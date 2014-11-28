@@ -22,7 +22,6 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
@@ -37,15 +36,17 @@ import org.slf4j.LoggerFactory;
 /**
  * Loader for MRC electron microscope image stacks
  */
-public class MRCImageStackLoader extends AbstractFileLoader implements IMetaLoader, Serializable {
+public class MRCImageStackLoader extends AbstractFileLoader implements Serializable {
 	protected static final Logger logger = LoggerFactory.getLogger(MRCImageStackLoader.class);
 
-	private String filename;
-
-	Metadata metadata = null;
-
 	public MRCImageStackLoader(String filename) {
-		this.filename = filename;
+		this.fileName = filename;
+	}
+
+	@Override
+	protected void clearMetadata() {
+		metadata = null;
+		headers.clear();
 	}
 
 	@Override
@@ -58,9 +59,9 @@ public class MRCImageStackLoader extends AbstractFileLoader implements IMetaLoad
 		File f = null;
 		BufferedInputStream bi = null;
 
-		f = new File(filename);
+		f = new File(fileName);
 		if (!f.exists()) {
-			throw new ScanFileHolderException("Cannot find " + filename);
+			throw new ScanFileHolderException("Cannot find " + fileName);
 		}
 
 		int pos = 0;
@@ -102,41 +103,6 @@ public class MRCImageStackLoader extends AbstractFileLoader implements IMetaLoad
 	}
 
 	@Override
-	public void loadMetadata(IMonitor mon) throws Exception {
-		if (metadata != null)
-			return;
-
-		File f = null;
-		BufferedInputStream bi = null;
-
-		f = new File(filename);
-		if (!f.exists()) {
-			throw new ScanFileHolderException("Cannot find " + filename);
-		}
-
-		try {
-			bi = new BufferedInputStream(new FileInputStream(f));
-			
-			readMetadata(bi);
-			if (mon != null) {
-				mon.worked(1);
-			}
-		} catch (Exception e) {
-			logger.error("Problem with file", e);
-			throw new ScanFileHolderException("Problem with file", e);
-		} finally {
-			if (bi != null) {
-				try {
-					bi.close();
-				} catch (IOException e1) {
-					logger.error("Cannot close stream", e1);
-					throw new ScanFileHolderException("Cannot close stream");
-				}
-			}
-		}
-	}
-
-	@Override
 	public IMetadata getMetadata() {
 		return metadata;
 	}
@@ -150,7 +116,7 @@ public class MRCImageStackLoader extends AbstractFileLoader implements IMetaLoad
 			
 			@Override
 			public boolean isFileReadable() {
-				return new File(filename).canRead();
+				return new File(fileName).canRead();
 			}
 			
 			@Override
@@ -202,10 +168,10 @@ public class MRCImageStackLoader extends AbstractFileLoader implements IMetaLoad
 							}
 						}
 
-						d = loadData(mon, filename, pos, dsize, dtype, trueShape, tstart, tsize, tstep);
+						d = loadData(mon, fileName, pos, dsize, dtype, trueShape, tstart, tsize, tstep);
 						d.setShape(newShape); // squeeze shape back
 					} else {
-						d = loadData(mon, filename, pos, dsize, dtype, trueShape, lstart, newShape, lstep);
+						d = loadData(mon, fileName, pos, dsize, dtype, trueShape, lstart, newShape, lstep);
 					}
 				} catch (Exception e) {
 					throw new ScanFileHolderException("Problem with HDF library", e);

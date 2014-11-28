@@ -54,7 +54,7 @@ public class CSVLoader extends DatLoader {
 			return null;
 
 		if (line.trim().startsWith("&")) throw new Exception("Cannot load SRS files with EpicsCSVLoader!");
-		metaData.clear();
+		metadataMap.clear();
 		vals.clear();
 
 		List<String> header = new ArrayList<String>(31);
@@ -62,14 +62,13 @@ public class CSVLoader extends DatLoader {
 		boolean foundHeaderLine = false;
 		boolean wasScanLine     = false;
 		// TODO clean up as this should not be a while loop
-		while (line != null) {
+		while (true) {
 
 			try {
 				if ("".equals(line.trim())) continue;
 				foundHeaderLine = true;
 
-				if (mon!=null) mon.worked(1);
-				if (mon!=null && mon.isCancelled()) {
+				if (!monitorIncrement(mon)) {
 					throw new ScanFileHolderException("Loader cancelled during reading!");
 				}
 
@@ -83,7 +82,7 @@ public class CSVLoader extends DatLoader {
 				if (line.contains(":")) {
 					String key = line.substring(0,line.indexOf(":"));
 					String value =line.substring(line.indexOf(":")+1, line.length());
-					metaData.put(key.trim(),value.trim());
+					metadataMap.put(key.trim(),value.trim());
 				}
 
 
@@ -95,7 +94,7 @@ public class CSVLoader extends DatLoader {
 					line = in.readLine();
 				}
 
-				if (line != null && !line.startsWith("#")) { // We found the header line
+				if (!line.startsWith("#")) { // We found the header line
 					
 					if (DATA.matcher(line).matches()) break; // Data is not columns!
 					
@@ -119,7 +118,4 @@ public class CSVLoader extends DatLoader {
         
 		return line;
 	}
-
-
-
 }

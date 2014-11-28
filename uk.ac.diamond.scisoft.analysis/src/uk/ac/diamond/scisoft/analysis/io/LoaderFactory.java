@@ -99,7 +99,7 @@ public class LoaderFactory {
 
 	private static final Logger logger = LoggerFactory.getLogger(LoaderFactory.class);
 
-	private static final Map<String, List<Class<? extends AbstractFileLoader>>> LOADERS = new HashMap<String, List<Class<? extends AbstractFileLoader>>>(19);
+	private static final Map<String, List<Class<? extends IFileLoader>>> LOADERS = new HashMap<String, List<Class<? extends IFileLoader>>>(19);
 	private static final Map<String, Class<? extends java.io.InputStream>>     UNZIPERS = new HashMap<String, Class<? extends java.io.InputStream>>(3);
 
 	/**
@@ -170,9 +170,7 @@ public class LoaderFactory {
 		    LoaderFactory.registerUnzip("gz",  GZIPInputStream.class);
 		    LoaderFactory.registerUnzip("zip", ZipInputStream.class);
 		    LoaderFactory.registerUnzip("bz2", CBZip2InputStream.class);
-		    
-		    
-		    	
+
 		    try {
 			    /**
 			     * Tell the extension points to load in.
@@ -233,7 +231,6 @@ public class LoaderFactory {
 		});
 	}
 	
-	
 	/**
 	 * Call to load any file type into memory. By default loads all data sets, therefore
 	 * could take a **long time**.
@@ -276,7 +273,7 @@ public class LoaderFactory {
 	 * @throws Exception
 	 */
 	public static IDataHolder getData(final String path, final boolean willLoadMetadata, final IMonitor mon) throws Exception {
-		return getData(path, willLoadMetadata, false, mon);
+		return getData(path, willLoadMetadata, false, false, mon);
 	}
 
 	/**
@@ -297,6 +294,7 @@ public class LoaderFactory {
 	 * 
 	 * @param path to file
 	 * @param willLoadMetadata dictates whether metadata is not loaded (if possible)
+	 * @param loadImageStacks if true, find and load images in the same directory as a stack
 	 * @param mon
 	 * @return DataHolder
 	 * @throws Exception
@@ -305,6 +303,39 @@ public class LoaderFactory {
 												  final boolean  willLoadMetadata, 
 												  final boolean  loadImageStacks, 
 											      final IMonitor mon) throws Exception {
+		return getData(path, willLoadMetadata, loadImageStacks, false, mon);
+	}
+
+	/**
+	 * Call to load any file type into memory. By default loads all data sets, therefore
+	 * could take a **long time**.
+	 * 
+	 * In addition to find out if a given file loads with a particular loader - it actually 
+	 * LOADS it. 
+	 * 
+	 * Therefore it can take a while to run depending on how quickly the loader
+	 * fails. Also if there are many loaders called in turn, much memory could be consumed and
+	 * discarded. For this reason the registration process requires a file extension and tries 
+	 * all the loaders for a given extension if the extension is registered already. 
+	 * Otherwise it tries all loaders - in no particular order.
+	 * 
+	 *   *synchronized* is REQUIRED because multiple threads load data simultaneously and without
+	 *   a synchronized you can get data loaded twice which is SLOW.
+	 * 
+	 * @param path to file
+	 * @param willLoadMetadata dictates whether metadata is not loaded (if possible)
+	 * @param loadImageStacks if true, find and load images in the same directory as a stack
+	 * @param lazily if true, <b>all</b> datasets in the data holder will be lazy otherwise the holder
+	 * may contain non-lazy datasets
+	 * @param mon
+	 * @return DataHolder
+	 * @throws Exception
+	 */
+	public static /*THIS IS REQUIRED:*/ synchronized  IDataHolder getData(final String   path,
+												final boolean willLoadMetadata, 
+												final boolean loadImageStacks, 
+												final boolean lazily, 
+												final IMonitor mon) throws Exception {
 
 		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
 		
@@ -321,7 +352,7 @@ public class LoaderFactory {
 		if (cachedObject!=null && cachedObject instanceof IDataHolder) holder = (IDataHolder)cachedObject;
 
 		if (holder==null) { // try and load it
-			final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
+			final Iterator<Class<? extends IFileLoader>> it = getIterator(path);
 			if (it == null) return null;
 	
 			// Currently this method simply cycles through all loaders.
@@ -329,8 +360,9 @@ public class LoaderFactory {
 			// returns the data from this loader.
 			while (it.hasNext()) {
 				final Class<? extends IFileLoader> clazz = it.next();
-				final IFileLoader loader = LoaderFactory.getLoader(clazz, path);
+				final IFileLoader loader = getLoader(clazz, path);
 				loader.setLoadMetadata(willLoadMetadata);
+				loader.setLoadAllLazily(lazily);
 				try {
 					// NOTE Assumes loader fails quickly and nicely
 					// if given the wrong file. If a loader does not
@@ -375,7 +407,7 @@ public class LoaderFactory {
 	/**
 	 * Call to load file into memory with specific loader class
 	 * 
-	 *   *synchronized* is REQUIRED because multiple threads load data synmultaneously and without
+	 *   *synchronized* is REQUIRED because multiple threads load data simultaneously and without
 	 *   a synchronized you can get data loaded twice which is SLOW.
      *
 	 * @param clazz loader class
@@ -476,8 +508,6 @@ public class LoaderFactory {
 		}
 		return null;
 	}
-
-
 
 	private final static Object LOCK = new Object();
 
@@ -598,14 +628,14 @@ public class LoaderFactory {
 			logger.warn("Cached object is not a metadata object or contain one");
 		}
 
-		final Iterator<Class<? extends AbstractFileLoader>> it = getIterator(path);
+		final Iterator<Class<? extends IFileLoader>> it = getIterator(path);
 		if (it == null) return null;
 
 		// Currently this method simply cycles through all loaders.
 		// When it finds one which does not give an exception on loading, it
 		// returns the data from this loader.
 		while (it.hasNext()) {
-			final Class<? extends AbstractFileLoader> clazz = it.next();
+			final Class<? extends IFileLoader> clazz = it.next();
 			final IFileLoader loader = LoaderFactory.getLoader(clazz, path);
 			if (!IMetaLoader.class.isInstance(loader)) continue;
 
@@ -678,9 +708,9 @@ public class LoaderFactory {
 		final String extension = FileUtils.getFileExtension(path).toLowerCase();
 
 		if (LOADERS.containsKey(extension)) {
-			final Collection<Class<? extends AbstractFileLoader>> loaders = LOADERS.get(extension);
+			final Collection<Class<? extends IFileLoader>> loaders = LOADERS.get(extension);
 
-			for (Class<? extends AbstractFileLoader> clazz : loaders) {
+			for (Class<? extends IFileLoader> clazz : loaders) {
 				final IFileLoader loader = LoaderFactory.getLoader(clazz, path);
 				if (interfaceClass.isInstance(loader))
 					return true;
@@ -723,18 +753,18 @@ public class LoaderFactory {
 	 * @param extension
 	 * @return loader class
 	 */
-	public static Class<? extends AbstractFileLoader> getLoaderClass(String extension) {
-		List<Class<? extends AbstractFileLoader>> loader = LOADERS.get(extension); 
+	public static Class<? extends IFileLoader> getLoaderClass(String extension) {
+		List<Class<? extends IFileLoader>> loader = LOADERS.get(extension); 
 		return (loader!=null) ? loader.get(0) : null;
 	}
 
-	private static Iterator<Class<? extends AbstractFileLoader>> getIterator(String path) throws IllegalAccessException {
+	private static Iterator<Class<? extends IFileLoader>> getIterator(String path) throws IllegalAccessException {
 
 		if ((new File(path).isDirectory()))
 			throw new IllegalAccessException("Cannot load directories with LoaderFactory!");
 
 		final String extension = FileUtils.getFileExtension(path).toLowerCase();
-		Iterator<Class<? extends AbstractFileLoader>> it = null;
+		Iterator<Class<? extends IFileLoader>> it = null;
 
 		if (LOADERS.containsKey(extension)) {
 			it = LOADERS.get(extension).iterator();
@@ -747,7 +777,7 @@ public class LoaderFactory {
 			if (m.matches()) {
 				final String realExt = m.group(1);
 				if (LoaderFactory.LOADERS.keySet().contains(realExt)) {
-					final Collection<Class<? extends AbstractFileLoader>> ret = new ArrayList<Class<? extends AbstractFileLoader>>(1);
+					final Collection<Class<? extends IFileLoader>> ret = new ArrayList<Class<? extends IFileLoader>>(1);
 					ret.add(CompressedLoader.class);
 					return ret.iterator();
 				}
@@ -756,7 +786,7 @@ public class LoaderFactory {
 			if (!searchingAllowed)
 				return null;
 
-			final Set<Class<? extends AbstractFileLoader>> all = new HashSet<Class<? extends AbstractFileLoader>>();
+			final Set<Class<? extends IFileLoader>> all = new HashSet<Class<? extends IFileLoader>>();
 			for (String ext : LOADERS.keySet())
 				all.addAll(LOADERS.get(ext));
 			it = all.iterator();
@@ -815,9 +845,9 @@ public class LoaderFactory {
 	 * @param loader
 	 * @throws Exception
 	 */
-	public static void registerLoader(final String extension, final Class<? extends AbstractFileLoader> loader) throws Exception {
+	public static void registerLoader(final String extension, final Class<? extends IFileLoader> loader) throws Exception {
 
-		List<Class<? extends AbstractFileLoader>> list = prepareRegistration(extension, loader);
+		List<Class<? extends IFileLoader>> list = prepareRegistration(extension, loader);
 
 		// Since not using set of loaders anymore must use contains to ensure
 		// that a memory leak does not occur.
@@ -841,15 +871,15 @@ public class LoaderFactory {
 	 * @param loader
 	 * @throws Exception
 	 */
-	public static void registerLoader(final String extension, final Class<? extends AbstractFileLoader> loader, final int position) throws Exception {
+	public static void registerLoader(final String extension, final Class<? extends IFileLoader> loader, final int position) throws Exception {
 
-		List<Class<? extends AbstractFileLoader>> list = prepareRegistration(extension, loader);
+		List<Class<? extends IFileLoader>> list = prepareRegistration(extension, loader);
 		// Since not using set of loaders anymore must use contains to ensure
 		// that a memory leak does not occur.
 		if (!list.contains(loader)) list.add(position, loader);
 	}
 
-	private static List<Class<? extends AbstractFileLoader>> prepareRegistration(String extension, Class<? extends AbstractFileLoader> loader) throws Exception {
+	private static List<Class<? extends IFileLoader>> prepareRegistration(String extension, Class<? extends IFileLoader> loader) throws Exception {
 		try {
 			loader.getConstructor(String.class);
 		} catch (NoSuchMethodException e) {
@@ -860,9 +890,9 @@ public class LoaderFactory {
 				throw new Exception("Loaders must have a no argument constructor!");
 		}
 
-		List<Class<? extends AbstractFileLoader>> list = LOADERS.get(extension);
+		List<Class<? extends IFileLoader>> list = LOADERS.get(extension);
 		if (list == null) {
-			list = new ArrayList<Class<? extends AbstractFileLoader>>();
+			list = new ArrayList<Class<? extends IFileLoader>>();
 			LOADERS.put(extension, list);
 		}
 		return list;
@@ -874,7 +904,7 @@ public class LoaderFactory {
 	 * @param extension
 	 * @return the old loader list, now removed, if any.
 	 */
-	public static List<Class<? extends AbstractFileLoader>> clearLoader(final String extension) {
+	public static List<Class<? extends IFileLoader>> clearLoader(final String extension) {
 		return LOADERS.remove(extension);
 	}
 

@@ -18,9 +18,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -33,16 +33,14 @@ import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
  * <p>
  * <b>Note</b>: the header data from this loader is left as strings
  */
-public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
+public class PgmLoader extends AbstractFileLoader {
 
-	private String fileName;
 	private Map<String, String> textMetadata = new HashMap<String, String>();
-	private Metadata metadata;
 	private static final String DATA_NAME = "Portable Grey Map";
 
 	public PgmLoader() {
-		
 	}
+
 	/**
 	 * @param fileName
 	 */
@@ -51,13 +49,20 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 	}
 
 	@Override
+	protected void clearMetadata() {
+		metadata = null;
+		textMetadata.clear();
+	}
+
+	@Override
 	public DataHolder loadFile() throws ScanFileHolderException {
 		return loadFile(null);
 	}
+
 	@Override
 	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
 
-		Dataset data = null;
+		ILazyDataset data = null;
 		DataHolder output = new DataHolder();
 		File f = null;
 		FileInputStream fi = null;
@@ -68,21 +73,31 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 
 			BufferedReader br = new BufferedReader(new FileReader(f));
 			
-			int[] vals = readMetaData(br, mon);
+			int[] vals = readMetaData(br, mon, textMetadata);
 			int index  = vals[0];
 			int width  = vals[1];
 			int height = vals[2];
 			int maxval = vals[3];
 
-			// Now read the data
-			if (maxval < 256) {
-				data = new ShortDataset(height, width);
-				Utils.readByte(fi, (ShortDataset) data, index);
+			if (loadLazily) {
+				data = createLazyDataset(DEF_IMAGE_NAME, maxval < 256 ? Dataset.INT16 : Dataset.INT32, new int[] {height, width}, new LazyLoaderStub() {
+					@Override
+					public IDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws Exception {
+						Dataset data = loadDataset(fileName);
+						return data == null ? null : data.getSliceView(start, stop, step);
+					}
+				});
 			} else {
-				data = new IntegerDataset(height, width);
-				Utils.readBeShort(fi, (IntegerDataset) data, index, false);
+				// Now read the data
+				if (maxval < 256) {
+					data = new ShortDataset(height, width);
+					Utils.readByte(fi, (ShortDataset) data, index);
+				} else {
+					data = new IntegerDataset(height, width);
+					Utils.readBeShort(fi, (IntegerDataset) data, index, false);
+				}
+				data.setName(DEF_IMAGE_NAME);
 			}
-			data.setName(DEF_IMAGE_NAME);
 		} catch (Exception e) {
 			throw new ScanFileHolderException("File failed to load " + fileName, e);
 		} finally {
@@ -105,14 +120,56 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 		return output;
 	}
 
-	private int[] readMetaData(BufferedReader br, IMonitor mon) throws Exception {
+	private static Dataset loadDataset(String fileName) throws ScanFileHolderException {
+		File f = null;
+		FileInputStream fi = null;
+		try {
+
+			f = new File(fileName);
+			fi = new FileInputStream(f);
+
+			BufferedReader br = new BufferedReader(new FileReader(f));
+			
+			int[] vals = readMetaData(br, null, new HashMap<String, String>());
+			int index  = vals[0];
+			int width  = vals[1];
+			int height = vals[2];
+			int maxval = vals[3];
+			
+			Dataset data;
+			// Now read the data
+			if (maxval < 256) {
+				data = new ShortDataset(height, width);
+				Utils.readByte(fi, (ShortDataset) data, index);
+			} else {
+				data = new IntegerDataset(height, width);
+				Utils.readBeShort(fi, (IntegerDataset) data, index, false);
+			}
+			data.setName(DEF_IMAGE_NAME);
+			return data;
+		} catch (Exception e) {
+			throw new ScanFileHolderException("File failed to load " + fileName, e);
+		} finally {
+			if (fi != null) {
+				try {
+					fi.close();
+				} catch (IOException ex) {
+					// do nothing
+				}
+				fi = null;
+			}
+		}
+	}
+	
+	private static int[] readMetaData(BufferedReader br, IMonitor mon, Map<String, String> textMetadata) throws Exception {
 		int width  = 0;
 		int height = 0;
 		int maxval = 0;
 
 		textMetadata.clear();
-		if (mon!=null) mon.worked(1);
-		if (mon!=null&&mon.isCancelled()) throw new ScanFileHolderException("Loader cancelled during reading!");
+		if (!monitorIncrement(mon)) {
+			throw new ScanFileHolderException("Loader cancelled during reading!");
+		}
 
 		String line = br.readLine();
 		if (line == null) {
@@ -164,29 +221,12 @@ public class PgmLoader extends AbstractFileLoader implements IMetaLoader {
 		return new int[]{index, width, height, maxval};
 	}
 
-	@Override
-	public void loadMetadata(final IMonitor mon) throws Exception {
-
-		final BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
-		try {
-		    readMetaData(br, mon);
-		    createMetadata();
-		} finally {
-			br.close();
-		}
-	}
-
 	private void createMetadata() {
 		metadata = new Metadata(textMetadata);
 		metadata.setFilePath(fileName);
 		metadata.addDataInfo(DATA_NAME, Integer.parseInt(textMetadata.get("Height")), Integer.parseInt(textMetadata.get("Width")));
 	}
 	
-	@Override
-	public IMetadata getMetadata() {
-		return metadata;
-	}
-
 	public String getHeaderValue(String key) {
 		return textMetadata.get(key);	
 	}

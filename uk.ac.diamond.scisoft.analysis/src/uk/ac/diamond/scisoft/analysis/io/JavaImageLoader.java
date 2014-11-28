@@ -11,14 +11,24 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
+import java.awt.image.SampleModel;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.stream.ImageInputStream;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
+import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.RGBDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,15 +47,9 @@ import org.slf4j.LoggerFactory;
 public class JavaImageLoader extends AbstractFileLoader {
 	protected static final Logger logger = LoggerFactory.getLogger(JavaImageLoader.class);
 
-	protected String fileName = "";
 	private String fileType = "";
 	protected boolean asGrey;
 	protected boolean keepBitWidth = false;
-
-	
-	public void setFile(final String fileName) {
-		this.fileName = fileName;
-	}
 
 	/**
 	 * @return true if loader keeps bit width of pixels
@@ -102,10 +106,13 @@ public class JavaImageLoader extends AbstractFileLoader {
 	}
 
 	@Override
+	protected void clearMetadata() {
+		metadata = null;
+	}
+
+	@Override
 	public DataHolder loadFile() throws ScanFileHolderException {
-		Dataset data = null;
 		File f = null;
-		BufferedImage input = null;
 
 		// Check for file
 		f = new File(fileName);
@@ -114,26 +121,155 @@ public class JavaImageLoader extends AbstractFileLoader {
 			f = findCorrectSuffix();
 		}
 
-		// TODO cope with multiple images (gif, tiff)
-		try {
-			// test to see if the filename passed will load
-			f = new File(fileName);
+		DataHolder output = new DataHolder();
+		// test to see if the filename passed will load
+		f = new File(fileName);
 
-			input = ImageIO.read(f);
-			if (input == null) {
-				throw new ScanFileHolderException("File format in '" + fileName + "' cannot be read");
+		ImageInputStream iis = null;
+		try {
+			iis = ImageIO.createImageInputStream(f);
+		} catch (Exception e) {
+			logger.error("Problem creating input stream for file " + fileName, e);
+			throw new ScanFileHolderException("Problem creating input stream for file " + fileName, e);
+		}
+		if (iis == null) {
+			logger.error("File format in '{}' cannot be read", fileName);
+			throw new ScanFileHolderException("File format in '" + fileName + "' cannot be read");
+		}
+		Iterator<ImageReader> it = ImageIO.getImageReaders(iis);
+		boolean loaded = false;
+		while (it.hasNext()) {
+			ImageReader reader = it.next();
+			reader.setInput(iis, false, loadMetadata);
+			if (loadLazily) {
+				loaded = createLazyDatasets(output, reader);
+			} else {
+				loaded = createDatasets(output, reader);
 			}
-		} catch (IOException e) {
-			throw new ScanFileHolderException("IOException loading file '" + fileName + "'", e);
-		} catch (IllegalArgumentException e) {
-			throw new ScanFileHolderException("IllegalArgumentException interpreting file '" + fileName + "'", e);
+			if (loaded) {
+				if (loadMetadata) {
+					createMetadata(output, reader);
+				}
+				break;
+			}
+		}
+		if (!loaded) {
+			logger.error("File format in '{}' cannot be read", fileName);
+			throw new ScanFileHolderException("File format in '" + fileName + "' cannot be read");
 		}
 
-		data = createDataset(input);
-		data.setName(DEF_IMAGE_NAME);
-		DataHolder output = new DataHolder();
-		output.addDataset(DEF_IMAGE_NAME, data);
 		return output;
+	}
+
+	private boolean createDatasets(DataHolder output, ImageReader reader) {
+		int j = 1; // start at 1
+		BufferedImage input = null;
+		for (int i = 0; true; i++) {
+			try {
+				String name = String.format(IMAGE_NAME_FORMAT, j);
+				input = reader.read(i);
+				Dataset data = createDataset(input);
+				data.setName(name);
+				output.addDataset(name, data);
+			} catch (IOException e) {
+				return false;
+			} catch (IndexOutOfBoundsException e) {
+				break;
+			} catch (ScanFileHolderException e) {
+				logger.error("Problem with creating dataset from image", e);
+				return false;
+			}
+			j++;
+		}
+		return true;
+	}
+
+	protected boolean createLazyDatasets(DataHolder output, ImageReader reader) {
+		int j = 1; // start at 1
+		for (int i = 0; true; i++) {
+			try {
+				int[] shape = new int[] {reader.getHeight(i), reader.getWidth(i)};
+				Iterator<ImageTypeSpecifier> it = reader.getImageTypes(i);
+				SampleModel sm = it.next().getSampleModel();
+				int dtype = AWTImageUtils.getDTypeFromImage(sm, keepBitWidth)[0];
+				final String name = String.format(IMAGE_NAME_FORMAT, j);
+				LazyDataset lazy = createLazyDataset(name, dtype, shape, new LazyLoaderStub() {
+					@Override
+					public IDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws Exception {
+						Dataset data = loadDataset(fileName, name, asGrey, keepBitWidth);
+						return data == null ? null : data.getSliceView(start, stop, step);
+					}
+				});
+				output.addDataset(name, lazy);
+//				IIOMetadata imd = reader.getImageMetadata(i);
+//				imd.getAsTree(imd.getNativeMetadataFormatName()).toString();
+			} catch (IndexOutOfBoundsException e) {
+				break;
+			} catch (Exception e) {
+				logger.warn("Could not get height or width for image {}", j);
+				continue;
+			}
+			j++;
+		}
+		return output.getNames().length > 0;
+	}
+
+	private static Dataset loadDataset(String path, String name, boolean asGrey, boolean keepBitWidth) throws ScanFileHolderException {
+		if (!name.startsWith(IMAGE_NAME_PREFIX)) {
+			throw new ScanFileHolderException("Dataset of name '" + name + "' does not contain prefix " + IMAGE_NAME_PREFIX);
+		}
+		String number = name.substring(IMAGE_NAME_FORMAT.length());
+		int num = -1;
+		try {
+			num = Integer.parseInt(number) - 1;
+		} catch (NumberFormatException e) {
+		}
+		if (num < 0) {
+			throw new ScanFileHolderException("Dataset of name '" + name + "' does not contain image number");
+		}
+
+		File f = new File(path);
+
+		ImageInputStream iis = null;
+		try {
+			iis = ImageIO.createImageInputStream(f);
+		} catch (Exception e) {
+			logger.error("Problem creating input stream for file " + path, e);
+			throw new ScanFileHolderException("Problem creating input stream for file " + path, e);
+		}
+		if (iis == null) {
+			logger.error("File format in '{}' cannot be read", path);
+			throw new ScanFileHolderException("File format in '" + path + "' cannot be read");
+		}
+		Iterator<ImageReader> it = ImageIO.getImageReaders(iis);
+		while (it.hasNext()) {
+			ImageReader reader = it.next();
+			reader.setInput(iis, false, true);
+			Dataset data;
+			try {
+				data = createDataset(reader.read(num), asGrey, keepBitWidth);
+				data.setName(name);
+				return data;
+			} catch (IndexOutOfBoundsException e) {
+				throw new ScanFileHolderException("Image number is incorrect");
+			} catch (IOException e) {
+				logger.error("Problem reading file", e);
+				
+			} catch (ScanFileHolderException e) {
+				logger.error("Problem creating dataset", e);
+			}
+		}
+
+		return null;
+	}
+
+	protected void createMetadata(DataHolder output, @SuppressWarnings("unused") ImageReader reader) {
+		metadata = new Metadata();
+		metadata.setFilePath(fileName);
+		for (String n : output.getNames()) {
+			ILazyDataset lazy = output.getLazyDataset(n);
+			metadata.addDataInfo(n, lazy.getShape());
+		}
 	}
 
 	protected Dataset createDataset(BufferedImage input) throws ScanFileHolderException {

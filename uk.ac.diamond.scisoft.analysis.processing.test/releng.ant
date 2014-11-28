@@ -33,6 +33,12 @@
 				<pathelement location="${workspace.git.loc}/dawn-common.git/org.dawb.common.services/bin" />
 				<pathelement location="${workspace.git.loc}/dawn-common.git/org.dawnsci.conversion/bin" />
 				<pathelement location="${workspace.git.loc}/dawn-common.git/org.dawnsci.persistence/bin" />
+				<pathelement location="${workspace.git.loc}/dawn-workflow.git/org.dawb.passerelle.common/bin" />
+				<pathelement location="${workspace.git.loc}/dawn-isencia.git/com.isencia.passerelle.commons/target/classes" />
+				<pathelement location="${workspace.git.loc}/dawn-isencia.git/com.isencia.passerelle.domain.et/target/classes" />
+				<pathelement location="${workspace.git.loc}/dawn-isencia.git/com.isencia.passerelle.engine/target/classes" />
+				<pathelement location="${workspace.git.loc}/dawn-isencia.git/com.isencia.passerelle.runtime/target/classes" />
+				<pathelement location="${workspace.git.loc}/dawn-isenciaui.git/com.isencia.passerelle.resources/bin" />
 				<path refid="tp.slf4j.path" />  <!--ensure that required org.slf4j.LoggerFactory appears first in classpath -->
 				<path refid="tp.jcl-over-slf4j.path" />  <!--ensure that matching imp appears first in classpath -->
 				<pathelement location="${workspace.loc}/tp/plugins/*" />

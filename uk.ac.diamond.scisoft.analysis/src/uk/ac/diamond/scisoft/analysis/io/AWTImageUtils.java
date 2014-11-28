@@ -29,15 +29,13 @@ import javax.media.jai.RasterFactory;
 import javax.media.jai.TiledImage;
 
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
-import org.eclipse.dawnsci.analysis.dataset.impl.ByteDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.RGBDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
 
 /**
  * Helper methods to convert to/from AWT images and datasets
@@ -50,47 +48,19 @@ public class AWTImageUtils {
 	 * Create datasets from a Raster
 	 * @param r raster
 	 * @param data array to output datasets
-	 * @param dbtype data buffer type
-	 * @param keepBitWidth if true, then use signed primitives of same bit width for possibly unsigned data
+	 * @param dtype dataset type
 	 */
-	static public void createDatasets(Raster r, Dataset[] data, final int dbtype, boolean keepBitWidth) {
+	static public void createDatasets(Raster r, Dataset[] data, final int dtype) {
 		final int bands = data.length;
 		final int height = r.getHeight();
 		final int width = r.getWidth();
 		Dataset tmp;
 
 		for (int i = 0; i < bands; i++) {
-			switch (dbtype) {
-			case DataBuffer.TYPE_BYTE:
-				tmp = new IntegerDataset(r.getSamples(0, 0, width, height, i, (int[]) null), height, width);
-				data[i] = keepBitWidth ? new ByteDataset(tmp) : new ShortDataset(tmp);
-				break;
-			case DataBuffer.TYPE_SHORT:
-				tmp = new IntegerDataset(r.getSamples(0, 0, width, height, i, (int[]) null), height, width);
-				data[i] = new ShortDataset(tmp);
-				break;
-			case DataBuffer.TYPE_USHORT:
-				tmp = new IntegerDataset(r.getSamples(0, 0, width, height, i, (int[]) null), height, width);
-				data[i] = keepBitWidth ? new ShortDataset(tmp) : createIntForShortDataset((IntegerDataset)tmp);
-				break;
-			case DataBuffer.TYPE_INT:
-				data[i] = new IntegerDataset(r.getSamples(0, 0, width, height, i, (int[]) null), height, width);
-				break;
-			case DataBuffer.TYPE_DOUBLE:
-				data[i] = new DoubleDataset(r.getSamples(0, 0, width, height, i, (double[]) null), height, width);
-				break;
-			case DataBuffer.TYPE_FLOAT:
-				data[i] = new FloatDataset(r.getSamples(0, 0, width, height, i, (float[]) null), height, width);
-				break;
-			}
+			tmp = DatasetFactory.createFromObject(r.getSamples(0, 0, width, height, i, (int[]) null), dtype);
+			tmp.setShape(height, width);
+			data[i] = tmp;
 		}
-	}
-
-	private static IntegerDataset createIntForShortDataset(IntegerDataset ret) {
-		final Map<String,String> metadata = new HashMap<String, String>(1);
-		metadata.put("unsigned.short.data", "true");
-		ret.setMetadata(new Metadata(metadata));
-		return ret;
 	}
 
 	/**
@@ -102,9 +72,28 @@ public class AWTImageUtils {
 	static public Dataset[] makeDatasets(final BufferedImage image, boolean keepBitWidth) {
 		// make raster from buffered image
 		final Raster ras = image.getData();
-		final int bands = ras.getNumBands();
 		final SampleModel sm = ras.getSampleModel();
+		int[] dtype = getDTypeFromImage(sm, keepBitWidth);
 
+		final int bands = ras.getNumBands();
+		Dataset[] data = new Dataset[bands];
+
+		createDatasets(ras, data, dtype[0]);
+		if (dtype[1] == 1) {
+			for (int i = 0; i < bands; i++) {
+				tagIntForShortDataset(data[i]);
+			}
+		}
+		return data;
+	}
+
+	private static void tagIntForShortDataset(Dataset ret) {
+		final Map<String,String> metadata = new HashMap<String, String>(1);
+		metadata.put("unsigned.short.data", "true");
+		ret.setMetadata(new Metadata(metadata));
+	}
+
+	static public int[] getDTypeFromImage(final SampleModel sm, boolean keepBitWidth) {
 		int dbtype = sm.getDataType();
 		final int bits = sm.getSampleSize(0);
 		if (dbtype == DataBuffer.TYPE_INT) {
@@ -126,11 +115,29 @@ public class AWTImageUtils {
 				dbtype = DataBuffer.TYPE_BYTE;
 			}
 		}
-		Dataset[] data = new Dataset[bands];
+		int dtype = -1;
+		switch (dbtype) {
+		case DataBuffer.TYPE_BYTE:
+			dtype = keepBitWidth ? Dataset.INT8 : Dataset.INT16;
+			break;
+		case DataBuffer.TYPE_SHORT:
+			dtype = Dataset.INT16;
+			break;
+		case DataBuffer.TYPE_USHORT:
+			dtype = keepBitWidth ? Dataset.INT16 : Dataset.INT32;
+			break;
+		case DataBuffer.TYPE_INT:
+			dtype = Dataset.INT32;
+			break;
+		case DataBuffer.TYPE_DOUBLE:
+			dtype = Dataset.FLOAT64;
+			break;
+		case DataBuffer.TYPE_FLOAT:
+			dtype = Dataset.FLOAT32;
+			break;
+		}
 
-		createDatasets(ras, data, dbtype, keepBitWidth);
-
-		return data;
+		return new int[] {dtype, dbtype == DataBuffer.TYPE_USHORT && !keepBitWidth ? 1 : 0};
 	}
 
 	/**

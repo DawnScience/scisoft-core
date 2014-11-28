@@ -34,10 +34,10 @@ public class MAR345LoaderTest {
 	@BeforeClass
 	static public void setUpClass() {
 		TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		if( TestFileFolder == null){
+		if (TestFileFolder == null) {
 			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
 		}
-		TestFileFolder += "/MAR3450LoaderTest/";
+		TestFileFolder += "MAR3450LoaderTest/";
 		testfile = TestFileFolder + "image_130.mar3450";
 	}
 

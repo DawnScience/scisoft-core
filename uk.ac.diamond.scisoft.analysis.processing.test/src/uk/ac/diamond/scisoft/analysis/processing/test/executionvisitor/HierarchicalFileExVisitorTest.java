@@ -19,6 +19,7 @@ import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
+import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
@@ -28,6 +29,8 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
+import org.eclipse.dawnsci.analysis.dataset.impl.SliceIterator;
+import org.eclipse.dawnsci.analysis.dataset.impl.SliceND;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -64,30 +67,26 @@ public class HierarchicalFileExVisitorTest {
 		Junk2Dto1DOperation op21 = new Junk2Dto1DOperation();
 		op21.setModel(new Junk1DModel());
 		
-		try {
+		final File tmp = File.createTempFile("Test", ".h5");
+		tmp.deleteOnExit();
+		tmp.createNewFile();
 
-			final File tmp = File.createTempFile("Test", ".h5");
-			tmp.deleteOnExit();
-			tmp.createNewFile();
-			
-			context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
-			context.setSeries(op22,op21);
-			service.execute(context);
-			
-			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-			assertTrue(dh.contains("/entry/result/data"));
-			assertTrue(dh.contains("/entry/result/Axis_0"));
-			assertTrue(dh.contains("/entry/result/Junk1Dax"));
-			
-			assertArrayEquals(new int[]{inputShape[0],op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
-			assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+		context.setSeries(op22,op21);
+		context.setExecutionType(ExecutionType.GRAPH);
+		service.execute(context);
 
-			testDataset(op21, "5,:", dh.getLazyDataset("/entry/result/data"));
-			
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
+		assertTrue(dh.contains("/entry/result/data"));
+		assertTrue(dh.contains("/entry/result/Axis_0"));
+		assertTrue(dh.contains("/entry/result/Junk1Dax"));
+
+		assertArrayEquals(new int[]{inputShape[0],op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
+		assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+
+		testDataset(op21, "5,:", dh.getLazyDataset("/entry/result/data"));
+
 		
 	}
 	
@@ -440,35 +439,29 @@ public class HierarchicalFileExVisitorTest {
 		op21.setModel(new Junk1DModel());
 		Junk1Dto1DAuxOperation op11 = new Junk1Dto1DAuxOperation();
 		op11.setModel(new Junk1DModel());
-		
-		try {
 
-			final File tmp = File.createTempFile("Test", ".h5");
-			tmp.deleteOnExit();
-			tmp.createNewFile();
-			
-			context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
-			context.setSeries(op21,op11);
-			service.execute(context);
-			
-			IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-			assertTrue(dh.contains("/entry/result/data"));
-			assertTrue(dh.contains("/entry/result/Axis_0"));
-			assertTrue(dh.contains("/entry/result/Junk1Dax"));
-			assertTrue(dh.contains("/entry/auxiliary/1-Junk1Dto1DAuxOperation/singlevalue/Axis_0"));
-			assertTrue(dh.contains("/entry/auxiliary/1-Junk1Dto1DAuxOperation/singlevalue/data"));
-			
-			assertArrayEquals(new int[]{inputShape[0],op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
-			assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
-			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/auxiliary/1-Junk1Dto1DAuxOperation/singlevalue/Axis_0").getShape());
-			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/auxiliary/1-Junk1Dto1DAuxOperation/singlevalue/data").getShape());
+		final File tmp = File.createTempFile("Test", ".h5");
+		tmp.deleteOnExit();
+		tmp.createNewFile();
 
-			testDataset( op11, "5,:", dh.getLazyDataset("/entry/result/data"));
-			
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+		context.setSeries(op21,op11);
+		service.execute(context);
+
+		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
+		assertTrue(dh.contains("/entry/result/data"));
+		assertTrue(dh.contains("/entry/result/Axis_0"));
+		assertTrue(dh.contains("/entry/result/Junk1Dax"));
+		assertTrue(dh.contains("/entry/auxiliary/1-Junk1Dto1DAuxOperation/singlevalue/Axis_0"));
+		assertTrue(dh.contains("/entry/auxiliary/1-Junk1Dto1DAuxOperation/singlevalue/data"));
+
+		assertArrayEquals(new int[]{inputShape[0],op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
+		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/auxiliary/1-Junk1Dto1DAuxOperation/singlevalue/Axis_0").getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/auxiliary/1-Junk1Dto1DAuxOperation/singlevalue/data").getShape());
+
+		testDataset( op11, "5,:", dh.getLazyDataset("/entry/result/data"));
 		
 	}
 	
@@ -850,44 +843,42 @@ public class HierarchicalFileExVisitorTest {
 		return lz;
 	}
 	
-	@Test
-	public void AbstractOperationCounter() {
-	
-		int[] shape = new int[]{1,2,3,4,5,10,10};
-		int[] dd = new int[]{2,3};
-		final IDataset parent = Random.rand(shape);
-		Slice[] init = new Slice[shape.length];
-		PositionIterator pi = new PositionIterator(shape,dd);
+//	@Test
+//	public void AbstractOperationCounter() {
+//	
+//		int[] shape = new int[]{1,2,3,4,5,10,10};
+//		int[] dd = new int[]{2,3};
+//		final IDataset parent = Random.rand(shape);
+//		Slice[] init = new Slice[shape.length];
+//		PositionIterator pi = new PositionIterator(shape,dd);
+//		
+//		OriginMetadataImpl om = new OriginMetadataImpl(parent,init,dd,"test","test");
+//		
+//		int[] pos = pi.getPos();
+//
+//		int count = 0;
+//		while (pi.hasNext()) {
+//
+//			int[] end = pos.clone();
+//			for (int i = 0; i<pos.length;i++) {
+//				end[i]++;
+//			}
+//
+//			for (int i = 0; i < dd.length; i++){
+//				end[dd[i]] = shape[dd[i]];
+//			}
+//
+//			int[] st = pos.clone();
+//			for (int i = 0; i < st.length;i++) st[i] = 1;
+//
+//			Slice[] slice = Slice.convertToSlice(pos, end, st);
+//			
+//			om.setCurrentSlice(slice);
+//			int currentSliceNumber = AbstractOperation.getCurrentSliceNumber(om);
+//			assertTrue(currentSliceNumber == count++);
+//			
+//		}
 		
-		OriginMetadataImpl om = new OriginMetadataImpl(parent,init,dd,"test","test");
-		
-		int[] pos = pi.getPos();
-
-		int count = 0;
-		while (pi.hasNext()) {
-
-			int[] end = pos.clone();
-			for (int i = 0; i<pos.length;i++) {
-				end[i]++;
-			}
-
-			for (int i = 0; i < dd.length; i++){
-				end[dd[i]] = shape[dd[i]];
-			}
-
-			int[] st = pos.clone();
-			for (int i = 0; i < st.length;i++) st[i] = 1;
-
-			Slice[] slice = Slice.convertToSlice(pos, end, st);
-			
-			om.setCurrentSlice(slice);
-			int currentSliceNumber = AbstractOperation.getCurrentSliceNumber(om);
-			assertTrue(currentSliceNumber == count++);
-			
-		}
-		
-		
-	}
-	
-	
+//		
+//	}
 }

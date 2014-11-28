@@ -71,9 +71,11 @@ public class OperationsTest {
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 10.0, 1024, 1024));
 		
+		counter = 0;
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
+				++counter;
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
 					for (int j = 0; j < result.getData().getShape()[1]; j++) {
 					    if ( result.getData().getDouble(i,j)>0 ) throw new Exception("Incorrect value found!");
@@ -83,6 +85,14 @@ public class OperationsTest {
 		});
 		context.setSeries(subtract);
 		service.execute(context);
+		if (counter!=1) throw new Exception("Unexpected execution amount "+counter);
+		
+		// Test in graph mode
+		counter = 0;
+		context.setExecutionType(ExecutionType.GRAPH);
+		service.execute(context);
+		if (counter!=1) throw new Exception("Unexpected execution amount "+counter);
+		
 	}
 
 	@Test
@@ -97,9 +107,11 @@ public class OperationsTest {
 		subtract.setModel(new ValueModel(100));
 		add.setModel(new ValueModel(101));
 		
+		counter = 0;
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
+				++counter;
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
 					for (int j = 0; j < result.getData().getShape()[1]; j++) {
 					    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found! "+result.getData().getDouble(i,j));
@@ -109,6 +121,15 @@ public class OperationsTest {
 		});
 		context.setSeries(subtract, add);
 		service.execute(context);
+		if (counter!=1) throw new Exception("Unexpected execution amount "+counter);
+		
+	
+		// Test in graph mode
+		counter = 0;
+		context.setExecutionType(ExecutionType.GRAPH);
+		service.execute(context);
+		if (counter!=1) throw new Exception("Unexpected execution amount "+counter);
+
 	}
 
 	private volatile int counter;
@@ -129,7 +150,7 @@ public class OperationsTest {
 		counter = 0;
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				
 				System.out.println(result.getData().getName());
 				counter++;
@@ -141,8 +162,14 @@ public class OperationsTest {
 			}			
 		});
 		context.setSeries(subtract, add);
-		service.execute(context);
+		service.execute(context);	
+		if ( counter != 24 ) throw new Exception("The counter is "+counter);
 		
+	
+		// Test in graph mode
+		counter = 0;
+		context.setExecutionType(ExecutionType.GRAPH);
+		service.execute(context);
 		if ( counter != 24 ) throw new Exception("The counter is "+counter);
 	}
 
@@ -165,7 +192,7 @@ public class OperationsTest {
 
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 
 				try {
 					// This sleep simply introduces some random behaviour
@@ -187,7 +214,16 @@ public class OperationsTest {
 		context.setSeries(subtract, add);
 		service.execute(context);
 
-		if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run!");
+		if ( counter < 23 ) throw new Exception("Not all jobs completed before timeout in parallel run! Loop count was : "+counter);
+	
+	
+		// Test in graph mode
+		counter = 0;
+		context.setExecutionType(ExecutionType.GRAPH);
+		context.setPoolSize(Runtime.getRuntime().availableProcessors());
+		service.execute(context);
+		if ( counter != 24 ) throw new Exception("The counter is "+counter);
+
 	}
 
 
@@ -207,7 +243,7 @@ public class OperationsTest {
 		context.setExecutionType(ExecutionType.PARALLEL);
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 
 				try {
 					// This sleep simply introduces some random behaviour
@@ -230,7 +266,17 @@ public class OperationsTest {
 		try {
 		    service.execute(context);
 		} catch (OperationException ne) {
-			return; // That's what we wanted!
+			
+			try {
+				// This also should timeout
+			    context.setExecutionType(ExecutionType.GRAPH);
+				context.setParallelTimeout(5000);
+			    context.setPoolSize(Runtime.getRuntime().availableProcessors());
+			    service.execute(context);
+			    
+			} catch (OperationException neo) {	
+				return; // That's what we wanted!
+			}
 		}
 
 		throw new Exception("The default wait time of 5000ms should have been reached!");
@@ -252,10 +298,9 @@ public class OperationsTest {
 		counter = 0;
 
 		context.setParallelTimeout(Long.MAX_VALUE);
-		context.setExecutionType(ExecutionType.PARALLEL);
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 
 				try {
 					// This sleep simply introduces some random behaviour
@@ -273,12 +318,17 @@ public class OperationsTest {
 				}
 			}			
 		});
-		context.setSeries(subtract, add);
+		
+		context.setSeries(subtract, add);	
+		context.setExecutionType(ExecutionType.PARALLEL);
 		service.execute(context);
-
 		if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run!");
 
-
+		counter=0;
+	    context.setExecutionType(ExecutionType.GRAPH);
+	    context.setPoolSize(Runtime.getRuntime().availableProcessors());
+	    service.execute(context);
+		if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run!");
 	}
 
 }

@@ -17,9 +17,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -32,11 +31,9 @@ import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
  * <p>
  * <b>Note</b>: the header data from this loader is left as strings
  */
-public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader {
+public class PilatusEdfLoader extends AbstractFileLoader {
 
-	private String fileName;
 	private Map<String, String> textMetadata = new HashMap<String, String>();
-	private Metadata metadata;
 	public static final String DATA_NAME = "EDF";
 
 	/**
@@ -47,13 +44,19 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 	}
 
 	@Override
+	protected void clearMetadata() {
+		metadata = null;
+		textMetadata.clear();
+	}
+
+	@Override
 	public DataHolder loadFile() throws ScanFileHolderException {
 		return loadFile(null);
 	}
 	
 	@Override
 	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
-		Dataset data = null;
+		ILazyDataset data = null;
 		final DataHolder output = new DataHolder();
 		File f = null;
 		FileInputStream fi = null;
@@ -76,29 +79,34 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 				int index = readMetaData(br, line.length()+1, mon);
 				
 				// Now read the data
-				int height = Integer.parseInt(textMetadata.get("Dim_1"));
-				int width = Integer.parseInt(textMetadata.get("Dim_2"));
+				int[] shape = new int[] { Integer.parseInt(textMetadata.get("Dim_2")),
+						Integer.parseInt(textMetadata.get("Dim_1"))};
 				String dataType = textMetadata.get("DataType");
-				if (dataType.equals("Float")) {
-					data = new FloatDataset(width, height);
-					Utils.readFloat(fi, (FloatDataset) data, index);
+				if (loadLazily) {
+					data = createLazyDataset(DEF_IMAGE_NAME, DATA_NAME, dataType.equals("Float") ? Dataset.FLOAT32 : Dataset.INT32,
+							shape, new PilatusEdfLoader(fileName));
 				} else {
-					data = new IntegerDataset(width, height);
-					boolean le = "LowByteFirst".equals(textMetadata.get("ByteOrder")); 
-					if (dataType.contains("Short")) {
-						boolean signed = dataType.startsWith("Signed");
-						if (le)
-							Utils.readLeShort(fi, (IntegerDataset) data, index, signed);
-						else
-							Utils.readBeShort(fi, (IntegerDataset) data, index, signed);
+					if (dataType.equals("Float")) {
+						data = new FloatDataset(shape);
+						Utils.readFloat(fi, (FloatDataset) data, index);
 					} else {
-						if (le)
-							Utils.readLeInt(fi, (IntegerDataset) data, index);
-						else
-							Utils.readBeInt(fi, (IntegerDataset) data, index);
+						data = new IntegerDataset(shape);
+						boolean le = "LowByteFirst".equals(textMetadata.get("ByteOrder"));
+						if (dataType.contains("Short")) {
+							boolean signed = dataType.startsWith("Signed");
+							if (le)
+								Utils.readLeShort(fi, (IntegerDataset) data, index, signed);
+							else
+								Utils.readBeShort(fi, (IntegerDataset) data, index, signed);
+						} else {
+							if (le)
+								Utils.readLeInt(fi, (IntegerDataset) data, index);
+							else
+								Utils.readBeInt(fi, (IntegerDataset) data, index);
+						}
 					}
+					data.setName(DEF_IMAGE_NAME);
 				}
-				data.setName(DEF_IMAGE_NAME);
 			}
 		} catch (Exception e) {
 			throw new ScanFileHolderException("File failed to load " + fileName, e);
@@ -123,21 +131,6 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 		return output;
 	}
 
-	@Override
-	public void loadMetadata(final IMonitor mon) throws Exception {
-
-		final BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
-		try {
-			final String line = br.readLine();
-			if (line == null)
-				throw new ScanFileHolderException("No lines found");
-			readMetaData(br, line.length()+1, mon);
-			createMetadata();
-		} finally {
-			br.close();
-		}
-	}
-
 	private void createMetadata() {
 		metadata = new Metadata(textMetadata);
 		metadata.setFilePath(fileName);
@@ -145,18 +138,13 @@ public class PilatusEdfLoader extends AbstractFileLoader implements IMetaLoader 
 				Integer.parseInt(textMetadata.get("Dim_1")));
 	}
 
-	@Override
-	public IMetadata getMetadata() {
-		return metadata;
-	}
-
 	private int readMetaData(final BufferedReader br, int index, final IMonitor mon) throws Exception {
 		
 		textMetadata.clear();
 		while (true) {
-			
-			if (mon!=null) mon.worked(1);
-			if (mon!=null&&mon.isCancelled()) throw new ScanFileHolderException("Loader cancelled during reading!");
+			if (!monitorIncrement(mon)) {
+				throw new ScanFileHolderException("Loader cancelled during reading!");
+			}
 			
 			String line = br.readLine();
 			if (line == null) {

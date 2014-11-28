@@ -31,7 +31,7 @@ public class PixiumLoader extends TIFFImageLoader {
 	}
 
 	@Override
-	protected Map<String, Serializable> createMetadata(IIOMetadata imageMetadata) throws ScanFileHolderException {
+	protected Map<String, Serializable> createMetadataMap(IIOMetadata imageMetadata) throws ScanFileHolderException {
 		// check to see if our metadata exists
 		File file = new File(fileName);
 		File mFile = new File(file.getParent(), "metadata.inf");

@@ -9,11 +9,13 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
+import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 
 public class RotatedCartesianBoxModel extends AbstractOperationModel {
 
+	@OperationModelField(hint="Define a region of interest.", label = "Region of Interest")
 	private IRectangularROI roi;
 	
 	public RotatedCartesianBoxModel() {

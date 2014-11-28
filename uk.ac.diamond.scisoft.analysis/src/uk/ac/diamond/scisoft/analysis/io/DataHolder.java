@@ -165,7 +165,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	/**
 	 * This pulls out the dataset which could be lazy, maintaining its laziness.
 	 * @param index
-	 * @return Generic dataset with given index in holder
+	 * @return Generic dataset with given index in holder or null if it does not exist
 	 */
 	@Override
 	public ILazyDataset getLazyDataset(int index) {
@@ -177,7 +177,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	/**
 	 * This pulls out the dataset which could be lazy, maintaining its laziness.
 	 * @param name
-	 * @return Generic dataset with given name
+	 * @return Generic dataset with given name or null if it does not exist
 	 */
 	@Override
 	public ILazyDataset getLazyDataset(String name) {
@@ -196,7 +196,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	/**
 	 * This does not retrieve lazy datasets.
 	 * @param index
-	 * @return Generic dataset with given index in holder
+	 * @return Generic dataset with given index in holder or null if it is lazy or does not exist
 	 */
 	@Override
 	public Dataset getDataset(int index) {
@@ -206,7 +206,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	/**
 	 * This does not retrieve lazy datasets.
 	 * @param name
-	 * @return Generic dataset with given name
+	 * @return Generic dataset with given name or null if it is lazy or does not exist
 	 */
 	@Override
 	public Dataset getDataset(String name) {

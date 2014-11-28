@@ -28,7 +28,7 @@ import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 
 import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
 
-public class CompressedLoader extends AbstractFileLoader  implements IMetaLoader {
+public class CompressedLoader extends AbstractFileLoader {
 
 	private IFileLoader loader;
 	
@@ -38,13 +38,18 @@ public class CompressedLoader extends AbstractFileLoader  implements IMetaLoader
 	
 	public CompressedLoader(final String file) throws Exception {
 		setFile(file);
+		initFile();
 	}
-	
+
+	@Override
+	protected void clearMetadata() {
+	}
+
 	private static final Pattern ZIP_PATH = Pattern.compile("(.+)\\.(.+)\\."+LoaderFactory.getZipExpression());
 	
-	public void setFile(final String file) throws Exception {
+	public void initFile() throws Exception {
 		
-		final Matcher m = ZIP_PATH.matcher((new File(file)).getName());
+		final Matcher m = ZIP_PATH.matcher((new File(fileName)).getName());
 		if (m.matches()) {
 			
 			final String name     = m.group(1);
@@ -54,7 +59,7 @@ public class CompressedLoader extends AbstractFileLoader  implements IMetaLoader
 			final Class<? extends InputStream>   clazz = LoaderFactory.getZipStream(zipType);
 			final Constructor<? extends InputStream> c = clazz.getConstructor(InputStream.class);
 			
-			final InputStream in = c.newInstance(new FileInputStream(file));
+			final InputStream in = c.newInstance(new FileInputStream(fileName));
 			// Hack zip files
 			if (in instanceof ZipInputStream) {
 				((ZipInputStream)in).getNextEntry();
@@ -63,7 +68,7 @@ public class CompressedLoader extends AbstractFileLoader  implements IMetaLoader
 			final File tmp = File.createTempFile(name, "."+ext);
 			tmp.deleteOnExit();
 			
-			// This is slow and unecessary. Should refactor LoaderFactory to 
+			// This is slow and unnecessary. Should refactor LoaderFactory to 
 			// work either from a file path or in memory representation.
 			FileUtils.write(new BufferedInputStream(in), tmp);
 			

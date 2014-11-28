@@ -13,6 +13,7 @@ import java.util.Collection;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
@@ -33,6 +34,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.FunctionFactory;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.operations.FunctionModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.SectorIntegrationModel;
+import uk.ac.diamond.scisoft.analysis.processing.operations.ValueModel;
 
 public class RankTest {
 
@@ -67,13 +69,22 @@ public class RankTest {
 		
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				if (result.getData().getRank()!=context.getData().getRank()) throw new Exception("Unexpected rank found!");
 				count++;
 			}			
 		});
 		context.setSeries(function);
 		
+        context.setExecutionType(ExecutionType.SERIES);
+        anyRank(context, service);
+        
+        context.setExecutionType(ExecutionType.GRAPH);
+        anyRank(context, service);
+
+	}
+
+	private void anyRank(IOperationContext context, IOperationService service) throws Exception {
 		count=0;
 		context.setSlicing("all"); // 
         service.execute(context);
@@ -84,12 +95,10 @@ public class RankTest {
         service.execute(context);
 		System.out.println("Run with slicing first and second dimension gave "+count+ "of rank 1");
 
-		
 		count=0;
 		context.setSlicing("8", "500", "500");
         service.execute(context);
 		System.out.println("Run with slicing first, second and third dimension gave "+count+ "of rank 0");
-
 	}
 
 	@Test
@@ -104,7 +113,7 @@ public class RankTest {
 	
 			context.setVisitor(new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+				public void executed(OperationData result, IMonitor monitor) throws Exception {
 					throw new Exception("Unexpected execution of invalid pipeline!");
 				}			
 			});
@@ -133,17 +142,12 @@ public class RankTest {
 		
 		final IOperation box = service.findFirst("box");
 		final IOperation add = service.findFirst("add");
-		add.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public double getValue() {
-				return 100;
-			}
-		});
+		add.setModel(new ValueModel(100));
 
 		// This order is ok
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				if (result.getData().getRank()!=1) throw new Exception("Add followed by azi should give a 1D result!");
 			}			
 		});
@@ -154,7 +158,7 @@ public class RankTest {
 		try {
 			context.setVisitor(new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+				public void executed(OperationData result, IMonitor monitor) throws Exception {
 					// Should never execute!
 					throw new Exception("Unexpected execution of invalid pipeline!");
 				}			
@@ -191,23 +195,14 @@ public class RankTest {
 		// Parameters
 		final IFunction poly = FunctionFactory.getFunction("Polynomial", 3/*x^2*/, 5.3/*x*/, 9.4/*m*/);
 		function.setModel(new FunctionModel(poly));
-		add.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public double getValue() {
-				return 100;
-			}
-		});
-		sub.setModel(new AbstractOperationModel() {
-			@SuppressWarnings("unused")
-			public double getValue() {
-				return 100;
-			}
-		});
+		add.setModel(new ValueModel(100));
+		sub.setModel(new ValueModel(100));
+		
 		context.setSeries(add, sub, function, azi);
 
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				if (result.getData().getRank()!=1) throw new Exception("Azi should give a 1D result!");
 			}			
 		});
@@ -217,7 +212,7 @@ public class RankTest {
 		try {
 			context.setVisitor(new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+				public void executed(OperationData result, IMonitor monitor) throws Exception {
 					// Should never execute!
 					throw new Exception("Unexpected execution of invalid pipeline!");
 				}			
@@ -269,7 +264,7 @@ public class RankTest {
 		try {
 			context.setVisitor(new IExecutionVisitor.Stub() {
 				@Override
-				public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+				public void executed(OperationData result, IMonitor monitor) throws Exception {
 					throw new Exception("Unexpected execution of invalid pipeline!");
 				}			
 			});

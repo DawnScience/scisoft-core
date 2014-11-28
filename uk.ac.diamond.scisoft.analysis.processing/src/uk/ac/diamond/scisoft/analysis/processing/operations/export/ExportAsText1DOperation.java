@@ -6,7 +6,6 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-
 import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
@@ -14,7 +13,7 @@ import org.eclipse.dawnsci.analysis.api.processing.IExportOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-
+import org.eclipse.dawnsci.analysis.api.slice.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 
 import uk.ac.diamond.scisoft.analysis.io.ASCIIDataWithHeadingSaver;
@@ -34,18 +33,18 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
 		if (model.getOutputDirectoryPath() == null) throw new OperationException(this, "Output directory not set!");
-		OriginMetadata om = getOriginMetadata(input);
-		if (om == null) throw new OperationException(this, "Dataset has not Origin!");
+		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(input);
+		if (ssm == null) throw new OperationException(this, "Dataset has not Origin!");
 		
 		String filename = EXPORT;
 		String slice ="";
 		String ext = DEFAULT_EXT;
 		
 		if (model.isIncludeSliceName()) {
-			slice = Slice.createString(om.getCurrentSlice());
+			slice = Slice.createString(ssm.getSliceInfo().getCurrentSlice());
 		}
 		
-		int c = getCurrentSliceNumber(om);
+		int c = ssm.getSliceInfo().getSliceNumber();
 		String count = "";
 		if (model.getZeroPad() != null) {
 			count = String.format("%0" + String.valueOf(model.getZeroPad()) + "d", c);
@@ -55,7 +54,7 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 		
 		if (model.getExtension() != null) ext = model.getExtension();
 		
-		String fn = om.getFilePath();
+		String fn = ssm.getSourceInfo().getFilePath();
 		if (fn != null) {
 			File f = new File(fn);
 			filename = getFileNameNoExtension(f.getName());
@@ -94,11 +93,12 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 			outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
 		}
 		
-		IDataset error = input.getError().getSlice();
+		ILazyDataset error = input.getError();
 		
 		if (error != null) {
-			error.setShape(error.getShape()[0],1);
-			outds = DatasetUtils.concatenate(new IDataset[]{outds,error}, 1);
+			IDataset e = error.getSlice();
+			e.setShape(e.getShape()[0],1);
+			outds = DatasetUtils.concatenate(new IDataset[]{outds,e}, 1);
 		}
 		
 		ASCIIDataWithHeadingSaver saver = new ASCIIDataWithHeadingSaver(fileName);

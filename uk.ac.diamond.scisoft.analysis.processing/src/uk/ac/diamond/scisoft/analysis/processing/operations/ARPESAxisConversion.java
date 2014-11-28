@@ -36,7 +36,7 @@ public class ARPESAxisConversion extends AbstractOperation<ARPESAxisConversionMo
 		// get the photon energy
 		IDataset photon_energy;
 		try {
-			photon_energy = LoaderFactory.getDataSet(getOriginMetadata(slice).getFilePath(), "/entry1/instrument/monochromator/energy", null);
+			photon_energy = LoaderFactory.getDataSet(getSliceSeriesMetadata(slice).getSourceInfo().getFilePath(), "/entry1/instrument/monochromator/energy", null);
 		} catch (Exception e) {
 			throw new OperationException(this, "There is no photon energy specified in the data file");
 		}

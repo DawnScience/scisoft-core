@@ -72,7 +72,7 @@ public class IntegrationTest {
 		count = 0;
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				
 				final IDataset integrated = result.getData();
 				if (integrated.getSize()!=472) {
@@ -111,7 +111,7 @@ public class IntegrationTest {
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 
 				count++;
 				final IDataset integrated = result.getData();
@@ -153,7 +153,7 @@ public class IntegrationTest {
 		context.setVisitor(new IExecutionVisitor.Stub() {
 
 			@Override
-			public void executed(OperationData result, IMonitor monitor, Slice[] slices, int[] shape, int[] dataDims) throws Exception {
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
 
 				final IDataset integrated = result.getData();
 				if (integrated.getSize()!=472) {

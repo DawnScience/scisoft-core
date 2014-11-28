@@ -33,9 +33,28 @@ public class OperationContextImpl implements IOperationContext {
 	private IMonitor             monitor;
 	private IExecutionVisitor    visitor;
 	
-	// The default timeout is 5000 ms
-	private long                 parallelTimeout=5000;
+	/** 
+	 *  The default timeout is 5000 ms for PARALLEL and 10 minutes for GRAPH.
+	 *  This default is applied when setExecutionType(..) is called if the parallel timeout is -1
+	 *  
+	 * 1. ExecutionType.SERIES has NO timeout
+	 * 2. ExecutionType.PARALLEL has 5000 ms applied when setExecutionType(...) is called, if parallelTimeout=-1
+	 *    You can use setParallelTimeout(...) to change this.
+	 * 3. ExecutionType.GRAPH has 10 minutes applied when setExecutionType(...) is called, if parallelTimeout=-1
+	 *    You can use setParallelTimeout(...) to change this.
+	 *
+	 */
+	private long                 parallelTimeout=-1;
 	
+	/**
+	 * The size of the thread pool used in GRAPH mode. By default the value is 1 meaning that 1 slice is ]
+	 * in the pipeline at a time.
+	 */
+	private int                  poolSize=1;
+	
+	/**
+	 * Defaults to ExecutionType.SERIES
+	 */
 	private ExecutionType executionType = ExecutionType.SERIES;
 	
 	/* (non-Javadoc)
@@ -193,6 +212,7 @@ public class OperationContextImpl implements IOperationContext {
 	}
 	public void setExecutionType(ExecutionType executionType) {
 		this.executionType = executionType;
+		if (parallelTimeout<0) parallelTimeout = executionType.getTimeout();
 	}
 	
 
@@ -214,6 +234,12 @@ public class OperationContextImpl implements IOperationContext {
 	}
 	public void setDatasetPath(String datasetPath) {
 		this.datasetPath = datasetPath;
+	}
+	public int getPoolSize() {
+		return poolSize;
+	}
+	public void setPoolSize(int slugCount) {
+		this.poolSize = slugCount;
 	}
 
 }

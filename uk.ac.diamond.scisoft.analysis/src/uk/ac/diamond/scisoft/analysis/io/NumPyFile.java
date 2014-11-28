@@ -47,6 +47,15 @@ public class NumPyFile {
 			return this;
 		}
 
+		void setShape(int[] shape) {
+			this.shape = shape;
+		}
+
+		int[] getShape() {
+			return shape;
+		}
+
+		int[] shape;
 		String numPyType;
 		int dType;
 		int iSize;

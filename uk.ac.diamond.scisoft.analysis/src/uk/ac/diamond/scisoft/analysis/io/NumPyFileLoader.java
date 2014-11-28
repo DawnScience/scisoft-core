@@ -19,21 +19,24 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 import java.util.ArrayList;
 
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.ac.diamond.scisoft.analysis.io.NumPyFile.DataTypeInfo;
+
 /**
  * Reads files in npy format as defined here; http://svn.scipy.org/svn/numpy/trunk/doc/neps/npy-format.txt
  */
 public class NumPyFileLoader extends AbstractFileLoader {
+	private static final String NUMPY_NAME = "NumPy file";
 	private static final Logger logger = LoggerFactory.getLogger(NumPyFileLoader.class);
-	private String fileName;
 
 	public NumPyFileLoader() {
-
 	}
 
 	/**
@@ -43,8 +46,8 @@ public class NumPyFileLoader extends AbstractFileLoader {
 		this.fileName = fileName;
 	}
 
-	public void setFile(final String fileName) {
-		this.fileName = fileName;
+	@Override
+	protected void clearMetadata() {
 	}
 
 	@Override
@@ -84,13 +87,15 @@ public class NumPyFileLoader extends AbstractFileLoader {
 				fBuffer = fc.map(MapMode.READ_ONLY, 0, fc.size());
 			}
 
-			Dataset data = loadDataset(fBuffer);
+			ILazyDataset data = loadDataset(f, fBuffer);
 
 			if (fc != null)
 				fc.close();
 
-			output.addDataset("NumPy file", data);
-			data.setDirty();
+			output.addDataset(NUMPY_NAME, data);
+			if (loadMetadata)
+				output.setMetadata(metadata);
+
 		} catch (Exception ex) {
 			if (ex instanceof ScanFileHolderException)
 				throw (ScanFileHolderException) ex;
@@ -106,9 +111,35 @@ public class NumPyFileLoader extends AbstractFileLoader {
 		return output;
 	}
 
-	public static Dataset loadDataset(ByteBuffer fBuffer) throws ScanFileHolderException {
+	protected ILazyDataset loadDataset(File f, ByteBuffer fBuffer) throws ScanFileHolderException {
 		fBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
+		DataTypeInfo dataTypeInfo = getDataInfo(fBuffer);
+		int dtype = dataTypeInfo .dType;
+		int isize = dataTypeInfo.iSize;
+		boolean unsigned = dataTypeInfo.unsigned;
+		int[] shape = dataTypeInfo.getShape();
+		int rank = shape.length;
+
+		if (loadMetadata)
+			metadata = createMetadata(f.getAbsolutePath(), dataTypeInfo);
+
+		ILazyDataset data;
+		if (loadLazily) {
+			data = createLazyDataset(NUMPY_NAME, dtype, shape, new NumPyFileLoader(fileName));
+		} else {
+			int tSize = isize;
+			for (int j = 0; j < rank; j++) {
+				tSize *= shape[j];
+			}
+			data = RawBinaryLoader.loadRawDataset(fBuffer, dtype, isize, tSize, shape);
+			if (unsigned)
+				data = DatasetFactory.createFromObject(data, unsigned);
+		}
+		return data;
+	}
+
+	private static DataTypeInfo getDataInfo(ByteBuffer fBuffer) throws ScanFileHolderException {
 		for (int i = 0; i < NumPyFile.magic.length; i++) {
 			byte b = fBuffer.get();
 			if (NumPyFile.magic[i] != b) {
@@ -165,19 +196,8 @@ public class NumPyFileLoader extends AbstractFileLoader {
 		if (dataTypeInfo == null) {
 			throw new ScanFileHolderException("Unknown/unsupported data type description: " + description);
 		}
-		int dtype = dataTypeInfo.dType;
-		int isize = dataTypeInfo.iSize;
-		boolean unsigned = dataTypeInfo.unsigned;
-		int tSize = isize;
-		for (int j = 0; j < rank; j++) {
-			tSize *= shape[j];
-		}
-
-		Dataset data = RawBinaryLoader.loadRawDataset(fBuffer, dtype, isize, tSize, shape);
-		if (unsigned)
-			data = DatasetFactory.createFromObject(data, unsigned);
-
-		return data;
+		dataTypeInfo.setShape(shape);
+		return dataTypeInfo;
 	}
 
 	/**
@@ -197,4 +217,10 @@ public class NumPyFileLoader extends AbstractFileLoader {
 		return dataset;
 	}
 
+	private Metadata createMetadata(String path, DataTypeInfo info) {
+		Metadata md = new Metadata();
+		md.setFilePath(path);
+		md.addDataInfo(path, info.getShape());
+		return md;
+	}
 }

@@ -9,9 +9,10 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -59,6 +60,24 @@ public class PgmLoaderTest {
 		IDataHolder dataHolder = LoaderFactory.getData(testFileFolder+file, null);
 
 		IDataset data = dataHolder.getDataset("Portable Grey Map");
+		// Check the first data point
+		assertEquals(data.getDouble(0, 0), 0.0, 0.0);
+		// Check the middle data point
+		assertEquals(data.getDouble(512, 511), 15104.0, 0.0);			
+		// Check the last data point
+		assertEquals(data.getDouble(1023, 1023), 0.0, 0.0);
+
+	}
+
+	@Test
+	public void lazyLoadLoaderFactory()  throws Exception {
+		
+		IDataHolder dataHolder = LoaderFactory.getData(testFileFolder+file, true, true, true, null);
+
+		ILazyDataset lazy = dataHolder.getLazyDataset("Portable Grey Map");
+		assertArrayEquals(new int[] {1024, 1024}, lazy.getShape());
+		
+		IDataset data = lazy.getSlice();
 		// Check the first data point
 		assertEquals(data.getDouble(0, 0), 0.0, 0.0);
 		// Check the middle data point

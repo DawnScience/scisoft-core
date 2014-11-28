@@ -44,10 +44,10 @@ public class TiffLoaderTest {
 	@BeforeClass
 	static public void setUpClass() {
 		TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		if( TestFileFolder == null){
+		if (TestFileFolder == null) {
 			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
 		}
-		TestFileFolder += "/PilatusTiffLoaderTest/";
+		TestFileFolder += "PilatusTiffLoaderTest/";
 		testfile1 = TestFileFolder + "fcell_H_8GPa_20keV_18000s_0173.tif";
 		testfile2 = TestFileFolder + "ipp16.TIF";
 		testfile3 = TestFileFolder + "crl-bestfocus1.tif";

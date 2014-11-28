@@ -25,8 +25,6 @@ import java.util.regex.Pattern;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileSaver;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
@@ -41,11 +39,10 @@ import org.slf4j.LoggerFactory;
  * <p>
  * <b>Note</b>: the metadata from this loader is left as strings
  */
-public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLoader {
+public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 	
 	protected static final Logger logger = LoggerFactory.getLogger(SRSLoader.class);
 
-	protected String fileName;
 	protected Map<String, String> textMetadata = new HashMap<String, String>();
 	protected List<String> extraHeaders = new ArrayList<String>();
 	
@@ -62,8 +59,11 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 		fileName = FileName;
 	}
 
-	public void setFile(final String fileName) {
-		this.fileName = fileName;
+	@Override
+	protected void clearMetadata() {
+		metadata = null;
+		textMetadata.clear();
+		extraHeaders.clear();
 	}
 
 	/**
@@ -131,15 +131,17 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			List<?> [] columns = new List<?>[vals.size()];
 
 			// now add the data to the appropriate vectors
+			int count = 0;
 			while ((dataStr = in.readLine()) != null) {
-				
-				if (mon!=null) {
-					mon.worked(1);
-					if (mon.isCancelled()) throw new ScanFileHolderException("Load cancelled!");
+				if (!monitorIncrement(mon)) {
+					throw new ScanFileHolderException("Loader cancelled during reading!");
 				}
 				dataStr = dataStr.trim();
 				if (NUMBER_REGEX.matcher(dataStr).matches()) {
-					parseColumns(SPLIT_REGEX.split(dataStr), columns);
+					if (!loadLazily) {
+						parseColumns(SPLIT_REGEX.split(dataStr), columns);
+					}
+					count++;
 				} else {
 					// more metadata?
 					in.reset();
@@ -149,8 +151,13 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 				in.mark(MARK_LIMIT);
 			}
 
-			convertToDatasets(result, vals, columns, isStoreStringValues(), isUseImageLoaderForStrings(), (new File(this.fileName)).getParent());
-			
+			if (loadLazily) {
+				for (String n : vals) {
+					result.addDataset(n, createLazyDataset(n, -1, new int[] {count}, new SRSLoader(fileName)));
+				}
+			} else {
+				convertToDatasets(result, vals, columns, isStoreStringValues(), isUseImageLoaderForStrings(), (new File(this.fileName)).getParent());
+			}
 			if (result.toLazyMap().isEmpty()) throw new Exception("Cannot parse "+fileName+" into datasets!");
 
 			if (loadMetadata) {
@@ -309,10 +316,8 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			in.mark(MARK_LIMIT);
 
 			while (true) {
-				
-				if (mon!=null) {
-					mon.worked(1);
-					if (mon.isCancelled()) throw new ScanFileHolderException("Load cancelled!");
+				if (!monitorIncrement(mon)) {
+					throw new ScanFileHolderException("Loader cancelled during reading!");
 				}
 				line = in.readLine();
 				if (line == null || line.contains("&END")) {
@@ -523,14 +528,6 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 	protected List<String> datasetNames      = new ArrayList<String>(7);
 	protected Map<String,int[]>   dataShapes = new HashMap<String,int[]>(7);
 
-	private ExtendedMetadata metadata;
-
-	
-	@Override
-	public IMetadata getMetadata() {
-		return metadata;
-	}
-
 	protected void createMetadata() {
 		metadata = new ExtendedMetadata(new File(fileName));
 		metadata.setMetadata(textMetadata);
@@ -543,28 +540,4 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver, IMetaLo
 			metadata.addDataInfo(e.getKey(), e.getValue());
 		}
 	}
-
-	@Override
-	public void loadMetadata(IMonitor mon) throws Exception {
-		LineNumberReader in = null;
-		
-		try {
-			in = new LineNumberReader(new FileReader(fileName));
-			// an updated header reader grabs all the metadata
-			readMetadata(in, mon);
-			readColumnHeaders(in);
-			createMetadata();
-		} catch (Exception e) {
-			throw new ScanFileHolderException("SRSLoader.loadFile exception loading  " + fileName, e);
-		} finally {
-			try {
-				if (in!=null) in.close();
-			} catch (IOException e) {
-				throw new ScanFileHolderException("Cannot read file", e);
-			}
-			
-		}
-		
-	}
-
 }

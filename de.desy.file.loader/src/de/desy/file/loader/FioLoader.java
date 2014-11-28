@@ -19,7 +19,6 @@ package de.desy.file.loader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -31,19 +30,16 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 // lots of below added
-
-
 import uk.ac.diamond.scisoft.analysis.io.AbstractFileLoader;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.ExtendedMetadata;
@@ -86,7 +82,7 @@ import uk.ac.diamond.scisoft.analysis.io.Utils;
            7679          3290        100297          8863         92247      108.9605  
 
   */
-public class FioLoader extends AbstractFileLoader implements IMetaLoader {
+public class FioLoader extends AbstractFileLoader {
 	
 	transient protected static final Logger logger = LoggerFactory.getLogger(FioLoader.class);
 	
@@ -95,12 +91,9 @@ public class FioLoader extends AbstractFileLoader implements IMetaLoader {
 	//GF: Brute force way to allow also single column pattern (it is already trimmed, i.e no white space around): 
 	transient private static final Pattern DATA  = Pattern.compile("^(("+FLOAT+")\\s+)+("+FLOAT+")$|^"+FLOAT+"$");
 
-	protected String                    fileName;
 	protected List<String>              header;
 	protected Map<String,String>        fioParameters;
 	protected Map<String, List<Double>> columns;
-
-	private ExtendedMetadata metadata;
 
 	public FioLoader() {
 	}
@@ -110,15 +103,19 @@ public class FioLoader extends AbstractFileLoader implements IMetaLoader {
 	 */
 	public FioLoader(final String fileName) {
 		setFile(fileName);
-	}
-	
-	public void setFile(final String fileName) {
-		this.fileName  = fileName;
-		this.header   = new ArrayList<String>();
-		this.fioParameters = new HashMap<String,String>();
+		header   = new ArrayList<String>();
+		fioParameters = new HashMap<String,String>();
 		
 		// Important must use LinkedHashMap as order assumes is insertion order.
-		this.columns   = new LinkedHashMap<String, List<Double>>();
+		columns   = new LinkedHashMap<String, List<Double>>();
+	}
+
+	@Override
+	protected void clearMetadata() {
+		metadata = null;
+		header.clear();
+		fioParameters.clear();
+		columns.clear();
 	}
 
 	@Override
@@ -146,8 +143,6 @@ public class FioLoader extends AbstractFileLoader implements IMetaLoader {
 		try {
 			in = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8"));
 			
-			boolean readingFooter = false;
-			
 			String line	= parseHeaders(in, name, mon);
 			// GF: if name != null, read only that data column (?):
 			int columnIndex = -1; // GF moved here from data members and initialise
@@ -158,56 +153,89 @@ public class FioLoader extends AbstractFileLoader implements IMetaLoader {
 				}
 			}
 			// Read data
-			DATA: while (line != null) {
-				
-				if (mon!=null) mon.worked(1);
-				if (mon!=null && mon.isCancelled()) {
-					throw new ScanFileHolderException("Loader cancelled during reading!");
+			int count = -1;
+			if (loadLazily) {
+				count = 0;
+				// We assume the rest of the lines not starting with # are all
+				// data lines in getting the meta data. We do not parse these
+				// lines.
+				line = null;
+				while ((line = in.readLine()) != null) {
+					line = line.trim();
+					if (line.startsWith("#"))
+						break;
+					count++;
 				}
+				for (final String n : columns.keySet()) {
+					final Dataset set =  DatasetFactory.createFromList(columns.get(n));
+					set.setName(n);
+					result.addDataset(n, createLazyDataset(n, Dataset.FLOAT64, new int[] {count}, new LazyLoaderStub(new FioLoader(fileName), n) {
+						private static final long serialVersionUID = LazyLoaderStub.serialVersionUID;
+
+						@Override
+						public IDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
+								throws Exception {
+							IDataHolder holder = ((FioLoader) loader).loadFile(n, mon);
+
+							return holder.getDataset(n).getSlice(mon, start, stop, step);
+						}
+					}));
+				}		
+			} else {
+				boolean readingFooter = false;
 				
-				line = line.trim();
-				if (!readingFooter && DATA.matcher(line).matches()) {
-					
-					if (line.startsWith("#")) {
-						readingFooter = true;
-						break DATA;
+				while (line != null) {
+					if (!monitorIncrement(mon)) {
+						throw new ScanFileHolderException("Loader cancelled during reading!");
 					}
-					// TODO: move following check outwards?
-					if (columns.isEmpty()) throw new ScanFileHolderException("Cannot read header for data set names!");
-					
-					final String[] values = line.split("\\s+");
-					if (columnIndex > -1) { //  && name!=null) { // read only this column (? TODO: check!) 
-						final String value = values[columnIndex]; // TODO: check index out of range?
-						columns.get(name).add(Utils.parseDouble(value.trim()));
-					} else {
-						//logger.debug("GF loadFile: columnIndex '{}', name is '{}'", columnIndex, name == null ? "a null" : name);
-						if (values.length != columns.size()) {
-							throw new ScanFileHolderException("Data and header must be the same size!");
+
+					line = line.trim();
+					if (!readingFooter && DATA.matcher(line).matches()) {
+
+						if (line.startsWith("#")) {
+							readingFooter = true;
+							break;
 						}
-						final Iterator<String> it = columns.keySet().iterator();
-						for (String value : values) {
-							columns.get(it.next()).add(Utils.parseDouble(value.trim())); 
+						// TODO: move following check outwards?
+						if (columns.isEmpty())
+							throw new ScanFileHolderException("Cannot read header for data set names!");
+
+						final String[] values = line.split("\\s+");
+						if (columnIndex > -1) { // && name!=null) { // read only
+												// this column (? TODO: check!)
+							final String value = values[columnIndex]; // TODO: check index out of range?
+							columns.get(name).add(Utils.parseDouble(value.trim()));
+						} else {
+							// logger.debug("GF loadFile: columnIndex '{}', name is '{}'",
+							// columnIndex, name == null ? "a null" : name);
+							if (values.length != columns.size()) {
+								throw new ScanFileHolderException("Data and header must be the same size!");
+							}
+							final Iterator<String> it = columns.keySet().iterator();
+							for (String value : values) {
+								columns.get(it.next()).add(Utils.parseDouble(value.trim()));
+							}
 						}
+
+					} else if (!readingFooter) {
+						// TODO: what is the consequence?
+						// what if no line is 'successful'? (as with old DATA
+						// pattern and single column files)
+						logger.error("FioLoader: Line (with data) '{}' does not match expected pattern '{}'!", line,
+								DATA);
 					}
-					
-				} else if (!readingFooter) {
-					// TODO: what is the consequence?
-					//       what if no line is 'successful'? (as with old DATA pattern and single column files) 
-					logger.error("FioLoader: Line (with data) '{}' does not match expected pattern '{}'!", line, DATA);
+
+					line = in.readLine();
 				}
-				
-				line = in.readLine();
+				for (String n : columns.keySet()) {
+					final Dataset set =  DatasetFactory.createFromList(columns.get(n));
+					set.setName(n);
+					result.addDataset(n, set);
+				}		
 			}
-			
 
-			for (String n : columns.keySet()) {
-				final Dataset set =  DatasetFactory.createFromList(columns.get(n));
-				set.setName(n);
-				result.addDataset(n, set);
-			}		
-
+			createMetadata(count);
 			if (loadMetadata) {
-				createMetadata();
 				result.setMetadata(metadata);
 			}
 			return result;
@@ -224,32 +252,6 @@ public class FioLoader extends AbstractFileLoader implements IMetaLoader {
 		}
 	}
 
-	@Override
-	public void loadMetadata(final IMonitor mon) throws Exception {
-
-		final BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
-		int count = 1;
-		try {
-			parseHeaders(br, null, mon);
-			// We assume the rest of the lines not starting with # are all
-			// data lines in getting the meta data. We do not parse these lines.
-			String line=null;
-			while ((line = br.readLine()) != null) {	
-				line = line.trim();
-				if (line.startsWith("#")) break;
-				count++;
-			}
-			
-		} finally {
-			br.close();
-		}
-		createMetadata(count);
-	}
-	
-	private void createMetadata() {
-		createMetadata(-1);
-	}
-	
 	private void createMetadata(int approxSize) {
 		metadata = new ExtendedMetadata(new File(fileName));
 		metadata.setMetadata(fioParameters);
@@ -262,10 +264,6 @@ public class FioLoader extends AbstractFileLoader implements IMetaLoader {
 		}
 	}
 
-	@Override
-	public IMetadata getMetadata() {
-		return metadata;
-	}
 	/**
 	 * @param in
 	 * @param name
@@ -293,8 +291,7 @@ public class FioLoader extends AbstractFileLoader implements IMetaLoader {
 					continue;
 				}
 				header.add(line);
-				if (mon!=null) mon.worked(1);
-				if (mon!=null && mon.isCancelled()) {
+				if (!monitorIncrement(mon)) {
 					// GF: throw within a try block...???
 					throw new ScanFileHolderException("Loader cancelled during reading!");
 				}

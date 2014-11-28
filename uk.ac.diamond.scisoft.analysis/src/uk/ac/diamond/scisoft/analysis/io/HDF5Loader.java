@@ -46,8 +46,6 @@ import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.io.SliceObject;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
@@ -79,12 +77,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Load HDF5 files using NCSA's Java library
  */
-public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
+public class HDF5Loader extends AbstractFileLoader {
 	
 	protected static final Logger logger = LoggerFactory.getLogger(HDF5Loader.class);
 
 
-	private String fileName;
 	private boolean keepBitWidth = false;
 	private boolean async = false;
 	private int syncLimit;
@@ -104,6 +101,11 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 	public HDF5Loader(final String name) {
 		setHost();
 		setFile(name);
+	}
+
+	@Override
+	protected void clearMetadata() {
+		metadata = null;
 	}
 
 	/**
@@ -139,10 +141,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		} catch (UnknownHostException e) {
 			logger.error("Could not find host name", e);
 		}
-	}
-
-	public void setFile(final String name) {
-		fileName = name;
 	}
 
 	@Override
@@ -1794,7 +1792,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 					if (dtype >= 0) {
 						ldtype = dtype;
 					} else {
-						// TODO check if this is actually used
 						Datatype type = new H5Datatype(tid);
 						ldtype = getDtype(type.getDatatypeClass(), type.getDatatypeSize());
 					}
@@ -2037,13 +2034,6 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 		metadata = (Metadata) createDataHolder(tFile, true).getMetadata();
 	}
 
-	private Metadata metadata;
-
-	@Override
-	public IMetadata getMetadata() {
-		return metadata;
-	}
-
 	/**
 	 * Create data holder from tree
 	 * @param tree
@@ -2122,8 +2112,7 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				addToMaps(l, lMap, aMap);
 
 				if (l.isDestinationData()) {
-					DataNode d = (DataNode) l.getDestination();
-					ILazyDataset dataset = d.getDataset();
+					ILazyDataset dataset = createAugmentedDataset1(l, true);
 					lMap.put(l.getFullName(), dataset);
 					if (aMap != null && dataset instanceof Dataset) { // zero-rank dataset
 						Dataset a = (Dataset) dataset;
@@ -2132,6 +2121,28 @@ public class HDF5Loader extends AbstractFileLoader implements IMetaLoader {
 				}
 			}
 		}
+	}
+
+	public ILazyDataset createAugmentedDataset1(NodeLink link, @SuppressWarnings("unused") final boolean isAxisFortranOrder) {
+		if (!link.isDestinationData()) {
+			return null;
+		}
+		
+		return ((DataNode) link.getDestination()).getDataset();
+	}
+
+	/**
+	 * Make a dataset with metadata that is pointed by link
+	 * @param link
+	 * @param isAxisFortranOrder in most cases, this should be set to true
+	 * @return dataset augmented with metadata
+	 */
+	public ILazyDataset createAugmentedDataset(NodeLink link, @SuppressWarnings("unused") final boolean isAxisFortranOrder) {
+		if (!link.isDestinationData()) {
+			return null;
+		}
+		
+		return ((DataNode) link.getDestination()).getDataset();
 	}
 
 	/**

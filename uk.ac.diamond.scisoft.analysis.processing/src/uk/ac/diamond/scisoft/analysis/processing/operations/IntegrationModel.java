@@ -9,6 +9,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
+import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class IntegrationModel extends AbstractOperationModel {
 
 	@JsonIgnore
+	@OperationModelField(hint="Define a region of interest directly.", label = "Region of Interest")
 	protected IROI region = new RectangularROI(0,0,10,10,0);
 
 	public IROI getRegion() {

@@ -8,6 +8,7 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile;
 
+import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.IntegrationModel;
@@ -15,8 +16,7 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxIntegr
 
 public class BoxIntegrationModel extends IntegrationModel {
 
-//	@OperationModelField(label="Box Region", hint="The region to use with the operation.\n\nClick the '...' button to open the region dialog.")
-//	protected IROI region;
+	@OperationModelField(label="Direction of Integration", hint="The direction to integrate over the box.")
 	private Direction direction = Direction.X;
 
 	public BoxIntegrationModel() {

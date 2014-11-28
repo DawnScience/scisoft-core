@@ -94,11 +94,12 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 			outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
 		}
 		
-		IDataset error = input.getError().getSlice();
+		ILazyDataset error = input.getError();
 		
 		if (error != null) {
-			error.setShape(error.getShape()[0],1);
-			outds = DatasetUtils.concatenate(new IDataset[]{outds,error}, 1);
+			IDataset e = error.getSlice();
+			e.setShape(e.getShape()[0],1);
+			outds = DatasetUtils.concatenate(new IDataset[]{outds,e}, 1);
 		}
 		
 		ASCIIDataWithHeadingSaver saver = new ASCIIDataWithHeadingSaver(fileName);

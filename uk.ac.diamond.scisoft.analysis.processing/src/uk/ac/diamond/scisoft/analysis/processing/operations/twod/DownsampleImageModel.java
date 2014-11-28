@@ -7,11 +7,11 @@ import uk.ac.diamond.scisoft.analysis.dataset.function.DownsampleMode;
 
 public class DownsampleImageModel extends AbstractOperationModel {
 
-	@OperationModelField(label = "Set downsample mode")
+	@OperationModelField(label = "Downsample mode", hint = "The mode, choose from a list of alternative modes.")
 	private DownsampleMode downsampleMode = DownsampleMode.MEAN;
-	@OperationModelField(label = "Set downsample size X")
+	@OperationModelField(label = "Downsample size X", hint = "The width of the downsample box in pixels.")
 	private int downsampleSizeX = 2;
-	@OperationModelField(label = "Set downsample size Y")
+	@OperationModelField(label = "Downsample size Y", hint = "The height of the downsample box in pixels.")
 	private int downsampleSizeY = 2;
 	public DownsampleMode getDownsampleMode() {
 		return downsampleMode;

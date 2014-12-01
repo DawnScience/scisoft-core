@@ -91,7 +91,7 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 		super(container, name);
 		
 		// Data file
-		path = new ResourceParameter(this, "Path", "Data File", LoaderFactory.getSupportedExtensions().toArray(new String[0]));
+		path = new ResourceParameter(this, "Data File", "Data File", LoaderFactory.getSupportedExtensions().toArray(new String[0]));
 		setDescription(path, Requirement.ESSENTIAL, VariableHandling.EXPAND, "The path to the data to read. May be an external file (full path to file) or a file in the workspace ('relative' file) or a folder which will iterate over all contained files and use the filter.");
 		try {
 			URI baseURI = new File(StringConvertor.convertPathDelimiters(EnvironmentUtils.getApplicationRootFolder())).toURI();
@@ -298,10 +298,10 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 			
 			try {
 				final IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(sourcePath, true);
-				if (res==null) return  null;
 				sourcePath = res.getLocation().toOSString();
+				return sourcePath;
 			} catch (NullPointerException ne) {
-				return null;
+				
 			}
 
 			final File file = new File(sourcePath);

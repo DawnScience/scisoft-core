@@ -2,6 +2,8 @@ package uk.ac.diamond.scisoft.analysis.processing.actor;
 
 import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -12,10 +14,18 @@ import org.dawb.passerelle.common.DatasetConstants;
 import org.dawb.passerelle.common.actors.AbstractDataMessageSource;
 import org.dawb.passerelle.common.actors.ActorUtils;
 import org.dawb.passerelle.common.message.DataMessageException;
+import org.dawb.passerelle.common.message.IVariable;
+import org.dawb.passerelle.common.message.IVariable.VARIABLE_TYPE;
+import org.dawb.passerelle.common.message.MessageUtils;
+import org.dawb.passerelle.common.message.Variable;
+import org.dawb.passerelle.common.parameter.ParameterUtils;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.message.DataMessageComponent;
+import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.slice.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.api.slice.Slicer;
@@ -58,7 +68,7 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 	
 	private static final Logger logger = LoggerFactory.getLogger(OperationSource.class);
 
-	private Queue<ILazyDataset>  queue;
+	private Queue<SliceInfo>  queue;
 	private IOperationContext    context; // Might be null if pipeline rerun from UI
 	
 	// a counter for indexing each generated message in the complete sequence that this source generates
@@ -96,7 +106,7 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 			@Override
 			public String[] getChoices() {
                 try {
-                	return LoaderFactory.getData(path.getExpression()).getNames();
+                	return LoaderFactory.getData(getSourcePath()).getNames();
                 } catch (Exception ne) {
                 	return new String[]{"Please select a Data File"};
                 }
@@ -106,7 +116,7 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 			    return null;
 			}
 		}, 1 << 2); // Single selection bit
-		setDescription(datasetPath, Requirement.ESSENTIAL, VariableHandling.NONE, "A dataset name to read for slicing. Please set the path before setting the dataset names. If the path is an expand, use a temperary (but typical) file so that the name list can be determined in the builder.");
+		setDescription(datasetPath, Requirement.ESSENTIAL, VariableHandling.EXPAND, "A dataset name to read for slicing. Please set the path before setting the dataset names. If the path is an expand, use a temperary (but typical) file so that the name list can be determined in the builder.");
 		registerConfigurableParameter(datasetPath);
 
 		
@@ -127,20 +137,29 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 		msgSequenceID = MessageFactory.getInstance().createSequenceID();
 
         try {
-    		if (!isTriggerConnected()) createQueue();
+    		if (!isTriggerConnected()) createQueue(null);
 		} catch (Exception e) {
 			throw new InitializationException(ErrorCode.FATAL, e.getMessage(), this, e);
 		}
         super.doInitialize();
 	}
 
-	private void createQueue() throws Exception {
+	private void createQueue(ManagedMessage msg) throws Exception {
+		
+		Queue<ILazyDataset> slices=null;
 		if (context!=null) {
-			queue = Slicer.getSlices(context.getData(), context.getSlicing());
+			slices = Slicer.getSlices(context.getData(), context.getSlicing());
+			
 		} else {
-			final IDataHolder  dh = LoaderFactory.getData(path.getExpression());
-			final ILazyDataset lz = dh.getLazyDataset(datasetPath.getExpression());
-			queue = Slicer.getSlices(lz, slicing.getValue());
+			final IDataHolder  dh = LoaderFactory.getData(getSourcePath(msg));
+			final ILazyDataset lz = dh.getLazyDataset(getDatasetPath(msg));
+			slices = Slicer.getSlices(lz, slicing.getValue());
+		}
+		
+		
+		queue = new LinkedList<SliceInfo>();
+		for (ILazyDataset slice : slices) {
+			queue.add(new SliceInfo(slice, msg));
 		}
 	}
 
@@ -162,7 +181,7 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 		// Required to stop too many slugs going into a threading actor.
 		ActorUtils.waitWhileLocked();
 		
-		final ILazyDataset info = queue.poll();
+		final SliceInfo info = queue.poll();
 		if (info==null) return null;
 		
         ManagedMessage msg = MessageFactory.getInstance().createMessageInSequence(msgSequenceID, msgCounter++, hasNoMoreMessages(), getStandardMessageHeaders());
@@ -192,16 +211,21 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 		return false;
 	}
 
-	private DataMessageComponent getData(ILazyDataset info) throws Exception {
+	private DataMessageComponent getData(SliceInfo info) throws Exception {
 		
 		DataMessageComponent ret = new DataMessageComponent();
 		
 		final IDataset slice = info.getSlice();
-		SliceFromSeriesMetadata ssm = info.getMetadata(SliceFromSeriesMetadata.class).get(0);
+		SliceFromSeriesMetadata ssm = (SliceFromSeriesMetadata)info.getMetadata(SliceFromSeriesMetadata.class).get(0);
 		slice.setMetadata(ssm);
 		
 		ret.setList(slice);
-		ret.setSlice(info);
+		ret.putScalar("file_path", getSourcePath());
+		ret.putScalar("file_name", new File(getSourcePath(info.getTrigger())).getName());
+		ret.putScalar("file_dir",  new File(getSourcePath(info.getTrigger())).getParentFile().getAbsolutePath());
+		ret.putScalar("dataset_path",  getDatasetPath(info.getTrigger()));
+		ret.putScalar("slice_name",    info.getName());
+		
 		return ret;
 	}
 
@@ -247,7 +271,7 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 	 */
 	protected void acceptTriggerMessage(ManagedMessage triggerMsg) {
 		try {
-			createQueue();
+			createQueue(triggerMsg);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -256,7 +280,7 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 	@Override
 	public String[] getDataSetNames() {
         try {
-        	return new String[]{datasetPath.getExpression()};
+        	return new String[]{getDatasetPath(null)};
         } catch (Exception ne) {
         	return new String[]{"Please select a Data File"};
         }
@@ -264,7 +288,130 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 
 	@Override
 	public String getSourcePath() {
-		return path.getExpression();
+		return getSourcePath(null);
 	}
 
+	private String getSourcePath(final ManagedMessage manMsg) {
+		try {
+			final DataMessageComponent comp = manMsg!=null ? MessageUtils.coerceMessage(manMsg) : null;
+			String sourcePath = ParameterUtils.getSubstituedValue(path, comp);
+			
+			try {
+				final IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(sourcePath, true);
+				if (res==null) return  null;
+				sourcePath = res.getLocation().toOSString();
+			} catch (NullPointerException ne) {
+				return null;
+			}
+
+			final File file = new File(sourcePath);
+			if (!file.exists()) return null;
+			
+			return file.getAbsolutePath();
+			
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	private String getDatasetPath(final ManagedMessage manMsg) {
+		try {
+			final DataMessageComponent comp = manMsg!=null ? MessageUtils.coerceMessage(manMsg) : null;
+			return ParameterUtils.getSubstituedValue(datasetPath, comp);
+
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	@Override
+	public List<IVariable> getOutputVariables() {
+		
+		final List<IVariable> ret = new ArrayList<IVariable>(7);
+		if (getSourcePath()==null)  {
+			final String msg = "Invalid Path '"+path.getExpression()+"'";
+			ret.add(new Variable("file_path",    VARIABLE_TYPE.PATH,   msg, String.class));
+			ret.add(new Variable("file_name",    VARIABLE_TYPE.SCALAR, msg, String.class));
+			ret.add(new Variable("file_dir",     VARIABLE_TYPE.PATH,   msg, String.class));
+			ret.add(new Variable("dataset_path", VARIABLE_TYPE.SCALAR, msg, String.class));
+			ret.add(new Variable("slice_name",   VARIABLE_TYPE.SCALAR, msg, String.class));
+			return ret;
+		}
+		
+		ret.add(new Variable("file_path",    VARIABLE_TYPE.PATH,   getSourcePath(), String.class));
+		ret.add(new Variable("file_name",    VARIABLE_TYPE.SCALAR, new File(getSourcePath()).getName(), String.class));
+		ret.add(new Variable("file_dir",     VARIABLE_TYPE.PATH,   new File(getSourcePath()).getParentFile().getAbsolutePath(), String.class));
+		ret.add(new Variable("dataset_path", VARIABLE_TYPE.SCALAR, datasetPath.getExpression(), String.class));
+		ret.add(new Variable("slice_name",   VARIABLE_TYPE.SCALAR, String.class));
+				
+		return ret;
+	}
+
+	
+	private class SliceInfo {
+		private ILazyDataset   slice;
+		private ManagedMessage trigger;
+		
+		
+		public SliceInfo(ILazyDataset slice, ManagedMessage trigger) {
+			super();
+			this.slice = slice;
+			this.trigger = trigger;
+		}
+		public List<? extends MetadataType> getMetadata(Class<? extends MetadataType> class1) throws Exception {
+			return slice.getMetadata(class1);
+		}
+		public String getName() {
+			return slice.getName();
+		}
+		public IDataset getSlice() {
+			return slice.getSlice();
+		}
+		public void setSlice(ILazyDataset slice) {
+			this.slice = slice;
+		}
+		public ManagedMessage getTrigger() {
+			return trigger;
+		}
+		public void setTrigger(ManagedMessage trigger) {
+			this.trigger = trigger;
+		}
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + ((slice == null) ? 0 : slice.hashCode());
+			result = prime * result
+					+ ((trigger == null) ? 0 : trigger.hashCode());
+			return result;
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			SliceInfo other = (SliceInfo) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (slice == null) {
+				if (other.slice != null)
+					return false;
+			} else if (!slice.equals(other.slice))
+				return false;
+			if (trigger == null) {
+				if (other.trigger != null)
+					return false;
+			} else if (!trigger.equals(other.trigger))
+				return false;
+			return true;
+		}
+		private OperationSource getOuterType() {
+			return OperationSource.this;
+		}
+		
+	}
 }

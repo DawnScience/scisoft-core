@@ -5,7 +5,6 @@ import java.util.List;
 import org.dawb.passerelle.common.actors.AbstractDataMessageTransformer;
 import org.dawb.passerelle.common.message.MessageUtils;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.message.DataMessageComponent;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
@@ -75,8 +74,6 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 			
 			data = operation.isPassUnmodifiedData() ? data : tmp.getData();
 
-			final ILazyDataset info = msg.getSlice();
-
 			tmp.getData().setMetadata(fullssm);
 			if (context.getVisitor()!=null) {
 				context.getVisitor().notify(operation, tmp); // Optionally send intermediate result
@@ -88,7 +85,7 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 			    	context.getVisitor().executed(odata, context.getMonitor()); // Send result.
 					if (context.getMonitor() != null) context.getMonitor().worked(1);
 					
-					logger.debug(info.getName()+" ran in: " +(System.currentTimeMillis()-msg.getTime())/1000. + " s : Thread" +Thread.currentThread().toString());
+					logger.debug(data.getName()+" ran in: " +(System.currentTimeMillis()-msg.getTime())/1000. + " s : Thread" +Thread.currentThread().toString());
 			    }
 			}
 			

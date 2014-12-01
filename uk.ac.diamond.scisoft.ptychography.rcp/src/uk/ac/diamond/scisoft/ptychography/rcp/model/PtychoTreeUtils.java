@@ -8,7 +8,7 @@ public class PtychoTreeUtils {
 	/**
 	 * Populates the Ptycho tree given a list of PtychoInput read from
 	 * a CSV file
-	 * 
+	 * TODO put in a recursive method to support more than depth 3 tree
 	 * @param input
 	 * @return
 	 */
@@ -20,9 +20,9 @@ public class PtychoTreeUtils {
 				PtychoNode node = new PtychoNode(input.get(i));
 				int level = input.get(i).getLevel();
 				int nextLevel = input.get(i + 1).getLevel();
-				if (level == 3 && nextLevel == 2) {
+				if (level == 0 && nextLevel == 1) {
 					int j = 0;
-					while (nextLevel == 2) {
+					while (nextLevel == 1) {
 						int max = input.size() - (j + 1);
 						if (i == max)
 							break;
@@ -34,10 +34,10 @@ public class PtychoTreeUtils {
 							break;
 						}
 						nextLevel = input.get(i + 1 + j).getLevel();
-						if (nextLevel == 1) {
+						if (nextLevel == 2) {
 							int k = 0;
 							i += j;
-							while (nextLevel == 1) {
+							while (nextLevel == 2) {
 								PtychoNode subchild = new PtychoNode(
 										input.get(i + 1 + k));
 								k++;

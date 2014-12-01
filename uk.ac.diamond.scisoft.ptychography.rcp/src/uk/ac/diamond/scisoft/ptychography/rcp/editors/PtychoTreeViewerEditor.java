@@ -174,11 +174,15 @@ public class PtychoTreeViewerEditor extends EditorPart {
 
 	@Override
 	public void createPartControl(final Composite parent) {
+//		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(1, false));
-		container.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, true));
-
+		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		createToolBarActions(container);
+//
+//		Composite viewerComp = new Composite(container, SWT.NONE);
+//		viewerComp.setLayout(new GridLayout());
+//		viewerComp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
 
 		PatternFilter filter = new PatternFilter() {
 			@Override
@@ -196,8 +200,8 @@ public class PtychoTreeViewerEditor extends EditorPart {
 				filter,
 				true);
 		viewer = filteredTree.getViewer();
-		viewer.getControl().setLayoutData(
-				new GridData(SWT.FILL, SWT.FILL, true, true));
+//		viewer.getControl().setLayoutData(
+//				new GridData(SWT.FILL, SWT.TOP, true, false));
 		viewer.setColumnProperties(new String[] { "Name", "Value" });
 		ColumnViewerToolTipSupport.enableFor(viewer);
 		TreeViewerColumn var = new TreeViewerColumn(viewer, SWT.LEFT, 0);
@@ -208,7 +212,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 		var.getColumn().setText("Value"); // Selected
 		var.getColumn().setWidth(100);
 		var.setLabelProvider(new PtychoTreeLabelProvider(1));
-
+		
 		viewer.setContentProvider(new PtychoTreeContentProvider());
 		viewer.getTree().setLinesVisible(true);
 		viewer.getTree().setHeaderVisible(true);
@@ -217,7 +221,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 
 		Composite editorComposite = new Composite(container, SWT.NONE);
 		editorComposite.setLayout(new GridLayout(2, false));
-		editorComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		editorComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 		Composite leftComp = new Composite(editorComposite, SWT.NONE);
 		leftComp.setLayout(new GridLayout(3, false));
 

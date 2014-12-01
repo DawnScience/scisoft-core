@@ -19,7 +19,8 @@ Require-Bundle: org.eclipse.dawnsci.analysis.api;bundle-version="1.0.0",
  com.isencia.passerelle.domain.et;bundle-version="8.7.0",
  org.dawb.passerelle.actors.ui;bundle-version="1.0.0",
  org.dawb.passerelle.common.ui;bundle-version="1.0.0",
- com.isencia.passerelle.commons;bundle-version="8.7.0"
+ com.isencia.passerelle.commons;bundle-version="8.7.0",
+ com.isencia.passerelle.workbench.model.editor.ui;bundle-version="8.7.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: com.fasterxml.jackson.annotation;version="2.2.0",

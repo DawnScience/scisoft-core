@@ -3,6 +3,7 @@ package uk.ac.diamond.scisoft.analysis.processing.actor;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -77,9 +78,9 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 	private long msgSequenceID;
 	
 	// Attributes
-	private ResourceParameter  path;
-	private StringParameter    datasetPath;
-	private JSONSliceParameter slicing;
+	public final  ResourceParameter  path;
+	public final  StringParameter    datasetPath;
+	public final  JSONSliceParameter slicing;
 	
 	/**
 	 * 
@@ -153,7 +154,7 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 		} else {
 			final IDataHolder  dh = LoaderFactory.getData(getSourcePath(msg));
 			final ILazyDataset lz = dh.getLazyDataset(getDatasetPath(msg));
-			slices = Slicer.getSlices(lz, slicing.getValue());
+			slices = Slicer.getSlices(lz, slicing.getValue(HashMap.class));
 		}
 		
 		

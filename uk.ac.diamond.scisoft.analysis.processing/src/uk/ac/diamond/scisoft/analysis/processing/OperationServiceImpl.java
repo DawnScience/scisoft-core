@@ -38,6 +38,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.api.slice.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.api.slice.Slicer;
+import org.eclipse.dawnsci.analysis.api.slice.SourceInformation;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +102,16 @@ public class OperationServiceImpl implements IOperationService {
 	
 			
 			SliceFromSeriesMetadata ssm = firstSlice.getMetadata(SliceFromSeriesMetadata.class).get(0);
-			SliceFromSeriesMetadata fullssm = new SliceFromSeriesMetadata(context.getData().getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo(), ssm.getShapeInfo(), ssm.getSliceInfo());
+			
+			SourceInformation ssource = null;
+			
+			try {
+				 ssource = context.getData().getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo();
+			} catch (Exception e) {
+				logger.error("Source not obtainable. Hope this is just a unit test...");
+			}
+			
+			SliceFromSeriesMetadata fullssm = new SliceFromSeriesMetadata(ssource, ssm.getShapeInfo(), ssm.getSliceInfo());
 			context.getData().setMetadata(fullssm);
 			
 			IOperationRunner runner = OperationRunnerFactory.getRunner(context.getExecutionType());

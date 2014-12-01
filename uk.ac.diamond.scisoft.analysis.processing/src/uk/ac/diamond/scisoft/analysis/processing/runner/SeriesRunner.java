@@ -67,7 +67,8 @@ class SeriesRunner implements IOperationRunner {
 
 				if (context.getMonitor() != null && context.getMonitor().isCancelled()) return;
 
-				String path = fullssm.getSourceInfo().getFilePath();
+				SourceInformation si = fullssm.getSourceInfo();
+				String path = si == null ? "" : si.getFilePath();
 				if (path == null) path = "";
 
 				OperationData  data = new OperationData(slice, (Serializable[])null);

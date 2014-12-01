@@ -221,11 +221,14 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 		slice.setMetadata(ssm);
 		
 		ret.setList(slice);
-		ret.putScalar("file_path", getSourcePath());
-		ret.putScalar("file_name", new File(getSourcePath(info.getTrigger())).getName());
-		ret.putScalar("file_dir",  new File(getSourcePath(info.getTrigger())).getParentFile().getAbsolutePath());
-		ret.putScalar("dataset_path",  getDatasetPath(info.getTrigger()));
-		ret.putScalar("slice_name",    info.getName());
+		
+		if (getSourcePath()!=null) {
+			ret.putScalar("file_path", getSourcePath());
+			ret.putScalar("file_name", new File(getSourcePath(info.getTrigger())).getName());
+			ret.putScalar("file_dir",  new File(getSourcePath(info.getTrigger())).getParentFile().getAbsolutePath());
+			ret.putScalar("dataset_path",  getDatasetPath(info.getTrigger()));
+			ret.putScalar("slice_name",    info.getName());
+		}
 		
 		return ret;
 	}
@@ -255,10 +258,14 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
         } else {
     		ILazyDataset lz = context.getData();
     		List<SliceFromSeriesMetadata> md = lz.getMetadata(SliceFromSeriesMetadata.class);
-    		SourceInformation sinfo = md.get(0).getSourceInfo();
             
-        	path.setExpression(sinfo.getFilePath());
-        	datasetPath.setExpression(sinfo.getDatasetName());
+    		if (md!=null) { // This means they cannot open up the workflow and have it run directly.
+        		SourceInformation sinfo = md.get(0).getSourceInfo();
+        		if (sinfo!=null) {
+		        	path.setExpression(sinfo.getFilePath());
+		        	datasetPath.setExpression(sinfo.getDatasetName());
+        		}
+    		}
         }
         slicing.setValue(context.getSlicing());
 	}

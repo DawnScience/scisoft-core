@@ -1,6 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.runner;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
@@ -61,13 +62,17 @@ class SeriesRunner implements IOperationRunner {
 			@Override
 			public void visit(IDataset slice, Slice[] slices, int[] shape) throws Exception {
 
-				SliceFromSeriesMetadata ssm = slice.getMetadata(SliceFromSeriesMetadata.class).get(0);
-				SliceFromSeriesMetadata fullssm = new SliceFromSeriesMetadata(finalSource, ssm.getShapeInfo(), ssm.getSliceInfo());
-				slice.setMetadata(fullssm);
+				List<SliceFromSeriesMetadata> meta = slice.getMetadata(SliceFromSeriesMetadata.class);
+				SliceFromSeriesMetadata ssm = meta!=null && meta.size()>0 ? meta.get(0) : null;
+				SliceFromSeriesMetadata fullssm = null;
+				if (ssm!=null) {
+					fullssm = new SliceFromSeriesMetadata(finalSource, ssm.getShapeInfo(), ssm.getSliceInfo());
+					slice.setMetadata(fullssm);
+				}
 
 				if (context.getMonitor() != null && context.getMonitor().isCancelled()) return;
 
-				SourceInformation si = fullssm.getSourceInfo();
+				SourceInformation si = fullssm!=null ? fullssm.getSourceInfo() : null;
 				String path = si == null ? "" : si.getFilePath();
 				if (path == null) path = "";
 
@@ -80,7 +85,7 @@ class SeriesRunner implements IOperationRunner {
 					}
 
 					OperationData tmp = i.execute(data.getData(), context.getMonitor());
-					tmp.getData().setMetadata(fullssm);
+					if (fullssm!=null) tmp.getData().setMetadata(fullssm);
 					
 					visitor.notify(i, tmp); // Optionally send intermediate result
 					data = i.isPassUnmodifiedData() ? data : tmp;

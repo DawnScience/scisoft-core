@@ -100,8 +100,8 @@ public class OperationServiceImpl implements IOperationService {
 	        final IDataset firstSlice = Slicer.getFirstSlice(context.getData(), context.getSlicing());
 			validate(firstSlice, context.getSeries());
 	
-			
-			SliceFromSeriesMetadata ssm = firstSlice.getMetadata(SliceFromSeriesMetadata.class).get(0);
+			List<SliceFromSeriesMetadata> meta = firstSlice.getMetadata(SliceFromSeriesMetadata.class);
+			SliceFromSeriesMetadata ssm = meta!=null && meta.size()>0 ? meta.get(0) : null;
 			
 			SourceInformation ssource = null;
 			
@@ -111,8 +111,12 @@ public class OperationServiceImpl implements IOperationService {
 				logger.error("Source not obtainable. Hope this is just a unit test...");
 			}
 			
-			SliceFromSeriesMetadata fullssm = new SliceFromSeriesMetadata(ssource, ssm.getShapeInfo(), ssm.getSliceInfo());
-			context.getData().setMetadata(fullssm);
+			try {
+				SliceFromSeriesMetadata fullssm = new SliceFromSeriesMetadata(ssource, ssm.getShapeInfo(), ssm.getSliceInfo());
+				context.getData().setMetadata(fullssm);
+			} catch (Exception e) {
+				logger.error("Unable to set slice from service metadata on full data.");
+			}
 			
 			IOperationRunner runner = OperationRunnerFactory.getRunner(context.getExecutionType());
 			runner.init(context);

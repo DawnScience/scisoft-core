@@ -38,11 +38,28 @@ public class PtychoTreeUtils {
 							int k = 0;
 							i += j;
 							while (nextLevel == 2) {
-								PtychoNode subchild = new PtychoNode(
-										input.get(i + 1 + k));
+								int max2 = input.size() - (k + 1);
+								if (i == max2)
+									break;
+								PtychoNode subchild = new PtychoNode(input.get(i + 1 + k));
 								k++;
-								if (i < input.size() - k)
+								if (i < input.size() - (k+1))
 									nextLevel = input.get(i + 1 + k).getLevel();
+								//Test**
+								if (nextLevel == 3) {
+									int l = 0;
+									i += k;
+									while (nextLevel == 3) {
+										PtychoNode subSubChild = new PtychoNode(input.get(i + 1 + l));
+										l++;
+										if (i  < input.size() - l)
+											nextLevel = input.get(i + 1 + l).getLevel();
+										subSubChild.setParent(subchild);
+										subchild.addChild(subSubChild);
+									}
+									i += l;
+									k = 0;
+								}
 								subchild.setParent(child);
 								child.addChild(subchild);
 							}
@@ -62,7 +79,7 @@ public class PtychoTreeUtils {
 	}
 
 	/**
-	 * expands the depth 3 tree and puts it into a list
+	 * expands the depth 4 tree and puts it into a list
 	 * TODO put in a recursive method
 	 * @param tree
 	 * @return
@@ -79,6 +96,12 @@ public class PtychoTreeUtils {
 						List<PtychoNode> leafs = child.getChildren();
 						for (PtychoNode leaf : leafs) {
 							result.add(leaf.getData());
+							if (!leaf.getChildren().isEmpty()) {
+								List<PtychoNode> leafChildren = leaf.getChildren();
+								for (PtychoNode leafChild : leafChildren) {
+									result.add(leafChild.getData());
+								}
+							}
 						}
 					}
 				}
@@ -114,9 +137,25 @@ public class PtychoTreeUtils {
 							PtychoNode leaf = leafs.get(k);
 							json.append("\"" + leaf.getData().getName() +"\"");
 							json.append(":");
-							json.append("\"" + leaf.getData().getDefaultValue() +"\"");
-							if (k < leafs.size() - 1)
-								json.append(",");
+							if (!leaf.getChildren().isEmpty()) {
+								List<PtychoNode> leafChildren = leaf.getChildren();
+								json.append("{");
+								for (int l = 0; l < leafChildren.size(); l ++) {
+									PtychoNode leafChild = leafChildren.get(l);
+									json.append("\"" + leafChild.getData().getName() +"\"");
+									json.append(":");
+									json.append("\"" + leafChild.getData().getDefaultValue() +"\"");
+									if (l < leafChildren.size() - 1)
+										json.append(",");
+								}
+								json.append("}");
+								if (k < leafs.size() - 1)
+									json.append(",");
+							} else {
+								json.append("\"" + leaf.getData().getDefaultValue() +"\"");
+								if (k < leafs.size() - 1)
+									json.append(",");
+							}
 						}
 						json.append("}");
 						if (j < children.size() - 1)

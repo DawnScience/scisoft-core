@@ -308,8 +308,14 @@ public class PtychoTreeViewerEditor extends EditorPart {
 		});
 		Button runButton = new Button(container, SWT.NONE);
 		runButton.setText("RUN");
-		runButton.setToolTipText("Run ptychography process on cluster");
+		runButton.setToolTipText("Run ptychography process");
 		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
+		runButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				
+			}
+		});
 
 		getSite().setSelectionProvider(viewer);
 	}

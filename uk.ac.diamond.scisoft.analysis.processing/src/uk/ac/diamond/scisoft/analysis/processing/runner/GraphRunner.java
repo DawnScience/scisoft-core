@@ -8,6 +8,8 @@ import org.dawb.passerelle.common.actors.ActorUtils;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationRunner;
 
+import ptolemy.moml.MoMLParser;
+
 import com.isencia.passerelle.model.Flow;
 import com.isencia.passerelle.model.FlowManager;
 
@@ -30,6 +32,8 @@ class GraphRunner  implements IOperationRunner {
 
 	public void execute() throws Exception {
 		
+        MoMLParser.purgeAllModelRecords();
+
 		GraphBuilder builder = new GraphBuilder(context);
 		Flow flow = builder.createEventDirectorFlow();
 		

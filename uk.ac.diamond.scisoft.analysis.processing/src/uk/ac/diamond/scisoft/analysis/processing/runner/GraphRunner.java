@@ -5,19 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.dawb.passerelle.common.actors.ActorUtils;
-import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
-import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationRunner;
-import org.eclipse.dawnsci.analysis.api.processing.OperationData;
-import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 
-import ptolemy.data.IntToken;
-import uk.ac.diamond.scisoft.analysis.processing.actor.OperationSource;
-import uk.ac.diamond.scisoft.analysis.processing.actor.OperationTransformer;
+import ptolemy.moml.MoMLParser;
 
-import com.isencia.passerelle.core.Port;
-import com.isencia.passerelle.domain.et.ETDirector;
 import com.isencia.passerelle.model.Flow;
 import com.isencia.passerelle.model.FlowManager;
 
@@ -40,14 +32,10 @@ class GraphRunner  implements IOperationRunner {
 
 	public void execute() throws Exception {
 		
-		Flow flow = new Flow("Operations Graph", null);
-		
-		ETDirector director = new ETDirector(flow, "Director");
-		director.dispatchThreadsParameter.setToken(new IntToken(context.getPoolSize()));
-		
-		flow.setDirector(director);
-		
-		buildGraph(flow);
+        MoMLParser.purgeAllModelRecords();
+
+		GraphBuilder builder = new GraphBuilder(context);
+		Flow flow = builder.createEventDirectorFlow();
 		
 		try {
 		    // We switch off being able to remotely debug the workflow
@@ -106,29 +94,5 @@ class GraphRunner  implements IOperationRunner {
 			
 			// Otherwise it worked ok
 		}
-	}
-
-	/**
-	 * Currently we simply build an in memory graph which is a linear
-	 * list of operations. Later we might execute a full graph.
-	 * 
-	 * @param flow
-	 * @throws Exception
-	 */
-	private void buildGraph(Flow flow) throws Exception {
-		
-        final OperationSource source = new OperationSource(flow, "Operation Pipeline");
-        source.setContext(context);
-        
-        Port from = source.output;
-        for (IOperation<? extends IOperationModel, ? extends OperationData> op : context.getSeries()) {
-        	
-        	final OperationTransformer opTrans = new OperationTransformer(flow, op.getName());
-        	opTrans.setContext(context);
-        	opTrans.setOperation((IOperation<IOperationModel, OperationData>)op);
-       	
-        	flow.connect(from, opTrans.input);
-        	from = opTrans.output;
-        }
 	}
 }

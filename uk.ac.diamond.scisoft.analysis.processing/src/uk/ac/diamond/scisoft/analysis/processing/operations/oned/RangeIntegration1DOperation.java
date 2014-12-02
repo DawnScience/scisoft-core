@@ -12,8 +12,8 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.roi.ROISliceUtils;
 
 
 public class RangeIntegration1DOperation extends AbstractOperation<RangeIntegration1DModel, OperationData> {
@@ -50,8 +50,8 @@ public class RangeIntegration1DOperation extends AbstractOperation<RangeIntegrat
 			integrationRange = integrationRange.clone();
 			Arrays.sort(integrationRange);
 			indexes = new int[2];
-			indexes[0]= DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset)axis, integrationRange[0]);
-			indexes[1]= DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset)axis, integrationRange[1]);
+			indexes[0]= ROISliceUtils.findPositionOfClosestValueInAxis(axis, integrationRange[0]);
+			indexes[1]= ROISliceUtils.findPositionOfClosestValueInAxis(axis, integrationRange[1]);
 			Arrays.sort(indexes);
 		} else {
 			indexes[0] = 0;
@@ -64,7 +64,8 @@ public class RangeIntegration1DOperation extends AbstractOperation<RangeIntegrat
 		for (int i = indexes[0]; i < indexes[1]; i++) {
 			
 			double val = (input.getDouble(i)+input.getDouble(i+1))/2;
-			val = val * (axis.getDouble(i+1)+axis.getDouble(i));
+			double tmp = Math.abs((axis.getDouble(i+1)-axis.getDouble(i)));
+			val = val * tmp;
 			
 			out += val;
 			
@@ -73,7 +74,8 @@ public class RangeIntegration1DOperation extends AbstractOperation<RangeIntegrat
 		if (model.isSubtractBaseline()) {
 			
 			double val = (input.getDouble(indexes[0]) + input.getDouble(indexes[1]))/2;
-			val = val * (axis.getDouble(indexes[0])+axis.getDouble(indexes[1]));
+			double tmp = Math.abs((axis.getDouble(indexes[1])-axis.getDouble(indexes[0])));
+			val = val * tmp;
 			out -= val;
 		}
 		

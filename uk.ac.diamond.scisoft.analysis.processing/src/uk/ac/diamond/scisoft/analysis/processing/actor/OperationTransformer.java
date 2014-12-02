@@ -1,14 +1,18 @@
 package uk.ac.diamond.scisoft.analysis.processing.actor;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.dawb.passerelle.actors.data.config.OperationModelParameter;
 import org.dawb.passerelle.common.actors.AbstractDataMessageTransformer;
 import org.dawb.passerelle.common.message.MessageUtils;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.message.DataMessageComponent;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
+import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.api.slice.SliceFromSeriesMetadata;
@@ -19,8 +23,11 @@ import org.slf4j.LoggerFactory;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
+import uk.ac.diamond.scisoft.analysis.processing.Activator;
 
 import com.isencia.passerelle.actor.ProcessingException;
+import com.isencia.passerelle.util.ptolemy.IAvailableChoices;
+import com.isencia.passerelle.util.ptolemy.StringChoiceParameter;
 
 /**
  * Transformer to run an operation. 
@@ -36,12 +43,54 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 	 */
 	private static final long serialVersionUID = 4261989437774965670L;
 
-	private IOperation<IOperationModel, OperationData> operation;
-	private IOperationContext                          context;
+	private IOperation<? extends IOperationModel, ? extends OperationData> operation;
+	private IOperationContext                          context;   // May be null.
+	
+	/**
+	 * 
+	 */
+	public final StringChoiceParameter                 operationId; 
+	/**
+	 * 
+	 */
+	public final OperationModelParameter               model;
 
 	public OperationTransformer(CompositeEntity container, String name)	throws NameDuplicationException, IllegalActionException {
+		
 		super(container, createNonNullName(name));
-		// TODO We could have attributes in here for editing the operation or operation model.
+		
+		operationId = new StringChoiceParameter(this, "Operation", new IAvailableChoices() {		
+			@Override
+			public String[] getChoices() {
+                try {
+                	IOperationService service = (IOperationService)Activator.getService(IOperationService.class);
+                	Collection<String> ops = service.getRegisteredOperations();
+                	return ops.toArray(new String[ops.size()]);
+                } catch (Exception ne) {
+                	return new String[]{"Please select a Data File"};
+                }
+			}
+			@Override
+			public Map<String,String> getVisibleChoices() {
+                try {
+                	IOperationService service = (IOperationService)Activator.getService(IOperationService.class);
+                	Collection<String>  ops = service.getRegisteredOperations();
+                	Map<String, String> ret = new HashMap<String, String>(ops.size());
+                	for (String id : ops) ret.put(id, service.getName(id));
+                	return ret;
+               } catch (Exception ne) {
+                	return null;
+                }
+			}
+		}, 1 << 2); // Single selection bit
+		setDescription(operationId, Requirement.ESSENTIAL, VariableHandling.NONE, "The id of the operation that you would like to use.");
+		registerConfigurableParameter(operationId);
+
+
+		model = new OperationModelParameter(this, "Model");
+		setDescription(model, Requirement.ESSENTIAL, VariableHandling.NONE, "The model for the operation we are running.\n\nThis model will be saved and edited with the same table available in the processing perspective.");
+		registerConfigurableParameter(model);
+
 	}
 
 	private static long nullNameCount = 0;
@@ -61,7 +110,7 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 			SourceInformation ssource = null;
 			
 			try {
-				ssource = context.getData().getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo();
+				ssource = data.getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo();
 			}catch (Exception e) {
 				logger.error("Source not obtainable. Hope this is just a unit test...");
 			}
@@ -71,14 +120,12 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 			
 			data.setMetadata(fullssm);
 			
-			OperationData tmp = operation.execute(data, context.getMonitor());
-			
+			if (operation==null) operation = createOperation();
+			OperationData tmp = operation.execute(data, context!=null ? context.getMonitor() : null);
 			data = operation.isPassUnmodifiedData() ? data : tmp.getData();
 
-			final ILazyDataset info = msg.getSlice();
-
 			tmp.getData().setMetadata(fullssm);
-			if (context.getVisitor()!=null) {
+			if (context!=null && context.getVisitor()!=null) {
 				context.getVisitor().notify(operation, tmp); // Optionally send intermediate result
 			
 			    if (output.getWidth()<1) { // We have reached the end.
@@ -88,7 +135,7 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 			    	context.getVisitor().executed(odata, context.getMonitor()); // Send result.
 					if (context.getMonitor() != null) context.getMonitor().worked(1);
 					
-					logger.debug(info.getName()+" ran in: " +(System.currentTimeMillis()-msg.getTime())/1000. + " s : Thread" +Thread.currentThread().toString());
+					logger.debug(data.getName()+" ran in: " +(System.currentTimeMillis()-msg.getTime())/1000. + " s : Thread" +Thread.currentThread().toString());
 			    }
 			}
 			
@@ -102,17 +149,28 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 		}
 	}
 
+	private IOperation<? extends IOperationModel, ? extends OperationData> createOperation() throws Exception {
+       	IOperationService service = (IOperationService)Activator.getService(IOperationService.class);
+        IOperation<IOperationModel, OperationData> op      = (IOperation<IOperationModel, OperationData>)service.create(operationId.getExpression());
+        IOperationModel omod = model.getValue(service.getModelClass(op.getId()));
+        op.setModel(omod);
+        return op;
+	}
+
 	@Override
 	protected String getOperationName() {
 		return operation.getName();
 	}
 
-	public IOperation<IOperationModel, OperationData> getOperation() {
+	public IOperation<? extends IOperationModel, ? extends OperationData> getOperation() {
 		return operation;
 	}
 
-	public void setOperation(IOperation<IOperationModel, OperationData> operation) {
+	public void setOperation(IOperation<? extends IOperationModel, ? extends OperationData> operation) {
 		this.operation = operation;
+		
+		operationId.setExpression(operation.getId());
+		model.setValue(operation.getModel());
 	}
 
 	public IOperationContext getContext() {

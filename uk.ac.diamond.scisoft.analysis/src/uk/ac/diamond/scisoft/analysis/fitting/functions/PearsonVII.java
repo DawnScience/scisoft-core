@@ -176,4 +176,60 @@ public class PearsonVII extends APeak implements IPeak {
 			buffer[i++] = height / Math.pow((1.0 + arg * arg), power);
 		}
 	}
+
+	public double getPos() {
+		return pos;
+	}
+
+	public void setPos(double pos) {
+		this.pos = pos;
+	}
+
+	public double getHalfwp() {
+		return halfwp;
+	}
+
+	public void setHalfwp(double halfwp) {
+		this.halfwp = halfwp;
+	}
+
+	public double getPower() {
+		return power;
+	}
+
+	public void setPower(double power) {
+		this.power = power;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		long temp;
+		temp = Double.doubleToLongBits(halfwp);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(pos);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(power);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PearsonVII other = (PearsonVII) obj;
+		if (Double.doubleToLongBits(halfwp) != Double.doubleToLongBits(other.halfwp))
+			return false;
+		if (Double.doubleToLongBits(pos) != Double.doubleToLongBits(other.pos))
+			return false;
+		if (Double.doubleToLongBits(power) != Double.doubleToLongBits(other.power))
+			return false;
+		return true;
+	}
 }

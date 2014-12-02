@@ -344,4 +344,56 @@ public class Polynomial extends AFunction {
 		return rts.toArray(new Complex[0]);
 	}
 
+	public double[] getA() {
+		return a;
+	}
+
+	public void setA(double[] a) {
+		this.a = a;
+	}
+
+	public String[] getParamNames() {
+		return paramNames;
+	}
+
+	public void setParamNames(String[] paramNames) {
+		this.paramNames = paramNames;
+	}
+
+	public int getNparams() {
+		return nparams;
+	}
+
+	public void setNparams(int nparams) {
+		this.nparams = nparams;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Arrays.hashCode(a);
+		result = prime * result + nparams;
+		result = prime * result + Arrays.hashCode(paramNames);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Polynomial other = (Polynomial) obj;
+		if (!Arrays.equals(a, other.a))
+			return false;
+		if (nparams != other.nparams)
+			return false;
+		if (!Arrays.equals(paramNames, other.paramNames))
+			return false;
+		return true;
+	}
+
 }

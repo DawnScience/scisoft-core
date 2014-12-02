@@ -94,10 +94,16 @@ public class HierarchicalFileExecutionVisitor implements IExecutionVisitor {
 		List<SliceFromSeriesMetadata> metadata = data.getMetadata(SliceFromSeriesMetadata.class);
 		if (metadata != null && metadata.get(0) != null) origin = metadata.get(0);
 		file = HierarchicalDataFactory.getWriter(filePath);
-		IPersistenceService service = (IPersistenceService)ServiceManager.getService(IPersistenceService.class);
-		IPersistentFile pf = service.createPersistentFile(file);
-		pf.setOperations(series);
-		pf.setOperationDataOrigin(origin);
+		try {
+			//dont fail process because of error persisting models
+			IPersistenceService service = (IPersistenceService)ServiceManager.getService(IPersistenceService.class);
+			IPersistentFile pf = service.createPersistentFile(file);
+			pf.setOperations(series);
+			pf.setOperationDataOrigin(origin);
+		} catch (Exception e){
+			logger.error("Cant persist operations!", e);
+		}
+		
 		
 	}
 	

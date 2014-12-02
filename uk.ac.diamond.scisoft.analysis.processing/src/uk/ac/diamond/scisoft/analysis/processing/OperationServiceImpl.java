@@ -38,6 +38,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.api.slice.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.api.slice.Slicer;
+import org.eclipse.dawnsci.analysis.api.slice.SourceInformation;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,10 +100,23 @@ public class OperationServiceImpl implements IOperationService {
 	        final IDataset firstSlice = Slicer.getFirstSlice(context.getData(), context.getSlicing());
 			validate(firstSlice, context.getSeries());
 	
+			List<SliceFromSeriesMetadata> meta = firstSlice.getMetadata(SliceFromSeriesMetadata.class);
+			SliceFromSeriesMetadata ssm = meta!=null && meta.size()>0 ? meta.get(0) : null;
 			
-			SliceFromSeriesMetadata ssm = firstSlice.getMetadata(SliceFromSeriesMetadata.class).get(0);
-			SliceFromSeriesMetadata fullssm = new SliceFromSeriesMetadata(context.getData().getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo(), ssm.getShapeInfo(), ssm.getSliceInfo());
-			context.getData().setMetadata(fullssm);
+			SourceInformation ssource = null;
+			
+			try {
+				 ssource = context.getData().getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo();
+			} catch (Exception e) {
+				logger.error("Source not obtainable. Hope this is just a unit test...");
+			}
+			
+			try {
+				SliceFromSeriesMetadata fullssm = new SliceFromSeriesMetadata(ssource, ssm.getShapeInfo(), ssm.getSliceInfo());
+				context.getData().setMetadata(fullssm);
+			} catch (Exception e) {
+				logger.error("Unable to set slice from service metadata on full data.");
+			}
 			
 			IOperationRunner runner = OperationRunnerFactory.getRunner(context.getExecutionType());
 			runner.init(context);
@@ -261,7 +275,14 @@ public class OperationServiceImpl implements IOperationService {
 
 	@Override
 	public Class<? extends IOperationModel> getModelClass(String operationId) throws Exception {
-		return models.get(operationId);
+		if (models.containsKey(operationId)) {
+			return models.get(operationId);
+		}
+		IOperation<? extends IOperationModel, ? extends OperationData> op = create(operationId);
+		if (op instanceof AbstractOperation) {
+			return ((AbstractOperation)op).getModelClass();
+		}
+		return null; // Normally one of the above lines would throw an exception before this.
 	}
 
 	@Override

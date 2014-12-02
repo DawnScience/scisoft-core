@@ -232,4 +232,72 @@ public class PseudoVoigt extends APeak implements IPeak {
 		double width = crossings.get(1).doubleValue() - crossings.get(0).doubleValue();
 		return width;
 	}
+
+	public double getPos() {
+		return pos;
+	}
+
+	public void setPos(double pos) {
+		this.pos = pos;
+	}
+
+	public double getHalfwg() {
+		return halfwg;
+	}
+
+	public void setHalfwg(double halfwg) {
+		this.halfwg = halfwg;
+	}
+
+	public double getHalfwl() {
+		return halfwl;
+	}
+
+	public void setHalfwl(double halfwl) {
+		this.halfwl = halfwl;
+	}
+
+	public double getMixing() {
+		return mixing;
+	}
+
+	public void setMixing(double mixing) {
+		this.mixing = mixing;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		long temp;
+		temp = Double.doubleToLongBits(halfwg);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(halfwl);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(mixing);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(pos);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PseudoVoigt other = (PseudoVoigt) obj;
+		if (Double.doubleToLongBits(halfwg) != Double.doubleToLongBits(other.halfwg))
+			return false;
+		if (Double.doubleToLongBits(halfwl) != Double.doubleToLongBits(other.halfwl))
+			return false;
+		if (Double.doubleToLongBits(mixing) != Double.doubleToLongBits(other.mixing))
+			return false;
+		if (Double.doubleToLongBits(pos) != Double.doubleToLongBits(other.pos))
+			return false;
+		return true;
+	}
 }

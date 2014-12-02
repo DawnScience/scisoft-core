@@ -43,7 +43,7 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 	 */
 	private static final long serialVersionUID = 4261989437774965670L;
 
-	private IOperation<IOperationModel, OperationData> operation;
+	private IOperation<? extends IOperationModel, ? extends OperationData> operation;
 	private IOperationContext                          context;   // May be null.
 	
 	/**
@@ -149,11 +149,11 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 		}
 	}
 
-	private IOperation createOperation() throws Exception {
+	private IOperation<? extends IOperationModel, ? extends OperationData> createOperation() throws Exception {
        	IOperationService service = (IOperationService)Activator.getService(IOperationService.class);
-        IOperation        op      = service.create(operationId.getExpression());
-        op.setModel(model.getValue(service.getModelClass(op.getId())));
-        
+        IOperation<IOperationModel, OperationData> op      = (IOperation<IOperationModel, OperationData>)service.create(operationId.getExpression());
+        IOperationModel omod = model.getValue(service.getModelClass(op.getId()));
+        op.setModel(omod);
         return op;
 	}
 
@@ -162,11 +162,11 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 		return operation.getName();
 	}
 
-	public IOperation<IOperationModel, OperationData> getOperation() {
+	public IOperation<? extends IOperationModel, ? extends OperationData> getOperation() {
 		return operation;
 	}
 
-	public void setOperation(IOperation<IOperationModel, OperationData> operation) {
+	public void setOperation(IOperation<? extends IOperationModel, ? extends OperationData> operation) {
 		this.operation = operation;
 		
 		operationId.setExpression(operation.getId());

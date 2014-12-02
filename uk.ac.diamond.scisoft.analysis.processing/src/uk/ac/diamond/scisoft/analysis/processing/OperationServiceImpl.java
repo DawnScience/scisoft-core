@@ -271,7 +271,14 @@ public class OperationServiceImpl implements IOperationService {
 
 	@Override
 	public Class<? extends IOperationModel> getModelClass(String operationId) throws Exception {
-		return models.get(operationId);
+		if (models.containsKey(operationId)) {
+			return models.get(operationId);
+		}
+		IOperation<? extends IOperationModel, ? extends OperationData> op = create(operationId);
+		if (op instanceof AbstractOperation) {
+			return ((AbstractOperation)op).getModelClass();
+		}
+		return null; // Normally one of the above lines would throw an exception before this.
 	}
 
 	@Override

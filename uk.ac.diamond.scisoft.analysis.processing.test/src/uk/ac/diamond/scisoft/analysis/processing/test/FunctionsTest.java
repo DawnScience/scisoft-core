@@ -236,6 +236,7 @@ public class FunctionsTest {
 		
 		count = 0;
 		context.setExecutionType(ExecutionType.GRAPH);
+		context.setPoolSize(4);
 		service.execute(context);
 		if (count!=5) throw new Exception("Tiled 10x"+dataRange+" did not fit 5 times! "+count);
 

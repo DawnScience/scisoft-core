@@ -1,8 +1,11 @@
 package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.dawnsci.python.rpc.action.InjectPyDevConsole;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -25,7 +28,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -44,6 +46,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.part.EditorPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -306,17 +310,34 @@ public class PtychoTreeViewerEditor extends EditorPart {
 				updateAttributes(e);
 			}
 		});
-		Button runButton = new Button(container, SWT.NONE);
-		runButton.setText("RUN");
-		runButton.setToolTipText("Run ptychography process");
-		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
-		runButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				
-			}
-		});
 
+		CommandContributionItemParameter ccip = new CommandContributionItemParameter(
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow(), null,
+				InjectPyDevConsole.COMMAND_ID,
+				CommandContributionItem.STYLE_PUSH);
+		ccip.label = "RUN";
+		ccip.tooltip = "Run python ptychography process";
+		Map<String, String> params = new HashMap<String, String>();
+		params.put(InjectPyDevConsole.INJECT_COMMANDS_PARAM, "run python");
+		ccip.parameters = params;
+		CommandContributionItem runPythonCCI = new CommandContributionItem(ccip);
+		runPythonCCI.fill(container);
+//		Button runButton = (Button) runPythonCCI.getWidget();
+//		runButton.setText("RUN");
+//		runButton.setToolTipText("Run ptychography process");
+//		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
+		
+//		Button runButton = new Button(container, SWT.NONE);
+//		runButton.setText("RUN");
+//		runButton.setToolTipText("Run ptychography process");
+//		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
+//		runButton.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent event) {
+//				
+//			}
+//		});
+		
 		getSite().setSelectionProvider(viewer);
 	}
 

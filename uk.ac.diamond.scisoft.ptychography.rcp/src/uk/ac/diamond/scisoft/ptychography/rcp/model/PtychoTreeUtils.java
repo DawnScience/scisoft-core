@@ -144,7 +144,7 @@ public class PtychoTreeUtils {
 									PtychoNode leafChild = leafChildren.get(l);
 									json.append("\"" + leafChild.getData().getName() +"\"");
 									json.append(":");
-									json.append("\"" + leafChild.getData().getDefaultValue() +"\"");
+									json.append(getValue(leafChild.getData().getDefaultValue()));
 									if (l < leafChildren.size() - 1)
 										json.append(",");
 								}
@@ -152,7 +152,7 @@ public class PtychoTreeUtils {
 								if (k < leafs.size() - 1)
 									json.append(",");
 							} else {
-								json.append("\"" + leaf.getData().getDefaultValue() +"\"");
+								json.append(getValue(leaf.getData().getDefaultValue()));
 								if (k < leafs.size() - 1)
 									json.append(",");
 							}
@@ -161,14 +161,14 @@ public class PtychoTreeUtils {
 						if (j < children.size() - 1)
 							json.append(",");
 					} else {
-						json.append("\"" + child.getData().getDefaultValue() +"\"");
+						json.append(getValue(child.getData().getDefaultValue()));
 						if (j < children.size() - 1)
 							json.append(",");
 					}
 				}
 				json.append("}");
 			} else {
-				json.append("\"" + node.getData().getDefaultValue() +"\"");
+				json.append(getValue(node.getData().getDefaultValue()));
 			}
 			
 			if (i < tree.size() - 1)
@@ -176,5 +176,12 @@ public class PtychoTreeUtils {
 		}
 		json.append("}");
 		return json.toString();
+	}
+
+	private static String getValue(String value) {
+		if ((value.startsWith("\"[") && value.endsWith("]\"")) ||
+				(value.startsWith("\"\"") && value.endsWith("\"\"")))
+			return value.substring(1, value.length() - 2);
+		return value;
 	}
 }

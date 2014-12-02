@@ -184,4 +184,108 @@ public class Step extends AFunction {
 			buffer[i++] = x;
 		}
 	}
+
+	public double getBase() {
+		return base;
+	}
+
+	public void setBase(double base) {
+		this.base = base;
+	}
+
+	public double getPmin() {
+		return pmin;
+	}
+
+	public void setPmin(double pmin) {
+		this.pmin = pmin;
+	}
+
+	public double getPmax() {
+		return pmax;
+	}
+
+	public void setPmax(double pmax) {
+		this.pmax = pmax;
+	}
+
+	public double getWidth() {
+		return width;
+	}
+
+	public void setWidth(double width) {
+		this.width = width;
+	}
+
+	public double getStart() {
+		return start;
+	}
+
+	public void setStart(double start) {
+		this.start = start;
+	}
+
+	public double getOuter() {
+		return outer;
+	}
+
+	public void setOuter(double outer) {
+		this.outer = outer;
+	}
+
+	public double getInner() {
+		return inner;
+	}
+
+	public void setInner(double inner) {
+		this.inner = inner;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		long temp;
+		temp = Double.doubleToLongBits(base);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(inner);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(outer);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(pmax);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(pmin);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(start);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(width);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Step other = (Step) obj;
+		if (Double.doubleToLongBits(base) != Double.doubleToLongBits(other.base))
+			return false;
+		if (Double.doubleToLongBits(inner) != Double.doubleToLongBits(other.inner))
+			return false;
+		if (Double.doubleToLongBits(outer) != Double.doubleToLongBits(other.outer))
+			return false;
+		if (Double.doubleToLongBits(pmax) != Double.doubleToLongBits(other.pmax))
+			return false;
+		if (Double.doubleToLongBits(pmin) != Double.doubleToLongBits(other.pmin))
+			return false;
+		if (Double.doubleToLongBits(start) != Double.doubleToLongBits(other.start))
+			return false;
+		if (Double.doubleToLongBits(width) != Double.doubleToLongBits(other.width))
+			return false;
+		return true;
+	}
 }

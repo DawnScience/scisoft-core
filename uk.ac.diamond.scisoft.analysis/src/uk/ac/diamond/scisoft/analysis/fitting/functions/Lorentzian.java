@@ -148,4 +148,48 @@ public class Lorentzian extends APeak {
 			buffer[i++] = height / ( dist * dist + 1);
 		}
 	}
+
+	public double getHalfw() {
+		return halfw;
+	}
+
+	public void setHalfw(double halfw) {
+		this.halfw = halfw;
+	}
+
+	public double getPos() {
+		return pos;
+	}
+
+	public void setPos(double pos) {
+		this.pos = pos;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		long temp;
+		temp = Double.doubleToLongBits(halfw);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(pos);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Lorentzian other = (Lorentzian) obj;
+		if (Double.doubleToLongBits(halfw) != Double.doubleToLongBits(other.halfw))
+			return false;
+		if (Double.doubleToLongBits(pos) != Double.doubleToLongBits(other.pos))
+			return false;
+		return true;
+	}
 }

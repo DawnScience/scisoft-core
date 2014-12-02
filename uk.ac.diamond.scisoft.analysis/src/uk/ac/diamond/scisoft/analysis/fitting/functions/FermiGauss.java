@@ -214,5 +214,109 @@ public class FermiGauss extends AFunction implements Serializable{
 
 	private double k2eV(double temperature) {
 		return temperature*K2EV_CONVERSION_FACTOR;
+	}
+
+	public double getMu() {
+		return mu;
+	}
+
+	public void setMu(double mu) {
+		this.mu = mu;
+	}
+
+	public double getkT() {
+		return kT;
+	}
+
+	public void setkT(double kT) {
+		this.kT = kT;
+	}
+
+	public double getScaleM() {
+		return scaleM;
+	}
+
+	public void setScaleM(double scaleM) {
+		this.scaleM = scaleM;
+	}
+
+	public double getScaleC() {
+		return scaleC;
+	}
+
+	public void setScaleC(double scaleC) {
+		this.scaleC = scaleC;
+	}
+
+	public double getOffset() {
+		return offset;
+	}
+
+	public void setOffset(double offset) {
+		this.offset = offset;
+	}
+
+	public double getTemperature() {
+		return temperature;
+	}
+
+	public void setTemperature(double temperature) {
+		this.temperature = temperature;
+	}
+
+	public double getFwhm() {
+		return fwhm;
+	}
+
+	public void setFwhm(double fwhm) {
+		this.fwhm = fwhm;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		long temp;
+		temp = Double.doubleToLongBits(fwhm);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(kT);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(mu);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(offset);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(scaleC);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(scaleM);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(temperature);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FermiGauss other = (FermiGauss) obj;
+		if (Double.doubleToLongBits(fwhm) != Double.doubleToLongBits(other.fwhm))
+			return false;
+		if (Double.doubleToLongBits(kT) != Double.doubleToLongBits(other.kT))
+			return false;
+		if (Double.doubleToLongBits(mu) != Double.doubleToLongBits(other.mu))
+			return false;
+		if (Double.doubleToLongBits(offset) != Double.doubleToLongBits(other.offset))
+			return false;
+		if (Double.doubleToLongBits(scaleC) != Double.doubleToLongBits(other.scaleC))
+			return false;
+		if (Double.doubleToLongBits(scaleM) != Double.doubleToLongBits(other.scaleM))
+			return false;
+		if (Double.doubleToLongBits(temperature) != Double.doubleToLongBits(other.temperature))
+			return false;
+		return true;
 	}	
 }

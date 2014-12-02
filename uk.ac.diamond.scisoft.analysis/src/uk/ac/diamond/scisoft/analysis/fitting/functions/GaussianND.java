@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import java.util.Arrays;
+
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -238,6 +240,74 @@ public class GaussianND extends AFunction {
 
 			buffer[j++] = norm * Math.exp(-0.5 * arg);
 		}
+	}
+
+	public int getRank() {
+		return rank;
+	}
+
+	public void setRank(int rank) {
+		this.rank = rank;
+	}
+
+	public double[] getPos() {
+		return pos;
+	}
+
+	public void setPos(double[] pos) {
+		this.pos = pos;
+	}
+
+	public Array2DRowRealMatrix getInvcov() {
+		return invcov;
+	}
+
+	public void setInvcov(Array2DRowRealMatrix invcov) {
+		this.invcov = invcov;
+	}
+
+	public double getNorm() {
+		return norm;
+	}
+
+	public void setNorm(double norm) {
+		this.norm = norm;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((invcov == null) ? 0 : invcov.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(norm);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + Arrays.hashCode(pos);
+		result = prime * result + rank;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GaussianND other = (GaussianND) obj;
+		if (invcov == null) {
+			if (other.invcov != null)
+				return false;
+		} else if (!invcov.equals(other.invcov))
+			return false;
+		if (Double.doubleToLongBits(norm) != Double.doubleToLongBits(other.norm))
+			return false;
+		if (!Arrays.equals(pos, other.pos))
+			return false;
+		if (rank != other.rank)
+			return false;
+		return true;
 	}
 
 }

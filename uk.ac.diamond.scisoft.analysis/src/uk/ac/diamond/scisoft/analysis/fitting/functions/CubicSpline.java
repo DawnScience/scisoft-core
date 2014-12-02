@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import java.util.Arrays;
+
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 
@@ -177,5 +179,90 @@ public class CubicSpline extends AFunction {
 		while (it.hasNext()) {
 			buffer[i++] = evaluateSpline(coords[0]);
 		}
+	}
+
+	public double[] getA() {
+		return a;
+	}
+
+	public void setA(double[] a) {
+		this.a = a;
+	}
+
+	public double[] getB() {
+		return b;
+	}
+
+	public void setB(double[] b) {
+		this.b = b;
+	}
+
+	public double[] getC() {
+		return c;
+	}
+
+	public void setC(double[] c) {
+		this.c = c;
+	}
+
+	public double[] getD() {
+		return d;
+	}
+
+	public void setD(double[] d) {
+		this.d = d;
+	}
+
+	public double[] getX() {
+		return x;
+	}
+
+	public void setX(double[] x) {
+		this.x = x;
+	}
+
+	public double[] getY() {
+		return y;
+	}
+
+	public void setY(double[] y) {
+		this.y = y;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Arrays.hashCode(a);
+		result = prime * result + Arrays.hashCode(b);
+		result = prime * result + Arrays.hashCode(c);
+		result = prime * result + Arrays.hashCode(d);
+		result = prime * result + Arrays.hashCode(x);
+		result = prime * result + Arrays.hashCode(y);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CubicSpline other = (CubicSpline) obj;
+		if (!Arrays.equals(a, other.a))
+			return false;
+		if (!Arrays.equals(b, other.b))
+			return false;
+		if (!Arrays.equals(c, other.c))
+			return false;
+		if (!Arrays.equals(d, other.d))
+			return false;
+		if (!Arrays.equals(x, other.x))
+			return false;
+		if (!Arrays.equals(y, other.y))
+			return false;
+		return true;
 	}
 }

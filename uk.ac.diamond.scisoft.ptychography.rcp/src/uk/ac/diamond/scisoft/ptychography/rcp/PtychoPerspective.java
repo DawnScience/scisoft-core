@@ -36,11 +36,25 @@ public class PtychoPerspective implements IPerspectiveFactory {
 		String scanPosPlot = ptychoPlotViews + "ScanPos";
 		String dataPlot = ptychoPlotViews + "Data";
 
-		layout.addView(objectPlot, IPageLayout.RIGHT, 0.7f, editorArea);
-		layout.addView(probePlot, IPageLayout.RIGHT, 0.6f, editorArea);
-
-		layout.addView(dataPlot, IPageLayout.BOTTOM, 0.6f, objectPlot);
-		layout.addView(scanPosPlot, IPageLayout.BOTTOM, 0.6f, probePlot);
+		IFolderLayout objectFolder = layout.createFolder(objectPlot, IPageLayout.RIGHT, 0.7f, editorArea);
+		objectFolder.addView(ptychoPlotViews + "ObjectComplex");
+		objectFolder.addView(ptychoPlotViews + "ObjectPhase");
+		objectFolder.addView(ptychoPlotViews + "ObjectModulus");
+		
+		IFolderLayout probeFolder = layout.createFolder(probePlot, IPageLayout.RIGHT, 0.6f, editorArea);
+		probeFolder.addView(ptychoPlotViews + "ProbeComplex");
+		probeFolder.addView(ptychoPlotViews + "ProbePhase");
+		probeFolder.addView(ptychoPlotViews + "ProbeModulus");
+		
+		IFolderLayout dataFolder = layout.createFolder(dataPlot, IPageLayout.BOTTOM, 0.6f, objectPlot);
+		dataFolder.addView(ptychoPlotViews + "RMSE");
+		dataFolder.addView(ptychoPlotViews + "DeadPixels");
+		dataFolder.addView(ptychoPlotViews + "RecordedDiffPattern");
+		dataFolder.addView(ptychoPlotViews + "DiffPatternEstimate");
+		
+		IFolderLayout scanPosFolder = layout.createFolder(scanPosPlot, IPageLayout.BOTTOM, 0.6f, probePlot);
+		scanPosFolder.addView(ptychoPlotViews + "RelativeScanPosOriginal");
+		scanPosFolder.addView(ptychoPlotViews + "RelativeScanPosCorrected");
 		
 		// add the console and the outline to the bottom
 		IFolderLayout bottomLayout = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.6f, editorArea);

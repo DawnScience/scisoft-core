@@ -2,13 +2,13 @@ package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.dawb.common.util.eclipse.BundleUtils;
 import org.dawnsci.python.rpc.action.InjectPyDevConsole;
+import org.dawnsci.python.rpc.action.InjectPyDevConsoleAction;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
@@ -49,9 +49,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.menus.CommandContributionItem;
-import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.part.EditorPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,10 +114,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 			e.printStackTrace();
 		}
 		//save the json right away
-		jsonSavedPath = fullPath.substring(0, fullPath.length() - 3);
-		jsonSavedPath += "json";
-		String json = PtychoTreeUtils.jsonMarshal(tree);
-		PtychoUtils.saveJSon(jsonSavedPath, json);
+		saveJSon();
 
 		setSite(site);
 		setInput(input);
@@ -214,8 +208,6 @@ public class PtychoTreeViewerEditor extends EditorPart {
 				filter,
 				true);
 		viewer = filteredTree.getViewer();
-//		viewer.getControl().setLayoutData(
-//				new GridData(SWT.FILL, SWT.TOP, true, false));
 		viewer.setColumnProperties(new String[] { "Name", "Value" });
 		ColumnViewerToolTipSupport.enableFor(viewer);
 		TreeViewerColumn var = new TreeViewerColumn(viewer, SWT.LEFT, 0);
@@ -336,44 +328,20 @@ public class PtychoTreeViewerEditor extends EditorPart {
 			}
 		});
 
-//		Button runButton = (Button) runPythonCCI.getWidget();
-//		runButton.setText("RUN");
-//		runButton.setToolTipText("Run ptychography process");
-//		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
-		
-		Button runButton = new Button(container, SWT.NONE);
-		runButton.setText("SAVE");
-		runButton.setToolTipText("save ptycho input parameters");
-		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
-		runButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				jsonSavedPath = fullPath.substring(0, fullPath.length() - 3);
-				jsonSavedPath += "json";
-				String json = PtychoTreeUtils.jsonMarshal(tree);
-				PtychoUtils.saveJSon(jsonSavedPath, json);
-//				IHandlerService handlerService = (IHandlerService) getSite()
-//						.getService(IHandlerService.class);
-//				try {
-//					handlerService.executeCommand(PtychoConstants.INJECT_PYTHON_CMD_ID, null);
-//				} catch (Exception ex) {
-//					throw new RuntimeException(
-//							"command with id \""+ PtychoConstants.INJECT_PYTHON_CMD_ID +"\" not found");
-//				}
+		final InjectPyDevConsoleAction runPython = new InjectPyDevConsoleAction("Open plotted data in python console") {
+			public void run() {
+				saveJSon();
+				super.run();
 			}
-		});
-		final CommandContributionItemParameter ccip = new CommandContributionItemParameter(
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow(), null,
-				InjectPyDevConsole.COMMAND_ID,
-				CommandContributionItem.STYLE_PUSH);
-		ccip.label = "RUN";
-		ccip.tooltip = "Run python ptychography process";
-		Map<String, String> params = new HashMap<String, String>();
-		params.put(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd());
-		ccip.parameters = params;
-		CommandContributionItem runPythonCCI = new CommandContributionItem(ccip);
-		runPythonCCI.setId(PtychoConstants.INJECT_PYTHON_CMD_ID);
-		runPythonCCI.fill(container);
+		};
+		runPython.setParameter(InjectPyDevConsole.CREATE_NEW_CONSOLE_PARAM, Boolean.TRUE.toString());
+		runPython.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd());
+		ActionContributionItem aci = new ActionContributionItem(runPython);
+		aci.fill(container);
+		Button runButton = (Button) aci.getWidget();
+		runButton.setText("RUN");
+		runButton.setToolTipText("Run python ptychography proces");
+		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
 		
 		getSite().setSelectionProvider(viewer);
 	}
@@ -389,7 +357,15 @@ public class PtychoTreeViewerEditor extends EditorPart {
 			e1.printStackTrace();
 		}
 		pythonCmd.append(jsonSavedPath);
+		pythonCmd.append("\n");
 		return pythonCmd.toString();
+	}
+
+	private void saveJSon() {
+		jsonSavedPath = fullPath.substring(0, fullPath.length() - 3);
+		jsonSavedPath += "json";
+		String json = PtychoTreeUtils.jsonMarshal(tree);
+		PtychoUtils.saveJSon(jsonSavedPath, json);
 	}
 
 	private void updateAttributes(ModifyEvent event) {

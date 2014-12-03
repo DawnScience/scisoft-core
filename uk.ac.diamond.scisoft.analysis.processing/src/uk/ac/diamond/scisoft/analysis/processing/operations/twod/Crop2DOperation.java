@@ -10,10 +10,13 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.twod;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 
 public class Crop2DOperation extends AbstractOperation<Crop2DModel, OperationData> {
 	
@@ -42,5 +45,19 @@ public class Crop2DOperation extends AbstractOperation<Crop2DModel, OperationDat
 		Double xMaxVal = model.getxMax();
 		Double yMinVal = model.getyMin();
 		Double yMaxVal = model.getyMax();
+		
+		//Get axes data from dataset and see if X & Y axes exist
+		ILazyDataset[] axes = getFirstAxes(input);
+		
+		ILazyDataset theXAxis = axes[0];
+		ILazyDataset theYAxis = axes[1];
+		
+		xMinIndex = new int[]{DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theXAxis, xMinVal)};
+		xMaxIndex = new int[]{DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theXAxis, xMaxVal)};
+		
+		yMinIndex = new int[]{DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theXAxis, yMinVal)};
+		yMaxIndex = new int[]{DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theXAxis, yMaxVal)};
+		
+		}
 	}
 }

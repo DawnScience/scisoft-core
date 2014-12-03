@@ -10,11 +10,11 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 
-public class Crop1dOperation extends AbstractOperation<Crop1dModel, OperationData> {
+public class Crop1DOperation extends AbstractOperation<Crop1DModel, OperationData> {
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1dOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1DOperation";
 	}
 
 	@Override

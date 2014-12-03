@@ -367,6 +367,16 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
             name="Average All Data">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.ARPESanalysis"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.XRegionProfileNormalize"
+            description="A filter which normalises the data frame by the profile of the selected region of the X axis."
+            icon="icons/region.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.ARPESXRegionProfileNormalize"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.XRegionProfileNormalizeModel"
+            name="ARPES X Region Profile Normalize"
+            visible="true">
+      </operation>
    </extension>
    <extension
          point="com.isencia.passerelle.engine.actorGroups">

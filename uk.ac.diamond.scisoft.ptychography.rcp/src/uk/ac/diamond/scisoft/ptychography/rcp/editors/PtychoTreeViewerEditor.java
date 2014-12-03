@@ -1,8 +1,13 @@
 package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.dawb.common.util.eclipse.BundleUtils;
+import org.dawnsci.python.rpc.action.InjectPyDevConsole;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -44,6 +49,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.part.EditorPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +87,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 	private Color black;
 	private String fullPath;
 	private String fileSavedPath;
+	private String jsonSavedPath;
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
@@ -107,6 +116,11 @@ public class PtychoTreeViewerEditor extends EditorPart {
 			logger.error("Error loading spreadsheet file:" + e.getMessage());
 			e.printStackTrace();
 		}
+		//save the json right away
+		jsonSavedPath = fullPath.substring(0, fullPath.length() - 3);
+		jsonSavedPath += "json";
+		String json = PtychoTreeUtils.jsonMarshal(tree);
+		PtychoUtils.saveJSon(jsonSavedPath, json);
 
 		setSite(site);
 		setInput(input);
@@ -322,37 +336,60 @@ public class PtychoTreeViewerEditor extends EditorPart {
 			}
 		});
 
-//		CommandContributionItemParameter ccip = new CommandContributionItemParameter(
-//				PlatformUI.getWorkbench().getActiveWorkbenchWindow(), null,
-//				InjectPyDevConsole.COMMAND_ID,
-//				CommandContributionItem.STYLE_PUSH);
-//		ccip.label = "RUN";
-//		ccip.tooltip = "Run python ptychography process";
-//		Map<String, String> params = new HashMap<String, String>();
-//		params.put(InjectPyDevConsole.INJECT_COMMANDS_PARAM, "run python");
-//		ccip.parameters = params;
-//		CommandContributionItem runPythonCCI = new CommandContributionItem(ccip);
-//		runPythonCCI.fill(container);
 //		Button runButton = (Button) runPythonCCI.getWidget();
 //		runButton.setText("RUN");
 //		runButton.setToolTipText("Run ptychography process");
 //		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
 		
 		Button runButton = new Button(container, SWT.NONE);
-		runButton.setText("RUN");
-		runButton.setToolTipText("Run ptychography process");
+		runButton.setText("SAVE");
+		runButton.setToolTipText("save ptycho input parameters");
 		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
 		runButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
-				String jsonSavedPath = fullPath.substring(0, fullPath.length() - 3);
+				jsonSavedPath = fullPath.substring(0, fullPath.length() - 3);
 				jsonSavedPath += "json";
 				String json = PtychoTreeUtils.jsonMarshal(tree);
 				PtychoUtils.saveJSon(jsonSavedPath, json);
+//				IHandlerService handlerService = (IHandlerService) getSite()
+//						.getService(IHandlerService.class);
+//				try {
+//					handlerService.executeCommand(PtychoConstants.INJECT_PYTHON_CMD_ID, null);
+//				} catch (Exception ex) {
+//					throw new RuntimeException(
+//							"command with id \""+ PtychoConstants.INJECT_PYTHON_CMD_ID +"\" not found");
+//				}
 			}
 		});
+		final CommandContributionItemParameter ccip = new CommandContributionItemParameter(
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow(), null,
+				InjectPyDevConsole.COMMAND_ID,
+				CommandContributionItem.STYLE_PUSH);
+		ccip.label = "RUN";
+		ccip.tooltip = "Run python ptychography process";
+		Map<String, String> params = new HashMap<String, String>();
+		params.put(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd());
+		ccip.parameters = params;
+		CommandContributionItem runPythonCCI = new CommandContributionItem(ccip);
+		runPythonCCI.setId(PtychoConstants.INJECT_PYTHON_CMD_ID);
+		runPythonCCI.fill(container);
 		
 		getSite().setSelectionProvider(viewer);
+	}
+
+	private String getPythonCmd() {
+		StringBuilder pythonCmd = new StringBuilder();
+		pythonCmd.append("run ");
+		try {
+			File bundlePath = BundleUtils.getBundleLocation(Activator.PLUGIN_ID);
+			pythonCmd.append(bundlePath + File.separator + "Ptycho"+ File.separator + "LaunchPtycho.py ");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		pythonCmd.append(jsonSavedPath);
+		return pythonCmd.toString();
 	}
 
 	private void updateAttributes(ModifyEvent event) {

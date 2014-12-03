@@ -1,11 +1,8 @@
 package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.dawnsci.python.rpc.action.InjectPyDevConsole;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -28,6 +25,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -46,8 +44,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.menus.CommandContributionItem;
-import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.part.EditorPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -258,6 +254,21 @@ public class PtychoTreeViewerEditor extends EditorPart {
 		typeCombo = new Combo(leftComp, SWT.BORDER);
 		typeCombo.setItems(new String[] {"Param", "str", "int", "float", "bool", "list", "tuple"});
 		typeCombo.setLayoutData(gridData);
+		typeCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				if (currentNode == null)
+					return;
+				PtychoData data = currentNode.getData();
+				if (!data.isUnique()) {
+					Object evt = event.getSource();
+					Combo cmb = (Combo) evt;
+					data.setType(cmb.getText());
+					viewer.refresh();
+					setDirty(true);
+				}
+			}
+		});
 
 		Composite subLeftComp = new Composite(leftComp, SWT.NONE);
 		subLeftComp.setLayout(new GridLayout(3, false));
@@ -311,32 +322,35 @@ public class PtychoTreeViewerEditor extends EditorPart {
 			}
 		});
 
-		CommandContributionItemParameter ccip = new CommandContributionItemParameter(
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow(), null,
-				InjectPyDevConsole.COMMAND_ID,
-				CommandContributionItem.STYLE_PUSH);
-		ccip.label = "RUN";
-		ccip.tooltip = "Run python ptychography process";
-		Map<String, String> params = new HashMap<String, String>();
-		params.put(InjectPyDevConsole.INJECT_COMMANDS_PARAM, "run python");
-		ccip.parameters = params;
-		CommandContributionItem runPythonCCI = new CommandContributionItem(ccip);
-		runPythonCCI.fill(container);
+//		CommandContributionItemParameter ccip = new CommandContributionItemParameter(
+//				PlatformUI.getWorkbench().getActiveWorkbenchWindow(), null,
+//				InjectPyDevConsole.COMMAND_ID,
+//				CommandContributionItem.STYLE_PUSH);
+//		ccip.label = "RUN";
+//		ccip.tooltip = "Run python ptychography process";
+//		Map<String, String> params = new HashMap<String, String>();
+//		params.put(InjectPyDevConsole.INJECT_COMMANDS_PARAM, "run python");
+//		ccip.parameters = params;
+//		CommandContributionItem runPythonCCI = new CommandContributionItem(ccip);
+//		runPythonCCI.fill(container);
 //		Button runButton = (Button) runPythonCCI.getWidget();
 //		runButton.setText("RUN");
 //		runButton.setToolTipText("Run ptychography process");
 //		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
 		
-//		Button runButton = new Button(container, SWT.NONE);
-//		runButton.setText("RUN");
-//		runButton.setToolTipText("Run ptychography process");
-//		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
-//		runButton.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent event) {
-//				
-//			}
-//		});
+		Button runButton = new Button(container, SWT.NONE);
+		runButton.setText("RUN");
+		runButton.setToolTipText("Run ptychography process");
+		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
+		runButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				String jsonSavedPath = fullPath.substring(0, fullPath.length() - 3);
+				jsonSavedPath += "json";
+				String json = PtychoTreeUtils.jsonMarshal(tree);
+				PtychoUtils.saveJSon(jsonSavedPath, json);
+			}
+		});
 		
 		getSite().setSelectionProvider(viewer);
 	}
@@ -362,8 +376,6 @@ public class PtychoTreeViewerEditor extends EditorPart {
 			} else if (evt instanceof StyledText) {
 				StyledText stxt = (StyledText) evt;
 				data.setLongDoc(stxt.getText());
-			} else if (evt instanceof Combo) {
-				;
 			}
 			viewer.refresh();
 			setDirty(true);
@@ -407,7 +419,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 			public void widgetSelected(SelectionEvent event) {
 				try {
 					saveAs();
-					isDirtyFlag = false;
+					setDirty(false);
 				} catch (Exception e) {
 					logger.error("Problem exporting to file", e);
 				}

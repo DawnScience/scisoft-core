@@ -144,7 +144,7 @@ public class PtychoTreeUtils {
 									PtychoNode leafChild = leafChildren.get(l);
 									json.append("\"" + leafChild.getData().getName() +"\"");
 									json.append(":");
-									json.append(getValue(leafChild.getData().getDefaultValue()));
+									json.append(getValue(leafChild.getData().getDefaultValue(), leafChild.getData().getType()));
 									if (l < leafChildren.size() - 1)
 										json.append(",");
 								}
@@ -152,7 +152,7 @@ public class PtychoTreeUtils {
 								if (k < leafs.size() - 1)
 									json.append(",");
 							} else {
-								json.append(getValue(leaf.getData().getDefaultValue()));
+								json.append(getValue(leaf.getData().getDefaultValue(), leaf.getData().getType()));
 								if (k < leafs.size() - 1)
 									json.append(",");
 							}
@@ -161,14 +161,14 @@ public class PtychoTreeUtils {
 						if (j < children.size() - 1)
 							json.append(",");
 					} else {
-						json.append(getValue(child.getData().getDefaultValue()));
+						json.append(getValue(child.getData().getDefaultValue(), child.getData().getType()));
 						if (j < children.size() - 1)
 							json.append(",");
 					}
 				}
 				json.append("}");
 			} else {
-				json.append(getValue(node.getData().getDefaultValue()));
+				json.append(getValue(node.getData().getDefaultValue(), node.getData().getType()));
 			}
 			
 			if (i < tree.size() - 1)
@@ -178,10 +178,13 @@ public class PtychoTreeUtils {
 		return json.toString();
 	}
 
-	private static String getValue(String value) {
-		if ((value.startsWith("\"[") && value.endsWith("]\"")) ||
-				(value.startsWith("\"\"") && value.endsWith("\"\"")))
-			return value.substring(1, value.length() - 2);
-		return value;
+	private static String getValue(String value, String type) {
+		if (((value.startsWith("[") && value.endsWith("]")) ||
+				(value.startsWith("\"") && value.endsWith("\"")))
+				|| (type.equals("int")||(type.equals("float")))) {
+			if(value.equals("") || value.equals("None")) return "\"\"";
+			return value;
+		}
+		return "\"" + value + "\"";
 	}
 }

@@ -36,10 +36,8 @@ public class Crop2DOperation extends AbstractOperation<Crop2DModel, OperationDat
 	}
 	
 	protected OperationData process(IDataset input, IMonitor monitor) {
-		int[] xMinIndex;
-		int[] xMaxIndex;
-		int[] yMinIndex;
-		int[] yMaxIndex;
+		int[] minIndices = new int[2];
+		int[] maxIndices = new int[2];
 		
 		Double xMinVal = model.getxMin();
 		Double xMaxVal = model.getxMax();
@@ -52,12 +50,14 @@ public class Crop2DOperation extends AbstractOperation<Crop2DModel, OperationDat
 		ILazyDataset theXAxis = axes[0];
 		ILazyDataset theYAxis = axes[1];
 		
-		xMinIndex = new int[]{DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theXAxis, xMinVal)};
-		xMaxIndex = new int[]{DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theXAxis, xMaxVal)};
+		minIndices[0] = DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theXAxis, xMinVal);
+		maxIndices[0] = DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theXAxis, xMaxVal);
 		
-		yMinIndex = new int[]{DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theXAxis, yMinVal)};
-		yMaxIndex = new int[]{DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theXAxis, yMaxVal)};
+		minIndices[1] = DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theYAxis, yMinVal);
+		maxIndices[1] = DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theYAxis, yMaxVal);
 		
-		}
+		return new OperationData(input.getSlice(minIndices, maxIndices, null));
+		
 	}
 }
+

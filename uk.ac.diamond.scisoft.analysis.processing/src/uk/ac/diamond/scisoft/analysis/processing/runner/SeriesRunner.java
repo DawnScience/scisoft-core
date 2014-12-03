@@ -85,13 +85,27 @@ class SeriesRunner implements IOperationRunner {
 					}
 
 					OperationData tmp = i.execute(data.getData(), context.getMonitor());
-					if (fullssm!=null) tmp.getData().setMetadata(fullssm);
+					//TODO only set metadata if doesnt already contain it!
+					//TODO continue if null;
+					
+					if (tmp == null) {
+						data = null;
+						break;
+					}
+					
+					List<SliceFromSeriesMetadata> md = tmp.getData().getMetadata(SliceFromSeriesMetadata.class);
+					
+					if (md == null || md.isEmpty())  {
+						tmp.getData().setMetadata(fullssm);
+					} else {
+						fullssm = md.get(0);
+					}
 					
 					visitor.notify(i, tmp); // Optionally send intermediate result
 					data = i.isPassUnmodifiedData() ? data : tmp;
 				}
 				logger.debug("Slice ran in: " +(System.currentTimeMillis()-start)/1000. + " s : Thread" +Thread.currentThread().toString());
-
+				if (data == null) return;
 				visitor.executed(data, context.getMonitor()); // Send result.
 				if (context.getMonitor() != null) context.getMonitor().worked(1);
 			}

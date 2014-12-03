@@ -361,6 +361,12 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1dOperation"
             name="Crop Data [1D]">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.AveragingOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.AveragingOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            name="Average All Data">
+      </operation>
    </extension>
    <extension
          point="com.isencia.passerelle.engine.actorGroups">

@@ -120,11 +120,18 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 			
 			data.setMetadata(fullssm);
 			
+
 			if (operation==null) operation = createOperation();
 			OperationData tmp = operation.execute(data, context!=null ? context.getMonitor() : null);
+
+			if (tmp == null) return null;
+			
 			data = operation.isPassUnmodifiedData() ? data : tmp.getData();
 
-			tmp.getData().setMetadata(fullssm);
+			List<SliceFromSeriesMetadata> md = tmp.getData().getMetadata(SliceFromSeriesMetadata.class);
+			
+			if (md == null || md.isEmpty()) tmp.getData().setMetadata(fullssm);
+			
 			if (context!=null && context.getVisitor()!=null) {
 				context.getVisitor().notify(operation, tmp); // Optionally send intermediate result
 			

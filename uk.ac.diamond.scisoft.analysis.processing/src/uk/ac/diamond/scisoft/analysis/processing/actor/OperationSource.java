@@ -217,8 +217,13 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 		DataMessageComponent ret = new DataMessageComponent();
 		
 		final IDataset slice = info.getSlice();
-		SliceFromSeriesMetadata ssm = (SliceFromSeriesMetadata)info.getMetadata(SliceFromSeriesMetadata.class).get(0);
-		slice.setMetadata(ssm);
+		if (context != null && context.getData() != null) {
+			List<SliceFromSeriesMetadata> lssm = context.getData().getMetadata(SliceFromSeriesMetadata.class);
+			if (lssm != null && !lssm.isEmpty()){
+				SliceFromSeriesMetadata ssm = lssm.get(0);
+				slice.setMetadata(ssm);
+			}
+		}
 		
 		ret.setList(slice);
 		
@@ -229,7 +234,7 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 			ret.putScalar("dataset_path",  getDatasetPath(info.getTrigger()));
 			ret.putScalar("slice_name",    info.getName());
 		}
-		
+
 		return ret;
 	}
 

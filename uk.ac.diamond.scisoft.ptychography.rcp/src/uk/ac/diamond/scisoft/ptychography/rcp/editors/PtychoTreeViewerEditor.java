@@ -362,8 +362,13 @@ public class PtychoTreeViewerEditor extends EditorPart {
 	}
 
 	private void saveJSon() {
-		if (fileSavedPath == null)
-			return;
+		if (fileSavedPath == null) {
+			//trigger the save wizard
+			saveAs();
+			if (fileSavedPath == null)
+				return;
+			setDirty(false);
+		}
 		jsonSavedPath = fileSavedPath.substring(0, fileSavedPath.length() - 3);
 		jsonSavedPath += "json";
 		String json = PtychoTreeUtils.jsonMarshal(tree);
@@ -486,7 +491,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 	private void saveAs() {
 		FileDialog dialog = new FileDialog(Display.getDefault()
 				.getActiveShell(), SWT.SAVE);
-		dialog.setText("Save as");
+		dialog.setText("Choose file path and name to save parameter input");
 		String[] filterExtensions = new String[] {
 				"*.csv;*.CSV", "*.json;*.JSON",
 				"*.xml;*.XML" };

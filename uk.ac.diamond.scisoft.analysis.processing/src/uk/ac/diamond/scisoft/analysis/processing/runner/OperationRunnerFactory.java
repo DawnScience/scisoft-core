@@ -16,7 +16,6 @@ public class OperationRunnerFactory {
 	private static final Map<ExecutionType, Class<? extends IOperationRunner>> runners;
 	static {
 		runners = new HashMap<ExecutionType, Class<? extends IOperationRunner>>(3);
-		runners.put(ExecutionType.GRAPH,    GraphRunner.class);
 		runners.put(ExecutionType.SERIES,   SeriesRunner.class);
 		runners.put(ExecutionType.PARALLEL, SeriesRunner.class);
 	}

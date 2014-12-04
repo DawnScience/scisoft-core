@@ -1,4 +1,4 @@
-package uk.ac.diamond.scisoft.analysis.processing.actor;
+package uk.ac.diamond.scisoft.analysis.processing.actor.actors;
 
 import java.io.File;
 import java.net.URI;

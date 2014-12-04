@@ -1,4 +1,4 @@
-package uk.ac.diamond.scisoft.analysis.processing.runner;
+package uk.ac.diamond.scisoft.analysis.processing.actor.runner;
 
 import java.io.FileWriter;
 
@@ -9,8 +9,8 @@ import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 
 import ptolemy.data.IntToken;
 import ptolemy.kernel.util.Location;
-import uk.ac.diamond.scisoft.analysis.processing.actor.OperationSource;
-import uk.ac.diamond.scisoft.analysis.processing.actor.OperationTransformer;
+import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationSource;
+import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationTransformer;
 
 import com.isencia.passerelle.core.Port;
 import com.isencia.passerelle.domain.et.ETDirector;

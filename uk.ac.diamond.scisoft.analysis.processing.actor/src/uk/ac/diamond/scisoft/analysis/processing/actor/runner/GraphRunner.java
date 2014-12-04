@@ -1,4 +1,4 @@
-package uk.ac.diamond.scisoft.analysis.processing.runner;
+package uk.ac.diamond.scisoft.analysis.processing.actor.runner;
 
 import java.util.ArrayList;
 import java.util.HashMap;

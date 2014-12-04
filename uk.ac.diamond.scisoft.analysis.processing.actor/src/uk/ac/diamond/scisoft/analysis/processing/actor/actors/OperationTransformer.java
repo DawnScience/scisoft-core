@@ -1,4 +1,4 @@
-package uk.ac.diamond.scisoft.analysis.processing.actor;
+package uk.ac.diamond.scisoft.analysis.processing.actor.actors;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
-import uk.ac.diamond.scisoft.analysis.processing.Activator;
 
 import com.isencia.passerelle.actor.ProcessingException;
 import com.isencia.passerelle.util.ptolemy.IAvailableChoices;
@@ -36,6 +35,11 @@ import com.isencia.passerelle.util.ptolemy.StringChoiceParameter;
  *
  */
 public class OperationTransformer extends AbstractDataMessageTransformer {
+	
+	private static IOperationService oservice;
+	public static void setOperationService(IOperationService s) {
+		oservice = s;
+	}
 	
 	private static final Logger logger = LoggerFactory.getLogger(OperationTransformer.class);
 	/**
@@ -63,8 +67,7 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 			@Override
 			public String[] getChoices() {
                 try {
-                	IOperationService service = (IOperationService)Activator.getService(IOperationService.class);
-                	Collection<String> ops = service.getRegisteredOperations();
+                	Collection<String> ops = oservice.getRegisteredOperations();
                 	return ops.toArray(new String[ops.size()]);
                 } catch (Exception ne) {
                 	return new String[]{"Please select a Data File"};
@@ -73,10 +76,9 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 			@Override
 			public Map<String,String> getVisibleChoices() {
                 try {
-                	IOperationService service = (IOperationService)Activator.getService(IOperationService.class);
-                	Collection<String>  ops = service.getRegisteredOperations();
+                  	Collection<String>  ops = oservice.getRegisteredOperations();
                 	Map<String, String> ret = new HashMap<String, String>(ops.size());
-                	for (String id : ops) ret.put(id, service.getName(id));
+                	for (String id : ops) ret.put(id, oservice.getName(id));
                 	return ret;
                } catch (Exception ne) {
                 	return null;
@@ -157,9 +159,8 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 	}
 
 	private IOperation<? extends IOperationModel, ? extends OperationData> createOperation() throws Exception {
-       	IOperationService service = (IOperationService)Activator.getService(IOperationService.class);
-        IOperation<IOperationModel, OperationData> op      = (IOperation<IOperationModel, OperationData>)service.create(operationId.getExpression());
-        IOperationModel omod = model.getValue(service.getModelClass(op.getId()));
+        IOperation<IOperationModel, OperationData> op      = (IOperation<IOperationModel, OperationData>)oservice.create(operationId.getExpression());
+        IOperationModel omod = model.getValue(oservice.getModelClass(op.getId()));
         op.setModel(omod);
         return op;
 	}

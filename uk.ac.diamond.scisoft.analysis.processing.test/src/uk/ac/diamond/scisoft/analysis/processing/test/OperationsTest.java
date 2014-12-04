@@ -23,7 +23,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
+import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationTransformer;
+import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.operations.ValueModel;
+import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerFactory;
+import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 
 /**
  * Works with ordinary junit but therefore does not test the extension points
@@ -47,7 +51,15 @@ public class OperationsTest {
 		
 		// Just read all these operations.
 		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.operations");
+	
+		OperationRunnerFactory.setRunner(ExecutionType.SERIES,   new SeriesRunner());
+		OperationRunnerFactory.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
+		OperationRunnerFactory.setRunner(ExecutionType.GRAPH,    new GraphRunner());
+	
+		OperationTransformer.setOperationService(service);
 	}
+	
+	
 	@Test
 	public void testGetService() throws Exception {
 		if (service == null) throw new Exception("Cannot get the service!");
@@ -212,6 +224,7 @@ public class OperationsTest {
 		context.setSeries(subtract, add);
 		service.execute(context);
 
+		Thread.sleep(1000);
 		if ( counter < 23 ) throw new Exception("Not all jobs completed before timeout in parallel run! Loop count was : "+counter);
 	
 	

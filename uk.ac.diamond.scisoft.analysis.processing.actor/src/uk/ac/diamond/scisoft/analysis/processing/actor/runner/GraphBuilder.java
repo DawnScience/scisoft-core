@@ -1,24 +1,29 @@
-package uk.ac.diamond.scisoft.analysis.processing.runner;
+package uk.ac.diamond.scisoft.analysis.processing.actor.runner;
 
+import java.io.FileWriter;
+
+import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
+import org.eclipse.dawnsci.analysis.api.processing.IOperationExporter;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 
 import ptolemy.data.IntToken;
 import ptolemy.kernel.util.Location;
-import uk.ac.diamond.scisoft.analysis.processing.actor.OperationSource;
-import uk.ac.diamond.scisoft.analysis.processing.actor.OperationTransformer;
+import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationSource;
+import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationTransformer;
 
 import com.isencia.passerelle.core.Port;
 import com.isencia.passerelle.domain.et.ETDirector;
 import com.isencia.passerelle.model.Flow;
 
-public class GraphBuilder {
+public class GraphBuilder implements IOperationExporter{
 
 	private IOperationContext context;
 
-	public GraphBuilder(IOperationContext context) {
+	@Override
+	public void init(IOperationContext context) {
 		this.context = context;
 	}
 
@@ -48,7 +53,7 @@ public class GraphBuilder {
         	final OperationTransformer opTrans = new OperationTransformer(flow, op.getName());
         	opTrans.setContext(context);
         	opTrans.setOperation((IOperation<IOperationModel, OperationData>)op);
-            new Location(opTrans, "_location").setLocation(new double[]{count*150, 100});
+            new Location(opTrans, "_location").setLocation(new double[]{count*200, 100});
             count++;
        	
         	flow.connect(from, opTrans.input);
@@ -56,6 +61,24 @@ public class GraphBuilder {
         }
         
         return flow;
+	}
+
+	@Override
+	public void export(String location) throws Exception {
+		
+		
+		final Flow         flo = createEventDirectorFlow();
+		final FileWriter   fw = new FileWriter(location);
+		try {
+		    flo.exportMoML(fw);
+		} finally {
+			fw.close();
+		}
+	}
+
+	@Override
+	public ExecutionType[] getExecutionTypes() {
+		return new ExecutionType[]{ExecutionType.GRAPH};
 	}
 
 }

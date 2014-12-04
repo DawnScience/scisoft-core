@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="operationRunner" name="Operation Runner" schema="schema/operationRunner.exsd"/>
    <extension
          point="org.eclipse.dawnsci.analysis.api.operation">
       <operation
@@ -374,6 +375,16 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.Crop2DModel"
             name="Crop Data [2D]">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.ARPESanalysis"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.XRegionProfileNormalize"
+            description="A filter which normalises the data frame by the profile of the selected region of the X axis."
+            icon="icons/region.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.ARPESXRegionProfileNormalize"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.XRegionProfileNormalizeModel"
+            name="ARPES X Region Profile Normalize"
+            visible="true">
+      </operation>
    </extension>
    <extension
          point="com.isencia.passerelle.engine.actorGroups">
@@ -398,6 +409,9 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operationTransformer"
             name="Operation Transformer">
       </actor>
+      <runner
+            class="uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner">
+      </runner>
    </extension>
 
 </plugin>

@@ -1,7 +1,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.test;
 
 import java.io.File;
-import java.io.FileWriter;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
@@ -14,8 +13,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
+import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphBuilder;
 import uk.ac.diamond.scisoft.analysis.processing.operations.ValueModel;
-import uk.ac.diamond.scisoft.analysis.processing.runner.GraphBuilder;
 
 import com.isencia.passerelle.model.Flow;
 
@@ -75,17 +74,12 @@ public class OperationMOMLExportTest {
 	
 		context.setSeries(subtract, add);
 
-		GraphBuilder builder = new GraphBuilder(context);
+		GraphBuilder builder = new GraphBuilder();
+		builder.init(context);
 		Flow flow = builder.createEventDirectorFlow();
-		
+
 		final File tmp = File.createTempFile("workflow", ".moml");
-		
-		final FileWriter fw = new FileWriter(tmp);
-		try {
-		    flow.exportMoML(fw);
-		} finally {
-			fw.close();
-		}
+		builder.export(tmp.getAbsolutePath());
 		
 		
 	}

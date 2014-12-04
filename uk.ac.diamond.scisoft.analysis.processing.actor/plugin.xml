@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="com.isencia.passerelle.engine.actorGroups">
+      <actorgroup
+            id="uk.ac.diamond.scisoft.analysis.processing.actorGroup"
+            name="Processing">
+      </actorgroup>
+   </extension>
+   <extension
+         point="com.isencia.passerelle.engine.actors">
+      <actor
+            class="uk.ac.diamond.scisoft.analysis.processing.actor.OperationSource"
+            group="uk.ac.diamond.scisoft.analysis.processing.actorGroup"
+            icon="icons/operationSource.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operationSource"
+            name="Operation Source">
+      </actor>
+      <actor
+            class="uk.ac.diamond.scisoft.analysis.processing.actor.OperationTransformer"
+            group="uk.ac.diamond.scisoft.analysis.processing.actorGroup"
+            icon="icons/operationTransformer.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operationTransformer"
+            name="Operation Transformer">
+      </actor>
+   </extension>
+   <extension
+         point="org.eclipse.dawnsci.analysis.api.operation">
+      <runner
+            class="uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner">
+      </runner>
+      <exporter
+            class="uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphBuilder">
+      </exporter>
+   </extension>
+
+</plugin>

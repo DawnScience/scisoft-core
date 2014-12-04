@@ -38,8 +38,12 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
+import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationTransformer;
+import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.operations.FittingModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.FunctionModel;
+import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerFactory;
+import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 
 public class FunctionsTest {
 
@@ -57,6 +61,11 @@ public class FunctionsTest {
 		
 		// Just read all these operations.
 		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.operations");
+		
+		OperationRunnerFactory.setRunner(ExecutionType.SERIES,   new SeriesRunner());
+		OperationRunnerFactory.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
+		OperationRunnerFactory.setRunner(ExecutionType.GRAPH,    new GraphRunner());
+		OperationTransformer.setOperationService(service);
 	}
 	
 	@Test

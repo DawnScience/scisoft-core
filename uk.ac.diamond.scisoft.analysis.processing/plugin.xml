@@ -360,6 +360,7 @@
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1DOperation"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1DOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1DModel"
             name="Crop Data [1D]">
       </operation>
       <operation
@@ -367,6 +368,12 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.AveragingOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
             name="Average All Data">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.Crop2DOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.twod.Crop2DOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.Crop2DModel"
+            name="Crop Data [2D]">
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.ARPESanalysis"
@@ -378,6 +385,30 @@
             name="ARPES X Region Profile Normalize"
             visible="true">
       </operation>
+   </extension>
+   <extension
+         point="com.isencia.passerelle.engine.actorGroups">
+      <actorgroup
+            id="uk.ac.diamond.scisoft.analysis.processing.actorGroup"
+            name="Processing">
+      </actorgroup>
+   </extension>
+   <extension
+         point="com.isencia.passerelle.engine.actors">
+      <actor
+            class="uk.ac.diamond.scisoft.analysis.processing.actor.OperationSource"
+            group="uk.ac.diamond.scisoft.analysis.processing.actorGroup"
+            icon="icons/operationSource.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operationSource"
+            name="Operation Source">
+      </actor>
+      <actor
+            class="uk.ac.diamond.scisoft.analysis.processing.actor.OperationTransformer"
+            group="uk.ac.diamond.scisoft.analysis.processing.actorGroup"
+            icon="icons/operationTransformer.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operationTransformer"
+            name="Operation Transformer">
+      </actor>
       <runner
             class="uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner">
       </runner>

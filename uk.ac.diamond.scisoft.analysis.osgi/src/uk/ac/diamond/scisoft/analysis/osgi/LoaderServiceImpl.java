@@ -40,18 +40,18 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 	}
 	
 	@Override
-	public IDataHolder getData(String filePath, final IMonitor monitor) throws Throwable {
+	public IDataHolder getData(String filePath, final IMonitor monitor) throws Exception {
 		return getData(filePath, false, monitor);
 	}
 
 	@Override
-	public IDataHolder getData(String filePath, boolean lazily, IMonitor monitor) throws Throwable {
+	public IDataHolder getData(String filePath, boolean lazily, IMonitor monitor) throws Exception {
 	    IMonitor mon = monitor!=null ? monitor : new IMonitor.Stub(); 
 		return LoaderFactory.getData(filePath, true, false, lazily, mon);
 	}
 
 	@Override
-	public IDataset getDataset(String filePath, final IMonitor monitor) throws Throwable {
+	public IDataset getDataset(String filePath, final IMonitor monitor) throws Exception {
 	    try {
 		    final URL uri = new URL(filePath);
 		    filePath = uri.getPath();
@@ -65,7 +65,7 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 	}
 
 	@Override
-	public IDataset getDataset(final String path, final String datasetName, final IMonitor monitor) throws Throwable {
+	public IDataset getDataset(final String path, final String datasetName, final IMonitor monitor) throws Exception {
 	    
 	    IMonitor mon = monitor!=null ? monitor : new IMonitor.Stub(); 
 		return LoaderFactory.getDataSet(path, datasetName, mon);

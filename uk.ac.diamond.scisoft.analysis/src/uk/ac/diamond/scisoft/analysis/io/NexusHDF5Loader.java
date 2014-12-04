@@ -34,9 +34,9 @@ import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
+import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 
 import uk.ac.diamond.scisoft.analysis.axis.AxisChoice;
-import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
 
 /**
  * This class is a HDF5Loader with extra things associated by the nexus standard. Primarily if an ILazyDataset is

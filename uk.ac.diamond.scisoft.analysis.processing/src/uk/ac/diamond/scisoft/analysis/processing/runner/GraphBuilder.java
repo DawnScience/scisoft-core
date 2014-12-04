@@ -1,5 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.runner;
 
+import java.io.FileWriter;
+
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -56,6 +58,18 @@ public class GraphBuilder {
         }
         
         return flow;
+	}
+
+	public void export(String location) throws Exception {
+		
+		
+		final Flow         flo = createEventDirectorFlow();
+		final FileWriter   fw = new FileWriter(location);
+		try {
+		    flo.exportMoML(fw);
+		} finally {
+			fw.close();
+		}
 	}
 
 }

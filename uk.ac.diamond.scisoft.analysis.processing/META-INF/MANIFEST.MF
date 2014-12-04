@@ -42,4 +42,5 @@ Bundle-ClassPath: .,
 Export-Package: uk.ac.diamond.scisoft.analysis.processing,
  uk.ac.diamond.scisoft.analysis.processing.operations,
  uk.ac.diamond.scisoft.analysis.processing.operations.mask,
+ uk.ac.diamond.scisoft.analysis.processing.runner,
  uk.ac.diamond.scisoft.analysis.processing.visitors

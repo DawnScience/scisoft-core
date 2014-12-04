@@ -32,7 +32,7 @@ import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadataImpl;
  * @author fcp94556
  *
  */
-class SeriesRunner implements IOperationRunner {
+public class SeriesRunner implements IOperationRunner {
 
 
 	private IOperationContext context;
@@ -130,6 +130,11 @@ class SeriesRunner implements IOperationRunner {
 		}
 		logger.debug("Data ran in: " +(System.currentTimeMillis()-start)/1000. + " s");
 		
+	}
+
+	@Override
+	public ExecutionType[] getExecutionTypes() {
+		return new ExecutionType[]{ExecutionType.SERIES, ExecutionType.PARALLEL};
 	}
 
 }

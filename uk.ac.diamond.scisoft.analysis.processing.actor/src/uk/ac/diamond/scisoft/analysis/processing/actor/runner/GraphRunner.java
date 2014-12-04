@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.dawb.passerelle.common.actors.ActorUtils;
+import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationRunner;
 
@@ -19,7 +20,7 @@ import com.isencia.passerelle.model.FlowManager;
  * @author fcp94556
  *
  */
-class GraphRunner  implements IOperationRunner {
+public class GraphRunner  implements IOperationRunner {
 
 	private IOperationContext context;
 
@@ -34,7 +35,8 @@ class GraphRunner  implements IOperationRunner {
 		
         MoMLParser.purgeAllModelRecords();
 
-		GraphBuilder builder = new GraphBuilder(context);
+		GraphBuilder builder = new GraphBuilder();
+		builder.init(context);
 		Flow flow = builder.createEventDirectorFlow();
 		
 		try {
@@ -95,4 +97,10 @@ class GraphRunner  implements IOperationRunner {
 			// Otherwise it worked ok
 		}
 	}
+	
+	@Override
+	public ExecutionType[] getExecutionTypes() {
+		return new ExecutionType[]{ExecutionType.GRAPH};
+	}
+
 }

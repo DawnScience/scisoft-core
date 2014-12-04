@@ -25,5 +25,14 @@
             name="Operation Transformer">
       </actor>
    </extension>
+   <extension
+         point="org.eclipse.dawnsci.analysis.api.operation">
+      <runner
+            class="uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner">
+      </runner>
+      <exporter
+            class="uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphBuilder">
+      </exporter>
+   </extension>
 
 </plugin>

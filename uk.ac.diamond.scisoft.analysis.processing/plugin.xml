@@ -378,6 +378,9 @@
             name="ARPES X Region Profile Normalize"
             visible="true">
       </operation>
+      <runner
+            class="uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner">
+      </runner>
    </extension>
 
 </plugin>

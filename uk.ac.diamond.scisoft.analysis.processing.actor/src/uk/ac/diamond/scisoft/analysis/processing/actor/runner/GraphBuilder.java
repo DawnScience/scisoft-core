@@ -2,8 +2,10 @@ package uk.ac.diamond.scisoft.analysis.processing.actor.runner;
 
 import java.io.FileWriter;
 
+import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
+import org.eclipse.dawnsci.analysis.api.processing.IOperationExporter;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 
@@ -16,11 +18,12 @@ import com.isencia.passerelle.core.Port;
 import com.isencia.passerelle.domain.et.ETDirector;
 import com.isencia.passerelle.model.Flow;
 
-public class GraphBuilder {
+public class GraphBuilder implements IOperationExporter{
 
 	private IOperationContext context;
 
-	public GraphBuilder(IOperationContext context) {
+	@Override
+	public void init(IOperationContext context) {
 		this.context = context;
 	}
 
@@ -60,6 +63,7 @@ public class GraphBuilder {
         return flow;
 	}
 
+	@Override
 	public void export(String location) throws Exception {
 		
 		
@@ -70,6 +74,11 @@ public class GraphBuilder {
 		} finally {
 			fw.close();
 		}
+	}
+
+	@Override
+	public ExecutionType[] getExecutionTypes() {
+		return new ExecutionType[]{ExecutionType.GRAPH};
 	}
 
 }

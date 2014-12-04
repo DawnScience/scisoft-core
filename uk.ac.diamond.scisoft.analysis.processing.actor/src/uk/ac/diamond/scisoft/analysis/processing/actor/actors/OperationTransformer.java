@@ -36,12 +36,13 @@ import com.isencia.passerelle.util.ptolemy.StringChoiceParameter;
  */
 public class OperationTransformer extends AbstractDataMessageTransformer {
 	
+	
+	private static final Logger logger = LoggerFactory.getLogger(OperationTransformer.class);
+
 	private static IOperationService oservice;
 	public static void setOperationService(IOperationService s) {
 		oservice = s;
 	}
-	
-	private static final Logger logger = LoggerFactory.getLogger(OperationTransformer.class);
 	/**
 	 * 
 	 */

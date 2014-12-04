@@ -74,9 +74,10 @@ public class OperationMOMLExportTest {
 	
 		context.setSeries(subtract, add);
 
-		GraphBuilder builder = new GraphBuilder(context);
+		GraphBuilder builder = new GraphBuilder();
+		builder.init(context);
 		Flow flow = builder.createEventDirectorFlow();
-		
+
 		final File tmp = File.createTempFile("workflow", ".moml");
 		builder.export(tmp.getAbsolutePath());
 		

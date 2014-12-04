@@ -1,10 +1,8 @@
 package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-import org.dawb.common.util.eclipse.BundleUtils;
 import org.dawnsci.python.rpc.action.InjectPyDevConsole;
 import org.dawnsci.python.rpc.action.InjectPyDevConsoleAction;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -60,6 +58,7 @@ import uk.ac.diamond.scisoft.ptychography.rcp.Activator;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoData;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoNode;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoTreeUtils;
+import uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferenceConstants;
 import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoConstants;
 import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoUtils;
 
@@ -108,14 +107,18 @@ public class PtychoTreeViewerEditor extends EditorPart {
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
-		IPreferenceStore store = Activator.getPlottingPreferenceStore();
-		fileSavedPath = store.getString(PtychoConstants.FILE_SAVE_PATH);
+		IPreferenceStore store = Activator.getPtychoPreferenceStore();
+		fileSavedPath = store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
 		fullPath = PtychoUtils.getFullPath(input);
 		try {
 			String path = "";
-			if (fileSavedPath != null || !fileSavedPath.equals(""))
-				path = fileSavedPath;
-			else
+			if (fileSavedPath != null || !fileSavedPath.equals("")) {
+				File f = new File(fileSavedPath);
+				if (!f.exists())
+					path = fullPath;
+				else
+					path = fileSavedPath;
+			} else
 				path = fullPath;
 			levels = PtychoUtils.loadSpreadSheet(path);
 			tree = PtychoTreeUtils.populate(levels);
@@ -176,15 +179,21 @@ public class PtychoTreeViewerEditor extends EditorPart {
 		propertyListener = new IPropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent event) {
-				if (isInterestingProperty(event))
-					fileSavedPath = event.getProperty();
+				if (isInterestingProperty(event)) {
+					String propName = event.getProperty();
+					if (PtychoPreferenceConstants.FILE_SAVE_PATH.equals(propName))
+						fileSavedPath = event.getProperty();
+					else if (PtychoPreferenceConstants.EPI_RESOURCE_PATH.equals(propName))
+						;
+				}
 			}
 			private boolean isInterestingProperty(PropertyChangeEvent event) {
-				final String propName = event.getProperty();
-				return PtychoConstants.FILE_SAVE_PATH.equals(propName);
+				String propName = event.getProperty();
+				return PtychoPreferenceConstants.FILE_SAVE_PATH.equals(propName) || 
+						PtychoPreferenceConstants.EPI_RESOURCE_PATH.equals(propName);
 			}
 		};
-		Activator.getPlottingPreferenceStore().addPropertyChangeListener(propertyListener);
+		Activator.getPtychoPreferenceStore().addPropertyChangeListener(propertyListener);
 	}
 
 	@Override
@@ -371,13 +380,9 @@ public class PtychoTreeViewerEditor extends EditorPart {
 	private String getPythonCmd() {
 		StringBuilder pythonCmd = new StringBuilder();
 		pythonCmd.append("run ");
-		try {
-			File bundlePath = BundleUtils.getBundleLocation(Activator.PLUGIN_ID);
-			pythonCmd.append(bundlePath + File.separator + "Ptycho"+ File.separator + "LaunchPtycho.py ");
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		IPreferenceStore store = Activator.getPtychoPreferenceStore();
+		String epiFolder = store.getString(PtychoPreferenceConstants.EPI_RESOURCE_PATH);
+		pythonCmd.append(epiFolder + File.separator + "LaunchPtycho.py ");
 		pythonCmd.append(jsonSavedPath);
 		pythonCmd.append("\n");
 		return pythonCmd.toString();
@@ -533,8 +538,8 @@ public class PtychoTreeViewerEditor extends EditorPart {
 		if (fileSavedPath == null) {
 			return;
 		}
-		IPreferenceStore store = Activator.getPlottingPreferenceStore();
-		store.setValue(PtychoConstants.FILE_SAVE_PATH, fileSavedPath);
+		IPreferenceStore store = Activator.getPtychoPreferenceStore();
+		store.setValue(PtychoPreferenceConstants.FILE_SAVE_PATH, fileSavedPath);
 		try {
 			final File file = new File(fileSavedPath);
 			if (file.exists()) {
@@ -573,7 +578,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 			darkGray.dispose();
 			black.dispose();
 		}
-		Activator.getPlottingPreferenceStore().removePropertyChangeListener(propertyListener);
+		Activator.getPtychoPreferenceStore().removePropertyChangeListener(propertyListener);
 	}
 
 	@Override

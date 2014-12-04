@@ -155,6 +155,21 @@
             name="Ptychography">
       </introPageRegister>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.dawnsci.preferences.root"
+            class="uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferencePage"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.ptychoPreferencePage"
+            name="Ptychography preferences">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferenceInitializer">
+      </initializer>
+   </extension>
    <!-- comment out for now until the ptychography perspective is fully done-->
    <!--
    <extension

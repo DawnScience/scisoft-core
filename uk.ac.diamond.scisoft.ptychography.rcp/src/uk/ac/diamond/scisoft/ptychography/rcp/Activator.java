@@ -18,7 +18,7 @@ public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
 
-	private static IPreferenceStore plottingPreferences;
+	private static IPreferenceStore ptychoPreferences;
 	
 	/**
 	 * The constructor
@@ -64,11 +64,11 @@ public class Activator extends AbstractUIPlugin {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
 
-	public static IPreferenceStore getPlottingPreferenceStore() {
-		if (plottingPreferences != null)
-			return plottingPreferences;
-		plottingPreferences = new ScopedPreferenceStore(InstanceScope.INSTANCE,
+	public static IPreferenceStore getPtychoPreferenceStore() {
+		if (ptychoPreferences != null)
+			return ptychoPreferences;
+		ptychoPreferences = new ScopedPreferenceStore(InstanceScope.INSTANCE,
 				"uk.ac.diamond.scisoft.ptychography.rcp");
-		return plottingPreferences;
+		return ptychoPreferences;
 	}
 }

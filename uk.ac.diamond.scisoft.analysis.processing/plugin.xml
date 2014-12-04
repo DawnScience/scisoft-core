@@ -359,6 +359,7 @@
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1DOperation"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1DOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1DModel"
             name="Crop Data [1D]">
       </operation>
       <operation
@@ -366,6 +367,12 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.AveragingOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
             name="Average All Data">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.Crop2DOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.twod.Crop2DOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.Crop2DModel"
+            name="Crop Data [2D]">
       </operation>
    </extension>
    <extension

@@ -3,6 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Processing Actors
 Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis.processing.actor;singleton:=true
 Bundle-Version: 1.0.0.qualifier
+Eclipse-RegisterBuddy: com.isencia.passerelle.engine, ptolemy.core, com.isencia.passerelle.actor
 Bundle-Vendor: DLS
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.dawb.passerelle.actors;bundle-version="1.0.0",

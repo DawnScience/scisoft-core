@@ -1,7 +1,10 @@
 package uk.ac.diamond.scisoft.ptychography.rcp;
 
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -14,6 +17,8 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
+
+	private static IPreferenceStore plottingPreferences;
 	
 	/**
 	 * The constructor
@@ -57,5 +62,13 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
+	}
+
+	public static IPreferenceStore getPlottingPreferenceStore() {
+		if (plottingPreferences != null)
+			return plottingPreferences;
+		plottingPreferences = new ScopedPreferenceStore(InstanceScope.INSTANCE,
+				"uk.ac.diamond.scisoft.ptychography.rcp");
+		return plottingPreferences;
 	}
 }

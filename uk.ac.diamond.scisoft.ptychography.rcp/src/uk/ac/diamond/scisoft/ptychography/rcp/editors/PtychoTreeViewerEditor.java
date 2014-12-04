@@ -10,7 +10,10 @@ import org.dawnsci.python.rpc.action.InjectPyDevConsoleAction;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -85,14 +88,14 @@ public class PtychoTreeViewerEditor extends EditorPart {
 	private String fullPath;
 	private String fileSavedPath;
 	private String jsonSavedPath;
+	private IPropertyChangeListener propertyListener;
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		List<PtychoData> list = PtychoTreeUtils.extract(tree);
 		if (fileSavedPath == null)
-			PtychoUtils.saveCSVFile(fullPath, list);
-		else
-			PtychoUtils.saveCSVFile(fileSavedPath, list);
+			doSaveAs();
+		PtychoUtils.saveCSVFile(fileSavedPath, list);
 		setDirty(false);
 	}
 
@@ -105,9 +108,16 @@ public class PtychoTreeViewerEditor extends EditorPart {
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
+		IPreferenceStore store = Activator.getPlottingPreferenceStore();
+		fileSavedPath = store.getString(PtychoConstants.FILE_SAVE_PATH);
+		fullPath = PtychoUtils.getFullPath(input);
 		try {
-			fullPath = PtychoUtils.getFullPath(input);
-			levels = PtychoUtils.loadSpreadSheet(fullPath);
+			String path = "";
+			if (fileSavedPath != null || !fileSavedPath.equals(""))
+				path = fileSavedPath;
+			else
+				path = fullPath;
+			levels = PtychoUtils.loadSpreadSheet(path);
 			tree = PtychoTreeUtils.populate(levels);
 		} catch (Exception e) {
 			logger.error("Error loading spreadsheet file:" + e.getMessage());
@@ -163,6 +173,18 @@ public class PtychoTreeViewerEditor extends EditorPart {
 				}
 			}
 		};
+		propertyListener = new IPropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if (isInterestingProperty(event))
+					fileSavedPath = event.getProperty();
+			}
+			private boolean isInterestingProperty(PropertyChangeEvent event) {
+				final String propName = event.getProperty();
+				return PtychoConstants.FILE_SAVE_PATH.equals(propName);
+			}
+		};
+		Activator.getPlottingPreferenceStore().addPropertyChangeListener(propertyListener);
 	}
 
 	@Override
@@ -362,7 +384,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 	}
 
 	private void saveJSon() {
-		if (fileSavedPath == null) {
+		if (fileSavedPath == null || fileSavedPath.equals("")) {
 			//trigger the save wizard
 			saveAs();
 			if (fileSavedPath == null)
@@ -511,6 +533,8 @@ public class PtychoTreeViewerEditor extends EditorPart {
 		if (fileSavedPath == null) {
 			return;
 		}
+		IPreferenceStore store = Activator.getPlottingPreferenceStore();
+		store.setValue(PtychoConstants.FILE_SAVE_PATH, fileSavedPath);
 		try {
 			final File file = new File(fileSavedPath);
 			if (file.exists()) {
@@ -549,6 +573,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 			darkGray.dispose();
 			black.dispose();
 		}
+		Activator.getPlottingPreferenceStore().removePropertyChangeListener(propertyListener);
 	}
 
 	@Override

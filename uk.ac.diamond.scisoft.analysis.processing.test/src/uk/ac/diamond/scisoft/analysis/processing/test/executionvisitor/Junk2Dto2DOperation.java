@@ -9,8 +9,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
-
-import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
+import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 
 public class Junk2Dto2DOperation extends AbstractOperation<Junk2Dto2Dmodel, OperationData> implements ITestOperation {
 

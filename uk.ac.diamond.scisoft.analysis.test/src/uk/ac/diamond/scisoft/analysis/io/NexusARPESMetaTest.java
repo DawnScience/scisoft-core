@@ -16,9 +16,8 @@ import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.metadata.ARPESMetadata;
+import org.eclipse.dawnsci.analysis.dataset.metadata.ARPESMetadataImpl;
 import org.junit.Test;
-
-import uk.ac.diamond.scisoft.analysis.metadata.ARPESMetadataImpl;
 
 public class NexusARPESMetaTest {
 

@@ -17,8 +17,7 @@ import org.eclipse.dawnsci.analysis.api.slice.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.api.slice.SliceVisitor;
 import org.eclipse.dawnsci.analysis.api.slice.Slicer;
 import org.eclipse.dawnsci.analysis.api.slice.SourceInformation;
-
-import uk.ac.diamond.scisoft.analysis.metadata.OriginMetadataImpl;
+import org.eclipse.dawnsci.analysis.dataset.metadata.OriginMetadataImpl;
 
 /**
  * Runs a pipeline by looping the services of operations.

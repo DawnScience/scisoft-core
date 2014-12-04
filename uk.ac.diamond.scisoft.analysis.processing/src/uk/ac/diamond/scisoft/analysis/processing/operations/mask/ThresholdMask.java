@@ -20,8 +20,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
-
-import uk.ac.diamond.scisoft.analysis.metadata.MaskMetadataImpl;
+import org.eclipse.dawnsci.analysis.dataset.metadata.MaskMetadataImpl;
 
 public class ThresholdMask extends AbstractOperation<ThresholdMaskModel, OperationData> {
 

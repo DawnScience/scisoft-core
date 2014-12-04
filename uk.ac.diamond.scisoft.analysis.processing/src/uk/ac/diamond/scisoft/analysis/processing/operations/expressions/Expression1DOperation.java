@@ -13,8 +13,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-
-import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
+import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 
 public class Expression1DOperation<T extends Expression1DModel> extends AbstractOperation<Expression1DModel ,OperationData> {
 

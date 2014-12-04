@@ -9,9 +9,8 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
+import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.metadata.ErrorMetadataImpl;
-
-import uk.ac.diamond.scisoft.analysis.metadata.AxesMetadataImpl;
 
 public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, OperationData> implements ITestOperation {
 

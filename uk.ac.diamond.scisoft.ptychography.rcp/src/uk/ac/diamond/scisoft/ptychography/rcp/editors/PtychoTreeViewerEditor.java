@@ -362,7 +362,9 @@ public class PtychoTreeViewerEditor extends EditorPart {
 	}
 
 	private void saveJSon() {
-		jsonSavedPath = fullPath.substring(0, fullPath.length() - 3);
+		if (fileSavedPath == null)
+			return;
+		jsonSavedPath = fileSavedPath.substring(0, fileSavedPath.length() - 3);
 		jsonSavedPath += "json";
 		String json = PtychoTreeUtils.jsonMarshal(tree);
 		PtychoUtils.saveJSon(jsonSavedPath, json);

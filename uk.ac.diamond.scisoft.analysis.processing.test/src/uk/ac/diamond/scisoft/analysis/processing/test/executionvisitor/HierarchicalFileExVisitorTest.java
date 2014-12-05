@@ -10,7 +10,6 @@ import java.util.Arrays;
 
 import org.dawb.common.services.ServiceManager;
 import org.dawnsci.persistence.PersistenceServiceCreator;
-import org.eclipse.dawnsci.hdf5.operation.HierarchicalFileExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
@@ -27,11 +26,15 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
+import org.eclipse.dawnsci.hdf5.operation.HierarchicalFileExecutionVisitor;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
+import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
+import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
+import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 
 public class HierarchicalFileExVisitorTest {
 	
@@ -39,6 +42,11 @@ public class HierarchicalFileExVisitorTest {
 
 	@BeforeClass
 	public static void before() throws Exception {
+		
+		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
+		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
+		OperationRunnerImpl.setRunner(ExecutionType.GRAPH,    new GraphRunner());
+		
 		ServiceManager.setService(IPersistenceService.class, PersistenceServiceCreator.createPersistenceService());
 		service = (IOperationService)Activator.getService(IOperationService.class);
 		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.test.executionvisitor");

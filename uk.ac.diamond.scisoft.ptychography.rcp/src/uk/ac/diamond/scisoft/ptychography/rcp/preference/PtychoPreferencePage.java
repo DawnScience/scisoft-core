@@ -21,6 +21,8 @@ import uk.ac.diamond.scisoft.ptychography.rcp.Activator;
 
 public class PtychoPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
+	public static final String ID = "uk.ac.diamond.scisoft.ptychography.rcp.ptychoPreferencePage";
+
 	public PtychoPreferencePage() {
 		super(GRID);
 	}

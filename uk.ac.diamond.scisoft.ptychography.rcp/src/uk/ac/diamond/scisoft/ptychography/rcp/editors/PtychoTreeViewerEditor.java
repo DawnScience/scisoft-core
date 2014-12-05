@@ -59,6 +59,7 @@ import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoData;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoNode;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoTreeUtils;
 import uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferenceConstants;
+import uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferencePage;
 import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoConstants;
 import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoUtils;
 
@@ -493,7 +494,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 											.getWorkbench()
 											.getActiveWorkbenchWindow()
 											.getShell(),
-											PtychoTreeViewerEditor.ID, null,
+											PtychoPreferencePage.ID, null,
 											null);
 							if (pref != null)
 								pref.open();

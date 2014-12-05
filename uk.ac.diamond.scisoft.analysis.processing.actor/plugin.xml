@@ -4,24 +4,24 @@
    <extension
          point="com.isencia.passerelle.engine.actorGroups">
       <actorgroup
-            id="uk.ac.diamond.scisoft.analysis.processing.actorGroup"
+            id="uk.ac.diamond.scisoft.analysis.processing.actors.actorGroup"
             name="Processing">
       </actorgroup>
    </extension>
    <extension
          point="com.isencia.passerelle.engine.actors">
       <actor
-            class="uk.ac.diamond.scisoft.analysis.processing.actor.OperationSource"
-            group="uk.ac.diamond.scisoft.analysis.processing.actorGroup"
+            class="uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationSource"
+            group="uk.ac.diamond.scisoft.analysis.processing.actors.actorGroup"
             icon="icons/operationSource.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operationSource"
+            id="uk.ac.diamond.scisoft.analysis.processing.actors.operationSource"
             name="Operation Source">
       </actor>
       <actor
-            class="uk.ac.diamond.scisoft.analysis.processing.actor.OperationTransformer"
-            group="uk.ac.diamond.scisoft.analysis.processing.actorGroup"
+            class="uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationTransformer"
+            group="uk.ac.diamond.scisoft.analysis.processing.actors.actorGroup"
             icon="icons/operationTransformer.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operationTransformer"
+            id="uk.ac.diamond.scisoft.analysis.processing.actors.operationTransformer"
             name="Operation Transformer">
       </actor>
    </extension>

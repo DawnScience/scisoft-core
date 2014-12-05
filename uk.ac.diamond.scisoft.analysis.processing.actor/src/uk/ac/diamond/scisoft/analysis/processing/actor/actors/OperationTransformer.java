@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.dawb.passerelle.actors.data.config.IOperationModelInstanceProvider;
 import org.dawb.passerelle.actors.data.config.OperationModelParameter;
 import org.dawb.passerelle.common.actors.AbstractDataMessageTransformer;
 import org.dawb.passerelle.common.message.MessageUtils;
@@ -34,7 +35,7 @@ import com.isencia.passerelle.util.ptolemy.StringChoiceParameter;
  * @author fcp94556
  *
  */
-public class OperationTransformer extends AbstractDataMessageTransformer {
+public class OperationTransformer extends AbstractDataMessageTransformer implements IOperationModelInstanceProvider{
 	
 	
 	private static final Logger logger = LoggerFactory.getLogger(OperationTransformer.class);
@@ -95,6 +96,13 @@ public class OperationTransformer extends AbstractDataMessageTransformer {
 		registerConfigurableParameter(model);
 
 	}
+
+	@Override
+	public Class<? extends IOperationModel> getModelClass() throws Exception {
+		final String opId = operationId.getExpression();
+		if (opId !=null) return oservice.getModelClass(opId);
+		return null;
+ 	}
 
 	private static long nullNameCount = 0;
 	private static String createNonNullName(String name) {

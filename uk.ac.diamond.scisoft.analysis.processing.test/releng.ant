@@ -26,6 +26,7 @@
 				<pathelement location="${workspace.git.loc}/dawn-eclipse.git/org.eclipse.dawnsci.analysis.api/bin" />
 				<pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis/bin" />
 				<pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis/jars/*" />
+				<pathelement location="${workspace.git.loc}/scisoft-core.git/uk.ac.diamond.scisoft.analysis.processing.actor/bin" />
 				<pathelement location="${workspace.git.loc}/dawn-eclipse.git/org.eclipse.dawnsci.analysis.dataset/bin" />
 				<pathelement location="${workspace.git.loc}/dawn-eclipse.git/org.eclipse.dawnsci.analysis.tree/bin" />
 				<pathelement location="${workspace.git.loc}/dawn-eclipse.git/org.eclipse.dawnsci.hdf5/bin" />

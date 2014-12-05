@@ -38,6 +38,10 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
+import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationTransformer;
+import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
+import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerFactory;
+import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 import uk.ac.diamond.scisoft.analysis.processing.visitors.HierarchicalFileExecutionVisitor;
 
 public class HierarchicalFileExVisitorTest {
@@ -46,6 +50,11 @@ public class HierarchicalFileExVisitorTest {
 
 	@BeforeClass
 	public static void before() throws Exception {
+		
+		OperationRunnerFactory.setRunner(ExecutionType.SERIES,   new SeriesRunner());
+		OperationRunnerFactory.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
+		OperationRunnerFactory.setRunner(ExecutionType.GRAPH,    new GraphRunner());
+		
 		ServiceManager.setService(IPersistenceService.class, PersistenceServiceCreator.createPersistenceService());
 		service = (IOperationService)Activator.getService(IOperationService.class);
 		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.test.executionvisitor");

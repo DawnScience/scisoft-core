@@ -217,14 +217,6 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 		DataMessageComponent ret = new DataMessageComponent();
 		
 		final IDataset slice = info.getSlice();
-		if (context != null && context.getData() != null) {
-			List<SliceFromSeriesMetadata> lssm = context.getData().getMetadata(SliceFromSeriesMetadata.class);
-			if (lssm != null && !lssm.isEmpty()){
-				SliceFromSeriesMetadata ssm = lssm.get(0);
-				slice.setMetadata(ssm);
-			}
-		}
-		
 		ret.setList(slice);
 		
 		if (getSourcePath()!=null) {

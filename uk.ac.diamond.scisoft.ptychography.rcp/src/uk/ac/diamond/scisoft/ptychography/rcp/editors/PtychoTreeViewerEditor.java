@@ -128,7 +128,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 			e.printStackTrace();
 		}
 		//save the json right away
-		saveJSon();
+//		saveJSon();
 
 		setSite(site);
 		setInput(input);
@@ -361,8 +361,11 @@ public class PtychoTreeViewerEditor extends EditorPart {
 		});
 
 		final InjectPyDevConsoleAction runPython = new InjectPyDevConsoleAction("Open plotted data in python console") {
+			@Override
 			public void run() {
 				saveJSon();
+				// reinject command
+				this.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd());
 				super.run();
 			}
 		};

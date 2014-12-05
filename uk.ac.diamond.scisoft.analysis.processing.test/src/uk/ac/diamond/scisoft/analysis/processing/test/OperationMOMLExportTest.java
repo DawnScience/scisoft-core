@@ -3,6 +3,7 @@ package uk.ac.diamond.scisoft.analysis.processing.test;
 import java.io.File;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
@@ -13,8 +14,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
+import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationTransformer;
 import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphBuilder;
+import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.operations.ValueModel;
+import uk.ac.diamond.scisoft.analysis.processing.runner.OperationExporterImpl;
+import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
+import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 
 import com.isencia.passerelle.model.Flow;
 
@@ -37,6 +43,12 @@ public class OperationMOMLExportTest {
 		
 		// Just read all these operations.
 		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.operations");
+		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
+		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
+		OperationRunnerImpl.setRunner(ExecutionType.GRAPH,    new GraphRunner());
+		OperationExporterImpl.setRunner(ExecutionType.GRAPH,  new GraphBuilder());
+		
+		OperationTransformer.setOperationService(service);
 	
 		final File output = File.createTempFile("data", ".nxs");
 		output.getParentFile().mkdirs();

@@ -11,6 +11,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
@@ -29,6 +30,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
+import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationTransformer;
+import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
+import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
+import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 
 public class OperationDataAxesRankTest {
 
@@ -47,6 +52,11 @@ public class OperationDataAxesRankTest {
 		
 		// Just read all these operations.
 		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.operations");
+		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
+		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
+		OperationRunnerImpl.setRunner(ExecutionType.GRAPH,    new GraphRunner());
+	
+		OperationTransformer.setOperationService(service);
 	}
 
 	@SuppressWarnings("unchecked")

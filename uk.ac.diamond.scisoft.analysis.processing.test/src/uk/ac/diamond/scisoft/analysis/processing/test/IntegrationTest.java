@@ -31,8 +31,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
+import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationTransformer;
+import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.operations.SectorIntegrationModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.mask.ThresholdMaskModel;
+import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
+import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 
 public class IntegrationTest {
 
@@ -51,6 +55,11 @@ public class IntegrationTest {
 		
 		// Just read all these operations.
 		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.operations");
+		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
+		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
+		OperationRunnerImpl.setRunner(ExecutionType.GRAPH,    new GraphRunner());
+	
+		OperationTransformer.setOperationService(service);
 	}
 
 	private volatile int count;

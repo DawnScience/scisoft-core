@@ -119,9 +119,12 @@ public class DatLoader extends AbstractFileLoader {
 	@Override
 	protected void clearMetadata() {
 		metadata = null;
-		metadataMap.clear();
-		footer.clear();
-		vals.clear();
+		if (metadataMap != null)
+			metadataMap.clear();
+		if (footer != null)
+			footer.clear();
+		if(vals != null)
+			vals.clear();
 	}
 
 	@Override

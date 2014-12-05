@@ -24,11 +24,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.AbstractOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationRunner;
+import org.eclipse.dawnsci.analysis.api.processing.IOperationRunnerService;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.InvalidRankException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationCategory;
@@ -43,8 +43,6 @@ import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerFactory;
-
 /**
  * Do not use this class externally. Instead get the IOperationService
  * from OSGI.
@@ -54,6 +52,10 @@ import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerFactory;
  */
 public class OperationServiceImpl implements IOperationService {
 	
+	private static IOperationRunnerService rservice;
+	public static void setOperationRunner(IOperationRunnerService s) {
+		rservice = s;
+	}
 	
 	static {
 		System.out.println("Starting operation service");
@@ -118,7 +120,7 @@ public class OperationServiceImpl implements IOperationService {
 				logger.error("Unable to set slice from service metadata on full data.");
 			}
 			
-			IOperationRunner runner = OperationRunnerFactory.getRunner(context.getExecutionType());
+			IOperationRunner runner = rservice.getRunner(context.getExecutionType());
 			runner.init(context);
 			runner.execute();
 			

@@ -7,13 +7,14 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationExporter;
+import org.eclipse.dawnsci.analysis.api.processing.IOperationExporterService;
 
 /**
  * for now hard codes runners because there are not many
  * @author fcp94556
  *
  */
-public class OperationExporterFactory {
+public class OperationExporterImpl implements IOperationExporterService {
 
 	private static Map<ExecutionType, IOperationExporter> exporters;
 	
@@ -23,7 +24,7 @@ public class OperationExporterFactory {
 	 * @return
 	 * @throws Exception
 	 */
-	public static IOperationExporter getExporter(ExecutionType type) throws Exception {
+	public IOperationExporter getExporter(ExecutionType type) throws Exception {
 		if (exporters==null) createExportersByExtensionPoint();
 		return exporters.get(type).getClass().newInstance();
 	}

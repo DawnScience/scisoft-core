@@ -4,4 +4,5 @@
    <service>
       <provide interface="org.eclipse.dawnsci.analysis.api.processing.IOperationService"/>
    </service>
+   <reference bind="setOperationRunner" cardinality="1..1" interface="org.eclipse.dawnsci.analysis.api.processing.IOperationRunnerService" name="IOperationRunnerService" policy="static"/>
 </scr:component>

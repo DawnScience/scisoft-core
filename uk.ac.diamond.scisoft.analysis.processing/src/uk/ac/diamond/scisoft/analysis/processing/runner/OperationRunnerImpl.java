@@ -7,13 +7,14 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationRunner;
+import org.eclipse.dawnsci.analysis.api.processing.IOperationRunnerService;
 
 /**
  * for now hard codes runners because there are not many
  * @author fcp94556
  *
  */
-public class OperationRunnerFactory {
+public class OperationRunnerImpl implements IOperationRunnerService {
 
 	private static Map<ExecutionType, IOperationRunner> runners;
 	
@@ -23,7 +24,7 @@ public class OperationRunnerFactory {
 	 * @return
 	 * @throws Exception
 	 */
-	public static IOperationRunner getRunner(ExecutionType type) throws Exception {
+	public IOperationRunner getRunner(ExecutionType type) throws Exception {
 		if (runners==null) createRunnersByExtensionPoint();
 		return runners.get(type).getClass().newInstance();
 	}

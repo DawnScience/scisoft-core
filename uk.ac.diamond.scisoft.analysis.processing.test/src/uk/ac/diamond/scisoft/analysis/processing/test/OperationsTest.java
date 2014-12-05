@@ -26,7 +26,7 @@ import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationTransformer;
 import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.operations.ValueModel;
-import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerFactory;
+import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 
 /**
@@ -52,9 +52,9 @@ public class OperationsTest {
 		// Just read all these operations.
 		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.operations");
 	
-		OperationRunnerFactory.setRunner(ExecutionType.SERIES,   new SeriesRunner());
-		OperationRunnerFactory.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
-		OperationRunnerFactory.setRunner(ExecutionType.GRAPH,    new GraphRunner());
+		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
+		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
+		OperationRunnerImpl.setRunner(ExecutionType.GRAPH,    new GraphRunner());
 	
 		OperationTransformer.setOperationService(service);
 	}

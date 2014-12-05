@@ -31,7 +31,7 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.operations.RotatedCartesianBox;
 import uk.ac.diamond.scisoft.analysis.processing.operations.RotatedCartesianBoxModel;
-import uk.ac.diamond.scisoft.analysis.processing.visitors.HierarchicalFileExecutionVisitor;
+import org.eclipse.dawnsci.hdf5.operation.HierarchicalFileExecutionVisitor;
 
 public class RotatedCartesianBoxToFileTest {
 	

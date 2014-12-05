@@ -43,6 +43,10 @@ public class IntegersIteratorTest {
 		int[] shape;
 
 		shape = new int[] {10, 20, 30};
+
+		iter = new IntegersIterator(shape);
+		Assert.assertArrayEquals("Shape", new int[] {10, 20, 30}, iter.getShape());
+
 		iter = new IntegersIterator(shape, s, t, u);
 		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4}, iter.getShape());
 		
@@ -97,9 +101,18 @@ public class IntegersIteratorTest {
 		IntegerDataset t = new IntegerDataset(new int[] {0, 2, 1}, null);
 
 		List<Double> inds = new ArrayList<Double>();
+		IntegersIterator iter;
+		int[] pos;
 
-		IntegersIterator iter = new IntegersIterator(c.getShapeRef(), s, t);
-		int[] pos = iter.getPos();
+		iter = new IntegersIterator(c.getShapeRef());
+		pos = iter.getPos();
+		while (iter.hasNext())
+			inds.add(c.getDouble(pos));
+		checkDatasets((DoubleDataset) a, (DoubleDataset) DatasetFactory.createFromList(inds));
+		inds.clear();
+
+		iter = new IntegersIterator(c.getShapeRef(), s, t);
+		pos = iter.getPos();
 		while (iter.hasNext())
 			inds.add(c.getDouble(pos));
 		checkDatasets(new DoubleDataset(new double[] {0, -9, 1}),
@@ -230,8 +243,24 @@ public class IntegersIteratorTest {
 		pos = iter.getPos();
 		while (iter.hasNext())
 			inds.add(c.getDouble(pos));
-		checkDatasets(new DoubleDataset(new double[] { -9, -7, -7, 5, -7, -9, -7, 5, 5, 5, -7,
+		checkDatasets(new DoubleDataset(new double[] {-9, -7, -7, 5, -7, -9, -7, 5, 5, 5, -7,
 				5, 3, 1, 1, 0, 1, 3, 1, 0, 0, 0, 1, 0}),
+				(DoubleDataset) DatasetFactory.createFromList(inds));
+		inds.clear();
+
+		iter = new IntegersIterator(c.getShapeRef(), new Slice(null, null, -1));
+		pos = iter.getPos();
+		while (iter.hasNext())
+			inds.add(c.getDouble(pos));
+		checkDatasets(new DoubleDataset(new double[] {5, -7, -9, 0, 1, 3}),
+				(DoubleDataset) DatasetFactory.createFromList(inds));
+		inds.clear();
+
+		iter = new IntegersIterator(c.getShapeRef(), null, new Slice(1, null, -1));
+		pos = iter.getPos();
+		while (iter.hasNext())
+			inds.add(c.getDouble(pos));
+		checkDatasets(new DoubleDataset(new double[] {1, 0, -7, 5}),
 				(DoubleDataset) DatasetFactory.createFromList(inds));
 		inds.clear();
 	}

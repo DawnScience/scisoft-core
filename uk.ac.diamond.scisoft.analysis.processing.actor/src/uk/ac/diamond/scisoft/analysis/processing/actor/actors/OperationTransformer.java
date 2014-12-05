@@ -16,8 +16,8 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
-import org.eclipse.dawnsci.analysis.api.slice.SliceFromSeriesMetadata;
-import org.eclipse.dawnsci.analysis.api.slice.SourceInformation;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

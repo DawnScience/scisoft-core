@@ -13,11 +13,11 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationRunner;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
-import org.eclipse.dawnsci.analysis.api.slice.SliceFromSeriesMetadata;
-import org.eclipse.dawnsci.analysis.api.slice.SliceVisitor;
-import org.eclipse.dawnsci.analysis.api.slice.Slicer;
-import org.eclipse.dawnsci.analysis.api.slice.SourceInformation;
 import org.eclipse.dawnsci.analysis.dataset.metadata.OriginMetadataImpl;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceVisitor;
+import org.eclipse.dawnsci.analysis.dataset.slicer.Slicer;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
 
 /**
  * Runs a pipeline by looping the services of operations.

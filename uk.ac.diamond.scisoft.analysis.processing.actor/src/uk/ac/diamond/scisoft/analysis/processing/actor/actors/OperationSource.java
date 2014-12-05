@@ -28,9 +28,9 @@ import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.message.DataMessageComponent;
 import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
-import org.eclipse.dawnsci.analysis.api.slice.SliceFromSeriesMetadata;
-import org.eclipse.dawnsci.analysis.api.slice.Slicer;
-import org.eclipse.dawnsci.analysis.api.slice.SourceInformation;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.dawnsci.analysis.dataset.slicer.Slicer;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -156,6 +156,8 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 			final ILazyDataset lz = dh.getLazyDataset(getDatasetPath(msg));
 			slices = Slicer.getSlices(lz, slicing.getValue(HashMap.class));
 		}
+		
+		//TODO sort if required
 		
 		
 		queue = new LinkedList<SliceInfo>();

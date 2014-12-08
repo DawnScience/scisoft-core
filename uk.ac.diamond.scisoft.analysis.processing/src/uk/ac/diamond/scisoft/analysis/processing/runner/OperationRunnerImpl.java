@@ -9,6 +9,8 @@ import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationRunner;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationRunnerService;
 
+import uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl;
+
 /**
  * for now hard codes runners because there are not many
  * @author fcp94556
@@ -37,6 +39,7 @@ public class OperationRunnerImpl implements IOperationRunnerService {
 	public static void setRunner(ExecutionType type, IOperationRunner runner) {
 		if (runners==null) runners = new HashMap<ExecutionType, IOperationRunner>(7);
 		runners.put(type, runner);
+		OperationServiceImpl.setOperationRunner(new OperationRunnerImpl());
 	}
 
 	private static void createRunnersByExtensionPoint() throws Exception {

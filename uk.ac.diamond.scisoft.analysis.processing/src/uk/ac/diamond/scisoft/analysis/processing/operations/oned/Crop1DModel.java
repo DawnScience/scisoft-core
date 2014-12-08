@@ -35,7 +35,4 @@ public class Crop1DModel extends AbstractOperationModel {
 	public void setMax(Double max) {
 		firePropertyChange("max", this.max, this.max = max);
 	}
-
-
-
 }

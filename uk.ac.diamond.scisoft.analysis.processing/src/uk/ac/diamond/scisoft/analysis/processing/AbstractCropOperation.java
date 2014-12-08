@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.processing;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
@@ -40,5 +41,26 @@ public abstract class AbstractCropOperation<T extends IOperationModel, D extends
 		}
 		
 		return axisCropIndices;
+	}
+	
+	protected OperationData cropOperation(IDataset input, int cropRank, Double[][] userVals){
+		//Return: array of arrays [[min/max][dimension]]
+		int[][] indices = new int[2][cropRank];
+		
+		//Get the axes and also the shape of the data
+		int[] dataShape = input.getShape();
+		ILazyDataset[] axes = getFirstAxes(input);
+		for (int dim = 0; dim < cropRank; dim++) {
+			//If no axes come back, use the raw user values
+			if ((axes == null) || (axes[0] == null))  {
+				indices[0][dim] = userVals[dim][0] == null ? 0 : (int)userVals[dim][0].doubleValue();
+				indices[1][dim] = userVals[dim][1] == null ? dataShape[dim] : (int)userVals[dim][1].doubleValue();
+			}else {
+			//We do have axes, so get the indices of the user values
+				indices[0][dim] = userVals[dim][0] == null ? 0 :  DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) axes[dim], userVals[dim][0]);
+				indices[1][dim] = userVals[dim][1] == null ? dataShape[dim] :  DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) axes[dim], userVals[dim][1]);
+			}
+		}
+		return new OperationData(input.getSlice(indices[0], indices[1], null));
 	}
 }

@@ -10,7 +10,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.twod;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -35,34 +34,18 @@ public class Crop2DOperation extends AbstractCropOperation<Crop2DModel, Operatio
 	}
 	
 	protected OperationData process(IDataset input, IMonitor monitor) {
-		int[] xIndices = new int[2];
-		int[] yIndices = new int[2];
-		int[] minIndices = new int[2];
-		int[] maxIndices = new int[2];
+		//Set the rank of the operation
+		int operationRank = 2;
 		
-		//Get user crop values.
-		Double[] userXVals = new Double[]{model.getxMin(), model.getxMax()};
-		Double[] userYVals = new Double[]{model.getyMin(), model.getyMax()};
+		//Get user crop values from the model
+		Double[][] userVals = new Double[operationRank][2];
+		userVals[0][0] = model.getxMin();
+		userVals[0][1] = model.getxMax();
+		userVals[1][0] = model.getyMin();
+		userVals[1][1] = model.getyMax();
 		
-		//Get axes data from dataset and see if X & Y axes exist
-		ILazyDataset[] axes = getFirstAxes(input);
-		if (axes == null) {
-			for (int i = 0; i < 2; i++) {
-				xIndices[i] = (int)userXVals[i].doubleValue();
-				yIndices[i] = (int)userYVals[i].doubleValue();
-			}
-		} else {
-			int[] dataShape = input.getShape();
-			xIndices = axisCropIndexConverter(userXVals, dataShape[0], axes[0]);
-			yIndices = axisCropIndexConverter(userYVals, dataShape[1], axes[1]);
-		}
-		minIndices[0] = xIndices[0];
-		minIndices[1] = yIndices[0];
-		maxIndices[0] = xIndices[1];
-		maxIndices[1] = yIndices[1];
-
-		return new OperationData(input.getSlice(minIndices, maxIndices, null));
-		
+		//Do crop and return
+		return cropOperation(input, operationRank, userVals);
 	}
 }
 

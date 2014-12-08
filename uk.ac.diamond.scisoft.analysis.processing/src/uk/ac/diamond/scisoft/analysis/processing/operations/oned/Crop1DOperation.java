@@ -10,7 +10,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -36,27 +35,15 @@ public class Crop1DOperation extends AbstractCropOperation<Crop1DModel, Operatio
 	}
 	
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
-		int[] xIndices = new int[2];
-		int[] minIndices = new int[1];
-		int[] maxIndices = new int[1];
+		//Set the rank of the operation
+		int operationRank = 1;
 		
-		//Get user crop values.
-		Double[] userXVals = new Double[]{model.getMin(), model.getMax()};
+		//Get user crop values from the model
+		Double[][] userVals = new Double[operationRank][2];
+		userVals[0][0] = model.getMin();
+		userVals[0][1] = model.getMax();
 		
-		//Get the x-axis (if no axes come back, we'll use the user values)
-		ILazyDataset[] axes = getFirstAxes(input);
-		if (axes == null) {
-			for (int i = 0; i < 2; i++) {
-				xIndices[i] = (int)userXVals[i].doubleValue();
-			}
-		} else {
-			int[] dataShape = input.getShape();
-			xIndices = axisCropIndexConverter(userXVals, dataShape[0], axes[0]);
-		}
-		//Copy axes indices to the indices for slicing
-		minIndices[0] = xIndices[0];
-		maxIndices[0] = xIndices[1];
-		
-		return new OperationData(input.getSlice(minIndices, maxIndices, null));
+		//Do crop and return
+		return cropOperation(input, operationRank, userVals);
 	}
 }

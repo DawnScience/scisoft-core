@@ -21,7 +21,10 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -29,6 +32,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -255,11 +259,17 @@ public class PtychoTreeViewerEditor extends EditorPart {
 		viewer.getTree().setLinesVisible(true);
 		viewer.getTree().setHeaderVisible(true);
 		viewer.setInput(tree);
+		GridData data = new GridData(SWT.TOP, SWT.FILL, true, true);
+		data.widthHint = 600;
+		data.heightHint = 300;
+		viewer.getTree().setLayoutData(data);
 		viewer.addSelectionChangedListener(selectionListener);
 
-		Composite editorComposite = new Composite(container, SWT.NONE);
+		final ScrolledComposite scrollComposite = new ScrolledComposite(container, SWT.H_SCROLL | SWT.V_SCROLL);
+		scrollComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		final Composite editorComposite = new Composite(scrollComposite, SWT.NONE);
 		editorComposite.setLayout(new GridLayout(2, false));
-		editorComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
+		editorComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true)); 
 		Composite leftComp = new Composite(editorComposite, SWT.NONE);
 		leftComp.setLayout(new GridLayout(3, false));
 
@@ -357,6 +367,16 @@ public class PtychoTreeViewerEditor extends EditorPart {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				updateAttributes(e);
+			}
+		});
+		scrollComposite.setContent(editorComposite);
+		scrollComposite.setExpandHorizontal(true);
+		scrollComposite.setExpandVertical(true);
+		scrollComposite.addControlListener(new ControlAdapter() {
+			@Override
+			public void controlResized(ControlEvent e) {
+				Rectangle r = scrollComposite.getClientArea();
+				scrollComposite.setMinSize(editorComposite.computeSize(r.width, SWT.DEFAULT));
 			}
 		});
 

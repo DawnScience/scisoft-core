@@ -30,8 +30,8 @@ public abstract class AbstractCropOperation<T extends IOperationModel, D extends
 		
 		if (theAxis == null) {
 			//We have no axis metadata - use the user values
-			axisCropIndices[0] = (int)userCropRange[0].doubleValue();
-			axisCropIndices[1] = (int)userCropRange[1].doubleValue();
+			axisCropIndices[0] = userCropRange[0] == null ? 0 : (int)userCropRange[0].doubleValue();
+			axisCropIndices[1] = userCropRange[1] == null ? dataDimShape :(int)userCropRange[1].doubleValue();
 		} else {
 			//If one or other crop directions is not given, set index to 0/shape of data
 			//Otherwise get the index from the axis

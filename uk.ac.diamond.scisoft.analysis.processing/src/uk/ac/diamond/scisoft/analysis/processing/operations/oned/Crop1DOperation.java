@@ -37,44 +37,44 @@ public class Crop1DOperation extends AbstractOperation<Crop1DModel, OperationDat
 	}
 	
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
-		int[] startIndex;
-		int[] endIndex;
+		int[] xIndices = new int[2];
+		Double[] userXVals = new Double[2];
+		int[] minIndices = new int[1];
+		int[] maxIndices = new int[1];
 		
-		Double startVal = model.getStart();
-		Double endVal = model.getEnd();
+		userXVals[0] = model.getMin();
+		userXVals[1] = model.getMax();
 		
-		// Get the x-axis
+		//Get the x-axis (if no axes come back, we'll use the user values)
 		ILazyDataset[] axes = getFirstAxes(input);
-		if ((axes == null) || (axes[0] == null))  {
-			// We're plotting against axis-less data
-			startIndex = new int[]{(int) startVal.doubleValue()};
-			endIndex = new int[]{(int) endVal.doubleValue()};
+		if (axes == null) {
+			xIndices[0] = (int)userXVals[0].doubleValue();
+			xIndices[1] = (int)userXVals[1].doubleValue();
+		} else {
+			int[] dataShape = input.getShape();
+			xIndices = axisCropIndexConverter(userXVals, dataShape[0], axes[0]);
 		}
-		else {
-			ILazyDataset theAxis = axes[0];
-			if ((startVal == null) && (endVal == null)){
-				startIndex = null;
-				endIndex = null;
-			}else if (startVal == null) {
-				startIndex = null;
-				endIndex = new int[]{DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theAxis, endVal)};
-				
-			} else if (endVal == null) {
-				startIndex = new int[]{DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theAxis, startVal)};
-				endIndex = null;
-			} else {
-				if (endVal <= startVal) {
-					throw new OperationException(this, "Beginning of range is at or after end");
-				}else if (startVal>= endVal){
-					throw new OperationException(this, "End of range is at or before beginning");
-				}
-				startIndex = new int[]{DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theAxis, startVal)};
-				endIndex = new int[]{DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theAxis, endVal)};
-			}
-		}
-			
-		return new OperationData(input.getSlice(startIndex, endIndex, null));
+		//Copy axes indices to the indices for slicing
+		minIndices[0] = xIndices[0];
+		maxIndices[0] = xIndices[1];
+		
+		return new OperationData(input.getSlice(minIndices, maxIndices, null));
 	}
-
-
+	
+	protected int[] axisCropIndexConverter(Double[] userCropRange, int dataDimShape, ILazyDataset theAxis) {
+		int[] axisCropIndices = new int[2];
+		
+		if (theAxis == null) {
+			//We have no axis metadata - use the user values
+			axisCropIndices[0] = (int)userCropRange[0].doubleValue();
+			axisCropIndices[1] = (int)userCropRange[1].doubleValue();
+		} else {
+			//If one or other crop directions is not given, set index to 0/shape of data
+			//Otherwise get the index from the axis
+			axisCropIndices[0] = userCropRange[0] == null ? 0 : DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theAxis, userCropRange[0]);
+			axisCropIndices[1] = userCropRange[1] == null ? dataDimShape : DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theAxis, userCropRange[1]);
+		}
+		
+		return axisCropIndices;
+	}
 }

@@ -127,18 +127,17 @@ public class OperationTransformer extends AbstractDataMessageTransformer impleme
 			
 			IDataset data = (IDataset)msg.getList().values().iterator().next();
 			
-			SourceInformation ssource = null;
 			
+			SliceFromSeriesMetadata fullssm = null;
 			try {
-				ssource = data.getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo();
+				SourceInformation ssource = data.getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo();
+				final SliceFromSeriesMetadata ssm = data.getMetadata(SliceFromSeriesMetadata.class).get(0);
+				fullssm = new SliceFromSeriesMetadata(ssource, ssm.getShapeInfo(), ssm.getSliceInfo());
+				data.setMetadata(fullssm);
+				
 			}catch (Exception e) {
 				logger.error("Source not obtainable. Hope this is just a unit test...");
 			}
-			final SliceFromSeriesMetadata ssm = data.getMetadata(SliceFromSeriesMetadata.class).get(0);
-			
-			SliceFromSeriesMetadata fullssm = new SliceFromSeriesMetadata(ssource, ssm.getShapeInfo(), ssm.getSliceInfo());
-			
-			data.setMetadata(fullssm);
 			
 
 			if (operation==null) operation = createOperation();
@@ -150,7 +149,7 @@ public class OperationTransformer extends AbstractDataMessageTransformer impleme
 
 			List<SliceFromSeriesMetadata> md = tmp.getData().getMetadata(SliceFromSeriesMetadata.class);
 			
-			if (md == null || md.isEmpty()) tmp.getData().setMetadata(fullssm);
+			if (fullssm!=null && (md == null || md.isEmpty())) tmp.getData().setMetadata(fullssm);
 			
 			if (context!=null && context.getVisitor()!=null) {
 				context.getVisitor().notify(operation, tmp); // Optionally send intermediate result

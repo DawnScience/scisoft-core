@@ -6,7 +6,9 @@ import java.util.List;
 import org.dawnsci.python.rpc.action.InjectPyDevConsole;
 import org.dawnsci.python.rpc.action.InjectPyDevConsoleAction;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -264,6 +266,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 		data.heightHint = 300;
 		viewer.getTree().setLayoutData(data);
 		viewer.addSelectionChangedListener(selectionListener);
+		createRightMenuActions();
 
 		final ScrolledComposite scrollComposite = new ScrolledComposite(container, SWT.H_SCROLL | SWT.V_SCROLL);
 		scrollComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -537,6 +540,67 @@ public class PtychoTreeViewerEditor extends EditorPart {
 				}
 			}
 		});
+	}
+
+	private void createRightMenuActions() {
+		Action addNodeAction = new Action("Add row", Activator.getImageDescriptor("icons/add_obj.gif")) {
+			@Override
+			public void run() {
+				if (currentNode != null) {
+					int level = currentNode.getData().getLevel();
+					PtychoData data = new PtychoData();
+					data.setLevel(level);
+					data.setName("new node");
+					data.setDefaultValue("");
+					data.setShortDoc("");
+					data.setLongDoc("");
+					data.setType("str");
+					data.setUnique(false);
+					PtychoNode node = new PtychoNode(data);
+					PtychoNode parent = currentNode.getParent();
+					if (parent != null) {
+						List<PtychoNode> children = parent.getChildren();
+						int currentIdx = children.indexOf(currentNode);
+						node.setParent(parent);
+						children.add(currentIdx + 1, node);
+					} else {
+						int currentIdx = tree.indexOf(currentNode);
+						tree.add(currentIdx + 1, node);
+					}
+					viewer.refresh();
+				}
+			}
+		};
+		Action removeNodeAction = new Action("Delete selected row", Activator.getImageDescriptor("icons/delete_obj.gif")) {
+			@Override
+			public void run() {
+				if (currentNode != null) {
+					PtychoNode parent = currentNode.getParent();
+					if (parent != null) {
+						List<PtychoNode> children = parent.getChildren();
+						int currentIdx = children.indexOf(currentNode);
+						children.remove(currentNode);
+						if (currentIdx != 0)
+							currentNode = children.get(currentIdx -1);
+						else
+							currentNode = children.get(0);
+					} else {
+						int currentIdx = tree.indexOf(currentNode);
+						tree.remove(currentNode);
+						if (currentIdx != 0)
+							currentNode = tree.get(currentIdx -1);
+						else
+							currentNode = tree.get(0);
+					}
+					viewer.refresh();
+				}
+			}
+		};
+		// right click menu buttons
+		MenuManager rightClickMenuMan = new MenuManager();
+		rightClickMenuMan.add(addNodeAction);
+		rightClickMenuMan.add(removeNodeAction);
+		viewer.getControl().setMenu(rightClickMenuMan.createContextMenu(viewer.getControl()));
 	}
 
 	private void saveAs() {

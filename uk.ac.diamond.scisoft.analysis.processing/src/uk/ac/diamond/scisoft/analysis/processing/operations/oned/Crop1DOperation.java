@@ -46,8 +46,9 @@ public class Crop1DOperation extends AbstractCropOperation<Crop1DModel, Operatio
 		//Get the x-axis (if no axes come back, we'll use the user values)
 		ILazyDataset[] axes = getFirstAxes(input);
 		if (axes == null) {
-			xIndices[0] = (int)userXVals[0].doubleValue();
-			xIndices[1] = (int)userXVals[1].doubleValue();
+			for (int i = 0; i < 2; i++) {
+				xIndices[i] = (int)userXVals[i].doubleValue();
+			}
 		} else {
 			int[] dataShape = input.getShape();
 			xIndices = axisCropIndexConverter(userXVals, dataShape[0], axes[0]);

@@ -15,25 +15,25 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 public class Crop1DModel extends AbstractOperationModel {
 	
 	@OperationModelField(hint="Set beginning of range to crop data to", label = "Beginning")
-	private Double start = null;
+	private Double min = null;
 	
 	@OperationModelField(hint="Set end of range to crop data to", label = "End")
-	private Double end = null;
+	private Double max = null;
 	
-	public Double getStart() {
-		return start;
+	public Double getMin() {
+		return min;
 	}
 
-	public void setStart(Double start) {
-		firePropertyChange("start", this.start, this.start = start);
+	public void setMin(Double min) {
+		firePropertyChange("min", this.min, this.min = min);
 	}
 
-	public Double getEnd() {
-		return end;
+	public Double getMax() {
+		return max;
 	}
 
-	public void setEnd(Double end) {
-		firePropertyChange("end", this.end, this.end = end);
+	public void setMax(Double max) {
+		firePropertyChange("max", this.max, this.max = max);
 	}
 
 

@@ -59,6 +59,11 @@ public class JythonInterpreterUtils {
 		return getBasicInterpreter(null);
 	}
 	
+	public static PythonInterpreter getBasicInterpreter(Set<String> extraPaths) throws Exception {
+
+		return getBasicInterpreter(extraPaths, JythonInterpreterUtils.class.getClassLoader());
+	}
+	
 	/**
 	 * Create Jython interpreter with extra java libraries
 	 * 
@@ -66,7 +71,7 @@ public class JythonInterpreterUtils {
 	 * @return a new Jython Interpreter
 	 * @throws Exception from getJythonInterpreterDirectory in case of missing JYTHON_BUNDLE_LOC when no Jython bundle found
 	 */
-	public static PythonInterpreter getBasicInterpreter(Set<String> extraPaths) throws Exception {
+	public static PythonInterpreter getBasicInterpreter(Set<String> extraPaths, ClassLoader classLoader) throws Exception {
 		final long start = System.currentTimeMillis();
 		
 		Properties preProperties = System.getProperties();
@@ -77,8 +82,7 @@ public class JythonInterpreterUtils {
 		logger.debug("Starting new Jython Interpreter.");
 		PySystemState     state       = new PySystemState();
 		
-		final ClassLoader classLoader = JythonInterpreterUtils.class.getClassLoader();
-		state.setClassLoader(classLoader);
+		if (classLoader!=null) state.setClassLoader(classLoader);
 		logger.info("Class loader is {}", classLoader);
 		if (classLoader instanceof URLClassLoader) {
 			logger.debug("URL classpath:");
@@ -153,7 +157,15 @@ public class JythonInterpreterUtils {
 		return interpreter;
 	}
 	
-	public static PythonInterpreter getFullInterpreter() throws Exception {
+	/**
+	 * Provide the same interpreter as when you run jython in DAWN. 
+	 * 
+	 * @param classLoader
+	 * @return PythonInterpreter
+	 * @throws Exception
+	 */
+	public static PythonInterpreter getFullInterpreter(ClassLoader classLoader) throws Exception {
+
 		//Where we are searching for additional jars/plugins (affected by whether running in eclipse)
 		boolean isRunningInEclipse = "true".equalsIgnoreCase(System.getProperty(RUN_IN_ECLIPSE));
 		File pluginsDir = JythonPath.getPluginsDirectory(isRunningInEclipse); 
@@ -166,11 +178,14 @@ public class JythonInterpreterUtils {
 		//Could set cache dir here???
 		//System.setProperty("python.cachedir", cachePath);
 		
-		//Instantiate the jyPaths HashSet and get its contents
-		Set<String> jyPaths = JythonPath.assembleJyPaths(pluginsDir, isRunningInEclipse);
+		final Set<String> extras = new HashSet<String>();
+		extras.add("org.eclipse.dawnsci.*");
 		
+		//Instantiate the jyPaths HashSet and get its contents
+		Set<String> jyPaths = JythonPath.assembleJyPaths(pluginsDir, extras, isRunningInEclipse);
+			
 		//If we've got everything in the extraPaths list, send it to the interpreter maker
-		PythonInterpreter interpreter = getBasicInterpreter(jyPaths);
+		PythonInterpreter interpreter = getBasicInterpreter(jyPaths, classLoader);
 		return interpreter;
 	}
 	

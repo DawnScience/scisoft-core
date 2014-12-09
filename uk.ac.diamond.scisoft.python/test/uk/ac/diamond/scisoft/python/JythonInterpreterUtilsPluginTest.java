@@ -119,7 +119,7 @@ public class JythonInterpreterUtilsPluginTest {
 	@Test
 	public void interpreterShouldLoadDLSLibs() {
 		try{
-			jyTestInt = JythonInterpreterUtils.getFullInterpreter();
+			jyTestInt = JythonInterpreterUtils.getFullInterpreter(JythonInterpreterUtils.class.getClassLoader());
 		} catch (Exception e) {
 			fail("Starting Jython interpreter failed!");
 		}

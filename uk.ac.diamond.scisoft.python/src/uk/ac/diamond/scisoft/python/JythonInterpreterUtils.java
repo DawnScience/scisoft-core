@@ -70,34 +70,48 @@ public class JythonInterpreterUtils {
 		final long start = System.currentTimeMillis();
 		
 		Properties preProperties = System.getProperties();
-		PythonInterpreter.initialize(preProperties, null, null);
+		
+		File jyRoot = JythonPath.getInterpreterDirectory();
+		
+		Properties postProperties = new Properties();
+		postProperties.setProperty("python.path", jyRoot.getAbsolutePath());
+		postProperties.setProperty("python.cachedir", "/scratch/.jython_cachedir");
+		
+		if (extraPaths != null) {
+			String allPaths = extraPaths.toString();
+			allPaths = allPaths.replace(", ", ":");//Removes spaces
+			allPaths = allPaths.substring(1, (allPaths.length()-1));//Removes beginning [ & trailing ]
+//			postProperties.put("python.packages.directories", allPaths);
+			postProperties.put("python.path", allPaths);
+		}
+		PythonInterpreter.initialize(preProperties, postProperties, null);
 		
 		//This was the major part of the getInterpreter method.
 		//Idea is to separate interpreter creation and starting of scisoftpy
 		logger.debug("Starting new Jython Interpreter.");
 		PySystemState     state       = new PySystemState();
 		
-		final ClassLoader classLoader = JythonInterpreterUtils.class.getClassLoader();
-		state.setClassLoader(classLoader);
-		logger.info("Class loader is {}", classLoader);
-		if (classLoader instanceof URLClassLoader) {
-			logger.debug("URL classpath:");
-			for (URL u : ((URLClassLoader) classLoader).getURLs()) {
-				logger.debug("\t{}", u.getPath());
-			}
-		}
-		File jyRoot = JythonPath.getInterpreterDirectory();
-		logger.debug("Classpath:");
-		for (String p : System.getProperty("java.class.path").split(File.pathSeparator)) {
-			logger.debug("\t{}", p);
-		}
-
-		PySystemState.exec_prefix = new PyString(jyRoot.getAbsolutePath());
-		String executable = new File(jyRoot, JythonPath.getJythonExecutableName()).getAbsolutePath();
-		state.executable = new PyString(executable);
-
+//		final ClassLoader classLoader = JythonInterpreterUtils.class.getClassLoader();
+//		state.setClassLoader(classLoader);
+//		logger.info("Class loader is {}", classLoader);
+//		if (classLoader instanceof URLClassLoader) {
+//			logger.debug("URL classpath:");
+//			for (URL u : ((URLClassLoader) classLoader).getURLs()) {
+//				logger.debug("\t{}", u.getPath());
+//			}
+//		}
+////		File jyRoot = JythonPath.getInterpreterDirectory();
+//		logger.debug("Classpath:");
+//		for (String p : System.getProperty("java.class.path").split(File.pathSeparator)) {
+//			logger.debug("\t{}", p);
+//		}
+//
+//		PySystemState.exec_prefix = new PyString(jyRoot.getAbsolutePath());
+//		String executable = new File(jyRoot, JythonPath.getJythonExecutableName()).getAbsolutePath();
+//		state.executable = new PyString(executable);
+//
 		PyList path = state.path;
-//		path.clear();
+////		path.clear();
 		path.append(new PyString(new File(jyRoot, "jython.jar").getAbsolutePath()));
 		File jyLib = new File(jyRoot, "Lib");
 		path.append(new PyString(jyLib.getAbsolutePath()));
@@ -110,6 +124,7 @@ public class JythonInterpreterUtils {
 			for (String jyPath : extraPaths){
 				path.append(new PyString(jyPath));
 			}
+			
 		}
 		
 		PythonInterpreter interpreter = new PythonInterpreter(new PyStringMap(), state);

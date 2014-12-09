@@ -35,7 +35,7 @@ public class CallPtychoEditor extends AbstractHandler implements IHandler {
 		IPreferenceStore store = Activator.getPtychoPreferenceStore();
 		IFileStore fileLocation;
 		try {
-			String fullPath = store.getString(PtychoPreferenceConstants.EPI_RESOURCE_PATH);
+			String fullPath = store.getString(PtychoPreferenceConstants.PIE_RESOURCE_PATH);
 			File f = new File(fullPath + File.separator + PtychoConstants.SPREADSHEET_FILE);
 			URI uri = f.toURI();
 			fileLocation = EFS.getLocalFileSystem().getStore(uri);

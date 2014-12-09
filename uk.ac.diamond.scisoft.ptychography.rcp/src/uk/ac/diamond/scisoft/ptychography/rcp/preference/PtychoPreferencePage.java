@@ -30,8 +30,8 @@ public class PtychoPreferencePage extends FieldEditorPreferencePage implements I
 	@Override
 	protected void createFieldEditors() {
 		 // Add a directory field
-		DirectoryFieldEditor epiResourceFolder = new DirectoryFieldEditor(PtychoPreferenceConstants.EPI_RESOURCE_PATH,
-				"ePi resource directory:", getFieldEditorParent());
+		DirectoryFieldEditor epiResourceFolder = new DirectoryFieldEditor(PtychoPreferenceConstants.PIE_RESOURCE_PATH,
+				"PIE resource directory:", getFieldEditorParent());
 		addField(epiResourceFolder);
 		// Add a file field
 		FileFieldEditor savedFilePath = new FileFieldEditor(PtychoPreferenceConstants.FILE_SAVE_PATH, "Parameter file saved path:",

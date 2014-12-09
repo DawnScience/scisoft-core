@@ -190,14 +190,14 @@ public class PtychoTreeViewerEditor extends EditorPart {
 					String propName = event.getProperty();
 					if (PtychoPreferenceConstants.FILE_SAVE_PATH.equals(propName))
 						fileSavedPath = event.getProperty();
-					else if (PtychoPreferenceConstants.EPI_RESOURCE_PATH.equals(propName))
+					else if (PtychoPreferenceConstants.PIE_RESOURCE_PATH.equals(propName))
 						;
 				}
 			}
 			private boolean isInterestingProperty(PropertyChangeEvent event) {
 				String propName = event.getProperty();
 				return PtychoPreferenceConstants.FILE_SAVE_PATH.equals(propName) || 
-						PtychoPreferenceConstants.EPI_RESOURCE_PATH.equals(propName);
+						PtychoPreferenceConstants.PIE_RESOURCE_PATH.equals(propName);
 			}
 		};
 		Activator.getPtychoPreferenceStore().addPropertyChangeListener(propertyListener);
@@ -408,7 +408,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 		StringBuilder pythonCmd = new StringBuilder();
 		pythonCmd.append("run ");
 		IPreferenceStore store = Activator.getPtychoPreferenceStore();
-		String epiFolder = store.getString(PtychoPreferenceConstants.EPI_RESOURCE_PATH);
+		String epiFolder = store.getString(PtychoPreferenceConstants.PIE_RESOURCE_PATH);
 		pythonCmd.append(epiFolder + File.separator + "LaunchPtycho.py ");
 		pythonCmd.append(jsonSavedPath);
 		pythonCmd.append("\n");

@@ -11,7 +11,7 @@ public class PtychoPreferenceInitializer extends AbstractPreferenceInitializer {
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = Activator.getPtychoPreferenceStore();
-		store.setDefault(PtychoPreferenceConstants.EPI_RESOURCE_PATH, PtychoConstants.EPI_FOLDER);
+		store.setDefault(PtychoPreferenceConstants.PIE_RESOURCE_PATH, PtychoConstants.PIE_FOLDER);
 		store.setDefault(PtychoPreferenceConstants.FILE_SAVE_PATH, PtychoConstants.TMP_FILE);
 	}
 }

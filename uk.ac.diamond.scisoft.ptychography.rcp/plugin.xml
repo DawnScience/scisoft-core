@@ -5,12 +5,24 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
+            class="uk.ac.diamond.scisoft.ptychography.rcp.editors.MultiPagePtychoEditor"
+            default="false"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.ptychoMultiPageEditor"
+            name="Ptycho Editor">
+      </editor>
+      <editor
             class="uk.ac.diamond.scisoft.ptychography.rcp.editors.PtychoTreeViewerEditor"
             default="false"
             extensions="csv"
             icon="icons/ptypy25x14.png"
-            id="uk.ac.diamond.scisoft.ptychography.rcp.ptychoEditor"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.ptychoTreeEditor"
             name="Ptychography input editor">
+      </editor>
+      <editor
+            class="uk.ac.diamond.scisoft.ptychography.rcp.editors.SimplePtychoEditor"
+            default="false"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.basicPtychoInput"
+            name="Basic Ptycho Input">
       </editor>
    </extension>
    <extension

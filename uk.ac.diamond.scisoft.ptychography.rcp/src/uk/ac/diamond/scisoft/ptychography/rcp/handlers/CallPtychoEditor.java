@@ -18,7 +18,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 
 import uk.ac.diamond.scisoft.ptychography.rcp.Activator;
-import uk.ac.diamond.scisoft.ptychography.rcp.editors.PtychoTreeViewerEditor;
+import uk.ac.diamond.scisoft.ptychography.rcp.editors.MultiPagePtychoEditor;
 import uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferenceConstants;
 import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoConstants;
 
@@ -40,8 +40,7 @@ public class CallPtychoEditor extends AbstractHandler implements IHandler {
 			URI uri = f.toURI();
 			fileLocation = EFS.getLocalFileSystem().getStore(uri);
 			FileStoreEditorInput fileStoreEditorInput = new FileStoreEditorInput(fileLocation);
-			page.openEditor((IEditorInput) fileStoreEditorInput,
-					PtychoTreeViewerEditor.ID);
+			page.openEditor((IEditorInput) fileStoreEditorInput, MultiPagePtychoEditor.ID);
 		} catch (PartInitException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -56,7 +56,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.part.EditorPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,13 +68,12 @@ import uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferencePage;
 import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoConstants;
 import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoUtils;
 
-public class PtychoTreeViewerEditor extends EditorPart {
+public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 
-	public final static String ID = "uk.ac.diamond.scisoft.ptychography.rcp.ptychoEditor";
+	public final static String ID = "uk.ac.diamond.scisoft.ptychography.rcp.ptychoTreeEditor";
 	private static final Logger logger = LoggerFactory.getLogger(PtychoTreeViewerEditor.class);
 	private TreeViewer viewer;
 	private FilteredTree filteredTree;
-	private List<PtychoData> levels;
 	private List<PtychoNode> tree;
 	private ISelectionChangedListener selectionListener;
 	private Text nameText;
@@ -86,14 +84,10 @@ public class PtychoTreeViewerEditor extends EditorPart {
 	private Text shortDocText;
 	private StyledText longDocStyledText;
 	private PtychoNode currentNode;
-	private boolean isDirtyFlag = false;
 	private Color white;
 	private Color gray;
 	private Color darkGray;
 	private Color black;
-	private String fullPath;
-	private String fileSavedPath;
-	private String jsonSavedPath;
 	private IPropertyChangeListener propertyListener;
 
 	@Override
@@ -114,30 +108,12 @@ public class PtychoTreeViewerEditor extends EditorPart {
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
-		IPreferenceStore store = Activator.getPtychoPreferenceStore();
-		fileSavedPath = store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
-		fullPath = PtychoUtils.getFullPath(input);
-		try {
-			String path = "";
-			if (fileSavedPath != null || !fileSavedPath.equals("")) {
-				File f = new File(fileSavedPath);
-				if (!f.exists())
-					path = fullPath;
-				else
-					path = fileSavedPath;
-			} else
-				path = fullPath;
-			levels = PtychoUtils.loadSpreadSheet(path);
+		super.init(site, input);
+		if (levels != null)
 			tree = PtychoTreeUtils.populate(levels);
-		} catch (Exception e) {
-			logger.error("Error loading spreadsheet file:" + e.getMessage());
-			e.printStackTrace();
-		}
 		//save the json right away
 //		saveJSon();
 
-		setSite(site);
-		setInput(input);
 		setPartName("Ptychography parameter Tree Editor");
 
 		Display display = Display.getDefault();
@@ -201,21 +177,6 @@ public class PtychoTreeViewerEditor extends EditorPart {
 			}
 		};
 		Activator.getPtychoPreferenceStore().addPropertyChangeListener(propertyListener);
-	}
-
-	@Override
-	public boolean isDirty() {
-		return isDirtyFlag;
-	}
-
-	protected void setDirty(boolean value) {
-		isDirtyFlag = value;
-		firePropertyChange(PROP_DIRTY);
-	}
-
-	@Override
-	public boolean isSaveAsAllowed() {
-		return true;
 	}
 
 	@Override

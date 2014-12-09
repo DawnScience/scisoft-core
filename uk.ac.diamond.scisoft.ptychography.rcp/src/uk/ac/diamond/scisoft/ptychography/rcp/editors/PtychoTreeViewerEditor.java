@@ -383,7 +383,7 @@ public class PtychoTreeViewerEditor extends EditorPart {
 			}
 		});
 
-		final InjectPyDevConsoleAction runPython = new InjectPyDevConsoleAction("Open plotted data in python console") {
+		final InjectPyDevConsoleAction runPython = new InjectPyDevConsoleAction("Open plotted data in python console", false) {
 			@Override
 			public void run() {
 				saveJSon();

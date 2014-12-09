@@ -75,7 +75,21 @@ public class JythonInterpreterUtils {
 		final long start = System.currentTimeMillis();
 		
 		Properties preProperties = System.getProperties();
-		PythonInterpreter.initialize(preProperties, null, null);
+		
+		File jyRoot = JythonPath.getInterpreterDirectory();
+		
+		Properties postProperties = new Properties();
+		postProperties.setProperty("python.path", jyRoot.getAbsolutePath());
+		postProperties.setProperty("python.cachedir", "/scratch/.jython_cachedir");
+		
+		if (extraPaths != null) {
+			String allPaths = extraPaths.toString();
+			allPaths = allPaths.replace(", ", ":");//Removes spaces
+			allPaths = allPaths.substring(1, (allPaths.length()-1));//Removes beginning [ & trailing ]
+//			postProperties.put("python.packages.directories", allPaths);
+			postProperties.put("python.path", allPaths);
+		}
+		PythonInterpreter.initialize(preProperties, postProperties, null);
 		
 		//This was the major part of the getInterpreter method.
 		//Idea is to separate interpreter creation and starting of scisoftpy
@@ -90,7 +104,7 @@ public class JythonInterpreterUtils {
 				logger.debug("\t{}", u.getPath());
 			}
 		}
-		File jyRoot = JythonPath.getInterpreterDirectory();
+		
 		logger.debug("Classpath:");
 		for (String p : System.getProperty("java.class.path").split(File.pathSeparator)) {
 			logger.debug("\t{}", p);
@@ -114,6 +128,7 @@ public class JythonInterpreterUtils {
 			for (String jyPath : extraPaths){
 				path.append(new PyString(jyPath));
 			}
+			
 		}
 		
 		PythonInterpreter interpreter = new PythonInterpreter(new PyStringMap(), state);

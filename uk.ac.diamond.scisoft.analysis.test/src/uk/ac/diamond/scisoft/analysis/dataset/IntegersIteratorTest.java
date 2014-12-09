@@ -92,6 +92,13 @@ public class IntegersIteratorTest {
 
 		iter = new IntegersIterator(shape, s, t, new Slice(1,7,2));
 		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4, 3, 40, 50}, iter.getShape());
+
+		// now 1D
+		shape = new int[] {10, 20, 30};
+		s = new IntegerDataset(new int[] {2, 5, 9}, null);
+		t = new IntegerDataset(new int[] {0, 5, 10, 15, 18, 19}, null);
+		iter = new IntegersIterator(true, shape, s, t, new Slice(1,7,2));
+		Assert.assertArrayEquals("Shape", new int[] {3, 6, 3}, iter.getShape());
 	}
 
 	@Test
@@ -164,6 +171,15 @@ public class IntegersIteratorTest {
 		while (iter.hasNext())
 			inds.add(c.getDouble(pos));
 		checkDatasets(new DoubleDataset(new double[] {0, 3, 1}),
+				(DoubleDataset) DatasetFactory.createFromList(inds));
+		inds.clear();
+
+		t = new IntegerDataset(new int[] {0, 2}, null);
+		iter = new IntegersIterator(true, c.getShapeRef(), s, t);
+		pos = iter.getPos();
+		while (iter.hasNext())
+			inds.add(c.getDouble(pos));
+		checkDatasets(new DoubleDataset(new double[] {0, 3, 5, -9, 0, 3}),
 				(DoubleDataset) DatasetFactory.createFromList(inds));
 		inds.clear();
 

@@ -2,7 +2,6 @@ package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -21,22 +20,9 @@ public class SimplePtychoEditor extends AbstractPtychoEditor {
 	private Text dataFilePathText;
 
 	@Override
-	public void doSave(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void doSaveAs() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
 		super.init(site, input);
-		
 		setPartName("Ptychography parameter simple Editor");
 	}
 

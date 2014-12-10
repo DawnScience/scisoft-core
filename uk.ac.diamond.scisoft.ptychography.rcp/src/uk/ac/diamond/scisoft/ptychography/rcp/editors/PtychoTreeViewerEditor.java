@@ -5,11 +5,9 @@ import java.util.List;
 
 import org.dawnsci.python.rpc.action.InjectPyDevConsole;
 import org.dawnsci.python.rpc.action.InjectPyDevConsoleAction;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -41,7 +39,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -65,7 +62,6 @@ import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoNode;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoTreeUtils;
 import uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferenceConstants;
 import uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferencePage;
-import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoConstants;
 import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoUtils;
 
 public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
@@ -74,7 +70,6 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 	private static final Logger logger = LoggerFactory.getLogger(PtychoTreeViewerEditor.class);
 	private TreeViewer viewer;
 	private FilteredTree filteredTree;
-	private List<PtychoNode> tree;
 	private ISelectionChangedListener selectionListener;
 	private Text nameText;
 	private Text valueText;
@@ -91,26 +86,9 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 	private IPropertyChangeListener propertyListener;
 
 	@Override
-	public void doSave(IProgressMonitor monitor) {
-		List<PtychoData> list = PtychoTreeUtils.extract(tree);
-		if (fileSavedPath == null)
-			doSaveAs();
-		PtychoUtils.saveCSVFile(fileSavedPath, list);
-		setDirty(false);
-	}
-
-	@Override
-	public void doSaveAs() {
-		saveAs();
-		setDirty(false);
-	}
-
-	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
 		super.init(site, input);
-		if (levels != null)
-			tree = PtychoTreeUtils.populate(levels);
 		//save the json right away
 //		saveJSon();
 
@@ -344,7 +322,7 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 			}
 		});
 
-		final InjectPyDevConsoleAction runPython = new InjectPyDevConsoleAction("Open plotted data in python console", false) {
+		final InjectPyDevConsoleAction runPython = new InjectPyDevConsoleAction("Open plotted data in python console") {
 			@Override
 			public void run() {
 				saveJSon();
@@ -353,6 +331,7 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 				super.run();
 			}
 		};
+		runPython.setDataInjected(false);
 		runPython.setParameter(InjectPyDevConsole.CREATE_NEW_CONSOLE_PARAM, Boolean.TRUE.toString());
 		runPython.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd());
 		ActionContributionItem aci = new ActionContributionItem(runPython);
@@ -562,56 +541,6 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 		rightClickMenuMan.add(addNodeAction);
 		rightClickMenuMan.add(removeNodeAction);
 		viewer.getControl().setMenu(rightClickMenuMan.createContextMenu(viewer.getControl()));
-	}
-
-	private void saveAs() {
-		FileDialog dialog = new FileDialog(Display.getDefault()
-				.getActiveShell(), SWT.SAVE);
-		dialog.setText("Choose file path and name to save parameter input");
-		String[] filterExtensions = new String[] {
-				"*.csv;*.CSV", "*.json;*.JSON",
-				"*.xml;*.XML" };
-		if (fileSavedPath != null) {
-			dialog.setFilterPath((new File(fileSavedPath)).getParent());
-		} else {
-			String filterPath = "/";
-			String platform = SWT.getPlatform();
-			if (platform.equals("win32") || platform.equals("wpf")) {
-				filterPath = "c:\\";
-			}
-			dialog.setFilterPath(filterPath);
-		}
-		dialog.setFilterNames(PtychoConstants.FILE_TYPES);
-		dialog.setFilterExtensions(filterExtensions);
-		fileSavedPath = dialog.open();
-		if (fileSavedPath == null) {
-			return;
-		}
-		IPreferenceStore store = Activator.getPtychoPreferenceStore();
-		store.setValue(PtychoPreferenceConstants.FILE_SAVE_PATH, fileSavedPath);
-		try {
-			final File file = new File(fileSavedPath);
-			if (file.exists()) {
-				boolean yes = MessageDialog.openQuestion(Display.getDefault()
-						.getActiveShell(), "Confirm Overwrite", "The file '"
-						+ file.getName()
-						+ "' exists.\n\nWould you like to overwrite it?");
-				if (!yes)
-					;
-			}
-			String fileType = PtychoConstants.FILE_TYPES[dialog.getFilterIndex()];
-			if (fileType.equals("CSV File")) {
-				List<PtychoData> list = PtychoTreeUtils.extract(tree);
-				PtychoUtils.saveCSVFile(fileSavedPath, list);
-			} else if (fileType.equals("JSon File")) {
-				String json = PtychoTreeUtils.jsonMarshal(tree);
-				PtychoUtils.saveJSon(fileSavedPath, json);
-			} else {
-				throw new Exception("XML serialisation is not yet implemented.");
-			}
-		} catch (Exception e) {
-			logger.error("Error saving file:"+ e.getMessage());
-		}
 	}
 
 	@Override

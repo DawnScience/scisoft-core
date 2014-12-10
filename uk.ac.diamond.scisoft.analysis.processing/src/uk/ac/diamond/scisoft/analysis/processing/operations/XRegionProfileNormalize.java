@@ -9,7 +9,9 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
+import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -37,8 +39,28 @@ public class XRegionProfileNormalize extends AbstractOperation<XRegionProfileNor
 	protected OperationData process(IDataset input, IMonitor monitor)
 			throws OperationException {
 		// Get the Region to work with
+		AxesMetadata axesMetadata;
+		try {
+			axesMetadata = input.getMetadata(AxesMetadata.class).get(0);
+		} catch (Exception e) {
+			throw new OperationException(this, "Cannot find appropriate Axes in the data file");
+		}
 		
-		Dataset region = DatasetUtils.convertToDataset(input.getSlice(new Slice[] {null, new Slice(model.getxStart(), model.getxEnd(), 1)}));
+		ILazyDataset energyAxis = axesMetadata.getAxis(1)[0];
+		int minPos = Maths.abs(Maths.subtract(energyAxis, model.getxStart())).argMin();
+		int maxPos = Maths.abs(Maths.subtract(energyAxis, model.getxEnd())).argMin();
+		
+		if (minPos == maxPos) {
+			throw new OperationException(this, "Select a range inside the X axis");
+		}
+		if (minPos > maxPos) {
+			int tmp = minPos;
+			minPos = maxPos;
+			maxPos = tmp;
+		}
+		
+		
+		Dataset region = DatasetUtils.convertToDataset(input.getSlice(new Slice[] {null, new Slice(minPos, maxPos, 1)}));
 		Dataset regionProfile = region.sum(1);
 		
 		Dataset smoothedProfile = regionProfile;

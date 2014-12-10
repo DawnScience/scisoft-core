@@ -14,28 +14,28 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 public class XRegionProfileNormalizeModel extends AbstractOperationModel {
 
 	@OperationModelField(hint="Set lower bound of crop in X-direction", label = "X Beginning")
-	private int xStart = 10;
+	private double xStart = 10;
 	
 	@OperationModelField(hint="Set upper bound of crop in X-direction", label = "X End")
-	private int xEnd = 20;
+	private double xEnd = 20;
 	
 	@OperationModelField(hint="Set the smoothing ammount of the integrated line", label = "Smoothing Width")
 	private int smoothing = 5;
 	
 
-	public int getxStart() {
+	public double getxStart() {
 		return xStart;
 	}
 
-	public void setxStart(int xStart) {
+	public void setxStart(double xStart) {
 		this.xStart = xStart;
 	}
 
-	public int getxEnd() {
+	public double getxEnd() {
 		return xEnd;
 	}
 
-	public void setxEnd(int xEnd) {
+	public void setxEnd(double xEnd) {
 		this.xEnd = xEnd;
 	}
 
@@ -52,8 +52,11 @@ public class XRegionProfileNormalizeModel extends AbstractOperationModel {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + smoothing;
-		result = prime * result + xEnd;
-		result = prime * result + xStart;
+		long temp;
+		temp = Double.doubleToLongBits(xEnd);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(xStart);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
 
@@ -68,9 +71,11 @@ public class XRegionProfileNormalizeModel extends AbstractOperationModel {
 		XRegionProfileNormalizeModel other = (XRegionProfileNormalizeModel) obj;
 		if (smoothing != other.smoothing)
 			return false;
-		if (xEnd != other.xEnd)
+		if (Double.doubleToLongBits(xEnd) != Double
+				.doubleToLongBits(other.xEnd))
 			return false;
-		if (xStart != other.xStart)
+		if (Double.doubleToLongBits(xStart) != Double
+				.doubleToLongBits(other.xStart))
 			return false;
 		return true;
 	}

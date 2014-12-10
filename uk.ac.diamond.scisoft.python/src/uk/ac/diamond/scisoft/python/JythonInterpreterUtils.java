@@ -18,8 +18,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.dawb.common.util.eclipse.BundleUtils;
-import org.python.core.PyList;
-import org.python.core.PyString;
 import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
 import org.python.util.PythonInterpreter;
@@ -42,12 +40,6 @@ public class JythonInterpreterUtils {
 	
 	private static Logger logger = LoggerFactory.getLogger(JythonInterpreterUtils.class);
 	
-//	static {
-//		PySystemState.initialize();
-//	}
-
-	
-	
 	/**
 	 * Create Jython interpreter
 	 * 
@@ -60,8 +52,9 @@ public class JythonInterpreterUtils {
 	}
 	
 	public static PythonInterpreter getBasicInterpreter(Set<String> extraPaths) throws Exception {
-
-		return getBasicInterpreter(extraPaths, JythonInterpreterUtils.class.getClassLoader());
+		
+		boolean isRunningInEclipse = "true".equalsIgnoreCase(System.getProperty(RUN_IN_ECLIPSE));
+		return getBasicInterpreter(extraPaths, JythonInterpreterUtils.class.getClassLoader(), isRunningInEclipse);
 	}
 	
 	/**
@@ -71,32 +64,58 @@ public class JythonInterpreterUtils {
 	 * @return a new Jython Interpreter
 	 * @throws Exception from getJythonInterpreterDirectory in case of missing JYTHON_BUNDLE_LOC when no Jython bundle found
 	 */
-	public static PythonInterpreter getBasicInterpreter(Set<String> extraPaths, ClassLoader classLoader) throws Exception {
+	public static PythonInterpreter getBasicInterpreter(Set<String> extraPaths, ClassLoader classLoader, boolean isRunningInEclipse) throws Exception {
 		final long start = System.currentTimeMillis();
 		
 		Properties preProperties = System.getProperties();
+		Properties postProperties = new Properties();
 		
-		File jyRoot = JythonPath.getInterpreterDirectory();
+		//Set some useful parameters for the jython environment
+		File jyRoot = JythonPath.getInterpreterDirectory(isRunningInEclipse);
+		postProperties.setProperty("python.home", jyRoot.getAbsolutePath());
+		postProperties.setProperty("python.executable", new File(jyRoot, JythonPath.getJythonExecutableName()).getAbsolutePath());
 		
-//		Properties postProperties = new Properties();
-//		postProperties.setProperty("python.path", jyRoot.getAbsolutePath());
-//		postProperties.setProperty("python.cachedir", "/scratch/.jython_cachedir");
-		
-		if (extraPaths != null) {
-			String allPaths = extraPaths.toString();
-			allPaths = allPaths.replace(", ", ":");//Removes spaces
-			allPaths = allPaths.substring(1, (allPaths.length()-1));//Removes beginning [ & trailing ]
-//			postProperties.put("python.packages.directories", allPaths);
-//			postProperties.put("python.path", allPaths);
+		//Set the cache for java classes loaded by Jython
+		String cacheDir = System.getProperty("python.cachedir");
+		if (cacheDir == null) {
+			cacheDir = "/scratch/.jython_consumer_cachedir";
+			postProperties.setProperty("python.cachedir", cacheDir);
 		}
-//		PythonInterpreter.initialize(preProperties, postProperties, null);
-		PythonInterpreter.initialize(preProperties, null, null);
+		File cacheDirPath = new File(cacheDir);
+		if (!cacheDirPath.exists()) {
+			try {
+				logger.debug("Creating jython cachedir", cacheDir);
+				cacheDirPath.mkdirs();
+			} catch (Exception e){
+				logger.warn("Could not create python.cachedir. Resetting to cachedir");
+				postProperties.setProperty("python.cachedir", "cachedir");
+			}
+		}
 		
-		//This was the major part of the getInterpreter method.
-		//Idea is to separate interpreter creation and starting of scisoftpy
+		//Set up the path environmental variable & send it to properties
+		StringBuilder allPaths = new StringBuilder();
+		allPaths.append(new File(jyRoot, "jython.jar").getAbsolutePath()+File.pathSeparatorChar);
+		File jyLib = new File(jyRoot, "Lib");
+		allPaths.append(jyLib.getAbsolutePath()+File.pathSeparatorChar);
+		allPaths.append(new File(jyLib, "distutils").getAbsolutePath()+File.pathSeparatorChar);
+		allPaths.append(new File(jyLib, "site-packages").getAbsolutePath()+File.pathSeparatorChar);
+		//If there's anything else to add to the path, add it.
+		if (extraPaths != null) {
+			for (String path : extraPaths) {
+				allPaths.append(path);
+				allPaths.append(File.pathSeparatorChar);
+			}
+		}
+		String pythonPath = allPaths.toString();
+		postProperties.setProperty("python.path", pythonPath);
+
 		logger.debug("Starting new Jython Interpreter.");
-		PySystemState     state       = new PySystemState();
+		PythonInterpreter.initialize(preProperties, postProperties, null);
 		
+		//Create object to give access to python system
+		PySystemState state = new PySystemState();
+		
+		//This adds an external classloader & reports classpath
 		if (classLoader!=null) state.setClassLoader(classLoader);
 		logger.info("Class loader is {}", classLoader);
 		if (classLoader instanceof URLClassLoader) {
@@ -105,33 +124,12 @@ public class JythonInterpreterUtils {
 				logger.debug("\t{}", u.getPath());
 			}
 		}
-		
 		logger.debug("Classpath:");
 		for (String p : System.getProperty("java.class.path").split(File.pathSeparator)) {
 			logger.debug("\t{}", p);
 		}
 		
-		//Set some useful parameters for the jython environment
-		PySystemState.exec_prefix = new PyString(jyRoot.getAbsolutePath());
-		String executable = new File(jyRoot, JythonPath.getJythonExecutableName()).getAbsolutePath();
-		state.executable = new PyString(executable);
-		
-		//Sets sys.path and locations of jy/python base libs. 
-		PyList path = state.path;
-		//path.clear();
-		path.append(new PyString(new File(jyRoot, "jython.jar").getAbsolutePath()));
-		File jyLib = new File(jyRoot, "Lib");
-		path.append(new PyString(jyLib.getAbsolutePath()));
-		path.append(new PyString(new File(jyLib, "distutils").getAbsolutePath()));
-		path.append(new PyString(new File(jyLib, "site-packages").getAbsolutePath())); // TODO? iterate over sub-directories
-		
-		//Add additional paths to sys.path in new interpreter
-		if (extraPaths != null){
-			for (String jyPath : extraPaths){
-				path.append(new PyString(jyPath));
-			}
-		}
-		
+		//All set? Create the interpreter!
 		PythonInterpreter interpreter = new PythonInterpreter(new PyStringMap(), state);
 		
 		final long end = System.currentTimeMillis();
@@ -192,10 +190,7 @@ public class JythonInterpreterUtils {
 			return null;
 		}
 		logger.debug("Plugins directory set to: {}", pluginsDir);
-		
-		//Could set cache dir here???
-		//System.setProperty("python.cachedir", cachePath);
-		
+
 		//TODO Move this to where ever it's being called - I'd rather add paths from calling method rather than
 		//forcing all callers of this method to have this set of paths. MTW
 //		final Set<String> extras = new HashSet<String>();
@@ -205,7 +200,7 @@ public class JythonInterpreterUtils {
 		Set<String> jyPaths = JythonPath.assembleJyPaths(pluginsDir, extras, isRunningInEclipse);
 			
 		//If we've got everything in the extraPaths list, send it to the interpreter maker
-		PythonInterpreter interpreter = getBasicInterpreter(jyPaths, classLoader);
+		PythonInterpreter interpreter = getBasicInterpreter(jyPaths, classLoader, isRunningInEclipse);
 		return interpreter;
 	}
 	

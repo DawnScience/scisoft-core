@@ -38,7 +38,7 @@ import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.crystallography.HKL;
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
 import uk.ac.diamond.scisoft.analysis.crystallography.UnitCell;
-import uk.ac.diamond.scisoft.analysis.diffraction.PowderRingsUtils.FitFunction;
+import uk.ac.diamond.scisoft.analysis.diffraction.PowderRingsUtils.DetectorFitFunction;
 import uk.ac.diamond.scisoft.analysis.io.ADSCImageLoader;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.NumPyFileSaver;
@@ -129,7 +129,7 @@ public class PowderRingsUtilsTest {
 	}
 
 	private DoubleDataset calcFit7Values(DetectorProperties det, double wavelength, double distance, List<Double> list, List<EllipticalROI> ells) {
-		FitFunction f = PowderRingsUtils.createQFitFunction7(ells, det, wavelength, false);
+		DetectorFitFunction f = PowderRingsUtils.createQFitFunction7(ells, det, wavelength, false);
 		f.setSpacings(list);
 		double[] init = new double[7];
 		DoubleDataset rms = new DoubleDataset(N_W, N_D, N_D, N_TD);
@@ -155,7 +155,7 @@ public class PowderRingsUtilsTest {
 	}
 
 	private DoubleDataset calcFit4Values(DetectorProperties det, double wavelength, double distance, List<Double> list, List<EllipticalROI> ells) {
-		FitFunction f = PowderRingsUtils.createQFitFunction4(ells, det, wavelength, false);
+		DetectorFitFunction f = PowderRingsUtils.createQFitFunction4(ells, det, wavelength, false);
 		f.setSpacings(list);
 		double[] init = new double[4];
 		DoubleDataset rms = new DoubleDataset(N_W, N_D, N_D);
@@ -467,7 +467,7 @@ public class PowderRingsUtilsTest {
 			}
 		}
 
-		FitFunction f;
+		DetectorFitFunction f;
 		double[] init;
 
 		// test functions

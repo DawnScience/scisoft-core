@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * Utilities for fitting
  */
 public class FittingUtils {
-	private static Logger logger = LoggerFactory.getLogger(TwoCircleFitter.class);
+	private static Logger logger = LoggerFactory.getLogger(FittingUtils.class);
 
 	public static Long seed = null;
 

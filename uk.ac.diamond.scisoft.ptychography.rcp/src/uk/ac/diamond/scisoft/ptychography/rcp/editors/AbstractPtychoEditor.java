@@ -3,10 +3,15 @@ package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 import java.io.File;
 import java.util.List;
 
+import org.dawnsci.python.rpc.action.InjectPyDevConsole;
+import org.dawnsci.python.rpc.action.InjectPyDevConsoleAction;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -35,6 +40,8 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 	protected String fileSavedPath;
 	protected String jsonSavedPath;
 	protected boolean isDirtyFlag = false;
+
+	private InjectPyDevConsoleAction runPython;
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
@@ -91,6 +98,52 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 
 	@Override
 	public abstract void createPartControl(Composite parent);
+
+	protected void createPythonRunCommand(Composite parent) {
+		runPython = new InjectPyDevConsoleAction("Run Ptychographic Iterative Engine python script") {
+			@Override
+			public void run() {
+				saveJSon();
+				// reinject command
+				this.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd());
+				super.run();
+			}
+		};
+		runPython.setDataInjected(false);
+		runPython.setParameter(InjectPyDevConsole.CREATE_NEW_CONSOLE_PARAM, Boolean.TRUE.toString());
+		runPython.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd());
+		ActionContributionItem aci = new ActionContributionItem(runPython);
+		aci.fill(parent);
+		Button runButton = (Button) aci.getWidget();
+		runButton.setText("RUN");
+		runButton.setToolTipText("Run Ptychographic Iterative Engine process");
+		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
+	}
+
+	private String getPythonCmd() {
+		StringBuilder pythonCmd = new StringBuilder();
+		pythonCmd.append("run ");
+		IPreferenceStore store = Activator.getPtychoPreferenceStore();
+		String epiFolder = store.getString(PtychoPreferenceConstants.PIE_RESOURCE_PATH);
+		pythonCmd.append(epiFolder + File.separator + "LaunchPtycho.py ");
+		pythonCmd.append(jsonSavedPath);
+		pythonCmd.append("\n");
+		return pythonCmd.toString();
+	}
+
+	private void saveJSon() {
+		if (fileSavedPath == null || fileSavedPath.equals("")) {
+			//trigger the save wizard
+			saveAs();
+			if (fileSavedPath == null)
+				return;
+			setDirty(false);
+		}
+		jsonSavedPath = fileSavedPath.substring(0, fileSavedPath.length() - 3);
+		jsonSavedPath += "json";
+		String json = PtychoTreeUtils.jsonMarshal(tree);
+		PtychoUtils.saveJSon(jsonSavedPath, json);
+	}
 
 	@Override
 	public void setFocus() {

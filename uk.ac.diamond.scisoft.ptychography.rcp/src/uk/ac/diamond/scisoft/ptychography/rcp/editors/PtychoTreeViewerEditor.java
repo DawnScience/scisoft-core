@@ -1,14 +1,9 @@
 package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 
-import java.io.File;
 import java.util.List;
 
-import org.dawnsci.python.rpc.action.InjectPyDevConsole;
-import org.dawnsci.python.rpc.action.InjectPyDevConsoleAction;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -35,7 +30,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -59,10 +53,8 @@ import org.slf4j.LoggerFactory;
 import uk.ac.diamond.scisoft.ptychography.rcp.Activator;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoData;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoNode;
-import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoTreeUtils;
 import uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferenceConstants;
 import uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferencePage;
-import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoUtils;
 
 public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 
@@ -322,51 +314,9 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 			}
 		});
 
-		final InjectPyDevConsoleAction runPython = new InjectPyDevConsoleAction("Open plotted data in python console") {
-			@Override
-			public void run() {
-				saveJSon();
-				// reinject command
-				this.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd());
-				super.run();
-			}
-		};
-		runPython.setDataInjected(false);
-		runPython.setParameter(InjectPyDevConsole.CREATE_NEW_CONSOLE_PARAM, Boolean.TRUE.toString());
-		runPython.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd());
-		ActionContributionItem aci = new ActionContributionItem(runPython);
-		aci.fill(container);
-		Button runButton = (Button) aci.getWidget();
-		runButton.setText("RUN");
-		runButton.setToolTipText("Run python ptychography proces");
-		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
-		
+		createPythonRunCommand(container);
+
 		getSite().setSelectionProvider(viewer);
-	}
-
-	private String getPythonCmd() {
-		StringBuilder pythonCmd = new StringBuilder();
-		pythonCmd.append("run ");
-		IPreferenceStore store = Activator.getPtychoPreferenceStore();
-		String epiFolder = store.getString(PtychoPreferenceConstants.PIE_RESOURCE_PATH);
-		pythonCmd.append(epiFolder + File.separator + "LaunchPtycho.py ");
-		pythonCmd.append(jsonSavedPath);
-		pythonCmd.append("\n");
-		return pythonCmd.toString();
-	}
-
-	private void saveJSon() {
-		if (fileSavedPath == null || fileSavedPath.equals("")) {
-			//trigger the save wizard
-			saveAs();
-			if (fileSavedPath == null)
-				return;
-			setDirty(false);
-		}
-		jsonSavedPath = fileSavedPath.substring(0, fileSavedPath.length() - 3);
-		jsonSavedPath += "json";
-		String json = PtychoTreeUtils.jsonMarshal(tree);
-		PtychoUtils.saveJSon(jsonSavedPath, json);
 	}
 
 	private void updateAttributes(ModifyEvent event) {

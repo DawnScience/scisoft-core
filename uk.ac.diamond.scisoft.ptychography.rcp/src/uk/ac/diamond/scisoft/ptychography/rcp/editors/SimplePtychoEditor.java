@@ -29,16 +29,21 @@ public class SimplePtychoEditor extends AbstractPtychoEditor {
 	@Override
 	public void createPartControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
-		container.setLayout(new GridLayout(2, false));
+		container.setLayout(new GridLayout(1, false));
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
+		Composite subComp = new Composite(container, SWT.NONE);
+		subComp.setLayout(new GridLayout(2, false));
+		subComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
 		String dataFilePath = getDataFilePath(levels);
-		Label dataFileLabel = new Label(container, SWT.NONE);
+		Label dataFileLabel = new Label(subComp, SWT.NONE);
 		dataFileLabel.setText("Scan path:");
-		dataFilePathText = new Text(container, SWT.BORDER);
+		dataFilePathText = new Text(subComp, SWT.BORDER);
 		dataFilePathText.setText(dataFilePath);
 		dataFilePathText.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		
+
+		createPythonRunCommand(container);
 	}
 
 	private String getDataFilePath(List<PtychoData> levels) {

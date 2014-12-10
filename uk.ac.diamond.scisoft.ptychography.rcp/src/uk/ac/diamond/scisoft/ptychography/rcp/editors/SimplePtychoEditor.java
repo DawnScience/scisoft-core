@@ -1,8 +1,11 @@
 package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -12,12 +15,12 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 
-import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoData;
+import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoNode;
+import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoTreeUtils;
 
 public class SimplePtychoEditor extends AbstractPtychoEditor {
 
 	public static final String ID = "uk.ac.diamond.scisoft.ptychography.rcp.basicPtychoInput";
-	private Text dataFilePathText;
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
@@ -33,28 +36,45 @@ public class SimplePtychoEditor extends AbstractPtychoEditor {
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		Composite subComp = new Composite(container, SWT.NONE);
-		subComp.setLayout(new GridLayout(2, false));
+		subComp.setLayout(new GridLayout(1, false));
 		subComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		String dataFilePath = getDataFilePath(levels);
-		Label dataFileLabel = new Label(subComp, SWT.NONE);
-		dataFileLabel.setText("Scan path:");
-		dataFilePathText = new Text(subComp, SWT.BORDER);
-		dataFilePathText.setText(dataFilePath);
-		dataFilePathText.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		createLabelAndText(subComp, "path");
 
 		createPythonRunCommand(container);
 	}
 
-	private String getDataFilePath(List<PtychoData> levels) {
-		if(levels == null)
-			return null;
-		for (PtychoData data : levels) {
-			if (data.getName().equals("path")) {
-				return data.getDefaultValue();
+	private void createLabelAndText(Composite parent, String name) {
+		if(tree == null)
+			return;
+		List<PtychoNode> result = new ArrayList<PtychoNode>();
+		for (PtychoNode node : tree) {
+			PtychoNode aNode = PtychoTreeUtils.findNodeWithName(node, name);
+			if (aNode != null)
+				result.add(aNode);
+		}
+		for (final PtychoNode res : result) {
+			if (res != null) {
+				String parentName = "";
+				PtychoNode par = res.getParent();
+				parentName = par != null ? par.getData().getName() : "";
+				Label label = new Label(parent, SWT.NONE);
+				label.setText(parentName + " " + name + ":");
+				final Text text = new Text(parent, SWT.BORDER);
+				text.setText(res.getData().getDefaultValue());
+				text.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+				text.addModifyListener(new ModifyListener() {
+					@Override
+					public void modifyText(ModifyEvent e) {
+						res.getData().setDefaultValue(text.getText());
+					}
+				});
 			}
 		}
-		return "";
 	}
 
+	public void refresh() {
+		// TODO Auto-generated method stub
+		
+	}
 }

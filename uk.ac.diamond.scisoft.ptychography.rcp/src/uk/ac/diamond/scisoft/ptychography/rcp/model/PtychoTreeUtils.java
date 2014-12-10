@@ -78,6 +78,17 @@ public class PtychoTreeUtils {
 		return nodes;
 	}
 
+	public static PtychoNode findNodeWithName(PtychoNode node, String name) {
+		if (node.getData().getName().equals(name))
+			return node;
+		List<PtychoNode> children = node.getChildren();
+		PtychoNode res = null;
+		for (int i = 0; res == null && i < children.size(); i++) {
+			res = findNodeWithName(children.get(i), name);
+		}
+		return res;
+	}
+
 	/**
 	 * expands the depth 4 tree and puts it into a list
 	 * TODO put in a recursive method

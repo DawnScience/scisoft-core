@@ -7,27 +7,33 @@ import org.eclipse.ui.part.MultiPageEditorPart;
 public class MultiPagePtychoEditor extends MultiPageEditorPart {
 
 	public static final String ID = "uk.ac.diamond.scisoft.ptychography.rcp.ptychoMultiPageEditor";
+	private PtychoTreeViewerEditor treeEditor;
+	private SimplePtychoEditor simpleEditor;
 
 	@Override
 	protected void createPages() {
 		try {
-			int index = 0;
-			PtychoTreeViewerEditor treeEditor = new PtychoTreeViewerEditor();
-			addPage(index, treeEditor, getEditorInput());
-			setPageText(index, "Advanced");
-			index++;
+			treeEditor = new PtychoTreeViewerEditor();
+			addPage(0, treeEditor, getEditorInput());
+			setPageText(0, "Advanced");
 
-			SimplePtychoEditor simpleEditor = new SimplePtychoEditor();
-			addPage(index, simpleEditor, getEditorInput());
-			setPageText(index, "Basic");
-			index++;
-		
-			
+			simpleEditor = new SimplePtychoEditor();
+			addPage(1, simpleEditor, getEditorInput());
+			setPageText(1, "Basic");
 		} catch (PartInitException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
+	}
+
+	@Override
+	protected void pageChange(int newPageIndex) {
+		super.pageChange(newPageIndex);
+		if (newPageIndex == 0)
+			treeEditor.refresh();
+		else if (newPageIndex == 1)
+			simpleEditor.refresh();
 	}
 
 	@Override

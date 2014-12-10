@@ -346,6 +346,10 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 		}
 	}
 
+	public void refresh() {
+		viewer.refresh();
+	}
+
 	private void createToolBarActions(Composite parent) {
 		ToolBar toolBar = new ToolBar(parent, SWT.RIGHT);
 		ToolItem expand = new ToolItem(toolBar, SWT.PUSH);

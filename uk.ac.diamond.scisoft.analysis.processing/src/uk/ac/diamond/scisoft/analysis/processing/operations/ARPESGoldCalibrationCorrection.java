@@ -37,9 +37,9 @@ public class ARPESGoldCalibrationCorrection extends AbstractOperation<ARPESGoldC
 			throws OperationException {
 		
 		// Load the dataset for gold calibration
-		if (!filename.equals(model.getFilePath())) {
-			filename = model.getFilePath();
+		if (!(filename != null && filename.equals(model.getFilePath()) && goldData != null)) {
 			try {
+				filename = model.getFilePath();
 				goldData =  LoaderFactory.getDataSet(model.getFilePath(), "/entry/calibration/fittedMu/data", null);
 			} catch (Exception e) {
 				throw new OperationException(this, "Not an appropriate calibration file selected");

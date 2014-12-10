@@ -78,15 +78,22 @@ public class PtychoTreeUtils {
 		return nodes;
 	}
 
-	public static PtychoNode findNodeWithName(PtychoNode node, String name) {
-		if (node.getData().getName().equals(name))
-			return node;
-		List<PtychoNode> children = node.getChildren();
-		PtychoNode res = null;
-		for (int i = 0; res == null && i < children.size(); i++) {
-			res = findNodeWithName(children.get(i), name);
+	public static List<PtychoNode> findNodeWithName(PtychoNode node, String name) {
+		List<PtychoNode> result = new ArrayList<PtychoNode>();
+		if (node.getData().getName().equals(name)) {
+			result.add(node);
 		}
-		return res;
+		if (node != null && node.nbChildren() == 0)
+			return result;
+		List<PtychoNode> children = node.getChildren();
+		List<PtychoNode> temp = new ArrayList<PtychoNode>();
+		if (children.size() > 0)
+			for (int i = 0; i < children.size(); i++) {
+				temp = findNodeWithName(children.get(i), name);
+				if (temp != null && !temp.isEmpty())
+					return temp;
+			}
+		return null;
 	}
 
 	/**

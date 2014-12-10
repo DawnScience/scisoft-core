@@ -49,9 +49,11 @@ public class SimplePtychoEditor extends AbstractPtychoEditor {
 			return;
 		List<PtychoNode> result = new ArrayList<PtychoNode>();
 		for (PtychoNode node : tree) {
-			PtychoNode aNode = PtychoTreeUtils.findNodeWithName(node, name);
-			if (aNode != null)
-				result.add(aNode);
+			List<PtychoNode> nodes = PtychoTreeUtils.findNodeWithName(node, name);
+			if (nodes != null)
+				for (PtychoNode res : nodes) {
+					result.add(res);
+				}
 		}
 		for (final PtychoNode res : result) {
 			if (res != null) {

@@ -7,13 +7,13 @@
       <editor
             class="uk.ac.diamond.scisoft.ptychography.rcp.editors.MultiPagePtychoEditor"
             default="false"
+            extensions="csv"
             id="uk.ac.diamond.scisoft.ptychography.rcp.ptychoMultiPageEditor"
             name="Ptycho Editor">
       </editor>
       <editor
             class="uk.ac.diamond.scisoft.ptychography.rcp.editors.PtychoTreeViewerEditor"
             default="false"
-            extensions="csv"
             icon="icons/ptypy25x14.png"
             id="uk.ac.diamond.scisoft.ptychography.rcp.ptychoTreeEditor"
             name="Ptychography input editor">

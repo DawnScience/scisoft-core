@@ -25,6 +25,10 @@ public class SimplePtychoEditor extends AbstractPtychoEditor {
 
 	private List<TextNode> textNodes = new ArrayList<TextNode>();
 
+	public SimplePtychoEditor() {
+		
+	}
+
 	public SimplePtychoEditor(List<PtychoData> levels, List<PtychoNode> tree, boolean isDirtyFlag) {
 		this.levels = levels;
 		this.tree = tree;

@@ -78,6 +78,9 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 	private Color black;
 	private IPropertyChangeListener propertyListener;
 
+	public PtychoTreeViewerEditor() {
+	}
+
 	public PtychoTreeViewerEditor(List<PtychoData> levels,
 			List<PtychoNode> tree, String fullPath, boolean isDirtyFlag) {
 		this.levels = levels;

@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -180,7 +181,7 @@ public class JythonInterpreterUtils {
 	 * @return PythonInterpreter
 	 * @throws Exception
 	 */
-	public static PythonInterpreter getFullInterpreter(ClassLoader classLoader, Set<String> extras) throws Exception {
+	public static PythonInterpreter getFullInterpreter(ClassLoader classLoader, String... extras) throws Exception {
 
 		//Where we are searching for additional jars/plugins (affected by whether running in eclipse)
 		boolean isRunningInEclipse = "true".equalsIgnoreCase(System.getProperty(RUN_IN_ECLIPSE));
@@ -197,7 +198,7 @@ public class JythonInterpreterUtils {
 //		extras.add("org.eclipse.dawnsci.*");
 		
 		//Instantiate the jyPaths HashSet and get its contents
-		Set<String> jyPaths = JythonPath.assembleJyPaths(pluginsDir, extras, isRunningInEclipse);
+		Set<String> jyPaths = JythonPath.assembleJyPaths(pluginsDir, Arrays.asList(extras), isRunningInEclipse);
 			
 		//If we've got everything in the extraPaths list, send it to the interpreter maker
 		PythonInterpreter interpreter = getBasicInterpreter(jyPaths, classLoader, isRunningInEclipse);

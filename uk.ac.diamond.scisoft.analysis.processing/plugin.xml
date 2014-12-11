@@ -387,6 +387,14 @@
       <runner
             class="uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner">
       </runner>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.maskingCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutsideRegionOperation"
+            description="Mask all pixels outside the specified region"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutsideRegionOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutsideRegionModel"
+            name="Mask Outside Region Operation">
+      </operation>
    </extension>
 
 </plugin>

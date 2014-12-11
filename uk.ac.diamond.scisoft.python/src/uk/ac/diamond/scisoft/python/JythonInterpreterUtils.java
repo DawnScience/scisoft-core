@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright (c) 2012 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
@@ -25,7 +25,7 @@ import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.jython.util.JythonPath;
+import uk.ac.diamond.scisoft.jython.JythonPath;
 
 /**
  * SCISOFT - added static method which returns a PythonInterpreter which can run scisoft scripts
@@ -53,9 +53,7 @@ public class JythonInterpreterUtils {
 	}
 	
 	public static PythonInterpreter getBasicInterpreter(Set<String> extraPaths) throws Exception {
-		
-		boolean isRunningInEclipse = "true".equalsIgnoreCase(System.getProperty(RUN_IN_ECLIPSE));
-		return getBasicInterpreter(extraPaths, JythonInterpreterUtils.class.getClassLoader(), isRunningInEclipse);
+		return getBasicInterpreter(extraPaths, JythonInterpreterUtils.class.getClassLoader(), Boolean.getBoolean(RUN_IN_ECLIPSE));
 	}
 	
 	/**

@@ -34,6 +34,7 @@ public class JythonInterpreterUtilsPluginTest {
 	@Before
 	public void setup() {
 		jyTestInt = null;
+		System.setProperty("run.in.eclipse", "true");
 	}
 	
 	@Test
@@ -48,7 +49,7 @@ public class JythonInterpreterUtilsPluginTest {
 		
 		
 		try{
-			jyTestInt = JythonInterpreterUtils.getBasicInterpreter();
+			jyTestInt = JythonInterpreterUtils.getBasicInterpreter(null);
 		} catch (Exception e) {
 			fail("Starting Jython interpreter failed!");
 		}

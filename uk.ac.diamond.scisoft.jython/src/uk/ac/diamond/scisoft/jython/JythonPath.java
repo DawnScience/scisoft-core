@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.jython;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -161,7 +162,7 @@ public class JythonPath {
 	 * @param isRunningInEclipse
 	 * @return jyPaths Set containing all of the required plugins
 	 */
-	public static final Set<String> assembleJyPaths(File pluginsDir, Set<String> extras, boolean isRunningInEclipse) {
+	public static final Set<String> assembleJyPaths(File pluginsDir, Collection<String> extras, boolean isRunningInEclipse) {
 		
 		final Set<String> jyPaths = new HashSet<String>();
 		
@@ -238,7 +239,7 @@ public class JythonPath {
 	 * @param directory location searched for jar files 
 	 * @return List of jar files which will be added to the path
 	 */
-	private static final List<File> findJars(File directory, Set<String> extraPlugins) {
+	private static final List<File> findJars(File directory, Collection<String> extraPlugins) {
 		final List<File> jarFiles = new ArrayList<File>();
 	
 		if (directory.isDirectory()) {
@@ -264,7 +265,7 @@ public class JythonPath {
 	 * @param isRunningInEclipse Boolean, true if running in eclipse
 	 * @return list of directories
 	 */
-	public static List<File> findDirs(File directory, Set<String> extras, boolean isRunningInEclipse) {
+	public static List<File> findDirs(File directory, Collection<String> extras, boolean isRunningInEclipse) {
 		final List<File> plugins = new ArrayList<File>();
 		
 		// TODO This could be shortened code-wise (move for loop outside if), but that might be slower in execution
@@ -309,7 +310,7 @@ public class JythonPath {
 	 * @param keys List to search against
 	 * @return Boolean, true if file is in list
 	 */
-	private static boolean isRequired(File file, String[] keys, Set<String> extraKeys) {
+	private static boolean isRequired(File file, String[] keys, Collection<String> extraKeys) {
 		String filename = file.getName();
 //		logger.debug("Jar/dir found: {}", filename);
 		for (String key : keys) {

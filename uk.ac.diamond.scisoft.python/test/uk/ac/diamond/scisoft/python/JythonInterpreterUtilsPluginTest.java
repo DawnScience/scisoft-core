@@ -39,14 +39,6 @@ public class JythonInterpreterUtilsPluginTest {
 	
 	@Test
 	public void basicInterpreterShouldStartAndExecutePython() {
-//		String wsDir = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
-		
-//		System.setProperty("uk.ac.diamond.jython.location",)
-//		
-//		(, "uk.ac.diamond.jython.location")
-		//("JYTHON_BUNDLE_LOC");  
-		
-		
 		
 		try{
 			jyTestInt = JythonInterpreterUtils.getBasicInterpreter(null);

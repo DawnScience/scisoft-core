@@ -12,37 +12,21 @@ package uk.ac.diamond.scisoft.analysis.processing;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 public abstract class AbstractCropOperation<T extends IOperationModel, D extends OperationData> extends AbstractOperation<T, D> {
 	/**
 	 * Take the user's selected range and determine if axis or raw values should be used.
 	 * Thus, set the indices to either the the raw values, shape of data or axis indices.
-	 * @param userCropRange
-	 * @param dataDimShape
-	 * @param theAxis
-	 * @return axisCropIndices
+	 * If user values null return the a slice with the same shape.
+	 * @param input
+	 * @param cropRank
+	 * @param userVals
+	 * @return OperationData (slice)
 	 */
-	protected static int[] axisCropIndexConverter(Double[] userCropRange, int dataDimShape, ILazyDataset theAxis) {
-		int[] axisCropIndices = new int[2];
-		
-		if (theAxis == null) {
-			//We have no axis metadata - use the user values
-			axisCropIndices[0] = userCropRange[0] == null ? 0 : (int)userCropRange[0].doubleValue();
-			axisCropIndices[1] = userCropRange[1] == null ? dataDimShape :(int)userCropRange[1].doubleValue();
-		} else {
-			//If one or other crop directions is not given, set index to 0/shape of data
-			//Otherwise get the index from the axis
-			axisCropIndices[0] = userCropRange[0] == null ? 0 : DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theAxis, userCropRange[0]);
-			axisCropIndices[1] = userCropRange[1] == null ? dataDimShape : DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) theAxis, userCropRange[1]);
-		}
-		
-		return axisCropIndices;
-	}
-	
 	protected OperationData cropOperation(IDataset input, int cropRank, Double[][] userVals){
 		//Return: array of arrays [[min/max][dimension]]
 		int[][] indices = new int[2][cropRank];
@@ -50,17 +34,35 @@ public abstract class AbstractCropOperation<T extends IOperationModel, D extends
 		//Get the axes and also the shape of the data
 		int[] dataShape = input.getShape();
 		ILazyDataset[] axes = getFirstAxes(input);
+		//As the axes are picked up in reverse order (i.e. z,y,x) have to get crop values using (cropRank-1)-dim
 		for (int dim = 0; dim < cropRank; dim++) {
 			//If no axes come back, use the raw user values
 			if ((axes == null) || (axes[0] == null))  {
-				indices[0][dim] = userVals[dim][0] == null ? 0 : (int)userVals[dim][0].doubleValue();
-				indices[1][dim] = userVals[dim][1] == null ? dataShape[dim] : (int)userVals[dim][1].doubleValue();
+				indices[0][dim] = userVals[(cropRank-1)-dim][0] == null ? 0 : (int)userVals[(cropRank-1)-dim][0].doubleValue();
+				indices[1][dim] = userVals[(cropRank-1)-dim][1] == null ? dataShape[dim] : (int)userVals[(cropRank-1)-dim][1].doubleValue();
 			}else {
 			//We do have axes, so get the indices of the user values
-				indices[0][dim] = userVals[dim][0] == null ? 0 :  DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) axes[dim], userVals[dim][0]);
-				indices[1][dim] = userVals[dim][1] == null ? dataShape[dim] :  DatasetUtils.findIndexGreaterThanOrEqualTo((Dataset) axes[dim], userVals[dim][1]);
+				indices[0][dim] = userVals[(cropRank-1)-dim][0] == null ? 0 : getAxisIndex(axes[dim], userVals[(cropRank-1)-dim][0]);
+				indices[1][dim] = userVals[(cropRank-1)-dim][1] == null ? dataShape[dim] : getAxisIndex(axes[dim], userVals[(cropRank-1)-dim][1]);
+			}
+			
+			if (indices[0][dim] == indices[1][dim]) {
+				throw new OperationException(this, "Selected crop range outside axis range");
+			}
+			
+			//Correct for reversed axes/inputs
+			if (indices[0][dim] > indices[1][dim]) {
+				int tmp = indices[0][dim];
+				indices[0][dim] = indices[1][dim];
+				indices[1][dim] = tmp;
 			}
 		}
+		
 		return new OperationData(input.getSlice(indices[0], indices[1], null));
 	}
+	
+	protected int getAxisIndex(ILazyDataset theAxis, Double value) {
+
+		return Maths.abs(Maths.subtract(theAxis, value)).argMin();
+		}
 }

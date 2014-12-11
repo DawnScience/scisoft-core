@@ -34,21 +34,14 @@ public class JythonInterpreterUtilsPluginTest {
 	@Before
 	public void setup() {
 		jyTestInt = null;
+		System.setProperty("run.in.eclipse", "true");
 	}
 	
 	@Test
 	public void basicInterpreterShouldStartAndExecutePython() {
-//		String wsDir = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
-		
-//		System.setProperty("uk.ac.diamond.jython.location",)
-//		
-//		(, "uk.ac.diamond.jython.location")
-		//("JYTHON_BUNDLE_LOC");  
-		
-		
 		
 		try{
-			jyTestInt = JythonInterpreterUtils.getBasicInterpreter();
+			jyTestInt = JythonInterpreterUtils.getBasicInterpreter(null);
 		} catch (Exception e) {
 			fail("Starting Jython interpreter failed!");
 		}

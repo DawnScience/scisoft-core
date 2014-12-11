@@ -36,9 +36,8 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 
 	protected List<PtychoData> levels;
 	protected List<PtychoNode> tree;
-	protected String fullPath;
-	protected String fileSavedPath;
 	protected String jsonSavedPath;
+	protected String fullPath;
 	protected boolean isDirtyFlag = false;
 
 	private InjectPyDevConsoleAction runPython;
@@ -46,6 +45,8 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		List<PtychoData> list = PtychoTreeUtils.extract(tree);
+		IPreferenceStore store = Activator.getPtychoPreferenceStore();
+		String fileSavedPath = store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
 		if (fileSavedPath == null)
 			doSaveAs();
 		PtychoUtils.saveCSVFile(fileSavedPath, list);
@@ -54,33 +55,35 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 
 	@Override
 	public void doSaveAs() {
-		saveAs();
+		IPreferenceStore store = Activator.getPtychoPreferenceStore();
+		String fileSavedPath = store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
+		saveAs(fileSavedPath);
 		setDirty(false);
 	}
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
-		IPreferenceStore store = Activator.getPtychoPreferenceStore();
-		fileSavedPath = store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
-		fullPath = PtychoUtils.getFullPath(input);
-		try {
-			String path = "";
-			if (fileSavedPath != null || !fileSavedPath.equals("")) {
-				File f = new File(fileSavedPath);
-				if (!f.exists())
-					path = fullPath;
-				else
-					path = fileSavedPath;
-			} else
-				path = fullPath;
-			levels = PtychoUtils.loadSpreadSheet(path);
-			if (levels != null)
-				tree = PtychoTreeUtils.populate(levels);
-		} catch (Exception e) {
-			logger.error("Error loading spreadsheet file:" + e.getMessage());
-			e.printStackTrace();
-		}
+//		IPreferenceStore store = Activator.getPtychoPreferenceStore();
+//		fileSavedPath = store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
+//		fullPath = PtychoUtils.getFullPath(input);
+//		try {
+//			String path = "";
+//			if (fileSavedPath != null || !fileSavedPath.equals("")) {
+//				File f = new File(fileSavedPath);
+//				if (!f.exists())
+//					path = fullPath;
+//				else
+//					path = fileSavedPath;
+//			} else
+//				path = fullPath;
+//			levels = PtychoUtils.loadSpreadSheet(path);
+//			if (levels != null)
+//				tree = PtychoTreeUtils.populate(levels);
+//		} catch (Exception e) {
+//			logger.error("Error loading spreadsheet file:" + e.getMessage());
+//			e.printStackTrace();
+//		}
 		setSite(site);
 		setInput(input);
 
@@ -103,15 +106,17 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 		runPython = new InjectPyDevConsoleAction("Run Ptychographic Iterative Engine python script") {
 			@Override
 			public void run() {
-				saveJSon();
+				IPreferenceStore store = Activator.getPtychoPreferenceStore();
+				String fileSavedPath = store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
+				jsonSavedPath = saveJSon(fileSavedPath);
 				// reinject command
-				this.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd());
+				this.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd(jsonSavedPath));
 				super.run();
 			}
 		};
 		runPython.setDataInjected(false);
 		runPython.setParameter(InjectPyDevConsole.CREATE_NEW_CONSOLE_PARAM, Boolean.TRUE.toString());
-		runPython.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd());
+		runPython.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd(jsonSavedPath));
 		ActionContributionItem aci = new ActionContributionItem(runPython);
 		aci.fill(parent);
 		Button runButton = (Button) aci.getWidget();
@@ -120,7 +125,7 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
 	}
 
-	private String getPythonCmd() {
+	private String getPythonCmd(String jsonSavedPath) {
 		StringBuilder pythonCmd = new StringBuilder();
 		pythonCmd.append("run ");
 		IPreferenceStore store = Activator.getPtychoPreferenceStore();
@@ -131,18 +136,19 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 		return pythonCmd.toString();
 	}
 
-	private void saveJSon() {
+	private String saveJSon(String fileSavedPath) {
 		if (fileSavedPath == null || fileSavedPath.equals("")) {
 			//trigger the save wizard
-			saveAs();
+			saveAs(fileSavedPath);
 			if (fileSavedPath == null)
-				return;
+				return "";
 			setDirty(false);
 		}
-		jsonSavedPath = fileSavedPath.substring(0, fileSavedPath.length() - 3);
+		String jsonSavedPath = fileSavedPath.substring(0, fileSavedPath.length() - 3);
 		jsonSavedPath += "json";
 		String json = PtychoTreeUtils.jsonMarshal(tree);
 		PtychoUtils.saveJSon(jsonSavedPath, json);
+		return jsonSavedPath;
 	}
 
 	@Override
@@ -155,7 +161,7 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 		return true;
 	}
 
-	protected void saveAs() {
+	protected void saveAs(String fileSavedPath) {
 		FileDialog dialog = new FileDialog(Display.getDefault()
 				.getActiveShell(), SWT.SAVE);
 		dialog.setText("Choose file path and name to save parameter input");

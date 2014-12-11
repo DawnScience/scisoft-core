@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -77,6 +78,14 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 	private Color black;
 	private IPropertyChangeListener propertyListener;
 
+	public PtychoTreeViewerEditor(List<PtychoData> levels,
+			List<PtychoNode> tree, String fullPath, boolean isDirtyFlag) {
+		this.levels = levels;
+		this.tree = tree;
+		this.fullPath = fullPath;
+		this.isDirtyFlag = isDirtyFlag;
+	}
+
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
@@ -135,8 +144,7 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 				if (isInterestingProperty(event)) {
 					String propName = event.getProperty();
 					if (PtychoPreferenceConstants.FILE_SAVE_PATH.equals(propName))
-						fileSavedPath = event.getProperty();
-					else if (PtychoPreferenceConstants.PIE_RESOURCE_PATH.equals(propName))
+//						fileSavedPath = event.getProperty();
 						;
 				}
 			}
@@ -386,7 +394,9 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				try {
-					saveAs();
+					IPreferenceStore store = Activator.getPtychoPreferenceStore();
+					String fileSavedPath = store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
+					saveAs(fileSavedPath);
 					setDirty(false);
 				} catch (Exception e) {
 					logger.error("Problem exporting to file", e);

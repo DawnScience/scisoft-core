@@ -96,6 +96,20 @@ public class PtychoTreeUtils {
 		return null;
 	}
 
+	public static String getTreePath(PtychoNode tree, PtychoNode node) {
+		String path = "";
+		List<PtychoNode> children = tree.getChildren();
+		for (PtychoNode child : children) {
+			if (child.equals(node)) {
+				path = tree.getData().getName() + "/" + child.getData().getName();
+				return path;
+			}
+			if (!child.getChildren().isEmpty())
+				path = getTreePath(child, node);
+		}
+		return "";
+	}
+
 	/**
 	 * expands the depth 4 tree and puts it into a list
 	 * TODO put in a recursive method

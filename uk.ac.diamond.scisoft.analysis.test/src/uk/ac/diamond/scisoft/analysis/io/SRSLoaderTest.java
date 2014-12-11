@@ -121,6 +121,8 @@ public class SRSLoaderTest {
 
 	@Test
 	public void testLoaderFactory() throws Exception {
+		// clear state left over from any previous tests
+		LoaderFactory.clear();
 		IDataHolder dh = LoaderFactory.getData("testfiles/gda/analysis/io/SRSLoaderTest/96356.dat", null);
         if (dh==null || dh.getNames().length<1) throw new Exception();
 		assertEquals("There is not the correct number of axis in the file", 7, dh.size());

@@ -16,6 +16,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -34,6 +35,12 @@ public class PgmLoaderTest {
 	    TestUtils.makeScratchDirectory(testScratchDirectoryName);
 	}
 
+	@Before
+	public void setup() {
+		// clear state left over from any previous tests
+		LoaderFactory.clear();
+	}
+	
 	@Test
 	public void load()  throws Exception {
 		

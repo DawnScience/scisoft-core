@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright (c) 2012 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -24,7 +25,7 @@ import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.jython.util.JythonPath;
+import uk.ac.diamond.scisoft.jython.JythonPath;
 
 /**
  * SCISOFT - added static method which returns a PythonInterpreter which can run scisoft scripts
@@ -52,9 +53,7 @@ public class JythonInterpreterUtils {
 	}
 	
 	public static PythonInterpreter getBasicInterpreter(Set<String> extraPaths) throws Exception {
-		
-		boolean isRunningInEclipse = "true".equalsIgnoreCase(System.getProperty(RUN_IN_ECLIPSE));
-		return getBasicInterpreter(extraPaths, JythonInterpreterUtils.class.getClassLoader(), isRunningInEclipse);
+		return getBasicInterpreter(extraPaths, JythonInterpreterUtils.class.getClassLoader(), Boolean.getBoolean(RUN_IN_ECLIPSE));
 	}
 	
 	/**
@@ -180,7 +179,7 @@ public class JythonInterpreterUtils {
 	 * @return PythonInterpreter
 	 * @throws Exception
 	 */
-	public static PythonInterpreter getFullInterpreter(ClassLoader classLoader, Set<String> extras) throws Exception {
+	public static PythonInterpreter getFullInterpreter(ClassLoader classLoader, String... extras) throws Exception {
 
 		//Where we are searching for additional jars/plugins (affected by whether running in eclipse)
 		boolean isRunningInEclipse = "true".equalsIgnoreCase(System.getProperty(RUN_IN_ECLIPSE));
@@ -197,7 +196,7 @@ public class JythonInterpreterUtils {
 //		extras.add("org.eclipse.dawnsci.*");
 		
 		//Instantiate the jyPaths HashSet and get its contents
-		Set<String> jyPaths = JythonPath.assembleJyPaths(pluginsDir, extras, isRunningInEclipse);
+		Set<String> jyPaths = JythonPath.assembleJyPaths(pluginsDir, Arrays.asList(extras), isRunningInEclipse);
 			
 		//If we've got everything in the extraPaths list, send it to the interpreter maker
 		PythonInterpreter interpreter = getBasicInterpreter(jyPaths, classLoader, isRunningInEclipse);

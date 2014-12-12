@@ -1,6 +1,7 @@
 package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.dawnsci.python.rpc.action.InjectPyDevConsole;
@@ -147,7 +148,15 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 		String jsonSavedPath = fileSavedPath.substring(0, fileSavedPath.length() - 3);
 		jsonSavedPath += "json";
 		String json = PtychoTreeUtils.jsonMarshal(tree);
-		PtychoUtils.saveJSon(jsonSavedPath, json);
+		try {
+			PtychoUtils.saveJSon(jsonSavedPath, json);
+		} catch (IOException e) {
+			logger.error("Error saving JSON file:" + e.getMessage());
+			MessageDialog.openError(Display.getDefault()
+					.getActiveShell(), "Error writing JSON file", "An IO error occured while writing '"
+					+ jsonSavedPath
+					+ "' JSON file.");
+		}
 		return jsonSavedPath;
 	}
 

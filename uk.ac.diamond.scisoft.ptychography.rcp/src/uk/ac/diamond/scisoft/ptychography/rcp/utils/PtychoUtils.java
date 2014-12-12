@@ -158,21 +158,15 @@ public class PtychoUtils {
 	 * @param filePath
 	 * @param content
 	 */
-	public static void saveJSon(String filePath, String content) {
+	public static void saveJSon(String filePath, String content) throws IOException{
 		FileWriter fileWriter = null;
 		try {
 			File newTextFile = new File(filePath);
 			fileWriter = new FileWriter(newTextFile);
 			fileWriter.write(content);
 			fileWriter.close();
-		} catch (IOException ex) {
-			logger.error("Error writing to file:" + ex.getMessage());
 		} finally {
-			try {
-				fileWriter.close();
-			} catch (IOException ex) {
-				logger.error("Error closing file writer:" + ex.getMessage());
-			}
+			fileWriter.close();
 		}
 	}
 }

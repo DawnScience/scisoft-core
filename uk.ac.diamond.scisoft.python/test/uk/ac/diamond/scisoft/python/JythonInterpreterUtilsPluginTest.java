@@ -82,7 +82,7 @@ public class JythonInterpreterUtilsPluginTest {
 		// Have we *really* got a python interpreter???
 		assertTrue("jyTestInt not a PythonInterpreter", jyTestInt != null);
 
-		// Do some numpy type stuff to see that everything is beahving.
+		// Do some numpy type stuff to see that everything is behaving.
 		// Check scisoftpy libs are loaded and we can do stuff
 		jyTestInt.exec("myArray = dnp.zeros((4,5))");
 		jyTestInt.exec("myShape = myArray.shape");
@@ -112,7 +112,7 @@ public class JythonInterpreterUtilsPluginTest {
 	@Test
 	public void interpreterShouldLoadDLSLibs() {
 		try{
-			jyTestInt = JythonInterpreterUtils.getFullInterpreter(JythonInterpreterUtils.class.getClassLoader(), null);
+			jyTestInt = JythonInterpreterUtils.getFullInterpreter(JythonInterpreterUtils.class.getClassLoader());
 		} catch (Exception e) {
 			fail("Starting Jython interpreter failed!");
 		}

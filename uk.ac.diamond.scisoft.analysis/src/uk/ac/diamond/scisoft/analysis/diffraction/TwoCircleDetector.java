@@ -247,8 +247,8 @@ public class TwoCircleDetector implements Cloneable {
 
 	/**
 	 * @param old
-	 * @param gamma (in mm)
-	 * @param delta (in mm)
+	 * @param gamma (in degrees)
+	 * @param delta (in degrees)
 	 * @return detector properties (modified in-place)
 	 */
 	public DetectorProperties getDetectorProperties(DetectorProperties old, double gamma, double delta) {

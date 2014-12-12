@@ -3,11 +3,19 @@ package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 import java.io.File;
 import java.util.List;
 
+import org.dawnsci.common.widgets.editor.ITitledEditor;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageEditorPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +27,7 @@ import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoTreeUtils;
 import uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferenceConstants;
 import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoUtils;
 
-public class MultiPagePtychoEditor extends MultiPageEditorPart {
+public class MultiPagePtychoEditor extends MultiPageEditorPart implements ITitledEditor, IResourceChangeListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(MultiPagePtychoEditor.class);
 
@@ -33,6 +41,11 @@ public class MultiPagePtychoEditor extends MultiPageEditorPart {
 	protected String jsonSavedPath;
 	protected boolean isDirtyFlag = false;
 
+	public MultiPagePtychoEditor() {
+		super();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+	}
+
 	@Override
 	protected void createPages() {
 		try {
@@ -45,8 +58,7 @@ public class MultiPagePtychoEditor extends MultiPageEditorPart {
 			addPage(1, simpleEditor, getEditorInput());
 			setPageText(1, "Basic");
 		} catch (PartInitException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error creating pages:" + e.getMessage());
 		}
 
 	}
@@ -89,9 +101,16 @@ public class MultiPagePtychoEditor extends MultiPageEditorPart {
 			logger.error("Error loading spreadsheet file:" + e.getMessage());
 			e.printStackTrace();
 		}
-		setSite(site);
-		setInput(input);
+//		setSite(site);
+//		setInput(input);
+		super.init(site, input);
 
+	}
+
+	@Override
+	public void dispose() {
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		super.dispose();
 	}
 
 	@Override
@@ -101,23 +120,60 @@ public class MultiPagePtychoEditor extends MultiPageEditorPart {
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		List<PtychoData> list = PtychoTreeUtils.extract(tree);
-		if (fileSavedPath == null)
-			doSaveAs();
-		PtychoUtils.saveCSVFile(fileSavedPath, list);
-		treeEditor.setFileSavedPath(fileSavedPath);
-		treeEditor.setDirty(false);
+		getEditor(0).doSave(monitor);
+//		getEditor(1).doSave(monitor);
 	}
+	
 
 	@Override
 	public void doSaveAs() {
-		treeEditor.saveAs(fileSavedPath);
-		treeEditor.setDirty(false);
+		IEditorPart treeEditor = getEditor(0);
+		treeEditor.doSaveAs();
+		setPageText(0, treeEditor.getTitle());
+		setInput(treeEditor.getEditorInput());
+//		IEditorPart simpleEditor = getEditor(1);
+//		simpleEditor.doSaveAs();
+//		setPageText(1, simpleEditor.getTitle());
+//		setInput(simpleEditor.getEditorInput());
+	}
+
+	@SuppressWarnings("unused")
+	private String getFileName(String fileSavedPath) {
+		String[] temp = fileSavedPath.split(File.separator);
+		if (temp.length == 0)
+			return "";
+		return temp[temp.length - 1];
 	}
 
 	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
+	}
+
+	@Override
+	public void setPartTitle(String name) {
+		super.setPartName(name);
+	}
+
+	@Override
+	public void resourceChanged(final IResourceChangeEvent event) {
+		if (event.getType() == IResourceChangeEvent.PRE_CLOSE) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					IWorkbenchPage[] pages = getSite().getWorkbenchWindow()
+							.getPages();
+					for (int i = 0; i < pages.length; i++) {
+						if (((FileEditorInput) treeEditor.getEditorInput())
+								.getFile().getProject()
+								.equals(event.getResource())) {
+							IEditorPart editorPart = pages[i].findEditor(treeEditor
+									.getEditorInput());
+							pages[i].closeEditor(editorPart, true);
+						}
+					}
+				}
+			});
+		}
 	}
 
 }

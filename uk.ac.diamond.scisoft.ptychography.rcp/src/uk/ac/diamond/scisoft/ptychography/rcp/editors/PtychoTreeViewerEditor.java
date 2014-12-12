@@ -2,10 +2,8 @@ package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -95,7 +93,7 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 			throws PartInitException {
 		super.init(site, input);
 
-		setPartName("Ptychography parameter Tree Editor");
+		setPartName("Ptycho Tree Input");
 
 		Display display = Display.getDefault();
 		white = new Color(display, 255, 255, 255);
@@ -396,9 +394,9 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				try {
-					IPreferenceStore store = Activator.getPtychoPreferenceStore();
-					String fileSavedPath = store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
-					saveAs(fileSavedPath);
+					String fileSavedPath = getFileSavedPath();
+					String newPath = saveAs(fileSavedPath);
+					setFileSavedPath(newPath);
 					setDirty(false);
 				} catch (Exception e) {
 					logger.error("Problem exporting to file", e);

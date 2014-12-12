@@ -65,14 +65,18 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
-		
+		List<PtychoData> list = PtychoTreeUtils.extract(tree);
+		if (fileSavedPath == null)
+			doSaveAs();
+		PtychoUtils.saveCSVFile(fileSavedPath, list);
+		setFileSavedPath(fileSavedPath);
+		setDirty(false);
 	}
 
 	@Override
 	public void doSaveAs() {
-		// TODO Auto-generated method stub
-		
+		fileSavedPath = saveAs(fileSavedPath);
+		setDirty(false);
 	}
 
 	@Override
@@ -143,7 +147,7 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 		return true;
 	}
 
-	protected void saveAs(String fileSavedPath) {
+	protected String saveAs(String fileSavedPath) {
 		FileDialog dialog = new FileDialog(Display.getDefault()
 				.getActiveShell(), SWT.SAVE);
 		dialog.setText("Choose file path and name to save parameter input");
@@ -162,14 +166,14 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 		}
 		dialog.setFilterNames(PtychoConstants.FILE_TYPES);
 		dialog.setFilterExtensions(filterExtensions);
-		fileSavedPath = dialog.open();
-		if (fileSavedPath == null) {
-			return;
+		String path = dialog.open();
+		if (path == null) {
+			return fileSavedPath;
 		}
 		IPreferenceStore store = Activator.getPtychoPreferenceStore();
-		store.setValue(PtychoPreferenceConstants.FILE_SAVE_PATH, fileSavedPath);
+		store.setValue(PtychoPreferenceConstants.FILE_SAVE_PATH, path);
 		try {
-			final File file = new File(fileSavedPath);
+			final File file = new File(path);
 			if (file.exists()) {
 				boolean yes = MessageDialog.openQuestion(Display.getDefault()
 						.getActiveShell(), "Confirm Overwrite", "The file '"
@@ -181,19 +185,25 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 			String fileType = PtychoConstants.FILE_TYPES[dialog.getFilterIndex()];
 			if (fileType.equals("CSV File")) {
 				List<PtychoData> list = PtychoTreeUtils.extract(tree);
-				PtychoUtils.saveCSVFile(fileSavedPath, list);
+				PtychoUtils.saveCSVFile(path, list);
 			} else if (fileType.equals("JSon File")) {
 				String json = PtychoTreeUtils.jsonMarshal(tree);
-				PtychoUtils.saveJSon(fileSavedPath, json);
+				PtychoUtils.saveJSon(path, json);
 			} else {
 				throw new Exception("XML serialisation is not yet implemented.");
 			}
 		} catch (Exception e) {
 			logger.error("Error saving file:"+ e.getMessage());
+			return fileSavedPath;
 		}
+		return path;
 	}
 
 	public void setFileSavedPath(String fileSavedPath) {
 		this.fileSavedPath = fileSavedPath;
+	}
+
+	public String getFileSavedPath() {
+		return fileSavedPath;
 	}
 }

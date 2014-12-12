@@ -230,7 +230,7 @@ public class NexusHDF5Loader extends HDF5Loader {
 				if (error != null)
 					//TODO need better slicable metadata clearing to stop stack overflow
 					error.clearMetadata(AxesMetadata.class);
-					data.setError(error);
+				data.setError(error);
 			}
 		} catch (Exception e) {
 			// Non fatal exception, as the file does not support NeXus for error definitions

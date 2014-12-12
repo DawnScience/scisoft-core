@@ -4,11 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
@@ -21,7 +17,6 @@ import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoData;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoNode;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoTreeUtils;
 import uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferenceConstants;
-import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoConstants;
 import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoUtils;
 
 public class MultiPagePtychoEditor extends MultiPageEditorPart {
@@ -67,12 +62,16 @@ public class MultiPagePtychoEditor extends MultiPageEditorPart {
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
-		IPreferenceStore store = Activator.getPtychoPreferenceStore();
-		fileSavedPath = store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
-		fullPath = PtychoUtils.getFullPath(input);
-		try {
-			String path = "";
-			if (fileSavedPath != null || !fileSavedPath.equals("")) {
+		String fullPath = PtychoUtils.getFullPath(input);
+		File file = new File(fullPath);
+		String path = "";
+		if (file != null && file.isFile() && file.canWrite()) {
+			this.fileSavedPath = fullPath;
+			path = fullPath;
+		} else {
+			IPreferenceStore store = Activator.getPtychoPreferenceStore();
+			String fileSavedPath = store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
+			if (fileSavedPath != null && !fileSavedPath.equals("")) {
 				File f = new File(fileSavedPath);
 				if (!f.exists())
 					path = fullPath;
@@ -80,6 +79,8 @@ public class MultiPagePtychoEditor extends MultiPageEditorPart {
 					path = fileSavedPath;
 			} else
 				path = fullPath;
+		}
+		try {
 			levels = PtychoUtils.loadSpreadSheet(path);
 			if (levels != null)
 				tree = PtychoTreeUtils.populate(levels);
@@ -94,27 +95,26 @@ public class MultiPagePtychoEditor extends MultiPageEditorPart {
 
 	@Override
 	public boolean isDirty() {
-		return isDirtyFlag;
+		return treeEditor.isDirtyFlag;
 	}
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		List<PtychoData> list = PtychoTreeUtils.extract(tree);
+//		IPreferenceStore store = Activator.getPtychoPreferenceStore();
+//		String fileSavedPath = store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
 		if (fileSavedPath == null)
 			doSaveAs();
 		PtychoUtils.saveCSVFile(fileSavedPath, list);
-		setDirty(false);
+		treeEditor.setDirty(false);
 	}
 
 	@Override
 	public void doSaveAs() {
-		saveAs();
-		setDirty(false);
-	}
-
-	protected void setDirty(boolean value) {
-		isDirtyFlag = value;
-		firePropertyChange(PROP_DIRTY);
+//		IPreferenceStore store = Activator.getPtychoPreferenceStore();
+//		String fileSavedPath = store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
+		treeEditor.saveAs(fileSavedPath);
+		treeEditor.setDirty(false);
 	}
 
 	@Override
@@ -122,53 +122,4 @@ public class MultiPagePtychoEditor extends MultiPageEditorPart {
 		return true;
 	}
 
-	protected void saveAs() {
-		FileDialog dialog = new FileDialog(Display.getDefault()
-				.getActiveShell(), SWT.SAVE);
-		dialog.setText("Choose file path and name to save parameter input");
-		String[] filterExtensions = new String[] {
-				"*.csv;*.CSV", "*.json;*.JSON",
-				"*.xml;*.XML" };
-		if (fileSavedPath != null) {
-			dialog.setFilterPath((new File(fileSavedPath)).getParent());
-		} else {
-			String filterPath = "/";
-			String platform = SWT.getPlatform();
-			if (platform.equals("win32") || platform.equals("wpf")) {
-				filterPath = "c:\\";
-			}
-			dialog.setFilterPath(filterPath);
-		}
-		dialog.setFilterNames(PtychoConstants.FILE_TYPES);
-		dialog.setFilterExtensions(filterExtensions);
-		fileSavedPath = dialog.open();
-		if (fileSavedPath == null) {
-			return;
-		}
-		IPreferenceStore store = Activator.getPtychoPreferenceStore();
-		store.setValue(PtychoPreferenceConstants.FILE_SAVE_PATH, fileSavedPath);
-		try {
-			final File file = new File(fileSavedPath);
-			if (file.exists()) {
-				boolean yes = MessageDialog.openQuestion(Display.getDefault()
-						.getActiveShell(), "Confirm Overwrite", "The file '"
-						+ file.getName()
-						+ "' exists.\n\nWould you like to overwrite it?");
-				if (!yes)
-					;
-			}
-			String fileType = PtychoConstants.FILE_TYPES[dialog.getFilterIndex()];
-			if (fileType.equals("CSV File")) {
-				List<PtychoData> list = PtychoTreeUtils.extract(tree);
-				PtychoUtils.saveCSVFile(fileSavedPath, list);
-			} else if (fileType.equals("JSon File")) {
-				String json = PtychoTreeUtils.jsonMarshal(tree);
-				PtychoUtils.saveJSon(fileSavedPath, json);
-			} else {
-				throw new Exception("XML serialisation is not yet implemented.");
-			}
-		} catch (Exception e) {
-			logger.error("Error saving file:"+ e.getMessage());
-		}
-	}
 }

@@ -9,14 +9,14 @@
             default="false"
             extensions="csv"
             id="uk.ac.diamond.scisoft.ptychography.rcp.ptychoMultiPageEditor"
-            name="Ptycho Editor">
+            name="Ptycho Input Editor">
       </editor>
       <editor
             class="uk.ac.diamond.scisoft.ptychography.rcp.editors.PtychoTreeViewerEditor"
             default="false"
             icon="icons/ptypy25x14.png"
             id="uk.ac.diamond.scisoft.ptychography.rcp.ptychoTreeEditor"
-            name="Ptychography input editor">
+            name="Tree Ptycho input">
       </editor>
       <editor
             class="uk.ac.diamond.scisoft.ptychography.rcp.editors.SimplePtychoEditor"

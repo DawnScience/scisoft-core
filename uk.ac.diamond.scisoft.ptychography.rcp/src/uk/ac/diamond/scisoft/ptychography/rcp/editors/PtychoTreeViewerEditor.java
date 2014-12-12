@@ -204,7 +204,7 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 		viewer.getTree().setHeaderVisible(true);
 		viewer.setInput(tree);
 		GridData data = new GridData(SWT.TOP, SWT.FILL, true, true);
-		data.widthHint = 600;
+		data.widthHint = 900;
 		data.heightHint = 300;
 		viewer.getTree().setLayoutData(data);
 		viewer.addSelectionChangedListener(selectionListener);

@@ -132,8 +132,8 @@ public class JythonPath {
 		}
 		jyBundleLoc = new File(jyBundleLoc, JYTHON_DIR);
 		
-		//Test whether we're running in 
-		if (!(isRunningInEclipse) && ((jyBundleLoc.getAbsolutePath().contains(GIT_REPO_ENDING))||(jyBundleLoc.getAbsolutePath().contains(GIT_REPO_ENDING)))) {
+		// Test whether we're running in 
+		if (!isRunningInEclipse && jyBundleLoc.getAbsolutePath().contains(GIT_REPO_ENDING)) {
 			logger.error("Using jython from git, but -Drun.in.eclipse set false. This will cause errors.");
 			return null;
 		}

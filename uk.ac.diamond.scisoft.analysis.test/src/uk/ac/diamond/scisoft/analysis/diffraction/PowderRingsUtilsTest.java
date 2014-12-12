@@ -488,12 +488,12 @@ public class PowderRingsUtilsTest {
 				}
 
 				f = PowderRingsUtils.createQFitFunction4(ells, dt, wavelength, false);
-				init = f.getInit();
+				init = f.getInitial();
 				f.setSpacings(list);
 				Assert.assertEquals("", 0, f.value(init), 1e-2);
 
 				f = PowderRingsUtils.createQFitFunction4(ells, dt, wavelength, true);
-				init = f.getInit();
+				init = f.getInitial();
 				f.setSpacings(list);
 				Assert.assertEquals("", 0, f.value(init), 1e-2);
 			}
@@ -526,12 +526,12 @@ public class PowderRingsUtilsTest {
 						}
 
 						f = PowderRingsUtils.createQFitFunction7(ells, dt, wavelength, false);
-						init = f.getInit();
+						init = f.getInitial();
 						f.setSpacings(list);
 						Assert.assertEquals("", 0, f.value(init), 1e-2);
 
 						f = PowderRingsUtils.createQFitFunction7(ells, dt, wavelength, true);
-						init = f.getInit();
+						init = f.getInitial();
 						f.setSpacings(list);
 						Assert.assertEquals("", 0, f.value(init), 1e-2);
 
@@ -540,7 +540,7 @@ public class PowderRingsUtilsTest {
 					}
 
 					f = PowderRingsUtils.createQFitFunctionForAllImages(le, ld, wavelength);
-					init = f.getInit();
+					init = f.getInitial();
 					f.setSpacings(bList);
 					Assert.assertEquals("", 0, f.value(init), 1e-2);
 				}

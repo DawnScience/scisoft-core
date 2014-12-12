@@ -580,7 +580,7 @@ public class PowderRingsUtils {
 			f = createQFitFunction7(ellipses, detector, env.getWavelength(), fixedWavelength);
 		}
 
-		logger.debug("Init: {}", f.getInit());
+		logger.debug("Init: {}", f.getInitial());
 
 		// set up a combination generator for all
 		List<Double> s = new ArrayList<Double>();
@@ -686,7 +686,7 @@ public class PowderRingsUtils {
 			f = createQFitFunction7(ellipses, detector, env.getWavelength(), fixedWavelength);
 		}
 
-		logger.debug("Init: {}", f.getInit());
+		logger.debug("Init: {}", f.getInitial());
 
 		if (mon != null) {
 			mon.worked(1);
@@ -843,7 +843,7 @@ public class PowderRingsUtils {
 
 		DetectorFitFunction f = createQFitFunctionForAllImages(lEllipses, lDetectors, env.getWavelength());
 
-		logger.debug("Init: {}", f.getInit());
+		logger.debug("Init: {}", f.getInitial());
 
 		if (mon != null) {
 			mon.worked(1);
@@ -909,10 +909,10 @@ public class PowderRingsUtils {
 		double[] a = dp.getNormalAnglesInDegrees();
 		if (fixedWavelength) {
 			f = new QSpaceFitFixedWFunction7(known, weight, dp.getVPxSize(), wavelength);
-			f.setInit(new double[] {o.getX(), o.getY(), o.getZ(), a[0], a[1], a[2]});
+			f.setInitial(new double[] {o.getX(), o.getY(), o.getZ(), a[0], a[1], a[2]});
 		} else {
 			f = new QSpaceFitFunction7(known, weight, dp.getVPxSize());
-			f.setInit(new double[] {wavelength, o.getX(), o.getY(), o.getZ(), a[0], a[1], a[2]});
+			f.setInitial(new double[] {wavelength, o.getX(), o.getY(), o.getZ(), a[0], a[1], a[2]});
 		}
 		f.setBaseRollAngle(base);
 		return f;
@@ -941,10 +941,10 @@ public class PowderRingsUtils {
 		Vector3d o = dp.getOrigin();
 		if (fixedWavelength) {
 			f = new QSpaceFitFixedWFunction4(known, weight, dp.getVPxSize(), wavelength);
-			f.setInit(new double[] {o.getX(), o.getY(), o.getZ()});
+			f.setInitial(new double[] {o.getX(), o.getY(), o.getZ()});
 		} else {
 			f = new QSpaceFitFunction4(known, weight, dp.getVPxSize());
-			f.setInit(new double[] {wavelength, o.getX(), o.getY(), o.getZ()});
+			f.setInitial(new double[] {wavelength, o.getX(), o.getY(), o.getZ()});
 		}
 		f.setBaseRollAngle(ellipses.get(0).getAngle());
 		return f;
@@ -1002,7 +1002,7 @@ public class PowderRingsUtils {
 		}
 
 		DetectorFitFunction f = new QSpacesFitFunction(allKnowns, allWeights, lDP.get(0).getVPxSize());
-		f.setInit(init);
+		f.setInitial(init);
 		f.setBaseRollAngles(bases);
 		return f;
 	}
@@ -1106,12 +1106,12 @@ public class PowderRingsUtils {
 		}
 
 		@Override
-		public void setInit(double[] init) {
+		public void setInitial(double[] init) {
 			initial = init;
 		}
 
 		@Override
-		public double[] getInit() {
+		public double[] getInitial() {
 			return initial;
 		}
 

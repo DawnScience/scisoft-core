@@ -40,7 +40,8 @@ public class FittingUtils {
 	private static final int MAX_EVAL = 1000000;
 	private static final double REL_TOL = 1e-7;
 	private static final double ABS_TOL = 1e-15;
-	enum Optimizer { Simplex, CMAES, BOBYQA}
+
+	public enum Optimizer { Simplex, CMAES, BOBYQA}
 	static Optimizer optimizer = Optimizer.CMAES;
 
 	/**
@@ -48,7 +49,16 @@ public class FittingUtils {
 	 * @return optimizer
 	 */
 	public static MultivariateOptimizer createOptimizer(int n) {
-		switch (optimizer) {
+		return createOptimizer(optimizer, n);
+	}
+
+	/**
+	 * @param opt
+	 * @param n
+	 * @return optimizer
+	 */
+	public static MultivariateOptimizer createOptimizer(Optimizer opt, int n) {
+		switch (opt) {
 		case BOBYQA:
 			return new BOBYQAOptimizer(n + 2);
 		case CMAES:
@@ -72,20 +82,16 @@ public class FittingUtils {
 		try {
 			PointValuePair result;
 
-			switch (optimizer) {
-			case BOBYQA:
-				result = opt.optimize(new InitialGuess(f.getInit()), GoalType.MINIMIZE, new ObjectiveFunction(f),
+			if (opt instanceof BOBYQAOptimizer) {
+				result = opt.optimize(new InitialGuess(f.getInitial()), GoalType.MINIMIZE, new ObjectiveFunction(f),
 						new MaxEval(MAX_EVAL), f.getBounds());
-				break;
-			case CMAES:
+			} else if (opt instanceof CMAESOptimizer) {
 				int p = (int) Math.ceil(4 + Math.log(f.getN())) + 1;
 				logger.trace("Population size: {}", p);
-				result = opt.optimize(new InitialGuess(f.getInit()), GoalType.MINIMIZE, new ObjectiveFunction(f),
+				result = opt.optimize(new InitialGuess(f.getInitial()), GoalType.MINIMIZE, new ObjectiveFunction(f),
 						new CMAESOptimizer.Sigma(f.getSigma()), new CMAESOptimizer.PopulationSize(p),
 						new MaxEval(MAX_EVAL), f.getBounds());
-				break;
-			case Simplex:
-			default:
+			} else {
 				int n = f.getN();
 				double offset = 1e12;
 				double[] scale = new double[n];
@@ -94,11 +100,10 @@ public class FittingUtils {
 				}
 				SimpleBounds bnds = f.getBounds();
 				MultivariateFunctionPenaltyAdapter of = new MultivariateFunctionPenaltyAdapter(f, bnds.getLower(), bnds.getUpper(), offset, scale);
-				result = opt.optimize(new InitialGuess(f.getInit()), GoalType.MINIMIZE,
+				result = opt.optimize(new InitialGuess(f.getInitial()), GoalType.MINIMIZE,
 						new ObjectiveFunction(of), new MaxEval(MAX_EVAL),
 						new MultiDirectionalSimplex(n));
 //				new NelderMeadSimplex(n));
-				break;
 			}
 
 			// logger.info("Q-space fit: rms = {}, x^2 = {}", opt.getRMS(), opt.getChiSquare());
@@ -125,14 +130,37 @@ public class FittingUtils {
 	 * Basic fit function interface
 	 */
 	public interface FitFunction extends MultivariateFunction {
+		/**
+		 * Set stored parameters
+		 * @param arg
+		 */
 		public void setParameters(double[] arg);
+
+		/**
+		 * @return stored parameters
+		 */
 		public double[] getParameters();
 
+		/**
+		 * @return standard deviations which may be used for sampling parameter space
+		 */
 		public double[] getSigma();
+
+		/**
+		 * @return bounds on parameters
+		 */
 		public SimpleBounds getBounds();
 
-		public double[] getInit();
-		public void setInit(double[] init);
+		/**
+		 * @return initial parameters
+		 */
+		public double[] getInitial();
+
+		/**
+		 * Set initial parameters
+		 * @param init
+		 */
+		public void setInitial(double[] init);
 
 		/**
 		 * @return number of parameters

@@ -117,6 +117,7 @@ public class TiffLoaderTest {
 	public void testSaveFile() throws ScanFileHolderException {
 		Dataset a = DatasetFactory.createRange(128 * 128, Dataset.FLOAT32).reshape(128, 128);
 		DataHolder d = new DataHolder();
+		a.idivide(10000);
 		d.addDataset("a", a);
 
 		String oname = testScratchDirectoryName + "a.tif";
@@ -127,14 +128,13 @@ public class TiffLoaderTest {
 		s.saveFile(d);
 
 		in = new TIFFImageLoader(oname).loadFile();
-
 		checkDataset(a, in.getDataset(0));
 
 		s = new TIFFImageSaver(oname);
 		s.saveFile(d);
 
 		in = new TIFFImageLoader(oname).loadFile();
-		checkDataset(a, in.getDataset(0));
+		checkDataset(a.cast(Dataset.INT32), in.getDataset(0));
 	}
 
 	@Test
@@ -161,7 +161,7 @@ public class TiffLoaderTest {
 		Assert.assertEquals("1st value", e.getDouble(0, 0), a.getDouble(0, 0), 1e-5);
 		Assert.assertEquals("last value", e.getDouble(shape[0] - 1, shape[1] - 1),
 				a.getDouble(shape[0] - 1, shape[1] - 1), 1e-5);
-
+		TestUtils.assertDatasetEquals(e, a, 1e-14, 1e-14);
 	}
 
 }

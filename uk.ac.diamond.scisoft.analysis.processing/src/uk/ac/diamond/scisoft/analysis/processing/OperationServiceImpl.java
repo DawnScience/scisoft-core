@@ -180,7 +180,6 @@ public class OperationServiceImpl implements IOperationService {
         	
 	        for (int i = 1; i < series.length; i++) {
 	        	OperationRank input = series[i].getInputRank();
-	        	if (input == OperationRank.ANY)  input = firstRank;
 	        	if (!input.isCompatibleWith(output)) {
 	        		throw new InvalidRankException(series[i], "The output of '"+series[i-1].getName()+"' is not compatible with the input of '"+series[i].getName()+"'.");
 	        	}

@@ -102,8 +102,6 @@ public class MultiPagePtychoEditor extends MultiPageEditorPart {
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		List<PtychoData> list = PtychoTreeUtils.extract(tree);
-//		IPreferenceStore store = Activator.getPtychoPreferenceStore();
-//		String fileSavedPath = store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
 		if (fileSavedPath == null)
 			doSaveAs();
 		PtychoUtils.saveCSVFile(fileSavedPath, list);
@@ -113,8 +111,6 @@ public class MultiPagePtychoEditor extends MultiPageEditorPart {
 
 	@Override
 	public void doSaveAs() {
-//		IPreferenceStore store = Activator.getPtychoPreferenceStore();
-//		String fileSavedPath = store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
 		treeEditor.saveAs(fileSavedPath);
 		treeEditor.setDirty(false);
 	}

@@ -2,6 +2,7 @@ package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -93,8 +94,6 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
 		super.init(site, input);
-		//save the json right away
-//		saveJSon();
 
 		setPartName("Ptychography parameter Tree Editor");
 
@@ -531,5 +530,4 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 		if (viewer != null)
 			viewer.getControl().setFocus();
 	}
-
 }

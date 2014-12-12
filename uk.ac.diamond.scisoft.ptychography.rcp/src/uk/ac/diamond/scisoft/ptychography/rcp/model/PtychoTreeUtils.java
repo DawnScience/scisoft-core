@@ -107,7 +107,7 @@ public class PtychoTreeUtils {
 			if (!child.getChildren().isEmpty())
 				path = getTreePath(child, node);
 		}
-		return "";
+		return path;
 	}
 
 	/**

@@ -37,6 +37,7 @@ public class MultiPagePtychoEditor extends MultiPageEditorPart {
 	protected void createPages() {
 		try {
 			treeEditor = new PtychoTreeViewerEditor(levels, tree, fullPath, isDirtyFlag);
+			treeEditor.setFileSavedPath(fileSavedPath);
 			addPage(0, treeEditor, getEditorInput());
 			setPageText(0, "Advanced");
 
@@ -106,6 +107,7 @@ public class MultiPagePtychoEditor extends MultiPageEditorPart {
 		if (fileSavedPath == null)
 			doSaveAs();
 		PtychoUtils.saveCSVFile(fileSavedPath, list);
+		treeEditor.setFileSavedPath(fileSavedPath);
 		treeEditor.setDirty(false);
 	}
 

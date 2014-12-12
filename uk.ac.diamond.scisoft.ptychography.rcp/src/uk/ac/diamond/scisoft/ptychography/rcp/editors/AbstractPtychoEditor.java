@@ -43,48 +43,11 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 
 	private InjectPyDevConsoleAction runPython;
 
-	@Override
-	public void doSave(IProgressMonitor monitor) {
-		List<PtychoData> list = PtychoTreeUtils.extract(tree);
-		IPreferenceStore store = Activator.getPtychoPreferenceStore();
-		String fileSavedPath = store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
-		if (fileSavedPath == null)
-			doSaveAs();
-		PtychoUtils.saveCSVFile(fileSavedPath, list);
-		setDirty(false);
-	}
-
-	@Override
-	public void doSaveAs() {
-		IPreferenceStore store = Activator.getPtychoPreferenceStore();
-		String fileSavedPath = store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
-		saveAs(fileSavedPath);
-		setDirty(false);
-	}
+	private String fileSavedPath;
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
-//		IPreferenceStore store = Activator.getPtychoPreferenceStore();
-//		fileSavedPath = store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
-//		fullPath = PtychoUtils.getFullPath(input);
-//		try {
-//			String path = "";
-//			if (fileSavedPath != null || !fileSavedPath.equals("")) {
-//				File f = new File(fileSavedPath);
-//				if (!f.exists())
-//					path = fullPath;
-//				else
-//					path = fileSavedPath;
-//			} else
-//				path = fullPath;
-//			levels = PtychoUtils.loadSpreadSheet(path);
-//			if (levels != null)
-//				tree = PtychoTreeUtils.populate(levels);
-//		} catch (Exception e) {
-//			logger.error("Error loading spreadsheet file:" + e.getMessage());
-//			e.printStackTrace();
-//		}
 		setSite(site);
 		setInput(input);
 
@@ -101,14 +64,24 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 	}
 
 	@Override
+	public void doSave(IProgressMonitor monitor) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void doSaveAs() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public abstract void createPartControl(Composite parent);
 
 	protected void createPythonRunCommand(Composite parent) {
 		runPython = new InjectPyDevConsoleAction("Run Ptychographic Iterative Engine python script") {
 			@Override
 			public void run() {
-				IPreferenceStore store = Activator.getPtychoPreferenceStore();
-				String fileSavedPath = store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
 				jsonSavedPath = saveJSon(fileSavedPath);
 				// reinject command
 				this.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd(jsonSavedPath));
@@ -218,5 +191,9 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 		} catch (Exception e) {
 			logger.error("Error saving file:"+ e.getMessage());
 		}
+	}
+
+	public void setFileSavedPath(String fileSavedPath) {
+		this.fileSavedPath = fileSavedPath;
 	}
 }

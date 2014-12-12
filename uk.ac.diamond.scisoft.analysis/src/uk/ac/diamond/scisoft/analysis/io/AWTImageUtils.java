@@ -57,7 +57,13 @@ public class AWTImageUtils {
 		Dataset tmp;
 
 		for (int i = 0; i < bands; i++) {
-			tmp = DatasetFactory.createFromObject(r.getSamples(0, 0, width, height, i, (int[]) null), dtype);
+			if (dtype == Dataset.FLOAT32) {
+				tmp = DatasetFactory.createFromObject(r.getSamples(0, 0, width, height, i, (float[]) null), dtype);
+			} else if (dtype == Dataset.FLOAT64) {
+				tmp = DatasetFactory.createFromObject(r.getSamples(0, 0, width, height, i, (double[]) null), dtype);
+			} else {
+				tmp = DatasetFactory.createFromObject(r.getSamples(0, 0, width, height, i, (int[]) null), dtype);
+			}
 			tmp.setShape(height, width);
 			data[i] = tmp;
 		}

@@ -23,7 +23,7 @@ public class SmoothGoldEdgeFunction extends AFunction implements
 	private static final long serialVersionUID = 1L;
 	
 	private static final String NAME = "Smooth Gold Edge";
-	private static final String DESC = "y(x) = Ployline with tails";
+	private static final String DESC = "y(x) = Polyline with tails";
 	private static final String[] PARAM_NAMES = new String[]{"smoothing", "tail_proportion"};
 	private static final double[] PARAMS = new double[]{5, 0.2};
 

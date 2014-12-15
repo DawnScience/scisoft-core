@@ -38,6 +38,7 @@
 				<pathelement location="${workspace.git.loc}/dawn-workflow.git/org.dawb.passerelle.common/bin" />
 				<pathelement location="${workspace.git.loc}/dawn-workflow.git/org.dawb.passerelle.common.ui/bin" />
 				<pathelement location="${workspace.git.loc}/dawn-workflow.git/org.dawb.passerelle.actors.ui/bin" />
+				<pathelement location="${workspace.git.loc}/dawn-workflow.git/org.dawb.workbench.jmx/bin" />
 				<pathelement location="${workspace.git.loc}/dawn-isencia.git/com.isencia.passerelle.commons/target/classes" />
 				<pathelement location="${workspace.git.loc}/dawn-isencia.git/com.isencia.passerelle.domain.et/target/classes" />
 				<pathelement location="${workspace.git.loc}/dawn-isencia.git/com.isencia.passerelle.engine/target/classes" />

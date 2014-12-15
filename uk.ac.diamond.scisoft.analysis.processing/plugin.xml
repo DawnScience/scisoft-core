@@ -395,34 +395,6 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutsideRegionModel"
             name="Mask Outside Region Operation">
       </operation>
-      <operation
-            category="uk.ac.diamond.scisoft.spectroscopy.xafs"
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.spectroscopy.XAFSNormalisationOperation"
-            icon="icons/xafsnorm.png"
-            id="uk.ac.diamond.scisoft.spectroscopy.operations.XAFSNormalisationOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.spectroscopy.XAFSNormalisationModel"
-            name="XAFS Normalisation">
-      </operation>
-      <operation
-            category="uk.ac.diamond.scisoft.spectroscopy.xafs"
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.spectroscopy.XAFSEDEPostEdgeBackgroundOperation"
-            icon="icons/xafssub.png"
-            id="uk.ac.diamond.scisoft.spectroscopy.operations.XAFSEDEPostEdgeBackgroundOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.spectroscopy.XAFSEDEPostEdgeBackgroundModel"
-            name="XAFS EDE background subtraction">
-      </operation>
-      <operation
-            category="uk.ac.diamond.scisoft.spectroscopy.xafs"
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.spectroscopy.XAFSFFTOperation"
-            icon="icons/xafsfft.png"
-            id="uk.ac.diamond.scisoft.spectroscopy.operations.XAFSFFTOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.spectroscopy.XAFSFFTModel"
-            name="XAFS FFT">
-      </operation>
-      <category
-            id="uk.ac.diamond.scisoft.spectroscopy.xafs"
-            name="XAFS Analysis">
-      </category>
    </extension>
 
 </plugin>

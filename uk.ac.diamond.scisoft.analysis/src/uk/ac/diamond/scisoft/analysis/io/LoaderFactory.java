@@ -338,7 +338,7 @@ public class LoaderFactory {
 												final IMonitor mon) throws Exception {
 
 		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
-		
+
 		// IMPORTANT: DO NOT USE loadImageStacks in Key. 
 		// Instead when loadImageStacks=true, we add the stack to the already
 		// cached data. So reducing the cache size.
@@ -370,11 +370,12 @@ public class LoaderFactory {
 					holder = loader.loadFile(mon);
 					holder.setLoaderClass(clazz);
 					holder.setFilePath(path);
-					
-					key.setMetadata(holder.getMetadata()!=null);
-					boolean cached = recordSoftReference(key, holder);
-					if (!cached) System.err.println("Loader factory failed to cache "+path);
-					
+
+					if (!lazily) {
+						key.setMetadata(holder.getMetadata()!=null);
+						boolean cached = recordSoftReference(key, holder);
+						if (!cached) System.err.println("Loader factory failed to cache "+path);
+					}
 					break;
 					
 				} catch (OutOfMemoryError ome) {

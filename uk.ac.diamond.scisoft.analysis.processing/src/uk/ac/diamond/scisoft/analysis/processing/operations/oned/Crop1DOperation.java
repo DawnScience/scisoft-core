@@ -9,15 +9,11 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.api.processing.OperationData;
-import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 
 import uk.ac.diamond.scisoft.analysis.processing.AbstractCropOperation;
 
-public class Crop1DOperation extends AbstractCropOperation<Crop1DModel, OperationData> {
+public class Crop1DOperation extends AbstractCropOperation<Crop1DModel> {
 
 	@Override
 	public String getId() {
@@ -33,17 +29,16 @@ public class Crop1DOperation extends AbstractCropOperation<Crop1DModel, Operatio
 	public OperationRank getOutputRank() {
 		return OperationRank.ONE;
 	}
-	
-	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
-		//Set the rank of the operation
-		int operationRank = 1;
-		
+
+	@Override
+	protected Double[][] getUserVals() {
 		//Get user crop values from the model
-		Double[][] userVals = new Double[operationRank][2];
+		Double[][] userVals = new Double[getOutputRank().getRank()][2];
 		userVals[0][0] = model.getMin();
 		userVals[0][1] = model.getMax();
 		
-		//Do crop and return
-		return cropOperation(input, operationRank, userVals);
+		return userVals;
 	}
+	
+	
 }

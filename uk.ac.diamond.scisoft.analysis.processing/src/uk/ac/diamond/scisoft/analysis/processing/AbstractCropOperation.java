@@ -11,23 +11,30 @@ package uk.ac.diamond.scisoft.analysis.processing;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
-public abstract class AbstractCropOperation<T extends IOperationModel, D extends OperationData> extends AbstractOperation<T, D> {
+public abstract class AbstractCropOperation<T extends IOperationModel> extends AbstractOperation<T, OperationData> {
 	/**
 	 * Take the user's selected range and determine if axis or raw values should be used.
 	 * Thus, set the indices to either the the raw values, shape of data or axis indices.
 	 * If user values null return the a slice with the same shape.
 	 * @param input
-	 * @param cropRank
-	 * @param userVals
+	 * @param monitor
+	 * @throws OperationException
 	 * @return OperationData (slice)
 	 */
-	protected OperationData cropOperation(IDataset input, int cropRank, Double[][] userVals){
+	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
+		//Determine the operation rank
+		int cropRank = getOutputRank().getRank();
+		
+		//Get the user crop limits from the model
+		Double[][] userVals = getUserVals();
+		
 		//Return: array of arrays [[min/max][dimension]]
 		int[][] indices = new int[2][cropRank];
 		
@@ -65,4 +72,11 @@ public abstract class AbstractCropOperation<T extends IOperationModel, D extends
 
 		return Maths.abs(Maths.subtract(theAxis, value)).argMin();
 		}
+	
+	/**
+	 * Returns user defined crop values from the model.
+	 * @return userVals
+	 */
+	protected abstract Double[][] getUserVals();
+	
 }

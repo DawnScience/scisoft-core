@@ -169,6 +169,197 @@ public class OperationDataAxesRankTest {
 		service.execute(context);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void test1DtoAny() throws Exception {
+		
+		ILazyDataset ds = getDataset();
+		
+		final IOperationContext context = service.createContext();
+		context.setData(ds);
+		context.setSlicing("all","all"); // All 24 images in first dimension.		
+
+
+		final IOperation di = new Op1dto1d();
+		final IOperation anySame = new OpAnyToSame();
+
+//		
+//		//pixel integration
+//		final IOperation azi = new PixelIntegrationOperation();
+//		azi.setModel(new PowderIntegrationModel());
+//		
+//		
+		context.setVisitor(new IExecutionVisitor.Stub() {
+			@Override
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
+				
+				final IDataset integrated = result.getData();
+				if (integrated.getRank() != 3) {
+					throw new Exception("Unexpected data rank");
+				}
+				
+				List<AxesMetadata> axes = integrated.getMetadata(AxesMetadata.class);
+				ILazyDataset[] ax = axes.get(0).getAxes();
+				
+				assertEquals(ax.length, 3);
+				assertArrayEquals(new int[]{1,1,1}, ax[0].getShape());
+				assertArrayEquals(new int[]{1,1,1}, ax[1].getShape());
+				assertArrayEquals(new int[]{1,1,10}, ax[2].getShape());
+			}
+		});
+		context.setSeries(di, anySame);
+		service.execute(context);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void test2DtoAny() throws Exception {
+		
+		ILazyDataset ds = getDataset();
+		
+		final IOperationContext context = service.createContext();
+		context.setData(ds);
+		context.setSlicing("all"); // All 24 images in first dimension.
+		
+
+		final IOperation di = new Op2dto2d();
+		final IOperation anySame = new OpAnyToSame();
+
+		context.setVisitor(new IExecutionVisitor.Stub() {
+			@Override
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
+				
+				final IDataset integrated = result.getData();
+				if (integrated.getRank() != 3) {
+					throw new Exception("Unexpected data rank");
+				}
+				
+				List<AxesMetadata> axes = integrated.getMetadata(AxesMetadata.class);
+				ILazyDataset[] ax = axes.get(0).getAxes();
+				
+				assertEquals(ax.length, 3);
+				assertArrayEquals(new int[]{1,1,1}, ax[0].getShape());
+				assertArrayEquals(new int[]{1,5,1}, ax[1].getShape());
+				assertArrayEquals(new int[]{1,1,10}, ax[2].getShape());
+				
+			}
+		});
+		context.setSeries(di, anySame);
+		service.execute(context);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void test2DtoAnyto2D() throws Exception {
+		
+		ILazyDataset ds = getDataset();
+		
+		final IOperationContext context = service.createContext();
+		context.setData(ds);
+		context.setSlicing("all"); // All 24 images in first dimension.
+		
+
+		final IOperation di = new Op2dto2d();
+		final IOperation anySame = new OpAnyToSame();
+		final IOperation di2 = new Op2dto2d();
+
+		context.setVisitor(new IExecutionVisitor.Stub() {
+			@Override
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
+				
+				final IDataset integrated = result.getData();
+				if (integrated.getRank() != 3) {
+					throw new Exception("Unexpected data rank");
+				}
+				
+				List<AxesMetadata> axes = integrated.getMetadata(AxesMetadata.class);
+				ILazyDataset[] ax = axes.get(0).getAxes();
+				
+				assertEquals(ax.length, 3);
+				assertArrayEquals(new int[]{1,1,1}, ax[0].getShape());
+				assertArrayEquals(new int[]{1,5,1}, ax[1].getShape());
+				assertArrayEquals(new int[]{1,1,10}, ax[2].getShape());
+				
+			}
+		});
+		context.setSeries(di, anySame, di2);
+		service.execute(context);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void test2Dto1DtoAny() throws Exception {
+		
+		ILazyDataset ds = getDataset();
+		
+		final IOperationContext context = service.createContext();
+		context.setData(ds);
+		context.setSlicing("all"); // All 24 images in first dimension.
+		
+
+		final IOperation di = new Op2dto2d();
+		final IOperation di2 = new Op2dto1d();
+		final IOperation anySame = new OpAnyToSame();
+
+		context.setVisitor(new IExecutionVisitor.Stub() {
+			@Override
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
+				
+				final IDataset integrated = result.getData();
+				if (integrated.getRank() != 2) {
+					throw new Exception("Unexpected data rank");
+				}
+				
+				List<AxesMetadata> axes = integrated.getMetadata(AxesMetadata.class);
+				ILazyDataset[] ax = axes.get(0).getAxes();
+				
+				assertEquals(ax.length, 2);
+				assertArrayEquals(new int[]{1,1}, ax[0].getShape());
+				assertArrayEquals(new int[]{1,10}, ax[1].getShape());
+				
+			}
+		});
+		context.setSeries(di, di2, anySame);
+		service.execute(context);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void test2Dto1DtoAnyto1D() throws Exception {
+		
+		ILazyDataset ds = getDataset();
+		
+		final IOperationContext context = service.createContext();
+		context.setData(ds);
+		context.setSlicing("all"); // All 24 images in first dimension.
+		
+
+		final IOperation di = new Op2dto2d();
+		final IOperation di2 = new Op2dto1d();
+		final IOperation anySame = new OpAnyToSame();
+		final IOperation di3 = new Op1dto1d();
+
+		context.setVisitor(new IExecutionVisitor.Stub() {
+			@Override
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
+				
+				final IDataset integrated = result.getData();
+				if (integrated.getRank() != 2) {
+					throw new Exception("Unexpected data rank");
+				}
+				
+				List<AxesMetadata> axes = integrated.getMetadata(AxesMetadata.class);
+				ILazyDataset[] ax = axes.get(0).getAxes();
+				
+				assertEquals(ax.length, 2);
+				assertArrayEquals(new int[]{1,1}, ax[0].getShape());
+				assertArrayEquals(new int[]{1,10}, ax[1].getShape());
+				
+			}
+		});
+		context.setSeries(di, di2, anySame, di3);
+		service.execute(context);
+	}
 //	@Test
 //	public void test1Dto2D() throws Exception {
 //		
@@ -291,18 +482,11 @@ public class OperationDataAxesRankTest {
 		
 		protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 			
-			Dataset ones = DatasetFactory.ones(new int[] {5, 10}, Dataset.INT16);
-			Dataset ax1 = DatasetFactory.createRange(5, Dataset.INT16);
-			ax1.setShape(new int[]{5,1});
-			Dataset ax2 = DatasetFactory.createRange(10, Dataset.INT16);
-			ax2.setShape(new int[]{1,10});
-			AxesMetadataImpl md = new AxesMetadataImpl(2);
-			md.addAxis(0, ax1);
-			md.addAxis(1, ax2);
-			ones.setMetadata(md);
+			Dataset ones = getNew2dDataset();
 			
 			return new OperationData(ones);
 		}
+
 		
 		@Override
 		public String getId() {
@@ -326,15 +510,11 @@ public class OperationDataAxesRankTest {
 		
 		protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 			
-			Dataset ones = DatasetFactory.ones(new int[] {10}, Dataset.INT16);
-			Dataset ax1 = DatasetFactory.createRange(10, Dataset.INT16);
-			ax1.setShape(new int[]{10});
-			AxesMetadataImpl md = new AxesMetadataImpl(1);
-			md.addAxis(0, ax1);
-			ones.setMetadata(md);
+			Dataset ones = getNew1dDataset();
 			
 			return new OperationData(ones);
 		}
+
 		
 		@Override
 		public String getId() {
@@ -353,7 +533,7 @@ public class OperationDataAxesRankTest {
 		
 	}
 	
-private class Op1dto1d extends AbstractOperation<IOperationModel, OperationData> {
+	private class Op1dto1d extends AbstractOperation<IOperationModel, OperationData> {
 
 		
 		protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
@@ -382,7 +562,61 @@ private class Op1dto1d extends AbstractOperation<IOperationModel, OperationData>
 		public OperationRank getOutputRank() {
 			return OperationRank.ONE;
 		}
-		
+
 	}
 	
+	private class OpAnyToSame extends AbstractOperation<IOperationModel, OperationData> {
+	
+	
+		protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
+	
+			if (input.getRank() == 2) {
+				return new OperationData(getNew2dDataset());
+			}
+			else if (input.getRank() == 1) {
+				return new OperationData(getNew1dDataset());
+			}
+			throw new OperationException(this, "rank is invalid for this test - must be 1 or 2");
+		}
+	
+		@Override
+		public String getId() {
+			return "junk";
+		}
+	
+		@Override
+		public OperationRank getInputRank() {
+			return OperationRank.ANY;
+		}
+	
+		@Override
+		public OperationRank getOutputRank() {
+			return OperationRank.SAME;
+		}
+	
+	}
+	
+	public static Dataset getNew2dDataset() {
+		Dataset ones = DatasetFactory.ones(new int[] {5, 10}, Dataset.INT16);
+		Dataset ax1 = DatasetFactory.createRange(5, Dataset.INT16);
+		ax1.setShape(new int[]{5,1});
+		Dataset ax2 = DatasetFactory.createRange(10, Dataset.INT16);
+		ax2.setShape(new int[]{1,10});
+		AxesMetadataImpl md = new AxesMetadataImpl(2);
+		md.addAxis(0, ax1);
+		md.addAxis(1, ax2);
+		ones.setMetadata(md);
+		return ones;
+	}
+	
+
+	public static Dataset getNew1dDataset() {
+		Dataset ones = DatasetFactory.ones(new int[] {10}, Dataset.INT16);
+		Dataset ax1 = DatasetFactory.createRange(10, Dataset.INT16);
+		ax1.setShape(new int[]{10});
+		AxesMetadataImpl md = new AxesMetadataImpl(1);
+		md.addAxis(0, ax1);
+		ones.setMetadata(md);
+		return ones;
+	}
 }

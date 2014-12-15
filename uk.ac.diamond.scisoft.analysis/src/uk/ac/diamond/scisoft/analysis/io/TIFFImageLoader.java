@@ -276,21 +276,32 @@ public class TIFFImageLoader extends JavaImageLoader {
 				reader = new TIFFImageReader(new TIFFImageReaderSpi());
 				reader.setInput(iis);
 
+				do {
+					Dataset image = readImage(filename, reader, asGrey, keepBitWidth, num);
+					d.setSlice(image.getSliceView(imageStart, imageStop, imageStep), dataStart, dataStop, null);
+					if (monitorIncrement(mon) || is2D) {
+						break;
+					}
+					num += step[0];
+					dataStart[0]++;
+					dataStop[0] = dataStart[0] + 1;
+				} while (dataStart[0] < count[0]);
 			} catch (IllegalArgumentException e) { // catch bad number of bits
 				logger.warn("Exception using TIFFImageReader for file:" + filename, e);
 				reader = new Grey12bitTIFFReader(new Grey12bitTIFFReaderSpi());
 				reader.setInput(iis);
+
+				do {
+					Dataset image = readImage(filename, reader, asGrey, keepBitWidth, num);
+					d.setSlice(image.getSliceView(imageStart, imageStop, imageStep), dataStart, dataStop, null);
+					if (monitorIncrement(mon) || is2D) {
+						break;
+					}
+					num += step[0];
+					dataStart[0]++;
+					dataStop[0] = dataStart[0] + 1;
+				} while (dataStart[0] < count[0]);
 			}
-			do {
-				Dataset image = readImage(filename, reader, asGrey, keepBitWidth, num);
-				d.setSlice(image.getSliceView(imageStart, imageStop, imageStep), dataStart, dataStop, null);
-				if (monitorIncrement(mon) || is2D) {
-					break;
-				}
-				num += step[0];
-				dataStart[0]++;
-				dataStop[0] = dataStart[0] + 1;
-			} while (dataStart[0] < count[0]);
 		} catch (IOException e) {
 			throw new ScanFileHolderException("IOException loading file '" + filename + "'", e);
 		} catch (IllegalArgumentException e) {

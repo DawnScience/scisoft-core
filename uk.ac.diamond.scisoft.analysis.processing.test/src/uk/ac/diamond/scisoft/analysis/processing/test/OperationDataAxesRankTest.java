@@ -2,6 +2,7 @@ package uk.ac.diamond.scisoft.analysis.processing.test;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
+import org.eclipse.dawnsci.analysis.api.processing.InvalidRankException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -359,6 +361,54 @@ public class OperationDataAxesRankTest {
 		});
 		context.setSeries(di, di2, anySame, di3);
 		service.execute(context);
+	}
+	
+	/**
+	 * This sequence should fail because the Any/Same operation is followed by an operation
+	 * with a different numerical rank than the previous numerical one (2 instead of 1).
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	@Test
+	public void test2Dto1DtoAnyto2D() throws Exception {
+		
+		ILazyDataset ds = getDataset();
+		
+		final IOperationContext context = service.createContext();
+		context.setData(ds);
+		context.setSlicing("all"); // All 24 images in first dimension.
+		
+
+		final IOperation di = new Op2dto2d();
+		final IOperation di2 = new Op2dto1d();
+		final IOperation anySame = new OpAnyToSame();
+		final IOperation di3 = new Op2dto2d();
+
+		context.setVisitor(new IExecutionVisitor.Stub() {
+			@Override
+			public void executed(OperationData result, IMonitor monitor) throws Exception {
+				
+				final IDataset integrated = result.getData();
+				if (integrated.getRank() != 2) {
+					throw new Exception("Unexpected data rank");
+				}
+				
+				List<AxesMetadata> axes = integrated.getMetadata(AxesMetadata.class);
+				ILazyDataset[] ax = axes.get(0).getAxes();
+				
+				assertEquals(ax.length, 2);
+				assertArrayEquals(new int[]{5,1}, ax[0].getShape());
+				assertArrayEquals(new int[]{1,10}, ax[1].getShape());
+				
+			}
+		});
+		context.setSeries(di, di2, anySame, di3);
+		try {
+			service.execute(context);
+			fail("This test with mismatched ranks should have failed");
+		} catch (InvalidRankException e) {
+			//this is the expected exception so getting here is a success!
+		}
 	}
 //	@Test
 //	public void test1Dto2D() throws Exception {

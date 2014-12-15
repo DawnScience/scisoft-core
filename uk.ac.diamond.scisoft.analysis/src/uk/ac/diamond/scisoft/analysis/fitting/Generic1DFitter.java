@@ -71,7 +71,7 @@ public class Generic1DFitter implements Serializable {
 	/**
 	 * This method fits peaks to a dataset describing the y values at specified x values. The APeak function specified
 	 * will be returned in the list of FittedPeaks. numPeaks is the maximum number of peaks that will be fitted. The
-	 * method to fit the peaks can be specified provided that the method obeys the IOptomiser interface. The smoothing
+	 * method to fit the peaks can be specified provided that the method obeys the IOptimizer interface. The smoothing
 	 * is the value given when calculating the differential of the data being fitted.
 	 * 
 	 * @param xdata
@@ -97,7 +97,7 @@ public class Generic1DFitter implements Serializable {
 	/**
 	 * This method fits peaks to a dataset describing the y values at specified x values. The APeak function specified
 	 * will be returned in the list of FittedPeaks. numPeaks is the maximum number of peaks that will be fitted. The
-	 * method to fit the peaks can be specified provided that the method obeys the IOptomiser interface. The smoothing
+	 * method to fit the peaks can be specified provided that the method obeys the IOptimizer interface. The smoothing
 	 * is the value given when calculating the differential of the data being fitted. Stopping. Autostopping will stop
 	 * the fitting when the threshold is met of the indicated measure. For example, if the threshold is set to 0.10 and
 	 * the largest peak is has an area of 100 then the routing will continue to run until the next peak being fitted as
@@ -133,7 +133,7 @@ public class Generic1DFitter implements Serializable {
 	/**
 	 * This method fits peaks to a dataset describing the y values at specified x values. The APeak function specified
 	 * will be returned in the list of FittedPeaks. numPeaks is the maximum number of peaks that will be fitted. The
-	 * method to fit the peaks can be specified provided that the method obeys the IOptomiser interface. The smoothing
+	 * method to fit the peaks can be specified provided that the method obeys the IOptimizer interface. The smoothing
 	 * is the value given when calculating the differential of the data being fitted. Stopping. Autostopping will stop
 	 * the fitting when the threshold is met of the indicated measure. For example, if the threshold is set to 0.10 and
 	 * the largest peak is has an area of 100 then the routing will continue to run until the next peak being fitted as

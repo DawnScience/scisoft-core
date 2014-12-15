@@ -178,14 +178,17 @@ public class OperationServiceImpl implements IOperationService {
         	if (output == OperationRank.SAME) output = firstRank;
         	if (output == OperationRank.ANY)  output = firstRank;
         	
+            OperationRank lastNumericalRank = output;
 	        for (int i = 1; i < series.length; i++) {
 	        	OperationRank input = series[i].getInputRank();
 	        	if (!input.isCompatibleWith(output)) {
 	        		throw new InvalidRankException(series[i], "The output of '"+series[i-1].getName()+"' is not compatible with the input of '"+series[i].getName()+"'.");
 	        	}
 	        	output = series[i].getOutputRank();
-	        	if (output == OperationRank.SAME) output = input;
+	        	if ((output == OperationRank.SAME || output == OperationRank.ANY) && input.isDiscrete() == false) output = lastNumericalRank;
+	        	else if (output == OperationRank.SAME) output = input;
 	        	if (series[i].isPassUnmodifiedData()) output = input;
+	        	lastNumericalRank = output;
 			}
         }
 	}

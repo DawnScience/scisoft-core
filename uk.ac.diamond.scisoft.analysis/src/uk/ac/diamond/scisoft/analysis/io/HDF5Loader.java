@@ -928,34 +928,34 @@ public class HDF5Loader extends AbstractFileLoader {
 	private static int getDtype(final int dclass, final int dsize, final boolean isComplex) {
 		switch (dclass) {
 		case Datatype.CLASS_STRING:
-			return org.eclipse.dawnsci.analysis.dataset.impl.Dataset.STRING;
+			return Dataset.STRING;
 		case Datatype.CLASS_CHAR:
 		case Datatype.CLASS_INTEGER:
 			switch (dsize) {
 			case 1:
-				return org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT8;
+				return Dataset.INT8;
 			case 2:
-				return org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT16;
+				return Dataset.INT16;
 			case 4:
-				return org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT32;
+				return Dataset.INT32;
 			case 8:
-				return org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT64;
+				return Dataset.INT64;
 			}
 			break;
 		case Datatype.CLASS_FLOAT:
 			if (isComplex) {
 				switch (dsize) {
 				case 4:
-					return org.eclipse.dawnsci.analysis.dataset.impl.Dataset.COMPLEX64;
+					return Dataset.COMPLEX64;
 				case 8:
-					return org.eclipse.dawnsci.analysis.dataset.impl.Dataset.COMPLEX128;
+					return Dataset.COMPLEX128;
 				}
 			}
 			switch (dsize) {
 			case 4:
-				return org.eclipse.dawnsci.analysis.dataset.impl.Dataset.FLOAT32;
+				return Dataset.FLOAT32;
 			case 8:
-				return org.eclipse.dawnsci.analysis.dataset.impl.Dataset.FLOAT64;
+				return Dataset.FLOAT64;
 			}
 			break;
 		}
@@ -1039,31 +1039,31 @@ public class HDF5Loader extends AbstractFileLoader {
 			final boolean extend) {
 		Dataset ds = null;
 		switch (dtype) {
-		case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.FLOAT32:
+		case Dataset.FLOAT32:
 			float[] fData = (float[]) data;
 			ds = new FloatDataset(fData, shape);
 			break;
-		case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.FLOAT64:
+		case Dataset.FLOAT64:
 			double[] dData = (double[]) data;
 			ds = new DoubleDataset(dData, shape);
 			break;
-		case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT8:
+		case Dataset.INT8:
 			byte[] bData = (byte[]) data;
 			ds = new ByteDataset(bData, shape);
 			break;
-		case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT16:
+		case Dataset.INT16:
 			short[] sData = (short[]) data;
 			ds = new ShortDataset(sData, shape);
 			break;
-		case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT32:
+		case Dataset.INT32:
 			int[] iData = (int[]) data;
 			ds = new IntegerDataset(iData, shape);
 			break;
-		case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT64:
+		case Dataset.INT64:
 			long[] lData = (long[]) data;
 			ds = new LongDataset(lData, shape);
 			break;
-		case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.STRING:
+		case Dataset.STRING:
 			String[] strData = (String[]) data;
 			ds = new StringDataset(strData, shape);
 			break;
@@ -1073,15 +1073,15 @@ public class HDF5Loader extends AbstractFileLoader {
 
 		if (extend) {
 			switch (dtype) {
-			case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT32:
+			case Dataset.INT32:
 				ds = new LongDataset(ds);
 				DatasetUtils.unwrapUnsigned(ds, 32);
 				break;
-			case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT16:
+			case Dataset.INT16:
 				ds = new IntegerDataset(ds);
 				DatasetUtils.unwrapUnsigned(ds, 16);
 				break;
-			case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT8:
+			case Dataset.INT8:
 				ds = new ShortDataset(ds);
 				DatasetUtils.unwrapUnsigned(ds, 8);
 				break;
@@ -1497,7 +1497,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		}
 
 		// cope with external files specified in a non-standard way and which may not be HDF5 either
-		if (dtype == org.eclipse.dawnsci.analysis.dataset.impl.Dataset.STRING && useExternalFiles) {
+		if (dtype == Dataset.STRING && useExternalFiles) {
 			// interpret set of strings as the full path names to a group of external files that are stacked together
 			if (!isVLEN && !isText) {
 				logger.error("String dataset not variable length or text!");
@@ -1861,7 +1861,7 @@ public class HDF5Loader extends AbstractFileLoader {
 						} else {
 							H5.H5Dread(did, tid, msid, sid, HDF5Constants.H5P_DEFAULT, odata);
 
-							if (odata instanceof byte[] && ldtype != org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT8) {
+							if (odata instanceof byte[] && ldtype != Dataset.INT8) {
 								// TODO check if this is actually used
 								Object idata = null;
 								byte[] bdata = (byte[]) odata;
@@ -1933,7 +1933,7 @@ public class HDF5Loader extends AbstractFileLoader {
 							} else {
 								H5.H5Dread(did, tid, msid, sid, HDF5Constants.H5P_DEFAULT, odata);
 
-								if (odata instanceof byte[] && ldtype != org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT8) {
+								if (odata instanceof byte[] && ldtype != Dataset.INT8) {
 									// TODO check if this is actually used
 									byte[] bdata = (byte[]) odata;
 									if (isText) {
@@ -1966,15 +1966,15 @@ public class HDF5Loader extends AbstractFileLoader {
 					}
 					if (extend) {
 						switch (ldtype) {
-						case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT32:
+						case Dataset.INT32:
 							data = new LongDataset(data);
 							DatasetUtils.unwrapUnsigned(data, 32);
 							break;
-						case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT16:
+						case Dataset.INT16:
 							data = new IntegerDataset(data);
 							DatasetUtils.unwrapUnsigned(data, 16);
 							break;
-						case org.eclipse.dawnsci.analysis.dataset.impl.Dataset.INT8:
+						case Dataset.INT8:
 							data = new ShortDataset(data);
 							DatasetUtils.unwrapUnsigned(data, 8);
 							break;

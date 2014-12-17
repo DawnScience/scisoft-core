@@ -11,6 +11,8 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
+
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
@@ -19,8 +21,9 @@ import org.junit.Test;
 
 public class TwoCircleDetectorTest {
 
-	private static final double ROT_5 = Math.toDegrees(Math.atan(5/1000.));
-	private static final double ROT_7 = Math.toDegrees(Math.atan(7/1000.));
+	private static final double RADIUS = 1000;
+	private static final double ROT_5 = Math.toDegrees(Math.atan(5/RADIUS));
+	private static final double ROT_7 = Math.toDegrees(Math.atan(7/RADIUS));
 
 	@Test
 	public void testDetectorNormal() {
@@ -30,7 +33,7 @@ public class TwoCircleDetectorTest {
 		TwoCircleDetector dt = new TwoCircleDetector();
 
 		// set detector normal to beam and fast axis horizontal
-		dt.setDetector(new Vector3d(1000, 0, 1000), new Vector3d(0, 0, -1), new Vector3d(-1, 0, 0));
+		dt.setDetector(new Vector3d(RADIUS, 0, RADIUS), new Vector3d(0, 0, -1), new Vector3d(-1, 0, 0));
 
 		ndp = dt.getDetectorProperties(dp, 0, 0);
 		System.err.println(ndp);
@@ -73,6 +76,197 @@ public class TwoCircleDetectorTest {
 		System.err.println(ndp);
 		System.err.println(dt);
 		assertArrayEquals(new double[] {0, -5}, ndp.getBeamCentreCoords(), 1e-8);
+
+		// set detector normal to beam and fast axis horizontal
+		// and vary everything one-by-one
+		dt.setDetector(new Vector3d(1000, 0, 1000), new Vector3d(0, 0, -1), new Vector3d(-1, 0, 0));
+		double[] bc;
+
+		dt.beamPos.x += 0.95;
+		bc = dt.getDetectorProperties(dp, 0, 0).getBeamCentreCoords();
+		System.err.println(Arrays.toString(bc));
+		assertTrue(bc[0] < 0 && bc[1] == 0);
+		dt.beamPos.x -= 0.95;
+
+		dt.beamPos.y += 0.95;
+		bc = dt.getDetectorProperties(dp, 0, 0).getBeamCentreCoords();
+		System.err.println(Arrays.toString(bc));
+		assertTrue(bc[0] == 0 && bc[1] < 0);
+		dt.beamPos.y -= 0.95;
+
+		dt.beamPos.z += 0.95;
+		bc = dt.getDetectorProperties(dp, 0, 0).getBeamCentreCoords();
+		System.err.println(Arrays.toString(bc));
+		assertTrue(bc[0] == 0 && bc[1] == 0);
+		dt.beamPos.z -= 0.95;
+
+		dt.beamDir.x = 0.05;
+		dt.beamDir.normalize();
+		bc = dt.getDetectorProperties(dp, 0, 0).getBeamCentreCoords();
+		System.err.println(Arrays.toString(bc));
+		assertTrue(bc[0] < 0 && bc[1] == 0);
+		dt.beamDir.x = 0.0;
+		dt.beamDir.normalize();
+
+		dt.beamDir.y = 0.05;
+		dt.beamDir.normalize();
+		bc = dt.getDetectorProperties(dp, 0, 0).getBeamCentreCoords();
+		System.err.println(Arrays.toString(bc));
+		assertTrue(bc[0] == 0 && bc[1] < 0);
+		dt.beamDir.y = 0.0;
+		dt.beamDir.normalize();
+
+		dt.gammaOff += 0.95;
+		bc = dt.getDetectorProperties(dp, 0, 0).getBeamCentreCoords();
+		System.err.println(Arrays.toString(bc));
+		assertTrue(bc[0] > 0 && bc[1] == 0);
+		dt.gammaOff -= 0.95;
+
+		dt.deltaOff += 0.95;
+		bc = dt.getDetectorProperties(dp, 0, 0).getBeamCentreCoords();
+		System.err.println(Arrays.toString(bc));
+		assertTrue(bc[0] == 0 && bc[1] > 0);
+		dt.deltaOff -= 0.95;
+
+		dt.deltaPos.x += 0.95;
+		bc = dt.getDetectorProperties(dp, 0, 0).getBeamCentreCoords();
+		System.err.println(Arrays.toString(bc));
+		assertTrue(bc[0] > 0 && bc[1] == 0);
+		dt.deltaPos.x -= 0.95;
+
+		dt.deltaPos.y += 0.95;
+		bc = dt.getDetectorProperties(dp, 0, 0).getBeamCentreCoords();
+		System.err.println(Arrays.toString(bc));
+		assertTrue(bc[0] == 0 && bc[1] > 0);
+		dt.deltaPos.y -= 0.95;
+
+		dt.deltaPos.z += 0.95;
+		bc = dt.getDetectorProperties(dp, 0, 0).getBeamCentreCoords();
+		System.err.println(Arrays.toString(bc));
+		assertTrue(bc[0] == 0 && bc[1] == 0);
+		dt.deltaPos.z -= 0.95;
+
+		double[] obc = dt.getDetectorProperties(dp, 0, 1).getBeamCentreCoords();
+		System.err.println(Arrays.toString(obc));
+		dt.deltaDir.y = 0.05;
+		dt.deltaDir.normalize();
+		bc = dt.getDetectorProperties(dp, 0, 1).getBeamCentreCoords();
+		System.err.println(Arrays.toString(bc));
+		assertTrue(bc[0] > obc[0] && bc[1] < obc[1]);
+		dt.deltaDir.y = 0.0;
+		dt.deltaDir.normalize();
+
+		dt.deltaDir.z = 0.05;
+		dt.deltaDir.normalize();
+		bc = dt.getDetectorProperties(dp, 0, 1).getBeamCentreCoords();
+		System.err.println(Arrays.toString(bc));
+		assertTrue(bc[0] > obc[0] && bc[1] > obc[1]);
+		dt.deltaDir.z = 0.0;
+		dt.deltaDir.normalize();
+
+		dt.detectorPos.x += 0.95;
+		bc = dt.getDetectorProperties(dp, 0, 0).getBeamCentreCoords();
+		System.err.println(Arrays.toString(bc));
+		assertTrue(bc[0] > 0 && bc[1] == 0);
+		dt.detectorPos.x -= 0.95;
+
+		dt.detectorPos.y += 0.95;
+		bc = dt.getDetectorProperties(dp, 0, 0).getBeamCentreCoords();
+		System.err.println(Arrays.toString(bc));
+		assertTrue(bc[0] == 0 && bc[1] > 0);
+		dt.detectorPos.y -= 0.95;
+
+		dt.detectorPos.z += 0.95;
+		bc = dt.getDetectorProperties(dp, 0, 0).getBeamCentreCoords();
+		System.err.println(Arrays.toString(bc));
+		assertTrue(bc[0] == 0 && bc[1] == 0);
+		dt.detectorPos.z -= 0.95;
+
+		dt.detectorPos.x += 0.95;
+		dt.detectorOri.m10 = 0.05;
+		dt.detectorOri.normalize();
+		System.err.println(dt.detectorOri);
+		bc = dt.getDetectorProperties(dp, 0, 0).getBeamCentreCoords();
+		System.err.println(Arrays.toString(bc));
+		assertTrue(bc[0] > 0 && bc[1] < 0);
+		dt.detectorOri.setIdentity();
+
+		dt.detectorOri.m20 = 0.05;
+		dt.detectorOri.normalize();
+		System.err.println(dt.detectorOri);
+		bc = dt.getDetectorProperties(dp, 0, 0).getBeamCentreCoords();
+		System.err.println(Arrays.toString(bc));
+		assertTrue(bc[0] > 0 && bc[1] == 0);
+		dt.detectorOri.setIdentity();
+
+		dt.detectorOri.m12 = 0.05;
+		dt.detectorOri.normalize();
+		System.err.println(dt.detectorOri);
+		bc = dt.getDetectorProperties(dp, 0, 0).getBeamCentreCoords();
+		System.err.println(Arrays.toString(bc));
+		assertTrue(bc[0] > 0 && bc[1] == 0);
+		dt.detectorOri.setIdentity();
+	}
+
+	@Test
+	public void testBeam() {
+		TwoCircleDetector dt = new TwoCircleDetector();
+
+		dt.setBeam(new Vector3d(0, 0, 0), TwoCircleFitter.createDirection(0, 0));
+		dt.setGamma(0);
+		dt.setDelta(new Vector3d(-RADIUS, 0, 0), TwoCircleFitter.createDirection(90, 180), 0);
+		dt.setDetector(new Vector3d(RADIUS, 0, RADIUS), TwoCircleFitter.createDirection(180, 0), 90);
+
+		DetectorProperties dp = new DetectorProperties(100, 0, 0, 200, 400, 1, 1);
+		Vector3d p;
+		double[] bc;
+
+		p = dt.getDetectorProperties(dp, 0, 0).getBeamCentrePosition();
+		assertEquals(0, p.x, 1e-10);
+		assertEquals(0, p.y, 1e-10);
+		assertEquals(RADIUS, p.z, 1e-10);
+
+		p = dt.getDetectorProperties(dp, 5, 0).getBeamCentrePosition();
+		assertEquals(0, p.x, 1e-10);
+		assertEquals(0, p.y, 1e-10);
+		assertEquals(RADIUS/Math.cos(Math.toRadians(5)), p.z, 1e-10);
+
+		p = dt.getDetectorProperties(dp, 0, 5).getBeamCentrePosition();
+		assertEquals(0, p.x, 1e-10);
+		assertEquals(0, p.y, 1e-10);
+		assertEquals(RADIUS/Math.cos(Math.toRadians(5)), p.z, 1e-10);
+
+		bc = dt.getDetectorProperties(dp, 0, 5).getBeamCentreCoords();
+		assertEquals(-RADIUS*Math.tan(Math.toRadians(5)), bc[0], 1e-10);
+		assertEquals(0, bc[1], 1e-10);
+
+		bc = dt.getDetectorProperties(dp, 5, 0).getBeamCentreCoords();
+		assertEquals(0, bc[0], 1e-10);
+		assertEquals(RADIUS*Math.tan(Math.toRadians(5)), bc[1], 1e-10);
+
+		dt.setDetector(new Vector3d(RADIUS, 0, RADIUS), TwoCircleFitter.createDirection(180, 0), 0);
+		p = dt.getDetectorProperties(dp, 0, 0).getBeamCentrePosition();
+		assertEquals(0, p.x, 1e-10);
+		assertEquals(0, p.y, 1e-10);
+		assertEquals(RADIUS, p.z, 1e-10);
+
+		p = dt.getDetectorProperties(dp, 5, 0).getBeamCentrePosition();
+		assertEquals(0, p.x, 1e-10);
+		assertEquals(0, p.y, 1e-10);
+		assertEquals(RADIUS/Math.cos(Math.toRadians(5)), p.z, 1e-10);
+
+		p = dt.getDetectorProperties(dp, 0, 5).getBeamCentrePosition();
+		assertEquals(0, p.x, 1e-10);
+		assertEquals(0, p.y, 1e-10);
+		assertEquals(RADIUS/Math.cos(Math.toRadians(5)), p.z, 1e-10);
+
+		bc = dt.getDetectorProperties(dp, 0, 5).getBeamCentreCoords();
+		assertEquals(0, bc[0], 1e-10);
+		assertEquals(RADIUS*Math.tan(Math.toRadians(5)), bc[1], 1e-10);
+
+		bc = dt.getDetectorProperties(dp, 5, 0).getBeamCentreCoords();
+		assertEquals(RADIUS*Math.tan(Math.toRadians(5)), bc[0], 1e-10);
+		assertEquals(0, bc[1], 1e-10);
 	}
 
 	private static final double ANGLE = Math.toRadians(20);
@@ -209,7 +403,7 @@ public class TwoCircleDetectorTest {
 		System.err.println(ndp);
 		System.err.println(dt);
 		assertArrayEquals(new double[] {0, -5}, ndp.getBeamCentreCoords(), 1e-8);
-}
+	}
 
 	private void checkIntBeamCentreCoords(DetectorProperties dp, double... coords) {
 		double[] nc = dp.getBeamCentreCoords();

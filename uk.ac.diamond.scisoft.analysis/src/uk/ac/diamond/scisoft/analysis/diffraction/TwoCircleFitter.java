@@ -55,7 +55,7 @@ public class TwoCircleFitter {
 	 * @param two
 	 * @param p
 	 */
-	public static void setupTwoCircle(TwoCircleDetector two, double[] p) {
+	public static void setupTwoCircle(TwoCircleDetector two, double... p) {
 		int i = 0;
 		two.setBeam(new Vector3d(p[i++], p[i++], p[i++]), createDirection(p[i++], p[i++]));
 		two.setGamma(p[i++]);
@@ -137,7 +137,7 @@ public class TwoCircleFitter {
 		}
 
 		@Override
-		public void setInitial(double[] init) {
+		public void setInitial(double... init) {
 			initial = init.clone();
 			setDetector(initial);
 		}

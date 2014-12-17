@@ -41,7 +41,7 @@ public class FittingUtils {
 	private static final double REL_TOL = 1e-7;
 	private static final double ABS_TOL = 1e-15;
 
-	public enum Optimizer { Simplex, CMAES, BOBYQA}
+	public enum Optimizer { Simplex, CMAES, BOBYQA }
 	static Optimizer optimizer = Optimizer.CMAES;
 
 	/**
@@ -160,7 +160,7 @@ public class FittingUtils {
 		 * Set initial parameters
 		 * @param init
 		 */
-		public void setInitial(double[] init);
+		public void setInitial(double... init);
 
 		/**
 		 * @return number of parameters

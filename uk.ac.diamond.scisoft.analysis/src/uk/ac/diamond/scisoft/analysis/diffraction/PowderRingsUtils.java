@@ -907,10 +907,10 @@ public class PowderRingsUtils {
 		double[] a = dp.getNormalAnglesInDegrees();
 		if (fixedWavelength) {
 			f = new QSpaceFitFixedWFunction7(known, weight, dp.getVPxSize(), wavelength);
-			f.setInitial(new double[] {o.getX(), o.getY(), o.getZ(), a[0], a[1], a[2]});
+			f.setInitial(o.getX(), o.getY(), o.getZ(), a[0], a[1], a[2]);
 		} else {
 			f = new QSpaceFitFunction7(known, weight, dp.getVPxSize());
-			f.setInitial(new double[] {wavelength, o.getX(), o.getY(), o.getZ(), a[0], a[1], a[2]});
+			f.setInitial(wavelength, o.getX(), o.getY(), o.getZ(), a[0], a[1], a[2]);
 		}
 		f.setBaseRollAngle(base);
 		return f;
@@ -939,10 +939,10 @@ public class PowderRingsUtils {
 		Vector3d o = dp.getOrigin();
 		if (fixedWavelength) {
 			f = new QSpaceFitFixedWFunction4(known, weight, dp.getVPxSize(), wavelength);
-			f.setInitial(new double[] {o.getX(), o.getY(), o.getZ()});
+			f.setInitial(o.getX(), o.getY(), o.getZ());
 		} else {
 			f = new QSpaceFitFunction4(known, weight, dp.getVPxSize());
-			f.setInitial(new double[] {wavelength, o.getX(), o.getY(), o.getZ()});
+			f.setInitial(wavelength, o.getX(), o.getY(), o.getZ());
 		}
 		f.setBaseRollAngle(ellipses.get(0).getAngle());
 		return f;
@@ -1104,7 +1104,7 @@ public class PowderRingsUtils {
 		}
 
 		@Override
-		public void setInitial(double[] init) {
+		public void setInitial(double... init) {
 			initial = init;
 		}
 

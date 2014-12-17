@@ -43,21 +43,18 @@ public class Generic1DFitter implements Serializable {
 	private static final Logger logger = LoggerFactory.getLogger(Generic1DFitter.class);
 
 	/**
-	 * This method fits peaks to a dataset describing the y values at specified x values. The APeak function specified
+	 * This method fits peaks to a dataset describing the y values at specified x values. The CompositeFunction specified
 	 * will be returned in the list of FittedPeaks. numPeaks is the maximum number of peaks that will be fitted.
 	 * 
-	 * @param xdata
-	 *            - the x values that of the measurements given in ydata
-	 * @param ydata
-	 *            - the y values corresponding to the x values given
-	 * @param peakClass
-	 *            - A class that obeys the APeak interface
-	 * @param numPeaks
-	 *            - The maximum number of peaks that are fitted.
+	 * @param xdata - the x values that of the measurements given in ydata
+	 * @param ydata - the y values corresponding to the x values given
+	 * @param peakClass - A class that obeys the APeak interface
+	 * @param numPeaks - The maximum number of peaks that are fitted.
 	 * @return list of FittedPeaks - an object that contain the fitted APeak objects and the corresponding objects that
 	 *         describe the region of the data where the peak was found
 	 */
-	public static List<APeak> fitPeaks(Dataset xdata, Dataset ydata, Class<? extends APeak> peakClass, int numPeaks) {
+	
+	public static List<CompositeFunction> fitPeakFunctions(Dataset xdata, Dataset ydata, Class<? extends APeak> peakClass, int numPeaks) {
 		int tempSmoothing = (int) (xdata.getSize() * 0.01);
 		int smoothing;
 		if (tempSmoothing > DEFAULT_SMOOTHING) {
@@ -65,7 +62,15 @@ public class Generic1DFitter implements Serializable {
 		} else {
 			smoothing = DEFAULT_SMOOTHING;
 		}
-		return getPeaks(fitPeakFunctions(xdata, ydata, peakClass, DEFAULT_OPTIMISER, smoothing, numPeaks));
+		
+		return fitPeakFunctions(xdata, ydata, peakClass, DEFAULT_OPTIMISER, smoothing, numPeaks);
+	}
+	/**
+	 * Identical method to the above, but returns list of APeak instead of CompositeFunction (different name to tell apart)
+	 */
+	public static List<APeak> fitPeaks(Dataset xdata, Dataset ydata, Class<? extends APeak> peakClass, int numPeaks) {
+		
+		return getPeaks(fitPeakFunctions(xdata, ydata, peakClass, numPeaks));
 	}
 
 	/**

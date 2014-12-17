@@ -80,6 +80,7 @@ public class JythonPath {
 		"uk.ac.diamond.org.apache.xmlrpc.server",
 		"com.thoughtworks.xstream",
 		"uk.ac.diamond.org.jscience4",
+		"org.eclipse.equinox.common" // Required for IRemotePlottingSystem
 	};
 	/*
 	 * Plugins we want/don't want
@@ -87,6 +88,7 @@ public class JythonPath {
 	private final static String[] pluginKeys = {
 		"org.eclipse.dawnsci.hdf5", // required for loading to work in client started from IDE
 		"org.eclipse.dawnsci.analysis.*", // includes api, dataset, tree, etc
+		"org.eclipse.dawnsci.plotting.*", // required to expose IRemotePlottingSystem to Jython
 		"uk.ac.diamond.scisoft.analysis",
 		"uk.ac.diamond.scisoft.diffraction.powder",
 		"uk.ac.diamond.scisoft.python",
@@ -242,6 +244,7 @@ public class JythonPath {
 	private static final List<File> findJars(File directory, Collection<String> extraPlugins) {
 		final List<File> jarFiles = new ArrayList<File>();
 	
+		
 		if (directory.isDirectory()) {
 			for (File file : directory.listFiles()) {
 				final String name = file.getName();

@@ -189,11 +189,6 @@ public class JythonInterpreterUtils {
 			return null;
 		}
 		logger.debug("Plugins directory set to: {}", pluginsDir);
-
-		//TODO Move this to where ever it's being called - I'd rather add paths from calling method rather than
-		//forcing all callers of this method to have this set of paths. MTW
-//		final Set<String> extras = new HashSet<String>();
-//		extras.add("org.eclipse.dawnsci.*");
 		
 		//Instantiate the jyPaths HashSet and get its contents
 		Set<String> jyPaths = JythonPath.assembleJyPaths(pluginsDir, Arrays.asList(extras), isRunningInEclipse);

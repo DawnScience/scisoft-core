@@ -896,3 +896,18 @@ def viewtree(tree, name=_H5TVNAME):
 
 viewnexus = viewtree
 
+
+
+if os.name == 'java':
+    import jython.jyplottingsystem as _ps
+else:
+    import python.pyplottingsystem as _ps
+
+
+'''
+name  - the name of the plot to get or if none, the current active plotting system.
+'''
+def getPlottingSystem(name=None):  
+    if name is None:
+        name = _PVNAME
+    return _ps.getPlottingSystem(name)

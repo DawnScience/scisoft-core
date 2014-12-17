@@ -266,7 +266,7 @@ public class TwoCircleDetector implements Cloneable {
 		out.append(beamDir);
 		out.append(", p: ");
 		out.append(beamPos);
-		out.append(", delta d: ");
+		out.append(",\ndelta d: ");
 		out.append(deltaDir);
 		out.append(", a: ");
 		out.append(deltaOff);
@@ -282,5 +282,30 @@ public class TwoCircleDetector implements Cloneable {
 		out.append(orientation);
 
 		return out.toString();
+	}
+
+	private boolean isClose(double e, double a, final double rel, final double abs) {
+		double rt = rel * Math.max(Math.abs(e), Math.abs(a));
+		if (Math.abs(e - a) > abs + rt) {
+			throw new AssertionError(e + " != " + a);
+		}
+		return true;
+	}
+
+	private boolean isClose(Vector3d e, Vector3d a, final double rel, final double abs) {
+		return isClose(e.x, a.x, rel, abs) && isClose(e.y, a.y, rel, abs) && isClose(e.z, a.z, rel, abs);
+	}
+
+	private boolean isClose(Matrix3d e, Matrix3d a, final double rel, final double abs) {
+		return isClose(e.m00, a.m00, rel, abs) && isClose(e.m01, a.m01, rel, abs) && isClose(e.m02, a.m02, rel, abs)
+				&& isClose(e.m10, a.m10, rel, abs) && isClose(e.m11, a.m11, rel, abs) && isClose(e.m12, a.m12, rel, abs)
+				&& isClose(e.m20, a.m20, rel, abs) && isClose(e.m21, a.m21, rel, abs) && isClose(e.m22, a.m22, rel, abs);
+	}
+
+	public boolean isClose(TwoCircleDetector other, final double rel, final double abs) {
+		return isClose(beamDir, other.beamDir, rel, abs) && isClose(beamPos, other.beamPos, rel, abs)
+				&& isClose(gammaOff, other.gammaOff, rel, abs) && isClose(deltaOff, other.deltaOff, rel, abs)
+				&& isClose(deltaDir, other.deltaDir, rel, abs) && isClose(deltaPos, other.deltaPos, rel, abs)
+				&& isClose(detectorPos, other.detectorPos, rel, abs) && isClose(detectorOri, other.detectorOri, rel, abs);
 	}
 }

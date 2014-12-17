@@ -68,8 +68,6 @@ public class PowderRingsUtils {
 	private static final double MAX_FWHM_FACTOR = 2;
 	private static final double RING_SEPARATION = 4;
 
-	public static Long seed = null;
-
 	public static PolylineROI findPOIsNearCircle(IMonitor mon, Dataset image, BooleanDataset mask, CircularROI circle) {
 		return findPOIsNearCircle(mon, image, mask, circle, ARC_LENGTH, RADIAL_DELTA, MAX_POINTS);
 	}

@@ -911,3 +911,6 @@ def getPlottingSystem(name=None):
     if name is None:
         name = _PVNAME
     return _ps.getPlottingSystem(name)
+
+def createColor(r, g, b):    
+    return _ps.createColor(r,g,b)

@@ -76,7 +76,7 @@ public class PowderRingsUtilsTest {
 		for (double d : SPACINGS) {
 			spacings.add(new HKL(Amount.valueOf(d, NonSI.ANGSTROM)));
 		}
-		PowderRingsUtils.seed = 1237L; // set seed for evolution strategy fitting
+		FittingUtils.seed = 1237L; // set seed for evolution strategy fitting
 //		mSpace = new MillerSpace(siliconCell, null);
 	}
 

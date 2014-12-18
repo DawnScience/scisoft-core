@@ -14,11 +14,15 @@ import javax.vecmath.Vector3d;
 import org.apache.commons.math3.optim.SimpleBounds;
 import org.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
  */
 public class TwoCircleFitter {
+	private static Logger logger = LoggerFactory.getLogger(TwoCircleFitter.class);
+
 	/**
 	 * 
 	 * @param prop
@@ -36,14 +40,20 @@ public class TwoCircleFitter {
 		}
 
 		TwoCircleFitFunction f = new TwoCircleFitFunction(prop, init, gamma, delta, x, y);
-		f.setInitial(null); // TODO
-		MultivariateOptimizer opt = FittingUtils.createOptimizer(pts);
+		/* 18-parameter fit function: beam pos (x,y,z), beam dir (t,p), gamma offset, delta pos, delta dir, delta offset,
+		 * detector pos, detector normal, detector fast axis angle from horizontal
+		 */
+		f.setInitial(0, 0, 950, 0, 0, 0, -970, 950, 0, 90, 180, 0,
+				33.54, 0, 535, 180-35, 0, 90);
+		MultivariateOptimizer opt = FittingUtils.createOptimizer(FittingUtils.Optimizer.CMAES, f.getN());
 		double res = FittingUtils.optimize(f, opt, Double.POSITIVE_INFINITY);
 
+		logger.debug("Parameters: p {} (min {})", new Object[] { f.getParameters(), res });
+		logger.debug("Residual value: {}", f.value(f.getParameters()));
 		return f.getTwoCircle();
 	}
 
-	private static Vector3d createDirection(double a, double b) {
+	static Vector3d createDirection(double a, double b) {
 		double theta = Math.toRadians(a);
 		double phi = Math.toRadians(b);
 		double st = Math.sin(theta);
@@ -55,7 +65,7 @@ public class TwoCircleFitter {
 	 * @param two
 	 * @param p
 	 */
-	public static void setupTwoCircle(TwoCircleDetector two, double[] p) {
+	public static void setupTwoCircle(TwoCircleDetector two, double... p) {
 		int i = 0;
 		two.setBeam(new Vector3d(p[i++], p[i++], p[i++]), createDirection(p[i++], p[i++]));
 		two.setGamma(p[i++]);
@@ -80,25 +90,26 @@ public class TwoCircleFitter {
 		private double[] y;
 		private int pts;
 
-		protected static final double SIGMA_POSN = 3; // (in mm)
-		protected static final double SIGMA_ANG  = 6; // (in degrees)
+		protected static final double SIGMA_POSN = 1./16; // (in mm)
+		protected static final double SIGMA_FANG = 1./8; // (in degrees)
+		protected static final double SIGMA_ANG  = 2; // (in degrees)
 
 		public TwoCircleFitFunction(DetectorProperties prop, TwoCircleDetector detector, double[] gamma, double[] delta, double[] x, double[] y) {
 			initial = null;
 			parameters = null;
 			bounds = new SimpleBounds(new double[] {
-					Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 0, 0, -180,
-					Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 0, 0, -180,
-					Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 0, 0, -90
+					Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 0, -180, -180,
+					Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 0, -180, -180,
+					Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 0, -180, -90
 					}, new double[] {
-					Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 180, 360, 180,
-					Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 180, 360, 180,
-					Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 180, 360, 90
+					Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 180, 180, 180,
+					Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 180, 180, 180,
+					Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 180, 180, 90
 			});
 			sigma = new double[] {
-					SIGMA_POSN, SIGMA_POSN, SIGMA_POSN, SIGMA_ANG, SIGMA_ANG, SIGMA_ANG,
-					SIGMA_POSN, SIGMA_POSN, SIGMA_POSN, SIGMA_ANG, SIGMA_ANG, SIGMA_ANG,
-					SIGMA_POSN, SIGMA_POSN, SIGMA_POSN, SIGMA_ANG, SIGMA_ANG, SIGMA_ANG
+					SIGMA_POSN, SIGMA_POSN, SIGMA_POSN, SIGMA_FANG, SIGMA_FANG, SIGMA_FANG,
+					SIGMA_POSN, SIGMA_POSN, SIGMA_POSN, SIGMA_ANG, SIGMA_ANG, SIGMA_FANG,
+					SIGMA_POSN, SIGMA_POSN, SIGMA_POSN, SIGMA_FANG, SIGMA_FANG, SIGMA_FANG
 			};
 
 			dp = prop;
@@ -118,7 +129,7 @@ public class TwoCircleFitter {
 
 		@Override
 		public int getN() {
-			return pts;
+			return sigma.length;
 		}
 
 		@Override
@@ -137,7 +148,7 @@ public class TwoCircleFitter {
 		}
 
 		@Override
-		public void setInitial(double[] init) {
+		public void setInitial(double... init) {
 			initial = init.clone();
 			setDetector(initial);
 		}
@@ -157,7 +168,11 @@ public class TwoCircleFitter {
 
 		@Override
 		public double value(double[] point) {
-			setDetector(point);
+			try {
+				setDetector(point);
+			} catch (Exception e) {
+				return Double.MAX_VALUE;
+			}
 			double diff = 0;
 			double t;
 			for (int i = 0; i < pts; i++) {

@@ -9,7 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
@@ -96,6 +96,7 @@ public class PositionIteratorTest {
 		PositionIterator iter = ta.getPositionIterator();
 		int[] pos = iter.getPos();
 
+		assertArrayEquals(ta.getShapeRef(), iter.getShape());
 		for (int i = 0; iter.hasNext(); i++) {
 			assertEquals(i, ta.getDouble(pos), 1e-5*i);
 		}
@@ -116,10 +117,20 @@ public class PositionIteratorTest {
 		PositionIterator iter = new PositionIterator(shape, start, stop, step, axes);
 		int[] pos = iter.getPos();
 		int endrank = shape.length - 1;
-		int[] tpos = start;
+		int[] tpos = start.clone();
 
 		for (int i = 0; i < axes.length; i++) {
 			step[axes[i]] = 0;
+		}
+		for (int i = 0; i <= endrank; i++) {
+			int s = iter.getShape()[i];
+			if (step[i] > 0) {
+				assertEquals(s, (stop[i] - start[i] - 1)/step[i] + 1);
+			} else if (step[i] < 0) {
+				assertEquals(s, (stop[i] - start[i] + 1)/step[i] + 1);
+			} else {
+				assertEquals(s, 1);
+			}
 		}
 
 		for (; iter.hasNext();) {

@@ -68,8 +68,6 @@ public class PowderRingsUtils {
 	private static final double MAX_FWHM_FACTOR = 2;
 	private static final double RING_SEPARATION = 4;
 
-	public static Long seed = null;
-
 	public static PolylineROI findPOIsNearCircle(IMonitor mon, Dataset image, BooleanDataset mask, CircularROI circle) {
 		return findPOIsNearCircle(mon, image, mask, circle, ARC_LENGTH, RADIAL_DELTA, MAX_POINTS);
 	}
@@ -909,10 +907,10 @@ public class PowderRingsUtils {
 		double[] a = dp.getNormalAnglesInDegrees();
 		if (fixedWavelength) {
 			f = new QSpaceFitFixedWFunction7(known, weight, dp.getVPxSize(), wavelength);
-			f.setInitial(new double[] {o.getX(), o.getY(), o.getZ(), a[0], a[1], a[2]});
+			f.setInitial(o.getX(), o.getY(), o.getZ(), a[0], a[1], a[2]);
 		} else {
 			f = new QSpaceFitFunction7(known, weight, dp.getVPxSize());
-			f.setInitial(new double[] {wavelength, o.getX(), o.getY(), o.getZ(), a[0], a[1], a[2]});
+			f.setInitial(wavelength, o.getX(), o.getY(), o.getZ(), a[0], a[1], a[2]);
 		}
 		f.setBaseRollAngle(base);
 		return f;
@@ -941,10 +939,10 @@ public class PowderRingsUtils {
 		Vector3d o = dp.getOrigin();
 		if (fixedWavelength) {
 			f = new QSpaceFitFixedWFunction4(known, weight, dp.getVPxSize(), wavelength);
-			f.setInitial(new double[] {o.getX(), o.getY(), o.getZ()});
+			f.setInitial(o.getX(), o.getY(), o.getZ());
 		} else {
 			f = new QSpaceFitFunction4(known, weight, dp.getVPxSize());
-			f.setInitial(new double[] {wavelength, o.getX(), o.getY(), o.getZ()});
+			f.setInitial(wavelength, o.getX(), o.getY(), o.getZ());
 		}
 		f.setBaseRollAngle(ellipses.get(0).getAngle());
 		return f;
@@ -1106,7 +1104,7 @@ public class PowderRingsUtils {
 		}
 
 		@Override
-		public void setInitial(double[] init) {
+		public void setInitial(double... init) {
 			initial = init;
 		}
 

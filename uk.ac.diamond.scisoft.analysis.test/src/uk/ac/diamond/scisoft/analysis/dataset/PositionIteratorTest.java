@@ -122,12 +122,15 @@ public class PositionIteratorTest {
 		for (int i = 0; i < axes.length; i++) {
 			step[axes[i]] = 0;
 		}
-		for (int i = 0, j = 0; i <= endrank; i++) {
+		for (int i = 0; i <= endrank; i++) {
+			int s = iter.getShape()[i];
 			if (step[i] > 0) {
-				assertEquals(iter.getShape()[j++], (stop[i] - start[i] - 1)/step[i] + 1);
+				assertEquals(s, (stop[i] - start[i] - 1)/step[i] + 1);
 			} else if (step[i] < 0) {
-				assertEquals(iter.getShape()[j++], (stop[i] - start[i] + 1)/step[i] + 1);
-			} 
+				assertEquals(s, (stop[i] - start[i] + 1)/step[i] + 1);
+			} else {
+				assertEquals(s, 1);
+			}
 		}
 
 		for (; iter.hasNext();) {

@@ -132,7 +132,7 @@ public class OperationTransformer extends AbstractDataMessageTransformer impleme
 			try {
 				SourceInformation ssource = data.getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo();
 				final SliceFromSeriesMetadata ssm = data.getMetadata(SliceFromSeriesMetadata.class).get(0);
-				fullssm = new SliceFromSeriesMetadata(ssource, ssm.getShapeInfo(), ssm.getSliceInfo());
+				fullssm = new SliceFromSeriesMetadata(ssource, ssm.getSliceInfo());
 				data.setMetadata(fullssm);
 				
 			}catch (Exception e) {

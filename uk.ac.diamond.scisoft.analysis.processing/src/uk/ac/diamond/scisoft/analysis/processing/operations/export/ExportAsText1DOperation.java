@@ -41,7 +41,7 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 		String ext = DEFAULT_EXT;
 		
 		if (model.isIncludeSliceName()) {
-			slice = Slice.createString(ssm.getSliceInfo().getCurrentSlice());
+			slice = Slice.createString(ssm.getSliceFromInput());
 		}
 		
 		int c = ssm.getSliceInfo().getSliceNumber();

@@ -49,14 +49,14 @@ public class AveragingOperation extends AbstractOperation<EmptyModel, OperationD
 			average.iadd(d);
 		}
 		
-		if (counter == ssm.getShapeInfo().getTotalSlices()) {
+		if (counter == ssm.getTotalSlices()) {
 			IDataset out = average;
 			average = null;
 			counter = 0;
 			SliceFromSeriesMetadata outsmm = ssm.clone();
 			for (int i = 0; i < ssm.getParent().getRank(); i++) {
 				
-				if (!outsmm.getShapeInfo().isDataDimension(i)) outsmm.reducedDimensionToSingular(i);
+				if (!outsmm.isDataDimension(i)) outsmm.reducedDimensionToSingular(i);
 				
 			}
 			out.setMetadata(outsmm);

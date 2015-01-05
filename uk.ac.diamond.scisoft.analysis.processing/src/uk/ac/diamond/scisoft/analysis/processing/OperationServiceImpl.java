@@ -114,7 +114,7 @@ public class OperationServiceImpl implements IOperationService {
 			}
 			
 			try {
-				SliceFromSeriesMetadata fullssm = new SliceFromSeriesMetadata(ssource, ssm.getShapeInfo(), ssm.getSliceInfo());
+				SliceFromSeriesMetadata fullssm = new SliceFromSeriesMetadata(ssource, ssm.getSliceInfo());
 				context.getData().setMetadata(fullssm);
 			} catch (Exception e) {
 				logger.error("Unable to set slice from service metadata on full data.");

@@ -45,7 +45,7 @@ public class SubtractBlankFrameOperation extends AbstractImageSubtrationOperatio
 		
 		ILazyDataset lzBg = ssm.getSourceInfo().getParent();
 
-		int[] dd = ssm.getShapeInfo().getDataDimensions().clone();
+		int[] dd = ssm.getDataDimensions().clone();
 		Arrays.sort(dd);
 
 		int startFrame = model.getStartFrame();

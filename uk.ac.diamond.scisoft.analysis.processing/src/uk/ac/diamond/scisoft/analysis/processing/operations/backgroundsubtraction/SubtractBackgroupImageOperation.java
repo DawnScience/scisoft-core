@@ -42,12 +42,11 @@ public class SubtractBackgroupImageOperation extends AbstractImageSubtrationOper
 			ILazyDataset lzBg = dh.getLazyDataset(dsName);
 			
 			if (Arrays.equals(lzBg.getShape(), ssm.getSourceInfo().getParent().getShape())) {
-				bg = (Dataset)lzBg.getSliceView(ssm.getSliceInfo().getViewSlice()).getSlice(ssm.getSliceInfo().getCurrentSlice()).squeeze();
+				bg = (Dataset)lzBg.getSlice(ssm.getSliceFromInput()).squeeze();
 			} else {
-				bg = LazyMaths.mean(lzBg, ssm.getShapeInfo().getDataDimensions()).squeeze();
+				bg = LazyMaths.mean(lzBg, ssm.getDataDimensions()).squeeze();
 				image = bg;
 			}
-			
 			
 		}catch (FileNotFoundException e) {
 			throw new OperationException(this, "Background file not found!");

@@ -65,7 +65,7 @@ public class SeriesRunner implements IOperationRunner {
 				SliceFromSeriesMetadata ssm = meta!=null && meta.size()>0 ? meta.get(0) : null;
 				SliceFromSeriesMetadata fullssm = null;
 				if (ssm!=null) {
-					fullssm = new SliceFromSeriesMetadata(finalSource, ssm.getShapeInfo(), ssm.getSliceInfo());
+					fullssm = new SliceFromSeriesMetadata(finalSource, ssm.getSliceInfo());
 					slice.setMetadata(fullssm);
 				}
 

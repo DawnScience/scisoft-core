@@ -106,8 +106,8 @@ public class MapTo2DUtils {
 		FloatDataset histo = (FloatDataset)DatasetFactory.zeros(new int[]{yNumber,xNumber}, Dataset.FLOAT32);
 		FloatDataset intensity = (FloatDataset)DatasetFactory.zeros(new int[]{yNumber,xNumber},Dataset.FLOAT32);
 
-		Dataset[] radialArray = getPixelRange(xO);
-		Dataset[] azimuthalArray = getPixelRange(yO);
+		Dataset[] radialArray = getPixelRange(xO,1);
+		Dataset[] azimuthalArray = getPixelRange(yO,0);
 		Dataset b = DatasetUtils.convertToDataset(original);
 
 		IndexIterator iter = b.getIterator();
@@ -173,7 +173,6 @@ public class MapTo2DUtils {
 					
 					intensity.set(inVal+sig*iPerPixel*modify, setPos);
 				}
-
 			}
 		}
 		
@@ -183,36 +182,30 @@ public class MapTo2DUtils {
 		return intensity;
 	}
 	
-	private static Dataset[] getPixelRange(IDataset d) {
+	private static Dataset[] getPixelRange(IDataset d, int dim) {
 		
 		int[] sli = new int[d.getRank()];
 		Arrays.fill(sli, 1);
-		sli[d.getRank()-1] = 0;
+		sli[dim] = 0;
 		IDataset dd = d.getSlice(sli, null, null);
 		
 		Arrays.fill(sli, -1);
-		sli[d.getRank()-1] = d.getShape()[d.getRank()-1];
+		sli[dim] = d.getShape()[dim];
 		
 		IDataset d0 = d.getSlice(null, sli, null);
 		
 		((Dataset)dd).isubtract(d0);
 		dd = Maths.abs(dd);
 		
-		for (int i = 0; i < d.getRank()-1; i++) {
-			
+		int nd = dim == 0 ? 1 : 0;
+		
 			int[] start = new int[d.getRank()];
 			int[] stop = dd.getShape();
-			start[i] = -1;
+			start[nd] = -1;
 			IDataset pad = dd.getSlice(start,stop,null);
-			dd = DatasetUtils.append(dd, pad, i);
-		}
-		
-		((Dataset)dd).idivide(2);
-		
+			dd = DatasetUtils.append(dd, pad, nd);
 
-		
+		((Dataset)dd).idivide(2);
 		return new Dataset[]{Maths.subtract(d, dd), Maths.add(d, dd)};
 	}
-	
-	
 }

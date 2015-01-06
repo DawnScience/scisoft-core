@@ -64,7 +64,7 @@ public class ExampleOperationsTest {
 	@Test
 	public void sumExample() {
 		
-		String path = ExampleDataUtils.createExampleDataFile("myfile", new int[] {10, 100, 200});
+		String path = ExampleDataUtils.createExampleDataFile("myfilesum", new int[] {10, 100, 200});
 		
 		if (path == null) fail("Could not create data file");
 		
@@ -108,7 +108,7 @@ public class ExampleOperationsTest {
 			File f1 = new File(outpath);
 			File[] matchingFiles = f1.listFiles(new FilenameFilter() {
 			    public boolean accept(File dir, String name) {
-			        return name.startsWith("myfile") && name.endsWith("nxs");
+			        return name.startsWith("myfilesum") && name.endsWith("nxs");
 			    }
 			});
 			
@@ -138,7 +138,7 @@ public class ExampleOperationsTest {
 	@Test
 	public void subtractionExample() {
 		
-		String path = ExampleDataUtils.createExampleDataFile("myfile", new int[] {2, 5, 100, 200});
+		String path = ExampleDataUtils.createExampleDataFile("myfilesub", new int[] {2, 5, 100, 200});
 		final String pathsub = ExampleDataUtils.createExampleDataFile("myfile", new int[] {3, 100, 200});
 		
 		if (path == null) fail("Could not create data file");
@@ -188,19 +188,87 @@ public class ExampleOperationsTest {
 			File f1 = new File(outpath);
 			File[] matchingFiles = f1.listFiles(new FilenameFilter() {
 			    public boolean accept(File dir, String name) {
-			        return name.startsWith("myfile") && name.endsWith("nxs");
+			        return name.startsWith("myfilesub") && name.endsWith("nxs");
 			    }
 			});
 			
 			File result = matchingFiles[0];
 			result.deleteOnExit();
-			
 			IDataHolder dh = LoaderFactory.getData(result.getAbsolutePath());
 			
 			IDataset d1 = dh.getLazyDataset("/entry/result/data").getSlice();
 			double val = d1.getDouble(0);
 			assertEquals(0, val, 0);
 			
+			
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+	}
+	
+	@Test
+	public void normExample() {
+		
+		String path = ExampleDataUtils.createExampleDataFile("myfilenorm", new int[] {10, 100, 200});
+		final String pathn = ExampleDataUtils.createExampleDataFile("myfile", new int[] {10});
+		
+		if (path == null) fail("Could not create data file");
+		
+		try {
+			IConversionService service = (IConversionService)ServiceManager.getService(IConversionService.class);
+			IConversionContext context = service.open(path);
+			
+			context.setConversionScheme(ConversionScheme.PROCESS);
+			context.setDatasetName("/entry1/data/data");
+			context.addSliceDimension(0, "all");
+			Map<Integer, String> axesNames = new HashMap<Integer,String>();
+			axesNames.put(1, "/entry1/data/axis0");
+			axesNames.put(2, "/entry1/data/axis1");
+			axesNames.put(3, "/entry1/data/axis2");
+			context.setAxesNames(axesNames);
+			
+			File f = new File(path);
+			String outpath = f.getParentFile().getAbsolutePath() + File.separator + "output" + File.separator;
+			File o = new File(outpath);
+			o.mkdirs();
+			o.deleteOnExit();
+			
+			context.setOutputPath(outpath);
+			context.setUserObject(new IProcessingConversionInfo() {
+				
+				@Override
+				public IOperation[] getOperationSeries() {
+					ExampleExternalDataNormalisationOperation subop = new ExampleExternalDataNormalisationOperation();
+					ExampleExternalDataModel mod = new ExampleExternalDataModel();
+					mod.setFilePath(pathn);
+					mod.setDatasetName("/entry1/data/data");
+					subop.setModel(mod);
+					return new IOperation[]{subop};
+				}
+				
+				@Override
+				public IExecutionVisitor getExecutionVisitor(String fileName) {
+					return new HierarchicalFileExecutionVisitor(fileName);
+				}
+			});
+			
+			service.process(context);
+			
+			File f1 = new File(outpath);
+			File[] matchingFiles = f1.listFiles(new FilenameFilter() {
+			    public boolean accept(File dir, String name) {
+			        return name.startsWith("myfilenorm") && name.endsWith("nxs");
+			    }
+			});
+			
+			File result = matchingFiles[0];
+			result.deleteOnExit();
+			IDataHolder dh = LoaderFactory.getData(result.getAbsolutePath());
+			
+			IDataset d1 = dh.getLazyDataset("/entry/result/data").getSlice();
+			double val = d1.getDouble(0);
+			assertEquals(1, val, 0);
 			
 		} catch (Exception e) {
 			fail(e.getMessage());

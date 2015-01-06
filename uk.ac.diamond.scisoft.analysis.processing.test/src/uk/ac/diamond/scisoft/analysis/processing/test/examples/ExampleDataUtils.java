@@ -23,7 +23,7 @@ public class ExampleDataUtils {
 		
 		try {
 			File tmp;
-			tmp = File.createTempFile("myfile", ".nxs");
+			tmp = File.createTempFile(name, ".nxs");
 			tmp.deleteOnExit();
 			tmp.createNewFile();
 			

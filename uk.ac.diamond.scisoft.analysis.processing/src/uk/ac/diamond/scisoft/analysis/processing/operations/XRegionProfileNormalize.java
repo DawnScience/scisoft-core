@@ -19,6 +19,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
@@ -40,13 +41,19 @@ public class XRegionProfileNormalize extends AbstractOperation<XRegionProfileNor
 			throws OperationException {
 		// Get the Region to work with
 		AxesMetadata axesMetadata;
+		ILazyDataset energyAxis = null;
 		try {
 			axesMetadata = input.getMetadata(AxesMetadata.class).get(0);
+			energyAxis = axesMetadata.getAxis(1)[0];
 		} catch (Exception e) {
-			throw new OperationException(this, "Cannot find appropriate Axes in the data file");
+			//throw new OperationException(this, "Cannot find appropriate Axes in the data file");
 		}
 		
-		ILazyDataset energyAxis = axesMetadata.getAxis(1)[0];
+		if (energyAxis == null) {
+			// default to the pixel values
+			energyAxis = IntegerDataset.createRange(input.getShape()[1]);
+		}
+		
 		int minPos = Maths.abs(Maths.subtract(energyAxis, model.getxStart())).argMin();
 		int maxPos = Maths.abs(Maths.subtract(energyAxis, model.getxEnd())).argMin();
 		

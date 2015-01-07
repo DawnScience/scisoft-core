@@ -68,11 +68,6 @@ public class NexusHDF5Loader extends HDF5Loader {
 	}
 
 	public static ILazyDataset augmentDataset(NodeLink link, final boolean isAxisFortranOrder) {
-		// two cases: axis and primary or axes
-		// iterate through each child to find axes and primary attributes
-
-		logger.trace("Link: {}", link);
-		// see if chosen group node is a NXdata class
 		if (!link.isDestinationData()) {
 			logger.warn("Cannot augment non-data node: {}", link);
 			return null;
@@ -360,14 +355,6 @@ public class NexusHDF5Loader extends HDF5Loader {
 
 			amd.setAxis(i, axisList.toArray(new ILazyDataset[0]));
 			axisList.clear();
-			
-			// add in an automatically generated axis with top order so it appears after primary axes
-//			Dataset axis = DatasetFactory.createRange(len, Dataset.INT32);
-//			axis.setName(AbstractExplorer.DIM_PREFIX + (i + 1));
-//			AxisChoice newChoice = new AxisChoice(axis);
-//			newChoice.setAxisNumber(i);
-//			aSel.addChoice(newChoice, aSel.getMaxOrder() + 1);
-			
 		}
 		cData.addMetadata(amd);
 		return cData;

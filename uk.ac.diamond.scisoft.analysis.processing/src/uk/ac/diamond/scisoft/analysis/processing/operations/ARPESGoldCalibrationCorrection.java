@@ -72,7 +72,7 @@ public class ARPESGoldCalibrationCorrection extends AbstractOperation<ARPESGoldC
 		for(int y = 0; y < shape[0]; y++) {
 			int min = Math.max(differenceInts.getInt(0,y), 0);
 			int max = Math.min(shape[1]+differenceInts.getInt(0,y), shape[1]);
-			int ref = 0;
+			int ref = Math.min(differenceInts.getInt(0,y), 0) * -1;
 			for(int xx = min; xx < max; xx++) {
 				result.set(input.getObject(y,xx), y,ref);
 				ref++;

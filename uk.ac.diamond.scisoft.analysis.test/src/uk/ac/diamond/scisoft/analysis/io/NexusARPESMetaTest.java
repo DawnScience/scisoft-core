@@ -40,7 +40,7 @@ public class NexusARPESMetaTest {
 			fail("Required dataset " + ENTRY1_ANALYSER_DATA + " is not available");
 		}
 
-		ILazyDataset dataset = ARPESMetadataImpl.GetFromDataHolder(dh);
+		ILazyDataset dataset = ARPESMetadataImpl.getFromDataHolder(dh);
 
 		ARPESMetadata arpesMetadata = null;
 

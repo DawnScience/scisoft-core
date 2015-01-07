@@ -2107,28 +2107,23 @@ public class HDF5Loader extends AbstractFileLoader {
 			}
 		}
 
-		if (node instanceof GroupNode) {
+		if (node instanceof DataNode) {
+			ILazyDataset dataset = createAugmentedDataset(link, true);
+			if (dataset == null)
+				return;
+
+			if (lMap != null)
+				lMap.put(link.getFullName(), dataset);
+			if (aMap != null && dataset instanceof Dataset) { // zero-rank dataset
+				Dataset a = (Dataset) dataset;
+				aMap.put(link.getFullName(), a.getRank() == 0 ? a.getString() : a.getString(0));
+			}
+
+		} else if (node instanceof GroupNode) {
 			for (NodeLink l : (GroupNode) node) {
 				addToMaps(l, lMap, aMap);
-
-				if (l.isDestinationData()) {
-					ILazyDataset dataset = createAugmentedDataset1(l, true);
-					lMap.put(l.getFullName(), dataset);
-					if (aMap != null && dataset instanceof Dataset) { // zero-rank dataset
-						Dataset a = (Dataset) dataset;
-						aMap.put(l.getFullName(), a.getRank() == 0 ? a.getString() : a.getString(0));
-					}
-				}
 			}
 		}
-	}
-
-	public ILazyDataset createAugmentedDataset1(NodeLink link, @SuppressWarnings("unused") final boolean isAxisFortranOrder) {
-		if (!link.isDestinationData()) {
-			return null;
-		}
-		
-		return ((DataNode) link.getDestination()).getDataset();
 	}
 
 	/**

@@ -24,6 +24,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
@@ -406,5 +407,18 @@ public class HDF5LoaderTest {
 		ILazyDataset d = ds.get(0);
 		assertTrue(d instanceof StringDataset);
 	}
-	
+
+	@Test
+	public void testLoadingNexusMetadata() throws ScanFileHolderException {
+		String n = TestFileFolder + "../NexusDiffractionTest/results_i22-102527_Pilatus2M_280313_112434.nxs";
+		NexusHDF5Loader l = new NexusHDF5Loader();
+		l.setFile(n);
+		DataHolder dh = l.loadFile();
+		ILazyDataset d = dh.getLazyDataset("/entry1/Pilatus2M_processing/SectorIntegration/data");
+		assertTrue(d.getError() == null);
+		try {
+			assertTrue(d.getMetadata(AxesMetadata.class) != null);
+		} catch (Exception e) {
+		}
+	}
 }

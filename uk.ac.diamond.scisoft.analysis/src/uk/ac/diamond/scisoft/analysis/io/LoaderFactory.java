@@ -100,7 +100,7 @@ public class LoaderFactory {
 	private static final Logger logger = LoggerFactory.getLogger(LoaderFactory.class);
 
 	private static final Map<String, List<Class<? extends IFileLoader>>> LOADERS = new HashMap<String, List<Class<? extends IFileLoader>>>(19);
-	private static final Map<String, Class<? extends java.io.InputStream>>     UNZIPERS = new HashMap<String, Class<? extends java.io.InputStream>>(3);
+	private static final Map<String, Class<? extends InputStream>> UNZIPPERS = new HashMap<String, Class<? extends InputStream>>(3);
 
 	/**
 	 * 
@@ -118,58 +118,58 @@ public class LoaderFactory {
 	 */
 	static {
 		try {
-		    LoaderFactory.registerLoader("npy",  NumPyFileLoader.class);
-		    LoaderFactory.registerLoader("img",  ADSCImageLoader.class);
-		    LoaderFactory.registerLoader("osc",  RAxisImageLoader.class);
-		    LoaderFactory.registerLoader("cbf",  CBFLoader.class);
-		    LoaderFactory.registerLoader("img",  CrysalisLoader.class);
-			LoaderFactory.registerLoader("tif",  PixiumLoader.class);
-		    LoaderFactory.registerLoader("jpeg", JPEGLoader.class);
-		    LoaderFactory.registerLoader("jpg",  JPEGLoader.class);
-		    LoaderFactory.registerLoader("mccd", MARLoader.class);
-		    LoaderFactory.registerLoader("mar3450", MAR345Loader.class);
-		    LoaderFactory.registerLoader("pck3450", MAR345Loader.class);
-		    LoaderFactory.registerLoader("mrc", MRCImageStackLoader.class);
+		    registerLoader("npy",  NumPyFileLoader.class);
+		    registerLoader("img",  ADSCImageLoader.class);
+		    registerLoader("osc",  RAxisImageLoader.class);
+		    registerLoader("cbf",  CBFLoader.class);
+		    registerLoader("img",  CrysalisLoader.class);
+			registerLoader("tif",  PixiumLoader.class);
+		    registerLoader("jpeg", JPEGLoader.class);
+		    registerLoader("jpg",  JPEGLoader.class);
+		    registerLoader("mccd", MARLoader.class);
+		    registerLoader("mar3450", MAR345Loader.class);
+		    registerLoader("pck3450", MAR345Loader.class);
+		    registerLoader("mrc", MRCImageStackLoader.class);
 
 		    // There is some disagreement about the proper nexus/hdf5 
 		    // file extension at different facilities
-		    LoaderFactory.registerLoader("nxs",  NexusHDF5Loader.class);
-		    LoaderFactory.registerLoader("nexus",NexusHDF5Loader.class);
-		    LoaderFactory.registerLoader("h5",   HDF5Loader.class);
-		    LoaderFactory.registerLoader("hdf",  HDF5Loader.class);
-		    LoaderFactory.registerLoader("hdf5", HDF5Loader.class);
-		    LoaderFactory.registerLoader("hd5",  HDF5Loader.class);
-		    LoaderFactory.registerLoader("mat",  HDF5Loader.class);
+		    registerLoader("nxs",  NexusHDF5Loader.class);
+		    registerLoader("nexus",NexusHDF5Loader.class);
+		    registerLoader("h5",   HDF5Loader.class);
+		    registerLoader("hdf",  HDF5Loader.class);
+		    registerLoader("hdf5", HDF5Loader.class);
+		    registerLoader("hd5",  HDF5Loader.class);
+		    registerLoader("mat",  HDF5Loader.class);
 		    
-		    LoaderFactory.registerLoader("tif",  PilatusTiffLoader.class);
-		    LoaderFactory.registerLoader("png",  PNGLoader.class);
-		    LoaderFactory.registerLoader("raw",  RawBinaryLoader.class);
-		    LoaderFactory.registerLoader("srs",  ExtendedSRSLoader.class);
-		    LoaderFactory.registerLoader("srs",  SRSLoader.class);
-		    LoaderFactory.registerLoader("dat",  DatLoader.class);
-		    LoaderFactory.registerLoader("xy",  DatLoader.class);
-		    LoaderFactory.registerLoader("dat",  ExtendedSRSLoader.class);
-		    LoaderFactory.registerLoader("dat",  SRSLoader.class);
-		    LoaderFactory.registerLoader("csv",  CSVLoader.class);
-		    LoaderFactory.registerLoader("txt",  DatLoader.class);
-		    LoaderFactory.registerLoader("txt",  SRSLoader.class);
-		    LoaderFactory.registerLoader("txt",  RawTextLoader.class);
-		    LoaderFactory.registerLoader("mca",  DatLoader.class);
-		    LoaderFactory.registerLoader("mca",  SRSLoader.class);
-		    LoaderFactory.registerLoader("mca",  RawTextLoader.class);
-		    LoaderFactory.registerLoader("tif",  TIFFImageLoader.class);		    
-		    LoaderFactory.registerLoader("tiff", TIFFImageLoader.class);		    
-		    LoaderFactory.registerLoader("zip",  XMapLoader.class);
-		    LoaderFactory.registerLoader("edf",  PilatusEdfLoader.class);
-		    LoaderFactory.registerLoader("pgm",  PgmLoader.class);
-		    LoaderFactory.registerLoader("f2d",  Fit2DLoader.class);
-		    LoaderFactory.registerLoader("msk",  Fit2DMaskLoader.class);
-		    LoaderFactory.registerLoader("mib", MerlinLoader.class);
-		    LoaderFactory.registerLoader("bmp", BitmapLoader.class);
+		    registerLoader("tif",  PilatusTiffLoader.class);
+		    registerLoader("png",  PNGLoader.class);
+		    registerLoader("raw",  RawBinaryLoader.class);
+		    registerLoader("srs",  ExtendedSRSLoader.class);
+		    registerLoader("srs",  SRSLoader.class);
+		    registerLoader("dat",  DatLoader.class);
+		    registerLoader("xy",  DatLoader.class);
+		    registerLoader("dat",  ExtendedSRSLoader.class);
+		    registerLoader("dat",  SRSLoader.class);
+		    registerLoader("csv",  CSVLoader.class);
+		    registerLoader("txt",  DatLoader.class);
+		    registerLoader("txt",  SRSLoader.class);
+		    registerLoader("txt",  RawTextLoader.class);
+		    registerLoader("mca",  DatLoader.class);
+		    registerLoader("mca",  SRSLoader.class);
+		    registerLoader("mca",  RawTextLoader.class);
+		    registerLoader("tif",  TIFFImageLoader.class);		    
+		    registerLoader("tiff", TIFFImageLoader.class);		    
+		    registerLoader("zip",  XMapLoader.class);
+		    registerLoader("edf",  PilatusEdfLoader.class);
+		    registerLoader("pgm",  PgmLoader.class);
+		    registerLoader("f2d",  Fit2DLoader.class);
+		    registerLoader("msk",  Fit2DMaskLoader.class);
+		    registerLoader("mib", MerlinLoader.class);
+		    registerLoader("bmp", BitmapLoader.class);
 
-		    LoaderFactory.registerUnzip("gz",  GZIPInputStream.class);
-		    LoaderFactory.registerUnzip("zip", ZipInputStream.class);
-		    LoaderFactory.registerUnzip("bz2", CBZip2InputStream.class);
+		    registerUnzip("gz",  GZIPInputStream.class);
+		    registerUnzip("zip", ZipInputStream.class);
+		    registerUnzip("bz2", CBZip2InputStream.class);
 
 		    try {
 			    /**
@@ -637,7 +637,7 @@ public class LoaderFactory {
 		// returns the data from this loader.
 		while (it.hasNext()) {
 			final Class<? extends IFileLoader> clazz = it.next();
-			final IFileLoader loader = LoaderFactory.getLoader(clazz, path);
+			final IFileLoader loader = getLoader(clazz, path);
 			if (!IMetaLoader.class.isInstance(loader)) continue;
 
 			try {
@@ -712,7 +712,7 @@ public class LoaderFactory {
 			final Collection<Class<? extends IFileLoader>> loaders = LOADERS.get(extension);
 
 			for (Class<? extends IFileLoader> clazz : loaders) {
-				final IFileLoader loader = LoaderFactory.getLoader(clazz, path);
+				final IFileLoader loader = getLoader(clazz, path);
 				if (interfaceClass.isInstance(loader))
 					return true;
 			}
@@ -739,9 +739,9 @@ public class LoaderFactory {
 
 			final Method setFile = loader.getClass().getMethod("setFile", String.class);
 			setFile.invoke(loader, path);
-		} catch (java.lang.NoClassDefFoundError ne) { // CBF Loader does this on win64
+		} catch (NoClassDefFoundError ne) { // CBF Loader does this on win64
 			loader = null;
-		} catch (java.lang.UnsatisfiedLinkError ule) {// CBF Loader does this on win64, the first time
+		} catch (UnsatisfiedLinkError ule) {// CBF Loader does this on win64, the first time
 			loader = null;
 		}
 
@@ -777,7 +777,7 @@ public class LoaderFactory {
 			final Matcher m = Pattern.compile(regEx).matcher(file.getName());
 			if (m.matches()) {
 				final String realExt = m.group(1);
-				if (LoaderFactory.LOADERS.keySet().contains(realExt)) {
+				if (LOADERS.keySet().contains(realExt)) {
 					final Collection<Class<? extends IFileLoader>> ret = new ArrayList<Class<? extends IFileLoader>>(1);
 					ret.add(CompressedLoader.class);
 					return ret.iterator();
@@ -796,14 +796,14 @@ public class LoaderFactory {
 	}
 
 	public static void registerUnzip(final String extension, final Class<? extends InputStream> input) {
-		UNZIPERS.put(extension, input);
+		UNZIPPERS.put(extension, input);
 	}
 
 	/**
 	 * Could cache this but it will be fast
 	 */
 	protected static String getZipExpression() {
-		return getExpression(UNZIPERS.keySet().iterator());
+		return getExpression(UNZIPPERS.keySet().iterator());
 	}
 
 	/**
@@ -915,8 +915,8 @@ public class LoaderFactory {
 		searchingAllowed = sa;
 	}
 
-	protected static Class<? extends java.io.InputStream> getZipStream(final String extension) {
-		return UNZIPERS.get(extension);
+	protected static Class<? extends InputStream> getZipStream(final String extension) {
+		return UNZIPPERS.get(extension);
 	}
 
 	
@@ -956,5 +956,4 @@ public class LoaderFactory {
 		if (ext == null) { return false; }
 		return HDF5_EXT.contains(ext.toLowerCase());
 	}
-
 }

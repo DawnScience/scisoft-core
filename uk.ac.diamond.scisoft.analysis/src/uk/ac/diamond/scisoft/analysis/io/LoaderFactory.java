@@ -470,6 +470,41 @@ public class LoaderFactory {
 		}
 	}
 
+	/**
+	 * Store data into cache
+	 * 
+	 *   *synchronized* is REQUIRED because multiple threads load data simultaneously and without
+	 *   a synchronized you can get data loaded twice which is SLOW.
+     *
+	 * @param holder
+	 */
+	public static /*THIS IS REQUIRED:*/ synchronized void cacheData(IDataHolder holder) {
+		final LoaderKey key = new LoaderKey();
+		key.setFilePath(holder.getFilePath());
+		key.setMetadata(holder.getMetadata() != null);
+
+		if (!recordSoftReference(key, holder))
+			System.err.println("Loader factory failed to cache "+holder.getFilePath());
+	}
+
+	/**
+	 * Fetch data from cache
+	 * 
+	 *   *synchronized* is REQUIRED because multiple threads load data simultaneously and without
+	 *   a synchronized you can get data loaded twice which is SLOW.
+     *
+	 * @param path
+	 * @param willLoadMetadata dictates whether metadata is not loaded (if possible)
+	 * @return data or null if not in cache
+	 */
+	public static /*THIS IS REQUIRED:*/ synchronized IDataHolder fetchData(String path, boolean willLoadMetadata) {
+		final LoaderKey key = new LoaderKey();
+		key.setFilePath(path);
+		key.setMetadata(willLoadMetadata);
+
+		final Object cachedObject = getSoftReference(key);
+		return cachedObject instanceof IDataHolder ? (IDataHolder) cachedObject : null;
+	}
 
 	/**
 	 * This method can be used to load an image stack of other images in the same directory.

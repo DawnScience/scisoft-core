@@ -42,6 +42,7 @@ public class XRegionProfileNormalize extends AbstractOperation<XRegionProfileNor
 		// Get the Region to work with
 		AxesMetadata axesMetadata;
 		ILazyDataset energyAxis = null;
+		if (model.getxRange() == null || model.getxRange().length != 2) throw new OperationException(this,"X range must contain 2 values");
 		try {
 			axesMetadata = input.getMetadata(AxesMetadata.class).get(0);
 			energyAxis = axesMetadata.getAxis(1)[0];
@@ -54,8 +55,8 @@ public class XRegionProfileNormalize extends AbstractOperation<XRegionProfileNor
 			energyAxis = IntegerDataset.createRange(input.getShape()[1]);
 		}
 		
-		int minPos = Maths.abs(Maths.subtract(energyAxis, model.getxStart())).argMin();
-		int maxPos = Maths.abs(Maths.subtract(energyAxis, model.getxEnd())).argMin();
+		int minPos = Maths.abs(Maths.subtract(energyAxis.getSlice(), model.getxRange()[0])).argMin();
+		int maxPos = Maths.abs(Maths.subtract(energyAxis.getSlice(), model.getxRange()[1])).argMin();
 		
 		if (minPos == maxPos) {
 			throw new OperationException(this, "Select a range inside the X axis");

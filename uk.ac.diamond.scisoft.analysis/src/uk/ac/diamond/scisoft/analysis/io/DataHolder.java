@@ -22,6 +22,7 @@ import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
+import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.slf4j.Logger;
@@ -59,6 +60,8 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * The path to the original file loaded (if any)
 	 */
 	private String filePath;
+
+	private Tree tree;
 
 	/**
 	 * This must create the three objects which will be put into the ScanFileHolder
@@ -279,6 +282,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	public void clear() {
 		nameDataMappings.clear();
 		metadata = null;
+		tree = null;
 	}
 
 	/**
@@ -321,6 +325,14 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 		this.filePath = filePath;
 	}
 
+	public void setTree(Tree tree) {
+		this.tree = tree;
+	}
+
+	@Override
+	public Tree getTree() {
+		return tree;
+	}
 
 	@Override
 	public int hashCode() {

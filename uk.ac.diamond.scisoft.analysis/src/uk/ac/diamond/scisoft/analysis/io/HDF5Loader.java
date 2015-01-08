@@ -233,6 +233,10 @@ public class HDF5Loader extends AbstractFileLoader {
 			return null;
 		}
 
+		if (tFile != null) {
+			return tFile;
+		}
+
 		logger.trace(String.format("Loading in thd %x\n", Thread.currentThread().getId()));
 		File f = new File(fileName);
 		if (!f.exists()) {
@@ -2044,6 +2048,8 @@ public class HDF5Loader extends AbstractFileLoader {
 		if (tree == null)
 			return dh;
 
+		dh.setFilePath(fileName);
+		dh.setTree(tree);
 		// Change to TreeMap so that order maintained
 		Map<String, ILazyDataset> lMap = new LinkedHashMap<String, ILazyDataset>();
 		Map<String, Serializable> aMap = withMetadata ? new LinkedHashMap<String, Serializable>() : null;

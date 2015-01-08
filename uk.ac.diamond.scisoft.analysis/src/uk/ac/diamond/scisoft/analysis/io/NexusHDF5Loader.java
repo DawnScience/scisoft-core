@@ -64,10 +64,6 @@ public class NexusHDF5Loader extends HDF5Loader {
 	 */
 	@Override
 	public ILazyDataset createAugmentedDataset(NodeLink link, final boolean isAxisFortranOrder) {
-		return augmentDataset(link, isAxisFortranOrder);
-	}
-
-	public static ILazyDataset augmentDataset(NodeLink link, final boolean isAxisFortranOrder) {
 		if (!link.isDestinationData()) {
 			logger.warn("Cannot augment non-data node: {}", link);
 			return null;
@@ -216,7 +212,6 @@ public class NexusHDF5Loader extends HDF5Loader {
 				}
 
 				int[] intAxis = null;
-				Attribute attrLabel = null;
 				if (isSignal) {
 					String indAttr = l.getName() + NX_INDICES_SUFFIX;
 					if (gNode.containsAttribute(indAttr)) {
@@ -232,6 +227,7 @@ public class NexusHDF5Loader extends HDF5Loader {
 					}
 				}
 
+				Attribute attrLabel = null;
 				if (intAxis == null) {
 					attr = d.getAttribute(NX_AXIS);
 					attrLabel = d.getAttribute(NX_LABEL);
@@ -245,13 +241,13 @@ public class NexusHDF5Loader extends HDF5Loader {
 								int al = ashape[i];
 								if (il < 0 || il >= rank || al != shape[il]) {
 									intAxis = null;
-									logger.warn("Axis attribute {} does not match shape", a.getName());
+									logger.debug("Axis attribute {} does not match shape", a.getName());
 									break;
 								}
 							}
 						} else {
 							intAxis = null;
-							logger.warn("Axis attribute {} does not match rank", a.getName());
+							logger.debug("Axis attribute {} does not match rank", a.getName());
 						}
 					}
 				}
@@ -260,7 +256,7 @@ public class NexusHDF5Loader extends HDF5Loader {
 					// remedy bogus or missing @axis by simply pairing matching dimension
 					// lengths to the signal dataset shape (this may be wrong as transposes in
 					// common dimension lengths can occur)
-					logger.warn("Creating index mapping from axis shape");
+					logger.debug("Creating index mapping from axis shape");
 					Map<Integer, Integer> dims = new LinkedHashMap<Integer, Integer>();
 					for (int i = 0; i < rank; i++) {
 						dims.put(i, shape[i]);
@@ -292,7 +288,7 @@ public class NexusHDF5Loader extends HDF5Loader {
 
 				choices.add(choice);
 			} catch (Exception e) {
-				logger.warn("Axis attributes in {} are invalid - {}", a.getName(), e.getMessage());
+				logger.debug("Axis attributes in {} are invalid - {}", a.getName(), e.getMessage());
 				continue;
 			}
 		}

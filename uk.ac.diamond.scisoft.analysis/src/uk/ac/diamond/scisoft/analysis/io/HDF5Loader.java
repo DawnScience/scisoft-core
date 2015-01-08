@@ -35,12 +35,8 @@ import ncsa.hdf.hdf5lib.structs.H5G_info_t;
 import ncsa.hdf.hdf5lib.structs.H5O_info_t;
 import ncsa.hdf.object.Attribute;
 import ncsa.hdf.object.Datatype;
-import ncsa.hdf.object.HObject;
 import ncsa.hdf.object.h5.H5Datatype;
 import ncsa.hdf.object.h5.H5File;
-import ncsa.hdf.object.h5.H5Group;
-import ncsa.hdf.object.h5.H5Link;
-import ncsa.hdf.object.h5.H5ScalarDS;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
@@ -151,7 +147,10 @@ public class HDF5Loader extends AbstractFileLoader {
 	@Override
 	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
 		Tree tree = loadTree(mon);
-		DataHolder dh = createDataHolder(tree, loadMetadata);
+		DataHolder dh = new DataHolder();
+		dh.setFilePath(fileName);
+		dh.setTree(tree);
+		updateDataHolder(dh, loadMetadata);
 		if (loadMetadata) {
 			metadata = (Metadata) dh.getMetadata();
 		}
@@ -395,7 +394,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * @return node
 	 * @throws Exception
 	 */
-	private static Node createNode(final int fid, final TreeFile f, final HashMap<Long, Node> pool, final Queue<String> queue, final String name, final boolean keepBitWidth) throws Exception {
+	private Node createNode(final int fid, final TreeFile f, final HashMap<Long, Node> pool, final Queue<String> queue, final String name, final boolean keepBitWidth) throws Exception {
 		try {
 			H5O_info_t info = H5.H5Oget_info_by_name(fid, name, HDF5Constants.H5P_DEFAULT);
 			int t = info.type;
@@ -435,7 +434,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * @return node
 	 * @throws Exception
 	 */
-	private static Node createGroup(final int fid, final TreeFile f, long oid, final HashMap<Long, Node> pool, final Queue<String> queue, final String name, final boolean keepBitWidth) throws Exception {
+	private Node createGroup(final int fid, final TreeFile f, long oid, final HashMap<Long, Node> pool, final Queue<String> queue, final String name, final boolean keepBitWidth) throws Exception {
 		int gid = -1;
 		GroupNode group = null;
 
@@ -608,6 +607,10 @@ public class HDF5Loader extends AbstractFileLoader {
 			}
 		}
 
+		for (NodeLink l : group) {
+			augmentLink(l, true);
+		}
+
 		return group;
 	}
 
@@ -622,7 +625,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * @return node
 	 * @throws Exception
 	 */
-	private static Node createDataset(final int lid, final TreeFile f, long oid, final HashMap<Long, Node> pool, final String path, final boolean keepBitWidth) throws Exception {
+	private Node createDataset(final int lid, final TreeFile f, long oid, final HashMap<Long, Node> pool, final String path, final boolean keepBitWidth) throws Exception {
 		byte[] idbuf = null;
 		if (oid == DEFAULT_OBJECT_ID) {
 			try {
@@ -686,31 +689,6 @@ public class HDF5Loader extends AbstractFileLoader {
 	private static final String NAPISCHEME = "nxfile";
 
 	// return true when attributes contain a NAPI mount - dodgy external linking for HDF5 version < 1.8
-	private static boolean copyAttributes(final TreeFile f, final Node nn, final HObject oo) {
-		boolean hasNAPIMount = false;
-
-		try {
-			if (oo.hasAttribute()) {
-				@SuppressWarnings("unchecked")
-				final List<Attribute> attributes = oo.getMetadata();
-				final String fname = (oo instanceof H5Group) && ((H5Group) oo).isRoot() ? Tree.ROOT : oo
-						.getFullName();
-				for (Attribute a : attributes) {
-					org.eclipse.dawnsci.analysis.api.tree.Attribute h = TreeFactory.createAttribute(f, fname, a.getName(), a.getValue(), a.isUnsigned());
-					h.setTypeName(getTypeName(a.getType()));
-					nn.addAttribute(h);
-					if (a.getName().equals(NAPIMOUNT)) {
-						hasNAPIMount = true;
-					}
-				}
-			}
-		} catch (Exception e) {
-			logger.warn("Problem with attributes on {}: {}", oo.getFullName(), e.getMessage());
-		}
-		return hasNAPIMount;
-	}
-
-	// return true when attributes contain a NAPI mount - dodgy external linking for HDF5 version < 1.8
 	private static boolean copyAttributes(final TreeFile f, final String name, final Node nn, final int id) {
 		boolean hasNAPIMount = false;
 
@@ -731,7 +709,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	}
 
 	// get external node
-	private static Node getExternalNode(final HashMap<Long, Node> pool, final String host, final String path, String node, final boolean keepBitWidth) throws Exception {
+	private Node getExternalNode(final HashMap<Long, Node> pool, final String host, final String path, String node, final boolean keepBitWidth) throws Exception {
 		Node nn = null;
 
 		if (!node.startsWith(Tree.ROOT)) {
@@ -770,7 +748,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	}
 
 	// retrieve external file link
-	private static Node copyNAPIMountNode(final TreeFile file, final HashMap<Long, Node> pool, final String link, final boolean keepBitWidth) throws Exception {
+	private Node copyNAPIMountNode(final TreeFile file, final HashMap<Long, Node> pool, final String link, final boolean keepBitWidth) throws Exception {
 		final URI ulink = new URI(link);
 		Node nn = null;
 		if (ulink.getScheme().equals(NAPISCHEME)) {
@@ -795,121 +773,6 @@ public class HDF5Loader extends AbstractFileLoader {
 		}
 
 		return nn;
-	}
-
-	/**
-	 * Method can be used to set up a HObject which is a group.
-	 * @param file
-	 * @param pool - may be null
-	 * @param oo
-	 * @param keepBitWidth
-	 * @return Node, child to be added.
-	 * @throws Exception
-	 */
-	public static Node copyNode(final TreeFile file, final HashMap<Long, Node> pool, final HObject oo, final boolean keepBitWidth) throws Exception {
-		if (oo instanceof H5Link) {
-			// a link which cannot be resolved remains a link
-			H5Link ol = (H5Link) oo;
-			ol.getMetadata(); // API quirk needed to populate link target
-			final String target = ol.getLinkTargetObjName();
-			if (target == null) {
-				throw new IllegalArgumentException("No link target defined in link object");
-			}
-
-			throw new IllegalArgumentException("Link target cannot be resolved: " + target);
-		}
-
-		final Long oid = oo.getOID()[0] + file.getFilename().hashCode()*17; // include file name in ID
-
-		if (oo instanceof ncsa.hdf.object.Dataset) {
-			if (pool != null && pool.containsKey(oid)) {
-				Node p = pool.get(oid);
-				if (!(p instanceof DataNode)) {
-					throw new IllegalStateException("Matching pooled node is not a dataset");
-				}
-				return p;
-			}
-
-			DataNode nd = TreeFactory.createDataNode(oid);
-			if (copyAttributes(file, nd, oo)) {
-				final String link = nd.getAttribute(NAPIMOUNT).getFirstElement();
-				return copyNAPIMountNode(file, pool, link, keepBitWidth);
-			}
-
-			final Datatype type = ((ncsa.hdf.object.Dataset) oo).getDatatype();
-			final int dclass = type.getDatatypeClass();
-
-			if (dclass == Datatype.CLASS_COMPOUND) { // special case for compound data types
-				return nd;
-			}
-
-			nd.setTypeName(getTypeName(type));
-
-			if (!(oo instanceof H5ScalarDS)) {
-				throw new IllegalArgumentException("Dataset unsupported");
-			}
-
-			H5ScalarDS osd = (H5ScalarDS) oo;
-			if (dclass == Datatype.CLASS_STRING) { // special case for strings
-				// This is a kludge for linking to non-hdf5 files
-				// An attribute called "data_filename" is defined and refers to 
-				// an external file and acts like a group
-				osd.setConvertByteToString(true);
-				if (nd.containsAttribute(DATA_FILENAME_ATTR_NAME)) {
-					// interpret set of strings as the full path names to a group of external files that are stacked together
-					ExternalFiles ef = extractExternalFileNames(osd);
-					try {
-						ILazyDataset l = createStackedDatasetFromStrings(ef);
-						nd.setDataset(l);
-					} catch (Throwable th) {
-						logger.warn("Could not find {}, trying in {}", ef.files[0], file.getParentDirectory());
-						try { // try again with known-to-be-good directory
-							ILazyDataset l = createStackedDatasetFromStrings(ef, file.getParentDirectory());
-							nd.setDataset(l);
-						} catch (Throwable th2) {
-							logger.error("Unable to create lazydataset for" + osd, th2);
-							nd.setString(ef.getAsText());
-						}
-					}
-				} else {
-					nd.setDataset(createLazyDataset(file.getHostname(), osd, keepBitWidth));
-					nd.setMaxShape(osd.getMaxDims());
-				}
-			} else {
-				nd.setDataset(createLazyDataset(file.getHostname(), osd, keepBitWidth));
-				nd.setMaxShape(osd.getMaxDims());
-			}
-			if (pool != null)
-				pool.put(oid, nd);
-			return nd;
-		} else if (oo instanceof H5Group) {
-			if (pool != null && pool.containsKey(oid)) {
-				Node p = pool.get(oid);
-				if (!(p instanceof GroupNode)) {
-					throw new IllegalStateException("Matching pooled node is not a group");
-				}
-				return p;
-			}
-			H5Group og = (H5Group) oo;
-			GroupNode ng = TreeFactory.createGroupNode(oid);
-			if (copyAttributes(file, ng, og)) {
-				final String link = ng.getAttribute(NAPIMOUNT).getFirstElement();
-				return copyNAPIMountNode(file, pool, link, keepBitWidth);
-			}
-
-			List<HObject> members = og.getMemberList();
-			for (HObject h : members) {
-				final String path = h.getPath();
-				final String name = h.getName();
-				ng.addNode(file, path, name, copyNode(file, pool, h, keepBitWidth));
-			}
-
-			if (pool != null)
-				pool.put(oid, ng);
-			return ng;
-		}
-
-		return null;
 	}
 
 	/**
@@ -1224,129 +1087,6 @@ public class HDF5Loader extends AbstractFileLoader {
 	}
 
 	/**
-	 * Create a lazy dataset from a H5 scalar dataset
-	 * @param host
-	 * @param osd
-	 * @param keepBitWidth
-	 * @return the dataset
-	 * @throws Exception
-	 */
-	public static ILazyDataset createLazyDataset(final String host, final H5ScalarDS osd, final boolean keepBitWidth) throws Exception {
-		
-		long[] dims = osd.getDims();
-		if (dims == null) {
-			osd.init();
-			dims = osd.getDims();
-		}
-
-		final int[] trueShape = new int[dims.length];
-		for (int i = 0; i < dims.length; i++) {
-			long d = dims[i];
-			if (d > Integer.MAX_VALUE) {
-				throw new IllegalArgumentException("Dimension larger than ints");
-			}
-			trueShape[i] = (int) d;
-		}
-
-		if (trueShape.length == 1 && trueShape[0] == 1) { // special case for single values
-			final Dataset d = DatasetFactory.createFromObject(osd.read());
-			d.setName(osd.getName());
-			return d;
-		}
-
-		final String filePath = osd.getFile();
-		final String nodePath = osd.getFullName();
-		final String name = osd.getName();
-		final Datatype type = osd.getDatatype();
-		final boolean extendUnsigned = !keepBitWidth && type.isUnsigned();
-		final int dtype = getDtype(type.getDatatypeClass(), type.getDatatypeSize());
-
-		ILazyLoader l = new ILazyLoader() {
-			@Override
-			public boolean isFileReadable() {
-				try {
-					if (host != null && host.length() > 0 && !host.equals(InetAddress.getLocalHost().getHostName()))
-						return false;
-				} catch (UnknownHostException e) {
-					logger.warn("Problem finding local host so ignoring check", e);
-				}
-				return new File(filePath).canRead();
-			}
-
-			@Override
-			public String toString() {
-				return filePath + ":" + nodePath;
-			}
-
-			@Override
-			public Dataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
-					throws ScanFileHolderException {
-				final int rank = shape.length;
-				SliceND slice = new SliceND(shape, start, stop, step);
-				int[] lstart = slice.getStart();
-				int[] lstep  = slice.getStep();
-				int[] newShape = slice.getShape();
-
-				Dataset d = null;
-				try {
-					if (!Arrays.equals(trueShape, shape)) {
-						final int trank = trueShape.length;
-						int[] tstart = new int[trank];
-						int[] tsize = new int[trank];
-						int[] tstep = new int[trank];
-
-						if (rank > trank) { // shape was extended (from left) then need to translate to true slice
-							int j = 0;
-							for (int i = 0; i < trank; i++) {
-								if (trueShape[i] == 1) {
-									tstart[i] = 0;
-									tsize[i] = 1;
-									tstep[i] = 1;
-								} else {
-									while (shape[j] == 1 && (rank - j) > (trank - i))
-										j++;
-
-									tstart[i] = lstart[j];
-									tsize[i] = newShape[j];
-									tstep[i] = lstep[j];
-									j++;
-								}
-							}
-						} else { // shape was squeezed then need to translate to true slice
-							int j = 0;
-							for (int i = 0; i < trank; i++) {
-								if (trueShape[i] == 1) {
-									tstart[i] = 0;
-									tsize[i] = 1;
-									tstep[i] = 1;
-								} else {
-									tstart[i] = lstart[j];
-									tsize[i] = newShape[j];
-									tstep[i] = lstep[j];
-									j++;
-								}
-							}
-						}
-
-						d = loadData(filePath, nodePath, tstart, tsize, tstep, dtype, extendUnsigned);
-						d.setShape(newShape); // squeeze shape back
-					} else {
-						d = loadData(filePath, nodePath, lstart, newShape, lstep, dtype, extendUnsigned);
-					}
-					if (d != null) {
-						d.setName(name);
-					}
-				} catch (Exception e) {
-					throw new ScanFileHolderException("Problem with HDF library", e);
-				}
-				return d;
-			}
-		};
-
-		return new LazyDataset(name, dtype, trueShape.clone(), l);
-	}
-
-	/**
 	 * Create a lazy dataset from given dataset and datatype IDs
 	 * @param file
 	 * @param dataset
@@ -1625,37 +1365,6 @@ public class HDF5Loader extends AbstractFileLoader {
 	}
 
 	/**
-	 * Create a stacked dataset from external files
-	 * @param ef
-	 * @return lazy data set from external file
-	 * @throws OutOfMemoryError
-	 * @throws Exception
-	 */
-	public static ILazyDataset createStackedDatasetFromStrings(ExternalFiles ef) throws OutOfMemoryError, Exception {
-		//remove final dimension as that is for the characters of the strings
-		//shape here is for the actual filenames
-		
-		ImageStackLoaderEx loader = new ImageStackLoaderEx(ef.shape, ef.files);
-		return new LazyDataset("file_name", loader.getDtype(), loader.getShape(), loader);
-	}
-
-	/**
-	 * Create a stacked dataset from external files
-	 * @param ef
-	 * @param directory
-	 * @return lazy data set from external file
-	 * @throws OutOfMemoryError
-	 * @throws Exception
-	 */
-	public static ILazyDataset createStackedDatasetFromStrings(ExternalFiles ef, String directory) throws OutOfMemoryError, Exception {
-		//remove final dimension as that is for the characters of the strings
-		//shape here is for the actual filenames
-		
-		ImageStackLoaderEx loader = new ImageStackLoaderEx(ef.shape, ef.files, directory);
-		return new LazyDataset("file_name", loader.getDtype(), loader.getShape(), loader);
-	}
-
-	/**
 	 * Return any External File references to be followed.
 	 * @return string dataset
 	 * @throws Exception
@@ -1681,46 +1390,6 @@ public class HDF5Loader extends AbstractFileLoader {
 		}
 
 		return new StringDataset((String[]) data, AbstractDataset.squeezeShape(shape, false));
-	}
-
-	/**
-	 * Return any External File references to be followed.
-	 * @param sds
-	 * @return ExternalFiles object
-	 * @throws Exception
-	 */
-	public static ExternalFiles extractExternalFileNames(H5ScalarDS sds) throws Exception {
-		sds.init();
-		final long[] dshape = sds.getDims();
-		final long[] dstart = sds.getStartDims();
-		final long[] dstride = sds.getStride();
-		final long[] dsize = sds.getSelectedDims();
-
-		int length = 1;
-		final int[] shape = new int[dshape.length];
-		for (int i = 0; i < dshape.length; i++) {
-			dstride[i] = 1;
-			dsize[i] = 1;
-			int s = (int) dshape[i];
-			shape[i] = s;
-			length *= s;
-		}
-		final String[] files = new String[length];
-		PositionIterator iter = new PositionIterator(shape);
-		final int[] pos = iter.getPos();
-		int index = 0;
-		while (iter.hasNext()) {
-			for (int i = 0; i < shape.length; i++) {
-				dstart[i] = pos[i];
-			}
-			//DO NOT CHANGE THE FOLLOWING UNLESS YOU HAVE A TEST TO PROVE IT IS NOT WORKING. 
-			sds.clear();
-			files[index++] = ((String[]) sds.getData())[0];
-		}
-		ExternalFiles ef= new ExternalFiles();
-		ef.shape = AbstractDataset.squeezeShape(shape, false);
-		ef.files = files;
-		return ef;
 	}
 
 	protected static Dataset loadData(final String fileName, final String node,
@@ -2035,21 +1704,25 @@ public class HDF5Loader extends AbstractFileLoader {
 	@Override
 	public void loadMetadata(IMonitor mon) throws Exception {
 		loadTree(mon);
-		metadata = (Metadata) createDataHolder(tFile, true).getMetadata();
+
+		DataHolder dh = new DataHolder();
+		dh.setFilePath(fileName);
+		dh.setTree(tFile);
+
+		updateDataHolder(dh, true);
+		metadata = (Metadata) dh.getMetadata();
 	}
 
 	/**
 	 * Create data holder from tree
-	 * @param tree
+	 * @param dh
 	 * @param withMetadata
 	 */
-	public DataHolder createDataHolder(Tree tree, boolean withMetadata) {
-		DataHolder dh = new DataHolder();
+	public static void updateDataHolder(DataHolder dh, boolean withMetadata) {
+		Tree tree = dh.getTree();
 		if (tree == null)
-			return dh;
+			return;
 
-		dh.setFilePath(fileName);
-		dh.setTree(tree);
 		// Change to TreeMap so that order maintained
 		Map<String, ILazyDataset> lMap = new LinkedHashMap<String, ILazyDataset>();
 		Map<String, Serializable> aMap = withMetadata ? new LinkedHashMap<String, Serializable>() : null;
@@ -2093,7 +1766,6 @@ public class HDF5Loader extends AbstractFileLoader {
 				dh.addDataset(e.getKey(), e.getValue());
 			}
 		}
-		return dh;
 	}
 
 	/**
@@ -2102,7 +1774,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * @param lMap - the lazy dataset map to add items to, to aid the recursive method
 	 * @param aMap - the attribute map to add items to, to aid the recursive method (can be null)
 	 */
-	private void addToMaps(NodeLink link, Map<String, ILazyDataset> lMap, Map<String, Serializable> aMap) {
+	private static void addToMaps(NodeLink link, Map<String, ILazyDataset> lMap, Map<String, Serializable> aMap) {
 		Node node = link.getDestination();
 		if (aMap != null) {
 			Iterator<String> iter = node.getAttributeNameIterator();
@@ -2114,7 +1786,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		}
 
 		if (node instanceof DataNode) {
-			ILazyDataset dataset = createAugmentedDataset(link, true);
+			ILazyDataset dataset = ((DataNode) node).getDataset();
 			if (dataset == null)
 				return;
 
@@ -2124,7 +1796,6 @@ public class HDF5Loader extends AbstractFileLoader {
 				Dataset a = (Dataset) dataset;
 				aMap.put(link.getFullName(), a.getRank() == 0 ? a.getString() : a.getString(0));
 			}
-
 		} else if (node instanceof GroupNode) {
 			for (NodeLink l : (GroupNode) node) {
 				addToMaps(l, lMap, aMap);
@@ -2133,17 +1804,12 @@ public class HDF5Loader extends AbstractFileLoader {
 	}
 
 	/**
-	 * Make a dataset with metadata that is pointed by link
+	 * Augment a dataset with metadata that is pointed by link
 	 * @param link
 	 * @param isAxisFortranOrder in most cases, this should be set to true
-	 * @return dataset augmented with metadata
 	 */
-	public ILazyDataset createAugmentedDataset(NodeLink link, @SuppressWarnings("unused") final boolean isAxisFortranOrder) {
-		if (!link.isDestinationData()) {
-			return null;
-		}
-		
-		return ((DataNode) link.getDestination()).getDataset();
+	@SuppressWarnings("unused")
+	public void augmentLink(NodeLink link, boolean isAxisFortranOrder) {
 	}
 
 	/**

@@ -56,29 +56,23 @@ public class NexusHDF5Loader extends HDF5Loader {
 
 	public static final String DATA = "data";
 
-	/**
-	 * Make a dataset with metadata that is pointed by link
-	 * @param link
-	 * @param isAxisFortranOrder in most cases, this should be set to true
-	 * @return dataset augmented with metadata
-	 */
 	@Override
-	public ILazyDataset createAugmentedDataset(NodeLink link, final boolean isAxisFortranOrder) {
+	public void augmentLink(NodeLink link, final boolean isAxisFortranOrder) {
 		if (!link.isDestinationData()) {
 			logger.warn("Cannot augment non-data node: {}", link);
-			return null;
+			return;
 		}
 
 		DataNode dNode = (DataNode) link.getDestination();
 		if (dNode.isAugmented()) {
 			logger.debug("Node has already been augmented: {}", link);
-			return dNode.getDataset();
+			return;
 		}
 		dNode.setAugmented();
 
 		if (!dNode.isSupported()) {
 			logger.warn("Node is not supported: {}", link);
-			return null;
+			return;
 		}
 
 		Attribute stringAttr = dNode.getAttribute(NX_CLASS);
@@ -90,7 +84,7 @@ public class NexusHDF5Loader extends HDF5Loader {
 		ILazyDataset cData = dNode.getDataset();
 		if (cData == null || cData.getSize() == 0) {
 			logger.warn("Chosen data {}, has zero size", dNode);
-			return null;
+			return;
 		}
 
 		// find possible @long_name
@@ -353,7 +347,6 @@ public class NexusHDF5Loader extends HDF5Loader {
 			axisList.clear();
 		}
 		cData.addMetadata(amd);
-		return cData;
 	}
 
 	/**

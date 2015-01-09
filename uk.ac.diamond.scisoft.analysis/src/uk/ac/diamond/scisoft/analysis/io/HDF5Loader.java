@@ -17,6 +17,7 @@ import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -1728,6 +1729,8 @@ public class HDF5Loader extends AbstractFileLoader {
 		Map<String, Serializable> aMap = withMetadata ? new LinkedHashMap<String, Serializable>() : null;
 		addToMaps(tree.getNodeLink(), lMap, aMap);
 
+		dh.clear();
+		dh.setTree(tree);
 		if (withMetadata) {
 			Metadata metadata = new Metadata(aMap);
 			if (tree instanceof TreeFile)
@@ -1754,7 +1757,6 @@ public class HDF5Loader extends AbstractFileLoader {
 						if (localname == null || localname.isEmpty()) continue;
 						if (lMap.keySet().contains(localname)) continue;
 						dh.addDataset(localname, l);
-						
 					} catch (Exception ex) {
 						logger.info("seen an exception populating local nexus name for "+n, ex);
 					}
@@ -1797,8 +1799,10 @@ public class HDF5Loader extends AbstractFileLoader {
 				aMap.put(link.getFullName(), a.getRank() == 0 ? a.getString() : a.getString(0));
 			}
 		} else if (node instanceof GroupNode) {
-			for (NodeLink l : (GroupNode) node) {
-				addToMaps(l, lMap, aMap);
+			GroupNode g = (GroupNode) node;
+			Collection<String> names = g.getNames();
+			for (String n: names) {
+				addToMaps(g.getNodeLink(n), lMap, aMap);
 			}
 		}
 	}

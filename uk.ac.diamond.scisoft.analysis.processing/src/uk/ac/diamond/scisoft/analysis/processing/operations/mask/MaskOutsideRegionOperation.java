@@ -33,7 +33,7 @@ public class MaskOutsideRegionOperation extends AbstractOperation<MaskOutsideReg
 		}
 		
 		IDataset m = generateMaskFromROI(model.getRegion(), mask.getShape());
-		mask = Comparisons.logicalOr(mask, m);
+		mask = Comparisons.logicalAnd(mask, m);
 
 		
 		MaskMetadata mm = new MaskMetadataImpl(mask);

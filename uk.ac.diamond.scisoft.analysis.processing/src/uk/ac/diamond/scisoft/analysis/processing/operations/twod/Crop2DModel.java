@@ -11,19 +11,20 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.twod;
 
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
+import org.eclipse.dawnsci.analysis.api.processing.model.RangeType;
 
 public class Crop2DModel extends AbstractOperationModel {
 	
-	@OperationModelField(hint="Set lower bound of crop in X-direction", label = "X Beginning")
+	@OperationModelField(rangevalue = RangeType.XSINGLE,hint="Set lower bound of crop in X-direction", label = "X Beginning")
 	private Double xMin = null;
 	
-	@OperationModelField(hint="Set upper bound of crop in X-direction", label = "X End")
+	@OperationModelField(rangevalue = RangeType.XSINGLE,hint="Set upper bound of crop in X-direction", label = "X End")
 	private Double xMax = null;
 	
-	@OperationModelField(hint="Set lower bound of crop in Y-direction", label = "Y Beginning")
+	@OperationModelField(rangevalue = RangeType.YSINGLE,hint="Set lower bound of crop in Y-direction", label = "Y Beginning")
 	private Double yMin = null;
 	
-	@OperationModelField(hint="Set upper bound of crop in Y-direction", label = "Y End")
+	@OperationModelField(rangevalue = RangeType.YSINGLE,hint="Set upper bound of crop in Y-direction", label = "Y End")
 	private Double yMax = null;
 
 	public Double getxMin() {

@@ -20,6 +20,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
@@ -121,6 +122,10 @@ public class PgmLoader extends AbstractFileLoader {
 	}
 
 	private static Dataset loadDataset(String fileName) throws ScanFileHolderException {
+		IDataHolder holder = LoaderFactory.fetchData(fileName, false);
+		if (holder != null) {
+			return (Dataset) holder.getDataset(0);
+		}
 		File f = null;
 		FileInputStream fi = null;
 		try {
@@ -146,6 +151,10 @@ public class PgmLoader extends AbstractFileLoader {
 				Utils.readBeShort(fi, (IntegerDataset) data, index, false);
 			}
 			data.setName(DEF_IMAGE_NAME);
+			holder = new DataHolder();
+			holder.setFilePath(fileName);
+			holder.addDataset(DEF_IMAGE_NAME, data);
+			LoaderFactory.cacheData(holder);
 			return data;
 		} catch (Exception e) {
 			throw new ScanFileHolderException("File failed to load " + fileName, e);

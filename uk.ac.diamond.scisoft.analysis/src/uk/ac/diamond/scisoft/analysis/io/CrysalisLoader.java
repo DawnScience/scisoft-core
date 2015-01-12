@@ -176,6 +176,10 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver {
 	}
 
 	private static Dataset loadDataset(String fileName, int header, int[] shape) throws ScanFileHolderException {
+		IDataHolder holder = LoaderFactory.fetchData(fileName, false);
+		if (holder != null) {
+			return (Dataset) holder.getDataset(0);
+		}
 		Dataset data = null;
 		FileInputStream fi = null;
 		// Try to load the file
@@ -188,7 +192,11 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver {
 			data = new IntegerDataset(shape);
 			Utils.readLeInt(fi, (IntegerDataset) data, 0);
 			data.setName(DEF_IMAGE_NAME);
-
+			holder = new DataHolder();
+			holder.setFilePath(fileName);
+			holder.addDataset(DEF_IMAGE_NAME, data);
+			LoaderFactory.cacheData(holder);
+			return data;
 		} catch (Exception e) {
 			logger.error("File failed to load {} with error: {}" , fileName, e);
 			throw new ScanFileHolderException("File failed to load " + fileName, e);
@@ -202,7 +210,6 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver {
 				fi = null;
 			}
 		}
-		return data;
 	}
 
 	private void createMetadata(ILazyDataset data) {

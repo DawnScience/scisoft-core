@@ -25,6 +25,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
@@ -39,6 +40,8 @@ import org.slf4j.LoggerFactory;
  * Class to load ADSC images
  */
 public class ADSCImageLoader extends AbstractFileLoader {
+	private static final String ADSC_IMAGE_NAME = "ADSC Image";
+
 	private static final Logger logger = LoggerFactory.getLogger(ADSCImageLoader.class);
 
 	private HashMap<String, String>      metadataMap    = new HashMap<String, String>();
@@ -137,7 +140,7 @@ public class ADSCImageLoader extends AbstractFileLoader {
 				raf.seek(pointer);
 				data = createDataset(raf, shape, keepBitWidth);
 			}
-			output.addDataset("ADSC Image", data);
+			output.addDataset(ADSC_IMAGE_NAME, data);
 			if (loadMetadata) {
 				data.setMetadata(getMetadata());
 				output.setMetadata(data.getMetadata());
@@ -156,6 +159,10 @@ public class ADSCImageLoader extends AbstractFileLoader {
 	}
 
 	private static Dataset loadDataset(String fileName, int[] shape, int pointer, boolean keepBitWidth) throws ScanFileHolderException {
+		IDataHolder holder = LoaderFactory.fetchData(fileName, false);
+		if (holder != null) {
+			return (Dataset) holder.getDataset(0);
+		}
 		RandomAccessFile raf = null;
 		try {
 
@@ -163,6 +170,10 @@ public class ADSCImageLoader extends AbstractFileLoader {
 			raf.seek(pointer);
 
 			Dataset data = createDataset(raf, shape, keepBitWidth);
+			holder = new DataHolder();
+			holder.setFilePath(fileName);
+			holder.addDataset(ADSC_IMAGE_NAME, data);
+			LoaderFactory.cacheData(holder);
 			return data;
 		} catch (FileNotFoundException fnf) {
 			throw new ScanFileHolderException("File not found", fnf);
@@ -313,7 +324,7 @@ public class ADSCImageLoader extends AbstractFileLoader {
 
 		DiffractionMetadata diffMetadata = new DiffractionMetadata(fileName, detectorProperties, diffractionCrystalEnvironment);
 		metadata = diffMetadata;
-		diffMetadata.addDataInfo("ADSC Image", getInteger("SIZE1"), getInteger("SIZE2"));
+		diffMetadata.addDataInfo(ADSC_IMAGE_NAME, getInteger("SIZE1"), getInteger("SIZE2"));
 		diffMetadata.setMetadata(metadataMap);
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 		try {

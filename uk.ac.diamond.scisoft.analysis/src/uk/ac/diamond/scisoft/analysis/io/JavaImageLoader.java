@@ -24,6 +24,7 @@ import javax.imageio.stream.ImageInputStream;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
@@ -227,6 +228,10 @@ public class JavaImageLoader extends AbstractFileLoader {
 		if (num < 0) {
 			throw new ScanFileHolderException("Dataset of name '" + name + "' does not contain image number");
 		}
+		IDataHolder holder = LoaderFactory.fetchData(path, false, num);
+		if (holder != null) {
+			return (Dataset) holder.getDataset(0);
+		}
 
 		File f = new File(path);
 
@@ -249,6 +254,10 @@ public class JavaImageLoader extends AbstractFileLoader {
 			try {
 				data = createDataset(reader.read(num), asGrey, keepBitWidth);
 				data.setName(name);
+				holder = new DataHolder();
+				holder.setFilePath(path);
+				holder.addDataset(name, data);
+				LoaderFactory.cacheData(holder, num);
 				return data;
 			} catch (IndexOutOfBoundsException e) {
 				throw new ScanFileHolderException("Image number is incorrect");

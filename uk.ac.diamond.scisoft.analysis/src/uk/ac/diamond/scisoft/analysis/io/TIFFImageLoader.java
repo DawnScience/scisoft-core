@@ -26,6 +26,7 @@ import javax.imageio.stream.ImageInputStream;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -325,6 +326,10 @@ public class TIFFImageLoader extends JavaImageLoader {
 	}
 
 	private static Dataset readImage(String filename, ImageReader reader, boolean asGrey, boolean keepBitWidth, int num) throws IOException, ScanFileHolderException {
+		IDataHolder holder = LoaderFactory.fetchData(filename, false, num);
+		if (holder != null)
+			return (Dataset) holder.getDataset(0);
+
 		int n = reader.getNumImages(true);
 
 		if (num >= n) {
@@ -335,9 +340,13 @@ public class TIFFImageLoader extends JavaImageLoader {
 			throw new ScanFileHolderException("File format in '" + filename + "' cannot be read");
 		}
 
-		return createDataset(input, asGrey, keepBitWidth);
+		Dataset d = createDataset(input, asGrey, keepBitWidth);
+		holder = new DataHolder();
+		holder.setFilePath(filename);
+		holder.addDataset(DEF_IMAGE_NAME, d);
+		LoaderFactory.cacheData(holder, num);
+		return d;
 	}
-
 
 	/**
 	 * This can be overridden to add metadata

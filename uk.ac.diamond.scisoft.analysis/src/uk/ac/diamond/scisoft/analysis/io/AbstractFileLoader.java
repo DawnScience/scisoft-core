@@ -134,7 +134,11 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 			if (loader == null) {
 				return null;
 			}
-			IDataHolder holder = loader.loadFile(mon);
+			IDataHolder holder = LoaderFactory.fetchData(fileName, loadMetadata);
+			if (holder == null) {
+				holder = loader.loadFile(mon);
+				LoaderFactory.cacheData(holder);
+			}
 			IDataset data = name == null ? holder.getDataset(0) : holder.getDataset(name);
 			return data.getSliceView(start, stop, step);
 		}

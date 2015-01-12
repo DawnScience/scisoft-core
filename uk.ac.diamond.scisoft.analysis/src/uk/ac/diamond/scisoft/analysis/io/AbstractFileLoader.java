@@ -100,8 +100,8 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 
 	protected class LazyLoaderStub implements ILazyLoader {
 		public static final long serialVersionUID = 5057544213374303912L;
-		public IFileLoader loader;
-		public String name;
+		private IFileLoader loader;
+		private String name;
 
 		public LazyLoaderStub() {
 			loader = null;
@@ -123,6 +123,10 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 				loader.setLoadAllLazily(false);
 				loader.setLoadMetadata(false);
 			}
+		}
+
+		public IFileLoader getLoader() {
+			return loader;
 		}
 
 		@Override

@@ -173,7 +173,7 @@ public class FioLoader extends AbstractFileLoader {
 						@Override
 						public IDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
 								throws Exception {
-							IDataHolder holder = ((FioLoader) loader).loadFile(n, mon);
+							IDataHolder holder = ((FioLoader) getLoader()).loadFile(n, mon);
 
 							return holder.getDataset(n).getSlice(mon, start, stop, step);
 						}

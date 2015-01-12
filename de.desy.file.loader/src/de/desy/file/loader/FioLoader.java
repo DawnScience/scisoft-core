@@ -167,8 +167,6 @@ public class FioLoader extends AbstractFileLoader {
 					count++;
 				}
 				for (final String n : columns.keySet()) {
-					final Dataset set =  DatasetFactory.createFromList(columns.get(n));
-					set.setName(n);
 					result.addDataset(n, createLazyDataset(n, Dataset.FLOAT64, new int[] {count}, new LazyLoaderStub(new FioLoader(fileName), n) {
 						private static final long serialVersionUID = LazyLoaderStub.serialVersionUID;
 

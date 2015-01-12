@@ -20,7 +20,7 @@ import org.eclipse.dawnsci.analysis.api.io.SliceObject;
 public class LoaderKey {
 
 	private String  filePath;
-	private long    dateStamp;
+	private long    timeStamp;
 	private String  datasetName;
 	private List<String> datasetNames;
 	private SliceObject slice;
@@ -34,20 +34,26 @@ public class LoaderKey {
 	}
 
 	/**
-	 * Gets date stamp of file, may throw exception
 	 * @param filePath
 	 */
 	public void setFilePath(String filePath) {
 		this.filePath  = filePath;
-		this.dateStamp = (new File(filePath)).lastModified();
+		this.timeStamp = (new File(filePath)).lastModified();
 	}
 
-	public long getDatStamp() {
-		return dateStamp;
+	/**
+	 * @return time stamp of file in milliseconds relative to epoch
+	 */
+	public long getTimeStamp() {
+		return timeStamp;
 	}
 
-	public void setDataStamp(long dataStamp) {
-		this.dateStamp = dataStamp;
+	/**
+	 * Set time stamp
+	 * @param timeStamp elapsed time in milliseconds since epoch
+	 */
+	public void setTimeStamp(long timeStamp) {
+		this.timeStamp = timeStamp;
 	}
 
 	public String getDatasetName() {
@@ -62,7 +68,7 @@ public class LoaderKey {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (dateStamp ^ (dateStamp >>> 32));
+		result = prime * result + (int) (timeStamp ^ (timeStamp >>> 32));
 		result = prime * result + ((datasetName == null) ? 0 : datasetName.hashCode());
 		result = prime * result + ((datasetNames == null) ? 0 : datasetNames.hashCode());
 		result = prime * result + ((filePath == null) ? 0 : filePath.hashCode());
@@ -80,7 +86,7 @@ public class LoaderKey {
 		if (getClass() != obj.getClass())
 			return false;
 		LoaderKey other = (LoaderKey) obj;
-		if (dateStamp != other.dateStamp)
+		if (timeStamp != other.timeStamp)
 			return false;
 		if (datasetName == null) {
 			if (other.datasetName != null)
@@ -148,7 +154,7 @@ public class LoaderKey {
 	 * @return true if file and date stamp are the same.
 	 */
 	public boolean isSameFile(LoaderKey other) {
-		if (dateStamp != other.dateStamp)               return false;
+		if (timeStamp != other.timeStamp)               return false;
 		if (!getFilePath().equals(other.getFilePath())) return false;
 		return true;
 	}

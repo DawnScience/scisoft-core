@@ -609,7 +609,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		}
 
 		for (NodeLink l : group) {
-			augmentLink(l, true);
+			augmentLink(l);
 		}
 
 		return group;
@@ -1810,10 +1810,9 @@ public class HDF5Loader extends AbstractFileLoader {
 	/**
 	 * Augment a dataset with metadata that is pointed by link
 	 * @param link
-	 * @param isAxisFortranOrder in most cases, this should be set to true
 	 */
 	@SuppressWarnings("unused")
-	public void augmentLink(NodeLink link, boolean isAxisFortranOrder) {
+	public void augmentLink(NodeLink link) {
 	}
 
 	/**

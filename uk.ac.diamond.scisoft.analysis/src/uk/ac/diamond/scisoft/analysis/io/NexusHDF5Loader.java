@@ -23,6 +23,7 @@ import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
+import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -57,9 +58,35 @@ public class NexusHDF5Loader extends HDF5Loader {
 	public static final String DATA = "data";
 
 	@Override
-	public void augmentLink(NodeLink link, final boolean isAxisFortranOrder) {
+	public void augmentLink(NodeLink link) {
 		if (!link.isDestinationData()) {
 			logger.warn("Cannot augment non-data node: {}", link);
+			return;
+		}
+		augmentNodeLink(link, true);
+	}
+
+	public static void augmentTree(Tree tree) {
+		augmentNodeLink(tree.getNodeLink(), true);
+	}
+
+	/**
+	 * Augment a node with metadata that is pointed by link
+	 * @param link
+	 * @param isAxisFortranOrder in most cases, this should be set to true
+	 */
+	public static void augmentNodeLink(NodeLink link, final boolean isAxisFortranOrder) {
+		if (link.isDestinationSymbolic()) {
+			SymbolicNode sn = (SymbolicNode) link.getDestination();
+			augmentNodeLink(sn.getNodeLink(), isAxisFortranOrder);
+			return;
+		}
+
+		if (link.isDestinationGroup()) {
+			GroupNode gn = (GroupNode) link.getDestination();
+			for (NodeLink l : gn) {
+				augmentNodeLink(l, isAxisFortranOrder);
+			}
 			return;
 		}
 
@@ -78,7 +105,7 @@ public class NexusHDF5Loader extends HDF5Loader {
 		Attribute stringAttr = dNode.getAttribute(NX_CLASS);
 		String nxClass = stringAttr != null ? stringAttr.getFirstElement() : null;
 		if (!SDS.equals(nxClass)) {
-			logger.warn("Data node does not have {} attribute: {}", NX_CLASS, link);
+			logger.trace("Data node does not have {} attribute: {}", NX_CLASS, link);
 		}
 
 		ILazyDataset cData = dNode.getDataset();

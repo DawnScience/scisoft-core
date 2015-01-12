@@ -21,6 +21,7 @@ import org.dawb.common.services.conversion.IConversionContext;
 import org.dawb.common.services.conversion.IConversionContext.ConversionScheme;
 import org.dawb.common.services.conversion.IConversionService;
 import org.dawb.common.services.conversion.IProcessingConversionInfo;
+import org.dawb.common.services.conversion.ProcessingOutputType;
 import org.dawnsci.conversion.ConversionServiceImpl;
 import org.dawnsci.persistence.PersistenceServiceCreator;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
@@ -100,6 +101,11 @@ public class ExampleOperationsTest {
 				@Override
 				public IExecutionVisitor getExecutionVisitor(String fileName) {
 					return new HierarchicalFileExecutionVisitor(fileName);
+				}
+
+				@Override
+				public ProcessingOutputType getProcessingOutputType() {
+					return ProcessingOutputType.PROCESSING_ONLY;
 				}
 			});
 			
@@ -181,6 +187,11 @@ public class ExampleOperationsTest {
 				public IExecutionVisitor getExecutionVisitor(String fileName) {
 					return new HierarchicalFileExecutionVisitor(fileName);
 				}
+
+				@Override
+				public ProcessingOutputType getProcessingOutputType() {
+					return ProcessingOutputType.PROCESSING_ONLY;
+				}
 			});
 			
 			service.process(context);
@@ -250,6 +261,11 @@ public class ExampleOperationsTest {
 				@Override
 				public IExecutionVisitor getExecutionVisitor(String fileName) {
 					return new HierarchicalFileExecutionVisitor(fileName);
+				}
+
+				@Override
+				public ProcessingOutputType getProcessingOutputType() {
+					return ProcessingOutputType.PROCESSING_ONLY;
 				}
 			});
 			

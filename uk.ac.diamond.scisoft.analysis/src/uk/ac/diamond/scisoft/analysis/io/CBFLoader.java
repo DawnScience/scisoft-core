@@ -461,7 +461,7 @@ public class CBFLoader extends AbstractFileLoader {
 	//		}
 
 		if (imageOrien == null) {
-			imageOrien = readCBFHeaderData(chs);
+			imageOrien = readImageOrientation(chs);
 		}
 
 		int[] shape = imageOrien.getShape();

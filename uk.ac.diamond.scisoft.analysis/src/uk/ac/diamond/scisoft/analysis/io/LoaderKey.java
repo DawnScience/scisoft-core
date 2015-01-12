@@ -24,6 +24,7 @@ public class LoaderKey {
 	private String  datasetName;
 	private List<String> datasetNames;
 	private SliceObject slice;
+	private int imageNumber;
 	private boolean metadata;
 
 	public LoaderKey() {
@@ -56,6 +57,21 @@ public class LoaderKey {
 		this.timeStamp = timeStamp;
 	}
 
+	
+	/**
+	 * @return Returns the image number.
+	 */
+	public int getImageNumber() {
+		return imageNumber;
+	}
+
+	/**
+	 * @param imageNumber The image number to set.
+	 */
+	public void setImageNumber(int imageNumber) {
+		this.imageNumber = imageNumber;
+	}
+
 	public String getDatasetName() {
 		return datasetName;
 	}
@@ -74,6 +90,7 @@ public class LoaderKey {
 		result = prime * result + ((filePath == null) ? 0 : filePath.hashCode());
 		result = prime * result + (metadata ? 1231 : 1237);
 		result = prime * result + ((slice == null) ? 0 : slice.hashCode());
+		result = prime * result + imageNumber;
 		return result;
 	}
 
@@ -109,6 +126,8 @@ public class LoaderKey {
 			if (other.slice != null)
 				return false;
 		} else if (!slice.equals(other.slice))
+			return false;
+		if (imageNumber != other.imageNumber)
 			return false;
 		return true;
 	}

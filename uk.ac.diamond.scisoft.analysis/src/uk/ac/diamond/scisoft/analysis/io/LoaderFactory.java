@@ -479,9 +479,23 @@ public class LoaderFactory {
 	 * @param holder
 	 */
 	public static /*THIS IS REQUIRED:*/ synchronized void cacheData(IDataHolder holder) {
+		cacheData(holder, 0);
+	}
+
+	/**
+	 * Store data into cache
+	 * 
+	 *   *synchronized* is REQUIRED because multiple threads load data simultaneously and without
+	 *   a synchronized you can get data loaded twice which is SLOW.
+     *
+	 * @param holder
+	 * @param imageNumber
+	 */
+	public static /*THIS IS REQUIRED:*/ synchronized void cacheData(IDataHolder holder, int imageNumber) {
 		final LoaderKey key = new LoaderKey();
 		key.setFilePath(holder.getFilePath());
 		key.setMetadata(holder.getMetadata() != null);
+		key.setImageNumber(imageNumber);
 
 		if (!recordSoftReference(key, holder))
 			System.err.println("Loader factory failed to cache "+holder.getFilePath());
@@ -498,9 +512,25 @@ public class LoaderFactory {
 	 * @return data or null if not in cache
 	 */
 	public static /*THIS IS REQUIRED:*/ synchronized IDataHolder fetchData(String path, boolean willLoadMetadata) {
+		return fetchData(path, willLoadMetadata, 0);
+	}
+
+	/**
+	 * Fetch data from cache
+	 * 
+	 *   *synchronized* is REQUIRED because multiple threads load data simultaneously and without
+	 *   a synchronized you can get data loaded twice which is SLOW.
+     *
+	 * @param path
+	 * @param willLoadMetadata dictates whether metadata is not loaded (if possible)
+	 * @param imageNumber
+	 * @return data or null if not in cache
+	 */
+	public static /*THIS IS REQUIRED:*/ synchronized IDataHolder fetchData(String path, boolean willLoadMetadata, int imageNumber) {
 		final LoaderKey key = new LoaderKey();
 		key.setFilePath(path);
 		key.setMetadata(willLoadMetadata);
+		key.setImageNumber(imageNumber);
 
 		final Object cachedObject = getSoftReference(key);
 		return cachedObject instanceof IDataHolder ? (IDataHolder) cachedObject : null;

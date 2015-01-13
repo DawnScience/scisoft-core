@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.SliceND;
+import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.junit.Assert;
 import org.junit.Test;
 

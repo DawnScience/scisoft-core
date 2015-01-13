@@ -9,10 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.metadata;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
+import static org.junit.Assert.*;
 import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
@@ -266,5 +263,8 @@ public class AxesMetadataTest {
 
            ILazyDataset d=dataset.getSliceView();
            d.squeeze();
+           IDataset slice = d.getSlice();
+           
+           assertTrue(slice != null);
     }
 }

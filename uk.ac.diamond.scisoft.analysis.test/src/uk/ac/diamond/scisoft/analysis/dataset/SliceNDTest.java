@@ -134,7 +134,7 @@ public class SliceNDTest {
 		}
 
 		try {
-			lstop[0] = 8;
+			lstop[0] = 9;
 			slice = new SliceND(new int[] {7}, null, lstop, step);
 			fail();
 		} catch (IllegalArgumentException e) {

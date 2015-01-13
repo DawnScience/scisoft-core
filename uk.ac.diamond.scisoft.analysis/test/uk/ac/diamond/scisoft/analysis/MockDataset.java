@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
+import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
@@ -76,7 +77,17 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
+	public IDataset getSlice(SliceND slice) {
+		throw new AssertionFailedError("Methods in MockDataset should not be called");
+	}
+
+	@Override
 	public IDataset getSlice(IMonitor monitor, Slice... slice) throws ScanFileHolderException {
+		throw new AssertionFailedError("Methods in MockDataset should not be called");
+	}
+
+	@Override
+	public IDataset getSlice(IMonitor monitor, SliceND slice) throws ScanFileHolderException {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
 
@@ -87,6 +98,11 @@ public class MockDataset implements IDataset {
 
 	@Override
 	public IDataset getSliceView(Slice... slice) {
+		throw new AssertionFailedError("Methods in MockDataset should not be called");
+	}
+
+	@Override
+	public IDataset getSliceView(SliceND slice) {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
 

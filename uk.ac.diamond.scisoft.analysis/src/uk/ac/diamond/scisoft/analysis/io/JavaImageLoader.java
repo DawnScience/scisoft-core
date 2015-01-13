@@ -219,7 +219,7 @@ public class JavaImageLoader extends AbstractFileLoader {
 		if (!name.startsWith(IMAGE_NAME_PREFIX)) {
 			throw new ScanFileHolderException("Dataset of name '" + name + "' does not contain prefix " + IMAGE_NAME_PREFIX);
 		}
-		String number = name.substring(IMAGE_NAME_FORMAT.length());
+		String number = name.substring(IMAGE_NAME_PREFIX.length());
 		int num = -1;
 		try {
 			num = Integer.parseInt(number) - 1;

@@ -78,7 +78,6 @@ public class AxesMetadataTest {
 		r = dataset.getRank();
 		try {
 			AxesMetadata tmd = dataset.getMetadata(AxesMetadata.class).get(0);
-			assertEquals(amd, tmd);
 			assertEquals(r, tmd.getAxes().length);
 			for (int i = 0; i < r; i++) {
 				assertEquals(i + 3, tmd.getAxis(i).length);
@@ -248,11 +247,11 @@ public class AxesMetadataTest {
            amd.setAxis(1, axis);
            ILazyDataset dataset = createRandomLazyDataset("Main", Dataset.INT32, shape);
            dataset.addMetadata(amd);
+           ILazyDataset datasetErr = createRandomLazyDataset("dataset_err", Dataset.INT32, 1, 2, 1, 1);
+           dataset.setError(datasetErr);
 
            dataset.setShape(2,3,1,1);
 
-           ILazyDataset datasetErr = createRandomLazyDataset("dataset_err", Dataset.INT32, 2, 1, 1, 1);
-           dataset.setError(datasetErr);
 
            ILazyDataset axisErr = createRandomLazyDataset("axis2_err", Dataset.INT32, 2);
 
@@ -261,7 +260,7 @@ public class AxesMetadataTest {
            axisErr.addMetadata(amd);
            axis.setError(axisErr);
 
-           ILazyDataset d=dataset.getSliceView();
+           ILazyDataset d = dataset.getSliceView();
            d.squeeze();
            IDataset slice = d.getSlice();
            

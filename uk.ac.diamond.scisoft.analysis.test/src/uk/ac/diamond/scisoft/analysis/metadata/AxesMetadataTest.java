@@ -267,4 +267,21 @@ public class AxesMetadataTest {
            
            assertTrue(slice != null);
     }
+    
+    @Test
+    public void testSliceFromView(){
+    	final int[] shape = new int[] { 3, 10, 11};
+    	final int[] ashape = new int[] {3};
+    	
+    	ILazyDataset dataset = createRandomLazyDataset("Main", Dataset.INT32, shape);
+    	ILazyDataset ax = createRandomLazyDataset("Axis", Dataset.INT32, ashape);
+    	
+    	AxesMetadataImpl amd = new AxesMetadataImpl(shape.length);
+        amd.setAxis(0, ax);
+        dataset.setMetadata(amd); 
+        
+        ILazyDataset view = dataset.getSliceView(new Slice(1,2),null,null);
+        IDataset slice = view.getSlice();
+        assertTrue(slice != null);
+    }
 }

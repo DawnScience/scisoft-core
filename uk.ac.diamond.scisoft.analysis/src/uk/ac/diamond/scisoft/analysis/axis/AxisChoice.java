@@ -130,8 +130,13 @@ public class AxisChoice {
 	 */
 	public void setAxisNumber(int axisNumber) {
 		number = axisNumber;
-		if (indexMapping == null)
-			indexMapping = new int[] { number };
+		if (indexMapping == null) {
+			int r = values.getRank();
+			indexMapping = new int[r];
+			for (int i = 0; i < r; i++) {
+				indexMapping[i] = i;
+			}
+		}
 	}
 
 	/**

@@ -9,8 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
@@ -18,7 +17,6 @@ import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
@@ -55,8 +53,11 @@ public class NormalisationOperation extends AbstractOperation<ExternalDataModel,
 		if (path == null) path = ssm.getFilePath();
 		
 		ILazyDataset lz = ProcessingUtils.getLazyDataset(this, path, model.getDatasetName());
-
-		IDataset val = ssm.getMatchingSlice(lz).squeeze();
+		IDataset val = ssm.getMatchingSlice(lz);
+		
+		if (val == null) throw new OperationException(this, "Dataset " + model.getDatasetName() + " " + Arrays.toString(lz.getShape()) + 
+				" not a compatable shape with " + Arrays.toString(ssm.getParent().getShape()));
+		val.squeeze();
 		
 		if (val.getRank() != 0) throw new OperationException(this, "External data shape invalid");
 		

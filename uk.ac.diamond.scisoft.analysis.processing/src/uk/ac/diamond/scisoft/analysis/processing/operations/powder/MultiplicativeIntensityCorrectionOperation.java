@@ -42,7 +42,8 @@ public class MultiplicativeIntensityCorrectionOperation extends
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		IDiffractionMetadata md = getFirstDiffractionMetadata(input);
 		
-		if (metadata == null || !metadata.equals(md)) {
+		if (metadata == null || !(metadata.getDetector2DProperties().equals(md.getDetector2DProperties()) &&
+				metadata.getDiffractionCrystalEnvironment().equals(md.getDiffractionCrystalEnvironment()))) {
 			metadata = md;
 			correction = null;
 		}

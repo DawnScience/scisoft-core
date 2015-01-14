@@ -46,7 +46,6 @@ public class SubtractDataOperation extends AbstractOperation<SelectedFramesModel
 		Dataset bg = null;
 		if (subtrahend == null) {
 			bg = getImage(input);
-			subtrahend = bg;
 		} else {
 			bg = subtrahend;
 		}
@@ -88,7 +87,9 @@ public class SubtractDataOperation extends AbstractOperation<SelectedFramesModel
 			dataDims = new int[]{dataDims[0]};
 		}
 		
-		return LazyMaths.mean(s,  e,lz,dataDims).squeeze();
+		subtrahend = LazyMaths.mean(s,  e,lz,dataDims).squeeze();
+		
+		return subtrahend;
 		
 	}
 	

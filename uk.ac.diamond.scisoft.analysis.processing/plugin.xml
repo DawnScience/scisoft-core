@@ -338,18 +338,21 @@
       </category>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1DOperation"
+            icon="icons/crop1.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1DOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1DModel"
             name="Crop Data [1D]">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.AveragingOperation"
+            icon="icons/meanfilt.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.AveragingOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
             name="Average All Data">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.Crop2DOperation"
+            icon="icons/crop2.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.twod.Crop2DOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.Crop2DModel"
             name="Crop Data [2D]">
@@ -360,20 +363,26 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.maskingCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutsideRegionOperation"
-            description="Mask all pixels outside the specified region"
+            description="Mask pixels outside the specified region"
+            icon="icons/regionMask.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutsideRegionOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutsideRegionModel"
-            name="Mask Outside Region Operation">
+            name="Mask Outside Region">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.externaldata"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.NormalisationOperation"
-            description="Normalise data"
+            description="Normalise data against the value from a corresponding value in an external dataset (if path is empty, dataset from processed file is used)"
+            icon="icons/decolor.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.NormalisationOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataModel"
             name="Normalisation">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.externaldata"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractDataOperation"
+            description="Subtract a dataset (or average if stack) in the specified file"
+            icon="icons/subblank.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractDataOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SelectedFramesModel"
             name="Subtract Data">
@@ -381,10 +390,16 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.xrd2imageprocessing"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.DiffractionEllipseFitOperation"
+            description="Fit an ellipse to the ring at the specified q value - parameters returned as auxiliary data"
+            icon="icons/PowderFit.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.DiffractionEllipseFitOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.DiffractionEllipseFitModel"
             name="Diffraction Ellipse Fit">
       </operation>
+      <category
+            id="uk.ac.diamond.scisoft.analysis.processing.externaldata"
+            name="External Data">
+      </category>
    </extension>
 
 </plugin>

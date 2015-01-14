@@ -269,26 +269,6 @@
             visible="true">
       </operation>
       <operation
-            category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBackgroupImageOperation"
-            description="Subtract a background image from a different file"
-            icon="icons/subblank.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.SubtractBackgroupImageOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBackgroundImageModel"
-            name="Subtract Background Image"
-            visible="true">
-      </operation>
-      <operation
-            category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBlankFrameOperation"
-            description="Subtract a blank frame in the processed dataset"
-            icon="icons/subblank.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBlankFrameOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBlankFrameModel"
-            name="Subtract Blank Frame"
-            visible="true">
-      </operation>
-      <operation
             category="uk.ac.diamond.scisoft.analysis.processing.filterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.XRegionProfileNormalize"
             description="A filter which normalises the data frame by the profile of the selected region of the X axis."
@@ -384,6 +364,26 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutsideRegionOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutsideRegionModel"
             name="Mask Outside Region Operation">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.NormalisationOperation"
+            description="Normalise data"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.NormalisationOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataModel"
+            name="Normalisation">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractDataOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractDataOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SelectedFramesModel"
+            name="Subtract Data">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.xrd2imageprocessing"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.DiffractionEllipseFitOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.DiffractionEllipseFitOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.DiffractionEllipseFitModel"
+            name="Diffraction Ellipse Fit">
       </operation>
    </extension>
 

@@ -31,6 +31,7 @@ import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
@@ -38,6 +39,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 // lots of below added
 import uk.ac.diamond.scisoft.analysis.io.AbstractFileLoader;
@@ -171,11 +173,10 @@ public class FioLoader extends AbstractFileLoader {
 						private static final long serialVersionUID = LazyLoaderStub.serialVersionUID;
 
 						@Override
-						public IDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
-								throws Exception {
+						public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
 							IDataHolder holder = ((FioLoader) getLoader()).loadFile(n, mon);
 
-							return holder.getDataset(n).getSlice(mon, start, stop, step);
+							return holder.getDataset(n).getSlice(mon, slice);
 						}
 					}));
 				}		

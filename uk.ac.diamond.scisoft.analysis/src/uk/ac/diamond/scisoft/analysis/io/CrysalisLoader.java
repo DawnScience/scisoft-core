@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileSaver;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
@@ -126,10 +127,10 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver {
 			if (loadLazily) {
 				data = createLazyDataset(DEF_IMAGE_NAME, Dataset.INT32, shape, new LazyLoaderStub() {
 					@Override
-					public IDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
+					public IDataset getDataset(IMonitor mon, SliceND slice)
 							throws Exception {
-						Dataset data = loadDataset(fileName, nheader, shape);
-						return data.getSliceView(start, stop, step);
+						Dataset data = loadDataset(fileName, nheader, slice.getSourceShape());
+						return data.getSliceView(slice);
 					}
 				});
 			} else {

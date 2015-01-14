@@ -23,6 +23,7 @@ import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
@@ -131,9 +132,9 @@ public class ADSCImageLoader extends AbstractFileLoader {
 			if (loadLazily) {
 				data = createLazyDataset(DEF_IMAGE_NAME, Dataset.INT32, shape, new LazyLoaderStub() {
 					@Override
-					public IDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws Exception {
-						Dataset tmp = loadDataset(fileName, shape, pointer, keepBitWidth);
-						return tmp == null ? null : tmp.getSliceView(start, stop, step);
+					public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
+						Dataset tmp = loadDataset(fileName, slice.getSourceShape(), pointer, keepBitWidth);
+						return tmp == null ? null : tmp.getSliceView(slice);
 					}
 				});
 			} else {

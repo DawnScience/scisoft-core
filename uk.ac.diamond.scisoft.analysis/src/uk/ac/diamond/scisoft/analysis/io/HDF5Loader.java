@@ -1293,14 +1293,12 @@ public class HDF5Loader extends AbstractFileLoader {
 			}
 
 			@Override
-			public Dataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
-					throws ScanFileHolderException {
-				final int rank = shape.length;
-
-				SliceND slice = new SliceND(shape, start, stop, step);
+			public Dataset getDataset(IMonitor mon, SliceND slice) throws ScanFileHolderException {
 				int[] lstart = slice.getStart();
 				int[] lstep  = slice.getStep();
 				int[] newShape = slice.getShape();
+				int[] shape = slice.getSourceShape();
+				final int rank = shape.length;
 
 				Dataset d = null;
 				try {

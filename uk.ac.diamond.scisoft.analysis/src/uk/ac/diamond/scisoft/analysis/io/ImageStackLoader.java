@@ -82,12 +82,11 @@ public class ImageStackLoader implements ILazyLoader {
 	}
 
 	@Override
-	public Dataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws Exception {
+	public Dataset getDataset(IMonitor mon, SliceND slice) throws Exception {
 		
-		if (start==null && step==null) return getFullStack();// Might cause out of memory!
+		if (slice.isAll()) return getFullStack();// Might cause out of memory!
 		                                                     // But this allows expressions of the stack to work if the stack fit in memory.
 
-		SliceND slice = new SliceND(shape, start, stop, step);
 		int[] lstart = slice.getStart();
 		int[] lstop  = slice.getStop();
 		int[] lstep  = slice.getStep();

@@ -24,6 +24,7 @@ import javax.imageio.stream.ImageInputStream;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
@@ -196,9 +197,9 @@ public class JavaImageLoader extends AbstractFileLoader {
 				final String name = String.format(IMAGE_NAME_FORMAT, j);
 				LazyDataset lazy = createLazyDataset(name, dtype, shape, new LazyLoaderStub() {
 					@Override
-					public IDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws Exception {
+					public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
 						Dataset data = loadDataset(fileName, name, asGrey, keepBitWidth);
-						return data == null ? null : data.getSliceView(start, stop, step);
+						return data == null ? null : data.getSliceView(slice);
 					}
 				});
 				output.addDataset(name, lazy);

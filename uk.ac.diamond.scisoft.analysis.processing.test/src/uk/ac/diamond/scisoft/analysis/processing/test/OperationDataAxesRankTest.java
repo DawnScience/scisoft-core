@@ -8,8 +8,6 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.Slice;
-import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
@@ -24,7 +22,6 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
@@ -450,28 +447,8 @@ public class OperationDataAxesRankTest {
 	
 	private ILazyDataset getDataset() {
 		int[] dsShape = new int[]{24, 1000, 1000};
-
-		final IDataset innerDS = Random.rand(0.0, 1000.0, 24, 1000, 1000);
-
-		ILazyDataset lz = new LazyDataset("test", Dataset.FLOAT64, dsShape, new ILazyLoader() {
-
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public boolean isFileReadable() {
-				return true;
-			}
-
-			@Override
-			public IDataset getDataset(IMonitor mon, int[] shape, int[] start,
-					int[] stop, int[] step) throws Exception {
-				// TODO Auto-generated method stub
-				return innerDS.getSlice(mon, start, stop, step);
-			}
-		});
+		
+		ILazyDataset lz = Random.lazyRand("test", dsShape);
 
 		final IDataset axDataset1 = DatasetFactory.createRange(24,Dataset.INT16);
 		axDataset1.setShape(new int[] {24,1,1});

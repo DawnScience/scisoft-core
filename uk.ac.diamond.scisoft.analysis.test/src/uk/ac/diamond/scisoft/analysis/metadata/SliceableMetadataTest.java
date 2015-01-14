@@ -9,7 +9,9 @@
 
 package uk.ac.diamond.scisoft.analysis.metadata;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,38 +21,19 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
-import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
 import org.junit.Test;
 
 public class SliceableMetadataTest {
 
-	ILazyDataset createRandomLazyDataset(String name, final int[] shape, final int dtype) {
-		LazyDataset ld = new LazyDataset(name, dtype, shape, new ILazyLoader() {
-			final Dataset d = Random.randn(shape).cast(dtype);
-			@Override
-			public boolean isFileReadable() {
-				return true;
-			}
-			@Override
-			public Dataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
-					throws Exception {
-				return d.getSlice(mon, start, stop, step);
-			}
-		});
-		return ld;
-	}
-
 	@Test
 	public void testSlicingMetadata() {
 		final int[] shape = new int[] {1, 2, 3, 4};
-		ILazyDataset ld = createRandomLazyDataset("Metadata1", shape, Dataset.INT32);
+		ILazyDataset ld = Random.lazyRand(Dataset.INT32, "Metadata1", shape);
 
 		final DoubleDataset[] dda = new DoubleDataset[] {Random.randn(shape), Random.randn(shape),};
 
@@ -68,7 +51,7 @@ public class SliceableMetadataTest {
 		
 		SliceableTestMetadata md = new SliceableTestMetadata(ld, dda, sdl, bdm, l2);
 
-		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
+		ILazyDataset dataset = Random.lazyRand(Dataset.INT32, "Main", shape);
 		dataset.addMetadata(md);
 
 		try {
@@ -169,10 +152,10 @@ public class SliceableMetadataTest {
 	@Test
 	public void testSlicingSqueezedMetadata() {
 		final int[] shape = new int[] {1, 1, 128};
-		ILazyDataset ld = createRandomLazyDataset("Metadata1", shape, Dataset.INT32);
+		ILazyDataset ld = Random.lazyRand(Dataset.INT32, "Metadata1", shape);
 		SliceableTestMetadata md = new SliceableTestMetadata(ld, null, null, null, null);
 
-		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
+		ILazyDataset dataset = Random.lazyRand(Dataset.INT32, "Main", shape);
 		dataset.addMetadata(md);
 
 		Slice[] slice = new Slice[] {null, null, new Slice(64)};
@@ -222,7 +205,7 @@ public class SliceableMetadataTest {
 		final int[] result2 = new int[] {1, 1, 3, 1};
 		
 		final int[] shape = new int[] {1, 2, 3, 4};
-		ILazyDataset ld = createRandomLazyDataset("Metadata1", shape, Dataset.INT32);
+		ILazyDataset ld = Random.lazyRand(Dataset.INT32, "Metadata1", shape);
 
 		final int [] partial1 = new int[] {1, 1, 1, 4};
 		final DoubleDataset[] dda = new DoubleDataset[] {Random.randn(partial1), Random.randn(partial1),};
@@ -243,7 +226,7 @@ public class SliceableMetadataTest {
 		
 		SliceableTestMetadata md = new SliceableTestMetadata(ld, dda, sdl, bdm, l2);
 
-		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
+		ILazyDataset dataset = Random.lazyRand(Dataset.INT32, "Main", shape);
 		dataset.addMetadata(md);
 		
 		try {
@@ -317,7 +300,7 @@ public class SliceableMetadataTest {
 		final int[] result2 = new int[] {1, 1, 3, 2};
 		
 		final int[] shape = new int[] {1, 2, 3, 4};
-		ILazyDataset ld = createRandomLazyDataset("Metadata1", shape, Dataset.INT32);
+		ILazyDataset ld = Random.lazyRand(Dataset.INT32, "Metadata1", shape);
 
 		final int [] partial1 = new int[] {1, 1, 1, 4};
 		final DoubleDataset[] dda = new DoubleDataset[] {Random.randn(partial1), Random.randn(partial1),};
@@ -338,7 +321,7 @@ public class SliceableMetadataTest {
 
 		SliceableTestMetadata md = new SliceableTestMetadata(ld, dda, sdl, bdm, l2);
 
-		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
+		ILazyDataset dataset = Random.lazyRand(Dataset.INT32, "Main", shape);
 		dataset.addMetadata(md);
 		
 		try {
@@ -384,7 +367,7 @@ public class SliceableMetadataTest {
 	public void testSlicingSameRankDifferentShapeSqueezeMetadata() {
 		
 		final int[] shape = new int[] {1, 2, 3, 4};
-		ILazyDataset ld = createRandomLazyDataset("Metadata1", shape, Dataset.INT32);
+		ILazyDataset ld = Random.lazyRand(Dataset.INT32, "Metadata1", shape);
 
 		final int [] partial1 = new int[] {1, 1, 1, 4};
 		final DoubleDataset[] dda = new DoubleDataset[] {Random.randn(partial1), Random.randn(partial1),};
@@ -405,7 +388,7 @@ public class SliceableMetadataTest {
 		
 		SliceableTestMetadata md = new SliceableTestMetadata(ld, dda, sdl, bdm, l2);
 
-		ILazyDataset dataset = createRandomLazyDataset("Main", shape, Dataset.INT32);
+		ILazyDataset dataset = Random.lazyRand(Dataset.INT32, "Main", shape);
 		dataset.addMetadata(md);
 		
 		try {

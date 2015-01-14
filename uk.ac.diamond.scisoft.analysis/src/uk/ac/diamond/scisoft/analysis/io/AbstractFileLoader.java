@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.io.File;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
@@ -130,7 +131,7 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 		}
 
 		@Override
-		public IDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws Exception {
+		public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
 			if (loader == null) {
 				return null;
 			}
@@ -143,7 +144,7 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 				LoaderFactory.cacheData(holder);
 			}
 			IDataset data = name == null ? holder.getDataset(0) : holder.getDataset(name);
-			return data.getSliceView(start, stop, step);
+			return data.getSliceView(slice);
 		}
 
 		@Override

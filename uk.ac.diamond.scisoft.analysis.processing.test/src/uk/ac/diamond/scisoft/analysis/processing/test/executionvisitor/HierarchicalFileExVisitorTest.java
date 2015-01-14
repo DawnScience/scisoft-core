@@ -14,16 +14,13 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.hdf5.operation.HierarchicalFileExecutionVisitor;
@@ -794,27 +791,7 @@ public class HierarchicalFileExVisitorTest {
 	
 	public ILazyDataset getLazyDataset(int[] dsShape, int withAxes) {
 		
-		final IDataset innerDS = Random.rand(dsShape);
-		
-		ILazyDataset lz = new LazyDataset("test", Dataset.FLOAT64, dsShape, new ILazyLoader() {
-			
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public boolean isFileReadable() {
-				return true;
-			}
-			
-			@Override
-			public IDataset getDataset(IMonitor mon, int[] shape, int[] start,
-					int[] stop, int[] step) throws Exception {
-				return innerDS.getSlice(mon, start, stop, step);
-			}
-		});
-		
+		ILazyDataset lz = Random.lazyRand("test", dsShape);
 		
 		if (withAxes > 0) {
 			AxesMetadataImpl am = new AxesMetadataImpl(dsShape.length);

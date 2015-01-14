@@ -20,6 +20,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
@@ -83,9 +84,9 @@ public class PgmLoader extends AbstractFileLoader {
 			if (loadLazily) {
 				data = createLazyDataset(DEF_IMAGE_NAME, maxval < 256 ? Dataset.INT16 : Dataset.INT32, new int[] {height, width}, new LazyLoaderStub() {
 					@Override
-					public IDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws Exception {
+					public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
 						Dataset data = loadDataset(fileName);
-						return data == null ? null : data.getSliceView(start, stop, step);
+						return data == null ? null : data.getSliceView(slice);
 					}
 				});
 			} else {

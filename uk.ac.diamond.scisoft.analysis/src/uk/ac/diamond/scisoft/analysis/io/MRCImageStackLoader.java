@@ -120,12 +120,12 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 			}
 			
 			@Override
-			public IDataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws Exception {
-				final int rank = shape.length;
-				SliceND slice = new SliceND(shape, start, stop, step);
+			public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
 				int[] lstart = slice.getStart();
 				int[] lstep  = slice.getStep();
 				int[] newShape = slice.getShape();
+				int[] shape = slice.getSourceShape();
+				final int rank = shape.length;
 
 				Dataset d = null;
 				try {

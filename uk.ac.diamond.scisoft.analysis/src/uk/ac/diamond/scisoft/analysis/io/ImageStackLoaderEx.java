@@ -171,8 +171,7 @@ public class ImageStackLoaderEx implements ILazyLoader {
 	}
 
 	@Override
-	public Dataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step) throws ScanFileHolderException {
-		SliceND slice = new SliceND(shape, start, stop, step);
+	public Dataset getDataset(IMonitor mon, SliceND slice) throws ScanFileHolderException {
 		int[] lstart = slice.getStart();
 		int[] lstop  = slice.getStop();
 		int[] lstep  = slice.getStep();

@@ -9,40 +9,25 @@
 
 package uk.ac.diamond.scisoft.analysis.metadata;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
-import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.metadata.ErrorMetadataImpl;
 import org.junit.Test;
 
 public class AxesMetadataTest {
-
-	ILazyDataset createRandomLazyDataset(String name, final int dtype, final int... shape) {
-		LazyDataset ld = new LazyDataset(name, dtype, shape, new ILazyLoader() {
-			final Dataset d = Random.randn(shape).cast(dtype);
-			@Override
-			public boolean isFileReadable() {
-				return true;
-			}
-			@Override
-			public Dataset getDataset(IMonitor mon, int[] shape, int[] start, int[] stop, int[] step)
-					throws Exception {
-				return d.getSlice(mon, start, stop, step);
-			}
-		});
-		return ld;
-	}
 
 	@Test
 	public void testAxesMetadata() {
@@ -59,7 +44,7 @@ public class AxesMetadataTest {
 		}
 
 
-		ILazyDataset dataset = createRandomLazyDataset("Main", Dataset.INT32, shape);
+		ILazyDataset dataset = Random.lazyRand(Dataset.INT32, "Main", shape);
 		dataset.addMetadata(amd);
 
 		try {
@@ -141,7 +126,7 @@ public class AxesMetadataTest {
 			DoubleDataset array = Random.randn(nShape);
 			amd.setAxis(i, array);
 		}
-		ILazyDataset dataset = createRandomLazyDataset("Main", Dataset.INT32, shape);
+		ILazyDataset dataset = Random.lazyRand(Dataset.INT32, "Main", shape);
 		dataset.addMetadata(amd);
 		dataset.setShape(reshape);
 	}
@@ -152,7 +137,7 @@ public class AxesMetadataTest {
 
 		int r = shape.length;
 
-		ILazyDataset dataset = createRandomLazyDataset("Main", Dataset.INT32, shape);
+		ILazyDataset dataset = Random.lazyRand(Dataset.INT32, "Main", shape);
 
 		AxesMetadataImpl amd = new AxesMetadataImpl(r);
 		dataset.addMetadata(amd);
@@ -178,21 +163,21 @@ public class AxesMetadataTest {
 
 		int r = shape.length;
 
-		ILazyDataset axis = createRandomLazyDataset("axis", Dataset.INT32, 2);
+		ILazyDataset axis = Random.lazyRand(Dataset.INT32, "axis", 2);
 		AxesMetadataImpl amd = new AxesMetadataImpl(1);
-		amd.setAxis(0, createRandomLazyDataset("axis2", Dataset.INT32, 2));
+		amd.setAxis(0, Random.lazyRand(Dataset.INT32, "axis2", 2));
 		axis.addMetadata(amd);
 
 		amd = new AxesMetadataImpl(r);
 		amd.setAxis(1, axis);
-		ILazyDataset dataset = createRandomLazyDataset("Main", Dataset.INT32, shape);
+		ILazyDataset dataset = Random.lazyRand(Dataset.INT32, "Main", shape);
 		dataset.addMetadata(amd);
 
 		dataset.setShape(2,3,1,1);
 
 		
 		ErrorMetadataImpl emd = new ErrorMetadataImpl();
-		ILazyDataset axisErr = createRandomLazyDataset("axis2_err", Dataset.INT32, 2);
+		ILazyDataset axisErr = Random.lazyRand(Dataset.INT32, "axis2_err", 2);
 		emd.setError(axisErr);
 		axis.addMetadata(emd);
 
@@ -238,22 +223,22 @@ public class AxesMetadataTest {
 
            int r = shape.length;
 
-           ILazyDataset axis = createRandomLazyDataset("axis", Dataset.INT32, 2);
+           ILazyDataset axis = Random.lazyRand(Dataset.INT32, "axis", 2);
            AxesMetadataImpl amd = new AxesMetadataImpl(1);
-           amd.setAxis(0, createRandomLazyDataset("axis2", Dataset.INT32, 2));
+           amd.setAxis(0, Random.lazyRand(Dataset.INT32, "axis2", 2));
            axis.addMetadata(amd);
 
            amd = new AxesMetadataImpl(r);
            amd.setAxis(1, axis);
-           ILazyDataset dataset = createRandomLazyDataset("Main", Dataset.INT32, shape);
+           ILazyDataset dataset = Random.lazyRand(Dataset.INT32, "Main", shape);
            dataset.addMetadata(amd);
-           ILazyDataset datasetErr = createRandomLazyDataset("dataset_err", Dataset.INT32, 1, 2, 1, 1);
+           ILazyDataset datasetErr = Random.lazyRand(Dataset.INT32, "dataset_err", 1, 2, 1, 1);
            dataset.setError(datasetErr);
 
            dataset.setShape(2,3,1,1);
 
 
-           ILazyDataset axisErr = createRandomLazyDataset("axis2_err", Dataset.INT32, 2);
+           ILazyDataset axisErr = Random.lazyRand(Dataset.INT32, "axis2_err", 2);
 
            amd = new AxesMetadataImpl(1);
            amd.setAxis(0, axis);
@@ -272,8 +257,8 @@ public class AxesMetadataTest {
     	final int[] shape = new int[] { 3, 10, 11};
     	final int[] ashape = new int[] {3};
     	
-    	ILazyDataset dataset = createRandomLazyDataset("Main", Dataset.INT32, shape);
-    	ILazyDataset ax = createRandomLazyDataset("Axis", Dataset.INT32, ashape);
+    	ILazyDataset dataset = Random.lazyRand(Dataset.INT32, "Main", shape);
+    	ILazyDataset ax = Random.lazyRand(Dataset.INT32, "Axis", ashape);
     	
     	AxesMetadataImpl amd = new AxesMetadataImpl(shape.length);
         amd.setAxis(0, ax);

@@ -14,24 +14,21 @@ import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
+import org.eclipse.dawnsci.hdf5.operation.HierarchicalFileExecutionVisitor;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.operations.RotatedCartesianBox;
 import uk.ac.diamond.scisoft.analysis.processing.operations.RotatedCartesianBoxModel;
-import org.eclipse.dawnsci.hdf5.operation.HierarchicalFileExecutionVisitor;
 
 public class RotatedCartesianBoxToFileTest {
 	
@@ -53,25 +50,9 @@ private static IOperationService service;
 	
 	@Test
 	public void testIntegration() throws Exception {
-		final IDataset innerDS = DoubleDataset.createRange(1000000);
 		int[] dsShape = new int[]{100, 100, 100};
-		innerDS.resize(100, 100, 100);
-		ILazyDataset lz = new LazyDataset("test", Dataset.FLOAT64, dsShape, new ILazyLoader() {
-			
-			private static final long serialVersionUID = 1L;
+		ILazyDataset lz = Random.lazyRand("test", dsShape);
 
-			@Override
-			public boolean isFileReadable() {
-				return true;
-			}
-			
-			@Override
-			public IDataset getDataset(IMonitor mon, int[] shape, int[] start,
-					int[] stop, int[] step) throws Exception {
-				return innerDS.getSlice(mon, start, stop, step);
-			}
-		});
-		
 		final IOperationContext context = service.createContext();
 		context.setData(lz);
 		Map<Integer, String> sliceMap = new HashMap<Integer, String>();

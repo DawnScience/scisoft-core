@@ -81,6 +81,16 @@ public class LazyMathsTest {
 		AbstractDatasetTest.checkDatasets(a.mean(3).squeeze(),LazyMaths.mean(a, 0,1,2), 1e-9, 1e-15);
 		AbstractDatasetTest.checkDatasets(a.mean(0).mean(0).squeeze(),LazyMaths.mean(a, 2,3), 1e-9, 1e-15);
 		
+		Dataset er = DatasetFactory.createRange(100, Dataset.FLOAT64);
+		a.setShape(10, 10);
+		er.setShape(10, 10);
+		a.setErrorBuffer(er);
+		
+		Dataset e = a.sum(1);
+		e.ipower(0.5);
+		e.idivide(10);
+		
+		AbstractDatasetTest.checkDatasets(e, LazyMaths.mean(a, 0).getError(), 1e-9, 1e-15);
 
 	}
 }

@@ -63,7 +63,11 @@ public class NexusHDF5Loader extends HDF5Loader {
 			logger.warn("Cannot augment non-data node: {}", link);
 			return;
 		}
-		augmentNodeLink(link, true);
+		try {
+			augmentNodeLink(link, true);
+		} catch (Exception e) {
+			logger.debug("Problem augmenting node: {}", link, e);
+		}
 	}
 
 	public static void augmentTree(Tree tree) {

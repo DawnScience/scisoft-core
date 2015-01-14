@@ -192,6 +192,10 @@ public class HDF5Loader extends AbstractFileLoader {
 				tFile = createTreeBF(mon, fid, keepBitWidth);
 			} catch (Throwable le) {
 				syncException = new ScanFileHolderException("Problem loading file: " + fileName, le);
+				try {
+					updateSyncNodes(syncLimit); // prevent deadlock
+				} catch (Throwable e) {
+				}
 			} finally {
 				try {
 					H5.H5Fclose(fid);

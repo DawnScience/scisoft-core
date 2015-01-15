@@ -38,6 +38,7 @@ _plot_addline = _plot.plot_addline
 _plot_updateline = _plot.plot_updateline
 _plot_image = _plot.plot_image
 _plot_images = _plot.plot_images
+_plot_setupimagegrid = _plot.plot_setupimagegrid
 _plot_imagetogrid = _plot.plot_imagetogrid
 _plot_surface = _plot.plot_surface
 _plot_stack = _plot.plot_stack
@@ -477,11 +478,25 @@ def images(im, x=None, y=None, name=None):
 
     _plot_images(name, x, y, _toList(im))
 
+def setupimagegrid(row, column, name=None):
+    '''Set up a new image grid for an image explorer view with the specified number of rows and columns
+
+    Arguments:
+    row -- number of start rows
+    column -- number of start columns
+    name -- optional name of Image Explorer view to use (if None, default name - Image Explorer - will be used)
+
+    '''
+    if name is None:
+        name = 'Image Explorer'
+
+    _plot_setupimagegrid(name, row, column)
+
 def imagetogrid(im, name=None, x=None, y=None, store=None):
     '''Plot images to the grid of an image explorer view
 
     Arguments:
-    im -- image dataset
+    im -- images dataset
     name -- optional name of Image Explorer view to use (if None, default name - Image Explorer - will be used)
     x -- optional : gridX use -1 to automatically place
     y -- optional : gridY use -1 to automatically place
@@ -497,6 +512,21 @@ def imagetogrid(im, name=None, x=None, y=None, store=None):
         store = True
 
     _plot_imagetogrid(name, im, x, y, store)
+
+def imagestogrid(im, name=None, store=None):
+    '''Plot images to the grid of an image explorer view
+
+    Arguments:
+    im -- images dataset
+    name -- optional name of Image Explorer view to use (if None, default name - Image Explorer - will be used)
+    store -- optional : if true, create a copy of image as a temporary file
+    '''
+    if name is None:
+        name = 'Image Explorer'
+    if store is None:
+        store = True
+
+    _plot_imagetogrid(name, im, store)
 
 def surface(s, x=None, y=None, name=None):
     '''Plot the 2D dataset as a surface in the named view with optional x and y axes

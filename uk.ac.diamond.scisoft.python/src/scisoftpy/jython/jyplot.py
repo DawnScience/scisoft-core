@@ -64,6 +64,10 @@ def plot_images(*arg, **kwarg):
     _plotter.imagesPlot(*arg, **kwarg)
 
 @_wrapin
+def plot_setupimagegrid(*arg, **kwarg):
+    _plotter.setupNewImageGrid(*arg, **kwarg)
+
+@_wrapin
 def plot_imagetogrid(*arg, **kwarg):
     _plotter.plotImageToGrid(*arg, **kwarg)
 

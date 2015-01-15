@@ -63,6 +63,7 @@ _plot_name_remapper = {
     'plot_updatestack': 'updateStackPlot',
     'plot_image': 'imagePlot',
     'plot_images': 'imagesPlot',
+    'plot_setupimagegrid' : 'setupNewImageGrid',
     'plot_imagetogrid': 'plotImageToGrid',
     'plot_surface': 'surfacePlot',
     'plot_points2d': 'scatter2DPlot',

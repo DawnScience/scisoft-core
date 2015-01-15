@@ -38,6 +38,7 @@ _plot_addline = _plot.plot_addline
 _plot_updateline = _plot.plot_updateline
 _plot_image = _plot.plot_image
 _plot_images = _plot.plot_images
+_plot_imagetogrid = _plot.plot_imagetogrid
 _plot_surface = _plot.plot_surface
 _plot_stack = _plot.plot_stack
 _plot_addstack = _plot.plot_addstack
@@ -475,6 +476,27 @@ def images(im, x=None, y=None, name=None):
         x = None
 
     _plot_images(name, x, y, _toList(im))
+
+def imagetogrid(im, name=None, x=None, y=None, store=None):
+    '''Plot images to the grid of an image explorer view
+
+    Arguments:
+    im -- image dataset
+    name -- optional name of Image Explorer view to use (if None, default name - Image Explorer - will be used)
+    x -- optional : gridX use -1 to automatically place
+    y -- optional : gridY use -1 to automatically place
+    store -- optional : if true, create a copy of image as a temporary file
+    '''
+    if name is None:
+        name = 'Image Explorer'
+    if x is None:
+        x = -1
+    if y is None:
+        y = -1
+    if store is None:
+        store = True
+
+    _plot_imagetogrid(name, im, x, y, store)
 
 def surface(s, x=None, y=None, name=None):
     '''Plot the 2D dataset as a surface in the named view with optional x and y axes

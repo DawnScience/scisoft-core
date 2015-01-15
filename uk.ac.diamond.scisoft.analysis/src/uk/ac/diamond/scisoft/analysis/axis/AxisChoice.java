@@ -126,15 +126,19 @@ public class AxisChoice {
 
 	/**
 	 * Set which axis number this choice represents (sets index mapping too, if it is null, to
-	 * a single-element array containing that number)
+	 * a single-element array containing that number if one-dimensional)
 	 */
 	public void setAxisNumber(int axisNumber) {
 		number = axisNumber;
 		if (indexMapping == null) {
 			int r = values.getRank();
 			indexMapping = new int[r];
-			for (int i = 0; i < r; i++) {
-				indexMapping[i] = i;
+			if (r == 1) {
+				indexMapping[0] = number;
+			} else {
+				for (int i = 0; i < r; i++) {
+					indexMapping[i] = i;
+				}
 			}
 		}
 	}

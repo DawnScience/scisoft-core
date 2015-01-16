@@ -832,6 +832,8 @@ class ndarray(object):
     def __abs__(self):
         return _maths.abs(self)
     def __invert__(self):
+        if self.dtype is bool:
+            return _cmps.logical_not(self)
         return _maths.invert(self)
 
     #  arithmetic operators
@@ -858,11 +860,20 @@ class ndarray(object):
     def __rshift__(self, o):
         return _maths.right_shift(self, asDataset(o))
     def __and__(self, o):
-        return _maths.bitwise_and(self, asDataset(o))
+        d = asDataset(o)
+        if self.dtype is bool and d.dtype is bool:
+            return _cmps.logical_and(self, d)
+        return _maths.bitwise_and(self, d)
     def __or__(self, o):
-        return _maths.bitwise_or(self, asDataset(o))
+        d = asDataset(o)
+        if self.dtype is bool and d.dtype is bool:
+            return _cmps.logical_or(self, d)
+        return _maths.bitwise_or(self, d)
     def __xor__(self, o):
-        return _maths.bitwise_xor(self, asDataset(o))
+        d = asDataset(o)
+        if self.dtype is bool and d.dtype is bool:
+            return _cmps.logical_xor(self, d)
+        return _maths.bitwise_xor(self, d)
 
     def __radd__(self, o):
         return _maths.add(self, asDataset(o))

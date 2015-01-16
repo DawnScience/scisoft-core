@@ -29,6 +29,7 @@ import org.eclipse.dawnsci.analysis.api.message.DataMessageComponent;
 import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.Slicer;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
 import org.slf4j.Logger;
@@ -148,20 +149,32 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 	private void createQueue(ManagedMessage msg) throws Exception {
 		
 		Queue<ILazyDataset> slices=null;
+		SourceInformation si = null;
 		if (context!=null) {
+			try {
+				si = context.getData().getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo();
+			} catch (Exception e) {
+				logger.warn("Pipeline metadata missing!");
+			}
+			context.getData().clearMetadata(SliceFromSeriesMetadata.class);
 			slices = Slicer.getSlices(context.getData(), context.getSlicing());
 			
 		} else {
 			final IDataHolder  dh = LoaderFactory.getData(getSourcePath(msg));
 			final ILazyDataset lz = dh.getLazyDataset(getDatasetPath(msg));
 			slices = Slicer.getSlices(lz, slicing.getValue(HashMap.class));
+			si = new SourceInformation(getSourcePath(msg), getDatasetPath(msg), lz);
 		}
-		
-		//TODO sort if required
-		
 		
 		queue = new LinkedList<SliceInfo>();
 		for (ILazyDataset slice : slices) {
+			try {
+				SliceInformation s = slice.getMetadata(SliceFromSeriesMetadata.class).get(0).getSliceInfo();
+				slice.setMetadata(new SliceFromSeriesMetadata(si, s));
+			} catch (Exception e) {
+				logger.warn("Pipeline metadata missing!");
+			}
+			
 			queue.add(new SliceInfo(slice, msg));
 		}
 	}
@@ -372,7 +385,17 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 			return slice.getName();
 		}
 		public IDataset getSlice() {
-			return slice.getSlice();
+			
+			SliceFromSeriesMetadata meta = null;
+			try {
+				meta = slice.getMetadata(SliceFromSeriesMetadata.class).get(0);
+			} catch (Exception e) {
+				logger.warn("Pipeline data does not contain correct metadata");
+			}
+			
+			IDataset s = slice.getSlice();
+			s.setMetadata(meta);
+			return s;
 		}
 		public void setSlice(ILazyDataset slice) {
 			this.slice = slice;

@@ -9,6 +9,8 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -57,7 +59,8 @@ public class ARPESGoldCalibrationCorrection extends AbstractOperation<ARPESGoldC
 
 		IDataset xAxis = null;
 		try{
-			xAxis = DatasetUtils.convertToDataset(axesMetadata.getAxis(1)[0]);
+			ILazyDataset axis1Meta = axesMetadata.getAxis(1)[0];
+			xAxis = axis1Meta.getSlice(new Slice(null));
 		} catch (Exception e) {
 			throw new OperationException(this, "Cannot get Energy Axis information");
 		}

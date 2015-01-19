@@ -10,6 +10,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -55,8 +56,8 @@ public class ARPESAxisConversion extends AbstractOperation<ARPESAxisConversionMo
 		for (ILazyDataset axis : axesMetadata.getAxis(0)) {
 			if (axis != null) {
 				if (axis.getName().startsWith("sapolar")) {
-					Dataset kx = DoubleDataset.zeros(DatasetUtils.convertToDataset(axis));
-					kx = Maths.multiply(Maths.sin(Maths.toRadians(axis)), k);
+					IDataset axisData = axis.getSlice(new Slice(null));
+					Dataset kx = Maths.multiply(Maths.sin(Maths.toRadians(axisData)), k);
 					kx.iadd(model.getKxOffset());
 					kx.setName("kx");
 					
@@ -73,8 +74,8 @@ public class ARPESAxisConversion extends AbstractOperation<ARPESAxisConversionMo
 		for (ILazyDataset axis : axesMetadata.getAxis(1)) {
 			if (axis != null) {
 				if (axis.getName().startsWith("angle")) {
-					Dataset ky = DoubleDataset.zeros(DatasetUtils.convertToDataset(axis));
-					ky = Maths.multiply(Maths.sin(Maths.toRadians(axis)), k);
+					IDataset axisData = axis.getSlice(new Slice(null));
+					Dataset ky = Maths.multiply(Maths.sin(Maths.toRadians(axisData)), k);
 					ky.iadd(model.getKyOffset());
 					ky.setName("ky");
 					try {

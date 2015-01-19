@@ -104,9 +104,11 @@ public class IdentifiedPeak implements Serializable {
 		return indexOfDatasetAtMaxPos;
 	}
 
-	public void setFWHM(List<Double> crossings){
-		if (crossings.size() < 2) {
-			fullWidth = getPos() - crossings.get(0) * 2;
+	public void setFWHM(List<Double> crossings) {
+		if (crossings == null || crossings.size() == 0) {
+			fullWidth = height / (maxXVal - minXVal);
+		} else if (crossings.size() == 1) {
+			fullWidth = (getPos() - crossings.get(0)) * 2;
 		} else {
 			// assumes that that is only 2 crossings
 			fullWidth = crossings.get(1).doubleValue() - crossings.get(0).doubleValue();

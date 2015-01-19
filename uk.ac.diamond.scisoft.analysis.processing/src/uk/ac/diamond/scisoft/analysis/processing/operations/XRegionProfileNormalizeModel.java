@@ -25,6 +25,8 @@ public class XRegionProfileNormalizeModel extends AbstractOperationModel {
 	}
 
 	public void setxRange(double[] xRange) {
+		this.xRange[0] = xRange[0];
+		this.xRange[1] = xRange[1];
 		firePropertyChange("xRange", this.xRange, this.xRange = xRange);
 	}
 

@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import uk.ac.diamond.scisoft.analysis.io.AbstractFileLoader;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.ExtendedMetadata;
+import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.Utils;
 
 /**
@@ -167,16 +168,27 @@ public class FioLoader extends AbstractFileLoader {
 					count++;
 				}
 				int i = 0;
-				for (String n : columns.keySet()) {
+				for (final String n : columns.keySet()) {
 					final int num = i++;
 					result.addDataset(n, createLazyDataset(n, Dataset.FLOAT64, new int[] {count}, new LazyLoaderStub(new FioLoader(fileName), n) {
 						private static final long serialVersionUID = LazyLoaderStub.serialVersionUID;
 
 						@Override
 						public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
-							IDataHolder holder = ((FioLoader) getLoader()).loadFile(num, mon);
+							FioLoader ldr = (FioLoader) getLoader();
+							if (ldr == null) {
+								return null;
+							}
+							IDataHolder holder = LoaderFactory.fetchData(fileName, loadMetadata, num);
+							if (holder == null) {
+								holder = ldr.loadFile(num, mon);
+								if (holder.getFilePath() == null) {
+									holder.setFilePath(fileName);
+								}
+								LoaderFactory.cacheData(holder, num);
+							}
 
-							return holder.getDataset(num).getSlice(mon, slice);
+							return holder.getDataset(n).getSliceView(slice);
 						}
 					}));
 				}		

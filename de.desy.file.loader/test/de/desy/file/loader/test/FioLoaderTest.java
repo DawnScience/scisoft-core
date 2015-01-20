@@ -18,6 +18,8 @@ public class FioLoaderTest {
 		Dataset d = dh.getDataset(0);
 		assertEquals(544, d.getSize());
 		assertEquals(11710, d.getDouble(10), 0);
+
+		assertEquals(145.3369, dh.getDataset(2).getDouble(10), 0);
 	}
 
 	@Test
@@ -29,5 +31,8 @@ public class FioLoaderTest {
 		ILazyDataset d = dh.getLazyDataset(0);
 		assertEquals(544, d.getSize());
 		assertEquals(11710, d.getSlice().getDouble(10), 0);
+
+		d = dh.getLazyDataset(2);
+		assertEquals(145.3369, d.getSlice().getDouble(10), 0);
 	}
 }

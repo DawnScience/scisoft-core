@@ -40,8 +40,6 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-// lots of below added
 import uk.ac.diamond.scisoft.analysis.io.AbstractFileLoader;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.ExtendedMetadata;
@@ -105,11 +103,16 @@ public class FioLoader extends AbstractFileLoader {
 	 */
 	public FioLoader(final String fileName) {
 		setFile(fileName);
+	}
+
+	@Override
+	public void setFile(String fileName) {
 		header   = new ArrayList<String>();
 		fioParameters = new HashMap<String,String>();
 		
 		// Important must use LinkedHashMap as order assumes is insertion order.
 		columns   = new LinkedHashMap<String, List<Double>>();
+		super.setFile(fileName);
 	}
 
 	@Override
@@ -133,11 +136,11 @@ public class FioLoader extends AbstractFileLoader {
 	 */
 	@Override
 	public DataHolder loadFile(final IMonitor mon) throws ScanFileHolderException {
-        final DataHolder result = loadFile(null, mon);
+        final DataHolder result = loadFile(-1, mon);
 		return result;
 	}
 
-	private DataHolder loadFile(final String name, final IMonitor mon) throws ScanFileHolderException {
+	private DataHolder loadFile(final int columnIndex, final IMonitor mon) throws ScanFileHolderException {
 		// first instantiate the return object.
 		final DataHolder result = new DataHolder();
 		// then try to read the file given
@@ -145,15 +148,10 @@ public class FioLoader extends AbstractFileLoader {
 		try {
 			in = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8"));
 			
-			String line	= parseHeaders(in, name, mon);
-			// GF: if name != null, read only that data column (?):
-			int columnIndex = -1; // GF moved here from data members and initialise
-			if (name != null && columns.containsKey(name)) { // find index of column with name
-				for (String key : columns.keySet()) {
-					++columnIndex;
-					if (key == name) break;
-				}
-			}
+			String line	= parseHeaders(in, mon);
+			if (columns.isEmpty())
+				throw new ScanFileHolderException("Cannot read header for data set names!");
+
 			// Read data
 			int count = -1;
 			if (loadLazily) {
@@ -168,21 +166,33 @@ public class FioLoader extends AbstractFileLoader {
 						break;
 					count++;
 				}
-				for (final String n : columns.keySet()) {
+				int i = 0;
+				for (String n : columns.keySet()) {
+					final int num = i++;
 					result.addDataset(n, createLazyDataset(n, Dataset.FLOAT64, new int[] {count}, new LazyLoaderStub(new FioLoader(fileName), n) {
 						private static final long serialVersionUID = LazyLoaderStub.serialVersionUID;
 
 						@Override
 						public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
-							IDataHolder holder = ((FioLoader) getLoader()).loadFile(n, mon);
+							IDataHolder holder = ((FioLoader) getLoader()).loadFile(num, mon);
 
-							return holder.getDataset(n).getSlice(mon, slice);
+							return holder.getDataset(num).getSlice(mon, slice);
 						}
 					}));
 				}		
 			} else {
 				boolean readingFooter = false;
 				
+				List<Double> column = null;
+				if (columnIndex >= 0) {
+					int i = 0;
+					for (String c : columns.keySet()) {
+						column = columns.get(c);
+						if (i++ == columnIndex)
+							break;
+					}
+				}
+
 				while (line != null) {
 					if (!monitorIncrement(mon)) {
 						throw new ScanFileHolderException("Loader cancelled during reading!");
@@ -195,15 +205,16 @@ public class FioLoader extends AbstractFileLoader {
 							readingFooter = true;
 							break;
 						}
-						// TODO: move following check outwards?
-						if (columns.isEmpty())
-							throw new ScanFileHolderException("Cannot read header for data set names!");
 
 						final String[] values = line.split("\\s+");
-						if (columnIndex > -1) { // && name!=null) { // read only
-												// this column (? TODO: check!)
-							final String value = values[columnIndex]; // TODO: check index out of range?
-							columns.get(name).add(Utils.parseDouble(value.trim()));
+						if (columnIndex > -1) {
+							if (columnIndex >= values.length) {
+								logger.warn("Missing data so adding NaN as a placeholder");
+								column.add(Double.NaN);
+							} else {
+								final String value = values[columnIndex];
+								column.add(Utils.parseDouble(value.trim()));
+							}
 						} else {
 							// logger.debug("GF loadFile: columnIndex '{}', name is '{}'",
 							// columnIndex, name == null ? "a null" : name);
@@ -227,6 +238,10 @@ public class FioLoader extends AbstractFileLoader {
 					line = in.readLine();
 				}
 				for (String n : columns.keySet()) {
+					column = columns.get(n);
+					if (column.size() == 0)
+						continue;
+
 					final Dataset set =  DatasetFactory.createFromList(columns.get(n));
 					set.setName(n);
 					result.addDataset(n, set);
@@ -270,7 +285,7 @@ public class FioLoader extends AbstractFileLoader {
 	 * @return last line
 	 * @throws Exception
 	 */
-	private String parseHeaders(final BufferedReader in, final String name, IMonitor mon) throws Exception {
+	private String parseHeaders(final BufferedReader in, IMonitor mon) throws Exception {
 		Boolean isComment = false;
 		Boolean isParameter = false;
 		Boolean isColumnDesc = false;

@@ -964,5 +964,22 @@ def getPlottingSystem(name=None):
         name = _PVNAME
     return _ps.getPlottingSystem(name)
 
+'''
+Creates a color that can be used with the plotting system
+For instance to set trace color.
+'''  
 def createColor(r, g, b):    
     return _ps.createColor(r,g,b)
+
+'''
+Creates a color that can be used with the plotting system
+For instance to set trace color.
+'''  
+def createHistogramBound(position, r, g, b):    
+    return _ps.createHistogramBound(position,r,g,b)
+
+'''
+Get an implementation of an OSGi service
+'''
+def getService(serviceClass):
+    return _ps.getService(serviceClass)

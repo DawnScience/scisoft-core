@@ -101,13 +101,13 @@ public class TIFFImageLoader extends JavaImageLoader {
 			try {
 				reader = new TIFFImageReader(new TIFFImageReaderSpi());
 				reader.setInput(iis);
-				reader.getRawImageType(0); // this raises an exception for 12-bit images when using standard reader
-			} catch (Exception e) { // catch bad number of bits
+				readImages(output, reader); // this raises an exception for 12-bit images when using standard reader
+			} catch (Exception e) {
 				logger.debug("Using alternative 12-bit TIFF reader: {}", fileName);
 				reader = new Grey12bitTIFFReader(new Grey12bitTIFFReaderSpi());
 				reader.setInput(iis);
+				readImages(output, reader);
 			}
-			readImages(output, reader);
 		} catch (IOException e) {
 			throw new ScanFileHolderException("IOException loading file '" + fileName + "'", e);
 		} catch (IllegalArgumentException e) {
@@ -118,7 +118,6 @@ public class TIFFImageLoader extends JavaImageLoader {
 			if (reader != null)
 				reader.dispose();
 		}
-
 
 		if (!loadData) {
 			return null;

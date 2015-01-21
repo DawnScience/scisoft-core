@@ -45,11 +45,9 @@ Bundle-ClassPath: .,
  jars/jai_imageio.jar
 Import-Package: Jama,
  com.thoughtworks.xstream.core.util,
- org.eclipse.core.runtime;version="3.4.0",
- org.osgi.framework;version="1.6.0",
  org.slf4j;version="[1.7.6,1.7.7)"
 Eclipse-BuddyPolicy: global
 Important-Note: This plugin SHOULD NOT be lazy activated because we always want this 
  plugin to be loaded to contribute the service.
-Bundle-Activator: uk.ac.diamond.scisoft.analysis.Activator
 Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/*.xml

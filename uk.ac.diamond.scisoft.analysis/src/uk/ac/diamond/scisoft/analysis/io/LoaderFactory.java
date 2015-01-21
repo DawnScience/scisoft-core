@@ -46,7 +46,6 @@ import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.Activator;
 import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
 // TODO Not sure if org.eclipse.core could break GDA server.
 // Been told verbally that the GDA server now can resolve core and resources.
@@ -81,6 +80,28 @@ import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
     
  */
 public class LoaderFactory {
+
+	// Not for public use: only used by OSGI
+	public LoaderFactory() {
+		
+	}
+
+	/**
+	 * Injected by OSGI
+	 * @param lf
+	 */
+	public static void setLoaderFactoryService(ILoaderFactoryExtensionService lf) {
+		try {
+			/**
+			 * Tell the extension points to load in.
+			 */
+			if (lf != null)
+				lf.registerExtensionPoints();
+		} catch (Throwable t) {
+			logger.error("Problem getting extension service");
+		}
+	}
+
 	/**
 	 * A caching mechanism using soft references. Soft references attempt to keep things
 	 * in memory until the system is short on memory. Hashtable used because it is synchronized
@@ -171,15 +192,6 @@ public class LoaderFactory {
 		    registerUnzip("zip", ZipInputStream.class);
 		    registerUnzip("bz2", CBZip2InputStream.class);
 
-		    try {
-			    /**
-			     * Tell the extension points to load in.
-			     */
-			    final ILoaderFactoryExtensionService service = (ILoaderFactoryExtensionService) Activator.getService(ILoaderFactoryExtensionService.class);
-			    if (service!=null) service.registerExtensionPoints();
-		    } catch (Throwable t) {
-				logger.error("Problem getting extension service");
-		    }
 		} catch (Exception ne) {
 			logger.error("Cannot register loader - ALL loader registration aborted!", ne);
 		}

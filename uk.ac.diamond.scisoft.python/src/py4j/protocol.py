@@ -143,7 +143,8 @@ OUTPUT_CONVERTER = {NULL_TYPE: (lambda x, y: None),
               BYTES_TYPE: (lambda value, y: decode_bytearray(value)),
               DOUBLE_TYPE: (lambda value, y: float(value)),
               STRING_TYPE: (lambda value, y: unescape_new_line(value)),
-              LIST_TYPE: (lambda value, y: decode_list(value))
+              LIST_TYPE: (lambda value, y: decode_list(value)),
+              MAP_TYPE: (lambda value, y: decode_map(value))
               }
 
 INPUT_CONVERTER = []
@@ -213,7 +214,7 @@ def decode_bytearray(encoded):
     new_bytes = strtobyte(encoded)
     return bytearray2([bytetoint(b) for b in standard_b64decode(new_bytes)])
 
-def encode_list(llist):
+def encode_list(llist): # TODO Use JSON?
     
     ret = ''
     for item in llist:
@@ -222,7 +223,7 @@ def encode_list(llist):
         
     return ret
 
-def decode_list(encoded):
+def decode_list(encoded): # TODO Use JSON?
        
     ret = []
     tmp = encoded.split("#$_LISTSEP_$#") # Still Yuck
@@ -231,6 +232,30 @@ def decode_list(encoded):
         ret.append(get_return_value(answer, gateway_client, None, None))
     
     return ret
+
+def encode_map(map): # TODO Use JSON?
+    
+    ret = ''
+    for key in map:
+        ret+=get_command_part(key, appendNewLine=False)
+        ret+="#$_MAPSEP_$#"  # Yuck
+        ret+=get_command_part(map[key], appendNewLine=False)
+        ret+="#$_LISTSEP_$#"  # Yuck
+        
+    return ret
+
+def decode_map(encoded): # TODO Use JSON?
+       
+    ret = {}
+    tmp = encoded.split("#$_LISTSEP_$#") # Still Yuck
+    for line in tmp:
+        kv = line.split("#$_MAPSEP_$#")
+        key = get_return_value(kv[0], gateway_client, None, None)
+        val = get_return_value(kv[1], gateway_client, None, None)
+        ret[key] = val
+    
+    return ret
+
 
 def is_python_proxy(parameter):
     """Determines whether parameter is a Python Proxy, i.e., it has a Java
@@ -278,6 +303,8 @@ def get_command_part(parameter, python_proxy_pool=None, appendNewLine=True):
         command_part = STRING_TYPE + escape_new_line(parameter)
     elif isinstance(parameter, list):
         command_part = LIST_TYPE + encode_list(parameter)
+    elif isinstance(parameter, dict):
+        command_part = MAP_TYPE + encode_map(parameter)
     elif is_python_proxy(parameter):
         command_part = PYTHON_PROXY_TYPE + python_proxy_pool.put(parameter)
         for interface in parameter.Java.implements:

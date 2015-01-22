@@ -172,6 +172,7 @@ public class ADSCImageLoader extends AbstractFileLoader {
 
 			Dataset data = createDataset(raf, shape, keepBitWidth);
 			holder = new DataHolder();
+			holder.setLoaderClass(ADSCImageLoader.class);
 			holder.setFilePath(fileName);
 			holder.addDataset(ADSC_IMAGE_NAME, data);
 			LoaderFactory.cacheData(holder);

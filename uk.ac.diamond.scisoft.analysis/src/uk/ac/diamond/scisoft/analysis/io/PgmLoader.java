@@ -153,6 +153,7 @@ public class PgmLoader extends AbstractFileLoader {
 			}
 			data.setName(DEF_IMAGE_NAME);
 			holder = new DataHolder();
+			holder.setLoaderClass(PgmLoader.class);
 			holder.setFilePath(fileName);
 			holder.addDataset(DEF_IMAGE_NAME, data);
 			LoaderFactory.cacheData(holder);

@@ -194,6 +194,7 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver {
 			Utils.readLeInt(fi, (IntegerDataset) data, 0);
 			data.setName(DEF_IMAGE_NAME);
 			holder = new DataHolder();
+			holder.setLoaderClass(CrysalisLoader.class);
 			holder.setFilePath(fileName);
 			holder.addDataset(DEF_IMAGE_NAME, data);
 			LoaderFactory.cacheData(holder);

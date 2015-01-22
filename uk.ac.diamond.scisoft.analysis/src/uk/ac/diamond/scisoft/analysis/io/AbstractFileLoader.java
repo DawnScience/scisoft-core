@@ -141,6 +141,9 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 				if (holder.getFilePath() == null) {
 					holder.setFilePath(fileName);
 				}
+				if (holder.getLoaderClass() == null) {
+					holder.setLoaderClass(loader.getClass());
+				}
 				LoaderFactory.cacheData(holder);
 			}
 			IDataset data = name == null ? holder.getDataset(0) : holder.getDataset(name);

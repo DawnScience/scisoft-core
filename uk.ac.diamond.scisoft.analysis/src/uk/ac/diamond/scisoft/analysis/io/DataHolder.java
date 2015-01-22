@@ -302,6 +302,9 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	@Override
 	@SuppressWarnings("unchecked")
 	public Class<? extends IFileLoader> getLoaderClass() {
+		if (loaderClass == null)
+			return null;
+
 		try {
 			return (Class<? extends AbstractFileLoader>) Class.forName(loaderClass);
 		} catch (ClassNotFoundException e) {

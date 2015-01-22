@@ -235,7 +235,7 @@ public class MerlinLoader extends AbstractFileLoader {
 				((Dataset) ds).setSlice(dataList.get(i), start, stop, step);
 			}
 		}
-		output.addDataset(DATA_NAME, ds.squeeze());
+		output.addDataset(DATA_NAME, ds.squeezeEnds());
 		for(int i = 0; i < metaHolder.size(); i++) {
 			metaHolder.get(i).addToDataHolder(output);
 		}

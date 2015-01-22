@@ -59,7 +59,7 @@ public class AxesMetadataTest {
 			fail("Should not fail: " + e);
 		}
 
-		dataset.squeeze();
+		dataset.squeezeEnds();
 		r = dataset.getRank();
 		try {
 			AxesMetadata tmd = dataset.getMetadata(AxesMetadata.class).get(0);
@@ -143,7 +143,7 @@ public class AxesMetadataTest {
 		dataset.addMetadata(amd);
 
 		ILazyDataset v = dataset.getSliceView();
-		v.squeeze();
+		v.squeezeEnds();
 		assertEquals(2, v.getMetadata(AxesMetadata.class).get(0).getAxes().length);
 
 		IDataset d = v.getSlice(new Slice(1), null);
@@ -246,7 +246,7 @@ public class AxesMetadataTest {
            axis.setError(axisErr);
 
            ILazyDataset d = dataset.getSliceView();
-           d.squeeze();
+           d.squeezeEnds();
            IDataset slice = d.getSlice();
            
            assertTrue(slice != null);

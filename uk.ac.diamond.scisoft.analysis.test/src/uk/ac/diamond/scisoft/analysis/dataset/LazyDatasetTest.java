@@ -138,7 +138,7 @@ public class LazyDatasetTest {
 		Assert.assertEquals("Part slice", d.getSlice(slice), l.getSlice());
 
 		l = ld.getSliceView();
-		l.squeeze();
+		l.squeezeEnds();
 		Assert.assertEquals("Full slice", 3, l.getSlice().getRank());
 	}
 
@@ -182,9 +182,9 @@ public class LazyDatasetTest {
 		Slice[] slice = new Slice[] {null, null, null, new Slice(1, null, 2)};
 		ld.setShape(1, 2, 3, 4);
 		tld = ld.getSliceView(slice);
-		tld.squeeze(true);
-		TestUtils.assertDatasetEquals(data.getSliceView(slice).squeeze(true), tld.getSlice(), true, 1e-14, 1e-14);
-		TestUtils.assertDatasetEquals(data.getSliceView(slice).squeeze(true), tld.getSliceView().getSlice(), true, 1e-14, 1e-14);
+		tld.squeezeEnds();
+		TestUtils.assertDatasetEquals(data.getSliceView(slice).squeezeEnds(), tld.getSlice(), true, 1e-14, 1e-14);
+		TestUtils.assertDatasetEquals(data.getSliceView(slice).squeezeEnds(), tld.getSliceView().getSlice(), true, 1e-14, 1e-14);
 	}
 
 	@Test

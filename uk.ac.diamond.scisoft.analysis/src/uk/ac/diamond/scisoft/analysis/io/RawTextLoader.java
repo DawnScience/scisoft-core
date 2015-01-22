@@ -88,7 +88,7 @@ public class RawTextLoader extends AbstractFileLoader {
 					l = br.readLine();
 				}
 				data = DatasetFactory.createFromObject(rows);
-				data.squeeze(); // convert Nx1 to 1D dataset
+				data.squeezeEnds(); // convert Nx1 to 1D dataset
 				shape = data.getShape();
 			}
 			if (loadMetadata) {

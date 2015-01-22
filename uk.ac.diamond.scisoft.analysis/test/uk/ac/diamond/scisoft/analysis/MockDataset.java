@@ -51,6 +51,11 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
+	public IDataset squeezeEnds() {
+		throw new AssertionFailedError("Methods in MockDataset should not be called");
+	}
+
+	@Override
 	public IDataset squeeze() {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}

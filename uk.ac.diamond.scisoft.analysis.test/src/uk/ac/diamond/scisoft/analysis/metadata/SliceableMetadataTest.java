@@ -163,7 +163,7 @@ public class SliceableMetadataTest {
 
 		assertArrayEquals(new int[] {1, 1, 64}, sliced.getShape());
 
-		dataset.squeeze();
+		dataset.squeezeEnds();
 		assertEquals(1, dataset.getRank());
 		assertArrayEquals(new int[] {128}, dataset.getShape());
 		try {
@@ -405,7 +405,7 @@ public class SliceableMetadataTest {
 		Slice[] slice = new Slice[] {new Slice(1), new Slice(1), null, null};
 		ILazyDataset sliced = dataset.getSliceView(slice);
 		
-		sliced.squeeze();
+		sliced.squeezeEnds();
 		int rank = sliced.getRank();
 		assertArrayEquals(new int[] {3, 4}, sliced.getShape());
 		try {

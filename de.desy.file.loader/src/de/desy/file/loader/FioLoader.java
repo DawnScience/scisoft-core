@@ -185,6 +185,9 @@ public class FioLoader extends AbstractFileLoader {
 								if (holder.getFilePath() == null) {
 									holder.setFilePath(fileName);
 								}
+								if (holder.getLoaderClass() == null) {
+									holder.setLoaderClass(ldr.getClass());
+								}
 								LoaderFactory.cacheData(holder, num);
 							}
 

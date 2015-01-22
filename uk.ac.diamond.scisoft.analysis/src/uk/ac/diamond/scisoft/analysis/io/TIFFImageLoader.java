@@ -341,6 +341,7 @@ public class TIFFImageLoader extends JavaImageLoader {
 
 		Dataset d = createDataset(input, asGrey, keepBitWidth);
 		holder = new DataHolder();
+		holder.setLoaderClass(TIFFImageLoader.class);
 		holder.setFilePath(filename);
 		holder.addDataset(DEF_IMAGE_NAME, d);
 		LoaderFactory.cacheData(holder, num);

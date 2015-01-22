@@ -256,6 +256,7 @@ public class JavaImageLoader extends AbstractFileLoader {
 				data = createDataset(reader.read(num), asGrey, keepBitWidth);
 				data.setName(name);
 				holder = new DataHolder();
+				holder.setLoaderClass(JavaImageLoader.class);
 				holder.setFilePath(path);
 				holder.addDataset(name, data);
 				LoaderFactory.cacheData(holder, num);

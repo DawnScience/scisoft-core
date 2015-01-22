@@ -131,7 +131,8 @@ public class ImageStackLoaderEx implements ILazyLoader {
 				if (data == null) {
 					throw new ScanFileHolderException("Cannot load image in image stack");
 				}
-			} else if (loaderClass == null) {
+			}
+			if (loaderClass == null) {
 				loaderClass = data.getLoaderClass();
 			}
 

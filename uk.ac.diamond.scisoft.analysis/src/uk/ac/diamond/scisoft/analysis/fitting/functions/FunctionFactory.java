@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * Instead use something like:
  * <code>
  *     double[]  params = ...
- *     AFunction box    = FunctionFactory.getFunction("Box", params);
+ *     IFunction box    = FunctionFactory.getFunction("Box", params);
  *     
  * </code>
  * 

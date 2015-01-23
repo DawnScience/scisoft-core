@@ -42,6 +42,7 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.Slicer;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
+import org.eclipse.dawnsci.hdf5.operation.HierarchicalFileExecutionVisitor;
 import org.eclipse.dawnsci.macro.api.IMacroService;
 import org.eclipse.dawnsci.macro.api.MacroEventObject;
 import org.slf4j.Logger;
@@ -150,6 +151,7 @@ public class OperationServiceImpl implements IOperationService {
 
 	}
 	
+	private static int count = 0;
 	/**
 	 * Constructs a macro by mirroring the context into the python layer. 
 	 */
@@ -182,7 +184,8 @@ public class OperationServiceImpl implements IOperationService {
 	        		}
 	    		}
 	        }
-			evt.append("context.setFilePath('"+filePath.replace('\\', '/')+"')");
+	        filePath = filePath.replace('\\', '/');
+			evt.append("context.setFilePath('"+filePath+"')");
 			evt.append("context.setDatasetPath('"+dataPath+"')");
 			evt.append("context.setSlicing("+evt.getMap(context.getSlicing())+")");
 			
@@ -195,6 +198,11 @@ public class OperationServiceImpl implements IOperationService {
 			evt.append("context.setPoolSize("+context.getPoolSize()+")");
 			evt.append("context.setExecutionType('"+context.getExecutionType()+"')");
 			
+			evt.append("java_import(jvm, '"+HierarchicalFileExecutionVisitor.class.getPackage().getName()+".*')\n");
+			String outputPath = filePath.substring(0, filePath.lastIndexOf('.'))+"_processed"+(++count)+".nxs";
+			evt.append("visitor = jvm.HierarchicalFileExecutionVisitor('"+outputPath+""+"')");
+			evt.append("context.setVisitor(visitor)");
+			
 			evt.append("\n# Execute the pipeline (commented out for now)");
 			evt.append("# oservice.execute(context)");
 			
@@ -205,7 +213,7 @@ public class OperationServiceImpl implements IOperationService {
 		}
 	}
 
-	private void createOperationCommands(IOperationContext context, MacroEventObject evt) throws Exception {
+	private String createOperationCommands(IOperationContext context, MacroEventObject evt) throws Exception {
 		
 		evt.append("\n# Setup the operations, this requires that models be created which is harder python to understand");
 		evt.append("from py4j.java_gateway import JavaGateway, java_import");
@@ -226,6 +234,7 @@ public class OperationServiceImpl implements IOperationService {
 			if (i < ops.length-1)opList.append(','); 
 		}
 		evt.append("context.setSeries(["+opList+"])");
+		return opList.toString();
 	}
 
 	/**

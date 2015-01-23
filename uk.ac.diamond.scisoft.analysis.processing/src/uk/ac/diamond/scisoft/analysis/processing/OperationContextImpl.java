@@ -2,6 +2,7 @@ package uk.ac.diamond.scisoft.analysis.processing;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
@@ -71,6 +72,10 @@ public class OperationContextImpl implements IOperationContext {
 	public void setSeries(IOperation<? extends IOperationModel, ? extends OperationData>... series) {
 		this.series = series;
 	}
+	@Override
+	public void setSeries(List<IOperation<? extends IOperationModel, ? extends OperationData>> series) {
+		this.series = series.toArray(new IOperation[series.size()]);
+	}
 	/* (non-Javadoc)
 	 * @see uk.ac.diamond.scisoft.analysis.processing.IOperationContext#getData()
 	 */
@@ -106,8 +111,9 @@ public class OperationContextImpl implements IOperationContext {
 	}
 	
     public void setSlicing(String... slices) {
-    	if (slicing==null) slicing= new HashMap<Integer, String>(slices.length);
+    	if (slicing==null) slicing= new HashMap<Integer, String>(slices!=null ? slices.length:1);
     	slicing.clear();
+    	if (slices==null) return;
     	for (int i = 0; i < slices.length; i++) {
     		slicing.put(i, slices[i]);
 		}

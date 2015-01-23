@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationRunner;
@@ -34,12 +35,15 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationCategory;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.Slicer;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
+import org.eclipse.dawnsci.macro.api.IMacroService;
+import org.eclipse.dawnsci.macro.api.MacroEventObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,6 +128,11 @@ public class OperationServiceImpl implements IOperationService {
 			runner.init(context);
 			runner.execute();
 			
+			// We send some macro commands, to tell people how to drive the service with
+			// macros.
+			sendMacroCommands(context);
+
+			
 		} catch (OperationException o) {
 			throw o;
 		} catch (Exception e) {
@@ -139,6 +148,84 @@ public class OperationServiceImpl implements IOperationService {
 			}
 		}
 
+	}
+	
+	/**
+	 * Constructs a macro by mirroring the context into the python layer. 
+	 */
+	private void sendMacroCommands(IOperationContext context) {
+		
+		IMacroService mservice = (IMacroService)Activator.getService(IMacroService.class);
+		if (mservice==null) return;
+		
+		try {
+			MacroEventObject evt = new MacroEventObject(this);
+			evt.setJythonAllowed(false); // We create CPython specific commands.
+			
+			evt.setPythonCommand("\n# Recording macro for operation pipeline, warning not all operations work from macro.");
+			evt.append("oservice = dnp.plot.getService('"+IOperationService.class.getName()+"')");
+			evt.append("context  = oservice.createContext()");
+			
+			evt.append("\n# Create the data and slice information");
+			// Send over the data slice for this run
+			String filePath = context.getFilePath();
+			String dataPath = context.getDatasetPath();
+	        if (context.getData()!=null) {
+	    		ILazyDataset lz = context.getData();
+	    		List<SliceFromSeriesMetadata> md = lz.getMetadata(SliceFromSeriesMetadata.class);
+	            
+	    		if (md!=null) { // This means they cannot open up the workflow and have it run directly.
+	        		SourceInformation sinfo = md.get(0).getSourceInfo();
+	        		if (sinfo!=null) {
+	        			filePath = sinfo.getFilePath();
+	        			dataPath = sinfo.getDatasetName();
+	        		}
+	    		}
+	        }
+			evt.append("context.setFilePath('"+filePath.replace('\\', '/')+"')");
+			evt.append("context.setDatasetPath('"+dataPath+"')");
+			evt.append("context.setSlicing("+evt.getMap(context.getSlicing())+")");
+			
+			// Send over the operations
+			createOperationCommands(context, evt);
+			
+			// Send over the execution settings
+			evt.append("\n# Setup the execution");
+    		evt.append("context.setParallelTimeout("+context.getParallelTimeout()+")");
+			evt.append("context.setPoolSize("+context.getPoolSize()+")");
+			evt.append("context.setExecutionType('"+context.getExecutionType()+"')");
+			
+			evt.append("\n# Execute the pipeline (commented out for now)");
+			evt.append("# oservice.execute(context)");
+			
+			mservice.publish(evt);
+			
+		} catch (Exception ne) {
+			ne.printStackTrace();
+		}
+	}
+
+	private void createOperationCommands(IOperationContext context, MacroEventObject evt) throws Exception {
+		
+		evt.append("\n# Setup the operations, this requires that models be created which is harder python to understand");
+		evt.append("from py4j.java_gateway import JavaGateway, java_import");
+		evt.append("gateway = JavaGateway()");
+		evt.append("jvm = gateway.jvm");
+		
+		StringBuilder opList = new StringBuilder();
+		IOperation[] ops = context.getSeries();
+		for (int i = 0; i < ops.length; i++) {
+			IOperation op = ops[i];
+			String opName = "operation"+i;
+			evt.append(opName+" = oservice.create('"+op.getId()+"')");
+			
+			final AbstractOperationModel model = (AbstractOperationModel)op.getModel();
+			evt.append(model.createMacroCommands("model"));
+			evt.append(opName+".setModel(model)");
+			opList.append(opName);
+			if (i < ops.length-1)opList.append(','); 
+		}
+		evt.append("context.setSeries(["+opList+"])");
 	}
 
 	/**

@@ -401,5 +401,11 @@
             name="External Data">
       </category>
    </extension>
+   <extension
+         point="org.eclipse.dawnsci.analysis.classloader">
+      <bundle
+            class="uk.ac.diamond.scisoft.analysis.processing.Activator">
+      </bundle>
+   </extension>
 
 </plugin>

@@ -18,6 +18,11 @@ public abstract class AbstractIntegrationOperation<T extends IntegrationModel> e
 	protected IROI getRegion() {
 		return model.getRegion();
 	}
+	@Override
+	public void setModel(T model) {
+		super.setModel(model);
+	}
+
 	
 	public OperationRank getInputRank() {
 		return OperationRank.TWO; // Images

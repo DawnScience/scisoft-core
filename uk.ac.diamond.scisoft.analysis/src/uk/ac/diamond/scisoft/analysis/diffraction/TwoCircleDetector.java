@@ -52,7 +52,7 @@ public class TwoCircleDetector implements Cloneable {
 		deltaDir = new Vector3d(-1, 0, 0);
 		deltaPos = new Vector3d(-circle, circle, 0);
 		detectorPos = new Vector3d(circle, 0, circle);
-		detectorOri = computeOrientation(new Vector3d(0, -Math.sin(detectorOffset), -Math.cos(detectorOffset)),
+		detectorOri = MatrixUtils.computeOrientation(new Vector3d(0, -Math.sin(detectorOffset), -Math.cos(detectorOffset)),
 				new Vector3d(1, 0, 0));
 	}
 
@@ -111,7 +111,7 @@ public class TwoCircleDetector implements Cloneable {
 	 */
 	public void setDetector(Vector3d position, Vector3d normal, Vector3d fast) {
 		detectorPos = position;
-		detectorOri = computeOrientation(normal, fast);
+		detectorOri = MatrixUtils.computeOrientation(normal, fast);
 	}
 
 	/**
@@ -123,73 +123,7 @@ public class TwoCircleDetector implements Cloneable {
 	 */
 	public void setDetector(Vector3d position, Vector3d normal, double angle) {
 		detectorPos = position;
-		detectorOri = computeOrientation(normal, computeIntersection(normal, angle));
-	}
-
-	/**
-	 * Compute intersection between plane and cone (whose apex is on the plane) for a unit vector
-	 * @param normal
-	 * @param angle (in degrees)
-	 * @return unit vector
-	 */
-	private static Vector3d computeIntersection(Vector3d normal, double angle) {
-		double n0s = normal.getX();
-		double n1s = normal.getY();
-		double n0n1 = n0s * n1s;
-		n0s *= n0s;
-		n1s *= n1s;
-		double ang = Math.toRadians(angle);
-		double ca = Math.cos(ang);
-		double d = ca * ca - n1s;
-		if (d <= 0) {
-			throw new IllegalArgumentException("No intersection possible for given normal and angle");
-		}
-		double n2 = normal.getZ();
-		d = Math.sqrt(d) * Math.abs(n2);
-		
-		double a = 1 - n1s;
-		double sa = Math.sin(ang);
-		double b = -n0n1 * sa;
-
-		double x = (b - d) / a;
-		// choose one where x < 0 as we need fast axis to be anti-parallel...
-		if (x > 0) {
-			throw new IllegalArgumentException("No solution!");
-		}
-
-		Vector3d dirn = new Vector3d(x, sa, -(x * normal.getX() + sa * normal.getY()) / n2);
-		
-		return dirn;
-	}
-
-	/**
-	 * Compute transform to go from detector frame given normal direction and fast axis 
-	 * @param normal
-	 * @param fast (or component of it if it is not perpendicular to the normal)
-	 * @return orientation transform from detector frame
-	 */
-	public static Matrix3d computeOrientation(Vector3d normal, Vector3d fast) {
-		Matrix3d ori = new Matrix3d();
-		Vector3d lz = new Vector3d();
-		lz.negate(normal); // as normal is anti-parallel to detector frame
-		lz.normalize();
-		Vector3d lx = new Vector3d();
-		lx.negate(fast); // as fast is anti-parallel to detector frame
-		double d = lx.dot(lz);
-		if (d != 0) { // ensure x-dir is perpendicular to z-dir
-			if (Math.abs(Math.abs(d) - 1) < Math.ulp(1)) {
-				throw new IllegalArgumentException("fast axis must not be parallel or anti-parallel to normal");
-			}
-			lx.scaleAdd(-d, lz, lx);
-		}
-		lx.normalize();
-		Vector3d ly = new Vector3d();
-		ly.cross(lz, lx);
-		ori.setColumn(0, lx);
-		ori.setColumn(1, ly);
-		ori.setColumn(2, lz);
-		santise(ori);
-		return ori;
+		detectorOri = MatrixUtils.computeOrientation(normal, MatrixUtils.computeIntersection(normal, angle));
 	}
 
 	/**
@@ -217,32 +151,8 @@ public class TwoCircleDetector implements Cloneable {
 		orientation.mul(rDelta, detectorOri);
 		orientation.mul(rGamma, orientation);
 		orientation.normalize();
-		santise(orientation);
+		MatrixUtils.santise(orientation);
 		orientation.transpose(); // make inverse as that's what detector properties needs
-	}
-
-	/**
-	 * Reset entries that are less than or equal to 1 unit of least precision of
-	 * the matrix's scale
-	 * @param m
-	 */
-	private static void santise(Matrix3d m) {
-		double min = Math.ulp(m.getScale());
-		for (int i = 0; i < 3; i++) {
-			double t;
-			t = Math.abs(m.getElement(i, 0));
-			if (t <= min) {
-				m.setElement(i, 0, 0);
-			}
-			t = Math.abs(m.getElement(i, 1));
-			if (t <= min) {
-				m.setElement(i, 1, 0);
-			}
-			t = Math.abs(m.getElement(i, 2));
-			if (t <= min) {
-				m.setElement(i, 2, 0);
-			}
-		}
 	}
 
 	/**
@@ -284,28 +194,10 @@ public class TwoCircleDetector implements Cloneable {
 		return out.toString();
 	}
 
-	private boolean isClose(double e, double a, final double rel, final double abs) {
-		double rt = rel * Math.max(Math.abs(e), Math.abs(a));
-		if (Math.abs(e - a) > abs + rt) {
-			throw new AssertionError(e + " != " + a);
-		}
-		return true;
-	}
-
-	private boolean isClose(Vector3d e, Vector3d a, final double rel, final double abs) {
-		return isClose(e.x, a.x, rel, abs) && isClose(e.y, a.y, rel, abs) && isClose(e.z, a.z, rel, abs);
-	}
-
-	private boolean isClose(Matrix3d e, Matrix3d a, final double rel, final double abs) {
-		return isClose(e.m00, a.m00, rel, abs) && isClose(e.m01, a.m01, rel, abs) && isClose(e.m02, a.m02, rel, abs)
-				&& isClose(e.m10, a.m10, rel, abs) && isClose(e.m11, a.m11, rel, abs) && isClose(e.m12, a.m12, rel, abs)
-				&& isClose(e.m20, a.m20, rel, abs) && isClose(e.m21, a.m21, rel, abs) && isClose(e.m22, a.m22, rel, abs);
-	}
-
 	public boolean isClose(TwoCircleDetector other, final double rel, final double abs) {
-		return isClose(beamDir, other.beamDir, rel, abs) && isClose(beamPos, other.beamPos, rel, abs)
-				&& isClose(gammaOff, other.gammaOff, rel, abs) && isClose(deltaOff, other.deltaOff, rel, abs)
-				&& isClose(deltaDir, other.deltaDir, rel, abs) && isClose(deltaPos, other.deltaPos, rel, abs)
-				&& isClose(detectorPos, other.detectorPos, rel, abs) && isClose(detectorOri, other.detectorOri, rel, abs);
+		return MatrixUtils.isClose(beamDir, other.beamDir, rel, abs) && MatrixUtils.isClose(beamPos, other.beamPos, rel, abs)
+				&& MatrixUtils.isClose(gammaOff, other.gammaOff, rel, abs) && MatrixUtils.isClose(deltaOff, other.deltaOff, rel, abs)
+				&& MatrixUtils.isClose(deltaDir, other.deltaDir, rel, abs) && MatrixUtils.isClose(deltaPos, other.deltaPos, rel, abs)
+				&& MatrixUtils.isClose(detectorPos, other.detectorPos, rel, abs) && MatrixUtils.isClose(detectorOri, other.detectorOri, rel, abs);
 	}
 }

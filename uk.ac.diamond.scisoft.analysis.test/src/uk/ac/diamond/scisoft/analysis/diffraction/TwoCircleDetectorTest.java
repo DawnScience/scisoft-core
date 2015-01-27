@@ -286,7 +286,7 @@ public class TwoCircleDetectorTest {
 	}
 
 	private void checkTransform(Vector3d ni, Vector3d fa) {
-		Matrix3d ori = TwoCircleDetector.computeOrientation(ni, fa);
+		Matrix3d ori = MatrixUtils.computeOrientation(ni, fa);
 		System.err.printf("%s", ori);
 		Vector3d no = new Vector3d();
 		Vector3d vn = new Vector3d(0, 0, -1);

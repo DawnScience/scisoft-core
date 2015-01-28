@@ -11,10 +11,12 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.Downsample;
+import uk.ac.diamond.scisoft.analysis.dataset.function.DownsampleDatatype;
 import uk.ac.diamond.scisoft.analysis.dataset.function.DownsampleMode;
 
 public class DownsampleImageOperation extends AbstractOperation<DownsampleImageModel, OperationData> {
@@ -35,8 +37,37 @@ public class DownsampleImageOperation extends AbstractOperation<DownsampleImageM
 		
 		int x = model.getDownsampleSizeX();
 		int y = model.getDownsampleSizeY();
-		
+		DownsampleDatatype outputDatatype = model.getDownSampleDatatype();
+
 		Downsample downsample = new Downsample(((DownsampleImageModel)model).getDownsampleMode(), y,x);
+		switch (outputDatatype) {
+		case BOOL:
+			input = DatasetUtils.cast(input, Dataset.BOOL);
+			break;
+		case INTEGER:
+			input = DatasetUtils.cast(input, Dataset.INT);
+			break;
+		case INTEGER16:
+			input = DatasetUtils.cast(input, Dataset.INT16);
+			break;
+		case INTEGER32:
+			input = DatasetUtils.cast(input, Dataset.INT32);
+			break;
+		case INTEGER64:
+			input = DatasetUtils.cast(input, Dataset.INT64);
+			break;
+		case FLOAT:
+			input = DatasetUtils.cast(input, Dataset.FLOAT);
+			break;
+		case FLOAT32:
+			input = DatasetUtils.cast(input, Dataset.FLOAT32);
+			break;
+		case FLOAT64:
+			input = DatasetUtils.cast(input, Dataset.FLOAT64);
+			break;
+		default:
+			break;
+		}
 		List<Dataset> out = downsample.value(input);
 		Dataset dataset = out.get(0);
 		dataset.setName("downsampled");

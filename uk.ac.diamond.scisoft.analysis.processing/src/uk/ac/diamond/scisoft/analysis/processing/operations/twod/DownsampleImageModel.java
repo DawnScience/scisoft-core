@@ -3,6 +3,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.twod;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
+import uk.ac.diamond.scisoft.analysis.dataset.function.DownsampleDatatype;
 import uk.ac.diamond.scisoft.analysis.dataset.function.DownsampleMode;
 
 public class DownsampleImageModel extends AbstractOperationModel {
@@ -13,6 +14,9 @@ public class DownsampleImageModel extends AbstractOperationModel {
 	private int downsampleSizeX = 2;
 	@OperationModelField(label = "Downsample size Y", hint = "The height of the downsample box in pixels.")
 	private int downsampleSizeY = 2;
+	@OperationModelField(label = "Downsample Output datatype", hint = "Datatype of the downsample output.")
+	private DownsampleDatatype downSampleDatatype = DownsampleDatatype.FLOAT32;
+
 	public DownsampleMode getDownsampleMode() {
 		return downsampleMode;
 	}
@@ -33,5 +37,10 @@ public class DownsampleImageModel extends AbstractOperationModel {
 		firePropertyChange("downsampleSizeY", this.downsampleSizeY, this.downsampleSizeY = downsampleSizeY);
 	}
 	
-	
+	public DownsampleDatatype getDownSampleDatatype() {
+		return downSampleDatatype;
+	}
+	public void setDownsampleDatatype(DownsampleDatatype downSampleDatatype) {
+		firePropertyChange("downSampleDatatype", this.downSampleDatatype, this.downSampleDatatype = downSampleDatatype);
+	}
 }

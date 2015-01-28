@@ -11,11 +11,13 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import static org.junit.Assert.*;
 
+import java.util.Random;
+
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.diffraction.TwoCircleFitter.TwoCircleFitFunction;
+import uk.ac.diamond.scisoft.analysis.diffraction.TwoCircleFitter;
 
 public class TwoCircleFitterTest {
 	private int n;
@@ -34,8 +36,8 @@ public class TwoCircleFitterTest {
 		int k = 0;
 		for (int i = 0; i < ng; i++) {
 			for (int j = 0; j < nd; j++) {
-				gamma[k] = i;
-				delta[k] = j;
+				gamma[k] = i*5 - 2;
+				delta[k] = j*5 - 2;
 				k++;
 			}
 		}
@@ -59,7 +61,7 @@ public class TwoCircleFitterTest {
 		double[] init = new double[] {0, 0, 0, 0, 0, -0.5,
 				-1000, 0, 0, 90, 180, 0.5,
 				1000, 0, 1000, 180-9, -90, 0};
-		TwoCircleFitter.setupTwoCircle(dt, init);
+		TwoCircleFitter.setupTwoCircle18(dt, init);
 
 		for (int i = 0; i < n; i++) {
 			dt.getDetectorProperties(ndp, gamma[i], delta[i]);
@@ -68,8 +70,8 @@ public class TwoCircleFitterTest {
 			y[i] = bc[1];
 		}
 
-
-		TwoCircleFitFunction f = new TwoCircleFitFunction(prop, dt, gamma, delta, x, y);
+		// check for minima in many dimensions
+		TwoCircleFitter.TwoCircleFitFunctionBase f = new TwoCircleFitter.TwoCircleFitFunction8(prop, dt, gamma, delta, x, y);
 		assertEquals(0, f.value(init), 1e-14);
 
 		for (int i = 0; i < n; i++) {
@@ -78,7 +80,64 @@ public class TwoCircleFitterTest {
 			x[i] = bc[0] + 1;
 			y[i] = bc[1] + 1;
 		}
-		f = new TwoCircleFitFunction(prop, dt, gamma, delta, x, y);
+		f = new TwoCircleFitter.TwoCircleFitFunction8(prop, dt, gamma, delta, x, y);
 		assertEquals(2*n, f.value(init), 1e-14);
+
+	}
+
+	@Test
+	public void testFitter() {
+		DetectorProperties prop = new DetectorProperties(100, 0, 0, 195, 487, 0.172, 0.172);
+		DetectorProperties ndp = prop.clone();
+
+		TwoCircleDetector dt = new TwoCircleDetector();
+		/* 18-parameter fit function: beam pos (x,y,z), beam dir (t,p), gamma offset,
+		 * delta pos, delta dir, delta offset,
+		 * detector pos, detector normal, detector fast axis angle from horizontal
+		 */
+		TwoCircleFitter.setupTwoCircle18(dt, 0, 950, 0, 0, 0, 1,
+				-970, 950, 0, 90, 180, 0,
+				970 + 33.54, 0, 535, 180-35, 0, 90);
+
+		Random rnd = new Random(123457L);
+		for (int i = 0; i < n; i++) {
+			dt.getDetectorProperties(ndp, gamma[i], delta[i]);
+			double[] bc = ndp.getBeamCentreCoords();
+			x[i] = bc[0] + rnd.nextGaussian();
+			y[i] = bc[1] + rnd.nextGaussian();
+		}
+
+		TwoCircleDetector fdt = TwoCircleFitter.fitDetector(prop, dt, gamma, delta, x, y);
+		System.err.println(dt);
+		System.err.println(fdt);
+		assertTrue(dt.isClose(fdt, 1e-10, 1e-10));
+
+		// now fix points and move detector
+		checkDetectorFitter(fdt, prop, ndp,
+				0, 950, 0, 0, 0, 0,
+				-970, 950, 0, 90, 180, 0,
+				970 + 33.54, 0, 535, 180 - 35 + 1. / 32, 0, 90);
+
+		checkDetectorFitter(fdt, prop, ndp,
+				0, 950 - 5, 0, 0, 0, 0,
+				-970, 950, 0, 90, 180, 0,
+				970 + 33.54, 0, 535, 180 - 35, 0, 90);
+	}
+
+	private void checkDetectorFitter(TwoCircleDetector dt, DetectorProperties prop, DetectorProperties ndp,
+			double... p) {
+		TwoCircleFitter.setupTwoCircle18(dt, p);
+		int n = gamma.length;
+		for (int i = 0; i < n; i++) {
+			dt.getDetectorProperties(ndp, gamma[i], delta[i]);
+			double[] bc = ndp.getBeamCentreCoords();
+			x[i] = bc[0];
+			y[i] = bc[1];
+		}
+
+		TwoCircleDetector fdt = TwoCircleFitter.fitDetector(prop, dt, gamma, delta, x, y);
+		System.err.println(dt);
+		System.err.println(fdt);
+		assertTrue(dt.isClose(fdt, 5e-4, 5e-4));
 	}
 }

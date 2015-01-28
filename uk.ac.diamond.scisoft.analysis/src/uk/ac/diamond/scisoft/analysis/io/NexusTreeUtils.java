@@ -148,7 +148,7 @@ public class NexusTreeUtils {
 
 		GroupNode gNode = (GroupNode) link.getSource(); // before hunting for axes
 		Attribute stringAttr = dNode.getAttribute(NX_SIGNAL);
-		boolean isSignal;
+		boolean isSignal = false;
 		if (stringAttr != null) {
 			isSignal = true;
 			if (parseFirstInt(stringAttr) != 1) {
@@ -156,7 +156,17 @@ public class NexusTreeUtils {
 				isSignal = false;
 			}
 		} else {
-			isSignal = gNode.containsDataNode(DATA) && dNode == gNode.getDataNode(DATA);
+			String sName = parseStringAttr(gNode, NX_SIGNAL);
+			if (sName != null) {
+				if (gNode.containsDataNode(sName)) {
+					isSignal = dNode == gNode.getDataNode(sName);
+				} else {
+					logger.warn("Given signal {} does not exist in group {}", sName, gNode);
+				}
+			}
+			if (!isSignal) {
+				isSignal = gNode.containsDataNode(DATA) && dNode == gNode.getDataNode(DATA);
+			}
 		}
 
 		// add errors
@@ -251,18 +261,13 @@ public class NexusTreeUtils {
 						attr = gNode.getAttribute(indAttr);
 						if (attr != null) {
 							intAxis = parseIntArray(attr);
-							for (int i = 0, imax = intAxis.length; i < imax; i++) {
-								intAxis[i]--;
-							}
 							choice.setPrimary(1);
 						}
 					}
 				}
 
-				Attribute attrLabel = null;
 				if (intAxis == null) {
 					attr = d.getAttribute(NX_AXIS);
-					attrLabel = d.getAttribute(NX_LABEL);
 					if (attr != null) {
 						intAxis = parseIntArray(attr);
 						if (intAxis.length == ashape.length) {
@@ -311,13 +316,7 @@ public class NexusTreeUtils {
 				}
 
 				choice.setIndexMapping(intAxis);
-				if (attrLabel != null) {
-					int j = parseFirstInt(attrLabel) - 1;
-					choice.setAxisNumber(isAxisFortranOrder ? rank - 1 - j : j); // fix C (row-major) dimension
-				} else {
-					choice.setAxisNumber(intAxis[intAxis.length-1]);
-				}
-
+				choice.setAxisNumber(intAxis[intAxis.length-1]);
 				choices.add(choice);
 			} catch (Exception e) {
 				logger.debug("Axis attributes in {} are invalid - {}", a.getName(), e.getMessage());
@@ -335,7 +334,7 @@ public class NexusTreeUtils {
 
 		if (axesAttr != null) { // check axes attribute for list axes
 			// check if axes referenced by data's @axes tag exists
-			String[] names = parseString(axesAttr.getFirstElement());
+			String[] names = parseStringArray(axesAttr);
 			for (String s : names) {
 				boolean flg = false;
 				for (AxisChoice c : choices) {
@@ -437,7 +436,7 @@ public class NexusTreeUtils {
 			m = new Matrix4d();
 			m.setIdentity();
 			do {
-				m.mul(t.matrix, m);
+				m.mul(t.matrix, m); // left multiply as working back
 				t = btrans.get(t.name);
 			} while (t != null);
 		}
@@ -560,7 +559,7 @@ public class NexusTreeUtils {
 		return dp;
 	}
 
-	// follow dependency chain forward and left multiply
+	// follow dependency chain forward and right multiply
 	private static Matrix4d calcForwardTransform(Map<String, Transform> ftrans, String dep) {
 		Matrix4d m = new Matrix4d();
 		m.setIdentity();
@@ -746,6 +745,19 @@ public class NexusTreeUtils {
 	}
 
 	/**
+	 * Parse elements of attribute as string array
+	 * @param attr
+	 * @return string array or null if attribute does not exist
+	 */
+	public static String[] parseStringArray(Attribute attr) {
+		if (attr == null)
+			return null;
+
+		return attr.getSize() == 1 ? parseString(attr.getFirstElement()) :
+			((StringDataset) DatasetUtils.cast(attr.getValue(), Dataset.STRING)).getData();
+	}
+
+	/**
 	 * Parse elements of data node as string array
 	 * @param n
 	 * @return string array or null if not a data node
@@ -813,7 +825,8 @@ public class NexusTreeUtils {
 
 		int[] array;
 		if (attr.isString()) {
-			String[] str = parseString(attr.getFirstElement());
+			String[] str = attr.getSize() == 1 ? parseString(attr.getFirstElement()) :
+				((StringDataset) DatasetUtils.cast(attr.getValue(), Dataset.STRING)).getData();
 			array = new int[str.length];
 			for (int i = 0; i < str.length; i++) {
 				array[i] = Integer.parseInt(str[i]);
@@ -893,7 +906,8 @@ public class NexusTreeUtils {
 
 		double[] array;
 		if (attr.isString()) {
-			String[] str = parseString(attr.getFirstElement());
+			String[] str = attr.getSize() == 1 ? parseString(attr.getFirstElement()) :
+				((StringDataset) DatasetUtils.cast(attr.getValue(), Dataset.STRING)).getData();
 			array = new double[str.length];
 			for (int i = 0; i < str.length; i++) {
 				array[i] = Double.parseDouble(str[i]);

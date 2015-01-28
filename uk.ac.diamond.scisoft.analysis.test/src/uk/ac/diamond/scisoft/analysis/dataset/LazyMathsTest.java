@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyMaths;
+import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.junit.Test;
 
 public class LazyMathsTest {
@@ -85,11 +86,9 @@ public class LazyMathsTest {
 		a.setShape(10, 10);
 		er.setShape(10, 10);
 		a.setErrorBuffer(er);
-		
-		Dataset e = a.sum(1);
-		e.ipower(0.5);
-		e.idivide(10);
-		
+
+		Dataset e = Maths.sqrt(er.sum(1)).idivide(10);
+
 		AbstractDatasetTest.checkDatasets(e, LazyMaths.mean(a, 0).getError(), 1e-9, 1e-15);
 
 	}

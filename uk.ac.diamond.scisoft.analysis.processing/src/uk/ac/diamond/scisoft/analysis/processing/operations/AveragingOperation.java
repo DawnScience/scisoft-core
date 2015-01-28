@@ -8,8 +8,6 @@ import org.eclipse.dawnsci.analysis.api.processing.IExportOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.RunningAverage;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
@@ -18,7 +16,6 @@ public class AveragingOperation<T extends EmptyModel> extends AbstractOperation<
 
 	private RunningAverage average;
 	private ILazyDataset parent;
-	private int counter;
 	
 	@Override
 	public String getId() {
@@ -34,28 +31,20 @@ public class AveragingOperation<T extends EmptyModel> extends AbstractOperation<
 		if (parent != ssm.getSourceInfo().getParent()) {
 			parent = ssm.getSourceInfo().getParent();
 			average = null;
-			counter = 0;
 		}
 		
-		
-		Dataset d = DatasetUtils.cast(input,Dataset.FLOAT64);
 		
 		if (average == null) {
-			average = new RunningAverage(d);
-			
+			average = new RunningAverage(input);
 		} else {
-			average.update(d);
-			
+			average.update(input);
 		}
 		
-		counter++;
-		
-		if (counter == ssm.getTotalSlices()) {
+		if (average.getCount() == ssm.getTotalSlices()) {
 			IDataset out = average.getCurrentAverage();
 			copyMetadata(input, out);
 			out.clearMetadata(SliceFromSeriesMetadata.class);
 			average = null;
-			counter = 0;
 			SliceFromSeriesMetadata outsmm = ssm.clone();
 			for (int i = 0; i < ssm.getParent().getRank(); i++) {
 				

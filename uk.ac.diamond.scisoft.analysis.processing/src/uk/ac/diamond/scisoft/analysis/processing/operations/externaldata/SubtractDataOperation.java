@@ -87,7 +87,7 @@ public class SubtractDataOperation extends AbstractOperation<SelectedFramesModel
 			dataDims = new int[]{dataDims[0]};
 		}
 		
-		subtrahend = LazyMaths.mean(s,  e,lz,dataDims).squeeze();
+		subtrahend = LazyMaths.mean(s, e, lz, dataDims).squeeze();
 		
 		return subtrahend;
 		

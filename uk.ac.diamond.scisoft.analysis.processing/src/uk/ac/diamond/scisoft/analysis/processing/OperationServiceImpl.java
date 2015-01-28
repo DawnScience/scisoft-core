@@ -200,7 +200,7 @@ public class OperationServiceImpl implements IOperationService {
 			
 			evt.append("java_import(jvm, '"+HierarchicalFileExecutionVisitor.class.getPackage().getName()+".*')\n");
 			String outputPath = filePath.substring(0, filePath.lastIndexOf('.'))+"_processed"+(++count)+".nxs";
-			evt.append("visitor = jvm.HierarchicalFileExecutionVisitor('"+outputPath+""+"')");
+			evt.append("visitor = jvm."+HierarchicalFileExecutionVisitor.class.getSimpleName()+"('"+outputPath+""+"')");
 			evt.append("context.setVisitor(visitor)");
 			
 			evt.append("\n# Execute the pipeline (commented out for now)");

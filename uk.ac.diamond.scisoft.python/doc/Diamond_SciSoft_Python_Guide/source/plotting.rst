@@ -136,7 +136,7 @@ clicking on the toolbar buttons in the plot view. These buttons become visible
 when an image is plotted.
 
 The coordinate system used in the image plot is in pixels starting from the
-upper left at (0,0) with *x* increasing when moving left and *y* increasing
+upper left at (0,0) with *x* increasing when moving right and *y* increasing
 moving down. Angles are measured from the horizontal and increases when moving
 clockwise.
 

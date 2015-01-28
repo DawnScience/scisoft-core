@@ -9,12 +9,18 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.vecmath.AxisAngle4d;
+import javax.vecmath.Matrix4d;
+import javax.vecmath.Vector3d;
+import javax.vecmath.Vector4d;
 
 import ncsa.hdf.object.FileFormat;
 import ncsa.hdf.object.h5.H5File;
@@ -23,6 +29,7 @@ import org.apache.commons.math3.complex.Complex;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
+import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
@@ -38,6 +45,7 @@ import org.eclipse.dawnsci.analysis.tree.impl.TreeImpl;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 
 public class HDF5LoaderTest {
 	final static String TestFileFolder = "testfiles/gda/analysis/io/NexusLoaderTest/";
@@ -420,5 +428,51 @@ public class HDF5LoaderTest {
 			assertTrue(d.getMetadata(AxesMetadata.class) != null);
 		} catch (Exception e) {
 		}
+	}
+
+	@Test
+	public void testLoadingNexusDetector() throws ScanFileHolderException {
+		String n = TestFileFolder + "../NexusDiffractionTest/336502.nxs";
+		NexusHDF5Loader l = new NexusHDF5Loader();
+		l.setFile(n);
+		DataHolder dh = l.loadFile();
+		Tree t = dh.getTree();
+		NodeLink nl = t.findNodeLink("/entry/instrument/detector");
+		DetectorProperties dp = NexusTreeUtils.parseDetector(nl)[0];
+
+		ILazyDataset ld = dh.getLazyDataset(0);
+		assertArrayEquals(new int[] {10, 195, 487}, ld.getShape());
+
+		System.err.println(dp);
+
+		AxisAngle4d ad = new AxisAngle4d(-1, 0, 0, Math.toRadians(9 + 36.53819));
+
+		Matrix4d m = new Matrix4d();
+		m.set(ad);
+		m.setColumn(3, 571+210, 200, 0, 1);
+
+		Vector3d fast = new Vector3d(0, -Math.sqrt(0.5), Math.sqrt(0.5));
+		Vector3d slow = new Vector3d(1, 0, 0);
+		m.transform(fast);
+		m.transform(slow);
+
+		Vector4d o4 = new Vector4d();
+		o4.setW(1);
+		m.transform(o4);
+		Vector3d origin = new Vector3d(o4.x, o4.y, o4.z);
+		DetectorProperties edp = new DetectorProperties(origin, 195, 487, 0.172, 0.172, MatrixUtils.computeFSOrientation(fast, slow));
+		Vector3d bv = new Vector3d(origin);
+		bv.normalize();
+		edp.setBeamVector(bv);
+
+		assertEquals(edp.getPx(), dp.getPx());
+		assertEquals(edp.getPy(), dp.getPy());
+		assertEquals(edp.getStartX(), dp.getStartX());
+		assertEquals(edp.getStartY(), dp.getStartY());
+		assertTrue(MatrixUtils.isClose(edp.getBeamVector(), dp.getBeamVector(), 1e-8, 1e-8));
+		assertTrue(MatrixUtils.isClose(edp.getHPxSize(), dp.getHPxSize(), 1e-8, 1e-8));
+		assertTrue(MatrixUtils.isClose(edp.getVPxSize(), dp.getVPxSize(), 1e-8, 1e-8));
+		assertTrue(MatrixUtils.isClose(edp.getOrigin(), dp.getOrigin(), 1e-8, 1e-8));
+		assertTrue(MatrixUtils.isClose(edp.getOrientation(), dp.getOrientation(), 1e-8, 1e-8));
 	}
 }

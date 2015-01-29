@@ -159,14 +159,12 @@ public class TwoCircleDetector implements Cloneable {
 	 * @param old
 	 * @param gamma (in degrees)
 	 * @param delta (in degrees)
-	 * @return detector properties (modified in-place)
 	 */
-	public DetectorProperties getDetectorProperties(DetectorProperties old, double gamma, double delta) {
+	public void updateDetectorProperties(DetectorProperties old, double gamma, double delta) {
 		calc(gamma, delta);
 		old.setOrigin(origin);
 		old.setOrientation(orientation);
 		old.setBeamVector(beamDir);
-		return old;
 	}
 
 	@Override

@@ -9,6 +9,12 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset.function;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+
 /**
  * Enumerations for down-sample datatypes
  */
@@ -22,4 +28,23 @@ public enum DownsampleDatatype {
 	FLOAT,
 	FLOAT32,
 	FLOAT64;
+
+	private static Map<DownsampleDatatype, Integer> datatype;
+
+	static {
+		Map<DownsampleDatatype, Integer> aMap = new HashMap<DownsampleDatatype, Integer>();
+		aMap.put(BOOL, Dataset.BOOL);
+		aMap.put(INTEGER, Dataset.INT);
+		aMap.put(INTEGER16, Dataset.INT16);
+		aMap.put(INTEGER32, Dataset.INT32);
+		aMap.put(INTEGER64, Dataset.INT64);
+		aMap.put(FLOAT, Dataset.FLOAT);
+		aMap.put(FLOAT32, Dataset.FLOAT32);
+		aMap.put(FLOAT64, Dataset.FLOAT64);
+		datatype = Collections.unmodifiableMap(aMap);
+	}
+
+	public static int getDatasetType(DownsampleDatatype type) {
+		return datatype.get(type);
+	}
 }

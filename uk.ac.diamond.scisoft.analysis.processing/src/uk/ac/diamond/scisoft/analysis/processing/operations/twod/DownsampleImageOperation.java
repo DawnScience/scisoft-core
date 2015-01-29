@@ -40,34 +40,9 @@ public class DownsampleImageOperation extends AbstractOperation<DownsampleImageM
 		DownsampleDatatype outputDatatype = model.getDownSampleDatatype();
 
 		Downsample downsample = new Downsample(((DownsampleImageModel)model).getDownsampleMode(), y,x);
-		switch (outputDatatype) {
-		case BOOL:
-			input = DatasetUtils.cast(input, Dataset.BOOL);
-			break;
-		case INTEGER:
-			input = DatasetUtils.cast(input, Dataset.INT);
-			break;
-		case INTEGER16:
-			input = DatasetUtils.cast(input, Dataset.INT16);
-			break;
-		case INTEGER32:
-			input = DatasetUtils.cast(input, Dataset.INT32);
-			break;
-		case INTEGER64:
-			input = DatasetUtils.cast(input, Dataset.INT64);
-			break;
-		case FLOAT:
-			input = DatasetUtils.cast(input, Dataset.FLOAT);
-			break;
-		case FLOAT32:
-			input = DatasetUtils.cast(input, Dataset.FLOAT32);
-			break;
-		case FLOAT64:
-			input = DatasetUtils.cast(input, Dataset.FLOAT64);
-			break;
-		default:
-			break;
-		}
+
+		input = DatasetUtils.cast(input, DownsampleDatatype.getDatasetType(outputDatatype));
+
 		List<Dataset> out = downsample.value(input);
 		Dataset dataset = out.get(0);
 		dataset.setName("downsampled");

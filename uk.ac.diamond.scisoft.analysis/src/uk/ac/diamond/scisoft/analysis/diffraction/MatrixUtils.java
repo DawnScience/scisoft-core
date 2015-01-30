@@ -146,8 +146,8 @@ public class MatrixUtils {
 	 * @return true if close
 	 */
 	public static boolean isClose(double e, double a, final double rel, final double abs) {
-		double rt = rel * Math.max(Math.abs(e), Math.abs(a));
-		if (Math.abs(e - a) > abs + rt) {
+		double tt = rel * Math.max(Math.abs(e), Math.abs(a)) + abs;
+		if (Math.abs(e - a) > tt) {
 			throw new AssertionError(e + " != " + a);
 		}
 		return true;
@@ -162,7 +162,11 @@ public class MatrixUtils {
 	 * @return true if close
 	 */
 	public static boolean isClose(Vector3d e, Vector3d a, final double rel, final double abs) {
-		return isClose(e.x, a.x, rel, abs) && isClose(e.y, a.y, rel, abs) && isClose(e.z, a.z, rel, abs);
+		double tt = rel * Math.max(e.length(), a.length()) + abs;
+		if (!e.epsilonEquals(a, tt)) {
+			throw new AssertionError(e + " != " + a);
+		}
+		return true;
 	}
 
 	/**
@@ -174,8 +178,10 @@ public class MatrixUtils {
 	 * @return true if close
 	 */
 	public static boolean isClose(Matrix3d e, Matrix3d a, final double rel, final double abs) {
-		return isClose(e.m00, a.m00, rel, abs) && isClose(e.m01, a.m01, rel, abs) && isClose(e.m02, a.m02, rel, abs)
-				&& isClose(e.m10, a.m10, rel, abs) && isClose(e.m11, a.m11, rel, abs) && isClose(e.m12, a.m12, rel, abs)
-				&& isClose(e.m20, a.m20, rel, abs) && isClose(e.m21, a.m21, rel, abs) && isClose(e.m22, a.m22, rel, abs);
+		double tt = rel * e.getScale() + abs;
+		if (!e.epsilonEquals(a, tt)) {
+			throw new AssertionError(e + " != " + a);
+		}
+		return true;
 	}
 }

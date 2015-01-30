@@ -44,6 +44,7 @@ public class TwoCircleFitterTest {
 		x = new double[n];
 		y = new double[n];
 
+		FittingUtils.seed = 12375L;
 	}
 
 	@Test

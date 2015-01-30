@@ -230,10 +230,10 @@ public class TwoCircleDetectorTest {
 	public void testBeam() {
 		TwoCircleDetector dt = new TwoCircleDetector();
 
-		dt.setBeam(new Vector3d(0, 0, 0), TwoCircleFitter.createDirection(0, 0));
+		dt.setBeam(new Vector3d(0, 0, 0), TwoCircleDetector.createDirection(0, 0));
 		dt.setGamma(0);
-		dt.setDelta(new Vector3d(-RADIUS, 0, 0), TwoCircleFitter.createDirection(90, 180), 0);
-		dt.setDetector(new Vector3d(RADIUS, 0, RADIUS), TwoCircleFitter.createDirection(180, 0), 90);
+		dt.setDelta(new Vector3d(-RADIUS, 0, 0), TwoCircleDetector.createDirection(90, 180), 0);
+		dt.setDetector(new Vector3d(RADIUS, 0, RADIUS), TwoCircleDetector.createDirection(180, 0), 90);
 
 		DetectorProperties dp = new DetectorProperties(100, 0, 0, 200, 400, 1, 1);
 		Vector3d p;
@@ -267,7 +267,7 @@ public class TwoCircleDetectorTest {
 		assertEquals(0, bc[0], 1e-10);
 		assertEquals(RADIUS*Math.tan(Math.toRadians(5)), bc[1], 1e-10);
 
-		dt.setDetector(new Vector3d(RADIUS, 0, RADIUS), TwoCircleFitter.createDirection(180, 0), 0);
+		dt.setDetector(new Vector3d(RADIUS, 0, RADIUS), TwoCircleDetector.createDirection(180, 0), 0);
 		dt.updateDetectorProperties(dp, 0, 0);
 		p = dp.getBeamCentrePosition();
 		assertEquals(0, p.x, 1e-10);
@@ -438,5 +438,28 @@ public class TwoCircleDetectorTest {
 			nc[i] = Math.round(nc[i]);
 		}
 		assertArrayEquals(coords, nc, 1e-8);
+	}
+
+	@Test
+	public void testParameters() {
+		TwoCircleDetector two = new TwoCircleDetector();
+
+		double[][] parameters = new double[][] {
+				new double[] {5, 0, 20, -30, 100, 35, -17, 0},
+				new double[] {2, 12, 20, -30, 100, 35, -17, 60},
+				new double[] {2, -3, 20, -30, 100, 35, -17, -75},
+				new double[] {5, 0, 1, 0, 20, -30, 100, 35, -17, 0},
+				new double[] {2, 12, 1, -4, 20, -30, 100, 35, -17, 60},
+				new double[] {2, -3, 3, 7, 20, -30, 100, 35, -17, -75},
+				new double[] {0, -23, 43,   1, -3, 7, 122, 5, 0, 1,  1.5, 0, 20, -30, 100, 35, -17, 0},
+				new double[] {0, -23, 43,   3, -3, 7, 122, 2, 12, 1, 1.5, -4, 20, -30, 100, 35, -17, 60},
+				new double[] {0, -23, 43, 2.5, -3, 7, 122, 2, -3, 3, 1.5, 7, 20, -30, 100, 35, -17, -75},
+		};
+
+		for (double[] p : parameters) {
+			TwoCircleDetector.setupTwoCircle(two, p);
+			double[] np = TwoCircleDetector.getTwoCircleParameters(two, p.length);
+			assertArrayEquals(p, np, 1e-8);
+		}
 	}
 }

@@ -198,4 +198,128 @@ public class TwoCircleDetector implements Cloneable {
 				&& MatrixUtils.isClose(deltaDir, other.deltaDir, rel, abs) && MatrixUtils.isClose(deltaPos, other.deltaPos, rel, abs)
 				&& MatrixUtils.isClose(detectorPos, other.detectorPos, rel, abs) && MatrixUtils.isClose(detectorOri, other.detectorOri, rel, abs);
 	}
+
+	static Vector3d createDirection(double a, double b) {
+		double theta = Math.toRadians(a);
+		double phi = Math.toRadians(b);
+		double st = Math.sin(theta);
+		return new Vector3d(st*Math.cos(phi), st*Math.sin(phi), Math.cos(theta));
+	}
+
+	/**
+	 * Setup two circle detector in a variety of ways (0 <= t <= 90, -180 < p <= 180, -90 < axis angle <= 90)
+	 * <dl>
+	 * <dt>8-parameter</dt>
+	 * <dd>beam dir (t,p),
+	 *  detector pos, detector normal, detector fast axis angle from horizontal</dd>
+	 * <dt>10-parameter</dt>
+	 * <dd>beam dir (t,p), delta dir,
+	 *  detector pos, detector normal, detector fast axis angle from horizontal</dd>
+	 * <dt>18-parameter</dt>
+	 * <dd>	beam pos (x,y,z), beam dir (t,p), gamma offset,
+	 *  delta pos, delta dir, delta offset,
+	 *  detector pos, detector normal, detector fast axis angle from horizontal</dd>
+	 * </dl>
+	 * @param two
+	 * @param p only array lengths of 8, 10, 18 are supported
+	 */
+	public static void setupTwoCircle(TwoCircleDetector two, double... p) {
+		int i = 0;
+		switch (p.length) {
+		case 8:
+			two.setBeam(two.beamPos, createDirection(p[i++], p[i++]));
+			two.setGamma(two.gammaOff);
+			two.setDelta(two.deltaPos, two.deltaDir, two.deltaOff);
+			break;
+		case 10:
+			two.setBeam(two.beamPos, createDirection(p[i++], p[i++]));
+			two.setGamma(two.gammaOff);
+			two.setDelta(two.deltaPos, createDirection(p[i++], p[i++]), two.deltaOff);
+			break;
+		case 18:
+			two.setBeam(new Vector3d(p[i++], p[i++], p[i++]), createDirection(p[i++], p[i++]));
+			two.setGamma(p[i++]);
+			two.setDelta(new Vector3d(p[i++], p[i++], p[i++]), createDirection(p[i++], p[i++]), p[i++]);
+			break;
+		default:
+			throw new IllegalArgumentException("Number of parameters not specified correctly");
+		}
+		two.setDetector(new Vector3d(p[i++], p[i++], p[i++]), createDirection(p[i++], p[i++]), p[i++]);
+	}
+
+	private static double[] getAngles(Vector3d v) {
+		return new double[] {Math.toDegrees(Math.acos(v.z)), Math.toDegrees(Math.atan2(v.y, v.x))};
+	}
+
+	/**
+	 * Get parameters from two circle detector (0 <= t <= 90, -180 < p <= 180, -90 < axis angle <= 90) 
+	 * <dl>
+	 * <dt>8-parameter</dt>
+	 * <dd>beam dir (t,p),
+	 *  detector pos, detector normal, detector fast axis angle from horizontal</dd>
+	 * <dt>10-parameter</dt>
+	 * <dd>beam dir (t,p), delta dir,
+	 *  detector pos, detector normal, detector fast axis angle from horizontal</dd>
+	 * <dt>18-parameter</dt>
+	 * <dd>	beam pos (x,y,z), beam dir (t,p), gamma offset,
+	 *  delta pos, delta dir, delta offset,
+	 *  detector pos, detector normal, detector fast axis angle from horizontal</dd>
+	 * </dl>
+	 * @param two
+	 * @param n only values of 8, 10, 18 are supported
+	 * @return parameters
+	 */
+	public static double[] getTwoCircleParameters(TwoCircleDetector two, int n) {
+		double[] params = new double[n];
+		int i = 0;
+		double[] a;
+		Vector3d v;
+		switch (n) {
+		case 8:
+			a = getAngles(two.beamDir);
+			params[i++] = a[0];
+			params[i++] = a[1];
+			break;
+		case 10:
+			a = getAngles(two.beamDir);
+			params[i++] = a[0];
+			params[i++] = a[1];
+			a = getAngles(two.deltaDir);
+			params[i++] = a[0];
+			params[i++] = a[1];
+			break;
+		case 18:
+			params[i++] = two.beamPos.x;
+			params[i++] = two.beamPos.y;
+			params[i++] = two.beamPos.z;
+			a = getAngles(two.beamDir);
+			params[i++] = a[0];
+			params[i++] = a[1];
+			params[i++] = two.gammaOff;
+			params[i++] = two.deltaPos.x;
+			params[i++] = two.deltaPos.y;
+			params[i++] = two.deltaPos.z;
+			a = getAngles(two.deltaDir);
+			params[i++] = a[0];
+			params[i++] = a[1];
+			params[i++] = two.deltaOff;
+			break;
+		default:
+			throw new IllegalArgumentException("Number of parameters not specified correctly");
+		}
+	
+		params[i++] = two.detectorPos.x;
+		params[i++] = two.detectorPos.y;
+		params[i++] = two.detectorPos.z;
+		v = new Vector3d(0, 0, -1);
+		two.detectorOri.transform(v);
+		a = getAngles(v);
+		params[i++] = a[0];
+		params[i++] = a[1];
+		v.set(-1, 0, 0);
+		two.detectorOri.transform(v);
+		params[i++] = Math.toDegrees(Math.asin(v.y));
+//		System.err.println("Params: " + Arrays.toString(params));
+		return params;
+	}
 }

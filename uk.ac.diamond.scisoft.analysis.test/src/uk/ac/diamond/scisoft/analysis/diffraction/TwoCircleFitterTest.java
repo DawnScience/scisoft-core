@@ -61,7 +61,7 @@ public class TwoCircleFitterTest {
 		double[] init = new double[] {0, 0, 0, 0, 0, -0.5,
 				-1000, 0, 0, 90, 180, 0.5,
 				1000, 0, 1000, 180-9, -90, 0};
-		TwoCircleFitter.setupTwoCircle(dt, init);
+		TwoCircleDetector.setupTwoCircle(dt, init);
 
 		// check for minima in many dimensions
 		for (int np : new int[] {8, 10, 18}) {
@@ -86,6 +86,9 @@ public class TwoCircleFitterTest {
 		}
 	}
 
+	private static double R_TOL = 1e-4;
+	private static double A_TOL = 1e-8;
+
 	@Test
 	public void testFitter() {
 		DetectorProperties prop = new DetectorProperties(100, 0, 0, 195, 487, 0.172, 0.172);
@@ -96,23 +99,25 @@ public class TwoCircleFitterTest {
 		 * delta pos, delta dir, delta offset,
 		 * detector pos, detector normal, detector fast axis angle from horizontal
 		 */
-		TwoCircleFitter.setupTwoCircle(dt, 0, 950, 0, 0, 0, 1,
-				-970, 950, 0, 90, 180, 0,
-				970 + 33.54, 0, 535, 180-35, 0, 90);
+		double[] init = new double[] {0, 950, 0, 0, 0, 1,
+			-970, 950, 0, 90, 180, 0,
+			970 + 33.54, 0, 535, 180-35, 0, 90};
+		TwoCircleDetector.setupTwoCircle(dt, init);
 
 		Random rnd = new Random(123457L);
-		for (int i = 0; i < n; i++) {
-			dt.updateDetectorProperties(ndp, gamma[i], delta[i]);
-			double[] bc = ndp.getBeamCentreCoords();
-			x[i] = bc[0] + rnd.nextGaussian();
-			y[i] = bc[1] + rnd.nextGaussian();
-		}
 
 		for (int np : new int[] {8, 10}) {
+			for (int i = 0; i < n; i++) {
+				dt.updateDetectorProperties(ndp, gamma[i], delta[i]);
+				double[] bc = ndp.getBeamCentreCoords();
+				x[i] = bc[0] + 0.007*rnd.nextGaussian();
+				y[i] = bc[1] + 0.007*rnd.nextGaussian();
+			}
+
 			TwoCircleDetector fdt = TwoCircleFitter.fitDetector(prop, dt, np, gamma, delta, x, y);
 			System.err.println(dt);
 			System.err.println(fdt);
-//			assertTrue(dt.isClose(fdt, 1e-10, 1e-10));
+			assertTrue(dt.isClose(fdt, R_TOL, A_TOL));
 	
 			// now fix points and move detector
 			checkDetectorFitter(fdt, np, prop, ndp,
@@ -129,7 +134,7 @@ public class TwoCircleFitterTest {
 
 	private void checkDetectorFitter(TwoCircleDetector dt, int np, DetectorProperties prop, DetectorProperties ndp,
 			double... p) {
-		TwoCircleFitter.setupTwoCircle(dt, p);
+		TwoCircleDetector.setupTwoCircle(dt, p);
 		int n = gamma.length;
 		for (int i = 0; i < n; i++) {
 			dt.updateDetectorProperties(ndp, gamma[i], delta[i]);
@@ -141,6 +146,6 @@ public class TwoCircleFitterTest {
 		TwoCircleDetector fdt = TwoCircleFitter.fitDetector(prop, dt, np, gamma, delta, x, y);
 		System.err.println(dt);
 		System.err.println(fdt);
-//		assertTrue(dt.isClose(fdt, 5e-4, 5e-4));
+		assertTrue(dt.isClose(fdt, R_TOL, A_TOL));
 	}
 }

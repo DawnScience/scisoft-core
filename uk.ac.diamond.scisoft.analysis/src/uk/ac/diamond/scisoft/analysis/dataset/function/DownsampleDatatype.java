@@ -9,42 +9,30 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset.function;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
 /**
  * Enumerations for down-sample datatypes
  */
 public enum DownsampleDatatype {
-	BOOL,
-	INTEGER,
-	INTEGER8,
-	INTEGER16,
-	INTEGER32,
-	INTEGER64,
-	FLOAT,
-	FLOAT32,
-	FLOAT64;
+	BOOL(Dataset.BOOL),
+	INTEGER(Dataset.INT),
+	INTEGER8(Dataset.INT8),
+	INTEGER16(Dataset.INT16),
+	INTEGER32(Dataset.INT32),
+	INTEGER64(Dataset.INT64),
+	FLOAT(Dataset.FLOAT),
+	FLOAT32(Dataset.FLOAT32),
+	FLOAT64(Dataset.FLOAT64);
 
-	private static Map<DownsampleDatatype, Integer> datatype;
+	int datatype;
 
-	static {
-		Map<DownsampleDatatype, Integer> aMap = new HashMap<DownsampleDatatype, Integer>();
-		aMap.put(BOOL, Dataset.BOOL);
-		aMap.put(INTEGER, Dataset.INT);
-		aMap.put(INTEGER16, Dataset.INT16);
-		aMap.put(INTEGER32, Dataset.INT32);
-		aMap.put(INTEGER64, Dataset.INT64);
-		aMap.put(FLOAT, Dataset.FLOAT);
-		aMap.put(FLOAT32, Dataset.FLOAT32);
-		aMap.put(FLOAT64, Dataset.FLOAT64);
-		datatype = Collections.unmodifiableMap(aMap);
+	DownsampleDatatype(int datatype) {
+		this.datatype = datatype;
 	}
 
-	public static int getDatasetType(DownsampleDatatype type) {
-		return datatype.get(type);
+	public int getDatatype() {
+		return datatype;
 	}
+
 }

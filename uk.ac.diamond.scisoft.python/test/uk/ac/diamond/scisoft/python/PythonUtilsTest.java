@@ -19,6 +19,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.python.core.Py;
 import org.python.core.PyInteger;
+import org.python.core.PyList;
+import org.python.core.PyObject;
 import org.python.core.PySlice;
 import org.python.core.PySystemState;
 import org.python.core.PyTuple;
@@ -87,6 +89,9 @@ public class PythonUtilsTest {
 		assertArrayEquals(new int[] {2, 1, 5, 3, 1}, b.getShape());
 
 		b = PythonUtils.getSlice(a, new PyTuple(new PySlice(), Py.None, Py.Ellipsis, new PyInteger(-1), Py.None));
+		assertArrayEquals(new int[] {2, 1, 5, 3, 1}, b.getShape());
+
+		b = PythonUtils.getSlice(a, new PyList(new PyObject[] {new PySlice(), Py.None, Py.Ellipsis, new PyInteger(-1), Py.None}));
 		assertArrayEquals(new int[] {2, 1, 5, 3, 1}, b.getShape());
 
 		a = DatasetFactory.createFromObject(1);

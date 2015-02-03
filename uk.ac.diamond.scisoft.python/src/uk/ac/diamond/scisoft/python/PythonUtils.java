@@ -31,7 +31,6 @@ import org.python.core.PySequence;
 import org.python.core.PySequenceList;
 import org.python.core.PySlice;
 import org.python.core.PyString;
-import org.python.core.PyTuple;
 
 /**
  * Class of utilities for interfacing with Jython
@@ -108,7 +107,7 @@ public class PythonUtils {
 	 * @return slice array
 	 */
 	private static SliceData convertPySlicesToSlice(final PyObject indexes, final int[] shape) {
-		PyObject indices[] = (indexes instanceof PyTuple) ? ((PyTuple) indexes).getArray() : new PyObject[] { indexes };
+		PyObject indices[] = indexes instanceof PySequenceList ? ((PySequenceList) indexes).getArray() : new PyObject[] { indexes };
 
 		int orank = shape.length;
 		SliceData slice = new SliceData();

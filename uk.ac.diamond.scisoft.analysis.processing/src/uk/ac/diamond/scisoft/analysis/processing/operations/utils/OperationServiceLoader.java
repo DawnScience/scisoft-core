@@ -39,11 +39,11 @@ public class OperationServiceLoader {
 	public OperationServiceLoader () {
 	}
 
-	public IImageFilterService getImageFilterService() {
+	public static IImageFilterService getImageFilterService() {
 		return imageFilterService;
 	}
 
-	public IImageTransform getImageTransformService() {
+	public static IImageTransform getImageTransformService() {
 		return imageTransformService;
 	}
 }

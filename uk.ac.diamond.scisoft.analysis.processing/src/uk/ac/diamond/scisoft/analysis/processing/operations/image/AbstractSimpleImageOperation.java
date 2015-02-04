@@ -27,9 +27,9 @@ public abstract class AbstractSimpleImageOperation <T extends IOperationModel> e
 
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		if (imageFilterService == null)
-			imageFilterService = new OperationServiceLoader().getImageFilterService();
+			imageFilterService = OperationServiceLoader.getImageFilterService();
 		if (imageTransformService == null)
-			imageTransformService = new OperationServiceLoader().getImageTransformService();
+			imageTransformService = OperationServiceLoader.getImageTransformService();
 
 		IDataset out = processImage(input, monitor);
 		copyMetadata(input, out);

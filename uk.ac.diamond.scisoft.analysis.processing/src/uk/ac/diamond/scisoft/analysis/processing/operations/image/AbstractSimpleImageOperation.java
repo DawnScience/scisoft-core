@@ -8,9 +8,9 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing.operations.image;
 
-import org.dawb.common.services.ServiceManager;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.image.IImageFilterService;
+import org.eclipse.dawnsci.analysis.api.image.IImageTransform;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -18,25 +18,25 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
-public abstract class AbstractSimpleImageOperation<T extends IOperationModel> extends AbstractOperation<IOperationModel,OperationData> {
+import uk.ac.diamond.scisoft.analysis.processing.operations.utils.OperationServiceLoader;
 
-	IImageFilterService service = null;
+public abstract class AbstractSimpleImageOperation <T extends IOperationModel> extends AbstractOperation<IOperationModel, OperationData> {
+
+	private IImageFilterService imageFilterService;
+	private IImageTransform imageTransformService;
 
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
-		if (service == null) {
-			try { 
-				service = (IImageFilterService)ServiceManager.getService(IImageFilterService.class);
-			} catch (Exception e) {
-				throw new OperationException(this, "Could not get image processing service");
-			}
-		}
-		
-		IDataset out = processImage(input, service);
+		if (imageFilterService == null)
+			imageFilterService = new OperationServiceLoader().getImageFilterService();
+		if (imageTransformService == null)
+			imageTransformService = new OperationServiceLoader().getImageTransformService();
+
+		IDataset out = processImage(input, monitor);
 		copyMetadata(input, out);
 		return new OperationData(out);
 	}
-	
-	public abstract IDataset processImage(IDataset dataset, IImageFilterService service);
+
+	public abstract IDataset processImage(IDataset dataset, IMonitor monitor);
 
 	@Override
 	public OperationRank getInputRank() {
@@ -48,4 +48,11 @@ public abstract class AbstractSimpleImageOperation<T extends IOperationModel> ex
 		return OperationRank.TWO;
 	}
 
+	protected IImageFilterService getImageFilterService() {
+		return imageFilterService;
+	}
+
+	protected IImageTransform getImageTransformService() {
+		return imageTransformService;
+	}
 }

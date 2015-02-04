@@ -10,21 +10,18 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.image;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.image.IImageFilterService;
+import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 
 public class GaussianBlurOperation extends AbstractSimpleImageOperation<KernelWidthModel> {
 
-	
-	IImageFilterService service = null;
-	
 	@Override
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.GaussianBlurOperation";
 	}
 
 	@Override
-	public IDataset processImage(IDataset dataset,
-			IImageFilterService service) {
-
+	public IDataset processImage(IDataset dataset, IMonitor monitor) {
+		IImageFilterService service = getImageFilterService();
 		return service.filterGaussianBlur(dataset, -1, ((KernelWidthModel)model).getWidth());
 	}
 }

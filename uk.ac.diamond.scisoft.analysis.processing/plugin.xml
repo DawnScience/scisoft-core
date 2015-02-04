@@ -420,6 +420,14 @@
             id="uk.ac.diamond.scisoft.analysis.processing.externaldata"
             name="External Data">
       </category>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.image.RotateImageOperation"
+            description="Rotates an image by a certain angle around the image centre"
+            icon="icons/shape_rotate_clockwise.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.RotateImageOperation"
+            name="Image Rotation"
+            visible="true">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

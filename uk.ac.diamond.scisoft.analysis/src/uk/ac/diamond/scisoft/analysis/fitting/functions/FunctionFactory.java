@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
+import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunctionFactoryExtensionService;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +69,29 @@ public final class FunctionFactory {
 	}
 
 	private static final Logger logger = LoggerFactory.getLogger(FunctionFactory.class);
-	
+
+	// Not for public use: only used by OSGI
+	public FunctionFactory() {
+
+	}
+
+	/**
+	 * Provides OSGI with pointer to the extension service from which function
+	 * will be loaded (Injected by OSGI).
+	 * @param lf
+	 */
+	public static void setFunctionFactoryService(IFunctionFactoryExtensionService lf) {
+		try {
+			/**
+			 * Tell the extension points to load in.
+			 */
+			if (lf != null)
+				lf.registerExtensionPoints();
+		} catch (Throwable t) {
+			logger.error("Problem getting extension service");
+		}
+	}
+
 	/**
 	 * Register functions with factory.
 	 * @param classes

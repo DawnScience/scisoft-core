@@ -18,6 +18,7 @@
       </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="function" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -48,16 +49,33 @@
 
    <element name="function">
       <complexType>
-         <attribute name="class" type="string">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Class file which defines the function.
+                  The fully qualified class name of the file defining this function.
 
 For sanity, the new functions should extend AFunction (which is the base implementation of IFunction).
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn="uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction:org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction"/>
                </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for the function (can be same as fully qualified class name.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Name of the function.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

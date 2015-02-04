@@ -6,7 +6,7 @@
          <meta.schema plugin="uk.ac.diamond.scisoft.analysis" id="uk.ac.diamond.scisoft.analysis.function" name="Function"/>
       </appinfo>
       <documentation>
-         [Enter description of this extension point.]
+         Interface to allow new functions (including peak functions) to be added to DAWN product.
       </documentation>
    </annotation>
 
@@ -17,6 +17,8 @@
          </appinfo>
       </annotation>
       <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+         </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
@@ -44,12 +46,29 @@
       </complexType>
    </element>
 
+   <element name="function">
+      <complexType>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  Class file which defines the function.
+
+For sanity, the new functions should extend AFunction (which is the base implementation of IFunction).
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction:org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appinfo>
          <meta.section type="since"/>
       </appinfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         1.8
       </documentation>
    </annotation>
 

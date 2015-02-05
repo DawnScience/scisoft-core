@@ -24,7 +24,7 @@ public class FunctionFactoryExtensionService implements IFunctionFactoryExtensio
 	
 	//Added the following two members following LoaderFactoryExt.Serv.
 	static {
-		System.out.println("Starting function factory extension service");
+		System.out.println("Starting function factory extension service...");
 	}
 	public FunctionFactoryExtensionService() {
 		// Important do nothing here, OSGI may start the service more than once.

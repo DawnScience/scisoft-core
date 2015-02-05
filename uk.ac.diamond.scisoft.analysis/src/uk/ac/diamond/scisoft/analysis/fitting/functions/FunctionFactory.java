@@ -206,6 +206,7 @@ public final class FunctionFactory {
 	 * @param functionName
 	 * @return name
 	 */
+	@Deprecated
 	public static Class<? extends IFunction> getClass(String functionName) {
 		return FUNCTIONS.get(functionName);
 	}
@@ -217,6 +218,7 @@ public final class FunctionFactory {
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
 	 */
+	@Deprecated
 	public static String getName(Class<? extends IFunction> clazz) throws Exception {
 		IFunction function = clazz.newInstance();
 		return function.getName();

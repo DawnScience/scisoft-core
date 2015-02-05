@@ -26,6 +26,11 @@ public class RotateImageModel extends AbstractOperationModel {
 		return unit;
 	}
 	public void setUnit(AngleUnit unit) {
+		if (unit == AngleUnit.DEGREE) {
+			setAngle(Math.toDegrees(angle));
+		} else if (unit == AngleUnit.RADIAN) {
+			setAngle(Math.toRadians(angle));
+		}
 		firePropertyChange("angleUnit", this.unit, this.unit = unit);
 	}
 	public boolean isResize() {

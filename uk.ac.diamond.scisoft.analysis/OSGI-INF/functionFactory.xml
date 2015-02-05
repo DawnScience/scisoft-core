@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="Function Factory service injector">
+   <implementation class="uk.ac.diamond.scisoft.analysis.fitting.functions.FunctionFactory"/>
+   <reference bind="setFunctionFactoryService" cardinality="1..1" interface="org.eclipse.dawnsci.analysis.api.fitting.functions.IFunctionFactoryExtensionService" name="IFunctionFactoryExtensionService" policy="static"/>ce>
+</scr:component>

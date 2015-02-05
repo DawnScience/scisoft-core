@@ -43,9 +43,11 @@ import org.slf4j.LoggerFactory;
 public final class FunctionFactory {
 
 	private static final Map<String, Class<? extends IFunction>> FUNCTIONS;
+	private static final Map<String, Class<? extends IPeak>> PEAKS;
 	static {
 		
 		FUNCTIONS = new TreeMap<String, Class<? extends IFunction>>();
+		PEAKS = new TreeMap<String, Class<? extends IPeak>>();
 		/**
 		 * Functions *must* have a zero argument constructor.
 		 */
@@ -108,7 +110,7 @@ public final class FunctionFactory {
 	}
 	
 	/**
-	 * Call to register external functions with the factory
+	 * Call to register external functions with the factory in function (and peak) maps
 	 * 
 	 * @param clazz
 	 * @throws Exception
@@ -116,15 +118,54 @@ public final class FunctionFactory {
 	public static void registerFunction(Class<? extends IFunction> clazz) throws Exception {
 		final IFunction function = clazz.newInstance();
 		final String    name     = function.getName();
+		//Add function to FUNCTION map
 		if (!FUNCTIONS.containsKey(name)) {
 			FUNCTIONS.put(name, clazz);
 		} else {
-			throw new Exception("The function "+name+" is registered twice!!");
-		}	
+			throw new Exception("The function "+name+" is registered twice!");
+		}
+		//If the class is a Peak, add function to PEAK map
+		if (function instanceof IPeak) {
+			if (!PEAKS.containsKey(name)) {
+				PEAKS.put(name, (Class<? extends IPeak>) clazz);
+			} else {
+				throw new Exception("The peak "+name+" is registered twice!");
+			}
+		}
 	}
-
+	
+	/**
+	 * Returns the complete list of function names registered with the factory
+	 * @return Collection of function names (strings)
+	 */
 	public static Collection<String> getFunctionNames() {
 		return FUNCTIONS.keySet();
+	}
+	
+	/**
+	 * Returns the complete set of functions with their names and classes
+	 * registered with the factory
+	 * @return Map of names (strings) and classes (IFunction)
+	 */
+	public static Map<String, Class<? extends IFunction>> getFunctions() {
+		return FUNCTIONS;
+	}
+	
+	/**
+	 * Returns the list of peak functions registered with the factory
+	 * @return Collection of strings of peak function names
+	 */
+	public static Collection<String> getPeakFunctionNames() {
+		return PEAKS.keySet();
+	}
+	
+	/**
+	 * Returns the complete set of peak functions with their names and classes
+	 * registered with the factory
+	 * @return Map of names (strings) and classes (IPeak)
+	 */
+	public static Map<String, Class<? extends IPeak>> getPeakFunctions() {
+		return PEAKS;
 	}
 	
 	/**
@@ -152,6 +193,7 @@ public final class FunctionFactory {
 	 * Returns the no argument constructor for the function
 	 * @return AFunction
 	 */
+	@Deprecated
 	public static IFunction getFunction(String name, IParameter[] args) throws Exception {
 		Class<? extends IFunction> clazz = FUNCTIONS.get(name);
 		
@@ -179,5 +221,34 @@ public final class FunctionFactory {
 		IFunction function = clazz.newInstance();
 		return function.getName();
 	}
-
+	
+	/**
+	 * Returns a class implementing IFunction based on the name supplied 
+	 * @param functionName
+	 * @return Function class
+	 * @throws Exception - if named function is not registered
+	 */
+	public static Class<? extends IFunction> getClassForFunctionName(String functionName) throws Exception {
+		Class<? extends IFunction> functionClass  = FUNCTIONS.get(functionName);
+		
+		if (functionClass == null) {
+			throw new Exception("There is no function with the name "+functionName+" registered!");
+		}
+		return functionClass;
+	}
+	
+	/**
+	 * Returns a class implementing IFunction based on the name supplied 
+	 * @param peakFunctionName
+	 * @return Peak function class
+	 * @throws Exception - if named peak function is not registered
+	 */
+	public static Class<? extends IPeak> getClassForPeakFunctionName(String peakFunctionName) throws Exception {
+		Class<? extends IPeak> peakClass = PEAKS.get(peakFunctionName);
+		
+		if (peakClass == null) {
+			throw new Exception("There is no function with the name "+peakFunctionName+" registered!");
+		}
+		return peakClass;
+	}
 }

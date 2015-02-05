@@ -10,7 +10,7 @@ Capabilities
  * Indexing
  * Slicing (now returns views)
  * Boolean dataset selection
- * Flat index integer dataset selection
+ * Some advanced integer indexing
  * Arithmetic operations
  * Comparison and logic operations
  * Mathematical and statistical functions

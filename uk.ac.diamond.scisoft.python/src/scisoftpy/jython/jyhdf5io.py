@@ -37,6 +37,25 @@ from ..nexus.hdf5 import HDF5dataset as _hdataset
 
 from jycore import asarray, _isslice, _getdtypefromjdataset, _wrapout, Sciwrap
 
+def _toslice(rank, key):
+    '''Transform key to proper slice if necessary
+    '''
+    if rank == 1:
+        if isinstance(key, int):
+            return False, key
+        if isinstance(key, (tuple, list)):
+            nk = len(key)
+            if nk == 1:
+                key = key[0]
+            elif nk > 1:
+                raise IndexError, "too many indices"
+        if isinstance(key, slice) or key is Ellipsis:
+            return True, key
+        return False, (key,)
+
+    return _isslice(rank, key), key
+
+
 class SDS(_hdataset):
     def __init__(self, dataset, attrs, parent):
         if isinstance(dataset, _jdnode):
@@ -64,29 +83,11 @@ class SDS(_hdataset):
 
         _hdataset.__init__(self, dataset, shape, dtype, maxshape, attrs, parent)
 
-    def _toslice(self, key):
-        '''Transform key to proper slice if necessary
-        '''
-        if self.rank == 1:
-            if isinstance(key, list) and len(key) == 1:
-                key = key[0]
-            if isinstance(key, slice) or key is Ellipsis:
-                return True, key
-            if isinstance(key, tuple):
-                if len(key) > 1:
-                    raise IndexError, "too many indices"
-                return False, key
-            return False, (key,)
-
-        if _isslice(self.rank, self.shape, key):
-            return True, key
-        return False, key
-
     @_wrapout
     def __getitem__(self, key):
         data = self._getdata()
         if isinstance(data, _ldataset):
-            isslice,key = self._toslice(key)
+            isslice, key = _toslice(self.rank, key)
             if not isslice: # single item
                 key = tuple([ slice(k,k+1) for k in key ])
                 v = _getslice(data, key)

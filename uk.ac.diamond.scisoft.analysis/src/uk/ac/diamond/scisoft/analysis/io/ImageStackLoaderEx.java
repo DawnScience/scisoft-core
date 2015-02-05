@@ -180,6 +180,8 @@ public class ImageStackLoaderEx implements ILazyLoader {
 
 		// dataset we will return
 		Dataset result = DatasetFactory.zeros(newShape, dtype);
+		if (result.getSize() == 0)
+			return result;
 
 		int [] resultStart = new int[newShape.length];
 

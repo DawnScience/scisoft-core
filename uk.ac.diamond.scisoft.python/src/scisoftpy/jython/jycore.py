@@ -31,6 +31,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils as _dsutils
 from uk.ac.diamond.scisoft.python.PythonUtils import convertToJava as _cvt2j
 from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
 from uk.ac.diamond.scisoft.python.PythonUtils import setSlice as _setslice
+from uk.ac.diamond.scisoft.python.PythonUtils import convertToSlice as _cvt2js
 
 import org.apache.commons.math3.complex.Complex as _jcomplex #@UnresolvedImport
 
@@ -182,13 +183,10 @@ def _jinput(arg): # strip for java input
     return arg
 
 def _joutput(result): # wrap java output
-    if type(result) is _types.ListType:
-        return [ Sciwrap(r) for r in result ]
-    elif type(result) is _types.TupleType:
+    t = type(result)
+    if t is _types.ListType or t is _types.TupleType or isinstance(result, _jlist):
         return tuple([ Sciwrap(r) for r in result ])
-    elif isinstance(result, _jlist):
-        return [ Sciwrap(r) for r in result ]
-    elif type(result) is _arraytype:
+    elif t is _arraytype:
         return [ Sciwrap(r) for r in result if r is not None ]
     return Sciwrap(result)
 
@@ -315,19 +313,61 @@ def asDatasetDict(dsdict):
         rdict[k] = fromDS(dsdict[k])
     return rdict
 
-def _isslice(rank, shape, key):
-    if rank > 0:
-        key = asIterable(key)
+def _toslice(rank, key):
+    '''Transform key to proper slice if necessary
+    '''
+    if rank == 1:
+        if isinstance(key, int):
+            return False, key
+        if isinstance(key, (tuple, list)):
+            nk = len(key)
+            if nk == 1:
+                key = key[0]
+            elif nk > 1:
+                raise IndexError, "too many indices"
+        if isinstance(key, slice) or key is Ellipsis:
+            return True, key
+        if isinstance(key, list):
+            key = asarray(key)
+        if isinstance(key, ndarray):
+            key = key._jdataset()
+        return False, key
 
-        if len(key) < rank:
+    adv = False
+    if isinstance(key, list): # strip any arrays
+        adv = True
+        key = [k if isinstance(k, slice) else asarray(k)._jdataset() for k in key]
+    elif isinstance(key, tuple): # strip any arrays
+        nkeys = []
+        for k in key:
+            if isinstance(k, (tuple, list)):
+                k = asarray(k)
+            if isinstance(k, ndarray):
+                nkeys.append(k._jdataset())
+                adv = True
+            else:
+                nkeys.append(k)
+        key = nkeys
+    elif isinstance(key, ndarray):
+        return False, key._jdataset()
+
+    if adv:
+        return False, [k if not isinstance(k, slice) else _cvt2js(k) for k in key]
+    return _isslice(rank, key), key
+
+def _isslice(rank, key):
+    if not isinstance(key, (tuple, list)):
+        key = (key,)
+    nk = len(key)
+    if rank > 0:
+        if nk < rank:
             return True
-        elif len(key) > rank and newaxis not in key:
+        elif nk > rank and newaxis not in key:
             raise IndexError, "Too many indices"
     else:
-        if key is Ellipsis:
-            return True
-        key = asIterable(key)
-        if len(key) > 0:
+        if nk > 0:
+            if key[0] is Ellipsis:
+                return True
             raise ValueError, "Cannot slice 0-d dataset" 
 
     for k in key:
@@ -944,39 +984,22 @@ class ndarray(object):
             return self.shape[0]
         raise TypeError, "len() of unsized object"
 
-    def _toslice(self, key):
-        '''Transform key to proper slice if necessary
-        '''
-        rank = self.ndim
-        if rank == 1:
-            if isinstance(key, list) and len(key) == 1:
-                key = key[0]
-            if isinstance(key, slice) or key is Ellipsis:
-                return True, key
-            if isinstance(key, tuple):
-                if len(key) > 1:
-                    raise IndexError, "too many indices"
-                return False, key
-            return False, (key,)
-
-        if _isslice(rank, self.shape, key):
-            return True, key
-        return False, key
-
     @_wrapout
     def __getitem__(self, key):
-        if isinstance(key, ndarray):
-            key = key._jdataset()
-            if isinstance(key, _booleands):
-                return self.__dataset.getByBoolean(key)
-            if isinstance(key, _integerds):
-                return self.__dataset.getBy1DIndex(key)
-# FIXME add integers indexing
-        isslice, key = self._toslice(key)
+# FIXME add advanced integers indexing
+        isslice, key = _toslice(self.ndim, key)
         try:
-            if isslice:
-                return _getslice(self.__dataset, key)
-            return self.__dataset.getObject(key)
+            if not isslice:
+                if isinstance(key, _booleands):
+                    return self.__dataset.getByBoolean(key)
+                if isinstance(key, _integerds):
+                    return self.__dataset.getBy1DIndex(key)
+                if isinstance(key, (tuple, list)):
+                    if len(key) > 0 and isinstance(key[0], _integerds):
+                        return self.__dataset.getByIndexes(key)
+                return self.__dataset.getObject(key)
+    
+            return _getslice(self.__dataset, key)
         except _jarrayindex_exception:
             raise IndexError
 
@@ -984,21 +1007,24 @@ class ndarray(object):
         value = fromDS(value)
         if isinstance(value, ndarray):
             value = value._jdataset()
-
-        if isinstance(key, ndarray):
-            key = key._jdataset()
-            if isinstance(key, _booleands):
-                return self.__dataset.setByBoolean(value, key)
-            if isinstance(key, _integerds): #FIXME
-                return self.__dataset.setBy1DIndex(value, key)
-
-        isslice, key = self._toslice(key)
-        try:
-            if isslice:
-                _setslice(self.__dataset, value, key)
-                return self
+        else:
             value = _cvt2j(value)
-            return self.__dataset.set(value, key)
+
+        isslice, key = _toslice(self.ndim, key)
+
+        try:
+            if not isslice:
+                if isinstance(key, _booleands):
+                    return self.__dataset.setByBoolean(value, key)
+                if isinstance(key, _integerds):
+                    return self.__dataset.setBy1DIndex(value, key)
+                if isinstance(key, (tuple, list)):
+                    if len(key) > 0 and isinstance(key[0], _integerds):
+                        return self.__dataset.setByIndexes(value, key)
+                return self.__dataset.set(value, key)
+    
+            _setslice(self.__dataset, value, key)
+            return self
         except _jarrayindex_exception:
             raise IndexError
 

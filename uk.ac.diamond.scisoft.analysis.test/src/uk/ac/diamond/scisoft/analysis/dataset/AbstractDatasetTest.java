@@ -949,6 +949,14 @@ public class AbstractDatasetTest {
 			assertEquals(s.getElementLongAbs(is.index), t.getElementLongAbs(it.index));
 		}
 
+		s = a.getSlice(new int[]{0}, new int[] {10}, null);
+		assertEquals(1, s.getShape().length);
+		assertEquals(10, s.getShape()[0]);
+
+		s = a.getSlice(new int[]{-1000}, new int[] {10}, null);
+		assertEquals(1, s.getShape().length);
+		assertEquals(10, s.getShape()[0]);
+
 		s = a.getSlice(new int[] {9}, null, new int[] {-1});
 		assertEquals(1, s.getShape().length);
 		assertEquals(10, s.getShape()[0]);
@@ -989,32 +997,14 @@ public class AbstractDatasetTest {
 			assertEquals(s.getElementLongAbs(is.index), t.getElementLongAbs(it.index));
 		}
 
-		try {
-			t = a.getSlice(new Slice(2000));
-			fail("No exception thrown");
-		} catch (IllegalArgumentException iae) {
-			// passed
-		} catch (Exception e) {
-			fail("Wrong exception type passed, this should give an IllegalArgumentException");
-		}
+		t = a.getSlice(new Slice(2000));
+		assertArrayEquals(a.getShapeRef(), t.getShapeRef());
 
-		try {
-			t = a.getSlice(new Slice(12, 10, 3));
-			fail("No exception thrown");
-		} catch (IllegalArgumentException iae) {
-			// passed
-		} catch (Exception e) {
-			fail("Wrong exception type passed, this should give an IllegalArgumentException");
-		}
+		t = a.getSlice(new Slice(12, 10, 3));
+		assertArrayEquals(new int[] {0}, t.getShapeRef());
 
-		try {
-			t = a.getSlice(new Slice(2, 10, -3));
-			fail("No exception thrown");
-		} catch (IllegalArgumentException iae) {
-			// passed
-		} catch (Exception e) {
-			fail("Wrong exception type passed, this should give an IllegalArgumentException");
-		}
+		t = a.getSlice(new Slice(2, 10, -3));
+		assertArrayEquals(new int[] {0}, t.getShapeRef());
 
 		a.setShape(10, 10, 10);
 

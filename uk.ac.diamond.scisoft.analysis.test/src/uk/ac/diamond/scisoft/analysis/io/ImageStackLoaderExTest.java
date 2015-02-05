@@ -43,23 +43,19 @@ public class ImageStackLoaderExTest {
 
 		}
 
-		try {
-			String testScratchDirectoryName = TestUtils.setUpTest(ImageStackLoaderExTest.class, "test1DFiles", true);
+		String testScratchDirectoryName = TestUtils.setUpTest(ImageStackLoaderExTest.class, "test1DFiles", true);
 
 
-			int[] multipliers= new int[]{2,3};
-			String[] imageFilenames = makeFiles(testScratchDirectoryName, multipliers);
-			int[] dimensions = new int[] { imageFilenames.length };
-			ImageStackLoaderEx loaderEx = new ImageStackLoaderEx(dimensions, imageFilenames);
-			int[] step = null;
-			int[] shape = loaderEx.getShape();
-			int[] stop = null;
-			int[] start = shape.clone();
-			loaderEx.getDataset(null, new SliceND(shape, start, stop, step));
-			fail();
-		} catch (IllegalArgumentException ex) {
-
-		}
+		int[] multipliers= new int[]{2,3};
+		String[] imageFilenames = makeFiles(testScratchDirectoryName, multipliers);
+		int[] dimensions = new int[] { imageFilenames.length };
+		ImageStackLoaderEx loaderEx = new ImageStackLoaderEx(dimensions, imageFilenames);
+		int[] step = null;
+		int[] shape = loaderEx.getShape();
+		int[] stop = null;
+		int[] start = shape.clone();
+		Dataset d = loaderEx.getDataset(null, new SliceND(shape, start, stop, step));
+		assertEquals(0, d.getSize());
 	}
 
 	private void makeFile(String filePath, Object multiplier) throws ScanFileHolderException {

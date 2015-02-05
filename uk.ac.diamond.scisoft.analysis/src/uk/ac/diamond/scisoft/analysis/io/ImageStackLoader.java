@@ -93,6 +93,8 @@ public class ImageStackLoader implements ILazyLoader {
 		int[] newShape = slice.getShape();
 
 		Dataset result = DatasetFactory.zeros(newShape, dtype);
+		if (result.getSize() == 0)
+			return result;
 
 		IDataHolder data = null;
 		// FIXME this seems to be designed for three dimensions only

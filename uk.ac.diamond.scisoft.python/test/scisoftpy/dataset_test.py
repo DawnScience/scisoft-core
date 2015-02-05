@@ -224,6 +224,33 @@ class Test(unittest.TestCase):
         a[:2,1] = np.array([2,2])
         self.checkitems([2,2], a[:2,1])
 
+        a = np.arange(7)
+        c = range(7)
+        self.checkitems(c[::2], a[::2])
+        self.checkitems(c[0::2], a[0::2])
+        self.checkitems(c[3::2], a[3::2])
+        self.checkitems(c[6::2], a[6::2])
+        self.checkitems(c[6:6:2], a[6:6:2])
+        self.checkitems(c[7::2], a[7::2])
+        self.checkitems(c[-1::2], a[-1::2])
+        self.checkitems(c[-2::2], a[-2::2])
+        self.checkitems(c[::-2], a[::-2])
+        self.checkitems(c[0::-2], a[0::-2])
+        self.checkitems(c[3::-2], a[3::-2])
+        self.checkitems(c[6::-2], a[6::-2])
+        self.checkitems(c[6:6:-2], a[6:6:-2])
+        self.checkitems(c[7::-2], a[7::-2])
+        self.checkitems(c[-1::-2], a[-1::-2])
+        self.checkitems(c[-2::-2], a[-2::-2])
+        self.checkitems(a[::-2], a[:-8:-2])
+
+        a = np.arange(24).reshape(6,4)
+        self.assertEqual((6,4), a[:].shape)
+        self.assertEqual((6,4), a[:,].shape)
+        self.assertEqual((6,3), a[:,:3].shape)
+        self.assertEqual((0,3), a[4:2,:3].shape)
+        self.assertEqual((6,), a[:,3].shape)
+        self.assertEqual((0,), a[4:2,3].shape)
 
     def testArange(self):
         print "test arange"
@@ -783,37 +810,50 @@ class Test(unittest.TestCase):
         print 'test integer get and set'
         tm = np.array(self.mm).flatten()
 
-#        self.mm = [ [[0., 2.], [6., 12.]], [[20., 30.], [42., 56.]] ]
         d = tm[np.array([2, 4, 7])]
         self.checkitems([ 6., 20., 56. ], d)
-#        d = tm[np.array([2, 4, 7])]
-#        self.checkitems([ 6., 20., 56. ], d)
 
         tm[np.array([3, 4, 5, 6, 7])] = -2.3
-#        self.checkitems([ [[0., 2.], [6., -2.3]], [[-2.3, -2.3], [-2.3, -2.3]] ], tm)
         self.checkitems([ 0., 2., 6., -2.3, -2.3, -2.3, -2.3, -2.3 ], tm)
 
-#    def testIntegers(self):
-#        print 'test integers get and set'
-#        tm = np.array(self.mm)
-#
-#        d = tm[[1]]
-#        self.checkitems([[[20., 30.], [42., 56.]]], d)
-#
-#        d = tm[np.array([0, 1]), np.array([1, 1])]
-#        self.checkitems([[6.,  12.], [42.,  56.]], d)
-#
-#        d = tm[np.array([0, 1]), np.array([1, 1]), :1]
-#        self.checkitems([[6.], [42.]], d)
-#
-#        d = tm[np.array([[0, 1], [1, 1]]), np.array([[1, 1], [1, 0]]), :1]
-#        self.checkitems([[[6.], [42.]], [[42.], [20.]]], d)
-#
-#        d = tm[[[0, 1], [1, 1]], [[1, 1], [1, 0]], :1]
-#        self.checkitems([[[6.], [42.]], [[42.], [20.]]], d)
-#
-#        tm[np.array([[0, 1], [1, 1]]), np.array([[1, 1], [1, 0]]), :1] = -2.3
-#        self.checkitems([[[0., 2.], [-2.3, 12.]], [[-2.3, 30.], [-2.3, 56.]]], tm)
+    def testIntegers(self):
+        print 'test integers get and set'
+        a = np.array([8,9,10,11,12,13])
+        d = a[np.where(a > 10)]
+        self.checkitems([11, 12, 13], d)
+
+        a.shape = 3,2
+        d = a[np.where(a > 10)]
+        self.checkitems([11, 12, 13], d)
+
+        a[np.where(a > 10)] = -1
+        self.checkitems([[8,9],[10,-1], [-1, -1]], a)
+
+        # fancy indexing
+        a = np.array([8,9,10,11,12,13])
+        a.shape = 3,2
+        self.assertEquals(13, a[(2,1)])
+        d = a[(2,1),]
+        self.checkitems([[12, 13], [10, 11]], d)
+
+        tm = np.array(self.mm)
+        d = tm[[1]]
+        self.checkitems([[[20., 30.], [42., 56.]]], d)
+ 
+        d = tm[np.array([0, 1]), np.array([1, 1])]
+        self.checkitems([[6.,  12.], [42.,  56.]], d)
+ 
+        d = tm[np.array([0, 1]), np.array([1, 1]), :1]
+        self.checkitems([[6.], [42.]], d)
+ 
+        d = tm[np.array([[0, 1], [1, 1]]), np.array([[1, 1], [1, 0]]), :1]
+        self.checkitems([[[6.], [42.]], [[42.], [20.]]], d)
+ 
+        d = tm[[[0, 1], [1, 1]], [[1, 1], [1, 0]], :1]
+        self.checkitems([[[6.], [42.]], [[42.], [20.]]], d)
+ 
+        tm[np.array([[0, 1], [1, 1]]), np.array([[1, 1], [1, 0]]), :1] = -2.3
+        self.checkitems([[[0., 2.], [-2.3, 12.]], [[-2.3, 30.], [-2.3, 56.]]], tm)
 
     def testSelect(self):
         print 'test select'

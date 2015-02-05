@@ -16,6 +16,7 @@ import org.apache.commons.math3.complex.Complex;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
+import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
@@ -94,7 +95,7 @@ public class PythonUtils {
 	}
 
 	static class SliceData {
-		Slice[] slice;  // slices
+		SliceND slice;  // slices
 		boolean[] sdim; // flag which dimensions are sliced
 		int[] axes;  // new axes
 	}
@@ -128,7 +129,7 @@ public class PythonUtils {
 		}
 
 		int spare = orank - nc - ns; // number of spare dimensions
-		slice.slice = new Slice[orank];
+		slice.slice = new SliceND(shape);
 		slice.axes = new int[na];
 		slice.sdim = new boolean[orank]; // flag which dimensions are sliced
 
@@ -139,13 +140,11 @@ public class PythonUtils {
 		for (int j = 0; i < orank && j < indices.length; j++) {
 			PyObject index = indices[j];
 			if (index instanceof PyEllipsis) {
-				slice.sdim[i] = true;
-				slice.slice[i++] = null;
+				slice.sdim[i++] = true;
 				if (!hasEllipse) { // pad out with full slices on first ellipse
 					hasEllipse = true;
 					for (int k = 0; k < spare; k++) {
-						slice.sdim[i] = true;
-						slice.slice[i++] = null;
+						slice.sdim[i++] = true;
 					}
 				}
 			} else if (index instanceof PyInteger) {
@@ -157,14 +156,14 @@ public class PythonUtils {
 					n += shape[i];
 				}
 				slice.sdim[i] = false; // nb specifying indexes whilst using slices will reduce rank
-				slice.slice[i++] = new Slice(n, n + 1);
+				slice.slice.setSlice(i++, n, n + 1, 1);
 				c++;
 			} else if (index instanceof PySlice) {
 				PySlice pyslice = (PySlice) index;
 				slice.sdim[i] = true;
-				slice.slice[i++] = new Slice(pyslice.start instanceof PyNone ? null : ((PyInteger) pyslice.start).getValue(),
+				slice.slice.setSlice(i++, pyslice.start instanceof PyNone ? null : ((PyInteger) pyslice.start).getValue(),
 						pyslice.stop instanceof PyNone ? null : ((PyInteger) pyslice.stop).getValue(),
-						pyslice.step instanceof PyNone ? null : ((PyInteger) pyslice.step).getValue());
+						pyslice.step instanceof PyNone ? 1 : ((PyInteger) pyslice.step).getValue());
 			} else if (index instanceof PyNone) { // newaxis
 				slice.axes[a++] = (hasEllipse ? j + spare : j) - c;
 			} else {
@@ -182,6 +181,25 @@ public class PythonUtils {
 		}
 
 		return slice;
+	}
+
+	/**
+	 * @param pyslice
+	 * @return slice
+	 */
+	public static Slice convertToSlice(PySlice pyslice) {
+		return new Slice(pyslice.start instanceof PyNone ? null : ((PyInteger) pyslice.start).getValue(),
+					pyslice.stop instanceof PyNone ? null : ((PyInteger) pyslice.stop).getValue(),
+					pyslice.step instanceof PyNone ? null : ((PyInteger) pyslice.step).getValue());
+	}
+
+	/**
+	 * @param indexes
+	 * @param shape
+	 * @return N-D slice
+	 */
+	public static SliceND convertToSliceND(PyObject indexes, int[] shape) {
+		return convertPySlicesToSlice(indexes, shape).slice;
 	}
 
 	/**

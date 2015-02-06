@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -406,8 +407,12 @@ public class LoaderFactory {
 			if (loadImageStacks && holder!=null) {
 
 				if (holder.size()==1 && holder.getLazyDataset(0).getRank()==2 && !isH5(path)) {
-					final ILazyDataset stack = getImageStack(path, holder, mon);
-					if (stack!=null) holder.addDataset(stack.getName(), stack);
+					final Map<String,ILazyDataset> stack = getImageStack(path, holder, mon);
+					if (stack!=null) {
+						for (String name : stack.keySet()) {
+							holder.addDataset(name, stack.get(name));
+						}
+					}
 				}
 
 			}
@@ -557,32 +562,53 @@ public class LoaderFactory {
 	 * @return and image stack for 
 	 * @throws Exception
 	 */
-	public static final ILazyDataset getImageStack(final String filePath, IDataHolder holder, IMonitor mon) throws Exception {
+	public static final Map<String,ILazyDataset> getImageStack(final String filePath, IDataHolder holder, IMonitor mon) throws Exception {
 		
 		if (filePath==null) return null;
 		
-		// TODO FIXME - should the image stack be only files with a similar name?
-		// For instance each 0-9 character replaced with '\d' and a regex done?
-		// This would reduce the image stack to a more likely list of similar files 
-		// for directories with multiple collections.
-		final List<String> imageFilenames = new ArrayList<String>();
+		final Map<String, List<String>> imageFilenames = new TreeMap<String, List<String>>();
+		imageFilenames.put("Image Stack", new ArrayList<String>(31));
+		
 		final File   file  = new File(filePath);
 		final String ext  = FileUtils.getFileExtension(file.getName());
 		final File   par = file.getParentFile();
+		
+		Pattern pattern = Pattern.compile("(.+)_(\\d+)."+ext);
 		if (par.isDirectory()) {
 			for (String fName : par.list()) {
 				if (fName.endsWith(ext)) {
+					
 					final File f = new File(par,fName);
-					imageFilenames.add(f.getAbsolutePath());
+					String name  = "Image Stack";
+					
+					// Name will be something like 35873_M3S15_1_0001.cbf
+					// A string '35873_M3S15_1_' followed by a 4-digit number, followed by the file extension.
+					Matcher matcher = pattern.matcher(fName);
+					if (matcher.matches()) {
+						name = matcher.group(1);
+						if (!imageFilenames.containsKey(name)) {
+							imageFilenames.put(name, new ArrayList<String>(31));
+						}
+					} 
+					
+					imageFilenames.get(name).add(f.getAbsolutePath());
 				}
 			}
 		}
 		
-		if (imageFilenames.size() > 1) {
- 		    Collections.sort(imageFilenames, new SortNatural<String>(true));
-			ImageStackLoader loader = new ImageStackLoader(imageFilenames, holder, mon);
-			LazyDataset lazyDataset = new LazyDataset("Image Stack", loader.getDtype(), loader.getShape(), loader);
-			return lazyDataset;
+		if (imageFilenames.size() > 0) {
+			
+			Map<String,ILazyDataset> ret = new TreeMap<String,ILazyDataset>();
+			for (String name : imageFilenames.keySet()) {
+				final List<String> files = imageFilenames.get(name);
+				
+				if (files==null || files.size()<2) continue;
+	 			ImageStackLoader loader = new ImageStackLoader(files, holder, mon);
+				LazyDataset lazyDataset = new LazyDataset(name, loader.getDtype(), loader.getShape(), loader);
+				ret.put(name, lazyDataset);
+			}
+			
+			if (ret.size()>0) return ret;
 		}
 		return null;
 	}

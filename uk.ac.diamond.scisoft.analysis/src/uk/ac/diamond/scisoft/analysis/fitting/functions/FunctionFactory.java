@@ -60,6 +60,7 @@ public final class FunctionFactory {
 				uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian.class,
 				uk.ac.diamond.scisoft.analysis.fitting.functions.GaussianND.class,
 				uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian.class,
+				uk.ac.diamond.scisoft.analysis.fitting.functions.LorentzianSqr.class,
 				uk.ac.diamond.scisoft.analysis.fitting.functions.Offset.class,
 				uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII.class,
 				uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial.class,

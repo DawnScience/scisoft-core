@@ -121,15 +121,15 @@ public class LorentzianSqr extends APeak {
 		}
 	}
 
-	double widthPar, pos;
+	double halfWidthPar, pos; // 'height' already declared in APeak
 
 	// conversion between FWHM and parameter G in function:
-	private static final double CONST = 1./Math.sqrt(Math.sqrt(2.0) - 1.);
+	private static final double CONST = 0.5/Math.sqrt(Math.sqrt(2.0) - 1.);
 	@Override
 	protected void calcCachedParameters() {
 		pos = getParameterValue(POSN);
-		widthPar = getParameterValue(FWHM) * CONST;
-		height = getParameterValue(AREA) / (0.5 * Math.PI * widthPar);
+		halfWidthPar = getParameterValue(FWHM) * CONST;
+		height = getParameterValue(AREA) / (0.5 * Math.PI * halfWidthPar);
 
 		setDirty(false);
 	}
@@ -139,7 +139,7 @@ public class LorentzianSqr extends APeak {
 		if (isDirty())
 			calcCachedParameters();
 
-		double dist = (values[0] - pos) / widthPar;
+		double dist = (values[0] - pos) / halfWidthPar;
 		double denominatorSqrt = (dist * dist + 1);
 		return height / (denominatorSqrt * denominatorSqrt);
 	}
@@ -154,34 +154,20 @@ public class LorentzianSqr extends APeak {
 		int i = 0;
 		double[] buffer = data.getData();
 		while (it.hasNext()) {
-			double dist = (coords[0] - pos) / widthPar; 
+			double dist = (coords[0] - pos) / halfWidthPar; 
 			double denominatorSqrt = (dist * dist + 1);
 			buffer[i++] = height / (denominatorSqrt * denominatorSqrt);
 		}
 	}
 
-//	public double getHalfw() {
-//		return halfw;
-//	}
-//
-//	public void setHalfw(double halfw) {
-//		this.halfw = halfw;
-//	}
-
-	public double getPos() {
-		return pos;
-	}
-
-	public void setPos(double pos) {
-		this.pos = pos;
-	}
-
 	@Override
 	public int hashCode() {
+		if (isDirty())
+			calcCachedParameters();
 		final int prime = 31;
 		int result = super.hashCode();
 		long temp;
-		temp = Double.doubleToLongBits(widthPar);
+		temp = Double.doubleToLongBits(halfWidthPar);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		temp = Double.doubleToLongBits(pos);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -192,13 +178,15 @@ public class LorentzianSqr extends APeak {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
-			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		LorentzianSqr other = (LorentzianSqr) obj;
-		// other data members tested already in super.equals(..)
-		if (Double.doubleToLongBits(widthPar) != Double.doubleToLongBits(other.widthPar))
+		if (this .isDirty()) this .calcCachedParameters();
+		if (other.isDirty()) other.calcCachedParameters();
+		// call to super.equals(..) after calcCachedParameters(..): it tests dirty 
+		if (!super.equals(obj))
+			return false;
+		if (Double.doubleToLongBits(halfWidthPar) != Double.doubleToLongBits(other.halfWidthPar))
 			return false;
 		if (Double.doubleToLongBits(pos) != Double.doubleToLongBits(other.pos))
 			return false;

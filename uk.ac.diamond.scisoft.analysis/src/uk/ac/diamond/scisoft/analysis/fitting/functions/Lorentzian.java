@@ -167,6 +167,8 @@ public class Lorentzian extends APeak {
 
 	@Override
 	public int hashCode() {
+		if (isDirty())
+			calcCachedParameters();
 		final int prime = 31;
 		int result = super.hashCode();
 		long temp;
@@ -181,11 +183,14 @@ public class Lorentzian extends APeak {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
-			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		Lorentzian other = (Lorentzian) obj;
+		if (this. isDirty()) this. calcCachedParameters();
+		if (other.isDirty()) other.calcCachedParameters();
+		// call to super.equals(..) after calcCachedParameters(..): it tests dirty 
+		if (!super.equals(obj))
+			return false;
 		if (Double.doubleToLongBits(halfw) != Double.doubleToLongBits(other.halfw))
 			return false;
 		if (Double.doubleToLongBits(pos) != Double.doubleToLongBits(other.pos))

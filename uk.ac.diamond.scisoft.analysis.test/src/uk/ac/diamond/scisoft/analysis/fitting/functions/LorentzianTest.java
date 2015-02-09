@@ -32,9 +32,16 @@ public class LorentzianTest {
 		Assert.assertEquals(0.5 * h, f.val(23. - 1), ABS_TOL);
 		Assert.assertEquals(0.5 * h, f.val(23. + 1), ABS_TOL);
 
+		// test that equals(f2) works even if f2 is still "dirty" 
+		IFunction f2 = new Lorentzian(new double[] {23., 2., 1.2});
+		Assert.assertTrue(f.equals(f2));
+		
 		Dataset x = DatasetUtils.linSpace(-100+23, 100+23, 201, Dataset.FLOAT64);
 		Dataset v = DatasetUtils.convertToDataset(f.calculateValues(x));
 		double s = ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1));
 		Assert.assertEquals(1.2, s, 1e-2);
+
+		// test that calculateValues(dataset) gives same as f.val(double)
+		Assert.assertEquals(v.getDouble(0), f.val(x.getDouble(0)), ABS_TOL);
 	}
 }

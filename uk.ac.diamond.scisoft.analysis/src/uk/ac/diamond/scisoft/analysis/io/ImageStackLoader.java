@@ -106,6 +106,8 @@ public class ImageStackLoader implements ILazyLoader {
 		int[] resultStep = new int[] {1,1,1};
 		int n = lstart[0];
 		do {
+			
+			if (mon!=null && mon.isCancelled()) throw new Exception("Slicing cancelled!");
 			// load the file
 			if (loaderClass != null) {
 				try {

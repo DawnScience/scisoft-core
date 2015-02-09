@@ -82,6 +82,8 @@ import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
  */
 public class LoaderFactory {
 
+	private static ILoaderFactoryExtensionService extensionService;
+	
 	// Not for public use: only used by OSGI
 	public LoaderFactory() {
 		
@@ -96,8 +98,9 @@ public class LoaderFactory {
 			/**
 			 * Tell the extension points to load in.
 			 */
-			if (lf != null)
-				lf.registerExtensionPoints();
+			extensionService = lf;
+			if (extensionService != null) extensionService.registerExtensionPoints();
+			
 		} catch (Throwable t) {
 			logger.error("Problem getting extension service");
 		}
@@ -573,7 +576,10 @@ public class LoaderFactory {
 		final String ext  = FileUtils.getFileExtension(file.getName());
 		final File   par = file.getParentFile();
 		
-		Pattern pattern = Pattern.compile("(.+)_(\\d+)."+ext);
+		String patternPrefix = extensionService!=null
+				             ? extensionService.getStackExpression()
+				             : "(.+)_(\\d+)";
+		Pattern pattern = Pattern.compile(patternPrefix+"\\."+ext);
 		if (par.isDirectory()) {
 			for (String fName : par.list()) {
 				if (fName.endsWith(ext)) {

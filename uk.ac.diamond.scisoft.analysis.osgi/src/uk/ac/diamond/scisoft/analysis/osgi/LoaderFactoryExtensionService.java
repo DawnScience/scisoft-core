@@ -13,12 +13,16 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.io.ILoaderFactoryExtensionService;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
+import uk.ac.diamond.scisoft.analysis.osgi.preference.PreferenceConstants;
 
 public class LoaderFactoryExtensionService implements ILoaderFactoryExtensionService {
 
@@ -87,5 +91,20 @@ public class LoaderFactoryExtensionService implements ILoaderFactoryExtensionSer
 	@Override
 	public List<String> getExtensions() {
 		return extensions;
+	}
+
+	@Override
+	public String getStackExpression() {
+		
+		IPreferenceStore store = new ScopedPreferenceStore(InstanceScope.INSTANCE, "uk.ac.diamond.scisoft.analysis.osgi");
+		if (System.getProperty(PreferenceConstants.DATASET_REGEXP)!=null) {
+			String regexp = System.getProperty(PreferenceConstants.DATASET_REGEXP);
+			store.setValue(PreferenceConstants.DATASET_REGEXP, regexp);
+		}
+
+		String value = store.getString(PreferenceConstants.DATASET_REGEXP);
+		if (value==null || "".equals(value)) value = "(.+)_(\\d+).";
+
+		return value;
 	}
 }

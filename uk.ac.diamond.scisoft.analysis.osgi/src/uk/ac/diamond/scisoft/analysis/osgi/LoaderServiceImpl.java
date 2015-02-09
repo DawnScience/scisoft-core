@@ -11,16 +11,20 @@ package uk.ac.diamond.scisoft.analysis.osgi;
 import java.net.URL;
 import java.util.Collection;
 
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
+import uk.ac.diamond.scisoft.analysis.osgi.preference.PreferenceConstants;
 
 /**
  * Provides a class which will use any loaders available to load a particular file
@@ -113,4 +117,21 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 	public void clearSoftReferenceCache() {
 		LoaderFactory.clear();
 	}
+	
+
+	@Override
+	public String getStackExpression() {
+		
+		IPreferenceStore store = new ScopedPreferenceStore(InstanceScope.INSTANCE, "uk.ac.diamond.scisoft.analysis.osgi");
+		if (System.getProperty(PreferenceConstants.DATASET_REGEXP)!=null) {
+			String regexp = System.getProperty(PreferenceConstants.DATASET_REGEXP);
+			store.setValue(PreferenceConstants.DATASET_REGEXP, regexp);
+		}
+
+		String value = store.getString(PreferenceConstants.DATASET_REGEXP);
+		if (value==null || "".equals(value)) value = "(.+)_(\\d+).";
+
+		return value;
+	}
+
 }

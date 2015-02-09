@@ -21,5 +21,20 @@
                serviceClass="py4j.ClassLoaderService"></service>
       </serviceFactory>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="uk.ac.diamond.scisoft.analysis.rcp.preferences.root"
+            class="uk.ac.diamond.scisoft.analysis.osgi.preference.LoadingPreferencePage"
+            id="uk.ac.diamond.scisoft.analysis.osgi.loaderPage"
+            name="Loading Preferences">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.equinox.preferences.preferences">
+      <initializer
+            class="uk.ac.diamond.scisoft.analysis.osgi.preference.PreferenceInitializer">
+      </initializer>
+   </extension>
 
 </plugin>

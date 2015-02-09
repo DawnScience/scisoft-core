@@ -13,7 +13,7 @@ import org.osgi.framework.BundleContext;
 
 public class Activator implements BundleActivator {
 
-	private BundleContext context=null;
+	private static BundleContext context=null;
 	@Override
 	public void start(BundleContext c) throws Exception {
 		context = c;
@@ -24,4 +24,7 @@ public class Activator implements BundleActivator {
 		context = null;
 	}
 
+	public static BundleContext getContext() {
+		return context;
+	}
 }

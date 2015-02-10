@@ -404,6 +404,12 @@ public class CBFLoader extends AbstractFileLoader {
 			yIncreasing = isMatch("direction 1", "increasing");
 		}
 
+		// TODO FIXME This uses some random header I don't understand...
+		// We need to read the header completely
+		if (loadMetadata && metadata==null) { // We create something
+			metadata = new Metadata(metadataMap);
+			metadata.setFilePath(fileName);
+		}
 		return new ImageOrientation(xLength, yLength, -1, -1, xIncreasing, yIncreasing, isRowsX);
 	}
 	

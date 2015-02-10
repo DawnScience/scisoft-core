@@ -10,6 +10,8 @@ package uk.ac.diamond.scisoft.analysis.osgi;
 
 import java.net.URL;
 import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
@@ -120,7 +122,7 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 	
 
 	@Override
-	public String getStackExpression() {
+	public Matcher getStackMatcher(String name) {
 		
 		IPreferenceStore store = new ScopedPreferenceStore(InstanceScope.INSTANCE, "uk.ac.diamond.scisoft.analysis.osgi");
 		if (System.getProperty(PreferenceConstants.DATASET_REGEXP)!=null) {
@@ -128,10 +130,16 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 			store.setValue(PreferenceConstants.DATASET_REGEXP, regexp);
 		}
 
-		String value = store.getString(PreferenceConstants.DATASET_REGEXP);
-		if (value==null || "".equals(value)) value = "(.+)_(\\d+).";
+		String regexp = store.getString(PreferenceConstants.DATASET_REGEXP);
+		if (regexp==null || "".equals(regexp)) regexp = "(.+)_(\\d+).";
 
-		return value;
+		int posExt = name.lastIndexOf(".");
+		if (posExt>-1) {
+			String ext = name.substring(posExt + 1);
+    		Pattern pattern = Pattern.compile(regexp+"\\.("+ext+")");
+    		return pattern.matcher(name);
+		}
+		return null;
 	}
 
 }

@@ -41,6 +41,14 @@ public class DatasetWithAxisInformation implements Serializable {
 	}
 
 	/**
+	 * Clears metadata from dataset
+	 */
+	public void clearMetadata() {
+		data = data.getView();
+		data.clearMetadata(null);
+	}
+
+	/**
 	 * @return Returns the axisMap.
 	 */
 	public AxisMapBean getAxisMap() {

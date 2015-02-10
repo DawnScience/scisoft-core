@@ -19,6 +19,7 @@ Core package contains wrappers for Java dataset classes
 '''
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset as _ds
+import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset as _lds
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset as _abstractds
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory as _df
 
@@ -145,6 +146,8 @@ _arraytype = type(_array([0], 'f')) # this is used for testing if returned objec
 import java.util.List as _jlist #@UnresolvedImport
 import java.util.Map as _jmap #@UnresolvedImport
 
+from scisoftpy.dictutils import ListDict as _ldict
+
 def Sciwrap(a):
     '''
     This wrapper function is required for any Java method that returns a dataset
@@ -244,6 +247,8 @@ def fromDS(data):
     '''Convert from a Dataset'''
     if isinstance(data, _ds):
         return Sciwrap(data)
+    if isinstance(data, _lds):
+        return lazyarray(data)
     return data
 
 def asDataset(data, dtype=None, force=False):
@@ -423,6 +428,67 @@ import jymaths as _maths
 import jycomparisons as _cmps
 
 _jempty = tuple()
+
+class lazyarray(object):
+    def __init__(self, dataset, shape=None, dtype=None, maxshape=None, attrs={}, parent=None):
+        '''
+        '''
+        super(lazyarray, self).__setattr__('attrs', _ldict(attrs, lock=True))
+        self.__data = dataset
+
+        if shape is None:
+            shape = tuple(dataset.getShape())
+        self.__shape = shape
+        self.rank = len(shape)
+
+        if dtype is None:
+            if isinstance(dataset, _lds) or isinstance(dataset, _ds):
+                dtype = _getdtypefromjdataset(dataset)
+        self.__dtype = dtype
+
+        if maxshape is None:
+            maxshape = shape
+        self.__maxshape = maxshape
+
+    @property
+    def shape(self):
+        return self.__shape
+
+    @property
+    def maxshape(self):
+        '''Maximum shape (-1 indicates an unlimited dimension)
+        '''
+        return self.__maxshape
+
+    @property
+    def dtype(self):
+        return self.__dtype
+
+    @_wrapout
+    def __getitem__(self, key):
+        data = self._getdata()
+        if isinstance(data, _lds):
+            isslice, key = _toslice(self.rank, key)
+            if not isslice: # single item
+                key = tuple([ slice(k,k+1) for k in key ])
+                v = _getslice(data, key)
+                v = v.getAbs(0)
+            else:
+                v = _getslice(data, key)
+            return v
+
+        return asarray(data)[key]
+
+    def __str__(self):
+        s = "   @shape = %s\n" % (self.__shape,)
+        s += "   @maxshape = %s\n" % (self.__maxshape,)
+        for a in self.attrs:
+            s += "   @%s = %s\n" % (a, self.attrs[a]) 
+        return s
+
+    def _getdata(self):
+        return self.__data
+
 
 class ndarray(object):
     '''

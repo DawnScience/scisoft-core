@@ -10,7 +10,8 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import java.lang.reflect.Constructor;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -137,10 +138,20 @@ public final class FunctionFactory {
 	
 	/**
 	 * Returns the complete list of function names registered with the factory
-	 * @return Collection of function names (strings)
+	 * @return List of function names (strings)
 	 */
-	public static Collection<String> getFunctionNames() {
-		return FUNCTIONS.keySet();
+	public static List<String> getFunctionNames() {
+		List<String> peakFunctionNames = new ArrayList<String>();
+		peakFunctionNames.addAll(FUNCTIONS.keySet());
+		return peakFunctionNames;
+	}
+	
+	/**
+	 * Returns the complete list of function names registered with the factory as an array
+	 * @return String array of function names
+	 */
+	public static String[] getFunctionNameArray() {
+		return FUNCTIONS.keySet().toArray(new String[FUNCTIONS.size()]);
 	}
 	
 	/**
@@ -154,11 +165,22 @@ public final class FunctionFactory {
 	
 	/**
 	 * Returns the list of peak functions registered with the factory
-	 * @return Collection of strings of peak function names
+	 * @return List of strings of peak function names
 	 */
-	public static Collection<String> getPeakFunctionNames() {
-		return PEAKS.keySet();
+	public static List<String> getPeakFunctionNames() {
+		List<String> peakFunctionNames = new ArrayList<String>();
+		peakFunctionNames.addAll(PEAKS.keySet());
+		return peakFunctionNames;
 	}
+	
+	/**
+	 * Returns the complete list of function names registered with the factory as an array
+	 * @return String array of function names
+	 */
+	public static String[] getPeakNameArray() {
+		return PEAKS.keySet().toArray(new String[PEAKS.size()]);
+	}
+
 	
 	/**
 	 * Returns the complete set of peak functions with their names and classes

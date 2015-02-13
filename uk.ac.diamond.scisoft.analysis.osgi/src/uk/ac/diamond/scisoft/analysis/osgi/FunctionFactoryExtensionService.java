@@ -49,9 +49,11 @@ public class FunctionFactoryExtensionService implements IFunctionFactoryExtensio
 	 */
 	private final static void registerFunction(IConfigurationElement extPt) {
 		try {
+			//Get the name and class of the function in the extension point.
 			final IFunction function = (IFunction) extPt.createExecutableExtension("class");
+			final String fnName = extPt.getAttribute("name");
 			Class<? extends IFunction> clazz = function.getClass();
-			FunctionFactory.registerFunction(clazz);
+			FunctionFactory.registerFunction(clazz, fnName);
 		} catch (Exception e) {
 			logger.error("Cannot import function "+extPt.getAttribute("class"), e);
 		}

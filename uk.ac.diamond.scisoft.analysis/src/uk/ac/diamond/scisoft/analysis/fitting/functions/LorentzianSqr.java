@@ -22,6 +22,11 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
  * * x0 is the position of the peak (posn) and <br>
  * * G is a width parameter, related to the full width at half maximum
  *     via G = fwhm / sqrt(sqrt(2.) - 1.).
+ *     
+ * Literature:
+ *    Gibaud et al., J. Phys. Condens. Matter - 10.1088/0953-8984/7/14/005
+ *    Langridge et al., Phys Rev. B, 49, 12022 - 10.1103/PhysRevB.49.12022
+ *    Christianson et al., Phys. Rev. B, 66, 174105 - 10.1103/PhysRevB.66.174105
  */
 public class LorentzianSqr extends APeak {
 	private static final String NAME = "LorentzianSqr";

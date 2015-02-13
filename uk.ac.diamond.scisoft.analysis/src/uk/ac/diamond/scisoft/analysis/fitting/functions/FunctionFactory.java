@@ -51,25 +51,12 @@ public final class FunctionFactory {
 		PEAKS = new TreeMap<String, Class<? extends IPeak>>();
 		/**
 		 * Functions *must* have a zero argument constructor.
+		 * 
+		 * Previously included full list of functions. Now these are 
+		 * imported as Extension Points. Left in case of future need.
 		 */
-		registerFunctions(
-				uk.ac.diamond.scisoft.analysis.fitting.functions.Box.class,
-				uk.ac.diamond.scisoft.analysis.fitting.functions.Cubic.class,
-				uk.ac.diamond.scisoft.analysis.fitting.functions.CubicSpline.class,
-				uk.ac.diamond.scisoft.analysis.fitting.functions.Fermi.class,
-				uk.ac.diamond.scisoft.analysis.fitting.functions.FermiGauss.class,
-				uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian.class,
-				uk.ac.diamond.scisoft.analysis.fitting.functions.GaussianND.class,
-				uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian.class,
-				uk.ac.diamond.scisoft.analysis.fitting.functions.LorentzianSqr.class,
-				uk.ac.diamond.scisoft.analysis.fitting.functions.Offset.class,
-				uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII.class,
-				uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial.class,
-				uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt.class,
-				uk.ac.diamond.scisoft.analysis.fitting.functions.Quadratic.class,
-				uk.ac.diamond.scisoft.analysis.fitting.functions.Step.class,
-				uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine.class
-		);
+//		registerFunctions(
+//		);
 	}
 
 	private static final Logger logger = LoggerFactory.getLogger(FunctionFactory.class);
@@ -97,7 +84,7 @@ public final class FunctionFactory {
 	}
 
 	/**
-	 * Register functions with factory.
+	 * Register a block of functions with factory.
 	 * @param classes
 	 */
 	private static void registerFunctions(Class<? extends IFunction>... classes) {
@@ -112,14 +99,31 @@ public final class FunctionFactory {
 	}
 	
 	/**
-	 * Call to register external functions with the factory in function (and peak) maps
-	 * 
+	 * Wrapper method to register class without a name.
 	 * @param clazz
 	 * @throws Exception
 	 */
 	public static void registerFunction(Class<? extends IFunction> clazz) throws Exception {
+		registerFunction(clazz, null);
+	}
+	
+	/**
+	 * Call to register external functions with the factory in function (and peak) maps
+	 * @param clazz
+	 * @param fnName
+	 * @throws Exception
+	 */
+	public static void registerFunction(Class<? extends IFunction> clazz, String fnName) throws Exception {
 		final IFunction function = clazz.newInstance();
-		final String    name     = function.getName();
+		final String name;
+		
+		//Register with a different name to the one in the class
+		if (fnName != null) {
+			name = fnName;
+		} else {
+			name = function.getName(); 
+		}
+		
 		//Add function to FUNCTION map
 		if (!FUNCTIONS.containsKey(name)) {
 			FUNCTIONS.put(name, clazz);

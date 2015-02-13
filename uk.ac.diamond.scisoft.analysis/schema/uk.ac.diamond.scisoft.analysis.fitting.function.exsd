@@ -64,7 +64,7 @@ For sanity, the new functions should extend AFunction (which is the base impleme
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  A unique identifier for the function (can be same as fully qualified class name.
+                  A unique identifier for the function (can be same as fully qualified class name).
                </documentation>
                <appinfo>
                   <meta.attribute kind="identifier"/>

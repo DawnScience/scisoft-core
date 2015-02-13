@@ -49,7 +49,7 @@ public class FunctionFactoryExtensionService implements IFunctionFactoryExtensio
 	 */
 	private final static void registerFunction(IConfigurationElement extPt) {
 		try {
-			//Get the name and class of the function in the extension point.
+			//Get the name and class of the function from the extension point.
 			final IFunction function = (IFunction) extPt.createExecutableExtension("class");
 			final String fnName = extPt.getAttribute("name");
 			Class<? extends IFunction> clazz = function.getClass();

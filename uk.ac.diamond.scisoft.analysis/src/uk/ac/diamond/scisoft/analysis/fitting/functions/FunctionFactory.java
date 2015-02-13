@@ -199,7 +199,7 @@ public final class FunctionFactory {
 	 * Returns the no argument constructor for the function
 	 * @return AFunction
 	 */
-	public static IFunction getFunction(String name) throws Exception {
+	public static IFunction getFunction(String name) throws ReflectiveOperationException {
 		Class<? extends IFunction> clazz = FUNCTIONS.get(name);
 		return clazz.newInstance();
 	}
@@ -208,7 +208,7 @@ public final class FunctionFactory {
 	 * Returns the no argument constructor for the function
 	 * @return AFunction
 	 */
-	public static IFunction getFunction(String name, double... args) throws Exception {
+	public static IFunction getFunction(String name, double... args) throws ReflectiveOperationException {
 		Class<? extends IFunction> clazz = FUNCTIONS.get(name);
 		
 		final Constructor<? extends IFunction> c = clazz.getConstructor(double[].class);
@@ -219,13 +219,13 @@ public final class FunctionFactory {
 	 * Returns a class implementing IFunction based on the name supplied 
 	 * @param functionName
 	 * @return Function class
-	 * @throws Exception - if named function is not registered
+	 * @throws ClassNotFoundException - if named function is not registered
 	 */
-	public static Class<? extends IFunction> getClassForFunction(String functionName) throws Exception {
+	public static Class<? extends IFunction> getClassForFunction(String functionName) throws ClassNotFoundException {
 		Class<? extends IFunction> functionClass  = FUNCTIONS.get(functionName);
 		
 		if (functionClass == null) {
-			throw new Exception("There is no function with the name "+functionName+" registered!");
+			throw new ClassNotFoundException("There is no function with the name "+functionName+" registered!");
 		}
 		return functionClass;
 	}
@@ -234,7 +234,7 @@ public final class FunctionFactory {
 	 * Returns the no argument constructor for the function
 	 * @return AFunction
 	 */
-	public static IPeak getPeakFn(String name) throws Exception {
+	public static IPeak getPeakFn(String name) throws ReflectiveOperationException {
 		Class<? extends IPeak> clazz = PEAKS.get(name);
 		return clazz.newInstance();
 	}
@@ -243,13 +243,13 @@ public final class FunctionFactory {
 	 * Returns a class implementing IFunction based on the name supplied 
 	 * @param peakFunctionName
 	 * @return Peak function class
-	 * @throws Exception - if named peak function is not registered
+	 * @throws ClassNotFoundException - if named peak function is not registered
 	 */
-	public static Class<? extends IPeak> getClassForPeakFn(String peakFunctionName) throws Exception {
+	public static Class<? extends IPeak> getClassForPeakFn(String peakFunctionName) throws ClassNotFoundException {
 		Class<? extends IPeak> peakClass = PEAKS.get(peakFunctionName);
 		
 		if (peakClass == null) {
-			throw new Exception("There is no function with the name "+peakFunctionName+" registered!");
+			throw new ClassNotFoundException("There is no function with the name "+peakFunctionName+" registered!");
 		}
 		return peakClass;
 	}

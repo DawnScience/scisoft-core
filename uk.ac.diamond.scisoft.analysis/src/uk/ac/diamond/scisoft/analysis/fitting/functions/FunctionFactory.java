@@ -87,7 +87,8 @@ public final class FunctionFactory {
 	 * Register a block of functions with factory.
 	 * @param classes
 	 */
-	private static void registerFunctions(Class<? extends IFunction>... classes) {
+	@SafeVarargs
+	public static void registerFunctions(Class<? extends IFunction>... classes) {
 		
         for (Class<? extends IFunction> clazz : classes) {
     		try {
@@ -200,8 +201,13 @@ public final class FunctionFactory {
 	 * @return AFunction
 	 */
 	public static IFunction getFunction(String name) throws ReflectiveOperationException {
-		Class<? extends IFunction> clazz = FUNCTIONS.get(name);
-		return clazz.newInstance();
+		Class<? extends IFunction> functionClass = FUNCTIONS.get(name);
+		
+		if (functionClass == null) {
+			throw new ClassNotFoundException("There is no function with the name "+functionClass+" registered!");
+		}
+		
+		return functionClass.newInstance();
 	}
 	
 	/**
@@ -209,9 +215,13 @@ public final class FunctionFactory {
 	 * @return AFunction
 	 */
 	public static IFunction getFunction(String name, double... args) throws ReflectiveOperationException {
-		Class<? extends IFunction> clazz = FUNCTIONS.get(name);
+		Class<? extends IFunction> functionClass = FUNCTIONS.get(name);
 		
-		final Constructor<? extends IFunction> c = clazz.getConstructor(double[].class);
+		if (functionClass == null) {
+			throw new ClassNotFoundException("There is no function with the name "+functionClass+" registered!");
+		}
+		
+		final Constructor<? extends IFunction> c = functionClass.getConstructor(double[].class);
 		return c.newInstance(args);
 	}
 	
@@ -235,8 +245,12 @@ public final class FunctionFactory {
 	 * @return AFunction
 	 */
 	public static IPeak getPeakFn(String name) throws ReflectiveOperationException {
-		Class<? extends IPeak> clazz = PEAKS.get(name);
-		return clazz.newInstance();
+		Class<? extends IPeak> peakClass = PEAKS.get(name);
+		
+		if (peakClass == null) {
+			throw new ClassNotFoundException("There is no function with the name "+peakClass+" registered!");
+		}
+		return peakClass.newInstance();
 	}
 	
 	/**

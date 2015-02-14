@@ -63,7 +63,7 @@ public class FunctionFactoryPluginTest {
 	public void testGetFunction() {
 		try {
 			assertEquals(FunctionFactory.getClassForFunction("Linear").newInstance(), FunctionFactory.getFunction("Linear"));
-		} catch (ReflectiveOperationException e) {
+		} catch (Exception e) {
 			System.out.println("Could not load Linear function type");
 		}
 	}
@@ -72,7 +72,7 @@ public class FunctionFactoryPluginTest {
 	public void testGetPeak() {
 		try{
 			assertEquals(FunctionFactory.getClassForPeakFn("Lorentzian").newInstance(), FunctionFactory.getPeakFn("Lorentzian"));
-		} catch (ReflectiveOperationException e) {
+		} catch (Exception e) {
 			System.out.println("Could not load Lorentzian peak type");
 		}
 	}

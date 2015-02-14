@@ -204,7 +204,7 @@ public final class FunctionFactory {
 		Class<? extends IFunction> functionClass = FUNCTIONS.get(name);
 		
 		if (functionClass == null) {
-			throw new ClassNotFoundException("There is no function with the name "+functionClass+" registered!");
+			throw new ClassNotFoundException("There is no function with the name "+name+" registered!");
 		}
 		
 		return functionClass.newInstance();
@@ -218,7 +218,7 @@ public final class FunctionFactory {
 		Class<? extends IFunction> functionClass = FUNCTIONS.get(name);
 		
 		if (functionClass == null) {
-			throw new ClassNotFoundException("There is no function with the name "+functionClass+" registered!");
+			throw new ClassNotFoundException("There is no function with the name "+name+" registered!");
 		}
 		
 		final Constructor<? extends IFunction> c = functionClass.getConstructor(double[].class);
@@ -248,7 +248,7 @@ public final class FunctionFactory {
 		Class<? extends IPeak> peakClass = PEAKS.get(name);
 		
 		if (peakClass == null) {
-			throw new ClassNotFoundException("There is no function with the name "+peakClass+" registered!");
+			throw new ClassNotFoundException("There is no peak function with the name "+name+" registered!");
 		}
 		return peakClass.newInstance();
 	}
@@ -263,7 +263,7 @@ public final class FunctionFactory {
 		Class<? extends IPeak> peakClass = PEAKS.get(peakFunctionName);
 		
 		if (peakClass == null) {
-			throw new ClassNotFoundException("There is no function with the name "+peakFunctionName+" registered!");
+			throw new ClassNotFoundException("There is no peak function with the name "+peakFunctionName+" registered!");
 		}
 		return peakClass;
 	}

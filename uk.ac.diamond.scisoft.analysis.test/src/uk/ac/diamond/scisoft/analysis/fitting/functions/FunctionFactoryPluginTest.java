@@ -22,15 +22,20 @@ import org.junit.Test;
 
 public class FunctionFactoryPluginTest {
 	
+	/**
+	 * This class performs a series of tests, relying on the FunctionFactoryExtensionService
+	 * to register the functions. It is nearly identical to the FunctionFactoryTest.
+	 */
+	
 	@Test
 	public void testGetFunctionNames() {
 		List<String> functionList = FunctionFactory.getFunctionNameList();
 		//Check that we have a common function
-		assertTrue(functionList.contains("Gaussian"));
+		assertTrue(functionList.contains("Linear"));
 		
 		String[] functionArray = FunctionFactory.getFunctionNameArray();
 		//Does the array also contain our function?
-		assertTrue(Arrays.asList(functionArray).contains("Gaussian"));
+		assertTrue(Arrays.asList(functionArray).contains("Linear"));
 		//Check that both sets of data are the same length...
 		assertEquals(functionArray.length, functionList.size());
 		//... and are actually the same

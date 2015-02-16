@@ -129,15 +129,36 @@ public final class FunctionFactory {
 		if (!FUNCTIONS.containsKey(name)) {
 			FUNCTIONS.put(name, clazz);
 		} else {
-			throw new Exception("The function "+name+" is registered twice!");
+			throw new Exception("A function is already registered with the name "+name+".");
 		}
 		//If the class is a Peak, add function to PEAK map
 		if (function instanceof IPeak) {
 			if (!PEAKS.containsKey(name)) {
 				PEAKS.put(name, (Class<? extends IPeak>) clazz);
 			} else {
-				throw new Exception("The peak "+name+" is registered twice!");
+				throw new Exception("A peak function is already registered with the name "+name+".");
 			}
+		}
+	}
+	
+	/**
+	 * Removes a given function from both the FUNCTIONS and PEAKS maps (if present).
+	 * This is mostly useful for tests, where a function may be added by more than
+	 * one test, thus leading to am exception being thrown.
+	 * @param functionName
+	 */
+	public static void unRegisterFunction(String functionName) {
+		try{
+			if (FUNCTIONS.containsKey(functionName)) {
+				FUNCTIONS.remove(functionName);
+				if (PEAKS.containsKey(functionName)) {
+					PEAKS.remove(functionName);
+				}
+			} else {
+				logger.warn("Cannot delete "+functionName+". Function was not found in register.");
+			}
+		} catch (Exception ne) {
+			logger.error("Could not find or delete function "+functionName+" from register.", ne);
 		}
 	}
 	

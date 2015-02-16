@@ -29,6 +29,11 @@
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.Fermi"
             id="uk.ac.diamond.scisoft.analysis.fitting.functions.Fermi"
+            name="Fermi">
+      </function>
+      <function
+            class="uk.ac.diamond.scisoft.analysis.fitting.functions.FermiGauss"
+            id="uk.ac.diamond.scisoft.analysis.fitting.functions.FermiGauss"
             name="Fermi convoluted with Gaussian">
       </function>
       <function
@@ -54,7 +59,7 @@
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.LorentzianSqr"
             id="uk.ac.diamond.scisoft.analysis.fitting.functions.LorentzianSqr"
-            name="Lorentzian squared">
+            name="Lorentzian Squared">
       </function>
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.Offset"

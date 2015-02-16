@@ -32,7 +32,7 @@ public class FunctionFactoryTest {
 	 */
 	
 	@Rule
-	public ExpectedException thrownE = ExpectedException.none();
+	public ExpectedException thrower = ExpectedException.none();
 	
 	@Before
 	public void setup() {
@@ -44,18 +44,14 @@ public class FunctionFactoryTest {
 	 * Specific to JUnit test
 	 */
 	@Test
-	public void testPeakRegistration() {
-		try {
+	public void testPeakRegistration() throws Exception{
+		//Re-register the Gaussian function with a different name.
 		FunctionFactory.registerFunction(Gaussian.class, "myGauss");
-		} catch (Exception e) {
-			System.out.println("Failed to register Gaussian function with different name.");
-		}
-		try {
-			assertEquals(FunctionFactory.getPeakFn("myGauss"), FunctionFactory.getPeakFn("Gaussian"));
-			assertFalse((FunctionFactory.getPeakFn("myGauss").equals(FunctionFactory.getPeakFn("Lorentzian"))));
-		} catch (ReflectiveOperationException e) {
-			System.out.println("Could not load function.");
-		}	
+		
+		//Check it is the same Gaussian and that it is not another type of function
+		assertEquals(FunctionFactory.getPeakFn("myGauss"), FunctionFactory.getPeakFn("Gaussian"));
+		assertFalse((FunctionFactory.getPeakFn("myGauss").equals(FunctionFactory.getPeakFn("Lorentzian"))));
+
 	}
 	
 	/**
@@ -63,7 +59,7 @@ public class FunctionFactoryTest {
 	 */
 	@Test
 	public void testFunctionRegistration() throws Exception{
-		thrownE.expect(ClassNotFoundException.class);
+		thrower.expect(ClassNotFoundException.class);
 		FunctionFactory.getPeakFn("Polynomial");
 	}
 	

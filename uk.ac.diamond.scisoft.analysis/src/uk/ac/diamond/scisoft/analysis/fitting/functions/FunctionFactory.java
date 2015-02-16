@@ -100,22 +100,6 @@ public final class FunctionFactory {
 	}
 	
 	/**
-	 * Unregister a block of functions from the factory.
-	 * @param classes
-	 */
-	@SafeVarargs
-	public static void unRegisterFunctions(Class<? extends IFunction>... classes) {
-		for (Class<? extends IFunction> func : classes) {
-			String fnName = func.getName();
-			try {
-				unRegisterFunction(fnName);
-			} catch (Exception ne) {
-				logger.error("Could not find or delete function "+fnName+" from register.");
-			}
-		}
-	}
-	
-	/**
 	 * Wrapper method to register class without a name.
 	 * @param clazz
 	 * @throws Exception
@@ -131,6 +115,18 @@ public final class FunctionFactory {
 	 * @throws Exception
 	 */
 	public static void registerFunction(Class<? extends IFunction> clazz, String fnName) throws Exception {
+		registerFunction(clazz, fnName, false);
+	}
+	
+	/**
+	 * Full method allowing registration of functions with the factory and also 
+	 * (for testing) ignoring of duplicates in the PEAKS and FUNCTIONS maps.
+	 * @param clazz
+	 * @param fnName
+	 * @param ignoreDuplicates
+	 * @throws Exception
+	 */
+	public static void registerFunction(Class<? extends IFunction> clazz, String fnName, Boolean ignoreDuplicates) throws Exception {
 		final IFunction function = clazz.newInstance();
 		final String name;
 		
@@ -145,37 +141,23 @@ public final class FunctionFactory {
 		if (!FUNCTIONS.containsKey(name)) {
 			FUNCTIONS.put(name, clazz);
 		} else {
-			throw new Exception("A function is already registered with the name "+name+".");
+			if (ignoreDuplicates) {
+				//Pass
+			} else {
+				throw new Exception("A function is already registered with the name "+name+".");
+			}
 		}
 		//If the class is a Peak, add function to PEAK map
 		if (function instanceof IPeak) {
 			if (!PEAKS.containsKey(name)) {
 				PEAKS.put(name, (Class<? extends IPeak>) clazz);
 			} else {
-				throw new Exception("A peak function is already registered with the name "+name+".");
-			}
-		}
-	}
-	
-	/**
-	 * Removes a given function from both the FUNCTIONS and PEAKS maps (if present).
-	 * This is mostly useful for tests, where a function may be added by more than
-	 * one test, thus leading to am exception being thrown.
-	 * @param functionName
-	 * @throws Exception 
-	 */
-	public static void unRegisterFunction(String functionName) throws Exception {
-		try{
-			if (FUNCTIONS.containsKey(functionName)) {
-				FUNCTIONS.remove(functionName);
-				if (PEAKS.containsKey(functionName)) {
-					PEAKS.remove(functionName);
+				if (ignoreDuplicates) {
+					//Pass
+				} else {
+					throw new Exception("A peak function is already registered with the name "+name+".");
 				}
-			} else {
-				logger.warn("Cannot delete "+functionName+". Function was not found in register.");
 			}
-		} catch (Exception ne) {
-			throw new Exception("Peak name "+functionName+" not found.");
 		}
 	}
 	

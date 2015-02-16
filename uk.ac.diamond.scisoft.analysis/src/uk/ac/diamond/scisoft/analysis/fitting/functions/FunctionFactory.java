@@ -89,13 +89,29 @@ public final class FunctionFactory {
 	 */
 	@SafeVarargs
 	public static void registerFunctions(Class<? extends IFunction>... classes) {
-		
-        for (Class<? extends IFunction> clazz : classes) {
-    		try {
-			    registerFunction(clazz);
-    		} catch (Throwable e) {
-    			logger.error("Cannot register function "+clazz.getCanonicalName()+"!", e);
-    		}
+
+		for (Class<? extends IFunction> clazz : classes) {
+			try {
+				registerFunction(clazz);
+			} catch (Throwable e) {
+				logger.error("Cannot register function "+clazz.getCanonicalName()+"!", e);
+			}
+		}
+	}
+	
+	/**
+	 * Unregister a block of functions from the factory.
+	 * @param classes
+	 */
+	@SafeVarargs
+	public static void unRegisterFunctions(Class<? extends IFunction>... classes) {
+		for (Class<? extends IFunction> func : classes) {
+			String fnName = func.getName();
+			try {
+				unRegisterFunction(fnName);
+			} catch (Exception ne) {
+				logger.error("Could not find or delete function "+fnName+" from register.");
+			}
 		}
 	}
 	
@@ -146,8 +162,9 @@ public final class FunctionFactory {
 	 * This is mostly useful for tests, where a function may be added by more than
 	 * one test, thus leading to am exception being thrown.
 	 * @param functionName
+	 * @throws Exception 
 	 */
-	public static void unRegisterFunction(String functionName) {
+	public static void unRegisterFunction(String functionName) throws Exception {
 		try{
 			if (FUNCTIONS.containsKey(functionName)) {
 				FUNCTIONS.remove(functionName);
@@ -158,7 +175,7 @@ public final class FunctionFactory {
 				logger.warn("Cannot delete "+functionName+". Function was not found in register.");
 			}
 		} catch (Exception ne) {
-			logger.error("Could not find or delete function "+functionName+" from register.", ne);
+			throw new Exception("Peak name "+functionName+" not found.");
 		}
 	}
 	
@@ -225,10 +242,10 @@ public final class FunctionFactory {
 		Class<? extends IFunction> functionClass;
 		try {
 			functionClass = FUNCTIONS.get(name);
+			return functionClass.newInstance();
 		} catch (NullPointerException npe) {
 			throw new ClassNotFoundException("There is no function with the name "+name+" registered!");
 		}
-		return functionClass.newInstance();
 	}
 	
 	/**
@@ -239,11 +256,11 @@ public final class FunctionFactory {
 		Class<? extends IFunction> functionClass;
 		try {
 			functionClass = FUNCTIONS.get(name);
+			final Constructor<? extends IFunction> c = functionClass.getConstructor(double[].class);
+			return c.newInstance(args);
 		} catch (NullPointerException npe) {
 			throw new ClassNotFoundException("There is no function with the name "+name+" registered!");
 		}
-		final Constructor<? extends IFunction> c = functionClass.getConstructor(double[].class);
-		return c.newInstance(args);
 	}
 	
 	/**
@@ -256,10 +273,10 @@ public final class FunctionFactory {
 		Class<? extends IFunction> functionClass;
 		try {
 			functionClass= FUNCTIONS.get(functionName);
+			return functionClass;
 		} catch (NullPointerException npe) {
 			throw new ClassNotFoundException("There is no function with the name "+functionName+" registered!");
 		}
-		return functionClass;
 	}
 	
 	/**
@@ -272,10 +289,10 @@ public final class FunctionFactory {
 		String functionClassName;
 		try {
 			functionClassName  = FUNCTIONS.get(functionName).getName();
+			return functionClassName;
 		} catch (NullPointerException npe) {
 			throw new ClassNotFoundException("There is no function with the name "+functionName+" registered!");
 		}
-		return functionClassName;
 	}
 	
 	/**
@@ -283,13 +300,13 @@ public final class FunctionFactory {
 	 * @return AFunction
 	 */
 	public static IPeak getPeakFn(String name) throws ReflectiveOperationException {
-		Class<? extends IPeak> peakClass; 
+		Class<? extends IPeak> peakClass;
 		try {
 			peakClass = PEAKS.get(name);
-		} catch (NullPointerException npe) {
+			return peakClass.newInstance();
+		} catch (Exception npe) {
 			throw new ClassNotFoundException("There is no peak function with the name "+name+" registered!");
-		}
-		return peakClass.newInstance();
+		}	
 	}
 	
 	/**
@@ -302,10 +319,10 @@ public final class FunctionFactory {
 		Class<? extends IPeak> peakClass;
 		try {
 			peakClass = PEAKS.get(peakFunctionName);
+			return peakClass;
 		} catch (NullPointerException npe) {
 			throw new ClassNotFoundException("There is no peak function with the name "+peakFunctionName+" registered!");
 		}
-		return peakClass;
 	}
 	
 	/**

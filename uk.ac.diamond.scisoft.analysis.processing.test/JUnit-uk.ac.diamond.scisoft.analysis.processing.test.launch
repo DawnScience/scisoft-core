@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.junit.launchconfig">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/uk.ac.diamond.scisoft.analysis.processing.test"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="4"/>
+</listAttribute>
+<booleanAttribute key="org.eclipse.debug.core.appendEnvironmentVariables" value="false"/>
+<mapAttribute key="org.eclipse.debug.core.environmentVariables">
+<mapEntry key="LD_LIBRARY_PATH" value="${project_loc:ncsa.hdf}/lib/${target.os}-${target.arch}"/>
+<mapEntry key="PATH" value="${project_loc:ncsa.hdf}/lib/${target.os}-${target.arch}"/>
+</mapAttribute>
+<stringAttribute key="org.eclipse.jdt.junit.CONTAINER" value="=uk.ac.diamond.scisoft.analysis.processing.test"/>
+<booleanAttribute key="org.eclipse.jdt.junit.KEEPRUNNING_ATTR" value="true"/>
+<stringAttribute key="org.eclipse.jdt.junit.TESTNAME" value=""/>
+<stringAttribute key="org.eclipse.jdt.junit.TEST_KIND" value="org.eclipse.jdt.junit.loader.junit4"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value=""/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="uk.ac.diamond.scisoft.analysis.processing.test"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-DGDALargeTestFilesLocation=/dls_sw/dasc/GDALargeTestFiles/ -XX:MaxPermSize=256m -Xms256m -Xmx1536m"/>
+</launchConfiguration>

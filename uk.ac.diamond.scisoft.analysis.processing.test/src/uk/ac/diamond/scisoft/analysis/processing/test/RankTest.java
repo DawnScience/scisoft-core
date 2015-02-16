@@ -31,6 +31,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.FunctionFactory;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationTransformer;
 import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
@@ -61,6 +62,11 @@ public class RankTest {
 		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
 		OperationRunnerImpl.setRunner(ExecutionType.GRAPH,    new GraphRunner());
 		OperationTransformer.setOperationService(service);
+		
+		/*FunctionFactory has been set up as an OSGI service so need to register
+		 *function before it is called (or make this a JUnit PluginTest.
+		 */
+		FunctionFactory.registerFunction(Polynomial.class);
 	}
 	
 	private volatile int count;

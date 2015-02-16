@@ -20,6 +20,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 
 public class FittingOperation extends AbstractOperation<FittingModel, OperationData> {
@@ -39,7 +40,7 @@ public class FittingOperation extends AbstractOperation<FittingModel, OperationD
 			}
 			List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions((Dataset)model.getxAxis(), 
 					                                                                  (Dataset)data, 
-					                                                                  model.getPeak(), model.createOptimizer(),
+					                                                                  (Class<? extends APeak>) model.getPeak(), model.createOptimizer(),
 					                                                                  model.getSmoothing(), model.getNumberOfPeaks(),
 					                                                                  model.getThreshold(), 
 					                                                                  model.isAutostopping(), model.isBackgrounddominated(), monitor);

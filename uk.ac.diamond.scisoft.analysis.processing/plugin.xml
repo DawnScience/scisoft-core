@@ -428,6 +428,13 @@
             name="Image Rotation"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.ConvertAxisTypeOperation"
+            description="Change the axis between 2theta, Q and d-spacing."
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.ConvertQToTwoThetaOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.ConvertAxisTypeModel"
+            name="Convert axis type">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

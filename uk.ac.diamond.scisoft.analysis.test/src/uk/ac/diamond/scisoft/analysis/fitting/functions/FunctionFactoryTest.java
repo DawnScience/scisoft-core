@@ -36,7 +36,7 @@ public class FunctionFactoryTest {
 	
 	@Before
 	public void setup() {
-		FunctionFactory.registerFunctions(Gaussian.class,
+		FunctionFactory.registerFunctions(true, Gaussian.class,
 				Lorentzian.class, Polynomial.class, StraightLine.class);
 	}
 	

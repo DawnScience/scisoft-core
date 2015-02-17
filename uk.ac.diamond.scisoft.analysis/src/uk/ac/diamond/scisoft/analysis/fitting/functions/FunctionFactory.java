@@ -88,11 +88,11 @@ public final class FunctionFactory {
 	 * @param classes
 	 */
 	@SafeVarargs
-	public static void registerFunctions(Class<? extends IFunction>... classes) {
+	public static void registerFunctions(Boolean ignoreDuplicates, Class<? extends IFunction>... classes) {
 
 		for (Class<? extends IFunction> clazz : classes) {
 			try {
-				registerFunction(clazz);
+				registerFunction(clazz, null, ignoreDuplicates);
 			} catch (Throwable e) {
 				logger.error("Cannot register function "+clazz.getCanonicalName()+"!", e);
 			}
@@ -105,7 +105,7 @@ public final class FunctionFactory {
 	 * @throws Exception
 	 */
 	public static void registerFunction(Class<? extends IFunction> clazz) throws Exception {
-		registerFunction(clazz, null);
+		registerFunction(clazz, null, false);
 	}
 	
 	/**

@@ -20,11 +20,14 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
+import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.FunctionFactory;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.IPeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
@@ -48,6 +51,12 @@ public abstract class Generic1DFitterTestBase {
 	static final long seed = 12357L;
 
 	protected static String name;
+	
+	@Before
+	public void setup() throws Exception {
+		FunctionFactory.registerFunctions(Gaussian.class, 
+				Lorentzian.class, PseudoVoigt.class, PearsonVII.class);
+	}
 
 	@Test
 	public void testPearsonVIIFitting() {
@@ -58,7 +67,7 @@ public abstract class Generic1DFitterTestBase {
 		}
 		DoubleDataset testingPeaks = generatePearsonVII(i);
 		try {
-			fittingTest(peakPos, testingPeaks, PearsonVII.class);
+			fittingTest(peakPos, testingPeaks, FunctionFactory.getClassForPeakFn("PearsonVII"));
 		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using " + name);
@@ -74,7 +83,7 @@ public abstract class Generic1DFitterTestBase {
 		}
 		DoubleDataset testingPeaks = generateGaussianPeaks(i);
 		try {
-			fittingTest(peakPos, testingPeaks, Gaussian.class);
+			fittingTest(peakPos, testingPeaks, FunctionFactory.getClassForPeakFn("Gaussian"));
 		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using " + name);
@@ -90,7 +99,7 @@ public abstract class Generic1DFitterTestBase {
 		}
 		DoubleDataset testingPeaks = generatePseudoVoigt(i);
 		try {
-			fittingTest(peakPos, testingPeaks, PseudoVoigt.class);
+			fittingTest(peakPos, testingPeaks, FunctionFactory.getClassForPeakFn("PseudoVoigt"));
 		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using " + name);
@@ -106,7 +115,7 @@ public abstract class Generic1DFitterTestBase {
 		}
 		DoubleDataset testingPeaks = generateLorentzianPeaks(i);
 		try {
-			fittingTest(peakPos, testingPeaks, Lorentzian.class);
+			fittingTest(peakPos, testingPeaks, FunctionFactory.getClassForPeakFn("Lorentzian"));
 		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using " + name);
@@ -178,7 +187,10 @@ public abstract class Generic1DFitterTestBase {
 		return (DoubleDataset) Maths.add(data, noise);
 	}
 
-	private void fittingTest(int[] peakPos, DoubleDataset data, Class<? extends APeak> peakClass) {
+	private void fittingTest(int[] peakPos, DoubleDataset data, Class<? extends IPeak> mypeakClass) {
+		//TODO FIXME Once Generic1DFitter updated, remove this cast.
+		@SuppressWarnings("unchecked")
+		Class<? extends APeak> peakClass = (Class<? extends APeak>)mypeakClass;
 		List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions(xAxis, data, peakClass, new GeneticAlg(0.0001, seed),
 				smoothing, numPeaks, threshold, autoStopping, backgroundDominated);
 

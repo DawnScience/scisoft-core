@@ -29,7 +29,7 @@ public class ConvertAxisTypeOperation<T extends ConvertAxisTypeModel> extends Ab
 	
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.powder.ConvertQToTwoThetaOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.powder.ConvertAxisTypeOperation";
 	}
 
 	@Override
@@ -43,64 +43,64 @@ public class ConvertAxisTypeOperation<T extends ConvertAxisTypeModel> extends Ab
 	}
 	
 	protected OperationData process(IDataset input, IMonitor monitor) {
-		List<AxesMetadata> metaList = null;
-
-		try {
-			metaList = input.getMetadata(AxesMetadata.class);
-			if (metaList == null || metaList.isEmpty())
-				return null;
-		} catch (Exception e) {
-			return null;
-		}
-
-		AxesMetadata am = metaList.get(0);
-		if (am == null)
-			return null;
-
-		ILazyDataset[] axes =  am.getAxes();
-		
-		if ((axes != null) || (axes[0] !=null)) {
-			Dataset oldXAxis = (Dataset)axes[0];
-			Dataset newXAxis = DatasetFactory.zeros(oldXAxis);
-
-			String axisName = oldXAxis.getName();
-			XAxis axisType = XAxis.ANGLE;//model.getAxisType();
-			for (int i = 0; i < oldXAxis.getSize()-1; i++) {
-				Double xAxisVal = oldXAxis.getDouble(i);
-				if (axisName == "q") {
-					if (axisType == XAxis.ANGLE) {
-						//					Double wavelength = ???.getWavelength();
-						//					newXAxis.set(convertQToTwoTheta(xAxisVal, wavelength), i);
-						throw new OperationException(this, "Currently unsupported.");
-					} else if (axisType == XAxis.RESOLUTION){
-						newXAxis.set(convertQAndDSpacing(xAxisVal), i);
-					}
-				} else if (axisName == "2theta") {
-					if (axisType == XAxis.Q) {
-						//					Double wavelength = ???.getWavelength();
-						//					newXAxis.set(convertTwoThetaToQ(xAxisVal, wavelength), i);
-						throw new OperationException(this, "Currently unsupported.");
-					} else if (axisType == XAxis.RESOLUTION) {
-						//					Double wavelength = ???.getWavelength();
-						//					newXAxis.set(convertTwoThetaToDSpacing(xAxisVal, wavelength), i);
-						throw new OperationException(this, "Currently unsupported.");
-					}
-				} else if (axisName == "d-spacing") {
-					if (axisType == XAxis.ANGLE) {
-
-					} else if (axisType == XAxis.Q) {
-						newXAxis.set(convertQAndDSpacing(oldXAxis.getDouble(i)), i);
-					} 
-				} else {
-					throw new OperationException(this, "Input axis type unrecognised or not supported.");
-				}
-			}
-			am.setAxis(0, newXAxis);
-			input.setMetadata(am);
+//		List<AxesMetadata> metaList = null;
+//
+//		try {
+//			metaList = input.getMetadata(AxesMetadata.class);
+//			if (metaList == null || metaList.isEmpty())
+//				return null;
+//		} catch (Exception e) {
+//			return null;
+//		}
+//
+//		AxesMetadata am = metaList.get(0);
+//		if (am == null)
+//			return null;
+//
+//		ILazyDataset[] axes =  am.getAxes();
+//		
+//		if ((axes != null) || (axes[0] !=null)) {
+//			Dataset oldXAxis = (Dataset)axes[0];
+//			Dataset newXAxis = DatasetFactory.zeros(oldXAxis);
+//
+//			String axisName = oldXAxis.getName();
+//			XAxis axisType = XAxis.ANGLE;//model.getAxisType();
+//			for (int i = 0; i < oldXAxis.getSize()-1; i++) {
+//				Double xAxisVal = oldXAxis.getDouble(i);
+//				if (axisName == "q") {
+//					if (axisType == XAxis.ANGLE) {
+//						//					Double wavelength = ???.getWavelength();
+//						//					newXAxis.set(convertQToTwoTheta(xAxisVal, wavelength), i);
+//						throw new OperationException(this, "Currently unsupported.");
+//					} else if (axisType == XAxis.RESOLUTION){
+//						newXAxis.set(convertQAndDSpacing(xAxisVal), i);
+//					}
+//				} else if (axisName == "2theta") {
+//					if (axisType == XAxis.Q) {
+//						//					Double wavelength = ???.getWavelength();
+//						//					newXAxis.set(convertTwoThetaToQ(xAxisVal, wavelength), i);
+//						throw new OperationException(this, "Currently unsupported.");
+//					} else if (axisType == XAxis.RESOLUTION) {
+//						//					Double wavelength = ???.getWavelength();
+//						//					newXAxis.set(convertTwoThetaToDSpacing(xAxisVal, wavelength), i);
+//						throw new OperationException(this, "Currently unsupported.");
+//					}
+//				} else if (axisName == "d-spacing") {
+//					if (axisType == XAxis.ANGLE) {
+//
+//					} else if (axisType == XAxis.Q) {
+//						newXAxis.set(convertQAndDSpacing(oldXAxis.getDouble(i)), i);
+//					} 
+//				} else {
+//					throw new OperationException(this, "Input axis type unrecognised or not supported.");
+//				}
+//			}
+//			am.setAxis(0, newXAxis);
+//			input.setMetadata(am);
 			return new OperationData(input);
-		} else {
-			throw new OperationException(this, "Axes in this dataset cannot be converted");
-		}
+//		} else {
+//			throw new OperationException(this, "Axes in this dataset cannot be converted");
+//		}
 	}
 
 	private double calcThetaInRadians(double tthVal) {

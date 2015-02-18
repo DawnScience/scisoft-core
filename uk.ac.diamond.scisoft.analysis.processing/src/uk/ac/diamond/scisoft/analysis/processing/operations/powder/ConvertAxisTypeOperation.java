@@ -22,6 +22,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
+import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.processing.operations.oned.RangeIntegration1DModel;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
 
@@ -67,24 +68,30 @@ public class ConvertAxisTypeOperation extends AbstractOperation<ConvertAxisTypeM
 
 			String axisName = oldXAxis.getName();
 			XAxis axisType = XAxis.ANGLE;//model.getAxisType();
+			Double wavelength;
+			if (model.isUseCalibratedWavelength()){
+				//PASS
+//				String path = getSliceSeriesMetadata(input).getSourceInfo().getFilePath();
+//				System.out.println(path);
+//			//	photon_energy = LoaderFactory.getDataSet(getSliceSeriesMetadata(input).getSourceInfo().getFilePath(), "/entry1/instrument/monochromator/energy", null);
+			} else {
+				wavelength = model.getUserWavelength();
+			}
 			for (int i = 0; i < oldXAxis.getSize()-1; i++) {
 				Double xAxisVal = oldXAxis.getDouble(i);
 				if (axisName == "q") {
 					if (axisType == XAxis.ANGLE) {
-						//					Double wavelength = ???.getWavelength();
-						//					newXAxis.set(convertQToTwoTheta(xAxisVal, wavelength), i);
+//						newXAxis.set(convertQToTwoTheta(xAxisVal, wavelength), i);
 						throw new OperationException(this, "Currently unsupported.");
 					} else if (axisType == XAxis.RESOLUTION){
 						newXAxis.set(convertQAndDSpacing(xAxisVal), i);
 					}
 				} else if (axisName == "2theta") {
 					if (axisType == XAxis.Q) {
-						//					Double wavelength = ???.getWavelength();
-						//					newXAxis.set(convertTwoThetaToQ(xAxisVal, wavelength), i);
+//						newXAxis.set(convertTwoThetaToQ(xAxisVal, wavelength), i);
 						throw new OperationException(this, "Currently unsupported.");
 					} else if (axisType == XAxis.RESOLUTION) {
-						//					Double wavelength = ???.getWavelength();
-						//					newXAxis.set(convertTwoThetaToDSpacing(xAxisVal, wavelength), i);
+//						newXAxis.set(convertTwoThetaToDSpacing(xAxisVal, wavelength), i);
 						throw new OperationException(this, "Currently unsupported.");
 					}
 				} else if (axisName == "d-spacing") {

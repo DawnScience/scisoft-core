@@ -19,6 +19,12 @@ public class ConvertAxisTypeModel extends AbstractOperationModel {
 	@OperationModelField(hint="Set value for X axis after integration", label = "Select X Axis")
 	private XAxis axisType = XAxis.Q;
 	
+	@OperationModelField(hint="Use wavelength from detector calibration.", label = "Use Calibrated Wavelength")
+	private boolean useCalibratedWavelength = true;
+	
+	@OperationModelField(hint="Specify a wavelength to use.", label = "Wavelength")
+	private Double userWavelength = null;
+	
 	public XAxis getAxisType() {
 		return axisType;
 	}
@@ -26,5 +32,20 @@ public class ConvertAxisTypeModel extends AbstractOperationModel {
 	public void setAxisType(XAxis axisType) {
 		firePropertyChange("axisType", this.axisType, this.axisType = axisType);
 	}
+	
+	public boolean isUseCalibratedWavelength() {
+		return useCalibratedWavelength;
+	}
 
+	public void setUseCalibratedWavelength(boolean useCalibratedWavelength) {
+		firePropertyChange("useCalibratedWavelength", this.useCalibratedWavelength, this.useCalibratedWavelength = useCalibratedWavelength);
+	}
+
+	public Double getUserWavelength() {
+		return userWavelength;
+	}
+
+	public void setUserWavelength(Double userWavelength) {
+		firePropertyChange("userWavelength", this.userWavelength, this.userWavelength = userWavelength);
+	}
 }

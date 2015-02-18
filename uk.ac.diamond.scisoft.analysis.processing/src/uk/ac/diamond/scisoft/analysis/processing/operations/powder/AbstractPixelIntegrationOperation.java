@@ -64,6 +64,7 @@ public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrati
 
 		setAxes(data, out);
 		
+		//Persist Diffraction metadata along the pipe.
 		addDiffractionMetadata(data, metadata);
 
 		return new OperationData(data);
@@ -89,12 +90,22 @@ public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrati
 		((AbstractOperationModel)this.model).addPropertyChangeListener(listener);
 	}
 	
+	/**
+	 * Creates new DiffractionMetadata object and adds it to the output of the 
+	 * integration operation. Currently this keeps both the 
+	 * DiffractionCrystalEnvironment and the DetectorProperties from the 
+	 * original experiment. Detector properties might need to be updated...
+	 * 
+	 * @param data Output data from integration operation
+	 * @param dmd Existing diffraction metadata
+	 */
 	protected void addDiffractionMetadata(IDataset data, IDiffractionMetadata dmd) {
-		
+		//Get metadatas from current environment
 		DiffractionCrystalEnvironment integDCE = dmd.getDiffractionCrystalEnvironment();
 		DetectorProperties integProps = dmd.getDetector2DProperties();
 		
-		DiffractionMetadata integratedDMD = new DiffractionMetadata(filename, integProps, integDCE)
+		DiffractionMetadata integratedDMD = new DiffractionMetadata(null, integProps, integDCE);
+		data.addMetadata(integratedDMD);
 	}
 	
 	protected abstract void setAxes(IDataset data, List<Dataset> out);

@@ -27,8 +27,6 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.oned.RangeIntegratio
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
 
 public class ConvertAxisTypeOperation extends AbstractOperation<ConvertAxisTypeModel, OperationData> {
-//public class RangeIntegration1DOperation extends AbstractOperation<RangeIntegration1DModel, OperationData> {
-
 	
 	@Override
 	public String getId() {

@@ -701,9 +701,8 @@ public class HierarchicalFileExVisitorTest {
 	}
 	
 	private void testAxesDataset(ITestOperation op, String slice, ILazyDataset lz, int dim) throws Exception {
-		Slice[] slices = Slice.convertFromString(slice);
 		IDataset data = op.getTestData().getData().getMetadata(AxesMetadata.class).get(0).getAxes()[dim].getSlice();
-		IDataset out = lz.getSlice(slices);
+		IDataset out = lz.getSlice();
 		out = out.squeeze();
 		compareDatasets(out, data);
 	}

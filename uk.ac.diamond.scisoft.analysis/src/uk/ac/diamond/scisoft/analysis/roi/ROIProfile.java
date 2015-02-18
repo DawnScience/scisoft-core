@@ -37,7 +37,131 @@ import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 public class ROIProfile {
 	
 	public enum XAxis {
-		PIXEL, RESOLUTION, ANGLE, Q,
+		ANGLE("2theta / deg") {
+
+			@Override
+			double toANGLE(double initVal, Double lambda) throws Exception {
+				return initVal; //Do nothing
+			}
+
+			@Override
+			double toPIXEL(double initVal) throws Exception {
+				throw new Exception("Unimplemented method.");
+			}
+
+			@Override
+			double toRESOLUTION(double initVal, Double lambda) throws Exception {
+				return lambda/(2*Math.sin(calcThetaInRadians(initVal)));
+			}
+
+			@Override
+			double toQ(double initVal, Double lambda) throws Exception {
+				return (4*Math.PI/lambda)*Math.sin(calcThetaInRadians(initVal));
+			}
+		},
+		PIXEL("Pixel Number") {
+
+			@Override
+			double toANGLE(double initVal, Double lambda) throws Exception {
+				throw new Exception("Unimplemented method.");
+			}
+
+			@Override
+			double toPIXEL(double initVal) throws Exception {
+				return initVal; //Do nothing
+			}
+
+			@Override
+			double toRESOLUTION(double initVal, Double lambda) throws Exception {
+				throw new Exception("Unimplemented method.");
+			}
+
+			@Override
+			double toQ(double initVal, Double lambda) throws Exception {
+				throw new Exception("Unimplemented method.");
+			}
+		},
+		RESOLUTION("d-space") {
+
+			@Override
+			double toANGLE(double initVal, Double lambda) throws Exception {
+				Double thRadians = Math.asin(lambda/(2*initVal));
+				return calcTwoThetaInDegrees(thRadians);
+			}
+
+			@Override
+			double toPIXEL(double initVal) throws Exception {
+				throw new Exception("Unimplemented method.");
+			}
+
+			@Override
+			double toRESOLUTION(double initVal, Double lambda) throws Exception {
+				return initVal; //Do nothing
+			}
+
+			@Override
+			double toQ(double initVal, Double lambda) throws Exception {
+				return (2*Math.PI)/initVal;
+			}
+		},
+		Q("Q-space") {
+
+			@Override
+			double toANGLE(double initVal, Double lambda) throws Exception {
+				double thRadians = Math.asin((initVal*lambda)/(4*Math.PI));
+				return calcTwoThetaInDegrees(thRadians);
+			}
+
+			@Override
+			double toPIXEL(double initVal) throws Exception {
+				throw new Exception("Unimplemented method.");
+			}
+
+			@Override
+			double toRESOLUTION(double initVal, Double lambda) throws Exception {
+				return (2*Math.PI)/initVal;
+			}
+
+			@Override
+			double toQ(double initVal, Double lambda) throws Exception {
+				return initVal; //Do nothing
+			}
+		};
+		
+		//Enum fields and constructor
+		private final String axisLabel;
+		private XAxis(String axisLabel){
+			this.axisLabel = axisLabel;
+		}
+		
+		//Enum methods
+		String getName() {
+			return this.axisLabel;
+		}
+		
+		/**
+		 * Calculate value of theta in radians from a given two theta value in degrees
+		 * @param tthVal
+		 * @return theta (radians)
+		 */
+		private static double calcThetaInRadians(double tthVal) {
+			return Math.toRadians(tthVal/2);
+		}
+		
+		/**
+		 * Calculate value of two theta in degrees fomr a given theta value in radians
+		 * @param thRadians
+		 * @return two theta (degrees)
+		 */
+		private static double calcTwoThetaInDegrees(double thRadians) {
+			return 2*Math.toDegrees(thRadians);
+		}
+		//Conversion abstract methods
+		abstract double toANGLE(double initVal, Double lambda) throws Exception;
+		abstract double toPIXEL(double initVal) throws Exception;
+		abstract double toRESOLUTION(double initVal, Double lambda) throws Exception;
+		abstract double toQ(double initVal, Double lambda) throws Exception;
+		
 	}
 	
 	/**

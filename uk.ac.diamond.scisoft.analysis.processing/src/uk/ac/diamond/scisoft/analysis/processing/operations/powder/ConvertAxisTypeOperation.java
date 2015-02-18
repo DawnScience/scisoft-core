@@ -19,9 +19,9 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
+import uk.ac.diamond.scisoft.analysis.diffraction.powder.PowderDataUtils;
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
 
@@ -43,101 +43,76 @@ public class ConvertAxisTypeOperation extends AbstractOperation<ConvertAxisTypeM
 	}
 	
 	protected OperationData process(IDataset input, IMonitor monitor) {
-		List<AxesMetadata> metaList = null;
+		List<AxesMetadata> axesMetaList = null;
+		ILazyDataset[] axes;
+		AxesMetadata am;
 
 		try {
-			metaList = input.getMetadata(AxesMetadata.class);
-			if (metaList == null || metaList.isEmpty())
-				return null;
+			axesMetaList = input.getMetadata(AxesMetadata.class);
+			if (axesMetaList == null || axesMetaList.isEmpty())
+				throw new Exception();
+			am = axesMetaList.get(0);
+			if (am == null) {
+				throw new Exception();
+			}
+			axes =  am.getAxes();
 		} catch (Exception e) {
-			return null;
+			throw new OperationException(this, "Could not read axis information from data.");
 		}
 
-		AxesMetadata am = metaList.get(0);
-		if (am == null)
-			return null;
-
-		ILazyDataset[] axes =  am.getAxes();
-		
 		if ((axes != null) && (axes[0] !=null)) {
 			Dataset oldXAxis = (Dataset)axes[0];
-			Dataset newXAxis = DatasetFactory.zeros(oldXAxis);
 
 			String axisName = oldXAxis.getName();
-			XAxis axisType = model.getAxisType();
+			XAxis currentAxisType;
+			//FIXME This should be set better in AbstractPixelIntegration
+			if (axisName.equals("q")) {
+				currentAxisType = XAxis.Q;
+			} else if (axisName.equals("2theta")) {
+				currentAxisType = XAxis.ANGLE;
+			} else if (axisName.equals("d-spacing")) {
+				currentAxisType = XAxis.RESOLUTION;
+			} else if (axisName.equals("Pixel")) {
+				currentAxisType = XAxis.PIXEL;
+			} else {
+				throw new OperationException(this, "Current axis type is not recognised.");
+			}
+			
+			XAxis targetAxisType = model.getAxisType();
 			Double wavelength;
 			if (model.isUseCalibratedWavelength()){
+				List<DiffractionMetadata> dmdMetaList = null;
 				try {
-				DiffractionMetadata dmd = (DiffractionMetadata) input.getMetadata(DiffractionMetadata.class);
-				wavelength = dmd.getDiffractionCrystalEnvironment().getWavelength();
+					dmdMetaList = input.getMetadata(DiffractionMetadata.class);
+					if (dmdMetaList == null || dmdMetaList.isEmpty())
+						throw new Exception();
+					DiffractionMetadata dmd = dmdMetaList.get(0);
+					if (dmd == null) {
+						throw new Exception();
+					}
+					wavelength = dmd.getDiffractionCrystalEnvironment().getWavelength();
 				} catch (Exception e) {
 					throw new OperationException(this, "Could not read wavelength from calibration data.");
 				}
 			} else {
 				wavelength = model.getUserWavelength();
 			}
-			for (int i = 0; i < oldXAxis.getSize()-1; i++) {
-				Double xAxisVal = oldXAxis.getDouble(i);
-				if (axisName == "q") {
-					if (axisType == XAxis.ANGLE) {
-						newXAxis.set(convertQToTwoTheta(xAxisVal, wavelength), i);
-						throw new OperationException(this, "Currently unsupported.");
-					} else if (axisType == XAxis.RESOLUTION){
-						newXAxis.set(convertQAndDSpacing(xAxisVal), i);
-					}
-				} else if (axisName == "2theta") {
-					if (axisType == XAxis.Q) {
-						newXAxis.set(convertTwoThetaToQ(xAxisVal, wavelength), i);
-						throw new OperationException(this, "Currently unsupported.");
-					} else if (axisType == XAxis.RESOLUTION) {
-						newXAxis.set(convertTwoThetaToDSpacing(xAxisVal, wavelength), i);
-						throw new OperationException(this, "Currently unsupported.");
-					}
-				} else if (axisName == "d-spacing") {
-					if (axisType == XAxis.ANGLE) {
-
-					} else if (axisType == XAxis.Q) {
-						newXAxis.set(convertQAndDSpacing(oldXAxis.getDouble(i)), i);
-					} 
-				} else {
-					throw new OperationException(this, "Input axis type unrecognised or not supported.");
-				}
+			
+			Dataset newXAxis;
+			try {
+				newXAxis = PowderDataUtils.convert1DDataset(oldXAxis, currentAxisType, targetAxisType, wavelength);
+			} catch (Exception e) {
+				throw new OperationException(this, "Error converting axis dataset.");
 			}
+
+			
 			am.setAxis(0, newXAxis);
 			input.setMetadata(am);
 			return new OperationData(input);
+			
 		} else {
 			throw new OperationException(this, "Axes in this dataset cannot be converted");
 		}
 	}
 
-	private double calcThetaInRadians(double tthVal) {
-		return Math.toRadians(tthVal/2);
-	}
-	
-	private double calcTwoThetaInDegrees(double thRadians) {
-		return 2*Math.toDegrees(thRadians);
-	}
-	
-	private double convertQToTwoTheta(double qVal, double lambda){
-		Double thRadians = Math.asin((qVal*lambda)/(4*Math.PI));
-		return calcTwoThetaInDegrees(thRadians);
-	}
-	
-	private double convertTwoThetaToQ(double tthVal, double lambda) {
-		return (4*Math.PI/lambda)*Math.sin(calcThetaInRadians(tthVal));
-	}
-	
-	private double convertDSpacingToTwoTheta(double dVal, double lambda) {
-		Double thRadians = Math.asin(lambda/(2*dVal));
-		return calcTwoThetaInDegrees(thRadians); 
-	}
-	
-	private double convertTwoThetaToDSpacing(double tthVal, double lambda) {
-		return lambda/(2*Math.sin(calcThetaInRadians(tthVal)));
-	}
-	
-	private double convertQAndDSpacing(double qdVal) {
-		return (2*Math.PI)/qdVal;
-	}
 }

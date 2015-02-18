@@ -14,6 +14,8 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
+import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -23,6 +25,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.AbstractPixelIntegration;
+import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 
 public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrationModel> extends AbstractOperation<T, OperationData> {
 
@@ -60,6 +63,8 @@ public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrati
 		Dataset data = out.remove(1);
 
 		setAxes(data, out);
+		
+		addDiffractionMetadata(data, metadata);
 
 		return new OperationData(data);
 
@@ -84,7 +89,14 @@ public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrati
 		((AbstractOperationModel)this.model).addPropertyChangeListener(listener);
 	}
 	
-
+	protected void addDiffractionMetadata(IDataset data, IDiffractionMetadata dmd) {
+		
+		DiffractionCrystalEnvironment integDCE = dmd.getDiffractionCrystalEnvironment();
+		DetectorProperties integProps = dmd.getDetector2DProperties();
+		
+		DiffractionMetadata integratedDMD = new DiffractionMetadata(filename, integProps, integDCE)
+	}
+	
 	protected abstract void setAxes(IDataset data, List<Dataset> out);
 	
 	protected abstract AbstractPixelIntegration createIntegrator(PixelIntegrationModel model, IDiffractionMetadata md);

@@ -9,8 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.osgi;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.FunctionFactory;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.FunctionUseCaseService;
 
 public class FunctionFactoryExtensionService implements IFunctionFactoryExtensionService {
 	
@@ -70,7 +71,7 @@ public class FunctionFactoryExtensionService implements IFunctionFactoryExtensio
 			final String fnName = extPt.getAttribute("name");
 			Class<? extends IFunction> clazz = function.getClass();
 			//Get the use cases
-			List<String> ucidList = new ArrayList<String>();
+			Set<String> ucidList = new HashSet<String>();
 			for (int i = 0; i < nUseCases; i++) { 
 				String attrLabel = "usecase"+(i+1);
 				String ucid = extPt.getAttribute(attrLabel);
@@ -87,7 +88,7 @@ public class FunctionFactoryExtensionService implements IFunctionFactoryExtensio
 		final String name = extPt.getAttribute("name");
 		final String ucid = extPt.getAttribute("id");
 		
-		FunctionFactory.registerUseCase(ucid, name);
+		FunctionUseCaseService.registerUseCase(ucid, name);
 	}
 
 }

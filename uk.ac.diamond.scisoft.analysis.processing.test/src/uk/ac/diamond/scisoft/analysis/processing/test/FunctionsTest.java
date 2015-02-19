@@ -71,8 +71,8 @@ public class FunctionsTest {
 		/*FunctionFactory has been set up as an OSGI service so need to register
 		 *function before it is called (or make this a JUnit PluginTest.
 		 */
-		FunctionFactory.registerFunction(Polynomial.class);
-		FunctionFactory.registerFunction(PseudoVoigt.class);
+		FunctionFactory.registerFunction(Polynomial.class, true);
+		FunctionFactory.registerFunction(PseudoVoigt.class, true);
 	}
 	
 	@Test

@@ -9,6 +9,9 @@
 
 package uk.ac.diamond.scisoft.analysis.osgi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
@@ -21,6 +24,9 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.FunctionFactory;
 public class FunctionFactoryExtensionService implements IFunctionFactoryExtensionService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(FunctionFactoryExtensionService.class);
+	
+	//This is the number of possible use cases provided by the extension point.
+	private static final int nUseCases = 5;
 	
 	//Added the following two members following LoaderFactoryExt.Serv.
 	static {
@@ -36,11 +42,21 @@ public class FunctionFactoryExtensionService implements IFunctionFactoryExtensio
 	 */
 	@Override
 	public void registerExtensionPoints() {
-		final IConfigurationElement[] extPts = Platform.getExtensionRegistry().getConfigurationElementsFor("uk.ac.diamond.scisoft.analysis.fitting.function");
-		for (IConfigurationElement eP : extPts) {
-			registerFunction(eP);
+		final IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("uk.ac.diamond.scisoft.analysis.fitting.function");		
+		/* Loop through this element array twice since we want to record the 
+		 * use cases to sanity check the ones provided in the function extension
+		 * points.
+		 */
+		for (IConfigurationElement ele : elements) {
+			if (!ele.getName().equals("usecase")) continue;
+			registerUseCase(ele);
+		}
+		for (IConfigurationElement ele : elements) {
+			if (!ele.getName().equals("function")) continue;
+			registerFunction(ele);
 		}
 	}
+
 	
 	/**
 	 * Take an extension point, determine it's class and then register it with
@@ -53,10 +69,25 @@ public class FunctionFactoryExtensionService implements IFunctionFactoryExtensio
 			final IFunction function = (IFunction) extPt.createExecutableExtension("class");
 			final String fnName = extPt.getAttribute("name");
 			Class<? extends IFunction> clazz = function.getClass();
-			FunctionFactory.registerFunction(clazz, fnName);
+			//Get the use cases
+			List<String> ucidList = new ArrayList<String>();
+			for (int i = 0; i < nUseCases; i++) { 
+				String attrLabel = "usecase"+(i+1);
+				String ucid = extPt.getAttribute(attrLabel);
+				if (ucid == null) continue;
+				ucidList.add(ucid);
+			}
+			FunctionFactory.registerFunction(clazz, fnName, ucidList);
 		} catch (Exception e) {
 			logger.error("Cannot import function "+extPt.getAttribute("class"), e);
 		}
+	}
+	
+	private final static void registerUseCase(IConfigurationElement extPt) {
+		final String name = extPt.getAttribute("name");
+		final String ucid = extPt.getAttribute("id");
+		
+		FunctionFactory.registerUseCase(ucid, name);
 	}
 
 }

@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -45,10 +46,13 @@ public final class FunctionFactory {
 
 	private static final Map<String, Class<? extends IFunction>> FUNCTIONS;
 	private static final Map<String, Class<? extends IPeak>> PEAKS;
+	private static final Map<String, String> USECASES;
 	static {
 		
 		FUNCTIONS = new TreeMap<String, Class<? extends IFunction>>();
 		PEAKS = new TreeMap<String, Class<? extends IPeak>>();
+		USECASES = new HashMap<String, String>();
+		
 		/**
 		 * Functions *must* have a zero argument constructor.
 		 * 
@@ -159,6 +163,15 @@ public final class FunctionFactory {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Register a use case with a particular usecase ID and a friendly name.
+	 * @param ucid
+	 * @param name
+	 */
+	public static void registerUseCase(String ucid, String name) {
+		USECASES.put(ucid, name);
 	}
 	
 	/**

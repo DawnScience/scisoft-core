@@ -30,135 +30,19 @@ import uk.ac.diamond.scisoft.analysis.dataset.function.Integrate2D;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToPolarAndIntegrate;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToRotatedCartesianAndIntegrate;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
+import uk.ac.diamond.scisoft.analysis.roi.XAxist;
 
 /**
  * Utility methods for calculating region of interest profiles.
  */
 public class ROIProfile {
 	
-	public enum XAxis {
-		ANGLE("2theta / deg") {
-			@Override
-			public double toANGLE(double initVal, Double lambda) throws Exception {
-				return initVal; //Do nothing
-			}
-
-			@Override
-			public double toPIXEL(double initVal) throws Exception {
-				throw new Exception("Unimplemented method.");
-			}
-
-			@Override
-			public double toRESOLUTION(double initVal, Double lambda) throws Exception {
-				return lambda/(2*Math.sin(calcThetaInRadians(initVal)));
-			}
-
-			@Override
-			public double toQ(double initVal, Double lambda) throws Exception {
-				return (4*Math.PI/lambda)*Math.sin(calcThetaInRadians(initVal));
-			}
-		},
-		PIXEL("Pixel Number") {
-			@Override
-			public double toANGLE(double initVal, Double lambda) throws Exception {
-				throw new Exception("Unimplemented method.");
-			}
-
-			@Override
-			public double toPIXEL(double initVal) throws Exception {
-				return initVal; //Do nothing
-			}
-
-			@Override
-			public double toRESOLUTION(double initVal, Double lambda) throws Exception {
-				throw new Exception("Unimplemented method.");
-			}
-
-			@Override
-			public double toQ(double initVal, Double lambda) throws Exception {
-				throw new Exception("Unimplemented method.");
-			}
-		},
-		RESOLUTION("d-space") {
-			@Override
-			public double toANGLE(double initVal, Double lambda) throws Exception {
-				Double thRadians = Math.asin(lambda/(2*initVal));
-				return calcTwoThetaInDegrees(thRadians);
-			}
-
-			@Override
-			public double toPIXEL(double initVal) throws Exception {
-				throw new Exception("Unimplemented method.");
-			}
-
-			@Override
-			public double toRESOLUTION(double initVal, Double lambda) throws Exception {
-				return initVal; //Do nothing
-			}
-
-			@Override
-			public double toQ(double initVal, Double lambda) throws Exception {
-				return (2*Math.PI)/initVal;
-			}
-		},
-		Q("Q-space") {
-			@Override
-			public double toANGLE(double initVal, Double lambda) throws Exception {
-				double thRadians = Math.asin((initVal*lambda)/(4*Math.PI));
-				return calcTwoThetaInDegrees(thRadians);
-			}
-
-			@Override
-			public double toPIXEL(double initVal) throws Exception {
-				throw new Exception("Unimplemented method.");
-			}
-
-			@Override
-			public double toRESOLUTION(double initVal, Double lambda) throws Exception {
-				return (2*Math.PI)/initVal;
-			}
-
-			@Override
-			public double toQ(double initVal, Double lambda) throws Exception {
-				return initVal; //Do nothing
-			}
-		};
-		
-		//Enum fields and constructor
-		private final String axisLabel;
-		private XAxis(String axisLabel){
-			this.axisLabel = axisLabel;
-		}
-		
-		//Enum methods
-		public final String getAxisLabel() {
-			return this.axisLabel;
-		}
-		
-		/**
-		 * Calculate value of theta in radians from a given two theta value in degrees
-		 * @param tthVal
-		 * @return theta (radians)
-		 */
-		private static double calcThetaInRadians(double tthVal) {
-			return Math.toRadians(tthVal/2);
-		}
-		
-		/**
-		 * Calculate value of two theta in degrees fomr a given theta value in radians
-		 * @param thRadians
-		 * @return two theta (degrees)
-		 */
-		private static double calcTwoThetaInDegrees(double thRadians) {
-			return 2*Math.toDegrees(thRadians);
-		}
-		//Conversion abstract methods
-		public abstract double toANGLE(double initVal, Double lambda) throws Exception;
-		public abstract double toPIXEL(double initVal) throws Exception;
-		public abstract double toRESOLUTION(double initVal, Double lambda) throws Exception;
-		public abstract double toQ(double initVal, Double lambda) throws Exception;
-		
-	}
+//	public enum XAxis {
+//		ANGLE,
+//		PIXEL,
+//		RESOLUTION,
+//		Q;
+//	}
 	
 	/**
 	 * @param data
@@ -739,7 +623,7 @@ public class ROIProfile {
 	 * @return 
 	 *     the profile
 	 */
-	public static Dataset[] sector(Dataset data, Dataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean useInterpolateFJ, QSpace qSpace, XAxis axisType, boolean doErrors) {
+	public static Dataset[] sector(Dataset data, Dataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean useInterpolateFJ, QSpace qSpace, XAxist axisType, boolean doErrors) {
 		final double[] spt = sroi.getPointRef();
 		final double[] rad = sroi.getRadii();
 		final double[] ang = sroi.getAngles();

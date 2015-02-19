@@ -14,12 +14,14 @@
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.Box"
             id="uk.ac.diamond.scisoft.analysis.fitting.functions.Box"
-            name="Box">
+            name="Box"
+            usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.FunctionType">
       </function>
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.Cubic"
             id="uk.ac.diamond.scisoft.analysis.fitting.functions.Cubic"
-            name="Cubic">
+            name="Cubic"
+            usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.FunctionType">
       </function>
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.CubicSpline"
@@ -29,17 +31,20 @@
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.Fermi"
             id="uk.ac.diamond.scisoft.analysis.fitting.functions.Fermi"
-            name="Fermi">
+            name="Fermi"
+            usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.FunctionType">
       </function>
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.FermiGauss"
             id="uk.ac.diamond.scisoft.analysis.fitting.functions.FermiGauss"
-            name="Fermi convoluted with Gaussian">
+            name="Fermi convoluted with Gaussian"
+            usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.FunctionType">
       </function>
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian"
             id="uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian"
-            name="Gaussian">
+            name="Gaussian"
+            usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.FunctionType">
       </function>
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.GaussianND"
@@ -49,12 +54,14 @@
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine"
             id="uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine"
-            name="Linear">
+            name="Linear"
+            usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.FunctionType">
       </function>
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian"
             id="uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian"
-            name="Lorentzian">
+            name="Lorentzian"
+            usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.FunctionType">
       </function>
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.LorentzianSqr"
@@ -69,22 +76,26 @@
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII"
             id="uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII"
-            name="Pearson VII">
+            name="Pearson VII"
+            usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.FunctionType">
       </function>
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial"
             id="uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial"
-            name="Polynomial">
-      </function>
-      <function
-            class="uk.ac.diamond.scisoft.analysis.fitting.functions.Quadratic"
-            id="uk.ac.diamond.scisoft.analysis.fitting.functions.Quadratic"
-            name="Quadratic">
+            name="Polynomial"
+            usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.FunctionType">
       </function>
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt"
             id="uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt"
-            name="Pseudo-Voigt">
+            name="Pseudo-Voigt"
+            usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.FunctionType">
+      </function>
+      <function
+            class="uk.ac.diamond.scisoft.analysis.fitting.functions.Quadratic"
+            id="uk.ac.diamond.scisoft.analysis.fitting.functions.Quadratic"
+            name="Quadratic"
+            usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.FunctionType">
       </function>
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.Step"
@@ -95,15 +106,17 @@
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.SmoothGoldEdgeFunction"
             id="uk.ac.diamond.scisoft.analysis.fitting.functions.SmoothGoldEdgeFunction"
             name="Smooth gold edge"
-            usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.NotFittingTool">
+            usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.NotFunctionFittingTool">
       </function>
       <usecase
+            Description="Functions which were previously in the FunctionType Enum."
             id="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.FunctionType"
             name="FunctionType">
       </usecase>
       <usecase
-            id="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.NotFittingTool"
-            name="NotFittingTool">
+            Description="Should not be available in the Function Fitting Tool."
+            id="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.NotFunctionFittingTool"
+            name="NotFunctionFittingTool">
       </usecase>
    </extension>
 

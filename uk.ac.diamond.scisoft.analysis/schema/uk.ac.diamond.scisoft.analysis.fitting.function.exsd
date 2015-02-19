@@ -161,6 +161,13 @@ For sanity, the new functions should extend AFunction (which is the base impleme
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="Description" type="string">
+            <annotation>
+               <documentation>
+                  Provides a helpful description of what this usecase will allow/deny.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

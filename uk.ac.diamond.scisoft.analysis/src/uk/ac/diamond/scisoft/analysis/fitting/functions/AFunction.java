@@ -66,8 +66,6 @@ public abstract class AFunction implements IFunction, Serializable {
 	protected IMonitor monitor = null;
 
 	protected IOperator parent;
-	
-	protected final Set<String> functionUseCaseIDs = new HashSet<>();
 
 	/**
 	 * Constructor which simply generates the parameters but uninitialised
@@ -711,22 +709,5 @@ public abstract class AFunction implements IFunction, Serializable {
 		}
 		
 		setDirty(true);
-	}
-	
-	/**
-	 * 
-	 */
-	public void setUseCases(List<String> useCaseIDs) {
-		for (String ucid : useCaseIDs) {
-			functionUseCaseIDs.add(ucid);
-		}
-	}
-	
-	public Set<String> getAllUseCases() {
-		return functionUseCaseIDs;
-	}
-	
-	public boolean hasUseCase(String ucid) {
-		return functionUseCaseIDs.contains(ucid);
 	}
 }

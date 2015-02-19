@@ -49,6 +49,11 @@
    </element>
 
    <element name="function">
+      <annotation>
+         <documentation>
+            Class, ID and name of function. A number of usecases are also included (currently 5) to allow categorisation of the function. Only 5 usecases (usecase1...) will be searched by the FunctionFactoryExtensionService. If more usecases are added, hardcoded value in FunctionFactoryExtensionService must be changed.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>

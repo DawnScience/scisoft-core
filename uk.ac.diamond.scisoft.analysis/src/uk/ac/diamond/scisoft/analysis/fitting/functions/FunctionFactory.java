@@ -11,9 +11,9 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
@@ -46,12 +46,10 @@ public final class FunctionFactory {
 
 	private static final Map<String, Class<? extends IFunction>> FUNCTIONS;
 	private static final Map<String, Class<? extends IPeak>> PEAKS;
-	private static final Map<String, String> USECASES;
 	static {
 		
 		FUNCTIONS = new TreeMap<String, Class<? extends IFunction>>();
 		PEAKS = new TreeMap<String, Class<? extends IPeak>>();
-		USECASES = new HashMap<String, String>();
 		
 		/**
 		 * Functions *must* have a zero argument constructor.
@@ -96,7 +94,7 @@ public final class FunctionFactory {
 
 		for (Class<? extends IFunction> clazz : classes) {
 			try {
-				registerFunction(clazz, null, ignoreDuplicates);
+				registerFunction(clazz, null, ignoreDuplicates,null);
 			} catch (Throwable e) {
 				logger.error("Cannot register function "+clazz.getCanonicalName()+"!", e);
 			}
@@ -109,7 +107,7 @@ public final class FunctionFactory {
 	 * @throws Exception
 	 */
 	public static void registerFunction(Class<? extends IFunction> clazz) throws Exception {
-		registerFunction(clazz, null, false);
+		registerFunction(clazz, null, false, null);
 	}
 	
 	/**
@@ -119,7 +117,30 @@ public final class FunctionFactory {
 	 * @throws Exception
 	 */
 	public static void registerFunction(Class<? extends IFunction> clazz, String fnName) throws Exception {
-		registerFunction(clazz, fnName, false);
+		registerFunction(clazz, fnName, false, null);
+	}
+	
+	/**
+	 * Register a function with it's class and whether we should ignore duplicates
+	 * in the maps. This is useful for tests.
+	 * @param clazz
+	 * @param ignoreDuplicates
+	 * @throws Exception
+	 */
+	public static void registerFunction(Class<? extends IFunction> clazz, Boolean ignoreDuplicates) throws Exception {
+		registerFunction(clazz, null, ignoreDuplicates, null);
+	}
+	
+	/**
+	 * Register a function with it's class, function name and use case list. 
+	 * (This is default option that should be used)
+	 * @param clazz - function clas
+	 * @param fnName - string of user defined function name
+	 * @param useCaseList - list of use cases ids extracted from extension point
+	 * @throws Exception
+	 */
+	public static void registerFunction(Class<? extends IFunction> clazz, String fnName, Set<String> useCaseList) throws Exception {
+		registerFunction(clazz, fnName, false, useCaseList);
 	}
 	
 	/**
@@ -130,7 +151,7 @@ public final class FunctionFactory {
 	 * @param ignoreDuplicates
 	 * @throws Exception
 	 */
-	public static void registerFunction(Class<? extends IFunction> clazz, String fnName, Boolean ignoreDuplicates) throws Exception {
+	public static void registerFunction(Class<? extends IFunction> clazz, String fnName, Boolean ignoreDuplicates, Set<String> useCaseList) throws Exception {
 		final IFunction function = clazz.newInstance();
 		final String name;
 		
@@ -144,6 +165,11 @@ public final class FunctionFactory {
 		//Add function to FUNCTION map
 		if (!FUNCTIONS.containsKey(name)) {
 			FUNCTIONS.put(name, clazz);
+			try {
+			FunctionUseCaseService.setFunctionUseCases(name, useCaseList);
+			} catch (Exception e) {
+				throw new Exception(e);
+			}
 		} else {
 			if (ignoreDuplicates) {
 				//Pass
@@ -163,15 +189,6 @@ public final class FunctionFactory {
 				}
 			}
 		}
-	}
-	
-	/**
-	 * Register a use case with a particular usecase ID and a friendly name.
-	 * @param ucid
-	 * @param name
-	 */
-	public static void registerUseCase(String ucid, String name) {
-		USECASES.put(ucid, name);
 	}
 	
 	/**

@@ -94,8 +94,17 @@
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.SmoothGoldEdgeFunction"
             id="uk.ac.diamond.scisoft.analysis.fitting.functions.SmoothGoldEdgeFunction"
-            name="Smooth gold edge">
+            name="Smooth gold edge"
+            usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.NotFittingTool">
       </function>
+      <usecase
+            id="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.FunctionType"
+            name="FunctionType">
+      </usecase>
+      <usecase
+            id="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.NotFittingTool"
+            name="NotFittingTool">
+      </usecase>
    </extension>
 
 

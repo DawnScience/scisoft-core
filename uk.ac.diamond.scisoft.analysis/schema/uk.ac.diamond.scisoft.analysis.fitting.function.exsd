@@ -19,6 +19,7 @@
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="function" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="usecase" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -76,6 +77,83 @@ For sanity, the new functions should extend AFunction (which is the base impleme
                <documentation>
                   Name of the function.
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="usecase1" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="uk.ac.diamond.scisoft.analysis.fitting.function/usecase/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="usecase2" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="uk.ac.diamond.scisoft.analysis.fitting.function/usecase/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="usecase3" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="uk.ac.diamond.scisoft.analysis.fitting.function/usecase/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="usecase4" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="uk.ac.diamond.scisoft.analysis.fitting.function/usecase/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="usecase5" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="uk.ac.diamond.scisoft.analysis.fitting.function/usecase/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="usecase">
+      <annotation>
+         <documentation>
+            Some functions are specific to fields of science, this allows them to be classified.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for the usecase.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>

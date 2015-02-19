@@ -30,7 +30,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.function.Integrate2D;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToPolarAndIntegrate;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToRotatedCartesianAndIntegrate;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
-import uk.ac.diamond.scisoft.analysis.roi.XAxist;
+import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 /**
  * Utility methods for calculating region of interest profiles.
@@ -623,7 +623,7 @@ public class ROIProfile {
 	 * @return 
 	 *     the profile
 	 */
-	public static Dataset[] sector(Dataset data, Dataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean useInterpolateFJ, QSpace qSpace, XAxist axisType, boolean doErrors) {
+	public static Dataset[] sector(Dataset data, Dataset mask, SectorROI sroi, boolean doRadial, boolean doAzimuthal, boolean useInterpolateFJ, QSpace qSpace, XAxis axisType, boolean doErrors) {
 		final double[] spt = sroi.getPointRef();
 		final double[] rad = sroi.getRadii();
 		final double[] ang = sroi.getAngles();

@@ -40,8 +40,6 @@ import ncsa.hdf.object.h5.H5Datatype;
 import ncsa.hdf.object.h5.H5File;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
-import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.io.SliceObject;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
@@ -1276,92 +1274,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			return true;
 		}
 
-		final String host = file.getHostname();
-		final String filePath = file.getFilename();
-
-		ILazyLoader l = new ILazyLoader() {
-			@Override
-			public boolean isFileReadable() {
-				try {
-					if (host != null && host.length() > 0 && !host.equals(InetAddress.getLocalHost().getHostName()))
-						return false;
-				} catch (UnknownHostException e) {
-					logger.warn("Problem finding local host so ignoring check", e);
-				}
-				return new File(filePath).canRead();
-			}
-
-			@Override
-			public String toString() {
-				return filePath + ":" + nodePath;
-			}
-
-			@Override
-			public Dataset getDataset(IMonitor mon, SliceND slice) throws ScanFileHolderException {
-				int[] lstart = slice.getStart();
-				int[] lstep  = slice.getStep();
-				int[] newShape = slice.getShape();
-				int[] shape = slice.getSourceShape();
-				final int rank = shape.length;
-
-				Dataset d = null;
-				try {
-					if (!Arrays.equals(trueShape, shape)) {
-						final int trank = trueShape.length;
-						int[] tstart = new int[trank];
-						int[] tsize = new int[trank];
-						int[] tstep = new int[trank];
-
-						if (rank > trank) { // shape was extended (from left) then need to translate to true slice
-							int j = 0;
-							for (int i = 0; i < trank; i++) {
-								if (trueShape[i] == 1) {
-									tstart[i] = 0;
-									tsize[i] = 1;
-									tstep[i] = 1;
-								} else {
-									while (shape[j] == 1 && (rank - j) > (trank - i))
-										j++;
-
-									tstart[i] = lstart[j];
-									tsize[i] = newShape[j];
-									tstep[i] = lstep[j];
-									j++;
-								}
-							}
-						} else { // shape was squeezed (and could have been extended again) then need to translate to true slice
-							int j = 0;
-							while (shape[j] == 1 && j < rank)
-								j++;
-
-							for (int i = 0; i < trank; i++) {
-								if (trueShape[i] == 1) {
-									tstart[i] = 0;
-									tsize[i] = 1;
-									tstep[i] = 1;
-								} else {
-									tstart[i] = lstart[j];
-									tsize[i] = newShape[j];
-									tstep[i] = lstep[j];
-									j++;
-								}
-							}
-						}
-
-						d = loadData(filePath, nodePath, tstart, tsize, tstep, dtype, isize, extendUnsigned);
-						d.setShape(newShape); // squeeze shape back
-					} else {
-						d = loadData(filePath, nodePath, lstart, newShape, lstep, dtype, isize, extendUnsigned);
-					}
-					if (d != null) {
-						d.setName(name);
-					}
-				} catch (Exception e) {
-					throw new ScanFileHolderException("Problem loading dataset", e);
-				}
-				return d;
-			}
-		};
+		HDF5LazyLoader l = new HDF5LazyLoader(file.getHostname(), file.getFilename(), nodePath, name, trueShape, isize, dtype, extendUnsigned);
 
 		dataset.setDataset(new LazyDataset(name, dtype, isize, trueShape.clone(), l));
 		return true;

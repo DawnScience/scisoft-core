@@ -23,7 +23,7 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PowderDataUtils;
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
-import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
+import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 public class ConvertAxisTypeOperation extends AbstractOperation<ConvertAxisTypeModel, OperationData> {
 	

@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
-import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
+import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 public class ConvertAxisTypeModel extends AbstractOperationModel {
 	

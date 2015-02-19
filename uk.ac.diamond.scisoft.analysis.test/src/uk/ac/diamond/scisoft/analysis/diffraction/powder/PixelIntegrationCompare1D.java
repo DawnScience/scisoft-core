@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
-import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
+import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 public class PixelIntegrationCompare1D extends AbstractPixelIntegrationTestBase {
 	

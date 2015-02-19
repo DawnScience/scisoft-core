@@ -34,7 +34,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
-import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
+import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 /**
  * Map and integrate a 2D dataset from Cartesian to Polar coordinates and return that remapped dataset

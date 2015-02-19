@@ -18,7 +18,7 @@ import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
+import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 public class NonPixelSplittingIntegrationTest extends AbstractPixelIntegrationTestBase {
 	

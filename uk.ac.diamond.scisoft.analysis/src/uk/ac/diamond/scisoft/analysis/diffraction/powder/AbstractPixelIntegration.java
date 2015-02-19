@@ -25,7 +25,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
-import uk.ac.diamond.scisoft.analysis.roi.ROIProfile.XAxis;
+import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 public abstract class AbstractPixelIntegration {
 	
@@ -42,7 +42,7 @@ public abstract class AbstractPixelIntegration {
 	Dataset maskRoiCached;
 	
 	QSpace qSpace = null;
-	ROIProfile.XAxis xAxis = XAxis.Q;
+	XAxis xAxis = XAxis.Q;
 	
 	IROI roi = null;
 	
@@ -120,7 +120,7 @@ public abstract class AbstractPixelIntegration {
 		binEdges = null;
 	}
 	
-	public void setAxisType(ROIProfile.XAxis axis) {
+	public void setAxisType(XAxis axis) {
 		if (this.xAxis == axis) return;
 		this.xAxis = axis;
 		radialArray = null;

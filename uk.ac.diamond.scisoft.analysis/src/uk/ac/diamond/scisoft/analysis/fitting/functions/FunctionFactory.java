@@ -165,12 +165,14 @@ public final class FunctionFactory {
 		//Add function to FUNCTION map
 		if (!FUNCTIONS.containsKey(name)) {
 			FUNCTIONS.put(name, clazz);
-			try {
-			FunctionUseCaseService.setFunctionUseCases(name, useCaseList);
-			} catch (Exception e) {
-				throw new Exception(e);
+			if (useCaseList != null) {
+				try {
+					FunctionUseCaseService.setFunctionUseCases(name, useCaseList);
+				} catch (Exception e) {
+					throw new Exception(e);
+				}
 			}
-		} else {
+	} else {
 			if (ignoreDuplicates) {
 				//Pass
 			} else {
@@ -183,7 +185,7 @@ public final class FunctionFactory {
 				PEAKS.put(name, (Class<? extends IPeak>) clazz);
 			} else {
 				if (ignoreDuplicates) {
-					//Pass
+					//pass
 				} else {
 					throw new Exception("A peak function is already registered with the name "+name+".");
 				}
@@ -254,8 +256,11 @@ public final class FunctionFactory {
 		Class<? extends IFunction> functionClass;
 		try {
 			functionClass = FUNCTIONS.get(name);
+			if(functionClass == null) {
+				throw new ClassNotFoundException("There is no function with the name "+name+" registered!");
+			}
 			return functionClass.newInstance();
-		} catch (NullPointerException npe) {
+		} catch (Exception ne) {
 			throw new ClassNotFoundException("There is no function with the name "+name+" registered!");
 		}
 	}
@@ -268,48 +273,51 @@ public final class FunctionFactory {
 		Class<? extends IFunction> functionClass;
 		try {
 			functionClass = FUNCTIONS.get(name);
+			if(functionClass == null) {
+				throw new ClassNotFoundException("There is no function with the name "+name+" registered!");
+			}
 			final Constructor<? extends IFunction> c = functionClass.getConstructor(double[].class);
 			return c.newInstance(args);
-		} catch (NullPointerException npe) {
+		} catch (Exception ne) {
 			throw new ClassNotFoundException("There is no function with the name "+name+" registered!");
 		}
 	}
 	
 	/**
 	 * Returns a class implementing IFunction based on the name supplied 
-	 * @param functionName
+	 * @param name
 	 * @return Function class
 	 * @throws ClassNotFoundException - if named function is not registered
 	 */
-	public static Class<? extends IFunction> getClassForFunction(String functionName) throws ClassNotFoundException {
+	public static Class<? extends IFunction> getClassForFunction(String name) throws ClassNotFoundException {
 		Class<? extends IFunction> functionClass;
 		try {
-			functionClass= FUNCTIONS.get(functionName);
+			functionClass= FUNCTIONS.get(name);
 			if (functionClass == null) {
-				throw new NullPointerException();
+				throw new ClassNotFoundException("There is no function with the name "+name+" registered!");
 			}
 			return functionClass;
-		} catch (NullPointerException npe) {
-			throw new ClassNotFoundException("There is no function with the name "+functionName+" registered!");
+		} catch (Exception ne) {
+			throw new ClassNotFoundException("There is no function with the name "+name+" registered!");
 		}
 	}
 	
 	/**
 	 * Returns the fully qualified class name represented by this class object as a String.
-	 * @param functionName
+	 * @param name
 	 * @return class name of function
 	 * @throws ClassNotFoundException
 	 */
-	public static String getClassNameForFunction(String functionName) throws ClassNotFoundException {
+	public static String getClassNameForFunction(String name) throws ClassNotFoundException {
 		String functionClassName;
 		try {
-			functionClassName  = FUNCTIONS.get(functionName).getName();
+			functionClassName  = FUNCTIONS.get(name).getName();
 			if (functionClassName == null) {
-				throw new NullPointerException();
+				throw new ClassNotFoundException("There is no function with the name "+name+" registered!");
 			}
 			return functionClassName;
-		} catch (NullPointerException npe) {
-			throw new ClassNotFoundException("There is no function with the name "+functionName+" registered!");
+		} catch (Exception ne) {
+			throw new ClassNotFoundException("There is no function with the name "+name+" registered!");
 		}
 	}
 	
@@ -322,30 +330,30 @@ public final class FunctionFactory {
 		try {
 			peakClass = PEAKS.get(name);
 			if (peakClass == null) {
-				throw new NullPointerException();
+				throw new ClassNotFoundException("There is no function with the name "+name+" registered!");
 			}
 			return peakClass.newInstance();
-		} catch (NullPointerException npe) {
+		} catch (Exception ne) {
 			throw new ClassNotFoundException("There is no peak function with the name "+name+" registered!");
 		}	
 	}
 	
 	/**
 	 * Returns a class implementing IFunction based on the name supplied 
-	 * @param peakFunctionName
+	 * @param name
 	 * @return Peak function class
 	 * @throws ClassNotFoundException - if named peak function is not registered
 	 */
-	public static Class<? extends IPeak> getClassForPeakFn(String peakFunctionName) throws ClassNotFoundException {
+	public static Class<? extends IPeak> getClassForPeakFn(String name) throws ClassNotFoundException {
 		Class<? extends IPeak> peakClass;
 		try {
-			peakClass = PEAKS.get(peakFunctionName);
+			peakClass = PEAKS.get(name);
 			if (peakClass == null) {
-				throw new NullPointerException();
-			}
+				throw new ClassNotFoundException("There is no function with the name "+name+" registered!");
+				}
 			return peakClass;
-		} catch (NullPointerException npe) {
-			throw new ClassNotFoundException("There is no peak function with the name "+peakFunctionName+" registered!");
+		} catch (Exception ne) {
+			throw new ClassNotFoundException("There is no peak function with the name "+name+" registered!");
 		}
 	}
 	

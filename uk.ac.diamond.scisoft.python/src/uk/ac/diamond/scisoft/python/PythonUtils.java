@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.python;
 
 import java.lang.reflect.Array;
+import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.commons.math3.complex.Complex;
@@ -81,7 +82,7 @@ public class PythonUtils {
 			return obj;
 		}
 
-		if (!(obj instanceof PyObject))
+		if (obj instanceof BigInteger || !(obj instanceof PyObject))
 			return obj;
 
 		if (obj instanceof PyComplex) {

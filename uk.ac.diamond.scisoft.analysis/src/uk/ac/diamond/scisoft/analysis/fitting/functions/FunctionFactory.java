@@ -161,34 +161,31 @@ public final class FunctionFactory {
 		} else {
 			name = function.getName(); 
 		}
-		
+
 		//Add function to FUNCTION map
 		if (!FUNCTIONS.containsKey(name)) {
 			FUNCTIONS.put(name, clazz);
-			if (useCaseList != null) {
-				try {
-					FunctionUseCaseService.setFunctionUseCases(name, useCaseList);
-				} catch (Exception e) {
-					throw new Exception(e);
+			
+			//If this is a peak function, register it in the PEAK map too
+			if (function instanceof IPeak) {
+				if (!PEAKS.containsKey(name)) {
+					PEAKS.put(name, (Class<? extends IPeak>) clazz);
+				} else {
+					if (ignoreDuplicates) {
+						//pass
+					} else {
+						throw new Exception("A peak function is already registered with the name "+name+".");
+					}
 				}
 			}
-	} else {
+			if (useCaseList != null) {
+				FunctionUseCaseService.setFunctionUseCases(name, useCaseList);
+			}
+		} else {
 			if (ignoreDuplicates) {
 				//Pass
 			} else {
 				throw new Exception("A function is already registered with the name "+name+".");
-			}
-		}
-		//If the class is a Peak, add function to PEAK map
-		if (function instanceof IPeak) {
-			if (!PEAKS.containsKey(name)) {
-				PEAKS.put(name, (Class<? extends IPeak>) clazz);
-			} else {
-				if (ignoreDuplicates) {
-					//pass
-				} else {
-					throw new Exception("A peak function is already registered with the name "+name+".");
-				}
 			}
 		}
 	}

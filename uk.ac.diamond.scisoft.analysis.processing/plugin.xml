@@ -358,7 +358,7 @@
       </category>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1DOperation"
-            icon="icons/crop1.png"
+            icon="icons/Crop_nD.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1DOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1DModel"
             name="Crop Data [1D]">
@@ -372,7 +372,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.Crop2DOperation"
-            icon="icons/crop2.png"
+            icon="icons/Crop_nD.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.twod.Crop2DOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.Crop2DModel"
             name="Crop Data [2D]">
@@ -430,6 +430,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.ConvertAxisTypeOperation"
+            icon="icons/ConvertAxis.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.ConvertAxisTypeOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.ConvertAxisTypeModel"
             name="Convert axis type [1D]"

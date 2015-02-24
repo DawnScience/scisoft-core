@@ -9,9 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.osgi;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -30,7 +28,6 @@ public class FunctionFactoryExtensionService implements IFunctionFactoryExtensio
 	
 	//This is the number of possible use cases provided by the extension point.
 	private static final int nUseCases = 5;
-	private static final List<String> plugins = new ArrayList<String>();
 	
 	//Added the following two members following LoaderFactoryExt.Serv.
 	static {
@@ -63,9 +60,8 @@ public class FunctionFactoryExtensionService implements IFunctionFactoryExtensio
 
 	
 	/**
-	 * Take a function extension point, determine it's class and  register it 
-	 * with the function factory. Also record the plugin contributing the 
-	 * extension point.
+	 * Take an extension point, determine it's class and then register it with
+	 * the function factory.
 	 * @param extPt
 	 */
 	private final static void registerFunction(IConfigurationElement extPt) {
@@ -83,34 +79,16 @@ public class FunctionFactoryExtensionService implements IFunctionFactoryExtensio
 				ucidList.add(ucid);
 			}
 			FunctionFactory.registerFunction(clazz, fnName, ucidList);
-			
-			//Record the contributing plugin
-			final String name = extPt.getContributor().getName();
-			if (!plugins.contains(name))
-				plugins.add(name);
 		} catch (Exception e) {
 			logger.error("Cannot import function "+extPt.getAttribute("class"), e);
 		}
 	}
 	
-	/**
-	 * Take a use case extension point and register it with the 
-	 * FunctionUseCaseService.
-	 * @param extPt
-	 */
 	private final static void registerUseCase(IConfigurationElement extPt) {
 		final String name = extPt.getAttribute("name");
 		final String ucid = extPt.getAttribute("id");
 		
 		FunctionUseCaseService.registerUseCase(ucid, name);
-	}
-	
-	/**
-	 * Return a list of plugins which have contributed functions to the 
-	 * FunctionFactory.
-	 */
-	public List<String> getPlugins() {
-		return plugins;
 	}
 
 }

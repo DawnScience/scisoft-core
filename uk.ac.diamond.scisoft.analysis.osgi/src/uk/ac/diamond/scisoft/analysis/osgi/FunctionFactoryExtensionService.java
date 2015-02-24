@@ -45,7 +45,7 @@ public class FunctionFactoryExtensionService implements IFunctionFactoryExtensio
 	 * and register them sequentially.
 	 */
 	@Override
-	public void registerExtensionPoints() {
+	public void registerFunctionExtensionPoints() {
 		final IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("uk.ac.diamond.scisoft.analysis.fitting.function");		
 		/* Loop through this element array twice since we want to record the 
 		 * use cases to sanity check the ones provided in the function extension
@@ -109,6 +109,7 @@ public class FunctionFactoryExtensionService implements IFunctionFactoryExtensio
 	 * Return a list of plugins which have contributed functions to the 
 	 * FunctionFactory.
 	 */
+	@Override
 	public List<String> getPlugins() {
 		return plugins;
 	}

@@ -18,6 +18,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -34,7 +35,6 @@ import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
 import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
 import ncsa.hdf.hdf5lib.structs.H5G_info_t;
 import ncsa.hdf.hdf5lib.structs.H5O_info_t;
-import ncsa.hdf.object.Attribute;
 import ncsa.hdf.object.Datatype;
 import ncsa.hdf.object.h5.H5Datatype;
 import ncsa.hdf.object.h5.H5File;
@@ -44,6 +44,7 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.io.SliceObject;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
@@ -691,14 +692,14 @@ public class HDF5Loader extends AbstractFileLoader {
 	private static final String NAPIMOUNT = "napimount";
 	private static final String NAPISCHEME = "nxfile";
 
+
 	// return true when attributes contain a NAPI mount - dodgy external linking for HDF5 version < 1.8
 	private static boolean copyAttributes(final TreeFile f, final String name, final Node nn, final int id) {
 		boolean hasNAPIMount = false;
 
 		try {
-			final List<Attribute> attributes = H5File.getAttribute(id);
-			for (Attribute a : attributes) {
-				org.eclipse.dawnsci.analysis.api.tree.Attribute h = TreeFactory.createAttribute(f, name, a.getName(), a.getValue(), a.isUnsigned());
+			for (ncsa.hdf.object.Attribute a : H5File.getAttribute(id)) {
+				Attribute h = TreeFactory.createAttribute(f, name, a.getName(), a.getValue(), a.isUnsigned());
 				h.setTypeName(getTypeName(a.getType()));
 				nn.addAttribute(h);
 				if (a.getName().equals(NAPIMOUNT)) {
@@ -781,21 +782,22 @@ public class HDF5Loader extends AbstractFileLoader {
 	/**
 	 * Translate between data type and dataset type
 	 * @param dclass data type class
-	 * @param dsize data type item size in bytes
+	 * @param dsize data type element size in bytes
 	 * @return dataset type
 	 */
 	public static int getDtype(final int dclass, final int dsize) {
-		return getDtype(dclass, dsize, false);
+		return getDtype(dclass, dsize, 1, false);
 	}
 
 	/**
 	 * Translate between data type and dataset type
 	 * @param dclass data type class
-	 * @param dsize data type item size in bytes
+	 * @param dsize data type element size in bytes
+	 * @param isize number of items
 	 * @param isComplex
 	 * @return dataset type
 	 */
-	private static int getDtype(final int dclass, final int dsize, final boolean isComplex) {
+	private static int getDtype(final int dclass, final int dsize, final int isize, final boolean isComplex) {
 		switch (dclass) {
 		case Datatype.CLASS_STRING:
 			return Dataset.STRING;
@@ -810,6 +812,18 @@ public class HDF5Loader extends AbstractFileLoader {
 				return Dataset.INT32;
 			case 8:
 				return Dataset.INT64;
+			}
+			break;
+		case Datatype.CLASS_BITFIELD:
+			switch (dsize) {
+			case 1:
+				return isize == 1 ? Dataset.INT8 : Dataset.ARRAYINT8;
+			case 2:
+				return isize == 1 ? Dataset.INT16 : Dataset.ARRAYINT16;
+			case 4:
+				return isize == 1 ? Dataset.INT32 : Dataset.ARRAYINT32;
+			case 8:
+				return isize == 1 ? Dataset.INT64 : Dataset.ARRAYINT64;
 			}
 			break;
 		case Datatype.CLASS_FLOAT:
@@ -962,14 +976,18 @@ public class HDF5Loader extends AbstractFileLoader {
 
 	private static class CompositeDatatype {
 		public int tclass;
-		public int size;
+		public int size; // number of elements
+		public int bits = -1; // max number of bits for bit-fields (-1 for other types)
+		public String name;
 		public boolean isComplex = false;
 	}
 
 	private static CompositeDatatype findClassesInComposite(int tid) throws HDF5LibraryException {
 		List<String> names = new ArrayList<String>();
 		List<Integer> classes = new ArrayList<Integer>();
-		flattenCompositeDatatype(tid, "", names, classes);
+		List<Integer> widths = new ArrayList<Integer>();
+		List<Boolean> signs = new ArrayList<Boolean>();
+		flattenCompositeDatatype(tid, "", names, classes, widths, signs);
 		CompositeDatatype comp = new CompositeDatatype();
 		comp.size = classes.size();
 		if (comp.size > 0) {
@@ -981,12 +999,52 @@ public class HDF5Loader extends AbstractFileLoader {
 				}
 			}
 			if (comp.size == 2 && comp.tclass == HDF5Constants.H5T_FLOAT) {
-				if (names.get(0).toLowerCase().startsWith("r") && names.get(1).toLowerCase().startsWith("i")) {
+				if (getLastComponent(names.get(0)).toLowerCase().startsWith("r") && getLastComponent(names.get(1)).toLowerCase().startsWith("i")) {
 					comp.isComplex = true;
 				}
 			}
+			StringBuilder name = new StringBuilder(comp.isComplex ? "Complex = {" : "Composite of {");
+			for (int i = 0; i < comp.size; i++) {
+				name.append(names.get(i));
+				name.append(constructType(classes.get(i), widths.get(i), signs.get(i)));
+				name.append(", ");
+			}
+			name.delete(name.length() - 2, name.length());
+			name.append("}");
+			comp.name = name.toString();
+			Collections.sort(widths);
+			comp.bits = widths.get(widths.size() - 1);
 		}
 		return comp;
+	}
+
+
+	private static final String COLON = ":";
+	private static String getLastComponent(String n) {
+		String[] bits = n.split(COLON);
+		int l = bits.length - 1;
+		while (bits[l].trim().length() == 0) {
+			l--;
+		}
+		return bits[l];
+	}
+
+	private static String constructType(int c, int w, boolean s) {
+		StringBuilder n = new StringBuilder(":");
+		if (!s) {
+			n.append("U");
+		}
+		if (c == HDF5Constants.H5T_BITFIELD) {
+			n.append("INT");
+			n.append(w);
+		} else if (c == HDF5Constants.H5T_INTEGER) {
+			n.append("INT");
+			n.append(-w*8);
+		} else if (c == HDF5Constants.H5T_FLOAT) {
+			n.append("FLOAT");
+			n.append(-w*8);
+		}
+		return n.toString();
 	}
 
 	/**
@@ -995,9 +1053,11 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * @param prefix
 	 * @param names
 	 * @param classes
+	 * @param widths bits (positive) or bytes (negative)
+	 * @param signs
 	 * @throws HDF5LibraryException
 	 */
-	private static void flattenCompositeDatatype(int tid, String prefix, List<String> names, List<Integer> classes) throws HDF5LibraryException {
+	private static void flattenCompositeDatatype(int tid, String prefix, List<String> names, List<Integer> classes, List<Integer> widths, List<Boolean> signs) throws HDF5LibraryException {
 		int tclass = H5.H5Tget_class(tid);
 		if (tclass == HDF5Constants.H5T_ARRAY) {
 			int btid = -1;
@@ -1006,7 +1066,7 @@ public class HDF5Loader extends AbstractFileLoader {
 				tclass = H5.H5Tget_class(btid);
 				// deal with array of composite
 				if (tclass == HDF5Constants.H5T_COMPOUND || tclass == HDF5Constants.H5T_ARRAY) {
-					flattenCompositeDatatype(btid, prefix, names, classes);
+					flattenCompositeDatatype(btid, prefix, names, classes, widths, signs);
 					return;
 				}
 				int r = H5.H5Tget_array_ndims(tid);
@@ -1054,15 +1114,56 @@ public class HDF5Loader extends AbstractFileLoader {
 					continue;
 				}
 
-				String mname = prefix + H5.H5Tget_member_name(tid, i);
+				
+				String mname = prefix;
+				if (prefix.length() > 0) {
+					mname += COLON;
+				}
+				mname += H5.H5Tget_member_name(tid, i);
 				if (mclass == HDF5Constants.H5T_COMPOUND || mclass == HDF5Constants.H5T_ARRAY) {
 					// deal with composite
-					flattenCompositeDatatype(mtype, mname, names, classes);
+					flattenCompositeDatatype(mtype, mname, names, classes, widths, signs);
 				} else if (mclass == HDF5Constants.H5T_VLEN) {
 					continue;
 				} else {
 					names.add(mname);
 					classes.add(mclass);
+					if (mclass == HDF5Constants.H5T_BITFIELD) {
+						int p = -1;
+						try {
+							p = H5.H5Tget_precision(mtype);
+						} catch (HDF5Exception ex) {
+							continue;
+						} finally {
+							widths.add(p);
+						}
+						signs.add(false);
+					} else {
+						int w = 1;
+						try {
+							w = H5.H5Tget_size(mtype);
+						} catch (HDF5Exception ex) {
+							continue;
+						} finally {
+							widths.add(-w);
+						}
+						if (mclass == HDF5Constants.H5T_INTEGER) {
+							boolean s = true;
+							try {
+								s = H5.H5Tget_sign(mtype) == HDF5Constants.H5T_SGN_2;
+							} catch (HDF5Exception ex) {
+								continue;
+							} finally {
+								signs.add(s);
+							}
+						} else {
+							signs.add(true);
+						}
+					}
+				}
+				try {
+					H5.H5Tclose(mtype);
+				} catch (HDF5Exception ex) {
 				}
 			}
 		}
@@ -1078,7 +1179,7 @@ public class HDF5Loader extends AbstractFileLoader {
 				throw new IllegalArgumentException(String.format(
 						"The %d-th is %d which is an illegal argument as it is negative", i, shape[i]));
 			}
-	
+
 			dsize *= shape[i];
 		}
 	
@@ -1233,14 +1334,17 @@ public class HDF5Loader extends AbstractFileLoader {
 		}
 
 		final boolean extendUnsigned = !keepBitWidth && isUnsigned;
-		final int isize = tcomp == null ? 1 : tcomp.size;
+		final int isize;
 		final int dtype;
 		if (tcomp == null) {
-			dtype = getDtype(type.getDatatypeClass(), type.getDatatypeSize(), false);
+			isize = 1;
+			dtype = getDtype(type.getDatatypeClass(), type.getDatatypeSize(), isize, false);
 			dataset.setTypeName(getTypeName(type));
 		} else {
-			dtype = getDtype(tcomp.tclass, type.getDatatypeSize()/isize, tcomp.isComplex);
-			dataset.setTypeName(getTypeName(type, isize, tcomp.isComplex));
+			isize = tcomp.size;
+			int esize = tcomp.bits < 0 ? type.getDatatypeSize()/tcomp.size : (tcomp.bits+7)/8; // round up
+			dtype = getDtype(tcomp.tclass, esize, isize, tcomp.isComplex);
+			dataset.setTypeName(tcomp.name);
 		}
 
 		// cope with external files specified in a non-standard way and which may not be HDF5 either

@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -348,8 +349,7 @@ public class HDF5LoaderTest {
 		System.out.printf("Time taken = %d ms\n", timeTaken);
 		assertTrue(timeTaken < 10000);
 	}
-	
-	
+
 	@Test
 	public void testCanonicalization() {
 		String[] before = { "/asd/sdf/dfg/../ds/../../gfd", "/asd/asd/../as", "/asd/as/.././bad", "/asd/..", "/abal/." };
@@ -474,5 +474,17 @@ public class HDF5LoaderTest {
 		assertTrue(MatrixUtils.isClose(edp.getVPxSize(), dp.getVPxSize(), 1e-8, 1e-8));
 		assertTrue(MatrixUtils.isClose(edp.getOrigin(), dp.getOrigin(), 1e-8, 1e-8));
 		assertTrue(MatrixUtils.isClose(edp.getOrientation(), dp.getOrientation(), 1e-8, 1e-8));
+	}
+
+	@Test
+	public void testLoadingPercival() throws ScanFileHolderException {
+		String n = TestFileFolder + "KnifeQuadBPos1_2_21.h5";
+		HDF5Loader l = new HDF5Loader(n);
+		DataHolder dh = l.loadFile();
+		System.err.println(Arrays.toString(dh.getNames()));
+		IDataset ds = dh.getLazyDataset("/KnifeQuadBPos1/10/Sample").getSlice();
+		assertEquals(Byte.class, ds.elementClass());
+		assertArrayEquals(new int[] {160, 210}, ds.getShape());
+		assertArrayEquals(new byte[] {87, 11, 1}, (byte[]) ds.getObject(0, 0));
 	}
 }

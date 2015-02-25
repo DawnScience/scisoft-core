@@ -1134,6 +1134,20 @@ class ndarray(object):
         return 'array(' + self.__dataset.toString(True) + ', dtype=%s)' % (dt,)
         return self.__dataset.toString(True)
 
+    # extra method
+    @_wrapout
+    def get_elements(self, n):
+        '''Retrieve n-th elements from each item in array as view
+        '''
+        me = self.__dataset.getElementsPerItem()
+        if n < 0:
+            n += me
+        if n >= me or n < 0:
+            raise IndexError, "Element number is out of range"
+        if me == 1:
+            return self.__dataset.getView()
+        return self.__dataset.getElements(n)
+
 class ndarrayRGB(ndarray):
     '''
     Wrap RGB dataset

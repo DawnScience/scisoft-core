@@ -17,6 +17,7 @@ Capabilities
 
 Key differences
  * Incomplete implementation all NumPy's methods
+ * ndarray.get_elements method to get view of n-th elements of a compound array
 
 Implemented NumPy methods (1.7)
  * Array attributes: shape, ndim, data, size, itemsize, nbytes, T, view, indices

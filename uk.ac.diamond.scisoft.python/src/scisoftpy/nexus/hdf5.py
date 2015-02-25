@@ -112,9 +112,11 @@ class HDF5group(_ldict, HDF5node):
                 elif n == "" or n == ".":
                     pass
                 else:
-#                    print n
-#                    print(dir(g))
-                    g = _ldict.__getitem__(g, n)
+                    try:
+                        g = _ldict.__getitem__(g, n)
+                    except: # attempt to use sanitised version
+                        n = "_" + n
+                        g = _ldict.__getitem__(g, n)
             return g
         elif key == '..':
             p = self._getparent()

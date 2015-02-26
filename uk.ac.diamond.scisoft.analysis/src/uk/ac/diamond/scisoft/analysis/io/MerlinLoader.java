@@ -15,18 +15,18 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
 
 public class MerlinLoader extends AbstractFileLoader {
 
 	private static final String DATA_NAME = "MerlinData";
-	private static final String U16 = "U16";
-//	private static final String U32 = "U32";
 	
 	public MerlinLoader(String fileName) {
 		this.fileName = fileName;
@@ -58,44 +58,38 @@ public class MerlinLoader extends AbstractFileLoader {
 		
 	}
 	
-	
+	private static int INITIAL_LENGTH = 40;
+
 	@Override
 	public DataHolder loadFile() throws ScanFileHolderException {
-		IntegerDataset data = null;
+		Dataset data = null;
 		final DataHolder output = new DataHolder();
 		File f = null;
 		FileInputStream fi = null;
 		BufferedReader br = null;
-		ArrayList<Dataset> dataList = new ArrayList<Dataset>();
+		List<Dataset> dataList = new ArrayList<Dataset>();
 		
-		ArrayList<MetaListHolder> metaHolder = new ArrayList<MetaListHolder>();
-		final int x, y;
+		List<MetaListHolder> metaHolder = new ArrayList<MetaListHolder>();
+		int x;
+		int y;
+		int dtype;
 		try {
-			
-			
 			f = new File(fileName);
-			fi = new FileInputStream(f);
-			char[] cbuf = new char[54];
-			
-			
+			char[] cbuf = new char[INITIAL_LENGTH];
+
 			br = new BufferedReader(new FileReader(f));
-			
 			br.read(cbuf);
-			
 			String[] head = new String(cbuf).split(",");
-			head.toString();
-			
+
 			if (!head[0].equals("MQ1")) {
-				throw new ScanFileHolderException("Merlin File should start with MQ1!");
+				throw new ScanFileHolderException("Merlin File must start with MQ1!");
 			}
-			
-			final int imageStart = Integer.parseInt(head[2]);
-			String numberOfChips = head[3];
+			// missing frame number head[1]
+			int numberOfChips = Integer.parseInt(head[3]);
 			x = Integer.parseInt(head[4]);
 			y = Integer.parseInt(head[5]);
-			String depth = head[6];
-			
-			// build the arrays to hold the data			
+
+			// build the arrays to hold the data
 			metaHolder.add(new MetaListHolder("acquisitionSequenceNumber"));
 			metaHolder.add(new MetaListHolder("dataOffset"));
 			metaHolder.add(new MetaListHolder("numberOfChips"));
@@ -109,96 +103,114 @@ public class MerlinLoader extends AbstractFileLoader {
 			metaHolder.add(new MetaListHolder("counter"));
 			metaHolder.add(new MetaListHolder("colourMode"));
 			metaHolder.add(new MetaListHolder("gainMode"));
-			metaHolder.add(new MetaListHolder("threshold"));
-			metaHolder.add(new MetaListHolder("dacs"));
-			metaHolder.add(new MetaListHolder("padding"));
-			metaHolder.add(new MetaListHolder("o1"));
-			metaHolder.add(new MetaListHolder("o2"));
-			metaHolder.add(new MetaListHolder("o3"));
-			metaHolder.add(new MetaListHolder("o4"));
-			metaHolder.add(new MetaListHolder("o5"));
-			
-			for(int i = 0; i < Integer.parseInt(numberOfChips); i++) {
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_DACFormat", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_Threshold0", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_Threshold1", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_Threshold2", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_Threshold3", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_Threshold4", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_Threshold5", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_Threshold6", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_Threshold7", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_Preamp", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_Ikrum", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_Shaper", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_Disc", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_DiskLS", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_ShaperTest", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_DACDiskL", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_DACTest", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_DACDISKH", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_Delay", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_TPBuffIn", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_TPBuffOut", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_RPZ", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_GND", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_TPRef", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_FBK", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_Cas", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_TPrefA", i)));
-				metaHolder.add(new MetaListHolder(String.format("Chip%02d_TPrefB", i)));
+			metaHolder.add(new MetaListHolder("TH0"));
+			metaHolder.add(new MetaListHolder("TH1"));
+			metaHolder.add(new MetaListHolder("TH2"));
+			metaHolder.add(new MetaListHolder("TH3"));
+			metaHolder.add(new MetaListHolder("TH4"));
+			metaHolder.add(new MetaListHolder("TH5"));
+			metaHolder.add(new MetaListHolder("TH6"));
+			metaHolder.add(new MetaListHolder("TH7"));
+
+			for(int i = 0; i < numberOfChips; i++) {
+				String chip = String.format("Chip%02d_", i);
+				metaHolder.add(new MetaListHolder(chip + "DACFormat"));
+				metaHolder.add(new MetaListHolder(chip + "Threshold0"));
+				metaHolder.add(new MetaListHolder(chip + "Threshold1"));
+				metaHolder.add(new MetaListHolder(chip + "Threshold2"));
+				metaHolder.add(new MetaListHolder(chip + "Threshold3"));
+				metaHolder.add(new MetaListHolder(chip + "Threshold4"));
+				metaHolder.add(new MetaListHolder(chip + "Threshold5"));
+				metaHolder.add(new MetaListHolder(chip + "Threshold6"));
+				metaHolder.add(new MetaListHolder(chip + "Threshold7"));
+				metaHolder.add(new MetaListHolder(chip + "Preamp"));
+				metaHolder.add(new MetaListHolder(chip + "Ikrum"));
+				metaHolder.add(new MetaListHolder(chip + "Shaper"));
+				metaHolder.add(new MetaListHolder(chip + "Disc"));
+				metaHolder.add(new MetaListHolder(chip + "DiscLS"));
+				metaHolder.add(new MetaListHolder(chip + "ShaperTest"));
+				metaHolder.add(new MetaListHolder(chip + "DACDiscL"));
+				metaHolder.add(new MetaListHolder(chip + "DACTest"));
+				metaHolder.add(new MetaListHolder(chip + "DACDiscH"));
+				metaHolder.add(new MetaListHolder(chip + "Delay"));
+				metaHolder.add(new MetaListHolder(chip + "TPBuffIn"));
+				metaHolder.add(new MetaListHolder(chip + "TPBuffOut"));
+				metaHolder.add(new MetaListHolder(chip + "RPZ"));
+				metaHolder.add(new MetaListHolder(chip + "GND"));
+				metaHolder.add(new MetaListHolder(chip + "TPRef"));
+				metaHolder.add(new MetaListHolder(chip + "FBK"));
+				metaHolder.add(new MetaListHolder(chip + "Cas"));
+				metaHolder.add(new MetaListHolder(chip + "TPRefA"));
+				metaHolder.add(new MetaListHolder(chip + "TPRefB"));
 			}
 
-			char[] cbufRemainder = new char[imageStart-54];
+			char[] cbufRemainder;
 			
-			
-			int imageReadStart = imageStart;
-			long skip = x*y*2;
-			while (br.read(cbufRemainder) > 0) {
-			
-				String fullHeader = new String(cbuf) + new String(cbufRemainder);
-				cbuf = new char[0];
-				head = fullHeader.split(",");
-				
-				for(int i = 0; i < metaHolder.size(); i++) {
-					Object value = head[i+1];
-					try {
-						value = Integer.parseInt(head[i+1]);
-					} catch (Exception e) {
-						// TODO: handle exception
-					}
-					try {
-						value = Double.parseDouble(head[i+1]);
-					} catch (Exception e) {
-						// TODO: handle exception
-					}
-					metaHolder.get(i).addValue(value);
+			long imageReadStart = 0;
+			do {
+				head = new String(cbuf).split(",");
+
+				if (!head[0].equals("MQ1")) {
+					throw new ScanFileHolderException("Merlin file must start with MQ1!");
 				}
-				
-				br.skip(skip);
+				// missing frame number head[1]
+				int headerLength = Integer.parseInt(head[2]);
+				if (x != Integer.parseInt(head[4]) || y != Integer.parseInt(head[5])) {
+					throw new ScanFileHolderException("Size of image has changed!");
+				}
+				int itemSize = 0;
+				switch (head[6]) { // TODO support other formats like U01, U64
+				case "U08":
+					itemSize = 1;
+					dtype = Dataset.INT16;
+					break;
+				case "U16":
+					itemSize = 2;
+					dtype = Dataset.INT32;
+					break;
+				case "U32":
+					itemSize = 4;
+					dtype = Dataset.INT32;
+					break;
+				default:
+					throw new ScanFileHolderException("Binary number format not supported");
+				}
+				long imageLength = x * y * itemSize;
+
+				cbufRemainder = new char[headerLength - INITIAL_LENGTH];
+				br.read(cbufRemainder);
+
+				String fullHeader = new String(cbuf) + new String(cbufRemainder);
+				parseHeaders(fullHeader.split(","), metaHolder);
+				br.skip(imageLength);
+
+				imageReadStart += headerLength;
+
 				if (loadLazily) {
 					dataList.add(null);
 				} else {
-					// reset the cbuffer to the full size
-					cbufRemainder = new char[imageStart];
-					
-					data = new IntegerDataset(new int[]{x, y});
-		
-					if (depth.contains(U16)) {
-						Utils.readBeShort(fi, data, imageReadStart,false);
-					} else {
-						Utils.readBeInt(fi, data, imageReadStart);
-					}			
-					
-	//				Number max = data.max(false);
-	//				Number min = data.min(false);
-					
-					//imageReadStart += Integer.parseInt(imageX)*Integer.parseInt(imageY)*2 + Integer.parseInt(imageStart) + 100000;
-					
-					dataList.add(new IntegerDataset(data));
+					fi = new FileInputStream(f);
+					try {
+						data = DatasetFactory.zeros(new int[] {x, y}, dtype);
+						switch (itemSize) {
+						case 1:
+							Utils.readByte(fi, (ShortDataset) data, imageReadStart);
+							break;
+						case 2:
+							Utils.readBeShort(fi, (IntegerDataset) data, imageReadStart, false);
+							break;
+						case 4:
+							Utils.readBeInt(fi, (IntegerDataset) data, imageReadStart);
+							break;
+						}
+					} finally {
+						fi.close();
+						fi = null;
+					}
+					imageReadStart += imageLength;
+					dataList.add(data);
 				}
-			}
-			
+			} while (br.read(cbuf) > 0);
 		} catch (Exception e) {
 			throw new ScanFileHolderException("File failed to load " + fileName, e);
 		} finally {
@@ -222,9 +234,9 @@ public class MerlinLoader extends AbstractFileLoader {
 		ILazyDataset ds;
 		int[] shape = new int[] {dataList.size(), x, y};
 		if (loadLazily) {
-			ds = createLazyDataset(DATA_NAME, Dataset.INT32, shape, new MerlinLoader(fileName));
+			ds = createLazyDataset(DATA_NAME, dtype, shape, new MerlinLoader(fileName));
 		} else {
-			ds = new IntegerDataset(shape);
+			ds = DatasetFactory.zeros(shape, dtype);
 
 			int[] start = new int[3];
 			int[] stop  = shape.clone();
@@ -241,5 +253,13 @@ public class MerlinLoader extends AbstractFileLoader {
 		}
 
 		return output;
+	}
+
+	private void parseHeaders(String[] headers, List<MetaListHolder> metaHolder) {
+		for(int i = 0, imax = Math.min(headers.length-1, metaHolder.size()); i < imax; i++) {
+			String h = headers[i+1];
+			Number value = Utils.parseValue(h);
+			metaHolder.get(i).addValue(value == null ? h : value);
+		}
 	}
 }

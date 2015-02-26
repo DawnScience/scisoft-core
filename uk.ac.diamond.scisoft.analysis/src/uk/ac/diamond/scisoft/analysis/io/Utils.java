@@ -202,7 +202,7 @@ public class Utils {
 	 * @param start number of bytes from start of input stream
 	 * @throws IOException
 	 */
-	public static void readLeInt(InputStream is, IntegerDataset data, int start) throws IOException {
+	public static void readLeInt(InputStream is, IntegerDataset data, long start) throws IOException {
 		final int size = data.getSize();
 		final int[] idata = data.getData();
 		final byte[] buf = new byte[4 * size];
@@ -243,7 +243,7 @@ public class Utils {
 	 * @param start number of bytes from start of input stream
 	 * @throws IOException
 	 */
-	public static void readBeInt(InputStream is, IntegerDataset data, int start) throws IOException {
+	public static void readBeInt(InputStream is, IntegerDataset data, long start) throws IOException {
 		final int size = data.getSize();
 		final int[] idata = data.getData();
 		final byte[] buf = new byte[4 * size];
@@ -285,7 +285,7 @@ public class Utils {
 	 * @param signed if true, shorts are sign-extended into integers
 	 * @throws IOException
 	 */
-	public static void readBeShort(InputStream is, IntegerDataset data, int start, boolean signed) throws IOException {
+	public static void readBeShort(InputStream is, IntegerDataset data, long start, boolean signed) throws IOException {
 		final int size = data.getSize();
 		final int[] idata = data.getData();
 		byte[] buf = new byte[2 * size];
@@ -342,7 +342,7 @@ public class Utils {
 	 * @param signed if true, shorts are sign-extended into integers
 	 * @throws IOException
 	 */
-	public static void readLeShort(InputStream is, IntegerDataset data, int start, boolean signed) throws IOException {
+	public static void readLeShort(InputStream is, IntegerDataset data, long start, boolean signed) throws IOException {
 		final int size = data.getSize();
 		final int[] idata = data.getData();
 		byte[] buf = new byte[2 * size];
@@ -397,7 +397,7 @@ public class Utils {
 	 * @param start number of bytes from start of input stream
 	 * @throws IOException
 	 */
-	public static void readByte(InputStream is, ShortDataset data, int start) throws IOException {
+	public static void readByte(InputStream is, ShortDataset data, long start) throws IOException {
 		final int size = data.getSize();
 		final short[] idata = data.getData();
 		byte[] buf = new byte[size];
@@ -439,7 +439,7 @@ public class Utils {
 	 * @param start number of bytes from start of input stream
 	 * @throws IOException
 	 */
-	public static void readFloat(InputStream is, FloatDataset data, int start) throws IOException {
+	public static void readFloat(InputStream is, FloatDataset data, long start) throws IOException {
 		final int size = data.getSize();
 		final float[] fdata = data.getData();
 		byte[] buf = new byte[4*size];

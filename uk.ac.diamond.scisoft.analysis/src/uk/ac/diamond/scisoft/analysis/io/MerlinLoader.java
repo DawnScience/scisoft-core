@@ -14,11 +14,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
@@ -38,24 +42,20 @@ public class MerlinLoader extends AbstractFileLoader {
 
 	private class MetaListHolder {
 		
-		private ArrayList<Object> dataList = new ArrayList<Object>();
+		private List<Serializable> dataList = new ArrayList<Serializable>();
 		private String name = "Undefined";
 		
 		public MetaListHolder(String metaName) {
 			name = metaName;
 		}
 
-		public void addValue(Object value) {
+		public void addValue(Serializable value) {
 			dataList.add(value);
 		}
-		
-		public void addToDataHolder(DataHolder holder) {
-			if (dataList.get(0) instanceof Number) {
-				Dataset data = DatasetFactory.createFromList(dataList);
-				holder.addDataset(name, data);
-			}
+
+		public List<Serializable> getValue() {
+			return dataList;
 		}
-		
 	}
 	
 	private static int INITIAL_LENGTH = 40;
@@ -232,10 +232,10 @@ public class MerlinLoader extends AbstractFileLoader {
 		}
 
 		ILazyDataset ds;
-		int[] shape = new int[] {dataList.size(), x, y};
+		int[] shape = dataList.size() > 1 ? new int[] {dataList.size(), y, x} : new int[] {y, x};
 		if (loadLazily) {
 			ds = createLazyDataset(DATA_NAME, dtype, shape, new MerlinLoader(fileName));
-		} else {
+		} else if (shape.length == 3) {
 			ds = DatasetFactory.zeros(shape, dtype);
 
 			int[] start = new int[3];
@@ -246,10 +246,13 @@ public class MerlinLoader extends AbstractFileLoader {
 				stop[0] = i + 1;
 				((Dataset) ds).setSlice(dataList.get(i), start, stop, step);
 			}
+		} else {
+			ds = dataList.get(0);
 		}
 		output.addDataset(DATA_NAME, ds.squeezeEnds());
-		for(int i = 0; i < metaHolder.size(); i++) {
-			metaHolder.get(i).addToDataHolder(output);
+		if (loadMetadata) {
+			createMetadata(metaHolder);
+			output.setMetadata(metadata);
 		}
 
 		return output;
@@ -261,5 +264,14 @@ public class MerlinLoader extends AbstractFileLoader {
 			Number value = Utils.parseValue(h);
 			metaHolder.get(i).addValue(value == null ? h : value);
 		}
+	}
+
+	private void createMetadata(List<MetaListHolder> metaHolder) {
+		metadata = new Metadata();
+		Map<String, Serializable> map = new HashMap<>();
+		for (MetaListHolder h : metaHolder) {
+			map.put(h.name, (Serializable) h.getValue());
+		}
+		metadata.setMetadata(map);
 	}
 }

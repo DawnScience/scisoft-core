@@ -436,6 +436,14 @@
             name="Convert axis type [1D]"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Rebinning1DOperation"
+            description="Rebin data onto new axis with specified start, stop and number of points (defaults to min, max and number of points in first axis"
+            icon="icons/rebin.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Rebinning1DOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Rebinning1DModel"
+            name="Rebin">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

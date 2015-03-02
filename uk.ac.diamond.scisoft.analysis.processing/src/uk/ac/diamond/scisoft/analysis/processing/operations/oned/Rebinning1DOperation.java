@@ -9,6 +9,11 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+import javax.jws.WebParam.Mode;
+
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
@@ -16,6 +21,7 @@ import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
@@ -25,6 +31,8 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
+import uk.ac.diamond.scisoft.analysis.processing.operations.twod.DiffractionMetadataImportModel;
+
 public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, OperationData> {
 
 	private ILazyDataset parent = null;
@@ -32,6 +40,7 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 	private double start;
 	private double stop;
 	private Dataset binEdges;
+	private PropertyChangeListener listener;
 	
 	@Override
 	public String getId() {
@@ -48,7 +57,7 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		
 		//TODO this is bs. Should have an init method when the file changes.
 		ILazyDataset p = getSliceSeriesMetadata(input).getParent();
-		if (parent == null || parent != p) {
+		if (parent == null || parent != p || binEdges == null) {
 			parent = p;
 
 
@@ -58,18 +67,15 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 			
 		}
 			
-			double[] edges = new double[]{binEdges.getElementDoubleAbs(0),binEdges.getElementDoubleAbs(nBins)};
-			IDataset rebinned = doRebinning(getMinMaxAxisArray(axis), (Dataset)input, nBins, edges);
-			AxesMetadataImpl axm = new AxesMetadataImpl(1);
-			Dataset ax = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
-			ax.idivide(2);
-			axm.setAxis(0, ax);
-			rebinned.setMetadata(axm);
-			int[] maxPos = rebinned.maxPos();
-			return new OperationData(rebinned);
+		double[] edges = new double[]{binEdges.getElementDoubleAbs(0),binEdges.getElementDoubleAbs(nBins)};
+		IDataset rebinned = doRebinning(getMinMaxAxisArray(axis), (Dataset)input, nBins, edges);
+		AxesMetadataImpl axm = new AxesMetadataImpl(1);
+		Dataset ax = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
+		ax.idivide(2);
+		axm.setAxis(0, ax);
+		rebinned.setMetadata(axm);
+		return new OperationData(rebinned);
 		
-		
-//		IDataset r = rebin(axis, input);
 		
 	}
 	
@@ -191,46 +197,6 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		return intensity;
 		
 	}
-	
-//	private IDataset rebin(IDataset axis, IDataset data) {
-//		//TODO check axis inc/dec
-//		int[] shape = new int[]{nBins};
-//		
-//		Dataset i = DatasetFactory.zeros(shape, Dataset.FLOAT64);
-//		Dataset n = DatasetFactory.zeros(shape, Dataset.FLOAT64);
-//		Dataset d = DatasetUtils.convertToDataset(data);
-//		Dataset a = DatasetUtils.convertToDataset(axis);
-//		
-//		final double span = (binEdges.getElementDoubleAbs(0) - lo)/nins;
-//		
-//		IndexIterator it = d.getIterator();
-//		
-//		double r0 = 0;
-//		double r1 = 0;
-//		double aVal = 0;
-//		double dVal = 0;
-//		
-//		while (it.hasNext()) {
-//			
-//			aVal = a.getElementDoubleAbs(it.index);
-//			dVal = d.getElementDoubleAbs(it.index);
-//			
-//			
-//			if (it.index != 0) {
-//				r0 = a.getElementDoubleAbs(it.index-1);
-//				r0 = aVal - (aVal-r0)/2;
-//			}
-//			
-//			if (it.index < d.getSize()-1) {
-//				r1 = a.getElementDoubleAbs(it.index+1);
-//				r1 = aVal + (r1-aVal)/2;
-//			}
-//			
-//			
-//		}
-//		
-//		return null;
-//	}
 
 	private void updateStartStop(IDataset axis) {
 
@@ -252,30 +218,24 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 	public OperationRank getOutputRank() {
 		return OperationRank.ONE;
 	}
-
-	private IDataset generateBins(IDataset axis, Rebinning1DModel model){
+	
+	@Override
+	public void setModel(Rebinning1DModel model) {
 		
-		int nBins = axis.getSize();
-		double min = axis.min().doubleValue();
-		double max = axis.max().doubleValue();
-		double offset = (max - min)/(2*nBins);
-		max += offset;
-		min -= offset;
+		super.setModel(model);
+		if (listener == null) {
+			listener = new PropertyChangeListener() {
+				
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					binEdges = null;
+				}
+			};
+		} else {
+			((AbstractOperationModel)this.model).removePropertyChangeListener(listener);
+		}
 		
-		
-		
-		if (model.getNumberOfBins() != null) nBins = model.getNumberOfBins();
-		if (model.getMax() != null) max = model.getMax();
-		if (model.getMin() != null) min = model.getMin();
-		
-		IDataset left = axis.getSlice(new Slice(1,axis.getSize()));
-		IDataset right = axis.getSlice(new Slice(-1));
-		Dataset b = (Dataset)right;
-		b.isubtract(left);
-		double minbin = Math.abs(b.min().doubleValue());
-		
-		return null;
-		
-		
+		((AbstractOperationModel)this.model).addPropertyChangeListener(listener);
 	}
+
 }

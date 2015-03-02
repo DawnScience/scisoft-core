@@ -39,8 +39,13 @@ public class Generic1DFitter implements Serializable {
 	private static double DEFAULT_ACCURACY = 0.0001;
 	private static IOptimizer DEFAULT_OPTIMISER = new GeneticAlg(DEFAULT_ACCURACY);
 	private static double EPSILON = 1E-5;
-	private static int BASELINE_ORDER = 0;
+	private static boolean FIT_LINEAR_BASELINE = true;
 	private static final Logger logger = LoggerFactory.getLogger(Generic1DFitter.class);
+	
+	/*TODO This class needs a tidy up to:
+	 * 1) Remove some of the wrapper classes
+	 * 2) Move from peakClass extending APeak to extending IPeak
+	 */
 
 	/**
 	 * This method fits peaks to a dataset describing the y values at specified x values. The CompositeFunction specified
@@ -203,14 +208,36 @@ public class Generic1DFitter implements Serializable {
 		}
 
 		List<CompositeFunction> fittedPeaks = fitFunction(peaks, peakClass, xdata, ydata, optimiser, numPeaks, threshold,
-				autoStopping, heightMeasure, monitor, BASELINE_ORDER);
+				autoStopping, heightMeasure, monitor, FIT_LINEAR_BASELINE);
 
 		return fittedPeaks;
 	}
+	
+	
+	/**
+	 * Yet another wrapper method. This gives access to fitting the linear background
+	 */
+	public static List<CompositeFunction> fitPeakFunctions(List<IdentifiedPeak> peaks, Dataset xdata, Dataset ydata, Class<? extends APeak> peakClass,
+			IOptimizer optimiser, int smoothing, int numPeaks, double threshold, boolean autoStopping,
+			boolean heightMeasure, IMonitor monitor, boolean fitLinearBaseline) {
+		
+		if (peaks==null) {
+			peaks = parseDataDerivative(xdata, ydata, smoothing);
+		}
+		if (peaks == null || peaks.size() <= 0) {
+			logger.error("No peaks found");
+			return null;
+		}
+		return fitFunction(peaks, peakClass, xdata, ydata, optimiser, numPeaks, threshold,
+				autoStopping, heightMeasure, monitor, fitLinearBaseline);
+	}
 
+	/**
+	 * This is the class which actually does the fitting. Do not make public.
+	 */
 	private static List<CompositeFunction> fitFunction(List<IdentifiedPeak> initialPeaks, Class<? extends APeak> peakClass, Dataset xData,
 			Dataset ydata, IOptimizer optimiser, int numPeaks, double threshold, boolean autoStopping,
-			boolean heightMeasure, IMonitor monitor, int baselineOrder) {
+			boolean heightMeasure, IMonitor monitor, boolean fitLinearBaseline) {
 
 		ArrayList<CompositeFunction> peaks = new ArrayList<CompositeFunction>();
 		if (numPeaks == 0) {
@@ -253,16 +280,15 @@ public class Generic1DFitter implements Serializable {
 			AFunction baseline = null;
 			try {
 				
-				switch (baselineOrder) {
-				case 1:
+				if (fitLinearBaseline) {
 					double initm = (y.getDouble(0) - y.getDouble(-1))/(x.getDouble(0) - x.getDouble(-1));
 					double initc = y.getDouble(0) - initm * x.getDouble(0);
 					double stepx = Math.abs(x.getDouble(1) - x.getDouble(0));
 					double maxC = y.peakToPeak().doubleValue() / stepx;
 					double maxY = y.max().doubleValue();
 					baseline = new StraightLine(-maxC, maxC, initc - maxY, initc + maxY);
-					break;
-				default:
+					baseline.setParameterValues(initm,initc);
+				} else {
 					double lowOffset = y.min().doubleValue();
 					double highOffset = (Double) y.mean();
 					baseline = new Offset(lowOffset, highOffset);

@@ -39,7 +39,7 @@ public class Generic1DFitter implements Serializable {
 	private static double DEFAULT_ACCURACY = 0.0001;
 	private static IOptimizer DEFAULT_OPTIMISER = new GeneticAlg(DEFAULT_ACCURACY);
 	private static double EPSILON = 1E-5;
-	private static boolean FIT_LINEAR_BASELINE = true;
+	private static boolean FIT_LINEAR_BASELINE = false;
 	private static final Logger logger = LoggerFactory.getLogger(Generic1DFitter.class);
 	
 	/*TODO This class needs a tidy up to:

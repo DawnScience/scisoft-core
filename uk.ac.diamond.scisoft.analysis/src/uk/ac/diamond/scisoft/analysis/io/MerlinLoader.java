@@ -16,7 +16,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -191,7 +191,7 @@ public class MerlinLoader extends AbstractFileLoader {
 				} else {
 					fi = new FileInputStream(f);
 					try {
-						data = DatasetFactory.zeros(new int[] {x, y}, dtype);
+						data = DatasetFactory.zeros(new int[] {y, x}, dtype);
 						switch (itemSize) {
 						case 1:
 							Utils.readByte(fi, (ShortDataset) data, imageReadStart);
@@ -268,7 +268,7 @@ public class MerlinLoader extends AbstractFileLoader {
 
 	private void createMetadata(List<MetaListHolder> metaHolder) {
 		metadata = new Metadata();
-		Map<String, Serializable> map = new HashMap<>();
+		Map<String, Serializable> map = new LinkedHashMap<>();
 		for (MetaListHolder h : metaHolder) {
 			map.put(h.name, (Serializable) h.getValue());
 		}

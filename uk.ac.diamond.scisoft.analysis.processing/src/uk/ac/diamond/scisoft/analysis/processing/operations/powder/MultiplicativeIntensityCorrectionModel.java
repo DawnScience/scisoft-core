@@ -54,9 +54,9 @@ public class MultiplicativeIntensityCorrectionModel extends AbstractOperationMod
 	public boolean isApplyDetectorTransmissionCorrection() {
 		return applyDetectorTransmissionCorrection;
 	}
-	public void setAppyDetectorTransmissionCorrection(
-			boolean isAppyDetectorTransmissionCorrection) {
-		firePropertyChange("applyDetectorTransmissionCorrection", this.applyDetectorTransmissionCorrection, this.applyDetectorTransmissionCorrection = isAppyDetectorTransmissionCorrection);
+	public void setApplyDetectorTransmissionCorrection(
+			boolean applyDetectorTransmissionCorrection) {
+		firePropertyChange("applyDetectorTransmissionCorrection", this.applyDetectorTransmissionCorrection, this.applyDetectorTransmissionCorrection = applyDetectorTransmissionCorrection);
 	}
 	public double getTransmittedFraction() {
 		return transmittedFraction;

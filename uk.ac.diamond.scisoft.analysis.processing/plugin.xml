@@ -444,6 +444,12 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Rebinning1DModel"
             name="Rebin">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.IterativePolynomialBaselineSubtractionOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.IterativePolynomialBaselineSubtractionOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.IterativePolynomialBaselineSubtractionModel"
+            name="Iterative Polynomial Baseline Subtraction">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

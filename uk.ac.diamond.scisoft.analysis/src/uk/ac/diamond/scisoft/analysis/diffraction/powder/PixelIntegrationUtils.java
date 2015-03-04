@@ -248,6 +248,33 @@ public class PixelIntegrationUtils {
 		return image;
 	}
 	
+	public static double solidAngleCorrection(double correctionValue, double tth) {
+		//L.B. Skinner et al Nuc Inst Meth Phys Res A 662 (2012) 61-70
+		double cor = Math.cos(tth);
+		cor = Math.pow(cor, 3);
+		return correctionValue/cor;
+	}
+	
+	public static double polarisationCorrection(double correctionValue, double tth, double angle, double factor) {
+		//L.B. Skinner et al Nuc Inst Meth Phys Res A 662 (2012) 61-70
+		//pol(th) = 1/2[1+cos2(tth) - f*cos(azimuthal)sin2(tth)
+		
+		double cosSq = Math.pow(Math.cos(tth),2);
+		//use 1-cos2(tth) instead of sin2(tth)
+		double sub = (1-cosSq)*Math.cos(angle)*factor;
+		
+		double cor = (cosSq +1 - sub)/2;
+		return correctionValue/cor;
+	}
+	
+	public static double detectorTranmissionCorrection(double correctionValue, double tth, double transmissionFactor) {
+		//J. Zaleski, G. Wu and P. Coppens, J. Appl. Cryst. (1998). 31, 302-304
+		//K = [1 - exp(lnT/cos(a))]/(1-T)
+		double cor = (1-Math.exp(Math.log(transmissionFactor)/Math.cos(tth)))/(1-transmissionFactor);
+		
+		return correctionValue/cor;
+	}
+	
 	public static void solidAngleCorrection(Dataset correctionArray, Dataset tth) {
 		//L.B. Skinner et al Nuc Inst Meth Phys Res A 662 (2012) 61-70
 		Dataset cor = Maths.cos(tth);

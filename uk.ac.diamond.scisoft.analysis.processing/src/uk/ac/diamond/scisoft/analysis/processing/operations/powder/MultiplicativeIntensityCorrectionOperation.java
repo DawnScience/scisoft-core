@@ -21,6 +21,8 @@ import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
@@ -40,6 +42,11 @@ public class MultiplicativeIntensityCorrectionOperation extends
 	
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
+		
+		if (!model.isApplyDetectorTransmissionCorrection() && !model.isApplyPolarisationCorrection() &&
+				!model.isApplySolidAngleCorrection()) return new OperationData(input);
+		
+		
 		IDiffractionMetadata md = getFirstDiffractionMetadata(input);
 		
 		if (metadata == null || !(metadata.getDetector2DProperties().equals(md.getDetector2DProperties()) &&
@@ -90,24 +97,38 @@ public class MultiplicativeIntensityCorrectionOperation extends
 		
 		MultiplicativeIntensityCorrectionModel m = (MultiplicativeIntensityCorrectionModel)model;
 		
-		Dataset cor = DatasetFactory.ones(data.getShape(), Dataset.FLOAT64);
+		DoubleDataset cor = new DoubleDataset(data.getShape());
 
 		Dataset tth = PixelIntegrationUtils.generate2ThetaArrayRadians(data.getShape(), md);
-
-		if (m.isApplySolidAngleCorrection()) {
-			PixelIntegrationUtils.solidAngleCorrection(cor,tth);
-		}
-
+		
+		Dataset az = null;
 		if (m.isApplyPolarisationCorrection()) {
-			Dataset az = PixelIntegrationUtils.generateAzimuthalArray(data.getShape(), md, true);
+			az = PixelIntegrationUtils.generateAzimuthalArray(data.getShape(), md, true);
 			az.iadd(Math.toRadians(m.getPolarisationAngularOffset()));
-			PixelIntegrationUtils.polarisationCorrection(cor, tth, az, m.getPolarisationFactor());
 		}
 
-		if (m.isApplyDetectorTransmissionCorrection()) {
-			PixelIntegrationUtils.detectorTranmissionCorrection(cor, tth, m.getTransmittedFraction());
+		IndexIterator it = cor.getIterator();
+		
+		while (it.hasNext()) {
+			double val = 1;
+			double tthval = tth.getElementDoubleAbs(it.index);
+			
+			if (m.isApplySolidAngleCorrection()) {
+				val = PixelIntegrationUtils.solidAngleCorrection(val, tthval);
+			}
+			
+			if (m.isApplyDetectorTransmissionCorrection()) {
+				val = PixelIntegrationUtils.detectorTranmissionCorrection(val, tthval, m.getTransmittedFraction());
+			}
+			
+			if (m.isApplyPolarisationCorrection()) {
+				double azval = az.getElementDoubleAbs(it.index);
+				val = PixelIntegrationUtils.polarisationCorrection(val, tthval, azval, m.getPolarisationFactor());
+			}
+			cor.setAbs(it.index, val);
+			
 		}
-
+		
 		return cor;
 	}
 

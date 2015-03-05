@@ -64,7 +64,7 @@ class Test(unittest.TestCase):
 
     def testSubprocess(self):
         import subprocess as sub
-        pyexe, pypath, pyldpath = pyenv()
+        pyexe, pypath, _pyldpath = pyenv()
         import os
         env = dict(os.environ)
         env["PYTHONPATH"] = ":".join(pypath)
@@ -87,7 +87,7 @@ class Test(unittest.TestCase):
         print dnp.external.get_python()
 
     def testExternal(self):
-        from external_functions import fun, funadd, fundec, funexception
+        from external_functions import fun, funadd, fundec#, funexception
         a = fun()
         efun = dnp.external.create_function(fun, dls_module=True)
         print a, self.equals(efun(), a)
@@ -131,6 +131,26 @@ class Test(unittest.TestCase):
         print a,
         self.assertEquals(efun(), a)
         print 'passed'
+
+    def testSpeed(self):
+        efun = dnp.external.create_function("fun", "external_functions", dls_module=True, keep=False)
+        import time
+        t = time.clock()
+        for _i in xrange(10):
+            efun()
+        print time.clock() - t
+        efun = dnp.external.create_function("fun", "external_functions", dls_module=True, keep=True)
+        t = time.clock()
+        for _i in xrange(10):
+            efun()
+        print time.clock() - t
+
+    def testHello(self):
+        py = dnp.external.PythonSubProcess("python", None)
+        print py.communicate("print \"Hello World!\"\n")
+        print py.communicate("print \"Hello World2!\"\n")
+        print py.communicate("for i in range(4): print i\n")
+        py.stop()
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

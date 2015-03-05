@@ -19,8 +19,10 @@
 
 import os
 if os.name == 'java':
+    _isjava = True
     from jython.jycore import ndarray, ndgeneric, scalarToPython #@UnusedImport
 else:
+    _isjava = False
     from python.pycore import ndarray, ndgeneric, scalarToPython #@Reimport
 
 _env = os.environ
@@ -144,6 +146,7 @@ def _recreate_args(arg, fdict):
         return fdict[arg]
 
 import sys
+
 def wrapper(func):
     '''Decorator to run a function
     '''
@@ -171,7 +174,7 @@ def pyenv(exe=None, path=None, ldpath=None):
     '''
 
 #    print 'ScisoftPy package is in', pkg
-    if os.name == 'java':
+    if _isjava:
         pyexe, pypath, pyldpath = _cached_pyenv
 
         if exe:
@@ -292,7 +295,7 @@ def parse_for_env(stream, sep=':'):
 
     return exe, path, ldpath
 
-if os.name == 'java':
+if _isjava:
     _cached_pyenv = get_python()
 
 def find_module_path(path, module):
@@ -305,7 +308,190 @@ def find_module_path(path, module):
             return p
     return None
 
-def create_function(function, module=None, exe=None, path=None, extra_path=None, dls_module=None):
+if _isjava:
+    # need Java class as the Python code below does not work in Jython!!!
+    from uk.ac.diamond.scisoft.python import PythonSubProcess
+else:
+    from Queue import Queue, Empty
+    from threading import Thread
+    from subprocess import Popen, PIPE
+    cmds='''import sys
+while True:
+  print 'READY'
+  sys.stdout.flush()
+  l = sys.stdin.readline()
+  if not l:
+    break
+  exec l
+'''
+    class StreamHandler(object):
+        def __init__(self, stream):
+            self.stream = stream
+            self.alive = True
+            self.out = Queue()
+            def add():
+                while self.alive:
+                    line = self.stream.readline()
+                    if line:
+                        self.out.put(line)
+                    else:
+                        break
+            self.thd = Thread(target=add)
+            self.thd.daemon = True
+            self.thd.start()
+
+        def readline(self, timeout=None):
+            try:
+                return self.out.get(block=True, timeout=timeout)
+            except Empty:
+                return None
+
+        def kill(self):
+            self.alive = False
+
+        def clear(self):
+            while self.out.qsize() > 0:
+                self.out.get_nowait()
+
+    class PythonSubProcess(object):
+        READY = 'READY\n'
+        TIMEOUT = 0.005
+        def __init__(self, exe="python", env=None):
+            self.proc = Popen([exe, '-c', cmds], bufsize=1, env=env, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+            self.out = StreamHandler(self.proc.stdout)
+            self.err = StreamHandler(self.proc.stderr)
+            self.stdin = self.proc.stdin
+            from time import sleep
+            sleep(0.5)
+
+            l = self.out.readline()
+            if l != self.READY:
+                if l is None:
+                    l = "None"
+                el = self.err.readline(self.TIMEOUT)
+                if el is None:
+                    el = "None"
+                raise OSError, "Problem with python subprocess not being ready: " + l + "; " + el
+
+        def communicate(self, text):
+            self._send(text)
+
+            results = []
+            while True:
+                l = self.out.readline()
+                if l == self.READY:
+                    break
+                results.append(l)
+            lines = ["".join(results)]
+            results = []
+            while True:
+                l = self.err.readline(self.TIMEOUT)
+                if not l:
+                    break
+                results.append(l)
+            if len(results) > 0:
+                lines.append("".join(results))
+            else:
+                lines.append(None)
+            return lines
+
+        def _send(self, text):
+            self.out.clear()
+            self.err.clear()
+            self.stdin.write(text)
+            self.stdin.flush()
+
+        def stop(self):
+            self.stdin.close()
+
+#PYDEV_SRC="/scratch/eclipse441_64/plugins/org.python.pydev_3.9.2.201502050007/pysrc"
+
+class ExternalFunction(object):
+    '''Emulates a function object with an attached python process
+    '''
+    def __init__(self, exe, env, module, function, keep):
+        self.exe = exe
+        self.env = env
+        self.mod = module
+#        modules = [(k, v.__name__) for k,v in globals().items() if isinstance(v, type(sys)) and not k.startswith('__')]
+#        print func.__name__
+#        pprint(modules)
+        self.func = function
+        self.keep = keep
+        self.thd = None
+        self.proc = None
+        if self.keep:
+            self._mk_process()
+
+    def _mk_process(self):
+        self.proc = PythonSubProcess(self.exe, self.env)
+#         self.proc.stdin.write('import sys\n')
+#         self.proc.stdin.write('sys.path.append("%s")\n' % PYDEV_SRC)
+        _out, err = self.proc.communicate('from scisoftpy import external as _fwext\n')
+        if err:
+            raise RuntimeError, "Problem with import: %s" % err
+        _out, err = self.proc.communicate('from %s import %s\n' % (self.mod, self.func))
+        if err:
+            raise RuntimeError, "Problem with import: %s" % err
+        _out, err = self.proc.communicate('_fwwrapped = _fwext.wrapper(%s)\n' % self.func)
+        if err:
+            raise RuntimeError, "Problem with wrapping: %s" % err
+
+    def stop(self):
+        '''Stop process
+        '''
+        if self.proc:
+            self.proc.stop()
+            self.proc = None
+
+    def __del__(self):
+        self.stop()
+
+    def __call__(self, *arg, **kwarg):
+        import shutil
+        argsdir = save_args((arg, kwarg))
+        try:
+            if not self.keep or not self.proc:
+                self._mk_process()
+            out, err = self.proc.communicate('_fwiarg, _fwikwarg = _fwext.load_args(\"%s\")\n' % argsdir)
+#             print >> sys.stderr, "1Out:", out
+#             print >> sys.stderr, "1Err:", err
+            if err:
+                raise RuntimeError, "Problem with running external process: %s" % err
+
+            out, err = self.proc.communicate('print "FWOUT:|%s|" % _fwext.save_args(_fwwrapped(*_fwiarg, **_fwikwarg))\n')
+#             print >> sys.stderr, "2Out:", out
+#             print >> sys.stderr, "2Err:", err
+
+            if out:
+                for l in out.splitlines():
+#                     print >> sys.stderr, "3Out:", l
+                    if not l:
+                        continue
+                    l = l.strip()
+                    if l.startswith('FWOUT'):
+                        r = l.split('|')
+                        if len(r) > 1:
+                            d = r[1]
+                            try:
+                                ret, err = load_args(d)
+                                if err:
+                                    import traceback
+                                    print >> sys.stderr, '\n'.join(traceback.format_list(err[2]))
+                                    raise err[1]
+                                return ret
+                            finally:
+                                shutil.rmtree(d)
+                    else:
+                        print l
+            if err:
+                raise RuntimeError, "Problem with saving results: %s" % err
+        finally:
+            shutil.rmtree(argsdir)
+            if not self.keep:
+                self.stop()
+
+def create_function(function, module=None, exe=None, path=None, extra_path=None, dls_module=None, keep=True):
     '''Create a function that will run in an external python
 
     function -- function or its name, if the former then module is not needed
@@ -314,6 +500,7 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
     path -- list of Python paths
     extra_path -- list of extra Python (prepended) paths for local packages
     dls_module -- if True, use 'numpy', else if string use as module name to obtain python parameters
+    keep -- if True, keep process alive
 
     returns a function object
 
@@ -367,43 +554,4 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
             key = 'LD_LIBRARY_PATH'
         env[key] = os.pathsep.join(ldpath)
 
-    def func(*arg, **kwarg):
-        import shutil
-        argsdir = save_args((arg, kwarg))
-        try:
-#        modules = [(k, v.__name__) for k,v in globals().items() if isinstance(v, type(sys)) and not k.startswith('__')]
-#        print func.__name__
-    #    pprint(modules)
-            import subprocess as sub
-            p = sub.Popen([exe,], env=env, shell=False, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
-            p.stdin.write('from scisoftpy import external as _fwext\n')
-            p.stdin.write('from %s import %s\n' % (module, function))
-            p.stdin.write('_fwwrapped = _fwext.wrapper(%s)\n' % function)
-            p.stdin.write('_fwiarg, _fwikwarg = _fwext.load_args(\"%s\")\n' % argsdir)
-            p.stdin.write('print "FWOUT:|%s|" % _fwext.save_args(_fwwrapped(*_fwiarg, **_fwikwarg))\n')
-            p.stdin.close()
-            while True:
-                l =  p.stdout.readline()
-                if not l:
-                    break
-                l = l.strip()
-                if l.startswith('FWOUT'):
-                    r = l.split('|')
-                    if len(r) > 1:
-                        d = r[1]
-                        try:
-                            ret, err = load_args(d)
-                            if err:
-                                import traceback
-                                print >> sys.stderr, '\n'.join(traceback.format_list(err[2]))
-                                raise err[1]
-                            return ret
-                        finally:
-                            shutil.rmtree(d)
-                else:
-                    print l
-            raise RuntimeError, "Problem with running external process: %s" % p.stderr.read()
-        finally:
-            shutil.rmtree(argsdir)
-
-    return func
+    return ExternalFunction(exe, env, module, function, keep)

@@ -72,6 +72,7 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		AxesMetadataImpl axm = new AxesMetadataImpl(1);
 		Dataset ax = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
 		ax.idivide(2);
+		ax.setName(axis.getName());
 		axm.setAxis(0, ax);
 		rebinned.setMetadata(axm);
 		return new OperationData(rebinned);

@@ -79,7 +79,7 @@ public final class FunctionFactory {
 			 * Tell the extension points to load in.
 			 */
 			if (lf != null)
-				lf.registerExtensionPoints();
+				lf.registerFunctionExtensionPoints();
 		} catch (Throwable t) {
 			logger.error("Problem getting extension service");
 		}

@@ -9,9 +9,10 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
+import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
-public class SelectedFramesModel extends ExternalDataModel {
+public class SelectedFramesModel extends AbstractOperationModel {
 	
 	@OperationModelField(hint="Position of first (or only) dataset, leave blank to average all data",label = "First:" )
 	private Integer startFrame = null;

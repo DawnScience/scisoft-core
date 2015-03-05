@@ -445,10 +445,19 @@
             name="Rebin">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.IterativePolynomialBaselineSubtractionOperation"
+            description="Subtract a polynomial baseline using an iterative fitting routine. On each iteration any data above the fit is set to the fit value."
+            icon="icons/rollingball.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.IterativePolynomialBaselineSubtractionOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.IterativePolynomialBaselineSubtractionModel"
             name="Iterative Polynomial Baseline Subtraction">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractCurrentDataOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractCurrentDataOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SelectedFramesModel"
+            name="Subtract Current Data">
       </operation>
    </extension>
    <extension

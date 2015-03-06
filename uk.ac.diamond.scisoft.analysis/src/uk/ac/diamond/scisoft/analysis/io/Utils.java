@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,8 +17,14 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.Slice;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
@@ -554,5 +561,42 @@ public class Utils {
 	 */
 	public static String getString(byte[] bytes) throws UnsupportedEncodingException {
 		return new String(bytes, "US-ASCII"); 
+	}
+
+	/**
+	 * Loads a list of files (through a string array) and returns a list of IDataset
+	 * 
+	 * @param data
+	 *            output of data loaded (Optional)
+	 * @param filePaths
+	 *            file paths of files to be loaded
+	 * @return data loaded
+	 * @throws Exception
+	 */
+	public static List<IDataset> loadData(List<IDataset> data, String[] filePaths) throws Exception {
+		if (data == null)
+			data = new ArrayList<IDataset>(filePaths.length);
+		for (int i = 0; i < filePaths.length; i++) {
+			IDataHolder holder = null;
+			holder = LoaderFactory.getData(filePaths[i]);
+			File file = new File(filePaths[i]);
+			String filename = file.getName();
+			ILazyDataset lazy = holder.getLazyDataset(0);
+			int[] shape = lazy.getShape();
+			if (shape[0] > 1 && lazy.getRank() == 3) { // 3d dataset
+				for (int j = 0; j < shape[0]; j++) {
+					IDataset dataset = lazy.getSlice(
+							new Slice(j, shape[0], shape[1])).squeeze();
+					data.add(dataset);
+				}
+			} else { // if each single image is loaded separately (2d)
+				IDataset dataset = lazy.getSlice(new Slice());
+				if (dataset.getName() == null || dataset.getName().equals("")) {
+					dataset.setName(filename);
+				}
+				data.add(dataset);
+			}
+		}
+		return data;
 	}
 }

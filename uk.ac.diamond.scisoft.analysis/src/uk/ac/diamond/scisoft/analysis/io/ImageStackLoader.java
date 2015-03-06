@@ -9,28 +9,43 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.SliceNDIterator;
+import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 
+/**
+ * Class to create dataset from a dataset of filenames.
+ * 
+ * The shape of the 'whole' dataset represented by the set of filenames appended with
+ * the shape of the first image.
+ * 
+ * The type of the dataset is set to equal the type of the first image.
+ */
 public class ImageStackLoader implements ILazyLoader {
 
-	private List<String> imageFilenames;
+	private StringDataset filenames;
+	private int[] fShape; // filename shape
+	private int[] iShape; // image shape
 	private int[] shape;
 	private int dtype;
+	private String parent;
 	private Class<? extends IFileLoader> loaderClass;
-
+	private boolean onlyOne;
+	
 	public int getDtype() {
 		return dtype;
 	}
@@ -41,20 +56,112 @@ public class ImageStackLoader implements ILazyLoader {
 
 	@SuppressWarnings("unused")
 	public ImageStackLoader(List<String> imageFilenames, IDataHolder dh, IMonitor mon) throws Exception {
-		this.imageFilenames = imageFilenames;
-		// load the first image to get the shape of the whole thing
-		int stack = imageFilenames.size();
-		loaderClass = dh.getLoaderClass();
+		this((StringDataset) DatasetFactory.createFromList(imageFilenames), dh, null);
+	}
 
-		ILazyDataset data = dh.getLazyDataset(0);
-		dtype = AbstractDataset.getDType(data);
-		int[] dShape = data.getShape();
+	public ImageStackLoader(int[] dimensions, String[] imageFilenames, String directory) throws Exception {
+		this(new StringDataset(imageFilenames, dimensions), null, directory);
+	}
 
-		shape = new int[dShape.length + 1];
-		shape[0] = stack;
-		for (int i = 0; i < dShape.length; i++) {
-			shape[i + 1] = dShape[i];
+	public ImageStackLoader(int[] dimensions, String[] imageFilenames) throws Exception {
+		this(dimensions, imageFilenames, null);
+	}
+
+	public ImageStackLoader(StringDataset imageFilenames, String directory) throws Exception {
+		this(imageFilenames, null, directory);
+	}
+
+	public ImageStackLoader(StringDataset imageFilenames, IDataHolder dh, String directory) throws Exception {
+		if (directory != null) {
+			File file = new File(directory); 
+			if (!file.isDirectory()) {
+				throw new IllegalArgumentException("Given directory is not a directory");
+			}
 		}
+		parent = directory;
+
+		filenames = imageFilenames;
+		fShape = imageFilenames.getShapeRef();
+		int fRank = fShape.length;
+		// load the first image to get the shape of the whole thing
+		IDataset dataSetFromFile;
+		if (dh == null || dh.getNames().length == 0) {
+			dataSetFromFile = getDataSetFromFile(new int[fRank], null);
+		} else {
+			dataSetFromFile = dh.getDataset(0);
+			loaderClass = dh.getLoaderClass();
+		}
+		onlyOne = imageFilenames.getSize() == 1;
+		dtype = AbstractDataset.getDType(dataSetFromFile);
+		iShape = dataSetFromFile.getShape();
+		shape = Arrays.copyOf(fShape, fRank + iShape.length);
+		for (int i = 0; i < iShape.length; i++) {
+			shape[i + fRank] = iShape[i];
+		}
+	}
+
+	private IDataset getDataSetFromFile(int[] location, IMonitor mon) throws ScanFileHolderException {
+		// load the file
+		String filename = filenames.get(location);
+		filename = getLegalPath(filename);
+		if (parent != null) {
+			File f = new File(filename);
+			if (f.isAbsolute()) {
+				filename = f.getName();
+			}
+			filename = new File(parent, filename).getAbsolutePath();
+		}
+		IDataHolder data = null;
+		if (loaderClass != null) {
+			try {
+				data = LoaderFactory.getData(loaderClass, filename, true, mon);
+			} catch (Exception e) {
+				// do nothing and try with all registered loaders
+			}
+		}
+		if (data == null) {
+			try {
+				data = LoaderFactory.getData(filename, mon);
+			} catch (Exception e) {
+				throw new ScanFileHolderException("Cannot load image in image stack", e);
+			}
+			if (data == null) {
+				throw new ScanFileHolderException("Cannot load image in image stack");
+			}
+		}
+		if (loaderClass == null) {
+			loaderClass = data.getLoaderClass();
+		}
+
+		IDataset dataset = data.getDataset(0);
+		dataset.setName(filename);
+
+		return dataset;
+	}
+	
+	/**
+	 * 
+	 * @param dlsPath
+	 * @return String in windows format.
+	 */
+	private static String getLegalPath(String dlsPath) {
+		if (dlsPath ==null)
+			return null;
+
+		String path;
+		if (isWindowsOS() && dlsPath.startsWith("/dls/")) {
+			path = "\\\\Data.diamond.ac.uk\\" + dlsPath.substring(5);
+		} else {
+			path = dlsPath;
+		}
+        return path;
+	}
+
+	/**
+	 * @return true if windows
+	 */
+	static public boolean isWindowsOS() {
+		return System.getProperty("os.name").startsWith("Windows");
 	}
 
 	@Override
@@ -62,94 +169,44 @@ public class ImageStackLoader implements ILazyLoader {
 		return true;
 	}
 
-	private Dataset getFullStack() throws Exception {
-		
-    	IDataHolder      data = LoaderFactory.getData(loaderClass, imageFilenames.get(0), true, new IMonitor.Stub());
-    	int size = data.getDataset(0).getSize();
-
-    	Dataset result = DatasetFactory.zeros(shape, dtype);
-     	Object          buffer = result.getBuffer();
-		// this assumes that all files have images of the same shape and type
-		int image = 0;
-        for (String path : imageFilenames) {
-        	final IDataHolder      d = LoaderFactory.getData(loaderClass, path, true, new IMonitor.Stub());
-        	final Dataset i = DatasetUtils.convertToDataset(d.getDataset(0));
-        	System.arraycopy(i.getBuffer(), 0, buffer, image*size, size);
-        	++image;
-		}
-        
-        return result;
-	}
-
 	@Override
-	public Dataset getDataset(IMonitor mon, SliceND slice) throws Exception {
-		
-		if (slice.isAll()) return getFullStack();// Might cause out of memory!
-		                                                     // But this allows expressions of the stack to work if the stack fit in memory.
-
-		int[] lstart = slice.getStart();
-		int[] lstop  = slice.getStop();
-		int[] lstep  = slice.getStep();
+	public Dataset getDataset(IMonitor mon, SliceND slice) throws ScanFileHolderException {
 		int[] newShape = slice.getShape();
 
-		Dataset result = DatasetFactory.zeros(newShape, dtype);
-		if (result.getSize() == 0)
-			return result;
+		int size = AbstractDataset.calcSize(newShape); 
+		if (size == 0)
+			return DatasetFactory.zeros(newShape, dtype);
 
-		IDataHolder data = null;
-		// FIXME this seems to be designed for three dimensions only
-		int[] imageStart = new int[] {lstart[1], lstart[2]};
-		int[] imageStop = new int[] {lstop[1], lstop[2]};
-		int[] imageStep = new int[] {lstep[1], lstep[2]};
-		int[] resultStart = new int[3];
-		int[] resultStop = newShape.clone();
-		int[] resultStep = new int[] {1,1,1};
-		int n = lstart[0];
-		do {
-			
-			if (mon!=null && mon.isCancelled()) throw new Exception("Slicing cancelled!");
-			// load the file
-			if (loaderClass != null) {
-				try {
-					data = LoaderFactory.getData(loaderClass, imageFilenames.get(n), true, mon);
-				} catch (Exception e) {
-					// do nothing and try with all registered loaders
-				}
-			}
-			if (data == null) {
-				try {
-					data = LoaderFactory.getData(imageFilenames.get(n), mon);
-				} catch (Exception e) {
-					throw new ScanFileHolderException("Cannot load image in image stack", e);
-				}
-				if (data == null) {
-					throw new ScanFileHolderException("Cannot load image in image stack");
-				}
-			}
-			if (loaderClass == null) {
-				loaderClass = data.getLoaderClass();
-			}
+		int iRank = iShape.length;
+		int nRank = newShape.length;
+		int[] missing = new int[iRank];
+		int start = nRank - iRank;
+		for (int i = 0; i < iRank; i++) {
+			missing[i] = start + i;
+		}
+		SliceNDIterator it = new SliceNDIterator(slice, missing);
+		Dataset result = onlyOne || size == 1 ? null : DatasetFactory.zeros(newShape, dtype);
 
-			ILazyDataset sliced = data.getLazyDataset(0).getSliceView(imageStart, imageStop, imageStep);
-			resultStop[0] = resultStart[0] + 1;
-			result.setSlice(sliced, resultStart, resultStop, resultStep);
-			resultStart[0]++;
-			n += lstep[0];
-		} while (resultStart[0] < newShape[0]);
+		int[] pos = it.getUsedPos();
+		SliceND iSlice = it.getOmittedSlice();
+		int[] iShape = iSlice.getShape();
+		SliceND dSlice = it.getOutputSlice();
+		while (it.hasNext()) {
+			IDataset image = getDataSetFromFile(pos, mon).getSliceView(iSlice);
 
-		IMetadata meta = LoaderFactory.getLockedMetaData();
-		if (meta!=null) {
-			 result.setMetadata(meta); // Locked overrides all
-		} else {
-		    meta = result.getMetadata()==null ? data.getMetadata() : null;
-			if (meta!=null) result.setMetadata(meta);
+			image.setShape(iShape);
+			if (result == null) {
+				result = DatasetUtils.convertToDataset(image);
+				result.setShape(newShape);
+				break;
+			}
+			result.setSlice(image, dSlice);
 		}
 
-		return result;	
+		return result;
 	}
 
 	public int[] getShape() {
 		return shape;
 	}
-
 }

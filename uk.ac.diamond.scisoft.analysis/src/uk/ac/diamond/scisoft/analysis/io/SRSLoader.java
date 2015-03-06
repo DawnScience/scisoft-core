@@ -288,7 +288,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 							}
 							loader = new ImageStackLoaderEx(sds.getShape(), paths);
 							name += "_image";
-							LazyDataset lazyDataset = new LazyDataset(name, loader.dtype, loader.getShape(), loader);
+							LazyDataset lazyDataset = new LazyDataset(name, loader.getDtype(), loader.getShape(), loader);
 							holder.addDataset(name, lazyDataset);
 							if (dataShapes!=null) dataShapes.put(name, lazyDataset.getShape());
 						} catch (Exception ex) {

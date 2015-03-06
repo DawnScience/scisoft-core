@@ -255,24 +255,26 @@ public class TIFFImageLoader extends JavaImageLoader {
 			int dtype, int[] oshape, int[] start, int[] count, int[] step) throws ScanFileHolderException {
 		ImageInputStream iis = null;
 		ImageReader reader = null;
-		Dataset d = DatasetFactory.zeros(count, dtype);
+
+		int rank = start.length;
+		boolean is2D = rank == 2;
+		int num = is2D ? 0 : start[0];
+		int off = rank - 2;
+		int[] nshape = Arrays.copyOfRange(oshape, off, rank);
+		int[] nstart = Arrays.copyOfRange(start, off, rank);
+		int[] nstep = Arrays.copyOfRange(step, off, rank);
+
+		SliceND iSlice = new SliceND(nshape, nstart,
+				new int[] {nstart[0] + count[off] * nstep[0], nstart[1] + count[off + 1] * nstep[1]},
+				nstep);
+		SliceND dSlice = new SliceND(count);
+
+		Dataset d = is2D ? null : DatasetFactory.zeros(count, dtype);
 
 		try {
 			// test to see if the filename passed will load
 			iis = new FileImageInputStream(new File(filename));
 
-			int rank = start.length;
-			boolean is2D = rank == 2;
-			int num = is2D ? 0 : start[0];
-			int off = is2D ? 0 : rank - 2;
-			int[] nshape = Arrays.copyOfRange(oshape, off, rank);
-			int[] nstart = Arrays.copyOfRange(start, off, rank);
-			int[] nstep = Arrays.copyOfRange(step, off, rank);
-
-			SliceND iSlice = new SliceND(nshape, nstart,
-					new int[] {nstart[0] + count[off] * nstep[0], nstart[1] + count[off + 1] * nstep[1]},
-					nstep);
-			SliceND dSlice = new SliceND(count);
 			int[] dataStart = dSlice.getStart();
 			int[] dataStop  = dSlice.getStop();
 
@@ -293,8 +295,14 @@ public class TIFFImageLoader extends JavaImageLoader {
 			while (dataStart[0] < count[0]) {
 				if (image == null)
 					image = readImage(filename, reader, asGrey, keepBitWidth, num);
-				d.setSlice(image.getSliceView(iSlice), dSlice);
-				if (monitorIncrement(mon) || is2D) {
+				image = image.getSliceView(iSlice);
+				if (d == null) {
+					d = image;
+					d.setShape(count);
+					break;
+				}
+				d.setSlice(image, dSlice);
+				if (monitorIncrement(mon)) {
 					break;
 				}
 				num += step[0];
@@ -317,10 +325,6 @@ public class TIFFImageLoader extends JavaImageLoader {
 			}
 		}
 
-		if (!Arrays.equals(count, d.getShapeRef())) {
-			throw new ScanFileHolderException("Image does not have expected shape");
-
-		}
 		return d;
 	}
 

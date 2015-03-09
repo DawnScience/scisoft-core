@@ -133,7 +133,8 @@ public class CBFLoader extends AbstractFileLoader {
 		return output;
 	}
 
-	private static final String PLACE_HOLDER = ".";
+	private static final String PLACE_HOLDER = "."; // can mean inapplicable or inappropriate for a row and also use default
+	private static final String MISSING = "?"; // missing value
 
 	private Tree readAllMetadata(cbf_handle_struct chs) throws ScanFileHolderException {
 		SWIGTYPE_p_p_char s = cbf.new_charPP();
@@ -191,10 +192,10 @@ public class CBFLoader extends AbstractFileLoader {
 						String v = null;
 						if (cbf.cbf_get_value(chs, s) == 0) {
 							v = cbf.charPP_value(s);
-							if (!PLACE_HOLDER.equals(v)) {
+							if (!PLACE_HOLDER.equals(v) && !MISSING.equals(v)) {
 								Number num = Utils.parseValue(v);
 								if (column == null) {
-									int dt = num == null ? Dataset.STRING : AbstractDataset.getDTypeFromObject(num);
+									int dt = num == null ? Dataset.STRING : (num instanceof Float || num instanceof Double ? Dataset.FLOAT64 : Dataset.INT32);
 									Dataset ds = DatasetFactory.zeros(new int[] {r}, dt);
 									column = TreeFactory.createAttribute(tree, catName, colName, ds, false);
 									category.addAttribute(column);

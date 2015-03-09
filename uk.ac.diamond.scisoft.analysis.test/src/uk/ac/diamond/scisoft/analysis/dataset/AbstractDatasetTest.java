@@ -1101,6 +1101,9 @@ public class AbstractDatasetTest {
 			int[] p = s.getNDPosition(iter.index);
 			assertArrayEquals(Arrays.toString(pos) + " : " + Arrays.toString(p), pos, p);
 		}
+
+		TestUtils.assertEquals("Max", t.max().doubleValue(), s.max().doubleValue());
+		TestUtils.assertEquals("Min", t.min().doubleValue(), s.min().doubleValue());
 		return s;
 	}
 

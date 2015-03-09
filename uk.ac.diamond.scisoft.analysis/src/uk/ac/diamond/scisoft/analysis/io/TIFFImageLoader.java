@@ -269,7 +269,7 @@ public class TIFFImageLoader extends JavaImageLoader {
 				nstep);
 		SliceND dSlice = new SliceND(count);
 
-		Dataset d = is2D ? null : DatasetFactory.zeros(count, dtype);
+		Dataset d = is2D || count[0] == 1 ? null : DatasetFactory.zeros(count, dtype);
 
 		try {
 			// test to see if the filename passed will load

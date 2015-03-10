@@ -288,7 +288,7 @@ public class CBFLoader extends AbstractFileLoader {
 					metadataMap.put("SIZE " + ind, String.valueOf(dim));
 					metadataMap.put("precedence " + ind, String.valueOf(pre));
 					metadataMap.put("direction " + ind, dir);
-					metadataMap.put("axis_set_id" + ind, asi);
+					metadataMap.put("axis_set_id " + ind, asi);
 
 				}
 				i++;

@@ -73,4 +73,15 @@ public class FileSystemEmulatingTIFFImageLoader implements IFileLoader {
 	@Override
 	public void setLoadAllLazily(boolean willLoadLazily) {
 	}
+
+	@Override
+	public void setAsyncLoad(boolean treeOnTop) {
+		throw new RuntimeException("Asynchronous loadering is not supported!");
+	}
+	
+	@Override
+	public boolean isLoading() {
+		throw new RuntimeException("Asynchronous loadering is not supported!");
+	}
+
 }

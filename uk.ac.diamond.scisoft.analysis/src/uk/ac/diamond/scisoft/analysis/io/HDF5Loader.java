@@ -40,6 +40,7 @@ import ncsa.hdf.object.h5.H5Datatype;
 import ncsa.hdf.object.h5.H5File;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.io.SliceObject;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
@@ -1738,7 +1739,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * @param dh
 	 * @param withMetadata
 	 */
-	public static void updateDataHolder(DataHolder dh, boolean withMetadata) {
+	public static void updateDataHolder(IDataHolder dh, boolean withMetadata) {
 		Tree tree = dh.getTree();
 		if (tree == null)
 			return;

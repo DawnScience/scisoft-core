@@ -93,7 +93,7 @@ public class CBFLoader extends AbstractFileLoader {
 		cbf_handle_struct chs = new cbf_handle_struct(fileName);
 
 		Tree tree = readAllMetadata(chs);
-		
+
 		if (loadMetadata) {
 			NodeLink link = tree.getGroupNode().iterator().next(); // first group in root group
 			if (link.isDestinationGroup()) {
@@ -102,9 +102,7 @@ public class CBFLoader extends AbstractFileLoader {
 				imageOrien = parseCBFHeaderData(group);
 			}
 		}
-		if (imageOrien == null) {
-			imageOrien = readImageOrientation(chs);
-		}
+		imageOrien = readImageOrientation(chs, imageOrien);
 
 		if (loadLazily) {
 			data = createLazyDataset(DEF_IMAGE_NAME, imageOrien.getDType(), imageOrien.getShape(), new CBFLoader(fileName));
@@ -466,9 +464,12 @@ _diffrn_radiation_wavelength.wt 1.0
 		metadata.setFilePath(fileName);
 	}
 
-	private ImageOrientation readImageOrientation(cbf_handle_struct chs) throws ScanFileHolderException {
+	private ImageOrientation readImageOrientation(cbf_handle_struct chs, ImageOrientation imageOrien) throws ScanFileHolderException {
 		CBFError.errorChecker(cbf.cbf_rewind_datablock(chs));
+		CBFError.errorChecker(cbf.cbf_rewind_category(chs));
 		CBFError.errorChecker(cbf.cbf_find_category(chs, "array_data"));
+		CBFError.errorChecker(cbf.cbf_rewind_row(chs));
+		CBFError.errorChecker(cbf.cbf_rewind_column(chs));
 		CBFError.errorChecker(cbf.cbf_find_column(chs, "data"));
 
 		uintP cifcomp = new uintP();
@@ -482,14 +483,20 @@ _diffrn_radiation_wavelength.wt 1.0
 				.cast(), elu.cast(), elnum.cast(), minel.cast(), maxel.cast(), isre.cast(), byteorder, dim1.cast(),
 				dim2.cast(), dim3.cast(), pad.cast()));
 
-		ImageOrientation imageOrien = new ImageOrientation((int) dim1.value(), (int) dim2.value(), isre.value(), els.value());
-		metadataMap.put("numPixels_x", String.valueOf(dim1.value()));
-		metadataMap.put("numPixels_y", String.valueOf(dim2.value()));
+		if (imageOrien == null) {
+			imageOrien = new ImageOrientation((int) dim1.value(), (int) dim2.value(), isre.value(), els.value());
+		} else {
+			imageOrien.isReal = isre.value();
+			imageOrien.isSigned = els.value();
+		}
 
-		long numPixels = dim1.value() * dim2.value();
+		metadataMap.put("numPixels_x", String.valueOf(imageOrien.shape[1]));
+		metadataMap.put("numPixels_y", String.valueOf(imageOrien.shape[0]));
+
+		long numPixels = AbstractDataset.calcLongSize(imageOrien.shape);
 
 		if (numPixels != elnum.value()) {
-			throw new ScanFileHolderException("Mismatch of CBF binary data size");
+			throw new ScanFileHolderException("Mismatch of CBF binary data size: " + numPixels + " cf " + elnum.value());
 		}
 
 		cifcomp.delete();
@@ -514,13 +521,7 @@ _diffrn_radiation_wavelength.wt 1.0
 		int[] shape = imageOrien.getShape();
 		AbstractDataset data;
 		try {
-			int dtype = imageOrien.getDType();
-			if (dtype < 0) {
-				imageOrien.isReal = -1;
-				dtype = Dataset.INT32;
-				imageOrien.isSigned = 1;
-			}
-			data = (AbstractDataset) DatasetFactory.zeros(shape, dtype);
+			data = (AbstractDataset) DatasetFactory.zeros(shape, imageOrien.getDType());
 		} catch (Exception eb) {
 			throw new ScanFileHolderException("CBFLoader failed when creating a Dataset for the data", eb);
 		}
@@ -589,7 +590,10 @@ _diffrn_radiation_wavelength.wt 1.0
 		sizetP rsize = new sizetP();
 
 		CBFError.errorChecker(cbf.cbf_rewind_datablock(chs));
+		CBFError.errorChecker(cbf.cbf_rewind_category(chs));
 		CBFError.errorChecker(cbf.cbf_find_category(chs, "array_data"));
+		CBFError.errorChecker(cbf.cbf_rewind_row(chs));
+		CBFError.errorChecker(cbf.cbf_rewind_column(chs));
 		CBFError.errorChecker(cbf.cbf_find_column(chs, "data"));
 
 		if (data instanceof DoubleDataset) {

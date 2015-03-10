@@ -483,6 +483,8 @@ _diffrn_radiation_wavelength.wt 1.0
 				dim2.cast(), dim3.cast(), pad.cast()));
 
 		ImageOrientation imageOrien = new ImageOrientation((int) dim1.value(), (int) dim2.value(), isre.value(), els.value());
+		metadataMap.put("numPixels_x", String.valueOf(dim1.value()));
+		metadataMap.put("numPixels_y", String.valueOf(dim2.value()));
 
 		long numPixels = dim1.value() * dim2.value();
 

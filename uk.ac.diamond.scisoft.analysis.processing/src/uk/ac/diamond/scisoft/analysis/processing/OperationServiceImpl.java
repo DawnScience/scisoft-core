@@ -125,6 +125,8 @@ public class OperationServiceImpl implements IOperationService {
 				logger.error("Unable to set slice from service metadata on full data.");
 			}
 			
+			for (IOperation op : context.getSeries()) op.init();
+			
 			IOperationRunner runner = rservice.getRunner(context.getExecutionType());
 			runner.init(context);
 			runner.execute();

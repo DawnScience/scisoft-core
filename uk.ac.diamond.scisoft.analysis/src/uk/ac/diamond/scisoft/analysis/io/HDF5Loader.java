@@ -110,6 +110,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * level of a tree is read in and at least 200 nodes are read 
 	 * @param loadAsynchronously
 	 */
+	@Override
 	public void setAsyncLoad(boolean loadAsynchronously) {
 		setAsyncLoad(loadAsynchronously, 200);
 	}
@@ -292,6 +293,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	/**
 	 * @return true if still loading file
 	 */
+	@Override
 	public boolean isLoading() {
 		if (loaderThread == null)
 			return false;

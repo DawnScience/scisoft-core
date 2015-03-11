@@ -114,7 +114,6 @@ public class SeriesRunner implements IOperationRunner {
 				}
 				logger.debug("Slice " + current + " ran in: " +(System.currentTimeMillis()-start)/1000. + " s : Thread" +Thread.currentThread().toString());
 				if (context.getMonitor() != null) context.getMonitor().worked(1);
-				if (data == null) return;
 				visitor.executed(data, context.getMonitor()); // Send result.
 			}
 

@@ -716,6 +716,44 @@ public class HierarchicalFileExVisitorTest {
 		
 	}
 	
+	@Test
+	public void Process3DStackAs2DTo1DToNull() throws Exception {
+		
+		int[] inputShape = new int[] {10,1000,1100};
+		
+		ILazyDataset lazy = getLazyDataset(inputShape,0);
+		lazy.addMetadata(new AxesMetadataImpl(3));
+		
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+		context.setSlicing("all");
+		
+		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
+		op22.setWithAxes(true);
+		op22.setModel(new Junk2Dto2Dmodel());
+		op22.setStoreOutput(true);
+		Junk2Dto1DNullOperation op21 = new Junk2Dto1DNullOperation();
+		op21.setModel(new Junk1DModel());
+		op21.setWithAxes(false);
+		
+		final File tmp = File.createTempFile("Test", ".h5");
+		tmp.deleteOnExit();
+		tmp.createNewFile();
+		
+		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+		context.setSeries(op22,op21);
+		context.setExecutionType(type);
+		service.execute(context);
+		
+		
+		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
+		assertFalse(dh.contains("/entry/result/data"));
+		assertTrue(dh.contains("/entry/intermediate/0-Junk2Dto2DOperation/Junk2Dto2DAx1"));
+		assertFalse(dh.contains("/entry/intermediate/0-Junk2Dto2DOperation/Junk2Dto2DAx11"));
+		
+			
+	}
+	
 	private void testDataset(ITestOperation op, String slice, ILazyDataset lz) {
 		Slice[] slices = Slice.convertFromString(slice);
 		IDataset data = op.getTestData().getData();
@@ -770,43 +808,4 @@ public class HierarchicalFileExVisitorTest {
 		
 		return lz;
 	}
-	
-//	@Test
-//	public void AbstractOperationCounter() {
-//	
-//		int[] shape = new int[]{1,2,3,4,5,10,10};
-//		int[] dd = new int[]{2,3};
-//		final IDataset parent = Random.rand(shape);
-//		Slice[] init = new Slice[shape.length];
-//		PositionIterator pi = new PositionIterator(shape,dd);
-//		
-//		OriginMetadataImpl om = new OriginMetadataImpl(parent,init,dd,"test","test");
-//		
-//		int[] pos = pi.getPos();
-//
-//		int count = 0;
-//		while (pi.hasNext()) {
-//
-//			int[] end = pos.clone();
-//			for (int i = 0; i<pos.length;i++) {
-//				end[i]++;
-//			}
-//
-//			for (int i = 0; i < dd.length; i++){
-//				end[dd[i]] = shape[dd[i]];
-//			}
-//
-//			int[] st = pos.clone();
-//			for (int i = 0; i < st.length;i++) st[i] = 1;
-//
-//			Slice[] slice = Slice.convertToSlice(pos, end, st);
-//			
-//			om.setCurrentSlice(slice);
-//			int currentSliceNumber = AbstractOperation.getCurrentSliceNumber(om);
-//			assertTrue(currentSliceNumber == count++);
-//			
-//		}
-		
-//		
-//	}
 }

@@ -178,7 +178,7 @@ public class OperationServiceImpl implements IOperationService {
 	    		ILazyDataset lz = context.getData();
 	    		List<SliceFromSeriesMetadata> md = lz.getMetadata(SliceFromSeriesMetadata.class);
 	            
-	    		if (md!=null) { // This means they cannot open up the workflow and have it run directly.
+	    		if (md!=null && !md.isEmpty()) { // This means they cannot open up the workflow and have it run directly.
 	        		SourceInformation sinfo = md.get(0).getSourceInfo();
 	        		if (sinfo!=null) {
 	        			filePath = sinfo.getFilePath();

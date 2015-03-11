@@ -143,7 +143,18 @@ public class OperationTransformer extends AbstractDataMessageTransformer impleme
 			if (operation==null) operation = createOperation();
 			OperationData tmp = operation.execute(data, context!=null ? context.getMonitor() : null);
 
-			if (tmp == null) return null;
+			if (tmp == null) {
+				//if null after all operations, still need to execute with null
+				//so the visitor knows a pass has finished
+				
+				if (output.getWidth()<1 && context!=null && context.getVisitor()!=null) {
+					context.getVisitor().executed(null, context.getMonitor());
+					if (context.getMonitor() != null) context.getMonitor().worked(1);
+					logger.debug("null output ran in: " +(System.currentTimeMillis()-msg.getTime())/1000. + " s : Thread" +Thread.currentThread().toString());
+				}
+				
+				return null;
+			}
 			
 			data = operation.isPassUnmodifiedData() ? data : tmp.getData();
 

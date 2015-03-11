@@ -182,12 +182,12 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 	
 	@Override
 	public void setAsyncLoad(boolean treeOnTop) {
-		throw new RuntimeException("Asynchronous loadering is not supported!");
+		throw new RuntimeException("Asynchronous loading is not supported!");
 	}
 	
 	@Override
 	public boolean isLoading() {
-		throw new RuntimeException("Asynchronous loadering is not supported!");
+		throw new RuntimeException("Asynchronous loading is not supported!");
 	}
 
 }

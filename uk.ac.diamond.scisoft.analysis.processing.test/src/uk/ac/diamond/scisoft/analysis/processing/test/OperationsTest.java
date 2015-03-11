@@ -166,7 +166,7 @@ public class OperationsTest {
 				counter++;
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
 					for (int j = 0; j < result.getData().getShape()[1]; j++) {
-					    if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
+					    if ( result.getData().getDouble(0,i,j)<0 ) throw new Exception("Incorrect value found!");
 					}
 				}
 			}			
@@ -216,7 +216,7 @@ public class OperationsTest {
 				++counter;
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
 					for (int j = 0; j < result.getData().getShape()[1]; j++) {
-						if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
+						if ( result.getData().getDouble(0,i,j)<0 ) throw new Exception("Incorrect value found!");
 					}
 				}
 			}			
@@ -324,7 +324,7 @@ public class OperationsTest {
 				counter++;
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
 					for (int j = 0; j < result.getData().getShape()[1]; j++) {
-						if ( result.getData().getDouble(i,j)<0 ) throw new Exception("Incorrect value found!");
+						if ( result.getData().getDouble(0,i,j)<0 ) throw new Exception("Incorrect value found!");
 					}
 				}
 			}			

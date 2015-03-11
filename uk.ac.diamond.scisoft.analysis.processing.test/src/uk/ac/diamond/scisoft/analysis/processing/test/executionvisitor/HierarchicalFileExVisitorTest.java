@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collection;
 
 import org.dawb.common.services.ServiceManager;
 import org.dawnsci.persistence.PersistenceServiceCreator;
@@ -26,6 +27,8 @@ import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.hdf5.operation.HierarchicalFileExecutionVisitor;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
@@ -33,7 +36,14 @@ import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 
+@RunWith(Parameterized.class)
 public class HierarchicalFileExVisitorTest {
+	
+	ExecutionType type;
+	
+	public HierarchicalFileExVisitorTest(ExecutionType type) {
+		this.type = type;
+	}
 	
 	private static IOperationService service;
 
@@ -48,6 +58,14 @@ public class HierarchicalFileExVisitorTest {
 		service = (IOperationService)Activator.getService(IOperationService.class);
 		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.test.executionvisitor");
 	}
+	
+	@Parameterized.Parameters
+	   public static Collection<?> params() {
+	      return Arrays.asList(new Object[] {new Object[]
+	         {ExecutionType.SERIES},new Object[]{ ExecutionType.GRAPH}
+	         
+	      });
+	   }
 	
 	@Test
 	public void Process3DStackAs2DTo1D() throws Exception {
@@ -71,7 +89,7 @@ public class HierarchicalFileExVisitorTest {
 
 		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
 		context.setSeries(op22,op21);
-		context.setExecutionType(ExecutionType.GRAPH);
+		context.setExecutionType(type);
 		service.execute(context);
 
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
@@ -111,6 +129,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
 		context.setSeries(op22,op21);
+		context.setExecutionType(type);
 		service.execute(context);
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
@@ -150,6 +169,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
 		context.setSeries(op22,op21);
+		context.setExecutionType(type);
 		service.execute(context);
 
 					
@@ -188,6 +208,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
 		context.setSeries(op11);
+		context.setExecutionType(type);
 		service.execute(context);
 		
 		
@@ -228,6 +249,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
 		context.setSeries(op11);
+		context.setExecutionType(type);
 		service.execute(context);
 		
 		
@@ -269,6 +291,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
 		context.setSeries(op11);
+		context.setExecutionType(type);
 		service.execute(context);
 
 		
@@ -314,6 +337,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
 		context.setSeries(op11);
+		context.setExecutionType(type);
 		service.execute(context);			
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
@@ -357,6 +381,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
 		context.setSeries(op11);
+		context.setExecutionType(type);
 		service.execute(context);
 		
 		
@@ -402,6 +427,7 @@ public class HierarchicalFileExVisitorTest {
 
 		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
 		context.setSeries(op21,op11);
+		context.setExecutionType(type);
 		service.execute(context);
 
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
@@ -444,6 +470,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
 		context.setSeries(op22,op21);
+		context.setExecutionType(type);
 		service.execute(context);
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
@@ -480,6 +507,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
 		context.setSeries(op11);
+		context.setExecutionType(type);
 		service.execute(context);
 		
 		
@@ -519,6 +547,7 @@ public class HierarchicalFileExVisitorTest {
 		tmp.deleteOnExit();
 		tmp.createNewFile();
 		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+		context.setExecutionType(type);
 		service.execute(context);
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
@@ -572,6 +601,7 @@ public class HierarchicalFileExVisitorTest {
 		tmp.deleteOnExit();
 		tmp.createNewFile();
 		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+		context.setExecutionType(type);
 		service.execute(context);
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
@@ -614,6 +644,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
 		context.setSeries(op22,op21);
+		context.setExecutionType(type);
 		service.execute(context);
 		
 		
@@ -660,6 +691,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
 		context.setSeries(op11);
+		
 		service.execute(context);
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());

@@ -13,8 +13,8 @@ public class ExportAsText1DModel extends AbstractOperationModel {
 	private boolean includeSliceName = false;
 	@OperationModelField(label = "Pad with zeros", hint = "Leave blank for no padding")
 	private Integer zeroPad = 5;
-	
-	
+	private String suffix = "";
+
 	public String getExtension() {
 		return extension;
 	}
@@ -45,6 +45,14 @@ public class ExportAsText1DModel extends AbstractOperationModel {
 
 	public void setOutputDirectoryPath(String outputDirectoryPath) {
 		firePropertyChange("outputDirectoryPath", this.outputDirectoryPath, this.outputDirectoryPath = outputDirectoryPath);
+	}
+	
+	public String getSuffix() {
+		return suffix;
+	}
+
+	public void setSuffix(String suffix) {
+		firePropertyChange("suffix", this.suffix, this.suffix = suffix);
 	}
 	
 }

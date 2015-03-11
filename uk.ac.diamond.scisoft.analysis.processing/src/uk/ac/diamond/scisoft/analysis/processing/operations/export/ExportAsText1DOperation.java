@@ -12,7 +12,9 @@ import org.eclipse.dawnsci.analysis.api.processing.IExportOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 
@@ -32,9 +34,8 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
-		if (model.getOutputDirectoryPath() == null) throw new OperationException(this, "Output directory not set!");
+		if (model.getOutputDirectoryPath() == null || model.getOutputDirectoryPath().isEmpty()) throw new OperationException(this, "Output directory not set!");
 		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(input);
-		if (ssm == null) throw new OperationException(this, "Dataset has not Origin!");
 		
 		String filename = EXPORT;
 		String slice ="";
@@ -59,7 +60,12 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 			File f = new File(fn);
 			filename = getFileNameNoExtension(f.getName());
 		}
-
+		
+		String postfix = "";
+		
+		if (model.getSuffix() != null) {
+			postfix = model.getSuffix();
+		}
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append(model.getOutputDirectoryPath());
@@ -71,6 +77,10 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 			slice = slice.replace(":", ";");
 			sb.append(slice);
 			sb.append("]");
+			sb.append("_");
+		}
+		if (!postfix.isEmpty()) {
+			sb.append(postfix);
 			sb.append("_");
 		}
 		sb.append(count);
@@ -90,6 +100,15 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 		if (lx != null) {
 			IDataset x = lx.getSliceView().getSlice().squeeze();
 			x.setShape(x.getShape()[0],1);
+			int xtype = AbstractDataset.getDType(x);
+			int ytype = AbstractDataset.getDType(outds);
+			if (xtype != ytype) {
+				if (xtype > ytype) {
+					outds = DatasetUtils.cast(outds, xtype);
+				} else {
+					x = DatasetUtils.cast(x, ytype);
+				}
+			}
 			outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
 		}
 		
@@ -98,6 +117,15 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 		if (error != null) {
 			IDataset e = error.getSlice();
 			e.setShape(e.getShape()[0],1);
+			int etype = AbstractDataset.getDType(e);
+			int ytype = AbstractDataset.getDType(outds);
+			if (etype != ytype) {
+				if (etype > ytype) {
+					outds = DatasetUtils.cast(outds, etype);
+				} else {
+					e = DatasetUtils.cast(e, ytype);
+				}
+			}
 			outds = DatasetUtils.concatenate(new IDataset[]{outds,e}, 1);
 		}
 		
@@ -108,7 +136,7 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 		try {
 			saver.saveFile(dh);
 		} catch (ScanFileHolderException e) {
-			e.printStackTrace();
+			throw new OperationException(this, "Error saving text file! (Do you have write access?)");
 		}
 		
 		return new OperationData(input);

@@ -12,18 +12,14 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.jws.WebParam.Mode;
-
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
@@ -31,11 +27,8 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.twod.DiffractionMetadataImportModel;
-
 public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, OperationData> {
 
-	private ILazyDataset parent = null;
 	private int nBins;
 	private double start;
 	private double stop;
@@ -47,6 +40,11 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.oned.Rebinning1DOperation";
 	}
 	
+	@Override
+	public void init(){
+		binEdges = null;
+	}
+	
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
 		ILazyDataset[] axes = getFirstAxes(input);
@@ -55,16 +53,9 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		
 		Dataset axis = (Dataset)axes[0].getSlice();
 		
-		//TODO this is bs. Should have an init method when the file changes.
-		ILazyDataset p = getSliceSeriesMetadata(input).getParent();
-		if (parent == null || parent != p || binEdges == null) {
-			parent = p;
-
-
+		if (binEdges == null) {
 			nBins = model.getNumberOfBins() != null ? model.getNumberOfBins() : axis.getSize(); 
-
 			updateStartStop(axis);
-			
 		}
 			
 		double[] edges = new double[]{binEdges.getElementDoubleAbs(0),binEdges.getElementDoubleAbs(nBins)};

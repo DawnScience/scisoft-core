@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="Loader Factory service injector">
-   <implementation class="uk.ac.diamond.scisoft.analysis.io.LoaderFactory"/>
-   <reference bind="setLoaderFactoryService" cardinality="1..1" interface="org.eclipse.dawnsci.analysis.api.io.ILoaderFactoryExtensionService" name="ILoaderFactoryExtensionService" policy="static"/>ce>
-</scr:component>

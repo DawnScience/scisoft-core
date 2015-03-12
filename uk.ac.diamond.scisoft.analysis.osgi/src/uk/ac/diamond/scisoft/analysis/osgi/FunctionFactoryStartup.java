@@ -9,43 +9,48 @@
 
 package uk.ac.diamond.scisoft.analysis.osgi;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
-import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunctionFactoryExtensionService;
+import org.eclipse.ui.IStartup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.FunctionFactory;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.FunctionUseCaseService;
 
-public class FunctionFactoryExtensionService implements IFunctionFactoryExtensionService {
+public class FunctionFactoryStartup implements IStartup {
 	
-	private static final Logger logger = LoggerFactory.getLogger(FunctionFactoryExtensionService.class);
+	private static final Logger logger = LoggerFactory.getLogger(FunctionFactoryStartup.class);
 	
 	//This is the number of possible use cases provided by the extension point.
 	private static final int nUseCases = 5;
-	private static final List<String> plugins = new ArrayList<String>();
-	
-	//Added the following two members following LoaderFactoryExt.Serv.
-	static {
-		System.out.println("Starting function factory extension service...");
+	private static Set<String> plugins;
+	private static boolean     started=false;
+
+	@Override
+	public void earlyStartup() {
+		plugins = new HashSet<String>();
+		registerFunctionExtensionPoints();
+		started = true;
 	}
-	public FunctionFactoryExtensionService() {
-		// Important do nothing here, OSGI may start the service more than once.
+	
+	public static boolean isStarted() {
+		return started;
+	}
+
+	public static Set<String> getPlugins() {
+		return plugins;
 	}
 
 	/**
 	 * Get all extension points of type u.a.d.s.a.fitting.function
 	 * and register them sequentially.
 	 */
-	@Override
-	public void registerFunctionExtensionPoints() {
+	private void registerFunctionExtensionPoints() {
 		final IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("uk.ac.diamond.scisoft.analysis.fitting.function");		
 		/* Loop through this element array twice since we want to record the 
 		 * use cases to sanity check the ones provided in the function extension
@@ -104,14 +109,6 @@ public class FunctionFactoryExtensionService implements IFunctionFactoryExtensio
 		
 		FunctionUseCaseService.registerUseCase(ucid, name);
 	}
-	
-	/**
-	 * Return a list of plugins which have contributed functions to the 
-	 * FunctionFactory.
-	 */
-	@Override
-	public List<String> getPlugins() {
-		return plugins;
-	}
+
 
 }

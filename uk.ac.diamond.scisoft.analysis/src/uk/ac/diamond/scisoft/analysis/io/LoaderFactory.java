@@ -38,7 +38,6 @@ import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataAnalysisObject;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
-import org.eclipse.dawnsci.analysis.api.io.ILoaderFactoryExtensionService;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
@@ -82,28 +81,10 @@ import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
  */
 public class LoaderFactory {
 
-	private static ILoaderFactoryExtensionService extensionService;
 	
 	// Not for public use: only used by OSGI
 	public LoaderFactory() {
 		
-	}
-
-	/**
-	 * Injected by OSGI
-	 * @param lf
-	 */
-	public static void setLoaderFactoryService(ILoaderFactoryExtensionService lf) {
-		try {
-			/**
-			 * Tell the extension points to load in.
-			 */
-			extensionService = lf;
-			if (extensionService != null) extensionService.registerExtensionPoints();
-			
-		} catch (Throwable t) {
-			logger.error("Problem getting extension service");
-		}
 	}
 
 	/**
@@ -545,6 +526,18 @@ public class LoaderFactory {
 		return cachedObject instanceof IDataHolder ? (IDataHolder) cachedObject : null;
 	}
 
+	private static String stackExpression = "(.+)_(\\d+)";
+	
+	public static String getStackExpression() {
+		return stackExpression;
+	}
+
+
+	public static void setStackExpression(String stackExpression) {
+		LoaderFactory.stackExpression = stackExpression;
+	}
+
+
 	/**
 	 * This method can be used to load an image stack of other images in the same directory.
 	 * 
@@ -565,9 +558,7 @@ public class LoaderFactory {
 		final String ext  = FileUtils.getFileExtension(file.getName());
 		final File   par = file.getParentFile();
 		
-		String patternPrefix = extensionService!=null
-				             ? extensionService.getStackExpression()
-				             : "(.+)_(\\d+)";
+		String patternPrefix = getStackExpression();
 		Pattern pattern = Pattern.compile(patternPrefix+"\\."+ext);
 		if (par.isDirectory()) {
 			for (String fName : par.list()) {

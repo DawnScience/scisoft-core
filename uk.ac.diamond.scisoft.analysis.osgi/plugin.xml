@@ -36,5 +36,14 @@
             class="uk.ac.diamond.scisoft.analysis.osgi.preference.PreferenceInitializer">
       </initializer>
    </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="uk.ac.diamond.scisoft.analysis.osgi.FunctionFactoryStartup">
+      </startup>
+      <startup
+            class="uk.ac.diamond.scisoft.analysis.osgi.LoaderFactoryStartup">
+      </startup>
+   </extension>
 
 </plugin>

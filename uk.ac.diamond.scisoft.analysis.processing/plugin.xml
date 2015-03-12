@@ -276,7 +276,7 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.SubtractBackgroupImageOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBackgroundImageModel"
             name="Subtract Background Image"
-            visible="true">
+            visible="false">
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
@@ -286,7 +286,7 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBlankFrameOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBlankFrameModel"
             name="Subtract Blank Frame"
-            visible="true">
+            visible="false">
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.filterCategory"
@@ -455,9 +455,10 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractCurrentDataOperation"
+            icon="icons/subblank.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractCurrentDataOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SelectedFramesModel"
-            name="Subtract Current Data">
+            name="Subtract Input Data">
       </operation>
    </extension>
    <extension

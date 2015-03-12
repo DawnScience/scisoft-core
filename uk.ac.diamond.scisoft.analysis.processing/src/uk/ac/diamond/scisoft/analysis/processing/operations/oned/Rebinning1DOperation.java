@@ -14,12 +14,14 @@ import java.beans.PropertyChangeListener;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
@@ -75,8 +77,18 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		
 		DoubleDataset minD = new DoubleDataset(axis.getShape());
 		DoubleDataset maxD = new DoubleDataset(axis.getShape());
+		boolean reversed = false;
 		
 		//TODO handle high to low order
+		if (axis.getElementDoubleAbs(0) > axis.getElementDoubleAbs(axis.getSize()-1)) {
+			reversed = true;
+			Dataset axisr = axis.getSlice();
+			for (int i = 0; i < axis.getSize(); i++) {
+				axisr.set(axis.getObject(i), axis.getSize()-i-1);
+			}
+			axis = axisr;
+		}
+		
 		
 		IndexIterator it = axis.getIterator();
 		double min = 0;
@@ -107,6 +119,17 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 			minD.setAbs(it.index, min);
 			maxD.setAbs(it.index, max);
 			
+		}
+		
+		if (reversed) {
+			DoubleDataset minDr = (DoubleDataset)minD.getSlice();;
+			DoubleDataset maxDr = (DoubleDataset)maxD.getSlice();;
+			for (int i = 0; i < minDr.getSize(); i++) {
+				minDr.set(minD.getObject(i), minD.getSize()-1-i);
+				maxDr.set(maxD.getObject(i), maxD.getSize()-1-i);
+			}
+			minD = minDr;
+			maxD = maxDr;
 		}
 		
 		return new Dataset[]{minD,maxD};

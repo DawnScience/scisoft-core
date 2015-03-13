@@ -10,7 +10,6 @@ package uk.ac.diamond.scisoft.analysis.processing.test;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.metadata.MaskMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
@@ -29,6 +28,7 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.roi.SectorROI;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationTransformer;
@@ -177,7 +177,8 @@ public class IntegrationTest {
 		context.setExecutionType(ExecutionType.PARALLEL);
 		service.execute(context);
 
-		if (count!=24) throw new Exception("Size of integrated results incorrect! Results found was "+count);
+		Thread.sleep(1000);
+		assertEquals("Size of integrated results incorrect! Results found: " + count + ", expected: 24", 24, count);
 
 	}
 

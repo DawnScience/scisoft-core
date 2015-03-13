@@ -224,7 +224,7 @@ public class OperationsTest {
 		context.setSeries(subtract, add);
 		service.execute(context);
 
-		Thread.sleep(1000);
+		Thread.sleep(5000);
 		if ( counter < 23 ) throw new Exception("Not all jobs completed before timeout in parallel run! Loop count was : "+counter);
 	
 	
@@ -233,6 +233,8 @@ public class OperationsTest {
 		context.setExecutionType(ExecutionType.GRAPH);
 		context.setPoolSize(Runtime.getRuntime().availableProcessors());
 		service.execute(context);
+		
+		Thread.sleep(5000);
 		if ( counter != 24 ) throw new Exception("The counter is "+counter);
 
 	}

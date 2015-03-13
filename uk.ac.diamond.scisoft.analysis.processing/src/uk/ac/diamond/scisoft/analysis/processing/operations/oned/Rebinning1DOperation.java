@@ -12,8 +12,6 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.jws.WebParam.Mode;
-
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
@@ -31,11 +29,8 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.twod.DiffractionMetadataImportModel;
-
 public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, OperationData> {
 
-	private ILazyDataset parent = null;
 	private int nBins;
 	private double start;
 	private double stop;
@@ -47,6 +42,11 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.oned.Rebinning1DOperation";
 	}
 	
+	@Override
+	public void init(){
+		binEdges = null;
+	}
+	
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
 		ILazyDataset[] axes = getFirstAxes(input);
@@ -55,16 +55,9 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		
 		Dataset axis = (Dataset)axes[0].getSlice();
 		
-		//TODO this is bs. Should have an init method when the file changes.
-		ILazyDataset p = getSliceSeriesMetadata(input).getParent();
-		if (parent == null || parent != p || binEdges == null) {
-			parent = p;
-
-
+		if (binEdges == null) {
 			nBins = model.getNumberOfBins() != null ? model.getNumberOfBins() : axis.getSize(); 
-
 			updateStartStop(axis);
-			
 		}
 			
 		double[] edges = new double[]{binEdges.getElementDoubleAbs(0),binEdges.getElementDoubleAbs(nBins)};
@@ -84,8 +77,18 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		
 		DoubleDataset minD = new DoubleDataset(axis.getShape());
 		DoubleDataset maxD = new DoubleDataset(axis.getShape());
+		boolean reversed = false;
 		
 		//TODO handle high to low order
+		if (axis.getElementDoubleAbs(0) > axis.getElementDoubleAbs(axis.getSize()-1)) {
+			reversed = true;
+			Dataset axisr = axis.getSlice();
+			for (int i = 0; i < axis.getSize(); i++) {
+				axisr.set(axis.getObject(i), axis.getSize()-i-1);
+			}
+			axis = axisr;
+		}
+		
 		
 		IndexIterator it = axis.getIterator();
 		double min = 0;
@@ -116,6 +119,17 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 			minD.setAbs(it.index, min);
 			maxD.setAbs(it.index, max);
 			
+		}
+		
+		if (reversed) {
+			DoubleDataset minDr = (DoubleDataset)minD.getSlice();;
+			DoubleDataset maxDr = (DoubleDataset)maxD.getSlice();;
+			for (int i = 0; i < minDr.getSize(); i++) {
+				minDr.set(minD.getObject(i), minD.getSize()-1-i);
+				maxDr.set(maxD.getObject(i), maxD.getSize()-1-i);
+			}
+			minD = minDr;
+			maxD = maxDr;
 		}
 		
 		return new Dataset[]{minD,maxD};

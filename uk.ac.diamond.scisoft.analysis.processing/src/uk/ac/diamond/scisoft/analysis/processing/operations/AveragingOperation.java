@@ -2,7 +2,6 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.IExportOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -15,24 +14,20 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 public class AveragingOperation<T extends EmptyModel> extends AbstractOperation<EmptyModel, OperationData> implements IExportOperation{
 
 	private RunningAverage average;
-	private ILazyDataset parent;
 	
 	@Override
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.AveragingOperation";
 	}
 	
+	@Override
+	public void init(){
+		average = null;
+	}
+	
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
 		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(input);
-		
-		if (ssm == null) throw new OperationException(this, "Pipeline metadata not present!");
-		
-		if (parent != ssm.getSourceInfo().getParent()) {
-			parent = ssm.getSourceInfo().getParent();
-			average = null;
-		}
-		
 		
 		if (average == null) {
 			average = new RunningAverage(input);

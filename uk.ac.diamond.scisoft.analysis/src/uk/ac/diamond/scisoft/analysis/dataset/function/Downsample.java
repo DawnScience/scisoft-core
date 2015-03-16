@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.dataset.function;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
@@ -25,8 +26,34 @@ import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFuncti
  * Down-sample a dataset by a given bin
  */
 public class Downsample implements DatasetToDatasetFunction {
-	private DownsampleMode mode;
-	private int[] bshape; // bin shape 
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(bshape);
+		result = prime * result + ((mode == null) ? 0 : mode.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Downsample other = (Downsample) obj;
+		if (!Arrays.equals(bshape, other.bshape))
+			return false;
+		if (mode != other.mode)
+			return false;
+		return true;
+	}
+
+	private final DownsampleMode mode;
+	private final int[] bshape; // bin shape 
 
 	/**
 	 * This class down-samples (or subsamples) datasets according to given mode and sample bin shape
@@ -75,10 +102,11 @@ public class Downsample implements DatasetToDatasetFunction {
 			}
 
 			final Dataset binned;
+			DownsampleMode m = mode;
 			if (dataset instanceof RGBDataset) {
 				binned = new RGBDataset(shape);
 				// set the mode to point whenever RGB datasets are involved for the moment.
-				mode = DownsampleMode.POINT;
+				m = DownsampleMode.POINT;
 			} else {
 				binned = DatasetFactory.zeros(dataset.getElementsPerItem(), shape, dataset.getDtype());
 			}
@@ -91,7 +119,7 @@ public class Downsample implements DatasetToDatasetFunction {
 
 			
 			// TODO In Java8 switch these loops to using ParallelStreams
-			switch (mode) {
+			switch (m) {
 			case POINT:
 				while (biter.hasNext()) {
 					for (int i = 0; i < drank; i++) {
@@ -248,5 +276,35 @@ public class Downsample implements DatasetToDatasetFunction {
 			result.add(binned);
 		}
 		return result;
+	}
+	
+	public DownsampleMode getMode() {
+		return mode;
+	}
+
+	public int[] getBshape() {
+		return bshape;
+	}
+
+	public static String encode(Downsample s) {
+		
+		StringBuilder buf = new StringBuilder();
+		buf.append(s.mode.name());
+		buf.append(":");
+		for (int i = 0; i < s.bshape.length; i++) {
+			buf.append(s.bshape[i]);
+			if (i<s.bshape.length-1) buf.append("x");
+		}
+        return buf.toString();
+	}
+	
+	public static Downsample decode(String enc) {
+		
+		final String[] sa = enc.split("\\:");
+		DownsampleMode dt    = DownsampleMode.valueOf(sa[0]);
+		final String[]    vals   = sa[1].split("x");
+        final int[]       bshape = new int[vals.length];
+        for (int i = 0; i < vals.length; i++) bshape[i] = Integer.parseInt(vals[i]);
+        return new Downsample(dt, bshape);
 	}
 }

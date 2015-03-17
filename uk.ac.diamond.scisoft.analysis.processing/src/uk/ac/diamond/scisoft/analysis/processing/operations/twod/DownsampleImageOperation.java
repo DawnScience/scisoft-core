@@ -43,8 +43,8 @@ public class DownsampleImageOperation extends AbstractOperation<DownsampleImageM
 
 		input = DatasetUtils.cast(input, outputDatatype.getDatatype());
 
-		List<Dataset> out = downsample.value(input);
-		Dataset dataset = out.get(0);
+		List<IDataset> out = downsample.value(input);
+		IDataset dataset = out.get(0);
 		dataset.setName("downsampled");
 		
 		List<AxesMetadata> ml = null;

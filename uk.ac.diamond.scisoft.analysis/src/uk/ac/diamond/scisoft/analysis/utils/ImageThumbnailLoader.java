@@ -113,7 +113,7 @@ public class ImageThumbnailLoader {
 					step = Math.max(1, (width > height ? width : height)/ DOWNSAMPLE_SIZE_IN_PIXELS);
 					int[] stepping = new int[] {step, step};
 					Downsample down = new Downsample(DownsampleMode.POINT, stepping);
-					Dataset ds_downsampled = down.value(ds).get(0);
+					Dataset ds_downsampled = (Dataset)down.value(ds).get(0);
 					ds_downsampled.setName(new String(path));
 					return ds_downsampled;
 				}

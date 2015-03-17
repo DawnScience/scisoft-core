@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.fitting.functions.IDownsampleService;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
@@ -23,38 +24,23 @@ import org.eclipse.dawnsci.analysis.dataset.impl.SliceIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
 
 /**
- * Down-sample a dataset by a given bin
+ * Down-sample a dataset by a given bin. Also is the implementation of a service
+ * so instead of using this class directly, one can consume the IDownsampleService
+ * from OSGi thus not making a hard dependency on uk.ac.diamond.scisoft.analysis
  */
-public class Downsample implements DatasetToDatasetFunction {
+public class Downsample implements DatasetToDatasetFunction, IDownsampleService {
 	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(bshape);
-		result = prime * result + ((mode == null) ? 0 : mode.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Downsample other = (Downsample) obj;
-		if (!Arrays.equals(bshape, other.bshape))
-			return false;
-		if (mode != other.mode)
-			return false;
-		return true;
-	}
-
 	private final DownsampleMode mode;
 	private final int[] bshape; // bin shape 
 
+	/**
+	 * Creates a default Downsample set to MAXIMUM with a 2x2 bin.
+	 * Called by OSGi when contributing the IDownsampleService
+	 */
+	public Downsample() {
+		this(DownsampleMode.MAXIMUM, 2, 2);
+	}
+	
 	/**
 	 * This class down-samples (or subsamples) datasets according to given mode and sample bin shape
 	 * 
@@ -74,6 +60,12 @@ public class Downsample implements DatasetToDatasetFunction {
 		this.mode = mode;
 	}
 
+	@Override
+	public List<IDataset> downsample(String enc, IDataset... data) throws Exception {
+		Downsample d = Downsample.decode(enc);
+		return d.value(data);
+	}
+
 	/**
 	 * The class implements down-sampling of datasets
 	 * 
@@ -81,11 +73,11 @@ public class Downsample implements DatasetToDatasetFunction {
 	 * @return a list of down-sampled datasets
 	 */
 	@Override
-	public List<Dataset> value(IDataset... datasets) {
+	public List<IDataset> value(IDataset... datasets) {
 		if (datasets.length == 0)
 			return null;
 
-		List<Dataset> result = new ArrayList<Dataset>();
+		List<IDataset> result = new ArrayList<IDataset>();
 		int brank = bshape.length;
 
 		for (IDataset idataset : datasets) {
@@ -307,4 +299,32 @@ public class Downsample implements DatasetToDatasetFunction {
         for (int i = 0; i < vals.length; i++) bshape[i] = Integer.parseInt(vals[i]);
         return new Downsample(dt, bshape);
 	}
+
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(bshape);
+		result = prime * result + ((mode == null) ? 0 : mode.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Downsample other = (Downsample) obj;
+		if (!Arrays.equals(bshape, other.bshape))
+			return false;
+		if (mode != other.mode)
+			return false;
+		return true;
+	}
+
+
 }

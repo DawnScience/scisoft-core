@@ -106,9 +106,9 @@ public class ROIProfile {
 			mask = DatasetFactory.ones(data.getShape(), Dataset.BOOL);
 		}
 
-		List<? extends Dataset> dsets = map.value(mask);
-		Dataset nintx = dsets.get(1);
-		Dataset ninty = dsets.get(0);
+		List<? extends IDataset> dsets = map.value(mask);
+		IDataset nintx = dsets.get(1);
+		IDataset ninty = dsets.get(0);
 		// calculate fraction in each element that was not clipped
 		nintx = Maths.dividez(nintx, dsets.get(3));
 		ninty = Maths.dividez(ninty, dsets.get(2));

@@ -14,7 +14,7 @@ import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 public class AzimuthalPixelIntegrationModel extends PixelIntegrationModel {
 
-	@OperationModelField(hint="Set value for X axis after integration", label = "Select X Axis")
+	@OperationModelField(hint="Set value for X axis after integration", label = "X axis")
 	private XAxis axisType = XAxis.Q;
 	
 	public XAxis getAxisType() {

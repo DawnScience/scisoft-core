@@ -42,7 +42,7 @@ import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.nexusformat.NexusException;
-import org.nexusformat.NexusFile;
+import gda.data.nexus.NexusGlobals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -382,7 +382,7 @@ public class NexusLoader extends AbstractFileLoader {
 		}
 		if (dataSetNames == null || dataSetNames.contains(name)) {
 			NexusGroupData data = dataNode.getData();
-			if (data != null && data.getBuffer() != null && data.type != NexusFile.NX_CHAR) {
+			if (data != null && data.getBuffer() != null && data.type != NexusGlobals.NX_CHAR) {
 				Dataset ds = Nexus.createDataset(data, keepBitWidth);
 				if (ds == null) {
 					logger.error("NexusLoader cannot handle data of type {}", data.type);

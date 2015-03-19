@@ -44,7 +44,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LongDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
 import org.nexusformat.NexusException;
-import org.nexusformat.NexusFile;
+import gda.data.nexus.NexusGlobals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,21 +64,21 @@ public class Nexus {
 	 */
 	static public int getDType(int type) {
 		switch (type) {
-		case NexusFile.NX_FLOAT64:
+		case NexusGlobals.NX_FLOAT64:
 			return Dataset.FLOAT64;
-		case NexusFile.NX_FLOAT32:
+		case NexusGlobals.NX_FLOAT32:
 			return Dataset.FLOAT32;
-		case NexusFile.NX_INT64:
-		case NexusFile.NX_UINT64:
+		case NexusGlobals.NX_INT64:
+		case NexusGlobals.NX_UINT64:
 			return Dataset.INT64;
-		case NexusFile.NX_INT32:
-		case NexusFile.NX_UINT32:
+		case NexusGlobals.NX_INT32:
+		case NexusGlobals.NX_UINT32:
 			return Dataset.INT32;
-		case NexusFile.NX_INT16:
-		case NexusFile.NX_UINT16:
+		case NexusGlobals.NX_INT16:
+		case NexusGlobals.NX_UINT16:
 			return Dataset.INT16;
-		case NexusFile.NX_INT8:
-		case NexusFile.NX_UINT8:
+		case NexusGlobals.NX_INT8:
+		case NexusGlobals.NX_UINT8:
 			return Dataset.INT8;
 		default:
 			throw new IllegalArgumentException("Unknown or unsupported NeXus data type");
@@ -93,17 +93,17 @@ public class Nexus {
 	static public int getGroupDataType(int dtype) {
 		switch (dtype) {
 		case Dataset.FLOAT64:
-			return NexusFile.NX_FLOAT64;
+			return NexusGlobals.NX_FLOAT64;
 		case Dataset.FLOAT32:
-			return NexusFile.NX_FLOAT32;
+			return NexusGlobals.NX_FLOAT32;
 		case Dataset.INT64:
-			return NexusFile.NX_INT64;
+			return NexusGlobals.NX_INT64;
 		case Dataset.INT32:
-			return NexusFile.NX_INT32;
+			return NexusGlobals.NX_INT32;
 		case Dataset.INT16:
-			return NexusFile.NX_INT16;
+			return NexusGlobals.NX_INT16;
 		case Dataset.INT8:
-			return NexusFile.NX_INT8;
+			return NexusGlobals.NX_INT8;
 		default:
 			throw new IllegalArgumentException("Unknown or unsupported dataset type");
 		}
@@ -117,13 +117,13 @@ public class Nexus {
 	static public int getUnsignedGroupDataType(int dtype) {
 		switch (dtype) {
 		case Dataset.INT64:
-			return NexusFile.NX_UINT64;
+			return NexusGlobals.NX_UINT64;
 		case Dataset.INT32:
-			return NexusFile.NX_UINT32;
+			return NexusGlobals.NX_UINT32;
 		case Dataset.INT16:
-			return NexusFile.NX_UINT16;
+			return NexusGlobals.NX_UINT16;
 		case Dataset.INT8:
-			return NexusFile.NX_UINT8;
+			return NexusGlobals.NX_UINT8;
 		default:
 			throw new IllegalArgumentException("Unknown or unsupported dataset type");
 		}
@@ -137,31 +137,31 @@ public class Nexus {
 	static public Dataset createDataset(NexusGroupData groupData, boolean keepBitWidth) {
 		Dataset ds = null;
 		switch (groupData.type) {
-		case NexusFile.NX_FLOAT64:
+		case NexusGlobals.NX_FLOAT64:
 			double[] dData = (double[]) groupData.getBuffer();
 			ds = new DoubleDataset(Arrays.copyOf(dData, dData.length), groupData.dimensions);
 			break;
-		case NexusFile.NX_FLOAT32:
+		case NexusGlobals.NX_FLOAT32:
 			float[] fData = (float[]) groupData.getBuffer();
 			ds = new FloatDataset(Arrays.copyOf(fData, fData.length), groupData.dimensions);
 			break;
-		case NexusFile.NX_INT64:
-		case NexusFile.NX_UINT64:
+		case NexusGlobals.NX_INT64:
+		case NexusGlobals.NX_UINT64:
 			long[] lData = (long[]) groupData.getBuffer();
 			ds = new LongDataset(Arrays.copyOf(lData, lData.length), groupData.dimensions);
 			break;
-		case NexusFile.NX_INT32:
-		case NexusFile.NX_UINT32:
+		case NexusGlobals.NX_INT32:
+		case NexusGlobals.NX_UINT32:
 			int[] iData = (int[]) groupData.getBuffer();
 			ds = new IntegerDataset(Arrays.copyOf(iData, iData.length), groupData.dimensions);
 			break;
-		case NexusFile.NX_INT16:
-		case NexusFile.NX_UINT16:
+		case NexusGlobals.NX_INT16:
+		case NexusGlobals.NX_UINT16:
 			short[] sData = (short[]) groupData.getBuffer();
 			ds = new ShortDataset(Arrays.copyOf(sData, sData.length), groupData.dimensions);
 			break;
-		case NexusFile.NX_INT8:
-		case NexusFile.NX_UINT8:
+		case NexusGlobals.NX_INT8:
+		case NexusGlobals.NX_UINT8:
 			byte[] bData = (byte[]) groupData.getBuffer();
 			ds = new ByteDataset(Arrays.copyOf(bData, bData.length), groupData.dimensions);
 			break;
@@ -171,15 +171,15 @@ public class Nexus {
 
 		if (!keepBitWidth) {
 			switch (groupData.type) {
-			case NexusFile.NX_UINT32:
+			case NexusGlobals.NX_UINT32:
 				ds = new LongDataset(ds);
 				DatasetUtils.unwrapUnsigned(ds, 32);
 				break;
-			case NexusFile.NX_UINT16:
+			case NexusGlobals.NX_UINT16:
 				ds = new IntegerDataset(ds);
 				DatasetUtils.unwrapUnsigned(ds, 16);
 				break;
-			case NexusFile.NX_UINT8:
+			case NexusGlobals.NX_UINT8:
 				ds = new ShortDataset(ds);
 				DatasetUtils.unwrapUnsigned(ds, 8);
 				break;

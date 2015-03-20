@@ -41,8 +41,10 @@ import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.nexusformat.NexusException;
+
+import gda.data.nexus.NexusException;
 import gda.data.nexus.NexusGlobals;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

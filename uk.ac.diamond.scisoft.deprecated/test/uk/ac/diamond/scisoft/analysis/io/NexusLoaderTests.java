@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 
+import gda.data.nexus.NexusException;
 import gda.data.nexus.extractor.NexusExtractorException;
 import gda.data.nexus.tree.INexusTree;
 import gda.data.nexus.tree.NexusTreeNodeSelection;
@@ -33,7 +34,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.nexusformat.NexusException;
 import org.xml.sax.InputSource;
 
 public class NexusLoaderTests {

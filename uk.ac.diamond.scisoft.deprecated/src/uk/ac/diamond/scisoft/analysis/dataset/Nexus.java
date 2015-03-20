@@ -43,7 +43,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LongDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
-import org.nexusformat.NexusException;
+import gda.data.nexus.NexusException;
 import gda.data.nexus.NexusGlobals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -308,7 +308,7 @@ public class Nexus {
 							d.setName(name);
 						}
 					} catch (NexusException e) {
-						logger.error("Problem with NeXus library: {}", e.getMessage());
+						logger.error("Problem with NeXus library: {}", e);
 					} catch (NexusExtractorException e) {
 						logger.error("Problem with NeXus extraction: {}", e.getMessage());
 					}

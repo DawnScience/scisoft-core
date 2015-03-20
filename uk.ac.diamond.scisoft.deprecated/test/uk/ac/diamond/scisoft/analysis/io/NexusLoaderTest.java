@@ -16,6 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import gda.data.nexus.NexusException;
+import gda.data.nexus.NexusFile;
+import gda.data.nexus.NexusGlobals;
 import gda.data.nexus.extractor.NexusExtractor;
 import gda.util.TestUtils;
 
@@ -31,8 +34,6 @@ import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.junit.Assert;
 import org.junit.Test;
-import org.nexusformat.NexusException;
-import org.nexusformat.NexusFile;
 
 import uk.ac.gda.util.OSUtils;
 
@@ -82,11 +83,11 @@ public class NexusLoaderTest {
 	
 	private void makeTestFile(String fileName, int[] dims) throws NexusException {
 		NexusFile file = null;
-		file = new NexusFile(fileName, NexusFile.NXACC_CREATE5);
+		file = new NexusFile(fileName, NexusGlobals.NXACC_CREATE5);
 		file.makegroup("dummy", "dummy");
 		file.opengroup("dummy", "dummy");
 		{
-			file.makedata("heading1", NexusFile.NX_FLOAT64, dims.length, dims);
+			file.makedata("heading1", NexusGlobals.NX_FLOAT64, dims.length, dims);
 			file.opendata("heading1");
 			int totalLength = NexusExtractor.calcTotalLength(dims);
 			double[] dataIn = new double[totalLength];
@@ -103,7 +104,7 @@ public class NexusLoaderTest {
 		file.makegroup("datasets", "NXdata");
 		file.opengroup("datasets", "NXdata");
 		{
-			file.makedata("heading1", NexusFile.NX_FLOAT64, dims.length, dims);
+			file.makedata("heading1", NexusGlobals.NX_FLOAT64, dims.length, dims);
 			file.opendata("heading1");
 			int totalLength = NexusExtractor.calcTotalLength(dims);
 			double[] dataIn = new double[totalLength];
@@ -114,7 +115,7 @@ public class NexusLoaderTest {
 			file.closedata();
 		}
 		{
-			file.makedata("heading2", NexusFile.NX_FLOAT64, dims.length, dims);
+			file.makedata("heading2", NexusGlobals.NX_FLOAT64, dims.length, dims);
 			file.opendata("heading2");
 			int totalLength = NexusExtractor.calcTotalLength(dims);
 			double[] dataIn = new double[totalLength];

@@ -16,6 +16,10 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import gda.data.nexus.NexusException;
+import gda.data.nexus.NexusFile;
+import gda.data.nexus.NexusGlobals;
+
 import java.util.Arrays;
 import java.util.Enumeration;
 
@@ -23,8 +27,6 @@ import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.nexusformat.NexusException;
-import org.nexusformat.NexusFile;
 
 import uk.ac.diamond.scisoft.analysis.dataset.Nexus;
 
@@ -64,7 +66,7 @@ public class RawNexusLoader extends AbstractFileLoader {
 
 		NexusFile file;
 		try {
-			file = new NexusFile(fileName, NexusFile.NXACC_READ);
+			file = new NexusFile(fileName, NexusGlobals.NXACC_READ);
 
 			if (loadMetadata) {
 				metadata = new Metadata();

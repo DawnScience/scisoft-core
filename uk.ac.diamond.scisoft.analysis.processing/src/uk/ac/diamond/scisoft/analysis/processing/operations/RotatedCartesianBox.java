@@ -26,7 +26,7 @@ public class RotatedCartesianBox extends AbstractOperation<RotatedCartesianBoxMo
 	}
 
 	@Override
-	public OperationData execute(IDataset slice, IMonitor monitor) throws OperationException {
+	public OperationData process(IDataset slice, IMonitor monitor) throws OperationException {
 		
 		// Get the data ROI
 		IRectangularROI roi;

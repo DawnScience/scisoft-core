@@ -17,8 +17,8 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import gda.data.nexus.NexusException;
-import gda.data.nexus.NexusFile;
-import gda.data.nexus.NexusGlobals;
+import gda.data.nexus.NexusFileInterface;
+import gda.data.nexus.NexusUtils;
 
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -59,14 +59,13 @@ public class RawNexusLoader extends AbstractFileLoader {
 		return loadFile(true);
 	}
 
-	@SuppressWarnings("unchecked")
 	public DataHolder loadFile(boolean loadData) {
 
 		DataHolder dataHolder = new DataHolder();
 
-		NexusFile file;
+		NexusFileInterface file;
 		try {
-			file = new NexusFile(fileName, NexusGlobals.NXACC_READ);
+			file = NexusUtils.openNexusFileReadOnly(fileName);
 
 			if (loadMetadata) {
 				metadata = new Metadata();
@@ -79,7 +78,7 @@ public class RawNexusLoader extends AbstractFileLoader {
 			Enumeration<String> topKeys = file.groupdir().keys();
 			while (topKeys.hasMoreElements()) {
 				String topName = topKeys.nextElement();
-				String topClass = (String) file.groupdir().get(topName);
+				String topClass = file.groupdir().get(topName);
 				if (topClass.compareTo("NXentry") == 0) {
 					// Specify class explicitly to make sure we are opening the correct one. Otherwise it will throw an
 					// exception.
@@ -87,7 +86,7 @@ public class RawNexusLoader extends AbstractFileLoader {
 					Enumeration<String> keys = file.groupdir().keys();
 					while (keys.hasMoreElements()) {
 						String name = keys.nextElement();
-						String className = (String) file.groupdir().get(name);
+						String className = file.groupdir().get(name);
 						if (className.compareTo("NXdata") == 0) {
 							file.opengroup(name, "NXdata");
 							// Now lets get a list of the data items

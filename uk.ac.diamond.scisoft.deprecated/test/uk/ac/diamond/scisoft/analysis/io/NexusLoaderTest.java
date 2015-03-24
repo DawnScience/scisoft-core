@@ -17,8 +17,9 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import gda.data.nexus.NexusException;
-import gda.data.nexus.NexusFile;
+import gda.data.nexus.NexusFileInterface;
 import gda.data.nexus.NexusGlobals;
+import gda.data.nexus.NexusUtils;
 import gda.data.nexus.extractor.NexusExtractor;
 import gda.util.TestUtils;
 
@@ -82,8 +83,7 @@ public class NexusLoaderTest {
 
 	
 	private void makeTestFile(String fileName, int[] dims) throws NexusException {
-		NexusFile file = null;
-		file = new NexusFile(fileName, NexusGlobals.NXACC_CREATE5);
+		NexusFileInterface file = NexusUtils.createNexusFile(fileName);
 		file.makegroup("dummy", "dummy");
 		file.opengroup("dummy", "dummy");
 		{

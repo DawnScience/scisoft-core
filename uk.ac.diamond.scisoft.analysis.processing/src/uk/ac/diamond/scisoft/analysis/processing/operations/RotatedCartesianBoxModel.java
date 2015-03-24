@@ -27,7 +27,7 @@ public class RotatedCartesianBoxModel extends AbstractOperationModel {
 	}
 
 	public void setRoi(IRectangularROI roi) {
-		this.roi = roi;
+		firePropertyChange("roi", this.roi, this.roi = roi);
 	}
 
 	@Override

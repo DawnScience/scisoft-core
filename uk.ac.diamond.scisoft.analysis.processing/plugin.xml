@@ -36,7 +36,7 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.maskingCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskOperation"
-            description="Import Mask from .nxs or fit2d mask file"
+            description="Import a Mask from .nxs or fit2d mask file. A mask file can be created using the masking tool."
             icon="icons/mask.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.ImportMaskOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskModel"
@@ -46,7 +46,7 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.maskingCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.DilateMaskOperation"
-            description="Dilate the mask by a set number of pixels"
+            description="Increase the size of masked regions by dilating the mask by a set number of pixels"
             icon="icons/mask.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.DilateMaskOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.DilateMaskModel"
@@ -72,7 +72,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.RotatedCartesianBox"
-            description="Define a region of interest to be used in the rest of the processing pipeline."
+            description="Use a rectangular region to crop and rotate a selected data region"
             icon="icons/region.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.selectROI"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.RotatedCartesianBoxModel"

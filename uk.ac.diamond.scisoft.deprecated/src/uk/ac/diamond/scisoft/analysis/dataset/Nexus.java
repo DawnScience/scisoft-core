@@ -136,7 +136,7 @@ public class Nexus {
 	 */
 	static public Dataset createDataset(NexusGroupData groupData, boolean keepBitWidth) {
 		Dataset ds = null;
-		switch (groupData.type) {
+		switch (groupData.getType()) {
 		case NexusGlobals.NX_FLOAT64:
 			double[] dData = (double[]) groupData.getBuffer();
 			ds = new DoubleDataset(Arrays.copyOf(dData, dData.length), groupData.dimensions);
@@ -170,7 +170,7 @@ public class Nexus {
 		}
 
 		if (!keepBitWidth) {
-			switch (groupData.type) {
+			switch (groupData.getType()) {
 			case NexusGlobals.NX_UINT32:
 				ds = new LongDataset(ds);
 				DatasetUtils.unwrapUnsigned(ds, 32);
@@ -316,7 +316,7 @@ public class Nexus {
 				}
 			};
 
-			groupDataset = new LazyDataset(name, getDType(groupData.type), trueShape.clone(), l);
+			groupDataset = new LazyDataset(name, getDType(groupData.getType()), trueShape.clone(), l);
 		} else {
 			Dataset dataset = createDataset(groupData, false);
 			dataset.setName(name);

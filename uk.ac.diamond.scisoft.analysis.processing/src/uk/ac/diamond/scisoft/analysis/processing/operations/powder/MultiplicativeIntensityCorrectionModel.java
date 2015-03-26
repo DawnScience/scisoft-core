@@ -13,17 +13,17 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class MultiplicativeIntensityCorrectionModel extends AbstractOperationModel {
 
-	@OperationModelField(label = "Apply solid angle correction")
+	@OperationModelField(label = "Solid angle",hint = "Check to apply the solid angle correction to the data")
 	private boolean applySolidAngleCorrection = false;
-	@OperationModelField(label = "Apply polarisation correction")
+	@OperationModelField(label = "Polarisation",hint = "Check to apply the polarisation correction to the data")
 	private boolean applyPolarisationCorrection = false;
-	@OperationModelField(label = "Apply detector transmission correction")
+	@OperationModelField(label = "Detector transmission",hint = "Check to apply the detector transmission correction to the data")
 	private boolean applyDetectorTransmissionCorrection = false;
-	@OperationModelField(label = "Set polarisation factor")
+	@OperationModelField(label = "Polarisation factor",hint = "Polarisation factor value used in the polarisation correction")
 	private double polarisationFactor = 0.9;
-	@OperationModelField(label = "Set polarisation angular offset")
+	@OperationModelField(label = "Polarisation angular offset", hint = "Set the offset of the polarisation relative to the detector")
 	private double polarisationAngularOffset = 0;
-	@OperationModelField(label = "Set transmitted fraction")
+	@OperationModelField(label = "Detector transmitted fraction", hint = "Set the fraction of radiation transmitted for the detector transmission correction")
 	private double transmittedFraction = 0;
 	
 	public boolean isApplySolidAngleCorrection() {

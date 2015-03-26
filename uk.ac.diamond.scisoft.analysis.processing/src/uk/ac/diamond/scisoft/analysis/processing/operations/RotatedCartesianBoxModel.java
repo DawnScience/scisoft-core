@@ -13,8 +13,11 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class RotatedCartesianBoxModel extends AbstractOperationModel {
 
+	@JsonIgnore
 	@OperationModelField(hint="Define a region of interest.", label = "Region of Interest")
 	private IRectangularROI roi;
 	

@@ -99,7 +99,7 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.xrd2imageprocessing"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DiffractionMetadataImportOperation"
-            description="Import detector geometry and x-ray energy (can be determined in powder calibration perspective)"
+            description="Import the experimental detector geometry and x-ray energy (can be determined in powder calibration perspective). Required for operations which transform data to 2 theta/q/d-space."
             icon="icons/CalibrationRun.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.DiffractionMetadataImportOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DiffractionMetadataImportModel"
@@ -109,7 +109,7 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.xrd2integration"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationOperation"
-            description="Azimuthal integration of a 2D powder diffraction/SAXS image to a 1D pattern (Intensity vs q, 2 theta, d or pixel)"
+            description="Azimuthal integration of a 2D powder diffraction/SAXS image to a 1D pattern (Intensity vs q, 2 theta, d or pixel). Requires Detector Calibration information to be in the pipeline (use Import Detector Calibration)."
             icon="icons/PowderIntegration.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationModel"
@@ -119,7 +119,7 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.xrd2integration"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.RadialPixelIntegrationOperation"
-            description="Radial integration of a 2D powder diffraction/SAXS image to intenisty vs azimuthal angle (Intensity vs azimuthal angle)"
+            description="Radial integration of a 2D powder diffraction/SAXS image to intenisty vs azimuthal angle. Requires Detector Calibration information to be in the pipeline (use Import Detector Calibration)."
             icon="icons/PowderIntegrationRadial.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.RadialPixelIntegrationOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationModel"
@@ -129,7 +129,7 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.xrd2imageprocessing"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.MultiplicativeIntensityCorrectionOperation"
-            description="Solid angle, polarisation and detector transmission corrections"
+            description="Solid angle, polarisation and detector transmission corrections. Requires Detector Calibration information to be in the pipeline (use Import Detector Calibration)."
             icon="icons/PowderCorrection.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.MultiplicativeIntensityCorrectionOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.MultiplicativeIntensityCorrectionModel"
@@ -139,7 +139,7 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.xrd2integration"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.CakePixelIntegrationOperation"
-            description="Remap a powder diffraction/SAXS image to q/2theta vs azimuthal angle"
+            description="Remap a powder diffraction/SAXS image to q/2theta vs azimuthal angle. Requires Detector Calibration information to be in the pipeline (use Import Detector Calibration)."
             icon="icons/PowderCake.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.CakePixelIntegrationOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.CakePixelIntegrationModel"
@@ -459,6 +459,12 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractCurrentDataOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SelectedFramesModel"
             name="Subtract Input Data">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.AverageFastestOperation"
+            icon="icons/meanfilt.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.AverageFastestOperation"
+            name="Average Fastest Dimension Only">
       </operation>
    </extension>
    <extension

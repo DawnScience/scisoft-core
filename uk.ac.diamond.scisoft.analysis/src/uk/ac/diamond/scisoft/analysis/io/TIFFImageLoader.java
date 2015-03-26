@@ -167,6 +167,7 @@ public class TIFFImageLoader extends JavaImageLoader {
 			} else {
 				image = createDataset(reader.read(0));
 			}
+			image.setName(DEF_IMAGE_NAME);
 			image.setMetadata(metadata);
 			output.addDataset(DEF_IMAGE_NAME, image);
 		} else if (allSame) {

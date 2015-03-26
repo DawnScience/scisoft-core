@@ -19,7 +19,7 @@ public abstract class PixelIntegrationModel extends AbstractOperationModel {
 	@OperationModelField(min=2,max=1000000, hint="Set number of bins for integration axis, leave blank for maximum pixel distance on detector",label = "Number of bins" )
 	private Integer numberOfBins = null;
 	
-	@OperationModelField(label = "Radial range",hint="Please set two values, start and end, separated by a comma i.e. 2,4.\nThe values should match the axis selected (i.e. q, 2 theta, pixel).\n\nIf you delete the text, the range is cleared and the whole image used.")
+	@OperationModelField(label = "Radial range",hint="Please set two values, start and end, separated by a comma i.e. 2,4.The values should match the axis selected (i.e. q, 2 theta, pixel).If you delete the text, the range is cleared and the whole image used.")
 	double[] radialRange = null;
 	
 	@OperationModelField(label = "Azimuthal range", hint="Please set two values, start and end, separated by a comma i.e. -90,90",min=-180, max=180, unit="°")

@@ -462,6 +462,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.AverageFastestOperation"
+            description="Averages the data along the fastest non-data dimension of the array. For example, if the data set shape is [a,b,c,X,Y] where X and Y are the data dimensions, c is the fastest axis (row-major order)"
             icon="icons/meanfilt.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.AverageFastestOperation"
             name="Average Fastest Dimension Only">

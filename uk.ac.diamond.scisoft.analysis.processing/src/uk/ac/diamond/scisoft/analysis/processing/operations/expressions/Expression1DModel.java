@@ -5,9 +5,9 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class Expression1DModel extends AbstractOperationModel {
 	
-	@OperationModelField(label = "Enter data function")
+	@OperationModelField(label = "data function",hint = "Use the dnp: and dat: namespaces to access different mathematical functions")
 	String dataExpression = "dnp:power(data,2)";
-	@OperationModelField(label = "Enter x axis function")
+	@OperationModelField(label = "x axis function",hint = "Use the dnp: and dat: namespaces to access different mathematical functions")
 	String axisExpressionX = "xaxis - dat:min(xaxis,0)";
 	
 	public String getDataExpression() {

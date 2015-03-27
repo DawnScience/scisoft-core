@@ -16,7 +16,7 @@ import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 public class ConvertAxisTypeModel extends AbstractOperationModel {
 	
-	@OperationModelField(hint="Set value for X axis after integration", label = "Select X Axis")
+	@OperationModelField(hint="Set value for X axis after integration", label = "X Axis")
 	private XAxis axisType = XAxis.Q;
 	
 	@OperationModelField(hint="Use wavelength from detector calibration.", label = "Use Calibrated Wavelength")

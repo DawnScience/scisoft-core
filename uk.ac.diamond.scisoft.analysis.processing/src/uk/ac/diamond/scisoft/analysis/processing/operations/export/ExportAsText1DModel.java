@@ -6,13 +6,15 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class ExportAsText1DModel extends AbstractOperationModel {
 
-	@OperationModelField(hint="Enter the path to output directory", file = FileType.EXISTING_FOLDER, label = "Select Output Directory:")
+	@OperationModelField(hint="Enter the path to output directory", file = FileType.EXISTING_FOLDER, label = "Output Directory")
 	private String outputDirectoryPath = "";
+	@OperationModelField(hint="Enter the extension that should be used for the output file", label = "File Extension")
 	private String extension = "dat";
-	@OperationModelField(label = "Include slice in filename")
+	@OperationModelField(label = "Include explicit location", hint = "Select to include the explicit (slice) location of the data in the full dataset as part of the filename")
 	private boolean includeSliceName = false;
 	@OperationModelField(label = "Pad with zeros", hint = "Leave blank for no padding")
 	private Integer zeroPad = 5;
+	@OperationModelField(label = "Suffix", hint = "Add a custom suffix to be appended to the file name, leave blank for no suffix")
 	private String suffix = "";
 
 	public String getExtension() {

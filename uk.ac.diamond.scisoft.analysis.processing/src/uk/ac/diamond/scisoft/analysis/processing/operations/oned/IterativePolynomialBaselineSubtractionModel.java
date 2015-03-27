@@ -10,11 +10,14 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
+import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class IterativePolynomialBaselineSubtractionModel extends
 		AbstractOperationModel {
 	
+	@OperationModelField(label = "Polynomial Order", hint = "Polynomial orde to use for baseline")
 	private int polynomialOrder = 5;
+	@OperationModelField(label = "Number of Iterations", hint = "Number of iterations to use in fitting process")
 	private int nIterations = 5;
 	public int getPolynomialOrder() {
 		return polynomialOrder;

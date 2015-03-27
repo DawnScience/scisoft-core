@@ -163,7 +163,7 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.GaussianBlurOperation"
-            description="Gaussian image filter using kernal of specified width"
+            description="Gaussian filter an image using kernal of specified width"
             icon="icons/gausfilt.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.GaussianBlurOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.image.KernelWidthModel"
@@ -212,7 +212,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText1DOperation"
-            description="Save 1D data with axes as text"
+            description="Save XY data as text"
             icon="icons/exptext.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText1DOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText1DModel"
@@ -222,7 +222,7 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DownsampleImageOperation"
-            description="Downsample an image"
+            description="Downsample an image using the corner, mean, min, or max value. The type the output data should take (int, float etc) can also be specified"
             icon="icons/downsamp.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.DownsampleImageOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DownsampleImageModel"
@@ -231,7 +231,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.RangeIntegration1DOperation"
-            description="Integrate range"
+            description="Trapezoidal integration of the data between the specified range, with the option to subtract a local linear baseline."
             icon="icons/intrange.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.RangeIntegration1DOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.RangeIntegration1DModel"
@@ -241,7 +241,7 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.expressions"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression1DOperation"
-            description="Custom mathematical operation"
+            description="Custom mathematical operation, use &quot;data&quot; for the data variable and &quot;xaxis&quot; for the axis"
             icon="icons/exp1d.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression1DOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression1DModel"
@@ -251,7 +251,7 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.expressions"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DOperation"
-            description="Custom mathematical operation on an image"
+            description="Custom mathematical operation on an image, use &quot;data&quot; for the data variable and &quot;xaxis&quot; and &quot;yaxis&quot; for the axes"
             icon="icons/exp2d.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DModel"
@@ -300,7 +300,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.StandardNormalVariate"
-            description="Subtract mean and divide by standard deviation"
+            description="Subtract mean and divide by standard deviation to bring all XY data onto the same scale"
             icon="icons/snv.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.StandardNormalVariate"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
@@ -358,6 +358,7 @@
       </category>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1DOperation"
+            description="Crop XY data to a specified range"
             icon="icons/Crop_nD.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1DOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Crop1DModel"
@@ -365,6 +366,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.AveragingOperation"
+            description="Average all the data into a single dataset"
             icon="icons/meanfilt.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.AveragingOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
@@ -372,6 +374,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.Crop2DOperation"
+            description="Crop an image to a specified size"
             icon="icons/Crop_nD.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.twod.Crop2DOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.Crop2DModel"
@@ -430,10 +433,11 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.ConvertAxisTypeOperation"
+            description="Convert XY diffraction data axes between q, 2 theta and d-space"
             icon="icons/ConvertAxis.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.ConvertAxisTypeOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.ConvertAxisTypeModel"
-            name="Convert axis type [1D]"
+            name="Convert Diffraction Axis Type [1D]"
             visible="true">
       </operation>
       <operation
@@ -442,7 +446,7 @@
             icon="icons/rebin.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Rebinning1DOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Rebinning1DModel"
-            name="Rebin">
+            name="Rebin XY Data">
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
@@ -455,6 +459,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractCurrentDataOperation"
+            description="Subtract a selected dataset of the input data (or average) from all datasets"
             icon="icons/subblank.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractCurrentDataOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SelectedFramesModel"
@@ -465,6 +470,7 @@
             description="Averages the data along the fastest non-data dimension of the array. For example, if the data set shape is [a,b,c,X,Y] where X and Y are the data dimensions, c is the fastest axis (row-major order)"
             icon="icons/meanfilt.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.AverageFastestOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
             name="Average Fastest Dimension Only">
       </operation>
    </extension>

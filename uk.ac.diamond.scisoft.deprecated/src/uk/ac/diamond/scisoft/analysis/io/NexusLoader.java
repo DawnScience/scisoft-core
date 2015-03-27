@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import gda.data.nexus.NexusException;
 import gda.data.nexus.extractor.NexusExtractor;
 import gda.data.nexus.extractor.NexusExtractorException;
 import gda.data.nexus.extractor.NexusGroupData;
@@ -41,10 +42,6 @@ import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-
-import gda.data.nexus.NexusException;
-import gda.data.nexus.NexusGlobals;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -384,7 +381,7 @@ public class NexusLoader extends AbstractFileLoader {
 		}
 		if (dataSetNames == null || dataSetNames.contains(name)) {
 			NexusGroupData data = dataNode.getData();
-			if (data != null && data.getBuffer() != null && data.getType() != NexusGlobals.NX_CHAR) {
+			if (data != null && data.getBuffer() != null && !data.isChar()) {
 				Dataset ds = Nexus.createDataset(data, keepBitWidth);
 				if (ds == null) {
 					logger.error("NexusLoader cannot handle data of type {}", data.getType());

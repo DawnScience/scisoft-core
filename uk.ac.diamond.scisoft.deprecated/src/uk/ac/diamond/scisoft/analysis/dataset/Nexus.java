@@ -195,7 +195,7 @@ public class Nexus {
 	 */
 	public static NexusGroupData createNexusGroupData(IDataset data) {
 		Dataset ad = DatasetUtils.convertToDataset(data);
-		return new NexusGroupData(ad.getShape(), getGroupDataType(ad.getDtype()), ad.getBuffer());
+		return new NexusGroupData(ad.getShape(), ad.getBuffer());
 	}
 
 	public static ILazyDataset createLazyDataset(INexusTree node) {

@@ -76,6 +76,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * @param meta
 	 */
 	public DataHolder(IMetadata meta) {
+		nameDataMappings = new LinkedHashMap<String, ILazyDataset>();
 		metadata = meta;
 	}
 

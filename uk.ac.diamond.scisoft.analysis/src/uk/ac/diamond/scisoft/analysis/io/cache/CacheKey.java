@@ -26,6 +26,7 @@ public class CacheKey {
 	private SliceObject slice;
 	private int imageNumber;
 	private boolean metadata;
+	private boolean metadataOnly;
 
 	/**
 	 * Important, do not allow clients to create their own keys
@@ -87,13 +88,14 @@ public class CacheKey {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (timeStamp ^ (timeStamp >>> 32));
 		result = prime * result + ((datasetName == null) ? 0 : datasetName.hashCode());
 		result = prime * result + ((datasetNames == null) ? 0 : datasetNames.hashCode());
 		result = prime * result + ((filePath == null) ? 0 : filePath.hashCode());
-		result = prime * result + (metadata ? 1231 : 1237);
-		result = prime * result + ((slice == null) ? 0 : slice.hashCode());
 		result = prime * result + imageNumber;
+		result = prime * result + (metadata ? 1231 : 1237);
+		result = prime * result + (metadataOnly ? 1231 : 1237);
+		result = prime * result + ((slice == null) ? 0 : slice.hashCode());
+		result = prime * result + (int) (timeStamp ^ (timeStamp >>> 32));
 		return result;
 	}
 
@@ -106,8 +108,6 @@ public class CacheKey {
 		if (getClass() != obj.getClass())
 			return false;
 		CacheKey other = (CacheKey) obj;
-		if (timeStamp != other.timeStamp)
-			return false;
 		if (datasetName == null) {
 			if (other.datasetName != null)
 				return false;
@@ -123,14 +123,18 @@ public class CacheKey {
 				return false;
 		} else if (!filePath.equals(other.filePath))
 			return false;
+		if (imageNumber != other.imageNumber)
+			return false;
 		if (metadata != other.metadata)
+			return false;
+		if (metadataOnly != other.metadataOnly)
 			return false;
 		if (slice == null) {
 			if (other.slice != null)
 				return false;
 		} else if (!slice.equals(other.slice))
 			return false;
-		if (imageNumber != other.imageNumber)
+		if (timeStamp != other.timeStamp)
 			return false;
 		return true;
 	}
@@ -179,5 +183,13 @@ public class CacheKey {
 		if (timeStamp != other.timeStamp)               return false;
 		if (!getFilePath().equals(other.getFilePath())) return false;
 		return true;
+	}
+
+	public boolean isMetadataOnly() {
+		return metadataOnly;
+	}
+
+	public void setMetadataOnly(boolean metadataOnly) {
+		this.metadataOnly = metadataOnly;
 	}
 }

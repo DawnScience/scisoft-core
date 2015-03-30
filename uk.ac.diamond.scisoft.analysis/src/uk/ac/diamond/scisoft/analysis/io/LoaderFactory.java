@@ -323,6 +323,19 @@ public class LoaderFactory {
 												final boolean lazily, 
 												final IMonitor mon) throws Exception {
 
+		if (path.toLowerCase().startsWith("http")) {
+			return null;
+		} else {
+			return getFileData(path, willLoadMetadata, loadImageStacks, lazily, mon);
+		}
+
+	}
+	
+	private static /*THIS IS REQUIRED:*/ synchronized  IDataHolder getFileData(final String   path,
+																				final boolean willLoadMetadata, 
+																				final boolean loadImageStacks, 
+																				final boolean lazily, 
+																				final IMonitor mon) throws Exception {
 		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
 
 		// IMPORTANT: DO NOT USE loadImageStacks in Key. 
@@ -392,6 +405,7 @@ public class LoaderFactory {
 		}
 		return holder;
 	}
+
 	
 	/**
 	 * Call to load file into memory with specific loader class
@@ -591,13 +605,23 @@ public class LoaderFactory {
 		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
 		final CacheKey key = dataCache.createCacheKey(path, true);
 		
+		// Look for other data with the meta data
 		IDataHolder cachedObject = dataCache.getSoftReferenceWithMetadata(key);
 		if (cachedObject!=null) {
 			IMetadata meta = cachedObject.getMetadata();
 			if (meta!=null) return meta;
 			logger.warn("Cached object is not a metadata object or contain one");
 		}
-
+		
+		// Look for cached metadataonly record
+		key.setMetadataOnly(true);
+		cachedObject = dataCache.getSoftReferenceWithMetadata(key);
+		if (cachedObject!=null) {
+			IMetadata meta = cachedObject.getMetadata();
+			if (meta!=null) return meta;
+			logger.warn("Cached object is not a metadata object or contain one");
+		}
+		
 		final Iterator<Class<? extends IFileLoader>> it = getIterator(path);
 		if (it == null) return null;
 
@@ -615,6 +639,7 @@ public class LoaderFactory {
 				// do this, it should not be registered with LoaderFactory
 				((IMetaLoader) loader).loadMetadata(mon);
 				IMetadata meta = ((IMetaLoader) loader).getMetadata();
+				key.setMetadataOnly(true); // We are definitely recording only metadata with this step.
 				dataCache.recordSoftReference(key, new DataHolder(meta));
 				return meta;
 			} catch (Throwable ne) {
@@ -753,9 +778,6 @@ public class LoaderFactory {
 				}
 			}
 
-			if (!searchingAllowed)
-				return null;
-
 			final Set<Class<? extends IFileLoader>> all = new HashSet<Class<? extends IFileLoader>>();
 			for (String ext : LOADERS.keySet())
 				all.addAll(LOADERS.get(ext));
@@ -876,12 +898,6 @@ public class LoaderFactory {
 	 */
 	public static List<Class<? extends IFileLoader>> clearLoader(final String extension) {
 		return LOADERS.remove(extension);
-	}
-
-	private static boolean searchingAllowed = false;
-
-	public static void setLoaderSearching(final boolean sa) {
-		searchingAllowed = sa;
 	}
 
 	protected static Class<? extends InputStream> getZipStream(final String extension) {

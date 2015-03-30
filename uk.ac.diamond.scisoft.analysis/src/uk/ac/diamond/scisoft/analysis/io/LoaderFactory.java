@@ -12,9 +12,6 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.lang.ref.Reference;
-import java.lang.ref.SoftReference;
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -22,7 +19,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +31,6 @@ import java.util.zip.ZipInputStream;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.io.IDataAnalysisObject;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
@@ -46,9 +41,9 @@ import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.ac.diamond.scisoft.analysis.io.cache.CacheKey;
+import uk.ac.diamond.scisoft.analysis.io.cache.DataCache;
 import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
-// TODO Not sure if org.eclipse.core could break GDA server.
-// Been told verbally that the GDA server now can resolve core and resources.
 
 /**
  * A class which gives a single point of entry to loading data files
@@ -71,42 +66,31 @@ import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
  * 
  * see LoaderFactoryExtensions which boots up the extensions from reading the extension points.
  * 
- * This class is going to be @Deprecated please use ILoaderService where possible.
- * <code>
+ * This class is going to be Deprecated please use ILoaderService where possible.
+ * See org.eclipse.dawnsci.plotting.examples.Examples which receives OSGi services, including ILoaderService. 
  * 
-  	final ILoaderService service = (ILoaderService)ServiceManager.getService(ILoaderService.class);
-  	// ServiceManager may need to be configured using Spring on GDA server
-  	// service can now be used as if it was a 'LoaderFactory' instance.
-    
+ *  @deprecated - Please use ILoaderService.
  */
 public class LoaderFactory {
 
+	/**
+	 * Logger for detailing any non-fatal problems (sorry but there are some)
+	 */
+	private static final Logger logger = LoggerFactory.getLogger(LoaderFactory.class);
 	
-	// Not for public use: only used by OSGI
+	/**
+	 * DO NOT USE this constructor. It is used by OSGi for reflecting/instantiating the object
+	 * Ideally use ILoaderService available from OSGi but the static methods are still supported
+	 * on LoaderFactory.
+	 */
+	@Deprecated
 	public LoaderFactory() {
 		
 	}
 
-	/**
-	 * A caching mechanism using soft references. Soft references attempt to keep things
-	 * in memory until the system is short on memory. Hashtable used because it is synchronized
-	 * which should reduce chances of getting the wrong data for the key.
-	 */
-	private static final Map<LoaderKey, Reference<IDataAnalysisObject>> SOFT_CACHE = new Hashtable<LoaderKey, Reference<IDataAnalysisObject>>(89);
-	
-	/**
-	 * This method may be called to ensure that the soft reference cache of data is
-	 * empty. It is required from the unit tests which attempt to measure memory
-	 * leaks, which otherwise would measure the "leak" of the soft reference cache.
-	 */
-	public static void clear() {
-		SOFT_CACHE.clear();
-	}
-
-	private static final Logger logger = LoggerFactory.getLogger(LoaderFactory.class);
-
-	private static final Map<String, List<Class<? extends IFileLoader>>> LOADERS = new HashMap<String, List<Class<? extends IFileLoader>>>(19);
-	private static final Map<String, Class<? extends InputStream>> UNZIPPERS = new HashMap<String, Class<? extends InputStream>>(3);
+	private static final Map<String, List<Class<? extends IFileLoader>>> LOADERS;
+	private static final Map<String, Class<? extends InputStream>>     UNZIPPERS;
+	private static final DataCache dataCache;
 
 	/**
 	 * 
@@ -123,6 +107,11 @@ public class LoaderFactory {
 	 * 
 	 */
 	static {
+		
+		LOADERS   = new HashMap<String, List<Class<? extends IFileLoader>>>(19);
+		UNZIPPERS = new HashMap<String, Class<? extends InputStream>>(3);
+		dataCache = new DataCache();
+		
 		try {
 		    registerLoader("npy",  NumPyFileLoader.class);
 		    registerLoader("img",  ADSCImageLoader.class);
@@ -339,12 +328,10 @@ public class LoaderFactory {
 		// IMPORTANT: DO NOT USE loadImageStacks in Key. 
 		// Instead when loadImageStacks=true, we add the stack to the already
 		// cached data. So reducing the cache size.
-		final LoaderKey key = new LoaderKey();
-		key.setFilePath(path);
-		key.setMetadata(willLoadMetadata);
+		final CacheKey key = dataCache.createLoaderKey(path, willLoadMetadata);
 		// END IMPORTANT
 
-		final Object cachedObject = getSoftReference(key);
+		final Object cachedObject = dataCache.getSoftReference(key);
 		IDataHolder holder = null;
 		if (cachedObject!=null && cachedObject instanceof IDataHolder) holder = (IDataHolder)cachedObject;
 
@@ -370,7 +357,7 @@ public class LoaderFactory {
 
 					if (!lazily) {
 						key.setMetadata(holder.getMetadata()!=null);
-						boolean cached = recordSoftReference(key, holder);
+						boolean cached = dataCache.recordSoftReference(key, holder);
 						if (!cached) System.err.println("Loader factory failed to cache "+path);
 					}
 					break;
@@ -429,12 +416,10 @@ public class LoaderFactory {
 		// IMPORTANT: DO NOT USE loadImageStacks in Key. 
 		// Instead when loadImageStacks=true, we add the stack to the already
 		// cached data. So reducing the cache size.
-		final LoaderKey key = new LoaderKey();
-		key.setFilePath(path);
-		key.setMetadata(willLoadMetadata);
+		final CacheKey key = dataCache.createLoaderKey(path, willLoadMetadata);
 		// END IMPORTANT
 
-		final Object cachedObject = getSoftReference(key);
+		final Object cachedObject = dataCache.getSoftReference(key);
 		IDataHolder holder = null;
 		if (cachedObject!=null && cachedObject instanceof IDataHolder) holder = (IDataHolder)cachedObject;
         if (holder!=null) return holder;
@@ -458,7 +443,7 @@ public class LoaderFactory {
 			holder.setFilePath(path);
 			
 			key.setMetadata(holder.getMetadata()!=null);
-			boolean cached = recordSoftReference(key, holder);
+			boolean cached = dataCache.recordSoftReference(key, holder);
 			if (!cached) System.err.println("Loader factory failed to cache "+path);
 			return holder;
 			
@@ -477,7 +462,7 @@ public class LoaderFactory {
 	 * @param holder
 	 */
 	public static void cacheData(IDataHolder holder) {
-		cacheData(holder, 0);
+		dataCache.cacheData(holder);
 	}
 
 	/**
@@ -488,13 +473,7 @@ public class LoaderFactory {
 	 * @param imageNumber
 	 */
 	public static void cacheData(IDataHolder holder, int imageNumber) {
-		final LoaderKey key = new LoaderKey();
-		key.setFilePath(holder.getFilePath());
-		key.setMetadata(holder.getMetadata() != null);
-		key.setImageNumber(imageNumber);
-
-		if (!recordSoftReference(key, holder))
-			System.err.println("Loader factory failed to cache "+holder.getFilePath());
+		dataCache.cacheData(holder, imageNumber);
 	}
 
 	/**
@@ -505,7 +484,7 @@ public class LoaderFactory {
 	 * @return data or null if not in cache
 	 */
 	public static IDataHolder fetchData(String path, boolean willLoadMetadata) {
-		return fetchData(path, willLoadMetadata, 0);
+		return dataCache.fetchData(path, willLoadMetadata);
 	}
 
 	/**
@@ -517,13 +496,7 @@ public class LoaderFactory {
 	 * @return data or null if not in cache
 	 */
 	public static IDataHolder fetchData(String path, boolean willLoadMetadata, int imageNumber) {
-		final LoaderKey key = new LoaderKey();
-		key.setFilePath(path);
-		key.setMetadata(willLoadMetadata);
-		key.setImageNumber(imageNumber);
-
-		final Object cachedObject = getSoftReference(key);
-		return cachedObject instanceof IDataHolder ? (IDataHolder) cachedObject : null;
+		return dataCache.fetchData(path, willLoadMetadata, imageNumber);
 	}
 
 	private static String stackExpression = "(.+)_(\\d+)";
@@ -599,93 +572,6 @@ public class LoaderFactory {
 		return null;
 	}
 
-	private final static Object LOCK = new Object();
-
-	/**
-	 * May be null
-	 * @param key
-	 * @return the object referenced or null if it got garbaged or was not cached yet
-	 */
-	private static Object getSoftReference(LoaderKey key) {
-		Object o = getReference(key);
-		if (o != null) {
-			return o;
-		}
-		if (key.hasMetadata()) { // wanted metadata but none there
-			return null;
-		}
-		key.setMetadata(true); // try with unwanted metadata
-		return getReference(key);
-	}
-
-	/**
-	 * May be null
-	 * @param key
-	 * @return the object referenced or null if it got garbaged or was not cached yet
-	 */
-	private static Object getSoftReferenceWithMetadata(LoaderKey key) {
-		Object o = getReference(key);
-		if (o != null) return o;
-
-		LoaderKey k = findKeyWithMetadata(key);
-		return k == null ? null : getReference(k);
-	}
-
-
-	private static final String NO_CACHING = "uk.ac.diamond.scisoft.analysis.io.nocaching";
-
-	/**
-	 * May be null
-	 * @param key
-	 * @return the object referenced or null if it got garbaged or was not cached yet
-	 */
-	private static IDataAnalysisObject getReference(LoaderKey key) {
-		if (Boolean.getBoolean(NO_CACHING)) return null;
-		synchronized (LOCK) {
-			try {
-		        final Reference<IDataAnalysisObject> ref = SOFT_CACHE.get(key);
-		        if (ref == null) return null;
-		        IDataAnalysisObject got = ref.get();
-		        return got;
-			} catch (Throwable ne) {
-				return null;
-			}
-		}
-	}
-
-	private static LoaderKey findKeyWithMetadata(LoaderKey key) {
-		if (Boolean.getBoolean(NO_CACHING)) return null;
-		synchronized (LOCK) {
-			for (LoaderKey k : SOFT_CACHE.keySet()) {
-				if (k.isSameFile(key) && k.hasMetadata()) {
-					return k;
-				}
-			}
-			return null;
-		}
-
-	}
-
-	/**
-	 * 
-	 * @param key
-	 * @param value
-	 * @return true if another value has been replaced.
-	 */
-	private static boolean recordSoftReference(LoaderKey key, IDataAnalysisObject value) {
-		
-		if (Boolean.getBoolean(NO_CACHING)) return false;
-		synchronized (LOCK) {
-			try {
-				Reference<IDataAnalysisObject> ref = Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.weakcaching")
-						                           ? new WeakReference<IDataAnalysisObject>(value)
-						                           : new SoftReference<IDataAnalysisObject>(value);
-				return SOFT_CACHE.put(key, ref)!=null;
-			} catch (Throwable ne) {
-				return false;
-			}
-		}
-	}
 
 	/**
 	 * Call to load any file type into memory. If a loader implements IMetaLoader will
@@ -703,11 +589,9 @@ public class LoaderFactory {
 
 		
 		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
-		final LoaderKey key = new LoaderKey();
-		key.setFilePath(path);
-		key.setMetadata(true);
+		final CacheKey key = dataCache.createLoaderKey(path, true);
 		
-		Object cachedObject = getSoftReferenceWithMetadata(key);
+		Object cachedObject = dataCache.getSoftReferenceWithMetadata(key);
 		if (cachedObject!=null) {
 			if (cachedObject instanceof DataHolder) {
 				IMetadata meta = ((DataHolder) cachedObject).getMetadata();
@@ -735,7 +619,7 @@ public class LoaderFactory {
 				// do this, it should not be registered with LoaderFactory
 				((IMetaLoader) loader).loadMetadata(mon);
 				IMetadata meta = ((IMetaLoader) loader).getMetadata();
-				recordSoftReference(key, meta);
+				dataCache.recordSoftReference(key, meta);
 				return meta;
 			} catch (Throwable ne) {
 				//logger.trace("Cannot load nexus meta data", ne);
@@ -1045,4 +929,15 @@ public class LoaderFactory {
 		if (ext == null) { return false; }
 		return HDF5_EXT.contains(ext.toLowerCase());
 	}
+	
+	
+	/**
+	 * This method may be called to ensure that the soft reference cache of data is
+	 * empty. It is required from the unit tests which attempt to measure memory
+	 * leaks, which otherwise would measure the "leak" of the soft reference cache.
+	 */
+	public static void clear() {
+		dataCache.clear();
+	}
+
 }

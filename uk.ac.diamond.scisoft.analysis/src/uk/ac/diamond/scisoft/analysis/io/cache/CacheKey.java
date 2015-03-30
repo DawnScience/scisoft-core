@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.io;
+package uk.ac.diamond.scisoft.analysis.io.cache;
 
 import java.io.File;
 import java.util.List;
@@ -17,7 +17,7 @@ import org.eclipse.dawnsci.analysis.api.io.SliceObject;
 /**
  * A key used by the loader factory to cache previously read data.
  */
-public class LoaderKey {
+public class CacheKey {
 
 	private String  filePath;
 	private long    timeStamp;
@@ -27,7 +27,10 @@ public class LoaderKey {
 	private int imageNumber;
 	private boolean metadata;
 
-	public LoaderKey() {
+	/**
+	 * Important, do not allow clients to create their own keys
+	 */
+	protected CacheKey() {
 	}
 
 	public String getFilePath() {
@@ -102,7 +105,7 @@ public class LoaderKey {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		LoaderKey other = (LoaderKey) obj;
+		CacheKey other = (CacheKey) obj;
 		if (timeStamp != other.timeStamp)
 			return false;
 		if (datasetName == null) {
@@ -172,7 +175,7 @@ public class LoaderKey {
 	 * @param other
 	 * @return true if file and date stamp are the same.
 	 */
-	public boolean isSameFile(LoaderKey other) {
+	public boolean isSameFile(CacheKey other) {
 		if (timeStamp != other.timeStamp)               return false;
 		if (!getFilePath().equals(other.getFilePath())) return false;
 		return true;

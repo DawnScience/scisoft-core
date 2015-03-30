@@ -23,6 +23,8 @@ import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
  */
 public class DataCache {
 
+
+	private static final String NO_CACHING = "uk.ac.diamond.scisoft.analysis.io.nocaching";
 	/**
 	 * A caching mechanism using soft references. Soft references attempt to keep things
 	 * in memory until the system is short on memory. Hashtable used because it is synchronized
@@ -43,7 +45,7 @@ public class DataCache {
 		cache.clear();
 	}
 	
-	public CacheKey createLoaderKey(String path, boolean loadMeta) {
+	public CacheKey createCacheKey(String path, boolean loadMeta) {
 		final CacheKey key = new CacheKey();
 		key.setFilePath(path);
 		key.setMetadata(loadMeta);
@@ -80,8 +82,6 @@ public class DataCache {
 		return k == null ? null : getReference(k);
 	}
 
-
-	private static final String NO_CACHING = "uk.ac.diamond.scisoft.analysis.io.nocaching";
 
 	/**
 	 * May be null

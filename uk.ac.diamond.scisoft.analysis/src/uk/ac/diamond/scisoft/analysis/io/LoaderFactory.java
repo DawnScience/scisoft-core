@@ -328,7 +328,7 @@ public class LoaderFactory {
 		// IMPORTANT: DO NOT USE loadImageStacks in Key. 
 		// Instead when loadImageStacks=true, we add the stack to the already
 		// cached data. So reducing the cache size.
-		final CacheKey key = dataCache.createLoaderKey(path, willLoadMetadata);
+		final CacheKey key = dataCache.createCacheKey(path, willLoadMetadata);
 		// END IMPORTANT
 
 		final Object cachedObject = dataCache.getSoftReference(key);
@@ -416,7 +416,7 @@ public class LoaderFactory {
 		// IMPORTANT: DO NOT USE loadImageStacks in Key. 
 		// Instead when loadImageStacks=true, we add the stack to the already
 		// cached data. So reducing the cache size.
-		final CacheKey key = dataCache.createLoaderKey(path, willLoadMetadata);
+		final CacheKey key = dataCache.createCacheKey(path, willLoadMetadata);
 		// END IMPORTANT
 
 		final Object cachedObject = dataCache.getSoftReference(key);
@@ -589,7 +589,7 @@ public class LoaderFactory {
 
 		
 		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
-		final CacheKey key = dataCache.createLoaderKey(path, true);
+		final CacheKey key = dataCache.createCacheKey(path, true);
 		
 		Object cachedObject = dataCache.getSoftReferenceWithMetadata(key);
 		if (cachedObject!=null) {

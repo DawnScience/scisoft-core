@@ -90,7 +90,7 @@ public class LoaderFactory {
 
 	private static final Map<String, List<Class<? extends IFileLoader>>> LOADERS;
 	private static final Map<String, Class<? extends InputStream>>     UNZIPPERS;
-	private static final DataCache dataCache;
+	private static final DataCache<IDataHolder> dataCache;
 
 	/**
 	 * 
@@ -110,7 +110,7 @@ public class LoaderFactory {
 		
 		LOADERS   = new HashMap<String, List<Class<? extends IFileLoader>>>(19);
 		UNZIPPERS = new HashMap<String, Class<? extends InputStream>>(3);
-		dataCache = new DataCache();
+		dataCache = new DataCache<IDataHolder>();
 		
 		try {
 		    registerLoader("npy",  NumPyFileLoader.class);
@@ -591,14 +591,10 @@ public class LoaderFactory {
 		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
 		final CacheKey key = dataCache.createCacheKey(path, true);
 		
-		Object cachedObject = dataCache.getSoftReferenceWithMetadata(key);
+		IDataHolder cachedObject = dataCache.getSoftReferenceWithMetadata(key);
 		if (cachedObject!=null) {
-			if (cachedObject instanceof DataHolder) {
-				IMetadata meta = ((DataHolder) cachedObject).getMetadata();
-			    if (meta!=null) return meta;
-			}
-			if (cachedObject instanceof IMetadata)
-				return (IMetadata)cachedObject;
+			IMetadata meta = cachedObject.getMetadata();
+			if (meta!=null) return meta;
 			logger.warn("Cached object is not a metadata object or contain one");
 		}
 
@@ -619,7 +615,7 @@ public class LoaderFactory {
 				// do this, it should not be registered with LoaderFactory
 				((IMetaLoader) loader).loadMetadata(mon);
 				IMetadata meta = ((IMetaLoader) loader).getMetadata();
-				dataCache.recordSoftReference(key, meta);
+				dataCache.recordSoftReference(key, new DataHolder(meta));
 				return meta;
 			} catch (Throwable ne) {
 				//logger.trace("Cannot load nexus meta data", ne);

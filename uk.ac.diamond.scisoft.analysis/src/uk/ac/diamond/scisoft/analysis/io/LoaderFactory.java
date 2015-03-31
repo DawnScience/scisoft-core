@@ -318,13 +318,13 @@ public class LoaderFactory {
 	 * @throws Exception
 	 */
 	public static /*THIS IS REQUIRED:*/ synchronized  IDataHolder getData(final String   path,
-												final boolean willLoadMetadata, 
-												final boolean loadImageStacks, 
-												final boolean lazily, 
-												final IMonitor mon) throws Exception {
+																		  final boolean willLoadMetadata, 
+																		  final boolean loadImageStacks, 
+																		  final boolean lazily, 
+																		  final IMonitor mon) throws Exception {
 
 		if (path.toLowerCase().startsWith("http")) {
-			return null;
+			throw new Exception("Data from URL not yet supported!");
 		} else {
 			return getFileData(path, willLoadMetadata, loadImageStacks, lazily, mon);
 		}

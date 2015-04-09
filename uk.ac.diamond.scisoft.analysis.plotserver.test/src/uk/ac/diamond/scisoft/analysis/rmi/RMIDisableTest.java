@@ -42,7 +42,7 @@ public class RMIDisableTest {
 	
 	@Test(expected=RemoteException.class)
 	public void testDisableRMITrue() throws AlreadyBoundException, IOException {
-		System.setProperty(DISABLE_PROP, "True");
+		System.setProperty(DISABLE_PROP, "true");
 		RMIServerProvider.getInstance().exportAndRegisterObject("should_not_register", new Remote() {
 		});
 	}

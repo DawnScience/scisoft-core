@@ -256,12 +256,12 @@ public class PixelIntegrationUtils {
 	}
 	
 	public static double polarisationCorrection(double correctionValue, double tth, double angle, double factor) {
-		//L.B. Skinner et al Nuc Inst Meth Phys Res A 662 (2012) 61-70
-		//pol(th) = 1/2[1+cos2(tth) - f*cos(azimuthal)sin2(tth)
+		//R Kahn et al, J Appl Cryst 15 330 (1982)
+		//pol(th) = 1/2[1+cos2(tth) - f*cos(2*azimuthal)sin2(tth)
 		
 		double cosSq = Math.pow(Math.cos(tth),2);
 		//use 1-cos2(tth) instead of sin2(tth)
-		double sub = (1-cosSq)*Math.cos(angle)*factor;
+		double sub = (1-cosSq)*Math.cos(angle*2)*factor;
 		
 		double cor = (cosSq +1 - sub)/2;
 		return correctionValue/cor;
@@ -283,15 +283,15 @@ public class PixelIntegrationUtils {
 	}
 	
 	public static void polarisationCorrection(Dataset correctionArray, Dataset tth, Dataset angle, double factor) {
-		//L.B. Skinner et al Nuc Inst Meth Phys Res A 662 (2012) 61-70
-		//pol(th) = 1/2[1+cos2(tth) - f*cos(azimuthal)sin2(tth)
+		//R Kahn et al, J Appl Cryst 15 330 (1982)
+		//pol(th) = 1/2[1+cos2(tth) - f*cos(2*azimuthal)sin2(tth)
 		
 		Dataset cosSq = Maths.cos(tth);
 		cosSq.ipower(2);
 		
 		//use 1-cos2(tth) instead of sin2(tth)
 		Dataset sub = Maths.subtract(1, cosSq);
-		sub.imultiply(Maths.cos(angle));
+		sub.imultiply(Maths.cos(Maths.multiply(angle,2)));
 		sub.imultiply(factor);
 		
 		Dataset cor = Maths.add(cosSq, 1);

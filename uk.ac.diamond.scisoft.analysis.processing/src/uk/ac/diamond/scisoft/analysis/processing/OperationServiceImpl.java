@@ -260,7 +260,7 @@ public class OperationServiceImpl implements IOperationService {
         if (series[0].getInputRank().isDiscrete() && firstSlice != null) {
         	
 	        if (squeezedShape.length != series[0].getInputRank().getRank()) {
-	        	InvalidRankException e = new InvalidRankException(series[0], "The slicing results in a dataset of rank "+firstSlice.getRank()+" but the input rank of '"+series[0].getDescription()+"' is "+series[0].getInputRank().getRank());
+	        	InvalidRankException e = new InvalidRankException(series[0], "The slicing results in a dataset of rank "+squeezedShape.length+" but the input rank of '"+series[0].getDescription()+"' is "+series[0].getInputRank().getRank());
 	            throw e;
 	        }
         }

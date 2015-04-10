@@ -88,7 +88,7 @@ public class SliceNDGeneratorTest {
 		sliceNDo = outSlice.get(slices.size()-1);
 		assertArrayEquals(sliceND.getStart(), sliceNDo.getStart());
 
-		gen = new SliceNDGenerator(shape, dd, new SliceND(shape,null, new Slice(1,4,2), new Slice(0,3),null,null));
+		gen = new SliceNDGenerator(shape, dd, new SliceND(shape, (Slice) null, new Slice(1, 4, 2), new Slice(0, 3), null, null));
 
 		os = gen.getOutputShape();
 		assertArrayEquals(new int[]{shape[0],2,3,shape[3],shape[4]}, os);

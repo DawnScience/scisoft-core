@@ -15,6 +15,8 @@
 ###
 
 from jyhdf5io import HDF5Loader as _h5loader
+from org.eclipse.dawnsci.analysis.api.tree import Tree as _jtree
+from org.eclipse.dawnsci.analysis.api.tree import TreeFile as _jtreefile
 
 #from jyhdf5io import SDS
 
@@ -30,8 +32,9 @@ class NXLoader(_h5loader):
             else:
                 print "Unknown Nexus class: %s" % cls
                 g = super(NXLoader, self)._mkgroup(name, link, attrs, parent)
-        elif name == '/' or parent is None:
-            g = _nx.NXroot(link.getSource().getFilename(), attrs)
+        elif name == '/' or isinstance(parent, _jtree):
+            src = parent.getFilename() if isinstance(parent, _jtreefile) else parent.getSourceURI()
+            g = _nx.NXroot(src, attrs)
         else:
             g = _nx.NXgroup(attrs, parent)
 

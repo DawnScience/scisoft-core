@@ -18,6 +18,8 @@
 '''
 
 from uk.ac.diamond.scisoft.analysis.io import HDF5Loader as _hdf5loader
+from org.eclipse.dawnsci.analysis.api.tree import Tree as _jtree
+from org.eclipse.dawnsci.analysis.api.tree import TreeFile as _jtreefile
 from org.eclipse.dawnsci.analysis.api.tree import DataNode as _jdnode
 from org.eclipse.dawnsci.analysis.dataset.impl import Dataset as _dataset
 from org.eclipse.dawnsci.analysis.dataset.impl import LazyDataset as _ldataset
@@ -120,11 +122,12 @@ class HDF5Loader(object):
         # convert tree to own tree
         r = tree.getNodeLink()
         pool = dict()
-        return self._copynode(pool, r)
+        return self._copynode(pool, r, tree)
 
     def _mkgroup(self, name, link, attrs, parent):
-        if parent is None:
-            return _tree(link.getSource().getFilename(), attrs)
+        if isinstance(parent, _jtree):
+            src = parent.getFilename() if isinstance(parent, _jtreefile) else parent.getSourceURI()
+            return _tree(src, attrs)
         return _group(attrs, parent)
 
     def _mkdataset(self, dataset, attrs, parent):

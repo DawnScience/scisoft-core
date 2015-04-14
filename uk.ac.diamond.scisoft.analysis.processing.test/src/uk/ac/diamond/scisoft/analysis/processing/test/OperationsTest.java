@@ -8,6 +8,8 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing.test;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collection;
 
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
@@ -335,13 +337,15 @@ public class OperationsTest {
 		context.setSeries(subtract, add);	
 		context.setExecutionType(ExecutionType.PARALLEL);
 		service.execute(context);
-		if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run!");
+		Thread.sleep(3000);
+		assertEquals("Not all jobs completed before timeout in parallel run! counter: " + counter + ", expected: 24", 24, counter);
 
 		counter=0;
 	    context.setExecutionType(ExecutionType.GRAPH);
 	    context.setPoolSize(Runtime.getRuntime().availableProcessors());
 	    service.execute(context);
-		if ( counter != 24 ) throw new Exception("Not all jobs completed before timeout in parallel run!");
+		Thread.sleep(3000);
+		assertEquals("Not all jobs completed before timeout in parallel run! counter: " + counter + ", expected: 24", 24, counter);
 	}
 
 }

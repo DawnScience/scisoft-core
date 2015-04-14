@@ -32,13 +32,13 @@ public class HDF5LazyLoader implements ILazyLoader, Serializable {
 	protected static final Logger logger = LoggerFactory.getLogger(HDF5LazyLoader.class);
 
 	private String host;
-	private String filePath;
-	private String nodePath;
-	private int[] trueShape;
-	private int dtype;
+	protected String filePath;
+	protected String nodePath;
+	protected int[] trueShape;
+	protected int dtype;
 	private int isize;
 	private boolean extendUnsigned;
-	private String name;
+	protected String name;
 
 	/**
 	 * @param hostname

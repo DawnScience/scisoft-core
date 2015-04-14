@@ -177,7 +177,7 @@ public class IntegrationTest {
 		context.setExecutionType(ExecutionType.PARALLEL);
 		service.execute(context);
 
-		Thread.sleep(1000);
+		Thread.sleep(5000);
 		assertEquals("Size of integrated results incorrect! Results found: " + count + ", expected: 24", 24, count);
 
 	}

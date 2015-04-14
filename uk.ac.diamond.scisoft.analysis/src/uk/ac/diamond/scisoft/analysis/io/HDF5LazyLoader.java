@@ -20,9 +20,16 @@ import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.hdf5.HDF5Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Lazy loader for HDF5 files
+ */
 public class HDF5LazyLoader implements ILazyLoader, Serializable {
 	public static final long serialVersionUID = 5057544213374303912L;
+	protected static final Logger logger = LoggerFactory.getLogger(HDF5LazyLoader.class);
 
 	private String host;
 	private String filePath;
@@ -33,16 +40,26 @@ public class HDF5LazyLoader implements ILazyLoader, Serializable {
 	private boolean extendUnsigned;
 	private String name;
 
-	public HDF5LazyLoader(String hostname, String filename, String node, String name, int[] trueShape2, int isize2, int dtype2,
-			boolean extendUnsigned2) {
+	/**
+	 * @param hostname
+	 * @param filename
+	 * @param node
+	 * @param name
+	 * @param trueShape
+	 * @param isize
+	 * @param dtype
+	 * @param extendUnsigned
+	 */
+	public HDF5LazyLoader(String hostname, String filename, String node, String name, int[] trueShape, int isize, int dtype,
+			boolean extendUnsigned) {
 		host = hostname;
 		filePath = filename;
 		nodePath = node;
 		this.name = name;
-		trueShape = trueShape2;
-		isize = isize2;
-		dtype = dtype2;
-		extendUnsigned = extendUnsigned2;
+		this.trueShape = trueShape;
+		this.isize = isize;
+		this.dtype = dtype;
+		this.extendUnsigned = extendUnsigned;
 	}
 
 	@Override
@@ -51,7 +68,7 @@ public class HDF5LazyLoader implements ILazyLoader, Serializable {
 			if (host != null && host.length() > 0 && !host.equals(InetAddress.getLocalHost().getHostName()))
 				return false;
 		} catch (UnknownHostException e) {
-			HDF5Loader.logger.warn("Problem finding local host so ignoring check", e);
+			logger.warn("Problem finding local host so ignoring check", e);
 		}
 		return new File(filePath).canRead();
 	}
@@ -113,10 +130,10 @@ public class HDF5LazyLoader implements ILazyLoader, Serializable {
 					}
 				}
 
-				d = HDF5Loader.loadData(filePath, nodePath, tstart, tsize, tstep, dtype, isize, extendUnsigned);
+				d = HDF5Utils.loadDataset(filePath, nodePath, tstart, tsize, tstep, dtype, isize, extendUnsigned);
 				d.setShape(newShape); // squeeze shape back
 			} else {
-				d = HDF5Loader.loadData(filePath, nodePath, lstart, newShape, lstep, dtype, isize, extendUnsigned);
+				d = HDF5Utils.loadDataset(filePath, nodePath, lstart, newShape, lstep, dtype, isize, extendUnsigned);
 			}
 			if (d != null) {
 				d.setName(name);

@@ -41,3 +41,39 @@ def bicubic(image, newshape):
     '''Make a new image which has the new shape by taking the bicubic interpolation of the input image'''
     bicube = _bicubic(newshape)
     return bicube.value([image])[0]
+
+@_wrap
+def threshold_global_mean(image, down=None):
+    if down==None:
+        down = True
+    return _image.globalMeanThreshold(image, down)
+
+@_wrap
+def threshold_global_otsu(image, down=None):
+    if down==None:
+        down = True
+    return _image.globalOtsuThreshold(image, down)
+
+@_wrap
+def threshold_global_entropy(image, down):
+    if down==None:
+        down = True
+    return _image.globalEntropyThreshold(image, down)
+
+@_wrap
+def threshold_adaptive_square(image, radius, down=None):
+    if down==None:
+        down = True
+    return _image.adaptiveSquareThreshold(image, radius, down)
+
+@_wrap
+def threshold_adaptive_gaussian(image, radius, down=None):
+    if down==None:
+        down = True
+    return _image.adaptiveGaussianThreshold(image, radius, down)
+
+@_wrap
+def threshold_adaptive_sauvola(image, radius, down=None):
+    if down==None:
+        down = True
+    return _image.adaptiveSauvolaThreshold(image, radius, down)

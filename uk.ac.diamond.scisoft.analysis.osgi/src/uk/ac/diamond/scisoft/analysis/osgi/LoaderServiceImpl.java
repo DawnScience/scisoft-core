@@ -9,17 +9,22 @@
 package uk.ac.diamond.scisoft.analysis.osgi;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
+import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.services.AbstractServiceFactory;
@@ -140,6 +145,75 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
     		return pattern.matcher(name);
 		}
 		return null;
+	}
+	
+	@Override
+	public AxesMetadata getAxesMetadata(ILazyDataset parent, String path, Map<Integer, String> axesNames) throws Exception {
+
+		AxesMetadataImpl axMeta = null;
+		int rank = parent.getRank();
+		int[] shape = parent.getShape();
+			axMeta = new AxesMetadataImpl(rank);
+			if (axesNames == null) return axMeta;
+			for (Integer key : axesNames.keySet()) {
+				String axesName = axesNames.get(key);
+				IDataHolder dataHolder = getData(path, null);
+				ILazyDataset lazyDataset = dataHolder.getLazyDataset(axesName);
+				if (lazyDataset == parent) throw new IllegalArgumentException("Axes metadata should not contain original dataset!");
+				if (lazyDataset!= null) {
+
+					if (lazyDataset.getName() == null || lazyDataset.getName().isEmpty()) {
+						lazyDataset.setName(axesName);
+					}
+
+					int axRank = lazyDataset.getRank();
+					if (axRank == rank || axRank == 1)	{
+						axMeta.setAxis(key-1, lazyDataset);
+					} else {
+
+						int[] axShape = lazyDataset.getShape();
+						int[] newShape = new int[rank];
+						Arrays.fill(newShape, 1);
+
+						int[] idx = new int[axRank];
+						int max = rank;
+
+						for (int i = axRank-1; i >= 0; i--) {
+
+							int id = axShape[i];
+							boolean found = false;
+
+							for (int j = max -1 ; i >= 0; i--) {
+
+								if (id == shape[j]) {
+									found = true;
+									idx[i] = j;
+									max = j;
+									break;
+								}
+
+							}
+
+							if (!found) {
+								throw new IllegalArgumentException("Axes shape not compatible!");
+							}
+						}
+
+						for (int i = 0; i < axRank; i++) {
+							newShape[idx[i]] = axShape[i];
+						}
+
+						lazyDataset = lazyDataset.getSliceView();
+						lazyDataset.setShape(newShape);
+					}
+					axMeta.setAxis(key-1, lazyDataset);
+				}
+				else {
+					axMeta.setAxis(key-1, new ILazyDataset[1]);
+				}
+			}
+
+			return axMeta;
 	}
 
 }

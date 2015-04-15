@@ -25,13 +25,29 @@ public class HDF5LazySaver extends HDF5LazyLoader implements ILazySaver, Seriali
 
 	private int[] maxShape;
 	private int[] chunks;
+	private Object fill;
 	private boolean init = false;
 
+	/**
+	 * 
+	 * @param hostname
+	 * @param filename
+	 * @param node
+	 * @param name
+	 * @param trueShape
+	 * @param isize
+	 * @param dtype
+	 * @param extendUnsigned
+	 * @param maxShape
+	 * @param chunks
+	 * @param fill null, a String or single value array
+	 */
 	public HDF5LazySaver(String hostname, String filename, String node, String name, int[] trueShape, int isize,
-			int dtype, boolean extendUnsigned, int[] maxShape, int[] chunks) {
+			int dtype, boolean extendUnsigned, int[] maxShape, int[] chunks, Object fill) {
 		super(hostname, filename, node, name, trueShape, isize, dtype, extendUnsigned);
 		this.maxShape = maxShape == null ? trueShape.clone() : maxShape.clone();
 		this.chunks = chunks == null ? null : chunks.clone();
+		this.fill = fill;
 	}
 
 	@Override
@@ -43,7 +59,7 @@ public class HDF5LazySaver extends HDF5LazyLoader implements ILazySaver, Seriali
 	public void initialize() throws Exception {
 		if (!init) {
 			init = true;
-			HDF5Utils.createDataset(filePath, nodePath, name, trueShape, maxShape, chunks, dtype, false);
+			HDF5Utils.createDataset(filePath, nodePath, name, trueShape, maxShape, chunks, dtype, fill, false);
 		}
 	}
 

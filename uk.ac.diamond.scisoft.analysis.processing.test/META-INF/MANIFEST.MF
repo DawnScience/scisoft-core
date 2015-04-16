@@ -10,9 +10,12 @@ Bundle-ActivationPolicy: lazy
 Import-Package: org.dawb.common.services,
  org.dawb.common.services.conversion,
  org.dawnsci.conversion,
+ org.dawnsci.conversion.converters.util,
  org.dawnsci.persistence,
  org.eclipse.dawnsci.hdf5,
- org.slf4j;version="1.7.6"
+ org.eclipse.ui.services,
+ org.slf4j;version="1.7.6",
+ uk.ac.diamond.scisoft.analysis.osgi
 Require-Bundle: org.junit;bundle-version="[4.10.0,5.0.0)",
  uk.ac.diamond.scisoft.analysis.processing.actor;bundle-version="1.0.0",
  com.isencia.passerelle.engine;bundle-version="8.7.0",

@@ -23,11 +23,10 @@ import org.dawb.common.services.conversion.IConversionService;
 import org.dawb.common.services.conversion.IProcessingConversionInfo;
 import org.dawb.common.services.conversion.ProcessingOutputType;
 import org.dawnsci.conversion.ConversionServiceImpl;
+import org.dawnsci.conversion.converters.util.LocalServiceManager;
 import org.dawnsci.persistence.PersistenceServiceCreator;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
@@ -38,6 +37,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
+import uk.ac.diamond.scisoft.analysis.osgi.LoaderServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
@@ -59,6 +59,9 @@ public class ExampleOperationsTest {
 		IOperationService service = (IOperationService)Activator.getService(IOperationService.class);
 		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.test.examples");
 		ServiceManager.setService(IOperationService.class, service);
+		
+		LocalServiceManager.setLoaderService(new LoaderServiceImpl());
+		LocalServiceManager.setOperationService(service);
 	}
 	
 	

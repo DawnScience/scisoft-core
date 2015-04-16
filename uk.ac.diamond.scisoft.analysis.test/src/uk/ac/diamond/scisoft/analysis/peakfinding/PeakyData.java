@@ -21,10 +21,10 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Offset;
 
 public class PeakyData {
 	
-	private Double xAxisMax = 50.;
-	private DoubleDataset xAxisRange = (DoubleDataset) DatasetFactory.createRange(0, xAxisMax, 0.01, Dataset.FLOAT64);
+	private static Double xAxisMax = 30.;
+	private static DoubleDataset xAxisRange = (DoubleDataset) DatasetFactory.createRange(0, xAxisMax, 0.01, Dataset.FLOAT64);
 	
-	private Add makeGauLorPeaks(IFunction bkg) {
+	public static Add makeGauLorPeaks() {
 		Add peaks = new Add();
 		
 		Gaussian g1 = new Gaussian(0.1080*xAxisMax, 0.0200*xAxisMax, 50.);
@@ -41,20 +41,31 @@ public class PeakyData {
 		peaks.addFunction(l1);
 		peaks.addFunction(l2);
 		peaks.addFunction(l3);
-		peaks.addFunction(bkg);
 				
 		return peaks;
 	}
 	
-	public Dataset makeOffsetGauLorPeakyData() {
+	public static Add makeOffsetGauLorPeaks() {
 		Offset offsetBkg = new Offset();
 		offsetBkg.setParameterValues(5.7);
 		
-		Add profileFn = makeGauLorPeaks(offsetBkg);
+		Add profileFn = makeGauLorPeaks();
+		profileFn.addFunction(offsetBkg);
 		
-		DoubleDataset profile = profileFn.calculateValues(xAxisRange);
-		
-		return profile;
+		return profileFn;
+	}
+
+	public static Double getxAxisMax() {
+		return xAxisMax;
+	}
+
+	public static void setxAxisMax(Double xAxisMax) {
+		PeakyData.xAxisMax = xAxisMax;
+		PeakyData.xAxisRange = (DoubleDataset) DatasetFactory.createRange(0, xAxisMax, 0.01, Dataset.FLOAT64);
+	}
+	
+	public static DoubleDataset getxAxisRange() {
+		return xAxisRange;
 	}
 
 }

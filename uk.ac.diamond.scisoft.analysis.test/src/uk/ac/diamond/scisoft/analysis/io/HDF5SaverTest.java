@@ -83,6 +83,11 @@ public class HDF5SaverTest {
 
 	@Test
 	public void testSavingAll() throws Exception {
+		test(false);
+		test(true);
+	}
+
+	private void test(boolean initialize) throws Exception {
 		String file = TestFileFolder + "all.h5";
 		String path = "/e/a/";
 		String name = "f";
@@ -93,6 +98,13 @@ public class HDF5SaverTest {
 		File f = new File(file);
 		if (f.exists())
 			f.delete();
+
+		int value = initialize ? -1 : 0;
+		if (initialize) {
+			HDF5Utils.createDataset(file, path, name, shape, mshape, shape, dtype, new int[] {value}, false);
+
+			assertEquals(value, checkOutput(file, path, name, shape).getShort(0, 0));
+		}
 
 		SliceND slice = new SliceND(mshape, new Slice(null, null, 2));
 		SliceNDIterator it = new SliceNDIterator(slice, 1);
@@ -106,7 +118,11 @@ public class HDF5SaverTest {
 		}
 
 		data = checkOutput(file, path, name, mshape);
-		assertTrue(((Number) data.getSlice(new Slice(null, null, 2)).sum()).longValue() != 0);
-		assertEquals(0, ((Number) data.getSlice(new Slice(1, null, 2)).sum()).longValue());
+
+		assertEquals(2, data.getInt(2, 1));
+		assertEquals(value, data.getInt(1, 0));
+
+		assertEquals(10*34*35/2, ((Number) data.getSlice(new Slice(null, null, 2)).sum()).longValue());
+		assertEquals(value*data.getSize()/2, ((Number) data.getSlice(new Slice(1, null, 2)).sum()).longValue());
 	}
 }

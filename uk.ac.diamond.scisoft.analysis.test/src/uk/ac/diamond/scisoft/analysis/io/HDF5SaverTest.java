@@ -27,6 +27,8 @@ import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.SliceNDIterator;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.junit.Test;
 
@@ -46,9 +48,10 @@ public class HDF5SaverTest {
 		if (f.exists())
 			f.delete();
 
-		HDF5Utils.createDataset(file, path, name, shape, mshape, new int[] {1, 34}, dtype, new int[] {-1}, false);
+		int value = -1;
+		HDF5Utils.createDataset(file, path, name, shape, mshape, new int[] {1, 34}, dtype, new int[] {value}, false);
 
-		assertEquals(-1, checkOutput(file, path, name, shape).getShort(0, 0));
+		assertEquals(value, checkOutput(file, path, name, shape).getShort(0, 0));
 
 		SliceND slice = new SliceND(shape, mshape, new Slice(1, 3), new Slice(null, null, 2));
 		System.out.println(slice);
@@ -58,13 +61,13 @@ public class HDF5SaverTest {
 		HDF5Utils.setDatasetSlice(file, path, name, slice, data);
 
 		data = checkOutput(file, path, name, slice.getSourceShape());
-		assertEquals(-1, data.getShort(0, 0));
+		assertEquals(value, data.getShort(0, 0));
+		assertEquals(value, data.getShort(1, 1));
 		assertEquals(1, data.getShort(1, 0));
-		assertEquals(-1, data.getShort(1, 1));
 		assertEquals(2, data.getShort(1, 2));
 	}
 
-	private IDataset checkOutput(String file, String path, String name, int[] shape) throws ScanFileHolderException {
+	private Dataset checkOutput(String file, String path, String name, int[] shape) throws ScanFileHolderException {
 		TreeFile tree = new HDF5Loader(file).loadTree();
 		NodeLink link = tree.findNodeLink(path + name);
 		assertEquals(path, link.getPath());
@@ -75,6 +78,35 @@ public class HDF5SaverTest {
 		ILazyDataset ds = d.getDataset();
 		assertArrayEquals(shape, ds.getShape());
 		assertEquals(Short.class, ds.elementClass());
-		return ds.getSlice();
+		return DatasetUtils.convertToDataset(ds.getSlice());
+	}
+
+	@Test
+	public void testSavingAll() throws Exception {
+		String file = TestFileFolder + "all.h5";
+		String path = "/e/a/";
+		String name = "f";
+		int[] shape = new int[] {1, 34};
+		int[] mshape = new int[] {20, 34};
+		int dtype = Dataset.INT16;
+
+		File f = new File(file);
+		if (f.exists())
+			f.delete();
+
+		SliceND slice = new SliceND(mshape, new Slice(null, null, 2));
+		SliceNDIterator it = new SliceNDIterator(slice, 1);
+
+		Dataset data = DatasetFactory.createRange(1, shape[1]+1, 1, dtype);
+		data.setShape(shape);
+		slice = it.getCurrentSlice();
+		while (it.hasNext()) {
+			System.err.println(slice);
+			HDF5Utils.setDatasetSlice(file, path, name, slice, data);
+		}
+
+		data = checkOutput(file, path, name, mshape);
+		assertTrue(((Number) data.getSlice(new Slice(null, null, 2)).sum()).longValue() != 0);
+		assertEquals(0, ((Number) data.getSlice(new Slice(1, null, 2)).sum()).longValue());
 	}
 }

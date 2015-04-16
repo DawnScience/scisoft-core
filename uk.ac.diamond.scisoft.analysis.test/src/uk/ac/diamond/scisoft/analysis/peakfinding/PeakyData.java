@@ -9,7 +9,6 @@
 
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
-import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
@@ -23,6 +22,15 @@ public class PeakyData {
 	
 	private static Double xAxisMax = 30.;
 	private static DoubleDataset xAxisRange = (DoubleDataset) DatasetFactory.createRange(0, xAxisMax, 0.01, Dataset.FLOAT64);
+	
+	public static Add makeGauPeak() {
+		Add peak = new Add();
+		
+		Gaussian g1 = new Gaussian(0.3785*xAxisMax, 0.0200*xAxisMax, 50.);
+		peak.addFunction(g1);
+		
+		return peak;
+	}
 	
 	public static Add makeGauLorPeaks() {
 		Add peaks = new Add();

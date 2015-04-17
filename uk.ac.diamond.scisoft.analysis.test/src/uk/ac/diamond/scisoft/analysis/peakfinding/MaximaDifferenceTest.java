@@ -9,17 +9,31 @@
 
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
+import java.util.Map;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
 
 public class MaximaDifferenceTest {
 	
+	private IPeakFinder maxDiff = new MaximaDifference();
+	
 	@Test
 	public void nameCheck() {
-		IPeakFinder maxDiff = new MaximaDifference();
-		
 		Assert.assertEquals("Maxima Difference", maxDiff.getName());
+	}
+	
+	@Test
+	public void parametersCheck() throws Exception {
+		Map<String, Double> paramMap = maxDiff.getParameters();
+		Assert.assertEquals(2, paramMap.size());
+		
+		Assert.assertEquals(true, paramMap.containsKey("windowSize"));
+		Assert.assertEquals(true, paramMap.containsKey("minSignificance"));
+		
+		Assert.assertEquals(3, maxDiff.getParameter("windowSize"));
+		Assert.assertEquals(1, maxDiff.getParameter("minSignificance"));
 	}
 
 }

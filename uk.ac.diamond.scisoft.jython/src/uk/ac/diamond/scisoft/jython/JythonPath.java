@@ -80,7 +80,11 @@ public class JythonPath {
 		"uk.ac.diamond.org.apache.xmlrpc.server",
 		"com.thoughtworks.xstream",
 		"uk.ac.diamond.org.jscience4",
-		"org.eclipse.equinox.common" // Required for IRemotePlottingSystem
+		"org.eclipse.equinox.common", // Required for IRemotePlottingSystem
+		"org.boofcv.feature_0.18.0",
+		"org.boofcv.geo_0.18.0",
+		"org.boofcv.ip_0.18.0",
+		"org.boofcv.sfm_0.18.0"
 	};
 	/*
 	 * Plugins we want/don't want

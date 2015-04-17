@@ -46,6 +46,11 @@ def bicubic(image, newshape):
     return bicube.value([image])[0]
 
 @_wrap
+def threshold_global_mean(image, down=True):
+    '''Applies a global mean threshold across the whole image with the mean pixel intensity value as a threshold value'''
+    return _image.globalMeanThreshold(image, down)
+
+@_wrap
 def threshold_global(image, threshold, down=True):
     '''Applies a global threshold across the whole image. If 'down' is true, then pixels with values <= to 'threshold' 
     are set to 1 and the others set to 0. If 'down' is false, then pixels with values >= to 'threshold' are set to 1 
@@ -53,23 +58,14 @@ def threshold_global(image, threshold, down=True):
     return _image.globalThreshold(image, threshold, down)
 
 @_wrap
-def threshold_global_mean(image, down=None):
-    '''Applies a global mean threshold across the whole image with the mean pixel intensity value as a threshold value'''
-    if down==None:
-        down = True
-    return _image.globalMeanThreshold(image, down)
-
-@_wrap
 def threshold_global_otsu(image, down=True):
     '''Applies a global mean threshold across the whole image with the variance based threshold using Otsu's method'''
     return _image.globalOtsuThreshold(image, down)
 
 @_wrap
-def threshold_global_entropy(image, down):
+def threshold_global_entropy(image, down=True):
     '''Applies a global mean threshold across the whole image with the threshold which maximizes the entropy between the
     foreground and background regions.'''
-    if down==None:
-        down = True
     return _image.globalEntropyThreshold(image, down)
 
 @_wrap

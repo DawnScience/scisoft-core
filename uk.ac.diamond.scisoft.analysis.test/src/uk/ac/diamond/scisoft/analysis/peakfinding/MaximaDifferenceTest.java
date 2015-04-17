@@ -26,14 +26,14 @@ public class MaximaDifferenceTest {
 	
 	@Test
 	public void parametersCheck() throws Exception {
-		Map<String, Double> paramMap = maxDiff.getParameters();
+		Map<String, Number> paramMap = maxDiff.getParameters();
 		Assert.assertEquals(2, paramMap.size());
 		
 		Assert.assertEquals(true, paramMap.containsKey("windowSize"));
 		Assert.assertEquals(true, paramMap.containsKey("minSignificance"));
 		
-		Assert.assertEquals(3, (int)maxDiff.getParameter("windowSize").doubleValue());
-		Assert.assertEquals(1, (int)maxDiff.getParameter("minSignificance").doubleValue());
+		Assert.assertEquals(3, maxDiff.getParameter("windowSize"));
+		Assert.assertEquals(1, maxDiff.getParameter("minSignificance"));
 	}
 
 }

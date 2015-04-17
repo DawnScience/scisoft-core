@@ -94,6 +94,7 @@ public class JythonPath {
 		"uk.ac.diamond.scisoft.python",
 		"uk.ac.diamond.CBFlib",
 		"uk.ac.gda.common",
+		"org.dawnsci.boofcv", //required for boofcv services
 		"ncsa.hdf"
 	};
 	

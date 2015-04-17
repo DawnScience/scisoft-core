@@ -29,7 +29,7 @@ public interface IPeakFinder {
 	 * @return <String name, IParameter value> map of all parameters available 
 	 * to control this IPeakFinder. 
 	 */
-	public Map<String, Double> getParameters();
+	public Map<String, Number> getParameters();
 	
 	/**
 	 * Get a named parameter from the map of parameters.
@@ -37,15 +37,15 @@ public interface IPeakFinder {
 	 * @param pName name of the parameter in the map
 	 * @return parameter value
 	 */
-	public Double getParameter(String pName) throws Exception;
+	public Number getParameter(String pName) throws Exception;
 	
 	/**
 	 * Change the current state of a named parameter to the given state.
 	 * 
 	 * @param pName name of the parameter to update
-	 * @param param parameter value
+	 * @param pValue parameter value
 	 */
-	public void setParameter(String pName, Double param) throws Exception;
+	public void setParameter(String pName, Number pValue) throws Exception;
 	
 	/**
 	 * An implementation of an algorithm capable of identifying a number peaks

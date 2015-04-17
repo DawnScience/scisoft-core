@@ -50,12 +50,6 @@ public abstract class AbstractPeakFinder implements IPeakFinder {
 		throw new Exception("Cannot find peak finding parameter "+pName);
 	}
 
-	@Override
-	public Set<Double> findPeaks(IDataset xData, IDataset yData, int nPeaks) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	/**
 	 * Set the class variable name to the name of the peak finder.
 	 */

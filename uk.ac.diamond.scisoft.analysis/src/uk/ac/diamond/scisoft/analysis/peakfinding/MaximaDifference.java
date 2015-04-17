@@ -9,9 +9,19 @@
 
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
+import java.util.Set;
+
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+
+
 public class MaximaDifference extends AbstractPeakFinder {
 	
 	private final static String NAME = "Maxima Difference";
+	
+	public MaximaDifference() {
+		peakFindParams.put("windowSize", 3.);
+		peakFindParams.put("minSignificance", 1.);
+	}
 	
 	@Override
 	protected void setName() {
@@ -19,6 +29,10 @@ public class MaximaDifference extends AbstractPeakFinder {
 		
 	}
 	
-	
+	@Override
+	public Set<Double> findPeaks(IDataset xData, IDataset yData, int nPeaks) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

@@ -36,9 +36,9 @@ public abstract class AbstractPeakFinder implements IPeakFinder {
 	/**
 	 * Initialise a parameter with a name, value and whether it's an integer or
 	 * not, by populating the two maps each with one entry.
-	 * @param pName
-	 * @param pValue
-	 * @param isInt
+	 * @param pName name of parameter
+	 * @param pValue value to assign to parameter
+	 * @param isInt should the value be an integer or not (double if not)
 	 */
 	protected void initialiseParameter(String pName, Number pValue, boolean isInt) throws Exception {
 		//Record whether we're expecting integers of not

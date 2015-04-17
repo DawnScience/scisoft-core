@@ -19,14 +19,17 @@ public class MaximaDifference extends AbstractPeakFinder {
 	private final static String NAME = "Maxima Difference";
 	
 	public MaximaDifference() {
-		peakFindParams.put("windowSize", 3.);
-		peakFindParams.put("minSignificance", 1.);
+		try {
+			initialiseParameter("windowSize", 3, true);
+			initialiseParameter("minSignificance", 1, true);
+		} catch (Exception e) {
+			logger.error("Failed to initialise parameters for "+this.getName()+"peak finder!");
+		}
 	}
 	
 	@Override
 	protected void setName() {
 		this.name = NAME;
-		
 	}
 	
 	@Override
@@ -34,5 +37,4 @@ public class MaximaDifference extends AbstractPeakFinder {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

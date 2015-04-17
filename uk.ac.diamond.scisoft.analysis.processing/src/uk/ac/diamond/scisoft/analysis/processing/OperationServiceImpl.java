@@ -149,6 +149,8 @@ public class OperationServiceImpl implements IOperationService {
 					e.printStackTrace();
 				}
 			}
+			
+			for (IOperation op : context.getSeries()) op.dispose();
 		}
 
 	}

@@ -15,12 +15,10 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
-
 public abstract class AbstractPeakFinder implements IPeakFinder {
 	
 	/* Add logging facility */
-	protected static transient final Logger logger = LoggerFactory.getLogger(AFunction.class);
+	protected static transient final Logger logger = LoggerFactory.getLogger(AbstractPeakFinder.class);
 	
 	protected String name;
 	private Map<String, Boolean> paramIsInteger = new TreeMap<String, Boolean>();

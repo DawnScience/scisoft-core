@@ -10,18 +10,50 @@
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
 
 public abstract class AbstractPeakFinder implements IPeakFinder {
 	
+	/* Add logging facility */
+	protected static transient final Logger logger = LoggerFactory.getLogger(AFunction.class);
+	
 	protected String name;
-	protected Map<String, Double> peakFindParams = new TreeMap<String, Double>();
+	private Map<String, Boolean> paramIsInteger = new TreeMap<String, Boolean>();
+	protected Map<String, Number> peakFindParams = new TreeMap<String, Number>();
 	
 	public AbstractPeakFinder() {
 		setName();
+	}
+	
+	/**
+	 * Set the class variable name to the name of the peak finder.
+	 */
+	protected abstract void setName();
+	
+	/**
+	 * Initialise a parameter with a name, value and whether it's an integer or
+	 * not, by populating the two maps each with one entry.
+	 * @param pName
+	 * @param pValue
+	 * @param isInt
+	 */
+	protected void initialiseParameter(String pName, Number pValue, boolean isInt) throws Exception {
+		//Record whether we're expecting integers of not
+		paramIsInteger.put(pName, isInt);
+		
+		//Check the given value is consistent with the expected type
+		if((isInt) && (pValue == (Integer)pValue)) {
+			peakFindParams.put(pName, pValue);
+		} else if (!isInt) {
+			peakFindParams.put(pName, pValue);
+		} else {
+			throw new Exception("Parameter should be an Integer, found Double.");
+		}
 	}
 	
 	@Override
@@ -30,12 +62,12 @@ public abstract class AbstractPeakFinder implements IPeakFinder {
 	}
 	
 	@Override
-	public Map<String, Double> getParameters() {
+	public Map<String, Number> getParameters() {
 		return peakFindParams;
 	}
 
 	@Override
-	public Double getParameter(String pName) throws Exception {
+	public Number getParameter(String pName) throws Exception {
 		if(peakFindParams.containsKey(pName)){
 			return peakFindParams.get(pName);
 		}
@@ -43,15 +75,19 @@ public abstract class AbstractPeakFinder implements IPeakFinder {
 	}
 
 	@Override
-	public void setParameter(String pName, Double pValue) throws Exception {
-		if (peakFindParams.containsKey(pName)) {
-			peakFindParams.put(pName, pValue);
+	public void setParameter(String pName, Number pValue) throws Exception {
+		//Check that the parameter is already initialised, if not, stop!
+		if(!peakFindParams.containsKey(pName)){
+			throw new Exception("Cannot find peak finding parameter "+pName);
 		}
-		throw new Exception("Cannot find peak finding parameter "+pName);
+		
+		//Check whether given value is consistent with the expected type
+		if((paramIsInteger.get(pName)) && (pValue == (Integer)pValue)) {
+			peakFindParams.put(pName, pValue);
+		} else if (!paramIsInteger.get(pName)) {
+			peakFindParams.put(pName, pValue);
+		} else {
+			throw new Exception("Parameter should be an Integer, found Double.");
+		}
 	}
-
-	/**
-	 * Set the class variable name to the name of the peak finder.
-	 */
-	protected abstract void setName();
 }

@@ -32,8 +32,8 @@ public class MaximaDifferenceTest {
 		Assert.assertEquals(true, paramMap.containsKey("windowSize"));
 		Assert.assertEquals(true, paramMap.containsKey("minSignificance"));
 		
-		Assert.assertEquals(3, maxDiff.getParameter("windowSize"));
-		Assert.assertEquals(1, maxDiff.getParameter("minSignificance"));
+		Assert.assertEquals(3, (int)maxDiff.getParameter("windowSize").doubleValue());
+		Assert.assertEquals(1, (int)maxDiff.getParameter("minSignificance").doubleValue());
 	}
 
 }

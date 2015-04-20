@@ -33,7 +33,7 @@ public class MaximaDifference extends AbstractPeakFinder {
 	}
 	
 	@Override
-	public Set<Double> findPeaks(IDataset xData, IDataset yData, int nPeaks) {
+	public Set<Double> findPeaks(IDataset xData, IDataset yData, Integer nPeaks) {
 		// TODO Auto-generated method stub
 		return null;
 	}

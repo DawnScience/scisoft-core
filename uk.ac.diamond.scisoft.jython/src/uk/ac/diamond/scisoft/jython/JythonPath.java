@@ -81,10 +81,11 @@ public class JythonPath {
 		"com.thoughtworks.xstream",
 		"uk.ac.diamond.org.jscience4",
 		"org.eclipse.equinox.common", // Required for IRemotePlottingSystem
-		"org.boofcv.feature_0.18.0",
-		"org.boofcv.geo_0.18.0",
-		"org.boofcv.ip_0.18.0",
-		"org.boofcv.sfm_0.18.0"
+		"org.boofcv.feature",
+		"org.boofcv.geo",
+		"org.boofcv.ip",
+		"org.boofcv.sfm",
+		"org.ddogleg"
 	};
 	/*
 	 * Plugins we want/don't want

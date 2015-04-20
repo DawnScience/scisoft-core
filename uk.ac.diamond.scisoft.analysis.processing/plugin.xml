@@ -428,6 +428,7 @@
             description="Rotates an image by a certain angle around the image centre"
             icon="icons/shape_rotate_clockwise.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.RotateImageOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.image.RotateImageModel"
             name="Image Rotation"
             visible="true">
       </operation>
@@ -472,6 +473,15 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.AverageFastestOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
             name="Average Fastest Dimension Only">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.image.ThresholdImageOperation"
+            description="Applies a threshold across the whole image"
+            icon="icons/threshold.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.ThresholdImageOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.image.ThresholdImageModel"
+            name="Image Threshold"
+            visible="true">
       </operation>
    </extension>
    <extension

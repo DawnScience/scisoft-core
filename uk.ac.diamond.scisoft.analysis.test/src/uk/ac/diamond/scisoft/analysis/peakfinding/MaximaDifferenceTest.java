@@ -9,10 +9,12 @@
 
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
 
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.junit.Test;
 
 public class MaximaDifferenceTest {
@@ -34,6 +36,20 @@ public class MaximaDifferenceTest {
 		
 		Assert.assertEquals(3, maxDiff.getParameter("windowSize"));
 		Assert.assertEquals(1, maxDiff.getParameter("minSignificance"));
+	}
+	
+	@Test
+	public void singlePeakFinding() {
+		Dataset xData = PeakyData.getxAxisRange();
+		Dataset yData = PeakyData.makeGauPeak().calculateValues(xData);
+		
+		Double expectedPos = 0.3785 * PeakyData.getxAxisMax();
+		
+		List<Double> foundPeaks = maxDiff.findPeaks(xData, yData, null);
+		
+		Assert.assertEquals(1, foundPeaks.size());
+		Assert.assertEquals(0.3785, foundPeaks.get(0), 0.001);
+		
 	}
 
 }

@@ -61,6 +61,6 @@ public interface IPeakFinder {
 	 * @param nPeaks maximum number of peaks to find
 	 * @return A set containing all or a number of peaks found by this IPeakFinder
 	 */
-	public List<Double> findPeaks(IDataset xData, IDataset yData, Integer nPeaks);
+	public List<Integer> findPeaks(IDataset xData, IDataset yData, Integer nPeaks);
 
 }

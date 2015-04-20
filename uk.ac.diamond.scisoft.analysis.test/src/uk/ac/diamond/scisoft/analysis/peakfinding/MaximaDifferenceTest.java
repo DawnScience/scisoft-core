@@ -45,7 +45,7 @@ public class MaximaDifferenceTest {
 		
 		Double expectedPos = 0.3785 * PeakyData.getxAxisMax();
 		
-		List<Double> foundPeaks = maxDiff.findPeaks(xData, yData, null);
+		List<Integer> foundPeaks = maxDiff.findPeaks(xData, yData, null);
 		
 		Assert.assertEquals(1, foundPeaks.size());
 		Assert.assertEquals(0.3785, foundPeaks.get(0), 0.001);

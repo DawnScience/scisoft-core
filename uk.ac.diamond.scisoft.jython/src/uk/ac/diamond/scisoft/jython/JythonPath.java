@@ -81,6 +81,7 @@ public class JythonPath {
 		"com.thoughtworks.xstream",
 		"uk.ac.diamond.org.jscience4",
 		"org.eclipse.equinox.common", // Required for IRemotePlottingSystem
+		"org.dawnsci.boofcv", //required for running boofcv image processing in jython
 		"org.boofcv.feature",
 		"org.boofcv.geo",
 		"org.boofcv.ip",

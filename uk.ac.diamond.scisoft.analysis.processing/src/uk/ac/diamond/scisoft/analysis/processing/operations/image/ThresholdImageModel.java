@@ -16,7 +16,7 @@ public class ThresholdImageModel extends AbstractOperationModel {
 
 	@OperationModelField(label = "Type", hint = "Type of thresholding algorithm")
 	private ImageThresholdType type = ImageThresholdType.GLOBAL_CUSTOM;
-	@OperationModelField(label = "Threshold", hint = "Value used for GLOBAL_CUSTOM thresholding")
+	@OperationModelField(label = "Threshold", hint = "Value used for GLOBAL_CUSTOM thresholding", enableif="type==\"GLOBAL_CUSTOM\"")
 	private float threshold = 0;
 	@OperationModelField(label = "Radius", hint = "Used for adaptive thresholding algorithms that are computed "
 			+ "using a local square region centered on each pixel.")

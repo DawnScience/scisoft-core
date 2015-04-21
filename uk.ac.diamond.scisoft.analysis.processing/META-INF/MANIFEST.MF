@@ -16,7 +16,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: com.fasterxml.jackson.annotation;version="2.2.0",
  org.dawb.common.services,
- org.dawb.common.services.expressions,
  org.eclipse.dawnsci.hdf5,
  org.junit;version="4.10.0",
  org.osgi.framework;version="1.7.0",

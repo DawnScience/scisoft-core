@@ -1,10 +1,9 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.expressions;
 
-import org.dawb.common.services.ServiceManager;
-import org.dawb.common.services.expressions.IExpressionEngine;
-import org.dawb.common.services.expressions.IExpressionService;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.expressions.IExpressionEngine;
+import org.eclipse.dawnsci.analysis.api.expressions.IExpressionService;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -25,7 +24,7 @@ public class Expression2DOperation<T extends Expression2DModel> extends Expressi
 		
 		if (engine == null) {
 			try {
-				IExpressionService service = (IExpressionService)ServiceManager.getService(IExpressionService.class);
+				IExpressionService service = ExpressionServiceHolder.getExpressionService();
 				engine = service.getExpressionEngine();
 			} catch (Exception e) {
 				throw new OperationException(this, e.getMessage());

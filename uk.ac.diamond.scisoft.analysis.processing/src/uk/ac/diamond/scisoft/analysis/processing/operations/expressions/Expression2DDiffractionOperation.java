@@ -1,7 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.expressions;
 
-import org.dawb.common.services.expressions.IExpressionEngine;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.expressions.IExpressionEngine;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 

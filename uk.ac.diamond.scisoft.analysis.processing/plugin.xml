@@ -475,12 +475,23 @@
             name="Average Fastest Dimension Only">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.ThresholdImageOperation"
             description="Applies a threshold across the whole image"
             icon="icons/threshold.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.ThresholdImageOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.image.ThresholdImageModel"
             name="Image Threshold"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.image.BlobExtractionOperation"
+            description="Extracts blobs on binary image"
+            icon="icons/blobextract.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.BlobExtractionOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.image.BlobExtractionModel"
+            name="Blob Extraction"
             visible="true">
       </operation>
    </extension>

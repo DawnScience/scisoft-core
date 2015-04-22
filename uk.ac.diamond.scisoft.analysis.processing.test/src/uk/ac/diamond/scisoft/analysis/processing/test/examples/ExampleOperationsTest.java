@@ -109,6 +109,11 @@ public class ExampleOperationsTest {
 			public ProcessingOutputType getProcessingOutputType() {
 				return ProcessingOutputType.PROCESSING_ONLY;
 			}
+
+			@Override
+			public ExecutionType getExecutionType() {
+				return ExecutionType.SERIES;
+			}
 		});
 
 		service.process(context);
@@ -190,6 +195,11 @@ public class ExampleOperationsTest {
 			public ProcessingOutputType getProcessingOutputType() {
 				return ProcessingOutputType.PROCESSING_ONLY;
 			}
+			
+			@Override
+			public ExecutionType getExecutionType() {
+				return ExecutionType.SERIES;
+			}
 		});
 
 		service.process(context);
@@ -258,6 +268,11 @@ public class ExampleOperationsTest {
 			@Override
 			public ProcessingOutputType getProcessingOutputType() {
 				return ProcessingOutputType.PROCESSING_ONLY;
+			}
+			
+			@Override
+			public ExecutionType getExecutionType() {
+				return ExecutionType.SERIES;
 			}
 		});
 

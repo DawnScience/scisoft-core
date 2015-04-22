@@ -41,7 +41,7 @@ public class Gaussian extends APeak implements IPeak {
 		super(PARAMS.length);
 		// make sure that there are 3 parameters, otherwise, throw a sensible error
 		if (params.length != PARAMS.length) 
-			throw new IllegalArgumentException("A gaussian peak requires 3 parameters, and it has only been given "+params.length);
+			throw new IllegalArgumentException("A gaussian peak requires 3 parameters, and it has been given "+params.length);
 		fillParameters(params);
 		getParameter(FWHM).setLowerLimit(0.0);
 
@@ -51,7 +51,7 @@ public class Gaussian extends APeak implements IPeak {
 	public Gaussian(IParameter... params) {
 		super(PARAMS.length);
 		if (params.length != PARAMS.length) 
-			throw new IllegalArgumentException("A gaussian peak requires 3 parameters, and it has only been given "+params.length);
+			throw new IllegalArgumentException("A gaussian peak requires 3 parameters, and it has been given "+params.length);
 		fillParameters(params);
 		getParameter(FWHM).setLowerLimit(0.0);
 

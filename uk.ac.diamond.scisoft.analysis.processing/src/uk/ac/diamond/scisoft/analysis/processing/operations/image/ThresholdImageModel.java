@@ -49,6 +49,6 @@ public class ThresholdImageModel extends AbstractOperationModel {
 		return down;
 	}
 	public void setDown(boolean down) {
-		this.down = down;
+		firePropertyChange("down", this.down, this.down = down);
 	}
 }

@@ -485,7 +485,7 @@
             visible="true">
       </operation>
       <operation
-            category="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"
+            category="uk.ac.diamond.scisoft.analysis.processing.binaryImageCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.BlobExtractionOperation"
             description="Extracts blobs on binary image"
             icon="icons/blobextract.png"
@@ -494,6 +494,10 @@
             name="Blob Extraction"
             visible="true">
       </operation>
+      <category
+            id="uk.ac.diamond.scisoft.analysis.processing.binaryImageCategory"
+            name="Binary Image">
+      </category>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

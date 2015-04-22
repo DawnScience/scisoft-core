@@ -86,3 +86,10 @@ def threshold_adaptive_gaussian(image, radius, down=True):
 def threshold_adaptive_sauvola(image, radius, down=True):
     '''Applies Sauvola thresholding to the input image. Intended for use with text image'''
     return _image.adaptiveSauvolaThreshold(image, radius, down)
+
+@_wrap
+def extract_blob(image, rule = 8):
+    '''Given a binary image, connect together pixels to form blobs/clusters using the specified connectivity rule 
+    (can be 4 or 8, set to 8 by default). The found blobs will be labeled in an output image and also described 
+    as a set of contours.'''
+    return _image.extractBlob(image, rule)

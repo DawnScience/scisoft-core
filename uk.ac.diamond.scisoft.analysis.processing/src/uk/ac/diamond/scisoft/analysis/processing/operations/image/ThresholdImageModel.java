@@ -19,7 +19,7 @@ public class ThresholdImageModel extends AbstractOperationModel {
 	@OperationModelField(label = "Threshold", hint = "Value used for GLOBAL_CUSTOM thresholding", enableif="type==\"GLOBAL_CUSTOM\"")
 	private float threshold = 0;
 	@OperationModelField(label = "Radius", hint = "Used for adaptive thresholding algorithms that are computed "
-			+ "using a local square region centered on each pixel.")
+			+ "using a local square region centered on each pixel.", enableif="type==\"ADAPTIVE_GAUSSIAN\" or type==\"ADAPTIVE_SAUVOLA\" or type==\"ADAPTIVE_SQUARE\"")
 	private int radius = 0;
 	@OperationModelField(label = "Down", hint = "If 'down' is true, then pixels with "
 			+ "values <= to 'threshold' are set to 1 and the others set to 0. "

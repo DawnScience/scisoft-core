@@ -16,6 +16,7 @@ public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, Operatio
 
 	private boolean withAxes = true;
 	private boolean withErrors = true;
+	private int sleep = 0;
 	
 	@Override
 	public String getId() {
@@ -44,14 +45,31 @@ public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, Operatio
 	public void setWithErrors(boolean withErrors) {
 		this.withErrors = withErrors;
 	}
+	
+	public int getSleep() {
+		return sleep;
+	}
+
+	public void setSleep(int sleep) {
+		this.sleep = sleep;
+	}
 
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
+		
+		if (sleep != 0) {
+			try {
+				Thread.sleep(sleep);
+			} catch (InterruptedException e) {
+				throw new OperationException(this, "Interruped Exception: " + e.getMessage());
+			}
+		}
 		
 		return getTestData();
 		
 	}
-	
+
 	public OperationData getTestData() {
+		
 		int x = model.getxDim();
 
 		IDataset out = DatasetFactory.createRange(x,Dataset.INT16);

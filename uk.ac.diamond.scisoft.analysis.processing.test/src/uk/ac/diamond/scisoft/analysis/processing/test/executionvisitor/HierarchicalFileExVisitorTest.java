@@ -779,7 +779,7 @@ public class HierarchicalFileExVisitorTest {
 		compareDatasets(out, data);
 	}
 	
-	public ILazyDataset getLazyDataset(int[] dsShape, int withAxes) {
+	public static ILazyDataset getLazyDataset(int[] dsShape, int withAxes) {
 		
 		ILazyDataset lz = Random.lazyRand("test", dsShape);
 		

@@ -498,6 +498,15 @@
             id="uk.ac.diamond.scisoft.analysis.processing.binaryImageCategory"
             name="Binary Image">
       </category>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.StitchingImagesOperation"
+            description="Given a 3d dataset/stack of images, stitches the stack with feature association and/or image translations"
+            icon="icons/stitch.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.StitchingImagesOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.StitchingImagesModel"
+            name="Image Stitching"
+            visible="true">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

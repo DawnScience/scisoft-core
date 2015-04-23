@@ -25,7 +25,7 @@ public class MaximaDifference extends AbstractPeakFinder {
 	public MaximaDifference() {
 		try {
 			initialiseParameter("windowSize", 5, true);
-			initialiseParameter("nrStdDevs", 3, true);
+			initialiseParameter("nrStdDevs", 2, true);
 		} catch (Exception e) {
 			logger.error("Failed to initialise parameters for "+this.getName()+"peak finder!");
 		}

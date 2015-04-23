@@ -1,5 +1,5 @@
 /*-
- * Copyright 2015 Diamond Light Source Ltd.
+ * Copyright 2011-2015 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,12 +10,14 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.utils;
 
 import org.eclipse.dawnsci.analysis.api.image.IImageFilterService;
+import org.eclipse.dawnsci.analysis.api.image.IImageStitchingProcess;
 import org.eclipse.dawnsci.analysis.api.image.IImageTransform;
 
 public class OperationServiceLoader {
 
 	private static IImageFilterService imageFilterService;
 	private static IImageTransform imageTransformService;
+	private static IImageStitchingProcess imageStitchingService;
 
 	/**
 	 * Injected by OSGI
@@ -34,6 +36,14 @@ public class OperationServiceLoader {
 	}
 
 	/**
+	 * Injected by OSGI
+	 * @param isp
+	 */
+	public static void setImageStitchingService(IImageStitchingProcess isp) {
+		imageStitchingService = isp;
+	}
+
+	/**
 	 * Used for OSGI injection
 	 */
 	public OperationServiceLoader () {
@@ -45,5 +55,9 @@ public class OperationServiceLoader {
 
 	public static IImageTransform getImageTransformService() {
 		return imageTransformService;
+	}
+
+	public static IImageStitchingProcess getImageStitchingService() {
+		return imageStitchingService;
 	}
 }

@@ -1,0 +1,73 @@
+/*-
+ * Copyright (c) 2011-2015 Diamond Light Source Ltd.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+package uk.ac.diamond.scisoft.analysis.processing.operations;
+
+import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
+import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
+
+public class StitchingImagesModel extends AbstractOperationModel {
+
+	@OperationModelField(label = "Rows", hint = "Number of rows in the image stack")
+	private int rows = 3;
+	@OperationModelField(label = "Columns", hint = "Number of columns in the image stack")
+	private int columns = 3;
+	@OperationModelField(label = "Field of View", hint = "Field of view")
+	private double fieldOfView = 50;
+	@OperationModelField(label = "Use feature", hint = "Use feature association to perfom the stitching")
+	private boolean featureAssociated;
+	@OperationModelField(label = "X Translation", hint = "X translation of each image")
+	private double xTransl = 25;
+	@OperationModelField(label = "Y Translation", hint = "Y translation of each image")
+	private double yTransl = 25;
+	@OperationModelField(label = "Use Manual Translations", hint = "Use Manual Translations")
+	private boolean givenTranslationsUsed = true;
+
+	public int getRows() {
+		return rows;
+	}
+	public void setRows(int rows) {
+		firePropertyChange("imageStackRows", this.rows, this.rows = rows);
+	}
+	public int getColumns() {
+		return columns;
+	}
+	public void setColumns(int columns) {
+		firePropertyChange("imageStackColumns", this.columns, this.columns = columns);
+	}
+	public double getFieldOfView() {
+		return fieldOfView;
+	}
+	public void setFieldOfView(double fieldOfView) {
+		firePropertyChange("fildOfView", this.fieldOfView, this.fieldOfView = fieldOfView);
+	}
+	public boolean isFeatureAssociated() {
+		return featureAssociated;
+	}
+	public void setFeatureAssociated(boolean featureAssociated) {
+		firePropertyChange("hasFeatureAssociation", this.featureAssociated, this.featureAssociated = featureAssociated);
+	}
+	public double getxTransl() {
+		return xTransl;
+	}
+	public void setxTransl(double xTransl) {
+		firePropertyChange("xTranslation", this.xTransl, this.xTransl = xTransl);
+	}
+	public double getyTransl() {
+		return yTransl;
+	}
+	public void setyTransl(double yTransl) {
+		firePropertyChange("yTranslation", this.yTransl, this.yTransl = yTransl);
+	}
+	public boolean useGivenTranslations() {
+		return givenTranslationsUsed;
+	}
+	public void setUseGivenTranslations(boolean givenTranslationsUsed) {
+		firePropertyChange("givenTranslationsUsed", this.givenTranslationsUsed, this.givenTranslationsUsed = givenTranslationsUsed);
+	}
+}

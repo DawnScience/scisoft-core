@@ -80,7 +80,7 @@ public abstract class AbstractPeakFinder implements IPeakFinder {
 		}
 		
 		//Check whether given value is consistent with the expected type
-		if((paramIsInteger.get(pName)) && (pValue == (Integer)pValue)) {
+		if((paramIsInteger.get(pName)) && (pValue instanceof Integer)) {
 			peakFindParams.put(pName, pValue);
 		} else if (!paramIsInteger.get(pName)) {
 			peakFindParams.put(pName, pValue);

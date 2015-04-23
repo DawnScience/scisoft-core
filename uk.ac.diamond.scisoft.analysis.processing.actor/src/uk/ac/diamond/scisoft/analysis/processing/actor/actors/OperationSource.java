@@ -213,9 +213,9 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 			throw new DataMessageException("Cannot read data from '"+info.getName()+"'", this, ne);
 		}
 
-		if (context!=null && context.getMonitor()!=null) {
-			context.getMonitor().subTask(info.getName());
-		}
+//		if (context!=null && context.getMonitor()!=null) {
+//			context.getMonitor().subTask(info.getName());
+//		}
 
 		return msg;
 

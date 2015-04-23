@@ -1,5 +1,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.actor.actors;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,8 @@ import org.dawb.passerelle.actors.data.config.OperationModelParameter;
 import org.dawb.passerelle.common.actors.AbstractDataMessageTransformer;
 import org.dawb.passerelle.common.message.MessageUtils;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.Slice;
+import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.message.DataMessageComponent;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
@@ -170,7 +173,23 @@ public class OperationTransformer extends AbstractDataMessageTransformer impleme
 			    	if (!operation.isPassUnmodifiedData()) odata.setAuxData(tmp.getAuxData());
 			    	
 			    	context.getVisitor().executed(odata, context.getMonitor()); // Send result.
-					if (context.getMonitor() != null) context.getMonitor().worked(1);
+					if (context.getMonitor() != null) {
+						context.getMonitor().worked(1);
+						String update = "";
+						if (fullssm != null) {
+							try {
+							String filePath = fullssm.getFilePath();
+							File f = new File(filePath);
+							String name = f.getName();
+							String slice = Slice.createString(fullssm.getSliceFromInput());
+							update = name+ " ["+ slice + "] " + operation.getName();
+							} catch (Exception e) {
+								logger.error("Could not update progress: " + e.getMessage());
+							}
+						}
+						context.getMonitor().subTask(update);
+						
+					}
 					
 					logger.debug(data.getName()+" ran in: " +(System.currentTimeMillis()-msg.getTime())/1000. + " s : Thread" +Thread.currentThread().toString());
 			    }

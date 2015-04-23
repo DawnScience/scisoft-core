@@ -1,5 +1,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.runner;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.List;
 
@@ -88,8 +89,21 @@ public class SeriesRunner implements IOperationRunner {
 				long start = System.currentTimeMillis();
 				for (IOperation<?,?> i : context.getSeries()) {
 
-					if (context.getMonitor()!=null) {
-						context.getMonitor().subTask(path +" : " + i.getName());
+					if (context.getMonitor() != null) {
+						String update = "";
+						if (fullssm != null) {
+							try {
+								String filePath = fullssm.getFilePath();
+								File f = new File(filePath);
+								String name = f.getName();
+								String s = Slice.createString(fullssm.getSliceFromInput());
+								update = name+ " ["+ s + "] " + i.getName();
+							} catch (Exception e) {
+								logger.error("Could not update progress: " + e.getMessage());
+							}
+						}
+						context.getMonitor().subTask(update);
+						
 					}
 
 					OperationData tmp = i.execute(data.getData(), context.getMonitor());

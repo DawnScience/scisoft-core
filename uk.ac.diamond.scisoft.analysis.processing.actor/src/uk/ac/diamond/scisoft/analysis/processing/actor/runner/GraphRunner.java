@@ -32,7 +32,7 @@ public class GraphRunner  implements IOperationRunner {
 	}
 
 	public void execute() throws Exception {
-		
+		long start = System.currentTimeMillis();
         MoMLParser.purgeAllModelRecords();
 
 		GraphBuilder builder = new GraphBuilder();
@@ -56,6 +56,8 @@ public class GraphRunner  implements IOperationRunner {
 			// We put it back 
 		    ActorUtils.setCanNotify(true);
 		}
+		
+		logger.debug("Data ran in: " +(System.currentTimeMillis()-start)/1000. + " s");
 	}
 
 	/**

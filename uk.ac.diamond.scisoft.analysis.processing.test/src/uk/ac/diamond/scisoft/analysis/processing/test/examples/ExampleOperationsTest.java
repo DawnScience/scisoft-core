@@ -114,6 +114,11 @@ public class ExampleOperationsTest {
 			public ExecutionType getExecutionType() {
 				return ExecutionType.SERIES;
 			}
+
+			@Override
+			public int getPoolSize() {
+				return 1;
+			}
 		});
 
 		service.process(context);
@@ -200,6 +205,11 @@ public class ExampleOperationsTest {
 			public ExecutionType getExecutionType() {
 				return ExecutionType.SERIES;
 			}
+			
+			@Override
+			public int getPoolSize() {
+				return 1;
+			}
 		});
 
 		service.process(context);
@@ -273,6 +283,11 @@ public class ExampleOperationsTest {
 			@Override
 			public ExecutionType getExecutionType() {
 				return ExecutionType.SERIES;
+			}
+			
+			@Override
+			public int getPoolSize() {
+				return 1;
 			}
 		});
 

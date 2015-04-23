@@ -13,9 +13,21 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 
 
+/**
+ * Method 1 in: 
+ * "Simple Algorithm Peak Detection Time Series, Palshikar (Tata Research)"
+ * 
+ * Compute the average of the maxima of the signed difference of a point and
+ * it's windowSize left and right neighbours. Smaller values of windowSize are
+ * appropriate for narrower peaks.
+ */
 public class MaximaDifference extends AbstractSignificanceFilter {
 	
 	private final static String NAME = "Maxima Difference";
+	
+	public MaximaDifference() {
+		//Change the windowSize default here.
+	}
 	
 	@Override
 	protected void setName() {

@@ -17,8 +17,18 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 
+/**
+ * Contains routines for filtering out points in the significance function
+ * which might be peaks.
+ * 
+ * Originally specified in:
+ * "Simple Algorithm Peak Detection Time Series, Palshikar (Tata Research)"
+ */
 public abstract class AbstractSignificanceFilter extends AbstractPeakFinder {
 	
+	/**
+	 * Set's values of parameters needed for filtering significance function.
+	 */
 	public AbstractSignificanceFilter() {
 		try {
 			initialiseParameter("windowSize", 5, true);
@@ -28,8 +38,17 @@ public abstract class AbstractSignificanceFilter extends AbstractPeakFinder {
 		}
 	}
 	
+	/**
+	 * Calculates the significance function specified in "Simple Algorithm Peak
+	 * Detection Time Series, Palshikar (Tata Research)". The significance of 
+	 * each point of a 1D dataset is calculated.
+	 * @param position Index of current point 
+	 * @param windowSize Number of points left and right to consider
+	 * @param yData The dataset
+	 * @return The significance of the current point (i.e. it's peakiness)
+	 */
 	protected abstract double calcPosPeakSig(int position, int windowSize, IDataset yData);
-
+	
 	@Override
 	public Set<Integer> findPeaks(IDataset xData, IDataset yData, Integer nPeaks) {
 		//Put our peak finding parameters into more accessible variables
@@ -77,8 +96,4 @@ public abstract class AbstractSignificanceFilter extends AbstractPeakFinder {
 		
 		return peakPosns;
 	}
-	
-	
-
-	
 }

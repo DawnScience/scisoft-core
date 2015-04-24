@@ -17,9 +17,9 @@ import junit.framework.Assert;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.junit.Test;
 
-public class AverageDifferenceTest {
+public class SumDifferenceAverageTest {
 	
-	private IPeakFinder avgDiff = new AverageDifference();
+	private IPeakFinder avgDiff = new SumDifferenceAverage();
 	
 	@Test
 	public void nameCheck() {

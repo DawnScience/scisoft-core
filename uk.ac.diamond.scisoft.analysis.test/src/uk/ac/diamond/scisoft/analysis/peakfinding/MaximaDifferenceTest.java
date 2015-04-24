@@ -34,8 +34,8 @@ public class MaximaDifferenceTest {
 		Assert.assertEquals(true, paramMap.containsKey("windowSize"));
 		Assert.assertEquals(true, paramMap.containsKey("nrStdDevs"));
 		
-		Assert.assertEquals(5, maxDiff.getParameter("windowSize"));
-		Assert.assertEquals(2, maxDiff.getParameter("nrStdDevs"));
+		Assert.assertEquals(50, maxDiff.getParameter("windowSize"));
+		Assert.assertEquals(3, maxDiff.getParameter("nrStdDevs"));
 	}
 	
 	@Test
@@ -54,7 +54,7 @@ public class MaximaDifferenceTest {
 		for (Integer i : foundPeaks) {
 			foundPos = xData.getDouble(i);
 			//Yes, it finds the wrong position.
-			Assert.assertEquals(expectedPos, foundPos, 0.6);
+			Assert.assertEquals(expectedPos, foundPos, 0.35);
 		}
 	}
 

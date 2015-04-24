@@ -47,7 +47,7 @@ public abstract class AbstractSignificanceFilter extends AbstractPeakFinder {
 	 * @param yData The dataset
 	 * @return The significance of the current point (i.e. it's peakiness)
 	 */
-	protected abstract double calcPosPeakSig(int position, int windowSize, IDataset yData);
+	protected abstract double calculateSignificance(int position, int windowSize, IDataset yData);
 	
 	@Override
 	public Set<Integer> findPeaks(IDataset xData, IDataset yData, Integer nPeaks) {
@@ -66,7 +66,7 @@ public abstract class AbstractSignificanceFilter extends AbstractPeakFinder {
 		int nrPoints = yData.getSize();
 		Dataset significance = new DoubleDataset(yData.getShape());
 		for (int i = windowSize; i <= (nrPoints-windowSize-1); i++) {
-			double posSig = calcPosPeakSig(i, windowSize, yData);
+			double posSig = calculateSignificance(i, windowSize, yData);
 			significance.set(posSig, i);
 		}
 		

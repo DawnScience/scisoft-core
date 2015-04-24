@@ -34,7 +34,7 @@ public class AverageWindowAverageDiffs extends AbstractSignificanceFilter {
 	}
 	
 	@Override
-	public double calcPosPeakSig(int position, int windowSize, IDataset yData) {
+	public double calculateSignificance(int position, int windowSize, IDataset yData) {
 		double posVal = yData.getDouble(position);
 		
 		//Calculate the averages of the the left & right windows. 

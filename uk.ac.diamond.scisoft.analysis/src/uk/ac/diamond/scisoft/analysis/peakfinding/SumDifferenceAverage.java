@@ -22,7 +22,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
  */
 public class SumDifferenceAverage extends AbstractSignificanceFilter {
 	
-	private final static String NAME = "Average Difference";
+	private final static String NAME = "Average Sum of Differences";
 	
 	public SumDifferenceAverage() {
 		//Change the windowSize default here.

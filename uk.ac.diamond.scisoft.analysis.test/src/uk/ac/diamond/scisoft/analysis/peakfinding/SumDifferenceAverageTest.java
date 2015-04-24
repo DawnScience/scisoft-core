@@ -23,7 +23,7 @@ public class SumDifferenceAverageTest {
 	
 	@Test
 	public void nameCheck() {
-		Assert.assertEquals("Average Difference", avgDiff.getName());
+		Assert.assertEquals("Average Sum of Differences", avgDiff.getName());
 	}
 	
 	@Test

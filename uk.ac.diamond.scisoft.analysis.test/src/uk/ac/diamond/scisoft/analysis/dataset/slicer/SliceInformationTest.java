@@ -72,7 +72,7 @@ public class SliceInformationTest {
 		SliceND o = new SliceND(shape,start.clone(),stop.clone(),step.clone());
 		SliceND s = new SliceND(shape);
 		
-		return new SliceInformation(c, o, s, shape, new int[]{2}, 20, 18);
+		return new SliceInformation(c, o, s, new int[]{2}, 20, 18);
 	}
 	
 }

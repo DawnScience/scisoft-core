@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.image.IImageStitchingProcess;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -25,6 +26,7 @@ public class StitchingImagesOperation extends AbstractOperation<StitchingImagesM
 
 	private List<IDataset> imageStack = new ArrayList<IDataset>();
 	private int counter;
+	private ILazyDataset parent;
 	private IImageStitchingProcess imageStitchingService;
 	private List<double[]> translations = new ArrayList<double[]>();
 
@@ -39,13 +41,19 @@ public class StitchingImagesOperation extends AbstractOperation<StitchingImagesM
 		//get series metadata (will not be null), to check we are from the same parent
 		//and whether we have hit the final image
 		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(dataset);
+
+		if (parent != ssm.getParent()) {
+			parent = ssm.getParent();
+			counter = 0;
+		}
+		counter++;
+
 		imageStack.add(dataset);
 		double xTransl = ((StitchingImagesModel)model).getxTransl();
 		double yTransl = ((StitchingImagesModel)model).getyTransl();
 		translations.add(new double[] { xTransl, yTransl });
-		counter++;
-		int total = ssm.getTotalSlices();
-		if (counter == total) {
+
+		if (counter == ssm.getTotalSlices()) {
 			int rows = ((StitchingImagesModel)model).getRows();
 			int columns = ((StitchingImagesModel)model).getColumns();
 			double fieldOfView = ((StitchingImagesModel)model).getFieldOfView();
@@ -56,6 +64,11 @@ public class StitchingImagesOperation extends AbstractOperation<StitchingImagesM
 				imageStitchingService = OperationServiceLoader.getImageStitchingService();
 			stitched = imageStitchingService.stitch(imageStack, rows, columns, fieldOfView, translations, useFeatureAssociation, !useGivenTranslations);
 
+			SliceFromSeriesMetadata outsmm = ssm.clone();
+			for (int i = 0; i < ssm.getParent().getRank(); i++) {
+				if (!outsmm.isDataDimension(i)) outsmm.reducedDimensionToSingular(i);
+			}
+			stitched.setMetadata(outsmm);
 			return new OperationData(stitched);
 		}
 		return null;

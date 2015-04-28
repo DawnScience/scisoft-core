@@ -16,9 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.data.nexus.NexusException;
 import gda.data.nexus.NexusFileInterface;
 import gda.data.nexus.NexusUtils;
+import gda.data.nexus.napi.NexusException;
 
 import java.util.Arrays;
 import java.util.Enumeration;

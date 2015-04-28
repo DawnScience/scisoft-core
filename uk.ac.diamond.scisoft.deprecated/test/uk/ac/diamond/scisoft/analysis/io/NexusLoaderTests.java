@@ -17,8 +17,8 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 
-import gda.data.nexus.NexusException;
 import gda.data.nexus.extractor.NexusExtractorException;
+import gda.data.nexus.napi.NexusException;
 import gda.data.nexus.tree.INexusTree;
 import gda.data.nexus.tree.NexusTreeNodeSelection;
 import gda.util.TestUtils;

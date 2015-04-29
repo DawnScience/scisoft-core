@@ -259,4 +259,11 @@ public class LinearAlgebraTest {
 
 		TestUtils.assertDatasetEquals(DatasetUtils.eye(4, 4, 0, Dataset.INT32), LinearAlgebra.power(DatasetFactory.zeros(new int[] {4, 4}, Dataset.INT32), 0), true, 1, 1);
 	}
+
+	@Test
+	public void testSolve() {
+		Dataset a = new IntegerDataset(new int[] {3, 1, 1, 2}, 2, 2);
+		Dataset b = new IntegerDataset(new int[] {9, 8}, 2);
+		TestUtils.assertDatasetEquals(new DoubleDataset(new double[]{2, 3}), LinearAlgebra.solve(a, b), true, 1e-12, 1e-12);
+	}
 }

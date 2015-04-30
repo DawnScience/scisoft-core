@@ -71,6 +71,7 @@ public abstract class AbstractPixelIntegration {
 		
 		if (range == null) {
 			radialRange = null;
+			binEdges = null;
 			return;
 		}
 		
@@ -98,6 +99,7 @@ public abstract class AbstractPixelIntegration {
 		
 		if (range == null) {
 			azimuthalRange = null;
+			binEdges = null;
 			return;
 		}
 		
@@ -209,7 +211,7 @@ public abstract class AbstractPixelIntegration {
 		this.mask = mask;
 		maskRoiCached = null;
 		if (mask == null) return;
-		binEdges = null;
+//		binEdges = null;
 		if (radialArray != null && !Arrays.equals(radialArray[0].getShape(), mask.getShape())) radialArray = null;
 	}
 	

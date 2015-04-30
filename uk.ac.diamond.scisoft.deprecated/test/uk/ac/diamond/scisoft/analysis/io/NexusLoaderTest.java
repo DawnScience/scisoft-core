@@ -16,11 +16,8 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.data.nexus.NexusFileInterface;
-import gda.data.nexus.NexusGlobals;
 import gda.data.nexus.NexusUtils;
 import gda.data.nexus.extractor.NexusExtractor;
-import gda.data.nexus.napi.NexusException;
 import gda.util.TestUtils;
 
 import java.io.File;
@@ -32,7 +29,11 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
+import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.hdf5.nexus.NexusException;
+import org.eclipse.dawnsci.hdf5.nexus.NexusFile;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -83,50 +84,30 @@ public class NexusLoaderTest {
 
 	
 	private void makeTestFile(String fileName, int[] dims) throws NexusException {
-		NexusFileInterface file = NexusUtils.createNexusFile(fileName);
-		file.makegroup("dummy", "dummy");
-		file.opengroup("dummy", "dummy");
+		NexusFile file = NexusUtils.createNXFile(fileName);
+		file.openToWrite(true);
+		GroupNode g = file.getGroup("/dummy:dummy", true);
 		{
-			file.makedata("heading1", NexusGlobals.NX_FLOAT64, dims.length, dims);
-			file.opendata("heading1");
 			int totalLength = NexusExtractor.calcTotalLength(dims);
-			double[] dataIn = new double[totalLength];
-			for (int index = 0; index < totalLength; index++) {
-				dataIn[index] = index;
-			}
-			file.putdata(dataIn);
-			file.closedata();
+			Dataset data = DatasetFactory.createRange(totalLength, Dataset.FLOAT64).reshape(dims);
+			data.setName("heading1");
+			file.createData(g, data);
 		}
-		file.closegroup();
 
-		file.makegroup("ScanFileHolder", "NXentry");
-		file.opengroup("ScanFileHolder", "NXentry");
-		file.makegroup("datasets", "NXdata");
-		file.opengroup("datasets", "NXdata");
+		g = file.getGroup("/ScanFileHolder:NXEntry/datasets:NXdata", true);
 		{
-			file.makedata("heading1", NexusGlobals.NX_FLOAT64, dims.length, dims);
-			file.opendata("heading1");
 			int totalLength = NexusExtractor.calcTotalLength(dims);
-			double[] dataIn = new double[totalLength];
-			for (int index = 0; index < totalLength; index++) {
-				dataIn[index] = index;
-			}
-			file.putdata(dataIn);
-			file.closedata();
+			Dataset data = DatasetFactory.createRange(totalLength, Dataset.FLOAT64).reshape(dims);
+			data.setName("heading1");
+			file.createData(g, data);
 		}
 		{
-			file.makedata("heading2", NexusGlobals.NX_FLOAT64, dims.length, dims);
-			file.opendata("heading2");
 			int totalLength = NexusExtractor.calcTotalLength(dims);
-			double[] dataIn = new double[totalLength];
-			for (int index = 0; index < totalLength; index++) {
-				dataIn[index] = index*2;
-			}
-			file.putdata(dataIn);
-			file.closedata();
+			Dataset data = DatasetFactory.createRange(totalLength, Dataset.FLOAT64).reshape(dims);
+			data.imultiply(2);
+			data.setName("heading2");
+			file.createData(g, data);
 		}
-		file.closegroup();
-		file.closegroup();
 		file.close();
 	}
 

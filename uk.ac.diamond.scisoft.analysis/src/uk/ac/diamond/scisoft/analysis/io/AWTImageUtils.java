@@ -32,6 +32,7 @@ import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
@@ -58,13 +59,12 @@ public class AWTImageUtils {
 
 		for (int i = 0; i < bands; i++) {
 			if (dtype == Dataset.FLOAT32) {
-				tmp = DatasetFactory.createFromObject(r.getSamples(0, 0, width, height, i, (float[]) null), dtype);
+				tmp = new FloatDataset(r.getSamples(0, 0, width, height, i, (float[]) null), height, width);
 			} else if (dtype == Dataset.FLOAT64) {
-				tmp = DatasetFactory.createFromObject(r.getSamples(0, 0, width, height, i, (double[]) null), dtype);
+				tmp = new DoubleDataset(r.getSamples(0, 0, width, height, i, (double[]) null), height, width);
 			} else {
-				tmp = DatasetFactory.createFromObject(r.getSamples(0, 0, width, height, i, (int[]) null), dtype);
+				tmp = new IntegerDataset(r.getSamples(0, 0, width, height, i, (int[]) null), height, width);
 			}
-			tmp.setShape(height, width);
 			data[i] = tmp;
 		}
 	}

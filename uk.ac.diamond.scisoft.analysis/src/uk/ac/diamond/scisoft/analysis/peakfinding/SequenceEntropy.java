@@ -25,7 +25,7 @@ public class SequenceEntropy extends AbstractSignificanceFilter {
 
 	}
 	@Override
-	public double calculateSignificance(int position, int windowSize, IDataset yData) {
+	protected double calculateSignificance(int position, int windowSize, IDataset yData) {
 		
 		IDataset localSeq = yData.getSlice(new int[position - windowSize], new int[position + windowSize], new int[1]);
 		DoubleDataset localDoubleSeq = (DoubleDataset)DatasetUtils.cast(localSeq, Dataset.FLOAT64);

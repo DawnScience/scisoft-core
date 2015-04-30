@@ -176,27 +176,20 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 						Arrays.fill(newShape, 1);
 
 						int[] idx = new int[axRank];
+						Boolean[] found = new Boolean[axRank];
+						Arrays.fill(found, false);
 						int max = rank;
 
 						for (int i = axRank-1; i >= 0; i--) {
-
 							int id = axShape[i];
-							boolean found = false;
+							updateShape(i, max, shape, id, idx, found);
 
-							for (int j = max -1 ; i >= 0; i--) {
-
-								if (id == shape[j]) {
-									found = true;
-									idx[i] = j;
-									max = j;
-									break;
-								}
-
-							}
-
-							if (!found) {
-								throw new IllegalArgumentException("Axes shape not compatible!");
-							}
+						}
+						
+						boolean allFound = !Arrays.asList(found).contains(false);
+						
+						if (!allFound) {
+							throw new IllegalArgumentException("Axes shape not compatible!");
 						}
 
 						for (int i = 0; i < axRank; i++) {
@@ -214,6 +207,22 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 			}
 
 			return axMeta;
+	}
+	
+	private boolean updateShape(int i, int max, int[] shape, int id, int[] idx, Boolean[] found){
+		
+		for (int j = max -1 ; j >= 0; j--) {
+
+			if (id == shape[j]) {
+				idx[i] = j;
+				found[i] = true;
+				max = j;
+				return true;
+			}
+
+		}
+		
+		return false;
 	}
 
 }

@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
@@ -37,6 +38,17 @@ BL04J-AL-SLITS-02:TOP.VAL,Points,BL04J-EA-STK-03:IAMP4:I
  */
 public class CSVLoader extends DatLoader {
 
+	public CSVLoader() {
+		super();
+	}
+	
+	/**
+	 * @param fileName
+	 */
+	public CSVLoader(final String fileName) {
+		super(fileName);
+	}
+
 	/**
 	 * May override to support different file formats.
 	 * @return the delimiter
@@ -54,7 +66,7 @@ public class CSVLoader extends DatLoader {
 			return null;
 
 		if (line.trim().startsWith("&")) throw new Exception("Cannot load SRS files with EpicsCSVLoader!");
-		metadataMap.clear();
+		if (metadataMap != null) metadataMap.clear();
 		vals.clear();
 
 		List<String> header = new ArrayList<String>(31);

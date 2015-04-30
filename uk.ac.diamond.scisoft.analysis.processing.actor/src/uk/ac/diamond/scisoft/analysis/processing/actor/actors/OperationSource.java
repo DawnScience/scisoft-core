@@ -4,10 +4,8 @@ import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
 import org.dawb.passerelle.actors.data.config.ISliceInformationProvider;
 import org.dawb.passerelle.actors.data.config.JSONSliceParameter;
@@ -29,7 +27,7 @@ import org.eclipse.dawnsci.analysis.api.message.DataMessageComponent;
 import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
-import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.Slicer;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
 import org.slf4j.Logger;
@@ -70,7 +68,9 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 	
 	private static final Logger logger = LoggerFactory.getLogger(OperationSource.class);
 
-	private Queue<SliceInfo>  queue;
+	private SliceViewIterator generator;
+	private ManagedMessage message;
+//	private Queue<SliceInfo>  queue;
 	private IOperationContext    context; // Might be null if pipeline rerun from UI
 	
 	// a counter for indexing each generated message in the complete sequence that this source generates
@@ -130,7 +130,7 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 	
 	@Override
 	public void doPreInitialize() {
-		queue = null;
+		generator = null;
 	}
 
 	@Override
@@ -147,58 +147,43 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 	}
 
 	private void createQueue(ManagedMessage msg) throws Exception {
+		message = msg;
 		
-		Queue<ILazyDataset> slices=null;
-		SourceInformation si = null;
 		if (context!=null) {
-			try {
-				si = context.getData().getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo();
-			} catch (Exception e) {
-				logger.warn("Pipeline metadata missing!");
-			}
-			context.getData().clearMetadata(SliceFromSeriesMetadata.class);
-			slices = Slicer.getSlices(context.getData(), context.getSlicing());
+			generator = Slicer.getSliceViewGenerator(context.getData(), context.getSlicing());
 			
 		} else {
 			final IDataHolder  dh = LoaderFactory.getData(getSourcePath(msg));
 			final ILazyDataset lz = dh.getLazyDataset(getDatasetPath(msg));
-			slices = Slicer.getSlices(lz, slicing.getValue(HashMap.class));
-			si = new SourceInformation(getSourcePath(msg), getDatasetPath(msg), lz);
-		}
-		
-		queue = new LinkedList<SliceInfo>();
-		for (ILazyDataset slice : slices) {
-			try {
-				SliceInformation s = slice.getMetadata(SliceFromSeriesMetadata.class).get(0).getSliceInfo();
-				slice.setMetadata(new SliceFromSeriesMetadata(si, s));
-			} catch (Exception e) {
-				logger.warn("Pipeline metadata missing!");
-			}
+			generator = Slicer.getSliceViewGenerator(lz, slicing.getValue(HashMap.class));
 			
-			queue.add(new SliceInfo(slice, msg));
 		}
 	}
 
 	public boolean hasNoMoreMessages() {
-		if (queue == null)   return true;
-		return queue.isEmpty() && super.hasNoMoreMessages();
+		if (generator == null)   return true;
+		return super.hasNoMoreMessages();
 	}
 	
 	protected ManagedMessage getDataMessage() throws ProcessingException {
 
-		if (queue == null)   return null;
-		if (queue.isEmpty()) return null;
+		if (generator == null)   return null;
+		if (!generator.hasNext()) {
+			generator = null;
+			return null;
+		}
 		
 		if (isFinishRequested()) {
-			queue.clear();
+			generator = null;
 			return null;
 		}
 
 		// Required to stop too many slugs going into a threading actor.
 		ActorUtils.waitWhileLocked();
 		
-		final SliceInfo info = queue.poll();
-		if (info==null) return null;
+		ILazyDataset lazy = generator.getCurrentView();
+		if (lazy == null) return null;
+		final SliceInfo info = new SliceInfo(lazy, message);
 		
         ManagedMessage msg = MessageFactory.getInstance().createMessageInSequence(msgSequenceID, msgCounter++, hasNoMoreMessages(), getStandardMessageHeaders());
     
@@ -207,15 +192,11 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 			msg.setBodyContent(getData(info), DatasetConstants.CONTENT_TYPE_DATA);
 		} catch (MessageException e) {
 			msg = MessageFactory.getInstance().createErrorMessage(new PasserelleException(ErrorCode.MSG_CONSTRUCTION_ERROR, "Cannot set map of data in message body!", this, e));
-			queue.clear();
+			generator = null;
 		} catch (Exception ne) {
-			queue.clear();
+			generator = null;
 			throw new DataMessageException("Cannot read data from '"+info.getName()+"'", this, ne);
 		}
-
-//		if (context!=null && context.getMonitor()!=null) {
-//			context.getMonitor().subTask(info.getName());
-//		}
 
 		return msg;
 
@@ -385,16 +366,7 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 			return slice.getName();
 		}
 		public IDataset getSlice() {
-			
-			SliceFromSeriesMetadata meta = null;
-			try {
-				meta = slice.getMetadata(SliceFromSeriesMetadata.class).get(0);
-			} catch (Exception e) {
-				logger.warn("Pipeline data does not contain correct metadata");
-			}
-			
 			IDataset s = slice.getSlice();
-			s.setMetadata(meta);
 			return s;
 		}
 		public void setSlice(ILazyDataset slice) {

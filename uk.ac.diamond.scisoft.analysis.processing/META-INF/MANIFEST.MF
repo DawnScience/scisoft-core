@@ -41,4 +41,5 @@ Export-Package: uk.ac.diamond.scisoft.analysis.processing,
  uk.ac.diamond.scisoft.analysis.processing.operations.powder,
  uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile,
  uk.ac.diamond.scisoft.analysis.processing.operations.twod,
+ uk.ac.diamond.scisoft.analysis.processing.operations.utils,
  uk.ac.diamond.scisoft.analysis.processing.runner

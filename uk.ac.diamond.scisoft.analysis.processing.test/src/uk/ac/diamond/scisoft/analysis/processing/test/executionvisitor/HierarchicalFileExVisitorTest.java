@@ -36,14 +36,14 @@ import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 
-//@RunWith(Parameterized.class)
+@RunWith(Parameterized.class)
 public class HierarchicalFileExVisitorTest {
 	
-	ExecutionType type = ExecutionType.SERIES;
+	private ExecutionType type;
 	
-//	public HierarchicalFileExVisitorTest(ExecutionType type) {
-//		this.type = type;
-//	}
+	public HierarchicalFileExVisitorTest(ExecutionType type) {
+		this.type = type;
+	}
 	
 	private static IOperationService service;
 
@@ -59,13 +59,13 @@ public class HierarchicalFileExVisitorTest {
 		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.test.executionvisitor");
 	}
 	
-//	@Parameterized.Parameters
-//	   public static Collection<?> params() {
-//	      return Arrays.asList(new Object[] {new Object[]
-//	         {ExecutionType.SERIES},new Object[]{ ExecutionType.GRAPH}
-//	         
-//	      });
-//	   }
+	@Parameterized.Parameters
+	   public static Collection<?> params() {
+	      return Arrays.asList(new Object[] {new Object[]
+	         {ExecutionType.SERIES},new Object[]{ ExecutionType.GRAPH}
+	         
+	      });
+	   }
 	
 	@Test
 	public void Process3DStackAs2DTo1D() throws Exception {

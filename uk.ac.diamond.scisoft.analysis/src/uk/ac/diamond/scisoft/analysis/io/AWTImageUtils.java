@@ -62,8 +62,11 @@ public class AWTImageUtils {
 				tmp = new FloatDataset(r.getSamples(0, 0, width, height, i, (float[]) null), height, width);
 			} else if (dtype == Dataset.FLOAT64) {
 				tmp = new DoubleDataset(r.getSamples(0, 0, width, height, i, (double[]) null), height, width);
-			} else {
+			} else if (dtype == Dataset.INT32) {
 				tmp = new IntegerDataset(r.getSamples(0, 0, width, height, i, (int[]) null), height, width);
+			} else {
+				tmp = DatasetFactory.createFromObject(r.getSamples(0, 0, width, height, i, (int[]) null), dtype);
+				tmp.setShape(height, width);
 			}
 			data[i] = tmp;
 		}

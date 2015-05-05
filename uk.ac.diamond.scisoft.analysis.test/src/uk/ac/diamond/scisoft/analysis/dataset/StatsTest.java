@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -241,5 +242,15 @@ public class StatsTest {
 		Dataset covd = Stats.covariance(d);
 		Dataset dexpect = new DoubleDataset(new double[]{-2., -24., -3., -48., 2., 24., 3., 48., -48., -576., -72., -1152., 48., 576., 72., 1152.}, 2, 2, 2, 2);
 		assertEquals(dexpect, covd);
+	}
+	
+	@Test
+	public void testCovarianceArgs() {
+		//Tests adding a second dataset to the first.
+		Dataset a = new DoubleDataset(new double[]{-3.5, 6., 8., 14., -2.2, 1.6, 4.0, 7});
+		Dataset b = new DoubleDataset(new double[]{8.5, 9., 13., -2.3, 1.6, 7.2, 3., -2.9});
+		DoubleDataset covab = (DoubleDataset)Stats.covariance(a, b);
+		DoubleDataset abexpect = new DoubleDataset(new double[]{32.628392857142856, -9.44267857142857, -9.44267857142857, 32.47125}, 2, 2);
+		assertArrayEquals(abexpect.getData(), covab.getData(), 1E-6);
 	}
 }

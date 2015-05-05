@@ -224,24 +224,24 @@ public class StatsTest {
 	
 	@Test
 	public void testCovarianceRanks() {
-		Dataset a = new DoubleDataset(new double[]{-3.5, 6., 8., 14., -2.2, 1.6, 4.0, 7});
-		Dataset cova = Stats.covariance(a);
-		assertEquals(32.62839, cova.getDouble(), 1e-4);
+		DoubleDataset a = new DoubleDataset(new double[]{-3.5, 6., 8., 14., -2.2, 1.6, 4.0, 7});
+		DoubleDataset cova = (DoubleDataset)Stats.covariance(a);
+		assertEquals(32.6283928, cova.getDouble(), 1e-7); 
 		
 		Dataset b = new DoubleDataset(new double[]{0., 1., 2., 2., 1., 0.}, 2, 3);
-		Dataset covb = Stats.covariance(b);
-		Dataset bexpect = new DoubleDataset(new double[]{1., -1., -1., 1.}, 2, 2);
-		assertEquals(bexpect, covb);
+		DoubleDataset covb = (DoubleDataset)Stats.covariance(b);
+		DoubleDataset bexpect = new DoubleDataset(new double[]{1., -1., -1., 1.}, 2, 2);
+		assertArrayEquals(bexpect.getData(), covb.getData(), 1E-7);
 		
 		Dataset c = b.transpose();
-		Dataset covc = Stats.covariance(c);
-		Dataset cexpect = new DoubleDataset(new double[]{2., 0., -2., 0., 0., 0., -2., 0., 2.}, 3, 3);
-		assertEquals(cexpect, covc);
+		DoubleDataset covc = (DoubleDataset)Stats.covariance(c);
+		DoubleDataset cexpect = new DoubleDataset(new double[]{2., 0., -2., 0., 0., 0., -2., 0., 2.}, 3, 3);
+		assertArrayEquals(cexpect.getData(), covc.getData(), 1E-7);
 		
 		Dataset d = new DoubleDataset(new double[]{0., 2., 4., 8., 16., 32., 64., 128.}, 2, 2, 2);
-		Dataset covd = Stats.covariance(d);
-		Dataset dexpect = new DoubleDataset(new double[]{-2., -24., -3., -48., 2., 24., 3., 48., -48., -576., -72., -1152., 48., 576., 72., 1152.}, 2, 2, 2, 2);
-		assertEquals(dexpect, covd);
+		DoubleDataset covd = (DoubleDataset)Stats.covariance(d);
+		DoubleDataset dexpect = new DoubleDataset(new double[]{-2., -24., -3., -48., 2., 24., 3., 48., -48., -576., -72., -1152., 48., 576., 72., 1152.}, 2, 2, 2, 2);
+		assertArrayEquals(dexpect.getData(), covd.getData(), 1E-7);
 	}
 	
 	@Test
@@ -250,7 +250,7 @@ public class StatsTest {
 		Dataset a = new DoubleDataset(new double[]{-3.5, 6., 8., 14., -2.2, 1.6, 4.0, 7});
 		Dataset b = new DoubleDataset(new double[]{8.5, 9., 13., -2.3, 1.6, 7.2, 3., -2.9});
 		DoubleDataset covab = (DoubleDataset)Stats.covariance(a, b);
-		DoubleDataset abexpect = new DoubleDataset(new double[]{32.628392857142856, -9.44267857142857, -9.44267857142857, 32.47125}, 2, 2);
-		assertArrayEquals(abexpect.getData(), covab.getData(), 1E-6);
+		DoubleDataset abexpect = new DoubleDataset(new double[]{32.6283928, -9.4426785, -9.4426785, 32.47125}, 2, 2);
+		assertArrayEquals(abexpect.getData(), covab.getData(), 1E-7);
 	}
 }

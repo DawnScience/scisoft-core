@@ -237,10 +237,9 @@ public class StatsTest {
 		Dataset cexpect = new DoubleDataset(new double[]{2., 0., -2., 0., 0., 0., -2., 0., 2.}, 3, 3);
 		assertEquals(cexpect, covc);
 		
-		//FIXME Extension into 3D/nD doesn't work yet...!
-//		Dataset d = new DoubleDataset(new double[]{0., 2., 4., 8., 16., 32., 64., 128.}, 2, 2, 2);
-//		Dataset covd = Stats.covariance(d);
-//		Dataset dexpect = new DoubleDataset(new double[]{-2., -24., -3., -48., 2., 24., 3., 48., -48., -576., -72., -1152., 48., 576., 72., 1152.}, 2, 2, 2, 2);
-//		assertEquals(dexpect, covd);
+		Dataset d = new DoubleDataset(new double[]{0., 2., 4., 8., 16., 32., 64., 128.}, 2, 2, 2);
+		Dataset covd = Stats.covariance(d);
+		Dataset dexpect = new DoubleDataset(new double[]{-2., -24., -3., -48., 2., 24., 3., 48., -48., -576., -72., -1152., 48., 576., 72., 1152.}, 2, 2, 2, 2);
+		assertEquals(dexpect, covd);
 	}
 }

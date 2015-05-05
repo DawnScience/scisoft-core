@@ -223,7 +223,7 @@ public class StatsTest {
 	
 	@Test
 	public void testCovarianceSimple() {
-		Dataset a = DatasetFactory.createFromObject(new double[]{-3.5, 6., 8., 14., -2.2, 1.6, 4.0, 7}, Dataset.FLOAT64);
+		Dataset a = new DoubleDataset(new double[]{-3.5, 6., 8., 14., -2.2, 1.6, 4.0, 7});
 		Dataset cova = Stats.covariance(a);
 		assertEquals(32.62839, cova.getDouble(), 1e-4);
 		

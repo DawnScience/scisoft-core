@@ -272,9 +272,6 @@ public class StatsTest {
 		}, 8, 8);
 		assertArrayEquals(abresexpect.getData(), covabrs.getData(), 1E-7);
 		
-//		Boolean rowvar, Boolean bias, Integer ddof
-		
-		
 		//Test effect of setting rowvar false
 		DoubleDataset covcrv = (DoubleDataset)Stats.covariance(c,false, false, null);
 		DoubleDataset crvexpect = new DoubleDataset(new double[]{

@@ -11,10 +11,10 @@ package uk.ac.diamond.scisoft.analysis;
 
 import java.util.Arrays;
 
+import org.eclipse.dawnsci.analysis.api.downsample.DownsampleMode;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.Downsample;
-import uk.ac.diamond.scisoft.analysis.dataset.function.DownsampleMode;
 
 public class DownsampleEncodeTest {
 

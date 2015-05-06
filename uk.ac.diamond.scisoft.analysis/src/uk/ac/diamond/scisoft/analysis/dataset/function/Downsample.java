@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.downsample.DownsampleMode;
 import org.eclipse.dawnsci.analysis.api.downsample.IDownsampleService;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
@@ -66,6 +67,11 @@ public class Downsample implements DatasetToDatasetFunction, IDownsampleService 
 		return d.value(data);
 	}
 
+	@Override
+	public List<IDataset> downsample(DownsampleMode mode, int[] binShape, IDataset... data) throws Exception{
+	    Downsample d = new Downsample(mode, binShape);
+		return d.value(data);
+	}
 	/**
 	 * The class implements down-sampling of datasets
 	 * 

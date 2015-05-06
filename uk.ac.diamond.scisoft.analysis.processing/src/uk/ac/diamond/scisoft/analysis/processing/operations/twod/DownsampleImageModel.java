@@ -1,10 +1,10 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.twod;
 
+import org.eclipse.dawnsci.analysis.api.downsample.DownsampleMode;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.DownsampleDatatype;
-import uk.ac.diamond.scisoft.analysis.dataset.function.DownsampleMode;
 
 public class DownsampleImageModel extends AbstractOperationModel {
 

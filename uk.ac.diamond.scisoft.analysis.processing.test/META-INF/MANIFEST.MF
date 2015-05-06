@@ -8,7 +8,7 @@ Fragment-Host: uk.ac.diamond.scisoft.analysis.processing
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: org.dawb.common.services,
- org.dawb.common.services.conversion,
+ org.eclipse.dawnsci.analysis.api.conversion,
  org.dawnsci.conversion,
  org.dawnsci.conversion.converters.util,
  org.dawnsci.persistence,

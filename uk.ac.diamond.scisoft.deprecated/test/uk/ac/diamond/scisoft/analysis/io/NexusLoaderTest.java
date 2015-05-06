@@ -94,7 +94,7 @@ public class NexusLoaderTest {
 			file.createData(g, data);
 		}
 
-		g = file.getGroup("/ScanFileHolder:NXEntry/datasets:NXdata", true);
+		g = file.getGroup("/ScanFileHolder:NXentry/datasets:NXdata", true);
 		{
 			int totalLength = NexusExtractor.calcTotalLength(dims);
 			Dataset data = DatasetFactory.createRange(totalLength, Dataset.FLOAT64).reshape(dims);

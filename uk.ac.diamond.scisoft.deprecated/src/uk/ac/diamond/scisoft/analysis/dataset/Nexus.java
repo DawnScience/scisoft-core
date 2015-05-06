@@ -16,6 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
+import gda.data.nexus.NexusGlobals;
 import gda.data.nexus.extractor.NexusExtractor;
 import gda.data.nexus.extractor.NexusExtractorException;
 import gda.data.nexus.extractor.NexusGroupData;
@@ -34,19 +35,10 @@ import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.ByteDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.LongDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
 import org.eclipse.dawnsci.hdf5.nexus.NexusException;
-
-import gda.data.nexus.NexusGlobals;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,57 +129,7 @@ public class Nexus {
 	 * @return dataset
 	 */
 	static public Dataset createDataset(NexusGroupData groupData, boolean keepBitWidth) {
-		Dataset ds = null;
-		switch (groupData.getType()) {
-		case NexusGlobals.NX_FLOAT64:
-			double[] dData = (double[]) groupData.getBuffer();
-			ds = new DoubleDataset(Arrays.copyOf(dData, dData.length), groupData.dimensions);
-			break;
-		case NexusGlobals.NX_FLOAT32:
-			float[] fData = (float[]) groupData.getBuffer();
-			ds = new FloatDataset(Arrays.copyOf(fData, fData.length), groupData.dimensions);
-			break;
-		case NexusGlobals.NX_INT64:
-		case NexusGlobals.NX_UINT64:
-			long[] lData = (long[]) groupData.getBuffer();
-			ds = new LongDataset(Arrays.copyOf(lData, lData.length), groupData.dimensions);
-			break;
-		case NexusGlobals.NX_INT32:
-		case NexusGlobals.NX_UINT32:
-			int[] iData = (int[]) groupData.getBuffer();
-			ds = new IntegerDataset(Arrays.copyOf(iData, iData.length), groupData.dimensions);
-			break;
-		case NexusGlobals.NX_INT16:
-		case NexusGlobals.NX_UINT16:
-			short[] sData = (short[]) groupData.getBuffer();
-			ds = new ShortDataset(Arrays.copyOf(sData, sData.length), groupData.dimensions);
-			break;
-		case NexusGlobals.NX_INT8:
-		case NexusGlobals.NX_UINT8:
-			byte[] bData = (byte[]) groupData.getBuffer();
-			ds = new ByteDataset(Arrays.copyOf(bData, bData.length), groupData.dimensions);
-			break;
-		default:
-			throw new IllegalArgumentException("Unknown or unsupported dataset type");
-		}
-
-		if (!keepBitWidth) {
-			switch (groupData.getType()) {
-			case NexusGlobals.NX_UINT32:
-				ds = new LongDataset(ds);
-				DatasetUtils.unwrapUnsigned(ds, 32);
-				break;
-			case NexusGlobals.NX_UINT16:
-				ds = new IntegerDataset(ds);
-				DatasetUtils.unwrapUnsigned(ds, 16);
-				break;
-			case NexusGlobals.NX_UINT8:
-				ds = new ShortDataset(ds);
-				DatasetUtils.unwrapUnsigned(ds, 8);
-				break;
-			}
-		}
-		return ds;
+		return groupData.toDataset(keepBitWidth);
 	}
 
 	/**

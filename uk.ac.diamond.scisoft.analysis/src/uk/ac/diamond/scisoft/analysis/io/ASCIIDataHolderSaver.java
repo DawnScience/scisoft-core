@@ -45,6 +45,7 @@ public class ASCIIDataHolderSaver implements IFileSaver {
 
 	private void w(String msg) throws IOException {
 		out.write(msg);
+		out.flush();
 	}
 
 	private void writeData(int[] shape, DoubleBuffer db) throws IOException {

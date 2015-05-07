@@ -52,8 +52,7 @@ public class SimpleNexusSaver implements IFileSaver {
 		try {
 			// TODO Check to see if the file exists...
 			// TODO then either delete it or fail gracefully!
-			file = NexusUtils.createNXFile(fileName);
-			file.openToWrite(true);
+			file = NexusUtils.createNexusFile(fileName);
 			GroupNode g = file.getGroup("/ScanFileHolder:NXentry/datasets:NXdata", true);
 
 			String[] headings = dh.getNames();

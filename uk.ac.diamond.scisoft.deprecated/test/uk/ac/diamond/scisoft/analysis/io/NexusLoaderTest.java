@@ -84,8 +84,7 @@ public class NexusLoaderTest {
 
 	
 	private void makeTestFile(String fileName, int[] dims) throws NexusException {
-		NexusFile file = NexusUtils.createNXFile(fileName);
-		file.openToWrite(true);
+		NexusFile file = NexusUtils.createNexusFile(fileName);
 		GroupNode g = file.getGroup("/dummy:dummy", true);
 		{
 			int totalLength = NexusExtractor.calcTotalLength(dims);

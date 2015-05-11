@@ -39,38 +39,36 @@ public class ThresholdMask extends AbstractOperation<ThresholdMaskModel, Operati
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 
 		Dataset mask = DatasetUtils.convertToDataset(getFirstMask(input));
-		Dataset in = DatasetUtils.convertToDataset(getFirstMask(input));
+		Dataset in = DatasetUtils.convertToDataset(input);
 		
 		if (mask == null) mask = BooleanDataset.ones(input.getShape());
 		
 		if (!Arrays.equals(input.getShape(), mask.getShape())) {
 			throw new OperationException(this, "Mask is incorrect shape!");
 		}
-		
-		try {
-			Double upper  = (Double)model.get("Upper");
-			if (upper==null) upper = Double.MAX_VALUE;
-			
-			Double lower  = (Double)model.get("Lower");
-			if (lower==null) lower = -Double.MAX_VALUE;
-			
-			IndexIterator it = mask.getIterator();
 
-			while (it.hasNext()) {
-				double val = in.getElementDoubleAbs(it.index);
-				if (val>upper || val<lower) {
-					mask.setObjectAbs(it.index,false);
-				}
+
+		Double upper  = (Double)model.getUpper();
+		if (upper==null) upper = Double.MAX_VALUE;
+
+		Double lower  = (Double)model.getLower();
+		if (lower==null) lower = -Double.MAX_VALUE;
+
+		IndexIterator it = mask.getIterator();
+
+		while (it.hasNext()) {
+			double val = in.getElementDoubleAbs(it.index);
+			if (val>upper || val<lower) {
+				mask.setObjectAbs(it.index,false);
 			}
-			
-			MaskMetadata mm = new MaskMetadataImpl(mask);
-			input.setMetadata(mm);
-			
-			return new OperationData(input);
-
-		} catch (Exception ne) {
-			throw new OperationException(this, ne);
 		}
+
+		MaskMetadata mm = new MaskMetadataImpl(mask);
+		input.setMetadata(mm);
+
+		return new OperationData(input);
+
+
 	}
 
 	@Override

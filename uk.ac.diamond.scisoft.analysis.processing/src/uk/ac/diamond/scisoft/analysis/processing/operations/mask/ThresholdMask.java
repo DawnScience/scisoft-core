@@ -17,8 +17,9 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
+import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.metadata.MaskMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
@@ -37,7 +38,8 @@ public class ThresholdMask extends AbstractOperation<ThresholdMaskModel, Operati
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 
-		IDataset mask = DatasetUtils.convertToDataset(getFirstMask(input));
+		Dataset mask = DatasetUtils.convertToDataset(getFirstMask(input));
+		Dataset in = DatasetUtils.convertToDataset(getFirstMask(input));
 		
 		if (mask == null) mask = BooleanDataset.ones(input.getShape());
 		
@@ -52,13 +54,12 @@ public class ThresholdMask extends AbstractOperation<ThresholdMaskModel, Operati
 			Double lower  = (Double)model.get("Lower");
 			if (lower==null) lower = -Double.MAX_VALUE;
 			
-			// TODO A fork/join or Java8 lambda would do this operation faster...
-			PositionIterator it = new PositionIterator(mask.getShape());
+			IndexIterator it = mask.getIterator();
+
 			while (it.hasNext()) {
-								
-				int[] pos = it.getPos();
-				if (input.getDouble(pos)>upper || input.getDouble(pos)<lower) {
-					mask.set(false, pos);
+				double val = in.getElementDoubleAbs(it.index);
+				if (val>upper || val<lower) {
+					mask.setObjectAbs(it.index,false);
 				}
 			}
 			

@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -285,10 +286,10 @@ public class LoaderFactory {
 	 * @return DataHolder
 	 * @throws Exception
 	 */
-	public static /*THIS IS REQUIRED:*/ synchronized  IDataHolder getData(final String   path, 
-												  final boolean  willLoadMetadata, 
-												  final boolean  loadImageStacks, 
-											      final IMonitor mon) throws Exception {
+	public static IDataHolder getData(final String   path, 
+									  final boolean  willLoadMetadata, 
+									  final boolean  loadImageStacks, 
+									  final IMonitor mon) throws Exception {
 		return getData(path, willLoadMetadata, loadImageStacks, false, mon);
 	}
 
@@ -325,10 +326,21 @@ public class LoaderFactory {
 
 		if (path.toLowerCase().startsWith("http")) {
 			throw new Exception("Data from URL not yet supported!");
-		} else {
-			return getFileData(path, willLoadMetadata, loadImageStacks, lazily, mon);
 		}
-
+		
+		final File file = new File(path);
+		if (!file.exists()) throw new FileNotFoundException(path);
+		
+		if (file.isFile()) {
+		    return getFileData(path, willLoadMetadata, loadImageStacks, lazily, mon);
+		    
+		} else if (file.isDirectory()) {
+			final IDataHolder holder = new DataHolder();
+			final Map<String, ILazyDataset> stack = getImageStack(file, holder, mon, LOADERS.keySet());
+			if (stack!=null) for (String name : stack.keySet()) holder.addDataset(name, stack.get(name));
+			return holder;
+		}
+		throw new Exception(path+" is not valid!");
 	}
 	
 	private static /*THIS IS REQUIRED:*/ synchronized  IDataHolder getFileData(final String   path,
@@ -336,7 +348,6 @@ public class LoaderFactory {
 																				final boolean loadImageStacks, 
 																				final boolean lazily, 
 																				final IMonitor mon) throws Exception {
-		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
 
 		// IMPORTANT: DO NOT USE loadImageStacks in Key. 
 		// Instead when loadImageStacks=true, we add the stack to the already
@@ -392,11 +403,7 @@ public class LoaderFactory {
 
 				if (holder.size()==1 && holder.getLazyDataset(0).getRank()==2 && !isH5(path)) {
 					final Map<String,ILazyDataset> stack = getImageStack(path, holder, mon);
-					if (stack!=null) {
-						for (String name : stack.keySet()) {
-							holder.addDataset(name, stack.get(name));
-						}
-					}
+					if (stack!=null) for (String name : stack.keySet()) holder.addDataset(name, stack.get(name));
 				}
 
 			}
@@ -537,33 +544,46 @@ public class LoaderFactory {
 	public static final Map<String,ILazyDataset> getImageStack(final String filePath, IDataHolder holder, IMonitor mon) throws Exception {
 		
 		if (filePath==null) return null;
+				
+		final File   file  = new File(filePath);
+		final String ext   = FileUtils.getFileExtension(file.getName());
+		final File   dir   = file.getParentFile();
+
+		return getImageStack(dir, holder, mon, ext);
+	}
+	
+	private static final Map<String,ILazyDataset> getImageStack(final File dir, IDataHolder holder, IMonitor mon, String... extensions) throws Exception {
+        return getImageStack(dir, holder, mon, Arrays.asList(extensions));
+	}
+	
+	private static final Map<String,ILazyDataset> getImageStack(final File dir, IDataHolder holder, IMonitor mon, Collection<String> extensions) throws Exception {
+
 		
 		final Map<String, List<String>> imageFilenames = new TreeMap<String, List<String>>();
 		imageFilenames.put("Image Stack", new ArrayList<String>(31));
 		
-		final File   file  = new File(filePath);
-		final String ext  = FileUtils.getFileExtension(file.getName());
-		final File   par = file.getParentFile();
-		
 		String patternPrefix = getStackExpression();
-		Pattern pattern = Pattern.compile(patternPrefix+"\\."+ext);
-		if (par.isDirectory()) {
-			for (String fName : par.list()) {
-				if (fName.endsWith(ext)) {
+		
+		if (dir.isDirectory()) { // Which it should be...
+			
+			for (String fName : dir.list()) {
+				
+				final String ext   = FileUtils.getFileExtension(fName);
+				if (extensions.contains(ext)) {
 					
-					final File f = new File(par,fName);
+					final File f = new File(dir,fName);
 					String name  = "Image Stack";
 					
 					// Name will be something like 35873_M3S15_1_0001.cbf
 					// A string '35873_M3S15_1_' followed by a 4-digit number, followed by the file extension.
+					Pattern pattern = Pattern.compile(patternPrefix+"\\."+ext);
 					Matcher matcher = pattern.matcher(fName);
 					if (matcher.matches()) {
 						name = matcher.group(1);
 						if (!imageFilenames.containsKey(name)) {
 							imageFilenames.put(name, new ArrayList<String>(31));
 						}
-					} 
-					
+					}
 					imageFilenames.get(name).add(f.getAbsolutePath());
 				}
 			}

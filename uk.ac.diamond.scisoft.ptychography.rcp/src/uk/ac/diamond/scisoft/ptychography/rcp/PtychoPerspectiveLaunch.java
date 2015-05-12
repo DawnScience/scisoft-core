@@ -8,7 +8,6 @@ import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -23,12 +22,6 @@ public class PtychoPerspectiveLaunch extends AbstractPerspectiveLaunch {
 	@Override
 	public String getID() {
 		return PtychoPerspective.ID;
-	}
-
-	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-
 	}
 
 	private IWorkbenchPartSite site;
@@ -55,11 +48,5 @@ public class PtychoPerspectiveLaunch extends AbstractPerspectiveLaunch {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public void selectionChanged(IAction action, ISelection selection) {
-		// TODO Auto-generated method stub
-
 	}
 }

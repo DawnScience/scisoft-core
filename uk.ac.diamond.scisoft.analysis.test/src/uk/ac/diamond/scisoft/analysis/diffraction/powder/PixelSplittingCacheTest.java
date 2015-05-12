@@ -47,11 +47,7 @@ public class PixelSplittingCacheTest extends AbstractPixelIntegrationTestBase {
 		double firstTime = testWholeImageAzimuthal(data,null,info);
 		//second pass
 		double secondTime = testWholeImageAzimuthal(data,null,info);
-		
-//		if (firstTime < secondTime) {
-//			Assert.fail("Whole image: second run should be faster due to caching, something odd is afoot");
-//		}
-		
+
 		bean.setAzimuthalRange(new double[]{-180,-170});
 		info = new PixelIntegrationCache(meta, bean);
 		//first pass
@@ -59,10 +55,7 @@ public class PixelSplittingCacheTest extends AbstractPixelIntegrationTestBase {
 		//first pass
 		secondTime =testSectionImageAzimuthal(data,null,info);
 		
-//		if (firstTime < secondTime) {
-//			Assert.fail("Sector: Second run should be faster due to caching, something odd is afoot");
-//		}
-		
+
 		bean.setRadialRange(new double[]{1,5});
 		info = new PixelIntegrationCache(meta, bean);
 		//first pass
@@ -110,10 +103,6 @@ public class PixelSplittingCacheTest extends AbstractPixelIntegrationTestBase {
 		firstTime =testLimitedRadial(data,null,info);
 		//first pass
 		secondTime =testLimitedRadial(data,null,info);
-		
-		if (firstTime < secondTime) {
-			Assert.fail("Sector: Second run should be faster due to caching, something odd is afoot");
-		}
 		
 		bean.setAzimuthalRange(new double[]{-180,-170});
 		info = new PixelIntegrationCache(meta, bean);

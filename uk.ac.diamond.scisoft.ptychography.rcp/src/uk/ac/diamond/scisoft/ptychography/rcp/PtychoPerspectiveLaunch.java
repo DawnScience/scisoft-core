@@ -1,5 +1,6 @@
 package uk.ac.diamond.scisoft.ptychography.rcp;
 
+import org.dawb.common.ui.perspective.AbstractPerspectiveLaunch;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -11,15 +12,18 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 
 import uk.ac.diamond.scisoft.ptychography.rcp.handlers.CallPtychoEditor;
 
-public class PtychoPerspectiveLaunch implements IWorkbenchWindowActionDelegate {
+public class PtychoPerspectiveLaunch extends AbstractPerspectiveLaunch {
+
+	@Override
+	public String getID() {
+		return PtychoPerspective.ID;
+	}
 
 	@Override
 	public void dispose() {
@@ -36,11 +40,7 @@ public class PtychoPerspectiveLaunch implements IWorkbenchWindowActionDelegate {
 
 	@Override
 	public void run(IAction action) {
-		try {
-			PlatformUI.getWorkbench().showPerspective(PtychoPerspective.ID, PlatformUI.getWorkbench().getActiveWorkbenchWindow());
-		} catch (WorkbenchException e) {
-			e.printStackTrace();
-		}
+		super.run(action);
 		site = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart().getSite();
 		Command command = ((ICommandService) site.getService(
 				ICommandService.class)).getCommand(CallPtychoEditor.COMMAND_ID);
@@ -55,7 +55,6 @@ public class PtychoPerspectiveLaunch implements IWorkbenchWindowActionDelegate {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	@Override
@@ -63,5 +62,4 @@ public class PtychoPerspectiveLaunch implements IWorkbenchWindowActionDelegate {
 		// TODO Auto-generated method stub
 
 	}
-
 }

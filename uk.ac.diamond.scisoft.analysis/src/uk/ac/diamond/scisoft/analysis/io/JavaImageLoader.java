@@ -291,8 +291,8 @@ public class JavaImageLoader extends AbstractFileLoader {
 		Dataset data = null;
 		try {
 			Dataset[] channels = AWTImageUtils.makeDatasets(input, keepBitWidth);
-			final int bands = input.getData().getNumBands();
-
+//			final int bands = input.getData().getNumBands();
+			final int bands = channels.length;
 			if (bands == 1) {
 				data = channels[0];
 			} else {

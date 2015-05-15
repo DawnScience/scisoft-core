@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import gda.data.nexus.NexusGlobals;
 import gda.data.nexus.extractor.NexusExtractor;
 import gda.data.nexus.extractor.NexusExtractorException;
 import gda.data.nexus.extractor.NexusGroupData;
@@ -51,77 +50,6 @@ public class Nexus {
 	 */
 	transient private static final Logger logger = LoggerFactory.getLogger(Nexus.class);
 
-	/**
-	 * Get dataset type from NeXus group data type
-	 * @param type
-	 * @return dataset type
-	 */
-	static public int getDType(int type) {
-		switch (type) {
-		case NexusGlobals.NX_FLOAT64:
-			return Dataset.FLOAT64;
-		case NexusGlobals.NX_FLOAT32:
-			return Dataset.FLOAT32;
-		case NexusGlobals.NX_INT64:
-		case NexusGlobals.NX_UINT64:
-			return Dataset.INT64;
-		case NexusGlobals.NX_INT32:
-		case NexusGlobals.NX_UINT32:
-			return Dataset.INT32;
-		case NexusGlobals.NX_INT16:
-		case NexusGlobals.NX_UINT16:
-			return Dataset.INT16;
-		case NexusGlobals.NX_INT8:
-		case NexusGlobals.NX_UINT8:
-			return Dataset.INT8;
-		default:
-			throw new IllegalArgumentException("Unknown or unsupported NeXus data type");
-		}
-	}
-
-	/**
-	 * Get NeXus group data type from dataset type
-	 * @param dtype
-	 * @return NeXus group data type
-	 */
-	static public int getGroupDataType(int dtype) {
-		switch (dtype) {
-		case Dataset.FLOAT64:
-			return NexusGlobals.NX_FLOAT64;
-		case Dataset.FLOAT32:
-			return NexusGlobals.NX_FLOAT32;
-		case Dataset.INT64:
-			return NexusGlobals.NX_INT64;
-		case Dataset.INT32:
-			return NexusGlobals.NX_INT32;
-		case Dataset.INT16:
-			return NexusGlobals.NX_INT16;
-		case Dataset.INT8:
-			return NexusGlobals.NX_INT8;
-		default:
-			throw new IllegalArgumentException("Unknown or unsupported dataset type");
-		}
-	}
-
-	/**
-	 * Get unsigned integer NeXus group data type from dataset type
-	 * @param dtype
-	 * @return NeXus group data type
-	 */
-	static public int getUnsignedGroupDataType(int dtype) {
-		switch (dtype) {
-		case Dataset.INT64:
-			return NexusGlobals.NX_UINT64;
-		case Dataset.INT32:
-			return NexusGlobals.NX_UINT32;
-		case Dataset.INT16:
-			return NexusGlobals.NX_UINT16;
-		case Dataset.INT8:
-			return NexusGlobals.NX_UINT8;
-		default:
-			throw new IllegalArgumentException("Unknown or unsupported dataset type");
-		}
-	}
 	/**
 	 * Create a dataset from NeXus group data
 	 * @param groupData
@@ -260,7 +188,7 @@ public class Nexus {
 				}
 			};
 
-			groupDataset = new LazyDataset(name, getDType(groupData.getType()), trueShape.clone(), l);
+			groupDataset = new LazyDataset(name, groupData.getDtype(), trueShape.clone(), l);
 		} else {
 			Dataset dataset = createDataset(groupData, false);
 			dataset.setName(name);

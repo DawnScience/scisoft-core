@@ -507,6 +507,12 @@
             name="Image Stitching"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.DerivativeOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.DerivativeOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.DerivativeModel"
+            name="Derivative">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

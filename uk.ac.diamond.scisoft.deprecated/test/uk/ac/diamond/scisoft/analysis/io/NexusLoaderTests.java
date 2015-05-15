@@ -18,7 +18,6 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 
 import gda.data.nexus.extractor.NexusExtractorException;
-import gda.data.nexus.napi.NexusException;
 import gda.data.nexus.tree.INexusTree;
 import gda.data.nexus.tree.NexusTreeNodeSelection;
 import gda.util.TestUtils;
@@ -30,6 +29,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.hdf5.nexus.NexusException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

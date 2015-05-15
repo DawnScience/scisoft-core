@@ -26,17 +26,15 @@ public class MaskOutsideRegionOperation extends AbstractOperation<MaskOutsideReg
 
 		IDataset mask = DatasetUtils.convertToDataset(getFirstMask(input));
 		
-		if (mask == null) mask = DatasetFactory.zeros(input.getShape(),Dataset.BOOL);
-		
-		if (!Arrays.equals(input.getShape(), mask.getShape())) {
+		if (mask != null && !Arrays.equals(input.getShape(), mask.getShape())) {
 			throw new OperationException(this, "Mask is incorrect shape!");
 		}
 		
-		IDataset m = generateMaskFromROI(model.getRegion(), mask.getShape());
-		mask = Comparisons.logicalAnd(mask, m);
+		IDataset m = generateMaskFromROI(model.getRegion(), input.getShape());
+		if (mask != null) m = Comparisons.logicalAnd(mask, m);
 
 		
-		MaskMetadata mm = new MaskMetadataImpl(mask);
+		MaskMetadata mm = new MaskMetadataImpl(m);
 		input.setMetadata(mm);
 		
 		return new OperationData(input);

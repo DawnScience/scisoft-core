@@ -25,8 +25,6 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
-import uk.ac.diamond.scisoft.analysis.dataset.Nexus;
-
 /**
  * Simple class which wraps a nexus structure and provides some easy methods for extracting data from it.
  */
@@ -77,7 +75,7 @@ public class NexusManager {
 				NexusGroupData data = child.getData();
 				if (data != null) {
 					try {
-						datasets.add(Nexus.createDataset(data, false));
+						datasets.add(data.toDataset(false));
 					} catch (IllegalArgumentException e) {
 						// ignore
 					}

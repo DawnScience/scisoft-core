@@ -381,7 +381,7 @@ public class NexusLoader extends AbstractFileLoader {
 		if (dataSetNames == null || dataSetNames.contains(name)) {
 			NexusGroupData data = dataNode.getData();
 			if (data != null && data.getBuffer() != null && !data.isChar()) {
-				Dataset ds = Nexus.createDataset(data, keepBitWidth);
+				Dataset ds = data.toDataset(keepBitWidth);
 				if (ds == null) {
 					logger.error("NexusLoader cannot handle data of type {}", data.getType());
 				} else {

@@ -28,14 +28,12 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.hdf5.nexus.NexusException;
 import org.slf4j.Logger;
@@ -51,25 +49,9 @@ public class Nexus {
 	transient private static final Logger logger = LoggerFactory.getLogger(Nexus.class);
 
 	/**
-	 * Create a dataset from NeXus group data
-	 * @param groupData
-	 * @param keepBitWidth if true, does not promoted unsigned types to wider (signed) Java primitive type 
-	 * @return dataset
+	 * @param node
+	 * @return lazy dataset
 	 */
-	static public Dataset createDataset(NexusGroupData groupData, boolean keepBitWidth) {
-		return groupData.toDataset(keepBitWidth);
-	}
-
-	/**
-	 * Make a NeXus group data object from a IDataset
-	 * @param data
-	 * @return group data
-	 */
-	public static NexusGroupData createNexusGroupData(IDataset data) {
-		Dataset ad = DatasetUtils.convertToDataset(data);
-		return new NexusGroupData(ad.getShape(), ad.getBuffer());
-	}
-
 	public static ILazyDataset createLazyDataset(INexusTree node) {
 		NexusGroupData groupData = node.getData();
 		final URL source;
@@ -168,11 +150,11 @@ public class Nexus {
 								}
 							}
 							ngd = NexusExtractor.getNexusGroupData(source, nodePath, tstart, tsize, logger.isDebugEnabled());
-							d = createDataset(ngd, false);
+							d = ngd.toDataset(false);
 							d.setShape(size); // squeeze shape back
 						} else {
 							ngd = NexusExtractor.getNexusGroupData(source, nodePath, lstart, size, logger.isDebugEnabled());
-							d = createDataset(ngd, false);
+							d = ngd.toDataset(false);
 						}
 						if (d != null) {
 							if (useSteps)
@@ -190,7 +172,7 @@ public class Nexus {
 
 			groupDataset = new LazyDataset(name, groupData.getDtype(), trueShape.clone(), l);
 		} else {
-			Dataset dataset = createDataset(groupData, false);
+			Dataset dataset = groupData.toDataset(false);
 			dataset.setName(name);
 			groupDataset = dataset;
 		}

@@ -19,9 +19,9 @@ Require-Bundle: org.junit;bundle-version="[4.10.0,5.0.0)",
  uk.ac.diamond.scisoft.analysis.xmlrpc;bundle-version="1.0.0",
  org.dawnsci.boofcv;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: uk.ac.diamond.scisoft.python
 Bundle-Vendor: Diamond Light Source
 Import-Package: Jama,
  org.dawb.common.util.eclipse,
  org.slf4j;version="[1.7.6,1.7.7)"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

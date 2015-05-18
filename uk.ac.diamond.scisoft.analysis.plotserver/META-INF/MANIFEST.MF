@@ -4,7 +4,7 @@ Bundle-Name: Plotserver
 Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis.plotserver
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Diamond Light Source
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: uk.ac.diamond.scisoft.analysis,
  uk.ac.diamond.scisoft.analysis.plotserver,
  uk.ac.diamond.scisoft.analysis.rpc.sdaplotter

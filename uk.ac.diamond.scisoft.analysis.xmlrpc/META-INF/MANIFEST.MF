@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Xmlrpc
 Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis.xmlrpc
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: uk.ac.diamond.scisoft.analysis,
  uk.ac.diamond.scisoft.analysis.rpc,
  uk.ac.diamond.scisoft.analysis.rpc.flattening,

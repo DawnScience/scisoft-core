@@ -119,6 +119,12 @@ public class ExampleOperationsTest {
 			public int getPoolSize() {
 				return 1;
 			}
+
+			@Override
+			public boolean isTryParallel() {
+				// TODO Auto-generated method stub
+				return false;
+			}
 		});
 
 		service.process(context);
@@ -210,6 +216,12 @@ public class ExampleOperationsTest {
 			public int getPoolSize() {
 				return 1;
 			}
+
+			@Override
+			public boolean isTryParallel() {
+				// TODO Auto-generated method stub
+				return false;
+			}
 		});
 
 		service.process(context);
@@ -288,6 +300,12 @@ public class ExampleOperationsTest {
 			@Override
 			public int getPoolSize() {
 				return 1;
+			}
+
+			@Override
+			public boolean isTryParallel() {
+				// TODO Auto-generated method stub
+				return false;
 			}
 		});
 

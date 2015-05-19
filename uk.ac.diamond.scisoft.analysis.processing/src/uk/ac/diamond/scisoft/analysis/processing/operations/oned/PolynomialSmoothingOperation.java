@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -24,6 +25,7 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.optimize.ApachePolynomial;
 
+@Atomic
 public class PolynomialSmoothingOperation extends AbstractOperation<PolynomialSmoothModel, OperationData> {
 
 	@Override

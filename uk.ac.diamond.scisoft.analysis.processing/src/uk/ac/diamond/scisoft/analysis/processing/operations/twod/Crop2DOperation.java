@@ -9,10 +9,12 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.twod;
 
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 
 import uk.ac.diamond.scisoft.analysis.processing.AbstractCropOperation;
 
+@Atomic
 public class Crop2DOperation extends AbstractCropOperation<Crop2DModel> {
 	
 	@Override

@@ -20,7 +20,7 @@ import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 public class PixelIntegrationCache implements IPixelIntegrationCache {
 	
-	PixelIntegrationBean bean;
+	private final PixelIntegrationBean bean;
 	
 	private DoubleDataset binEdgesAzimuthal = null;
 	private DoubleDataset binEdgesRadial = null;

@@ -24,13 +24,14 @@ import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
-import uk.ac.diamond.scisoft.analysis.diffraction.powder.AbstractPixelIntegration;
+import uk.ac.diamond.scisoft.analysis.diffraction.powder.IPixelIntegrationCache;
+import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegration;
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 
 public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrationModel> extends AbstractOperation<T, OperationData> {
 
-	private AbstractPixelIntegration integrator;
-	private IDiffractionMetadata metadata;
+	protected volatile IPixelIntegrationCache cache;
+	protected IDiffractionMetadata metadata;
 	private PropertyChangeListener listener;
 	
 	@Override
@@ -47,18 +48,19 @@ public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrati
 		
 		if (metadata == null || (!metadata.getDiffractionCrystalEnvironment().equals(md.getDiffractionCrystalEnvironment())&& !metadata.getDetector2DProperties().equals(md.getDetector2DProperties()))) {
 			metadata = md;
-			integrator = null;
+			cache = null;
 		}
 
-		if (integrator == null) integrator = createIntegrator((PixelIntegrationModel)model, metadata);
+		IPixelIntegrationCache lcache = getCache((PixelIntegrationModel)model, metadata);
 
 		ILazyDataset mask = getFirstMask(input);
+		IDataset m = null;
 		if (mask != null) {
-			IDataset m = mask.getSlice().squeeze();
-			integrator.setMask((Dataset)m);
+			m = mask.getSlice().squeeze();
+
 		}
 
-		final List<Dataset> out = integrator.integrate(input);
+		final List<Dataset> out = PixelIntegration.integrate(input,m,lcache);
 
 		Dataset data = out.remove(1);
 
@@ -80,7 +82,7 @@ public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrati
 				
 				@Override
 				public void propertyChange(PropertyChangeEvent evt) {
-					AbstractPixelIntegrationOperation.this.integrator = null;
+					AbstractPixelIntegrationOperation.this.cache = null;
 				}
 			};
 		} else {
@@ -110,5 +112,5 @@ public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrati
 	
 	protected abstract void setAxes(IDataset data, List<Dataset> out);
 	
-	protected abstract AbstractPixelIntegration createIntegrator(PixelIntegrationModel model, IDiffractionMetadata md);
+	protected abstract IPixelIntegrationCache getCache(PixelIntegrationModel model, IDiffractionMetadata md);
 }

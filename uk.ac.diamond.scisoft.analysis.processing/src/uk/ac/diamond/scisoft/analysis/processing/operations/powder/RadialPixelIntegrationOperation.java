@@ -9,11 +9,14 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 
-import uk.ac.diamond.scisoft.analysis.diffraction.powder.AbstractPixelIntegration;
-import uk.ac.diamond.scisoft.analysis.diffraction.powder.AbstractPixelIntegration1D;
+import uk.ac.diamond.scisoft.analysis.diffraction.powder.IPixelIntegrationCache;
+import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationBean;
+import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationCache;
 
+@Atomic
 public class RadialPixelIntegrationOperation extends AzimuthalPixelIntegrationOperation<AzimuthalPixelIntegrationModel> {
 
 	@Override
@@ -25,13 +28,30 @@ public class RadialPixelIntegrationOperation extends AzimuthalPixelIntegrationOp
 	public OperationRank getOutputRank() {
 		return OperationRank.ONE;
 	}
-
+	
 	@Override
-	protected AbstractPixelIntegration createIntegrator(
+	protected IPixelIntegrationCache getCache(
 			PixelIntegrationModel model, IDiffractionMetadata md) {
-		AbstractPixelIntegration integ = super.createIntegrator(model, md);
-		((AbstractPixelIntegration1D)integ).setAzimuthalIntegration(false);
-		return integ;
+
+		IPixelIntegrationCache lcache = cache;
+		if (lcache == null) {
+			synchronized(this) {
+				lcache = cache;
+				if (lcache == null) {
+					PixelIntegrationBean bean = new PixelIntegrationBean();
+					bean.setUsePixelSplitting(model.isPixelSplitting());
+					bean.setNumberOfBinsRadial(model.getNumberOfBins());
+					bean.setxAxis(((AzimuthalPixelIntegrationModel)model).getAxisType());
+					bean.setRadialRange(model.getRadialRange());
+					bean.setAzimuthalRange(model.getAzimuthalRange());
+					bean.setAzimuthalIntegration(false);
+					bean.setTo1D(true);
+					
+					cache = lcache = new PixelIntegrationCache(metadata, bean);
+				}
+			}
+		}
+		return lcache;
 	}
 
 }

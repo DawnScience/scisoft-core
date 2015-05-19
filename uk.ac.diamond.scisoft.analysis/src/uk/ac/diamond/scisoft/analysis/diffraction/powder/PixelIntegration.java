@@ -40,7 +40,7 @@ public class PixelIntegration {
 		List<Dataset> result = new ArrayList<Dataset>();
 		
 		Dataset d = DatasetUtils.convertToDataset(data);
-		Dataset e = d.getErrorBuffer();
+		Dataset e = d.getError();
 		
 		int nbins = bean.getNumberOfBinsXAxis();
 		
@@ -96,7 +96,10 @@ public class PixelIntegration {
 			if(p < h.length){
 				h[p]++;
 				in[p] += sig;
-				if (e!=null) eb[p] += e.getElementDoubleAbs(iter.index);
+				if (e!=null) {
+					final double std = e.getElementDoubleAbs(iter.index);
+					eb[p] += (std*std);
+				}
 			}
 		}
 		

@@ -12,14 +12,16 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 
-import uk.ac.diamond.scisoft.analysis.diffraction.powder.AbstractPixelIntegration;
-import uk.ac.diamond.scisoft.analysis.diffraction.powder.NonPixelSplittingIntegration2D;
-import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelSplittingIntegration2D;
+import uk.ac.diamond.scisoft.analysis.diffraction.powder.IPixelIntegrationCache;
+import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationBean;
+import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationCache;
 
+@Atomic
 public class CakePixelIntegrationOperation extends AbstractPixelIntegrationOperation<CakePixelIntegrationModel> {
 
 
@@ -38,9 +40,7 @@ public class CakePixelIntegrationOperation extends AbstractPixelIntegrationOpera
 		
 		AxesMetadataImpl amd = new AxesMetadataImpl(2);
 		Dataset first = out.get(1);
-		first.setShape(new int[]{first.getShape()[0], 1});
 		Dataset second = out.get(0);
-		second.setShape(new int[]{1, second.getShape()[0]});
 		amd.setAxis(0, first);
 		amd.setAxis(1, second);
 		data.setMetadata(amd);
@@ -48,35 +48,28 @@ public class CakePixelIntegrationOperation extends AbstractPixelIntegrationOpera
 
 	}
 
+	
 	@Override
-	protected AbstractPixelIntegration createIntegrator(
+	protected IPixelIntegrationCache getCache(
 			PixelIntegrationModel model, IDiffractionMetadata md) {
-		
-		AbstractPixelIntegration integ = null;
-		
-		int[] shape = new int[]{md.getDetector2DProperties().getPy(), md.getDetector2DProperties().getPx()};
-		int nBins = AbstractPixelIntegration.calculateNumberOfBins(md.getDetector2DProperties().getBeamCentreCoords(), shape);
-		int nBins2 = nBins;
-		
-		if (model.getNumberOfBins() != null) nBins = model.getNumberOfBins();
-		if (((CakePixelIntegrationModel)model).getNumberOfBins2ndAxis() != null) nBins2 = ((CakePixelIntegrationModel)model).getNumberOfBins2ndAxis() ;
-		
-		if (model.isPixelSplitting()) {
-			
-			integ = new PixelSplittingIntegration2D(md, nBins, nBins2);
-		} else {
-			integ = new NonPixelSplittingIntegration2D(md, nBins, nBins2);
-		}
-		
-		integ.setAxisType(((CakePixelIntegrationModel)model).getAxisType());
-		
-		if (model.getRadialRange() == null) integ.setRadialRange(null);
-		else integ.setRadialRange(model.getRadialRange().clone());
-		
-		if (model.getAzimuthalRange() == null) integ.setAzimuthalRange(null);
-		else integ.setAzimuthalRange(model.getAzimuthalRange().clone());
-		
-		return integ;
-	}
 
+		IPixelIntegrationCache lcache = cache;
+		if (lcache == null) {
+			synchronized(this) {
+				lcache = cache;
+				if (lcache == null) {
+					PixelIntegrationBean bean = new PixelIntegrationBean();
+					bean.setUsePixelSplitting(model.isPixelSplitting());
+					if (model.getNumberOfBins()!=null)bean.setNumberOfBinsRadial(model.getNumberOfBins());
+					bean.setxAxis(((CakePixelIntegrationModel)model).getAxisType());
+					bean.setRadialRange(model.getRadialRange());
+					bean.setAzimuthalRange(model.getAzimuthalRange());
+					bean.setAzimuthalIntegration(true);
+					bean.setTo1D(false);
+					cache = lcache = new PixelIntegrationCache(metadata, bean);
+				}
+			}
+		}
+		return lcache;
+	}
 }

@@ -12,16 +12,16 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 
-import uk.ac.diamond.scisoft.analysis.diffraction.powder.AbstractPixelIntegration;
-import uk.ac.diamond.scisoft.analysis.diffraction.powder.AbstractPixelIntegration1D;
-import uk.ac.diamond.scisoft.analysis.diffraction.powder.NonPixelSplittingIntegration;
-import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelSplittingIntegration;
+import uk.ac.diamond.scisoft.analysis.diffraction.powder.IPixelIntegrationCache;
+import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationBean;
+import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationCache;
 
-
+@Atomic
 public class AzimuthalPixelIntegrationOperation<T extends AzimuthalPixelIntegrationModel> extends AbstractPixelIntegrationOperation<AzimuthalPixelIntegrationModel> {
 
 
@@ -45,31 +45,27 @@ public class AzimuthalPixelIntegrationOperation<T extends AzimuthalPixelIntegrat
 	}
 
 	@Override
-	protected AbstractPixelIntegration createIntegrator(
+	protected IPixelIntegrationCache getCache(
 			PixelIntegrationModel model, IDiffractionMetadata md) {
-		
-		AbstractPixelIntegration integ = null;
-		
-		if (model.isPixelSplitting()) {
-			if (model.getNumberOfBins() == null) integ = new PixelSplittingIntegration(md);
-			else integ = new PixelSplittingIntegration(md, model.getNumberOfBins());
-		} else {
-			if (model.getNumberOfBins() == null)  integ = new NonPixelSplittingIntegration(md);
-			else integ = new NonPixelSplittingIntegration(md, model.getNumberOfBins());
-		}
-		
-		integ.setAxisType(((AzimuthalPixelIntegrationModel)model).getAxisType());
-		
-		if (model.getRadialRange() == null) integ.setRadialRange(null);
-		else integ.setRadialRange(model.getRadialRange().clone());
-		
-		if (model.getAzimuthalRange() == null) integ.setAzimuthalRange(null);
-		else integ.setAzimuthalRange(model.getAzimuthalRange().clone());
-		
-		
-		((AbstractPixelIntegration1D)integ).setAzimuthalIntegration(true);
-		
-		return integ;
-	}
 
+		IPixelIntegrationCache lcache = cache;
+		if (lcache == null) {
+			synchronized(this) {
+				lcache = cache;
+				if (lcache == null) {
+					PixelIntegrationBean bean = new PixelIntegrationBean();
+					bean.setUsePixelSplitting(model.isPixelSplitting());
+					if (model.getNumberOfBins() != null) bean.setNumberOfBinsRadial(model.getNumberOfBins());
+					bean.setxAxis(((AzimuthalPixelIntegrationModel)model).getAxisType());
+					bean.setRadialRange(model.getRadialRange());
+					bean.setAzimuthalRange(model.getAzimuthalRange());
+					bean.setAzimuthalIntegration(true);
+					bean.setTo1D(true);
+					bean.setLog(model.isLogRadial());
+					cache = lcache = new PixelIntegrationCache(metadata, bean);
+				}
+			}
+		}
+		return lcache;
+	}
 }

@@ -118,7 +118,7 @@ public class PixelIntegration {
 		List<Dataset> result = new ArrayList<Dataset>();
 		
 		Dataset d = DatasetUtils.convertToDataset(data);
-		Dataset e = d.getErrorBuffer();
+		Dataset e = d.getError();
 		
 		int nbins = bean.getNumberOfBinsXAxis();
 		
@@ -199,6 +199,12 @@ public class PixelIntegration {
 			if (minBin == maxBin) {
 				h[minBin]++;
 				in[minBin] += sig;
+				
+				if (e!=null) {
+					final double std = e.getElementDoubleAbs(iter.index);
+					eb[minBin] += (std*std);
+				}
+				
 			} else {
 
 				double iPerPixel = 1/(maxBinExact-minBinExact);
@@ -209,11 +215,21 @@ public class PixelIntegration {
 				if (minBin >= 0 && minBin < h.length) {
 					h[minBin]+=(iPerPixel*minFrac);
 					in[minBin] += (sig*iPerPixel*minFrac);
+					
+					if (e!=null) {
+						final double std = e.getElementDoubleAbs(iter.index)*iPerPixel*minFrac;
+						eb[minBin] += (std*std);
+					}
 				}
 
 				if (maxBin < h.length && maxBin >=0) {
 					h[maxBin]+=(iPerPixel*maxFrac);
 					in[maxBin] += (sig*iPerPixel*maxFrac);
+					
+					if (e!=null) {
+						final double std = e.getElementDoubleAbs(iter.index)*iPerPixel*maxFrac;
+						eb[maxBin] += (std*std);
+					}
 				}
 
 
@@ -221,10 +237,16 @@ public class PixelIntegration {
 					if (i >= h.length || i < 0) continue; 
 					h[i]+=iPerPixel;
 					in[i] += (sig*iPerPixel);
+					if (e!=null) {
+						final double std = e.getElementDoubleAbs(iter.index)*iPerPixel;
+						eb[i] += (std*std);
+					}
 				}
 			}
 		}
-
+		
+		if (eb != null) intensity.setErrorBuffer(eb);
+		
 		processAndAddToResult(intensity, histo, result, bean,false);
 		
 		return result;

@@ -519,6 +519,13 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.PolynomialSmoothModel"
             name="Polynomial Smoothing Filter">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.GeneralDetectorErrorOperation"
+            description="Add errors to data"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.GeneralDetectorErrorOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.GeneralDetectorErrorModel"
+            name="General Detector Error">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

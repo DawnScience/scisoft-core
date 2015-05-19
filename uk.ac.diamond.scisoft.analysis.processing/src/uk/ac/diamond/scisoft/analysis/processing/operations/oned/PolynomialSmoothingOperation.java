@@ -32,7 +32,7 @@ public class PolynomialSmoothingOperation extends AbstractOperation<PolynomialSm
 	}
 
 	
-protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
+	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
 		if (model.getPolynomial() > model.getWindow()) throw new OperationException(this,"Polynomial should be less than window size");
 		
@@ -53,9 +53,7 @@ protected OperationData process(IDataset input, IMonitor monitor) throws Operati
 			throw new OperationException(this, e);
 		}
 		
-		AxesMetadataImpl axm = new AxesMetadataImpl(1);
-		axm.setAxis(0, a);
-		out.setMetadata(axm);
+		copyMetadata(input, out);
 		
 		return new OperationData(out);
 	}

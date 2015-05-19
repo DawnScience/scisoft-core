@@ -17,13 +17,10 @@ import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
-import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
@@ -57,11 +54,25 @@ public class MultiplicativeIntensityCorrectionOperation extends
 		
 		if (correction == null) correction = calculateCorrectionArray(input, metadata);
 		
-		Dataset corrected = Maths.multiply(input,correction);
+		Dataset in = DatasetUtils.convertToDataset(input);
+		DoubleDataset out = new DoubleDataset(in.getShape());
+		Dataset error = in.getError();
+		if (error != null) error = error.getSlice();
+
+		IndexIterator i = in.getIterator();
+		double val = 0;
+		double cor = 0;
+		while (i.hasNext()) {
+			val = in.getElementDoubleAbs(i.index);
+			cor = correction.getElementDoubleAbs(i.index);
+			out.setAbs(i.index, cor);
+			if (error != null) error.setObjectAbs(i.index, error.getElementDoubleAbs(i.index)*cor);
+		}
 		
-		copyMetadata(input, corrected);
+		copyMetadata(input, out);
+		out.setError(error);
 		
-		return new OperationData(corrected);
+		return new OperationData(out);
 	}
 
 	@Override

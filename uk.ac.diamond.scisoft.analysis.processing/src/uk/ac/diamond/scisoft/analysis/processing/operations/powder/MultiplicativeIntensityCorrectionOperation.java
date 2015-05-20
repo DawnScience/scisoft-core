@@ -65,7 +65,7 @@ public class MultiplicativeIntensityCorrectionOperation extends
 		while (i.hasNext()) {
 			val = in.getElementDoubleAbs(i.index);
 			cor = correction.getElementDoubleAbs(i.index);
-			out.setAbs(i.index, cor);
+			out.setAbs(i.index, val*cor);
 			if (error != null) error.setObjectAbs(i.index, error.getElementDoubleAbs(i.index)*cor);
 		}
 		

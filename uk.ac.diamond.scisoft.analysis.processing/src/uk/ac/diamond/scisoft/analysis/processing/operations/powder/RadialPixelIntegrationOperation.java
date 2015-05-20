@@ -40,7 +40,7 @@ public class RadialPixelIntegrationOperation extends AzimuthalPixelIntegrationOp
 				if (lcache == null) {
 					PixelIntegrationBean bean = new PixelIntegrationBean();
 					bean.setUsePixelSplitting(model.isPixelSplitting());
-					bean.setNumberOfBinsRadial(model.getNumberOfBins());
+					if (model.getNumberOfBins() != null) bean.setNumberOfBinsAzimuthal(model.getNumberOfBins());
 					bean.setxAxis(((AzimuthalPixelIntegrationModel)model).getAxisType());
 					bean.setRadialRange(model.getRadialRange());
 					bean.setAzimuthalRange(model.getAzimuthalRange());

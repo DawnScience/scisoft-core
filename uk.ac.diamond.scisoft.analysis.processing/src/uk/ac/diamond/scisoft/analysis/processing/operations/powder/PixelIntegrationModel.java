@@ -24,6 +24,8 @@ public abstract class PixelIntegrationModel extends AbstractOperationModel {
 	
 	@OperationModelField(label = "Azimuthal range", hint="Please set two values, start and end, separated by a comma i.e. -90,90",min=-180, max=180, unit="°")
 	double[] azimuthalRange = null;
+	
+	@OperationModelField(label = "Log Radial Axis", hint="Integrates onto a log axis, has no effect on radial integration")
 	private boolean logRadial = false;
 
 	public boolean isLogRadial() {

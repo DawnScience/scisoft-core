@@ -506,6 +506,15 @@ class Test(unittest.TestCase):
         self.checkitems([-1,  0, -1,  1,  0,  1], np.fmod([-3, -2, -1, 1, 2, 3], 2))
         self.checkitems([1, 0, 1, 1, 0, 1], np.mod([-3, -2, -1, 1, 2, 3], 2))
 
+    def testInterpolate(self):
+        print 'Interpolate testing'
+        xp = [1, 2, 3]
+        fp = [3, 2, 0]
+        self.assertAlmostEqual(1.0, np.interp(2.5, xp, fp), 5)
+        self.checkitems([ 3. ,  3. ,  2.5 ,  0.56,  0. ], np.interp([0, 1, 1.5, 2.72, 3.14], xp, fp))
+        UNDEF = -99.0
+        self.assertAlmostEqual(UNDEF, np.interp(3.14, xp, fp, right=UNDEF), 5)
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']

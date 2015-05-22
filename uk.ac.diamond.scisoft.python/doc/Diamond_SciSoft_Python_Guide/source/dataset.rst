@@ -32,7 +32,7 @@ Implemented NumPy methods (1.7)
  * Indexing operations: unravel_index, ravel_multi_index
  * Maths: add, subtract, multiply, divide, negative, power, real, imag, absolute,
    exp, log, log2, log10, expm1, log1p, sqrt, square, reciprocal, angle, conjugate,
-   floor_divide, remainder, phase, signum, diff, gradient, roots, modf, fmod
+   floor_divide, remainder, phase, signum, diff, gradient, roots, modf, fmod, interp
  * Trig: sin, cos, tan, arcsin, arccos, arctan, arctan2, hypot, sinh, cosh,
    tanh, arcsinh, arccosh, arctanh, deg2rad, rad2deg
  * Linear algebra: trace, tensordot, eig, eigvals, cholesky, qr, svd, norm, cond, det, solve, inv, pinv, matrix_power

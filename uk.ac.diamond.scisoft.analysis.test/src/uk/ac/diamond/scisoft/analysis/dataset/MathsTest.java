@@ -1848,6 +1848,53 @@ public class MathsTest {
 		Assert.assertEquals((1 - t) * f1 + t * f2, v, 1e-15);
 	}
 
+	private void checkInterpolate2(Dataset a, double x) {
+		int s = a.getShapeRef()[0];
+		Dataset dv = Maths.interpolate(DatasetFactory.createRange(s, Dataset.INT32), a, DatasetFactory.createFromObject(x), null, null);
+		double v = dv.getElementDoubleAbs(0);
+		if (x <= -1 || x >= s) {
+			Assert.assertEquals(0, v, 1e-15);
+			return;
+		}
+
+		int i = (int) Math.floor(x);
+		double f1 = 0;
+		double f2 = 0;
+		double t = x - i;
+		if (x < 0) {
+			f2 = a.getDouble(0);
+		} else if (x >= s - 1) {
+			f1 = a.getDouble(i);
+		} else {
+			f1 = a.getDouble(i);
+			f2 = a.getDouble(i + 1);
+		}
+		Assert.assertEquals((1 - t) * f1 + t * f2, v, 1e-15);
+	}
+
+	private void checkInterpolate3(Dataset a, double x) {
+		int s = a.getShapeRef()[0];
+		Dataset dv = Maths.interpolate(DatasetFactory.createRange(s, Dataset.INT32), a, DatasetFactory.createFromObject(x), 0, 0);
+		double v = dv.getElementDoubleAbs(0);
+		if (x <= -1 || x >= s) {
+			Assert.assertEquals(0, v, 1e-15);
+			return;
+		}
+
+		int i = (int) Math.floor(x);
+		double f1 = 0;
+		double f2 = 0;
+		double t = x - i;
+		if (x < 0 || x > s - 1) {
+		} else if (x == s - 1) {
+			f1 = a.getDouble(i);
+		} else {
+			f1 = a.getDouble(i);
+			f2 = a.getDouble(i + 1);
+		}
+		Assert.assertEquals((1 - t) * f1 + t * f2, v, 1e-15);
+	}
+
 	private void checkInterpolateArray(CompoundDataset a, double x) {
 		int s = a.getShapeRef()[0];
 		int is = a.getElementsPerItem();
@@ -1994,6 +2041,8 @@ public class MathsTest {
 		for (double x : xc) {
 //			System.out.printf("%g\n", x);
 			checkInterpolate(xa, x);
+			checkInterpolate2(xa, x);
+			checkInterpolate3(xa, x);
 		}
 
 		Dataset xb = DatasetFactory.createRange(120, Dataset.INT32);
@@ -2003,7 +2052,11 @@ public class MathsTest {
 
 		for (double x : xc) {
 			checkInterpolate(xb, x);
+			checkInterpolate2(xb, x);
+			checkInterpolate3(xb, x);
 		}
+
+		AbstractDatasetTest.checkDatasets(Maths.interpolate(DatasetFactory.createFromObject(new double[] {1, 2, 3}), DatasetFactory.createFromObject(new double[] {3, 2, 0}), DatasetFactory.createFromObject(new double[] {0, 1, 1.5, 2.72, 3.14}), 3, 0), DatasetFactory.createFromObject(new double[] {3. ,  3. ,  2.5 ,  0.56,  0.}));
 
 		CompoundDataset cxb = (CompoundDataset) xb;
 		for (double x : xc) {

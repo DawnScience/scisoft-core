@@ -264,6 +264,12 @@ class Test(unittest.TestCase):
 
     def testGradient(self):
         print 'Gradient testing'
+        z = np.arange(200.)
+        dz = np.gradient(z)
+        self.assertEquals(1, len(dz.shape))
+        self.assertEquals(200, dz.size)
+        self.assertEquals(1, dz[0])
+
         x = np.array([1, 2, 4, 7, 11, 16], dtype=np.float)
         g = np.gradient(x)
         self.checkitems([1., 1.5, 2.5, 3.5, 4.5, 5.], g)
@@ -352,14 +358,6 @@ class Test(unittest.TestCase):
         self.assertEquals(np.array(1.), zf[...])
         zf[()] = -3
         self.assertEquals(-3, zf[()])
-
-    def testGradient(self):
-        print 'Gradient testing'
-        z = np.arange(200.)
-        dz = np.gradient(z)
-        self.assertEquals(1, len(dz.shape))
-        self.assertEquals(200, dz.size)
-        self.assertEquals(1, dz[0])
 
     def testUnpack(self):
         print 'Unpacking testing'

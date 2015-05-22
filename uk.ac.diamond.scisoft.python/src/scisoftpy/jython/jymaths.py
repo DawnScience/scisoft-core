@@ -486,7 +486,7 @@ def cross(a, b, axisa=-1, axisb=-1, axisc=-1, axis=None):
     if axis is not None:
         axisa = axisb = axisc = axis
 
-        return _linalg.crossProduct(a, b, axisa, axisb, axisc)
+    return _linalg.crossProduct(a, b, axisa, axisb, axisc)
 
 @_wrap
 def gradient(f, *varargs):

@@ -526,6 +526,20 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.GeneralDetectorErrorModel"
             name="General Detector Error">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.NoDataOperation"
+            description="Stops data being sent down the pipeline, used to not duplicate your data if you only need the auxiliary output"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.NoDataOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            name="No Data">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.OriginalDataOperation"
+            description="Propagates the input data without modifying it, used to convert other data formats to nexus"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.OriginalDataOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            name="No Change">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

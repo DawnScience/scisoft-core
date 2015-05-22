@@ -486,7 +486,7 @@ def cross(a, b, axisa=-1, axisb=-1, axisc=-1, axis=None):
     if axis is not None:
         axisa = axisb = axisc = axis
 
-        return _linalg.crossProduct(a, b, axisa, axisb, axisc)
+    return _linalg.crossProduct(a, b, axisa, axisb, axisc)
 
 @_wrap
 def gradient(f, *varargs):
@@ -524,3 +524,18 @@ def roots(p):
     from uk.ac.diamond.scisoft.analysis.fitting.functions import Polynomial as _poly
     pa = _asarray(p, dtype=_f64)
     return _asarray(_poly.findRoots(pa._jdataset().getBuffer()))
+
+def interp(x, xp, fp, left=None, right=None):
+    '''Linearly interpolate'''
+    x = _asarray(x)
+        
+    xp = _asarray(xp)
+    fp = _asarray(fp)
+    if left is None:
+        left = fp[0]
+    if right is None:
+        right = fp[-1]
+    r = _asarray(_maths.interpolate(xp._jdataset(), fp._jdataset(), x._jdataset(), left, right))
+    if x.ndim == 0:
+        return r.item()
+    return r

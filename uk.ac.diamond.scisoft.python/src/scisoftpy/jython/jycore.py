@@ -401,6 +401,8 @@ def __cvt_jobj(obj, dtype=None, copy=True, force=False):
             if dtype is None:
                 dtype = float64
             obj = obj.getArray()
+    elif len(obj) == 0 and dtype is None:
+        dtype = float64
 
     obj = _cvt2j(obj)
     try:

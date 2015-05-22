@@ -181,3 +181,5 @@ def gradient(f, *arg):
     return _np.gradient(f, *arg)
 
 roots = _np.roots
+
+interp = _np.interp

@@ -264,6 +264,12 @@ class Test(unittest.TestCase):
 
     def testGradient(self):
         print 'Gradient testing'
+        z = np.arange(200.)
+        dz = np.gradient(z)
+        self.assertEquals(1, len(dz.shape))
+        self.assertEquals(200, dz.size)
+        self.assertEquals(1, dz[0])
+
         x = np.array([1, 2, 4, 7, 11, 16], dtype=np.float)
         g = np.gradient(x)
         self.checkitems([1., 1.5, 2.5, 3.5, 4.5, 5.], g)
@@ -352,14 +358,6 @@ class Test(unittest.TestCase):
         self.assertEquals(np.array(1.), zf[...])
         zf[()] = -3
         self.assertEquals(-3, zf[()])
-
-    def testGradient(self):
-        print 'Gradient testing'
-        z = np.arange(200.)
-        dz = np.gradient(z)
-        self.assertEquals(1, len(dz.shape))
-        self.assertEquals(200, dz.size)
-        self.assertEquals(1, dz[0])
 
     def testUnpack(self):
         print 'Unpacking testing'
@@ -505,6 +503,15 @@ class Test(unittest.TestCase):
         self.checkitems([0, 1,  -3, -1], np.fmod([4, 7, -3, -7], [2, -3,  8, -3]))
         self.checkitems([-1,  0, -1,  1,  0,  1], np.fmod([-3, -2, -1, 1, 2, 3], 2))
         self.checkitems([1, 0, 1, 1, 0, 1], np.mod([-3, -2, -1, 1, 2, 3], 2))
+
+    def testInterpolate(self):
+        print 'Interpolate testing'
+        xp = [1, 2, 3]
+        fp = [3, 2, 0]
+        self.assertAlmostEqual(1.0, np.interp(2.5, xp, fp), 5)
+        self.checkitems([ 3. ,  3. ,  2.5 ,  0.56,  0. ], np.interp([0, 1, 1.5, 2.72, 3.14], xp, fp))
+        UNDEF = -99.0
+        self.assertAlmostEqual(UNDEF, np.interp(3.14, xp, fp, right=UNDEF), 5)
 
 if __name__ == "__main__":
     #import sys

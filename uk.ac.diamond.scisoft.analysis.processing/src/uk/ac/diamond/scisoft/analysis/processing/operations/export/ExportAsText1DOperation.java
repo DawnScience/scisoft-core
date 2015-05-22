@@ -49,7 +49,7 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 		
 		int c = ssm.getSliceInfo().getSliceNumber();
 		String count = "";
-		if (model.getZeroPad() != null) {
+		if (model.getZeroPad() != null && model.getZeroPad() >= 1) {
 			count = String.format("%0" + String.valueOf(model.getZeroPad()) + "d", c);
 		} else {
 			count =String.valueOf(c);

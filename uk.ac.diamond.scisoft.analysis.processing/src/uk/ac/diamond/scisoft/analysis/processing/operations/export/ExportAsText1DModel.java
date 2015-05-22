@@ -12,7 +12,7 @@ public class ExportAsText1DModel extends AbstractOperationModel {
 	private String extension = "dat";
 	@OperationModelField(label = "Include explicit location", hint = "Select to include the explicit (slice) location of the data in the full dataset as part of the filename")
 	private boolean includeSliceName = false;
-	@OperationModelField(label = "Pad with zeros", hint = "Leave blank for no padding")
+	@OperationModelField(label = "Pad with zeros", hint = "Leave blank for no padding", min = 1)
 	private Integer zeroPad = 5;
 	@OperationModelField(label = "Suffix", hint = "Add a custom suffix to be appended to the file name, leave blank for no suffix")
 	private String suffix = "";

@@ -143,7 +143,8 @@ public class LoaderFactory {
 		    registerLoader("srs",  ExtendedSRSLoader.class);
 		    registerLoader("srs",  SRSLoader.class);
 		    registerLoader("dat",  DatLoader.class);
-		    registerLoader("xy",  DatLoader.class);
+		    registerLoader("xy",   DatLoader.class);
+		    registerLoader("xye",  DatLoader.class);
 		    registerLoader("dat",  ExtendedSRSLoader.class);
 		    registerLoader("dat",  SRSLoader.class);
 		    registerLoader("csv",  CSVLoader.class);

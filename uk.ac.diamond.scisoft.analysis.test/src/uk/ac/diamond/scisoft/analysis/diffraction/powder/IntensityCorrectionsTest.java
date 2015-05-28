@@ -83,7 +83,7 @@ public class IntensityCorrectionsTest extends AbstractPixelIntegrationTestBase {
 			correctionArray2.setAbs(it.index, val);
 		}
 		stop = System.currentTimeMillis();
-		assertArrayEquals(correctionArray.getData(), correctionArray2.getData(), 0);
+		assertArrayEquals(correctionArray.getData(), correctionArray2.getData(), 1e-12);
 	}
 
 	@Test

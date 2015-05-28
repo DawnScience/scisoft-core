@@ -1,5 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.expressions;
 
+import java.util.Arrays;
+
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionEngine;
@@ -44,6 +46,10 @@ public class Expression2DOperation<T extends Expression2DModel> extends Expressi
 		outaxisy.setShape(new int[]{outaxisy.getShape()[0],1});
 		if (model.getAxisExpressionX() != null && !model.getAxisExpressionX().isEmpty()) outaxisx.setName("custom_x_axis");
 		outaxisx.setShape(new int[]{1,outaxisx.getShape()[0]});
+		
+		if (Arrays.equals(input.getShape(), outdata.getShape())) {
+			copyMetadata(input, outdata);
+		}
 		
 		AxesMetadata am = new AxesMetadataImpl(2);
 		am.setAxis(0, outaxisy);

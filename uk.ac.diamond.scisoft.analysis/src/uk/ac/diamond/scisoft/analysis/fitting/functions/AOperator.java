@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -217,15 +218,21 @@ abstract public class AOperator extends AFunction implements IOperator {
 
 	@Override
 	public AOperator copy() throws Exception {
-		AOperator copy = (AOperator) super.copy();
+		Constructor<? extends AOperator> c = getClass().getConstructor();
+
+		IParameter[] localParameters = getParameters();
+			
+		AOperator operator = c.newInstance();
+		operator.fillParameters(localParameters); //Do we need to do this?
+		
 		for (IFunction f : getFunctions()) {
 			if (f == null) {
-				copy.addFunction(null);
+				operator.addFunction(null);
 			} else {
-				copy.addFunction(f.copy());
+				operator.addFunction(f.copy());
 			}
 		}
-		return copy;
+		return operator;
 	}
 
 }

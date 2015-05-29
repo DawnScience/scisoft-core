@@ -62,7 +62,7 @@ public class HierarchicalFileExVisitorTest {
 	@Parameterized.Parameters
 	   public static Collection<?> params() {
 	      return Arrays.asList(new Object[] {new Object[]
-	         {ExecutionType.SERIES},new Object[]{ ExecutionType.GRAPH}
+	         {ExecutionType.SERIES},new Object[]{ ExecutionType.GRAPH},new Object[]{ExecutionType.PARALLEL}
 	         
 	      });
 	   }

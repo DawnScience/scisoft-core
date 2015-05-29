@@ -308,6 +308,7 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.error"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.PhotonCountingErrorOperation"
             description="Sets the current value of the data as the variance on the dataset"
             icon="icons/pois.png"
@@ -509,37 +510,53 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.DerivativeOperation"
+            icon="icons/derivative.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.DerivativeOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.DerivativeModel"
             name="Derivative">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.PolynomialSmoothingOperation"
+            icon="icons/polysmooth.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.PolynomialSmoothingOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.PolynomialSmoothModel"
             name="Polynomial Smoothing Filter">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.error"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.GeneralDetectorErrorOperation"
             description="Add errors to data"
+            icon="icons/error.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.GeneralDetectorErrorOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.GeneralDetectorErrorModel"
             name="General Detector Error">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.utilities"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.NoDataOperation"
             description="Stops data being sent down the pipeline, used to not duplicate your data if you only need the auxiliary output"
+            icon="icons/blank.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.NoDataOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
             name="No Data">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.utilities"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.OriginalDataOperation"
             description="Propagates the input data without modifying it, used to convert other data formats to nexus"
+            icon="icons/unchanged.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.OriginalDataOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
             name="No Change">
       </operation>
+      <category
+            id="uk.ac.diamond.scisoft.analysis.processing.error"
+            name="Error">
+      </category>
+      <category
+            id="uk.ac.diamond.scisoft.analysis.processing.utilities"
+            name="Utilities">
+      </category>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

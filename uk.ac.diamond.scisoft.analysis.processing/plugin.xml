@@ -517,6 +517,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.PolynomialSmoothingOperation"
+            icon="icons/polysmooth.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.PolynomialSmoothingOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.PolynomialSmoothModel"
             name="Polynomial Smoothing Filter">
@@ -525,6 +526,7 @@
             category="uk.ac.diamond.scisoft.analysis.processing.error"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.GeneralDetectorErrorOperation"
             description="Add errors to data"
+            icon="icons/error.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.GeneralDetectorErrorOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.GeneralDetectorErrorModel"
             name="General Detector Error">

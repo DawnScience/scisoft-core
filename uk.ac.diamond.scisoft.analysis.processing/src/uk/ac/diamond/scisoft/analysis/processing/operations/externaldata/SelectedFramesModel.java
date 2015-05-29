@@ -15,15 +15,15 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 public class SelectedFramesModel extends AbstractOperationModel {
 	
 	@OperationModelField(hint="Position of first (or only) dataset, leave blank to average all data",label = "First:" )
-	private Integer startFrame = null;
+	private Integer startFrame = 0;
 	@OperationModelField(hint="Position of end dataset, leave empty to use a single dataset",label = "Last:" )
-	private Integer endFrame = null;
+	private Integer endFrame = 1;
 	
 	public Integer getStartFrame() {
 		return startFrame;
 	}
 
-	public void setStartFrame(int startFrame) {
+	public void setStartFrame(Integer startFrame) {
 		firePropertyChange("startFrame", this.startFrame, this.startFrame = startFrame);
 	}
 

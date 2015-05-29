@@ -548,12 +548,11 @@ public abstract class AFunction implements IFunction, Serializable {
 
 	@Override
 	public AFunction copy() throws Exception {
-		Constructor<? extends AFunction> c = getClass().getConstructor();
+		Constructor<? extends AFunction> c = getClass().getConstructor(IParameter[].class);
 
 		IParameter[] localParameters = getParameters();
 		
-		AFunction function = c.newInstance();
-		function.fillParameters(localParameters);
+		AFunction function = c.newInstance((Object) localParameters);
 		return function;
 	}
 

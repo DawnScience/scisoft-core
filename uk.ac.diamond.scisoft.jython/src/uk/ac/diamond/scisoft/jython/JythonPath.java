@@ -43,25 +43,26 @@ public class JythonPath {
 		"ch.qos.logback.beagle",
 		"org.dawb.workbench.jmx",
 		GIT_REPO_ENDING,
-		JYTHON_DIR
+		JYTHON_DIR,
+		"org.dawnsci.persistence.test" // Required for I11 LDE script (we don't want the tests!)
 	};
 	private static final String[] requiredJars = {
 		"org.python.pydev",
 		"cbflib-0.9",
 		"org.apache.commons.codec",
-		"org.apache.commons.math", // includes math3
+		"org.apache.commons.math", // Includes math3
 		"uk.ac.diamond.CBFlib",
 		"uk.ac.diamond.jama",
 		"uk.ac.diamond.ejml",
 		"uk.ac.diamond.ddogleg",
 		"org.apache.commons.lang",
-		"org.eclipse.dawnsci.analysis", // includes api, dataset, tree, etc
+		"org.eclipse.dawnsci.analysis", // Includes api, dataset, tree, etc
 		"uk.ac.diamond.scisoft.analysis",
 		"uk.ac.diamond.scisoft.diffraction.powder",
 		"uk.ac.diamond.scisoft.python",
 		"uk.ac.diamond.scisoft.spectroscopy",
 		"uk.ac.gda.common",
-		"org.eclipse.dawnsci.hdf5", // fix to http://jira.diamond.ac.uk/browse/SCI-1467
+		"org.eclipse.dawnsci.hdf5", // Fix to http://jira.diamond.ac.uk/browse/SCI-1467
 		"slf4j.api",
 		"jcl.over.slf4j",
 		"log4j.over.slf4j",
@@ -81,7 +82,7 @@ public class JythonPath {
 		"com.thoughtworks.xstream",
 		"uk.ac.diamond.org.jscience4",
 		"org.eclipse.equinox.common", // Required for IRemotePlottingSystem
-		"org.dawnsci.boofcv", //required for running boofcv image processing in jython
+		"org.dawnsci.boofcv", // Required for running boofcv image processing in jython
 		"org.boofcv.feature",
 		"org.boofcv.geo",
 		"org.boofcv.ip",
@@ -101,7 +102,8 @@ public class JythonPath {
 		"uk.ac.diamond.CBFlib",
 		"uk.ac.gda.common",
 		"org.dawnsci.boofcv", //required for boofcv services
-		"ncsa.hdf"
+		"ncsa.hdf",
+		"org.dawnsci.persistence" // Required for I11 LDE script
 	};
 	
 	/**

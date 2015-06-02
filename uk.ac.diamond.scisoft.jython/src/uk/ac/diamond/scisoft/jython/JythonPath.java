@@ -87,7 +87,8 @@ public class JythonPath {
 		"org.boofcv.geo",
 		"org.boofcv.ip",
 		"org.boofcv.sfm",
-		"org.ddogleg"
+		"org.ddogleg",
+		"org.dawnsci.persistence" // Required for I11 LDE script
 	};
 	/*
 	 * Plugins we want/don't want

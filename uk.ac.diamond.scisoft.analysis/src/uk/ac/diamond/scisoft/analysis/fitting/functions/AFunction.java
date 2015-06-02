@@ -172,14 +172,14 @@ public abstract class AFunction implements IFunction, Serializable {
 
 	@Override
 	public IParameter getParameter(int index) {
-		return new Parameter(parameters[index]);
+		return parameters[index];
 	}
 
 	@Override
 	public IParameter[] getParameters() {
 		IParameter[] params = new IParameter[parameters.length];
 		for (int i = 0; i < parameters.length; i++) {
-			params[i] = new Parameter(parameters[i]);
+			params[i] = parameters[i];
 		}
 		return params;
 	}

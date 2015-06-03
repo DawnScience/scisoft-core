@@ -557,6 +557,14 @@
             id="uk.ac.diamond.scisoft.analysis.processing.utilities"
             name="Utilities">
       </category>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText2DOperation"
+            description="Save image as text with x axis as first column, use with caution, files can get very large"
+            icon="icons/exptext.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText2DOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText1DModel"
+            name="Export to Text File [Image]">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

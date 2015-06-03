@@ -12,6 +12,9 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.impl.SummedAreaTable;
 import org.junit.Test;
@@ -70,12 +73,39 @@ public class SummedAreaTableTest {
 		testDiagonal(image, sum, 5, 5);
 	}
 
+	@Test
+	public void testSmallVariance() throws Exception {
+		
+		final IDataset image = Maths.multiply(Random.rand(new int[]{1024,1024}), 100);
+		final SummedAreaTable sum = new SummedAreaTable(image);
+		testDiagonal(image, sum, true, 3, 3);
+	}
 
-
+	@Test
+	public void testLargeVariance() throws Exception {
+		
+		long start = System.currentTimeMillis();
+		final IDataset image = Maths.multiply(Random.rand(new int[]{1024,1024}), 100);
+		final SummedAreaTable sum = new SummedAreaTable(image);
+		long end   = System.currentTimeMillis();
+		
+		// Check time
+		long delta = end-start;
+		if (delta>1000) throw new Exception("Unexpected long sum table generation! As a guide, it should take less than 400ms on I7 but took longer than 1000ms");
+		
+		// Long time, no caching done!
+		testDiagonal(image, sum, true, 5, 5);
+	}
+	
 	private void testDiagonal(IDataset image, SummedAreaTable sum, int... box) throws Exception {
+		testDiagonal(image, sum, false, box);
+	}
+
+	private void testDiagonal(IDataset image, SummedAreaTable sum, boolean variance, int... box) throws Exception {
 		
 		if (!Arrays.equals(sum.getShape(), image.getShape())) throw new Exception("Shape not the same! sum is "+Arrays.toString(sum.getShape()));
 		
+		String lastFail = null;
 		int x=0, y=0;
 		while(x<image.getShape()[0] && y<image.getShape()[1]) {
 			
@@ -85,23 +115,70 @@ public class SummedAreaTableTest {
 				b = getSum(image, x, y);
 				
 			} else {				
-				int w = box[0];
-				int h = box[1];
-				double csum = getBoxSum(image, new int[]{x,y}, box);
-				double isum = sum.getBoxSum(new int[]{x,y}, box);
-                a = isum / (w*h);
-				b = csum / (w*h);
+				
+				if (variance) { // variance
+					a = sum.getBoxVariance(new int[]{x,y}, box);
+					b = getBoxVariance(image, new int[]{x,y}, box);
+					
+				} else { // mean
+					a = sum.getBoxMean(new int[]{x,y}, box);				
+					b = getBoxMean(image, new int[]{x,y}, box);
+				}
 			}
 			if (!DoubleUtils.equalsWithinTolerance(a, b, 0.000001)) {
-				throw new Exception(a+" does not equal "+b+" for x,y="+x+","+y);
+				lastFail = a+" does not equal "+b+" for x,y="+x+","+y;
+				System.out.println(lastFail);
 			}
 			x++; y++;
 		}
+		if (lastFail!=null) throw new Exception(lastFail);
+	}
+	
+	@Test
+	public void testDatasetVariance() throws Exception {
+		
+		final Dataset image = Maths.multiply(Random.rand(new int[]{10,10}), 100);
+	    double mean = ((Number)image.mean()).doubleValue();
+	    Dataset minus  = Maths.subtract(image, mean);
+	    Dataset square = Maths.power(minus, 2);
+	    double var = ((Number)square.mean()).doubleValue();
+
+		if (var!=image.variance().doubleValue()) {
+			throw new Exception("Variance not equal : "+var+" to "+image.variance().doubleValue());
+		}
 	}
 
+	private double getBoxVariance(IDataset image, int[] point, int[] box) {
+	    Dataset subsetNoSlice = createDataset(image, point, box);
+	    double mean = ((Number)subsetNoSlice.mean()).doubleValue();
+	    Dataset minus  = Maths.subtract(subsetNoSlice, mean);
+	    Dataset square = Maths.power(minus, 2);
+	    return ((Number)square.mean()).doubleValue();
+	}
 
-	private double getBoxSum(IDataset image, int[] point, int... box) {
-			
+	private double getBoxMean(IDataset image, int[] point, int... box) {
+	    Dataset subsetNoSlice = createDataset(image, point, box);
+		return ((Number)subsetNoSlice.mean()).doubleValue();
+	}
+
+	private Dataset createDataset(IDataset image, int[] point, int[] box) {
+        int[] coords = createCoords(image, point, box);
+        
+        double[] subset = new double[box[0]*box[1]];
+        
+        int count = 0;
+		for (int ix = coords[0]; ix <=coords[2]; ix++) {
+			for (int iy = coords[1]; iy <=coords[3]; iy++) {
+				subset[count] = image.getDouble(ix,iy);
+				++count;
+			}
+		}
+		
+		return new DoubleDataset(subset, box);
+	}
+
+	private int[] createCoords(IDataset image, int[] point, int[] box) {
+		
 		int x = point[0];
 		int y = point[1];
 		int r1 = (int)Math.floor(box[0]/2d); // for instance 3->1, 5->2, 7->3 
@@ -116,14 +193,8 @@ public class SummedAreaTableTest {
 		if (miny<0) miny=0;		
 		int maxy = y+r2;
 		if (maxy>=image.getShape()[1]) maxy = image.getShape()[1]-1;
-
-		double sum = 0d;
-		for (int ix = minx; ix <=maxx; ix++) {
-			for (int iy = miny; iy <=maxy; iy++) {
-				sum+=image.getDouble(ix,iy);
-			}
-		}
-		return sum;
+		
+		return new int[]{minx, miny, maxx, maxy};
 	}
 
 	/**

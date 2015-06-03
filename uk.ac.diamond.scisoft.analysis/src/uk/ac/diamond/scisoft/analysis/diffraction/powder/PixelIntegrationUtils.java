@@ -127,21 +127,22 @@ public class PixelIntegrationUtils {
 			//Should only change the single row of pixels allow the discontinuity
 //			(vals[0] < -Math.PI/2 && vals[3] > Math.PI/2)
 			
-			if (vals[0] < (minInBase+90) && vals[3] > (180+minInBase)) {
+			
+			if ( vals[3] - vals[0] > 180) {
 				//FIXME do best to handle discontinuity here - saves changing the integration routine
 				//may not be as accurate - might need to make the integration aware.
 				//currently just squeeze all the signal in one side
 				
 				if ((minInBase+360)-vals[3] > vals[0]-minInBase) {
+					vals[0] = vals[3];
 					vals[3] = minInBase+360;
-					vals[0] = vals[2];
 				} else {
+					vals[3] = vals[0];
 					vals[0] = minInBase;
-					vals[3] = vals[1];
+					
 				}
 			}
 			
-
 			aMax.set(vals[3]+360*n, pos);
 			aMin.set(vals[0]+360*n, pos);
 

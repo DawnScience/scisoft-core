@@ -78,6 +78,78 @@ public class PixelIntegrationUtils {
 		return out;
 	}
 	
+	public static Dataset generateAzimuthalArray(double[] beamCentre, int[] shape, double min) {
+		//Number of circles
+		int n = (int)Math.floor((min+180)/360);
+		double minInBase = (min - (360*n));
+		
+		Dataset out = DatasetFactory.zeros(shape, Dataset.FLOAT64);
+		PositionIterator iter = out.getPositionIterator();
+
+		int[] pos = iter.getPos();
+		
+		//+0.5 for centre of pixel
+		while (iter.hasNext()) {
+			double val = Math.toDegrees(Math.atan2(pos[0]+0.5-beamCentre[1],pos[1]+0.5-beamCentre[0]));
+			if (val < minInBase) val = val + 360;
+			out.set(val+360*n, pos);
+		}
+		
+		return out;
+		
+	}
+	
+	public static Dataset[] generateMinMaxAzimuthalArray(double[] beamCentre, int[] shape, double min) {
+		//Number of circles
+		int n = (int)Math.floor((min+180)/360);
+		double minInBase = (min - (360*n));
+		Dataset aMax = DatasetFactory.zeros(shape, Dataset.FLOAT64);
+		Dataset aMin = DatasetFactory.zeros(shape, Dataset.FLOAT64);
+
+		PositionIterator iter = aMax.getPositionIterator();
+		int[] pos = iter.getPos();
+		double[] vals = new double[4];
+		
+		while (iter.hasNext()) {
+			//find vals at pixel corners
+			vals[0] = Math.toDegrees(Math.atan2(pos[0]-beamCentre[1],pos[1]-beamCentre[0]));
+			vals[1] = Math.toDegrees(Math.atan2(pos[0]-beamCentre[1]+1,pos[1]-beamCentre[0]));
+			vals[2] = Math.toDegrees(Math.atan2(pos[0]-beamCentre[1],pos[1]-beamCentre[0]+1));
+			vals[3] = Math.toDegrees(Math.atan2(pos[0]-beamCentre[1]+1,pos[1]-beamCentre[0]+1));
+			if (vals[0] < minInBase) vals[0] = vals[0] + 360;
+			if (vals[1] < minInBase) vals[1] = vals[1] + 360;
+			if (vals[2] < minInBase) vals[2] = vals[2] + 360;
+			if (vals[3] < minInBase) vals[3] = vals[3] + 360;
+			
+			Arrays.sort(vals);
+			//if the pixel needs to be split over 180 degrees, over the discontinuity
+			//Only split up to the discontinuity on the side with the largest range
+			//Should only change the single row of pixels allow the discontinuity
+//			(vals[0] < -Math.PI/2 && vals[3] > Math.PI/2)
+			
+			if (vals[0] < (minInBase+90) && vals[3] > (180+minInBase)) {
+				//FIXME do best to handle discontinuity here - saves changing the integration routine
+				//may not be as accurate - might need to make the integration aware.
+				//currently just squeeze all the signal in one side
+				
+				if ((minInBase+360)-vals[3] > vals[0]-minInBase) {
+					vals[3] = minInBase+360;
+					vals[0] = vals[2];
+				} else {
+					vals[0] = minInBase;
+					vals[3] = vals[1];
+				}
+			}
+			
+
+			aMax.set(vals[3]+360*n, pos);
+			aMin.set(vals[0]+360*n, pos);
+
+		}
+		
+		return new Dataset[]{aMin,aMax};
+	}
+	
 	public static Dataset[] generateMinMaxAzimuthalArray(double[] beamCentre, int[] shape, boolean radians) {
 		
 		Dataset aMax = DatasetFactory.zeros(shape, Dataset.FLOAT64);

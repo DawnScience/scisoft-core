@@ -33,6 +33,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LongDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.ObjectDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 import org.junit.Assert;
 import org.junit.Test;
@@ -1953,4 +1954,15 @@ public class AbstractDatasetTest {
 			Assert.fail("Should have thrown an illegal argument exception");
 		}
 	}
+
+    @Test
+    public void testDatasetVariance() {
+    	Random.seed(12345);
+		final Dataset image = Maths.multiply(Random.rand(new int[] { 10, 10 }), 1);
+		double mean = ((Number) image.mean()).doubleValue();
+		Dataset square = Maths.square(Maths.subtract(image, mean));
+		double var = ((Number) square.mean()).doubleValue();
+
+		Assert.assertEquals(var, image.variance(true).doubleValue(), var * 1.e-15);
+    }
 }

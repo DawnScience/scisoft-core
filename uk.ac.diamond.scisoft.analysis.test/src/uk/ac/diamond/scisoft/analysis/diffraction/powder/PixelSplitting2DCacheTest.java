@@ -44,10 +44,6 @@ public class PixelSplitting2DCacheTest extends AbstractPixelIntegrationTestBase 
 		//second pass
 		double secondTime = testWholeImage(data,null,info);
 		
-//		if (firstTime < secondTime) {
-//			Assert.fail("Whole image: second run should be faster due to caching, something odd is afoot");
-//		}
-		
 		bean.setAzimuthalRange(new double[]{-180,-170});
 		info = new PixelIntegrationCache(meta, bean);
 		//first pass

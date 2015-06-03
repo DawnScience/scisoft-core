@@ -76,7 +76,13 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 			
 			if (!to1D || !isAz || (isAz && bean.getAzimuthalRange() != null)) {
 				
-				azimuthalArray = PixelIntegrationUtils.generateMinMaxAzimuthalArray(beamCentre, shape, false);
+				if (bean.getAzimuthalRange() == null) azimuthalArray = PixelIntegrationUtils.generateMinMaxAzimuthalArray(beamCentre, shape, false);
+				else {
+					double[] r = bean.getAzimuthalRange();
+					double min = Math.min(r[0], r[1]);
+					azimuthalArray = PixelIntegrationUtils.generateMinMaxAzimuthalArray(beamCentre, shape, min);
+					
+				}
 				binEdgesAzimuthal = calculateBins(azimuthalArray, bean.getAzimuthalRange(), nBinsAz);
 			}
 			
@@ -92,8 +98,15 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 			}
 			
 			if (!to1D || !isAz || (isAz && bean.getAzimuthalRange() != null)) {
-				
-				azimuthalArray = new Dataset[]{PixelIntegrationUtils.generateAzimuthalArray(beamCentre, shape, false)};
+				azimuthalArray = new Dataset[1];
+				if (bean.getAzimuthalRange() == null){
+					azimuthalArray[0] = PixelIntegrationUtils.generateAzimuthalArray(beamCentre, shape, false);
+				}else {
+					double[] r = bean.getAzimuthalRange();
+					double min = Math.min(r[0], r[1]);
+					azimuthalArray[0] = PixelIntegrationUtils.generateAzimuthalArray(beamCentre, shape, min);
+					
+				}
 				binEdgesAzimuthal = calculateBins(azimuthalArray, bean.getAzimuthalRange(), nBinsAz);
 			}
 		}

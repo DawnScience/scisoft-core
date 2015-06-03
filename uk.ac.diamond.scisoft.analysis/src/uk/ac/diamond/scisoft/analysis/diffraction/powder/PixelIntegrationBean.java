@@ -90,8 +90,8 @@ public class PixelIntegrationBean {
 			Arrays.sort(range);
 		}
 		
-		if (range[0] < -180) throw new IllegalArgumentException("Min cannot be less than -Pi");
-		if (range[1] > 180) throw new IllegalArgumentException("Max cannot be greater than +Pi");
+		if (range[0] > range[1]) throw new IllegalArgumentException("Start angle must be smaller than end");
+		if ((range[1] - range[0]) > 360) throw new IllegalArgumentException("Range must be <= 360");
 		
 		this.azimuthalRange = range;
 	}

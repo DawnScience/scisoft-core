@@ -315,7 +315,7 @@ public class PixelSplittingCacheTest extends AbstractPixelIntegrationTestBase {
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
 		Assert.assertEquals(5488.909329548431, max,0.00001);
-		Assert.assertEquals(3902.7255524746024, min,0.00001);
+		Assert.assertEquals(3897.33265730118, min,0.00001);
 		Assert.assertEquals(-170, maxq,0.00001);
 		Assert.assertEquals(-180, minq,0.00001);
 		

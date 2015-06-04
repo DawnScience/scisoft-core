@@ -134,6 +134,10 @@ public class SummedAreaTableTest {
 		if (lastFail!=null) throw new Exception(lastFail);
 	}
 	
+	/**
+	 * At one point during development the dataset variance was wrong.
+	 * @throws Exception
+	 */
 	@Test
 	public void testDatasetVariance() throws Exception {
 		
@@ -143,17 +147,14 @@ public class SummedAreaTableTest {
 	    Dataset square = Maths.power(minus, 2);
 	    double var = ((Number)square.mean()).doubleValue();
 
-		if (var!=image.variance().doubleValue()) {
+		if (DoubleUtils.equalsWithinTolerance(var, image.variance().doubleValue(), 0.000001d)) {
 			throw new Exception("Variance not equal : "+var+" to "+image.variance().doubleValue());
 		}
 	}
 
 	private double getBoxVariance(IDataset image, int[] point, int[] box) {
 	    Dataset subsetNoSlice = createDataset(image, point, box);
-	    double mean = ((Number)subsetNoSlice.mean()).doubleValue();
-	    Dataset minus  = Maths.subtract(subsetNoSlice, mean);
-	    Dataset square = Maths.power(minus, 2);
-	    return ((Number)square.mean()).doubleValue();
+	    return subsetNoSlice.variance(true).doubleValue();
 	}
 
 	private double getBoxMean(IDataset image, int[] point, int... box) {

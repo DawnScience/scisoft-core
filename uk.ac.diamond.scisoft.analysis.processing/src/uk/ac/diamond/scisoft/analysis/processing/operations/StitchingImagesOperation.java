@@ -58,11 +58,10 @@ public class StitchingImagesOperation extends AbstractOperation<StitchingImagesM
 			int columns = ((StitchingImagesModel)model).getColumns();
 			double fieldOfView = ((StitchingImagesModel)model).getFieldOfView();
 			boolean useFeatureAssociation = ((StitchingImagesModel)model).isFeatureAssociated();
-			boolean useGivenTranslations = ((StitchingImagesModel)model).isUseManualTransl();
 			
 			if (imageStitchingService == null)
 				imageStitchingService = OperationServiceLoader.getImageStitchingService();
-			stitched = imageStitchingService.stitch(imageStack, rows, columns, fieldOfView, translations, useFeatureAssociation, !useGivenTranslations);
+			stitched = imageStitchingService.stitch(imageStack, rows, columns, fieldOfView, translations, useFeatureAssociation);
 
 			SliceFromSeriesMetadata outsmm = ssm.clone();
 			for (int i = 0; i < ssm.getParent().getRank(); i++) {

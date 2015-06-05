@@ -22,6 +22,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
@@ -255,7 +256,9 @@ public class OperationsTest {
 		subtract.setModel(new ValueModel(100));
 		add.setModel(new ValueModel(101));
 			
-		context.setExecutionType(ExecutionType.PARALLEL);
+		context.setExecutionType(ExecutionType.GRAPH);
+		context.setParallelTimeout(5000);
+	    context.setPoolSize(Runtime.getRuntime().availableProcessors());
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor) throws Exception {
@@ -281,17 +284,7 @@ public class OperationsTest {
 		try {
 		    service.execute(context);
 		} catch (OperationException ne) {
-			
-			try {
-				// This also should timeout
-			    context.setExecutionType(ExecutionType.GRAPH);
-				context.setParallelTimeout(5000);
-			    context.setPoolSize(Runtime.getRuntime().availableProcessors());
-			    service.execute(context);
-			    
-			} catch (OperationException neo) {	
-				return; // That's what we wanted!
-			}
+			return;
 		}
 
 		throw new Exception("The default wait time of 5000ms should have been reached!");

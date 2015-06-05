@@ -13,9 +13,9 @@ import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.impl.SummedAreaTable;
@@ -104,14 +104,8 @@ public class SummedAreaTableTest {
 	}
 	
 	@Test
-	public void testFunnyFano() throws Exception {	
-        typeLoop(new int[]{10,10});
-	}
-	
-	@Test
 	public void testMediumFano() throws Exception {
-		testFano(DatasetFactory.zeros(new int[]{10, 10}, Dataset.FLOAT32), 3, 3);
-		testFano(DatasetFactory.ones(new int[]{10, 10}, Dataset.FLOAT32), 3, 3);
+		typeLoop(new int[]{378,517});
 	}
 
 	@Test
@@ -127,19 +121,51 @@ public class SummedAreaTableTest {
 		System.out.println("Total fano image of size "+Arrays.toString(new int[]{2000,3000})+" in "+(end-start)+"ms");
         if ((end-start)>5000) throw new Exception("Rather long time take to compute fano factor image!");
 	}
-
-    //@Test
-	public void testMediumLargeFano() throws Exception {
-        typeLoop(new int[]{3000,2000});
+    
+    @Test
+	public void testNullImage() throws Exception {
+       try {
+    	   new SummedAreaTable(null);
+       } catch (Exception required) {
+    	   return;
+       }
+       throw new Exception("Null image worked!");
 	}
-	
-	//@Test
-	public void testLargeFano() throws Exception {
-        typeLoop(new int[]{4096,4096});
+    
+    @Test
+	public void testEmptyImage() throws Exception {
+       try {
+    	   new SummedAreaTable(new IntegerDataset(new int[]{0,0}));
+       } catch (Exception required) {
+    	   return;
+       }
+       throw new Exception("Empty image worked!");
+	}
+
+    @Test
+	public void testZeroBox() throws Exception {
+       try {
+    	   SummedAreaTable table = new SummedAreaTable(Random.rand(new int[]{10,10}), true);
+    	   table.getFanoImage(0,0);
+       } catch (Exception required) {
+    	   return;
+       }
+       throw new Exception("Empty box worked!");
+	}
+    
+    @Test
+	public void testEvenBox() throws Exception {
+       try {
+    	   SummedAreaTable table = new SummedAreaTable(Random.rand(new int[]{10,10}), true);
+    	   table.getFanoImage(2,2);
+       } catch (Exception required) {
+    	   return;
+       }
+       throw new Exception("Even box worked!");
 	}
 
 	private void typeLoop(int[] size)  throws Exception {
-		for (int i : new int[]{1,3,5,7,9}) {	
+		for (int i : new int[]{1,5,9}) {	
 			testFano(DatasetUtils.cast(Maths.multiply(Random.rand(size), 100), Dataset.INT16),   i, i);
 			testFano(DatasetUtils.cast(Maths.multiply(Random.rand(size), 100), Dataset.INT32),   i, i);
 			testFano(DatasetUtils.cast(Maths.multiply(Random.rand(size), 100), Dataset.INT64),   i, i);

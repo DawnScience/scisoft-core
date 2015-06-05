@@ -28,7 +28,7 @@ public class SummedAreaTableTest {
 	@Test
 	public void testSmallDiagonal() throws Exception {
 		
-		final IDataset image = Random.rand(new int[]{10,10});
+		final Dataset image = Random.rand(new int[]{10,10});
 		final SummedAreaTable sum = new SummedAreaTable(image);
 		testDiagonal(image, sum);
 	}
@@ -37,7 +37,7 @@ public class SummedAreaTableTest {
 	public void testLargeDiagonal() throws Exception {
 		
 		long start = System.currentTimeMillis();
-		final IDataset image = Random.rand(new int[]{1024,1024});
+		final Dataset image = Random.rand(new int[]{1024,1024});
 		final SummedAreaTable sum = new SummedAreaTable(image);
 		long end   = System.currentTimeMillis();
 		
@@ -53,7 +53,7 @@ public class SummedAreaTableTest {
 	@Test
 	public void testSmallMean() throws Exception {
 		
-		final IDataset image = Random.rand(new int[]{10,10});
+		final Dataset image = Random.rand(new int[]{10,10});
 		final SummedAreaTable sum = new SummedAreaTable(image);
 		testDiagonal(image, sum, 3, 3);
 	}
@@ -62,7 +62,7 @@ public class SummedAreaTableTest {
 	public void testLargeMean() throws Exception {
 		
 		long start = System.currentTimeMillis();
-		final IDataset image = Random.rand(new int[]{1024,1024});
+		final Dataset image = Random.rand(new int[]{1024,1024});
 		final SummedAreaTable sum = new SummedAreaTable(image);
 		long end   = System.currentTimeMillis();
 		
@@ -77,7 +77,7 @@ public class SummedAreaTableTest {
 	@Test
 	public void testSmallVariance() throws Exception {
 		
-		final IDataset image = Maths.multiply(Random.rand(new int[]{10,10}), 100);
+		final Dataset image = Maths.multiply(Random.rand(new int[]{10,10}), 100);
 		final SummedAreaTable sum = new SummedAreaTable(image);
 		testDiagonal(image, sum, true, 3, 3);
 	}
@@ -86,7 +86,7 @@ public class SummedAreaTableTest {
 	public void testLargeVariance() throws Exception {
 		
 		long start = System.currentTimeMillis();
-		final IDataset image = Maths.multiply(Random.rand(new int[]{1024,1024}), 100);
+		final Dataset image = Maths.multiply(Random.rand(new int[]{1024,1024}), 100);
 		final SummedAreaTable sum = new SummedAreaTable(image);
 		long end   = System.currentTimeMillis();
 		
@@ -113,27 +113,19 @@ public class SummedAreaTableTest {
 		testFano(DatasetFactory.zeros(new int[]{10, 10}, Dataset.FLOAT32), 3, 3);
 		testFano(DatasetFactory.ones(new int[]{10, 10}, Dataset.FLOAT32), 3, 3);
 	}
-	
-	@Test
-	public void test6MillTableTime() throws Exception {
-		
-		long start = System.currentTimeMillis();
-		final IDataset image = Random.rand(new int[]{2000,3000});
-		final SummedAreaTable sum = new SummedAreaTable(image, true);
-		long end  = System.currentTimeMillis();
-		System.out.println("Calculated summed area table of size "+Arrays.toString(new int[]{2000,3000})+" in "+(end-start)+"ms");
-		
-	}
+
 	@Test
 	public void test6MillFanoTableTime() throws Exception {
 		long start = System.currentTimeMillis();
-		final IDataset image = Random.rand(new int[]{2000,3000});
+		final Dataset image = Random.rand(new int[]{2000,3000});
 		final SummedAreaTable sum = new SummedAreaTable(image, true);
-		System.out.println("Calculated summed area table of size "+Arrays.toString(new int[]{2000,3000})+" in "+(System.currentTimeMillis()-start)+"ms");
+		long postTable =  System.currentTimeMillis();
+		System.out.println("Calculated summed area table of size "+Arrays.toString(new int[]{2000,3000})+" in "+(postTable-start)+"ms");
 		final IDataset fano = sum.getFanoImage(new int[]{5,5});
 		long end  = System.currentTimeMillis();
-		System.out.println("Calculated fano image of size "+Arrays.toString(new int[]{2000,3000})+" in "+(end-start)+"ms");
-
+		System.out.println("Fano loop after table creation of size "+Arrays.toString(new int[]{2000,3000})+" in "+(end-postTable)+"ms");
+		System.out.println("Total fano image of size "+Arrays.toString(new int[]{2000,3000})+" in "+(end-start)+"ms");
+        if ((end-start)>5000) throw new Exception("Rather long time take to compute fano factor image!");
 	}
 
     //@Test
@@ -164,7 +156,6 @@ public class SummedAreaTableTest {
 		final Dataset fano   = (Dataset)sum.getFanoImage(box);
 		long end  = System.currentTimeMillis();
 		
-		if (fano.getDtype() != image.getDtype()) throw new Exception("Fano image changed dType!");
 		if (!Arrays.equals(fano.getShape(), image.getShape())) throw new Exception("Fano image changed shape!");
 		
 		System.out.println("Calculated fano of size "+Arrays.toString(fano.getShape())+" with box "+Arrays.toString(box)+" in "+(end-start)+"ms");

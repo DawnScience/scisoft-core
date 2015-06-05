@@ -17,7 +17,7 @@ public class StitchingImagesModel extends AbstractOperationModel {
 	private int rows = 3;
 	@OperationModelField(label = "Stack Layout Columns", hint = "Number of columns in the image stack")
 	private int columns = 3;
-	@OperationModelField(label = "Field of View", hint = "Field of view")
+	@OperationModelField(label = "Field of View", hint = "Field of view in microns")
 	private double fieldOfView = 50;
 	@OperationModelField(label = "Use feature Association", hint = "Use feature association to perfom the stitching, mosaic operation otherwise")
 	private boolean featureAssociated = true;

@@ -16,6 +16,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
@@ -127,7 +128,8 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 			if (ids.getRank() != 2)
 				return null;
 
-			final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
+			Dataset ds = DatasetUtils.convertToDataset(ids);
+			final int dtype = AbstractDataset.getBestFloatDType(ds.getDtype());
 			Dataset sumx = DatasetFactory.zeros(new int[] { h }, dtype);
 			Dataset sumy = DatasetFactory.zeros(new int[] { w }, dtype);
 			Dataset usumx = DatasetFactory.zeros(new int[] { h }, dtype);
@@ -146,7 +148,7 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 
 					if (mask != null)
 						msk = Maths.interpolate(mask, y, x);
-					final double v = Maths.interpolate(ids, mask, cy, cx);
+					final double v = Maths.interpolate(ds, mask, cy, cx);
 					sumy.set(v + sumy.getDouble(x), x);
 					usumy.set(msk + usumy.getDouble(x), x);
 					csum += v;
@@ -179,7 +181,8 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 			if (ids.getRank() != 2)
 				return null;
 
-			final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
+			Dataset ds = DatasetUtils.convertToDataset(ids);
+			final int dtype = AbstractDataset.getBestFloatDType(ds.getDtype());
 			Dataset mx = DatasetFactory.zeros(new int[] { h }, dtype);
 			Dataset my = DatasetFactory.zeros(new int[] { w }, dtype);
 
@@ -192,7 +195,7 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 					cx = ox + x * cp - y * sp;
 					cy = oy + x * sp + y * cp;
 
-					final double v = Maths.interpolate(ids, mask, cy, cx);
+					final double v = Maths.interpolate(ds, mask, cy, cx);
 					my.set(Math.max(v, my.getDouble(x)), x);
 					if (v > cmax)
 						cmax = v;

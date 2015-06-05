@@ -200,7 +200,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 *            input 2D dataset
 	 * @return 4 1D datasets for integral over radius, integral over azimuth (for given input and a uniform input)
 	 */
-	private List<Dataset> interpolate_value(IDataset... datasets) {
+	private List<Dataset> interpolate_value(Dataset... datasets) {
 		if (datasets.length == 0) {
 			return null;
 		}
@@ -210,6 +210,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			if (ids.getRank() != 2) {
 				throw new IllegalArgumentException("operating on 2d arrays only");
 			}
+			Dataset ds = DatasetUtils.convertToDataset(ids);
 			final int[] shape = ids.getShape();
 			final int xmax = shape[1] + 1;
 			final int ymax = shape[0] + 1;
@@ -226,7 +227,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			final double dphi = (ephi - sphi) / np;
 			final double rdphi = dphi * erad;
 			
-			final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
+			final int dtype = AbstractDataset.getBestFloatDType(ds.getDtype());
 			Dataset sump = DatasetFactory.zeros(new int[] { nr }, dtype);
 			Dataset sumr = DatasetFactory.zeros(new int[] { np }, dtype);
 			
@@ -268,7 +269,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 						isOutside = true;
 					}
 					
-					final double v = rad * dr * tdphi * (isOutside ? 1.0 : Maths.interpolate(ids, mask, y, x));
+					final double v = rad * dr * tdphi * (isOutside ? 1.0 : Maths.interpolate(ds, mask, y, x));
 					
 					if (doRadial) {
 						csum += v;
@@ -299,7 +300,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 	 * @param x1 coordinate
 	 * @return bilinear interpolation
 	 */
-	private Map<Point2i, Double> getBilinearWeights(final int[] s, final IDataset m, final double x0, final double x1) {
+	private Map<Point2i, Double> getBilinearWeights(final int[] s, final Dataset m, final double x0, final double x1) {
 		Map<Point2i, Double> res = new HashMap<Point2i, Double>();
 		
 		if (s.length != 2) {
@@ -397,6 +398,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			if (ids.getRank() != 2) {
 				throw new IllegalArgumentException("operating on 2d arrays only");
 			}
+			Dataset ds = DatasetUtils.convertToDataset(ids);
 			int npts = (int) (erad - srad + 1);
 			int apts = (int) (erad*(ephi - sphi) + 1);
 			double dphi = (ephi - sphi) / apts;
@@ -407,9 +409,9 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			
 			// Calculate bounding rectangle around the sector
 			int nxstart = (int) Math.max(0, cx - erad);
-			int nx = (int) Math.min(ids.getShape()[1], cx + erad);
+			int nx = (int) Math.min(ds.getShapeRef()[1], cx + erad);
 			int nystart = (int) Math.max(0, cy - erad);
-			int ny = (int) Math.min(ids.getShape()[0], cy + erad);
+			int ny = (int) Math.min(ds.getShapeRef()[0], cy + erad);
 			
 			for (int j = nystart; j < ny; j++) {
 				for (int i = nxstart; i < nx; i++) {
@@ -428,7 +430,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 							if (mask != null && !mask.getBoolean(j, i)) {
 									continue;
 							}
-							double val = ids.getDouble(j, i);
+							double val = ds.getDouble(j, i);
 							
 							// Each point participating to the sector integration is weighted depending on
 							// how far/close it is from the following point i+1
@@ -472,6 +474,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			if (ids.getRank() != 2) {
 				throw new IllegalArgumentException("operating on 2d arrays only");
 			}
+			Dataset ds = DatasetUtils.convertToDataset(ids);
 			double dr = 1.0/dpp;
 			int npts =  (int) ((erad - srad + 1) * dpp);
 			int apts = (int) (erad * (ephi - sphi) * dpp + 1);
@@ -479,9 +482,9 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			
 			// Calculate bounding rectangle around the sector
 			int nxstart = (int) Math.max(0, cx - erad);
-			int nx = (int) Math.min(ids.getShape()[1], cx + erad);
+			int nx = (int) Math.min(ds.getShapeRef()[1], cx + erad);
 			int nystart = (int) Math.max(0, cy - erad);
-			int ny = (int) Math.min(ids.getShape()[0], cy + erad);
+			int ny = (int) Math.min(ds.getShapeRef()[0], cy + erad);
 			
 			Dataset[] rAxis = setupSelectedAxes(npts, apts, dr, dphi);
 			
@@ -505,7 +508,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				break;
 			}
 			azAxis.setName("Angle (\u00b0)");
-			QSpaceProfileTask profileTask = new QSpaceProfileTask(nxstart, nx, nystart, ny, ids);
+			QSpaceProfileTask profileTask = new QSpaceProfileTask(nxstart, nx, nystart, ny, ds);
 			profileTask.setAxes(rAxis);
 			result.addAll(ProfileForkJoinPool.profileForkJoinPool.invoke(profileTask));
 			result.add(new FloatDataset()) ;
@@ -524,11 +527,11 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		
 		private final int nxstart, nx;
 		private final int nystart, ny;
-		private final IDataset ids;
+		private final Dataset ids;
 		
 		private Dataset[] rAxes;
 		
-		public QSpaceProfileTask(int nxstart, int nx, int nystart, int ny, final IDataset dataset) {
+		public QSpaceProfileTask(int nxstart, int nx, int nystart, int ny, final Dataset dataset) {
 			super();
 			
 			// We need to scale each job size with number of running threads
@@ -688,7 +691,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			if (ids.getRank() != 2) {
 				throw new IllegalArgumentException("operating on 2d arrays only");
 			}
-			result.addAll(ProfileForkJoinPool.profileForkJoinPool.invoke(new ProfileTask(0, nr, 0, np, ids)));
+			Dataset ds = DatasetUtils.convertToDataset(ids);
+			result.addAll(ProfileForkJoinPool.profileForkJoinPool.invoke(new ProfileTask(0, nr, 0, np, ds)));
 		}
 		
 		return result;
@@ -709,13 +713,13 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		private final double sr, sp;
 		private final int sri, eri;
 		private final int spi, epi;
-		private final IDataset ids;
+		private final Dataset ids;
 		
 		private final double dr = 1.0/dpp;
 		private final int npi = Math.max(1, (int) Math.ceil((ephi - sphi) * erad / dr));
 		private final double dphi = (ephi - sphi) / npi;
 
-		public ProfileTask(int sri, int eri, int spi, int epi, final IDataset dataset) {
+		public ProfileTask(int sri, int eri, int spi, int epi, final Dataset dataset) {
 			super();
 			
 			MAX_POINTS = 50000;
@@ -791,15 +795,15 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		        
 			} else {
 				
-				IDataset errIds = null; 
-				if (doErrors && (ids instanceof Dataset)) {
-					Serializable errorBuffer = ((Dataset) ids).getErrorBuffer();
+				Dataset errIds = null; 
+				if (doErrors) {
+					Serializable errorBuffer = ids.getErrorBuffer();
 					if (errorBuffer instanceof DoubleDataset) {
 						errIds = (DoubleDataset) errorBuffer;
 					}
 				}
 				
-				final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
+				final int dtype = AbstractDataset.getBestFloatDType(ids.getDtype());
 				Dataset sump = DatasetFactory.zeros(new int[] { nr }, dtype);
 				Dataset sumr = DatasetFactory.zeros(new int[] { np }, dtype);
 				Dataset errsump = DatasetFactory.zeros(new int[] { nr }, Dataset.FLOAT64);
@@ -918,7 +922,6 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 		
 	}
 }
-
 
 final class ProfileForkJoinPool {
 	

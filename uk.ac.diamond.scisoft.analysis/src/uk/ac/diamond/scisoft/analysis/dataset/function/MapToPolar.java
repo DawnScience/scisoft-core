@@ -16,6 +16,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
 
@@ -99,6 +100,7 @@ public class MapToPolar implements DatasetToDatasetFunction {
 			if (ids.getRank() != 2)
 				throw new IllegalArgumentException("operating on 2d arrays only");
 
+			Dataset ds = DatasetUtils.convertToDataset(ids);
 			// work out azimuthal resolution as roughly equal to pixel at outer radius
 			double dphi = 1.0 / erad;
 			int nr = (int) Math.ceil(erad - srad);
@@ -109,7 +111,7 @@ public class MapToPolar implements DatasetToDatasetFunction {
 				np = 1;
 
 			Dataset polarmap = DatasetFactory.zeros(new int[] { nr, np },
-					AbstractDataset.getBestFloatDType(ids.elementClass()));
+					AbstractDataset.getBestFloatDType(ds.getDtype()));
 			Dataset unitpolarmap = DatasetFactory.zeros(polarmap); // unclipped polar of unit field
 
 			double rad, phi;
@@ -121,7 +123,7 @@ public class MapToPolar implements DatasetToDatasetFunction {
 					phi = sphi + p * dphi;
 					x = cx + rad * Math.cos(phi);
 					y = cy + rad * Math.sin(phi);
-					polarmap.set(dphi * rad * Maths.interpolate(ids, y, x), r, p);
+					polarmap.set(dphi * rad * Maths.interpolate(ds, y, x), r, p);
 				}
 			}
 

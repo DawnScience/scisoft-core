@@ -19,6 +19,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
 
 /**
@@ -70,6 +71,7 @@ public class Integrate2D implements DatasetToDatasetFunction {
 			if (shape.length != 2)
 				return null;
 
+			Dataset ds = DatasetUtils.convertToDataset(ids);
 			if (full) {
 				sx = 0;
 				sy = 0;
@@ -100,8 +102,8 @@ public class Integrate2D implements DatasetToDatasetFunction {
 			if (ny == 0)
 				ny = 1;
 
-			final int dtype = AbstractDataset.getBestFloatDType(ids.elementClass());
-			final int is = ids.getElementsPerItem();
+			final int dtype = AbstractDataset.getBestFloatDType(ds.getDtype());
+			final int is = ds.getElementsPerItem();
 			Dataset sumy = DatasetFactory.zeros(is, new int[] { nx }, dtype);
 			Dataset sumx = DatasetFactory.zeros(is, new int[] { ny }, dtype);
 
@@ -110,7 +112,7 @@ public class Integrate2D implements DatasetToDatasetFunction {
 				for (int b = 0; b < ny; b++) {
 					csum = 0.0;
 					for (int a = 0; a < nx; a++) {
-						final double v = ids.getDouble(b + sy, a + sx);
+						final double v = ds.getDouble(b + sy, a + sx);
 						if (Double.isNaN(v)) continue; 
 						csum += v;
 						sumy.set(v + sumy.getDouble(a), a);
@@ -124,7 +126,7 @@ public class Integrate2D implements DatasetToDatasetFunction {
 				for (int b = 0; b < ny; b++) {
 					Arrays.fill(csums, 0.);
 					for (int a = 0; a < nx; a++) {
-						((CompoundDataset) ids).getDoubleArray(xvalues, b + sy, a + sx);
+						((CompoundDataset) ds).getDoubleArray(xvalues, b + sy, a + sx);
 						((CompoundDataset) sumy).getDoubleArray(yvalues, a);
 						for (int j = 0; j < is; j++) {
 							csums[j] += xvalues[j];

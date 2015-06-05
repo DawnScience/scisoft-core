@@ -317,9 +317,9 @@ public class ROIProfile {
 			List<? extends Dataset> dsets = int2d.value(slicedData);
 			if (dsets == null) return null;
 
-			profiles[0] = DatasetUtils.convertToDataset(slicedData.mean(0));
+			profiles[0] = slicedData.mean(0);
 			
-			profiles[1] = DatasetUtils.convertToDataset(slicedData.mean(1));
+			profiles[1] = slicedData.mean(1);
 
 		} else {
 			

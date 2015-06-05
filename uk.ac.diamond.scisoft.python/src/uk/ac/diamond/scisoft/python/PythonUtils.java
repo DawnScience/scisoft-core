@@ -219,7 +219,7 @@ public class PythonUtils {
 		SliceData slice = convertPySlicesToSlice(indexes, shape);
 		IDataset dataSlice;
 		if (a instanceof IDataset) {
-			dataSlice = DatasetUtils.convertToDataset(a).getSliceView(slice.slice);
+			dataSlice = DatasetUtils.convertToDataset((IDataset) a).getSliceView(slice.slice);
 		} else {
 			dataSlice = a.getSlice(slice.slice);
 		}

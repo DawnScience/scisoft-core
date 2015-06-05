@@ -17,16 +17,14 @@ public class StitchingImagesModel extends AbstractOperationModel {
 	private int rows = 3;
 	@OperationModelField(label = "Stack Layout Columns", hint = "Number of columns in the image stack")
 	private int columns = 3;
-	@OperationModelField(label = "Field of View", hint = "Field of view")
+	@OperationModelField(label = "Field of View", hint = "Field of view in microns")
 	private double fieldOfView = 50;
-	@OperationModelField(label = "Use feature Association", hint = "Use feature association to perfom the stitching")
+	@OperationModelField(label = "Use feature Association", hint = "Use feature association to perfom the stitching, mosaic operation otherwise")
 	private boolean featureAssociated = true;
-	@OperationModelField(label = "X Translation", hint = "X translation of each image", enableif = "useManualTransl == true")
+	@OperationModelField(label = "X Translation", hint = "X translation of each image in pixels")
 	private double xTransl = 25;
-	@OperationModelField(label = "Y Translation", hint = "Y translation of each image", enableif = "useManualTransl == true")
+	@OperationModelField(label = "Y Translation", hint = "Y translation of each image in pixels")
 	private double yTransl = 25;
-	@OperationModelField(label = "Use Manual Translations", hint = "Use Manual Translations")
-	private boolean useManualTransl = true;
 
 	public int getRows() {
 		return rows;
@@ -63,11 +61,5 @@ public class StitchingImagesModel extends AbstractOperationModel {
 	}
 	public void setyTransl(double yTransl) {
 		firePropertyChange("yTranslation", this.yTransl, this.yTransl = yTransl);
-	}
-	public boolean isUseManualTransl() {
-		return useManualTransl;
-	}
-	public void setUseManualTransl(boolean useManualTransl) {
-		firePropertyChange("useManualTransl", this.useManualTransl, this.useManualTransl = useManualTransl);
 	}
 }

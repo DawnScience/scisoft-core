@@ -19,11 +19,11 @@ public class StitchingImagesModel extends AbstractOperationModel {
 	private int columns = 3;
 	@OperationModelField(label = "Field of View", hint = "Field of view")
 	private double fieldOfView = 50;
-	@OperationModelField(label = "Use feature Association", hint = "Use feature association to perfom the stitching")
+	@OperationModelField(label = "Use feature Association", hint = "Use feature association to perfom the stitching, mosaic operation otherwise")
 	private boolean featureAssociated = true;
-	@OperationModelField(label = "X Translation", hint = "X translation of each image in pixels", enableif = "useManualTransl == true")
+	@OperationModelField(label = "X Translation", hint = "X translation of each image in pixels")
 	private double xTransl = 25;
-	@OperationModelField(label = "Y Translation", hint = "Y translation of each image in pixels", enableif = "useManualTransl == true")
+	@OperationModelField(label = "Y Translation", hint = "Y translation of each image in pixels")
 	private double yTransl = 25;
 
 	public int getRows() {

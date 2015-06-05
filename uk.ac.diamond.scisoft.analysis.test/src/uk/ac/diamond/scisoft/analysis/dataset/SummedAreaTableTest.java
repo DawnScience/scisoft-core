@@ -13,6 +13,8 @@ import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
@@ -22,8 +24,7 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.DoubleUtils;
 
 public class SummedAreaTableTest {
-
-	
+		
 	@Test
 	public void testSmallDiagonal() throws Exception {
 		
@@ -76,7 +77,7 @@ public class SummedAreaTableTest {
 	@Test
 	public void testSmallVariance() throws Exception {
 		
-		final IDataset image = Maths.multiply(Random.rand(new int[]{1024,1024}), 100);
+		final IDataset image = Maths.multiply(Random.rand(new int[]{10,10}), 100);
 		final SummedAreaTable sum = new SummedAreaTable(image);
 		testDiagonal(image, sum, true, 3, 3);
 	}
@@ -97,6 +98,79 @@ public class SummedAreaTableTest {
 		testDiagonal(image, sum, true, 5, 5);
 	}
 	
+	@Test
+	public void testSmallFano() throws Exception {	
+        typeLoop(new int[]{10,10});
+	}
+	
+	@Test
+	public void testFunnyFano() throws Exception {	
+        typeLoop(new int[]{10,10});
+	}
+	
+	@Test
+	public void testMediumFano() throws Exception {
+		testFano(DatasetFactory.zeros(new int[]{10, 10}, Dataset.FLOAT32), 3, 3);
+		testFano(DatasetFactory.ones(new int[]{10, 10}, Dataset.FLOAT32), 3, 3);
+	}
+	
+	@Test
+	public void test6MillTableTime() throws Exception {
+		
+		long start = System.currentTimeMillis();
+		final IDataset image = Random.rand(new int[]{2000,3000});
+		final SummedAreaTable sum = new SummedAreaTable(image, true);
+		long end  = System.currentTimeMillis();
+		System.out.println("Calculated summed area table of size "+Arrays.toString(new int[]{2000,3000})+" in "+(end-start)+"ms");
+		
+	}
+	@Test
+	public void test6MillFanoTableTime() throws Exception {
+		long start = System.currentTimeMillis();
+		final IDataset image = Random.rand(new int[]{2000,3000});
+		final SummedAreaTable sum = new SummedAreaTable(image, true);
+		System.out.println("Calculated summed area table of size "+Arrays.toString(new int[]{2000,3000})+" in "+(System.currentTimeMillis()-start)+"ms");
+		final IDataset fano = sum.getFanoImage(new int[]{5,5});
+		long end  = System.currentTimeMillis();
+		System.out.println("Calculated fano image of size "+Arrays.toString(new int[]{2000,3000})+" in "+(end-start)+"ms");
+
+	}
+
+    //@Test
+	public void testMediumLargeFano() throws Exception {
+        typeLoop(new int[]{3000,2000});
+	}
+	
+	//@Test
+	public void testLargeFano() throws Exception {
+        typeLoop(new int[]{4096,4096});
+	}
+
+	private void typeLoop(int[] size)  throws Exception {
+		for (int i : new int[]{1,3,5,7,9}) {	
+			testFano(DatasetUtils.cast(Maths.multiply(Random.rand(size), 100), Dataset.INT16),   i, i);
+			testFano(DatasetUtils.cast(Maths.multiply(Random.rand(size), 100), Dataset.INT32),   i, i);
+			testFano(DatasetUtils.cast(Maths.multiply(Random.rand(size), 100), Dataset.INT64),   i, i);
+			testFano(DatasetUtils.cast(Maths.multiply(Random.rand(size), 100), Dataset.FLOAT32), i, i);
+			testFano(DatasetUtils.cast(Maths.multiply(Random.rand(size), 100), Dataset.FLOAT64), i, i);
+		}
+	}
+
+	
+	private void testFano(Dataset image, int... box) throws Exception {
+		
+		long start = System.currentTimeMillis();
+		final SummedAreaTable sum = new SummedAreaTable(image);
+		final Dataset fano   = (Dataset)sum.getFanoImage(box);
+		long end  = System.currentTimeMillis();
+		
+		if (fano.getDtype() != image.getDtype()) throw new Exception("Fano image changed dType!");
+		if (!Arrays.equals(fano.getShape(), image.getShape())) throw new Exception("Fano image changed shape!");
+		
+		System.out.println("Calculated fano of size "+Arrays.toString(fano.getShape())+" with box "+Arrays.toString(box)+" in "+(end-start)+"ms");
+		
+	}
+
 	private void testDiagonal(IDataset image, SummedAreaTable sum, int... box) throws Exception {
 		testDiagonal(image, sum, false, box);
 	}

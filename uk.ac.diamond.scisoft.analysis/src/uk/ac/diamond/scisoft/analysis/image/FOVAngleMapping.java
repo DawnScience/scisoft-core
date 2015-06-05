@@ -60,9 +60,7 @@ public class FOVAngleMapping {
 		} else {
 			alpha = dict.get(fov);
 		}
-		double angle = alpha - theta;
-
-		return angle;
+		return alpha - theta;
 	}
 
 }

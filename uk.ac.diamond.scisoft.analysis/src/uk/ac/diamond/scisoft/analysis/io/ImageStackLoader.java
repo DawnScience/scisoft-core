@@ -86,7 +86,7 @@ public class ImageStackLoader implements ILazyLoader {
 		// load the first image to get the shape of the whole thing
 		IDataset dataSetFromFile;
 		if (dh == null || dh.getNames().length == 0) {
-			dataSetFromFile = getDataSetFromFile(new int[fRank], null);
+			dataSetFromFile = getDatasetFromFile(new int[fRank], null);
 		} else {
 			dataSetFromFile = dh.getDataset(0);
 			loaderClass = dh.getLoaderClass();
@@ -100,7 +100,7 @@ public class ImageStackLoader implements ILazyLoader {
 		}
 	}
 
-	private IDataset getDataSetFromFile(int[] location, IMonitor mon) throws ScanFileHolderException {
+	private IDataset getDatasetFromFile(int[] location, IMonitor mon) throws ScanFileHolderException {
 		// load the file
 		String filename = filenames.get(location);
 		filename = getLegalPath(filename);
@@ -145,11 +145,11 @@ public class ImageStackLoader implements ILazyLoader {
 	 * @return String in windows format.
 	 */
 	private static String getLegalPath(String dlsPath) {
-		if (dlsPath ==null)
+		if (dlsPath == null)
 			return null;
 
 		String path;
-		if (isWindowsOS() && dlsPath.startsWith("/dls/")) {
+		if (isWindows && dlsPath.startsWith("/dls/")) {
 			path = "\\\\Data.diamond.ac.uk\\" + dlsPath.substring(5);
 		} else {
 			path = dlsPath;
@@ -157,12 +157,7 @@ public class ImageStackLoader implements ILazyLoader {
         return path;
 	}
 
-	/**
-	 * @return true if windows
-	 */
-	static public boolean isWindowsOS() {
-		return System.getProperty("os.name").startsWith("Windows");
-	}
+	private static final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
 
 	@Override
 	public boolean isFileReadable() {
@@ -191,7 +186,7 @@ public class ImageStackLoader implements ILazyLoader {
 		int[] iShape = iSlice.getShape();
 		SliceND dSlice = it.getOutputSlice();
 		while (it.hasNext()) {
-			IDataset image = getDataSetFromFile(pos, mon).getSliceView(iSlice);
+			IDataset image = getDatasetFromFile(pos, mon).getSliceView(iSlice);
 
 			image.setShape(iShape);
 			if (result == null) {

@@ -19,6 +19,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
+import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionMetaReader;
@@ -38,11 +39,11 @@ public class DiffractionMetadataImportOperation extends AbstractOperation<Diffra
 	public OperationData execute(IDataset slice, IMonitor monitor)
 			throws OperationException {
 		
-		slice.setMetadata(getMeta(model));
+		slice.setMetadata(getMeta(model,AbstractDataset.squeezeShape(slice.getShape(), false)));
 		return new OperationData(slice);
 	}
 	
-	private IDiffractionMetadata getMeta(DiffractionMetadataImportModel mod) {
+	private IDiffractionMetadata getMeta(DiffractionMetadataImportModel mod, int[] shape) {
 
 		IDiffractionMetadata lmeta = metadata;
 		if (lmeta == null) {
@@ -50,7 +51,7 @@ public class DiffractionMetadataImportOperation extends AbstractOperation<Diffra
 				lmeta = metadata;
 				if (lmeta == null) {
 					NexusDiffractionMetaReader reader = new NexusDiffractionMetaReader(mod.getFilePath());
-					IDiffractionMetadata md = reader.getDiffractionMetadataFromNexus(null);
+					IDiffractionMetadata md = reader.getDiffractionMetadataFromNexus(shape);
 					if (!(reader.isPartialRead() || reader.isNcdRead())) throw new OperationException(this, "File does not contain metadata");
 					metadata = lmeta = md;
 					

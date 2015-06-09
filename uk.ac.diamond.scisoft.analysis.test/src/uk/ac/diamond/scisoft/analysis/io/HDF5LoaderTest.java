@@ -43,6 +43,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.ComplexDoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 import org.eclipse.dawnsci.analysis.tree.impl.TreeImpl;
+import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
@@ -343,8 +344,8 @@ public class HDF5LoaderTest {
 		final String n = TestUtils.getGDALargeTestFilesLocation() + "NexusUITest/3dDataChunked.nxs";
 		long timeAtStartms = System.currentTimeMillis();
 
-		HDF5Loader.loadData(n, "entry/instrument/detector/data", new int[] { 0, 0, 0 }, new int[] { 1, 1795, 2069 },
-				new int[] { 1, 1, 1 }, -1, false);
+		HDF5Utils.loadDataset(n, "entry/instrument/detector/data", new int[] { 0, 0, 0 }, new int[] { 1, 1795, 2069 },
+				new int[] { 1, 1, 1 }, -1, 1, false);
 		long timeTaken = System.currentTimeMillis() - timeAtStartms;
 		System.out.printf("Time taken = %d ms\n", timeTaken);
 		assertTrue(timeTaken < 10000);

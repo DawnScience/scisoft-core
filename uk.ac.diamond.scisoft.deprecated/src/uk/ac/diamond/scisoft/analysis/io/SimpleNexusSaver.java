@@ -16,22 +16,20 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import gda.data.nexus.NexusUtils;
 import gda.data.nexus.tree.NexusTreeProvider;
 import gda.data.nexus.tree.NexusTreeWriter;
-
-import java.util.Enumeration;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileSaver;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.nexusformat.NexusException;
-import org.nexusformat.NexusFile;
+import org.eclipse.dawnsci.hdf5.nexus.NexusException;
+import org.eclipse.dawnsci.hdf5.nexus.NexusFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import uk.ac.diamond.scisoft.analysis.dataset.Nexus;
 
 /**
  * File saver for simple NeXus files.
@@ -51,44 +49,26 @@ public class SimpleNexusSaver implements IFileSaver {
 	@Override
 	public void saveFile(IDataHolder dh) throws ScanFileHolderException {
 		NexusFile file;
-		boolean duplicate = false;
-
 		try {
 			// TODO Check to see if the file exists...
 			// TODO then either delete it or fail gracefully!
-			file = new NexusFile(fileName, NexusFile.NXACC_CREATE5);
-			file.makegroup("ScanFileHolder", "NXentry");
-			file.opengroup("ScanFileHolder", "NXentry");
-
-			file.makegroup("datasets", "NXdata");
-			file.opengroup("datasets", "NXdata");
+			file = NexusUtils.createNexusFile(fileName);
+			GroupNode g = file.getGroup("/ScanFileHolder:NXentry/datasets:NXdata", true);
 
 			String[] headings = dh.getNames();
 
 			for (int i = 0; i < headings.length; i++) {
 
-				// First lets check to see if this item already exists in the NeXus file.
-				Enumeration<?> keys = file.groupdir().keys();
-				while (keys.hasMoreElements()) {
-					String name = (String) keys.nextElement();
-					if (name.equalsIgnoreCase(headings[i])) {
-						duplicate = true;
-					}
-				}
-
-				if (duplicate) {
+				if (g.containsDataNode(headings[i])) {
 					logger.warn("Duplicate headings found - only writing the first one.");
 				} else {
 					Dataset data = DatasetUtils.convertToDataset(dh.getDataset(headings[i]));
-					int[] shape = data.getShape();
-					file.makedata(headings[i], Nexus.getGroupDataType(data.getDtype()), shape.length, shape);
-					file.opendata(headings[i]);
-					file.putdata(data.getBuffer());
-					file.closedata();
+					data.setName(headings[i]);
+					file.createData(g, data);
 				}
 			}
 			if(dh instanceof NexusTreeProvider){
-				NexusTreeWriter.writeHere(file, ((NexusTreeProvider)dh).getNexusTree());
+				NexusTreeWriter.writeHere(file, g, ((NexusTreeProvider)dh).getNexusTree());
 			}
 			file.close();
 		} catch (NexusException e) {

@@ -41,8 +41,7 @@ import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.nexusformat.NexusException;
-import org.nexusformat.NexusFile;
+import org.eclipse.dawnsci.hdf5.nexus.NexusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +53,6 @@ import uk.ac.diamond.scisoft.analysis.dataset.Nexus;
 public class NexusLoader extends AbstractFileLoader {
 	private static final Logger logger = LoggerFactory.getLogger(NexusLoader.class);
 
-	private String filename;
 	private String nexusDataSelectionFilename;
 	private String nexusMetaDataSelectionFilename;
 	private NexusTreeNodeSelection dataSelectionTree; 
@@ -73,7 +71,7 @@ public class NexusLoader extends AbstractFileLoader {
 	 * @param dataSetNames list of scannables and detectors for which data is to be extracted. If null then all
 	 */
 	public NexusLoader(String filename, List<String> dataSetNames) {
-		this.filename = filename;
+		this.fileName = filename;
 		this.nexusDataSelectionFilename = "";
 		this.nexusMetaDataSelectionFilename = "";
 		this.dataSelectionTree=null;
@@ -113,7 +111,7 @@ public class NexusLoader extends AbstractFileLoader {
 	 */
 	public NexusLoader(String filename, String nexusDataSelectionFilename, 
 			String nexusMetaDataSelectionFilename, List<String> dataSetNames) {
-		this.filename = filename;
+		this.fileName = filename;
 		this.nexusDataSelectionFilename = nexusDataSelectionFilename;
 		this.nexusMetaDataSelectionFilename = nexusMetaDataSelectionFilename;
 		this.dataSelectionTree=null;
@@ -133,7 +131,7 @@ public class NexusLoader extends AbstractFileLoader {
 	 */
 	public NexusLoader(String filename, NexusTreeNodeSelection dataSelectionTree, 
 			NexusTreeNodeSelection metaSelectionTree, List<String> dataSetNames) {
-		this.filename = filename;
+		this.fileName = filename;
 		this.nexusDataSelectionFilename = null;
 		this.nexusMetaDataSelectionFilename = null;
 		this.dataSelectionTree=dataSelectionTree;
@@ -152,14 +150,14 @@ public class NexusLoader extends AbstractFileLoader {
 	public NexusLoader(String filename, boolean loadAll) {
 		if (loadAll) {
 			NexusTreeNodeSelection sel = NexusTreeNodeSelection.createTreeForAllData();
-			this.filename = filename;
+			this.fileName = filename;
 			this.nexusDataSelectionFilename = null;
 			this.nexusMetaDataSelectionFilename = null;
 			this.dataSelectionTree = sel;
 			this.metaSelectionTree = sel;
 			this.dataSetNames = null;
 		} else {
-			this.filename = filename;
+			this.fileName = filename;
 			this.nexusDataSelectionFilename = "";
 			this.nexusMetaDataSelectionFilename = "";
 			this.dataSelectionTree = null;
@@ -214,20 +212,20 @@ public class NexusLoader extends AbstractFileLoader {
 		INexusTree tree = null;
 		try {
 			if( dataSelectionTree != null ){
-				tree = dataSelectionTree.equals(NexusTreeNodeSelection.SKIP) ? null :NexusTreeBuilder.getNexusTree(filename, dataSelectionTree, mon);
+				tree = dataSelectionTree.equals(NexusTreeNodeSelection.SKIP) ? null :NexusTreeBuilder.getNexusTree(fileName, dataSelectionTree, mon);
 			} else {
 				if( nexusDataSelectionFilename != null && !nexusDataSelectionFilename.isEmpty()){
-					tree = NexusTreeBuilder.getNexusTree(filename, nexusDataSelectionFilename, mon);
+					tree = NexusTreeBuilder.getNexusTree(fileName, nexusDataSelectionFilename, mon);
 				} else {
 					if( dataSetNames != null){
-						tree = getTreeForDatasetNames(filename, dataSetNames, true, mon);
+						tree = getTreeForDatasetNames(fileName, dataSetNames, true, mon);
 					} else {
-						tree = NexusTreeBuilder.getNexusTree(filename, NexusTreeNodeSelection.createTreeForAllNXData(), mon);
+						tree = NexusTreeBuilder.getNexusTree(fileName, NexusTreeNodeSelection.createTreeForAllNXData(), mon);
 					}
 				}
 			}
 		} catch (Exception e) {
-			throw new ScanFileHolderException("NexusReader exception loading " + filename
+			throw new ScanFileHolderException("NexusReader exception loading " + fileName
 					+ (nexusDataSelectionFilename == null ? "" : (" using selection file" + nexusDataSelectionFilename)), e);
 		
 		}
@@ -269,14 +267,14 @@ public class NexusLoader extends AbstractFileLoader {
 			INexusTree metaDatatree = null;
 			if (metaSelectionTree != null) {
 				metaDatatree = metaSelectionTree.equals(NexusTreeNodeSelection.SKIP) ? null : NexusTreeBuilder
-						.getNexusTree(filename, metaSelectionTree, mon);
+						.getNexusTree(fileName, metaSelectionTree, mon);
 			} else {
 				if( nexusMetaDataSelectionFilename != null && !nexusMetaDataSelectionFilename.isEmpty()){
-					metaDatatree = NexusTreeBuilder.getNexusTree(filename, nexusMetaDataSelectionFilename, mon);
+					metaDatatree = NexusTreeBuilder.getNexusTree(fileName, nexusMetaDataSelectionFilename, mon);
 				} else {
 					//if we only want specific dataSet them do not read in the metadata
 					if( dataSetNames == null){
-						metaDatatree = NexusTreeBuilder.getNexusTree(filename, NexusTreeNodeSelection.createTreeForAllMetaData(), mon);
+						metaDatatree = NexusTreeBuilder.getNexusTree(fileName, NexusTreeNodeSelection.createTreeForAllMetaData(), mon);
 					}
 				}
 			}
@@ -294,7 +292,7 @@ public class NexusLoader extends AbstractFileLoader {
 			return dataHolder;
 			
 		} catch (Exception e) {
-			throw new ScanFileHolderException("NexusReader exception loading " + filename
+			throw new ScanFileHolderException("NexusReader exception loading " + fileName
 					+ (nexusDataSelectionFilename == null ? "" : (" using selection file " + nexusDataSelectionFilename)), e);
 		}
 	}
@@ -382,10 +380,10 @@ public class NexusLoader extends AbstractFileLoader {
 		}
 		if (dataSetNames == null || dataSetNames.contains(name)) {
 			NexusGroupData data = dataNode.getData();
-			if (data != null && data.getBuffer() != null && data.type != NexusFile.NX_CHAR) {
-				Dataset ds = Nexus.createDataset(data, keepBitWidth);
+			if (data != null && data.getBuffer() != null && !data.isChar()) {
+				Dataset ds = data.toDataset(keepBitWidth);
 				if (ds == null) {
-					logger.error("NexusLoader cannot handle data of type {}", data.type);
+					logger.error("NexusLoader cannot handle data of type {}", data.getType());
 				} else {
 					ds.setName(name);
 					dataHolder.addDataset(name, ds);
@@ -400,8 +398,8 @@ public class NexusLoader extends AbstractFileLoader {
 	
 	@Override
 	public void loadMetadata(final IMonitor mon) throws Exception {
-		allDataSetNames = getDatasetNames(this.filename, mon);
-		allDataSetRanks = getDataShapes(filename, allDataSetNames, mon);
+		allDataSetNames = getDatasetNames(fileName, mon);
+		allDataSetRanks = getDataShapes(fileName, allDataSetNames, mon);
 	}
 	
 	@Override
@@ -431,7 +429,7 @@ public class NexusLoader extends AbstractFileLoader {
 		
 		try {
 			Map< String, INexusTree> trees = getDatasetNexusTrees(path, sets, false, mon);
-			final Map<String,int[]> ret = new HashMap<String, int[]>(sets.size());
+			final Map<String,int[]> ret = new TreeMap<String, int[]>();
 			for (Entry<String, INexusTree> tree : trees.entrySet()) {
 				ret.put(tree.getKey(), tree.getValue().getData().dimensions);
 			}
@@ -470,32 +468,32 @@ public class NexusLoader extends AbstractFileLoader {
 	public Dataset loadSet(String path, String name, IMonitor mon) throws Exception {
 		
 		final List<String> origNames    =  dataSetNames;
-		final String       origFileName =  filename;
+		final String       origFileName =  fileName;
 		
 		try {
-			this.filename     = path;
+			this.fileName     = path;
 			this.dataSetNames = Arrays.asList(new String[]{name});
 			final DataHolder dh = loadFile(mon);
 			return dh.getDataset(name);
 		} finally {
 			this.dataSetNames = origNames;
-			this.filename     = origFileName;
+			this.fileName     = origFileName;
 		}
     }
 	
 	public Map<String,ILazyDataset> loadSets(String path, List<String> names, IMonitor mon) throws Exception {
 		
 		final List<String> origNames    =  dataSetNames;
-		final String       origFileName =  filename;
+		final String       origFileName =  fileName;
 		
 		try {
-			this.filename     = path;
+			this.fileName     = path;
 			this.dataSetNames = names;
 			final DataHolder dh = loadFile(mon);
 			return dh.toLazyMap();
 		} finally {
 			this.dataSetNames = origNames;
-			this.filename     = origFileName;
+			this.fileName     = origFileName;
 		}
     }
 
@@ -513,12 +511,12 @@ public class NexusLoader extends AbstractFileLoader {
 	protected Dataset slice(final SliceObject object, IMonitor mon) throws Exception {
 
 		final List<String> origNames    =  dataSetNames;
-		final String       origFileName =  filename;
+		final String       origFileName =  fileName;
 		try {
-			this.filename     = object.getPath();
+			this.fileName     = object.getPath();
 			this.dataSetNames = Arrays.asList(new String[]{object.getName()});
 			if (mon!=null&&mon.isCancelled()) return null;
-			INexusTree tree = getTreeForDatasetNames(filename, dataSetNames, false, mon);
+			INexusTree tree = getTreeForDatasetNames(fileName, dataSetNames, false, mon);
 			if (mon!=null&&mon.isCancelled()) return null;
 			Map<String, INexusTree> nodes =  getDatasetNodes(tree, dataSetNames);
 			if (mon!=null&&mon.isCancelled()) return null;
@@ -534,7 +532,7 @@ public class NexusLoader extends AbstractFileLoader {
 
 		} finally {
 			this.dataSetNames = origNames;
-			this.filename     = origFileName;
+			this.fileName     = origFileName;
 		}
 
 	}

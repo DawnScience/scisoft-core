@@ -28,23 +28,14 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.ByteDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.LongDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
-import org.nexusformat.NexusException;
-import org.nexusformat.NexusFile;
+import org.eclipse.dawnsci.hdf5.nexus.NexusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,146 +49,9 @@ public class Nexus {
 	transient private static final Logger logger = LoggerFactory.getLogger(Nexus.class);
 
 	/**
-	 * Get dataset type from NeXus group data type
-	 * @param type
-	 * @return dataset type
+	 * @param node
+	 * @return lazy dataset
 	 */
-	static public int getDType(int type) {
-		switch (type) {
-		case NexusFile.NX_FLOAT64:
-			return Dataset.FLOAT64;
-		case NexusFile.NX_FLOAT32:
-			return Dataset.FLOAT32;
-		case NexusFile.NX_INT64:
-		case NexusFile.NX_UINT64:
-			return Dataset.INT64;
-		case NexusFile.NX_INT32:
-		case NexusFile.NX_UINT32:
-			return Dataset.INT32;
-		case NexusFile.NX_INT16:
-		case NexusFile.NX_UINT16:
-			return Dataset.INT16;
-		case NexusFile.NX_INT8:
-		case NexusFile.NX_UINT8:
-			return Dataset.INT8;
-		default:
-			throw new IllegalArgumentException("Unknown or unsupported NeXus data type");
-		}
-	}
-
-	/**
-	 * Get NeXus group data type from dataset type
-	 * @param dtype
-	 * @return NeXus group data type
-	 */
-	static public int getGroupDataType(int dtype) {
-		switch (dtype) {
-		case Dataset.FLOAT64:
-			return NexusFile.NX_FLOAT64;
-		case Dataset.FLOAT32:
-			return NexusFile.NX_FLOAT32;
-		case Dataset.INT64:
-			return NexusFile.NX_INT64;
-		case Dataset.INT32:
-			return NexusFile.NX_INT32;
-		case Dataset.INT16:
-			return NexusFile.NX_INT16;
-		case Dataset.INT8:
-			return NexusFile.NX_INT8;
-		default:
-			throw new IllegalArgumentException("Unknown or unsupported dataset type");
-		}
-	}
-
-	/**
-	 * Get unsigned integer NeXus group data type from dataset type
-	 * @param dtype
-	 * @return NeXus group data type
-	 */
-	static public int getUnsignedGroupDataType(int dtype) {
-		switch (dtype) {
-		case Dataset.INT64:
-			return NexusFile.NX_UINT64;
-		case Dataset.INT32:
-			return NexusFile.NX_UINT32;
-		case Dataset.INT16:
-			return NexusFile.NX_UINT16;
-		case Dataset.INT8:
-			return NexusFile.NX_UINT8;
-		default:
-			throw new IllegalArgumentException("Unknown or unsupported dataset type");
-		}
-	}
-	/**
-	 * Create a dataset from NeXus group data
-	 * @param groupData
-	 * @param keepBitWidth if true, does not promoted unsigned types to wider (signed) Java primitive type 
-	 * @return dataset
-	 */
-	static public Dataset createDataset(NexusGroupData groupData, boolean keepBitWidth) {
-		Dataset ds = null;
-		switch (groupData.type) {
-		case NexusFile.NX_FLOAT64:
-			double[] dData = (double[]) groupData.getBuffer();
-			ds = new DoubleDataset(Arrays.copyOf(dData, dData.length), groupData.dimensions);
-			break;
-		case NexusFile.NX_FLOAT32:
-			float[] fData = (float[]) groupData.getBuffer();
-			ds = new FloatDataset(Arrays.copyOf(fData, fData.length), groupData.dimensions);
-			break;
-		case NexusFile.NX_INT64:
-		case NexusFile.NX_UINT64:
-			long[] lData = (long[]) groupData.getBuffer();
-			ds = new LongDataset(Arrays.copyOf(lData, lData.length), groupData.dimensions);
-			break;
-		case NexusFile.NX_INT32:
-		case NexusFile.NX_UINT32:
-			int[] iData = (int[]) groupData.getBuffer();
-			ds = new IntegerDataset(Arrays.copyOf(iData, iData.length), groupData.dimensions);
-			break;
-		case NexusFile.NX_INT16:
-		case NexusFile.NX_UINT16:
-			short[] sData = (short[]) groupData.getBuffer();
-			ds = new ShortDataset(Arrays.copyOf(sData, sData.length), groupData.dimensions);
-			break;
-		case NexusFile.NX_INT8:
-		case NexusFile.NX_UINT8:
-			byte[] bData = (byte[]) groupData.getBuffer();
-			ds = new ByteDataset(Arrays.copyOf(bData, bData.length), groupData.dimensions);
-			break;
-		default:
-			throw new IllegalArgumentException("Unknown or unsupported dataset type");
-		}
-
-		if (!keepBitWidth) {
-			switch (groupData.type) {
-			case NexusFile.NX_UINT32:
-				ds = new LongDataset(ds);
-				DatasetUtils.unwrapUnsigned(ds, 32);
-				break;
-			case NexusFile.NX_UINT16:
-				ds = new IntegerDataset(ds);
-				DatasetUtils.unwrapUnsigned(ds, 16);
-				break;
-			case NexusFile.NX_UINT8:
-				ds = new ShortDataset(ds);
-				DatasetUtils.unwrapUnsigned(ds, 8);
-				break;
-			}
-		}
-		return ds;
-	}
-
-	/**
-	 * Make a NeXus group data object from a IDataset
-	 * @param data
-	 * @return group data
-	 */
-	public static NexusGroupData createNexusGroupData(IDataset data) {
-		Dataset ad = DatasetUtils.convertToDataset(data);
-		return new NexusGroupData(ad.getShape(), getGroupDataType(ad.getDtype()), ad.getBuffer());
-	}
-
 	public static ILazyDataset createLazyDataset(INexusTree node) {
 		NexusGroupData groupData = node.getData();
 		final URL source;
@@ -296,11 +150,11 @@ public class Nexus {
 								}
 							}
 							ngd = NexusExtractor.getNexusGroupData(source, nodePath, tstart, tsize, logger.isDebugEnabled());
-							d = createDataset(ngd, false);
+							d = ngd.toDataset(false);
 							d.setShape(size); // squeeze shape back
 						} else {
 							ngd = NexusExtractor.getNexusGroupData(source, nodePath, lstart, size, logger.isDebugEnabled());
-							d = createDataset(ngd, false);
+							d = ngd.toDataset(false);
 						}
 						if (d != null) {
 							if (useSteps)
@@ -308,7 +162,7 @@ public class Nexus {
 							d.setName(name);
 						}
 					} catch (NexusException e) {
-						logger.error("Problem with NeXus library: {}", e.getMessage());
+						logger.error("Problem with NeXus library: {}", e);
 					} catch (NexusExtractorException e) {
 						logger.error("Problem with NeXus extraction: {}", e.getMessage());
 					}
@@ -316,9 +170,9 @@ public class Nexus {
 				}
 			};
 
-			groupDataset = new LazyDataset(name, getDType(groupData.type), trueShape.clone(), l);
+			groupDataset = new LazyDataset(name, groupData.getDtype(), trueShape.clone(), l);
 		} else {
-			Dataset dataset = createDataset(groupData, false);
+			Dataset dataset = groupData.toDataset(false);
 			dataset.setName(name);
 			groupDataset = dataset;
 		}

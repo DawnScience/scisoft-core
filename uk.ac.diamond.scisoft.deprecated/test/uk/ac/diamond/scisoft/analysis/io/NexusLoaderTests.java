@@ -29,11 +29,11 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.hdf5.nexus.NexusException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.nexusformat.NexusException;
 import org.xml.sax.InputSource;
 
 public class NexusLoaderTests {

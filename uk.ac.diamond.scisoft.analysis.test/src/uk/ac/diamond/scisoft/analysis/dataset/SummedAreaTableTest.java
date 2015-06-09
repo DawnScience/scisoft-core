@@ -24,13 +24,17 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.DoubleUtils;
 
 public class SummedAreaTableTest {
+	
+	private enum TestType{
+		VALUE, MEAN, VARIANCE, FANO;
+	}
 		
 	@Test
 	public void testSmallDiagonal() throws Exception {
 		
 		final Dataset image = Random.rand(new int[]{10,10});
 		final SummedAreaTable sum = new SummedAreaTable(image);
-		testDiagonal(image, sum);
+		testDiagonal(image, sum, TestType.VALUE);
 	}
 	
 	@Test
@@ -46,20 +50,20 @@ public class SummedAreaTableTest {
 		if (delta>1000) throw new Exception("Unexpected long sum table generation! As a guide, it should take less than 400ms on I7 but took longer than 1000ms");
 		
 		// Long time, no caching done!
-		testDiagonal(image, sum);
+		testDiagonal(image, sum,  TestType.VALUE);
 	}
 	
 
 	@Test
-	public void testSmallMean() throws Exception {
+	public void testSmallMeanDiagonal() throws Exception {
 		
 		final Dataset image = Random.rand(new int[]{10,10});
 		final SummedAreaTable sum = new SummedAreaTable(image);
-		testDiagonal(image, sum, 3, 3);
+		testDiagonal(image, sum, TestType.MEAN, 3, 3);
 	}
 
 	@Test
-	public void testLargeMean() throws Exception {
+	public void testLargeMeanDiagonal() throws Exception {
 		
 		long start = System.currentTimeMillis();
 		final Dataset image = Random.rand(new int[]{1024,1024});
@@ -71,19 +75,19 @@ public class SummedAreaTableTest {
 		if (delta>1000) throw new Exception("Unexpected long sum table generation! As a guide, it should take less than 400ms on I7 but took longer than 1000ms");
 		
 		// Long time, no caching done!
-		testDiagonal(image, sum, 5, 5);
+		testDiagonal(image, sum, TestType.MEAN, 5, 5);
 	}
 
 	@Test
-	public void testSmallVariance() throws Exception {
+	public void testSmallVarianceDiagonal() throws Exception {
 		
 		final Dataset image = Maths.multiply(Random.rand(new int[]{10,10}), 100);
 		final SummedAreaTable sum = new SummedAreaTable(image);
-		testDiagonal(image, sum, true, 3, 3);
+		testDiagonal(image, sum, TestType.VARIANCE, 3, 3);
 	}
 
 	@Test
-	public void testLargeVariance() throws Exception {
+	public void testLargeVarianceDiagonal() throws Exception {
 		
 		long start = System.currentTimeMillis();
 		final Dataset image = Maths.multiply(Random.rand(new int[]{1024,1024}), 100);
@@ -95,9 +99,33 @@ public class SummedAreaTableTest {
 		if (delta>1000) throw new Exception("Unexpected long sum table generation! As a guide, it should take less than 400ms on I7 but took longer than 1000ms");
 		
 		// Long time, no caching done!
-		testDiagonal(image, sum, true, 5, 5);
+		testDiagonal(image, sum, TestType.VARIANCE, 5, 5);
 	}
 	
+	@Test
+	public void testSmallFanoDiagonal() throws Exception {
+		
+		final Dataset image = Maths.multiply(Random.rand(new int[]{10,10}), 100);
+		final SummedAreaTable sum = new SummedAreaTable(image, true);
+		testDiagonal(image, sum, TestType.FANO, 3, 3);
+	}
+
+	@Test
+	public void testLargeFanoDiagonal() throws Exception {
+		
+		long start = System.currentTimeMillis();
+		final Dataset image = Maths.multiply(Random.rand(new int[]{1024,1024}), 100);
+		final SummedAreaTable sum = new SummedAreaTable(image, true);
+		long end   = System.currentTimeMillis();
+		
+		// Check time
+		long delta = end-start;
+		if (delta>1000) throw new Exception("Unexpected long sum table generation! As a guide, it should take less than 400ms on I7 but took longer than 1000ms");
+		
+		// Long time, no caching done!
+		testDiagonal(image, sum, TestType.FANO, 5, 5);
+	}
+
 	@Test
 	public void testSmallFano() throws Exception {	
         typeLoop(new int[]{10,10});
@@ -188,11 +216,7 @@ public class SummedAreaTableTest {
 		
 	}
 
-	private void testDiagonal(IDataset image, SummedAreaTable sum, int... box) throws Exception {
-		testDiagonal(image, sum, false, box);
-	}
-
-	private void testDiagonal(IDataset image, SummedAreaTable sum, boolean variance, int... box) throws Exception {
+	private void testDiagonal(IDataset image, SummedAreaTable sum, TestType type, int... box) throws Exception {
 		
 		if (!Arrays.equals(sum.getShape(), image.getShape())) throw new Exception("Shape not the same! sum is "+Arrays.toString(sum.getShape()));
 		
@@ -201,21 +225,25 @@ public class SummedAreaTableTest {
 		while(x<image.getShape()[0] && y<image.getShape()[1]) {
 			
 			double a=0d, b=0d;
-			if (box==null || box.length<1) {
+			if (type==TestType.VALUE) {
 				a = sum.getDouble(x,y);
 				b = getSum(image, x, y);
 				
-			} else {				
+			} else if (type == TestType.MEAN){				
+				a = sum.getBoxMean(new int[]{x,y}, box);				
+				b = getBoxMean(image, new int[]{x,y}, box);
+
+			} else if (type == TestType.VARIANCE){				
+				a = sum.getBoxVariance(new int[]{x,y}, box);
+				b = getBoxVariance(image, new int[]{x,y}, box);
 				
-				if (variance) { // variance
-					a = sum.getBoxVariance(new int[]{x,y}, box);
-					b = getBoxVariance(image, new int[]{x,y}, box);
-					
-				} else { // mean
-					a = sum.getBoxMean(new int[]{x,y}, box);				
-					b = getBoxMean(image, new int[]{x,y}, box);
-				}
+			} else if (type == TestType.FANO){				
+				a = sum.getBoxFanoFactor(new int[]{x,y}, box);
+				double mean     = getBoxMean(image, new int[]{x,y}, box);
+				double variance = getBoxVariance(image, new int[]{x,y}, box);
+				b = variance/mean;
 			}
+			
 			if (!DoubleUtils.equalsWithinTolerance(a, b, 0.000001)) {
 				lastFail = a+" does not equal "+b+" for x,y="+x+","+y;
 				System.out.println(lastFail);

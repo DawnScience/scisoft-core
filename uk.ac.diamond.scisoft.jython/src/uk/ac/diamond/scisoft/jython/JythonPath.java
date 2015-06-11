@@ -103,6 +103,7 @@ public class JythonPath {
 		"uk.ac.diamond.CBFlib",
 		"uk.ac.gda.common",
 		"org.dawnsci.boofcv", //required for boofcv services
+		"org.ddogleg",
 		"ncsa.hdf",
 		"org.dawnsci.persistence" // Required for I11 LDE script
 	};

@@ -567,7 +567,10 @@ public class LoaderFactory {
 		
 		if (dir.isDirectory()) { // Which it should be...
 			
-			for (String fName : dir.list()) {
+			final List<String> files = Arrays.asList(dir.list());
+			Collections.sort(files, new SortNatural<String>(true));
+			
+			for (String fName : files) {
 				
 				final String ext   = FileUtils.getFileExtension(fName);
 				if (extensions.contains(ext)) {

@@ -50,7 +50,7 @@ public class ImagePeemUtils {
 		// if fov not in the map, calculate it with linear interpolation
 		// using the following equation:
 		// alpha = alpha1 + (fov - fov1)*((alpha2 - alpha1)/(fov2 - fov1))
-		if (!dict.containsKey(fov)){
+		if (!dict.containsKey((int)fov)){
 			List<Integer> fovs = new ArrayList<Integer>(dict.keySet());
 			Collections.sort(fovs);
 			for (int i = 0; i < fovs.size(); i++) {
@@ -64,7 +64,7 @@ public class ImagePeemUtils {
 				}
 			}
 		} else {
-			alpha = dict.get(fov);
+			alpha = dict.get((int)fov);
 		}
 		return alpha - theta;
 	}

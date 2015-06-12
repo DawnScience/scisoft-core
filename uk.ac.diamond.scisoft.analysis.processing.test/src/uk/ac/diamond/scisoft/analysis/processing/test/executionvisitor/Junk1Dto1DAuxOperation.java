@@ -43,7 +43,7 @@ public class Junk1Dto1DAuxOperation extends Junk1Dto1DOperation {
 		OperationData d = super.process(input, monitor);
 		
 		DoubleDataset rand = Random.rand(auxShape);
-		rand.squeeze();
+//		rand.squeeze();
 		rand.setName("singlevalue");
 		
 		d.setAuxData(rand);

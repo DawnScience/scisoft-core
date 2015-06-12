@@ -57,7 +57,8 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 		int nBinsRad = bean.getNumberOfBinsRadial();
 		
 		double[] beamCentre = qSpace.getDetectorProperties().getBeamCentreCoords();
-		int[] shape = new int[]{qSpace.getDetectorProperties().getPy(),
+		int[] shape = bean.getShape();
+		if (shape == null) shape = new int[]{qSpace.getDetectorProperties().getPy(),
 				qSpace.getDetectorProperties().getPx()};
 	
 		if (bean.isUsePixelSplitting()) {

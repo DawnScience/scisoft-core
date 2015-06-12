@@ -51,7 +51,7 @@ public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrati
 			cache = null;
 		}
 
-		IPixelIntegrationCache lcache = getCache((PixelIntegrationModel)model, metadata);
+		IPixelIntegrationCache lcache = getCache((PixelIntegrationModel)model, metadata, input.getShape());
 
 		ILazyDataset mask = getFirstMask(input);
 		IDataset m = null;
@@ -112,5 +112,5 @@ public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrati
 	
 	protected abstract void setAxes(IDataset data, List<Dataset> out);
 	
-	protected abstract IPixelIntegrationCache getCache(PixelIntegrationModel model, IDiffractionMetadata md);
+	protected abstract IPixelIntegrationCache getCache(PixelIntegrationModel model, IDiffractionMetadata md, int[] shape);
 }

@@ -46,7 +46,7 @@ public class AzimuthalPixelIntegrationOperation<T extends AzimuthalPixelIntegrat
 
 	@Override
 	protected IPixelIntegrationCache getCache(
-			PixelIntegrationModel model, IDiffractionMetadata md) {
+			PixelIntegrationModel model, IDiffractionMetadata md, int[] shape) {
 
 		IPixelIntegrationCache lcache = cache;
 		if (lcache == null) {
@@ -62,6 +62,7 @@ public class AzimuthalPixelIntegrationOperation<T extends AzimuthalPixelIntegrat
 					bean.setAzimuthalIntegration(true);
 					bean.setTo1D(true);
 					bean.setLog(model.isLogRadial());
+					bean.setShape(shape);
 					cache = lcache = new PixelIntegrationCache(metadata, bean);
 				}
 			}

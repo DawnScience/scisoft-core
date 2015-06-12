@@ -13,6 +13,7 @@ import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
@@ -56,6 +57,13 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 		int nBinsAz = bean.getNumberOfBinsAzimuthal();
 		int nBinsRad = bean.getNumberOfBinsRadial();
 		
+		double[] radialRange = bean.getRadialRange();
+		if (bean.isLog() && radialRange != null) {
+			radialRange = bean.getRadialRange().clone();
+			radialRange[0] = Math.log10(radialRange[0]);
+			radialRange[1] = Math.log10(radialRange[1]);
+		}
+		
 		double[] beamCentre = qSpace.getDetectorProperties().getBeamCentreCoords();
 		int[] shape = bean.getShape();
 		if (shape == null) shape = new int[]{qSpace.getDetectorProperties().getPy(),
@@ -63,7 +71,7 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 	
 		if (bean.isUsePixelSplitting()) {
 			
-			if (!to1D || isAz || (!isAz && bean.getRadialRange() != null)) {
+			if (!to1D || isAz || (!isAz && radialRange != null)) {
 				
 				XAxis x = bean.getxAxis() != XAxis.RESOLUTION ? bean.getxAxis() : XAxis.Q;
 				radialArray = PixelIntegrationUtils.generateMinMaxRadialArray(shape, qSpace, x);
@@ -71,7 +79,7 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 					radialArray[0] = Maths.log10(radialArray[0]);
 					radialArray[1] = Maths.log10(radialArray[1]);
 				}
-				binEdgesRadial = calculateBins(radialArray, bean.getRadialRange(), nBinsRad);
+				binEdgesRadial = calculateBins(radialArray, radialRange, nBinsRad);
 				
 			}
 			
@@ -89,12 +97,12 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 			
 		} else {
 			
-			if (!to1D || isAz || (!isAz && bean.getRadialRange() != null)) {
+			if (!to1D || isAz || (!isAz && radialRange != null)) {
 				
 				XAxis x = bean.getxAxis() != XAxis.RESOLUTION ? bean.getxAxis() : XAxis.Q;
 				radialArray = new Dataset[]{PixelIntegrationUtils.generateRadialArray(shape, qSpace, x)};
 				if (bean.isLog()) radialArray[0] = Maths.log10(radialArray[0]);
-				binEdgesRadial = calculateBins(radialArray, bean.getRadialRange(), nBinsRad);
+				binEdgesRadial = calculateBins(radialArray, radialRange, nBinsRad);
 				
 			}
 			
@@ -114,7 +122,7 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 		
 		if (!to1D || !isAz) azimuthalAxis = calculateAzimuthalAxis(nBinsAz, bean.getAzimuthalRange(), binEdgesAzimuthal);
 		
-		if (!to1D || isAz) radialAxis = calculateRadialAxis(bean.getxAxis(), nBinsRad, bean.getRadialRange() , binEdgesRadial);
+		if (!to1D || isAz) radialAxis = calculateRadialAxis(bean.getxAxis(), nBinsRad, radialRange, binEdgesRadial, bean.isLog());
 		
 	}
 	
@@ -213,7 +221,7 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 		
 			
 		double min = Double.MAX_VALUE;
-		double max = Double.MIN_VALUE;
+		double max = -Double.MAX_VALUE;
 
 		for (Dataset a : arrays) {
 
@@ -228,7 +236,7 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 		return (DoubleDataset) DatasetUtils.linSpace(min, max, numBins + 1, Dataset.FLOAT64);
 	}
 	
-	private static Dataset calculateRadialAxis(XAxis xAxis, int nBins, double[] binRange, DoubleDataset binEdges) {
+	private static Dataset calculateRadialAxis(XAxis xAxis, int nBins, double[] binRange, DoubleDataset binEdges, boolean isLog) {
 		Dataset axis = null;
 		
 		if (binRange == null) {
@@ -236,6 +244,13 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 			axis.idivide(2);
 		} else {
 			axis = DatasetUtils.linSpace(binRange[0], binRange[1], nBins, Dataset.FLOAT64);
+		}
+		
+		if (isLog) {
+			IndexIterator it = axis.getIterator();
+			while (it.hasNext()) {
+				axis.setObjectAbs(it.index,Math.pow(10,axis.getElementDoubleAbs(it.index)));
+			}
 		}
 		
 		switch (xAxis) {

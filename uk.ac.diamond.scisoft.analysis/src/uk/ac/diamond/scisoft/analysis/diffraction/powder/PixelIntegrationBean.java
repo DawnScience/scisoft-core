@@ -24,6 +24,7 @@ public class PixelIntegrationBean {
 	private double[] azimuthalRange = null;
 	private double[] radialRange = null;
 	private XAxis xAxis = XAxis.Q;
+	private int[] shape = null;
 	
 	public int getNumberOfBinsAzimuthal() {
 		return nBinsAzimuthal;
@@ -141,6 +142,14 @@ public class PixelIntegrationBean {
 		bean.xAxis = xAxis;
 		
 		return bean;
+	}
+
+	public int[] getShape() {
+		return shape;
+	}
+
+	public void setShape(int[] shape) {
+		this.shape = shape;
 	}
 	
 }

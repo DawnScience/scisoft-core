@@ -31,7 +31,7 @@ public class RadialPixelIntegrationOperation extends AzimuthalPixelIntegrationOp
 	
 	@Override
 	protected IPixelIntegrationCache getCache(
-			PixelIntegrationModel model, IDiffractionMetadata md) {
+			PixelIntegrationModel model, IDiffractionMetadata md, int[] shape) {
 
 		IPixelIntegrationCache lcache = cache;
 		if (lcache == null) {
@@ -46,6 +46,7 @@ public class RadialPixelIntegrationOperation extends AzimuthalPixelIntegrationOp
 					bean.setAzimuthalRange(model.getAzimuthalRange());
 					bean.setAzimuthalIntegration(false);
 					bean.setTo1D(true);
+					bean.setShape(shape);
 					
 					cache = lcache = new PixelIntegrationCache(metadata, bean);
 				}

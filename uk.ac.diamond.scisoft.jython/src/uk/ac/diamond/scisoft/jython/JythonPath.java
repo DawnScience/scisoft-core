@@ -57,6 +57,7 @@ public class JythonPath {
 		"uk.ac.diamond.ddogleg",
 		"org.apache.commons.lang",
 		"org.eclipse.dawnsci.analysis", // Includes api, dataset, tree, etc
+		"org.eclipse.dawnsci.plotting.api",
 		"uk.ac.diamond.scisoft.analysis",
 		"uk.ac.diamond.scisoft.diffraction.powder",
 		"uk.ac.diamond.scisoft.python",

@@ -34,8 +34,6 @@ class _lazydataset(object):
         self.shape = dataset.shape
         self.dtype = dataset.dtype
         self.file = dataset.file.filename
-        if isexternal:
-            dataset.file.close() # need to explicitly close otherwise file becomes inaccessible
         self.name = dataset.name
         self.rank = len(self.shape)
         prop = dataset.id.get_create_plist()
@@ -43,6 +41,8 @@ class _lazydataset(object):
             self.chunking = prop.get_chunk()
         else:
             self.chunking = None 
+        if isexternal: # is this now necessary?
+            dataset.file.close() # need to explicitly close otherwise file becomes inaccessible
 
     def __getitem__(self, key):
         try:

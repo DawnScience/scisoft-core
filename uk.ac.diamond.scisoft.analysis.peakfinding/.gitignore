@@ -1,0 +1,10 @@
+# Ignores that are common to all Eclipse GDA plugin projects
+/@dot
+/@dot.log
+/bin
+/build.xml
+/javaCompiler...args
+/src/corba/
+/temp.folder
+/test-reports
+/test-scratch

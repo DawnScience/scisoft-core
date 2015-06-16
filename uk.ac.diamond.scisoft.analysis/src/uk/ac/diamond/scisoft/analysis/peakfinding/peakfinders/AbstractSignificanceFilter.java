@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.peakfinding;
+package uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders;
 
 import java.util.Iterator;
 import java.util.Set;

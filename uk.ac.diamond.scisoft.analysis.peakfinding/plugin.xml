@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.dawnsci.analysis.api.peakfinder">
+      <peakFinder
+            class="uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders.MaximaDifference"
+            id="uk.ac.diamond.scisoft.analysis.peakfinding.peakFinder1"
+            name="Maxima Difference">
+      </peakFinder>
+   </extension>
+
+</plugin>

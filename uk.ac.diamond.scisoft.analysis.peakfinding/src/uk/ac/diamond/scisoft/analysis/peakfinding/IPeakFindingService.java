@@ -9,11 +9,15 @@
 
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
+import java.util.Collection;
+
 
 public interface IPeakFindingService {
 	
 	public String getName(String id) throws Exception;
 	
 	public String getDescription(String id) throws Exception;
+	
+	public Collection<String> getRegisteredPeakFinderNames();
 
 }

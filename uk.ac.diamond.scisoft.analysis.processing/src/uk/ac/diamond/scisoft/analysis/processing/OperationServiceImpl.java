@@ -91,7 +91,7 @@ public class OperationServiceImpl implements IOperationService {
 	public void execute(final IOperationContext context) throws OperationException {
 				
 		if (context.getSeries()==null || context.getSeries().length<1) {
-			throw new OperationException(null, "No operation list defined, call setSerices(...) with something meaningful please!");
+			throw new OperationException(null, "No operation list defined, call setSeries(...) with something meaningful please!");
 		}
 		
 		Map<Integer, String> slicing = context.getSlicing();

@@ -9,49 +9,52 @@
 
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-
-import uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders.IPeakFinder;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
+import org.eclipse.dawnsci.analysis.api.peakfinding.PeakFinderInfo;
 
 public class PeakFindingServiceImpl implements IPeakFindingService {
-
-	private static final Map<String, Class<? extends IPeakFinder>> PEAKFINDERS;
-	private static final List<String> PEAKFINDERNAMES;
-	static {
-		PEAKFINDERS = new HashMap<String, Class<? extends IPeakFinder>>();
-		PEAKFINDERNAMES = new ArrayList<String>();
-	}
+	
+	private Map<String, PeakFinderInfo> peakFinders;
 
 	@Override
 	public String getName(String id) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return peakFinders.get(id).getName();
 	}
 
 	@Override
 	public String getDescription(String id) throws Exception {
-		// TODO Auto-generated method stub
+		return peakFinders.get(id).getDescription();
+	}
+
+	@Override
+	public Collection<String> getRegisteredPeakFinderNames() {
+		
 		return null;
 	}
-
-	private void registerPeakFinders() {
-		//We only want to run this once 
-		if (PEAKFINDERS != null) return;
+	
+	private void registerPeakfinders() {
+		peakFinders = new HashMap<String, PeakFinderInfo>();
 		
-		IConfigurationElement[] elems;
-		
-		
-		
-//		PEAKFINDERNAMES.addAll(PEAKFINDERS.keySet());
+		IConfigurationElement[] elems = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.peakfinder");
+		for (IConfigurationElement el : elems) {
+			final String id = el.getAttribute("id");
+			final String name = el.getAttribute("name");
+			final String desc = el.getAttribute("description");
+			
+			IPeakFinder pf = null;
+			try {
+				pf = (IPeakFinder)el.createExecutableExtension("class");
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				continue;
+			}
+			peakFinders.put(id, new PeakFinderInfo(name, desc, pf));
+		}
 	}
-
-	public static List<String> getPeakFinders() {
-		return PEAKFINDERNAMES;
-	}
-
 }

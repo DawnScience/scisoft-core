@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.peakfinding;
+package uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders;
 
 import java.util.Map;
 import java.util.TreeSet;
@@ -16,6 +16,9 @@ import junit.framework.Assert;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.junit.Test;
+
+import uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders.AverageWindowAverageDiffs;
+import uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders.IPeakFinder;
 
 public class AverageWindowAverageDiffsTest {
 	

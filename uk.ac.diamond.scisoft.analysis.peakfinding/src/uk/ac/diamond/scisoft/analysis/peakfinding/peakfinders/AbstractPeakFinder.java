@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

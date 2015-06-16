@@ -14,11 +14,11 @@ import java.util.TreeSet;
 
 import junit.framework.Assert;
 
+import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders.AverageWindowAverageDiffs;
-import uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders.IPeakFinder;
 
 public class AverageWindowAverageDiffsTest {
 	

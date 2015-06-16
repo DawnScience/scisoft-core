@@ -1,22 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?eclipse-pydev version="1.0"?>
-
-<pydev_project>
+<?eclipse-pydev version="1.0"?><pydev_project>
 <pydev_property name="org.python.pydev.PYTHON_PROJECT_INTERPRETER">Default</pydev_property>
 <pydev_property name="org.python.pydev.PYTHON_PROJECT_VERSION">jython 2.5</pydev_property>
 <pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
 <path>/uk.ac.diamond.scisoft.python/src</path>
 <path>/uk.ac.diamond.scisoft.python/bin</path>
 </pydev_pathproperty>
-<pydev_pathproperty name="org.python.pydev.PROJECT_EXTERNAL_SOURCE_PATH">
-<path>${tpp_loc}/org.apache.commons.math_2.2.0.jar</path>
-<path>${tpp_loc}/uk.ac.diamond.jama_1.0.3.jar</path>
-<path>${tpp_loc}/uk.ac.diamond.org.apache.xmlrpc.common_3.1.3.jar</path>
-<path>${tpp_loc}/uk.ac.diamond.org.apache.xmlrpc.client_3.1.3.jar</path>
-<path>${tpp_loc}/uk.ac.diamond.org.apache.xmlrpc.server_3.1.3.jar</path>
-</pydev_pathproperty>
-<pydev_variables_property name="org.python.pydev.PROJECT_VARIABLE_SUBSTITUTION">
-<key>tpp_loc</key>
-<value>/here/lies/third-party/plugins</value>
-</pydev_variables_property>
 </pydev_project>

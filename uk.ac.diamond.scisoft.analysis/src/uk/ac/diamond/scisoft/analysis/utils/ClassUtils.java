@@ -6,7 +6,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package uk.ac.diamond.scisoft.analysis.processing;
+package uk.ac.diamond.scisoft.analysis.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +20,7 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-class ClassUtils {
+public class ClassUtils {
 
 	 /**
      * Attempts to list all the classes in the specified package as determined

@@ -19,7 +19,7 @@ public class PeakFindingServTest {
 	private static IPeakFindingService peakFindServ;
 	
 	@BeforeClass
-	public static void setupNonOSGiService() {
+	public static void setupNonOSGiService() throws Exception {
 		peakFindServ = (IPeakFindingService)Activator.getService(IPeakFindingService.class);
 		
 		//Grab the all the PeakFinders in u.a.d.s.a.peakfinding.peakfinders
@@ -34,7 +34,7 @@ public class PeakFindingServTest {
 	
 	@Test
 	public void testServiceHasPeakFinders() {
-		final Collection<String> peakFinderNames = peakFindServ.getRegisteredNames();
+		final Collection<String> peakFinderNames = peakFindServ.getPeakFinderNames();
 		assertNotNull(peakFinderNames);
 		assertTrue(peakFinderNames.isEmpty());
 	}

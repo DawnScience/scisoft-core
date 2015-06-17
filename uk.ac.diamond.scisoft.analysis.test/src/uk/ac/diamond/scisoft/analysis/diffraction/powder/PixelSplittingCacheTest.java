@@ -229,7 +229,7 @@ public class PixelSplittingCacheTest extends AbstractPixelIntegrationTestBase {
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(336830.76975107513, max,0.00001);
+		Assert.assertEquals(343922.8951987, max,0.00001);
 		Assert.assertEquals(0, min,0.00001);
 		Assert.assertEquals(10.402591860873361, maxq,0.00001);
 		Assert.assertEquals(0.007293853017842496, minq,0.00001);
@@ -249,8 +249,8 @@ public class PixelSplittingCacheTest extends AbstractPixelIntegrationTestBase {
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(370268.363719988, max,0.00001);
-		Assert.assertEquals(834.8830331973187, min,0.00001);
+		Assert.assertEquals(382277.508507386, max,0.00001);
+		Assert.assertEquals(840.1512395, min,0.00001);
 		Assert.assertEquals(5, maxq,0.00001);
 		Assert.assertEquals(1, minq,0.00001);
 		return after-before;
@@ -292,8 +292,8 @@ public class PixelSplittingCacheTest extends AbstractPixelIntegrationTestBase {
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(5346.04087202132, max,0.00001);
-		Assert.assertEquals(3801.9952775754186, min,0.00001);
+		Assert.assertEquals(5359.7359518, max,0.00001);
+		Assert.assertEquals(3810.364724508, min,0.00001);
 		Assert.assertEquals(179.86865947533707, maxq,0.00001);
 		Assert.assertEquals(-179.88694041486792, minq,0.00001);
 		
@@ -314,8 +314,8 @@ public class PixelSplittingCacheTest extends AbstractPixelIntegrationTestBase {
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(5488.909329548431, max,0.00001);
-		Assert.assertEquals(3897.33265730118, min,0.00001);
+		Assert.assertEquals(5507.947972896381, max,0.00001);
+		Assert.assertEquals(3904.14540326, min,0.00001);
 		Assert.assertEquals(-170, maxq,0.00001);
 		Assert.assertEquals(-180, minq,0.00001);
 		

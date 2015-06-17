@@ -14,10 +14,41 @@ import java.util.Collection;
 
 public interface IPeakFindingService {
 	
-	public String getName(String id) throws Exception;
+	/**
+	 * Get the name of a specified PeakFinder
+	 * @param id Should be unique string from extension point, e.g. fully qualified class name
+	 * @return String
+	 * @throws Exception
+	 */
+	public String getPeakFinderName(String id) throws Exception;
+
+	/**
+	 * Get the list of all peak finders registered with the service
+	 * @return
+	 */
+	public Collection<String> getPeakFinderNames();
 	
-	public String getDescription(String id) throws Exception;
+	/**
+	 * Get the description of the specified PeakFinder
+	 * @param id Should be unique string from extension point, e.g. fully qualified class name
+	 * @return String
+	 * @throws Exception
+	 */
+	public String getPeakFinderDescription(String id) throws Exception;
 	
-	public Collection<String> getRegisteredPeakFinderNames();
+	/**
+	 * Register all full implementations of IPeakFinders in a package
+	 * to the service. This is to avoid using extension points, so useful
+	 * for unit tests
+	 * @param cl 
+	 * @param pakage
+	 */
+	public void addPeakFindersByClass(ClassLoader cl, String pakage);
+	
+	/**
+	 * Register all all peakfinders found by extensions points with
+	 * the service.
+	 */
+	public void addPeakFindersByExtension();
 
 }

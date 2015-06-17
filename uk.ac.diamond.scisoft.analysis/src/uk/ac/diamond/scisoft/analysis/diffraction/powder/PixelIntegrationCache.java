@@ -140,27 +140,93 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 
 	@Override
 	public double getXBinEdgeMax() {
-		return bean.isAzimuthalIntegration() ? binEdgesRadial.get(bean.getNumberOfBinsRadial()) :
-			binEdgesAzimuthal.get(bean.getNumberOfBinsAzimuthal());
+		if (bean.isAzimuthalIntegration()) {
+
+			if (bean.getRadialRange() != null) {
+				double[] range = bean.getRadialRange();
+				return Math.max(range[0], range[1]);
+			} 
+
+			return binEdgesRadial.get(bean.getNumberOfBinsRadial());
+		}
+
+		if (bean.getAzimuthalRange() != null) {
+			double[] range = bean.getAzimuthalRange();
+			return Math.max(range[0], range[1]);
+		} 
+
+		return binEdgesAzimuthal.get(bean.getNumberOfBinsAzimuthal());
+
 	}
 
 
 	@Override
 	public double getXBinEdgeMin() {
-		return bean.isAzimuthalIntegration() ? binEdgesRadial.get(0) : binEdgesAzimuthal.get(0);
+		
+		if (bean.isAzimuthalIntegration()) {
+			
+			if (bean.getRadialRange() != null) {
+				double[] range = bean.getRadialRange();
+				return Math.min(range[0], range[1]);
+			} 
+				
+			return binEdgesRadial.get(0);
+			
+			
+		}
+		
+		if (bean.getAzimuthalRange() != null) {
+			double[] range = bean.getAzimuthalRange();
+			return Math.min(range[0], range[1]);
+		} 
+
+		return binEdgesAzimuthal.get(0);
+
+
 	}
 
 
 	@Override
 	public double getYBinEdgeMax() {
-		return bean.isAzimuthalIntegration() ?  binEdgesAzimuthal.get(bean.getNumberOfBinsAzimuthal()) :
-			binEdgesRadial.get(bean.getNumberOfBinsRadial());
+		if (!bean.isAzimuthalIntegration()) {
+
+			if (bean.getRadialRange() != null) {
+				double[] range = bean.getRadialRange();
+				return Math.max(range[0], range[1]);
+			} 
+
+			return binEdgesRadial.get(bean.getNumberOfBinsRadial());
+		}
+
+		if (bean.getAzimuthalRange() != null) {
+			double[] range = bean.getAzimuthalRange();
+			return Math.max(range[0], range[1]);
+		} 
+
+		return binEdgesAzimuthal.get(bean.getNumberOfBinsAzimuthal());
 	}
 
 
 	@Override
 	public double getYBinEdgeMin() {
-		return bean.isAzimuthalIntegration() ? binEdgesAzimuthal.get(0) : binEdgesRadial.get(0);
+		if (!bean.isAzimuthalIntegration()) {
+			
+			if (bean.getRadialRange() != null) {
+				double[] range = bean.getRadialRange();
+				return Math.min(range[0], range[1]);
+			} 
+				
+			return binEdgesRadial.get(0);
+			
+			
+		}
+		
+		if (bean.getAzimuthalRange() != null) {
+			double[] range = bean.getAzimuthalRange();
+			return Math.min(range[0], range[1]);
+		} 
+
+		return binEdgesAzimuthal.get(0);
 	}
 
 

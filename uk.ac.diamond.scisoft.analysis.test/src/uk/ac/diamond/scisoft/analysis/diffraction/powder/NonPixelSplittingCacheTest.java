@@ -246,8 +246,8 @@ public class NonPixelSplittingCacheTest extends AbstractPixelIntegrationTestBase
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(420544.14285714284, max,0.00001);
-		Assert.assertEquals(824.7391304347826, min,0.00001);
+		Assert.assertEquals(431639.6842105, max,0.00001);
+		Assert.assertEquals(821.3030303030, min,0.00001);
 		Assert.assertEquals(5.0, maxq,0.00001);
 		Assert.assertEquals(1.0, minq,0.00001);
 		return after-before;
@@ -311,7 +311,7 @@ public class NonPixelSplittingCacheTest extends AbstractPixelIntegrationTestBase
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(37002.0, max,0.00001);
+		Assert.assertEquals(39444.15789473684, max,0.00001);
 		Assert.assertEquals(0, min,0.00001);
 		Assert.assertEquals(-170, maxq,0.00001);
 		Assert.assertEquals(-180, minq,0.00001);

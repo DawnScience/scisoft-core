@@ -172,8 +172,8 @@ public class PixelSplitting2DCacheTest extends AbstractPixelIntegrationTestBase 
 		double maxa = out.get(2).max().doubleValue();
 		double mina = out.get(2).min().doubleValue();
 		
-		Assert.assertEquals(662878.0, max,0.00001);
-		Assert.assertEquals(-26270.607421875, min,0.00001);
+		Assert.assertEquals(658622.3408751222, max,0.00001);
+		Assert.assertEquals(-22529.7040995777, min,0.00001);
 		Assert.assertEquals(10.402591860873361, maxq,0.00001);
 		Assert.assertEquals(0.007293853017842496, minq,0.00001);
 		Assert.assertEquals(179.86865947533707, maxa,0.00001);
@@ -198,8 +198,8 @@ public class PixelSplitting2DCacheTest extends AbstractPixelIntegrationTestBase 
 		double maxa = out.get(2).max().doubleValue();
 		double mina = out.get(2).min().doubleValue();
 		
-		Assert.assertEquals(444024.03125, max,0.00001);
-		Assert.assertEquals(-8611.45703125, min,0.00001);
+		Assert.assertEquals(444024.0416205494, max,0.00001);
+		Assert.assertEquals(-8611.45624616, min,0.00001);
 		Assert.assertEquals(10.402591860873361, maxq,0.00001);
 		Assert.assertEquals(0.007293853017842496, minq,0.00001);
 		Assert.assertEquals(-170, maxa,0.00001);
@@ -225,7 +225,7 @@ public class PixelSplitting2DCacheTest extends AbstractPixelIntegrationTestBase 
 		double mina = out.get(2).min().doubleValue();
 		
 		Assert.assertEquals(463957.0, max,0.00001);
-		Assert.assertEquals(-405.9999694824219, min,0.00001);
+		Assert.assertEquals(-406, min,0.00001);
 		Assert.assertEquals(5, maxq,0.00001);
 		Assert.assertEquals(1, minq,0.00001);
 		Assert.assertEquals(-170, maxa,0.00001);
@@ -249,8 +249,8 @@ public class PixelSplitting2DCacheTest extends AbstractPixelIntegrationTestBase 
 		double maxa = out.get(2).max().doubleValue();
 		double mina = out.get(2).min().doubleValue();
 		
-		Assert.assertEquals(610043.375, max,0.00001);
-		Assert.assertEquals(-5393.3134765625, min,0.00001);
+		Assert.assertEquals(612730.85385289, max,0.00001);
+		Assert.assertEquals(-6100.88281466, min,0.00001);
 		Assert.assertEquals(10.402591860873361, maxq,0.00001);
 		Assert.assertEquals(0.007293853017842496, minq,0.00001);
 		Assert.assertEquals(179.48174445066292, maxa,0.00001);
@@ -275,8 +275,8 @@ public class PixelSplitting2DCacheTest extends AbstractPixelIntegrationTestBase 
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(363110.0625, max,0.00001);
-		Assert.assertEquals(-2562.922119140625, min,0.00001);
+		Assert.assertEquals(359668.816034755, max,0.00001);
+		Assert.assertEquals(-2815.057230127, min,0.00001);
 		Assert.assertEquals(10.400657851941666, maxq,0.00001);
 		Assert.assertEquals(0.009227861949536547, minq,0.00001);
 		

@@ -32,15 +32,15 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 
 	@Override
 	public void addPeakFindersByClass(ClassLoader cl, String pakage) {
-		final List<Class<?>> clazzes = ClassUtils.getClassesForPackage(cl, pakage);
-		for (Class<?> clazz : clazzes) {
-			if (Modifier.isAbstract(clazz.getModifiers())) continue;
-			if (IPeakFinder.class.isAssignableFrom(clazz)) {
-				IPeakFinder pf = (IPeakFinder) clazz.newInstance();
-				
-				registerPeakFinder(null, pf.getName(), null, pf);
-			}
-		}
+//		final List<Class<?>> clazzes = ClassUtils.getClassesForPackage(cl, pakage);
+//		for (Class<?> clazz : clazzes) {
+//			if (Modifier.isAbstract(clazz.getModifiers())) continue;
+//			if (IPeakFinder.class.isAssignableFrom(clazz)) {
+//				IPeakFinder pf = (IPeakFinder) clazz.newInstance();
+//				
+//				registerPeakFinder(null, pf.getName(), null, pf);
+//			}
+//		}
 
 	}
 

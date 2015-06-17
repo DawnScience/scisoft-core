@@ -108,7 +108,7 @@ public class PixelIntegrationBean {
 			return;
 		}
 		
-		this.radialRange = radialRange;
+		this.radialRange = radialRange.clone();
 		
 		if (xAxis == XAxis.RESOLUTION) {
 			this.radialRange[0] = (2*Math.PI)/this.radialRange[0];

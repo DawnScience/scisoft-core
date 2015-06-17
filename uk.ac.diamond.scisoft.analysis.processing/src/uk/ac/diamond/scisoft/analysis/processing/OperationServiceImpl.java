@@ -48,6 +48,8 @@ import org.eclipse.dawnsci.macro.api.MacroEventObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.ac.diamond.scisoft.analysis.utils.ClassUtils;
+
 /**
  * Do not use this class externally. Instead get the IOperationService
  * from OSGI.

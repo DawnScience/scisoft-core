@@ -1,60 +1,64 @@
-/*-
- * Copyright 2015 Diamond Light Source Ltd.
- *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- */
-
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
-import org.eclipse.dawnsci.analysis.api.peakfinding.PeakFinderInfo;
 
 public class PeakFindingServiceImpl implements IPeakFindingService {
-	
-	private Map<String, PeakFinderInfo> peakFinders;
 
 	@Override
-	public String getName(String id) throws Exception {
-		return peakFinders.get(id).getName();
-	}
-
-	@Override
-	public String getDescription(String id) throws Exception {
-		return peakFinders.get(id).getDescription();
-	}
-
-	@Override
-	public Collection<String> getRegisteredPeakFinderNames() {
-		
+	public String getPeakFinderName(String id) throws Exception {
+		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Collection<String> getPeakFinderNames() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getPeakFinderDescription(String id) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addPeakFindersByClass(ClassLoader cl, String pakage) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void addPeakFindersByExtension() {
+		// TODO Auto-generated method stub
+
+	}
 	
-	private void registerPeakfinders() {
-		peakFinders = new HashMap<String, PeakFinderInfo>();
+	private class PeakFinderInfo {
 		
-		IConfigurationElement[] elems = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.peakfinder");
-		for (IConfigurationElement el : elems) {
-			final String id = el.getAttribute("id");
-			final String name = el.getAttribute("name");
-			final String desc = el.getAttribute("description");
-			
-			IPeakFinder pf = null;
-			try {
-				pf = (IPeakFinder)el.createExecutableExtension("class");
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				continue;
-			}
-			peakFinders.put(id, new PeakFinderInfo(name, desc, pf));
+		private String name;
+		private String description;
+		private IPeakFinder peakFinder;
+		
+		public PeakFinderInfo(String nm, String desc, IPeakFinder pf) {
+			this.name = nm;
+			this.description = desc;
+			this.peakFinder = pf;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public IPeakFinder getPeakFinder() {
+			return peakFinder;
 		}
 	}
+
 }

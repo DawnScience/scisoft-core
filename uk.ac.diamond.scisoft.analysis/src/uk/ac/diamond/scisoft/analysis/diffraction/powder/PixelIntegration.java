@@ -17,7 +17,6 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 
@@ -71,7 +70,9 @@ public class PixelIntegration {
 		double[] integrationRange = bean.getYAxisRange();
 		Dataset m = DatasetUtils.convertToDataset(mask);
 		Dataset r =  null;
-		if (bean.getYAxisArray() != null) r = bean.getYAxisArray()[0];
+		if (bean.getYAxisArray() != null) {
+			r = bean.getYAxisArray()[0];
+		}
 
 		//iterate over dataset, binning values per pixel
 		IndexIterator iter = a.getIterator();
@@ -153,6 +154,9 @@ public class PixelIntegration {
 		//iterate over dataset, binning values per pixel
 		IndexIterator iter = a[0].getIterator();
 		
+		double rMin = 0;
+		double rMax = 0;
+		
 		while (iter.hasNext()) {
 
 			if (m != null && !m.getElementBooleanAbs(iter.index)) continue;
@@ -160,8 +164,8 @@ public class PixelIntegration {
 			double rangeScale = 1;
 
 			if (integrationRange != null && r != null) {
-				double rMin = r[0].getElementDoubleAbs(iter.index);
-				double rMax = r[1].getElementDoubleAbs(iter.index);
+				rMin = r[0].getElementDoubleAbs(iter.index);
+				rMax = r[1].getElementDoubleAbs(iter.index);
 
 				if (rMin > integrationRange[1]) continue;
 				if (rMax < integrationRange[0]) continue;
@@ -181,14 +185,9 @@ public class PixelIntegration {
 			double qMin = a[0].getElementDoubleAbs(iter.index);
 			double qMax = a[1].getElementDoubleAbs(iter.index);
 
-			//			double sig = d.getDouble(pos);
-			sig *= rangeScale;
-
 			if (qMax < lo || qMin > hi) {
 				continue;
 			} 
-
-			//losing something here?
 
 			double minBinExact = (qMin-lo)/span;
 			double maxBinExact = (qMax-lo)/span;
@@ -197,49 +196,33 @@ public class PixelIntegration {
 			int maxBin = (int)maxBinExact;
 
 			if (minBin == maxBin) {
-				h[minBin]++;
-				in[minBin] += sig;
+				h[minBin]+=rangeScale;
+				in[minBin] += (sig*rangeScale);
 				
 				if (e!=null) {
-					final double std = e.getElementDoubleAbs(iter.index);
+					final double std = e.getElementDoubleAbs(iter.index)*rangeScale;
 					eb[minBin] += (std*std);
 				}
 				
 			} else {
 
-				double iPerPixel = 1/(maxBinExact-minBinExact);
+				double range = maxBinExact-minBinExact;
 
 				double minFrac = 1-(minBinExact-minBin);
 				double maxFrac = maxBinExact-maxBin;
 
-				if (minBin >= 0 && minBin < h.length) {
-					h[minBin]+=(iPerPixel*minFrac);
-					in[minBin] += (sig*iPerPixel*minFrac);
-					
+				for (int i = minBin; i <= maxBin; i++) {
+					double modify = rangeScale;
+					if (i >= h.length || i < 0) continue;
+					if (i == minBin) modify *= minFrac;
+					if (i == maxBin) modify *= maxFrac;
+					modify /= range;
+					h[i]+=modify;
+					in[i] += (sig*modify);
 					if (e!=null) {
-						final double std = e.getElementDoubleAbs(iter.index)*iPerPixel*minFrac;
-						eb[minBin] += (std*std);
-					}
-				}
-
-				if (maxBin < h.length && maxBin >=0) {
-					h[maxBin]+=(iPerPixel*maxFrac);
-					in[maxBin] += (sig*iPerPixel*maxFrac);
-					
-					if (e!=null) {
-						final double std = e.getElementDoubleAbs(iter.index)*iPerPixel*maxFrac;
-						eb[maxBin] += (std*std);
-					}
-				}
-
-
-				for (int i = (minBin+1); i < maxBin; i++) {
-					if (i >= h.length || i < 0) continue; 
-					h[i]+=iPerPixel;
-					in[i] += (sig*iPerPixel);
-					if (e!=null) {
-						final double std = e.getElementDoubleAbs(iter.index)*iPerPixel;
+						final double std = e.getElementDoubleAbs(iter.index)*modify;
 						eb[i] += (std*std);
+
 					}
 				}
 			}
@@ -258,18 +241,18 @@ public class PixelIntegration {
 		
 		final double loQ = bean.getXBinEdgeMin();
 		final double hiQ = bean.getXBinEdgeMax();
-		final double spanQ = (hiQ - loQ)/bean.getNumberOfBinsXAxis();
+		final double spanQ = (hiQ - loQ)/(bean.getNumberOfBinsXAxis());
 
 		final double loChi = bean.getYBinEdgeMin();
 		final double hiChi = bean.getYBinEdgeMax();
-		final double spanChi = (hiChi - loChi)/bean.getNumberOfBinsYAxis();
-
+		final double spanChi = (hiChi - loChi)/(bean.getNumberOfBinsYAxis());
+		
 		//TODO early exit if spans are z
 		final int nXBins = bean.getNumberOfBinsXAxis();
 		final int nYBins = bean.getNumberOfBinsYAxis();
 
 		IntegerDataset histo = (IntegerDataset) DatasetFactory.zeros(new int[]{nYBins,nXBins}, Dataset.INT32);
-		FloatDataset intensity = (FloatDataset) DatasetFactory.zeros(new int[]{nYBins,nXBins},Dataset.FLOAT32);
+		DoubleDataset intensity = (DoubleDataset) DatasetFactory.zeros(new int[]{nYBins,nXBins},Dataset.FLOAT64);
 
 		Dataset x = DatasetUtils.convertToDataset(bean.getXAxisArray()[0]);
 		Dataset y = DatasetUtils.convertToDataset(bean.getYAxisArray()[0]);
@@ -282,7 +265,9 @@ public class PixelIntegration {
 			final double valq = x.getElementDoubleAbs(iter.index);
 			final double sig = b.getElementDoubleAbs(iter.index);
 			final double chi = y.getElementDoubleAbs(iter.index);
-			if (m != null && !m.getElementBooleanAbs(iter.index)) continue;
+			if (m != null && !m.getElementBooleanAbs(iter.index)) {
+				continue;
+			}
 
 			if (valq < loQ || valq > hiQ) {
 				continue;
@@ -297,10 +282,10 @@ public class PixelIntegration {
 
 			if(qPos<nXBins && chiPos<nYBins){
 				int cNum = histo.get(chiPos,qPos);
-				float cIn = intensity.get(chiPos,qPos);
+				double cIn = intensity.get(chiPos,qPos);
 				histo.set(cNum+1, chiPos,qPos);
 				intensity.set(cIn+sig, chiPos,qPos);
-			}
+			} 
 
 		}
 
@@ -318,16 +303,16 @@ public class PixelIntegration {
 		final int nXBins = bean.getNumberOfBinsXAxis();
 		final int nYBins = bean.getNumberOfBinsYAxis();
 		
-		final double loQ = bean.getXBinEdgeMin();
-		final double hiQ = bean.getXBinEdgeMax();
-		final double spanQ = (hiQ - loQ)/nXBins;
+		final double minX = bean.getXBinEdgeMin();
+		final double maxX = bean.getXBinEdgeMax();
+		final double spanX = (maxX - minX)/nXBins;
 
-		final double loChi = bean.getYBinEdgeMin();
-		final double hiChi = bean.getYBinEdgeMax();
-		final double spanChi = (hiChi - loChi)/nYBins;
+		final double minY = bean.getYBinEdgeMin();
+		final double maxY = bean.getYBinEdgeMax();
+		final double spanY = (maxY - minY)/nYBins;
 
-		FloatDataset histo = new FloatDataset(nYBins, nXBins);
-		FloatDataset intensity = new FloatDataset(nYBins, nXBins);
+		DoubleDataset histo = new DoubleDataset(nYBins, nXBins);
+		DoubleDataset intensity = new DoubleDataset(nYBins, nXBins);
 		//			final double[] h = histo.getData();
 		//			final double[] in = intensity.getData();
 		//			if (spanQ <= 0) {
@@ -346,64 +331,78 @@ public class PixelIntegration {
 		Dataset m = DatasetUtils.convertToDataset(mask);
 		
 		IndexIterator iter = x0.getIterator();
-
 		while (iter.hasNext()) {
 
 			if (m != null && !m.getElementBooleanAbs(iter.index)) continue;
-			final double qMax = x1.getElementDoubleAbs(iter.index);
-			final double qMin = x0.getElementDoubleAbs(iter.index);
-			final double chiMax = y1.getElementDoubleAbs(iter.index);
-			final double chiMin = y0.getElementDoubleAbs(iter.index);
+			double xPixMax = x1.getElementDoubleAbs(iter.index);
+			double xPixMin = x0.getElementDoubleAbs(iter.index);
+			double yPixMax = y1.getElementDoubleAbs(iter.index);
+			double yPixMin = y0.getElementDoubleAbs(iter.index);
 
-			final double sig = d.getElementDoubleAbs(iter.index);
+			double sig = d.getElementDoubleAbs(iter.index);
 
-			if (qMax < loQ || qMin > hiQ) {
+			if (xPixMax < minX || xPixMin > maxX) {
 				continue;
 			} 
 
-			if (chiMax < loChi || chiMin > hiChi) {
+			if (yPixMax < minY || yPixMin > maxY) {
 				continue;
-			} 
+			}
 
-			//losing something here? is flooring (int cast best?)
+			double minBinExactX = (xPixMin-minX)/spanX;
+			double maxBinExactX = (xPixMax-minX)/spanX;
 
-			double minBinExactQ = (qMin-loQ)/spanQ;
-			double maxBinExactQ = (qMax-loQ)/spanQ;
-			int minBinQ = (int)minBinExactQ;
-			int maxBinQ = (int)maxBinExactQ;
+			double minBinExactY = (yPixMin-minY)/spanY;
+			double maxBinExactY = (yPixMax-minY)/spanY;
 
-			double minBinExactChi = (chiMin-loChi)/spanChi;
-			double maxBinExactChi = (chiMax-loChi)/spanChi;
-			int minBinChi = (int)minBinExactChi;
-			int maxBinChi = (int)maxBinExactChi;
-
-			//FIXME potentially may need to deal with azimuthal arrays with discontinuities (+180/-180 degress etc)
-
-			double iPerPixel = 1/((maxBinExactQ-minBinExactQ)*(maxBinExactChi-minBinExactChi));
-			double minFracQ = 1-(minBinExactQ-minBinQ);
-			double maxFracQ = maxBinExactQ-maxBinQ;
-			double minFracChi = 1-(minBinExactChi-minBinChi);
-			double maxFracChi = maxBinExactChi-maxBinChi;
-
-			for (int i = minBinQ ; i <= maxBinQ; i++) {
+			double partialScale = 1;
+			double iFull = (maxBinExactX-minBinExactX)*(maxBinExactY-minBinExactY);
+			
+			//Partial pixel if outside of range
+			minBinExactX = xPixMin < minX ? 0 : minBinExactX;
+			maxBinExactX = xPixMax > maxX ? nXBins : maxBinExactX;
+			minBinExactY = yPixMin < minY ? 0 : minBinExactY;
+			maxBinExactY = yPixMax > maxY ? nYBins : maxBinExactY;
+			
+			double iFraction = (maxBinExactX-minBinExactX)*(maxBinExactY-minBinExactY);
+			partialScale *= (iFraction/iFull);
+			
+			int minBinX = (int)minBinExactX;
+			int maxBinX= (int)maxBinExactX;
+			int minBinY = (int)minBinExactY;
+			int maxBinY = (int)maxBinExactY;
+			
+			double binArea = (maxBinExactX-minBinExactX)*(maxBinExactY-minBinExactY);
+			
+			double minFracX = 1-(minBinExactX-minBinX);
+			double maxFracX = maxBinExactX-maxBinX;
+			double minFracY = 1-(minBinExactY-minBinY);
+			double maxFracY = maxBinExactY-maxBinY;
+			
+			for (int i = minBinX ; i <= maxBinX; i++) {
 				if (i < 0 || i >= nXBins) continue;
-				for (int j = minBinChi; j <= maxBinChi; j++) {
+				for (int j = minBinY; j <= maxBinY; j++) {
 					if (j < 0 || j >= nYBins) continue;
 
 					int[] setPos = new int[]{j,i};
 					double val = histo.get(setPos);
 
-					double modify = 1;
+					double modify = partialScale;
 
-					if (i == minBinQ && minBinQ != maxBinQ) modify *= minFracQ;
-					if (i == maxBinQ && minBinQ != maxBinQ) modify *= maxFracQ;
-					if (i == minBinChi && minBinChi != maxBinChi) modify *= minFracChi;
-					if (i == maxBinChi && minBinChi != maxBinChi) modify *= maxFracChi;
-
-					histo.set(val+iPerPixel*modify, setPos);
+					if (i == minBinX && minBinX != maxBinX) modify *= (minFracX);
+					if (i == maxBinX && minBinX != maxBinX) modify *= (maxFracX);
+					if (j == minBinY && minBinY != maxBinY) modify *= (minFracY);
+					if (j == maxBinY && minBinY != maxBinY) modify *= (maxFracY);
+					
+					if (j == maxBinY && maxBinY == minBinY) modify*=(maxBinExactY-minBinExactY);
+					if (j == maxBinX && maxBinX == minBinX) modify*=(maxBinExactX-minBinExactX);
+					
+					modify /= binArea;
+					histo.set(val+modify, setPos);
 					double inVal = intensity.get(setPos);
-					intensity.set(inVal+sig*iPerPixel*modify, setPos);
+					intensity.set(inVal+sig*modify, setPos);
 				}
+				
 
 			}
 		}
@@ -425,15 +424,13 @@ public class PixelIntegration {
 
 
 		Dataset axis = bean.getXAxis();
-
+		
 		intensity.idivide(histo);
 		DatasetUtils.makeFinite(intensity);
-
 
 		result.add(axis);
 		result.add(intensity);
 		if (is2d) result.add(bean.getYAxis());
-
 
 		result.get(1).setError(error);
 		

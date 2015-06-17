@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
 
+import uk.ac.diamond.scisoft.analysis.utils.ClassUtils;
+
 public class PeakFindingServiceImpl implements IPeakFindingService {
 	
 	private Map<String, PeakFinderInfo> peakFinders;
@@ -31,16 +33,16 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 	}
 
 	@Override
-	public void addPeakFindersByClass(ClassLoader cl, String pakage) {
-//		final List<Class<?>> clazzes = ClassUtils.getClassesForPackage(cl, pakage);
-//		for (Class<?> clazz : clazzes) {
-//			if (Modifier.isAbstract(clazz.getModifiers())) continue;
-//			if (IPeakFinder.class.isAssignableFrom(clazz)) {
-//				IPeakFinder pf = (IPeakFinder) clazz.newInstance();
-//				
-//				registerPeakFinder(null, pf.getName(), null, pf);
-//			}
-//		}
+	public void addPeakFindersByClass(ClassLoader cl, String pakage) throws Exception {
+		final List<Class<?>> clazzes = ClassUtils.getClassesForPackage(cl, pakage);
+		for (Class<?> clazz : clazzes) {
+			if (Modifier.isAbstract(clazz.getModifiers())) continue;
+			if (IPeakFinder.class.isAssignableFrom(clazz)) {
+				IPeakFinder pf = (IPeakFinder) clazz.newInstance();
+				
+				registerPeakFinder(null, pf.getName(), null, pf);
+			}
+		}
 
 	}
 

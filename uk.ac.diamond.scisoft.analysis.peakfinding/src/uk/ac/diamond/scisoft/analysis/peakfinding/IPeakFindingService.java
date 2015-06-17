@@ -43,7 +43,7 @@ public interface IPeakFindingService {
 	 * @param cl 
 	 * @param pakage
 	 */
-	public void addPeakFindersByClass(ClassLoader cl, String pakage);
+	public void addPeakFindersByClass(ClassLoader cl, String pakage) throws Exception;
 	
 	/**
 	 * Register all all peakfinders found by extensions points with

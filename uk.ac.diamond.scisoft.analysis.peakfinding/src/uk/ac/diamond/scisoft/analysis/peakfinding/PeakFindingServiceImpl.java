@@ -1,10 +1,16 @@
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
+import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
 
 public class PeakFindingServiceImpl implements IPeakFindingService {
+	
+	private Map<String, PeakFinderInfo> peakFinders;
 
 	@Override
 	public String getPeakFinderName(String id) throws Exception {
@@ -26,7 +32,15 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 
 	@Override
 	public void addPeakFindersByClass(ClassLoader cl, String pakage) {
-		// TODO Auto-generated method stub
+		final List<Class<?>> clazzes = ClassUtils.getClassesForPackage(cl, pakage);
+		for (Class<?> clazz : clazzes) {
+			if (Modifier.isAbstract(clazz.getModifiers())) continue;
+			if (IPeakFinder.class.isAssignableFrom(clazz)) {
+				IPeakFinder pf = (IPeakFinder) clazz.newInstance();
+				
+				registerPeakFinder(null, pf.getName(), null, pf);
+			}
+		}
 
 	}
 
@@ -34,6 +48,19 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 	public void addPeakFindersByExtension() {
 		// TODO Auto-generated method stub
 
+	}
+	
+	private void registerPeakFinder(String pfID, String nm, String desc, IPeakFinder pf) {
+		if (peakFinders == null) {
+			peakFinders = new HashMap<String, PeakFinderInfo>();
+		}
+		
+		//In case we're not working from extension points.
+		if (pfID == null) {
+			pfID = pf.getClass().getName();
+		}
+		
+		peakFinders.put(pfID, new PeakFinderInfo(nm, desc, pf));
 	}
 	
 	private class PeakFinderInfo {

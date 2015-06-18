@@ -6,13 +6,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
 
 import uk.ac.diamond.scisoft.analysis.utils.ClassUtils;
 
 public class PeakFindingServiceImpl implements IPeakFindingService {
 	
-	private final Map<String, PeakFinderInfo> PEAKFINDERS = new HashMap<String, PeakFinderInfo>();;
+	private final Map<String, PeakFinderInfo> PEAKFINDERS = new HashMap<String, PeakFinderInfo>();
 	
 	@Override
 	public String getPeakFinderName(String id) throws Exception {
@@ -45,17 +47,32 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 
 	@Override
 	public void addPeakFindersByExtension() {
-		// TODO Auto-generated method stub
-
+		IConfigurationElement[] elems = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.peakfinder");
+		for (IConfigurationElement el: elems) {
+			if (el.getName().equals("peakFinder")) {
+				final String pfID = el.getAttribute("id");
+				final String pfNm = el.getAttribute("name");
+				final String pfDesc = el.getAttribute("description");
+				IPeakFinder pf = null;
+				try {
+					pf = (IPeakFinder)el.createExecutableExtension("class");
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					continue;
+				}
+				
+				registerPeakFinder(pfID, pfNm, pfDesc, pf);
+			}
+		}
 	}
 	
-	private void registerPeakFinder(String pfID, String nm, String desc, IPeakFinder pf) {
+	private void registerPeakFinder(String pfID, String pfNm, String pfDesc, IPeakFinder pf) {
 		//In case we're not working from extension points.
 		if (pfID == null) {
 			pfID = pf.getClass().getName();
 		}
 		
-		PEAKFINDERS.put(pfID, new PeakFinderInfo(nm, desc, pf));
+		PEAKFINDERS.put(pfID, new PeakFinderInfo(pfNm, pfDesc, pf));
 	}
 	
 	

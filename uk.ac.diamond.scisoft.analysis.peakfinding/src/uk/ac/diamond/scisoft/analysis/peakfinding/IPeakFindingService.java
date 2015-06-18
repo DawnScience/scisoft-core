@@ -23,10 +23,10 @@ public interface IPeakFindingService {
 	public String getPeakFinderName(String id) throws Exception;
 
 	/**
-	 * Get the list of all peak finders registered with the service
+	 * Get the collection of IDs of all peak finders registered with the service
 	 * @return
 	 */
-	public Collection<String> getPeakFinderNames();
+	public Collection<String> getRegisteredPeakFinders() throws Exception;
 	
 	/**
 	 * Get the description of the specified PeakFinder

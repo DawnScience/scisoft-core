@@ -2,7 +2,6 @@ package uk.ac.diamond.scisoft.analysis.peakfinding;
 
 import java.util.Collection;
 
-import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
 import org.junit.BeforeClass;
 
 import static org.junit.Assert.*;

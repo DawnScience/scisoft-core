@@ -143,8 +143,13 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 		if (bean.isAzimuthalIntegration()) {
 
 			if (bean.getRadialRange() != null) {
-				double[] range = bean.getRadialRange();
-				return Math.max(range[0], range[1]);
+				double[] radialRange = bean.getRadialRange();
+				if (bean.isLog() && radialRange != null) {
+					radialRange = bean.getRadialRange().clone();
+					radialRange[0] = Math.log10(radialRange[0]);
+					radialRange[1] = Math.log10(radialRange[1]);
+				}
+				return Math.max(radialRange[0], radialRange[1]);
 			} 
 
 			return binEdgesRadial.get(bean.getNumberOfBinsRadial());
@@ -166,8 +171,13 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 		if (bean.isAzimuthalIntegration()) {
 			
 			if (bean.getRadialRange() != null) {
-				double[] range = bean.getRadialRange();
-				return Math.min(range[0], range[1]);
+				double[] radialRange = bean.getRadialRange();
+				if (bean.isLog() && radialRange != null) {
+					radialRange = bean.getRadialRange().clone();
+					radialRange[0] = Math.log10(radialRange[0]);
+					radialRange[1] = Math.log10(radialRange[1]);
+				}
+				return Math.min(radialRange[0], radialRange[1]);
 			} 
 				
 			return binEdgesRadial.get(0);
@@ -181,8 +191,6 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 		} 
 
 		return binEdgesAzimuthal.get(0);
-
-
 	}
 
 
@@ -191,8 +199,13 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 		if (!bean.isAzimuthalIntegration()) {
 
 			if (bean.getRadialRange() != null) {
-				double[] range = bean.getRadialRange();
-				return Math.max(range[0], range[1]);
+				double[] radialRange = bean.getRadialRange();
+				if (bean.isLog() && radialRange != null) {
+					radialRange = bean.getRadialRange().clone();
+					radialRange[0] = Math.log10(radialRange[0]);
+					radialRange[1] = Math.log10(radialRange[1]);
+				}
+				return Math.max(radialRange[0], radialRange[1]);
 			} 
 
 			return binEdgesRadial.get(bean.getNumberOfBinsRadial());
@@ -212,8 +225,13 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 		if (!bean.isAzimuthalIntegration()) {
 			
 			if (bean.getRadialRange() != null) {
-				double[] range = bean.getRadialRange();
-				return Math.min(range[0], range[1]);
+				double[] radialRange = bean.getRadialRange();
+				if (bean.isLog() && radialRange != null) {
+					radialRange = bean.getRadialRange().clone();
+					radialRange[0] = Math.log10(radialRange[0]);
+					radialRange[1] = Math.log10(radialRange[1]);
+				}
+				return Math.min(radialRange[0], radialRange[1]);
 			} 
 				
 			return binEdgesRadial.get(0);

@@ -16,21 +16,10 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 	
 	private final Map<String, PeakFinderInfo> PEAKFINDERS = new HashMap<String, PeakFinderInfo>();
 	
-	@Override
-	public String getPeakFinderName(String id) throws Exception {
-		return PEAKFINDERS.get(id).getName();
+	public PeakFindingServiceImpl() {
+		//Intentionally left blank (OSGi).
 	}
-
-	@Override
-	public Collection<String> getRegisteredPeakFinders() {
-		return PEAKFINDERS.keySet();
-	}
-
-	@Override
-	public String getPeakFinderDescription(String id) throws Exception {
-		return PEAKFINDERS.get(id).getDescription();
-	}
-
+	
 	@Override
 	public void addPeakFindersByClass(ClassLoader cl, String pakage) throws Exception {
 		final List<Class<?>> clazzes = ClassUtils.getClassesForPackage(cl, pakage);
@@ -42,9 +31,8 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 				registerPeakFinder(null, pf.getName(), null, pf);
 			}
 		}
-
 	}
-
+	
 	@Override
 	public void addPeakFindersByExtension() {
 		IConfigurationElement[] elems = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.peakfinder");
@@ -75,6 +63,20 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 		PEAKFINDERS.put(pfID, new PeakFinderInfo(pfNm, pfDesc, pf));
 	}
 	
+	@Override
+	public String getPeakFinderName(String id) throws Exception {
+		return PEAKFINDERS.get(id).getName();
+	}
+
+	@Override
+	public Collection<String> getRegisteredPeakFinders() {
+		return PEAKFINDERS.keySet();
+	}
+
+	@Override
+	public String getPeakFinderDescription(String id) throws Exception {
+		return PEAKFINDERS.get(id).getDescription();
+	}
 	
 	private class PeakFinderInfo {
 		

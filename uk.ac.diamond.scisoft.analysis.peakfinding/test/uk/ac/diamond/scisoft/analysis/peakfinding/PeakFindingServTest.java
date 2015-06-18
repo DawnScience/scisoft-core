@@ -33,8 +33,8 @@ public class PeakFindingServTest {
 	}
 	
 	@Test
-	public void testServiceHasPeakFinders() {
-		final Collection<String> peakFinderNames = peakFindServ.getPeakFinderNames();
+	public void testServiceHasPeakFinders() throws Exception {
+		final Collection<String> peakFinderNames = peakFindServ.getRegisteredPeakFinders();
 		assertNotNull(peakFinderNames);
 		assertTrue(peakFinderNames.isEmpty());
 	}

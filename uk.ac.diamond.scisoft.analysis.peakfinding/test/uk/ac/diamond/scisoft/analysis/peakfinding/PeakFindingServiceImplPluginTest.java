@@ -9,18 +9,31 @@
 
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-import java.util.List;
+import java.util.Collection;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class PeakFindingServiceImplPluginTest {
 	
-	@Test
-	public void testGetDummyFinderName() {
-		final List<String> peakFindersList = PeakFindingServiceImpl.getPeakFinders();
-		assertTrue(peakFindersList.contains("Dummy peak finder"));
+	private static IPeakFindingService peakFindServ;
+	
+	@BeforeClass
+	public static void setupOSGiService() {
+		peakFindServ = (IPeakFindingService)Activator.getService(IPeakFindingService.class);
 	}
-
+	
+	@Test
+	public void testGetService() {
+		assertNotNull(peakFindServ);
+	}
+	
+	@Test
+	public void testServiceHasPeakFinders() throws Exception {
+		final Collection<String> peakFinderNames = peakFindServ.getRegisteredPeakFinders();
+		assertNotNull(peakFinderNames);
+		assertFalse(peakFinderNames.isEmpty());
+	}
 }

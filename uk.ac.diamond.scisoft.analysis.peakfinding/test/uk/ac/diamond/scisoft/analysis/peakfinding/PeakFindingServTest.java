@@ -23,7 +23,7 @@ public class PeakFindingServTest {
 		peakFindServ = (IPeakFindingService)Activator.getService(IPeakFindingService.class);
 		
 		//Grab the all the PeakFinders in u.a.d.s.a.peakfinding.peakfinders
-		peakFindServ.addPeakFindersByClass(peakFindServ.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.peakFinding.peakFinders");
+		peakFindServ.addPeakFindersByClass(peakFindServ.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders");
 		
 	}
 	
@@ -36,7 +36,7 @@ public class PeakFindingServTest {
 	public void testServiceHasPeakFinders() throws Exception {
 		final Collection<String> peakFinderNames = peakFindServ.getRegisteredPeakFinders();
 		assertNotNull(peakFinderNames);
-		assertTrue(peakFinderNames.isEmpty());
+		assertFalse(peakFinderNames.isEmpty());
 	}
 
 }

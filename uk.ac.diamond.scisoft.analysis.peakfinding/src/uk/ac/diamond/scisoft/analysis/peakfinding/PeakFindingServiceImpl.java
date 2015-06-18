@@ -14,10 +14,18 @@ import uk.ac.diamond.scisoft.analysis.utils.ClassUtils;
 
 public class PeakFindingServiceImpl implements IPeakFindingService {
 	
-	private final Map<String, PeakFinderInfo> PEAKFINDERS = new HashMap<String, PeakFinderInfo>();
+	private Map<String, PeakFinderInfo> PEAKFINDERS = new HashMap<String, PeakFinderInfo>();
 	
 	public PeakFindingServiceImpl() {
 		//Intentionally left blank (OSGi).
+	}
+	
+	/**
+	 * Checks whether the PEAKFINDERS is populated and if not tries to fill it.
+	 */
+	private void checkForPeakFinders() {
+		if (!PEAKFINDERS.isEmpty()) return;
+		addPeakFindersByExtension();
 	}
 	
 	@Override
@@ -65,16 +73,19 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 	
 	@Override
 	public String getPeakFinderName(String id) throws Exception {
+		checkForPeakFinders();
 		return PEAKFINDERS.get(id).getName();
 	}
 
 	@Override
 	public Collection<String> getRegisteredPeakFinders() {
+		checkForPeakFinders();
 		return PEAKFINDERS.keySet();
 	}
 
 	@Override
 	public String getPeakFinderDescription(String id) throws Exception {
+		checkForPeakFinders();
 		return PEAKFINDERS.get(id).getDescription();
 	}
 	

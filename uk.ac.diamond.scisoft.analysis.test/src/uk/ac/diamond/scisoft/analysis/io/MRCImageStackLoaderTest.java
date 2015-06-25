@@ -91,4 +91,23 @@ public class MRCImageStackLoaderTest {
 		Assert.assertEquals(3710, subImage.getShape()[1]);
 		Assert.assertEquals(3838/2, subImage.getShape()[2]);
 	}
+
+	@Test
+	public void testLoadFile2() throws Exception {
+		DataHolder dh = new MRCImageStackLoader(TestFileFolder + "FoilHole_18118581_Data_18120607_18120608_20150618_1751_frames.mrc").loadFile();
+
+		ILazyDataset image = dh.getLazyDataset(0);
+		Assert.assertEquals(3, image.getRank());
+		Assert.assertEquals(8, image.getShape()[0]);
+		Assert.assertEquals(4096, image.getShape()[1]);
+		Assert.assertEquals(4096, image.getShape()[2]);
+
+		IDataset subImage;
+		subImage = image.getSlice(new Slice(1), null, null);
+		Assert.assertEquals(3, subImage.getRank());
+		Assert.assertEquals(1, subImage.getShape()[0]);
+		Assert.assertEquals(4096, subImage.getShape()[1]);
+		Assert.assertEquals(4096, subImage.getShape()[2]);
+	}
+
 }

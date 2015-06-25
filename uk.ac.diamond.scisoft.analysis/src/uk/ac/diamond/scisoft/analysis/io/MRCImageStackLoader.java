@@ -105,13 +105,14 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 
 	private ILazyDataset createDataset(final long pos, final int mode, final int width, final int height, final int depth) throws ScanFileHolderException {
 		final int[] trueShape = new int[] {depth, height, width};
-		final int dtype = modeToDtype.get(mode);
-		if (dtype != Dataset.INT16) { // TODO support other modes
+		final int type = modeToDtype.get(mode);
+		if (type != Dataset.INT16) { // TODO support other modes
 			throw new ScanFileHolderException("Only 16-bit integers is currently supported");
 		}
 
 		final int dsize = modeToDsize.get(mode);
 		final boolean signExtend = !modeToUnsigned.get(mode);
+		final int dtype = signExtend ? type : Dataset.INT32;
 
 		ILazyLoader l = new ILazyLoader() {
 			

@@ -87,12 +87,8 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 			}
 		}
 
-		int mode = getInteger(BinaryKey.MODE);
-		if (mode != 1) { // TODO support other modes
-			throw new ScanFileHolderException("Only mode 1 (signed 16-bit integers) is currently supported");
-		}
 		DataHolder result = new DataHolder();
-		result.addDataset(STACK_NAME, createDataset(pos, mode, getInteger(BinaryKey.WIDTH),
+		result.addDataset(STACK_NAME, createDataset(pos, getInteger(BinaryKey.MODE), getInteger(BinaryKey.WIDTH),
 				getInteger(BinaryKey.HEIGHT), getInteger(BinaryKey.DEPTH)));
 
 		if (loadMetadata) {
@@ -107,10 +103,15 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 		return metadata;
 	}
 
-	private ILazyDataset createDataset(final long pos, final int mode, final int width, final int height, final int depth) {
+	private ILazyDataset createDataset(final long pos, final int mode, final int width, final int height, final int depth) throws ScanFileHolderException {
 		final int[] trueShape = new int[] {depth, height, width};
 		final int dtype = modeToDtype.get(mode);
+		if (dtype != Dataset.INT16) { // TODO support other modes
+			throw new ScanFileHolderException("Only 16-bit integers is currently supported");
+		}
+
 		final int dsize = modeToDsize.get(mode);
+		final boolean signExtend = !modeToUnsigned.get(mode);
 
 		ILazyLoader l = new ILazyLoader() {
 			
@@ -168,10 +169,10 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 							}
 						}
 
-						d = loadData(mon, fileName, pos, dsize, dtype, trueShape, tstart, tsize, tstep);
+						d = loadData(mon, fileName, pos, dsize, dtype, signExtend, trueShape, tstart, tsize, tstep);
 						d.setShape(newShape); // squeeze shape back
 					} else {
-						d = loadData(mon, fileName, pos, dsize, dtype, trueShape, lstart, newShape, lstep);
+						d = loadData(mon, fileName, pos, dsize, dtype, signExtend, trueShape, lstart, newShape, lstep);
 					}
 				} catch (Exception e) {
 					throw new ScanFileHolderException("Problem with HDF library", e);
@@ -184,7 +185,7 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 		return new LazyDataset(STACK_NAME, dtype, 1, trueShape.clone(), l);
 	}
 
-	private static Dataset loadData(IMonitor mon, String filename, long pos, int dsize, int dtype, int[] shape, int[] start, int[] count, int[] step) throws ScanFileHolderException {
+	private static Dataset loadData(IMonitor mon, String filename, long pos, int dsize, int dtype, boolean signExtend, int[] shape, int[] start, int[] count, int[] step) throws ScanFileHolderException {
 		File f = null;
 		BufferedInputStream bi = null;
 
@@ -210,7 +211,7 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 			bi.skip(pos);
 			pos = (step[0] - 1) * imageSize;
 			do { // TODO maybe read smaller chunk of image...
-				Utils.readLeShort(bi, image, 0, true);
+				Utils.readLeShort(bi, image, 0, signExtend);
 				dataStop[0] = dataStart[0] + 1;
 				d.setSlice(image.getSliceView(imageStart, imageStop, imageStep), dataStart, dataStop, null);
 				if (mon != null) {
@@ -317,6 +318,7 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 
 	private static final Map<Integer, Integer> modeToDtype = new HashMap<>(); // destination dataset type
 	private static final Map<Integer, Integer> modeToDsize = new HashMap<>(); // source data size
+	private static final Map<Integer, Boolean> modeToUnsigned= new HashMap<>(); // source data unsignedness
 	static {
 		modeToDtype.put(0, Dataset.INT8);
 		modeToDtype.put(1, Dataset.INT16);
@@ -333,6 +335,14 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 		modeToDsize.put(4, 8);
 		modeToDsize.put(6, 2);
 		modeToDsize.put(16, 3);
+
+		modeToUnsigned.put(0, false);
+		modeToUnsigned.put(1, false);
+		modeToUnsigned.put(2, false);
+		modeToUnsigned.put(3, false);
+		modeToUnsigned.put(4, false);
+		modeToUnsigned.put(6, true);
+		modeToUnsigned.put(16, true);
 	}
 
 	protected Map<String, Serializable> headers = new HashMap<>();

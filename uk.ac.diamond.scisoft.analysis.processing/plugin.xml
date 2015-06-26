@@ -565,6 +565,12 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText1DModel"
             name="Export to Text File [Image]">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.AverageSectionsOfFastestOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.AverageSectionsOfFastestOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.AverageSectionsOfFastestModel"
+            name="Average Sections of Fastest Dimension">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

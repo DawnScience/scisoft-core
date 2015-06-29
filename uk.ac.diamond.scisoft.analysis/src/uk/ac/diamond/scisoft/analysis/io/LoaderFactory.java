@@ -150,10 +150,8 @@ public class LoaderFactory {
 		    registerLoader("csv",  CSVLoader.class);
 		    registerLoader("txt",  DatLoader.class);
 		    registerLoader("txt",  SRSLoader.class);
-		    registerLoader("txt",  RawTextLoader.class);
 		    registerLoader("mca",  DatLoader.class);
 		    registerLoader("mca",  SRSLoader.class);
-		    registerLoader("mca",  RawTextLoader.class);
 		    registerLoader("tif",  TIFFImageLoader.class);		    
 		    registerLoader("tiff", TIFFImageLoader.class);		    
 		    registerLoader("zip",  XMapLoader.class);

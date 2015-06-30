@@ -56,29 +56,27 @@ public class PeakFindingServTest {
 	@Test
 	public void testActivatePeakFinders() throws Exception {
 		//Resources for test
-		Set<String> activePFs;
-		Iterator<String> activePFIter;
+		boolean gotDummy;
 		
 		peakFindServ.activatePeakFinder(dummyID);
-		
-		activePFs = (Set<String>) peakFindServ.getActivePeakFinders();
-		activePFIter = activePFs.iterator();
-		boolean gotDummy = false;
-		while (activePFIter.hasNext()) {
-			String pfID = activePFIter.next();
-			if (pfID.equals(dummyID)) gotDummy = true;
-		}
+		gotDummy = searchForPFID(dummyID);
 		assertTrue(gotDummy);
 		
 		peakFindServ.deactivatePeakFinder(dummyID);
-		activePFs = (Set<String>) peakFindServ.getActivePeakFinders();
-		activePFIter = activePFs.iterator();
-		while (activePFIter.hasNext()) {
-			String pfID = activePFIter.next();
-			if (pfID.equals(dummyID)) gotDummy = true;
-		}
+		gotDummy = searchForPFID(dummyID);
 		assertFalse(gotDummy);	
 		}
+	
+	private boolean searchForPFID(String pfID) {
+		boolean gotPFID = false;
+		Set<String> activePFs = (Set<String>) peakFindServ.getActivePeakFinders();
+		Iterator<String> pfIter = activePFs.iterator();
+		while (pfIter.hasNext()) {
+			String currID = pfIter.next();
+			if (currID.equals(pfID)) gotPFID = true;
+		}
+		return gotPFID;
+	}
 	
 	@Test
 	public void testActivateException() throws Exception {

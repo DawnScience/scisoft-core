@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -20,7 +21,7 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 	
 	private final Map<String, PeakFinderInfo> PEAKFINDERS = new HashMap<String, PeakFinderInfo>();
 	private Set<String> activePeakFinders = new TreeSet<String>(); 
-	private Map<String, Map<Integer, Double>> allFoundPeaks;
+	private Map<String, Map<Integer, Double>> allFoundPeaks = new TreeMap<String, Map<Integer, Double>>();
 	
 	private IDataset xData, yData;
 	private Integer nPeaks;
@@ -124,6 +125,10 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 	
 	@Override
 	public void findPeaks() throws Exception {
+		/* FIXME dataInitialised will be true for the lifetime of the service
+		 * (i.e. DAWN PID); if a new set of data is supplied, it might no longer
+		 * be true that data has been initialised. Need a dispose/reset method?
+		 */
 		if (!dataInitialised) throw new Exception("Data has not been initialised. Cannot find peaks");
 		Iterator<String> activePeakFindersIter = activePeakFinders.iterator();
 		while (activePeakFindersIter.hasNext()) {
@@ -151,18 +156,19 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 	}
 	
 	@Override
+	public void setData(IDataset xData, IDataset yData) {
+		setData(xData, yData, null);
+	}
+	
+	@Override
 	public void setData(IDataset xData, IDataset yData, Integer nPeaks) {
 		this.xData = xData;
 		this.yData = yData;
 		this.nPeaks = nPeaks;
 		
 		//As long as we have initialised xData and yData once, we can call findPeaks
+		//TODO service needs to know if completely fresh data is coming in.
 		if (xData != null && yData != null) dataInitialised = true;
-	}
-
-	@Override
-	public void setData(IDataset xData, IDataset yData) {
-		setData(xData, yData, null);
 	}
 
 	@Override

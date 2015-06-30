@@ -51,13 +51,15 @@ public class PeakFindingServTest {
 	
 	@Test
 	public void testActivatePeakFinders() throws Exception {
-		//Peak finders to set active
+		//Resources for test
 		String dummyID = DummyPeakFinder.class.getName();
+		Set<String> activePFs;
+		Iterator<String> activePFIter;
 		
-		peakFindServ.setPeakFinderActive(dummyID);
+		peakFindServ.activatePeakFinder(dummyID);
 		
-		Set<String> activePFs = (Set<String>) peakFindServ.getActivePeakFinders();
-		Iterator<String> activePFIter = activePFs.iterator();
+		activePFs = (Set<String>) peakFindServ.getActivePeakFinders();
+		activePFIter = activePFs.iterator();
 		boolean gotDummy = false;
 		while (activePFIter.hasNext()) {
 			String pfID = activePFIter.next();
@@ -65,7 +67,15 @@ public class PeakFindingServTest {
 		}
 		assertTrue(gotDummy);
 		
-	}
+		peakFindServ.deactivatePeakFinder(dummyID);
+		activePFs = (Set<String>) peakFindServ.getActivePeakFinders();
+		activePFIter = activePFs.iterator();
+		while (activePFIter.hasNext()) {
+			String pfID = activePFIter.next();
+			if (pfID.equals(dummyID)) gotDummy = true;
+		}
+		assertFalse(gotDummy);	
+		}
 	
 	@Test
 	public void testOnePeakFinder() throws Exception {

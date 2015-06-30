@@ -16,21 +16,22 @@ public interface IPeakFindingService {
 	
 	/**
 	 * Get the name of a specified PeakFinder
-	 * @param id Should be unique string from extension point, e.g. fully qualified class name
+	 * @param String id Should be unique string from extension point, e.g. fully 
+	 * qualified class name (FQCN)
 	 * @return String
 	 * @throws Exception
 	 */
 	public String getPeakFinderName(String id) throws Exception;
 
 	/**
-	 * Get the collection of IDs of all peak finders registered with the service
+	 * Returns the collection of IDs of all peak finders registered with the service
 	 * @return
 	 */
 	public Collection<String> getRegisteredPeakFinders() throws Exception;
 	
 	/**
 	 * Get the description of the specified PeakFinder
-	 * @param id Should be unique string from extension point, e.g. fully qualified class name
+	 * @param String id Should be unique string (e.g. FQCN)
 	 * @return String
 	 * @throws Exception
 	 */
@@ -40,15 +41,28 @@ public interface IPeakFindingService {
 	 * Register all full implementations of IPeakFinders in a package
 	 * to the service. This is to avoid using extension points, so useful
 	 * for unit tests
-	 * @param cl 
-	 * @param pakage
+	 * @param ClassLoader cl 
+	 * @param String package from which to load IPeakFinders
 	 */
 	public void addPeakFindersByClass(ClassLoader cl, String pakage) throws Exception;
 	
 	/**
-	 * Register all all peakfinders found by extensions points with
-	 * the service.
+	 * Register all all peakfinders found by extensions points with the
+	 * service.
 	 */
 	public void addPeakFindersByExtension();
-
+	
+	/**
+	 * Adds peak finder, specified by unique ID, to the active peak finders 
+	 * collection
+	 * @param String Unique string (e.g. FQCN)
+	 * @throws Exception in case peak finder already active
+	 */
+	public void setPeakFinderActive(String id) throws Exception;
+	
+	/**
+	 * Returns the current active peak finders collection
+	 * @return 
+	 */
+	public Collection<String> getActivePeakFinders();
 }

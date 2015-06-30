@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -91,6 +93,22 @@ public class PeakFindingServTest {
 		peakFindServ.deactivatePeakFinder(dummyID);	
 	}
 	
+	//Must run before first run of setData otherwise it passes!
+	@Test
+	public void testDataNotSetFindPeaksException() throws Exception {
+		thrower.expect(Exception.class);
+		thrower.expectMessage("Data has not been initialised");
+		peakFindServ.findPeaks();
+	}
+	
+	//Must run before first run of findPeaks otherwise it passes!
+	@Test
+	public void testGetPeaksBeforeFindPeaksException() throws Exception {
+		thrower.expect(Exception.class);
+		thrower.expectMessage("findPeaks");
+		peakFindServ.getPeaks(dummyID);
+	}
+	
 	@Test
 	public void testOneDummyPeakFinder() throws Exception {
 		Map<Integer, Double>testData = new TreeMap<Integer, Double>();
@@ -103,17 +121,10 @@ public class PeakFindingServTest {
 		testData.put(13, 0.6);
 		
 		peakFindServ.activatePeakFinder(dummyID);
+		peakFindServ.setData(DatasetFactory.ones(new int[1], Dataset.INT), DatasetFactory.ones(new int[1], Dataset.INT));
 		peakFindServ.findPeaks();
 		Map<Integer, Double> peakPosnsSigs = peakFindServ.getPeaks(dummyID);
 		
 		assertEquals(testData, peakPosnsSigs);
 	}
-	
-	@Test
-	public void testFindPeaksNotRunException() throws Exception {
-		thrower.expect(Exception.class);
-		thrower.expectMessage("findPeaks");
-		peakFindServ.getPeaks(dummyID);
-	}
-
 }

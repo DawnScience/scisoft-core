@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
@@ -15,6 +17,7 @@ import uk.ac.diamond.scisoft.analysis.utils.ClassUtils;
 public class PeakFindingServiceImpl implements IPeakFindingService {
 	
 	private Map<String, PeakFinderInfo> PEAKFINDERS = new HashMap<String, PeakFinderInfo>();
+	private Set<String> activePeakFinders = new TreeSet<String>(); 
 	
 	public PeakFindingServiceImpl() {
 		//Intentionally left blank (OSGi).
@@ -89,6 +92,29 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 		return PEAKFINDERS.get(id).getDescription();
 	}
 	
+	@Override
+	public void activatePeakFinder(String id) throws Exception {
+		if (activePeakFinders.contains(id)) {
+			throw new Exception(id+" already set active");
+		} else {
+			activePeakFinders.add(id);
+		}
+	}
+	
+	@Override
+	public void deactivatePeakFinder(String id) throws Exception {
+		if (activePeakFinders.contains(id)) {
+			activePeakFinders.remove(id);
+		} else {
+			throw new Exception(id+" not set active");
+		}
+	}
+
+	@Override
+	public Collection<String> getActivePeakFinders() {
+		return activePeakFinders;
+	}
+
 	private class PeakFinderInfo {
 		
 		private String name;

@@ -10,15 +10,13 @@
 package uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders;
 
 import java.util.Map;
-import java.util.TreeSet;
+import java.util.TreeMap;
 
 import junit.framework.Assert;
 
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.junit.Test;
-
-import uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders.AverageWindowAverageDiffs;
 
 public class AverageWindowAverageDiffsTest {
 	
@@ -51,10 +49,10 @@ public class AverageWindowAverageDiffsTest {
 		Double foundPos;
 		
 		//Find the x-coordinate of the found peak
-		TreeSet<Integer> foundPeaks = (TreeSet<Integer>)winAvgDiff.findPeaks(xData, yData, null);
+		TreeMap<Integer, Double> foundPeaks = (TreeMap<Integer, Double>)winAvgDiff.findPeaks(xData, yData, null);
 		//We need the set to have a length of 1 for the next bit...
 		Assert.assertEquals(1, foundPeaks.size());
-		for (Integer i : foundPeaks) {
+		for (Integer i : foundPeaks.keySet()) {
 			foundPos = xData.getDouble(i);
 			//Yes, it finds the wrong position.
 			Assert.assertEquals(expectedPos, foundPos, 0.25);

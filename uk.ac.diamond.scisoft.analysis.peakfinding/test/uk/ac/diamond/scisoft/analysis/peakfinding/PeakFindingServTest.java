@@ -1,10 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
 //import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -95,9 +92,7 @@ public class PeakFindingServTest {
 	}
 	
 	@Test
-	public void testOnePeakFinder() throws Exception {
-		final Set<String> peakFinderIDs = (Set<String>) peakFindServ.getRegisteredPeakFinders();
-		
+	public void testOneDummyPeakFinder() throws Exception {
 		Map<Integer, Double>testData = new TreeMap<Integer, Double>();
 		testData.put(1, 0.6);
 		testData.put(2, 1.2);
@@ -107,14 +102,11 @@ public class PeakFindingServTest {
 		testData.put(11, 0.9);
 		testData.put(13, 0.6);
 		
-		//Find the dummy peakfinder
-		String dummyPFClassName = DummyPeakFinder.class.getName();
-		if (!dummyPFClassName.contains(dummyPFClassName)) {
-			fail("Dummy peak finder not registered");
-		}
-//		IPeakFinder testPF = peakFindServ.getPeakFinder(dummyPFClassName);
-//		Map<Integer, Double> peakPosnsSigs = testPF.findPeaks(null, null, null);
-//		assertEquals(testData, peakPosnsSigs);
+		peakFindServ.activatePeakFinder(dummyID);
+		peakFindServ.findPeaks();
+		Map<Integer, Double> peakPosnsSigs = peakFindServ.getPeaks(dummyID);
+		
+		assertEquals(testData, peakPosnsSigs);
 	}
 
 }

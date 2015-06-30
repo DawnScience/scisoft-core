@@ -146,6 +146,7 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 	@Override
 	public Map<Integer, Double> getPeaks(String id) throws Exception {
 		if (allFoundPeaks == null || allFoundPeaks.isEmpty()) throw new Exception("No peaks found. Need to run findPeaks()");
+		if (!allFoundPeaks.keySet().contains(id)) throw new Exception(id+" was not active when findPeaks() was called");
 		return allFoundPeaks.get(id);
 	}
 	

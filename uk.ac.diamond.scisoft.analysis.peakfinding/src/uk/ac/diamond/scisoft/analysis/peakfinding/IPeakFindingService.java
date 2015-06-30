@@ -81,7 +81,7 @@ public interface IPeakFindingService {
 	 * Calls the findPeaks method of each of the active IPeakFinders and record
 	 * found peaks to internal store.
 	 */
-	public void findPeaks();
+	public void findPeaks() throws Exception;
 	
 	/**
 	 * Returns a map with the unique IPeakFinder ID as the key and values which 

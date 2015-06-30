@@ -10,7 +10,9 @@
 package uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
@@ -50,7 +52,7 @@ public abstract class AbstractSignificanceFilter extends AbstractPeakFinder {
 	protected abstract double calculateSignificance(int position, int windowSize, IDataset yData);
 	
 	@Override
-	public Set<Integer> findPeaks(IDataset xData, IDataset yData, Integer nPeaks) {
+	public Map<Integer, Double> findPeaks(IDataset xData, IDataset yData, Integer nPeaks) {
 		//Put our peak finding parameters into more accessible variables
 		Integer nrStdDevs;
 		Integer windowSize;
@@ -73,27 +75,27 @@ public abstract class AbstractSignificanceFilter extends AbstractPeakFinder {
 		//Filter out significance values less than n*SD
 		Double sigMean = (Double)significance.mean();
 		Double sigStdDev = (Double)significance.stdDeviation();
-		Set<Integer> peakIndices = new TreeSet<Integer>();
+		Map<Integer, Double> peakPosnsSigs = new TreeMap<Integer, Double>();
+		
 		for (int i = 0; i < significance.getSize(); i++) {
 			Double currSig = significance.getDouble(i);
 			if ((currSig > 0) && ((currSig-sigMean) > nrStdDevs * sigStdDev)) {
-				peakIndices.add(i);
+				peakPosnsSigs.put(i, currSig);
 			}
 		}
 		
 		//Remove significant points less than one windowSize apart
-		Iterator<Integer> peakIndIter = peakIndices.iterator();
-		Set<Integer> peakPosns = new TreeSet<Integer>(peakIndices); 
+		Set<Integer> peakIndices = new TreeSet<Integer>(peakPosnsSigs.keySet());
+		Iterator<Integer> peakIndIter = peakIndices.iterator(); 
 		int currInd = peakIndIter.next().intValue();
 		int nextInd;
 		while (peakIndIter.hasNext()) {
 			nextInd = peakIndIter.next().intValue();
 			if (Math.abs(currInd - nextInd) <= windowSize) {
-				peakPosns.remove(currInd);
+				peakPosnsSigs.remove(currInd);
 			}
 			currInd = nextInd;
 		}
-		
-		return peakPosns;
+		return peakPosnsSigs;
 	}
 }

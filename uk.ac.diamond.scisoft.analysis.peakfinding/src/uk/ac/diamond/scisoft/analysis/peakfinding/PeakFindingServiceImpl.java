@@ -3,6 +3,7 @@ package uk.ac.diamond.scisoft.analysis.peakfinding;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,14 +11,20 @@ import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
 
 import uk.ac.diamond.scisoft.analysis.utils.ClassUtils;
 
 public class PeakFindingServiceImpl implements IPeakFindingService {
 	
-	private Map<String, PeakFinderInfo> PEAKFINDERS = new HashMap<String, PeakFinderInfo>();
+	private final Map<String, PeakFinderInfo> PEAKFINDERS = new HashMap<String, PeakFinderInfo>();
 	private Set<String> activePeakFinders = new TreeSet<String>(); 
+	private Map<String, Map<Integer, Double>> allFoundPeaks;
+	
+	private IDataset xData, yData;
+	private Integer nPeaks;
+	private boolean dataInitialised = false;
 	
 	public PeakFindingServiceImpl() {
 		//Intentionally left blank (OSGi).
@@ -113,6 +120,68 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 	@Override
 	public Collection<String> getActivePeakFinders() {
 		return activePeakFinders;
+	}
+	
+	@Override
+	public void findPeaks() throws Exception {
+		if (!dataInitialised) throw new Exception("Data has not been initialised. Cannot find peaks");
+		Iterator<String> activePeakFindersIter = activePeakFinders.iterator();
+		while (activePeakFindersIter.hasNext()) {
+			//Get each active IPeakFinder in turn...
+			String currID = activePeakFindersIter.next();
+			IPeakFinder currPF = PEAKFINDERS.get(currID).getPeakFinder();
+			
+			//... call the findPeaks method and record the result
+			allFoundPeaks.put(currID, currPF.findPeaks(xData, yData, nPeaks));
+		}
+		//TODO Add some process here which averages the results of the findPeaks calls
+	}
+
+	@Override
+	public Map<String, Map<Integer, Double>> getPeaks() throws Exception {
+		if (allFoundPeaks == null || allFoundPeaks.isEmpty()) throw new Exception("No peaks found. Need to run findPeaks()");
+		return allFoundPeaks;
+	}
+
+	@Override
+	public Map<Integer, Double> getPeaks(String id) throws Exception {
+		if (allFoundPeaks == null || allFoundPeaks.isEmpty()) throw new Exception("No peaks found. Need to run findPeaks()");
+		return allFoundPeaks.get(id);
+	}
+	
+	@Override
+	public void setData(IDataset xData, IDataset yData, Integer nPeaks) {
+		this.xData = xData;
+		this.yData = yData;
+		this.nPeaks = nPeaks;
+		
+		//As long as we have initialised xData and yData once, we can call findPeaks
+		if (xData != null && yData != null) dataInitialised = true;
+	}
+
+	@Override
+	public void setData(IDataset xData, IDataset yData) {
+		setData(xData, yData, null);
+	}
+
+	@Override
+	public void setXData(IDataset xData) {
+		setData(xData, null, null);
+	}
+
+	@Override
+	public void setYData(IDataset yData) {
+		setData(null, yData, null);
+	}
+
+	@Override
+	public void setNPeaks(Integer nPeaks) {
+		setData(null, null, nPeaks);
+	}
+
+	@Override
+	public Integer getNPeaks() {
+		return nPeaks;
 	}
 
 	private class PeakFinderInfo {

@@ -108,5 +108,12 @@ public class PeakFindingServTest {
 		
 		assertEquals(testData, peakPosnsSigs);
 	}
+	
+	@Test
+	public void testFindPeaksNotRunException() throws Exception {
+		thrower.expect(Exception.class);
+		thrower.expectMessage("findPeaks");
+		peakFindServ.getPeaks(dummyID);
+	}
 
 }

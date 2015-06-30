@@ -58,7 +58,15 @@ public interface IPeakFindingService {
 	 * @param String Unique string (e.g. FQCN)
 	 * @throws Exception in case peak finder already active
 	 */
-	public void setPeakFinderActive(String id) throws Exception;
+	public void activatePeakFinder(String id) throws Exception;
+	
+	/**
+	 * Removes peak finder, specified by unique ID, from active peak finders
+	 * collection
+	 * @param String unique string (e.g. FQCN)
+	 * @throws Exception in case the peak finder is not already active
+	 */
+	public void deactivatePeakFinder(String id) throws Exception;
 	
 	/**
 	 * Returns the current active peak finders collection

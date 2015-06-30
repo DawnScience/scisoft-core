@@ -11,8 +11,6 @@ package uk.ac.diamond.scisoft.analysis.peakfinding;
 
 import java.util.Collection;
 
-import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
-
 
 public interface IPeakFindingService {
 	
@@ -23,14 +21,6 @@ public interface IPeakFindingService {
 	 * @throws Exception
 	 */
 	public String getPeakFinderName(String id) throws Exception;
-	
-	/**
-	 * Get a reference to the PeakFinder from a given ID.
-	 * @param id Should be unique string from extension point, e.g. fully qualified class name
-	 * @return IPeakFinder
-	 * @throws Exception
-	 */
-	public IPeakFinder getPeakFinder(String id) throws Exception;
 
 	/**
 	 * Get the collection of IDs of all peak finders registered with the service

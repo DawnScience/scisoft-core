@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
 import java.util.Collection;
+import java.util.Map;
 
 
 public interface IPeakFindingService {
@@ -30,7 +31,7 @@ public interface IPeakFindingService {
 	public Collection<String> getRegisteredPeakFinders() throws Exception;
 	
 	/**
-	 * Get the description of the specified PeakFinder
+	 * Get the description of the specified IPeakFinder
 	 * @param String id Should be unique string (e.g. FQCN)
 	 * @return String
 	 * @throws Exception
@@ -47,13 +48,13 @@ public interface IPeakFindingService {
 	public void addPeakFindersByClass(ClassLoader cl, String pakage) throws Exception;
 	
 	/**
-	 * Register all all peakfinders found by extensions points with the
+	 * Register all all IPeakFinders found by extensions points with the
 	 * service.
 	 */
 	public void addPeakFindersByExtension();
 	
 	/**
-	 * Adds peak finder, specified by unique ID, to the active peak finders 
+	 * Adds IPeakFinder, specified by unique ID, to the active IPeakFinders 
 	 * collection
 	 * @param String Unique string (e.g. FQCN)
 	 * @throws Exception in case peak finder already active
@@ -61,7 +62,7 @@ public interface IPeakFindingService {
 	public void activatePeakFinder(String id) throws Exception;
 	
 	/**
-	 * Removes peak finder, specified by unique ID, from active peak finders
+	 * Removes IPeakFinder, specified by unique ID, from active IPeakFinders
 	 * collection
 	 * @param String unique string (e.g. FQCN)
 	 * @throws Exception in case the peak finder is not already active
@@ -69,8 +70,26 @@ public interface IPeakFindingService {
 	public void deactivatePeakFinder(String id) throws Exception;
 	
 	/**
-	 * Returns the current active peak finders collection
+	 * Returns a collection containing the IPeakFinders which are set active
 	 * @return 
 	 */
 	public Collection<String> getActivePeakFinders();
+	
+	/**
+	 * Calls the findPeaks method of each of the active IPeakFinders and record
+	 * found peaks to internal store.
+	 */
+	public void findPeaks();
+	
+	/**
+	 * Returns a map with the unique IPeakFinder ID as the key and values which 
+	 * are the results of the IPeakFinder findPeaks() method. Specifying a 
+	 * string ID will return only the peaks found by one IPeakFinder.
+	 * @param String Unique IPeakFinder ID (e.g. FQCN)
+	 * @return Map of IPeakFinderIDs and IPeakFinder found peaks
+	 * @throws Exception in case no peakfinder result is found
+	 */
+	public Map<String, Map<Integer, Double>> getPeaks() throws Exception;
+	
+	public Map<Integer, Double> getPeaks(String id) throws Exception;
 }

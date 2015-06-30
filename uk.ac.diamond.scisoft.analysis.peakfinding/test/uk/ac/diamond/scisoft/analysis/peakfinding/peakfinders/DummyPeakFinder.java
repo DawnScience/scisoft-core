@@ -17,11 +17,12 @@ import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
 
 public class DummyPeakFinder extends AbstractPeakFinder implements IPeakFinder {
 	
-	private final String NAME = "Dummy peak finder"; 
+	private final String NAME = "Dummy peak finder";
+	private Map<Integer, Double>fakePeakPosnsSigs;
 
 	@Override
 	public Map<Integer, Double> findPeaks(IDataset xData, IDataset yData, Integer nPeaks) {
-		Map<Integer, Double>fakePeakPosnsSigs = new TreeMap<Integer, Double>();
+		fakePeakPosnsSigs = new TreeMap<Integer, Double>();
 		fakePeakPosnsSigs.put(1, 0.6);
 		fakePeakPosnsSigs.put(2, 1.2);
 		fakePeakPosnsSigs.put(3, 0.9);
@@ -37,6 +38,10 @@ public class DummyPeakFinder extends AbstractPeakFinder implements IPeakFinder {
 	protected void setName() {
 		this.name = NAME;
 
+	}
+	
+	public void setPeaks(Map<Integer, Double> peakPosnsSigs) {
+		fakePeakPosnsSigs = peakPosnsSigs;
 	}
 
 }

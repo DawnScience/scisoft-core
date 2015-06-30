@@ -15,7 +15,9 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders.DummyPeakFinder;
 
@@ -27,6 +29,7 @@ public class PeakFindingServTest {
 	 */
 	
 	private static IPeakFindingService peakFindServ;
+	private String dummyID = DummyPeakFinder.class.getName();
 	
 	@BeforeClass
 	public static void setupNonOSGiService() throws Exception {
@@ -36,6 +39,9 @@ public class PeakFindingServTest {
 		peakFindServ.addPeakFindersByClass(peakFindServ.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders");
 		
 	}
+	
+	@Rule
+	public ExpectedException thrower = ExpectedException.none();
 	
 	@Test
 	public void testGetService() {
@@ -50,9 +56,20 @@ public class PeakFindingServTest {
 	}
 	
 	@Test
+	public void testActivePeakFinderExceptions() throws Exception {
+		thrower.expect(IllegalArgumentException.class);
+		thrower.expectMessage("not active");
+		thrower.expectMessage("already active");
+	
+		peakFindServ.deactivatePeakFinder(dummyID);
+		peakFindServ.deactivatePeakFinder(dummyID);	
+		peakFindServ.activatePeakFinder(dummyID);
+		peakFindServ.activatePeakFinder(dummyID);
+	}
+	
+	@Test
 	public void testActivatePeakFinders() throws Exception {
 		//Resources for test
-		String dummyID = DummyPeakFinder.class.getName();
 		Set<String> activePFs;
 		Iterator<String> activePFIter;
 		
@@ -92,8 +109,7 @@ public class PeakFindingServTest {
 		
 		//Find the dummy peakfinder
 		String dummyPFClassName = DummyPeakFinder.class.getName();
-		List<String> peakFinderIDList = new ArrayList<String>(peakFinderIDs);
-		if (!peakFinderIDList.contains(dummyPFClassName)) {
+		if (!dummyPFClassName.contains(dummyPFClassName)) {
 			fail("Dummy peak finder not registered");
 		}
 //		IPeakFinder testPF = peakFindServ.getPeakFinder(dummyPFClassName);

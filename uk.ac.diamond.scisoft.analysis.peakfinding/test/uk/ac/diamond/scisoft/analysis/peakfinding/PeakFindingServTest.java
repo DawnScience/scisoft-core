@@ -6,10 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -56,18 +54,6 @@ public class PeakFindingServTest {
 	}
 	
 	@Test
-	public void testActivePeakFinderExceptions() throws Exception {
-		thrower.expect(IllegalArgumentException.class);
-		thrower.expectMessage("not active");
-		thrower.expectMessage("already active");
-	
-		peakFindServ.deactivatePeakFinder(dummyID);
-		peakFindServ.deactivatePeakFinder(dummyID);	
-		peakFindServ.activatePeakFinder(dummyID);
-		peakFindServ.activatePeakFinder(dummyID);
-	}
-	
-	@Test
 	public void testActivatePeakFinders() throws Exception {
 		//Resources for test
 		Set<String> activePFs;
@@ -93,6 +79,22 @@ public class PeakFindingServTest {
 		}
 		assertFalse(gotDummy);	
 		}
+	
+	@Test
+	public void testActivateException() throws Exception {
+		thrower.expect(Exception.class);
+		thrower.expectMessage("already set active");
+		peakFindServ.activatePeakFinder(dummyID);
+		peakFindServ.activatePeakFinder(dummyID);
+	}
+	
+	@Test
+	public void testDeactivateException() throws Exception {
+		thrower.expect(Exception.class);
+		thrower.expectMessage("not set active");
+		peakFindServ.deactivatePeakFinder(dummyID);
+		peakFindServ.deactivatePeakFinder(dummyID);	
+	}
 	
 	@Test
 	public void testOnePeakFinder() throws Exception {

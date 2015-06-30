@@ -9,9 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders;
 
-import java.util.Arrays;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
@@ -21,8 +20,17 @@ public class DummyPeakFinder extends AbstractPeakFinder implements IPeakFinder {
 	private final String NAME = "Dummy peak finder"; 
 
 	@Override
-	public Set<Integer> findPeaks(IDataset xData, IDataset yData, Integer nPeaks) {
-		return new TreeSet<Integer>(Arrays.asList(1, 2, 3, 5, 7, 11, 13));
+	public Map<Integer, Double> findPeaks(IDataset xData, IDataset yData, Integer nPeaks) {
+		Map<Integer, Double>fakePeakPosnsSigs = new TreeMap<Integer, Double>();
+		fakePeakPosnsSigs.put(1, 0.6);
+		fakePeakPosnsSigs.put(2, 1.2);
+		fakePeakPosnsSigs.put(3, 0.9);
+		fakePeakPosnsSigs.put(5, 1.7);
+		fakePeakPosnsSigs.put(7, 2.5);
+		fakePeakPosnsSigs.put(11, 0.9);
+		fakePeakPosnsSigs.put(13, 0.6);
+		
+		return fakePeakPosnsSigs;
 	}
 
 	@Override

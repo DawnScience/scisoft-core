@@ -22,7 +22,7 @@ import uk.ac.diamond.scisoft.analysis.rpc.IAnalysisRpcHandler;
  */
 public class AnalysisRpcServerProvider extends ServerProvider {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisRpcServerProvider.class);
-	
+
 	private static AnalysisRpcServerProvider instance = new AnalysisRpcServerProvider();
 	private int port = 0;
 	private AnalysisRpcServer server = null;
@@ -114,6 +114,10 @@ public class AnalysisRpcServerProvider extends ServerProvider {
 	 *             if the port number is < 0
 	 */
 	public void setPort(int analysisRpcPort) throws IllegalStateException, IllegalArgumentException {
+		if (Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.analysisrpcserverprovider.disable")) {
+			throw new IllegalStateException("Analysis RPC Server disabled with property uk.ac.diamond.scisoft.analysis.analysisrpcserverprovider.disable");
+		}
+
 		if (analysisRpcPort < 0)
 			throw new IllegalArgumentException("Port number must be >= 0");
 		if (server != null ){

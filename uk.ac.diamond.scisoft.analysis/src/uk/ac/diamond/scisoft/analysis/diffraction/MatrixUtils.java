@@ -9,10 +9,51 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
+import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
 public class MatrixUtils {
+
+	/**
+	 * Compute tangent to direction vector that lies along meridian (from pole)
+	 * <p>
+	 * In the case where the direction is polar, the prime meridian is chosen
+	 * @param direction
+	 * @return unit vector
+	 */
+	public static Vector3d computeMeridionalTangent(Vector3d direction) {
+		double dz = direction.z;
+		Vector3d t;
+		if (Math.abs(dz) == 1) {
+			t = new Vector3d(dz, 0, 0);
+			t.normalize();
+		} else if (dz == 0) {
+			t = new Vector3d(0, 0, -1);
+		} else {
+			t = new Vector3d(0, 0, -1/dz);
+			t.add(direction);
+			t.normalize();
+		}
+		return t;
+	}
+
+
+	/**
+	 * Compute tangent to direction vector that makes an angle with meridian (from pole)
+	 * <p>
+	 * In the case where the direction is polar, the prime meridian is chosen
+	 * @param direction
+	 * @param angle (in degrees)
+	 * @return unit vector
+	 */
+	public static Vector3d computeTangent(Vector3d direction, double angle) {
+		Vector3d t = computeMeridionalTangent(direction);
+		Matrix3d r = new Matrix3d();
+		r.set(new AxisAngle4d(direction, Math.toRadians(angle)));
+		r.transform(t);
+		return t;
+	}
 
 	/**
 	 * Compute intersection between plane and cone (whose apex is on the plane) for a unit vector

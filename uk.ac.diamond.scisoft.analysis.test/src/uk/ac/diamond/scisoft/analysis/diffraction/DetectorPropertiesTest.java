@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
@@ -271,6 +272,20 @@ public class DetectorPropertiesTest {
 		Assert.assertEquals("Yaw",   -95+103, angle[0], 1e-7);
 		Assert.assertEquals("Pitch", -90, angle[1], 1e-7);
 		Assert.assertEquals("Roll",  0, angle[2], 1e-7);
+	}
+
+	@Test
+	public void testEulerXYZ() {
+		DetectorProperties det = DetectorProperties.getDefaultDetectorProperties(new int[] {100,100});
+		det.setOrientationEulerXYZ(Math.toRadians(0.4663), Math.toRadians(-44.01), Math.toRadians(-88.99));
+		Matrix3d m = det.getOrientation();
+		double[] row = new double[3];
+		m.getRow(0, row);
+		assertArrayEquals(new double[] {0.01268187, -0.99991112,  0.00411266}, row, 1e-4);
+		m.getRow(1, row);
+		assertArrayEquals(new double[] {0.71913747,  0.01197841,  0.69476458}, row, 1e-4);
+		m.getRow(2, row);
+		assertArrayEquals(new double[] {-0.69475209, -0.00585335,  0.71922547}, row, 1e-4);
 	}
 
 	@Test

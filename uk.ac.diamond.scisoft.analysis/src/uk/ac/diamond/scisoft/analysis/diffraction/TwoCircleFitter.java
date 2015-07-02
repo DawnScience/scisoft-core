@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Class supports a number of ways to fit a detector using the direct beam method:
  * <dl>
+ * <dt>6-parameter</dt>
+ * <dd>detector pos, detector normal, detector fast axis angle from horizontal</dd>
  * <dt>8-parameter</dt>
  * <dd>beam dir (t,p),
  *  detector pos, detector normal, detector fast axis angle from horizontal</dd>
@@ -40,16 +42,21 @@ public class TwoCircleFitter {
 	 * delta pos, delta dir, delta offset,
 	 * detector pos, detector normal, detector fast axis angle from horizontal
 	 */
-	public static double[] I16_NOMINAL_PARAMS = new double[] {0, 789, 0, 0, 0, 0,
-		-938.5, 789, 0, 90, 180, 0,
-		637+271-73+83.764*0.5, (30.5+33.54)*Math.sqrt(0.5), 500 - (30.5+33.54)*Math.sqrt(0.5), 180-45, 0, 90
+	public static double[] I16_NOMINAL_PARAMS = new double[] {
+		637+271-73+83.764*0.5 - 938.5, (30.5+33.54)*Math.sqrt(0.5), 500 - (30.5+33.54)*Math.sqrt(0.5), 180-45, -90, 0
 		};
+
+	public static TwoCircleDetector createI16Detector() {
+		TwoCircleDetector two = new TwoCircleDetector();
+		TwoCircleDetector.setupTwoCircle(two, I16_NOMINAL_PARAMS);
+		return two;
+	}
 
 	/**
 	 * 
 	 * @param prop
 	 * @param init detector
-	 * @param n
+	 * @param n number of parameters
 	 * @param gamma angles (in degrees) for gamma circle
 	 * @param delta angles (in degrees) for delta circle
 	 * @param x x-coordinates of beam centre in pixels
@@ -108,6 +115,16 @@ public class TwoCircleFitter {
 			this.y = y;
 			pts = x.length;
 			switch (n) {
+			case 6:
+				bounds = new SimpleBounds(new double[] {
+						Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 0, -180, -90
+						}, new double[] {
+						Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 180, 180, 90
+				});
+				sigma = new double[] {
+						SIGMA_POSN, SIGMA_POSN, SIGMA_POSN, SIGMA_FANG, SIGMA_FANG, SIGMA_FANG
+				};
+				break;
 			case 8:
 				bounds = new SimpleBounds(new double[] {
 						0, -180,

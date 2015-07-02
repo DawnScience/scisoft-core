@@ -13,6 +13,8 @@ import static org.junit.Assert.*;
 
 import java.util.Random;
 
+import javax.vecmath.Vector3d;
+
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,13 +57,10 @@ public class TwoCircleFitterTest {
 
 		TwoCircleDetector dt = new TwoCircleDetector();
 
-		/* 18-parameter fit function: beam pos (x,y,z), beam dir (t,p), gamma offset,
-		 * delta pos, delta dir, delta offset,
-		 * detector pos, detector normal, detector fast axis angle from horizontal
+		/* 6-parameter fit function:
+		 * detector pos, detector normal, detector fast axis angle from meridian
 		 */
-		double[] init = new double[] {0, 0, 0, 0, 0, -0.5,
-				-1000, 0, 0, 90, 180, 0.5,
-				1000, 0, 1000, 180-9, -90, 0};
+		double[] init = new double[] {0, 0, 1000, 180-9, -90, 0};
 		TwoCircleDetector.setupTwoCircle(dt, init);
 
 		// check for minima in many dimensions
@@ -96,13 +95,11 @@ public class TwoCircleFitterTest {
 		DetectorProperties ndp = prop.clone();
 
 		TwoCircleDetector dt = new TwoCircleDetector();
-		/* 18-parameter fit function: beam pos (x,y,z), beam dir (t,p), gamma offset,
-		 * delta pos, delta dir, delta offset,
-		 * detector pos, detector normal, detector fast axis angle from horizontal
+		/* 6-parameter fit function:
+		 * detector pos, detector normal, detector fast axis angle from meridian
 		 */
-		double[] init = new double[] {0, 950, 0, 0, 0, 1,
-			-970, 950, 0, 90, 180, 0,
-			970 + 33.54, 0, 535, 180-35, 0, 90};
+		double[] init = new double[] {
+			0, 0, 535, 180-35, 0, 90};
 		TwoCircleDetector.setupTwoCircle(dt, init);
 
 		Random rnd = new Random(123457L);
@@ -122,14 +119,10 @@ public class TwoCircleFitterTest {
 	
 			// now fix points and move detector
 			checkDetectorFitter(fdt, np, prop, ndp,
-					0, 950, 0, 0, 0, 0,
-					-970, 950, 0, 90, 180, 0,
-					970 + 33.54, 0, 535, 180 - 35 + 1. / 32, 0, 90);
+					0, 0, 535, 180 - 35 + 1. / 32, 0, 90);
 	
 			checkDetectorFitter(fdt, np, prop, ndp,
-					0, 950 - 5, 0, 0, 0, 0,
-					-970, 950, 0, 90, 180, 0,
-					970 + 33.54, 0, 535, 180 - 35, 0, 90);
+					0, 0, 535, 180 - 35, 0, 90);
 		}
 	}
 
@@ -148,5 +141,15 @@ public class TwoCircleFitterTest {
 		System.err.println(dt);
 		System.err.println(fdt);
 		assertTrue(dt.isClose(fdt, R_TOL, A_TOL));
+	}
+
+	@Test
+	public void testI16() {
+		TwoCircleDetector d = TwoCircleFitter.createI16Detector();
+		DetectorProperties prop = new DetectorProperties(100, 0, 0, 195, 487, 0.172, 0.172);
+		d.updateDetectorProperties(prop, 0, 0);
+		Vector3d v = new Vector3d(0, -1, -1);
+		v.normalize();
+		assertTrue(MatrixUtils.isClose(v, prop.getNormal(), R_TOL, A_TOL));
 	}
 }

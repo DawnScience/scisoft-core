@@ -571,6 +571,12 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.AverageSectionsOfFastestModel"
             name="Average Sections of Fastest Dimension">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.image.CentroidOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.image.CentroidOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            name="Centroid">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

@@ -1897,6 +1897,14 @@ public class AbstractDatasetTest {
 	}
 
 	@Test
+	public void testExtract() {
+		Dataset a = DatasetFactory.createRange(20, Dataset.INT32).reshape(4,5);
+		Dataset b = DatasetFactory.createFromObject(new boolean[] {true, false, true, false, false});
+
+		checkDatasets(DatasetUtils.extract(a, b), DatasetFactory.createFromObject(new int[] {0, 2, 5, 7, 10, 12, 15, 17}));
+	}
+
+	@Test
 	public void testSetBy1DIndex() {
 		Dataset a = DatasetFactory.createRange(10, Dataset.INT32);
 		a.max();

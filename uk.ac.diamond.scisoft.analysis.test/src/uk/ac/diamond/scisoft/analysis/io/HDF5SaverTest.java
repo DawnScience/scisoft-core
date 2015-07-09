@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.IDynamicDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyWriteableDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
@@ -41,7 +42,7 @@ public class HDF5SaverTest {
 		String path = "/e/a/b/";
 		String name = "d";
 		int[] shape = new int[] {2, 34};
-		int[] mshape = new int[] {ILazyWriteableDataset.UNLIMITED, 34};
+		int[] mshape = new int[] {IDynamicDataset.UNLIMITED, 34};
 		int dtype = Dataset.INT16;
 
 		File f = new File(file);

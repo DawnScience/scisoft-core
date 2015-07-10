@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.dataset;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
+import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
@@ -69,7 +70,7 @@ public class LazyDatasetTest {
 	}
 
 	@Test
-	public void testGetSlice() {
+	public void testGetSlice() throws Exception {
 		final int[] shape = new int[] {1, 2, 3, 4};
 		final Dataset d = Random.randn(shape);
 		LazyDataset ld = LazyDataset.createLazyDataset(d);
@@ -79,6 +80,7 @@ public class LazyDatasetTest {
 		Assert.assertEquals("Full slice", d, ld.getSlice());
 		Assert.assertEquals("Full slice", d, ld.getSlice((Slice) null));
 		Assert.assertEquals("Full slice", d, ld.getSlice((Slice) null, null));
+		Assert.assertEquals("Full slice", d, ld.getSlice(null, (SliceND) null));
 		Assert.assertEquals("Full slice", d, ld.getSlice(null, null, null));
 		Assert.assertEquals("Full slice", d, ld.getSlice(null, null, new int[] {1, 1, 1, 1}));
 		Assert.assertEquals("Full slice", d, ld.getSlice(new int[4], null, new int[] {1, 1, 1, 1}));

@@ -71,4 +71,16 @@ public class LazyWriteableDatasetTest {
 		ld.setSlice(sd, s);
 		Assert.assertEquals(d.transpose().getSlice(s), sd);
 	}
+
+	@Test
+	public void testSetExpandedSlice() throws Exception {
+		final int[] shape = new int[] {1, 2, 3, 4};
+		final Dataset d = Random.randn(shape);
+		LazyWriteableDataset ld = LazyWriteableDataset.createLazyDataset(d, new int[] {2, 2, 3, 4});
+
+		SliceND s = new SliceND(d.getShapeRef(), ld.getMaxShape(), new Slice(1,2), null, new Slice(1), new Slice(0, null, 2));
+		Dataset sd = DatasetFactory.ones(s.getShape(), d.getDtype());
+		ld.setSlice(sd, s);
+		Assert.assertEquals(ld.getSlice(s), sd);
+	}	
 }

@@ -1101,16 +1101,26 @@ public class HDF5Loader extends AbstractFileLoader {
 //			isEnum = tclass == HDF5Constants.H5T_ENUM;
 //			isRegRef = H5.H5Tequal(tid, HDF5Constants.H5T_STD_REF_DSETREG);
 
-			// check if it is an external dataset
 			try {
 				pid = H5.H5Dget_create_plist(did);
+				int layout = H5.H5Pget_layout(pid);
+				if (layout == HDF5Constants.H5D_CHUNKED) { // add any chunking information
+					long[] chunk = new long[rank];
+					int crank = H5.H5Pget_chunk(pid, rank, chunk);
+					if (crank != rank) {
+						logger.error("Rank of chunk does not equal rank of dataset");
+					} else {
+						dataset.setChunkShape(chunk);
+					}
+				}
+				// check if it is an external dataset
 				int nfiles = H5.H5Pget_external_count(pid);
 				if (nfiles > 0) {
-					logger.error("Zero external files");
+					logger.error("External files are not supported");
 					return false;
 				}
 			} catch (HDF5Exception ex) {
-				logger.error("Could not get external count");
+				logger.error("Could not get creation property information", ex);
 			} finally {
 				try {
 					H5.H5Pclose(pid);

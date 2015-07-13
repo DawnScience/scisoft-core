@@ -81,21 +81,27 @@ public class ImagePeemUtils {
 		int[] matrixSize = getColumnAndRowNumber(psx, psy);
 		List<double[]> translations = new ArrayList<double[]>();
 		int count = 0;
+		int xshift = matrixSize[0];
 		for (int i = 0; i < matrixSize[0]; i++) {
 			for (int j = 0; j < matrixSize[1]; j++) {
-				double currentY = psy.getDouble(j);
+				double currentY = psy.getDouble(count);
 				double previousY = 0;
-				if (j > 0)
-					previousY = psy.getDouble(j - 1);
-				else
+				if (count >= 1)
+					previousY = psy.getDouble(count - 1);
+				if (j == 0) {
 					currentY = 0;
+					previousY = 0;
+				}
+
 				double currentX = psx.getDouble(count);
 				double previousX = 0;
-				if (i == 0 ) {
-					currentX = 0; previousX = 0;
-				} else {
-					previousX = psx.getDouble(count - j - 1);
+				if (i == 0) {
+					currentX = 0;
+					previousX = 0;
 				}
+
+				if (count >= xshift)
+					previousX = psx.getDouble(count - xshift);
 				double translX = (currentX - previousX) * 1000;
 				double translY = (currentY - previousY) * 1000;
 				if (translX == 0 && translY != 0)
@@ -110,7 +116,7 @@ public class ImagePeemUtils {
 	}
 
 	/**
-	 * Returns the number of columns and rows given a list of X/Y positions byt counting the number of times a
+	 * Returns the number of columns and rows given a list of X/Y positions by counting the number of times a
 	 * particular position is identical to its predecessor.
 	 * 
 	 * @param psx
@@ -129,6 +135,9 @@ public class ImagePeemUtils {
 			yIndex += columns;
 			rows++;
 		}
+		// just return the integer value of the square root
+		columns = (int) Math.sqrt(psx.getSize());
+		rows = columns;
 		return new int[] { columns, rows};
 	}
 }

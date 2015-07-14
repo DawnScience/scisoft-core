@@ -1243,12 +1243,9 @@ public class HDF5Loader extends AbstractFileLoader {
 					return false;
 				}
 			}
-			int[] ishape = loader.getShape();
-			long[] lshape = new long[ishape.length];
-			for (int i = 0; i < ishape.length; i++) {
-				lshape[i] = ishape[i];
-			}
-			dataset.setMaxShape(lshape);
+			// set dataset information again as loader now has correct shapes
+			dataset.setMaxShape(loader.getMaxShape());
+			dataset.setChunkShape(loader.getChunkShape());
 			dataset.setDataset(new LazyDataset(name, loader.getDtype(), loader.getShape(), loader));
 			return true;
 		}

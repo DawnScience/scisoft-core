@@ -203,4 +203,35 @@ public class ImageStackLoader implements ILazyLoader {
 	public int[] getShape() {
 		return shape;
 	}
+
+	/**
+	 * @return maximum shape
+	 */
+	public long[] getMaxShape() {
+		int rank = shape.length;
+		long[] mshape = new long[rank];
+		for (int i = 0; i < rank; i++) {
+			mshape[i] = shape[i];
+		}
+
+		return mshape;
+	}
+
+	/**
+	 * @return chunk shape
+	 */
+	public long[] getChunkShape() {
+		int rank = shape.length;
+		long[] chunk = new long[rank];
+		int i = 0;
+		int irank = iShape.length;
+		for (; i < irank; i++) {
+			chunk[i] = 1;
+		}
+		for (; i < rank; i++) {
+			chunk[i] = iShape[i - irank];
+		}
+
+		return chunk;
+	}
 }

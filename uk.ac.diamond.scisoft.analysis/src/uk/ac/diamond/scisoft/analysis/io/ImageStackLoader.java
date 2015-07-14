@@ -221,15 +221,16 @@ public class ImageStackLoader implements ILazyLoader {
 	 * @return chunk shape
 	 */
 	public long[] getChunkShape() {
+		// use each image as a chunk
 		int rank = shape.length;
 		long[] chunk = new long[rank];
 		int i = 0;
-		int irank = iShape.length;
-		for (; i < irank; i++) {
+		int ibeg = rank - iShape.length;
+		for (; i < ibeg; i++) {
 			chunk[i] = 1;
 		}
 		for (; i < rank; i++) {
-			chunk[i] = iShape[i - irank];
+			chunk[i] = iShape[i - ibeg];
 		}
 
 		return chunk;

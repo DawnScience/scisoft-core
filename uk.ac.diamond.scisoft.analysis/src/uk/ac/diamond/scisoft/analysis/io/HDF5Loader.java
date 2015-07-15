@@ -1243,6 +1243,8 @@ public class HDF5Loader extends AbstractFileLoader {
 					return false;
 				}
 			}
+			loader.setMaxShape(dataset.getMaxShape());
+			loader.squeeze();
 			// set dataset information again as loader now has correct shapes
 			dataset.setMaxShape(loader.getMaxShape());
 			dataset.setChunkShape(loader.getChunkShape());
@@ -1288,7 +1290,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			data = ncsa.hdf.object.Dataset.byteToString((byte[]) data, H5.H5Tget_size(tid));
 		}
 
-		return new StringDataset((String[]) data, AbstractDataset.squeezeShape(shape, false));
+		return new StringDataset((String[]) data, shape);
 	}
 
 	@Override

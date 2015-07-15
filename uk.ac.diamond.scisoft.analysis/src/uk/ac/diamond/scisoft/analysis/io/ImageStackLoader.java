@@ -39,6 +39,7 @@ public class ImageStackLoader implements ILazyLoader {
 
 	private StringDataset filenames;
 	private int[] fShape; // filename shape
+	private long[] mShape; // max total shape
 	private int[] iShape; // image shape
 	private int[] shape;
 	private int dtype;
@@ -205,16 +206,65 @@ public class ImageStackLoader implements ILazyLoader {
 	}
 
 	/**
+	 * @param maxShape original maximum shape for filenames dataset
+	 */
+	public void setMaxShape(long[] maxShape) {
+		if (maxShape == null) {
+			mShape = null;
+			return;
+		}
+		if (maxShape.length != fShape.length) {
+			throw new IllegalArgumentException("Maximum shape must be same rank as filename dataset");
+		}
+		int rank = shape.length;
+		int mrank = maxShape.length;
+		mShape = new long[rank];
+		int i = 0;
+		for (; i < mrank; i++) {
+			mShape[i] = maxShape[i];
+		}
+		for (; i < rank; i++) {
+			mShape[i] = shape[i];
+		}
+	}
+
+	/**
+	 * Remove dimensions of one from shape (and max shape)
+	 */
+	public void squeeze() {
+		int rank = shape.length;
+		int unitDims = 0;
+		for (int i = 0; i < rank; i++) {
+			if (shape[i] == 1) {
+				unitDims++;
+			}
+		}
+
+		if (unitDims == 0)
+			return;
+
+		int nrank = rank - unitDims;
+		int[] nShape = new int[nrank];
+		long[] nMaxShape = new long[nrank];
+
+		int j = 0;
+		for (int i = 0; i < rank; i++) {
+			if (shape[i] > 1) {
+				nShape[j] = shape[i];
+				nMaxShape[j++] = mShape[i];
+				if (j == nrank)
+					break;
+			}
+		}
+		shape = nShape;
+		mShape = nMaxShape;
+	}
+
+	/**
 	 * @return maximum shape
 	 */
 	public long[] getMaxShape() {
-		int rank = shape.length;
-		long[] mshape = new long[rank];
-		for (int i = 0; i < rank; i++) {
-			mshape[i] = shape[i];
-		}
-
-		return mshape;
+		return mShape;
 	}
 
 	/**

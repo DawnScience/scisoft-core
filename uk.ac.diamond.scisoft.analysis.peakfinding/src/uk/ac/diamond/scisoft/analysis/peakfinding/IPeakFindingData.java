@@ -84,7 +84,12 @@ public interface IPeakFindingData {
 	 */
 	public Integer getNPeaks();
 	
-	
+	/**
+	 * Sets the peaks which were found in the data and using the settings of this object,
+	 * by the IPeakFindingService and stores them 
+	 * @param newFoundPeaks
+	 */
+	public void setPeaks(Map<String, Map<Integer, Double>> newFoundPeaks);
 	
 	/**
 	 * Returns a map with the unique IPeakFinder ID as the key and values which 

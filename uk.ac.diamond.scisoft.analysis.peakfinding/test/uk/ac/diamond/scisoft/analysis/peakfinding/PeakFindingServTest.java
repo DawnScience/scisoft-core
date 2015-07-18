@@ -71,6 +71,10 @@ public class PeakFindingServTest {
 		peakFindServ.findPeaks(peakFindData);
 	}
 	
+	/*
+	 * The next tests check that the peak finders interact with the peak 
+	 * finding service and the peak finding DTO correctly
+	 */
 	@Test
 	public void testOneDummyPeakFinder() throws Exception {
 		Map<Integer, Double>testData = DummyPeakFinder.getFakePeaks();
@@ -78,7 +82,7 @@ public class PeakFindingServTest {
 		peakFindData.activatePeakFinder(dummyID);
 		peakFindData.setData(DatasetFactory.ones(new int[1], Dataset.INT), DatasetFactory.ones(new int[1], Dataset.INT));
 		peakFindServ.findPeaks(peakFindData);
-		Map<Integer, Double> peakPosnsSigs = peakFindServ.getPeaks(dummyID);
+		Map<Integer, Double> peakPosnsSigs = peakFindData.getPeaks(dummyID);
 		
 		assertEquals(testData, peakPosnsSigs);
 	}

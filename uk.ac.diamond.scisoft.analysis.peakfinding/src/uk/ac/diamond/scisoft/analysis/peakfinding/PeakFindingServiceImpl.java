@@ -20,10 +20,8 @@ import uk.ac.diamond.scisoft.analysis.utils.ClassUtils;
 public class PeakFindingServiceImpl implements IPeakFindingService {
 	
 	private final Map<String, PeakFinderInfo> PEAKFINDERS = new HashMap<String, PeakFinderInfo>();
-	 
 	
 	
-
 	
 	public PeakFindingServiceImpl() {
 		//Intentionally left blank (OSGi).
@@ -99,12 +97,26 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 	}
 	
 	@Override
-	public void findPeaks() throws Exception {
+	public Map<String, Map<Integer, Double>> findPeaks(IPeakFindingData peakFindingData) throws Exception {
 		/* FIXME dataInitialised will be true for the lifetime of the service
 		 * (i.e. DAWN PID); if a new set of data is supplied, it might no longer
 		 * be true that data has been initialised. Need a dispose/reset method?
 		 */
-		if (!dataInitialised) throw new Exception("Data has not been initialised. Cannot find peaks");
+		Set<String> activePeakFinders;
+		Map<String, Map<Integer, Double>> allFoundPeaks = new TreeMap<String, Map<Integer, Double>>();
+		IDataset[] searchData;
+		Integer nPeaks = peakFindingData.getNPeaks();
+		if (peakFindingData.hasData()){
+			searchData = peakFindingData.getData();
+		} else {
+			throw new Exception("No data set to find peaks in.");
+		}
+		if (peakFindingData.hasActivePeakFinders()) {
+			activePeakFinders = (Set<String>)peakFindingData.getActivePeakFinders();
+		} else {
+			throw new Exception("No peak finders set active");
+		}
+		
 		Iterator<String> activePeakFindersIter = activePeakFinders.iterator();
 		while (activePeakFindersIter.hasNext()) {
 			//Get each active IPeakFinder in turn...
@@ -112,9 +124,10 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 			IPeakFinder currPF = PEAKFINDERS.get(currID).getPeakFinder();
 			
 			//... call the findPeaks method and record the result
-			allFoundPeaks.put(currID, currPF.findPeaks(xData, yData, nPeaks));
+			allFoundPeaks.put(currID, currPF.findPeaks(searchData[0], searchData[1], nPeaks));
 		}
 		//TODO Add some process here which averages the results of the findPeaks calls
+		return allFoundPeaks;
 	}
 
 	private class PeakFinderInfo {

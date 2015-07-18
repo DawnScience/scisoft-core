@@ -67,17 +67,13 @@ public class PeakFindingData implements IPeakFindingData {
 
 	@Override
 	public IDataset[] getData() throws Exception {
-		if (hasData()) {
-			return new IDataset[]{xData, yData};
-		} else {
-			throw new Exception("No data has been set to find peaks in");
-		}
+		return new IDataset[]{xData, yData};
 	}
 
 	@Override
 	public boolean hasData() {
-		if ((xData == null) || (xData.getSize() == 0) &&
-				(yData == null) || (yData.getSize() == 0)) {
+		if ((xData == null) ||  (yData == null) || 
+				(xData.getSize() == 0) || (yData.getSize() == 0)) {
 			return false;
 		}
 		return true;

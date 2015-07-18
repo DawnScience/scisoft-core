@@ -20,12 +20,10 @@ import uk.ac.diamond.scisoft.analysis.utils.ClassUtils;
 public class PeakFindingServiceImpl implements IPeakFindingService {
 	
 	private final Map<String, PeakFinderInfo> PEAKFINDERS = new HashMap<String, PeakFinderInfo>();
-	private Set<String> activePeakFinders = new TreeSet<String>(); 
-	private Map<String, Map<Integer, Double>> allFoundPeaks = new TreeMap<String, Map<Integer, Double>>();
+	 
 	
-	private IDataset xData, yData;
-	private Integer nPeaks;
-	private boolean dataInitialised = false;
+	
+
 	
 	public PeakFindingServiceImpl() {
 		//Intentionally left blank (OSGi).
@@ -101,29 +99,6 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 	}
 	
 	@Override
-	public void activatePeakFinder(String id) throws Exception {
-		if (activePeakFinders.contains(id)) {
-			throw new Exception(id+" already set active");
-		} else {
-			activePeakFinders.add(id);
-		}
-	}
-	
-	@Override
-	public void deactivatePeakFinder(String id) throws Exception {
-		if (activePeakFinders.contains(id)) {
-			activePeakFinders.remove(id);
-		} else {
-			throw new Exception(id+" not set active");
-		}
-	}
-
-	@Override
-	public Collection<String> getActivePeakFinders() {
-		return activePeakFinders;
-	}
-	
-	@Override
 	public void findPeaks() throws Exception {
 		/* FIXME dataInitialised will be true for the lifetime of the service
 		 * (i.e. DAWN PID); if a new set of data is supplied, it might no longer
@@ -140,55 +115,6 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 			allFoundPeaks.put(currID, currPF.findPeaks(xData, yData, nPeaks));
 		}
 		//TODO Add some process here which averages the results of the findPeaks calls
-	}
-
-	@Override
-	public Map<String, Map<Integer, Double>> getPeaks() throws Exception {
-		if (allFoundPeaks == null || allFoundPeaks.isEmpty()) throw new Exception("No peaks found. Need to run findPeaks()");
-		return allFoundPeaks;
-	}
-
-	@Override
-	public Map<Integer, Double> getPeaks(String id) throws Exception {
-		if (allFoundPeaks == null || allFoundPeaks.isEmpty()) throw new Exception("No peaks found. Need to run findPeaks()");
-		if (!allFoundPeaks.keySet().contains(id)) throw new Exception(id+" was not active when findPeaks() was called");
-		return allFoundPeaks.get(id);
-	}
-	
-	@Override
-	public void setData(IDataset xData, IDataset yData) {
-		setData(xData, yData, null);
-	}
-	
-	@Override
-	public void setData(IDataset xData, IDataset yData, Integer nPeaks) {
-		this.xData = xData;
-		this.yData = yData;
-		this.nPeaks = nPeaks;
-		
-		//As long as we have initialised xData and yData once, we can call findPeaks
-		//TODO service needs to know if completely fresh data is coming in.
-		if (xData != null && yData != null) dataInitialised = true;
-	}
-
-	@Override
-	public void setXData(IDataset xData) {
-		setData(xData, null, null);
-	}
-
-	@Override
-	public void setYData(IDataset yData) {
-		setData(null, yData, null);
-	}
-
-	@Override
-	public void setNPeaks(Integer nPeaks) {
-		setData(null, null, nPeaks);
-	}
-
-	@Override
-	public Integer getNPeaks() {
-		return nPeaks;
 	}
 
 	private class PeakFinderInfo {

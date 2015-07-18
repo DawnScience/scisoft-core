@@ -88,7 +88,7 @@ public class PeakFindingDataImplTest {
 	@Test
 	public void testHasDataException() throws Exception {
 		thrower.expect(Exception.class);
-		thrower.expectMessage("no data");
+		thrower.expectMessage("No data");
 		assertFalse(peakFindData.hasData());
 		peakFindData.getData();
 	}

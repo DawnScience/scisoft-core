@@ -16,7 +16,7 @@ import org.junit.rules.ExpectedException;
 
 import uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders.DummyPeakFinder;
 
-public class PeakFindingDataImplTest {
+public class PeakFindingDataTest {
 	
 	private static IPeakFindingService peakFindServ;
 	private IPeakFindingData peakFindData;

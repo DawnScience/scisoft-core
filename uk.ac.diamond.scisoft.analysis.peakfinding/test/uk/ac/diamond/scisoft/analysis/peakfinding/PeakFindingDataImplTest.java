@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -64,6 +66,27 @@ public class PeakFindingDataImplTest {
 		}
 		return gotPFID;
 	}
+	
+	@Test
+	public void testHasData() throws Exception {
+		//No data
+		assertFalse(peakFindData.hasData());
+		
+		//Only xData set
+		peakFindData.setData(DatasetFactory.createRange(0, 10, 1, Dataset.FLOAT32),
+				null);
+		assertFalse(peakFindData.hasData());
+		
+		//yData initialised to 0 length dataset
+		peakFindData.setData(DatasetFactory.createRange(0, 10, 1, Dataset.FLOAT32),
+				DatasetFactory.zeros(new int[]{0}, Dataset.FLOAT32));
+		assertFalse(peakFindData.hasData());
+		
+		//Should be correct
+		peakFindData.setData(DatasetFactory.createRange(0, 10, 1, Dataset.FLOAT32),
+				DatasetFactory.createRange(0, 10, 1, Dataset.FLOAT32));
+		assertTrue(peakFindData.hasData());
+	}
 
 	/*
 	 * The next tests check exceptions are thrown when IPeakFindingData is not 
@@ -83,14 +106,6 @@ public class PeakFindingDataImplTest {
 		thrower.expectMessage("not set active");
 		peakFindData.deactivatePeakFinder(dummyID);
 		peakFindData.deactivatePeakFinder(dummyID);	
-	}
-	
-	@Test
-	public void testHasDataException() throws Exception {
-		thrower.expect(Exception.class);
-		thrower.expectMessage("No data");
-		assertFalse(peakFindData.hasData());
-		peakFindData.getData();
 	}
 	
 	/*

@@ -46,6 +46,14 @@ public class PeakFindingServTest {
 	@Rule
 	public ExpectedException thrower = ExpectedException.none();
 	
+	/*
+	 * A couple of support methods for the 
+	 */
+	private void setFakeDataOnDTO() {
+		peakFindData.setData(DatasetFactory.createRange(0, 10, 1, Dataset.FLOAT32), 
+				DatasetFactory.createRange(0, 10, 1, Dataset.FLOAT32));
+	}
+	
 	@Test
 	public void testGetService() {
 		assertNotNull(peakFindServ);
@@ -62,11 +70,18 @@ public class PeakFindingServTest {
 	 * The next tests check exceptions are thrown when interactions between 
 	 * IPeakFindingData and IPeakFindingService go wrong
 	 */
-	//Must run before first run of setData otherwise it passes!
 	@Test
 	public void testDataNotSetFindPeaksException() throws Exception {
 		thrower.expect(Exception.class);
-		thrower.expectMessage("Data has not been initialised");
+		thrower.expectMessage("No data");
+		peakFindServ.findPeaks(peakFindData);
+	}
+	@Test
+	public void testNoActivePeakFindersException() throws Exception {
+		thrower.expect(Exception.class);
+		thrower.expectMessage("No peak finders");
+		
+		setFakeDataOnDTO();
 		peakFindServ.findPeaks(peakFindData);
 	}
 	
@@ -79,7 +94,7 @@ public class PeakFindingServTest {
 		Map<Integer, Double>testData = DummyPeakFinder.getFakePeaks();
 		
 		peakFindData.activatePeakFinder(dummyID);
-		peakFindData.setData(DatasetFactory.ones(new int[1], Dataset.INT), DatasetFactory.ones(new int[1], Dataset.INT));
+		setFakeDataOnDTO();
 		peakFindServ.findPeaks(peakFindData);
 		Map<Integer, Double> peakPosnsSigs = peakFindData.getPeaks(dummyID);
 		

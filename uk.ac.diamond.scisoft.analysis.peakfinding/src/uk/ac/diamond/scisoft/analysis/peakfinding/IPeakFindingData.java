@@ -63,8 +63,9 @@ public interface IPeakFindingData {
 	
 	/**
 	 * Get the current data of this IPeakFindingData object (not nPeaks)
+	 * @throws Exception when no data has been set in this object
 	 */
-	public IDataset[] getData();
+	public IDataset[] getData() throws Exception;
 	
 	/**
 	 * Reports whether data has been set in this instance.

@@ -11,6 +11,7 @@ import java.util.TreeMap;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,6 +27,7 @@ public class PeakFindingServTest {
 	 */
 	
 	private static IPeakFindingService peakFindServ;
+	private IPeakFindingData peakFindData;
 	private String dummyID = DummyPeakFinder.class.getName();
 	
 	@BeforeClass
@@ -35,6 +37,11 @@ public class PeakFindingServTest {
 		//Grab the all the PeakFinders in u.a.d.s.a.peakfinding.peakfinders
 		peakFindServ.addPeakFindersByClass(peakFindServ.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders");
 		
+	}
+	
+	@Before
+	public void createPeakFindData() {
+		peakFindData = new PeakFindingData();
 	}
 	
 	@Rule
@@ -52,61 +59,16 @@ public class PeakFindingServTest {
 		assertFalse(peakFinderNames.isEmpty());
 	}
 	
-	@Test
-	public void testActivatePeakFinders() throws Exception {
-		//Resources for test
-		boolean gotDummy;
-		
-		peakFindServ.activatePeakFinder(dummyID);
-		gotDummy = searchForPFID(dummyID);
-		assertTrue(gotDummy);
-		
-		peakFindServ.deactivatePeakFinder(dummyID);
-		gotDummy = searchForPFID(dummyID);
-		assertFalse(gotDummy);	
-		}
-	
-	private boolean searchForPFID(String pfID) {
-		boolean gotPFID = false;
-		Set<String> activePFs = (Set<String>) peakFindServ.getActivePeakFinders();
-		Iterator<String> pfIter = activePFs.iterator();
-		while (pfIter.hasNext()) {
-			String currID = pfIter.next();
-			if (currID.equals(pfID)) gotPFID = true;
-		}
-		return gotPFID;
-	}
-	
-	@Test
-	public void testActivateException() throws Exception {
-		thrower.expect(Exception.class);
-		thrower.expectMessage("already set active");
-		peakFindServ.activatePeakFinder(dummyID);
-		peakFindServ.activatePeakFinder(dummyID);
-	}
-	
-	@Test
-	public void testDeactivateException() throws Exception {
-		thrower.expect(Exception.class);
-		thrower.expectMessage("not set active");
-		peakFindServ.deactivatePeakFinder(dummyID);
-		peakFindServ.deactivatePeakFinder(dummyID);	
-	}
-	
+	/*
+	 * The next tests check exceptions are thrown when interactions between 
+	 * IPeakFindingData and IPeakFindingService go wrong
+	 */
 	//Must run before first run of setData otherwise it passes!
 	@Test
 	public void testDataNotSetFindPeaksException() throws Exception {
 		thrower.expect(Exception.class);
 		thrower.expectMessage("Data has not been initialised");
-		peakFindServ.findPeaks();
-	}
-	
-	//Must run before first run of findPeaks otherwise it passes!
-	@Test
-	public void testGetPeaksBeforeFindPeaksException() throws Exception {
-		thrower.expect(Exception.class);
-		thrower.expectMessage("findPeaks");
-		peakFindServ.getPeaks(dummyID);
+		peakFindServ.findPeaks(peakFindData);
 	}
 	
 	@Test
@@ -120,9 +82,9 @@ public class PeakFindingServTest {
 		testData.put(11, 0.9);
 		testData.put(13, 0.6);
 		
-		peakFindServ.activatePeakFinder(dummyID);
-		peakFindServ.setData(DatasetFactory.ones(new int[1], Dataset.INT), DatasetFactory.ones(new int[1], Dataset.INT));
-		peakFindServ.findPeaks();
+		peakFindData.activatePeakFinder(dummyID);
+		peakFindData.setData(DatasetFactory.ones(new int[1], Dataset.INT), DatasetFactory.ones(new int[1], Dataset.INT));
+		peakFindServ.findPeaks(peakFindData);
 		Map<Integer, Double> peakPosnsSigs = peakFindServ.getPeaks(dummyID);
 		
 		assertEquals(testData, peakPosnsSigs);

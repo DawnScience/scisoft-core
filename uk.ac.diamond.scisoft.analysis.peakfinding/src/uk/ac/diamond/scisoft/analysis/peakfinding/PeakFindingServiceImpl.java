@@ -96,11 +96,7 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 	}
 	
 	@Override
-	public Map<String, Map<Integer, Double>> findPeaks(IPeakFindingData peakFindingData) throws Exception {
-		/* FIXME dataInitialised will be true for the lifetime of the service
-		 * (i.e. DAWN PID); if a new set of data is supplied, it might no longer
-		 * be true that data has been initialised. Need a dispose/reset method?
-		 */
+	public void findPeaks(IPeakFindingData peakFindingData) throws Exception {
 		Set<String> activePeakFinders;
 		Map<String, Map<Integer, Double>> allFoundPeaks = new TreeMap<String, Map<Integer, Double>>();
 		IDataset[] searchData;
@@ -126,7 +122,9 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 			allFoundPeaks.put(currID, currPF.findPeaks(searchData[0], searchData[1], nPeaks));
 		}
 		//TODO Add some process here which averages the results of the findPeaks calls
-		return allFoundPeaks;
+		
+		//Finally set the found peaks on the IPeakFindingData DTO
+		peakFindingData.setPeaks(allFoundPeaks);
 	}
 
 	private class PeakFinderInfo {

@@ -41,14 +41,17 @@ public class PeakFindingDataImplTest {
 	public void testActivateDeactivatePeakFinders() throws Exception {
 		//Resources for test
 		boolean gotDummy;
+		assertFalse(peakFindData.hasActivePeakFinders());
 		
 		peakFindData.activatePeakFinder(dummyID);
 		gotDummy = searchForPFID(dummyID);
 		assertTrue(gotDummy);
+		assertTrue(peakFindData.hasActivePeakFinders());
 		
 		peakFindData.deactivatePeakFinder(dummyID);
 		gotDummy = searchForPFID(dummyID);
-		assertFalse(gotDummy);	
+		assertFalse(gotDummy);
+		assertFalse(peakFindData.hasActivePeakFinders());
 		}
 	
 	private boolean searchForPFID(String pfID) {

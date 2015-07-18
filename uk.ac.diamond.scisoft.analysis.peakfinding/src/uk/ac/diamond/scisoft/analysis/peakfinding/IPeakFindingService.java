@@ -12,8 +12,6 @@ package uk.ac.diamond.scisoft.analysis.peakfinding;
 import java.util.Collection;
 import java.util.Map;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-
 
 public interface IPeakFindingService {
 	

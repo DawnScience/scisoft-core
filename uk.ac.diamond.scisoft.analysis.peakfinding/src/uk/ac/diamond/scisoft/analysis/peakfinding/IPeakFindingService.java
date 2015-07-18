@@ -10,8 +10,6 @@
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
 import java.util.Collection;
-import java.util.Map;
-
 
 public interface IPeakFindingService {
 	
@@ -54,8 +52,11 @@ public interface IPeakFindingService {
 	public void addPeakFindersByExtension();
 	
 	/**
-	 * Calls the findPeaks method of each of the active IPeakFinders and record
-	 * found peaks to internal store.
+	 * Calls the findPeaks method of each of the active IPeakFinders using the 
+	 * data and parameters stored wiht the IPeakFindingData DTO and record
+	 * found peaks back in the DTO.
+	 * @param peakFindingData Data Transfer Object (DTO) containing the 
+	 *        configuration for peak finding run
 	 */
-	public Map<String, Map<Integer, Double>> findPeaks(IPeakFindingData peakFindingData) throws Exception;
+	public void findPeaks(IPeakFindingData peakFindingData) throws Exception;
 }

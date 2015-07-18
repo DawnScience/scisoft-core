@@ -73,14 +73,7 @@ public class PeakFindingServTest {
 	
 	@Test
 	public void testOneDummyPeakFinder() throws Exception {
-		Map<Integer, Double>testData = new TreeMap<Integer, Double>();
-		testData.put(1, 0.6);
-		testData.put(2, 1.2);
-		testData.put(3, 0.9);
-		testData.put(5, 1.7);
-		testData.put(7, 2.5);
-		testData.put(11, 0.9);
-		testData.put(13, 0.6);
+		Map<Integer, Double>testData = DummyPeakFinder.getFakePeaks();
 		
 		peakFindData.activatePeakFinder(dummyID);
 		peakFindData.setData(DatasetFactory.ones(new int[1], Dataset.INT), DatasetFactory.ones(new int[1], Dataset.INT));

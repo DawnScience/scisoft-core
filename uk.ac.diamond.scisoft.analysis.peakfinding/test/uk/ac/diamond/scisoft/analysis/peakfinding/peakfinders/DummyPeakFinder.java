@@ -18,20 +18,11 @@ import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
 public class DummyPeakFinder extends AbstractPeakFinder implements IPeakFinder {
 	
 	private final String NAME = "Dummy peak finder";
-	private Map<Integer, Double>fakePeakPosnsSigs;
+	private static Map<Integer, Double>fakePeakPosnsSigs;
 
 	@Override
 	public Map<Integer, Double> findPeaks(IDataset xData, IDataset yData, Integer nPeaks) {
-		fakePeakPosnsSigs = new TreeMap<Integer, Double>();
-		fakePeakPosnsSigs.put(1, 0.6);
-		fakePeakPosnsSigs.put(2, 1.2);
-		fakePeakPosnsSigs.put(3, 0.9);
-		fakePeakPosnsSigs.put(5, 1.7);
-		fakePeakPosnsSigs.put(7, 2.5);
-		fakePeakPosnsSigs.put(11, 0.9);
-		fakePeakPosnsSigs.put(13, 0.6);
-		
-		return fakePeakPosnsSigs;
+		return getFakePeaks();
 	}
 
 	@Override
@@ -42,6 +33,20 @@ public class DummyPeakFinder extends AbstractPeakFinder implements IPeakFinder {
 	
 	public void setPeaks(Map<Integer, Double> peakPosnsSigs) {
 		fakePeakPosnsSigs = peakPosnsSigs;
+	}
+	
+	public static Map<Integer, Double> getFakePeaks() {
+		if (fakePeakPosnsSigs == null) {
+			fakePeakPosnsSigs = new TreeMap<Integer, Double>();
+			fakePeakPosnsSigs.put(1, 0.6);
+			fakePeakPosnsSigs.put(2, 1.2);
+			fakePeakPosnsSigs.put(3, 0.9);
+			fakePeakPosnsSigs.put(5, 1.7);
+			fakePeakPosnsSigs.put(7, 2.5);
+			fakePeakPosnsSigs.put(11, 0.9);
+			fakePeakPosnsSigs.put(13, 0.6);
+		}
+		return fakePeakPosnsSigs;
 	}
 
 }

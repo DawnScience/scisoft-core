@@ -12,7 +12,7 @@ public class PeakFindingData implements IPeakFindingData {
 	
 	private Map<String, Map<Integer, Double>> allFoundPeaks = new TreeMap<String, Map<Integer, Double>>();
 	private Set<String> activePeakFinders = new TreeSet<String>();
-	private IDataset xData, yData;
+	private IDataset[] searchData = new IDataset[2];
 	private Integer nPeaks;
 
 	@Override
@@ -45,8 +45,8 @@ public class PeakFindingData implements IPeakFindingData {
 
 	@Override
 	public void setData(IDataset xData, IDataset yData, Integer nPeaks) {
-		this.xData = xData;
-		this.yData = yData;
+		this.searchData[0] = xData;
+		this.searchData[1] = yData;
 		this.nPeaks = nPeaks;
 	}
 
@@ -67,13 +67,13 @@ public class PeakFindingData implements IPeakFindingData {
 
 	@Override
 	public IDataset[] getData() throws Exception {
-		return new IDataset[]{xData, yData};
+		return searchData;
 	}
 
 	@Override
 	public boolean hasData() {
-		if ((xData == null) ||  (yData == null) || 
-				(xData.getSize() == 0) || (yData.getSize() == 0)) {
+		if ((searchData[0] == null) ||  (searchData[1] == null) || 
+				(searchData[0].getSize() == 0) || (searchData[1].getSize() == 0)) {
 			return false;
 		}
 		return true;

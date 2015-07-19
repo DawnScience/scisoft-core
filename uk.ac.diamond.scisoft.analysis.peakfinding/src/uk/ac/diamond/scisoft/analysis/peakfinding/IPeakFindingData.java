@@ -46,7 +46,8 @@ public interface IPeakFindingData {
 	 *         consistent with the expected type; change will not be accepted.
 	 *         Alternatively if the peak finder has never been marked active
 	 */
-	public void setPFParametersByPeakFinder(String pfID, Map<String, Number> pfParameters) throws Exception;
+	public void setPFParametersByPeakFinder(String pfID, 
+			Map<String, Number> pfParameters) throws Exception;
 	
 	/**
 	 * Sets the value of a specified parameter in a named peak finder to a  
@@ -60,7 +61,8 @@ public interface IPeakFindingData {
 	 *         Alternatively if the peak finder has never been marked active or
 	 *         the parameter name does not exist.
 	 */
-	public void setPFParameterByName(String pfID, String paramName, Number paramValue) throws Exception;
+	public void setPFParameterByName(String pfID, String paramName, 
+			Number paramValue) throws Exception;
 	
 	/**
 	 * Returns a map containing IDs of all peak finders which have been 
@@ -69,7 +71,8 @@ public interface IPeakFindingData {
 	 * @return Map<String peak finder IDs, Map<parameter name, parameter value>>
 	 * @throws If no peak finders have ever been made active
 	 */
-	public Map<String, Map<String, Number>> getAllPFParameters() throws Exception;
+	public Map<String, Map<String, Number>> getAllPFParameters() 
+			throws Exception;
 	
 	/**
 	 * Returns a map containing the names and values of the parameters of this 
@@ -78,7 +81,8 @@ public interface IPeakFindingData {
 	 * @return Map<parameter names, parameter values>
 	 * @throws Exception If peak finder pfID has never been marked active
 	 */
-	public Map<String, Number> getPFParametersByPeakFinder(String pfID) throws Exception;
+	public Map<String, Number> getPFParametersByPeakFinder(String pfID) 
+			throws Exception;
 	
 	/**
 	 * Returns the value of a named parameter from a specified peak finder.
@@ -88,7 +92,8 @@ public interface IPeakFindingData {
 	 * @throws Exception If peak finder pfID has never been marked active or if
 	 *         parameter name does not exist
 	 */
-	public Number getPFParameterByName(String pfID, String paramName) throws Exception;
+	public Number getPFParameterByName(String pfID, String paramName) 
+			throws Exception;
 	
 	/**
 	 * Returns set of all the string names of the parameters associated with 
@@ -97,7 +102,8 @@ public interface IPeakFindingData {
 	 * @return Set containing parameter names
 	 * @throws Exception If peak finder pfID has never been marked active
 	 */
-	public Set<String> getPFParameterNamesByPeakFinder(String pfID) throws Exception;
+	public Set<String> getPFParameterNamesByPeakFinder(String pfID) 
+			throws Exception;
 	
 	/**
 	 * Returns a map of parameter string names and booleans denoting whether 
@@ -106,7 +112,8 @@ public interface IPeakFindingData {
 	 * @return Map<parameter name, boolean isInteger>
 	 * @throws Exception If peak finder pfID has never been marked active
 	 */
-	public Map<String, Boolean> getPFAllParamIsInteger(String pfID) throws Exception;
+	public Map<String, Boolean> getPFAllParamIsInteger(String pfID) 
+			throws Exception;
 	
 	/**
 	 * Returns a boolean indicating whether a named parameter of a specified 
@@ -117,7 +124,8 @@ public interface IPeakFindingData {
 	 * @throws Exception If peak finder pfID has never been marked active or if
 	 *         parameter name does not exist
 	 */
-	public Boolean getPFParamIsInteger(String pfID, String paramName)throws Exception;
+	public Boolean getPFParamIsInteger(String pfID, String paramName)
+			throws Exception;
 	
 	/**
 	 * Set all the data on this IPeakFindingData object which might change 

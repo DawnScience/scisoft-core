@@ -2,6 +2,7 @@ package uk.ac.diamond.scisoft.analysis.peakfinding;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 
@@ -36,6 +37,89 @@ public interface IPeakFindingData {
 	public boolean hasActivePeakFinders();
 	
 	/**
+	 * Sets all the parameters of a specified peak finder using a supplied map 
+	 * of parameter names and values. Method checks that parameter value types 
+	 * are consistent with their expected types.
+	 * @param pfID String ID (FQCN) of peak finder
+	 * @param pfParameters Map of parameter name keys and new parameter values
+	 * @throws Exception If Number type of any of the parameters is not 
+	 *         consistent with the expected type; change will not be accepted.
+	 *         Alternatively if the peak finder has never been marked active
+	 */
+	public void setPFParametersByPeakFinder(String pfID, Map<String, Number> pfParameters) throws Exception;
+	
+	/**
+	 * Sets the value of a specified parameter in a named peak finder to a  
+	 * given value. Method checks parameter value type is consistent with the 
+	 * expected type
+	 * @param pfID String ID (FQCN) of peak finder
+	 * @param paramName Name of peak finder parameter
+	 * @param paramValue New value of parameter
+	 * @throws Exception If Number type of the parameter is not consistent 
+	 *         with the expected type; change will not be accepted. 
+	 *         Alternatively if the peak finder has never been marked active or
+	 *         the parameter name does not exist.
+	 */
+	public void setPFParameterByName(String pfID, String paramName, Number paramValue) throws Exception;
+	
+	/**
+	 * Returns a map containing IDs of all peak finders which have been 
+	 * activated in the lifetime of this instance and maps of all their 
+	 * parameters with associated values. 
+	 * @return Map<String peak finder IDs, Map<parameter name, parameter value>>
+	 * @throws If no peak finders have ever been made active
+	 */
+	public Map<String, Map<String, Number>> getAllPFParameters() throws Exception;
+	
+	/**
+	 * Returns a map containing the names and values of the parameters of this 
+	 * peak finder.
+	 * @param pfID String ID (FQCN) pf peak finder
+	 * @return Map<parameter names, parameter values>
+	 * @throws Exception If peak finder pfID has never been marked active
+	 */
+	public Map<String, Number> getPFParametersByPeakFinder(String pfID) throws Exception;
+	
+	/**
+	 * Returns the value of a named parameter from a specified peak finder.
+	 * @param pfID String ID (FQCN) of peak finder
+	 * @param paramName String name of the parameter
+	 * @return Number value of the parameter
+	 * @throws Exception If peak finder pfID has never been marked active or if
+	 *         parameter name does not exist
+	 */
+	public Number getPFParameterByName(String pfID, String paramName) throws Exception;
+	
+	/**
+	 * Returns set of all the string names of the parameters associated with 
+	 * this peak finder
+	 * @param pfID String ID (FQCN) of peak finder
+	 * @return Set containing parameter names
+	 * @throws Exception If peak finder pfID has never been marked active
+	 */
+	public Set<String> getPFParameterNamesByPeakFinder(String pfID) throws Exception;
+	
+	/**
+	 * Returns a map of parameter string names and booleans denoting whether 
+	 * parameters are integers or not.
+	 * @param pfID String ID (FQCN) of peak finder
+	 * @return Map<parameter name, boolean isInteger>
+	 * @throws Exception If peak finder pfID has never been marked active
+	 */
+	public Map<String, Boolean> getPFAllParamIsInteger(String pfID) throws Exception;
+	
+	/**
+	 * Returns a boolean indicating whether a named parameter of a specified 
+	 * peak finder is expected to have an integer value.
+	 * @param pfID String ID (FQCN) of peak finder
+	 * @param paramName String name of the parameter
+	 * @return Boolean denoting if parameter is expected to be an integer 
+	 * @throws Exception If peak finder pfID has never been marked active or if
+	 *         parameter name does not exist
+	 */
+	public Boolean getPFParamIsInteger(String pfID, String paramName)throws Exception;
+	
+	/**
 	 * Set all the data on this IPeakFindingData object which might change 
 	 * between findPeaks calls
 	 * @param xData
@@ -43,6 +127,7 @@ public interface IPeakFindingData {
 	 * @param nPeaks maximum number of peaks
 	 */
 	public void setData(IDataset xData, IDataset yData, Integer nPeaks);
+	
 	/**
 	 * See {@link #setData(IDataset, IDataset, Integer)} method
 	 * @param xData

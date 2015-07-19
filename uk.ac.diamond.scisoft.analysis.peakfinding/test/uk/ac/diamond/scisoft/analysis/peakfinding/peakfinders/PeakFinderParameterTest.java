@@ -21,6 +21,8 @@ public class PeakFinderParameterTest {
 		assertTrue(paramA.hashCode() == paramB.hashCode());
 		assertFalse(paramA.equals(paramC));
 		assertTrue(paramA.hashCode() == paramC.hashCode());
+		
+		assertTrue(paramA.equals(new PeakFinderParameter("Test", false, 0)));
 	}
 	
 	@Test

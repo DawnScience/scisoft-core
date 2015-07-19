@@ -12,7 +12,6 @@ package uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -43,17 +42,8 @@ public class MaximaDifferenceTest {
 		Set<IPeakFinderParameter> paramSet = maxDiff.getParameters();
 		Assert.assertEquals(2, paramSet.size());
 		
-		Iterator<IPeakFinderParameter> paramSetIter = paramSet.iterator();
-		
-		boolean wsTest = false, nsdTest = false;
-		while (paramSetIter.hasNext()) {
-			IPeakFinderParameter currParam = paramSetIter.next();
-			if (currParam.getName().equals("windowSize")) wsTest = true;
-			if (currParam.getName().equals("nrStdDevs")) nsdTest = true;
-		}
-		
-		assertTrue(wsTest);
-		assertTrue(nsdTest);
+		assertTrue(paramSet.contains(new PeakFinderParameter("windowSize", false, 0)));
+		assertTrue(paramSet.contains(new PeakFinderParameter("nrStdDevs", false, 0)));
 	}
 	
 	@Test

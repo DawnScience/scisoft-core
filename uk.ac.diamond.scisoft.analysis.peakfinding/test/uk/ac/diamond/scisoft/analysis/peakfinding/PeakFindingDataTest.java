@@ -1,10 +1,14 @@
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
@@ -87,6 +91,53 @@ public class PeakFindingDataTest {
 				DatasetFactory.createRange(0, 10, 1, Dataset.FLOAT32));
 		assertTrue(peakFindData.hasData());
 	}
+	
+	@Test
+	public void testGetPeakFinderParameters() throws Exception {
+		peakFindData.activatePeakFinder(dummyID);
+		
+		//Test getting all the parameters
+		Map<String, Map<String, Number>> allPFParams = peakFindData.getAllPFParameters();
+		assertTrue(allPFParams.containsKey(dummyID));
+		
+		Map<String, Number> dummyPFParams = allPFParams.get(dummyID);	
+		Number paramValue = dummyPFParams.get("testParamA");
+		assertEquals(paramValue, 123.456);
+		assertTrue(dummyPFParams.containsKey("testParamB"));
+		
+		//Test getting parameter by name
+		Number namedParamValue = peakFindData.getPFParameterByName(dummyID, "testParamB");
+		assertEquals(namedParamValue, 123);
+	}
+	
+	@Test
+	public void testSetPeakFinderParameters() throws Exception {
+		peakFindData.activatePeakFinder(dummyID);
+		
+		//Set all the parameters at once
+		Map<String, Number> newpfParams = new TreeMap<String, Number>();
+		Set<String> pfParamNames = peakFindData.getPFParameterNamesByPeakFinder(dummyID);
+		assertEquals(pfParamNames.size(), 2);
+		List<Number> pfNewParamValues = new ArrayList<Number>(Arrays.asList(654.321, 321));
+		
+		Iterator<String> pfParamNamesIter = pfParamNames.iterator();
+		Iterator<Number> pfNewParamValuesIter = pfNewParamValues.iterator();
+		while (pfParamNamesIter.hasNext()) {
+			String currParamName = pfParamNamesIter.next();
+			Number currParamValue = pfNewParamValuesIter.next();
+			newpfParams.put(currParamName, currParamValue);
+		}
+		
+		peakFindData.setPFParametersByPeakFinder(dummyID, newpfParams);
+		
+		Map<String, Number> dummyPFParams = peakFindData.getPFParametersByPeakFinder(dummyID);
+		assertEquals(dummyPFParams.get("testParamA"), 654.321);
+		assertEquals(dummyPFParams.get("testParamB"), 654.321);
+		
+		peakFindData.setPFParameterByName(dummyID, "testParamA", 987.654);
+		Double testParamAVal = (Double)peakFindData.getPFParameterByName(dummyID, "testParamA");
+		assertEquals(testParamAVal, (Double)987.654);
+	}
 
 	/*
 	 * The next tests check exceptions are thrown when IPeakFindingData is not 
@@ -106,6 +157,20 @@ public class PeakFindingDataTest {
 		thrower.expectMessage("not set active");
 		peakFindData.deactivatePeakFinder(dummyID);
 		peakFindData.deactivatePeakFinder(dummyID);	
+	}
+	
+	@Test
+	public void testNoParametersToGet() {
+		thrower.expect(Exception.class);
+		thrower.expectMessage("No parameters");
+		Map<String, Map<String, Number>> allPFParams = peakFindData.getAllPFParameters();
+	}
+	
+	@Test
+	public void testParameterAsDoubleException() {
+		thrower.expect(Exception.class);
+		thrower.expectMessage("should be an Integer");
+		peakFindData.setPFParameterByName(dummyID, "testParamB", 111.222);
 	}
 	
 	/*

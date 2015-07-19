@@ -160,14 +160,28 @@ public class PeakFindingDataTest {
 	}
 	
 	@Test
-	public void testNoParametersToGet() {
+	public void testNoParametersToGetException() throws Exception {
 		thrower.expect(Exception.class);
 		thrower.expectMessage("No parameters");
-		Map<String, Map<String, Number>> allPFParams = peakFindData.getAllPFParameters();
+		peakFindData.getAllPFParameters();
 	}
 	
 	@Test
-	public void testParameterAsDoubleException() {
+	public void testNoPFForParamsException() throws Exception {
+		thrower.expect(Exception.class);
+		thrower.expectMessage("No peak finder");
+		peakFindData.getPFParametersByPeakFinder(dummyID+"badger");
+	}
+	
+	@Test
+	public void testNoParamInPeakFinderException() throws Exception {
+		thrower.expect(Exception.class);
+		thrower.expectMessage("No parameter");
+		peakFindData.getPFParameterByName(dummyID, "totallyFakeParameter");
+	}
+	
+	@Test
+	public void testParameterAsDoubleException() throws Exception {
 		thrower.expect(Exception.class);
 		thrower.expectMessage("should be an Integer");
 		peakFindData.setPFParameterByName(dummyID, "testParamB", 111.222);

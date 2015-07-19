@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
 
 public interface IPeakFindingData {
 
@@ -47,7 +48,7 @@ public interface IPeakFindingData {
 	 *         Alternatively if the peak finder has never been marked active
 	 */
 	public void setPFParametersByPeakFinder(String pfID, 
-			Map<String, Number> pfParameters) throws Exception;
+			Map<String, IPeakFinderParameter> pfParameters) throws Exception;
 	
 	/**
 	 * Sets the value of a specified parameter in a named peak finder to a  
@@ -68,31 +69,31 @@ public interface IPeakFindingData {
 	 * Returns a map containing IDs of all peak finders which have been 
 	 * activated in the lifetime of this instance and maps of all their 
 	 * parameters with associated values. 
-	 * @return Map<String peak finder IDs, Map<parameter name, parameter value>>
+	 * @return Map<String peak finder IDs, Map<parameter name, parameter>>
 	 * @throws If no peak finders have ever been made active
 	 */
-	public Map<String, Map<String, Number>> getAllPFParameters() 
+	public Map<String, Map<String, IPeakFinderParameter>> getAllPFParameters() 
 			throws Exception;
 	
 	/**
 	 * Returns a map containing the names and values of the parameters of this 
 	 * peak finder.
 	 * @param pfID String ID (FQCN) pf peak finder
-	 * @return Map<parameter names, parameter values>
+	 * @return Map<parameter names, parameter>
 	 * @throws Exception If peak finder pfID has never been marked active
 	 */
-	public Map<String, Number> getPFParametersByPeakFinder(String pfID) 
+	public Map<String, IPeakFinderParameter> getPFParametersByPeakFinder(String pfID) 
 			throws Exception;
 	
 	/**
 	 * Returns the value of a named parameter from a specified peak finder.
 	 * @param pfID String ID (FQCN) of peak finder
 	 * @param paramName String name of the parameter
-	 * @return Number value of the parameter
+	 * @return PeakFinderParameter containing value, isInt logic and name
 	 * @throws Exception If peak finder pfID has never been marked active or if
 	 *         parameter name does not exist
 	 */
-	public Number getPFParameterByName(String pfID, String paramName) 
+	public IPeakFinderParameter getPFParameterByName(String pfID, String paramName) 
 			throws Exception;
 	
 	/**
@@ -103,28 +104,6 @@ public interface IPeakFindingData {
 	 * @throws Exception If peak finder pfID has never been marked active
 	 */
 	public Set<String> getPFParameterNamesByPeakFinder(String pfID) 
-			throws Exception;
-	
-	/**
-	 * Returns a map of parameter string names and booleans denoting whether 
-	 * parameters are integers or not.
-	 * @param pfID String ID (FQCN) of peak finder
-	 * @return Map<parameter name, boolean isInteger>
-	 * @throws Exception If peak finder pfID has never been marked active
-	 */
-	public Map<String, Boolean> getPFAllParamIsInteger(String pfID) 
-			throws Exception;
-	
-	/**
-	 * Returns a boolean indicating whether a named parameter of a specified 
-	 * peak finder is expected to have an integer value.
-	 * @param pfID String ID (FQCN) of peak finder
-	 * @param paramName String name of the parameter
-	 * @return Boolean denoting if parameter is expected to be an integer 
-	 * @throws Exception If peak finder pfID has never been marked active or if
-	 *         parameter name does not exist
-	 */
-	public Boolean getPFParamIsInteger(String pfID, String paramName)
 			throws Exception;
 	
 	/**

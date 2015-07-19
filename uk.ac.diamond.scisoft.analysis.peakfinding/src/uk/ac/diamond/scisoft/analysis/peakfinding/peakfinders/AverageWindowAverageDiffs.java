@@ -25,6 +25,7 @@ public class AverageWindowAverageDiffs extends AbstractSignificanceFilter {
 	private final static String NAME = "Average of Window-Average Differences";
 	
 	public AverageWindowAverageDiffs() {
+		super();
 		//Change the windowSize default here.
 	}
 	

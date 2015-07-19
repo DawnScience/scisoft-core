@@ -25,6 +25,7 @@ public class SumDifferenceAverage extends AbstractSignificanceFilter {
 	private final static String NAME = "Average Sum of Differences";
 	
 	public SumDifferenceAverage() {
+		super();
 		//Change the windowSize default here.
 	}
 	

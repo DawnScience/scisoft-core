@@ -26,6 +26,7 @@ public class MaximaDifference extends AbstractSignificanceFilter {
 	private final static String NAME = "Maxima Difference";
 	
 	public MaximaDifference() {
+		super();
 		//Change the windowSize default here.
 	}
 	

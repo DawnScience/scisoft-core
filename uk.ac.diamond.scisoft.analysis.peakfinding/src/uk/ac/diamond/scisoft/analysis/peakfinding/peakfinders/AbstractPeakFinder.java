@@ -51,7 +51,7 @@ public abstract class AbstractPeakFinder implements IPeakFinder {
 		} else if (!isInt) {
 			peakFindParams.put(pName, pValue);
 		} else {
-			throw new Exception("Parameter should be an Integer, found Double.");
+			throw new Exception("Parameter "+pName+" should be an Integer, found Double.");
 		}
 	}
 	

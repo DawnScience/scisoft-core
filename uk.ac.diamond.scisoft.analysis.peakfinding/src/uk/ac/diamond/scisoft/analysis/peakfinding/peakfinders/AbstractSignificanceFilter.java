@@ -32,11 +32,12 @@ public abstract class AbstractSignificanceFilter extends AbstractPeakFinder {
 	 * Set's values of parameters needed for filtering significance function.
 	 */
 	public AbstractSignificanceFilter() {
+		super();
 		try {
 			initialiseParameter("windowSize", 50, true);
 			initialiseParameter("nrStdDevs", 3, true);
 		} catch (Exception e) {
-			logger.error("Failed to initialise parameters for "+this.getName()+" peak finder!");
+			logger.error("Problem initialising "+this.getName()+" peak finder: e");
 		}
 	}
 	

@@ -25,7 +25,7 @@ public class DummyPeakFinder extends AbstractPeakFinder implements IPeakFinder {
 			initialiseParameter("testParamA", 123.456, false);
 			initialiseParameter("testParamB", 123, true);
 		} catch (Exception e) {
-			logger.error("Failed to initialise parameters for "+this.getName()+" peak finder!");
+			logger.error("Problem initialising "+this.getName()+" peak finder: e");
 		}
 	}
 

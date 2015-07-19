@@ -1,5 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders;
 
+import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
+
 
 public class PeakFinderParameter implements IPeakFinderParameter {
 	
@@ -21,7 +23,7 @@ public class PeakFinderParameter implements IPeakFinderParameter {
 	@Override
 	public void setValue(Number value) throws Exception {
 		try {
-			if((isInt) && (value == (Integer)value)) this.value = value;
+			if((isInt) && (value.equals((Integer)value))) this.value = value;
 		} catch (Exception e) {
 			if (isInt) throw new Exception("Parameter "+name+" should be an Integer, found Double.");
 		} finally {

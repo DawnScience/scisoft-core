@@ -30,13 +30,15 @@ public abstract class AbstractSignificanceFilter extends AbstractPeakFinder {
 	
 	/**
 	 * Set's values of parameters needed for filtering significance function.
+	 * @throws Exception 
 	 */
 	public AbstractSignificanceFilter() {
 		super();
 		try {
-			initialiseParameter("windowSize", 50, true);
-			initialiseParameter("nrStdDevs", 3, true);
+			initialiseParameter("windowSize", true, 50);
+			initialiseParameter("nrStdDevs", true, 3);
 		} catch (Exception e) {
+			System.out.println(e);
 			logger.error("Problem initialising "+this.getName()+" peak finder: e");
 		}
 	}
@@ -58,8 +60,8 @@ public abstract class AbstractSignificanceFilter extends AbstractPeakFinder {
 		Integer nrStdDevs;
 		Integer windowSize;
 		try {
-			nrStdDevs = (Integer)getParameter("nrStdDevs");
-			windowSize = (Integer)getParameter("windowSize");
+			nrStdDevs = (Integer)getParameterValue("nrStdDevs");
+			windowSize = (Integer)getParameterValue("windowSize");
 		} catch(Exception e) {
 			logger.error("Could not find specified peak finding parameters");
 			return null;

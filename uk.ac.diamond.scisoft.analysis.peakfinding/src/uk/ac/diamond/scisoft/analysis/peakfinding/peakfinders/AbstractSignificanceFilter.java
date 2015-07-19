@@ -36,7 +36,7 @@ public abstract class AbstractSignificanceFilter extends AbstractPeakFinder {
 			initialiseParameter("windowSize", 50, true);
 			initialiseParameter("nrStdDevs", 3, true);
 		} catch (Exception e) {
-			logger.error("Failed to initialise parameters for "+this.getName()+"peak finder!");
+			logger.error("Failed to initialise parameters for "+this.getName()+" peak finder!");
 		}
 	}
 	

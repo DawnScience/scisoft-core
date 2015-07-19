@@ -138,6 +138,12 @@ public class PeakFindingDataTest {
 		Double testParamAVal = (Double)peakFindData.getPFParameterByName(dummyID, "testParamA");
 		assertEquals(testParamAVal, (Double)987.654);
 	}
+	
+	@Test
+	public void testParameterTypes() throws Exception {
+		assertFalse(peakFindData.getPFParamIsInteger(dummyID, "testParamA"));
+		assertTrue(peakFindData.getPFParamIsInteger(dummyID, "testParamB"));
+	}
 
 	/*
 	 * The next tests check exceptions are thrown when IPeakFindingData is not 

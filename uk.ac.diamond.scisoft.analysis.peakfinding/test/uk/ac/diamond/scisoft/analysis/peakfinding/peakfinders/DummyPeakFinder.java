@@ -17,8 +17,17 @@ import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
 
 public class DummyPeakFinder extends AbstractPeakFinder implements IPeakFinder {
 	
-	private final String NAME = "Dummy peak finder";
+	private final String NAME = "Dummy";
 	private static Map<Integer, Double>fakePeakPosnsSigs;
+	
+	public DummyPeakFinder() {
+		try {
+			initialiseParameter("testParamA", 123.456, false);
+			initialiseParameter("testParamB", 123, true);
+		} catch (Exception e) {
+			logger.error("Failed to initialise parameters for "+this.getName()+" peak finder!");
+		}
+	}
 
 	@Override
 	public Map<Integer, Double> findPeaks(IDataset xData, IDataset yData, Integer nPeaks) {

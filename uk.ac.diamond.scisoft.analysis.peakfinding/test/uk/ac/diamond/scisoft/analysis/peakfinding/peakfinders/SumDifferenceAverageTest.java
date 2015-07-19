@@ -9,12 +9,17 @@
 
 package uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import junit.framework.Assert;
 
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
+import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.junit.Test;
 
@@ -29,14 +34,24 @@ public class SumDifferenceAverageTest {
 	
 	@Test
 	public void parametersCheck() throws Exception {
-		Map<String, Number> paramMap = avgDiff.getParameters();
-		Assert.assertEquals(2, paramMap.size());
+		Set<IPeakFinderParameter> paramSet = avgDiff.getParameters();
+		Assert.assertEquals(2, paramSet.size());
 		
-		Assert.assertEquals(true, paramMap.containsKey("windowSize"));
-		Assert.assertEquals(true, paramMap.containsKey("nrStdDevs"));
+
 		
-		Assert.assertEquals(50, avgDiff.getParameter("windowSize"));
-		Assert.assertEquals(3, avgDiff.getParameter("nrStdDevs"));
+		Iterator<IPeakFinderParameter> paramSetIter = paramSet.iterator();
+		
+		boolean wsTest = false, nsdTest = false;
+		while (paramSetIter.hasNext()) {
+			IPeakFinderParameter currParam = paramSetIter.next();
+			if (currParam.getName().equals("windowSize")) wsTest = true;
+			if (currParam.getName().equals("nrStdDevs")) nsdTest = true;
+		}
+		
+		assertTrue(wsTest);
+		assertTrue(nsdTest);
+		Assert.assertEquals(50, avgDiff.getParameterValue("windowSize"));
+		Assert.assertEquals(3, avgDiff.getParameterValue("nrStdDevs"));
 	}
 	
 	@Test

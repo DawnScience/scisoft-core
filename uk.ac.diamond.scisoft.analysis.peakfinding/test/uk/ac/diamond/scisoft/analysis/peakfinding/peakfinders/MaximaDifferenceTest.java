@@ -9,34 +9,51 @@
 
 package uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders;
 
-import java.util.Map;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Iterator;
+import java.util.Set;
 import java.util.TreeMap;
 
 import junit.framework.Assert;
 
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
+import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class MaximaDifferenceTest {
 	
-	private IPeakFinder maxDiff = new MaximaDifference();
+	private static IPeakFinder maxDiff;
+	
+	@BeforeClass
+	public static void testSetup() {
+		maxDiff = new MaximaDifference();
+	}
 	
 	@Test
 	public void nameCheck() {
-		Assert.assertEquals("Maxima Difference", maxDiff.getName());
+		assertEquals("Maxima Difference", maxDiff.getName());
 	}
 	
 	@Test
 	public void parametersCheck() throws Exception {
-		Map<String, Number> paramMap = maxDiff.getParameters();
-		Assert.assertEquals(2, paramMap.size());
+		Set<IPeakFinderParameter> paramSet = maxDiff.getParameters();
+		Assert.assertEquals(2, paramSet.size());
 		
-		Assert.assertEquals(true, paramMap.containsKey("windowSize"));
-		Assert.assertEquals(true, paramMap.containsKey("nrStdDevs"));
+		Iterator<IPeakFinderParameter> paramSetIter = paramSet.iterator();
 		
-		Assert.assertEquals(50, maxDiff.getParameter("windowSize"));
-		Assert.assertEquals(3, maxDiff.getParameter("nrStdDevs"));
+		boolean wsTest = false, nsdTest = false;
+		while (paramSetIter.hasNext()) {
+			IPeakFinderParameter currParam = paramSetIter.next();
+			if (currParam.getName().equals("windowSize")) wsTest = true;
+			if (currParam.getName().equals("nrStdDevs")) nsdTest = true;
+		}
+		
+		assertTrue(wsTest);
+		assertTrue(nsdTest);
 	}
 	
 	@Test

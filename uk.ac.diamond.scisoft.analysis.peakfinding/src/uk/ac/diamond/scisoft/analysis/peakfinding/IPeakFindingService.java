@@ -10,6 +10,9 @@
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
 import java.util.Collection;
+import java.util.Map;
+
+import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
 
 public interface IPeakFindingService {
 	
@@ -29,12 +32,20 @@ public interface IPeakFindingService {
 	public Collection<String> getRegisteredPeakFinders() throws Exception;
 	
 	/**
-	 * Get the description of the specified IPeakFinder
+	 * Get the description of the specified IPeakFinder ID
 	 * @param id Unique string (e.g. FQCN)
 	 * @return String
 	 * @throws Exception
 	 */
 	public String getPeakFinderDescription(String id) throws Exception;
+	
+	/**
+	 * Get the (default) set of parameters associated with given IPeakFinder ID
+	 * @param id Unique string (e.g. FQCN)
+	 * @return Map<name string of parameter, parameter value>
+	 * @throws Exception
+	 */
+	public Map<String, IPeakFinderParameter> getPeakFinderParameters(String id) throws Exception;
 	
 	/**
 	 * Register all full implementations of IPeakFinders in a package

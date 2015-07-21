@@ -24,6 +24,7 @@ public abstract class AbstractPeakFinder implements IPeakFinder {
 	
 	protected String name;
 	protected Map<String, IPeakFinderParameter> peakFindParams = new TreeMap<String, IPeakFinderParameter>();
+	protected final Map<String, IPeakFinderParameter> defaultParams = new TreeMap<String, IPeakFinderParameter>();
 	
 	public AbstractPeakFinder() {
 		setName();
@@ -43,6 +44,7 @@ public abstract class AbstractPeakFinder implements IPeakFinder {
 	 */
 	protected void initialiseParameter(String pName, boolean isInt, Number pValue) throws Exception {
 		peakFindParams.put(pName, new PeakFinderParameter(pName, isInt, pValue));
+		defaultParams.put(pName, new PeakFinderParameter(pName, isInt, pValue));
 	}
 	
 	@Override
@@ -67,10 +69,23 @@ public abstract class AbstractPeakFinder implements IPeakFinder {
 		IPeakFinderParameter currParam = getParameter(pName);
 		return currParam.getValue();
 	}
+	
+	@Override
+	public void setParameter(String pName, IPeakFinderParameter param)
+			throws Exception {
+		if (peakFindParams.containsKey(pName)) peakFindParams.put(pName, param);
+		
+		throw new Exception("Cannot find peak finding parameter "+pName);
+	}
 
 	@Override
-	public void setParameter(String pName, Number pValue) throws Exception {
+	public void setParameterValue(String pName, Number pValue) throws Exception {
 		IPeakFinderParameter currParam = getParameter(pName);
 		currParam.setValue(pValue);
+	}
+
+	@Override
+	public void resetParameters() {
+		peakFindParams = new TreeMap<String, IPeakFinderParameter>(defaultParams);		
 	}
 }

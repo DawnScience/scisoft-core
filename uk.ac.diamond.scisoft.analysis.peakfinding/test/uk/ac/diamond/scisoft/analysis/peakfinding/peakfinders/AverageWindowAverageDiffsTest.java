@@ -46,9 +46,9 @@ public class AverageWindowAverageDiffsTest {
 		assertEquals(50, winAvgDiff.getParameterValue("windowSize"));
 		assertEquals(3, winAvgDiff.getParameterValue("nrStdDevs"));
 		
-		winAvgDiff.setParameter("windowSize", 45);
+		winAvgDiff.setParameterValue("windowSize", 45);
 		assertEquals(45, winAvgDiff.getParameterValue("windowSize"));
-		winAvgDiff.setParameter("windowSize", 50);
+		winAvgDiff.setParameterValue("windowSize", 50);
 	}
 	
 	@Test

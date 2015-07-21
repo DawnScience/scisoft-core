@@ -907,12 +907,11 @@ public class MathsTest {
 						} else {
 							final double[] answer = new double[MAXISIZE];
 							final int is = d.getElementsPerItem();
-							final int rtype = d.getDtype();
 
 							if (a.getElementsPerItem() < is) {
 								while (ita.hasNext() && itb.hasNext()) {
 									final double xa = a.getElementDoubleAbs(ita.index);
-									if (rtype == Dataset.ARRAYFLOAT32 || rtype == Dataset.ARRAYFLOAT64) {
+									if (d.hasFloatingPointElements()) {
 										for (int k = 0; k < ISIZEB; k++) {
 											answer[k] = xa / b.getElementDoubleAbs(itb.index + k);
 										}
@@ -928,7 +927,7 @@ public class MathsTest {
 							} else if (b.getElementsPerItem() < is) {
 								while (ita.hasNext() && itb.hasNext()) {
 									final double xb = b.getElementDoubleAbs(itb.index);
-									if (rtype == Dataset.ARRAYFLOAT32 || rtype == Dataset.ARRAYFLOAT64) {
+									if (d.hasFloatingPointElements()) {
 										for (int k = 0; k < ISIZEA; k++) {
 											answer[k] = a.getElementDoubleAbs(ita.index + k) / xb;
 										}
@@ -948,7 +947,7 @@ public class MathsTest {
 								}
 							} else {
 								while (ita.hasNext() && itb.hasNext()) {
-									if (rtype == Dataset.ARRAYFLOAT32 || rtype == Dataset.ARRAYFLOAT64) {
+									if (d.hasFloatingPointElements()) {
 										double v;
 										for (int k = 0; k < is; k++) {
 											v = a.getElementDoubleAbs(ita.index + k)
@@ -1440,13 +1439,12 @@ public class MathsTest {
 						} else {
 							final double[] answer = new double[MAXISIZE];
 							final int is = d.getElementsPerItem();
-							final int rtype = d.getDtype();
 
 							double v;
 							if (a.getElementsPerItem() < is) {
 								while (ita.hasNext() && itb.hasNext()) {
 									final double xa = a.getElementDoubleAbs(ita.index);
-									if (rtype == Dataset.ARRAYFLOAT32 || rtype == Dataset.ARRAYFLOAT64) {
+									if (d.hasFloatingPointElements()) {
 										for (int k = 0; k < ISIZEB; k++) {
 											answer[k] = Math.pow(xa, b.getElementDoubleAbs(itb.index + k));
 										}
@@ -1462,7 +1460,7 @@ public class MathsTest {
 							} else if (b.getElementsPerItem() < is) {
 								while (ita.hasNext() && itb.hasNext()) {
 									final double xb = b.getElementDoubleAbs(itb.index);
-									if (rtype == Dataset.ARRAYFLOAT32 || rtype == Dataset.ARRAYFLOAT64) {
+									if (d.hasFloatingPointElements()) {
 										for (int k = 0; k < ISIZEA; k++) {
 											answer[k] = Math.pow(a.getElementDoubleAbs(ita.index + k), xb);
 										}
@@ -1477,7 +1475,7 @@ public class MathsTest {
 								}
 							} else {
 								while (ita.hasNext() && itb.hasNext()) {
-									if (rtype == Dataset.ARRAYFLOAT32 || rtype == Dataset.ARRAYFLOAT64) {
+									if (d.hasFloatingPointElements()) {
 										for (int k = 0; k < is; k++) {
 											answer[k] = Math.pow(a.getElementDoubleAbs(ita.index + k),
 													b.getElementDoubleAbs(itb.index + k));

@@ -129,29 +129,6 @@ public interface IPeakFindingData {
 	public Boolean getPFParameterIsIntByName(String pfID, String paramName) 
 			throws Exception;
 	
-//	/**
-//	 * Returns the value of a named parameter from a given set.
-//	 * @param pfID String ID (FQCN) of peak finder
-//	 * @param paramName String name of the parameter
-//	 * @return Number value of peak finder parameter
-//	 * @throws Exception If peak finder pfID has never been marked active or if
-//	 *         parameter name does not exist
-//	 */
-//	public Number getPFParameterValueFromSet(String paramName, Set<IPeakFinderParameter> pfParamSet) 
-//			throws Exception;
-//	
-//	/**
-//	 * Returns boolean of whether parameter is an integer or not from a given 
-//	 * set.
-//	 * @param pfID String ID (FQCN) of peak finder
-//	 * @param paramName String name of the parameter
-//	 * @return Boolean value of isInt peak finder parameter
-//	 * @throws Exception If peak finder pfID has never been marked active or if
-//	 *         parameter name does not exist
-//	 */
-//	public Boolean getPFParameterIsInt(String paramName, Set<IPeakFinderParameter> pfParamSet) 
-//			throws Exception;
-	
 	/**
 	 * Returns set of all the string names of the parameters associated with 
 	 * this peak finder

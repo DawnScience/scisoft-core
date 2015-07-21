@@ -73,9 +73,12 @@ public abstract class AbstractPeakFinder implements IPeakFinder {
 	@Override
 	public void setParameter(String pName, IPeakFinderParameter param)
 			throws Exception {
-		if (peakFindParams.containsKey(pName)) peakFindParams.put(pName, param);
+		if (peakFindParams.containsKey(pName)) {
+			peakFindParams.put(pName, param);
+		} else{
+			throw new Exception("Cannot find peak finding parameter "+pName);
+		}
 		
-		throw new Exception("Cannot find peak finding parameter "+pName);
 	}
 
 	@Override

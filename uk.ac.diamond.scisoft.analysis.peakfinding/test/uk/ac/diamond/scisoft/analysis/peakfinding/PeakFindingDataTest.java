@@ -50,7 +50,7 @@ public class PeakFindingDataTest {
 	
 	@Before
 	public void createPeakFindData() {
-		peakFindData = new PeakFindingData();
+		peakFindData = new PeakFindingData(peakFindServ);
 	}
 	
 	@Rule
@@ -148,7 +148,7 @@ public class PeakFindingDataTest {
 		
 		Map<String, IPeakFinderParameter> dummyPFParams = peakFindData.getPFParametersByPeakFinder(dummyID);
 		assertEquals(654.321, dummyPFParams.get("testParamA").getValue());
-		assertEquals(321, dummyPFParams.get("testParamA").getValue());
+		assertEquals(321, dummyPFParams.get("testParamB").getValue());
 		
 		
 		peakFindData.setPFParameterByName(dummyID, "testParamA", 987.654);
@@ -194,6 +194,7 @@ public class PeakFindingDataTest {
 	public void testNoParamInPeakFinderException() throws Exception {
 		thrower.expect(Exception.class);
 		thrower.expectMessage("No parameter name ");
+		peakFindData.activatePeakFinder(dummyID);
 		peakFindData.getPFParameterByName(dummyID, "totallyFakeParameter");
 	}
 	
@@ -201,6 +202,7 @@ public class PeakFindingDataTest {
 	public void testParameterAsDoubleException() throws Exception {
 		thrower.expect(Exception.class);
 		thrower.expectMessage("should be an Integer");
+		peakFindData.activatePeakFinder(dummyID);
 		peakFindData.setPFParameterByName(dummyID, "testParamB", 111.222);
 	}
 	

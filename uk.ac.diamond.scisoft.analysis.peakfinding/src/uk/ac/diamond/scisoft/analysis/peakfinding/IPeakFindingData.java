@@ -40,15 +40,16 @@ public interface IPeakFindingData {
 	/**
 	 * Sets all the parameters of a specified peak finder using a supplied map 
 	 * of parameter names and values. Method checks that parameter value types 
-	 * are consistent with their expected types.
+	 * are consistent with their expected types. N.B. Names in keys must be 
+	 * identical to names in parameters.
 	 * @param pfID String ID (FQCN) of peak finder
-	 * @param pfParameters Set of parameter name keys and new parameter values
+	 * @param pfParameters Map of parameter name keys and new parameter objects
 	 * @throws Exception If Number type of any of the parameters is not 
 	 *         consistent with the expected type; change will not be accepted.
 	 *         Alternatively if the peak finder has never been marked active
 	 */
 	public void setPFParametersByPeakFinder(String pfID, 
-			Set<IPeakFinderParameter> pfParameters) throws Exception;
+			Map<String, IPeakFinderParameter> pfParameters) throws Exception;
 	
 	/**
 	 * Sets the value of a specified parameter in a named peak finder to a  
@@ -69,20 +70,20 @@ public interface IPeakFindingData {
 	 * Returns a map containing IDs of all peak finders which have been 
 	 * activated in the lifetime of this instance and maps of all their 
 	 * parameters with associated values. 
-	 * @return Map<String peak finder IDs, Set<parameter>>
+	 * @return Map<String peak finder IDs, Map<parameter string name, parameter>>
 	 * @throws If no peak finders have ever been made active
 	 */
-	public Map<String, Set<IPeakFinderParameter>> getAllPFParameters() 
+	public Map<String, Map<String, IPeakFinderParameter>> getAllPFParameters() 
 			throws Exception;
 	
 	/**
 	 * Returns a set containing the names and values of the parameters of this 
 	 * peak finder.
 	 * @param pfID String ID (FQCN) pf peak finder
-	 * @return Set<parameter>
+	 * @return Map<parameter string name, parameter>
 	 * @throws Exception If peak finder pfID has never been marked active
 	 */
-	public Set<IPeakFinderParameter> getPFParametersByPeakFinder(String pfID) 
+	public Map<String, IPeakFinderParameter> getPFParametersByPeakFinder(String pfID) 
 			throws Exception;
 	
 	/**
@@ -119,28 +120,28 @@ public interface IPeakFindingData {
 	public Boolean getPFParameterIsIntByName(String pfID, String paramName) 
 			throws Exception;
 	
-	/**
-	 * Returns the value of a named parameter from a given set.
-	 * @param pfID String ID (FQCN) of peak finder
-	 * @param paramName String name of the parameter
-	 * @return Number value of peak finder parameter
-	 * @throws Exception If peak finder pfID has never been marked active or if
-	 *         parameter name does not exist
-	 */
-	public Number getPFParameterValueFromSet(String paramName, Set<IPeakFinderParameter> pfParamSet) 
-			throws Exception;
-	
-	/**
-	 * Returns boolean of whether parameter is an integer or not from a given 
-	 * set.
-	 * @param pfID String ID (FQCN) of peak finder
-	 * @param paramName String name of the parameter
-	 * @return Boolean value of isInt peak finder parameter
-	 * @throws Exception If peak finder pfID has never been marked active or if
-	 *         parameter name does not exist
-	 */
-	public Boolean getPFParameterIsIntFromSet(String paramName, Set<IPeakFinderParameter> pfParamSet) 
-			throws Exception;
+//	/**
+//	 * Returns the value of a named parameter from a given set.
+//	 * @param pfID String ID (FQCN) of peak finder
+//	 * @param paramName String name of the parameter
+//	 * @return Number value of peak finder parameter
+//	 * @throws Exception If peak finder pfID has never been marked active or if
+//	 *         parameter name does not exist
+//	 */
+//	public Number getPFParameterValueFromSet(String paramName, Set<IPeakFinderParameter> pfParamSet) 
+//			throws Exception;
+//	
+//	/**
+//	 * Returns boolean of whether parameter is an integer or not from a given 
+//	 * set.
+//	 * @param pfID String ID (FQCN) of peak finder
+//	 * @param paramName String name of the parameter
+//	 * @return Boolean value of isInt peak finder parameter
+//	 * @throws Exception If peak finder pfID has never been marked active or if
+//	 *         parameter name does not exist
+//	 */
+//	public Boolean getPFParameterIsInt(String paramName, Set<IPeakFinderParameter> pfParamSet) 
+//			throws Exception;
 	
 	/**
 	 * Returns set of all the string names of the parameters associated with 

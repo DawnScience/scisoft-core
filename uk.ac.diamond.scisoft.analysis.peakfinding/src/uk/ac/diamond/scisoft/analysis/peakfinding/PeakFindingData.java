@@ -7,13 +7,16 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
 
 public class PeakFindingData implements IPeakFindingData {
 	
-	private Map<String, Map<Integer, Double>> allFoundPeaks = new TreeMap<String, Map<Integer, Double>>();
 	private Set<String> activePeakFinders = new TreeSet<String>();
+	private Map<String, Map<String, IPeakFinderParameter>> allPeakFindersParams; //Sets should always be HashSets, since IPeakFinderParameters are not comparable
+		
 	private IDataset[] searchData = new IDataset[2];
 	private Integer nPeaks;
+	private Map<String, Map<Integer, Double>> allFoundPeakPosns = new TreeMap<String, Map<Integer, Double>>();
 
 	@Override
 	public void activatePeakFinder(String id) throws Exception {
@@ -41,6 +44,118 @@ public class PeakFindingData implements IPeakFindingData {
 	@Override
 	public boolean hasActivePeakFinders() {
 		return !activePeakFinders.isEmpty();
+	}
+	
+	
+
+	@Override
+	public void setPFParametersByPeakFinder(String pfID,
+			Map<String, IPeakFinderParameter> pfParameters) throws Exception {
+		checkPFInParams(pfID);
+		for (Map.Entry<String, IPeakFinderParameter> entry  : pfParameters.entrySet()) {
+			checkParamNameMatch(entry.getKey(), pfParameters);
+		}
+		allPeakFindersParams.put(pfID, pfParameters);
+	}
+
+	@Override
+	public void setPFParameterByName(String pfID, String paramName,
+			Number paramValue) throws Exception {
+		checkPFInParams(pfID);
+		IPeakFinderParameter pfParam = getPFParameterByName(pfID, paramName);
+		Map<String, IPeakFinderParameter> pfParamSet = getPFParametersByPeakFinder(pfID);
+		
+		pfParam.setValue(paramValue);
+		pfParamSet.put(paramName, pfParam);
+		
+		setPFParametersByPeakFinder(pfID, pfParamSet);
+	}
+
+	@Override
+	public Map<String, Map<String, IPeakFinderParameter>> getAllPFParameters()
+			throws Exception {
+		if (allPeakFindersParams.isEmpty()) throw new Exception("No parameters recorded in PeakFindingData object");
+		return allPeakFindersParams;
+	}
+
+	@Override
+	public Map<String, IPeakFinderParameter> getPFParametersByPeakFinder(String pfID)
+			throws Exception {
+		checkPFInParams(pfID);
+		return allPeakFindersParams.get(pfID);
+	}
+
+	@Override
+	public IPeakFinderParameter getPFParameterByName(String pfID, String paramName)
+			throws Exception {
+		Map<String, IPeakFinderParameter> pfParams = getPFParametersByPeakFinder(pfID);
+		checkParamInPFSet(paramName, pfParams);
+		return pfParams.get(paramName);
+	}
+	
+	@Override
+	public Number getPFParameterValueByName(String pfID, String paramName)
+			throws Exception {
+		IPeakFinderParameter pfParam = getPFParameterByName(pfID, paramName);
+		return pfParam.getValue();
+	}
+
+	@Override
+	public Boolean getPFParameterIsIntByName(String pfID, String paramName)
+			throws Exception {
+		IPeakFinderParameter pfParam = getPFParameterByName(pfID, paramName);
+		return pfParam.isInt();
+	}
+		
+	@Override
+	public Set<String> getPFParameterNamesByPeakFinder(String pfID)
+			throws Exception {
+		checkPFInParams(pfID);
+		Map<String, IPeakFinderParameter> pfParams = allPeakFindersParams.get(pfID);
+		for (Map.Entry<String, IPeakFinderParameter> entry  : pfParams.entrySet()) {
+			checkParamNameMatch(entry.getKey(), pfParams);
+		}
+		return pfParams.keySet();
+		
+	}
+
+	/**
+	 * Checks whether the specified peak finder ID is in the set
+	 * @param pfID ID (FQCN) string of peak finder
+	 * @param keyset Set (keyset) which should contain this pfID
+	 * @throws Exception When peak finder is not in the keyset; 
+	 *         i.e. never activated
+	 */
+	private void checkPFInParams(String pfID) throws Exception {
+		if (allPeakFindersParams.containsKey(pfID)) return;
+		throw new Exception("Peak finder "+pfID+" has never been activated");
+	}
+	
+	/**
+	 * Checks whether the specified parameter name is in the set
+	 * @param paramName String name of parameter
+	 * @param paramset Map which should contain this name
+	 * @throws Exception When peak finder is not in the keyset; 
+	 *         i.e. never activated
+	 */	
+	private void checkParamInPFSet(String paramName, Map<String, IPeakFinderParameter> paramSet) throws Exception {
+		if (paramSet.containsKey(paramName)) {
+			checkParamNameMatch(paramName, paramSet);
+			return;
+		} 
+		throw new Exception("No parameter name "+paramName+" found");
+	}
+	
+	/**
+	 * Check that the parameter name in the keyset of the map is the same as 
+	 * the name given in the parameter object 
+	 * @param paramName paramName String name of parameter
+	 * @param paramset Map which should contain this name
+	 * @throws Exception If the names do not match
+	 */
+	private void checkParamNameMatch(String paramName, Map<String, IPeakFinderParameter> paramSet) throws Exception {
+		if (paramSet.get(paramName).getName().equals(paramName)) return;
+		throw new Exception("Peak finder parameter name mismatch; expecting: "+paramName+" was: "+paramSet.get(paramName).getName());
 	}
 
 	@Override
@@ -91,20 +206,20 @@ public class PeakFindingData implements IPeakFindingData {
 
 	@Override
 	public void setPeaks(Map<String, Map<Integer, Double>> newFoundPeaks) {
-		this.allFoundPeaks = newFoundPeaks;
+		this.allFoundPeakPosns = newFoundPeaks;
 	}
 	
 	@Override
 	public Map<String, Map<Integer, Double>> getPeaks() throws Exception {
-		if (allFoundPeaks == null || allFoundPeaks.isEmpty()) throw new Exception("No peaks found. Need to run findPeaks()");
-		return allFoundPeaks;
+		if (allFoundPeakPosns == null || allFoundPeakPosns.isEmpty()) throw new Exception("No peaks found. Need to run findPeaks()");
+		return allFoundPeakPosns;
 	}
 
 	@Override
 	public Map<Integer, Double> getPeaks(String id) throws Exception {
-		if (allFoundPeaks == null || allFoundPeaks.isEmpty()) throw new Exception("No peaks found. Need to run findPeaks(...)");
-		if (!allFoundPeaks.keySet().contains(id)) throw new Exception(id+" was not active when findPeaks() was called");
-		return allFoundPeaks.get(id);
+		if (allFoundPeakPosns == null || allFoundPeakPosns.isEmpty()) throw new Exception("No peaks found. Need to run findPeaks(...)");
+		if (!allFoundPeakPosns.keySet().contains(id)) throw new Exception(id+" was not active when findPeaks() was called");
+		return allFoundPeakPosns.get(id);
 	}
 
 }

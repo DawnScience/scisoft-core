@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.junit.Before;
@@ -40,7 +41,7 @@ public class PeakFindingServTest {
 	
 	@Before
 	public void createPeakFindData() {
-		peakFindData = new PeakFindingData();
+		peakFindData = new PeakFindingData(peakFindServ);
 	}
 	
 	@Rule
@@ -64,6 +65,12 @@ public class PeakFindingServTest {
 		final Collection<String> peakFinderNames = peakFindServ.getRegisteredPeakFinders();
 		assertNotNull(peakFinderNames);
 		assertFalse(peakFinderNames.isEmpty());
+	}
+	
+	@Test
+	public void testGetPeakFinderParameters () throws Exception {
+		Map<String, IPeakFinderParameter> pfParams = peakFindServ.getPeakFinderParameters(dummyID);
+		assertEquals(2, pfParams.size());
 	}
 	
 	/*

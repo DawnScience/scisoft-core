@@ -116,19 +116,28 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 	@Override
 	public void findPeaks(IPeakFindingData peakFindingData) throws Exception {
 		Set<String> activePeakFinders;
+		Map<String, Map<String, IPeakFinderParameter>> peakFinderParameters = new TreeMap<String, Map<String, IPeakFinderParameter>>();
 		Map<String, Map<Integer, Double>> allFoundPeaks = new TreeMap<String, Map<Integer, Double>>();
 		IDataset[] searchData;
 		Integer nPeaks = peakFindingData.getNPeaks();
+		
+		//Get the data to find peaks in
 		if (peakFindingData.hasData()){
 			searchData = peakFindingData.getData();
 		} else {
 			throw new Exception("No data set to find peaks in.");
 		}
+		
+		//Get the peak finders to use and their parameters
 		if (peakFindingData.hasActivePeakFinders()) {
 			activePeakFinders = (Set<String>)peakFindingData.getActivePeakFinders();
+			for (String pfID : activePeakFinders) {
+				peakFinderParameters.put(pfID, peakFindingData.getPFParametersByPeakFinder(pfID));
+			}
 		} else {
 			throw new Exception("No peak finders set active");
 		}
+		
 		
 		Iterator<String> activePeakFindersIter = activePeakFinders.iterator();
 		while (activePeakFindersIter.hasNext()) {
@@ -136,8 +145,16 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 			String currID = activePeakFindersIter.next();
 			IPeakFinder currPF = PEAKFINDERS.get(currID).getPeakFinder();
 			
-			//... call the findPeaks method and record the result
+			//... set new parameters on PeakFinder ...
+			Map<String, IPeakFinderParameter> currPFParams = peakFinderParameters.get(currID);
+			for (Map.Entry<String, IPeakFinderParameter> pfParam : currPFParams.entrySet()) {
+				//Will only set parameters which are in the map (may be others unset)
+				currPF.setParameter(pfParam.getKey(), pfParam.getValue());
+			}
+			
+			//... call the findPeaks method, record the result & reset the peak finder parameters
 			allFoundPeaks.put(currID, currPF.findPeaks(searchData[0], searchData[1], nPeaks));
+			currPF.resetParameters();
 		}
 		//TODO Add some process here which averages the results of the findPeaks calls
 		

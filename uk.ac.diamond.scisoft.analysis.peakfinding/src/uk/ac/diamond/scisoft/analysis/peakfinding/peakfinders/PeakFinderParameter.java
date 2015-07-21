@@ -14,9 +14,9 @@ import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
 
 public class PeakFinderParameter implements IPeakFinderParameter {
 	
-	private String name;
+	private final String name;
 	private Number value;
-	private boolean isInt;
+	private final boolean isInt;
 	
 	public PeakFinderParameter(String name, Boolean isInt, Number value) throws Exception {
 		this.name = name;

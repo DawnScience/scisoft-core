@@ -20,19 +20,31 @@ import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
 
 public class PeakFindingData implements IPeakFindingData {
 	
+	private final IPeakFindingService peakFindServ;
+	
 	private Set<String> activePeakFinders = new TreeSet<String>();
-	private Map<String, Map<String, IPeakFinderParameter>> allPeakFindersParams; //Sets should always be HashSets, since IPeakFinderParameters are not comparable
+	private Map<String, Map<String, IPeakFinderParameter>> pfParamsStore = new TreeMap<String, Map<String, IPeakFinderParameter>>();
 		
 	private IDataset[] searchData = new IDataset[2];
 	private Integer nPeaks;
 	private Map<String, Map<Integer, Double>> allFoundPeakPosns = new TreeMap<String, Map<Integer, Double>>();
-
+	
+	
+	public PeakFindingData(IPeakFindingService serv) {
+		this.peakFindServ = serv;
+	}
+	
 	@Override
 	public void activatePeakFinder(String id) throws Exception {
 		if (activePeakFinders.contains(id)) {
 			throw new Exception(id+" already set active");
 		} else {
 			activePeakFinders.add(id);
+			
+			//Add the peak finder parameters to the store iff it's not there already
+			if (!pfParamsStore.containsKey(id)) {
+				pfParamsStore.put(id, peakFindServ.getPeakFinderParameters(id));
+			}
 		}
 	}
 
@@ -54,44 +66,58 @@ public class PeakFindingData implements IPeakFindingData {
 	public boolean hasActivePeakFinders() {
 		return !activePeakFinders.isEmpty();
 	}
-	
-	
 
 	@Override
 	public void setPFParametersByPeakFinder(String pfID,
-			Map<String, IPeakFinderParameter> pfParameters) throws Exception {
-		checkPFInParams(pfID);
-		for (Map.Entry<String, IPeakFinderParameter> entry  : pfParameters.entrySet()) {
-			checkParamNameMatch(entry.getKey(), pfParameters);
+			Map<String, IPeakFinderParameter> newPFParams) throws Exception {
+		//Get Peak Finder parameter set		
+		Map<String, IPeakFinderParameter> currPFParams = getPFParametersByPeakFinder(pfID);
+		
+		for (Map.Entry<String, IPeakFinderParameter> pfParam : newPFParams.entrySet()) {
+			//Check parameter names in new param set match
+			checkParamNameMatch(pfParam.getKey(), newPFParams);
+			
+			//Set values
+			setParameterInParamSet(pfParam.getKey(), pfParam.getValue().getValue(), currPFParams);
 		}
-		allPeakFindersParams.put(pfID, pfParameters);
+		//Put parameter set back to store
+		pfParamsStore.put(pfID, currPFParams);
+		
 	}
 
 	@Override
 	public void setPFParameterByName(String pfID, String paramName,
 			Number paramValue) throws Exception {
-		checkPFInParams(pfID);
-		IPeakFinderParameter pfParam = getPFParameterByName(pfID, paramName);
-		Map<String, IPeakFinderParameter> pfParamSet = getPFParametersByPeakFinder(pfID);
+		//Get Peak Finder parameter set
+		Map<String, IPeakFinderParameter> currPFParams = getPFParametersByPeakFinder(pfID);
 		
-		pfParam.setValue(paramValue);
-		pfParamSet.put(paramName, pfParam);
+		//Set parameter & put set back to store
+		setParameterInParamSet(paramName, paramValue, currPFParams);
+		pfParamsStore.put(pfID, currPFParams);
+
+	}
+	
+	private void setParameterInParamSet(String pName, 
+			Number pNewValue, Map<String, IPeakFinderParameter> pfParams) throws Exception {
+		//Check the parameter is already in the keyset
+		checkParamNameMatch(pName, pfParams);
 		
-		setPFParametersByPeakFinder(pfID, pfParamSet);
+		//Set the parameter value
+		pfParams.get(pName).setValue(pNewValue);
 	}
 
 	@Override
 	public Map<String, Map<String, IPeakFinderParameter>> getAllPFParameters()
 			throws Exception {
-		if (allPeakFindersParams.isEmpty()) throw new Exception("No parameters recorded in PeakFindingData object");
-		return allPeakFindersParams;
+		if (pfParamsStore.isEmpty()) throw new Exception("No parameters recorded in PeakFindingData object");
+		return pfParamsStore;
 	}
 
 	@Override
 	public Map<String, IPeakFinderParameter> getPFParametersByPeakFinder(String pfID)
 			throws Exception {
-		checkPFInParams(pfID);
-		return allPeakFindersParams.get(pfID);
+		checkPFParamsStored(pfID);
+		return pfParamsStore.get(pfID);
 	}
 
 	@Override
@@ -119,8 +145,8 @@ public class PeakFindingData implements IPeakFindingData {
 	@Override
 	public Set<String> getPFParameterNamesByPeakFinder(String pfID)
 			throws Exception {
-		checkPFInParams(pfID);
-		Map<String, IPeakFinderParameter> pfParams = allPeakFindersParams.get(pfID);
+		checkPFParamsStored(pfID);
+		Map<String, IPeakFinderParameter> pfParams = pfParamsStore.get(pfID);
 		for (Map.Entry<String, IPeakFinderParameter> entry  : pfParams.entrySet()) {
 			checkParamNameMatch(entry.getKey(), pfParams);
 		}
@@ -135,8 +161,8 @@ public class PeakFindingData implements IPeakFindingData {
 	 * @throws Exception When peak finder is not in the keyset; 
 	 *         i.e. never activated
 	 */
-	private void checkPFInParams(String pfID) throws Exception {
-		if (allPeakFindersParams.containsKey(pfID)) return;
+	private void checkPFParamsStored(String pfID) throws Exception {
+		if (pfParamsStore.containsKey(pfID)) return;
 		throw new Exception("Peak finder "+pfID+" has never been activated");
 	}
 	

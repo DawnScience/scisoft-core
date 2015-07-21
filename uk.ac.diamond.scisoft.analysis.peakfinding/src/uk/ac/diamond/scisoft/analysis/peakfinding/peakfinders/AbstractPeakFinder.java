@@ -9,9 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
@@ -24,7 +23,7 @@ public abstract class AbstractPeakFinder implements IPeakFinder {
 	protected static transient final Logger logger = LoggerFactory.getLogger(AbstractPeakFinder.class);
 	
 	protected String name;
-	protected Set<IPeakFinderParameter> peakFindParams = new HashSet<IPeakFinderParameter>();
+	protected Map<String, IPeakFinderParameter> peakFindParams = new TreeMap<String, IPeakFinderParameter>();
 	
 	public AbstractPeakFinder() {
 		setName();
@@ -43,7 +42,7 @@ public abstract class AbstractPeakFinder implements IPeakFinder {
 	 * @param isInt should the value be an integer or not (double if not)
 	 */
 	protected void initialiseParameter(String pName, boolean isInt, Number pValue) throws Exception {
-		peakFindParams.add(new PeakFinderParameter(pName, isInt, pValue));
+		peakFindParams.put(pName, new PeakFinderParameter(pName, isInt, pValue));
 	}
 	
 	@Override
@@ -52,17 +51,14 @@ public abstract class AbstractPeakFinder implements IPeakFinder {
 	}
 	
 	@Override
-	public Set<IPeakFinderParameter> getParameters() {
+	public Map<String, IPeakFinderParameter> getParameters() {
 		return peakFindParams;
 	}
 
 	@Override
 	public IPeakFinderParameter getParameter(String pName) throws Exception {
-		Iterator<IPeakFinderParameter> paramIter = peakFindParams.iterator();
-		while (paramIter.hasNext()) {
-			IPeakFinderParameter currParam = paramIter.next();
-			if (currParam.getName().equals(pName)) return currParam;
-		}
+		if (peakFindParams.containsKey(pName)) return peakFindParams.get(pName);
+		
 		throw new Exception("Cannot find peak finding parameter "+pName);
 	}
 

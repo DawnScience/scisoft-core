@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Set;
+import java.util.Map;
 import java.util.TreeMap;
 
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
@@ -37,11 +37,11 @@ public class AverageWindowAverageDiffsTest {
 	
 	@Test
 	public void parametersCheck() throws Exception {
-		Set<IPeakFinderParameter> paramSet = winAvgDiff.getParameters();
+		Map<String, IPeakFinderParameter> paramSet = winAvgDiff.getParameters();
 		assertEquals(2, paramSet.size());
 		
-		assertTrue(paramSet.contains(new PeakFinderParameter("windowSize", false, 0)));
-		assertTrue(paramSet.contains(new PeakFinderParameter("nrStdDevs", false, 0)));
+		assertTrue(paramSet.containsKey("windowSize"));
+		assertTrue(paramSet.containsKey("nrStdDevs"));
 		
 		assertEquals(50, winAvgDiff.getParameterValue("windowSize"));
 		assertEquals(3, winAvgDiff.getParameterValue("nrStdDevs"));

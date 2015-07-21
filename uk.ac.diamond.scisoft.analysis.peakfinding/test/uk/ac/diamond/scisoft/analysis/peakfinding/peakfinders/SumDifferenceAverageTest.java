@@ -12,7 +12,6 @@ package uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import junit.framework.Assert;
@@ -33,11 +32,11 @@ public class SumDifferenceAverageTest {
 	
 	@Test
 	public void parametersCheck() throws Exception {
-		Set<IPeakFinderParameter> paramSet = avgDiff.getParameters();
+		Map<String, IPeakFinderParameter> paramSet = avgDiff.getParameters();
 		Assert.assertEquals(2, paramSet.size());
 		
-		assertTrue(paramSet.contains(new PeakFinderParameter("windowSize", false, 0)));
-		assertTrue(paramSet.contains(new PeakFinderParameter("nrStdDevs", false, 0)));
+		assertTrue(paramSet.containsKey("windowSize"));
+		assertTrue(paramSet.containsKey("nrStdDevs"));
 		
 		Assert.assertEquals(50, avgDiff.getParameterValue("windowSize"));
 		Assert.assertEquals(3, avgDiff.getParameterValue("nrStdDevs"));

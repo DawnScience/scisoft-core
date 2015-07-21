@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
+import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
 
 import uk.ac.diamond.scisoft.analysis.utils.ClassUtils;
 
@@ -96,6 +97,14 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 	public Collection<String> getRegisteredPeakFinders() {
 		checkForPeakFinders();
 		return PEAKFINDERS.keySet();
+	}
+
+	@Override
+	public Map<String, IPeakFinderParameter> getPeakFinderParameters(String id)
+			throws Exception {
+		checkForPeakFinders();
+		IPeakFinder selectedPeakFinder = PEAKFINDERS.get(id).getPeakFinder();
+		return selectedPeakFinder.getParameters();
 	}
 
 	@Override

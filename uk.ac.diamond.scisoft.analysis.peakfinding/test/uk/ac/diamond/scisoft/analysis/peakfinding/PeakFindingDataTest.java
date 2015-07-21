@@ -1,3 +1,12 @@
+/*-
+ * Copyright 2015 Diamond Light Source Ltd.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
 import static org.junit.Assert.assertEquals;
@@ -6,11 +15,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -101,18 +110,15 @@ public class PeakFindingDataTest {
 		peakFindData.activatePeakFinder(dummyID);
 		
 		//Test getting all the parameters
-		Map<String, Set<IPeakFinderParameter>> allPFParams = peakFindData.getAllPFParameters();
+		Map<String, Map<String,IPeakFinderParameter>> allPFParams = peakFindData.getAllPFParameters();
 		assertTrue(allPFParams.containsKey(dummyID));
 		
-		Set<IPeakFinderParameter> dummyPFParams = allPFParams.get(dummyID);	
-		Iterator<IPeakFinderParameter> dummyPFParamIter = dummyPFParams.iterator();
-		while (dummyPFParamIter.hasNext()) {
-			IPeakFinderParameter currParam = dummyPFParamIter.next(); 
-			if (currParam.getName().equals("testParamA")) {
-				assertEquals(currParam.getValue(), 123.456);
-			}
-		}
-		assertTrue(dummyPFParams.contains(new PeakFinderParameter("testParamB", false, 0)));
+		Map<String,IPeakFinderParameter> dummyPFParams = allPFParams.get(dummyID);	
+		assertTrue(dummyPFParams.containsKey("testParamA"));
+		IPeakFinderParameter currParam = dummyPFParams.get("testParamA");
+		assertEquals(currParam.getValue(), 123.456);
+		
+		assertTrue(dummyPFParams.containsKey("testParamB"));
 		
 		//Test getting parameter by name
 		Number namedParamValue = peakFindData.getPFParameterValueByName(dummyID, "testParamB");
@@ -124,29 +130,26 @@ public class PeakFindingDataTest {
 		peakFindData.activatePeakFinder(dummyID);
 		
 		//Set all the parameters at once
-		Set<IPeakFinderParameter> newpfParams = new HashSet<IPeakFinderParameter>();
+		Map<String, IPeakFinderParameter> newpfParams = new TreeMap<String, IPeakFinderParameter>();
 		Set<String> pfParamNames = peakFindData.getPFParameterNamesByPeakFinder(dummyID);
 		assertEquals(pfParamNames.size(), 2);
-		List<Number> pfNewParamValues = new ArrayList<Number>(Arrays.asList(654.321, 321));
 		
+		List<Number> pfNewParamValues = new ArrayList<Number>(Arrays.asList(654.321, 321));
 		Iterator<String> pfParamNamesIter = pfParamNames.iterator();
 		Iterator<Number> pfNewParamValuesIter = pfNewParamValues.iterator();
 		while (pfParamNamesIter.hasNext()) {
 			String currParamName = pfParamNamesIter.next();
 			Number currParamValue = pfNewParamValuesIter.next();
 			Boolean currParamIsInt = peakFindData.getPFParameterIsIntByName(dummyID, currParamName);
-			newpfParams.add(new PeakFinderParameter(currParamName, currParamIsInt, currParamValue));
+			newpfParams.put(currParamName, new PeakFinderParameter(currParamName, currParamIsInt, currParamValue));
 		}
 		
 		peakFindData.setPFParametersByPeakFinder(dummyID, newpfParams);
 		
-		Set<IPeakFinderParameter> dummyPFParams = peakFindData.getPFParametersByPeakFinder(dummyID);
-		Iterator<IPeakFinderParameter> dummyPFParamsIter = dummyPFParams.iterator();
-		while (dummyPFParamsIter.hasNext()) {
-			IPeakFinderParameter currParam = dummyPFParamsIter.next();
-			if (currParam.getName().equals("testParamA")) assertEquals(currParam.getValue(), 654.321);
-			if (currParam.getName().equals("testParamB")) assertEquals(currParam.getValue(), 654.321);
-		}
+		Map<String, IPeakFinderParameter> dummyPFParams = peakFindData.getPFParametersByPeakFinder(dummyID);
+		assertEquals(654.321, dummyPFParams.get("testParamA").getValue());
+		assertEquals(321, dummyPFParams.get("testParamA").getValue());
+		
 		
 		peakFindData.setPFParameterByName(dummyID, "testParamA", 987.654);
 		Double testParamAVal = (Double)peakFindData.getPFParameterValueByName(dummyID, "testParamA");

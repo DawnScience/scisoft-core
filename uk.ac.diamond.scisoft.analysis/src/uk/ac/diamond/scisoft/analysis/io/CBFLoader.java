@@ -195,7 +195,7 @@ public class CBFLoader extends AbstractFileLoader {
 								if (column == null) {
 									int dt = num == null ? Dataset.STRING : (num instanceof Float || num instanceof Double ? Dataset.FLOAT64 : Dataset.INT32);
 									Dataset ds = DatasetFactory.zeros(new int[] {r}, dt);
-									column = TreeFactory.createAttribute(tree, catName, colName, ds, false);
+									column = TreeFactory.createAttribute(colName, ds, false);
 									category.addAttribute(column);
 								}
 								column.getValue().set(num == null ? v : num, row);

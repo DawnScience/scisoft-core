@@ -201,7 +201,7 @@ public class HDF5LoaderTest {
 		GroupNode g = tree.getGroupNode().getGroupNode("entry1");
 		assertEquals("Group is wrongly named" , "/entry1/EDXD_Element_00", g.getNodeLink("EDXD_Element_00").getFullName());
 		g = g.getGroupNode("EDXD_Element_00");
-		assertEquals("Attribute is wrongly named" , "/entry1/EDXD_Element_00/a@axis", g.getDataNode("a").getAttribute("axis").getFullName());
+		assertEquals("Attribute is wrongly named" , "@axis", g.getDataNode("a").getAttribute("axis").getName());
 	}
 
 	@Test

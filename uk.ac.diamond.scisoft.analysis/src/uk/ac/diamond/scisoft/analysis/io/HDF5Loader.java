@@ -468,7 +468,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			group = TreeFactory.createGroupNode(oid);
 			if (pool != null)
 				pool.put(oid, group);
-			if (copyAttributes(f, name, group, gid)) {
+			if (copyAttributes(name, group, gid)) {
 				final String link = group.getAttribute(NAPIMOUNT).getFirstElement();
 				try {
 					return copyNAPIMountNode(f, pool, link, keepBitWidth);
@@ -652,7 +652,7 @@ public class HDF5Loader extends AbstractFileLoader {
 
 			// create a new dataset
 			DataNode d = TreeFactory.createDataNode(oid);
-			if (copyAttributes(f, path, d, did)) {
+			if (copyAttributes(path, d, did)) {
 				final String link = d.getAttribute(NAPIMOUNT).getFirstElement();
 				return copyNAPIMountNode(f, pool, link, keepBitWidth);
 			}
@@ -690,12 +690,12 @@ public class HDF5Loader extends AbstractFileLoader {
 
 
 	// return true when attributes contain a NAPI mount - dodgy external linking for HDF5 version < 1.8
-	private static boolean copyAttributes(final TreeFile f, final String name, final Node nn, final int id) {
+	private static boolean copyAttributes(final String name, final Node nn, final int id) {
 		boolean hasNAPIMount = false;
 
 		try {
 			for (ncsa.hdf.object.Attribute a : H5File.getAttribute(id)) {
-				Attribute h = TreeFactory.createAttribute(f, name, a.getName(), a.getValue(), a.isUnsigned());
+				Attribute h = TreeFactory.createAttribute(a.getName(), a.getValue(), a.isUnsigned());
 				h.setTypeName(getTypeName(a.getType()));
 				nn.addAttribute(h);
 				if (a.getName().equals(NAPIMOUNT)) {

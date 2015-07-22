@@ -23,7 +23,7 @@ public class NexusHDF5Loader extends HDF5Loader {
 			return;
 		}
 		try {
-			NexusTreeUtils.augmentNodeLink(link, true);
+			NexusTreeUtils.augmentNodeLink(fileName, link, true);
 		} catch (Exception e) {
 			logger.debug("Problem augmenting node: {}", link, e);
 		}

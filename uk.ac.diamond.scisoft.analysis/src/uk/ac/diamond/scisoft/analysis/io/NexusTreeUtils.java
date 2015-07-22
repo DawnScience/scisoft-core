@@ -82,25 +82,26 @@ public class NexusTreeUtils {
 	public static final String NX_TRANSFORMATIONS_ROOT = ".";
 
 	public static void augmentTree(Tree tree) {
-		augmentNodeLink(tree.getNodeLink(), true);
+		augmentNodeLink(tree instanceof TreeFile ? ((TreeFile) tree).getFilename() : null, tree.getNodeLink(), true);
 	}
 
 	/**
 	 * Augment a node with metadata that is pointed by link
+	 * @param filePath
 	 * @param link
 	 * @param isAxisFortranOrder in most cases, this should be set to true
 	 */
-	public static void augmentNodeLink(NodeLink link, final boolean isAxisFortranOrder) {
+	public static void augmentNodeLink(String filePath, NodeLink link, final boolean isAxisFortranOrder) {
 		if (link.isDestinationSymbolic()) {
 			SymbolicNode sn = (SymbolicNode) link.getDestination();
-			augmentNodeLink(sn.getNodeLink(), isAxisFortranOrder);
+			augmentNodeLink(filePath, sn.getNodeLink(), isAxisFortranOrder);
 			return;
 		}
 
 		if (link.isDestinationGroup()) {
 			GroupNode gn = (GroupNode) link.getDestination();
 			for (NodeLink l : gn) {
-				augmentNodeLink(l, isAxisFortranOrder);
+				augmentNodeLink(filePath, l, isAxisFortranOrder);
 			}
 			return;
 		}
@@ -135,15 +136,11 @@ public class NexusTreeUtils {
 
 		// Fix to http://jira.diamond.ac.uk/browse/DAWNSCI-333. We put the path in the meta
 		// data in order to put a title containing the file in the plot.
-		Tree tree = link.getTree();
-		if (tree != null && tree instanceof TreeFile) {
-			String name = ((TreeFile) tree).getFilename();
-			if (name != null) {
-				final Metadata meta = new Metadata();
-				meta.setFilePath(name);
-				cData.setMetadata(meta);
+		if (filePath != null) {
+			final Metadata meta = new Metadata();
+			meta.setFilePath(filePath);
+			cData.setMetadata(meta);
 			// TODO Maybe	dNode.getAttributeNameIterator()
-			}
 		}
 
 		GroupNode gNode = (GroupNode) link.getSource(); // before hunting for axes

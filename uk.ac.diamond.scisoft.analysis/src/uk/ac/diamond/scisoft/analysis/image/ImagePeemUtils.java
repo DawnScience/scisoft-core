@@ -126,16 +126,6 @@ public class ImagePeemUtils {
 	@SuppressWarnings("unused")
 	public static int[] getColumnAndRowNumber(IDataset psx, IDataset psy) {
 		int columns = 0, rows = 0, yIndex = 0;
-//		double currentXValue = psx.getDouble(0), currentYValue = psy.getDouble(0);
-//		while (yIndex < psy.getSize() && psy.getDouble(yIndex) == currentYValue) {
-//			columns = 0;
-//			while (psx.getDouble(columns) == currentXValue) {
-//				currentXValue = psx.getDouble(columns);
-//				columns++;
-//			}
-//			yIndex += columns;
-//			rows++;
-//		}
 		// just return the integer value of the square root
 		int[] shape = psx.getShape();
 		rows = (int)Math.sqrt(shape[0]);

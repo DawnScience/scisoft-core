@@ -61,7 +61,7 @@ public class StitchingImagesOperation extends AbstractOperation<StitchingImagesM
 			
 			if (imageStitchingService == null)
 				imageStitchingService = OperationServiceLoader.getImageStitchingService();
-			stitched = imageStitchingService.stitch(imageStack, rows, columns, fieldOfView, translations, useFeatureAssociation);
+			stitched = imageStitchingService.stitch(imageStack, rows, columns, fieldOfView, translations, useFeatureAssociation, monitor);
 
 			SliceFromSeriesMetadata outsmm = ssm.clone();
 			for (int i = 0; i < ssm.getParent().getRank(); i++) {

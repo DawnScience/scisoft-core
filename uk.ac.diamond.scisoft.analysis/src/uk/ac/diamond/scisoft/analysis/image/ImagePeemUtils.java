@@ -123,21 +123,23 @@ public class ImagePeemUtils {
 	 * @param psy
 	 * @return column and row array
 	 */
+	@SuppressWarnings("unused")
 	public static int[] getColumnAndRowNumber(IDataset psx, IDataset psy) {
 		int columns = 0, rows = 0, yIndex = 0;
-		double currentXValue = psx.getDouble(0), currentYValue = psy.getDouble(0);
-		while (yIndex < psy.getSize() && psy.getDouble(yIndex) == currentYValue) {
-			columns = 0;
-			while (psx.getDouble(columns) == currentXValue) {
-				currentXValue = psx.getDouble(columns);
-				columns++;
-			}
-			yIndex += columns;
-			rows++;
-		}
+//		double currentXValue = psx.getDouble(0), currentYValue = psy.getDouble(0);
+//		while (yIndex < psy.getSize() && psy.getDouble(yIndex) == currentYValue) {
+//			columns = 0;
+//			while (psx.getDouble(columns) == currentXValue) {
+//				currentXValue = psx.getDouble(columns);
+//				columns++;
+//			}
+//			yIndex += columns;
+//			rows++;
+//		}
 		// just return the integer value of the square root
-		columns = (int) Math.sqrt(psx.getSize());
-		rows = columns;
+		int[] shape = psx.getShape();
+		rows = (int)Math.sqrt(shape[0]);
+		columns = shape[0] / rows;
 		return new int[] { columns, rows};
 	}
 }

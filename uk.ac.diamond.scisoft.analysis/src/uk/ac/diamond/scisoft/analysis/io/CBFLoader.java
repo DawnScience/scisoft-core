@@ -150,7 +150,7 @@ public class CBFLoader extends AbstractFileLoader {
 				block = tree.getGroupNode().getGroupNode(blockName);
 			} else {
 				block = TreeFactory.createGroupNode(blockName.hashCode());
-				gt.addGroupNode(tree, Tree.ROOT, blockName, block);
+				gt.addGroupNode(Tree.ROOT, blockName, block);
 			}
 
 			// TODO add save frame support using block-item functions
@@ -164,7 +164,7 @@ public class CBFLoader extends AbstractFileLoader {
 					category = block.getGroupNode(catName);
 				} else {
 					category = TreeFactory.createGroupNode(catName.hashCode());
-					block.addGroupNode(tree, Tree.ROOT + blockName + Node.SEPARATOR, catName, category);
+					block.addGroupNode(Tree.ROOT + blockName + Node.SEPARATOR, catName, category);
 				}
 
 				CBFError.errorChecker(cbf.cbf_count_columns(chs, n.cast()));

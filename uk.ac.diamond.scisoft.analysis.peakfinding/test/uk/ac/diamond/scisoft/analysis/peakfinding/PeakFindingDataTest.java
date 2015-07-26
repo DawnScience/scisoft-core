@@ -177,13 +177,6 @@ public class PeakFindingDataTest {
 	}
 	
 	@Test
-	public void testNoParametersToGetException() throws Exception {
-		thrower.expect(Exception.class);
-		thrower.expectMessage("No parameters recorded");
-		peakFindData.getAllPFParameters();
-	}
-	
-	@Test
 	public void testNoPFForParamsException() throws Exception {
 		thrower.expect(Exception.class);
 		thrower.expectMessage("never been activated");

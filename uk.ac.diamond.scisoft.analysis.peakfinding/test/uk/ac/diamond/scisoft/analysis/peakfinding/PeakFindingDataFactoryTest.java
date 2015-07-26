@@ -28,7 +28,7 @@ public class PeakFindingDataFactoryTest {
 	private String maxDiffID = MaximaDifference.class.getName();
 	
 	//Dummy values for creating PeakFindingData DTOs
-	private static List<String> activePFs;
+	private List<String> activePFs;
 	private Integer nPeaks = DummyPeakFinder.getFakePeaks().size();
 	private IDataset xData = DatasetFactory.createRange(0, 10, 1, Dataset.FLOAT32);
 	private IDataset yData = DatasetFactory.createRange(0, 10, 1, Dataset.FLOAT32);
@@ -43,7 +43,7 @@ public class PeakFindingDataFactoryTest {
 	}
 	
 	@Before
-	public static void createVars() {
+	public void createVars() {
 		activePFs = new ArrayList<String>();
 	}
 	
@@ -88,7 +88,7 @@ public class PeakFindingDataFactoryTest {
 	public void createPSetFromDTO() throws Exception {
 		activePFs.add(dummyID);
 		
-		IPeakFindingData pfDTO = PeakFindingDataFactory.createPeakFindingData(peakFindServ, activePFs, nPeaks, xData, yData);
+		PeakFindingData pfDTO = (PeakFindingData)PeakFindingDataFactory.createPeakFindingData(peakFindServ, activePFs, nPeaks, xData, yData);
 		
 		Map<String, Number> vals = new TreeMap<String, Number>();
 		vals.put("testParamA", 14.2);

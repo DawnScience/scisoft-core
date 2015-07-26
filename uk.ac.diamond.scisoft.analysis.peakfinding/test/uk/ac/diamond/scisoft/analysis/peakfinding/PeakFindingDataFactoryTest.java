@@ -96,8 +96,15 @@ public class PeakFindingDataFactoryTest {
 		Map<String, IPeakFinderParameter> pSet = PeakFindingDataFactory.createParameterSet(pfDTO, dummyID, vals);
 		assertEquals(2, pSet.size());
 		assertEquals(14.2, pSet.get("testParamA").getValue());
-		assertEquals(12, pSet.get("testParamB").getValue());
-		
+		assertEquals(12, pSet.get("testParamB").getValue());	
+	}
+	
+	@Test
+	public void badPeakFinderExceptionTest() {
+		thrower.expect(NullPointerException.class);
+		thrower.expectMessage("not registered");
+		activePFs.add("badger");
+		IPeakFindingData pfd = PeakFindingDataFactory.createPeakFindingData(peakFindServ, activePFs, nPeaks, xData, yData);
 	}
 	
 

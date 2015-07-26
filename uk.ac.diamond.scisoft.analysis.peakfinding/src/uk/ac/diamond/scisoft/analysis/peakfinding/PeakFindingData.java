@@ -40,6 +40,15 @@ public class PeakFindingData implements IPeakFindingData {
 		this.peakFindServ = serv;
 	}
 	
+	/**
+	 * Returns a reference to the peak finding service which this 
+	 * IPeakFindingData object is associated with
+	 * @return
+	 */
+	public IPeakFindingService getPFService() {
+		return peakFindServ;
+	}
+	
 	@Override
 	public void activatePeakFinder(String id) throws Exception {
 		if (activePeakFinders.contains(id)) {

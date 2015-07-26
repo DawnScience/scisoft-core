@@ -20,14 +20,20 @@ import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
 
 public class PeakFindingData implements IPeakFindingData {
 	
+	/*
+	 * These variables determine how the PeakFindingData object interacts with
+	 * the PeakFindingService
+	 */
 	private final IPeakFindingService peakFindServ;
-	
 	private Set<String> activePeakFinders = new TreeSet<String>();
 	private Map<String, Map<String, IPeakFinderParameter>> pfParamsStore = new TreeMap<String, Map<String, IPeakFinderParameter>>();
-		
+	private Integer nPeaks;	
 	private IDataset[] searchData = new IDataset[2];
-	private Integer nPeaks;
-	private Map<String, Map<Integer, Double>> allFoundPeakPosns = new TreeMap<String, Map<Integer, Double>>();
+	
+	/*
+	 * These variables are populated only after peak finding has been done
+	 */
+	private Map<String, Map<Integer, Double>> allIdentifiedPeakPosns = new TreeMap<String, Map<Integer, Double>>();
 	
 	
 	public PeakFindingData(IPeakFindingService serv) {
@@ -241,20 +247,20 @@ public class PeakFindingData implements IPeakFindingData {
 
 	@Override
 	public void setPeaks(Map<String, Map<Integer, Double>> newFoundPeaks) {
-		this.allFoundPeakPosns = newFoundPeaks;
+		this.allIdentifiedPeakPosns = newFoundPeaks;
 	}
 	
 	@Override
 	public Map<String, Map<Integer, Double>> getPeaks() throws Exception {
-		if (allFoundPeakPosns == null || allFoundPeakPosns.isEmpty()) throw new Exception("No peaks found. Need to run findPeaks()");
-		return allFoundPeakPosns;
+		if (allIdentifiedPeakPosns == null || allIdentifiedPeakPosns.isEmpty()) throw new Exception("No peaks found. Need to run findPeaks()");
+		return allIdentifiedPeakPosns;
 	}
 
 	@Override
 	public Map<Integer, Double> getPeaks(String id) throws Exception {
-		if (allFoundPeakPosns == null || allFoundPeakPosns.isEmpty()) throw new Exception("No peaks found. Need to run findPeaks(...)");
-		if (!allFoundPeakPosns.keySet().contains(id)) throw new Exception(id+" was not active when findPeaks() was called");
-		return allFoundPeakPosns.get(id);
+		if (allIdentifiedPeakPosns == null || allIdentifiedPeakPosns.isEmpty()) throw new Exception("No peaks found. Need to run findPeaks(...)");
+		if (!allIdentifiedPeakPosns.keySet().contains(id)) throw new Exception(id+" was not active when findPeaks() was called");
+		return allIdentifiedPeakPosns.get(id);
 	}
 
 }

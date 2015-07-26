@@ -113,9 +113,7 @@ public class PeakFindingData implements IPeakFindingData {
 	}
 
 	@Override
-	public Map<String, Map<String, IPeakFinderParameter>> getAllPFParameters()
-			throws Exception {
-		if (pfParamsStore.isEmpty()) throw new Exception("No parameters recorded in PeakFindingData object");
+	public Map<String, Map<String, IPeakFinderParameter>> getAllPFParameters() {
 		return pfParamsStore;
 	}
 
@@ -222,7 +220,7 @@ public class PeakFindingData implements IPeakFindingData {
 	}
 
 	@Override
-	public IDataset[] getData() throws Exception {
+	public IDataset[] getData() {
 		return searchData;
 	}
 

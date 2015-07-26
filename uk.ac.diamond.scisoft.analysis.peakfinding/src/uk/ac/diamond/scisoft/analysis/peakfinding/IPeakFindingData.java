@@ -80,10 +80,8 @@ public interface IPeakFindingData {
 	 * activated in the lifetime of this instance and maps of all their 
 	 * parameters with associated values. 
 	 * @return Map<String peak finder IDs, Map<parameter string name, parameter>>
-	 * @throws If no peak finders have ever been made active
 	 */
-	public Map<String, Map<String, IPeakFinderParameter>> getAllPFParameters() 
-			throws Exception;
+	public Map<String, Map<String, IPeakFinderParameter>> getAllPFParameters();
 	
 	/**
 	 * Returns a set containing the names and values of the parameters of this 
@@ -168,9 +166,8 @@ public interface IPeakFindingData {
 	
 	/**
 	 * Get the current data of this IPeakFindingData object (not nPeaks)
-	 * @throws Exception when no data has been set in this object
 	 */
-	public IDataset[] getData() throws Exception;
+	public IDataset[] getData();
 	
 	/**
 	 * Reports whether data has been set in this instance.

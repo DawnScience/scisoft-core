@@ -22,17 +22,18 @@ public interface IPeakFindingData {
 	 * Adds IPeakFinder, specified by unique ID, to the active IPeakFinders 
 	 * collection in this instance
 	 * @param id Unique string (e.g. Fully Qualified Class Name - FQCN)
-	 * @throws Exception in case peak finder already active
+	 * @throws IllegalArgumentException in case peak finder already active
+	 * @throws NullPointerException in case the peak finder cannot be found in register
 	 */
-	public void activatePeakFinder(String id) throws Exception;
+	public void activatePeakFinder(String id);
 
 	/**
 	 * Removes IPeakFinder, specified by unique ID, from active IPeakFinders
 	 * collection in this instance
 	 * @param id unique string (e.g. FQCN)
-	 * @throws Exception in case the peak finder is not already active
+	 * @throws IllegalArgumentException in case the peak finder is not already active
 	 */
-	public void deactivatePeakFinder(String id) throws Exception;
+	public void deactivatePeakFinder(String id);
 	
 	/**
 	 * Returns a collection containing the IPeakFinders which are set active 
@@ -53,12 +54,13 @@ public interface IPeakFindingData {
 	 * identical to names in parameters.
 	 * @param pfID String ID (FQCN) of peak finder
 	 * @param pfParameters Map of parameter name keys and new parameter objects
-	 * @throws Exception If Number type of any of the parameters is not 
-	 *         consistent with the expected type; change will not be accepted.
-	 *         Alternatively if the peak finder has never been marked active
+	 * @throws IllegalArgumentException If Number type of any of the parameters  
+	 *         is notconsistent with the expected type; change will not be 
+	 *         accepted. Alternatively if the peak finder has never been marked 
+	 *         active.
 	 */
 	public void setPFParametersByPeakFinder(String pfID, 
-			Map<String, IPeakFinderParameter> pfParameters) throws Exception;
+			Map<String, IPeakFinderParameter> pfParameters);
 	
 	/**
 	 * Sets the value of a specified parameter in a named peak finder to a  
@@ -67,13 +69,13 @@ public interface IPeakFindingData {
 	 * @param pfID String ID (FQCN) of peak finder
 	 * @param paramName Name of peak finder parameter
 	 * @param paramValue New value of parameter
-	 * @throws Exception If Number type of the parameter is not consistent 
-	 *         with the expected type; change will not be accepted. 
+	 * @throws IllegalArgumentException If Number type of the parameter is not  
+	 *         consistent with the expected type; change will not be accepted. 
 	 *         Alternatively if the peak finder has never been marked active or
 	 *         the parameter name does not exist.
 	 */
 	public void setPFParameterByName(String pfID, String paramName, 
-			Number paramValue) throws Exception;
+			Number paramValue);
 	
 	/**
 	 * Returns a map containing IDs of all peak finders which have been 
@@ -88,32 +90,32 @@ public interface IPeakFindingData {
 	 * peak finder.
 	 * @param pfID String ID (FQCN) pf peak finder
 	 * @return Map<parameter string name, parameter>
-	 * @throws Exception If peak finder pfID has never been marked active
+	 * @throws NullPointerException If peak finder pfID has never been marked 
+	 *         active.
 	 */
-	public Map<String, IPeakFinderParameter> getPFParametersByPeakFinder(String pfID) 
-			throws Exception;
+	public Map<String, IPeakFinderParameter> getPFParametersByPeakFinder(String pfID);
 	
 	/**
 	 * Returns a named parameter from a specified peak finder.
 	 * @param pfID String ID (FQCN) of peak finder
 	 * @param paramName String name of the parameter
 	 * @return PeakFinderParameter containing value, isInt logic and name
-	 * @throws Exception If peak finder pfID has never been marked active or if
-	 *         parameter name does not exist
+	 * @throws NullPointerException If peak finder pfID has never been marked 
+	 *         active.
+	 * @throws IllegalArgument If parameter name does not exist.
 	 */
-	public IPeakFinderParameter getPFParameterByName(String pfID, String paramName) 
-			throws Exception;
+	public IPeakFinderParameter getPFParameterByName(String pfID, String paramName);
 	
 	/**
 	 * Returns the value of a named parameter from a specified peak finder.
 	 * @param pfID String ID (FQCN) of peak finder
 	 * @param paramName String name of the parameter
 	 * @return Number value of peak finder parameter
-	 * @throws Exception If peak finder pfID has never been marked active or if
-	 *         parameter name does not exist
+	 * @throws NullPointerException If peak finder pfID has never been marked 
+	 *         active.
+	 * @throws IllegalArgument If parameter name does not exist.
 	 */
-	public Number getPFParameterValueByName(String pfID, String paramName) 
-			throws Exception;
+	public Number getPFParameterValueByName(String pfID, String paramName);
 	
 	/**
 	 * Returns boolean of whether parameter is an integer or not for a 
@@ -121,21 +123,21 @@ public interface IPeakFindingData {
 	 * @param pfID String ID (FQCN) of peak finder
 	 * @param paramName String name of the parameter
 	 * @return Boolean value of isInt peak finder parameter
-	 * @throws Exception If peak finder pfID has never been marked active or if
-	 *         parameter name does not exist
+	 * @throws NullPointerException If peak finder pfID has never been marked 
+	 *         active.
+	 * @throws IllegalArgument If parameter name does not exist.
 	 */
-	public Boolean getPFParameterIsIntByName(String pfID, String paramName) 
-			throws Exception;
+	public Boolean getPFParameterIsIntByName(String pfID, String paramName);
 	
 	/**
 	 * Returns set of all the string names of the parameters associated with 
 	 * this peak finder
 	 * @param pfID String ID (FQCN) of peak finder
 	 * @return Set containing parameter names
-	 * @throws Exception If peak finder pfID has never been marked active
+	 * @throws NullPointerException If peak finder pfID has never been marked 
+	 *         active.
 	 */
-	public Set<String> getPFParameterNamesByPeakFinder(String pfID) 
-			throws Exception;
+	public Set<String> getPFParameterNamesByPeakFinder(String pfID);
 	
 	/**
 	 * Set all the data on this IPeakFindingData object which might change 
@@ -197,16 +199,18 @@ public interface IPeakFindingData {
 	 * Returns a map with the unique IPeakFinder ID as the key and values which 
 	 * are the results of the IPeakFinder findPeaks() method.
 	 * @return Map of IPeakFinderIDs and IPeakFinder found peaks
-	 * @throws Exception in case no IPeakFinder result is found
+	 * @throws NullPointerException in case no IPeakFinder result is found
 	 */
-	public Map<String, Map<Integer, Double>> getPeaks() throws Exception;
+	public Map<String, Map<Integer, Double>> getPeaks();
 
 	/**
 	 * Returns a map with key peak position and value significance for the 
 	 * IPeakFinder specified by the unique ID.
 	 * @param id Unique IPeakFinder ID (e.g. FQCN)
 	 * @return Map of IPeakFinderIDs and IPeakFinder found peaks
-	 * @throws Exception in case no peakfinder result is found
+	 * @throws NullPointerException in case no IPeakFinder result is found
+	 * @throws IllegalArgumentException in case no IPeakFinder result is 
+	 *         found for the given ID
 	 */
-	public Map<Integer, Double> getPeaks(String id) throws Exception;
+	public Map<Integer, Double> getPeaks(String id);
 }

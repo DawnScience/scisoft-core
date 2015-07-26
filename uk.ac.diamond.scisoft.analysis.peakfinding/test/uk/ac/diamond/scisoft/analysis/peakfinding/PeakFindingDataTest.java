@@ -24,6 +24,7 @@ import java.util.TreeMap;
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -51,6 +52,11 @@ public class PeakFindingDataTest {
 	@Before
 	public void createPeakFindData() {
 		peakFindData = new PeakFindingData(peakFindServ);
+	}
+	
+	@After
+	public void disposePeakFindData() {
+		peakFindData = null;
 	}
 	
 	@Rule
@@ -162,14 +168,14 @@ public class PeakFindingDataTest {
 	 */
 	@Test
 	public void testUnregisteredPeakFinderException() throws Exception {
-		thrower.expect(Exception.class);
+		thrower.expect(NullPointerException.class);
 		thrower.expectMessage("not registered");
 		peakFindData.activatePeakFinder("badger");
 	}
 	
 	@Test
 	public void testActivateException() throws Exception {
-		thrower.expect(Exception.class);
+		thrower.expect(IllegalArgumentException.class);
 		thrower.expectMessage("already set active");
 		peakFindData.activatePeakFinder(dummyID);
 		peakFindData.activatePeakFinder(dummyID);
@@ -177,7 +183,7 @@ public class PeakFindingDataTest {
 	
 	@Test
 	public void testDeactivateException() throws Exception {
-		thrower.expect(Exception.class);
+		thrower.expect(IllegalArgumentException.class);
 		thrower.expectMessage("not set active");
 		peakFindData.deactivatePeakFinder(dummyID);
 		peakFindData.deactivatePeakFinder(dummyID);	
@@ -185,14 +191,14 @@ public class PeakFindingDataTest {
 	
 	@Test
 	public void testNoPFForParamsException() throws Exception {
-		thrower.expect(Exception.class);
+		thrower.expect(NullPointerException.class);
 		thrower.expectMessage("never been activated");
 		peakFindData.getPFParametersByPeakFinder(dummyID+"badger");
 	}
 	
 	@Test
 	public void testNoParamInPeakFinderException() throws Exception {
-		thrower.expect(Exception.class);
+		thrower.expect(NullPointerException.class);
 		thrower.expectMessage("No parameter name ");
 		peakFindData.activatePeakFinder(dummyID);
 		peakFindData.getPFParameterByName(dummyID, "totallyFakeParameter");
@@ -200,7 +206,7 @@ public class PeakFindingDataTest {
 	
 	@Test
 	public void testParameterAsDoubleException() throws Exception {
-		thrower.expect(Exception.class);
+		thrower.expect(IllegalArgumentException.class);
 		thrower.expectMessage("should be an Integer");
 		peakFindData.activatePeakFinder(dummyID);
 		peakFindData.setPFParameterByName(dummyID, "testParamB", 111.222);
@@ -212,14 +218,14 @@ public class PeakFindingDataTest {
 	 */
 	@Test
 	public void testGetPeaksBeforeFindPeaksException() throws Exception {
-		thrower.expect(Exception.class);
+		thrower.expect(NullPointerException.class);
 		thrower.expectMessage("findPeaks");
 		peakFindData.getPeaks();
 	}
 	
 	@Test
 	public void testGetPeakByPeakFinderBeforeFindPeaksException() throws Exception {
-		thrower.expect(Exception.class);
+		thrower.expect(NullPointerException.class);
 		thrower.expectMessage("findPeaks");
 		peakFindData.getPeaks(dummyID);
 	}

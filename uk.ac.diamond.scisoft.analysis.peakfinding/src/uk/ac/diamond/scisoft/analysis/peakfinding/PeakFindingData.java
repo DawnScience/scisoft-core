@@ -50,12 +50,12 @@ public class PeakFindingData implements IPeakFindingData {
 	}
 	
 	@Override
-	public void activatePeakFinder(String id) throws Exception {
+	public void activatePeakFinder(String id) {
 		if (!peakFindServ.getRegisteredPeakFinders().contains(id)) {
-			throw new Exception(id+" not registered with peak finding service");
+			throw new NullPointerException(id+" not registered with peak finding service");
 		}
 		else if (activePeakFinders.contains(id)) {
-			throw new Exception(id+" already set active");
+			throw new IllegalArgumentException(id+" already set active");
 		} else {
 			activePeakFinders.add(id);
 			
@@ -67,11 +67,11 @@ public class PeakFindingData implements IPeakFindingData {
 	}
 
 	@Override
-	public void deactivatePeakFinder(String id) throws Exception {
+	public void deactivatePeakFinder(String id) {
 		if (activePeakFinders.contains(id)) {
 			activePeakFinders.remove(id);
 		} else {
-			throw new Exception(id+" not set active");
+			throw new IllegalArgumentException(id+" not set active");
 		}
 	}
 
@@ -87,7 +87,7 @@ public class PeakFindingData implements IPeakFindingData {
 
 	@Override
 	public void setPFParametersByPeakFinder(String pfID,
-			Map<String, IPeakFinderParameter> newPFParams) throws Exception {
+			Map<String, IPeakFinderParameter> newPFParams) {
 		//Get Peak Finder parameter set		
 		Map<String, IPeakFinderParameter> currPFParams = getPFParametersByPeakFinder(pfID);
 		
@@ -105,7 +105,7 @@ public class PeakFindingData implements IPeakFindingData {
 
 	@Override
 	public void setPFParameterByName(String pfID, String paramName,
-			Number paramValue) throws Exception {
+			Number paramValue) {
 		//Get Peak Finder parameter set
 		Map<String, IPeakFinderParameter> currPFParams = getPFParametersByPeakFinder(pfID);
 		
@@ -116,7 +116,7 @@ public class PeakFindingData implements IPeakFindingData {
 	}
 	
 	private void setParameterInParamSet(String pName, 
-			Number pNewValue, Map<String, IPeakFinderParameter> pfParams) throws Exception {
+			Number pNewValue, Map<String, IPeakFinderParameter> pfParams) {
 		//Check the parameter is already in the keyset
 		checkParamNameMatch(pName, pfParams);
 		
@@ -130,37 +130,32 @@ public class PeakFindingData implements IPeakFindingData {
 	}
 
 	@Override
-	public Map<String, IPeakFinderParameter> getPFParametersByPeakFinder(String pfID)
-			throws Exception {
+	public Map<String, IPeakFinderParameter> getPFParametersByPeakFinder(String pfID) {
 		checkPFParamsStored(pfID);
 		return pfParamsStore.get(pfID);
 	}
 
 	@Override
-	public IPeakFinderParameter getPFParameterByName(String pfID, String paramName)
-			throws Exception {
+	public IPeakFinderParameter getPFParameterByName(String pfID, String paramName) {
 		Map<String, IPeakFinderParameter> pfParams = getPFParametersByPeakFinder(pfID);
 		checkParamInPFSet(paramName, pfParams);
 		return pfParams.get(paramName);
 	}
 	
 	@Override
-	public Number getPFParameterValueByName(String pfID, String paramName)
-			throws Exception {
+	public Number getPFParameterValueByName(String pfID, String paramName) {
 		IPeakFinderParameter pfParam = getPFParameterByName(pfID, paramName);
 		return pfParam.getValue();
 	}
 
 	@Override
-	public Boolean getPFParameterIsIntByName(String pfID, String paramName)
-			throws Exception {
+	public Boolean getPFParameterIsIntByName(String pfID, String paramName) {
 		IPeakFinderParameter pfParam = getPFParameterByName(pfID, paramName);
 		return pfParam.isInt();
 	}
 		
 	@Override
-	public Set<String> getPFParameterNamesByPeakFinder(String pfID)
-			throws Exception {
+	public Set<String> getPFParameterNamesByPeakFinder(String pfID) {
 		checkPFParamsStored(pfID);
 		Map<String, IPeakFinderParameter> pfParams = pfParamsStore.get(pfID);
 		for (Map.Entry<String, IPeakFinderParameter> entry  : pfParams.entrySet()) {
@@ -174,27 +169,27 @@ public class PeakFindingData implements IPeakFindingData {
 	 * Checks whether the specified peak finder ID is in the set
 	 * @param pfID ID (FQCN) string of peak finder
 	 * @param keyset Set (keyset) which should contain this pfID
-	 * @throws Exception When peak finder is not in the keyset; 
-	 *         i.e. never activated
+	 * @throws NullPointerException When peak finder is not in 
+	 *         the keyset; i.e. never activated
 	 */
-	private void checkPFParamsStored(String pfID) throws Exception {
+	private void checkPFParamsStored(String pfID) {
 		if (pfParamsStore.containsKey(pfID)) return;
-		throw new Exception("Peak finder "+pfID+" has never been activated");
+		throw new NullPointerException("Peak finder "+pfID+" has never been activated");
 	}
 	
 	/**
 	 * Checks whether the specified parameter name is in the set
 	 * @param paramName String name of parameter
 	 * @param paramset Map which should contain this name
-	 * @throws Exception When peak finder is not in the keyset; 
-	 *         i.e. never activated
+	 * @throws NullPointerException When peak finder is not in 
+	 *         the keyset; i.e. never activated
 	 */	
-	private void checkParamInPFSet(String paramName, Map<String, IPeakFinderParameter> paramSet) throws Exception {
+	private void checkParamInPFSet(String paramName, Map<String, IPeakFinderParameter> paramSet) {
 		if (paramSet.containsKey(paramName)) {
 			checkParamNameMatch(paramName, paramSet);
 			return;
 		} 
-		throw new Exception("No parameter name "+paramName+" found");
+		throw new NullPointerException("No parameter name "+paramName+" found");
 	}
 	
 	/**
@@ -202,11 +197,11 @@ public class PeakFindingData implements IPeakFindingData {
 	 * the name given in the parameter object 
 	 * @param paramName paramName String name of parameter
 	 * @param paramset Map which should contain this name
-	 * @throws Exception If the names do not match
+	 * @throws IllegalArgumentException If the names do not match
 	 */
-	private void checkParamNameMatch(String paramName, Map<String, IPeakFinderParameter> paramSet) throws Exception {
+	private void checkParamNameMatch(String paramName, Map<String, IPeakFinderParameter> paramSet) {
 		if (paramSet.get(paramName).getName().equals(paramName)) return;
-		throw new Exception("Peak finder parameter name mismatch; expecting: "+paramName+" was: "+paramSet.get(paramName).getName());
+		throw new IllegalArgumentException("Peak finder parameter name mismatch; expecting: "+paramName+" was: "+paramSet.get(paramName).getName());
 	}
 
 	@Override
@@ -261,15 +256,15 @@ public class PeakFindingData implements IPeakFindingData {
 	}
 	
 	@Override
-	public Map<String, Map<Integer, Double>> getPeaks() throws Exception {
-		if (allIdentifiedPeakPosns == null || allIdentifiedPeakPosns.isEmpty()) throw new Exception("No peaks found. Need to run findPeaks()");
+	public Map<String, Map<Integer, Double>> getPeaks() {
+		if (allIdentifiedPeakPosns == null || allIdentifiedPeakPosns.isEmpty()) throw new NullPointerException("No peaks found. Need to run findPeaks()");
 		return allIdentifiedPeakPosns;
 	}
 
 	@Override
-	public Map<Integer, Double> getPeaks(String id) throws Exception {
-		if (allIdentifiedPeakPosns == null || allIdentifiedPeakPosns.isEmpty()) throw new Exception("No peaks found. Need to run findPeaks(...)");
-		if (!allIdentifiedPeakPosns.keySet().contains(id)) throw new Exception(id+" was not active when findPeaks() was called");
+	public Map<Integer, Double> getPeaks(String id) {
+		if (allIdentifiedPeakPosns == null || allIdentifiedPeakPosns.isEmpty()) throw new NullPointerException("No peaks found. Need to run findPeaks(...)");
+		if (!allIdentifiedPeakPosns.keySet().contains(id)) throw new IllegalArgumentException(id+" was not active when findPeaks() was called");
 		return allIdentifiedPeakPosns.get(id);
 	}
 

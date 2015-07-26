@@ -161,6 +161,13 @@ public class PeakFindingDataTest {
 	 * populated correctly
 	 */
 	@Test
+	public void testUnregisteredPeakFinderException() throws Exception {
+		thrower.expect(Exception.class);
+		thrower.expectMessage("not registered");
+		peakFindData.activatePeakFinder("badger");
+	}
+	
+	@Test
 	public void testActivateException() throws Exception {
 		thrower.expect(Exception.class);
 		thrower.expectMessage("already set active");

@@ -51,7 +51,10 @@ public class PeakFindingData implements IPeakFindingData {
 	
 	@Override
 	public void activatePeakFinder(String id) throws Exception {
-		if (activePeakFinders.contains(id)) {
+		if (!peakFindServ.getRegisteredPeakFinders().contains(id)) {
+			throw new Exception(id+" not registered with peak finding service");
+		}
+		else if (activePeakFinders.contains(id)) {
 			throw new Exception(id+" already set active");
 		} else {
 			activePeakFinders.add(id);

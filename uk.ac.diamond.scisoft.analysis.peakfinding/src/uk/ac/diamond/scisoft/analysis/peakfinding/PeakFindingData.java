@@ -206,9 +206,9 @@ public class PeakFindingData implements IPeakFindingData {
 
 	@Override
 	public void setData(IDataset xData, IDataset yData, Integer nPeaks) {
-		this.searchData[0] = xData;
-		this.searchData[1] = yData;
-		this.nPeaks = nPeaks;
+		if(xData != null) this.searchData[0] = xData;
+		if(yData != null) this.searchData[1] = yData;
+		if(nPeaks != null) this.nPeaks = nPeaks;
 	}
 
 	@Override

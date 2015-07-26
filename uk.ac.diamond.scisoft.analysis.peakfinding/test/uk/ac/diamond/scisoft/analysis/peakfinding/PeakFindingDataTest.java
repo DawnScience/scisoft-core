@@ -168,7 +168,7 @@ public class PeakFindingDataTest {
 	 */
 	@Test
 	public void testUnregisteredPeakFinderException() throws Exception {
-		thrower.expect(IllegalArgumentException.class);
+		thrower.expect(NullPointerException.class);
 		thrower.expectMessage("not registered");
 		peakFindData.activatePeakFinder("badger");
 	}

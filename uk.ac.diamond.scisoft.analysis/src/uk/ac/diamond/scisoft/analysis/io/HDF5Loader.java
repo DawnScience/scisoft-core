@@ -171,7 +171,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		
 		@Override
 		public void run() {
-			int fid = -1;
+			long fid = -1;
 			try {
 				HierarchicalDataFactory.acquireLowLevelReadingAccess(fileName);
 				fid = H5.H5Fopen(fileName, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
@@ -257,7 +257,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			}
 			waitForSyncLimit();
 		} else {
-			int fid = -1;
+			long fid = -1;
 			try {
 				HierarchicalDataFactory.acquireLowLevelReadingAccess(fileName);
 				fid = H5.H5Fopen(fileName, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
@@ -300,7 +300,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * @return a HDF5 tree
 	 * @throws Exception
 	 */
-	private TreeFile createTree(final int fid, final boolean keepBitWidth) throws Exception {
+	private TreeFile createTree(final long fid, final boolean keepBitWidth) throws Exception {
 		final long oid = fileName.hashCode(); // include file name in ID
 		TreeFile f = TreeFactory.createTreeFile(oid, fileName);
 		f.setHostname(host);
@@ -321,7 +321,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * @return a HDF5 tree
 	 * @throws Exception
 	 */
-	private TreeFile createTreeBF(final IMonitor mon, final int fid, final boolean keepBitWidth) throws Exception {
+	private TreeFile createTreeBF(final IMonitor mon, final long fid, final boolean keepBitWidth) throws Exception {
 		final long oid = fileName.hashCode(); // include file name in ID
 		TreeFile f = TreeFactory.createTreeFile(oid, fileName);
 		f.setHostname(host);
@@ -395,7 +395,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * @return node
 	 * @throws Exception
 	 */
-	private Node createNode(final int fid, final TreeFile f, final HashMap<Long, Node> pool, final Queue<String> queue, final String name, final boolean keepBitWidth) throws Exception {
+	private Node createNode(final long fid, final TreeFile f, final HashMap<Long, Node> pool, final Queue<String> queue, final String name, final boolean keepBitWidth) throws Exception {
 		try {
 			H5O_info_t info = H5.H5Oget_info_by_name(fid, name, HDF5Constants.H5P_DEFAULT);
 			int t = info.type;
@@ -435,8 +435,8 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * @return node
 	 * @throws Exception
 	 */
-	private Node createGroup(final int fid, final TreeFile f, long oid, final HashMap<Long, Node> pool, final Queue<String> queue, final String name, final boolean keepBitWidth) throws Exception {
-		int gid = -1;
+	private Node createGroup(final long fid, final TreeFile f, long oid, final HashMap<Long, Node> pool, final Queue<String> queue, final String name, final boolean keepBitWidth) throws Exception {
+		long gid = -1;
 		GroupNode group = null;
 
 		try {
@@ -630,7 +630,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * @return node
 	 * @throws Exception
 	 */
-	private Node createDataset(final int lid, final TreeFile f, long oid, final HashMap<Long, Node> pool, final String path, final boolean keepBitWidth) throws Exception {
+	private Node createDataset(final long lid, final TreeFile f, long oid, final HashMap<Long, Node> pool, final String path, final boolean keepBitWidth) throws Exception {
 		byte[] idbuf = null;
 		if (oid == DEFAULT_OBJECT_ID) {
 			try {
@@ -648,7 +648,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			}
 		}
 
-		int did = -1, tid = -1;
+		long did = -1, tid = -1;
 		try {
 //			Thread.sleep(200);
 
@@ -695,7 +695,7 @@ public class HDF5Loader extends AbstractFileLoader {
 
 
 	// return true when attributes contain a NAPI mount - dodgy external linking for HDF5 version < 1.8
-	private static boolean copyAttributes(final String name, final Node nn, final int id) {
+	private static boolean copyAttributes(final String name, final Node nn, final long id) {
 		boolean hasNAPIMount = false;
 
 		try {
@@ -729,7 +729,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			throw new ScanFileHolderException("Could not get canonical path", e);
 		}
 
-		int fid = -1;
+		long fid = -1;
 		try {
 			HierarchicalDataFactory.acquireLowLevelReadingAccess(cPath);
 			fid = H5.H5Fopen(path, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
@@ -853,7 +853,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		public boolean isComplex = false;
 	}
 
-	private static CompositeDatatype findClassesInComposite(int tid) throws HDF5LibraryException {
+	private static CompositeDatatype findClassesInComposite(long tid) throws HDF5LibraryException {
 		List<String> names = new ArrayList<String>();
 		List<Integer> classes = new ArrayList<Integer>();
 		List<Integer> widths = new ArrayList<Integer>();
@@ -928,10 +928,10 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * @param signs
 	 * @throws HDF5LibraryException
 	 */
-	private static void flattenCompositeDatatype(int tid, String prefix, List<String> names, List<Integer> classes, List<Integer> widths, List<Boolean> signs) throws HDF5LibraryException {
+	private static void flattenCompositeDatatype(long tid, String prefix, List<String> names, List<Integer> classes, List<Integer> widths, List<Boolean> signs) throws HDF5LibraryException {
 		int tclass = H5.H5Tget_class(tid);
 		if (tclass == HDF5Constants.H5T_ARRAY) {
-			int btid = -1;
+			long btid = -1;
 			try {
 				btid = H5.H5Tget_super(tid);
 				tclass = H5.H5Tget_class(btid);
@@ -957,9 +957,9 @@ public class HDF5Loader extends AbstractFileLoader {
 			if (n <= 0)
 				return;
 	
-			int mtype = 0;
+			long mtype = 0;
 			int mclass = 0;
-			int tmptid = 0;
+			long tmptid = 0;
 			for (int i = 0; i < n; i++) {
 				try {
 					mtype = H5.H5Tget_member_type(tid, i);
@@ -1075,9 +1075,9 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * @throws Exception
 	 */
 	private static boolean createLazyDataset(final TreeFile file, final DataNode dataset,
-			final String nodePath, final String name, final int did, final int tid,
+			final String nodePath, final String name, final long did, final long tid,
 			final boolean keepBitWidth, final boolean useExternalFiles) throws Exception {
-		int sid = -1, pid = -1;
+		long sid = -1, pid = -1;
 		int rank;
 		boolean isText, isVLEN, isUnsigned = false;
 //		boolean isEnum, isRegRef, isNativeDatatype;
@@ -1134,7 +1134,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			}
 
 			// check if datatype in file is native datatype
-			int tmptid = 0;
+			long tmptid = 0;
 			try {
 				tmptid = H5.H5Tget_native_type(tid);
 				if (!H5.H5Tequal(tid, tmptid)) {
@@ -1275,7 +1275,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * @return string dataset
 	 * @throws Exception
 	 */
-	private static StringDataset extractExternalFileNames(final int did, final int tid, final boolean isVLEN, final int[] shape) throws Exception {
+	private static StringDataset extractExternalFileNames(final long did, final long tid, final boolean isVLEN, final int[] shape) throws Exception {
 		int length = 1;
 		for (int i = 0; i < shape.length; i++) {
 			length *= shape[i];
@@ -1428,7 +1428,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			logger.error("Could not get canonical path", e);
 			throw new ScanFileHolderException("Could not get canonical path", e);
 		}
-		int fid = -1;
+		long fid = -1;
 		try {
 			HierarchicalDataFactory.acquireLowLevelReadingAccess(fileName);
 			fid = H5.H5Fopen(fileName, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
@@ -1459,8 +1459,8 @@ public class HDF5Loader extends AbstractFileLoader {
 		return list;
 	}
 
-	private void visitGroup(final int fid, final TreeFile f, final String name, final List<String> names, int cDepth, int rDepth, ArrayList<ILazyDataset> list) throws Exception {
-		int gid = -1;
+	private void visitGroup(final long fid, final TreeFile f, final String name, final List<String> names, int cDepth, int rDepth, ArrayList<ILazyDataset> list) throws Exception {
+		long gid = -1;
 
 		try {
 			int nelems = 0;
@@ -1519,36 +1519,36 @@ public class HDF5Loader extends AbstractFileLoader {
 						// System.err.println("D: " + oname);
 						if (names.contains(oname)) {
 							
-						int did = -1, tid = -1;
-						try {
-							did = H5.H5Dopen(gid, oname, HDF5Constants.H5P_DEFAULT);
-							tid = H5.H5Dget_type(did);
-
-							// create a new dataset
-							DataNode d = TreeFactory.createDataNode(oid);
-							if (!createLazyDataset(f, d, name + oname, oname, did, tid, keepBitWidth,
-									d.containsAttribute(DATA_FILENAME_ATTR_NAME))) {
-								logger.error("Could not create a lazy dataset {} from {}", oname, name);
-								continue;
-							}
-							if (d.getDataset() != null)
-								list.add(d.getDataset());
-						} catch (HDF5Exception ex) {
-							logger.error(String.format("Could not open dataset (%s) %s in %s", name, oname, f), ex);
-						} finally {
-							if (tid >= 0) {
-								try {
-									H5.H5Tclose(tid);
-								} catch (HDF5Exception ex) {
+							long did = -1, tid = -1;
+							try {
+								did = H5.H5Dopen(gid, oname, HDF5Constants.H5P_DEFAULT);
+								tid = H5.H5Dget_type(did);
+	
+								// create a new dataset
+								DataNode d = TreeFactory.createDataNode(oid);
+								if (!createLazyDataset(f, d, name + oname, oname, did, tid, keepBitWidth,
+										d.containsAttribute(DATA_FILENAME_ATTR_NAME))) {
+									logger.error("Could not create a lazy dataset {} from {}", oname, name);
+									continue;
+								}
+								if (d.getDataset() != null)
+									list.add(d.getDataset());
+							} catch (HDF5Exception ex) {
+								logger.error(String.format("Could not open dataset (%s) %s in %s", name, oname, f), ex);
+							} finally {
+								if (tid >= 0) {
+									try {
+										H5.H5Tclose(tid);
+									} catch (HDF5Exception ex) {
+									}
+								}
+								if (did >= 0) {
+									try {
+										H5.H5Dclose(did);
+									} catch (HDF5Exception ex) {
+									}
 								}
 							}
-							if (did >= 0) {
-								try {
-									H5.H5Dclose(did);
-								} catch (HDF5Exception ex) {
-								}
-							}
-						}
 						}
 					} else if (otype == HDF5Constants.H5O_TYPE_NAMED_DATATYPE) {
 						logger.error("Named datatype not supported"); // TODO

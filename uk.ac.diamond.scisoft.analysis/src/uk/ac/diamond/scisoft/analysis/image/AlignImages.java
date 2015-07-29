@@ -36,10 +36,11 @@ public class AlignImages {
 	 * @param fromStart direction of image alignment: should currently be set to true 
 	 * (the method needs to be re-modified to take into account the flip mode)
 	 * @param preShift
+	 * @param monitor
 	 * @return shifts
 	 */
 	public static List<double[]> align(final IDataset[] images, final List<IDataset> shifted, 
-			final RectangularROI roi, final boolean fromStart, double[] preShift) {
+			final RectangularROI roi, final boolean fromStart, double[] preShift, IMonitor monitor) {
 		List<IDataset> list = new ArrayList<IDataset>();
 		Collections.addAll(list, images);
 		if (!fromStart) {
@@ -68,6 +69,11 @@ public class AlignImages {
 			Dataset data = map.value(image).get(0);
 			data.setName("aligned_" + image.getName());
 			shifted.add(data);
+			if (monitor != null) {
+				if(monitor.isCancelled())
+					return shift;
+				monitor.worked(1);
+			}
 		}
 		return shift;
 	}
@@ -81,7 +87,7 @@ public class AlignImages {
 	 * @param preShift
 	 * @return shifts
 	 */
-	public static List<double[]> align(final String[] files, final List<IDataset> shifted, final RectangularROI roi, final boolean fromStart, final double[] preShift) {
+	public static List<double[]> align(final String[] files, final List<IDataset> shifted, final RectangularROI roi, final boolean fromStart, final double[] preShift, IMonitor monitor) {
 		IDataset[] images = new IDataset[files.length];
 
 		for (int i = 0; i < files.length; i++) {
@@ -93,7 +99,7 @@ public class AlignImages {
 			}
 		}
 
-		return align(images, shifted, roi, fromStart, preShift);
+		return align(images, shifted, roi, fromStart, preShift, monitor);
 	}
 
 	/**
@@ -116,9 +122,6 @@ public class AlignImages {
 			return null;
 		RectangularROIList rois = new RectangularROIList();
 		rois.add(roi);
-
-		if (monitor != null)
-			monitor.worked(1);
 
 		if (shifts == null)
 			shifts = new ArrayList<List<double[]>>();
@@ -159,7 +162,7 @@ public class AlignImages {
 				topImages[i] = data.get(i * nsets);
 			}
 			// align top images
-			topShifts = align(topImages, anchorList, rois.get(0), true, null);
+			topShifts = align(topImages, anchorList, rois.get(0), true, null, monitor);
 
 			for (int p = 0; p < mode; p++) {
 				for (int i = 0; i < nsets; i++) {
@@ -169,7 +172,7 @@ public class AlignImages {
 				shifted.clear();
 				try {
 					// align rest of images
-					shifts.add(AlignImages.align(tImages, shifted, rois.get(p), true, topShifts.get(p)));
+					shifts.add(AlignImages.align(tImages, shifted, rois.get(p), true, topShifts.get(p), monitor));
 					shifted.remove(0); // remove unshifted anchor
 					shiftedImages.add(anchor); // add shifted anchor
 					shiftedImages.addAll(shifted); // add aligned images
@@ -179,12 +182,13 @@ public class AlignImages {
 				}
 
 				fromStart = !fromStart;
-				if (monitor != null)
+				if (monitor != null) {
+					if (monitor.isCancelled())
+						return shiftedImages;
 					monitor.worked(1);
+				}
 			}
 		}
-		if (monitor != null)
-			monitor.worked(1);
 		return shiftedImages;
 	}
 }

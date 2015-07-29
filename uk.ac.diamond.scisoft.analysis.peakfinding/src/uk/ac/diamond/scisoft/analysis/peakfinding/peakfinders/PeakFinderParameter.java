@@ -30,11 +30,11 @@ public class PeakFinderParameter implements IPeakFinderParameter {
 	}
 
 	@Override
-	public void setValue(Number value) throws Exception {
+	public void setValue(Number value) {
 		try {
 			if((isInt) && (value.equals((Integer)value))) this.value = value;
 		} catch (Exception e) {
-			if (isInt) throw new Exception("Parameter "+name+" should be an Integer, found Double.");
+			if (isInt) throw new IllegalArgumentException("Parameter "+name+" should be an Integer, found Double.");
 		} finally {
 			if (!isInt) this.value = value;
 		}

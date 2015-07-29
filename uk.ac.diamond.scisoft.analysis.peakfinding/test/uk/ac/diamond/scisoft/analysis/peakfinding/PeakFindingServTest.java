@@ -85,7 +85,7 @@ public class PeakFindingServTest {
 	}
 	@Test
 	public void testNoActivePeakFindersException() throws Exception {
-		thrower.expect(Exception.class);
+		thrower.expect(IllegalArgumentException.class);
 		thrower.expectMessage("No peak finders");
 		
 		setFakeDataOnDTO();

@@ -21,31 +21,31 @@ public interface IPeakFindingService {
 	 * @param id Should be unique string from extension point, e.g. fully 
 	 * qualified class name (FQCN)
 	 * @return String
-	 * @throws Exception
+	 * @throws IllegalArgumentException
 	 */
-	public String getPeakFinderName(String id) throws Exception;
+	public String getPeakFinderName(String id);
 
 	/**
 	 * Returns the collection of IDs of all peak finders registered with the service
 	 * @return
 	 */
-	public Collection<String> getRegisteredPeakFinders() throws Exception;
+	public Collection<String> getRegisteredPeakFinders();
 	
 	/**
 	 * Get the description of the specified IPeakFinder ID
 	 * @param id Unique string (e.g. FQCN)
 	 * @return String
-	 * @throws Exception
+	 * @throws IllegalArgumentException
 	 */
-	public String getPeakFinderDescription(String id) throws Exception;
+	public String getPeakFinderDescription(String id);
 	
 	/**
 	 * Get the (default) set of parameters associated with given IPeakFinder ID
 	 * @param id Unique string (e.g. FQCN)
 	 * @return Map<name string of parameter, parameter value>
-	 * @throws Exception
+	 * @throws IllegalArgumentException
 	 */
-	public Map<String, IPeakFinderParameter> getPeakFinderParameters(String id) throws Exception;
+	public Map<String, IPeakFinderParameter> getPeakFinderParameters(String id);
 	
 	/**
 	 * Register all full implementations of IPeakFinders in a package
@@ -53,8 +53,9 @@ public interface IPeakFindingService {
 	 * for unit tests
 	 * @param ClassLoader cl 
 	 * @param String package from which to load IPeakFinders
+	 * @throws Exception
 	 */
-	public void addPeakFindersByClass(ClassLoader cl, String pakage) throws Exception;
+	public void addPeakFindersByClass(ClassLoader cl, String pakage) throws ClassNotFoundException,IllegalAccessException,InstantiationException;
 	
 	/**
 	 * Register all all IPeakFinders found by extensions points with the
@@ -68,6 +69,7 @@ public interface IPeakFindingService {
 	 * found peaks back in the DTO.
 	 * @param peakFindingData Data Transfer Object (DTO) containing the 
 	 *        configuration for peak finding run
+	 * @throws Exception
 	 */
 	public void findPeaks(IPeakFindingData peakFindingData) throws Exception;
 }

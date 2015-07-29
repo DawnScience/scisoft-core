@@ -44,8 +44,14 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 		addPeakFindersByExtension();
 	}
 	
+	private void checkForPFID(String pfID) {
+		if (PEAKFINDERS.containsKey(pfID)) return;
+		throw new IllegalArgumentException(pfID+" is not registered with the peak finding service");
+	}
+	
 	@Override
-	public void addPeakFindersByClass(ClassLoader cl, String pakage) throws Exception {
+	public void addPeakFindersByClass(ClassLoader cl, String pakage) 
+			throws ClassNotFoundException,IllegalAccessException,InstantiationException {
 		final List<Class<?>> clazzes = ClassUtils.getClassesForPackage(cl, pakage);
 		for (Class<?> clazz : clazzes) {
 			if (Modifier.isAbstract(clazz.getModifiers())) continue;
@@ -88,9 +94,10 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 	}
 	
 	@Override
-	public String getPeakFinderName(String id) throws Exception {
+	public String getPeakFinderName(String pfID) {
 		checkForPeakFinders();
-		return PEAKFINDERS.get(id).getName();
+		checkForPFID(pfID);
+		return PEAKFINDERS.get(pfID).getName();
 	}
 
 	@Override
@@ -100,17 +107,18 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 	}
 
 	@Override
-	public Map<String, IPeakFinderParameter> getPeakFinderParameters(String id)
-			throws Exception {
+	public Map<String, IPeakFinderParameter> getPeakFinderParameters(String pfID) {
 		checkForPeakFinders();
-		IPeakFinder selectedPeakFinder = PEAKFINDERS.get(id).getPeakFinder();
+		checkForPFID(pfID);
+		IPeakFinder selectedPeakFinder = PEAKFINDERS.get(pfID).getPeakFinder();
 		return selectedPeakFinder.getParameters();
 	}
 
 	@Override
-	public String getPeakFinderDescription(String id) throws Exception {
+	public String getPeakFinderDescription(String pfID) {
 		checkForPeakFinders();
-		return PEAKFINDERS.get(id).getDescription();
+		checkForPFID(pfID);
+		return PEAKFINDERS.get(pfID).getDescription();
 	}
 	
 	@Override
@@ -132,10 +140,11 @@ public class PeakFindingServiceImpl implements IPeakFindingService {
 		if (peakFindingData.hasActivePeakFinders()) {
 			activePeakFinders = (Set<String>)peakFindingData.getActivePeakFinders();
 			for (String pfID : activePeakFinders) {
+				checkForPFID(pfID);
 				peakFinderParameters.put(pfID, peakFindingData.getPFParametersByPeakFinder(pfID));
 			}
 		} else {
-			throw new Exception("No peak finders set active");
+			throw new IllegalArgumentException("No peak finders set active");
 		}
 		
 		

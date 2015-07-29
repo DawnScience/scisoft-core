@@ -577,6 +577,13 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
             name="Centroid">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.MinMaxNormalize"
+            description="Normalize the minimum to zero and the maximum to one"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.MinMaxNormalize"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            name="Minimum Maximum Normalization">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

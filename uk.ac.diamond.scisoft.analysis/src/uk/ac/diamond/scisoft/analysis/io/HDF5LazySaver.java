@@ -78,6 +78,10 @@ public class HDF5LazySaver extends HDF5LazyLoader implements ILazySaver, Seriali
 			}
 			initialize();
 		}
+		if (data.getRank() == 0) {
+			data = data.getSliceView();
+			data.setShape(slice.getShape());
+		}
 		HDF5Utils.setDatasetSlice(filePath, nodePath, name, slice, data);
 	}
 }

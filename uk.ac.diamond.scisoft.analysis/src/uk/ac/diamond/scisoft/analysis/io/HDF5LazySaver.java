@@ -26,7 +26,8 @@ public class HDF5LazySaver extends HDF5LazyLoader implements ILazySaver, Seriali
 	private int[] maxShape;
 	private int[] chunks;
 	private Object fill;
-	private boolean init = false;
+	private boolean create = false; // create on first slice setting
+	private boolean init = false;   // has been initialized?
 
 	/**
 	 * 
@@ -50,6 +51,17 @@ public class HDF5LazySaver extends HDF5LazyLoader implements ILazySaver, Seriali
 		this.fill = fill;
 	}
 
+	/**
+	 * Set flag to create the dataset on file when the first slice is set
+	 * @param create this is false by default (i.e. no dataset is created)
+	 */
+	public void setCreateOnInitialization(boolean create) {
+		if (init) {
+			throw new UnsupportedOperationException("It is too late for this flag to have any effect as the first slice has already been set");
+		}
+		this.create = create;
+	}
+
 	@Override
 	public boolean isFileWriteable() {
 		return new File(filePath).canWrite();
@@ -59,7 +71,9 @@ public class HDF5LazySaver extends HDF5LazyLoader implements ILazySaver, Seriali
 	public void initialize() throws Exception {
 		if (!init) {
 			init = true;
-			HDF5Utils.createDataset(filePath, nodePath, name, trueShape, maxShape, chunks, dtype, fill, false);
+			if (create) {
+				HDF5Utils.createDataset(filePath, nodePath, name, trueShape, maxShape, chunks, dtype, fill, false);
+			}
 		}
 	}
 

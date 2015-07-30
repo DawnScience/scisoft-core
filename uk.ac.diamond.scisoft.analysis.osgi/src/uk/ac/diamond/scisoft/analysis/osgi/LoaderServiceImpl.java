@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
@@ -225,4 +226,8 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 		return false;
 	}
 
+	@Override
+	public Class<? extends IFileLoader> getLoaderClass(String extension) {
+		return LoaderFactory.getLoaderClass(extension);
+	}
 }

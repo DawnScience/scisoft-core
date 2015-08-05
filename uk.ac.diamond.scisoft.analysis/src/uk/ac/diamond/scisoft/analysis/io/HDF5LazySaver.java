@@ -16,6 +16,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.ILazySaver;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 
 /**
@@ -96,6 +97,8 @@ public class HDF5LazySaver extends HDF5LazyLoader implements ILazySaver, Seriali
 			data = data.getSliceView();
 			data.setShape(slice.getShape());
 		}
+		//higher level API does not cope with differing data types
+		data = DatasetUtils.cast(data, dtype);
 		HDF5Utils.setDatasetSlice(filePath, nodePath, name, slice, data);
 	}
 }

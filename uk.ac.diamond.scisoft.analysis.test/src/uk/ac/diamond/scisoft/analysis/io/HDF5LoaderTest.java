@@ -488,4 +488,14 @@ public class HDF5LoaderTest {
 		assertArrayEquals(new int[] {160, 210}, ds.getShape());
 		assertArrayEquals(new byte[] {87, 11, 1}, (byte[]) ds.getObject(0, 0));
 	}
+
+	@Test
+	public void testLoadingMissingLink() throws ScanFileHolderException {
+		String n = TestFileFolder + "missinglink.h5";
+		HDF5Loader l = new HDF5Loader(n);
+		DataHolder dh = l.loadFile();
+		System.err.println(Arrays.toString(dh.getNames()));
+		GroupNode g = l.tFile.getGroupNode();
+		assertEquals(0, g.getNumberOfNodelinks());
+	}
 }

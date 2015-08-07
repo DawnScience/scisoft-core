@@ -34,6 +34,7 @@ import ncsa.hdf.hdf5lib.HDFNativeData;
 import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
 import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
 import ncsa.hdf.hdf5lib.structs.H5G_info_t;
+import ncsa.hdf.hdf5lib.structs.H5L_info_t;
 import ncsa.hdf.hdf5lib.structs.H5O_info_t;
 import ncsa.hdf.object.Datatype;
 import ncsa.hdf.object.h5.H5Datatype;
@@ -511,6 +512,10 @@ public class HDF5Loader extends AbstractFileLoader {
 				otype = oTypes[i];
 				ltype = lTypes[i];
 				oid = createObjectID(f.getID(), oids[i]);
+				if (ltype == -1) { // need to handle cases where the get_info call fails
+					H5L_info_t info = H5.H5Lget_info(fid, oname, HDF5Constants.H5P_DEFAULT);
+					ltype = info.type; // not worth getting object type as it has already failed
+				}
 
 				if (ltype == HDF5Constants.H5L_TYPE_HARD) {
 					if (otype == HDF5Constants.H5O_TYPE_GROUP) {
@@ -557,6 +562,8 @@ public class HDF5Loader extends AbstractFileLoader {
 							group.addNode(name, oname, n);
 					} else if (otype == HDF5Constants.H5O_TYPE_NAMED_DATATYPE) {
 						logger.error("Named datatype not supported"); // TODO
+					} else {
+						logger.error("Something wrong with hardlinked object");
 					}
 				} else if (ltype == HDF5Constants.H5L_TYPE_SOFT) {
 					// System.err.println("S: " + oname);
@@ -594,8 +601,6 @@ public class HDF5Loader extends AbstractFileLoader {
 					} else {
 						logger.error("Could not find external file {}", eName);
 					}
-				} else {
-					// System.err.println("U: " + oname);
 				}
 			}
 		} finally {

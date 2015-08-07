@@ -104,6 +104,9 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 
 	private static final String QUOTE_CHAR = "\"";
 
+	private static final int BUFFER_SIZE = 40*1024;
+	private static final int MARK_LIMIT = BUFFER_SIZE;
+
 	/**
 	 * Function that loads in the standard SRS datafile
 	 * 
@@ -120,7 +123,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 		LineNumberReader in = null;
 		
 		try {
-			in = new LineNumberReader(new FileReader(fileName));
+			in = new LineNumberReader(new FileReader(fileName), BUFFER_SIZE);
 			String dataStr;
 			// an updated header reader grabs all the metadata
 			readMetadata(in, mon);
@@ -303,7 +306,6 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 	}
 
 	private static final String EQUAL = "=";
-	private static final int MARK_LIMIT = 1024;
 
 	protected void readMetadata(LineNumberReader in, IMonitor mon) throws ScanFileHolderException {
 		
@@ -455,6 +457,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 				datasets[i] = DatasetUtils.convertToDataset(dh.getDataset(i));
 			}
 
+			// TODO check line length does not exceed loader capability
 			for (int j = 0; j < rows; j++) {
 				for (int i = 0; i < imax; i++) {
 					try {

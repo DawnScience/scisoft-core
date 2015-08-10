@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.dawnsci.analysis.api.operation">
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.python.PythonXPDFShim"
+            icon="icons/python.png"
+            id="uk.ac.diamond.scisoft.xpdf.python.PythonXPDFShim"
+            model="uk.ac.diamond.scisoft.analysis.processing.python.PythonScriptModel"
+            name="XPDF Python Shim">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertBeamMetadataOperation"
+            description="Insert the XPDF metadata into the main Dataset"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertBeamMetadataOperation"
+            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertBeamMetadataModel"
+            name="Insert XPDF Beam Metadata">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertSampleMetadataOperation"
+            description="Insert the sample metadata into the processing pipeline"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertSampleMetadataOperation"
+            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertSampleMetadataModel"
+            name="Insert XPDF Sample Metadata">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertContainerMetadataOperation"
+            description="Insert a container metadata instance into the processing pipeline"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertContainerMetadataOperation"
+            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertContainerMetadataModel"
+            name="Insert XPDF Container Metadata">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFProcessingOperation"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFProcessingOperation"
+            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFProcessingModel"
+            name="XPDF Pipeline Processing">
+      </operation>
+   </extension>
+
+</plugin>

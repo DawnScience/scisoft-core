@@ -86,37 +86,34 @@ public class SRSLoaderTest {
 	@Test
 	public void testSRSLoaderLoop()  {
 		
-		boolean fail = true;
+		boolean success = false;
 		try {
 			String testfile1 = "testfiles/gda/analysis/io/SRSLoaderTest/optics_april20110402.dat";
-			// Dodgy old spec file, SRSLoader should reject it! Or at least not loop forever
+			// Dodgy old spec file, but now SRSLoader loads it! (And does not loop forever)
 			
 			DataHolder dh = new SRSLoader(testfile1).loadFile();
 			
-			final int size = dh.getList().size();
-			if (size!=0) fail("Test file optics_april20110402.dat should not be parsed!");
+			success = dh.size() != 0;
 		} catch (Exception expected) {
-			fail = false;
+			// do nothing
 		}
-		if (fail) fail("Test file optics_april20110402.dat should not be parsed!");
+		if (!success) fail("Test file optics_april20110402.dat should be parsed!");
 	}
 	
 	@Test
 	public void testExtendedSRSLoaderLoop()  {
 		
-		boolean fail = true;
+		boolean success = false;
 		try {
 			String testfile1 = "testfiles/gda/analysis/io/SRSLoaderTest/optics_april20110402.dat";
-			// Dodgy old spec file, SRSLoader should reject it! Or at least not loop forever
+			// Dodgy old spec file, but now SRSLoader loads it! (And does not loop forever)
 			
 			DataHolder dh = new ExtendedSRSLoader(testfile1).loadFile();
 			
-			final int size = dh.getList().size();
-			if (size!=0) fail("Test file optics_april20110402.dat should not be parsed!");
+			success = dh.size() != 0;
 		} catch (Exception expected) {
-			fail = false;
 		}
-		if (fail) fail("Test file optics_april20110402.dat should not be parsed!");
+		if (!success) fail("Test file optics_april20110402.dat should be parsed!");
 	}
 
 	@Test

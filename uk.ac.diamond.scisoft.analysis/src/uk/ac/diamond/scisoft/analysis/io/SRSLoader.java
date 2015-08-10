@@ -161,7 +161,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 			} else {
 				convertToDatasets(result, vals, columns, isStoreStringValues(), isUseImageLoaderForStrings(), (new File(this.fileName)).getParent());
 			}
-			if (result.toLazyMap().isEmpty()) throw new Exception("Cannot parse "+fileName+" into datasets!");
+			if (result.size() == 0) throw new Exception("Cannot parse "+fileName+" into datasets!");
 
 			if (loadMetadata) {
 				createMetadata();

@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.xpdf.operations;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
-public class XPDFProcessingModel extends AbstractOperationModel {
+public class XPDFTophatModel extends AbstractOperationModel {
 
 	// TODO: Change defaults to real defaults, rather than ceria SRM defaults
 	@OperationModelField(hint="Enter the minimum radius to consider", label="Rmin (Angstroms)")
@@ -23,8 +23,6 @@ public class XPDFProcessingModel extends AbstractOperationModel {
 	private double rStep = 0.02;
 	@OperationModelField(hint="Enter the width of the Tophat filter", label="Tophat width (Angstroms)")
 	private double tophatWidth = 3.0;
-	@OperationModelField(hint="Enter the width of the Lorch Fourier filter", label="Lorch width")
-	private double lorchWidth = 0.2;
 	
 	public double getrMin() {
 		return rMin;
@@ -49,12 +47,6 @@ public class XPDFProcessingModel extends AbstractOperationModel {
 	}
 	public void setTophatWidth(double tophatWidth) {
 		firePropertyChange("tophatWidth", this.tophatWidth, this.tophatWidth = tophatWidth);
-	}
-	public double getLorchWidth() {
-		return lorchWidth;
-	}
-	public void setLorchWidth(double lorchWidth) {
-		firePropertyChange("lorchWidth", this.lorchWidth, this.lorchWidth = lorchWidth);
 	}
 
 

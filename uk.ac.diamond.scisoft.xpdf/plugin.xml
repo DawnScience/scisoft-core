@@ -32,10 +32,29 @@
             name="Insert XPDF Container Metadata">
       </operation>
       <operation
-            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFProcessingOperation"
-            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFProcessingOperation"
-            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFProcessingModel"
-            name="XPDF Pipeline Processing">
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFLorchFTOperation"
+            description="Apply the Lorch Fourier Transform to enter r-space."
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFLorchFTOperation"
+            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFLorchFTModel"
+            name="XPDF Lorch Fourier Transform (th_soq to dofr)">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFGofrFromDofrOperation"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFGofrFromDofrOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            name="XPDF D(r) to G(r)">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFTophatOperation"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFTophatOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            name="XPDF Tophat background subtraction (soq to th_soq)">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFSelfScatteringNormalisationOperation"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFSelfScatteringNormalisationOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            name="XPDF Self-scattering and Normalisation (ABSCOR to soq)">
       </operation>
    </extension>
 

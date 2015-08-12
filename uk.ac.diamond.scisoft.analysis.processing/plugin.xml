@@ -584,6 +584,16 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
             name="Minimum Maximum Normalization">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.image.PseudoFlatFieldFilterOperation"
+            description="Creates a Gaussian-blurred image using the given kernel and then subtract the blurred image/pseudo flat field from the original image"
+            icon="icons/image-blur.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.image.PseudoFlatFieldFilterOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.image.KernelWidthModel"
+            name="Pseudo-Flat Field Filter"
+            visible="true">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

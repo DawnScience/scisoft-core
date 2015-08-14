@@ -513,7 +513,7 @@ public class HDF5Loader extends AbstractFileLoader {
 				ltype = lTypes[i];
 				oid = createObjectID(f.getID(), oids[i]);
 				if (ltype == -1) { // need to handle cases where the get_info call fails
-					H5L_info_t info = H5.H5Lget_info(fid, oname, HDF5Constants.H5P_DEFAULT);
+					H5L_info_t info = H5.H5Lget_info(fid, name + Node.SEPARATOR + oname, HDF5Constants.H5P_DEFAULT);
 					ltype = info.type; // not worth getting object type as it has already failed
 				}
 

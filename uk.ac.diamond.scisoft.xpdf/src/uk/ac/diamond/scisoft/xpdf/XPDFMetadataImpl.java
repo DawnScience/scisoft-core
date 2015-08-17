@@ -167,9 +167,9 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void packFromPython(Map<String, Object> pyMap) {
-		this.makeSampleMetadata((Map<String, Object>) pyMap.get("sample"));
-		this.makeContainersMetadata((Map<String, Object>) pyMap.get("containerData"));
-		this.makeBeamMetadata((Map<String, Object>) pyMap.get("beamData"));
+		sampleData = this.makeSampleMetadata((Map<String, Object>) pyMap.get("sample"));
+		containerData = this.makeContainersMetadata((Map<String, Object>) pyMap.get("containerData"));
+		beamData = this.makeBeamMetadata((Map<String, Object>) pyMap.get("beamData"));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -186,7 +186,7 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 	}
 
 	private XPDFTargetComponent makeContainerMetadata(Map<String, Object> outputContainer) {
-		XPDFTargetComponent compMeta = new XPDFTargetComponent();
+		XPDFTargetComponent compMeta = makeTargetComponent(outputContainer);
 
 		compMeta.setSample(false);
 

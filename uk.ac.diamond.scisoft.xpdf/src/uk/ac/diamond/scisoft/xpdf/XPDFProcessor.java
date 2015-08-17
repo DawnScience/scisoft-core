@@ -21,6 +21,7 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFContainersMetadataImpl;
+import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 public class XPDFProcessor {
 
@@ -168,7 +169,7 @@ public class XPDFProcessor {
 		
 		Dataset q;
 		try {
-			 q = Maths.multiply(4*Math.PI*xpdfData.getMetadata(XPDFBeamMetadata.class).get(0).getBeamEnergy()/hc_qe, Maths.sin(Maths.multiply(0.5*Math.PI/180.0, tthd)));
+			 q = Maths.multiply(4*Math.PI*xpdfData.getMetadata(XPDFMetadata.class).get(0).getBeam().getBeamEnergy()/hc_qe, Maths.sin(Maths.multiply(0.5*Math.PI/180.0, tthd)));
 		} catch (Exception e) {
 			q = DoubleDataset.zeros(tthd);
 		}

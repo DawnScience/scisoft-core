@@ -7,7 +7,7 @@ level,name,default,type,unique,lowerlimit,upperlimit,shortdoc,longdoc
 3: Debug"
 0,data_type,single,str,yes,,,Reconstruction floatine number precision,Reconstruction floating number precision ('single' or 'double')
 0,io,,Param,yes,,,,
-1,base_dir,/data/CDI/simulations/ptypy/,str,,,,Relative base path for all other paths,Important: any otherpath that not have a leading '/' indicating an absolut path will be consideres as having base_dir as root
+1,base_dir,/data/CDI/simulations/ptycho/,str,,,,Relative base path for all other paths,Important: any otherpath that not have a leading '/' indicating an absolut path will be consideres as having base_dir as root
 1,run,None,str,,,,Name of reconstruction run,"If None, the filename of the reconstruction script will be used"
 1,data_dir,analysis/,str,,,,directory where diffraction data is stored,(deprecated)
 1,plot_dir,plots/%(run)s/,str,,,,directory to dump plot images,probably this parameter will shift to the plotting client later

@@ -10,15 +10,20 @@
 package uk.ac.diamond.scisoft.xpdf.metadata;
 
 import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
+import org.eclipse.dawnsci.analysis.api.metadata.XPDFBeamMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.XPDFTargetComponentMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.XPDFTargetFormMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.XPDFTraceMetadata;
+import org.eclipse.dawnsci.analysis.api.metadata.XPDFTrace;
 
 public class XPDFTargetComponentMetadataImpl implements XPDFTargetComponentMetadata {
 
+	/**
+	 * Generated UID
+	 */
+	private static final long serialVersionUID = 5460077133669701514L;
 	private String name;
 	private XPDFTargetFormMetadata form;
-	private XPDFTraceMetadata trace;
+	private XPDFTrace trace;
 	private boolean isSample;
 	
 	public XPDFTargetComponentMetadataImpl() {
@@ -31,7 +36,7 @@ public class XPDFTargetComponentMetadataImpl implements XPDFTargetComponentMetad
 	public XPDFTargetComponentMetadataImpl(XPDFTargetComponentMetadataImpl incont) {
 		this.name = incont.name;
 		this.form = (XPDFTargetFormMetadata) incont.form.clone();
-		this.trace = (XPDFTraceMetadata) incont.trace.clone();
+		this.trace = (XPDFTrace) incont.trace.clone();
 		this.isSample=incont.isSample;
 	}
 
@@ -49,8 +54,8 @@ public class XPDFTargetComponentMetadataImpl implements XPDFTargetComponentMetad
 		this.form = (XPDFTargetFormMetadata) form.clone();
 	}
 
-	public void setTrace(XPDFTraceMetadata traceMeta) {
-		this.trace = (XPDFTraceMetadata) traceMeta.clone();
+	public void setTrace(XPDFTrace traceMeta) {
+		this.trace = (XPDFTrace) traceMeta.clone();
 	}
 
 	public void setSample(boolean isSample) {
@@ -68,14 +73,13 @@ public class XPDFTargetComponentMetadataImpl implements XPDFTargetComponentMetad
 	}
 
 	@Override
-	public XPDFTraceMetadata getTrace() {
-		return (XPDFTraceMetadata) this.trace.clone();
+	public XPDFTrace getTrace() {
+		return (XPDFTrace) this.trace.clone();
 	}
 
 	@Override
 	public boolean isSample() {
 		return this.isSample;
 	}
-
 
 }

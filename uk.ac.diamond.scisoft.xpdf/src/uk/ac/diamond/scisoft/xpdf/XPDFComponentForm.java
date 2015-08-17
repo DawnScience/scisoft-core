@@ -12,38 +12,33 @@ package uk.ac.diamond.scisoft.xpdf;
 
 import org.eclipse.dawnsci.analysis.api.metadata.XPDFTargetFormMetadata;
 
-class ComponentForm {
+// public because it needs to be visible in the uk...xpdf.operations package
+public class XPDFComponentForm {
 
 	String matName;
 	double density;
 	double packingFraction;
-	ComponentGeometry geom;
+	XPDFComponentGeometry geom;
 	
-	public ComponentForm() {
+	public XPDFComponentForm() {
 		matName = "";
 		density = 0.0;
 		packingFraction = 1.0;
 		geom = null;
 	}
 
-	public ComponentForm(ComponentForm inForm) {
+	public XPDFComponentForm(XPDFComponentForm inForm) {
 		this.matName = inForm.matName;
 		this.density = inForm.density;
 		this.packingFraction = inForm.packingFraction;
-		this.geom = (ComponentGeometry) inForm.geom.clone();
-	}
-
-	public ComponentForm(XPDFTargetFormMetadata inForm) {
-		this.matName = inForm.getMaterialName();
-		this.density = inForm.getDensity();
-		this.packingFraction = inForm.getPackingFraction();
 		// Must be a better way to do this
-		if (inForm.getGeometry().getShape() == "cylinder") {
-			this.geom = new ComponentCylinder(inForm.getGeometry());
-		} else if (inForm.getGeometry().getShape() == "plate") {
-			this.geom = new ComponentPlate(inForm.getGeometry());
+		if (inForm.getGeom().getShape() == "cylinder") {
+			this.geom = new XPDFComponentCylinder(inForm.getGeom());
+		} else if (inForm.getGeom().getShape() == "plate") {
+			this.geom = new XPDFComponentPlate(inForm.getGeom());
 		}
 	}
+
 
 	public String getMatName() {
 		return matName;
@@ -69,11 +64,11 @@ class ComponentForm {
 		this.packingFraction = packingFraction;
 	}
 
-	public ComponentGeometry getGeom() {
+	public XPDFComponentGeometry getGeom() {
 		return geom;
 	}
 
-	public void setGeom(ComponentGeometry geom) {
+	public void setGeom(XPDFComponentGeometry geom) {
 		this.geom = geom;
 	}
 	

@@ -49,12 +49,13 @@ public class XPDFProcessorTest extends TestCase {
 		mrData.setIntermediateResult("th_soq", thSoq);
 		mrData.setQ(tthd);
 		
-		Dataset gofr = DatasetUtils.convertToDataset(mrData.getGofr());
-		Dataset dofr = DatasetUtils.convertToDataset(mrData.getDofr());
+//		Dataset gofr = DatasetUtils.convertToDataset(mrData.getGofr());
+//		Dataset dofr = DatasetUtils.convertToDataset(mrData.getDofr());
 		
-		assertTrue("RMS error of dofr too large", checkDofr(r, dofr));
-		assertTrue("RMS error of gofr too large", checkGofr(r, gofr));
-		
+//		assertTrue("RMS error of dofr too large", checkDofr(r, dofr));
+//		assertTrue("RMS error of gofr too large", checkGofr(r, gofr));
+
+		fail("Code moved");
 		return;
 	}
 	
@@ -82,11 +83,12 @@ public class XPDFProcessorTest extends TestCase {
 		mrData.setIntermediateResult("DprimedoQ", dPrimedoQ);
 		mrData.setQ(tthd);
 		
-		Dataset gofr = DatasetUtils.convertToDataset(mrData.getGofr());
-		Dataset dofr = DatasetUtils.convertToDataset(mrData.getDofr());
+//		Dataset gofr = DatasetUtils.convertToDataset(mrData.getGofr());
+//		Dataset dofr = DatasetUtils.convertToDataset(mrData.getDofr());
 		
-		assertTrue("RMS error of dofr too large", checkDofr(r, dofr));
-		assertTrue("RMS error of gofr too large", checkGofr(r, gofr));
+//		assertTrue("RMS error of dofr too large", checkDofr(r, dofr));
+//		assertTrue("RMS error of gofr too large", checkGofr(r, gofr));
+		fail("Code moved");
 
 		
 	}
@@ -113,11 +115,12 @@ public class XPDFProcessorTest extends TestCase {
 		mrData.setIntermediateResult("soq", soq);
 		mrData.setQ(tthd);
 		
-		Dataset gofr = DatasetUtils.convertToDataset(mrData.getGofr());
-		Dataset dofr = DatasetUtils.convertToDataset(mrData.getDofr());
+//		Dataset gofr = DatasetUtils.convertToDataset(mrData.getGofr());
+//		Dataset dofr = DatasetUtils.convertToDataset(mrData.getDofr());
 		
-		assertTrue("RMS error of dofr too large", checkDofr(r, dofr));
-		assertTrue("RMS error of gofr too large", checkGofr(r, gofr));
+//		assertTrue("RMS error of dofr too large", checkDofr(r, dofr));
+//		assertTrue("RMS error of gofr too large", checkGofr(r, gofr));
+		fail("Code moved");
 
 		
 	}
@@ -159,11 +162,12 @@ public class XPDFProcessorTest extends TestCase {
 		mrData.setIntermediateResult("self_scattering", selfScattering);
 		mrData.setQ(tthd);
 		
-		Dataset gofr = DatasetUtils.convertToDataset(mrData.getGofr());
-		Dataset dofr = DatasetUtils.convertToDataset(mrData.getDofr());
+//		Dataset gofr = DatasetUtils.convertToDataset(mrData.getGofr());
+//		Dataset dofr = DatasetUtils.convertToDataset(mrData.getDofr());
 		
-		assertTrue("RMS error of dofr too large", checkDofr(r, dofr));
-		assertTrue("RMS error of gofr too large", checkGofr(r, gofr));
+//		assertTrue("RMS error of dofr too large", checkDofr(r, dofr));
+//		assertTrue("RMS error of gofr too large", checkGofr(r, gofr));
+		fail("Code moved");
 
 		
 	}
@@ -276,7 +280,7 @@ public class XPDFProcessorTest extends TestCase {
 		double packingFraction = 1.0;
 
 		formMeta.setMaterialName(material);
-		formMeta.setDensity(density);
+		formMeta.setMassDensity(density);
 		formMeta.setPackingFraction(packingFraction);
 		formMeta.setGeometry(geomMeta);
 
@@ -341,7 +345,7 @@ public class XPDFProcessorTest extends TestCase {
 		double packingFraction = 0.6;
 
 		formMeta.setMaterialName(material);
-		formMeta.setDensity(density);
+		formMeta.setMassDensity(density);
 		formMeta.setPackingFraction(packingFraction);
 		formMeta.setGeometry(geomMeta);
 

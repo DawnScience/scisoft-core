@@ -8,11 +8,11 @@
  */
 
 package uk.ac.diamond.scisoft.xpdf;
-//TODO: Move back to uk.ac.diamond.scisoft.xpdf once the NPEs are solved
 
 import org.eclipse.dawnsci.analysis.api.metadata.XPDFTargetGeometryMetadata;
 
-abstract class ComponentGeometry {
+// public because it needs to be visible in the uk...xpdf.operations package
+public abstract class XPDFComponentGeometry {
 
 	// Larger and smaller measurements of the component
 	double inner_r, outer_r;
@@ -20,21 +20,21 @@ abstract class ComponentGeometry {
 	// neither upstream nor downstream of itself 
 	boolean is_upstream, is_downstream;
 
-	public ComponentGeometry() {
+	public XPDFComponentGeometry() {
 		this.inner_r = 0.0;
 		this.outer_r = 0.0;
 		this.is_upstream = false;
 		this.is_downstream = false;
 	}
 
-	public ComponentGeometry(ComponentGeometry inGeom) {
+	public XPDFComponentGeometry(XPDFComponentGeometry inGeom) {
 		this.inner_r = inGeom.inner_r;
 		this.outer_r = inGeom.outer_r;
 		this.is_upstream = inGeom.is_upstream;
 		this.is_downstream = inGeom.is_downstream;
 	}
 
-	public ComponentGeometry(XPDFTargetGeometryMetadata inGeom) {
+	public XPDFComponentGeometry(XPDFTargetGeometryMetadata inGeom) {
 		double[] distances = inGeom.getDistances();
 		inner_r = distances[0];
 		outer_r = distances[1];
@@ -44,7 +44,7 @@ abstract class ComponentGeometry {
 	}
 	
 	@Override
-	protected abstract ComponentGeometry clone();
+	protected abstract XPDFComponentGeometry clone();
 
 	public void setDistances(double inIn, double inOut) {
 		this.inner_r = inIn;

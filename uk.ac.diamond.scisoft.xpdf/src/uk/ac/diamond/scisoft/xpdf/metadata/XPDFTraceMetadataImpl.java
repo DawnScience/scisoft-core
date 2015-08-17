@@ -11,9 +11,9 @@ package uk.ac.diamond.scisoft.xpdf.metadata;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
-import org.eclipse.dawnsci.analysis.api.metadata.XPDFTraceMetadata;
+import org.eclipse.dawnsci.analysis.api.metadata.XPDFTrace;
 
-public class XPDFTraceMetadataImpl implements XPDFTraceMetadata {
+public class XPDFTraceMetadataImpl implements XPDFTrace {
 
 	// Remove these if I ever work out how best to include the metadata in the dataset itself 
 	ILazyDataset trace;

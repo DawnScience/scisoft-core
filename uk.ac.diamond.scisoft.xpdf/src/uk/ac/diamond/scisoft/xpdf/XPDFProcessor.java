@@ -50,9 +50,9 @@ public class XPDFProcessor {
 	double beamData_energy;
 	
 	// Additional data
-	BeamData beamData;
-	TargetComponent sampleData;
-	List<TargetComponent> containersData;
+	XPDFBeamData beamData;
+	XPDFTargetComponent sampleData;
+	List<XPDFTargetComponent> containersData;
 	
 	
 	public XPDFProcessor(){
@@ -62,7 +62,7 @@ public class XPDFProcessor {
 
 		beamData = null;
 		sampleData = null;
-		containersData = new ArrayList<TargetComponent>();
+		containersData = new ArrayList<XPDFTargetComponent>();
 		
 		this.lorchWidth = 0.2;		
 		this.tophatWidth = 3.0;
@@ -81,42 +81,42 @@ public class XPDFProcessor {
 		this.dofr = null;
 		this.intermediateResults = new HashMap<String, Dataset>();
 
-		// Get the metadata to fill the object.
-		try {
-			beamData = new BeamData(input.getMetadata(XPDFBeamMetadata.class).get(0));
-		} catch (Exception e) {
-			beamData=null;
-		}
-		try {
-			sampleData = new TargetComponent(input.getMetadata(XPDFTargetComponentMetadata.class).get(0));
-		} catch (Exception e) {
-			sampleData = null;
-		}
-		// The XPDFProcessing Op is the end of the line for the original data, so it is subsumed into the objects.
-		sampleData.setTraceCounts(input.getSliceView());
-		
-		containersData = new ArrayList<TargetComponent>();
-		XPDFContainerMetadata containersList;
-		try {
-			containersList = input.getMetadata(XPDFContainerMetadata.class).get(0);
-		} catch (Exception e) {
-			containersList = new XPDFContainersMetadataImpl();
-		}
-		for (int i = 0; i < containersList.size(); i++) {
-			TargetComponent container = new TargetComponent((XPDFTargetComponentMetadata) containersList.getContainer(i));
-			containersData.add(container);
-		}
-		
-		// Set up the axes for the independent var
-		ILazyDataset[] axes = AbstractOperation.getFirstAxes(input);
-		IDataset ya = null;
-		if (axes != null && axes[0] != null) 
-			ya = axes[0].getSlice().squeeze();
-
-		this.setQ(DatasetUtils.convertToDataset(ya));
-		
-		
-		
+//		// Get the metadata to fill the object.
+//		try {
+//			beamData = new XPDFBeamData(input.getMetadata(XPDFBeamMetadata.class).get(0));
+//		} catch (Exception e) {
+//			beamData=null;
+//		}
+//		try {
+//			sampleData = new XPDFTargetComponent(input.getMetadata(XPDFTargetComponent.class).get(0));
+//		} catch (Exception e) {
+//			sampleData = null;
+//		}
+//		// The XPDFProcessing Op is the end of the line for the original data, so it is subsumed into the objects.
+//		sampleData.setTraceCounts(input.getSliceView());
+//		
+//		containersData = new ArrayList<XPDFTargetComponent>();
+//		XPDFContainerMetadata containersList;
+//		try {
+//			containersList = input.getMetadata(XPDFContainerMetadata.class).get(0);
+//		} catch (Exception e) {
+//			containersList = new XPDFContainersMetadataImpl();
+//		}
+//		for (int i = 0; i < containersList.size(); i++) {
+//			XPDFTargetComponent container = new XPDFTargetComponent((XPDFTargetComponent) containersList.getContainer(i));
+//			containersData.add(container);
+//		}
+//		
+//		// Set up the axes for the independent var
+//		ILazyDataset[] axes = AbstractOperation.getFirstAxes(input);
+//		IDataset ya = null;
+//		if (axes != null && axes[0] != null) 
+//			ya = axes[0].getSlice().squeeze();
+//
+//		this.setQ(DatasetUtils.convertToDataset(ya));
+//		
+//		
+//		
 		// TODO: Move to sample
 		this.g0Minus1 = 0.522718594884;
 		this.massDensity = 7.65;

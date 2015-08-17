@@ -8,25 +8,25 @@
  */
 
 package uk.ac.diamond.scisoft.xpdf;
-//TODO: Move back to uk.ac.diamond.scisoft.xpdf once the NPEs are solved
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.XPDFTargetComponentMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
-class TargetComponent {
+public class XPDFTargetComponent {
 
 	private String name;
-	private ComponentForm form;
-	private BeamTrace trace;
+	private XPDFComponentForm form;
+	private XPDFBeamTrace trace;
 	boolean isSample;
 	private double c3;
 	private Dataset subBak;
 	private Dataset calCon;
 	private Dataset mulCor;
 	
-	public TargetComponent() {
+	public XPDFTargetComponent() {
 		this.name="";
 		this.form=null;
 		this.trace=null;
@@ -37,37 +37,42 @@ class TargetComponent {
 		this.mulCor = null;
 	}
 
-	public TargetComponent(TargetComponent inComp) {
+	public XPDFTargetComponent(XPDFTargetComponent inComp) {
 		this.name = inComp.name;
-		this.form = new ComponentForm(inComp.form);
-		this.trace = new BeamTrace(inComp.trace);
+		this.form = new XPDFComponentForm(inComp.form);
+		this.trace = new XPDFBeamTrace(inComp.trace);
 		this.isSample = inComp.isSample;
 		this.c3 = inComp.c3;
-		this.subBak = inComp.subBak.getSliceView();
-		this.calCon = inComp.calCon.getSliceView();
-		this.mulCor = inComp.mulCor.getSliceView();
+		this.subBak = inComp.subBak != null ? inComp.subBak : null;
+		this.calCon = inComp.calCon != null ? inComp.calCon : null;
+		this.mulCor = inComp.mulCor != null ? inComp.mulCor : null;
 	}
 	
-	public TargetComponent(XPDFTargetComponentMetadata inComp) {
-		this.name = inComp.getName();
-		this.form = new ComponentForm(inComp.getForm());
-		this.trace = new BeamTrace(inComp.getTrace());
-		this.isSample = inComp.isSample();
-		this.c3 = 1.0;
-		this.subBak= null;
-		this.calCon = null;
-		this.mulCor = null;
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setForm(XPDFComponentForm form) {
+		this.form = form;
+	}
+
+	public void setTrace(XPDFBeamTrace trace) {
+		this.trace = trace;
+	}
+
+	public void setSample(boolean isSample) {
+		this.isSample = isSample;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public ComponentForm getForm() {
+	public XPDFComponentForm getForm() {
 		return form;
 	}
 
-	public BeamTrace getTrace() {
+	public XPDFBeamTrace getTrace() {
 		return trace;
 	}
 
@@ -79,7 +84,7 @@ class TargetComponent {
 		trace.setTrace(sliceView);
 	}
 	
-	public void setBackground(BeamTrace background) {
+	public void setBackground(XPDFBeamTrace background) {
 		subBak =  Maths.subtract(trace.getNormalizedTrace(), background.getNormalizedTrace());
 	}
 	

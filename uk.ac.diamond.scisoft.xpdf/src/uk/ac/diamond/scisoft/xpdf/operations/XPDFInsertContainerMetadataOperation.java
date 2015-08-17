@@ -21,7 +21,15 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
+import uk.ac.diamond.scisoft.xpdf.XPDFBeamTrace;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentForm;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentGeometry;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentPlate;
+import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
+import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFContainersMetadataImpl;
+import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTargetAbstractGeometryMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTargetComponentMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTargetCylinderMetadataImpl;
@@ -33,21 +41,21 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTraceMetadataImpl;
  * Add a container to the target 
  */
 public class XPDFInsertContainerMetadataOperation extends
-		AbstractOperation<XPDFInsertContainerMetadataModel, OperationData> {
+		XPDFInsertXMetadataOperation<XPDFInsertContainerMetadataModel, OperationData> {
 
 	protected OperationData process(IDataset input, IMonitor monitor)
 			throws OperationException {
-		XPDFTargetComponentMetadataImpl compMeta = new XPDFTargetComponentMetadataImpl();
-		XPDFTargetFormMetadataImpl formMeta = new XPDFTargetFormMetadataImpl();
-		XPDFTargetAbstractGeometryMetadataImpl geomMeta = null;
+		XPDFTargetComponent compMeta = new XPDFTargetComponent();
+		XPDFComponentForm formMeta = new XPDFComponentForm();
+		XPDFComponentGeometry geomMeta = null;
 
 		// Read shape from the Model
 		String shape = model.getShape();
 
 		if (shape.equals("cylinder")) {
-			geomMeta = new XPDFTargetCylinderMetadataImpl();
+			geomMeta = new XPDFComponentCylinder();
 		} else if (shape.equals("plate")) {
-			geomMeta = new XPDFTargetPlateMetadataImpl();
+			geomMeta = new XPDFComponentPlate();
 		}
 		// Read size data from the Model
 		double inner = model.getInner();
@@ -63,10 +71,10 @@ public class XPDFInsertContainerMetadataOperation extends
 		double density = model.getDensity();
 		double packingFraction = model.getPackingFraction();
 
-		formMeta.setMaterialName(material);
+		formMeta.setMatName(material);
 		formMeta.setDensity(density);
 		formMeta.setPackingFraction(packingFraction);
-		formMeta.setGeometry(geomMeta);
+		formMeta.setGeom(geomMeta);
 
 		compMeta.setForm(formMeta);
 
@@ -87,7 +95,7 @@ public class XPDFInsertContainerMetadataOperation extends
 		IDataset contTrace = ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2").getSlice();
 		// The counting time and monitor relative flux are set directly on the
 		// input Dataset, since they pertain to the data it holds
-		XPDFTraceMetadataImpl containerTraceMeta = new XPDFTraceMetadataImpl();
+		XPDFBeamTrace containerTraceMeta = new XPDFBeamTrace();
 		containerTraceMeta.setCountingTime(model.getCountingTime());
 		containerTraceMeta.setMonitorRelativeFlux(model.getMonitorRelativeFlux());
 		containerTraceMeta.setTrace(contTrace);
@@ -97,25 +105,11 @@ public class XPDFInsertContainerMetadataOperation extends
 		compMeta.setSample(false);
 
 		// compMeta is complete. Add it to the list of containers in input
-
-		XPDFContainerMetadata containerList;
-		try {
-			List<XPDFContainerMetadata> containerListList = input.getMetadata(XPDFContainerMetadata.class);
-			if (containerListList != null && !containerListList.isEmpty()) {
-				containerList = containerListList.get(0);
-			} else {
-				containerList = new XPDFContainersMetadataImpl();
-			}
-		} catch (Exception e) {
-			containerList = new XPDFContainersMetadataImpl();
-		} 
-		// containerList should now be a valid ContainerXPDFMetadata implementation
-		// Add the new container to the cloned list
-		containerList.addContainer(compMeta);
-		// remove the existing list of containers, if any
-		input.clearMetadata(XPDFContainerMetadata.class);
-		// add the new list of containers
-		input.setMetadata(containerList);
+		XPDFMetadataImpl theXPDFMetadata = getAndRemoveXPDFMetadata(input);
+		// add the container to the metadata
+		theXPDFMetadata.addContainer(compMeta);
+		
+		input.setMetadata(theXPDFMetadata);
 		
 		return new OperationData(input);
 	}
@@ -127,7 +121,7 @@ public class XPDFInsertContainerMetadataOperation extends
 
 	@Override
 	public OperationRank getInputRank() {
-		return OperationRank.ANY;
+				return OperationRank.ANY;
 	}
 
 	@Override

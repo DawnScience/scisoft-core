@@ -19,14 +19,14 @@ import org.eclipse.dawnsci.analysis.api.metadata.XPDFBeamMetadata;
  * @author Timothy Spain
  *
  */
-class BeamData {
+public class XPDFBeamData {
 
 	double beamEnergy;
 	double beamWidth;
 	double beamHeight;
-	BeamTrace beamBGTrace;
+	XPDFBeamTrace beamBGTrace;
 	
-	public BeamData() {
+	public XPDFBeamData() {
 //		Zero beam data values
 		this.beamEnergy = 0.0;
 		this.beamHeight = 0.0;
@@ -34,23 +34,23 @@ class BeamData {
 		this.beamBGTrace = null;
 	}
 
-	public BeamData(BeamData inBeam) {
+	public XPDFBeamData(XPDFBeamData inBeam) {
 		this.beamEnergy = inBeam.beamEnergy;
 		this.beamHeight = inBeam.beamHeight;
 		this.beamWidth = inBeam.beamWidth;
-		this.beamBGTrace = (BeamTrace) inBeam.beamBGTrace.clone();
+		this.beamBGTrace = (XPDFBeamTrace) inBeam.beamBGTrace.clone();
 	}
 
-	public BeamData(XPDFBeamMetadata inBeam) {
+	public XPDFBeamData(XPDFBeamMetadata inBeam) {
 		this.beamEnergy = inBeam.getBeamEnergy();
 		this.beamHeight = inBeam.getBeamHeight();
 		this.beamWidth = inBeam.getBeamWidth();
-		this.beamBGTrace = new BeamTrace(inBeam.getTrace());
+		this.beamBGTrace = new XPDFBeamTrace(inBeam.getTrace());
 	}
 	
 	@Override
-	protected BeamData clone() {
-		return new BeamData(this);
+	protected XPDFBeamData clone() {
+		return new XPDFBeamData(this);
 	}
 
 	public double getBeamEnergy() {
@@ -77,11 +77,11 @@ class BeamData {
 		this.beamHeight = beamHeight;
 	}
 
-	public BeamTrace getBeamBGTrace() {
+	public XPDFBeamTrace getBeamBGTrace() {
 		return beamBGTrace;
 	}
 
-	public void setBeamBGTrace(BeamTrace beamBGTrace) {
+	public void setBeamBGTrace(XPDFBeamTrace beamBGTrace) {
 		this.beamBGTrace = beamBGTrace;
 	}
 }

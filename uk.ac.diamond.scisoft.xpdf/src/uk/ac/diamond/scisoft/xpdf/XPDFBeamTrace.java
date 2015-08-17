@@ -8,10 +8,10 @@
  */
 
 package uk.ac.diamond.scisoft.xpdf;
-//TODO: Move back to uk.ac.diamond.scisoft.xpdf once the NPEs are solved
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.XPDFTraceMetadata;
+import org.eclipse.dawnsci.analysis.api.metadata.XPDFTrace;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 /**
@@ -20,40 +20,41 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
  * @author Timothy Spain
  *
  */
-class BeamTrace {
+//public because it needs to be visible in the uk...xpdf.operations package
+public class XPDFBeamTrace {
 
-	ILazyDataset trace;
+	IDataset trace;
 	double countingTime;
 	double monitorRelativeFlux;
 
-	public BeamTrace() {
+	public XPDFBeamTrace() {
 		countingTime = 0.0;
 		monitorRelativeFlux = 0.0;
 		trace = null;
 	}
 	
-	public BeamTrace(BeamTrace inTrace) {
+	public XPDFBeamTrace(XPDFBeamTrace inTrace) {
 		this.countingTime = inTrace.countingTime;
 		this.monitorRelativeFlux = inTrace.monitorRelativeFlux;
 		this.trace = (inTrace.trace == null) ? null : inTrace.trace.getSliceView();
 	}
 
-	public BeamTrace(XPDFTraceMetadata inTrace) {
+	public XPDFBeamTrace(XPDFTrace inTrace) {
 		this.countingTime = inTrace.getCountingTime();
 		this.monitorRelativeFlux = inTrace.getMonitorRelativeFlux();
-		this.trace = (inTrace.getTrace() == null) ? null : inTrace.getTrace().getSliceView();
+		this.trace = (inTrace.getTrace() == null) ? null : inTrace.getTrace().getSlice();
 	}
 	
 	@Override
-	protected BeamTrace clone() {
-		return new BeamTrace(this);
+	protected XPDFBeamTrace clone() {
+		return new XPDFBeamTrace(this);
 	}
 
 	public ILazyDataset getTrace() {
-		return trace.getSliceView();
+		return (trace != null) ? trace.getSliceView() : null;
 	}
 
-	public void setTrace(ILazyDataset trace) {
+	public void setTrace(IDataset trace) {
 		this.trace = trace;
 	}
 
@@ -61,17 +62,17 @@ class BeamTrace {
 		return Maths.divide(trace.getSliceView(), this.countingTime*this.monitorRelativeFlux);
 	}
 	
-//	public double getCountingTime() {
-//		return countingTime;
-//	}
+	public double getCountingTime() {
+		return countingTime;
+	}
 
 	public void setCountingTime(double countingTime) {
 		this.countingTime = countingTime;
 	}
 
-//	public double getMonitorRelativeFlux() {
-//		return monitorRelativeFlux;
-//	}
+	public double getMonitorRelativeFlux() {
+		return monitorRelativeFlux;
+	}
 
 	public void setMonitorRelativeFlux(double monitorRelativeFlux) {
 		this.monitorRelativeFlux = monitorRelativeFlux;

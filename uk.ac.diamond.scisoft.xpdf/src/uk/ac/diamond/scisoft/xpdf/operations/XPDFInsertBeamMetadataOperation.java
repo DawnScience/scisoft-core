@@ -15,19 +15,18 @@ import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFBeamMetadataImpl;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTraceMetadataImpl;
+import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
+import uk.ac.diamond.scisoft.xpdf.XPDFBeamTrace;
+import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
 
 
-public class XPDFInsertBeamMetadataOperation extends AbstractOperation<XPDFInsertBeamMetadataModel, OperationData> {
+public class XPDFInsertBeamMetadataOperation extends XPDFInsertXMetadataOperation<XPDFInsertBeamMetadataModel, OperationData> {
 
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		// Beam geometry metadata
-		XPDFBeamMetadataImpl beamMetadata = new XPDFBeamMetadataImpl();
+		XPDFBeamData beamMetadata = new XPDFBeamData();
 		
 		// Get the properties of the beam
 		beamMetadata.setBeamEnergy(model.getBeamEnergy());
@@ -44,14 +43,16 @@ public class XPDFInsertBeamMetadataOperation extends AbstractOperation<XPDFInser
 		// Load the background from the designated xy file
 		IDataset bgTrace = ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2").getSlice();
 		
-		XPDFTraceMetadataImpl bgMetadata = new XPDFTraceMetadataImpl();
+		XPDFBeamTrace bgMetadata = new XPDFBeamTrace();
 		bgMetadata.setCountingTime(model.getCountingTime());
 		bgMetadata.setMonitorRelativeFlux(model.getMonitorRelativeFlux());
 		bgMetadata.setTrace(bgTrace);
 		
-		beamMetadata.setTrace(bgMetadata);
+		beamMetadata.setBeamBGTrace(bgMetadata);
 
-		input.setMetadata(beamMetadata);
+		XPDFMetadataImpl theXPDFMetadata = getAndRemoveXPDFMetadata(input);
+		theXPDFMetadata.setBeamData(beamMetadata);
+		input.setMetadata(theXPDFMetadata);
 		
 		return new OperationData(input);
 	}

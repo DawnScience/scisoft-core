@@ -10,26 +10,30 @@
 package uk.ac.diamond.scisoft.xpdf.metadata;
 
 import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
+import org.eclipse.dawnsci.analysis.api.metadata.XPDFBeamMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.XPDFTargetFormMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.XPDFTargetGeometryMetadata;
 
 public class XPDFTargetFormMetadataImpl implements XPDFTargetFormMetadata {
 	
 	String matName;
-	double density;
+	double massDensity;
+	double numberDensity;
 	double packingFraction;
 	XPDFTargetGeometryMetadata geom;
 	
 	public XPDFTargetFormMetadataImpl() {
 		matName = "";
-		density = 0.0;
+		massDensity = 0.0;
+		numberDensity = 0.0;
 		packingFraction = 1.0;
 		geom = null;
 	}
 
 	public XPDFTargetFormMetadataImpl(XPDFTargetFormMetadataImpl inform){
 		this.matName = inform.matName;
-		this.density = inform.density;
+		this.massDensity = inform.massDensity;
+		this.numberDensity = inform.numberDensity;
 		this.packingFraction = inform.packingFraction;
 		this.geom = (XPDFTargetGeometryMetadata) inform.geom.clone();
 	}
@@ -51,8 +55,8 @@ public class XPDFTargetFormMetadataImpl implements XPDFTargetFormMetadata {
 		this.geom = (XPDFTargetGeometryMetadata) geom.clone();
 	}
 
-	public void setDensity(double density) {
-		this.density = density;
+	public void setMassDensity(double massDensity) {
+		this.massDensity = massDensity;
 	}
 
 	public void setPackingFraction(double packingFraction) {
@@ -65,8 +69,8 @@ public class XPDFTargetFormMetadataImpl implements XPDFTargetFormMetadata {
 	}
 
 	@Override
-	public double getDensity() {
-		return this.density;
+	public double getMassDensity() {
+		return this.massDensity;
 	}
 
 	@Override
@@ -77,6 +81,19 @@ public class XPDFTargetFormMetadataImpl implements XPDFTargetFormMetadata {
 	@Override
 	public XPDFTargetGeometryMetadata getGeometry() {
 		return (XPDFTargetGeometryMetadata) this.geom.clone();
+	}
+
+	@Override
+	public double getNumberOfAtomsIlluminated(XPDFBeamMetadata beam) {
+		 double atomicNumberDensitymm3 = 1.0e21 * this.packingFraction * numberDensity;
+//		 double volumeIlluminated = geom.getVolumeIlluminated(beam);
+		 return 0;
+	}
+
+	@Override
+	public double getNumberDensity() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

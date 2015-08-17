@@ -10,36 +10,34 @@
 package uk.ac.diamond.scisoft.xpdf.operations;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.XPDFTraceMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import uk.ac.diamond.scisoft.xpdf.XPDFBeamTrace;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentForm;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentGeometry;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentPlate;
+import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
+import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTargetAbstractGeometryMetadataImpl;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTargetComponentMetadataImpl;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTargetCylinderMetadataImpl;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTargetFormMetadataImpl;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTargetPlateMetadataImpl;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTraceMetadataImpl;
-
-public class XPDFInsertSampleMetadataOperation extends AbstractOperation<XPDFInsertSampleMetadataModel, OperationData> {
+public class XPDFInsertSampleMetadataOperation extends XPDFInsertXMetadataOperation<XPDFInsertSampleMetadataModel, OperationData> {
 
 	protected OperationData process(IDataset input, IMonitor monitor)
 			throws OperationException {
 
-		XPDFTargetComponentMetadataImpl compMeta = new XPDFTargetComponentMetadataImpl();
-		XPDFTargetFormMetadataImpl formMeta = new XPDFTargetFormMetadataImpl();
-		XPDFTargetAbstractGeometryMetadataImpl geomMeta = null;
+		XPDFTargetComponent compMeta = new XPDFTargetComponent();
+		XPDFComponentForm formMeta = new XPDFComponentForm();
+		XPDFComponentGeometry geomMeta = null;
 
 		// Read shape from the Model
 		String shape = model.getShape();
 
 		if (shape.equals("cylinder")) {
-			geomMeta = new XPDFTargetCylinderMetadataImpl();
+			geomMeta = new XPDFComponentCylinder();
 		} else if (shape.equals("plate")) {
-			geomMeta = new XPDFTargetPlateMetadataImpl();
+			geomMeta = new XPDFComponentPlate();
 		}
 		// Read size data from the Model
 		double inner = model.getInner();
@@ -53,10 +51,10 @@ public class XPDFInsertSampleMetadataOperation extends AbstractOperation<XPDFIns
 		double density = model.getDensity();
 		double packingFraction = model.getPackingFraction();
 
-		formMeta.setMaterialName(material);
+		formMeta.setMatName(material);
 		formMeta.setDensity(density);
 		formMeta.setPackingFraction(packingFraction);
-		formMeta.setGeometry(geomMeta);
+		formMeta.setGeom(geomMeta);
 
 		compMeta.setForm(formMeta);
 
@@ -66,7 +64,7 @@ public class XPDFInsertSampleMetadataOperation extends AbstractOperation<XPDFIns
 		compMeta.setName(name);
 
 		// Counting time and relative flux of the trace in the main Dataset
-		XPDFTraceMetadataImpl sampleTraceMeta = new XPDFTraceMetadataImpl();
+		XPDFBeamTrace sampleTraceMeta = new XPDFBeamTrace();
 		sampleTraceMeta.setCountingTime(model.getCountingTime());
 		sampleTraceMeta.setMonitorRelativeFlux(model.getMonitorRelativeFlux());
 		sampleTraceMeta.setTrace(null);
@@ -75,7 +73,10 @@ public class XPDFInsertSampleMetadataOperation extends AbstractOperation<XPDFIns
 		
 		compMeta.setSample(true);
 		
-		input.setMetadata(compMeta);
+		XPDFMetadataImpl theXPDFMetadata = getAndRemoveXPDFMetadata(input);
+		theXPDFMetadata.setSampleData(compMeta);
+		
+		input.setMetadata(theXPDFMetadata);
 		
 		return new OperationData(input);
 	}

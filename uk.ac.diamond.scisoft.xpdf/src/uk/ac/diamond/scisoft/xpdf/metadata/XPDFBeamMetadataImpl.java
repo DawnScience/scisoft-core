@@ -11,14 +11,14 @@ package uk.ac.diamond.scisoft.xpdf.metadata;
 
 import org.eclipse.dawnsci.analysis.api.metadata.XPDFBeamMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
-import org.eclipse.dawnsci.analysis.api.metadata.XPDFTraceMetadata;
+import org.eclipse.dawnsci.analysis.api.metadata.XPDFTrace;
 
 public class XPDFBeamMetadataImpl implements XPDFBeamMetadata {
 
 	double beamEnergy;
 	double beamWidth;
 	double beamHeight;
-	XPDFTraceMetadata beamBGTrace;
+	XPDFTrace beamBGTrace;
 	
 	public XPDFBeamMetadataImpl() {
 //		Zero beam data values
@@ -53,7 +53,7 @@ public class XPDFBeamMetadataImpl implements XPDFBeamMetadata {
 		this.beamHeight = beamHeight;
 	}
 
-	public void setTrace(XPDFTraceMetadata inTrace) {
+	public void setTrace(XPDFTrace inTrace) {
 		this.beamBGTrace = (XPDFTraceMetadataImpl) inTrace.clone();
 	}
 	
@@ -74,7 +74,7 @@ public class XPDFBeamMetadataImpl implements XPDFBeamMetadata {
 	}
 
 	@Override
-	public XPDFTraceMetadata getTrace() {
+	public XPDFTrace getTrace() {
 		return (XPDFTraceMetadataImpl) beamBGTrace.clone();
 	}
 

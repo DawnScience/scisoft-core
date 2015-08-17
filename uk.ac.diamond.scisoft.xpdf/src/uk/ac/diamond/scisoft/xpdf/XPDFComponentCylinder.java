@@ -8,27 +8,25 @@
  */
 
 package uk.ac.diamond.scisoft.xpdf;
-//TODO: Move back to uk.ac.diamond.scisoft.xpdf once the NPEs are solved
 
-import org.eclipse.dawnsci.analysis.api.metadata.XPDFTargetGeometryMetadata;
+//public because it needs to be visible in the uk...xpdf.operations package
+public class XPDFComponentCylinder extends XPDFComponentGeometry {
 
-class ComponentCylinder extends ComponentGeometry {
-
-	public ComponentCylinder() {
+	public XPDFComponentCylinder() {
 		super();
 	}
 	
-	public ComponentCylinder(ComponentCylinder inCyl) {
+	public XPDFComponentCylinder(XPDFComponentCylinder inCyl) {
 		super(inCyl);
 	}
 	
-	public ComponentCylinder(XPDFTargetGeometryMetadata inGeom) {
+	public XPDFComponentCylinder(XPDFComponentGeometry inGeom) {
 		super(inGeom);
 	}
 	
 	@Override
-	protected ComponentGeometry clone() {
-		return new ComponentCylinder(this);
+	protected XPDFComponentGeometry clone() {
+		return new XPDFComponentCylinder(this);
 	}
 
 	@Override

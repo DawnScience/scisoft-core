@@ -14,7 +14,6 @@
       <editor
             class="uk.ac.diamond.scisoft.ptychography.rcp.editors.PtychoTreeViewerEditor"
             default="false"
-            icon="icons/ptypy25x14.png"
             id="uk.ac.diamond.scisoft.ptychography.rcp.ptychoTreeEditor"
             name="Tree Ptycho input">
       </editor>
@@ -37,7 +36,6 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="uk.ac.diamond.scisoft.ptychography.rcp.PtychoPerspective"
-            icon="icons/ptypy.png"
             id="uk.ac.diamond.scisoft.ptychography.rcp.perspective"
             name="Ptychography">
       </perspective>
@@ -162,7 +160,7 @@
       <introPageRegister
             class="uk.ac.diamond.scisoft.ptychography.rcp.PtychoPerspectiveLaunch"
             description="Opens the Ptychography perspective"
-            icon="icons/ptypy.png"
+            icon="icons/chart_curve.png"
             id="uk.ac.diamond.scisoft.intro.PtychographyPerspective"
             name="Ptychography">
       </introPageRegister>

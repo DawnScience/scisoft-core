@@ -27,8 +27,8 @@ public class XPDFBeamTrace {
 	double monitorRelativeFlux;
 
 	public XPDFBeamTrace() {
-		countingTime = 0.0;
-		monitorRelativeFlux = 0.0;
+		countingTime = 1.0;
+		monitorRelativeFlux = 1.0;
 		trace = null;
 	}
 	
@@ -43,18 +43,14 @@ public class XPDFBeamTrace {
 		return new XPDFBeamTrace(this);
 	}
 
-	public ILazyDataset getTrace() {
-		return (trace != null) ? trace.getSliceView() : null;
+	public IDataset getTrace() {
+		return (trace != null) ? trace.getSlice() : null;
 	}
 
 	public void setTrace(IDataset trace) {
 		this.trace = trace;
 	}
 
-	public ILazyDataset getNormalizedTrace() {
-		return Maths.divide(trace.getSliceView(), this.countingTime*this.monitorRelativeFlux);
-	}
-	
 	public double getCountingTime() {
 		return countingTime;
 	}
@@ -71,4 +67,12 @@ public class XPDFBeamTrace {
 		this.monitorRelativeFlux = monitorRelativeFlux;
 	}
 	
+	public IDataset getNormalizedTrace() {
+		return Maths.divide(trace.getSliceView(), this.countingTime*this.monitorRelativeFlux);
+	}
+	
+	public IDataset getBackgroundSubtractedTrace(XPDFBeamTrace background) {
+		return Maths.subtract(getNormalizedTrace(), background.getNormalizedTrace());
+		
+	}
 }

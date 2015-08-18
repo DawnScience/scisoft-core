@@ -17,8 +17,7 @@ Import-Package: org.dawnsci.python.rpc,
  org.eclipse.dawnsci.analysis.dataset.metadata,
  org.eclipse.dawnsci.analysis.dataset.operations,
  uk.ac.diamond.scisoft.analysis.processing.operations,
- uk.ac.diamond.scisoft.analysis.processing.operations.utils,
- uk.ac.diamond.scisoft.analysis.processing.python
+ uk.ac.diamond.scisoft.analysis.processing.operations.utils
 Bundle-Vendor: Diamond Light Source
 Bundle-ActivationPolicy: lazy
 Export-Package: uk.ac.diamond.scisoft.xpdf;
@@ -32,5 +31,4 @@ Export-Package: uk.ac.diamond.scisoft.xpdf;
    org.eclipse.dawnsci.analysis.api.dataset,
    org.eclipse.dawnsci.analysis.api.processing,
    org.eclipse.dawnsci.analysis.api.processing.model,
-   org.eclipse.dawnsci.analysis.api.monitor",
- uk.ac.diamond.scisoft.xpdf.python
+   org.eclipse.dawnsci.analysis.api.monitor"

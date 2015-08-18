@@ -23,16 +23,6 @@ import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 public interface XPDFMetadata extends MetadataType {
 
 	/**
-	 * unpack the metadata in a form suitable for use by the XPDF python script
-	 */
-	Map<String, Object> unpackToPython();
-	
-	/**
-	 * pack the metadata with information gleaned from the XPDF python script
-	 */
-	void packFromPython(Map<String, Object> mappitymapmap);
-
-	/**
 	 * get a list of the containers in the sample, as XPDFTargetComponents
 	 */
 	List<XPDFTargetComponent> getContainers();

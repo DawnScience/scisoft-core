@@ -1,5 +1,7 @@
 package uk.ac.diamond.scisoft.xpdf.test;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -9,14 +11,22 @@ import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
+import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
+import uk.ac.diamond.scisoft.xpdf.XPDFBeamTrace;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentForm;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentGeometry;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentPlate;
+import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.XPDFProcessor;
+import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 import junit.framework.TestCase;
 
 public class XPDFProcessorTest extends TestCase {
 
 	@Test
 	public void testXPDFProcessorLorchFT(){
-		if (false) fail("Don't want to run this test right now");
+		// fail("Don't want to run this test right now");
 		String dataPath = "/home/rkl37156/ceria_dean_data/";
 
 		// Load up the th_soq data obtained from the python version 
@@ -51,7 +61,7 @@ public class XPDFProcessorTest extends TestCase {
 	
 	@Test
 	public void testXPDFProcessorTophatSubtraction() {
-		if (false) fail("Don't want to run this test right now");
+		// fail("Don't want to run this test right now");
 		String dataPath = "/home/rkl37156/ceria_dean_data/";
 
 		// Load up the th_soq data obtained from the python version 
@@ -224,9 +234,12 @@ public class XPDFProcessorTest extends TestCase {
 		Dataset ceria = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_2").getSlice());
 		Dataset tthd = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_1").getSlice());
 
-		ceria.setMetadata(createBeamMetadata());
-		ceria.setMetadata(createContainersMetadata());
-		ceria.setMetadata(createSampleMetadata());
+		XPDFMetadataImpl ceriaMetadata = new XPDFMetadataImpl();
+		
+		ceriaMetadata.setBeamData(createBeamMetadata());
+		ceriaMetadata.setContainerData(createContainersMetadata());
+		ceriaMetadata.setSampleData(createSampleMetadata());
+		ceria.addMetadata(ceriaMetadata);
 		AxesMetadataImpl ax = new AxesMetadataImpl(1);
 		ax.addAxis(0, (IDataset) tthd);
 		ceria.addMetadata(ax);
@@ -241,18 +254,18 @@ public class XPDFProcessorTest extends TestCase {
 	}
 
 
-	private XPDFContainerMetadata createContainersMetadata() {
-		XPDFTargetComponentMetadataImpl compMeta = new XPDFTargetComponentMetadataImpl();
-		XPDFTargetFormMetadataImpl formMeta = new XPDFTargetFormMetadataImpl();
-		XPDFTargetAbstractGeometryMetadataImpl geomMeta = null;
+	private List<XPDFTargetComponent> createContainersMetadata() {
+		XPDFTargetComponent compMeta = new XPDFTargetComponent();
+		XPDFComponentForm formMeta = new XPDFComponentForm();
+		XPDFComponentGeometry geomMeta = null;
 
 		// Read shape from the Model
 		String shape = "cylinder";
 
 		if (shape.equals("cylinder")) {
-			geomMeta = new XPDFTargetCylinderMetadataImpl();
+			geomMeta = new XPDFComponentCylinder();
 		} else if (shape.equals("plate")) {
-			geomMeta = new XPDFTargetPlateMetadataImpl();
+			geomMeta = new XPDFComponentPlate();
 		}
 		// Read size data from the Model
 		double inner = 0.15;
@@ -268,10 +281,10 @@ public class XPDFProcessorTest extends TestCase {
 		double density = 2.65;
 		double packingFraction = 1.0;
 
-		formMeta.setMaterialName(material);
-		formMeta.setMassDensity(density);
+		formMeta.setMatName(material);
+		formMeta.setDensity(density);
 		formMeta.setPackingFraction(packingFraction);
-		formMeta.setGeometry(geomMeta);
+		formMeta.setGeom(geomMeta);
 
 		compMeta.setForm(formMeta);
 
@@ -293,7 +306,7 @@ public class XPDFProcessorTest extends TestCase {
 
 		// The counting time and monitor relative flux are set directly on the
 		// input Dataset, since they pertain to the data it holds
-		XPDFTraceMetadataImpl containerTraceMeta = new XPDFTraceMetadataImpl();
+		XPDFBeamTrace containerTraceMeta = new XPDFBeamTrace();
 		containerTraceMeta.setCountingTime(240.0);
 		containerTraceMeta.setMonitorRelativeFlux(1.0);
 		containerTraceMeta.setTrace(contTrace);
@@ -303,25 +316,23 @@ public class XPDFProcessorTest extends TestCase {
 		compMeta.setSample(false);
 
 		// compMeta is complete. Add it to the list of containers in input
-
-		XPDFContainerMetadata containerList = new XPDFContainersMetadataImpl();
-		containerList.addContainer(compMeta);
-
+		List<XPDFTargetComponent> containerList = new ArrayList<XPDFTargetComponent>();
+		containerList.add(compMeta);
 		return containerList;
 	}
 
 
-	private XPDFTargetComponentMetadata createSampleMetadata() {
-		XPDFTargetComponentMetadataImpl compMeta = new XPDFTargetComponentMetadataImpl();
-		XPDFTargetFormMetadataImpl formMeta = new XPDFTargetFormMetadataImpl();
-		XPDFTargetAbstractGeometryMetadataImpl geomMeta = null;
+	private XPDFTargetComponent createSampleMetadata() {
+		XPDFTargetComponent compMeta = new XPDFTargetComponent();
+		XPDFComponentForm formMeta = new XPDFComponentForm();
+		XPDFComponentGeometry geomMeta = null;
 
 		String shape = "cylinder";
 
 		if (shape.equals("cylinder")) {
-			geomMeta = new XPDFTargetCylinderMetadataImpl();
+			geomMeta = new XPDFComponentCylinder();
 		} else if (shape.equals("plate")) {
-			geomMeta = new XPDFTargetPlateMetadataImpl();
+			geomMeta = new XPDFComponentPlate();
 		}
 		double inner = 0.0;
 		double outer = 0.15;
@@ -333,10 +344,10 @@ public class XPDFProcessorTest extends TestCase {
 		double density = 7.65;
 		double packingFraction = 0.6;
 
-		formMeta.setMaterialName(material);
-		formMeta.setMassDensity(density);
+		formMeta.setMatName(material);
+		formMeta.setDensity(density);
 		formMeta.setPackingFraction(packingFraction);
-		formMeta.setGeometry(geomMeta);
+		formMeta.setGeom(geomMeta);
 
 		compMeta.setForm(formMeta);
 
@@ -344,7 +355,7 @@ public class XPDFProcessorTest extends TestCase {
 
 		compMeta.setName(name);
 
-		XPDFTraceMetadataImpl sampleTraceMeta = new XPDFTraceMetadataImpl();
+		XPDFBeamTrace sampleTraceMeta = new XPDFBeamTrace();
 		sampleTraceMeta.setCountingTime(240.0);
 		sampleTraceMeta.setMonitorRelativeFlux(1.0);
 		sampleTraceMeta.setTrace(null);
@@ -356,8 +367,8 @@ public class XPDFProcessorTest extends TestCase {
 	}
 
 
-	private XPDFBeamMetadata createBeamMetadata() {
-		XPDFBeamMetadataImpl beamMetadata = new XPDFBeamMetadataImpl();
+	private XPDFBeamData createBeamMetadata() {
+		XPDFBeamData beamMetadata = new XPDFBeamData();
 		// Get the properties of the beam
 		beamMetadata.setBeamEnergy(76.6);
 		beamMetadata.setBeamHeight(0.07);
@@ -372,7 +383,7 @@ public class XPDFProcessorTest extends TestCase {
 			//ignore
 		}
 		Dataset bgTrace = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_2").getSlice());
-		XPDFTraceMetadataImpl bgMetadata = new XPDFTraceMetadataImpl();
+		XPDFBeamTrace bgMetadata = new XPDFBeamTrace();
 		bgMetadata.setCountingTime(240.0);
 		bgMetadata.setMonitorRelativeFlux(1.0);
 		bgMetadata.setTrace(bgTrace);

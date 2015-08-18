@@ -4,13 +4,6 @@
    <extension
          point="org.eclipse.dawnsci.analysis.api.operation">
       <operation
-            class="uk.ac.diamond.scisoft.xpdf.python.PythonXPDFShim"
-            icon="icons/python.png"
-            id="uk.ac.diamond.scisoft.xpdf.python.PythonXPDFShim"
-            model="uk.ac.diamond.scisoft.analysis.processing.python.PythonScriptModel"
-            name="XPDF Python Shim">
-      </operation>
-      <operation
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertBeamMetadataOperation"
             description="Insert the XPDF metadata into the main Dataset"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertBeamMetadataOperation"
@@ -55,6 +48,24 @@
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFSelfScatteringNormalisationOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
             name="XPDF Self-scattering and Normalisation (ABSCOR to soq)">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFNormalizeTracesOperation"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFNormalizeTracesOperation"
+            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFNormalizeTracesModel"
+            name="XPDF Normalise Data (count to Normon)">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFSubtractBackgroundOperation"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFSubtractBackgroundOperation"
+            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFSubtractBackgroundModel"
+            name="XPDF Subtract Background (Normon to SUBBAK)">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFIterateCalibrationConstantOperation"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFIterateCalibrationConstantOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            name="XPDF Iterate Calibration Constant (SUBBAK to ABSCOR)">
       </operation>
    </extension>
 

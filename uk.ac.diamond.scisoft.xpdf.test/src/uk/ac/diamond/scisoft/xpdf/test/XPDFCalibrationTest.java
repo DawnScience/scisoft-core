@@ -1,4 +1,4 @@
-package uk.ac.diamond.scisoft.xpdf;
+package uk.ac.diamond.scisoft.xpdf.test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +8,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
+import uk.ac.diamond.scisoft.xpdf.XPDFCalibration;
 import junit.framework.TestCase;
 
 public class XPDFCalibrationTest extends TestCase {

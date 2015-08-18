@@ -11,7 +11,6 @@ package uk.ac.diamond.scisoft.xpdf;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.XPDFTrace;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 /**
@@ -37,12 +36,6 @@ public class XPDFBeamTrace {
 		this.countingTime = inTrace.countingTime;
 		this.monitorRelativeFlux = inTrace.monitorRelativeFlux;
 		this.trace = (inTrace.trace == null) ? null : inTrace.trace.getSliceView();
-	}
-
-	public XPDFBeamTrace(XPDFTrace inTrace) {
-		this.countingTime = inTrace.getCountingTime();
-		this.monitorRelativeFlux = inTrace.getMonitorRelativeFlux();
-		this.trace = (inTrace.getTrace() == null) ? null : inTrace.getTrace().getSlice();
 	}
 	
 	@Override

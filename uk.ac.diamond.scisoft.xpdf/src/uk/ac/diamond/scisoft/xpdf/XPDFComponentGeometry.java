@@ -9,8 +9,6 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
-import org.eclipse.dawnsci.analysis.api.metadata.XPDFTargetGeometryMetadata;
-
 // public because it needs to be visible in the uk...xpdf.operations package
 public abstract class XPDFComponentGeometry {
 
@@ -34,15 +32,6 @@ public abstract class XPDFComponentGeometry {
 		this.is_downstream = inGeom.is_downstream;
 	}
 
-	public XPDFComponentGeometry(XPDFTargetGeometryMetadata inGeom) {
-		double[] distances = inGeom.getDistances();
-		inner_r = distances[0];
-		outer_r = distances[1];
-		boolean[] streamality = inGeom.getStreamality();
-		is_upstream = streamality[0];
-		is_downstream = streamality[1];
-	}
-	
 	@Override
 	protected abstract XPDFComponentGeometry clone();
 

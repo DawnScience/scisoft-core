@@ -2,9 +2,6 @@ package uk.ac.diamond.scisoft.xpdf.test;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.api.metadata.XPDFBeamMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.XPDFContainerMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.XPDFTargetComponentMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
@@ -13,14 +10,6 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.xpdf.XPDFProcessor;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFBeamMetadataImpl;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFContainersMetadataImpl;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTargetAbstractGeometryMetadataImpl;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTargetComponentMetadataImpl;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTargetCylinderMetadataImpl;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTargetFormMetadataImpl;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTargetPlateMetadataImpl;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTraceMetadataImpl;
 import junit.framework.TestCase;
 
 public class XPDFProcessorTest extends TestCase {

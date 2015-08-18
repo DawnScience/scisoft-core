@@ -10,9 +10,6 @@
 package uk.ac.diamond.scisoft.xpdf;
 //TODO: Move back to uk.ac.diamond.scisoft.xpdf once the NPEs are solved
 
-
-import org.eclipse.dawnsci.analysis.api.metadata.XPDFBeamMetadata;
-
 /**
  * Beam data for the XPDFProcessor class
  * 
@@ -41,13 +38,6 @@ public class XPDFBeamData {
 		this.beamBGTrace = (XPDFBeamTrace) inBeam.beamBGTrace.clone();
 	}
 
-	public XPDFBeamData(XPDFBeamMetadata inBeam) {
-		this.beamEnergy = inBeam.getBeamEnergy();
-		this.beamHeight = inBeam.getBeamHeight();
-		this.beamWidth = inBeam.getBeamWidth();
-		this.beamBGTrace = new XPDFBeamTrace(inBeam.getTrace());
-	}
-	
 	@Override
 	protected XPDFBeamData clone() {
 		return new XPDFBeamData(this);

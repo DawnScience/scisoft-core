@@ -9,9 +9,6 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.XPDFBeamMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.XPDFContainerMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.XPDFTargetComponentMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
@@ -20,7 +17,6 @@ import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFContainersMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 public class XPDFProcessor {
@@ -82,32 +78,20 @@ public class XPDFProcessor {
 		this.dofr = null;
 		this.intermediateResults = new HashMap<String, Dataset>();
 
-//		// Get the metadata to fill the object.
-//		try {
-//			beamData = new XPDFBeamData(input.getMetadata(XPDFBeamMetadata.class).get(0));
-//		} catch (Exception e) {
-//			beamData=null;
-//		}
-//		try {
-//			sampleData = new XPDFTargetComponent(input.getMetadata(XPDFTargetComponent.class).get(0));
-//		} catch (Exception e) {
-//			sampleData = null;
-//		}
-//		// The XPDFProcessing Op is the end of the line for the original data, so it is subsumed into the objects.
-//		sampleData.setTraceCounts(input.getSliceView());
-//		
-//		containersData = new ArrayList<XPDFTargetComponent>();
-//		XPDFContainerMetadata containersList;
-//		try {
-//			containersList = input.getMetadata(XPDFContainerMetadata.class).get(0);
-//		} catch (Exception e) {
-//			containersList = new XPDFContainersMetadataImpl();
-//		}
-//		for (int i = 0; i < containersList.size(); i++) {
-//			XPDFTargetComponent container = new XPDFTargetComponent((XPDFTargetComponent) containersList.getContainer(i));
-//			containersData.add(container);
-//		}
-//		
+		XPDFMetadata theXPDFMetadata = null;
+		// Get the metadata to fill the object.
+		try {
+			if (input.getMetadata(XPDFMetadata.class) != null &&
+					!input.getMetadata(XPDFMetadata.class).isEmpty() && 
+					input.getMetadata(XPDFMetadata.class).get(0) != null )
+			theXPDFMetadata= input.getMetadata(XPDFMetadata.class).get(0);
+		} catch (Exception e) {
+		}
+		this.beamData = theXPDFMetadata.getBeam();
+		this.containersData = theXPDFMetadata.getContainers();
+		this.sampleData = theXPDFMetadata.getSample();
+		
+		
 //		// Set up the axes for the independent var
 //		ILazyDataset[] axes = AbstractOperation.getFirstAxes(input);
 //		IDataset ya = null;
@@ -178,35 +162,12 @@ public class XPDFProcessor {
 	
 	public static void copyXPDFMetadata(IDataset oldDataset, Dataset newDataset, boolean copyXAxis) {
 
-		// 3 or 4 items of metadata: beam, containers, sample and possibly x-axis
-		
-		// Copy beam metadata
+		// XPDF metadata copy.
 		try {
-			if (oldDataset.getMetadata(XPDFBeamMetadata.class) != null && 
-				!oldDataset.getMetadata(XPDFBeamMetadata.class).isEmpty() &&
-				oldDataset.getMetadata(XPDFBeamMetadata.class).get(0) != null) 
-				newDataset.setMetadata(oldDataset.getMetadata(XPDFBeamMetadata.class).get(0).clone());
-			} catch (Exception e) {
-				; // Do nothing
-			}
-		
-		// Container metadata
-		try {
-			if (oldDataset.getMetadata(XPDFContainerMetadata.class) != null &&
-					!oldDataset.getMetadata(XPDFContainerMetadata.class).isEmpty() &&
-					oldDataset.getMetadata(XPDFContainerMetadata.class).get(0) != null)
-				newDataset.setMetadata(oldDataset.getMetadata(XPDFContainerMetadata.class).get(0).clone());
-		} catch (Exception e) {
-			; // Do nothing
-		}
-	
-		// Sample metadata. This is a TargetComponent object, the only one in
-		// the metadata root area
-		try {
-			if (oldDataset.getMetadata(XPDFTargetComponentMetadata.class) != null &&
-					!oldDataset.getMetadata(XPDFTargetComponentMetadata.class).isEmpty() &&
-					oldDataset.getMetadata(XPDFTargetComponentMetadata.class).get(0) != null)
-				newDataset.setMetadata(oldDataset.getMetadata(XPDFTargetComponentMetadata.class).get(0).clone());
+			if (oldDataset.getMetadata(XPDFMetadata.class) != null &&
+					!oldDataset.getMetadata(XPDFMetadata.class).isEmpty() &&
+					oldDataset.getMetadata(XPDFMetadata.class).get(0) != null)
+				newDataset.setMetadata(oldDataset.getMetadata(XPDFMetadata.class).get(0).clone());
 		} catch (Exception e) {
 			; // Do nothing
 		}

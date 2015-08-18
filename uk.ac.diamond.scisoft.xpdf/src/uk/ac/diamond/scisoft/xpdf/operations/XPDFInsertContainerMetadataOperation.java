@@ -9,17 +9,11 @@
 
 package uk.ac.diamond.scisoft.xpdf.operations;
 
-import java.util.List;
-
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.XPDFContainerMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
-
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamTrace;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
@@ -28,14 +22,6 @@ import uk.ac.diamond.scisoft.xpdf.XPDFComponentGeometry;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentPlate;
 import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFContainersMetadataImpl;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTargetAbstractGeometryMetadataImpl;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTargetComponentMetadataImpl;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTargetCylinderMetadataImpl;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTargetFormMetadataImpl;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTargetPlateMetadataImpl;
-import uk.ac.diamond.scisoft.xpdf.metadata.XPDFTraceMetadataImpl;
 
 /**
  * Add a container to the target 

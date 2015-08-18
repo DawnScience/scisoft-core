@@ -10,8 +10,6 @@
 package uk.ac.diamond.scisoft.xpdf;
 //TODO: Move back to uk.ac.diamond.scisoft.xpdf once the NPEs are solved
 
-import org.eclipse.dawnsci.analysis.api.metadata.XPDFTargetFormMetadata;
-
 // public because it needs to be visible in the uk...xpdf.operations package
 public class XPDFComponentForm {
 

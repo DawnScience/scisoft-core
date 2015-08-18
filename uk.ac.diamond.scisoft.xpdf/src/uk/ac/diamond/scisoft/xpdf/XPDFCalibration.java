@@ -39,7 +39,7 @@ public class XPDFCalibration {
 	}
 	
 	// TODO: a more sophisticated quadrature formula than the rectangle rule
-	public static double quadrateDataset(Dataset integrand) {
+	private static double quadrateDataset(Dataset integrand) {
 		return (double) integrand.sum();
 	}
 }

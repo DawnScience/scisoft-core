@@ -21,21 +21,21 @@ public class XPDFBeamData {
 	double beamEnergy;
 	double beamWidth;
 	double beamHeight;
-	XPDFBeamTrace beamBGTrace;
+	XPDFBeamTrace trace;
 	
 	public XPDFBeamData() {
 //		Zero beam data values
 		this.beamEnergy = 0.0;
 		this.beamHeight = 0.0;
 		this.beamWidth = 0.0;
-		this.beamBGTrace = null;
+		this.trace = null;
 	}
 
 	public XPDFBeamData(XPDFBeamData inBeam) {
 		this.beamEnergy = inBeam.beamEnergy;
 		this.beamHeight = inBeam.beamHeight;
 		this.beamWidth = inBeam.beamWidth;
-		this.beamBGTrace = (XPDFBeamTrace) inBeam.beamBGTrace.clone();
+		this.trace = (XPDFBeamTrace) inBeam.trace.clone();
 	}
 
 	@Override
@@ -67,11 +67,11 @@ public class XPDFBeamData {
 		this.beamHeight = beamHeight;
 	}
 
-	public XPDFBeamTrace getBeamBGTrace() {
-		return beamBGTrace;
+	public XPDFBeamTrace getTrace() {
+		return trace;
 	}
 
-	public void setBeamBGTrace(XPDFBeamTrace beamBGTrace) {
-		this.beamBGTrace = beamBGTrace;
+	public void setTrace(XPDFBeamTrace trace) {
+		this.trace = trace;
 	}
 }

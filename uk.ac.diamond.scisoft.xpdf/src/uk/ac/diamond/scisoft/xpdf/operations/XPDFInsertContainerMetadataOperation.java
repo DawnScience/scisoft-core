@@ -14,6 +14,9 @@ import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamTrace;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
@@ -78,7 +81,7 @@ public class XPDFInsertContainerMetadataOperation extends
 		}
 
 		// Load the container trace from the designated xy file
-		IDataset contTrace = ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2").getSlice();
+		Dataset contTrace = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2"));
 		// The counting time and monitor relative flux are set directly on the
 		// input Dataset, since they pertain to the data it holds
 		XPDFBeamTrace containerTraceMeta = new XPDFBeamTrace();

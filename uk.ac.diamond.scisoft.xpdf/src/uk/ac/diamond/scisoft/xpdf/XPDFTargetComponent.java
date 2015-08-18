@@ -9,9 +9,7 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 public class XPDFTargetComponent {
@@ -79,7 +77,7 @@ public class XPDFTargetComponent {
 		return isSample;
 	}
 
-	public void setTraceCounts(IDataset sliceView) {
+	public void setTraceCounts(Dataset sliceView) {
 		trace.setTrace(sliceView);
 	}
 	
@@ -87,8 +85,8 @@ public class XPDFTargetComponent {
 		subBak =  Maths.subtract(trace.getNormalizedTrace(), background.getNormalizedTrace());
 	}
 	
-	public IDataset getBackgroundSubtractedTrace() {
-		return subBak.getSliceView();
+	public Dataset getBackgroundSubtractedTrace() {
+		return subBak;
 	}
 	
 	public void setCalibrationConstant(double c3) {
@@ -96,15 +94,15 @@ public class XPDFTargetComponent {
 		calCon = Maths.divide(this.subBak, this.c3);
 	}
 	
-	public IDataset getCalibratedTrace() {
-		return calCon.getSliceView();
+	public Dataset getCalibratedTrace() {
+		return calCon;
 	}
 	
-	public void setMultipleScatteringCorrection(IDataset multipleScatteringCorrection) {
+	public void setMultipleScatteringCorrection(Dataset multipleScatteringCorrection) {
 		mulCor = Maths.subtract(calCon, multipleScatteringCorrection);
 	}
 
-	public IDataset getMultipleScatteringCorrectedTrace() {
+	public Dataset getMultipleScatteringCorrectedTrace() {
 		return mulCor;
 	}
 }

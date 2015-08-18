@@ -10,7 +10,7 @@
 package uk.ac.diamond.scisoft.xpdf;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 /**
@@ -22,20 +22,26 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 //public because it needs to be visible in the uk...xpdf.operations package
 public class XPDFBeamTrace {
 
-	IDataset trace;
+	Dataset trace;
 	double countingTime;
 	double monitorRelativeFlux;
-
+	boolean isNormalized, isBackgroundSubtracted;
+	
+	
 	public XPDFBeamTrace() {
 		countingTime = 1.0;
 		monitorRelativeFlux = 1.0;
 		trace = null;
+		isNormalized = false;
+		isBackgroundSubtracted = false;
 	}
 	
 	public XPDFBeamTrace(XPDFBeamTrace inTrace) {
 		this.countingTime = inTrace.countingTime;
 		this.monitorRelativeFlux = inTrace.monitorRelativeFlux;
 		this.trace = (inTrace.trace == null) ? null : inTrace.trace.getSliceView();
+		this.isNormalized = inTrace.isNormalized;
+		this.isBackgroundSubtracted = inTrace.isBackgroundSubtracted;
 	}
 	
 	@Override
@@ -43,11 +49,11 @@ public class XPDFBeamTrace {
 		return new XPDFBeamTrace(this);
 	}
 
-	public IDataset getTrace() {
-		return (trace != null) ? trace.getSlice() : null;
+	public Dataset getTrace() {
+		return (trace != null) ? trace : null;
 	}
 
-	public void setTrace(IDataset trace) {
+	public void setTrace(Dataset trace) {
 		this.trace = trace;
 	}
 
@@ -67,12 +73,40 @@ public class XPDFBeamTrace {
 		this.monitorRelativeFlux = monitorRelativeFlux;
 	}
 	
+	public void normalizeTrace() {
+		if (trace != null)
+			trace = Maths.divide(trace, this.countingTime*this.monitorRelativeFlux);
+		isNormalized = true;
+	}
+	
 	public IDataset getNormalizedTrace() {
-		return Maths.divide(trace.getSliceView(), this.countingTime*this.monitorRelativeFlux);
+		if (isNormalized) {
+			return trace;
+		} else {
+			return (trace != null) ? Maths.divide(trace, this.countingTime*this.monitorRelativeFlux) : null;
+		}
+	}
+	
+	public boolean isNormalized() {
+		return this.isNormalized;
+	}
+	
+	public void subtractBackground(XPDFBeamTrace background) {
+		if (trace != null)
+			trace = Maths.subtract(this.getNormalizedTrace(), background.getNormalizedTrace());
+		isBackgroundSubtracted = true;
+	}
+	
+	public boolean isBackgroundSubtracted() {
+		return this.isBackgroundSubtracted;
 	}
 	
 	public IDataset getBackgroundSubtractedTrace(XPDFBeamTrace background) {
-		return Maths.subtract(getNormalizedTrace(), background.getNormalizedTrace());
-		
+		if (isBackgroundSubtracted) {
+			return trace;
+		} else {
+			return (trace == null) ? null : Maths.subtract(getNormalizedTrace(), background.getNormalizedTrace());
+		}
 	}
+
 }

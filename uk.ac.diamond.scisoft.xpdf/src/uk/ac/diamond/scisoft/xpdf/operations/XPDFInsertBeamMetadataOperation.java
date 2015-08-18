@@ -15,6 +15,8 @@ import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
@@ -41,14 +43,14 @@ public class XPDFInsertBeamMetadataOperation extends XPDFInsertXMetadataOperatio
 			throw new OperationException(this, "Could not find " + xyFilePath);
 		}
 		// Load the background from the designated xy file
-		IDataset bgTrace = ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2").getSlice();
+		Dataset bgTrace = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2"));
 		
 		XPDFBeamTrace bgMetadata = new XPDFBeamTrace();
 		bgMetadata.setCountingTime(model.getCountingTime());
 		bgMetadata.setMonitorRelativeFlux(model.getMonitorRelativeFlux());
 		bgMetadata.setTrace(bgTrace);
 		
-		beamMetadata.setBeamBGTrace(bgMetadata);
+		beamMetadata.setTrace(bgMetadata);
 
 		XPDFMetadataImpl theXPDFMetadata = getAndRemoveXPDFMetadata(input);
 		theXPDFMetadata.setBeamData(beamMetadata);

@@ -48,8 +48,8 @@ public class XPDFSubtractBackgroundOperation extends
 			// Dataset trace, from the Sample metadata
 			if (theXPDFMetadata.getSample() != null && 
 					theXPDFMetadata.getSample().getTrace() != null && 
-					!theXPDFMetadata.getSample().getTrace().isBackgroundSubtracted()) {// && 
-//					model.isNormalizeSample()) {
+					!theXPDFMetadata.getSample().getTrace().isBackgroundSubtracted() && 
+					model.isSubtractSampleBackground()) {
 				// sets the isBackgroundSubtracted flag, but does not subtract the background from the (null) trace
 				theXPDFMetadata.getSample().getTrace().subtractBackground(theXPDFMetadata.getBeam().getTrace());
 				// Subtract the background from the Dataset
@@ -57,8 +57,8 @@ public class XPDFSubtractBackgroundOperation extends
 			}
 			
 			// For each container metadataset, subtract the background from it
-						if (theXPDFMetadata.getContainers() != null){// && 
-//					model.isNormalizeContainers()) {
+						if (theXPDFMetadata.getContainers() != null && 
+					model.isSubtractContainersBackground()) {
 				for (XPDFTargetComponent container : theXPDFMetadata.getContainers()) {
 					if (container.getTrace() != null)
 						container.getTrace().subtractBackground(theXPDFMetadata.getBeam().getTrace());

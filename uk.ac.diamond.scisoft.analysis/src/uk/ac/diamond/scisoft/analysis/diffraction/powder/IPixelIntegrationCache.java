@@ -41,4 +41,8 @@ public interface IPixelIntegrationCache {
 	
 	boolean isTo1D();
 	
+	boolean sanitise();
+	
+	boolean provideLookup();
+	
 }

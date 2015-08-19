@@ -17,6 +17,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 
@@ -252,7 +253,13 @@ public class PixelIntegration {
 		final int nYBins = bean.getNumberOfBinsYAxis();
 
 		IntegerDataset histo = (IntegerDataset) DatasetFactory.zeros(new int[]{nYBins,nXBins}, Dataset.INT32);
-		DoubleDataset intensity = (DoubleDataset) DatasetFactory.zeros(new int[]{nYBins,nXBins},Dataset.FLOAT64);
+		FloatDataset intensity = (FloatDataset) DatasetFactory.zeros(new int[]{nYBins,nXBins},Dataset.FLOAT32);
+		IntegerDataset lookup = null;
+		
+		if (bean.provideLookup()) {
+			lookup = (IntegerDataset) DatasetFactory.zeros(new int[]{nYBins,nXBins}, Dataset.INT32);
+			lookup.isubtract(1);
+		}
 
 		Dataset x = DatasetUtils.convertToDataset(bean.getXAxisArray()[0]);
 		Dataset y = DatasetUtils.convertToDataset(bean.getYAxisArray()[0]);
@@ -285,12 +292,15 @@ public class PixelIntegration {
 				double cIn = intensity.get(chiPos,qPos);
 				histo.set(cNum+1, chiPos,qPos);
 				intensity.set(cIn+sig, chiPos,qPos);
+				if (lookup != null) lookup.set(iter.index, chiPos,qPos);
 			} 
 
 		}
 
 		processAndAddToResult(intensity, histo, result,bean, true);
 
+		if (lookup != null) result.add(lookup);
+		
 		return result;
 		
 	}
@@ -419,14 +429,13 @@ public class PixelIntegration {
 		
 		if (error != null) {
 			error.idivide(histo);
-			DatasetUtils.makeFinite(error);
+			if (bean.sanitise()) DatasetUtils.makeFinite(error);
 		}
-
 
 		Dataset axis = bean.getXAxis();
 		
 		intensity.idivide(histo);
-		DatasetUtils.makeFinite(intensity);
+		if (bean.sanitise()) DatasetUtils.makeFinite(intensity);
 
 		result.add(axis);
 		result.add(intensity);

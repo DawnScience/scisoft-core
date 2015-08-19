@@ -394,4 +394,16 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 			return (int)Math.hypot(shape[1], shape[0]);
 		}
 	}
+
+
+	@Override
+	public boolean sanitise() {
+		return true;
+	}
+
+
+	@Override
+	public boolean provideLookup() {
+		return false;
+	}
 }

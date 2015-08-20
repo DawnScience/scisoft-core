@@ -253,7 +253,7 @@ public class PixelIntegration {
 		final int nYBins = bean.getNumberOfBinsYAxis();
 
 		IntegerDataset histo = (IntegerDataset) DatasetFactory.zeros(new int[]{nYBins,nXBins}, Dataset.INT32);
-		FloatDataset intensity = (FloatDataset) DatasetFactory.zeros(new int[]{nYBins,nXBins},Dataset.FLOAT32);
+		DoubleDataset intensity = (DoubleDataset) DatasetFactory.zeros(new int[]{nYBins,nXBins},Dataset.FLOAT64);
 		IntegerDataset lookup = null;
 		
 		if (bean.provideLookup()) {

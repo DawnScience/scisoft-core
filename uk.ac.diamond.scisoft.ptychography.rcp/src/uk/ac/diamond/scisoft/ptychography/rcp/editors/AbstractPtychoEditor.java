@@ -7,6 +7,7 @@ import java.util.List;
 import org.dawnsci.python.rpc.action.InjectPyDevConsole;
 import org.dawnsci.python.rpc.action.InjectPyDevConsoleAction;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.dawnsci.analysis.api.EventTracker;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -24,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.ptychography.rcp.Activator;
+import uk.ac.diamond.scisoft.ptychography.rcp.ServiceLoader;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoData;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoNode;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoTreeUtils;
@@ -86,6 +88,15 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 		runPython = new InjectPyDevConsoleAction("Run Ptychographic Iterative Engine python script") {
 			@Override
 			public void run() {
+				try {
+					// track event
+					EventTracker tracker = ServiceLoader.getEventTracker();
+					if (tracker != null)
+						tracker.trackActionEvent("Ptycho_Iterative_Engine");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
 				jsonSavedPath = saveJSon(fileSavedPath);
 				// reinject command
 				this.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd(jsonSavedPath));

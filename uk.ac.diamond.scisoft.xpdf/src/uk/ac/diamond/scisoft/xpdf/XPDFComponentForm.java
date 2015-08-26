@@ -8,66 +8,67 @@
  */
 
 package uk.ac.diamond.scisoft.xpdf;
-//TODO: Move back to uk.ac.diamond.scisoft.xpdf once the NPEs are solved
 
 // public because it needs to be visible in the uk...xpdf.operations package
 public class XPDFComponentForm {
 
-	String matName;
-	double density;
-	double packingFraction;
-	XPDFComponentGeometry geom;
+	XPDFSubstance substance;
+	XPDFComponentGeometry geometry;
 	
 	public XPDFComponentForm() {
-		matName = "";
-		density = 0.0;
-		packingFraction = 1.0;
-		geom = null;
+		substance = new XPDFSubstance();
+		geometry = null;
 	}
 
 	public XPDFComponentForm(XPDFComponentForm inForm) {
-		this.matName = inForm.matName;
-		this.density = inForm.density;
-		this.packingFraction = inForm.packingFraction;
+		substance = new XPDFSubstance(inForm.substance);
 		// Must be a better way to do this
 		if (inForm.getGeom().getShape() == "cylinder") {
-			this.geom = new XPDFComponentCylinder(inForm.getGeom());
+			this.geometry = new XPDFComponentCylinder(inForm.getGeom());
 		} else if (inForm.getGeom().getShape() == "plate") {
-			this.geom = new XPDFComponentPlate(inForm.getGeom());
+			this.geometry = new XPDFComponentPlate(inForm.getGeom());
 		}
 	}
 
 
-	public String getMatName() {
-		return matName;
+	public String getMaterialName() {
+		return this.substance.getMaterialName();
 	}
 
 	public void setMatName(String matName) {
-		this.matName = matName;
+		this.substance.setMaterialName(matName);
 	}
 
 	public double getDensity() {
-		return density;
+		return this.substance.getMassDensity();
 	}
 
 	public void setDensity(double density) {
-		this.density = density;
+		this.substance.setMassDensity(density);
 	}
 
 	public double getPackingFraction() {
-		return packingFraction;
+		return this.substance.getPackingFraction();
 	}
 
 	public void setPackingFraction(double packingFraction) {
-		this.packingFraction = packingFraction;
+		this.substance.setPackingFraction(packingFraction);
 	}
 
 	public XPDFComponentGeometry getGeom() {
-		return geom;
+		return geometry;
 	}
 
 	public void setGeom(XPDFComponentGeometry geom) {
-		this.geom = geom;
+		this.geometry = geom;
+	}
+	
+	public double getIlluminatedAtoms(XPDFBeamData beamdata){
+		double packingFactorUsed;
+		// Don't know why this is used on one, and not the other
+		packingFactorUsed = (getGeom().getShape().equals("cylinder")) ? 1.0 : getPackingFraction();
+		final double cubicAngstromsPerCubicMillimetre = 1e21; 
+		return substance.getNumberDensity() * cubicAngstromsPerCubicMillimetre * packingFactorUsed;		
 	}
 	
 }

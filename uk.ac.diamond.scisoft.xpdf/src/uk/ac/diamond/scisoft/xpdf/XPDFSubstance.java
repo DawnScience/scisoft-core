@@ -9,8 +9,6 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
-import java.util.Map;
-
 public class XPDFSubstance {
 
 	private String materialName;

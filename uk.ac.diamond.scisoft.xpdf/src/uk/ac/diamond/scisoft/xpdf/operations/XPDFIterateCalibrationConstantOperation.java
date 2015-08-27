@@ -1,5 +1,9 @@
 package uk.ac.diamond.scisoft.xpdf.operations;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -7,11 +11,14 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
+import uk.ac.diamond.scisoft.xpdf.XPDFQSquaredIntegrator;
+import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 public class XPDFIterateCalibrationConstantOperation extends
@@ -51,12 +58,103 @@ public class XPDFIterateCalibrationConstantOperation extends
 		double containerDelta = (double) Maths.divide(Maths.square(Maths.subtract(subBakCapRef, subBakCap)), subBakCapRef).sum(true) / subBakRef.getSize();
 		boolean containerMatch = containerDelta < delta;
 		
-		return new OperationData((sampleMatch && containerMatch) ? absCorRef : input);
+		
+		// The real XPDFIterateCalibrationConstantOperation starts here
+		
+		// TODO: get from the model
+		int nIterations = 5;
+		LinkedList<Double> calibrationConstants = new LinkedList<Double>();
+		// The initial value is 1
+		calibrationConstants.add(1.0);
+
+		Dataset absCor = null;
+		
+		XPDFMetadata theXPDFMetadata = null;
+		// Get the metadata
+		try {
+			if (input.getMetadata(XPDFMetadata.class) != null &&
+					!input.getMetadata(XPDFMetadata.class).isEmpty() &&
+					input.getMetadata(XPDFMetadata.class).get(0) != null)
+				theXPDFMetadata = input.getMetadata(XPDFMetadata.class).get(0);
+		} catch (Exception e) {
+			// No XPDF metadata? Bail out!
+			return new OperationData(input);
+		}
+		
+		// TODO: Get the order of the containers and the sample
+		List<Dataset> backgroundSubtracted = new ArrayList<Dataset>();
+		// The 0th element is the sample
+		backgroundSubtracted.add((Dataset) input);
+		// Add the containers is in order, innermost to outermost
+		for (XPDFTargetComponent container : theXPDFMetadata.getContainers()) {
+			backgroundSubtracted.add(container.getBackgroundSubtractedTrace());
+		}
+		
+		// Get 2θ, the axis variable
+		Dataset twoTheta = DatasetUtils.convertToDataset(AbstractOperation.getFirstAxes(input)[0]);
+		
+		// Set up the q² integrator class
+		XPDFQSquaredIntegrator qSquaredIntegrator = new XPDFQSquaredIntegrator(twoTheta, theXPDFMetadata.getBeam());
+		
+		// Difference ofKrogh-Moe sum and integral of Thomson self-scattering
+		double selfScatteringDenominator = 
+				qSquaredIntegrator.ThomsonIntegral(theXPDFMetadata.getSample().getSelfScattering(twoTheta))
+				- theXPDFMetadata.getSample().getKroghMoeSum();
+		
+		for (int i = 0; i < nIterations; i++) {
+			absCor = iterateCalibrationConstant(backgroundSubtracted, calibrationConstants, qSquaredIntegrator,
+					selfScatteringDenominator, DoubleDataset.zeros((Dataset) input), theXPDFMetadata.getSampleIlluminatedAtoms());			
+		}
+		
+		return new OperationData((sampleMatch && containerMatch) ? absCorRef : absCor);
+	}
+	
+	/* Run through one iteration of the calibration. The input list of Datasets
+	 * is the background subtracted flux traces for the target components
+	 * ordered from innermost (the sample) at [0] to outermost at size-1.
+	 * 
+	 * The return value is the absorption corrected data. The list of
+	 * calibration constants is also altered, adding the latest value to the
+	 * end of the list. 
+	 *   
+	 */
+	private Dataset iterateCalibrationConstant(List<Dataset> backgroundSubtracted, 
+			LinkedList<Double> calibrationConstants, XPDFQSquaredIntegrator qSquaredIntegrator,
+			double selfScatteringDenominator, Dataset multipleScatteringCorrection,
+			double sampleAtomCount) {
+
+		// Divide by the calibration constant and subtract the multiple scattering correction
+		List<Dataset> calCon = new ArrayList<Dataset>();
+		for (Dataset componentTrace : backgroundSubtracted)
+			calCon.add(Maths.divide(componentTrace, calibrationConstants.getLast()));
+		
+		// Mulcor should be a LinkedList, so that we can get the last element simply
+		List<Dataset> mulCor = new ArrayList<Dataset>();
+		for (Dataset componentTrace : calCon)
+			mulCor.add(Maths.subtract(componentTrace, multipleScatteringCorrection));
+		
+		Dataset absCor = applyCalibrationConstant(mulCor);
+		absCor.idivide(sampleAtomCount);
+		
+		// Integrate
+		double numerator = qSquaredIntegrator.ThomsonIntegral(absCor);
+		// Divide by denominator
+		double updatedCalibration = numerator/selfScatteringDenominator;
+		// Add to the list
+		calibrationConstants.add(updatedCalibration);
+		
+		return absCor;
+		
 	}
 	
 	
-	
-	
+	private Dataset applyCalibrationConstant(List<Dataset> mulCor) {
+		// TODO Do something more than just returning the sample data
+		double a;
+		
+		return mulCor.get(0);
+	}
+
 	@Override
 	public String getId() {
 		return "uk.ac.diamond.scisoft.xpdf.operations.XPDFIterateCalibrationConstantOperation";

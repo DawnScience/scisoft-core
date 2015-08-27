@@ -85,6 +85,11 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 			containerData = new ArrayList<XPDFTargetComponent>();
 		this.containerData.add(newContainer);
 	}
+
+	@Override
+	public double getSampleIlluminatedAtoms() {
+		return getSample().getForm().getIlluminatedAtoms(beamData);
+	}
 	
 
 }

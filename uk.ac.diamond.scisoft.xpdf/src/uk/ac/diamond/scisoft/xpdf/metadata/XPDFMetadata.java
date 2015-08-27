@@ -42,4 +42,11 @@ public interface XPDFMetadata extends MetadataType {
 	 * get the data on the beam as XPDFBeam
 	 */
 	XPDFBeamData getBeam();
+
+	/**
+	 * 
+	 * @return The number of atoms in the sample illuminated by the beam
+	 */
+	
+	double getSampleIlluminatedAtoms();
 }

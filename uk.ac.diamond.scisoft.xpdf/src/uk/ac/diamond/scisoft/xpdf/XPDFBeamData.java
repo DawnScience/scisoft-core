@@ -8,6 +8,11 @@
  */
 
 package uk.ac.diamond.scisoft.xpdf;
+
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+
 //TODO: Move back to uk.ac.diamond.scisoft.xpdf once the NPEs are solved
 
 /**
@@ -22,6 +27,8 @@ public class XPDFBeamData {
 	double beamWidth;
 	double beamHeight;
 	XPDFBeamTrace trace;
+	private static final double hckeVAA = 12.39841974;//(17)
+
 	
 	public XPDFBeamData() {
 //		Zero beam data values
@@ -50,7 +57,15 @@ public class XPDFBeamData {
 	public void setBeamEnergy(double beamEnergy) {
 		this.beamEnergy = beamEnergy;
 	}
+	
+	public void setBeamWavelength(double beamWavelength) {
+		this.beamEnergy = hckeVAA/beamWavelength;
+	}
 
+	public double getBeamWavelength() {
+		return hckeVAA/this.beamEnergy;
+	}
+	
 	public double getBeamWidth() {
 		return beamWidth;
 	}
@@ -74,4 +89,12 @@ public class XPDFBeamData {
 	public void setTrace(XPDFBeamTrace trace) {
 		this.trace = trace;
 	}
+
+	// The q(2θ) calculation is in this class because of the energy dependence.
+	public Dataset getQFromTwoTheta(Dataset twoTheta) {
+		Dataset x = Maths.divide(Maths.sin(Maths.divide(twoTheta, 2)), this.getBeamWavelength());
+		Dataset q = Maths.multiply(4*Math.PI, x);
+		return q;
+	}
+		
 }

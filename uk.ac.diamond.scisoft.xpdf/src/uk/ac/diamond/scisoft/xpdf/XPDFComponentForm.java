@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+
 // public because it needs to be visible in the uk...xpdf.operations package
 public class XPDFComponentForm {
 
@@ -69,6 +71,14 @@ public class XPDFComponentForm {
 		packingFactorUsed = (getGeom().getShape().equals("cylinder")) ? 1.0 : getPackingFraction();
 		final double cubicAngstromsPerCubicMillimetre = 1e21; 
 		return substance.getNumberDensity() * cubicAngstromsPerCubicMillimetre * packingFactorUsed;		
+	}
+
+	public double getKroghMoeSum() {
+		return substance.getKroghMoeSum();
+	}
+
+	public Dataset getSelfScattering(Dataset twoTheta) {
+		return null;
 	}
 	
 }

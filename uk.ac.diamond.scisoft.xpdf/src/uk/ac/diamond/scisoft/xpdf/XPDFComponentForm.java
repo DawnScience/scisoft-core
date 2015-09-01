@@ -39,6 +39,7 @@ public class XPDFComponentForm {
 
 	public void setMatName(String matName) {
 		this.substance.setMaterialName(matName);
+		this.substance.setMaterialComposition(matName);
 	}
 
 	public double getDensity() {
@@ -79,6 +80,10 @@ public class XPDFComponentForm {
 
 	public Dataset getSelfScattering(Dataset twoTheta) {
 		return null;
+	}
+
+	public double getAttenuationCoefficient(double beamEnergy) {
+		return substance.getAttenuationCoefficient(beamEnergy);
 	}
 	
 }

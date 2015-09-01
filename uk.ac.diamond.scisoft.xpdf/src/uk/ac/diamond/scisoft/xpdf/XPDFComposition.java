@@ -20,7 +20,7 @@ import java.util.Vector;
 public class XPDFComposition {
 	Map<Integer, Integer> atomCount;
 	double electronOverlap;
-	static final double[] atomicMass = {
+	static final double[] atomicMass = { 1.008664,
 		1.00794,4.002602,6.941,9.012182,10.811,12.011,14.00674,
         15.9994,18.9984032,20.1797,22.989768,24.305,26.981539,
         28.0855,30.973762,32.066,35.4527,39.948,39.0983,40.078,
@@ -37,7 +37,7 @@ public class XPDFComposition {
         238.0289,237.0482,244.0642,243.0614,247.0703,247.0703,
         251.0796,252.0816,257.0951
 	};
-	static final String[] elementSymbol = {
+	static final String[] elementSymbol = { "n",
 		"H","He","Li","Be","B","C","N","O","F","Ne","Na","Mg","Al","Si",
         "P","S","Cl","Ar","K","Ca","Sc","Ti","V","Cr","Mn","Fe","Co",
         "Ni","Cu","Zn","Ga","Ge","As","Se","Br","Kr","Rb","Sr","Y","Zr",
@@ -47,7 +47,7 @@ public class XPDFComposition {
         "Hg","Tl","Pb","Bi","Po","At","Rn","Fr","Ra","Ac","Th","Pa","U",
         "Np","Pu","Am","Cm","Bk","Cf","Es","Fm"
 	};
-	static final String[] elementName = {
+	static final String[] elementName = { "neutronium",
 		"Hydrogen","Helium","Lithium","Beryllium","Boron","Carbon",
         "Nitrogen","Oxygen","Fluorine","Neon","Sodium","Magnesium",
         "Aluminium","Silicon","Phosphorus","Sulphur","Chlorine","Argon",
@@ -104,7 +104,24 @@ public class XPDFComposition {
 		// Local class for parsing chemical formulae into a map from atomic number to multiplicity
 		return CompoundParser.indexElements(CompoundParser.countAtoms(CompoundParser.tokenize(chemicalFormula)));
 	}
-	
+
+	public double getMassAttenuation(double beamEnergy) {
+		double massAttenuation = 0.0;
+		
+		// TODO: replace the ceria experiment fixed values
+		if (beamEnergy == 76.6) {
+			// Both components have two oxygen atoms in their formula
+			if (atomCount.containsKey(8) && atomCount.get(8) == 2) {
+				if (atomCount.containsKey(14) && atomCount.get(14) == 1) {
+					massAttenuation = 0.19991818715584905;
+				} else if (atomCount.containsKey(58) && atomCount.get(58) == 1) {
+					massAttenuation = 4.0599040920479297;
+				}
+			}
+		}
+		return massAttenuation;
+	}
+
 }
 
 

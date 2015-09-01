@@ -66,7 +66,9 @@ public class XPDFSubstance {
 		return microMassDensity;
 	}
 	public double getNumberDensity() {
-		return microMassDensity/materialComposition.getMeanAtomicMass();
+		final double nAvogadro = 6.022140857e23;//(74)
+		final double cubicCentimetresPerCubicAngstrom = 1e-24;
+		return microMassDensity/materialComposition.getMeanAtomicMass()*nAvogadro*cubicCentimetresPerCubicAngstrom;
 	}
 	// macroscopic density packing fraction of the substance
 	public double getPackingFraction() {
@@ -75,14 +77,12 @@ public class XPDFSubstance {
 	
 	// Krogh-Moe sum from XPDFNormalisation
 	public double getKroghMoeSum() {
-			
 		return 2*Math.PI*Math.PI*getNumberDensity()*materialComposition.getKroghMoeSummand();
 	}
 	
 	// mass attenuation coefficient of the substance at the given energy
-	public double getMassAttenuation(double beamEnergy) {
-		// TODO: Implement this
-		return 1.0;
+	public double getAttenuationCoefficient(double beamEnergy) {
+		return 0.1 * getMassDensity()*getPackingFraction() * materialComposition.getMassAttenuation(beamEnergy);
 	}
 	
 	public XPDFComposition getComposition() {

@@ -88,18 +88,18 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 		
 		// Account for the streamality of the (half) cylinder
 		double arc = 0.0, xiMin = 0.0, xiMax = 0.0;
-		if (isUpstream && isDownstream) {
+		if (doUpstreamAbsorption && doDownstreamAbsorption) {
 			arc = 2*Math.PI;
 			xiMin = -Math.PI;
 			xiMax = Math.PI;
 		} else {
-			if (!(isUpstream || isDownstream))
+			if (!(doUpstreamAbsorption || doDownstreamAbsorption))
 				return DoubleDataset.zeros(gamma);
 			arc = Math.PI;
-			if (isDownstream) {
+			if (doDownstreamAbsorption) {
 				xiMin = -Math.PI/2;
 				xiMax = Math.PI/2;
-			} else if (isUpstream) {
+			} else if (doUpstreamAbsorption) {
 				xiMin = -3*Math.PI/2;
 				xiMax = Math.PI/2;
 			} else {

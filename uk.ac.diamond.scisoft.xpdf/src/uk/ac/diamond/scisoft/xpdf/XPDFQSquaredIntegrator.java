@@ -52,7 +52,8 @@ public class XPDFQSquaredIntegrator {
 	// Calculate an integral over q², given a function and some angles
 	public double qSquaredIntegral(Dataset fn) {
 		Dataset dq = XPDFQSquaredIntegrator.differentiate1DDataset(q);
-		Dataset integrand = Maths.multiply(Maths.multiply(Maths.multiply(q, q), fn), dq);
+		double dqScalar = dq.getDouble(0);
+		Dataset integrand = Maths.multiply(Maths.multiply(Maths.multiply(q, q), fn), dqScalar);
 		double integral = quadrate1DDataset(integrand);
 		return integral;
 	}

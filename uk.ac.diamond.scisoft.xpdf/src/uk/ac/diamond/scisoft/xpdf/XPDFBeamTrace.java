@@ -79,7 +79,7 @@ public class XPDFBeamTrace {
 		isNormalized = true;
 	}
 	
-	public IDataset getNormalizedTrace() {
+	public Dataset getNormalizedTrace() {
 		if (isNormalized) {
 			return trace;
 		} else {
@@ -101,7 +101,7 @@ public class XPDFBeamTrace {
 		return this.isBackgroundSubtracted;
 	}
 	
-	public IDataset getBackgroundSubtractedTrace(XPDFBeamTrace background) {
+	public Dataset getBackgroundSubtractedTrace(XPDFBeamTrace background) {
 		if (isBackgroundSubtracted) {
 			return trace;
 		} else {

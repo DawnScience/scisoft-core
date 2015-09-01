@@ -1,8 +1,10 @@
 package uk.ac.diamond.scisoft.xpdf.operations;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
@@ -27,36 +29,36 @@ public class XPDFIterateCalibrationConstantOperation extends
 	protected OperationData process(IDataset input, IMonitor monitor)
 			throws OperationException {
 
-		String xyFilePath = "/scratch/dawn_diamond_ws/runtime-uk.ac.diamond.dawn.product/data/ceria_dean_data/";
-		// Load the reference background subtracted traces from the designated xy file
-		Dataset subBakRef = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath+"SUBBAK.xy", "Column_2"));
-		Dataset subBakCapRef = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath+"SUBBAK_cap.xy", "Column_2"));
-		Dataset absCorRef = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath+"ABSCOR.xy", "Column_2"));
+//		String xyFilePath = "/scratch/dawn_diamond_ws/runtime-uk.ac.diamond.dawn.product/data/ceria_dean_data/";
+//		// Load the reference background subtracted traces from the designated xy file
+//		Dataset subBakRef = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath+"SUBBAK.xy", "Column_2"));
+//		Dataset subBakCapRef = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath+"SUBBAK_cap.xy", "Column_2"));
+//		Dataset absCorRef = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath+"ABSCOR.xy", "Column_2"));
+//		
+//		Dataset subBak = DatasetUtils.convertToDataset(input);
+//		Dataset subBakCap = null;
 		
-		Dataset subBak = DatasetUtils.convertToDataset(input);
-		Dataset subBakCap = null;
+//		try {
+//			if (input.getMetadata(XPDFMetadata.class) != null &&
+//				!input.getMetadata(XPDFMetadata.class).isEmpty() &&
+//				input.getMetadata(XPDFMetadata.class).get(0) != null &&
+//				input.getMetadata(XPDFMetadata.class).get(0).getContainers() != null &&
+//				!input.getMetadata(XPDFMetadata.class).get(0).getContainers().isEmpty() &&
+//				input.getMetadata(XPDFMetadata.class).get(0).getContainers().get(0) != null &&
+//				input.getMetadata(XPDFMetadata.class).get(0).getContainers().get(0).getTrace() != null &&
+//				input.getMetadata(XPDFMetadata.class).get(0).getContainers().get(0).getTrace().isBackgroundSubtracted()) 
+//				subBakCap = input.getMetadata(XPDFMetadata.class).get(0).getContainers().get(0).getTrace().getTrace();
+//		} catch (Exception e) {
+//			;
+//		}
+//
+//		copyMetadata(input, absCorRef);
 		
-		try {
-			if (input.getMetadata(XPDFMetadata.class) != null &&
-				!input.getMetadata(XPDFMetadata.class).isEmpty() &&
-				input.getMetadata(XPDFMetadata.class).get(0) != null &&
-				input.getMetadata(XPDFMetadata.class).get(0).getContainers() != null &&
-				!input.getMetadata(XPDFMetadata.class).get(0).getContainers().isEmpty() &&
-				input.getMetadata(XPDFMetadata.class).get(0).getContainers().get(0) != null &&
-				input.getMetadata(XPDFMetadata.class).get(0).getContainers().get(0).getTrace() != null &&
-				input.getMetadata(XPDFMetadata.class).get(0).getContainers().get(0).getTrace().isBackgroundSubtracted()) 
-				subBakCap = input.getMetadata(XPDFMetadata.class).get(0).getContainers().get(0).getTrace().getTrace();
-		} catch (Exception e) {
-			;
-		}
-
-		copyMetadata(input, absCorRef);
-		
-		double delta = 1e-6;
-		double sampleDelta = (double) Maths.divide(Maths.square(Maths.subtract(subBakRef, subBak)), subBakRef).sum(true) / subBakRef.getSize();
-		boolean sampleMatch = sampleDelta < delta;
-		double containerDelta = (double) Maths.divide(Maths.square(Maths.subtract(subBakCapRef, subBakCap)), subBakCapRef).sum(true) / subBakRef.getSize();
-		boolean containerMatch = containerDelta < delta;
+//		double delta = 1e-6;
+//		double sampleDelta = (double) Maths.divide(Maths.square(Maths.subtract(subBakRef, subBak)), subBakRef).sum(true) / subBakRef.getSize();
+//		boolean sampleMatch = sampleDelta < delta;
+//		double containerDelta = (double) Maths.divide(Maths.square(Maths.subtract(subBakCapRef, subBakCap)), subBakCapRef).sum(true) / subBakRef.getSize();
+//		boolean containerMatch = containerDelta < delta;
 		
 		
 		// The real XPDFIterateCalibrationConstantOperation starts here
@@ -65,7 +67,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 		int nIterations = 5;
 		LinkedList<Double> calibrationConstants = new LinkedList<Double>();
 		// The initial value is 1
-		calibrationConstants.add(1.0);
+		calibrationConstants.add(20.0);
 
 		Dataset absCor = null;
 		
@@ -91,7 +93,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 		}
 		
 		// Get 2θ, the axis variable
-		Dataset twoTheta = DatasetUtils.convertToDataset(AbstractOperation.getFirstAxes(input)[0]);
+		Dataset twoTheta = Maths.toRadians(DatasetUtils.convertToDataset(AbstractOperation.getFirstAxes(input)[0]));
 		
 		// Set up the q² integrator class
 		XPDFQSquaredIntegrator qSquaredIntegrator = new XPDFQSquaredIntegrator(twoTheta, theXPDFMetadata.getBeam());
@@ -101,12 +103,17 @@ public class XPDFIterateCalibrationConstantOperation extends
 				qSquaredIntegrator.ThomsonIntegral(theXPDFMetadata.getSample().getSelfScattering(twoTheta))
 				- theXPDFMetadata.getSample().getKroghMoeSum();
 		
+		Map<AbstractMap.SimpleImmutableEntry<Integer, Integer>, Dataset> absorptionCorrections = 
+				theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DoubleDataset.zeros(twoTheta.reshape(twoTheta.getSize(), 1)));
+		
 		for (int i = 0; i < nIterations; i++) {
 			absCor = iterateCalibrationConstant(backgroundSubtracted, calibrationConstants, qSquaredIntegrator,
 					selfScatteringDenominator, DoubleDataset.zeros((Dataset) input), theXPDFMetadata.getSampleIlluminatedAtoms());			
 		}
 		
-		return new OperationData((sampleMatch && containerMatch) ? absCorRef : absCor);
+		copyMetadata(input, absCor);
+		
+		return new OperationData(absCor);
 	}
 	
 	/* Run through one iteration of the calibration. The input list of Datasets
@@ -134,12 +141,15 @@ public class XPDFIterateCalibrationConstantOperation extends
 			mulCor.add(Maths.subtract(componentTrace, multipleScatteringCorrection));
 		
 		Dataset absCor = applyCalibrationConstant(mulCor);
-		absCor.idivide(sampleAtomCount);
+// TODO: Add this back when the real calculations are done
+		//		absCor.idivide(sampleAtomCount);
 		
 		// Integrate
 		double numerator = qSquaredIntegrator.ThomsonIntegral(absCor);
 		// Divide by denominator
-		double updatedCalibration = numerator/selfScatteringDenominator;
+		double aMultiplier = numerator/selfScatteringDenominator;
+		// Make the new calibration constant
+		double updatedCalibration = aMultiplier * calibrationConstants.getLast();
 		// Add to the list
 		calibrationConstants.add(updatedCalibration);
 		
@@ -151,8 +161,14 @@ public class XPDFIterateCalibrationConstantOperation extends
 	private Dataset applyCalibrationConstant(List<Dataset> mulCor) {
 		// TODO Do something more than just returning the sample data
 		double a;
-		
-		return mulCor.get(0);
+		String dataPath = "/home/rkl37156/ceria_dean_data/";
+		String prefix = "ABSCOR";
+		String suffix = ".xy";
+		String infix = (mulCor.get(0).getDouble(1) <= 1e15 ) ? ".1" : ""; 
+
+		Dataset AbsCorFake = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, dataPath+prefix+infix+suffix, "Column_2"));
+
+		return AbsCorFake;
 	}
 
 	@Override

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
@@ -49,4 +50,14 @@ public interface XPDFMetadata extends MetadataType {
 	 */
 	
 	double getSampleIlluminatedAtoms();
+	
+	/**
+	 * 
+	 * The absorption correction maps of the system. The metadata knows whether
+	 * to use the cached values, or whether to call the absorption mapping
+	 * function. The key is (index of scatterer, index of attenuator), ordered
+	 * with the sample in position 0, and the other containers in order as one 
+	 * goes outward 
+	 */
+	Map<String, Dataset> getAbsorptionMaps(Dataset delta, Dataset gamma);
 }

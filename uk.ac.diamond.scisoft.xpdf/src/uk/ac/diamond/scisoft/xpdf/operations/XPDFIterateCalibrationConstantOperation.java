@@ -103,7 +103,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 				qSquaredIntegrator.ThomsonIntegral(theXPDFMetadata.getSample().getSelfScattering(twoTheta))
 				- theXPDFMetadata.getSample().getKroghMoeSum();
 		
-		Map<AbstractMap.SimpleImmutableEntry<Integer, Integer>, Dataset> absorptionCorrections = 
+		Map<String, Dataset> absorptionCorrections = 
 				theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DoubleDataset.zeros(twoTheta.reshape(twoTheta.getSize(), 1)));
 		
 		for (int i = 0; i < nIterations; i++) {

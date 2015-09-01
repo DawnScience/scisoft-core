@@ -1,11 +1,12 @@
 package uk.ac.diamond.scisoft.xpdf;
 
+import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
@@ -17,12 +18,14 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 	XPDFTargetComponent sampleData;
 	List<XPDFTargetComponent> containerData;
 	XPDFBeamData beamData;
-	
+	Map<String, Dataset> absorptionCorrectionMaps;
+
 	
 	public XPDFMetadataImpl() {
 		sampleData = null;
 		containerData = new ArrayList<XPDFTargetComponent>();
 		beamData = null;
+		absorptionCorrectionMaps = null;
 	}
 	
 	public XPDFMetadataImpl(XPDFMetadataImpl inMeta) {
@@ -33,6 +36,12 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 			if (container != null) this.containerData.add(new XPDFTargetComponent(container));
 		
 		this.beamData = (inMeta.beamData != null) ? new XPDFBeamData(inMeta.beamData) : null;
+		if (inMeta.absorptionCorrectionMaps != null) {
+			this.absorptionCorrectionMaps = new HashMap<String, Dataset>();
+			this.absorptionCorrectionMaps.putAll(inMeta.absorptionCorrectionMaps);
+		} else {
+			this.absorptionCorrectionMaps = null;
+		}
 	}
 	
 	@Override
@@ -89,6 +98,33 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 	@Override
 	public double getSampleIlluminatedAtoms() {
 		return getSample().getForm().getIlluminatedAtoms(beamData);
+	}
+
+	@Override
+	public Map<String, Dataset> getAbsorptionMaps(
+			Dataset delta, Dataset gamma) {
+		// The intention is to be able to recall cached maps, if these are set 
+		// in the metadata. They are not, yet, so press on with the direct
+		// calculations. The map uses a pair of integers in a string as an
+		// index, based on the order in which they come in the list of components 
+		if (absorptionCorrectionMaps == null) {
+		
+			absorptionCorrectionMaps = new HashMap<String, Dataset>();
+
+			// Note the less than or equal to
+			for (int iScatterer = 0; iScatterer <= containerData.size(); iScatterer++) {
+				XPDFTargetComponent scatterer = (iScatterer == 0) ? sampleData : containerData.get(iScatterer-1);
+
+				for (int iAttenuator = 0; iAttenuator <= containerData.size(); iAttenuator++) {
+					XPDFTargetComponent attenuator = (iAttenuator == 0) ? sampleData : containerData.get(iAttenuator-1);
+
+					Dataset absorptionCorrectionMap = scatterer.getForm().getGeom().calculateAbsorptionCorrections(gamma, delta, attenuator.getForm().getGeom(), attenuator.getForm().getAttenuationCoefficient(beamData.getBeamEnergy()), beamData, true, true);
+					String scattererAttenuatorString = Integer.toString(iScatterer)+" "+Integer.toString(iAttenuator);
+					absorptionCorrectionMaps.put(scattererAttenuatorString, absorptionCorrectionMap);
+				}
+			}
+		}		
+		return absorptionCorrectionMaps;
 	}
 	
 

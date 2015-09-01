@@ -9,7 +9,9 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
@@ -85,7 +87,8 @@ public class XPDFTargetComponent {
 	}
 	
 	public void setBackground(XPDFBeamTrace background) {
-		subBak =  Maths.subtract(trace.getNormalizedTrace(), background.getNormalizedTrace());
+		trace.subtractBackground(background);
+		subBak = trace.getBackgroundSubtractedTrace(background);
 	}
 	
 	public Dataset getBackgroundSubtractedTrace() {
@@ -116,7 +119,7 @@ public class XPDFTargetComponent {
 	public Dataset getSelfScattering(Dataset twoTheta) {
 		Dataset selfScattering = null;
 		if (isSample) {
-			double[] selfScaterringArray = {
+			Double[] selfScaterringArray = {
 				608.255443763, 608.239231464, 608.190604047, 608.109589936, 607.99623646,
 				607.850609772, 607.672794755, 607.462894891, 607.221032097, 606.947346548,
 				606.641996453, 606.305157825, 605.937024207, 605.537806382, 605.107732058,
@@ -589,7 +592,8 @@ public class XPDFTargetComponent {
 				24.6762215524, 24.6684046408, 24.6606010628, 24.652810793, 24.6450338063,
 				24.6372700774};
 		
-			selfScattering = DoubleDataset.createFromList(Arrays.asList(selfScaterringArray));
+			List<Double> selfScatteringList = Arrays.asList(selfScaterringArray);
+			selfScattering = DoubleDataset.createFromList(selfScatteringList);
 		}
 			
 		return selfScattering;

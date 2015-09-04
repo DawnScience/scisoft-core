@@ -15,6 +15,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
+import uk.ac.diamond.scisoft.xpdf.XPDFAbsorptionMaps;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 
@@ -59,5 +60,5 @@ public interface XPDFMetadata extends MetadataType {
 	 * with the sample in position 0, and the other containers in order as one 
 	 * goes outward 
 	 */
-	Map<String, Dataset> getAbsorptionMaps(Dataset delta, Dataset gamma);
+	XPDFAbsorptionMaps getAbsorptionMaps(Dataset delta, Dataset gamma);
 }

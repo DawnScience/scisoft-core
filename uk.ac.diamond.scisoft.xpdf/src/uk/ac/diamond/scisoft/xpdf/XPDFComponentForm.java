@@ -66,12 +66,12 @@ public class XPDFComponentForm {
 		this.geometry = geom;
 	}
 	
-	public double getIlluminatedAtoms(XPDFBeamData beamdata){
+	public double getIlluminatedAtoms(XPDFBeamData beamData){
 		double packingFactorUsed;
 		// Don't know why this is used on one, and not the other
 		packingFactorUsed = (getGeom().getShape().equals("cylinder")) ? 1.0 : getPackingFraction();
 		final double cubicAngstromsPerCubicMillimetre = 1e21; 
-		return substance.getNumberDensity() * cubicAngstromsPerCubicMillimetre * packingFactorUsed;		
+		return substance.getNumberDensity() * cubicAngstromsPerCubicMillimetre * packingFactorUsed*geometry.getIlluminatedVolume(beamData);		
 	}
 
 	public double getKroghMoeSum() {

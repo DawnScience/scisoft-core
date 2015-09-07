@@ -24,29 +24,27 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 public class XPDFQSquaredIntegrator {
 
 	Dataset q;
-	Dataset Thomson;
-//	static final double classicalElectronRadius = 2.8179403267e-15;//(27)
+	XPDFElectronCrossSections eXSections;
+	//	static final double classicalElectronRadius = 2.8179403267e-15;//(27)
 	static final double classicalElectronRadius = 1.0;
+	static final double electronMasskeV = 510.998910;//(13)
+	static final double breitDiracPower = 2.0;
 	
 	public XPDFQSquaredIntegrator() {
 		q = null;
-		Thomson = null;
+		eXSections = null;
 	}
 
 	public XPDFQSquaredIntegrator(Dataset twoTheta, XPDFBeamData beamData) {
 		q = beamData.getQFromTwoTheta(twoTheta);
-		Thomson = Maths.multiply(
-				0.5*classicalElectronRadius*classicalElectronRadius, 
-				Maths.add(
-						1,
-						Maths.square(Maths.cos(twoTheta))
-						)
-				);
+		eXSections = new XPDFElectronCrossSections();
+		eXSections.setAngles(twoTheta);
+		eXSections.setBeamEnergy(beamData.getBeamEnergy());
 	}
 	
 	public XPDFQSquaredIntegrator(XPDFQSquaredIntegrator qq) {
 		this.q = qq.q;
-		this.Thomson = qq.Thomson;
+		this.eXSections = (qq.eXSections != null) ? qq.eXSections : null;
 	}
 
 	// Calculate an integral over q², given a function and some angles
@@ -59,7 +57,7 @@ public class XPDFQSquaredIntegrator {
 	}
 	
 	public double ThomsonIntegral(Dataset fn) {
-		double qqIntegral = qSquaredIntegral(Maths.divide(fn, Thomson));
+		double qqIntegral = qSquaredIntegral(Maths.divide(fn, eXSections.getThomsonCrossSection()));
 		return qqIntegral;
 	}
 	

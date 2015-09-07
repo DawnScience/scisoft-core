@@ -131,18 +131,6 @@ public class XPDFCalibration {
 	}
 	
 	private Dataset applyCalibrationConstant(List<Dataset> mulCor) {
-		// TODO Do something more than just returning the sample data
-//		double a;
-//		String dataPath = "/home/rkl37156/ceria_dean_data/";
-//		String prefix = "ABSCOR";
-//		String suffix = ".xy";
-//		String infix = (mulCor.get(0).getDouble(1) <= 1e15 ) ? ".1" : ""; 
-//		// making a temporary Operation?? Is this right?
-//		Dataset absCorFake = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(new XPDFIterateCalibrationConstantOperation(), dataPath+prefix+infix+suffix, "Column_2"));
-//		absCorFake.imultiply(1.50589794741e+17);
-		
-		// The real processing starts here
-		
 		// Use size and indexing, rather than any fancy-pants iterators or such
 		int nComponents = mulCor.size();
 		

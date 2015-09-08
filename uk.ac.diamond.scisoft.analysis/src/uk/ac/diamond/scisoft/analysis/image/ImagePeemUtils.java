@@ -63,6 +63,13 @@ public class ImagePeemUtils {
 					break;
 				}
 			}
+			if (fov > fovs.get(fovs.size() - 1)) {
+				double alpha1 = dict.get(fovs.get(fovs.size() - 2));
+				double fov1 = fovs.get(fovs.size() - 2);
+				double alpha2 = dict.get(fovs.get(fovs.size() - 1));
+				double fov2 = fovs.get(fovs.size() - 1);
+				alpha = alpha1 + ((fov - fov1) * ((alpha2 - alpha1) / (fov2 - fov1)));
+			}
 		} else {
 			alpha = dict.get((int)fov);
 		}

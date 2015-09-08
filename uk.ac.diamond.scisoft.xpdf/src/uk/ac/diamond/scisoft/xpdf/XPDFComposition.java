@@ -17,6 +17,9 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
 
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+
 public class XPDFComposition {
 	Map<Integer, Integer> atomCount;
 	double electronOverlap;
@@ -122,6 +125,31 @@ public class XPDFComposition {
 		return massAttenuation;
 	}
 
+	public double getG0Minus1() {
+		int nSum = 0, dSum = 0;
+		int aCount = 0;
+		for (Map.Entry<Integer, Integer> iZN : atomCount.entrySet()) {
+			nSum += iZN.getValue()*iZN.getKey();
+			dSum += iZN.getValue()*Math.pow(iZN.getKey(), 2);
+			aCount += iZN.getValue();
+		}
+		double g0Minus1 = Math.pow(nSum, 2)/(double) dSum;
+		// divide by the number of atoms to normalize correctly
+		g0Minus1 /= aCount;
+		return g0Minus1;
+	}
+
+	public Dataset getSelfScattering(double beamEnergy, Dataset twoTheta) {
+		XPDFElectronCrossSections eXSections = new XPDFElectronCrossSections();
+		eXSections.setBeamEnergy(beamEnergy);
+		eXSections.setAngles(twoTheta);
+		
+		// TODO: Form factors
+		Dataset elasticSelfScattering = Maths.multiply(eXSections.getThomsonCrossSection(), 1);
+		Dataset inelasticSelfScattering = Maths.multiply(eXSections.getKleinNishimaCrossSection(), 1);
+		
+		return Maths.add(elasticSelfScattering, inelasticSelfScattering);
+	}
 }
 
 

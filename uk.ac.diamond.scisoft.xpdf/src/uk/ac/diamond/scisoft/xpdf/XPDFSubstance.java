@@ -89,4 +89,7 @@ public class XPDFSubstance {
 		return materialComposition;
 	}
 	
+	public double getG0Minus1() {
+		return materialComposition.getG0Minus1();
+	}
 }

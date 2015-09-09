@@ -348,7 +348,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			}
 			NodeLink ol = f.findNodeLink(Tree.ROOT);
 			GroupNode og = (GroupNode) ol.getDestination();
-			og.addNode(Tree.ROOT, nn.substring(1, nn.length() - 1), n);
+			og.addNode(nn.substring(1, nn.length() - 1), n);
 		}
 
 		tFile = f;
@@ -373,7 +373,7 @@ public class HDF5Loader extends AbstractFileLoader {
 				int i = nn.lastIndexOf(Node.SEPARATOR, nn.length() - 2);
 				NodeLink ol = f.findNodeLink(nn.substring(0, i));
 				GroupNode og = (GroupNode) ol.getDestination();
-				og.addNode(nn.substring(0, i+1), nn.substring(i + 1, nn.length() - 1), n);
+				og.addNode(nn.substring(i + 1, nn.length() - 1), n);
 			}
 			if (!monitorIncrement(mon)) {
 				updateSyncNodes(syncLimit); // notify if finished
@@ -528,7 +528,7 @@ public class HDF5Loader extends AbstractFileLoader {
 							if (!(p instanceof GroupNode)) {
 								throw new IllegalStateException("Matching pooled node is not a group");
 							}
-							group.addNode(name, oname, p);
+							group.addNode(oname, p);
 							continue;
 						}
 
@@ -543,7 +543,7 @@ public class HDF5Loader extends AbstractFileLoader {
 							if (g == null) {
 								logger.error("Could not load group {} in {}", oname, name);
 							} else {
-								group.addNode(name, oname, g);
+								group.addNode(oname, g);
 							}
 						}
 					} else if (otype == HDF5Constants.H5O_TYPE_DATASET) {
@@ -552,7 +552,7 @@ public class HDF5Loader extends AbstractFileLoader {
 							if (!(p instanceof DataNode)) {
 								throw new IllegalStateException("Matching pooled node is not a dataset");
 							}
-							group.addNode(name, oname, p);
+							group.addNode(oname, p);
 							continue;
 						}
 
@@ -563,7 +563,7 @@ public class HDF5Loader extends AbstractFileLoader {
 						Node n = createDataset(fid, f, oid, pool, newname, keepBitWidth);
 
 						if (n != null)
-							group.addNode(name, oname, n);
+							group.addNode(oname, n);
 					} else if (otype == HDF5Constants.H5O_TYPE_NAMED_DATATYPE) {
 						logger.error("Named datatype not supported"); // TODO
 					} else {
@@ -579,7 +579,7 @@ public class HDF5Loader extends AbstractFileLoader {
 					}
 					// System.err.println("  -> " + linkName[0]);
 					SymbolicNode slink = TreeFactory.createSymbolicNode(oid, f, linkName[0]);
-					group.addNode(name, oname, slink);
+					group.addNode(oname, slink);
 				} else if (ltype == HDF5Constants.H5L_TYPE_EXTERNAL) {
 					// System.err.println("E: " + oname);
 					String[] linkName = new String[2]; // file name and file path
@@ -601,7 +601,7 @@ public class HDF5Loader extends AbstractFileLoader {
 						}						
 					}
 					if (new File(eName).exists()) {
-						group.addNode(name, oname, getExternalNode(pool, f.getHostname(), eName, linkName[0], keepBitWidth));
+						group.addNode(oname, getExternalNode(pool, f.getHostname(), eName, linkName[0], keepBitWidth));
 					} else {
 						logger.error("Could not find external file {}", eName);
 					}
@@ -1329,7 +1329,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		// Change to TreeMap so that order maintained
 		Map<String, ILazyDataset> lMap = new LinkedHashMap<String, ILazyDataset>();
 		Map<String, Serializable> aMap = withMetadata ? new LinkedHashMap<String, Serializable>() : null;
-		addToMaps(tree.getNodeLink(), lMap, aMap);
+		addToMaps("", tree.getNodeLink(), lMap, aMap);
 
 		dh.clear();
 		dh.setTree(tree);
@@ -1374,15 +1374,17 @@ public class HDF5Loader extends AbstractFileLoader {
 
 	/**
 	 * Adds lazy datasets and the attributes and scalar dataset items in a node to the given maps recursively
+	 * @param ppath - parent path
 	 * @param link - link to node to investigate
 	 * @param lMap - the lazy dataset map to add items to, to aid the recursive method
 	 * @param aMap - the attribute map to add items to, to aid the recursive method (can be null)
 	 */
-	private static void addToMaps(NodeLink link, Map<String, ILazyDataset> lMap, Map<String, Serializable> aMap) {
+	private static void addToMaps(String ppath, NodeLink link, Map<String, ILazyDataset> lMap, Map<String, Serializable> aMap) {
 		Node node = link.getDestination();
+		String cpath = ppath + link.getName();
 		if (aMap != null) {
 			Iterator<String> iter = node.getAttributeNameIterator();
-			String name = link.getFullName() + Node.ATTRIBUTE;
+			String name = cpath + Node.ATTRIBUTE;
 			while (iter.hasNext()) {
 				String attr = iter.next();
 				aMap.put(name + attr, node.getAttribute(attr).getFirstElement());
@@ -1395,16 +1397,16 @@ public class HDF5Loader extends AbstractFileLoader {
 				return;
 
 			if (lMap != null)
-				lMap.put(link.getFullName(), dataset);
+				lMap.put(cpath, dataset);
 			if (aMap != null && dataset instanceof Dataset) { // zero-rank dataset
 				Dataset a = (Dataset) dataset;
-				aMap.put(link.getFullName(), a.getRank() == 0 ? a.getString() : a.getString(0));
+				aMap.put(cpath, a.getRank() == 0 ? a.getString() : a.getString(0));
 			}
 		} else if (node instanceof GroupNode) {
 			GroupNode g = (GroupNode) node;
 			Collection<String> names = g.getNames();
 			for (String n: names) {
-				addToMaps(g.getNodeLink(n), lMap, aMap);
+				addToMaps(cpath, g.getNodeLink(n), lMap, aMap);
 			}
 		}
 	}

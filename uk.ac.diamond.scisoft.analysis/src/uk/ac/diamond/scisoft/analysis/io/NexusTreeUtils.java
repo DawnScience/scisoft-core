@@ -682,7 +682,7 @@ public class NexusTreeUtils {
 		}
 
 		Transform t = new Transform();
-		t.name = link.getFullName();
+		t.name = link.getName();
 		String dep = parseStringAttr(dNode, "depends_on");
 		t.depend = dep == null ? NX_TRANSFORMATIONS_ROOT : dep;
 		t.matrix = m4;

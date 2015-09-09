@@ -1329,7 +1329,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		// Change to TreeMap so that order maintained
 		Map<String, ILazyDataset> lMap = new LinkedHashMap<String, ILazyDataset>();
 		Map<String, Serializable> aMap = withMetadata ? new LinkedHashMap<String, Serializable>() : null;
-		addToMaps(tree.getNodeLink(), lMap, aMap);
+		addToMaps("", tree.getNodeLink(), lMap, aMap);
 
 		dh.clear();
 		dh.setTree(tree);
@@ -1374,15 +1374,17 @@ public class HDF5Loader extends AbstractFileLoader {
 
 	/**
 	 * Adds lazy datasets and the attributes and scalar dataset items in a node to the given maps recursively
+	 * @param ppath - parent path
 	 * @param link - link to node to investigate
 	 * @param lMap - the lazy dataset map to add items to, to aid the recursive method
 	 * @param aMap - the attribute map to add items to, to aid the recursive method (can be null)
 	 */
-	private static void addToMaps(NodeLink link, Map<String, ILazyDataset> lMap, Map<String, Serializable> aMap) {
+	private static void addToMaps(String ppath, NodeLink link, Map<String, ILazyDataset> lMap, Map<String, Serializable> aMap) {
 		Node node = link.getDestination();
+		String cpath = ppath + link.getName();
 		if (aMap != null) {
 			Iterator<String> iter = node.getAttributeNameIterator();
-			String name = link.getFullName() + Node.ATTRIBUTE;
+			String name = cpath + Node.ATTRIBUTE;
 			while (iter.hasNext()) {
 				String attr = iter.next();
 				aMap.put(name + attr, node.getAttribute(attr).getFirstElement());
@@ -1395,16 +1397,16 @@ public class HDF5Loader extends AbstractFileLoader {
 				return;
 
 			if (lMap != null)
-				lMap.put(link.getFullName(), dataset);
+				lMap.put(cpath, dataset);
 			if (aMap != null && dataset instanceof Dataset) { // zero-rank dataset
 				Dataset a = (Dataset) dataset;
-				aMap.put(link.getFullName(), a.getRank() == 0 ? a.getString() : a.getString(0));
+				aMap.put(cpath, a.getRank() == 0 ? a.getString() : a.getString(0));
 			}
 		} else if (node instanceof GroupNode) {
 			GroupNode g = (GroupNode) node;
 			Collection<String> names = g.getNames();
 			for (String n: names) {
-				addToMaps(g.getNodeLink(n), lMap, aMap);
+				addToMaps(cpath, g.getNodeLink(n), lMap, aMap);
 			}
 		}
 	}

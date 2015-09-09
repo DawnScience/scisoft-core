@@ -70,7 +70,6 @@ public class HDF5SaverTest {
 	private Dataset checkOutput(String file, String path, String name, int[] shape) throws ScanFileHolderException {
 		TreeFile tree = new HDF5Loader(file).loadTree();
 		NodeLink link = tree.findNodeLink(path + name);
-		assertEquals(path, link.getPath());
 		assertEquals(name, link.getName());
 		assertTrue(link.isDestinationData());
 

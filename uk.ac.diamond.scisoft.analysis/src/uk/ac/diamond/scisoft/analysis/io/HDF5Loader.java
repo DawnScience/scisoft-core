@@ -348,7 +348,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			}
 			NodeLink ol = f.findNodeLink(Tree.ROOT);
 			GroupNode og = (GroupNode) ol.getDestination();
-			og.addNode(Tree.ROOT, nn.substring(1, nn.length() - 1), n);
+			og.addNode(nn.substring(1, nn.length() - 1), n);
 		}
 
 		tFile = f;
@@ -373,7 +373,7 @@ public class HDF5Loader extends AbstractFileLoader {
 				int i = nn.lastIndexOf(Node.SEPARATOR, nn.length() - 2);
 				NodeLink ol = f.findNodeLink(nn.substring(0, i));
 				GroupNode og = (GroupNode) ol.getDestination();
-				og.addNode(nn.substring(0, i+1), nn.substring(i + 1, nn.length() - 1), n);
+				og.addNode(nn.substring(i + 1, nn.length() - 1), n);
 			}
 			if (!monitorIncrement(mon)) {
 				updateSyncNodes(syncLimit); // notify if finished
@@ -528,7 +528,7 @@ public class HDF5Loader extends AbstractFileLoader {
 							if (!(p instanceof GroupNode)) {
 								throw new IllegalStateException("Matching pooled node is not a group");
 							}
-							group.addNode(name, oname, p);
+							group.addNode(oname, p);
 							continue;
 						}
 
@@ -543,7 +543,7 @@ public class HDF5Loader extends AbstractFileLoader {
 							if (g == null) {
 								logger.error("Could not load group {} in {}", oname, name);
 							} else {
-								group.addNode(name, oname, g);
+								group.addNode(oname, g);
 							}
 						}
 					} else if (otype == HDF5Constants.H5O_TYPE_DATASET) {
@@ -552,7 +552,7 @@ public class HDF5Loader extends AbstractFileLoader {
 							if (!(p instanceof DataNode)) {
 								throw new IllegalStateException("Matching pooled node is not a dataset");
 							}
-							group.addNode(name, oname, p);
+							group.addNode(oname, p);
 							continue;
 						}
 
@@ -563,7 +563,7 @@ public class HDF5Loader extends AbstractFileLoader {
 						Node n = createDataset(fid, f, oid, pool, newname, keepBitWidth);
 
 						if (n != null)
-							group.addNode(name, oname, n);
+							group.addNode(oname, n);
 					} else if (otype == HDF5Constants.H5O_TYPE_NAMED_DATATYPE) {
 						logger.error("Named datatype not supported"); // TODO
 					} else {
@@ -579,7 +579,7 @@ public class HDF5Loader extends AbstractFileLoader {
 					}
 					// System.err.println("  -> " + linkName[0]);
 					SymbolicNode slink = TreeFactory.createSymbolicNode(oid, f, linkName[0]);
-					group.addNode(name, oname, slink);
+					group.addNode(oname, slink);
 				} else if (ltype == HDF5Constants.H5L_TYPE_EXTERNAL) {
 					// System.err.println("E: " + oname);
 					String[] linkName = new String[2]; // file name and file path
@@ -601,7 +601,7 @@ public class HDF5Loader extends AbstractFileLoader {
 						}						
 					}
 					if (new File(eName).exists()) {
-						group.addNode(name, oname, getExternalNode(pool, f.getHostname(), eName, linkName[0], keepBitWidth));
+						group.addNode(oname, getExternalNode(pool, f.getHostname(), eName, linkName[0], keepBitWidth));
 					} else {
 						logger.error("Could not find external file {}", eName);
 					}

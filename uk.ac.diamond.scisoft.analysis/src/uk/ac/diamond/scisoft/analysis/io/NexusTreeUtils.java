@@ -398,10 +398,11 @@ public class NexusTreeUtils {
 
 	/**
 	 * Parse a group that is NXdetector class
+	 * @param path to group
 	 * @param link
 	 * @return an array of detector modules
 	 */
-	public static DetectorProperties[] parseDetector(NodeLink link) {
+	public static DetectorProperties[] parseDetector(String path, NodeLink link) {
 		if (!link.isDestinationGroup())
 			return null;
 
@@ -412,7 +413,7 @@ public class NexusTreeUtils {
 		Map<String, Transform> ftrans = new HashMap<String, Transform>();
 		for (NodeLink l : gNode) {
 			if (isNXClass(l.getDestination(), NX_TRANSFORMATIONS)) {
-				parseTransformations(l, ftrans);
+				parseTransformations(path, l, ftrans);
 				break;
 			}
 		}
@@ -444,7 +445,7 @@ public class NexusTreeUtils {
 		List<DetectorProperties> detectors = new ArrayList<>();
 		for (NodeLink l : gNode) {
 			if (isNXClass(l.getDestination(), NX_DETECTOR_MODULE)) {
-				detectors.add(parseSubDetector(ftrans, l));
+				detectors.add(parseSubDetector(path + Node.SEPARATOR + l.getName(), ftrans, l));
 			}
 		}
 
@@ -476,7 +477,7 @@ public class NexusTreeUtils {
 		return da;
 	}
 
-	public static DetectorProperties parseSubDetector(Map<String, Transform> ftrans, NodeLink link) {
+	public static DetectorProperties parseSubDetector(String path, Map<String, Transform> ftrans, NodeLink link) {
 		if (!link.isDestinationGroup())
 			return null;
 		GroupNode gNode = (GroupNode) link.getDestination();
@@ -494,7 +495,7 @@ public class NexusTreeUtils {
 				size = parseIntArray(l.getDestination(), 2);
 				break;
 			case "module_offset":
-				mo  = parseTransformation(l);
+				mo  = parseTransformation(path, l);
 				if (mo != null) {
 					ftrans.put(mo.name, mo);
 				}
@@ -632,21 +633,21 @@ public class NexusTreeUtils {
 		}
 	}
 
-	public static void parseTransformations(NodeLink link, Map<String, Transform> ftrans) {
+	public static void parseTransformations(String path, NodeLink link, Map<String, Transform> ftrans) {
 		if (!link.isDestinationGroup())
 			return;
 
 		GroupNode gNode = (GroupNode) link.getDestination();
-
+		String gpath = path + Node.SEPARATOR + link.getName();
 		for (NodeLink l : gNode) {
-			Transform t = parseTransformation(l);
+			Transform t = parseTransformation(gpath, l);
 			if (t != null) {
 				ftrans.put(t.name, t);
 			}
 		}
 	}
 
-	public static Transform parseTransformation(NodeLink link) {
+	public static Transform parseTransformation(String path, NodeLink link) {
 		if (!link.isDestinationData())
 			return null;
 		DataNode dNode = (DataNode) link.getDestination();
@@ -682,7 +683,7 @@ public class NexusTreeUtils {
 		}
 
 		Transform t = new Transform();
-		t.name = link.getName();
+		t.name = path + Node.SEPARATOR + link.getName();
 		String dep = parseStringAttr(dNode, "depends_on");
 		t.depend = dep == null ? NX_TRANSFORMATIONS_ROOT : dep;
 		t.matrix = m4;

@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.xpdf;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 public class XPDFElectronCrossSections {
@@ -94,7 +95,13 @@ public class XPDFElectronCrossSections {
 									Maths.add(
 											photonEnergyRatio, 
 											Maths.divide(1, photonEnergyRatio)),
-									Maths.multiply(2, Maths.square(Maths.sin(coordinates.getTwoTheta())))
+									Maths.multiply(
+											2,
+											Maths.multiply(
+													Maths.square(Maths.sin(coordinates.getTwoTheta())),
+													Maths.square(Maths.sin(DoubleDataset.zeros(coordinates.getTwoTheta()))) // The azimuthal scattering angle is zero
+													)
+											)
 									)
 							)
 					);								

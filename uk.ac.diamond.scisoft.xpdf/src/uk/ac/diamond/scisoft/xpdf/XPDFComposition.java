@@ -142,13 +142,10 @@ public class XPDFComposition {
 
 	public Dataset getSelfScattering(XPDFCoordinates coordinates) {
 		XPDFElectronCrossSections eXSections = new XPDFElectronCrossSections();
-//		eXSections.setBeamEnergy(beamEnergy);
-//		eXSections.setAngles(twoTheta);
 		eXSections.setCoordinates(coordinates);
 		
-		// TODO: Form factors
-		Dataset elasticSelfScattering = Maths.multiply(eXSections.getThomsonCrossSection(), 1);
-		Dataset inelasticSelfScattering = Maths.multiply(eXSections.getKleinNishimaCrossSection(), 1);
+		Dataset elasticSelfScattering = Maths.multiply(eXSections.getThomsonCrossSection(), Maths.square(this.getElasticScatteringFactor(coordinates.getX())));
+		Dataset inelasticSelfScattering = Maths.multiply(eXSections.getKleinNishimaCrossSection(), this.getInelasticScatteringFactor(coordinates.getX()));
 		
 		return Maths.add(elasticSelfScattering, inelasticSelfScattering);
 	}
@@ -156,27 +153,36 @@ public class XPDFComposition {
 	public Dataset getElasticScatteringFactor(Dataset x) {
 		Dataset fofx = DoubleDataset.zeros(x);
 		
-		for (Map.Entry<Integer, Integer> stoichiometry : atomCount.entrySet())
+		int totalAtoms = 0;
+		for (Map.Entry<Integer, Integer> stoichiometry : atomCount.entrySet()) {
 			fofx.iadd(Maths.multiply(stoichiometry.getValue(), XPDFElementalFormFactors.fofx(stoichiometry.getKey(), x)));
-		
+			totalAtoms += stoichiometry.getValue();
+		}
+		fofx.idivide(totalAtoms);
 		return fofx;
 	}
 	
 	public Dataset getElasticScatteringFactorSquared(Dataset x) {
 		Dataset fsquaredofx = DoubleDataset.zeros(x);
 		
-		for (Map.Entry<Integer, Integer> stoichiometry : atomCount.entrySet())
+		int totalAtoms = 0;
+		for (Map.Entry<Integer, Integer> stoichiometry : atomCount.entrySet()) {
 			fsquaredofx.iadd(Maths.multiply(stoichiometry.getValue(), Maths.square(XPDFElementalFormFactors.fofx(stoichiometry.getKey(), x))));
-		
+			totalAtoms += stoichiometry.getValue();
+		}
+		fsquaredofx.idivide(totalAtoms);
 		return fsquaredofx;
 	}
 	
 	public Dataset getInelasticScatteringFactor(Dataset x) {
 		Dataset Sofx = DoubleDataset.zeros(x);
 		
-		for (Map.Entry<Integer, Integer> stoichiometry : atomCount.entrySet())
+		int totalAtoms = 0;
+		for (Map.Entry<Integer, Integer> stoichiometry : atomCount.entrySet()) {
 			Sofx.iadd(Maths.multiply(stoichiometry.getValue(), XPDFElementalFormFactors.Sofx(stoichiometry.getKey(), x)));
-		
+			totalAtoms += stoichiometry.getValue();
+		}
+		Sofx.idivide(totalAtoms);
 		return Sofx;
 	}
 

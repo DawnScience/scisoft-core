@@ -20,6 +20,7 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.xpdf.XPDFCalibration;
+import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFQSquaredIntegrator;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
@@ -67,10 +68,14 @@ public class XPDFIterateCalibrationConstantOperation extends
 		
 		// Get 2θ, the axis variable
 		Dataset twoTheta = Maths.toRadians(DatasetUtils.convertToDataset(AbstractOperation.getFirstAxes(input)[0]));
-		// Set up the q² integrator class
-		theCalibration.setqSquaredIntegrator(new XPDFQSquaredIntegrator(twoTheta, theXPDFMetadata.getBeam()));
+		XPDFCoordinates coordinates = new XPDFCoordinates();
+		coordinates.setTwoTheta(twoTheta);
+		coordinates.setBeamData(theXPDFMetadata.getBeam());
 		
-		theCalibration.setSelfScatteringDenominatorFromSample(theXPDFMetadata.getSample(), twoTheta);
+		// Set up the q² integrator class
+		theCalibration.setqSquaredIntegrator(new XPDFQSquaredIntegrator(coordinates));//twoTheta, theXPDFMetadata.getBeam()));
+		
+		theCalibration.setSelfScatteringDenominatorFromSample(theXPDFMetadata.getSample(), coordinates);
 		
 		theCalibration.setAbsorptionMaps(theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DoubleDataset.zeros(twoTheta.reshape(twoTheta.getSize(), 1))));
 		

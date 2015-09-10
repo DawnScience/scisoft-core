@@ -116,8 +116,11 @@ public class XPDFTargetComponent {
 		return form.getKroghMoeSum();
 	}
 
-	public Dataset getSelfScattering(Dataset twoTheta) {
-		Dataset selfScattering = null;
+	public Dataset getSelfScattering(XPDFCoordinates coordinates) {
+
+//		return form.substance.getComposition().getSelfScattering(coordinates);
+		
+		Dataset selfScattering = form.substance.getComposition().getSelfScattering(coordinates);
 		if (isSample) {
 			Double[] selfScaterringArray = {
 				608.255443763, 608.239231464, 608.190604047, 608.109589936, 607.99623646,
@@ -597,5 +600,9 @@ public class XPDFTargetComponent {
 		}
 			
 		return selfScattering;
+	}
+
+	public Object getFSquared(XPDFCoordinates coords) {
+		return form.substance.getComposition().getElasticScatteringFactorSquared(coords.getX());
 	}
 }

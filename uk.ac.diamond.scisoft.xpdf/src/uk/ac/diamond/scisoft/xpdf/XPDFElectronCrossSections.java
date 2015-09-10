@@ -14,8 +14,9 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 public class XPDFElectronCrossSections {
 
-	double beamEnergy;
-	Dataset twoTheta;
+//	double beamEnergy;
+//	Dataset twoTheta;
+	XPDFCoordinates coordinates;
 	Dataset thomson;
 	Dataset kleinNishima;
 	static final double classicalElectronRadius = 1.0;
@@ -23,26 +24,36 @@ public class XPDFElectronCrossSections {
 	static final double breitDiracPower = 2.0;
 	
 	public XPDFElectronCrossSections() {
-		twoTheta = null;
+		coordinates = null;
 		thomson = null;
 		kleinNishima = null;
 	}
 	
 	public XPDFElectronCrossSections(XPDFElectronCrossSections inXSect){
-		this.beamEnergy = inXSect.beamEnergy;
-		this.twoTheta = (inXSect.twoTheta != null) ? inXSect.twoTheta : null;
+		this.coordinates = (inXSect.coordinates != null) ? inXSect.coordinates : null;
 		this.thomson = (inXSect.thomson != null) ? inXSect.thomson : null;
 		this.kleinNishima = (inXSect.kleinNishima != null) ? inXSect.kleinNishima : null;
 	}
 	
 	public void setBeamEnergy(double beamEnergy) {
-		this.beamEnergy = beamEnergy;
+		if (this.coordinates == null)
+			this.coordinates = new XPDFCoordinates();
+		this.coordinates.setEnergy(beamEnergy);
 		// invalidate the Klein-Nishima value
 		kleinNishima = null;
 	}
 	
 	public void setAngles(Dataset twoTheta) {
-		this.twoTheta = (twoTheta != null) ? twoTheta : null;
+		if (this.coordinates == null)
+			this.coordinates = new XPDFCoordinates();
+		this.coordinates.setTwoTheta(twoTheta);
+		// invalidate the Thomson and Klein-Nishima values
+		this.kleinNishima = null;
+		this.thomson = null;
+	}
+	
+	public void setCoordinates(XPDFCoordinates coordinates) {
+		this.coordinates = coordinates;
 		// invalidate the Thomson and Klein-Nishima values
 		this.kleinNishima = null;
 		this.thomson = null;
@@ -52,7 +63,7 @@ public class XPDFElectronCrossSections {
 		if (this.thomson == null) {
 			thomson = Maths.multiply(
 					0.5*classicalElectronRadius*classicalElectronRadius, 
-					Maths.add(1, Maths.square(Maths.cos(twoTheta)))
+					Maths.add(1, Maths.square(Maths.cos(coordinates.getTwoTheta())))
 					);
 		}
 		return this.thomson;
@@ -60,7 +71,7 @@ public class XPDFElectronCrossSections {
 	
 	public Dataset getKleinNishimaCrossSection() {
 		if (this.kleinNishima == null) {
-			double gamma = beamEnergy/electronMasskeV;
+			double gamma = coordinates.getEnergy()/electronMasskeV;
 			Dataset photonEnergyRatio = Maths.divide(
 					1.0,
 					Maths.add(
@@ -69,7 +80,7 @@ public class XPDFElectronCrossSections {
 									gamma, 
 									Maths.subtract(
 											1,
-											Maths.cos(twoTheta)
+											Maths.cos(coordinates.getTwoTheta())
 											)
 									)
 							)
@@ -83,7 +94,7 @@ public class XPDFElectronCrossSections {
 									Maths.add(
 											photonEnergyRatio, 
 											Maths.divide(1, photonEnergyRatio)),
-									Maths.multiply(2, Maths.square(Maths.sin(twoTheta)))
+									Maths.multiply(2, Maths.square(Maths.sin(coordinates.getTwoTheta())))
 									)
 							)
 					);								

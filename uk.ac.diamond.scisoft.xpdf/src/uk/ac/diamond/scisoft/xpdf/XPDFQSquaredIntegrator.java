@@ -35,11 +35,13 @@ public class XPDFQSquaredIntegrator {
 		eXSections = null;
 	}
 
-	public XPDFQSquaredIntegrator(Dataset twoTheta, XPDFBeamData beamData) {
-		q = beamData.getQFromTwoTheta(twoTheta);
+	public XPDFQSquaredIntegrator(XPDFCoordinates coordinates) { //Dataset twoTheta, XPDFBeamData beamData) {
+		q = coordinates.getQ();
+		//		q = beamData.getQFromTwoTheta(twoTheta);
 		eXSections = new XPDFElectronCrossSections();
-		eXSections.setAngles(twoTheta);
-		eXSections.setBeamEnergy(beamData.getBeamEnergy());
+		eXSections.setCoordinates(coordinates);
+		//		eXSections.setAngles(twoTheta);
+//		eXSections.setBeamEnergy(beamData.getBeamEnergy());
 	}
 	
 	public XPDFQSquaredIntegrator(XPDFQSquaredIntegrator qq) {

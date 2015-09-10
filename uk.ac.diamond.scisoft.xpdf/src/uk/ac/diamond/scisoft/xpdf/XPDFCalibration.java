@@ -74,8 +74,8 @@ public class XPDFCalibration {
 	}
 
 	// Difference of the Krogh-Moe sum and integral of Thomson self-scattering for the sample
-	public void setSelfScatteringDenominatorFromSample(XPDFTargetComponent sample, Dataset twoTheta) {
-		selfScatteringDenominator = qSquaredIntegrator.ThomsonIntegral(sample.getSelfScattering(twoTheta))
+	public void setSelfScatteringDenominatorFromSample(XPDFTargetComponent sample, XPDFCoordinates coordinates) {
+		selfScatteringDenominator = qSquaredIntegrator.ThomsonIntegral(sample.getSelfScattering(coordinates))
 				- sample.getKroghMoeSum();
 	}
 

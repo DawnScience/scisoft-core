@@ -18,6 +18,7 @@ import java.util.Stack;
 import java.util.Vector;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 public class XPDFComposition {
@@ -139,10 +140,11 @@ public class XPDFComposition {
 		return g0Minus1;
 	}
 
-	public Dataset getSelfScattering(double beamEnergy, Dataset twoTheta) {
+	public Dataset getSelfScattering(XPDFCoordinates coordinates) {
 		XPDFElectronCrossSections eXSections = new XPDFElectronCrossSections();
-		eXSections.setBeamEnergy(beamEnergy);
-		eXSections.setAngles(twoTheta);
+//		eXSections.setBeamEnergy(beamEnergy);
+//		eXSections.setAngles(twoTheta);
+		eXSections.setCoordinates(coordinates);
 		
 		// TODO: Form factors
 		Dataset elasticSelfScattering = Maths.multiply(eXSections.getThomsonCrossSection(), 1);
@@ -150,6 +152,35 @@ public class XPDFComposition {
 		
 		return Maths.add(elasticSelfScattering, inelasticSelfScattering);
 	}
+	
+	public Dataset getElasticScatteringFactor(Dataset x) {
+		Dataset fofx = DoubleDataset.zeros(x);
+		
+		for (Map.Entry<Integer, Integer> stoichiometry : atomCount.entrySet())
+			fofx.iadd(Maths.multiply(stoichiometry.getValue(), XPDFElementalFormFactors.fofx(stoichiometry.getKey(), x)));
+		
+		return fofx;
+	}
+	
+	public Dataset getElasticScatteringFactorSquared(Dataset x) {
+		Dataset fsquaredofx = DoubleDataset.zeros(x);
+		
+		for (Map.Entry<Integer, Integer> stoichiometry : atomCount.entrySet())
+			fsquaredofx.iadd(Maths.multiply(stoichiometry.getValue(), Maths.square(XPDFElementalFormFactors.fofx(stoichiometry.getKey(), x))));
+		
+		return fsquaredofx;
+	}
+	
+	public Dataset getInelasticScatteringFactor(Dataset x) {
+		Dataset Sofx = DoubleDataset.zeros(x);
+		
+		for (Map.Entry<Integer, Integer> stoichiometry : atomCount.entrySet())
+			Sofx.iadd(Maths.multiply(stoichiometry.getValue(), XPDFElementalFormFactors.Sofx(stoichiometry.getKey(), x)));
+		
+		return Sofx;
+	}
+
+	
 }
 
 

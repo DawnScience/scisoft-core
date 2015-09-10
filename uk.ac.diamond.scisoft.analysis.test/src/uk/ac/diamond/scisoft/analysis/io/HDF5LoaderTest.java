@@ -199,7 +199,7 @@ public class HDF5LoaderTest {
 			System.out.println(nl);
 
 		GroupNode g = tree.getGroupNode().getGroupNode("entry1");
-		assertEquals("Group is wrongly named" , "/entry1/EDXD_Element_00", TreeUtils.getPath(tree, g.getNodeLink("EDXD_Element_00").getDestination()));
+		assertEquals("Group is wrongly named" , "/entry1/EDXD_Element_00/", TreeUtils.getPath(tree, g.getNodeLink("EDXD_Element_00").getDestination()));
 		g = g.getGroupNode("EDXD_Element_00");
 		assertEquals("Attribute is wrongly named" , "axis", g.getDataNode("a").getAttribute("axis").getName());
 	}
@@ -439,7 +439,7 @@ public class HDF5LoaderTest {
 		DataHolder dh = l.loadFile();
 		Tree t = dh.getTree();
 		NodeLink nl = t.findNodeLink("/entry/instrument/detector");
-		DetectorProperties dp = NexusTreeUtils.parseDetector(nl)[0];
+		DetectorProperties dp = NexusTreeUtils.parseDetector("/entry/instrument/detector", nl)[0];
 
 		ILazyDataset ld = dh.getLazyDataset(0);
 		assertArrayEquals(new int[] {10, 195, 487}, ld.getShape());

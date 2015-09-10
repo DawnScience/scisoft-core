@@ -23,13 +23,13 @@ public class XPDFSelfScatteringNormalisationOperation extends
 	protected OperationData process(IDataset absCor, IMonitor monitor) throws OperationException {
 		
 		// TODO: read from internal metadata, not from external files
-		String xyFilePath = "/home/rkl37156/ceria_dean_data/";
-		Dataset selfScattering = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath+"self_scattering.xy", "Column_2").getSlice());
-		Dataset fSquaredOfX = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath+"fsquaredofx.xy", "Column_2").getSlice());
-		
-		Dataset soqFake = Maths.divide(Maths.subtract(absCor, selfScattering), fSquaredOfX);
-		
-		copyMetadata(absCor, soqFake);
+//		String xyFilePath = "/home/rkl37156/ceria_dean_data/";
+//		Dataset selfScattering = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath+"self_scattering.xy", "Column_2").getSlice());
+//		Dataset fSquaredOfX = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath+"fsquaredofx.xy", "Column_2").getSlice());
+//		
+//		Dataset soqFake = Maths.divide(Maths.subtract(absCor, selfScattering), fSquaredOfX);
+//		
+//		copyMetadata(absCor, soqFake);
 
 		IDataset soq = null;
 		try {
@@ -44,7 +44,7 @@ public class XPDFSelfScatteringNormalisationOperation extends
 				// Get the x variable
 				Dataset twoTheta = DatasetUtils.convertToDataset(absCor.getMetadata(AxesMetadata.class).get(0).getAxis(0)[0]);
 				XPDFCoordinates coords = new XPDFCoordinates();
-				coords.setTwoTheta(twoTheta);
+				coords.setTwoTheta(Maths.toRadians(twoTheta));
 				coords.setBeamData(theXPDFMetadata.getBeam());
 				soq = Maths.divide(Maths.subtract(absCor, sample.getSelfScattering(coords)), sample.getFSquared(coords));
 				copyMetadata(absCor, soq);
@@ -53,7 +53,8 @@ public class XPDFSelfScatteringNormalisationOperation extends
 			soq = absCor;
 		}
 		
-		return new OperationData(soqFake);
+//		return new OperationData(soqFake);
+		return new OperationData(soq);
 	}
 	@Override
 	public String getId() {

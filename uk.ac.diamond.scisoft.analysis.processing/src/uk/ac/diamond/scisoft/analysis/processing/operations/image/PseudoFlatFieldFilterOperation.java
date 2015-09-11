@@ -25,6 +25,7 @@ public class PseudoFlatFieldFilterOperation extends AbstractSimpleImageOperation
 	@Override
 	public IDataset processImage(IDataset dataset, IMonitor monitor) {
 		int dtype = AbstractDataset.getDType(dataset);
-		return Image.backgroundFilter(DatasetUtils.cast(dataset, dtype),((KernelWidthModel)model).getWidth());
+		int radius = ((KernelWidthModel)model).getWidth();
+		return Image.pseudoFlatFieldFilter(DatasetUtils.cast(dataset, dtype), radius);
 	}
 }

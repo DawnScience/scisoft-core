@@ -113,16 +113,24 @@ public class XPDFComposition {
 		double massAttenuation = 0.0;
 		
 		// TODO: replace the ceria experiment fixed values
-		if (beamEnergy == 76.6) {
-			// Both components have two oxygen atoms in their formula
-			if (atomCount.containsKey(8) && atomCount.get(8) == 2) {
-				if (atomCount.containsKey(14) && atomCount.get(14) == 1) {
-					massAttenuation = 0.19991818715584905;
-				} else if (atomCount.containsKey(58) && atomCount.get(58) == 1) {
-					massAttenuation = 4.0599040920479297;
-				}
-			}
+//		if (beamEnergy == 76.6) {
+//			// Both components have two oxygen atoms in their formula
+//			if (atomCount.containsKey(8) && atomCount.get(8) == 2) {
+//				if (atomCount.containsKey(14) && atomCount.get(14) == 1) {
+//					massAttenuation = 0.19991818715584905;
+//				} else if (atomCount.containsKey(58) && atomCount.get(58) == 1) {
+//					massAttenuation = 4.0599040920479297;
+//				}
+//			}
+//		}
+		
+		int intEnergy = (int) Math.round(beamEnergy*1000);
+		double formulaMass = 0.0;
+		for (Map.Entry<Integer, Integer> stoichiometry : atomCount.entrySet()) {
+			massAttenuation += atomicMass[stoichiometry.getKey()]*stoichiometry.getValue()*XPDFMassAttenuation.get(intEnergy, stoichiometry.getKey());
+			formulaMass += atomicMass[stoichiometry.getKey()]*stoichiometry.getValue();
 		}
+		massAttenuation /= formulaMass;
 		return massAttenuation;
 	}
 

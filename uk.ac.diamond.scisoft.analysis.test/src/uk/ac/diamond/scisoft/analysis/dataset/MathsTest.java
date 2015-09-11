@@ -900,9 +900,17 @@ public class MathsTest {
 						}
 					} else {
 						if (dtype < Dataset.ARRAYINT8 && etype < Dataset.ARRAYINT8) {
-							while (ita.hasNext() && itb.hasNext()) {
-								d.setObjectAbs(j++, ((Number) a.getObjectAbs(ita.index)).doubleValue()
-												/ ((Number) b.getObjectAbs(itb.index)).doubleValue());
+							if (d.hasFloatingPointElements()) {
+								while (ita.hasNext() && itb.hasNext()) {
+									d.setObjectAbs(j++, ((Number) a.getObjectAbs(ita.index)).doubleValue()
+													/ ((Number) b.getObjectAbs(itb.index)).doubleValue());
+								}
+							} else {
+								while (ita.hasNext() && itb.hasNext()) {
+									double bv = ((Number) b.getObjectAbs(itb.index)).doubleValue();
+									d.setObjectAbs(j++, bv == 0 ? 0 :((Number) a.getObjectAbs(ita.index)).doubleValue()
+													/ bv);
+								}
 							}
 						} else {
 							final double[] answer = new double[MAXISIZE];
@@ -968,8 +976,6 @@ public class MathsTest {
 							}
 						}
 					}
-					if (d == null)
-						break;
 					start += System.nanoTime();
 					double otime = ((double) start) / d.getSize();
 
@@ -1440,19 +1446,11 @@ public class MathsTest {
 							final double[] answer = new double[MAXISIZE];
 							final int is = d.getElementsPerItem();
 
-							double v;
 							if (a.getElementsPerItem() < is) {
 								while (ita.hasNext() && itb.hasNext()) {
 									final double xa = a.getElementDoubleAbs(ita.index);
-									if (d.hasFloatingPointElements()) {
-										for (int k = 0; k < ISIZEB; k++) {
-											answer[k] = Math.pow(xa, b.getElementDoubleAbs(itb.index + k));
-										}
-									} else {
-										for (int k = 0; k < ISIZEB; k++) {
-											v = Math.pow(xa, b.getElementDoubleAbs(itb.index + k));
-											answer[k] = Double.isInfinite(v) || Double.isNaN(v) ? 0 : v;
-										}
+									for (int k = 0; k < ISIZEB; k++) {
+										answer[k] = Math.pow(xa, b.getElementDoubleAbs(itb.index + k));
 									}
 									d.setObjectAbs(j, answer);
 									j += is;
@@ -1460,32 +1458,17 @@ public class MathsTest {
 							} else if (b.getElementsPerItem() < is) {
 								while (ita.hasNext() && itb.hasNext()) {
 									final double xb = b.getElementDoubleAbs(itb.index);
-									if (d.hasFloatingPointElements()) {
-										for (int k = 0; k < ISIZEA; k++) {
-											answer[k] = Math.pow(a.getElementDoubleAbs(ita.index + k), xb);
-										}
-									} else {
-										for (int k = 0; k < ISIZEA; k++) {
-											v = Math.pow(a.getElementDoubleAbs(ita.index + k), xb);
-											answer[k] = Double.isInfinite(v) || Double.isNaN(v) ? 0 : v;
-										}
+									for (int k = 0; k < ISIZEA; k++) {
+										answer[k] = Math.pow(a.getElementDoubleAbs(ita.index + k), xb);
 									}
 									d.setObjectAbs(j, answer);
 									j += is;
 								}
 							} else {
 								while (ita.hasNext() && itb.hasNext()) {
-									if (d.hasFloatingPointElements()) {
-										for (int k = 0; k < is; k++) {
-											answer[k] = Math.pow(a.getElementDoubleAbs(ita.index + k),
-													b.getElementDoubleAbs(itb.index + k));
-										}
-									} else {
-										for (int k = 0; k < is; k++) {
-											v = Math.pow(a.getElementDoubleAbs(ita.index + k),
-													b.getElementDoubleAbs(itb.index + k));
-											answer[k] = Double.isInfinite(v) || Double.isNaN(v) ? 0 : v;
-										}
+									for (int k = 0; k < is; k++) {
+										answer[k] = Math.pow(a.getElementDoubleAbs(ita.index + k),
+												b.getElementDoubleAbs(itb.index + k));
 									}
 									d.setObjectAbs(j, answer);
 									j += is;

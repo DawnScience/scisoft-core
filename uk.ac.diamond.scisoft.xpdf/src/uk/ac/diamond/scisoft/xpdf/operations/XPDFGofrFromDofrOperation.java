@@ -21,7 +21,6 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
-import uk.ac.diamond.scisoft.xpdf.XPDFProcessor;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 /**
@@ -59,7 +58,6 @@ public class XPDFGofrFromDofrOperation extends AbstractOperation<EmptyModel, Ope
 			;
 		}
 
-//		gofr = Maths.divide(Maths.divide(dofr, 4*Math.PI*numberDensity), XPDFProcessor.getR(DatasetUtils.convertToDataset(dofr)));
 		gofr = Maths.divide(Maths.divide(dofr, 4*Math.PI*numberDensity), r);
 		copyMetadata(dofr, gofr);
 		return new OperationData(gofr);

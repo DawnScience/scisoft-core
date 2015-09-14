@@ -24,7 +24,6 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
-import uk.ac.diamond.scisoft.xpdf.XPDFProcessor;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 /**
@@ -64,7 +63,6 @@ public class XPDFLorchFTOperation extends
 
 		Dataset q, r;
 		
-		//q = XPDFProcessor.getQFromMetadata(thSoq);
 		XPDFCoordinates coordinates = new XPDFCoordinates();
 		coordinates.setTwoTheta(Maths.toRadians(DatasetUtils.convertToDataset(AbstractOperation.getFirstAxes(thSoq)[0])));
 		coordinates.setBeamData(theXPDFMetadata.getBeam());
@@ -75,7 +73,6 @@ public class XPDFLorchFTOperation extends
 		Dataset gofr = Maths.divide(hofr, g0minus1);
 		Dataset dofr = Maths.multiply(Maths.multiply(gofr, r), 4*Math.PI * numberDensity);
 		
-//		XPDFProcessor.copyXPDFMetadata(thSoq, dofr, false);
 		dofr.setMetadata(theXPDFMetadata);
 		
 		// Not copying the x-axis metadata, so create new x-axis from the 

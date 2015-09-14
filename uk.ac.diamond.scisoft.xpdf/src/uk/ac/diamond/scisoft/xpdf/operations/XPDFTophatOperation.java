@@ -21,7 +21,6 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
-import uk.ac.diamond.scisoft.xpdf.XPDFProcessor;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 /**
@@ -56,7 +55,6 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 
 	double rMin = model.getrMin();
 	
-//	Dataset q = XPDFProcessor.getQFromMetadata(soq);
 	XPDFCoordinates coordinates = new XPDFCoordinates();
 	coordinates.setTwoTheta(Maths.toRadians(DatasetUtils.convertToDataset(AbstractOperation.getFirstAxes(thSoq)[0])));
 	coordinates.setBeamData(theXPDFMetadata.getBeam());

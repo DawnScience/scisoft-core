@@ -56,7 +56,7 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 	double rMin = model.getrMin();
 	
 	XPDFCoordinates coordinates = new XPDFCoordinates();
-	coordinates.setTwoTheta(Maths.toRadians(DatasetUtils.convertToDataset(AbstractOperation.getFirstAxes(thSoq)[0])));
+	coordinates.setTwoTheta(Maths.toRadians(DatasetUtils.convertToDataset(AbstractOperation.getFirstAxes(soq)[0])));
 	coordinates.setBeamData(theXPDFMetadata.getBeam());
 	Dataset q = coordinates.getQ();
 

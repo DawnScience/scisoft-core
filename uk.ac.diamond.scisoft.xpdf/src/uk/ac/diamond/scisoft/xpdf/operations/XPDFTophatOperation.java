@@ -20,6 +20,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
+import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFProcessor;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
@@ -38,13 +39,16 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 	// Number density and g0-1 from the sample material.
 	double numberDensity = 0.0;
 	double g0minus1 = 0.0;
+	XPDFMetadata theXPDFMetadata = null;
 	try {		
 		if (soq.getMetadata(XPDFMetadata.class) != null &&
 				!soq.getMetadata(XPDFMetadata.class).isEmpty() &&
-				soq.getMetadata(XPDFMetadata.class).get(0) != null &&
-				soq.getMetadata(XPDFMetadata.class).get(0).getSample() != null ) {
-			numberDensity = soq.getMetadata(XPDFMetadata.class).get(0).getSample().getNumberDensity();
-			g0minus1 = soq.getMetadata(XPDFMetadata.class).get(0).getSample().getG0Minus1();
+				soq.getMetadata(XPDFMetadata.class).get(0) != null) {
+			theXPDFMetadata = soq.getMetadata(XPDFMetadata.class).get(0);
+			if (theXPDFMetadata.getSample() != null ) {
+				numberDensity = theXPDFMetadata.getSample().getNumberDensity();
+				g0minus1 = theXPDFMetadata.getSample().getG0Minus1();
+			}
 		}
 	} catch (Exception e) {
 		;
@@ -52,7 +56,12 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 
 	double rMin = model.getrMin();
 	
-	Dataset q = XPDFProcessor.getQFromMetadata(soq);
+//	Dataset q = XPDFProcessor.getQFromMetadata(soq);
+	XPDFCoordinates coordinates = new XPDFCoordinates();
+	coordinates.setTwoTheta(Maths.toRadians(DatasetUtils.convertToDataset(AbstractOperation.getFirstAxes(thSoq)[0])));
+	coordinates.setBeamData(theXPDFMetadata.getBeam());
+	Dataset q = coordinates.getQ();
+
 	// Here r is merely a temporary coordinate system.
 	Dataset r = DoubleDataset.createRange(model.getrStep()/2, model.getrMax(), model.getrStep());
 

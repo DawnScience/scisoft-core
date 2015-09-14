@@ -23,6 +23,7 @@ import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
+import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFProcessor;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
@@ -46,13 +47,16 @@ public class XPDFLorchFTOperation extends
 		// Number density and g0-1 from the sample material.
 		double numberDensity = 0.0;
 		double g0minus1 = 0.0;
+		XPDFMetadata theXPDFMetadata = null;
 		try {		
 			if (thSoq.getMetadata(XPDFMetadata.class) != null &&
 					!thSoq.getMetadata(XPDFMetadata.class).isEmpty() &&
-					thSoq.getMetadata(XPDFMetadata.class).get(0) != null &&
-					thSoq.getMetadata(XPDFMetadata.class).get(0).getSample() != null ) {
+					thSoq.getMetadata(XPDFMetadata.class).get(0) != null) {
+				theXPDFMetadata = thSoq.getMetadata(XPDFMetadata.class).get(0);
+				if (theXPDFMetadata.getSample() != null ) {
 				numberDensity = thSoq.getMetadata(XPDFMetadata.class).get(0).getSample().getNumberDensity();
 				g0minus1 = thSoq.getMetadata(XPDFMetadata.class).get(0).getSample().getG0Minus1();
+				}
 			}
 		} catch (Exception e) {
 			;
@@ -60,13 +64,20 @@ public class XPDFLorchFTOperation extends
 
 		Dataset q, r;
 		
-		q = XPDFProcessor.getQFromMetadata(thSoq);
+		//q = XPDFProcessor.getQFromMetadata(thSoq);
+		XPDFCoordinates coordinates = new XPDFCoordinates();
+		coordinates.setTwoTheta(Maths.toRadians(DatasetUtils.convertToDataset(AbstractOperation.getFirstAxes(thSoq)[0])));
+		coordinates.setBeamData(theXPDFMetadata.getBeam());
+		q = coordinates.getQ();
+		
 		r = DoubleDataset.createRange(model.getrStep()/2, model.getrMax(), model.getrStep());
 		Dataset hofr = doLorchFT(DatasetUtils.convertToDataset(thSoq), q, r, model.getLorchWidth(), numberDensity);
 		Dataset gofr = Maths.divide(hofr, g0minus1);
 		Dataset dofr = Maths.multiply(Maths.multiply(gofr, r), 4*Math.PI * numberDensity);
 		
-		XPDFProcessor.copyXPDFMetadata(thSoq, dofr, false);
+//		XPDFProcessor.copyXPDFMetadata(thSoq, dofr, false);
+		dofr.setMetadata(theXPDFMetadata);
+		
 		// Not copying the x-axis metadata, so create new x-axis from the 
 		// r coordinate metadata
 		AxesMetadataImpl ax = new AxesMetadataImpl(1);

@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.xpdf.operations;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -46,7 +47,20 @@ public class XPDFGofrFromDofrOperation extends AbstractOperation<EmptyModel, Ope
 			;
 		}
 		Dataset gofr;
-		gofr = Maths.divide(Maths.divide(dofr, 4*Math.PI*numberDensity), XPDFProcessor.getR(DatasetUtils.convertToDataset(dofr)));
+		
+		Dataset r = null;
+		try {
+			if (dofr.getMetadata(AxesMetadata.class) != null &&
+					!dofr.getMetadata(AxesMetadata.class).isEmpty() &&
+					dofr.getMetadata(AxesMetadata.class).get(0) != null) {
+				r = DatasetUtils.convertToDataset(dofr.getMetadata(AxesMetadata.class).get(0).getAxes()[0]);
+			}
+		} catch (Exception e) {
+			;
+		}
+
+//		gofr = Maths.divide(Maths.divide(dofr, 4*Math.PI*numberDensity), XPDFProcessor.getR(DatasetUtils.convertToDataset(dofr)));
+		gofr = Maths.divide(Maths.divide(dofr, 4*Math.PI*numberDensity), r);
 		copyMetadata(dofr, gofr);
 		return new OperationData(gofr);
 	}

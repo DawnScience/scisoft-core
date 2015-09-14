@@ -23,8 +23,8 @@ public class XPDFMassAttenuationTest extends TestCase {
 		
 		assertTrue("Difference in cerium attenuation coefficient too large", Math.abs(ceriumMuExp76 - ceriumMu76) < accuTarget);
 		assertTrue("Difference in cerium attenuation coefficient too large", Math.abs(ceriumMuExp40 - ceriumMu40) < accuTarget);
-		assertTrue("Difference in cerium attenuation coefficient too large", Math.abs(siliconMuExp76 - siliconMu76) < accuTarget);
-		assertTrue("Difference in cerium attenuation coefficient too large", Math.abs(oxygenMuExp76 - oxygenMu76) < accuTarget);
+		assertTrue("Difference in silicon attenuation coefficient too large", Math.abs(siliconMuExp76 - siliconMu76) < accuTarget);
+		assertTrue("Difference in oxygen attenuation coefficient too large", Math.abs(oxygenMuExp76 - oxygenMu76) < accuTarget);
 	
 	}
 

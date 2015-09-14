@@ -21,6 +21,7 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
 import uk.ac.diamond.scisoft.xpdf.XPDFProcessor;
+import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 /**
  * Convert back from D(r) to G(r).
@@ -32,9 +33,18 @@ public class XPDFGofrFromDofrOperation extends AbstractOperation<EmptyModel, Ope
 
 	protected OperationData process(IDataset dofr, IMonitor monitor) throws OperationException {
 
-		// TODO: get these from the Sample metadata
-		double numberDensity = 0.08030;
-
+		// Get the number density from the sample metadata
+		double numberDensity = 0.0;
+		try {		
+			if (dofr.getMetadata(XPDFMetadata.class) != null &&
+					!dofr.getMetadata(XPDFMetadata.class).isEmpty() &&
+					dofr.getMetadata(XPDFMetadata.class).get(0) != null &&
+					dofr.getMetadata(XPDFMetadata.class).get(0).getSample() != null ) {
+				numberDensity = dofr.getMetadata(XPDFMetadata.class).get(0).getSample().getNumberDensity();
+			}
+		} catch (Exception e) {
+			;
+		}
 		Dataset gofr;
 		gofr = Maths.divide(Maths.divide(dofr, 4*Math.PI*numberDensity), XPDFProcessor.getR(DatasetUtils.convertToDataset(dofr)));
 		copyMetadata(dofr, gofr);

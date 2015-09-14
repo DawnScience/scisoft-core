@@ -21,6 +21,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.xpdf.XPDFProcessor;
+import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 /**
  * Subtract a top-hat convolution from the data.
@@ -34,9 +35,20 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 	protected OperationData process(IDataset soq, IMonitor monitor) throws OperationException {
 	Dataset thSoq = null;
 	
-	// TODO: get these from the Sample metadata
-	double numberDensity = 0.08030;
-	double g0minus1 = 0.522718594884;
+	// Number density and g0-1 from the sample material.
+	double numberDensity = 0.0;
+	double g0minus1 = 0.0;
+	try {		
+		if (soq.getMetadata(XPDFMetadata.class) != null &&
+				!soq.getMetadata(XPDFMetadata.class).isEmpty() &&
+				soq.getMetadata(XPDFMetadata.class).get(0) != null &&
+				soq.getMetadata(XPDFMetadata.class).get(0).getSample() != null ) {
+			numberDensity = soq.getMetadata(XPDFMetadata.class).get(0).getSample().getNumberDensity();
+			g0minus1 = soq.getMetadata(XPDFMetadata.class).get(0).getSample().getG0Minus1();
+		}
+	} catch (Exception e) {
+		;
+	}
 
 	double rMin = model.getrMin();
 	

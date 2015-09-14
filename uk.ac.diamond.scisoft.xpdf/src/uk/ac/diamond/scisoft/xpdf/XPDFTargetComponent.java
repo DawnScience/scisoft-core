@@ -223,4 +223,20 @@ public class XPDFTargetComponent {
 	public Object getFSquared(XPDFCoordinates coords) {
 		return form.substance.getComposition().getElasticScatteringFactorSquared(coords.getX());
 	}
+
+	/**
+	 * Returns the number density of the material that makes up the component.
+	 * @return the number density in 1/Å³
+	 */
+	public double getNumberDensity() {
+		return form.substance.getNumberDensity();
+	}
+
+	/**
+	 * Returns the g0-1 factor for the material that makes up the component.
+	 * @return g0-1
+	 */
+	public double getG0Minus1() {
+		return form.substance.getG0Minus1();
+	}
 }

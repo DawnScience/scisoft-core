@@ -24,6 +24,7 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
 import uk.ac.diamond.scisoft.xpdf.XPDFProcessor;
+import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 /**
  * Perform the Lorch Fourier Transform.
@@ -42,10 +43,21 @@ public class XPDFLorchFTOperation extends
 	
 	protected OperationData process(IDataset thSoq, IMonitor monitor) throws OperationException {
 	
-		// TODO: get these from the Sample metadata
-		double numberDensity = 0.08030;
-		double g0minus1 = 0.522718594884;
-		
+		// Number density and g0-1 from the sample material.
+		double numberDensity = 0.0;
+		double g0minus1 = 0.0;
+		try {		
+			if (thSoq.getMetadata(XPDFMetadata.class) != null &&
+					!thSoq.getMetadata(XPDFMetadata.class).isEmpty() &&
+					thSoq.getMetadata(XPDFMetadata.class).get(0) != null &&
+					thSoq.getMetadata(XPDFMetadata.class).get(0).getSample() != null ) {
+				numberDensity = thSoq.getMetadata(XPDFMetadata.class).get(0).getSample().getNumberDensity();
+				g0minus1 = thSoq.getMetadata(XPDFMetadata.class).get(0).getSample().getG0Minus1();
+			}
+		} catch (Exception e) {
+			;
+		}
+
 		Dataset q, r;
 		
 		q = XPDFProcessor.getQFromMetadata(thSoq);

@@ -10,20 +10,17 @@
 package uk.ac.diamond.scisoft.xpdf;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
-import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
-import uk.ac.diamond.scisoft.xpdf.operations.XPDFIterateCalibrationConstantOperation;
-
+/**
+ * A class for holding the information to calibrate the XPDF data.
+ * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @since 2015-09-11
+ */
 public class XPDFCalibration {
 
 	LinkedList<Double> calibrationConstants;
@@ -34,6 +31,9 @@ public class XPDFCalibration {
 	ArrayList<Dataset> backgroundSubtracted;
 	XPDFAbsorptionMaps absorptionMaps; 
 	
+	/**
+	 * Empty constructor.
+	 */
 	public XPDFCalibration() {
 		calibrationConstants = new LinkedList<Double>();
 		qSquaredIntegrator = null;
@@ -43,6 +43,11 @@ public class XPDFCalibration {
 		backgroundSubtracted = new ArrayList<Dataset>();
 	}
 	
+	/**
+	 * Copy constructor.
+	 * @param inCal
+	 * 				calibration object to be copied.
+	 */
 	public XPDFCalibration(XPDFCalibration inCal) {
 		if (inCal.calibrationConstants != null) {
 			this.calibrationConstants = new LinkedList<Double>();
@@ -61,42 +66,108 @@ public class XPDFCalibration {
 		}
 	}
 
+	/**
+	 * Get the most recent calibration constant from the list.
+	 * @return the most recent calibration constant.
+	 */
 	public double getCalibrationConstant() {
 		return calibrationConstants.getLast();
 	}
 
+	/**
+	 * Se the initial calibration constant to be iterated.
+	 * @param calibrationConstant
+	 * 							the initial value of the calibration constant.
+	 */
 	public void setInitialCalibrationConstant(double calibrationConstant) {
 		this.calibrationConstants.add(calibrationConstant);
 	}
 
+	/**
+	 * Set up the q² integrator class to use in the calculation of the constants
+	 * @param qSquaredIntegrator
+	 * 							a properly constructed q² integrator class to
+	 * 							be used to integrate scattering in the sample.
+	 */
 	public void setqSquaredIntegrator(XPDFQSquaredIntegrator qSquaredIntegrator) {
 		this.qSquaredIntegrator = new XPDFQSquaredIntegrator(qSquaredIntegrator);
 	}
 
-	// Difference of the Krogh-Moe sum and integral of Thomson self-scattering for the sample
+	/**
+	 * Calculate the denominator used in calculating the calibration constant.
+	 * <p> 
+	 * Difference of the Krogh-Moe sum and integral of Thomson self-scattering
+	 * for the sample, used as the denominator of the updating factor of the
+	 * calibration constant.
+	 * @param sample
+	 * 				Sample for which the properties should be calculated.
+	 * @param coordinates
+	 * 					Angles and beam energy at which the properties should be calculated.
+	 */
 	public void setSelfScatteringDenominatorFromSample(XPDFTargetComponent sample, XPDFCoordinates coordinates) {
 		selfScatteringDenominator = qSquaredIntegrator.ThomsonIntegral(sample.getSelfScattering(coordinates))
 				- sample.getKroghMoeSum();
 	}
 
+	/**
+	 * Set a Dataset for the multiple scattering correction.
+	 * <p>
+	 * Set the multiple scattering correction. Presently takes a zero Dataset
+	 * of the same shape as the angle arrays. 
+	 * @param multipleScatteringCorrection
+	 * 									A zero Dataset.
+	 */
 	public void setMultipleScatteringCorrection(Dataset multipleScatteringCorrection) {
 		this.multipleScatteringCorrection = new DoubleDataset(multipleScatteringCorrection);
 	}
 
+	/**
+	 * Set the number of atoms illuminated in the sample.
+	 * @param nSampleIlluminatedAtoms
+	 * 								the number of atoms illuminated in the sample.
+	 */
 	public void setSampleIlluminatedAtoms(double nSampleIlluminatedAtoms) {
 		this.nSampleIlluminatedAtoms = nSampleIlluminatedAtoms;
 	}
 
+	/**
+	 * Set the list of target component traces with their backgrounds subtracted.
+	 * @param backgroundSubtracted
+	 * 							A List of Datasets containing the ordered sample and containers.
+	 */
 	public void setBackgroundSubtracted(List<Dataset> backgroundSubtracted) {
 		this.backgroundSubtracted = new ArrayList<Dataset>();
 		for (Dataset data : backgroundSubtracted)
 			this.backgroundSubtracted.add(data);
 	}
 
+	/**
+	 * Set the absorption maps.
+	 * <p>
+	 * Set the absorption maps object that holds the maps between the target
+	 * components stored in the list of background subtracted traces. The
+	 * ordinals used in the list and used to index the maps. 
+	 * @param absorptionMaps
+	 * 						The absorption maps in their holding class.
+	 */
 	public void setAbsorptionMaps(XPDFAbsorptionMaps absorptionMaps) {
 		this.absorptionMaps = new XPDFAbsorptionMaps(absorptionMaps);
 	}
 	
+	/**
+	 * Iterate the calibration constant for five iterations.
+	 * <p>
+	 * Perform the iterations to converge the calibration constant of the data.
+	 * The steps performed are:
+	 * <ul>
+	 * <li>divide by the old calibration constant
+	 * <li>apply the multiple scattering correction
+	 * <li>apply the calibration constant
+	 * <li>divide by the number of atoms contributing to the signal to produce the absorption corrected data
+	 * <li>calculate the ratio of the new to old calibration constants
+	 * </ul>
+	 * @return the absorption corrected data
+	 */
 	public Dataset iterate() {
 		// Divide by the calibration constant and subtract the multiple scattering correction
 		List<Dataset> calCon = new ArrayList<Dataset>();
@@ -114,7 +185,6 @@ public class XPDFCalibration {
 		}
 		Dataset absCor = applyCalibrationConstant(mulCor);
 
-		// TODO: Add this back when the real calculations are done
 		absCor.idivide(nSampleIlluminatedAtoms);
 
 		// Integrate
@@ -129,7 +199,17 @@ public class XPDFCalibration {
 		return absCor;
 
 	}
-	
+	/**
+	 * Eliminate the scattered radiation from all containers from the data.
+	 * <p>
+	 * Subtract the scattered radiation from each container from the multiple-
+	 * scattering corrected data.
+	 * @param mulCor
+	 * 				list of the radiation scattered from the full target and
+	 * 				each container, ordered innermost outwards, with the sample
+	 * 				as the first element. 
+	 * @return the absorption corrected sample data.
+	 */
 	private Dataset applyCalibrationConstant(List<Dataset> mulCor) {
 		// Use size and indexing, rather than any fancy-pants iterators or such
 		int nComponents = mulCor.size();

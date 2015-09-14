@@ -26,11 +26,13 @@ import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 /**
- * 
+ * Normalize the data.
+ * <p>
  * Normalize the Dataset from its TargetComponent metadata, and if present, the
  * beam and container traces from their trace metadata
  * 
- * @author Timothy Spain
+ * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @since 2015-09-14
  *
  */
 public class XPDFNormalizeTracesOperation extends

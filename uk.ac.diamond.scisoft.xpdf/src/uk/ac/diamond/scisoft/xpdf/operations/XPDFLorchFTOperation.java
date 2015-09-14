@@ -26,12 +26,14 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
 import uk.ac.diamond.scisoft.xpdf.XPDFProcessor;
 
 /**
- * 
- * Perform the Lorch Fourier Transform. This takes the th_soq data and return
- * the dofr data. The function itself is a translation of DK's python code
+ * Perform the Lorch Fourier Transform.
+ * <p>
+ * This takes the th_soq data and return
+ * the D(r) data. The function itself is a translation of DK's python code
  * into Java.
  * 
- * @author Timothy Spain (rkl37156)
+ * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @since 2015-09-14
  *
  */
 public class XPDFLorchFTOperation extends
@@ -40,8 +42,6 @@ public class XPDFLorchFTOperation extends
 	
 	protected OperationData process(IDataset thSoq, IMonitor monitor) throws OperationException {
 	
-		// TODO: get this from the Model
-//		double lorchWidth = 0.2;
 		// TODO: get these from the Sample metadata
 		double numberDensity = 0.08030;
 		double g0minus1 = 0.522718594884;
@@ -49,7 +49,6 @@ public class XPDFLorchFTOperation extends
 		Dataset q, r;
 		
 		q = XPDFProcessor.getQFromMetadata(thSoq);
-		// TODO: get these from the Model
 		r = DoubleDataset.createRange(model.getrStep()/2, model.getrMax(), model.getrStep());
 		Dataset hofr = doLorchFT(DatasetUtils.convertToDataset(thSoq), q, r, model.getLorchWidth(), numberDensity);
 		Dataset gofr = Maths.divide(hofr, g0minus1);

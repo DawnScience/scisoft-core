@@ -1,11 +1,7 @@
 package uk.ac.diamond.scisoft.xpdf.operations;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -18,13 +14,18 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
-import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.xpdf.XPDFCalibration;
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFQSquaredIntegrator;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
+/**
+ * Iterate the calibration constant for the XPDF data.
+ * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @since 2015-09-14
+ *
+ */
 public class XPDFIterateCalibrationConstantOperation extends
 		AbstractOperation<EmptyModel, OperationData> {
 

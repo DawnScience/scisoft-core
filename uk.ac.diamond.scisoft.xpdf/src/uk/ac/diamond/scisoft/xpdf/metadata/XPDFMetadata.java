@@ -20,36 +20,46 @@ import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 
 /**
- * Interface for the metadata required by the XPDF processing pipeline
+ * Interface for the metadata required by the XPDF processing pipeline.
+ * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ *
  */
 public interface XPDFMetadata extends MetadataType {
 
 	/**
-	 * get a list of the containers in the sample, as XPDFTargetComponents
+	 * Gets a list of the containers in the target.
+	 * @return a list containing all the containers making up the target.
 	 */
 	List<XPDFTargetComponent> getContainers();
 
 	/**
-	 * reorder the containers in the metadata, according to the passed map. The key is the original ordinal, the value
-	 * is the new ordinal
+	 * Reorders the containers in the metadata.
+	 * <p>
+	 * Takes a mapping of the original ordinal to the new ordinal. The key is
+	 * the original ordinal, the value is the new ordinal.
+	 * @param newOrder
+	 * 				a map of the old ordinal to the new ordinal.
 	 */
 	void reorderContainers(Map<Integer, Integer> newOrder);
 	
 	/**
-	 * get the sample as XPDFTargetComponent
+	 * Getter for the sample properties.
+	 * @return the sample properties.
 	 */
 	XPDFTargetComponent getSample();
 
 	/**
-	 * get the data on the beam as XPDFBeam
+	 * Getter for the beam properties.
+	 * @return the beam properties.
 	 */
 	XPDFBeamData getBeam();
 
 	/**
-	 * 
-	 * @return The number of atoms in the sample illuminated by the beam
+	 * Returns the number of illuminated sample atoms.
+	 * <p>
+	 * Returns the number of atoms in the sample illuminated by the X-ray beam.
+	 * @return the number of illuminated atoms in the sample.
 	 */
-	
 	double getSampleIlluminatedAtoms();
 	
 	/**
@@ -59,6 +69,20 @@ public interface XPDFMetadata extends MetadataType {
 	 * function. The key is (index of scatterer, index of attenuator), ordered
 	 * with the sample in position 0, and the other containers in order as one 
 	 * goes outward 
+	 */
+
+	/**
+	 * Returns the absorption maps object.
+	 * <p>
+	 * The maps within the absorption maps object are indexed by scatterer and
+	 * attenuator index. The order of these indices matches the order of
+	 * containers returned in this.getContainers(). 
+	 * @param delta
+	 * 			Vertical scattering angle in radians.
+	 * @param gamma
+	 * 			Horizontal scattering angle in radians.
+	 * @return the absorption maps between each possible pair of target
+	 * 			components, wrapped in their own class.
 	 */
 	XPDFAbsorptionMaps getAbsorptionMaps(Dataset delta, Dataset gamma);
 }

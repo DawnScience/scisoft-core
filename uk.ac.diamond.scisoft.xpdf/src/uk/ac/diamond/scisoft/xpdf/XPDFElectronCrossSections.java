@@ -13,6 +13,12 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
+/**
+ * Calculates the electron cross-sections as a function of angle 
+ * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @since 2015-09-14
+ *
+ */
 public class XPDFElectronCrossSections {
 
 //	double beamEnergy;
@@ -24,18 +30,31 @@ public class XPDFElectronCrossSections {
 	static final double electronMasskeV = 510.998910;//(13)
 	static final double breitDiracPower = 2.0;
 	
+	/**
+	 * Empty constructor
+	 */
 	public XPDFElectronCrossSections() {
 		coordinates = null;
 		thomson = null;
 		kleinNishima = null;
 	}
 	
+	/**
+	 * Copy constructor
+	 * @param inXSect
+	 * 				Cross-section object to be copied.
+	 */
 	public XPDFElectronCrossSections(XPDFElectronCrossSections inXSect){
 		this.coordinates = (inXSect.coordinates != null) ? inXSect.coordinates : null;
 		this.thomson = (inXSect.thomson != null) ? inXSect.thomson : null;
 		this.kleinNishima = (inXSect.kleinNishima != null) ? inXSect.kleinNishima : null;
 	}
 	
+	/**
+	 * Sets the beam energy.
+	 * @param beamEnergy
+	 * 					The beam energy at which the cross-sections are to be calculated.
+	 */
 	public void setBeamEnergy(double beamEnergy) {
 		if (this.coordinates == null)
 			this.coordinates = new XPDFCoordinates();
@@ -44,6 +63,11 @@ public class XPDFElectronCrossSections {
 		kleinNishima = null;
 	}
 	
+	/**
+	 * Sets the scattering angles.
+	 * @param twoTheta
+	 * 				The scattering angles at which the cross-sections are to be calculated.
+	 */
 	public void setAngles(Dataset twoTheta) {
 		if (this.coordinates == null)
 			this.coordinates = new XPDFCoordinates();
@@ -53,6 +77,12 @@ public class XPDFElectronCrossSections {
 		this.thomson = null;
 	}
 	
+	/**
+	 * Sets the energy and scattering angles. 
+	 * @param coordinates
+	 * 					The coordinates object containing the beam energy and
+	 * 					the scattering angles.
+	 */
 	public void setCoordinates(XPDFCoordinates coordinates) {
 		this.coordinates = coordinates;
 		// invalidate the Thomson and Klein-Nishima values
@@ -60,6 +90,11 @@ public class XPDFElectronCrossSections {
 		this.thomson = null;
 	}
 	
+	/**
+	 * Calculates and returns the elastic Thomson scattering cross-section.
+	 * @return the elastic Thomson electron scattering cross-section at the
+	 * 			selected scattering angles.
+	 */
 	public Dataset getThomsonCrossSection() {
 		if (this.thomson == null) {
 			thomson = Maths.multiply(
@@ -70,6 +105,12 @@ public class XPDFElectronCrossSections {
 		return this.thomson;
 	}
 	
+	/**
+	 * Calculates and returns the inelastic electron scattering cross-section.
+	 * @return the inelastic electron scattering cross-section at the selected
+	 * 			scattering angles, for the beam energy. As parameterized by 
+	 * 			Klein and Nishima.
+	 */
 	public Dataset getKleinNishimaCrossSection() {
 		if (this.kleinNishima == null) {
 			double gamma = coordinates.getEnergy()/electronMasskeV;

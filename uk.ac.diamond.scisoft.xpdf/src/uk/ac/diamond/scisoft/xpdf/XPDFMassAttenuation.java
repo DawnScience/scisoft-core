@@ -12,15 +12,31 @@ package uk.ac.diamond.scisoft.xpdf;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Calculates the mass attenuation for fixed I15-1 beam energies.
+ * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ *
+ */
 public final class XPDFMassAttenuation {
 
 	// I15-1 only produces a closed set of energies, here listed in eV, to
 	// avoid fractional values and floating point keys
 	static int[] fixedEnergies = {40000, 63500, 76600};
 	
+	/**
+	 * Private constructor
+	 */
 	private XPDFMassAttenuation() {
 	}
 	
+	/**
+	 * Returns the mass attenuation coefficient.
+	 * @param energy
+	 * 				energy of the attenuated photons.
+	 * @param z
+	 * 			atomic number of the attenuating atoms.
+	 * @return the mass attenuation coefficient in cm²/g 
+	 */
 	public static double get(int energy, int z) {
 		if (muMaps.size() < fixedEnergies.length) {
 			muMaps.put(fixedEnergies[0], muForty);

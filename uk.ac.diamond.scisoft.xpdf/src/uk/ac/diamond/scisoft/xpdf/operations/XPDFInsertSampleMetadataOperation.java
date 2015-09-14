@@ -22,6 +22,12 @@ import uk.ac.diamond.scisoft.xpdf.XPDFComponentPlate;
 import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 
+/**
+ * Insert the sample properties metadata into the XPDF metadata.
+ * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @since 2015-09-14
+ *
+ */
 public class XPDFInsertSampleMetadataOperation extends XPDFInsertXMetadataOperation<XPDFInsertSampleMetadataModel, OperationData> {
 
 	protected OperationData process(IDataset input, IMonitor monitor)

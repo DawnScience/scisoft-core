@@ -14,11 +14,12 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 /**
+ * Performs the q² integrals.
+ * <p>
+ * Performs the q² integrals required to calculate total scattering, having had
+ * the momentum transfer array and the beam energy set.
  * 
- * Perform the q² integrals, having had the momentum transfer array and the
- * beam energy set.
- * 
- * @author Timothy Spain
+ * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
  *
  */
 public class XPDFQSquaredIntegrator {
@@ -30,11 +31,18 @@ public class XPDFQSquaredIntegrator {
 	static final double electronMasskeV = 510.998910;//(13)
 	static final double breitDiracPower = 2.0;
 	
+	/**
+	 * Empty constructor.
+	 */
 	public XPDFQSquaredIntegrator() {
 		q = null;
 		eXSections = null;
 	}
 
+	/**
+	 * Constructor using the coordinates object.
+	 * @param coordinates
+	 */
 	public XPDFQSquaredIntegrator(XPDFCoordinates coordinates) { //Dataset twoTheta, XPDFBeamData beamData) {
 		q = coordinates.getQ();
 		//		q = beamData.getQFromTwoTheta(twoTheta);
@@ -44,12 +52,25 @@ public class XPDFQSquaredIntegrator {
 //		eXSections.setBeamEnergy(beamData.getBeamEnergy());
 	}
 	
+	/**
+	 * Copy constructor.
+	 * @param qq
+	 * 			object to be copied.
+	 */
 	public XPDFQSquaredIntegrator(XPDFQSquaredIntegrator qq) {
 		this.q = qq.q;
 		this.eXSections = (qq.eXSections != null) ? qq.eXSections : null;
 	}
 
-	// Calculate an integral over q², given a function and some angles
+	// 
+	/**
+	 * Calculates the q² integral.
+	 * <p>
+	 * Calculate an integral over q², given a function and some angles.
+	 * @param fn
+	 * 			the function to be integrated.
+	 * @return the integral over q².
+	 */
 	public double qSquaredIntegral(Dataset fn) {
 		Dataset dq = XPDFQSquaredIntegrator.differentiate1DDataset(q);
 		double dqScalar = dq.getDouble(0);
@@ -58,18 +79,39 @@ public class XPDFQSquaredIntegrator {
 		return integral;
 	}
 	
+	/**
+	 * Calculates the ratios  of the q² integral of a function and the Thomson
+	 * scattering cross-section.
+	 * @param fn
+	 * 			the function to be integrated and used as the numerator.
+	 * @return the ratio of the q² integrals of the given function and the
+	 * 			Thomson scattering cross-section.
+	 */
 	public double ThomsonIntegral(Dataset fn) {
 		double qqIntegral = qSquaredIntegral(Maths.divide(fn, eXSections.getThomsonCrossSection()));
 		return qqIntegral;
 	}
 	
 	// TODO: a more sophisticated quadrature formula than the rectangle rule
+	/**
+	 * Calculates the quadrature of a function.
+	 * @param integrand
+	 * 				integrand to be calculated.
+	 * @return quadrature of the integrand over the stored angles.
+	 */
 	private static double quadrate1DDataset(Dataset integrand) {
 		return (double) integrand.sum();
 	}
 
-	// Second order correct finite difference approximation to the first
-	// derivative of a 1-d Dataset, with respect to the index
+	/**
+	 * Finite difference approximation to a 1d Dataset.
+	 * <p>
+	 * Second order correct finite difference approximation to the first
+	 * derivative of a 1-d Dataset, with respect to the index
+	 * @param y
+	 * 			Values of the function.
+	 * @return second-order correct approximation to the function.
+	 */
 	private static Dataset differentiate1DDataset(Dataset y) {
 		Dataset deriv = DoubleDataset.zeros(y);
 		if (y.getSize() > 1) {

@@ -21,9 +21,22 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
+/**
+ * 
+ * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @since 2015-09-14
+ *
+ */
 public class XPDFComposition {
+	/**
+	 * Map from the atomic numbers present in the compound, to the count of
+	 * atoms present in the fundamental formula
+	 */
 	Map<Integer, Integer> atomCount;
 	double electronOverlap;
+	/**
+	 * Mean atomic mass of the elements.
+	 */
 	static final double[] atomicMass = { 1.008664,
 		1.00794,4.002602,6.941,9.012182,10.811,12.011,14.00674,
         15.9994,18.9984032,20.1797,22.989768,24.305,26.981539,
@@ -41,6 +54,9 @@ public class XPDFComposition {
         238.0289,237.0482,244.0642,243.0614,247.0703,247.0703,
         251.0796,252.0816,257.0951
 	};
+	/**
+	 * Chemical symbols of the elements.
+	 */
 	static final String[] elementSymbol = { "n",
 		"H","He","Li","Be","B","C","N","O","F","Ne","Na","Mg","Al","Si",
         "P","S","Cl","Ar","K","Ca","Sc","Ti","V","Cr","Mn","Fe","Co",
@@ -51,6 +67,9 @@ public class XPDFComposition {
         "Hg","Tl","Pb","Bi","Po","At","Rn","Fr","Ra","Ac","Th","Pa","U",
         "Np","Pu","Am","Cm","Bk","Cf","Es","Fm"
 	};
+	/**
+	 * English names of the elements.
+	 */
 	static final String[] elementName = { "neutronium",
 		"Hydrogen","Helium","Lithium","Beryllium","Boron","Carbon",
         "Nitrogen","Oxygen","Fluorine","Neon","Sodium","Magnesium",
@@ -71,15 +90,30 @@ public class XPDFComposition {
         "Curium","Berkelium","Californium","Einsteinium","Fermium"
 	};
 			
+	/**
+	 * Construct from a chemical formula.
+	 * @param materialFormula
+	 * 						The chemical formula of the substance in ASCII
+	 * 						format (for example, water is H2O, hexane is C6H14)
+	 */
 	public XPDFComposition(String materialFormula) {
 		this(mapFormula(materialFormula));
 	}
 
+	/**
+	 * Constructor from a map of atomic number and atom count.
+	 * @param atomCount
+	 * 				Map of atomic number to count in the substance.
+	 */
 	public XPDFComposition(Map<Integer, Integer> atomCount) {
 		this.atomCount = atomCount;
 		this.electronOverlap = 0.0;
 	}
 	
+	/**
+	 * Returns the mean atomic mass of this compound.
+	 * @return mean atomic mass of the compound, averaged over all atoms.
+	 */
 	public double getMeanAtomicMass() {
 		double massSum = 0.0;
 		int atomSum = 0;
@@ -90,7 +124,11 @@ public class XPDFComposition {
 		return massSum/atomSum;
 	}
 
-	// Calculate the composition dependent part of the Krogh-Moe summation
+	/**
+	 * Calculates the composition dependent part of the Krogh-Moe summation.
+	 * @return the part of the Krogh-Moe sum that depends on the composition,
+	 * 			including the electron overlap.
+	 */
 	public double getKroghMoeSummand() {
 		double KMSum = 0.0;
 		int atomSum = 0;
@@ -103,12 +141,24 @@ public class XPDFComposition {
 		}
 		return KMSum/(atomSum*atomSum);
 	}
-	
+
+	/**
+	 * Transforms an ASCII chemical formula into a atomic number to atom count map.
+	 * @param chemicalFormula
+	 * 						A string holding the ASCII chemcial formula.
+	 * @return the map from atomic number to count of atoms in the compound.
+	 */
 	private static Map<Integer, Integer> mapFormula(String chemicalFormula) {
 		// Local class for parsing chemical formulae into a map from atomic number to multiplicity
 		return CompoundParser.indexElements(CompoundParser.countAtoms(CompoundParser.tokenize(chemicalFormula)));
 	}
 
+	/**
+	 * eturns the mass attenuation of the compound at the given energy. 
+	 * @param beamEnergy
+	 * 					The energy of the incident beam in keV.
+	 * @return the mass attenuation in cm²/g
+	 */
 	public double getMassAttenuation(double beamEnergy) {
 		// int beam energy in eV
 		int intEnergy = (int) Math.round(beamEnergy*1000);
@@ -123,6 +173,10 @@ public class XPDFComposition {
 		return massAttenuation;
 	}
 
+	/**
+	 * Calculates the value of g0-1 for the compound.
+	 * @return g0-1
+	 */
 	public double getG0Minus1() {
 		int nSum = 0, dSum = 0;
 		int aCount = 0;
@@ -137,6 +191,12 @@ public class XPDFComposition {
 		return g0Minus1;
 	}
 
+	/**
+	 * Return the self-scattering, given the energy of the beam and angles of interest.
+	 * @param coordinates
+	 * 					the coordinates of the detector, and energy of the beam.
+	 * @return the self-scattering cross-section in units of square classical electron radii.
+	 */
 	public Dataset getSelfScattering(XPDFCoordinates coordinates) {
 		XPDFElectronCrossSections eXSections = new XPDFElectronCrossSections();
 		eXSections.setCoordinates(coordinates);
@@ -147,6 +207,12 @@ public class XPDFComposition {
 		return Maths.add(elasticSelfScattering, inelasticSelfScattering);
 	}
 	
+	/**
+	 * Calculates the elastic electron scattering of the compound.
+	 * @param x
+	 * 			sin 2θ/λ 
+	 * @return the mass weighted mean elastic scattering form factor.
+	 */
 	public Dataset getElasticScatteringFactor(Dataset x) {
 		Dataset fofx = DoubleDataset.zeros(x);
 		
@@ -159,6 +225,12 @@ public class XPDFComposition {
 		return fofx;
 	}
 	
+	/**
+	 * Calculates the squared elastic electron scattering form factor of the compound.
+	 * @param x
+	 * 			sin 2θ/λ
+	 * @return the mass weighted mean squared elastic scattering form factor.
+	 */
 	public Dataset getElasticScatteringFactorSquared(Dataset x) {
 		Dataset fsquaredofx = DoubleDataset.zeros(x);
 		
@@ -171,6 +243,12 @@ public class XPDFComposition {
 		return fsquaredofx;
 	}
 	
+	/**
+	 * Calculates the inelastic electron scattering form factor of the compound.
+	 * @param x
+	 * 			sin 2θ/λ
+	 * @return the mass weighted mean inelastic scattering form factor.
+	 */
 	public Dataset getInelasticScatteringFactor(Dataset x) {
 		Dataset Sofx = DoubleDataset.zeros(x);
 		
@@ -186,11 +264,18 @@ public class XPDFComposition {
 	
 }
 
-
+/**
+ * Private class to do the chemical formula parsing.
+ * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @since 2015-09-14
+ *
+ */
 class CompoundParser {
 
-	/*
-	 * Names of the elements as an unmodifiable list. the neutron is added as
+	/**
+	 * Static list of element names.
+	 * <p>
+	 * Names of the elements as an unmodifiable list. The neutron is added as
 	 * element 0, so that index equals atomic number
 	 */
 	private static List<String> elements = Collections.unmodifiableList(Arrays
@@ -207,10 +292,13 @@ class CompoundParser {
 					"U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm"));
 
 	
-// Is this necessary? No	
-//	public CompoundParser() {
-//	}
-	// RL tokenization of the compound formula
+	/**
+	 * RL tokenization of the compound formula
+	 * @param compoundIn
+	 * 					Compound chemical formula, presented in ASCII (for 
+	 * 					example water is H2O, glucose is C6H12O6)
+	 * @return the list of tokens, comprising element names, brackets and multiplicities.
+	 */
 	public static List<String> tokenize(String compoundIn) {
 //		List<String> fakeTok = Arrays.asList( CompoundParser.elements.get(1) );
 		//return fakeTok;
@@ -242,8 +330,18 @@ class CompoundParser {
 	}
 	
 	
-	// Help to take a *valid* string, and return the last index of all the
-	// characters that do not occur in the search string
+	/**
+	 * Returns the index of the last character that does not appear in the search string.
+	 * <p>
+	 * Takes a valid string, and return the last index of all the
+	 * characters that do not occur in the search string.
+	 * @param str
+	 * 			string to be interrogated.
+	 * @param searchChars
+	 * 					string of the characters to be ignored.
+	 * @return
+	 * 		Index of the last character tha does not occur in the search string
+	 */
 	private static int lastIndexOfAnyBut(String str, String searchChars) {
 		
 		int lastInd;
@@ -254,6 +352,12 @@ class CompoundParser {
 	}
 
 
+	/**
+	 * Returns a map from elements symbols to counts of atoms.
+	 * @param tokens
+	 * 				the ASCII chemical formula represented as a list of tokens.
+	 * @return map from chemical symbol to multiplicity of atoms in the compound.
+	 */
 	public static Map<String, Integer> countAtoms(List<String> tokens) {
 
 		Map<String, Integer> atomCount = new HashMap<String, Integer>();
@@ -297,6 +401,12 @@ class CompoundParser {
 		return atomCount;
 	}
 	
+	/**
+	 * Converts a map of element symbols-to-multiplicities to a map of atomic number-to-multiplicities.
+	 * @param siMap
+	 * 			map of element symbols to multiplicities.
+	 * @return map of atomic number-to-multiplicities.
+	 */
 	public static Map<Integer, Integer> indexElements(Map<String, Integer> siMap) {
 	
 		Map<Integer, Integer> iMap = new HashMap<Integer, Integer>();

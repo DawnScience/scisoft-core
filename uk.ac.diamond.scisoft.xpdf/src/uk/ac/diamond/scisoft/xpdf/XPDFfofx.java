@@ -9,25 +9,53 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
-/* An effectively static class containing the atomic incoherent scattering
+/**
+ * Calculates elastic form factors following Waasmeier and Kirfel (1995).
+ * <p>
+ * An effectively static class containing the atomic incoherent scattering
  * factors.
+ * <p>
  * Derived from Waasmeier and Kirfel, "New Analytical Scattering-Factor
  * Functions for Free Atoms and Ions", Acta Crystallographica, A51, 416--431 (1995)
  * via ESRF's DABAX files.
- * Contains neutral atom values only, indexed with H at 0 and Californium at 97 */
+ * <p>
+ * Contains neutral atom values only, indexed with H at 0 and Californium at 97
+ *
+ * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @since 2015-09-14
+ *
+ */
 public final class XPDFfofx {
 
 	static int maxZ = 98;
 	
 	// Indices go from 0, atomic number from 1
+	/**
+	 * Return the array of "a" constants.
+	 * @param z
+	 * 			atomic number
+	 * @return the multiplicative exponential scaling constants.
+	 */
 	public static double[] getA(int z) {
 		return a[Integer.min(z, maxZ)-1];
 	}
 	
+	/**
+	 * Return the array of "b" constants.
+	 * @param z
+	 * 			atomic number
+	 * @return the exponential width constants.
+	 */
 	public static double[] getB(int z) {
 		return b[Integer.min(z, maxZ)-1];
 	}
 	
+	/**
+	 * Return the "c" constant.
+	 * @param z
+	 * 			atomic number
+	 * @return the additive constant.
+	 */
 	public static double getC(int z) {
 		return c[Integer.min(z, maxZ)-1];
 	}

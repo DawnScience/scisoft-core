@@ -18,6 +18,13 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
 
+/**
+ * Abstract class containing the common matters between sample and container 
+ * metadata insertion Operations
+ * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @since 2015-09-14
+ *
+ */
 abstract public class XPDFInsertComponentMetadataOperation extends AbstractOperation<EmptyModel, OperationData> {
 
 	

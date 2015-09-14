@@ -22,6 +22,12 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
 import uk.ac.diamond.scisoft.xpdf.XPDFProcessor;
 
+/**
+ * Convert back from D(r) to G(r).
+ * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @since 2015-09-14
+ *
+ */
 public class XPDFGofrFromDofrOperation extends AbstractOperation<EmptyModel, OperationData> {
 
 	protected OperationData process(IDataset dofr, IMonitor monitor) throws OperationException {

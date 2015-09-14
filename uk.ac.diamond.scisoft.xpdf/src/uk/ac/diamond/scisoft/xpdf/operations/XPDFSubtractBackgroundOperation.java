@@ -19,10 +19,17 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
+/**
+ * Subtract the background.
+ * <p>
+ * Subtract the empty beam data from the sample data and from that of any
+ * containers present. 
+ * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ *
+ */
 public class XPDFSubtractBackgroundOperation extends
 		AbstractOperation<XPDFSubtractBackgroundModel, OperationData> {
 

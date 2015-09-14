@@ -9,13 +9,15 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
-/*
- *  An effectively static class for holding the incoherent scattering factors.
+/**
+ * Calculates inelastic form factors following Balyuzi (1975).
+ * <p>
+ * An effectively static class for holding the incoherent scattering factors.
  *  Derived from Balyuzi, H. H. M., "Analytic Approximations to Incoherently
  *  Scattered X-Ray Intensities", Acta Crystallographica, A31, pp. 600-603 (1975)
  *  via ESRF's DABAX database and the Fortran library of S. Brennan and 
  *  P.L. Cowan (1992) Rev. Sci. Instrum. 63,1, 850.
- *  
+ * <p>
  *  Neutral atoms only, hydrogen ([0]) up to and including americium ([94]).
  */
 public final class XPDFSofx {
@@ -23,22 +25,43 @@ public final class XPDFSofx {
 	static int maxZ = 95;
 	
 	// Indices go from 0, atomic number from 1
+	/**
+	 * Return the array of "a" constants.
+	 * @param z
+	 * 			atomic number
+	 * @return the multiplicative exponential scaling constants.
+	 */
 	public static double[] getA(int z) {
 		return a[Integer.min(z, maxZ)-1];
 	}
 	
+	/**
+	 * Return the array of "b" constants.
+	 * @param z
+	 * 			atomic number
+	 * @return the exponential width constants.
+	 */
 	public static double[] getB(int z) {
 		return b[Integer.min(z, maxZ)-1];
 	}
 	
-	// Balyuzi (1975) does not include a constant term, but we can recover the
-	// incoherent scattering function directly by setting c to z
+	/**
+	 * Return the "c" constant.
+	 * <p>
+	 * Balyuzi (1975) does not include a constant term, but we can recover the
+	 * incoherent scattering function directly by setting c to z.
+	 * @param z
+	 * 			atomic number
+	 * @return the additive constant.
+	 */
 	public static double getC(int z) {
 		return (double) z;
 	}
 
-	// Negative of the a coeeficients given by Balyuzi. Combined with the c=Z
-	// constant term, this gives the incoherent scattering function directly
+	/**
+	 * Negative of the a coefficients given by Balyuzi. Combined with the c=Z
+	 * constant term, this gives the incoherent scattering function directly
+	 */
 	static double[][] a = {
 		{-0.262300014, -0.509400010, -0.203400001, -2.490000054E-02, -0.000000000E+00},
 		{-0.524600029, -1.01880002, -0.406800002, -4.980000108E-02, -0.000000000E+00},

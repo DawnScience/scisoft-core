@@ -13,31 +13,63 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
-//public because it needs to be visible in the uk...xpdf.operations package
+/**
+ * The class for cylindrical components of the experimental target. This class
+ * is <code>public</code> because it needs to be visible in the
+ * uk...xpdf.operations package
+ * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @since 2015-09-11
+ *
+ */
 public class XPDFComponentCylinder extends XPDFComponentGeometry {
 
+	/**
+	 * Empty constructor
+	 */
 	public XPDFComponentCylinder() {
 		super();
 	}
 
+	/**
+	 * Copy constructor from another cylinder.
+	 * @param inCyl
+	 * 			cylinder to be copied
+	 */
 	public XPDFComponentCylinder(XPDFComponentCylinder inCyl) {
 		super(inCyl);
 	}
 
+	/**
+	 * Copy constructor from another geometric object.
+	 * @param inGeom
+	 * 				geometry to be copied
+	 */
 	public XPDFComponentCylinder(XPDFComponentGeometry inGeom) {
 		super(inGeom);
 	}
 
+	/**
+	 * Clone method.
+	 */
 	@Override
 	protected XPDFComponentGeometry clone() {
 		return new XPDFComponentCylinder(this);
 	}
 
+	/**
+	 * Returns the shape of this cylinder.
+	 */
 	@Override
 	public String getShape() {
 		return "cylinder";
 	}
 
+	/**
+	 * Calculates the illuminated volume.
+	 * <p>
+	 * Return the illuminated volume of this cylinder, given the beam data. The
+	 *  beam is assumed to be centred on the cylinder. 
+	 */
 	@Override
 	public double getIlluminatedVolume(XPDFBeamData beamData) {
 		// Mathematics to match DK's python version. Never mind the
@@ -53,12 +85,18 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 		return illuminatedHeight * beamData.getBeamWidth() * rOuter * rOuter;
 	}
 
+	/**
+	 * Returns the path length upstream of the given points.
+	 */
 	@Override
 	public Dataset getUpstreamPathLength(Dataset x, Dataset y, Dataset z) {
 		// Thickness of the cylinder at x
 		return thicknessAtDistanceFromRadius(x, z);
 	}
 
+	/**
+	 * Returns the path length downstream of the given points.
+	 */
 	@Override
 	public Dataset getDownstreamPathLength(Dataset x, Dataset y, Dataset z,
 			double gamma, double delta) {
@@ -79,6 +117,9 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 				thicknessAtDistanceFromRadius(d, w), Math.cos(gamma));
 	}
 
+	/**
+	 * Calculates the absorption correction map when attenuatorGeometry is attenuating.
+	 */
 	@Override
 	public Dataset calculateAbsorptionCorrections(Dataset gamma, Dataset delta,
 			XPDFComponentGeometry attenuatorGeometry, double attenuationCoefficient,
@@ -86,7 +127,7 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 			boolean doUpstreamAbsorption, boolean doDownstreamAbsorption) {
 		double thickness = rOuter - rInner;
 		
-		// Account for the streamality of the (half) cylinder
+		// Account for the streamality of the (half?) cylinder
 		double arc = 0.0, xiMin = 0.0, xiMax = 0.0;
 		if (doUpstreamAbsorption && doDownstreamAbsorption) {
 			arc = 2*Math.PI;
@@ -106,6 +147,9 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 				; // You really shouldn't be here
 			}
 		}
+		// Calculate the number of grid points in each dimension. The total
+		// number should be gridSize, and the grid boxes should be roughly 
+		// isotropic on the surface of the cylinder.
 		double aspectRatio = (xiMax-xiMin)*rOuter/thickness;
 		double log2RSteps = Math.round(Math.log(gridSize/aspectRatio)/2/Math.log(2.0));
 		double rSteps = Math.pow(2.0, log2RSteps);
@@ -116,6 +160,7 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 		Dataset r1D = DoubleDataset.createRange(rInner+dR/2, rOuter-dR/2+dR/1e6, dR);
 		Dataset xi1D = DoubleDataset.createRange(xiMin+dXi/2, xiMax-dXi/2+dXi/1e6, dXi);
 		
+		// Expand the one dimensional coordinates to a two dimensional grid
 		// TODO: Is this the best way to expand a Dataset?
 		Dataset rCylinder = new DoubleDataset(r1D.getSize(), xi1D.getSize());
 		Dataset xiCylinder = new DoubleDataset(r1D.getSize(), xi1D.getSize());
@@ -130,6 +175,7 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 		Dataset yPlate = DoubleDataset.zeros(xPlate);
 		Dataset zPlate = Maths.multiply(rCylinder, Maths.cos(xiCylinder));
 		
+		// Create a mask of the illuminated atoms in the cyclinder.
 		// TODO: There has to be a better way to make a mask Dataset
 		Dataset illuminationPlate = DoubleDataset.ones(xPlate);
 		for (int i=0; i<xPlate.getShape()[0]; i++){
@@ -141,6 +187,8 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 		
 		Dataset illuminatedVolume = Maths.multiply(illuminationPlate, Maths.multiply(dR*dXi, rCylinder));
 		
+		// The upstream path length for each point is independent of scattering
+		// angle.
 		Dataset upstreamPathLength;
 		Dataset downstreamPathLength;
 		if (doUpstreamAbsorption) {
@@ -149,6 +197,9 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 			upstreamPathLength = DoubleDataset.zeros(xPlate);
 		}
 		
+		// For every direction, get the per-atom absorption of the radiation
+		// scattered by this object, as attenuated by the attenuating object 
+		// alone.
 		Dataset absorptionCorrection = new DoubleDataset(gamma);
 		// Loop over all detector angles
 		for (int i = 0; i<gamma.getShape()[0]; i++) {
@@ -177,6 +228,15 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 		return absorptionCorrection;
 		}
 
+	/**
+	 * For a circle, returns the chord distance from the -z boundary along the
+	 * line that passes p from the centre of the circle.
+	 * @param p
+	 * 			Distance the line passes from the centre of the circle.
+	 * @param z
+	 * 			z coordinate of the desired point. 
+	 * @return the Dataset of the path length for all the points provided.
+	 */
 	private Dataset thicknessAtDistanceFromRadius(Dataset p, Dataset z) {
 		// Given a distance from the radius vector, calculate the path length
 		// parallel to the radius

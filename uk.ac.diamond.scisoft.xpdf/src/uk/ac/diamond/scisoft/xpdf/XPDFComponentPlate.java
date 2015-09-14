@@ -13,31 +13,63 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
-//public because it needs to be visible in the uk...xpdf.operations package
+/**
+ * The class for cylindrical components of the experimental target. This class
+ * is <code>public</code> because it needs to be visible in the
+ * uk...xpdf.operations package
+ * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @since 2015-09-11
+ *
+ */
 public class XPDFComponentPlate extends XPDFComponentGeometry {
 
+	/**
+	 * Empty constructor
+	 */
 	public XPDFComponentPlate() {
 		super();
 	}
 	
+	/**
+	 * Copy constructor from another plate.
+	 * @param inPlate
+	 * 			plate to be copied
+	 */
 	public XPDFComponentPlate(XPDFComponentPlate inPlate) {
 		super(inPlate);
 	}
 	
+	/**
+	 * Copy constructor from another geometric object.
+	 * @param inGeom
+	 * 				geometry to be copied
+	 */
 	public XPDFComponentPlate(XPDFComponentGeometry inGeom) {
 		super(inGeom);
 	}
 	
+	/**
+	 * Clone method.
+	 */
 	@Override
 	protected XPDFComponentGeometry clone() {
 		return new XPDFComponentPlate(this);
 	}
 
+	/**
+	 * Returns the shape of this plate.
+	 */
 	@Override
 	public String getShape() {
 		return "plate";
 	}
 
+	/**
+	 * Calculates the illuminated volume.
+	 * <p>
+	 * Return the illuminated volume of this plate, given the beam data. The
+	 *  beam is assumed to be centred on the plate. 
+	 */
 	@Override
 	public double getIlluminatedVolume(XPDFBeamData beamData) {
 		// Matching DK's python code, even though the dimensions are incorrect
@@ -45,12 +77,18 @@ public class XPDFComponentPlate extends XPDFComponentGeometry {
 		return beamData.getBeamHeight()*beamData.getBeamWidth();
 	}
 
+	/**
+	 * Returns the path length upstream of the given points.
+	 */
 	@Override
 	public Dataset getUpstreamPathLength(Dataset x, Dataset y, Dataset z) {
 		// Thickness of the plate
 		return Maths.multiply(DoubleDataset.ones(x), Math.abs(rInner -rOuter));
 	}
 
+	/**
+	 * Returns the path length downstream of the given points.
+	 */
 	@Override
 	public Dataset getDownstreamPathLength(Dataset x, Dataset y, Dataset z,
 			double gamma, double delta) {
@@ -58,6 +96,9 @@ public class XPDFComponentPlate extends XPDFComponentGeometry {
 		return Maths.multiply(DoubleDataset.ones(x), Math.abs(rInner - rOuter)/(Math.cos(gamma)*Math.cos(delta)));
 	}
 
+	/**
+	 * Calculates the absorption correction map when attenuatorGeometry is attenuating.
+	 */
 	@Override
 	public Dataset calculateAbsorptionCorrections(Dataset gamma, Dataset delta,
 			XPDFComponentGeometry attenuatorGeometry, double attenuationCoefficient,

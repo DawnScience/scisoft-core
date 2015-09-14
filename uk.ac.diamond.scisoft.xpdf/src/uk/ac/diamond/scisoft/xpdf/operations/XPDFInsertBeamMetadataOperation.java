@@ -23,7 +23,12 @@ import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamTrace;
 import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
 
-
+/**
+ * Insert the beam metadata into the XPDF metadata.
+ * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @since 2015-09-14
+ *
+ */
 public class XPDFInsertBeamMetadataOperation extends XPDFInsertXMetadataOperation<XPDFInsertBeamMetadataModel, OperationData> {
 
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {

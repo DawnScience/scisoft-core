@@ -27,7 +27,10 @@ import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 
 /**
- * Add a container to the target 
+ * Add the metadata for a container to the XPDF metadata.
+ * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @since 2015-09-14
+ *
  */
 public class XPDFInsertContainerMetadataOperation extends
 		XPDFInsertXMetadataOperation<XPDFInsertContainerMetadataModel, OperationData> {

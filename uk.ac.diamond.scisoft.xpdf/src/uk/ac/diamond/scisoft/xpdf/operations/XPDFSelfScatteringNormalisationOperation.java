@@ -12,11 +12,16 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
-import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
+/**
+ * Apply self-scattering corrections to the data.
+ * @author Timothy Spain (rkl37156) thimothy.spain@diamond.ac.uk
+ * @since 2015-09-14
+ *
+ */
 public class XPDFSelfScatteringNormalisationOperation extends
 		AbstractOperation<EmptyModel, OperationData> {
 

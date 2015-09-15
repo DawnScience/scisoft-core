@@ -519,7 +519,7 @@ public class LoaderFactory {
 		return dataCache.fetchData(path, willLoadMetadata, imageNumber);
 	}
 
-	private static String stackExpression = "(.+)_(\\d+)";
+	private static String stackExpression = "(.+)_?(\\d+)";
 	
 	public static String getStackExpression() {
 		return stackExpression;

@@ -1406,7 +1406,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			GroupNode g = (GroupNode) node;
 			Collection<String> names = g.getNames();
 			for (String n: names) {
-				addToMaps(cpath, g.getNodeLink(n), lMap, aMap);
+				addToMaps(ppath.isEmpty() ? cpath : cpath  + Node.SEPARATOR, g.getNodeLink(n), lMap, aMap);
 			}
 		}
 	}

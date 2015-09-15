@@ -17,6 +17,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
@@ -122,11 +123,7 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 //	output = output*(q[3]-q[2])*np.power(2.0*np.square(pi)*rho*r,-1)
 		Dataset output = DoubleDataset.zeros(r);
 		Dataset qhq = Maths.multiply(q, fQ);
-		for (int i = 0; i<r.getSize(); i++){
-			output.set(Maths.multiply(
-					Maths.sin(Maths.multiply(q, r.getDouble(i))),
-					qhq).sum(), i);
-		}
+		output = fourierGeneric(qhq, q, r);
 		output.imultiply(
 				Maths.divide(
 						q.getDouble(3) - q.getDouble(2), 
@@ -136,6 +133,7 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 		return output;
 	}
 
+	
 	private Dataset fourierRtoQ(Dataset r, Dataset fR,
 			double numberDensity, Dataset q) {
 //  output = np.zeros(shape(q))
@@ -145,15 +143,34 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 //	output = output*(r[3]-r[2])*4*pi*rho/q
 		Dataset output = DoubleDataset.zeros(q);
 		Dataset rhr = Maths.multiply(r, fR);
-		for (int i = 0; i<q.getSize(); i++){
-			output.set(Maths.multiply(
-					Maths.sin(Maths.multiply(r, q.getDouble(i))),
-					rhr).sum(), i);
-		}
+		output = fourierGeneric(rhr, r, q);
 		output.imultiply(Maths.divide((r.getDouble(3) - r.getDouble(2))*4.0*Math.PI*numberDensity, q));
 		return output;
 	}
 
+	/**
+	 * Discrete sine transform common code. The summed functions are denoted by the u variable, the resultants by x
+	 * @param weight
+	 * 				A weighting function on the u axis
+	 * @return
+	 * 		The DST on the x axis
+	 */
+	private Dataset fourierGeneric(Dataset weightOnU, Dataset functionOnU, Dataset functionOnX) {
+		DoubleDataset dst = new DoubleDataset(functionOnX);
+		IndexIterator iterX = functionOnX.getIterator();
+		while (iterX.hasNext()) {
+			IndexIterator iterU = functionOnU.getIterator();
+			double accumulator = 0.0;
+			while (iterU.hasNext()) {
+				accumulator += weightOnU.getElementDoubleAbs(iterU.index)*
+						Math.sin(functionOnU.getElementDoubleAbs(iterU.index)*
+								functionOnX.getElementDoubleAbs(iterX.index));
+			}
+			dst.setAbs(iterX.index, accumulator);
+		}
+		return dst;
+	}
+	
 	private Dataset doTophatConvolution(Dataset soq, Dataset q, double tophatWidthInQ) {
 
 //    step_size = q[1]-q[0]

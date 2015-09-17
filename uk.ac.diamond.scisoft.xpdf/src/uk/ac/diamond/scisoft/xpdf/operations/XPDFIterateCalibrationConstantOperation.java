@@ -1,7 +1,12 @@
 package uk.ac.diamond.scisoft.xpdf.operations;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -55,7 +60,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 
 		// Sort the containers if requested
 		if (model.isSortContainers()) {
-			;
+			theXPDFMetadata.reorderContainers(orderContainers(theXPDFMetadata.getContainers()));
 		}
 		List<Dataset> backgroundSubtracted = new ArrayList<Dataset>();
 		// The 0th element is the sample
@@ -89,6 +94,43 @@ public class XPDFIterateCalibrationConstantOperation extends
 		return new OperationData(absCor);
 	}
 	
+	/**
+	 * Orders the list of containers.
+	 * <p>
+	 * Given a list of container XPDFTargetComponents, orders them by their
+	 * larger distance (external radius). Matches with the logic of the python
+	 * version.
+	 * @param containers
+	 * 					the list of containers to order
+	 * @return a map keyed by the position in the new list, with a value of the
+	 * position in the old list.
+	 */
+	static private Map<Integer, Integer> orderContainers(
+			List<XPDFTargetComponent> containers) {
+		List<Double> outerRadii = new ArrayList<Double>();
+		// Populate a list of outer radii of the containers
+		for (XPDFTargetComponent aContainer : containers) {
+			outerRadii.add(aContainer.getForm().getGeom().getDistances()[1]);
+		}
+		// Java offers no way of getting the sorted indices from a Collection, 
+		// so we have to do it ourselves
+		List<Integer> indices = new ArrayList<Integer>();
+		for (int i = 0; i<outerRadii.size(); i++) {
+			indices.add(i, i);
+		}
+		indices.sort(new Comparator<Integer>() {
+			@Override public int compare(final Integer i1, final Integer i2) {
+				return Double.compare(outerRadii.get(i1), outerRadii.get(i2));
+			}
+		});
+		Map<Integer, Integer> newOrder = new HashMap<Integer, Integer>();
+		for (int i = 0; i < indices.size(); i++) {
+			newOrder.put(i, indices.get(i));
+		}
+
+		return newOrder;
+	}
+
 
 	@Override
 	public String getId() {

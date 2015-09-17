@@ -64,7 +64,7 @@
       <operation
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFIterateCalibrationConstantOperation"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFIterateCalibrationConstantOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFIterateCalibrationConstantModel"
             name="XPDF Iterate Calibration Constant (SUBBAK to ABSCOR)">
       </operation>
    </extension>

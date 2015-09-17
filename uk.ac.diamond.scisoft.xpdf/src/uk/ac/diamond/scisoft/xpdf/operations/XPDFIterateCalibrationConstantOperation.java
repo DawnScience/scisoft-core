@@ -13,7 +13,6 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
 import uk.ac.diamond.scisoft.xpdf.XPDFCalibration;
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFQSquaredIntegrator;
@@ -27,7 +26,7 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
  *
  */
 public class XPDFIterateCalibrationConstantOperation extends
-		AbstractOperation<EmptyModel, OperationData> {
+		AbstractOperation<XPDFIterateCalibrationConstantModel, OperationData> {
 
 	protected OperationData process(IDataset input, IMonitor monitor)
 			throws OperationException {
@@ -36,8 +35,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 		
 		XPDFCalibration theCalibration = new XPDFCalibration();
 		
-		// TODO: get from the model
-		int nIterations = 5;
+		int nIterations = model.getnIterations();
 		// The initial value of the calibration constant is 20
 		theCalibration.setInitialCalibrationConstant(20.0);
 		
@@ -54,12 +52,15 @@ public class XPDFIterateCalibrationConstantOperation extends
 			// No XPDF metadata? Bail out!
 			return new OperationData(input);
 		}
-		
-		// TODO: Get the order of the containers and the sample
+
+		// Sort the containers if requested
+		if (model.isSortContainers()) {
+			;
+		}
 		List<Dataset> backgroundSubtracted = new ArrayList<Dataset>();
 		// The 0th element is the sample
 		backgroundSubtracted.add((Dataset) input);
-		// Add the containers is in order, innermost to outermost
+		// Add the containers in order, innermost to outermost
 		for (XPDFTargetComponent container : theXPDFMetadata.getContainers()) {
 			backgroundSubtracted.add(container.getBackgroundSubtractedTrace());
 		}

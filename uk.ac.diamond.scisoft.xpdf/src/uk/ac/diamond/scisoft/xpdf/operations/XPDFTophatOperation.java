@@ -150,21 +150,21 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 
 	/**
 	 * Discrete sine transform common code. The summed functions are denoted by the u variable, the resultants by x
-	 * @param weight
-	 * 				A weighting function on the u axis
+	 * @param functionOnU
+	 * 				A function on the u axis to be transformed
 	 * @return
 	 * 		The DST on the x axis
 	 */
-	private Dataset fourierGeneric(Dataset weightOnU, Dataset functionOnU, Dataset functionOnX) {
-		DoubleDataset dst = new DoubleDataset(functionOnX);
-		IndexIterator iterX = functionOnX.getIterator();
+	private Dataset fourierGeneric(Dataset functionOnU, Dataset coordinateU, Dataset coordinateX) {
+		DoubleDataset dst = new DoubleDataset(coordinateX);
+		IndexIterator iterX = coordinateX.getIterator();
 		while (iterX.hasNext()) {
-			IndexIterator iterU = functionOnU.getIterator();
+			IndexIterator iterU = coordinateU.getIterator();
 			double accumulator = 0.0;
 			while (iterU.hasNext()) {
-				accumulator += weightOnU.getElementDoubleAbs(iterU.index)*
-						Math.sin(functionOnU.getElementDoubleAbs(iterU.index)*
-								functionOnX.getElementDoubleAbs(iterX.index));
+				accumulator += functionOnU.getElementDoubleAbs(iterU.index)*
+						Math.sin(coordinateU.getElementDoubleAbs(iterU.index)*
+								coordinateX.getElementDoubleAbs(iterX.index));
 			}
 			dst.setAbs(iterX.index, accumulator);
 		}
@@ -175,7 +175,7 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 
 //    step_size = q[1]-q[0]
 //    w = top_hat_width_in_Q/step_size
-//    intw = int((2*np.round(w/2))+1) # do we need to make this an interger? 
+//    intw = int((2*np.round(w/2))+1) # do we need to make this an integer? 
 //    # step through the points of the output array. We'll define the value of 
 //    # each, one by one. 
 //    result = np.zeros(shape(soq))

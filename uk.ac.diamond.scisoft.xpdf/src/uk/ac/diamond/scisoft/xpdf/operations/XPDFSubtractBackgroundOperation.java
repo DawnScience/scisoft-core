@@ -42,14 +42,8 @@ public class XPDFSubtractBackgroundOperation extends
 		
 		copyMetadata(input, process);
 		
-		try {
-			if (process.getMetadata(XPDFMetadata.class) != null &&
-				!process.getMetadata(XPDFMetadata.class).isEmpty() &&
-				process.getMetadata(XPDFMetadata.class).get(0) != null)
-				theXPDFMetadata = process.getMetadata(XPDFMetadata.class).get(0);
-		} catch (Exception e) {
-			;
-		}
+		theXPDFMetadata = process.getFirstMetadata(XPDFMetadata.class);
+		if (theXPDFMetadata == null) throw new OperationException(this, "XPDF metadata not found.");
 		
 		if (theXPDFMetadata != null && theXPDFMetadata.getBeam() != null && theXPDFMetadata.getBeam().getTrace() != null) {
 			// Dataset trace, from the Sample metadata

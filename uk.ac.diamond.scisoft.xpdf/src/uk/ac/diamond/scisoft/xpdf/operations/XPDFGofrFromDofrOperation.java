@@ -35,30 +35,12 @@ public class XPDFGofrFromDofrOperation extends AbstractOperation<EmptyModel, Ope
 
 		// Get the number density from the sample metadata
 		double numberDensity = 0.0;
-		try {		
-			if (dofr.getMetadata(XPDFMetadata.class) != null &&
-					!dofr.getMetadata(XPDFMetadata.class).isEmpty() &&
-					dofr.getMetadata(XPDFMetadata.class).get(0) != null &&
-					dofr.getMetadata(XPDFMetadata.class).get(0).getSample() != null ) {
-				numberDensity = dofr.getMetadata(XPDFMetadata.class).get(0).getSample().getNumberDensity();
-			}
-		} catch (Exception e) {
-			;
-		}
-		Dataset gofr;
+		if (dofr.getFirstMetadata(XPDFMetadata.class) == null) throw new OperationException(this, "XPDF metadata not found.");
 		
-		Dataset r = null;
-		try {
-			if (dofr.getMetadata(AxesMetadata.class) != null &&
-					!dofr.getMetadata(AxesMetadata.class).isEmpty() &&
-					dofr.getMetadata(AxesMetadata.class).get(0) != null) {
-				r = DatasetUtils.convertToDataset(dofr.getMetadata(AxesMetadata.class).get(0).getAxes()[0]);
-			}
-		} catch (Exception e) {
-			;
-		}
-
-		gofr = Maths.divide(Maths.divide(dofr, 4*Math.PI*numberDensity), r);
+		if (dofr.getFirstMetadata(AxesMetadata.class) == null) throw new OperationException(this, "Axis metadata not found.");
+		Dataset r = DatasetUtils.convertToDataset(dofr.getFirstMetadata(AxesMetadata.class).getAxes()[0]);
+		
+		Dataset gofr = Maths.divide(Maths.divide(dofr, 4*Math.PI*numberDensity), r);
 		copyMetadata(dofr, gofr);
 		return new OperationData(gofr);
 	}

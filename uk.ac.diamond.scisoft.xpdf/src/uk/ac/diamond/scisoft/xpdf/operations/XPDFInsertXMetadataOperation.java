@@ -39,15 +39,7 @@ public abstract class XPDFInsertXMetadataOperation <T extends IOperationModel, D
 	}
 
 	protected XPDFMetadataImpl getAndRemoveXPDFMetadata( IDataset input) {
-		XPDFMetadataImpl theXPDFMetadata = null;
-		try {
-			List<XPDFMetadata> listOfXPDFMetadata = input.getMetadata(XPDFMetadata.class);
-			if (listOfXPDFMetadata != null && !listOfXPDFMetadata.isEmpty()) {
-				theXPDFMetadata = (XPDFMetadataImpl) listOfXPDFMetadata.get(0);
-			}
-		} catch (Exception e) {
-			// No metadata? No problem!
-		}
+		XPDFMetadataImpl theXPDFMetadata = (XPDFMetadataImpl) input.getFirstMetadata(XPDFMetadata.class);
 		// Create a new metadata if there is not one
 		if (theXPDFMetadata == null)
 			theXPDFMetadata = new XPDFMetadataImpl();

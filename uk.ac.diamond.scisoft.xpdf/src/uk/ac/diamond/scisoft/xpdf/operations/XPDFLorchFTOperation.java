@@ -10,7 +10,6 @@
 package uk.ac.diamond.scisoft.xpdf.operations;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -22,7 +21,6 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
@@ -43,24 +41,14 @@ public class XPDFLorchFTOperation extends
 	
 	protected OperationData process(IDataset thSoq, IMonitor monitor) throws OperationException {
 	
+		XPDFMetadata theXPDFMetadata = thSoq.getFirstMetadata(XPDFMetadata.class);
+		if (theXPDFMetadata == null) throw new OperationException(this, "XPDF metadata not found.");
+		if (theXPDFMetadata.getSample() == null) throw new OperationException(this, "XPDF sample metadata not found.");
 		// Number density and g0-1 from the sample material.
-		double numberDensity = 0.0;
-		double g0minus1 = 0.0;
-		XPDFMetadata theXPDFMetadata = null;
-		try {		
-			if (thSoq.getMetadata(XPDFMetadata.class) != null &&
-					!thSoq.getMetadata(XPDFMetadata.class).isEmpty() &&
-					thSoq.getMetadata(XPDFMetadata.class).get(0) != null) {
-				theXPDFMetadata = thSoq.getMetadata(XPDFMetadata.class).get(0);
-				if (theXPDFMetadata.getSample() != null ) {
-				numberDensity = thSoq.getMetadata(XPDFMetadata.class).get(0).getSample().getNumberDensity();
-				g0minus1 = thSoq.getMetadata(XPDFMetadata.class).get(0).getSample().getG0Minus1();
-				}
-			}
-		} catch (Exception e) {
-			;
-		}
-
+		double numberDensity = theXPDFMetadata.getSample().getNumberDensity();
+		double g0minus1 = theXPDFMetadata.getSample().getG0Minus1();
+		
+		
 		Dataset q, r;
 		
 		XPDFCoordinates coordinates = new XPDFCoordinates();

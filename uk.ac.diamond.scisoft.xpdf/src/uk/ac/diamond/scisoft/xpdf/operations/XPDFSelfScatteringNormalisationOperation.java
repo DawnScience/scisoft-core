@@ -28,28 +28,20 @@ public class XPDFSelfScatteringNormalisationOperation extends
 	protected OperationData process(IDataset absCor, IMonitor monitor) throws OperationException {
 		
 		IDataset soq = null;
-		try {
-			XPDFMetadata theXPDFMetadata;
-			if (absCor.getMetadata(XPDFMetadata.class) != null &&
-					!absCor.getMetadata(XPDFMetadata.class).isEmpty() &&
-					absCor.getMetadata(XPDFMetadata.class).get(0) != null &&
-					absCor.getMetadata(XPDFMetadata.class).get(0).getSample() != null) {
-				// Get the sample
-				theXPDFMetadata = absCor.getMetadata(XPDFMetadata.class).get(0);
-				XPDFTargetComponent sample = theXPDFMetadata.getSample();
-				// Get the x variable
-				Dataset twoTheta = DatasetUtils.convertToDataset(absCor.getMetadata(AxesMetadata.class).get(0).getAxis(0)[0]);
-				XPDFCoordinates coords = new XPDFCoordinates();
-				coords.setTwoTheta(Maths.toRadians(twoTheta));
-				coords.setBeamData(theXPDFMetadata.getBeam());
-				soq = Maths.divide(Maths.subtract(absCor, sample.getSelfScattering(coords)), sample.getFSquared(coords));
-				copyMetadata(absCor, soq);
-			}
-		} catch (Exception e) {
-			soq = absCor;
-		}
-		
-//		return new OperationData(soqFake);
+
+		XPDFMetadata theXPDFMetadata = absCor.getFirstMetadata(XPDFMetadata.class);
+		if (theXPDFMetadata == null) throw new OperationException(this, "XPDF metadata not found.");
+		if (theXPDFMetadata.getSample() == null) throw new OperationException(this, "XPDF sample metadata not found.");
+		XPDFTargetComponent sample = theXPDFMetadata.getSample();
+		// Get the x variable
+		if (absCor.getFirstMetadata(AxesMetadata.class) == null) throw new OperationException(this, "XPDF axis data not found.");
+		Dataset twoTheta = DatasetUtils.convertToDataset(absCor.getFirstMetadata(AxesMetadata.class).getAxis(0)[0]);
+		XPDFCoordinates coords = new XPDFCoordinates();
+		coords.setTwoTheta(Maths.toRadians(twoTheta));
+		coords.setBeamData(theXPDFMetadata.getBeam());
+		soq = Maths.divide(Maths.subtract(absCor, sample.getSelfScattering(coords)), sample.getFSquared(coords));
+		copyMetadata(absCor, soq);
+
 		return new OperationData(soq);
 	}
 	@Override

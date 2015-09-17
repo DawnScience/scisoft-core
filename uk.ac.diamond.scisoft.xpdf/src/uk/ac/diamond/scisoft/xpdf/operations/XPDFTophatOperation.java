@@ -37,23 +37,12 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 	Dataset thSoq = null;
 	
 	// Number density and g0-1 from the sample material.
-	double numberDensity = 0.0;
-	double g0minus1 = 0.0;
-	XPDFMetadata theXPDFMetadata = null;
-	try {		
-		if (soq.getMetadata(XPDFMetadata.class) != null &&
-				!soq.getMetadata(XPDFMetadata.class).isEmpty() &&
-				soq.getMetadata(XPDFMetadata.class).get(0) != null) {
-			theXPDFMetadata = soq.getMetadata(XPDFMetadata.class).get(0);
-			if (theXPDFMetadata.getSample() != null ) {
-				numberDensity = theXPDFMetadata.getSample().getNumberDensity();
-				g0minus1 = theXPDFMetadata.getSample().getG0Minus1();
-			}
-		}
-	} catch (Exception e) {
-		;
-	}
-
+	XPDFMetadata theXPDFMetadata = soq.getFirstMetadata(XPDFMetadata.class);
+	if (theXPDFMetadata == null) throw new OperationException(this, "XPDF metadata not found");
+	if (theXPDFMetadata.getSample() == null) throw new OperationException(this, "XPDF sample metadata not found");
+	double numberDensity = theXPDFMetadata.getSample().getNumberDensity();
+	double g0minus1 = theXPDFMetadata.getSample().getG0Minus1();
+	
 	double rMin = model.getrMin();
 	
 	XPDFCoordinates coordinates = new XPDFCoordinates();

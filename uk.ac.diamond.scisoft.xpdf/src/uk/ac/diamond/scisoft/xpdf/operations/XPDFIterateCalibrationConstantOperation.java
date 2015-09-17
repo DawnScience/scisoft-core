@@ -48,16 +48,9 @@ public class XPDFIterateCalibrationConstantOperation extends
 		
 		XPDFMetadata theXPDFMetadata = null;
 		// Get the metadata
-		try {
-			if (input.getMetadata(XPDFMetadata.class) != null &&
-					!input.getMetadata(XPDFMetadata.class).isEmpty() &&
-					input.getMetadata(XPDFMetadata.class).get(0) != null)
-				theXPDFMetadata = input.getMetadata(XPDFMetadata.class).get(0);
-		} catch (Exception e) {
-			// No XPDF metadata? Bail out!
-			return new OperationData(input);
-		}
-
+		theXPDFMetadata = input.getFirstMetadata(XPDFMetadata.class);
+		if (theXPDFMetadata == null) throw new OperationException(this, "XPDFMetadata not found.");
+		
 		// Sort the containers if requested
 		if (model.isSortContainers()) {
 			theXPDFMetadata.reorderContainers(orderContainers(theXPDFMetadata.getContainers()));

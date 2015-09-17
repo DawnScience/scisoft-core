@@ -235,6 +235,11 @@ public class MockDataset implements IDataset {
 	}
 	
 	@Override
+	public <T extends MetadataType> T getFirstMetadata(Class<T> clazz) {
+		throw new AssertionFailedError("Methods in MockDataset should not be called");
+	}
+	
+	@Override
 	public MockDataset clone() {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}

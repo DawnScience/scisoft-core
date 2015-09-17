@@ -61,7 +61,13 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 	 */
 	@Override
 	public void reorderContainers(Map<Integer, Integer> newOrder) {
-		// TODO Auto-generated method stub
+		// iterate over the keys in order
+		int nKeys = newOrder.size();
+		List <XPDFTargetComponent> newContainerData = new ArrayList<XPDFTargetComponent>();
+		for (int iKey = 0; iKey < nKeys; iKey++) {
+			newContainerData.add(iKey, this.containerData.get(newOrder.get(iKey)));
+		}
+		this.containerData = newContainerData;
 	}
 
 	/**

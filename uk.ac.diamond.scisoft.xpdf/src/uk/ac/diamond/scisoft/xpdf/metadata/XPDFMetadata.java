@@ -35,10 +35,10 @@ public interface XPDFMetadata extends MetadataType {
 	/**
 	 * Reorders the containers in the metadata.
 	 * <p>
-	 * Takes a mapping of the original ordinal to the new ordinal. The key is
-	 * the original ordinal, the value is the new ordinal.
+	 * Takes a mapping of the new ordinal to the original ordinal. The key is
+	 * the new ordinal, the value is the original ordinal.
 	 * @param newOrder
-	 * 				a map of the old ordinal to the new ordinal.
+	 * 				a map of the new ordinal to the old ordinal.
 	 */
 	void reorderContainers(Map<Integer, Integer> newOrder);
 	

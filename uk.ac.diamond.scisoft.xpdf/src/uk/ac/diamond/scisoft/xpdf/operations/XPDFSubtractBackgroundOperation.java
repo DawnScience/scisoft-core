@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.xpdf.operations;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -30,6 +31,7 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
  * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
  *
  */
+@Atomic
 public class XPDFSubtractBackgroundOperation extends
 		AbstractOperation<XPDFSubtractBackgroundModel, OperationData> {
 

@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.xpdf.operations;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -32,6 +33,7 @@ import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
  * @since 2015-09-14
  *
  */
+@Atomic
 public class XPDFInsertContainerMetadataOperation extends
 		XPDFInsertXMetadataOperation<XPDFInsertContainerMetadataModel, OperationData> {
 

@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.xpdf;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 /**
@@ -100,23 +101,49 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 	@Override
 	public Dataset getDownstreamPathLength(Dataset x, Dataset y, Dataset z,
 			double gamma, double delta) {
-	// The capillary is held vertically, such that γ=π/2 is along it. 
-		Dataset d =
-				Maths.subtract(
-						Maths.multiply(x, Math.cos(delta)),
-						Maths.multiply(z, -Math.sin(delta))
-						);
-		Dataset w = 
-				Maths.add(
-						Maths.multiply(x, Math.sin(delta)),
-						Maths.multiply(z, -Math.cos(delta))
-						);
-
-		// Don't forget the secant factor
-		return Maths.divide(
-				thicknessAtDistanceFromRadius(d, w), Math.cos(gamma));
+		return getDownstreamPathLengthExplicit(x, y, z, gamma, delta);
+//		return getDownstreamPathLengthImplicit(x, y, z, gamma, delta);
 	}
 
+//	private Dataset getDownstreamPathLengthImplicit(Dataset x, Dataset y, Dataset z,
+//			double gamma, double delta) {
+//		// The capillary is held vertically, such that γ=π/2 is along it. 
+//		Dataset d =
+//				Maths.subtract(
+//						Maths.multiply(x, Math.cos(delta)),
+//						Maths.multiply(z, -Math.sin(delta))
+//						);
+//		Dataset w = 
+//				Maths.add(
+//						Maths.multiply(x, Math.sin(delta)),
+//						Maths.multiply(z, -Math.cos(delta))
+//						);
+//
+//		// Don't forget the secant factor
+//		return Maths.divide(
+//				thicknessAtDistanceFromRadius(d, w), Math.cos(gamma));
+//		
+//	}
+	
+	
+	private Dataset getDownstreamPathLengthExplicit(Dataset xSet, Dataset ySet, Dataset zSet,
+			double gamma, double delta) {
+		double cd = Math.cos(delta), sd = Math.sin(delta);
+		double cgamma = Math.cos(gamma);
+		DoubleDataset lambda = new DoubleDataset(xSet);
+		IndexIterator iter = xSet.getIterator();
+		
+		while(iter.hasNext()) {
+			double x = xSet.getElementDoubleAbs(iter.index);
+			double z = zSet.getElementDoubleAbs(iter.index);
+			double d = x*cd - z*-sd;
+			double w = x*sd + z*-cd;
+			lambda.setAbs(iter.index, thicknessAtDistanceFromRadiusScalar(d, w)/cgamma);
+		}
+		return lambda;
+	}
+
+		
 	/**
 	 * Calculates the absorption correction map when attenuatorGeometry is attenuating.
 	 */
@@ -125,6 +152,7 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 			XPDFComponentGeometry attenuatorGeometry, double attenuationCoefficient,
 			XPDFBeamData beamData,
 			boolean doUpstreamAbsorption, boolean doDownstreamAbsorption) {
+		
 		double thickness = rOuter - rInner;
 		
 		// Account for the streamality of the (half?) cylinder
@@ -147,6 +175,7 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 				; // You really shouldn't be here
 			}
 		}
+
 		// Calculate the number of grid points in each dimension. The total
 		// number should be gridSize, and the grid boxes should be roughly 
 		// isotropic on the surface of the cylinder.
@@ -160,6 +189,7 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 		Dataset r1D = DoubleDataset.createRange(rInner+dR/2, rOuter-dR/2+dR/1e6, dR);
 		Dataset xi1D = DoubleDataset.createRange(xiMin+dXi/2, xiMax-dXi/2+dXi/1e6, dXi);
 		
+
 		// Expand the one dimensional coordinates to a two dimensional grid
 		// TODO: Is this the best way to expand a Dataset?
 		Dataset rCylinder = new DoubleDataset(r1D.getSize(), xi1D.getSize());
@@ -175,7 +205,7 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 		Dataset yPlate = DoubleDataset.zeros(xPlate);
 		Dataset zPlate = Maths.multiply(rCylinder, Maths.cos(xiCylinder));
 		
-		// Create a mask of the illuminated atoms in the cyclinder.
+		// Create a mask of the illuminated atoms in the cylinder.
 		// TODO: There has to be a better way to make a mask Dataset
 		Dataset illuminationPlate = DoubleDataset.ones(xPlate);
 		for (int i=0; i<xPlate.getShape()[0]; i++){
@@ -200,29 +230,49 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 		// For every direction, get the per-atom absorption of the radiation
 		// scattered by this object, as attenuated by the attenuating object 
 		// alone.
-		Dataset absorptionCorrection = new DoubleDataset(gamma);
+		DoubleDataset absorptionCorrection = new DoubleDataset(gamma);
 		// Loop over all detector angles
-		for (int i = 0; i<gamma.getShape()[0]; i++) {
-			for (int k = 0; k<gamma.getShape()[1]; k++) {
-				if (doDownstreamAbsorption)
-					downstreamPathLength = attenuatorGeometry.getDownstreamPathLength(xPlate, yPlate, zPlate, gamma.getDouble(i, k), delta.getDouble(i, k));
-				else
-					downstreamPathLength = DoubleDataset.zeros(xPlate);
-				
-				absorptionCorrection.set( (double)
-						Maths.multiply(
-								Maths.exp(
-										Maths.multiply(
-												-attenuationCoefficient, 
-												Maths.add(
-														upstreamPathLength,
-														downstreamPathLength
-														)
-												)
-										),
-										illuminatedVolume
-								).sum() / (double) illuminatedVolume.sum(), i, k);
+		IndexIterator iterAngle = gamma.getIterator();
+		// total illuminated volume
+		double totalIlluminatedVolume = 0;
+		IndexIterator iterGrid = illuminatedVolume.getIterator();
+		while(iterGrid.hasNext())
+			totalIlluminatedVolume += illuminatedVolume.getElementDoubleAbs(iterGrid.index);
+		
+		while(iterAngle.hasNext()) {
+			if (doDownstreamAbsorption)
+				downstreamPathLength = attenuatorGeometry.getDownstreamPathLength(xPlate, yPlate, zPlate, gamma.getElementDoubleAbs(iterAngle.index), delta.getElementDoubleAbs(iterAngle.index));
+			else
+				downstreamPathLength = DoubleDataset.zeros(xPlate);
+
+			iterGrid = downstreamPathLength.getIterator();
+			double illuminatedAbsorption = 0.0;
+			while (iterGrid.hasNext()) {
+				illuminatedAbsorption += illuminatedVolume.getElementDoubleAbs(iterGrid.index) *
+						Math.exp(-attenuationCoefficient*
+								(upstreamPathLength.getElementDoubleAbs(iterGrid.index) +
+								 downstreamPathLength.getElementDoubleAbs(iterGrid.index)));
 			}
+			absorptionCorrection.setAbs(iterAngle.index, illuminatedAbsorption/totalIlluminatedVolume);
+			
+			
+			
+//			absorptionCorrection.setAbs( iterAngle.index, (double)
+//					Maths.multiply(
+//							Maths.exp(
+//									Maths.multiply(
+//											-attenuationCoefficient, 
+//											Maths.add(
+//													upstreamPathLength,
+//													downstreamPathLength
+//													)
+//											)
+//									),
+//									illuminatedVolume
+//							).sum() / totalIlluminatedVolume);
+
+		
+		
 		}
 		
 		return absorptionCorrection;
@@ -238,29 +288,55 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 	 * @return the Dataset of the path length for all the points provided.
 	 */
 	private Dataset thicknessAtDistanceFromRadius(Dataset p, Dataset z) {
-		// Given a distance from the radius vector, calculate the path length
-		// parallel to the radius
-
-		Dataset zOuter = Maths.sqrt(
-				Maths.subtract(
-						rOuter*rOuter,
-						Maths.square(Maths.minimum(Maths.abs(p), rOuter))
-						)
-				);
-		Dataset zInner = Maths.sqrt(
-				Maths.subtract(
-						rInner*rInner,
-						Maths.square(Maths.minimum(Maths.abs(p), rInner))
-						)
-				);
+		return thicknessAtDistanceFromRadiusExplicit(p, z);
+	}
+	
+//	private Dataset thicknessAtDistanceFromRadiusImplicit(Dataset p, Dataset z) {
+//		// Given a distance from the radius vector, calculate the path length
+//		// parallel to the radius
+//
+//		Dataset zOuter = Maths.sqrt(
+//				Maths.subtract(
+//						rOuter*rOuter,
+//						Maths.square(Maths.minimum(Maths.abs(p), rOuter))
+//						)
+//				);
+//		Dataset zInner = Maths.sqrt(
+//				Maths.subtract(
+//						rInner*rInner,
+//						Maths.square(Maths.minimum(Maths.abs(p), rInner))
+//						)
+//				);
+//		
+//		Dataset l = Maths.add(Maths.add(Maths.add(
+//				Maths.maximum(Maths.multiply(z,  -1), zOuter), 
+//				Maths.minimum(z, zOuter)),
+//				Maths.minimum(z, Maths.multiply(zInner, -1))), 
+//				Maths.maximum(Maths.multiply(z, -1), Maths.multiply(zInner, -1)));
+//		
+//		return Maths.abs(l);
+//	}
+	
+	private Dataset thicknessAtDistanceFromRadiusExplicit(Dataset pSet, Dataset zSet) {
+		DoubleDataset lSet = new DoubleDataset(zSet.getShape());
+		IndexIterator iter = zSet.getIterator();
 		
-		Dataset l = Maths.add(Maths.add(Maths.add(
-				Maths.maximum(Maths.multiply(z,  -1), zOuter), 
-				Maths.minimum(z, zOuter)),
-				Maths.minimum(z, Maths.multiply(zInner, -1))), 
-				Maths.maximum(Maths.multiply(z, -1), Maths.multiply(zInner, -1)));
+		while (iter.hasNext()) {
+			lSet.setAbs(iter.index, thicknessAtDistanceFromRadiusScalar(
+					pSet.getElementDoubleAbs(iter.index),
+					zSet.getElementDoubleAbs(iter.index)));
+		}
 		
-		return Maths.abs(l);
+		return lSet;
 	}
 
+	private double thicknessAtDistanceFromRadiusScalar(double p, double z) {
+		double outerMin = Math.min(Math.abs(p), rOuter);
+		double zOuter = Math.sqrt( rOuter*rOuter - outerMin*outerMin );
+		double innerMin = Math.min(Math.abs(p), rInner);
+		double zInner = Math.sqrt( rInner*rInner -innerMin*innerMin );
+		double l = Math.max(-z, zOuter) + Math.min(z, zOuter) + Math.min(z, -zInner) + Math.max(-z, -zInner);
+		return Math.abs(l);		
+	}
+	
 }

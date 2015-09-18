@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -30,6 +31,7 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
  * @since 2015-09-14
  *
  */
+@Atomic
 public class XPDFIterateCalibrationConstantOperation extends
 		AbstractOperation<XPDFIterateCalibrationConstantModel, OperationData> {
 
@@ -67,7 +69,8 @@ public class XPDFIterateCalibrationConstantOperation extends
 		theCalibration.setSampleIlluminatedAtoms(theXPDFMetadata.getSampleIlluminatedAtoms());
 		
 		// Get 2θ, the axis variable
-		Dataset twoTheta = Maths.toRadians(DatasetUtils.convertToDataset(AbstractOperation.getFirstAxes(input)[0]));
+//		Dataset twoTheta = Maths.toRadians(DatasetUtils.convertToDataset(AbstractOperation.getFirstAxes(input)[0]));
+		Dataset twoTheta = Maths.toRadians(AbstractOperation.getFirstAxes(input)[0].getSlice());
 		XPDFCoordinates coordinates = new XPDFCoordinates();
 		coordinates.setTwoTheta(twoTheta);
 		coordinates.setBeamData(theXPDFMetadata.getBeam());

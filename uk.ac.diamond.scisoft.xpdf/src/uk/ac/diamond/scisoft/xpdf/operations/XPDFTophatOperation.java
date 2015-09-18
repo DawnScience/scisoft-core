@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.xpdf.operations;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -30,6 +31,7 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
  * @since 2015-09-14
  *
  */
+@Atomic
 public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, OperationData> {
 
 	
@@ -46,7 +48,7 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 	double rMin = model.getrMin();
 	
 	XPDFCoordinates coordinates = new XPDFCoordinates();
-	coordinates.setTwoTheta(Maths.toRadians(DatasetUtils.convertToDataset(AbstractOperation.getFirstAxes(soq)[0])));
+	coordinates.setTwoTheta(Maths.toRadians(DatasetUtils.convertToDataset(AbstractOperation.getFirstAxes(soq)[0].getSlice())));
 	coordinates.setBeamData(theXPDFMetadata.getBeam());
 	Dataset q = coordinates.getQ();
 

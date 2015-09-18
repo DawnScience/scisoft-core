@@ -19,6 +19,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
+import uk.ac.diamond.scisoft.xpdf.XPDFAbsorptionMaps;
 import uk.ac.diamond.scisoft.xpdf.XPDFCalibration;
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFQSquaredIntegrator;
@@ -35,6 +36,10 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 public class XPDFIterateCalibrationConstantOperation extends
 		AbstractOperation<XPDFIterateCalibrationConstantModel, OperationData> {
 
+	
+	private XPDFAbsorptionMaps cachedAbsorptionMaps;
+	private boolean isCachedMapsSorted;
+	
 	protected OperationData process(IDataset input, IMonitor monitor)
 			throws OperationException {
 
@@ -57,6 +62,16 @@ public class XPDFIterateCalibrationConstantOperation extends
 		if (model.isSortContainers()) {
 			theXPDFMetadata.reorderContainers(orderContainers(theXPDFMetadata.getContainers()));
 		}
+		// Nullify the absorption map cache if the container sorting setting
+		// has been changed.
+		if (model.isSortContainers() != isCachedMapsSorted) {
+			synchronized (this) {
+				if (model.isSortContainers() != isCachedMapsSorted) {
+					cachedAbsorptionMaps = null;
+					isCachedMapsSorted = model.isSortContainers();
+				}
+			}
+		}
 		List<Dataset> backgroundSubtracted = new ArrayList<Dataset>();
 		// The 0th element is the sample
 		backgroundSubtracted.add((Dataset) input);
@@ -69,7 +84,6 @@ public class XPDFIterateCalibrationConstantOperation extends
 		theCalibration.setSampleIlluminatedAtoms(theXPDFMetadata.getSampleIlluminatedAtoms());
 		
 		// Get 2θ, the axis variable
-//		Dataset twoTheta = Maths.toRadians(DatasetUtils.convertToDataset(AbstractOperation.getFirstAxes(input)[0]));
 		Dataset twoTheta = Maths.toRadians(AbstractOperation.getFirstAxes(input)[0].getSlice());
 		XPDFCoordinates coordinates = new XPDFCoordinates();
 		coordinates.setTwoTheta(twoTheta);
@@ -80,7 +94,21 @@ public class XPDFIterateCalibrationConstantOperation extends
 		
 		theCalibration.setSelfScatteringDenominatorFromSample(theXPDFMetadata.getSample(), coordinates);
 		
-		theCalibration.setAbsorptionMaps(theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DoubleDataset.zeros(twoTheta.reshape(twoTheta.getSize(), 1))));
+		
+		// localized cache with a double null check with sprinkles on top
+		XPDFAbsorptionMaps localAbsMaps = cachedAbsorptionMaps;
+		if (localAbsMaps == null) {
+			synchronized (this) {
+				localAbsMaps = cachedAbsorptionMaps;
+				if (localAbsMaps == null) {
+					cachedAbsorptionMaps = localAbsMaps = theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DoubleDataset.zeros(twoTheta.reshape(twoTheta.getSize(), 1)));
+				}
+			}
+		}
+		
+		
+//		theCalibration.setAbsorptionMaps(theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DoubleDataset.zeros(twoTheta.reshape(twoTheta.getSize(), 1))));
+		theCalibration.setAbsorptionMaps(localAbsMaps);
 		
 		for (int i = 0; i < nIterations; i++) 
 			absCor = theCalibration.iterate();

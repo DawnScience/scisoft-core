@@ -23,10 +23,12 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 //public because it needs to be visible in the uk...xpdf.operations package
 public class XPDFBeamTrace {
 
-	Dataset trace;
-	double countingTime;
-	double monitorRelativeFlux;
-	boolean isNormalized, isBackgroundSubtracted;
+	private Dataset trace;
+	private double countingTime;
+	private double monitorRelativeFlux;
+	private boolean isNormalized, isBackgroundSubtracted;
+	private boolean isAxisAngle;
+	
 	
 	/**
 	 * Empty constructor to create an empty beam.
@@ -37,6 +39,7 @@ public class XPDFBeamTrace {
 		trace = null;
 		isNormalized = false;
 		isBackgroundSubtracted = false;
+		isAxisAngle = true;
 	}
 	
 	/**
@@ -50,6 +53,7 @@ public class XPDFBeamTrace {
 		this.trace = (inTrace.trace == null) ? null : inTrace.trace.getSliceView();
 		this.isNormalized = inTrace.isNormalized;
 		this.isBackgroundSubtracted = inTrace.isBackgroundSubtracted;
+		this.isAxisAngle = inTrace.isAxisAngle;
 	}
 	
 	/**
@@ -177,6 +181,24 @@ public class XPDFBeamTrace {
 		} else {
 			return (trace == null) ? null : Maths.subtract(getNormalizedTrace(), background.getNormalizedTrace());
 		}
+	}
+
+	/**
+	 * Getter for whether the independent variable is angle.
+	 * @return true if the x axis is scattering angle.
+	 */
+	public boolean isAxisAngle() {
+		return isAxisAngle;
+	}
+
+	/**
+	 * Setter for whether the independent variable is angle.
+	 * @param isAxisAngle
+	 * 					is the independent variable of the trace angle rather
+	 * 					than momentum transfer.
+	 */
+	public void setAxisAngle(boolean isAxisAngle) {
+		this.isAxisAngle = isAxisAngle;
 	}
 
 }

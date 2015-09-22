@@ -34,6 +34,8 @@ public class XPDFInsertSampleMetadataModel extends AbstractOperationModel {
 	private double inner = 0.0;
 	@OperationModelField(hint="Enter an outer distance for the sample shape",label = "Sample Outer Distance (mm)" )
 	private double outer = 0.15;
+	@OperationModelField(hint="Enter whether the x-axis is angle or momentum transfer",label = "Is x-axis 2θ?" )
+	private boolean axisAngle = false;
 	
 	public double getCountingTime() {
 		return countingTime;
@@ -107,4 +109,12 @@ public class XPDFInsertSampleMetadataModel extends AbstractOperationModel {
 		firePropertyChange("sampleName", this.sampleName, this.sampleName = sampleName);
 	}
 
+	public boolean isAxisAngle() {
+		return axisAngle;
+	}
+
+	public void setAxisAngle(boolean axisAngle) {
+		firePropertyChange("axisAngle", this.axisAngle, this.axisAngle = axisAngle);
+	}
+	
 }

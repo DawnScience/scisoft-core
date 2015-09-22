@@ -23,6 +23,7 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtil
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamTrace;
 import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
+import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 /**
  * Insert the beam metadata into the XPDF metadata.
@@ -56,6 +57,11 @@ public class XPDFInsertBeamMetadataOperation extends XPDFInsertXMetadataOperatio
 		bgMetadata.setCountingTime(model.getCountingTime());
 		bgMetadata.setMonitorRelativeFlux(model.getMonitorRelativeFlux());
 		bgMetadata.setTrace(bgTrace);
+		// Assumes the axis is the sample as the experimental data, if present.
+		if (input.getFirstMetadata(XPDFMetadata.class) != null && 
+				input.getFirstMetadata(XPDFMetadata.class).getSample() != null )
+			bgMetadata.setAxisAngle(input.getFirstMetadata(XPDFMetadata.class).getSample().getTrace().isAxisAngle());
+
 		
 		beamMetadata.setTrace(bgMetadata);
 

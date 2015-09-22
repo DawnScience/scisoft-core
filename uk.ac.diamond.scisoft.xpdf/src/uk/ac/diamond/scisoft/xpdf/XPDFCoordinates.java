@@ -9,9 +9,13 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
+import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+
+import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 /*
  * Build from energy or wavelength, and angles, and able to return those values, or x or q.
@@ -24,10 +28,11 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
  */
 public class XPDFCoordinates {
 
-	double wavelength;
-	Dataset twoTheta;
-	Dataset q;
-	Dataset x;
+	private double wavelength;
+	private Dataset twoTheta;
+	private Dataset q;
+	private Dataset x;
+	private boolean isAngleAuthorative;
 	// Energy-wavelength conversion in keV Angstroms
 	private static final double hckeVAA = 12.39841974;//(17)
 
@@ -39,6 +44,7 @@ public class XPDFCoordinates {
 		twoTheta = null;
 		q = null;
 		x = null;
+		isAngleAuthorative = true;
 	}
 	
 	/**
@@ -51,6 +57,21 @@ public class XPDFCoordinates {
 		this.twoTheta = new DoubleDataset(inCoords.twoTheta);
 		this.q = new DoubleDataset(inCoords.q);
 		this.x = new DoubleDataset(inCoords.x);
+		this.isAngleAuthorative = inCoords.isAngleAuthorative;
+	}
+	
+	public XPDFCoordinates(Dataset input) {
+		XPDFMetadata theXPDFMetadata = input.getFirstMetadata(XPDFMetadata.class);
+		this.wavelength = theXPDFMetadata.getBeam().getBeamWavelength();
+		AxesMetadata axes = input.getFirstMetadata(AxesMetadata.class);
+		if (theXPDFMetadata.getSample().getTrace().isAxisAngle()) {
+			this.setTwoTheta(Maths.toRadians(DatasetUtils.convertToDataset(axes.getAxis(0)[0])));
+			q = null;
+			x = null;
+		} else {
+			this.setQ(DatasetUtils.convertToDataset(axes.getAxis(0)[0]));
+			twoTheta = null;
+		}		
 	}
 	
 	/**
@@ -60,9 +81,7 @@ public class XPDFCoordinates {
 	 */
 	public void setEnergy(double inEnergy) {
 		this.wavelength = hckeVAA/inEnergy;
-		// Invalidate all dependent variables
-		q = null;
-		x = null;
+		invalidateData();
 	}
 	
 	/**
@@ -72,9 +91,7 @@ public class XPDFCoordinates {
 	 */
 	public void setWavelength(double inLambda) {
 		this.wavelength = inLambda;
-		// Invalidate all dependent variables
-		q = null;
-		x = null;
+		invalidateData();
 	}
 
 	/**
@@ -88,12 +105,10 @@ public class XPDFCoordinates {
 	
 	public void setTwoTheta(Dataset twoTheta) {
 		this.twoTheta = twoTheta;
-		// Invalidate all dependent variables
-		q = null;
-		x = null;
+		this.isAngleAuthorative = true;
+		invalidateData();
 	}
 
-	// 
 	/**
 	 * Set the total scattering angle based on horizontal and vertical scattering angles.
 	 * @param gamma
@@ -104,9 +119,20 @@ public class XPDFCoordinates {
 	public void setGammaDelta(Dataset gamma, Dataset delta) {
 		// TODO: Fix this up when we have 2D data
 		this.twoTheta = delta;
-		// Invalidate all dependent variables
-		q = null;
-		x = null;
+		this.isAngleAuthorative = true;
+		invalidateData();
+	}
+	
+	public void setQ(Dataset q) {
+		this.q = q;
+		this.x = Maths.divide(this.q, 4*Math.PI);
+		this.isAngleAuthorative = false;
+	}
+	
+	public void setX(Dataset x) {
+		this.x = x;
+		this.q = Maths.multiply(this.x, 4*Math.PI);
+		this.isAngleAuthorative = false;
 	}
 	
 	/**
@@ -114,6 +140,8 @@ public class XPDFCoordinates {
 	 * @return the total scattering angle in radians.
 	 */
 	public Dataset getTwoTheta() {
+		if (this.twoTheta == null)
+			this.twoTheta = Maths.multiply(2, Maths.arcsin(Maths.multiply(this.x, this.wavelength)));
 		return this.twoTheta;
 	}
 	
@@ -123,7 +151,7 @@ public class XPDFCoordinates {
 	 */
 	public Dataset getX() {
 		if (this.x == null)
-			x = Maths.divide(Maths.sin(Maths.multiply(0.5, twoTheta)), this.wavelength);
+			this.x = Maths.divide(Maths.sin(Maths.multiply(0.5, this.twoTheta)), this.wavelength);
 		return this.x;
 	}
 	
@@ -147,4 +175,14 @@ public class XPDFCoordinates {
 	public double getEnergy() {
 		return hckeVAA/this.wavelength;
 	}
+
+	private void invalidateData() {
+		if (isAngleAuthorative) {
+			q = null;
+			x = null;
+		} else {
+			twoTheta = null;
+		}
+	}
+
 }

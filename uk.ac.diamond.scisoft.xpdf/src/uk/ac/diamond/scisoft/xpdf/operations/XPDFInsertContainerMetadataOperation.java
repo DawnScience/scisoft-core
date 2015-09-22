@@ -26,6 +26,7 @@ import uk.ac.diamond.scisoft.xpdf.XPDFComponentGeometry;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentPlate;
 import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
+import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 /**
  * Add the metadata for a container to the XPDF metadata.
@@ -93,6 +94,10 @@ public class XPDFInsertContainerMetadataOperation extends
 		containerTraceMeta.setCountingTime(model.getCountingTime());
 		containerTraceMeta.setMonitorRelativeFlux(model.getMonitorRelativeFlux());
 		containerTraceMeta.setTrace(contTrace);
+		// Assumes the axis is the sample as the experimental data, if present.
+		if (input.getFirstMetadata(XPDFMetadata.class) != null && 
+				input.getFirstMetadata(XPDFMetadata.class).getSample() != null )
+			containerTraceMeta.setAxisAngle(input.getFirstMetadata(XPDFMetadata.class).getSample().getTrace().isAxisAngle());
 
 		compMeta.setTrace(containerTraceMeta);		
 

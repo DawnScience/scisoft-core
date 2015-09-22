@@ -77,6 +77,7 @@ public class XPDFInsertSampleMetadataOperation extends XPDFInsertXMetadataOperat
 		sampleTraceMeta.setCountingTime(model.getCountingTime());
 		sampleTraceMeta.setMonitorRelativeFlux(model.getMonitorRelativeFlux());
 		sampleTraceMeta.setTrace(null);
+		sampleTraceMeta.setAxisAngle(model.isAxisAngle());
 		
 		compMeta.setTrace(sampleTraceMeta);		
 		
@@ -85,6 +86,18 @@ public class XPDFInsertSampleMetadataOperation extends XPDFInsertXMetadataOperat
 		XPDFMetadataImpl theXPDFMetadata = getAndRemoveXPDFMetadata(input);
 		theXPDFMetadata.setSampleData(compMeta);
 		
+		// The metadata having been got, if there are any beam data already
+		// inserted, update the value of isAxisAngle.
+		if (theXPDFMetadata.getBeam() != null) {
+			theXPDFMetadata.getBeam().getTrace().setAxisAngle(sampleTraceMeta.isAxisAngle());
+		}
+		if (theXPDFMetadata.getContainers() != null &&
+				!theXPDFMetadata.getContainers().isEmpty()) {
+			for (XPDFTargetComponent container : theXPDFMetadata.getContainers()) {
+				container.getTrace().setAxisAngle(sampleTraceMeta.isAxisAngle());
+			}
+		}
+				
 		input.setMetadata(theXPDFMetadata);
 		
 		return new OperationData(input);

@@ -53,9 +53,7 @@ public class XPDFLorchFTOperation extends
 		
 		Dataset q, r;
 		
-		XPDFCoordinates coordinates = new XPDFCoordinates();
-		coordinates.setTwoTheta(Maths.toRadians(DatasetUtils.convertToDataset(AbstractOperation.getFirstAxes(thSoq)[0].getSlice())));
-		coordinates.setBeamData(theXPDFMetadata.getBeam());
+		XPDFCoordinates coordinates = new XPDFCoordinates(DatasetUtils.convertToDataset(thSoq));
 		q = coordinates.getQ();
 		
 		r = DoubleDataset.createRange(model.getrStep()/2, model.getrMax(), model.getrStep());

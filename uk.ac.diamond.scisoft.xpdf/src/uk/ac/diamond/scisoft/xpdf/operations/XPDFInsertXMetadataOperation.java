@@ -1,7 +1,5 @@
 package uk.ac.diamond.scisoft.xpdf.operations;
 
-import java.util.List;
-
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;

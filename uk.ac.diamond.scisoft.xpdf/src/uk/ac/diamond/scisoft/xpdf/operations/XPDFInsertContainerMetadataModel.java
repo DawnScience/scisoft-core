@@ -19,6 +19,8 @@ public class XPDFInsertContainerMetadataModel extends AbstractOperationModel {
 	// TODO: CHange defaults to real defaults, rather than ceria SRM defaults
 	@OperationModelField(hint="Enter the path to the file", file = FileType.EXISTING_FILE, label = "Container xy File")
 	private String filePath = "/scratch/dawn_diamond_ws/runtime-uk.ac.diamond.dawn.product/data/ceriaXPDF/Empty_cap.xy";
+	@OperationModelField(hint="Enter the path to the file containing the error values", file = FileType.EXISTING_FILE, label = "Container errors xy File")
+	private String errorFilePath = "/scratch/dawn_diamond_ws/runtime-uk.ac.diamond.dawn.product/data/ceria_dean_data/CeO2/Empty_cap.error.xy";
 	@OperationModelField(hint="Enter a counting time for the experiment",label = "Counting Time (s)" )
 	private double countingTime = 240.0;
 	@OperationModelField(hint="Enter the flux relative to the monitor",label = "Monitor Relative Flux" )
@@ -48,6 +50,14 @@ public class XPDFInsertContainerMetadataModel extends AbstractOperationModel {
 
 	public void setFilePath(String filePath) {
 		firePropertyChange("filePath", this.filePath, this.filePath = filePath);
+	}
+
+	public String getErrorFilePath() {
+		return errorFilePath;
+	}
+
+	public void setErrorFilePath(String errorFilePath) {
+		firePropertyChange("errorFilePath", this.errorFilePath, this.errorFilePath = errorFilePath);
 	}
 
 	public double getCountingTime() {

@@ -18,6 +18,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
@@ -25,9 +26,12 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 /**
  * Normalize the data.
- * <p>
+ * </p><p>
  * Normalize the Dataset from its TargetComponent metadata, and if present, the
  * beam and container traces from their trace metadata
+ * </p><p>
+ * Also apply the normalization to error data, if present.
+ * </p>
  * 
  * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
  * @since 2015-09-14
@@ -58,8 +62,16 @@ public class XPDFNormalizeTracesOperation extends
 				// sets the isNormalized flag, but does not normalize the (null) trace
 				theXPDFMetadata.getSample().getTrace().normalizeTrace();
 				// Normalize the Dataset
-				((Dataset) process).idivide(theXPDFMetadata.getSample().getTrace().getCountingTime()*
-						theXPDFMetadata.getSample().getTrace().getMonitorRelativeFlux());
+				double normer = theXPDFMetadata.getSample().getTrace().getCountingTime()*
+						theXPDFMetadata.getSample().getTrace().getMonitorRelativeFlux();
+				((Dataset) process).idivide(normer);
+			
+				// Normalize the errors, if present
+				Dataset inputErrors = (input.getError() != null) ? DatasetUtils.convertToDataset(input.getError()) : null;
+				if (inputErrors != null) {
+					Dataset processErrors = Maths.divide(inputErrors, normer);
+					process.setError(processErrors);
+				}
 			}
 			
 			// If there is a BeamData metadataset, normalize it

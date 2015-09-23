@@ -88,6 +88,24 @@ public class XPDFInsertContainerMetadataOperation extends
 
 		// Load the container trace from the designated xy file
 		Dataset contTrace = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2"));
+
+		// Error metadata for the trace
+		boolean isErrorData = true;
+		try {
+			xyFilePath = model.getErrorFilePath();
+		} catch (Exception e) {
+			// If file not found, then unset isErrorData
+			isErrorData = false;
+		}
+		if (isErrorData && xyFilePath != null) {
+			Dataset contErrors = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2"));
+			if (contErrors != null) {
+				contTrace.setError(contErrors);
+			}
+		}
+
+		
+		
 		// The counting time and monitor relative flux are set directly on the
 		// input Dataset, since they pertain to the data it holds
 		XPDFBeamTrace containerTraceMeta = new XPDFBeamTrace();

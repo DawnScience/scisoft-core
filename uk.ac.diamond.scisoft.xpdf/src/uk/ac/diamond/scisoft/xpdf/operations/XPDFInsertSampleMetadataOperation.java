@@ -15,7 +15,10 @@ import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 
+import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamTrace;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentForm;
@@ -99,6 +102,23 @@ public class XPDFInsertSampleMetadataOperation extends XPDFInsertXMetadataOperat
 		}
 				
 		input.setMetadata(theXPDFMetadata);
+
+		// Error metadata for the trace
+		String xyFilePath = "";
+		boolean isErrorData = true;
+		try {
+			xyFilePath = model.getErrorFilePath();
+		} catch (Exception e) {
+			// If file not found, then unset isErrorData
+			isErrorData = false;
+		}
+		if (isErrorData && xyFilePath != null) {
+			Dataset dataErrors = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2"));
+			if (dataErrors != null) {
+				input.setError(dataErrors);
+			}
+		}
+
 		
 		return new OperationData(input);
 	}

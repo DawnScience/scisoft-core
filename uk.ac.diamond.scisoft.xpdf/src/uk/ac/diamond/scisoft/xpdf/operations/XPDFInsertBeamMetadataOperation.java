@@ -53,6 +53,21 @@ public class XPDFInsertBeamMetadataOperation extends XPDFInsertXMetadataOperatio
 		// Load the background from the designated xy file
 		Dataset bgTrace = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2"));
 		
+		// Error metadata for the trace
+		boolean isErrorData = true;
+		try {
+			xyFilePath = model.getErrorFilePath();
+		} catch (Exception e) {
+			// If file not found, then unset isErrorData
+			isErrorData = false;
+		}
+		if (isErrorData && xyFilePath != null) {
+			Dataset bgErrors = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2"));
+			if (bgErrors != null) {
+				bgTrace.setError(bgErrors);
+			}
+		}
+		
 		XPDFBeamTrace bgMetadata = new XPDFBeamTrace();
 		bgMetadata.setCountingTime(model.getCountingTime());
 		bgMetadata.setMonitorRelativeFlux(model.getMonitorRelativeFlux());

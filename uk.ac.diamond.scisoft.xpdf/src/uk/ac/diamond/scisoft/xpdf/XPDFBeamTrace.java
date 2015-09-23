@@ -118,8 +118,13 @@ public class XPDFBeamTrace {
 	 * Normalize the trace contained, and not this in the appropriate isNormalized boolean
 	 */
 	public void normalizeTrace() {
-		if (trace != null)
-			trace = Maths.divide(trace, this.countingTime*this.monitorRelativeFlux);
+		if (trace != null) {
+			Dataset traceErrors = (trace.getError() != null) ? trace.getError() : null;
+			trace = getNormalizedTrace();
+			// Normalize the errors, too
+			if (traceErrors != null)
+				trace.setError(Maths.divide(traceErrors, this.countingTime*this.monitorRelativeFlux));
+		}
 		isNormalized = true;
 	}
 	
@@ -153,8 +158,16 @@ public class XPDFBeamTrace {
 	 * 					the Dataset of the data to be subtracted.
 	 */
 	public void subtractBackground(XPDFBeamTrace background) {
-		if (trace != null)
-			trace = Maths.subtract(this.getNormalizedTrace(), background.getNormalizedTrace());
+		if (trace != null) {
+			Dataset traceErrors = (trace.getError() != null) ? trace.getError() : null;
+			trace = getBackgroundSubtractedTrace(background);
+			if (traceErrors != null) {
+				Dataset subErrors = (background.getNormalizedTrace().getError() != null) ?
+						Maths.sqrt(Maths.add(Maths.square(traceErrors), Maths.square(background.getNormalizedTrace().getError()))) :
+							traceErrors;
+						trace.setError(subErrors);
+			}
+		}
 		isBackgroundSubtracted = true;
 	}
 	

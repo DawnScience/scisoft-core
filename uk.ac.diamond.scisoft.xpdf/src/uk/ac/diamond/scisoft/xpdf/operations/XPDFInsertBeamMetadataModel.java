@@ -18,6 +18,8 @@ public class XPDFInsertBeamMetadataModel extends AbstractOperationModel {
 	// TODO: Change from the ceria experiment defaults to real defaults 
 	@OperationModelField(hint="Enter the path to the file", file = FileType.EXISTING_FILE, label = "Background xy File")
 	private String filePath = "/scratch/dawn_diamond_ws/runtime-uk.ac.diamond.dawn.product/data/ceriaXPDF/Empty_I15.xy";
+	@OperationModelField(hint="Enter the path to the file containing the error values", file = FileType.EXISTING_FILE, label = "Background errors xy File")
+	private String errorFilePath = "/scratch/dawn_diamond_ws/runtime-uk.ac.diamond.dawn.product/data/ceria_dean_data/CeO2/Empty_I15.error.xy";
 	@OperationModelField(hint="Enter the beam energy", label = "Beam Energy (keV)")
 	private double beamEnergy = 76.6;
 	@OperationModelField(hint="Enter the beam height", label = "Beam Height (mm)")
@@ -35,6 +37,14 @@ public class XPDFInsertBeamMetadataModel extends AbstractOperationModel {
 
 	public void setFilePath(String filePath) {
 		firePropertyChange("filePath", this.filePath, this.filePath = filePath);
+	}
+
+	public String getErrorFilePath() {
+		return errorFilePath;
+	}
+
+	public void setErrorFilePath(String errorFilePath) {
+		firePropertyChange("errorFilePath", this.errorFilePath, this.errorFilePath = errorFilePath);
 	}
 
 	public double getBeamEnergy() {

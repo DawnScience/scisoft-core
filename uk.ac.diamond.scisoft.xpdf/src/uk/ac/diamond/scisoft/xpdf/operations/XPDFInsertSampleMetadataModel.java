@@ -10,12 +10,15 @@
 package uk.ac.diamond.scisoft.xpdf.operations;
 
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
+import org.eclipse.dawnsci.analysis.api.processing.model.FileType;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class XPDFInsertSampleMetadataModel extends AbstractOperationModel {
 
 	
 	// TODO: CHange defaults to real defaults, rather than ceria SRM defaults
+	@OperationModelField(hint="Enter the path to the file containing the error values", file = FileType.EXISTING_FILE, label = "Data errors xy File")
+	private String errorFilePath = "/scratch/dawn_diamond_ws/runtime-uk.ac.diamond.dawn.product/data/ceria_dean_data/CeO2/CeO2.error.xy";
 	@OperationModelField(hint="Enter a counting time for the experiment",label = "Counting Time (s)" )
 	private double countingTime = 240.0;
 	@OperationModelField(hint="Enter the flux relative to the monitor",label = "Monitor Relative Flux" )
@@ -37,6 +40,14 @@ public class XPDFInsertSampleMetadataModel extends AbstractOperationModel {
 	@OperationModelField(hint="Enter whether the x-axis is angle or momentum transfer",label = "Is x-axis 2θ?" )
 	private boolean axisAngle = true;
 	
+	public String getErrorFilePath() {
+		return errorFilePath;
+	}
+
+	public void setErrorFilePath(String errorFilePath) {
+		firePropertyChange("errorFilePath", this.errorFilePath, this.errorFilePath = errorFilePath);
+	}
+
 	public double getCountingTime() {
 		return countingTime;
 	}

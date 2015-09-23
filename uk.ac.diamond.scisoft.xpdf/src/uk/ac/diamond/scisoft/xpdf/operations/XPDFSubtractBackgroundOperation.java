@@ -18,6 +18,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
@@ -57,6 +58,17 @@ public class XPDFSubtractBackgroundOperation extends
 				theXPDFMetadata.getSample().setBackground(theXPDFMetadata.getBeam().getTrace());
 				// Subtract the background from the Dataset
 				((Dataset) process).isubtract(theXPDFMetadata.getBeam().getTrace().getTrace());
+				
+				// Propagate the errors
+				Dataset inputErrors = (input.getError() != null) ? DatasetUtils.convertToDataset(input.getError()) : null;
+				Dataset processErrors = null;
+				if (inputErrors != null) {
+					Dataset	backgroundErrors = 	theXPDFMetadata.getBeam().getTrace().getTrace().getError();	
+					processErrors = (backgroundErrors != null) ? 
+							Maths.sqrt(Maths.add(Maths.square(inputErrors), Maths.square(backgroundErrors))) :
+								inputErrors;
+				}
+				process.setError(processErrors);
 			}
 			
 			// For each container metadataset, subtract the background from it

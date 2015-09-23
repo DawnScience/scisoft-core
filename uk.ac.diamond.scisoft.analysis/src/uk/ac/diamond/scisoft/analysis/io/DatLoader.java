@@ -372,14 +372,15 @@ public class DatLoader extends AbstractFileLoader {
 		
 				if (line.contains(":")) {
 					String[] parts = line.split(":");
-					String key = parts[0].replace("#", "");
-					String value = parts[1];
-					for (int p = 2; p < parts.length; p++) {
-						value = value+":"+parts[p];
+					if (parts.length > 1) {
+						String key = parts[0].replace("#", "");
+						String value = parts[1];
+						for (int p = 2; p < parts.length; p++) {
+							value = value+":"+parts[p];
+						}
+						metadataMap.put(key.trim(),value.trim());
 					}
-					metadataMap.put(key.trim(),value.trim());
 				}
-				
 				
 			} finally {
 			    line = in.readLine();

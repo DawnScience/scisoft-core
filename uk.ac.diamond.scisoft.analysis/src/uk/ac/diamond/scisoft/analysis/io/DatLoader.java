@@ -450,7 +450,7 @@ public class DatLoader extends AbstractFileLoader {
 		return ret;
 	}
 	
-	private String removeQuotations(String name) {
+	protected String removeQuotations(String name) {
 		name = name.trim();
 		if (name.startsWith("\"")) name = name.substring(1);
 		if (name.endsWith("\""))   name = name.substring(0, name.length()-2);

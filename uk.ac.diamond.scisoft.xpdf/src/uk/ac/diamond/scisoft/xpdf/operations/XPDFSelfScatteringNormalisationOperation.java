@@ -7,6 +7,7 @@ import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
@@ -38,7 +39,12 @@ public class XPDFSelfScatteringNormalisationOperation extends
 		if (absCor.getFirstMetadata(AxesMetadata.class) == null) throw new OperationException(this, "XPDF axis data not found.");
 		XPDFCoordinates coords = new XPDFCoordinates(DatasetUtils.convertToDataset(absCor));
 		soq = Maths.divide(Maths.subtract(absCor, sample.getSelfScattering(coords)), sample.getFSquared(coords));
+		Dataset soqError = null;
+		if (absCor.getError() != null)
+			soqError = Maths.divide(absCor.getError(), sample.getFSquared(coords));
 		copyMetadata(absCor, soq);
+		if (soqError != null)
+			soq.setError(soqError);
 
 		return new OperationData(soq);
 	}

@@ -171,21 +171,39 @@ public class XPDFCalibration {
 	public Dataset iterate() {
 		// Divide by the calibration constant and subtract the multiple scattering correction
 		List<Dataset> calCon = new ArrayList<Dataset>();
-		for (Dataset componentTrace : backgroundSubtracted)
-			calCon.add(Maths.divide(componentTrace, calibrationConstants.getLast()));
+		for (Dataset componentTrace : backgroundSubtracted) {
+			Dataset calConData = Maths.divide(componentTrace, calibrationConstants.getLast()); 
+			// Error propagation
+			if (componentTrace.getError() != null)
+				calConData.setError(Maths.divide(componentTrace.getError(), calibrationConstants.getLast()));
+			// Set the data
+			calCon.add(calConData);
+		}
 		
 		// Mulcor should be a LinkedList, so that we can get the last element simply
 		List<Dataset> mulCor = new ArrayList<Dataset>();
 		if (multipleScatteringCorrection != null) {
-			for (Dataset componentTrace : calCon)
-				mulCor.add(Maths.subtract(componentTrace, multipleScatteringCorrection));
+			for (Dataset componentTrace : calCon) {
+				Dataset mulCorData = Maths.subtract(componentTrace, multipleScatteringCorrection);
+				// Error propagation: no change if the multiple scattering correction is taken as exact
+				if (componentTrace.getError() != null)
+					mulCorData.setError(componentTrace.getError());
+				mulCor.add(mulCorData);
+			}
 		} else {
-			for (Dataset componentTrace : calCon)
-				mulCor.add(Maths.subtract(componentTrace, 0));
+			for (Dataset componentTrace : calCon) {
+				Dataset mulCorData = Maths.subtract(componentTrace, 0);
+				//Error propagation
+				if (componentTrace.getError() != null)
+					mulCorData.setError(componentTrace.getError());
+				mulCor.add(mulCorData);
+			}
 		}
 		Dataset absCor = applyCalibrationConstant(mulCor);
 
 		absCor.idivide(nSampleIlluminatedAtoms);
+		if (absCor.getError() != null)
+			absCor.getError().idivide(nSampleIlluminatedAtoms);
 
 		// Integrate
 		double numerator = qSquaredIntegrator.ThomsonIntegral(absCor);
@@ -218,7 +236,10 @@ public class XPDFCalibration {
 		// so copy to absorptionTemporary, an ArrayList.
 		List<Dataset> absorptionTemporary = new ArrayList<Dataset>();
 		for (Dataset data : mulCor) {
-			absorptionTemporary.add(new DoubleDataset(data));
+			Dataset absTempData = new DoubleDataset(data);
+			if (data.getError() != null)
+				absTempData.setError(data.getError());
+			absorptionTemporary.add(absTempData);
 		}
 		
 		// The objects are ordered outwards; 0 is the sample, nComponents-1 the
@@ -239,6 +260,20 @@ public class XPDFCalibration {
 						Maths.divide(
 								absorptionTemporary.get(iScatterer),
 								subsetAbsorptionCorrection.reshape(subsetAbsorptionCorrection.getSize())));
+
+				// Error propagation. If either is present, then set an error on the result. Non-present errors are taken as zero (exact).
+				if (absorptionTemporary.get(iInnermostAbsorber).getError() != null ||
+						absorptionTemporary.get(iScatterer).getError() != null) {
+					Dataset innerError = (absorptionTemporary.get(iInnermostAbsorber).getError() != null) ?
+							absorptionTemporary.get(iInnermostAbsorber).getError() :
+								DoubleDataset.zeros(absorptionTemporary.get(iInnermostAbsorber));
+					Dataset scatterError = (absorptionTemporary.get(iScatterer).getError() != null) ?
+							Maths.divide(absorptionTemporary.get(iScatterer).getError(),
+									subsetAbsorptionCorrection.reshape(subsetAbsorptionCorrection.getSize())) :
+								DoubleDataset.zeros(absorptionTemporary.get(iScatterer));
+					absorptionTemporary.get(iInnermostAbsorber).setError(Maths.sqrt(Maths.add(Maths.square(innerError), Maths.square(scatterError))));
+				}
+				
 			}
 		}
 		
@@ -248,6 +283,10 @@ public class XPDFCalibration {
 			absorptionCorrection.imultiply(absorptionMaps.getAbsorptionMap(0, iAbsorber));
 		
 		Dataset absCor = Maths.divide(absorptionTemporary.get(0), absorptionCorrection.reshape(absorptionCorrection.getSize()));
+		// Error propagation
+		if (absorptionTemporary.get(0).getError() != null) {
+			absCor.setError(Maths.divide(absorptionTemporary.get(0).getError(), absorptionCorrection.reshape(absorptionCorrection.getSize())));
+		}
 		
 		return absCor;
 	}

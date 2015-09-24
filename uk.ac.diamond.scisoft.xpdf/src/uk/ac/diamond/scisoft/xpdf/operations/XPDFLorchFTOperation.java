@@ -9,6 +9,9 @@
 
 package uk.ac.diamond.scisoft.xpdf.operations;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
@@ -18,10 +21,12 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
+import uk.ac.diamond.scisoft.analysis.processing.operations.XRegionProfileNormalize.DataType;
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
@@ -58,8 +63,51 @@ public class XPDFLorchFTOperation extends
 		
 		r = DoubleDataset.createRange(model.getrStep()/2, model.getrMax(), model.getrStep());
 		Dataset hofr = doLorchFT(DatasetUtils.convertToDataset(thSoq), q, r, model.getLorchWidth(), numberDensity);
+		// Error propagation: through the Fourier transform
+		if (thSoq.getError() != null) {
+			// Prepare the Datasets to receive the transformed values. They all
+			// need to be held at the same time to allow for the (logical)
+			// transpose
+			List<Dataset> sigmaF = new ArrayList<Dataset>(q.getSize());
+			
+			for (int iq = 0; iq < q.getSize(); iq++) {
+				Dataset covarQ = new DoubleDataset(4);
+				// The vector to transform is zero, except at element iq it
+				// holds the uncertainty variance (error squared) of the data
+				// point at iq
+				covarQ.set(Maths.square(thSoq.getError().getSlice().getDouble(iq)), 0);
+				Dataset qSlice = Maths.add(q.getDouble(iq), Maths.multiply(q.getDouble(3)-q.getDouble(2), DoubleDataset.createRange(0, 4, 1))); 
+						
+				// Transform this vector exactly as the data
+				sigmaF.add(iq, doLorchFT(covarQ, qSlice, r, model.getLorchWidth(), numberDensity));
+			}
+
+			Dataset hofrError = new DoubleDataset(hofr);
+			for (int ir = 0; ir < r.getSize(); ir++) {
+				DoubleDataset covarQR = (DoubleDataset) DoubleDataset.zeros(q);
+				// Create the vector to be transformed
+				for (int iq = 0; iq < q.getSize(); iq++) {
+					covarQR.setAbs(iq, sigmaF.get(iq).getDouble(ir));
+				}
+				// Transform the semi-transformed variance. Take the ir-th 
+				// element, and assign the square root to the ir-th element of
+				// the final error vector. 
+				
+				// Only a subset of r is needed
+				Dataset rSubset = r.getSlice(new int[] {ir}, new int[] {ir+1}, new int[] {1});
+				
+				hofrError.set(Maths.sqrt(doLorchFT(covarQR, q, rSubset, model.getLorchWidth(), numberDensity).getDouble(0)), ir);
+			}
+			hofr.setError(hofrError);
+		}
+		
 		Dataset gofr = Maths.divide(hofr, g0minus1);
+		if (hofr.getError() != null)
+			gofr.setError(Maths.divide(hofr.getError(), g0minus1));
+
 		Dataset dofr = Maths.multiply(Maths.multiply(gofr, r), 4*Math.PI * numberDensity);
+		if (gofr.getError() != null)
+			dofr.setError(Maths.multiply(gofr.getError(), Maths.multiply(r, 4*Math.PI*numberDensity)));
 		
 		dofr.setMetadata(theXPDFMetadata);
 		
@@ -98,7 +146,7 @@ public class XPDFLorchFTOperation extends
 					Maths.subtract(
 							Maths.sin(qd), 
 							Maths.multiply(qd, Maths.cos(qd))));
-		lorch.set(0.0, 0);
+		if (q.getDouble(0) <= 0.0) lorch.set(0.0, 0);
 		
 		// Something resembling a Discrete Sine Transform
 		for (int i = 0; i < output.getSize(); i++) {

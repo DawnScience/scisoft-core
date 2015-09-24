@@ -61,7 +61,7 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 	return new OperationData(thSoq);
 	}
 	
-	private Dataset doTopHatConvolutionAndSubtraction(Dataset DPrimedoQ, Dataset q, Dataset r, double rMin, double tophatWidth, double numberDensity, double g0Minus1) {
+	private Dataset doTopHatConvolutionAndSubtraction(Dataset dPrimedoQ, Dataset q, Dataset r, double rMin, double tophatWidth, double numberDensity, double g0Minus1) {
 //obj.th_dofr = XPDFFT.FT_qtor(obj.Q,obj.th_DprimedoQ,\
 //        obj.number_density,r)
 //# Need to know the following twice for the following equation
@@ -79,7 +79,7 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 //obj.th_soq[0] = 0
 
 		// Get from the model
-		Dataset thDofr = fourierQtoR(q, DPrimedoQ, numberDensity, r);
+		Dataset thDofr = fourierQtoR(q, dPrimedoQ, numberDensity, r);
 		Dataset rTophat = Maths.multiply(r, tophatWidth);
 		Dataset fQT = Maths.multiply(
 							Maths.multiply(3, Maths.power( rTophat, -3)),
@@ -94,11 +94,24 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 			thBofr.set(thDofr.getDouble(i) + g0Minus1, i);
 		}
 		Dataset thBoq = fourierRtoQ(r, thBofr, numberDensity, q);
-		Dataset thSoq = Maths.subtract(DPrimedoQ, thBoq);
-		thSoq.set(0.0, 0);
+
+		// Error propagation
+		// Calculate thBoq error.
+		// Just pass-through at the moment
+		if (dPrimedoQ.getError() != null) {
+			thBoq.setError(dPrimedoQ.getError());
+		}
 		
+		Dataset thSoq = Maths.subtract(dPrimedoQ, thBoq);
+		// Error propagation: assume that thBoq has a valid error iff dPrimedoQ does
+		Dataset thSoqError = (dPrimedoQ.getError() != null) ?
+				Maths.sqrt(Maths.add(Maths.square(dPrimedoQ.getError()), Maths.square(thBoq.getError()))) :
+					null;
+		thSoq.set(0.0, 0);
+
 		// copy metadata
-		copyMetadata(DPrimedoQ, thSoq);
+		copyMetadata(dPrimedoQ, thSoq);
+		if (thSoqError != null ) thSoq.setError(thSoqError);
 		
 		return thSoq;
 	}
@@ -259,10 +272,21 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 			hatted.set(convSum, (int) Math.round(intr-w)); 
 		}
 		
+		// Error propagation: error on hatted
+		if (soq.getError() != null) {
+			// Pass-through
+			hatted.setError(soq.getError());
+		}
+		
 //        obj.th_DprimedoQ = obj.soq - XPDFFT.topHatConvolutionSubtraction(obj.Q,\
 //                obj.soq,tophatwidth)
 		Dataset result = Maths.subtract(soq, hatted);
 		copyMetadata(soq, result);
+		// Error propagation: assume that hatted has a valid error iff soq does
+		if (soq.getError() != null) {
+			result.setError(Maths.sqrt(Maths.add(Maths.square(soq.getError()), Maths.square(hatted.getError()))));
+		}
+		
 		return result;
 		
 	}

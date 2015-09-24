@@ -65,11 +65,11 @@ public class XPDFCoordinates {
 		this.wavelength = theXPDFMetadata.getBeam().getBeamWavelength();
 		AxesMetadata axes = input.getFirstMetadata(AxesMetadata.class);
 		if (theXPDFMetadata.getSample().getTrace().isAxisAngle()) {
-			this.setTwoTheta(Maths.toRadians(DatasetUtils.convertToDataset(axes.getAxis(0)[0])));
+			this.setTwoTheta(Maths.toRadians(DatasetUtils.convertToDataset(axes.getAxis(0)[0].getSlice())));
 			q = null;
 			x = null;
 		} else {
-			this.setQ(DatasetUtils.convertToDataset(axes.getAxis(0)[0]));
+			this.setQ(DatasetUtils.convertToDataset(axes.getAxis(0)[0].getSlice()));
 			twoTheta = null;
 		}		
 	}

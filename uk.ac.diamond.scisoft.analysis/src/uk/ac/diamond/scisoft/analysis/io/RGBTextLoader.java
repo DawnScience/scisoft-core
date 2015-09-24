@@ -61,7 +61,6 @@ public class RGBTextLoader extends CSVLoader {
 
 	@Override
 	public DataHolder loadFile(final IMonitor mon) throws ScanFileHolderException {
-
 		// first instantiate the return object.
 		DataHolder result = new DataHolder();
 
@@ -89,15 +88,13 @@ public class RGBTextLoader extends CSVLoader {
 						break DATA;
 					}
 
-					if (!loadLazily) {
-						final String[] values = line.split(getDelimiter());
-						if (values.length != columns) {
-							throw new ScanFileHolderException("Data and header must be the same size!");
-						}
-						final Iterator<String> it = vals.keySet().iterator();
-						for (String value : values) {
-							vals.get(it.next()).add(Utils.parseDouble(value.trim()));
-						}
+					final String[] values = line.split(getDelimiter());
+					if (values.length != columns) { // accept files with unexpected headers
+						// throw new ScanFileHolderException("Data and header must be the same size!");
+					}
+					final Iterator<String> it = vals.keySet().iterator();
+					for (String value : values) {
+						vals.get(it.next()).add(Utils.parseDouble(value.trim()));
 					}
 				}
 				line = in.readLine();
@@ -131,11 +128,13 @@ public class RGBTextLoader extends CSVLoader {
 				int width = (int)rmax + 1;
 				int height = (int) cmax + 1;
 				DoubleDataset data = new DoubleDataset(new int[] { width, height });
+				data.fill(Double.NaN);
 				data.setName(n);
 				int idx = 0;
 				for (int i = 0; i < width; i++) {
 					for (int j = 0; j < height; j++) {
-						data.setItem(vals.get(n).get(idx), i, j);
+						if (idx < vals.get(n).size())
+							data.setItem(vals.get(n).get(idx), i, j);
 						idx++;
 					}
 				}

@@ -9,7 +9,9 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -20,12 +22,17 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
  */
 public class XPDFAbsorptionMaps {
 	private Map<String, Dataset> theMaps;
+	private Dataset delta;
+	private Dataset gamma;
+	private List<XPDFComponentForm> formList;
+	private XPDFBeamData beamData;
 	
 	/**
-	 * Create an empty Map.
+	 * Creates an empty Map.
 	 */
 	public XPDFAbsorptionMaps() {
 		theMaps = new HashMap<String, Dataset>();
+		formList = new ArrayList<XPDFComponentForm>();
 	}
 	
 	/**
@@ -42,7 +49,7 @@ public class XPDFAbsorptionMaps {
 	}
 	
 	/**
-	 * Set an absorption correction map in the map collection. 
+	 * Sets an absorption correction map in the map collection. 
 	 * @param iScatterer index of the scattering object in the list of XPDFTargetComponents.
 	 * @param iAttenuator index of the attenuating object in the list of XPDFTargetComponents.
 	 * @param inMap The Dataset holding the absorption map of the pair of objects.
@@ -52,7 +59,24 @@ public class XPDFAbsorptionMaps {
 	}
 
 	/**
-	 * Get a stored absorption map.
+	 * Sets absorption maps by the target component form.
+	 * <p>
+	 * Given a pair of XPDFComponentForm objects for the scatterer and the
+	 * attenuator, this method sets the corresponding absorption correction map
+	 * in the map collection.
+	 * @param formScatterer
+	 * 					the XPDFComponentForm of the scattering object.
+	 * @param formAttenuator
+	 * 					the XPDFComponentForm of the attenuating object.
+	 * @param inMap
+	 * 			the absorption map to be set.
+	 */
+	public void setAbsorptionMap(XPDFComponentForm formScatterer, XPDFComponentForm formAttenuator, Dataset inMap) {
+		this.setAbsorptionMap(this.indexFromForm(formScatterer), this.indexFromForm(formAttenuator), inMap);
+	}
+	
+	/**
+	 * Gets a stored absorption map.
 	 * @param iScatterer index of the scattering object in the list of XPDFTargetComponents.
 	 * @param iAttenuator index of the attenuating object in the list of XPDFTargetComponents.
 	 * @return the requested Dataset if it exists, else null.
@@ -62,7 +86,76 @@ public class XPDFAbsorptionMaps {
 	}
 	
 	/**
-	 * Convert the pairs of integers to the keying string in a consistent manner. 
+	 * Gets a stored absorption map by the target component form.
+	 * <p>
+	 * Given a  pair of XPDFComponentForm objects for the scatterer and the
+	 * attenuator, this method returns the corresponding, previously stored
+	 * absorption map.
+	 * @param formScatterer
+	 * 					the XPDFComponentForm of the scattering object.
+	 * @param formAttenuator
+	 * 					the XPDFComponentForm of the attenuating object.
+	 * @return the requested absorption map.
+	 */
+	public Dataset getAbsorptionMap(XPDFComponentForm formScatterer, XPDFComponentForm formAttenuator) {
+		return this.getAbsorptionMap(this.indexFromForm(formScatterer), this.indexFromForm(formAttenuator));
+	}
+	
+	/**
+	 * Sets the horizontal scattering angle.
+	 * <p>
+	 * The angle of scattering perpendicular to the beam, and parallel to the
+	 * cylinder axis. Measured in radians.  
+	 * @param delta
+	 * 				Dataset containing the horizontal scattering angle for every point.
+	 */
+	public void setDelta(Dataset delta) {
+		this.delta = delta;
+	}
+
+	/**
+	 * Sets the vertical scattering angle.
+	 * <p>
+	 * The angle of scattering perpendicular to both the beam and the cylinder
+	 * axis. Measured in radians. 
+	 * @param gamma
+	 * 				Dataset containing the vertical scattering angle for every point.
+	 */
+	public void setGamma(Dataset gamma) {
+		this.gamma = gamma;
+	}
+
+	/**
+	 * Sets the beam data for the radiation that the absorption map.
+	 * characterizes.
+	 * @param beamData
+	 * 				XPDFBeamData object describing the absorbed radiation.
+	 */
+	public void setBeamData(XPDFBeamData beamData) {
+		this.beamData = beamData;
+	}
+
+	/**
+	 * Adds a form to the list of component forms.
+	 * <p>
+	 * The forms in this list are considered in order from inner to outer. The
+	 * first, innermost form is taken to be that of the sample elsewhere, so it
+	 * is best to observe this convention.
+	 * @param form
+	 * 			The target component form to add to the list.
+	 */
+	public void addForm(XPDFComponentForm form) {
+		this.formList.add(form);
+	}
+	
+	private int indexFromForm(XPDFComponentForm form) {
+		for (int iform = 0; iform < formList.size(); iform++)
+			if (formList.get(iform) == form) return iform;
+		return -1; // Ugh
+}
+	
+	/**
+	 * Converts the pairs of integers to the keying string in a consistent manner. 
 	 * @param iScatterer index of the scattering object in the list of XPDFTargetComponents.
 	 * @param iAttenuator index of the attenuating object in the list of XPDFTargetComponents.
 	 * @return The encoded string.
@@ -70,4 +163,5 @@ public class XPDFAbsorptionMaps {
 	private static String stringifier(int iScatterer, int iAttenuator) {
 		return Integer.toString(iScatterer, Character.MAX_RADIX)+" "+Integer.toString(iAttenuator, Character.MAX_RADIX);
 	}
+
 }

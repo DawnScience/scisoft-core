@@ -177,16 +177,45 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 		
 			absorptionCorrectionMaps = new XPDFAbsorptionMaps();
 
-			// Note the less than or equal to
-			for (int iScatterer = 0; iScatterer <= containerData.size(); iScatterer++) {
-				XPDFTargetComponent scatterer = (iScatterer == 0) ? sampleData : containerData.get(iScatterer-1);
+			absorptionCorrectionMaps.setGamma(gamma);
+			absorptionCorrectionMaps.setDelta(delta);
+			absorptionCorrectionMaps.setBeamData(beamData);
+			// Add the target component forms, starting with the sample
+			List<XPDFComponentForm> formsList = new ArrayList<XPDFComponentForm>();
+			formsList.add(sampleData.getForm());
+			for (XPDFTargetComponent container : containerData)
+				formsList.add(container.getForm());
 
-				for (int iAttenuator = 0; iAttenuator <= containerData.size(); iAttenuator++) {
-					XPDFTargetComponent attenuator = (iAttenuator == 0) ? sampleData : containerData.get(iAttenuator-1);
-					absorptionCorrectionMaps.setAbsorptionMap(iScatterer, iAttenuator, 
-							scatterer.getForm().getGeom().calculateAbsorptionCorrections(gamma, delta, attenuator.getForm().getGeom(), attenuator.getForm().getAttenuationCoefficient(beamData.getBeamEnergy()), beamData, true, true));
+			for (XPDFComponentForm form : formsList) {
+				absorptionCorrectionMaps.addForm(form);
+			}
+			
+			for (XPDFComponentForm formScatterer : formsList) {
+				for (XPDFComponentForm formAttenuator : formsList) {
+					absorptionCorrectionMaps.setAbsorptionMap(formScatterer, formAttenuator,
+							formScatterer.getGeom().calculateAbsorptionCorrections(gamma, delta, formAttenuator.getGeom(), formAttenuator.getAttenuationCoefficient(beamData.getBeamEnergy()), beamData, true, true));
 				}
 			}
+			
+//			absorptionCorrectionMaps.addForm(sampleData.getForm());
+//			for (XPDFTargetComponent container : containerData)
+//				absorptionCorrectionMaps.addForm(container.getForm());
+			
+			
+			
+			// Note the less than or equal to
+//			for (int iScatterer = 0; iScatterer <= containerData.size(); iScatterer++) {
+//				XPDFTargetComponent scatterer = (iScatterer == 0) ? sampleData : containerData.get(iScatterer-1);
+//
+//				for (int iAttenuator = 0; iAttenuator <= containerData.size(); iAttenuator++) {
+//					XPDFTargetComponent attenuator = (iAttenuator == 0) ? sampleData : containerData.get(iAttenuator-1);
+//					absorptionCorrectionMaps.setAbsorptionMap(iScatterer, iAttenuator, 
+//							scatterer.getForm().getGeom().calculateAbsorptionCorrections(gamma, delta, attenuator.getForm().getGeom(), attenuator.getForm().getAttenuationCoefficient(beamData.getBeamEnergy()), beamData, true, true));
+//				}
+//			}
+
+		
+		
 		}		
 		return absorptionCorrectionMaps;
 	}

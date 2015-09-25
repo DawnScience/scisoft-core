@@ -26,6 +26,8 @@ public class XPDFAbsorptionMaps {
 	private Dataset gamma;
 	private List<XPDFComponentForm> formList;
 	private XPDFBeamData beamData;
+	private Map<String, Boolean> isUpstreamMap;
+	private Map<String, Boolean> isDownstreamMap;
 	
 	/**
 	 * Creates an empty Map.
@@ -33,6 +35,8 @@ public class XPDFAbsorptionMaps {
 	public XPDFAbsorptionMaps() {
 		theMaps = new HashMap<String, Dataset>();
 		formList = new ArrayList<XPDFComponentForm>();
+		isUpstreamMap = new HashMap<String, Boolean>();
+		isDownstreamMap = new HashMap<String, Boolean>();
 	}
 	
 	/**
@@ -85,7 +89,11 @@ public class XPDFAbsorptionMaps {
 		for (XPDFComponentForm formScatterer : formList) {
 			for (XPDFComponentForm formAttenuator : formList) {
 				this.setAbsorptionMap(formScatterer, formAttenuator,
-						formScatterer.getGeom().calculateAbsorptionCorrections(gamma, delta, formAttenuator.getGeom(), formAttenuator.getAttenuationCoefficient(beamData.getBeamEnergy()), beamData, true, true));
+						formScatterer.getGeom().calculateAbsorptionCorrections(
+								gamma, delta, formAttenuator.getGeom(),
+								formAttenuator.getAttenuationCoefficient(beamData.getBeamEnergy()), beamData,
+								isUpstreamMap.get(XPDFAbsorptionMaps.stringifier(this.indexFromForm(formScatterer), this.indexFromForm(formAttenuator))),
+								isDownstreamMap.get(XPDFAbsorptionMaps.stringifier(this.indexFromForm(formScatterer), this.indexFromForm(formAttenuator)))));
 			}
 		}
 	}
@@ -156,19 +164,41 @@ public class XPDFAbsorptionMaps {
 	 * <p>
 	 * The forms in this list are considered in order from inner to outer. The
 	 * first, innermost form is taken to be that of the sample elsewhere, so it
-	 * is best to observe this convention.
-	 * @param form
+	 * is best to observe this convention. This method also sets the default 
+	 * streamality: both up and downstream of every other component. Use 
+	 * this.setStreamality() to set it otherwise.
+	 * @param format
 	 * 			The target component form to add to the list.
 	 */
 	public void addForm(XPDFComponentForm form) {
 		this.formList.add(form);
+		for (XPDFComponentForm iComponent : formList) {
+			setStreamality(iComponent, form, true, true);
+			setStreamality(form, iComponent, true, true);
+		}
 	}
 	
+	/**
+	 * Gets the index of the Form from the list.
+	 * <p>
+	 * Given an XPDF target component form, this method returns the position in
+	 * the list of forms at which it appears. Woe betide them that ask for the 
+	 * index of a form that is not in the list. 
+	 * @param form
+	 * 			the XPDFComponentForm to find
+	 * @return the index at which it appears.
+	 */
 	private int indexFromForm(XPDFComponentForm form) {
 		for (int iform = 0; iform < formList.size(); iform++)
 			if (formList.get(iform) == form) return iform;
 		return -1; // Ugh
-}
+	}
+	
+
+	public void setStreamality(XPDFComponentForm formScatterer, XPDFComponentForm formAttenuator, boolean isAttenuatorUp, boolean isAttenuatorDown) {
+		isUpstreamMap.put(XPDFAbsorptionMaps.stringifier(this.indexFromForm(formScatterer), this.indexFromForm(formAttenuator)), isAttenuatorUp);
+		isDownstreamMap.put(XPDFAbsorptionMaps.stringifier(this.indexFromForm(formScatterer), this.indexFromForm(formAttenuator)), isAttenuatorDown);
+	}
 	
 	/**
 	 * Converts the pairs of integers to the keying string in a consistent manner. 

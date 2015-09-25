@@ -76,6 +76,22 @@ public class XPDFAbsorptionMaps {
 	}
 	
 	/**
+	 * Calculates the absorption maps.
+	 * <p>
+	 * Given the stored list of target component form objects, this method 
+	 * will calculate and store the full set of absorption maps.
+	 */
+	public void calculateAbsorptionMaps() {
+		for (XPDFComponentForm formScatterer : formList) {
+			for (XPDFComponentForm formAttenuator : formList) {
+				this.setAbsorptionMap(formScatterer, formAttenuator,
+						formScatterer.getGeom().calculateAbsorptionCorrections(gamma, delta, formAttenuator.getGeom(), formAttenuator.getAttenuationCoefficient(beamData.getBeamEnergy()), beamData, true, true));
+			}
+		}
+	}
+	
+	
+	/**
 	 * Gets a stored absorption map.
 	 * @param iScatterer index of the scattering object in the list of XPDFTargetComponents.
 	 * @param iAttenuator index of the attenuating object in the list of XPDFTargetComponents.

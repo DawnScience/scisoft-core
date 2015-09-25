@@ -181,27 +181,29 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 			absorptionCorrectionMaps.setDelta(delta);
 			absorptionCorrectionMaps.setBeamData(beamData);
 			// Add the target component forms, starting with the sample
-			List<XPDFComponentForm> formsList = new ArrayList<XPDFComponentForm>();
-			formsList.add(sampleData.getForm());
-			for (XPDFTargetComponent container : containerData)
-				formsList.add(container.getForm());
-
-			for (XPDFComponentForm form : formsList) {
-				absorptionCorrectionMaps.addForm(form);
-			}
-			
-			for (XPDFComponentForm formScatterer : formsList) {
-				for (XPDFComponentForm formAttenuator : formsList) {
-					absorptionCorrectionMaps.setAbsorptionMap(formScatterer, formAttenuator,
-							formScatterer.getGeom().calculateAbsorptionCorrections(gamma, delta, formAttenuator.getGeom(), formAttenuator.getAttenuationCoefficient(beamData.getBeamEnergy()), beamData, true, true));
-				}
-			}
-			
-//			absorptionCorrectionMaps.addForm(sampleData.getForm());
+//			List<XPDFComponentForm> formsList = new ArrayList<XPDFComponentForm>();
+//			formsList.add(sampleData.getForm());
 //			for (XPDFTargetComponent container : containerData)
-//				absorptionCorrectionMaps.addForm(container.getForm());
+//				formsList.add(container.getForm());
+//
+//			for (XPDFComponentForm form : formsList) {
+//				absorptionCorrectionMaps.addForm(form);
+//			}
+//
+//			
 			
+//			for (XPDFComponentForm formScatterer : formsList) {
+//				for (XPDFComponentForm formAttenuator : formsList) {
+//					absorptionCorrectionMaps.setAbsorptionMap(formScatterer, formAttenuator,
+//							formScatterer.getGeom().calculateAbsorptionCorrections(gamma, delta, formAttenuator.getGeom(), formAttenuator.getAttenuationCoefficient(beamData.getBeamEnergy()), beamData, true, true));
+//				}
+//			}
 			
+			absorptionCorrectionMaps.addForm(sampleData.getForm());
+			for (XPDFTargetComponent container : containerData)
+				absorptionCorrectionMaps.addForm(container.getForm());
+			
+			absorptionCorrectionMaps.calculateAbsorptionMaps();			
 			
 			// Note the less than or equal to
 //			for (int iScatterer = 0; iScatterer <= containerData.size(); iScatterer++) {

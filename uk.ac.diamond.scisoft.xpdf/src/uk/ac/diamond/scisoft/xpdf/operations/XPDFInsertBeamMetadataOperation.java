@@ -51,7 +51,7 @@ public class XPDFInsertBeamMetadataOperation extends XPDFInsertXMetadataOperatio
 			throw new OperationException(this, "Could not find " + xyFilePath);
 		}
 		// Load the background from the designated xy file
-		Dataset bgTrace = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2"));
+		Dataset bgTrace = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2").getSliceView());
 		
 		// Error metadata for the trace
 		boolean isErrorData = true;
@@ -62,7 +62,7 @@ public class XPDFInsertBeamMetadataOperation extends XPDFInsertXMetadataOperatio
 			isErrorData = false;
 		}
 		if (isErrorData && xyFilePath != null) {
-			Dataset bgErrors = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2"));
+			Dataset bgErrors = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2").getSliceView());
 			if (bgErrors != null) {
 				bgTrace.setError(bgErrors);
 			}

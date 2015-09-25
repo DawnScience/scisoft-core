@@ -113,7 +113,7 @@ public class XPDFInsertSampleMetadataOperation extends XPDFInsertXMetadataOperat
 			isErrorData = false;
 		}
 		if (isErrorData && xyFilePath != null) {
-			Dataset dataErrors = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2"));
+			Dataset dataErrors = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2").getSliceView());
 			if (dataErrors != null) {
 				input.setError(dataErrors);
 			}

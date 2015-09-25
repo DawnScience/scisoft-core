@@ -87,7 +87,7 @@ public class XPDFInsertContainerMetadataOperation extends
 		}
 
 		// Load the container trace from the designated xy file
-		Dataset contTrace = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2"));
+		Dataset contTrace = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2").getSliceView());
 
 		// Error metadata for the trace
 		boolean isErrorData = true;
@@ -98,7 +98,7 @@ public class XPDFInsertContainerMetadataOperation extends
 			isErrorData = false;
 		}
 		if (isErrorData && xyFilePath != null) {
-			Dataset contErrors = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2"));
+			Dataset contErrors = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2").getSliceView());
 			if (contErrors != null) {
 				contTrace.setError(contErrors);
 			}

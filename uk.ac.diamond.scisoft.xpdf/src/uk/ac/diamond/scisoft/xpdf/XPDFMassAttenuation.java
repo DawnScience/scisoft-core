@@ -38,16 +38,21 @@ public final class XPDFMassAttenuation {
 	 * @return the mass attenuation coefficient in cm²/g 
 	 */
 	public static double get(int energy, int z) {
-		if (muMaps.size() < fixedEnergies.length) {
-			muMaps.put(fixedEnergies[0], muForty);
-			muMaps.put(fixedEnergies[1], muSixtyThree);
-			muMaps.put(fixedEnergies[2], muSeventySix);
-		}
-
-		if (!muMaps.containsKey(energy)) {
-			// Throw an exception?
-		}
-		return muMaps.get(energy)[z-1];	
+		
+		return (new XCOMElement(z)).getAttenuation(energy*1e-3, "total");
+		
+		
+		
+//		if (muMaps.size() < fixedEnergies.length) {
+//			muMaps.put(fixedEnergies[0], muForty);
+//			muMaps.put(fixedEnergies[1], muSixtyThree);
+//			muMaps.put(fixedEnergies[2], muSeventySix);
+//		}
+//
+//		if (!muMaps.containsKey(energy)) {
+//			// Throw an exception?
+//		}
+//		return muMaps.get(energy)[z-1];	
 	}
 	
 	static double[] muForty = {

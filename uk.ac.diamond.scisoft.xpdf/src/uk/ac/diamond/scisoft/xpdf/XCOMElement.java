@@ -215,21 +215,13 @@ public class XCOMElement {
 		case "electronic pair production":
 			return 0.0;
 		case "total":
-//			return getCrossSection(photonEnergy, "total without coherent") + 
-//					getCrossSection(photonEnergy, "coherent");
-			double twoc = getCrossSection(photonEnergy, "total without coherent");
-			double cohe = getCrossSection(photonEnergy, "coherent");
-			return twoc + cohe;
+			return getCrossSection(photonEnergy, "total without coherent") + 
+					getCrossSection(photonEnergy, "coherent");
 		case "total without coherent":
-//			return getCrossSection(photonEnergy, "incoherent") + 
-//					getCrossSection(photonEnergy, "photoelectric") + 
-//					getCrossSection(photonEnergy, "nuclear pair production") + 
-//					getCrossSection(photonEnergy, "electronic pair production");
-			double inco = getCrossSection(photonEnergy, "incoherent");
-			double phel = getCrossSection(photonEnergy, "photoelectric");
-			double nupp = getCrossSection(photonEnergy, "nuclear pair production");
-			double eupp = getCrossSection(photonEnergy, "electronic pair production");
-			return inco + phel + nupp + eupp;
+			return getCrossSection(photonEnergy, "incoherent") + 
+					getCrossSection(photonEnergy, "photoelectric") + 
+					getCrossSection(photonEnergy, "nuclear pair production") + 
+					getCrossSection(photonEnergy, "electronic pair production");
 		default:
 			return 0.0;
 		}
@@ -279,9 +271,6 @@ public class XCOMElement {
 					logE = logEnergies.subList(edgeIndices.get(0), logEnergies.size());
 					logSigma = photoelectricSigma.subList(edgeIndices.get(0), logEnergies.size());
 				}
-//				return Math.exp((new SplineInterpolator()).interpolate(
-//						ArrayUtils.toPrimitive(logE.toArray(new Double[logE.size()])),
-//						ArrayUtils.toPrimitive(logSigma.toArray(new Double[logSigma.size()]))).value(logPhotonEnergy));
 				double tresult = Math.exp((new SplineInterpolator()).interpolate(
 						ArrayUtils.toPrimitive(logE.toArray(new Double[logE.size()])),
 						ArrayUtils.toPrimitive(logSigma.toArray(new Double[logSigma.size()]))).value(logPhotonEnergy));
@@ -295,9 +284,6 @@ public class XCOMElement {
 				int iEdge = Collections.binarySearch(reverseEdgeEnergies, photonEnergy);
 				// Select the edge data to use. on the edge (exactly) is taken as being below the edge.
 				iEdge = (iEdge < 0) ? -iEdge-1 : iEdge;
-//				return Math.exp((new LinearInterpolator()).interpolate(
-//						ArrayUtils.toPrimitive(edgeData1.get(iEdge).toArray(new Double[edgeMulitplicity.get(iEdge)])),
-//						ArrayUtils.toPrimitive(edgeData2.get(iEdge).toArray(new Double[edgeMulitplicity.get(iEdge)]))).value(photonEnergy));
 				double tresult = Math.exp((new LinearInterpolator()).interpolate(
 						ArrayUtils.toPrimitive(edgeData1.get(iEdge).toArray(new Double[edgeMulitplicity.get(iEdge)])),
 						ArrayUtils.toPrimitive(edgeData2.get(iEdge).toArray(new Double[edgeMulitplicity.get(iEdge)]))).value(logPhotonEnergy));

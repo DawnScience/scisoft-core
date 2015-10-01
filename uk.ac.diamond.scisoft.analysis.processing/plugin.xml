@@ -594,6 +594,13 @@
             name="Pseudo-Flat Field Filter"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.SplineBaselineOperation"
+            description="Subtract a spline from the data"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.SplineBaselineOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.SplineBaselineModel"
+            name="Spline Baseline Subtraction">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

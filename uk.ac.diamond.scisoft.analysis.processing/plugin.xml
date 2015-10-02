@@ -595,8 +595,10 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.SplineBaselineOperation"
             description="Subtract a spline from the data"
+            icon="icons/rollingball.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.SplineBaselineOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.SplineBaselineModel"
             name="Spline Baseline Subtraction">

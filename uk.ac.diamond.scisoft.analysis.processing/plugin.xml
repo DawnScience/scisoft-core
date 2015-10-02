@@ -603,6 +603,13 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.SplineBaselineModel"
             name="Spline Baseline Subtraction">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.ImageIntegration"
+            description="Integrate an image along a selected axis"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.imageIntegration"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.ImageIntegrationModel"
+            name="Image Integration">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

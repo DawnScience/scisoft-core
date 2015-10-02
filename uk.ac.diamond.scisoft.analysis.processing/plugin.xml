@@ -606,6 +606,7 @@
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.ImageIntegration"
             description="Integrate an image along a selected axis"
+            icon="icons/imageIntegration.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.imageIntegration"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.ImageIntegrationModel"
             name="Image Integration">

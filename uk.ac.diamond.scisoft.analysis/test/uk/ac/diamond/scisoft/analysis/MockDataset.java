@@ -112,7 +112,7 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public ILazyDataset getTransposedView(int... axes) {
+	public IDataset getTransposedView(int... axes) {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
 

@@ -10,6 +10,9 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
@@ -45,24 +48,19 @@ public class SplineBaselineOperation extends AbstractOperation<SplineBaselineMod
 
 		if (xknots == null || yknots == null) return null;
 		
-		// We can get the indices this way, since they must be unique; the
-		// spline cannot have two abscissae at the same ordinate.
-		double[] xsorted = xknots;
-		Arrays.sort(xsorted);
-		int[] sortIndices = new int[xknots.length];
-		
-		for (int i = 0; i < xknots.length; i++) {
-			sortIndices[i] = Arrays.binarySearch(xknots, xsorted[i]);
-		}
-		
 		int nknots = Math.min(xknots.length, yknots.length);
 		Dataset knots = new DoubleDataset(2, nknots);
-		
-		for (int i = 0; i < nknots; i++) {
-			knots.set(xknots[sortIndices[i]], 0, i);
-			knots.set(yknots[sortIndices[i]], 1, i);
+		SortedMap<Double, Double> xyknots = new TreeMap<Double, Double>();
+		for (int i = 0; i < nknots; i++)
+			xyknots.put(xknots[i], yknots[i]);
+
+		int i = 0;
+		for (Map.Entry<Double, Double> knot : xyknots.entrySet()) {
+			knots.set(knot.getKey(), 0, i);
+			knots.set(knot.getValue(), 1, i);
+			i++;
 		}
-		
+		// TODO?: Possibly sort the arrays as held in the model		
 		return knots;
 	}
 
@@ -98,7 +96,13 @@ public class SplineBaselineOperation extends AbstractOperation<SplineBaselineMod
 		IDataset xControl = knots.getSlice((new int[]{0, 0}), (new int[]{1, knots.getShape()[1]}), (new int[]{1,1})).reshape(knots.getShape()[1]);
 		IDataset yControl = knots.getSlice((new int[]{1, 0}), (new int[]{2, knots.getShape()[1]}), (new int[]{1,1})).reshape(knots.getShape()[1]);
 		
-		IDataset xaxis = DatasetUtils.convertToDataset(input.getFirstMetadata(AxesMetadata.class).getAxes()[0].getSlice());
+		IDataset xaxis;
+		if (input.getFirstMetadata(AxesMetadata.class) != null &&
+				input.getFirstMetadata(AxesMetadata.class).getAxes().length != 0 &&
+				input.getFirstMetadata(AxesMetadata.class).getAxes()[0] != null)
+			xaxis = DatasetUtils.convertToDataset(input.getFirstMetadata(AxesMetadata.class).getAxes()[0].getSlice());
+		else
+			xaxis = DoubleDataset.createRange(input.getShape()[0]);
 		
 		Dataset yspline = (Dataset) Interpolation1D.splineInterpolation(xControl, yControl, xaxis);
 		

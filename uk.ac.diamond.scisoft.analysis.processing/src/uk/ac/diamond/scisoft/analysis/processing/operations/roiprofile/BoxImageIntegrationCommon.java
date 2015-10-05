@@ -20,7 +20,11 @@ import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import uk.ac.diamond.scisoft.analysis.processing.operations.AbstractIntegrationOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.IntegrationModel;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
-
+/**
+ * Class holding the common code of the BoxIntegration and ImageIntegration Operations.
+ *
+ * @param <T> Model presented in the UI alongside this operation.
+ */
 public abstract class BoxImageIntegrationCommon<T extends IntegrationModel> extends AbstractIntegrationOperation<T> {
 
 	public enum Direction {

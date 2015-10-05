@@ -13,6 +13,9 @@ import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 
+/**
+ * Return the sum of a rectangular RoI along one axis. 
+ */
 @Atomic
 public class BoxIntegration extends BoxImageIntegrationCommon<BoxIntegrationModel> {
 

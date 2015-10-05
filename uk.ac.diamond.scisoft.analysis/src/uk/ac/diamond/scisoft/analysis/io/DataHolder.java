@@ -142,6 +142,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * Add a ImetaData object
 	 * @param metadata which is an object implementing IMetadata
 	 */
+	@Override
 	public void setMetadata(IMetadata metadata) {
 		this.metadata = metadata;
 	}
@@ -350,6 +351,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 		this.filePath = filePath;
 	}
 
+	@Override
 	public void setTree(Tree tree) {
 		this.tree = tree;
 	}

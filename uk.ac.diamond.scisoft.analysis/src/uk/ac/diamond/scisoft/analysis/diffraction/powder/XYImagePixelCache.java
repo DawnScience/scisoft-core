@@ -13,8 +13,6 @@ import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.IPixelIntegrationCache;
 
 public class XYImagePixelCache implements IPixelIntegrationCache {

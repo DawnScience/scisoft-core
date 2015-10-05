@@ -142,9 +142,9 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 	public double getXBinEdgeMax() {
 		if (bean.isAzimuthalIntegration()) {
 
-			if (bean.getRadialRange() != null) {
-				double[] radialRange = bean.getRadialRange();
-				if (bean.isLog() && radialRange != null) {
+			double[] radialRange = bean.getRadialRange();
+			if (radialRange != null) {
+				if (bean.isLog()) {
 					radialRange = bean.getRadialRange().clone();
 					radialRange[0] = Math.log10(radialRange[0]);
 					radialRange[1] = Math.log10(radialRange[1]);
@@ -170,9 +170,9 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 		
 		if (bean.isAzimuthalIntegration()) {
 			
-			if (bean.getRadialRange() != null) {
-				double[] radialRange = bean.getRadialRange();
-				if (bean.isLog() && radialRange != null) {
+			double[] radialRange = bean.getRadialRange();
+			if (radialRange != null) {
+				if (bean.isLog()) {
 					radialRange = bean.getRadialRange().clone();
 					radialRange[0] = Math.log10(radialRange[0]);
 					radialRange[1] = Math.log10(radialRange[1]);
@@ -198,15 +198,15 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 	public double getYBinEdgeMax() {
 		if (!bean.isAzimuthalIntegration()) {
 
-			if (bean.getRadialRange() != null) {
-				double[] radialRange = bean.getRadialRange();
-				if (bean.isLog() && radialRange != null) {
+			double[] radialRange = bean.getRadialRange();
+			if (radialRange != null) {
+				if (bean.isLog()) {
 					radialRange = bean.getRadialRange().clone();
 					radialRange[0] = Math.log10(radialRange[0]);
 					radialRange[1] = Math.log10(radialRange[1]);
 				}
 				return Math.max(radialRange[0], radialRange[1]);
-			} 
+			}
 
 			return binEdgesRadial.get(bean.getNumberOfBinsRadial());
 		}
@@ -224,9 +224,9 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 	public double getYBinEdgeMin() {
 		if (!bean.isAzimuthalIntegration()) {
 			
-			if (bean.getRadialRange() != null) {
-				double[] radialRange = bean.getRadialRange();
-				if (bean.isLog() && radialRange != null) {
+			double[] radialRange = bean.getRadialRange();
+			if (radialRange != null) {
+				if (bean.isLog()) {
 					radialRange = bean.getRadialRange().clone();
 					radialRange[0] = Math.log10(radialRange[0]);
 					radialRange[1] = Math.log10(radialRange[1]);

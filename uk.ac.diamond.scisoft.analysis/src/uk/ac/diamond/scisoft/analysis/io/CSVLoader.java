@@ -12,7 +12,6 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;

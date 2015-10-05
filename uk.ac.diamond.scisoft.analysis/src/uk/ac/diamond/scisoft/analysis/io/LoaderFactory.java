@@ -72,6 +72,7 @@ import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
  * 
  *  @deprecated - Please use ILoaderService.
  */
+@Deprecated
 public class LoaderFactory {
 
 	/**

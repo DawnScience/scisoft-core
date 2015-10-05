@@ -10,12 +10,9 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 
 import java.util.Arrays;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
+import org.apache.commons.math3.analysis.polynomials.PolynomialFunctionLagrangeForm;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -44,69 +41,85 @@ public class SplineBaselineOperation extends AbstractOperation<SplineBaselineMod
 	private Dataset getControlPoints() {
 
 		double[] xknots = model.getXControlPoints();
-		double[] yknots = model.getYControlPoints();
-
-		if (xknots == null || yknots == null) return null;
+		if (xknots == null) return null;
 		
-		int nknots = Math.min(xknots.length, yknots.length);
-		Dataset knots = new DoubleDataset(2, nknots);
-		SortedMap<Double, Double> xyknots = new TreeMap<Double, Double>();
-		for (int i = 0; i < nknots; i++)
-			xyknots.put(xknots[i], yknots[i]);
-
-		int i = 0;
-		for (Map.Entry<Double, Double> knot : xyknots.entrySet()) {
-			knots.set(knot.getKey(), 0, i);
-			knots.set(knot.getValue(), 1, i);
-			i++;
-		}
-		// TODO?: Possibly sort the arrays as held in the model		
-		return knots;
+		Arrays.sort(xknots);
+		
+		return new DoubleDataset(xknots, xknots.length);
 	}
 
 
 
 	private Dataset subtractSplineBaseline(Dataset input, Dataset knots) throws OperationException {
-		if (knots == null || knots.getSize() <= 0 || knots.getShape().length < 2 )
+		if (knots == null || knots.getSize() <= 0)// || knots.getShape().length < 2 )
 		// Without sufficient data points for a fit, return the original data
 			return input;
 		
-		switch (knots.getShape()[1]) {
+		Dataset xaxis = null;
+		// Get the axis, or create one.
+		if (AbstractOperation.getFirstAxes(input) != null &&
+				AbstractOperation.getFirstAxes(input).length != 0 &&
+				AbstractOperation.getFirstAxes(input)[0] != null )
+			xaxis = DatasetUtils.convertToDataset(AbstractOperation.getFirstAxes(input)[0].getSliceView());
+		else
+			xaxis = DoubleDataset.createRange(input.getSize());
+		
+		// y values at the xs
+		Dataset ys = Maths.interpolate(xaxis, input, knots, null, null);
+
+		Dataset ybase = null;
+		
+		switch (knots.getSize()) {
 		case 0:
-			// Original data
-			return input;
+			ybase = DoubleDataset.zeros(xaxis);
+			break;
 		case 1:
 			// Subtract a constant
-			return Maths.subtract(input, knots.getDouble(1, 0));
+			ybase = Maths.multiply(ys.getDouble(0), DoubleDataset.ones(xaxis));
+			break;
 		case 2:
 			// Subtract a linear fit
-			// control points
-			IDataset xControl = knots.getSlice((new int[]{0, 0}), (new int[]{1, knots.getShape()[1]}), (new int[]{1,1})).reshape(knots.getShape()[1]);
-			IDataset yControl = knots.getSlice((new int[]{1, 0}), (new int[]{2, knots.getShape()[1]}), (new int[]{1,1})).reshape(knots.getShape()[1]);
-			
-			IDataset xaxis = DatasetUtils.convertToDataset(input.getFirstMetadata(AxesMetadata.class).getAxes()[0].getSlice());
+			ybase = (Dataset) Interpolation1D.linearInterpolation(knots, ys, xaxis);
 
-			Dataset ylinear = (Dataset) Interpolation1D.linearInterpolation(xControl, yControl, xaxis);
-			return Maths.subtract(input, ylinear);
+			PolynomialFunctionLagrangeForm linearLagrange = 
+					new PolynomialFunctionLagrangeForm(
+							new double[]{knots.getDouble(0), knots.getDouble(1)},
+							new double[]{ys.getDouble(0), ys.getDouble(1)});
+
+			for (int i = 0; i < xaxis.getSize(); i++) 
+				if ( (xaxis.getDouble(i) < knots.min().doubleValue()) || (xaxis.getDouble(i) >= knots.max().doubleValue()) )
+					ybase.set(linearLagrange.value(xaxis.getDouble(i)), i);
+			
+			break;
 		default:
+			ybase = (Dataset) Interpolation1D.splineInterpolation(knots, ys, xaxis);
+			
+			final int degree = 3;
+			double[] lowerInterval = new double[degree+1];
+			double[] lowerValues = new double[degree+1];
+			double[] upperInterval = new double[degree+1];
+			double[] upperValues = new double[degree+1];
+			
+			for (int i = 0; i <= degree; i++) {
+				lowerInterval[i] = ((degree-i)*knots.getDouble(0) + i*knots.getDouble(1))/degree;
+				lowerValues[i] = ((Dataset) Interpolation1D.splineInterpolation(knots, ys, new DoubleDataset(Arrays.copyOfRange(lowerInterval, i, i+1), 1))).getDouble(0);
+				upperInterval[i] = ((degree-i)*knots.getDouble(knots.getSize()-2) + i*knots.getDouble(knots.getSize()-1))/degree;
+				upperValues[i] = ((Dataset) Interpolation1D.splineInterpolation(knots, ys, new DoubleDataset(Arrays.copyOfRange(upperInterval, i, i+1), 1))).getDouble(0);
+			}
+			
+			PolynomialFunctionLagrangeForm lowerLagrange = new PolynomialFunctionLagrangeForm(lowerInterval, lowerValues);
+			PolynomialFunctionLagrangeForm upperLagrange = new PolynomialFunctionLagrangeForm(upperInterval, upperValues);
+
+			for (int i = 0; i < xaxis.getSize(); i++) 
+				if (xaxis.getDouble(i) < knots.min().doubleValue())
+					ybase.set(lowerLagrange.value(xaxis.getDouble(i)), i);
+				else if (xaxis.getDouble(i) >= knots.max().doubleValue())
+					ybase.set(upperLagrange.value(xaxis.getDouble(i)), i);
+			
 			break;
 		}
-		
-		// spline control points
-		IDataset xControl = knots.getSlice((new int[]{0, 0}), (new int[]{1, knots.getShape()[1]}), (new int[]{1,1})).reshape(knots.getShape()[1]);
-		IDataset yControl = knots.getSlice((new int[]{1, 0}), (new int[]{2, knots.getShape()[1]}), (new int[]{1,1})).reshape(knots.getShape()[1]);
-		
-		IDataset xaxis;
-		if (input.getFirstMetadata(AxesMetadata.class) != null &&
-				input.getFirstMetadata(AxesMetadata.class).getAxes().length != 0 &&
-				input.getFirstMetadata(AxesMetadata.class).getAxes()[0] != null)
-			xaxis = DatasetUtils.convertToDataset(input.getFirstMetadata(AxesMetadata.class).getAxes()[0].getSlice());
-		else
-			xaxis = DoubleDataset.createRange(input.getShape()[0]);
-		
-		Dataset yspline = (Dataset) Interpolation1D.splineInterpolation(xControl, yControl, xaxis);
-		
-		return Maths.subtract(input, yspline);
+
+		return Maths.subtract(input, ybase);
 	}
 
 

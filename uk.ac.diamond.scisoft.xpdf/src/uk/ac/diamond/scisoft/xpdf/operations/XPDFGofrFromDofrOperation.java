@@ -36,12 +36,13 @@ public class XPDFGofrFromDofrOperation extends AbstractOperation<EmptyModel, Ope
 	protected OperationData process(IDataset dofr, IMonitor monitor) throws OperationException {
 
 		// Get the number density from the sample metadata
-		double numberDensity = 0.0;
 		if (dofr.getFirstMetadata(XPDFMetadata.class) == null) throw new OperationException(this, "XPDF metadata not found.");
+		XPDFMetadata theXPDFMetadata = dofr.getFirstMetadata(XPDFMetadata.class);
 		
 		if (dofr.getFirstMetadata(AxesMetadata.class) == null) throw new OperationException(this, "Axis metadata not found.");
 		Dataset r = DatasetUtils.convertToDataset(dofr.getFirstMetadata(AxesMetadata.class).getAxes()[0]);
 		
+		double numberDensity = theXPDFMetadata.getSample().getNumberDensity();
 		Dataset gofr = Maths.divide(Maths.divide(dofr, 4*Math.PI*numberDensity), r);
 		copyMetadata(dofr, gofr);
 		return new OperationData(gofr);

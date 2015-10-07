@@ -312,7 +312,7 @@ public class NexusLoader extends AbstractFileLoader {
 								INexusTree dataNode = entryNode.getChildNode(k);
 								String name = dataNode.getName();
 								/* get target if it exists as this is the unique id in the file */
-								HashMap<String, Serializable> attributes = dataNode.getAttributes();
+								Map<String, Serializable> attributes = dataNode.getAttributes();
 								String target = null;
 								if (attributes != null ){
 									target = (String)attributes.get("target");

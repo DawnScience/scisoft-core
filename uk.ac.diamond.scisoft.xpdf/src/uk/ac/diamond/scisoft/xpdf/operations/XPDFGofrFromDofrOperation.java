@@ -44,6 +44,14 @@ public class XPDFGofrFromDofrOperation extends AbstractOperation<EmptyModel, Ope
 		
 		double numberDensity = theXPDFMetadata.getSample().getNumberDensity();
 		Dataset gofr = Maths.divide(Maths.divide(dofr, 4*Math.PI*numberDensity), r);
+		
+		// Error propagation
+		if (dofr.getError() != null){
+			Dataset dofrErrors = DatasetUtils.convertToDataset(dofr.getError().getSlice());
+			Dataset gofrErrors = Maths.divide(Maths.divide(dofrErrors, 4*Math.PI*numberDensity), r);
+			gofr.setError(gofrErrors);
+		}
+		
 		copyMetadata(dofr, gofr);
 		return new OperationData(gofr);
 	}

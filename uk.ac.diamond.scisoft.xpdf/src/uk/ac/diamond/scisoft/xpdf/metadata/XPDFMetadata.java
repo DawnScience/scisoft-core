@@ -17,6 +17,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
 import uk.ac.diamond.scisoft.xpdf.XPDFAbsorptionMaps;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentForm;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 
 /**
@@ -85,4 +86,13 @@ public interface XPDFMetadata extends MetadataType {
 	 * 			components, wrapped in their own class.
 	 */
 	XPDFAbsorptionMaps getAbsorptionMaps(Dataset delta, Dataset gamma);
+	
+	/**
+	 * Returns a list of the forms of the target components.
+	 * <p>
+	 * Returns a List of XPDFComponentForms of the sample, in the first
+	 * position, and the containers, in the order they are stored within the 
+	 * object.
+	 */
+	List<XPDFComponentForm> getFormList();
 }

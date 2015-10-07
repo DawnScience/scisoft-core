@@ -210,4 +210,16 @@ public class XPDFAbsorptionMaps {
 		return Integer.toString(iScatterer, Character.MAX_RADIX)+" "+Integer.toString(iAttenuator, Character.MAX_RADIX);
 	}
 
+	public boolean checkFormList(List<XPDFComponentForm> inFormList) {
+		if (formList == null || inFormList == null) return false;
+		boolean sameForms = (inFormList.size() == formList.size());
+		for (int i = 0; i < formList.size(); i++) {
+			if (!sameForms) break;
+			sameForms &= formList.get(i).isEqualToForAbsorption(inFormList.get(i));
+		}
+		
+		return sameForms;
+	}
+	
+	
 }

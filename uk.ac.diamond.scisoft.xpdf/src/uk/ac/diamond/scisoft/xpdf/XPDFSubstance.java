@@ -172,4 +172,11 @@ public class XPDFSubstance {
 	public double getG0Minus1() {
 		return materialComposition.getG0Minus1();
 	}
+
+	public boolean isEqualToForAbsorption(XPDFSubstance inSubstance) {
+		return (inSubstance != null) &&
+				materialComposition.isEqualToForAbsorption(inSubstance.materialComposition) &&
+				microMassDensity == inSubstance.microMassDensity &&
+				packingFraction == inSubstance.packingFraction;
+	}
 }

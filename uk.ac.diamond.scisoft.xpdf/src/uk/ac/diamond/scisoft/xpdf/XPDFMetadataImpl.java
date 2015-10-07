@@ -199,9 +199,12 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 //				}
 //			}
 			
-			absorptionCorrectionMaps.addForm(sampleData.getForm());
-			for (XPDFTargetComponent container : containerData)
-				absorptionCorrectionMaps.addForm(container.getForm());
+//			absorptionCorrectionMaps.addForm(sampleData.getForm());
+//			for (XPDFTargetComponent container : containerData)
+//				absorptionCorrectionMaps.addForm(container.getForm());
+			for (XPDFComponentForm targetForm : this.getFormList())
+				absorptionCorrectionMaps.addForm(new XPDFComponentForm(targetForm));
+			
 			
 			absorptionCorrectionMaps.calculateAbsorptionMaps();			
 			
@@ -220,6 +223,15 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 		
 		}		
 		return absorptionCorrectionMaps;
+	}
+
+	@Override
+	public List<XPDFComponentForm> getFormList() {
+		List<XPDFComponentForm> formList = new ArrayList<XPDFComponentForm>();
+		formList.add(sampleData.getForm());
+		for (XPDFTargetComponent container : containerData)
+			formList.add(container.getForm());
+		return formList;
 	}
 	
 

@@ -93,10 +93,10 @@ public class XPDFIterateCalibrationConstantOperation extends
 		
 		// localized cache with a double null check with sprinkles on top
 		XPDFAbsorptionMaps localAbsMaps = cachedAbsorptionMaps;
-		if (localAbsMaps == null) {
+		if (localAbsMaps == null || ((localAbsMaps != null) && !(localAbsMaps.checkFormList(theXPDFMetadata.getFormList())))) {
 			synchronized (this) {
 				localAbsMaps = cachedAbsorptionMaps;
-				if (localAbsMaps == null) {
+				if (localAbsMaps == null || ((localAbsMaps != null) && !(localAbsMaps.checkFormList(theXPDFMetadata.getFormList())))) {
 					cachedAbsorptionMaps = localAbsMaps = theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DoubleDataset.zeros(twoTheta.reshape(twoTheta.getSize(), 1)));
 				}
 			}

@@ -161,5 +161,11 @@ public class XPDFComponentForm {
 	public double getAttenuationCoefficient(double beamEnergy) {
 		return substance.getAttenuationCoefficient(beamEnergy);
 	}
+
+	public boolean isEqualToForAbsorption(XPDFComponentForm inForm) {
+		return (inForm != null) &&
+				substance.isEqualToForAbsorption(inForm.substance) &&
+				geometry.isEqualToForAbsorption(inForm.geometry);
+	}
 	
 }

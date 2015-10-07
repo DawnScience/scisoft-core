@@ -218,6 +218,16 @@ public abstract class XPDFComponentGeometry {
 			XPDFComponentGeometry attenuatorGeometry, double attenuationCoefficient,
 			XPDFBeamData beamData,
 			boolean doUpstreamAbsorption, boolean doDownstreamAbsorption);
+
+	public boolean isEqualToForAbsorption(XPDFComponentGeometry inGeometry) {
+		return (inGeometry != null) &&
+				rInner == inGeometry.rInner &&
+				rOuter == inGeometry.rOuter &&
+				isUpstream == inGeometry.isUpstream &&
+				isDownstream == inGeometry.isDownstream &&
+				gridSize == inGeometry.gridSize &&
+				getShape() == inGeometry.getShape();
+	}
 	
 	
 }

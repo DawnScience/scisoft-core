@@ -261,6 +261,15 @@ public class XPDFComposition {
 		return Sofx;
 	}
 
+	public boolean isEqualToForAbsorption(XPDFComposition inCompo) {
+		boolean sameAtoms = (inCompo != null);
+		sameAtoms &= atomCount.size() == inCompo.atomCount.size();
+		for (Map.Entry<Integer, Integer> entry : atomCount.entrySet())
+			sameAtoms &= (entry.getValue() == inCompo.atomCount.get(entry.getKey()));
+		
+		return sameAtoms;
+	}
+
 	
 }
 

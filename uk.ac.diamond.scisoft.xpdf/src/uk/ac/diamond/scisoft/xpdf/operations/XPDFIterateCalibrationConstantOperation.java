@@ -131,7 +131,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 	 */
 	static private Map<Integer, Integer> orderContainers(
 			List<XPDFTargetComponent> containers) {
-		List<Double> outerRadii = new ArrayList<Double>();
+		final List<Double> outerRadii = new ArrayList<Double>();
 		// Populate a list of outer radii of the containers
 		for (XPDFTargetComponent aContainer : containers) {
 			outerRadii.add(aContainer.getForm().getGeom().getDistances()[1]);

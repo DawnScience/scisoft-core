@@ -611,6 +611,12 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.ImageIntegrationModel"
             name="Image Integration">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.FileMetadataNormalisation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.FileMetadataNormalisation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.FileMetadataModel"
+            name="Normalisation [metadata]">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

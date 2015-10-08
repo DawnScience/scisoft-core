@@ -47,6 +47,10 @@ public class FileMetadataNormalisation extends AbstractOperation<FileMetadataMod
 			Serializable metaValue = metadata.getMetaValue(model.getMetadataName());
 			double parseDouble = Double.parseDouble(metaValue.toString());
 			output = Maths.divide(input, parseDouble);
+			if (input.getError() != null) {
+				IDataset error = input.getError().getSlice();
+				output.setError(Maths.divide(error, parseDouble));
+			}
 			copyMetadata(input, output);
 		} catch (Exception e) {
 			throw new OperationException(this, "Could not read metadata");

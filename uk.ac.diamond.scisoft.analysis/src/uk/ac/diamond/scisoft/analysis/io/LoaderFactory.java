@@ -72,6 +72,7 @@ import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
  * 
  *  @deprecated - Please use ILoaderService.
  */
+@Deprecated
 public class LoaderFactory {
 
 	/**
@@ -148,6 +149,7 @@ public class LoaderFactory {
 		    registerLoader("dat",  ExtendedSRSLoader.class);
 		    registerLoader("dat",  SRSLoader.class);
 		    registerLoader("csv",  CSVLoader.class);
+		    registerLoader("rgb",  RGBTextLoader.class);
 		    registerLoader("txt",  DatLoader.class);
 		    registerLoader("txt",  SRSLoader.class);
 		    registerLoader("mca",  DatLoader.class);
@@ -519,7 +521,7 @@ public class LoaderFactory {
 		return dataCache.fetchData(path, willLoadMetadata, imageNumber);
 	}
 
-	private static String stackExpression = "(.+)_(\\d+)";
+	private static String stackExpression = "(.+)_?(\\d+)";
 	
 	public static String getStackExpression() {
 		return stackExpression;

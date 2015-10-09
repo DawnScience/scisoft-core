@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.dawnsci.analysis.api.operation">
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertBeamMetadataOperation"
+            description="Insert the XPDF metadata into the main Dataset"
+            icon="icons/xpdfbeam.png"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertBeamMetadataOperation"
+            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertBeamMetadataModel"
+            name="Insert XPDF Beam Metadata">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertSampleMetadataOperation"
+            description="Insert the sample metadata into the processing pipeline"
+            icon="icons/xpdfsample.png"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertSampleMetadataOperation"
+            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertSampleMetadataModel"
+            name="Insert XPDF Sample Metadata">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertContainerMetadataOperation"
+            description="Insert a container metadata instance into the processing pipeline"
+            icon="icons/xpdfcontainer.png"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertContainerMetadataOperation"
+            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFInsertContainerMetadataModel"
+            name="Insert XPDF Container Metadata">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFLorchFTOperation"
+            description="Apply the Lorch Fourier Transform to enter r-space."
+            icon="icons/xpdflorch.png"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFLorchFTOperation"
+            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFLorchFTModel"
+            name="XPDF Lorch Fourier Transform (th_soq to dofr)">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFGofrFromDofrOperation"
+            icon="icons/xpdfsubbak.png"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFGofrFromDofrOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            name="XPDF D(r) to G(r)">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFTophatOperation"
+            icon="icons/xpdftophat.png"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFTophatOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            name="XPDF Tophat background subtraction (soq to th_soq)">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFSelfScatteringNormalisationOperation"
+            icon="icons/xpdfnormal.png"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFSelfScatteringNormalisationOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            name="XPDF Self-scattering and Normalisation (ABSCOR to soq)">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFNormalizeTracesOperation"
+            icon="icons/xpdfnormal.png"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFNormalizeTracesOperation"
+            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFNormalizeTracesModel"
+            name="XPDF Normalise Data (count to Normon)">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFSubtractBackgroundOperation"
+            icon="icons/xpdfsubbak.png"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFSubtractBackgroundOperation"
+            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFSubtractBackgroundModel"
+            name="XPDF Subtract Background (Normon to SUBBAK)">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFIterateCalibrationConstantOperation"
+            icon="icons/xpdfxicco.png"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFIterateCalibrationConstantOperation"
+            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFIterateCalibrationConstantModel"
+            name="XPDF Iterate Calibration Constant (SUBBAK to ABSCOR)">
+      </operation>
+   </extension>
+
+</plugin>

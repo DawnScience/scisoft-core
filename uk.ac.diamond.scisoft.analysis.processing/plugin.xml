@@ -594,6 +594,29 @@
             name="Pseudo-Flat Field Filter"
             visible="true">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.SplineBaselineOperation"
+            description="Subtract a spline from the data"
+            icon="icons/rollingball.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.SplineBaselineOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.SplineBaselineModel"
+            name="Spline Baseline Subtraction">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.ImageIntegration"
+            description="Integrate an image along a selected axis"
+            icon="icons/imageIntegration.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.imageIntegration"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.ImageIntegrationModel"
+            name="Image Integration">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.FileMetadataNormalisation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.FileMetadataNormalisation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.FileMetadataModel"
+            name="Normalisation [metadata]">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

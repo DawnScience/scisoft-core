@@ -112,7 +112,7 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public ILazyDataset getTransposedView(int... axes) {
+	public IDataset getTransposedView(int... axes) {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
 
@@ -231,6 +231,11 @@ public class MockDataset implements IDataset {
 
 	@Override
 	public <T extends MetadataType> List<T> getMetadata(Class<T> clazz) throws Exception {
+		throw new AssertionFailedError("Methods in MockDataset should not be called");
+	}
+	
+	@Override
+	public <T extends MetadataType> T getFirstMetadata(Class<T> clazz) {
 		throw new AssertionFailedError("Methods in MockDataset should not be called");
 	}
 	

@@ -142,6 +142,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * Add a ImetaData object
 	 * @param metadata which is an object implementing IMetadata
 	 */
+	@Override
 	public void setMetadata(IMetadata metadata) {
 		this.metadata = metadata;
 	}
@@ -164,6 +165,19 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 		}
 		throw new UnsupportedOperationException("getMetadata(clazz) does not currently support anything other than IMetadata");
 		// If it should only support this, simply return null here, otherwise implement the method fully
+	}
+	
+	@Override
+	public <T extends MetadataType> T getFirstMetadata(Class<T> clazz) {
+		try {
+			List<T> ml = getMetadata(clazz);
+			if (ml == null) return null;
+			return ml.isEmpty() ? null : ml.get(0);
+		} catch (Exception e) {
+			logger.error("Get metadata failed!",e);
+		}
+
+		return null;
 	}
 
 	/**
@@ -337,6 +351,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 		this.filePath = filePath;
 	}
 
+	@Override
 	public void setTree(Tree tree) {
 		this.tree = tree;
 	}

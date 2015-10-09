@@ -163,8 +163,6 @@ public class Nexus {
 						}
 					} catch (NexusException e) {
 						logger.error("Problem with NeXus library: {}", e);
-					} catch (NexusExtractorException e) {
-						logger.error("Problem with NeXus extraction: {}", e.getMessage());
 					}
 					return d;
 				}

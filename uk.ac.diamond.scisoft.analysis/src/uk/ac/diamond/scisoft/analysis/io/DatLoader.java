@@ -372,14 +372,15 @@ public class DatLoader extends AbstractFileLoader {
 		
 				if (line.contains(":")) {
 					String[] parts = line.split(":");
-					String key = parts[0].replace("#", "");
-					String value = parts[1];
-					for (int p = 2; p < parts.length; p++) {
-						value = value+":"+parts[p];
+					if (parts.length > 1) {
+						String key = parts[0].replace("#", "");
+						String value = parts[1];
+						for (int p = 2; p < parts.length; p++) {
+							value = value+":"+parts[p];
+						}
+						metadataMap.put(key.trim(),value.trim());
 					}
-					metadataMap.put(key.trim(),value.trim());
 				}
-				
 				
 			} finally {
 			    line = in.readLine();
@@ -449,7 +450,7 @@ public class DatLoader extends AbstractFileLoader {
 		return ret;
 	}
 	
-	private String removeQuotations(String name) {
+	protected String removeQuotations(String name) {
 		name = name.trim();
 		if (name.startsWith("\"")) name = name.substring(1);
 		if (name.endsWith("\""))   name = name.substring(0, name.length()-2);

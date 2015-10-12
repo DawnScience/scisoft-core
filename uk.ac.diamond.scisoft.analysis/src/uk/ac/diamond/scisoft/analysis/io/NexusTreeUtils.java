@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
+import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
@@ -40,6 +42,7 @@ import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
+import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
@@ -50,6 +53,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.axis.AxisChoice;
+import uk.ac.diamond.scisoft.analysis.crystallography.ReciprocalCell;
+import uk.ac.diamond.scisoft.analysis.crystallography.UnitCell;
+import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionSample;
 import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 
 public class NexusTreeUtils {
@@ -80,6 +86,8 @@ public class NexusTreeUtils {
 	public static final String NX_ORIENTATION = "NXorientation";
 	public static final String NX_TRANSFORMATIONS = "NXtransformations";
 	public static final String NX_TRANSFORMATIONS_ROOT = ".";
+	public static final String NX_SAMPLE = "NXsample";
+	public static final String NX_BEAM = "NXbeam";
 
 	public static void augmentTree(Tree tree) {
 		augmentNodeLink(tree instanceof TreeFile ? ((TreeFile) tree).getFilename() : null, tree.getNodeLink(), true);
@@ -397,12 +405,42 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse a group that is NXdetector class
+	 * Parse a group that is NXdetector class from a tree for shape of detector scan parameters
 	 * @param path to group
-	 * @param link
+	 * @param tree
+	 * @return shape
+	 */
+	public static int[] parseDetectorScanShape(String path, Tree tree) {
+		NodeLink link = tree.findNodeLink(path);
+
+		if (!link.isDestinationGroup())
+			return null;
+
+		GroupNode gNode = (GroupNode) link.getDestination();
+		if (!isNXClass(gNode, NX_DETECTOR))
+			return null;
+
+		int[] shape = null;
+		for (NodeLink l : gNode) {
+			if (isNXClass(l.getDestination(), NX_DETECTOR_MODULE)) {
+				shape = parseSubDetectorShape(tree, l);
+				break; // TODO multiple modules
+			}
+		}
+
+		return shape;
+	}
+
+	/**
+	 * Parse a group that is NXdetector class from a tree
+	 * @param path to group
+	 * @param tree
+	 * @param pos
 	 * @return an array of detector modules
 	 */
-	public static DetectorProperties[] parseDetector(String path, NodeLink link) {
+	public static DetectorProperties[] parseDetector(String path, Tree tree, int... pos) {
+		NodeLink link = tree.findNodeLink(path);
+
 		if (!link.isDestinationGroup())
 			return null;
 
@@ -413,41 +451,69 @@ public class NexusTreeUtils {
 		Map<String, Transform> ftrans = new HashMap<String, Transform>();
 		for (NodeLink l : gNode) {
 			if (isNXClass(l.getDestination(), NX_TRANSFORMATIONS)) {
-				parseTransformations(path, l, ftrans);
+				parseTransformations(path, l, ftrans, pos);
 				break;
 			}
 		}
 
-		Matrix4d m;
+		// initial dependency chain
 		NodeLink nl = gNode.getNodeLink("depends_on");
-		if (nl != null && nl.isDestinationData()) {
-			m = calcForwardTransform(ftrans, parseStringArray(nl.getDestination(), 1)[0]);
-		} else {
+		String first = nl == null ? null : parseStringArray(nl.getDestination(), 1)[0];
+		if (first != null) {
+			Transform ta = parseTransformation(first.substring(0, first.lastIndexOf(Node.SEPARATOR)), tree.findNodeLink(first), pos);
+			ftrans.put(first, ta);
+		}
+
+		// Find all dependencies
+		Map<String, Transform> mtrans = new HashMap<String, Transform>();
+		for (Transform t: ftrans.values()) {
+			String dpath = t.depend;
+			while (!dpath.equals(NX_TRANSFORMATIONS_ROOT) && !ftrans.containsKey(dpath) && !mtrans.containsKey(dpath)) {
+				NodeLink l = tree.findNodeLink(dpath);
+				try {
+					Transform nt = parseTransformation(dpath.substring(0, dpath.lastIndexOf(Node.SEPARATOR)), l, pos);
+					mtrans.put(nt.name, nt);
+//					System.err.println("Found " + nt.name + " which points to " + nt.depend);
+					dpath = nt.depend;
+				} catch (IllegalArgumentException e) {
+					logger.error("Could not find dependency: {}", dpath);
+					break;
+				}
+			}
+		}
+		ftrans.putAll(mtrans);
+
+		Matrix4d m;
+		if (first == null) {
+			m = new Matrix4d();
+			m.setIdentity();
 			// reconstruct net transformation
 			// In order to reconstruct dependency chain of transformations,
 			// use a map where key is depend on name then can work back from root
-			Map<String, Transform> btrans = new HashMap<String, Transform>();
-			for (Transform t : ftrans.values()) {
-				btrans.put(t.depend, t);
-			}
-			Transform t = btrans.get(NX_TRANSFORMATIONS_ROOT);
+//			Map<String, Transform> btrans = new HashMap<String, Transform>();
+//			for (Transform t : ftrans.values()) {
+//				btrans.put(t.depend, t);
+//			}
+//			Transform t = btrans.get(NX_TRANSFORMATIONS_ROOT);
+//			do {
+//				m.mul(t.matrix, m); // left multiply as working back
+//				t = btrans.get(t.name);
+//			} while (t != null);
+		} else {
+//			m = calcForwardTransform(ftrans, first); // FIXME ignore first for time being as I16 written incorrectly
 			m = new Matrix4d();
 			m.setIdentity();
-			do {
-				m.mul(t.matrix, m); // left multiply as working back
-				t = btrans.get(t.name);
-			} while (t != null);
 		}
-
-		// XXX NX_GEOMETRY support or not?
-		// with parseGeometry(m, l);
 
 		List<DetectorProperties> detectors = new ArrayList<>();
 		for (NodeLink l : gNode) {
 			if (isNXClass(l.getDestination(), NX_DETECTOR_MODULE)) {
-				detectors.add(parseSubDetector(path + Node.SEPARATOR + l.getName(), ftrans, l));
+				detectors.add(parseSubDetector(path + Node.SEPARATOR + l.getName(), ftrans, m, l, pos));
 			}
 		}
+
+		// XXX NX_GEOMETRY support or not?
+		// with parseGeometry(m, l);
 
 		double[] beamCentre = new double[2];
 		nl = gNode.getNodeLink("beam_centre_x");
@@ -465,19 +531,39 @@ public class NexusTreeUtils {
 		}
 
 		// determine beam direction from centre position
-		Vector4d p4 = new Vector4d(beamCentre[0], beamCentre[1], 0, 1);
-		m.transform(p4);
-		Vector3d bv = new Vector3d(p4.x, p4.y, p4.z);
-		bv.normalize();
-		
+//		Vector4d p4 = new Vector4d(beamCentre[0], beamCentre[1], 0, 1);
+//		m.transform(p4);
+//		Vector3d bv = new Vector3d(p4.x, p4.y, p4.z);
+//		bv.normalize();
+//		
 		DetectorProperties[] da = detectors.toArray(new DetectorProperties[0]);
-		for (DetectorProperties dp : da) {
-			dp.setBeamVector(new Vector3d(bv));
-		}
+//		for (DetectorProperties dp : da) {
+//			dp.setBeamVector(new Vector3d(bv));
+//		}
 		return da;
 	}
 
-	public static DetectorProperties parseSubDetector(String path, Map<String, Transform> ftrans, NodeLink link) {
+	public static int[] parseSubDetectorShape(Tree tree, NodeLink link) {
+		if (!link.isDestinationGroup())
+			return null;
+		GroupNode gNode = (GroupNode) link.getDestination();
+
+		int[] shape = null;
+		for (NodeLink l : gNode) {
+			String name = l.getName();
+			switch(name) {
+			case "fast_pixel_direction":
+			case "slow_pixel_direction":
+				shape = parseNodeShape(tree, l, shape);
+				break;
+			default:
+				break;
+			}
+		}
+		return shape;
+	}
+
+	public static DetectorProperties parseSubDetector(String path, Map<String, Transform> ftrans, Matrix4d m1, NodeLink link, int[] pos) {
 		if (!link.isDestinationGroup())
 			return null;
 		GroupNode gNode = (GroupNode) link.getDestination();
@@ -491,11 +577,11 @@ public class NexusTreeUtils {
 			case "data_origin":
 				origin = parseIntArray(l.getDestination(), 2);
 				break;
-			case "data_size":
+			case "data_size": // #cols, #rows
 				size = parseIntArray(l.getDestination(), 2);
 				break;
 			case "module_offset":
-				mo  = parseTransformation(path, l);
+				mo  = parseTransformation(path, l, pos);
 				if (mo != null) {
 					ftrans.put(mo.name, mo);
 				}
@@ -534,24 +620,30 @@ public class NexusTreeUtils {
 			logger.warn("Only using first value of slow pixel size");
 		}
 
-		Vector3d off = new Vector3d();
-		if (mo != null) {
-			Matrix4d m = calcForwardTransform(ftrans, mo.depend);
+		Vector3d off;
+		Matrix4d m = new Matrix4d();
+		if (mo == null) {
+			off = new Vector3d();
+		} else {
+			m.mul(calcForwardTransform(ftrans, mo.name), m1);
 			Vector4d v = new Vector4d();
 			v.setW(1);
-			off.set(transform(m, v));
+			off = transform(m, v);
 		}
 
-		Vector3d xdir = new Vector3d();
-		Matrix4d m = calcForwardTransform(ftrans, fpd.depend);
-		xdir.set(transform(m, fpd.vector));
-		
-		Vector3d ydir = new Vector3d();
-		m = calcForwardTransform(ftrans, spd.depend);
-		ydir.set(transform(m, spd.vector));
+		m.mul(calcForwardTransform(ftrans, fpd.depend), m1);
+		Vector3d xdir = transform(m, fpd.vector);
 
-		Matrix3d ori = MatrixUtils.computeFSOrientation(xdir, ydir);
-		DetectorProperties dp = new DetectorProperties(off, size[0], size[1], spd.magnitudes[0], fpd.magnitudes[0], ori);
+		if (!spd.depend.equals(fpd.depend)) {
+			m.mul(calcForwardTransform(ftrans, spd.depend), m1);
+		}
+		Vector3d ydir = transform(m, spd.vector);
+
+		Matrix3d ori = new Matrix3d();
+		m1.getRotationScale(ori);
+		ori.mul(MatrixUtils.computeFSOrientation(xdir, ydir));
+		ori.transpose();
+		DetectorProperties dp = new DetectorProperties(off, size[1], size[0], spd.magnitudes[0], fpd.magnitudes[0], ori);
 		dp.setStartX(origin[1]);
 		dp.setStartY(origin[0]);
 		return dp;
@@ -562,19 +654,24 @@ public class NexusTreeUtils {
 		Matrix4d m = new Matrix4d();
 		m.setIdentity();
 		Transform t;
+//		System.err.println("Chaining dependencies:");
 		do {
 			t = ftrans.get(dep);
-			m.mul(t.matrix);
+//			System.err.println("\t" + dep);
+//			System.err.printf("%s", t.matrix);
+			m.mul(t.matrix, m);
 			dep = t.depend;
 		} while (!NX_TRANSFORMATIONS_ROOT.equals(dep));
+//		System.err.println("\tEnd");
 
 		return m;
 	}
 
 	private static Vector3d transform(Matrix4d m, Vector4d v) {
-		m.transform(v);
+		Vector4d vt = new Vector4d();
+		m.transform(v, vt);
 		Vector3d vout = new Vector3d();
-		vout.set(v.x, v.y, v.z);
+		vout.set(vt.x, vt.y, vt.z);
 		return vout;
 	}
 
@@ -633,26 +730,193 @@ public class NexusTreeUtils {
 		}
 	}
 
-	public static void parseTransformations(String path, NodeLink link, Map<String, Transform> ftrans) {
+	public static void parseTransformations(String path, NodeLink link, Map<String, Transform> ftrans, int[] pos) {
 		if (!link.isDestinationGroup())
 			return;
 
 		GroupNode gNode = (GroupNode) link.getDestination();
 		String gpath = path + Node.SEPARATOR + link.getName();
 		for (NodeLink l : gNode) {
-			Transform t = parseTransformation(gpath, l);
+			Transform t = parseTransformation(gpath, l, pos);
 			if (t != null) {
 				ftrans.put(t.name, t);
 			}
 		}
 	}
 
-	public static Transform parseTransformation(String path, NodeLink link) {
+	public static void parseBeam(NodeLink link, DiffractionCrystalEnvironment sample) {
+		if (!link.isDestinationGroup())
+			return;
+
+		GroupNode gNode = (GroupNode) link.getDestination();
+		DataNode wavelength = gNode.getDataNode("incident_wavelength");
+
+		Dataset w = getConvertedData(wavelength, NonSI.ANGSTROM);
+		sample.setWavelength(w.getElementDoubleAbs(0));
+	}
+
+	public static int[] parseNodeShape(Tree tree, NodeLink link, int[] shape) {
 		if (!link.isDestinationData())
 			return null;
 		DataNode dNode = (DataNode) link.getDestination();
 
-		double value = dNode.getDataset().getSlice().getDouble(0);
+		int[] nshape = dNode.getDataset().getShape();
+
+		String dep = parseStringAttr(dNode, "depends_on");
+
+		if (dep == null || dep.equals(NX_TRANSFORMATIONS_ROOT)) {
+			return nshape;
+		}
+		if (!dep.startsWith(Tree.ROOT)) {
+			dep = Tree.ROOT.concat(dep);
+		}
+
+		int[] dshape = parseNodeShape(tree, tree.findNodeLink(dep), shape);
+
+		return checkShapes(nshape, dshape);
+	}
+
+	private static int[] checkShapes(int[] nshape, int[] dshape) {
+		int nsize = AbstractDataset.calcSize(nshape);
+		int dsize = AbstractDataset.calcSize(dshape);
+		if (nsize != 1 && dsize != 1) {
+			if (nsize != dsize) {
+				throw new IllegalArgumentException("Non-trivial shapes must have same size");
+			}
+			if (nshape.length != dshape.length) {
+				throw new IllegalArgumentException("Non-trivial shapes must have same rank");
+			}
+			if (!Arrays.equals(nshape, dshape)) {
+				throw new IllegalArgumentException("Non-trivial shapes must match");
+			}
+			return nshape;
+		}
+
+		if (nsize == 1) {
+			if (dsize > nsize || dshape.length >= nshape.length) {
+				return dshape;
+			}
+			throw new IllegalArgumentException("Something is very wrong");
+		}
+		if (nsize > dsize || nshape.length >= dshape.length) {
+			return nshape;
+		}
+
+		throw new IllegalArgumentException("Something is very wrong");
+	}
+
+	/**
+	 * Parse a group that is NXsample class from a tree for shape of sample scan parameters
+	 * @param path to group
+	 * @param tree
+	 * @return an array of detector modules
+	 */
+	public static int[] parseSampleScanShape(String path, Tree tree, int[] shape) {
+		NodeLink link = tree.findNodeLink(path);
+
+		if (!link.isDestinationGroup())
+			return null;
+
+		GroupNode gNode = (GroupNode) link.getDestination();
+		if (!isNXClass(gNode, NX_SAMPLE))
+			return null;
+
+		return parseNodeShape(tree, tree.findNodeLink(parseStringArray(gNode.getNodeLink("depends_on").getDestination(), 1)[0]), shape);
+	}
+
+	public static DiffractionSample parseSample(String path, Tree tree, int... pos) {
+		NodeLink link = tree.findNodeLink(path);
+
+		if (!link.isDestinationGroup())
+			return null;
+
+		GroupNode gNode = (GroupNode) link.getDestination();
+		if (!isNXClass(gNode, NX_SAMPLE))
+			return null;
+
+		DiffractionCrystalEnvironment env = new DiffractionCrystalEnvironment();
+
+		// get wavelength and transformations
+		boolean getTransformations = true;
+		boolean getBeam = true;
+		Map<String, Transform> ftrans = new HashMap<String, Transform>();
+		for (NodeLink l : gNode) {
+			if (isNXClass(l.getDestination(), NX_TRANSFORMATIONS) && getTransformations) {
+				parseTransformations(path, l, ftrans, pos);
+				getTransformations = false;
+			}
+			if (isNXClass(l.getDestination(), NX_BEAM) && getBeam) {
+				parseBeam(l, env);
+				getBeam = false;
+			}
+		}
+
+		// Find all dependencies
+		Map<String, Transform> mtrans = new HashMap<String, Transform>();
+		for (Transform t: ftrans.values()) {
+			String dpath = t.depend;
+			while (!dpath.equals(NX_TRANSFORMATIONS_ROOT) && !ftrans.containsKey(dpath) && !mtrans.containsKey(dpath)) {
+				NodeLink l = tree.findNodeLink(dpath);
+				try {
+					Transform nt = parseTransformation(dpath.substring(0, dpath.lastIndexOf(Node.SEPARATOR)), l, pos);
+					mtrans.put(nt.name, nt);
+//					System.err.println("Found " + nt.name + " which points to " + nt.depend);
+					dpath = nt.depend;
+				} catch (IllegalArgumentException e) {
+					logger.error("Could not find dependency: {}", dpath);
+					break;
+				}
+			}
+		}
+		ftrans.putAll(mtrans);
+
+		UnitCell unitCell = parseUnitCell(gNode.getNodeLink("unit_cell"));
+		Matrix3d ub = parseOrientationMatrix(gNode.getNodeLink("orientation_matrix"));
+		// remove orthogonalization to find orientation
+		Matrix3d u = new Matrix3d();
+		u.invert(new ReciprocalCell(unitCell).orthogonalization());
+		u.mul(ub, u);
+
+		Matrix3d m3 = new Matrix3d();
+		NodeLink nl = gNode.getNodeLink("depends_on");
+		if (nl != null && nl.isDestinationData()) {
+			Matrix4d m = calcForwardTransform(ftrans, parseStringArray(nl.getDestination(), 1)[0]);
+			m.getRotationScale(m3);
+		} else {
+			m3.setIdentity();
+		}
+		// get net orientation
+		m3.mulTransposeLeft(m3, u);
+//		m3.mul(u);
+		m3.invert();
+		env.setOrientation(m3);
+		
+		return new DiffractionSample(env, unitCell);
+	}
+
+	private static Matrix3d parseOrientationMatrix(NodeLink link) {
+		if (!link.isDestinationData())
+			return null;
+		double[] matrix = parseDoubleArray(link.getDestination(), 9);
+
+		return new Matrix3d(matrix);
+	}
+
+	private static UnitCell parseUnitCell(NodeLink link) {
+		if (!link.isDestinationData())
+			return null;
+		double[] parms = parseDoubleArray(link.getDestination(), 6);
+
+		return new UnitCell(parms);
+	}
+
+	public static Transform parseTransformation(String ppath, NodeLink link, int[] pos) {
+		if (!link.isDestinationData())
+			return null;
+		DataNode dNode = (DataNode) link.getDestination();
+		IDataset dataset = dNode.getDataset().getSlice();
+
+		double value = dataset.getSize() == 1 ? dataset.getDouble(new int[dataset.getRank()]) : dataset.getDouble(pos);
 		double[] vector = parseDoubleArray(dNode.getAttribute("vector"), 3);
 		Vector3d v3 = new Vector3d(vector);
 		Matrix4d m4 = null;
@@ -662,7 +926,7 @@ public class NexusTreeUtils {
 		case "translation":
 			Matrix3d m3 = new Matrix3d();
 			m3.setIdentity();
-			v3.normalize();
+//			v3.normalize(); // XXX I16 written with magnitude too
 			v3.scale(convertIfNecessary(SI.MILLIMETRE, units, value));
 			m4 = new Matrix4d(m3, v3, 1);
 			break;
@@ -674,7 +938,14 @@ public class NexusTreeUtils {
 		default:
 			throw new IllegalArgumentException("Transformations node has wrong type");
 		}
-		double[] offset = parseDoubleArray(dNode.getAttribute("offset"), 3);
+
+		double[] offset = null;
+//		offset = parseDoubleArray(dNode.getAttribute("offset"), 3);
+		try { // XXX
+			offset = parseDoubleArray(dNode.getAttribute("offset"), 3);
+		} catch (IllegalArgumentException e) {
+			logger.error("Offset has wrong length");
+		}
 		if (offset != null) {
 			convertIfNecessary(SI.MILLIMETRE, parseStringAttr(dNode, "offset_units"), offset);
 			for (int i = 0; i < 3; i++) {
@@ -683,9 +954,14 @@ public class NexusTreeUtils {
 		}
 
 		Transform t = new Transform();
-		t.name = path + Node.SEPARATOR + link.getName();
+		t.name = ppath.concat(Node.SEPARATOR).concat(link.getName());
 		String dep = parseStringAttr(dNode, "depends_on");
-		t.depend = dep == null ? NX_TRANSFORMATIONS_ROOT : dep;
+		if (dep == null) {
+			dep = NX_TRANSFORMATIONS_ROOT;
+		} else if (!dep.startsWith(Tree.ROOT) && !dep.equals(NX_TRANSFORMATIONS_ROOT)) {
+			dep = Tree.ROOT.concat(dep);
+		}
+		t.depend = dep;
 		t.matrix = m4;
 		return t;
 	}
@@ -704,8 +980,8 @@ public class NexusTreeUtils {
 		}
 		v3.normalize();
 
-		double[] offset = parseDoubleArray(dNode.getAttribute("offset"), 3);
 		Vector3d o3 = new Vector3d();
+		double[] offset = parseDoubleArray(dNode.getAttribute("offset"), 3);
 		if (offset != null) {
 			convertIfNecessary(SI.MILLIMETRE, parseStringAttr(dNode, "offset_units"), offset);
 			o3.set(offset);
@@ -960,6 +1236,12 @@ public class NexusTreeUtils {
 			return u.getConverterTo(unit).convert(value);
 		}
 		return value;
+	}
+
+	private static DoubleDataset getConvertedData(DataNode data, Unit<? extends Quantity> unit) {
+		DoubleDataset values = (DoubleDataset) DatasetUtils.cast(data.getDataset().getSlice(), Dataset.FLOAT64);
+		convertIfNecessary(unit, parseStringAttr(data, NX_UNITS), values.getData());
+		return values;
 	}
 
 	private static void convertIfNecessary(Unit<? extends Quantity> unit, String attr, double[] values) {

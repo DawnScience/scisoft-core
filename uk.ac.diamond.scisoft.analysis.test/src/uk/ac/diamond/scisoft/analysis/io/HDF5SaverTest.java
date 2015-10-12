@@ -33,7 +33,7 @@ import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.junit.Test;
 
 public class HDF5SaverTest {
-	final static String TestFileFolder = "testfiles/gda/analysis/io/NexusLoaderTest/";
+	final static String TestFileFolder = "test-scratch/";
 
 	@Test
 	public void testSaving() throws Exception {

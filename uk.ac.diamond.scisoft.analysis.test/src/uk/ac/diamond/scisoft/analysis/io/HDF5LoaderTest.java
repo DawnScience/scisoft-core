@@ -440,8 +440,7 @@ public class HDF5LoaderTest {
 		l.setFile(n);
 		DataHolder dh = l.loadFile();
 		Tree t = dh.getTree();
-		NodeLink nl = t.findNodeLink("/entry/instrument/detector");
-		DetectorProperties dp = NexusTreeUtils.parseDetector("/entry/instrument/detector", nl)[0];
+		DetectorProperties dp = NexusTreeUtils.parseDetector("/entry/instrument/detector", t, 0)[0];
 
 		ILazyDataset ld = dh.getLazyDataset(0);
 		assertArrayEquals(new int[] {10, 195, 487}, ld.getShape());

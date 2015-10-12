@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import static org.junit.Assert.fail;
 
+import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
 import org.junit.Test;
@@ -51,5 +52,15 @@ public class MatrixUtilsTest {
 		Vector3d u = new Vector3d(0, 1, 0);
 		u.normalize();
 		MatrixUtils.isClose(u, MatrixUtils.computeTangent(v, 90), TOL, TOL);
+	}
+
+	@Test
+	public void testRotations() {
+		Matrix3d ma = MatrixUtils.createRotationMatrix(new Vector3d(1, 0, 0), 30);
+		System.err.println(ma);
+		Matrix3d mb = MatrixUtils.createRotationMatrix(new Vector3d(0, 1, 0), 30);
+		System.err.println(mb);
+		Matrix3d mc = MatrixUtils.createRotationMatrix(new Vector3d(0, 0, 1), 30);
+		System.err.println(mc);
 	}
 }

@@ -225,4 +225,17 @@ public class MatrixUtils {
 		}
 		return true;
 	}
+
+
+	/**
+	 * Create rotation matrix with given axis and angle
+	 * @param axis
+	 * @param angle in degrees
+	 * @return matrix
+	 */
+	public static Matrix3d createRotationMatrix(Vector3d axis, double angle) {
+		Matrix3d r = new Matrix3d();
+		r.set(new AxisAngle4d(axis, Math.toRadians(angle)));
+		return r;
+	}
 }

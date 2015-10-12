@@ -616,8 +616,10 @@ public class HDF5Loader extends AbstractFileLoader {
 			}
 		}
 
-		for (NodeLink l : group) {
-			augmentLink(l);
+		if (NexusTreeUtils.isNXClass(group, NexusTreeUtils.NX_DATA)) {
+			for (NodeLink l : group) {
+				augmentLink(l);
+			}
 		}
 
 		return group;

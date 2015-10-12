@@ -118,9 +118,9 @@ public class NexusTreeUtils {
 			return;
 		}
 
-		if (!isNXClass(dNode, SDS)) {
-			logger.trace("Data node does not have {} attribute: {}", NX_CLASS, link);
-		}
+//		if (!isNXClass(dNode, SDS)) {
+//			logger.trace("Data node does not have {} attribute: {}", NX_CLASS, link);
+//		}
 
 		ILazyDataset cData = dNode.getDataset();
 		if (cData == null || cData.getSize() == 0) {

@@ -17,8 +17,8 @@ import javax.vecmath.Vector3d;
  * Crystallographic reciprocal space as defined by Miller indices
  */
 public class MillerSpace {
-	private Matrix3d ub;  // UB
-	private Matrix3d rotate; // Phi
+	private Matrix3d ub; // UB
+	private Matrix3d rotate; // additional rotation on top of U
 	private Matrix3d toQ;
 	private Matrix3d toMiller;
 	private Matrix3d ta;
@@ -31,6 +31,7 @@ public class MillerSpace {
 	public MillerSpace(final Matrix3d ub) {
 		this.ub = ub;
 		rotate = new Matrix3d();
+		rotate.setIdentity();
 		toQ = new Matrix3d();
 		toMiller = new Matrix3d();
 		ta = new Matrix3d();
@@ -55,6 +56,7 @@ public class MillerSpace {
 		ub = new Matrix3d();
 		ub.mul(orient, ortho);
 		rotate = new Matrix3d();
+		rotate.setIdentity();
 		toQ = new Matrix3d();
 		toMiller = new Matrix3d();
 		calcNetTransforms();
@@ -138,7 +140,9 @@ public class MillerSpace {
 	}
 
 	/**
-	 * Set scattering vector q for given reflection defined by Miller indices
+	 * Set scattering vector q for given reflection defined by Miller indices.
+	 * This scattering vector will only be valid if the reflection lies on the
+	 * Ewald sphere
 	 * @param h
 	 * @param q
 	 */
@@ -177,7 +181,6 @@ public class MillerSpace {
 	 */
 	public void h(final Vector3d q, final Matrix3d rotation, final Vector3d h) {
 		h.set(q);
-		h.scale(0.5/Math.PI);
 		if (rotation != null)
 			setRotation(rotation);
 		toMiller.transform(h);
@@ -224,5 +227,4 @@ public class MillerSpace {
 
 		return h;
 	}
-	
 }

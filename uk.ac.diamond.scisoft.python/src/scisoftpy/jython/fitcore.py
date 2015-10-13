@@ -368,7 +368,7 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
 
     # use the appropriate fitter for the task
     if optimizer == 'local' :
-        _fitter.ApacheNelderMeadFit(ptol, jcoords, jdata, cfunc)
+        _fitter.ApacheNelderMeadFit(jcoords, jdata, cfunc)
     elif optimizer == 'global' :
         if n_bounds == 0 :
             print "Using a global optimizer with no bounds is unlikely to work, please use the bounds argument to narrow the search space" 

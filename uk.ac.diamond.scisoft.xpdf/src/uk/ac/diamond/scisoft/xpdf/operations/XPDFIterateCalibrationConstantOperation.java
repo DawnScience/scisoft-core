@@ -105,6 +105,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 		
 //		theCalibration.setAbsorptionMaps(theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DoubleDataset.zeros(twoTheta.reshape(twoTheta.getSize(), 1))));
 		theCalibration.setAbsorptionMaps(localAbsMaps);
+		theCalibration.setCoordinates(coordinates);
 		
 		for (int i = 0; i < nIterations; i++) 
 			absCor = theCalibration.iterate();

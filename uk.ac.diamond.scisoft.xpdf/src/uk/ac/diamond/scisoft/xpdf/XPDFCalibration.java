@@ -23,13 +23,14 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
  */
 public class XPDFCalibration {
 
-	LinkedList<Double> calibrationConstants;
-	XPDFQSquaredIntegrator qSquaredIntegrator;
-	double selfScatteringDenominator;
-	Dataset multipleScatteringCorrection;
-	double nSampleIlluminatedAtoms;
-	ArrayList<Dataset> backgroundSubtracted;
-	XPDFAbsorptionMaps absorptionMaps; 
+	private LinkedList<Double> calibrationConstants;
+	private XPDFQSquaredIntegrator qSquaredIntegrator;
+	private double selfScatteringDenominator;
+	private Dataset multipleScatteringCorrection;
+	private double nSampleIlluminatedAtoms;
+	private ArrayList<Dataset> backgroundSubtracted;
+	private XPDFAbsorptionMaps absorptionMaps;
+	private XPDFCoordinates coords;
 	
 	/**
 	 * Empty constructor.
@@ -67,7 +68,7 @@ public class XPDFCalibration {
 	}
 
 	/**
-	 * Get the most recent calibration constant from the list.
+	 * Gets the most recent calibration constant from the list.
 	 * @return the most recent calibration constant.
 	 */
 	public double getCalibrationConstant() {
@@ -75,7 +76,7 @@ public class XPDFCalibration {
 	}
 
 	/**
-	 * Se the initial calibration constant to be iterated.
+	 * Sets the initial calibration constant to be iterated.
 	 * @param calibrationConstant
 	 * 							the initial value of the calibration constant.
 	 */
@@ -84,7 +85,7 @@ public class XPDFCalibration {
 	}
 
 	/**
-	 * Set up the q² integrator class to use in the calculation of the constants
+	 * Sets up the q² integrator class to use in the calculation of the constants
 	 * @param qSquaredIntegrator
 	 * 							a properly constructed q² integrator class to
 	 * 							be used to integrate scattering in the sample.
@@ -94,7 +95,7 @@ public class XPDFCalibration {
 	}
 
 	/**
-	 * Calculate the denominator used in calculating the calibration constant.
+	 * Calculates the denominator used in calculating the calibration constant.
 	 * <p> 
 	 * Difference of the Krogh-Moe sum and integral of Thomson self-scattering
 	 * for the sample, used as the denominator of the updating factor of the
@@ -110,7 +111,7 @@ public class XPDFCalibration {
 	}
 
 	/**
-	 * Set a Dataset for the multiple scattering correction.
+	 * Sets a Dataset for the multiple scattering correction.
 	 * <p>
 	 * Set the multiple scattering correction. Presently takes a zero Dataset
 	 * of the same shape as the angle arrays. 
@@ -122,7 +123,7 @@ public class XPDFCalibration {
 	}
 
 	/**
-	 * Set the number of atoms illuminated in the sample.
+	 * Sets the number of atoms illuminated in the sample.
 	 * @param nSampleIlluminatedAtoms
 	 * 								the number of atoms illuminated in the sample.
 	 */
@@ -131,7 +132,7 @@ public class XPDFCalibration {
 	}
 
 	/**
-	 * Set the list of target component traces with their backgrounds subtracted.
+	 * Sets the list of target component traces with their backgrounds subtracted.
 	 * @param backgroundSubtracted
 	 * 							A List of Datasets containing the ordered sample and containers.
 	 */
@@ -142,7 +143,7 @@ public class XPDFCalibration {
 	}
 
 	/**
-	 * Set the absorption maps.
+	 * Sets the absorption maps.
 	 * <p>
 	 * Set the absorption maps object that holds the maps between the target
 	 * components stored in the list of background subtracted traces. The
@@ -154,8 +155,12 @@ public class XPDFCalibration {
 		this.absorptionMaps = new XPDFAbsorptionMaps(absorptionMaps);
 	}
 	
+	public void setCoordinates(XPDFCoordinates inCoords) {
+		this.coords = inCoords;
+	}
+	
 	/**
-	 * Iterate the calibration constant for five iterations.
+	 * Iterates the calibration constant for five iterations.
 	 * <p>
 	 * Perform the iterations to converge the calibration constant of the data.
 	 * The steps performed are:
@@ -205,8 +210,10 @@ public class XPDFCalibration {
 		if (absCor.getError() != null)
 			absCor.getError().idivide(nSampleIlluminatedAtoms);
 
+		Dataset absCorP = applyPolarizationConstant(absCor);
+		
 		// Integrate
-		double numerator = qSquaredIntegrator.ThomsonIntegral(absCor);
+		double numerator = qSquaredIntegrator.ThomsonIntegral(absCorP);
 		// Divide by denominator
 		double aMultiplier = numerator/selfScatteringDenominator;
 		// Make the new calibration constant
@@ -214,11 +221,11 @@ public class XPDFCalibration {
 		// Add to the list
 		calibrationConstants.add(updatedCalibration);
 
-		return absCor;
-
+		return absCorP;
 	}
+
 	/**
-	 * Eliminate the scattered radiation from all containers from the data.
+	 * Eliminates the scattered radiation from all containers from the data.
 	 * <p>
 	 * Subtract the scattered radiation from each container from the multiple-
 	 * scattering corrected data.
@@ -289,5 +296,30 @@ public class XPDFCalibration {
 		}
 		
 		return absCor;
+	}
+
+	/**
+	 * Removes the effect of polarization on the data. 
+	 * @param absCor
+	 * 				The data uncorrected for the effects of polarization
+	 * @return the data corrected for the effects of polarization.
+	 */
+	private Dataset applyPolarizationConstant(Dataset absCor) {
+		final double sineFudge = 0.99;
+		Dataset polCor = 
+				Maths.multiply(
+						0.5,
+						Maths.add(
+								1,
+								Maths.subtract(
+										Maths.square(Maths.cos(coords.getTwoTheta())),
+										Maths.multiply(0.5*sineFudge, Maths.square(Maths.sin(coords.getTwoTheta())))
+										)
+								)
+						);
+								
+		Dataset absCorP = Maths.multiply(absCor, polCor); 
+		
+		return absCorP; 
 	}
 }

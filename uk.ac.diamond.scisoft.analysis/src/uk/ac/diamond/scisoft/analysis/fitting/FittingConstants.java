@@ -39,7 +39,9 @@ public class FittingConstants {
 	 */
 	public enum FIT_ALGORITHMS {
 		APACHENELDERMEAD(0, "Nelder Mead Fitting"),
-		GENETIC(1, "Genetic Algorithm");
+		GENETIC(1, "Genetic Algorithm"),
+		APACHECONJUGATEGRADIENT(2, "Conjugate Gradient"),
+		APACHELEVENBERGMAQUARDT(3, "Levenberg Marquardt");
 
 		public final int ID;
 		public final String NAME;

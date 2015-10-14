@@ -14,7 +14,8 @@ import javax.vecmath.Vector3d;
 
 
 /**
- * Reciprocal cell that is dual to a unit cell
+ * Reciprocal cell that is dual to a unit cell.
+ * This is defined in the crystallographers' way.
  */
 public class ReciprocalCell extends UnitCell {
 	/**

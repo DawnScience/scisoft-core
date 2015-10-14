@@ -238,4 +238,42 @@ public class MatrixUtils {
 		r.set(new AxisAngle4d(axis, Math.toRadians(angle)));
 		return r;
 	}
+
+	final private static double FIFTY_DEGREES = Math.toRadians(50);
+	final private static double COS_50 = Math.cos(FIFTY_DEGREES);
+	final private static double SIN_50 = Math.sin(FIFTY_DEGREES);
+
+	/**
+	 * Create matrix to rotate from sample on end of phi arm to CBF laboratory frame for a kappa goniometer.
+	 * All angles in degrees
+	 * @param phi (horizontal, +ve y)
+	 * @param kappa (50 degrees from horizontal, away from sample, +ve y, -ve z) 
+	 * @param theta (horizontal, +ve y)
+	 * @param mu (vertical, +ve z)
+	 * @return rotation matrix
+	 */
+	public static Matrix3d createI16KappaRotation(double phi, double kappa, double theta, double mu) {
+		Matrix3d rotn = MatrixUtils.createRotationMatrix(new Vector3d(1, 0, 0), mu);
+		rotn.mul(MatrixUtils.createRotationMatrix(new Vector3d(0, 1, 0), theta));
+		rotn.mul(MatrixUtils.createRotationMatrix(new Vector3d(0, COS_50, -SIN_50), kappa));
+		rotn.mul(MatrixUtils.createRotationMatrix(new Vector3d(0, 1, 0), phi));
+		return rotn;
+	}
+
+	/**
+	 * Create matrix to rotate from sample on end of phi arm to CBF laboratory frame for an Euler goniometer.
+	 * All angles in degrees
+	 * @param phi (horizontal, +ve y)
+	 * @param chi (horizontal, +ve z)
+	 * @param eta (horizontal, +ve y)
+	 * @param mu (vertical, +ve z)
+	 * @return rotation matrix
+	 */
+	public static Matrix3d createI16EulerRotation(double phi, double chi, double eta, double mu) {
+		Matrix3d rotn = MatrixUtils.createRotationMatrix(new Vector3d(1, 0, 0), mu);
+		rotn.mul(MatrixUtils.createRotationMatrix(new Vector3d(0, 1, 0), eta));
+		rotn.mul(MatrixUtils.createRotationMatrix(new Vector3d(0, 0, 1), chi));
+		rotn.mul(MatrixUtils.createRotationMatrix(new Vector3d(0, 1, 0), phi));
+		return rotn;
+	}
 }

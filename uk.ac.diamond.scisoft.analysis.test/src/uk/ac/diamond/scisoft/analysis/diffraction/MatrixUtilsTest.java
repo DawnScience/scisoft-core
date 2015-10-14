@@ -56,11 +56,23 @@ public class MatrixUtilsTest {
 
 	@Test
 	public void testRotations() {
-		Matrix3d ma = MatrixUtils.createRotationMatrix(new Vector3d(1, 0, 0), 30);
-		System.err.println(ma);
-		Matrix3d mb = MatrixUtils.createRotationMatrix(new Vector3d(0, 1, 0), 30);
-		System.err.println(mb);
-		Matrix3d mc = MatrixUtils.createRotationMatrix(new Vector3d(0, 0, 1), 30);
-		System.err.println(mc);
+		double deg = 30;
+		double rad = Math.toRadians(deg);
+		Matrix3d ma = MatrixUtils.createRotationMatrix(new Vector3d(1, 0, 0), deg);
+		Matrix3d me = new Matrix3d();
+		me.rotX(rad);
+		MatrixUtils.isClose(me, ma, TOL, TOL);
+		Matrix3d mb = MatrixUtils.createRotationMatrix(new Vector3d(0, 1, 0), deg);
+		me.rotY(rad);
+		MatrixUtils.isClose(me, mb, TOL, TOL);
+		Matrix3d mc = MatrixUtils.createRotationMatrix(new Vector3d(0, 0, 1), deg);
+		me.rotZ(rad);
+		MatrixUtils.isClose(me, mc, TOL, TOL);
+
+		Matrix3d mi16 = MatrixUtils.createI16KappaRotation(0, 0, 0, 0);
+		me.setIdentity();
+		MatrixUtils.isClose(me, mi16, TOL, TOL);
+
+		System.err.println(MatrixUtils.createI16KappaRotation(10, 20, 30, 40));
 	}
 }

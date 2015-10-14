@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
+import uk.ac.diamond.scisoft.analysis.optimize.ApacheLevenbergMarquardt;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
 
 public class PeakFittingEllipseFinder {
@@ -162,7 +163,7 @@ public class PeakFittingEllipseFinder {
 				DoubleDataset xData = DoubleDataset.createRange(sub.getSize());
 				int maxPos = sub.maxPos()[0];
 				g = new Gaussian(new double[]{maxPos,1,sub.getDouble(maxPos)});
-				Fitter.ApacheNelderMeadFit(new Dataset[]{xData}, sub, g,1000);
+				Fitter.fit(xData, sub, new ApacheLevenbergMarquardt(), g);
 				
 			} catch (Exception e) {
 				logger.trace(e.getMessage());

@@ -484,26 +484,8 @@ public class NexusTreeUtils {
 		ftrans.putAll(mtrans);
 
 		Matrix4d m;
-		if (first == null) {
-			m = new Matrix4d();
-			m.setIdentity();
-			// reconstruct net transformation
-			// In order to reconstruct dependency chain of transformations,
-			// use a map where key is depend on name then can work back from root
-//			Map<String, Transform> btrans = new HashMap<String, Transform>();
-//			for (Transform t : ftrans.values()) {
-//				btrans.put(t.depend, t);
-//			}
-//			Transform t = btrans.get(NX_TRANSFORMATIONS_ROOT);
-//			do {
-//				m.mul(t.matrix, m); // left multiply as working back
-//				t = btrans.get(t.name);
-//			} while (t != null);
-		} else {
-//			m = calcForwardTransform(ftrans, first); // FIXME ignore first for time being as I16 written incorrectly
-			m = new Matrix4d();
-			m.setIdentity();
-		}
+		m = new Matrix4d();
+		m.setIdentity();
 
 		List<DetectorProperties> detectors = new ArrayList<>();
 		for (NodeLink l : gNode) {
@@ -577,7 +559,7 @@ public class NexusTreeUtils {
 			case "data_origin":
 				origin = parseIntArray(l.getDestination(), 2);
 				break;
-			case "data_size": // #cols, #rows
+			case "data_size": // #rows, #cols
 				size = parseIntArray(l.getDestination(), 2);
 				break;
 			case "module_offset":
@@ -642,8 +624,8 @@ public class NexusTreeUtils {
 		Matrix3d ori = new Matrix3d();
 		m1.getRotationScale(ori);
 		ori.mul(MatrixUtils.computeFSOrientation(xdir, ydir));
-		ori.transpose();
-		DetectorProperties dp = new DetectorProperties(off, size[1], size[0], spd.magnitudes[0], fpd.magnitudes[0], ori);
+		ori.transpose(); // as we need the passive transformation
+		DetectorProperties dp = new DetectorProperties(off, size[0], size[1], spd.magnitudes[0], fpd.magnitudes[0], ori);
 		dp.setStartX(origin[1]);
 		dp.setStartY(origin[0]);
 		return dp;
@@ -886,9 +868,7 @@ public class NexusTreeUtils {
 			m3.setIdentity();
 		}
 		// get net orientation
-		m3.mulTransposeLeft(m3, u);
-//		m3.mul(u);
-		m3.invert();
+		m3.mul(u);
 		env.setOrientation(m3);
 		
 		return new DiffractionSample(env, unitCell);

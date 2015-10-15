@@ -54,7 +54,7 @@ public class MillerSpaceMapper {
 		dshape = NexusTreeUtils.parseSampleScanShape("/entry1/sample", tree, dshape);
 		System.err.println(Arrays.toString(dshape));
 
-		DataNode node = (DataNode) tree.findNodeLink("/entry1/pil100k/data").getDestination();
+		DataNode node = (DataNode) tree.findNodeLink("/entry1/instrument/pil100k/image_data").getDestination();
 		ILazyDataset images = node.getDataset();
 
 		PositionIterator diter = new PositionIterator(dshape);
@@ -399,7 +399,7 @@ public class MillerSpaceMapper {
 			double mbeg = mStart[i];
 			double mend = mbeg + mShape[i]*mDelta;
 			mStop[i] = mend;
-			a[i] = DatasetFactory.createRange(mbeg, mend, mDelta, Dataset.FLOAT64);
+			a[i] = DatasetUtils.linSpace(mbeg, mend, mShape[i], Dataset.FLOAT64);
 		}
 		Dataset v = mapToMillerSpace(input, mShape, mStart, mStop, mDelta);
 
@@ -419,9 +419,10 @@ public class MillerSpaceMapper {
 		}
 		v.setName("volume");
 		HDF5Utils.writeDataset(file, "/entry1/data", v);
+		String[] axisName = new String[] {"h", "k", "l"};
 		for (int i = 0; i < axes.length; i++) {
 			Dataset x = axes[i];
-			x.setName("axis" + i);
+			x.setName(axisName[i] + "-axis");
 			HDF5Utils.writeDataset(file, "/entry1/data", x);
 		}
 	}

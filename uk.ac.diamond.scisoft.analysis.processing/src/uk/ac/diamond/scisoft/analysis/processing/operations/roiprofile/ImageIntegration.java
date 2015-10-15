@@ -25,7 +25,7 @@ import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.AbstractIntegrationOperation;
-import uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxImageIntegrationCommon.Direction;
+import uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxIntegration.Direction;
 
 /**
  * Integrate a 2D image along one of its axes.

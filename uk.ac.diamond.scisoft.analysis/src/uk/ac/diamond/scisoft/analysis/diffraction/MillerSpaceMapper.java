@@ -61,16 +61,17 @@ public class MillerSpaceMapper {
 		int[] dpos = diter.getPos();
 
 		int rank = images.getRank();
-		if (rank < 2) {
+		int srank = rank - 2;
+		if (srank < 0) {
 			throw new ScanFileHolderException("Image data must be at least 2D");
 		}
-		if (dshape.length != rank - 2) {
+		if (dshape.length != srank) {
 			throw new ScanFileHolderException("Scan shape must be 2 dimensions less than image data");
 		}
 
-		int[] axes = new int[rank - 2];
+		int[] axes = new int[2];
 		for (int i = 0; i < axes.length; i++) {
-			axes[i] = rank - 2 + i;
+			axes[i] = srank + i;
 		}
 		int[] stop = images.getShape();
 		PositionIterator iter = new PositionIterator(stop, axes);
@@ -78,13 +79,13 @@ public class MillerSpaceMapper {
 
 		int[] hpos = new int[3];
 		Vector3d q = new Vector3d();
-		Vector3d h = new Vector3d(2, 2, 2);
+		Vector3d h = new Vector3d();
 		Vector3d p = new Vector3d(); // position of pixel
 		Vector3d t = new Vector3d(); // temporary
 		Vector3d dh = new Vector3d();
 		while (iter.hasNext() && diter.hasNext()) {
 			DetectorProperties dp = NexusTreeUtils.parseDetector("/entry1/instrument/pil100k", tree, dpos)[0];
-			for (int i = 0; i < axes.length; i++) {
+			for (int i = 0; i < srank; i++) {
 				stop[i] = pos[i] + 1;
 			}
 			DiffractionSample sample = NexusTreeUtils.parseSample("/entry1/sample", tree, dpos);
@@ -93,8 +94,18 @@ public class MillerSpaceMapper {
 			QSpace qspace = new QSpace(dp, env);
 			MillerSpace mspace = new MillerSpace(ucell, env.getOrientation());
 			Dataset image = DatasetUtils.convertToDataset(images.getSlice(pos, stop, null));
-			int[] s = Arrays.copyOfRange(image.getShapeRef(), axes.length, rank);
+			int[] s = Arrays.copyOfRange(image.getShapeRef(), srank, rank);
 			image.setShape(s);
+			if (image.max().doubleValue() <= 0) {
+				System.err.println("Skipping image at " + Arrays.toString(pos));
+				continue;
+			}
+//			int index = image.argMax();
+//			int[] max = new int[] {index % s[1], index / s[1]};
+//			qspace.qFromPixelPosition(max[0], max[1], q);
+//			mspace.h(q, null, h);
+//			hToVoxel(hdel, hmin, hmax, h, hpos);
+//			System.err.println("Max = " + image.max() + " @ [" + max[0] + "," + max[1] + "] for " + Arrays.toString(pos) + "; h = " + h + " => " + Arrays.toString(hpos));
 
 			// how does voxel size map to pixel size?
 			// h = -hmax, -hmax+hdel, ..., hmax-hdel, hmax
@@ -105,6 +116,7 @@ public class MillerSpaceMapper {
 			// map back from Miller space to projected image coords
 			// put interpolated pixel value in voxel
 			// 
+//			long vs = 0;
 			double value;
 			for (int y = 0; y < s[0]; y++) {
 				for (int x = 0; x < s[1]; x++) {
@@ -113,19 +125,25 @@ public class MillerSpaceMapper {
 					if (!hToVoxel(hdel, hmin, hmax, h, hpos))
 						continue;
 
-					mspace.q(h, q);
-					qspace.pixelPosition(q, p, t);
-					value = Maths.interpolate(image, t.y, t.x);
-
-//					addValue(newmap, hpos, value);
+					value = image.getDouble(y, x);
+					if (value > 0) {
+//						vs++;
+						hFromVoxel(hdel, hmin, dh, hpos);
+//						System.err.println("Adding " + value + " @" + Arrays.toString(hpos) + " or " + dh + " from " + x + ", " + y);
+						addValue(newmap, hpos, value);
+					}
+//					mspace.q(h, q);
+//					qspace.pixelPosition(q, p, t);
+//					value = Maths.interpolate(image, t.y, t.x);
 					// Steve Collin's algorithm implemented as first attempt
 					// Assumes a pixel maps to a curvilinear patch that is
 					// not bigger than a voxel
-					hFromVoxel(hdel, hmin, dh, hpos);
-					dh.sub(h, dh);
-					spreadValue(hdel, mShape, newmap, dh, hpos, value);
+//					hFromVoxel(hdel, hmin, dh, hpos);
+//					dh.sub(h, dh);
+//					spreadValue(hdel, mShape, newmap, dh, hpos, value);
 				}
 			}
+//			System.err.println("Values added: " + vs);
 		}
 		return newmap;
 	}
@@ -143,15 +161,15 @@ public class MillerSpaceMapper {
 		if (h.x < hmin[0] || h.x > hmax[0] || h.y < hmin[1] || h.y > hmax[1] || 
 				h.z < hmin[2] || h.z > hmax[2])
 			return false;
-		pos[0] = (int) Math.floor((h.x - hmin[1])/hdel);
+		pos[0] = (int) Math.floor((h.x - hmin[0])/hdel);
 		pos[1] = (int) Math.floor((h.y - hmin[1])/hdel);
 		pos[2] = (int) Math.floor((h.z - hmin[2])/hdel);
 		return true;
 	}
 
-//	private static void addValue(Dataset newmap, final int[] pos, final double value) {
-//		newmap.set(newmap.getDouble(pos) + value, pos);
-//	}
+	private static void addValue(Dataset newmap, final int[] pos, final double value) {
+		newmap.set(newmap.getDouble(pos) + value, pos);
+	}
 
 	/**
 	 * Map back from volume to h

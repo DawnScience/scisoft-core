@@ -12,7 +12,7 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.IntegrationModel;
-import uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxImageIntegrationCommon.Direction;
+import uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxIntegration.Direction;
 
 public class BoxIntegrationModel extends IntegrationModel {
 

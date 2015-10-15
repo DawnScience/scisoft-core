@@ -83,10 +83,7 @@ public class MillerSpaceMapper {
 		Vector3d t = new Vector3d(); // temporary
 		Vector3d dh = new Vector3d();
 		while (iter.hasNext() && diter.hasNext()) {
-//			pos = new int[] {59, 0, 0};
-//			dpos = new int[] {59};
 			DetectorProperties dp = NexusTreeUtils.parseDetector("/entry1/instrument/pil100k", tree, dpos)[0];
-//			System.out.println(dp);
 			for (int i = 0; i < axes.length; i++) {
 				stop[i] = pos[i] + 1;
 			}
@@ -95,18 +92,9 @@ public class MillerSpaceMapper {
 			UnitCell ucell = sample.getUnitCell();
 			QSpace qspace = new QSpace(dp, env);
 			MillerSpace mspace = new MillerSpace(ucell, env.getOrientation());
-//			mspace.q(h, q);
-//			int[] pix = qspace.pixelPosition(q);
-//			System.err.println("[2,2,2] is at " + Arrays.toString(pix));
-			//			Vector3d q = qspace.qFromPixelPosition(x, y);
-//			double[] h = mspace.h(q, null);
 			Dataset image = DatasetUtils.convertToDataset(images.getSlice(pos, stop, null));
 			int[] s = Arrays.copyOfRange(image.getShapeRef(), axes.length, rank);
 			image.setShape(s);
-//			double[] bc = dp.getBeamCentreCoords();
-//			
-//			System.err.println(image.max() + " @ [" + (image.argMax() % width) + "," + (image.argMax() / width) + "]" );
-//			System.err.println(Arrays.toString(dpos) + " cf " + Arrays.toString(bc));
 
 			// how does voxel size map to pixel size?
 			// h = -hmax, -hmax+hdel, ..., hmax-hdel, hmax

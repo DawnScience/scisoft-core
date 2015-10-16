@@ -50,8 +50,8 @@ public class XPDFTargetComponent {
 	 */
 	public XPDFTargetComponent(XPDFTargetComponent inComp) {
 		this.name = inComp.name;
-		this.form = new XPDFComponentForm(inComp.form);
-		this.trace = new XPDFBeamTrace(inComp.trace);
+		this.form = inComp.form != null ? new XPDFComponentForm(inComp.form) : null;
+		this.trace = inComp.trace != null ? new XPDFBeamTrace(inComp.trace) : null;
 		this.isSample = inComp.isSample;
 		this.c3 = inComp.c3;
 		this.subBak = inComp.subBak != null ? inComp.subBak : null;

@@ -17,10 +17,10 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 @SuppressWarnings("serial")
 public class XPDFMetadataImpl implements XPDFMetadata {
 
-	XPDFTargetComponent sampleData;
-	List<XPDFTargetComponent> containerData;
-	XPDFBeamData beamData;
-	XPDFAbsorptionMaps absorptionCorrectionMaps;
+	private XPDFTargetComponent sampleData;
+	private List<XPDFTargetComponent> containerData;
+	private XPDFBeamData beamData;
+	private XPDFAbsorptionMaps absorptionCorrectionMaps;
 
 	/**
 	 * Empty constructor.

@@ -32,12 +32,12 @@ public class XPDFComposition {
 	 * Map from the atomic numbers present in the compound, to the count of
 	 * atoms present in the fundamental formula
 	 */
-	Map<Integer, Integer> atomCount;
-	double electronOverlap;
+	private Map<Integer, Integer> atomCount;
+	private double electronOverlap;
 	/**
 	 * Mean atomic mass of the elements.
 	 */
-	static final double[] atomicMass = { 1.008664,
+	private static final double[] atomicMass = { 1.008664,
 		1.00794,4.002602,6.941,9.012182,10.811,12.011,14.00674,
         15.9994,18.9984032,20.1797,22.989768,24.305,26.981539,
         28.0855,30.973762,32.066,35.4527,39.948,39.0983,40.078,
@@ -57,7 +57,7 @@ public class XPDFComposition {
 	/**
 	 * Chemical symbols of the elements.
 	 */
-	static final String[] elementSymbol = { "n",
+	private static final String[] elementSymbol = { "n",
 		"H","He","Li","Be","B","C","N","O","F","Ne","Na","Mg","Al","Si",
         "P","S","Cl","Ar","K","Ca","Sc","Ti","V","Cr","Mn","Fe","Co",
         "Ni","Cu","Zn","Ga","Ge","As","Se","Br","Kr","Rb","Sr","Y","Zr",
@@ -70,7 +70,7 @@ public class XPDFComposition {
 	/**
 	 * English names of the elements.
 	 */
-	static final String[] elementName = { "neutronium",
+	private static final String[] elementName = { "neutronium",
 		"Hydrogen","Helium","Lithium","Beryllium","Boron","Carbon",
         "Nitrogen","Oxygen","Fluorine","Neon","Sodium","Magnesium",
         "Aluminium","Silicon","Phosphorus","Sulphur","Chlorine","Argon",

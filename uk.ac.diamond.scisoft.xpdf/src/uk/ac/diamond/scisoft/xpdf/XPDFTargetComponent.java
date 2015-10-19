@@ -209,7 +209,7 @@ public class XPDFTargetComponent {
 	 */
 	public Dataset getSelfScattering(XPDFCoordinates coordinates) {
 
-		Dataset selfScattering = form.substance.getComposition().getSelfScattering(coordinates);
+		Dataset selfScattering = form.getSubstance().getComposition().getSelfScattering(coordinates);
 		return selfScattering;
 	}
 
@@ -221,7 +221,7 @@ public class XPDFTargetComponent {
 	 * 			in the material.
 	 */
 	public Object getFSquared(XPDFCoordinates coords) {
-		return form.substance.getComposition().getElasticScatteringFactorSquared(coords.getX());
+		return form.getSubstance().getComposition().getElasticScatteringFactorSquared(coords.getX());
 	}
 
 	/**
@@ -229,7 +229,7 @@ public class XPDFTargetComponent {
 	 * @return the number density in 1/Å³
 	 */
 	public double getNumberDensity() {
-		return form.substance.getNumberDensity();
+		return form.getSubstance().getNumberDensity();
 	}
 
 	/**
@@ -237,6 +237,6 @@ public class XPDFTargetComponent {
 	 * @return g0-1
 	 */
 	public double getG0Minus1() {
-		return form.substance.getG0Minus1();
+		return form.getSubstance().getG0Minus1();
 	}
 }

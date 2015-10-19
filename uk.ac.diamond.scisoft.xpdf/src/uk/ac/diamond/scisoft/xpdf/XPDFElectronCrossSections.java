@@ -23,12 +23,12 @@ public class XPDFElectronCrossSections {
 
 //	double beamEnergy;
 //	Dataset twoTheta;
-	XPDFCoordinates coordinates;
-	Dataset thomson;
-	Dataset kleinNishima;
-	static final double classicalElectronRadius = 1.0;
-	static final double electronMasskeV = 510.998910;//(13)
-	static final double breitDiracPower = 2.0;
+	private XPDFCoordinates coordinates;
+	private Dataset thomson;
+	private Dataset kleinNishima;
+	private static final double classicalElectronRadius = 1.0;
+	private static final double electronMasskeV = 510.998910;//(13)
+	private static final double breitDiracPower = 2.0;
 	
 	/**
 	 * Empty constructor

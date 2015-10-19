@@ -22,12 +22,12 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 public abstract class XPDFComponentGeometry {
 
 	// Larger and smaller measurements of the component
-	double rInner, rOuter;
+	protected double rInner, rOuter;
 	// Is this component up/down stream of the sample. The sample component is
 	// neither upstream nor downstream of itself
-	boolean isUpstream, isDownstream;
+	protected boolean isUpstream, isDownstream;
 	
-	int gridSize;
+	protected int gridSize;
 
 	/**
 	 * Empty constructor

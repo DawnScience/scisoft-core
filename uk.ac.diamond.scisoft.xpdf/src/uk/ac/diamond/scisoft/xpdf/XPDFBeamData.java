@@ -23,10 +23,10 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
  */
 public class XPDFBeamData {
 
-	double beamEnergy;
-	double beamWidth;
-	double beamHeight;
-	XPDFBeamTrace trace;
+	private double beamEnergy;
+	private double beamWidth;
+	private double beamHeight;
+	private XPDFBeamTrace trace;
 	private static final double hckeVAA = 12.39841974;// (17)
 
 	/**

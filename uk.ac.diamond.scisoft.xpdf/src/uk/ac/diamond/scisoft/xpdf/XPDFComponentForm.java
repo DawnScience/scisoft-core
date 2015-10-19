@@ -20,8 +20,8 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 // public because it needs to be visible in the uk...xpdf.operations package
 public class XPDFComponentForm {
 
-	XPDFSubstance substance;
-	XPDFComponentGeometry geometry;
+	private XPDFSubstance substance;
+	private XPDFComponentGeometry geometry;
 	
 	/**
 	 * Empty constructor.
@@ -166,6 +166,10 @@ public class XPDFComponentForm {
 		return (inForm != null) &&
 				substance.isEqualToForAbsorption(inForm.substance) &&
 				geometry.isEqualToForAbsorption(inForm.geometry);
+	}
+
+	public XPDFSubstance getSubstance() {
+		return substance;
 	}
 	
 }

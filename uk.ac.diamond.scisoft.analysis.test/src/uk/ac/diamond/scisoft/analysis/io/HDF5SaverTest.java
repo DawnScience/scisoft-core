@@ -29,11 +29,12 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.SliceNDIterator;
+import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.junit.Test;
 
 public class HDF5SaverTest {
-	final static String TestFileFolder = "testfiles/gda/analysis/io/NexusLoaderTest/";
+	final static String TestFileFolder = "test-scratch/";
 
 	@Test
 	public void testSaving() throws Exception {
@@ -96,8 +97,10 @@ public class HDF5SaverTest {
 		int dtype = Dataset.INT16;
 
 		File f = new File(file);
-		if (f.exists())
+		if (f.exists()) {
+			HDF5FileFactory.releaseFile(file, true);
 			f.delete();
+		}
 
 		int value = initialize ? -1 : 0;
 		if (initialize) {

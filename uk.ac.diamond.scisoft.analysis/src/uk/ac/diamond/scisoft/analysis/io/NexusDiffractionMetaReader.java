@@ -111,7 +111,7 @@ public class NexusDiffractionMetaReader {
 		IHierarchicalDataFile hiFile = null;
 		
 		try {
-			hiFile = HierarchicalDataFactory.getReader(filePath);
+			hiFile = HierarchicalDataFactory.getReader(filePath, true);
 
 			String rootGroup = hiFile.getRoot();
 

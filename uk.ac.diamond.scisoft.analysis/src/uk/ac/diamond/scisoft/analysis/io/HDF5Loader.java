@@ -28,18 +28,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 
-import ncsa.hdf.hdf5lib.H5;
-import ncsa.hdf.hdf5lib.HDF5Constants;
-import ncsa.hdf.hdf5lib.HDFNativeData;
-import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
-import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
-import ncsa.hdf.hdf5lib.structs.H5G_info_t;
-import ncsa.hdf.hdf5lib.structs.H5L_info_t;
-import ncsa.hdf.hdf5lib.structs.H5O_info_t;
-import ncsa.hdf.object.Datatype;
-import ncsa.hdf.object.h5.H5Datatype;
-import ncsa.hdf.object.h5.H5File;
-
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
@@ -60,10 +48,22 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
+import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
-import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ncsa.hdf.hdf5lib.H5;
+import ncsa.hdf.hdf5lib.HDF5Constants;
+import ncsa.hdf.hdf5lib.HDFNativeData;
+import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
+import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
+import ncsa.hdf.hdf5lib.structs.H5G_info_t;
+import ncsa.hdf.hdf5lib.structs.H5L_info_t;
+import ncsa.hdf.hdf5lib.structs.H5O_info_t;
+import ncsa.hdf.object.Datatype;
+import ncsa.hdf.object.h5.H5Datatype;
+import ncsa.hdf.object.h5.H5File;
 
 /**
  * Load HDF5 files using NCSA's Java library
@@ -171,16 +171,10 @@ public class HDF5Loader extends AbstractFileLoader {
 		
 		@Override
 		public void run() {
-			long fid = -1;
 			try {
-				HierarchicalDataFactory.acquireLowLevelReadingAccess(fileName);
-				fid = HDF5Utils.H5Fopen(fileName, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
+				long fid = HDF5FileFactory.acquireFile(fileName, false);
 
 				if (!monitorIncrement(mon)) {
-					try {
-						H5.H5Fclose(fid);
-					} catch (HDF5Exception ex) {
-					}
 					return;
 				}
 
@@ -192,13 +186,11 @@ public class HDF5Loader extends AbstractFileLoader {
 				} catch (Throwable e) {
 				}
 			} finally {
-				if (fid != -1) {
-					try {
-						H5.H5Fclose(fid);
-					} catch (Throwable e) {
-					}
+				try {
+					HDF5FileFactory.releaseFile(fileName);
+				} catch (ScanFileHolderException e) {
+					logger.error("Error in releasing file", e);
 				}
-				HierarchicalDataFactory.releaseLowLevelReadingAccess(fileName);
 			}
 		}
 	}
@@ -259,16 +251,10 @@ public class HDF5Loader extends AbstractFileLoader {
 			}
 			waitForSyncLimit();
 		} else {
-			long fid = -1;
 			try {
-				HierarchicalDataFactory.acquireLowLevelReadingAccess(fileName);
-				fid = HDF5Utils.H5Fopen(fileName, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
+				long fid = HDF5FileFactory.acquireFile(fileName, false);
 
 				if (!monitorIncrement(mon)) {
-					try {
-						H5.H5Fclose(fid);
-					} catch (HDF5Exception ex) {
-					}
 					return null;
 				}
 
@@ -276,13 +262,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			} catch (Throwable le) {
 				throw new ScanFileHolderException("Problem loading file: " + fileName, le);
 			} finally {
-				if (fid != -1) {
-					try {
-						H5.H5Fclose(fid);
-					} catch (Throwable e) {
-					}
-				}
-				HierarchicalDataFactory.releaseLowLevelReadingAccess(fileName);
+				HDF5FileFactory.releaseFile(fileName);
 			}
 		}
 		return tFile;
@@ -727,18 +707,8 @@ public class HDF5Loader extends AbstractFileLoader {
 			node = Tree.ROOT + node;
 		}
 
-		final String cPath;
 		try {
-			cPath = new File(path).getCanonicalPath();
-		} catch (IOException e) {
-			logger.error("Could not get canonical path", e);
-			throw new ScanFileHolderException("Could not get canonical path", e);
-		}
-
-		long fid = -1;
-		try {
-			HierarchicalDataFactory.acquireLowLevelReadingAccess(cPath);
-			fid = HDF5Utils.H5Fopen(path, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
+			long fid = HDF5FileFactory.acquireFile(path, false);
 
 			final long oid = path.hashCode(); // include file name in ID
 			TreeFile f = TreeFactory.createTreeFile(oid, path);
@@ -748,13 +718,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		} catch (Throwable le) {
 			throw new ScanFileHolderException("Problem loading file: " + path, le);
 		} finally {
-			if (fid != -1) {
-				try {
-					H5.H5Fclose(fid);
-				} catch (Throwable e) {
-				}
-			}
-			HierarchicalDataFactory.releaseLowLevelReadingAccess(cPath);
+			HDF5FileFactory.releaseFile(path);
 		}
 		
 		return nn;
@@ -1439,16 +1403,9 @@ public class HDF5Loader extends AbstractFileLoader {
 			throw new ScanFileHolderException("Could not get canonical path", e);
 		}
 
-		long fid = -1;
 		try {
-			HierarchicalDataFactory.acquireLowLevelReadingAccess(fileName);
-			fid = HDF5Utils.H5Fopen(fileName, HDF5Constants.H5F_ACC_RDONLY, HDF5Constants.H5P_DEFAULT);
-
+			long fid = HDF5FileFactory.acquireFile(fileName, false);
 			if (!monitorIncrement(mon)) {
-				try {
-					H5.H5Fclose(fid);
-				} catch (HDF5Exception ex) {
-				}
 				return null;
 			}
 
@@ -1461,13 +1418,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		} catch (Throwable le) {
 			throw new ScanFileHolderException("Problem loading file: " + fileName, le);
 		} finally {
-			if (fid != -1) {
-				try {
-					H5.H5Fclose(fid);
-				} catch (Throwable e) {
-				}
-			}
-			HierarchicalDataFactory.releaseLowLevelReadingAccess(fileName);
+			HDF5FileFactory.releaseFile(fileName);
 		}
 		return list;
 	}

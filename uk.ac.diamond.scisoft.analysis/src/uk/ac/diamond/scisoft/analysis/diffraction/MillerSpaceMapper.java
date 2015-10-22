@@ -397,7 +397,7 @@ public class MillerSpaceMapper {
 		Dataset[] a = new Dataset[3];
 		for (int i = 0; i < a.length; i++) {
 			double mbeg = mStart[i];
-			double mend = mbeg + mShape[i]*mDelta;
+			double mend = mbeg + (mShape[i] - 1) * mDelta;
 			mStop[i] = mend;
 			a[i] = DatasetUtils.linSpace(mbeg, mend, mShape[i], Dataset.FLOAT64);
 		}

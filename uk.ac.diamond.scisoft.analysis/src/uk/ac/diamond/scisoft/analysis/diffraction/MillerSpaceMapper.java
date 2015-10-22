@@ -41,12 +41,28 @@ public class MillerSpaceMapper {
 	private String dataPath;
 	private String samplePath;
 
+	/**
+	 * 
+	 * @param detectorPath
+	 * @param detectorDataName
+	 * @param samplePath
+	 */
 	public MillerSpaceMapper(String detectorPath, String detectorDataName, String samplePath) {
 		this.detectorPath = detectorPath;
 		this.dataPath = detectorPath + Node.SEPARATOR + detectorDataName;
 		this.samplePath = samplePath;
 	}
 
+	/**
+	 * Map images from given Nexus file to a volume in Miller (aka HKL) space
+	 * @param filePath path to Nexus file
+	 * @param mShape shape of volume in Miller space
+	 * @param mStart starting coordinates of volume
+	 * @param mStop end coordinates
+	 * @param mDelta length of voxel side
+	 * @return dataset
+	 * @throws ScanFileHolderException
+	 */
 	public Dataset mapToMillerSpace(String filePath, int[] mShape, double[] mStart, double[] mStop, double mDelta) throws ScanFileHolderException {
 		double hdel; // spacing between voxels in Miller space
 		Dataset newmap;
@@ -394,12 +410,12 @@ public class MillerSpaceMapper {
 	}
 
 	/**
-	 * 
-	 * @param input
-	 * @param output
-	 * @param mShape
-	 * @param mStart
-	 * @param mDelta
+	 * Map images from given Nexus file to a volume in Miller (aka HKL) space and save to a HDF5 file
+	 * @param input path to Nexus file
+	 * @param output path for saving HDF5 file
+	 * @param mShape shape of volume in Miller space
+	 * @param mStart starting coordinates of volume
+	 * @param mDelta length of voxel side
 	 * @throws ScanFileHolderException
 	 */
 	public void mapToVolumeFile(String input, String output, int[] mShape, double[] mStart, double mDelta) throws ScanFileHolderException {
@@ -417,9 +433,10 @@ public class MillerSpaceMapper {
 	}
 
 	/**
-	 * @param file
-	 * @param v
-	 * @param axes
+	 * Save volume and its axes to a HDF5 file
+	 * @param file path for saving HDF5 file
+	 * @param v volume dataset
+	 * @param axes axes datasets
 	 * @throws ScanFileHolderException
 	 */
 	public static void saveVolume(String file, Dataset v, Dataset... axes) throws ScanFileHolderException {

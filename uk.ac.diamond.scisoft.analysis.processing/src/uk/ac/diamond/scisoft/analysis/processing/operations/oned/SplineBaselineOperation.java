@@ -78,7 +78,7 @@ public class SplineBaselineOperation extends AbstractOperation<SplineBaselineMod
 		if (AbstractOperation.getFirstAxes(input) != null &&
 				AbstractOperation.getFirstAxes(input).length != 0 &&
 				AbstractOperation.getFirstAxes(input)[0] != null )
-			xaxis = DatasetUtils.convertToDataset(AbstractOperation.getFirstAxes(input)[0].getSliceView());
+			xaxis = DatasetUtils.convertToDataset(AbstractOperation.getFirstAxes(input)[0].getSlice());
 		else
 			xaxis = DoubleDataset.createRange(input.getSize());
 		

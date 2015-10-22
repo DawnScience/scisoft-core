@@ -20,11 +20,11 @@ import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
+import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 
@@ -37,7 +37,17 @@ import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
  * Map datasets in a Nexus file from image coordinates to Miller space
  */
 public class MillerSpaceMapper {
-	public static Dataset mapToMillerSpace(String filePath, int[] mShape, double[] mStart, double[] mStop, double mDelta) throws ScanFileHolderException {
+	private String detectorPath;
+	private String dataPath;
+	private String samplePath;
+
+	public MillerSpaceMapper(String detectorPath, String detectorDataName, String samplePath) {
+		this.detectorPath = detectorPath;
+		this.dataPath = detectorPath + Node.SEPARATOR + detectorDataName;
+		this.samplePath = samplePath;
+	}
+
+	public Dataset mapToMillerSpace(String filePath, int[] mShape, double[] mStart, double[] mStop, double mDelta) throws ScanFileHolderException {
 		double hdel; // spacing between voxels in Miller space
 		Dataset newmap;
 
@@ -49,12 +59,12 @@ public class MillerSpaceMapper {
 		NexusHDF5Loader l = new NexusHDF5Loader();
 		l.setFile(filePath);
 		Tree tree = l.loadFile().getTree();
-		int[] dshape = NexusTreeUtils.parseDetectorScanShape("/entry1/instrument/pil100k", tree);
+		int[] dshape = NexusTreeUtils.parseDetectorScanShape(detectorPath, tree);
 		System.err.println(Arrays.toString(dshape));
-		dshape = NexusTreeUtils.parseSampleScanShape("/entry1/sample", tree, dshape);
+		dshape = NexusTreeUtils.parseSampleScanShape(samplePath, tree, dshape);
 		System.err.println(Arrays.toString(dshape));
 
-		DataNode node = (DataNode) tree.findNodeLink("/entry1/instrument/pil100k/image_data").getDestination();
+		DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
 		ILazyDataset images = node.getDataset();
 
 		PositionIterator diter = new PositionIterator(dshape);
@@ -84,11 +94,11 @@ public class MillerSpaceMapper {
 		Vector3d t = new Vector3d(); // temporary
 		Vector3d dh = new Vector3d();
 		while (iter.hasNext() && diter.hasNext()) {
-			DetectorProperties dp = NexusTreeUtils.parseDetector("/entry1/instrument/pil100k", tree, dpos)[0];
+			DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
 			for (int i = 0; i < srank; i++) {
 				stop[i] = pos[i] + 1;
 			}
-			DiffractionSample sample = NexusTreeUtils.parseSample("/entry1/sample", tree, dpos);
+			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, dpos);
 			DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 			UnitCell ucell = sample.getUnitCell();
 			QSpace qspace = new QSpace(dp, env);
@@ -392,12 +402,12 @@ public class MillerSpaceMapper {
 	 * @param mDelta
 	 * @throws ScanFileHolderException
 	 */
-	public static void processVolume(String input, String output, int[] mShape, double[] mStart, double mDelta) throws ScanFileHolderException {
+	public void mapToVolumeFile(String input, String output, int[] mShape, double[] mStart, double mDelta) throws ScanFileHolderException {
 		double[] mStop = new double[3];
 		Dataset[] a = new Dataset[3];
 		for (int i = 0; i < a.length; i++) {
 			double mbeg = mStart[i];
-			double mend = mbeg + mShape[i]*mDelta;
+			double mend = mbeg + (mShape[i] - 1) * mDelta;
 			mStop[i] = mend;
 			a[i] = DatasetUtils.linSpace(mbeg, mend, mShape[i], Dataset.FLOAT64);
 		}
@@ -425,5 +435,20 @@ public class MillerSpaceMapper {
 			x.setName(axisName[i] + "-axis");
 			HDF5Utils.writeDataset(file, "/entry1/data", x);
 		}
+	}
+
+	private static final MillerSpaceMapper I16Mapper = new MillerSpaceMapper("/entry1/instrument/pil100k", "image_data", "/entry1/sample");
+
+	/**
+	 * Process Nexus file for I16
+	 * @param input Nexus file
+	 * @param output name of HDF5 file to be created
+	 * @param mShape shape of output volume
+	 * @param mStart start coordinates in Miller space
+	 * @param mDelta side of voxels in Miller space
+	 * @throws ScanFileHolderException
+	 */
+	public static void processVolume(String input, String output, int[] mShape, double[] mStart, double mDelta) throws ScanFileHolderException {
+		I16Mapper.mapToVolumeFile(input, output, mShape, mStart, mDelta);
 	}
 }

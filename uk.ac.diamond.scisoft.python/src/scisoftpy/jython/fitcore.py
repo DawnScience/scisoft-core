@@ -252,10 +252,10 @@ class fitresult(object):
 
         return fdata
 
-    def plot(self, name=None):
+    def plot(self, title=None, name=None):
         '''Plot fit as 1D
         '''
-        _dnp.plot.line(self.coords[0], self.makeplotdata(), name)
+        _dnp.plot.line(self.coords[0], self.makeplotdata(), title, name)
 
     def _parameters(self):
         '''Array of all parameter values

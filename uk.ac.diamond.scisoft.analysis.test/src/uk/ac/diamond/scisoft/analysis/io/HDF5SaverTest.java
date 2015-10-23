@@ -95,11 +95,7 @@ public class HDF5SaverTest {
 		int[] mshape = new int[] {20, 34};
 		int dtype = Dataset.INT16;
 
-		File f = new File(file);
-		if (f.exists()) {
-			HDF5FileFactory.releaseFile(file, true);
-			f.delete();
-		}
+		HDF5FileFactory.deleteFile(file);
 
 		int value = initialize ? -1 : 0;
 		if (initialize) {

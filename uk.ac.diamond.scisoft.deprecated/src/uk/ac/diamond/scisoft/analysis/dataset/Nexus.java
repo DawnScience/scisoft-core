@@ -16,12 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset;
 
-import gda.data.nexus.extractor.NexusExtractor;
-import gda.data.nexus.extractor.NexusExtractorException;
-import gda.data.nexus.extractor.NexusGroupData;
-import gda.data.nexus.tree.INexusSourceProvider;
-import gda.data.nexus.tree.INexusTree;
-
 import java.io.File;
 import java.net.InetAddress;
 import java.net.URL;
@@ -38,6 +32,11 @@ import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.hdf5.nexus.NexusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import gda.data.nexus.extractor.NexusExtractor;
+import gda.data.nexus.extractor.NexusGroupData;
+import gda.data.nexus.tree.INexusSourceProvider;
+import gda.data.nexus.tree.INexusTree;
 
 /**
  * Helper methods for NeXus

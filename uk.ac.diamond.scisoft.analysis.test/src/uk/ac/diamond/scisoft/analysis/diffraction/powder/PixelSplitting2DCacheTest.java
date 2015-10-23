@@ -202,8 +202,8 @@ public class PixelSplitting2DCacheTest extends AbstractPixelIntegrationTestBase 
 		Assert.assertEquals(-8611.45624616, min,0.00001);
 		Assert.assertEquals(10.402591860873361, maxq,0.00001);
 		Assert.assertEquals(0.007293853017842496, minq,0.00001);
-		Assert.assertEquals(-170, maxa,0.00001);
-		Assert.assertEquals(-180, mina,0.00001);
+		Assert.assertEquals(-170, maxa,0.005);
+		Assert.assertEquals(-180, mina,0.005);
 		
 		return after-before;
 	}
@@ -228,8 +228,8 @@ public class PixelSplitting2DCacheTest extends AbstractPixelIntegrationTestBase 
 		Assert.assertEquals(-406, min,0.00001);
 		Assert.assertEquals(5, maxq,0.00001);
 		Assert.assertEquals(1, minq,0.00001);
-		Assert.assertEquals(-170, maxa,0.00001);
-		Assert.assertEquals(-180, mina,0.00001);
+		Assert.assertEquals(-170, maxa,0.005);
+		Assert.assertEquals(-180, mina,0.005);
 		return after-before;
 	}
 	

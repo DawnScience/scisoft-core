@@ -79,7 +79,7 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 					radialArray[0] = Maths.log10(radialArray[0]);
 					radialArray[1] = Maths.log10(radialArray[1]);
 				}
-				binEdgesRadial = calculateBins(radialArray, radialRange, nBinsRad);
+				binEdgesRadial = calculateBins(radialArray, radialRange, nBinsRad,isAz);
 				
 			}
 			
@@ -92,7 +92,7 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 					azimuthalArray = PixelIntegrationUtils.generateMinMaxAzimuthalArray(beamCentre, shape, min);
 					
 				}
-				binEdgesAzimuthal = calculateBins(azimuthalArray, bean.getAzimuthalRange(), nBinsAz);
+				binEdgesAzimuthal = calculateBins(azimuthalArray, bean.getAzimuthalRange(), nBinsAz,!isAz);
 			}
 			
 		} else {
@@ -102,7 +102,7 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 				XAxis x = bean.getxAxis() != XAxis.RESOLUTION ? bean.getxAxis() : XAxis.Q;
 				radialArray = new Dataset[]{PixelIntegrationUtils.generateRadialArray(shape, qSpace, x)};
 				if (bean.isLog()) radialArray[0] = Maths.log10(radialArray[0]);
-				binEdgesRadial = calculateBins(radialArray, radialRange, nBinsRad);
+				binEdgesRadial = calculateBins(radialArray, radialRange, nBinsRad,isAz);
 				
 			}
 			
@@ -116,13 +116,13 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 					azimuthalArray[0] = PixelIntegrationUtils.generateAzimuthalArray(beamCentre, shape, min);
 					
 				}
-				binEdgesAzimuthal = calculateBins(azimuthalArray, bean.getAzimuthalRange(), nBinsAz);
+				binEdgesAzimuthal = calculateBins(azimuthalArray, bean.getAzimuthalRange(), nBinsAz,!isAz);
 			}
 		}
 		
-		if (!to1D || !isAz) azimuthalAxis = calculateAzimuthalAxis(nBinsAz, bean.getAzimuthalRange(), binEdgesAzimuthal);
+		if (!to1D || !isAz) azimuthalAxis = calculateAzimuthalAxis(nBinsAz, bean.getAzimuthalRange(), binEdgesAzimuthal,!isAz);
 		
-		if (!to1D || isAz) radialAxis = calculateRadialAxis(bean.getxAxis(), nBinsRad, radialRange, binEdgesRadial, bean.isLog());
+		if (!to1D || isAz) radialAxis = calculateRadialAxis(bean.getxAxis(), nBinsRad, radialRange, binEdgesRadial, bean.isLog(),isAz);
 		
 	}
 	
@@ -142,23 +142,9 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 	public double getXBinEdgeMax() {
 		if (bean.isAzimuthalIntegration()) {
 
-			double[] radialRange = bean.getRadialRange();
-			if (radialRange != null) {
-				if (bean.isLog()) {
-					radialRange = bean.getRadialRange().clone();
-					radialRange[0] = Math.log10(radialRange[0]);
-					radialRange[1] = Math.log10(radialRange[1]);
-				}
-				return Math.max(radialRange[0], radialRange[1]);
-			} 
-
-			return binEdgesRadial.get(bean.getNumberOfBinsRadial());
+			double m = binEdgesRadial.get(bean.getNumberOfBinsRadial());
+			return bean.isLog() ? Math.log(m) : m;
 		}
-
-		if (bean.getAzimuthalRange() != null) {
-			double[] range = bean.getAzimuthalRange();
-			return Math.max(range[0], range[1]);
-		} 
 
 		return binEdgesAzimuthal.get(bean.getNumberOfBinsAzimuthal());
 
@@ -169,26 +155,9 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 	public double getXBinEdgeMin() {
 		
 		if (bean.isAzimuthalIntegration()) {
-			
-			double[] radialRange = bean.getRadialRange();
-			if (radialRange != null) {
-				if (bean.isLog()) {
-					radialRange = bean.getRadialRange().clone();
-					radialRange[0] = Math.log10(radialRange[0]);
-					radialRange[1] = Math.log10(radialRange[1]);
-				}
-				return Math.min(radialRange[0], radialRange[1]);
-			} 
-				
-			return binEdgesRadial.get(0);
-			
-			
+			double m = binEdgesRadial.get(0);
+			return bean.isLog() ? Math.log(m) : m;
 		}
-		
-		if (bean.getAzimuthalRange() != null) {
-			double[] range = bean.getAzimuthalRange();
-			return Math.min(range[0], range[1]);
-		} 
 
 		return binEdgesAzimuthal.get(0);
 	}
@@ -196,25 +165,11 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 
 	@Override
 	public double getYBinEdgeMax() {
+		
 		if (!bean.isAzimuthalIntegration()) {
-
-			double[] radialRange = bean.getRadialRange();
-			if (radialRange != null) {
-				if (bean.isLog()) {
-					radialRange = bean.getRadialRange().clone();
-					radialRange[0] = Math.log10(radialRange[0]);
-					radialRange[1] = Math.log10(radialRange[1]);
-				}
-				return Math.max(radialRange[0], radialRange[1]);
-			}
-
-			return binEdgesRadial.get(bean.getNumberOfBinsRadial());
+			double m = binEdgesRadial.get(bean.getNumberOfBinsRadial());
+			return bean.isLog() ? Math.log(m) : m;
 		}
-
-		if (bean.getAzimuthalRange() != null) {
-			double[] range = bean.getAzimuthalRange();
-			return Math.max(range[0], range[1]);
-		} 
 
 		return binEdgesAzimuthal.get(bean.getNumberOfBinsAzimuthal());
 	}
@@ -222,28 +177,12 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 
 	@Override
 	public double getYBinEdgeMin() {
+		
 		if (!bean.isAzimuthalIntegration()) {
-			
-			double[] radialRange = bean.getRadialRange();
-			if (radialRange != null) {
-				if (bean.isLog()) {
-					radialRange = bean.getRadialRange().clone();
-					radialRange[0] = Math.log10(radialRange[0]);
-					radialRange[1] = Math.log10(radialRange[1]);
-				}
-				return Math.min(radialRange[0], radialRange[1]);
-			} 
-				
-			return binEdgesRadial.get(0);
-			
-			
+			double m = binEdgesRadial.get(0);
+			return bean.isLog() ? Math.log(m) : m;
 		}
 		
-		if (bean.getAzimuthalRange() != null) {
-			double[] range = bean.getAzimuthalRange();
-			return Math.min(range[0], range[1]);
-		} 
-
 		return binEdgesAzimuthal.get(0);
 	}
 
@@ -295,18 +234,19 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 		return bean.isTo1D();
 	}
 	
-	private static DoubleDataset calculateBins(Dataset[] arrays, double[] binRange, int numBins) {
+	private static DoubleDataset calculateBins(Dataset[] arrays, double[] binRange, int numBins, boolean isCentre) {
 		
 		if (binRange != null) {
-			//range corresponds to bin centres
-			double shift = (binRange[1]- binRange[0])/(2*numBins);
+			double shift = 0;
+//			range corresponds to bin centres
+			if (isCentre) shift = (binRange[1]- binRange[0])/(2*numBins);
 			return (DoubleDataset) DatasetUtils.linSpace(binRange[0]-shift, binRange[1]+shift, numBins + 1, Dataset.FLOAT64);
 		}
 		
 			
 		double min = Double.MAX_VALUE;
 		double max = -Double.MAX_VALUE;
-
+		
 		for (Dataset a : arrays) {
 
 			Dataset data = a;
@@ -316,18 +256,20 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 			min = n < min ? n : min;
 			max = x > max ? x : max;
 		}
-
+		//default range corresponds to bin edges
 		return (DoubleDataset) DatasetUtils.linSpace(min, max, numBins + 1, Dataset.FLOAT64);
 	}
 	
-	private static Dataset calculateRadialAxis(XAxis xAxis, int nBins, double[] binRange, DoubleDataset binEdges, boolean isLog) {
+	private static Dataset calculateRadialAxis(XAxis xAxis, int nBins, double[] binRange, DoubleDataset binEdges, boolean isLog, boolean isCentre) {
 		Dataset axis = null;
 		
-		if (binRange == null) {
+		if (binRange == null || !isCentre) {
 			axis = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
 			axis.idivide(2);
 		} else {
+			
 			axis = DatasetUtils.linSpace(binRange[0], binRange[1], nBins, Dataset.FLOAT64);
+	
 		}
 		
 		if (isLog) {
@@ -356,11 +298,11 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 		return axis;
 	}
 	
-	private static Dataset calculateAzimuthalAxis(int nBins, double[] binRange, DoubleDataset binEdges){
+	private static Dataset calculateAzimuthalAxis(int nBins, double[] binRange, DoubleDataset binEdges, boolean isCentre){
 		
 		Dataset axis = null;
 
-		if (binRange == null) {
+		if (binRange == null || !isCentre) {
 			axis = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
 			axis.idivide(2);
 		} else {
@@ -405,5 +347,11 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 	@Override
 	public boolean provideLookup() {
 		return false;
+	}
+	
+	private void setUpPixelSplitting() {
+		
+		
+		
 	}
 }

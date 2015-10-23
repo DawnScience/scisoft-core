@@ -206,8 +206,8 @@ public class NonPixelSplitting2DCacheTest extends AbstractPixelIntegrationTestBa
 		Assert.assertEquals(-17620.0, min,0.00001);
 		Assert.assertEquals(10.399522783579055, maxq,0.00001);
 		Assert.assertEquals(0.004975613824126736, minq,0.00001);
-		Assert.assertEquals(-170, maxa,0.00001);
-		Assert.assertEquals(-180, mina,0.00001);
+		Assert.assertEquals(-170, maxa,0.005);
+		Assert.assertEquals(-180, mina,0.005);
 		
 		return after-before;
 	}
@@ -232,8 +232,8 @@ public class NonPixelSplitting2DCacheTest extends AbstractPixelIntegrationTestBa
 		Assert.assertEquals(-406.0, min,0.00001);
 		Assert.assertEquals(5, maxq,0.00001);
 		Assert.assertEquals(1, minq,0.00001);
-		Assert.assertEquals(-170, maxa,0.00001);
-		Assert.assertEquals(-180, mina,0.00001);
+		Assert.assertEquals(-170, maxa,0.005);
+		Assert.assertEquals(-180, mina,0.005);
 		return after-before;
 	}
 	

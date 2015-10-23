@@ -16,6 +16,8 @@ import junit.framework.Assert;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.roi.XAxis;
@@ -187,9 +189,49 @@ public class NonPixelSplittingCacheTest extends AbstractPixelIntegrationTestBase
 		bean.setRadialRange(new double[]{100,300});
 		info = new PixelIntegrationCache(meta, bean);
 		out = PixelIntegration.integrate(data,null,info);
-		Assert.assertEquals(300, out.get(0).getDouble(1591),0.00001);
+		Assert.assertEquals(300, out.get(0).getDouble(1591),0.0001);
 		
 	}
+	
+	@Test
+	public void testNonPixelSplittingRange() {
+		IDataset data = getData();
+		if (data == null) {
+			Assert.fail("Could not load test data");
+			return;
+		}
+		
+		IDiffractionMetadata meta = getDiffractionMetadata();
+		NonPixelSplittingIntegration npsi = new NonPixelSplittingIntegration(meta);
+		PixelIntegrationBean bean = new PixelIntegrationBean();
+		bean.setTo1D(true);
+		bean.setUsePixelSplitting(false);
+		bean.setRadialRange(new double[]{1,5});
+		bean.setNumberOfBinsRadial(801);
+		IPixelIntegrationCache info = new PixelIntegrationCache(meta, bean);
+		List<Dataset> out = PixelIntegration.integrate(data,null,info);
+		
+		bean = new PixelIntegrationBean();
+		bean.setTo1D(true);
+		bean.setUsePixelSplitting(false);
+		bean.setRadialRange(new double[]{2,5});
+		bean.setNumberOfBinsRadial(601);
+		IPixelIntegrationCache info2 = new PixelIntegrationCache(meta, bean);
+		List<Dataset> out2 = PixelIntegration.integrate(data,null,info2);
+		
+		IDataset second = out2.get(1).getSlice(new int[]{1}, new int[]{-1},null);
+		IDataset first = out.get(1).getSlice(new int[]{201}, new int[]{-1},null);
+		
+		IDataset secondx = out2.get(0).getSlice(new int[]{1}, new int[]{-1},null);
+		IDataset firstx = out.get(0).getSlice(new int[]{201}, new int[]{-1},null);
+		
+		double delta = Maths.abs(Maths.subtract(second, first)).max().doubleValue();
+		double max = second.max().doubleValue();
+		double val = delta/max;
+		Assert.assertTrue(delta/max < 10E-4);
+
+	}
+	
 	
 	private double testWholeImageAzimuthal(IDataset data, IDataset mask, IPixelIntegrationCache info) {
 		long before = System.currentTimeMillis();
@@ -246,8 +288,8 @@ public class NonPixelSplittingCacheTest extends AbstractPixelIntegrationTestBase
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(431639.6842105, max,0.00001);
-		Assert.assertEquals(821.3030303030, min,0.00001);
+		Assert.assertEquals(420544.142857142845, max,0.00001);
+		Assert.assertEquals(824.7391304347826, min,0.00001);
 		Assert.assertEquals(5.0, maxq,0.00001);
 		Assert.assertEquals(1.0, minq,0.00001);
 		return after-before;
@@ -311,7 +353,7 @@ public class NonPixelSplittingCacheTest extends AbstractPixelIntegrationTestBase
 		double min = out.get(1).min().doubleValue();
 		double maxq = out.get(0).max().doubleValue();
 		double minq = out.get(0).min().doubleValue();
-		Assert.assertEquals(39444.15789473684, max,0.00001);
+		Assert.assertEquals(37002.0, max,0.00001);
 		Assert.assertEquals(0, min,0.00001);
 		Assert.assertEquals(-170, maxq,0.00001);
 		Assert.assertEquals(-180, minq,0.00001);

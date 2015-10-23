@@ -118,24 +118,23 @@ public class DataCache<T> {
 	 * 
 	 * @param key
 	 * @param value
-	 * @return true if another value has been replaced.
+	 * @return true if value has been stored
 	 */
 	public boolean recordSoftReference(CacheKey key, T value) {
-		
+
 		if (Boolean.getBoolean(NO_CACHING)) return false;
 		synchronized (LOCK) {
 			try {
 				Reference<T> ref = Boolean.getBoolean("uk.ac.diamond.scisoft.analysis.io.weakcaching")
 						         ? new WeakReference<T>(value)
 						         : new SoftReference<T>(value);
-				return cache.put(key, ref)!=null;
+				cache.put(key, ref);
+				return true;
 			} catch (Throwable ne) {
 				return false;
 			}
 		}
 	}
-
-	
 
 	/**
 	 * Store data into cache

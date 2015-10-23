@@ -13,6 +13,8 @@ import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.IPixelIntegrationCache;
 
 public class XYImagePixelCache implements IPixelIntegrationCache {
@@ -30,10 +32,16 @@ public class XYImagePixelCache implements IPixelIntegrationCache {
 	public XYImagePixelCache(Dataset xd, Dataset yd, double[] xRange, double[] yRange, int nX, int nY) {
 		this.x = xd;
 		this.y = yd;
+		double shiftx = (xRange[1]- xRange[0])/(2*nX);
+		double shifty = (xRange[1]- xRange[0])/(2*nX);
 		this.xRange = xRange.clone();
 		Arrays.sort(this.xRange);
+		this.xRange[0] -= shiftx;
+		this.xRange[1] += shiftx;
 		this.yRange = yRange.clone();
 		Arrays.sort(this.yRange);
+		this.yRange[0] -= shifty;
+		this.yRange[1] += shifty;
 		this.nX = nX;
 		this.nY = nY;
 		this.xAxis = calculateAxis(nX, xRange);
@@ -112,6 +120,9 @@ public class XYImagePixelCache implements IPixelIntegrationCache {
 	}
 	
 	private static Dataset calculateAxis(int nBins, double[] binRange){
+		
+//		double shift = (binRange[1]- binRange[0])/(2*nBins);
+//		return (DoubleDataset) DatasetUtils.linSpace(binRange[0]-shift, binRange[1]+shift, nBins + 1, Dataset.FLOAT64);
 		
 		return DatasetUtils.linSpace(binRange[0], binRange[1], nBins, Dataset.FLOAT64);
 	}

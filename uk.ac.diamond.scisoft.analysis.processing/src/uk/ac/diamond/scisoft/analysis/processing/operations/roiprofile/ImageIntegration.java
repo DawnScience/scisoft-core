@@ -71,8 +71,10 @@ public class ImageIntegration extends AbstractIntegrationOperation<ImageIntegrat
 		// copy axes to the new data
 		ILazyDataset[] oldAxes = AbstractOperation.getFirstAxes(input);
 		AxesMetadata newAxes = new AxesMetadataImpl(1);
-		newAxes.setAxis(0, oldAxes[1-axis].squeezeEnds());
-		output.setMetadata(newAxes);
+		if (oldAxes[1-axis] != null) {
+			newAxes.setAxis(0, oldAxes[1-axis].squeezeEnds());
+			output.setMetadata(newAxes);
+		}
 		
 		// Set some kind of name
 		output.setName(input.getName() + ((model.getDirection()==Direction.X) ? " X" : "Y") + ((model.isDoAverage()) ? " average" : " sum"));

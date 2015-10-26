@@ -114,7 +114,7 @@ public class XMSOLoader extends AbstractFileLoader {
 			//convoluted data
 			for (int interaction = first_interaction ; interaction <= n_interactions ; interaction++) {
 				double[] counts = new double[nchannels];
-				NodeList counts_list = ((NodeList) xpath.evaluate("/xmimsim-results/spectrum_conv/channel/counts[@interaction_number=\""+ first_interaction + "\"]", dom, XPathConstants.NODESET));
+				NodeList counts_list = ((NodeList) xpath.evaluate("/xmimsim-results/spectrum_conv/channel/counts[@interaction_number=\""+ interaction + "\"]", dom, XPathConstants.NODESET));
 				for (int i = 0 ; i < nchannels ; i++) {
 					counts[i] = Double.parseDouble(counts_list.item(i).getFirstChild().getNodeValue());
 				}

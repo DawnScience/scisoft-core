@@ -18,6 +18,9 @@ public class XMSOLoaderTest {
 		assertEquals(2048, d.getSize());
 		assertEquals(0.149149, d.getDouble(10), 1E-7);
 		assertEquals(61.0761, dh.getDataset(1).getDouble(0), 1E-7);
+		assertEquals(71.3896, dh.getDataset(2).getDouble(1), 1E-7);
+		assertEquals(72.0899, dh.getDataset(3).getDouble(2), 1E-7);
+		assertEquals(72.143, dh.getDataset(4).getDouble(3), 1E-7);
 	}
 
 }

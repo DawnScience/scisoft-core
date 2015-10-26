@@ -18,7 +18,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import gda.data.nexus.NexusUtils;
 import gda.data.nexus.extractor.NexusExtractor;
-import gda.util.TestUtils;
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 
 import java.io.File;
 import java.util.LinkedList;

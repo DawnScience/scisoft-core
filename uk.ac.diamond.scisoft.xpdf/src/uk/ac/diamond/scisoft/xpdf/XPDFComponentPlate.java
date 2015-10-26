@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
+import java.util.List;
+
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
@@ -192,6 +194,16 @@ public class XPDFComponentPlate extends XPDFComponentGeometry {
 		}		
 		
 		return absorptionCorrection;
+	}
+
+	@Override
+	public Dataset calculateFluorescence(Dataset gamma, Dataset delta,
+			List<XPDFComponentGeometry> attenuators,
+			List<Double> attenuationsIn, List<Double> attenuationsOut,
+			XPDFBeamData beamData, boolean doIncomingAbsorption,
+			boolean doOutgoingAbsorption) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

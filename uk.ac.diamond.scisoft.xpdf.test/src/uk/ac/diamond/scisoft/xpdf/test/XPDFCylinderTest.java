@@ -19,7 +19,10 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentForm;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentGeometry;
+import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
+import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 import junit.framework.TestCase;
 
 public class XPDFCylinderTest extends TestCase {
@@ -206,4 +209,86 @@ public class XPDFCylinderTest extends TestCase {
 		return Math.sqrt((Double) Maths.square(difference).mean());
 		
 	}
+	
+	///////////////////////////////////////////////////////////////////////////
+	//
+	// Tests using data from the autumn 2015 standards experiments
+	//
+	///////////////////////////////////////////////////////////////////////////
+	
+	public void testFluorescence() {
+		
+		XPDFSubstance ceria = new XPDFSubstance("ceria", "CeO2", 7.65, 0.6);
+		XPDFSubstance bto = new XPDFSubstance("BTO", "BaTiO3", 6.05, 0.6);
+		XPDFSubstance nickel = new XPDFSubstance("nickel", "Ni", 8.95, 0.6);
+		XPDFSubstance quartz = new XPDFSubstance("quartz", "SiO2", 2.65, 1.0);
+		
+		double[] ceriumLines = new double[] {34.7196, 34.2788, 39.2576, 4.8401, 5.2629};
+		double[] bariumLines = new double[] {32.1936, 31.817, 36.3784, 4.4663, 4.8275};
+		double[] nickelLines = new double[] {7.4781};
+		
+		XPDFComponentGeometry cap1mm= new XPDFComponentCylinder();
+		cap1mm.setDistances(0.5, 0.51);
+		cap1mm.setStreamality(true, true);
+		
+		XPDFComponentGeometry powder1mm = new XPDFComponentCylinder();
+		powder1mm.setDistances(0.0, 0.5);
+		powder1mm.setStreamality(true, true);
+		
+		XPDFComponentForm capForm = new XPDFComponentForm();
+		capForm.setGeom(cap1mm);
+		capForm.setMatName("SiO2");
+		XPDFTargetComponent quartzCap = new XPDFTargetComponent();
+		quartzCap.setForm(capForm);
+		quartzCap.setSample(false);
+		quartzCap.setName("quartz capillary");
+		
+		XPDFBeamData beamData = new XPDFBeamData();
+		beamData.setBeamEnergy(76.6);
+		beamData.setBeamHeight(0.07);
+		beamData.setBeamWidth(0.07);
+		
+		List<XPDFComponentGeometry> attenuators = new ArrayList<XPDFComponentGeometry>();
+		attenuators.add(powder1mm);
+		attenuators.add(cap1mm);
+		
+		
+		List<Double> muIn = new ArrayList<Double>();
+		muIn.add(ceria.getAttenuationCoefficient(beamData.getBeamEnergy()));
+		muIn.add(quartz.getAttenuationCoefficient(beamData.getBeamEnergy()));
+		
+		List<Double> muOut = new ArrayList<Double>();
+		muOut.add(ceria.getAttenuationCoefficient(ceriumLines[0]));
+		muOut.add(quartz.getAttenuationCoefficient(ceriumLines[1]));
+		
+		// Read the target data, and also the angles (in radians) to run
+		String dataPath = "/home/rkl37156/ceria_dean_data/standards2015/";
+		IDataHolder dh = null;
+		String fluorName = "ceria";
+		String fluorNumber = "1";
+		try {
+			dh = LoaderFactory.getData(dataPath+fluorName+ ".fluor" + fluorNumber + ".xy");
+		} catch (Exception e) {
+		}
+		Dataset delta1D = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_1").getSlice());
+		Dataset delta = new DoubleDataset(delta1D.getSize(), 1);
+		for (int i = 0; i<delta1D.getSize(); i++)
+			delta.set(delta1D.getDouble(i), i, 0);
+		Dataset gamma = DoubleDataset.zeros(delta);
+
+		Dataset expected = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_2").getSlice());
+		
+		Dataset ceriaFluor1 = powder1mm.calculateFluorescence(gamma, delta, attenuators, muIn, muOut, beamData, true, true);
+		
+		Dataset error = Maths.divide(ceriaFluor1.squeeze(), expected);
+		error.isubtract(1);
+		error = Maths.square(error);
+		double sumError = (double) error.sum();
+		sumError = Math.sqrt(sumError);
+		
+		assertTrue("Too large a difference, " + sumError + " between expected and calculated fluorescence for " + fluorName + " at " + ceriumLines[0] + "keV.",
+				sumError < 1e-2);
+	}
+	
+
 }

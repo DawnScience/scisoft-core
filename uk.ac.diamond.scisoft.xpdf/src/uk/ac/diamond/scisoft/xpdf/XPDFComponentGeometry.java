@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
+import java.util.List;
+
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
 /**
@@ -228,6 +230,11 @@ public abstract class XPDFComponentGeometry {
 				gridSize == inGeometry.gridSize &&
 				getShape() == inGeometry.getShape();
 	}
-	
+
+	public abstract Dataset calculateFluorescence(Dataset gamma, Dataset delta,
+			List<XPDFComponentGeometry> attenuators,
+			List<Double> attenuationsIn, List<Double> attenuationsOut,
+			XPDFBeamData beamData,
+			boolean doIncomingAbsorption, boolean doOutgoingAbsorption);	
 	
 }

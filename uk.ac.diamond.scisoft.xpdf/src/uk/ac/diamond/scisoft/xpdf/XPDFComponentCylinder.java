@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -155,129 +156,11 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 			XPDFBeamData beamData,
 			boolean doUpstreamAbsorption, boolean doDownstreamAbsorption) {
 		
-		double thickness = rOuter - rInner;
-		
-		// Account for the streamality of the (half?) cylinder
-		double arc = 0.0, xiMin = 0.0, xiMax = 0.0;
-		if (doUpstreamAbsorption && doDownstreamAbsorption) {
-			arc = 2*Math.PI;
-			xiMin = -Math.PI;
-			xiMax = Math.PI;
-		} else {
-			if (!(doUpstreamAbsorption || doDownstreamAbsorption))
-				return DoubleDataset.zeros(gamma);
-			arc = Math.PI;
-			if (doDownstreamAbsorption) {
-				xiMin = -Math.PI/2;
-				xiMax = Math.PI/2;
-			} else if (doUpstreamAbsorption) {
-				xiMin = -3*Math.PI/2;
-				xiMax = Math.PI/2;
-			} else {
-				; // You really shouldn't be here
-			}
-		}
-
-		// Calculate the number of grid points in each dimension. The total
-		// number should be gridSize, and the grid boxes should be roughly 
-		// isotropic on the surface of the cylinder.
-		double aspectRatio = (xiMax-xiMin)*rOuter/thickness;
-		double log2RSteps = Math.round(Math.log(gridSize/aspectRatio)/2/Math.log(2.0));
-		double rSteps = Math.pow(2.0, log2RSteps);
-		double xiSteps = gridSize/rSteps;
-		double dR = thickness/rSteps;
-		double dXi = (arc)/xiSteps;
-		
-		Dataset r1D = DoubleDataset.createRange(rInner+dR/2, rOuter-dR/2+dR/1e6, dR);
-		Dataset xi1D = DoubleDataset.createRange(xiMin+dXi/2, xiMax-dXi/2+dXi/1e6, dXi);
-		
-
-		// Expand the one dimensional coordinates to a two dimensional grid
-		// TODO: Is this the best way to expand a Dataset?
-		Dataset rCylinder = new DoubleDataset(r1D.getSize(), xi1D.getSize());
-		Dataset xiCylinder = new DoubleDataset(r1D.getSize(), xi1D.getSize());
-		for (int i = 0; i<rSteps; i++) {
-			for (int k = 0; k<xiSteps; k++) {
-				rCylinder.set(r1D.getDouble(i), i, k);
-				xiCylinder.set(xi1D.getDouble(k), i, k);
-			}
-		}
-
-		Dataset xPlate = Maths.multiply(rCylinder, Maths.sin(xiCylinder));
-		Dataset yPlate = DoubleDataset.zeros(xPlate);
-		Dataset zPlate = Maths.multiply(rCylinder, Maths.cos(xiCylinder));
-		
-		// Create a mask of the illuminated atoms in the cylinder.
-		// TODO: There has to be a better way to make a mask Dataset
-		Dataset illuminationPlate = DoubleDataset.ones(xPlate);
-		for (int i=0; i<xPlate.getShape()[0]; i++){
-			for (int k=0; k<xPlate.getShape()[1]; k++) {
-				if (Math.abs(xPlate.getDouble(i, k)) > beamData.getBeamHeight()/2)
-					illuminationPlate.set(0.0, i, k);
-			}
-		}
-		
-		Dataset illuminatedVolume = Maths.multiply(illuminationPlate, Maths.multiply(dR*dXi, rCylinder));
-		
-		// The upstream path length for each point is independent of scattering
-		// angle.
-		Dataset upstreamPathLength;
-		Dataset downstreamPathLength;
-		if (doUpstreamAbsorption) {
-			upstreamPathLength = attenuatorGeometry.getUpstreamPathLength(xPlate, yPlate, zPlate);
-		} else {
-			upstreamPathLength = DoubleDataset.zeros(xPlate);
-		}
-		
-		// For every direction, get the per-atom absorption of the radiation
-		// scattered by this object, as attenuated by the attenuating object 
-		// alone.
-		DoubleDataset absorptionCorrection = new DoubleDataset(gamma);
-		// Loop over all detector angles
-		IndexIterator iterAngle = gamma.getIterator();
-		// total illuminated volume
-		double totalIlluminatedVolume = 0;
-		IndexIterator iterGrid = illuminatedVolume.getIterator();
-		while(iterGrid.hasNext())
-			totalIlluminatedVolume += illuminatedVolume.getElementDoubleAbs(iterGrid.index);
-		
-		while(iterAngle.hasNext()) {
-			if (doDownstreamAbsorption)
-				downstreamPathLength = attenuatorGeometry.getDownstreamPathLength(xPlate, yPlate, zPlate, gamma.getElementDoubleAbs(iterAngle.index), delta.getElementDoubleAbs(iterAngle.index));
-			else
-				downstreamPathLength = DoubleDataset.zeros(xPlate);
-
-			iterGrid = downstreamPathLength.getIterator();
-			double illuminatedAbsorption = 0.0;
-			while (iterGrid.hasNext()) {
-				illuminatedAbsorption += illuminatedVolume.getElementDoubleAbs(iterGrid.index) *
-						Math.exp(-attenuationCoefficient*
-								(upstreamPathLength.getElementDoubleAbs(iterGrid.index) +
-								 downstreamPathLength.getElementDoubleAbs(iterGrid.index)));
-			}
-			absorptionCorrection.setAbs(iterAngle.index, illuminatedAbsorption/totalIlluminatedVolume);
-			
-			
-			
-//			absorptionCorrection.setAbs( iterAngle.index, (double)
-//					Maths.multiply(
-//							Maths.exp(
-//									Maths.multiply(
-//											-attenuationCoefficient, 
-//											Maths.add(
-//													upstreamPathLength,
-//													downstreamPathLength
-//													)
-//											)
-//									),
-//									illuminatedVolume
-//							).sum() / totalIlluminatedVolume);
-
-		
-		
-		}
-		
-		return absorptionCorrection;
+		return calculateAbsorptionFluorescence(gamma, delta,
+				Arrays.asList(new XPDFComponentGeometry[] {attenuatorGeometry}),
+				Arrays.asList(new Double[] {attenuationCoefficient}), Arrays.asList(new Double[] {attenuationCoefficient}),
+				beamData,
+				doUpstreamAbsorption, doDownstreamAbsorption, true);
 		}
 
 	/**
@@ -351,14 +234,15 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 						attenuators,
 						attenuationsIn, attenuationsOut,
 						beamData,
-						doIncomingAbsorption, doOutgoingAbsorption);
+						doIncomingAbsorption, doOutgoingAbsorption, false);
 	}
 	
 	private Dataset calculateAbsorptionFluorescence(Dataset gamma, Dataset delta,
 			List<XPDFComponentGeometry> attenuators,
 			List<Double> attenuationsIn, List<Double> attenuationsOut,
 			XPDFBeamData beamData,
-			boolean doIncomingAbsorption, boolean doOutgoingAbsorption) {
+			boolean doIncomingAbsorption, boolean doOutgoingAbsorption,
+			boolean illuminationNormalize) {
 		double thickness = rOuter - rInner;
 		
 		// Account for the streamality of the (half?) cylinder
@@ -422,54 +306,72 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 		}
 		
 		Dataset illuminatedVolume = Maths.multiply(illuminationPlate, Maths.multiply(dR*dXi, rCylinder));
+		// Loop over all detector angles
+		IndexIterator iterAngle = gamma.getIterator();
+		// total illuminated volume
+		double totalIlluminatedVolume = 0;
+		IndexIterator iterGrid = illuminatedVolume.getIterator();
+		while(iterGrid.hasNext())
+			totalIlluminatedVolume += illuminatedVolume.getElementDoubleAbs(iterGrid.index);
 
+		Dataset volumeElement = Maths.multiply(dR*dXi, rCylinder);
+		double totalVolume = (double) volumeElement.sum();
+
+		double normalizationVolume = (illuminationNormalize) ? totalIlluminatedVolume : totalVolume;
+		
 		// For every direction, get the per-atom absorption of the radiation
 		// scattered by this object, as attenuated by all the attenuating
 		// objects.
-		Dataset absorption = DoubleDataset.ones(gamma);
+		DoubleDataset attenuation = new DoubleDataset(gamma);
 		
+		// The amount of absorption experienced by photons reaching the grid
+		// point from all considered attenuators
+		Dataset inboundAttenuation = DoubleDataset.ones(rCylinder);
+		
+		// The upstream path length for each point is independent of scattering
+		// angle.
 		// Loop over all the attenuators in the List
 		for (int iAttenuator = 0; iAttenuator < attenuators.size(); iAttenuator++) {
-		
-			// The upstream path length for each point is independent of scattering
-			// angle.
 			Dataset upstreamPathLength;
-			Dataset downstreamPathLength;
-			DoubleDataset objectAttenuation = new DoubleDataset(absorption);
 			if (doIncomingAbsorption) {
 				upstreamPathLength = attenuators.get(iAttenuator).getUpstreamPathLength(xPlate, yPlate, zPlate);
 			} else {
 				upstreamPathLength = DoubleDataset.zeros(xPlate);
 			}
 
-			// Loop over all detector angles
-			IndexIterator iterAngle = gamma.getIterator();
-			// total illuminated volume
-			double totalIlluminatedVolume = 0;
-			IndexIterator iterGrid = illuminatedVolume.getIterator();
-			while(iterGrid.hasNext())
-				totalIlluminatedVolume += illuminatedVolume.getElementDoubleAbs(iterGrid.index);
+			double upstreamAttenuation = attenuationsIn.get(iAttenuator);
 
-			while(iterAngle.hasNext()) {
+			// Total inbound attenuation for all objects
+			inboundAttenuation.imultiply(Maths.exp(Maths.multiply(-upstreamAttenuation, upstreamPathLength)));
+		}
+		
+		while(iterAngle.hasNext()) {
+			//  Attenuation by all considered components, in the direction given by iterAngle at all grid points 
+			Dataset outboundAttenuation = DoubleDataset.ones(rCylinder);
+			for (int iAttenuator = 0; iAttenuator < attenuators.size(); iAttenuator++) {
+				// Attenuation by this component, in the given direction, at all grid points
+				Dataset downstreamPathLength;
 				if (doOutgoingAbsorption)
 					downstreamPathLength = attenuators.get(iAttenuator).getDownstreamPathLength(xPlate, yPlate, zPlate, gamma.getElementDoubleAbs(iterAngle.index), delta.getElementDoubleAbs(iterAngle.index));
 				else
 					downstreamPathLength = DoubleDataset.zeros(xPlate);
 
-				iterGrid = downstreamPathLength.getIterator();
-				double illuminatedAbsorption = 0.0;
-				while (iterGrid.hasNext()) {
-					illuminatedAbsorption += illuminatedVolume.getElementDoubleAbs(iterGrid.index) *
-							Math.exp(-attenuationsIn.get(iAttenuator)*
-									upstreamPathLength.getElementDoubleAbs(iterGrid.index) +
-									-attenuationsOut.get(iAttenuator) *
-									downstreamPathLength.getElementDoubleAbs(iterGrid.index));
-				}
-				objectAttenuation.setAbs(iterAngle.index, illuminatedAbsorption/totalIlluminatedVolume);
-			}			
-			absorption.imultiply(objectAttenuation);		
+				double downstreamAttenuation = attenuationsOut.get(iAttenuator);
+				outboundAttenuation.imultiply(Maths.exp(Maths.multiply(-downstreamAttenuation, downstreamPathLength)));
+			}
+
+			
+			double illuminatedScattering = (double) Maths.multiply(illuminatedVolume, Maths.multiply(inboundAttenuation, outboundAttenuation)).sum();
+//			iterGrid = outboundAttenuation.getIterator();
+//			double illuminatedScattering = 0.0;
+//			while (iterGrid.hasNext()) {
+//				illuminatedScattering += illuminatedVolume.getElementDoubleAbs(iterGrid.index) *
+//						inboundAttenuation.getElementDoubleAbs(iterGrid.index) * 
+//						outboundAttenuation.getElementDoubleAbs(iterGrid.index);
+//			}
+			attenuation.setAbs(iterAngle.index, illuminatedScattering/normalizationVolume);
 		}
-		return absorption;		
+		return attenuation;		
 	}
 	
 }

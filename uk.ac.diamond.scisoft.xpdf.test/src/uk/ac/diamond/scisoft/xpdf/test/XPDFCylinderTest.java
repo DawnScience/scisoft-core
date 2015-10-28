@@ -28,6 +28,7 @@ import junit.framework.TestCase;
 public class XPDFCylinderTest extends TestCase {
 
 	public void testGetUpstreamPathLength() {
+//		fail("Temporary fail"); //TODO: remove
 		XPDFComponentCylinder cap = new XPDFComponentCylinder();
 		cap.setDistances(0.15, 0.16);
 		cap.setStreamality(true, true);
@@ -71,6 +72,7 @@ public class XPDFCylinderTest extends TestCase {
 	}
 
 	public void testGetDownstreamPathLength() {
+//		fail("Temporary fail"); //TODO: remove
 		XPDFComponentCylinder cap = new XPDFComponentCylinder();
 		cap.setDistances(0.15, 0.16);
 		cap.setStreamality(true, true);
@@ -133,6 +135,7 @@ public class XPDFCylinderTest extends TestCase {
 	
 	public void testAbsorptionCorrections() {
 
+//		fail("Temporary fail"); //TODO: remove
 		double rmsError = absorptionCorrectionCommon(true, true);
 		double rmsErrorTarget = 1e-6;
 		assertTrue("Error in sample-sample absorption correction too large: " + rmsError, rmsError < rmsErrorTarget);
@@ -140,6 +143,7 @@ public class XPDFCylinderTest extends TestCase {
 
 	public void testAbsorptionCorrectionsSC() {
 
+//		fail("Temporary fail"); //TODO: remove
 		double rmsError = absorptionCorrectionCommon(true, false);
 		double rmsErrorTarget = 1e-6;
 		assertTrue("Error in sample-capillary absorption correction too large: " + rmsError, rmsError < rmsErrorTarget);		
@@ -147,6 +151,7 @@ public class XPDFCylinderTest extends TestCase {
 
 	public void testAbsorptionCorrectionsCS() {
 
+//		fail("Temporary fail"); //TODO: remove
 		double rmsError = absorptionCorrectionCommon(false, true);
 		double rmsErrorTarget = 1e-6;
 		assertTrue("Error in capillary-sample absorption correction too large: " + rmsError, rmsError < rmsErrorTarget);
@@ -154,6 +159,7 @@ public class XPDFCylinderTest extends TestCase {
 	
 	public void testAbsorptionCorrectionsCC() {
 
+//		fail("Temporary fail"); //TODO: remove
 		double rmsError = absorptionCorrectionCommon(false, false);
 		double rmsErrorTarget = 1e-6;
 		assertTrue("Error in capillary-capillary absorption correction too large: " + rmsError, rmsError < rmsErrorTarget);
@@ -262,7 +268,7 @@ public class XPDFCylinderTest extends TestCase {
 		muOut.add(quartz.getAttenuationCoefficient(ceriumLines[1]));
 		
 		// Read the target data, and also the angles (in radians) to run
-		String dataPath = "/home/rkl37156/ceria_dean_data/standards2015/";
+		String dataPath = "/home/rkl37156/ceria_dean_data/testData/";
 		IDataHolder dh = null;
 		String fluorName = "ceria";
 		String fluorNumber = "1";
@@ -283,7 +289,7 @@ public class XPDFCylinderTest extends TestCase {
 		Dataset error = Maths.divide(ceriaFluor1.squeeze(), expected);
 		error.isubtract(1);
 		error = Maths.square(error);
-		double sumError = (double) error.sum();
+		double sumError = (double) error.mean();
 		sumError = Math.sqrt(sumError);
 		
 		assertTrue("Too large a difference, " + sumError + " between expected and calculated fluorescence for " + fluorName + " at " + ceriumLines[0] + "keV.",

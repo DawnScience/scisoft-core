@@ -22,6 +22,8 @@ public class XPDFDetector {
 	 * Default constructor.
 	 */
 	public XPDFDetector() {
+		substance = null;
+		coords = null;
 	}
 	
 	/**
@@ -41,10 +43,40 @@ public class XPDFDetector {
 						Maths.exp(
 								Maths.divide(
 										-mu*thickness,
-										coords.getTwoTheta()
+										Maths.cos(coords.getTwoTheta())
 								)
 						)
 				)
 		);
 	}
+
+	/**
+	 * Sets the substance of which the detector is made.
+	 * @param substance
+	 * 				An XPDFSubstance class describing the material from which
+	 * 				the detector is made.
+	 */
+	public void setSubstance(XPDFSubstance substance) {
+		this.substance = substance;
+	}
+
+	/**
+	 * Sets the thickness of the detector in mm.
+	 * @param thickness
+	 * 				thickness of the detector, measured in mm.
+	 */
+	public void setThickness(double thickness) {
+		this.thickness = thickness;
+	}
+
+	/**
+	 * Sets the coordinates of the pixels of the detector.
+	 * @param coords
+	 * 				Coordinates of the pixels of the detector, along with
+	 * 				related angular parameters.
+	 */
+	public void setCoords(XPDFCoordinates coords) {
+		this.coords = coords;
+	}
+
 }

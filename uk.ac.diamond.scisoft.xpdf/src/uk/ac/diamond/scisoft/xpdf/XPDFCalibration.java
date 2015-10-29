@@ -349,4 +349,12 @@ public class XPDFCalibration {
 		
 		return absCorP; 
 	}
+
+	public Dataset calibrate(int nIterations) {
+		// TODO Solid angle and fluorescence corrections
+		Dataset absCor = null;
+		for (int i = 0; i < nIterations; i++)
+			absCor = this.iterate(true);
+		return absCor;
+	}
 }

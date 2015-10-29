@@ -108,8 +108,9 @@ public class XPDFIterateCalibrationConstantOperation extends
 		theCalibration.setCoordinates(coordinates);
 		theCalibration.setDetector(theXPDFMetadata.getDetector());
 		
-		for (int i = 0; i < nIterations; i++) 
-			absCor = theCalibration.iterate(true);
+//		for (int i = 0; i < nIterations; i++) 
+//			absCor = theCalibration.iterate(true);
+		absCor = theCalibration.calibrate(nIterations);
 		
 		// Copy metadata, but preserve the errors, if they exist.
 		Dataset absCorError = (absCor.getError() != null) ? absCor.getError() : null;

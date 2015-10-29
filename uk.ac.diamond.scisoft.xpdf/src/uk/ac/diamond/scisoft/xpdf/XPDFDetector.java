@@ -16,16 +16,19 @@ public class XPDFDetector {
 
 	private XPDFSubstance substance;
 	private double thickness;
-	private XPDFCoordinates coords;
 	
 	/**
 	 * Default constructor.
 	 */
 	public XPDFDetector() {
 		substance = null;
-		coords = null;
 	}
 	
+	public XPDFDetector(XPDFDetector inTect) {
+		this.substance = (inTect.substance != null) ? new XPDFSubstance(inTect.substance) : null;
+		this.thickness = inTect.thickness;
+	}
+
 	/**
 	 * Applies a detector correction to a Dataset.
 	 * @param data
@@ -34,7 +37,7 @@ public class XPDFDetector {
 	 * 			the beam energy at which the correction is to take place
 	 * @return the corrected data
 	 */
-	public Dataset applyTransmissionCorrection(Dataset data, double beamEnergy){
+	public Dataset applyTransmissionCorrection(Dataset data, Dataset twoTheta, double beamEnergy){
 		double mu = substance.getAttenuationCoefficient(beamEnergy);
 		return Maths.multiply(
 				data,
@@ -43,7 +46,7 @@ public class XPDFDetector {
 						Maths.exp(
 								Maths.divide(
 										-mu*thickness,
-										Maths.cos(coords.getTwoTheta())
+										Maths.cos(twoTheta)
 								)
 						)
 				)
@@ -68,15 +71,4 @@ public class XPDFDetector {
 	public void setThickness(double thickness) {
 		this.thickness = thickness;
 	}
-
-	/**
-	 * Sets the coordinates of the pixels of the detector.
-	 * @param coords
-	 * 				Coordinates of the pixels of the detector, along with
-	 * 				related angular parameters.
-	 */
-	public void setCoords(XPDFCoordinates coords) {
-		this.coords = coords;
-	}
-
 }

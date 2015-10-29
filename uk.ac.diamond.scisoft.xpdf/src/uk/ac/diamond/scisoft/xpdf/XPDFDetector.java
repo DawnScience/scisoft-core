@@ -34,7 +34,7 @@ public class XPDFDetector {
 	 * 			the beam energy at which the correction is to take place
 	 * @return the corrected data
 	 */
-	public Dataset applyCorrection(Dataset data, double beamEnergy){
+	public Dataset applyTransmissionCorrection(Dataset data, double beamEnergy){
 		double mu = substance.getAttenuationCoefficient(beamEnergy);
 		return Maths.multiply(
 				data,

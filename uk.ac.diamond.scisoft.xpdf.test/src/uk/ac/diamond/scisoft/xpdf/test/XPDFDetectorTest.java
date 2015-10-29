@@ -35,7 +35,7 @@ public class XPDFDetectorTest extends TestCase {
 		}
 		Dataset expected = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_2").getSlice());
 		
-		Dataset after = tect.applyCorrection(before, Integer.parseInt(photonEnergyeV)*1e-3);
+		Dataset after = tect.applyTransmissionCorrection(before, Integer.parseInt(photonEnergyeV)*1e-3);
 		
 		final double maxError = 5e-2;
 		Dataset ratio = Maths.divide(after, expected);

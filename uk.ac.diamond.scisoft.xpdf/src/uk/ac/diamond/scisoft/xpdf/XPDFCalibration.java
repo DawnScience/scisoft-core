@@ -77,10 +77,15 @@ public class XPDFCalibration {
 
 	/**
 	 * Sets the initial calibration constant to be iterated.
+	 * <p>
+	 * Sets the initial calibration constant. If there is already an array,
+	 * then a new Array is created.
 	 * @param calibrationConstant
 	 * 							the initial value of the calibration constant.
 	 */
-	public void setInitialCalibrationConstant(double calibrationConstant) {
+	public void initializeCalibrationConstant(double calibrationConstant) {
+		if (this.calibrationConstants == null || !this.calibrationConstants.isEmpty())
+			this.calibrationConstants = new LinkedList<Double>();
 		this.calibrationConstants.add(calibrationConstant);
 	}
 

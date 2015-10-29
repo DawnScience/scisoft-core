@@ -32,6 +32,7 @@ public class XPDFCalibration {
 	private XPDFAbsorptionMaps absorptionMaps;
 	private XPDFCoordinates coords;
 	private XPDFDetector tect;
+	private XPDFBeamData beamData;
 	
 	/**
 	 * Empty constructor.
@@ -56,7 +57,7 @@ public class XPDFCalibration {
 			for (double c3 : inCal.calibrationConstants)
 				this.calibrationConstants.add(c3);
 		}
-		this.qSquaredIntegrator = (this.qSquaredIntegrator != null) ? inCal.qSquaredIntegrator : null;
+		this.qSquaredIntegrator = (inCal.qSquaredIntegrator != null) ? inCal.qSquaredIntegrator : null;
 		this.selfScatteringDenominator = inCal.selfScatteringDenominator;
 		this.multipleScatteringCorrection = (inCal.multipleScatteringCorrection != null) ? new DoubleDataset(inCal.multipleScatteringCorrection) : null;
 		this.nSampleIlluminatedAtoms = inCal.nSampleIlluminatedAtoms;
@@ -66,6 +67,8 @@ public class XPDFCalibration {
 				this.backgroundSubtracted.add(data);
 			}
 		}
+		this.tect = (inCal.tect != null) ? new XPDFDetector(inCal.tect): null;
+		this.beamData = (inCal.beamData != null) ? new XPDFBeamData(inCal.beamData) : null;
 	}
 
 	/**
@@ -169,6 +172,10 @@ public class XPDFCalibration {
 		this.tect = inTect;
 	}
 	
+	public void setBeamData(XPDFBeamData inBeam) {
+		this.beamData = inBeam;
+	}
+	
 	/**
 	 * Iterates the calibration constant for five iterations.
 	 * <p>
@@ -183,13 +190,23 @@ public class XPDFCalibration {
 	 * </ul>
 	 * @return the absorption corrected data
 	 */
-	public Dataset iterate() {
+	public Dataset iterate(boolean propagateErrors) {
+		// Detector transmission correction
+		List<Dataset> deTran = new ArrayList<Dataset>();
+		for (Dataset componentTrace : backgroundSubtracted) {
+			Dataset deTranData = tect.applyTransmissionCorrection(componentTrace, coords.getTwoTheta(), beamData.getBeamEnergy());
+			// Error propagation
+			if (propagateErrors && componentTrace.getError() != null)
+				deTranData.setError(tect.applyTransmissionCorrection(componentTrace.getError(), coords.getTwoTheta(), beamData.getBeamEnergy()));
+			deTran.add(deTranData);
+		}
+		
 		// Divide by the calibration constant and subtract the multiple scattering correction
 		List<Dataset> calCon = new ArrayList<Dataset>();
-		for (Dataset componentTrace : backgroundSubtracted) {
+		for (Dataset componentTrace : deTran) {
 			Dataset calConData = Maths.divide(componentTrace, calibrationConstants.getLast()); 
 			// Error propagation
-			if (componentTrace.getError() != null)
+			if (propagateErrors && componentTrace.getError() != null)
 				calConData.setError(Maths.divide(componentTrace.getError(), calibrationConstants.getLast()));
 			// Set the data
 			calCon.add(calConData);
@@ -201,7 +218,7 @@ public class XPDFCalibration {
 			for (Dataset componentTrace : calCon) {
 				Dataset mulCorData = Maths.subtract(componentTrace, multipleScatteringCorrection);
 				// Error propagation: no change if the multiple scattering correction is taken as exact
-				if (componentTrace.getError() != null)
+				if (propagateErrors && componentTrace.getError() != null)
 					mulCorData.setError(componentTrace.getError());
 				mulCor.add(mulCorData);
 			}
@@ -209,7 +226,7 @@ public class XPDFCalibration {
 			for (Dataset componentTrace : calCon) {
 				Dataset mulCorData = Maths.subtract(componentTrace, 0);
 				//Error propagation
-				if (componentTrace.getError() != null)
+				if (propagateErrors && componentTrace.getError() != null)
 					mulCorData.setError(componentTrace.getError());
 				mulCor.add(mulCorData);
 			}
@@ -217,7 +234,7 @@ public class XPDFCalibration {
 		Dataset absCor = applyCalibrationConstant(mulCor);
 
 		absCor.idivide(nSampleIlluminatedAtoms);
-		if (absCor.getError() != null)
+		if (propagateErrors && absCor.getError() != null)
 			absCor.getError().idivide(nSampleIlluminatedAtoms);
 
 		Dataset absCorP = applyPolarizationConstant(absCor);

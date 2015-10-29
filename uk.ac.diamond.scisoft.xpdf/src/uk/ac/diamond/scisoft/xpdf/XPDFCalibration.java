@@ -31,6 +31,7 @@ public class XPDFCalibration {
 	private ArrayList<Dataset> backgroundSubtracted;
 	private XPDFAbsorptionMaps absorptionMaps;
 	private XPDFCoordinates coords;
+	private XPDFDetector tect;
 	
 	/**
 	 * Empty constructor.
@@ -162,6 +163,10 @@ public class XPDFCalibration {
 	
 	public void setCoordinates(XPDFCoordinates inCoords) {
 		this.coords = inCoords;
+	}
+	
+	public void setDetector(XPDFDetector inTect) {
+		this.tect = inTect;
 	}
 	
 	/**

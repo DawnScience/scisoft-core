@@ -95,7 +95,7 @@
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFDefineDetectorOperation"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFDefineDetectorOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFDefineDetectorModel"
             name="XPDF Define Detector">
       </operation>
    </extension>

@@ -11,14 +11,14 @@ import uk.ac.diamond.scisoft.xpdf.XPDFDetector;
 import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
 
-public class XPDFDefineDetectorOperation extends XPDFInsertXMetadataOperation<EmptyModel, OperationData> {
+public class XPDFDefineDetectorOperation extends XPDFInsertXMetadataOperation<XPDFDefineDetectorModel, OperationData> {
 
 	protected OperationData process(IDataset input, IMonitor minotaur) throws OperationException {
 		
 		XPDFMetadataImpl theXPDFMetadata = getAndRemoveXPDFMetadata(input);
 		XPDFDetector tect = new XPDFDetector();
 		// TODO: Get from the Model
-		tect.setSubstance(new XPDFSubstance("Perkin Elmer", "CsI", 4.51, 1.0));
+		tect.setSubstance(new XPDFSubstance(model.getDetectorName(), model.getDetectorMaterial(), model.getDensity(), 1.0));
 		// TODO: Get from the Model
 		tect.setThickness(0.5);
 		

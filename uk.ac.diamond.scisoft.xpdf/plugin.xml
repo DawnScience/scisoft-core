@@ -91,6 +91,13 @@
             id="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
             name="XPDF beta">
       </category>
+      <operation
+            category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFDefineDetectorOperation"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFDefineDetectorOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            name="XPDF Define Detector">
+      </operation>
    </extension>
 
 </plugin>

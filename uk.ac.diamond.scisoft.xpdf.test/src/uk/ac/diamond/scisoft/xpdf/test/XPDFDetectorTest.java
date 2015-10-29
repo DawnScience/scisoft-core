@@ -1,5 +1,7 @@
 package uk.ac.diamond.scisoft.xpdf.test;
 
+import junit.framework.TestCase;
+
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
@@ -7,11 +9,9 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
-import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFDetector;
 import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
-import junit.framework.TestCase;
 
 @SuppressWarnings("deprecation")
 public class XPDFDetectorTest extends TestCase {
@@ -25,6 +25,7 @@ public class XPDFDetectorTest extends TestCase {
 			System.err.println("File "+ dataPath+ "ceria"+photonEnergyeV+".before.xy" + " not found!");
 			return false;
 		}
+		Dataset delta = Maths.toRadians(DatasetUtils.convertToDataset(dh.getLazyDataset("Column_1").getSlice()));
 		Dataset before = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_2").getSlice());
 
 		try {
@@ -35,7 +36,12 @@ public class XPDFDetectorTest extends TestCase {
 		}
 		Dataset expected = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_2").getSlice());
 		
-		Dataset after = tect.applyTransmissionCorrection(before, Integer.parseInt(photonEnergyeV)*1e-3);
+		XPDFCoordinates theCoords = new XPDFCoordinates();
+//		theCoords.setBeamData(theBeam);
+		theCoords.setEnergy(76.6);
+		theCoords.setGammaDelta(DoubleDataset.zeros(delta), delta);
+		
+		Dataset after = tect.applyTransmissionCorrection(before, theCoords.getTwoTheta(), Integer.parseInt(photonEnergyeV)*1e-3);
 		
 		final double maxError = 5e-2;
 		Dataset ratio = Maths.divide(after, expected);
@@ -77,27 +83,9 @@ public class XPDFDetectorTest extends TestCase {
 	
 	
 	public XPDFDetector buildDetector() {
-		String dataPath = "/home/rkl37156/ceria_dean_data/testData/";
-		IDataHolder dh = null;
-		try {
-			dh = LoaderFactory.getData(dataPath+ "ceria76600.before"+".xy");
-		} catch (Exception e) {
-		}
-		Dataset delta = Maths.toRadians(DatasetUtils.convertToDataset(dh.getLazyDataset("Column_1").getSlice()));
-
-		
 		XPDFDetector tect = new XPDFDetector();
 		tect.setSubstance(new XPDFSubstance("caesium iodide", "CsI", 4.51, 1.0));
 		tect.setThickness(0.5);
-//		XPDFBeamData theBeam = new XPDFBeamData();
-//		theBeam.setBeamEnergy(76.6);
-		
-		XPDFCoordinates theCoords = new XPDFCoordinates();
-//		theCoords.setBeamData(theBeam);
-		theCoords.setEnergy(76.6);
-		theCoords.setGammaDelta(DoubleDataset.zeros(delta), delta);
-		tect.setCoords(theCoords);
-
 		
 		return tect;
 	}

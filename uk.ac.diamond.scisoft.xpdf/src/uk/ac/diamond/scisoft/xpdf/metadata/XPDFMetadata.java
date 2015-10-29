@@ -18,6 +18,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import uk.ac.diamond.scisoft.xpdf.XPDFAbsorptionMaps;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentForm;
+import uk.ac.diamond.scisoft.xpdf.XPDFDetector;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 
 /**
@@ -95,4 +96,10 @@ public interface XPDFMetadata extends MetadataType {
 	 * object.
 	 */
 	List<XPDFComponentForm> getFormList();
+	
+	/**
+	 * Returns the object describing the detector used in the experiment.
+	 * @return The object describing the detector used in the experiment. 
+	 */
+	XPDFDetector getDetector();
 }

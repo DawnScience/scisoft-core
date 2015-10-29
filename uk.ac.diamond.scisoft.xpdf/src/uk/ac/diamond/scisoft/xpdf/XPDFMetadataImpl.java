@@ -21,7 +21,8 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 	private List<XPDFTargetComponent> containerData;
 	private XPDFBeamData beamData;
 	private XPDFAbsorptionMaps absorptionCorrectionMaps;
-
+	private XPDFDetector tect;
+	
 	/**
 	 * Empty constructor.
 	 */
@@ -30,6 +31,7 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 		containerData = new ArrayList<XPDFTargetComponent>();
 		beamData = null;
 		absorptionCorrectionMaps = null;
+		tect = null;
 	}
 	
 	/**
@@ -46,6 +48,7 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 		
 		this.beamData = (inMeta.beamData != null) ? new XPDFBeamData(inMeta.beamData) : null;
 		this.absorptionCorrectionMaps = (inMeta.absorptionCorrectionMaps != null) ? new XPDFAbsorptionMaps(inMeta.absorptionCorrectionMaps) : null;
+		this.tect = (inMeta.tect != null) ? new XPDFDetector(inMeta.tect) : null;
 	}
 	
 	/**
@@ -232,6 +235,20 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 		for (XPDFTargetComponent container : containerData)
 			formList.add(container.getForm());
 		return formList;
+	}
+
+	/**
+	 * Setter for the detector object.
+	 * @param inTect
+	 * 				the detector to be assigned.
+	 */
+	public void setDetector(XPDFDetector inTect) {
+		tect = inTect;
+	}
+	
+	@Override
+	public XPDFDetector getDetector() {
+		return tect;
 	}
 	
 

@@ -233,6 +233,21 @@ public class XPDFTargetComponent {
 	}
 
 	/**
+	 * Returns the number density of the element with atomic number z.
+	 * <p>
+	 * Given an atomic number, <code>z</code>, this method returns the number
+	 * density of that element within this component. If the component contains
+	 * none of that element, then the number density therein is necessarily
+	 * zero. Pass through to <code>XPDFSubstance.getNumberDensity(int)</code>.
+	 * @param z
+	 * 			the atomic number to query the density of.
+	 * @return the number density in 1/Å³
+	 */
+	public double getNumberDensity(Integer z) {
+		return form.getSubstance().getNumberDensity(z);
+	}
+
+	/**
 	 * Returns the g0-1 factor for the material that makes up the component.
 	 * @return g0-1
 	 */

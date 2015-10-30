@@ -179,4 +179,19 @@ public class XPDFSubstance {
 				microMassDensity == inSubstance.microMassDensity &&
 				packingFraction == inSubstance.packingFraction;
 	}
+
+	/**
+	 * Returns the number density of the element with atomic number z.
+	 * <p>
+	 * Given an atomic number, <code>z</code>, this method returns the number
+	 * density of that element within this component. If the component contains
+	 * none of that element, then the number density therein is necessarily
+	 * zero.
+	 * @param z
+	 * 			the atomic number to query the density of.
+	 * @return the number density in 1/Å³
+	 */
+	public double getNumberDensity(Integer z) {
+		return getNumberDensity()*this.materialComposition.atomFraction(z);
+	}
 }

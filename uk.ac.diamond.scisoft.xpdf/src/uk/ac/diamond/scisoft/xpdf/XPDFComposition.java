@@ -270,6 +270,26 @@ public class XPDFComposition {
 		return sameAtoms;
 	}
 
+	/**
+	 * Returns the fraction of atoms with in the compound with atomic number z.
+	 * <p>
+	 * Given an atomic number, z, return the fraction of atoms are of this
+	 * element. If z is not part of the composition, then return 0. 
+	 * @param z
+	 * 			the atomic number to be queried.
+	 * @return the fraction of atoms with this atomic number.
+	 */
+	public double atomFraction(int z) {
+		if (atomCount.containsKey(z)) {
+			int num = atomCount.get(z);
+			int den = 0;
+			for (int nZ : atomCount.values())
+				den += nZ;
+			return num/(double) den;
+		} else 
+			return 0.0;
+	}
+
 	
 }
 

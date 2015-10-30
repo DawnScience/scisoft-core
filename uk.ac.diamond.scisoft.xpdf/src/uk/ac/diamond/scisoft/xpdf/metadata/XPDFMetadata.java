@@ -102,4 +102,10 @@ public interface XPDFMetadata extends MetadataType {
 	 * @return The object describing the detector used in the experiment. 
 	 */
 	XPDFDetector getDetector();
+	
+	/**
+	 * Returns the absorption and detector transmission corrected sample fluorescence. 
+	 * @return the dataset containing the total sample fluorescence.
+	 */
+	Dataset getSampleFluorescence(Dataset delta, Dataset gamma);
 }

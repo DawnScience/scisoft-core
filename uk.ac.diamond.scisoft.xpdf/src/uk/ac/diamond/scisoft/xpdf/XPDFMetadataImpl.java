@@ -1,11 +1,13 @@
 package uk.ac.diamond.scisoft.xpdf;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
@@ -170,8 +172,7 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 	 * ordered in the list of containers, with the sample appended in position 0.  
 	 */
 	@Override
-	public XPDFAbsorptionMaps getAbsorptionMaps(
-			Dataset delta, Dataset gamma) {
+	public XPDFAbsorptionMaps getAbsorptionMaps(Dataset delta, Dataset gamma) {
 		// The intention is to be able to recall cached maps, if these are set 
 		// in the metadata. They are not, yet, so press on with the direct
 		// calculations. The map uses a pair of integers in a string as an
@@ -249,6 +250,59 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 	@Override
 	public XPDFDetector getDetector() {
 		return tect;
+	}
+
+	@Override
+	public Dataset getSampleFluorescence(Dataset gamma, Dataset delta) {
+		Dataset totalSampleFluorescence = DoubleDataset.zeros(gamma);
+		List<XPDFComponentGeometry> attenuators = new ArrayList<XPDFComponentGeometry>();
+		List<Double> attenuationsIn = new ArrayList<Double>(),
+				attenuationsOut = new ArrayList<Double>();
+		
+		List<Double> fluorescentEnergies = new ArrayList<Double>();
+		List<Double> fluorescentXSections = new ArrayList<Double>();
+		List<Integer> fluorescentAtomicNumbers = new ArrayList<Integer>();
+		// TODO: xraylib fluorescence lines
+		String chemicalFormula = sampleData.getForm().getSubstance().getMaterialName();
+		if (chemicalFormula.equals("CeO2")) {
+			fluorescentEnergies = Arrays.asList(34.7196, 34.2788, 39.2576, 4.8401, 5.2629);
+			fluorescentXSections = Arrays.asList(444.94994401, 243.00829748, 87.69485581, 48.11886857, 28.32794357);
+			fluorescentAtomicNumbers = Arrays.asList(58, 58, 58, 58, 58);
+		} else if (chemicalFormula.equals("BaTiO2")) {
+			fluorescentEnergies = Arrays.asList(32.1936, 31.817, 36.3784, 4.4663, 4.8275);
+			fluorescentXSections = Arrays.asList(388.27213844, 210.42217958, 75.39646264, 37.42569601, 21.92040699);			fluorescentAtomicNumbers = Arrays.asList(58, 58, 58, 58, 58);
+			fluorescentAtomicNumbers = Arrays.asList(56, 56, 56, 56, 56);
+		} else if (chemicalFormula.equals("W")) {
+			fluorescentEnergies = Arrays.asList(59.3182, 57.981, 67.244, 8.3976, 9.6724);
+			fluorescentXSections = Arrays.asList(1019.37506384, 586.69404138, 219.28240133, 239.26301778, 156.7324558);				fluorescentAtomicNumbers = Arrays.asList(58, 58, 58, 58, 58);
+			fluorescentAtomicNumbers = Arrays.asList(74, 74, 74, 74, 74);
+		} else if (chemicalFormula.equals("Ni")) {
+			fluorescentEnergies = Arrays.asList(7.4781);
+			fluorescentXSections = Arrays.asList(12.68440462);
+			fluorescentAtomicNumbers = Arrays.asList(28);
+		} else {
+			fluorescentEnergies.clear();
+			fluorescentXSections.clear();
+		}
+		
+		
+		
+		
+		
+		XPDFCoordinates coords = new XPDFCoordinates();
+		coords.setGammaDelta(gamma, delta);
+		
+		for (int iFluor = 0; iFluor < fluorescentEnergies.size(); iFluor++) {
+			for (XPDFComponentForm componentForm : this.getFormList()) {
+				attenuators.add(componentForm.getGeom());
+				attenuationsIn.add(componentForm.getSubstance().getAttenuationCoefficient(beamData.getBeamEnergy()));
+				attenuationsOut.add(componentForm.getSubstance().getAttenuationCoefficient(fluorescentEnergies.get(iFluor)));
+			}
+			Dataset oneLineFluorescence = sampleData.getForm().getGeom().calculateFluorescence(gamma, delta, attenuators, attenuationsIn, attenuationsOut, beamData, true, true);
+			oneLineFluorescence.imultiply(fluorescentXSections.get(iFluor)*sampleData.getNumberDensity(fluorescentAtomicNumbers.get(iFluor)));
+			totalSampleFluorescence.iadd(tect.applyTransmissionCorrection(oneLineFluorescence, coords.getTwoTheta(), beamData.getBeamEnergy()));
+		}
+		return totalSampleFluorescence;
 	}
 	
 

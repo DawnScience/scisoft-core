@@ -22,6 +22,8 @@ public class XPDFDefineDetectorOperation extends XPDFInsertXMetadataOperation<XP
 		// TODO: Get from the Model
 		tect.setThickness(0.5);
 		
+		theXPDFMetadata.setDetector(tect);
+		
 		input.setMetadata(theXPDFMetadata);
 		
 		return new OperationData(input);

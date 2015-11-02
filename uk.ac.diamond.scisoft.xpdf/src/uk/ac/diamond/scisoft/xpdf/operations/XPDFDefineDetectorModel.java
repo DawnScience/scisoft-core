@@ -13,6 +13,8 @@ public class XPDFDefineDetectorModel extends AbstractOperationModel {
 	private double density = 4.51;
 	@OperationModelField(hint="Enter the detector thickness",label = "Detector Thickness (mm)" )
 	private double thickness = 0.5;
+	@OperationModelField(hint="Enter the solid angle subtended by the detector",label = "Solid Angle (sr)" )
+	private double solidAngle = 0.1;
 
 	public String getDetectorName() {
 		return detectorName;
@@ -37,6 +39,12 @@ public class XPDFDefineDetectorModel extends AbstractOperationModel {
 	}
 	public void setThickness(double thickness) {
 		firePropertyChange("thickness", this.thickness, this.thickness = thickness);
+	}
+	public double getSolidAngle() {
+		return solidAngle;
+	}
+	public void setSolidAngle(double solidAngle) {
+		firePropertyChange("solidAngle", this.solidAngle, this.solidAngle = solidAngle);
 	}
 
 }

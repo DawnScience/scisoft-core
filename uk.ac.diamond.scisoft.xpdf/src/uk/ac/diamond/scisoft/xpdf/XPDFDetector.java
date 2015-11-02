@@ -16,6 +16,7 @@ public class XPDFDetector {
 
 	private XPDFSubstance substance;
 	private double thickness;
+	private double solidAngleSubtended;
 	
 	/**
 	 * Default constructor.
@@ -27,6 +28,7 @@ public class XPDFDetector {
 	public XPDFDetector(XPDFDetector inTect) {
 		this.substance = (inTect.substance != null) ? new XPDFSubstance(inTect.substance) : null;
 		this.thickness = inTect.thickness;
+		this.solidAngleSubtended = inTect.solidAngleSubtended;
 	}
 
 	/**
@@ -71,4 +73,13 @@ public class XPDFDetector {
 	public void setThickness(double thickness) {
 		this.thickness = thickness;
 	}
+
+	public double getSolidAngle() {
+		return solidAngleSubtended;
+	}
+
+	public void setSolidAngle(double solidAngleSubtended) {
+		this.solidAngleSubtended = solidAngleSubtended;
+	}
+
 }

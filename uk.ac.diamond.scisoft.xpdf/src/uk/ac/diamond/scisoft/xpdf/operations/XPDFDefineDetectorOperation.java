@@ -17,10 +17,9 @@ public class XPDFDefineDetectorOperation extends XPDFInsertXMetadataOperation<XP
 		
 		XPDFMetadataImpl theXPDFMetadata = getAndRemoveXPDFMetadata(input);
 		XPDFDetector tect = new XPDFDetector();
-		// TODO: Get from the Model
 		tect.setSubstance(new XPDFSubstance(model.getDetectorName(), model.getDetectorMaterial(), model.getDensity(), 1.0));
-		// TODO: Get from the Model
-		tect.setThickness(0.5);
+		tect.setThickness(model.getThickness());
+		tect.setSolidAngle(model.getSolidAngle());
 		
 		theXPDFMetadata.setDetector(tect);
 		

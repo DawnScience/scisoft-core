@@ -78,10 +78,10 @@ public class XPDFMetadataTest extends TestCase {
 			delta.set(delta1D.getDouble(i), i, 0);
 		Dataset gamma = DoubleDataset.zeros(delta);
 		
-		Dataset fluor = meta.getSampleFluorescence(delta, gamma);
+		Dataset fluor = meta.getSampleFluorescence(gamma, delta);
 		Dataset squaredDiff = Maths.square(Maths.subtract(Maths.divide(fluor, fluorExp), 1));
 		double rmsError = Math.sqrt((double) squaredDiff.mean());
-		double maxError = 2e-1;
+		double maxError = 1e-2;
 		assertTrue("Too large an error in ceria total fluorescence, " + rmsError, rmsError < maxError);
 	}
 	

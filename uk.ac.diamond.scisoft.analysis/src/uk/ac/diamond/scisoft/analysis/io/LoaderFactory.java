@@ -163,6 +163,8 @@ public class LoaderFactory {
 		    registerLoader("msk",  Fit2DMaskLoader.class);
 		    registerLoader("mib", MerlinLoader.class);
 		    registerLoader("bmp", BitmapLoader.class);
+		    registerLoader("spe", SpeLoader.class);
+		    registerLoader("xmso", XMSOLoader.class);
 
 		    registerUnzip("gz",  GZIPInputStream.class);
 		    registerUnzip("zip", ZipInputStream.class);

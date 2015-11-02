@@ -11,4 +11,5 @@ Import-Package: org.eclipse.dawnsci.analysis.api.dataset,
  org.eclipse.dawnsci.analysis.dataset.impl,
  org.eclipse.dawnsci.analysis.dataset.metadata,
  uk.ac.diamond.scisoft.analysis.io,
- uk.ac.diamond.scisoft.analysis.processing.operations.utils
+ uk.ac.diamond.scisoft.analysis.processing.operations.utils,
+ uk.ac.diamond.scisoft.xpdf

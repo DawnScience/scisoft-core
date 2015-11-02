@@ -300,11 +300,15 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 				attenuationsOut.add(componentForm.getSubstance().getAttenuationCoefficient(fluorescentEnergies.get(iFluor)));
 			}
 			Dataset oneLineFluorescence = sampleData.getForm().getGeom().calculateFluorescence(gamma, delta, attenuators, attenuationsIn, attenuationsOut, beamData, true, true);
-			oneLineFluorescence.imultiply(fluorescentXSections.get(iFluor)*sampleData.getNumberDensity(fluorescentAtomicNumbers.get(iFluor)));
+			double lineXSection = fluorescentXSections.get(iFluor);
+			double lineNumberDensity = sampleData.getNumberDensity(fluorescentAtomicNumbers.get(iFluor));
+//			oneLineFluorescence.imultiply(fluorescentXSections.get(iFluor)*sampleData.getNumberDensity(fluorescentAtomicNumbers.get(iFluor)));
+			oneLineFluorescence.imultiply(lineXSection * lineNumberDensity);
 			Dataset detectorCorrectedOLF = tect.applyTransmissionCorrection(oneLineFluorescence, coords.getTwoTheta(), fluorescentEnergies.get(iFluor));
 //			totalSampleFluorescence.iadd(tect.applyTransmissionCorrection(oneLineFluorescence, coords.getTwoTheta(), beamData.getBeamEnergy()));
 			totalSampleFluorescence.iadd(detectorCorrectedOLF);
 		}
+		totalSampleFluorescence.imultiply(tect.getSolidAngle());
 		return totalSampleFluorescence.squeeze();
 	}
 	

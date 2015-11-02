@@ -255,14 +255,12 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 	@Override
 	public Dataset getSampleFluorescence(Dataset gamma, Dataset delta) {
 		Dataset totalSampleFluorescence = DoubleDataset.zeros(gamma);
-		List<XPDFComponentGeometry> attenuators = new ArrayList<XPDFComponentGeometry>();
-		List<Double> attenuationsIn = new ArrayList<Double>(),
-				attenuationsOut = new ArrayList<Double>();
 		
 		List<Double> fluorescentEnergies = new ArrayList<Double>();
 		List<Double> fluorescentXSections = new ArrayList<Double>();
 		List<Integer> fluorescentAtomicNumbers = new ArrayList<Integer>();
 		// TODO: xraylib fluorescence lines
+		// Beginning of hard-coded data
 		String chemicalFormula = sampleData.getForm().getSubstance().getMaterialName();
 		if (chemicalFormula.equals("CeO2")) {
 			fluorescentEnergies = Arrays.asList(34.7196, 34.2788, 39.2576, 4.8401, 5.2629);
@@ -270,11 +268,11 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 			fluorescentAtomicNumbers = Arrays.asList(58, 58, 58, 58, 58);
 		} else if (chemicalFormula.equals("BaTiO2")) {
 			fluorescentEnergies = Arrays.asList(32.1936, 31.817, 36.3784, 4.4663, 4.8275);
-			fluorescentXSections = Arrays.asList(388.27213844, 210.42217958, 75.39646264, 37.42569601, 21.92040699);			fluorescentAtomicNumbers = Arrays.asList(58, 58, 58, 58, 58);
+			fluorescentXSections = Arrays.asList(388.27213844, 210.42217958, 75.39646264, 37.42569601, 21.92040699);
 			fluorescentAtomicNumbers = Arrays.asList(56, 56, 56, 56, 56);
 		} else if (chemicalFormula.equals("W")) {
 			fluorescentEnergies = Arrays.asList(59.3182, 57.981, 67.244, 8.3976, 9.6724);
-			fluorescentXSections = Arrays.asList(1019.37506384, 586.69404138, 219.28240133, 239.26301778, 156.7324558);				fluorescentAtomicNumbers = Arrays.asList(58, 58, 58, 58, 58);
+			fluorescentXSections = Arrays.asList(1019.37506384, 586.69404138, 219.28240133, 239.26301778, 156.7324558);
 			fluorescentAtomicNumbers = Arrays.asList(74, 74, 74, 74, 74);
 		} else if (chemicalFormula.equals("Ni")) {
 			fluorescentEnergies = Arrays.asList(7.4781);
@@ -285,7 +283,7 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 			fluorescentXSections.clear();
 		}
 		
-		
+		// End of hard-coded data
 		
 		
 		
@@ -293,6 +291,9 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 		coords.setGammaDelta(gamma, delta);
 		
 		for (int iFluor = 0; iFluor < fluorescentEnergies.size(); iFluor++) {
+			List<XPDFComponentGeometry> attenuators = new ArrayList<XPDFComponentGeometry>();
+			List<Double> attenuationsIn = new ArrayList<Double>(),
+					attenuationsOut = new ArrayList<Double>();
 			for (XPDFComponentForm componentForm : this.getFormList()) {
 				attenuators.add(componentForm.getGeom());
 				attenuationsIn.add(componentForm.getSubstance().getAttenuationCoefficient(beamData.getBeamEnergy()));
@@ -300,9 +301,11 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 			}
 			Dataset oneLineFluorescence = sampleData.getForm().getGeom().calculateFluorescence(gamma, delta, attenuators, attenuationsIn, attenuationsOut, beamData, true, true);
 			oneLineFluorescence.imultiply(fluorescentXSections.get(iFluor)*sampleData.getNumberDensity(fluorescentAtomicNumbers.get(iFluor)));
-			totalSampleFluorescence.iadd(tect.applyTransmissionCorrection(oneLineFluorescence, coords.getTwoTheta(), beamData.getBeamEnergy()));
+			Dataset detectorCorrectedOLF = tect.applyTransmissionCorrection(oneLineFluorescence, coords.getTwoTheta(), fluorescentEnergies.get(iFluor));
+//			totalSampleFluorescence.iadd(tect.applyTransmissionCorrection(oneLineFluorescence, coords.getTwoTheta(), beamData.getBeamEnergy()));
+			totalSampleFluorescence.iadd(detectorCorrectedOLF);
 		}
-		return totalSampleFluorescence;
+		return totalSampleFluorescence.squeeze();
 	}
 	
 

@@ -137,6 +137,7 @@ public class LoaderFactory {
 		    registerLoader("hdf5", HDF5Loader.class);
 		    registerLoader("hd5",  HDF5Loader.class);
 		    registerLoader("mat",  HDF5Loader.class);
+		    registerLoader("nc",  HDF5Loader.class);
 		    
 		    registerLoader("tif",  PilatusTiffLoader.class);
 		    registerLoader("png",  PNGLoader.class);

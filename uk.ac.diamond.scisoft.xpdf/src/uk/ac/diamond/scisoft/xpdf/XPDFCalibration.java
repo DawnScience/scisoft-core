@@ -382,22 +382,26 @@ public class XPDFCalibration {
 		
 		// fluorescence correction
 		List<Dataset> fluorescenceCorrected = new ArrayList<Dataset>();
-		for (Dataset targetComponent : backgroundSubtracted) {
-			Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.reshape(targetComponent.getSize())));
-			if (propagateErrors && targetComponent.getError() != null)
-				if (sampleFluorescence.getError() != null)
-					fluorescenceCorrectedData.setError(
-							Maths.sqrt(
-									Maths.add(
-											Maths.square(targetComponent.getError()),
-											Maths.square(sampleFluorescence.getError())
-											)
-									)
-							);
-				else
-					fluorescenceCorrectedData.setError(targetComponent.getError());
-			fluorescenceCorrected.add(fluorescenceCorrectedData);
-		}
+//		for (Dataset targetComponent : backgroundSubtracted) {
+		// Only correct fluorescence in the sample itself
+		Dataset targetComponent = backgroundSubtracted.get(0);
+		
+		Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.reshape(targetComponent.getSize())));
+		if (propagateErrors && targetComponent.getError() != null)
+			if (sampleFluorescence.getError() != null)
+				fluorescenceCorrectedData.setError(
+						Maths.sqrt(
+								Maths.add(
+										Maths.square(targetComponent.getError()),
+										Maths.square(sampleFluorescence.getError())
+										)
+								)
+						);
+			else
+				fluorescenceCorrectedData.setError(targetComponent.getError());
+		fluorescenceCorrected.add(fluorescenceCorrectedData);
+		for (int iContainer = 1; iContainer < backgroundSubtracted.size(); iContainer++)
+			fluorescenceCorrected.add(backgroundSubtracted.get(iContainer));
 		
 		Dataset absCor = null;
 		for (int i = 0; i < nIterations; i++)
@@ -420,8 +424,10 @@ public class XPDFCalibration {
 			final int smoothLength = (int) Math.floor(absCor.getSize()*fractionOfRange);
 			Dataset covolver = Maths.divide(DoubleDataset.ones(smoothLength), smoothLength);
 			Dataset smoothed = Signal.convolveForOverlap(absCor, covolver, new int[] {0});
-			Dataset difference = Maths.subtract(smoothed, sampleSelfScattering);
-			double absSummedDifference = Math.abs((double) Maths.multiply(difference, coords.getQ()).sum());
+			Dataset truncatedSelfScattering = sampleSelfScattering.getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
+			Dataset difference = Maths.subtract(smoothed, truncatedSelfScattering);
+			Dataset truncatedQ = coords.getQ().getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
+			double absSummedDifference = Math.abs((double) Maths.multiply(difference, truncatedQ).sum());
 			
 			if (absSummedDifference < minimalValue) {
 				minimalScale = scale;
@@ -430,6 +436,5 @@ public class XPDFCalibration {
 			
 		}
 		this.fluorescenceScale = minimalScale;
-//		this.fluorescenceScale = 3604.0;
 	}
 }

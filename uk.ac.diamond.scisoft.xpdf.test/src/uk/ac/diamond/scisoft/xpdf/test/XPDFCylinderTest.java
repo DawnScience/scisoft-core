@@ -258,43 +258,49 @@ public class XPDFCylinderTest extends TestCase {
 		attenuators.add(powder1mm);
 		attenuators.add(cap1mm);
 		
+		List<Dataset> lineFluorescence = new ArrayList<Dataset>();
+		for (int iLine = 0; iLine < ceriumLines.length; iLine++) {
 		
-		List<Double> muIn = new ArrayList<Double>();
-		muIn.add(ceria.getAttenuationCoefficient(beamData.getBeamEnergy()));
-		muIn.add(quartz.getAttenuationCoefficient(beamData.getBeamEnergy()));
-		
-		List<Double> muOut = new ArrayList<Double>();
-		muOut.add(ceria.getAttenuationCoefficient(ceriumLines[0]));
-		muOut.add(quartz.getAttenuationCoefficient(ceriumLines[1]));
-		
-		// Read the target data, and also the angles (in radians) to run
-		String dataPath = "/home/rkl37156/ceria_dean_data/testData/";
-		IDataHolder dh = null;
-		String fluorName = "ceria";
-		String fluorNumber = "1";
-		try {
-			dh = LoaderFactory.getData(dataPath+fluorName+ ".fluor" + fluorNumber + ".xy");
-		} catch (Exception e) {
-		}
-		Dataset delta1D = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_1").getSlice());
-		Dataset delta = new DoubleDataset(delta1D.getSize(), 1);
-		for (int i = 0; i<delta1D.getSize(); i++)
-			delta.set(delta1D.getDouble(i), i, 0);
-		Dataset gamma = DoubleDataset.zeros(delta);
+			List<Double> muIn = new ArrayList<Double>();
+			muIn.add(ceria.getAttenuationCoefficient(beamData.getBeamEnergy()));
+			muIn.add(quartz.getAttenuationCoefficient(beamData.getBeamEnergy()));
 
-		Dataset expected = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_2").getSlice());
+			List<Double> muOut = new ArrayList<Double>();
+			muOut.add(ceria.getAttenuationCoefficient(ceriumLines[iLine]));
+			muOut.add(quartz.getAttenuationCoefficient(ceriumLines[iLine]));
 		
-		Dataset ceriaFluor1 = powder1mm.calculateFluorescence(gamma, delta, attenuators, muIn, muOut, beamData, true, true);
+			// Read the target data, and also the angles (in radians) to run
+			String dataPath = "/home/rkl37156/ceria_dean_data/testData/";
+			IDataHolder dh = null;
+			String fluorName = "ceria";
+			String fluorNumber = ((Integer) (iLine+1)).toString();
+			try {
+				dh = LoaderFactory.getData(dataPath+fluorName+ ".fluor" + fluorNumber + ".xy");
+			} catch (Exception e) {
+			}
+			Dataset delta1D = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_1").getSlice());
+			Dataset delta = new DoubleDataset(delta1D.getSize(), 1);
+			for (int i = 0; i<delta1D.getSize(); i++)
+				delta.set(delta1D.getDouble(i), i, 0);
+			Dataset gamma = DoubleDataset.zeros(delta);
+
+			Dataset expected = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_2").getSlice());
+
+			Dataset ceriaFluor1 = powder1mm.calculateFluorescence(gamma, delta, attenuators, muIn, muOut, beamData, true, true);
+
+			Dataset error = Maths.divide(ceriaFluor1.squeeze(), expected);
+			error.isubtract(1);
+			error = Maths.square(error);
+			double sumError = (double) error.mean();
+			sumError = Math.sqrt(sumError);
+
+			assertTrue("Too large a difference, " + sumError + " between expected and calculated fluorescence for " + fluorName + " at " + ceriumLines[iLine] + "keV.",
+					sumError < 8e-2);
+			lineFluorescence.add(ceriaFluor1);
+		}
 		
-		Dataset error = Maths.divide(ceriaFluor1.squeeze(), expected);
-		error.isubtract(1);
-		error = Maths.square(error);
-		double sumError = (double) error.mean();
-		sumError = Math.sqrt(sumError);
 		
-		assertTrue("Too large a difference, " + sumError + " between expected and calculated fluorescence for " + fluorName + " at " + ceriumLines[0] + "keV.",
-				sumError < 1e-2);
+		
 	}
-	
 
 }

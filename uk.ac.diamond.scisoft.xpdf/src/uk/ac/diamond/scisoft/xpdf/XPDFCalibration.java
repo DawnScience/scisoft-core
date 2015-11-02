@@ -12,9 +12,11 @@ package uk.ac.diamond.scisoft.xpdf;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
 
 /**
  * A class for holding the information to calibrate the XPDF data.
@@ -33,6 +35,9 @@ public class XPDFCalibration {
 	private XPDFCoordinates coords;
 	private XPDFDetector tect;
 	private XPDFBeamData beamData;
+	private Dataset sampleFluorescence;
+	private double fluorescenceScale;
+	private Dataset sampleSelfScattering;
 	
 	/**
 	 * Empty constructor.
@@ -69,6 +74,8 @@ public class XPDFCalibration {
 		}
 		this.tect = (inCal.tect != null) ? new XPDFDetector(inCal.tect): null;
 		this.beamData = (inCal.beamData != null) ? new XPDFBeamData(inCal.beamData) : null;
+		this.sampleFluorescence = (inCal.sampleFluorescence != null) ? inCal.sampleFluorescence.clone() : null;
+		this.fluorescenceScale = inCal.fluorescenceScale;
 	}
 
 	/**
@@ -176,6 +183,14 @@ public class XPDFCalibration {
 		this.beamData = inBeam;
 	}
 	
+	public void setSampleFluorescence(Dataset sampleFluor) {
+		this.sampleFluorescence = sampleFluor;
+	}
+	
+	public void setSelfScattering(XPDFTargetComponent sample) {
+		this.sampleSelfScattering = sample.getSelfScattering(coords);
+	}
+	
 	/**
 	 * Iterates the calibration constant for five iterations.
 	 * <p>
@@ -190,10 +205,10 @@ public class XPDFCalibration {
 	 * </ul>
 	 * @return the absorption corrected data
 	 */
-	public Dataset iterate(boolean propagateErrors) {
+	private Dataset iterate(List<Dataset> fluorescenceCorrected, boolean propagateErrors) {
 		// Detector transmission correction
 		List<Dataset> deTran = new ArrayList<Dataset>();
-		for (Dataset componentTrace : backgroundSubtracted) {
+		for (Dataset componentTrace : fluorescenceCorrected) {
 			Dataset deTranData = tect.applyTransmissionCorrection(componentTrace, coords.getTwoTheta(), beamData.getBeamEnergy());
 			// Error propagation
 			if (propagateErrors && componentTrace.getError() != null)
@@ -351,10 +366,70 @@ public class XPDFCalibration {
 	}
 
 	public Dataset calibrate(int nIterations) {
-		// TODO Solid angle and fluorescence corrections
+		calibrateFluorescence(nIterations);
+		return iterateCalibrate(nIterations, true);
+	}
+	
+	private Dataset iterateCalibrate(int nIterations, boolean propagateErrors) {
+		// TODO: Solid angle correction do nothing
+		List<Dataset> solAng = new ArrayList<Dataset>();
+		for (Dataset targetComponent : backgroundSubtracted) {
+			Dataset solAngData = Maths.multiply(1.0, targetComponent);
+			if (propagateErrors && targetComponent.getError() != null)
+				solAngData.setError(targetComponent.getError());
+			solAng.add(solAngData);
+		}
+		
+		// fluorescence correction
+		List<Dataset> fluorescenceCorrected = new ArrayList<Dataset>();
+		for (Dataset targetComponent : backgroundSubtracted) {
+			Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.reshape(targetComponent.getSize())));
+			if (propagateErrors && targetComponent.getError() != null)
+				if (sampleFluorescence.getError() != null)
+					fluorescenceCorrectedData.setError(
+							Maths.sqrt(
+									Maths.add(
+											Maths.square(targetComponent.getError()),
+											Maths.square(sampleFluorescence.getError())
+											)
+									)
+							);
+				else
+					fluorescenceCorrectedData.setError(targetComponent.getError());
+			fluorescenceCorrected.add(fluorescenceCorrectedData);
+		}
+		
 		Dataset absCor = null;
 		for (int i = 0; i < nIterations; i++)
-			absCor = this.iterate(true);
+			absCor = this.iterate(fluorescenceCorrected, propagateErrors);
 		return absCor;
+	}
+	
+	private void calibrateFluorescence(int nIterations) {
+		if (this.sampleFluorescence == null) return;
+		
+		final double minScale = 1000, maxScale = 5000, stepScale = 150;
+		final double fractionOfRange = 1/5.0;
+		double minimalScale = minScale;
+		double minimalValue = Double.POSITIVE_INFINITY;
+		for (double scale = minScale; scale < maxScale; scale += stepScale) {
+			this.fluorescenceScale = scale;
+			Dataset absCor = this.iterateCalibrate(nIterations, false);
+			
+			// See how well the processed data matches the target
+			final int smoothLength = (int) Math.floor(absCor.getSize()*fractionOfRange);
+			Dataset covolver = Maths.divide(DoubleDataset.ones(smoothLength), smoothLength);
+			Dataset smoothed = Signal.convolveForOverlap(absCor, covolver, new int[] {0});
+			Dataset difference = Maths.subtract(smoothed, sampleSelfScattering);
+			double absSummedDifference = Math.abs((double) Maths.multiply(difference, coords.getQ()).sum());
+			
+			if (absSummedDifference < minimalValue) {
+				minimalScale = scale;
+				minimalValue = absSummedDifference;
+			}
+			
+		}
+		this.fluorescenceScale = minimalScale;
+//		this.fluorescenceScale = 3604.0;
 	}
 }

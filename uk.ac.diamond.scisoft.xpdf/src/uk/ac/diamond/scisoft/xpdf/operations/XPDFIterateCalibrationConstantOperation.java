@@ -37,6 +37,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 	
 	private XPDFAbsorptionMaps cachedAbsorptionMaps;
 	private boolean isCachedMapsSorted;
+	private Dataset cachedSampleFluorescence;
 	
 	protected OperationData process(IDataset input, IMonitor monitor)
 			throws OperationException {
@@ -87,7 +88,9 @@ public class XPDFIterateCalibrationConstantOperation extends
 		
 		// Set up the q² integrator class
 		theCalibration.setqSquaredIntegrator(new XPDFQSquaredIntegrator(coordinates));//twoTheta, theXPDFMetadata.getBeam()));
+		theCalibration.setCoordinates(coordinates);
 		
+		theCalibration.setSelfScattering(theXPDFMetadata.getSample());
 		theCalibration.setSelfScatteringDenominatorFromSample(theXPDFMetadata.getSample(), coordinates);
 		
 		
@@ -102,11 +105,11 @@ public class XPDFIterateCalibrationConstantOperation extends
 			}
 		}
 		
-		
+		theCalibration.setBeamData(theXPDFMetadata.getBeam());
+		theCalibration.setDetector(theXPDFMetadata.getDetector());
 //		theCalibration.setAbsorptionMaps(theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DoubleDataset.zeros(twoTheta.reshape(twoTheta.getSize(), 1))));
 		theCalibration.setAbsorptionMaps(localAbsMaps);
-		theCalibration.setCoordinates(coordinates);
-		theCalibration.setDetector(theXPDFMetadata.getDetector());
+		theCalibration.setSampleFluorescence(theXPDFMetadata.getSampleFluorescence(coordinates.getTwoTheta().reshape(coordinates.getTwoTheta().getSize(), 1), DoubleDataset.zeros(coordinates.getTwoTheta().reshape(coordinates.getTwoTheta().getSize(), 1))));
 		
 //		for (int i = 0; i < nIterations; i++) 
 //			absCor = theCalibration.iterate(true);

@@ -132,20 +132,31 @@ public class XPDFElectronCrossSections {
 							Maths.power(
 									photonEnergyRatio, 
 									breitDiracPower),
-							Maths.subtract(
+							Maths.add(
 									Maths.add(
 											photonEnergyRatio, 
 											Maths.divide(1, photonEnergyRatio)),
-									Maths.multiply(
-											2,
-											Maths.multiply(
-													Maths.square(Maths.sin(coordinates.getTwoTheta())),
-													Maths.square(Maths.sin(DoubleDataset.zeros(coordinates.getTwoTheta()))) // The azimuthal scattering angle is zero
-													)
-											)
+									Maths.add(
+											-1,
+											Maths.square(Maths.cos(coordinates.getTwoTheta()))
 									)
 							)
-					);								
+					)
+			);
+//							Maths.subtract(
+//									Maths.add(
+//											photonEnergyRatio, 
+//											Maths.divide(1, photonEnergyRatio)),
+//									Maths.multiply(
+//											2,
+//											Maths.multiply(
+//													Maths.square(Maths.sin(coordinates.getTwoTheta())),
+//													Maths.square(Maths.sin(DoubleDataset.zeros(coordinates.getTwoTheta()))) // The azimuthal scattering angle is zero
+//													)
+//											)
+//									)
+//							)
+//					);								
 		}
 		return this.kleinNishima;
 	}

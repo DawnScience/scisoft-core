@@ -6,7 +6,6 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
 import uk.ac.diamond.scisoft.xpdf.XPDFDetector;
 import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;

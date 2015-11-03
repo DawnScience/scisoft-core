@@ -231,6 +231,33 @@ public abstract class XPDFComponentGeometry {
 				getShape() == inGeometry.getShape();
 	}
 
+	/**
+	 * Calculates the fluorescence of an object.
+	 * <p>
+	 * Calculates the fluorescence of an object after passing through all the
+	 * listed attenuators in the given directions. The attenuators also
+	 * attenuate the incoming beam, which recapitulates the upstream absorption
+	 * maps calculation.  
+	 * @param gamma
+	 * 				horizontal scattering angles in radians.
+	 * @param delta
+	 * 				vertical scattering angle in radians.
+	 * @param attenuators
+	 * 					a list of the attenuator geometries to be considered.
+	 * @param attenuationsIn
+	 * 						the attenuation coefficients of the attenuator
+	 * 						materials at the beam energy. 
+	 * @param attenuationsOut
+	 * 						the attenuation coefficients of the attenuator
+	 * 						materials at the fluorescence energy.
+	 * @param beamData
+	 * 				properties of the inbound beam.
+	 * @param doIncomingAbsorption
+	 * 							perform the attenuation on the beam.
+	 * @param doOutgoingAbsorption
+	 * 							perform the attenuation on the fluorescence.
+	 * @return the fluorescence intensity as a function of angle
+	 */
 	public abstract Dataset calculateFluorescence(Dataset gamma, Dataset delta,
 			List<XPDFComponentGeometry> attenuators,
 			List<Double> attenuationsIn, List<Double> attenuationsOut,

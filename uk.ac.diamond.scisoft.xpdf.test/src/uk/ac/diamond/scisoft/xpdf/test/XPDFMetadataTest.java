@@ -22,6 +22,7 @@ import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 import junit.framework.TestCase;
 
+@SuppressWarnings("deprecation")
 public class XPDFMetadataTest extends TestCase {
 
 	public void testReorderContainers() {

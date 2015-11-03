@@ -29,6 +29,8 @@ public class XPDFSelfScatteringNormalisationOperation extends
 
 	protected OperationData process(IDataset absCor, IMonitor monitor) throws OperationException {
 		
+		XPDFOperationChecker.checkXPDFMetadata(this, absCor, true, false, false);
+		
 		IDataset soq = null;
 
 		XPDFMetadata theXPDFMetadata = absCor.getFirstMetadata(XPDFMetadata.class);
@@ -36,7 +38,7 @@ public class XPDFSelfScatteringNormalisationOperation extends
 		if (theXPDFMetadata.getSample() == null) throw new OperationException(this, "XPDF sample metadata not found.");
 		XPDFTargetComponent sample = theXPDFMetadata.getSample();
 		// Get the x variable
-		if (absCor.getFirstMetadata(AxesMetadata.class) == null) throw new OperationException(this, "XPDF axis data not found.");
+		if (absCor.getFirstMetadata(AxesMetadata.class) == null) throw new OperationException(this, "Axis metadata not found.");
 		XPDFCoordinates coords = new XPDFCoordinates(DatasetUtils.convertToDataset(absCor));
 		soq = Maths.divide(Maths.subtract(absCor, sample.getSelfScattering(coords)), sample.getFSquared(coords));
 		Dataset soqError = null;

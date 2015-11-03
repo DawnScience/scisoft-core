@@ -39,6 +39,7 @@ public class XPDFSubtractBackgroundOperation extends
 	protected OperationData process(IDataset input, IMonitor monitor)
 			throws OperationException {
 
+		XPDFOperationChecker.checkXPDFMetadata(this, input, false, true, false);
 		XPDFMetadata theXPDFMetadata =  null;
 		
 		IDataset process = new DoubleDataset(DatasetUtils.convertToDataset(input));
@@ -46,7 +47,6 @@ public class XPDFSubtractBackgroundOperation extends
 		copyMetadata(input, process);
 		
 		theXPDFMetadata = process.getFirstMetadata(XPDFMetadata.class);
-		if (theXPDFMetadata == null) throw new OperationException(this, "XPDF metadata not found.");
 		
 		if (theXPDFMetadata != null && theXPDFMetadata.getBeam() != null && theXPDFMetadata.getBeam().getTrace() != null) {
 			// Dataset trace, from the Sample metadata

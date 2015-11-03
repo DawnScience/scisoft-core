@@ -21,12 +21,10 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.XRegionProfileNormalize.DataType;
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
@@ -48,6 +46,8 @@ public class XPDFLorchFTOperation extends
 	
 	protected OperationData process(IDataset thSoq, IMonitor monitor) throws OperationException {
 	
+		XPDFOperationChecker.checkXPDFMetadata(this, thSoq, true, false, false);
+		
 		XPDFMetadata theXPDFMetadata = thSoq.getFirstMetadata(XPDFMetadata.class);
 		if (theXPDFMetadata == null) throw new OperationException(this, "XPDF metadata not found.");
 		if (theXPDFMetadata.getSample() == null) throw new OperationException(this, "XPDF sample metadata not found.");

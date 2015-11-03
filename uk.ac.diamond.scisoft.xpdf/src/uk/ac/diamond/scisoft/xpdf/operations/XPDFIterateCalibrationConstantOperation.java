@@ -42,6 +42,8 @@ public class XPDFIterateCalibrationConstantOperation extends
 	protected OperationData process(IDataset input, IMonitor monitor)
 			throws OperationException {
 
+		XPDFOperationChecker.checkXPDFMetadata(this, input, true, true, true);
+		
 		// The real XPDFIterateCalibrationConstantOperation starts here
 		
 		XPDFCalibration theCalibration = new XPDFCalibration();

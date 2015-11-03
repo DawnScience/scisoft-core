@@ -37,11 +37,11 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 	
 	protected OperationData process(IDataset soq, IMonitor monitor) throws OperationException {
 	Dataset thSoq = null;
-	
+
+	XPDFOperationChecker.checkXPDFMetadata(this, soq, true, false, false);
 	// Number density and g0-1 from the sample material.
 	XPDFMetadata theXPDFMetadata = soq.getFirstMetadata(XPDFMetadata.class);
-	if (theXPDFMetadata == null) throw new OperationException(this, "XPDF metadata not found");
-	if (theXPDFMetadata.getSample() == null) throw new OperationException(this, "XPDF sample metadata not found");
+
 	double numberDensity = theXPDFMetadata.getSample().getNumberDensity();
 	double g0minus1 = theXPDFMetadata.getSample().getG0Minus1();
 	

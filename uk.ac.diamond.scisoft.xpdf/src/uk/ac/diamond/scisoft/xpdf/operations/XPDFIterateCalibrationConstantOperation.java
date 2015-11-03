@@ -47,8 +47,8 @@ public class XPDFIterateCalibrationConstantOperation extends
 		XPDFCalibration theCalibration = new XPDFCalibration();
 		
 		int nIterations = model.getnIterations();
-		// The initial value of the calibration constant is 20
-		theCalibration.initializeCalibrationConstant(20.0);
+		// The initial value of the calibration constant is 1e-16
+		theCalibration.initializeCalibrationConstant(1e-16);
 		
 		Dataset absCor = null;
 		

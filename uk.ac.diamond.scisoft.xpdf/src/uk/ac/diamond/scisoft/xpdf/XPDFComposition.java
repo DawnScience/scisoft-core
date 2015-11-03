@@ -57,6 +57,7 @@ public class XPDFComposition {
 	/**
 	 * Chemical symbols of the elements.
 	 */
+	@SuppressWarnings("unused")
 	private static final String[] elementSymbol = { "n",
 		"H","He","Li","Be","B","C","N","O","F","Ne","Na","Mg","Al","Si",
         "P","S","Cl","Ar","K","Ca","Sc","Ti","V","Cr","Mn","Fe","Co",
@@ -70,6 +71,7 @@ public class XPDFComposition {
 	/**
 	 * English names of the elements.
 	 */
+	@SuppressWarnings("unused")
 	private static final String[] elementName = { "neutronium",
 		"Hydrogen","Helium","Lithium","Beryllium","Boron","Carbon",
         "Nitrogen","Oxygen","Fluorine","Neon","Sodium","Magnesium",

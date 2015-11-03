@@ -43,6 +43,7 @@ import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 public class XCOMElement {
 	
 	private static final int nEnergiesXCom = 80;
+	@SuppressWarnings("unused")
 	private int atomicNumber;
 	private double atomicMass;
 	private int nEdges;

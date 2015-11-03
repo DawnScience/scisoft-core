@@ -26,10 +26,6 @@ public class XPDFQSquaredIntegrator {
 
 	private Dataset q;
 	private XPDFElectronCrossSections eXSections;
-	//	static final double classicalElectronRadius = 2.8179403267e-15;//(27)
-	private static final double classicalElectronRadius = 1.0;
-	private static final double electronMasskeV = 510.998910;//(13)
-	private static final double breitDiracPower = 2.0;
 	
 	/**
 	 * Empty constructor.

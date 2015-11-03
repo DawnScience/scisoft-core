@@ -37,6 +37,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 	
 	private XPDFAbsorptionMaps cachedAbsorptionMaps;
 	private boolean isCachedMapsSorted;
+	@SuppressWarnings("unused")
 	private Dataset cachedSampleFluorescence;
 	
 	protected OperationData process(IDataset input, IMonitor monitor)

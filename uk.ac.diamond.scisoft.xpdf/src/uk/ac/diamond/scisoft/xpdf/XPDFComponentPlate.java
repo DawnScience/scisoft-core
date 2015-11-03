@@ -76,7 +76,7 @@ public class XPDFComponentPlate extends XPDFComponentGeometry {
 	public double getIlluminatedVolume(XPDFBeamData beamData) {
 		// Matching DK's python code, even though the dimensions are incorrect
 		// TODO: Multiply by another length
-		return beamData.getBeamHeight()*beamData.getBeamWidth();
+		return beamData.getBeamHeight()*beamData.getBeamWidth()*Math.abs(this.rInner-this.rOuter);
 	}
 
 	/**

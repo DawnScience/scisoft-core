@@ -412,7 +412,7 @@ public class XPDFCalibration {
 	private void calibrateFluorescence(int nIterations) {
 		if (this.sampleFluorescence == null) return;
 		
-		final double minScale = 1000, maxScale = 5000, stepScale = 150;
+		final double minScale = 1000, maxScale = 5000, nSteps = 150, stepScale = (maxScale-minScale)/nSteps;
 		final double fractionOfRange = 1/5.0;
 		double minimalScale = minScale;
 		double minimalValue = Double.POSITIVE_INFINITY;

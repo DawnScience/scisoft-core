@@ -104,7 +104,16 @@ public interface XPDFMetadata extends MetadataType {
 	XPDFDetector getDetector();
 	
 	/**
-	 * Returns the absorption and detector transmission corrected sample fluorescence. 
+	 * Returns the corrected sample fluorescence.
+	 * <p>
+	 * Given arrays of the vertical and horizontal scattering angles, this
+	 * function returns the fluorescence flux of the sample, corrected for
+	 * absorption by the surrounding containers and for the relative
+	 * transmission of the various energies of photon by the detector.
+	 * @param delta
+	 * 			Vertical scattering angle in radians.
+	 * @param gamma
+	 * 			Horizontal scattering angle in radians.
 	 * @return the dataset containing the total sample fluorescence.
 	 */
 	Dataset getSampleFluorescence(Dataset delta, Dataset gamma);

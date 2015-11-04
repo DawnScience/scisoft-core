@@ -21,7 +21,11 @@ public class XPDFLorchFTModel extends AbstractOperationModel {
 	private double rStep = 0.02;
 	@OperationModelField(hint="Enter the width of the Lorch Fourier filter", label="Lorch width")
 	private double lorchWidth = 0.2;
-
+	@OperationModelField(hint="Enter the maximum Q up to which to take the transform.", label="Maximum Q")
+	private double maxQ = Double.POSITIVE_INFINITY;
+	@OperationModelField(hint="Seek the next zero after Qmax?", label="Seek next zero?")
+	private boolean seekNextZero = true;
+	
 	public double getrMax() {
 		return rMax;
 	}
@@ -39,5 +43,17 @@ public class XPDFLorchFTModel extends AbstractOperationModel {
 	}
 	public void setLorchWidth(double lorchWidth) {
 		firePropertyChange("lorchWidth", this.lorchWidth, this.lorchWidth = lorchWidth);
+	}
+	public double getMaxQ() {
+		return maxQ;
+	}
+	public void setMaxQ(double maxQ) {
+		firePropertyChange("maxQ", this.maxQ, this.maxQ = maxQ);
+	}
+	public boolean isSeekNextZero() {
+		return seekNextZero;
+	}
+	public void setSeekNextZero(boolean seekNextZero) {
+		firePropertyChange("seekNextZero", this.seekNextZero, this.seekNextZero = seekNextZero);
 	}
 }

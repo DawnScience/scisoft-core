@@ -49,20 +49,36 @@ public class XPDFLorchFTOperation extends
 		XPDFOperationChecker.checkXPDFMetadata(this, thSoq, true, false, false);
 		
 		XPDFMetadata theXPDFMetadata = thSoq.getFirstMetadata(XPDFMetadata.class);
-		if (theXPDFMetadata == null) throw new OperationException(this, "XPDF metadata not found.");
-		if (theXPDFMetadata.getSample() == null) throw new OperationException(this, "XPDF sample metadata not found.");
+
 		// Number density and g0-1 from the sample material.
 		double numberDensity = theXPDFMetadata.getSample().getNumberDensity();
 		double g0minus1 = theXPDFMetadata.getSample().getG0Minus1();
-		
-		
-		Dataset q, r;
-		
+
 		XPDFCoordinates coordinates = new XPDFCoordinates(DatasetUtils.convertToDataset(thSoq));
-		q = coordinates.getQ();
+		Dataset q = coordinates.getQ();
+		// Apply a Q cut-off, if defined
+		int iCutoff = q.getSize()-1;
+		if (model.getMaxQ() < q.max().doubleValue()) {
+			// Find the point closest to the selected maximum Q value.
+			iCutoff= Maths.abs(Maths.subtract(q, model.getMaxQ())).minPos()[0];
+			if (model.isSeekNextZero()) {
+				// Find the next sign change. The minimum value of the array of
+				// numbers with the same value as the decrementing index
+				// counter, and the same sign as the data.
+				int iZeroCrossing = Maths.multiply(Maths.multiply(Maths.signum(thSoq).getSlice(new int[]{iCutoff}, new int[]{thSoq.getSize()}, new int[]{1}), DoubleDataset.createRange(q.getSize(), iCutoff, -1)), Math.signum(thSoq.getDouble(iCutoff-1))).minPos()[0];
+				// Otherwise, use the point closest to zero
+				if (iZeroCrossing == thSoq.getSize()-1-iCutoff) {
+					Dataset absVal = Maths.abs(thSoq.getSlice(new int[]{iCutoff}, new int[]{thSoq.getSize()}, new int[]{1})); 
+					iZeroCrossing = absVal.minPos()[0];
+				}
+				iCutoff += iZeroCrossing;
+			}
+		}	
 		
-		r = DoubleDataset.createRange(model.getrStep()/2, model.getrMax(), model.getrStep());
-		Dataset hofr = doLorchFT(DatasetUtils.convertToDataset(thSoq), q, r, model.getLorchWidth(), numberDensity);
+		
+		Dataset r = DoubleDataset.createRange(model.getrStep()/2, model.getrMax(), model.getrStep());
+		Dataset hofr = doLorchFT(DatasetUtils.convertToDataset(thSoq).getSliceView(new int[]{0}, new int[]{iCutoff}, new int[]{1}),
+					q.getSliceView(new int[]{0}, new int[]{iCutoff}, new int[]{1}), r, model.getLorchWidth(), numberDensity);
 		// Error propagation: through the Fourier transform
 		if (thSoq.getError() != null) {
 			// Prepare the Datasets to receive the transformed values. They all

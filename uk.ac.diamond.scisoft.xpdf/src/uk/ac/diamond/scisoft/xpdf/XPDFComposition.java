@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -290,6 +291,65 @@ public class XPDFComposition {
 			return num/(double) den;
 		} else 
 			return 0.0;
+	}
+
+	/**
+	 * Returns a list of data about the strongest x-ray fluorescences.
+	 * @param energy
+	 * 				energy of the exciting beam in keV.
+	 * @param nLines
+	 * 				the maximum number of lines to return.
+	 * @return the fluorescence data as a List of {@link XPDFFluorescentLine}s. 
+	 */
+	public List<XPDFFluorescentLine> getFluorescences(double energy, int nLines) {
+		// TODO: xraylib fluorescence lines
+		// Beginning of hard-coded data
+		List<XPDFFluorescentLine> fluorescences = new ArrayList<XPDFFluorescentLine>();
+
+		if (atomCount.keySet().size() == 2 && 
+				atomCount.containsKey(58) && atomCount.get(58) == 1 &&
+				atomCount.containsKey(8) && atomCount.get(8) == 2)
+			// ceria, CeO2
+			fluorescences = Arrays.asList(
+					new XPDFFluorescentLine(34.7196, 444.94994401, 58),
+					new XPDFFluorescentLine(34.2788, 243.00829748, 58),
+					new XPDFFluorescentLine(39.2576, 87.69485581, 58),
+					new XPDFFluorescentLine(4.8401, 48.11886857, 58),
+					new XPDFFluorescentLine(5.2629, 28.32794357, 58));
+
+		else if (atomCount.keySet().size() == 3 &&
+				atomCount.containsKey(56) && atomCount.get(56) == 1 &&
+				atomCount.containsKey(22) && atomCount.get(22) == 1 &&
+				atomCount.containsKey(8) && atomCount.get(8) == 3)
+			// barium titanate, BaTiO3
+			fluorescences = Arrays.asList(
+					new XPDFFluorescentLine(32.1936, 388.27213844, 56),
+					new XPDFFluorescentLine(31.817, 210.42217958, 56),
+					new XPDFFluorescentLine(36.378, 75.39646264, 56),
+					new XPDFFluorescentLine(4.4663, 37.42569601, 56),
+					new XPDFFluorescentLine(4.8275, 21.92040699, 56));
+
+		else if (atomCount.keySet().size() == 1 &&
+				 atomCount.containsKey(74))
+			// tungsten, W
+			fluorescences = Arrays.asList(
+					new XPDFFluorescentLine(59.3182, 1019.37506384, 74),
+					new XPDFFluorescentLine(57.981, 586.69404138, 74),
+					new XPDFFluorescentLine(67.244, 219.28240133, 74),
+					new XPDFFluorescentLine(8.3976, 239.26301778, 74),
+					new XPDFFluorescentLine(9.6724, 156.7324558, 74));
+
+		else if (atomCount.keySet().size() == 1 &&
+				atomCount.containsKey(28))
+			// nickel, Ni
+			fluorescences = Arrays.asList(
+					new XPDFFluorescentLine(7.4781, 12.68440462, 28));			
+
+		else
+			fluorescences.clear();
+
+		// end of hard-coded data
+		return fluorescences;
 	}
 
 	

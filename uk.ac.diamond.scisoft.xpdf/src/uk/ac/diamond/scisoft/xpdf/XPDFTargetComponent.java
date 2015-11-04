@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
+import java.util.List;
+
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
@@ -253,5 +255,27 @@ public class XPDFTargetComponent {
 	 */
 	public double getG0Minus1() {
 		return form.getSubstance().getG0Minus1();
+	}
+	
+	/**
+	 * Returns the fluorescence data for the 5 strongest fluorescent lines.
+	 * @param energy
+	 * 				energy of the exciting beam in keV.
+	 * @return the parameters of the fluorescences.
+	 */
+	public List<XPDFFluorescentLine> getFluorescences(double energy) {
+		return getFluorescences(energy, 5);
+	}
+
+	/**
+	 * Returns the fluorescence data for the 5 strongest fluorescent lines.
+	 * @param energy
+	 * 				energy of the exciting beam in keV.
+	 * @param nLines
+	 * 				the maximum number of fluorescent lines to return. 
+	 * @return the parameters of the fluorescences.
+	 */
+	private List<XPDFFluorescentLine> getFluorescences(double energy, int nLines) {
+		return form.getSubstance().getComposition().getFluorescences(energy, nLines);
 	}
 }

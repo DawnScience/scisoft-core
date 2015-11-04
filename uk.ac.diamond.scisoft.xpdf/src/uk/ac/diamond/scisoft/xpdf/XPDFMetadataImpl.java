@@ -1,3 +1,12 @@
+/*-
+ * Copyright 2015 Diamond Light Source Ltd.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package uk.ac.diamond.scisoft.xpdf;
 
 import java.util.ArrayList;
@@ -252,62 +261,33 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 		return tect;
 	}
 
+	/**
+	 * Returns the sample fluorescence.
+	 */
 	@Override
 	public Dataset getSampleFluorescence(Dataset gamma, Dataset delta) {
 		Dataset totalSampleFluorescence = DoubleDataset.zeros(gamma);
 		
-		List<Double> fluorescentEnergies = new ArrayList<Double>();
-		List<Double> fluorescentXSections = new ArrayList<Double>();
-		List<Integer> fluorescentAtomicNumbers = new ArrayList<Integer>();
-		// TODO: xraylib fluorescence lines
-		// Beginning of hard-coded data
-		String chemicalFormula = sampleData.getForm().getSubstance().getMaterialName();
-		if (chemicalFormula.equals("CeO2")) {
-			fluorescentEnergies = Arrays.asList(34.7196, 34.2788, 39.2576, 4.8401, 5.2629);
-			fluorescentXSections = Arrays.asList(444.94994401, 243.00829748, 87.69485581, 48.11886857, 28.32794357);
-			fluorescentAtomicNumbers = Arrays.asList(58, 58, 58, 58, 58);
-		} else if (chemicalFormula.equals("BaTiO2")) {
-			fluorescentEnergies = Arrays.asList(32.1936, 31.817, 36.3784, 4.4663, 4.8275);
-			fluorescentXSections = Arrays.asList(388.27213844, 210.42217958, 75.39646264, 37.42569601, 21.92040699);
-			fluorescentAtomicNumbers = Arrays.asList(56, 56, 56, 56, 56);
-		} else if (chemicalFormula.equals("W")) {
-			fluorescentEnergies = Arrays.asList(59.3182, 57.981, 67.244, 8.3976, 9.6724);
-			fluorescentXSections = Arrays.asList(1019.37506384, 586.69404138, 219.28240133, 239.26301778, 156.7324558);
-			fluorescentAtomicNumbers = Arrays.asList(74, 74, 74, 74, 74);
-		} else if (chemicalFormula.equals("Ni")) {
-			fluorescentEnergies = Arrays.asList(7.4781);
-			fluorescentXSections = Arrays.asList(12.68440462);
-			fluorescentAtomicNumbers = Arrays.asList(28);
-		} else {
-			fluorescentEnergies.clear();
-			fluorescentXSections.clear();
-		}
-		
-		// End of hard-coded data
-		
-		
-		
 		XPDFCoordinates coords = new XPDFCoordinates();
 		coords.setGammaDelta(gamma, delta);
 		
-		for (int iFluor = 0; iFluor < fluorescentEnergies.size(); iFluor++) {
+		for (XPDFFluorescentLine line : sampleData.getFluorescences(getBeam().getBeamEnergy())) {
 			List<XPDFComponentGeometry> attenuators = new ArrayList<XPDFComponentGeometry>();
 			List<Double> attenuationsIn = new ArrayList<Double>(),
 					attenuationsOut = new ArrayList<Double>();
 			for (XPDFComponentForm componentForm : this.getFormList()) {
 				attenuators.add(componentForm.getGeom());
 				attenuationsIn.add(componentForm.getSubstance().getAttenuationCoefficient(beamData.getBeamEnergy()));
-				attenuationsOut.add(componentForm.getSubstance().getAttenuationCoefficient(fluorescentEnergies.get(iFluor)));
+				attenuationsOut.add(componentForm.getSubstance().getAttenuationCoefficient(line.getEnergy()));
 			}
 			Dataset oneLineFluorescence = sampleData.getForm().getGeom().calculateFluorescence(gamma, delta, attenuators, attenuationsIn, attenuationsOut, beamData, true, true);
-			double lineXSection = fluorescentXSections.get(iFluor);
-			double lineNumberDensity = sampleData.getNumberDensity(fluorescentAtomicNumbers.get(iFluor));
-//			oneLineFluorescence.imultiply(fluorescentXSections.get(iFluor)*sampleData.getNumberDensity(fluorescentAtomicNumbers.get(iFluor)));
-			oneLineFluorescence.imultiply(lineXSection * lineNumberDensity);
-			Dataset detectorCorrectedOLF = tect.applyTransmissionCorrection(oneLineFluorescence, coords.getTwoTheta(), fluorescentEnergies.get(iFluor));
-//			totalSampleFluorescence.iadd(tect.applyTransmissionCorrection(oneLineFluorescence, coords.getTwoTheta(), beamData.getBeamEnergy()));
-			totalSampleFluorescence.iadd(detectorCorrectedOLF);
+			double lineXSection = line.getCrossSection();
+			double lineNumberDensity = sampleData.getNumberDensity(line.getFluorescentZ());
+			oneLineFluorescence.imultiply(lineXSection*lineNumberDensity);
+			Dataset detectorCorrectedOLF = tect.applyTransmissionCorrection(oneLineFluorescence, coords.getTwoTheta(), line.getEnergy());
+			totalSampleFluorescence.iadd(detectorCorrectedOLF);	
 		}
+		
 		totalSampleFluorescence.imultiply(tect.getSolidAngle());
 		return totalSampleFluorescence.squeeze();
 	}

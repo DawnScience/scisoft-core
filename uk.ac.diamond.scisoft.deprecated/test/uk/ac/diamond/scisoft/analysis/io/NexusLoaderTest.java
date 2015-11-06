@@ -16,9 +16,7 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.data.nexus.NexusUtils;
 import gda.data.nexus.extractor.NexusExtractor;
-import uk.ac.diamond.scisoft.analysis.TestUtils;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -34,9 +32,11 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.hdf5.nexus.NexusException;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFile;
+import org.eclipse.dawnsci.nexus.NexusUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.gda.util.OSUtils;
 
 /**

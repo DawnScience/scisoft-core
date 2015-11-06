@@ -16,7 +16,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.data.nexus.NexusUtils;
 import gda.data.nexus.tree.NexusTreeProvider;
 import gda.data.nexus.tree.NexusTreeWriter;
 
@@ -28,6 +27,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.hdf5.nexus.NexusException;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFile;
+import org.eclipse.dawnsci.nexus.NexusUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

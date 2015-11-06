@@ -1382,21 +1382,79 @@ def choose(a, choices, mode='raise'):
             raise ValueError, "mode is not one of raise, clip or wrap"
     return _dsutils.choose(a, choices, rf, cf)
 
+@_wrapin
+def _jatleast_1d(arrays):
+    res = []
+    for a in arrays:
+        a = __cvt_jobj(a, dtype=None, copy=False, force=True)
+        res.append(a.reshape(1) if a.getRank() == 0 else a)
+    return res
+
+@_wrapout
+def atleast_1d(*arrays):
+    '''Return list of datasets that are at least 1d'''
+    res = _jatleast_1d(arrays)
+    return res if len(res) > 1 else res[0]
+
+@_wrapin
+def _jatleast_2d(arrays):
+    res = []
+    for a in arrays:
+        a = __cvt_jobj(a, dtype=None, copy=False, force=True)
+        r = a.getRank()
+        if r == 0:
+            a = a.reshape(1, 1)
+        elif r == 1:
+            a = a.reshape(1, a.getSize())
+        res.append(a)
+    return res
+
+@_wrapout
+def atleast_2d(*arrays):
+    '''Return list of datasets that are at least 2d'''
+    res = _jatleast_2d(arrays)
+    return res if len(res) > 1 else res[0]
+
+@_wrapin
+def _jatleast_3d(arrays):
+    res = []
+    for a in arrays:
+        a = __cvt_jobj(a, dtype=None, copy=False, force=True)
+        r = a.getRank()
+        if r == 0:
+            a = a.reshape(1,1,1)
+        elif r == 1:
+            a = a.reshape(1, a.getSize(), 1)
+        elif r == 2:
+            a = a.reshape(list(a.getShape()) + [1])
+        res.append(a)
+    return res
+
+@_wrapout
+def atleast_3d(*arrays):
+    '''Return list of datasets that are at least 3d'''
+    res = _jatleast_3d(arrays)
+    return res if len(res) > 1 else res[0]
+
+
 @_wrap
 def concatenate(a, axis=0):
     return _dsutils.concatenate(toList(a), axis)
 
-@_wrap
+@_wrapout
 def vstack(tup):
-    return _dsutils.concatenate(toList(tup), 0)
+    arr = [atleast_2d(t)._jdataset() for t in tup ]
+    return _dsutils.concatenate(arr, 0)
 
-@_wrap
+@_wrapout
 def hstack(tup):
-    return _dsutils.concatenate(toList(tup), 1)
+    arr = _jatleast_1d(toList(tup))
+    return _dsutils.concatenate(arr, 0) if arr[0].getRank() == 1 else _dsutils.concatenate(arr, 1)
 
-@_wrap
+@_wrapout
 def dstack(tup):
-    return _dsutils.concatenate(toList(tup), 2)
+    arr = [atleast_3d(t)._jdataset() for t in tup ]
+    return _dsutils.concatenate(arr, 2)
 
 @_wrap
 def split(ary, indices_or_sections, axis=0):

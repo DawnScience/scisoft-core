@@ -389,6 +389,22 @@ def _isslice(rank, key):
             return True
     return False
 
+def _contains_ints_bools_newaxis(sequence):
+    if not isinstance(sequence, (tuple, list)):
+        return False
+    if len(sequence) == 0:
+        return False
+
+    for s in sequence:
+        if isinstance(s, _integerds) or isinstance(s, _booleands):
+            return True
+
+    for s in sequence:
+        if s is newaxis:
+            return True
+
+    return False
+
 def __cvt_jobj(obj, dtype=None, copy=True, force=False):
     '''Convert object to java object'''
     if isinstance(obj, ndarray):
@@ -1071,9 +1087,8 @@ class ndarray(object):
                     return self.__dataset.getByBoolean(key)
                 if isinstance(key, _integerds):
                     return self.__dataset.getBy1DIndex(key)
-                if isinstance(key, (tuple, list)):
-                    if len(key) > 0 and isinstance(key[0], _integerds):
-                        return self.__dataset.getByIndexes(key)
+                if _contains_ints_bools_newaxis(key):
+                    return self.__dataset.getByIndexes(key)
                 return self.__dataset.getObject(key)
     
             return _getslice(self.__dataset, key)
@@ -1095,9 +1110,8 @@ class ndarray(object):
                     return self.__dataset.setByBoolean(value, key)
                 if isinstance(key, _integerds):
                     return self.__dataset.setBy1DIndex(value, key)
-                if isinstance(key, (tuple, list)):
-                    if len(key) > 0 and isinstance(key[0], _integerds):
-                        return self.__dataset.setByIndexes(value, key)
+                if _contains_ints_bools_newaxis(key):
+                    return self.__dataset.setByIndexes(value, key)
                 return self.__dataset.set(value, key)
     
             _setslice(self.__dataset, value, key)

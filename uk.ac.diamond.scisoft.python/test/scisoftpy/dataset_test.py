@@ -873,6 +873,11 @@ class Test(unittest.TestCase):
         tm[np.array([[0, 1], [1, 1]]), np.array([[1, 1], [1, 0]]), :1] = -2.3
         self.checkitems([[[0., 2.], [-2.3, 12.]], [[-2.3, 30.], [-2.3, 56.]]], tm)
 
+        # fancy with booleans too
+        tm = np.array(self.mm)
+        d = tm[np.array([0, 1]), np.array([False, True]), :1]
+        self.checkitems([[6.], [42.]], d)
+
     def testSelect(self):
         print 'test select'
         tm = np.select([np.array([[[False, True], [True, False]], [[True, True], [False, False]]])], [np.array(self.mm)], -2.3)

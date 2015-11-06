@@ -94,6 +94,7 @@
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFDefineDetectorOperation"
+            icon="icons/xpdfdetector.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFDefineDetectorOperation"
             model="uk.ac.diamond.scisoft.xpdf.operations.XPDFDefineDetectorModel"
             name="XPDF Define Detector">

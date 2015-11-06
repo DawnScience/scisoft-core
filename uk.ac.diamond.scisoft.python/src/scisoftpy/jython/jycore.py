@@ -329,7 +329,16 @@ def _toslice(rank, key):
             if nk == 1:
                 key = key[0]
             elif nk > 1:
-                raise IndexError, "too many indices"
+                has_slice = False
+                for k in key:
+                    if isinstance(k, slice):
+                        if has_slice:
+                            raise IndexError, "too many slices"
+                        has_slice = True
+                    elif k is not Ellipsis and k is not newaxis:
+                        return False, key
+                return True, key
+
         if isinstance(key, slice) or key is Ellipsis:
             return True, key
         if isinstance(key, list):

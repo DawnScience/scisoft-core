@@ -232,6 +232,34 @@ public class NonPixelSplittingCacheTest extends AbstractPixelIntegrationTestBase
 
 	}
 	
+	@Test
+	public void testNonPixelSplittingLog() {
+		IDataset data = getData();
+		if (data == null) {
+			Assert.fail("Could not load test data");
+			return;
+		}
+		
+		IDiffractionMetadata meta = getDiffractionMetadata();
+		NonPixelSplittingIntegration npsi = new NonPixelSplittingIntegration(meta);
+		PixelIntegrationBean bean = new PixelIntegrationBean();
+		bean.setTo1D(true);
+		bean.setUsePixelSplitting(false);
+		bean.setLog(true);
+		IPixelIntegrationCache info = new PixelIntegrationCache(meta, bean);
+		List<Dataset> out = PixelIntegration.integrate(data,null,info);
+		out.toString();
+		
+		double max = out.get(1).max().doubleValue();
+		double min = out.get(1).min().doubleValue();
+		double maxq = out.get(0).max().doubleValue();
+		double minq = out.get(0).min().doubleValue();
+		Assert.assertEquals(326115.9612787033, max,0.00001);
+		Assert.assertEquals(-112.0, min,0.00001);
+		Assert.assertEquals(10.374358078708074, maxq,0.00001);
+		Assert.assertEquals(0.0017136262406146236, minq,0.00001);
+
+	}
 	
 	private double testWholeImageAzimuthal(IDataset data, IDataset mask, IPixelIntegrationCache info) {
 		long before = System.currentTimeMillis();

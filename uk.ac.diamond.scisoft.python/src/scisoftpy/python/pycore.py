@@ -149,6 +149,12 @@ select = _np.select
 
 choose = _np.choose
 
+atleast_1d = _np.atleast_1d
+
+atleast_2d = _np.atleast_2d
+
+atleast_3d = _np.atleast_3d
+
 concatenate = _np.concatenate
 
 vstack = _np.vstack

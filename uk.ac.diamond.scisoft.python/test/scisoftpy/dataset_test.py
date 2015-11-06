@@ -683,6 +683,24 @@ class Test(unittest.TestCase):
         print s
         self.assertEquals(s, (2,3,5))
 
+        print 'test newaxis'
+        dr = np.arange(15).reshape(3,5)
+        s = dr[np.newaxis,:,1:].shape
+        print s
+        self.assertEquals(s, (1,3,4))
+        s = dr[np.newaxis,...].shape
+        print s
+        self.assertEquals(s, (1,3,5))
+        s = dr[np.newaxis,...,np.newaxis].shape
+        print s
+        self.assertEquals(s, (1,3,5,1))
+        s = dr[...,np.newaxis].shape
+        print s
+        self.assertEquals(s, (3,5,1))
+        s = dr[:,np.newaxis,...,np.newaxis].shape
+        print s
+        self.assertEquals(s, (3,1,5,1))
+
     def testTake(self):
         print 'test take'
         ds = np.arange(16)
@@ -854,6 +872,11 @@ class Test(unittest.TestCase):
  
         tm[np.array([[0, 1], [1, 1]]), np.array([[1, 1], [1, 0]]), :1] = -2.3
         self.checkitems([[[0., 2.], [-2.3, 12.]], [[-2.3, 30.], [-2.3, 56.]]], tm)
+
+        # fancy with booleans too
+        tm = np.array(self.mm)
+        d = tm[np.array([0, 1]), np.array([False, True]), :1]
+        self.checkitems([[6.], [42.]], d)
 
     def testSelect(self):
         print 'test select'

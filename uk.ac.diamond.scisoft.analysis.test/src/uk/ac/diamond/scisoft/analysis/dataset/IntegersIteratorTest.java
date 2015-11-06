@@ -38,6 +38,7 @@ public class IntegersIteratorTest {
 		IntegerDataset s = new IntegerDataset(2, 3, 4);
 		IntegerDataset t = new IntegerDataset(2, 3, 4);
 		IntegerDataset u = new IntegerDataset(2, 3, 4);
+		IntegerDataset v = new IntegerDataset(1);
 
 		IntegersIterator iter;
 		int[] shape;
@@ -93,12 +94,32 @@ public class IntegersIteratorTest {
 		iter = new IntegersIterator(shape, s, t, new Slice(1,7,2));
 		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4, 3, 40, 50}, iter.getShape());
 
+		// check broadcasting
+		iter = new IntegersIterator(shape, s, t, v);
+		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4, 40, 50}, iter.getShape());
+
+		iter = new IntegersIterator(shape, s, v, u);
+		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4, 40, 50}, iter.getShape());
+
+		iter = new IntegersIterator(shape, v, t, u);
+		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4, 40, 50}, iter.getShape());
+
+		iter = new IntegersIterator(shape, s, v, v);
+		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4, 40, 50}, iter.getShape());
+
+		iter = new IntegersIterator(shape, v, t, v);
+		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4, 40, 50}, iter.getShape());
+
+		iter = new IntegersIterator(shape, v, v, u);
+		Assert.assertArrayEquals("Shape", new int[] {2, 3, 4, 40, 50}, iter.getShape());
+
 		// now 1D
 		shape = new int[] {10, 20, 30};
 		s = new IntegerDataset(new int[] {2, 5, 9}, null);
 		t = new IntegerDataset(new int[] {0, 5, 10, 15, 18, 19}, null);
 		iter = new IntegersIterator(true, shape, s, t, new Slice(1,7,2));
 		Assert.assertArrayEquals("Shape", new int[] {3, 6, 3}, iter.getShape());
+
 	}
 
 	@Test

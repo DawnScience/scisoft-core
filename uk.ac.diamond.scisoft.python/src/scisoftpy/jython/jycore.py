@@ -329,7 +329,16 @@ def _toslice(rank, key):
             if nk == 1:
                 key = key[0]
             elif nk > 1:
-                raise IndexError, "too many indices"
+                has_slice = False
+                for k in key:
+                    if isinstance(k, slice):
+                        if has_slice:
+                            raise IndexError, "too many slices"
+                        has_slice = True
+                    elif k is not Ellipsis and k is not newaxis:
+                        return False, key
+                return True, key
+
         if isinstance(key, slice) or key is Ellipsis:
             return True, key
         if isinstance(key, list):
@@ -378,6 +387,22 @@ def _isslice(rank, key):
     for k in key:
         if isinstance(k, slice) or k is Ellipsis or k is newaxis:
             return True
+    return False
+
+def _contains_ints_bools_newaxis(sequence):
+    if not isinstance(sequence, (tuple, list)):
+        return False
+    if len(sequence) == 0:
+        return False
+
+    for s in sequence:
+        if isinstance(s, _integerds) or isinstance(s, _booleands):
+            return True
+
+    for s in sequence:
+        if s is newaxis:
+            return True
+
     return False
 
 def __cvt_jobj(obj, dtype=None, copy=True, force=False):
@@ -1062,9 +1087,8 @@ class ndarray(object):
                     return self.__dataset.getByBoolean(key)
                 if isinstance(key, _integerds):
                     return self.__dataset.getBy1DIndex(key)
-                if isinstance(key, (tuple, list)):
-                    if len(key) > 0 and isinstance(key[0], _integerds):
-                        return self.__dataset.getByIndexes(key)
+                if _contains_ints_bools_newaxis(key):
+                    return self.__dataset.getByIndexes(key)
                 return self.__dataset.getObject(key)
     
             return _getslice(self.__dataset, key)
@@ -1086,9 +1110,8 @@ class ndarray(object):
                     return self.__dataset.setByBoolean(value, key)
                 if isinstance(key, _integerds):
                     return self.__dataset.setBy1DIndex(value, key)
-                if isinstance(key, (tuple, list)):
-                    if len(key) > 0 and isinstance(key[0], _integerds):
-                        return self.__dataset.setByIndexes(value, key)
+                if _contains_ints_bools_newaxis(key):
+                    return self.__dataset.setByIndexes(value, key)
                 return self.__dataset.set(value, key)
     
             _setslice(self.__dataset, value, key)
@@ -1382,21 +1405,79 @@ def choose(a, choices, mode='raise'):
             raise ValueError, "mode is not one of raise, clip or wrap"
     return _dsutils.choose(a, choices, rf, cf)
 
+@_wrapin
+def _jatleast_1d(arrays):
+    res = []
+    for a in arrays:
+        a = __cvt_jobj(a, dtype=None, copy=False, force=True)
+        res.append(a.reshape(1) if a.getRank() == 0 else a)
+    return res
+
+@_wrapout
+def atleast_1d(*arrays):
+    '''Return list of datasets that are at least 1d'''
+    res = _jatleast_1d(arrays)
+    return res if len(res) > 1 else res[0]
+
+@_wrapin
+def _jatleast_2d(arrays):
+    res = []
+    for a in arrays:
+        a = __cvt_jobj(a, dtype=None, copy=False, force=True)
+        r = a.getRank()
+        if r == 0:
+            a = a.reshape(1, 1)
+        elif r == 1:
+            a = a.reshape(1, a.getSize())
+        res.append(a)
+    return res
+
+@_wrapout
+def atleast_2d(*arrays):
+    '''Return list of datasets that are at least 2d'''
+    res = _jatleast_2d(arrays)
+    return res if len(res) > 1 else res[0]
+
+@_wrapin
+def _jatleast_3d(arrays):
+    res = []
+    for a in arrays:
+        a = __cvt_jobj(a, dtype=None, copy=False, force=True)
+        r = a.getRank()
+        if r == 0:
+            a = a.reshape(1,1,1)
+        elif r == 1:
+            a = a.reshape(1, a.getSize(), 1)
+        elif r == 2:
+            a = a.reshape(list(a.getShape()) + [1])
+        res.append(a)
+    return res
+
+@_wrapout
+def atleast_3d(*arrays):
+    '''Return list of datasets that are at least 3d'''
+    res = _jatleast_3d(arrays)
+    return res if len(res) > 1 else res[0]
+
+
 @_wrap
 def concatenate(a, axis=0):
     return _dsutils.concatenate(toList(a), axis)
 
-@_wrap
+@_wrapout
 def vstack(tup):
-    return _dsutils.concatenate(toList(tup), 0)
+    arr = [atleast_2d(t)._jdataset() for t in tup ]
+    return _dsutils.concatenate(arr, 0)
 
-@_wrap
+@_wrapout
 def hstack(tup):
-    return _dsutils.concatenate(toList(tup), 1)
+    arr = _jatleast_1d(toList(tup))
+    return _dsutils.concatenate(arr, 0) if arr[0].getRank() == 1 else _dsutils.concatenate(arr, 1)
 
-@_wrap
+@_wrapout
 def dstack(tup):
-    return _dsutils.concatenate(toList(tup), 2)
+    arr = [atleast_3d(t)._jdataset() for t in tup ]
+    return _dsutils.concatenate(arr, 2)
 
 @_wrap
 def split(ary, indices_or_sections, axis=0):

@@ -142,8 +142,8 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 	public double getXBinEdgeMax() {
 		if (bean.isAzimuthalIntegration()) {
 
-			double m = binEdgesRadial.get(bean.getNumberOfBinsRadial());
-			return bean.isLog() ? Math.log(m) : m;
+			return binEdgesRadial.get(bean.getNumberOfBinsRadial());
+			
 		}
 
 		return binEdgesAzimuthal.get(bean.getNumberOfBinsAzimuthal());
@@ -155,8 +155,8 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 	public double getXBinEdgeMin() {
 		
 		if (bean.isAzimuthalIntegration()) {
-			double m = binEdgesRadial.get(0);
-			return bean.isLog() ? Math.log(m) : m;
+			return binEdgesRadial.get(0);
+
 		}
 
 		return binEdgesAzimuthal.get(0);
@@ -167,8 +167,7 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 	public double getYBinEdgeMax() {
 		
 		if (!bean.isAzimuthalIntegration()) {
-			double m = binEdgesRadial.get(bean.getNumberOfBinsRadial());
-			return bean.isLog() ? Math.log(m) : m;
+			return binEdgesRadial.get(bean.getNumberOfBinsRadial());
 		}
 
 		return binEdgesAzimuthal.get(bean.getNumberOfBinsAzimuthal());
@@ -179,8 +178,7 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 	public double getYBinEdgeMin() {
 		
 		if (!bean.isAzimuthalIntegration()) {
-			double m = binEdgesRadial.get(0);
-			return bean.isLog() ? Math.log(m) : m;
+			return binEdgesRadial.get(0);
 		}
 		
 		return binEdgesAzimuthal.get(0);

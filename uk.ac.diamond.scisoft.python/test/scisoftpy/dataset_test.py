@@ -683,6 +683,24 @@ class Test(unittest.TestCase):
         print s
         self.assertEquals(s, (2,3,5))
 
+        print 'test newaxis'
+        dr = np.arange(15).reshape(3,5)
+        s = dr[np.newaxis,:,1:].shape
+        print s
+        self.assertEquals(s, (1,3,4))
+        s = dr[np.newaxis,...].shape
+        print s
+        self.assertEquals(s, (1,3,5))
+        s = dr[np.newaxis,...,np.newaxis].shape
+        print s
+        self.assertEquals(s, (1,3,5,1))
+        s = dr[...,np.newaxis].shape
+        print s
+        self.assertEquals(s, (3,5,1))
+        s = dr[:,np.newaxis,...,np.newaxis].shape
+        print s
+        self.assertEquals(s, (3,1,5,1))
+
     def testTake(self):
         print 'test take'
         ds = np.arange(16)

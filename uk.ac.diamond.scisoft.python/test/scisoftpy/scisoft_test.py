@@ -513,6 +513,39 @@ class Test(unittest.TestCase):
         UNDEF = -99.0
         self.assertAlmostEqual(UNDEF, np.interp(3.14, xp, fp, right=UNDEF), 5)
 
+    def testAtleast(self):
+        print 'Atleast testing'
+        self.checkitems([1.], np.atleast_1d(1.))
+        self.checkitems([[1.]], np.atleast_2d(1.))
+        self.checkitems([[[1.]]], np.atleast_3d(1.))
+
+        a = np.atleast_1d(1., [2, 3])
+        self.checkitems([1.], a[0])
+        self.checkitems([2,3], a[1])
+        a = np.atleast_2d(np.arange(2))
+        self.checkitems([[0, 1]], a)
+        a = np.atleast_3d(np.arange(2))
+        self.checkitems([[[0], [1]]], a)
+        a = np.atleast_3d(np.arange(6).reshape(3,2))
+        self.checkitems([[[0], [1]], [[2], [3]], [[4], [5]]], a)
+
+    def testStack(self):
+        print 'Stack testing'
+        self.checkitems([1,1,1], np.hstack(np.ones(3)))
+        self.checkitems([[1],[1],[1]], np.vstack(np.ones(3)))
+        self.checkitems([[[1,1,1]]], np.dstack(np.ones(3)))
+
+        a = np.array([1,2,3])
+        b = np.array([2,3,4])
+        self.checkitems([1,2,3,2,3,4], np.hstack((a, b)))
+        self.checkitems([[1,2], [2,3], [3,4]], np.hstack((a.reshape(3,1), b.reshape(3,1))))
+
+        self.checkitems([[1,2,3],[2,3,4]], np.vstack((a, b)))
+        self.checkitems([[1], [2], [3], [2], [3], [4]], np.vstack((a.reshape(3,1), b.reshape(3,1))))
+
+        self.checkitems([[[1,2], [2,3], [3,4]]], np.dstack((a, b)))
+        self.checkitems([[[1,2]], [[2,3]], [[3,4]]], np.dstack((a.reshape(3,1), b.reshape(3,1))))
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']

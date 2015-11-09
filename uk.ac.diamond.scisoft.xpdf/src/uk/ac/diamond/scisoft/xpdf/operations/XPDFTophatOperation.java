@@ -27,7 +27,7 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 /**
  * Subtract a top-hat convolution from the data.
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  * @since 2015-09-14
  *
  */

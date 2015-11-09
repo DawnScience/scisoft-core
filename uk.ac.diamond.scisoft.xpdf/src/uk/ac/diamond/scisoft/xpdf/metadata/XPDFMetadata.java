@@ -22,7 +22,7 @@ import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 
 /**
  * Interface for the metadata required by the XPDF processing pipeline.
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  *
  */
 public interface XPDFMetadata extends MetadataType {

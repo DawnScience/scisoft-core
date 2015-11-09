@@ -21,7 +21,7 @@ package uk.ac.diamond.scisoft.xpdf;
  * <p>
  * Contains neutral atom values only, indexed with H at 0 and Californium at 97
  *
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  * @since 2015-09-14
  *
  */

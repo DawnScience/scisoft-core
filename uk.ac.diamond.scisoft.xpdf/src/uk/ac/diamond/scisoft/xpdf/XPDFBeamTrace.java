@@ -15,7 +15,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 /**
  * Beam trace data for XPDF processing
  * 
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  * @since 2015-09-11
  *
  */

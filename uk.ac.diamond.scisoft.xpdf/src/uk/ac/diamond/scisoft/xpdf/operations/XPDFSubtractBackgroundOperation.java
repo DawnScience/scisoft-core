@@ -29,7 +29,7 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
  * <p>
  * Subtract the empty beam data from the sample data and from that of any
  * containers present. 
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  *
  */
 @Atomic

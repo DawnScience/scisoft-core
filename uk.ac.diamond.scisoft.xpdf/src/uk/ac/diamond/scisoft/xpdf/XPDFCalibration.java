@@ -18,7 +18,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 /**
  * A class for holding the information to calibrate the XPDF data.
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  * @since 2015-09-11
  */
 public class XPDFCalibration {

@@ -15,7 +15,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 /**
  * The properties of any component of the beam target, including both the
  * sample and it containers.
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  * @since 2015-09-14
  */
 public class XPDFTargetComponent {

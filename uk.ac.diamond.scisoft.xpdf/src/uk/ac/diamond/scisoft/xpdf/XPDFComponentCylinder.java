@@ -18,7 +18,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
  * The class for cylindrical components of the experimental target. This class
  * is <code>public</code> because it needs to be visible in the
  * uk...xpdf.operations package
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  * @since 2015-09-11
  *
  */

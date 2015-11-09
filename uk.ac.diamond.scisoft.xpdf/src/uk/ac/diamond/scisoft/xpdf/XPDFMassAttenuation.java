@@ -11,7 +11,7 @@ package uk.ac.diamond.scisoft.xpdf;
 
 /**
  * Calculates the mass attenuation for fixed I15-1 beam energies.
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  *
  */
 public final class XPDFMassAttenuation {

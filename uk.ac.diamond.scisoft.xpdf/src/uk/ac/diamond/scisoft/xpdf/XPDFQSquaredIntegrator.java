@@ -19,7 +19,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
  * Performs the q² integrals required to calculate total scattering, having had
  * the momentum transfer array and the beam energy set.
  * 
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  *
  */
 public class XPDFQSquaredIntegrator {

@@ -11,7 +11,7 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 /**
  * Insert any XPDF related metadata.
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  *
  * @param <T>
  * 			the Operation Model.

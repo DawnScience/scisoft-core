@@ -19,7 +19,7 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 /**
  * Apply self-scattering corrections to the data.
- * @author Timothy Spain (rkl37156) thimothy.spain@diamond.ac.uk
+ * @author Timothy Spain thimothy.spain@diamond.ac.uk
  * @since 2015-09-14
  *
  */

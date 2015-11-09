@@ -33,7 +33,7 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
  * Also apply the normalization to error data, if present.
  * </p>
  * 
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  * @since 2015-09-14
  *
  */

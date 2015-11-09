@@ -5,7 +5,7 @@ package uk.ac.diamond.scisoft.xpdf;
  * <p>
  * The NIST XCOM x-ray cross section data, as obtained from the I15-1 data
  * directory. 
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  * @since 2015-09-28
  */
 final class XCOMData {

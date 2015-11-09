@@ -22,7 +22,7 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
  */
 /**
  * Centralized calculation of the momentum transfer coordinate.
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  * @since 2015-09-14
  *
  */

@@ -31,7 +31,7 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxIntegr
  * Integrate a 2D image along one of its axes.
  * <p>
  * Sum an two dimensional image along a selected axis. Alternatively, calculate the average along that axis.
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  * @since 2015-10-14
  */
 public class ImageIntegration extends AbstractIntegrationOperation<ImageIntegrationModel> {

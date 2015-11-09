@@ -14,7 +14,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 /**
  * Calculates the electron cross-sections as a function of angle 
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  * @since 2015-09-14
  *
  */

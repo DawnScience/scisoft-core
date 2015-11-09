@@ -35,7 +35,7 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
  * the D(r) data. The function itself is a translation of DK's python code
  * into Java.
  * 
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  * @since 2015-09-14
  *
  */

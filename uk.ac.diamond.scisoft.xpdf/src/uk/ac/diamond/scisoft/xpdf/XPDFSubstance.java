@@ -11,7 +11,7 @@ package uk.ac.diamond.scisoft.xpdf;
 
 /**
  * Holds the details of a material, both chemical and physical.
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  * @since 2015-09-14
  *
  */

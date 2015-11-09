@@ -21,7 +21,7 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
 /**
  * Abstract class containing the common matters between sample and container 
  * metadata insertion Operations
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  * @since 2015-09-14
  *
  */

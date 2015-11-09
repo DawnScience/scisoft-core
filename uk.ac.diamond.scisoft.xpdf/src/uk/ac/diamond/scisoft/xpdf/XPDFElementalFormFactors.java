@@ -15,7 +15,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 /**
  * Returns the elemental form factors form eleastic and inelastic scattering.
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  *
  */
 public class XPDFElementalFormFactors {

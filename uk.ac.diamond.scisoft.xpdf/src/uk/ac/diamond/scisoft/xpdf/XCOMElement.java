@@ -36,7 +36,7 @@ import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
  * Each of these may be accessed by its own method, or by a master method which
  * also takes the name of the requested cross-section.
  * 
- * @author Timothy Spain (rkl37156) timothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  * @since 2014-09-28
  *
  */

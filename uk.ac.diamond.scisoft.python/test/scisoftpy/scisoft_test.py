@@ -546,6 +546,15 @@ class Test(unittest.TestCase):
         self.checkitems([[[1,2], [2,3], [3,4]]], np.dstack((a, b)))
         self.checkitems([[[1,2]], [[2,3]], [[3,4]]], np.dstack((a.reshape(3,1), b.reshape(3,1))))
 
+    def testMeshGrid(self):
+        print 'Meshgrid testing'
+        x = np.arange(0, 6, 1)
+        y = np.arange(0, 4, 1)
+        xy = np.meshgrid(x,y)
+        self.checkitems([[0,1,2,3,4,5],[0,1,2,3,4,5],[0,1,2,3,4,5],[0,1,2,3,4,5]], xy[0])
+        self.checkitems([[0,0,0,0,0,0], [1,1,1,1,1,1], [2,2,2,2,2,2], [3,3,3,3,3,3]], xy[1])
+
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']

@@ -1573,7 +1573,7 @@ def nanargmin(a, axis=None):
     return a.argmin(axis, True)
 
 def meshgrid(*a):
-    axes = [ asDataset(x) for x in reversed(a) ]
+    axes = [ asDataset(x)._jdataset() for x in reversed(a) ]
     coords = _dsutils.meshGrid(axes)
     return tuple([ Sciwrap(x) for x in reversed(coords) ])
 

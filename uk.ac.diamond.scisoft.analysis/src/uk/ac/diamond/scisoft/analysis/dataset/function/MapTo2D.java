@@ -34,8 +34,8 @@ public class MapTo2D implements DatasetToDatasetFunction {
 	 * Set up mapping of 2D dataset
 	 * 
 	 * @param point origin point for 2d dataset
-	 * @param step0 direction vector for step in 0th dimension (column axis)
-	 * @param step1 direction vector for step in 1st dimension (row axis)
+	 * @param step0 direction vector for step in 0th dimension (axis down column)
+	 * @param step1 direction vector for step in 1st dimension (axis along row)
 	 * @param n0 number of rows
 	 * @param n1 number of columns
 	 */

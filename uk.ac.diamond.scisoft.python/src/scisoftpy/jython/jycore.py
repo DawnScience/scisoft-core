@@ -1572,9 +1572,17 @@ def nanargmax(a, axis=None):
 def nanargmin(a, axis=None):
     return a.argmin(axis, True)
 
-def meshgrid(*a):
-    axes = [ asDataset(x) for x in reversed(a) ]
+def meshgrid(*a, **kwargs):
+    indexing = kwargs.get('indexing', 'xy')
+    if indexing == 'ij':
+        a = [a[1], a[0]] + (a[2:] if len(a) > 2 else [])
+    elif indexing != 'xy':
+        raise ValueError, 'indexing value is not valid'
+    axes = [ asDataset(x)._jdataset() for x in reversed(a) ]
+        
     coords = _dsutils.meshGrid(axes)
+    if indexing == 'ij':
+        coords = [coords[1], coords[0]] + (coords[2:] if len(coords) > 2 else [])
     return tuple([ Sciwrap(x) for x in reversed(coords) ])
 
 @_wrap

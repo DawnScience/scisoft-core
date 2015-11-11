@@ -83,6 +83,37 @@ public class AbstractDatasetTest {
 	}
 
 	@Test
+	public void testBroadcastCompatibleShapes() {
+		assertTrue("[] and []", AbstractDataset.areShapesBroadcastCompatible(new int[] {}, new int[] {}));
+		assertTrue("[1] and []", AbstractDataset.areShapesBroadcastCompatible(new int[] {1}, new int[] {}));
+		assertTrue("[2] and []", AbstractDataset.areShapesBroadcastCompatible(new int[] {2}, new int[] {}));
+		assertTrue("[2] and [2]", AbstractDataset.areShapesBroadcastCompatible(new int[] {2}, new int[] {2}));
+		assertTrue("[3] and [3]", AbstractDataset.areShapesBroadcastCompatible(new int[] {3}, new int[] {3}));
+		assertTrue("[1,2] and [2]", AbstractDataset.areShapesBroadcastCompatible(new int[] {1,2}, new int[] {2}));
+		assertTrue("[2] and [1,2]", AbstractDataset.areShapesBroadcastCompatible(new int[] {2}, new int[] {1,2}));
+		assertTrue("[4,2] and [1,2]", AbstractDataset.areShapesBroadcastCompatible(new int[] {4,2}, new int[] {1,2}));
+		assertTrue("[10,10] and [10,10,10]", AbstractDataset.areShapesBroadcastCompatible(new int[] {10,10}, new int[] {10,10,10}));
+		assertTrue("[10,10,10] and [10,10]", AbstractDataset.areShapesBroadcastCompatible(new int[] {10,10,10}, new int[] {10,10}));
+
+		
+		assertTrue("[2] and [2,1,1,1]", AbstractDataset.areShapesBroadcastCompatible(new int[] {2}, new int[] {2,1,1,1}));
+		assertTrue("[2,1] and [2,1,1,1]", AbstractDataset.areShapesBroadcastCompatible(new int[] {2,1}, new int[] {2,1,1,1}));
+		assertTrue("[2,1] and [3,1,1,2]", AbstractDataset.areShapesBroadcastCompatible(new int[] {2,1}, new int[] {3,1,1,2}));
+		assertTrue("[2,1] and [3,1,1,1]", AbstractDataset.areShapesBroadcastCompatible(new int[] {2,1}, new int[] {3,1,1,1}));
+		assertTrue("[1,2,1] and [2,1,1,1]", AbstractDataset.areShapesBroadcastCompatible(new int[] {1,2,1}, new int[] {2,1,1,1}));
+		assertTrue("[1,2,1,3] and [2,1,1,1,3]", AbstractDataset.areShapesBroadcastCompatible(new int[] {1,2,1,3}, new int[] {2,1,1,1,3}));
+		assertTrue("[2,1,1] and [1,1,2]", AbstractDataset.areShapesBroadcastCompatible(new int[] {2,1,1}, new int[] {1,1,2}));
+		assertTrue("[2,1,1] and [1,1,3]", AbstractDataset.areShapesBroadcastCompatible(new int[] {2,1,1}, new int[] {1,1,3}));
+		assertFalse("[2,1,4] and [2,1,1,3]", AbstractDataset.areShapesBroadcastCompatible(new int[] {2,1,4}, new int[] {2,1,1,3}));
+		assertFalse("[2,1,4] and [2,1,3]", AbstractDataset.areShapesBroadcastCompatible(new int[] {2,1,4}, new int[] {2,1,3}));
+		assertFalse("[2,4] and [2,3]", AbstractDataset.areShapesBroadcastCompatible(new int[] {2,4}, new int[] {2,3}));
+		assertTrue("[2,1,4] and [2,1,4]", AbstractDataset.areShapesBroadcastCompatible(new int[] {2,1,4}, new int[] {2,1,4}));
+		assertTrue("[2,1,4] and [2,1,1,4]", AbstractDataset.areShapesBroadcastCompatible(new int[] {2,1,4}, new int[] {2,1,1,4}));
+		assertFalse("[2,4] and [2,4,3]", AbstractDataset.areShapesBroadcastCompatible(new int[] {2,4}, new int[] {2,4,3}));
+		assertFalse("[2,1,4] and [2,4,3]", AbstractDataset.areShapesBroadcastCompatible(new int[] {2,1,4}, new int[] {2,4,3}));
+	}
+
+	@Test
 	public void testMaxMin() {
 		Dataset a = DatasetFactory.createRange(12, Dataset.FLOAT64);
 		a.setShape(3,4);

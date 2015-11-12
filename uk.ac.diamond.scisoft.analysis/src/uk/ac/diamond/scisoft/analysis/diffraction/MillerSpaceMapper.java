@@ -329,7 +329,8 @@ public class MillerSpaceMapper {
 	 * @param value
 	 */
 	private static void addValue(Dataset map, final int[] pos, final double value) {
-		map.set(map.getDouble(pos) + value, pos);
+		final int index = map.get1DIndex(pos);
+		map.setObjectAbs(index, map.getElementDoubleAbs(index) + value);
 	}
 
 	/**

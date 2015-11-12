@@ -25,9 +25,12 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -89,11 +92,14 @@ public class XPDFSampleView extends ViewPart {
 		sampleTV.getTable().setHeaderVisible(true);
 		sampleTV.getTable().setLinesVisible(true);
 		
+		sampleTV.setContentProvider(new SampleParametersContentProvider());
+		sampleTV.setInput(getViewSite());
+		
 		createColumns(tCL);
 		
-		createLoadButtons();
-		createRHSButtons();
 		createActions();
+		createLoadButtons(tableCompo);
+		createRHSButtons(tableCompo);
 	}
 
 	private void createColumns(TableColumnLayout tCL) {
@@ -183,14 +189,14 @@ public class XPDFSampleView extends ViewPart {
 		hookIntoContextMenu();
 	}
 
-	private void createRHSButtons() {
+	private void createRHSButtons(Composite compoAbove) {
 		int rightMargin = -10;
 		int topMargin = 10;
-		Composite stCompo = sampleTV.getTable().getParent();
+		Composite stCompo = compoAbove.getParent();
 		simButton = new Button(stCompo, SWT.NONE);
 		FormData formData= new FormData();
 		formData.right = new FormAttachment(100, rightMargin);
-		formData.top = new FormAttachment(sampleTV.getControl(), topMargin);
+		formData.top = new FormAttachment(compoAbove, topMargin);
 		simButton.setLayoutData(formData);
 		simButton.setText("Simulate PDF");
 		simButton.setToolTipText("Produce a simulated pair distribution function for the selected sample");
@@ -204,14 +210,14 @@ public class XPDFSampleView extends ViewPart {
 		
 	}
 
-	private void createLoadButtons() {
+	private void createLoadButtons(Composite compoAbove) {
 		int leftMargin = 10;
 		int topMargin = 10;
-		Composite stCompo = sampleTV.getTable().getParent();
+		Composite stCompo = compoAbove.getParent();
 		cifButton = new Button(stCompo, SWT.NONE);
 		FormData formData = new FormData();
 		formData.left = new FormAttachment(0, leftMargin);
-		formData.top = new FormAttachment(sampleTV.getControl(), topMargin);
+		formData.top = new FormAttachment(compoAbove, topMargin);
 		cifButton.setLayoutData(formData);
 		cifButton.setText("New sample from CIF file");
 		cifButton.setToolTipText("Create new sample from the data contained in a specified Crystallographic Information File.");
@@ -251,6 +257,21 @@ public class XPDFSampleView extends ViewPart {
 	}
 
 
+	class SampleParametersContentProvider implements IStructuredContentProvider {
+
+		@Override
+		public void dispose() {} // TODO Auto-generated method stub
+
+		@Override
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {} // TODO Auto-generated method stub
+
+		@Override
+		public Object[] getElements(Object inputElement) {
+			return samples.toArray(new XPDFSampleParameters[]{});
+		}
+		
+	}
+	
 	// Sample data with integer multiplicities
 	class LoadTestDataAction extends Action {
 

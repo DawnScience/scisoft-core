@@ -126,7 +126,6 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 			}
 		}
 		
-//		if (nexusFile instanceof NexusFileHDF5) ((NexusFileHDF5)nexusFile).activateSwmrMode();
 
 	}
 
@@ -176,9 +175,6 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 
 	@Override
 	public void executed(OperationData result, IMonitor monitor) throws Exception {
-		synchronized (nexusFile) {
-			nexusFile.flush();
-		}
 		
 		if (result == null) return;
 		//not threadsafe but closer
@@ -198,8 +194,13 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 		if (fNNE){
 			synchronized (nexusFile) {
 				nexusFile.getData(results +"/" +integrated.getName()).addAttribute(new AttributeImpl("signal", String.valueOf(1)));
-				if (nexusFile instanceof NexusFileHDF5) ((NexusFileHDF5)nexusFile).activateSwmrMode();
+//				if (nexusFile instanceof NexusFileHDF5) {
+//					((NexusFileHDF5)nexusFile).activateSwmrMode();
+//				}
 			}
+		}
+		synchronized (nexusFile) {
+			nexusFile.flush();
 		}
 	}
 

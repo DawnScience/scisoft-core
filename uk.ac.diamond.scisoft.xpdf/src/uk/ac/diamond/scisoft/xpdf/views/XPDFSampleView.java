@@ -1,4 +1,15 @@
+/*-
+ * Copyright 2015 Diamond Light Source Ltd.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package uk.ac.diamond.scisoft.xpdf.views;
+
+import java.util.List;
 
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Composite;
@@ -17,9 +28,16 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 
 public class XPDFSampleView extends ViewPart {
-	TableViewer sampleTV;
-	Button cifButton;
-	Button eraButton;
+	
+	private TableViewer sampleTV;
+	
+	private List<XPDFSampleParameters> samples;
+	
+	private Button cifButton;
+	private Button eraButton;
+
+	public XPDFSampleView() {
+	}
 	
 	public XPDFSampleView(Composite parent, int style) {
 		createPartControl(parent);
@@ -39,20 +57,21 @@ public class XPDFSampleView extends ViewPart {
 	}
 
 	private void createLoadButtons() {
+		int leftMargin = 10;
+		int topMargin = 10;
 		Composite stCompo = sampleTV.getTable().getParent();
 		cifButton = new Button(stCompo, SWT.NONE);
 		FormData formData = new FormData();
-		formData.left = new FormAttachment(stCompo);
-		formData.top = new FormAttachment(sampleTV.getControl());
+		formData.left = new FormAttachment(stCompo, leftMargin);
+		formData.top = new FormAttachment(sampleTV.getControl(), topMargin);
 		cifButton.setLayoutData(formData);
-		cifButton.setText("New sample from CIF file.");
+		cifButton.setText("New sample from CIF file");
 		eraButton = new Button(stCompo, SWT.NONE);
 		formData = new FormData();
-		formData.left = new FormAttachment(stCompo);
-		formData.top = new FormAttachment(cifButton);
+		formData.left = new FormAttachment(stCompo, leftMargin);
+		formData.top = new FormAttachment(cifButton, topMargin);
 		eraButton.setLayoutData(formData);
-		eraButton.setText("New sample from ERA file.");
-		
+		eraButton.setText("New sample from ERA file");
 	}
 
 	@Override

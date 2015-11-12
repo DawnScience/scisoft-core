@@ -692,6 +692,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
 		context.setSeries(op11);
+		context.setExecutionType(type);
 		
 		service.execute(context);
 		

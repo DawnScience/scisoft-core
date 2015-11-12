@@ -12,17 +12,14 @@ package uk.ac.diamond.scisoft.xpdf.views;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.diamond.scisoft.xpdf.XPDFComposition;
+import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
 
 public class XPDFSampleParameters {
 	private String name;
 	private int id;
 	private List<String> phases;
-	private XPDFComposition composition;
-	private double density;
-	private double packingFraction;
+	private XPDFSubstance substance;
 	private double suggestedEnergy;
-	private double mu;
 	private double suggestedCapDiameter;
 	private String beamState;
 	private String container;
@@ -40,16 +37,22 @@ public class XPDFSampleParameters {
 		this.name = inSamp.name;
 		this.phases = new ArrayList<String>();
 		this.phases.addAll(inSamp.phases);
+		this.substance = new XPDFSubstance(inSamp.substance);
+		this.suggestedEnergy = inSamp.suggestedEnergy;
+		this.suggestedCapDiameter = inSamp.suggestedCapDiameter;
+		this.beamState = inSamp.beamState;
+		this.container = inSamp.container;
 	}
 	
 	/**
-	 * @return the name
+	 * @return the name of the sample
 	 */
 	public String getName() {
 		return name;
 	}
 	/**
-	 * @param name the name to set
+	 * @param name
+	 * 			 the name of the smaple to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -67,109 +70,129 @@ public class XPDFSampleParameters {
 		this.id = id;
 	}
 	/**
-	 * @return the phases
+	 * @return the phases present in the sample
 	 */
 	public List<String> getPhases() {
 		return phases;
 	}
 	/**
-	 * @param phases the phases to set
+	 * @param phases sets the phases present in the sample
 	 */
 	public void setPhases(List<String> phases) {
 		this.phases = phases;
 	}
+
 	/**
-	 * @return the composition
+	 * @return the substance
 	 */
-	public XPDFComposition getComposition() {
-		return composition;
+	public XPDFSubstance getSubstance() {
+		return substance;
 	}
 	/**
-	 * @param composition the composition to set
+	 * @param substance the substance to set
 	 */
-	public void setComposition(XPDFComposition composition) {
-		this.composition = composition;
+	public void setSubstance(XPDFSubstance substance) {
+		this.substance = substance;
+	}
+	
+	// Getters and setters for the properties of the substance
+	/**
+	 * @return the ASCII formula of the substance
+	 */
+	public String getComposition() {
+		return substance.getMaterialName();
 	}
 	/**
-	 * @return the density
+	 * @param compoString
+	 * 					the compostion to be set
+	 */
+	public void setComposition(String compoString) {
+		substance.setMaterialComposition(compoString);
+		// set the typical powder packing fraction
+		substance.setPackingFraction(0.6);
+	}
+	/**
+	 * @return the crystallographic density of the material in g/cm³.
 	 */
 	public double getDensity() {
-		return density;
+		return substance.getMassDensity();
 	}
 	/**
-	 * @param density the density to set
+	 * @param density
+	 * 				the crystallographic density of the material in g/cm³.
 	 */
 	public void setDensity(double density) {
-		this.density = density;
+		substance.setMassDensity(density);
 	}
 	/**
-	 * @return the packingFraction
+	 * @return the powder packing fraction (probably 0.6).
 	 */
 	public double getPackingFraction() {
-		return packingFraction;
+		return substance.getPackingFraction();
 	}
 	/**
-	 * @param packingFraction the packingFraction to set
+	 * @param fraction
+	 * 				the powder packing fraction to set.
 	 */
-	public void setPackingFraction(double packingFraction) {
-		this.packingFraction = packingFraction;
+	public void setPackingFraction(double fraction) {
+		substance.setPackingFraction(fraction);
 	}
+	
+	
 	/**
-	 * @return the suggestedEnergy
+	 * @return the suggested beam energy in keV.
 	 */
 	public double getSuggestedEnergy() {
 		return suggestedEnergy;
 	}
 	/**
-	 * @param suggestedEnergy the suggestedEnergy to set
+	 * @param suggestedEnergy
+	 * 						the suggested beam energy  in keV.
 	 */
 	public void setSuggestedEnergy(double suggestedEnergy) {
 		this.suggestedEnergy = suggestedEnergy;
 	}
 	/**
-	 * @return the mu
+	 * @return the attenuation coefficient at the suggested beam energy.
 	 */
 	public double getMu() {
-		return mu;
+		return substance.getAttenuationCoefficient(suggestedEnergy);
 	}
 	/**
-	 * @param mu the mu to set
-	 */
-	public void setMu(double mu) {
-		this.mu = mu;
-	}
-	/**
-	 * @return the suggestedCapDiameter
+	 * @return the suggested capillary diameter in mm.
 	 */
 	public double getSuggestedCapDiameter() {
 		return suggestedCapDiameter;
 	}
 	/**
-	 * @param suggestedCapDiameter the suggestedCapDiameter to set
+	 * @param suggestedCapDiameter
+	 * 							the suggested diameter of the capillary in mm.
 	 */
 	public void setSuggestedCapDiameter(double suggestedCapDiameter) {
 		this.suggestedCapDiameter = suggestedCapDiameter;
 	}
 	/**
-	 * @return the beamState
+	 * @return the chosen beam state (keV and flux)
 	 */
 	public String getBeamState() {
 		return beamState;
 	}
 	/**
-	 * @param beamState the beamState to set
+	 * @param beamState
+	 * 				the beam state to set (keV and flux)
 	 */
 	public void setBeamState(String beamState) {
 		this.beamState = beamState;
 	}
 	/**
-	 * @return the container
+	 * @return the chosen container description.
 	 */
 	public String getContainer() {
 		return container;
 	}
 	/**
-	 * @param container the container to set
+	 * @param container
+	 * 				the container description to set.
 	 */
 	public void setContainer(String container) {
 		this.container = container;

@@ -94,6 +94,14 @@ public class XPDFComposition {
 	};
 			
 	/**
+	 * Copy constructor.
+	 */
+	public XPDFComposition(XPDFComposition inComp) {
+		this.atomCount = new HashMap<Integer, Integer>(inComp.atomCount);
+		this.electronOverlap = inComp.electronOverlap;
+	}
+
+	/**
 	 * Construct from a chemical formula.
 	 * @param materialFormula
 	 * 						The chemical formula of the substance in ASCII

@@ -25,6 +25,11 @@ public class XPDFDetector {
 		substance = null;
 	}
 	
+	/**
+	 * Copy constructor.
+	 * @param inTect
+	 * 				detector data to be copied.
+	 */
 	public XPDFDetector(XPDFDetector inTect) {
 		this.substance = (inTect.substance != null) ? new XPDFSubstance(inTect.substance) : null;
 		this.thickness = inTect.thickness;

@@ -28,6 +28,7 @@ public class XPDFSampleParameters {
 	 * default ctor
 	 */
 	public XPDFSampleParameters() {
+		this.substance = new XPDFSubstance();
 	}
 
 	/**
@@ -35,8 +36,7 @@ public class XPDFSampleParameters {
 	 */
 	public XPDFSampleParameters(XPDFSampleParameters inSamp) {
 		this.name = inSamp.name;
-		this.phases = new ArrayList<String>();
-		this.phases.addAll(inSamp.phases);
+		this.phases = new ArrayList<String>(inSamp.phases);
 		this.substance = new XPDFSubstance(inSamp.substance);
 		this.suggestedEnergy = inSamp.suggestedEnergy;
 		this.suggestedCapDiameter = inSamp.suggestedCapDiameter;
@@ -52,7 +52,7 @@ public class XPDFSampleParameters {
 	}
 	/**
 	 * @param name
-	 * 			 the name of the smaple to set
+	 * 			 the name of the sample to set
 	 */
 	public void setName(String name) {
 		this.name = name;

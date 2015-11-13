@@ -11,7 +11,10 @@ package uk.ac.diamond.scisoft.xpdf.views;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -24,14 +27,20 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -41,7 +50,7 @@ import org.eclipse.ui.part.ViewPart;
 
 public class XPDFSampleView extends ViewPart {
 	
-	private TableViewer sampleTV;
+//	private TableViewer sampleTV;
 	
 	private List<XPDFSampleParameters> samples;
 	
@@ -61,6 +70,13 @@ public class XPDFSampleView extends ViewPart {
 		NAME, ID, DETAILS, PHASES, COMPOSITION, DENSITY, PACKING,
 		SUGGESTED_ENERGY, MU, SUGGESTED_DIAMETER, ENERGY, CAPILLARY
 	}
+	
+	private enum ColumnGroup {
+		ID, SAMPLE_DETAILS, SUGGESTED_EXPT, CHOSEN_EXPT
+	}
+	
+	private Map<ColumnGroup, TableViewer> groupViewers;
+	
 	
 	public XPDFSampleView() {
 	}
@@ -82,41 +98,149 @@ public class XPDFSampleView extends ViewPart {
 		Composite sampleTableCompo = new Composite(parent, SWT.BORDER);
 		sampleTableCompo.setLayout(new FormLayout());
 		
-		// Composite to define the table columns
-		Composite tableCompo = new Composite(sampleTableCompo, SWT.NONE);
-		TableColumnLayout tCL = new TableColumnLayout();
-		tableCompo.setLayout(tCL);
-		FormData formData= new FormData(1200, 600);
+		// Composite to hold the table column groups
+		SashForm tableCompo = new SashForm(sampleTableCompo, SWT.HORIZONTAL);
+		// Attach to the left and right edges of the parent, and set to a fixed height
+		FormData formData = new FormData();
+		formData.left = new FormAttachment(0, 0);
+		formData.right = new FormAttachment(100, 0);
+		formData.height = 800;
 		tableCompo.setLayoutData(formData);
-		// Table viewer to hold the main data table
-		sampleTV = new TableViewer(tableCompo);
-
-		sampleTV.getTable().setHeaderVisible(true);
-		sampleTV.getTable().setLinesVisible(true);
+		// To properly fake a table, set the sash width to 0
+		tableCompo.setSashWidth(0);
 		
-		sampleTV.setContentProvider(new SampleParametersContentProvider());
-		sampleTV.setInput(getViewSite());
-		
-		createColumns(tCL);
+		createColumnGroups(tableCompo);
 		
 		createActions();
 		createLoadButtons(tableCompo);
 		createRHSButtons(tableCompo);
 	}
 
-	private void createColumns(TableColumnLayout tCL) {
+	
+	
+	// Create the column groupings
+	private void createColumnGroups(Composite outerComposite) {
+
+		// Define the groupings of the columns
+		Map<ColumnGroup, List<Column>> columnGrouping = new TreeMap<XPDFSampleView.ColumnGroup, List<Column>>();
+		columnGrouping.put(ColumnGroup.ID, Arrays.asList(new Column[]{Column.NAME, Column.ID}));
+		columnGrouping.put(ColumnGroup.SAMPLE_DETAILS, Arrays.asList(new Column[] {Column.DETAILS, Column.PHASES, Column.COMPOSITION, Column.DENSITY, Column.PACKING}));
+		columnGrouping.put(ColumnGroup.SUGGESTED_EXPT, Arrays.asList(new Column[] {Column.SUGGESTED_ENERGY, Column.MU, Column.SUGGESTED_DIAMETER}));
+		columnGrouping.put(ColumnGroup.CHOSEN_EXPT, Arrays.asList(new Column[] {Column.ENERGY, Column.CAPILLARY}));
+
+		String[] groupHeaderText = {"Sample Identification", "Sample Details", "Suggested Parameters", "Chosen Parameters"};
+		
+		// TableViewers for each sub-table
+		groupViewers = new HashMap<XPDFSampleView.ColumnGroup, TableViewer>();
+
+		// Column weights, and column group weights
+		int[] columnWeights = {20, 10, 2, 10, 15, 10, 5, 5, 5, 15, 10, 10};
+		int[] groupWeights = new int[columnGrouping.size()];
+		
+		// Iterate over the groups.
+		for (Map.Entry<ColumnGroup, List<Column>> columngroup : columnGrouping.entrySet()) {
+			// Composite to hold the group header and table
+			Composite groupCompo = new Composite(outerComposite, SWT.NONE);		
+			groupCompo.setLayout(new FormLayout());
+			
+			// Add the Group column header as a do-nothing button
+			Button headerButton = new Button(groupCompo, SWT.PUSH);
+
+			FormData formData = new FormData();
+			formData.top = new FormAttachment(0, 0);
+			formData.left = new FormAttachment(0, 0);
+			formData.right = new FormAttachment(100, 0);
+			headerButton.setLayoutData(formData);
+
+			headerButton.setText(groupHeaderText[columngroup.getKey().ordinal()]);
+			
+			// Add the table that will hold this subset of the columns
+			Composite subTableCompo = new Composite(groupCompo, SWT.NONE);
+
+			formData = new FormData();
+			formData.top = new FormAttachment(headerButton);
+			formData.left = new FormAttachment(0, 0);
+			formData.right = new FormAttachment(100, 0);
+			formData.bottom = new FormAttachment(100, 0);
+			subTableCompo.setLayoutData(formData);
+			
+			// Define the sub-table
+			TableViewer tV = new TableViewer(subTableCompo);
+			groupViewers.put(columngroup.getKey(), tV);
+			TableColumnLayout tCL = new TableColumnLayout();
+			subTableCompo.setLayout(tCL);
+			
+			// Create the columns of the sub-table, according to the defintion of the group and the overall weights 
+			createColumns(tCL, columngroup.getValue(), tV, columnWeights);
+
+			// Style of each sub-table
+			tV.getTable().setHeaderVisible(true);
+			tV.getTable().setLinesVisible(true);
+			// Interactions of the sub-table
+			tV.setContentProvider(new IStructuredContentProvider() {
+				@Override
+				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}	// TODO Auto-generated method stub
+				
+				@Override
+				public void dispose() {} // TODO Auto-generated method stub
+				
+				@Override
+				public Object[] getElements(Object inputElement) {
+					return samples.toArray();
+				}
+			});
+			tV.setLabelProvider(new SampleTableLP(columngroup.getValue()));
+			tV.setInput(getViewSite());
+			
+			// Calculate the relative weighting of each group
+			groupWeights[columngroup.getKey().ordinal()] = 0;
+			for (Column column : columngroup.getValue()) {
+				groupWeights[columngroup.getKey().ordinal()] += columnWeights[column.ordinal()];
+			}
+		}
+
+		// Set the weights of the SashForm, if the parent Composite is one
+		if (outerComposite instanceof SashForm) {
+			((SashForm) outerComposite).setWeights(groupWeights); 
+		}
+		
+	}
+
+	// Create a sub-set of the columns of the table
+	private void createColumns(TableColumnLayout tCL, List<Column> columns, TableViewer tV, int[] columnWeights) {
 		TableViewerColumn col;
 		String[] columnNames = {"Sample name", "Code", "", "Phases", "Composition", "Density", "Vol. frac.", "Energy", "μ", "Max capillary ID", "Energy", "Container"}; 
-		int[] columnWeights = {20, 10, 2, 10, 15, 10, 5, 5, 5, 15, 10, 10};
-		for (Column column : Column.values()) {
-			col = new TableViewerColumn(sampleTV, SWT.NONE);
+		for (Column column : columns) {
+			col = new TableViewerColumn(tV, SWT.NONE);
 			col.getColumn().setText(columnNames[column.ordinal()]);
 			tCL.setColumnData(col.getColumn(), new ColumnWeightData(columnWeights[column.ordinal()], 10, true));
 			col.setLabelProvider(new SampleTableCLP(column));
-			col.setEditingSupport(new SampleTableCES(column));
+			col.setEditingSupport(new SampleTableCES(column, tV));
 		}
 	}
+
+	// The table label provider does nothing except delegate to the column label provider
+	class SampleTableLP extends LabelProvider implements ITableLabelProvider {
+
+		final List<Column> columns;
+		
+		public SampleTableLP(List <Column> columns) {
+			this.columns = columns;
+		}
+		
+		@Override
+		public Image getColumnImage(Object element, int columnIndex) {
+			return null;
+		}
+
+		@Override
+		public String getColumnText(Object element, int columnIndex) {
+			return (new SampleTableCLP(columns.get(columnIndex))).getText(element);
+		}
+		
+	}
 	
+	// Column label provider. Use a switch to provide the different data labels for the different columns.
 	class SampleTableCLP extends ColumnLabelProvider {
 		
 		final Column column;
@@ -152,18 +276,21 @@ public class XPDFSampleView extends ViewPart {
 			}
 		}
 	}
-	
-		class SampleTableCES extends EditingSupport {
-		
+
+	// Column editing support. The different cases for the different columns are just switched by a switch statements or if-then-else
+	class SampleTableCES extends EditingSupport {
+
 		final Column column;
-			
-		public SampleTableCES(Column column) {
-			super(sampleTV);
+		final TableViewer tV;	
+
+		public SampleTableCES(Column column, TableViewer tV) {
+			super(tV);
 			this.column = column;
+			this.tV = tV;
 		};
 		@Override
 		protected CellEditor getCellEditor(Object element) {
-			return new TextCellEditor(sampleTV.getTable());
+			return new TextCellEditor(tV.getTable());
 		}
 		@Override
 		protected boolean canEdit(Object element) {
@@ -200,12 +327,12 @@ public class XPDFSampleView extends ViewPart {
 			case ID: break;
 			case DETAILS: break; // TODO: This should eventually do something. Call a big function, probably.
 			case PHASES: { // Parse a comma separated list of strings to a list
-					String[] arrayOfPhases = sValue.split(","); 
-					List<String> listOfPhases = new ArrayList<String>();
-					for (int i = 0; i < arrayOfPhases.length; i++)
-						listOfPhases.add(arrayOfPhases[i].trim());
-					sample.setPhases(listOfPhases);
-				} break;
+				String[] arrayOfPhases = sValue.split(","); 
+				List<String> listOfPhases = new ArrayList<String>();
+				for (int i = 0; i < arrayOfPhases.length; i++)
+					listOfPhases.add(arrayOfPhases[i].trim());
+				sample.setPhases(listOfPhases);
+			} break;
 			case COMPOSITION: sample.setComposition(sValue); break;
 			case DENSITY: sample.setDensity(Double.parseDouble(sValue)); break;
 			case PACKING: sample.setPackingFraction(Double.parseDouble(sValue)); break;
@@ -216,7 +343,8 @@ public class XPDFSampleView extends ViewPart {
 			case CAPILLARY: sample.setContainer(sValue); break;
 			default: break;
 			}
-			sampleTV.update(element, null);
+			// Here, only this table needs updating
+			tV.update(element, null);
 		}
 	}
 		
@@ -283,7 +411,10 @@ public class XPDFSampleView extends ViewPart {
 
 	@Override
 	public void setFocus() {
-		sampleTV.getControl().setFocus();
+		// Can all the TableViewers have focus?
+		for (TableViewer iTV : groupViewers.values() ) {
+			iTV.getControl().setFocus();
+		}
 	}
 	
 	// Hook actions into the context menu
@@ -296,9 +427,12 @@ public class XPDFSampleView extends ViewPart {
 				fillContextMenu(manager);				
 			}
 		});
-		Menu popupMenu = menuMan.createContextMenu(sampleTV.getControl());
-		sampleTV.getControl().setMenu(popupMenu);
-		getSite().registerContextMenu(menuMan, sampleTV);
+		
+		for (TableViewer iTV : groupViewers.values() ) {
+			Menu popupMenu = menuMan.createContextMenu(iTV.getControl());
+			iTV.getControl().setMenu(popupMenu);
+			getSite().registerContextMenu(menuMan, iTV);
+		}
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
@@ -377,7 +511,9 @@ public class XPDFSampleView extends ViewPart {
 			
 			samples.add(explodite);
 			
-			sampleTV.refresh();
+			for (TableViewer iTV : groupViewers.values()) {
+				iTV.refresh();
+			}
 		}
 	}
 }

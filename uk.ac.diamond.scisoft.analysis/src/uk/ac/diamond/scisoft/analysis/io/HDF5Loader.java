@@ -63,7 +63,6 @@ import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
 import ncsa.hdf.hdf5lib.structs.H5G_info_t;
 import ncsa.hdf.hdf5lib.structs.H5L_info_t;
 import ncsa.hdf.hdf5lib.structs.H5O_info_t;
-import ncsa.hdf.object.h5.H5Datatype;
 
 /**
  * Load HDF5 files using NCSA's Java library
@@ -844,26 +843,15 @@ public class HDF5Loader extends AbstractFileLoader {
 
 		if (trueShape.length == 1 && trueShape[0] == 1) { // special case for single values
 			try {
-				Object data;
-				try {
-					data = H5Datatype.allocateArray(tid, 1);
-				} catch (OutOfMemoryError err) {
-					throw new HDF5Exception("Out Of Memory");
-				}
+				final Dataset d = DatasetFactory.zeros(type.isize, trueShape, type.dtype);
+				Object data = d.getBuffer();
 
-				boolean isREF = H5.H5Tequal(tid, HDF5Constants.H5T_STD_REF_OBJ);
 				if (type.vlen) {
 					H5.H5DreadVL(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, (Object[]) data);
 				} else {
 					H5.H5Dread(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, data);
-
-					if (type.dtype == Dataset.STRING) {
-						data = ncsa.hdf.object.Dataset.byteToString((byte[]) data, H5.H5Tget_size(tid));
-					} else if (isREF) {
-						data = HDFNativeData.byteToLong((byte[]) data);
-					}
 				}
-				final Dataset d = DatasetFactory.createFromObject(data);
+
 				d.setName(name);
 				dataset.setDataset(d);
 				return true;
@@ -919,26 +907,17 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * @throws Exception
 	 */
 	private static StringDataset extractExternalFileNames(final long did, final long tid, final boolean isVLEN, final int[] shape) throws Exception {
-		int length = 1;
-		for (int i = 0; i < shape.length; i++) {
-			length *= shape[i];
-		}
 
-		Object data;
-		try {
-			data = H5Datatype.allocateArray(tid, length);
-		} catch (OutOfMemoryError err) {
-			throw new HDF5Exception("Out of memory");
-		}
+		final StringDataset d = new StringDataset(shape);
+		Object data = d.getBuffer();
 
 		if (isVLEN) {
 			H5.H5DreadVL(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, (Object[]) data);
 		} else {
 			H5.H5Dread(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, data);
-			data = ncsa.hdf.object.Dataset.byteToString((byte[]) data, H5.H5Tget_size(tid));
 		}
 
-		return new StringDataset((String[]) data, shape);
+		return d;
 	}
 
 	@Override

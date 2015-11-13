@@ -108,6 +108,7 @@ public class XPDFSampleParameters {
 	 */
 	public void setComposition(String compoString) {
 		substance.setMaterialComposition(compoString);
+		substance.setMaterialName(compoString);
 		// set the typical powder packing fraction
 		substance.setPackingFraction(0.6);
 	}

@@ -42,6 +42,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import uk.ac.diamond.scisoft.xpdf.XPDFAbsorptionMaps;
+
 public class XPDFSampleView extends ViewPart {
 	
 	private TableViewer sampleTV;
@@ -59,6 +61,11 @@ public class XPDFSampleView extends ViewPart {
 	private Action newCifAction;
 	private Action newEraAction;
 	private Action pointBreakAction;
+	
+	private enum Column {
+		NAME, ID, DETAILS, PHASES, COMPOSITION, DENSITY, PACKING,
+		SUGGESTED_ENERGY, MU, SUGGESTED_DIAMETER, ENERGY, CAPILLARY
+	}
 	
 	public XPDFSampleView() {
 	}
@@ -104,52 +111,59 @@ public class XPDFSampleView extends ViewPart {
 
 	private void createColumns(TableColumnLayout tCL) {
 		TableViewerColumn col;
-		Deque<String> columnNames = new LinkedList<String>(Arrays.asList(new String[]
-				{"Sample name", "code", "", "Phases", "Composition", "Density", "Vol. frac.", "Energy", "μ", "Max capillary ID", "Energy", "Container"})); 
-		Deque<Integer> columnWeights = new LinkedList<Integer>(Arrays.asList(new Integer[]
-				{20, 10, 2, 10, 15, 10, 5, 5, 5, 15, 10, 10}));
-		Deque<EditingSupport> columnES = new LinkedList<EditingSupport>(Arrays.asList(new EditingSupport[]
-				{new StringCES(), null, null, new StringCES(), new StringCES()}));
-		while (!columnNames.isEmpty()) {
+		String[] columnNames = {"Sample name", "Code", "", "Phases", "Composition", "Density", "Vol. frac.", "Energy", "μ", "Max capillary ID", "Energy", "Container"}; 
+		int[] columnWeights = {20, 10, 2, 10, 15, 10, 5, 5, 5, 15, 10, 10};
+		for (Column column : Column.values()) {
 			col = new TableViewerColumn(sampleTV, SWT.NONE);
-			col.getColumn().setText(columnNames.pop());
-			tCL.setColumnData(col.getColumn(), new ColumnWeightData(columnWeights.pop(), 10, true));
-			col.setLabelProvider(new primitiveCLP());
-			if (!columnES.isEmpty()) {
-				if (columnES.peek() != null)
-					col.setEditingSupport(columnES.pop());
-				else
-					columnES.pop();
-			}
+			col.getColumn().setText(columnNames[column.ordinal()]);
+			tCL.setColumnData(col.getColumn(), new ColumnWeightData(columnWeights[column.ordinal()], 10, true));
+			col.setLabelProvider(new primitiveCLP(column));
+			col.setEditingSupport(new StringCES(column));
 		}
 	}
 	
 	class primitiveCLP extends ColumnLabelProvider {
+		
+		final Column column;
+		
+		public primitiveCLP(Column column) {
+			this.column = column;
+		}
+		
 		@Override
 		public String getText(Object element) {
-			if (element instanceof String)
-				return (String) element;
-			else if (element instanceof Integer)
-				return ((Integer) element).toString();
-			else if (element instanceof Double)
-				return ((Double) element).toString();
-			else
-				return "+";
+			XPDFSampleParameters xSP = (XPDFSampleParameters) element;
+			switch (column) {
+			case NAME: return xSP.getName();
+			case ID: return Integer.toString(xSP.getId());
+			case DETAILS: return "+";
+			case PHASES: 
+				StringBuilder sb = new StringBuilder();
+				for (String phase : xSP.getPhases()) {
+					sb.append(phase);
+					sb.append(", ");
+				}
+				return sb.toString();
+			case COMPOSITION: return xSP.getComposition();
+			case DENSITY: return Double.toString(xSP.getDensity());
+			case PACKING: return Double.toString(xSP.getPackingFraction());
+			case SUGGESTED_ENERGY: return Double.toString(xSP.getSuggestedEnergy());
+			case MU: return Double.toString(xSP.getMu());
+			case SUGGESTED_DIAMETER: return Double.toString(xSP.getSuggestedCapDiameter());
+			case ENERGY: return xSP.getBeamState();
+			case CAPILLARY: return xSP.getContainer();
+			default: return "";
 			}
+		}
 	}
 	
-	
-	interface StringCESFunctor {
+		class StringCES extends EditingSupport {
 		
-	}
-	
-	class StringCES extends EditingSupport {
-		
-//		private final StringCESFunctor functor;
-		
-		public StringCES() {//StringCESFunctor functor){
+		final Column column;
+			
+		public StringCES(Column column) {
 			super(sampleTV);
-//			this.functor = functor; 
+			this.column = column;
 		};
 		@Override
 		protected CellEditor getCellEditor(Object element) {
@@ -157,15 +171,56 @@ public class XPDFSampleView extends ViewPart {
 		}
 		@Override
 		protected boolean canEdit(Object element) {
-			return true;
+			if (column == Column.ID || column == Column.DETAILS || column == Column.MU) 
+				return false;
+			else
+				return true;
 		}
 		@Override
 		protected Object getValue(Object element) {
-			return element;
+			XPDFSampleParameters sample = (XPDFSampleParameters) element;
+			switch (column) {
+			case NAME: return sample.getName();
+			case ID: return sample.getId();
+			case DETAILS: return null; // TODO: This should eventually show something, but nothing for now.
+			case PHASES: return sample.getPhases();
+			case COMPOSITION: return sample.getComposition();
+			case DENSITY: return sample.getDensity();
+			case PACKING: return sample.getPackingFraction();
+			case SUGGESTED_ENERGY: return sample.getSuggestedEnergy();
+			case MU: return 1.0;
+			case SUGGESTED_DIAMETER: return sample.getSuggestedCapDiameter();
+			case ENERGY: return sample.getBeamState();
+			case CAPILLARY: return sample.getContainer();
+			default: return null;
+			}
 		}
 		@Override
 		protected void setValue(Object element, Object value) {
-			element = value;
+			XPDFSampleParameters sample = (XPDFSampleParameters) element;
+			switch (column) {
+			case NAME: sample.setName((String) value); break;
+			case ID: break;
+			case DETAILS: break; // TODO: This should eventually do something. Call a big function, probably.
+			case PHASES: { // Parse a comma separated list of strings to a list
+					String allPhases = (String) value;
+					String[] arrayOfPhases = allPhases.split(","); 
+					List<String> listOfPhases = new ArrayList<String>();
+					for (int i = 0; i < arrayOfPhases.length; i++)
+						listOfPhases.add(arrayOfPhases[i].trim());
+					sample.setPhases(listOfPhases);
+				} break;
+			case COMPOSITION: sample.setComposition((String) value); break;
+			case DENSITY: sample.setDensity((double) value); break;
+			case PACKING: sample.setPackingFraction((double) value); break;
+			case SUGGESTED_ENERGY: sample.setSuggestedEnergy((double) value); break;
+			case MU: break;
+			case SUGGESTED_DIAMETER: sample.setSuggestedCapDiameter((double) value); break;
+			case ENERGY: sample.setBeamState((String) value); break;
+			case CAPILLARY: sample.setContainer((String) value); break;
+			default: break;
+			}
+			sampleTV.update(element, null);
 		}
 	}
 		

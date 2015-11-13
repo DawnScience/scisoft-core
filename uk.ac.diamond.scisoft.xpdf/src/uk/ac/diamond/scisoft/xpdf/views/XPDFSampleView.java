@@ -11,8 +11,6 @@ package uk.ac.diamond.scisoft.xpdf.views;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Deque;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
@@ -25,7 +23,6 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.EditingSupport;
-import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -41,8 +38,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
-
-import uk.ac.diamond.scisoft.xpdf.XPDFAbsorptionMaps;
 
 public class XPDFSampleView extends ViewPart {
 	
@@ -91,7 +86,7 @@ public class XPDFSampleView extends ViewPart {
 		Composite tableCompo = new Composite(sampleTableCompo, SWT.NONE);
 		TableColumnLayout tCL = new TableColumnLayout();
 		tableCompo.setLayout(tCL);
-		FormData formData= new FormData(800, 600);
+		FormData formData= new FormData(1200, 600);
 		tableCompo.setLayoutData(formData);
 		// Table viewer to hold the main data table
 		sampleTV = new TableViewer(tableCompo);
@@ -117,51 +112,52 @@ public class XPDFSampleView extends ViewPart {
 			col = new TableViewerColumn(sampleTV, SWT.NONE);
 			col.getColumn().setText(columnNames[column.ordinal()]);
 			tCL.setColumnData(col.getColumn(), new ColumnWeightData(columnWeights[column.ordinal()], 10, true));
-			col.setLabelProvider(new primitiveCLP(column));
-			col.setEditingSupport(new StringCES(column));
+			col.setLabelProvider(new SampleTableCLP(column));
+			col.setEditingSupport(new SampleTableCES(column));
 		}
 	}
 	
-	class primitiveCLP extends ColumnLabelProvider {
+	class SampleTableCLP extends ColumnLabelProvider {
 		
 		final Column column;
 		
-		public primitiveCLP(Column column) {
+		public SampleTableCLP(Column column) {
 			this.column = column;
 		}
 		
 		@Override
 		public String getText(Object element) {
-			XPDFSampleParameters xSP = (XPDFSampleParameters) element;
+			XPDFSampleParameters sample = (XPDFSampleParameters) element;
 			switch (column) {
-			case NAME: return xSP.getName();
-			case ID: return Integer.toString(xSP.getId());
+			case NAME: return sample.getName();
+			case ID: return Integer.toString(sample.getId());
 			case DETAILS: return "+";
 			case PHASES: 
 				StringBuilder sb = new StringBuilder();
-				for (String phase : xSP.getPhases()) {
+				for (String phase : sample.getPhases()) {
 					sb.append(phase);
 					sb.append(", ");
 				}
+				sb.delete(sb.length()-2, sb.length());
 				return sb.toString();
-			case COMPOSITION: return xSP.getComposition();
-			case DENSITY: return Double.toString(xSP.getDensity());
-			case PACKING: return Double.toString(xSP.getPackingFraction());
-			case SUGGESTED_ENERGY: return Double.toString(xSP.getSuggestedEnergy());
-			case MU: return Double.toString(xSP.getMu());
-			case SUGGESTED_DIAMETER: return Double.toString(xSP.getSuggestedCapDiameter());
-			case ENERGY: return xSP.getBeamState();
-			case CAPILLARY: return xSP.getContainer();
+			case COMPOSITION: return sample.getComposition();
+			case DENSITY: return Double.toString(sample.getDensity());
+			case PACKING: return Double.toString(sample.getPackingFraction());
+			case SUGGESTED_ENERGY: return Double.toString(sample.getSuggestedEnergy());
+			case MU: return Double.toString(sample.getMu());
+			case SUGGESTED_DIAMETER: return Double.toString(sample.getSuggestedCapDiameter());
+			case ENERGY: return sample.getBeamState();
+			case CAPILLARY: return sample.getContainer();
 			default: return "";
 			}
 		}
 	}
 	
-		class StringCES extends EditingSupport {
+		class SampleTableCES extends EditingSupport {
 		
 		final Column column;
 			
-		public StringCES(Column column) {
+		public SampleTableCES(Column column) {
 			super(sampleTV);
 			this.column = column;
 		};
@@ -183,13 +179,13 @@ public class XPDFSampleView extends ViewPart {
 			case NAME: return sample.getName();
 			case ID: return sample.getId();
 			case DETAILS: return null; // TODO: This should eventually show something, but nothing for now.
-			case PHASES: return sample.getPhases();
+			case PHASES: return (new SampleTableCLP(Column.PHASES)).getText(element);
 			case COMPOSITION: return sample.getComposition();
-			case DENSITY: return sample.getDensity();
-			case PACKING: return sample.getPackingFraction();
-			case SUGGESTED_ENERGY: return sample.getSuggestedEnergy();
+			case DENSITY: return Double.toString(sample.getDensity());
+			case PACKING: return Double.toString(sample.getPackingFraction());
+			case SUGGESTED_ENERGY: return Double.toString(sample.getSuggestedEnergy());
 			case MU: return 1.0;
-			case SUGGESTED_DIAMETER: return sample.getSuggestedCapDiameter();
+			case SUGGESTED_DIAMETER: return Double.toString(sample.getSuggestedCapDiameter());
 			case ENERGY: return sample.getBeamState();
 			case CAPILLARY: return sample.getContainer();
 			default: return null;
@@ -198,26 +194,26 @@ public class XPDFSampleView extends ViewPart {
 		@Override
 		protected void setValue(Object element, Object value) {
 			XPDFSampleParameters sample = (XPDFSampleParameters) element;
+			String sValue = (String) value;
 			switch (column) {
-			case NAME: sample.setName((String) value); break;
+			case NAME: sample.setName(sValue); break;
 			case ID: break;
 			case DETAILS: break; // TODO: This should eventually do something. Call a big function, probably.
 			case PHASES: { // Parse a comma separated list of strings to a list
-					String allPhases = (String) value;
-					String[] arrayOfPhases = allPhases.split(","); 
+					String[] arrayOfPhases = sValue.split(","); 
 					List<String> listOfPhases = new ArrayList<String>();
 					for (int i = 0; i < arrayOfPhases.length; i++)
 						listOfPhases.add(arrayOfPhases[i].trim());
 					sample.setPhases(listOfPhases);
 				} break;
-			case COMPOSITION: sample.setComposition((String) value); break;
-			case DENSITY: sample.setDensity((double) value); break;
-			case PACKING: sample.setPackingFraction((double) value); break;
-			case SUGGESTED_ENERGY: sample.setSuggestedEnergy((double) value); break;
+			case COMPOSITION: sample.setComposition(sValue); break;
+			case DENSITY: sample.setDensity(Double.parseDouble(sValue)); break;
+			case PACKING: sample.setPackingFraction(Double.parseDouble(sValue)); break;
+			case SUGGESTED_ENERGY: sample.setSuggestedEnergy(Double.parseDouble(sValue)); break;
 			case MU: break;
-			case SUGGESTED_DIAMETER: sample.setSuggestedCapDiameter((double) value); break;
-			case ENERGY: sample.setBeamState((String) value); break;
-			case CAPILLARY: sample.setContainer((String) value); break;
+			case SUGGESTED_DIAMETER: sample.setSuggestedCapDiameter(Double.parseDouble(sValue)); break;
+			case ENERGY: sample.setBeamState(sValue); break;
+			case CAPILLARY: sample.setContainer(sValue); break;
 			default: break;
 			}
 			sampleTV.update(element, null);

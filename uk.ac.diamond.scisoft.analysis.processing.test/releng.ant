@@ -50,7 +50,7 @@
 				<pathelement location="${workspace.git.loc}/dawn-isenciaui.git/com.isencia.passerelle.workbench.model.editor.ui/target/classes" />
 				<path refid="tp.slf4j.path" />  <!-- ensure that required org.slf4j.LoggerFactory appears first in classpath -->
 				<path refid="tp.jcl-over-slf4j.path" />  <!-- ensure that matching imp appears first in classpath -->
-				<pathelement location="${workspace.loc}/tp/plugins/*" />
+				<path refid="tp.path" />  <!-- target platform -->
 			</classpath>
 			<!-- define several batches (default forkmode=perBatch), since otherwise HierarchicalFileExVisitorTest can fail with insufficient memory -->
 			<batchtest todir="@{report.dir}">

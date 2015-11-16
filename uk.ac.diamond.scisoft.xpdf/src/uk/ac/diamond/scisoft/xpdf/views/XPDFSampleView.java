@@ -393,6 +393,7 @@ public class XPDFSampleView extends ViewPart {
 		case PHASES:
 		case COMPOSITION:
 			columnSorter = null;
+			break;
 		case DENSITY:
 			columnSorter = new Comparator<XPDFSampleParameters>() {
 			@Override
@@ -468,6 +469,9 @@ public class XPDFSampleView extends ViewPart {
 		return new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
+				// If the present column has no defined Comparator, then return
+				if (getColumnSorting(column) == null) return;
+				
 				// Find the present sorted column, if any
 				TableColumn presentSorted = null;
 				int sortDirection = SWT.NONE;

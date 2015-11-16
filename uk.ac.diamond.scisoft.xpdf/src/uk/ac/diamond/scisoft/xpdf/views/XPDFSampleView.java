@@ -11,6 +11,8 @@ package uk.ac.diamond.scisoft.xpdf.views;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +41,8 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -48,6 +52,7 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
@@ -82,9 +87,15 @@ public class XPDFSampleView extends ViewPart {
 	private Map<ColumnGroup, TableViewer> groupViewers;
 	
 	private boolean propagateSelectionChange;
+
+	// Sorting parameters: possibly held by the table(s?)?
+	private Column sortedColumn;
+	private boolean isDescendingSort;
 	
 	public XPDFSampleView() {
 		propagateSelectionChange = true;
+		isDescendingSort = true;
+		sortedColumn = Column.ID;
 	}
 	
 	/**
@@ -225,6 +236,7 @@ public class XPDFSampleView extends ViewPart {
 			tCL.setColumnData(col.getColumn(), new ColumnWeightData(columnWeights[column.ordinal()], 10, true));
 			col.setLabelProvider(new SampleTableCLP(column));
 			col.setEditingSupport(new SampleTableCES(column, tV));
+			col.getColumn().addSelectionListener(getColumnSelectionAdapter(col.getColumn(), column));
 		}
 	}
 
@@ -335,7 +347,7 @@ public class XPDFSampleView extends ViewPart {
 			case NAME: sample.setName(sValue); break;
 			case ID: break;
 			case DETAILS: break; // TODO: This should eventually do something. Call a big function, probably.
-			case PHASES: { // Parse a comma separated list of strings to a list
+			case PHASES: { // Parse a comma separated list of phases to a list of Strings
 				String[] arrayOfPhases = sValue.split(","); 
 				List<String> listOfPhases = new ArrayList<String>();
 				for (int i = 0; i < arrayOfPhases.length; i++)
@@ -356,7 +368,140 @@ public class XPDFSampleView extends ViewPart {
 			tV.update(element, null);
 		}
 	}
-		
+
+	// Set a Comparator, depending on the column selected
+	private Comparator<XPDFSampleParameters> getColumnSorting(Column column) {
+		Comparator<XPDFSampleParameters> columnSorter;
+		switch (column) {
+		case NAME:
+			columnSorter = new Comparator<XPDFSampleParameters>() {
+			@Override
+			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		};
+		break;
+		case ID:
+			columnSorter = new Comparator<XPDFSampleParameters>() {
+			@Override
+			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+				return Integer.compare(o1.getId(), o2.getId());
+			}
+		};
+		break;
+		case DETAILS:
+		case PHASES:
+		case COMPOSITION:
+			columnSorter = null;
+		case DENSITY:
+			columnSorter = new Comparator<XPDFSampleParameters>() {
+			@Override
+			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+				return Double.compare(o1.getDensity(), o2.getDensity());
+			}
+		};
+		break;
+		case PACKING:
+			columnSorter = new Comparator<XPDFSampleParameters>() {
+			@Override
+			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+				return Double.compare(o1.getPackingFraction(), o2.getPackingFraction());
+			}
+		};
+		break;
+		case SUGGESTED_ENERGY:
+			columnSorter = new Comparator<XPDFSampleParameters>() {
+			@Override
+			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+				return Double.compare(o1.getSuggestedEnergy(), o2.getSuggestedEnergy());
+			}
+		};
+		break;
+		case MU:
+			columnSorter = new Comparator<XPDFSampleParameters>() {
+			@Override
+			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+				return Double.compare(o1.getMu(), o2.getMu());
+			}
+		};
+		break;
+		case SUGGESTED_DIAMETER:
+			columnSorter = new Comparator<XPDFSampleParameters>() {
+			@Override
+			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+				return Double.compare(o1.getSuggestedCapDiameter(), o2.getSuggestedCapDiameter());
+			}
+		};
+		break;
+		case ENERGY:
+			columnSorter = new Comparator<XPDFSampleParameters>() {
+			@Override
+			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+				return o1.getBeamState().compareTo(o2.getBeamState());
+			}
+		};
+		case CAPILLARY:
+			columnSorter = new Comparator<XPDFSampleParameters>() {
+			@Override
+			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+				return o1.getContainer().compareTo(o2.getContainer());
+			}
+		};
+		default:
+			columnSorter = null;
+		}
+		return columnSorter;
+	}
+
+	// Column selection listeners.
+	/**
+	 * Creates a listener that sorts the data depending on the column selected.
+	 * <p>
+	 * Clicking on the individual column headers will sort, or reverse the sort on the data in all sub-tables.
+	 * @param tableColumn
+	 * 					the SWT column object
+	 * @param column
+	 * 				the enum identifier of the column
+	 * @return the new anonymous sub-class of Selection Adapter
+	 */
+	private SelectionAdapter getColumnSelectionAdapter(final TableColumn tableColumn, final Column column) {
+		return new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				// Find the present sorted column, if any
+				TableColumn presentSorted = null;
+				int sortDirection = SWT.NONE;
+				for (TableViewer tV : groupViewers.values()) {
+					if (tV.getTable().getSortColumn() != null) {
+						presentSorted = tV.getTable().getSortColumn();
+						sortDirection = tV.getTable().getSortDirection();
+					}
+					// Set each table to unsorted
+					tV.getTable().setSortDirection(SWT.NONE);
+					tV.getTable().setSortColumn(null);
+				}
+
+				// If the same column is sorted as is now selected, then reverse the sorting
+				if (presentSorted == tableColumn)
+					sortDirection = (sortDirection == SWT.UP) ? SWT.DOWN : SWT.UP;
+
+				// Do the sort
+				if (sortDirection != SWT.NONE) {
+					if (getColumnSorting(column) != null) {
+						Collections.sort(samples, getColumnSorting(column));
+						if (sortDirection == SWT.UP)
+							Collections.reverse(samples);
+					}
+				}
+				
+				tableColumn.getParent().setSortDirection(sortDirection);
+				tableColumn.getParent().setSortColumn(tableColumn);
+				
+				for (TableViewer tV : groupViewers.values())
+					tV.refresh();
+			}
+		};
+	}
 		
 	private void createActions() {
 		loadTestDataAction = new LoadTestDataAction();
@@ -381,6 +526,7 @@ public class XPDFSampleView extends ViewPart {
 		int rightMargin = -10;
 		int topMargin = 10;
 		Composite stCompo = compoAbove.getParent();
+
 		simButton = new Button(stCompo, SWT.NONE);
 		FormData formData= new FormData();
 		formData.right = new FormAttachment(100, rightMargin);
@@ -388,6 +534,7 @@ public class XPDFSampleView extends ViewPart {
 		simButton.setLayoutData(formData);
 		simButton.setText("Simulate PDF");
 		simButton.setToolTipText("Produce a simulated pair distribution function for the selected sample");
+
 		savButton = new Button(stCompo, SWT.NONE);
 		formData = new FormData();
 		formData.right = new FormAttachment(100, rightMargin);
@@ -402,6 +549,7 @@ public class XPDFSampleView extends ViewPart {
 		int leftMargin = 10;
 		int topMargin = 10;
 		Composite stCompo = compoAbove.getParent();
+
 		cifButton = new Button(stCompo, SWT.NONE);
 		FormData formData = new FormData();
 		formData.left = new FormAttachment(0, leftMargin);
@@ -409,6 +557,7 @@ public class XPDFSampleView extends ViewPart {
 		cifButton.setLayoutData(formData);
 		cifButton.setText("New sample from CIF file");
 		cifButton.setToolTipText("Create new sample from the data contained in a specified Crystallographic Information File.");
+
 		eraButton = new Button(stCompo, SWT.NONE);
 		formData = new FormData();
 		formData.left = new FormAttachment(0, leftMargin);
@@ -551,6 +700,8 @@ public class XPDFSampleView extends ViewPart {
 			samples.add(explodite);
 			
 			for (TableViewer iTV : groupViewers.values()) {
+				iTV.getTable().setSortDirection(SWT.NONE);
+				iTV.getTable().setSortColumn(null);
 				iTV.refresh();
 			}
 		}

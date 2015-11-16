@@ -26,9 +26,13 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
@@ -77,8 +81,10 @@ public class XPDFSampleView extends ViewPart {
 	
 	private Map<ColumnGroup, TableViewer> groupViewers;
 	
+	private boolean propagateSelectionChange;
 	
 	public XPDFSampleView() {
+		propagateSelectionChange = true;
 	}
 	
 	/**
@@ -192,6 +198,9 @@ public class XPDFSampleView extends ViewPart {
 			tV.setLabelProvider(new SampleTableLP(columngroup.getValue()));
 			tV.setInput(getViewSite());
 			
+			// Set the listener that sets the selection as the same on each sub-table
+			tV.addSelectionChangedListener(new SubTableSelectionChangedListener());
+			
 			// Calculate the relative weighting of each group
 			groupWeights[columngroup.getKey().ordinal()] = 0;
 			for (Column column : columngroup.getValue()) {
@@ -268,7 +277,7 @@ public class XPDFSampleView extends ViewPart {
 			case DENSITY: return Double.toString(sample.getDensity());
 			case PACKING: return Double.toString(sample.getPackingFraction());
 			case SUGGESTED_ENERGY: return Double.toString(sample.getSuggestedEnergy());
-			case MU: return Double.toString(sample.getMu());
+			case MU: return String.format("%.4f", sample.getMu());
 			case SUGGESTED_DIAMETER: return Double.toString(sample.getSuggestedCapDiameter());
 			case ENERGY: return sample.getBeamState();
 			case CAPILLARY: return sample.getContainer();
@@ -455,6 +464,36 @@ public class XPDFSampleView extends ViewPart {
 			return samples.toArray(new XPDFSampleParameters[]{});
 		}
 		
+	}
+
+	/**
+	 * Changes the selection on all sub-tables.
+	 * <p>
+	 * When the selection changes, change the selection on the other
+	 * sub-tables.
+	 *
+	 */
+	// By using a object-wide flag we can prevent each call triggering four
+	// more and causing a stack overflow.
+	class SubTableSelectionChangedListener implements ISelectionChangedListener {
+
+		@Override
+		public void selectionChanged(SelectionChangedEvent event) {
+			ISelection selection = event.getSelection();
+			if (selection instanceof IStructuredSelection) {
+				if (propagateSelectionChange) {
+					// Oh, the race conditions we shall have.
+					// Tell the tables not to further propagate the selection
+					// change when we programmatically change the selection
+					propagateSelectionChange = false;
+								
+					for (TableViewer tV : groupViewers.values())
+						tV.setSelection(selection, true);
+				
+					propagateSelectionChange= true;
+				}
+			}
+		}
 	}
 	
 	// Sample data with integer multiplicities

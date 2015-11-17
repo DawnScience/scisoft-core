@@ -27,6 +27,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -42,8 +43,14 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -213,6 +220,10 @@ public class XPDFSampleView extends ViewPart {
 			// Set the listener that sets the selection as the same on each sub-table
 			tV.addSelectionChangedListener(new SubTableSelectionChangedListener());
 			
+			// Drag and drop support
+			tV.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalDragSupportListener(tV));
+			tV.addDropSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalViewerDropAdapter(tV));
+			
 			// Calculate the relative weighting of each group
 			groupWeights[columngroup.getKey().ordinal()] = 0;
 			for (Column column : columngroup.getValue()) {
@@ -227,6 +238,114 @@ public class XPDFSampleView extends ViewPart {
 		
 	}
 
+	// drag support for local moves. Copy data
+	class LocalDragSupportListener extends DragSourceAdapter {
+		private TableViewer tV;
+		public LocalDragSupportListener(TableViewer tV) {
+			this.tV = tV;
+		}
+		
+		@Override
+		public void dragSetData(DragSourceEvent event) {
+			LocalSelectionTransfer.getTransfer().setSelection(tV.getSelection());
+		}
+	}
+	
+	// Deals with both dragging and copy-dragging
+	class LocalViewerDropAdapter extends ViewerDropAdapter {
+
+		public LocalViewerDropAdapter(TableViewer tV) {
+			super(tV);
+		}
+
+		@Override
+		public boolean performDrop(Object data) {
+			XPDFSampleParameters targetEntry = (XPDFSampleParameters) getCurrentTarget();
+			// Create the List of new sample parameters to be dropped in.
+			List<XPDFSampleParameters> samplesToAdd = new ArrayList<XPDFSampleParameters>(((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).size());
+			for (Object oSample: ((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).toList()) {
+				XPDFSampleParameters sampleToAdd;
+				if (getCurrentOperation() == DND.DROP_COPY) {
+					sampleToAdd = new XPDFSampleParameters((XPDFSampleParameters) oSample);
+					sampleToAdd.setId(generateUniqueID());
+				} else {
+					sampleToAdd = (XPDFSampleParameters) oSample;
+				}
+				samplesToAdd.add(sampleToAdd);
+			}
+
+			int targetIndex;
+			// Deal with removing the originals when moving and get the index to insert the dragees before
+			if (getCurrentOperation() == DND.DROP_MOVE) {
+				// Remove the originals, except the target if it is in the dragged set
+				List<XPDFSampleParameters> samplesToRemove = new ArrayList<XPDFSampleParameters>(samplesToAdd);
+				boolean moveInitialTarget = samplesToAdd.contains(targetEntry);
+				if (moveInitialTarget)
+					samplesToRemove.remove(targetEntry);
+				samples.removeAll(samplesToRemove);
+
+				// Get the index before which to insert the moved data
+				targetIndex = getDropTargetIndex(targetEntry, getCurrentLocation(), moveInitialTarget);
+				if (targetIndex == -1) return false;
+
+				if (moveInitialTarget)
+					samples.remove(targetEntry);
+			} else {
+				// Get the index before which to insert the moved data
+				targetIndex = getDropTargetIndex(targetEntry, getCurrentLocation());
+				if (targetIndex == -1) return false;
+			}				
+			boolean success = samples.addAll(targetIndex, samplesToAdd);
+			refreshAll();
+			
+			return success;
+		}
+
+		@Override
+		public boolean validateDrop(Object target, int operation,
+				TransferData transferType) {
+			// Fine, whatever. Just don't try anything funny.
+			// TODO: real validation.
+			return true;
+		}
+		
+	}
+
+	private int getDropTargetIndex(XPDFSampleParameters targetEntry, int currentLocation) {
+		return getDropTargetIndex(targetEntry, currentLocation, false);
+	}
+	
+	private int getDropTargetIndex(XPDFSampleParameters targetEntry, int currentLocation, boolean isTargetRemoved) {
+		// If they are identical, there is only one dragee, and the location is ON, then do nothing.
+		if (((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).size() == 1 &&
+				targetEntry == ((XPDFSampleParameters) ((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).getFirstElement()) &&
+				currentLocation == ViewerDropAdapter.LOCATION_ON)
+			return -1;
+		
+		// Otherwise, copy all the data dragged.
+		int targetIndex;
+		if (targetEntry != null) {
+			targetIndex = samples.indexOf(targetEntry);
+
+			switch (currentLocation) {
+			case ViewerDropAdapter.LOCATION_BEFORE:
+			case ViewerDropAdapter.LOCATION_ON:
+				break;
+			case ViewerDropAdapter.LOCATION_AFTER:
+				if (!isTargetRemoved) targetIndex++;
+				break;
+			case ViewerDropAdapter.LOCATION_NONE:
+				return -1;
+			default: return -1;
+
+			}
+		} else {
+			targetIndex = samples.size();
+		}
+		return targetIndex;
+	}
+	
+	
 	// Create a sub-set of the columns of the table
 	private void createColumns(TableColumnLayout tCL, List<Column> columns, TableViewer tV, int[] columnWeights) {
 		TableViewerColumn col;

@@ -143,7 +143,7 @@ public class ROITest {
 	}
 	
 	@Test
-	public void testPolygonalBounds() throws Exception {
+	public void testPolygonalBounds() {
         PolygonalROI diamond = new PolygonalROI(new double[]{1.5, 0});
         diamond.addPoint(new double[]{3,1.5});
         diamond.addPoint(new double[]{1.5,3});
@@ -151,11 +151,11 @@ public class ROITest {
         diamond.addPoint(new double[]{1.5, 0});
         
         IRectangularROI roi = diamond.getBounds();
-        if (roi.getLength(0)<1) throw new Exception("Bounds length too short!");
+        assertTrue (roi.getLength(0)>0);
 	}
 	
 	@Test
-	public void testPolygonalContains() throws Exception {
+	public void testPolygonalContains() {
 		
         PolygonalROI diamond = new PolygonalROI(new double[]{1.5, 0});
         diamond.addPoint(new double[]{3,1.5});
@@ -163,7 +163,8 @@ public class ROITest {
         diamond.addPoint(new double[]{0,1.5});
         diamond.addPoint(new double[]{1.5, 0});
 
-        if (diamond.containsPoint(0, 0)) throw new Exception("0,0 is not in the polygon!");
+        assertTrue(diamond.containsPoint(1.5, 1.5));
+        assertFalse(diamond.containsPoint(0, 0));
 	}
 
 	@Test

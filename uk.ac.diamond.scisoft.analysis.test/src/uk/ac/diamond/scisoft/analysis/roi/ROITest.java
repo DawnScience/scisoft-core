@@ -141,6 +141,18 @@ public class ROITest {
 		l.setPoint(0.1, 0);
 		assertTrue(Double.isNaN(l.getVerticalIntersectionParameters(0.1)[0]));
 	}
+	
+	@Test
+	public void testPolygonalBounds() throws Exception {
+        PolygonalROI diamond = new PolygonalROI(new double[]{1.5, 0});
+        diamond.addPoint(new double[]{3,1.5});
+        diamond.addPoint(new double[]{1.5,3});
+        diamond.addPoint(new double[]{0,1.5});
+        diamond.addPoint(new double[]{1.5, 0});
+        
+        IRectangularROI roi = diamond.getBounds();
+        if (roi.getLength(0)<1) throw new Exception("Bounds length too short!");
+	}
 
 	@Test
 	public void testRectangularROI() {

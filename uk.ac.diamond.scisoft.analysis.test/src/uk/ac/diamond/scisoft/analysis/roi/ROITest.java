@@ -141,29 +141,28 @@ public class ROITest {
 		l.setPoint(0.1, 0);
 		assertTrue(Double.isNaN(l.getVerticalIntersectionParameters(0.1)[0]));
 	}
-	
+
 	@Test
 	public void testPolygonalBounds() {
-        PolygonalROI diamond = new PolygonalROI(new double[]{1.5, 0});
-        diamond.insertPoint(new double[]{3,1.5});
-        diamond.insertPoint(new double[]{1.5,3});
-        diamond.insertPoint(new double[]{0,1.5});
+		PolygonalROI diamond = new PolygonalROI(new double[] { 1.5, 0 });
+		diamond.insertPoint(new double[] { 3, 1.5 });
+		diamond.insertPoint(new double[] { 1.5, 3 });
+		diamond.insertPoint(new double[] { 0, 1.5 });
 
-        IRectangularROI roi = diamond.getBounds();
-        assertTrue (roi.getLength(0)>0);
+		IRectangularROI roi = diamond.getBounds();
+		assertTrue(roi.getLength(0) > 0);
 	}
-	
+
 	@Test
 	public void testPolygonalContains() {
-		
-        PolygonalROI diamond = new PolygonalROI(new double[]{1.5, 0});
-        diamond.insertPoint(new double[]{3,1.5});
-        diamond.insertPoint(new double[]{1.5,3});
-        diamond.insertPoint(new double[]{0,1.5});
+		PolygonalROI diamond = new PolygonalROI(new double[] { 1.5, 0 });
+		diamond.insertPoint(new double[] { 3, 1.5 });
+		diamond.insertPoint(new double[] { 1.5, 3 });
+		diamond.insertPoint(new double[] { 0, 1.5 });
 
-        assertTrue(diamond.containsPoint(1.5, 1.5));
-        assertFalse(diamond.containsPoint(3, 3));
-        assertFalse(diamond.containsPoint(0, 0));
+		assertTrue(diamond.containsPoint(1.5, 1.5));
+		assertFalse(diamond.containsPoint(3, 3));
+		assertFalse(diamond.containsPoint(0, 0));
 	}
 
 	@Test

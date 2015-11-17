@@ -154,7 +154,7 @@ public class XPDFSubstance {
 	 * @return the attenuation coefficient of the substance in 1/cm.
 	 */
 	public double getAttenuationCoefficient(double beamEnergy) {
-		return 0.1 * getMassDensity()*getPackingFraction() * materialComposition.getMassAttenuation(beamEnergy);
+		return (materialComposition != null) ? 0.1 * getMassDensity()*getPackingFraction() * materialComposition.getMassAttenuation(beamEnergy) : 0.0;
 	}
 	
 	/**

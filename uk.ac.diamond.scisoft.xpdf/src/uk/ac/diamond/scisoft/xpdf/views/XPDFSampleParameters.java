@@ -12,8 +12,12 @@ package uk.ac.diamond.scisoft.xpdf.views;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 
+import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
 
 public class XPDFSampleParameters {
@@ -212,8 +216,20 @@ public class XPDFSampleParameters {
 	// Simulate the pair distribution function of that this sample parameterizes
 	public Dataset getSimulatedPDF() {
 		// TODO Make this actually simulate a PDF
-		// TODO Make this actually return a Dataset
-		return null;
+		String dataPath = "/home/rkl37156/ceria_dean_data/standars2015/xy/";
+		IDataHolder dh = null;
+		try {
+			dh = LoaderFactory.getData(dataPath+"CeO2_NIST_8s_19slices_averaged_1_processed_00001.xyself_scattering.xy");
+		} catch (Exception e) {
+		}
+		Dataset r = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_1").getSlice());
+		Dataset ceria = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_2").getSlice());
+		
+		AxesMetadataImpl theRAxis = new AxesMetadataImpl(1);
+		theRAxis.setAxis(0, r);
+		ceria.setMetadata(theRAxis);
+		
+		return ceria;
 	}
 	
 }

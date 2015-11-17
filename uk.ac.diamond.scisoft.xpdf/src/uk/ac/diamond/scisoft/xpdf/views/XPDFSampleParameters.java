@@ -12,6 +12,8 @@ package uk.ac.diamond.scisoft.xpdf.views;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+
 import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
 
 public class XPDFSampleParameters {
@@ -29,6 +31,7 @@ public class XPDFSampleParameters {
 	 */
 	public XPDFSampleParameters() {
 		this.substance = new XPDFSubstance();
+		this.phases = new ArrayList<String>();
 	}
 
 	/**
@@ -37,7 +40,7 @@ public class XPDFSampleParameters {
 	public XPDFSampleParameters(XPDFSampleParameters inSamp) {
 		this.name = inSamp.name;
 		this.phases = new ArrayList<String>(inSamp.phases);
-		this.substance = new XPDFSubstance(inSamp.substance);
+		this.substance = (inSamp.substance != null) ? new XPDFSubstance(inSamp.substance) : null;
 		this.suggestedEnergy = inSamp.suggestedEnergy;
 		this.suggestedCapDiameter = inSamp.suggestedCapDiameter;
 		this.beamState = inSamp.beamState;
@@ -197,6 +200,20 @@ public class XPDFSampleParameters {
 	 */
 	public void setContainer(String container) {
 		this.container = container;
+	}
+	
+	@Override
+	public String toString() {
+		return id + ": " + name + ", " + substance.getMaterialName() + " " + 
+				substance.getMassDensity() + " " + substance.getPackingFraction() + 
+				"E=" + suggestedEnergy + " keV " + ", " + suggestedCapDiameter + " mm";
+	}
+
+	// Simulate the pair distribution function of that this sample parameterizes
+	public Dataset getSimulatedPDF() {
+		// TODO Make this actually simulate a PDF
+		// TODO Make this actually return a Dataset
+		return null;
 	}
 	
 }

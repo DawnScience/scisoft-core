@@ -27,7 +27,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -67,6 +66,8 @@ public class XPDFSampleView extends ViewPart {
 	private Button eraButton;
 	private Button simButton;
 	private Button savButton;
+	private Button delButton;
+	private Button clrButton;
 	
 	private Action loadTestDataAction;
 	private Action simPDFAction;
@@ -129,6 +130,7 @@ public class XPDFSampleView extends ViewPart {
 		
 		createActions();
 		createLoadButtons(tableCompo);
+		createCentreButtons(tableCompo);
 		createRHSButtons(tableCompo);
 	}
 
@@ -610,6 +612,39 @@ public class XPDFSampleView extends ViewPart {
 		});
 	}
 
+	private void createCentreButtons(Composite compoAbove) {
+		int offset = 10;
+		Composite stCompo = compoAbove.getParent();
+		
+		delButton = new Button(stCompo, SWT.NONE);
+		FormData formData = new FormData();
+		formData.left = new FormAttachment(50);
+		formData.top = new FormAttachment(compoAbove, offset);
+		delButton.setLayoutData(formData);
+		delButton.setText(deleteAction.getText());
+		delButton.setToolTipText(deleteAction.getToolTipText());
+		delButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				deleteAction.run();
+			}
+		});
+		
+		clrButton = new Button(stCompo, SWT.NONE);
+		formData = new FormData();
+		formData.left = new FormAttachment(50);
+		formData.top = new FormAttachment(delButton, offset);
+		clrButton.setLayoutData(formData);
+		clrButton.setText(clearAction.getText());
+		clrButton.setToolTipText(clearAction.getToolTipText());
+		clrButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				clearAction.run();
+			}
+		});
+	}
+	
 	private void createLoadButtons(Composite compoAbove) {
 		int leftMargin = 10;
 		int topMargin = 10;

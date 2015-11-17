@@ -164,6 +164,7 @@ public class ROITest {
         diamond.addPoint(new double[]{1.5, 0});
 
         assertTrue(diamond.containsPoint(1.5, 1.5));
+        assertFalse(diamond.containsPoint(3, 3));
         assertFalse(diamond.containsPoint(0, 0));
 	}
 

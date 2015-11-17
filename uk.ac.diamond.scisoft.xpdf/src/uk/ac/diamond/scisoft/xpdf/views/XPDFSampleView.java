@@ -16,14 +16,18 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -47,8 +51,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.RowData;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -58,8 +60,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 public class XPDFSampleView extends ViewPart {
-	
-//	private TableViewer sampleTV;
 	
 	private List<XPDFSampleParameters> samples;
 	
@@ -73,7 +73,10 @@ public class XPDFSampleView extends ViewPart {
 	private Action saveAction;
 	private Action newCifAction;
 	private Action newEraAction;
+	private Action newBlankAction;
 	private Action pointBreakAction;
+	private Action deleteAction;
+	private Action clearAction;
 	
 	private enum Column {
 		NAME, ID, DETAILS, PHASES, COMPOSITION, DENSITY, PACKING,
@@ -88,14 +91,10 @@ public class XPDFSampleView extends ViewPart {
 	
 	private boolean propagateSelectionChange;
 
-	// Sorting parameters: possibly held by the table(s?)?
-	private Column sortedColumn;
-	private boolean isDescendingSort;
+	private SortedSet<Integer> usedIDs; // The set of assigned ID numbers. Should come from the database eventually?	
 	
 	public XPDFSampleView() {
 		propagateSelectionChange = true;
-		isDescendingSort = true;
-		sortedColumn = Column.ID;
 	}
 	
 	/**
@@ -187,7 +186,7 @@ public class XPDFSampleView extends ViewPart {
 			TableColumnLayout tCL = new TableColumnLayout();
 			subTableCompo.setLayout(tCL);
 			
-			// Create the columns of the sub-table, according to the defintion of the group and the overall weights 
+			// Create the columns of the sub-table, according to the definition of the group and the overall weights 
 			createColumns(tCL, columngroup.getValue(), tV, columnWeights);
 
 			// Style of each sub-table
@@ -283,7 +282,7 @@ public class XPDFSampleView extends ViewPart {
 					sb.append(phase);
 					sb.append(", ");
 				}
-				sb.delete(sb.length()-2, sb.length());
+				if (sb.length() > 2) sb.delete(sb.length()-2, sb.length());
 				return sb.toString();
 			case COMPOSITION: return sample.getComposition();
 			case DENSITY: return Double.toString(sample.getDensity());
@@ -501,18 +500,19 @@ public class XPDFSampleView extends ViewPart {
 				tableColumn.getParent().setSortDirection(sortDirection);
 				tableColumn.getParent().setSortColumn(tableColumn);
 				
-				for (TableViewer tV : groupViewers.values())
-					tV.refresh();
+				refreshAll();
 			}
 		};
 	}
 		
 	private void createActions() {
+		// load the nonsense test data
 		loadTestDataAction = new LoadTestDataAction();
 		loadTestDataAction.setText("Load test data");
 		loadTestDataAction.setToolTipText("Load the test data");
 		loadTestDataAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FILE));
 		
+		// do nothing but allow a breakpoint hook
 		pointBreakAction = new Action() {
 			@Override
 			public void run() {
@@ -522,6 +522,56 @@ public class XPDFSampleView extends ViewPart {
 		pointBreakAction.setToolTipText("Ze goggles, zey...");
 		pointBreakAction.setText("...do nothing");
 		pointBreakAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
+		
+		// save the data
+		saveAction = new Action() {
+			@Override
+			public void run() {
+				for (XPDFSampleParameters sample : samples)
+					System.err.println(sample.toString());
+			}
+		};
+		saveAction.setToolTipText("Save data to stderr");
+		saveAction.setText("Save");
+		saveAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_SAVE_EDIT));
+		
+		// add a new entry to the end of the list
+		newBlankAction = new Action() {
+			@Override
+			public void run() {
+				XPDFSampleParameters blankSample = new XPDFSampleParameters();
+				blankSample.setId(generateUniqueID());
+				samples.add(blankSample);
+				refreshAll();
+			}
+		};
+		newBlankAction.setText("New sample");
+		newBlankAction.setToolTipText("Add an empty sample to the table");
+		newBlankAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
+		
+		// clear all the data from the list
+		clearAction = new Action() {
+			@Override
+			public void run() {
+				samples.clear();
+				usedIDs.clear();
+				refreshAll();
+			}
+		};
+		clearAction.setText("Clear");
+		clearAction.setToolTipText("Clear all entries");
+		clearAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
+		
+		// delete a selected entry
+		deleteAction = new DeleteSampleAction();
+		deleteAction.setText("Delete");
+		deleteAction.setToolTipText("Delete selected samples");
+		deleteAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_DELETE));
+		
+		// simulate a PDF
+		simPDFAction = new SimulatePDFAction();
+		simPDFAction.setText("Simulate");
+		simPDFAction.setToolTipText("Simulate a PDF for each of the selected samples");
 		
 		hookIntoContextMenu();
 	}
@@ -538,7 +588,13 @@ public class XPDFSampleView extends ViewPart {
 		simButton.setLayoutData(formData);
 		simButton.setText("Simulate PDF");
 		simButton.setToolTipText("Produce a simulated pair distribution function for the selected sample");
-
+		simButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				simPDFAction.run();
+			}
+		});
+		
 		savButton = new Button(stCompo, SWT.NONE);
 		formData = new FormData();
 		formData.right = new FormAttachment(100, rightMargin);
@@ -546,7 +602,12 @@ public class XPDFSampleView extends ViewPart {
 		savButton.setLayoutData(formData);
 		savButton.setText("Save");
 		savButton.setToolTipText("Save the sample data to file (or the database?)");
-		
+		savButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				saveAction.run();
+			}
+		});
 	}
 
 	private void createLoadButtons(Composite compoAbove) {
@@ -599,6 +660,12 @@ public class XPDFSampleView extends ViewPart {
 
 	protected void fillContextMenu(IMenuManager manager) {
 		manager.add(loadTestDataAction);
+		manager.add(newBlankAction);
+		manager.add(saveAction);
+		manager.add(deleteAction);
+		manager.add(clearAction);
+		manager.add(new Separator("Data"));
+		manager.add(simPDFAction);
 		manager.add(new Separator("Debug"));
 		manager.add(pointBreakAction);
 	}
@@ -649,19 +716,87 @@ public class XPDFSampleView extends ViewPart {
 		}
 	}
 	
+	
+	// Action class that simulates the pair-distribution function of the given sample.
+	// At the moment, this plots the NIST ceria standard PDF
+	class SimulatePDFAction extends Action {
+		@Override
+		public void run() {
+			List<XPDFSampleParameters> selectedXPDFParameters = getSelectedSampleParameters();
+			if (selectedXPDFParameters.isEmpty()) return;
+			// Get the pair-distribution function data for each sample
+			List<Dataset> simulatedPDFs = new ArrayList<Dataset>(selectedXPDFParameters.size());
+			for (int i = 0; i < selectedXPDFParameters.size(); i++)
+				simulatedPDFs.add(i, selectedXPDFParameters.get(i).getSimulatedPDF());
+			// Because the XPDF Sample View is not necessarily going to be 
+			// used in a Perspective containing a plot view, and because there
+			// may be many selected samples, open an new plot window, and plot
+			// the data there.
+			
+		// TODO: Do something with the data
+			
+		}
+	}
+
+	private class DeleteSampleAction extends Action {
+		@Override
+		public void run() {
+			List<XPDFSampleParameters> selectedXPDFParameters = getSelectedSampleParameters();
+			if (selectedXPDFParameters.isEmpty()) return;
+			samples.removeAll(selectedXPDFParameters);
+			refreshAll();
+		}
+	}
+
+	// get all the selected elements, regardless of the sub-table on which the action is initiated.
+	private List<XPDFSampleParameters> getSelectedSampleParameters() {
+		List<XPDFSampleParameters> selectedXPDFParameters = new ArrayList<XPDFSampleParameters>();
+		// The selection listeners make sure the selection is the same in
+		// all tables, so get the selection from the first table.
+		ISelection selection = groupViewers.get(ColumnGroup.ID).getSelection();
+		// No items? return, having done nothing.
+		if (selection.isEmpty()) return selectedXPDFParameters;
+		// If it is not an IStructureSelection, then I don't know what to do with it.
+		if (!(selection instanceof IStructuredSelection)) return selectedXPDFParameters;
+		// Get the list of all selected data
+		List<?> selectedData = ((IStructuredSelection) selection).toList();
+		for (Object datum : selectedData)
+			if (datum instanceof XPDFSampleParameters)
+				selectedXPDFParameters.add((XPDFSampleParameters) datum);
+		return selectedXPDFParameters;		
+	}
+	
+	/**
+	 * Refreshes all sub-tables.
+	 */
+	// refresh the entire table
+	private void refreshAll() {
+		for (TableViewer tV : groupViewers.values())
+			tV.refresh();
+	}
+	
+	// Generate a new id
+	private int generateUniqueID() {
+		final int lowestID = 154;
+		if (usedIDs == null)
+			usedIDs = new TreeSet<Integer>();
+		int theID = (usedIDs.isEmpty()) ? lowestID : usedIDs.last()+1;
+		usedIDs.add(theID);
+		return theID;
+	}
+	
 	// Sample data with integer multiplicities
 	class LoadTestDataAction extends Action {
 
 		@Override
 		public void run() {
-			samples = new ArrayList<XPDFSampleParameters>();
-			
-			int currentID = 154;
+			if (samples == null)
+				samples = new ArrayList<XPDFSampleParameters>();
 			
 			// barium titanate
 			XPDFSampleParameters bto = new XPDFSampleParameters();
 			bto.setName("Barium Titanate");
-			bto.setId(currentID++);
+			bto.setId(generateUniqueID());
 			bto.setPhases(new ArrayList<String>(Arrays.asList(new String[] {"BTO", "CaTiO3"})));
 			bto.setComposition("BaTiO3"); // Should be "Ba0.9Ca0.1TiO3"
 			bto.setDensity(3.71);
@@ -676,11 +811,11 @@ public class XPDFSampleView extends ViewPart {
 			// rutile
 			XPDFSampleParameters rutile = new XPDFSampleParameters();
 			rutile.setName("Rutile");
-			rutile.setId(currentID++);
+			rutile.setId(generateUniqueID());
 			rutile.setPhases(new ArrayList<String>(Arrays.asList(new String[] {"TiO2"})));
 			rutile.setComposition("TiO2");
 			rutile.setDensity(6.67);
-			// Packing fraction as result
+			// Packing fraction as default
 			rutile.setSuggestedEnergy(76.6);
 			rutile.setSuggestedCapDiameter(5.0);
 			rutile.setBeamState("76.6 Hi Flux");
@@ -691,7 +826,7 @@ public class XPDFSampleView extends ViewPart {
 			// and something else
 			XPDFSampleParameters explodite = new XPDFSampleParameters();
 			explodite.setName("Explodite");
-			explodite.setId(currentID++);
+			explodite.setId(generateUniqueID());
 			explodite.setPhases(new ArrayList<String>(Arrays.asList(new String[] {"LF", "O"})));
 			explodite.setComposition("K2S4P");
 			explodite.setDensity(1.1);

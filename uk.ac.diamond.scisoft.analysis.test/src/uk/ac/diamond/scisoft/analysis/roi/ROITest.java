@@ -145,10 +145,10 @@ public class ROITest {
 	@Test
 	public void testPolygonalBounds() {
         PolygonalROI diamond = new PolygonalROI(new double[]{1.5, 0});
-        diamond.addPoint(new double[]{3,1.5});
-        diamond.addPoint(new double[]{1.5,3});
-        diamond.addPoint(new double[]{0,1.5});
-        diamond.addPoint(new double[]{1.5, 0});
+        diamond.insertPoint(new double[]{3,1.5});
+        diamond.insertPoint(new double[]{1.5,3});
+        diamond.insertPoint(new double[]{0,1.5});
+        diamond.insertPoint(new double[]{1.5, 0});
         
         IRectangularROI roi = diamond.getBounds();
         assertTrue (roi.getLength(0)>0);
@@ -158,10 +158,10 @@ public class ROITest {
 	public void testPolygonalContains() {
 		
         PolygonalROI diamond = new PolygonalROI(new double[]{1.5, 0});
-        diamond.addPoint(new double[]{3,1.5});
-        diamond.addPoint(new double[]{1.5,3});
-        diamond.addPoint(new double[]{0,1.5});
-        diamond.addPoint(new double[]{1.5, 0});
+        diamond.insertPoint(new double[]{3,1.5});
+        diamond.insertPoint(new double[]{1.5,3});
+        diamond.insertPoint(new double[]{0,1.5});
+        diamond.insertPoint(new double[]{1.5, 0});
 
         assertTrue(diamond.containsPoint(1.5, 1.5));
         assertFalse(diamond.containsPoint(3, 3));

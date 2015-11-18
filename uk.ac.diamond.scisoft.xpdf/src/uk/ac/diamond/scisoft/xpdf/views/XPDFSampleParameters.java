@@ -216,7 +216,7 @@ public class XPDFSampleParameters {
 	public Dataset getSimulatedPDF() {
 		// TODO Make this actually simulate a PDF
 		Dataset r = DoubleDataset.createRange(0.01, 50.0, 0.02);
-		Dataset ceria = DoubleDataset.createFromList(Arrays.asList(new double[]
+		Dataset ceria = DoubleDataset.createFromList(Arrays.asList(new Double[]
 				{
 				-0.051018955, -0.14392168, -0.21143420, -0.24290696, -0.23565999,
 				 -0.19560127, -0.13595894, -0.074397602, -0.029142807, -0.014957260,

@@ -20,6 +20,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -888,7 +889,11 @@ public class XPDFSampleView extends ViewPart {
 			// the data there.
 			
 		// TODO: Do something with the data
-			
+			for (Dataset pdf : simulatedPDFs) {
+				XPDFPopUpPlotDialog popUp = new XPDFPopUpPlotDialog(XPDFSampleView.this.getViewSite().getShell(), null, (IDataset) pdf);
+				popUp.open();
+//				popUp.createDialogArea(XPDFSampleView.this.getViewSite().getShell().getParent());
+			}
 		}
 	}
 

@@ -9,7 +9,9 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.vecmath.Vector3d;
 
@@ -662,6 +664,35 @@ public class MillerSpaceMapper {
 			x.setName(AXIS_NAME[i] + "-axis");
 			HDF5Utils.writeDataset(file, "/entry1/data", x);
 		}
+
+		List<Dataset> attrs = new ArrayList<>();
+		Dataset a;
+
+		a = DatasetFactory.createFromObject("NXdata");
+		a.setName("NX_class");
+		attrs.add(a);
+
+		a = DatasetFactory.createFromObject("volume");
+		a.setName("signal");
+		attrs.add(a);
+
+		a = DatasetFactory.createFromObject(new String[] {"h-axis", "k-axis", "l-axis"});
+		a.setName("axes");
+		attrs.add(a);
+
+		a = DatasetFactory.createFromObject(0);
+		a.setName("h-axis_indices");
+		attrs.add(a);
+
+		a = DatasetFactory.createFromObject(1);
+		a.setName("k-axis_indices");
+		attrs.add(a);
+
+		a = DatasetFactory.createFromObject(2);
+		a.setName("l-axis_indices");
+		attrs.add(a);
+
+		HDF5Utils.writeAttributes(file, "/entry1/data", attrs.toArray(new Dataset[attrs.size()]));
 	}
 
 	private static final MillerSpaceMapper I16Mapper = new MillerSpaceMapper("/entry1/instrument/pil100k", "image_data", "/entry1/sample");

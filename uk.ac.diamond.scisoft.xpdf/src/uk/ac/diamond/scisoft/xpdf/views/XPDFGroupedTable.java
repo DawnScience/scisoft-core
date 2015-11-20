@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -213,6 +214,25 @@ public class XPDFGroupedTable extends Composite {
 			tableSelectionListeners = new ArrayList<ISelectionChangedListener>();
 		if (!tableSelectionListeners.contains(listener))
 			tableSelectionListeners.add(listener);
+	}
+	
+	@Override
+	public boolean setFocus() {
+		boolean gotFocus = true;
+		for (TableViewer tV : groupViewers)
+			gotFocus &= tV.getControl().setFocus();
+		return gotFocus;
+	}
+	
+	public void setContentProvider(IContentProvider cP) {
+		for (TableViewer tV : groupViewers)
+			// Is this a terrible idea? the same object, rather than copies
+			tV.setContentProvider(cP);
+		}
+	
+	public void setInput(Object in) {
+		for (TableViewer tV : groupViewers)
+			tV.setInput(in);
 	}
 	
 	private class SubTableSelectionListener implements ISelectionChangedListener {

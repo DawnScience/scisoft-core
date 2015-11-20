@@ -610,7 +610,7 @@ public class MillerSpaceMapper {
 			for (int i = 0; i < a.length; i++) {
 				double mbeg = mStart[i];
 				double mend = mbeg + mShape[i] * mDelta[i];
-				a[i] = DatasetUtils.linSpace(mbeg, mend, mShape[i], Dataset.FLOAT64);
+				a[i] = DatasetUtils.linSpace(mbeg, mend - mDelta[i], mShape[i], Dataset.FLOAT64);
 				System.err.println("Axis " + i + ": " + mbeg + " -> " + a[i].getDouble(mShape[i] - 1) +  "; " + mend);
 			}
 		}

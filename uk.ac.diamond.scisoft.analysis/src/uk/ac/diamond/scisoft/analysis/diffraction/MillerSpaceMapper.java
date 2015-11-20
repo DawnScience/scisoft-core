@@ -52,7 +52,7 @@ public class MillerSpaceMapper {
 	private int[] min;
 	private int[] max;
 	private double scale; // image upsampling factor
-	int border = 2; // extra voxels surrounding volume
+	int border = 10; // extra voxels surrounding volume
 
 	/**
 	 * 
@@ -180,10 +180,8 @@ public class MillerSpaceMapper {
 			dp.setHPxSize(dp.getHPxSize()/scale);
 			dp.setVPxSize(dp.getVPxSize()/scale);
 			if (upSampler != null) {
-				System.err.println("Detector is " + dp.getPx() + "x" + dp.getPy());
 				dp.setPx(ishape[0]);
 				dp.setPy(ishape[1]);
-				System.err.println(" but now is " + dp.getPx() + "x" + dp.getPy());
 			}
 			for (int i = 0; i < srank; i++) {
 				stop[i] = pos[i] + 1;

@@ -136,6 +136,9 @@ public class XPDFSampleEditorView extends ViewPart {
 
 	class SampleGroupedTable extends Composite {
 		
+		List<String> groupNames;
+		List<List<String>> groupedColumnNames;
+		
 		public SampleGroupedTable(Composite parent, int style) {
 			super(parent, style);
 				
@@ -148,10 +151,27 @@ public class XPDFSampleEditorView extends ViewPart {
 			formData.bottom = new FormAttachment(100);
 			groupedTable.setLayoutData(formData);
 
+			groupNames = new ArrayList<String>();
+			groupedColumnNames = new ArrayList<List<String>>();
+			
+			groupNames.add("Sample");
+			groupedColumnNames.add(Arrays.asList(new String[] {"Code", "Name"}));
+			
+			groupNames.add("Details");
+			groupedColumnNames.add(Arrays.asList(new String[] {"Phases", "Composition", "Density", "Vol. frac."}));
+			
+			groupNames.add("Geometry");
+			groupedColumnNames.add(Arrays.asList(new String[] {"Dimension(s)", "Shape"}));
+			
+			
+			groupedTable.createColumnGroups();
+			
 		}
 	}
 	
 	class MyGroupedTable extends Composite {
+		
+		private SashForm tableCompo;
 		
 		public MyGroupedTable(Composite parent, int style) {
 			super(parent, style);
@@ -159,7 +179,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			this.setLayout(new FormLayout());
 			
 			// Composite to hold the table column groups
-			SashForm tableCompo = new SashForm(this, SWT.HORIZONTAL);
+			tableCompo = new SashForm(this, SWT.HORIZONTAL);
 			FormData formData = new FormData();
 			formData.left = new FormAttachment(0);
 			formData.right = new FormAttachment(100);
@@ -169,103 +189,106 @@ public class XPDFSampleEditorView extends ViewPart {
 			// To properly fake a table, set the sash width to 0
 			tableCompo.setSashWidth(0);
 			
+		}			
+	
+		public void createColumnGroups() {
 			createColumnGroups(tableCompo);
 			
 		}
 		
-	}
-	
-	// Create the column groupings
-	private void createColumnGroups(Composite outerComposite) {
+		// Create the column groupings
+		private void createColumnGroups(Composite outerComposite) {
 
-		// Define the groupings of the columns
-		Map<ColumnGroup, List<Column>> columnGrouping = new TreeMap<XPDFSampleEditorView.ColumnGroup, List<Column>>();
-		columnGrouping.put(ColumnGroup.ID, Arrays.asList(new Column[]{Column.NAME, Column.ID}));
-		columnGrouping.put(ColumnGroup.SAMPLE_DETAILS, Arrays.asList(new Column[] {Column.DETAILS, Column.PHASES, Column.COMPOSITION, Column.DENSITY, Column.PACKING}));
-		columnGrouping.put(ColumnGroup.SUGGESTED_EXPT, Arrays.asList(new Column[] {Column.SUGGESTED_ENERGY, Column.MU, Column.SUGGESTED_DIAMETER}));
-		columnGrouping.put(ColumnGroup.CHOSEN_EXPT, Arrays.asList(new Column[] {Column.ENERGY, Column.CAPILLARY}));
+			// Define the groupings of the columns
+			Map<ColumnGroup, List<Column>> columnGrouping = new TreeMap<XPDFSampleEditorView.ColumnGroup, List<Column>>();
+			columnGrouping.put(ColumnGroup.ID, Arrays.asList(new Column[]{Column.NAME, Column.ID}));
+			columnGrouping.put(ColumnGroup.SAMPLE_DETAILS, Arrays.asList(new Column[] {Column.DETAILS, Column.PHASES, Column.COMPOSITION, Column.DENSITY, Column.PACKING}));
+			columnGrouping.put(ColumnGroup.SUGGESTED_EXPT, Arrays.asList(new Column[] {Column.SUGGESTED_ENERGY, Column.MU, Column.SUGGESTED_DIAMETER}));
+			columnGrouping.put(ColumnGroup.CHOSEN_EXPT, Arrays.asList(new Column[] {Column.ENERGY, Column.CAPILLARY}));
 
-		String[] groupHeaderText = {"Sample Identification", "Sample Details", "Suggested Parameters", "Chosen Parameters"};
-		
-		// TableViewers for each sub-table
-		groupViewers = new HashMap<XPDFSampleEditorView.ColumnGroup, TableViewer>();
+			String[] groupHeaderText = {"Sample Identification", "Sample Details", "Suggested Parameters", "Chosen Parameters"};
 
-		// Column weights, and column group weights
-		int[] columnWeights = {20, 10, 2, 10, 15, 10, 5, 5, 5, 15, 10, 10};
-		int[] groupWeights = new int[columnGrouping.size()];
-		
-		// Iterate over the groups.
-		for (Map.Entry<ColumnGroup, List<Column>> columngroup : columnGrouping.entrySet()) {
-			// Composite to hold the group header and table
-			Composite groupCompo = new Composite(outerComposite, SWT.NONE);		
-			groupCompo.setLayout(new FormLayout());
-			
-			// Add the Group column header as a do-nothing button
-			Button headerButton = new Button(groupCompo, SWT.PUSH);
+			// TableViewers for each sub-table
+			groupViewers = new HashMap<XPDFSampleEditorView.ColumnGroup, TableViewer>();
 
-			FormData formData = new FormData();
-			formData.top = new FormAttachment(0, 0);
-			formData.left = new FormAttachment(0, 0);
-			formData.right = new FormAttachment(100, 0);
-			headerButton.setLayoutData(formData);
+			// Column weights, and column group weights
+			int[] columnWeights = {20, 10, 2, 10, 15, 10, 5, 5, 5, 15, 10, 10};
+			int[] groupWeights = new int[columnGrouping.size()];
 
-			headerButton.setText(groupHeaderText[columngroup.getKey().ordinal()]);
-			
-			// Add the table that will hold this subset of the columns
-			Composite subTableCompo = new Composite(groupCompo, SWT.NONE);
+			// Iterate over the groups.
+			for (Map.Entry<ColumnGroup, List<Column>> columngroup : columnGrouping.entrySet()) {
+				// Composite to hold the group header and table
+				Composite groupCompo = new Composite(outerComposite, SWT.NONE);		
+				groupCompo.setLayout(new FormLayout());
 
-			formData = new FormData();
-			formData.top = new FormAttachment(headerButton);
-			formData.left = new FormAttachment(0, 0);
-			formData.right = new FormAttachment(100, 0);
-			formData.bottom = new FormAttachment(100, 0);
-			subTableCompo.setLayoutData(formData);
-			
-			// Define the sub-table
-			TableViewer tV = new TableViewer(subTableCompo);
-			groupViewers.put(columngroup.getKey(), tV);
-			TableColumnLayout tCL = new TableColumnLayout();
-			subTableCompo.setLayout(tCL);
-			
-			// Create the columns of the sub-table, according to the definition of the group and the overall weights 
-			createColumns(tCL, columngroup.getValue(), tV, columnWeights);
+				// Add the Group column header as a do-nothing button
+				Button headerButton = new Button(groupCompo, SWT.PUSH);
 
-			// Style of each sub-table
-			tV.getTable().setHeaderVisible(true);
-			tV.getTable().setLinesVisible(true);
-			// Interactions of the sub-table
-			tV.setContentProvider(new IStructuredContentProvider() {
-				@Override
-				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}	// TODO Auto-generated method stub
-				
-				@Override
-				public void dispose() {} // TODO Auto-generated method stub
-				
-				@Override
-				public Object[] getElements(Object inputElement) {
-					return samples.toArray();
+				FormData formData = new FormData();
+				formData.top = new FormAttachment(0, 0);
+				formData.left = new FormAttachment(0, 0);
+				formData.right = new FormAttachment(100, 0);
+				headerButton.setLayoutData(formData);
+
+				headerButton.setText(groupHeaderText[columngroup.getKey().ordinal()]);
+
+				// Add the table that will hold this subset of the columns
+				Composite subTableCompo = new Composite(groupCompo, SWT.NONE);
+
+				formData = new FormData();
+				formData.top = new FormAttachment(headerButton);
+				formData.left = new FormAttachment(0, 0);
+				formData.right = new FormAttachment(100, 0);
+				formData.bottom = new FormAttachment(100, 0);
+				subTableCompo.setLayoutData(formData);
+
+				// Define the sub-table
+				TableViewer tV = new TableViewer(subTableCompo);
+				groupViewers.put(columngroup.getKey(), tV);
+				TableColumnLayout tCL = new TableColumnLayout();
+				subTableCompo.setLayout(tCL);
+
+				// Create the columns of the sub-table, according to the definition of the group and the overall weights 
+				createColumns(tCL, columngroup.getValue(), tV, columnWeights);
+
+				// Style of each sub-table
+				tV.getTable().setHeaderVisible(true);
+				tV.getTable().setLinesVisible(true);
+				// Interactions of the sub-table
+				tV.setContentProvider(new IStructuredContentProvider() {
+					@Override
+					public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}	// TODO Auto-generated method stub
+
+					@Override
+					public void dispose() {} // TODO Auto-generated method stub
+
+					@Override
+					public Object[] getElements(Object inputElement) {
+						return samples.toArray();
+					}
+				});
+				tV.setLabelProvider(new SampleTableLP(columngroup.getValue()));
+				tV.setInput(getViewSite());
+
+				// Set the listener that sets the selection as the same on each sub-table
+				tV.addSelectionChangedListener(new SubTableSelectionChangedListener());
+
+				// Drag and drop support
+				tV.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalDragSupportListener(tV));
+				tV.addDropSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalViewerDropAdapter(tV));
+
+				// Calculate the relative weighting of each group
+				groupWeights[columngroup.getKey().ordinal()] = 0;
+				for (Column column : columngroup.getValue()) {
+					groupWeights[columngroup.getKey().ordinal()] += columnWeights[column.ordinal()];
 				}
-			});
-			tV.setLabelProvider(new SampleTableLP(columngroup.getValue()));
-			tV.setInput(getViewSite());
-			
-			// Set the listener that sets the selection as the same on each sub-table
-			tV.addSelectionChangedListener(new SubTableSelectionChangedListener());
-			
-			// Drag and drop support
-			tV.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalDragSupportListener(tV));
-			tV.addDropSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalViewerDropAdapter(tV));
-			
-			// Calculate the relative weighting of each group
-			groupWeights[columngroup.getKey().ordinal()] = 0;
-			for (Column column : columngroup.getValue()) {
-				groupWeights[columngroup.getKey().ordinal()] += columnWeights[column.ordinal()];
 			}
-		}
 
-		// Set the weights of the SashForm, if the parent Composite is one
-		if (outerComposite instanceof SashForm) {
-			((SashForm) outerComposite).setWeights(groupWeights); 
+			// Set the weights of the SashForm, if the parent Composite is one
+			if (outerComposite instanceof SashForm) {
+				((SashForm) outerComposite).setWeights(groupWeights); 
+			}
+
 		}
 		
 	}

@@ -14,9 +14,13 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
 
+/**
+ * Function acts as a 2D interpolator using cubic interpolation 
+ */
 public class BicubicInterpolator implements DatasetToDatasetFunction {
 
 	int[] shape;
@@ -69,8 +73,6 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 	 * @return the interpolated value
 	 */
 	public double bicubicInterpolate (double x, double y) {
-
-
 		// only this needs to be called per point
 		double x2 = x * x;
 		double x3 = x2 * x;
@@ -83,10 +85,9 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 		a30 * x3 + a31 * x3 * y + a32 * x3 * y2 + a33 * x3 * y3;
 	}
 
-	protected double[][] generateSurroundingPoints(int x, int y, final IDataset ds, final int[] dShape) {
+	double[][] result = new double[4][4];
 
-		double[][] result = new double[4][4];
-
+	protected double[][] generateSurroundingPoints(int x, int y, final Dataset ds, final int[] dShape) {
 		x--; // start to left
 		y--; // and below
 		for (int i = 0; i < 4; i++) {
@@ -94,20 +95,21 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 				result[i][j] = getPoint(x + i, y + j, ds, dShape);
 			}
 		}
-
 		return result;
 	}
 
-	private double getPoint(int i, int j, final IDataset ds, final int[] dShape) {
+	private double getPoint(int i, int j, final Dataset ds, final int[] dShape) {
 		// first check the bounds
-		if (i < 0)
+		if (i < 0) {
 			i = 0;
-		if (j < 0)
-			j = 0;
-		if (i >= dShape[0])
+		} else if (i >= dShape[0]) {
 			i = dShape[0] - 1;
-		if (j >= dShape[1])
+		}
+		if (j < 0) {
+			j = 0;
+		} else if (j >= dShape[1]) {
 			j = dShape[1] - 1;
+		}
 
 		return ds.getDouble(i, j);
 	}
@@ -115,11 +117,11 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 	@Override
 	public List<Dataset> value(IDataset... datasets) {
 
-		//TODO should first check for correct shape.
 		List<Dataset> result = new ArrayList<Dataset>();
 
 		for (IDataset ds : datasets) {
-			final int[] dShape = ds.getShape();
+			Dataset d = DatasetUtils.convertToDataset(ds);
+			final int[] dShape = d.getShapeRef();
 			if (dShape == null || dShape.length != 2) {
 				throw new IllegalArgumentException("Shape must be 2D");
 			}
@@ -132,21 +134,19 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 			double xscale = 1./dx;
 			double yscale = 1./dy;
 
-
-			for(int i = 0; i < dShape[0]-1; i++) {
-				for(int j = 0; j < dShape[1]-1; j++) {
+			for (int i = 0; i < dShape[0] - 1; i++) {
+				for (int j = 0; j < dShape[1] - 1; j++) {
 
 					// at this point we can make the pre-calculation to save time
-					calculateParameters(generateSurroundingPoints(i, j, ds, dShape));
+					calculateParameters(generateSurroundingPoints(i, j, d, dShape));
 
+					int xstart = (int) (i * xscale);
+					int xend   = (int) ((i + 1) * xscale);
+					int ystart = (int) (j * yscale);
+					int yend   = (int) ((j + 1) * yscale);
 
-					int xstart = (int) (i*xscale);
-					int xend   = (int) ((i+1)*xscale);
-					int ystart = (int) (j*yscale);
-					int yend   = (int) ((j+1)*yscale);
-
-					for(int x = xstart; x <= xend; x++ ) {
-						for(int y = ystart; y <= yend; y++ ) {
+					for (int x = xstart; x <= xend; x++) {
+						for (int y = ystart; y <= yend; y++) {
 
 							// find the position
 							double xpos = x * dx;
@@ -156,7 +156,7 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 							xpos -= i;
 							ypos -= j;
 
-							dds.setItem(bicubicInterpolate(xpos,ypos), x, y);
+							dds.setItem(bicubicInterpolate(xpos, ypos), x, y);
 						}
 					}					
 				}

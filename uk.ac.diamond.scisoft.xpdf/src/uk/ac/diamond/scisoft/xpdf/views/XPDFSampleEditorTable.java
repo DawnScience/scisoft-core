@@ -9,14 +9,18 @@ import java.util.Map;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 
-public class XPDFSampleEditorTable extends Composite {
+public class XPDFSampleEditorTable {
 
 	XPDFGroupedTable groupedTable;
+	
+	List<XPDFSampleParameters> samples;
 	
 	private enum Column {
 		NAME, ID, DETAILS, PHASES, COMPOSITION, DENSITY, PACKING,
@@ -31,8 +35,8 @@ public class XPDFSampleEditorTable extends Composite {
 	
 	
 	public XPDFSampleEditorTable(Composite parent, int style) {
-		super(parent, style);
 		groupedTable = new XPDFGroupedTable(parent, style);
+		samples = new ArrayList<XPDFSampleParameters>();
 		
 		columnGroupings = new HashMap<XPDFSampleEditorTable.ColumnGroup, List<Column>>();
 		columnGroupings.put(ColumnGroup.ID, Arrays.asList(new Column[]{Column.NAME, Column.ID}));
@@ -63,6 +67,19 @@ public class XPDFSampleEditorTable extends Composite {
 				tVC.setEditingSupport(new SampleEditorCES(column, (TableViewer) tVC.getViewer()));
 			}
 		}
+		groupedTable.setContentProvider(new IStructuredContentProvider() {
+				@Override
+				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}	// TODO Auto-generated method stub
+				
+				@Override
+				public void dispose() {} // TODO Auto-generated method stub
+				
+				@Override
+				public Object[] getElements(Object inputElement) {
+					return samples.toArray();
+				}
+			});
+		
 	}
 
 
@@ -174,9 +191,17 @@ public class XPDFSampleEditorTable extends Composite {
 		}
 	}
 	
-	@Override
 	public boolean setFocus() {
 		return groupedTable.setFocus();
+	}
+	
+	/**
+	 * Set the inputs of the grouped table.
+	 * @param input
+	 * 				the input providing Object
+	 */
+	public void setInput(Object input) {
+		groupedTable.setInput(input);
 	}
 
 }

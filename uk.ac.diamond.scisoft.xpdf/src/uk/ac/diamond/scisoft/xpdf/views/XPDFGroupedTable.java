@@ -37,7 +37,8 @@ public class XPDFGroupedTable extends Composite {
 		groupViewers = new ArrayList<TableViewer>();
 		groupNames = new ArrayList<String>();
 		
-		topLevelSash = new SashForm(this, SWT.BORDER);
+		this.setLayout(new FormLayout());
+		topLevelSash = new SashForm(parent, SWT.BORDER);
 		FormData sashForm = new FormData();
 		sashForm.left = new FormAttachment(0);
 		sashForm.right = new FormAttachment(100);
@@ -45,6 +46,7 @@ public class XPDFGroupedTable extends Composite {
 		sashForm.bottom = new FormAttachment(100);
 		topLevelSash.setLayoutData(sashForm);
 		topLevelSash.setSashWidth(0);
+
 	}
 
 	public TableViewerColumn newGroupedColumn(String id) {

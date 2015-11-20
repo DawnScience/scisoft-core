@@ -106,9 +106,6 @@ public class XPDFSampleView extends ViewPart {
 		propagateSelectionChange = true;
 	}
 	
-	/**
-	 * @wbp.parser.constructor
-	 */
 	public XPDFSampleView(Composite parent, int style) {
 		createPartControl(parent);
 	}

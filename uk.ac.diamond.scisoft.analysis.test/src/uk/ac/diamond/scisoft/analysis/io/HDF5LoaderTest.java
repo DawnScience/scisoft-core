@@ -472,8 +472,8 @@ public class HDF5LoaderTest {
 		Vector3d bv = new Vector3d(origin);
 		bv.normalize();
 
-		assertEquals(edp.getPx(), dp.getPx());
-		assertEquals(edp.getPy(), dp.getPy());
+		assertEquals(edp.getPx(), dp.getPy()); // XXX test file wrong!!!
+		assertEquals(edp.getPy(), dp.getPx());
 		assertEquals(edp.getStartX(), dp.getStartX());
 		assertEquals(edp.getStartY(), dp.getStartY());
 		assertTrue(MatrixUtils.isClose(edp.getBeamVector(), dp.getBeamVector(), 1e-8, 1e-8));

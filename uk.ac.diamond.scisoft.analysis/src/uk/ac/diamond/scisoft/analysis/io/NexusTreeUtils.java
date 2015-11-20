@@ -559,7 +559,7 @@ public class NexusTreeUtils {
 			case "data_origin":
 				origin = parseIntArray(l.getDestination(), 2);
 				break;
-			case "data_size": // #rows, #cols
+			case "data_size": // number of pixels in fast then slow; i.e. #cols, #rows
 				size = parseIntArray(l.getDestination(), 2);
 				break;
 			case "module_offset":
@@ -625,7 +625,7 @@ public class NexusTreeUtils {
 		m1.getRotationScale(ori);
 		ori.mul(MatrixUtils.computeFSOrientation(xdir, ydir));
 		ori.transpose(); // as we need the passive transformation
-		DetectorProperties dp = new DetectorProperties(off, size[0], size[1], spd.magnitudes[0], fpd.magnitudes[0], ori);
+		DetectorProperties dp = new DetectorProperties(off, size[1], size[0], spd.magnitudes[0], fpd.magnitudes[0], ori);
 		dp.setStartX(origin[1]);
 		dp.setStartY(origin[0]);
 		return dp;

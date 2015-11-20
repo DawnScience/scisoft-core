@@ -1,7 +1,13 @@
 package uk.ac.diamond.scisoft.xpdf.views;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -20,9 +26,16 @@ public class XPDFGroupedTable extends Composite {
 	
 	private List<TableViewer> groupViewers;
 	private List<String> groupNames;
+
+	private List<ISelectionChangedListener> tableSelectionListeners;
+	private boolean propagateSelectionChange;
 	
 	public XPDFGroupedTable(Composite parent, int style) {
 		super(parent, style);
+		
+		groupViewers = new ArrayList<TableViewer>();
+		groupNames = new ArrayList<String>();
+		
 		topLevelSash = new SashForm(this, SWT.BORDER);
 		FormData sashForm = new FormData();
 		sashForm.left = new FormAttachment(0);
@@ -80,18 +93,67 @@ public class XPDFGroupedTable extends Composite {
 	 * 			column in the anonymous group.
 	 * @return the new TableViewerColumn, associated with the named group.
 	 */
-	public TableViewerColumn newGroupedColumn(String id, int style, int index) {
-		if (id != null && id.equalsIgnoreCase("")) {
-			// Named group
+	public TableViewerColumn newGroupedColumn(String inID, int style, int index) {
+
+		String id = (inID == null) ? "" : inID;
+		
+		if (id.equals("")) {
+			if (index == -1) {
+				// Add a column in an anonymous group to the end of the table
+				if (!groupNames.get(groupNames.size()-1).equals(""))
+					makeNewGroup("");
+
+				// The last group is now guaranteed to be anonymous, add the
+				// new column to the end of it
+				return new TableViewerColumn(groupViewers.get(groupViewers.size()-1), style, -1);
+			} else {
+				// For an anonymous group, the index is over the total count of
+				// columns, and it is inserted at or after that index, should
+				// that column lie in a non-anonymous group
+				int groupIndex = 0;
+				int columnIndex = 0;
+				int addIndex = 0;
+				while (columnIndex < index) {
+					columnIndex += groupViewers.get(groupIndex).getTable().getColumnCount();
+					groupIndex++;
+				}
+				groupIndex--;
+				columnIndex -= groupViewers.get(groupIndex).getTable().getColumnCount();
+				addIndex = index - columnIndex;
+				// groupIndex now holds the index of the group containing the
+				// index-th column, and columnIndex the ordinal of the first
+				// column of that group.
+				if (!groupNames.get(groupIndex).equals("")) {
+					addIndex = 0;
+					while (groupNames.get(groupIndex) != "") {
+						groupIndex++;
+						if (groupIndex == groupNames.size()) break;
+					}
+					if (groupIndex == groupNames.size())
+						makeNewGroup("");
+				}
+
+				return new TableViewerColumn(groupViewers.get(groupIndex), style, addIndex);
+			}
+		} else {
+			// Add to a named group with the given index *within that group*
 			if (!groupNames.contains(id))
 				makeNewGroup(id);
 
-		
+			return new TableViewerColumn(groupViewers.get(groupNames.indexOf(id)), style, index);
+
 		}
 	}
 	
+	/**
+	 * Make all the data structures required to hold a new group of columns
+	 * @param id
+	 * 			name of the group of columns. Apart from <code>null</code>s
+	 * 			and "", repeated group names are not allowed. 
+	 */
 	private void makeNewGroup(String id) {
-		if (id != null && !id.equals("") && groupNames.contains(id)) return;
+		
+		String labelID = (id==null) ? "" : id;
 		
 		// The Composite containing the group header and all the columns in that group
 		Composite groupCompo = new Composite(topLevelSash, SWT.NONE);
@@ -99,7 +161,7 @@ public class XPDFGroupedTable extends Composite {
 		
 		// The Button pretending to be the column header
 		Button headerButton = new Button(groupCompo, SWT.TOGGLE);
-		// Might make sure the button is never selected. Might cause a Stack Overflow.
+		// Might make sure the button is never selected. Might cause a stack overflow.
 		headerButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -107,10 +169,68 @@ public class XPDFGroupedTable extends Composite {
 			}
 		});
 		
+		FormData buttonForm = new FormData();
+		buttonForm.top = new FormAttachment(0);
+		buttonForm.left = new FormAttachment(0);
+		buttonForm.right = new FormAttachment(100);
+		headerButton.setLayoutData(buttonForm);
 		
+		headerButton.setText(labelID);
 		
-		groupViewers.add(new)
+		// The Composite that will hold the sub-table
+		Composite subTableCompo = new Composite(groupCompo, SWT.NONE);
+		
+		FormData tableForm = new FormData();
+		tableForm.top = new FormAttachment(headerButton);
+		tableForm.bottom = new FormAttachment(100);
+		tableForm.left = new FormAttachment(0);
+		tableForm.right = new FormAttachment(100);
+		subTableCompo.setLayoutData(tableForm);
+		
+		// The TableViewer that will hold the data
+		TableViewer tV = new TableViewer(subTableCompo);
+		groupViewers.add(tV);
+		groupNames.add(labelID);
+		
+		subTableCompo.setLayout(new TableColumnLayout());
+		
+		// Set the style of the sub-table.
+		tV.getTable().setHeaderVisible(true);
+		tV.getTable().setLinesVisible(true);
+		
+		tV.addSelectionChangedListener(new SubTableSelectionListener());
+		
 	}
 	
+	/**
+	 * Adds a listener for selection changes in this selection provider. Has no
+	 * effect if an identical listener is already registered
+	 * @param listener
+	 * 				a selection changed listener
+	 */
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+		if (tableSelectionListeners == null)
+			tableSelectionListeners = new ArrayList<ISelectionChangedListener>();
+		if (!tableSelectionListeners.contains(listener))
+			tableSelectionListeners.add(listener);
+	}
 	
+	private class SubTableSelectionListener implements ISelectionChangedListener {
+		@Override
+		public void selectionChanged(SelectionChangedEvent event) {
+			if (propagateSelectionChange) {
+				propagateSelectionChange = false;
+				
+				for (ISelectionChangedListener listener : tableSelectionListeners)
+					listener.selectionChanged(event);
+				
+				ISelection selection = event.getSelection();
+				if (selection instanceof IStructuredSelection) {
+					for (TableViewer tV : groupViewers)
+						tV.setSelection(selection, true);
+				}
+				propagateSelectionChange = true;
+			}
+		}
+	}
 }

@@ -23,12 +23,16 @@ import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
 import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
 import uk.ac.diamond.scisoft.analysis.crystallography.UnitCell;
+import uk.ac.diamond.scisoft.analysis.dataset.function.BicubicInterpolator;
 import uk.ac.diamond.scisoft.analysis.io.NexusHDF5Loader;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 
@@ -47,6 +51,8 @@ public class MillerSpaceMapper {
 	private boolean reduceToNonZeroBB; // reduce data non-zero only
 	private int[] min;
 	private int[] max;
+	private double scale; // image upsampling factor
+	int border = 2; // extra voxels surrounding volume
 
 	/**
 	 * 
@@ -80,6 +86,14 @@ public class MillerSpaceMapper {
 	 */
 	public void setReduceToNonZeroData(boolean reduceToNonZero) {
 		reduceToNonZeroBB = reduceToNonZero;
+	}
+
+	/**
+	 * Set scale for upsampling images
+	 * @param scale
+	 */
+	public void setUpsamplingScale(double scale) {
+		this.scale = scale;
 	}
 
 	/**
@@ -138,13 +152,14 @@ public class MillerSpaceMapper {
 				calcMillerVolume(hMin, hMax, qspace, mspace);
 			}
 			for (int i = 0; i < 3; i++) {
-				hMin[i] = hDel[i] * Math.floor(hMin[i] / hDel[i]);
-				hMax[i] = hDel[i] * Math.ceil(hMax[i] / hDel[i]);
+				hMin[i] = hDel[i] * (Math.floor(hMin[i] / hDel[i]) - border);
+				hMax[i] = hDel[i] * (Math.ceil(hMax[i] / hDel[i]) + border);
 				hShape[i] = (int) (Math.floor((hMax[i] - hMin[i] + hDel[i]) / hDel[i]));
 			}
 		}
 
-		Dataset map = DatasetFactory.zeros(hShape, Dataset.FLOAT64);
+		DoubleDataset map = (DoubleDataset) DatasetFactory.zeros(hShape, Dataset.FLOAT64);
+		IntegerDataset tally = (IntegerDataset) DatasetFactory.zeros(hShape, Dataset.INT32);
 		iter.reset();
 		diter.reset();
 		if (reduceToNonZeroBB) {
@@ -152,8 +167,24 @@ public class MillerSpaceMapper {
 			max = new int[3];
 			Arrays.fill(max, -1);
 		}
+		int[] ishape = Arrays.copyOfRange(images.getShape(), srank, rank);
+		BicubicInterpolator upSampler = null;
+		if (scale != 1) {
+			for (int i = 0; i < ishape.length; i++) {
+				ishape[i] *= scale;
+			}
+			upSampler = new BicubicInterpolator(ishape);
+		}
 		while (iter.hasNext() && diter.hasNext()) {
 			DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
+			dp.setHPxSize(dp.getHPxSize()/scale);
+			dp.setVPxSize(dp.getVPxSize()/scale);
+			if (upSampler != null) {
+				System.err.println("Detector is " + dp.getPx() + "x" + dp.getPy());
+				dp.setPx(ishape[0]);
+				dp.setPy(ishape[1]);
+				System.err.println(" but now is " + dp.getPx() + "x" + dp.getPy());
+			}
 			for (int i = 0; i < srank; i++) {
 				stop[i] = pos[i] + 1;
 			}
@@ -169,9 +200,13 @@ public class MillerSpaceMapper {
 				System.err.println("Skipping image at " + Arrays.toString(pos));
 				continue;
 			}
-
-			mapImage(s, qspace, mspace, image, map);
+			if (upSampler != null) {
+				image = upSampler.value(image).get(0);
+				s = ishape;
+			}
+			mapImage(s, qspace, mspace, image, map, tally);
 		}
+		Maths.dividez(map, tally, map); // normalize by tally
 
 		if (findImageBB) {
 			System.err.println("Extent of Miller space was found to be " + Arrays.toString(hMin) + " to " + Arrays.toString(hMax));
@@ -185,7 +220,7 @@ public class MillerSpaceMapper {
 				hShape[i] = max[i] - min[i];
 			}
 			System.err.println("so now start = " + Arrays.toString(hMin) + " for shape = " + Arrays.toString(hShape));
-			map = map.getSlice(min, max, null);
+			map = (DoubleDataset) map.getSlice(min, max, null);
 		}
 		return map;
 	}
@@ -220,7 +255,7 @@ public class MillerSpaceMapper {
 		max[2] = Math.max(max[2], v.z);
 	}
 
-	private void mapImage(int[] s, QSpace qspace, MillerSpace mspace, Dataset image, Dataset map) {
+	private void mapImage(int[] s, QSpace qspace, MillerSpace mspace, Dataset image, DoubleDataset map, IntegerDataset tally) {
 		// how does voxel size map to pixel size?
 		// h = -hmax, -hmax+hdel, ..., hmax-hdel, hmax
 		// algorithm:
@@ -237,7 +272,7 @@ public class MillerSpaceMapper {
 		Vector3d p = new Vector3d(); // position of pixel
 		Vector3d t = new Vector3d(); // temporary
 		Vector3d dh = new Vector3d();
-		
+
 		double value;
 		double fkmod = 1e-6*qspace.getInitialWavevector().length();
 //		double threshold = Stats.quantile(image, 1. - 10./image.getSize());
@@ -268,7 +303,7 @@ public class MillerSpaceMapper {
 					if (reduceToNonZeroBB) {
 						minMax(min, max, hpos);
 					}
-					addValue(map, hpos, value);
+					addValue(map, hpos, value, tally);
 				}
 //				mspace.q(h, q);
 //				qspace.pixelPosition(q, p, t);
@@ -328,9 +363,11 @@ public class MillerSpaceMapper {
 	 * @param pos
 	 * @param value
 	 */
-	private static void addValue(Dataset map, final int[] pos, final double value) {
-		final int index = map.get1DIndex(pos);
-		map.setObjectAbs(index, map.getElementDoubleAbs(index) + value);
+	private static void addValue(DoubleDataset map, final int[] pos, final double value, IntegerDataset tally) {
+		int index = map.get1DIndex(pos);
+		map.setAbs(index, map.getAbs(index) + value);
+		index = tally.get1DIndex(pos);
+		tally.setAbs(index, tally.getAbs(index) + 1);
 	}
 
 	/**
@@ -534,15 +571,25 @@ public class MillerSpaceMapper {
 	 * Map images from given Nexus file to a volume in Miller (aka HKL) space and save to a HDF5 file
 	 * @param input path to Nexus file
 	 * @param output path for saving HDF5 file
+	 * @param scale scale for upsampling images
+	 * @param reduceToNonZero if true, reduce output to sub-volume with non-zero data
 	 * @param mShape shape of volume in Miller space (can be null to be autoset)
 	 * @param mStart starting coordinates of volume (can be null to be autoset)
 	 * @param mDelta lengths of voxel sides
-	 * @param reduceToNonZero if true, reduce output to sub-volume with non-zero data
 	 * @throws ScanFileHolderException
 	 */
-	public void mapToVolumeFile(String input, String output, int[] mShape, double[] mStart, double[] mDelta, boolean reduceToNonZero) throws ScanFileHolderException {
+	public void mapToVolumeFile(String input, String output, double scale, boolean reduceToNonZero, int[] mShape, double[] mStart, double[] mDelta) throws ScanFileHolderException {
 		Dataset[] a = new Dataset[3];
 		double[] mStop = new double[3];
+		if (mDelta == null || mDelta.length == 0) {
+			throw new IllegalArgumentException("At least one length must be specified");
+		} else if (mDelta.length == 1) {
+			double d = mDelta[0];
+			mDelta = new double[] {d, d, d};
+		} else if (mDelta.length == 2) {
+			double d = mDelta[1];
+			mDelta = new double[] {mDelta[0], d, d};
+		}
 		if (mShape == null || mStart == null) {
 			findImageBB = true;
 			mShape = new int[3];
@@ -558,6 +605,7 @@ public class MillerSpaceMapper {
 		}
 
 		setReduceToNonZeroData(reduceToNonZero);
+		setUpsamplingScale(scale);
 		setMillerSpaceBoundingBox(mShape, mStart, mStop, mDelta);
 		Dataset v = mapToMillerSpace(input);
 		if (findImageBB) {
@@ -600,36 +648,25 @@ public class MillerSpaceMapper {
 	 * @param output name of HDF5 file to be created
 	 * @param mShape shape of output volume
 	 * @param mStart start coordinates in Miller space
-	 * @param mDelta side of voxels in Miller space
+	 * @param mDelta sides of voxels in Miller space
 	 * @throws ScanFileHolderException
 	 */
-	public static void processVolume(String input, String output, int[] mShape, double[] mStart, double mDelta) throws ScanFileHolderException {
-		processVolume(input, output, mShape, mStart, new double[] {mDelta, mDelta, mDelta});
+	public static void processVolume(String input, String output, int[] mShape, double[] mStart, double... mDelta) throws ScanFileHolderException {
+		processVolume(input, output, 1, mShape, mStart, mDelta);
 	}
 
 	/**
 	 * Process Nexus file for I16
 	 * @param input Nexus file
 	 * @param output name of HDF5 file to be created
+	 * @param scale upsampling factor
 	 * @param mShape shape of output volume
 	 * @param mStart start coordinates in Miller space
 	 * @param mDelta sides of voxels in Miller space
 	 * @throws ScanFileHolderException
 	 */
-	public static void processVolume(String input, String output, int[] mShape, double[] mStart, double[] mDelta) throws ScanFileHolderException {
-		I16Mapper.mapToVolumeFile(input, output, mShape, mStart, mDelta, false);
-	}
-
-	/**
-	 * Process Nexus file for I16 with automatic bounding box setting
-	 * @param input Nexus file
-	 * @param output name of HDF5 file to be created
-	 * @param mDelta side of voxels in Miller space
-	 * @param reduceToNonZero if true, reduce output to sub-volume with non-zero data
-	 * @throws ScanFileHolderException
-	 */
-	public static void processVolume(String input, String output, double mDelta, boolean reduceToNonZero) throws ScanFileHolderException {
-		processVolume(input, output, new double[] {mDelta, mDelta, mDelta}, reduceToNonZero);
+	public static void processVolume(String input, String output, double scale, int[] mShape, double[] mStart, double... mDelta) throws ScanFileHolderException {
+		I16Mapper.mapToVolumeFile(input, output, scale, false, mShape, mStart, mDelta);
 	}
 
 	/**
@@ -640,7 +677,20 @@ public class MillerSpaceMapper {
 	 * @param reduceToNonZero if true, reduce output to sub-volume with non-zero data
 	 * @throws ScanFileHolderException
 	 */
-	public static void processVolume(String input, String output, double[] mDelta, boolean reduceToNonZero) throws ScanFileHolderException {
-		I16Mapper.mapToVolumeFile(input, output, null, null, mDelta, reduceToNonZero);
+	public static void processVolumeWithAutoBox(String input, String output, boolean reduceToNonZero, double... mDelta) throws ScanFileHolderException {
+		processVolumeWithAutoBox(input, output, 1, reduceToNonZero, mDelta);
+	}
+
+	/**
+	 * Process Nexus file for I16 with automatic bounding box setting
+	 * @param input Nexus file
+	 * @param output name of HDF5 file to be created
+	 * @param scale upsampling factor
+	 * @param mDelta sides of voxels in Miller space
+	 * @param reduceToNonZero if true, reduce output to sub-volume with non-zero data
+	 * @throws ScanFileHolderException
+	 */
+	public static void processVolumeWithAutoBox(String input, String output, double scale, boolean reduceToNonZero, double... mDelta) throws ScanFileHolderException {
+		I16Mapper.mapToVolumeFile(input, output, scale, reduceToNonZero, null, null, mDelta);
 	}
 }

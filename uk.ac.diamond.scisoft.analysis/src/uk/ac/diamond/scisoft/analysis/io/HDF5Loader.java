@@ -752,9 +752,9 @@ public class HDF5Loader extends AbstractFileLoader {
 	}
 
 	/**
-	 * Create a lazy dataset from given dataset and datatype IDs
+	 * Create a lazy dataset from given data node and datatype IDs
 	 * @param file
-	 * @param dataset
+	 * @param node
 	 * @param nodePath full node path
 	 * @param name
 	 * @param did
@@ -764,7 +764,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * @return true if created
 	 * @throws Exception
 	 */
-	private static boolean createLazyDataset(final TreeFile file, final DataNode dataset,
+	private static boolean createLazyDataset(final TreeFile file, final DataNode node,
 			final String nodePath, final String name, final long did, final long tid,
 			final boolean keepBitWidth, final boolean useExternalFiles) throws Exception {
 		long sid = -1, pid = -1;
@@ -791,7 +791,7 @@ public class HDF5Loader extends AbstractFileLoader {
 					if (crank != rank) {
 						logger.error("Rank of chunk does not equal rank of dataset");
 					} else {
-						dataset.setChunkShape(chunk);
+						node.setChunkShape(chunk);
 					}
 				}
 				// check if it is an external dataset
@@ -814,12 +814,12 @@ public class HDF5Loader extends AbstractFileLoader {
 				rank = 1;
 				dims = new long[1];
 				dims[0] = 1;
-				dataset.setMaxShape(dims);
+				node.setMaxShape(dims);
 			} else {
 				dims = new long[rank];
 				long[] maxDims = new long[rank];
 				H5.H5Sget_simple_extent_dims(sid, dims, maxDims);
-				dataset.setMaxShape(maxDims);
+				node.setMaxShape(maxDims);
 			}
 		} catch (HDF5Exception ex) {
 			logger.error("Could not get data space information", ex);
@@ -853,7 +853,7 @@ public class HDF5Loader extends AbstractFileLoader {
 				}
 
 				d.setName(name);
-				dataset.setDataset(d);
+				node.setDataset(d);
 				return true;
 			} catch (HDF5Exception ex) {
 				logger.error("Could not read single value dataset", ex);
@@ -879,25 +879,25 @@ public class HDF5Loader extends AbstractFileLoader {
 					return false;
 				}
 			}
-			loader.setMaxShape(dataset.getMaxShape());
+			loader.setMaxShape(node.getMaxShape());
 			loader.squeeze();
 			// set dataset information again as loader now has correct shapes
-			dataset.setMaxShape(loader.getMaxShape());
-			dataset.setChunkShape(loader.getChunkShape());
-			dataset.setDataset(new LazyDataset(name, loader.getDtype(), loader.getShape(), loader));
+			node.setMaxShape(loader.getMaxShape());
+			node.setChunkShape(loader.getChunkShape());
+			node.setDataset(new LazyDataset(name, loader.getDtype(), loader.getShape(), loader));
 			return true;
 		}
 
 		// check for zero-sized datasets
 		long trueSize = AbstractDataset.calcLongSize(trueShape);
 		if (trueSize == 0) {
-			dataset.setEmpty();
+			node.setEmpty();
 			return true;
 		}
 
 		HDF5LazyLoader l = new HDF5LazyLoader(file.getHostname(), file.getFilename(), nodePath, name, trueShape, type.isize, type.dtype, extendUnsigned);
 
-		dataset.setDataset(new LazyDataset(name, type.dtype, type.isize, trueShape.clone(), l));
+		node.setDataset(new LazyDataset(name, type.dtype, type.isize, trueShape.clone(), l));
 		return true;
 	}
 

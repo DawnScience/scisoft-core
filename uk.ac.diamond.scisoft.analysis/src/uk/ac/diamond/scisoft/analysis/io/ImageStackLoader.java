@@ -265,6 +265,7 @@ public class ImageStackLoader implements ILazyLoader {
 		}
 		shape = nShape;
 		mShape = nMaxShape;
+		filenames.squeeze();
 	}
 
 	/**

@@ -46,6 +46,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.LazyDynamicDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
@@ -776,6 +777,7 @@ public class HDF5Loader extends AbstractFileLoader {
 
 		try {
 //			Thread.sleep(200);
+			H5.H5Drefresh(did);
 			sid = H5.H5Dget_space(did);
 			rank = H5.H5Sget_simple_extent_ndims(sid);
 
@@ -897,7 +899,7 @@ public class HDF5Loader extends AbstractFileLoader {
 
 		HDF5LazyLoader l = new HDF5LazyLoader(file.getHostname(), file.getFilename(), nodePath, name, trueShape, type.isize, type.dtype, extendUnsigned);
 
-		node.setDataset(new LazyDataset(name, type.dtype, type.isize, trueShape.clone(), l));
+		node.setDataset(new LazyDynamicDataset(name, type.dtype, type.isize, trueShape.clone(), HDF5Utils.toIntArray(node.getMaxShape()), l));
 		return true;
 	}
 

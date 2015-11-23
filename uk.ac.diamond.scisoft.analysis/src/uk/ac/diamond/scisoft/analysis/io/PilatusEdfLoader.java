@@ -86,12 +86,17 @@ public class PilatusEdfLoader extends AbstractFileLoader {
 					data = createLazyDataset(DEF_IMAGE_NAME, DATA_NAME, dataType.equals("Float") ? Dataset.FLOAT32 : Dataset.INT32,
 							shape, new PilatusEdfLoader(fileName));
 				} else {
+					boolean le = "LowByteFirst".equals(textMetadata.get("ByteOrder"));
 					if (dataType.equals("Float")) {
 						data = new FloatDataset(shape);
-						Utils.readFloat(fi, (FloatDataset) data, index);
+						if (le) {
+							Utils.readLeFloat(fi, (FloatDataset) data, index);
+						}
+						else {
+							Utils.readBeFloat(fi, (FloatDataset) data, index);
+						}
 					} else {
 						data = new IntegerDataset(shape);
-						boolean le = "LowByteFirst".equals(textMetadata.get("ByteOrder"));
 						if (dataType.contains("Short")) {
 							boolean signed = dataType.startsWith("Signed");
 							if (le)

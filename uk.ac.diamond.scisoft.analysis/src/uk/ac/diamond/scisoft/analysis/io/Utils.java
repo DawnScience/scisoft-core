@@ -17,6 +17,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -438,15 +439,37 @@ public class Utils {
 		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
 	}
 
-
 	/**
-	 * Read an image of float
+	 * Read an image of little-endian floats
 	 * @param is
 	 * @param data
 	 * @param start number of bytes from start of input stream
 	 * @throws IOException
 	 */
-	public static void readFloat(InputStream is, FloatDataset data, long start) throws IOException {
+	public static void readLeFloat(InputStream is, FloatDataset data, long start) throws IOException {
+		readFloat(is, data, start, ByteOrder.LITTLE_ENDIAN);
+	}
+
+	/**
+	 * Read an image of big-endian floats
+	 * @param is
+	 * @param data
+	 * @param start number of bytes from start of input stream
+	 * @throws IOException
+	 */
+	public static void readBeFloat(InputStream is, FloatDataset data, long start) throws IOException {
+		readFloat(is, data, start, ByteOrder.BIG_ENDIAN);
+	}
+
+	/**
+	 * Read an image of floats, while specifying the endianness
+	 * @param is
+	 * @param data
+	 * @param start number of bytes from start of input stream
+	 * @param byte_order the byte order of the data
+	 * @throws IOException
+	 */
+	public static void readFloat(InputStream is, FloatDataset data, long start, ByteOrder byte_order) throws IOException {
 		final int size = data.getSize();
 		final float[] fdata = data.getData();
 		byte[] buf = new byte[4*size];
@@ -459,11 +482,13 @@ public class Utils {
 		int pos = 0; // Byte offset to start of data
 		float value;
 		for (int i = 0; i < size; i++) {
-			bdata[0] = buf[pos+3];
-			bdata[1] = buf[pos+2];
-			bdata[2] = buf[pos+1];
-			bdata[3] = buf[pos];
-			value = ByteBuffer.wrap(bdata).getFloat();
+			bdata[0] = buf[pos+0];
+			bdata[1] = buf[pos+1];
+			bdata[2] = buf[pos+2];
+			bdata[3] = buf[pos+3];
+			ByteBuffer byte_buffer = ByteBuffer.wrap(bdata);
+			byte_buffer.order(byte_order);
+			value = byte_buffer.getFloat();
 			hash = (hash * 19 + value);
 			fdata[i] = value;
 			if (value > fmax) {
@@ -484,6 +509,17 @@ public class Utils {
 		data.setStoredValue(AbstractDataset.STORE_MAX, fmax);
 		data.setStoredValue(AbstractDataset.STORE_MIN, fmin);
 		data.setStoredValue(AbstractDataset.STORE_HASH, (int)hash);
+	}
+	
+	/**
+	 * Read an image of little-endian floats
+	 * @param is
+	 * @param data
+	 * @param start number of bytes from start of input stream
+	 * @throws IOException
+	 */
+	public static void readFloat(InputStream is, FloatDataset data, long start) throws IOException {
+		readFloat(is, data, start, ByteOrder.LITTLE_ENDIAN);
 	}
 
 	private static final Pattern EXP_REGEX = Pattern.compile("[eE]");

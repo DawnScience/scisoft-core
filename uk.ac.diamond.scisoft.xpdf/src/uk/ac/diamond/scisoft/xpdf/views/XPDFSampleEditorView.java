@@ -86,27 +86,21 @@ public class XPDFSampleEditorView extends ViewPart {
 	private Action pointBreakAction;
 	private Action deleteAction;
 	private Action clearAction;
-	
-	private enum Column {
-		NAME, ID, DETAILS, PHASES, COMPOSITION, DENSITY, PACKING,
-		SUGGESTED_ENERGY, MU, SUGGESTED_DIAMETER, ENERGY, CAPILLARY
-	}
-	
-	private enum ColumnGroup {
-		ID, SAMPLE_DETAILS, SUGGESTED_EXPT, CHOSEN_EXPT
-	}
-	
+		
 //	private Map<ColumnGroup, TableViewer> groupViewers;
-	private List<TableViewer> groupViewers;
-	private List<String> groupNames;
+	private List<TableViewer> groupViewers; // To MyGroupedTable
+	private List<String> groupNames; // To MyGroupedTable
 	
-	private boolean propagateSelectionChange;
+	private boolean propagateSelectionChange; // To MyGroupedTable
 
 	private SortedSet<Integer> usedIDs; // The set of assigned ID numbers. Should come from the database eventually?	
 
-	private String[] groupHeaderText = {"Sample Identification", "Sample Details", "Suggested Parameters", "Chosen Parameters"};
-
 	private SampleGroupedTable sampleTable;
+
+	// members that will be moved to within sampleTable
+	List<String> groupNamesST; // To SampleGroupedTable
+	List<List<String>> groupedColumnNames; // To SampleGroupedTable
+	List<List<Integer>> groupedColumnWeights; // To SampleGroupedTable
 	
 	public XPDFSampleEditorView() {
 		propagateSelectionChange = true;
@@ -154,8 +148,6 @@ public class XPDFSampleEditorView extends ViewPart {
 
 	class SampleGroupedTable extends Composite {
 		
-		List<String> groupNames;
-		List<List<String>> groupedColumnNames;
 		MyGroupedTable groupedTable;
 		
 		public SampleGroupedTable(Composite parent, int style) {
@@ -170,19 +162,26 @@ public class XPDFSampleEditorView extends ViewPart {
 			formData.bottom = new FormAttachment(100);
 			groupedTable.setLayoutData(formData);
 
-			groupNames = new ArrayList<String>();
+			groupNamesST = new ArrayList<String>();
 			groupedColumnNames = new ArrayList<List<String>>();
+			groupedColumnWeights = new ArrayList<List<Integer>>();
 			
-			groupNames.add("Sample");
-			groupedColumnNames.add(Arrays.asList(new String[] {"Code", "Name"}));
+			groupNamesST.add("Sample Identification");
+			groupedColumnNames.add(Arrays.asList(new String[] {"Sample name", "Code"}));
+			groupedColumnWeights.add(Arrays.asList(new Integer[] {20, 10}));
 			
-			groupNames.add("Details");
-			groupedColumnNames.add(Arrays.asList(new String[] {"Phases", "Composition", "Density", "Vol. frac."}));
+			groupNamesST.add("Sample Details");
+			groupedColumnNames.add(Arrays.asList(new String[] {"", "Phases", "Composition", "Density", "Vol. frac."}));
+			groupedColumnWeights.add(Arrays.asList(new Integer[] {2, 10, 15, 10, 5}));
 			
-			groupNames.add("Geometry");
-			groupedColumnNames.add(Arrays.asList(new String[] {"Dimension(s)", "Shape"}));
+			groupNamesST.add("Suggested Parameters");
+			groupedColumnNames.add(Arrays.asList(new String[] {"Energy", "μ", "Max capillary ID"}));
+			groupedColumnWeights.add(Arrays.asList(new Integer[] {5, 5, 15}));
 			
-			
+			groupNamesST.add("Chosen Parameters");
+			groupedColumnNames.add(Arrays.asList(new String[] {"Beam state", "Container"}));
+			groupedColumnWeights.add(Arrays.asList(new Integer[] {10, 10}));
+
 			groupedTable.createColumnGroups();
 			
 		}
@@ -226,11 +225,11 @@ public class XPDFSampleEditorView extends ViewPart {
 		private void createColumnGroups(Composite outerComposite) {
 
 			// Define the groupings of the columns
-			Map<ColumnGroup, List<Column>> columnGrouping = new TreeMap<XPDFSampleEditorView.ColumnGroup, List<Column>>();
-			columnGrouping.put(ColumnGroup.ID, Arrays.asList(new Column[]{Column.NAME, Column.ID}));
-			columnGrouping.put(ColumnGroup.SAMPLE_DETAILS, Arrays.asList(new Column[] {Column.DETAILS, Column.PHASES, Column.COMPOSITION, Column.DENSITY, Column.PACKING}));
-			columnGrouping.put(ColumnGroup.SUGGESTED_EXPT, Arrays.asList(new Column[] {Column.SUGGESTED_ENERGY, Column.MU, Column.SUGGESTED_DIAMETER}));
-			columnGrouping.put(ColumnGroup.CHOSEN_EXPT, Arrays.asList(new Column[] {Column.ENERGY, Column.CAPILLARY}));
+//			Map<ColumnGroup, List<Column>> columnGrouping = new TreeMap<XPDFSampleEditorView.ColumnGroup, List<Column>>();
+//			columnGrouping.put(ColumnGroup.ID, Arrays.asList(new Column[]{Column.NAME, Column.ID}));
+//			columnGrouping.put(ColumnGroup.SAMPLE_DETAILS, Arrays.asList(new Column[] {Column.DETAILS, Column.PHASES, Column.COMPOSITION, Column.DENSITY, Column.PACKING}));
+//			columnGrouping.put(ColumnGroup.SUGGESTED_EXPT, Arrays.asList(new Column[] {Column.SUGGESTED_ENERGY, Column.MU, Column.SUGGESTED_DIAMETER}));
+//			columnGrouping.put(ColumnGroup.CHOSEN_EXPT, Arrays.asList(new Column[] {Column.ENERGY, Column.CAPILLARY}));
 
 
 			// TableViewers for each sub-table
@@ -239,13 +238,13 @@ public class XPDFSampleEditorView extends ViewPart {
 			groupNames = new ArrayList<String>();
 
 			// Column weights, and column group weights
-			int[] columnWeights = {20, 10, 2, 10, 15, 10, 5, 5, 5, 15, 10, 10};
-			int[] groupWeights = new int[columnGrouping.size()];
+			List<Integer> groupWeights = new ArrayList<Integer>();
 
 			// Iterate over the groups.
-			for (Map.Entry<ColumnGroup, List<Column>> columngroup : columnGrouping.entrySet()) {
+			for (int i = 0; i < groupNamesST.size(); i++) {
 
-				String groupName = groupHeaderText[columngroup.getKey().ordinal()];
+				groupNames.add(i, groupNamesST.get(i));
+				String groupName = groupNames.get(i);
 				
 				// Composite to hold the group header and table
 				Composite groupCompo = new Composite(outerComposite, SWT.NONE);		
@@ -281,7 +280,7 @@ public class XPDFSampleEditorView extends ViewPart {
 				subTableCompo.setLayout(tCL);
 
 				// Create the columns of the sub-table, according to the definition of the group and the overall weights 
-				createColumns(tCL, columngroup.getValue(), tV, columnWeights);
+				createColumns(tCL, groupedColumnNames.get(i), tV, groupedColumnWeights.get(i));
 
 				// Style of each sub-table
 				tV.getTable().setHeaderVisible(true);
@@ -299,7 +298,7 @@ public class XPDFSampleEditorView extends ViewPart {
 						return samples.toArray();
 					}
 				});
-				tV.setLabelProvider(new SampleTableLP(columngroup.getValue()));
+				tV.setLabelProvider(new SampleTableLP(groupedColumnNames.get(i)));
 				tV.setInput(getViewSite());
 
 				// Set the listener that sets the selection as the same on each sub-table
@@ -310,15 +309,19 @@ public class XPDFSampleEditorView extends ViewPart {
 				tV.addDropSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalViewerDropAdapter(tV));
 
 				// Calculate the relative weighting of each group
-				groupWeights[columngroup.getKey().ordinal()] = 0;
-				for (Column column : columngroup.getValue()) {
-					groupWeights[columngroup.getKey().ordinal()] += columnWeights[column.ordinal()];
-				}
+				int groupWeight = 0;
+				for (int j = 0; j < groupedColumnWeights.get(i).size(); j++) groupWeight += groupedColumnWeights.get(i).get(j);
+				groupWeights.add(i, groupWeight);
+				
 			}
 
 			// Set the weights of the SashForm, if the parent Composite is one
 			if (outerComposite instanceof SashForm) {
-				((SashForm) outerComposite).setWeights(groupWeights); 
+				
+				int[] sashWeights = new int[groupWeights.size()];
+				for (int iWeight = 0; iWeight < groupWeights.size(); iWeight++) sashWeights[iWeight] = groupWeights.get(iWeight);
+				
+				((SashForm) outerComposite).setWeights(sashWeights);
 			}
 
 		}
@@ -443,25 +446,25 @@ public class XPDFSampleEditorView extends ViewPart {
 	
 	
 	// Create a sub-set of the columns of the table
-	private void createColumns(TableColumnLayout tCL, List<Column> columns, TableViewer tV, int[] columnWeights) {
+	private void createColumns(TableColumnLayout tCL, List<String> columns, TableViewer tV, List<Integer> columnWeights) {
 		TableViewerColumn col;
-		String[] columnNames = {"Sample name", "Code", "", "Phases", "Composition", "Density", "Vol. frac.", "Energy", "μ", "Max capillary ID", "Energy", "Container"}; 
-		for (Column column : columns) {
+//		String[] columnNames = {"Sample name", "Code", "", "Phases", "Composition", "Density", "Vol. frac.", "Energy", "μ", "Max capillary ID", "Energy", "Container"}; 
+		for (int i = 0; i < columns.size(); i++) {
 			col = new TableViewerColumn(tV, SWT.NONE);
-			col.getColumn().setText(columnNames[column.ordinal()]);
-			tCL.setColumnData(col.getColumn(), new ColumnWeightData(columnWeights[column.ordinal()], 10, true));
-			col.setLabelProvider(new SampleTableCLP(column));
-			col.setEditingSupport(new SampleTableCES(column, tV));
-			col.getColumn().addSelectionListener(getColumnSelectionAdapter(col.getColumn(), column));
+			col.getColumn().setText(columns.get(i));
+			tCL.setColumnData(col.getColumn(), new ColumnWeightData(columnWeights.get(i), 10, true));
+			col.setLabelProvider(new SampleTableCLP(columns.get(i)));
+			col.setEditingSupport(new SampleTableCES(columns.get(i), tV));
+			col.getColumn().addSelectionListener(getColumnSelectionAdapter(col.getColumn(), columns.get(i)));
 		}
 	}
 
 	// The table label provider does nothing except delegate to the column label provider
 	class SampleTableLP extends LabelProvider implements ITableLabelProvider {
 
-		final List<Column> columns;
+		final List<String> columns;
 		
-		public SampleTableLP(List <Column> columns) {
+		public SampleTableLP(List <String> columns) {
 			this.columns = columns;
 		}
 		
@@ -480,20 +483,20 @@ public class XPDFSampleEditorView extends ViewPart {
 	// Column label provider. Use a switch to provide the different data labels for the different columns.
 	class SampleTableCLP extends ColumnLabelProvider {
 		
-		final Column column;
+		final String columnName;
 		
-		public SampleTableCLP(Column column) {
-			this.column = column;
+		public SampleTableCLP(String columnName) {
+			this.columnName = columnName;
 		}
 		
 		@Override
 		public String getText(Object element) {
 			XPDFSampleParameters sample = (XPDFSampleParameters) element;
-			switch (column) {
-			case NAME: return sample.getName();
-			case ID: return Integer.toString(sample.getId());
-			case DETAILS: return "+";
-			case PHASES: 
+			switch (columnName) {
+			case "Sample name": return sample.getName();
+			case "Code": return Integer.toString(sample.getId());
+			case "": return "+";
+			case "Phases": 
 				StringBuilder sb = new StringBuilder();
 				for (String phase : sample.getPhases()) {
 					sb.append(phase);
@@ -501,14 +504,14 @@ public class XPDFSampleEditorView extends ViewPart {
 				}
 				if (sb.length() > 2) sb.delete(sb.length()-2, sb.length());
 				return sb.toString();
-			case COMPOSITION: return sample.getComposition();
-			case DENSITY: return Double.toString(sample.getDensity());
-			case PACKING: return Double.toString(sample.getPackingFraction());
-			case SUGGESTED_ENERGY: return Double.toString(sample.getSuggestedEnergy());
-			case MU: return String.format("%.4f", sample.getMu());
-			case SUGGESTED_DIAMETER: return Double.toString(sample.getSuggestedCapDiameter());
-			case ENERGY: return sample.getBeamState();
-			case CAPILLARY: return sample.getContainer();
+			case "Composition": return sample.getComposition();
+			case "Density": return Double.toString(sample.getDensity());
+			case "Vol. frac.": return Double.toString(sample.getPackingFraction());
+			case "Energy": return Double.toString(sample.getSuggestedEnergy());
+			case "μ": return String.format("%.4f", sample.getMu());
+			case "Max capillary ID": return Double.toString(sample.getSuggestedCapDiameter());
+			case "Beam state": return sample.getBeamState();
+			case "Container": return sample.getContainer();
 			default: return "";
 			}
 		}
@@ -517,10 +520,10 @@ public class XPDFSampleEditorView extends ViewPart {
 	// Column editing support. The different cases for the different columns are just switched by a switch statements or if-then-else
 	class SampleTableCES extends EditingSupport {
 
-		final Column column;
+		final String column;
 		final TableViewer tV;	
 
-		public SampleTableCES(Column column, TableViewer tV) {
+		public SampleTableCES(String column, TableViewer tV) {
 			super(tV);
 			this.column = column;
 			this.tV = tV;
@@ -531,7 +534,7 @@ public class XPDFSampleEditorView extends ViewPart {
 		}
 		@Override
 		protected boolean canEdit(Object element) {
-			if (column == Column.ID || column == Column.DETAILS || column == Column.MU) 
+			if (column == "Code" || column == "" || column == "μ") 
 				return false;
 			else
 				return true;
@@ -540,18 +543,18 @@ public class XPDFSampleEditorView extends ViewPart {
 		protected Object getValue(Object element) {
 			XPDFSampleParameters sample = (XPDFSampleParameters) element;
 			switch (column) {
-			case NAME: return sample.getName();
-			case ID: return sample.getId();
-			case DETAILS: return null; // TODO: This should eventually show something, but nothing for now.
-			case PHASES: return (new SampleTableCLP(Column.PHASES)).getText(element);
-			case COMPOSITION: return sample.getComposition();
-			case DENSITY: return Double.toString(sample.getDensity());
-			case PACKING: return Double.toString(sample.getPackingFraction());
-			case SUGGESTED_ENERGY: return Double.toString(sample.getSuggestedEnergy());
-			case MU: return 1.0;
-			case SUGGESTED_DIAMETER: return Double.toString(sample.getSuggestedCapDiameter());
-			case ENERGY: return sample.getBeamState();
-			case CAPILLARY: return sample.getContainer();
+			case "Sample name": return sample.getName();
+			case "Code": return sample.getId();
+			case "": return null; // TODO: This should eventually show something, but nothing for now.
+			case "Phases": return (new SampleTableCLP("Phases")).getText(element);
+			case "Composition": return sample.getComposition();
+			case "Density": return Double.toString(sample.getDensity());
+			case "Vol. frac.": return Double.toString(sample.getPackingFraction());
+			case "Energy": return Double.toString(sample.getSuggestedEnergy());
+			case "μ": return 1.0;
+			case "Max capillary ID": return Double.toString(sample.getSuggestedCapDiameter());
+			case "Beam state": return sample.getBeamState();
+			case "Container": return sample.getContainer();
 			default: return null;
 			}
 		}
@@ -560,24 +563,24 @@ public class XPDFSampleEditorView extends ViewPart {
 			XPDFSampleParameters sample = (XPDFSampleParameters) element;
 			String sValue = (String) value;
 			switch (column) {
-			case NAME: sample.setName(sValue); break;
-			case ID: break;
-			case DETAILS: break; // TODO: This should eventually do something. Call a big function, probably.
-			case PHASES: { // Parse a comma separated list of phases to a list of Strings
+			case "Sample name": sample.setName(sValue); break;
+			case "Code": break;
+			case "": break; // TODO: This should eventually do something. Call a big function, probably.
+			case "Phases": { // Parse a comma separated list of phases to a list of Strings
 				String[] arrayOfPhases = sValue.split(","); 
 				List<String> listOfPhases = new ArrayList<String>();
 				for (int i = 0; i < arrayOfPhases.length; i++)
 					listOfPhases.add(arrayOfPhases[i].trim());
 				sample.setPhases(listOfPhases);
 			} break;
-			case COMPOSITION: sample.setComposition(sValue); break;
-			case DENSITY: sample.setDensity(Double.parseDouble(sValue)); break;
-			case PACKING: sample.setPackingFraction(Double.parseDouble(sValue)); break;
-			case SUGGESTED_ENERGY: sample.setSuggestedEnergy(Double.parseDouble(sValue)); break;
-			case MU: break;
-			case SUGGESTED_DIAMETER: sample.setSuggestedCapDiameter(Double.parseDouble(sValue)); break;
-			case ENERGY: sample.setBeamState(sValue); break;
-			case CAPILLARY: sample.setContainer(sValue); break;
+			case "Composition": sample.setComposition(sValue); break;
+			case "Density": sample.setDensity(Double.parseDouble(sValue)); break;
+			case "Vol. frac.": sample.setPackingFraction(Double.parseDouble(sValue)); break;
+			case "Energy": sample.setSuggestedEnergy(Double.parseDouble(sValue)); break;
+			case "μ": break;
+			case "Max capillary ID": sample.setSuggestedCapDiameter(Double.parseDouble(sValue)); break;
+			case "Beam state": sample.setBeamState(sValue); break;
+			case "Container": sample.setContainer(sValue); break;
 			default: break;
 			}
 			// Here, only this table needs updating
@@ -586,10 +589,10 @@ public class XPDFSampleEditorView extends ViewPart {
 	}
 
 	// Set a Comparator, depending on the column selected
-	private Comparator<XPDFSampleParameters> getColumnSorting(Column column) {
+	private Comparator<XPDFSampleParameters> getColumnSorting(String column) {
 		Comparator<XPDFSampleParameters> columnSorter;
 		switch (column) {
-		case NAME:
+		case "Sample name":
 			columnSorter = new Comparator<XPDFSampleParameters>() {
 			@Override
 			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
@@ -597,7 +600,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			}
 		};
 		break;
-		case ID:
+		case "Code":
 			columnSorter = new Comparator<XPDFSampleParameters>() {
 			@Override
 			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
@@ -605,12 +608,12 @@ public class XPDFSampleEditorView extends ViewPart {
 			}
 		};
 		break;
-		case DETAILS:
-		case PHASES:
-		case COMPOSITION:
+		case "":
+		case "Phases":
+		case "Composition":
 			columnSorter = null;
 			break;
-		case DENSITY:
+		case "Density":
 			columnSorter = new Comparator<XPDFSampleParameters>() {
 			@Override
 			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
@@ -618,7 +621,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			}
 		};
 		break;
-		case PACKING:
+		case "Vol. frac.":
 			columnSorter = new Comparator<XPDFSampleParameters>() {
 			@Override
 			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
@@ -626,7 +629,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			}
 		};
 		break;
-		case SUGGESTED_ENERGY:
+		case "Energy":
 			columnSorter = new Comparator<XPDFSampleParameters>() {
 			@Override
 			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
@@ -634,7 +637,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			}
 		};
 		break;
-		case MU:
+		case "μ":
 			columnSorter = new Comparator<XPDFSampleParameters>() {
 			@Override
 			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
@@ -642,7 +645,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			}
 		};
 		break;
-		case SUGGESTED_DIAMETER:
+		case "Max capillary ID":
 			columnSorter = new Comparator<XPDFSampleParameters>() {
 			@Override
 			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
@@ -650,14 +653,14 @@ public class XPDFSampleEditorView extends ViewPart {
 			}
 		};
 		break;
-		case ENERGY:
+		case "Beam state":
 			columnSorter = new Comparator<XPDFSampleParameters>() {
 			@Override
 			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
 				return o1.getBeamState().compareTo(o2.getBeamState());
 			}
 		};
-		case CAPILLARY:
+		case "Container":
 			columnSorter = new Comparator<XPDFSampleParameters>() {
 			@Override
 			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
@@ -681,7 +684,7 @@ public class XPDFSampleEditorView extends ViewPart {
 	 * 				the enum identifier of the column
 	 * @return the new anonymous sub-class of Selection Adapter
 	 */
-	private SelectionAdapter getColumnSelectionAdapter(final TableColumn tableColumn, final Column column) {
+	private SelectionAdapter getColumnSelectionAdapter(final TableColumn tableColumn, final String column) {
 		return new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {

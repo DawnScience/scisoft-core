@@ -96,11 +96,17 @@ public class XPDFSampleEditorView extends ViewPart {
 		ID, SAMPLE_DETAILS, SUGGESTED_EXPT, CHOSEN_EXPT
 	}
 	
-	private Map<ColumnGroup, TableViewer> groupViewers;
+//	private Map<ColumnGroup, TableViewer> groupViewers;
+	private List<TableViewer> groupViewers;
+	private List<String> groupNames;
 	
 	private boolean propagateSelectionChange;
 
 	private SortedSet<Integer> usedIDs; // The set of assigned ID numbers. Should come from the database eventually?	
+
+	private String[] groupHeaderText = {"Sample Identification", "Sample Details", "Suggested Parameters", "Chosen Parameters"};
+
+	private SampleGroupedTable sampleTable;
 	
 	public XPDFSampleEditorView() {
 		propagateSelectionChange = true;
@@ -120,7 +126,7 @@ public class XPDFSampleEditorView extends ViewPart {
 		Composite sampleTableCompo = new Composite(parent, SWT.BORDER);
 		sampleTableCompo.setLayout(new FormLayout());
 		
-		Composite sampleTable = new SampleGroupedTable(sampleTableCompo, SWT.NONE);
+		sampleTable = new SampleGroupedTable(sampleTableCompo, SWT.NONE);
 		Composite buttonCompo = new Composite(sampleTableCompo, SWT.NONE);
 
 		FormData formData = new FormData();
@@ -150,11 +156,12 @@ public class XPDFSampleEditorView extends ViewPart {
 		
 		List<String> groupNames;
 		List<List<String>> groupedColumnNames;
+		MyGroupedTable groupedTable;
 		
 		public SampleGroupedTable(Composite parent, int style) {
 			super(parent, style);
 				
-			MyGroupedTable groupedTable = new MyGroupedTable(this, SWT.NONE);
+			groupedTable = new MyGroupedTable(this, SWT.NONE);
 			this.setLayout(new FormLayout());
 			FormData formData = new FormData();
 			formData.left = new FormAttachment(0);
@@ -178,6 +185,13 @@ public class XPDFSampleEditorView extends ViewPart {
 			
 			groupedTable.createColumnGroups();
 			
+		}
+		
+		/**
+		 * Refresh the table
+		 */
+		public void refresh() {
+			groupedTable.refresh();
 		}
 	}
 	
@@ -218,10 +232,11 @@ public class XPDFSampleEditorView extends ViewPart {
 			columnGrouping.put(ColumnGroup.SUGGESTED_EXPT, Arrays.asList(new Column[] {Column.SUGGESTED_ENERGY, Column.MU, Column.SUGGESTED_DIAMETER}));
 			columnGrouping.put(ColumnGroup.CHOSEN_EXPT, Arrays.asList(new Column[] {Column.ENERGY, Column.CAPILLARY}));
 
-			String[] groupHeaderText = {"Sample Identification", "Sample Details", "Suggested Parameters", "Chosen Parameters"};
 
 			// TableViewers for each sub-table
-			groupViewers = new HashMap<XPDFSampleEditorView.ColumnGroup, TableViewer>();
+//			groupViewers = new HashMap<XPDFSampleEditorView.ColumnGroup, TableViewer>();
+			groupViewers = new ArrayList<TableViewer>();
+			groupNames = new ArrayList<String>();
 
 			// Column weights, and column group weights
 			int[] columnWeights = {20, 10, 2, 10, 15, 10, 5, 5, 5, 15, 10, 10};
@@ -229,6 +244,9 @@ public class XPDFSampleEditorView extends ViewPart {
 
 			// Iterate over the groups.
 			for (Map.Entry<ColumnGroup, List<Column>> columngroup : columnGrouping.entrySet()) {
+
+				String groupName = groupHeaderText[columngroup.getKey().ordinal()];
+				
 				// Composite to hold the group header and table
 				Composite groupCompo = new Composite(outerComposite, SWT.NONE);		
 				groupCompo.setLayout(new FormLayout());
@@ -242,7 +260,7 @@ public class XPDFSampleEditorView extends ViewPart {
 				formData.right = new FormAttachment(100, 0);
 				headerButton.setLayoutData(formData);
 
-				headerButton.setText(groupHeaderText[columngroup.getKey().ordinal()]);
+				headerButton.setText(groupName);
 
 				// Add the table that will hold this subset of the columns
 				Composite subTableCompo = new Composite(groupCompo, SWT.NONE);
@@ -256,7 +274,9 @@ public class XPDFSampleEditorView extends ViewPart {
 
 				// Define the sub-table
 				TableViewer tV = new TableViewer(subTableCompo);
-				groupViewers.put(columngroup.getKey(), tV);
+//				groupViewers.put(columngroup.getKey(), tV);
+				groupViewers.add(tV);
+				groupNames.add(groupName);
 				TableColumnLayout tCL = new TableColumnLayout();
 				subTableCompo.setLayout(tCL);
 
@@ -302,7 +322,16 @@ public class XPDFSampleEditorView extends ViewPart {
 			}
 
 		}
-		
+
+		/**
+		 * Refreshes all sub-tables.
+		 */
+		// refresh the entire table
+		public void refresh() {
+			for (TableViewer tV : groupViewers)
+				tV.refresh();
+		}
+
 	}
 
 	// drag support for local moves. Copy data
@@ -363,7 +392,7 @@ public class XPDFSampleEditorView extends ViewPart {
 				if (targetIndex == -1) return false;
 			}				
 			boolean success = samples.addAll(targetIndex, samplesToAdd);
-			refreshAll();
+			sampleTable.refresh();
 			
 			return success;
 		}
@@ -662,7 +691,7 @@ public class XPDFSampleEditorView extends ViewPart {
 				// Find the present sorted column, if any
 				TableColumn presentSorted = null;
 				int sortDirection = SWT.NONE;
-				for (TableViewer tV : groupViewers.values()) {
+				for (TableViewer tV : groupViewers) {
 					if (tV.getTable().getSortColumn() != null) {
 						presentSorted = tV.getTable().getSortColumn();
 						sortDirection = tV.getTable().getSortDirection();
@@ -688,7 +717,7 @@ public class XPDFSampleEditorView extends ViewPart {
 				tableColumn.getParent().setSortDirection(sortDirection);
 				tableColumn.getParent().setSortColumn(tableColumn);
 				
-				refreshAll();
+				sampleTable.refresh();
 			}
 		};
 	}
@@ -730,7 +759,7 @@ public class XPDFSampleEditorView extends ViewPart {
 				XPDFSampleParameters blankSample = new XPDFSampleParameters();
 				blankSample.setId(generateUniqueID());
 				samples.add(blankSample);
-				refreshAll();
+				sampleTable.refresh();
 			}
 		};
 		newBlankAction.setText("New sample");
@@ -743,7 +772,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			public void run() {
 				samples.clear();
 				usedIDs.clear();
-				refreshAll();
+				sampleTable.refresh();
 			}
 		};
 		clearAction.setText("Clear");
@@ -860,7 +889,7 @@ public class XPDFSampleEditorView extends ViewPart {
 	@Override
 	public void setFocus() {
 		// Can all the TableViewers have focus?
-		for (TableViewer iTV : groupViewers.values() ) {
+		for (TableViewer iTV : groupViewers ) {
 			iTV.getControl().setFocus();
 		}
 	}
@@ -876,7 +905,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			}
 		});
 		
-		for (TableViewer iTV : groupViewers.values() ) {
+		for (TableViewer iTV : groupViewers) {
 			Menu popupMenu = menuMan.createContextMenu(iTV.getControl());
 			iTV.getControl().setMenu(popupMenu);
 			getSite().registerContextMenu(menuMan, iTV);
@@ -932,7 +961,7 @@ public class XPDFSampleEditorView extends ViewPart {
 					// change when we programmatically change the selection
 					propagateSelectionChange = false;
 								
-					for (TableViewer tV : groupViewers.values())
+					for (TableViewer tV : groupViewers)
 						tV.setSelection(selection, true);
 				
 					propagateSelectionChange= true;
@@ -973,7 +1002,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			List<XPDFSampleParameters> selectedXPDFParameters = getSelectedSampleParameters();
 			if (selectedXPDFParameters.isEmpty()) return;
 			samples.removeAll(selectedXPDFParameters);
-			refreshAll();
+			sampleTable.refresh();
 		}
 	}
 
@@ -982,7 +1011,7 @@ public class XPDFSampleEditorView extends ViewPart {
 		List<XPDFSampleParameters> selectedXPDFParameters = new ArrayList<XPDFSampleParameters>();
 		// The selection listeners make sure the selection is the same in
 		// all tables, so get the selection from the first table.
-		ISelection selection = groupViewers.get(ColumnGroup.ID).getSelection();
+		ISelection selection = groupViewers.get(0).getSelection();
 		// No items? return, having done nothing.
 		if (selection.isEmpty()) return selectedXPDFParameters;
 		// If it is not an IStructureSelection, then I don't know what to do with it.
@@ -995,14 +1024,6 @@ public class XPDFSampleEditorView extends ViewPart {
 		return selectedXPDFParameters;		
 	}
 	
-	/**
-	 * Refreshes all sub-tables.
-	 */
-	// refresh the entire table
-	private void refreshAll() {
-		for (TableViewer tV : groupViewers.values())
-			tV.refresh();
-	}
 	
 	// Generate a new id
 	private int generateUniqueID() {
@@ -1067,7 +1088,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			
 			samples.add(explodite);
 			
-			for (TableViewer iTV : groupViewers.values()) {
+			for (TableViewer iTV : groupViewers) {
 				iTV.getTable().setSortDirection(SWT.NONE);
 				iTV.getTable().setSortColumn(null);
 				iTV.refresh();

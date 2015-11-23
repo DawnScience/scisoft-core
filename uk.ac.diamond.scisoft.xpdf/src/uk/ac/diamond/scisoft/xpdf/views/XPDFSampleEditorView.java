@@ -121,17 +121,29 @@ public class XPDFSampleEditorView extends ViewPart {
 		sampleTableCompo.setLayout(new FormLayout());
 		
 		Composite sampleTable = new SampleGroupedTable(sampleTableCompo, SWT.NONE);
+		Composite buttonCompo = new Composite(sampleTableCompo, SWT.NONE);
 
 		FormData formData = new FormData();
 		formData.left = new FormAttachment(0);
 		formData.right = new FormAttachment(100);
-		formData.height = 800;
+		formData.top = new FormAttachment(0);
+		formData.bottom = new FormAttachment(buttonCompo);
+		//		formData.height = 800;
 		sampleTable.setLayoutData(formData);
 		
+		
+		formData = new FormData();
+		formData.left = new FormAttachment(0);
+		formData.right = new FormAttachment(100);
+//		formData.top = new FormAttachment(sampleTable);
+		formData.bottom = new FormAttachment(100);
+		buttonCompo.setLayoutData(formData);
+		buttonCompo.setLayout(new FormLayout());
+		
 		createActions();
-		createLoadButtons(sampleTable);
-		createCentreButtons(sampleTable);
-		createRHSButtons(sampleTable);
+		createLoadButtons(buttonCompo);
+		createCentreButtons(buttonCompo);
+		createRHSButtons(buttonCompo);
 	}
 
 	class SampleGroupedTable extends Composite {
@@ -752,15 +764,15 @@ public class XPDFSampleEditorView extends ViewPart {
 		hookIntoContextMenu();
 	}
 
-	private void createRHSButtons(Composite compoAbove) {
+	private void createRHSButtons(Composite parent) {
 		int rightMargin = -10;
 		int topMargin = 10;
-		Composite stCompo = compoAbove.getParent();
+//		Composite stCompo = compoAbove.getParent();
 
-		simButton = new Button(stCompo, SWT.NONE);
+		simButton = new Button(parent, SWT.NONE);
 		FormData formData= new FormData();
 		formData.right = new FormAttachment(100, rightMargin);
-		formData.top = new FormAttachment(compoAbove, topMargin);
+		formData.top = new FormAttachment(0, topMargin);
 		simButton.setLayoutData(formData);
 		simButton.setText("Simulate PDF");
 		simButton.setToolTipText("Produce a simulated pair distribution function for the selected sample");
@@ -771,10 +783,11 @@ public class XPDFSampleEditorView extends ViewPart {
 			}
 		});
 		
-		savButton = new Button(stCompo, SWT.NONE);
+		savButton = new Button(parent, SWT.NONE);
 		formData = new FormData();
 		formData.right = new FormAttachment(100, rightMargin);
 		formData.top = new FormAttachment(simButton, topMargin);
+		formData.bottom = new FormAttachment(100, -topMargin);
 		savButton.setLayoutData(formData);
 		savButton.setText("Save");
 		savButton.setToolTipText("Save the sample data to file (or the database?)");
@@ -786,14 +799,15 @@ public class XPDFSampleEditorView extends ViewPart {
 		});
 	}
 
-	private void createCentreButtons(Composite compoAbove) {
+	private void createCentreButtons(Composite parent) {
 		int offset = 10;
-		Composite stCompo = compoAbove.getParent();
+		int bottomMargin = -10;
+//		Composite stCompo = compoAbove.getParent();
 		
-		delButton = new Button(stCompo, SWT.NONE);
+		delButton = new Button(parent, SWT.NONE);
 		FormData formData = new FormData();
 		formData.left = new FormAttachment(50);
-		formData.top = new FormAttachment(compoAbove, offset);
+		formData.top = new FormAttachment(0, offset);
 		delButton.setLayoutData(formData);
 		delButton.setText(deleteAction.getText());
 		delButton.setToolTipText(deleteAction.getToolTipText());
@@ -804,10 +818,11 @@ public class XPDFSampleEditorView extends ViewPart {
 			}
 		});
 		
-		clrButton = new Button(stCompo, SWT.NONE);
+		clrButton = new Button(parent, SWT.NONE);
 		formData = new FormData();
 		formData.left = new FormAttachment(50);
 		formData.top = new FormAttachment(delButton, offset);
+		formData.bottom = new FormAttachment(100, bottomMargin);
 		clrButton.setLayoutData(formData);
 		clrButton.setText(clearAction.getText());
 		clrButton.setToolTipText(clearAction.getToolTipText());
@@ -819,23 +834,24 @@ public class XPDFSampleEditorView extends ViewPart {
 		});
 	}
 	
-	private void createLoadButtons(Composite compoAbove) {
+	private void createLoadButtons(Composite parent) {
 		int leftMargin = 10;
 		int topMargin = 10;
-		Composite stCompo = compoAbove.getParent();
+//		Composite stCompo = compoAbove.getParent();
 
-		cifButton = new Button(stCompo, SWT.NONE);
+		cifButton = new Button(parent, SWT.NONE);
 		FormData formData = new FormData();
 		formData.left = new FormAttachment(0, leftMargin);
-		formData.top = new FormAttachment(compoAbove, topMargin);
+		formData.top = new FormAttachment(0, topMargin);
 		cifButton.setLayoutData(formData);
 		cifButton.setText("New sample from CIF file");
 		cifButton.setToolTipText("Create new sample from the data contained in a specified Crystallographic Information File.");
 
-		eraButton = new Button(stCompo, SWT.NONE);
+		eraButton = new Button(parent, SWT.NONE);
 		formData = new FormData();
 		formData.left = new FormAttachment(0, leftMargin);
 		formData.top = new FormAttachment(cifButton, topMargin);
+		formData.bottom = new FormAttachment(100, -topMargin);
 		eraButton.setLayoutData(formData);
 		eraButton.setText("New sample from ERA file");
 		eraButton.setToolTipText("Create a new sample from the data contained in a specified ERA file.");

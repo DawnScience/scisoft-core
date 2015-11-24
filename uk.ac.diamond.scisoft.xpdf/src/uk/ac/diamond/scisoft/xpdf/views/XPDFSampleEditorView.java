@@ -179,10 +179,18 @@ public class XPDFSampleEditorView extends ViewPart {
 			groupedColumnNames.add(Arrays.asList(new String[] {"Beam state", "Container"}));
 			groupedColumnWeights.add(Arrays.asList(new Integer[] {10, 10}));
 
-			groupedTable.createColumnGroups();
 
-//			for (String name : groupNamesST)
-//				groupedTable.createColumnGroup(name);
+			for (int iGroup = 0; iGroup < groupNamesST.size(); iGroup++) {
+				groupedTable.createColumnGroup(groupNamesST.get(iGroup));
+				for (int iColumn = 0; iColumn < groupedColumnNames.get(iGroup).size(); iColumn++) {
+					TableViewerColumn col = groupedTable.addColumn(groupNamesST.get(iGroup), SWT.NONE);
+					col.getColumn().setText(groupedColumnNames.get(iGroup).get(iColumn));
+					groupedTable.setColumnWidth(col, groupedColumnWeights.get(iGroup).get(iColumn));
+					col.setLabelProvider(new SampleTableCLP(groupedColumnNames.get(iGroup).get(iColumn)));
+//					col.setEditingSupport(new SampleTableCES(groupedColumnNames.get(iGroup).get(iColumn), tV));
+					col.getColumn().addSelectionListener(getColumnSelectionAdapter(col.getColumn(), groupedColumnNames.get(iGroup).get(iColumn)));
+				}
+		}
 			
 			groupedTable.setContentProvider(new IStructuredContentProvider() {
 				@Override
@@ -272,6 +280,9 @@ public class XPDFSampleEditorView extends ViewPart {
 			// To properly fake a table, set the sash width to 0
 			tableCompo.setSashWidth(0);
 			
+			groupViewers = new ArrayList<TableViewer>();
+			groupNames = new ArrayList<String>();
+
 			// null the cached table classes
 			cachedContentProvider = null;
 			cachedInput = null;
@@ -283,6 +294,20 @@ public class XPDFSampleEditorView extends ViewPart {
 			cachedDropTargetListener = null;
 		}			
 	
+		public void setColumnWidth(TableViewerColumn col, Integer weight) {
+			
+			TableViewer tV = null;
+			for (TableViewer iTV : groupViewers) {
+				if (iTV.getTable() == col.getColumn().getParent()) {
+					tV = iTV;
+					break;
+				}
+			}
+			if (tV == null) return;
+			TableColumnLayout tCL = (TableColumnLayout) tV.getTable().getParent().getLayout();
+			tCL.setColumnData(col.getColumn(), new ColumnWeightData(weight));
+		}
+
 		public void createColumnGroups() {
 			createColumnGroups(tableCompo);
 			
@@ -310,16 +335,16 @@ public class XPDFSampleEditorView extends ViewPart {
 				groupViewers.add(tV);
 
 				// Create the columns of the sub-table, according to the definition of the group and the overall weights 
-				createColumns(tV, groupedColumnNames.get(i), groupedColumnWeights.get(i));
+//				createColumns(tV, groupedColumnNames.get(i), groupedColumnWeights.get(i));
 
 				// Drag and drop support
 //				tV.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalDragSupportListener(tV));
 //				tV.addDropSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalViewerDropAdapter(tV));
 
 				// Calculate the relative weighting of each group
-				int groupWeight = 0;
-				for (int j = 0; j < groupedColumnWeights.get(i).size(); j++) groupWeight += groupedColumnWeights.get(i).get(j);
-				groupWeights.add(i, groupWeight);
+//				int groupWeight = 0;
+//				for (int j = 0; j < groupedColumnWeights.get(i).size(); j++) groupWeight += groupedColumnWeights.get(i).get(j);
+//				groupWeights.add(i, groupWeight);
 				
 			}
 
@@ -395,7 +420,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			tV.getTable().setLinesVisible(true);
 
 			// Column Layout
-			tV.getTable().getParent().setLayout(new TableColumnLayout());
+			subTableCompo.setLayout(new TableColumnLayout());
 			
 			// Previously set cached classes
 			if (cachedContentProvider != null) {
@@ -411,6 +436,16 @@ public class XPDFSampleEditorView extends ViewPart {
 			return tV;
 		}
 
+		public TableViewerColumn addColumn(String groupID, int style) {
+			// TODO: Add column group if it does not exist
+			if (!groupNames.contains(groupID)) return null;
+			TableViewer groupViewer = groupViewers.get(groupNames.indexOf(groupID));
+			
+			return new TableViewerColumn(groupViewer, style);
+		}
+
+
+		
 		public void setContentProvider(IStructuredContentProvider iSCP) {
 			cachedContentProvider = iSCP;
 			for (TableViewer tV : groupViewers)

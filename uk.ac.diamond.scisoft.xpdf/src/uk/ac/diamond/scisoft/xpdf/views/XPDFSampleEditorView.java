@@ -191,22 +191,22 @@ public class XPDFSampleEditorView extends ViewPart {
 
 //			for (String name : groupNamesST)
 //				groupedTable.createColumnGroup(name);
-//			
-//			groupedTable.setContentProvider(new IStructuredContentProvider() {
-//				@Override
-//				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}	// TODO Auto-generated method stub
-//
-//				@Override
-//				public void dispose() {} // TODO Auto-generated method stub
-//
-//				@Override
-//				public Object[] getElements(Object inputElement) {
-//					return samples.toArray();
-//				}
-//			});
-//			
-//			groupedTable.setInput(getSite()); // FIXME: watch out for this becoming invalid when the class is broken out 
-//			
+			
+			groupedTable.setContentProvider(new IStructuredContentProvider() {
+				@Override
+				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}	// TODO Auto-generated method stub
+
+				@Override
+				public void dispose() {} // TODO Auto-generated method stub
+
+				@Override
+				public Object[] getElements(Object inputElement) {
+					return samples.toArray();
+				}
+			});
+			
+			groupedTable.setInput(getSite()); // FIXME: watch out for this becoming invalid when the class is broken out 
+			
 			List<String> allColumnNames = new ArrayList<String>();
 			for (List<String> groupedNames : groupedColumnNames)
 				allColumnNames.addAll(groupedNames);
@@ -320,21 +320,6 @@ public class XPDFSampleEditorView extends ViewPart {
 
 				// Create the columns of the sub-table, according to the definition of the group and the overall weights 
 				createColumns(tV, groupedColumnNames.get(i), groupedColumnWeights.get(i));
-
-				// Interactions of the sub-table
-				tV.setContentProvider(new IStructuredContentProvider() {
-					@Override
-					public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}	// TODO Auto-generated method stub
-
-					@Override
-					public void dispose() {} // TODO Auto-generated method stub
-
-					@Override
-					public Object[] getElements(Object inputElement) {
-						return samples.toArray();
-					}
-				});
-				tV.setInput(getViewSite());
 
 				// Set the listener that sets the selection as the same on each sub-table
 				tV.addSelectionChangedListener(new SubTableSelectionChangedListener());

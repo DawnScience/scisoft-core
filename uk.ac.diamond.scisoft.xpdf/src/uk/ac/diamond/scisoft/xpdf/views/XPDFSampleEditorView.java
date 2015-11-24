@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.xpdf.views;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -52,6 +53,7 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
@@ -205,11 +207,18 @@ public class XPDFSampleEditorView extends ViewPart {
 //			
 //			groupedTable.setInput(getSite()); // FIXME: watch out for this becoming invalid when the class is broken out 
 //			
-//			List<String> allColumnNames = new ArrayList<String>();
-//			for (List<String> groupedNames : groupedColumnNames)
-//				allColumnNames.addAll(groupedNames);
-//			groupedTable.setLabelProvider(new SampleTableLP(allColumnNames));
+			List<String> allColumnNames = new ArrayList<String>();
+			for (List<String> groupedNames : groupedColumnNames)
+				allColumnNames.addAll(groupedNames);
+			groupedTable.setLabelProvider(new SampleTableLP(allColumnNames));
+
 			
+			// The Drag Listener and the Drop Adapter need the Viewer, which 
+			// we do not (and should not) have access to at this level. The
+			// final argument in each case is an object that returns the class
+			// when the method generate(Viewer) is called.
+//			groupedTable.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalDragSupportListener(null));
+//			groupedTable.addDropSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalViewerDropAdapter(null));
 			
 		}
 		
@@ -237,10 +246,8 @@ public class XPDFSampleEditorView extends ViewPart {
 			@Override
 			public String getColumnText(Object element, int columnIndex) {
 				return (new SampleTableCLP(columns.get(columnIndex))).getText(element);
-			}
-			
-		}
-		
+			}	
+		}		
 	}
 	
 	class MyGroupedTable extends Composite {
@@ -253,10 +260,10 @@ public class XPDFSampleEditorView extends ViewPart {
 		private ISelectionChangedListener cachedUserSelectionChangedListener;
 		private int cachedDragFlags;
 		private Transfer[] cachedDragTransfers;
-		private DragSourceListener cachedDragSourceListener;
+		private DragSourceAdapter cachedDragSourceListener;
 		private int cachedDropFlags;
 		private Transfer[] cachedDropTransfers;
-		private DropTargetListener cachedDropTargetListener;
+		private ViewerDropAdapter cachedDropTargetListener;
 		
 		public MyGroupedTable(Composite parent, int style) {
 			super(parent, style);
@@ -327,17 +334,14 @@ public class XPDFSampleEditorView extends ViewPart {
 						return samples.toArray();
 					}
 				});
-//				tV.setLabelProvider(new SampleTableLP(groupedColumnNames.get(i)));
 				tV.setInput(getViewSite());
-				cachedLabelProvider = new SampleTableHackLP();
-				tV.setLabelProvider(new SubTableLabelProvider(tV));
 
 				// Set the listener that sets the selection as the same on each sub-table
 				tV.addSelectionChangedListener(new SubTableSelectionChangedListener());
 
 				// Drag and drop support
-				tV.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalDragSupportListener(tV));
-				tV.addDropSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalViewerDropAdapter(tV));
+//				tV.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalDragSupportListener(tV));
+//				tV.addDropSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalViewerDropAdapter(tV));
 
 				// Calculate the relative weighting of each group
 				int groupWeight = 0;
@@ -431,11 +435,6 @@ public class XPDFSampleEditorView extends ViewPart {
 
 			tV.addSelectionChangedListener(new SubTableSelectionChangedListener());
 			
-			if (cachedDragTransfers != null && cachedDragSourceListener != null)
-				tV.addDragSupport(cachedDragFlags, cachedDragTransfers, cachedDragSourceListener);
-			if (cachedDropTransfers != null && cachedDropTargetListener != null)
-				tV.addDropSupport(cachedDropFlags, cachedDropTransfers, cachedDropTargetListener);
-			
 			return tV;
 		}
 
@@ -463,20 +462,32 @@ public class XPDFSampleEditorView extends ViewPart {
 			cachedUserSelectionChangedListener = iSCL;
 		}
 		
-		public void addDragSupport(int dragFlags, Transfer[] transfers, DragSourceListener dSL) {
+		public void addDragSupport(int dragFlags, Transfer[] transfers, DragSourceAdapter dSL) {
 			cachedDragFlags = dragFlags;
 			cachedDragTransfers = transfers;
 			cachedDragSourceListener = dSL;
 			for (TableViewer tV : groupViewers)
-				tV.addDragSupport(cachedDragFlags, cachedDropTransfers, cachedDragSourceListener);
+				try {
+					tV.addDragSupport(cachedDragFlags, cachedDragTransfers, cachedDragSourceListener.getClass().newInstance());
+				} catch (Exception e) {
+					// If there are any exceptions, log it and carry on; drag and drop is not critical
+					// TODO: Real logger, not stderr
+					System.err.println("Exception setting drag and drop support in " + this.getClass() + ":" + e);
+				}
 		}
 		
-		public void addDropSupport(int dropFlags, Transfer[] transfers, DropTargetListener dTL) {
+		public void addDropSupport(int dropFlags, Transfer[] transfers, ViewerDropAdapter dTL) {
 			cachedDropFlags = dropFlags;
 			cachedDropTransfers = transfers;
 			cachedDropTargetListener = dTL;
 			for (TableViewer tV : groupViewers)
-				tV.addDropSupport(cachedDropFlags, cachedDropTransfers, cachedDropTargetListener);
+				try {
+					tV.addDropSupport(cachedDropFlags, cachedDropTransfers, cachedDropTargetListener.getClass().getDeclaredConstructor(Viewer.class).newInstance(tV));
+				} catch (Exception e) {
+					// If there are any exceptions, log it and carry on; drag and drop is not critical
+					// TODO: Real logger, not stderr
+					System.err.println("Exception setting drag and drop support in " + this.getClass() + ":" + e);
+				}
 		}
 		
 		/**
@@ -551,8 +562,8 @@ public class XPDFSampleEditorView extends ViewPart {
 	// drag support for local moves. Copy data
 	class LocalDragSupportListener extends DragSourceAdapter {
 		private TableViewer tV;
-		public LocalDragSupportListener(TableViewer tV) {
-			this.tV = tV;
+		public LocalDragSupportListener(Viewer tV) {
+			this.tV = (tV instanceof TableViewer) ? (TableViewer) tV : null;
 		}
 		
 		@Override
@@ -564,7 +575,7 @@ public class XPDFSampleEditorView extends ViewPart {
 	// Deals with both dragging and copy-dragging
 	class LocalViewerDropAdapter extends ViewerDropAdapter {
 
-		public LocalViewerDropAdapter(TableViewer tV) {
+		public LocalViewerDropAdapter(Viewer tV) {
 			super(tV);
 		}
 

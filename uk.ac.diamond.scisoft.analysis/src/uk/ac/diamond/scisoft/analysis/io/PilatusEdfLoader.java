@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.activation.UnsupportedDataTypeException;
+
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
@@ -83,11 +85,15 @@ public class PilatusEdfLoader extends AbstractFileLoader {
 						Integer.parseInt(textMetadata.get("Dim_1"))};
 				String dataType = textMetadata.get("DataType");
 				if (loadLazily) {
+					// This does not provide support for 64-bit datatypes, which may be present in EDF files.
 					data = createLazyDataset(DEF_IMAGE_NAME, DATA_NAME, dataType.equals("Float") ? Dataset.FLOAT32 : Dataset.INT32,
 							shape, new PilatusEdfLoader(fileName));
 				} else {
 					boolean le = "LowByteFirst".equals(textMetadata.get("ByteOrder"));
-					if (dataType.equals("Float")) {
+					boolean signed = dataType.startsWith("Signed");
+					// this EDF loader supports only a subset of all possible datatypes
+					// an exception will be thrown when an unsupported datatype is encountered
+					if (dataType.equals("Float") || dataType.equals("FloatValue")) {
 						data = new FloatDataset(shape);
 						if (le) {
 							Utils.readLeFloat(fi, (FloatDataset) data, index);
@@ -95,20 +101,30 @@ public class PilatusEdfLoader extends AbstractFileLoader {
 						else {
 							Utils.readBeFloat(fi, (FloatDataset) data, index);
 						}
-					} else {
+					} 
+					else if (dataType.contains("Short")) {
+						// 16 bit integers
 						data = new IntegerDataset(shape);
-						if (dataType.contains("Short")) {
-							boolean signed = dataType.startsWith("Signed");
-							if (le)
-								Utils.readLeShort(fi, (IntegerDataset) data, index, signed);
-							else
-								Utils.readBeShort(fi, (IntegerDataset) data, index, signed);
-						} else {
-							if (le)
-								Utils.readLeInt(fi, (IntegerDataset) data, index);
-							else
-								Utils.readBeInt(fi, (IntegerDataset) data, index);
+						if (le)
+							Utils.readLeShort(fi, (IntegerDataset) data, index, signed);
+						else
+							Utils.readBeShort(fi, (IntegerDataset) data, index, signed);
+					} 
+					else if (dataType.contains("Long") || dataType.contains("Integer")) {
+						// 32 bit integers, signed ONLY
+						if (!signed) {
+							throw new ScanFileHolderException("32-bit unsigned integers are currently not supported");
 						}
+						data = new IntegerDataset(shape);
+						if (le)
+							Utils.readLeInt(fi, (IntegerDataset) data, index);
+						else
+							Utils.readBeInt(fi, (IntegerDataset) data, index);
+					}
+					else {
+						// unsupported data type exception
+						// expect this when datatype is byte, 64-bit integer or 64-bit float
+						throw new ScanFileHolderException("Unknown EDF datatype " + dataType);
 					}
 					data.setName(DEF_IMAGE_NAME);
 				}

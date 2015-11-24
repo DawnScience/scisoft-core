@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -50,6 +51,8 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -183,6 +186,30 @@ public class XPDFSampleEditorView extends ViewPart {
 			groupedColumnWeights.add(Arrays.asList(new Integer[] {10, 10}));
 
 			groupedTable.createColumnGroups();
+
+//			for (String name : groupNamesST)
+//				groupedTable.createColumnGroup(name);
+//			
+//			groupedTable.setContentProvider(new IStructuredContentProvider() {
+//				@Override
+//				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}	// TODO Auto-generated method stub
+//
+//				@Override
+//				public void dispose() {} // TODO Auto-generated method stub
+//
+//				@Override
+//				public Object[] getElements(Object inputElement) {
+//					return samples.toArray();
+//				}
+//			});
+//			
+//			groupedTable.setInput(getSite()); // FIXME: watch out for this becoming invalid when the class is broken out 
+//			
+//			List<String> allColumnNames = new ArrayList<String>();
+//			for (List<String> groupedNames : groupedColumnNames)
+//				allColumnNames.addAll(groupedNames);
+//			groupedTable.setLabelProvider(new SampleTableLP(allColumnNames));
+			
 			
 		}
 		
@@ -192,11 +219,44 @@ public class XPDFSampleEditorView extends ViewPart {
 		public void refresh() {
 			groupedTable.refresh();
 		}
+
+		// The table label provider does nothing except delegate to the column label provider
+		class SampleTableLP extends LabelProvider implements ITableLabelProvider {
+
+			final List<String> columns;
+			
+			public SampleTableLP(List <String> columns) {
+				this.columns = columns;
+			}
+			
+			@Override
+			public Image getColumnImage(Object element, int columnIndex) {
+				return null;
+			}
+
+			@Override
+			public String getColumnText(Object element, int columnIndex) {
+				return (new SampleTableCLP(columns.get(columnIndex))).getText(element);
+			}
+			
+		}
+		
 	}
 	
 	class MyGroupedTable extends Composite {
 		
 		private SashForm tableCompo;
+		// Only one of each of these per grouped table
+		private IStructuredContentProvider cachedContentProvider;
+		private Object cachedInput;
+		private ITableLabelProvider cachedLabelProvider;
+		private ISelectionChangedListener cachedUserSelectionChangedListener;
+		private int cachedDragFlags;
+		private Transfer[] cachedDragTransfers;
+		private DragSourceListener cachedDragSourceListener;
+		private int cachedDropFlags;
+		private Transfer[] cachedDropTransfers;
+		private DropTargetListener cachedDropTargetListener;
 		
 		public MyGroupedTable(Composite parent, int style) {
 			super(parent, style);
@@ -214,6 +274,15 @@ public class XPDFSampleEditorView extends ViewPart {
 			// To properly fake a table, set the sash width to 0
 			tableCompo.setSashWidth(0);
 			
+			// null the cached table classes
+			cachedContentProvider = null;
+			cachedInput = null;
+			cachedLabelProvider = null;
+			cachedUserSelectionChangedListener = null;
+			cachedDragTransfers = null;
+			cachedDragSourceListener = null;
+			cachedDropTransfers = null;
+			cachedDropTargetListener = null;
 		}			
 	
 		public void createColumnGroups() {
@@ -224,16 +293,7 @@ public class XPDFSampleEditorView extends ViewPart {
 		// Create the column groupings
 		private void createColumnGroups(Composite outerComposite) {
 
-			// Define the groupings of the columns
-//			Map<ColumnGroup, List<Column>> columnGrouping = new TreeMap<XPDFSampleEditorView.ColumnGroup, List<Column>>();
-//			columnGrouping.put(ColumnGroup.ID, Arrays.asList(new Column[]{Column.NAME, Column.ID}));
-//			columnGrouping.put(ColumnGroup.SAMPLE_DETAILS, Arrays.asList(new Column[] {Column.DETAILS, Column.PHASES, Column.COMPOSITION, Column.DENSITY, Column.PACKING}));
-//			columnGrouping.put(ColumnGroup.SUGGESTED_EXPT, Arrays.asList(new Column[] {Column.SUGGESTED_ENERGY, Column.MU, Column.SUGGESTED_DIAMETER}));
-//			columnGrouping.put(ColumnGroup.CHOSEN_EXPT, Arrays.asList(new Column[] {Column.ENERGY, Column.CAPILLARY}));
-
-
 			// TableViewers for each sub-table
-//			groupViewers = new HashMap<XPDFSampleEditorView.ColumnGroup, TableViewer>();
 			groupViewers = new ArrayList<TableViewer>();
 			groupNames = new ArrayList<String>();
 
@@ -243,48 +303,17 @@ public class XPDFSampleEditorView extends ViewPart {
 			// Iterate over the groups.
 			for (int i = 0; i < groupNamesST.size(); i++) {
 
-				groupNames.add(i, groupNamesST.get(i));
-				String groupName = groupNames.get(i);
+				String groupName = groupNamesST.get(i);
+				groupNames.add(i, groupName);
+				
+				TableViewer tV = createColumnGroupInternal(outerComposite, groupNames.get(i));
 				
 				// Composite to hold the group header and table
-				Composite groupCompo = new Composite(outerComposite, SWT.NONE);		
-				groupCompo.setLayout(new FormLayout());
-
-				// Add the Group column header as a do-nothing button
-				Button headerButton = new Button(groupCompo, SWT.PUSH);
-
-				FormData formData = new FormData();
-				formData.top = new FormAttachment(0, 0);
-				formData.left = new FormAttachment(0, 0);
-				formData.right = new FormAttachment(100, 0);
-				headerButton.setLayoutData(formData);
-
-				headerButton.setText(groupName);
-
-				// Add the table that will hold this subset of the columns
-				Composite subTableCompo = new Composite(groupCompo, SWT.NONE);
-
-				formData = new FormData();
-				formData.top = new FormAttachment(headerButton);
-				formData.left = new FormAttachment(0, 0);
-				formData.right = new FormAttachment(100, 0);
-				formData.bottom = new FormAttachment(100, 0);
-				subTableCompo.setLayoutData(formData);
-
-				// Define the sub-table
-				TableViewer tV = new TableViewer(subTableCompo);
-//				groupViewers.put(columngroup.getKey(), tV);
 				groupViewers.add(tV);
-				groupNames.add(groupName);
-				TableColumnLayout tCL = new TableColumnLayout();
-				subTableCompo.setLayout(tCL);
 
 				// Create the columns of the sub-table, according to the definition of the group and the overall weights 
-				createColumns(tCL, groupedColumnNames.get(i), tV, groupedColumnWeights.get(i));
+				createColumns(tV, groupedColumnNames.get(i), groupedColumnWeights.get(i));
 
-				// Style of each sub-table
-				tV.getTable().setHeaderVisible(true);
-				tV.getTable().setLinesVisible(true);
 				// Interactions of the sub-table
 				tV.setContentProvider(new IStructuredContentProvider() {
 					@Override
@@ -298,8 +327,10 @@ public class XPDFSampleEditorView extends ViewPart {
 						return samples.toArray();
 					}
 				});
-				tV.setLabelProvider(new SampleTableLP(groupedColumnNames.get(i)));
+//				tV.setLabelProvider(new SampleTableLP(groupedColumnNames.get(i)));
 				tV.setInput(getViewSite());
+				cachedLabelProvider = new SampleTableHackLP();
+				tV.setLabelProvider(new SubTableLabelProvider(tV));
 
 				// Set the listener that sets the selection as the same on each sub-table
 				tV.addSelectionChangedListener(new SubTableSelectionChangedListener());
@@ -335,6 +366,186 @@ public class XPDFSampleEditorView extends ViewPart {
 				tV.refresh();
 		}
 
+		/**
+		 * Creates a new column group.
+		 * <p>
+		 * Adds a new named or anonymous column group to the end of the list of
+		 * groups. Repeated named groups are not allowed, but an new anonymous
+		 * group can be added to the end of the list at any point.
+		 * @param groupNameIn
+		 * 					the name to give the group of columns
+		 */
+		public void createColumnGroup(String groupNameIn) {
+			String groupName  = (groupNameIn != null) ? groupNameIn : "";
+			// Do not add duplicate named groups
+			if (!groupName.equals("") && groupNames.contains(groupName)) return;
+			// Otherwise, add a group with this name to the end of the list of groups
+			groupNames.add(groupName);
+			groupViewers.add(createColumnGroupInternal(tableCompo, groupName));
+		}
+		
+		
+		private TableViewer createColumnGroupInternal(Composite parent, String groupName) {
+			Composite groupCompo = new Composite(parent, SWT.NONE);		
+			groupCompo.setLayout(new FormLayout());
+
+			// Add the Group column header as a do-nothing button
+			Button headerButton = new Button(groupCompo, SWT.PUSH);
+
+			FormData formData = new FormData();
+			formData.top = new FormAttachment(0, 0);
+			formData.left = new FormAttachment(0, 0);
+			formData.right = new FormAttachment(100, 0);
+			headerButton.setLayoutData(formData);
+
+			headerButton.setText(groupName);
+
+			// Add the table that will hold this subset of the columns
+			Composite subTableCompo = new Composite(groupCompo, SWT.NONE);
+
+			formData = new FormData();
+			formData.top = new FormAttachment(headerButton);
+			formData.left = new FormAttachment(0, 0);
+			formData.right = new FormAttachment(100, 0);
+			formData.bottom = new FormAttachment(100, 0);
+			subTableCompo.setLayoutData(formData);
+
+			// Define the sub-table
+			TableViewer tV = new TableViewer(subTableCompo);
+
+			// Style of each sub-table
+			tV.getTable().setHeaderVisible(true);
+			tV.getTable().setLinesVisible(true);
+
+			// Column Layout
+			tV.getTable().getParent().setLayout(new TableColumnLayout());
+			
+			// Previously set cached classes
+			if (cachedContentProvider != null) {
+				tV.setContentProvider(cachedContentProvider);
+				if (cachedInput != null)
+					tV.setInput(cachedInput);
+			}
+			
+			tV.setLabelProvider(new SubTableLabelProvider(tV));
+
+			tV.addSelectionChangedListener(new SubTableSelectionChangedListener());
+			
+			if (cachedDragTransfers != null && cachedDragSourceListener != null)
+				tV.addDragSupport(cachedDragFlags, cachedDragTransfers, cachedDragSourceListener);
+			if (cachedDropTransfers != null && cachedDropTargetListener != null)
+				tV.addDropSupport(cachedDropFlags, cachedDropTransfers, cachedDropTargetListener);
+			
+			return tV;
+		}
+
+		public void setContentProvider(IStructuredContentProvider iSCP) {
+			cachedContentProvider = iSCP;
+			for (TableViewer tV : groupViewers)
+				tV.setContentProvider(iSCP);
+			if (cachedInput != null)
+				for (TableViewer tV : groupViewers)
+					tV.setInput(cachedInput);
+		}
+		
+		public void setInput(Object input) {
+			cachedInput = input;
+			if (cachedContentProvider != null)
+				for (TableViewer tV : groupViewers)
+					tV.setInput(cachedInput);
+		}
+		
+		public void setLabelProvider(ITableLabelProvider iTLP) {
+			cachedLabelProvider = iTLP;
+		}
+		
+		public void addSelectionChangedListener(ISelectionChangedListener iSCL) {
+			cachedUserSelectionChangedListener = iSCL;
+		}
+		
+		public void addDragSupport(int dragFlags, Transfer[] transfers, DragSourceListener dSL) {
+			cachedDragFlags = dragFlags;
+			cachedDragTransfers = transfers;
+			cachedDragSourceListener = dSL;
+			for (TableViewer tV : groupViewers)
+				tV.addDragSupport(cachedDragFlags, cachedDropTransfers, cachedDragSourceListener);
+		}
+		
+		public void addDropSupport(int dropFlags, Transfer[] transfers, DropTargetListener dTL) {
+			cachedDropFlags = dropFlags;
+			cachedDropTransfers = transfers;
+			cachedDropTargetListener = dTL;
+			for (TableViewer tV : groupViewers)
+				tV.addDropSupport(cachedDropFlags, cachedDropTransfers, cachedDropTargetListener);
+		}
+		
+		/**
+		 * Changes the selection on all sub-tables.
+		 * <p>
+		 * When the selection changes, change the selection on the other
+		 * sub-tables.
+		 *
+		 */
+		// By using a object-wide flag we can prevent each call triggering four
+		// more and causing a stack overflow.
+		class SubTableSelectionChangedListener implements ISelectionChangedListener {
+
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				ISelection selection = event.getSelection();
+				if (selection instanceof IStructuredSelection) {
+					if (propagateSelectionChange) {
+						// Oh, the race conditions we shall have.
+						// Tell the tables not to further propagate the selection
+						// change when we programmatically change the selection
+						propagateSelectionChange = false;
+
+						// Fire off the user defined SelectionChangedListener once
+						if (cachedUserSelectionChangedListener != null)
+							cachedUserSelectionChangedListener.selectionChanged(event);
+						
+						for (TableViewer tV : groupViewers)
+							tV.setSelection(selection, true);
+					
+						propagateSelectionChange= true;
+					}
+				}
+			}
+		}
+
+		class SubTableLabelProvider extends LabelProvider implements ITableLabelProvider {
+
+			TableViewer tV;
+			
+			public SubTableLabelProvider(TableViewer tV) {
+				this.tV = tV;
+			}
+			
+			private int getOffset() {
+				int columnCount = 0;
+				if (groupViewers != null && groupViewers.size() > 1) {
+					for (int iTV = 0; iTV < groupViewers.size()-1 && groupViewers.get(iTV) != tV; iTV++) {
+						columnCount += groupViewers.get(iTV).getTable().getColumnCount();
+					}
+				}
+				return columnCount;
+			}
+			
+			@Override
+			public Image getColumnImage(Object element, int columnIndex) {
+				return (cachedLabelProvider != null) ? 
+						cachedLabelProvider.getColumnImage(element, columnIndex+getOffset()) :
+						null;
+			}
+
+			@Override
+			public String getColumnText(Object element, int columnIndex) {
+				return (cachedLabelProvider != null) ?
+						cachedLabelProvider.getColumnText(element, columnIndex+getOffset()) :
+						null;
+			}
+	
+		}
 	}
 
 	// drag support for local moves. Copy data
@@ -446,7 +657,8 @@ public class XPDFSampleEditorView extends ViewPart {
 	
 	
 	// Create a sub-set of the columns of the table
-	private void createColumns(TableColumnLayout tCL, List<String> columns, TableViewer tV, List<Integer> columnWeights) {
+	private void createColumns(TableViewer tV, List<String> columns, List<Integer> columnWeights) {
+		TableColumnLayout tCL = (TableColumnLayout) tV.getTable().getParent().getLayout();
 		TableViewerColumn col;
 //		String[] columnNames = {"Sample name", "Code", "", "Phases", "Composition", "Density", "Vol. frac.", "Energy", "μ", "Max capillary ID", "Energy", "Container"}; 
 		for (int i = 0; i < columns.size(); i++) {
@@ -479,6 +691,25 @@ public class XPDFSampleEditorView extends ViewPart {
 		}
 		
 	}
+
+	class SampleTableHackLP extends LabelProvider implements ITableLabelProvider {
+		List<String> columns;
+
+		public SampleTableHackLP() {
+			columns = Arrays.asList(new String[] {"Sample name", "Code", "", "Phases", "Composition", "Density", "Vol. frac.", "Energy", "μ", "Max capillary ID", "Beam state", "Container"});
+		}
+		
+		@Override
+		public Image getColumnImage(Object element, int columnIndex) {
+			return null;
+		}
+
+		@Override
+		public String getColumnText(Object element, int columnIndex) {
+			return (new SampleTableCLP(columns.get(columnIndex))).getText(element);
+		}
+	}
+	
 	
 	// Column label provider. Use a switch to provide the different data labels for the different columns.
 	class SampleTableCLP extends ColumnLabelProvider {
@@ -943,35 +1174,6 @@ public class XPDFSampleEditorView extends ViewPart {
 		
 	}
 
-	/**
-	 * Changes the selection on all sub-tables.
-	 * <p>
-	 * When the selection changes, change the selection on the other
-	 * sub-tables.
-	 *
-	 */
-	// By using a object-wide flag we can prevent each call triggering four
-	// more and causing a stack overflow.
-	class SubTableSelectionChangedListener implements ISelectionChangedListener {
-
-		@Override
-		public void selectionChanged(SelectionChangedEvent event) {
-			ISelection selection = event.getSelection();
-			if (selection instanceof IStructuredSelection) {
-				if (propagateSelectionChange) {
-					// Oh, the race conditions we shall have.
-					// Tell the tables not to further propagate the selection
-					// change when we programmatically change the selection
-					propagateSelectionChange = false;
-								
-					for (TableViewer tV : groupViewers)
-						tV.setSelection(selection, true);
-				
-					propagateSelectionChange= true;
-				}
-			}
-		}
-	}
 	
 	
 	// Action class that simulates the pair-distribution function of the given sample.

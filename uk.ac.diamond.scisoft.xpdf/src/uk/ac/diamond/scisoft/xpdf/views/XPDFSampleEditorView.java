@@ -9,16 +9,12 @@
 
 package uk.ac.diamond.scisoft.xpdf.views;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
@@ -34,7 +30,6 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.EditingSupport;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -52,9 +47,6 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DragSourceListener;
-import org.eclipse.swt.dnd.DropTargetAdapter;
-import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -212,7 +204,6 @@ public class XPDFSampleEditorView extends ViewPart {
 				allColumnNames.addAll(groupedNames);
 			groupedTable.setLabelProvider(new SampleTableLP(allColumnNames));
 
-			
 			// The Drag Listener and the Drop Adapter need the Viewer, which 
 			// we do not (and should not) have access to at this level. The
 			// final argument in each case is an object that returns the class
@@ -320,9 +311,6 @@ public class XPDFSampleEditorView extends ViewPart {
 
 				// Create the columns of the sub-table, according to the definition of the group and the overall weights 
 				createColumns(tV, groupedColumnNames.get(i), groupedColumnWeights.get(i));
-
-				// Set the listener that sets the selection as the same on each sub-table
-				tV.addSelectionChangedListener(new SubTableSelectionChangedListener());
 
 				// Drag and drop support
 //				tV.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalDragSupportListener(tV));

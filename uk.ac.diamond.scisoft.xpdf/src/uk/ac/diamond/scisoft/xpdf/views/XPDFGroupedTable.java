@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.TableColumn;
 class XPDFGroupedTable extends Composite {
 	
 	private SashForm tableCompo;
+	
 	// Only one of each of these per grouped table
 	private IStructuredContentProvider cachedContentProvider;
 	private Object cachedInput;
@@ -46,8 +47,8 @@ class XPDFGroupedTable extends Composite {
 	private Transfer[] cachedDropTransfers;
 	private ViewerDropAdapter cachedDropTargetListener;
 
-	private List<TableViewer> groupViewers; // To MyGroupedTable
-	private List<String> groupNames; // To MyGroupedTable
+	private List<TableViewer> groupViewers;
+	private List<String> groupNames;
 	
 	private int sortedGroup; // -1 signifies no column is sorted
 	
@@ -218,13 +219,7 @@ class XPDFGroupedTable extends Composite {
 		cachedDragTransfers = transfers;
 		cachedDragSourceListener = dSL;
 		for (TableViewer tV : groupViewers)
-			try {
-				tV.addDragSupport(cachedDragFlags, cachedDragTransfers, cachedDragSourceListener.getClass().newInstance());
-			} catch (Exception e) {
-				// If there are any exceptions, log it and carry on; drag and drop is not critical
-				// TODO: Real logger, not stderr
-				System.err.println("Exception setting drag and drop support in " + this.getClass() + ":" + e);
-			}
+				tV.addDragSupport(cachedDragFlags, cachedDragTransfers, cachedDragSourceListener);
 	}
 	
 	public void addDropSupport(int dropFlags, Transfer[] transfers, ViewerDropAdapter dTL) {

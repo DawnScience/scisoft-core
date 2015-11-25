@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.naming.ldap.SortControl;
+
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.jface.action.Action;
@@ -85,8 +87,8 @@ public class XPDFSampleEditorView extends ViewPart {
 	private Action clearAction;
 		
 //	private Map<ColumnGroup, TableViewer> groupViewers;
-	private List<TableViewer> groupViewers; // To MyGroupedTable
-	private List<String> groupNames; // To MyGroupedTable
+//	private List<TableViewer> groupViewers; // To MyGroupedTable
+//	private List<String> groupNames; // To MyGroupedTable
 	
 	private boolean propagateSelectionChange; // To MyGroupedTable
 
@@ -95,9 +97,9 @@ public class XPDFSampleEditorView extends ViewPart {
 	private SampleGroupedTable sampleTable;
 
 	// members that will be moved to within sampleTable
-	List<String> groupNamesST; // To SampleGroupedTable
-	List<List<String>> groupedColumnNames; // To SampleGroupedTable
-	List<List<Integer>> groupedColumnWeights; // To SampleGroupedTable
+//	List<String> groupNamesST; // To SampleGroupedTable
+//	List<List<String>> groupedColumnNames; // To SampleGroupedTable
+//	List<List<Integer>> groupedColumnWeights; // To SampleGroupedTable
 	
 	public XPDFSampleEditorView() {
 		propagateSelectionChange = true;
@@ -145,12 +147,17 @@ public class XPDFSampleEditorView extends ViewPart {
 
 	class SampleGroupedTable extends Composite {
 		
-		MyGroupedTable groupedTable;
+		private XPDFGroupedTable groupedTable;
+
+		private List<String> groupNamesST; // To SampleGroupedTable
+		private List<List<String>> groupedColumnNames; // To SampleGroupedTable
+		private List<List<Integer>> groupedColumnWeights; // To SampleGroupedTable
+
 		
 		public SampleGroupedTable(Composite parent, int style) {
 			super(parent, style);
 				
-			groupedTable = new MyGroupedTable(this, SWT.NONE);
+			groupedTable = new XPDFGroupedTable(this, SWT.NONE);
 			this.setLayout(new FormLayout());
 			FormData formData = new FormData();
 			formData.left = new FormAttachment(0);
@@ -227,6 +234,84 @@ public class XPDFSampleEditorView extends ViewPart {
 		public void refresh() {
 			groupedTable.refresh();
 		}
+		
+		public List<XPDFSampleParameters> getSelectedSamples() {
+			List<XPDFSampleParameters> selectedXPDFParameters = new ArrayList<XPDFSampleParameters>();
+			ISelection selection = groupedTable.getSelection();
+			// No items? return, having done nothing.
+			if (selection.isEmpty()) return selectedXPDFParameters;
+			// If it is not an IStructureSelection, then I don't know what to do with it.
+			if (!(selection instanceof IStructuredSelection)) return selectedXPDFParameters;
+			// Get the list of all selected data
+			List<?> selectedData = ((IStructuredSelection) selection).toList();
+			for (Object datum : selectedData)
+				if (datum instanceof XPDFSampleParameters)
+					selectedXPDFParameters.add((XPDFSampleParameters) datum);
+			return selectedXPDFParameters;		
+		}
+
+		public void createContextMenu(MenuManager menuManager) {
+			groupedTable.createContextMenu(menuManager);			
+		}
+		
+		// Column selection listeners.
+		/**
+		 * Creates a listener that sorts the data depending on the column selected.
+		 * <p>
+		 * Clicking on the individual column headers will sort, or reverse the sort on the data in all sub-tables.
+		 * @param tableColumn
+		 * 					the SWT column object
+		 * @param column
+		 * 				the enum identifier of the column
+		 * @return the new anonymous sub-class of Selection Adapter
+		 */
+		private SelectionAdapter getColumnSelectionAdapter(final TableColumn tableColumn, final String column) {
+			return new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent event) {
+					// If the present column has no defined Comparator, then return
+					if (getColumnSorting(column) == null) return;
+					
+					// Find the present sorted column, if any
+					TableColumn presentSorted = null;
+					int sortDirection = SWT.NONE;
+//					for (TableViewer tV : groupViewers) {
+//						if (tV.getTable().getSortColumn() != null) {
+//							presentSorted = tV.getTable().getSortColumn();
+//							sortDirection = tV.getTable().getSortDirection();
+//						}
+//						// Set each table to unsorted
+//						tV.getTable().setSortDirection(SWT.NONE);
+//						tV.getTable().setSortColumn(null);
+//					}
+					presentSorted = groupedTable.getSortColumn();
+					sortDirection = groupedTable.getSortDirection();
+					
+					groupedTable.setSortColumn(null);
+					groupedTable.setSortDirection(SWT.NONE);
+					
+					// If the same column is sorted as is now selected, then reverse the sorting
+					if (presentSorted == tableColumn)
+						sortDirection = (sortDirection == SWT.UP) ? SWT.DOWN : SWT.UP;
+
+					// Do the sort
+					if (sortDirection != SWT.NONE) {
+						if (getColumnSorting(column) != null) {
+							Collections.sort(samples, getColumnSorting(column));
+							if (sortDirection == SWT.UP)
+								Collections.reverse(samples);
+						}
+					}
+					
+//					tableColumn.getParent().setSortDirection(sortDirection);
+//					tableColumn.getParent().setSortColumn(tableColumn);
+					groupedTable.setSortColumn(tableColumn);
+					groupedTable.setSortDirection(sortDirection);
+					
+					sampleTable.refresh();
+				}
+			};
+		}
 
 		// The table label provider does nothing except delegate to the column label provider
 		class SampleTableLP extends LabelProvider implements ITableLabelProvider {
@@ -249,7 +334,7 @@ public class XPDFSampleEditorView extends ViewPart {
 		}		
 	}
 	
-	class MyGroupedTable extends Composite {
+	class XPDFGroupedTable extends Composite {
 		
 		private SashForm tableCompo;
 		// Only one of each of these per grouped table
@@ -263,8 +348,13 @@ public class XPDFSampleEditorView extends ViewPart {
 		private int cachedDropFlags;
 		private Transfer[] cachedDropTransfers;
 		private ViewerDropAdapter cachedDropTargetListener;
+
+		private List<TableViewer> groupViewers; // To MyGroupedTable
+		private List<String> groupNames; // To MyGroupedTable
 		
-		public MyGroupedTable(Composite parent, int style) {
+		private int sortedGroup; // -1 signifies no column is sorted
+		
+		public XPDFGroupedTable(Composite parent, int style) {
 			super(parent, style);
 			// Attach to the left and right edges of the parent, and set to a fixed height
 			this.setLayout(new FormLayout());
@@ -283,6 +373,8 @@ public class XPDFSampleEditorView extends ViewPart {
 			groupViewers = new ArrayList<TableViewer>();
 			groupNames = new ArrayList<String>();
 
+			sortedGroup = -1;
+			
 			// null the cached table classes
 			cachedContentProvider = null;
 			cachedInput = null;
@@ -308,56 +400,6 @@ public class XPDFSampleEditorView extends ViewPart {
 			tCL.setColumnData(col.getColumn(), new ColumnWeightData(weight));
 		}
 
-		public void createColumnGroups() {
-			createColumnGroups(tableCompo);
-			
-		}
-		
-		// Create the column groupings
-		private void createColumnGroups(Composite outerComposite) {
-
-			// TableViewers for each sub-table
-			groupViewers = new ArrayList<TableViewer>();
-			groupNames = new ArrayList<String>();
-
-			// Column weights, and column group weights
-			List<Integer> groupWeights = new ArrayList<Integer>();
-
-			// Iterate over the groups.
-			for (int i = 0; i < groupNamesST.size(); i++) {
-
-				String groupName = groupNamesST.get(i);
-				groupNames.add(i, groupName);
-				
-				TableViewer tV = createColumnGroupInternal(outerComposite, groupNames.get(i));
-				
-				// Composite to hold the group header and table
-				groupViewers.add(tV);
-
-				// Create the columns of the sub-table, according to the definition of the group and the overall weights 
-//				createColumns(tV, groupedColumnNames.get(i), groupedColumnWeights.get(i));
-
-				// Drag and drop support
-//				tV.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalDragSupportListener(tV));
-//				tV.addDropSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalViewerDropAdapter(tV));
-
-				// Calculate the relative weighting of each group
-//				int groupWeight = 0;
-//				for (int j = 0; j < groupedColumnWeights.get(i).size(); j++) groupWeight += groupedColumnWeights.get(i).get(j);
-//				groupWeights.add(i, groupWeight);
-				
-			}
-
-			// Set the weights of the SashForm, if the parent Composite is one
-			if (outerComposite instanceof SashForm) {
-				
-				int[] sashWeights = new int[groupWeights.size()];
-				for (int iWeight = 0; iWeight < groupWeights.size(); iWeight++) sashWeights[iWeight] = groupWeights.get(iWeight);
-				
-				((SashForm) outerComposite).setWeights(sashWeights);
-			}
-
-		}
 
 		/**
 		 * Refreshes all sub-tables.
@@ -499,6 +541,14 @@ public class XPDFSampleEditorView extends ViewPart {
 		}
 		
 		/**
+		 * Gets the selected data
+		 * @return the selected data of the table
+		 */
+		public ISelection getSelection() {
+			return (groupViewers.size() > 0) ? groupViewers.get(0).getSelection() : null;
+		}
+		
+		/**
 		 * Changes the selection on all sub-tables.
 		 * <p>
 		 * When the selection changes, change the selection on the other
@@ -532,6 +582,50 @@ public class XPDFSampleEditorView extends ViewPart {
 			}
 		}
 
+		public TableColumn getSortColumn() {
+			return (sortedGroup != -1) ? groupViewers.get(sortedGroup).getTable().getSortColumn() : null;
+		}
+		
+		public int getSortDirection() {
+			return (sortedGroup != -1) ? groupViewers.get(sortedGroup).getTable().getSortDirection() : SWT.NONE;
+		}
+		
+		public void setSortColumn(TableColumn column) {
+			if (column == null) {
+				if (sortedGroup != -1)
+					groupViewers.get(sortedGroup).getTable().setSortColumn(null);
+				sortedGroup = -1;
+			}
+			
+			int newSortedGroup = getIndexOfTableContaining(column);
+			// Only change sorted order if the grouped table contains the column 
+			if (newSortedGroup != -1) {
+				sortedGroup = newSortedGroup;
+				groupViewers.get(newSortedGroup).getTable().setSortColumn(column);
+			}
+		}
+		
+		public void setSortDirection(int direction) {
+			if (sortedGroup != -1)
+				groupViewers.get(sortedGroup).getTable().setSortDirection(direction);
+		}
+		
+		public void createContextMenu(MenuManager menuManager) {
+			for (TableViewer tV : groupViewers) {
+				Menu popupMenu = menuManager.createContextMenu(tV.getControl());
+				tV.getControl().setMenu(popupMenu);
+				getSite().registerContextMenu(menuManager, tV);
+			}
+		}
+		
+		private int getIndexOfTableContaining(TableColumn col) {
+			for (int i = 0; i < groupViewers.size(); i++) {
+				if (Arrays.asList(groupViewers.get(i).getTable().getColumns()).contains(col))
+					return Arrays.asList(groupViewers.get(i).getTable().getColumns()).indexOf(col);
+			}
+			return -1;
+		}
+		
 		class SubTableLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 			TableViewer tV;
@@ -676,19 +770,19 @@ public class XPDFSampleEditorView extends ViewPart {
 	
 	
 	// Create a sub-set of the columns of the table
-	private void createColumns(TableViewer tV, List<String> columns, List<Integer> columnWeights) {
-		TableColumnLayout tCL = (TableColumnLayout) tV.getTable().getParent().getLayout();
-		TableViewerColumn col;
-//		String[] columnNames = {"Sample name", "Code", "", "Phases", "Composition", "Density", "Vol. frac.", "Energy", "μ", "Max capillary ID", "Energy", "Container"}; 
-		for (int i = 0; i < columns.size(); i++) {
-			col = new TableViewerColumn(tV, SWT.NONE);
-			col.getColumn().setText(columns.get(i));
-			tCL.setColumnData(col.getColumn(), new ColumnWeightData(columnWeights.get(i), 10, true));
-			col.setLabelProvider(new SampleTableCLP(columns.get(i)));
-			col.setEditingSupport(new SampleTableCES(columns.get(i), tV));
-			col.getColumn().addSelectionListener(getColumnSelectionAdapter(col.getColumn(), columns.get(i)));
-		}
-	}
+//	private void createColumns(TableViewer tV, List<String> columns, List<Integer> columnWeights) {
+//		TableColumnLayout tCL = (TableColumnLayout) tV.getTable().getParent().getLayout();
+//		TableViewerColumn col;
+////		String[] columnNames = {"Sample name", "Code", "", "Phases", "Composition", "Density", "Vol. frac.", "Energy", "μ", "Max capillary ID", "Energy", "Container"}; 
+//		for (int i = 0; i < columns.size(); i++) {
+//			col = new TableViewerColumn(tV, SWT.NONE);
+//			col.getColumn().setText(columns.get(i));
+//			tCL.setColumnData(col.getColumn(), new ColumnWeightData(columnWeights.get(i), 10, true));
+//			col.setLabelProvider(new SampleTableCLP(columns.get(i)));
+//			col.setEditingSupport(new SampleTableCES(columns.get(i), tV));
+//			col.getColumn().addSelectionListener(getColumnSelectionAdapter(col.getColumn(), columns.get(i)));
+//		}
+//	}
 
 	// The table label provider does nothing except delegate to the column label provider
 	class SampleTableLP extends LabelProvider implements ITableLabelProvider {
@@ -923,57 +1017,6 @@ public class XPDFSampleEditorView extends ViewPart {
 		return columnSorter;
 	}
 
-	// Column selection listeners.
-	/**
-	 * Creates a listener that sorts the data depending on the column selected.
-	 * <p>
-	 * Clicking on the individual column headers will sort, or reverse the sort on the data in all sub-tables.
-	 * @param tableColumn
-	 * 					the SWT column object
-	 * @param column
-	 * 				the enum identifier of the column
-	 * @return the new anonymous sub-class of Selection Adapter
-	 */
-	private SelectionAdapter getColumnSelectionAdapter(final TableColumn tableColumn, final String column) {
-		return new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				// If the present column has no defined Comparator, then return
-				if (getColumnSorting(column) == null) return;
-				
-				// Find the present sorted column, if any
-				TableColumn presentSorted = null;
-				int sortDirection = SWT.NONE;
-				for (TableViewer tV : groupViewers) {
-					if (tV.getTable().getSortColumn() != null) {
-						presentSorted = tV.getTable().getSortColumn();
-						sortDirection = tV.getTable().getSortDirection();
-					}
-					// Set each table to unsorted
-					tV.getTable().setSortDirection(SWT.NONE);
-					tV.getTable().setSortColumn(null);
-				}
-
-				// If the same column is sorted as is now selected, then reverse the sorting
-				if (presentSorted == tableColumn)
-					sortDirection = (sortDirection == SWT.UP) ? SWT.DOWN : SWT.UP;
-
-				// Do the sort
-				if (sortDirection != SWT.NONE) {
-					if (getColumnSorting(column) != null) {
-						Collections.sort(samples, getColumnSorting(column));
-						if (sortDirection == SWT.UP)
-							Collections.reverse(samples);
-					}
-				}
-				
-				tableColumn.getParent().setSortDirection(sortDirection);
-				tableColumn.getParent().setSortColumn(tableColumn);
-				
-				sampleTable.refresh();
-			}
-		};
-	}
 		
 	private void createActions() {
 		// load the nonsense test data
@@ -1141,10 +1184,11 @@ public class XPDFSampleEditorView extends ViewPart {
 
 	@Override
 	public void setFocus() {
+		sampleTable.setFocus();
 		// Can all the TableViewers have focus?
-		for (TableViewer iTV : groupViewers ) {
-			iTV.getControl().setFocus();
-		}
+//		for (TableViewer iTV : groupViewers ) {
+//			iTV.getControl().setFocus();
+//		}
 	}
 	
 	// Hook actions into the context menu
@@ -1158,11 +1202,13 @@ public class XPDFSampleEditorView extends ViewPart {
 			}
 		});
 		
-		for (TableViewer iTV : groupViewers) {
-			Menu popupMenu = menuMan.createContextMenu(iTV.getControl());
-			iTV.getControl().setMenu(popupMenu);
-			getSite().registerContextMenu(menuMan, iTV);
-		}
+		sampleTable.createContextMenu(menuMan);
+		
+//		for (TableViewer iTV : groupViewers) {
+//			Menu popupMenu = menuMan.createContextMenu(iTV.getControl());
+//			iTV.getControl().setMenu(popupMenu);
+//			getSite().registerContextMenu(menuMan, iTV);
+//		}
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
@@ -1200,7 +1246,7 @@ public class XPDFSampleEditorView extends ViewPart {
 	class SimulatePDFAction extends Action {
 		@Override
 		public void run() {
-			List<XPDFSampleParameters> selectedXPDFParameters = getSelectedSampleParameters();
+			List<XPDFSampleParameters> selectedXPDFParameters = sampleTable.getSelectedSamples();
 			if (selectedXPDFParameters.isEmpty()) return;
 			// Get the pair-distribution function data for each sample
 			List<Dataset> simulatedPDFs = new ArrayList<Dataset>(selectedXPDFParameters.size());
@@ -1223,30 +1269,30 @@ public class XPDFSampleEditorView extends ViewPart {
 	private class DeleteSampleAction extends Action {
 		@Override
 		public void run() {
-			List<XPDFSampleParameters> selectedXPDFParameters = getSelectedSampleParameters();
+			List<XPDFSampleParameters> selectedXPDFParameters = sampleTable.getSelectedSamples();
 			if (selectedXPDFParameters.isEmpty()) return;
 			samples.removeAll(selectedXPDFParameters);
 			sampleTable.refresh();
 		}
 	}
 
-	// get all the selected elements, regardless of the sub-table on which the action is initiated.
-	private List<XPDFSampleParameters> getSelectedSampleParameters() {
-		List<XPDFSampleParameters> selectedXPDFParameters = new ArrayList<XPDFSampleParameters>();
-		// The selection listeners make sure the selection is the same in
-		// all tables, so get the selection from the first table.
-		ISelection selection = groupViewers.get(0).getSelection();
-		// No items? return, having done nothing.
-		if (selection.isEmpty()) return selectedXPDFParameters;
-		// If it is not an IStructureSelection, then I don't know what to do with it.
-		if (!(selection instanceof IStructuredSelection)) return selectedXPDFParameters;
-		// Get the list of all selected data
-		List<?> selectedData = ((IStructuredSelection) selection).toList();
-		for (Object datum : selectedData)
-			if (datum instanceof XPDFSampleParameters)
-				selectedXPDFParameters.add((XPDFSampleParameters) datum);
-		return selectedXPDFParameters;		
-	}
+//	// get all the selected elements, regardless of the sub-table on which the action is initiated.
+//	private List<XPDFSampleParameters> getSelectedSampleParameters() {
+//		List<XPDFSampleParameters> selectedXPDFParameters = new ArrayList<XPDFSampleParameters>();
+//		// The selection listeners make sure the selection is the same in
+//		// all tables, so get the selection from the first table.
+//		ISelection selection = groupViewers.get(0).getSelection();
+//		// No items? return, having done nothing.
+//		if (selection.isEmpty()) return selectedXPDFParameters;
+//		// If it is not an IStructureSelection, then I don't know what to do with it.
+//		if (!(selection instanceof IStructuredSelection)) return selectedXPDFParameters;
+//		// Get the list of all selected data
+//		List<?> selectedData = ((IStructuredSelection) selection).toList();
+//		for (Object datum : selectedData)
+//			if (datum instanceof XPDFSampleParameters)
+//				selectedXPDFParameters.add((XPDFSampleParameters) datum);
+//		return selectedXPDFParameters;		
+//	}
 	
 	
 	// Generate a new id
@@ -1312,11 +1358,12 @@ public class XPDFSampleEditorView extends ViewPart {
 			
 			samples.add(explodite);
 			
-			for (TableViewer iTV : groupViewers) {
-				iTV.getTable().setSortDirection(SWT.NONE);
-				iTV.getTable().setSortColumn(null);
-				iTV.refresh();
-			}
+			sampleTable.refresh();
+//			for (TableViewer iTV : groupViewers) {
+//				iTV.getTable().setSortDirection(SWT.NONE);
+//				iTV.getTable().setSortColumn(null);
+//				iTV.refresh();
+//			}
 		}
 	}
 }

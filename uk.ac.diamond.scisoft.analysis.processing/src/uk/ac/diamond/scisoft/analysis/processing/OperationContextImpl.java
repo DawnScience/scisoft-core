@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
@@ -27,8 +28,10 @@ public class OperationContextImpl implements IOperationContext {
 	// or
 	private String  filePath;
 	private String  datasetPath;
+	private ILazyDataset  key;
 	// And
-	private Map<Integer, String> slicing;
+	private SliceND slicing;
+	private int[] dataDimensions;
 	
 	// May be null
 	private IMonitor             monitor;
@@ -99,25 +102,17 @@ public class OperationContextImpl implements IOperationContext {
 	 * @see uk.ac.diamond.scisoft.analysis.processing.IOperationContext#getSlicing()
 	 */
 	@Override
-	public Map<Integer, String> getSlicing() {
+	public SliceND getSlicing() {
 		return slicing;
 	}
 	/* (non-Javadoc)
 	 * @see uk.ac.diamond.scisoft.analysis.processing.IOperationContext#setSlicing(java.util.Map)
 	 */
 	@Override
-	public void setSlicing(Map<Integer, String> slicing) {
+	public void setSlicing(SliceND slicing) {
 		this.slicing = slicing;
 	}
 	
-    public void setSlicing(String... slices) {
-    	if (slicing==null) slicing= new HashMap<Integer, String>(slices!=null ? slices.length:1);
-    	slicing.clear();
-    	if (slices==null) return;
-    	for (int i = 0; i < slices.length; i++) {
-    		slicing.put(i, slices[i]);
-		}
-    }
 
 	/* (non-Javadoc)
 	 * @see uk.ac.diamond.scisoft.analysis.processing.IOperationContext#getMonitor()
@@ -246,6 +241,24 @@ public class OperationContextImpl implements IOperationContext {
 	}
 	public void setPoolSize(int slugCount) {
 		this.poolSize = slugCount;
+	}
+	@Override
+	public void setKey(ILazyDataset key) {
+		this.key = key;
+		
+	}
+	@Override
+	public ILazyDataset getKey() {
+		return key;
+	}
+	@Override
+	public int[] getDataDimensions() {
+		return dataDimensions;
+	}
+	@Override
+	public void setDataDimensions(int[] dataDimensions) {
+		this.dataDimensions = dataDimensions;
+		
 	}
 
 }

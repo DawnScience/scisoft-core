@@ -22,6 +22,7 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.hdf5.operation.HierarchicalFileExecutionVisitor;
@@ -76,7 +77,8 @@ public class HierarchicalFileExVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all");
+//		context.setSlicing("all");
+		context.setDataDimensions(new int[]{1,2});
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setModel(new Junk2Dto2Dmodel());
@@ -118,7 +120,7 @@ public class HierarchicalFileExVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all","all");
+		context.setDataDimensions(new int[]{2,3});
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setModel(new Junk2Dto2Dmodel());
@@ -158,7 +160,8 @@ public class HierarchicalFileExVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all","all","all");
+//		context.setSlicing("all","all","all");
+		context.setDataDimensions(new int[]{3,4});
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setModel(new Junk2Dto2Dmodel());
@@ -199,7 +202,8 @@ public class HierarchicalFileExVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all","all");
+//		context.setSlicing("all","all");
+		context.setDataDimensions(new int[]{2});
 		
 		Junk1Dto1DOperation op11 = new Junk1Dto1DOperation();
 		op11.setModel(new Junk1DModel());
@@ -238,7 +242,8 @@ public class HierarchicalFileExVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all","all");
+//		context.setSlicing("all","all");
+		context.setDataDimensions(new int[]{2});
 		
 		
 		Junk1Dto1DOperation op11 = new Junk1Dto1DOperation();
@@ -280,7 +285,8 @@ public class HierarchicalFileExVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all","all");
+//		context.setSlicing("all","all");
+		context.setDataDimensions(new int[]{2});
 		
 		
 		Junk1Dto1DAuxOperation op11 = new Junk1Dto1DAuxOperation();
@@ -325,7 +331,8 @@ public class HierarchicalFileExVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all","all");
+//		context.setSlicing("all","all");
+		context.setDataDimensions(new int[]{2});
 		
 		
 		Junk1Dto1DAuxOperation op11 = new Junk1Dto1DAuxOperation();
@@ -370,7 +377,8 @@ public class HierarchicalFileExVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all","all");
+//		context.setSlicing("all","all");
+		context.setDataDimensions(new int[]{2});
 				
 		Junk1Dto1DAuxOperation op11 = new Junk1Dto1DAuxOperation();
 		op11.setModel(new Junk1DModel());
@@ -414,7 +422,8 @@ public class HierarchicalFileExVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all");
+//		context.setSlicing("all");
+		context.setDataDimensions(new int[]{1,2});
 		
 		
 		Junk2Dto1DOperation op21 = new Junk2Dto1DOperation();
@@ -458,7 +467,8 @@ public class HierarchicalFileExVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all");
+//		context.setSlicing("all");
+		context.setDataDimensions(new int[]{1,2});
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setModel(new Junk2Dto2Dmodel());
@@ -497,7 +507,8 @@ public class HierarchicalFileExVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all","all");
+//		context.setSlicing("all","all");
+		context.setDataDimensions(new int[]{2});
 		
 		Junk1Dto2DOperation op11 = new Junk1Dto2DOperation();
 		op11.setModel(new Junk2Dto2Dmodel());
@@ -536,7 +547,8 @@ public class HierarchicalFileExVisitorTest {
 		
 		ILazyDataset lazy = getLazyDataset(inputShape,2);
 		final IOperationContext context = service.createContext();
-		context.setSlicing("all");
+//		context.setSlicing("all");
+		context.setDataDimensions(new int[]{1,2});
 		context.setData(lazy);
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
@@ -592,7 +604,8 @@ public class HierarchicalFileExVisitorTest {
 		ILazyDataset lazy = getLazyDataset(inputShape,2);
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all");
+//		context.setSlicing("all");
+		context.setDataDimensions(new int[]{1,2});
 		
 		Junk2Dto1DOperation op21 = new Junk2Dto1DOperation();
 		op21.setModel(new Junk1DModel());
@@ -630,7 +643,8 @@ public class HierarchicalFileExVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all");
+//		context.setSlicing("all");
+		context.setDataDimensions(new int[]{1,2});
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setWithAxes(false);
@@ -679,7 +693,8 @@ public class HierarchicalFileExVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all","all");
+//		context.setSlicing("all","all");
+		context.setDataDimensions(new int[]{2});
 		
 		Junk1Dto1DOperation op11 = new Junk1Dto1DOperation();
 		op11.setWithErrors(true);
@@ -729,7 +744,8 @@ public class HierarchicalFileExVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all");
+//		context.setSlicing("all");
+		context.setDataDimensions(new int[]{1,2});
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setWithAxes(true);
@@ -782,7 +798,8 @@ public class HierarchicalFileExVisitorTest {
 	
 	public static ILazyDataset getLazyDataset(int[] dsShape, int withAxes) {
 		
-		ILazyDataset lz = Random.lazyRand("test", dsShape);
+//		ILazyDataset lz = Random.lazyRand("test", dsShape);
+		ILazyDataset lz = LazyDataset.createLazyDataset(DatasetFactory.ones(dsShape, Dataset.INT32));
 		
 		if (withAxes > 0) {
 			AxesMetadataImpl am = new AxesMetadataImpl(dsShape.length);

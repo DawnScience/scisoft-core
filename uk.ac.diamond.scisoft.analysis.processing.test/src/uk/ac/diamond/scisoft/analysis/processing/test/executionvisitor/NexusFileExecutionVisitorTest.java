@@ -77,7 +77,8 @@ public class NexusFileExecutionVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all");
+//		context.setSlicing("all");
+		context.setDataDimensions(new int[]{1,2});
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setModel(new Junk2Dto2Dmodel());
@@ -119,7 +120,8 @@ public class NexusFileExecutionVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all","all");
+//		context.setSlicing("all","all");
+		context.setDataDimensions(new int[]{2,3});
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setModel(new Junk2Dto2Dmodel());
@@ -159,7 +161,8 @@ public class NexusFileExecutionVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all","all","all");
+//		context.setSlicing("all","all","all");
+		context.setDataDimensions(new int[]{3,4});
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setModel(new Junk2Dto2Dmodel());
@@ -200,7 +203,8 @@ public class NexusFileExecutionVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all","all");
+//		context.setSlicing("all","all");
+		context.setDataDimensions(new int[]{2});
 		
 		Junk1Dto1DOperation op11 = new Junk1Dto1DOperation();
 		op11.setModel(new Junk1DModel());
@@ -239,7 +243,8 @@ public class NexusFileExecutionVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all","all");
+//		context.setSlicing("all","all");
+		context.setDataDimensions(new int[]{2});
 		
 		
 		Junk1Dto1DOperation op11 = new Junk1Dto1DOperation();
@@ -281,7 +286,8 @@ public class NexusFileExecutionVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all","all");
+//		context.setSlicing("all","all");
+		context.setDataDimensions(new int[]{2});
 		
 		
 		Junk1Dto1DAuxOperation op11 = new Junk1Dto1DAuxOperation();
@@ -326,7 +332,8 @@ public class NexusFileExecutionVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all","all");
+//		context.setSlicing("all","all");
+		context.setDataDimensions(new int[]{2});
 		
 		
 		Junk1Dto1DAuxOperation op11 = new Junk1Dto1DAuxOperation();
@@ -371,7 +378,9 @@ public class NexusFileExecutionVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all","all");
+//		context.setSlicing("all","all");
+		context.setDataDimensions(new int[]{2});
+		
 				
 		Junk1Dto1DAuxOperation op11 = new Junk1Dto1DAuxOperation();
 		op11.setModel(new Junk1DModel());
@@ -415,7 +424,8 @@ public class NexusFileExecutionVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all");
+//		context.setSlicing("all");
+		context.setDataDimensions(new int[]{1,2});
 		
 		
 		Junk2Dto1DOperation op21 = new Junk2Dto1DOperation();
@@ -459,7 +469,8 @@ public class NexusFileExecutionVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all");
+//		context.setSlicing("all");
+		context.setDataDimensions(new int[]{1,2});
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setModel(new Junk2Dto2Dmodel());
@@ -498,7 +509,8 @@ public class NexusFileExecutionVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all","all");
+//		context.setSlicing("all","all");
+		context.setDataDimensions(new int[]{2});
 		
 		Junk1Dto2DOperation op11 = new Junk1Dto2DOperation();
 		op11.setModel(new Junk2Dto2Dmodel());
@@ -537,7 +549,8 @@ public class NexusFileExecutionVisitorTest {
 		
 		ILazyDataset lazy = getLazyDataset(inputShape,2);
 		final IOperationContext context = service.createContext();
-		context.setSlicing("all");
+//		context.setSlicing("all");
+		context.setDataDimensions(new int[]{1,2});
 		context.setData(lazy);
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
@@ -593,7 +606,8 @@ public class NexusFileExecutionVisitorTest {
 		ILazyDataset lazy = getLazyDataset(inputShape,2);
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all");
+//		context.setSlicing("all");
+		context.setDataDimensions(new int[]{1,2});
 		
 		Junk2Dto1DOperation op21 = new Junk2Dto1DOperation();
 		op21.setModel(new Junk1DModel());
@@ -631,7 +645,8 @@ public class NexusFileExecutionVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all");
+//		context.setSlicing("all");
+		context.setDataDimensions(new int[]{1,2});
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setWithAxes(false);
@@ -680,7 +695,8 @@ public class NexusFileExecutionVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all","all");
+//		context.setSlicing("all","all");
+		context.setDataDimensions(new int[]{2});
 		
 		Junk1Dto1DOperation op11 = new Junk1Dto1DOperation();
 		op11.setWithErrors(true);
@@ -730,7 +746,8 @@ public class NexusFileExecutionVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all");
+//		context.setSlicing("all");
+		context.setDataDimensions(new int[]{1,2});
 		
 		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setWithAxes(true);

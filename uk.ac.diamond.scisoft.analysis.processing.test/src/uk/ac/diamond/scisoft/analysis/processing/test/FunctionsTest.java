@@ -81,6 +81,7 @@ public class FunctionsTest {
 		final IDataset       indices = DatasetFactory.createRange(1000, Dataset.INT);
 		final IOperationContext context = service.createContext();
 		context.setData(indices);
+		context.setDataDimensions(new int[]{0});
 
 
 		final IOperation functionOp = service.findFirst("function");
@@ -149,7 +150,7 @@ public class FunctionsTest {
 		final AggregateDataset    aggy   = new AggregateDataset(true, pseudo, pseudo, pseudo, pseudo, pseudo);
 		final IOperationContext context  = service.createContext();
 		context.setData(aggy);
-		context.setSlicing("all", "");
+		context.setDataDimensions(new int[]{1});
 		
 		// Cannot send a concrete GeneticAlg here because does not work in parallel.
 		fittingOp.setModel(new FittingModel(xAxis, FunctionFactory.getClassForPeakFn("PseudoVoigt"), GeneticAlg.class, 0.0001, seed, smoothing, numPeaks, threshold, autoStopping, backgroundDominated));      
@@ -202,7 +203,7 @@ public class FunctionsTest {
 		final AggregateDataset    aggy   = new AggregateDataset(true, pseudo, pseudo, pseudo, pseudo, pseudo);
 		final IOperationContext context  = service.createContext();
 		context.setData(aggy);
-		context.setSlicing("all", "");
+		context.setDataDimensions(new int[]{1});
 		
 		// Cannot send a concrete GeneticAlg here because does not work in parallel.
 		fittingOp.setModel(new FittingModel(xAxis, PseudoVoigt.class, GeneticAlg.class, 0.0001, seed, smoothing, numPeaks, threshold, autoStopping, backgroundDominated));      

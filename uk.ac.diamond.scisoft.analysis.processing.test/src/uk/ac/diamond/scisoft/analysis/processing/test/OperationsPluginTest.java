@@ -18,6 +18,7 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
@@ -56,8 +57,9 @@ public class OperationsPluginTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 10.0, 1024, 1024));
-		
+		context.setDataDimensions(new int[]{0,1});
 		context.setVisitor(new IExecutionVisitor.Stub() {
+		
 			public void executed(OperationData result, IMonitor monitor) {
 				for (int i = 0; i < result.getData().getShape()[0]; i++) {
 					for (int j = 0; j < result.getData().getShape()[1]; j++) {
@@ -70,7 +72,8 @@ public class OperationsPluginTest {
 		service.execute(context);
 
 	}
-
+	
+	@Ignore
 	@Test
 	public void testSimpleAddAndSubtractUsingFind() throws Exception {
 		
@@ -82,7 +85,7 @@ public class OperationsPluginTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 10.0, 1024, 1024));
-		
+		context.setDataDimensions(new int[]{1});
 		subtract.setModel(new ValueModel(100));
 		add.setModel(new ValueModel(101));
 		

@@ -194,9 +194,9 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 		if (fNNE){
 			synchronized (nexusFile) {
 				nexusFile.getData(results +"/" +integrated.getName()).addAttribute(new AttributeImpl("signal", String.valueOf(1)));
-//				if (nexusFile instanceof NexusFileHDF5) {
-//					((NexusFileHDF5)nexusFile).activateSwmrMode();
-//				}
+				if (nexusFile instanceof NexusFileHDF5) {
+					((NexusFileHDF5)nexusFile).activateSwmrMode();
+				}
 			}
 		}
 		synchronized (nexusFile) {

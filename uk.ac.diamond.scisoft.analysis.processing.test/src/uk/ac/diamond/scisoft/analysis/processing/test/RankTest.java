@@ -101,17 +101,20 @@ public class RankTest {
 
 	private void anyRank(IOperationContext context, IOperationService service) throws Exception {
 		count=0;
-		context.setSlicing("all"); // 
+//		context.setSlicing("all");
+		context.setDataDimensions(new int[]{1,2});
         service.execute(context);
 		System.out.println("Run with iterating first dimension gave "+count+ "of rank 2");
 
 		count=0;
-		context.setSlicing("all", "500");
+//		context.setSlicing("all", "500");
+		context.setDataDimensions(new int[]{1,2});
         service.execute(context);
 		System.out.println("Run with slicing first and second dimension gave "+count+ "of rank 1");
 
 		count=0;
-		context.setSlicing("8", "500", "500");
+//		context.setSlicing("8", "500", "500");
+		context.setDataDimensions(new int[]{1,2});
         service.execute(context);
 		System.out.println("Run with slicing first, second and third dimension gave "+count+ "of rank 0");
 	}
@@ -124,7 +127,8 @@ public class RankTest {
 
 			final IOperationContext context = service.createContext();
 			context.setData(Random.rand(0.0, 10.0, 10, 1024, 1024));
-			context.setSlicing("all", "500"); // 
+//			context.setSlicing("all", "500"); // 
+			context.setDataDimensions(new int[]{2});
 	
 			context.setVisitor(new IExecutionVisitor.Stub() {
 				@Override
@@ -150,7 +154,8 @@ public class RankTest {
 
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 1000.0, 2, 1000, 1000));
-		context.setSlicing("all"); // 
+//		context.setSlicing("all"); //
+		context.setDataDimensions(new int[]{1,2});
 	
 		final IOperation azi = service.findFirst("azimuthal");
 		azi.setModel(new SectorIntegrationModel(sector));
@@ -197,7 +202,8 @@ public class RankTest {
 
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 1000.0, 2, 1000, 1000));
-		context.setSlicing("all"); // 
+//		context.setSlicing("all"); // 
+		context.setDataDimensions(new int[]{1,2});
 
 		final IOperation azi      = service.findFirst("azimuthal");
 		azi.setModel(new SectorIntegrationModel(sector));
@@ -269,7 +275,8 @@ public class RankTest {
 
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 1000.0, 2, 1000, 1000));
-		context.setSlicing("all"); // 
+//		context.setSlicing("all"); // 
+		context.setDataDimensions(new int[]{1,2});
 
 		final IOperation add      = service.findFirst("add");
 		final IOperation fitting  = service.findFirst("fitting");

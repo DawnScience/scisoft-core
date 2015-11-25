@@ -58,7 +58,8 @@ public class NexusFileMultiThreadedRunnerTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-		context.setSlicing("all");
+//		context.setSlicing("all");
+		context.setDataDimensions(new int[]{1});
 		
 		Junk1Dto1DOperation op1 = new Junk1Dto1DOperation();
 		op1.setModel(new Junk1DModel());

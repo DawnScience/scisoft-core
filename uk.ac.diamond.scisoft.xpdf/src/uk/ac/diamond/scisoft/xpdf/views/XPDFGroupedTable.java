@@ -25,8 +25,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.DragSourceAdapter;
@@ -40,6 +38,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TableColumn;
 
+/**
+ * A table with grouped columns.
+ * @author Timothy Spain, timothy.spain@diamond.ac.uk
+ *
+ */
 class XPDFGroupedTable extends Composite {
 	
 	private SashForm tableCompo;
@@ -56,19 +59,24 @@ class XPDFGroupedTable extends Composite {
 	private Transfer[] cachedDropTransfers;
 	private ViewerDropAdapterFactory cachedDropTargetListenerFactory;
 
+	// An ordered list of the TableViewers containing the column groups, and
+	// their names 
 	private List<TableViewer> groupViewers;
 	private List<String> groupNames;
 	
 	private int sortedGroup; // -1 signifies no column is sorted
 	
-	private boolean propagateSelectionChange; // To MyGroupedTable
+	// If the SelectionChanged listener propagates blindly, you will eventually 
+	// exhaust the stack
+	private boolean propagateSelectionChange;
 	
 	public XPDFGroupedTable(Composite parent, int style) {
 		super(parent, style);
 		// Attach to the left and right edges of the parent, and set to a fixed height
 		this.setLayout(new FormLayout());
 		
-		// Composite to hold the table column groups
+		// Composite to hold the table column groups. Fills this class's
+		// Composite
 		tableCompo = new SashForm(this, SWT.HORIZONTAL);
 		FormData formData = new FormData();
 		formData.left = new FormAttachment(0);
@@ -111,14 +119,27 @@ class XPDFGroupedTable extends Composite {
 		tCL.setColumnData(col.getColumn(), new ColumnWeightData(weight));
 	}
 
-	public void setColumnEditingSupport(TableViewerColumn col, EditingSupportFactory eSF) {
-		col.setEditingSupport(eSF.get(groupViewers.get(getIndexOfTableContaining(col.getColumn()))));
+	// Editing support may need to manufacture its classes, hence a factory interface is used.
+	/**
+	 * Sets the per column editing support.
+	 * <p>
+	 * Hiding the multiple {@link TableViewer}s means that the 
+	 * {@link EditingSupport} objects cannot be create by the surrounding
+	 * objects. To allow creation of the {@link EditindSupport} classes, a
+	 * Factory implementation is defined in {@link EditingSupportFactory}.
+	 * @param column
+	 *	 			column for which the editing is to be defined
+	 * @param editingSupportFactory
+	 * 							the factory class to produce the editing support classes.
+	 * 			
+	 */
+	public void setColumnEditingSupport(TableViewerColumn column, EditingSupportFactory editingSupportFactory) {
+		column.setEditingSupport(editingSupportFactory.get(groupViewers.get(getIndexOfTableContaining(column.getColumn()))));
 	}
 
 	/**
 	 * Refreshes all sub-tables.
 	 */
-	// refresh the entire table
 	public void refresh() {
 		for (TableViewer tV : groupViewers)
 			tV.refresh();
@@ -192,6 +213,20 @@ class XPDFGroupedTable extends Composite {
 		return tV;
 	}
 
+	/**
+	 * Adds a column to a group.
+	 * <p>
+	 * Adds a new column to the end of the named group. A previously unnamed
+	 * group is created at the end. If the group to be added to is anonymous,
+	 * and the last defined group was not, define a new anonymous group at the
+	 * end of the List.
+	 * @param groupID
+	 * 				The name of the group the column is to be added to
+	 * @param style
+	 * 				SWT style of the Viewer to be created
+	 * @return
+	 * 		The new TableViewerColumn
+	 */
 	public TableViewerColumn addColumn(String groupID, int style) {
 		// TODO: Add column group if it does not exist
 		if (!groupNames.contains(groupID)) return null;
@@ -201,16 +236,25 @@ class XPDFGroupedTable extends Composite {
 	}
 
 
-	
-	public void setContentProvider(IStructuredContentProvider iSCP) {
-		cachedContentProvider = iSCP;
+	/**
+	 * Sets the content providers for all sub-tables.
+	 * @param iStructuredContentProvider
+	 * 									the content provider class to be used.
+	 */
+	public void setContentProvider(IStructuredContentProvider iStructuredContentProvider) {
+		cachedContentProvider = iStructuredContentProvider;
 		for (TableViewer tV : groupViewers)
-			tV.setContentProvider(iSCP);
+			tV.setContentProvider(iStructuredContentProvider);
 		if (cachedInput != null)
 			for (TableViewer tV : groupViewers)
 				tV.setInput(cachedInput);
 	}
 	
+	/**
+	 * Sets the Eclipse input.
+	 * @param input
+	 * 				Object that provides the input.
+	 */
 	public void setInput(Object input) {
 		cachedInput = input;
 		if (cachedContentProvider != null)
@@ -218,14 +262,33 @@ class XPDFGroupedTable extends Composite {
 				tV.setInput(cachedInput);
 	}
 	
+	/**
+	 * Sets the LabelProvider for the entire Table
+	 * @param iTLP
+	 * 			Label provider for all the tables 
+	 */
 	public void setLabelProvider(ITableLabelProvider iTLP) {
 		cachedLabelProvider = iTLP;
 	}
 	
+	/**
+	 * Adds a {@link ISelectionChangedListener} defined by the user.
+	 * @param iSCL
+	 * 			ISelectionChangedListener to be used table wide
+	 */
 	public void addSelectionChangedListener(ISelectionChangedListener iSCL) {
 		cachedUserSelectionChangedListener = iSCL;
 	}
 	
+	/**
+	 * Adds drag support to the table
+	 * @param dragFlags
+	 * 				as {@link Table.addDragSupport().
+	 * @param transfers
+	 * 				as {@link Table.addDragSupport().
+	 * @param dSL
+	 * 				as {@link Table.addDragSupport().
+	 */
 	public void addDragSupport(int dragFlags, Transfer[] transfers, DragSourceAdapter dSL) {
 		cachedDragFlags = dragFlags;
 		cachedDragTransfers = transfers;
@@ -284,14 +347,29 @@ class XPDFGroupedTable extends Composite {
 		}
 	}
 
+	/**
+	 * Gets the TableColumn within the table that is sorted 
+	 * @return
+	 * 		the object of the column that is sorted; otherwise -1.
+	 */
 	public TableColumn getSortColumn() {
 		return (sortedGroup != -1) ? groupViewers.get(sortedGroup).getTable().getSortColumn() : null;
 	}
 	
+	/**
+	 * Gets the direction of the sorted column within the table
+	 * @return
+	 * 		SWT.UP, SWT.DOWN or SWT.NONE
+	 */
 	public int getSortDirection() {
 		return (sortedGroup != -1) ? groupViewers.get(sortedGroup).getTable().getSortDirection() : SWT.NONE;
 	}
 	
+	/**
+	 * Set the column to be sorted.
+	 * @param column
+	 * 				the column to be sorted. Can be a valid column in any group viewer.
+	 */
 	public void setSortColumn(TableColumn column) {
 		if (column == null) {
 			if (sortedGroup != -1)
@@ -307,11 +385,21 @@ class XPDFGroupedTable extends Composite {
 		}
 	}
 	
+	/**
+	 * Sets the sort direction of the sorted column.
+	 * @param direction
+	 * 				SWT.UP, SWT.DOWN or SWT.NONE
+	 */
 	public void setSortDirection(int direction) {
 		if (sortedGroup != -1)
 			groupViewers.get(sortedGroup).getTable().setSortDirection(direction);
 	}
 	
+	/**
+	 * Creates a context menu look in each {@link TableViewer}.
+	 * @param menuManager
+	 * 					the managed menu to be inserted.
+	 */
 	public void createContextMenu(MenuManager menuManager) {
 		for (TableViewer tV : groupViewers) {
 			Menu popupMenu = menuManager.createContextMenu(tV.getControl());

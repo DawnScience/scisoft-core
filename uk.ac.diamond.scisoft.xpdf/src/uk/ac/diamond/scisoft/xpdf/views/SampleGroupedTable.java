@@ -47,35 +47,22 @@ import org.eclipse.swt.widgets.TableColumn;
 
 class SampleGroupedTable {
 		
-		/**
-		 * 
-		 */
-//		private final XPDFSampleEditorView xpdfSampleEditorView;
 	private SortedSet<Integer> usedIDs; // The set of assigned ID numbers. Should come from the database eventually?	
 
 	private List<XPDFSampleParameters> samples;
 
 	private XPDFGroupedTable groupedTable;
 
-	private List<String> groupNames; // To SampleGroupedTable
-	private List<List<String>> groupedColumnNames; // To SampleGroupedTable
-	private List<List<Integer>> groupedColumnWeights; // To SampleGroupedTable
+	private List<String> groupNames;
+	private List<List<String>> groupedColumnNames;
+	private List<List<Integer>> groupedColumnWeights;
 
 
 	public SampleGroupedTable(Composite parent, int style) {
 
-//			this.xpdfSampleEditorView = xpdfSampleEditorView;
-
 		samples = new ArrayList<XPDFSampleParameters>();
 
 		groupedTable = new XPDFGroupedTable(parent, SWT.NONE);
-		//			this.setLayout(new FormLayout());
-		//			FormData formData = new FormData();
-		//			formData.left = new FormAttachment(0);
-		//			formData.right = new FormAttachment(100);
-		//			formData.top = new FormAttachment(0);
-		//			formData.bottom = new FormAttachment(100);
-		//			groupedTable.setLayoutData(formData);
 
 		groupNames = new ArrayList<String>();
 		groupedColumnNames = new ArrayList<List<String>>();
@@ -219,15 +206,6 @@ class SampleGroupedTable {
 				// Find the present sorted column, if any
 				TableColumn presentSorted = null;
 				int sortDirection = SWT.NONE;
-				//					for (TableViewer tV : groupViewers) {
-				//						if (tV.getTable().getSortColumn() != null) {
-				//							presentSorted = tV.getTable().getSortColumn();
-				//							sortDirection = tV.getTable().getSortDirection();
-				//						}
-				//						// Set each table to unsorted
-				//						tV.getTable().setSortDirection(SWT.NONE);
-				//						tV.getTable().setSortColumn(null);
-				//					}
 				presentSorted = groupedTable.getSortColumn();
 				sortDirection = groupedTable.getSortDirection();
 
@@ -247,8 +225,6 @@ class SampleGroupedTable {
 					}
 				}
 
-				//					tableColumn.getParent().setSortDirection(sortDirection);
-				//					tableColumn.getParent().setSortColumn(tableColumn);
 				groupedTable.setSortColumn(tableColumn);
 				groupedTable.setSortDirection(sortDirection);
 

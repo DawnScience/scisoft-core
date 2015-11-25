@@ -12,8 +12,6 @@ package uk.ac.diamond.scisoft.xpdf.views;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -53,8 +51,6 @@ public class XPDFSampleEditorView extends ViewPart {
 	private Action deleteAction;
 	private Action clearAction;
 		
-//	private SortedSet<Integer> usedIDs; // The set of assigned ID numbers. Should come from the database eventually?	
-//
 	private SampleGroupedTable sampleTable;
 
 	public XPDFSampleEditorView() {

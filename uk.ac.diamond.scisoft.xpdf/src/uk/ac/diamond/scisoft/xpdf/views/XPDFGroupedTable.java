@@ -317,7 +317,7 @@ class XPDFGroupedTable extends Composite {
 	private int getIndexOfTableContaining(TableColumn col) {
 		for (int i = 0; i < groupViewers.size(); i++) {
 			if (Arrays.asList(groupViewers.get(i).getTable().getColumns()).contains(col))
-				return Arrays.asList(groupViewers.get(i).getTable().getColumns()).indexOf(col);
+				return i;//Arrays.asList(groupViewers.get(i).getTable().getColumns()).indexOf(col);
 		}
 		return -1;
 	}

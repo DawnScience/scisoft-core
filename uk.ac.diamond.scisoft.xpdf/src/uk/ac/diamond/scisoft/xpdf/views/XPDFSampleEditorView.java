@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.xpdf.views;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -61,8 +62,6 @@ import org.eclipse.ui.part.ViewPart;
 
 public class XPDFSampleEditorView extends ViewPart {
 	
-	private List<XPDFSampleParameters> samples;
-	
 	private Button cifButton;
 	private Button eraButton;
 	private Button simButton;
@@ -105,9 +104,6 @@ public class XPDFSampleEditorView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		
-		// Make the data container not-null
-		samples = new ArrayList<XPDFSampleParameters>();
-		
 		// Overall composite of the view
 		Composite sampleTableCompo = new Composite(parent, SWT.BORDER);
 		sampleTableCompo.setLayout(new FormLayout());
@@ -122,7 +118,6 @@ public class XPDFSampleEditorView extends ViewPart {
 		formData.bottom = new FormAttachment(buttonCompo);
 		//		formData.height = 800;
 		sampleTable.setLayoutData(formData);
-		
 		
 		formData = new FormData();
 		formData.left = new FormAttachment(0);
@@ -140,6 +135,8 @@ public class XPDFSampleEditorView extends ViewPart {
 
 	class SampleGroupedTable extends Composite {
 		
+		private List<XPDFSampleParameters> samples;
+
 		private XPDFGroupedTable groupedTable;
 
 		private List<String> groupNamesST; // To SampleGroupedTable
@@ -149,7 +146,9 @@ public class XPDFSampleEditorView extends ViewPart {
 		
 		public SampleGroupedTable(Composite parent, int style) {
 			super(parent, style);
-				
+
+			samples = new ArrayList<XPDFSampleParameters>();
+
 			groupedTable = new XPDFGroupedTable(this, SWT.NONE);
 			this.setLayout(new FormLayout());
 			FormData formData = new FormData();
@@ -221,12 +220,33 @@ public class XPDFSampleEditorView extends ViewPart {
 			
 		}
 		
-		/**
-		 * Refresh the table
-		 */
-		public void refresh() {
+		public void add(XPDFSampleParameters sample) {
+			samples.add(sample);
 			groupedTable.refresh();
 		}
+		
+		public void clear() {
+			samples.clear();
+			groupedTable.refresh();
+		}
+		
+		public void removeAll(Collection<XPDFSampleParameters> sample) {
+			samples.removeAll(sample);
+			groupedTable.refresh();
+		}
+		
+		public List<XPDFSampleParameters> getAll() {
+			return samples;
+		}
+		
+		public XPDFSampleParameters get(int index) {
+			return samples.get(index);
+		}
+		
+		public int size() {
+			return samples.size();
+		}
+		
 		
 		public List<XPDFSampleParameters> getSelectedSamples() {
 			List<XPDFSampleParameters> selectedXPDFParameters = new ArrayList<XPDFSampleParameters>();
@@ -301,7 +321,7 @@ public class XPDFSampleEditorView extends ViewPart {
 					groupedTable.setSortColumn(tableColumn);
 					groupedTable.setSortDirection(sortDirection);
 					
-					sampleTable.refresh();
+					groupedTable.refresh();
 				}
 			};
 		}
@@ -476,6 +496,169 @@ public class XPDFSampleEditorView extends ViewPart {
 			}
 		}
 
+		// Deals with both dragging and copy-dragging
+		class LocalViewerDropAdapter extends ViewerDropAdapter {
+
+			public LocalViewerDropAdapter(Viewer tV) {
+				super(tV);
+			}
+
+			@Override
+			public boolean performDrop(Object data) {
+				XPDFSampleParameters targetEntry = (XPDFSampleParameters) getCurrentTarget();
+				// Create the List of new sample parameters to be dropped in.
+				List<XPDFSampleParameters> samplesToAdd = new ArrayList<XPDFSampleParameters>(((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).size());
+				for (Object oSample: ((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).toList()) {
+					XPDFSampleParameters sampleToAdd;
+					if (getCurrentOperation() == DND.DROP_COPY) {
+						sampleToAdd = new XPDFSampleParameters((XPDFSampleParameters) oSample);
+						sampleToAdd.setId(generateUniqueID());
+					} else {
+						sampleToAdd = (XPDFSampleParameters) oSample;
+					}
+					samplesToAdd.add(sampleToAdd);
+				}
+
+				int targetIndex;
+				// Deal with removing the originals when moving and get the index to insert the dragees before
+				if (getCurrentOperation() == DND.DROP_MOVE) {
+					// Remove the originals, except the target if it is in the dragged set
+					List<XPDFSampleParameters> samplesToRemove = new ArrayList<XPDFSampleParameters>(samplesToAdd);
+					boolean moveInitialTarget = samplesToAdd.contains(targetEntry);
+					if (moveInitialTarget)
+						samplesToRemove.remove(targetEntry);
+					samples.removeAll(samplesToRemove);
+
+					// Get the index before which to insert the moved data
+					targetIndex = getDropTargetIndex(targetEntry, getCurrentLocation(), moveInitialTarget);
+					if (targetIndex == -1) return false;
+
+					if (moveInitialTarget)
+						samples.remove(targetEntry);
+				} else {
+					// Get the index before which to insert the moved data
+					targetIndex = getDropTargetIndex(targetEntry, getCurrentLocation());
+					if (targetIndex == -1) return false;
+				}				
+				boolean success = samples.addAll(targetIndex, samplesToAdd);
+				groupedTable.refresh();
+				
+				return success;
+			}
+
+			@Override
+			public boolean validateDrop(Object target, int operation,
+					TransferData transferType) {
+				// Fine, whatever. Just don't try anything funny.
+				// TODO: real validation.
+				return true;
+			}
+			
+		}
+
+		private int getDropTargetIndex(XPDFSampleParameters targetEntry, int currentLocation) {
+			return getDropTargetIndex(targetEntry, currentLocation, false);
+		}
+		
+		private int getDropTargetIndex(XPDFSampleParameters targetEntry, int currentLocation, boolean isTargetRemoved) {
+			// If they are identical, there is only one dragee, and the location is ON, then do nothing.
+			if (((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).size() == 1 &&
+					targetEntry == ((XPDFSampleParameters) ((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).getFirstElement()) &&
+					currentLocation == ViewerDropAdapter.LOCATION_ON)
+				return -1;
+			
+			// Otherwise, copy all the data dragged.
+			int targetIndex;
+			if (targetEntry != null) {
+				targetIndex = samples.indexOf(targetEntry);
+
+				switch (currentLocation) {
+				case ViewerDropAdapter.LOCATION_BEFORE:
+				case ViewerDropAdapter.LOCATION_ON:
+					break;
+				case ViewerDropAdapter.LOCATION_AFTER:
+					if (!isTargetRemoved) targetIndex++;
+					break;
+				case ViewerDropAdapter.LOCATION_NONE:
+					return -1;
+				default: return -1;
+
+				}
+			} else {
+				targetIndex = samples.size();
+			}
+			return targetIndex;
+		}
+
+		class SampleTableCES extends EditingSupport {
+
+			final String column;
+			final TableViewer tV;	
+
+			public SampleTableCES(String column, TableViewer tV) {
+				super(tV);
+				this.column = column;
+				this.tV = tV;
+			};
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				return new TextCellEditor(tV.getTable());
+			}
+			@Override
+			protected boolean canEdit(Object element) {
+				if (column == "Code" || column == "" || column == "μ") 
+					return false;
+				else
+					return true;
+			}
+			@Override
+			protected Object getValue(Object element) {
+				XPDFSampleParameters sample = (XPDFSampleParameters) element;
+				switch (column) {
+				case "Sample name": return sample.getName();
+				case "Code": return sample.getId();
+				case "": return null; // TODO: This should eventually show something, but nothing for now.
+				case "Phases": return "Phases!";//(new SampleTableCLP("Phases")).getText(element);
+				case "Composition": return sample.getComposition();
+				case "Density": return Double.toString(sample.getDensity());
+				case "Vol. frac.": return Double.toString(sample.getPackingFraction());
+				case "Energy": return Double.toString(sample.getSuggestedEnergy());
+				case "μ": return 1.0;
+				case "Max capillary ID": return Double.toString(sample.getSuggestedCapDiameter());
+				case "Beam state": return sample.getBeamState();
+				case "Container": return sample.getContainer();
+				default: return null;
+				}
+			}
+			@Override
+			protected void setValue(Object element, Object value) {
+				XPDFSampleParameters sample = (XPDFSampleParameters) element;
+				String sValue = (String) value;
+				switch (column) {
+				case "Sample name": sample.setName(sValue); break;
+				case "Code": break;
+				case "": break; // TODO: This should eventually do something. Call a big function, probably.
+				case "Phases": { // Parse a comma separated list of phases to a list of Strings
+					String[] arrayOfPhases = sValue.split(","); 
+					List<String> listOfPhases = new ArrayList<String>();
+					for (int i = 0; i < arrayOfPhases.length; i++)
+						listOfPhases.add(arrayOfPhases[i].trim());
+					sample.setPhases(listOfPhases);
+				} break;
+				case "Composition": sample.setComposition(sValue); break;
+				case "Density": sample.setDensity(Double.parseDouble(sValue)); break;
+				case "Vol. frac.": sample.setPackingFraction(Double.parseDouble(sValue)); break;
+				case "Energy": sample.setSuggestedEnergy(Double.parseDouble(sValue)); break;
+				case "μ": break;
+				case "Max capillary ID": sample.setSuggestedCapDiameter(Double.parseDouble(sValue)); break;
+				case "Beam state": sample.setBeamState(sValue); break;
+				case "Container": sample.setContainer(sValue); break;
+				default: break;
+				}
+				// Here, only this table needs updating
+				tV.update(element, null);
+			}
+		}
 	}
 	
 
@@ -492,99 +675,99 @@ public class XPDFSampleEditorView extends ViewPart {
 //		}
 //	}
 	
-	// Deals with both dragging and copy-dragging
-	class LocalViewerDropAdapter extends ViewerDropAdapter {
-
-		public LocalViewerDropAdapter(Viewer tV) {
-			super(tV);
-		}
-
-		@Override
-		public boolean performDrop(Object data) {
-			XPDFSampleParameters targetEntry = (XPDFSampleParameters) getCurrentTarget();
-			// Create the List of new sample parameters to be dropped in.
-			List<XPDFSampleParameters> samplesToAdd = new ArrayList<XPDFSampleParameters>(((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).size());
-			for (Object oSample: ((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).toList()) {
-				XPDFSampleParameters sampleToAdd;
-				if (getCurrentOperation() == DND.DROP_COPY) {
-					sampleToAdd = new XPDFSampleParameters((XPDFSampleParameters) oSample);
-					sampleToAdd.setId(generateUniqueID());
-				} else {
-					sampleToAdd = (XPDFSampleParameters) oSample;
-				}
-				samplesToAdd.add(sampleToAdd);
-			}
-
-			int targetIndex;
-			// Deal with removing the originals when moving and get the index to insert the dragees before
-			if (getCurrentOperation() == DND.DROP_MOVE) {
-				// Remove the originals, except the target if it is in the dragged set
-				List<XPDFSampleParameters> samplesToRemove = new ArrayList<XPDFSampleParameters>(samplesToAdd);
-				boolean moveInitialTarget = samplesToAdd.contains(targetEntry);
-				if (moveInitialTarget)
-					samplesToRemove.remove(targetEntry);
-				samples.removeAll(samplesToRemove);
-
-				// Get the index before which to insert the moved data
-				targetIndex = getDropTargetIndex(targetEntry, getCurrentLocation(), moveInitialTarget);
-				if (targetIndex == -1) return false;
-
-				if (moveInitialTarget)
-					samples.remove(targetEntry);
-			} else {
-				// Get the index before which to insert the moved data
-				targetIndex = getDropTargetIndex(targetEntry, getCurrentLocation());
-				if (targetIndex == -1) return false;
-			}				
-			boolean success = samples.addAll(targetIndex, samplesToAdd);
-			sampleTable.refresh();
-			
-			return success;
-		}
-
-		@Override
-		public boolean validateDrop(Object target, int operation,
-				TransferData transferType) {
-			// Fine, whatever. Just don't try anything funny.
-			// TODO: real validation.
-			return true;
-		}
-		
-	}
-
-	private int getDropTargetIndex(XPDFSampleParameters targetEntry, int currentLocation) {
-		return getDropTargetIndex(targetEntry, currentLocation, false);
-	}
-	
-	private int getDropTargetIndex(XPDFSampleParameters targetEntry, int currentLocation, boolean isTargetRemoved) {
-		// If they are identical, there is only one dragee, and the location is ON, then do nothing.
-		if (((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).size() == 1 &&
-				targetEntry == ((XPDFSampleParameters) ((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).getFirstElement()) &&
-				currentLocation == ViewerDropAdapter.LOCATION_ON)
-			return -1;
-		
-		// Otherwise, copy all the data dragged.
-		int targetIndex;
-		if (targetEntry != null) {
-			targetIndex = samples.indexOf(targetEntry);
-
-			switch (currentLocation) {
-			case ViewerDropAdapter.LOCATION_BEFORE:
-			case ViewerDropAdapter.LOCATION_ON:
-				break;
-			case ViewerDropAdapter.LOCATION_AFTER:
-				if (!isTargetRemoved) targetIndex++;
-				break;
-			case ViewerDropAdapter.LOCATION_NONE:
-				return -1;
-			default: return -1;
-
-			}
-		} else {
-			targetIndex = samples.size();
-		}
-		return targetIndex;
-	}
+//	// Deals with both dragging and copy-dragging
+//	class LocalViewerDropAdapter extends ViewerDropAdapter {
+//
+//		public LocalViewerDropAdapter(Viewer tV) {
+//			super(tV);
+//		}
+//
+//		@Override
+//		public boolean performDrop(Object data) {
+//			XPDFSampleParameters targetEntry = (XPDFSampleParameters) getCurrentTarget();
+//			// Create the List of new sample parameters to be dropped in.
+//			List<XPDFSampleParameters> samplesToAdd = new ArrayList<XPDFSampleParameters>(((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).size());
+//			for (Object oSample: ((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).toList()) {
+//				XPDFSampleParameters sampleToAdd;
+//				if (getCurrentOperation() == DND.DROP_COPY) {
+//					sampleToAdd = new XPDFSampleParameters((XPDFSampleParameters) oSample);
+//					sampleToAdd.setId(generateUniqueID());
+//				} else {
+//					sampleToAdd = (XPDFSampleParameters) oSample;
+//				}
+//				samplesToAdd.add(sampleToAdd);
+//			}
+//
+//			int targetIndex;
+//			// Deal with removing the originals when moving and get the index to insert the dragees before
+//			if (getCurrentOperation() == DND.DROP_MOVE) {
+//				// Remove the originals, except the target if it is in the dragged set
+//				List<XPDFSampleParameters> samplesToRemove = new ArrayList<XPDFSampleParameters>(samplesToAdd);
+//				boolean moveInitialTarget = samplesToAdd.contains(targetEntry);
+//				if (moveInitialTarget)
+//					samplesToRemove.remove(targetEntry);
+//				samples.removeAll(samplesToRemove);
+//
+//				// Get the index before which to insert the moved data
+//				targetIndex = getDropTargetIndex(targetEntry, getCurrentLocation(), moveInitialTarget);
+//				if (targetIndex == -1) return false;
+//
+//				if (moveInitialTarget)
+//					samples.remove(targetEntry);
+//			} else {
+//				// Get the index before which to insert the moved data
+//				targetIndex = getDropTargetIndex(targetEntry, getCurrentLocation());
+//				if (targetIndex == -1) return false;
+//			}				
+//			boolean success = samples.addAll(targetIndex, samplesToAdd);
+//			sampleTable.refresh();
+//			
+//			return success;
+//		}
+//
+//		@Override
+//		public boolean validateDrop(Object target, int operation,
+//				TransferData transferType) {
+//			// Fine, whatever. Just don't try anything funny.
+//			// TODO: real validation.
+//			return true;
+//		}
+//		
+//	}
+//
+//	private int getDropTargetIndex(XPDFSampleParameters targetEntry, int currentLocation) {
+//		return getDropTargetIndex(targetEntry, currentLocation, false);
+//	}
+//	
+//	private int getDropTargetIndex(XPDFSampleParameters targetEntry, int currentLocation, boolean isTargetRemoved) {
+//		// If they are identical, there is only one dragee, and the location is ON, then do nothing.
+//		if (((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).size() == 1 &&
+//				targetEntry == ((XPDFSampleParameters) ((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).getFirstElement()) &&
+//				currentLocation == ViewerDropAdapter.LOCATION_ON)
+//			return -1;
+//		
+//		// Otherwise, copy all the data dragged.
+//		int targetIndex;
+//		if (targetEntry != null) {
+//			targetIndex = samples.indexOf(targetEntry);
+//
+//			switch (currentLocation) {
+//			case ViewerDropAdapter.LOCATION_BEFORE:
+//			case ViewerDropAdapter.LOCATION_ON:
+//				break;
+//			case ViewerDropAdapter.LOCATION_AFTER:
+//				if (!isTargetRemoved) targetIndex++;
+//				break;
+//			case ViewerDropAdapter.LOCATION_NONE:
+//				return -1;
+//			default: return -1;
+//
+//			}
+//		} else {
+//			targetIndex = samples.size();
+//		}
+//		return targetIndex;
+//	}
 	
 	
 	// Create a sub-set of the columns of the table
@@ -643,75 +826,75 @@ public class XPDFSampleEditorView extends ViewPart {
 //	
 	
 	// Column editing support. The different cases for the different columns are just switched by a switch statements or if-then-else
-	class SampleTableCES extends EditingSupport {
-
-		final String column;
-		final TableViewer tV;	
-
-		public SampleTableCES(String column, TableViewer tV) {
-			super(tV);
-			this.column = column;
-			this.tV = tV;
-		};
-		@Override
-		protected CellEditor getCellEditor(Object element) {
-			return new TextCellEditor(tV.getTable());
-		}
-		@Override
-		protected boolean canEdit(Object element) {
-			if (column == "Code" || column == "" || column == "μ") 
-				return false;
-			else
-				return true;
-		}
-		@Override
-		protected Object getValue(Object element) {
-			XPDFSampleParameters sample = (XPDFSampleParameters) element;
-			switch (column) {
-			case "Sample name": return sample.getName();
-			case "Code": return sample.getId();
-			case "": return null; // TODO: This should eventually show something, but nothing for now.
-			case "Phases": return "Phases!";//(new SampleTableCLP("Phases")).getText(element);
-			case "Composition": return sample.getComposition();
-			case "Density": return Double.toString(sample.getDensity());
-			case "Vol. frac.": return Double.toString(sample.getPackingFraction());
-			case "Energy": return Double.toString(sample.getSuggestedEnergy());
-			case "μ": return 1.0;
-			case "Max capillary ID": return Double.toString(sample.getSuggestedCapDiameter());
-			case "Beam state": return sample.getBeamState();
-			case "Container": return sample.getContainer();
-			default: return null;
-			}
-		}
-		@Override
-		protected void setValue(Object element, Object value) {
-			XPDFSampleParameters sample = (XPDFSampleParameters) element;
-			String sValue = (String) value;
-			switch (column) {
-			case "Sample name": sample.setName(sValue); break;
-			case "Code": break;
-			case "": break; // TODO: This should eventually do something. Call a big function, probably.
-			case "Phases": { // Parse a comma separated list of phases to a list of Strings
-				String[] arrayOfPhases = sValue.split(","); 
-				List<String> listOfPhases = new ArrayList<String>();
-				for (int i = 0; i < arrayOfPhases.length; i++)
-					listOfPhases.add(arrayOfPhases[i].trim());
-				sample.setPhases(listOfPhases);
-			} break;
-			case "Composition": sample.setComposition(sValue); break;
-			case "Density": sample.setDensity(Double.parseDouble(sValue)); break;
-			case "Vol. frac.": sample.setPackingFraction(Double.parseDouble(sValue)); break;
-			case "Energy": sample.setSuggestedEnergy(Double.parseDouble(sValue)); break;
-			case "μ": break;
-			case "Max capillary ID": sample.setSuggestedCapDiameter(Double.parseDouble(sValue)); break;
-			case "Beam state": sample.setBeamState(sValue); break;
-			case "Container": sample.setContainer(sValue); break;
-			default: break;
-			}
-			// Here, only this table needs updating
-			tV.update(element, null);
-		}
-	}
+//	class SampleTableCES extends EditingSupport {
+//
+//		final String column;
+//		final TableViewer tV;	
+//
+//		public SampleTableCES(String column, TableViewer tV) {
+//			super(tV);
+//			this.column = column;
+//			this.tV = tV;
+//		};
+//		@Override
+//		protected CellEditor getCellEditor(Object element) {
+//			return new TextCellEditor(tV.getTable());
+//		}
+//		@Override
+//		protected boolean canEdit(Object element) {
+//			if (column == "Code" || column == "" || column == "μ") 
+//				return false;
+//			else
+//				return true;
+//		}
+//		@Override
+//		protected Object getValue(Object element) {
+//			XPDFSampleParameters sample = (XPDFSampleParameters) element;
+//			switch (column) {
+//			case "Sample name": return sample.getName();
+//			case "Code": return sample.getId();
+//			case "": return null; // TODO: This should eventually show something, but nothing for now.
+//			case "Phases": return "Phases!";//(new SampleTableCLP("Phases")).getText(element);
+//			case "Composition": return sample.getComposition();
+//			case "Density": return Double.toString(sample.getDensity());
+//			case "Vol. frac.": return Double.toString(sample.getPackingFraction());
+//			case "Energy": return Double.toString(sample.getSuggestedEnergy());
+//			case "μ": return 1.0;
+//			case "Max capillary ID": return Double.toString(sample.getSuggestedCapDiameter());
+//			case "Beam state": return sample.getBeamState();
+//			case "Container": return sample.getContainer();
+//			default: return null;
+//			}
+//		}
+//		@Override
+//		protected void setValue(Object element, Object value) {
+//			XPDFSampleParameters sample = (XPDFSampleParameters) element;
+//			String sValue = (String) value;
+//			switch (column) {
+//			case "Sample name": sample.setName(sValue); break;
+//			case "Code": break;
+//			case "": break; // TODO: This should eventually do something. Call a big function, probably.
+//			case "Phases": { // Parse a comma separated list of phases to a list of Strings
+//				String[] arrayOfPhases = sValue.split(","); 
+//				List<String> listOfPhases = new ArrayList<String>();
+//				for (int i = 0; i < arrayOfPhases.length; i++)
+//					listOfPhases.add(arrayOfPhases[i].trim());
+//				sample.setPhases(listOfPhases);
+//			} break;
+//			case "Composition": sample.setComposition(sValue); break;
+//			case "Density": sample.setDensity(Double.parseDouble(sValue)); break;
+//			case "Vol. frac.": sample.setPackingFraction(Double.parseDouble(sValue)); break;
+//			case "Energy": sample.setSuggestedEnergy(Double.parseDouble(sValue)); break;
+//			case "μ": break;
+//			case "Max capillary ID": sample.setSuggestedCapDiameter(Double.parseDouble(sValue)); break;
+//			case "Beam state": sample.setBeamState(sValue); break;
+//			case "Container": sample.setContainer(sValue); break;
+//			default: break;
+//			}
+//			// Here, only this table needs updating
+//			tV.update(element, null);
+//		}
+//	}
 
 //	// Set a Comparator, depending on the column selected
 //	private Comparator<XPDFSampleParameters> getColumnSorting(String column) {
@@ -810,7 +993,7 @@ public class XPDFSampleEditorView extends ViewPart {
 		pointBreakAction = new Action() {
 			@Override
 			public void run() {
-				samples.get(0).getDensity();
+				sampleTable.get(0).getDensity();
 			}
 		};
 		pointBreakAction.setToolTipText("Ze goggles, zey...");
@@ -821,7 +1004,7 @@ public class XPDFSampleEditorView extends ViewPart {
 		saveAction = new Action() {
 			@Override
 			public void run() {
-				for (XPDFSampleParameters sample : samples)
+				for (XPDFSampleParameters sample : sampleTable.getAll())
 					System.err.println(sample.toString());
 			}
 		};
@@ -835,8 +1018,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			public void run() {
 				XPDFSampleParameters blankSample = new XPDFSampleParameters();
 				blankSample.setId(generateUniqueID());
-				samples.add(blankSample);
-				sampleTable.refresh();
+				sampleTable.add(blankSample);
 			}
 		};
 		newBlankAction.setText("New sample");
@@ -847,9 +1029,8 @@ public class XPDFSampleEditorView extends ViewPart {
 		clearAction = new Action() {
 			@Override
 			public void run() {
-				samples.clear();
+				sampleTable.clear();
 				usedIDs.clear();
-				sampleTable.refresh();
 			}
 		};
 		clearAction.setText("Clear");
@@ -1034,8 +1215,7 @@ public class XPDFSampleEditorView extends ViewPart {
 		public void run() {
 			List<XPDFSampleParameters> selectedXPDFParameters = sampleTable.getSelectedSamples();
 			if (selectedXPDFParameters.isEmpty()) return;
-			samples.removeAll(selectedXPDFParameters);
-			sampleTable.refresh();
+			sampleTable.removeAll(selectedXPDFParameters);
 		}
 	}
 
@@ -1073,8 +1253,6 @@ public class XPDFSampleEditorView extends ViewPart {
 
 		@Override
 		public void run() {
-			if (samples == null)
-				samples = new ArrayList<XPDFSampleParameters>();
 			
 			// barium titanate
 			XPDFSampleParameters bto = new XPDFSampleParameters();
@@ -1089,7 +1267,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			bto.setBeamState("76.6 Hi Flux");
 			bto.setContainer("0.3 mm B");
 			
-			samples.add(bto);
+			sampleTable.add(bto);
 			
 			// rutile
 			XPDFSampleParameters rutile = new XPDFSampleParameters();
@@ -1104,7 +1282,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			rutile.setBeamState("76.6 Hi Flux");
 			rutile.setContainer("0.5 mm B");
 			
-			samples.add(rutile);
+			sampleTable.add(rutile);
 			
 			// and something else
 			XPDFSampleParameters explodite = new XPDFSampleParameters();
@@ -1119,14 +1297,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			explodite.setBeamState("76.6 Hi Flux");
 			explodite.setContainer("0.5 mm");
 			
-			samples.add(explodite);
-			
-			sampleTable.refresh();
-//			for (TableViewer iTV : groupViewers) {
-//				iTV.getTable().setSortDirection(SWT.NONE);
-//				iTV.getTable().setSortColumn(null);
-//				iTV.refresh();
-//			}
+			sampleTable.add(explodite);
 		}
 	}
 }

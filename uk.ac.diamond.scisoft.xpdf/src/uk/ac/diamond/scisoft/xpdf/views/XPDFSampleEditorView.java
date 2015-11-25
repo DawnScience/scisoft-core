@@ -44,6 +44,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -215,7 +216,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			// we do not (and should not) have access to at this level. The
 			// final argument in each case is an object that returns the class
 			// when the method generate(Viewer) is called.
-//			groupedTable.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalDragSupportListener(null));
+			groupedTable.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalDragSupportListener(groupedTable));
 //			groupedTable.addDropSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalViewerDropAdapter(null));
 			
 		}
@@ -305,6 +306,91 @@ public class XPDFSampleEditorView extends ViewPart {
 			};
 		}
 
+		// Set a Comparator, depending on the column selected
+		private Comparator<XPDFSampleParameters> getColumnSorting(String column) {
+			Comparator<XPDFSampleParameters> columnSorter;
+			switch (column) {
+			case "Sample name":
+				columnSorter = new Comparator<XPDFSampleParameters>() {
+				@Override
+				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+					return o1.getName().compareTo(o2.getName());
+				}
+			};
+			break;
+			case "Code":
+				columnSorter = new Comparator<XPDFSampleParameters>() {
+				@Override
+				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+					return Integer.compare(o1.getId(), o2.getId());
+				}
+			};
+			break;
+			case "":
+			case "Phases":
+			case "Composition":
+				columnSorter = null;
+				break;
+			case "Density":
+				columnSorter = new Comparator<XPDFSampleParameters>() {
+				@Override
+				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+					return Double.compare(o1.getDensity(), o2.getDensity());
+				}
+			};
+			break;
+			case "Vol. frac.":
+				columnSorter = new Comparator<XPDFSampleParameters>() {
+				@Override
+				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+					return Double.compare(o1.getPackingFraction(), o2.getPackingFraction());
+				}
+			};
+			break;
+			case "Energy":
+				columnSorter = new Comparator<XPDFSampleParameters>() {
+				@Override
+				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+					return Double.compare(o1.getSuggestedEnergy(), o2.getSuggestedEnergy());
+				}
+			};
+			break;
+			case "μ":
+				columnSorter = new Comparator<XPDFSampleParameters>() {
+				@Override
+				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+					return Double.compare(o1.getMu(), o2.getMu());
+				}
+			};
+			break;
+			case "Max capillary ID":
+				columnSorter = new Comparator<XPDFSampleParameters>() {
+				@Override
+				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+					return Double.compare(o1.getSuggestedCapDiameter(), o2.getSuggestedCapDiameter());
+				}
+			};
+			break;
+			case "Beam state":
+				columnSorter = new Comparator<XPDFSampleParameters>() {
+				@Override
+				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+					return o1.getBeamState().compareTo(o2.getBeamState());
+				}
+			};
+			case "Container":
+				columnSorter = new Comparator<XPDFSampleParameters>() {
+				@Override
+				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+					return o1.getContainer().compareTo(o2.getContainer());
+				}
+			};
+			default:
+				columnSorter = null;
+			}
+			return columnSorter;
+		}
+
 		// The table label provider does nothing except delegate to the column label provider
 		class SampleTableLP extends LabelProvider implements ITableLabelProvider {
 
@@ -323,22 +409,88 @@ public class XPDFSampleEditorView extends ViewPart {
 			public String getColumnText(Object element, int columnIndex) {
 				return (new SampleTableCLP(columns.get(columnIndex))).getText(element);
 			}	
-		}		
+		}
+		
+		class SampleParametersContentProvider implements IStructuredContentProvider {
+
+			@Override
+			public void dispose() {} // TODO Auto-generated method stub
+
+			@Override
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {} // TODO Auto-generated method stub
+
+			@Override
+			public Object[] getElements(Object inputElement) {
+				return samples.toArray(new XPDFSampleParameters[]{});
+			}
+			
+		}
+
+		// Column label provider. Use a switch to provide the different data labels for the different columns.
+		class SampleTableCLP extends ColumnLabelProvider {
+			
+			final String columnName;
+			
+			public SampleTableCLP(String columnName) {
+				this.columnName = columnName;
+			}
+			
+			@Override
+			public String getText(Object element) {
+				XPDFSampleParameters sample = (XPDFSampleParameters) element;
+				switch (columnName) {
+				case "Sample name": return sample.getName();
+				case "Code": return Integer.toString(sample.getId());
+				case "": return "+";
+				case "Phases": 
+					StringBuilder sb = new StringBuilder();
+					for (String phase : sample.getPhases()) {
+						sb.append(phase);
+						sb.append(", ");
+					}
+					if (sb.length() > 2) sb.delete(sb.length()-2, sb.length());
+					return sb.toString();
+				case "Composition": return sample.getComposition();
+				case "Density": return Double.toString(sample.getDensity());
+				case "Vol. frac.": return Double.toString(sample.getPackingFraction());
+				case "Energy": return Double.toString(sample.getSuggestedEnergy());
+				case "μ": return String.format("%.4f", sample.getMu());
+				case "Max capillary ID": return Double.toString(sample.getSuggestedCapDiameter());
+				case "Beam state": return sample.getBeamState();
+				case "Container": return sample.getContainer();
+				default: return "";
+				}
+			}
+		}
+
+		// drag support for local moves. Copy data
+		class LocalDragSupportListener extends DragSourceAdapter {
+			private XPDFGroupedTable gT;
+			public LocalDragSupportListener(XPDFGroupedTable gT) {
+				this.gT = gT;
+			}
+			
+			@Override
+			public void dragSetData(DragSourceEvent event) {
+				LocalSelectionTransfer.getTransfer().setSelection(gT.getSelection());
+			}
+		}
+
 	}
 	
 
-	// drag support for local moves. Copy data
-	class LocalDragSupportListener extends DragSourceAdapter {
-		private TableViewer tV;
-		public LocalDragSupportListener(Viewer tV) {
-			this.tV = (tV instanceof TableViewer) ? (TableViewer) tV : null;
-		}
-		
-		@Override
-		public void dragSetData(DragSourceEvent event) {
-			LocalSelectionTransfer.getTransfer().setSelection(tV.getSelection());
-		}
-	}
+//	// drag support for local moves. Copy data
+//	class LocalDragSupportListener extends DragSourceAdapter {
+//		private XPDFGroupedTable gT;
+//		public LocalDragSupportListener(XPDFGroupedTable gT) {
+//			this.gT = gT;
+//		}
+//		
+//		@Override
+//		public void dragSetData(DragSourceEvent event) {
+//			LocalSelectionTransfer.getTransfer().setSelection(gT.getSelection());
+//		}
+//	}
 	
 	// Deals with both dragging and copy-dragging
 	class LocalViewerDropAdapter extends ViewerDropAdapter {
@@ -451,82 +603,45 @@ public class XPDFSampleEditorView extends ViewPart {
 //	}
 
 	// The table label provider does nothing except delegate to the column label provider
-	class SampleTableLP extends LabelProvider implements ITableLabelProvider {
-
-		final List<String> columns;
-		
-		public SampleTableLP(List <String> columns) {
-			this.columns = columns;
-		}
-		
-		@Override
-		public Image getColumnImage(Object element, int columnIndex) {
-			return null;
-		}
-
-		@Override
-		public String getColumnText(Object element, int columnIndex) {
-			return (new SampleTableCLP(columns.get(columnIndex))).getText(element);
-		}
-		
-	}
-
-	class SampleTableHackLP extends LabelProvider implements ITableLabelProvider {
-		List<String> columns;
-
-		public SampleTableHackLP() {
-			columns = Arrays.asList(new String[] {"Sample name", "Code", "", "Phases", "Composition", "Density", "Vol. frac.", "Energy", "μ", "Max capillary ID", "Beam state", "Container"});
-		}
-		
-		@Override
-		public Image getColumnImage(Object element, int columnIndex) {
-			return null;
-		}
-
-		@Override
-		public String getColumnText(Object element, int columnIndex) {
-			return (new SampleTableCLP(columns.get(columnIndex))).getText(element);
-		}
-	}
+//	class SampleTableLP extends LabelProvider implements ITableLabelProvider {
+//
+//		final List<String> columns;
+//		
+//		public SampleTableLP(List <String> columns) {
+//			this.columns = columns;
+//		}
+//		
+//		@Override
+//		public Image getColumnImage(Object element, int columnIndex) {
+//			return null;
+//		}
+//
+//		@Override
+//		public String getColumnText(Object element, int columnIndex) {
+//			return (new SampleTableCLP(columns.get(columnIndex))).getText(element);
+//		}
+//		
+//	}
+//
+//	class SampleTableHackLP extends LabelProvider implements ITableLabelProvider {
+//		List<String> columns;
+//
+//		public SampleTableHackLP() {
+//			columns = Arrays.asList(new String[] {"Sample name", "Code", "", "Phases", "Composition", "Density", "Vol. frac.", "Energy", "μ", "Max capillary ID", "Beam state", "Container"});
+//		}
+//		
+//		@Override
+//		public Image getColumnImage(Object element, int columnIndex) {
+//			return null;
+//		}
+//
+//		@Override
+//		public String getColumnText(Object element, int columnIndex) {
+//			return (new SampleTableCLP(columns.get(columnIndex))).getText(element);
+//		}
+//	}
+//	
 	
-	
-	// Column label provider. Use a switch to provide the different data labels for the different columns.
-	class SampleTableCLP extends ColumnLabelProvider {
-		
-		final String columnName;
-		
-		public SampleTableCLP(String columnName) {
-			this.columnName = columnName;
-		}
-		
-		@Override
-		public String getText(Object element) {
-			XPDFSampleParameters sample = (XPDFSampleParameters) element;
-			switch (columnName) {
-			case "Sample name": return sample.getName();
-			case "Code": return Integer.toString(sample.getId());
-			case "": return "+";
-			case "Phases": 
-				StringBuilder sb = new StringBuilder();
-				for (String phase : sample.getPhases()) {
-					sb.append(phase);
-					sb.append(", ");
-				}
-				if (sb.length() > 2) sb.delete(sb.length()-2, sb.length());
-				return sb.toString();
-			case "Composition": return sample.getComposition();
-			case "Density": return Double.toString(sample.getDensity());
-			case "Vol. frac.": return Double.toString(sample.getPackingFraction());
-			case "Energy": return Double.toString(sample.getSuggestedEnergy());
-			case "μ": return String.format("%.4f", sample.getMu());
-			case "Max capillary ID": return Double.toString(sample.getSuggestedCapDiameter());
-			case "Beam state": return sample.getBeamState();
-			case "Container": return sample.getContainer();
-			default: return "";
-			}
-		}
-	}
-
 	// Column editing support. The different cases for the different columns are just switched by a switch statements or if-then-else
 	class SampleTableCES extends EditingSupport {
 
@@ -556,7 +671,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			case "Sample name": return sample.getName();
 			case "Code": return sample.getId();
 			case "": return null; // TODO: This should eventually show something, but nothing for now.
-			case "Phases": return (new SampleTableCLP("Phases")).getText(element);
+			case "Phases": return "Phases!";//(new SampleTableCLP("Phases")).getText(element);
 			case "Composition": return sample.getComposition();
 			case "Density": return Double.toString(sample.getDensity());
 			case "Vol. frac.": return Double.toString(sample.getPackingFraction());
@@ -598,91 +713,91 @@ public class XPDFSampleEditorView extends ViewPart {
 		}
 	}
 
-	// Set a Comparator, depending on the column selected
-	private Comparator<XPDFSampleParameters> getColumnSorting(String column) {
-		Comparator<XPDFSampleParameters> columnSorter;
-		switch (column) {
-		case "Sample name":
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return o1.getName().compareTo(o2.getName());
-			}
-		};
-		break;
-		case "Code":
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return Integer.compare(o1.getId(), o2.getId());
-			}
-		};
-		break;
-		case "":
-		case "Phases":
-		case "Composition":
-			columnSorter = null;
-			break;
-		case "Density":
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return Double.compare(o1.getDensity(), o2.getDensity());
-			}
-		};
-		break;
-		case "Vol. frac.":
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return Double.compare(o1.getPackingFraction(), o2.getPackingFraction());
-			}
-		};
-		break;
-		case "Energy":
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return Double.compare(o1.getSuggestedEnergy(), o2.getSuggestedEnergy());
-			}
-		};
-		break;
-		case "μ":
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return Double.compare(o1.getMu(), o2.getMu());
-			}
-		};
-		break;
-		case "Max capillary ID":
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return Double.compare(o1.getSuggestedCapDiameter(), o2.getSuggestedCapDiameter());
-			}
-		};
-		break;
-		case "Beam state":
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return o1.getBeamState().compareTo(o2.getBeamState());
-			}
-		};
-		case "Container":
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return o1.getContainer().compareTo(o2.getContainer());
-			}
-		};
-		default:
-			columnSorter = null;
-		}
-		return columnSorter;
-	}
-
+//	// Set a Comparator, depending on the column selected
+//	private Comparator<XPDFSampleParameters> getColumnSorting(String column) {
+//		Comparator<XPDFSampleParameters> columnSorter;
+//		switch (column) {
+//		case "Sample name":
+//			columnSorter = new Comparator<XPDFSampleParameters>() {
+//			@Override
+//			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+//				return o1.getName().compareTo(o2.getName());
+//			}
+//		};
+//		break;
+//		case "Code":
+//			columnSorter = new Comparator<XPDFSampleParameters>() {
+//			@Override
+//			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+//				return Integer.compare(o1.getId(), o2.getId());
+//			}
+//		};
+//		break;
+//		case "":
+//		case "Phases":
+//		case "Composition":
+//			columnSorter = null;
+//			break;
+//		case "Density":
+//			columnSorter = new Comparator<XPDFSampleParameters>() {
+//			@Override
+//			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+//				return Double.compare(o1.getDensity(), o2.getDensity());
+//			}
+//		};
+//		break;
+//		case "Vol. frac.":
+//			columnSorter = new Comparator<XPDFSampleParameters>() {
+//			@Override
+//			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+//				return Double.compare(o1.getPackingFraction(), o2.getPackingFraction());
+//			}
+//		};
+//		break;
+//		case "Energy":
+//			columnSorter = new Comparator<XPDFSampleParameters>() {
+//			@Override
+//			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+//				return Double.compare(o1.getSuggestedEnergy(), o2.getSuggestedEnergy());
+//			}
+//		};
+//		break;
+//		case "μ":
+//			columnSorter = new Comparator<XPDFSampleParameters>() {
+//			@Override
+//			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+//				return Double.compare(o1.getMu(), o2.getMu());
+//			}
+//		};
+//		break;
+//		case "Max capillary ID":
+//			columnSorter = new Comparator<XPDFSampleParameters>() {
+//			@Override
+//			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+//				return Double.compare(o1.getSuggestedCapDiameter(), o2.getSuggestedCapDiameter());
+//			}
+//		};
+//		break;
+//		case "Beam state":
+//			columnSorter = new Comparator<XPDFSampleParameters>() {
+//			@Override
+//			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+//				return o1.getBeamState().compareTo(o2.getBeamState());
+//			}
+//		};
+//		case "Container":
+//			columnSorter = new Comparator<XPDFSampleParameters>() {
+//			@Override
+//			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+//				return o1.getContainer().compareTo(o2.getContainer());
+//			}
+//		};
+//		default:
+//			columnSorter = null;
+//		}
+//		return columnSorter;
+//	}
+//
 		
 	private void createActions() {
 		// load the nonsense test data
@@ -887,25 +1002,7 @@ public class XPDFSampleEditorView extends ViewPart {
 		manager.add(simPDFAction);
 		manager.add(new Separator("Debug"));
 		manager.add(pointBreakAction);
-	}
-
-
-	class SampleParametersContentProvider implements IStructuredContentProvider {
-
-		@Override
-		public void dispose() {} // TODO Auto-generated method stub
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {} // TODO Auto-generated method stub
-
-		@Override
-		public Object[] getElements(Object inputElement) {
-			return samples.toArray(new XPDFSampleParameters[]{});
-		}
-		
-	}
-
-	
+	}	
 	
 	// Action class that simulates the pair-distribution function of the given sample.
 	// At the moment, this plots the NIST ceria standard PDF

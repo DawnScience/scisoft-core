@@ -17,8 +17,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDynamicDataset;
 import org.eclipse.dawnsci.analysis.dataset.metadata.OriginMetadataImpl;
-import org.eclipse.dawnsci.analysis.dataset.slicer.GrowingSliceNDIterator;
-import org.eclipse.dawnsci.analysis.dataset.slicer.GrowingSliceViewIterator;
+import org.eclipse.dawnsci.analysis.dataset.slicer.DynamicSliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.ISliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceViewIterator;
@@ -150,7 +149,7 @@ public class SeriesRunner implements IOperationRunner {
 		ISliceViewIterator iterator = null;
 		
 		if (context.getKey() != null) {
-			iterator = new GrowingSliceViewIterator((LazyDynamicDataset)context.getData(), (LazyDynamicDataset)context.getKey());
+			iterator = new DynamicSliceViewIterator((LazyDynamicDataset)context.getData(), (LazyDynamicDataset)context.getKey());
 		} else {
 			iterator = new SliceViewIterator(context.getData(), context.getSlicing(), context.getDataDimensions());
 		}

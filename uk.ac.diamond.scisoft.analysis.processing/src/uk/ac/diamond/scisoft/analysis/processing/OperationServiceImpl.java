@@ -40,7 +40,7 @@ import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDynamicDataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
-import org.eclipse.dawnsci.analysis.dataset.slicer.GrowingSliceViewIterator;
+import org.eclipse.dawnsci.analysis.dataset.slicer.DynamicSliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.ISliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceViewIterator;
@@ -107,7 +107,7 @@ public class OperationServiceImpl implements IOperationService {
 	        ISliceViewIterator it = null;
 	        
 	        if (context.getKey() == null) it = new SliceViewIterator(context.getData(), context.getSlicing(), context.getDataDimensions());
-	        else it = new GrowingSliceViewIterator((LazyDynamicDataset)context.getData(), (LazyDynamicDataset)context.getKey());
+	        else it = new DynamicSliceViewIterator((LazyDynamicDataset)context.getData(), (LazyDynamicDataset)context.getKey());
 			assert(it.hasNext());
 	        IDataset firstSlice = it.next().getSlice();
 	        validate(firstSlice, context.getSeries());

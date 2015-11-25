@@ -22,6 +22,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 
@@ -140,7 +141,9 @@ public class AlbaLinkFileLoader extends AbstractFileLoader {
 					
 					mapString.toString();
 					for (String key : mapDouble.keySet()){
-						result.addDataset(key, DatasetFactory.createFromList(mapDouble.get(key)));
+						Dataset d = DatasetFactory.createFromList(mapDouble.get(key));
+						d.setName(key);
+						result.addDataset(key, d);
 					}
 					
 					for (String key : mapString.keySet()){

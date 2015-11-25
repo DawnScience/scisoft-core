@@ -53,21 +53,10 @@ public class XPDFSampleEditorView extends ViewPart {
 	private Action deleteAction;
 	private Action clearAction;
 		
-//	private Map<ColumnGroup, TableViewer> groupViewers;
-//	private List<TableViewer> groupViewers; // To MyGroupedTable
-//	private List<String> groupNames; // To MyGroupedTable
-	
-//	private boolean propagateSelectionChange; // To MyGroupedTable
-
 	private SortedSet<Integer> usedIDs; // The set of assigned ID numbers. Should come from the database eventually?	
 
 	private SampleGroupedTable sampleTable;
 
-	// members that will be moved to within sampleTable
-//	List<String> groupNamesST; // To SampleGroupedTable
-//	List<List<String>> groupedColumnNames; // To SampleGroupedTable
-//	List<List<Integer>> groupedColumnWeights; // To SampleGroupedTable
-	
 	public XPDFSampleEditorView() {
 	}
 	
@@ -106,9 +95,6 @@ public class XPDFSampleEditorView extends ViewPart {
 		createCentreButtons(buttonCompo);
 		createRHSButtons(buttonCompo);
 	}
-
-	
-	
 
 		
 	private void createActions() {
@@ -276,10 +262,6 @@ public class XPDFSampleEditorView extends ViewPart {
 	@Override
 	public void setFocus() {
 		sampleTable.setFocus();
-		// Can all the TableViewers have focus?
-//		for (TableViewer iTV : groupViewers ) {
-//			iTV.getControl().setFocus();
-//		}
 	}
 	
 	// Hook actions into the context menu
@@ -295,11 +277,6 @@ public class XPDFSampleEditorView extends ViewPart {
 		
 		sampleTable.createContextMenu(menuMan);
 		
-//		for (TableViewer iTV : groupViewers) {
-//			Menu popupMenu = menuMan.createContextMenu(iTV.getControl());
-//			iTV.getControl().setMenu(popupMenu);
-//			getSite().registerContextMenu(menuMan, iTV);
-//		}
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {

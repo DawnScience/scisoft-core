@@ -134,7 +134,7 @@ class SampleGroupedTable {
 		// final argument in each case is an object that returns the class
 		// when the method generate(Viewer) is called.
 		groupedTable.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalDragSupportListener(groupedTable));
-		//			groupedTable.addDropSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalViewerDropAdapter(null));
+		groupedTable.addDropSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalViewerDropAdapterFactory(samples, groupedTable));
 
 	}
 		
@@ -427,11 +427,28 @@ class SampleGroupedTable {
 		}
 	}
 
+	class LocalViewerDropAdapterFactory implements ViewerDropAdapterFactory {
+		List<XPDFSampleParameters> samples;
+		XPDFGroupedTable groupedTable;
+		public LocalViewerDropAdapterFactory(List<XPDFSampleParameters> samples, XPDFGroupedTable groupedTable) {
+			this.samples = samples;
+			this.groupedTable = groupedTable;
+		}
+		
+		public ViewerDropAdapter get(Viewer v) {
+			return new LocalViewerDropAdapter(v, samples, groupedTable);
+		}
+	}
+	
 	// Deals with both dragging and copy-dragging
 	class LocalViewerDropAdapter extends ViewerDropAdapter {
+		List<XPDFSampleParameters> samples;
+		XPDFGroupedTable groupedTable;
 
-		public LocalViewerDropAdapter(Viewer tV) {
+		public LocalViewerDropAdapter(Viewer tV, List<XPDFSampleParameters> samples, XPDFGroupedTable groupedTable) {
 			super(tV);
+			this.samples = samples;
+			this.groupedTable = groupedTable;
 		}
 
 		@Override

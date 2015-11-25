@@ -54,7 +54,7 @@ class XPDFGroupedTable extends Composite {
 	private DragSourceAdapter cachedDragSourceListener;
 	private int cachedDropFlags;
 	private Transfer[] cachedDropTransfers;
-	private ViewerDropAdapter cachedDropTargetListener;
+	private ViewerDropAdapterFactory cachedDropTargetListenerFactory;
 
 	private List<TableViewer> groupViewers;
 	private List<String> groupNames;
@@ -94,7 +94,7 @@ class XPDFGroupedTable extends Composite {
 		cachedDragTransfers = null;
 		cachedDragSourceListener = null;
 		cachedDropTransfers = null;
-		cachedDropTargetListener = null;
+		cachedDropTargetListenerFactory = null;
 	}			
 
 	public void setColumnWidth(TableViewerColumn col, Integer weight) {
@@ -234,18 +234,12 @@ class XPDFGroupedTable extends Composite {
 				tV.addDragSupport(cachedDragFlags, cachedDragTransfers, cachedDragSourceListener);
 	}
 	
-	public void addDropSupport(int dropFlags, Transfer[] transfers, ViewerDropAdapter dTL) {
+	public void addDropSupport(int dropFlags, Transfer[] transfers, ViewerDropAdapterFactory dTLF) {
 		cachedDropFlags = dropFlags;
 		cachedDropTransfers = transfers;
-		cachedDropTargetListener = dTL;
+		cachedDropTargetListenerFactory = dTLF;
 		for (TableViewer tV : groupViewers)
-			try {
-				tV.addDropSupport(cachedDropFlags, cachedDropTransfers, cachedDropTargetListener.getClass().getDeclaredConstructor(Viewer.class).newInstance(tV));
-			} catch (Exception e) {
-				// If there are any exceptions, log it and carry on; drag and drop is not critical
-				// TODO: Real logger, not stderr
-				System.err.println("Exception setting drag and drop support in " + this.getClass() + ":" + e);
-			}
+				tV.addDropSupport(cachedDropFlags, cachedDropTransfers, cachedDropTargetListenerFactory.get(tV));
 	}
 	
 	/**

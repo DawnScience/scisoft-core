@@ -45,19 +45,36 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 
+/**
+ * A class to display and edit samples for the XPDF project.
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
+ *
+ */
 class SampleGroupedTable {
 		
 	private SortedSet<Integer> usedIDs; // The set of assigned ID numbers. Should come from the database eventually?	
 
+	// The samples held in the table
 	private List<XPDFSampleParameters> samples;
 
+	// the grouped table object that does the displaying
 	private XPDFGroupedTable groupedTable;
 
+	// Names of the groups, the columns in those groups, and the relative
+	// widths of the columns
 	private List<String> groupNames;
 	private List<List<String>> groupedColumnNames;
 	private List<List<Integer>> groupedColumnWeights;
 
-
+	/**
+	 * Constructor.
+	 * <p>
+	 * takes the same parameters as a Composite, which are passed to the delegated display table.
+	 * @param parent
+	 * 				parent Composite in which to insert
+	 * @param style
+	 * 				style flags to set
+	 */
 	public SampleGroupedTable(Composite parent, int style) {
 
 		samples = new ArrayList<XPDFSampleParameters>();
@@ -68,6 +85,7 @@ class SampleGroupedTable {
 		groupedColumnNames = new ArrayList<List<String>>();
 		groupedColumnWeights = new ArrayList<List<Integer>>();
 
+		// Define the column groups and the columns they contain
 		groupNames.add("Sample Identification");
 		groupedColumnNames.add(Arrays.asList(new String[] {"Sample name", "Code"}));
 		groupedColumnWeights.add(Arrays.asList(new Integer[] {20, 10}));
@@ -84,7 +102,7 @@ class SampleGroupedTable {
 		groupedColumnNames.add(Arrays.asList(new String[] {"Beam state", "Container"}));
 		groupedColumnWeights.add(Arrays.asList(new Integer[] {10, 10}));
 
-
+//		Make up the columns
 		for (int iGroup = 0; iGroup < groupNames.size(); iGroup++) {
 			groupedTable.createColumnGroup(groupNames.get(iGroup));
 			for (int iColumn = 0; iColumn < groupedColumnNames.get(iGroup).size(); iColumn++) {
@@ -111,6 +129,7 @@ class SampleGroupedTable {
 			}
 		});
 
+		// The label provider for the column headers
 		List<String> allColumnNames = new ArrayList<String>();
 		for (List<String> groupedNames : groupedColumnNames)
 			allColumnNames.addAll(groupedNames);
@@ -125,47 +144,92 @@ class SampleGroupedTable {
 
 	}
 		
+	/**
+	 * Sets the input of the delegated viewer objects.
+	 * @param input
+	 * 				the object providing the input
+	 */
 	public void setInput(Object input) {
 		groupedTable.setInput(input);
 	}
 
+	/**
+	 * Adds a set of sample parameters.
+	 * @param sample
+	 * 				parameters of the sample to be added
+	 */
 	public void add(XPDFSampleParameters sample) {
 		sample.setId(generateUniqueID());
 		samples.add(sample);
 		groupedTable.refresh();
 	}
 
+	/**
+	 * Clears all the samples in this table.
+	 */
 	public void clear() {
 		samples.clear();
 		usedIDs.clear();
 		groupedTable.refresh();
 	}
 
+	/**
+	 * Removes all the samples in the provided {@link Collection}.
+	 * @param sample
+	 * 				the samples to be removed
+	 */
 	public void removeAll(Collection<XPDFSampleParameters> sample) {
 		samples.removeAll(sample);
 		groupedTable.refresh();
 	}
 
+	/**
+	 * Returns the list of all samples.
+	 * <p>
+	 * Use this wisely.
+	 * @return list of all the samples in the table.
+	 */
 	public List<XPDFSampleParameters> getAll() {
 		return samples;
 	}
 
+	/**
+	 * Gets the sample parameters at the given index.
+	 * @param index
+	 * 				index to retrieve the parameters at.
+	 * @return the parameters retrieved
+	 */
 	public XPDFSampleParameters get(int index) {
 		return samples.get(index);
 	}
 
+	/**
+	 * Returns the number of samples in the sample table.
+	 * @return the size of the sample table
+	 */
 	public int size() {
 		return samples.size();
 	}
 
+	/**
+	 * Set the focus of the underlying Viewers.
+	 */
 	public void setFocus() {
 		groupedTable.setFocus();
 	}
 
+	/**
+	 * Set the {@link Layout} data of the underlying Composite.
+	 * @param layout
+	 */
 	public void setLayoutData(Object layout) {
 		groupedTable.setLayoutData(layout);
 	}
 	
+	/**
+	 * Returns a list of the samples selected in the table.
+	 * @return the selected samples.
+	 */
 	public List<XPDFSampleParameters> getSelectedSamples() {
 		List<XPDFSampleParameters> selectedXPDFParameters = new ArrayList<XPDFSampleParameters>();
 		ISelection selection = groupedTable.getSelection();

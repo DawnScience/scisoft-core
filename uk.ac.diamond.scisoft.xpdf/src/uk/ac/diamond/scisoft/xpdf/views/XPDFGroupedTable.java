@@ -1,3 +1,12 @@
+/*-
+ * Copyright 2015 Diamond Light Source Ltd.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package uk.ac.diamond.scisoft.xpdf.views;
 
 import java.util.ArrayList;
@@ -102,6 +111,9 @@ class XPDFGroupedTable extends Composite {
 		tCL.setColumnData(col.getColumn(), new ColumnWeightData(weight));
 	}
 
+	public void setColumnEditingSupport(TableViewerColumn col, EditingSupportFactory eSF) {
+		col.setEditingSupport(eSF.get(groupViewers.get(getIndexOfTableContaining(col.getColumn()))));
+	}
 
 	/**
 	 * Refreshes all sub-tables.
@@ -353,6 +365,5 @@ class XPDFGroupedTable extends Composite {
 					cachedLabelProvider.getColumnText(element, columnIndex+getOffset()) :
 					null;
 		}
-
 	}
 }

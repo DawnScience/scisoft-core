@@ -53,8 +53,8 @@ public class XPDFSampleEditorView extends ViewPart {
 	private Action deleteAction;
 	private Action clearAction;
 		
-	private SortedSet<Integer> usedIDs; // The set of assigned ID numbers. Should come from the database eventually?	
-
+//	private SortedSet<Integer> usedIDs; // The set of assigned ID numbers. Should come from the database eventually?	
+//
 	private SampleGroupedTable sampleTable;
 
 	public XPDFSampleEditorView() {
@@ -71,7 +71,7 @@ public class XPDFSampleEditorView extends ViewPart {
 		Composite sampleTableCompo = new Composite(parent, SWT.BORDER);
 		sampleTableCompo.setLayout(new FormLayout());
 		
-		sampleTable = new SampleGroupedTable(this, sampleTableCompo, SWT.NONE);
+		sampleTable = new SampleGroupedTable(sampleTableCompo, SWT.NONE);
 		Composite buttonCompo = new Composite(sampleTableCompo, SWT.NONE);
 
 		FormData formData = new FormData();
@@ -94,6 +94,8 @@ public class XPDFSampleEditorView extends ViewPart {
 		createLoadButtons(buttonCompo);
 		createCentreButtons(buttonCompo);
 		createRHSButtons(buttonCompo);
+		
+		sampleTable.setInput(getSite());
 	}
 
 		
@@ -132,7 +134,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			@Override
 			public void run() {
 				XPDFSampleParameters blankSample = new XPDFSampleParameters();
-				blankSample.setId(generateUniqueID());
+//				blankSample.setId(generateUniqueID());
 				sampleTable.add(blankSample);
 			}
 		};
@@ -145,7 +147,6 @@ public class XPDFSampleEditorView extends ViewPart {
 			@Override
 			public void run() {
 				sampleTable.clear();
-				usedIDs.clear();
 			}
 		};
 		clearAction.setText("Clear");
@@ -325,15 +326,15 @@ public class XPDFSampleEditorView extends ViewPart {
 		}
 	}
 
-	// Generate a new id
-	int generateUniqueID() {
-		final int lowestID = 154;
-		if (usedIDs == null)
-			usedIDs = new TreeSet<Integer>();
-		int theID = (usedIDs.isEmpty()) ? lowestID : usedIDs.last()+1;
-		usedIDs.add(theID);
-		return theID;
-	}
+//	// Generate a new id
+//	int generateUniqueID() {
+//		final int lowestID = 154;
+//		if (usedIDs == null)
+//			usedIDs = new TreeSet<Integer>();
+//		int theID = (usedIDs.isEmpty()) ? lowestID : usedIDs.last()+1;
+//		usedIDs.add(theID);
+//		return theID;
+//	}
 	
 	// Sample data with integer multiplicities
 	class LoadTestDataAction extends Action {
@@ -344,7 +345,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			// barium titanate
 			XPDFSampleParameters bto = new XPDFSampleParameters();
 			bto.setName("Barium Titanate");
-			bto.setId(generateUniqueID());
+//			bto.setId(generateUniqueID());
 			bto.setPhases(new ArrayList<String>(Arrays.asList(new String[] {"BTO", "CaTiO3"})));
 			bto.setComposition("BaTiO3"); // Should be "Ba0.9Ca0.1TiO3"
 			bto.setDensity(3.71);
@@ -359,7 +360,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			// rutile
 			XPDFSampleParameters rutile = new XPDFSampleParameters();
 			rutile.setName("Rutile");
-			rutile.setId(generateUniqueID());
+//			rutile.setId(generateUniqueID());
 			rutile.setPhases(new ArrayList<String>(Arrays.asList(new String[] {"TiO2"})));
 			rutile.setComposition("TiO2");
 			rutile.setDensity(6.67);
@@ -374,7 +375,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			// and something else
 			XPDFSampleParameters explodite = new XPDFSampleParameters();
 			explodite.setName("Explodite");
-			explodite.setId(generateUniqueID());
+//			explodite.setId(generateUniqueID());
 			explodite.setPhases(new ArrayList<String>(Arrays.asList(new String[] {"LF", "O"})));
 			explodite.setComposition("K2S4P");
 			explodite.setDensity(1.1);

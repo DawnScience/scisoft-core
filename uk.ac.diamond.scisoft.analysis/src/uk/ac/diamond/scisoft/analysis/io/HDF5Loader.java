@@ -899,7 +899,15 @@ public class HDF5Loader extends AbstractFileLoader {
 
 		HDF5LazyLoader l = new HDF5LazyLoader(file.getHostname(), file.getFilename(), nodePath, name, trueShape, type.isize, type.dtype, extendUnsigned);
 
-		node.setDataset(new LazyDynamicDataset(name, type.dtype, type.isize, trueShape.clone(), HDF5Utils.toIntArray(node.getMaxShape()), l));
+		int[] max = null;
+		try {
+			max = HDF5Utils.toIntArray(node.getMaxShape());
+		} catch (Exception e) {
+			logger.warn("Max shape cant convert to int");
+		}
+		
+		
+		node.setDataset(new LazyDynamicDataset(name, type.dtype, type.isize, trueShape.clone(), max, l));
 		return true;
 	}
 

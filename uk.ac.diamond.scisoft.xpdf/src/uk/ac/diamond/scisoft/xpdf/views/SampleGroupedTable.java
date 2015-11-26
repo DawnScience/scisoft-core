@@ -43,6 +43,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TableColumn;
 
 /**
@@ -212,18 +213,27 @@ class SampleGroupedTable {
 	}
 
 	/**
-	 * Set the focus of the underlying Viewers.
+	 * Sets the focus of the underlying Viewers.
 	 */
 	public void setFocus() {
 		groupedTable.setFocus();
 	}
 
 	/**
-	 * Set the {@link Layout} data of the underlying Composite.
+	 * Sets the {@link Layout} data of the underlying Composite.
 	 * @param layout
 	 */
 	public void setLayoutData(Object layout) {
 		groupedTable.setLayoutData(layout);
+	}
+	
+	/**
+	 * Returns the SWT {@link Control} of the grouped table, for the purposes
+	 * of laying out &c.
+	 * @return the Control of the grouped table.
+	 */
+	public Control getControl() {
+		return groupedTable;
 	}
 	
 	/**

@@ -21,6 +21,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
@@ -41,6 +42,9 @@ public class XPDFSampleEditorView extends ViewPart {
 	private Button delButton;
 	private Button clrButton;
 	
+	private Button cifPhaseButton;
+	private Button eraPhaseButton;
+	
 	private Action loadTestDataAction;
 	private Action simPDFAction;
 	private Action saveAction;
@@ -50,8 +54,9 @@ public class XPDFSampleEditorView extends ViewPart {
 	private Action pointBreakAction;
 	private Action deleteAction;
 	private Action clearAction;
-		
+	
 	private SampleGroupedTable sampleTable;
+	private SampleGroupedTable phaseTable;
 
 	public XPDFSampleEditorView() {
 	}
@@ -63,13 +68,21 @@ public class XPDFSampleEditorView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		
+		SashForm sampleEditorComposite = new SashForm(parent, SWT.VERTICAL);
+		
 		// Overall composite of the view
-		Composite sampleTableCompo = new Composite(parent, SWT.BORDER);
+		Composite sampleTableCompo = new Composite(sampleEditorComposite, SWT.BORDER);
 		sampleTableCompo.setLayout(new FormLayout());
+		Composite phaseTableCompo = new Composite(sampleEditorComposite, SWT.BORDER);
+		phaseTableCompo.setLayout(new FormLayout());
+		
+		sampleEditorComposite.setWeights(new int[]{1,1});
 		
 		sampleTable = new SampleGroupedTable(sampleTableCompo, SWT.NONE);
 		Composite buttonCompo = new Composite(sampleTableCompo, SWT.NONE);
-
+		phaseTable = new SampleGroupedTable(phaseTableCompo, SWT.NONE);
+		Composite phaseButtonCompo = new Composite(phaseTableCompo, SWT.NONE);
+		
 		FormData formData = new FormData();
 		formData.left = new FormAttachment(0);
 		formData.right = new FormAttachment(100);
@@ -86,12 +99,30 @@ public class XPDFSampleEditorView extends ViewPart {
 		buttonCompo.setLayoutData(formData);
 		buttonCompo.setLayout(new FormLayout());
 		
+		formData = new FormData();
+		formData.left = new FormAttachment(0);
+		formData.right = new FormAttachment(100);
+		formData.bottom = new FormAttachment(phaseButtonCompo);
+		formData.top = new FormAttachment(0);
+//		formData.top = new FormAttachment(buttonCompo);
+		phaseTable.setLayoutData(formData);
+		
+		formData = new FormData();
+		formData.left = new FormAttachment(0);
+		formData.right = new FormAttachment(100);
+		formData.bottom = new FormAttachment(100);
+		phaseButtonCompo.setLayoutData(formData);
+		phaseButtonCompo.setLayout(new FormLayout());
+		
 		createActions();
 		createLoadButtons(buttonCompo);
 		createCentreButtons(buttonCompo);
 		createRHSButtons(buttonCompo);
 		
+		createPhaseLoadButtons(phaseButtonCompo);
+		
 		sampleTable.setInput(getSite());
+		phaseTable.setInput(getSite());
 	}
 
 		
@@ -256,6 +287,24 @@ public class XPDFSampleEditorView extends ViewPart {
 		eraButton.setToolTipText("Create a new sample from the data contained in a specified ERA file.");
 	}
 
+	private void createPhaseLoadButtons(Composite parent) {
+		int leftMargin = 10;
+		int topMargin = 10;
+//		Composite stCompo = compoAbove.getParent();
+
+		cifPhaseButton = new Button(parent, SWT.NONE);
+		FormData formData = new FormData();
+		formData.left = new FormAttachment(0, leftMargin);
+		formData.top = new FormAttachment(0, topMargin);
+		formData.bottom = new FormAttachment(100, -topMargin);
+		cifPhaseButton.setLayoutData(formData);
+		cifPhaseButton.setText("New phase(s) from CIF file");
+		cifPhaseButton.setToolTipText("Create new phase(s) from the data contained in a specified Crystallographic Information File.");
+		
+	}
+	
+	
+	
 	@Override
 	public void setFocus() {
 		sampleTable.setFocus();

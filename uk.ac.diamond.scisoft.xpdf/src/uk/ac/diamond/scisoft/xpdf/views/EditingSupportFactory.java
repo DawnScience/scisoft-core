@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.xpdf.views;
 
+import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -23,6 +24,6 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public interface EditingSupportFactory {
 	
-	EditingSupport get(Viewer v);
+	EditingSupport get(ColumnViewer v);
 
 }

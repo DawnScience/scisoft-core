@@ -70,6 +70,9 @@ class XPDFGroupedTable extends Composite {
 	// exhaust the stack
 	private boolean propagateSelectionChange;
 	
+	// summed widths of the columns per group
+	private int[] groupWidths;
+	
 	public XPDFGroupedTable(Composite parent, int style) {
 		super(parent, style);
 		// Attach to the left and right edges of the parent, and set to a fixed height
@@ -89,7 +92,8 @@ class XPDFGroupedTable extends Composite {
 		
 		groupViewers = new ArrayList<TableViewer>();
 		groupNames = new ArrayList<String>();
-
+		groupWidths = new int[0];
+		
 		sortedGroup = -1;
 		
 		propagateSelectionChange = true;
@@ -114,9 +118,14 @@ class XPDFGroupedTable extends Composite {
 				break;
 			}
 		}
-		if (tV == null) return;
-		TableColumnLayout tCL = (TableColumnLayout) tV.getTable().getParent().getLayout();
-		tCL.setColumnData(col.getColumn(), new ColumnWeightData(weight));
+		if (tV != null) {
+			TableColumnLayout tCL = (TableColumnLayout) tV.getTable().getParent().getLayout();
+			tCL.setColumnData(col.getColumn(), new ColumnWeightData(weight));
+			
+			groupWidths[groupViewers.indexOf(tV)] += weight;
+			tableCompo.setWeights(groupWidths);
+		}
+
 	}
 
 	// Editing support may need to manufacture its classes, hence a factory interface is used.
@@ -161,6 +170,8 @@ class XPDFGroupedTable extends Composite {
 		// Otherwise, add a group with this name to the end of the list of groups
 		groupNames.add(groupName);
 		groupViewers.add(createColumnGroupInternal(tableCompo, groupName));
+		groupWidths = Arrays.copyOf(groupWidths, groupWidths.length+1);
+		groupWidths[groupWidths.length-1] = 0;
 	}
 	
 	

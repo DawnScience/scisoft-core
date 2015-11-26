@@ -22,6 +22,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -107,13 +108,23 @@ class SampleGroupedTable {
 		for (int iGroup = 0; iGroup < groupNames.size(); iGroup++) {
 			groupedTable.createColumnGroup(groupNames.get(iGroup));
 			for (int iColumn = 0; iColumn < groupedColumnNames.get(iGroup).size(); iColumn++) {
-				TableViewerColumn col = groupedTable.addColumn(groupNames.get(iGroup), SWT.NONE);
-				col.getColumn().setText(groupedColumnNames.get(iGroup).get(iColumn));
-				groupedTable.setColumnWidth(col, groupedColumnWeights.get(iGroup).get(iColumn));
-				col.setLabelProvider(new SampleTableCLP(groupedColumnNames.get(iGroup).get(iColumn)));
-				//					col.setEditingSupport(new SampleTableCES(groupedColumnNames.get(iGroup).get(iColumn), tV));
-				groupedTable.setColumnEditingSupport(col, new SampleTableCESFactory(groupedColumnNames.get(iGroup).get(iColumn)));
-				col.getColumn().addSelectionListener(getColumnSelectionAdapter(col.getColumn(), groupedColumnNames.get(iGroup).get(iColumn)));
+				if (iGroup == 0 && iColumn == 0) {
+					ColumnInterface colI = new NameColumnInterface();
+					TableViewerColumn col = groupedTable.addColumn(groupNames.get(iGroup), SWT.NONE);
+					col.getColumn().setText(colI.getName());
+					groupedTable.setColumnWidth(col, colI.getWeight());
+					col.setLabelProvider(colI.getLabelProvider());
+					groupedTable.setColumnEditingSupport(col, colI);
+					col.getColumn().addSelectionListener(getColumnSelectionAdapter(col.getColumn(), groupedColumnNames.get(iGroup).get(iColumn)));
+				} else {
+					TableViewerColumn col = groupedTable.addColumn(groupNames.get(iGroup), SWT.NONE);
+					col.getColumn().setText(groupedColumnNames.get(iGroup).get(iColumn));
+					groupedTable.setColumnWidth(col, groupedColumnWeights.get(iGroup).get(iColumn));
+					col.setLabelProvider(new SampleTableCLP(groupedColumnNames.get(iGroup).get(iColumn)));
+					//					col.setEditingSupport(new SampleTableCES(groupedColumnNames.get(iGroup).get(iColumn), tV));
+					groupedTable.setColumnEditingSupport(col, new SampleTableCESFactory(groupedColumnNames.get(iGroup).get(iColumn)));
+					col.getColumn().addSelectionListener(getColumnSelectionAdapter(col.getColumn(), groupedColumnNames.get(iGroup).get(iColumn)));
+				}
 			}
 		}
 
@@ -593,8 +604,8 @@ class SampleGroupedTable {
 		public SampleTableCESFactory(String column) {
 			this.column = column;
 		}
-
-		public EditingSupport get(Viewer v) {
+		@Override
+		public EditingSupport get(final ColumnViewer v) {
 			return new SampleTableCES(column, (TableViewer) v);
 		}
 	}
@@ -613,6 +624,7 @@ class SampleGroupedTable {
 		@Override
 		protected CellEditor getCellEditor(Object element) {
 			return new TextCellEditor(tV.getTable());
+//			return new TextCellEditor();
 		}
 		@Override
 		protected boolean canEdit(Object element) {
@@ -680,4 +692,108 @@ class SampleGroupedTable {
 		return theID;
 	}
 
+}
+
+interface ColumnInterface extends EditingSupportFactory {
+	public Comparator<?> getComparator();
+	public ColumnLabelProvider getLabelProvider();
+	public String getName();
+	public int getWeight();
+}
+
+class DimensionsInterface implements ColumnInterface {
+
+	@Override
+	public EditingSupport get(ColumnViewer v) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Comparator<?> getComparator() {
+		return new Comparator<XPDFSampleParameters>() {
+			@Override
+			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+				return 0;
+			}
+		};
+	}
+
+	@Override
+	public ColumnLabelProvider getLabelProvider() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getName() {
+		return "Dimensions";
+	}
+
+	@Override
+	public int getWeight() {
+		return 25;
+	}
+	
+}
+
+class NameColumnInterface implements ColumnInterface {
+
+	@Override
+	public EditingSupport get(final ColumnViewer v) {
+		return new EditingSupport(v) {
+
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				return new TextCellEditor(((TableViewer) v).getTable());
+			}
+
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+
+			@Override
+			protected Object getValue(Object element) {
+				return ((XPDFSampleParameters) element).getName();
+			}
+
+			@Override
+			protected void setValue(Object element, Object value) {
+				((XPDFSampleParameters) element).setName((String) value);
+			}
+			
+		};
+	}
+
+	@Override
+	public Comparator<?> getComparator() {
+		return new Comparator<XPDFSampleParameters>() {
+			@Override
+			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		};
+	}
+
+	@Override
+	public ColumnLabelProvider getLabelProvider() {
+		return new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return ((XPDFSampleParameters) element).getName();
+			}
+		};
+	}
+
+	@Override
+	public String getName() {
+		return "Name";
+	}
+
+	@Override
+	public int getWeight() {
+		return 20;
+	}
+	
 }

@@ -24,6 +24,6 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public interface EditingSupportFactory {
 	
-	EditingSupport get(ColumnViewer v);
+	EditingSupport get(final ColumnViewer v);
 
 }

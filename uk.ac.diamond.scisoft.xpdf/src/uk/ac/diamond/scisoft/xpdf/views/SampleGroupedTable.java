@@ -1,4 +1,4 @@
-/*-
+/*
  * Copyright 2015 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
@@ -23,6 +23,7 @@ import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -45,6 +46,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.TableColumn;
 
 /**
@@ -58,7 +60,10 @@ class SampleGroupedTable {
 
 	// The samples held in the table
 	private List<XPDFSampleParameters> samples;
-
+	
+	private List<XPDFSampleParameters> filteredSamples;
+	private boolean showSamples, showContainers;
+		
 	// the grouped table object that does the displaying
 	private XPDFGroupedTable groupedTable;
 
@@ -67,6 +72,8 @@ class SampleGroupedTable {
 	private List<String> groupNames;
 	private List<List<String>> groupedColumnNames;
 	private List<List<Integer>> groupedColumnWeights;
+	
+	private SampleParametersContentProvider contentProvider;
 
 	/**
 	 * Constructor.
@@ -81,6 +88,9 @@ class SampleGroupedTable {
 
 		samples = new ArrayList<XPDFSampleParameters>();
 
+		showSamples = true;
+		showContainers  = true;
+		
 		groupedTable = new XPDFGroupedTable(parent, SWT.NONE);
 
 		groupNames = new ArrayList<String>();
@@ -103,7 +113,7 @@ class SampleGroupedTable {
 		groupedColumnWeights.add(Arrays.asList(new Integer[] {15}));
 //		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {null, null, null, null, null}));
 		columnInterfaces = new ArrayList<ColumnInterface<XPDFSampleParameters>>();
-		columnInterfaces.add(null);
+		columnInterfaces.add(new TypeColumnInterface(this));
 		groupedColumnInterfaces.add(columnInterfaces);
 		
 		groupNames.add("Properties");
@@ -137,7 +147,7 @@ class SampleGroupedTable {
 					groupedTable.setColumnWidth(col, colI.getWeight());
 					col.setLabelProvider(colI.getLabelProvider());
 					groupedTable.setColumnEditingSupport(col, colI);
-					col.getColumn().addSelectionListener(getColumnSelectionAdapter(col.getColumn(), colI.getComparator()));
+					col.getColumn().addSelectionListener(colI.getSelectionAdapter(this, col));
 				} else {
 					TableViewerColumn col = groupedTable.addColumn(groupNames.get(iGroup), SWT.NONE);
 					col.getColumn().setText(groupedColumnNames.get(iGroup).get(iColumn));
@@ -150,18 +160,21 @@ class SampleGroupedTable {
 			}
 		}
 
-		groupedTable.setContentProvider(new IStructuredContentProvider() {
-			@Override
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}	// TODO Auto-generated method stub
-
-			@Override
-			public void dispose() {} // TODO Auto-generated method stub
-
-			@Override
-			public Object[] getElements(Object inputElement) {
-				return samples.toArray();
-			}
-		});
+		
+		contentProvider = new SampleParametersContentProvider();
+		groupedTable.setContentProvider(contentProvider);
+		//		groupedTable.setContentProvider(new IStructuredContentProvider() {
+//			@Override
+//			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}	// TODO Auto-generated method stub
+//
+//			@Override
+//			public void dispose() {} // TODO Auto-generated method stub
+//
+//			@Override
+//			public Object[] getElements(Object inputElement) {
+//				return samples.toArray();
+//			}
+//		});
 
 		// The label provider for the column headers
 		List<String> allColumnNames = new ArrayList<String>();
@@ -205,6 +218,8 @@ class SampleGroupedTable {
 		samples.clear();
 		usedIDs.clear();
 		groupedTable.refresh();
+		showSamples();
+		showContainers();
 	}
 
 	/**
@@ -267,6 +282,59 @@ class SampleGroupedTable {
 	 */
 	public Control getControl() {
 		return groupedTable;
+	}
+	
+	/**
+	 * Sets the samples to be shown
+	 */
+	public void showSamples() {
+		showSamples(true);
+	}
+	/**
+	 * Sets the flag as to whether the samples are to be shown
+	 * @param show
+	 * 			show the samples?
+	 */
+	public void showSamples(boolean show) {
+		showSamples = show;
+	}
+	/**
+	 * Sets the containers to be shown
+	 */
+	public void showContainers() {
+		showContainers(true);
+	}
+	/**
+	 * Sets the flag as to whether the containers are to be shown
+	 * @param show
+	 * 			show the containers?
+	 */
+	public void showContainers(boolean show) {
+		showContainers = show;
+	}
+	/**
+	 * Sets the samples to be hidden
+	 */
+	public void hideSamples() {
+		showSamples(false);
+	}
+	/**
+	 * Set the containers to be hidden
+	 */
+	public void hideContainers() {
+		showContainers(false);
+	}
+
+	public boolean isShowingSamples() {
+		return showSamples;
+	}
+	
+	public boolean isShowingContainers() {
+		return showContainers;
+	}
+	
+	public void refresh() {
+		groupedTable.refresh();
 	}
 	
 	/**
@@ -340,7 +408,7 @@ class SampleGroupedTable {
 		};
 	}
 	
-	private SelectionAdapter getColumnSelectionAdapter(final TableColumn tableColumn, final Comparator<XPDFSampleParameters> comparator) {
+	public SelectionAdapter getColumnSelectionAdapter(final TableColumn tableColumn, final Comparator<XPDFSampleParameters> comparator) {
 		return new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -480,17 +548,54 @@ class SampleGroupedTable {
 
 	class SampleParametersContentProvider implements IStructuredContentProvider {
 
+		public SampleParametersContentProvider() {
+			showSamples = true;
+			showContainers = true;
+		}
+		
+		public boolean isShowingContainers() {
+			return showContainers;
+		}
+
+		public boolean isShowingSamples() {
+			return showSamples;            
+		}                                     
 		@Override
 		public void dispose() {} // TODO Auto-generated method stub
 
 		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {} // TODO Auto-generated method stub
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+//			viewer.refresh();
+		}
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			return samples.toArray(new XPDFSampleParameters[]{});
+			if (showSamples && showContainers) {
+				return samples.toArray(new XPDFSampleParameters[]{});
+			} else if (showContainers) {
+				List<XPDFSampleParameters> containers = new ArrayList<XPDFSampleParameters>();
+				for (XPDFSampleParameters container : samples)
+					if (!container.isSample())
+						containers.add(container);
+				return containers.toArray(new XPDFSampleParameters[]{});
+			} else {
+				List<XPDFSampleParameters> filteredSamples = new ArrayList<XPDFSampleParameters>();
+				for (XPDFSampleParameters sample : samples)
+					if (sample.isSample())
+						filteredSamples.add(sample);
+				return filteredSamples.toArray(new XPDFSampleParameters[]{});
+			}
+				
 		}
 
+		public void showSamples(boolean show) {
+			showSamples = show;
+		}
+
+		public void showContainers(boolean show) {
+			showContainers = show;
+		}
+		
 	}
 
 	// Column label provider. Use a switch to provide the different data labels for the different columns.
@@ -750,7 +855,7 @@ class SampleGroupedTable {
 }
 
 interface ColumnInterface<T> extends EditingSupportFactory {
-	public Comparator<T> getComparator();
+	public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col);
 	public ColumnLabelProvider getLabelProvider();
 	public String getName();
 	public int getWeight();
@@ -765,13 +870,13 @@ class DimensionsInterface implements ColumnInterface<XPDFSampleParameters> {
 	}
 
 	@Override
-	public Comparator<XPDFSampleParameters> getComparator() {
-		return new Comparator<XPDFSampleParameters>() {
+	public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col) {
+		return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
 			@Override
 			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
 				return 0;
 			}
-		};
+		});
 	}
 
 	@Override
@@ -823,13 +928,13 @@ class NameColumnInterface implements ColumnInterface<XPDFSampleParameters> {
 	}
 
 	@Override
-	public Comparator<XPDFSampleParameters> getComparator() {
-		return new Comparator<XPDFSampleParameters>() {
+	public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col) {
+		return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
 			@Override
 			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
 				return o1.getName().compareTo(o2.getName());
 			}
-		};
+		});
 	}
 
 	@Override
@@ -882,13 +987,13 @@ class CodeColumnInterface implements ColumnInterface<XPDFSampleParameters> {
 	}
 
 	@Override
-	public Comparator<XPDFSampleParameters> getComparator() {
-		return new Comparator<XPDFSampleParameters>() {
+	public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col) {
+		return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
 			@Override
 			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
 				return Integer.compare(o1.getId(), o2.getId());
 			}
-		};
+		});
 	}
 
 	@Override
@@ -904,6 +1009,102 @@ class CodeColumnInterface implements ColumnInterface<XPDFSampleParameters> {
 	@Override
 	public String getName() {
 		return "Code";
+	}
+
+	@Override
+	public int getWeight() {
+		return 5;
+	}
+	
+}
+
+class TypeColumnInterface implements ColumnInterface<XPDFSampleParameters> {
+
+	private static String sampleString = "Sample";
+	private static String containerString = "Container";
+	private static String[] comboChoices = {sampleString, containerString};
+	private SampleGroupedTable sampleTable;
+	
+	public TypeColumnInterface(SampleGroupedTable sampleTable) {
+		this.sampleTable = sampleTable;
+	}
+	
+	@Override
+	public EditingSupport get(final ColumnViewer v) {
+		return new EditingSupport(v) {
+			
+			@Override
+			protected void setValue(Object element, Object value) {
+				switch((int) value) {
+				case(0) : 
+					((XPDFSampleParameters) element).setAsSample();
+				break;
+				case(1) :
+					((XPDFSampleParameters) element).setAsContainer();
+				break;
+				default :
+					break;
+				}
+				sampleTable.refresh();
+			}
+			
+			@Override
+			protected Object getValue(Object element) {
+				return ((XPDFSampleParameters) element).isSample() ? 0 : 1;
+			}
+			
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				return new ComboBoxCellEditor(((TableViewer) v).getTable(), comboChoices);
+			}
+			
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+		};
+	}
+
+	@Override
+	public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col) {
+		return new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				if (tab.isShowingContainers()) {
+					if (tab.isShowingSamples()) {
+						tab.hideContainers();
+						tab.showSamples();
+					} else {
+						tab.showSamples();
+						tab.showContainers();
+					}
+				} else {
+					tab.showContainers();
+					tab.hideSamples();
+				}
+				tab.refresh();
+				col.getColumn().setText(getName());
+		}
+		};
+	}
+	
+	@Override
+	public ColumnLabelProvider getLabelProvider() {
+		return new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return ((XPDFSampleParameters) element).isSample() ? sampleString : containerString;
+			}
+		};
+	}
+
+	@Override
+	public String getName() {
+		if (sampleTable.isShowingSamples() && sampleTable.isShowingContainers()) return sampleString+"/"+containerString;
+		if (sampleTable.isShowingSamples())
+			return sampleString;
+		else
+			return containerString;
 	}
 
 	@Override

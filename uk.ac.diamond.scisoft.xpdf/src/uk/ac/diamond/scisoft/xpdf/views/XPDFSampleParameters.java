@@ -22,6 +22,7 @@ import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
 public class XPDFSampleParameters {
 	private String name;
 	private int id;
+	private boolean isSample;
 	private List<String> phases;
 	private XPDFSubstance substance;
 	private double suggestedEnergy;
@@ -35,14 +36,21 @@ public class XPDFSampleParameters {
 	public XPDFSampleParameters() {
 		this.substance = new XPDFSubstance();
 		this.phases = new ArrayList<String>();
+		isSample = true;
 	}
 
+	public XPDFSampleParameters(boolean isSample) {
+		this();
+		this.isSample = isSample;
+	}
+	
 	/**
 	 * Copy constructor
 	 */
 	public XPDFSampleParameters(XPDFSampleParameters inSamp) {
 		this.name = inSamp.name;
 		this.phases = new ArrayList<String>(inSamp.phases);
+		this.isSample = inSamp.isSample;
 		this.substance = (inSamp.substance != null) ? new XPDFSubstance(inSamp.substance) : null;
 		this.suggestedEnergy = inSamp.suggestedEnergy;
 		this.suggestedCapDiameter = inSamp.suggestedCapDiameter;
@@ -89,11 +97,33 @@ public class XPDFSampleParameters {
 	}
 
 	/**
+	 * @return the isSample
+	 */
+	public boolean isSample() {
+		return isSample;
+	}
+
+	/**
+	 *  Sets the object as representing a sample
+	 */
+	public void setAsSample() {
+		this.isSample = true;
+	}
+
+	/**
+	 * Sets the object as a container
+	 */
+	public void setAsContainer() {
+		this.isSample = false;
+	}
+	
+	/**
 	 * @return the substance
 	 */
 	public XPDFSubstance getSubstance() {
 		return substance;
 	}
+	
 	/**
 	 * @param substance the substance to set
 	 */

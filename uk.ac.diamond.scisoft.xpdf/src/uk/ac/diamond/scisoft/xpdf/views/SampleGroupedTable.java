@@ -96,8 +96,8 @@ class SampleGroupedTable {
 		groupNames = new ArrayList<String>();
 		groupedColumnNames = new ArrayList<List<String>>();
 		groupedColumnWeights = new ArrayList<List<Integer>>();
-		List<List<ColumnInterface<XPDFSampleParameters>>> groupedColumnInterfaces = new ArrayList<List<ColumnInterface<XPDFSampleParameters>>>();
-		List<ColumnInterface<XPDFSampleParameters>> columnInterfaces = new ArrayList<ColumnInterface<XPDFSampleParameters>>();
+		List<List<ColumnInterface>> groupedColumnInterfaces = new ArrayList<List<ColumnInterface>>();
+		List<ColumnInterface> columnInterfaces = new ArrayList<ColumnInterface>();
 		
 		// Define the column groups and the columns they contain
 		groupNames.add("Sample Identification");
@@ -112,7 +112,7 @@ class SampleGroupedTable {
 		groupedColumnNames.add(Arrays.asList(new String[] {""}));
 		groupedColumnWeights.add(Arrays.asList(new Integer[] {15}));
 //		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {null, null, null, null, null}));
-		columnInterfaces = new ArrayList<ColumnInterface<XPDFSampleParameters>>();
+		columnInterfaces = new ArrayList<ColumnInterface>();
 		columnInterfaces.add(new TypeColumnInterface(this));
 		groupedColumnInterfaces.add(columnInterfaces);
 		
@@ -120,7 +120,7 @@ class SampleGroupedTable {
 		groupedColumnNames.add(Arrays.asList(new String[] {"Phases", "Composition", "Density", "Vol. frac."}));
 		groupedColumnWeights.add(Arrays.asList(new Integer[] {10, 15, 10, 5}));
 //		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {null, null, null}));
-		columnInterfaces = new ArrayList<ColumnInterface<XPDFSampleParameters>>();
+		columnInterfaces = new ArrayList<ColumnInterface>();
 		columnInterfaces.add(null);
 		columnInterfaces.add(null);
 		columnInterfaces.add(null);
@@ -131,7 +131,7 @@ class SampleGroupedTable {
 		groupedColumnNames.add(Arrays.asList(new String[] {"Container", "μ"}));
 		groupedColumnWeights.add(Arrays.asList(new Integer[] {10, 10}));
 //		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {null, null}));
-		columnInterfaces = new ArrayList<ColumnInterface<XPDFSampleParameters>>();
+		columnInterfaces = new ArrayList<ColumnInterface>();
 		columnInterfaces.add(null);
 		columnInterfaces.add(null);
 		groupedColumnInterfaces.add(columnInterfaces);
@@ -141,7 +141,7 @@ class SampleGroupedTable {
 			groupedTable.createColumnGroup(groupNames.get(iGroup));
 			for (int iColumn = 0; iColumn < groupedColumnInterfaces.get(iGroup).size(); iColumn++) {
 				if (groupedColumnInterfaces.get(iGroup).get(iColumn) != null) {
-					ColumnInterface<XPDFSampleParameters> colI = groupedColumnInterfaces.get(iGroup).get(iColumn);
+					ColumnInterface colI = groupedColumnInterfaces.get(iGroup).get(iColumn);
 					TableViewerColumn col = groupedTable.addColumn(groupNames.get(iGroup), SWT.NONE);
 					col.getColumn().setText(colI.getName());
 					groupedTable.setColumnWidth(col, colI.getWeight());
@@ -854,14 +854,14 @@ class SampleGroupedTable {
 
 }
 
-interface ColumnInterface<T> extends EditingSupportFactory {
+interface ColumnInterface extends EditingSupportFactory {
 	public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col);
 	public ColumnLabelProvider getLabelProvider();
 	public String getName();
 	public int getWeight();
 }
 
-class DimensionsInterface implements ColumnInterface<XPDFSampleParameters> {
+class DimensionsInterface implements ColumnInterface {
 
 	@Override
 	public EditingSupport get(ColumnViewer v) {
@@ -897,7 +897,7 @@ class DimensionsInterface implements ColumnInterface<XPDFSampleParameters> {
 	
 }
 
-class NameColumnInterface implements ColumnInterface<XPDFSampleParameters> {
+class NameColumnInterface implements ColumnInterface {
 
 	@Override
 	public EditingSupport get(final ColumnViewer v) {
@@ -959,7 +959,7 @@ class NameColumnInterface implements ColumnInterface<XPDFSampleParameters> {
 	
 }
 
-class CodeColumnInterface implements ColumnInterface<XPDFSampleParameters> {
+class CodeColumnInterface implements ColumnInterface {
 
 	@Override
 	public EditingSupport get(ColumnViewer v) {
@@ -1018,7 +1018,7 @@ class CodeColumnInterface implements ColumnInterface<XPDFSampleParameters> {
 	
 }
 
-class TypeColumnInterface implements ColumnInterface<XPDFSampleParameters> {
+class TypeColumnInterface implements ColumnInterface {
 
 	private static String sampleString = "Sample";
 	private static String containerString = "Container";
@@ -1113,3 +1113,5 @@ class TypeColumnInterface implements ColumnInterface<XPDFSampleParameters> {
 	}
 	
 }
+
+//class CompositionColumnInterface extends 

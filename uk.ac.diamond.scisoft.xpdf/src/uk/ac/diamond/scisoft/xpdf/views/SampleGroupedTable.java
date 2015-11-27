@@ -121,10 +121,10 @@ class SampleGroupedTable {
 		groupedColumnWeights.add(Arrays.asList(new Integer[] {10, 15, 10, 5}));
 //		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {null, null, null}));
 		columnInterfaces = new ArrayList<ColumnInterface>();
-		columnInterfaces.add(null);
-		columnInterfaces.add(null);
-		columnInterfaces.add(null);
-		columnInterfaces.add(null);
+		columnInterfaces.add(new PhaseColumnInterface());
+		columnInterfaces.add(new CompositionColumnInterface());
+		columnInterfaces.add(new DensityColumnInterface());
+		columnInterfaces.add(new PackingColumnInterface());
 		groupedColumnInterfaces.add(columnInterfaces);
 
 		groupNames.add("Geometry");
@@ -132,31 +132,21 @@ class SampleGroupedTable {
 		groupedColumnWeights.add(Arrays.asList(new Integer[] {10, 10}));
 //		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {null, null}));
 		columnInterfaces = new ArrayList<ColumnInterface>();
-		columnInterfaces.add(null);
-		columnInterfaces.add(null);
+		columnInterfaces.add(new ContainerColumnInterface());
+		columnInterfaces.add(new DimensionColumnInterface());
 		groupedColumnInterfaces.add(columnInterfaces);
 
 //		Make up the columns
 		for (int iGroup = 0; iGroup < groupNames.size(); iGroup++) {
 			groupedTable.createColumnGroup(groupNames.get(iGroup));
 			for (int iColumn = 0; iColumn < groupedColumnInterfaces.get(iGroup).size(); iColumn++) {
-				if (groupedColumnInterfaces.get(iGroup).get(iColumn) != null) {
-					ColumnInterface colI = groupedColumnInterfaces.get(iGroup).get(iColumn);
-					TableViewerColumn col = groupedTable.addColumn(groupNames.get(iGroup), SWT.NONE);
-					col.getColumn().setText(colI.getName());
-					groupedTable.setColumnWidth(col, colI.getWeight());
-					col.setLabelProvider(colI.getLabelProvider());
-					groupedTable.setColumnEditingSupport(col, colI);
-					col.getColumn().addSelectionListener(colI.getSelectionAdapter(this, col));
-				} else {
-					TableViewerColumn col = groupedTable.addColumn(groupNames.get(iGroup), SWT.NONE);
-					col.getColumn().setText(groupedColumnNames.get(iGroup).get(iColumn));
-					groupedTable.setColumnWidth(col, groupedColumnWeights.get(iGroup).get(iColumn));
-					col.setLabelProvider(new SampleTableCLP(groupedColumnNames.get(iGroup).get(iColumn)));
-					//					col.setEditingSupport(new SampleTableCES(groupedColumnNames.get(iGroup).get(iColumn), tV));
-					groupedTable.setColumnEditingSupport(col, new SampleTableCESFactory(groupedColumnNames.get(iGroup).get(iColumn)));
-					col.getColumn().addSelectionListener(getColumnSelectionAdapterString(col.getColumn(), groupedColumnNames.get(iGroup).get(iColumn)));
-				}
+				ColumnInterface colI = groupedColumnInterfaces.get(iGroup).get(iColumn);
+				TableViewerColumn col = groupedTable.addColumn(groupNames.get(iGroup), SWT.NONE);
+				col.getColumn().setText(colI.getName());
+				groupedTable.setColumnWidth(col, colI.getWeight());
+				col.setLabelProvider(colI.getLabelProvider());
+				groupedTable.setColumnEditingSupport(col, colI);
+				if (colI.getSelectionAdapter(this, col) != null) col.getColumn().addSelectionListener(colI.getSelectionAdapter(this, col));
 			}
 		}
 
@@ -861,41 +851,6 @@ interface ColumnInterface extends EditingSupportFactory {
 	public int getWeight();
 }
 
-class DimensionsInterface implements ColumnInterface {
-
-	@Override
-	public EditingSupport get(ColumnViewer v) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col) {
-		return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return 0;
-			}
-		});
-	}
-
-	@Override
-	public ColumnLabelProvider getLabelProvider() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getName() {
-		return "Dimensions";
-	}
-
-	@Override
-	public int getWeight() {
-		return 25;
-	}
-	
-}
 
 class NameColumnInterface implements ColumnInterface {
 
@@ -920,7 +875,7 @@ class NameColumnInterface implements ColumnInterface {
 
 			@Override
 			protected void setValue(Object element, Object value) {
-				((XPDFSampleParameters) element).setName((String) value);
+				((XPDFSampleParameters) element).setName( (value != null) ? (String) value : "");
 				v.refresh();
 			}
 			
@@ -1114,4 +1069,388 @@ class TypeColumnInterface implements ColumnInterface {
 	
 }
 
-//class CompositionColumnInterface extends 
+class PhaseColumnInterface implements ColumnInterface {
+
+	private String phasesString(Collection<String> phases) {
+		StringBuilder sb = new StringBuilder();
+		for (String phase : phases) {
+			sb.append(phase);
+			sb.append(", ");
+		}
+		if (sb.length() > 2) sb.delete(sb.length()-2, sb.length());
+		return sb.toString();
+	}
+	
+	@Override
+	public EditingSupport get(final ColumnViewer v) {
+		// TODO: Should interact with the phases table
+		return new EditingSupport(v) {
+			
+			@Override
+			protected void setValue(Object element, Object value) {
+				String[] arrayOfPhases = ((String) value).split(","); 
+				List<String> listOfPhases = new ArrayList<String>();
+				for (int i = 0; i < arrayOfPhases.length; i++)
+					listOfPhases.add(arrayOfPhases[i].trim());
+				((XPDFSampleParameters) element).setPhases(listOfPhases);
+				v.refresh();
+			}
+			
+			@Override
+			protected Object getValue(Object element) {
+				return phasesString(((XPDFSampleParameters) element).getPhases());
+			}
+			
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				return new TextCellEditor(((TableViewer) v).getTable());
+			}
+			
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+		};
+		}
+
+	@Override
+	public SelectionAdapter getSelectionAdapter(SampleGroupedTable tab,
+			TableViewerColumn col) {
+		return null;
+	}
+
+	@Override
+	public ColumnLabelProvider getLabelProvider() {
+		return new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return phasesString(((XPDFSampleParameters) element).getPhases());
+			}
+		};
+	}
+
+	@Override
+	public String getName() {
+		return "Phases";
+	}
+
+	@Override
+	public int getWeight() {
+		return 20;
+	}
+	
+}
+
+class CompositionColumnInterface implements ColumnInterface {
+
+	@Override
+	public EditingSupport get(final ColumnViewer v) {
+		// TODO: Should be uneditable, derived from the phases
+		return new EditingSupport(v) {
+			
+			@Override
+			protected void setValue(Object element, Object value) {
+				((XPDFSampleParameters) element).setComposition((value != null) ? (String) value : null);
+				v.refresh();
+			}
+			
+			@Override
+			protected Object getValue(Object element) {
+				return ((XPDFSampleParameters) element).getComposition();
+			}
+			
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				return new TextCellEditor(((TableViewer) v).getTable());
+			}
+			
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+		};
+		}
+
+	@Override
+	public SelectionAdapter getSelectionAdapter(SampleGroupedTable tab,
+			TableViewerColumn col) {
+		return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
+			@Override
+			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+				return o1.getComposition().compareTo(o2.getComposition());
+			}
+		});
+	}
+
+	@Override
+	public ColumnLabelProvider getLabelProvider() {
+		return new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return ((XPDFSampleParameters) element).getComposition();
+			}
+		};
+	}
+
+	@Override
+	public String getName() {
+		return "Composition";
+	}
+
+	@Override
+	public int getWeight() {
+		return 15;
+	}
+	
+}
+
+class DensityColumnInterface implements ColumnInterface {
+
+	@Override
+	public EditingSupport get(final ColumnViewer v) {
+		// TODO: Should be uneditable, derived from the phases
+		return new EditingSupport(v) {
+			
+			@Override
+			protected void setValue(Object element, Object value) {
+				((XPDFSampleParameters) element).setDensity((double) value);
+				v.refresh();
+			}
+			
+			@Override
+			protected Object getValue(Object element) {
+				return ((XPDFSampleParameters) element).getDensity();
+			}
+			
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				return new TextCellEditor(((TableViewer) v).getTable());
+			}
+			
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+		};
+	}
+
+	@Override
+	public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col) {
+		return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
+			@Override
+			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+				return Double.compare(o1.getDensity(), o2.getDensity());
+			}
+		});
+	}
+
+	@Override
+	public ColumnLabelProvider getLabelProvider() {
+		return new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return Double.toString(((XPDFSampleParameters) element).getDensity());
+			}
+		};
+	}
+
+	@Override
+	public String getName() {
+		return "Density";
+	}
+
+	@Override
+	public int getWeight() {
+		return 10;
+	}
+	
+}
+
+class PackingColumnInterface implements ColumnInterface {
+
+	@Override
+	public EditingSupport get(final ColumnViewer v) {
+		return new EditingSupport(v) {
+
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				return new TextCellEditor(((TableViewer) v).getTable());
+			}
+
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+
+			@Override
+			protected Object getValue(Object element) {
+				return ((XPDFSampleParameters) element).getPackingFraction();
+			}
+
+			@Override
+			protected void setValue(Object element, Object value) {
+				((XPDFSampleParameters) element).setPackingFraction(Double.parseDouble((String) value));				
+			}
+			
+		};
+	}
+
+	@Override
+	public SelectionAdapter getSelectionAdapter(SampleGroupedTable tab,
+			TableViewerColumn col) {
+		return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
+			@Override
+			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+				return Double.compare(o1.getPackingFraction(), o2.getPackingFraction());
+			}
+		});
+	}
+
+	@Override
+	public ColumnLabelProvider getLabelProvider() {
+		return new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return Double.toString(((XPDFSampleParameters) element).getPackingFraction());
+			}
+		};
+	}
+
+	@Override
+	public String getName() {
+		return "Pack. frac.";
+	}
+
+	@Override
+	public int getWeight() {
+		return 5;
+	}
+	
+}
+
+class ContainerColumnInterface implements ColumnInterface {
+
+	@Override
+	public EditingSupport get(final ColumnViewer v) {
+		// TODO: Should return a combo box, or list of containers
+		return new EditingSupport(v) {
+			
+			@Override
+			protected void setValue(Object element, Object value) {
+				((XPDFSampleParameters) element).setContainer((value != null) ? (String) value : null);
+				v.refresh();
+			}
+			
+			@Override
+			protected Object getValue(Object element) {
+				return ((XPDFSampleParameters) element).getContainer();
+			}
+			
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				return new TextCellEditor(((TableViewer) v).getTable());
+			}
+			
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+		};
+		}
+
+	@Override
+	public SelectionAdapter getSelectionAdapter(SampleGroupedTable tab,
+			TableViewerColumn col) {
+		return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
+			@Override
+			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+				return o1.getContainer().compareTo(o2.getContainer());
+			}
+		});
+	}
+
+	@Override
+	public ColumnLabelProvider getLabelProvider() {
+		return new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return ((XPDFSampleParameters) element).getContainer();
+			}
+		};
+	}
+
+	@Override
+	public String getName() {
+		return "Container";
+	}
+
+	@Override
+	public int getWeight() {
+		return 15;
+	}
+	
+}
+
+class DimensionColumnInterface implements ColumnInterface {
+
+	@Override
+	public EditingSupport get(final ColumnViewer v) {
+		// TODO: Add the actual dimensions, rather than copying the container column
+		return new EditingSupport(v) {
+			
+			@Override
+			protected void setValue(Object element, Object value) {
+				((XPDFSampleParameters) element).setContainer((value != null) ? (String) value : null);
+				v.refresh();
+			}
+			
+			@Override
+			protected Object getValue(Object element) {
+				return ((XPDFSampleParameters) element).getContainer();
+			}
+			
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				return new TextCellEditor(((TableViewer) v).getTable());
+			}
+			
+			@Override
+			protected boolean canEdit(Object element) {
+				return true;
+			}
+		};
+		}
+
+	@Override
+	public SelectionAdapter getSelectionAdapter(SampleGroupedTable tab,
+			TableViewerColumn col) {
+		return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
+			@Override
+			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+				return o1.getContainer().compareTo(o2.getContainer());
+			}
+		});
+	}
+
+	@Override
+	public ColumnLabelProvider getLabelProvider() {
+		return new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return ((XPDFSampleParameters) element).getContainer();
+			}
+		};
+	}
+
+	@Override
+	public String getName() {
+		return "Dimensions";
+	}
+
+	@Override
+	public int getWeight() {
+		return 20;
+	}
+	
+}
+

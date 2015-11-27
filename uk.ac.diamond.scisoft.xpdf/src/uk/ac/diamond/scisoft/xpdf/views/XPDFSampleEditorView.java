@@ -43,7 +43,7 @@ public class XPDFSampleEditorView extends ViewPart {
 	private Button clrButton;
 	
 	private Button cifPhaseButton;
-	private Button eraPhaseButton;
+//	private Button eraPhaseButton;
 	
 	private Action loadTestDataAction;
 	private Action simPDFAction;

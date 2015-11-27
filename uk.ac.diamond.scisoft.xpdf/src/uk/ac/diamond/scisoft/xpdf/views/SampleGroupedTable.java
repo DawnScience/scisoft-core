@@ -86,35 +86,52 @@ class SampleGroupedTable {
 		groupNames = new ArrayList<String>();
 		groupedColumnNames = new ArrayList<List<String>>();
 		groupedColumnWeights = new ArrayList<List<Integer>>();
-		List<List<ColumnInterface<?>>> groupedColumnInterfaces = new ArrayList<List<ColumnInterface<?>>>();
-
+		List<List<ColumnInterface<XPDFSampleParameters>>> groupedColumnInterfaces = new ArrayList<List<ColumnInterface<XPDFSampleParameters>>>();
+		List<ColumnInterface<XPDFSampleParameters>> columnInterfaces = new ArrayList<ColumnInterface<XPDFSampleParameters>>();
+		
 		// Define the column groups and the columns they contain
 		groupNames.add("Sample Identification");
 		groupedColumnNames.add(Arrays.asList(new String[] {"Sample name", "Code"}));
 		groupedColumnWeights.add(Arrays.asList(new Integer[] {20, 10}));
-		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {new NameColumnInterface(), null}));
+		columnInterfaces.clear();
+		columnInterfaces.add(new NameColumnInterface());
+		columnInterfaces.add(new CodeColumnInterface());
+		groupedColumnInterfaces.add(columnInterfaces);
 		
-		groupNames.add("Sample Details");
-		groupedColumnNames.add(Arrays.asList(new String[] {"", "Phases", "Composition", "Density", "Vol. frac."}));
-		groupedColumnWeights.add(Arrays.asList(new Integer[] {2, 10, 15, 10, 5}));
-		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {null, null, null, null, null}));
+		groupNames.add("Type");
+		groupedColumnNames.add(Arrays.asList(new String[] {""}));
+		groupedColumnWeights.add(Arrays.asList(new Integer[] {15}));
+//		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {null, null, null, null, null}));
+		columnInterfaces = new ArrayList<ColumnInterface<XPDFSampleParameters>>();
+		columnInterfaces.add(null);
+		groupedColumnInterfaces.add(columnInterfaces);
+		
+		groupNames.add("Properties");
+		groupedColumnNames.add(Arrays.asList(new String[] {"Phases", "Composition", "Density", "Vol. frac."}));
+		groupedColumnWeights.add(Arrays.asList(new Integer[] {10, 15, 10, 5}));
+//		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {null, null, null}));
+		columnInterfaces = new ArrayList<ColumnInterface<XPDFSampleParameters>>();
+		columnInterfaces.add(null);
+		columnInterfaces.add(null);
+		columnInterfaces.add(null);
+		columnInterfaces.add(null);
+		groupedColumnInterfaces.add(columnInterfaces);
 
-		groupNames.add("Suggested Parameters");
-		groupedColumnNames.add(Arrays.asList(new String[] {"Energy", "μ", "Max capillary ID"}));
-		groupedColumnWeights.add(Arrays.asList(new Integer[] {5, 5, 15}));
-		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {null, null, null}));
-
-		groupNames.add("Chosen Parameters");
-		groupedColumnNames.add(Arrays.asList(new String[] {"Beam state", "Container"}));
+		groupNames.add("Geometry");
+		groupedColumnNames.add(Arrays.asList(new String[] {"Container", "μ"}));
 		groupedColumnWeights.add(Arrays.asList(new Integer[] {10, 10}));
-		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {null, null}));
+//		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {null, null}));
+		columnInterfaces = new ArrayList<ColumnInterface<XPDFSampleParameters>>();
+		columnInterfaces.add(null);
+		columnInterfaces.add(null);
+		groupedColumnInterfaces.add(columnInterfaces);
 
 //		Make up the columns
 		for (int iGroup = 0; iGroup < groupNames.size(); iGroup++) {
 			groupedTable.createColumnGroup(groupNames.get(iGroup));
-			for (int iColumn = 0; iColumn < groupedColumnNames.get(iGroup).size(); iColumn++) {
+			for (int iColumn = 0; iColumn < groupedColumnInterfaces.get(iGroup).size(); iColumn++) {
 				if (groupedColumnInterfaces.get(iGroup).get(iColumn) != null) {
-					ColumnInterface<XPDFSampleParameters> colI = new NameColumnInterface();
+					ColumnInterface<XPDFSampleParameters> colI = groupedColumnInterfaces.get(iGroup).get(iColumn);
 					TableViewerColumn col = groupedTable.addColumn(groupNames.get(iGroup), SWT.NONE);
 					col.getColumn().setText(colI.getName());
 					groupedTable.setColumnWidth(col, colI.getWeight());
@@ -128,7 +145,7 @@ class SampleGroupedTable {
 					col.setLabelProvider(new SampleTableCLP(groupedColumnNames.get(iGroup).get(iColumn)));
 					//					col.setEditingSupport(new SampleTableCES(groupedColumnNames.get(iGroup).get(iColumn), tV));
 					groupedTable.setColumnEditingSupport(col, new SampleTableCESFactory(groupedColumnNames.get(iGroup).get(iColumn)));
-					col.getColumn().addSelectionListener(getColumnSelectionAdapter(col.getColumn(), groupedColumnNames.get(iGroup).get(iColumn)));
+					col.getColumn().addSelectionListener(getColumnSelectionAdapterString(col.getColumn(), groupedColumnNames.get(iGroup).get(iColumn)));
 				}
 			}
 		}
@@ -286,7 +303,7 @@ class SampleGroupedTable {
 	 * 				the enum identifier of the column
 	 * @return the new anonymous sub-class of Selection Adapter
 	 */
-	private SelectionAdapter getColumnSelectionAdapter(final TableColumn tableColumn, final String column) {
+	private SelectionAdapter getColumnSelectionAdapterString(final TableColumn tableColumn, final String column) {
 		return new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -833,6 +850,65 @@ class NameColumnInterface implements ColumnInterface<XPDFSampleParameters> {
 	@Override
 	public int getWeight() {
 		return 20;
+	}
+	
+}
+
+class CodeColumnInterface implements ColumnInterface<XPDFSampleParameters> {
+
+	@Override
+	public EditingSupport get(ColumnViewer v) {
+		return new EditingSupport(v) {
+			
+			@Override
+			protected void setValue(Object element, Object value) {
+			}
+			
+			@Override
+			protected Object getValue(Object element) {
+				return ((XPDFSampleParameters) element).getId();
+			}
+			
+			@Override
+			protected CellEditor getCellEditor(Object element) {
+				return null;
+			}
+			
+			@Override
+			protected boolean canEdit(Object element) {
+				return false;
+			}
+		};
+	}
+
+	@Override
+	public Comparator<XPDFSampleParameters> getComparator() {
+		return new Comparator<XPDFSampleParameters>() {
+			@Override
+			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+				return Integer.compare(o1.getId(), o2.getId());
+			}
+		};
+	}
+
+	@Override
+	public ColumnLabelProvider getLabelProvider() {
+		return new ColumnLabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return "E"+String.format("%05d", ((XPDFSampleParameters)element).getId());
+			}
+		};
+	}
+
+	@Override
+	public String getName() {
+		return "Code";
+	}
+
+	@Override
+	public int getWeight() {
+		return 10;
 	}
 	
 }

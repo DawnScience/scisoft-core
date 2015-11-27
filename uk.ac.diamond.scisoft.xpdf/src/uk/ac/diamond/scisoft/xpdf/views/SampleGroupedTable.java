@@ -28,8 +28,6 @@ import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
@@ -43,7 +41,6 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
@@ -61,7 +58,6 @@ class SampleGroupedTable {
 	// The samples held in the table
 	private List<XPDFSampleParameters> samples;
 	
-	private List<XPDFSampleParameters> filteredSamples;
 	private boolean showSamples, showContainers;
 		
 	// the grouped table object that does the displaying
@@ -132,7 +128,7 @@ class SampleGroupedTable {
 		groupedColumnWeights.add(Arrays.asList(new Integer[] {10, 10}));
 //		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {null, null}));
 		columnInterfaces = new ArrayList<ColumnInterface>();
-		columnInterfaces.add(new ContainerColumnInterface());
+		columnInterfaces.add(new ShapeColumnInterface());
 		columnInterfaces.add(new DimensionColumnInterface());
 		groupedColumnInterfaces.add(columnInterfaces);
 
@@ -1184,7 +1180,7 @@ class PackingColumnInterface implements ColumnInterface {
 	
 }
 
-class ContainerColumnInterface implements ColumnInterface {
+class ShapeColumnInterface implements ColumnInterface {
 
 	@Override
 	public EditingSupport get(final ColumnViewer v) {
@@ -1237,7 +1233,7 @@ class ContainerColumnInterface implements ColumnInterface {
 
 	@Override
 	public String getName() {
-		return "Container";
+		return "Shape";
 	}
 
 	@Override

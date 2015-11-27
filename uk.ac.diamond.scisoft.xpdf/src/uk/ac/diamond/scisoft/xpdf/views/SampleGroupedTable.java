@@ -86,36 +86,41 @@ class SampleGroupedTable {
 		groupNames = new ArrayList<String>();
 		groupedColumnNames = new ArrayList<List<String>>();
 		groupedColumnWeights = new ArrayList<List<Integer>>();
+		List<List<ColumnInterface<?>>> groupedColumnInterfaces = new ArrayList<List<ColumnInterface<?>>>();
 
 		// Define the column groups and the columns they contain
 		groupNames.add("Sample Identification");
 		groupedColumnNames.add(Arrays.asList(new String[] {"Sample name", "Code"}));
 		groupedColumnWeights.add(Arrays.asList(new Integer[] {20, 10}));
-
+		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {new NameColumnInterface(), null}));
+		
 		groupNames.add("Sample Details");
 		groupedColumnNames.add(Arrays.asList(new String[] {"", "Phases", "Composition", "Density", "Vol. frac."}));
 		groupedColumnWeights.add(Arrays.asList(new Integer[] {2, 10, 15, 10, 5}));
+		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {null, null, null, null, null}));
 
 		groupNames.add("Suggested Parameters");
 		groupedColumnNames.add(Arrays.asList(new String[] {"Energy", "μ", "Max capillary ID"}));
 		groupedColumnWeights.add(Arrays.asList(new Integer[] {5, 5, 15}));
+		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {null, null, null}));
 
 		groupNames.add("Chosen Parameters");
 		groupedColumnNames.add(Arrays.asList(new String[] {"Beam state", "Container"}));
 		groupedColumnWeights.add(Arrays.asList(new Integer[] {10, 10}));
+		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {null, null}));
 
 //		Make up the columns
 		for (int iGroup = 0; iGroup < groupNames.size(); iGroup++) {
 			groupedTable.createColumnGroup(groupNames.get(iGroup));
 			for (int iColumn = 0; iColumn < groupedColumnNames.get(iGroup).size(); iColumn++) {
-				if (iGroup == 0 && iColumn == 0) {
-					ColumnInterface colI = new NameColumnInterface();
+				if (groupedColumnInterfaces.get(iGroup).get(iColumn) != null) {
+					ColumnInterface<XPDFSampleParameters> colI = new NameColumnInterface();
 					TableViewerColumn col = groupedTable.addColumn(groupNames.get(iGroup), SWT.NONE);
 					col.getColumn().setText(colI.getName());
 					groupedTable.setColumnWidth(col, colI.getWeight());
 					col.setLabelProvider(colI.getLabelProvider());
 					groupedTable.setColumnEditingSupport(col, colI);
-					col.getColumn().addSelectionListener(getColumnSelectionAdapter(col.getColumn(), groupedColumnNames.get(iGroup).get(iColumn)));
+					col.getColumn().addSelectionListener(getColumnSelectionAdapter(col.getColumn(), colI.getComparator()));
 				} else {
 					TableViewerColumn col = groupedTable.addColumn(groupNames.get(iGroup), SWT.NONE);
 					col.getColumn().setText(groupedColumnNames.get(iGroup).get(iColumn));
@@ -312,6 +317,39 @@ class SampleGroupedTable {
 
 				groupedTable.setSortColumn(tableColumn);
 				groupedTable.setSortDirection(sortDirection);
+
+				groupedTable.refresh();
+			}
+		};
+	}
+	
+	private SelectionAdapter getColumnSelectionAdapter(final TableColumn tableColumn, final Comparator<XPDFSampleParameters> comparator) {
+		return new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				if (comparator == null) return;
+				// Find the present sorted column, if any
+				TableColumn presentSorted = null;
+				int oldSortDirection = SWT.NONE;
+				presentSorted = groupedTable.getSortColumn();
+				oldSortDirection = groupedTable.getSortDirection();
+
+				groupedTable.setSortColumn(null);
+				groupedTable.setSortDirection(SWT.NONE);
+
+				int newSortDirection = SWT.DOWN;
+				
+				// If the same column is sorted as is now selected, then reverse the sorting
+				if (presentSorted == tableColumn)
+					newSortDirection = (oldSortDirection == SWT.UP) ? SWT.DOWN : SWT.UP;
+
+				// Do the sort
+				Collections.sort(samples, comparator);
+				if (newSortDirection == SWT.UP)
+					Collections.reverse(samples);
+
+				groupedTable.setSortColumn(tableColumn);
+				groupedTable.setSortDirection(newSortDirection);
 
 				groupedTable.refresh();
 			}
@@ -694,14 +732,14 @@ class SampleGroupedTable {
 
 }
 
-interface ColumnInterface extends EditingSupportFactory {
-	public Comparator<?> getComparator();
+interface ColumnInterface<T> extends EditingSupportFactory {
+	public Comparator<T> getComparator();
 	public ColumnLabelProvider getLabelProvider();
 	public String getName();
 	public int getWeight();
 }
 
-class DimensionsInterface implements ColumnInterface {
+class DimensionsInterface implements ColumnInterface<XPDFSampleParameters> {
 
 	@Override
 	public EditingSupport get(ColumnViewer v) {
@@ -710,7 +748,7 @@ class DimensionsInterface implements ColumnInterface {
 	}
 
 	@Override
-	public Comparator<?> getComparator() {
+	public Comparator<XPDFSampleParameters> getComparator() {
 		return new Comparator<XPDFSampleParameters>() {
 			@Override
 			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
@@ -737,7 +775,7 @@ class DimensionsInterface implements ColumnInterface {
 	
 }
 
-class NameColumnInterface implements ColumnInterface {
+class NameColumnInterface implements ColumnInterface<XPDFSampleParameters> {
 
 	@Override
 	public EditingSupport get(final ColumnViewer v) {
@@ -761,13 +799,14 @@ class NameColumnInterface implements ColumnInterface {
 			@Override
 			protected void setValue(Object element, Object value) {
 				((XPDFSampleParameters) element).setName((String) value);
+				v.refresh();
 			}
 			
 		};
 	}
 
 	@Override
-	public Comparator<?> getComparator() {
+	public Comparator<XPDFSampleParameters> getComparator() {
 		return new Comparator<XPDFSampleParameters>() {
 			@Override
 			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {

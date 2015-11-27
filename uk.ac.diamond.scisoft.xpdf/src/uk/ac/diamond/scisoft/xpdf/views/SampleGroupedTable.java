@@ -153,24 +153,12 @@ class SampleGroupedTable {
 		
 		contentProvider = new SampleParametersContentProvider();
 		groupedTable.setContentProvider(contentProvider);
-		//		groupedTable.setContentProvider(new IStructuredContentProvider() {
-//			@Override
-//			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}	// TODO Auto-generated method stub
-//
-//			@Override
-//			public void dispose() {} // TODO Auto-generated method stub
-//
-//			@Override
-//			public Object[] getElements(Object inputElement) {
-//				return samples.toArray();
-//			}
-//		});
 
 		// The label provider for the column headers
-		List<String> allColumnNames = new ArrayList<String>();
-		for (List<String> groupedNames : groupedColumnNames)
-			allColumnNames.addAll(groupedNames);
-		groupedTable.setLabelProvider(new SampleTableLP(allColumnNames));
+//		List<String> allColumnNames = new ArrayList<String>();
+//		for (List<String> groupedNames : groupedColumnNames)
+//			allColumnNames.addAll(groupedNames);
+//		groupedTable.setLabelProvider(new SampleTableLP(allColumnNames));
 
 		// The Drag Listener and the Drop Adapter need the Viewer, which 
 		// we do not (and should not) have access to at this level. The
@@ -349,54 +337,6 @@ class SampleGroupedTable {
 	public void createContextMenu(MenuManager menuManager) {
 		groupedTable.createContextMenu(menuManager);			
 	}
-
-	// Column selection listeners.
-	/**
-	 * Creates a listener that sorts the data depending on the column selected.
-	 * <p>
-	 * Clicking on the individual column headers will sort, or reverse the sort on the data in all sub-tables.
-	 * @param tableColumn
-	 * 					the SWT column object
-	 * @param column
-	 * 				the enum identifier of the column
-	 * @return the new anonymous sub-class of Selection Adapter
-	 */
-	private SelectionAdapter getColumnSelectionAdapterString(final TableColumn tableColumn, final String column) {
-		return new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				// If the present column has no defined Comparator, then return
-				if (getColumnSorting(column) == null) return;
-
-				// Find the present sorted column, if any
-				TableColumn presentSorted = null;
-				int sortDirection = SWT.NONE;
-				presentSorted = groupedTable.getSortColumn();
-				sortDirection = groupedTable.getSortDirection();
-
-				groupedTable.setSortColumn(null);
-				groupedTable.setSortDirection(SWT.NONE);
-
-				// If the same column is sorted as is now selected, then reverse the sorting
-				if (presentSorted == tableColumn)
-					sortDirection = (sortDirection == SWT.UP) ? SWT.DOWN : SWT.UP;
-
-				// Do the sort
-				if (sortDirection != SWT.NONE) {
-					if (getColumnSorting(column) != null) {
-						Collections.sort(samples, getColumnSorting(column));
-						if (sortDirection == SWT.UP)
-							Collections.reverse(samples);
-					}
-				}
-
-				groupedTable.setSortColumn(tableColumn);
-				groupedTable.setSortDirection(sortDirection);
-
-				groupedTable.refresh();
-			}
-		};
-	}
 	
 	public SelectionAdapter getColumnSelectionAdapter(final TableColumn tableColumn, final Comparator<XPDFSampleParameters> comparator) {
 		return new SelectionAdapter() {
@@ -431,110 +371,25 @@ class SampleGroupedTable {
 		};
 	}
 
-	// Set a Comparator, depending on the column selected
-	private Comparator<XPDFSampleParameters> getColumnSorting(String column) {
-		Comparator<XPDFSampleParameters> columnSorter;
-		switch (column) {
-		case "Sample name":
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-				@Override
-				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-					return o1.getName().compareTo(o2.getName());
-				}
-			};
-			break;
-		case "Code":
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-				@Override
-				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-					return Integer.compare(o1.getId(), o2.getId());
-				}
-			};
-			break;
-		case "":
-		case "Phases":
-		case "Composition":
-			columnSorter = null;
-			break;
-		case "Density":
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-				@Override
-				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-					return Double.compare(o1.getDensity(), o2.getDensity());
-				}
-			};
-			break;
-		case "Vol. frac.":
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-				@Override
-				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-					return Double.compare(o1.getPackingFraction(), o2.getPackingFraction());
-				}
-			};
-			break;
-		case "Energy":
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-				@Override
-				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-					return Double.compare(o1.getSuggestedEnergy(), o2.getSuggestedEnergy());
-				}
-			};
-			break;
-		case "μ":
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-				@Override
-				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-					return Double.compare(o1.getMu(), o2.getMu());
-				}
-			};
-			break;
-		case "Max capillary ID":
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-				@Override
-				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-					return Double.compare(o1.getSuggestedCapDiameter(), o2.getSuggestedCapDiameter());
-				}
-			};
-			break;
-		case "Beam state":
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-				@Override
-				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-					return o1.getBeamState().compareTo(o2.getBeamState());
-				}
-			};
-		case "Container":
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-				@Override
-				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-					return o1.getContainer().compareTo(o2.getContainer());
-				}
-			};
-		default:
-			columnSorter = null;
-		}
-		return columnSorter;
-	}
-
-	// The table label provider does nothing except delegate to the column label provider
-	class SampleTableLP extends LabelProvider implements ITableLabelProvider {
-
-		final List<String> columns;
-
-		public SampleTableLP(List <String> columns) {
-			this.columns = columns;
-		}
-
-		@Override
-		public Image getColumnImage(Object element, int columnIndex) {
-			return null;
-		}
-
-		@Override
-		public String getColumnText(Object element, int columnIndex) {
-			return (new SampleTableCLP(columns.get(columnIndex))).getText(element);
-		}	
-	}
+//	// The table label provider does nothing except delegate to the column label provider
+//	class SampleTableLP extends LabelProvider implements ITableLabelProvider {
+//
+//		final List<String> columns;
+//
+//		public SampleTableLP(List <String> columns) {
+//			this.columns = columns;
+//		}
+//
+//		@Override
+//		public Image getColumnImage(Object element, int columnIndex) {
+//			return null;
+//		}
+//
+//		@Override
+//		public String getColumnText(Object element, int columnIndex) {
+//			return (new SampleTableCLP(columns.get(columnIndex))).getText(element);
+//		}	
+//	}
 
 	class SampleParametersContentProvider implements IStructuredContentProvider {
 
@@ -588,42 +443,42 @@ class SampleGroupedTable {
 		
 	}
 
-	// Column label provider. Use a switch to provide the different data labels for the different columns.
-	class SampleTableCLP extends ColumnLabelProvider {
-
-		final String columnName;
-
-		public SampleTableCLP(String columnName) {
-			this.columnName = columnName;
-		}
-
-		@Override
-		public String getText(Object element) {
-			XPDFSampleParameters sample = (XPDFSampleParameters) element;
-			switch (columnName) {
-			case "Sample name": return sample.getName();
-			case "Code": return Integer.toString(sample.getId());
-			case "": return "+";
-			case "Phases": 
-				StringBuilder sb = new StringBuilder();
-				for (String phase : sample.getPhases()) {
-					sb.append(phase);
-					sb.append(", ");
-				}
-				if (sb.length() > 2) sb.delete(sb.length()-2, sb.length());
-				return sb.toString();
-			case "Composition": return sample.getComposition();
-			case "Density": return Double.toString(sample.getDensity());
-			case "Vol. frac.": return Double.toString(sample.getPackingFraction());
-			case "Energy": return Double.toString(sample.getSuggestedEnergy());
-			case "μ": return String.format("%.4f", sample.getMu());
-			case "Max capillary ID": return Double.toString(sample.getSuggestedCapDiameter());
-			case "Beam state": return sample.getBeamState();
-			case "Container": return sample.getContainer();
-			default: return "";
-			}
-		}
-	}
+//	// Column label provider. Use a switch to provide the different data labels for the different columns.
+//	class SampleTableCLP extends ColumnLabelProvider {
+//
+//		final String columnName;
+//
+//		public SampleTableCLP(String columnName) {
+//			this.columnName = columnName;
+//		}
+//
+//		@Override
+//		public String getText(Object element) {
+//			XPDFSampleParameters sample = (XPDFSampleParameters) element;
+//			switch (columnName) {
+//			case "Sample name": return sample.getName();
+//			case "Code": return Integer.toString(sample.getId());
+//			case "": return "+";
+//			case "Phases": 
+//				StringBuilder sb = new StringBuilder();
+//				for (String phase : sample.getPhases()) {
+//					sb.append(phase);
+//					sb.append(", ");
+//				}
+//				if (sb.length() > 2) sb.delete(sb.length()-2, sb.length());
+//				return sb.toString();
+//			case "Composition": return sample.getComposition();
+//			case "Density": return Double.toString(sample.getDensity());
+//			case "Vol. frac.": return Double.toString(sample.getPackingFraction());
+//			case "Energy": return Double.toString(sample.getSuggestedEnergy());
+//			case "μ": return String.format("%.4f", sample.getMu());
+//			case "Max capillary ID": return Double.toString(sample.getSuggestedCapDiameter());
+//			case "Beam state": return sample.getBeamState();
+//			case "Container": return sample.getContainer();
+//			default: return "";
+//			}
+//		}
+//	}
 
 	// drag support for local moves. Copy data
 	class LocalDragSupportListener extends DragSourceAdapter {
@@ -749,88 +604,88 @@ class SampleGroupedTable {
 		return targetIndex;
 	}
 
-	class SampleTableCESFactory  implements EditingSupportFactory {
-		final String column;
-		public SampleTableCESFactory(String column) {
-			this.column = column;
-		}
-		@Override
-		public EditingSupport get(final ColumnViewer v) {
-			return new SampleTableCES(column, (TableViewer) v);
-		}
-	}
-
-
-	class SampleTableCES extends EditingSupport {
-
-		final String column;
-		final TableViewer tV;	
-
-		public SampleTableCES(String column, TableViewer tV) {
-			super(tV);
-			this.column = column;
-			this.tV = tV;
-		};
-		@Override
-		protected CellEditor getCellEditor(Object element) {
-			return new TextCellEditor(tV.getTable());
-//			return new TextCellEditor();
-		}
-		@Override
-		protected boolean canEdit(Object element) {
-			if (column == "Code" || column == "" || column == "μ") 
-				return false;
-			else
-				return true;
-		}
-		@Override
-		protected Object getValue(Object element) {
-			XPDFSampleParameters sample = (XPDFSampleParameters) element;
-			switch (column) {
-			case "Sample name": return sample.getName();
-			case "Code": return sample.getId();
-			case "": return null; // TODO: This should eventually show something, but nothing for now.
-			case "Phases": return (new SampleTableCLP("Phases")).getText(element);
-			case "Composition": return sample.getComposition();
-			case "Density": return Double.toString(sample.getDensity());
-			case "Vol. frac.": return Double.toString(sample.getPackingFraction());
-			case "Energy": return Double.toString(sample.getSuggestedEnergy());
-			case "μ": return 1.0;
-			case "Max capillary ID": return Double.toString(sample.getSuggestedCapDiameter());
-			case "Beam state": return sample.getBeamState();
-			case "Container": return sample.getContainer();
-			default: return null;
-			}
-		}
-		@Override
-		protected void setValue(Object element, Object value) {
-			XPDFSampleParameters sample = (XPDFSampleParameters) element;
-			String sValue = (String) value;
-			switch (column) {
-			case "Sample name": sample.setName(sValue); break;
-			case "Code": break;
-			case "": break; // TODO: This should eventually do something. Call a big function, probably.
-			case "Phases": { // Parse a comma separated list of phases to a list of Strings
-				String[] arrayOfPhases = sValue.split(","); 
-				List<String> listOfPhases = new ArrayList<String>();
-				for (int i = 0; i < arrayOfPhases.length; i++)
-					listOfPhases.add(arrayOfPhases[i].trim());
-				sample.setPhases(listOfPhases);
-			} break;
-			case "Composition": sample.setComposition(sValue); break;
-			case "Density": sample.setDensity(Double.parseDouble(sValue)); break;
-			case "Vol. frac.": sample.setPackingFraction(Double.parseDouble(sValue)); break;
-			case "Energy": sample.setSuggestedEnergy(Double.parseDouble(sValue)); break;
-			case "μ": break;
-			case "Max capillary ID": sample.setSuggestedCapDiameter(Double.parseDouble(sValue)); break;
-			case "Beam state": sample.setBeamState(sValue); break;
-			case "Container": sample.setContainer(sValue); break;
-			default: break;
-			}
-			// Here, only this table needs updating
-			tV.update(element, null);
-		}
-	}
+//	class SampleTableCESFactory  implements EditingSupportFactory {
+//		final String column;
+//		public SampleTableCESFactory(String column) {
+//			this.column = column;
+//		}
+//		@Override
+//		public EditingSupport get(final ColumnViewer v) {
+//			return new SampleTableCES(column, (TableViewer) v);
+//		}
+//	}
+//
+//
+//	class SampleTableCES extends EditingSupport {
+//
+//		final String column;
+//		final TableViewer tV;	
+//
+//		public SampleTableCES(String column, TableViewer tV) {
+//			super(tV);
+//			this.column = column;
+//			this.tV = tV;
+//		};
+//		@Override
+//		protected CellEditor getCellEditor(Object element) {
+//			return new TextCellEditor(tV.getTable());
+////			return new TextCellEditor();
+//		}
+//		@Override
+//		protected boolean canEdit(Object element) {
+//			if (column == "Code" || column == "" || column == "μ") 
+//				return false;
+//			else
+//				return true;
+//		}
+//		@Override
+//		protected Object getValue(Object element) {
+//			XPDFSampleParameters sample = (XPDFSampleParameters) element;
+//			switch (column) {
+//			case "Sample name": return sample.getName();
+//			case "Code": return sample.getId();
+//			case "": return null; // TODO: This should eventually show something, but nothing for now.
+//			case "Phases": return (new SampleTableCLP("Phases")).getText(element);
+//			case "Composition": return sample.getComposition();
+//			case "Density": return Double.toString(sample.getDensity());
+//			case "Vol. frac.": return Double.toString(sample.getPackingFraction());
+//			case "Energy": return Double.toString(sample.getSuggestedEnergy());
+//			case "μ": return 1.0;
+//			case "Max capillary ID": return Double.toString(sample.getSuggestedCapDiameter());
+//			case "Beam state": return sample.getBeamState();
+//			case "Container": return sample.getContainer();
+//			default: return null;
+//			}
+//		}
+//		@Override
+//		protected void setValue(Object element, Object value) {
+//			XPDFSampleParameters sample = (XPDFSampleParameters) element;
+//			String sValue = (String) value;
+//			switch (column) {
+//			case "Sample name": sample.setName(sValue); break;
+//			case "Code": break;
+//			case "": break; // TODO: This should eventually do something. Call a big function, probably.
+//			case "Phases": { // Parse a comma separated list of phases to a list of Strings
+//				String[] arrayOfPhases = sValue.split(","); 
+//				List<String> listOfPhases = new ArrayList<String>();
+//				for (int i = 0; i < arrayOfPhases.length; i++)
+//					listOfPhases.add(arrayOfPhases[i].trim());
+//				sample.setPhases(listOfPhases);
+//			} break;
+//			case "Composition": sample.setComposition(sValue); break;
+//			case "Density": sample.setDensity(Double.parseDouble(sValue)); break;
+//			case "Vol. frac.": sample.setPackingFraction(Double.parseDouble(sValue)); break;
+//			case "Energy": sample.setSuggestedEnergy(Double.parseDouble(sValue)); break;
+//			case "μ": break;
+//			case "Max capillary ID": sample.setSuggestedCapDiameter(Double.parseDouble(sValue)); break;
+//			case "Beam state": sample.setBeamState(sValue); break;
+//			case "Container": sample.setContainer(sValue); break;
+//			default: break;
+//			}
+//			// Here, only this table needs updating
+//			tV.update(element, null);
+//		}
+//	}
 
  	// Generate a new id
 	private	int generateUniqueID() {
@@ -1213,13 +1068,13 @@ class DensityColumnInterface implements ColumnInterface {
 			
 			@Override
 			protected void setValue(Object element, Object value) {
-				((XPDFSampleParameters) element).setDensity((double) value);
+				((XPDFSampleParameters) element).setDensity(Double.parseDouble((String) value));
 				v.refresh();
 			}
 			
 			@Override
 			protected Object getValue(Object element) {
-				return ((XPDFSampleParameters) element).getDensity();
+				return Double.toString(((XPDFSampleParameters) element).getDensity());
 			}
 			
 			@Override
@@ -1284,12 +1139,13 @@ class PackingColumnInterface implements ColumnInterface {
 
 			@Override
 			protected Object getValue(Object element) {
-				return ((XPDFSampleParameters) element).getPackingFraction();
+				return Double.toString(((XPDFSampleParameters) element).getPackingFraction());
 			}
 
 			@Override
 			protected void setValue(Object element, Object value) {
 				((XPDFSampleParameters) element).setPackingFraction(Double.parseDouble((String) value));				
+				v.refresh();
 			}
 			
 		};

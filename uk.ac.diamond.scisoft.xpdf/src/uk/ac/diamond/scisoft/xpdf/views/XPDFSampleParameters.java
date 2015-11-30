@@ -195,7 +195,7 @@ public class XPDFSampleParameters {
 	
 	public String getShapeName() {
 		if (getForm().getGeom() == null)
-			return "\\emph{Defined by container}";
+			return "Defined by container";
 		else if (getForm().getGeom() instanceof XPDFComponentCylinder)
 			return "Cylinder";
 		else

@@ -1182,6 +1182,13 @@ class PackingColumnInterface implements ColumnInterface {
 
 class ShapeColumnInterface implements ColumnInterface {
 
+	private final static String cylinderString = "Cylinder";
+	final static String cylinderLowerString = "cylinder";
+	private final static String plateString = "Plate";
+	final static String plateLowerString = "plate";
+	private final static String noneString = "Defined by container";
+	private final static String[] shapeChoices = {cylinderString, plateString, noneString};
+	
 	@Override
 	public EditingSupport get(final ColumnViewer v) {
 		// TODO: Should return a combo box, or list of containers
@@ -1189,18 +1196,37 @@ class ShapeColumnInterface implements ColumnInterface {
 			
 			@Override
 			protected void setValue(Object element, Object value) {
-				((XPDFSampleParameters) element).setContainer((value != null) ? (String) value : null);
+				switch((int) value) {
+				case(0) :
+				case(1) :
+					((XPDFSampleParameters) element).setShape(shapeChoices[(int) value]);
+				break;
+				default :
+					((XPDFSampleParameters) element).setShape(null);
+				}
 				v.refresh();
 			}
 			
 			@Override
 			protected Object getValue(Object element) {
-				return ((XPDFSampleParameters) element).getContainer();
+				String shapeName = ((XPDFSampleParameters) element).getShapeName();
+				if (shapeName == null) {
+					return 2;
+				} else {
+					switch (shapeName.toLowerCase()) {
+					case (cylinderLowerString):
+						return 0;
+					case (plateLowerString):
+						return 1;
+					default:
+						return 2;
+					}
+				}
 			}
 			
 			@Override
 			protected CellEditor getCellEditor(Object element) {
-				return new TextCellEditor(((TableViewer) v).getTable());
+				return new ComboBoxCellEditor(((TableViewer) v).getTable(), shapeChoices);
 			}
 			
 			@Override
@@ -1208,7 +1234,7 @@ class ShapeColumnInterface implements ColumnInterface {
 				return true;
 			}
 		};
-		}
+	}
 
 	@Override
 	public SelectionAdapter getSelectionAdapter(SampleGroupedTable tab,
@@ -1216,7 +1242,7 @@ class ShapeColumnInterface implements ColumnInterface {
 		return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
 			@Override
 			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return o1.getContainer().compareTo(o2.getContainer());
+				return o1.getShapeName().compareTo(o2.getShapeName());
 			}
 		});
 	}
@@ -1226,7 +1252,7 @@ class ShapeColumnInterface implements ColumnInterface {
 		return new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				return ((XPDFSampleParameters) element).getContainer();
+				return ((XPDFSampleParameters) element).getShapeName();
 			}
 		};
 	}
@@ -1247,18 +1273,22 @@ class DimensionColumnInterface implements ColumnInterface {
 
 	@Override
 	public EditingSupport get(final ColumnViewer v) {
-		// TODO: Add the actual dimensions, rather than copying the container column
 		return new EditingSupport(v) {
 			
 			@Override
 			protected void setValue(Object element, Object value) {
-				((XPDFSampleParameters) element).setContainer((value != null) ? (String) value : null);
+				String[] dimStrings = ((String) value).split(",", 2);
+				if (dimStrings.length == 1)
+						((XPDFSampleParameters) element).setDimensions(0, Double.parseDouble(dimStrings[0]));
+				else if (dimStrings.length > 1)
+					((XPDFSampleParameters) element).setDimensions(Double.parseDouble(dimStrings[0]), Double.parseDouble(dimStrings[1]));
 				v.refresh();
 			}
 			
 			@Override
 			protected Object getValue(Object element) {
-				return ((XPDFSampleParameters) element).getContainer();
+				double[] dims = ((XPDFSampleParameters) element).getDimensions();
+				return (dims != null) ? Double.toString(dims[0]) + ", " + Double.toString(dims[1]) : "";
 			}
 			
 			@Override
@@ -1268,10 +1298,15 @@ class DimensionColumnInterface implements ColumnInterface {
 			
 			@Override
 			protected boolean canEdit(Object element) {
-				return true;
+				String shape = ((XPDFSampleParameters) element).getShapeName();
+				boolean isCylinder = shape.equalsIgnoreCase(ShapeColumnInterface.cylinderLowerString);
+				boolean isPlate = shape.equalsIgnoreCase(ShapeColumnInterface.plateLowerString);
+				return (isCylinder || isPlate) ?
+						true :
+							false;
 			}
 		};
-		}
+	}
 
 	@Override
 	public SelectionAdapter getSelectionAdapter(SampleGroupedTable tab,
@@ -1279,7 +1314,7 @@ class DimensionColumnInterface implements ColumnInterface {
 		return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
 			@Override
 			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return o1.getContainer().compareTo(o2.getContainer());
+				return ((Double) o1.getDimensions()[0]).compareTo((Double) o2.getDimensions()[0]);
 			}
 		});
 	}
@@ -1289,7 +1324,8 @@ class DimensionColumnInterface implements ColumnInterface {
 		return new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
-				return ((XPDFSampleParameters) element).getContainer();
+				double[] dims = ((XPDFSampleParameters) element).getDimensions();
+				return (dims != null) ? Double.toString(dims[0]) + ", " + Double.toString(dims[1]) : "-";
 			}
 		};
 	}

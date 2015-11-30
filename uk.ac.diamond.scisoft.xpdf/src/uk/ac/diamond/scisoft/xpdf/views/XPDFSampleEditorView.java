@@ -395,10 +395,11 @@ public class XPDFSampleEditorView extends ViewPart {
 			bto.setComposition("BaTiO3"); // Should be "Ba0.9Ca0.1TiO3"
 			bto.setDensity(3.71);
 			// Packing fraction as default
-			bto.setSuggestedEnergy(76.6);
-			bto.setSuggestedCapDiameter(1.0);
-			bto.setBeamState("76.6 Hi Flux");
-			bto.setContainer("0.3 mm B");
+//			bto.setSuggestedEnergy(76.6);
+//			bto.setSuggestedCapDiameter(1.0);
+//			bto.setBeamState("76.6 Hi Flux");
+//			bto.setContainer("0.3 mm B");
+			bto.setAsSample();
 			
 			sampleTable.add(bto);
 			
@@ -410,10 +411,11 @@ public class XPDFSampleEditorView extends ViewPart {
 			rutile.setComposition("TiO2");
 			rutile.setDensity(6.67);
 			// Packing fraction as default
-			rutile.setSuggestedEnergy(76.6);
-			rutile.setSuggestedCapDiameter(5.0);
-			rutile.setBeamState("76.6 Hi Flux");
-			rutile.setContainer("0.5 mm B");
+//			rutile.setSuggestedEnergy(76.6);
+//			rutile.setSuggestedCapDiameter(5.0);
+//			rutile.setBeamState("76.6 Hi Flux");
+//			rutile.setContainer("0.5 mm B");
+			rutile.setAsSample();
 			
 			sampleTable.add(rutile);
 			
@@ -425,10 +427,11 @@ public class XPDFSampleEditorView extends ViewPart {
 			explodite.setComposition("K2S4P");
 			explodite.setDensity(1.1);
 			//packing fraction as default
-			explodite.setSuggestedEnergy(76.6);
-			explodite.setSuggestedCapDiameter(5.0);
-			explodite.setBeamState("76.6 Hi Flux");
-			explodite.setContainer("0.5 mm");
+//			explodite.setSuggestedEnergy(76.6);
+//			explodite.setSuggestedCapDiameter(5.0);
+//			explodite.setBeamState("76.6 Hi Flux");
+//			explodite.setContainer("0.5 mm");
+			explodite.setAsSample();
 			
 			sampleTable.add(explodite);
 		}

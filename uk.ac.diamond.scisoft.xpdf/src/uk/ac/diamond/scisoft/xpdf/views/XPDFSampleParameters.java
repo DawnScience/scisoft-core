@@ -17,59 +17,57 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentForm;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentPlate;
 import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
+import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 
 public class XPDFSampleParameters {
-	private String name;
+//	private String name;
 	private int id;
-	private boolean isSample;
+//	private boolean isSample;
 	private List<String> phases;
-	private XPDFSubstance substance;
-	private double suggestedEnergy;
-	private double suggestedCapDiameter;
-	private String beamState;
-	private String container;
-
+//	private XPDFSubstance substance;
+//	private double suggestedEnergy;
+//	private double suggestedCapDiameter;
+//	private String beamState;
+//	private String container;
+	private XPDFTargetComponent component;
+	
 	/**
 	 * default ctor
 	 */
 	public XPDFSampleParameters() {
-		this.substance = new XPDFSubstance();
+		this.component = new XPDFTargetComponent();
 		this.phases = new ArrayList<String>();
-		isSample = true;
 	}
 
 	public XPDFSampleParameters(boolean isSample) {
 		this();
-		this.isSample = isSample;
+		this.component.setSample(isSample);
 	}
 	
 	/**
 	 * Copy constructor
 	 */
 	public XPDFSampleParameters(XPDFSampleParameters inSamp) {
-		this.name = inSamp.name;
+		this.component = new XPDFTargetComponent(inSamp.component);
 		this.phases = new ArrayList<String>(inSamp.phases);
-		this.isSample = inSamp.isSample;
-		this.substance = (inSamp.substance != null) ? new XPDFSubstance(inSamp.substance) : null;
-		this.suggestedEnergy = inSamp.suggestedEnergy;
-		this.suggestedCapDiameter = inSamp.suggestedCapDiameter;
-		this.beamState = inSamp.beamState;
-		this.container = inSamp.container;
 	}
 	
 	/**
 	 * @return the name of the sample
 	 */
 	public String getName() {
-		return name;
+		return component.getName();
 	}
 	/**
 	 * @param name
 	 * 			 the name of the sample to set
 	 */
 	public void setName(String name) {
-		this.name = name;
+		component.setName(name);
 	}
 	/**
 	 * @return the id
@@ -100,35 +98,35 @@ public class XPDFSampleParameters {
 	 * @return the isSample
 	 */
 	public boolean isSample() {
-		return isSample;
+		return component.isSample();
 	}
 
 	/**
 	 *  Sets the object as representing a sample
 	 */
 	public void setAsSample() {
-		this.isSample = true;
+		component.setSample(true);
 	}
 
 	/**
 	 * Sets the object as a container
 	 */
 	public void setAsContainer() {
-		this.isSample = false;
+		component.setSample(false);
 	}
 	
 	/**
 	 * @return the substance
 	 */
 	public XPDFSubstance getSubstance() {
-		return substance;
+		return getForm().getSubstance();
 	}
 	
 	/**
 	 * @param substance the substance to set
 	 */
 	public void setSubstance(XPDFSubstance substance) {
-		this.substance = substance;
+		getForm().setMatName(substance.getMaterialName());
 	}
 	
 	// Getters and setters for the properties of the substance
@@ -136,110 +134,121 @@ public class XPDFSampleParameters {
 	 * @return the ASCII formula of the substance
 	 */
 	public String getComposition() {
-		return substance.getMaterialName();
+		return getForm().getMaterialName();
 	}
 	/**
 	 * @param compoString
 	 * 					the compostion to be set
 	 */
 	public void setComposition(String compoString) {
-		substance.setMaterialComposition(compoString);
-		substance.setMaterialName(compoString);
+		getForm().setMatName(compoString);
 		// set the typical powder packing fraction
-		substance.setPackingFraction(0.6);
+		getForm().setPackingFraction(0.6);
 	}
 	/**
 	 * @return the crystallographic density of the material in g/cm³.
 	 */
 	public double getDensity() {
-		return substance.getMassDensity();
+		return getForm().getDensity();
 	}
 	/**
 	 * @param density
 	 * 				the crystallographic density of the material in g/cm³.
 	 */
 	public void setDensity(double density) {
-		substance.setMassDensity(density);
+		getForm().setDensity(density);
 	}
 	/**
 	 * @return the powder packing fraction (probably 0.6).
 	 */
 	public double getPackingFraction() {
-		return substance.getPackingFraction();
+		return getForm().getPackingFraction();
 	}
 	/**
 	 * @param fraction
 	 * 				the powder packing fraction to set.
 	 */
 	public void setPackingFraction(double fraction) {
-		substance.setPackingFraction(fraction);
+		getForm().setPackingFraction(fraction);
 	}
 	
 	
-	/**
-	 * @return the suggested beam energy in keV.
-	 */
-	public double getSuggestedEnergy() {
-		return suggestedEnergy;
-	}
-	/**
-	 * @param suggestedEnergy
-	 * 						the suggested beam energy  in keV.
-	 */
-	public void setSuggestedEnergy(double suggestedEnergy) {
-		this.suggestedEnergy = suggestedEnergy;
-	}
 	/**
 	 * @return the attenuation coefficient at the suggested beam energy.
 	 */
-	public double getMu() {
-		return substance.getAttenuationCoefficient(suggestedEnergy);
+	public double getMu(double beamEnergy) {
+		return getForm().getAttenuationCoefficient(beamEnergy);
 	}
-	/**
-	 * @return the suggested capillary diameter in mm.
-	 */
-	public double getSuggestedCapDiameter() {
-		return suggestedCapDiameter;
+//	/**
+//	 * @return the chosen container description.
+//	 */
+//	public String getContainer() {
+//		return container;
+//	}
+//	/**
+//	 * @param container
+//	 * 				the container description to set.
+//	 */
+//	public void setContainer(String container) {
+//		this.container = container;
+//	}
+	
+	public String getShapeName() {
+		if (getForm().getGeom() == null)
+			return "\\emph{Defined by container}";
+		else if (getForm().getGeom() instanceof XPDFComponentCylinder)
+			return "Cylinder";
+		else
+			return "Plate";
 	}
-	/**
-	 * @param suggestedCapDiameter
-	 * 							the suggested diameter of the capillary in mm.
-	 */
-	public void setSuggestedCapDiameter(double suggestedCapDiameter) {
-		this.suggestedCapDiameter = suggestedCapDiameter;
+	
+	public void setShape(String shapeName) {
+		if (shapeName == null)
+			getForm().setGeom(null);
+		else
+			switch(shapeName.toLowerCase()) {
+			case("cylinder") :
+				getForm().setGeom((getForm().getGeom() == null) ? new XPDFComponentCylinder() : new XPDFComponentCylinder(getForm().getGeom()));
+				break;
+			case("plate") :
+				getForm().setGeom((getForm().getGeom() == null) ? new XPDFComponentPlate() : new XPDFComponentPlate(getForm().getGeom()));
+				break;
+			default:
+				getForm().setGeom(null);
+			}
 	}
-	/**
-	 * @return the chosen beam state (keV and flux)
-	 */
-	public String getBeamState() {
-		return beamState;
+	
+	public double[] getDimensions() {
+		if (getForm().getGeom() == null)
+			return null;
+		else
+			return getForm().getGeom().getDistances();
 	}
-	/**
-	 * @param beamState
-	 * 				the beam state to set (keV and flux)
-	 */
-	public void setBeamState(String beamState) {
-		this.beamState = beamState;
+
+	public void setDimensions(double[] dims) {
+		if (dims != null) {
+			if (dims.length == 1) {
+				getForm().getGeom().setDistances(0, dims[0]);
+			} else if (dims.length > 1) {
+				getForm().getGeom().setDistances(dims[0], dims[1]);
+			}
+		}
 	}
-	/**
-	 * @return the chosen container description.
-	 */
-	public String getContainer() {
-		return container;
-	}
-	/**
-	 * @param container
-	 * 				the container description to set.
-	 */
-	public void setContainer(String container) {
-		this.container = container;
+
+	public void setDimensions(double inDim, double outDim) {
+		getForm().getGeom().setDistances(inDim, outDim);
 	}
 	
 	@Override
 	public String toString() {
-		return id + ": " + name + ", " + substance.getMaterialName() + " " + 
-				substance.getMassDensity() + " " + substance.getPackingFraction() + 
-				"E=" + suggestedEnergy + " keV " + ", " + suggestedCapDiameter + " mm";
+		String dataString = id + ": " + getName() + ", " + getForm().getMaterialName() + " " + 
+				getDensity() + " " + getPackingFraction();
+		if (getForm().getGeom() == null)
+			dataString += " shape defined by container.";
+		else
+			dataString += " " + getShapeName() + " of " + getDimensions() + " mm.";
+		
+		return dataString;
 	}
 
 	// Simulate the pair distribution function of that this sample parameterizes
@@ -722,6 +731,12 @@ public class XPDFSampleParameters {
 		ceria.setMetadata(theRAxis);
 		
 		return ceria;
+	}
+	
+	private XPDFComponentForm getForm() {
+		if (component.getForm() == null)
+			component.setForm(new XPDFComponentForm());
+		return component.getForm();
 	}
 	
 }

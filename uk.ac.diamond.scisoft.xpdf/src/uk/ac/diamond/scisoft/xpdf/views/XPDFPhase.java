@@ -1,0 +1,70 @@
+/*-
+ * Copyright 2015 Diamond Light Source Ltd.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
+package uk.ac.diamond.scisoft.xpdf.views;
+
+import uk.ac.diamond.scisoft.xpdf.XPDFComposition;
+
+public class XPDFPhase {
+
+	/**
+	 * Default constructor
+	 */
+	public XPDFPhase() {
+		
+	}
+	
+	/**
+	 * Copy constructor
+	 * @param inPhase
+	 */
+	public XPDFPhase(XPDFPhase inPhase) {
+		
+	}
+	
+	/**
+	 * Adds an atom to a phase unit cell
+	 */
+	// TODO: Add the argument(s)
+	public void addAtom() {
+		
+	}
+	
+	/**
+	 * Sets the space group symmetry of the unit cell
+	 * @param spaceGroup
+	 * 					the space group structire to set
+	 */
+	// TODO: should be an enumeration or a class, or some such
+	public void setSpaceGroup(String spaceGroup) {
+		
+	}
+
+	/**
+	 * Returns the density.
+	 * @return the crystallographic density of the phase in g cm⁻³.
+	 */
+	public double getDensity() {
+	
+		return 0.0;
+	}
+	
+	/**
+	 * Returns the composition of the unit cell of the phase.
+	 * @return the XPDFComposition object describing the contents of the unit cell
+	 */
+	public XPDFComposition getComposition() {
+		
+		return new XPDFComposition("");
+	}
+	
+	public double getUnitCellVolume() {
+		return 0.0;
+	}
+}

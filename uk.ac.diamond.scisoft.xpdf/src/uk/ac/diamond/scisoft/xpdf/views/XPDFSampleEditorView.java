@@ -400,7 +400,7 @@ public class XPDFSampleEditorView extends ViewPart {
 //			bto.setBeamState("76.6 Hi Flux");
 //			bto.setContainer("0.3 mm B");
 			bto.setAsSample();
-			
+						
 			sampleTable.add(bto);
 			
 			// rutile
@@ -426,14 +426,30 @@ public class XPDFSampleEditorView extends ViewPart {
 			explodite.setPhases(new ArrayList<String>(Arrays.asList(new String[] {"LF", "O"})));
 			explodite.setComposition("K2S4P");
 			explodite.setDensity(1.1);
+			explodite.setPackingFraction(0.888);
 			//packing fraction as default
 //			explodite.setSuggestedEnergy(76.6);
 //			explodite.setSuggestedCapDiameter(5.0);
 //			explodite.setBeamState("76.6 Hi Flux");
 //			explodite.setContainer("0.5 mm");
 			explodite.setAsSample();
+			explodite.setShape("Cylinder");
+			explodite.setDimensions(0, 625.0);
 			
 			sampleTable.add(explodite);
+
+			// quartz capillary
+			XPDFSampleParameters cap = new XPDFSampleParameters();
+			cap.setName("Quartz Capillary");
+			cap.setAsContainer();
+			cap.setPhases(new ArrayList<String>(Arrays.asList(new String[] {"cSiO₂"})));
+			cap.setComposition("SiO2");
+			cap.setDensity(2.65);
+			cap.setPackingFraction(1.0);
+			cap.setShape("Cylinder");
+			cap.setDimensions(0.15, 0.16);
+			
+			sampleTable.add(cap);
 		}
 	}
 }

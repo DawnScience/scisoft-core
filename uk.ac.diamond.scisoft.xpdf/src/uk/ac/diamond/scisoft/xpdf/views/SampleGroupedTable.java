@@ -19,6 +19,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -41,6 +42,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
@@ -700,6 +702,7 @@ interface ColumnInterface extends EditingSupportFactory {
 	public ColumnLabelProvider getLabelProvider();
 	public String getName();
 	public int getWeight();
+	public boolean presentAsUneditable(Object element);
 }
 
 
@@ -762,6 +765,11 @@ class NameColumnInterface implements ColumnInterface {
 	public int getWeight() {
 		return 20;
 	}
+
+	@Override
+	public boolean presentAsUneditable(Object element) {
+		return false;
+	}
 	
 }
 
@@ -820,6 +828,11 @@ class CodeColumnInterface implements ColumnInterface {
 	@Override
 	public int getWeight() {
 		return 5;
+	}
+
+	@Override
+	public boolean presentAsUneditable(Object element) {
+		return false;
 	}
 	
 }
@@ -917,6 +930,11 @@ class TypeColumnInterface implements ColumnInterface {
 	public int getWeight() {
 		return 10;
 	}
+
+	@Override
+	public boolean presentAsUneditable(Object element) {
+		return false;
+	}
 	
 }
 
@@ -989,6 +1007,11 @@ class PhaseColumnInterface implements ColumnInterface {
 	public int getWeight() {
 		return 20;
 	}
+
+	@Override
+	public boolean presentAsUneditable(Object element) {
+		return false;
+	}
 	
 }
 
@@ -1052,6 +1075,11 @@ class CompositionColumnInterface implements ColumnInterface {
 	public int getWeight() {
 		return 15;
 	}
+
+	@Override
+	public boolean presentAsUneditable(Object element) {
+		return false;
+	}
 	
 }
 
@@ -1113,6 +1141,11 @@ class DensityColumnInterface implements ColumnInterface {
 	@Override
 	public int getWeight() {
 		return 10;
+	}
+
+	@Override
+	public boolean presentAsUneditable(Object element) {
+		return false;
 	}
 	
 }
@@ -1177,6 +1210,11 @@ class PackingColumnInterface implements ColumnInterface {
 	public int getWeight() {
 		return 5;
 	}
+
+	@Override
+	public boolean presentAsUneditable(Object element) {
+		return false;
+	}
 	
 }
 
@@ -1191,7 +1229,6 @@ class ShapeColumnInterface implements ColumnInterface {
 	
 	@Override
 	public EditingSupport get(final ColumnViewer v) {
-		// TODO: Should return a combo box, or list of containers
 		return new EditingSupport(v) {
 			
 			@Override
@@ -1254,6 +1291,13 @@ class ShapeColumnInterface implements ColumnInterface {
 			public String getText(Object element) {
 				return ((XPDFSampleParameters) element).getShapeName();
 			}
+
+			@Override
+			public Font getFont(Object element) {
+				return (presentAsUneditable((XPDFSampleParameters) element)) ?
+						JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT) :
+							JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);
+			}
 		};
 	}
 
@@ -1266,11 +1310,19 @@ class ShapeColumnInterface implements ColumnInterface {
 	public int getWeight() {
 		return 15;
 	}
+
+	@Override
+	public boolean presentAsUneditable(Object element) {
+		String shape = ((XPDFSampleParameters) element).getShapeName();
+		boolean isCylinder = shape.equalsIgnoreCase(cylinderLowerString);
+		boolean isPlate = shape.equalsIgnoreCase(plateLowerString);
+		return !(isCylinder || isPlate);
+	}
 	
 }
 
 class DimensionColumnInterface implements ColumnInterface {
-
+	
 	@Override
 	public EditingSupport get(final ColumnViewer v) {
 		return new EditingSupport(v) {
@@ -1298,12 +1350,13 @@ class DimensionColumnInterface implements ColumnInterface {
 			
 			@Override
 			protected boolean canEdit(Object element) {
-				String shape = ((XPDFSampleParameters) element).getShapeName();
-				boolean isCylinder = shape.equalsIgnoreCase(ShapeColumnInterface.cylinderLowerString);
-				boolean isPlate = shape.equalsIgnoreCase(ShapeColumnInterface.plateLowerString);
-				return (isCylinder || isPlate) ?
-						true :
-							false;
+//				String shape = ((XPDFSampleParameters) element).getShapeName();
+//				boolean isCylinder = shape.equalsIgnoreCase(ShapeColumnInterface.cylinderLowerString);
+//				boolean isPlate = shape.equalsIgnoreCase(ShapeColumnInterface.plateLowerString);
+//				return (isCylinder || isPlate) ?
+//						true :
+//							false;
+				return presentAsUneditable((XPDFSampleParameters) element);
 			}
 		};
 	}
@@ -1327,6 +1380,13 @@ class DimensionColumnInterface implements ColumnInterface {
 				double[] dims = ((XPDFSampleParameters) element).getDimensions();
 				return (dims != null) ? Double.toString(dims[0]) + ", " + Double.toString(dims[1]) : "-";
 			}
+			
+			@Override
+			public Font getFont(Object element) {
+				return (presentAsUneditable((XPDFSampleParameters) element)) ?
+						JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT) :
+							JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);
+			}
 		};
 	}
 
@@ -1338,6 +1398,11 @@ class DimensionColumnInterface implements ColumnInterface {
 	@Override
 	public int getWeight() {
 		return 20;
+	}
+	
+	@Override
+	public boolean presentAsUneditable(Object element) {
+		return (new ShapeColumnInterface()).presentAsUneditable(element);
 	}
 	
 }

@@ -77,6 +77,7 @@ public class NexusTreeUtils {
 	public static final String NX_UNITS = "units";
 	public static final String NX_NAME = "long_name";
 	public static final String NX_INDICES_SUFFIX = "_indices";
+	public static final String NX_AXES_EMPTY = ".";
 	public static final String SDS = "SDS";
 	public static final String DATA = "data";
 	public static final String NX_DETECTOR = "NXdetector";
@@ -108,6 +109,9 @@ public class NexusTreeUtils {
 
 		if (link.isDestinationGroup()) {
 			GroupNode gn = (GroupNode) link.getDestination();
+			if (parseNXdataAndAugment(gn)) {
+				return;
+			}
 			for (NodeLink l : gn) {
 				augmentNodeLink(filePath, l, isAxisFortranOrder);
 			}
@@ -391,6 +395,105 @@ public class NexusTreeUtils {
 		cData.addMetadata(amd);
 	}
 
+	/**
+	 * Parse new style (2014) NXdata class and augment with metadata
+	 * @param gn
+	 * @return true if it conforms to standard
+	 */
+	public static boolean parseNXdataAndAugment(GroupNode gn) {
+		if (!isNXClass(gn, NX_DATA)) {
+			return false;
+		}
+
+		String signal = parseStringAttr(gn, NX_SIGNAL);
+		if (signal == null) {
+			signal = DATA;
+		}
+		if (!gn.containsDataNode(signal)) {
+			return false;
+		}
+
+		DataNode dNode = gn.getDataNode(signal);
+		ILazyDataset cData = dNode.getDataset();
+		if (cData == null || cData.getSize() == 0) {
+			logger.warn("Chosen data {}, has zero size", dNode);
+			return false;
+		}
+
+		// find possible @long_name
+		String string = parseStringAttr(dNode, NX_NAME);
+		if (string != null && string.length() > 0) {
+			cData.setName(string);
+		}
+
+		// TODO add errors
+//		ILazyDataset eData = cData.getError();
+//		String cName;
+//		String eName;
+
+		// set up slices
+		int[] shape = cData.getShape();
+		int rank = shape.length;
+
+		String[] axisArray = parseStringArrayAttr(gn, NX_AXES);
+		if (axisArray.length < rank) {
+			// missing axes???
+		}
+
+		List<ILazyDataset> axes = new ArrayList<ILazyDataset>();
+		for (String a : axisArray) {
+			if (NX_AXES_EMPTY.equals(a)) {
+				continue;
+			}
+
+			if (!gn.containsDataNode(a)) {
+				logger.error("Axis {} is missing", a);
+				return false;
+			}
+
+			DataNode aNode = gn.getDataNode(a);
+			ILazyDataset aData = aNode.getDataset();
+			int[] ashape = aData.getShape();
+			int[] indices = parseIntArray(gn.getAttribute(a + NX_INDICES_SUFFIX));
+			if (indices.length != ashape.length) {
+				logger.error("Indices array of axis {} must have same length equal to its rank", a);
+				return false;
+			}
+			for (int i : indices) {
+				if (i < 0 || i >= rank) {
+					logger.error("Index value ({}) for axis {} is out of bounds", i, a);
+					return false;
+				}
+			}
+			int arank = ashape.length;
+			if (arank != rank) { // broadcast axis dataset
+				int[] nshape = new int[rank];
+				Arrays.fill(nshape, 1);
+				for (int i : indices) {
+					nshape[i] = shape[i];
+				}
+				aData.setShape(nshape);
+			}
+			axes.add(aData);
+		}
+
+		List<ILazyDataset> axisList = new ArrayList<ILazyDataset>();
+		AxesMetadata amd = new AxesMetadataImpl(rank);
+		for (int i = 0; i < rank; i++) {
+			int len = shape[i];
+			for (ILazyDataset a : axes) {
+				int[] ashape = a.getShape();
+				if (len == ashape[i]) {
+					axisList.add(a);
+				}
+			}
+			amd.setAxis(i, axisList.toArray(new ILazyDataset[0]));
+			axisList.clear();
+		}
+		cData.addMetadata(amd);
+		return true;
+	}
+
 	static class Transform {
 		String depend;
 		String name;
@@ -559,7 +662,7 @@ public class NexusTreeUtils {
 			case "data_origin":
 				origin = parseIntArray(l.getDestination(), 2);
 				break;
-			case "data_size": // #rows, #cols
+			case "data_size": // number of pixels in fast then slow; i.e. #cols, #rows
 				size = parseIntArray(l.getDestination(), 2);
 				break;
 			case "module_offset":
@@ -625,7 +728,7 @@ public class NexusTreeUtils {
 		m1.getRotationScale(ori);
 		ori.mul(MatrixUtils.computeFSOrientation(xdir, ydir));
 		ori.transpose(); // as we need the passive transformation
-		DetectorProperties dp = new DetectorProperties(off, size[0], size[1], spd.magnitudes[0], fpd.magnitudes[0], ori);
+		DetectorProperties dp = new DetectorProperties(off, size[1], size[0], spd.magnitudes[0], fpd.magnitudes[0], ori);
 		dp.setStartX(origin[1]);
 		dp.setStartY(origin[0]);
 		return dp;
@@ -985,6 +1088,20 @@ public class NexusTreeUtils {
 	public static String parseStringAttr(Node node, String attr) {
 		Attribute stringAttr = node.getAttribute(attr);
 		return stringAttr != null && stringAttr.isString() ? stringAttr.getFirstElement() : null;
+	}
+
+	/**
+	 * @param node
+	 * @param attr
+	 * @return string or null
+	 */
+	public static String[] parseStringArrayAttr(Node node, String attr) {
+		Attribute stringAttr = node.getAttribute(attr);
+		if (stringAttr == null || !stringAttr.isString()) {
+			return null;
+		}
+
+		return ((StringDataset) DatasetUtils.convertToDataset(stringAttr.getValue())).getData();
 	}
 
 	/**

@@ -38,8 +38,12 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.LazyDynamicDataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.dawnsci.analysis.dataset.slicer.DynamicSliceViewIterator;
+import org.eclipse.dawnsci.analysis.dataset.slicer.ISliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.Slicer;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
 import org.eclipse.dawnsci.hdf5.operation.HierarchicalFileExecutionVisitor;
@@ -96,18 +100,17 @@ public class OperationServiceImpl implements IOperationService {
 			throw new OperationException(null, "No operation list defined, call setSeries(...) with something meaningful please!");
 		}
 		
-		Map<Integer, String> slicing = context.getSlicing();
-		if (slicing==null) slicing = Collections.emptyMap();
-		for (Iterator<Integer> iterator = slicing.keySet().iterator(); iterator.hasNext();) {
-			Integer dim = iterator.next();
-			if ("".equals(slicing.get(dim))) iterator.remove();
-		}
-		context.setSlicing(slicing);
 		
 		// We check the pipeline ranks are ok
 		try {
-	        final IDataset firstSlice = Slicer.getFirstSlice(context.getData(), context.getSlicing());
-			validate(firstSlice, context.getSeries());
+	        
+	        ISliceViewIterator it = null;
+	        
+	        if (context.getKey() == null) it = new SliceViewIterator(context.getData(), context.getSlicing(), context.getDataDimensions());
+	        else it = new DynamicSliceViewIterator((LazyDynamicDataset)context.getData(), (LazyDynamicDataset)context.getKey());
+			assert(it.hasNext());
+	        IDataset firstSlice = it.next().getSlice();
+	        validate(firstSlice, context.getSeries());
 	
 			List<SliceFromSeriesMetadata> meta = firstSlice.getMetadata(SliceFromSeriesMetadata.class);
 			SliceFromSeriesMetadata ssm = meta!=null && meta.size()>0 ? meta.get(0) : null;
@@ -141,6 +144,7 @@ public class OperationServiceImpl implements IOperationService {
 		} catch (OperationException o) {
 			throw o;
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new OperationException(null, e);
 		} finally {
 			if (context.getVisitor() != null) {
@@ -193,7 +197,7 @@ public class OperationServiceImpl implements IOperationService {
 	        filePath = filePath.replace('\\', '/');
 			evt.append("context.setFilePath('"+filePath+"')");
 			evt.append("context.setDatasetPath('"+dataPath+"')");
-			evt.append("context.setSlicing("+evt.getMap(context.getSlicing())+")");
+//			evt.append("context.setSlicing("+evt.getMap(context.getSlicing())+")");
 			
 			// Send over the operations
 			createOperationCommands(context, evt);

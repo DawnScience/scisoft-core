@@ -166,6 +166,7 @@ public class LoaderFactory {
 		    registerLoader("bmp", BitmapLoader.class);
 		    registerLoader("spe", SpeLoader.class);
 		    registerLoader("xmso", XMSOLoader.class);
+		    registerLoader("alb", AlbaLinkFileLoader.class);
 
 		    registerUnzip("gz",  GZIPInputStream.class);
 		    registerUnzip("zip", ZipInputStream.class);

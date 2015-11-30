@@ -71,7 +71,8 @@ public class IntegrationTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 1000.0, 24, 1000, 1000));
-		context.setSlicing("all"); // All 24 images in first dimension.
+//		context.setSlicing("all"); // All 24 images in first dimension.
+		context.setDataDimensions(new int[]{1,2});
 		
 		final IOperation maskOp = getMaskOperation(mask);
 		
@@ -106,7 +107,8 @@ public class IntegrationTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 1000.0, 24, 1000, 1000));
-		context.setSlicing("all"); // All 24 images in first dimension.
+//		context.setSlicing("all"); // All 24 images in first dimension.
+		context.setDataDimensions(new int[]{1,2});
 		
 		final IOperation thresh = service.findFirst("threshold");
 		thresh.setModel(new ThresholdMaskModel(750d, 250d));
@@ -146,7 +148,8 @@ public class IntegrationTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 1000.0, 24, 1000, 1000));
-		context.setSlicing("all"); // All 24 images in first dimension.
+//		context.setSlicing("all"); // All 24 images in first dimension.
+		context.setDataDimensions(new int[]{1,2});
 		
 		final IOperation thresh = service.findFirst("threshold");
 		thresh.setModel(new ThresholdMaskModel(750d, 250d));

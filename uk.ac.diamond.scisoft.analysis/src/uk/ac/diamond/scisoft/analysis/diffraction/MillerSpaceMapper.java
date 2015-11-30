@@ -9,7 +9,9 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.vecmath.Vector3d;
 
@@ -52,7 +54,7 @@ public class MillerSpaceMapper {
 	private int[] min;
 	private int[] max;
 	private double scale; // image upsampling factor
-	int border = 10; // extra voxels surrounding volume
+	int border = 0; // extra voxels surrounding volume
 
 	/**
 	 * 
@@ -233,13 +235,36 @@ public class MillerSpaceMapper {
 		qspace.qFromPixelPosition(0, 0, q);
 		mspace.h(q, null, m);
 		minMax(mBeg, mEnd, m);
+
+		qspace.qFromPixelPosition(x/2, 0, q);
+		mspace.h(q, null, m);
+		minMax(mBeg, mEnd, m);
+
 		qspace.qFromPixelPosition(x, 0, q);
 		mspace.h(q, null, m);
 		minMax(mBeg, mEnd, m);
-		qspace.qFromPixelPosition(x, y, q);
+
+		qspace.qFromPixelPosition(0, y/2, q);
 		mspace.h(q, null, m);
 		minMax(mBeg, mEnd, m);
+
+		qspace.qFromPixelPosition(x/2, y/2, q);
+		mspace.h(q, null, m);
+		minMax(mBeg, mEnd, m);
+
+		qspace.qFromPixelPosition(x, y/2, q);
+		mspace.h(q, null, m);
+		minMax(mBeg, mEnd, m);
+
 		qspace.qFromPixelPosition(0, y, q);
+		mspace.h(q, null, m);
+		minMax(mBeg, mEnd, m);
+
+		qspace.qFromPixelPosition(x/2, y, q);
+		mspace.h(q, null, m);
+		minMax(mBeg, mEnd, m);
+
+		qspace.qFromPixelPosition(x, y, q);
 		mspace.h(q, null, m);
 		minMax(mBeg, mEnd, m);
 	}
@@ -333,14 +358,17 @@ public class MillerSpaceMapper {
 	 * @return true if within bounds
 	 */
 	private boolean hToVoxel(final Vector3d h, int[] pos) {
-		if (h.x < hMin[0] || h.x >= hMax[0] || h.y < hMin[1] || h.y >= hMax[1] || 
-				h.z < hMin[2] || h.z >= hMax[2]) {
-			return false;
+		if (!findImageBB) {
+			if (h.x < hMin[0] || h.x >= hMax[0] || h.y < hMin[1] || h.y >= hMax[1] || 
+					h.z < hMin[2] || h.z >= hMax[2]) {
+				return false;
+			}
 		}
 
 		pos[0] = (int) Math.floor((h.x - hMin[0])/hDel[0]);
 		pos[1] = (int) Math.floor((h.y - hMin[1])/hDel[1]);
 		pos[2] = (int) Math.floor((h.z - hMin[2])/hDel[2]);
+
 		return true;
 	}
 
@@ -610,7 +638,7 @@ public class MillerSpaceMapper {
 			for (int i = 0; i < a.length; i++) {
 				double mbeg = mStart[i];
 				double mend = mbeg + mShape[i] * mDelta[i];
-				a[i] = DatasetUtils.linSpace(mbeg, mend, mShape[i], Dataset.FLOAT64);
+				a[i] = DatasetUtils.linSpace(mbeg, mend - mDelta[i], mShape[i], Dataset.FLOAT64);
 				System.err.println("Axis " + i + ": " + mbeg + " -> " + a[i].getDouble(mShape[i] - 1) +  "; " + mend);
 			}
 		}
@@ -636,6 +664,35 @@ public class MillerSpaceMapper {
 			x.setName(AXIS_NAME[i] + "-axis");
 			HDF5Utils.writeDataset(file, "/entry1/data", x);
 		}
+
+		List<Dataset> attrs = new ArrayList<>();
+		Dataset a;
+
+		a = DatasetFactory.createFromObject("NXdata");
+		a.setName("NX_class");
+		attrs.add(a);
+
+		a = DatasetFactory.createFromObject("volume");
+		a.setName("signal");
+		attrs.add(a);
+
+		a = DatasetFactory.createFromObject(new String[] {"h-axis", "k-axis", "l-axis"});
+		a.setName("axes");
+		attrs.add(a);
+
+		a = DatasetFactory.createFromObject(0);
+		a.setName("h-axis_indices");
+		attrs.add(a);
+
+		a = DatasetFactory.createFromObject(1);
+		a.setName("k-axis_indices");
+		attrs.add(a);
+
+		a = DatasetFactory.createFromObject(2);
+		a.setName("l-axis_indices");
+		attrs.add(a);
+
+		HDF5Utils.writeAttributes(file, "/entry1/data", attrs.toArray(new Dataset[attrs.size()]));
 	}
 
 	private static final MillerSpaceMapper I16Mapper = new MillerSpaceMapper("/entry1/instrument/pil100k", "image_data", "/entry1/sample");

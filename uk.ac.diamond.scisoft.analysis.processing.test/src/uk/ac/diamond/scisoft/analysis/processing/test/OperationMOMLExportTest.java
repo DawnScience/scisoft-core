@@ -64,7 +64,8 @@ public class OperationMOMLExportTest {
 			
 			context.setFilePath(file.getPath());
 			context.setDatasetPath(dataset);
-			context.setSlicing("all"); // The 10 in the first dimension.
+//			context.setSlicing("all"); // The 10 in the first dimension.
+			context.setDataDimensions(new int[]{1,2});
 			
 			//output.deleteOnExit();
 			

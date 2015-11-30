@@ -55,9 +55,8 @@ private static IOperationService service;
 
 		final IOperationContext context = service.createContext();
 		context.setData(lz);
-		Map<Integer, String> sliceMap = new HashMap<Integer, String>();
-		sliceMap.put(0, "all");
-		context.setSlicing(sliceMap); // 
+//		context.setSlicing(sliceMap); //
+		context.setDataDimensions(new int[]{1,2});
 		
 		final IDataset axDataset1 = DatasetFactory.createRange(100,Dataset.INT16);
 		axDataset1.setShape(new int[] {100,1,1});

@@ -66,7 +66,8 @@ public class OperationDataAxesRankTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(ds);
-		context.setSlicing("all"); // All 24 images in first dimension.
+//		context.setSlicing("all"); // All 24 images in first dimension.
+		context.setDataDimensions(new int[]{1,2});
 		
 
 		final IOperation di = new Op2dto2d();
@@ -102,7 +103,8 @@ public class OperationDataAxesRankTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(ds);
-		context.setSlicing("all"); // All 24 images in first dimension.
+//		context.setSlicing("all"); // All 24 images in first dimension.
+		context.setDataDimensions(new int[]{1,2});
 		
 		final IOperation di = new Op2dto1d();
 
@@ -136,7 +138,8 @@ public class OperationDataAxesRankTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(ds);
-		context.setSlicing("all","all"); // All 24 images in first dimension.		
+//		context.setSlicing("all","all"); // All 24 images in first dimension.
+		context.setDataDimensions(new int[]{2});
 
 
 		final IOperation di = new Op1dto1d();
@@ -176,7 +179,8 @@ public class OperationDataAxesRankTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(ds);
-		context.setSlicing("all","all"); // All 24 images in first dimension.		
+//		context.setSlicing("all","all"); // All 24 images in first dimension.	
+		context.setDataDimensions(new int[]{2});
 
 
 		final IOperation di = new Op1dto1d();
@@ -218,7 +222,8 @@ public class OperationDataAxesRankTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(ds);
-		context.setSlicing("all"); // All 24 images in first dimension.
+//		context.setSlicing("all"); // All 24 images in first dimension.
+		context.setDataDimensions(new int[]{1,2});
 		
 
 		final IOperation di = new Op2dto2d();
@@ -255,7 +260,8 @@ public class OperationDataAxesRankTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(ds);
-		context.setSlicing("all"); // All 24 images in first dimension.
+//		context.setSlicing("all"); // All 24 images in first dimension.
+		context.setDataDimensions(new int[]{1,2});
 		
 
 		final IOperation di = new Op2dto2d();
@@ -293,7 +299,8 @@ public class OperationDataAxesRankTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(ds);
-		context.setSlicing("all"); // All 24 images in first dimension.
+//		context.setSlicing("all"); // All 24 images in first dimension.
+		context.setDataDimensions(new int[]{1,2});
 		
 
 		final IOperation di = new Op2dto2d();
@@ -330,7 +337,8 @@ public class OperationDataAxesRankTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(ds);
-		context.setSlicing("all"); // All 24 images in first dimension.
+//		context.setSlicing("all"); // All 24 images in first dimension.
+		context.setDataDimensions(new int[]{1,2});
 		
 
 		final IOperation di = new Op2dto2d();
@@ -373,7 +381,8 @@ public class OperationDataAxesRankTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(ds);
-		context.setSlicing("all"); // All 24 images in first dimension.
+//		context.setSlicing("all"); // All 24 images in first dimension.
+		context.setDataDimensions(new int[]{1,2});
 		
 
 		final IOperation di = new Op2dto2d();

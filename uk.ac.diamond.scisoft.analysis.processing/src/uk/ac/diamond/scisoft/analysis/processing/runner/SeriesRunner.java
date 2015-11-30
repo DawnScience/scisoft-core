@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
+import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
@@ -14,8 +15,12 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationRunner;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.dataset.impl.LazyDynamicDataset;
 import org.eclipse.dawnsci.analysis.dataset.metadata.OriginMetadataImpl;
+import org.eclipse.dawnsci.analysis.dataset.slicer.DynamicSliceViewIterator;
+import org.eclipse.dawnsci.analysis.dataset.slicer.ISliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceVisitor;
 import org.eclipse.dawnsci.analysis.dataset.slicer.Slicer;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
@@ -60,7 +65,7 @@ public class SeriesRunner implements IOperationRunner {
 		SliceVisitor sv = new SliceVisitor() {
 
 			@Override
-			public void visit(IDataset slice, Slice[] slices, int[] shape) throws Exception {
+			public void visit(IDataset slice) throws Exception {
 
 				List<SliceFromSeriesMetadata> meta = slice.getMetadata(SliceFromSeriesMetadata.class);
 				SliceFromSeriesMetadata ssm = meta!=null && meta.size()>0 ? meta.get(0) : null;
@@ -139,13 +144,20 @@ public class SeriesRunner implements IOperationRunner {
 
 		visitor.init(context.getSeries(), context.getData());
 		long start = System.currentTimeMillis();
-		// Jake's slicing from the conversion tool is now in Slicer.
+		
+		
+		ISliceViewIterator iterator = null;
+		
+		if (context.getKey() != null) {
+			iterator = new DynamicSliceViewIterator((LazyDynamicDataset)context.getData(), (LazyDynamicDataset)context.getKey());
+		} else {
+			iterator = new SliceViewIterator(context.getData(), context.getSlicing(), context.getDataDimensions());
+		}
+		
 		if (context.getExecutionType()==ExecutionType.SERIES) {
-			Slicer.visitAll(context.getData(), context.getSlicing(), "Slice", sv);
-
+			Slicer.visit(iterator,sv);
 		} else if (context.getExecutionType()==ExecutionType.PARALLEL) {
-			Slicer.visitAllParallel(context.getData(), context.getSlicing(), "Slice", sv, context.getParallelTimeout());
-
+			Slicer.visitParallel(iterator,sv);
 		} else {
 			throw new OperationException(context.getSeries()[0], "The edges are needed to execute a graph using ptolemy!");
 		}

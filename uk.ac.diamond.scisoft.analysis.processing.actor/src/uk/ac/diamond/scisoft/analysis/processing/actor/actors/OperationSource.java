@@ -150,7 +150,7 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 		message = msg;
 		
 		if (context!=null) {
-			generator = Slicer.getSliceViewGenerator(context.getData(), context.getSlicing());
+			generator = new SliceViewIterator(context.getData(), context.getSlicing(),context.getDataDimensions());
 			
 		} else {
 			final IDataHolder  dh = LoaderFactory.getData(getSourcePath(msg));
@@ -181,7 +181,7 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 		// Required to stop too many slugs going into a threading actor.
 		ActorUtils.waitWhileLocked();
 		
-		ILazyDataset lazy = generator.getCurrentView();
+		ILazyDataset lazy = generator.next();
 		if (lazy == null) return null;
 		final SliceInfo info = new SliceInfo(lazy, message);
 		
@@ -260,7 +260,8 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
         		}
     		}
         }
-        slicing.setValue(context.getSlicing());
+        //FIXME
+//        slicing.setValue(context.getSlicing());
 	}
 
 	

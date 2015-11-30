@@ -85,6 +85,7 @@ public class OperationsTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 10.0, 1024, 1024));
+		context.setDataDimensions(new int[]{0,1});
 		
 		counter = 0;
 		context.setVisitor(new IExecutionVisitor.Stub() {
@@ -118,6 +119,7 @@ public class OperationsTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 10.0, 1024, 1024));
+		context.setDataDimensions(new int[]{0,1});
 		
 		subtract.setModel(new ValueModel(100));
 		add.setModel(new ValueModel(101));
@@ -157,7 +159,8 @@ public class OperationsTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 10.0, 24, 1024, 1024));
-		context.setSlicing("all"); // 
+//		context.setSlicing("all"); // 
+		context.setDataDimensions(new int[]{1,2});
 		
 		subtract.setModel(new ValueModel(100));
 		add.setModel(new ValueModel(101));
@@ -196,7 +199,8 @@ public class OperationsTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 10.0, 24, 1024, 1024));
-		context.setSlicing("all"); // 
+//		context.setSlicing("all"); // 
+		context.setDataDimensions(new int[]{1,2});
 		
 		subtract.setModel(new ValueModel(100));
 		add.setModel(new ValueModel(101));
@@ -253,7 +257,8 @@ public class OperationsTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 10.0, 1024, 1024));
-		context.setSlicing("all"); // 
+//		context.setSlicing("all"); // 
+		context.setDataDimensions(new int[]{1,2});
 		
 		subtract.setModel(new ValueModel(100));
 		add.setModel(new ValueModel(101));
@@ -300,7 +305,8 @@ public class OperationsTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 10.0, 24, 1024, 1024));
-		context.setSlicing("all"); // 
+//		context.setSlicing("all"); // 
+		context.setDataDimensions(new int[]{1,2});
 		
 		subtract.setModel(new ValueModel(100));
 		add.setModel(new ValueModel(101));

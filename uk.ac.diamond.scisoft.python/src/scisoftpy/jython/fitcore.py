@@ -361,8 +361,6 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
     if seed:
         _fitter.seed = int(seed)
 
-    import time
-    start = -time.time()
     jcoords = [ __cvt_jobj(c, copy=False, force=True) for c in coords ]
     jdata = data._jdataset()
 
@@ -387,9 +385,6 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
         if n_bounds == 0 :
             print "Using a global optimizer with no bounds is unlikely to work, please use the bounds argument to narrow the search space" 
         _fitter.geneticFit(ptol, jcoords, jdata, cfunc)
-
-    start += time.time()
-    print "Fit took %fs" % start
 
     return fitresult(cfunc, coords, data)
 

@@ -406,11 +406,11 @@ public class XPDFSampleView extends ViewPart {
 			case COMPOSITION: return sample.getComposition();
 			case DENSITY: return Double.toString(sample.getDensity());
 			case PACKING: return Double.toString(sample.getPackingFraction());
-			case SUGGESTED_ENERGY: return Double.toString(sample.getSuggestedEnergy());
-			case MU: return String.format("%.4f", sample.getMu());
-			case SUGGESTED_DIAMETER: return Double.toString(sample.getSuggestedCapDiameter());
-			case ENERGY: return sample.getBeamState();
-			case CAPILLARY: return sample.getContainer();
+//			case SUGGESTED_ENERGY: return Double.toString(sample.getSuggestedEnergy());
+//			case MU: return String.format("%.4f", sample.getMu());
+//			case SUGGESTED_DIAMETER: return Double.toString(sample.getSuggestedCapDiameter());
+//			case ENERGY: return sample.getBeamState();
+//			case CAPILLARY: return sample.getContainer();
 			default: return "";
 			}
 		}
@@ -449,11 +449,11 @@ public class XPDFSampleView extends ViewPart {
 			case COMPOSITION: return sample.getComposition();
 			case DENSITY: return Double.toString(sample.getDensity());
 			case PACKING: return Double.toString(sample.getPackingFraction());
-			case SUGGESTED_ENERGY: return Double.toString(sample.getSuggestedEnergy());
+//			case SUGGESTED_ENERGY: return Double.toString(sample.getSuggestedEnergy());
 			case MU: return 1.0;
-			case SUGGESTED_DIAMETER: return Double.toString(sample.getSuggestedCapDiameter());
-			case ENERGY: return sample.getBeamState();
-			case CAPILLARY: return sample.getContainer();
+//			case SUGGESTED_DIAMETER: return Double.toString(sample.getSuggestedCapDiameter());
+//			case ENERGY: return sample.getBeamState();
+//			case CAPILLARY: return sample.getContainer();
 			default: return null;
 			}
 		}
@@ -475,11 +475,11 @@ public class XPDFSampleView extends ViewPart {
 			case COMPOSITION: sample.setComposition(sValue); break;
 			case DENSITY: sample.setDensity(Double.parseDouble(sValue)); break;
 			case PACKING: sample.setPackingFraction(Double.parseDouble(sValue)); break;
-			case SUGGESTED_ENERGY: sample.setSuggestedEnergy(Double.parseDouble(sValue)); break;
+//			case SUGGESTED_ENERGY: sample.setSuggestedEnergy(Double.parseDouble(sValue)); break;
 			case MU: break;
-			case SUGGESTED_DIAMETER: sample.setSuggestedCapDiameter(Double.parseDouble(sValue)); break;
-			case ENERGY: sample.setBeamState(sValue); break;
-			case CAPILLARY: sample.setContainer(sValue); break;
+//			case SUGGESTED_DIAMETER: sample.setSuggestedCapDiameter(Double.parseDouble(sValue)); break;
+//			case ENERGY: sample.setBeamState(sValue); break;
+//			case CAPILLARY: sample.setContainer(sValue); break;
 			default: break;
 			}
 			// Here, only this table needs updating
@@ -528,44 +528,44 @@ public class XPDFSampleView extends ViewPart {
 			}
 		};
 		break;
-		case SUGGESTED_ENERGY:
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return Double.compare(o1.getSuggestedEnergy(), o2.getSuggestedEnergy());
-			}
-		};
-		break;
-		case MU:
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return Double.compare(o1.getMu(), o2.getMu());
-			}
-		};
-		break;
-		case SUGGESTED_DIAMETER:
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return Double.compare(o1.getSuggestedCapDiameter(), o2.getSuggestedCapDiameter());
-			}
-		};
-		break;
-		case ENERGY:
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return o1.getBeamState().compareTo(o2.getBeamState());
-			}
-		};
-		case CAPILLARY:
-			columnSorter = new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return o1.getContainer().compareTo(o2.getContainer());
-			}
-		};
+//		case SUGGESTED_ENERGY:
+//			columnSorter = new Comparator<XPDFSampleParameters>() {
+//			@Override
+//			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+//				return Double.compare(o1.getSuggestedEnergy(), o2.getSuggestedEnergy());
+//			}
+//		};
+//		break;
+//		case MU:
+//			columnSorter = new Comparator<XPDFSampleParameters>() {
+//			@Override
+//			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+//				return Double.compare(o1.getMu(), o2.getMu());
+//			}
+//		};
+//		break;
+//		case SUGGESTED_DIAMETER:
+//			columnSorter = new Comparator<XPDFSampleParameters>() {
+//			@Override
+//			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+//				return Double.compare(o1.getSuggestedCapDiameter(), o2.getSuggestedCapDiameter());
+//			}
+//		};
+//		break;
+//		case ENERGY:
+//			columnSorter = new Comparator<XPDFSampleParameters>() {
+//			@Override
+//			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+//				return o1.getBeamState().compareTo(o2.getBeamState());
+//			}
+//		};
+//		case CAPILLARY:
+//			columnSorter = new Comparator<XPDFSampleParameters>() {
+//			@Override
+//			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+//				return o1.getContainer().compareTo(o2.getContainer());
+//			}
+//		};
 		default:
 			columnSorter = null;
 		}
@@ -957,10 +957,10 @@ public class XPDFSampleView extends ViewPart {
 			bto.setComposition("BaTiO3"); // Should be "Ba0.9Ca0.1TiO3"
 			bto.setDensity(3.71);
 			// Packing fraction as default
-			bto.setSuggestedEnergy(76.6);
-			bto.setSuggestedCapDiameter(1.0);
-			bto.setBeamState("76.6 Hi Flux");
-			bto.setContainer("0.3 mm B");
+//			bto.setSuggestedEnergy(76.6);
+//			bto.setSuggestedCapDiameter(1.0);
+//			bto.setBeamState("76.6 Hi Flux");
+//			bto.setContainer("0.3 mm B");
 			
 			samples.add(bto);
 			
@@ -972,10 +972,10 @@ public class XPDFSampleView extends ViewPart {
 			rutile.setComposition("TiO2");
 			rutile.setDensity(6.67);
 			// Packing fraction as default
-			rutile.setSuggestedEnergy(76.6);
-			rutile.setSuggestedCapDiameter(5.0);
-			rutile.setBeamState("76.6 Hi Flux");
-			rutile.setContainer("0.5 mm B");
+//			rutile.setSuggestedEnergy(76.6);
+//			rutile.setSuggestedCapDiameter(5.0);
+//			rutile.setBeamState("76.6 Hi Flux");
+//			rutile.setContainer("0.5 mm B");
 			
 			samples.add(rutile);
 			
@@ -987,10 +987,10 @@ public class XPDFSampleView extends ViewPart {
 			explodite.setComposition("K2S4P");
 			explodite.setDensity(1.1);
 			//packing fraction as default
-			explodite.setSuggestedEnergy(76.6);
-			explodite.setSuggestedCapDiameter(5.0);
-			explodite.setBeamState("76.6 Hi Flux");
-			explodite.setContainer("0.5 mm");
+//			explodite.setSuggestedEnergy(76.6);
+//			explodite.setSuggestedCapDiameter(5.0);
+//			explodite.setBeamState("76.6 Hi Flux");
+//			explodite.setContainer("0.5 mm");
 			
 			samples.add(explodite);
 			

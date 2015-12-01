@@ -10,7 +10,6 @@
 package uk.ac.diamond.scisoft.xpdf.views;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -65,14 +64,6 @@ class SampleGroupedTable {
 	// the grouped table object that does the displaying
 	private XPDFGroupedTable groupedTable;
 
-	// Names of the groups, the columns in those groups, and the relative
-	// widths of the columns
-	private List<String> groupNames;
-	private List<List<String>> groupedColumnNames;
-	private List<List<Integer>> groupedColumnWeights;
-	
-	private SampleParametersContentProvider contentProvider;
-
 	/**
 	 * Constructor.
 	 * <p>
@@ -91,33 +82,24 @@ class SampleGroupedTable {
 		
 		groupedTable = new XPDFGroupedTable(parent, SWT.NONE);
 
-		groupNames = new ArrayList<String>();
-		groupedColumnNames = new ArrayList<List<String>>();
-		groupedColumnWeights = new ArrayList<List<Integer>>();
+		// Names of the groups
+		List<String> groupNames = new ArrayList<String>();
 		List<List<ColumnInterface>> groupedColumnInterfaces = new ArrayList<List<ColumnInterface>>();
 		List<ColumnInterface> columnInterfaces = new ArrayList<ColumnInterface>();
 		
 		// Define the column groups and the columns they contain
 		groupNames.add("Sample Identification");
-		groupedColumnNames.add(Arrays.asList(new String[] {"Sample name", "Code"}));
-		groupedColumnWeights.add(Arrays.asList(new Integer[] {20, 10}));
 		columnInterfaces.clear();
 		columnInterfaces.add(new NameColumnInterface());
 		columnInterfaces.add(new CodeColumnInterface());
 		groupedColumnInterfaces.add(columnInterfaces);
 		
 		groupNames.add("Type");
-		groupedColumnNames.add(Arrays.asList(new String[] {""}));
-		groupedColumnWeights.add(Arrays.asList(new Integer[] {15}));
-//		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {null, null, null, null, null}));
 		columnInterfaces = new ArrayList<ColumnInterface>();
 		columnInterfaces.add(new TypeColumnInterface(this));
 		groupedColumnInterfaces.add(columnInterfaces);
 		
 		groupNames.add("Properties");
-		groupedColumnNames.add(Arrays.asList(new String[] {"Phases", "Composition", "Density", "Vol. frac."}));
-		groupedColumnWeights.add(Arrays.asList(new Integer[] {10, 15, 10, 5}));
-//		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {null, null, null}));
 		columnInterfaces = new ArrayList<ColumnInterface>();
 		columnInterfaces.add(new PhaseColumnInterface());
 		columnInterfaces.add(new CompositionColumnInterface());
@@ -126,9 +108,6 @@ class SampleGroupedTable {
 		groupedColumnInterfaces.add(columnInterfaces);
 
 		groupNames.add("Geometry");
-		groupedColumnNames.add(Arrays.asList(new String[] {"Container", "μ"}));
-		groupedColumnWeights.add(Arrays.asList(new Integer[] {10, 10}));
-//		groupedColumnInterfaces.add(Arrays.asList(new ColumnInterface<?>[] {null, null}));
 		columnInterfaces = new ArrayList<ColumnInterface>();
 		columnInterfaces.add(new ShapeColumnInterface());
 		columnInterfaces.add(new DimensionColumnInterface());
@@ -149,7 +128,7 @@ class SampleGroupedTable {
 		}
 
 		
-		contentProvider = new SampleParametersContentProvider();
+		SampleParametersContentProvider contentProvider = new SampleParametersContentProvider();
 		groupedTable.setContentProvider(contentProvider);
 
 		// The label provider for the column headers

@@ -56,7 +56,7 @@ public class XPDFSampleEditorView extends ViewPart {
 	private Action clearAction;
 	
 	private SampleGroupedTable sampleTable;
-	private SampleGroupedTable phaseTable;
+	private PhaseGroupedTable phaseTable;
 
 	public XPDFSampleEditorView() {
 	}
@@ -80,7 +80,7 @@ public class XPDFSampleEditorView extends ViewPart {
 		
 		sampleTable = new SampleGroupedTable(sampleTableCompo, SWT.NONE);
 		Composite buttonCompo = new Composite(sampleTableCompo, SWT.NONE);
-		phaseTable = new SampleGroupedTable(phaseTableCompo, SWT.NONE);
+		phaseTable = new PhaseGroupedTable(phaseTableCompo, SWT.NONE);
 		Composite phaseButtonCompo = new Composite(phaseTableCompo, SWT.NONE);
 		
 		FormData formData = new FormData();

@@ -17,8 +17,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.activation.UnsupportedDataTypeException;
-
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
@@ -62,12 +60,13 @@ public class PilatusEdfLoader extends AbstractFileLoader {
 		final DataHolder output = new DataHolder();
 		File f = null;
 		FileInputStream fi = null;
+		BufferedReader br = null;
 		try {
 
 			f = new File(fileName);
 			fi = new FileInputStream(f);
 
-			BufferedReader br = new BufferedReader(new FileReader(f));
+			br = new BufferedReader(new FileReader(f));
 			String line = br.readLine();
 			if (line == null)
 				throw new ScanFileHolderException("No lines found");
@@ -132,6 +131,13 @@ public class PilatusEdfLoader extends AbstractFileLoader {
 		} catch (Exception e) {
 			throw new ScanFileHolderException("File failed to load " + fileName, e);
 		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					// do nothing
+				}
+			}
 			if (fi != null) {
 				try {
 					fi.close();

@@ -466,29 +466,29 @@ public class Utils {
 	 * @param is
 	 * @param data
 	 * @param start number of bytes from start of input stream
-	 * @param byte_order the byte order of the data
+	 * @param byteOrder the byte order of the data
 	 * @throws IOException
 	 */
-	public static void readFloat(InputStream is, FloatDataset data, long start, ByteOrder byte_order) throws IOException {
+	private static void readFloat(InputStream is, FloatDataset data, long start, ByteOrder byteOrder) throws IOException {
 		final int size = data.getSize();
 		final float[] fdata = data.getData();
 		byte[] buf = new byte[4*size];
 		is.skip(start);
 		is.read(buf);
-		byte [] bdata = new byte[4];
+		byte[] bdata = new byte[4];
+		ByteBuffer byteBuffer = ByteBuffer.wrap(bdata);
+		byteBuffer.order(byteOrder);
 		float fmax = Float.MIN_VALUE;
 		float fmin = Float.MAX_VALUE;
 		double hash = 0.0;
 		int pos = 0; // Byte offset to start of data
 		float value;
 		for (int i = 0; i < size; i++) {
-			bdata[0] = buf[pos+0];
-			bdata[1] = buf[pos+1];
-			bdata[2] = buf[pos+2];
-			bdata[3] = buf[pos+3];
-			ByteBuffer byte_buffer = ByteBuffer.wrap(bdata);
-			byte_buffer.order(byte_order);
-			value = byte_buffer.getFloat();
+			bdata[0] = buf[pos + 0];
+			bdata[1] = buf[pos + 1];
+			bdata[2] = buf[pos + 2];
+			bdata[3] = buf[pos + 3];
+			value = byteBuffer.getFloat(0);
 			hash = (hash * 19 + value);
 			fdata[i] = value;
 			if (value > fmax) {
@@ -509,17 +509,6 @@ public class Utils {
 		data.setStoredValue(AbstractDataset.STORE_MAX, fmax);
 		data.setStoredValue(AbstractDataset.STORE_MIN, fmin);
 		data.setStoredValue(AbstractDataset.STORE_HASH, (int)hash);
-	}
-	
-	/**
-	 * Read an image of little-endian floats
-	 * @param is
-	 * @param data
-	 * @param start number of bytes from start of input stream
-	 * @throws IOException
-	 */
-	public static void readFloat(InputStream is, FloatDataset data, long start) throws IOException {
-		readFloat(is, data, start, ByteOrder.LITTLE_ENDIAN);
 	}
 
 	private static final Pattern EXP_REGEX = Pattern.compile("[eE]");

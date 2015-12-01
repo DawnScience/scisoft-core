@@ -15,13 +15,17 @@ import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.util.Arrays;
 
-import junit.framework.Assert;
-
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.junit.Test;
+
+import junit.framework.Assert;
 
 /**
  * Test IO utils
@@ -40,7 +44,7 @@ public class UtilsTest {
 	@Test
 	public void testLeInt() {
 		int attempt = Utils.leInt(0xef, 0xbe, 0xad, 0xde);
-		assertEquals(answer, attempt, 1e-8);
+		assertEquals(answer, attempt);
 	}
 
 	/**
@@ -49,7 +53,7 @@ public class UtilsTest {
 	@Test
 	public void testBeInt() {
 		int attempt = Utils.beInt(0xde, 0xad, 0xbe, 0xef);
-		assertEquals(answer, attempt, 1e-8);
+		assertEquals(answer, attempt);
 	}
 
 	/**
@@ -60,7 +64,7 @@ public class UtilsTest {
 		int attempt = Utils.leIntSE(255, -1);
 		assertEquals(-1, attempt, 1e-8);
 		attempt = Utils.leInt(255, -1);
-		assertEquals(256*255+255, attempt, 1e-8);
+		assertEquals(256*255+255, attempt);
 	}
 
 	/**
@@ -71,44 +75,44 @@ public class UtilsTest {
 		ByteArrayInputStream is = new ByteArrayInputStream(leAnswer);
 
 		int attempt = Utils.readLeInt(is);
-		assertEquals(answer, attempt, 1e-8);
+		assertEquals(answer, attempt);
 	}
 
 	/**
 	 * 
 	 */
 	@Test
-	public void testReadBeInt()  throws Exception {
+	public void testReadBeInt() throws Exception {
 		ByteArrayInputStream is = new ByteArrayInputStream(beAnswer);
 		int attempt = Utils.readBeInt(is);
-		assertEquals(answer, attempt, 1e-8);
+		assertEquals(answer, attempt);
 	}
 
 	/**
 	 * 
 	 */
 	@Test
-	public void testReadLeShort()  throws Exception{
+	public void testReadLeShort() throws Exception {
 		ByteArrayInputStream is = new ByteArrayInputStream(leAnswer);
 		int attempt = Utils.readLeShort(is);
-		assertEquals(sLeAnswer, attempt, 1e-8);
+		assertEquals(sLeAnswer, attempt);
 	}
 
 	/**
 	 * 
 	 */
 	@Test
-	public void testReadBeShort()  throws Exception{
+	public void testReadBeShort() throws Exception {
 		ByteArrayInputStream is = new ByteArrayInputStream(beAnswer);
 		int attempt = Utils.readBeShort(is);
-		assertEquals(sBeAnswer, attempt, 1e-8);
+		assertEquals(sBeAnswer, attempt);
 	}
 
 	/**
 	 * 
 	 */
 	@Test
-	public void testWriteLeInt()  throws Exception{
+	public void testWriteLeInt() throws Exception {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		Utils.writeLeInt(os, answer);
 		byte[] attempt = os.toByteArray();
@@ -119,11 +123,34 @@ public class UtilsTest {
 	 * 
 	 */
 	@Test
-	public void testWriteBeInt()  throws Exception{
+	public void testWriteBeInt() throws Exception {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		Utils.writeBeInt(os, answer);
 		byte[] attempt = os.toByteArray();
 		assertArrayEquals(beAnswer, attempt);
+	}
+
+	@Test
+	public void testReadFloat() throws Exception {
+		ByteBuffer bb = ByteBuffer.allocate(16).order(ByteOrder.BIG_ENDIAN);
+		FloatBuffer fb = bb.asFloatBuffer();
+		float[] answer = new float[] {0, 1, -2, -3};
+		fb.put(answer);
+
+		FloatDataset fd = new FloatDataset(4);
+		ByteArrayInputStream is = new ByteArrayInputStream(bb.array());
+		Utils.readBeFloat(is, fd, 0);
+		is.close();
+		assertArrayEquals(answer, fd.getData(), 1f-8);
+
+		bb = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN);
+		fb = bb.asFloatBuffer();
+		fb.put(answer);
+
+		is = new ByteArrayInputStream(bb.array());
+		Utils.readLeFloat(is, fd, 0);
+		is.close();
+		assertArrayEquals(answer, fd.getData(), 1f-8);
 	}
 
 	@Test

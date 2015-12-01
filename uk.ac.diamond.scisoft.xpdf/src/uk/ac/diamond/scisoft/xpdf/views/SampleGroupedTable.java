@@ -675,7 +675,7 @@ class SampleGroupedTable {
 	}
 
 
-	interface ColumnInterface extends EditingSupportFactory {
+	private interface ColumnInterface extends EditingSupportFactory {
 		public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col);
 		public ColumnLabelProvider getLabelProvider();
 		public String getName();

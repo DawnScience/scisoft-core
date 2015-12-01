@@ -702,7 +702,7 @@ class SampleGroupedTable {
 
 				@Override
 				protected Object getValue(Object element) {
-					return ((XPDFSampleParameters) element).getName();
+					return (element != null) ? ((XPDFSampleParameters) element).getName() : "";
 				}
 
 				@Override

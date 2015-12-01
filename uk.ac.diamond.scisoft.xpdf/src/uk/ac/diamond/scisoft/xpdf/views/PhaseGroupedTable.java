@@ -298,7 +298,7 @@ class PhaseGroupedTable {
 
 				@Override
 				protected Object getValue(Object element) {
-					return ((XPDFPhase) element).getName();
+					return (element != null) ? ((XPDFPhase) element).getName() : "";
 				}
 
 				@Override

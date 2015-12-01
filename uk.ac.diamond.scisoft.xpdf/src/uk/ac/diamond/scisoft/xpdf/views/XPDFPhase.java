@@ -13,6 +13,10 @@ import uk.ac.diamond.scisoft.xpdf.XPDFComposition;
 
 public class XPDFPhase {
 
+	
+	String name;
+	int iDCode;
+	
 	/**
 	 * Default constructor
 	 */
@@ -28,6 +32,34 @@ public class XPDFPhase {
 		
 	}
 	
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * @return the iDCode
+	 */
+	public int getId() {
+		return iDCode;
+	}
+
+	/**
+	 * @param iD the iDCode to set
+	 */
+	public void setId(int iD) {
+		this.iDCode = iD;
+	}
+
 	/**
 	 * Adds an atom to a phase unit cell
 	 */

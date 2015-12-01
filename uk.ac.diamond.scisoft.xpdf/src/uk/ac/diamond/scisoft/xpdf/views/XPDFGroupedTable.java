@@ -241,7 +241,8 @@ class XPDFGroupedTable extends Composite {
 	public TableViewerColumn addColumn(String groupID, int style) {
 		// TODO: Add column group if it does not exist
 		if (!groupNames.contains(groupID)) return null;
-		TableViewer groupViewer = groupViewers.get(groupNames.indexOf(groupID));
+		TableViewer groupViewer = groupViewers.get(groupNames.lastIndexOf(groupID));
+
 		
 		return new TableViewerColumn(groupViewer, style);
 	}

@@ -14,20 +14,23 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.internal.tweaklets.DummyTitlePathUpdater;
 
 /**
  * Display and edit phases for the XPDF project
@@ -39,10 +42,18 @@ class PhaseGroupedTable {
 	private List<XPDFPhase> phases;
 	
 	private XPDFGroupedTable groupedTable;
+
+	private TreeSet<Integer> usedIDs;
 	
 	public PhaseGroupedTable(Composite parent, int style) {
 		phases = new ArrayList<XPDFPhase>(Arrays.asList(new XPDFPhase[]{new XPDFPhase(), new XPDFPhase(), new XPDFPhase()}));
 		
+		String[] testNames = {"Quartz", "Crown glass", "Flint glass"}; 
+		for (int i = 0; i < phases.size(); i++) {
+			phases.get(i).setName(testNames[i]);
+			phases.get(i).setId(getUniqueID());
+
+		}
 		groupedTable = new XPDFGroupedTable(parent, SWT.NONE);
 		
 		List<String> groupNames = new ArrayList<String>();
@@ -99,6 +110,17 @@ class PhaseGroupedTable {
 		groupedTable.setContentProvider(contentProvider);
 	}
 
+ 	// Generate a new id
+	private	int getUniqueID() {
+		final int lowestID = 2564;
+		if (usedIDs == null)
+			usedIDs = new TreeSet<Integer>();
+		int theID = (usedIDs.isEmpty()) ? lowestID : usedIDs.last()+1;
+		usedIDs.add(theID);
+		return theID;
+	}
+
+	
 	class PhaseContentProvider implements IStructuredContentProvider {
 
 		@Override
@@ -261,19 +283,51 @@ class PhaseGroupedTable {
 	static class NameColumnInterface implements ColumnInterface {
 
 		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
+		public EditingSupport get(final ColumnViewer v) {
+			return new EditingSupport(v) {
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return new TextCellEditor(((TableViewer) v).getTable());
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return true;
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					return ((XPDFPhase) element).getName();
+				}
+
+				@Override
+				protected void setValue(Object element, Object value) {
+					((XPDFPhase) element).setName( (value != null) ? (String) value : "");
+					v.refresh();
+				}
+			};
 		}
 
 		@Override
-		public SelectionAdapter getSelectionAdapter(PhaseGroupedTable tab,
-				TableViewerColumn col) {
-			return DummySelectionAdapter.get(tab, col);
+		public SelectionAdapter getSelectionAdapter(final PhaseGroupedTable tab,
+				final TableViewerColumn col) {
+			return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFPhase>() {
+				@Override
+				public int compare(XPDFPhase o1, XPDFPhase o2) {
+					return o1.getName().compareTo(o2.getName());
+				}
+			});
 		}
 
 		@Override
 		public ColumnLabelProvider getLabelProvider() {
-			return new DummyLabelProvider("Name");
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return ((XPDFPhase) element).getName();
+				}
+			};
 		}
 
 		@Override
@@ -283,7 +337,7 @@ class PhaseGroupedTable {
 
 		@Override
 		public int getWeight() {
-			return 15;
+			return 20;
 		}
 
 		@Override
@@ -303,12 +357,22 @@ class PhaseGroupedTable {
 		@Override
 		public SelectionAdapter getSelectionAdapter(PhaseGroupedTable tab,
 				TableViewerColumn col) {
-			return DummySelectionAdapter.get(tab, col);
+			return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFPhase>() {
+				@Override
+				public int compare (XPDFPhase o1, XPDFPhase o2) {
+					return Integer.compare(o1.getId(), o2.getId());
+				}
+			});
 		}
 
 		@Override
 		public ColumnLabelProvider getLabelProvider() {
-			return new DummyLabelProvider("ID");
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return "P"+String.format("%05d", ((XPDFPhase) element).getId());
+				}
+			};
 		}
 
 		@Override

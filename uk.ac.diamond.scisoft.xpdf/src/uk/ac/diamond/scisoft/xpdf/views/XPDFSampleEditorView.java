@@ -50,7 +50,8 @@ public class XPDFSampleEditorView extends ViewPart {
 	private Action saveAction;
 	private Action newCifAction;
 	private Action newEraAction;
-	private Action newBlankAction;
+	private Action newSampleAction;
+	private Action newContainerAction;
 	private Action pointBreakAction;
 	private Action deleteAction;
 	private Action clearAction;
@@ -157,17 +158,27 @@ public class XPDFSampleEditorView extends ViewPart {
 		saveAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_SAVE_EDIT));
 		
 		// add a new entry to the end of the list
-		newBlankAction = new Action() {
+		newSampleAction = new Action() {
 			@Override
 			public void run() {
-				XPDFSampleParameters blankSample = new XPDFSampleParameters();
+				XPDFSampleParameters blankSample = new XPDFSampleParameters(true);
 //				blankSample.setId(generateUniqueID());
 				sampleTable.add(blankSample);
 			}
 		};
-		newBlankAction.setText("New sample");
-		newBlankAction.setToolTipText("Add an empty sample to the table");
-		newBlankAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
+		newSampleAction.setText("New sample");
+		newSampleAction.setToolTipText("Add an empty sample to the table");
+		newSampleAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
+		
+		newContainerAction = new Action() {
+			@Override
+			public void run() {
+				sampleTable.add(new XPDFSampleParameters(false));
+			}
+		};
+		newContainerAction.setText("New container");
+		newContainerAction.setToolTipText("Add an empty container to the table");
+		newContainerAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_ADD));
 		
 		// clear all the data from the list
 		clearAction = new Action() {
@@ -248,20 +259,20 @@ public class XPDFSampleEditorView extends ViewPart {
 			}
 		});
 		
-		clrButton = new Button(parent, SWT.NONE);
-		formData = new FormData();
-		formData.left = new FormAttachment(50);
-		formData.top = new FormAttachment(delButton, offset);
-		formData.bottom = new FormAttachment(100, bottomMargin);
-		clrButton.setLayoutData(formData);
-		clrButton.setText(clearAction.getText());
-		clrButton.setToolTipText(clearAction.getToolTipText());
-		clrButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				clearAction.run();
-			}
-		});
+//		clrButton = new Button(parent, SWT.NONE);
+//		formData = new FormData();
+//		formData.left = new FormAttachment(50);
+//		formData.top = new FormAttachment(delButton, offset);
+//		formData.bottom = new FormAttachment(100, bottomMargin);
+//		clrButton.setLayoutData(formData);
+//		clrButton.setText(clearAction.getText());
+//		clrButton.setToolTipText(clearAction.getToolTipText());
+//		clrButton.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent event) {
+//				clearAction.run();
+//			}
+//		});
 	}
 	
 	private void createLoadButtons(Composite parent) {
@@ -327,7 +338,8 @@ public class XPDFSampleEditorView extends ViewPart {
 
 	protected void fillContextMenu(IMenuManager manager) {
 		manager.add(loadTestDataAction);
-		manager.add(newBlankAction);
+		manager.add(newSampleAction);
+		manager.add(newContainerAction);
 		manager.add(saveAction);
 		manager.add(deleteAction);
 		manager.add(clearAction);

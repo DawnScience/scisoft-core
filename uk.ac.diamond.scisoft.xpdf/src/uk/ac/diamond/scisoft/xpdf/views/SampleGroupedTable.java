@@ -674,715 +674,721 @@ class SampleGroupedTable {
 		return theID;
 	}
 
-}
 
-interface ColumnInterface extends EditingSupportFactory {
-	public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col);
-	public ColumnLabelProvider getLabelProvider();
-	public String getName();
-	public int getWeight();
-	public boolean presentAsUneditable(Object element);
-}
-
-
-class NameColumnInterface implements ColumnInterface {
-
-	@Override
-	public EditingSupport get(final ColumnViewer v) {
-		return new EditingSupport(v) {
-
-			@Override
-			protected CellEditor getCellEditor(Object element) {
-				return new TextCellEditor(((TableViewer) v).getTable());
-			}
-
-			@Override
-			protected boolean canEdit(Object element) {
-				return true;
-			}
-
-			@Override
-			protected Object getValue(Object element) {
-				return ((XPDFSampleParameters) element).getName();
-			}
-
-			@Override
-			protected void setValue(Object element, Object value) {
-				((XPDFSampleParameters) element).setName( (value != null) ? (String) value : "");
-				v.refresh();
-			}
-			
-		};
+	interface ColumnInterface extends EditingSupportFactory {
+		public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col);
+		public ColumnLabelProvider getLabelProvider();
+		public String getName();
+		public int getWeight();
+		public boolean presentAsUneditable(Object element);
 	}
 
-	@Override
-	public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col) {
-		return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return o1.getName().compareTo(o2.getName());
-			}
-		});
+
+	static class NameColumnInterface implements ColumnInterface {
+
+		@Override
+		public EditingSupport get(final ColumnViewer v) {
+			return new EditingSupport(v) {
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return new TextCellEditor(((TableViewer) v).getTable());
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return true;
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					return ((XPDFSampleParameters) element).getName();
+				}
+
+				@Override
+				protected void setValue(Object element, Object value) {
+					((XPDFSampleParameters) element).setName( (value != null) ? (String) value : "");
+					v.refresh();
+				}
+
+			};
+		}
+
+		@Override
+		public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col) {
+			return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
+				@Override
+				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+					return o1.getName().compareTo(o2.getName());
+				}
+			});
+		}
+
+		@Override
+		public ColumnLabelProvider getLabelProvider() {
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return ((XPDFSampleParameters) element).getName();
+				}
+			};
+		}
+
+		@Override
+		public String getName() {
+			return "Name";
+		}
+
+		@Override
+		public int getWeight() {
+			return 20;
+		}
+
+		@Override
+		public boolean presentAsUneditable(Object element) {
+			return false;
+		}
+
 	}
 
-	@Override
-	public ColumnLabelProvider getLabelProvider() {
-		return new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return ((XPDFSampleParameters) element).getName();
-			}
-		};
+	static class CodeColumnInterface implements ColumnInterface {
+
+		@Override
+		public EditingSupport get(ColumnViewer v) {
+			return new EditingSupport(v) {
+
+				@Override
+				protected void setValue(Object element, Object value) {
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					return ((XPDFSampleParameters) element).getId();
+				}
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return null;
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return false;
+				}
+			};
+		}
+
+		@Override
+		public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col) {
+			return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
+				@Override
+				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+					return Integer.compare(o1.getId(), o2.getId());
+				}
+			});
+		}
+
+		@Override
+		public ColumnLabelProvider getLabelProvider() {
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return "E"+String.format("%05d", ((XPDFSampleParameters)element).getId());
+				}
+			};
+		}
+
+		@Override
+		public String getName() {
+			return "Code";
+		}
+
+		@Override
+		public int getWeight() {
+			return 5;
+		}
+
+		@Override
+		public boolean presentAsUneditable(Object element) {
+			return false;
+		}
+
 	}
 
-	@Override
-	public String getName() {
-		return "Name";
-	}
+	class TypeColumnInterface implements ColumnInterface {
 
-	@Override
-	public int getWeight() {
-		return 20;
-	}
+		private final static String sampleString = "Sample";
+		private final static String containerString = "Container";
+		private final String[] comboChoices = {sampleString, containerString};
+		private SampleGroupedTable sampleTable;
 
-	@Override
-	public boolean presentAsUneditable(Object element) {
-		return false;
-	}
-	
-}
+		public TypeColumnInterface(SampleGroupedTable sampleTable) {
+			this.sampleTable = sampleTable;
+		}
 
-class CodeColumnInterface implements ColumnInterface {
+		@Override
+		public EditingSupport get(final ColumnViewer v) {
+			return new EditingSupport(v) {
 
-	@Override
-	public EditingSupport get(ColumnViewer v) {
-		return new EditingSupport(v) {
-			
-			@Override
-			protected void setValue(Object element, Object value) {
-			}
-			
-			@Override
-			protected Object getValue(Object element) {
-				return ((XPDFSampleParameters) element).getId();
-			}
-			
-			@Override
-			protected CellEditor getCellEditor(Object element) {
-				return null;
-			}
-			
-			@Override
-			protected boolean canEdit(Object element) {
-				return false;
-			}
-		};
-	}
-
-	@Override
-	public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col) {
-		return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return Integer.compare(o1.getId(), o2.getId());
-			}
-		});
-	}
-
-	@Override
-	public ColumnLabelProvider getLabelProvider() {
-		return new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return "E"+String.format("%05d", ((XPDFSampleParameters)element).getId());
-			}
-		};
-	}
-
-	@Override
-	public String getName() {
-		return "Code";
-	}
-
-	@Override
-	public int getWeight() {
-		return 5;
-	}
-
-	@Override
-	public boolean presentAsUneditable(Object element) {
-		return false;
-	}
-	
-}
-
-class TypeColumnInterface implements ColumnInterface {
-
-	private static String sampleString = "Sample";
-	private static String containerString = "Container";
-	private static String[] comboChoices = {sampleString, containerString};
-	private SampleGroupedTable sampleTable;
-	
-	public TypeColumnInterface(SampleGroupedTable sampleTable) {
-		this.sampleTable = sampleTable;
-	}
-	
-	@Override
-	public EditingSupport get(final ColumnViewer v) {
-		return new EditingSupport(v) {
-			
-			@Override
-			protected void setValue(Object element, Object value) {
-				switch((int) value) {
-				case(0) : 
-					((XPDFSampleParameters) element).setAsSample();
-				break;
-				case(1) :
-					((XPDFSampleParameters) element).setAsContainer();
-				break;
-				default :
+				@Override
+				protected void setValue(Object element, Object value) {
+					switch((int) value) {
+					case(0) : 
+						((XPDFSampleParameters) element).setAsSample();
 					break;
+					case(1) :
+						((XPDFSampleParameters) element).setAsContainer();
+					break;
+					default :
+						break;
+					}
+					sampleTable.refresh();
 				}
-				sampleTable.refresh();
-			}
-			
-			@Override
-			protected Object getValue(Object element) {
-				return ((XPDFSampleParameters) element).isSample() ? 0 : 1;
-			}
-			
-			@Override
-			protected CellEditor getCellEditor(Object element) {
-				return new ComboBoxCellEditor(((TableViewer) v).getTable(), comboChoices);
-			}
-			
-			@Override
-			protected boolean canEdit(Object element) {
-				return true;
-			}
-		};
-	}
 
-	@Override
-	public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col) {
-		return new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				if (tab.isShowingContainers()) {
-					if (tab.isShowingSamples()) {
-						tab.hideContainers();
-						tab.showSamples();
+				@Override
+				protected Object getValue(Object element) {
+					return ((XPDFSampleParameters) element).isSample() ? 0 : 1;
+				}
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return new ComboBoxCellEditor(((TableViewer) v).getTable(), comboChoices);
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return true;
+				}
+			};
+		}
+
+		@Override
+		public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col) {
+			return new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent event) {
+					if (tab.isShowingContainers()) {
+						if (tab.isShowingSamples()) {
+							tab.hideContainers();
+							tab.showSamples();
+						} else {
+							tab.showSamples();
+							tab.showContainers();
+						}
 					} else {
-						tab.showSamples();
 						tab.showContainers();
+						tab.hideSamples();
 					}
-				} else {
-					tab.showContainers();
-					tab.hideSamples();
+					tab.refresh();
+					col.getColumn().setText(getName());
 				}
-				tab.refresh();
-				col.getColumn().setText(getName());
-		}
-		};
-	}
-	
-	@Override
-	public ColumnLabelProvider getLabelProvider() {
-		return new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return ((XPDFSampleParameters) element).isSample() ? sampleString : containerString;
-			}
-		};
-	}
-
-	@Override
-	public String getName() {
-		if (sampleTable.isShowingSamples() && sampleTable.isShowingContainers()) return sampleString+"/"+containerString;
-		if (sampleTable.isShowingSamples())
-			return sampleString;
-		else
-			return containerString;
-	}
-
-	@Override
-	public int getWeight() {
-		return 10;
-	}
-
-	@Override
-	public boolean presentAsUneditable(Object element) {
-		return false;
-	}
-	
-}
-
-class PhaseColumnInterface implements ColumnInterface {
-
-	private String phasesString(Collection<String> phases) {
-		StringBuilder sb = new StringBuilder();
-		for (String phase : phases) {
-			sb.append(phase);
-			sb.append(", ");
-		}
-		if (sb.length() > 2) sb.delete(sb.length()-2, sb.length());
-		return sb.toString();
-	}
-	
-	@Override
-	public EditingSupport get(final ColumnViewer v) {
-		// TODO: Should interact with the phases table
-		return new EditingSupport(v) {
-			
-			@Override
-			protected void setValue(Object element, Object value) {
-				String[] arrayOfPhases = ((String) value).split(","); 
-				List<String> listOfPhases = new ArrayList<String>();
-				for (int i = 0; i < arrayOfPhases.length; i++)
-					listOfPhases.add(arrayOfPhases[i].trim());
-				((XPDFSampleParameters) element).setPhases(listOfPhases);
-				v.refresh();
-			}
-			
-			@Override
-			protected Object getValue(Object element) {
-				return phasesString(((XPDFSampleParameters) element).getPhases());
-			}
-			
-			@Override
-			protected CellEditor getCellEditor(Object element) {
-				return new TextCellEditor(((TableViewer) v).getTable());
-			}
-			
-			@Override
-			protected boolean canEdit(Object element) {
-				return true;
-			}
-		};
+			};
 		}
 
-	@Override
-	public SelectionAdapter getSelectionAdapter(SampleGroupedTable tab,
-			TableViewerColumn col) {
-		return null;
-	}
-
-	@Override
-	public ColumnLabelProvider getLabelProvider() {
-		return new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return phasesString(((XPDFSampleParameters) element).getPhases());
-			}
-		};
-	}
-
-	@Override
-	public String getName() {
-		return "Phases";
-	}
-
-	@Override
-	public int getWeight() {
-		return 20;
-	}
-
-	@Override
-	public boolean presentAsUneditable(Object element) {
-		return false;
-	}
-	
-}
-
-class CompositionColumnInterface implements ColumnInterface {
-
-	@Override
-	public EditingSupport get(final ColumnViewer v) {
-		// TODO: Should be uneditable, derived from the phases
-		return new EditingSupport(v) {
-			
-			@Override
-			protected void setValue(Object element, Object value) {
-				((XPDFSampleParameters) element).setComposition((value != null) ? (String) value : null);
-				v.refresh();
-			}
-			
-			@Override
-			protected Object getValue(Object element) {
-				return ((XPDFSampleParameters) element).getComposition();
-			}
-			
-			@Override
-			protected CellEditor getCellEditor(Object element) {
-				return new TextCellEditor(((TableViewer) v).getTable());
-			}
-			
-			@Override
-			protected boolean canEdit(Object element) {
-				return true;
-			}
-		};
-		}
-
-	@Override
-	public SelectionAdapter getSelectionAdapter(SampleGroupedTable tab,
-			TableViewerColumn col) {
-		return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return o1.getComposition().compareTo(o2.getComposition());
-			}
-		});
-	}
-
-	@Override
-	public ColumnLabelProvider getLabelProvider() {
-		return new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return ((XPDFSampleParameters) element).getComposition();
-			}
-		};
-	}
-
-	@Override
-	public String getName() {
-		return "Composition";
-	}
-
-	@Override
-	public int getWeight() {
-		return 15;
-	}
-
-	@Override
-	public boolean presentAsUneditable(Object element) {
-		return false;
-	}
-	
-}
-
-class DensityColumnInterface implements ColumnInterface {
-
-	@Override
-	public EditingSupport get(final ColumnViewer v) {
-		// TODO: Should be uneditable, derived from the phases
-		return new EditingSupport(v) {
-			
-			@Override
-			protected void setValue(Object element, Object value) {
-				((XPDFSampleParameters) element).setDensity(Double.parseDouble((String) value));
-				v.refresh();
-			}
-			
-			@Override
-			protected Object getValue(Object element) {
-				return Double.toString(((XPDFSampleParameters) element).getDensity());
-			}
-			
-			@Override
-			protected CellEditor getCellEditor(Object element) {
-				return new TextCellEditor(((TableViewer) v).getTable());
-			}
-			
-			@Override
-			protected boolean canEdit(Object element) {
-				return true;
-			}
-		};
-	}
-
-	@Override
-	public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col) {
-		return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return Double.compare(o1.getDensity(), o2.getDensity());
-			}
-		});
-	}
-
-	@Override
-	public ColumnLabelProvider getLabelProvider() {
-		return new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return Double.toString(((XPDFSampleParameters) element).getDensity());
-			}
-		};
-	}
-
-	@Override
-	public String getName() {
-		return "Density";
-	}
-
-	@Override
-	public int getWeight() {
-		return 10;
-	}
-
-	@Override
-	public boolean presentAsUneditable(Object element) {
-		return false;
-	}
-	
-}
-
-class PackingColumnInterface implements ColumnInterface {
-
-	@Override
-	public EditingSupport get(final ColumnViewer v) {
-		return new EditingSupport(v) {
-
-			@Override
-			protected CellEditor getCellEditor(Object element) {
-				return new TextCellEditor(((TableViewer) v).getTable());
-			}
-
-			@Override
-			protected boolean canEdit(Object element) {
-				return true;
-			}
-
-			@Override
-			protected Object getValue(Object element) {
-				return Double.toString(((XPDFSampleParameters) element).getPackingFraction());
-			}
-
-			@Override
-			protected void setValue(Object element, Object value) {
-				((XPDFSampleParameters) element).setPackingFraction(Double.parseDouble((String) value));				
-				v.refresh();
-			}
-			
-		};
-	}
-
-	@Override
-	public SelectionAdapter getSelectionAdapter(SampleGroupedTable tab,
-			TableViewerColumn col) {
-		return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return Double.compare(o1.getPackingFraction(), o2.getPackingFraction());
-			}
-		});
-	}
-
-	@Override
-	public ColumnLabelProvider getLabelProvider() {
-		return new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return Double.toString(((XPDFSampleParameters) element).getPackingFraction());
-			}
-		};
-	}
-
-	@Override
-	public String getName() {
-		return "Pack. frac.";
-	}
-
-	@Override
-	public int getWeight() {
-		return 5;
-	}
-
-	@Override
-	public boolean presentAsUneditable(Object element) {
-		return false;
-	}
-	
-}
-
-class ShapeColumnInterface implements ColumnInterface {
-
-	private final static String cylinderString = "Cylinder";
-	final static String cylinderLowerString = "cylinder";
-	private final static String plateString = "Plate";
-	final static String plateLowerString = "plate";
-	private final static String noneString = "Defined by container";
-	private final static String[] shapeChoices = {cylinderString, plateString, noneString};
-	
-	@Override
-	public EditingSupport get(final ColumnViewer v) {
-		return new EditingSupport(v) {
-			
-			@Override
-			protected void setValue(Object element, Object value) {
-				switch((int) value) {
-				case(0) :
-				case(1) :
-					((XPDFSampleParameters) element).setShape(shapeChoices[(int) value]);
-				break;
-				default :
-					((XPDFSampleParameters) element).setShape(null);
+		@Override
+		public ColumnLabelProvider getLabelProvider() {
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return ((XPDFSampleParameters) element).isSample() ? sampleString : containerString;
 				}
-				v.refresh();
+			};
+		}
+
+		@Override
+		public String getName() {
+			if (sampleTable.isShowingSamples() && sampleTable.isShowingContainers()) return sampleString+"/"+containerString;
+			if (sampleTable.isShowingSamples())
+				return sampleString;
+			else
+				return containerString;
+		}
+
+		@Override
+		public int getWeight() {
+			return 10;
+		}
+
+		@Override
+		public boolean presentAsUneditable(Object element) {
+			return false;
+		}
+
+	}
+
+	static class PhaseColumnInterface implements ColumnInterface {
+
+		private String phasesString(Collection<String> phases) {
+			StringBuilder sb = new StringBuilder();
+			for (String phase : phases) {
+				sb.append(phase);
+				sb.append(", ");
 			}
-			
-			@Override
-			protected Object getValue(Object element) {
-				String shapeName = ((XPDFSampleParameters) element).getShapeName();
-				if (shapeName == null) {
-					return 2;
-				} else {
-					switch (shapeName.toLowerCase()) {
-					case (cylinderLowerString):
-						return 0;
-					case (plateLowerString):
-						return 1;
-					default:
+			if (sb.length() > 2) sb.delete(sb.length()-2, sb.length());
+			return sb.toString();
+		}
+
+		@Override
+		public EditingSupport get(final ColumnViewer v) {
+			// TODO: Should interact with the phases table
+			return new EditingSupport(v) {
+
+				@Override
+				protected void setValue(Object element, Object value) {
+					String[] arrayOfPhases = ((String) value).split(","); 
+					List<String> listOfPhases = new ArrayList<String>();
+					for (int i = 0; i < arrayOfPhases.length; i++)
+						listOfPhases.add(arrayOfPhases[i].trim());
+					((XPDFSampleParameters) element).setPhases(listOfPhases);
+					v.refresh();
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					return phasesString(((XPDFSampleParameters) element).getPhases());
+				}
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return new TextCellEditor(((TableViewer) v).getTable());
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return true;
+				}
+			};
+		}
+
+		@Override
+		public SelectionAdapter getSelectionAdapter(SampleGroupedTable tab,
+				TableViewerColumn col) {
+			return null;
+		}
+
+		@Override
+		public ColumnLabelProvider getLabelProvider() {
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return phasesString(((XPDFSampleParameters) element).getPhases());
+				}
+			};
+		}
+
+		@Override
+		public String getName() {
+			return "Phases";
+		}
+
+		@Override
+		public int getWeight() {
+			return 20;
+		}
+
+		@Override
+		public boolean presentAsUneditable(Object element) {
+			return false;
+		}
+
+	}
+
+	static class CompositionColumnInterface implements ColumnInterface {
+
+		@Override
+		public EditingSupport get(final ColumnViewer v) {
+			// TODO: Should be uneditable, derived from the phases
+			return new EditingSupport(v) {
+
+				@Override
+				protected void setValue(Object element, Object value) {
+					((XPDFSampleParameters) element).setComposition((value != null) ? (String) value : null);
+					v.refresh();
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					return ((XPDFSampleParameters) element).getComposition();
+				}
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return new TextCellEditor(((TableViewer) v).getTable());
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return true;
+				}
+			};
+		}
+
+		@Override
+		public SelectionAdapter getSelectionAdapter(SampleGroupedTable tab,
+				TableViewerColumn col) {
+			return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
+				@Override
+				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+					return o1.getComposition().compareTo(o2.getComposition());
+				}
+			});
+		}
+
+		@Override
+		public ColumnLabelProvider getLabelProvider() {
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return ((XPDFSampleParameters) element).getComposition();
+				}
+			};
+		}
+
+		@Override
+		public String getName() {
+			return "Composition";
+		}
+
+		@Override
+		public int getWeight() {
+			return 15;
+		}
+
+		@Override
+		public boolean presentAsUneditable(Object element) {
+			return false;
+		}
+
+	}
+
+	static class DensityColumnInterface implements ColumnInterface {
+
+		@Override
+		public EditingSupport get(final ColumnViewer v) {
+			// TODO: Should be uneditable, derived from the phases
+			return new EditingSupport(v) {
+
+				@Override
+				protected void setValue(Object element, Object value) {
+					((XPDFSampleParameters) element).setDensity(Double.parseDouble((String) value));
+					v.refresh();
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					return Double.toString(((XPDFSampleParameters) element).getDensity());
+				}
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return new TextCellEditor(((TableViewer) v).getTable());
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return true;
+				}
+			};
+		}
+
+		@Override
+		public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col) {
+			return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
+				@Override
+				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+					return Double.compare(o1.getDensity(), o2.getDensity());
+				}
+			});
+		}
+
+		@Override
+		public ColumnLabelProvider getLabelProvider() {
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return Double.toString(((XPDFSampleParameters) element).getDensity());
+				}
+			};
+		}
+
+		@Override
+		public String getName() {
+			return "Density";
+		}
+
+		@Override
+		public int getWeight() {
+			return 10;
+		}
+
+		@Override
+		public boolean presentAsUneditable(Object element) {
+			return false;
+		}
+
+	}
+
+	static class PackingColumnInterface implements ColumnInterface {
+
+		@Override
+		public EditingSupport get(final ColumnViewer v) {
+			return new EditingSupport(v) {
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return new TextCellEditor(((TableViewer) v).getTable());
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return true;
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					return Double.toString(((XPDFSampleParameters) element).getPackingFraction());
+				}
+
+				@Override
+				protected void setValue(Object element, Object value) {
+					((XPDFSampleParameters) element).setPackingFraction(Double.parseDouble((String) value));				
+					v.refresh();
+				}
+
+			};
+		}
+
+		@Override
+		public SelectionAdapter getSelectionAdapter(SampleGroupedTable tab,
+				TableViewerColumn col) {
+			return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
+				@Override
+				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+					return Double.compare(o1.getPackingFraction(), o2.getPackingFraction());
+				}
+			});
+		}
+
+		@Override
+		public ColumnLabelProvider getLabelProvider() {
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return Double.toString(((XPDFSampleParameters) element).getPackingFraction());
+				}
+			};
+		}
+
+		@Override
+		public String getName() {
+			return "Pack. frac.";
+		}
+
+		@Override
+		public int getWeight() {
+			return 5;
+		}
+
+		@Override
+		public boolean presentAsUneditable(Object element) {
+			return false;
+		}
+
+	}
+
+	static class ShapeColumnInterface implements ColumnInterface {
+
+		private final static String cylinderString = "Cylinder";
+		final static String cylinderLowerString = "cylinder";
+		private final static String plateString = "Plate";
+		final static String plateLowerString = "plate";
+		private final static String noneString = "Defined by container";
+		private final static String[] shapeChoices = {cylinderString, plateString, noneString};
+
+		@Override
+		public EditingSupport get(final ColumnViewer v) {
+			return new EditingSupport(v) {
+
+				@Override
+				protected void setValue(Object element, Object value) {
+					switch((int) value) {
+					case(0) :
+					case(1) :
+						((XPDFSampleParameters) element).setShape(shapeChoices[(int) value]);
+					break;
+					default :
+						((XPDFSampleParameters) element).setShape(null);
+					}
+					v.refresh();
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					String shapeName = ((XPDFSampleParameters) element).getShapeName();
+					if (shapeName == null) {
 						return 2;
+					} else {
+						switch (shapeName.toLowerCase()) {
+						case (cylinderLowerString):
+							return 0;
+						case (plateLowerString):
+							return 1;
+						default:
+							return 2;
+						}
 					}
 				}
-			}
-			
-			@Override
-			protected CellEditor getCellEditor(Object element) {
-				return new ComboBoxCellEditor(((TableViewer) v).getTable(), shapeChoices);
-			}
-			
-			@Override
-			protected boolean canEdit(Object element) {
-				return true;
-			}
-		};
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return new ComboBoxCellEditor(((TableViewer) v).getTable(), shapeChoices);
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return true;
+				}
+			};
+		}
+
+		@Override
+		public SelectionAdapter getSelectionAdapter(SampleGroupedTable tab,
+				TableViewerColumn col) {
+			return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
+				@Override
+				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+					return o1.getShapeName().compareTo(o2.getShapeName());
+				}
+			});
+		}
+
+		@Override
+		public ColumnLabelProvider getLabelProvider() {
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return ((XPDFSampleParameters) element).getShapeName();
+				}
+
+				@Override
+				public Font getFont(Object element) {
+					return (presentAsUneditable((XPDFSampleParameters) element)) ?
+							JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT) :
+								JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);
+				}
+			};
+		}
+
+		@Override
+		public String getName() {
+			return "Shape";
+		}
+
+		@Override
+		public int getWeight() {
+			return 15;
+		}
+
+		@Override
+		public boolean presentAsUneditable(Object element) {
+			String shape = ((XPDFSampleParameters) element).getShapeName();
+			boolean isCylinder = shape.equalsIgnoreCase(cylinderString);
+			boolean isPlate = shape.equalsIgnoreCase(plateString);
+			return !(isCylinder || isPlate);
+		}
+
 	}
 
-	@Override
-	public SelectionAdapter getSelectionAdapter(SampleGroupedTable tab,
-			TableViewerColumn col) {
-		return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return o1.getShapeName().compareTo(o2.getShapeName());
-			}
-		});
-	}
+	static class DimensionColumnInterface implements ColumnInterface {
 
-	@Override
-	public ColumnLabelProvider getLabelProvider() {
-		return new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return ((XPDFSampleParameters) element).getShapeName();
-			}
+		private final static String cylinderString = "Cylinder";
+		private final static String plateString = "Plate";
 
-			@Override
-			public Font getFont(Object element) {
-				return (presentAsUneditable((XPDFSampleParameters) element)) ?
-						JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT) :
-							JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);
-			}
-		};
-	}
+		@Override
+		public EditingSupport get(final ColumnViewer v) {
+			return new EditingSupport(v) {
 
-	@Override
-	public String getName() {
-		return "Shape";
-	}
-
-	@Override
-	public int getWeight() {
-		return 15;
-	}
-
-	@Override
-	public boolean presentAsUneditable(Object element) {
-		String shape = ((XPDFSampleParameters) element).getShapeName();
-		boolean isCylinder = shape.equalsIgnoreCase(cylinderLowerString);
-		boolean isPlate = shape.equalsIgnoreCase(plateLowerString);
-		return !(isCylinder || isPlate);
-	}
-	
-}
-
-class DimensionColumnInterface implements ColumnInterface {
-	
-	@Override
-	public EditingSupport get(final ColumnViewer v) {
-		return new EditingSupport(v) {
-			
-			@Override
-			protected void setValue(Object element, Object value) {
-				String[] dimStrings = ((String) value).split(",", 2);
-				if (dimStrings.length == 1)
+				@Override
+				protected void setValue(Object element, Object value) {
+					String[] dimStrings = ((String) value).split(",", 2);
+					if (dimStrings.length == 1)
 						((XPDFSampleParameters) element).setDimensions(0, Double.parseDouble(dimStrings[0]));
-				else if (dimStrings.length > 1)
-					((XPDFSampleParameters) element).setDimensions(Double.parseDouble(dimStrings[0]), Double.parseDouble(dimStrings[1]));
-				v.refresh();
-			}
-			
-			@Override
-			protected Object getValue(Object element) {
-				double[] dims = ((XPDFSampleParameters) element).getDimensions();
-				return (dims != null) ? Double.toString(dims[0]) + ", " + Double.toString(dims[1]) : "";
-			}
-			
-			@Override
-			protected CellEditor getCellEditor(Object element) {
-				return new TextCellEditor(((TableViewer) v).getTable());
-			}
-			
-			@Override
-			protected boolean canEdit(Object element) {
-//				String shape = ((XPDFSampleParameters) element).getShapeName();
-//				boolean isCylinder = shape.equalsIgnoreCase(ShapeColumnInterface.cylinderLowerString);
-//				boolean isPlate = shape.equalsIgnoreCase(ShapeColumnInterface.plateLowerString);
-//				return (isCylinder || isPlate) ?
-//						true :
-//							false;
-				return presentAsUneditable((XPDFSampleParameters) element);
-			}
-		};
+					else if (dimStrings.length > 1)
+						((XPDFSampleParameters) element).setDimensions(Double.parseDouble(dimStrings[0]), Double.parseDouble(dimStrings[1]));
+					v.refresh();
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					double[] dims = ((XPDFSampleParameters) element).getDimensions();
+					return (dims != null) ? Double.toString(dims[0]) + ", " + Double.toString(dims[1]) : "";
+				}
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return new TextCellEditor(((TableViewer) v).getTable());
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					//				String shape = ((XPDFSampleParameters) element).getShapeName();
+					//				boolean isCylinder = shape.equalsIgnoreCase(ShapeColumnInterface.cylinderLowerString);
+					//				boolean isPlate = shape.equalsIgnoreCase(ShapeColumnInterface.plateLowerString);
+					//				return (isCylinder || isPlate) ?
+					//						true :
+					//							false;
+					return presentAsUneditable((XPDFSampleParameters) element);
+				}
+			};
+		}
+
+		@Override
+		public SelectionAdapter getSelectionAdapter(SampleGroupedTable tab,
+				TableViewerColumn col) {
+			return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
+				@Override
+				public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
+					return ((Double) o1.getDimensions()[0]).compareTo((Double) o2.getDimensions()[0]);
+				}
+			});
+		}
+
+		@Override
+		public ColumnLabelProvider getLabelProvider() {
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					double[] dims = ((XPDFSampleParameters) element).getDimensions();
+					return (dims != null) ? Double.toString(dims[0]) + ", " + Double.toString(dims[1]) : "-";
+				}
+
+				@Override
+				public Font getFont(Object element) {
+					return (presentAsUneditable((XPDFSampleParameters) element)) ?
+							JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT) :
+								JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);
+				}
+			};
+		}
+
+		@Override
+		public String getName() {
+			return "Dimensions";
+		}
+
+		@Override
+		public int getWeight() {
+			return 20;
+		}
+
+		@Override
+		public boolean presentAsUneditable(Object element) {
+			String shape = ((XPDFSampleParameters) element).getShapeName();
+			boolean isCylinder = shape.equalsIgnoreCase(cylinderString);
+			boolean isPlate = shape.equalsIgnoreCase(plateString);
+			return !(isCylinder || isPlate);
+		}
+
 	}
 
-	@Override
-	public SelectionAdapter getSelectionAdapter(SampleGroupedTable tab,
-			TableViewerColumn col) {
-		return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFSampleParameters>() {
-			@Override
-			public int compare(XPDFSampleParameters o1, XPDFSampleParameters o2) {
-				return ((Double) o1.getDimensions()[0]).compareTo((Double) o2.getDimensions()[0]);
-			}
-		});
-	}
-
-	@Override
-	public ColumnLabelProvider getLabelProvider() {
-		return new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				double[] dims = ((XPDFSampleParameters) element).getDimensions();
-				return (dims != null) ? Double.toString(dims[0]) + ", " + Double.toString(dims[1]) : "-";
-			}
-			
-			@Override
-			public Font getFont(Object element) {
-				return (presentAsUneditable((XPDFSampleParameters) element)) ?
-						JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT) :
-							JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);
-			}
-		};
-	}
-
-	@Override
-	public String getName() {
-		return "Dimensions";
-	}
-
-	@Override
-	public int getWeight() {
-		return 20;
-	}
-	
-	@Override
-	public boolean presentAsUneditable(Object element) {
-		return (new ShapeColumnInterface()).presentAsUneditable(element);
-	}
-	
 }
-

@@ -115,7 +115,7 @@ public class XPDFBeamTrace {
 	}
 	
 	/**
-	 * Normalize the trace contained, and not this in the appropriate isNormalized boolean
+	 * Normalize the trace contained, and note this in the appropriate isNormalized boolean
 	 */
 	public void normalizeTrace() {
 		if (trace != null) {

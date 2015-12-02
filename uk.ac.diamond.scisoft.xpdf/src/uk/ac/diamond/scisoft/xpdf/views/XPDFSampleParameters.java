@@ -27,7 +27,7 @@ public class XPDFSampleParameters {
 //	private String name;
 	private int id;
 //	private boolean isSample;
-	private List<String> phases;
+	private List<XPDFPhase> phases;
 //	private XPDFSubstance substance;
 //	private double suggestedEnergy;
 //	private double suggestedCapDiameter;
@@ -40,7 +40,7 @@ public class XPDFSampleParameters {
 	 */
 	public XPDFSampleParameters() {
 		this.component = new XPDFTargetComponent();
-		this.phases = new ArrayList<String>();
+		this.phases = new ArrayList<XPDFPhase>();
 	}
 
 	public XPDFSampleParameters(boolean isSample) {
@@ -53,7 +53,7 @@ public class XPDFSampleParameters {
 	 */
 	public XPDFSampleParameters(XPDFSampleParameters inSamp) {
 		this.component = new XPDFTargetComponent(inSamp.component);
-		this.phases = new ArrayList<String>(inSamp.phases);
+		this.phases = new ArrayList<XPDFPhase>(inSamp.phases);
 	}
 	
 	/**
@@ -84,13 +84,13 @@ public class XPDFSampleParameters {
 	/**
 	 * @return the phases present in the sample
 	 */
-	public List<String> getPhases() {
+	public List<XPDFPhase> getPhases() {
 		return phases;
 	}
 	/**
 	 * @param phases sets the phases present in the sample
 	 */
-	public void setPhases(List<String> phases) {
+	public void setPhases(List<XPDFPhase> phases) {
 		this.phases = phases;
 	}
 

@@ -63,6 +63,8 @@ class SampleGroupedTable {
 		
 	// the grouped table object that does the displaying
 	private XPDFGroupedTable groupedTable;
+	
+	private PhaseGroupedTable phaseTable;
 
 	/**
 	 * Constructor.
@@ -164,6 +166,8 @@ class SampleGroupedTable {
 		sample.setId(generateUniqueID());
 		samples.add(sample);
 		groupedTable.refresh();
+		if (phaseTable != null)
+			phaseTable.addPhases(sample.getPhases());
 	}
 
 	/**
@@ -348,6 +352,10 @@ class SampleGroupedTable {
 		};
 	}
 
+	public void setPhaseTable(PhaseGroupedTable phaseTable) {
+		this.phaseTable = phaseTable;
+	}
+	
 //	// The table label provider does nothing except delegate to the column label provider
 //	class SampleTableLP extends LabelProvider implements ITableLabelProvider {
 //
@@ -918,10 +926,10 @@ class SampleGroupedTable {
 
 	static class PhaseColumnInterface implements ColumnInterface {
 
-		private String phasesString(Collection<String> phases) {
+		private String phasesString(Collection<XPDFPhase> phases) {
 			StringBuilder sb = new StringBuilder();
-			for (String phase : phases) {
-				sb.append(phase);
+			for (XPDFPhase phase : phases) {
+				sb.append(phase.getName());
 				sb.append(", ");
 			}
 			if (sb.length() > 2) sb.delete(sb.length()-2, sb.length());
@@ -936,9 +944,12 @@ class SampleGroupedTable {
 				@Override
 				protected void setValue(Object element, Object value) {
 					String[] arrayOfPhases = ((String) value).split(","); 
-					List<String> listOfPhases = new ArrayList<String>();
-					for (int i = 0; i < arrayOfPhases.length; i++)
-						listOfPhases.add(arrayOfPhases[i].trim());
+					List<XPDFPhase> listOfPhases = new ArrayList<XPDFPhase>();
+					for (int i = 0; i < arrayOfPhases.length; i++) {
+						XPDFPhase newPhase = new XPDFPhase();
+						newPhase.setName(arrayOfPhases[i].trim());
+						listOfPhases.add(newPhase);
+					}
 					((XPDFSampleParameters) element).setPhases(listOfPhases);
 					v.refresh();
 				}
@@ -955,7 +966,7 @@ class SampleGroupedTable {
 
 				@Override
 				protected boolean canEdit(Object element) {
-					return true;
+					return false;
 				}
 			};
 		}

@@ -45,6 +45,9 @@ class PhaseGroupedTable {
 
 	private TreeSet<Integer> usedIDs;
 	
+	private SampleGroupedTable sampleTable;
+	private List<XPDFPhase> visiblePhases;
+	
 	public PhaseGroupedTable(Composite parent, int style) {
 		phases = new ArrayList<XPDFPhase>(Arrays.asList(new XPDFPhase[]{new XPDFPhase(), new XPDFPhase(), new XPDFPhase()}));
 		
@@ -133,7 +136,10 @@ class PhaseGroupedTable {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			return phases.toArray(new XPDFPhase[]{});
+			if (visiblePhases == null || visiblePhases.size() == 0)
+				return phases.toArray(new XPDFPhase[]{});
+			else
+				return visiblePhases.toArray(new XPDFPhase[]{});
 		}
 		
 	}
@@ -188,6 +194,23 @@ class PhaseGroupedTable {
 		};
 	}
 
+	public void setSampleTable(SampleGroupedTable sampleTable) {
+		this.sampleTable = sampleTable;
+	}
+	
+	public void addPhases(List<XPDFPhase> addedPhases) {
+		// String version
+		for (XPDFPhase phase: addedPhases) {
+			phase.setId(getUniqueID());
+			phases.add(phase);
+		}
+		groupedTable.refresh();
+	}
+	
+	public void setVisiblePhases(List<String> visiblePhases) {
+		// String version
+		
+	}
 	private interface ColumnInterface extends EditingSupportFactory {
 		public SelectionAdapter getSelectionAdapter(final PhaseGroupedTable tab, final TableViewerColumn col);
 		public ColumnLabelProvider getLabelProvider();
@@ -644,4 +667,5 @@ class PhaseGroupedTable {
 		}
 		
 	}
+
 }

@@ -397,10 +397,10 @@ public class XPDFSampleView extends ViewPart {
 			case DETAILS: return "+";
 			case PHASES: 
 				StringBuilder sb = new StringBuilder();
-				for (String phase : sample.getPhases()) {
-					sb.append(phase);
-					sb.append(", ");
-				}
+//				for (String phase : sample.getPhases()) {
+//					sb.append(phase);
+//					sb.append(", ");
+//				}
 				if (sb.length() > 2) sb.delete(sb.length()-2, sb.length());
 				return sb.toString();
 			case COMPOSITION: return sample.getComposition();
@@ -470,7 +470,7 @@ public class XPDFSampleView extends ViewPart {
 				List<String> listOfPhases = new ArrayList<String>();
 				for (int i = 0; i < arrayOfPhases.length; i++)
 					listOfPhases.add(arrayOfPhases[i].trim());
-				sample.setPhases(listOfPhases);
+//				sample.setPhases(listOfPhases);
 			} break;
 			case COMPOSITION: sample.setComposition(sValue); break;
 			case DENSITY: sample.setDensity(Double.parseDouble(sValue)); break;
@@ -953,7 +953,7 @@ public class XPDFSampleView extends ViewPart {
 			XPDFSampleParameters bto = new XPDFSampleParameters();
 			bto.setName("Barium Titanate");
 			bto.setId(generateUniqueID());
-			bto.setPhases(new ArrayList<String>(Arrays.asList(new String[] {"BTO", "CaTiO3"})));
+//			bto.setPhases(new ArrayList<String>(Arrays.asList(new String[] {"BTO", "CaTiO3"})));
 			bto.setComposition("BaTiO3"); // Should be "Ba0.9Ca0.1TiO3"
 			bto.setDensity(3.71);
 			// Packing fraction as default
@@ -968,7 +968,7 @@ public class XPDFSampleView extends ViewPart {
 			XPDFSampleParameters rutile = new XPDFSampleParameters();
 			rutile.setName("Rutile");
 			rutile.setId(generateUniqueID());
-			rutile.setPhases(new ArrayList<String>(Arrays.asList(new String[] {"TiO2"})));
+//			rutile.setPhases(new ArrayList<String>(Arrays.asList(new String[] {"TiO2"})));
 			rutile.setComposition("TiO2");
 			rutile.setDensity(6.67);
 			// Packing fraction as default
@@ -983,7 +983,7 @@ public class XPDFSampleView extends ViewPart {
 			XPDFSampleParameters explodite = new XPDFSampleParameters();
 			explodite.setName("Explodite");
 			explodite.setId(generateUniqueID());
-			explodite.setPhases(new ArrayList<String>(Arrays.asList(new String[] {"LF", "O"})));
+//			explodite.setPhases(new ArrayList<String>(Arrays.asList(new String[] {"LF", "O"})));
 			explodite.setComposition("K2S4P");
 			explodite.setDensity(1.1);
 			//packing fraction as default

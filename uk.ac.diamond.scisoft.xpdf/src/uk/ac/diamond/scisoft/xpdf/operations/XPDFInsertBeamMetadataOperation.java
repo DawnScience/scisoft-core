@@ -52,10 +52,12 @@ public class XPDFInsertBeamMetadataOperation extends XPDFInsertXMetadataOperatio
 		}
 		// Load the background from the designated xy file
 		Dataset bgTrace = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2").getSliceView());
+		checkDataAndAuxillaryDataMatch(input, bgTrace);
 		
 		try {
 			Dataset bgErrors = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_3").getSliceView());
 			if (bgErrors != null)
+				checkDataAndAuxillaryDataMatch(bgTrace, bgErrors);
 				bgTrace.setError(bgErrors);
 		} catch (OperationException e) {
 			// catch and ignore; add no errors to the Dataset.
@@ -87,12 +89,12 @@ public class XPDFInsertBeamMetadataOperation extends XPDFInsertXMetadataOperatio
 
 	@Override
 	public OperationRank getInputRank() {
-		return OperationRank.ONE;
+		return OperationRank.ANY;
 	}
 
 	@Override
 	public OperationRank getOutputRank() {
-		return OperationRank.ONE;
+		return OperationRank.SAME;
 	}
 
 }

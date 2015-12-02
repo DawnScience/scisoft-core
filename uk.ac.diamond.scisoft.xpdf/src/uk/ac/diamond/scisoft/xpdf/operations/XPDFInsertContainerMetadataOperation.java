@@ -88,11 +88,12 @@ public class XPDFInsertContainerMetadataOperation extends
 
 		// Load the container trace from the designated xy file
 		Dataset contTrace = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2").getSliceView());
-
+		checkDataAndAuxillaryDataMatch(input, contTrace);
 		
 		try {
 			Dataset contErrors = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_3").getSliceView());
 			if (contErrors != null)
+				checkDataAndAuxillaryDataMatch(contTrace, contErrors);
 				contTrace.setError(contErrors);
 		} catch (OperationException e) {
 			// catch and ignore; add no errors to the Dataset.

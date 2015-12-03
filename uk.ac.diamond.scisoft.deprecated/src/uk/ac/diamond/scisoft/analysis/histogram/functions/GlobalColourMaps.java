@@ -20,8 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Deprecated and replaced by colour map implementations in org.dawnsci.plotting.histogram
  */
+@Deprecated
 public class GlobalColourMaps {
 
 	public static final String[] colourMapNames = {"Grey",

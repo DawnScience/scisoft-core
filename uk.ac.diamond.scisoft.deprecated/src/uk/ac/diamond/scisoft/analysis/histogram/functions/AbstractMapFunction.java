@@ -12,21 +12,18 @@
 
 package uk.ac.diamond.scisoft.analysis.histogram.functions;
 
-import org.eclipse.dawnsci.plotting.api.histogram.ITransferFunction;
-
 /**
  * Abstract class for a general mapping function from one double to another one or a byte<br>
  * Deprecated, replaced by Colour mapping functions implementations in org.dawnsci.plotting.histogram
  */
 @Deprecated
-public abstract class AbstractMapFunction implements ITransferFunction {
+public abstract class AbstractMapFunction {
 
 	/**
 	 * Clipped version of mapFunction
 	 * @param input original value to map
 	 * @return output double
 	 */
-	@Override
 	final public double getPoint(double input) {
 		double value = mapFunction(input);
 		if (value < 0.0) return 0.0;
@@ -39,7 +36,6 @@ public abstract class AbstractMapFunction implements ITransferFunction {
 	 * @return byte (C-style usage) 0..255 but due to stupid Java signed bytes will be 
 	 *              mapped to -128..127 in Java we have to use short
 	 */
-	@Override
 	final public short mapToByte(double input) {
 		return (short)(255*getPoint(input));
 	}
@@ -60,8 +56,6 @@ public abstract class AbstractMapFunction implements ITransferFunction {
 	 */
 	abstract public double mapFunction(double input);
 	
-	
-	@Override
 	public int[] getArray() {
 		int[] result = new int[256];
 		for (int i = 0; i < result.length; i++) {

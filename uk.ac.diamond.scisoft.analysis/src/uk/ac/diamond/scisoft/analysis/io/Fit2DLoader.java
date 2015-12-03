@@ -61,12 +61,13 @@ public class Fit2DLoader extends AbstractFileLoader {
 		final DataHolder output = new DataHolder();
 		File f = null;
 		FileInputStream fi = null;
+		BufferedReader br = null;
 		try {
 
 			f = new File(fileName);
 			fi = new FileInputStream(f);
 
-			BufferedReader br = new BufferedReader(new FileReader(f));
+			br = new BufferedReader(new FileReader(f));
 			String line = br.readLine();
 			
 			// If the first line is not a { then we fail this loader.
@@ -83,12 +84,19 @@ public class Fit2DLoader extends AbstractFileLoader {
 				data = createLazyDataset(DATA_NAME, Dataset.FLOAT32, shape, new Fit2DLoader(fileName));
 			} else {
 				data = new FloatDataset(shape);
-				Utils.readFloat(fi, (FloatDataset) data, index);
+				Utils.readLeFloat(fi, (FloatDataset) data, index);
 			}
 				
 		} catch (Exception e) {
 			throw new ScanFileHolderException("File failed to load " + fileName, e);
 		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException ex) {
+					// do nothing
+				}
+			}
 			if (fi != null) {
 				try {
 					fi.close();

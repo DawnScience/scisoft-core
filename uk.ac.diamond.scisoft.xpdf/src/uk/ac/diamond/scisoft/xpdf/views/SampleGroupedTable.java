@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -157,7 +159,8 @@ class SampleGroupedTable {
 				if (selection.size() == 0) {
 					phaseTable.setVisiblePhases(new ArrayList<XPDFPhase>());
 				} else {
-					List<XPDFPhase> visiblePhases = new ArrayList<XPDFPhase>();
+//					List<XPDFPhase> visiblePhases = new ArrayList<XPDFPhase>();
+					Set<XPDFPhase> visiblePhases = new HashSet<XPDFPhase>();
 					for (Object oSample : selection.toList())
 						if (oSample instanceof XPDFSampleParameters)
 							visiblePhases.addAll(((XPDFSampleParameters) oSample).getPhases());
@@ -525,6 +528,17 @@ class SampleGroupedTable {
 		@Override
 		public boolean performDrop(Object data) {
 			XPDFSampleParameters targetEntry = (XPDFSampleParameters) getCurrentTarget();
+			Object selectionObject = ((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).getFirstElement();
+			if (selectionObject instanceof XPDFSampleParameters)
+				return dropSamples(targetEntry);
+			else if (selectionObject instanceof XPDFPhase)
+				return dropPhases(targetEntry);
+			else
+				return false; 
+		}
+		
+		private boolean dropSamples(XPDFSampleParameters targetEntry) {
+			
 			// Create the List of new sample parameters to be dropped in.
 			List<XPDFSampleParameters> samplesToAdd = new ArrayList<XPDFSampleParameters>(((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).size());
 			for (Object oSample: ((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).toList()) {
@@ -565,6 +579,19 @@ class SampleGroupedTable {
 			return success;
 		}
 
+		private boolean dropPhases(XPDFSampleParameters targetEntry) {
+			
+			for (Object phase : ((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).toList()) {
+				List<XPDFPhase> phaseList = targetEntry.getPhases();
+				phaseList.add((XPDFPhase) phase);
+				targetEntry.setPhases(phaseList);
+			}
+			
+			groupedTable.refresh();
+			
+			return true;
+		}
+		
 		@Override
 		public boolean validateDrop(Object target, int operation,
 				TransferData transferType) {

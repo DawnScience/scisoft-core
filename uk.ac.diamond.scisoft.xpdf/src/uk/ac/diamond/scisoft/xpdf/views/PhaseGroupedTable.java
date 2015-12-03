@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
 
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
@@ -27,6 +28,11 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.DragDetectEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -117,6 +123,9 @@ class PhaseGroupedTable {
 		
 		PhaseContentProvider contentProvider = new PhaseContentProvider();
 		groupedTable.setContentProvider(contentProvider);
+
+		// For now, drag support only. Drop support for phase-defining CIF files will eventually be added
+		groupedTable.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalDragSupportListener(groupedTable));
 	}
 
  	// Generate a new id
@@ -233,6 +242,19 @@ class PhaseGroupedTable {
 			this.visiblePhases.add(phase);
 		}
 	}
+	
+	class LocalDragSupportListener extends DragSourceAdapter {
+		private XPDFGroupedTable gT;
+		public LocalDragSupportListener(XPDFGroupedTable gT) {
+			this.gT = gT;
+		}
+		
+		@Override
+		public void dragSetData(DragSourceEvent event) {
+			LocalSelectionTransfer.getTransfer().setSelection(gT.getSelection());
+		}
+	}
+	
 	private interface ColumnInterface extends EditingSupportFactory {
 		public SelectionAdapter getSelectionAdapter(final PhaseGroupedTable tab, final TableViewerColumn col);
 		public ColumnLabelProvider getLabelProvider();

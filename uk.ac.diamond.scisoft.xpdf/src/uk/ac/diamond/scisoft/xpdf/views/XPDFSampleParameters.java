@@ -138,7 +138,7 @@ public class XPDFSampleParameters {
 	}
 	/**
 	 * @param compoString
-	 * 					the compostion to be set
+	 * 					the composition to be set
 	 */
 	public void setComposition(String compoString) {
 		getForm().setMatName(compoString);

@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.xpdf.views;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -49,6 +50,8 @@ class PhaseGroupedTable {
 	private List<XPDFPhase> visiblePhases;
 	
 	public PhaseGroupedTable(Composite parent, int style) {
+		
+		// phases with test data
 		phases = new ArrayList<XPDFPhase>(Arrays.asList(new XPDFPhase[]{new XPDFPhase(), new XPDFPhase(), new XPDFPhase()}));
 		
 		String[] testNames = {"Quartz", "Crown glass", "Flint glass"}; 
@@ -57,6 +60,9 @@ class PhaseGroupedTable {
 			phases.get(i).setId(getUniqueID());
 
 		}
+		
+		visiblePhases = new ArrayList<XPDFPhase>();
+		
 		groupedTable = new XPDFGroupedTable(parent, SWT.NONE);
 		
 		List<String> groupNames = new ArrayList<String>();
@@ -197,9 +203,13 @@ class PhaseGroupedTable {
 	public void setSampleTable(SampleGroupedTable sampleTable) {
 		this.sampleTable = sampleTable;
 	}
-	
-	public void addPhases(List<XPDFPhase> addedPhases) {
-		// String version
+
+	/**
+	 * Adds new phases.
+	 * @param addedPhases
+	 * 					Collection of phases to add to the internal list
+	 */
+	public void addPhases(Collection<XPDFPhase> addedPhases) {
 		for (XPDFPhase phase: addedPhases) {
 			phase.setId(getUniqueID());
 			phases.add(phase);
@@ -207,9 +217,21 @@ class PhaseGroupedTable {
 		groupedTable.refresh();
 	}
 	
-	public void setVisiblePhases(List<String> visiblePhases) {
-		// String version
-		
+	/**
+	 * Sets the phases that should be visible.
+	 * @param visiblePhases
+	 * 						Collection of the phases that should be visible in the table.
+	 */
+	public void setVisiblePhases(Collection<XPDFPhase> visiblePhases) {
+		this.visiblePhases.clear();
+		for (XPDFPhase phase : visiblePhases) {
+			// Ensure any phases set to be visible exist in the list of all phases
+			if (!phases.contains(phase)) {
+				phase.setId(getUniqueID());
+				phases.add(phase);
+			}
+			this.visiblePhases.add(phase);
+		}
 	}
 	private interface ColumnInterface extends EditingSupportFactory {
 		public SelectionAdapter getSelectionAdapter(final PhaseGroupedTable tab, final TableViewerColumn col);
@@ -666,6 +688,13 @@ class PhaseGroupedTable {
 			return false;
 		}
 		
+	}
+
+	/**
+	 * Refreshes the internal table.
+	 */
+	public void refresh() {
+		groupedTable.refresh();
 	}
 
 }

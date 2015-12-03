@@ -26,8 +26,10 @@ import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
@@ -146,6 +148,24 @@ class SampleGroupedTable {
 		groupedTable.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalDragSupportListener(groupedTable));
 		groupedTable.addDropSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalViewerDropAdapterFactory(samples, groupedTable));
 
+		// Set a SelectionChangedListener to filter the phases in the phases table, based on the selected samples
+		groupedTable.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+				if (selection.size() == 0) {
+					phaseTable.setVisiblePhases(new ArrayList<XPDFPhase>());
+				} else {
+					List<XPDFPhase> visiblePhases = new ArrayList<XPDFPhase>();
+					for (Object oSample : selection.toList())
+						if (oSample instanceof XPDFSampleParameters)
+							visiblePhases.addAll(((XPDFSampleParameters) oSample).getPhases());
+					phaseTable.setVisiblePhases(visiblePhases);
+				}
+				phaseTable.refresh();
+			}
+		});
 	}
 		
 	/**
@@ -684,6 +704,7 @@ class SampleGroupedTable {
 
 
 	private interface ColumnInterface extends EditingSupportFactory {
+		// Selection Adapter for the group header button
 		public SelectionAdapter getSelectionAdapter(final SampleGroupedTable tab, final TableViewerColumn col);
 		public ColumnLabelProvider getLabelProvider();
 		public String getName();

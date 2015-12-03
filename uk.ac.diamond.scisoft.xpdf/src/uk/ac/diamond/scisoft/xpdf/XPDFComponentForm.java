@@ -38,11 +38,14 @@ public class XPDFComponentForm {
 	 */
 	public XPDFComponentForm(XPDFComponentForm inForm) {
 		substance = new XPDFSubstance(inForm.substance);
-		// Must be a better way to do this
-		if (inForm.getGeom().getShape() == "cylinder") {
-			this.geometry = new XPDFComponentCylinder(inForm.getGeom());
-		} else if (inForm.getGeom().getShape() == "plate") {
-			this.geometry = new XPDFComponentPlate(inForm.getGeom());
+		// Geometry can be null for samples defined by their container
+		if (inForm.getGeom() != null) {
+			// Must be a better way to do this
+			if (inForm.getGeom().getShape() == "cylinder") {
+				this.geometry = new XPDFComponentCylinder(inForm.getGeom());
+			} else if (inForm.getGeom().getShape() == "plate") {
+				this.geometry = new XPDFComponentPlate(inForm.getGeom());
+			}
 		}
 	}
 

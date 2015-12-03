@@ -15,9 +15,14 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class XPDFInsertBeamMetadataModel extends AbstractOperationModel {
 
-	// TODO: Change from the ceria experiment defaults to real defaults 
-	@OperationModelField(hint="Enter the path to the file", file = FileType.EXISTING_FILE, label = "Background xy/xye File")
+	@OperationModelField(hint="Enter the path to the file", file = FileType.EXISTING_FILE, label = "Data File")
 	private String filePath = "/scratch/dawn_diamond_ws/runtime-uk.ac.diamond.dawn.product/data/ceriaXPDF/Empty_I15.xy";
+	@OperationModelField(hint="Name of the dataset", dataset = "filePath", label = "Dataset")
+	private String dataset = "";
+	@OperationModelField(hint="Enter the path to the file containing the error values", file = FileType.EXISTING_FILE, label = "Errors File")
+	private String errorFilePath = "";
+	@OperationModelField(hint="Name of the dataset containing the errors", dataset = "errorFilePath", label = "Errors Dataset")
+	private String errorDataset = "";
 	@OperationModelField(hint="Enter the beam energy", label = "Beam Energy (keV)")
 	private double beamEnergy = 76.6;
 	@OperationModelField(hint="Enter the beam height", label = "Beam Height (mm)")
@@ -25,7 +30,7 @@ public class XPDFInsertBeamMetadataModel extends AbstractOperationModel {
 	@OperationModelField(hint="Enter the beam width", label = "Beam Width (mm)")
 	private double beamWidth = 0.07;
 	@OperationModelField(hint="Enter the experiment counting time", label = "Counting Time (s)")
-	private double countingTime = 240.0;
+	private double countingTime = 60.0;
 	@OperationModelField(hint="Enter the relative flux", label = "Monitor Relative Flux")
 	private double monitorRelativeFlux = 1.0;
 	
@@ -37,6 +42,30 @@ public class XPDFInsertBeamMetadataModel extends AbstractOperationModel {
 		firePropertyChange("filePath", this.filePath, this.filePath = filePath);
 	}
 
+	public String getDataset() {
+		return dataset;
+	}
+	
+	public void setDataset(String dataset) {
+		firePropertyChange("errorDataset", this.dataset, this.dataset = dataset);
+	}
+	
+	public String getErrorFilePath() {
+		return errorFilePath;
+	}
+
+	public void setErrorFilePath(String errorFilePath) {
+		firePropertyChange("errorFilePath", this.errorFilePath, this.errorFilePath = errorFilePath);
+	}
+
+	public String getErrorDataset() {
+		return errorDataset;
+	}
+	
+	public void setErrorDataset(String errorDataset) {
+		firePropertyChange("errorDataset", this.errorDataset, this.errorDataset = errorDataset);
+	}
+	
 	public double getBeamEnergy() {
 		return beamEnergy;
 	}

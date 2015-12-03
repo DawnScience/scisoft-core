@@ -16,11 +16,16 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 public class XPDFInsertContainerMetadataModel extends AbstractOperationModel {
 
 	
-	// TODO: CHange defaults to real defaults, rather than ceria SRM defaults
-	@OperationModelField(hint="Enter the path to the file", file = FileType.EXISTING_FILE, label = "Container xy/xye File")
+	@OperationModelField(hint="Enter the path to the file", file = FileType.EXISTING_FILE, label = "Data File")
 	private String filePath = "/scratch/dawn_diamond_ws/runtime-uk.ac.diamond.dawn.product/data/ceriaXPDF/Empty_cap.xy";
+	@OperationModelField(hint="Name of the dataset", dataset = "filePath", label = "Dataset")
+	private String dataset = "";
+	@OperationModelField(hint="Enter the path to the file containing the error values", file = FileType.EXISTING_FILE, label = "Errors File")
+	private String errorFilePath = "";
+	@OperationModelField(hint="Name of the dataset containing the errors", dataset = "errorFilePath", label = "Errors Dataset")
+	private String errorDataset = "";
 	@OperationModelField(hint="Enter a counting time for the experiment",label = "Counting Time (s)" )
-	private double countingTime = 240.0;
+	private double countingTime = 60.0;
 	@OperationModelField(hint="Enter the flux relative to the monitor",label = "Monitor Relative Flux" )
 	private double monitorRelativeFlux = 1.0;
 	@OperationModelField(hint="Enter an identifying name for the container", label = "Container Identifier")
@@ -34,9 +39,9 @@ public class XPDFInsertContainerMetadataModel extends AbstractOperationModel {
 	@OperationModelField(hint="Enter the shape of the container", label = "Container Shape")
 	private String shape = "cylinder";
 	@OperationModelField(hint="Enter an inner distance for the container shape",label = "Container Inner Distance (mm)" )
-	private double inner = 0.15;
+	private double inner = 0.5;
 	@OperationModelField(hint="Enter an outer distance for the container shape",label = "Container Outer Distance (mm)" )
-	private double outer = 0.16;
+	private double outer = 0.51;
 	@OperationModelField(hint="Enter whether the container exists upstream of the container",label = "Container is Upstream?" )
 	private boolean upstream = true;
 	@OperationModelField(hint="Enter whether the container exists downstream of the container",label = "Container is Downstream?" )
@@ -50,6 +55,30 @@ public class XPDFInsertContainerMetadataModel extends AbstractOperationModel {
 		firePropertyChange("filePath", this.filePath, this.filePath = filePath);
 	}
 
+	public String getDataset() {
+		return dataset;
+	}
+	
+	public void setDataset(String dataset) {
+		firePropertyChange("errorDataset", this.dataset, this.dataset = dataset);
+	}
+	
+	public String getErrorFilePath() {
+		return errorFilePath;
+	}
+
+	public void setErrorFilePath(String errorFilePath) {
+		firePropertyChange("errorFilePath", this.errorFilePath, this.errorFilePath = errorFilePath);
+	}
+
+	public String getErrorDataset() {
+		return errorDataset;
+	}
+	
+	public void setErrorDataset(String errorDataset) {
+		firePropertyChange("errorDataset", this.errorDataset, this.errorDataset = errorDataset);
+	}
+	
 	public double getCountingTime() {
 		return countingTime;
 	}

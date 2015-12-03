@@ -16,11 +16,12 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 public class XPDFInsertSampleMetadataModel extends AbstractOperationModel {
 
 	
-	// TODO: CHange defaults to real defaults, rather than ceria SRM defaults
-	@OperationModelField(hint="Enter the path to the file containing the error values", file = FileType.EXISTING_FILE, label = "Data errors xy File")
+	@OperationModelField(hint="Enter the path to the file containing the error values", file = FileType.EXISTING_FILE, label = "Errors File")
 	private String errorFilePath = "";
+	@OperationModelField(hint="Name of the dataset containing the errors", dataset = "errorFilePath", label = "Errors Dataset")
+	private String errorDataset = "";
 	@OperationModelField(hint="Enter a counting time for the experiment",label = "Counting Time (s)" )
-	private double countingTime = 240.0;
+	private double countingTime = 60.0;
 	@OperationModelField(hint="Enter the flux relative to the monitor",label = "Monitor Relative Flux" )
 	private double monitorRelativeFlux = 1.0;
 	@OperationModelField(hint="Enter an identifying name for the sample", label = "Sample Identifier")
@@ -36,7 +37,7 @@ public class XPDFInsertSampleMetadataModel extends AbstractOperationModel {
 	@OperationModelField(hint="Enter an inner distance for the sample shape",label = "Sample Inner Distance (mm)" )
 	private double inner = 0.0;
 	@OperationModelField(hint="Enter an outer distance for the sample shape",label = "Sample Outer Distance (mm)" )
-	private double outer = 0.15;
+	private double outer = 0.5;
 	@OperationModelField(hint="Enter whether the x-axis is angle or momentum transfer",label = "Is x-axis 2θ?" )
 	private boolean axisAngle = true;
 	
@@ -48,6 +49,14 @@ public class XPDFInsertSampleMetadataModel extends AbstractOperationModel {
 		firePropertyChange("errorFilePath", this.errorFilePath, this.errorFilePath = errorFilePath);
 	}
 
+	public String getErrorDataset() {
+		return errorDataset;
+	}
+	
+	public void setErrorDataset(String errorDataset) {
+		firePropertyChange("errorDataset", this.errorDataset, this.errorDataset = errorDataset);
+	}
+	
 	public double getCountingTime() {
 		return countingTime;
 	}

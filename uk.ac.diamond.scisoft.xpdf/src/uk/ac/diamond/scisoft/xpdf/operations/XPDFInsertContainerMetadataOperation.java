@@ -87,11 +87,13 @@ public class XPDFInsertContainerMetadataOperation extends
 		}
 
 		// Load the container trace from the designated xy file
-		Dataset contTrace = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_2").getSliceView());
+		if (model.getDataset().length() <= 0) throw new OperationException(this, "Undefined dataset");
+		Dataset contTrace = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, model.getDataset()).getSliceView());
 		checkDataAndAuxillaryDataMatch(input, contTrace);
 		
 		try {
-			Dataset contErrors = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "Column_3").getSliceView());
+			if (model.getErrorDataset().length() <= 0) throw new OperationException(this, "Undefined error dataset");
+			Dataset contErrors = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, model.getErrorFilePath(), model.getErrorDataset()).getSliceView());
 			if (contErrors != null)
 				checkDataAndAuxillaryDataMatch(contTrace, contErrors);
 				contTrace.setError(contErrors);

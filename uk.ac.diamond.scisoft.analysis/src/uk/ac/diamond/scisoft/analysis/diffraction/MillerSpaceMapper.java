@@ -26,9 +26,9 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
+import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
 import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 
@@ -161,7 +161,7 @@ public class MillerSpaceMapper {
 		}
 
 		DoubleDataset map = (DoubleDataset) DatasetFactory.zeros(hShape, Dataset.FLOAT64);
-		IntegerDataset tally = (IntegerDataset) DatasetFactory.zeros(hShape, Dataset.INT32);
+		ShortDataset tally = (ShortDataset) DatasetFactory.zeros(hShape, Dataset.INT16);
 		iter.reset();
 		diter.reset();
 		if (reduceToNonZeroBB) {
@@ -278,7 +278,7 @@ public class MillerSpaceMapper {
 		max[2] = Math.max(max[2], v.z);
 	}
 
-	private void mapImage(int[] s, QSpace qspace, MillerSpace mspace, Dataset image, DoubleDataset map, IntegerDataset tally) {
+	private void mapImage(int[] s, QSpace qspace, MillerSpace mspace, Dataset image, DoubleDataset map, ShortDataset tally) {
 		// how does voxel size map to pixel size?
 		// h = -hmax, -hmax+hdel, ..., hmax-hdel, hmax
 		// algorithm:
@@ -389,11 +389,11 @@ public class MillerSpaceMapper {
 	 * @param pos
 	 * @param value
 	 */
-	private static void addValue(DoubleDataset map, final int[] pos, final double value, IntegerDataset tally) {
+	private static void addValue(DoubleDataset map, final int[] pos, final double value, ShortDataset tally) {
 		int index = map.get1DIndex(pos);
 		map.setAbs(index, map.getAbs(index) + value);
 		index = tally.get1DIndex(pos);
-		tally.setAbs(index, tally.getAbs(index) + 1);
+		tally.setAbs(index, (short) (tally.getAbs(index) + 1));
 	}
 
 	/**
@@ -656,7 +656,7 @@ public class MillerSpaceMapper {
 	 */
 	public static void saveVolume(String file, Dataset v, Dataset... axes) throws ScanFileHolderException {
 		HDF5FileFactory.deleteFile(file);
-
+		HDF5FileFactory.setWriteBackwardCompatible(true);
 		v.setName("volume");
 		HDF5Utils.writeDataset(file, "/entry1/data", v);
 		for (int i = 0; i < axes.length; i++) {
@@ -693,6 +693,7 @@ public class MillerSpaceMapper {
 		attrs.add(a);
 
 		HDF5Utils.writeAttributes(file, "/entry1/data", attrs.toArray(new Dataset[attrs.size()]));
+		HDF5FileFactory.setWriteBackwardCompatible(false);
 	}
 
 	private static final MillerSpaceMapper I16Mapper = new MillerSpaceMapper("/entry1/instrument/pil100k", "image_data", "/entry1/sample");
@@ -733,7 +734,7 @@ public class MillerSpaceMapper {
 	 * @throws ScanFileHolderException
 	 */
 	public static void processVolumeWithAutoBox(String input, String output, boolean reduceToNonZero, double... mDelta) throws ScanFileHolderException {
-		processVolumeWithAutoBox(input, output, 1, reduceToNonZero, mDelta);
+		processVolumeWithAutoBox(input, output, 1.0, reduceToNonZero, mDelta);
 	}
 
 	/**

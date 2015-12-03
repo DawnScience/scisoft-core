@@ -18,5 +18,4 @@ Export-Package: uk.ac.diamond.scisoft.analysis.dataset,
  uk.ac.diamond.scisoft.analysis.plotserver
 Bundle-Vendor: Diamond Light Source
 Import-Package: junitx.framework,
- org.eclipse.dawnsci.plotting.api.histogram,
  org.slf4j;version="[1.7.6,1.7.7)"

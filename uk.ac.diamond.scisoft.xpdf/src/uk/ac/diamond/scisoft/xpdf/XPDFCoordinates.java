@@ -146,6 +146,24 @@ public class XPDFCoordinates {
 	}
 	
 	/**
+	 * Returns the gamma coordinate.
+	 * @return
+	 * 		the γ array.
+	 */
+	public Dataset getGamma() {
+		return Maths.multiply(twoTheta, 0.0);
+	}
+	
+	/**
+	 * Returns the delta coordinate.
+	 * @return
+	 * 		the δ array. 
+	 */
+	public Dataset getDelta() {
+		return twoTheta;
+	}
+	
+	/**
 	 * Calculates and returns sin 2θ/λ
 	 * @return the value x = sin 2θ/λ
 	 */

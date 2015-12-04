@@ -116,5 +116,5 @@ public interface XPDFMetadata extends MetadataType {
 	 * 			Horizontal scattering angle in radians.
 	 * @return the dataset containing the total sample fluorescence.
 	 */
-	Dataset getSampleFluorescence(Dataset delta, Dataset gamma);
+	Dataset getSampleFluorescence(Dataset gamma, Dataset delta);
 }

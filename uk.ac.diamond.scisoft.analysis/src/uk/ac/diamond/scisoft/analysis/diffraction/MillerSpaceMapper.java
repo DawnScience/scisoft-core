@@ -656,7 +656,6 @@ public class MillerSpaceMapper {
 	 */
 	public static void saveVolume(String file, Dataset v, Dataset... axes) throws ScanFileHolderException {
 		HDF5FileFactory.deleteFile(file);
-		HDF5FileFactory.setWriteBackwardCompatible(true);
 		v.setName("volume");
 		HDF5Utils.writeDataset(file, "/entry1/data", v);
 		for (int i = 0; i < axes.length; i++) {
@@ -693,7 +692,6 @@ public class MillerSpaceMapper {
 		attrs.add(a);
 
 		HDF5Utils.writeAttributes(file, "/entry1/data", attrs.toArray(new Dataset[attrs.size()]));
-		HDF5FileFactory.setWriteBackwardCompatible(false);
 	}
 
 	private static final MillerSpaceMapper I16Mapper = new MillerSpaceMapper("/entry1/instrument/pil100k", "image_data", "/entry1/sample");

@@ -99,6 +99,13 @@
             model="uk.ac.diamond.scisoft.xpdf.operations.XPDFDefineDetectorModel"
             name="XPDF Define Detector">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFAzimuthalIntegration"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFAzimuthalIntegration"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationModel"
+            name="XPDF Azimuthal Integration">
+      </operation>
    </extension>
 
 </plugin>

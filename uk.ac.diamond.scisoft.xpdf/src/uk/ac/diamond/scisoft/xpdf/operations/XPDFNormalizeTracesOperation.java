@@ -100,12 +100,12 @@ public class XPDFNormalizeTracesOperation extends
 
 	@Override
 	public OperationRank getInputRank() {
-		return OperationRank.ONE;
+		return OperationRank.ANY;
 	}
 
 	@Override
 	public OperationRank getOutputRank() {
-		return OperationRank.ONE;
+		return OperationRank.SAME;
 	}
 
 }

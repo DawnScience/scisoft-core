@@ -102,6 +102,7 @@
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFAzimuthalIntegration"
+            icon="icons/xpdfazimuthal.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFAzimuthalIntegration"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationModel"
             name="XPDF Azimuthal Integration">

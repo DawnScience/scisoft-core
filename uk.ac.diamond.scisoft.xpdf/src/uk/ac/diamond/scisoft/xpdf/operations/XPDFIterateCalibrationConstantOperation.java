@@ -87,7 +87,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 		
 		// Get 2θ, the axis variable
 		XPDFCoordinates coordinates = new XPDFCoordinates(DatasetUtils.convertToDataset(input));
-		Dataset twoTheta = coordinates.getTwoTheta();
+//		Dataset twoTheta = coordinates.getTwoTheta();
 		
 		// Set up the q² integrator class
 		theCalibration.setqSquaredIntegrator(new XPDFQSquaredIntegrator(coordinates));//twoTheta, theXPDFMetadata.getBeam()));

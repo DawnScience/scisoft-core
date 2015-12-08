@@ -156,13 +156,85 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 			XPDFBeamData beamData,
 			boolean doUpstreamAbsorption, boolean doDownstreamAbsorption) {
 		
-		return calculateAbsorptionFluorescence(gamma, delta,
+		// Grid size for the high resolution data
+		int nXHigh = delta.getShape()[0];
+		int nYHigh = delta.getShape()[1];
+
+		int[] nXYLow = new int[2];
+		
+		restrictGridSize(4096, nXHigh, nYHigh, nXYLow);
+		
+		int nXLow = nXYLow[0];
+		int nYLow = nXYLow[1];
+
+		// Down sampling of the angular coordinates for faster calculations
+		Dataset gammaDown = XPDFRegrid.two(gamma, nXLow, nYLow);
+		Dataset deltaDown = XPDFRegrid.two(delta, nXLow, nYLow);
+		
+		Dataset absorption = calculateAbsorptionFluorescence(gammaDown, deltaDown,
 				Arrays.asList(new XPDFComponentGeometry[] {attenuatorGeometry}),
 				Arrays.asList(new Double[] {attenuationCoefficient}), Arrays.asList(new Double[] {attenuationCoefficient}),
 				beamData,
 				doUpstreamAbsorption, doDownstreamAbsorption, true);
+		
+		// Upsample the absorption back to the original resolution and return
+		return XPDFRegrid.two(absorption, nXHigh, nYHigh);
 		}
 
+	/**
+	 * Returns smaller grid axes, based on the lengths of the originals and the maximum grid size.
+	 * @param maxGrid
+	 * 				maximum number of grid points to use.
+	 * @param nXHigh
+	 * 				original length of the x axis (dimension 0)
+	 * @param nYHigh
+	 * 				original length of the y axis (dimension 1)
+	 * @param nXYLow
+	 * 				return the values of the axis lengths using a 2 element int
+	 * 				array, since Java has no pass by reference
+	 */
+	private void restrictGridSize(int maxGrid, int nXHigh, int nYHigh, int[] nXYLow) {
+		int nXLow, nYLow;
+		// Grid size for the low resolution calculations
+		if (nXHigh*nYHigh < maxGrid) {
+			nXLow = nXHigh;
+			nYLow = nYHigh;
+		} else {
+			// Sort the axes
+			int smallerDim, largerDim;
+			boolean isXSmaller = nXHigh < nYHigh;
+			if (isXSmaller) {
+				smallerDim = nXHigh;
+				largerDim = nYHigh;
+			} else {
+				smallerDim = nYHigh;
+				largerDim = nXHigh;
+			}
+
+			// Deal with one axis being rather short
+			if (smallerDim <= 2) {
+				largerDim = (largerDim*smallerDim > maxGrid) ? maxGrid/smallerDim : largerDim;
+			} else {
+				double scale = maxGrid/(1.0*smallerDim*largerDim);
+				smallerDim = (int) Math.ceil(Math.sqrt(scale) * smallerDim);
+				smallerDim = (smallerDim < 2) ? 2 : smallerDim;
+				largerDim = maxGrid/smallerDim;
+			}
+			
+			// Unsort the axes
+			if (isXSmaller) {
+				nXLow = smallerDim;
+				nYLow = largerDim;
+			} else {
+				nXLow = largerDim;
+				nYLow = smallerDim;
+			}
+		
+		}
+		nXYLow[0] = nXLow;
+		nXYLow[1] = nYLow;
+	}
+	
 	/**
 	 * For a circle, returns the chord distance from the -z boundary along the
 	 * line that passes p from the centre of the circle.
@@ -230,11 +302,31 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 			List<Double> attenuationsIn, List<Double> attenuationsOut,
 			XPDFBeamData beamData,
 			boolean doIncomingAbsorption, boolean doOutgoingAbsorption) {
-		return calculateAbsorptionFluorescence(gamma, delta,
+		// Grid size for the high resolution data
+		int nXHigh = delta.getShape()[0];
+		int nYHigh = delta.getShape()[1];
+
+		int[] nXYLow = new int[2];
+		
+//		restrictGridSize(4096, nXHigh, nYHigh, nXYLow);
+		restrictGridSize(512, nXHigh, nYHigh, nXYLow);
+		
+		int nXLow = nXYLow[0];
+		int nYLow = nXYLow[1];
+
+		// Down sampling of the angular coordinates for faster calculations
+		Dataset gammaDown = XPDFRegrid.two(gamma, nXLow, nYLow);
+		Dataset deltaDown = XPDFRegrid.two(delta, nXLow, nYLow);
+
+		Dataset fluorescence = calculateAbsorptionFluorescence(gammaDown, deltaDown,
 						attenuators,
 						attenuationsIn, attenuationsOut,
 						beamData,
 						doIncomingAbsorption, doOutgoingAbsorption, false);
+
+		// Upsample the fluorescence back to the original resolution and return
+		return XPDFRegrid.two(fluorescence, nXHigh, nYHigh);
+		
 	}
 	
 	private Dataset calculateAbsorptionFluorescence(Dataset gamma, Dataset delta,

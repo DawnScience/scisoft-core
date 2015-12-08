@@ -14,6 +14,7 @@ import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
@@ -301,6 +302,74 @@ public class XPDFCylinderTest extends TestCase {
 		
 		
 		
+	}
+	
+	public void testCeriaAbsorption() {
+
+		XPDFSubstance ceria = new XPDFSubstance("ceria", "CeO2", 7.65, 0.6);
+
+		XPDFComponentGeometry cap1mm= new XPDFComponentCylinder();
+		cap1mm.setDistances(0.5, 0.51);
+		cap1mm.setStreamality(true, true);
+		
+		XPDFComponentGeometry powder1mm = new XPDFComponentCylinder();
+		powder1mm.setDistances(0.0, 0.5);
+		powder1mm.setStreamality(true, true);
+		
+		XPDFComponentForm capForm = new XPDFComponentForm();
+		capForm.setGeom(cap1mm);
+		capForm.setMatName("SiO2");
+		XPDFTargetComponent quartzCap = new XPDFTargetComponent();
+		quartzCap.setForm(capForm);
+		quartzCap.setSample(false);
+		quartzCap.setName("quartz capillary");
+		
+		XPDFBeamData beamData = new XPDFBeamData();
+		beamData.setBeamEnergy(76.6);
+		beamData.setBeamHeight(0.07);
+		beamData.setBeamWidth(0.07);
+		
+		List<XPDFComponentGeometry> attenuators = new ArrayList<XPDFComponentGeometry>();
+		attenuators.add(powder1mm);
+		attenuators.add(cap1mm);
+
+		String[] scattererNames = {"NIST_Ceria", "QGCT_1mm"};
+		String[] absorberNames = scattererNames;
+		
+		double[] mus = {ceria.getAttenuationCoefficient(beamData.getBeamEnergy()),
+				capForm.getAttenuationCoefficient(beamData.getBeamEnergy())};
+		
+		String dataPath = "/home/rkl37156/ceria_dean_data/standards2015/absorption/";
+		String fileName = "NIST_Ceria";
+		IDataHolder dh = null;
+		
+		for (int iScatter = 0; iScatter < 2; iScatter++) {
+			for (int jAbsorber = 0; jAbsorber < 2; jAbsorber++) {
+				String fn = dataPath+fileName+"_"+scattererNames[iScatter] + "_in_" + absorberNames[jAbsorber]+ ".xy";
+				try {
+					dh = LoaderFactory.getData(fn);
+				} catch (Exception e) {
+					fail("File not found: " + fn);
+				}
+
+				Dataset delta1D = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_1").getSlice());
+				Dataset delta = new DoubleDataset(delta1D.getSize(), 1);
+				for (int i = 0; i<delta1D.getSize(); i++)
+					delta.set(delta1D.getDouble(i), i, 0);
+				Dataset gamma = DoubleDataset.zeros(delta);
+
+				Dataset expected = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_2").getSlice());
+				
+				// Calculate a result
+				Dataset result = attenuators.get(iScatter).calculateAbsorptionCorrections(gamma, delta, attenuators.get(jAbsorber), mus[jAbsorber], beamData, true, true);
+
+				Dataset difference = Maths.subtract(result, expected);
+				Dataset squareDifference = Maths.square(difference);
+				double rmsDifference = Math.sqrt((double) squareDifference.mean());
+				double maxDifference = 2e-2;
+				assertTrue("Absorption of " + scattererNames[iScatter] + " in " + absorberNames[jAbsorber] + " deviates too far from target values: "+ rmsDifference, rmsDifference < maxDifference);
+			}
+		}
 	}
 
 }

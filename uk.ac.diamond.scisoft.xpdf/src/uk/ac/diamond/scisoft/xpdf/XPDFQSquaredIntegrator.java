@@ -57,6 +57,7 @@ public class XPDFQSquaredIntegrator {
 	 */
 	public XPDFQSquaredIntegrator(XPDFQSquaredIntegrator qq) {
 		this.q = qq.q;
+		this.dq = qq.dq;
 		this.eXSections = (qq.eXSections != null) ? qq.eXSections : null;
 	}
 

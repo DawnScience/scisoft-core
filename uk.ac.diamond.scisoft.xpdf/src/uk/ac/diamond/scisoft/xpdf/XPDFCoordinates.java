@@ -234,6 +234,17 @@ public class XPDFCoordinates {
 			this.twoTheta = Maths.multiply(2, Maths.arcsin(Maths.multiply(this.x, this.wavelength)));
 		return this.twoTheta;
 	}
+
+	/**
+	 * Returns the azimuthal scattering angle
+	 * @return the azimuthal scattering angle in radians.
+	 */
+	public Dataset getPhi() {
+		if (phi == null)
+			return DoubleDataset.zeros(getTwoTheta());
+		else
+			return phi;
+	}
 	
 	/**
 	 * Returns the gamma coordinate.

@@ -37,6 +37,7 @@ public class XPDFCoordinates {
 	private Dataset phi;
 	private Dataset gamma;
 	private Dataset delta;
+	private Dataset dAngle; // d(2θ)/di for 1D; dΩ, solid angle, for 2D. 
 	private Dataset q;
 	private Dataset x;
 	private boolean isAngleAuthorative;
@@ -78,6 +79,7 @@ public class XPDFCoordinates {
 			AxesMetadata axes = input.getFirstMetadata(AxesMetadata.class);
 			if (theXPDFMetadata.getSample().getTrace().isAxisAngle()) {
 				this.setTwoTheta(Maths.toRadians(DatasetUtils.convertToDataset(axes.getAxis(0)[0].getSlice())));
+				dAngle = differentiate1DDataset(twoTheta);
 				q = null;
 				x = null;
 			} else {
@@ -92,6 +94,8 @@ public class XPDFCoordinates {
 			Dataset localGamma = DoubleDataset.zeros(input);
 			Dataset localDelta = DoubleDataset.zeros(input);
 			
+			double pxArea = dP.getVPxSize() * dP.getHPxSize();
+			
 			for (int i = 0; i < input.getShape()[0]; i++) {
 				for (int j = 0; j < input.getShape()[1]; j++) {
 					Vector3d pixelPosition = dP.pixelPosition(i, j);
@@ -99,6 +103,7 @@ public class XPDFCoordinates {
 					double rho = Math.sqrt(Math.pow(pixelPosition.y, 2) + Math.pow(pixelPosition.z, 2));
 					localGamma.set(Math.atan2(-pixelPosition.x, rho), i, j);
 					localDelta.set(Math.atan2(pixelPosition.y, pixelPosition.z), i, j);
+					dAngle.set(pxArea/pixelPosition.lengthSquared(), i, j); // No problem setting dAngle directly
 				}
 			}
 			this.setGammaDelta(localGamma, localDelta);
@@ -335,4 +340,59 @@ public class XPDFCoordinates {
 		return null;
 	}
 	
+	/**
+	 * Returns the coordinate increment for integration.
+	 * <p>
+	 * The coordinate increment in 1D is the rate of change of scattering angle
+	 * with grid point d(2θ)/di. In 2D, it is the solid angle of the pixel.
+	 * @return dimensionally relevant angle increment Dataset.
+	 */
+	public Dataset getAngleIncrement() {
+		if (dAngle == null) dAngle = differentiate1DDataset(getTwoTheta());
+		return dAngle;
+	}
+	
+	/**
+	 * Returns the increment for performing integrals over q.
+	 * <p>
+	 * Multiplying the return value of this function with the function to be
+	 * integrated wrt q, and then applying the integration kernel, will give a
+	 * correct integral over q in both one and two dimensions.
+	 * @return
+	 */
+	public Dataset getQIncrement() {
+		// The result is dq/dθ * dAngle in both one and two dimensions.
+			return Maths.multiply(getAngleIncrement(), Maths.multiply(4*Math.PI/2*wavelength, Maths.cos(Maths.multiply(0.5, twoTheta))));
+	}
+	
+	/**
+	 * Finite difference approximation to a 1d Dataset.
+	 * <p>
+	 * Second order correct finite difference approximation to the first
+	 * derivative of a 1D Dataset, with respect to the index
+	 * @param y
+	 * 			Values of the function.
+	 * @return second-order correct approximation to derivative of the function.
+	 */
+	private static Dataset differentiate1DDataset(Dataset y) {
+		Dataset deriv = DoubleDataset.zeros(y);
+		if (y.getSize() > 1) {
+			if (y.getSize() == 2) {
+				double dderiv = y.getDouble(1) - y.getDouble(0);
+				deriv.set(dderiv, 0);
+				deriv.set(dderiv, 1);
+			} else {
+				// Three points or more
+				int iLast = y.getSize()-1;
+				// End points
+				deriv.set((-3*y.getDouble(0) + 4*y.getDouble(1) - y.getDouble(2))/2, 0);
+				deriv.set((y.getDouble(iLast-2) - 4*y.getDouble(iLast-1) + 3*y.getDouble(iLast))/2, iLast);
+				// The rest of the points
+				for (int i = 1; i < iLast; i++)
+					deriv.set((y.getDouble(i+1) - y.getDouble(i-1))/2, i);
+			}
+		}
+		return deriv;
+	}
+
 }

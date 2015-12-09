@@ -9,12 +9,16 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
+import javax.vecmath.Vector3d;
+
+import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
+import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 /*
@@ -30,6 +34,9 @@ public class XPDFCoordinates {
 
 	private double wavelength;
 	private Dataset twoTheta;
+	private Dataset phi;
+	private Dataset gamma;
+	private Dataset delta;
 	private Dataset q;
 	private Dataset x;
 	private boolean isAngleAuthorative;
@@ -54,24 +61,48 @@ public class XPDFCoordinates {
 	 */
 	public XPDFCoordinates(XPDFCoordinates inCoords) {
 		this.wavelength = inCoords.wavelength;
-		this.twoTheta = new DoubleDataset(inCoords.twoTheta);
-		this.q = new DoubleDataset(inCoords.q);
-		this.x = new DoubleDataset(inCoords.x);
+		this.twoTheta = (inCoords.twoTheta != null) ? new DoubleDataset(inCoords.twoTheta) : null;
+		this.phi = (inCoords.phi != null) ? new DoubleDataset(inCoords.phi) : null;
+		this.gamma = (inCoords.gamma != null) ? new DoubleDataset(inCoords.gamma) : null;
+		this.delta = (inCoords.delta != null) ? new DoubleDataset(inCoords.delta) : null;
+		this.q = (inCoords.q != null) ? new DoubleDataset(inCoords.q) : null;
+		this.x = (inCoords.x != null) ? new DoubleDataset(inCoords.x) : null;
 		this.isAngleAuthorative = inCoords.isAngleAuthorative;
 	}
 	
 	public XPDFCoordinates(Dataset input) {
 		XPDFMetadata theXPDFMetadata = input.getFirstMetadata(XPDFMetadata.class);
 		this.wavelength = theXPDFMetadata.getBeam().getBeamWavelength();
-		AxesMetadata axes = input.getFirstMetadata(AxesMetadata.class);
-		if (theXPDFMetadata.getSample().getTrace().isAxisAngle()) {
-			this.setTwoTheta(Maths.toRadians(DatasetUtils.convertToDataset(axes.getAxis(0)[0].getSlice())));
-			q = null;
-			x = null;
+
+		if (input.getShape().length == 1) {
+			AxesMetadata axes = input.getFirstMetadata(AxesMetadata.class);
+			if (theXPDFMetadata.getSample().getTrace().isAxisAngle()) {
+				this.setTwoTheta(Maths.toRadians(DatasetUtils.convertToDataset(axes.getAxis(0)[0].getSlice())));
+				q = null;
+				x = null;
+			} else {
+				this.setQ(DatasetUtils.convertToDataset(axes.getAxis(0)[0].getSlice()));
+				twoTheta = null;
+			}		
 		} else {
-			this.setQ(DatasetUtils.convertToDataset(axes.getAxis(0)[0].getSlice()));
-			twoTheta = null;
-		}		
+			// 2D case. The caller should check for valid metadata first
+			DiffractionMetadata dMD = input.getFirstMetadata(DiffractionMetadata.class);
+			DetectorProperties dP = dMD.getDetector2DProperties();
+			
+			Dataset localGamma = DoubleDataset.zeros(input);
+			Dataset localDelta = DoubleDataset.zeros(input);
+			
+			for (int i = 0; i < input.getShape()[0]; i++) {
+				for (int j = 0; j < input.getShape()[1]; j++) {
+					Vector3d pixelPosition = dP.pixelPosition(i, j);
+					
+					double rho = Math.sqrt(Math.pow(pixelPosition.y, 2) + Math.pow(pixelPosition.z, 2));
+					localGamma.set(Math.atan2(-pixelPosition.x, rho), i, j);
+					localDelta.set(Math.atan2(pixelPosition.y, pixelPosition.z), i, j);
+				}
+			}
+			this.setGammaDelta(localGamma, localDelta);
+		}
 	}
 	
 	/**
@@ -103,12 +134,45 @@ public class XPDFCoordinates {
 		this.setEnergy(inBeam.getBeamEnergy());
 	}
 	
+	/**
+	 * Sets the scattering 2θ angle.
+	 * <p>
+	 * Sets the polar scattering angle for both the 1D and 2D cases. 
+	 * @param twoTheta
+	 */
 	public void setTwoTheta(Dataset twoTheta) {
 		this.twoTheta = twoTheta;
+		if (phi == null) this.phi = Maths.add(DoubleDataset.zeros(this.twoTheta), Math.PI/2);
+		setGammaDeltaFrom2ThetaPhi();
 		this.isAngleAuthorative = true;
 		invalidateData();
 	}
 
+	/**
+	 * Sets the azimuthal angle around the beam.
+	 * <p>
+	 * Sets the azimuthal angle in the case of 2D data. When using 1D data, do
+	 * not set this, setTwoTheta() will provide the correct default. The
+	 * 0 angle is in the plane of the synchrotron.
+	 * @param phi
+	 * 			Azimuthal angle data to set
+	 */
+	public void setPhi(Dataset phi) {
+		this.phi = phi;
+		if (twoTheta != null)
+			setGammaDeltaFrom2ThetaPhi();
+		this.isAngleAuthorative = true;
+		invalidateData();
+	}
+	
+	/**
+	 * Converts from the scattering polar coordinates to the detector angular coordinates 
+	 */
+	private void setGammaDeltaFrom2ThetaPhi() {
+		gamma = Maths.arcsin(Maths.negative(Maths.multiply(Maths.sin(this.twoTheta), Maths.cos(phi))));
+		delta = Maths.arctan(Maths.multiply(Maths.tan(this.twoTheta), Maths.sin(phi)));
+	}
+	
 	/**
 	 * Set the total scattering angle based on horizontal and vertical scattering angles.
 	 * @param gamma
@@ -117,18 +181,34 @@ public class XPDFCoordinates {
 	 * 			Vertical scattering angle
 	 */
 	public void setGammaDelta(Dataset gamma, Dataset delta) {
-		// TODO: Fix this up when we have 2D data
-		this.twoTheta = delta;
+		this.gamma = gamma;
+		this.delta = delta;
+		this.twoTheta = Maths.arccos(Maths.multiply(Maths.cos(delta), Maths.cos(gamma)));
+		this.phi = Maths.arctan2(Maths.negative(Maths.sin(this.delta)), Maths.tan(this.gamma));
 		this.isAngleAuthorative = true;
 		invalidateData();
 	}
 	
+	/**
+	 * Sets the momentum transfer Q coordinate.
+	 * <p>
+	 * Only to be used with 1D data. For 2D data, the angles must be set. 
+	 * @param q
+	 * 			Q coordinate to set
+	 */
 	public void setQ(Dataset q) {
 		this.q = q;
 		this.x = Maths.divide(this.q, 4*Math.PI);
 		this.isAngleAuthorative = false;
 	}
 	
+	/**
+	 * Sets the momentum transfer X coordinate.
+	 * <p>
+	 * Only to be used with 1D data. For 2D data, the angles must be set. 
+	 * @param x
+	 * 			X coordinate to set
+	 */
 	public void setX(Dataset x) {
 		this.x = x;
 		this.q = Maths.multiply(this.x, 4*Math.PI);
@@ -147,20 +227,32 @@ public class XPDFCoordinates {
 	
 	/**
 	 * Returns the gamma coordinate.
+	 * <p>
+	 * In the 2D case, directly returns the γ coordinate. In the 1D case with
+	 * momentum transfer as the authoritative coordinate, returns 0. 
 	 * @return
 	 * 		the γ array.
 	 */
 	public Dataset getGamma() {
-		return Maths.multiply(twoTheta, 0.0);
+		if (!isAngleAuthorative)
+			return DoubleDataset.zeros(getTwoTheta());
+		else
+			return gamma;
 	}
 	
 	/**
 	 * Returns the delta coordinate.
+	 * <p>
+	 * In the 2D case, directly returns the δ coordinate. In the 1D case, if
+	 * the momentum transfer is the authoritative coordinate, returns 2θ.  
 	 * @return
 	 * 		the δ array. 
 	 */
 	public Dataset getDelta() {
-		return twoTheta;
+		if (!isAngleAuthorative)
+			return getTwoTheta();
+		else
+			return delta;
 	}
 	
 	/**
@@ -200,7 +292,47 @@ public class XPDFCoordinates {
 			x = null;
 		} else {
 			twoTheta = null;
+			phi = null;
+			gamma = null;
+			delta = null;
 		}
 	}
 
+	/**
+	 * Returns a description of the problems preventing the generation of a valid XPDFCoordinates object.
+	 * <p>
+	 * Given a Dataset to check, return a description of the problems with the
+	 * Dataset that would prevent it from generating a valid XPDFCoordinates
+	 * object. If there are no such problems, then return a null String.  
+	 * @param input
+	 * 				the Dataset to check
+	 * @return a String describing problems with the data for generating a valid XPDFCoordinates object.
+	 */
+	public static String coordinateMetadataProblems(Dataset input) {
+		if (input.getShape().length == 1) {
+			try {
+				if (input.getMetadata(AxesMetadata.class) == null ||
+					input.getMetadata(AxesMetadata.class).isEmpty() ||
+					input.getMetadata(AxesMetadata.class).get(0) == null ||
+					((AxesMetadata) input.getMetadata(AxesMetadata.class).get(0)).getAxis(0)[0] == null)
+					return "Axis metadata not found";
+
+			} catch (Exception e) {
+				return "Error getting axis metadata";
+			}
+		} else {
+			
+		}
+		try { 
+			if (input.getMetadata(DiffractionMetadata.class) == null ||
+					input.getMetadata(DiffractionMetadata.class).isEmpty() ||
+					input.getMetadata(DiffractionMetadata.class).get(0) == null ||
+					((DiffractionMetadata) input.getMetadata(DiffractionMetadata.class).get(0)).getDetector2DProperties() == null)
+				return "Detector calibration not found";
+		} catch (Exception e) {
+			return "Error getting detector calibration";
+		}
+		return null;
+	}
+	
 }

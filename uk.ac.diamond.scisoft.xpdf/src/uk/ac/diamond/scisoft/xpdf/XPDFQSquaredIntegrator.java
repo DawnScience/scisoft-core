@@ -24,7 +24,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
  */
 public class XPDFQSquaredIntegrator {
 
-	private Dataset q;
+	private Dataset q, dq;
 	private XPDFElectronCrossSections eXSections;
 	
 	/**
@@ -32,6 +32,7 @@ public class XPDFQSquaredIntegrator {
 	 */
 	public XPDFQSquaredIntegrator() {
 		q = null;
+		dq = null;
 		eXSections = null;
 	}
 
@@ -41,6 +42,7 @@ public class XPDFQSquaredIntegrator {
 	 */
 	public XPDFQSquaredIntegrator(XPDFCoordinates coordinates) { //Dataset twoTheta, XPDFBeamData beamData) {
 		q = coordinates.getQ();
+		dq = coordinates.getQIncrement();
 		//		q = beamData.getQFromTwoTheta(twoTheta);
 		eXSections = new XPDFElectronCrossSections();
 		eXSections.setCoordinates(coordinates);
@@ -68,7 +70,7 @@ public class XPDFQSquaredIntegrator {
 	 * @return the integral over q².
 	 */
 	public double qSquaredIntegral(Dataset fn) {
-		Dataset dq = XPDFQSquaredIntegrator.differentiate1DDataset(q);
+//		Dataset dq = XPDFQSquaredIntegrator.differentiate1DDataset(q);
 		double dqScalar = dq.getDouble(0);
 		Dataset integrand = Maths.multiply(Maths.multiply(Maths.multiply(q, q), fn), dqScalar);
 		double integral = quadrate1DDataset(integrand);

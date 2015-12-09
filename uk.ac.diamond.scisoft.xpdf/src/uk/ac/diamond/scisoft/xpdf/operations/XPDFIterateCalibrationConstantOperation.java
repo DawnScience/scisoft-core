@@ -14,7 +14,6 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.xpdf.XPDFAbsorptionMaps;
@@ -86,6 +85,8 @@ public class XPDFIterateCalibrationConstantOperation extends
 		theCalibration.setSampleIlluminatedAtoms(theXPDFMetadata.getSampleIlluminatedAtoms());
 		
 		// Get 2θ, the axis variable
+		if (XPDFCoordinates.coordinateMetadataProblems(DatasetUtils.convertToDataset(input)) != null)
+			throw new OperationException(this, XPDFCoordinates.coordinateMetadataProblems(DatasetUtils.convertToDataset(input)));
 		XPDFCoordinates coordinates = new XPDFCoordinates(DatasetUtils.convertToDataset(input));
 //		Dataset twoTheta = coordinates.getTwoTheta();
 		

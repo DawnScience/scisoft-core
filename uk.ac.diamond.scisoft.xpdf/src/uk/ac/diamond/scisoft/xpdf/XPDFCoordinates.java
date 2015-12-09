@@ -174,8 +174,13 @@ public class XPDFCoordinates {
 	 * Converts from the scattering polar coordinates to the detector angular coordinates 
 	 */
 	private void setGammaDeltaFrom2ThetaPhi() {
-		gamma = Maths.arcsin(Maths.negative(Maths.multiply(Maths.sin(this.twoTheta), Maths.cos(phi))));
-		delta = Maths.arctan(Maths.multiply(Maths.tan(this.twoTheta), Maths.sin(phi)));
+		gamma = Maths.arcsin(Maths.negative(Maths.multiply(Maths.sin(twoTheta), Maths.cos(phi))));
+		delta = Maths.arctan(Maths.multiply(Maths.tan(twoTheta), Maths.sin(phi)));
+		// Expand to two dimensions if twoTheta is one dimensional
+		if (twoTheta.getShape().length == 1) {
+			gamma.setShape(gamma.getSize(), 1);
+			delta.setShape(delta.getSize(), 1);
+		}
 	}
 	
 	/**
@@ -234,13 +239,14 @@ public class XPDFCoordinates {
 	 * Returns the gamma coordinate.
 	 * <p>
 	 * In the 2D case, directly returns the γ coordinate. In the 1D case with
-	 * momentum transfer as the authoritative coordinate, returns 0. 
+	 * momentum transfer as the authoritative coordinate, returns 0. In either
+	 * case, the returned Dataset is always two dimensional. 
 	 * @return
 	 * 		the γ array.
 	 */
 	public Dataset getGamma() {
 		if (!isAngleAuthorative)
-			return DoubleDataset.zeros(getTwoTheta());
+			return DoubleDataset.zeros(getDelta());
 		else
 			return gamma;
 	}
@@ -249,15 +255,18 @@ public class XPDFCoordinates {
 	 * Returns the delta coordinate.
 	 * <p>
 	 * In the 2D case, directly returns the δ coordinate. In the 1D case, if
-	 * the momentum transfer is the authoritative coordinate, returns 2θ.  
+	 * the momentum transfer is the authoritative coordinate, returns 2θ. In
+	 * either case, the returned Dataset is always two dimensional.  
 	 * @return
 	 * 		the δ array. 
 	 */
 	public Dataset getDelta() {
-		if (!isAngleAuthorative)
-			return getTwoTheta();
-		else
+		if (!isAngleAuthorative) {
+			Dataset delta1D = getTwoTheta();
+			return delta1D.reshape(delta1D.getSize(), 1);
+		} else {
 			return delta;
+		}
 	}
 	
 	/**

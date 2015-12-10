@@ -90,6 +90,8 @@ public class NexusTreeUtils {
 	public static final String NX_SAMPLE = "NXsample";
 	public static final String NX_BEAM = "NXbeam";
 
+	public static final String DEPENDS_ON = "depends_on";
+
 	public static void augmentTree(Tree tree) {
 		augmentNodeLink(tree instanceof TreeFile ? ((TreeFile) tree).getFilename() : null, tree.getNodeLink(), true);
 	}
@@ -560,7 +562,7 @@ public class NexusTreeUtils {
 		}
 
 		// initial dependency chain
-		NodeLink nl = gNode.getNodeLink("depends_on");
+		NodeLink nl = gNode.getNodeLink(DEPENDS_ON);
 		String first = nl == null ? null : parseStringArray(nl.getDestination(), 1)[0];
 		if (first != null) {
 			Transform ta = parseTransformation(first.substring(0, first.lastIndexOf(Node.SEPARATOR)), tree.findNodeLink(first), pos);
@@ -847,7 +849,7 @@ public class NexusTreeUtils {
 
 		int[] nshape = dNode.getDataset().getShape();
 
-		String dep = parseStringAttr(dNode, "depends_on");
+		String dep = parseStringAttr(dNode, DEPENDS_ON);
 
 		if (dep == null || dep.equals(NX_TRANSFORMATIONS_ROOT)) {
 			return nshape;
@@ -906,7 +908,13 @@ public class NexusTreeUtils {
 		if (!isNXClass(gNode, NX_SAMPLE))
 			return null;
 
-		return parseNodeShape(tree, tree.findNodeLink(parseStringArray(gNode.getNodeLink("depends_on").getDestination(), 1)[0]), shape);
+		// when depends_on does not exist!?!
+		NodeLink nl = gNode.getNodeLink(DEPENDS_ON);
+		if (nl == null) {
+			logger.error("Sample {} must have a {} field", link.getName(), DEPENDS_ON);
+			throw new IllegalArgumentException("Sample " + link.getName() + " must have a " + DEPENDS_ON + " field");
+		}
+		return parseNodeShape(tree, tree.findNodeLink(parseStringArray(nl.getDestination(), 1)[0]), shape);
 	}
 
 	public static DiffractionSample parseSample(String path, Tree tree, int... pos) {
@@ -963,7 +971,7 @@ public class NexusTreeUtils {
 		u.mul(ub, u);
 
 		Matrix3d m3 = new Matrix3d();
-		NodeLink nl = gNode.getNodeLink("depends_on");
+		NodeLink nl = gNode.getNodeLink(DEPENDS_ON);
 		if (nl != null && nl.isDestinationData()) {
 			Matrix4d m = calcForwardTransform(ftrans, parseStringArray(nl.getDestination(), 1)[0]);
 			m.getRotationScale(m3);
@@ -1038,7 +1046,7 @@ public class NexusTreeUtils {
 
 		Transform t = new Transform();
 		t.name = ppath.concat(Node.SEPARATOR).concat(link.getName());
-		String dep = parseStringAttr(dNode, "depends_on");
+		String dep = parseStringAttr(dNode, DEPENDS_ON);
 		if (dep == null) {
 			dep = NX_TRANSFORMATIONS_ROOT;
 		} else if (!dep.startsWith(Tree.ROOT) && !dep.equals(NX_TRANSFORMATIONS_ROOT)) {
@@ -1071,7 +1079,7 @@ public class NexusTreeUtils {
 		}
 
 		TransformedVectors tv = new TransformedVectors();
-		String dep = parseStringAttr(dNode, "depends_on");
+		String dep = parseStringAttr(dNode, DEPENDS_ON);
 		tv.depend = dep == null ? NX_TRANSFORMATIONS_ROOT : dep;
 		tv.magnitudes = values;
 		tv.vector = new Vector4d(v3);

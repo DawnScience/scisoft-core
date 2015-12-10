@@ -74,13 +74,19 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 	private ConcurrentHashMap<String,ConcurrentHashMap<Integer, String[]>> groupAxesNames = new ConcurrentHashMap<String,ConcurrentHashMap<Integer,String[]>>();
 	private String filePath;
 	private NexusFile nexusFile;
+	
+	private boolean swmring = false;
 
 	private final static Logger logger = LoggerFactory.getLogger(NexusFileExecutionVisitor.class);
 	
-	public NexusFileExecutionVisitor(String filePath) {
+	public NexusFileExecutionVisitor(String filePath, boolean swmr) {
 		this.filePath = filePath;
 		firstNotifyMap = new ConcurrentHashMap<IOperation, AtomicBoolean>();
 		positionMap = new ConcurrentHashMap<IOperation, Integer>();
+	}
+	
+	public NexusFileExecutionVisitor(String filePath) {
+		this(filePath,false);
 	}
 
 	@Override
@@ -188,8 +194,9 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 		if (fNNE){
 			synchronized (nexusFile) {
 				nexusFile.getData(results +"/" +integrated.getName()).addAttribute(new AttributeImpl("signal", String.valueOf(1)));
-				if (nexusFile instanceof NexusFileHDF5) {
+				if (nexusFile instanceof NexusFileHDF5 && swmring) {
 					((NexusFileHDF5)nexusFile).activateSwmrMode();
+					logger.debug("SWMR-ING");
 				}
 			}
 		}

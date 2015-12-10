@@ -93,6 +93,7 @@ public class XPDFCoordinates {
 			
 			Dataset localGamma = DoubleDataset.zeros(input);
 			Dataset localDelta = DoubleDataset.zeros(input);
+			dAngle = DoubleDataset.zeros(input);
 			
 			double pxArea = dP.getVPxSize() * dP.getHPxSize();
 			

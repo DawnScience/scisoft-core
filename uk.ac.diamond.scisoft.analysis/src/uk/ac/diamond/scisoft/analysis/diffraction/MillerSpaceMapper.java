@@ -28,7 +28,6 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
-import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
 import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 
@@ -37,6 +36,22 @@ import uk.ac.diamond.scisoft.analysis.crystallography.UnitCell;
 import uk.ac.diamond.scisoft.analysis.dataset.function.BicubicInterpolator;
 import uk.ac.diamond.scisoft.analysis.io.NexusHDF5Loader;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
+
+/**
+ * Intensity value splitter that splits an image pixel value and adds the pieces to close-by voxels
+ */
+interface PixelSplitter {
+	/**
+	 * Spread a pixel intensity value over voxels near position
+	 * @param volume dataset that holds the voxel values
+	 * @param weight dataset that holds the relative contributions from each pixel
+	 * @param vsize voxel size in reciprocal space
+	 * @param dh offset in reciprocal space from voxel corner
+	 * @param pos position in volume
+	 * @param value pixel intensity to split
+	 */
+	public void splitValue(DoubleDataset volume, DoubleDataset weight, final double[] vsize, final Vector3d dh, final int[] pos, final double value);
+}
 
 /**
  * Map datasets in a Nexus file from image coordinates to Miller space
@@ -54,7 +69,141 @@ public class MillerSpaceMapper {
 	private int[] min;
 	private int[] max;
 	private double scale; // image upsampling factor
-	int border = 0; // extra voxels surrounding volume
+
+	private PixelSplitter splitter;
+
+	/**
+	 * This does not split pixel but places its value in the nearest voxel
+	 */
+	static class NonSplitter implements PixelSplitter {
+		@Override
+		public void splitValue(DoubleDataset volume, DoubleDataset weight, final double[] vsize, Vector3d dh, int[] pos, double value) {
+			addToDataset(volume, pos, value);
+			addToDataset(weight, pos, 1);
+		}
+	}
+
+	/**
+	 * Split pixel over eight voxels with weight determined by 1/distance
+	 */
+	static class InverseSplitter implements PixelSplitter {
+		/**
+		 * Weight function of distance squared
+		 * @param squaredDistance 
+		 * @return 1/distance
+		 */
+		protected double calcWeight(double squaredDistance) {
+			return 1./Math.sqrt(squaredDistance);
+		}
+
+		double[] weights = new double[8];
+		double factor;
+
+		/**
+		 * Calculate weights
+		 * @param vd size of voxel
+		 * @param dx displacement in x from first voxel
+		 * @param dy displacement in y from first voxel
+		 * @param dz displacement in z from first voxel
+		 */
+		void calcWeights(double[] vd, double dx, double dy, double dz) {
+			final double cx = vd[0] - dx;
+			final double cy = vd[1] - dy;
+			final double cz = vd[2] - dz;
+			final double cxs = cx * cx;
+			final double cys = cy * cy;
+			final double czs = cz * cz;
+			final double dxs = dx * dx;
+			final double dys = dy * dy;
+			final double dzs = dz * dz;
+			weights[0] = calcWeight(dxs + dys + dzs);
+			weights[1] = calcWeight(cxs + dys + dzs);
+			weights[2] = calcWeight(dxs + cys + dzs);
+			weights[3] = calcWeight(cxs + cys + dzs);
+			weights[4] = calcWeight(dxs + dys + czs);
+			weights[5] = calcWeight(cxs + dys + czs);
+			weights[6] = calcWeight(dxs + cys + czs);
+			weights[7] = calcWeight(cxs + cys + czs);
+	
+			factor = 1./(weights[0] + weights[1] + weights[2] + weights[3] + weights[4] + weights[5] + weights[6] + weights[7]);
+		}
+	
+		@Override
+		public void splitValue(DoubleDataset volume, DoubleDataset weight, final double[] vsize, Vector3d dh, int[] pos, double value) {
+			calcWeights(vsize, dh.x, dh.y, dh.z);
+			int[] vShape = volume.getShapeRef();
+
+			double w;
+			int[] lpos = pos.clone();
+	
+			w = factor * weights[0];
+			addToDataset(volume, lpos, w * value);
+			addToDataset(weight, lpos, w);
+	
+			lpos[0]++;
+			if (lpos[0] >= 0 || lpos[0] < vShape[0]) {
+				w = factor * weights[1];
+				addToDataset(volume, lpos, w * value);
+				addToDataset(weight, lpos, w);
+			}
+			lpos[0]--;
+	
+			lpos[1]++;
+			if (lpos[1] >= 0 || lpos[1] < vShape[1]) {
+				w = factor * weights[2];
+				addToDataset(volume, lpos, w * value);
+				addToDataset(weight, lpos, w);
+	
+				lpos[0]++;
+				if (lpos[0] >= 0 || lpos[0] < vShape[0]) {
+					w = factor * weights[3];
+					addToDataset(volume, lpos, w * value);
+					addToDataset(weight, lpos, w);
+				}
+				lpos[0]--;
+			}
+			lpos[1]--;
+	
+			lpos[2]++;
+			if (lpos[2] >= 0 || lpos[2] < vShape[2]) {
+				w = factor * weights[4];
+				addToDataset(volume, lpos, w * value);
+				addToDataset(weight, lpos, w);
+	
+				lpos[0]++;
+				if (lpos[0] >= 0 || lpos[0] < vShape[0]) {
+					w = factor * weights[5];
+					addToDataset(volume, lpos, w * value);
+					addToDataset(weight, lpos, w);
+				}
+				lpos[0]--;
+	
+				lpos[1]++;
+				if (lpos[1] >= 0 || lpos[1] < vShape[1]) {
+					w = factor * weights[6];
+					addToDataset(volume, lpos, w * value);
+					addToDataset(weight, lpos, w);
+	
+					lpos[0]++;
+					if (lpos[0] >= 0 || lpos[0] < vShape[0]) {
+						w = factor * weights[7];
+						addToDataset(volume, lpos, w * value);
+						addToDataset(weight, lpos, w);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Split pixel over eight voxels with weight determined by exp(-distance^2)
+	 */
+	static class GaussianSplitter extends InverseSplitter {
+		@Override
+		protected double calcWeight(double ds) {
+			return Math.exp(-ds);
+		}
+	}
 
 	/**
 	 * 
@@ -66,6 +215,7 @@ public class MillerSpaceMapper {
 		this.detectorPath = detectorPath;
 		this.dataPath = detectorPath + Node.SEPARATOR + detectorDataName;
 		this.samplePath = samplePath;
+		this.splitter = new NonSplitter();
 	}
 
 	/**
@@ -96,6 +246,14 @@ public class MillerSpaceMapper {
 	 */
 	public void setUpsamplingScale(double scale) {
 		this.scale = scale;
+	}
+
+	/**
+	 * Set pixel value splitter
+	 * @param splitter
+	 */
+	public void setSplitter(PixelSplitter splitter) {
+		this.splitter = splitter;
 	}
 
 	/**
@@ -154,18 +312,14 @@ public class MillerSpaceMapper {
 				calcMillerVolume(hMin, hMax, qspace, mspace);
 			}
 			for (int i = 0; i < 3; i++) {
-				hMin[i] = hDel[i] * (Math.floor(hMin[i] / hDel[i]) - border);
-				hMax[i] = hDel[i] * (Math.ceil(hMax[i] / hDel[i]) + border);
+				hMin[i] = hDel[i] * Math.floor(hMin[i] / hDel[i]);
+				hMax[i] = hDel[i] * (Math.ceil(hMax[i] / hDel[i]) + 1);
 				hShape[i] = (int) (Math.floor((hMax[i] - hMin[i] + hDel[i]) / hDel[i]));
 			}
 		}
 
-		DoubleDataset map = (DoubleDataset) DatasetFactory.zeros(hShape, Dataset.FLOAT64);
-		ShortDataset tally = (ShortDataset) DatasetFactory.zeros(hShape, Dataset.INT16);
-		iter.reset();
-		diter.reset();
 		if (reduceToNonZeroBB) {
-			min = map.getShape();
+			min = hShape.clone();
 			max = new int[3];
 			Arrays.fill(max, -1);
 		}
@@ -177,10 +331,38 @@ public class MillerSpaceMapper {
 			}
 			upSampler = new BicubicInterpolator(ishape);
 		}
+
+		// TODO maybe automatically down delta when out-of-memory
+		DoubleDataset map = (DoubleDataset) DatasetFactory.zeros(hShape, Dataset.FLOAT64);
+		DoubleDataset tally = (DoubleDataset) DatasetFactory.zeros(hShape, Dataset.FLOAT64);
+		mapImages(tree, images, diter, dpos, rank, srank, stop, iter, pos, map, tally, ishape, upSampler);
+
+		if (findImageBB) {
+			System.err.println("Extent of Miller space was found to be " + Arrays.toString(hMin) + " to " + Arrays.toString(hMax));
+			System.err.println("with shape = " + Arrays.toString(hShape));
+		}
+		if (reduceToNonZeroBB) {
+			System.err.println("Reduced to non-zero bounding box: " + Arrays.toString(min) + " to " + Arrays.toString(max));
+			for (int i = 0; i < 3; i++) {
+				hMin[i] += min[i]*hDel[i];
+				max[i]++;
+				hShape[i] = max[i] - min[i];
+			}
+			System.err.println("so now start = " + Arrays.toString(hMin) + " for shape = " + Arrays.toString(hShape));
+			map = (DoubleDataset) map.getSlice(min, max, null);
+		}
+		return map;
+	}
+
+	private void mapImages(Tree tree, ILazyDataset images, PositionIterator diter, int[] dpos, int rank, int srank,
+			int[] stop, PositionIterator iter, int[] pos, DoubleDataset map, DoubleDataset tally, int[] ishape,
+			BicubicInterpolator upSampler) {
+		iter.reset();
+		diter.reset();
 		while (iter.hasNext() && diter.hasNext()) {
 			DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
-			dp.setHPxSize(dp.getHPxSize()/scale);
-			dp.setVPxSize(dp.getVPxSize()/scale);
+			dp.setHPxSize(dp.getHPxSize() / scale);
+			dp.setVPxSize(dp.getVPxSize() / scale);
 			if (upSampler != null) {
 				dp.setPx(ishape[0]);
 				dp.setPy(ishape[1]);
@@ -207,22 +389,6 @@ public class MillerSpaceMapper {
 			mapImage(s, qspace, mspace, image, map, tally);
 		}
 		Maths.dividez(map, tally, map); // normalize by tally
-
-		if (findImageBB) {
-			System.err.println("Extent of Miller space was found to be " + Arrays.toString(hMin) + " to " + Arrays.toString(hMax));
-			System.err.println("with shape = " + Arrays.toString(hShape));
-		}
-		if (reduceToNonZeroBB) {
-			System.err.println("Reduced to non-zero bounding box: " + Arrays.toString(min) + " to " + Arrays.toString(max));
-			for (int i = 0; i < 3; i++) {
-				hMin[i] += min[i]*hDel[i];
-				max[i]++;
-				hShape[i] = max[i] - min[i];
-			}
-			System.err.println("so now start = " + Arrays.toString(hMin) + " for shape = " + Arrays.toString(hShape));
-			map = (DoubleDataset) map.getSlice(min, max, null);
-		}
-		return map;
 	}
 
 	private void calcMillerVolume(double[] mBeg, double[] mEnd, QSpace qspace, MillerSpace mspace) {
@@ -278,68 +444,35 @@ public class MillerSpaceMapper {
 		max[2] = Math.max(max[2], v.z);
 	}
 
-	private void mapImage(int[] s, QSpace qspace, MillerSpace mspace, Dataset image, DoubleDataset map, ShortDataset tally) {
-		// how does voxel size map to pixel size?
-		// h = -hmax, -hmax+hdel, ..., hmax-hdel, hmax
-		// algorithm:
-		// iterate over image pixels
-		// map pixel coords to Miller space
-		// find voxel coords and store
-		// map back from Miller space to projected image coords
-		// put interpolated pixel value in voxel
-		// 
-//		long vs = 0;
-		int[] hpos = new int[3];
+	private void mapImage(int[] s, QSpace qspace, MillerSpace mspace, Dataset image, DoubleDataset map, DoubleDataset tally) {
+		int[] hpos = new int[3]; // voxel position
 		Vector3d q = new Vector3d();
 		Vector3d h = new Vector3d();
-		Vector3d p = new Vector3d(); // position of pixel
-		Vector3d t = new Vector3d(); // temporary
-		Vector3d dh = new Vector3d();
+//		Vector3d p = new Vector3d(); // position of pixel
+//		Vector3d t = new Vector3d(); // temporary
+		Vector3d dh = new Vector3d(); // delta in h
 
 		double value;
-		double fkmod = 1e-6*qspace.getInitialWavevector().length();
-//		double threshold = Stats.quantile(image, 1. - 10./image.getSize());
-//		System.err.println("Threshold is " + threshold + " cf max = " + image.max());
-//		Dataset mask = Comparisons.lessThan(image, threshold);
-//		image.setByBoolean(0, mask);
-//		image = Image.gaussianBlurFilter(image, 30);
+//		double fkmod = 1e-6*qspace.getInitialWavevector().length();
+
 		for (int y = 0; y < s[0]; y++) {
 			for (int x = 0; x < s[1]; x++) {
-				qspace.qFromPixelPosition(x, y, q);
-//				qspace.pixelPosition(q, t);
-//				if (Math.abs(x - t.x) > 1 || Math.abs(y - t.y) > 1) {
-//					System.err.println("Q out");
-//				}
+				qspace.qFromPixelPosition(x + 0.5, y + 0.5, q);
+
 				mspace.h(q, null, h);
-//				mspace.q(h, t);
-//				if (Math.abs(q.x - t.x) > fkmod || Math.abs(q.y - t.y) > fkmod || Math.abs(q.z - t.z) > fkmod) {
-//					System.err.println("H out");
-//				}
-				if (!hToVoxel(h, hpos))
+
+				if (!hToVoxel(h, dh, hpos))
 					continue;
 
 				value = image.getDouble(y, x);
 				if (value > 0) {
-//					vs++;
-//					voxelToH(hpos, dh);
-//					System.err.println("Adding " + value + " @" + Arrays.toString(hpos) + " or " + dh + " from " + x + ", " + y);
 					if (reduceToNonZeroBB) {
 						minMax(min, max, hpos);
 					}
-					addValue(map, hpos, value, tally);
+					splitter.splitValue(map, tally, hDel, dh, hpos, value);
 				}
-//				mspace.q(h, q);
-//				qspace.pixelPosition(q, p, t);
-//				value = Maths.interpolate(image, t.y, t.x);
-				// Steve Collin's algorithm implemented as first attempt
-				// Assumes a pixel maps to a curvilinear patch that is
-				// not bigger than a voxel
-//				voxelToH(hpos, dh);
-//				dh.sub(h, dh);
-//				spreadValue(map, dh, hpos, value);
 			}
 		}
-//		System.err.println("Values added: " + vs);
 	}
 
 	private static void minMax(int[] min, int[] max, int[] p) {
@@ -354,10 +487,11 @@ public class MillerSpaceMapper {
 	/**
 	 * Map from h to volume coords
 	 * @param h Miller indices
+	 * @param deltaH delta in Miller indices
 	 * @param pos volume coords
 	 * @return true if within bounds
 	 */
-	private boolean hToVoxel(final Vector3d h, int[] pos) {
+	private boolean hToVoxel(final Vector3d h, final Vector3d deltaH, int[] pos) {
 		if (!findImageBB) {
 			if (h.x < hMin[0] || h.x >= hMax[0] || h.y < hMin[1] || h.y >= hMax[1] || 
 					h.z < hMin[2] || h.z >= hMax[2]) {
@@ -365,232 +499,33 @@ public class MillerSpaceMapper {
 			}
 		}
 
-		pos[0] = (int) Math.floor((h.x - hMin[0])/hDel[0]);
-		pos[1] = (int) Math.floor((h.y - hMin[1])/hDel[1]);
-		pos[2] = (int) Math.floor((h.z - hMin[2])/hDel[2]);
+		int p;
+		double dh, hd;
+
+		dh = h.x - hMin[0];
+		hd = hDel[0];
+		p = (int) Math.floor(dh / hd);
+		deltaH.x = dh - p * hd;
+		pos[0] = p;
+
+		dh = h.y - hMin[1];
+		hd = hDel[1];
+		p = (int) Math.floor(dh / hd);
+		deltaH.y = dh - p * hd;
+		pos[1] = p;
+
+		dh = h.z - hMin[2];
+		hd = hDel[2];
+		p = (int) Math.floor(dh / hd);
+		deltaH.z = dh - p * hd;
+		pos[2] = p;
 
 		return true;
 	}
 
-	/**
-	 * Map back from volume coords to h
-	 * @param pos volume coords
-	 * @param h Miller indices
-	 */
-	private void voxelToH(final int[] pos, final Vector3d h) {
-		h.x = pos[0]*hDel[0] + hMin[0];
-		h.y = pos[1]*hDel[1] + hMin[1];
-		h.z = pos[2]*hDel[2] + hMin[2];
-	}
-
-	/**
-	 * Add value to map
-	 * @param map
-	 * @param pos
-	 * @param value
-	 */
-	private static void addValue(DoubleDataset map, final int[] pos, final double value, ShortDataset tally) {
-		int index = map.get1DIndex(pos);
-		map.setAbs(index, map.getAbs(index) + value);
-		index = tally.get1DIndex(pos);
-		tally.setAbs(index, (short) (tally.getAbs(index) + 1));
-	}
-
-	/**
-	 * Spread the value over nearest voxels on positive octant
-	 * 
-	 * The value is shared with weighting of inverse distance to centre of voxels
-	 * @param map 
-	 * @param dh discretized Miller indices
-	 * @param pos
-	 * @param value
-	 */
-	private void spreadValue(Dataset map, final Vector3d dh, final int[] pos, final double value) {
-		int[] lpos = pos.clone();
-
-		final double[] weights = new double[8];
-		double old, f, tx, ty, tz;
-
-		final double sx = dh.x*dh.x;
-		final double sy = dh.y*dh.y;
-		final double sz = dh.z*dh.z;
-
-		tx = hDel[0] - dh.x;
-		tx *= tx;
-		ty = hDel[1] - dh.y;
-		ty *= ty;
-		tz = hDel[2] - dh.z;
-		tz *= tz;
-
-		if (lpos[0] == hShape[0]) { // corner, face and edge cases
-			if (lpos[1] == hShape[1]) {
-				if (lpos[2] == hShape[2]) {
-					old = map.getDouble(lpos);
-					map.set(old + value, lpos);
-				} else {
-					weights[0] = 1./Math.sqrt(sz);
-					weights[1] = 1./Math.sqrt(tz);
-
-					f = 1./(weights[0] + weights[1]);
-
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[0]*value, lpos);
-
-					lpos[2]++;
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[1]*value, lpos);					
-				}
-			} else {
-				if (lpos[2] == hShape[2]) {
-					weights[0] = 1./Math.sqrt(sy);
-					weights[1] = 1./Math.sqrt(ty);
-
-					f = 1./(weights[0] + weights[1]);
-
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[0]*value, lpos);
-
-					lpos[1]++;
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[1]*value, lpos);
-				} else {
-					weights[0] = 1./Math.sqrt(sy + sz);
-					weights[1] = 1./Math.sqrt(ty + sz);
-					weights[2] = 1./Math.sqrt(sy + tz);
-					weights[3] = 1./Math.sqrt(ty + tz);
-
-					f = 1./(weights[0] + weights[1] + weights[2] + weights[3]);
-
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[0]*value, lpos);
-
-					lpos[1]++;
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[1]*value, lpos);
-					lpos[1]--;
-
-					lpos[2]++;
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[2]*value, lpos);
-
-					lpos[1]++;
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[3]*value, lpos);
-				}				
-			}
-		} else {
-			if (lpos[1] == hShape[1]) {
-				if (lpos[2] == hShape[2]) {
-					weights[0] = 1./Math.sqrt(sx);
-					weights[1] = 1./Math.sqrt(tx);
-
-					f = 1./(weights[0] + weights[1]);
-
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[0]*value, lpos);
-
-					lpos[0]++;
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[1]*value, lpos);
-				} else {
-					weights[0] = 1./Math.sqrt(sx + sz);
-					weights[1] = 1./Math.sqrt(tx + sz);
-					weights[2] = 1./Math.sqrt(sx + tz);
-					weights[3] = 1./Math.sqrt(tx + tz);
-
-					f = 1./(weights[0] + weights[1] + weights[2] + weights[3]);
-
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[0]*value, lpos);
-
-					lpos[0]++;
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[1]*value, lpos);
-					lpos[0]--;
-
-					lpos[2]++;
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[2]*value, lpos);
-
-					lpos[0]++;
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[3]*value, lpos);
-					lpos[0]--;
-				}
-			} else {
-				if (lpos[2] == hShape[2]) {
-					weights[0] = 1./Math.sqrt(sx + sy);
-					weights[1] = 1./Math.sqrt(tx + sy);
-					weights[2] = 1./Math.sqrt(sx + ty);
-					weights[3] = 1./Math.sqrt(tx + ty);
-
-					f = 1./(weights[0] + weights[1] + weights[2] + weights[3]);
-
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[0]*value, lpos);
-
-					lpos[0]++;
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[1]*value, lpos);
-					lpos[0]--;
-
-					lpos[1]++;
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[2]*value, lpos);
-
-					lpos[0]++;
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[3]*value, lpos);
-				} else {
-					weights[0] = 1./Math.sqrt(sx + sy + sz);
-					weights[1] = 1./Math.sqrt(tx + sy + sz);
-					weights[2] = 1./Math.sqrt(sx + ty + sz);
-					weights[3] = 1./Math.sqrt(tx + ty + sz);
-
-					weights[4] = 1./Math.sqrt(sx + sy + tz);
-					weights[5] = 1./Math.sqrt(tx + sy + tz);
-					weights[6] = 1./Math.sqrt(sx + ty + tz);
-					weights[7] = 1./Math.sqrt(tx + ty + tz);
-
-					f = 1./(weights[0] + weights[1] + weights[2] + weights[3] + weights[4] + weights[5] + weights[6] + weights[7]);
-
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[0]*value, lpos);
-
-					lpos[0]++;
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[1]*value, lpos);
-					lpos[0]--;
-
-					lpos[1]++;
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[2]*value, lpos);
-
-					lpos[0]++;
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[3]*value, lpos);
-					lpos[0]--;
-					lpos[1]--;
-
-					lpos[2]++;
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[4]*value, lpos);
-
-					lpos[0]++;
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[5]*value, lpos);
-					lpos[0]--;
-
-					lpos[1]++;
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[6]*value, lpos);
-
-					lpos[0]++;
-					old = map.getDouble(lpos);
-					map.set(old + f*weights[7]*value, lpos);
-				}
-			}
-		}
+	private static void addToDataset(DoubleDataset d, final int[] pos, double v) {
+		final int index = d.get1DIndex(pos);
+		d.setAbs(index, d.getAbs(index) + v);
 	}
 
 	/**
@@ -636,10 +571,10 @@ public class MillerSpaceMapper {
 		Dataset v = mapToMillerSpace(input);
 		if (findImageBB) {
 			for (int i = 0; i < a.length; i++) {
-				double mbeg = mStart[i];
-				double mend = mbeg + mShape[i] * mDelta[i];
-				a[i] = DatasetUtils.linSpace(mbeg, mend - mDelta[i], mShape[i], Dataset.FLOAT64);
-				System.err.println("Axis " + i + ": " + mbeg + " -> " + a[i].getDouble(mShape[i] - 1) +  "; " + mend);
+				double mbeg = hMin[i];
+				double mend = mbeg + hShape[i] * hDel[i];
+				a[i] = DatasetUtils.linSpace(mbeg, mend - hDel[i], hShape[i], Dataset.FLOAT64);
+				System.err.println("Axis " + i + ": " + mbeg + " -> " + a[i].getDouble(hShape[i] - 1) +  "; " + mend);
 			}
 		}
 		saveVolume(output, v, a);
@@ -700,26 +635,15 @@ public class MillerSpaceMapper {
 	 * Process Nexus file for I16
 	 * @param input Nexus file
 	 * @param output name of HDF5 file to be created
-	 * @param mShape shape of output volume
-	 * @param mStart start coordinates in Miller space
-	 * @param mDelta sides of voxels in Miller space
-	 * @throws ScanFileHolderException
-	 */
-	public static void processVolume(String input, String output, int[] mShape, double[] mStart, double... mDelta) throws ScanFileHolderException {
-		processVolume(input, output, 1, mShape, mStart, mDelta);
-	}
-
-	/**
-	 * Process Nexus file for I16
-	 * @param input Nexus file
-	 * @param output name of HDF5 file to be created
+	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
 	 * @param scale upsampling factor
 	 * @param mShape shape of output volume
 	 * @param mStart start coordinates in Miller space
 	 * @param mDelta sides of voxels in Miller space
 	 * @throws ScanFileHolderException
 	 */
-	public static void processVolume(String input, String output, double scale, int[] mShape, double[] mStart, double... mDelta) throws ScanFileHolderException {
+	public static void processVolume(String input, String output, String splitter, double scale, int[] mShape, double[] mStart, double... mDelta) throws ScanFileHolderException {
+		setI16Splitter(splitter);
 		I16Mapper.mapToVolumeFile(input, output, scale, false, mShape, mStart, mDelta);
 	}
 
@@ -727,24 +651,27 @@ public class MillerSpaceMapper {
 	 * Process Nexus file for I16 with automatic bounding box setting
 	 * @param input Nexus file
 	 * @param output name of HDF5 file to be created
-	 * @param mDelta sides of voxels in Miller space
-	 * @param reduceToNonZero if true, reduce output to sub-volume with non-zero data
-	 * @throws ScanFileHolderException
-	 */
-	public static void processVolumeWithAutoBox(String input, String output, boolean reduceToNonZero, double... mDelta) throws ScanFileHolderException {
-		processVolumeWithAutoBox(input, output, 1.0, reduceToNonZero, mDelta);
-	}
-
-	/**
-	 * Process Nexus file for I16 with automatic bounding box setting
-	 * @param input Nexus file
-	 * @param output name of HDF5 file to be created
+	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
 	 * @param scale upsampling factor
 	 * @param mDelta sides of voxels in Miller space
 	 * @param reduceToNonZero if true, reduce output to sub-volume with non-zero data
 	 * @throws ScanFileHolderException
 	 */
-	public static void processVolumeWithAutoBox(String input, String output, double scale, boolean reduceToNonZero, double... mDelta) throws ScanFileHolderException {
+	public static void processVolumeWithAutoBox(String input, String output, String splitter, double scale, boolean reduceToNonZero, double... mDelta) throws ScanFileHolderException {
+		setI16Splitter(splitter);
 		I16Mapper.mapToVolumeFile(input, output, scale, reduceToNonZero, null, null, mDelta);
+	}
+
+	static void setI16Splitter(String splitter) {
+		if (splitter == null || splitter.isEmpty()) {
+			return;
+		}
+		if (splitter.equals("gaussian")) {
+			I16Mapper.setSplitter(new GaussianSplitter());
+		} else if (splitter.equals("inverse")) {
+			I16Mapper.setSplitter(new InverseSplitter());
+		} else if (!splitter.equals("nearest")) {
+			throw new IllegalArgumentException("Splitter is not known");
+		}
 	}
 }

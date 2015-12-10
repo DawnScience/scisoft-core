@@ -59,8 +59,8 @@ public class XPDFRegrid {
 			}
 			// Deal with the last row
 			output.set(
-					(double) input.getObject(xIndex, newY-1) * (1-xF) + 
-					(double) input.getObject(xIndex+1, newY-1) * (xF), i, newY-1);
+					(double) input.getObject(xIndex, oldY-1) * (1-xF) + 
+					(double) input.getObject(xIndex+1, oldY-1) * (xF), i, newY-1);
 		}
 		// Deal with the last column
 		for (int j = 0; j < newY-1; j++) {
@@ -68,8 +68,8 @@ public class XPDFRegrid {
 			double yF = newYInOldY.getDouble(j) - yIndex;
 			
 			output.set(
-					(double) input.getObject(newX-1, yIndex) * (1-yF) + 
-					(double) input.getObject(newX-1, yIndex+1) * (yF), newX-1, j);
+					(double) input.getObject(oldX-1, yIndex) * (1-yF) + 
+					(double) input.getObject(oldX-1, yIndex+1) * (yF), newX-1, j);
 		}
 		// Deal with the last element
 		output.set((double) input.getObject(oldX-1, oldY-1), newX-1, newY-1);

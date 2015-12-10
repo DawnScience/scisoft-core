@@ -19,7 +19,8 @@ public class XPDFIterateCalibrationConstantModel extends AbstractOperationModel 
 	private int nIterations = 5;
 	@OperationModelField(hint="Enter whether to sort the previously inserted containers",label = "Sort containers?" )
 	private boolean sortContainers = false;
-	
+	@OperationModelField(hint="Do the fluorescence calculations as part of the calibration", label = "Correct fluorescence?")
+	private boolean doingFluorescence = true;
 
 	public int getnIterations() {
 		return nIterations;
@@ -37,4 +38,13 @@ public class XPDFIterateCalibrationConstantModel extends AbstractOperationModel 
 		firePropertyChange("sortContainers", this.sortContainers, this.sortContainers = sortContainers);
 	}
 
+	public boolean isDoingFluorescence() {
+		return doingFluorescence;
+	}
+	
+	public void setDoingFluorescence(boolean doFluorescence) {
+		firePropertyChange("doingFluorescence", this.doingFluorescence, this.doingFluorescence = doFluorescence);
+		
+	}
+	
 }

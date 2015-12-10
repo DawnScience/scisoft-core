@@ -617,6 +617,15 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.FileMetadataModel"
             name="Normalisation [metadata]">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.utilities"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.SleepOperation"
+            description="Doesn&apos;t do anything but make the thread sleep. For testing purposes."
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.SleepOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.SleepModel"
+            name="Sleep"
+            visible="false">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

@@ -312,8 +312,8 @@ public class XPDFCalibration {
 				absorptionTemporary.get(iInnermostAbsorber).isubtract(
 						Maths.divide(
 								absorptionTemporary.get(iScatterer),
-//								subsetAbsorptionCorrection.reshape(subsetAbsorptionCorrection.getSize())));
-								subsetAbsorptionCorrection.squeeze()));
+								subsetAbsorptionCorrection.reshape(subsetAbsorptionCorrection.getSize())));
+//								subsetAbsorptionCorrection.squeeze()));
 
 				// Error propagation. If either is present, then set an error on the result. Non-present errors are taken as zero (exact).
 				if (absorptionTemporary.get(iInnermostAbsorber).getError() != null ||
@@ -323,8 +323,8 @@ public class XPDFCalibration {
 								DoubleDataset.zeros(absorptionTemporary.get(iInnermostAbsorber));
 					Dataset scatterError = (absorptionTemporary.get(iScatterer).getError() != null) ?
 							Maths.divide(absorptionTemporary.get(iScatterer).getError(),
-//									subsetAbsorptionCorrection.reshape(subsetAbsorptionCorrection.getSize())) :
-									subsetAbsorptionCorrection.squeeze()) :
+									subsetAbsorptionCorrection.reshape(subsetAbsorptionCorrection.getSize())) :
+//									subsetAbsorptionCorrection.squeeze()) :
 								DoubleDataset.zeros(absorptionTemporary.get(iScatterer));
 					absorptionTemporary.get(iInnermostAbsorber).setError(Maths.sqrt(Maths.add(Maths.square(innerError), Maths.square(scatterError))));
 				}
@@ -337,12 +337,12 @@ public class XPDFCalibration {
 		for (int iAbsorber = 1; iAbsorber < nComponents; iAbsorber++)
 			absorptionCorrection.imultiply(absorptionMaps.getAbsorptionMap(0, iAbsorber));
 		
-//		Dataset absCor = Maths.divide(absorptionTemporary.get(0), absorptionCorrection.reshape(absorptionCorrection.getSize()));
-		Dataset absCor = Maths.divide(absorptionTemporary.get(0), absorptionCorrection.squeeze());
+		Dataset absCor = Maths.divide(absorptionTemporary.get(0), absorptionCorrection.reshape(absorptionCorrection.getSize()));
+//		Dataset absCor = Maths.divide(absorptionTemporary.get(0), absorptionCorrection.squeeze());
 		// Error propagation
 		if (absorptionTemporary.get(0).getError() != null) {
-//			absCor.setError(Maths.divide(absorptionTemporary.get(0).getError(), absorptionCorrection.reshape(absorptionCorrection.getSize())));
-			absCor.setError(Maths.divide(absorptionTemporary.get(0).getError(), absorptionCorrection.squeeze()));
+			absCor.setError(Maths.divide(absorptionTemporary.get(0).getError(), absorptionCorrection.reshape(absorptionCorrection.getSize())));
+//			absCor.setError(Maths.divide(absorptionTemporary.get(0).getError(), absorptionCorrection.squeeze()));
 		}
 		
 		return absCor;
@@ -394,8 +394,8 @@ public class XPDFCalibration {
 		// Only correct fluorescence in the sample itself
 		Dataset targetComponent = backgroundSubtracted.get(0);
 		
-//		Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.reshape(targetComponent.getSize())));
-		Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.squeeze()));
+		Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.reshape(targetComponent.getSize())));
+//		Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.squeeze()));
 		if (propagateErrors && targetComponent.getError() != null)
 			if (sampleFluorescence.getError() != null)
 				fluorescenceCorrectedData.setError(

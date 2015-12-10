@@ -408,8 +408,8 @@ public class XPDFCalibration {
 		Dataset targetComponent = backgroundSubtracted.get(0);
 
 		if (doFluorescence) {
-			Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.reshape(targetComponent.getSize())));
-			//		Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.squeeze()));
+//			Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.reshape(targetComponent.getSize())));
+					Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.squeeze()));
 			if (propagateErrors && targetComponent.getError() != null)
 				if (sampleFluorescence.getError() != null)
 					fluorescenceCorrectedData.setError(

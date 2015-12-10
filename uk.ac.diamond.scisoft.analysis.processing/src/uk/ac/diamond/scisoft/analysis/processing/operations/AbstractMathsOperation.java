@@ -16,6 +16,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperationBase;
 
 /**
  * Maths operations are bascially just for testing at the moment.
@@ -25,7 +26,7 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
  * @author Matthew Gerring
  *
  */
-public abstract class AbstractMathsOperation<T extends ValueModel, D extends OperationData> extends AbstractOperation<ValueModel, OperationData> {
+public abstract class AbstractMathsOperation<T extends ValueModel, D extends OperationData> extends AbstractOperationBase<ValueModel, OperationData> {
 
 	/**
 	 * TODO This operation is only an example.

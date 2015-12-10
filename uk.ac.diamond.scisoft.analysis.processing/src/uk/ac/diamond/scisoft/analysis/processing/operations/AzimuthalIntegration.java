@@ -32,7 +32,7 @@ public class AzimuthalIntegration extends AbstractIntegrationOperation<SectorInt
 
 
 	@Override
-	public OperationData execute(IDataset slice, IMonitor monitor) throws OperationException {
+	public OperationData process(IDataset slice, IMonitor monitor) throws OperationException {
 		
 		Dataset mask = DatasetUtils.convertToDataset(getFirstMask(slice));
 		SectorROI sector = (SectorROI)getRegion();

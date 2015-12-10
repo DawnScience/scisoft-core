@@ -19,10 +19,11 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperationBase;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 
-public class ARPESAxisConversion extends AbstractOperation<ARPESAxisConversionModel, OperationData> {
+public class ARPESAxisConversion extends AbstractOperationBase<ARPESAxisConversionModel, OperationData> {
 	
 	@Override
 	public String getId() {

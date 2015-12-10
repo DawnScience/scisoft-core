@@ -12,6 +12,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperationBase;
 
 public abstract class AbstractIntegrationOperation<T extends IntegrationModel> extends AbstractOperation<T, OperationData> {
 	

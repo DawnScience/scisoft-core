@@ -39,7 +39,7 @@ import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDynamicDataset;
-import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperationBase;
 import org.eclipse.dawnsci.analysis.dataset.slicer.DynamicSliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.ISliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
@@ -358,15 +358,15 @@ public class OperationServiceImpl implements IOperationService {
 			if (catId!=null) {
 				Collection<IOperation<? extends IOperationModel, ? extends OperationData>> ops = categoryOp.get(catId);
 				if (ops==null) {
-					ops = new TreeSet<IOperation<? extends IOperationModel,? extends OperationData>>(new AbstractOperation.OperationComparitor());
+					ops = new TreeSet<IOperation<? extends IOperationModel,? extends OperationData>>(new AbstractOperationBase.OperationComparitor());
 					categoryOp.put(catId, ops);
 				}
 				ops.add(op);
 			}
 
-			if (op instanceof AbstractOperation) {
+			if (op instanceof AbstractOperationBase) {
 				final String name = e.getAttribute("name");
-				AbstractOperation<? extends IOperationModel, ? extends OperationData> aop = (AbstractOperation<? extends IOperationModel, ? extends OperationData>)op;
+				AbstractOperationBase<? extends IOperationModel, ? extends OperationData> aop = (AbstractOperationBase<? extends IOperationModel, ? extends OperationData>)op;
 				aop.setName(name);
 				
 				final String desc = e.getAttribute("description");
@@ -389,8 +389,8 @@ public class OperationServiceImpl implements IOperationService {
 			return models.get(operationId);
 		}
 		IOperation<? extends IOperationModel, ? extends OperationData> op = create(operationId);
-		if (op instanceof AbstractOperation) {
-			return ((AbstractOperation)op).getModelClass();
+		if (op instanceof AbstractOperationBase) {
+			return ((AbstractOperationBase)op).getModelClass();
 		}
 		return null; // Normally one of the above lines would throw an exception before this.
 	}
@@ -488,11 +488,11 @@ public class OperationServiceImpl implements IOperationService {
 		ret.putAll(cats);
 		
 		// Now add all those with no category
-		final TreeSet<IOperation<? extends IOperationModel,? extends OperationData>> uncategorized = new TreeSet<IOperation<? extends IOperationModel,? extends OperationData>>(new AbstractOperation.OperationComparitor());
+		final TreeSet<IOperation<? extends IOperationModel,? extends OperationData>> uncategorized = new TreeSet<IOperation<? extends IOperationModel,? extends OperationData>>(new AbstractOperationBase.OperationComparitor());
 		for (String id : operations.keySet()) {
 			final IOperation op = operations.get(id);
-			if (op instanceof AbstractOperation) {
-				AbstractOperation<IOperationModel, OperationData> aop = (AbstractOperation<IOperationModel, OperationData>)op;
+			if (op instanceof AbstractOperationBase) {
+				AbstractOperationBase<IOperationModel, OperationData> aop = (AbstractOperationBase<IOperationModel, OperationData>)op;
 				if (getCategory(aop.getId())==null) uncategorized.add(aop);
 			}
 		}
@@ -506,8 +506,8 @@ public class OperationServiceImpl implements IOperationService {
 	public IOperation<? extends IOperationModel, ? extends OperationData> create(String operationId) throws Exception {
 		checkOperations();
 		IOperation<? extends IOperationModel, ? extends OperationData> op = operations.get(operationId).getClass().newInstance();
-		if (op instanceof AbstractOperation) {
-			AbstractOperation<? extends IOperationModel, ? extends OperationData> aop = (AbstractOperation<? extends IOperationModel, ? extends OperationData>)op;
+		if (op instanceof AbstractOperationBase) {
+			AbstractOperationBase<? extends IOperationModel, ? extends OperationData> aop = (AbstractOperationBase<? extends IOperationModel, ? extends OperationData>)op;
 			aop.setName(operations.get(operationId).getName());
 			aop.setDescription(operations.get(operationId).getDescription());
 			try {

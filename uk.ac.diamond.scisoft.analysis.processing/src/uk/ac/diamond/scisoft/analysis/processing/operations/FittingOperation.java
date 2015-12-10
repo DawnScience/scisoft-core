@@ -18,12 +18,13 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperationBase;
 
 import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 
-public class FittingOperation extends AbstractOperation<FittingModel, OperationData> {
+public class FittingOperation extends AbstractOperationBase<FittingModel, OperationData> {
 
 	@Override
 	public String getId() {

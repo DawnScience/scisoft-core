@@ -21,11 +21,12 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperationBase;
 
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionMetaReader;
 
 @Atomic
-public class DiffractionMetadataImportOperation extends AbstractOperation<DiffractionMetadataImportModel, OperationData> {
+public class DiffractionMetadataImportOperation extends AbstractOperationBase<DiffractionMetadataImportModel, OperationData> {
 
 	private volatile IDiffractionMetadata metadata;
 	private PropertyChangeListener listener;

@@ -224,7 +224,7 @@ public class IntegrationTest {
 			}
 			
 			@Override
-			public OperationData execute(IDataset slice, IMonitor monitor)
+			public OperationData process(IDataset slice, IMonitor monitor)
 					throws OperationException {
 					slice.addMetadata(mmd);
 				return new OperationData(slice);

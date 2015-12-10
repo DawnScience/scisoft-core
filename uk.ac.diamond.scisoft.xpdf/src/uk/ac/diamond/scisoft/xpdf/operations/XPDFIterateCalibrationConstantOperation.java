@@ -103,7 +103,8 @@ public class XPDFIterateCalibrationConstantOperation extends
 			synchronized (this) {
 				localAbsMaps = cachedAbsorptionMaps;
 				if (localAbsMaps == null || ((localAbsMaps != null) && !(localAbsMaps.checkFormList(theXPDFMetadata.getFormList())))) {
-					cachedAbsorptionMaps = localAbsMaps = theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DoubleDataset.zeros(twoTheta.reshape(twoTheta.getSize(), 1)));
+//					cachedAbsorptionMaps = localAbsMaps = theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DoubleDataset.zeros(twoTheta.reshape(twoTheta.getSize(), 1)));
+					cachedAbsorptionMaps = localAbsMaps = theXPDFMetadata.getAbsorptionMaps(coordinates.getDelta(), coordinates.getGamma());
 				}
 			}
 		}
@@ -114,7 +115,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 		theCalibration.setAbsorptionMaps(localAbsMaps);
 		if (model.isDoingFluorescence()) {
 			theCalibration.setDoFluorescence(true);
-			theCalibration.setSampleFluorescence(theXPDFMetadata.getSampleFluorescence(DoubleDataset.zeros(coordinates.getTwoTheta().reshape(coordinates.getTwoTheta().getSize(), 1)), coordinates.getTwoTheta().reshape(coordinates.getTwoTheta().getSize(), 1)));
+			theCalibration.setSampleFluorescence(theXPDFMetadata.getSampleFluorescence(coordinates.getGamma(), coordinates.getDelta()));
 		} else {
 			theCalibration.setDoFluorescence(false);
 		}

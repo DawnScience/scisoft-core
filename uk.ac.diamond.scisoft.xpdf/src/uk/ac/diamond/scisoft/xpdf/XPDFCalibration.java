@@ -374,7 +374,8 @@ public class XPDFCalibration {
 	}
 
 	public Dataset calibrate(int nIterations) {
-		calibrateFluorescence(nIterations);
+		if (doFluorescence)
+				calibrateFluorescence(nIterations);
 		return iterateCalibrate(nIterations, true);
 	}
 	
@@ -393,7 +394,8 @@ public class XPDFCalibration {
 //		for (Dataset targetComponent : backgroundSubtracted) {
 		// Only correct fluorescence in the sample itself
 		Dataset targetComponent = backgroundSubtracted.get(0);
-		
+
+		if (doFluorescence) {
 		Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.reshape(targetComponent.getSize())));
 //		Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.squeeze()));
 		if (propagateErrors && targetComponent.getError() != null)
@@ -409,6 +411,9 @@ public class XPDFCalibration {
 			else
 				fluorescenceCorrectedData.setError(targetComponent.getError());
 		fluorescenceCorrected.add(fluorescenceCorrectedData);
+		} else {
+			fluorescenceCorrected.add(targetComponent);
+		}
 		for (int iContainer = 1; iContainer < backgroundSubtracted.size(); iContainer++)
 			fluorescenceCorrected.add(backgroundSubtracted.get(iContainer));
 		
@@ -447,7 +452,7 @@ public class XPDFCalibration {
 		this.fluorescenceScale = minimalScale;
 	}
 
-	public void doFluorescence(boolean doIt) {
+	public void setDoFluorescence(boolean doIt) {
 		doFluorescence = doIt;
 	}
 }

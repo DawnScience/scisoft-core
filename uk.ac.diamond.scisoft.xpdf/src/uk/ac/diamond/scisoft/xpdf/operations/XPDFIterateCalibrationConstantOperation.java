@@ -113,10 +113,10 @@ public class XPDFIterateCalibrationConstantOperation extends
 //		theCalibration.setAbsorptionMaps(theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DoubleDataset.zeros(twoTheta.reshape(twoTheta.getSize(), 1))));
 		theCalibration.setAbsorptionMaps(localAbsMaps);
 		if (model.isDoingFluorescence()) {
-			theCalibration.doFluorescence(true);
+			theCalibration.setDoFluorescence(true);
 			theCalibration.setSampleFluorescence(theXPDFMetadata.getSampleFluorescence(DoubleDataset.zeros(coordinates.getTwoTheta().reshape(coordinates.getTwoTheta().getSize(), 1)), coordinates.getTwoTheta().reshape(coordinates.getTwoTheta().getSize(), 1)));
 		} else {
-			theCalibration.doFluorescence(false);
+			theCalibration.setDoFluorescence(false);
 		}
 //		for (int i = 0; i < nIterations; i++) 
 //			absCor = theCalibration.iterate(true);

@@ -93,7 +93,7 @@ public class MillerSpaceMapper {
 		 * @return 1/distance
 		 */
 		protected double calcWeight(double squaredDistance) {
-			return 1./Math.sqrt(squaredDistance);
+			return squaredDistance == 0 ? Double.POSITIVE_INFINITY : 1. / Math.sqrt(squaredDistance);
 		}
 
 		double[] weights = new double[8];
@@ -107,15 +107,16 @@ public class MillerSpaceMapper {
 		 * @param dz displacement in z from first voxel
 		 */
 		void calcWeights(double[] vd, double dx, double dy, double dz) {
+			final double dxs = dx * dx;
+			final double dys = dy * dy;
+			final double dzs = dz * dz;
 			final double cx = vd[0] - dx;
 			final double cy = vd[1] - dy;
 			final double cz = vd[2] - dz;
 			final double cxs = cx * cx;
 			final double cys = cy * cy;
 			final double czs = cz * cz;
-			final double dxs = dx * dx;
-			final double dys = dy * dy;
-			final double dzs = dz * dz;
+
 			weights[0] = calcWeight(dxs + dys + dzs);
 			weights[1] = calcWeight(cxs + dys + dzs);
 			weights[2] = calcWeight(dxs + cys + dzs);
@@ -124,10 +125,14 @@ public class MillerSpaceMapper {
 			weights[5] = calcWeight(cxs + dys + czs);
 			weights[6] = calcWeight(dxs + cys + czs);
 			weights[7] = calcWeight(cxs + cys + czs);
-	
-			factor = 1./(weights[0] + weights[1] + weights[2] + weights[3] + weights[4] + weights[5] + weights[6] + weights[7]);
+
+			double tw = weights[1] + weights[2] + weights[3] + weights[4] + weights[5] + weights[6] + weights[7];
+			if (Double.isInfinite(weights[0])) {
+				weights[0] = 1e3 * tw; // make voxel an arbitrary factor larger 
+			}
+			factor = 1./(weights[0] + tw);
 		}
-	
+
 		@Override
 		public void splitValue(DoubleDataset volume, DoubleDataset weight, final double[] vsize, Vector3d dh, int[] pos, double value) {
 			calcWeights(vsize, dh.x, dh.y, dh.z);
@@ -135,60 +140,74 @@ public class MillerSpaceMapper {
 
 			double w;
 			int[] lpos = pos.clone();
-	
+
 			w = factor * weights[0];
 			addToDataset(volume, lpos, w * value);
 			addToDataset(weight, lpos, w);
-	
+
 			lpos[0]++;
 			if (lpos[0] >= 0 || lpos[0] < vShape[0]) {
 				w = factor * weights[1];
-				addToDataset(volume, lpos, w * value);
-				addToDataset(weight, lpos, w);
+				if (w > 0) {
+					addToDataset(volume, lpos, w * value);
+					addToDataset(weight, lpos, w);
+				}
 			}
 			lpos[0]--;
-	
+
 			lpos[1]++;
 			if (lpos[1] >= 0 || lpos[1] < vShape[1]) {
 				w = factor * weights[2];
-				addToDataset(volume, lpos, w * value);
-				addToDataset(weight, lpos, w);
-	
+				if (w > 0) {
+					addToDataset(volume, lpos, w * value);
+					addToDataset(weight, lpos, w);
+				}
+
 				lpos[0]++;
 				if (lpos[0] >= 0 || lpos[0] < vShape[0]) {
 					w = factor * weights[3];
-					addToDataset(volume, lpos, w * value);
-					addToDataset(weight, lpos, w);
+					if (w > 0) {
+						addToDataset(volume, lpos, w * value);
+						addToDataset(weight, lpos, w);
+					}
 				}
 				lpos[0]--;
 			}
 			lpos[1]--;
-	
+
 			lpos[2]++;
 			if (lpos[2] >= 0 || lpos[2] < vShape[2]) {
 				w = factor * weights[4];
-				addToDataset(volume, lpos, w * value);
-				addToDataset(weight, lpos, w);
-	
-				lpos[0]++;
-				if (lpos[0] >= 0 || lpos[0] < vShape[0]) {
-					w = factor * weights[5];
+				if (w > 0) {
 					addToDataset(volume, lpos, w * value);
 					addToDataset(weight, lpos, w);
 				}
+
+				lpos[0]++;
+				if (lpos[0] >= 0 || lpos[0] < vShape[0]) {
+					w = factor * weights[5];
+					if (w > 0) {
+						addToDataset(volume, lpos, w * value);
+						addToDataset(weight, lpos, w);
+					}
+				}
 				lpos[0]--;
-	
+
 				lpos[1]++;
 				if (lpos[1] >= 0 || lpos[1] < vShape[1]) {
 					w = factor * weights[6];
-					addToDataset(volume, lpos, w * value);
-					addToDataset(weight, lpos, w);
-	
+					if (w > 0) {
+						addToDataset(volume, lpos, w * value);
+						addToDataset(weight, lpos, w);
+					}
+
 					lpos[0]++;
 					if (lpos[0] >= 0 || lpos[0] < vShape[0]) {
 						w = factor * weights[7];
-						addToDataset(volume, lpos, w * value);
-						addToDataset(weight, lpos, w);
+						if (w > 0) {
+							addToDataset(volume, lpos, w * value);
+							addToDataset(weight, lpos, w);
+						}
 					}
 				}
 			}

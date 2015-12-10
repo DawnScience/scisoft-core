@@ -344,12 +344,12 @@ public class XPDFCalibration {
 		for (int iAbsorber = 1; iAbsorber < nComponents; iAbsorber++)
 			absorptionCorrection = Maths.multiply(absorptionCorrection, absorptionMaps.getAbsorptionMap(0, iAbsorber));
 		
-		Dataset absCor = Maths.divide(absorptionTemporary.get(0), absorptionCorrection.reshape(absorptionCorrection.getSize()));
-//		Dataset absCor = Maths.divide(absorptionTemporary.get(0), absorptionCorrection.squeeze());
+//		Dataset absCor = Maths.divide(absorptionTemporary.get(0), absorptionCorrection.reshape(absorptionCorrection.getSize()));
+		Dataset absCor = Maths.divide(absorptionTemporary.get(0), absorptionCorrection.getSliceView().squeeze());
 		// Error propagation
 		if (absorptionTemporary.get(0).getError() != null) {
-			absCor.setError(Maths.divide(absorptionTemporary.get(0).getError(), absorptionCorrection.reshape(absorptionCorrection.getSize())));
-//			absCor.setError(Maths.divide(absorptionTemporary.get(0).getError(), absorptionCorrection.squeeze()));
+//			absCor.setError(Maths.divide(absorptionTemporary.get(0).getError(), absorptionCorrection.reshape(absorptionCorrection.getSize())));
+			absCor.setError(Maths.divide(absorptionTemporary.get(0).getError(), absorptionCorrection.getSliceView().squeeze()));
 		}
 		
 		return absCor;

@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
+import com.github.tschoonj.xraylib.Xraylib;
+
 /**
  * Calculates the mass attenuation for fixed I15-1 beam energies.
  * @author Timothy Spain timothy.spain@diamond.ac.uk
@@ -25,13 +27,18 @@ public final class XPDFMassAttenuation {
 	/**
 	 * Returns the mass attenuation coefficient.
 	 * @param energy
-	 * 				energy of the attenuated photons.
+	 * 				energy of the attenuated photons in eV.
 	 * @param z
 	 * 			atomic number of the attenuating atoms.
 	 * @return the mass attenuation coefficient in cm²/g 
 	 */
-	public static double get(int energy, int z) {
+	public static double get(double energy, int z) {
 		
-		return (new XCOMElement(z)).getAttenuation(energy*1e-3, "total");
+		//return (new XCOMElement(z)).getAttenuation(energy*1e-3, "total");
+		return Xraylib.CS_Total(z, energy*1e-3);
+	}
+	
+	public static double getPhoto(double energy, int z) {
+		return Xraylib.CS_Photo(z, energy*1e-3);
 	}
 }

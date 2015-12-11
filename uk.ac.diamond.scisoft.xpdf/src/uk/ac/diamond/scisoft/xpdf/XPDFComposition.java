@@ -191,7 +191,7 @@ public class XPDFComposition {
 		double massAttenuation = 0.0;		
 		double formulaMass = 0.0;
 		for (Map.Entry<Integer, Double> stoichiometry : atomCount.entrySet()) {
-			massAttenuation += Xraylib.AtomicWeight(stoichiometry.getKey())*stoichiometry.getValue()*XPDFMassAttenuation.get(beamEnergy*1000, stoichiometry.getKey());
+			massAttenuation += Xraylib.AtomicWeight(stoichiometry.getKey())*stoichiometry.getValue()*XPDFMassAttenuation.get(beamEnergy, stoichiometry.getKey());
 			formulaMass += Xraylib.AtomicWeight(stoichiometry.getKey())*stoichiometry.getValue();
 		}
 		massAttenuation /= formulaMass;
@@ -386,7 +386,7 @@ public class XPDFComposition {
 		double massAttenuation = 0.0;		
 		double formulaMass = 0.0;
 		for (Map.Entry<Integer, Double> stoichiometry : atomCount.entrySet()) {
-			massAttenuation += Xraylib.AtomicWeight(stoichiometry.getKey())*stoichiometry.getValue()*XPDFMassAttenuation.getPhoto(beamEnergy*1000, stoichiometry.getKey());
+			massAttenuation += Xraylib.AtomicWeight(stoichiometry.getKey())*stoichiometry.getValue()*XPDFMassAttenuation.getPhoto(beamEnergy, stoichiometry.getKey());
 			formulaMass += Xraylib.AtomicWeight(stoichiometry.getKey())*stoichiometry.getValue();
 		}
 		massAttenuation /= formulaMass;

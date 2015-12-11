@@ -27,7 +27,7 @@ public final class XPDFMassAttenuation {
 	/**
 	 * Returns the mass attenuation coefficient.
 	 * @param energy
-	 * 				energy of the attenuated photons in eV.
+	 * 				energy of the attenuated photons in keV.
 	 * @param z
 	 * 			atomic number of the attenuating atoms.
 	 * @return the mass attenuation coefficient in cm²/g 
@@ -35,10 +35,10 @@ public final class XPDFMassAttenuation {
 	public static double get(double energy, int z) {
 		
 		//return (new XCOMElement(z)).getAttenuation(energy*1e-3, "total");
-		return Xraylib.CS_Total(z, energy*1e-3);
+		return Xraylib.CS_Total(z, energy);
 	}
 	
 	public static double getPhoto(double energy, int z) {
-		return Xraylib.CS_Photo(z, energy*1e-3);
+		return Xraylib.CS_Photo(z, energy);
 	}
 }

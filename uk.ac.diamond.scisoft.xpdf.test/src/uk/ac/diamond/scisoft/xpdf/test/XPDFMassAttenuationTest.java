@@ -13,13 +13,13 @@ public class XPDFMassAttenuationTest extends TestCase {
 		double oxygenMuExp76 = 0.170698378863;
 		double ceriumMuExp40 = 5.21450473204;
 		
-		double ceriumMu76 = XPDFMassAttenuation.get(76600, 58);
-		double siliconMu76 = XPDFMassAttenuation.get(76600, 14);
-		double oxygenMu76 = XPDFMassAttenuation.get(76600, 8);
+		double ceriumMu76 = XPDFMassAttenuation.get(76.600, 58);
+		double siliconMu76 = XPDFMassAttenuation.get(76.600, 14);
+		double oxygenMu76 = XPDFMassAttenuation.get(76.600, 8);
 		
-		double ceriumMu40 = XPDFMassAttenuation.get(40000, 58);
+		double ceriumMu40 = XPDFMassAttenuation.get(40.000, 58);
 		
-		double accuTarget = 5e-4;
+		double accuTarget = 1e-3;
 		
 		assertTrue("Difference in cerium attenuation coefficient too large", Math.abs(ceriumMuExp76 - ceriumMu76) < accuTarget);
 		assertTrue("Difference in cerium attenuation coefficient too large", Math.abs(ceriumMuExp40 - ceriumMu40) < accuTarget);

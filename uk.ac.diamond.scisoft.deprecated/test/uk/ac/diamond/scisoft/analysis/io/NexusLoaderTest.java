@@ -30,9 +30,9 @@ import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.hdf5.nexus.NexusException;
-import org.eclipse.dawnsci.hdf5.nexus.NexusFile;
-import org.eclipse.dawnsci.nexus.NexusUtils;
+import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
+import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.dawnsci.nexus.NexusFile;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -84,7 +84,7 @@ public class NexusLoaderTest {
 
 	
 	private void makeTestFile(String fileName, int[] dims) throws NexusException {
-		NexusFile file = NexusUtils.createNexusFile(fileName);
+		NexusFile file = NexusFileHDF5.createNexusFile(fileName);
 		GroupNode g = file.getGroup("/dummy:dummy", true);
 		{
 			int totalLength = NexusExtractor.calcTotalLength(dims);

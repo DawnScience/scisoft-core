@@ -29,7 +29,7 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
-import org.eclipse.dawnsci.hdf5.nexus.NexusException;
+import org.eclipse.dawnsci.nexus.NexusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

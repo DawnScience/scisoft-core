@@ -53,7 +53,7 @@ import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5LazyLoader;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.eclipse.dawnsci.hdf5.HDF5Utils.DatasetType;
-import org.eclipse.dawnsci.hdf5.nexus.NexusException;
+import org.eclipse.dawnsci.nexus.NexusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

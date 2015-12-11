@@ -41,10 +41,9 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyWriteableDataset;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.tree.impl.AttributeImpl;
-import org.eclipse.dawnsci.hdf5.nexus.NexusException;
-import org.eclipse.dawnsci.hdf5.nexus.NexusFile;
-import org.eclipse.dawnsci.nexus.NexusUtils;
-import org.eclipse.dawnsci.nexus.hdf5.NexusFileHDF5;
+import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
+import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.dawnsci.nexus.NexusFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,7 +100,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 		List<SliceFromSeriesMetadata> metadata = data.getMetadata(SliceFromSeriesMetadata.class);
 		if (metadata != null && metadata.get(0) != null) origin = metadata.get(0);
 //		file = HierarchicalDataFactory.getWriter(filePath);
-		nexusFile = NexusUtils.createNexusFile(filePath, true);
+		nexusFile = NexusFileHDF5.createNexusFile(filePath, true);
 		try {
 			// don't fail process because of error persisting models
 //			IPersistentFile pf = service.createPersistentFile(file);

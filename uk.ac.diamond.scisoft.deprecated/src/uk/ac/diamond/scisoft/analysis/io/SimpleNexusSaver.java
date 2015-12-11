@@ -16,20 +16,20 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.data.nexus.tree.NexusTreeProvider;
-import gda.data.nexus.tree.NexusTreeWriter;
-
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileSaver;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.hdf5.nexus.NexusException;
-import org.eclipse.dawnsci.hdf5.nexus.NexusFile;
-import org.eclipse.dawnsci.nexus.NexusUtils;
+import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
+import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.dawnsci.nexus.NexusFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import gda.data.nexus.tree.NexusTreeProvider;
+import gda.data.nexus.tree.NexusTreeWriter;
 
 /**
  * File saver for simple NeXus files.
@@ -52,7 +52,7 @@ public class SimpleNexusSaver implements IFileSaver {
 		try {
 			// TODO Check to see if the file exists...
 			// TODO then either delete it or fail gracefully!
-			file = NexusUtils.createNexusFile(fileName);
+			file = NexusFileHDF5.createNexusFile(fileName);
 			GroupNode g = file.getGroup("/ScanFileHolder:NXentry/datasets:NXdata", true);
 
 			String[] headings = dh.getNames();

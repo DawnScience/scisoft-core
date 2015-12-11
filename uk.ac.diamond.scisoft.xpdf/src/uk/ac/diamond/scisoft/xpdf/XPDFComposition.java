@@ -187,13 +187,11 @@ public class XPDFComposition {
 	 * @return the mass attenuation in cm²/g
 	 */
 	public double getMassAttenuation(double beamEnergy) {
-		// int beam energy in eV
-		int intEnergy = (int) Math.round(beamEnergy*1000);
 
 		double massAttenuation = 0.0;		
 		double formulaMass = 0.0;
 		for (Map.Entry<Integer, Double> stoichiometry : atomCount.entrySet()) {
-			massAttenuation += Xraylib.AtomicWeight(stoichiometry.getKey())*stoichiometry.getValue()*XPDFMassAttenuation.get(intEnergy, stoichiometry.getKey());
+			massAttenuation += Xraylib.AtomicWeight(stoichiometry.getKey())*stoichiometry.getValue()*XPDFMassAttenuation.get(beamEnergy*1000, stoichiometry.getKey());
 			formulaMass += Xraylib.AtomicWeight(stoichiometry.getKey())*stoichiometry.getValue();
 		}
 		massAttenuation /= formulaMass;
@@ -382,6 +380,17 @@ public class XPDFComposition {
 
 		// end of hard-coded data
 		return fluorescences;
+	}
+
+	public double getPhotoionizationAttenuation(double beamEnergy) {
+		double massAttenuation = 0.0;		
+		double formulaMass = 0.0;
+		for (Map.Entry<Integer, Double> stoichiometry : atomCount.entrySet()) {
+			massAttenuation += Xraylib.AtomicWeight(stoichiometry.getKey())*stoichiometry.getValue()*XPDFMassAttenuation.getPhoto(beamEnergy*1000, stoichiometry.getKey());
+			formulaMass += Xraylib.AtomicWeight(stoichiometry.getKey())*stoichiometry.getValue();
+		}
+		massAttenuation /= formulaMass;
+		return massAttenuation;
 	}
 
 	

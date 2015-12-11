@@ -194,4 +194,8 @@ public class XPDFSubstance {
 	public double getNumberDensity(Integer z) {
 		return getNumberDensity()*this.materialComposition.atomFraction(z);
 	}
+
+	public double getPhotoionizationCoefficient(double beamEnergy) {
+		return 0.1 * getMassDensity()*getPackingFraction() * materialComposition.getPhotoionizationAttenuation(beamEnergy);
+	}
 }

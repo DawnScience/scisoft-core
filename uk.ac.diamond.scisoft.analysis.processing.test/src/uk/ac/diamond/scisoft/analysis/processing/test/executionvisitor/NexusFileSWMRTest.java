@@ -234,33 +234,5 @@ public class NexusFileSWMRTest {
 		IDataset as = m.get(0).getAxis(0)[0].getSlice();
 		Assert.assertArrayEquals(inputShape, output.getShape());
 		Assert.assertArrayEquals(new int[] {30,1,1}, as.getShape());
-		
-		
-//		while (!ste.awaitTermination(500,TimeUnit.MILLISECONDS)) {
-//			if (ldd != null) {
-////				System.out.println("Ax SHAPE " + Arrays.toString(ldd.getFirstMetadata(AxesMetadataImpl.class).getAxis(0)[0].getShape()));
-////				ldd.refreshShape();
-////				List<AxesMetadata> metadata = ldd.getMetadata(AxesMetadata.class);
-////				int[] mmshape = DynamicMetadataUtils.refreshDynamicAxesMetadata(metadata, ldd.getShape());
-////				ldd.resize(mmshape);
-////				System.out.println("Ax SHAPE " + Arrays.toString(ldd.getFirstMetadata(AxesMetadataImpl.class).getAxis(0)[0].getShape()));
-////				
-////				System.out.println("SHAPE " + Arrays.toString(ldd.getShape()));
-//				
-//				SliceND test = new SliceND(ldd.getShape());
-//				if (ldd.getShape()[0] > 1) {
-//					test.setSlice(0, ldd.getShape()[0]-1, ldd.getShape()[0], 1);
-//					Dataset slice = ldd.getSlice(test);
-//					System.out.println("Slice SHAPE " + Arrays.toString(slice.getShape()));
-//				}
-//				
-//				
-//			} else {
-//				ldd = (LazyDynamicDataset)dh.getLazyDataset("/entry/result/data");
-//				if (ldd == null) System.err.println("STILL NOT HERE");
-//			}
-//		}
-//		
-//		ILazyDataset output = dh.getLazyDataset("/entry/result/data");
 	}
 }

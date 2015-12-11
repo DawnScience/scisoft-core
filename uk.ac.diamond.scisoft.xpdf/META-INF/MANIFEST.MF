@@ -7,7 +7,8 @@ Bundle-Activator: uk.ac.diamond.scisoft.xpdf.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: org.apache.commons.lang;version="2.6.0",
+Import-Package: com.github.tschoonj.xraylib,
+ org.apache.commons.lang;version="2.6.0",
  org.apache.commons.math3.analysis.interpolation;version="3.2.0",
  org.apache.commons.math3.analysis.polynomials;version="3.2.0",
  org.dawnsci.python.rpc,

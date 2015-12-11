@@ -10,7 +10,11 @@
 package uk.ac.diamond.scisoft.xpdf;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+
+import com.github.tschoonj.xraylib.Xraylib;
 
 /**
  * Calculates the electron cross-sections as a function of angle 
@@ -105,6 +109,23 @@ public class XPDFElectronCrossSections {
 	}
 	
 	/**
+	 * Returns the Thomson differential cross section.
+	 * @param coords
+	 * 				the coordinates object describing the angles of interest
+	 * @return
+	 * 		the differential Thomson cross-section in barns per atom per steradian
+	 */
+	public static Dataset getThomsonCrossSection(XPDFCoordinates coords) {
+		IndexIterator iter = coords.getTwoTheta().getIterator();
+		DoubleDataset jJ = new DoubleDataset(coords.getTwoTheta());
+		
+		while (iter.hasNext())
+			 jJ.setAbs(iter.index, Xraylib.DCSP_Thoms(coords.getTwoTheta().getElementDoubleAbs(iter.index), 0));
+		
+		return jJ;
+	}
+	
+	/**
 	 * Calculates and returns the inelastic electron scattering cross-section.
 	 * @return the inelastic electron scattering cross-section at the selected
 	 * 			scattering angles, for the beam energy. As parameterized by 
@@ -158,5 +179,23 @@ public class XPDFElectronCrossSections {
 //					);								
 		}
 		return this.kleinNishima;
+	}
+	
+	/**
+	 * Returns the inelastic Klein-Nishina differential cross-section 
+	 * @param coords
+	 * 				coordinates object describing the angles of interest 
+	 * @param beamEnergy
+	 * 					energy of the incident photons in keV
+	 * @return
+	 * 		unpolarized Klein-Nishina differential cross section in barns per atom per steradian 
+	 */
+	public static Dataset getKleinNishinaCrossSection(XPDFCoordinates coords, double beamEnergy) {
+		IndexIterator iter = coords.getTwoTheta().getIterator();
+		DoubleDataset oscarYoshio = new DoubleDataset(coords.getTwoTheta());
+		while (iter.hasNext())
+			oscarYoshio.setAbs(iter.index, Xraylib.DCS_KN(beamEnergy, coords.getTwoTheta().getElementDoubleAbs(iter.index)));
+		
+		return oscarYoshio;
 	}
 }

@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 import org.dawb.common.services.ServiceManager;
 import org.dawnsci.persistence.PersistenceServiceCreator;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.IDynamicDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
@@ -150,7 +151,7 @@ public class NexusFileSWMRTest {
 		}
 		Assert.assertTrue(tested);
 		Assert.assertTrue(shapeChanged);
-		LazyDynamicDataset output = (LazyDynamicDataset)dh.getLazyDataset("/entry/result/data");
+		IDynamicDataset output = (IDynamicDataset)dh.getLazyDataset("/entry/result/data");
 		output.refreshShape();
 		Assert.assertArrayEquals(inputShape, output.getShape());
 	}

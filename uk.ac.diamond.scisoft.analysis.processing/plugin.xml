@@ -434,6 +434,14 @@
             visible="true">
       </operation>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.image.AffineTransformImageOperation"
+            description="Performs an affine transformation on the image"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.AffineTransformImageOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.image.AffineTransformImageModel"
+            name="Affine Transformation"
+            visible="true">
+      </operation>
+      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.ConvertAxisTypeOperation"
             description="Convert XY diffraction data axes between q, 2 theta and d-space"
             icon="icons/ConvertAxis.png"

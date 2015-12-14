@@ -279,7 +279,7 @@ public class XPDFComposition {
 		
 		int totalAtoms = 0;
 		for (Map.Entry<Integer, Double> stoichiometry : atomCount.entrySet()) {
-			Sofx.iadd(Maths.multiply(stoichiometry.getValue(), XPDFElementalFormFactors.Sofx(stoichiometry.getKey(), x)));
+			Sofx.iadd(Maths.multiply(stoichiometry.getValue(), XPDFElementalFormFactors.sofx(stoichiometry.getKey(), x)));
 			totalAtoms += stoichiometry.getValue();
 		}
 		Sofx.idivide(totalAtoms);

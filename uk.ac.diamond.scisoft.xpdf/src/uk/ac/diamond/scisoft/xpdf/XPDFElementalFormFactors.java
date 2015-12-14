@@ -11,7 +11,10 @@ package uk.ac.diamond.scisoft.xpdf;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
+//import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+
+import com.github.tschoonj.xraylib.Xraylib;
 
 /**
  * Returns the elemental form factors form eleastic and inelastic scattering.
@@ -20,31 +23,31 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
  */
 public class XPDFElementalFormFactors {
 
-	/**
-	 * Calculates a form factor using the sum of 5 Gaussian model.
-	 * <p>
-	 * Calculates a form factor, using the sum of 5 Gaussians model used in
-	 * both Waasmeier & Kirfel (1994) and Balyuzi (1975).
-	 * @param a
-	 * 		exponential scaling multiplier.
-	 * @param b
-	 * 		exponential factor.
-	 * @param c
-	 * 		additive constant.
-	 * @param x
-	 * 		sin 2θ/λ parameter for which the form factors are desired.
-	 * @return the calculated form factor
-	 */
-	private static Dataset genericFormFactor(double[] a, double[] b, double c, Dataset x) {
-		final int nTerms = 5;
-		Dataset formFactor = DoubleDataset.zeros(x);
-		Dataset xsq = Maths.square(x);
-		for (int i = 0; i < nTerms; i++)
-			formFactor.iadd(Maths.multiply(a[i], Maths.exp(Maths.multiply(-b[i], xsq))));
-		
-		formFactor.iadd(c);
-		return formFactor;
-	}
+//	/**
+//	 * Calculates a form factor using the sum of 5 Gaussian model.
+//	 * <p>
+//	 * Calculates a form factor, using the sum of 5 Gaussians model used in
+//	 * both Waasmeier & Kirfel (1994) and Balyuzi (1975).
+//	 * @param a
+//	 * 		exponential scaling multiplier.
+//	 * @param b
+//	 * 		exponential factor.
+//	 * @param c
+//	 * 		additive constant.
+//	 * @param x
+//	 * 		sin 2θ/λ parameter for which the form factors are desired.
+//	 * @return the calculated form factor
+//	 */
+//	private static Dataset genericFormFactor(double[] a, double[] b, double c, Dataset x) {
+//		final int nTerms = 5;
+//		Dataset formFactor = DoubleDataset.zeros(x);
+//		Dataset xsq = Maths.square(x);
+//		for (int i = 0; i < nTerms; i++)
+//			formFactor.iadd(Maths.multiply(a[i], Maths.exp(Maths.multiply(-b[i], xsq))));
+//		
+//		formFactor.iadd(c);
+//		return formFactor;
+//	}
 	
 	/**
 	 * Gets the inelastic scattering form factor. 
@@ -54,8 +57,13 @@ public class XPDFElementalFormFactors {
 	 * 			sin 2θ/λ parameter for which the form factor is desired.
 	 * @return inelastic (incoherent) scattering form factor.
 	 */
-	public static Dataset Sofx(int z, Dataset x) {
-		 return genericFormFactor(XPDFSofx.getA(z), XPDFSofx.getB(z), XPDFSofx.getC(z), x);
+	public static Dataset sofx(int z, Dataset x) {
+		IndexIterator iter = x.getIterator();
+		DoubleDataset sofx = new DoubleDataset(x);
+		while (iter.hasNext())
+			sofx.setAbs(iter.index, Xraylib.SF_Compt(z, x.getElementDoubleAbs(iter.index)));
+		return sofx;
+		//		 return genericFormFactor(XPDFSofx.getA(z), XPDFSofx.getB(z), XPDFSofx.getC(z), x);
 	}
 	
 	/**
@@ -67,7 +75,12 @@ public class XPDFElementalFormFactors {
 	 * @return elastic scattering form factor.
 	 */
 	public static Dataset fofx(int z, Dataset x) {
-		 return genericFormFactor(XPDFfofx.getA(z), XPDFfofx.getB(z), XPDFfofx.getC(z), x);
+		IndexIterator iter = x.getIterator();
+		DoubleDataset fofx = new DoubleDataset(x);
+		while (iter.hasNext())
+			fofx.setAbs(iter.index, Xraylib.FF_Rayl(z, x.getElementDoubleAbs(iter.index)));
+		return fofx;
+		//		 return genericFormFactor(XPDFfofx.getA(z), XPDFfofx.getB(z), XPDFfofx.getC(z), x);
 	}
 
 }

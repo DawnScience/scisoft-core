@@ -333,55 +333,88 @@ public class XPDFComposition {
 	 */
 	public List<XPDFFluorescentLine> getFluorescences(double energy, int nLines) {
 		// TODO: xraylib fluorescence lines
-		// Beginning of hard-coded data
 		List<XPDFFluorescentLine> fluorescences = new ArrayList<XPDFFluorescentLine>();
-
-		if (atomCount.keySet().size() == 2 && 
-				atomCount.containsKey(58) && atomCount.get(58) == 1 &&
-				atomCount.containsKey(8) && atomCount.get(8) == 2)
-			// ceria, CeO2
-			fluorescences = Arrays.asList(
-					new XPDFFluorescentLine(34.7196, 444.94994401, 58),
-					new XPDFFluorescentLine(34.2788, 243.00829748, 58),
-					new XPDFFluorescentLine(39.2576, 87.69485581, 58),
-					new XPDFFluorescentLine(4.8401, 48.11886857, 58),
-					new XPDFFluorescentLine(5.2629, 28.32794357, 58));
-
-		else if (atomCount.keySet().size() == 3 &&
-				atomCount.containsKey(56) && atomCount.get(56) == 1 &&
-				atomCount.containsKey(22) && atomCount.get(22) == 1 &&
-				atomCount.containsKey(8) && atomCount.get(8) == 3)
-			// barium titanate, BaTiO3
-			fluorescences = Arrays.asList(
-					new XPDFFluorescentLine(32.1936, 388.27213844, 56),
-					new XPDFFluorescentLine(31.817, 210.42217958, 56),
-					new XPDFFluorescentLine(36.378, 75.39646264, 56),
-					new XPDFFluorescentLine(4.4663, 37.42569601, 56),
-					new XPDFFluorescentLine(4.8275, 21.92040699, 56));
-
-		else if (atomCount.keySet().size() == 1 &&
-				 atomCount.containsKey(74))
-			// tungsten, W
-			fluorescences = Arrays.asList(
-					new XPDFFluorescentLine(59.3182, 1019.37506384, 74),
-					new XPDFFluorescentLine(57.981, 586.69404138, 74),
-					new XPDFFluorescentLine(67.244, 219.28240133, 74),
-					new XPDFFluorescentLine(8.3976, 239.26301778, 74),
-					new XPDFFluorescentLine(9.6724, 156.7324558, 74));
-
-		else if (atomCount.keySet().size() == 1 &&
-				atomCount.containsKey(28))
-			// nickel, Ni
-			fluorescences = Arrays.asList(
-					new XPDFFluorescentLine(7.4781, 12.68440462, 28));			
-
-		else
-			fluorescences.clear();
-
-		// end of hard-coded data
+//		int[] lineIndices = new int[] {Xraylib.KA1_LINE, Xraylib.KA2_LINE, Xraylib.KB1_LINE, Xraylib.LA1_LINE, Xraylib.LA2_LINE};
+		
+		// Loop over elements present
+		for (int z : atomCount.keySet()) {
+			// Loop over fluorescence line indices
+			for (int line : getLineIndices(z)) {
+				double lineEnergy = Xraylib.LineEnergy(z, line);
+				double lineBarns = Xraylib.CSb_FluorLine_Kissel_Cascade(z, line, energy);
+				final double minEnergy = 1.0;
+				final double minBarns = 10.0;
+				if (lineEnergy > minEnergy && lineBarns > minBarns)
+					fluorescences.add(new XPDFFluorescentLine(lineEnergy, lineBarns, z));
+			}
+		}
+		
+		
+//		fluorescences.clear();
+//		
+//		// Beginning of hard-coded data
+//		if (atomCount.keySet().size() == 2 && 
+//				atomCount.containsKey(58) && atomCount.get(58) == 1 &&
+//				atomCount.containsKey(8) && atomCount.get(8) == 2)
+//			// ceria, CeO2
+//			fluorescences = Arrays.asList(
+//					new XPDFFluorescentLine(34.7196, 444.94994401, 58),
+//					new XPDFFluorescentLine(34.2788, 243.00829748, 58),
+//					new XPDFFluorescentLine(39.2576, 87.69485581, 58),
+//					new XPDFFluorescentLine(4.8401, 48.11886857, 58),
+//					new XPDFFluorescentLine(5.2629, 28.32794357, 58));
+//
+//		else if (atomCount.keySet().size() == 3 &&
+//				atomCount.containsKey(56) && atomCount.get(56) == 1 &&
+//				atomCount.containsKey(22) && atomCount.get(22) == 1 &&
+//				atomCount.containsKey(8) && atomCount.get(8) == 3)
+//			// barium titanate, BaTiO3
+//			fluorescences = Arrays.asList(
+//					new XPDFFluorescentLine(32.1936, 388.27213844, 56),
+//					new XPDFFluorescentLine(31.817, 210.42217958, 56),
+//					new XPDFFluorescentLine(36.378, 75.39646264, 56),
+//					new XPDFFluorescentLine(4.4663, 37.42569601, 56),
+//					new XPDFFluorescentLine(4.8275, 21.92040699, 56));
+//
+//		else if (atomCount.keySet().size() == 1 &&
+//				 atomCount.containsKey(74))
+//			// tungsten, W
+//			fluorescences = Arrays.asList(
+//					new XPDFFluorescentLine(59.3182, 1019.37506384, 74),
+//					new XPDFFluorescentLine(57.981, 586.69404138, 74),
+//					new XPDFFluorescentLine(67.244, 219.28240133, 74),
+//					new XPDFFluorescentLine(8.3976, 239.26301778, 74),
+//					new XPDFFluorescentLine(9.6724, 156.7324558, 74));
+//
+//		else if (atomCount.keySet().size() == 1 &&
+//				atomCount.containsKey(28))
+//			// nickel, Ni
+//			fluorescences = Arrays.asList(
+//					new XPDFFluorescentLine(7.4781, 12.68440462, 28));			
+//
+//		else
+//			fluorescences.clear();
+//
+//		// end of hard-coded data
 		return fluorescences;
 	}
 
+	private List<Integer> getLineIndices(int z) {
+		List<Integer> lineIndices = new ArrayList<Integer>();//Arrays.asList(new Integer[] {Xraylib.KA1_LINE, Xraylib.KA2_LINE, Xraylib.KB1_LINE, Xraylib.LA1_LINE, Xraylib.LA2_LINE});
+		
+		if (z > 4)
+			lineIndices.add(Xraylib.KA2_LINE);
+		if (z > 6)
+			lineIndices.add(Xraylib.KA1_LINE);
+		if (z > 14)
+			lineIndices.add(Xraylib.KB1_LINE);
+		if (z > 22)
+			lineIndices.add(Xraylib.LB1_LINE);
+		if (z > 24)
+			lineIndices.add(Xraylib.LA1_LINE);
+		return lineIndices;	
+	}
+	
 	public double getPhotoionizationAttenuation(double beamEnergy) {
 		double massAttenuation = 0.0;		
 		double formulaMass = 0.0;

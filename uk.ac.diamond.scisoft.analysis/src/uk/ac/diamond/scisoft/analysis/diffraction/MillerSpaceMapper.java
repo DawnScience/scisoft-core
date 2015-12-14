@@ -146,7 +146,7 @@ public class MillerSpaceMapper {
 			addToDataset(weight, lpos, w);
 
 			lpos[0]++;
-			if (lpos[0] >= 0 || lpos[0] < vShape[0]) {
+			if (lpos[0] >= 0 && lpos[0] < vShape[0]) {
 				w = factor * weights[1];
 				if (w > 0) {
 					addToDataset(volume, lpos, w * value);
@@ -156,7 +156,7 @@ public class MillerSpaceMapper {
 			lpos[0]--;
 
 			lpos[1]++;
-			if (lpos[1] >= 0 || lpos[1] < vShape[1]) {
+			if (lpos[1] >= 0 && lpos[1] < vShape[1]) {
 				w = factor * weights[2];
 				if (w > 0) {
 					addToDataset(volume, lpos, w * value);
@@ -164,7 +164,7 @@ public class MillerSpaceMapper {
 				}
 
 				lpos[0]++;
-				if (lpos[0] >= 0 || lpos[0] < vShape[0]) {
+				if (lpos[0] >= 0 && lpos[0] < vShape[0]) {
 					w = factor * weights[3];
 					if (w > 0) {
 						addToDataset(volume, lpos, w * value);
@@ -176,7 +176,7 @@ public class MillerSpaceMapper {
 			lpos[1]--;
 
 			lpos[2]++;
-			if (lpos[2] >= 0 || lpos[2] < vShape[2]) {
+			if (lpos[2] >= 0 && lpos[2] < vShape[2]) {
 				w = factor * weights[4];
 				if (w > 0) {
 					addToDataset(volume, lpos, w * value);
@@ -184,7 +184,7 @@ public class MillerSpaceMapper {
 				}
 
 				lpos[0]++;
-				if (lpos[0] >= 0 || lpos[0] < vShape[0]) {
+				if (lpos[0] >= 0 && lpos[0] < vShape[0]) {
 					w = factor * weights[5];
 					if (w > 0) {
 						addToDataset(volume, lpos, w * value);
@@ -194,7 +194,7 @@ public class MillerSpaceMapper {
 				lpos[0]--;
 
 				lpos[1]++;
-				if (lpos[1] >= 0 || lpos[1] < vShape[1]) {
+				if (lpos[1] >= 0 && lpos[1] < vShape[1]) {
 					w = factor * weights[6];
 					if (w > 0) {
 						addToDataset(volume, lpos, w * value);
@@ -202,7 +202,7 @@ public class MillerSpaceMapper {
 					}
 
 					lpos[0]++;
-					if (lpos[0] >= 0 || lpos[0] < vShape[0]) {
+					if (lpos[0] >= 0 && lpos[0] < vShape[0]) {
 						w = factor * weights[7];
 						if (w > 0) {
 							addToDataset(volume, lpos, w * value);

@@ -82,6 +82,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 		this.filePath = filePath;
 		firstNotifyMap = new ConcurrentHashMap<IOperation, AtomicBoolean>();
 		positionMap = new ConcurrentHashMap<IOperation, Integer>();
+		this.swmring = swmr;
 	}
 	
 	public NexusFileExecutionVisitor(String filePath) {

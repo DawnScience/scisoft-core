@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.test.executionvisitor;
 
 import java.io.File;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -32,6 +33,8 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDynamicDataset;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.metadata.DynamicMetadataUtils;
+import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
+import org.eclipse.dawnsci.nexus.NexusFile;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -40,8 +43,8 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
+import uk.ac.diamond.scisoft.analysis.processing.operations.DataWrittenOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
-import uk.ac.diamond.scisoft.analysis.processing.operations.OriginalDataOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.SleepModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.SleepOperation;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
@@ -76,7 +79,7 @@ public class NexusFileSWMRTest {
 		SleepOperation ops = new SleepOperation();
 		ops.setModel(new SleepModel());
 		ops.getModel().setMilliseconds(sleep);
-		OriginalDataOperation odo = new OriginalDataOperation();
+		DataWrittenOperation odo = new DataWrittenOperation();
 		odo.setModel(new EmptyModel());
 
 		//FIXME or rather fix swmr. Not currently testing swmr since wont read from a 
@@ -227,6 +230,7 @@ public class NexusFileSWMRTest {
 			}
 		}
 		Assert.assertTrue(tested);
+		Assert.assertTrue(shapeChanged);
 		LazyDynamicDataset output = (LazyDynamicDataset)dh.getLazyDataset("/entry/result/data");
 		output.refreshShape();
 		List<AxesMetadata> m = output.getMetadata(AxesMetadata.class);
@@ -235,4 +239,86 @@ public class NexusFileSWMRTest {
 		Assert.assertArrayEquals(inputShape, output.getShape());
 		Assert.assertArrayEquals(new int[] {30,1,1}, as.getShape());
 	}
+	
+	
+	/**
+	 * For manual testing - set NexusFileExecutionVisitor to write swmr files
+	 * set First running, then run second
+	 * @throws Exception
+	 */
+	@Ignore
+	@Test
+	public void testLinkedFirst() throws Exception {
+		
+		final File tmp = new File("/tmp/data.h5");
+		tmp.deleteOnExit();
+		tmp.createNewFile();
+		
+		final File tmpAx = new File("/tmp/axes.h5");
+		tmpAx.deleteOnExit();
+		tmpAx.createNewFile();
+		
+
+		int sleep = 1000;
+
+		int[] inputShape = new int[] {30,200,200};
+
+		ExecutorService ste = Executors.newFixedThreadPool(3);
+		
+		startRunning(inputShape, sleep,ste,tmp);
+		startRunning(inputShape, sleep*2,ste,tmpAx);
+
+
+		ste.shutdown();
+		while (!ste.awaitTermination(200,TimeUnit.MILLISECONDS)) {
+			//do nothing
+		}
+
+
+	}
+	
+	@Ignore
+	@Test
+	public void testLinkedSecond() throws Exception {
+		NexusFile nexusFile = NexusFileHDF5.createNexusFile("/tmp/main.nxs", true);
+		nexusFile.linkExternal(new URI(null,null,"/tmp/data.h5","/entry/result/data"), "/entry/result/data", false);
+		nexusFile.linkExternal(new URI(null,null,"/tmp/axes.h5","/entry/result/Axis_0"), "/entry/Axis_0", false);
+		nexusFile.linkExternal(new URI(null,null,"/tmp/axes.h5","/entry/auxiliary/1-DataWritten/key/data"), "/key", false);
+		nexusFile.close();
+		
+		IDataHolder dh = null;
+		int count = 0;
+		while (count < 100 &&  (dh == null || !dh.contains("/entry/result/data"))){
+			Thread.sleep(500);
+			count++;
+			dh = LoaderFactory.getData("/tmp/main.nxs");
+		}
+		
+		
+		LazyDynamicDataset ldd = (LazyDynamicDataset)dh.getLazyDataset("/entry/result/data");
+		LazyDynamicDataset ax = (LazyDynamicDataset)dh.getLazyDataset("/entry/Axis_0");
+		LazyDynamicDataset key = (LazyDynamicDataset)dh.getLazyDataset("/key");
+		
+		AxesMetadata a = new AxesMetadataImpl(ldd.getRank());
+		a.setAxis(0, ax);
+		ldd.setMetadata(a);
+		
+		final IOperationContext context = service.createContext();
+		context.setData(ldd);
+		context.setDataDimensions(new int[]{1,2});
+		context.setKey(key);
+		DataWrittenOperation odo = new DataWrittenOperation();
+		odo.setModel(new EmptyModel());
+
+		context.setVisitor(new NexusFileExecutionVisitor("/tmp/processed.nxs",true));
+		context.setSeries(odo);
+		context.setExecutionType(ExecutionType.SERIES);
+		
+
+		service.execute(context);
+		
+	}
+	
+	
+	
 }

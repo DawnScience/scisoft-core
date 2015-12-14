@@ -215,12 +215,34 @@ public class MillerSpaceMapper {
 	}
 
 	/**
-	 * Split pixel over eight voxels with weight determined by exp(-distance^2)
+	 * Split pixel over eight voxels with weight determined by exp(-log(2)*(distance/hwhm)^2)
 	 */
 	static class GaussianSplitter extends InverseSplitter {
+		private double f;
+
+		public GaussianSplitter(double hwhm) {
+			f = Math.log(2) / (hwhm * hwhm);
+		}
+
 		@Override
 		protected double calcWeight(double ds) {
-			return Math.exp(-ds);
+			return Math.exp(-ds*f);
+		}
+	}
+
+	/**
+	 * Split pixel over eight voxels with weight determined by exp(-log(2)*(distance/hm))
+	 */
+	static class ExponentialSplitter extends InverseSplitter {
+		private double f;
+
+		public ExponentialSplitter(double hm) {
+			f = Math.log(2) / hm;
+		}
+
+		@Override
+		protected double calcWeight(double ds) {
+			return Math.exp(-Math.sqrt(ds)*f);
 		}
 	}
 
@@ -655,14 +677,15 @@ public class MillerSpaceMapper {
 	 * @param input Nexus file
 	 * @param output name of HDF5 file to be created
 	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
+	 * @param p splitter parameter
 	 * @param scale upsampling factor
 	 * @param mShape shape of output volume
 	 * @param mStart start coordinates in Miller space
 	 * @param mDelta sides of voxels in Miller space
 	 * @throws ScanFileHolderException
 	 */
-	public static void processVolume(String input, String output, String splitter, double scale, int[] mShape, double[] mStart, double... mDelta) throws ScanFileHolderException {
-		setI16Splitter(splitter);
+	public static void processVolume(String input, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double... mDelta) throws ScanFileHolderException {
+		setI16Splitter(splitter, p);
 		I16Mapper.mapToVolumeFile(input, output, scale, false, mShape, mStart, mDelta);
 	}
 
@@ -671,22 +694,25 @@ public class MillerSpaceMapper {
 	 * @param input Nexus file
 	 * @param output name of HDF5 file to be created
 	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
+	 * @param p splitter parameter
 	 * @param scale upsampling factor
 	 * @param mDelta sides of voxels in Miller space
 	 * @param reduceToNonZero if true, reduce output to sub-volume with non-zero data
 	 * @throws ScanFileHolderException
 	 */
-	public static void processVolumeWithAutoBox(String input, String output, String splitter, double scale, boolean reduceToNonZero, double... mDelta) throws ScanFileHolderException {
-		setI16Splitter(splitter);
+	public static void processVolumeWithAutoBox(String input, String output, String splitter, double p, double scale, boolean reduceToNonZero, double... mDelta) throws ScanFileHolderException {
+		setI16Splitter(splitter, p);
 		I16Mapper.mapToVolumeFile(input, output, scale, reduceToNonZero, null, null, mDelta);
 	}
 
-	static void setI16Splitter(String splitter) {
+	static void setI16Splitter(String splitter, double p) {
 		if (splitter == null || splitter.isEmpty()) {
 			return;
 		}
 		if (splitter.equals("gaussian")) {
-			I16Mapper.setSplitter(new GaussianSplitter());
+			I16Mapper.setSplitter(new GaussianSplitter(p));
+		} else if (splitter.equals("negexp")) {
+			I16Mapper.setSplitter(new ExponentialSplitter(p));
 		} else if (splitter.equals("inverse")) {
 			I16Mapper.setSplitter(new InverseSplitter());
 		} else if (!splitter.equals("nearest")) {

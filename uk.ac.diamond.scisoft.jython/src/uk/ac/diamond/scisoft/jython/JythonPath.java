@@ -95,7 +95,8 @@ public class JythonPath {
 	 * Plugins we want/don't want
 	 */
 	private final static String[] pluginKeys = {
-		"org.eclipse.dawnsci.hdf5", // required for loading to work in client started from IDE
+		"org.eclipse.dawnsci.nexus", // required for loading to work in client started from IDE
+		"org.eclipse.dawnsci.hdf5",
 		"org.eclipse.dawnsci.analysis.*", // includes api, dataset, tree, etc
 		"org.eclipse.dawnsci.plotting.*", // required to expose IRemotePlottingSystem to Jython
 		"uk.ac.diamond.scisoft.analysis",

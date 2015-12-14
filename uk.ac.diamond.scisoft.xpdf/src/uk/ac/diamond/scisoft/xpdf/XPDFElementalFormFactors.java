@@ -61,7 +61,9 @@ public class XPDFElementalFormFactors {
 		IndexIterator iter = x.getIterator();
 		DoubleDataset sofx = new DoubleDataset(x);
 		while (iter.hasNext())
-			sofx.setAbs(iter.index, Xraylib.SF_Compt(z, x.getElementDoubleAbs(iter.index)));
+			sofx.setAbs(iter.index,
+					(x.getElementDoubleAbs(iter.index) <= 0.0) ?
+							0.0 : Xraylib.SF_Compt(z, x.getElementDoubleAbs(iter.index)));
 		return sofx;
 		//		 return genericFormFactor(XPDFSofx.getA(z), XPDFSofx.getB(z), XPDFSofx.getC(z), x);
 	}
@@ -78,7 +80,8 @@ public class XPDFElementalFormFactors {
 		IndexIterator iter = x.getIterator();
 		DoubleDataset fofx = new DoubleDataset(x);
 		while (iter.hasNext())
-			fofx.setAbs(iter.index, Xraylib.FF_Rayl(z, x.getElementDoubleAbs(iter.index)));
+			fofx.setAbs(iter.index, (x.getElementDoubleAbs(iter.index) <= 0.0) ? 
+					z : Xraylib.FF_Rayl(z, x.getElementDoubleAbs(iter.index)));
 		return fofx;
 		//		 return genericFormFactor(XPDFfofx.getA(z), XPDFfofx.getB(z), XPDFfofx.getC(z), x);
 	}

@@ -41,15 +41,25 @@ public class XPDFAbsorptionMaps {
 	
 	/**
 	 * Copy constructor.
+	 * <p>
+	 * Performs a deep copy of the absorption maps, but a shallow copy of everything else.
 	 * @param inMaps object to be copied.
 	 */
 	public XPDFAbsorptionMaps(XPDFAbsorptionMaps inMaps) {
-		if (this.theMaps == null) {
-			this.theMaps = new HashMap<String, Dataset>();
+		if (inMaps.theMaps == null) {
+			this.theMaps = null;
 		} else {
-			this.theMaps.clear();
+			this.theMaps = new HashMap<String, Dataset>(inMaps.theMaps.size());
+			for (Map.Entry<String, Dataset> entry : inMaps.theMaps.entrySet() )
+				this.theMaps.put(entry.getKey(), entry.getValue().clone());
 		}
-		this.theMaps.putAll(inMaps.theMaps);
+		this.delta = (inMaps.delta != null) ? inMaps.delta : null;
+		this.gamma = (inMaps.gamma != null) ? inMaps.gamma : null;
+		this.formList = (inMaps.formList != null) ? inMaps.formList : null;
+		this.beamData = (inMaps.beamData != null) ? inMaps.beamData : null;
+		this.isUpstreamMap = (inMaps.isUpstreamMap != null) ? inMaps.isUpstreamMap : null;
+		this.isDownstreamMap = (inMaps.isDownstreamMap != null) ? inMaps.isDownstreamMap : null;
+ 		
 	}
 	
 	/**

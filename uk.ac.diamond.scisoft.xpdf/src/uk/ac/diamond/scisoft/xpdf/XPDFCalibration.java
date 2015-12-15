@@ -376,7 +376,10 @@ public class XPDFCalibration {
 	public Dataset calibrate(int nIterations) {
 		if (doFluorescence)
 				calibrateFluorescence(nIterations);
-		return iterateCalibrate(nIterations, true);
+		Dataset absCor = iterateCalibrate(nIterations, true);
+		System.err.println("Fluorescence scale = " + fluorescenceScale);
+		System.err.println("Calibration constant = " + calibrationConstants.getLast());
+		return absCor;
 	}
 	
 	private Dataset iterateCalibrate(int nIterations, boolean propagateErrors) {
@@ -396,21 +399,21 @@ public class XPDFCalibration {
 		Dataset targetComponent = backgroundSubtracted.get(0);
 
 		if (doFluorescence) {
-		Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.reshape(targetComponent.getSize())));
-//		Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.squeeze()));
-		if (propagateErrors && targetComponent.getError() != null)
-			if (sampleFluorescence.getError() != null)
-				fluorescenceCorrectedData.setError(
-						Maths.sqrt(
-								Maths.add(
-										Maths.square(targetComponent.getError()),
-										Maths.square(sampleFluorescence.getError())
-										)
-								)
-						);
-			else
-				fluorescenceCorrectedData.setError(targetComponent.getError());
-		fluorescenceCorrected.add(fluorescenceCorrectedData);
+			Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.reshape(targetComponent.getSize())));
+			//		Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.squeeze()));
+			if (propagateErrors && targetComponent.getError() != null)
+				if (sampleFluorescence.getError() != null)
+					fluorescenceCorrectedData.setError(
+							Maths.sqrt(
+									Maths.add(
+											Maths.square(targetComponent.getError()),
+											Maths.square(sampleFluorescence.getError())
+											)
+									)
+							);
+				else
+					fluorescenceCorrectedData.setError(targetComponent.getError());
+			fluorescenceCorrected.add(fluorescenceCorrectedData);
 		} else {
 			fluorescenceCorrected.add(targetComponent);
 		}

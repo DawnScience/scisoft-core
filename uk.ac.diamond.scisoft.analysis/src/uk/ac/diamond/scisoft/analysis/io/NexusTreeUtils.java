@@ -142,7 +142,7 @@ public class NexusTreeUtils {
 			return;
 		}
 
-		// find possible @long_name
+		// find possible long name
 		String string = parseStringAttr(dNode, NX_NAME);
 		if (string != null && string.length() > 0) {
 			cData.setName(string);
@@ -744,8 +744,11 @@ public class NexusTreeUtils {
 //		System.err.println("Chaining dependencies:");
 		do {
 			t = ftrans.get(dep);
-//			System.err.println("\t" + dep);
-//			System.err.printf("%s", t.matrix);
+			if (t == null) {
+				logger.error("Cannot find transformation dependency {}", dep);
+				throw new IllegalArgumentException("Cannot find transformation dependency + " + dep);
+			}
+
 			m.mul(t.matrix, m);
 			dep = t.depend;
 		} while (!NX_TRANSFORMATIONS_ROOT.equals(dep));
@@ -824,7 +827,12 @@ public class NexusTreeUtils {
 		GroupNode gNode = (GroupNode) link.getDestination();
 		String gpath = path + Node.SEPARATOR + link.getName();
 		for (NodeLink l : gNode) {
-			Transform t = parseTransformation(gpath, l, pos);
+			Transform t = null;
+			try {
+				t = parseTransformation(gpath, l, pos);
+			} catch (Exception e) {
+				logger.warn("Problem parsing transformation {}", l);
+			}
 			if (t != null) {
 				ftrans.put(t.name, t);
 			}

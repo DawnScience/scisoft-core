@@ -310,7 +310,7 @@ public class SliceableMetadataTest {
 		sdl.add((ShortDataset) Random.randn(partial2).cast(Dataset.INT16));
 		sdl.add((ShortDataset) Random.randn(partial2).cast(Dataset.INT16));
 
-		final int [] partial3 = new int[] {1, 5, 1, 1};
+		final int [] partial3 = new int[] {1, 1, 1, 3};
 		Map<String, BooleanDataset> bdm = new HashMap<String, BooleanDataset>();
 		bdm.put("1", (BooleanDataset) Random.randn(partial3).cast(Dataset.BOOL));
 		bdm.put("2", (BooleanDataset) Random.randn(partial3).cast(Dataset.BOOL));

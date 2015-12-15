@@ -179,6 +179,7 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 						Arrays.fill(newShape, 1);
 
 						int[] idx = new int[axRank];
+						Arrays.fill(idx, -1);
 						Boolean[] found = new Boolean[axRank];
 						Arrays.fill(found, false);
 						int max = rank;
@@ -215,9 +216,12 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 	
 	private boolean updateShape(int i, int max, int[] shape, int id, int[] idx, Boolean[] found){
 		
+		int[] idxc = idx.clone();
+		Arrays.sort(idxc);
+		
 		for (int j = max -1 ; j >= 0; j--) {
 
-			if (id == shape[j]) {
+			if (id == shape[j] && Arrays.binarySearch(idxc, j) < 0) {
 				idx[i] = j;
 				found[i] = true;
 				max = j;

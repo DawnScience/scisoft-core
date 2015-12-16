@@ -842,8 +842,9 @@ public class HDF5Loader extends AbstractFileLoader {
 		}
 
 		trueShape = HDF5Utils.toIntArray(dims);
+		int[] maxShape = HDF5Utils.toIntArray(node.getMaxShape());
 
-		if (trueShape.length == 1 && trueShape[0] == 1) { // special case for single values
+		if (trueShape.length == 1 && trueShape[0] == 1 && maxShape.length == 1 && maxShape[0] == 1) { // special case for single values
 			try {
 				final Dataset d = DatasetFactory.zeros(type.isize, trueShape, type.dtype);
 				Object data = d.getBuffer();
@@ -864,7 +865,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		}
 
 		final boolean extendUnsigned = !keepBitWidth && type.unsigned;
-		
+
 		// cope with external files specified in a non-standard way and which may not be HDF5 either
 		if (type.dtype == Dataset.STRING && useExternalFiles) {
 			// interpret set of strings as the full path names to a group of external files that are stacked together
@@ -899,15 +900,7 @@ public class HDF5Loader extends AbstractFileLoader {
 
 		HDF5LazyLoader l = new HDF5LazyLoader(file.getHostname(), file.getFilename(), nodePath, name, trueShape, type.isize, type.dtype, extendUnsigned);
 
-		int[] max = null;
-		try {
-			max = HDF5Utils.toIntArray(node.getMaxShape());
-		} catch (Exception e) {
-			logger.warn("Max shape cant convert to int");
-		}
-		
-		
-		node.setDataset(new LazyDynamicDataset(name, type.dtype, type.isize, trueShape.clone(), max, l));
+		node.setDataset(new LazyDynamicDataset(name, type.dtype, type.isize, trueShape.clone(), maxShape, l));
 		return true;
 	}
 

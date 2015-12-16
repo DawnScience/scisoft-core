@@ -41,7 +41,7 @@ public class XPDFEXSTest extends TestCase {
 		xECS.setCoordinates(coords);
 		xECS.setBeamEnergy(76.6);
 
-		Dataset oldKN = Maths.multiply(xECS.getKleinNishimaCrossSection(), re2);
+		Dataset oldKN = Maths.multiply(xECS.getKleinNishinaCrossSection(), re2);
 		Dataset newKN = XPDFElectronCrossSections.getKleinNishinaCrossSection(coords, 76.6);
 		
 		Dataset ratioExcess = Maths.subtract(Maths.divide(newKN, oldKN), 1);

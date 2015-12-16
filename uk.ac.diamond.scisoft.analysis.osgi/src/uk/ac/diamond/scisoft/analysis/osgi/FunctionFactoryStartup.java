@@ -57,12 +57,12 @@ public class FunctionFactoryStartup implements IStartup {
 		 * points.
 		 */
 		for (IConfigurationElement ele : elements) {
-			if (!ele.getName().equals("usecase")) continue;
-			registerUseCase(ele);
+			if (ele.getName().equals("usecase"))
+				registerUseCase(ele);
 		}
 		for (IConfigurationElement ele : elements) {
-			if (!ele.getName().equals("function")) continue;
-			registerFunction(ele);
+			if (ele.getName().equals("function"))
+				registerFunction(ele);
 		}
 	}
 

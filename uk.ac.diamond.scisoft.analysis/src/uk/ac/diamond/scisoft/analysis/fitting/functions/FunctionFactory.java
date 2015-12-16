@@ -82,26 +82,7 @@ public final class FunctionFactory {
 			}
 		}
 	}
-	
-	/**
-	 * Wrapper method to register class without a name.
-	 * @param clazz
-	 * @throws Exception
-	 */
-	public static void registerFunction(Class<? extends IFunction> clazz) throws Exception {
-		registerFunction(clazz, null, false, null);
-	}
-	
-	/**
-	 * Call to register external functions with the factory in function (and peak) maps
-	 * @param clazz
-	 * @param fnName
-	 * @throws Exception
-	 */
-	public static void registerFunction(Class<? extends IFunction> clazz, String fnName) throws Exception {
-		registerFunction(clazz, fnName, false, null);
-	}
-	
+
 	/**
 	 * Register a function with it's class and whether we should ignore duplicates
 	 * in the maps. This is useful for tests.

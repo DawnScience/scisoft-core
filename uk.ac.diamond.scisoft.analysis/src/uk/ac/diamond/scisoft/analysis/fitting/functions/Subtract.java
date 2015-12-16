@@ -61,12 +61,11 @@ public class Subtract extends ABinaryOperator implements IOperator {
 	}
 
 	@Override
-	public double partialDeriv(int index, double... values) throws IndexOutOfBoundsException {
-		IParameter p = getParameter(index);
-		double d = fa == null ? 0 : fa.partialDeriv(p, values);
+	public double partialDeriv(IParameter param, double... values) {
+		double d = fa == null ? 0 : fa.partialDeriv(param, values);
 
 		if (fb != null) {
-			d -= fb.partialDeriv(p, values);
+			d -= fb.partialDeriv(param, values);
 		}
 
 		return d;

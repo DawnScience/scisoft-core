@@ -80,8 +80,7 @@ public class Multiply extends ANaryOperator implements IOperator {
 	}
 
 	@Override
-	public double partialDeriv(int index, double... values) throws IndexOutOfBoundsException {
-		IParameter p = getParameter(index);
+	public double partialDeriv(IParameter param, double... values) {
 		double d = 0;
 		double m = 1;
 
@@ -90,7 +89,7 @@ public class Multiply extends ANaryOperator implements IOperator {
 			if (f == null)
 				continue;
 
-			double r = f.partialDeriv(p, values);
+			double r = f.partialDeriv(param, values);
 			double t = f.val(values);
 			m *= t;
 			if (r != 0) {

@@ -236,12 +236,6 @@ public abstract class AFunction implements IFunction, Serializable {
 		return out.toString();
 	}
 
-	@Override
-	@Deprecated
-	public double partialDeriv(int index, double... values) {
-		return partialDeriv(getParameter(index), values);
-	}
-
 	/**
 	 * This implementation is a numerical approximation. Overriding methods should check
 	 * for duplicated parameters before doing any calculation and either cope with this
@@ -324,11 +318,6 @@ public abstract class AFunction implements IFunction, Serializable {
 		param.setValue(v);
 		dirty = true;
 		return (maxval - minval) / (2. * dv);
-	}
-
-	@Override
-	public DoubleDataset makeDataset(IDataset... values) {
-		return calculateValues(values);
 	}
 
 	/**
@@ -507,12 +496,6 @@ public abstract class AFunction implements IFunction, Serializable {
 		}
 
 		return residual;
-	}
-
-	@Override
-	@Deprecated
-	public double residual(boolean allValues, IDataset data, IDataset... coords) {
-		return residual(allValues, data, null, coords);
 	}
 
 	@Override

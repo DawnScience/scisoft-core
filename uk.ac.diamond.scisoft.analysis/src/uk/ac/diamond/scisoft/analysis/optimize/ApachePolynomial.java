@@ -17,21 +17,41 @@ import org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquar
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 
+/**
+ * Class to contain methods to fit univariate polynomials
+ */
 public class ApachePolynomial {
 
-	@SuppressWarnings("unused")
-	public static double[] polynomialFit(Dataset x, Dataset y, int polyOrder) throws Exception {
+	/**
+	 * Fit a polynomial to given x and y data
+	 * @param x
+	 * @param y
+	 * @param order order or highest degree of terms in polynomial
+	 * @return coefficients of fitted polynomial (given in increasing degree of the terms)
+	 */
+	public static double[] polynomialFit(Dataset x, Dataset y, int order) {
+		double[] guess = new double[order + 1];
+		Arrays.fill(guess, 1);
+		return polynomialFit(x, y, guess);
+	}
+
+	/**
+	 * Fit a polynomial to given x and y data
+	 * @param x
+	 * @param y
+	 * @param guess initial values for coefficients (given in increasing degree of the terms)
+	 * @return coefficients of fitted polynomial
+	 */
+	public static double[] polynomialFit(Dataset x, Dataset y, double... guess) {
 		PolynomialFitter fitter = new PolynomialFitter(new LevenbergMarquardtOptimizer());
 
 		for (int i = 0; i < y.getSize(); i++) {
 			fitter.addObservedPoint(1,x.getDouble(i),y.getDouble(i));
 		}
 
-		double[] guess = new double[polyOrder+1];
-		Arrays.fill(guess, 1);
 		return fitter.fit(guess);
 	}
-	
+
 	/**
 	 * Calculate a polynomial filtered dataset using a specified window size and polynomial order.
 	 * 
@@ -47,16 +67,15 @@ public class ApachePolynomial {
 		// Could probably do with more sanity check on relative size of
 		// window vs polynomial but doesn't seem to trip up
 		// So we'll see how it goes...
-		
+
 		// integer divide window size so window is symmetric around point
 		int window = windowSize/2;
-		
+
 		PolynomialFitter fitter = new PolynomialFitter(new LevenbergMarquardtOptimizer());
-		double dx = x.getDouble(1) - x.getDouble(0); //change in x for edge extrapolation
+		double dx = x.getDouble(1) - x.getDouble(0); // change in x for edge extrapolation
 		int xs =  x.getSize();
 		Dataset result = DatasetFactory.zeros(y);
 		double[] guess = new double[polyOrder+1];
-//		Arrays.fill(guess, 0);
 
 		for (int idx = 0; idx < xs; idx++) {
 			fitter.clearObservations();
@@ -75,9 +94,9 @@ public class ApachePolynomial {
 			}
 
 			PolynomialFunction fitted = new PolynomialFunction(fitter.fit(guess));
-			result.set(fitted.value(x.getDouble(idx)), idx);	
+			result.set(fitted.value(x.getDouble(idx)), idx);
 		}
-		
+
 		return result;
 	}
 }

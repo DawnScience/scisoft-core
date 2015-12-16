@@ -226,7 +226,7 @@ public class XPDFComposition {
 		eXSections.setCoordinates(coordinates);
 		
 		Dataset elasticSelfScattering = Maths.multiply(eXSections.getThomsonCrossSection(), this.getElasticScatteringFactorSquared(coordinates.getX()));
-		Dataset inelasticSelfScattering = Maths.multiply(eXSections.getKleinNishimaCrossSection(), this.getInelasticScatteringFactor(coordinates.getX()));
+		Dataset inelasticSelfScattering = Maths.multiply(eXSections.getKleinNishinaCrossSection(), this.getInelasticScatteringFactor(coordinates.getX()));
 		
 		return Maths.add(elasticSelfScattering, inelasticSelfScattering);
 	}

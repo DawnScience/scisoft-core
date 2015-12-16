@@ -28,7 +28,7 @@ public class XPDFElectronCrossSections {
 //	Dataset twoTheta;
 	private XPDFCoordinates coordinates;
 	private Dataset thomson;
-	private Dataset kleinNishima;
+	private Dataset kleinNishina;
 	private static final double classicalElectronRadius = 1.0;
 	private static final double electronMasskeV = 510.998910;//(13)
 	private static final double breitDiracPower = 2.0;
@@ -39,7 +39,7 @@ public class XPDFElectronCrossSections {
 	public XPDFElectronCrossSections() {
 		coordinates = null;
 		thomson = null;
-		kleinNishima = null;
+		kleinNishina = null;
 	}
 	
 	/**
@@ -50,7 +50,7 @@ public class XPDFElectronCrossSections {
 	public XPDFElectronCrossSections(XPDFElectronCrossSections inXSect){
 		this.coordinates = (inXSect.coordinates != null) ? inXSect.coordinates : null;
 		this.thomson = (inXSect.thomson != null) ? inXSect.thomson : null;
-		this.kleinNishima = (inXSect.kleinNishima != null) ? inXSect.kleinNishima : null;
+		this.kleinNishina = (inXSect.kleinNishina != null) ? inXSect.kleinNishina : null;
 	}
 	
 	/**
@@ -62,8 +62,8 @@ public class XPDFElectronCrossSections {
 		if (this.coordinates == null)
 			this.coordinates = new XPDFCoordinates();
 		this.coordinates.setEnergy(beamEnergy);
-		// invalidate the Klein-Nishima value
-		kleinNishima = null;
+		// invalidate the Klein-Nishina value
+		kleinNishina = null;
 	}
 	
 	/**
@@ -76,7 +76,7 @@ public class XPDFElectronCrossSections {
 			this.coordinates = new XPDFCoordinates();
 		this.coordinates.setTwoTheta(twoTheta);
 		// invalidate the Thomson and Klein-Nishima values
-		this.kleinNishima = null;
+		this.kleinNishina = null;
 		this.thomson = null;
 	}
 	
@@ -89,7 +89,7 @@ public class XPDFElectronCrossSections {
 	public void setCoordinates(XPDFCoordinates coordinates) {
 		this.coordinates = coordinates;
 		// invalidate the Thomson and Klein-Nishima values
-		this.kleinNishima = null;
+		this.kleinNishina = null;
 		this.thomson = null;
 	}
 	
@@ -129,10 +129,10 @@ public class XPDFElectronCrossSections {
 	 * Calculates and returns the inelastic electron scattering cross-section.
 	 * @return the inelastic electron scattering cross-section at the selected
 	 * 			scattering angles, for the beam energy. As parameterized by 
-	 * 			Klein and Nishima.
+	 * 			Klein and Nishina.
 	 */
-	public Dataset getKleinNishimaCrossSection() {
-		if (this.kleinNishima == null) {
+	public Dataset getKleinNishinaCrossSection() {
+		if (this.kleinNishina == null) {
 			double gamma = coordinates.getEnergy()/electronMasskeV;
 			Dataset photonEnergyRatio = Maths.divide(
 					1.0,
@@ -147,7 +147,7 @@ public class XPDFElectronCrossSections {
 									)
 							)
 					);
-			this.kleinNishima = Maths.multiply(0.5*classicalElectronRadius*classicalElectronRadius,
+			this.kleinNishina = Maths.multiply(0.5*classicalElectronRadius*classicalElectronRadius,
 					Maths.multiply(
 							Maths.power(
 									photonEnergyRatio, 
@@ -178,7 +178,7 @@ public class XPDFElectronCrossSections {
 //							)
 //					);								
 		}
-		return this.kleinNishima;
+		return this.kleinNishina;
 	}
 	
 	/**

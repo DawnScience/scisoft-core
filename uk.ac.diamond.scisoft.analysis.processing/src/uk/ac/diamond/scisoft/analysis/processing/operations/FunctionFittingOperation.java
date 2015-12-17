@@ -211,7 +211,7 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 			}
 			
 			Fitter.ApacheNelderMeadFit(new Dataset[] { x }, y,
-					resultFunction, 100000);
+					resultFunction);
 			break;
 		case GENETIC:
 			IOptimizer fitMethod = new GeneticAlg(accuracy);

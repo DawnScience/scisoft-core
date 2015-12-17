@@ -120,7 +120,7 @@ public class XPDFElectronCrossSections {
 		DoubleDataset jJ = new DoubleDataset(coords.getTwoTheta());
 		
 		while (iter.hasNext())
-			 jJ.setAbs(iter.index, Xraylib.DCS_Thoms(coords.getTwoTheta().getElementDoubleAbs(iter.index)));
+			 jJ.setAbs(iter.index, Xraylib.DCS_Thoms(coords.getTwoTheta().getElementDoubleAbs(iter.index))/Xraylib.DCS_Thoms(0));
 		
 		return jJ;
 	}
@@ -194,7 +194,7 @@ public class XPDFElectronCrossSections {
 		IndexIterator iter = coords.getTwoTheta().getIterator();
 		DoubleDataset oscarYoshio = new DoubleDataset(coords.getTwoTheta());
 		while (iter.hasNext())
-			oscarYoshio.setAbs(iter.index, Xraylib.DCS_KN(beamEnergy, coords.getTwoTheta().getElementDoubleAbs(iter.index)));
+			oscarYoshio.setAbs(iter.index, Xraylib.DCS_KN(beamEnergy, coords.getTwoTheta().getElementDoubleAbs(iter.index))/Xraylib.DCS_KN(beamEnergy, 0.0));
 		
 		return oscarYoshio;
 	}

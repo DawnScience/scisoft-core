@@ -10,10 +10,8 @@
 package uk.ac.diamond.scisoft.analysis.optimize;
 
 /**
- * Class which wraps the Apache Commons Nelder Mead routine
- * and makes it compatible with the scisoft fitting routines
+ * Use {@link ApacheOptimizer} with {@link ApacheOptimizer.Optimizer#SIMPLEX_NM}
  */
-
 @Deprecated
 public class ApacheNelderMead extends ApacheOptimizer {
 	public ApacheNelderMead() {

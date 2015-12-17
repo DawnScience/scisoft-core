@@ -9,16 +9,12 @@
 
 package uk.ac.diamond.scisoft.analysis.optimize;
 
-//import org.apache.commons.math3.FunctionEvaluationException;
-
-
 /**
- * Class which wraps the Apache Commons Conjugate Gradient fitting routine
- * and makes it compatible with the scisoft fitting routines
+ * Use {@link ApacheOptimizer} with {@link ApacheOptimizer.Optimizer#SIMPLEX_MD}
  */
 @Deprecated
-public class ApacheConjugateGradient extends ApacheOptimizer {
-	public ApacheConjugateGradient() {
-		super(Optimizer.CONJUGATE_GRADIENT);
+public class ApacheMultiDirectional extends ApacheOptimizer {
+	public ApacheMultiDirectional() {
+		super(Optimizer.SIMPLEX_MD);
 	}
 }

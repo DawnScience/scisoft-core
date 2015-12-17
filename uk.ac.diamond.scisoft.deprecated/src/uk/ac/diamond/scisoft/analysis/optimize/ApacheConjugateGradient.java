@@ -10,13 +10,11 @@
 package uk.ac.diamond.scisoft.analysis.optimize;
 
 /**
- * Class which wraps the Apache Commons Multi Directional fitting routine
- * and makes it compatible with the scisoft fitting routines
+ * Use {@link ApacheOptimizer} with {@link ApacheOptimizer.Optimizer#CONJUGATE_GRADIENT}
  */
-
 @Deprecated
-public class ApacheMultiDirectional extends ApacheOptimizer {
-	public ApacheMultiDirectional() {
-		super(Optimizer.SIMPLEX_MD);
+public class ApacheConjugateGradient extends ApacheOptimizer {
+	public ApacheConjugateGradient() {
+		super(Optimizer.CONJUGATE_GRADIENT);
 	}
 }

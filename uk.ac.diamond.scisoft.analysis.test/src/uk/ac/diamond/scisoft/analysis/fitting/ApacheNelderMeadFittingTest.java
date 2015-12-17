@@ -11,14 +11,15 @@ package uk.ac.diamond.scisoft.analysis.fitting;
 
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.optimize.ApacheNelderMead;
+import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
+import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 
 public class ApacheNelderMeadFittingTest extends AbstractFittingTestBase {
 
 	@Override
 	public IOptimizer createOptimizer() {
-		return new ApacheNelderMead();
+		return new ApacheOptimizer(Optimizer.SIMPLEX_NM);
 	}
 
 	@Test

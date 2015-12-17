@@ -13,14 +13,15 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.optimize.ApacheConjugateGradient;
+import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
+import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 
 public class ApacheConjugateGradientFittingTest extends AbstractFittingTestBase {
 
 	@Override
 	public IOptimizer createOptimizer() {
-		return new ApacheConjugateGradient();
+		return new ApacheOptimizer(Optimizer.CONJUGATE_GRADIENT);
 	}
 
 	@Override

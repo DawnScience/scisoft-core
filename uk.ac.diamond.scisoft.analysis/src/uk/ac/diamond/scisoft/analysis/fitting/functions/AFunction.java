@@ -14,8 +14,6 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.apache.commons.math3.analysis.MultivariateFunction;
-import org.apache.commons.math3.optim.nonlinear.scalar.MultivariateFunctionPenaltyAdapter;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IOperator;
@@ -568,44 +566,7 @@ public abstract class AFunction implements IFunction, Serializable {
 	public void setParentOperator(IOperator parent) {
 		this.parent = parent;
 	}
-	
-	/**
-	 * Generate a Apache MultivariateFunctionPenaltyAdapter from the function
-	 * @param inputValues A dataset containing the data values for the optimisation
-	 * @param inputCoords A dataset containing the coordinates for the optimization
-	 * @return the bounded MultivariateFunctionPenaltyAdapter
-	 */
-	public MultivariateFunctionPenaltyAdapter getApacheMultivariateFunction(IDataset inputValues, IDataset[] inputCoords) {
-		
-		final AFunction function = this;
-		final IDataset values = inputValues;
-		final IDataset[] coords = inputCoords;
-		
-		MultivariateFunction multivariateFunction = new MultivariateFunction() {
-			
-			@Override
-			public double value(double[] arg0) {
-				function.setParameterValuesNoFixed(arg0);
-				
-				double result = function.residual(true, values, null, coords);
-				
-				return result;
-			}
-		};
-		
-		double offset = 1e12;
-		double[] lowerb = getLowerBoundsNoFixed();
-		double[] upperb = getUpperBoundsNoFixed();
-		double[] scale = new double[lowerb.length];
-		for (int i = 0; i < scale.length; i++) {
-			scale[i] = offset*0.25;
-		}
-		
-		MultivariateFunctionPenaltyAdapter multivariateFunctionPenaltyAdapter = new MultivariateFunctionPenaltyAdapter(multivariateFunction, lowerb, upperb, offset, scale);
-		
-		return multivariateFunctionPenaltyAdapter;
-	}
-	
+
 	/**
 	 * Get the parameter values as an array, excluding parameters which are fixed
 	 * @return a double[] of non fixed parameter values

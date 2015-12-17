@@ -62,14 +62,13 @@ public class Divide extends ABinaryOperator implements IOperator {
 	}
 
 	@Override
-	public double partialDeriv(int index, double... values) throws IndexOutOfBoundsException {
-		IParameter p = getParameter(index);
+	public double partialDeriv(IParameter param, double... values) {
 		double a;
 		double d;
 
 		if (fa != null) {
 			a = fa.val(values);
-			d = fa.partialDeriv(p, values);
+			d = fa.partialDeriv(param, values);
 		} else {
 			a = 1;
 			d = 0;
@@ -77,7 +76,7 @@ public class Divide extends ABinaryOperator implements IOperator {
 
 		if (fb != null) {
 			double b = fb.val(values);
-			double db = fb.partialDeriv(p, values);
+			double db = fb.partialDeriv(param, values);
 			d = (d * b - a * db) / (b * b);
 		}
 		return d;

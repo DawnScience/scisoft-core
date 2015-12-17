@@ -46,7 +46,7 @@ public class FunctionFactoryTest {
 	@Test
 	public void testPeakRegistration() throws Exception{
 		//Re-register the Gaussian function with a different name.
-		FunctionFactory.registerFunction(Gaussian.class, "myGauss");
+		FunctionFactory.registerFunction(Gaussian.class, "myGauss", null);
 		
 		//Check it is the same Gaussian and that it is not another type of function
 		assertEquals(FunctionFactory.getPeakFn("myGauss"), FunctionFactory.getPeakFn("Gaussian"));

@@ -18,9 +18,8 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Offset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
-import uk.ac.diamond.scisoft.analysis.optimize.ApacheConjugateGradient;
-import uk.ac.diamond.scisoft.analysis.optimize.ApacheMultiDirectional;
-import uk.ac.diamond.scisoft.analysis.optimize.ApacheNelderMead;
+import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
+import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApachePolynomial;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.optimize.GradientDescent;
@@ -39,8 +38,7 @@ public class Fitter {
 	}
 	
 	public static void simplexFit(final double quality, final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
-		NelderMead nm = new NelderMead(quality);
-		nm.optimize(coords, yAxis, function);	
+		new NelderMead(quality).optimize(coords, yAxis, function);	
 	}
 
 	/**
@@ -51,32 +49,25 @@ public class Fitter {
 	 * @throws Exception
 	 */
 	public static void ApacheNelderMeadFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
-		IOptimizer anm = new ApacheNelderMead();
-		anm.optimize(coords, yAxis, function);	
-	}	
-	
-	public static void ApacheMultiDirectionFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
-//		IOptimizer amd = new ApacheOptimizer(Optimizer.SIMPLEX_MD);
-		IOptimizer amd = new ApacheMultiDirectional();
-		amd.optimize(coords, yAxis, function);	
+		new ApacheOptimizer(Optimizer.SIMPLEX_NM).optimize(coords, yAxis, function);
 	}
-		
+
+	public static void ApacheMultiDirectionFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
+		new ApacheOptimizer(Optimizer.SIMPLEX_MD).optimize(coords, yAxis, function);
+	}
+
 	public static void ApacheConjugateGradientFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
-//		IOptimizer acg = new ApacheOptimizer(Optimizer.CONJUGATE_GRADIENT);
-		IOptimizer acg = new ApacheConjugateGradient();
-		acg.optimize(coords, yAxis, function);	
+		new ApacheOptimizer(Optimizer.CONJUGATE_GRADIENT).optimize(coords, yAxis, function);
 	}
 
 	public static void GDFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
 		GDFit(quality, coords, yAxis, function);
 	}
-	
+
 	public static void GDFit(final double quality, final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
-		IOptimizer gd = new GradientDescent(quality);
-		gd.optimize(coords, yAxis, function);	
+		new GradientDescent(quality).optimize(coords, yAxis, function);
 	}
-	
-	
+
 	/**
 	 * Genetic algorithm fitter
 	 * @param coords
@@ -97,9 +88,7 @@ public class Fitter {
 	 * @throws Exception 
 	 */
 	public static void geneticFit(final double quality, final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
-		IOptimizer ga = new GeneticAlg(quality, seed); 
-
-		ga.optimize(coords, yAxis, function);
+		new GeneticAlg(quality, seed).optimize(coords, yAxis, function);
 	}
 
 	/**
@@ -110,9 +99,7 @@ public class Fitter {
 	 * @throws Exception 
 	 */
 	public static void llsqFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
-		IOptimizer lsq = new LeastSquares(0); 
-
-		lsq.optimize(coords, yAxis, function);
+		new LeastSquares(0).optimize(coords, yAxis, function);
 	}
 
 	/**
@@ -121,9 +108,8 @@ public class Fitter {
 	 * @param yAxis
 	 * @param rcond relative condition number used to limit singular values to use (try 1e-15)
 	 * @param degree of polynomial
-	 * @throws Exception 
 	 */
-	public static Polynomial polyFit(final Dataset[] coords, final Dataset yAxis, final double rcond, final int degree) throws Exception {
+	public static Polynomial polyFit(final Dataset[] coords, final Dataset yAxis, final double rcond, final int degree) {
 		Polynomial polynomial = new Polynomial(degree);
 		polyFit(coords, yAxis, rcond, polynomial);
 		return polynomial;
@@ -135,9 +121,8 @@ public class Fitter {
 	 * @param yAxis
 	 * @param rcond relative condition number used to limit singular values to use (try 1e-15)
 	 * @param polynomial
-	 * @throws Exception 
 	 */
-	public static void polyFit(final Dataset[] coords, final Dataset yAxis, @SuppressWarnings("unused") final double rcond, final Polynomial polynomial) throws Exception {
+	public static void polyFit(final Dataset[] coords, final Dataset yAxis, @SuppressWarnings("unused") final double rcond, final Polynomial polynomial) {
 		//determine polynomial order from number of parameters in polynomial
 		int polyOrder = polynomial.getNoOfParameters()-1;
 		

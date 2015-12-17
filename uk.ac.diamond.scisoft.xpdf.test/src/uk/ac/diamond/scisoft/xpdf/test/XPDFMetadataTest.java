@@ -132,6 +132,7 @@ public class XPDFMetadataTest extends TestCase {
 		XPDFDetector tect = new XPDFDetector();
 		tect.setThickness(0.5);
 		tect.setSubstance(new XPDFSubstance("caesium iodide", "CsI", 4.51, 1.0));
+		tect.setSolidAngle(1.0);
 		
 		meta.setDetector(tect);
 		

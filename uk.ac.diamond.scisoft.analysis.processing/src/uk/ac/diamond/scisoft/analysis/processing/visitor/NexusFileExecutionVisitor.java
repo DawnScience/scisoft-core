@@ -101,7 +101,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 		List<SliceFromSeriesMetadata> metadata = data.getMetadata(SliceFromSeriesMetadata.class);
 		if (metadata != null && metadata.get(0) != null) origin = metadata.get(0);
 //		file = HierarchicalDataFactory.getWriter(filePath);
-		nexusFile = NexusFileHDF5.createNexusFile(filePath, true);
+		nexusFile = NexusFileHDF5.createNexusFile(filePath, swmring);
 		try {
 			// don't fail process because of error persisting models
 //			IPersistentFile pf = service.createPersistentFile(file);

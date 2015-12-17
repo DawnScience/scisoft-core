@@ -76,7 +76,7 @@ public class XPDFQSquaredIntegrator {
 	}
 	
 	/**
-	 * Calculates the ratios  of the q² integral of a function and the Thomson
+	 * Calculates q² integral of the ratios of a function and the Thomson
 	 * scattering cross-section.
 	 * @param fn
 	 * 			the function to be integrated and used as the numerator.

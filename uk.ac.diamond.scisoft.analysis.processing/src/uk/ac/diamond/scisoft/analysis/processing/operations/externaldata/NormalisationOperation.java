@@ -18,6 +18,7 @@ import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
@@ -55,7 +56,14 @@ public class NormalisationOperation extends AbstractOperation<ExternalDataModel,
 		if (path == null) path = ssm.getFilePath();
 		
 		ILazyDataset lz = ProcessingUtils.getLazyDataset(this, path, model.getDatasetName());
-		IDataset val = ssm.getMatchingSlice(lz);
+		
+		IDataset val = null;
+		
+		if (AbstractDataset.squeezeShape(lz.getShape(), false).length == 0) {
+			val = lz.getSlice();
+		} else {
+			val = ssm.getMatchingSlice(lz);
+		}
 		
 		if (val == null) throw new OperationException(this, "Dataset " + model.getDatasetName() + " " + Arrays.toString(lz.getShape()) + 
 				" not a compatable shape with " + Arrays.toString(ssm.getParent().getShape()));

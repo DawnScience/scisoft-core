@@ -120,7 +120,7 @@ public class XPDFElectronCrossSections {
 		DoubleDataset jJ = new DoubleDataset(coords.getTwoTheta());
 		
 		while (iter.hasNext())
-			 jJ.setAbs(iter.index, Xraylib.DCSP_Thoms(coords.getTwoTheta().getElementDoubleAbs(iter.index), 0));
+			 jJ.setAbs(iter.index, Xraylib.DCS_Thoms(coords.getTwoTheta().getElementDoubleAbs(iter.index)));
 		
 		return jJ;
 	}

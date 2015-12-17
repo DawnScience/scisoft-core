@@ -14,7 +14,6 @@ import java.util.Arrays;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -26,14 +25,14 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 
+import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
-@Atomic
-public class NormalisationOperation extends AbstractOperation<ExternalDataModel, OperationData> {
-
+public class MultiplyExternalDataOperation extends AbstractOperation<ExternalDataModel, OperationData> {
+	
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.NormalisationOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyExternalDataOperation";
 	}
 
 	@Override
@@ -56,7 +55,6 @@ public class NormalisationOperation extends AbstractOperation<ExternalDataModel,
 		if (path == null) path = ssm.getFilePath();
 		
 		ILazyDataset lz = ProcessingUtils.getLazyDataset(this, path, model.getDatasetName());
-		
 		IDataset val = null;
 		
 		if (AbstractDataset.squeezeShape(lz.getShape(), false).length == 0) {
@@ -71,26 +69,16 @@ public class NormalisationOperation extends AbstractOperation<ExternalDataModel,
 		
 		if (val.getRank() != 0) throw new OperationException(this, "External data shape invalid");
 		
-		DoubleDataset out = (DoubleDataset)DatasetFactory.zeros(input.getShape(), Dataset.FLOAT64);
 		Dataset er = DatasetUtils.convertToDataset(in.getError());
-		DoubleDataset oute = in.getError() == null ? null : (DoubleDataset)DatasetFactory.zeros(input.getShape(), Dataset.FLOAT64);
 		
-		out.setError(oute);
-		
-		double tmp = 0;
-		double tmpv = val.getDouble();
-		
-		for (int i = 0; i< input.getSize(); i++) {
-			tmp = in.getElementDoubleAbs(i);
-			out.setAbs(i, tmp/tmpv);
-			
-			if (oute != null) oute.setAbs(i, er.getElementDoubleAbs(i)/tmpv);
-			
-		}
+		DoubleDataset[] vals = ErrorPropagationUtils.multiplyWithError(in, er, val.getDouble());
 
-		copyMetadata(in, out);
+		copyMetadata(in, vals[0]);
+		vals[0].setError(vals[1]);
 		
-		return new OperationData(out);
+		return new OperationData(vals[0]);
 	}
 	
+	
+
 }

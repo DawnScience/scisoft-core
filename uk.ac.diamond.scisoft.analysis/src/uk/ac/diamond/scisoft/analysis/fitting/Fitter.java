@@ -42,19 +42,6 @@ public class Fitter {
 		NelderMead nm = new NelderMead(quality);
 		nm.optimize(coords, yAxis, function);	
 	}
-	
-	/**
-	 * Run the Apache Nelder mead fitter with a set number of MaxEvals
-	 * @param coords
-	 * @param yAxis
-	 * @param function
-	 * @param maxEvals
-	 * @throws Exception
-	 */
-	public static void ApacheNelderMeadFit(final Dataset[] coords, final Dataset yAxis, final IFunction function, int maxEvals) throws Exception {
-		ApacheNelderMead anm = new ApacheNelderMead();
-		anm.optimize(coords, yAxis, function, maxEvals);	
-	}
 
 	/**
 	 * Run the Apache Nelder mead fitter

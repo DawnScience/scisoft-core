@@ -10,7 +10,8 @@ import junit.framework.TestCase;
 
 public class XPDFEXSTest extends TestCase {
 
-	static double re2 = 7.940787684842103e-30*1e28;
+//	static double re2 = 7.940787684842103e-30*1e28;
+	static double re2 = 1.0;
 	
 	public void testGetThomsonCrossSection() {
 

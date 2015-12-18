@@ -71,7 +71,7 @@ public class ImageIntegration extends AbstractIntegrationOperation<ImageIntegrat
 		// copy axes to the new data
 		ILazyDataset[] oldAxes = AbstractOperation.getFirstAxes(input);
 		AxesMetadata newAxes = new AxesMetadataImpl(1);
-		if (oldAxes[1-axis] != null) {
+		if (oldAxes != null && oldAxes[1-axis] != null) {
 			newAxes.setAxis(0, oldAxes[1-axis].squeezeEnds());
 			output.setMetadata(newAxes);
 		}

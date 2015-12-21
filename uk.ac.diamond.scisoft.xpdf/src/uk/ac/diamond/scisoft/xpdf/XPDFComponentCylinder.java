@@ -152,9 +152,9 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 	 */
 	@Override
 	public Dataset calculateAbsorptionCorrections(Dataset gamma, Dataset delta,
-			XPDFComponentGeometry attenuatorGeometry, double attenuationCoefficient,
-			XPDFBeamData beamData,
-			boolean doUpstreamAbsorption, boolean doDownstreamAbsorption) {
+			final XPDFComponentGeometry attenuatorGeometry, final double attenuationCoefficient,
+			final XPDFBeamData beamData,
+			final boolean doUpstreamAbsorption, final boolean doDownstreamAbsorption) {
 		
 		// Grid size for the high resolution data
 		int nXHigh = delta.getShape()[0];
@@ -176,9 +176,24 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 				Arrays.asList(new Double[] {attenuationCoefficient}), Arrays.asList(new Double[] {attenuationCoefficient}),
 				beamData,
 				doUpstreamAbsorption, doDownstreamAbsorption, true);
-		
+
 		// Upsample the absorption back to the original resolution and return
-		return XPDFRegrid.two(absorption, nXHigh, nYHigh);
+		Dataset absorptionHigh = XPDFRegrid.two(absorption, nXHigh, nYHigh);
+
+		Dataset absorption2 = (new XPDFScaled2DCalculation(4096) {
+			
+			@Override
+			protected Dataset calculate(Dataset gammaCalc, Dataset deltaCalc) {
+				return calculateAbsorptionFluorescence(gammaCalc, deltaCalc,
+						Arrays.asList(new XPDFComponentGeometry[] {attenuatorGeometry}),
+						Arrays.asList(new Double[] {attenuationCoefficient}),
+						Arrays.asList(new Double[] {attenuationCoefficient}),
+						beamData, doUpstreamAbsorption, doDownstreamAbsorption, true);
+			}
+		}).calculate(gamma, delta);
+		
+		
+		return absorptionHigh;		
 		}
 
 	/**

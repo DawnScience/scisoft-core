@@ -450,7 +450,7 @@ public class XPDFCalibration {
 	private void calibrateFluorescence(int nIterations) {
 		if (this.sampleFluorescence == null) return;
 		
-		final double minScale = 1000, maxScale = 5000, nSteps = 150, stepScale = (maxScale-minScale)/nSteps;
+		final double minScale = 200, maxScale = 5000, nSteps = 20, stepScale = (maxScale-minScale)/nSteps;
 		final double fractionOfRange = 1/5.0;
 		double minimalScale = minScale;
 		double minimalValue = Double.POSITIVE_INFINITY;
@@ -458,8 +458,6 @@ public class XPDFCalibration {
 		// 2 D variables that do not need re-creating every time around the loop
 		Dataset truncatedQ = DoubleDataset.createRange(8, 32, 1.6);
 		
-		// Set up the pixel integration information
-		IPixelIntegrationCache lcache = getPICache(truncatedQ, AbstractOperationBase.getFirstDiffractionMetadata(backgroundSubtracted.get(0)), backgroundSubtracted.get(0).getShape());
 		// Get the mask from the background subtracted sample data
 		ILazyDataset mask = AbstractOperationBase.getFirstMask(backgroundSubtracted.get(0));
 		IDataset m = (mask != null) ? mask.getSlice().squeeze() : null;
@@ -485,6 +483,9 @@ public class XPDFCalibration {
 				truncatedSelfScattering = sampleSelfScattering.getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
 				truncatedQ = coords.getQ().getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
 			} else {
+				// Set up the pixel integration information
+				IPixelIntegrationCache lcache = getPICache(truncatedQ, AbstractOperationBase.getFirstDiffractionMetadata(backgroundSubtracted.get(0)), backgroundSubtracted.get(0).getShape());
+
 				List<Dataset> out = PixelIntegration.integrate(absCor, m, lcache);
 				smoothed = out.remove(1);
 

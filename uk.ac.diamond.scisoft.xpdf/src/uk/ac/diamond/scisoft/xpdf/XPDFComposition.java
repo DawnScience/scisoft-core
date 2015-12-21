@@ -296,13 +296,24 @@ public class XPDFComposition {
 	 * @return are the two compositions equivalent?
 	 */
 	public boolean isEqualToForAbsorption(XPDFComposition inCompo) {
-		boolean sameAtoms = (inCompo != null);
+		if (inCompo == null)
+			return false;
 		final double maximumDifference = 1e-6;
-		sameAtoms &= atomCount.size() == inCompo.atomCount.size();
-		for (Map.Entry<Integer, Double> entry : atomCount.entrySet())
-			sameAtoms &= (entry.getValue() - inCompo.atomCount.get(entry.getKey()) < maximumDifference);
+
+		// check there are the same number of elements in each compound 
+		if (atomCount.size() != inCompo.atomCount.size())
+			return false;
 		
-		return sameAtoms;
+		// Check all elements present in this are present in inCompo and vice versa
+		if (!inCompo.atomCount.keySet().containsAll(atomCount.keySet()) ||
+				!atomCount.keySet().containsAll(inCompo.atomCount.keySet()))
+			return false;
+		
+		for (Map.Entry<Integer, Double> entry : atomCount.entrySet())
+			if (entry.getValue() - inCompo.atomCount.get(entry.getKey()) > maximumDifference)
+				return false;
+		
+		return true;
 	}
 
 	/**

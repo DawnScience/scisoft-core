@@ -15,13 +15,15 @@ abstract public class XPDFScaled2DCalculation {
 
 	int maxGridSize;
 	
-	abstract protected Dataset calculate(Dataset gamma, Dataset delta);
-	
 	public XPDFScaled2DCalculation(int maxGridSize) {
 		this.maxGridSize = maxGridSize;
 	}
+		
+	protected Dataset calculate(Dataset gamma, Dataset delta) {
+		return null;
+	}
 	
-	public Dataset run(Dataset gamma, Dataset delta) {
+	final public Dataset run(Dataset gamma, Dataset delta) {
 		// Grid size for the high resolution data
 		int nXHigh = delta.getShape()[0];
 		int nYHigh = delta.getShape()[1];
@@ -37,17 +39,38 @@ abstract public class XPDFScaled2DCalculation {
 		Dataset gammaDown = XPDFRegrid.two(gamma, nXLow, nYLow);
 		Dataset deltaDown = XPDFRegrid.two(delta, nXLow, nYLow);
 		
-		Dataset absorption = calculate(gammaDown, deltaDown);
-//		= calculateAbsorptionFluorescence(gammaDown, deltaDown,
-//				Arrays.asList(new XPDFComponentGeometry[] {attenuatorGeometry}),
-//				Arrays.asList(new Double[] {attenuationCoefficient}), Arrays.asList(new Double[] {attenuationCoefficient}),
-//				beamData,
-//				doUpstreamAbsorption, doDownstreamAbsorption, true);
+		Dataset resultLow = calculate(gammaDown, deltaDown);
 		
-		// Upsample the absorption back to the original resolution and return
-		return XPDFRegrid.two(absorption, nXHigh, nYHigh);
+		// Up-sample the absorption back to the original resolution and return
+		return XPDFRegrid.two(resultLow, nXHigh, nYHigh);
 	}
 
+	protected Dataset calculateTwoTheta(Dataset twoTheta) {
+		return null;
+	}
+	
+	final public Dataset runTwoTheta(Dataset twoTheta) {
+		// Grid shape for the high resolution data
+		int nXHigh = twoTheta.getShape()[0];
+		int nYHigh = twoTheta.getShape()[1];
+		
+		int[] nXYLow = new int[2];
+		
+		restrictGridSize(maxGridSize, nXHigh, nYHigh, nXYLow);
+		
+		int nXLow = nXYLow[0];
+		int nYLow = nXYLow[1];
+		
+		// Down-sampling of the angular coordinate for faster calculations
+		Dataset twoThetaLow = XPDFRegrid.two(twoTheta, nXLow, nYLow);
+		
+		Dataset resultLow = calculateTwoTheta(twoThetaLow);
+		
+		// Up-sample the result back to the original resolution and return
+		return XPDFRegrid.two(resultLow, nXHigh, nYHigh);
+		
+	}
+	
 	/**
 	 * Returns smaller grid axes, based on the lengths of the originals and the maximum grid size.
 	 * @param maxGrid

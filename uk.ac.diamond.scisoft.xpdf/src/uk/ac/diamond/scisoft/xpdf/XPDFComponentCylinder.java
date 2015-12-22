@@ -156,29 +156,29 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 			final XPDFBeamData beamData,
 			final boolean doUpstreamAbsorption, final boolean doDownstreamAbsorption) {
 		
-		// Grid size for the high resolution data
-		int nXHigh = delta.getShape()[0];
-		int nYHigh = delta.getShape()[1];
-
-		int[] nXYLow = new int[2];
-		
-		restrictGridSize(4096, nXHigh, nYHigh, nXYLow);
-		
-		int nXLow = nXYLow[0];
-		int nYLow = nXYLow[1];
-
-		// Down sampling of the angular coordinates for faster calculations
-		Dataset gammaDown = XPDFRegrid.two(gamma, nXLow, nYLow);
-		Dataset deltaDown = XPDFRegrid.two(delta, nXLow, nYLow);
-		
-		Dataset absorption = calculateAbsorptionFluorescence(gammaDown, deltaDown,
-				Arrays.asList(new XPDFComponentGeometry[] {attenuatorGeometry}),
-				Arrays.asList(new Double[] {attenuationCoefficient}), Arrays.asList(new Double[] {attenuationCoefficient}),
-				beamData,
-				doUpstreamAbsorption, doDownstreamAbsorption, true);
-
-		// Upsample the absorption back to the original resolution and return
-		Dataset absorptionHigh = XPDFRegrid.two(absorption, nXHigh, nYHigh);
+//		// Grid size for the high resolution data
+//		int nXHigh = delta.getShape()[0];
+//		int nYHigh = delta.getShape()[1];
+//
+//		int[] nXYLow = new int[2];
+//		
+//		restrictGridSize(4096, nXHigh, nYHigh, nXYLow);
+//		
+//		int nXLow = nXYLow[0];
+//		int nYLow = nXYLow[1];
+//
+//		// Down sampling of the angular coordinates for faster calculations
+//		Dataset gammaDown = XPDFRegrid.two(gamma, nXLow, nYLow);
+//		Dataset deltaDown = XPDFRegrid.two(delta, nXLow, nYLow);
+//		
+//		Dataset absorption = calculateAbsorptionFluorescence(gammaDown, deltaDown,
+//				Arrays.asList(new XPDFComponentGeometry[] {attenuatorGeometry}),
+//				Arrays.asList(new Double[] {attenuationCoefficient}), Arrays.asList(new Double[] {attenuationCoefficient}),
+//				beamData,
+//				doUpstreamAbsorption, doDownstreamAbsorption, true);
+//
+//		// Upsample the absorption back to the original resolution and return
+//		Dataset absorptionHigh = XPDFRegrid.two(absorption, nXHigh, nYHigh);
 
 		Dataset absorption2 = (new XPDFScaled2DCalculation(4096) {
 			
@@ -190,10 +190,10 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 						Arrays.asList(new Double[] {attenuationCoefficient}),
 						beamData, doUpstreamAbsorption, doDownstreamAbsorption, true);
 			}
-		}).calculate(gamma, delta);
+		}).run(gamma, delta);
 		
 		
-		return absorptionHigh;		
+		return absorption2;//High;		
 		}
 
 	/**

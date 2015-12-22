@@ -46,20 +46,21 @@ public class XPDFDetector {
 	 */
 	public Dataset applyTransmissionCorrection(Dataset data, Dataset twoTheta, double beamEnergy){
 		double mu = substance.getPhotoionizationCoefficient(beamEnergy);
-		return Maths.multiply(
-				data,
-				Maths.subtract(
-						1,
-						Maths.exp(
-								Maths.divide(
-										-mu*thickness,
-										Maths.cos(twoTheta)
-								)
+		return Maths.multiply(data, calculateTransmission(mu, twoTheta));
+	}
+
+	private Dataset calculateTransmission(double mu, Dataset twoTheta) {
+		return Maths.subtract(
+				1,
+				Maths.exp(
+						Maths.divide(
+								-mu*thickness,
+								Maths.cos(twoTheta)
 						)
 				)
 		);
 	}
-
+	
 	/**
 	 * Sets the substance of which the detector is made.
 	 * @param substance

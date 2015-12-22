@@ -45,8 +45,19 @@ public class XPDFDetector {
 	 * @return the corrected data
 	 */
 	public Dataset applyTransmissionCorrection(Dataset data, Dataset twoTheta, double beamEnergy){
-		double mu = substance.getPhotoionizationCoefficient(beamEnergy);
-		return Maths.multiply(data, calculateTransmission(mu, twoTheta));
+		final double mu = substance.getPhotoionizationCoefficient(beamEnergy);
+		Dataset transmission = null;
+		if (data.getShape().length == 1) {
+			transmission = calculateTransmission(mu, twoTheta);
+		} else {
+			transmission = (new XPDFScaled2DCalculation(4096) {
+				@Override
+				protected Dataset calculateTwoTheta(Dataset twoThetaLow) {
+					return calculateTransmission(mu, twoThetaLow);
+				}
+			}).runTwoTheta(twoTheta);
+		}
+		return Maths.multiply(data, transmission);
 	}
 
 	private Dataset calculateTransmission(double mu, Dataset twoTheta) {

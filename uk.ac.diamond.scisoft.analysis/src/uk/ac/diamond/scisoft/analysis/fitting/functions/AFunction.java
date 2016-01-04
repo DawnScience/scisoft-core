@@ -252,12 +252,15 @@ public abstract class AFunction implements IFunction, Serializable {
 	 * @return true if there is more than one occurrence of given parameter in function
 	 */
 	protected boolean isDuplicated(IParameter param) {
-		int c = 0;
+		boolean found = false;
 		int n = getNoOfParameters();
 		for (int i = 0; i < n; i++) {
 			if (getParameter(i) == param) {
-				c++;
-				return c > 1;
+				if (found) { // found twice
+					return true;
+				}
+
+				found = true;
 			}
 		}
 

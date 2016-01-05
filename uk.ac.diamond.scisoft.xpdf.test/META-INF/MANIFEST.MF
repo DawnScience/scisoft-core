@@ -6,8 +6,11 @@ Bundle-Version: 1.0.0.qualifier
 Fragment-Host: uk.ac.diamond.scisoft.xpdf;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.junit;bundle-version="[4.10.0,5.0.0)"
-Import-Package: org.eclipse.dawnsci.analysis.api.dataset,
+Import-Package: org.dawb.common.services,
+ org.dawnsci.persistence,
+ org.eclipse.dawnsci.analysis.api.dataset,
  org.eclipse.dawnsci.analysis.api.io,
+ org.eclipse.dawnsci.analysis.api.persistence,
  org.eclipse.dawnsci.analysis.dataset.impl,
  org.eclipse.dawnsci.analysis.dataset.impl.function,
  org.eclipse.dawnsci.analysis.dataset.metadata,

@@ -43,7 +43,8 @@ public class XPDFCoordinates {
 	private boolean isAngleAuthorative;
 	// Energy-wavelength conversion in keV Angstroms
 	private static final double hckeVAA = 12.39841974;//(17)
-
+	private Dataset sinTwoTheta, cosTwoTheta;
+	
 	/**
 	 * Empty constructor.
 	 */
@@ -53,6 +54,8 @@ public class XPDFCoordinates {
 		q = null;
 		x = null;
 		isAngleAuthorative = true;
+		sinTwoTheta = null;
+		cosTwoTheta = null;
 	}
 	
 	/**
@@ -69,6 +72,8 @@ public class XPDFCoordinates {
 		this.q = (inCoords.q != null) ? new DoubleDataset(inCoords.q) : null;
 		this.x = (inCoords.x != null) ? new DoubleDataset(inCoords.x) : null;
 		this.isAngleAuthorative = inCoords.isAngleAuthorative;
+		this.sinTwoTheta = null;
+		this.cosTwoTheta = null;
 	}
 	
 	public XPDFCoordinates(Dataset input) {
@@ -109,6 +114,8 @@ public class XPDFCoordinates {
 			}
 			this.setGammaDelta(localGamma, localDelta);
 		}
+		this.sinTwoTheta = null;
+		this.cosTwoTheta = null;
 	}
 	
 	/**
@@ -237,6 +244,27 @@ public class XPDFCoordinates {
 	}
 
 	/**
+	 * Returns the sine of the total scattering angle.
+	 * @return the sine of the total scattering angle.
+	 */
+	public Dataset getSinTwoTheta() {
+		if (sinTwoTheta == null)
+			calculateSinCos();
+		return sinTwoTheta;
+	}
+	
+	/**
+	 * Returns the cosine of the total scattering angle.
+	 * @return the cosine of the total scattering angle.
+	 */
+	public Dataset getCosTwoTheta() {
+		if (cosTwoTheta == null)
+			calculateSinCos();
+		return cosTwoTheta;
+	}
+	
+	
+	/**
 	 * Returns the azimuthal scattering angle
 	 * @return the azimuthal scattering angle in radians.
 	 */
@@ -321,6 +349,8 @@ public class XPDFCoordinates {
 			phi = null;
 			gamma = null;
 			delta = null;
+			sinTwoTheta = null;
+			cosTwoTheta = null;
 		}
 	}
 
@@ -416,4 +446,9 @@ public class XPDFCoordinates {
 		return deriv;
 	}
 
+	private void calculateSinCos() {
+		this.sinTwoTheta = Maths.sin(twoTheta);
+		this.cosTwoTheta = Maths.cos(twoTheta);
+	}
+	
 }

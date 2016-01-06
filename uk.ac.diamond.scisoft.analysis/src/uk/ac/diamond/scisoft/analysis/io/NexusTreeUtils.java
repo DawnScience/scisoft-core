@@ -865,7 +865,7 @@ public class NexusTreeUtils {
 			try {
 				t = parseTransformation(gpath, l, pos);
 			} catch (Exception e) {
-				logger.warn("Problem parsing transformation {}", l);
+//				logger.warn("Problem parsing transformation {}", l);
 			}
 			if (t != null) {
 				ftrans.put(t.name, t);

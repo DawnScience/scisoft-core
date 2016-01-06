@@ -1125,7 +1125,8 @@ public class NexusTreeUtils {
 	}
 
 	public static TransformedVectors parseTransformedVectors(NodeLink link) {
-		if (!link.isDestinationData())
+		if (!link.isDestinationData()) {
+			logger.warn("'{}' was not a dataset", link.getName());
 			return null;
 		}
 

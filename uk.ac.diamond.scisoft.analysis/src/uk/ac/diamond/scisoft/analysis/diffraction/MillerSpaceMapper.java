@@ -62,6 +62,7 @@ public class MillerSpaceMapper {
 	private String detectorPath;
 	private String dataPath;
 	private String samplePath;
+	private String attenuatorPath;
 	private double[] hDel; // sides of voxels in Miller space
 	private double[] hMin; // minimum
 	private double[] hMax; // maximum
@@ -251,14 +252,19 @@ public class MillerSpaceMapper {
 
 	/**
 	 * 
-	 * @param detectorPath
-	 * @param detectorDataName
-	 * @param samplePath
+	 * @param entryPath
+	 * @param instrument name of instrument in entry
+	 * @param attenuator name of attenuator in instrument
+	 * @param detector name of detector in instrument 
+	 * @param data name of data in detector
+	 * @param sample name of sample in entry
 	 */
-	public MillerSpaceMapper(String detectorPath, String detectorDataName, String samplePath) {
-		this.detectorPath = detectorPath;
-		this.dataPath = detectorPath + Node.SEPARATOR + detectorDataName;
-		this.samplePath = samplePath;
+	public MillerSpaceMapper(String entryPath, String instrument, String attenuator, String detector, String data, String sample) {
+		String instrumentPath = entryPath + Node.SEPARATOR + instrument + Node.SEPARATOR;
+		detectorPath = instrumentPath + detector;
+		attenuatorPath = instrumentPath + attenuator;
+		dataPath = detectorPath + Node.SEPARATOR + data;
+		samplePath = entryPath + Node.SEPARATOR + sample;
 		this.splitter = new NonSplitter();
 	}
 
@@ -315,6 +321,14 @@ public class MillerSpaceMapper {
 		dshape = NexusTreeUtils.parseSampleScanShape(samplePath, tree, dshape);
 		System.err.println(Arrays.toString(dshape));
 
+		Dataset trans = NexusTreeUtils.parseAttenuator(attenuatorPath, tree);
+		if (trans != null && trans.getSize() != 1) {
+			int[] tshape = trans.getShapeRef();
+			if (!Arrays.equals(tshape, dshape)) {
+				throw new ScanFileHolderException("Attenuator transmission shape does not match detector or sample scan shape");
+			}
+		}
+
 		DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
 		ILazyDataset images = node.getDataset();
 
@@ -360,7 +374,7 @@ public class MillerSpaceMapper {
 
 		DoubleDataset map = (DoubleDataset) DatasetFactory.zeros(hShape, Dataset.FLOAT64);
 		DoubleDataset weight = (DoubleDataset) DatasetFactory.zeros(hShape, Dataset.FLOAT64);
-		mapImages(tree, images, diter, dpos, rank, srank, stop, iter, pos, map, weight, ishape, upSampler);
+		mapImages(tree, trans, images, diter, dpos, rank, srank, stop, iter, pos, map, weight, ishape, upSampler);
 
 		if (reduceToNonZeroBB) {
 			System.err.println("Reduced to non-zero bounding box: " + Arrays.toString(min) + " to " + Arrays.toString(max));
@@ -444,7 +458,7 @@ public class MillerSpaceMapper {
 		minMax(mBeg, mEnd, m);
 	}
 
-	private void mapImages(Tree tree, ILazyDataset images, PositionIterator diter, int[] dpos, int rank, int srank,
+	private void mapImages(Tree tree, Dataset trans, ILazyDataset images, PositionIterator diter, int[] dpos, int rank, int srank,
 			int[] stop, PositionIterator iter, int[] pos, DoubleDataset map, DoubleDataset weight, int[] ishape,
 			BicubicInterpolator upSampler) {
 		iter.reset();
@@ -466,6 +480,13 @@ public class MillerSpaceMapper {
 			QSpace qspace = new QSpace(dp, env);
 			MillerSpace mspace = new MillerSpace(ucell, env.getOrientation());
 			Dataset image = DatasetUtils.convertToDataset(images.getSlice(pos, stop, null));
+			if (trans != null) {
+				if (trans.getSize() == 1) {
+					image.idivide(trans.getElementDoubleAbs(0));
+				} else {
+					image.idivide(trans.getDouble(dpos));
+				}
+			}
 			int[] s = Arrays.copyOfRange(image.getShapeRef(), srank, rank);
 			image.setShape(s);
 			if (image.max().doubleValue() <= 0) {
@@ -741,6 +762,8 @@ public class MillerSpaceMapper {
 		DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
 		ILazyDataset images = node.getDataset();
 
+		Dataset trans = NexusTreeUtils.parseAttenuator(attenuatorPath, tree);
+
 		PositionIterator diter = new PositionIterator(dshape);
 		int[] dpos = diter.getPos();
 
@@ -780,7 +803,7 @@ public class MillerSpaceMapper {
 			// shift min
 			hMin[0] = oMin + hstart[0] * hDel[0];
 			hMax[0] = hMin[0] + ml * hDel[0];
-			mapImages(tree, images, diter, dpos, rank, srank, stop, iter, pos, map, weight, ishape, upSampler);
+			mapImages(tree, trans, images, diter, dpos, rank, srank, stop, iter, pos, map, weight, ishape, upSampler);
 			try {
 				output.setSlice(map, slice);
 			} catch (Exception e) {
@@ -802,7 +825,7 @@ public class MillerSpaceMapper {
 			hstop[0] = hl;
 		}
 
-		mapImages(tree, images, diter, dpos, rank, srank, stop, iter, pos, map, weight, ishape, upSampler);
+		mapImages(tree, trans, images, diter, dpos, rank, srank, stop, iter, pos, map, weight, ishape, upSampler);
 		DoubleDataset tmap;
 		if (overflow) {
 			int[] tstop = map.getShape();
@@ -820,7 +843,7 @@ public class MillerSpaceMapper {
 		}
 	}
 
-	private static final MillerSpaceMapper I16Mapper = new MillerSpaceMapper("/entry1/instrument/pil100k", "image_data", "/entry1/sample");
+	private static final MillerSpaceMapper I16Mapper = new MillerSpaceMapper("/entry1", "instrument", "attenuator", "pil100k", "image_data", "sample");
 
 	/**
 	 * Process Nexus file for I16

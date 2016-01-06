@@ -89,6 +89,7 @@ public class NexusTreeUtils {
 	public static final String NX_TRANSFORMATIONS_ROOT = ".";
 	public static final String NX_SAMPLE = "NXsample";
 	public static final String NX_BEAM = "NXbeam";
+	public static final String NX_ATTENUATOR = "NXattenuator";
 
 	public static final String DEPENDS_ON = "depends_on";
 
@@ -650,6 +651,40 @@ public class NexusTreeUtils {
 //			dp.setBeamVector(new Vector3d(bv));
 //		}
 		return da;
+	}
+
+	/**
+	 * Parse a group that is an NXattenuator class from a tree
+	 * @param path to group
+	 * @param tree
+	 * @return a dataset of attenuator transmission values
+	 */
+	public static Dataset parseAttenuator(String path, Tree tree) {
+		NodeLink link = tree.findNodeLink(path);
+
+		if (link == null) {
+			logger.warn("'{}' could not be found", path);
+			return null;
+		}
+
+		if (!link.isDestinationGroup()) {
+			logger.warn("'{}' was not a group", path);
+			return null;
+		}
+
+		GroupNode gNode = (GroupNode) link.getDestination();
+		if (!isNXClass(gNode, NX_ATTENUATOR)) {
+			logger.warn("'{}' was not an {} class", path, NX_ATTENUATOR);
+			return null;
+		}
+
+		DataNode trans = gNode.getDataNode("attenuator_transmission");
+		if (trans == null) {
+			logger.warn("'{}' does not contain an attenuator_transmission dataset", path);
+			return null;
+		}
+
+		return getAndCacheData(trans);
 	}
 
 	public static int[] parseSubDetectorShape(Tree tree, NodeLink link) {

@@ -125,29 +125,28 @@ public class XICCO2DTest {
 		
 		String referenceDataPath = "/dls/science/groups/das/ExampleData/i15-1/2015Oct.Standards/optimization reference/CeO2_NIST_8s_19slices_averaged_processed_160104_154754.nxs"; 
 		IDataset referenceData = null;
-//		try {
-//			IDataHolder dh = LoaderFactory.getData(referenceDataPath);
-//			referenceData = dh.getDataset(0);
-//			referenceData = dh.getDataset("result/data");
-
+		try {
+			IDataHolder dh = LoaderFactory.getData(referenceDataPath);
+			referenceData = dh.getLazyDataset("/entry/result/data").getSlice();
+			
 //			IPersistenceService service = (IPersistenceService)ServiceManager.getService(IPersistenceService.class);
 //			IPersistentFile pf = service.getPersistentFile(referenceDataPath);
 //			List<String> dataNames = pf.getDataNames(mon);
+//			List<String> maskNames = pf.getMaskNames(mon);
 //			referenceData = pf.getData("/result/data", mon).getSlice();
 //			referenceData = pf.getData(pf.getDataNames(mon), mon);
-//		} catch (Exception e) {
-//			fail("Could not load data from " + referenceDataPath + ", " + e.toString());
-//		}
-
+		} catch (Exception e) {
+			fail("Could not load data from " + referenceDataPath + ", " + e.toString());
+		}
 		
+		Dataset ratio = Maths.divide(abscor, referenceData);
+		double maxRatio = (double) Maths.abs(ratio).max();
+		double maxRationalDifference = maxRatio - 1;
+		double rationalDifferenceLimit = 1e-6;
 		
-//		Dataset ratio = Maths.divide(abscor, referenceData);
-//		double maxRatio = (double) Maths.abs(ratio).max();
-//		double maxRationalDifference = maxRatio - 1;
-//		
-//		assertTrue("ABSCOR rational difference too large.", maxRationalDifference < 1e-2);
+		assertTrue("ABSCOR rational difference too large.", maxRationalDifference < rationalDifferenceLimit);
 
-		assertTrue("A dummy assertion shouldn't return false.", true);
+//		assertTrue("A dummy assertion shouldn't return false.", true);
 		
 	}
 
@@ -407,5 +406,6 @@ class FakeXICCOModel extends XPDFIterateCalibrationConstantModel {
 	@Override
 	public boolean isDoingFluorescence() {
 		return true;
+//		return false;
 	}
 }

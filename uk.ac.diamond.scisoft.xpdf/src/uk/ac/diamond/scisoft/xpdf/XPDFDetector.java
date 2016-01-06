@@ -40,14 +40,30 @@ public class XPDFDetector {
 	 * Applies a detector correction to a Dataset.
 	 * @param data
 	 * 			the data to be corrected
+	 * @param twoTheta
+	 * 			the Dataset of angles over which the data is to be corrected
 	 * @param beamEnergy
 	 * 			the beam energy at which the correction is to take place
 	 * @return the corrected data
 	 */
 	public Dataset applyTransmissionCorrection(Dataset data, Dataset twoTheta, double beamEnergy){
+		return Maths.multiply(data, getTransmissionCorrection(twoTheta, beamEnergy));
+	}
+
+	
+	/**
+	 * Returns a multiplicative detector correction.
+	 * @param twoTheta
+	 * 			the Dataset of angles over which the data is to be corrected
+	 * @param beamEnergy
+	 * 			the beam energy at which the correction is to take place
+	 * @return the corrected data
+	 */
+	public Dataset getTransmissionCorrection(Dataset twoTheta, double beamEnergy){
+	
 		final double mu = substance.getPhotoionizationCoefficient(beamEnergy);
 		Dataset transmission = null;
-		if (data.getShape().length == 1) {
+		if (twoTheta.getShape().length == 1) {
 			transmission = calculateTransmission(mu, twoTheta);
 		} else {
 			transmission = (new XPDFScaled2DCalculation(4096) {
@@ -57,9 +73,9 @@ public class XPDFDetector {
 				}
 			}).runTwoTheta(twoTheta);
 		}
-		return Maths.multiply(data, transmission);
+		return transmission;
 	}
-
+		
 	private Dataset calculateTransmission(double mu, Dataset twoTheta) {
 		return Maths.subtract(
 				1,

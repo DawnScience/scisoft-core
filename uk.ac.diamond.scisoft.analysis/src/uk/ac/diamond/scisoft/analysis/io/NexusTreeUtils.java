@@ -826,12 +826,12 @@ public class NexusTreeUtils {
 			throw new IllegalArgumentException("Geometry subnode is missing dataset");
 		}
 		DataNode dNode = (DataNode) l.getDestination();
-		ILazyDataset d = dNode.getDataset();
-		int[] shape = d.getShape();
+		DoubleDataset ds = (DoubleDataset) getCastAndCacheData(dNode, Dataset.FLOAT64);
+		
+		int[] shape = ds.getShapeRef();
 		if (shape.length != 2 || shape[1] != (translate ? 3 : 6)) {
 			throw new IllegalArgumentException("Geometry subnode has wrong shape");
 		}
-		DoubleDataset ds = (DoubleDataset) DatasetUtils.cast(d.getSlice(), Dataset.FLOAT64);
 		double[] da = ds.getData();
 		Matrix4d m2 = new Matrix4d();
 		if (translate) {
@@ -1072,9 +1072,9 @@ public class NexusTreeUtils {
 		}
 
 		DataNode dNode = (DataNode) link.getDestination();
-		IDataset dataset = dNode.getDataset().getSlice();
+		Dataset dataset = getAndCacheData(dNode);
 
-		double value = dataset.getSize() == 1 ? dataset.getDouble(new int[dataset.getRank()]) : dataset.getDouble(pos);
+		double value = dataset.getSize() == 1 ? dataset.getElementDoubleAbs(0) : dataset.getDouble(pos);
 		double[] vector = parseDoubleArray(dNode.getAttribute("vector"), 3);
 		Vector3d v3 = new Vector3d(vector);
 		Matrix4d m4 = null;
@@ -1132,7 +1132,7 @@ public class NexusTreeUtils {
 		DataNode dNode = (DataNode) link.getDestination();
 		double[] vector = parseDoubleArray(dNode.getAttribute("vector"), 3);
 		Vector3d v3 = new Vector3d(vector);
-		double[] values = ((DoubleDataset) DatasetUtils.cast(dNode.getDataset().getSlice(), Dataset.FLOAT64)).getData();
+		double[] values = ((DoubleDataset) getCastAndCacheData(dNode, Dataset.FLOAT64)).getData();
 		convertIfNecessary(SI.MILLIMETRE, parseStringAttr(dNode, NX_UNITS), values);
 		String type = parseStringAttr(dNode, "transformation_type");
 		if (!"translation".equals(type)) {
@@ -1214,7 +1214,7 @@ public class NexusTreeUtils {
 		if (n == null || !(n instanceof DataNode))
 			return null;
 
-		StringDataset id = (StringDataset) DatasetUtils.cast(((DataNode) n).getDataset().getSlice(), Dataset.STRING);
+		StringDataset id = (StringDataset) getCastAndCacheData((DataNode) n, Dataset.STRING);
 		return id.getData();
 	}
 
@@ -1310,7 +1310,7 @@ public class NexusTreeUtils {
 		if (n == null || !(n instanceof DataNode))
 			return null;
 
-		IntegerDataset id = (IntegerDataset) DatasetUtils.cast(((DataNode) n).getDataset().getSlice(), Dataset.INT32);
+		IntegerDataset id = (IntegerDataset) getCastAndCacheData((DataNode) n, Dataset.INT32);
 		return id.getData();
 	}
 
@@ -1391,7 +1391,7 @@ public class NexusTreeUtils {
 		if (n == null || !(n instanceof DataNode))
 			return null;
 
-		DoubleDataset dd = (DoubleDataset) DatasetUtils.cast(((DataNode) n).getDataset().getSlice(), Dataset.FLOAT64);
+		DoubleDataset dd = (DoubleDataset) getCastAndCacheData((DataNode) n, Dataset.FLOAT64);
 		return dd.getData();
 	}
 
@@ -1412,8 +1412,28 @@ public class NexusTreeUtils {
 		return value;
 	}
 
+	private static Dataset getAndCacheData(DataNode dNode) {
+		return getCastAndCacheData(dNode, -1);
+	}
+
+	private static Dataset getCastAndCacheData(DataNode dNode, int dtype) {
+		ILazyDataset ld = dNode.getDataset();
+		Dataset dataset;
+		if (ld instanceof Dataset) {
+			dataset = (Dataset) ld;
+		} else {
+			dataset = DatasetUtils.convertToDataset(ld.getSlice());
+			dNode.setDataset(dataset);
+		}
+		if (dtype >= 0 && dataset.getDtype() != dtype) {
+			dataset = DatasetUtils.cast(dataset, dtype);
+			dNode.setDataset(dataset);
+		}
+		return dataset;
+	}
+
 	private static DoubleDataset getConvertedData(DataNode data, Unit<? extends Quantity> unit) {
-		DoubleDataset values = (DoubleDataset) DatasetUtils.cast(data.getDataset().getSlice(), Dataset.FLOAT64);
+		DoubleDataset values = (DoubleDataset) getCastAndCacheData(data, Dataset.FLOAT64);
 		convertIfNecessary(unit, parseStringAttr(data, NX_UNITS), values.getData());
 		return values;
 	}

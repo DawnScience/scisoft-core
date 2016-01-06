@@ -31,7 +31,7 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
  * If you have averaging or branching, you will need to consider using a 
  * graph to execute your operations.
  * 
- * @author fcp94556
+ * @author Matthew Gerring
  *
  */
 public class SeriesRunner implements IOperationRunner {

@@ -36,7 +36,7 @@ import com.isencia.passerelle.util.ptolemy.StringChoiceParameter;
 /**
  * Transformer to run an operation. 
  * 
- * @author fcp94556
+ * @author Matthew Gerring
  *
  */
 public class OperationTransformer extends AbstractDataMessageTransformer implements IOperationModelInstanceProvider{

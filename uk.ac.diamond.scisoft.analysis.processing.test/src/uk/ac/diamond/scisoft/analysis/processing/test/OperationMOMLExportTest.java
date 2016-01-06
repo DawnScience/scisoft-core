@@ -28,7 +28,7 @@ import com.isencia.passerelle.model.Flow;
  * Class to test exporting of momls. The files 
  * written can be reimported to 
  * 
- * @author fcp94556
+ * @author Matthew Gerring
  *
  */
 public class OperationMOMLExportTest {

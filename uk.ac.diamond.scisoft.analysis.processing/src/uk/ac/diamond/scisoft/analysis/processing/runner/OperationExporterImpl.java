@@ -11,7 +11,7 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperationExporterService;
 
 /**
  * for now hard codes runners because there are not many
- * @author fcp94556
+ * @author Matthew Gerring
  *
  */
 public class OperationExporterImpl implements IOperationExporterService {

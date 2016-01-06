@@ -13,7 +13,7 @@ import uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl;
 
 /**
  * for now hard codes runners because there are not many
- * @author fcp94556
+ * @author Matthew Gerring
  *
  */
 public class OperationRunnerImpl implements IOperationRunnerService {

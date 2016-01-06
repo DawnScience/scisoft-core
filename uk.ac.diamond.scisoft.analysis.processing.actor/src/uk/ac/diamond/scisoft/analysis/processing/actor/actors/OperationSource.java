@@ -61,7 +61,7 @@ import com.isencia.util.StringConvertor;
  * 
  * To avoid too much data in memory the Q size is defaulted on this class
  * 
- * @author fcp94556
+ * @author Matthew Gerring
  *
  */
 public class OperationSource extends AbstractDataMessageSource implements ISliceInformationProvider {

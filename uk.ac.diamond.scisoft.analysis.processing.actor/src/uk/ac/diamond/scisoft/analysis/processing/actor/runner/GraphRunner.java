@@ -17,7 +17,7 @@ import com.isencia.passerelle.model.FlowManager;
 /**
  * Builds a graph for executing with Passerelle
  * 
- * @author fcp94556
+ * @author Matthew Gerring
  *
  */
 public class GraphRunner  implements IOperationRunner {

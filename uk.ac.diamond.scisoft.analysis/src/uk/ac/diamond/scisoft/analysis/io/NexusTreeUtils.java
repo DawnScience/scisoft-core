@@ -123,7 +123,7 @@ public class NexusTreeUtils {
 
 		DataNode dNode = (DataNode) link.getDestination();
 		if (dNode.isAugmented()) {
-			logger.debug("Node has already been augmented: {}", link);
+			logger.debug("Node has already been augmented: {}", link.getName());
 			return;
 		}
 		dNode.setAugmented();
@@ -305,7 +305,7 @@ public class NexusTreeUtils {
 					// remedy bogus or missing @axis by simply pairing matching dimension
 					// lengths to the signal dataset shape (this may be wrong as transposes in
 					// common dimension lengths can occur)
-					logger.debug("Creating index mapping from axis shape");
+//					logger.debug("Creating index mapping from axis shape");
 					Map<Integer, Integer> dims = new LinkedHashMap<Integer, Integer>();
 					for (int i = 0; i < rank; i++) {
 						dims.put(i, shape[i]);

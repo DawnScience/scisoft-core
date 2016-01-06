@@ -404,6 +404,7 @@ public class NexusTreeUtils {
 	 */
 	public static boolean parseNXdataAndAugment(GroupNode gn) {
 		if (!isNXClass(gn, NX_DATA)) {
+			logger.warn("'{}' was not an {} class", gn, NX_DATA);
 			return false;
 		}
 
@@ -510,7 +511,7 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse a group that is NXdetector class from a tree for shape of detector scan parameters
+	 * Parse a group that is an NXdetector class from a tree for shape of detector scan parameters
 	 * @param path to group
 	 * @param tree
 	 * @return shape
@@ -518,12 +519,21 @@ public class NexusTreeUtils {
 	public static int[] parseDetectorScanShape(String path, Tree tree) {
 		NodeLink link = tree.findNodeLink(path);
 
-		if (!link.isDestinationGroup())
+		if (link == null) {
+			logger.warn("'{}' could not be found", path);
 			return null;
+		}
+
+		if (!link.isDestinationGroup()) {
+			logger.warn("'{}' was not a group", link.getName());
+			return null;
+		}
 
 		GroupNode gNode = (GroupNode) link.getDestination();
-		if (!isNXClass(gNode, NX_DETECTOR))
+		if (!isNXClass(gNode, NX_DETECTOR)) {
+			logger.warn("'{}' was not an {} class", gNode, NX_DETECTOR);
 			return null;
+		}
 
 		int[] shape = null;
 		for (NodeLink l : gNode) {
@@ -537,7 +547,7 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse a group that is NXdetector class from a tree
+	 * Parse a group that is an NXdetector class from a tree
 	 * @param path to group
 	 * @param tree
 	 * @param pos
@@ -546,12 +556,21 @@ public class NexusTreeUtils {
 	public static DetectorProperties[] parseDetector(String path, Tree tree, int... pos) {
 		NodeLink link = tree.findNodeLink(path);
 
-		if (!link.isDestinationGroup())
+		if (link == null) {
+			logger.warn("'{}' could not be found", path);
 			return null;
+		}
+
+		if (!link.isDestinationGroup()) {
+			logger.warn("'{}' was not a group", link.getName());
+			return null;
+		}
 
 		GroupNode gNode = (GroupNode) link.getDestination();
-		if (!isNXClass(gNode, NX_DETECTOR))
+		if (!isNXClass(gNode, NX_DETECTOR)) {
+			logger.warn("'{}' was not an {} class", gNode, NX_DETECTOR);
 			return null;
+		}
 
 		Map<String, Transform> ftrans = new HashMap<String, Transform>();
 		for (NodeLink l : gNode) {
@@ -582,6 +601,9 @@ public class NexusTreeUtils {
 					dpath = nt.depend;
 				} catch (IllegalArgumentException e) {
 					logger.error("Could not find dependency: {}", dpath);
+					break;
+				} catch (Exception e) {
+					logger.error("Problem parsing transformation: {}", dpath);
 					break;
 				}
 			}
@@ -631,8 +653,11 @@ public class NexusTreeUtils {
 	}
 
 	public static int[] parseSubDetectorShape(Tree tree, NodeLink link) {
-		if (!link.isDestinationGroup())
+		if (!link.isDestinationGroup()) {
+			logger.warn("'{}' was not a group", link.getName());
 			return null;
+		}
+
 		GroupNode gNode = (GroupNode) link.getDestination();
 
 		int[] shape = null;
@@ -651,8 +676,11 @@ public class NexusTreeUtils {
 	}
 
 	public static DetectorProperties parseSubDetector(String path, Map<String, Transform> ftrans, Matrix4d m1, NodeLink link, int[] pos) {
-		if (!link.isDestinationGroup())
+		if (!link.isDestinationGroup()) {
+			logger.warn("'{}' was not a group", link.getName());
 			return null;
+		}
+
 		GroupNode gNode = (GroupNode) link.getDestination();
 
 		Transform mo = null;
@@ -740,8 +768,8 @@ public class NexusTreeUtils {
 	private static Matrix4d calcForwardTransform(Map<String, Transform> ftrans, String dep) {
 		Matrix4d m = new Matrix4d();
 		m.setIdentity();
+
 		Transform t;
-//		System.err.println("Chaining dependencies:");
 		do {
 			t = ftrans.get(dep);
 			if (t == null) {
@@ -752,7 +780,6 @@ public class NexusTreeUtils {
 			m.mul(t.matrix, m);
 			dep = t.depend;
 		} while (!NX_TRANSFORMATIONS_ROOT.equals(dep));
-//		System.err.println("\tEnd");
 
 		return m;
 	}
@@ -766,8 +793,11 @@ public class NexusTreeUtils {
 	}
 
 	public static void parseGeometry(Matrix4d m, NodeLink link) {
-		if (!link.isDestinationGroup())
+		if (!link.isDestinationGroup()) {
+			logger.warn("'{}' was not a group", link.getName());
 			return;
+		}
+
 		GroupNode gNode = (GroupNode) link.getDestination();
 	
 		// find orientation first as parseSubGeometry multiplies from the right
@@ -784,8 +814,10 @@ public class NexusTreeUtils {
 	}
 
 	public static void parseSubGeometry(Matrix4d m, NodeLink link, boolean translate) {
-		if (!link.isDestinationGroup())
+		if (!link.isDestinationGroup()) {
+			logger.warn("'{}' was not a group", link.getName());
 			return;
+		}
 	
 		GroupNode gNode = (GroupNode) link.getDestination();
 	
@@ -821,8 +853,10 @@ public class NexusTreeUtils {
 	}
 
 	public static void parseTransformations(String path, NodeLink link, Map<String, Transform> ftrans, int[] pos) {
-		if (!link.isDestinationGroup())
+		if (!link.isDestinationGroup()) {
+			logger.warn("'{}' was not a group", link.getName());
 			return;
+		}
 
 		GroupNode gNode = (GroupNode) link.getDestination();
 		String gpath = path + Node.SEPARATOR + link.getName();
@@ -840,8 +874,10 @@ public class NexusTreeUtils {
 	}
 
 	public static void parseBeam(NodeLink link, DiffractionCrystalEnvironment sample) {
-		if (!link.isDestinationGroup())
+		if (!link.isDestinationGroup()) {
+			logger.warn("'{}' was not a group", link.getName());
 			return;
+		}
 
 		GroupNode gNode = (GroupNode) link.getDestination();
 		DataNode wavelength = gNode.getDataNode("incident_wavelength");
@@ -851,8 +887,11 @@ public class NexusTreeUtils {
 	}
 
 	public static int[] parseNodeShape(Tree tree, NodeLink link, int[] shape) {
-		if (!link.isDestinationData())
+		if (!link.isDestinationData()) {
+			logger.warn("'{}' was not a dataset", link.getName());
 			return null;
+		}
+
 		DataNode dNode = (DataNode) link.getDestination();
 
 		int[] nshape = dNode.getDataset().getShape();
@@ -909,12 +948,16 @@ public class NexusTreeUtils {
 	public static int[] parseSampleScanShape(String path, Tree tree, int[] shape) {
 		NodeLink link = tree.findNodeLink(path);
 
-		if (!link.isDestinationGroup())
+		if (!link.isDestinationGroup()) {
+			logger.warn("'{}' was not a group", link.getName());
 			return null;
+		}
 
 		GroupNode gNode = (GroupNode) link.getDestination();
-		if (!isNXClass(gNode, NX_SAMPLE))
+		if (!isNXClass(gNode, NX_SAMPLE)) {
+			logger.warn("'{}' was not an {} class", gNode, NX_SAMPLE);
 			return null;
+		}
 
 		// when depends_on does not exist!?!
 		NodeLink nl = gNode.getNodeLink(DEPENDS_ON);
@@ -928,12 +971,16 @@ public class NexusTreeUtils {
 	public static DiffractionSample parseSample(String path, Tree tree, int... pos) {
 		NodeLink link = tree.findNodeLink(path);
 
-		if (!link.isDestinationGroup())
+		if (!link.isDestinationGroup()) {
+			logger.warn("'{}' was not a group", link.getName());
 			return null;
+		}
 
 		GroupNode gNode = (GroupNode) link.getDestination();
-		if (!isNXClass(gNode, NX_SAMPLE))
+		if (!isNXClass(gNode, NX_SAMPLE)) {
+			logger.warn("'{}' was not an {} class", gNode, NX_SAMPLE);
 			return null;
+		}
 
 		DiffractionCrystalEnvironment env = new DiffractionCrystalEnvironment();
 
@@ -966,6 +1013,9 @@ public class NexusTreeUtils {
 				} catch (IllegalArgumentException e) {
 					logger.error("Could not find dependency: {}", dpath);
 					break;
+				} catch (Exception e) {
+					logger.error("Problem parsing transformation: {}", dpath);
+					break;
 				}
 			}
 		}
@@ -994,24 +1044,33 @@ public class NexusTreeUtils {
 	}
 
 	private static Matrix3d parseOrientationMatrix(NodeLink link) {
-		if (!link.isDestinationData())
+		if (!link.isDestinationData()) {
+			logger.warn("'{}' was not a dataset", link.getName());
 			return null;
+		}
+
 		double[] matrix = parseDoubleArray(link.getDestination(), 9);
 
 		return new Matrix3d(matrix);
 	}
 
 	private static UnitCell parseUnitCell(NodeLink link) {
-		if (!link.isDestinationData())
+		if (!link.isDestinationData()) {
+			logger.warn("'{}' was not a dataset", link.getName());
 			return null;
+		}
+
 		double[] parms = parseDoubleArray(link.getDestination(), 6);
 
 		return new UnitCell(parms);
 	}
 
 	public static Transform parseTransformation(String ppath, NodeLink link, int[] pos) {
-		if (!link.isDestinationData())
+		if (!link.isDestinationData()) {
+			logger.warn("'{}' was not a dataset", link.getName());
 			return null;
+		}
+
 		DataNode dNode = (DataNode) link.getDestination();
 		IDataset dataset = dNode.getDataset().getSlice();
 
@@ -1068,6 +1127,8 @@ public class NexusTreeUtils {
 	public static TransformedVectors parseTransformedVectors(NodeLink link) {
 		if (!link.isDestinationData())
 			return null;
+		}
+
 		DataNode dNode = (DataNode) link.getDestination();
 		double[] vector = parseDoubleArray(dNode.getAttribute("vector"), 3);
 		Vector3d v3 = new Vector3d(vector);

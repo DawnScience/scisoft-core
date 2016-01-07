@@ -297,6 +297,15 @@ public abstract class AFunction implements IFunction, Serializable {
 			aprevious = acurrent;
 		}
 
+		if (delta <= Double.MIN_NORMAL) {
+			// Signal that we have not converged, despite having reached the
+			// limits of floating point resolution, by some manner of Exception
+		}
+		
+		if (false) {
+			// Signal that we have failed to converge before discretization error takes over
+		}
+		
 		return current;
 	}
 

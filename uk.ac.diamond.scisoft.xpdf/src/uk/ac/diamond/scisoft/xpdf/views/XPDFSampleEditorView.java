@@ -486,7 +486,7 @@ public class XPDFSampleEditorView extends ViewPart {
 				phases.add(newPhase);
 			}
 			cap.setPhases(phases);
-			cap.setComposition("SiO₂");
+			cap.setComposition("SiO2");
 			cap.setDensity(2.65);
 			cap.setPackingFraction(1.0);
 			cap.setShape("Cylinder");

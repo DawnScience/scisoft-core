@@ -286,24 +286,28 @@ public abstract class AFunction implements IFunction, Serializable {
 		double aprevious = Math.abs(previous);
 		double current = 0;
 		double acurrent = 0;
+		double absDifference;
+		double previousAbsDifference = Double.POSITIVE_INFINITY;
+		final double absDifferenceRatio = 1.00; 
 
 		while (delta > Double.MIN_NORMAL) {
 			delta *= DELTA_FACTOR;
 			current = numericalDerivative(delta, param, values);
 			acurrent = Math.abs(current);
-			if (Math.abs(current - previous) <= abs + rel*Math.max(acurrent, aprevious))
+			absDifference = Math.abs(current - previous);
+			if (absDifference <= abs + rel*Math.max(acurrent, aprevious))
 				break;
+			// If the difference is increasing, then we are no longer
+			// approaching the convergence criterion. Assume we have just
+			// passed the best we are going to get, and break, passing back
+			// the previous value.
+			if (absDifference > absDifferenceRatio * previousAbsDifference) {
+				current = previous;
+				break;
+			}
+			previousAbsDifference = absDifference;
 			previous = current;
 			aprevious = acurrent;
-		}
-
-		if (delta <= Double.MIN_NORMAL) {
-			// Signal that we have not converged, despite having reached the
-			// limits of floating point resolution, by some manner of Exception
-		}
-		
-		if (false) {
-			// Signal that we have failed to converge before discretization error takes over
 		}
 		
 		return current;

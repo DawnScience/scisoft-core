@@ -16,6 +16,7 @@ public class XPDFPhase {
 	
 	String name;
 	int iDCode;
+	String comment;
 	
 	/**
 	 * Default constructor
@@ -99,4 +100,18 @@ public class XPDFPhase {
 	public double getUnitCellVolume() {
 		return 0.0;
 	}
+
+	public void addComment(String inComment) {
+		if (comment == null) comment = new String();
+		comment += inComment;
+	}
+	
+	public void clearComment() {
+		comment = new String();
+	}
+	
+	public String getComment() {
+		return (comment != null) ? comment : "";
+	}
+
 }

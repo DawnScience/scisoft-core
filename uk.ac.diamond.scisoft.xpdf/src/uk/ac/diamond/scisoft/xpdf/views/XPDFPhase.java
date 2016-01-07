@@ -103,7 +103,8 @@ public class XPDFPhase {
 
 	public void addComment(String inComment) {
 		if (comment == null) comment = new String();
-		comment += inComment;
+		if (inComment != null)
+			comment += " " + inComment;
 	}
 	
 	public void clearComment() {

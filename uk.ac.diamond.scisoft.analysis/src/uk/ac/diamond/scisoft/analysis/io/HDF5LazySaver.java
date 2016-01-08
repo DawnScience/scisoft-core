@@ -16,6 +16,8 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.ILazySaver;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.api.tree.Node;
+import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 
@@ -24,6 +26,7 @@ import org.eclipse.dawnsci.hdf5.HDF5Utils;
  */
 public class HDF5LazySaver extends HDF5LazyLoader implements ILazySaver, Serializable {
 
+	private String parentPath; // group containing dataset
 	private int[] maxShape;
 	private int[] chunks;
 	private Object fill;
@@ -47,6 +50,12 @@ public class HDF5LazySaver extends HDF5LazyLoader implements ILazySaver, Seriali
 	public HDF5LazySaver(String hostname, String filename, String node, String name, int[] trueShape, int isize,
 			int dtype, boolean extendUnsigned, int[] maxShape, int[] chunks, Object fill) {
 		super(hostname, filename, node, name, trueShape, isize, dtype, extendUnsigned);
+		int i = node.lastIndexOf(Node.SEPARATOR);
+		if (i > 0) {
+			parentPath = node.substring(0, i);
+		} else {
+			parentPath = Tree.ROOT;
+		}
 		this.maxShape = maxShape == null ? trueShape.clone() : maxShape.clone();
 		this.chunks = chunks == null ? null : chunks.clone();
 		this.fill = fill;
@@ -73,7 +82,7 @@ public class HDF5LazySaver extends HDF5LazyLoader implements ILazySaver, Seriali
 		if (!init) {
 			init = true;
 			if (create) {
-				HDF5Utils.createDataset(filePath, nodePath, name, trueShape, maxShape, chunks, dtype, fill, false);
+				HDF5Utils.createDataset(filePath, parentPath, name, trueShape, maxShape, chunks, dtype, fill, false);
 			}
 		}
 	}
@@ -99,6 +108,6 @@ public class HDF5LazySaver extends HDF5LazyLoader implements ILazySaver, Seriali
 		}
 		//higher level API does not cope with differing data types
 		data = DatasetUtils.cast(data, dtype);
-		HDF5Utils.setDatasetSlice(filePath, nodePath, name, slice, data);
+		HDF5Utils.setDatasetSlice(filePath, parentPath, name, slice, data);
 	}
 }

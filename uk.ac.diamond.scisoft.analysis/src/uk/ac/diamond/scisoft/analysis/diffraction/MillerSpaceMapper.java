@@ -74,7 +74,6 @@ public class MillerSpaceMapper {
 	private double scale; // image upsampling factor
 
 	private PixelSplitter splitter;
-	private Tree tree;
 
 	/**
 	 * This does not split pixel but places its value in the nearest voxel
@@ -315,45 +314,13 @@ public class MillerSpaceMapper {
 	public Dataset mapToMillerSpace(String filePath) throws ScanFileHolderException {
 		NexusHDF5Loader l = new NexusHDF5Loader();
 		l.setFile(filePath);
-		tree = l.loadFile().getTree();
-		int[] dshape = NexusTreeUtils.parseDetectorScanShape(detectorPath, tree);
-		System.err.println(Arrays.toString(dshape));
-		dshape = NexusTreeUtils.parseSampleScanShape(samplePath, tree, dshape);
-		System.err.println(Arrays.toString(dshape));
-
-		Dataset trans = NexusTreeUtils.parseAttenuator(attenuatorPath, tree);
-		if (trans != null && trans.getSize() != 1) {
-			int[] tshape = trans.getShapeRef();
-			if (!Arrays.equals(tshape, dshape)) {
-				throw new ScanFileHolderException("Attenuator transmission shape does not match detector or sample scan shape");
-			}
-		}
-
-		DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
-		ILazyDataset images = node.getDataset();
-
-		PositionIterator diter = new PositionIterator(dshape);
-		int[] dpos = diter.getPos();
-
-		int rank = images.getRank();
-		int srank = rank - 2;
-		if (srank < 0) {
-			throw new ScanFileHolderException("Image data must be at least 2D");
-		}
-		if (dshape.length != srank) {
-			throw new ScanFileHolderException("Scan shape must be 2 dimensions less than image data");
-		}
-
-		int[] axes = new int[2];
-		for (int i = 0; i < axes.length; i++) {
-			axes[i] = srank + i;
-		}
-		int[] stop = images.getShape();
-		PositionIterator iter = new PositionIterator(stop, axes);
-		int[] pos = iter.getPos();
+		Tree tree = l.loadFile().getTree();
+		PositionIterator[] iters = getPositionIterators(tree);
 
 		if (findImageBB) {
-			findBoundingBox(tree, diter, dpos, srank, stop, iter, pos);
+			Arrays.fill(hMin, Double.POSITIVE_INFINITY);
+			Arrays.fill(hMax, Double.NEGATIVE_INFINITY);
+			findBoundingBox(tree, iters);
 			System.err.println("Extent of Miller space was found to be " + Arrays.toString(hMin) + " to " + Arrays.toString(hMax));
 			System.err.println("with shape = " + Arrays.toString(hShape));
 		}
@@ -363,18 +330,11 @@ public class MillerSpaceMapper {
 			max = new int[3];
 			Arrays.fill(max, -1);
 		}
-		int[] ishape = Arrays.copyOfRange(images.getShape(), srank, rank);
-		BicubicInterpolator upSampler = null;
-		if (scale != 1) {
-			for (int i = 0; i < ishape.length; i++) {
-				ishape[i] *= scale;
-			}
-			upSampler = new BicubicInterpolator(ishape);
-		}
 
 		DoubleDataset map = (DoubleDataset) DatasetFactory.zeros(hShape, Dataset.FLOAT64);
 		DoubleDataset weight = (DoubleDataset) DatasetFactory.zeros(hShape, Dataset.FLOAT64);
-		mapImages(tree, trans, images, diter, dpos, rank, srank, stop, iter, pos, map, weight, ishape, upSampler);
+
+		mapToMillerSpace(tree, iters, map, weight);
 
 		if (reduceToNonZeroBB) {
 			System.err.println("Reduced to non-zero bounding box: " + Arrays.toString(min) + " to " + Arrays.toString(max));
@@ -389,10 +349,41 @@ public class MillerSpaceMapper {
 		return map;
 	}
 
-	private void findBoundingBox(Tree tree, PositionIterator diter, int[] dpos, int srank, int[] stop,
-			PositionIterator iter, int[] pos) {
-		Arrays.fill(hMin, Double.POSITIVE_INFINITY);
-		Arrays.fill(hMax, Double.NEGATIVE_INFINITY);
+	private void mapToMillerSpace(Tree tree, PositionIterator[] iters, DoubleDataset map, DoubleDataset weight) throws ScanFileHolderException {
+		int[] dshape = iters[0].getShape();
+
+		Dataset trans = NexusTreeUtils.parseAttenuator(attenuatorPath, tree);
+		if (trans != null && trans.getSize() != 1) {
+			int[] tshape = trans.getShapeRef();
+			if (!Arrays.equals(tshape, dshape)) {
+				throw new ScanFileHolderException("Attenuator transmission shape does not match detector or sample scan shape");
+			}
+		}
+
+		DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
+		ILazyDataset images = node.getDataset();
+		int rank = images.getRank();
+		int[] ishape = Arrays.copyOfRange(images.getShape(), rank - 2, rank);
+
+		BicubicInterpolator upSampler = null;
+		if (scale != 1) {
+			for (int i = 0; i < ishape.length; i++) {
+				ishape[i] *= scale;
+			}
+			upSampler = new BicubicInterpolator(ishape);
+		}
+
+		mapImages(tree, trans, images, iters, map, weight, ishape, upSampler);
+		Maths.dividez(map, weight, map); // normalize by tally
+	}
+
+	private void findBoundingBox(Tree tree, PositionIterator[] iters) {
+		PositionIterator diter = iters[0];
+		PositionIterator iter = iters[1];
+		int[] dpos = diter.getPos();
+		int[] pos = iter.getPos();
+		int[] stop = iter.getStop().clone();
+		int srank = pos.length - 2;
 
 		while (iter.hasNext() && diter.hasNext()) {
 			DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
@@ -458,11 +449,18 @@ public class MillerSpaceMapper {
 		minMax(mBeg, mEnd, m);
 	}
 
-	private void mapImages(Tree tree, Dataset trans, ILazyDataset images, PositionIterator diter, int[] dpos, int rank, int srank,
-			int[] stop, PositionIterator iter, int[] pos, DoubleDataset map, DoubleDataset weight, int[] ishape,
-			BicubicInterpolator upSampler) {
+	private void mapImages(Tree tree, Dataset trans, ILazyDataset images, PositionIterator[] iters,
+			DoubleDataset map, DoubleDataset weight, int[] ishape, BicubicInterpolator upSampler) {
+		PositionIterator diter = iters[0];
+		PositionIterator iter = iters[1];
 		iter.reset();
 		diter.reset();
+		int[] dpos = diter.getPos();
+		int[] pos = iter.getPos();
+		int[] stop = iter.getStop().clone();
+		int rank  = pos.length;
+		int srank = rank - 2;
+
 		while (iter.hasNext() && diter.hasNext()) {
 			DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
 			dp.setHPxSize(dp.getHPxSize() / scale);
@@ -499,7 +497,6 @@ public class MillerSpaceMapper {
 			}
 			mapImage(s, qspace, mspace, image, map, weight);
 		}
-		Maths.dividez(map, weight, map); // normalize by tally
 	}
 
 	private static void minMax(double[] min, double[] max, Vector3d v) {
@@ -594,8 +591,8 @@ public class MillerSpaceMapper {
 	}
 
 	/**
-	 * Map images from given Nexus file to a volume in Miller (aka HKL) space and save to a HDF5 file
-	 * @param input path to Nexus file
+	 * Map images from given Nexus files to a volume in Miller (aka HKL) space and save to a HDF5 file
+	 * @param inputs paths to Nexus files
 	 * @param output path for saving HDF5 file
 	 * @param scale scale for upsampling images
 	 * @param reduceToNonZero if true, reduce output to sub-volume with non-zero data
@@ -604,7 +601,7 @@ public class MillerSpaceMapper {
 	 * @param mDelta lengths of voxel sides
 	 * @throws ScanFileHolderException
 	 */
-	public void mapToVolumeFile(String input, String output, double scale, boolean reduceToNonZero, int[] mShape, double[] mStart, double[] mDelta) throws ScanFileHolderException {
+	public void mapToVolumeFile(String[] inputs, String output, double scale, boolean reduceToNonZero, int[] mShape, double[] mStart, double[] mDelta) throws ScanFileHolderException {
 		Dataset[] a = new Dataset[3];
 		double[] mStop = new double[3];
 		if (mDelta == null || mDelta.length == 0) {
@@ -621,39 +618,69 @@ public class MillerSpaceMapper {
 			mShape = new int[3];
 			mStart = new double[3];
 		} else {
-			for (int i = 0; i < a.length; i++) {
-				double mbeg = mStart[i];
-				double mend = mbeg + mShape[i] * mDelta[i];
-				mStop[i] = mend;
-				a[i] = DatasetUtils.linSpace(mbeg, mend - mDelta[i], mShape[i], Dataset.FLOAT64);
-				System.out.println("Axis " + i + ": " + mbeg + " -> " + a[i].getDouble(mShape[i] - 1) +  "; " + mend);
-			}
+			createAxes(a, mShape, mStart, mStop, mDelta);
 		}
 
 		setReduceToNonZeroData(reduceToNonZero);
 		setUpsamplingScale(scale);
 		setMillerSpaceBoundingBox(mShape, mStart, mStop, mDelta);
-		try {
-			Dataset v = mapToMillerSpace(input);
-			if (findImageBB) {
-				for (int i = 0; i < a.length; i++) {
-					double mbeg = hMin[i];
-					double mend = mbeg + hShape[i] * hDel[i];
-					a[i] = DatasetUtils.linSpace(mbeg, mend - hDel[i], hShape[i], Dataset.FLOAT64);
-					System.out.println("Axis " + i + ": " + mbeg + " -> " + a[i].getDouble(hShape[i] - 1) +  "; " + mend);
-				}
+
+		int n = inputs.length;
+		Tree[] trees = new Tree[n];
+		PositionIterator[][] allIters = new PositionIterator[n][];
+		for (int i = 0; i < n; i++) {
+			NexusHDF5Loader l = new NexusHDF5Loader();
+			l.setFile(inputs[i]);
+			trees[i] = l.loadFile().getTree();
+			allIters[i] = getPositionIterators(trees[i]);
+		}
+
+		if (findImageBB) {
+			Arrays.fill(hMin, Double.POSITIVE_INFINITY);
+			Arrays.fill(hMax, Double.NEGATIVE_INFINITY);
+
+			for (int i = 0; i < n; i++) {
+				findBoundingBox(trees[i], allIters[i]);
 			}
-			saveVolume(output, v, a);
+			System.err.println("Extent of Miller space was found to be " + Arrays.toString(hMin) + " to " + Arrays.toString(hMax));
+			System.err.println("with shape = " + Arrays.toString(hShape));
+		}
+
+		if (reduceToNonZeroBB) {
+			min = hShape.clone();
+			max = new int[3];
+			Arrays.fill(max, -1);
+		}
+
+		try {
+			DoubleDataset map = (DoubleDataset) DatasetFactory.zeros(hShape, Dataset.FLOAT64);
+			DoubleDataset weight = (DoubleDataset) DatasetFactory.zeros(hShape, Dataset.FLOAT64);
+
+			for (int i = 0; i < n; i++) {
+				Tree tree = trees[i];
+				mapToMillerSpace(tree, allIters[i], map, weight);
+			}
+
+			if (reduceToNonZeroBB) {
+				System.err.println("Reduced to non-zero bounding box: " + Arrays.toString(min) + " to " + Arrays.toString(max));
+				for (int i = 0; i < 3; i++) {
+					hMin[i] += min[i]*hDel[i];
+					max[i]++;
+					hShape[i] = max[i] - min[i];
+				}
+				System.err.println("so now start = " + Arrays.toString(hMin) + " for shape = " + Arrays.toString(hShape));
+				map = (DoubleDataset) map.getSlice(min, max, null);
+			}
+
+			if (findImageBB) {
+				createAxes(a, hShape, hMin, null, hDel);
+			}
+			saveVolume(output, map, a);
 		} catch (OutOfMemoryError e) {
 			System.err.println("There is not enough memory to do this all at once!");
 			System.err.println("Now attempting to segment volume");
 			if (findImageBB) {
-				for (int i = 0; i < a.length; i++) {
-					double mbeg = hMin[i];
-					double mend = mbeg + hShape[i] * hDel[i];
-					a[i] = DatasetUtils.linSpace(mbeg, mend - hDel[i], hShape[i], Dataset.FLOAT64);
-					System.out.println("Axis " + i + ": " + mbeg + " -> " + a[i].getDouble(hShape[i] - 1) +  "; " + mend);
-				}
+				createAxes(a, hShape, hMin, null, hDel);
 			}
 
 			// unset these as code does not or should not handle them
@@ -690,9 +717,55 @@ public class MillerSpaceMapper {
 			int[] cShape = hShape.clone();
 			cShape[0] = 1;
 			LazyWriteableDataset lazy = HDF5Utils.createLazyDataset(output, "/entry1/data", "volume", hShape, null, cShape, Dataset.FLOAT64, null, false);
-			mapAndSaveInParts(lazy, parts, map, weight);
+			mapAndSaveInParts(trees, allIters, lazy, parts, map, weight);
+
 			saveAxesAndAttributes(output, a);
 		}
+	}
+
+	private static void createAxes(Dataset[] a, int[] mShape, double[] mStart, double[] mStop, double[] mDelta) {
+		for (int i = 0; i < a.length; i++) {
+			double mbeg = mStart[i];
+			double mend = mbeg + mShape[i] * mDelta[i];
+			if (mStop != null) {
+				mStop[i] = mend;
+			}
+			a[i] = DatasetUtils.linSpace(mbeg, mend - mDelta[i], mShape[i], Dataset.FLOAT64);
+			System.out.print("Axis " + i + ": " + mbeg);
+			if (mShape[i] > 1) {
+				System.out.print(" -> " + a[i].getDouble(mShape[i] - 1));
+			}
+			System.out.println("; " + mend);
+		}
+	}
+
+	private PositionIterator[] getPositionIterators(Tree tree) throws ScanFileHolderException {
+		int[] dshape = NexusTreeUtils.parseDetectorScanShape(detectorPath, tree);
+		System.err.println(Arrays.toString(dshape));
+		dshape = NexusTreeUtils.parseSampleScanShape(samplePath, tree, dshape);
+		System.err.println(Arrays.toString(dshape));
+
+		DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
+		ILazyDataset images = node.getDataset();
+
+		PositionIterator diter = new PositionIterator(dshape);
+
+		int rank = images.getRank();
+		int srank = rank - 2;
+		if (srank < 0) {
+			throw new ScanFileHolderException("Image data must be at least 2D");
+		}
+		if (dshape.length != srank) {
+			throw new ScanFileHolderException("Scan shape must be 2 dimensions less than image data");
+		}
+
+		int[] axes = new int[2];
+		for (int i = 0; i < axes.length; i++) {
+			axes[i] = srank + i;
+		}
+		PositionIterator iter = new PositionIterator(images.getShape(), axes);
+
+		return new PositionIterator[] {diter, iter};
 	}
 
 	/**
@@ -750,48 +823,15 @@ public class MillerSpaceMapper {
 
 	/**
 	 * Map images from given Nexus file to a volume in Miller (aka HKL) space
+	 * @param trees 
+	 * @param allIters 
 	 * @param parts 
 	 * @param map 
 	 * @param weight 
 	 * @throws ScanFileHolderException
 	 */
-	public void mapAndSaveInParts(LazyWriteableDataset output, int parts, DoubleDataset map, DoubleDataset weight) throws ScanFileHolderException {
-		int[] dshape = NexusTreeUtils.parseDetectorScanShape(detectorPath, tree);
-		dshape = NexusTreeUtils.parseSampleScanShape(samplePath, tree, dshape);
-
-		DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
-		ILazyDataset images = node.getDataset();
-
-		Dataset trans = NexusTreeUtils.parseAttenuator(attenuatorPath, tree);
-
-		PositionIterator diter = new PositionIterator(dshape);
-		int[] dpos = diter.getPos();
-
-		int rank = images.getRank();
-		int srank = rank - 2;
-		if (srank < 0) {
-			throw new ScanFileHolderException("Image data must be at least 2D");
-		}
-		if (dshape.length != srank) {
-			throw new ScanFileHolderException("Scan shape must be 2 dimensions less than image data");
-		}
-
-		int[] axes = new int[2];
-		for (int i = 0; i < axes.length; i++) {
-			axes[i] = srank + i;
-		}
-		int[] stop = images.getShape();
-		PositionIterator iter = new PositionIterator(stop, axes);
-		int[] pos = iter.getPos();
-
-		int[] ishape = Arrays.copyOfRange(images.getShape(), srank, rank);
-		BicubicInterpolator upSampler = null;
-		if (scale != 1) {
-			for (int i = 0; i < ishape.length; i++) {
-				ishape[i] *= scale;
-			}
-			upSampler = new BicubicInterpolator(ishape);
-		}
+	private void mapAndSaveInParts(Tree[] trees, PositionIterator[][] allIters, LazyWriteableDataset output, int parts, DoubleDataset map, DoubleDataset weight) throws ScanFileHolderException {
+		int n = trees.length;
 
 		SliceND slice = new SliceND(hShape, null, map.getShapeRef(), null);
 		int ml = map.getShapeRef()[0]; // length of first dimension
@@ -799,11 +839,36 @@ public class MillerSpaceMapper {
 		int[] hstop = slice.getStop();
 		double oMin = hMin[0];
 		double oMax = hMax[0];
+
+		Tree tree;
+		PositionIterator[] iters;
 		for (int p = 0; p < (parts-1); p++) {
 			// shift min
 			hMin[0] = oMin + hstart[0] * hDel[0];
 			hMax[0] = hMin[0] + ml * hDel[0];
-			mapImages(tree, trans, images, diter, dpos, rank, srank, stop, iter, pos, map, weight, ishape, upSampler);
+
+			for (int t = 0; t < n; t++) {
+				tree = trees[t];
+				iters = allIters[t];
+				DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
+				ILazyDataset images = node.getDataset();
+
+				Dataset trans = NexusTreeUtils.parseAttenuator(attenuatorPath, tree);
+
+				int rank = iters[1].getPos().length;
+				int[] ishape = Arrays.copyOfRange(images.getShape(), rank - 2, rank);
+				BicubicInterpolator upSampler = null;
+				if (scale != 1) {
+					for (int i = 0; i < ishape.length; i++) {
+						ishape[i] *= scale;
+					}
+					upSampler = new BicubicInterpolator(ishape);
+				}
+
+				mapImages(tree, trans, images, iters, map, weight, ishape, upSampler);
+			}
+			Maths.dividez(map, weight, map); // normalize by tally
+
 			try {
 				output.setSlice(map, slice);
 			} catch (Exception e) {
@@ -825,7 +890,28 @@ public class MillerSpaceMapper {
 			hstop[0] = hl;
 		}
 
-		mapImages(tree, trans, images, diter, dpos, rank, srank, stop, iter, pos, map, weight, ishape, upSampler);
+		for (int t = 0; t < n; t++) {
+			tree = trees[t];
+			iters = allIters[t];
+			DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
+			ILazyDataset images = node.getDataset();
+
+			Dataset trans = NexusTreeUtils.parseAttenuator(attenuatorPath, tree);
+
+			int rank = iters[1].getPos().length;
+			int[] ishape = Arrays.copyOfRange(images.getShape(), rank - 2, rank);
+			BicubicInterpolator upSampler = null;
+			if (scale != 1) {
+				for (int i = 0; i < ishape.length; i++) {
+					ishape[i] *= scale;
+				}
+				upSampler = new BicubicInterpolator(ishape);
+			}
+
+			mapImages(tree, trans, images, iters, map, weight, ishape, upSampler);
+		}
+		Maths.dividez(map, weight, map); // normalize by tally
+
 		DoubleDataset tmap;
 		if (overflow) {
 			int[] tstop = map.getShape();
@@ -859,7 +945,7 @@ public class MillerSpaceMapper {
 	 */
 	public static void processVolume(String input, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double... mDelta) throws ScanFileHolderException {
 		setI16Splitter(splitter, p);
-		I16Mapper.mapToVolumeFile(input, output, scale, false, mShape, mStart, mDelta);
+		I16Mapper.mapToVolumeFile(new String[] {input}, output, scale, false, mShape, mStart, mDelta);
 	}
 
 	/**
@@ -875,7 +961,23 @@ public class MillerSpaceMapper {
 	 */
 	public static void processVolumeWithAutoBox(String input, String output, String splitter, double p, double scale, boolean reduceToNonZero, double... mDelta) throws ScanFileHolderException {
 		setI16Splitter(splitter, p);
-		I16Mapper.mapToVolumeFile(input, output, scale, reduceToNonZero, null, null, mDelta);
+		I16Mapper.mapToVolumeFile(new String[] {input}, output, scale, reduceToNonZero, null, null, mDelta);
+	}
+
+	/**
+	 * Process Nexus files for I16 with automatic bounding box setting
+	 * @param inputs Nexus files
+	 * @param output name of HDF5 file to be created
+	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
+	 * @param p splitter parameter
+	 * @param scale upsampling factor
+	 * @param mDelta sides of voxels in Miller space
+	 * @param reduceToNonZero if true, reduce output to sub-volume with non-zero data
+	 * @throws ScanFileHolderException
+	 */
+	public static void processVolumeWithAutoBox(String[] inputs, String output, String splitter, double p, double scale, boolean reduceToNonZero, double... mDelta) throws ScanFileHolderException {
+		setI16Splitter(splitter, p);
+		I16Mapper.mapToVolumeFile(inputs, output, scale, reduceToNonZero, null, null, mDelta);
 	}
 
 	static void setI16Splitter(String splitter, double p) {

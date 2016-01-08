@@ -50,6 +50,17 @@ public class SampleTestData {
 			sample.setPackingFraction(1.0);
 			sample.setShape("Cylinder");
 			sample.setDimensions(0.15, 0.16);
+			break;
+		}
+		case("ceria"): {
+			sample.setName("Ceria SRM");
+			sample.setAsSample();
+			List<XPDFPhase> phases = new ArrayList<XPDFPhase>();
+			phases.add(createTestPhase("ceria"));
+			sample.setPhases(phases);
+			sample.setComposition("CeO2");
+			sample.setDensity(7.65);
+			break;
 		}
 		default:
 		}
@@ -88,6 +99,11 @@ public class SampleTestData {
 		}
 		case ("Flint Glass"): {
 			phase.setName("Flint glass");
+			break;
+		}
+		case ("ceria"): {
+			phase.setName("ceria");
+			phase.addComment("I love you, ceria!");
 			break;
 		}
 		default:

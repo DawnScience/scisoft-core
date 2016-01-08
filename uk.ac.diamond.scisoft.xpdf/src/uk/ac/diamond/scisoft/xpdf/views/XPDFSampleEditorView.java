@@ -468,6 +468,8 @@ public class XPDFSampleEditorView extends ViewPart {
 			sampleTable.add(SampleTestData.createTestSample("Barium Titanate"));
 			// rutile
 			sampleTable.add(SampleTestData.createTestSample("Rutile"));
+			// ceria
+			sampleTable.add(SampleTestData.createTestSample("ceria"));
 			// quartz capillary
 			sampleTable.add(SampleTestData.createTestSample("Quartz Capillary"));
 		

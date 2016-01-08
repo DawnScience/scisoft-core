@@ -338,6 +338,13 @@ class SampleGroupedTable {
 		return selectedXPDFParameters;		
 	}
 
+	public List<XPDFPhase> getAllPhases() {
+		Set<XPDFPhase> usedPhases = new HashSet<XPDFPhase>();
+		for (XPDFSampleParameters sample : samples)
+			usedPhases.addAll(sample.getPhases());
+			return new ArrayList<XPDFPhase>(usedPhases);
+	}
+	
 	public void createContextMenu(MenuManager menuManager) {
 		groupedTable.createContextMenu(menuManager);			
 	}

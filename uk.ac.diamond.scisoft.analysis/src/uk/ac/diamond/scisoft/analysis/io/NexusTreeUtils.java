@@ -862,7 +862,7 @@ public class NexusTreeUtils {
 		}
 		DataNode dNode = (DataNode) l.getDestination();
 		DoubleDataset ds = (DoubleDataset) getCastAndCacheData(dNode, Dataset.FLOAT64);
-		
+
 		int[] shape = ds.getShapeRef();
 		if (shape.length != 2 || shape[1] != (translate ? 3 : 6)) {
 			throw new IllegalArgumentException("Geometry subnode has wrong shape");
@@ -870,6 +870,7 @@ public class NexusTreeUtils {
 		double[] da = ds.getData();
 		Matrix4d m2 = new Matrix4d();
 		if (translate) {
+			da = da.clone(); // necessary to stop clobbering cached values
 			convertIfNecessary(SI.MILLIMETRE, parseStringAttr(dNode, NX_UNITS), da);
 			m2.setIdentity();
 			m2.setColumn(3, da[0], da[1], da[2], 1);
@@ -1168,8 +1169,7 @@ public class NexusTreeUtils {
 		DataNode dNode = (DataNode) link.getDestination();
 		double[] vector = parseDoubleArray(dNode.getAttribute("vector"), 3);
 		Vector3d v3 = new Vector3d(vector);
-		double[] values = ((DoubleDataset) getCastAndCacheData(dNode, Dataset.FLOAT64)).getData();
-		convertIfNecessary(SI.MILLIMETRE, parseStringAttr(dNode, NX_UNITS), values);
+		double[] values = getConvertedData(dNode, SI.MILLIMETRE).getData();
 		String type = parseStringAttr(dNode, "transformation_type");
 		if (!"translation".equals(type)) {
 			throw new IllegalArgumentException("Transformed vector node has wrong type");
@@ -1457,6 +1457,9 @@ public class NexusTreeUtils {
 		Dataset dataset;
 		if (ld instanceof Dataset) {
 			dataset = (Dataset) ld;
+		} else if (ld instanceof IDataset) {
+			dataset = DatasetUtils.convertToDataset(ld);
+			dNode.setDataset(dataset);
 		} else {
 			dataset = DatasetUtils.convertToDataset(ld.getSlice());
 			dNode.setDataset(dataset);
@@ -1470,6 +1473,7 @@ public class NexusTreeUtils {
 
 	private static DoubleDataset getConvertedData(DataNode data, Unit<? extends Quantity> unit) {
 		DoubleDataset values = (DoubleDataset) getCastAndCacheData(data, Dataset.FLOAT64);
+		values = values.clone(); // necessary to stop clobbering cached values
 		convertIfNecessary(unit, parseStringAttr(data, NX_UNITS), values.getData());
 		return values;
 	}

@@ -19,6 +19,8 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
  */
 public class CubicSpline extends AFunction {
 	private static String NAME = "CubicSpline";
+	private static String DESCRIPTION = "y(x) = a + b*x + c*x^2 + d*x^3";
+	private static final String[] PARAM_NAMES = new String[]{"A", "B", "C", "D"};
 
 	double[] a = null;
 	double[] b = null;
@@ -34,12 +36,12 @@ public class CubicSpline extends AFunction {
 
 	public CubicSpline(int numberOfParameters) {
 		super(numberOfParameters);
-		name = NAME;
+		setNames();
 	}
 
 	public CubicSpline(IParameter... params) {
 		super(params);
-		name = NAME;
+		setNames();
 	}
 
 	/**
@@ -50,7 +52,7 @@ public class CubicSpline extends AFunction {
 	 */
 	public CubicSpline(double[] xpoints, double[] ystartpoints, double deviation) {
 		super(ystartpoints);
-		name = NAME;
+		setNames();
 		for(int i = 0; i < parameters.length; i++) {
 			IParameter p = parameters[i];
 			p.setLimits(p.getValue() - deviation, p.getValue() + deviation);
@@ -65,8 +67,17 @@ public class CubicSpline extends AFunction {
 	 */
 	public CubicSpline(double[] xpoints, double[] ystartpoints) {
 		super(ystartpoints);
-		name = NAME;
+		setNames();
 		x = xpoints;
+	}
+
+	private void setNames() {
+		name = NAME;
+		description = DESCRIPTION;
+		for (int i = 0; i < PARAM_NAMES.length; i++) {
+			IParameter p = getParameter(i);
+			p.setName(PARAM_NAMES[i]);
+		}
 	}
 
 	protected void generateSpline(double[] newx, double[] newy) throws IllegalArgumentException {

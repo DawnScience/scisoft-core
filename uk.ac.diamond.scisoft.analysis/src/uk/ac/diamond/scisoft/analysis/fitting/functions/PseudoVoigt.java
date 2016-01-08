@@ -23,9 +23,11 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
  */
 public class PseudoVoigt extends APeak implements IPeak {
 	private static final String NAME = "PseudoVoigt";
-	private static final String DESC = "y(x) = Pseudo Voigt";
-	private static final String[] PARAM_NAMES = new String[]{"posn", "l_fwhm", "area", "g_fwhm", "mix"};
-	private static final double[] PARAMS = new double[]{0,0,0,0,0};
+	private static final String DESC = "y(x) = I(2θ) = I_hkl *(η * L(2θ − 2θ_0) + (1 − η)* G(2θ − 2θ_0)) where, "
+			+ "respectively, L(2θ − 2θ_0) and G(2θ − 2θ_0) represent suitably normalised Lorentz and Gaussian "
+			+ "functions, and η (the \"Lorentz fraction\") and (1 − η) represent the fractions of each used.";
+	private static final String[] PARAM_NAMES = new String[] { "posn", "l_fwhm", "area", "g_fwhm", "mix" };
+	private static final double[] PARAMS = new double[] { 0, 0, 0, 0, 0 };
 
 	public PseudoVoigt() {
 		this(PARAMS[0], PARAMS[1], PARAMS[2], PARAMS[3], PARAMS[4]);
@@ -33,6 +35,7 @@ public class PseudoVoigt extends APeak implements IPeak {
 
 	/**
 	 * Note, now (20131204) this constructor has a different order
+	 * 
 	 * @param position
 	 * @param lorentzianFWHM
 	 * @param area

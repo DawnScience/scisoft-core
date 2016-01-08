@@ -29,6 +29,8 @@ import org.slf4j.LoggerFactory;
  */
 public class GaussianND extends AFunction {
 	private static String NAME = "GaussianND";
+	// TODO Description to be added
+	private static String DESCRIPTION = "nD Gaussian function";
 	private int rank;
 	private double[] pos = null;
 
@@ -40,11 +42,13 @@ public class GaussianND extends AFunction {
 	public GaussianND() {
 		super(new double[]{0,0,0});
 		name = NAME;
+		description = DESCRIPTION;
 	}
 
 	public GaussianND(IParameter... params) {
 		super(params);
 		name = NAME;
+		description = DESCRIPTION;
 	}
 
 	/**

@@ -22,7 +22,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
  */
 public class PearsonVII extends APeak implements IPeak {
 	private static final String NAME = "PearsonVII";
-	private static final String DESC = "y(x) = PearsonVII distribution";
+	private static final String DESC = "I(2θ) = Imax * (w^2m / ( w^2 + (2^1/m − 1)*(2θ − 2θ_0)^2)^m)";
 	private static final String[] PARAM_NAMES = new String[]{"posn", "fwhm", "area", "power"};
 	private static final double[] PARAMS = new double[] { 0, 0, 0, 1.0 };
 

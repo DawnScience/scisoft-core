@@ -38,15 +38,18 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
  */
 public class Step extends AFunction {
 	private static String NAME = "Step";
+	private static String DESCRIPTION = " f(x)=alpha_1f_1(x)+...+alpha_nf_n(x), where alpha_i in R, f_i(x)=1 if x in [a_i,b_i) and 0 otherwise, for i=1, ..., n";
+	private static final String[] PARAM_NAMES = new String[] { "min Y", "max Y", "min X1", "max X1", "min X2", "max X2",
+			"min H1", "max H1", "min H2", "max H2", "min W", "max W", "min Pos", "max Pos" };
 
 	public Step() {
 		super(new double[]{0,0,0,0,0,0,0});
-		name = NAME;
+		setNames();
 	}
 
 	public Step(IParameter... params) {
 		super(params);
-		name = NAME;
+		setNames();
 	}
 
 	/**
@@ -122,7 +125,16 @@ public class Step extends AFunction {
 		p.setUpperLimit(maxPos);
 		p.setValue((minPos + maxPos) / 2.0);
 
+		setNames();
+	}
+
+	private void setNames() {
 		name = NAME;
+		description = DESCRIPTION;
+		for (int i = 0; i < PARAM_NAMES.length; i++) {
+			IParameter p = getParameter(i);
+			p.setName(PARAM_NAMES[i]);
+		}
 	}
 
 	double base, pmin, pmax, width, start, outer, inner;

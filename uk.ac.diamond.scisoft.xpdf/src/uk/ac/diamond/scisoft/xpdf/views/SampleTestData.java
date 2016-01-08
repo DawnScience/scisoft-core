@@ -21,15 +21,8 @@ public class SampleTestData {
 		case("Barium Titanate"): {
 			sample.setName("Barium Titanate");
 			List<XPDFPhase> phases = new ArrayList<XPDFPhase>();
-			{
-				XPDFPhase newPhase = new XPDFPhase();
-				newPhase.setName("BTO");
-				newPhase.addComment("barium titanate");
-				phases.add(newPhase);
-				newPhase = new XPDFPhase();
-				newPhase.setName("Calcium titanate");
-				phases.add(newPhase);
-			}
+			phases.add(createTestPhase("BTO"));
+			phases.add(createTestPhase("Calcium titanate"));
 			sample.setPhases(phases);
 			sample.setComposition("Ba0.9Ca0.1TiO3"); // Should be "Ba0.9Ca0.1TiO3"
 			sample.setDensity(3.71);
@@ -39,13 +32,8 @@ public class SampleTestData {
 		case("Rutile"): {
 			sample.setName("Rutile");
 			List<XPDFPhase> phases = new ArrayList<XPDFPhase>();
-
-			XPDFPhase newPhase = new XPDFPhase();
-			newPhase.setName("TiO2");
-			newPhase.addComment("tianium dioxide");
-			phases.add(newPhase);
-
-				sample.setPhases(phases);
+			phases.add(createTestPhase("TiO2"));
+			sample.setPhases(phases);
 			sample.setComposition("TiO2");
 			sample.setDensity(6.67);
 			sample.setAsSample();
@@ -54,15 +42,8 @@ public class SampleTestData {
 		case("Quartz Capillary"): {
 			sample.setName("Quartz Capillary");
 			sample.setAsContainer();
-			//		cap.setPhases(new ArrayList<String>(Arrays.asList(new String[] {"cSiO₂"})));
 			List<XPDFPhase> phases = new ArrayList<XPDFPhase>();
-			for (String phaseName : new String[] {"cSiO2"}) {
-				XPDFPhase newPhase = new XPDFPhase();
-				newPhase.setName(phaseName);
-				newPhase.addComment("Crystalline silica,");
-				newPhase.addComment("also known as quartz");
-				phases.add(newPhase);
-			}
+			phases.add(createTestPhase("cSiO2"));
 			sample.setPhases(phases);
 			sample.setComposition("SiO2");
 			sample.setDensity(2.65);
@@ -74,6 +55,46 @@ public class SampleTestData {
 		}
 		
 		return sample;
+	}
+	
+	
+	public static XPDFPhase createTestPhase(String name) {
+		XPDFPhase phase = new XPDFPhase();
+		
+		switch (name) {
+		case ("BTO"): { 
+			phase.setName("BTO");
+			phase.addComment("barium titanate");
+			break;
+		}
+		case ("Calcium titanate"): {
+			phase.setName("calcium titanate");
+			break;
+		}
+		case ("TiO2"): {
+			phase.setName("TiO2");
+			phase.addComment("titanium dioxide");
+			break;
+		}
+		case ("cSiO2"): {
+			phase.setName("cSiO2");
+			phase.addComment("Crystalline silica,");
+			phase.addComment("also known as quartz");
+			break;
+		}
+		case ("Crown Glass"): {
+			phase.setName("Crown glass");
+			break;
+		}
+		case ("Flint Glass"): {
+			phase.setName("Flint glass");
+			break;
+		}
+		default:
+		}
+		
+		
+		return phase;
 	}
 	
 }

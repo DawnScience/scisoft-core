@@ -408,13 +408,18 @@ public class XPDFSampleEditorView extends ViewPart {
 //			bto.setId(generateUniqueID());
 //			bto.setPhases(new ArrayList<String>(Arrays.asList(new String[] {"BTO", "CaTiO3"})));
 			List<XPDFPhase> phases = new ArrayList<XPDFPhase>();
-			for (String phaseName : new String[] {"BTO", "CaTiO3"}) {
+//			for (String phaseName : new String[] {"BTO", "CaTiO3"}) {
+			{
 				XPDFPhase newPhase = new XPDFPhase();
-				newPhase.setName(phaseName);
+				newPhase.setName("BTO");
+				newPhase.addComment("barium titanate");
+				phases.add(newPhase);
+				newPhase = new XPDFPhase();
+				newPhase.setName("Calcium titanate");
 				phases.add(newPhase);
 			}
 			bto.setPhases(phases);
-			bto.setComposition("BaTiO3"); // Should be "Ba0.9Ca0.1TiO3"
+			bto.setComposition("Ba0.9Ca0.1TiO3"); // Should be "Ba0.9Ca0.1TiO3"
 			bto.setDensity(3.71);
 			// Packing fraction as default
 //			bto.setSuggestedEnergy(76.6);
@@ -431,9 +436,11 @@ public class XPDFSampleEditorView extends ViewPart {
 //			rutile.setId(generateUniqueID());
 //			rutile.setPhases(new ArrayList<String>(Arrays.asList(new String[] {"TiO2"})));
 			phases = new ArrayList<XPDFPhase>();
-			for (String phaseName : new String[] {"TiO2"}) {
+//			for (String phaseName : new String[] {"TiO2"}) {
+			{
 				XPDFPhase newPhase = new XPDFPhase();
-				newPhase.setName(phaseName);
+				newPhase.setName("TiO2");
+				newPhase.addComment("tianium dioxide");
 				phases.add(newPhase);
 			}
 			rutile.setPhases(phases);
@@ -448,31 +455,31 @@ public class XPDFSampleEditorView extends ViewPart {
 			
 			sampleTable.add(rutile);
 			
-			// and something else
-			XPDFSampleParameters explodite = new XPDFSampleParameters();
-			explodite.setName("Explodite");
-//			explodite.setId(generateUniqueID());
-//			explodite.setPhases(new ArrayList<String>(Arrays.asList(new String[] {"LF", "O"})));
-			phases = new ArrayList<XPDFPhase>();
-			for (String phaseName : new String[] {"LF", "O"}) {
-				XPDFPhase newPhase = new XPDFPhase();
-				newPhase.setName(phaseName);
-				phases.add(newPhase);
-			}
-			explodite.setPhases(phases);
-			explodite.setComposition("K2S4P");
-			explodite.setDensity(1.1);
-			explodite.setPackingFraction(0.888);
-			//packing fraction as default
-//			explodite.setSuggestedEnergy(76.6);
-//			explodite.setSuggestedCapDiameter(5.0);
-//			explodite.setBeamState("76.6 Hi Flux");
-//			explodite.setContainer("0.5 mm");
-			explodite.setAsSample();
-			explodite.setShape("Cylinder");
-			explodite.setDimensions(0, 625.0);
-			
-			sampleTable.add(explodite);
+//			// and something else
+//			XPDFSampleParameters explodite = new XPDFSampleParameters();
+//			explodite.setName("Explodite");
+////			explodite.setId(generateUniqueID());
+////			explodite.setPhases(new ArrayList<String>(Arrays.asList(new String[] {"LF", "O"})));
+//			phases = new ArrayList<XPDFPhase>();
+////			for (String phaseName : new String[] {"LF", "O"}) {
+//			XPDFPhase newPhase = new XPDFPhase();
+//			newPhase.setName("LF");
+//				phases.add(newPhase);
+////			}
+//			explodite.setPhases(phases);
+//			explodite.setComposition("K2S4P");
+//			explodite.setDensity(1.1);
+//			explodite.setPackingFraction(0.888);
+//			//packing fraction as default
+////			explodite.setSuggestedEnergy(76.6);
+////			explodite.setSuggestedCapDiameter(5.0);
+////			explodite.setBeamState("76.6 Hi Flux");
+////			explodite.setContainer("0.5 mm");
+//			explodite.setAsSample();
+//			explodite.setShape("Cylinder");
+//			explodite.setDimensions(0, 625.0);
+//			
+//			sampleTable.add(explodite);
 
 			// quartz capillary
 			XPDFSampleParameters cap = new XPDFSampleParameters();
@@ -483,6 +490,8 @@ public class XPDFSampleEditorView extends ViewPart {
 			for (String phaseName : new String[] {"cSiO2"}) {
 				XPDFPhase newPhase = new XPDFPhase();
 				newPhase.setName(phaseName);
+				newPhase.addComment("Crystalline silica,");
+				newPhase.addComment("also known as quartz");
 				phases.add(newPhase);
 			}
 			cap.setPhases(phases);

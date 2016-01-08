@@ -58,13 +58,14 @@ class PhaseGroupedTable {
 	public PhaseGroupedTable(Composite parent, int style) {
 		
 		// phases with test data
-		phases = new ArrayList<XPDFPhase>(Arrays.asList(new XPDFPhase[]{new XPDFPhase(), new XPDFPhase(), new XPDFPhase()}));
+		phases = new ArrayList<XPDFPhase>();
 		
-		String[] testNames = {"Quartz", "Crown glass", "Flint glass"}; 
-		for (int i = 0; i < phases.size(); i++) {
-			phases.get(i).setName(testNames[i]);
-			phases.get(i).setId(getUniqueID());
-
+		String[] testNames = {"Crown glass", "Flint glass"};
+		for (int i = 0; i < testNames.length; i++) {
+			XPDFPhase phase = new XPDFPhase();
+			phase.setName(testNames[i]);
+			phase.setId(getUniqueID());
+			phases.add(phase);
 		}
 		
 		visiblePhases = new ArrayList<XPDFPhase>();
@@ -680,8 +681,35 @@ class PhaseGroupedTable {
 	static class CommentColumnInterface implements ColumnInterface {
 
 		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
+		public EditingSupport get(final ColumnViewer v) {
+			return new EditingSupport(v) {
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return new TextCellEditor(((TableViewer) v).getTable());
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return true;
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					return (element != null) ? ((XPDFPhase) element).getComment() : "";
+				}
+
+				@Override
+				protected void setValue(Object element, Object value) {
+					if (!(element instanceof XPDFPhase)) return; 
+					XPDFPhase phase = (XPDFPhase) element;
+					if (value != null) {
+						phase.clearComment();
+						phase.addComment((String) value);
+					}
+					v.refresh();
+				}
+			};
 		}
 
 		@Override
@@ -692,7 +720,12 @@ class PhaseGroupedTable {
 
 		@Override
 		public ColumnLabelProvider getLabelProvider() {
-			return new DummyLabelProvider("Words words words");
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return ((XPDFPhase) element).getComment();
+				}
+			};
 		}
 
 		@Override

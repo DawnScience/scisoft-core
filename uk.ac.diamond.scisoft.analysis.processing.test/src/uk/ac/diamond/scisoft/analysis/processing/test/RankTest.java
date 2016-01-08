@@ -168,7 +168,7 @@ public class RankTest {
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor) throws Exception {
-				if (result.getData().getRank()!=1) throw new Exception("Add followed by azi should give a 1D result!");
+				if (result.getData().squeeze().getRank()!=1) throw new Exception("Add followed by azi should give a 1D result!");
 			}			
 		});
 		context.setSeries(add, azi);
@@ -224,7 +224,7 @@ public class RankTest {
 		context.setVisitor(new IExecutionVisitor.Stub() {
 			@Override
 			public void executed(OperationData result, IMonitor monitor) throws Exception {
-				if (result.getData().getRank()!=1) throw new Exception("Azi should give a 1D result!");
+				if (result.getData().squeeze().getRank()!=1) throw new Exception("Azi should give a 1D result!");
 			}			
 		});
 		service.execute(context);

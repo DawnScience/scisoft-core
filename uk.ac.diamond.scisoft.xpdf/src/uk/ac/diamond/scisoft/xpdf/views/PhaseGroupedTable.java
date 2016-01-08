@@ -17,12 +17,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
 
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
@@ -227,6 +230,34 @@ class PhaseGroupedTable {
 		groupedTable.refresh();
 	}
 	
+	public List<XPDFPhase> getAll() {
+		return phases;
+	}
+	
+	public void removeAll(Collection<XPDFPhase> phasesToGo) {
+		phases.removeAll(phasesToGo);
+		refresh();
+	}
+	
+	public List<XPDFPhase> getSelectedPhases() {
+		List<XPDFPhase> selectedPhases= new ArrayList<XPDFPhase>();
+		ISelection selection = groupedTable.getSelection();
+		// No items? return, having done nothing.
+		if (selection.isEmpty()) return selectedPhases;
+		// If it is not an IStructureSelection, then I don't know what to do with it.
+		if (!(selection instanceof IStructuredSelection)) return selectedPhases;
+		// Get the list of all selected data
+		List<?> selectedData = ((IStructuredSelection) selection).toList();
+		for (Object datum : selectedData)
+			if (datum instanceof XPDFPhase)
+				selectedPhases.add((XPDFPhase) datum);
+		return selectedPhases;		
+	}
+	
+	public void createContextMenu(MenuManager menuManager) {
+		groupedTable.createContextMenu(menuManager);			
+	}
+
 	/**
 	 * Sets the phases that should be visible.
 	 * @param visiblePhases

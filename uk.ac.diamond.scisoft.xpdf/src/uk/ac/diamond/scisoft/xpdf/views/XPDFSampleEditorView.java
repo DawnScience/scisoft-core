@@ -44,6 +44,7 @@ public class XPDFSampleEditorView extends ViewPart {
 	
 	private Button cifPhaseButton;
 //	private Button eraPhaseButton;
+	private Button delPhaseButton;
 	
 	private Action loadTestDataAction;
 	private Action simPDFAction;
@@ -55,6 +56,8 @@ public class XPDFSampleEditorView extends ViewPart {
 	private Action pointBreakAction;
 	private Action deleteAction;
 	private Action clearAction;
+
+	private Action deletePhaseAction;
 	
 	private SampleGroupedTable sampleTable;
 	private PhaseGroupedTable phaseTable;
@@ -124,6 +127,7 @@ public class XPDFSampleEditorView extends ViewPart {
 		createRHSButtons(buttonCompo);
 		
 		createPhaseLoadButtons(phaseButtonCompo);
+		createPhaseCentreButtons(phaseButtonCompo);
 		
 		sampleTable.setInput(getSite());
 		phaseTable.setInput(getSite());
@@ -204,8 +208,15 @@ public class XPDFSampleEditorView extends ViewPart {
 		simPDFAction = new SimulatePDFAction();
 		simPDFAction.setText("Simulate");
 		simPDFAction.setToolTipText("Simulate a PDF for each of the selected samples");
+
+		// Phase Table Actions
+		deletePhaseAction = new DeletePhaseAction();
+		deletePhaseAction.setText("Delete unused");
+		deletePhaseAction.setToolTipText("Delete selected (or all) phases not used by a sample.");
+		
 		
 		hookIntoContextMenu();
+		hookIntoPhaseContextMenu();
 	}
 
 	private void createRHSButtons(Composite parent) {
@@ -245,7 +256,7 @@ public class XPDFSampleEditorView extends ViewPart {
 
 	private void createCentreButtons(Composite parent) {
 		int offset = 10;
-		int bottomMargin = -10;
+//		int bottomMargin = -10;
 //		Composite stCompo = compoAbove.getParent();
 		
 		delButton = new Button(parent, SWT.NONE);
@@ -317,8 +328,26 @@ public class XPDFSampleEditorView extends ViewPart {
 		
 	}
 	
-	
-	
+	private void createPhaseCentreButtons(Composite parent) {
+		int offset = 10;
+//		int bottomMargin = -10;
+//		Composite stCompo = compoAbove.getParent();
+		
+		delPhaseButton = new Button(parent, SWT.NONE);
+		FormData formData = new FormData();
+		formData.left = new FormAttachment(50);
+		formData.top = new FormAttachment(0, offset);
+		delPhaseButton.setLayoutData(formData);
+		delPhaseButton.setText(deletePhaseAction.getText());
+		delPhaseButton.setToolTipText(deletePhaseAction.getToolTipText());
+		delPhaseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				deletePhaseAction.run();
+			}
+		});
+	}
+
 	@Override
 	public void setFocus() {
 		sampleTable.setFocus();
@@ -386,6 +415,40 @@ public class XPDFSampleEditorView extends ViewPart {
 		}
 	}
 
+	private void hookIntoPhaseContextMenu() {
+		MenuManager menuMan = new MenuManager("#PopupMenu");
+		menuMan.setRemoveAllWhenShown(true);
+		menuMan.addMenuListener(new IMenuListener() {
+			@Override
+			public void menuAboutToShow(IMenuManager manager) {
+				fillPhaseContextMenu(manager);				
+			}
+		});
+		
+		phaseTable.createContextMenu(menuMan);
+		
+	}
+
+	protected void fillPhaseContextMenu(IMenuManager manager) {
+		manager.add(deletePhaseAction);
+	}	
+	
+	
+	private class DeletePhaseAction extends Action {
+		@Override
+		public void run() {
+			List<XPDFPhase> selectedPhases = phaseTable.getSelectedPhases();
+			if (selectedPhases.isEmpty()) selectedPhases = phaseTable.getAll();
+			List<XPDFPhase> usedPhases = sampleTable.getAllPhases();
+			List<XPDFPhase> unusedPhases = new ArrayList<XPDFPhase>();
+			for (XPDFPhase phase : selectedPhases)
+				if (!usedPhases.contains(phase))
+					unusedPhases.add(phase);
+			phaseTable.removeAll(unusedPhases);
+			phaseTable.refresh();
+		}
+	}
+	
 //	// Generate a new id
 //	int generateUniqueID() {
 //		final int lowestID = 154;

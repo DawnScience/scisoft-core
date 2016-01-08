@@ -23,8 +23,10 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 
-public class ApacheLevenbergMarquardt implements IOptimizer {
+public class ApacheLevenbergMarquardt implements IOptimizer,ILeastSquaresOptimizer {
 
+	private double[] errors = null;
+	
 	@Override
 	public void optimize(IDataset[] coords, final IDataset data, final IFunction function) throws Exception {
 
@@ -81,6 +83,12 @@ public class ApacheLevenbergMarquardt implements IOptimizer {
 		
 		VectorialPointValuePair result = cg.optimize(dmvf, (double[])values.getBuffer(), weights, start);
 		function.setParameterValues(result.getPoint());
+		errors = cg.guessParametersErrors();
+	}
+
+	@Override
+	public double[] guessParametersErrors() {
+		return errors;
 	}
 
 }

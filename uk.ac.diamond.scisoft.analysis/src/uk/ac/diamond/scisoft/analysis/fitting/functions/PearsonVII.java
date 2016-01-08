@@ -22,7 +22,10 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
  */
 public class PearsonVII extends APeak implements IPeak {
 	private static final String NAME = "PearsonVII";
-	private static final String DESC = "I(2θ) = Imax * (w^2m / ( w^2 + (2^1/m − 1)*(2θ − 2θ_0)^2)^m)";
+	private static final String DESC = "I(2θ) = Imax * (w^2m / ( w^2 + (2^1/m − 1)*(2θ − 2θ_0)^2)^m) "
+			+ "\nwhere m can be chosen to suit a particular peak shape and w is related to the peak width. "
+			+ "\nSpecial cases of this function are that it becomes a Lorentzian as m → 1 and "
+			+ "\napproaches a Gaussian as m → ∞ (e.g. m > 10).";
 	private static final String[] PARAM_NAMES = new String[]{"posn", "fwhm", "area", "power"};
 	private static final double[] PARAMS = new double[] { 0, 0, 0, 1.0 };
 

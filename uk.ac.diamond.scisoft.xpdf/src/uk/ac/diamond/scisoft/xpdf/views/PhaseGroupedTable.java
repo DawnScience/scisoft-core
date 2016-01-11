@@ -122,11 +122,11 @@ class PhaseGroupedTable {
 		// For now, drag support only. Drop support for phase-defining CIF files will eventually be added
 		groupedTable.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalDragSupportListener(groupedTable));
 
-		// phases with test data
-		List<XPDFPhase> testPhases = new ArrayList<XPDFPhase>();
-		testPhases.add(SampleTestData.createTestPhase("Crown Glass"));
-		testPhases.add(SampleTestData.createTestPhase("Flint Glass"));
-		addPhases(testPhases);
+//		// phases with test data
+//		List<XPDFPhase> testPhases = new ArrayList<XPDFPhase>();
+//		testPhases.add(SampleTestData.createTestPhase("Crown Glass"));
+//		testPhases.add(SampleTestData.createTestPhase("Flint Glass"));
+//		addPhases(testPhases);
 
 	}
 

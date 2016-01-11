@@ -135,7 +135,7 @@ public class XPDFPhase {
 		for (systemIndex = 1; systemIndex < nSystems-1; systemIndex++)
 			if (firstGroupIndex[systemIndex] > spaceGroupIndex)
 				break;
-		return SystemNames[systemIndex--];
+		return SystemNames[systemIndex-1];
 	}
 	
 	public static String getGroupFullName(int spaceGroupIndex) {
@@ -378,7 +378,7 @@ public class XPDFPhase {
 		else if (spaceGroupIndex < 0) {
 			return getSystemName(-spaceGroupIndex);
 		} else {
-			return fullNames[spaceGroupIndex];					
+			return fullNames[spaceGroupIndex-1];					
 		}
 	}
 	
@@ -619,7 +619,7 @@ public class XPDFPhase {
 		if (spaceGroupIndex <= 0 || spaceGroupIndex > nGroups)
 			return getGroupFullName(spaceGroupIndex);
 		else
-			return shortNames[spaceGroupIndex];
+			return shortNames[spaceGroupIndex-1];
 	}			
 }				
 				

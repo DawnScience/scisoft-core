@@ -41,8 +41,8 @@ public class Step extends AFunction {
 	private static String DESCRIPTION = " f(x)=alpha_1f_1(x)+...+alpha_nf_n(x),"
 			+ "\nwhere alpha_i in R, f_i(x)=1 if x in [a_i,b_i) and 0 otherwise,"
 			+ "\nfor i=1, ..., n";
-	private static final String[] PARAM_NAMES = new String[] { "min Y", "max Y", "min X1", "max X1", "min X2", "max X2",
-			"min H1", "max H1", "min H2", "max H2", "min W", "max W", "min Pos", "max Pos" };
+	private static final String[] PARAM_NAMES = new String[] { "base", "pmin", "pmax", "width", "start", "outer",
+			"inner" };
 
 	public Step() {
 		super(new double[]{0,0,0,0,0,0,0});

@@ -503,7 +503,12 @@ class PhaseGroupedTable {
 
 		@Override
 		public ColumnLabelProvider getLabelProvider() {
-			return new DummyLabelProvider("System");
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return XPDFPhase.getSystemName(((XPDFPhase) element).getSpaceGroupIndex());
+				}
+			};
 		}
 
 		@Override
@@ -537,7 +542,12 @@ class PhaseGroupedTable {
 
 		@Override
 		public ColumnLabelProvider getLabelProvider() {
-			return new DummyLabelProvider("Group");
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return XPDFPhase.getGroupFullName(((XPDFPhase) element).getSpaceGroupIndex());
+				}
+			};
 		}
 
 		@Override

@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: uk.ac.diamond.scisoft.xpdf.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.apache.commons.math3;bundle-version="[3.2.0,3.6.0)"
+ org.apache.commons.math3;bundle-version="[3.2.0,4.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.github.tschoonj.xraylib,
  org.apache.commons.lang;version="2.6.0",

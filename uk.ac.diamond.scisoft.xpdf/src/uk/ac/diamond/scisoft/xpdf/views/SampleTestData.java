@@ -92,7 +92,7 @@ public class SampleTestData {
 		}
 		case ("cSiO2"): {
 			phase.setName("cSiO2");
-			phase.setSpaceGroupIndex(32); // Pba2
+			phase.setSpaceGroupIndex(152); // P3121
 			phase.addComment("Crystalline silica,");
 			phase.addComment("also known as quartz");
 			break;

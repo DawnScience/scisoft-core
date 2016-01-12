@@ -77,8 +77,9 @@ class PhaseGroupedTable {
 		columnInterfaces.add(new CodeColumnInterface());
 		groupedColumnInterfaces.add(columnInterfaces);
 		
-		groupNames.add("");
+		groupNames.add("Physical Form");
 		columnInterfaces = new ArrayList<ColumnInterface>();
+		columnInterfaces.add(new FormColumnInterface());
 		columnInterfaces.add(new CrystalColumnInterface());
 		groupedColumnInterfaces.add(columnInterfaces);
 
@@ -124,11 +125,11 @@ class PhaseGroupedTable {
 		// For now, drag support only. Drop support for phase-defining CIF files will eventually be added
 		groupedTable.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalDragSupportListener(groupedTable));
 
-//		// phases with test data
-//		List<XPDFPhase> testPhases = new ArrayList<XPDFPhase>();
-//		testPhases.add(SampleTestData.createTestPhase("Crown Glass"));
-//		testPhases.add(SampleTestData.createTestPhase("Flint Glass"));
-//		addPhases(testPhases);
+		// phases with test data
+		List<XPDFPhase> testPhases = new ArrayList<XPDFPhase>();
+		testPhases.add(SampleTestData.createTestPhase("Crown Glass"));
+		testPhases.add(SampleTestData.createTestPhase("Flint Glass"));
+		addPhases(testPhases);
 
 	}
 
@@ -490,6 +491,46 @@ class PhaseGroupedTable {
 		}
 	}
 	
+	static class FormColumnInterface implements ColumnInterface {
+
+		@Override
+		public EditingSupport get(ColumnViewer v) {
+			return new DummyEditingSupport(v);
+		}
+
+		@Override
+		public SelectionAdapter getSelectionAdapter(PhaseGroupedTable tab,
+				TableViewerColumn col) {
+			return DummySelectionAdapter.get(tab, col);
+		}
+
+		@Override
+		public ColumnLabelProvider getLabelProvider() {
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return ((XPDFPhase) element).getForm();
+				}
+			};
+		}
+
+		@Override
+		public String getName() {
+			return "Form";
+		}
+
+		@Override
+		public int getWeight() {
+			return 10;
+		}
+
+		@Override
+		public boolean presentAsUneditable(Object element) {
+			return false;
+		}
+		
+	}
+	
 	static class CrystalColumnInterface implements ColumnInterface {
 
 		@Override
@@ -508,7 +549,7 @@ class PhaseGroupedTable {
 			return new ColumnLabelProvider() {
 				@Override
 				public String getText(Object element) {
-					return ((XPDFPhase) element).getSpaceGroup().getSystem().getName();
+					return (presentAsUneditable(element)) ? "-" : ((XPDFPhase) element).getSpaceGroup().getSystem().getName();
 				}
 			};
 		}
@@ -525,7 +566,7 @@ class PhaseGroupedTable {
 
 		@Override
 		public boolean presentAsUneditable(Object element) {
-			return false;
+			return !((XPDFPhase) element).isCrystalline();
 		}
 	}
 
@@ -547,7 +588,8 @@ class PhaseGroupedTable {
 			return new ColumnLabelProvider() {
 				@Override
 				public String getText(Object element) {
-					return ((XPDFPhase) element).getSpaceGroup().getName();
+					XPDFPhase phase = (XPDFPhase) element; 
+					return (phase.isCrystalline()) ? phase.getSpaceGroup().getName() : "-";
 				}
 			};
 		}
@@ -579,7 +621,6 @@ class PhaseGroupedTable {
 
 		@Override
 		public EditingSupport get(final ColumnViewer v) {
-//			return new DummyEditingSupport(v);
 			return new EditingSupport(v) {
 
 				@Override
@@ -617,7 +658,8 @@ class PhaseGroupedTable {
 			return new ColumnLabelProvider() {
 				@Override
 				public String getText(Object element) {
-					return axisNames[((XPDFPhase) element).getSpaceGroup().getSystem().getAxisIndices()[axisIndex]];
+					XPDFPhase phase = (XPDFPhase) element;
+					return (phase.isCrystalline()) ? axisNames[phase.getSpaceGroup().getSystem().getAxisIndices()[axisIndex]] : "-";
 				}
 
 				@Override
@@ -641,7 +683,8 @@ class PhaseGroupedTable {
 
 		@Override
 		public boolean presentAsUneditable(Object element) {
-			return ((XPDFPhase) element).getSpaceGroup().getSystem().getAxisIndices()[axisIndex] != axisIndex;
+			XPDFPhase phase = (XPDFPhase) element;
+			return !phase.isCrystalline() || phase.getSpaceGroup().getSystem().getAxisIndices()[axisIndex] != axisIndex;
 		}
 	}
 	
@@ -666,7 +709,28 @@ class PhaseGroupedTable {
 
 		@Override
 		public ColumnLabelProvider getLabelProvider() {
-			return new DummyLabelProvider(angleNames[angleIndex]);
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					XPDFPhase phase = (XPDFPhase) element;
+					if (!phase.isCrystalline())
+						return "-";
+					else {
+						int[] angles = phase.getSpaceGroup().getSystem().getFixedAngles();
+						if (angles[angleIndex] > 0)
+						return Integer.toString(angles[angleIndex]);
+					else
+						return angleNames[-angles[angleIndex]-1];
+					}
+				}
+
+				@Override
+				public Font getFont(Object element) {
+					return (presentAsUneditable((XPDFPhase) element)) ?
+							JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT) :
+								JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);
+				}
+			};
 		}
 
 		@Override
@@ -681,7 +745,10 @@ class PhaseGroupedTable {
 
 		@Override
 		public boolean presentAsUneditable(Object element) {
-			return false;
+			XPDFPhase phase = (XPDFPhase) element;
+			return !phase.isCrystalline() || 
+					phase.getSpaceGroup().getSystem().getFixedAngles()[angleIndex] > 0 ||
+					-phase.getSpaceGroup().getSystem().getFixedAngles()[angleIndex]-1 != angleIndex;
 		}
 	}
 	

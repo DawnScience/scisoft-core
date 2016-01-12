@@ -75,41 +75,41 @@ public class SampleTestData {
 		switch (name) {
 		case ("BTO"): { 
 			phase.setName("BTO");
-			phase.setSpaceGroupIndex(99); // P4mm
+			phase.setSpaceGroup(99); // P4mm
 			phase.addComment("barium titanate");
 			break;
 		}
 		case ("Calcium titanate"): {
 			phase.setName("calcium titanate");
-			phase.setSpaceGroupIndex(62); // Pnma
+			phase.setSpaceGroup(62); // Pnma
 			break;
 		}
 		case ("TiO2"): {
 			phase.setName("TiO2");
-			phase.setSpaceGroupIndex(123);  // P4mmm
+			phase.setSpaceGroup(123);  // P4mmm
 			phase.addComment("titanium dioxide");
 			break;
 		}
 		case ("cSiO2"): {
 			phase.setName("cSiO2");
-			phase.setSpaceGroupIndex(152); // P3121
+			phase.setSpaceGroup(152); // P3121
 			phase.addComment("Crystalline silica,");
 			phase.addComment("also known as quartz");
 			break;
 		}
 		case ("Crown Glass"): {
 			phase.setName("Crown glass");
-			phase.setSpaceGroupIndex(0); // was glass really the best example?
+			phase.setSpaceGroup(0); // was glass really the best example?
 			break;
 		}
 		case ("Flint Glass"): {
 			phase.setName("Flint glass");
-			phase.setSpaceGroupIndex(0);
+			phase.setSpaceGroup(0);
 			break;
 		}
 		case ("ceria"): {
 			phase.setName("ceria");
-			phase.setSpaceGroupIndex(225); //Fm-3m
+			phase.setSpaceGroup(225); //Fm-3m
 			phase.addComment("I love you, ceria!");
 			break;
 		}

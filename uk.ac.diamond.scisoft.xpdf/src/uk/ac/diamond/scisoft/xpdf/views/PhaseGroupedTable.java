@@ -23,6 +23,7 @@ import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -492,10 +493,42 @@ class PhaseGroupedTable {
 	}
 	
 	static class FormColumnInterface implements ColumnInterface {
-
+		static final String[] formLabels = {
+			XPDFPhaseForm.get(XPDFPhaseForm.Forms.values()[0]).getName(),
+			XPDFPhaseForm.get(XPDFPhaseForm.Forms.values()[1]).getName(),
+			XPDFPhaseForm.get(XPDFPhaseForm.Forms.values()[2]).getName(),
+			XPDFPhaseForm.get(XPDFPhaseForm.Forms.values()[3]).getName(),
+		};
+		
 		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
+		public EditingSupport get(final ColumnViewer v) {
+			return new EditingSupport(v) {
+				
+				@Override
+				protected void setValue(Object element, Object value) {
+					((XPDFPhase) element).setForm(formLabels[(int) value]);
+					v.refresh();
+				}
+				
+				@Override
+				protected Object getValue(Object element) {
+					for (int iForm = 0; iForm < formLabels.length; iForm++) {
+						if (((XPDFPhase) element).getForm().equalsIgnoreCase(formLabels[iForm]))
+							return iForm;
+					}
+					return -1;
+				}
+				
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return new ComboBoxCellEditor(((TableViewer) v).getTable(), formLabels, ComboBoxCellEditor.DROP_DOWN_ON_MOUSE_ACTIVATION);
+				}
+				
+				@Override
+				protected boolean canEdit(Object element) {
+					return true;
+				}
+			};
 		}
 
 		@Override

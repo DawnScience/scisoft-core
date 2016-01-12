@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.TreeSet;
 
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -38,6 +39,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.DragDetectEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.TableColumn;
@@ -506,7 +508,7 @@ class PhaseGroupedTable {
 			return new ColumnLabelProvider() {
 				@Override
 				public String getText(Object element) {
-					return XPDFPhase.getSystemName(((XPDFPhase) element).getSpaceGroupIndex());
+					return ((XPDFPhase) element).getSpaceGroup().getSystem().getName();
 				}
 			};
 		}
@@ -545,7 +547,7 @@ class PhaseGroupedTable {
 			return new ColumnLabelProvider() {
 				@Override
 				public String getText(Object element) {
-					return XPDFPhase.getGroupFullName(((XPDFPhase) element).getSpaceGroupIndex());
+					return ((XPDFPhase) element).getSpaceGroup().getName();
 				}
 			};
 		}
@@ -569,15 +571,39 @@ class PhaseGroupedTable {
 	
 	static class UnitCellColumnInterface implements ColumnInterface {
 		static final String[] axisNames = {"a", "b", "c"};
-		int axisIndex;
+		final int axisIndex;
 		
 		public UnitCellColumnInterface(int axisIndex) {
 			this.axisIndex = axisIndex; 
 		}
 
 		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
+		public EditingSupport get(final ColumnViewer v) {
+//			return new DummyEditingSupport(v);
+			return new EditingSupport(v) {
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return new TextCellEditor(((TableViewer) v).getTable());
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return !presentAsUneditable(element);
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					return axisNames[((XPDFPhase) element).getSpaceGroup().getSystem().getAxisIndices()[axisIndex]];
+				}
+
+				@Override
+				protected void setValue(Object element, Object value) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+			};
 		}
 
 		@Override
@@ -588,7 +614,19 @@ class PhaseGroupedTable {
 
 		@Override
 		public ColumnLabelProvider getLabelProvider() {
-			return new DummyLabelProvider(axisNames[axisIndex]);
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return axisNames[((XPDFPhase) element).getSpaceGroup().getSystem().getAxisIndices()[axisIndex]];
+				}
+
+				@Override
+				public Font getFont(Object element) {
+					return (presentAsUneditable((XPDFPhase) element)) ?
+							JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT) :
+								JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);
+				}
+			};
 		}
 
 		@Override
@@ -603,7 +641,7 @@ class PhaseGroupedTable {
 
 		@Override
 		public boolean presentAsUneditable(Object element) {
-			return false;
+			return ((XPDFPhase) element).getSpaceGroup().getSystem().getAxisIndices()[axisIndex] != axisIndex;
 		}
 	}
 	

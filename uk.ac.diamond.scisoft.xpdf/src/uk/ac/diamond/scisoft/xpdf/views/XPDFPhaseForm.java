@@ -13,10 +13,10 @@ import java.util.EnumMap;
 
 class XPDFPhaseForm {
 
-	static EnumMap<Forms, XPDFPhaseForm> formMap;
-	static EnumMap<Forms, String> names;
+	private static EnumMap<Forms, XPDFPhaseForm> formMap;
+	private static EnumMap<Forms, String> names;
 	public enum Forms {AMORPHOUS, GLASSY, LIQUID, CRYSTALLINE};
-	Forms form; 
+	private Forms form; 
 	
 	public static XPDFPhaseForm get(Forms inForm) {
 		if (formMap == null) 

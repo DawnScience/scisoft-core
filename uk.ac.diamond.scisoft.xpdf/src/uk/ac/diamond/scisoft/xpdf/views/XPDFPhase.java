@@ -17,6 +17,7 @@ public class XPDFPhase {
 	String name;
 	int iDCode;
 	String comment;
+	XPDFPhaseForm form;
 	XPDFSpaceGroup spaceGroup;
 	
 	/**
@@ -70,6 +71,36 @@ public class XPDFPhase {
 		
 	}
 	
+	public void setForm(String formIn) {
+		switch (formIn.toLowerCase()) {
+		case "amorphous":
+			form = XPDFPhaseForm.get(XPDFPhaseForm.Forms.AMORPHOUS);
+			break;
+		case "glass":
+		case "glassy":
+			form = XPDFPhaseForm.get(XPDFPhaseForm.Forms.GLASSY);
+			break;
+		case "liquid":
+			form = XPDFPhaseForm.get(XPDFPhaseForm.Forms.LIQUID);
+			break;
+		case "crystalline":
+		case "crystal":
+			form = XPDFPhaseForm.get(XPDFPhaseForm.Forms.CRYSTALLINE);
+			break;
+
+		default:
+			break;
+		}
+	}
+	
+	public String getForm() {
+		return form.getName();
+	}
+	
+	public boolean isCrystalline() {
+		return form.isCrystalline();
+	}
+	
 	/**
 	 * Sets the space group symmetry of the unit cell
 	 * @param spaceGroupIndex
@@ -78,6 +109,7 @@ public class XPDFPhase {
 	public void setSpaceGroup(int spaceGroupIndex) {
 		if (spaceGroupIndex > 0 && spaceGroupIndex <= XPDFSpaceGroup.nGroups)
 			this.spaceGroup = XPDFSpaceGroup.get(spaceGroupIndex);
+		this.setForm("Crystalline");
 	}
 	
 	public XPDFSpaceGroup getSpaceGroup() {

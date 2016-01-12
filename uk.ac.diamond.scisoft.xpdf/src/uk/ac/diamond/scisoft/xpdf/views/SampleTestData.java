@@ -99,12 +99,12 @@ public class SampleTestData {
 		}
 		case ("Crown Glass"): {
 			phase.setName("Crown glass");
-			phase.setSpaceGroup(0); // was glass really the best example?
+			phase.setForm("Glass");
 			break;
 		}
 		case ("Flint Glass"): {
 			phase.setName("Flint glass");
-			phase.setSpaceGroup(0);
+			phase.setForm("Glassy");
 			break;
 		}
 		case ("ceria"): {

@@ -17,11 +17,6 @@ public class XPDFPhase {
 	String name;
 	int iDCode;
 	String comment;
-	final static int nGroups = 230;
-	final static int nSystems = 7;
-	final static int[] firstGroupIndex = new int[] {1, 3, 16, 75, 143, 168, 195};
-	final static String[] SystemNames = new String[] {"Triclinic", "Monoclinic", "Orthorhombic", "Tetragonal", "Trigonal", "Hexagonal", "Cubic"};
-//	int spaceGroupIndex;
 	XPDFSpaceGroup spaceGroup;
 	
 	/**

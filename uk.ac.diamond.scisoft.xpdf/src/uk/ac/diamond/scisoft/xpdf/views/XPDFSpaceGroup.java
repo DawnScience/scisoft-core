@@ -11,9 +11,8 @@ package uk.ac.diamond.scisoft.xpdf.views;
 
 class XPDFSpaceGroup {
 
-	int number;
-	String name, shortName;
-	static XPDFSpaceGroup[] groups;
+	private int number;
+	private static XPDFSpaceGroup[] groups;
 	static final int nGroups = 230;
 	
 	private XPDFSpaceGroup() {
@@ -24,48 +23,53 @@ class XPDFSpaceGroup {
 			generateGroups();
 		}
 		// Watch out for off by 1 errors
-		return groups[groupNumber-1];
+		return groups[groupNumber];
+	}
+	
+	public int getNumber() {
+		return number;
 	}
 	
 	public String getName() {
-		return names[number-1];
+		return names[number];
 	}
 	
 	public String getShortName() {
-		return shortNames[number-1];
+		return shortNames[number];
 	}
 	
 	public CrystalSystem getSystem() {
-		if (number+1 < 1)
-			return CrystalSystem.get(0); // 0 is amorphous
-		else if (number+1 < 3)
+		if (number < 1)
+			return null; // 0 is undefined
+		else if (number < 3)
+			return CrystalSystem.get(0);
+		else if (number < 16)
 			return CrystalSystem.get(1);
-		else if (number+1 < 16)
+		else if (number < 7)
 			return CrystalSystem.get(2);
-		else if (number+1 < 75)
+		else if (number < 143)
 			return CrystalSystem.get(3);
-		else if (number+1 < 143)
+		else if (number < 168)
 			return CrystalSystem.get(4);
-		else if (number+1 < 168)
+		else if (number < 195)
 			return CrystalSystem.get(5);
-		else if (number+1 < 195)
+		else if (number < nGroups+1)
 			return CrystalSystem.get(6);
-		else if (number+1 < nGroups+1)
-			return CrystalSystem.get(7);
 		else
 			return null;
 	}
 	
 	private static void generateGroups() {
-		groups = new XPDFSpaceGroup[nGroups];
-		for (int newGroup = 0; newGroup < nGroups; newGroup++) {
+		groups = new XPDFSpaceGroup[nGroups+1];
+		for (int newGroup = 0; newGroup <= nGroups; newGroup++) {
 			XPDFSpaceGroup group = new XPDFSpaceGroup();
-			group.number = newGroup+1;
+			group.number = newGroup;
 			groups[newGroup] = group;
 		}
 	}
 	
 	private static final String[] names = {
+		"-",
 		"P 1", // Triclinic 1-2
 		"P 1̅",
 		"P 1 2 1", // Monoclinic 3-15
@@ -298,6 +302,7 @@ class XPDFSpaceGroup {
 		"I 4₁/a 3̅ 2/d"};
 
 	private static final String[] shortNames = {
+		"-",
 		"P1", 
 		"P-1",
 		"P2",

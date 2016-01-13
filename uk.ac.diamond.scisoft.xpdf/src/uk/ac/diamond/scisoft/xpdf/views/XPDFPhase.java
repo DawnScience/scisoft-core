@@ -100,13 +100,17 @@ public class XPDFPhase {
 	 * 					the space group structure to set
 	 */
 	public void setSpaceGroup(int spaceGroupIndex) {
-		if (spaceGroupIndex > 0 && spaceGroupIndex <= XPDFSpaceGroup.nGroups)
-			this.spaceGroup = XPDFSpaceGroup.get(spaceGroupIndex);
+		// If we set a space group, the phase must be crystalline
 		this.setForm(XPDFPhaseForm.get(XPDFPhaseForm.Forms.CRYSTALLINE));
-		// Find and set the crystal system, too
-		for (int i = 0; i < CrystalSystem.nSystems; i++) {
-			if (CrystalSystem.get(i).getGroups().contains(this.spaceGroup))
-				this.setCrystalSystem(CrystalSystem.get(i));
+
+		if (spaceGroupIndex >= 0 && spaceGroupIndex <= XPDFSpaceGroup.nGroups) {
+			this.spaceGroup = XPDFSpaceGroup.get(spaceGroupIndex);
+
+		if (spaceGroupIndex >= 1 && spaceGroupIndex <= XPDFSpaceGroup.nGroups)
+			// Find and set the crystal system, too
+			for (int i = 0; i < CrystalSystem.nSystems; i++)
+				if (CrystalSystem.get(i).getGroups().contains(this.spaceGroup))
+					this.setCrystalSystem(CrystalSystem.get(i));
 		}
 	}
 	

@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.xpdf.views;
 
+import java.util.List;
+
 import uk.ac.diamond.scisoft.xpdf.XPDFComposition;
 
 public class XPDFPhase {
@@ -18,6 +20,7 @@ public class XPDFPhase {
 	int iDCode;
 	String comment;
 	XPDFPhaseForm form;
+	CrystalSystem system;
 	XPDFSpaceGroup spaceGroup;
 	
 	/**
@@ -71,34 +74,24 @@ public class XPDFPhase {
 		
 	}
 	
-	public void setForm(String formIn) {
-		switch (formIn.toLowerCase()) {
-		case "amorphous":
-			form = XPDFPhaseForm.get(XPDFPhaseForm.Forms.AMORPHOUS);
-			break;
-		case "glass":
-		case "glassy":
-			form = XPDFPhaseForm.get(XPDFPhaseForm.Forms.GLASSY);
-			break;
-		case "liquid":
-			form = XPDFPhaseForm.get(XPDFPhaseForm.Forms.LIQUID);
-			break;
-		case "crystalline":
-		case "crystal":
-			form = XPDFPhaseForm.get(XPDFPhaseForm.Forms.CRYSTALLINE);
-			break;
-
-		default:
-			break;
-		}
+	public void setForm(XPDFPhaseForm formIn) {
+		form = formIn;
 	}
 	
-	public String getForm() {
-		return form.getName();
+	public XPDFPhaseForm getForm() {
+		return form;
 	}
 	
 	public boolean isCrystalline() {
 		return form.isCrystalline();
+	}
+	
+	public void setCrystalSystem(CrystalSystem inSystem) {
+		system = inSystem;
+	}
+	
+	public CrystalSystem getCrystalSystem() {
+		return system;
 	}
 	
 	/**
@@ -109,7 +102,12 @@ public class XPDFPhase {
 	public void setSpaceGroup(int spaceGroupIndex) {
 		if (spaceGroupIndex > 0 && spaceGroupIndex <= XPDFSpaceGroup.nGroups)
 			this.spaceGroup = XPDFSpaceGroup.get(spaceGroupIndex);
-		this.setForm("Crystalline");
+		this.setForm(XPDFPhaseForm.get(XPDFPhaseForm.Forms.CRYSTALLINE));
+		// Find and set the crystal system, too
+		for (int i = 0; i < CrystalSystem.nSystems; i++) {
+			if (CrystalSystem.get(i).getGroups().contains(this.spaceGroup))
+				this.setCrystalSystem(CrystalSystem.get(i));
+		}
 	}
 	
 	public XPDFSpaceGroup getSpaceGroup() {

@@ -99,12 +99,12 @@ public class SampleTestData {
 		}
 		case ("Crown Glass"): {
 			phase.setName("Crown glass");
-			phase.setForm("Glass");
+			phase.setForm(XPDFPhaseForm.get(XPDFPhaseForm.Forms.GLASSY));
 			break;
 		}
 		case ("Flint Glass"): {
 			phase.setName("Flint glass");
-			phase.setForm("Glassy");
+			phase.setForm(XPDFPhaseForm.get(XPDFPhaseForm.Forms.GLASSY));
 			break;
 		}
 		case ("ceria"): {

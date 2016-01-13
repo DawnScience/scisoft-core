@@ -58,7 +58,7 @@ class CrystalSystem {
 	}
 	
 	public int[] getFixedAngles() {
-		return fixedAxes[number];
+		return fixedAngles[number];
 	}
 	
 	private static void generateSystems() {
@@ -74,13 +74,13 @@ class CrystalSystem {
 	private final static int[] highestGroups = {2, 15, 74, 142, 167, 194, 230};
 	private final static String[] names = {"Triclinic", "Monoclinic", "Orthorhombic",
 		"Tetragonal", "Trigonal", "Hexagonal", "Cubic"};
-	private final static int[] nFreeAxes = {3, 3, 3, 2, 1, 2, 1};
-	private final static int[][] fixedAxes = {
+	private final static int[] nFreeAxes = {3, 3, 3, 2, 2, 2, 1};
+	private final static int[][] fixedAngles = {
 		new int[] {-1, -2, -3},
 		new int[] {90, -2, 90},
 		new int[] {90, 90, 90},
 		new int[] {90, 90, 90},
-		new int[] {-1, -1, -1},
+		new int[] {90, 90, 120},
 		new int[] {90, 90, 120},
 		new int[] {90, 90, 90}};
 		

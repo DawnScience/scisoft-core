@@ -739,7 +739,14 @@ class PhaseGroupedTable {
 
 				@Override
 				protected void setValue(Object element, Object value) {
-					((XPDFPhase) element).setUnitCellLength(axisIndex, Double.parseDouble((String) value));
+					double newLength;
+					try {
+						newLength = Double.parseDouble((String) value);
+					} catch (NumberFormatException nFE) {
+						// Do nothing, get out of here
+						return;
+					}
+					((XPDFPhase) element).setUnitCellLength(axisIndex, newLength);
 					v.refresh();
 				}
 				
@@ -808,8 +815,47 @@ class PhaseGroupedTable {
 		}
 
 		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
+		public EditingSupport get(final ColumnViewer v) {
+			return new EditingSupport(v) {
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return new TextCellEditor(((TableViewer) v).getTable());
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return !presentAsUneditable(element);
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					XPDFPhase phase = (XPDFPhase) element;
+					int rawAngle = phase.getSpaceGroup().getSystem().getFixedAngles()[angleIndex];
+					if (rawAngle > 0) {
+						return Integer.toString(rawAngle);
+					} else {
+						int angleAxis = -rawAngle-1;
+						double angle = phase.getUnitCellAngle(angleAxis);
+						return (angle == 0.0) ? angleNames[angleAxis] : Double.toString(angle); 
+					}
+						
+				}
+
+				@Override
+				protected void setValue(Object element, Object value) {
+					double newAngle;
+					try {
+						newAngle = Double.parseDouble((String) value);
+					} catch (NumberFormatException nFE) {
+						// Do nothing, get out of here
+						return;
+					}
+					((XPDFPhase) element).setUnitCellAngle(angleIndex, newAngle);
+					v.refresh();
+				}
+				
+			};
 		}
 
 		@Override
@@ -824,14 +870,18 @@ class PhaseGroupedTable {
 				@Override
 				public String getText(Object element) {
 					XPDFPhase phase = (XPDFPhase) element;
-					if (!phase.isCrystalline())
+					if (!phase.isCrystalline()) {
+						// Non-crysatlline phase
 						return "-";
-					else {
-						int[] angles = phase.getSpaceGroup().getSystem().getFixedAngles();
-						if (angles[angleIndex] > 0)
-						return Integer.toString(angles[angleIndex]);
-					else
-						return angleNames[-angles[angleIndex]-1];
+					} else {
+						int rawAngle = phase.getSpaceGroup().getSystem().getFixedAngles()[angleIndex];
+						if (rawAngle > 0) {
+							return Integer.toString(rawAngle);
+						} else {
+							int angleAxis = -rawAngle-1;
+							double angle = phase.getUnitCellAngle(angleAxis);
+							return (angle == 0.0) ? angleNames[angleAxis] : Double.toString(angle); 
+						}
 					}
 				}
 

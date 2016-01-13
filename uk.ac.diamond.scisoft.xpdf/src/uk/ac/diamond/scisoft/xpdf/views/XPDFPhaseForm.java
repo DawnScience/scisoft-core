@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.xpdf.views;
 
+import java.util.Collection;
 import java.util.EnumMap;
 
 class XPDFPhaseForm {
@@ -36,6 +37,15 @@ class XPDFPhaseForm {
 		names.put(Forms.GLASSY, "Glassy");
 		names.put(Forms.LIQUID, "Liquid");
 		names.put(Forms.CRYSTALLINE, "Crystalline");
+	}
+
+	public static String[] getNames() {
+		Collection<String> allNames = names.values();
+		return allNames.toArray(new String[allNames.size()]);
+	}
+	
+	public int getOrdinal() {
+		return form.ordinal();
 	}
 	
 	public String getName() {

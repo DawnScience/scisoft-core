@@ -11,10 +11,16 @@ package uk.ac.diamond.scisoft.analysis.optimize;
 
 import java.util.Arrays;
 
-import org.apache.commons.math3.analysis.DifferentiableMultivariateVectorFunction;
 import org.apache.commons.math3.analysis.MultivariateMatrixFunction;
-import org.apache.commons.math3.optimization.PointVectorValuePair;
-import org.apache.commons.math3.optimization.general.LevenbergMarquardtOptimizer;
+import org.apache.commons.math3.analysis.MultivariateVectorFunction;
+import org.apache.commons.math3.optim.InitialGuess;
+import org.apache.commons.math3.optim.MaxEval;
+import org.apache.commons.math3.optim.PointVectorValuePair;
+import org.apache.commons.math3.optim.nonlinear.vector.ModelFunction;
+import org.apache.commons.math3.optim.nonlinear.vector.ModelFunctionJacobian;
+import org.apache.commons.math3.optim.nonlinear.vector.Target;
+import org.apache.commons.math3.optim.nonlinear.vector.Weight;
+import org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquardtOptimizer;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
@@ -40,49 +46,48 @@ public class ApacheLevenbergMarquardt implements IOptimizer,ILeastSquaresOptimiz
 
 		LevenbergMarquardtOptimizer cg = new LevenbergMarquardtOptimizer();
 
-		DifferentiableMultivariateVectorFunction dmvf = new DifferentiableMultivariateVectorFunction() {
+		MultivariateVectorFunction vec = new MultivariateVectorFunction() {
 			
 			@Override
 			public double[] value(double[] arg0) throws IllegalArgumentException {
 				function.setParameterValues(arg0);
 				return ((DoubleDataset)function.calculateValues(newCoords)).getData().clone();
 			}
+		};
+
+		MultivariateMatrixFunction jac = new MultivariateMatrixFunction() {
 			
 			@Override
-			public MultivariateMatrixFunction jacobian() {
-				return new MultivariateMatrixFunction() {
-					
-					@Override
-					public double[][] value(double[] arg0) throws IllegalArgumentException {
-						
-						int length = values.getData().length;
-						double[][] result = new double[length][];
-						IParameter[] params = function.getParameters();
-						
+			public double[][] value(double[] arg0) throws IllegalArgumentException {
+				int length = values.getData().length;
+				double[][] result = new double[length][];
+				IParameter[] params = function.getParameters();
+				
 
-							for (int j = 0; j< length ;j++) {
-								double[] d = new double[arg0.length];
-								for (int i = 0; i < arg0.length; i++) {
-									d[i] = function.partialDeriv(params[i], newCoords[0].getData()[j]);
-								}
-								result[j] = d;
-							}
-							
-							
-						return result;
+					for (int j = 0; j< length ;j++) {
+						double[] d = new double[arg0.length];
+						for (int i = 0; i < arg0.length; i++) {
+							d[i] = function.partialDeriv(params[i], newCoords[0].getData()[j]);
+						}
+						result[j] = d;
 					}
-				};
+					
+					
+				return result;
 			}
-		};
+		}; 
 		
 		double[] start = function.getParameterValues();
 
-		double[] weights = ((double[])values.getBuffer()).clone();
+		double[] weights = values.getData().clone();
 		Arrays.fill(weights, 1);
 		
-		PointVectorValuePair result = cg.optimize(1000, dmvf, (double[])values.getBuffer(), weights, start);
+		PointVectorValuePair result = cg.optimize(new MaxEval(1000),
+				new ModelFunction(vec), new ModelFunctionJacobian(jac),
+				new Target(values.getData()), 
+				new Weight(weights), new InitialGuess(start));
 		function.setParameterValues(result.getPoint());
-		errors = cg.computeSigma(result.getPoint(), 0);
+		errors = cg.computeSigma(result.getPoint(), 1e-14);
 	}
 
 	@Override

@@ -11,11 +11,10 @@ package uk.ac.diamond.scisoft.analysis.optimize;
 
 import java.util.Arrays;
 
-import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
-import org.apache.commons.math.analysis.MultivariateMatrixFunction;
-import org.apache.commons.math.optimization.VectorialPointValuePair;
-import org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizer;
+import org.apache.commons.math3.analysis.DifferentiableMultivariateVectorFunction;
+import org.apache.commons.math3.analysis.MultivariateMatrixFunction;
+import org.apache.commons.math3.optimization.PointVectorValuePair;
+import org.apache.commons.math3.optimization.general.LevenbergMarquardtOptimizer;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
@@ -41,10 +40,10 @@ public class ApacheLevenbergMarquardt implements IOptimizer,ILeastSquaresOptimiz
 
 		LevenbergMarquardtOptimizer cg = new LevenbergMarquardtOptimizer();
 
-		DifferentiableMultivariateVectorialFunction dmvf = new DifferentiableMultivariateVectorialFunction() {
+		DifferentiableMultivariateVectorFunction dmvf = new DifferentiableMultivariateVectorFunction() {
 			
 			@Override
-			public double[] value(double[] arg0) throws FunctionEvaluationException, IllegalArgumentException {
+			public double[] value(double[] arg0) throws IllegalArgumentException {
 				function.setParameterValues(arg0);
 				return ((DoubleDataset)function.calculateValues(newCoords)).getData().clone();
 			}
@@ -54,7 +53,7 @@ public class ApacheLevenbergMarquardt implements IOptimizer,ILeastSquaresOptimiz
 				return new MultivariateMatrixFunction() {
 					
 					@Override
-					public double[][] value(double[] arg0) throws FunctionEvaluationException, IllegalArgumentException {
+					public double[][] value(double[] arg0) throws IllegalArgumentException {
 						
 						int length = values.getData().length;
 						double[][] result = new double[length][];
@@ -81,9 +80,9 @@ public class ApacheLevenbergMarquardt implements IOptimizer,ILeastSquaresOptimiz
 		double[] weights = ((double[])values.getBuffer()).clone();
 		Arrays.fill(weights, 1);
 		
-		VectorialPointValuePair result = cg.optimize(dmvf, (double[])values.getBuffer(), weights, start);
+		PointVectorValuePair result = cg.optimize(1000, dmvf, (double[])values.getBuffer(), weights, start);
 		function.setParameterValues(result.getPoint());
-		errors = cg.guessParametersErrors();
+		errors = cg.computeSigma(result.getPoint(), 0);
 	}
 
 	@Override

@@ -30,7 +30,8 @@ import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
-import uk.ac.diamond.scisoft.analysis.optimize.ApacheLevenbergMarquardt;
+import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
+import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
 
 public class PeakFittingEllipseFinder {
@@ -163,7 +164,7 @@ public class PeakFittingEllipseFinder {
 				DoubleDataset xData = DoubleDataset.createRange(sub.getSize());
 				int maxPos = sub.maxPos()[0];
 				g = new Gaussian(new double[]{maxPos,1,sub.getDouble(maxPos)});
-				Fitter.fit(xData, sub, new ApacheLevenbergMarquardt(), g);
+				Fitter.fit(xData, sub, new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT), g);
 				
 			} catch (Exception e) {
 				logger.trace(e.getMessage());

@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -636,8 +637,38 @@ class PhaseGroupedTable {
 	static class GroupColumnInterface implements ColumnInterface {
 
 		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
+		public EditingSupport get(final ColumnViewer v) {
+			return new EditingSupport(v){
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					XPDFPhase phase = (XPDFPhase) element;
+					List<String> groupNames = new LinkedList<String>();
+					for (XPDFSpaceGroup group : phase.getCrystalSystem().getGroups())
+						groupNames.add(group.getName());
+
+					return new ComboBoxCellEditor(((TableViewer) v).getTable(), groupNames.toArray(new String[groupNames.size()]));
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return ((XPDFPhase) element).isCrystalline();
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					XPDFPhase phase = (XPDFPhase) element;
+					return phase.getSpaceGroup().getNumber() - phase.getCrystalSystem().getGroups().get(0).getNumber();
+				}
+
+				@Override
+				protected void setValue(Object element, Object value) {
+					XPDFPhase phase = (XPDFPhase) element;
+					phase.setSpaceGroup((int) value + phase.getCrystalSystem().getGroups().get(0).getNumber());
+					v.refresh();
+				}
+				
+			};
 		}
 
 		@Override
@@ -669,7 +700,7 @@ class PhaseGroupedTable {
 
 		@Override
 		public boolean presentAsUneditable(Object element) {
-			return false;
+			return !((XPDFPhase) element).isCrystalline();
 		}
 		
 	}

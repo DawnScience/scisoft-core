@@ -10,7 +10,6 @@
 		<project>org.eclipse.dawnsci.hdf5</project>
 		<project>tp</project>
 		<project>uk.ac.diamond.CBFlib</project>
-		<project>uk.ac.gda.common</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

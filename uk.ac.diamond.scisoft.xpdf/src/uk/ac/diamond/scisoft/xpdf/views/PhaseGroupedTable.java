@@ -493,12 +493,6 @@ class PhaseGroupedTable {
 	}
 	
 	static class FormColumnInterface implements ColumnInterface {
-		static final String[] formLabels = {
-			XPDFPhaseForm.get(XPDFPhaseForm.Forms.values()[0]).getName(),
-			XPDFPhaseForm.get(XPDFPhaseForm.Forms.values()[1]).getName(),
-			XPDFPhaseForm.get(XPDFPhaseForm.Forms.values()[2]).getName(),
-			XPDFPhaseForm.get(XPDFPhaseForm.Forms.values()[3]).getName(),
-		};
 		
 		@Override
 		public EditingSupport get(final ColumnViewer v) {
@@ -506,22 +500,26 @@ class PhaseGroupedTable {
 				
 				@Override
 				protected void setValue(Object element, Object value) {
-					((XPDFPhase) element).setForm(formLabels[(int) value]);
+					XPDFPhase phase = (XPDFPhase) element;
+					XPDFPhaseForm oldForm = phase.getForm();
+					XPDFPhaseForm newForm = XPDFPhaseForm.get(XPDFPhaseForm.Forms.values()[(int) value]); 
+					phase.setForm(newForm);
+					if (oldForm != newForm)
+						if (newForm == XPDFPhaseForm.get(XPDFPhaseForm.Forms.CRYSTALLINE))
+							phase.setCrystalSystem(CrystalSystem.get(0)); // Triclinic
+						else
+							phase.setCrystalSystem(null);
 					v.refresh();
 				}
 				
 				@Override
 				protected Object getValue(Object element) {
-					for (int iForm = 0; iForm < formLabels.length; iForm++) {
-						if (((XPDFPhase) element).getForm().equalsIgnoreCase(formLabels[iForm]))
-							return iForm;
-					}
-					return -1;
+					return ((XPDFPhase) element).getForm().getOrdinal();
 				}
 				
 				@Override
 				protected CellEditor getCellEditor(Object element) {
-					return new ComboBoxCellEditor(((TableViewer) v).getTable(), formLabels, ComboBoxCellEditor.DROP_DOWN_ON_MOUSE_ACTIVATION);
+					return new ComboBoxCellEditor(((TableViewer) v).getTable(), XPDFPhaseForm.getNames());
 				}
 				
 				@Override
@@ -542,7 +540,7 @@ class PhaseGroupedTable {
 			return new ColumnLabelProvider() {
 				@Override
 				public String getText(Object element) {
-					return ((XPDFPhase) element).getForm();
+					return ((XPDFPhase) element).getForm().getName();
 				}
 			};
 		}
@@ -567,8 +565,38 @@ class PhaseGroupedTable {
 	static class CrystalColumnInterface implements ColumnInterface {
 
 		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
+		public EditingSupport get(final ColumnViewer v) {
+			return new EditingSupport(v) {
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return new ComboBoxCellEditor(((TableViewer) v).getTable(), CrystalSystem.getNames());
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return ((XPDFPhase) element).isCrystalline();
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					return ((XPDFPhase) element).getCrystalSystem().getOrdinal();
+				}
+
+				@Override
+				protected void setValue(Object element, Object value) {
+					XPDFPhase phase = (XPDFPhase) element;
+					CrystalSystem oldSystem = phase.getCrystalSystem(); 
+					CrystalSystem newSystem = CrystalSystem.get((int) value);
+					
+					phase.setCrystalSystem(newSystem);					
+					if (oldSystem != newSystem)
+						phase.setSpaceGroup(0);
+
+					v.refresh();
+				}
+				
+			};
 		}
 
 		@Override
@@ -582,7 +610,9 @@ class PhaseGroupedTable {
 			return new ColumnLabelProvider() {
 				@Override
 				public String getText(Object element) {
-					return (presentAsUneditable(element)) ? "-" : ((XPDFPhase) element).getSpaceGroup().getSystem().getName();
+					return (!presentAsUneditable(element)) ? 
+							((XPDFPhase) element).getCrystalSystem().getName() :
+								 "-";
 				}
 			};
 		}

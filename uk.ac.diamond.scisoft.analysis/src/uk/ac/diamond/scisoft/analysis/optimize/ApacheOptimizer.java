@@ -12,6 +12,19 @@ package uk.ac.diamond.scisoft.analysis.optimize;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.analysis.MultivariateVectorFunction;
 import org.apache.commons.math3.exception.TooManyEvaluationsException;
+import org.apache.commons.math3.fitting.leastsquares.GaussNewtonOptimizer;
+import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
+import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer;
+import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer.Optimum;
+import org.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem;
+import org.apache.commons.math3.fitting.leastsquares.LevenbergMarquardtOptimizer;
+import org.apache.commons.math3.fitting.leastsquares.MultivariateJacobianFunction;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.linear.SingularMatrixException;
 import org.apache.commons.math3.optim.InitialGuess;
 import org.apache.commons.math3.optim.MaxEval;
 import org.apache.commons.math3.optim.PointValuePair;
@@ -31,11 +44,19 @@ import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.NelderMeadSimplex
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.PowellOptimizer;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
 import org.apache.commons.math3.random.Well19937c;
+import org.apache.commons.math3.util.Pair;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ApacheOptimizer extends AbstractOptimizer {
+import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.CoordinatesIterator;
+
+public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresOptimizer {
 	private static Logger logger = LoggerFactory.getLogger(ApacheOptimizer.class);
 
 	public MultivariateFunction createFunction() {
@@ -68,6 +89,65 @@ public class ApacheOptimizer extends AbstractOptimizer {
 		return f;
 	}
 
+	public MultivariateJacobianFunction createJacobianFunction() {
+		final int size = coords[0].getSize();
+		final AFunction afn;
+		final CoordinatesIterator it;
+		final DoubleDataset vd, pvd;
+		final double[][] dm = new double[size][n];
+		if (function instanceof AFunction) {
+			afn = (AFunction) function;
+			it = afn.getIterator(coords);
+			vd = (DoubleDataset) DatasetFactory.zeros(coords[0].getShapeRef(), Dataset.FLOAT64);
+			pvd = vd.clone();
+		} else {
+			afn = null;
+			it = null;
+			vd = null;
+			pvd = null;
+		}
+
+		MultivariateJacobianFunction f = new MultivariateJacobianFunction() {
+			
+			@SuppressWarnings("null")
+			@Override
+			public Pair<RealVector, RealMatrix> value(RealVector point) {
+				if (point instanceof ArrayRealVector) {
+					setParameterValues(((ArrayRealVector) point).getDataRef());
+				} else {
+					setParameterValues(point.toArray());
+				}
+				final double[] dv ;
+				if (afn != null) {
+					dv = vd.getData();
+					AFunction afn = (AFunction) function;
+					afn.fillWithValues(vd, it);
+					double[] pd = pvd.getData();
+					for (int i = 0; i < n; i++) { // assuming number of parameters is less than number of coordinates
+						IParameter p = params.get(i);
+						afn.fillWithPartialDerivativeValues(p, pvd, it);
+						for (int j = 0; j < size; j++) {
+							dm[j][i] = pd[j];
+						}
+					}
+				} else {
+					dv = calculateValues().getData();
+					for (int i = 0; i < n; i++) {
+						IParameter p = params.get(i);
+						DoubleDataset dp = (DoubleDataset) DatasetUtils.cast(function.calculatePartialDerivativeValues(p, coords), Dataset.FLOAT64);
+						double[] pd = dp.getData();
+						for (int j = 0; j < size; j++) {
+							dm[j][i] = pd[j];
+						}
+					}
+				}
+				return new Pair<RealVector, RealMatrix>(new ArrayRealVector(dv, false), new Array2DRowRealMatrix(dm, false));
+			}
+		};
+
+		return f;
+	}
+
 	public Long seed = null;
 
 	private static final int MAX_ITER = 10000;
@@ -75,9 +155,10 @@ public class ApacheOptimizer extends AbstractOptimizer {
 	private static final double REL_TOL = 1e-7;
 	private static final double ABS_TOL = 1e-15;
 
-	public enum Optimizer { SIMPLEX_MD, SIMPLEX_NM, POWELL, CMAES, BOBYQA, CONJUGATE_GRADIENT }
+	public enum Optimizer { SIMPLEX_MD, SIMPLEX_NM, POWELL, CMAES, BOBYQA, CONJUGATE_GRADIENT, GAUSS_NEWTON, LEVENBERG_MARQUARDT }
 
-	Optimizer optimizer;
+	private Optimizer optimizer;
+	private double[] errors = null;
 
 	public ApacheOptimizer(Optimizer opt) {
 		optimizer = opt;
@@ -97,8 +178,20 @@ public class ApacheOptimizer extends AbstractOptimizer {
 			return new PowellOptimizer(REL_TOL, ABS_TOL, checker);
 		case SIMPLEX_MD:
 		case SIMPLEX_NM:
-		default:
 			return new SimplexOptimizer(checker);
+		default:
+			throw new IllegalStateException("Should not be called");
+		}
+	}
+
+	private LeastSquaresOptimizer createLeastSquaresOptimizer() {
+		switch (optimizer) {
+		case GAUSS_NEWTON:
+			return new GaussNewtonOptimizer();
+		case LEVENBERG_MARQUARDT:
+			return new LevenbergMarquardtOptimizer();
+		default:
+			throw new IllegalStateException("Should not be called");
 		}
 	}
 
@@ -116,20 +209,34 @@ public class ApacheOptimizer extends AbstractOptimizer {
 
 	@Override
 	void internalOptimize() throws Exception {
+		switch (optimizer) {
+		case LEVENBERG_MARQUARDT:
+		case GAUSS_NEWTON:
+			internalLeastSquaresOptimize();
+			break;
+		default:
+			internalScalarOptimize();
+			break;
+		}
+	}
+
+	private void internalScalarOptimize() {
 		MultivariateOptimizer opt = createOptimizer();
-		MultivariateFunction fn = createFunction();
-		ObjectiveFunction of = new ObjectiveFunction(fn);
-		InitialGuess ig = new InitialGuess(getParameterValues());
 		SimpleBounds bd = createBounds();
-		MaxEval me = new MaxEval(MAX_EVAL);
-		double min = Double.POSITIVE_INFINITY;
-		double res = Double.NaN;
 		double offset = 1e12;
 		double[] scale = new double[n];
 		for (int i = 0; i < n; i++) {
 			scale[i] = offset*0.25;
 		}
-		MultivariateFunctionPenaltyAdapter af;
+		MultivariateFunction fn = createFunction();
+		if (optimizer == Optimizer.SIMPLEX_MD || optimizer == Optimizer.SIMPLEX_NM) {
+			fn = new MultivariateFunctionPenaltyAdapter(fn, bd.getLower(), bd.getUpper(), offset, scale);
+		}
+		ObjectiveFunction of = new ObjectiveFunction(fn);
+		InitialGuess ig = new InitialGuess(getParameterValues());
+		MaxEval me = new MaxEval(MAX_EVAL);
+		double min = Double.POSITIVE_INFINITY;
+		double res = Double.NaN;
 
 		try {
 			PointValuePair result;
@@ -137,7 +244,7 @@ public class ApacheOptimizer extends AbstractOptimizer {
 			switch (optimizer) {
 			case CONJUGATE_GRADIENT:
 //				af = new MultivariateFunctionPenaltyAdapter(fn, bd.getLower(), bd.getUpper(), offset, scale);
-				result = opt.optimize(ig, GoalType.MINIMIZE, new ObjectiveFunction(fn), me,
+				result = opt.optimize(ig, GoalType.MINIMIZE, of, me,
 						new ObjectiveFunctionGradient(createGradientFunction()));
 				break;
 			case BOBYQA:
@@ -157,16 +264,13 @@ public class ApacheOptimizer extends AbstractOptimizer {
 						new CMAESOptimizer.Sigma(sigma), new CMAESOptimizer.PopulationSize(p));
 				break;
 			case SIMPLEX_MD:
-			default:
-				af = new MultivariateFunctionPenaltyAdapter(fn, bd.getLower(), bd.getUpper(), offset, scale);
-				result = opt.optimize(ig, GoalType.MINIMIZE, new ObjectiveFunction(af), me,
-						new MultiDirectionalSimplex(n));
+				result = opt.optimize(ig, GoalType.MINIMIZE, of, me, new MultiDirectionalSimplex(n));
 				break;
 			case SIMPLEX_NM:
-				af = new MultivariateFunctionPenaltyAdapter(fn, bd.getLower(), bd.getUpper(), offset, scale);
-				result = opt.optimize(ig, GoalType.MINIMIZE, new ObjectiveFunction(af), me,
-						new NelderMeadSimplex(n));
+				result = opt.optimize(ig, GoalType.MINIMIZE, of, me, new NelderMeadSimplex(n));
 				break;
+			default:
+				throw new IllegalStateException("Should not be called");
 			}
 
 			// logger.info("Q-space fit: rms = {}, x^2 = {}", opt.getRMS(), opt.getChiSquare());
@@ -185,5 +289,48 @@ public class ApacheOptimizer extends AbstractOptimizer {
 			throw new IllegalArgumentException("Could not fit as optimizer did not converge");
 //				logger.error("Convergence problem: max iterations ({}) exceeded", opt.getMaxIterations());
 		}
+	}
+
+	/**
+	 * create a multivariateJacobianFunction from MVF and MMF (using builder?)
+	 * 
+	 */
+	private void internalLeastSquaresOptimize() {
+		LeastSquaresOptimizer opt = createLeastSquaresOptimizer();
+
+		try {
+			
+			LeastSquaresBuilder builder = new LeastSquaresBuilder().model(createJacobianFunction())
+					.target(data.getData()).start(getParameterValues()).lazyEvaluation(false)
+					.maxEvaluations(MAX_EVAL).maxIterations(MAX_ITER);
+
+			if (weight != null) {
+				builder.weight(MatrixUtils.createRealDiagonalMatrix(weight.getData()));
+			}
+
+			// TODO add checker, validator
+			LeastSquaresProblem problem = builder.build();
+
+			Optimum result = opt.optimize(problem);
+
+			RealVector res = result.getPoint();
+			setParameterValues(res instanceof ArrayRealVector ? ((ArrayRealVector) res).getDataRef() : res.toArray());
+			try {
+				RealVector err = result.getSigma(1e-14);
+				errors = err instanceof ArrayRealVector ? ((ArrayRealVector) err).getDataRef() : err.toArray();
+			} catch (SingularMatrixException e) {
+				logger.warn("Could not find errors as covariance matrix was singular");
+			}
+
+			logger.trace("Residual: {} from {}", result.getRMS(), Math.sqrt(calculateResidual()));
+		} catch (Exception e) {
+			logger.error("Problem with least squares optimizer", e);
+			throw new IllegalArgumentException("Problem with least squares optimizer");
+		}
+	}
+
+	@Override
+	public double[] guessParametersErrors() {
+		return errors;
 	}
 }

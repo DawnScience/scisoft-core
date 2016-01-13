@@ -129,8 +129,10 @@ class PhaseGroupedTable {
 
 		// phases with test data
 		List<XPDFPhase> testPhases = new ArrayList<XPDFPhase>();
-		testPhases.add(SampleTestData.createTestPhase("Crown Glass"));
+//		testPhases.add(SampleTestData.createTestPhase("Crown Glass"));
 		testPhases.add(SampleTestData.createTestPhase("Flint Glass"));
+		testPhases.add(SampleTestData.createTestPhase("microcline"));
+		testPhases.add(SampleTestData.createTestPhase("cryolite"));
 		addPhases(testPhases);
 
 	}
@@ -729,13 +731,16 @@ class PhaseGroupedTable {
 
 				@Override
 				protected Object getValue(Object element) {
-					return axisNames[((XPDFPhase) element).getSpaceGroup().getSystem().getAxisIndices()[axisIndex]];
+					XPDFPhase phase = (XPDFPhase) element;
+					int axisIndexData = phase.getSpaceGroup().getSystem().getAxisIndices()[axisIndex];
+					double cellLength = phase.getUnitCellLength(axisIndexData);
+					return (cellLength == 0.0) ? axisNames[axisIndexData] : Double.toString(cellLength); 
 				}
 
 				@Override
 				protected void setValue(Object element, Object value) {
-					// TODO Auto-generated method stub
-					
+					((XPDFPhase) element).setUnitCellLength(axisIndex, Double.parseDouble((String) value));
+					v.refresh();
 				}
 				
 			};
@@ -753,7 +758,19 @@ class PhaseGroupedTable {
 				@Override
 				public String getText(Object element) {
 					XPDFPhase phase = (XPDFPhase) element;
-					return (phase.isCrystalline()) ? axisNames[phase.getSpaceGroup().getSystem().getAxisIndices()[axisIndex]] : "-";
+					String label;
+					if (!phase.isCrystalline())
+						label = "-";
+					else {
+						int axisIndexData = phase.getSpaceGroup().getSystem().getAxisIndices()[axisIndex];
+						double cellLength = phase.getUnitCellLength(axisIndexData);
+
+						if (cellLength == 0.0)
+							label = axisNames[axisIndexData];
+						else
+							label = Double.toString(cellLength);
+					}
+					return label;
 				}
 
 				@Override

@@ -113,6 +113,17 @@ public class SampleTestData {
 			phase.addComment("I love you, ceria!");
 			break;
 		}
+		case ("microcline"): {
+			phase.setName("microcline");
+			phase.setSpaceGroup(2); // P-1
+			phase.addComment("bright blue");
+			break;
+		}
+		case ("cryolite"): {
+			phase.setName("cryolite");
+			phase.setSpaceGroup(10); // P2/m
+			break;
+		}
 		default:
 		}
 		

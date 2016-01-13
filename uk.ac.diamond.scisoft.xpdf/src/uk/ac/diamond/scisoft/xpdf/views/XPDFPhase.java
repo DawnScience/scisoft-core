@@ -11,23 +11,28 @@ package uk.ac.diamond.scisoft.xpdf.views;
 
 import java.util.List;
 
+import org.apache.commons.math3.exception.OutOfRangeException;
+
 import uk.ac.diamond.scisoft.xpdf.XPDFComposition;
 
 public class XPDFPhase {
 
-	
-	String name;
-	int iDCode;
-	String comment;
-	XPDFPhaseForm form;
-	CrystalSystem system;
-	XPDFSpaceGroup spaceGroup;
+	private String name;
+	private int iDCode;
+	private String comment;
+	private XPDFPhaseForm form;
+	private CrystalSystem system;
+	private XPDFSpaceGroup spaceGroup;
+	private double[] unitCellLengths;
+	private double[] unitCellDegrees;
+	private static final int nDim = 3;
 	
 	/**
 	 * Default constructor
 	 */
 	public XPDFPhase() {
-		
+		unitCellLengths = new double[] {0, 0, 0}; // zero is meaningless, used as a default value
+		unitCellDegrees = new double[] {0, 0, 0}; // ditto
 	}
 	
 	/**
@@ -35,7 +40,7 @@ public class XPDFPhase {
 	 * @param inPhase
 	 */
 	public XPDFPhase(XPDFPhase inPhase) {
-		
+		//TODO copy some things
 	}
 	
 	/**
@@ -118,6 +123,59 @@ public class XPDFPhase {
 		return spaceGroup;
 	}
 
+	public void setUnitCellLengths(double[] lengths) {
+		for (int i = 0; i < nDim; i++)
+			unitCellLengths[i] = lengths[i];
+	}
+	
+	public void setUnitCellLengths(double a, double b, double c) {
+		unitCellLengths[0] = a;
+		unitCellLengths[1] = b;
+		unitCellLengths[2] = c;
+	}
+	
+	public void setUnitCellLength(int dimension, double l) {
+		if (dimension < 0 || dimension >= nDim)
+			throw new OutOfRangeException(dimension, 0, nDim);
+		unitCellLengths[dimension] = l;
+	}
+	
+	public double[] getUnitCellLengths() {
+		return unitCellLengths;
+	}
+	
+	public double getUnitCellLength(int dimension) {
+		if (dimension < 0 || dimension >= nDim)
+			throw new OutOfRangeException(dimension, 0, nDim);
+		return unitCellLengths[dimension];
+	}
+	
+	public void setUnitCellAngles(double[] angles) {
+		for (int i = 0; i < nDim; i++)
+			unitCellDegrees[i] = angles[i];
+	}
+	
+	public void setUnitCellAngles(double a, double b, double c) {
+		unitCellDegrees[0] = a;
+		unitCellDegrees[1] = b;
+		unitCellDegrees[2] = c;
+	}
+	
+	public void setUnitCellAngle(int dimension, double a) {
+		if (dimension < 0 || dimension >= nDim)
+			throw new OutOfRangeException(dimension, 0, nDim);
+		unitCellDegrees[dimension] = a;
+	}
+	
+	public double[] getUnitCellAngle() {
+		return unitCellDegrees;
+	}
+	
+	public double getUnitCellAngle(int dimension) {
+		if (dimension < 0 || dimension >= nDim)
+			throw new OutOfRangeException(dimension, 0, nDim);
+		return unitCellDegrees[dimension];
+	}
 	/**
 	 * Returns the density.
 	 * @return the crystallographic density of the phase in g cm⁻³.
@@ -137,7 +195,7 @@ public class XPDFPhase {
 	}
 	
 	public double getUnitCellVolume() {
-		return 0.0;
+		return unitCellLengths[0] * unitCellLengths[1] * unitCellLengths[2];
 	}
 
 	public void addComment(String inComment) {

@@ -58,6 +58,7 @@ public class XPDFSampleEditorView extends ViewPart {
 	private Action clearAction;
 
 	private Action deletePhaseAction;
+	private Action newPhaseAction;
 	
 	private SampleGroupedTable sampleTable;
 	private PhaseGroupedTable phaseTable;
@@ -214,6 +215,9 @@ public class XPDFSampleEditorView extends ViewPart {
 		deletePhaseAction.setText("Delete unused");
 		deletePhaseAction.setToolTipText("Delete selected (or all) phases not used by a sample.");
 		
+		newPhaseAction = new NewPhaseAction();
+		newPhaseAction.setText("New");
+		newPhaseAction.setToolTipText("New blank phase");
 		
 		hookIntoContextMenu();
 		hookIntoPhaseContextMenu();
@@ -430,6 +434,7 @@ public class XPDFSampleEditorView extends ViewPart {
 	}
 
 	protected void fillPhaseContextMenu(IMenuManager manager) {
+		manager.add(newPhaseAction);
 		manager.add(deletePhaseAction);
 	}	
 	
@@ -446,6 +451,15 @@ public class XPDFSampleEditorView extends ViewPart {
 					unusedPhases.add(phase);
 			phaseTable.removeAll(unusedPhases);
 			phaseTable.refresh();
+		}
+	}
+	
+	private class NewPhaseAction extends Action {
+		@Override
+		public void run() {
+			List<XPDFPhase> newPhases = new ArrayList<XPDFPhase>();
+			newPhases.add(new XPDFPhase());
+			phaseTable.addPhases(newPhases);
 		}
 	}
 	

@@ -9,7 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting;
 
-import org.junit.Test;
+import java.util.HashMap;
 
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
@@ -17,49 +17,16 @@ import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 public class GeneticAlgFittingTest extends AbstractFittingTestBase {
 
 	static final long SEED = 12357L;
+	static {
+		deltaFactor = new HashMap<String, int[]>();
+		deltaFactor.put(GAUSSIAN, new int[] {1, 1});
+		deltaFactor.put(LORENTZIAN, new int[] {4, 6});
+		deltaFactor.put(PEARSON_VII, new int[] {1, 2});
+		deltaFactor.put(PSEUDO_VOIGT, new int[] {1, 7});
+	}
 
 	@Override
 	public IOptimizer createOptimizer() {
 		return new GeneticAlg(accuracy, SEED);
-	}
-
-	@Test
-	public void testFWHMGaussian() {
-		checkClose("Gaussian fwhm", fwhm, fittedGaussian.get(0).getPeak(0).getFWHM(), delta);
-	}
-
-	@Test
-	public void testFWHMLorentzian() {
-		checkClose("Lorentzian fwhm", fwhm, fittedLorentzian.get(0).getPeak(0).getFWHM(), 4*delta);
-	}
-
-	@Test
-	public void testFWHMPearsonVII() {
-		checkClose("Pearson7 fwhm", fwhm, fittedPearsonVII.get(0).getPeak(0).getFWHM(), delta);
-	}
-
-	@Test
-	public void testFWHMPseudoVoigt() {
-		checkClose("PseudoVoigt fwhm", fwhm, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), delta);
-	}
-
-	@Test
-	public void testAreaGaussian() {
-		checkClose("Gaussian area", area, fittedGaussian.get(0).getPeak(0).getArea(), delta);
-	}
-
-	@Test
-	public void testAreaLorentzian() {
-		checkClose("Lorentzian area", area, fittedLorentzian.get(0).getPeak(0).getArea(), 6*delta);
-	}
-
-	@Test
-	public void testAreaPearsonVII() {
-		checkClose("Pearson7 area", area, fittedPearsonVII.get(0).getPeak(0).getArea(), 2*delta);
-	}
-
-	@Test
-	public void testAreaPseudoVoigt() {
-		checkClose("PseudoVoigt area", area, fittedPseudoVoigt.get(0).getPeak(0).getArea(), 6*delta);
 	}
 }

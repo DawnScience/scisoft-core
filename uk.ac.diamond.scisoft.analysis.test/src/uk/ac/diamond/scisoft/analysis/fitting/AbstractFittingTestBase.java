@@ -10,12 +10,12 @@
 package uk.ac.diamond.scisoft.analysis.fitting;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
@@ -27,6 +27,10 @@ import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 
 public abstract class AbstractFittingTestBase {
 
+	protected static final String PSEUDO_VOIGT = "PseudoVoigt";
+	protected static final String PEARSON_VII = "PearsonVII";
+	protected static final String LORENTZIAN = "Lorentzian";
+	protected static final String GAUSSIAN = "Gaussian";
 	static DoubleDataset gaussian;
 	static DoubleDataset lorentzian;
 	static DoubleDataset pearsonVII;
@@ -45,6 +49,8 @@ public abstract class AbstractFittingTestBase {
 	static List<CompositeFunction> fittedLorentzian;
 	static List<CompositeFunction> fittedPearsonVII;
 	static List<CompositeFunction> fittedPseudoVoigt;
+
+	static Map<String, int[]> deltaFactor;
 
 	abstract public IOptimizer createOptimizer();
 
@@ -80,45 +86,83 @@ public abstract class AbstractFittingTestBase {
 	}
 
 	@Test
-	public void testNumberOfPeaksFoundGaussian() {
+	public void testGaussianNumberOfPeaksFound() {
 		Assert.assertEquals(1, fittedGaussian.size());
 	}
 
 	@Test
-	public void testNumberOfPeaksFoundLorentzian() {
+	public void testGaussianPeakPos() {
+		checkClose(GAUSSIAN + " pos", pos, fittedGaussian.get(0).getPeak(0).getPosition(), delta);
+	}
+
+	@Test
+	public void testGaussianFWHM() {
+		checkClose(GAUSSIAN + " fwhm", fwhm, fittedGaussian.get(0).getPeak(0).getFWHM(), deltaFactor.get(GAUSSIAN)[0]*delta);
+	}
+
+	@Test
+	public void testGaussianArea() {
+		checkClose(GAUSSIAN + " area", area, fittedGaussian.get(0).getPeak(0).getArea(), deltaFactor.get(GAUSSIAN)[1]*delta);
+	}
+
+	@Test
+	public void testLorentzianNumberOfPeaksFound() {
 		Assert.assertEquals(1, fittedLorentzian.size());
 	}
 
-	@Ignore("Test failing. 17 Dec 15")
 	@Test
-	public void testNumberOfPeaksFoundPearsonVII() {
+	public void testLorentzianPeakPos() {
+		checkClose(LORENTZIAN + " pos", pos, fittedLorentzian.get(0).getPeak(0).getPosition(), delta);
+	}
+
+	@Test
+	public void testLorentzianFWHM() {
+		checkClose(LORENTZIAN + " fwhm", fwhm, fittedLorentzian.get(0).getPeak(0).getFWHM(), deltaFactor.get(LORENTZIAN)[0]*delta);
+	}
+
+	@Test
+	public void testLorentzianArea() {
+		checkClose(LORENTZIAN + " area", area, fittedLorentzian.get(0).getPeak(0).getArea(), deltaFactor.get(LORENTZIAN)[1]*delta);
+	}
+
+	@Test
+	public void testPearsonVIINumberOfPeaksFound() {
 		Assert.assertEquals(1, fittedPearsonVII.size());
 	}
 
 	@Test
-	public void testNumberOfPeaksFoundPseudoVoigt() {
+	public void testPearsonVIIPeakPos() {
+		checkClose(PEARSON_VII + " pos", pos, fittedPearsonVII.get(0).getPeak(0).getPosition(), delta);
+	}
+
+	@Test
+	public void testPearsonVIIFWHM() {
+		checkClose(PEARSON_VII + " fwhm", fwhm, fittedPearsonVII.get(0).getPeak(0).getFWHM(), deltaFactor.get(PEARSON_VII)[0]*delta);
+	}
+
+	@Test
+	public void testPearsonVIIArea() {
+		checkClose(PEARSON_VII + " area", area, fittedPearsonVII.get(0).getPeak(0).getArea(), deltaFactor.get(PEARSON_VII)[1]*delta);
+	}
+
+	@Test
+	public void testPseudoVoigtNumberOfPeaksFound() {
 		Assert.assertEquals(1, fittedPseudoVoigt.size());
 	}
 
 	@Test
-	public void testPeakPosGaussian() {
-		checkClose("Gaussian pos", pos, fittedGaussian.get(0).getPeak(0).getPosition(), delta);
+	public void testPseudoVoigtPeakPos() {
+		checkClose(PSEUDO_VOIGT + " pos", pos, fittedPseudoVoigt.get(0).getPeak(0).getPosition(), delta);
 	}
 
 	@Test
-	public void testPeakPosLorentzian() {
-		checkClose("Lorentzian pos", pos, fittedLorentzian.get(0).getPeak(0).getPosition(), delta);
-	}
-
-	@Ignore("Test failing. 17 Dec 15")
-	@Test
-	public void testPeakPosPearsonVII() {
-		checkClose("Pearson7 pos", pos, fittedPearsonVII.get(0).getPeak(0).getPosition(), delta);
+	public void testPseudoVoigtFWHM() {
+		checkClose(PSEUDO_VOIGT + " fwhm", fwhm, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), deltaFactor.get(PSEUDO_VOIGT)[0]*delta);
 	}
 
 	@Test
-	public void testPeakPosPseudoVoigt() {
-		checkClose("PseudoVoigt pos", pos, fittedPseudoVoigt.get(0).getPeak(0).getPosition(), delta);
+	public void testPseudoVoigtArea() {
+		checkClose(PSEUDO_VOIGT + " area", area, fittedPseudoVoigt.get(0).getPeak(0).getArea(), deltaFactor.get(PSEUDO_VOIGT)[1]*delta);
 	}
 
 	boolean verbose = true;

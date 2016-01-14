@@ -9,56 +9,23 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting;
 
-import org.junit.Test;
+import java.util.HashMap;
 
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.NelderMead;
 
 
 public class NelderMeadFittingTest extends AbstractFittingTestBase {
+	static {
+		deltaFactor = new HashMap<String, int[]>();
+		deltaFactor.put(GAUSSIAN, new int[] {1, 1});
+		deltaFactor.put(LORENTZIAN, new int[] {4, 6});
+		deltaFactor.put(PEARSON_VII, new int[] {11, 24}); // FIXME
+		deltaFactor.put(PSEUDO_VOIGT, new int[] {11, 28}); // FIXME
+	}
 
 	@Override
 	public IOptimizer createOptimizer() {
 		return new NelderMead(accuracy);
-	}
-
-	@Test
-	public void testFWHMGaussian() {
-		checkClose("Gaussian fwhm", fwhm, fittedGaussian.get(0).getPeak(0).getFWHM(), delta);
-	}
-
-	@Test
-	public void testFWHMLorentzian() {
-		checkClose("Lorentzian fwhm", fwhm, fittedLorentzian.get(0).getPeak(0).getFWHM(), 4*delta);
-	}
-
-	@Test
-	public void testFWHMPearsonVII() {
-		checkClose("Pearson7 fwhm", fwhm, fittedPearsonVII.get(0).getPeak(0).getFWHM(), 11*delta);
-	}
-
-	@Test
-	public void testFWHMPseudoVoigt() {
-		checkClose("PseudoVoigt fwhm", fwhm, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), 20*delta);
-	}
-
-	@Test
-	public void testAreaGaussian() {
-		checkClose("Gaussian area", area, fittedGaussian.get(0).getPeak(0).getArea(), delta);
-	}
-
-	@Test
-	public void testAreaLorentzian() {
-		checkClose("Lorentzian area", area, fittedLorentzian.get(0).getPeak(0).getArea(), 6*delta);
-	}
-
-	@Test
-	public void testAreaPearsonVII() {
-		checkClose("Pearson7 area", area, fittedPearsonVII.get(0).getPeak(0).getArea(), 24*delta); // FIXME
-	}
-
-	@Test
-	public void testAreaPseudoVoigt() {
-		checkClose("PseudoVoigt area", area, fittedPseudoVoigt.get(0).getPeak(0).getArea(), 28*delta);
 	}
 }

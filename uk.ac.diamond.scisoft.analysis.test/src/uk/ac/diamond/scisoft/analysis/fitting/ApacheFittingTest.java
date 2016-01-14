@@ -11,8 +11,8 @@ package uk.ac.diamond.scisoft.analysis.fitting;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -31,14 +31,25 @@ public class ApacheFittingTest extends AbstractFittingTestBase {
 	@Parameters
 	public static Collection<Object[]> data() {
 		Object[][] data = new Object[][] {
+//				{Optimizer.GAUSS_NEWTON},
 				{Optimizer.SIMPLEX_MD},
 				{Optimizer.SIMPLEX_NM},
 //				{Optimizer.POWELL}, // bad fit
 				{Optimizer.BOBYQA},
 //				{Optimizer.CMAES},  // bad fit
-//				{Optimizer.CONJUGATE_GRADIENT}, // does not work for Gaussian and PVII
+//				{Optimizer.CONJUGATE_GRADIENT}, // does not work for PseudoVoigt and PearsonVII
+				{Optimizer.LEVENBERG_MARQUARDT},
+//				{Optimizer.GAUSS_NEWTON},
 				};
 		return Arrays.asList(data);
+	}
+
+	static {
+		deltaFactor = new HashMap<String, int[]>();
+		deltaFactor.put(GAUSSIAN, new int[] {1, 1});
+		deltaFactor.put(LORENTZIAN, new int[] {4, 6});
+		deltaFactor.put(PEARSON_VII, new int[] {1, 2});
+		deltaFactor.put(PSEUDO_VOIGT, new int[] {1, 7});
 	}
 
 	public ApacheFittingTest(Optimizer optimizer) {
@@ -52,43 +63,4 @@ public class ApacheFittingTest extends AbstractFittingTestBase {
 		return opt;
 	}
 
-	@Test
-	public void testFWHMGaussian() {
-		checkClose("Gaussian fwhm", fwhm, fittedGaussian.get(0).getPeak(0).getFWHM(), delta);
-	}
-
-	@Test
-	public void testFWHMLorentzian() {
-		checkClose("Lorentzian fwhm", fwhm, fittedLorentzian.get(0).getPeak(0).getFWHM(), 4*delta);
-	}
-
-	@Test
-	public void testFWHMPearsonVII() {
-		checkClose("Pearson7 fwhm", fwhm, fittedPearsonVII.get(0).getPeak(0).getFWHM(), delta);
-	}
-
-	@Test
-	public void testFWHMPseudoVoigt() {
-		checkClose("PseudoVoigt fwhm", fwhm, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), delta);
-	}
-
-	@Test
-	public void testAreaGaussian() {
-		checkClose("Gaussian area", area, fittedGaussian.get(0).getPeak(0).getArea(), delta);
-	}
-
-	@Test
-	public void testAreaLorentzian() {
-		checkClose("Lorentzian area", area, fittedLorentzian.get(0).getPeak(0).getArea(), 6*delta);
-	}
-
-	@Test
-	public void testAreaPearsonVII() {
-		checkClose("Pearson7 area", area, fittedPearsonVII.get(0).getPeak(0).getArea(), 2*delta);
-	}
-
-	@Test
-	public void testAreaPseudoVoigt() {
-		checkClose("PseudoVoigt area", area, fittedPseudoVoigt.get(0).getPeak(0).getArea(), 7*delta);
-	}
 }

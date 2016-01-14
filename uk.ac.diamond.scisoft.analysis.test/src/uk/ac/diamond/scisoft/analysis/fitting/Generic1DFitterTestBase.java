@@ -53,7 +53,7 @@ public abstract class Generic1DFitterTestBase {
 	protected static String name;
 	
 	@Before
-	public void setup() throws Exception {
+	public void setup() {
 		FunctionFactory.registerFunctions(true, Gaussian.class, 
 				Lorentzian.class, PseudoVoigt.class, PearsonVII.class);
 	}

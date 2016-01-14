@@ -18,8 +18,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
  */
 public class Gaussian extends APeak implements IPeak {
 	private static final String NAME = "Gaussian";
-	private static final String DESC = "y(x) = A exp(-((x-b)^2)/(2*c^2))";
-	private static final String[] PARAM_NAMES = new String[]{"posn", "fwhm", "area"};
+	private static final String DESCRIPTION = "y(x) = a exp(-((x-b)^2)/(2*c^2))";
 	private static final double[] PARAMS = new double[]{0, 0, 0};
 
 	public Gaussian() {
@@ -40,22 +39,19 @@ public class Gaussian extends APeak implements IPeak {
 	public Gaussian(double... params) {
 		super(PARAMS.length);
 		// make sure that there are 3 parameters, otherwise, throw a sensible error
-		if (params.length != PARAMS.length) 
-			throw new IllegalArgumentException("A gaussian peak requires 3 parameters, and it has been given "+params.length);
+		if (params.length != PARAMS.length) {
+			throw new IllegalArgumentException("A Gaussian peak requires 3 parameters, and it has been given "+params.length);
+		}
 		fillParameters(params);
 		getParameter(FWHM).setLowerLimit(0.0);
-
-		setNames();
 	}
 
 	public Gaussian(IParameter... params) {
 		super(PARAMS.length);
 		if (params.length != PARAMS.length) 
-			throw new IllegalArgumentException("A gaussian peak requires 3 parameters, and it has been given "+params.length);
+			throw new IllegalArgumentException("A Gaussian peak requires 3 parameters, and it has been given "+params.length);
 		fillParameters(params);
 		getParameter(FWHM).setLowerLimit(0.0);
-
-		setNames();
 	}
 
 	public Gaussian(IdentifiedPeak peakParameters) {
@@ -77,8 +73,6 @@ public class Gaussian extends APeak implements IPeak {
 		p = getParameter(AREA);
 		p.setLimits(-maxArea, maxArea);
 		p.setValue(peakParameters.getArea() / 2); // area better fitting is generally found if sigma expands into the peak.
-
-		setNames();
 	}
 
 	/**
@@ -98,17 +92,11 @@ public class Gaussian extends APeak implements IPeak {
 		super(PARAMS.length);
 
 		internalSetPeakParameters(minPeakPosition, maxPeakPosition, maxFWHM, maxArea);
-
-		setNames();
 	}
 
-	private void setNames() {
-		name = NAME;
-		description = DESC;
-		for (int i = 0; i < PARAM_NAMES.length; i++) {
-			IParameter p = getParameter(i);
-			p.setName(PARAM_NAMES[i]);
-		}
+	@Override
+	protected void setNames() {
+		setNames(NAME, DESCRIPTION, PARAM_NAMES);
 	}
 
 	private static final double CONST = Math.sqrt(4. * Math.log(2.));

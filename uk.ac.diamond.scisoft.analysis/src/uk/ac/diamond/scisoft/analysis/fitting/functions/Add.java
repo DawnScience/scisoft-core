@@ -26,8 +26,11 @@ public class Add extends ANaryOperator implements IOperator, Serializable {
 
 	public Add() {
 		super();
-		name = NAME;
-		description = DESC;
+	}
+
+	@Override
+	protected void setNames() {
+		setNames(NAME, DESC);
 	}
 
 	@Override

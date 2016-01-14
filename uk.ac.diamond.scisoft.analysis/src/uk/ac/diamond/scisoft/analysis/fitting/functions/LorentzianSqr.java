@@ -38,7 +38,6 @@ public class LorentzianSqr extends APeak {
 			+ "- x0 is the position of the peak (posn) and\n"
 			+ "- G is a width parameter\n"
 			+ "     G = fwhm / sqrt(sqrt(2.) - 1.)."; 
-	private static String[] PARAM_NAMES = new String[]{"posn", "fwhm", "area"};
 	private static final double[] PARAMS = new double[] { 0, 0, 0 };
 
 	public LorentzianSqr() { 
@@ -61,7 +60,6 @@ public class LorentzianSqr extends APeak {
 		fillParameters(params);
 
 		getParameter(FWHM).setLowerLimit(0.0);
-		setNames();
 	}
 
 	public LorentzianSqr(IParameter... params) {
@@ -69,7 +67,6 @@ public class LorentzianSqr extends APeak {
 		fillParameters(params);
 
 		getParameter(FWHM).setLowerLimit(0.0);
-		setNames();
 	}
 
 	public LorentzianSqr(IdentifiedPeak peakParameters) {
@@ -92,8 +89,6 @@ public class LorentzianSqr extends APeak {
 		p = getParameter(AREA);
 		p.setLimits(-maxArea, maxArea);
 		p.setValue(peakParameters.getArea()); // / 2); // GF: why by two (as in Lorentzian)?
-
-		setNames();
 	}
 
 	/**
@@ -113,17 +108,11 @@ public class LorentzianSqr extends APeak {
 		super(PARAMS.length);
 
 		internalSetPeakParameters(minPeakPosition, maxPeakPosition, maxFWHM, maxArea);
-
-		setNames();
 	}
 
-	private void setNames() {
-		name = NAME;
-		description = DESC;
-		for (int i = 0; i < PARAM_NAMES.length; i++) {
-			IParameter p = getParameter(i);
-			p.setName(PARAM_NAMES[i]);
-		}
+	@Override
+	protected void setNames() {
+		setNames(NAME, DESC, PARAM_NAMES);
 	}
 
 	double halfWidthPar, pos; // 'height' already declared in APeak

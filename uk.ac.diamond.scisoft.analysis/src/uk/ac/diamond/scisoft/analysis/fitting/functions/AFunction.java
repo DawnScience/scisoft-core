@@ -62,16 +62,31 @@ public abstract class AFunction implements IFunction, Serializable {
 
 	protected IOperator parent;
 
+	protected void setNames(String name, String description, String... parameterNames) {
+		this.name = name;
+		this.description = description;
+		int n = Math.min(parameterNames.length, parameters.length);
+		for (int i = 0; i < n; i++) {
+			IParameter p = getParameter(i);
+			p.setName(parameterNames[i]);
+		}
+	}
+
+	/**
+	 * Implement to set names and descriptions for function and its parameters
+	 */
+	protected abstract void setNames();
+
+
 	/**
 	 * Constructor which simply generates the parameters but uninitialised
 	 * 
 	 * @param numberOfParameters
 	 */
 	public AFunction(int numberOfParameters) {
-		parameters = new Parameter[numberOfParameters];
-		for (int i = 0; i < numberOfParameters; i++) {
-			parameters[i] = new Parameter();
-		}
+		fillParameters(new double[numberOfParameters]);
+
+		setNames();
 	}
 
 	/**
@@ -81,8 +96,9 @@ public abstract class AFunction implements IFunction, Serializable {
 	 *            An array of starting parameter values as doubles.
 	 */
 	public AFunction(double... params) {
-		if (params != null)
-			fillParameters(params);
+		fillParameters(params);
+
+		setNames();
 	}
 
 	/**
@@ -92,13 +108,16 @@ public abstract class AFunction implements IFunction, Serializable {
 	 *            An array of parameters
 	 */
 	public AFunction(IParameter... params) {
-		if (params != null)
-			fillParameters(params);
+		fillParameters(params);
+
+		setNames();
 	}
 
 	protected void fillParameters(double... params) {
-		if (parameters == null)
+		if (parameters == null) {
 			parameters = new IParameter[params.length];
+		}
+
 		int n = Math.min(params.length, parameters.length);
 		for (int i = 0; i < n; i++) {
 			parameters[i] = new Parameter(params[i]);
@@ -106,8 +125,10 @@ public abstract class AFunction implements IFunction, Serializable {
 	}
 
 	protected void fillParameters(IParameter... params) {
-		if (parameters == null)
+		if (parameters == null) {
 			parameters = new IParameter[params.length];
+		}
+
 		int n = Math.min(params.length, parameters.length);
 		for (int i = 0; i < n; i++) {
 			IParameter p = params[i];
@@ -444,9 +465,9 @@ public abstract class AFunction implements IFunction, Serializable {
 			previous = current;
 			current = temp;
 		}
-		if (delta <= SMALLEST_DELTA) {
-			logger.warn("Numerical derivative did not converge!");
-		}
+//		if (delta <= SMALLEST_DELTA) {
+//			logger.warn("Numerical derivative did not converge!");
+//		}
 
 		data.setSlice(current);
 	}

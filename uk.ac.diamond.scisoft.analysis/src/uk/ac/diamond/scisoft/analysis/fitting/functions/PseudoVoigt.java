@@ -26,7 +26,7 @@ public class PseudoVoigt extends APeak implements IPeak {
 	private static final String DESC = "y(x) = I(2θ) = I_hkl *(η * L(2θ − 2θ_0) + (1 − η)* G(2θ − 2θ_0)) \nwhere, "
 			+ "respectively, L(2θ − 2θ_0) and G(2θ − 2θ_0) represent suitably normalised Lorentz \nand Gaussian "
 			+ "functions, and η (the \"Lorentz fraction\") and (1 − η) \nrepresent the fractions of each used.";
-	private static final String[] PARAM_NAMES = new String[] { "posn", "l_fwhm", "area", "g_fwhm", "mix" };
+	private static final String[] LOCAL_PARAM_NAMES = new String[] { "posn", "l_fwhm", "area", "g_fwhm", "mix" };
 	private static final double[] PARAMS = new double[] { 0, 0, 0, 0, 0 };
 
 	public PseudoVoigt() {
@@ -50,7 +50,6 @@ public class PseudoVoigt extends APeak implements IPeak {
 		getParameter(FWHMG).setLowerLimit(0.0);
 		getParameter(MIX).setLowerLimit(0.0);
 		getParameter(MIX).setUpperLimit(1.0);
-		setNames();
 	}
 
 	public PseudoVoigt(double[] params) {
@@ -61,7 +60,6 @@ public class PseudoVoigt extends APeak implements IPeak {
 		getParameter(FWHMG).setLowerLimit(0.0);
 		getParameter(MIX).setLowerLimit(0.0);
 		getParameter(MIX).setUpperLimit(1.0);
-		setNames();
 	}
 
 	/**
@@ -77,7 +75,6 @@ public class PseudoVoigt extends APeak implements IPeak {
 		getParameter(FWHMG).setLowerLimit(0.0);
 		getParameter(MIX).setLowerLimit(0.0);
 		getParameter(MIX).setUpperLimit(1.0);
-		setNames();
 	}
 
 	private static final int FWHMG = AREA + 1;
@@ -114,8 +111,6 @@ public class PseudoVoigt extends APeak implements IPeak {
 		p = getParameter(MIX);
 		p.setValue(0.5);
 		p.setLimits(0.0, 1.0);
-
-		setNames();
 	}
 
 	/**
@@ -139,17 +134,11 @@ public class PseudoVoigt extends APeak implements IPeak {
 		p = getParameter(MIX);
 		p.setValue(0.5);
 		p.setLimits(0.0, 1.0);
-
-		setNames();
 	}
 
-	private void setNames() {
-		name = NAME;
-		description = DESC;
-		for (int i = 0; i < PARAM_NAMES.length; i++) {
-			IParameter p = getParameter(i);
-			p.setName(PARAM_NAMES[i]);
-		}
+	@Override
+	protected void setNames() {
+		setNames(NAME, DESC, LOCAL_PARAM_NAMES);
 	}
 
 	@Override

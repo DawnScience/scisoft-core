@@ -56,8 +56,6 @@ public class SmoothGoldEdgeFunction extends AFunction implements
 		if (params.length != PARAMS.length) 
 			throw new IllegalArgumentException("A SmoothGoldEdgeFunction requires 2 parameters, and it has only been given "+params.length);
 		fillParameters(params);
-
-		setNames();
 	}
 
 	public SmoothGoldEdgeFunction(IParameter... params) {
@@ -65,17 +63,11 @@ public class SmoothGoldEdgeFunction extends AFunction implements
 		if (params.length != PARAMS.length) 
 			throw new IllegalArgumentException("A SmoothGoldEdgeFunction requires 2 parameters, and it has only been given "+params.length);
 		fillParameters(params);
-
-		setNames();
 	}
-	
-	private void setNames() {
-		name = NAME;
-		description = DESC;
-		for (int i = 0; i < PARAM_NAMES.length; i++) {
-			IParameter p = getParameter(i);
-			p.setName(PARAM_NAMES[i]);
-		}
+
+	@Override
+	protected void setNames() {
+		setNames(NAME, DESC, PARAM_NAMES);
 	}
 
 	@Override

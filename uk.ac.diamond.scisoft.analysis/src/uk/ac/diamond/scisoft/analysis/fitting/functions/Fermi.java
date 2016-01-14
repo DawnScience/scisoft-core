@@ -22,7 +22,7 @@ public class Fermi extends AFunction implements Serializable {
 	
 	private static final String NAME = "Fermi";
 	private static final String DESC = "y(x) = scale / (exp((x - mu)/kT) + 1) + C";
-	private static final String[] PARAM_NAMES = new String[]{"mu", "kT", "scale", "Constant"};
+	private static final String[] PARAM_NAMES = new String[]{"mu", "kT", "scale", "C"};
 	private static final double[] PARAMS = new double[]{0,0,0,0};
 
 	private double mu, kT, scale, C;
@@ -33,14 +33,10 @@ public class Fermi extends AFunction implements Serializable {
 
 	public Fermi(double... params) {
 		super(params);
-
-		setNames();
 	}
 
 	public Fermi(IParameter... params) {
 		super(params);
-
-		setNames();
 	}
 
 	/**
@@ -84,17 +80,11 @@ public class Fermi extends AFunction implements Serializable {
 		p = getParameter(3);
 		p.setLimits(minC, maxC);
 		p.setValue((minC + maxC) / 2.0);
-
-		setNames();
 	}
 
-	private void setNames() {
-		name = NAME;
-		description = DESC;
-		for (int i = 0; i < PARAM_NAMES.length; i++) {
-			IParameter p = getParameter(i);
-			p.setName(PARAM_NAMES[i]);
-		}
+	@Override
+	protected void setNames() {
+		setNames(NAME, DESC, PARAM_NAMES);
 	}
 
 	private void calcCachedParameters() {
@@ -109,8 +99,9 @@ public class Fermi extends AFunction implements Serializable {
 
 	@Override
 	public double val(double... values) {
-		if (isDirty())
+		if (isDirty()) {
 			calcCachedParameters();
+		}
 
 		double position = values[0];
 		
@@ -121,8 +112,9 @@ public class Fermi extends AFunction implements Serializable {
 
 	@Override
 	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
-		if (isDirty())
+		if (isDirty()) {
 			calcCachedParameters();
+		}
 
 		it.reset();
 		double[] coords = it.getCoordinates();

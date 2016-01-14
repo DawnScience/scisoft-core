@@ -26,7 +26,6 @@ public class PearsonVII extends APeak implements IPeak {
 			+ "\nwhere m can be chosen to suit a particular peak shape and w is related to the peak width. "
 			+ "\nSpecial cases of this function are that it becomes a Lorentzian as m → 1 and "
 			+ "\napproaches a Gaussian as m → ∞ (e.g. m > 10).";
-	private static final String[] PARAM_NAMES = new String[]{"posn", "fwhm", "area", "power"};
 	private static final double[] PARAMS = new double[] { 0, 0, 0, 1.0 };
 
 	public PearsonVII() {
@@ -52,7 +51,6 @@ public class PearsonVII extends APeak implements IPeak {
 		getParameter(FWHM).setLowerLimit(0.0);
 		getParameter(POWER).setLowerLimit(1.0);
 		getParameter(POWER).setUpperLimit(10.0);
-		setNames();
 	}
 
 	public PearsonVII(IParameter... params) {
@@ -62,7 +60,6 @@ public class PearsonVII extends APeak implements IPeak {
 		getParameter(FWHM).setLowerLimit(0.0);
 		getParameter(POWER).setLowerLimit(1.0);
 		getParameter(POWER).setUpperLimit(10.0);
-		setNames();
 	}
 
 	private static final int POWER = AREA + 1;
@@ -93,8 +90,6 @@ public class PearsonVII extends APeak implements IPeak {
 		p = getParameter(POWER);
 		p.setValue(DEF_POWER);
 		p.setLimits(1.0, 10.0);
-
-		setNames();
 	}
 
 	/**
@@ -128,17 +123,11 @@ public class PearsonVII extends APeak implements IPeak {
 		p = getParameter(POWER);
 		p.setLimits(1.0, 10.0);
 		p.setValue(power);
-
-		setNames();
 	}
 
-	private void setNames() {
-		name = NAME;
-		description = DESC;
-		for (int i = 0; i < PARAM_NAMES.length; i++) {
-			IParameter p = getParameter(i);
-			p.setName(PARAM_NAMES[i]);
-		}
+	@Override
+	protected void setNames() {
+		setNames(NAME, DESC, PARAM_NAMES);
 	}
 
 	double pos, halfwp, power;

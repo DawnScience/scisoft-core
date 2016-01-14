@@ -22,21 +22,17 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 public class Quadratic extends AFunction {
 	private static final String NAME = "Quadratic";
 	private static final String DESC = "y(x) = ax^2 + bx + c";
-	private static final String[] PARAM_NAMES = new String[]{"A", "B", "C"};
+	private static final String[] PARAM_NAMES = new String[]{"a", "b", "c"};
 
 	/**
 	 * Basic constructor, not advisable to use
 	 */
 	public Quadratic() {
 		super(3);
-
-		setNames();
 	}
 
 	public Quadratic(IParameter... params) {
 		super(params);
-
-		setNames();
 	}
 
 	/**
@@ -73,27 +69,19 @@ public class Quadratic extends AFunction {
 		p.setLowerLimit(minC);
 		p.setUpperLimit(maxC);
 		p.setValue((minC + maxC) / 2.0);
-
-		setNames();
 	}
 	
 	/**
 	 * A very simple constructor which just specifies the values, not the bounds
-	 * @param Params
+	 * @param params
 	 */
-	public Quadratic(double[] Params) {
-		super(Params);
-
-		setNames();
+	public Quadratic(double[] params) {
+		super(params);
 	}
 
-	private void setNames() {
-		name = NAME;
-		description = DESC;
-		for (int i = 0; i < PARAM_NAMES.length; i++) {
-			IParameter p = getParameter(i);
-			p.setName(PARAM_NAMES[i]);
-		}
+	@Override
+	protected void setNames() {
+		setNames(NAME, DESC, PARAM_NAMES);
 	}
 
 	double a, b, c;

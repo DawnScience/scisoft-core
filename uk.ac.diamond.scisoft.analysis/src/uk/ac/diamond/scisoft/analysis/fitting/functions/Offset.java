@@ -19,14 +19,13 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 public class Offset extends AFunction {
 	private static final String NAME = "Offset";
 	private static final String DESCRIPTION = "y(x) = c";
-	private static final String[] PARAM_NAMES = new String[]{"C"};
+	private static final String[] PARAM_NAMES = new String[]{"c"};
 
 	/**
 	 * Constructor which simply creates the right number of parameters, but probably isn't that much good
 	 */
 	public Offset() {
 		super(1);
-		setNames();
 	}
 	
 	/**
@@ -35,12 +34,10 @@ public class Offset extends AFunction {
 	 */
 	public Offset(double[] params) {
 		super(params);
-		setNames();
 	}
 
 	public Offset(IParameter... params) {
 		super(params);
-		setNames();
 	}
 
 	/**
@@ -58,17 +55,11 @@ public class Offset extends AFunction {
 		p.setValue((minOffset + maxOffset) / 2.0);
 		p.setLowerLimit(minOffset);
 		p.setUpperLimit(maxOffset);
-
-		setNames();
 	}
 
-	private void setNames() {
-		name = NAME;
-		description = DESCRIPTION;
-		for (int i = 0; i < PARAM_NAMES.length; i++) {
-			IParameter p = getParameter(i);
-			p.setName(PARAM_NAMES[i]);
-		}
+	@Override
+	protected void setNames() {
+		setNames(NAME, DESCRIPTION, PARAM_NAMES);
 	}
 
 	@Override

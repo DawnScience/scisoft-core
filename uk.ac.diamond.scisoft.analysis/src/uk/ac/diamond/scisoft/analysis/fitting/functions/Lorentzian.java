@@ -25,7 +25,6 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 public class Lorentzian extends APeak {
 	private static final String NAME = "Lorentzian";
 	private static final String DESC = "y(x) = A x(half)^2 / ( x(half)^2 + (x-a)^2 )\nwhere A is the height\na is the position of the peak\nx(half) is the half width at half maximum, known as gamma";
-	private static String[] PARAM_NAMES = new String[]{"posn", "fwhm", "area"};
 	private static final double[] PARAMS = new double[] { 0, 0, 0 };
 
 	public Lorentzian() { 
@@ -48,7 +47,6 @@ public class Lorentzian extends APeak {
 		fillParameters(params);
 
 		getParameter(FWHM).setLowerLimit(0.0);
-		setNames();
 	}
 
 	public Lorentzian(IParameter... params) {
@@ -56,7 +54,6 @@ public class Lorentzian extends APeak {
 		fillParameters(params);
 
 		getParameter(FWHM).setLowerLimit(0.0);
-		setNames();
 	}
 
 	public Lorentzian(IdentifiedPeak peakParameters) {
@@ -79,8 +76,6 @@ public class Lorentzian extends APeak {
 		p = getParameter(AREA);
 		p.setLimits(-maxArea, maxArea);
 		p.setValue(peakParameters.getArea() / 2);
-
-		setNames();
 	}
 
 	/**
@@ -100,17 +95,11 @@ public class Lorentzian extends APeak {
 		super(PARAMS.length);
 
 		internalSetPeakParameters(minPeakPosition, maxPeakPosition, maxFWHM, maxArea);
-
-		setNames();
 	}
 
-	private void setNames() {
-		name = NAME;
-		description = DESC;
-		for (int i = 0; i < PARAM_NAMES.length; i++) {
-			IParameter p = getParameter(i);
-			p.setName(PARAM_NAMES[i]);
-		}
+	@Override
+	protected void setNames() {
+		setNames(NAME, DESC, PARAM_NAMES);
 	}
 
 	double halfw, pos;

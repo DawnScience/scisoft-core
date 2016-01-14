@@ -19,27 +19,21 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 public class StraightLine extends AFunction {
 	private static final String NAME = "Linear";
 	private static final String DESC = "y(x) = m*x + c";
-	private static final String[] PARAMETER_NAMES = new String[]{"M", "Constant"};
+	private static final String[] PARAM_NAMES = new String[]{"M", "Constant"};
 
 	/**
 	 * Basic constructor, not advisable to use.
 	 */
 	public StraightLine() {
 		super(2);
-
-		setNames();
 	}
 
 	public StraightLine(double[] params) {
 		super(params);
-
-		setNames();
 	}
 
 	public StraightLine(IParameter... params) {
 		super(params);
-
-		setNames();
 	}
 
 	/**
@@ -67,17 +61,11 @@ public class StraightLine extends AFunction {
 		p.setLowerLimit(minC);
 		p.setUpperLimit(maxC);
 		p.setValue((minC + maxC) / 2.0);
-
-		setNames();
 	}
 
-	private void setNames() {
-		name = NAME;
-		description = DESC;
-		for (int i = 0; i < PARAMETER_NAMES.length; i++) {
-			IParameter p = getParameter(i);
-			p.setName(PARAMETER_NAMES[i]);
-		}
+	@Override
+	protected void setNames() {
+		setNames(NAME, DESC, PARAM_NAMES);
 	}
 
 	double a, b;

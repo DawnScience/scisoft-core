@@ -23,27 +23,21 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 public class Cubic extends AFunction {
 	private static final String NAME = "Cubic";
 	private static final String DESC = "y(x) = ax^3 + bx^2 + cx + d";
-	private static final String[] PARAM_NAMES = new String[]{"A", "B", "C", "D"};
+	private static final String[] PARAM_NAMES = new String[]{"a", "b", "c", "d"};
 
 	/**
 	 * Basic constructor, not advisable to use
 	 */
 	public Cubic() {
 		super(4);
-
-		setNames();
 	}
 
 	public Cubic(double[] params) {
 		super(params);
-
-		setNames();
 	}
 
 	public Cubic(IParameter... params) {
 		super(params);
-
-		setNames();
 	}
 
 	/**
@@ -80,17 +74,11 @@ public class Cubic extends AFunction {
 
 		getParameter(3).setLimits(minD,maxD);
 		getParameter(3).setValue((minD + maxD) / 2.0);
-
-		setNames();
 	}
 
-	private void setNames() {
-		name = NAME;
-		description = DESC;
-		for (int i = 0; i < PARAM_NAMES.length; i++) {
-			IParameter p = getParameter(i);
-			p.setName(PARAM_NAMES[i]);
-		}
+	@Override
+	protected void setNames() {
+		setNames(NAME, DESC, PARAM_NAMES);
 	}
 
 	double a, b, c, d;

@@ -19,7 +19,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
  */
 public class CubicSpline extends AFunction {
 	private static String NAME = "CubicSpline";
-	private static String DESCRIPTION = "y(x) = a + b*x + c*x^2 + d*x^3";
+	private static String DESC = "y(x) = a + b*x + c*x^2 + d*x^3";
 	private static final String[] PARAM_NAMES = new String[]{"A", "B", "C", "D"};
 
 	double[] a = null;
@@ -36,12 +36,10 @@ public class CubicSpline extends AFunction {
 
 	public CubicSpline(int numberOfParameters) {
 		super(numberOfParameters);
-		setNames();
 	}
 
 	public CubicSpline(IParameter... params) {
 		super(params);
-		setNames();
 	}
 
 	/**
@@ -71,9 +69,10 @@ public class CubicSpline extends AFunction {
 		x = xpoints;
 	}
 
-	private void setNames() {
+	@Override
+	protected void setNames() {
 		name = NAME;
-		description = DESCRIPTION;
+		description = DESC;
 		for (int i = 0; i < PARAM_NAMES.length; i++) {
 			IParameter p = getParameter(i);
 			p.setName(PARAM_NAMES[i]);
@@ -95,8 +94,8 @@ public class CubicSpline extends AFunction {
 		double[] bb = new double[n];
 
 		for (int i = 0; i < n; i++) {
-			h[i] = x[i+1]-x[i];
-			bb[i] = (y[i+1]-y[i])/h[i];
+			h[i] = x[i + 1] - x[i];
+			bb[i] = (y[i + 1] - y[i]) / h[i];
 		}
 
 		double[] u = new double[n];
@@ -106,14 +105,14 @@ public class CubicSpline extends AFunction {
 		v[1] = 6.0*(bb[1]-bb[0]);
 
 		for (int i = 2; i < n; i++) {
-			u[i] = 2.0*(h[i-1]+h[i]) - (h[i-1]*h[i-1])/u[i-1];
-			v[i] = 6.0*(bb[i]-bb[i-1]) - (h[i-1]*v[i-1])/u[i-1];
+			u[i] = 2.0 * (h[i - 1] + h[i]) - (h[i - 1] * h[i - 1]) / u[i - 1];
+			v[i] = 6.0 * (bb[i] - bb[i - 1]) - (h[i - 1] * v[i - 1]) / u[i - 1];
 		}
 		
 		double[] z = new double[n+1];
 		z[n] = 0;
 		for(int i = n-1; i > 0; i--) {
-			z[i] = (v[i] - h[i]*z[i+1])/u[i];
+			z[i] = (v[i] - h[i] * z[i + 1]) / u[i];
 		}
 
 		// now calculate the parameters
@@ -124,9 +123,9 @@ public class CubicSpline extends AFunction {
 
 		for (int i = 0; i < n; i++) {
 			a[i] = y[i];
-			b[i] = (-h[i]/6.0)*z[i+1] - (h[i]/3.0)*z[i] + (y[i+1]-y[i])/h[i];
-			c[i] = z[i]/2.0;
-			d[i] = (z[i+1]-z[i])/(6.0*h[i]);
+			b[i] = (-h[i] / 6.0) * z[i + 1] - (h[i] / 3.0) * z[i] + (y[i + 1] - y[i]) / h[i];
+			c[i] = z[i] / 2.0;
+			d[i] = (z[i + 1] - z[i]) / (6.0 * h[i]);
 		}
 
 		setDirty(false);
@@ -146,7 +145,7 @@ public class CubicSpline extends AFunction {
 		int i = getRegion(xvalue);
 
 		double dx = (xvalue - x[i]);
-		double result = a[i] + dx*(b[i]+(dx*(c[i]+(dx*d[i]))));
+		double result = a[i] + dx * (b[i] + (dx * (c[i] + (dx * d[i]))));
 
 		return result;
 	}

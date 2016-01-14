@@ -33,6 +33,11 @@ public class Convolve extends ABinaryOperator implements IOperator {
 	}
 
 	@Override
+	protected void setNames() {
+		setNames(NAME, DESC);
+	}
+
+	@Override
 	public double val(double... values) {
 		DoubleDataset v = calculateValues(new CompoundDoubleDataset(values.length, values, 1));
 		return v.getAbs(0);

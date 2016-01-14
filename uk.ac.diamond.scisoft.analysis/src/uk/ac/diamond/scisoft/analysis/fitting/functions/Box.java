@@ -19,9 +19,8 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
  */
 public class Box extends AFunction {
 
-	private static final String cname = "Box";
-
-	private static final String cdescription = "y(x) = Fermi(mu1, kT1, scale) - Fermi(mu2,kT2, scale)";
+	private static final String NAME = "Box";
+	private static final String DESC = "y(x) = Fermi(mu1, kT1, scale) - Fermi(mu2,kT2, scale)";
 	private static final String[] paramNames = new String[]{"mu1", "kT1", "mu2", "kT2", "scale"};
 	private static final double[] params = new double[]{0,0,0,0,0};
 
@@ -40,8 +39,6 @@ public class Box extends AFunction {
 		
 		fermi1 = new Fermi(fermi1Params);
 		fermi2 = new Fermi(fermi2Params);
-
-		setNames();
 	}
 
 	public Box(IParameter... params) {
@@ -52,17 +49,11 @@ public class Box extends AFunction {
 		
 		fermi1 = new Fermi(fermi1Params);
 		fermi2 = new Fermi(fermi2Params);
-
-		setNames();
 	}
 
-	private void setNames() {
-		name = cname;
-		description = cdescription;
-		for (int i = 0; i < paramNames.length; i++) {
-			IParameter p = getParameter(i);
-			p.setName(paramNames[i]);
-		}
+	@Override
+	protected void setNames() {
+		setNames(NAME, DESC, paramNames);
 	}
 
 	private void calcCachedParameters() {

@@ -34,8 +34,7 @@ import org.ejml.data.Complex64F;
 public class Polynomial extends AFunction {
 	private static final String NAME = "Polynomial";
 	private static final String DESC = "y(x) = a_0 x^n + a_1 x^(n-1) + a_2 x^(n-2) + ... + a_(n-1) x + a_n";
-	private double[] a;
-	private String[] paramNames;
+	private transient double[] a;
 	private int nparams; // actually degree + 1
 
 	/**
@@ -51,10 +50,6 @@ public class Polynomial extends AFunction {
 	 */
 	public Polynomial(final int degree) {
 		super(degree + 1);
-		a = new double[degree+1];
-		fillParameters(a);
-
-		setNames();
 	}
 
 	/**
@@ -63,8 +58,6 @@ public class Polynomial extends AFunction {
 	 */
 	public Polynomial(double[] params) {
 		super(params);
-
-		setNames();
 	}
 
 	/**
@@ -73,8 +66,6 @@ public class Polynomial extends AFunction {
 	 */
 	public Polynomial(IParameter... params) {
 		super(params);
-
-		setNames();
 	}
 
 	/**
@@ -98,44 +89,35 @@ public class Polynomial extends AFunction {
 			a[i] = 0.5*(min[i] + max[i]);
 			parameters[i] = new Parameter(a[i], min[i], max[i]);
 		}
-
-		setNames();
 	}
 
-	private void setNames() {
-		name = NAME;
-		description = DESC;
-		for (int i = 0; i < paramNames.length; i++) {
-			IParameter p = getParameter(i);
-			p.setName(paramNames[i]);
+	@Override
+	protected void setNames() {
+		int n = getNoOfParameters();
+		String[] paramNames = new String[n];
+		for (int i = 0; i < n; i++) {
+			paramNames[i] = "Parameter" + i;
 		}
+
+		setNames(NAME, DESC, paramNames);
 	}
 
 	@Override
 	protected void fillParameters(double... params) {
 		super.fillParameters(params);
 		nparams = getNoOfParameters();
-		a = new double[nparams];
-		paramNames = new String[nparams];
-		for (int i = 0; i < nparams; i++) {
-			a[i] = params[i];
-			paramNames[i] = "Parameter" + i;
-		}
 	}
 
 	@Override
 	protected void fillParameters(IParameter... params) {
 		super.fillParameters(params);
 		nparams = getNoOfParameters();
-		a = new double[nparams];
-		paramNames = new String[nparams];
-		for (int i = 0; i < paramNames.length; i++) {
-			a[i] = params[i].getValue();
-			paramNames[i] = "Parameter" + i;
-		}
 	}
 
 	private void calcCachedParameters() {
+		if (a == null) {
+			a = new double[nparams];
+		}
 		for (int i = 0; i < nparams; i++)
 			a[i] = getParameterValue(i);
 
@@ -248,15 +230,11 @@ public class Polynomial extends AFunction {
 	 * @param degree
 	 */
 	public void setDegree(int degree) {
-		parameters = new Parameter[degree + 1];
-		for (int i = 0; i < degree + 1; i++) {
-			parameters[i] = new Parameter();
-		}
+		parameters = null;
 		a = new double[degree + 1];
-		nparams = degree + 1;
-		name = NAME;
-		description = DESC;
+
 		fillParameters(a);
+
 		if (parent != null)
 			parent.updateParameters();
 	}
@@ -344,22 +322,6 @@ public class Polynomial extends AFunction {
 		return rts.toArray(new Complex[0]);
 	}
 
-	public double[] getA() {
-		return a;
-	}
-
-	public void setA(double[] a) {
-		this.a = a;
-	}
-
-	public String[] getParamNames() {
-		return paramNames;
-	}
-
-	public void setParamNames(String[] paramNames) {
-		this.paramNames = paramNames;
-	}
-
 	public int getNparams() {
 		return nparams;
 	}
@@ -374,7 +336,6 @@ public class Polynomial extends AFunction {
 		int result = super.hashCode();
 		result = prime * result + Arrays.hashCode(a);
 		result = prime * result + nparams;
-		result = prime * result + Arrays.hashCode(paramNames);
 		return result;
 	}
 
@@ -390,8 +351,6 @@ public class Polynomial extends AFunction {
 		if (!Arrays.equals(a, other.a))
 			return false;
 		if (nparams != other.nparams)
-			return false;
-		if (!Arrays.equals(paramNames, other.paramNames))
 			return false;
 		return true;
 	}

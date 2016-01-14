@@ -447,6 +447,10 @@ public class OperatorTest {
 
 	private static final class TestGenericBinaryOperator extends ABinaryOperator {
 		@Override
+		protected void setNames() {
+		}
+
+		@Override
 		public double val(double... values) {
 			return 0;
 		}

@@ -25,8 +25,11 @@ public class Multiply extends ANaryOperator implements IOperator {
 
 	public Multiply() {
 		super();
-		name = NAME;
-		description = DESC;
+	}
+
+	@Override
+	protected void setNames() {
+		setNames(NAME, DESC);
 	}
 
 	@Override

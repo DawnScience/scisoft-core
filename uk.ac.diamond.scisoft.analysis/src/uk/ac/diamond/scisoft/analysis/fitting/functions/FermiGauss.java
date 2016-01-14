@@ -31,8 +31,8 @@ public class FermiGauss extends AFunction implements Serializable{
 	static final double K2EV_CONVERSION_FACTOR = 8.6173324e-5; // Boltzmann constant in eV/K
 
 	private static final String NAME = "Fermi * Gaussian";
-	private static final String DESC = "y(x) = (scale / (exp((x - mu)/kT) + 1) + C) * exp(-((x)^2)/(2*sigma^2))";
-	private static final String[] PARAM_NAMES = new String[]{"mu", "temperature", "BG_slope", "FE_step_height", "Constant", "FWHM"};
+	private static final String DESC = "y(x) = [(scaleM * (x - mu) + scaleC) * Fermi(mu, kT, 1, 0) + C] * Gaussian(mu, fwhm, 1)";
+	private static final String[] PARAM_NAMES = new String[]{"mu", "T", "scaleM", "scaleC", "C", "fwhm"};
 	private static final double[] PARAMS = new double[] { 0, 0, 0, 0, 0, 0 };
 	
 	private double mu, kT, scaleM, scaleC, offset, temperature, fwhm;
@@ -43,14 +43,10 @@ public class FermiGauss extends AFunction implements Serializable{
 
 	public FermiGauss(double... params) {
 		super(params);
-
-		setNames();
 	}
 
 	public FermiGauss(IParameter... params) {
 		super(params);
-
-		setNames();
 	}
 
 	/**
@@ -98,17 +94,11 @@ public class FermiGauss extends AFunction implements Serializable{
 		p = getParameter(5);
 		p.setLimits(minFWHM, maxFWHM);
 		p.setValue((minFWHM + maxFWHM) / 2.0);
-
-		setNames();
 	}
 
-	private void setNames() {
-		name = NAME;
-		description = DESC;
-		for (int i = 0; i < PARAM_NAMES.length; i++) {
-			IParameter p = getParameter(i);
-			p.setName(PARAM_NAMES[i]);
-		}
+	@Override
+	protected void setNames() {
+		setNames(NAME, DESC, PARAM_NAMES);
 	}
 
 	private void calcCachedParameters() {
@@ -118,7 +108,7 @@ public class FermiGauss extends AFunction implements Serializable{
 		scaleC = getParameterValue(3);
 		offset = getParameterValue(4);
 		fwhm = getParameterValue(5);
-		kT = k2eV(temperature);
+		kT = temp2eV(temperature);
 
 		setDirty(false);
 	}
@@ -186,11 +176,11 @@ public class FermiGauss extends AFunction implements Serializable{
 			LOGGER.warn("Fitted temperature was below the real temperature");
 			temp.setValue(realTemperaure);
 			width.setValue(0.0);
-			return k2eV(realTemperaure)*8;
+			return temp2eV(realTemperaure)*8;
 		}
 		
-		double fitEnergy = k2eV(temp.getValue());
-		double realEnergy = k2eV(realTemperaure);
+		double fitEnergy = temp2eV(temp.getValue());
+		double realEnergy = temp2eV(realTemperaure);
 		double fwhm = fitEnergy*fitEnergy - realEnergy*realEnergy;
 		fwhm = Math.sqrt(fwhm);
 		if (temp.isFixed()) {
@@ -212,7 +202,7 @@ public class FermiGauss extends AFunction implements Serializable{
 		return fitEnergy*6;
 	}
 
-	private double k2eV(double temperature) {
+	private double temp2eV(double temperature) {
 		return temperature*K2EV_CONVERSION_FACTOR;
 	}
 
@@ -262,6 +252,7 @@ public class FermiGauss extends AFunction implements Serializable{
 
 	public void setTemperature(double temperature) {
 		this.temperature = temperature;
+		kT = temp2eV(temperature);
 	}
 
 	public double getFwhm() {

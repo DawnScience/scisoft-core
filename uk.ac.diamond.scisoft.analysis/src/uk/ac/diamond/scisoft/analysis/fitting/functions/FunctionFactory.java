@@ -84,7 +84,7 @@ public final class FunctionFactory {
 	}
 
 	/**
-	 * Register a function with it's class and whether we should ignore duplicates
+	 * Register a function with its class and whether we should ignore duplicates
 	 * in the maps. This is useful for tests.
 	 * @param clazz
 	 * @param ignoreDuplicates
@@ -95,9 +95,9 @@ public final class FunctionFactory {
 	}
 	
 	/**
-	 * Register a function with it's class, function name and use case list. 
+	 * Register a function with its class, function name and use case list. 
 	 * (This is default option that should be used)
-	 * @param clazz - function clas
+	 * @param clazz - function class
 	 * @param fnName - string of user defined function name
 	 * @param useCaseList - list of use cases ids extracted from extension point
 	 * @throws Exception

@@ -22,10 +22,12 @@ public class Subtract extends ABinaryOperator implements IOperator {
 
 	public Subtract() {
 		super();
-		name = NAME;
-		description = DESC;
 	}
 
+	@Override
+	protected void setNames() {
+		setNames(NAME, DESC);
+	}
 
 	@Override
 	public double val(double... values) {

@@ -24,8 +24,11 @@ public class Divide extends ABinaryOperator implements IOperator {
 
 	public Divide() {
 		super();
-		name = NAME;
-		description = DESC;
+	}
+
+	@Override
+	protected void setNames() {
+		setNames(NAME, DESC);
 	}
 
 	@Override

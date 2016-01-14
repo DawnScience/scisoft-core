@@ -20,6 +20,7 @@ import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
  * calcCachedParameters method.
  */
 public abstract class APeak extends AFunction implements IPeak {
+	protected static final String[] PARAM_NAMES = new String[]{"posn", "fwhm", "area"};
 	protected static final int POSN = 0;
 	protected static final int FWHM = 1;
 	protected static final int AREA = 2;

@@ -33,6 +33,7 @@ public class XPDFPhase {
 	public XPDFPhase() {
 		unitCellLengths = new double[] {0, 0, 0}; // zero is meaningless, used as a default value
 		unitCellDegrees = new double[] {0, 0, 0}; // ditto
+		form = XPDFPhaseForm.get(XPDFPhaseForm.Forms.AMORPHOUS);
 	}
 	
 	/**
@@ -88,7 +89,7 @@ public class XPDFPhase {
 	}
 	
 	public boolean isCrystalline() {
-		return form.isCrystalline();
+		return (form != null) ? form.isCrystalline() : false;
 	}
 	
 	public void setCrystalSystem(CrystalSystem inSystem) {

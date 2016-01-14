@@ -115,7 +115,7 @@ public class LorentzianSqr extends APeak {
 		setNames(NAME, DESC, PARAM_NAMES);
 	}
 
-	double halfWidthPar, pos; // 'height' already declared in APeak
+	private transient double halfWidthPar, pos; // 'height' already declared in APeak
 
 	// conversion between FWHM and parameter G in function:
 	private static final double CONST = 0.5/Math.sqrt(Math.sqrt(2.0) - 1.);
@@ -152,38 +152,5 @@ public class LorentzianSqr extends APeak {
 			double denominatorSqrt = (dist * dist + 1);
 			buffer[i++] = height / (denominatorSqrt * denominatorSqrt);
 		}
-	}
-
-	@Override
-	public int hashCode() {
-		if (isDirty())
-			calcCachedParameters();
-		final int prime = 31;
-		int result = super.hashCode();
-		long temp;
-		temp = Double.doubleToLongBits(halfWidthPar);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(pos);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (getClass() != obj.getClass())
-			return false;
-		LorentzianSqr other = (LorentzianSqr) obj;
-		if (this .isDirty()) this .calcCachedParameters();
-		if (other.isDirty()) other.calcCachedParameters();
-		// call to super.equals(..) after calcCachedParameters(..): it tests dirty 
-		if (!super.equals(obj))
-			return false;
-		if (Double.doubleToLongBits(halfWidthPar) != Double.doubleToLongBits(other.halfWidthPar))
-			return false;
-		if (Double.doubleToLongBits(pos) != Double.doubleToLongBits(other.pos))
-			return false;
-		return true;
 	}
 }

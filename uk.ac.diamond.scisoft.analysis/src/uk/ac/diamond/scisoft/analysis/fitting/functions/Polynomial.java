@@ -35,7 +35,7 @@ public class Polynomial extends AFunction {
 	private static final String NAME = "Polynomial";
 	private static final String DESC = "y(x) = a_0 x^n + a_1 x^(n-1) + a_2 x^(n-2) + ... + a_(n-1) x + a_n";
 	private transient double[] a;
-	private int nparams; // actually degree + 1
+	private transient int nparams; // actually degree + 1
 
 	/**
 	 * Basic constructor, not advisable to use
@@ -321,38 +321,4 @@ public class Polynomial extends AFunction {
 
 		return rts.toArray(new Complex[0]);
 	}
-
-	public int getNparams() {
-		return nparams;
-	}
-
-	public void setNparams(int nparams) {
-		this.nparams = nparams;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Arrays.hashCode(a);
-		result = prime * result + nparams;
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Polynomial other = (Polynomial) obj;
-		if (!Arrays.equals(a, other.a))
-			return false;
-		if (nparams != other.nparams)
-			return false;
-		return true;
-	}
-
 }

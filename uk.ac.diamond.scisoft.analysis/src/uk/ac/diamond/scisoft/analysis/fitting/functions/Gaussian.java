@@ -101,7 +101,7 @@ public class Gaussian extends APeak implements IPeak {
 
 	private static final double CONST = Math.sqrt(4. * Math.log(2.));
 
-	double pos, sigma;
+	private transient double pos, sigma;
 
 	@Override
 	protected void calcCachedParameters() {
@@ -137,49 +137,5 @@ public class Gaussian extends APeak implements IPeak {
 
 			buffer[i++] = height * Math.exp(- arg * arg);
 		}
-	}
-
-	public double getPos() {
-		return pos;
-	}
-
-	public void setPos(double pos) {
-		this.pos = pos;
-	}
-
-	public double getSigma() {
-		return sigma;
-	}
-
-	public void setSigma(double sigma) {
-		this.sigma = sigma;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		long temp;
-		temp = Double.doubleToLongBits(pos);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(sigma);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Gaussian other = (Gaussian) obj;
-		if (Double.doubleToLongBits(pos) != Double.doubleToLongBits(other.pos))
-			return false;
-		if (Double.doubleToLongBits(sigma) != Double.doubleToLongBits(other.sigma))
-			return false;
-		return true;
 	}
 }

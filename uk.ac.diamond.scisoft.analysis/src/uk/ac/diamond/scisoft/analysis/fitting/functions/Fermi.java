@@ -25,7 +25,7 @@ public class Fermi extends AFunction implements Serializable {
 	private static final String[] PARAM_NAMES = new String[]{"mu", "kT", "scale", "C"};
 	private static final double[] PARAMS = new double[]{0,0,0,0};
 
-	private double mu, kT, scale, C;
+	private transient double mu, kT, scale, C;
 
 	public Fermi(){
 		this(PARAMS);
@@ -127,73 +127,5 @@ public class Fermi extends AFunction implements Serializable {
 			
 			buffer[i++] = scale/(Math.exp(arg) + 1.0) + C;
 		}
-	}
-
-	public double getMu() {
-		return mu;
-	}
-
-	public void setMu(double mu) {
-		this.mu = mu;
-	}
-
-	public double getkT() {
-		return kT;
-	}
-
-	public void setkT(double kT) {
-		this.kT = kT;
-	}
-
-	public double getScale() {
-		return scale;
-	}
-
-	public void setScale(double scale) {
-		this.scale = scale;
-	}
-
-	public double getC() {
-		return C;
-	}
-
-	public void setC(double c) {
-		C = c;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		long temp;
-		temp = Double.doubleToLongBits(C);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(kT);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(mu);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(scale);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Fermi other = (Fermi) obj;
-		if (Double.doubleToLongBits(C) != Double.doubleToLongBits(other.C))
-			return false;
-		if (Double.doubleToLongBits(kT) != Double.doubleToLongBits(other.kT))
-			return false;
-		if (Double.doubleToLongBits(mu) != Double.doubleToLongBits(other.mu))
-			return false;
-		if (Double.doubleToLongBits(scale) != Double.doubleToLongBits(other.scale))
-			return false;
-		return true;
 	}
 }

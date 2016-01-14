@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.optimize;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.analysis.MultivariateVectorFunction;
 import org.apache.commons.math3.exception.TooManyEvaluationsException;
+import org.apache.commons.math3.fitting.leastsquares.EvaluationRmsChecker;
 import org.apache.commons.math3.fitting.leastsquares.GaussNewtonOptimizer;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer;
@@ -303,6 +304,8 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 			LeastSquaresBuilder builder = new LeastSquaresBuilder().model(createJacobianFunction())
 					.target(data.getData()).start(getParameterValues()).lazyEvaluation(false)
 					.maxEvaluations(MAX_EVAL).maxIterations(MAX_ITER);
+
+			builder.checker(new EvaluationRmsChecker(REL_TOL, ABS_TOL));
 
 			if (weight != null) {
 				builder.weight(MatrixUtils.createRealDiagonalMatrix(weight.getData()));

@@ -203,7 +203,7 @@ public class XPDFComposition {
 	 */
 	public double getG0Minus1() {
 		int nSum = 0, dSum = 0;
-		int aCount = 0;
+		double aCount = 0;
 		for (Map.Entry<Integer, Double> iZN : atomCount.entrySet()) {
 			nSum += iZN.getValue()*iZN.getKey();
 			dSum += iZN.getValue()*Math.pow(iZN.getKey(), 2);
@@ -243,7 +243,7 @@ public class XPDFComposition {
 	public Dataset getElasticScatteringFactor(Dataset x) {
 		Dataset fofx = DoubleDataset.zeros(x);
 		
-		int totalAtoms = 0;
+		double totalAtoms = 0;
 		for (Map.Entry<Integer, Double> stoichiometry : atomCount.entrySet()) {
 			fofx.iadd(Maths.multiply(stoichiometry.getValue(), XPDFElementalFormFactors.fofx(stoichiometry.getKey(), x)));
 			totalAtoms += stoichiometry.getValue();
@@ -261,7 +261,7 @@ public class XPDFComposition {
 	public Dataset getElasticScatteringFactorSquared(Dataset x) {
 		Dataset fsquaredofx = DoubleDataset.zeros(x);
 		
-		int totalAtoms = 0;
+		double totalAtoms = 0;
 		for (Map.Entry<Integer, Double> stoichiometry : atomCount.entrySet()) {
 			fsquaredofx.iadd(Maths.multiply(stoichiometry.getValue(), Maths.square(XPDFElementalFormFactors.fofx(stoichiometry.getKey(), x))));
 			totalAtoms += stoichiometry.getValue();
@@ -279,7 +279,7 @@ public class XPDFComposition {
 	public Dataset getInelasticScatteringFactor(Dataset x) {
 		Dataset Sofx = DoubleDataset.zeros(x);
 		
-		int totalAtoms = 0;
+		double totalAtoms = 0;
 		for (Map.Entry<Integer, Double> stoichiometry : atomCount.entrySet()) {
 			Sofx.iadd(Maths.multiply(stoichiometry.getValue(), XPDFElementalFormFactors.sofx(stoichiometry.getKey(), x)));
 			totalAtoms += stoichiometry.getValue();

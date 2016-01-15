@@ -433,7 +433,11 @@ public class XPDFCalibration {
 		final double fractionOfRange = 1/5.0;
 		double minimalScale = minScale;
 		double minimalValue = Double.POSITIVE_INFINITY;
-		for (double scale = minScale; scale < maxScale; scale += stepScale) {
+		List<Double> fluorScales = new ArrayList<Double>(), fluorDiffs = new ArrayList<Double>();
+		for (double scale = minScale; scale < maxScale; scale += stepScale)
+			fluorScales.add(scale);
+//		for (double scale = minScale; scale < maxScale; scale += stepScale) {
+		for (double scale : fluorScales) {
 			this.fluorescenceScale = scale;
 			Dataset absCor = this.iterateCalibrate(nIterations, false);
 			
@@ -445,6 +449,8 @@ public class XPDFCalibration {
 			Dataset difference = Maths.subtract(smoothed, truncatedSelfScattering);
 			Dataset truncatedQ = coords.getQ().getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
 			double absSummedDifference = Math.abs((double) Maths.multiply(difference, truncatedQ).sum());
+
+			fluorDiffs.add(absSummedDifference);
 			
 			if (absSummedDifference < minimalValue) {
 				minimalScale = scale;

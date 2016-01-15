@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * Class that wrappers the Fermi function from Fermi-Dirac distribution
  * y(x) = scale / (exp((x - mu)/kT) + 1) + C
  */
-public class FermiGauss extends AFunction implements Serializable{
+public class FermiGauss extends AFunction implements Serializable {
 	private static final int NUMBER_OF_PARAMETERS = 6;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FermiGauss.class);

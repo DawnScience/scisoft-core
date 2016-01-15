@@ -16,11 +16,11 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 /**
  * Class which expands on the AFunction class to give the properties of a Gaussian. A 1D implementation
  */
-public class Gaussian extends APeak implements IPeak {
+public class Gaussian extends APeak {
 	private static final String NAME = "Gaussian";
 	private static final String DESC = "A Gaussian or normal distribution."
 			+ "\n    y(x) = A exp( -(x-posn)^2 / a^2 )"
-			+ "\nwhere fwhm = 2*a*sqrt(ln(2)), and area = sqrt(pi) * a * A.;" + PEAK_DESC;
+			+ "\nwhere fwhm = 2*a*sqrt(ln(2)), and area = sqrt(pi) * a * A." + PEAK_DESC;
 	private static final double[] PARAMS = new double[]{0, 0, 0};
 
 	public Gaussian() {

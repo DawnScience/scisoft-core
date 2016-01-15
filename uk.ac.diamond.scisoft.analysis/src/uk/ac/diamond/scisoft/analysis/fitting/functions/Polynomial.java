@@ -33,7 +33,7 @@ import org.ejml.data.Complex64F;
  */
 public class Polynomial extends AFunction {
 	private static final String NAME = "Polynomial";
-	private static final String DESC = "A polnomial of degree n."
+	private static final String DESC = "A polynomial of degree n."
 			+ "\n    y(x) = a_0 x^n + a_1 x^(n-1) + a_2 x^(n-2) + ... + a_(n-1) x + a_n";
 	private transient double[] a;
 	private transient int nparams; // actually degree + 1

@@ -43,7 +43,7 @@ public class Step extends AFunction {
 			+ "\n         = base + outer + inner, if x in [left, right),"
 			+ "\n         = base + outer,         otherwise"
 			+ "\nwhere left = pmin + offset*(pmax - pmin - width), width = (pmax - pmin)*frac"
-			+ "\nand right = left + width";
+			+ "\nand right = left + width.";
 
 	private static final String[] PARAM_NAMES = new String[] { "base", "pmin", "pmax", "outer", "inner", 
 			"frac", "offset" };

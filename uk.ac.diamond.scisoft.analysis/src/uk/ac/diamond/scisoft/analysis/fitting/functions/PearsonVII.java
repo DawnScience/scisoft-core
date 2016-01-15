@@ -20,7 +20,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
  * First experiments at the Swiss Light Source Materials Science beamline powder diffractometer.
  * Journal of Alloys and Compounds, 362(1-2), 206-217. doi:10.1016/S0925-8388(03)00585-1
  */
-public class PearsonVII extends APeak implements IPeak {
+public class PearsonVII extends APeak {
 	private static final String NAME = "PearsonVII";
 	private static final String DESC = "The Pearson type VII distribution."
 			+ "\n    y(x) = A / [ 1 + (x - posn)^2 / a^2 ]^m"

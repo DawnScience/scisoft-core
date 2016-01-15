@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 /**
  * PseudoVoigt Class
  */
-public class PseudoVoigt extends APeak implements IPeak {
+public class PseudoVoigt extends APeak {
 	private static final String NAME = "PseudoVoigt";
 	private static final String DESC = "A pseudo Voigt function defined by a linear mixture of Lorentzian and Gaussian functions"
 			+ "\nwhere l_fhwm is Lorentzian full-width at half-maximum, g_fhwm is the Gaussian full-width,"

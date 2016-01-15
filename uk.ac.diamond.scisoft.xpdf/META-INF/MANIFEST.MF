@@ -25,7 +25,8 @@ Import-Package: com.github.tschoonj.xraylib,
  uk.ac.diamond.scisoft.analysis.io,
  uk.ac.diamond.scisoft.analysis.processing.operations,
  uk.ac.diamond.scisoft.analysis.processing.operations.powder,
- uk.ac.diamond.scisoft.analysis.processing.operations.utils
+ uk.ac.diamond.scisoft.analysis.processing.operations.utils,
+ uk.ac.diamond.scisoft.analysis.roi
 Bundle-Vendor: Diamond Light Source
 Bundle-ActivationPolicy: lazy
 Export-Package: uk.ac.diamond.scisoft.xpdf;

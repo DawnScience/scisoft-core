@@ -27,9 +27,10 @@ import org.slf4j.LoggerFactory;
  */
 public class GaussianND extends AFunction {
 	private static String NAME = "GaussianND";
-	private static String DESC = "The parameters are mean peak position coordinates (N), volume (1), "
-			+ "\ndiagonal elements of covariance matrix (N) and normalized upper triangle "
-			+ "\nelements of covariance matrix (N*(N-1)/2). The last set of parameters are "
+	private static String DESC = "An N-dimensional Gaussian function."
+			+ "\nThe parameters are mean peak position coordinates (N), volume (1),"
+			+ "\ndiagonal elements of covariance matrix (N) and normalized upper triangle"
+			+ "\nelements of covariance matrix (N*(N-1)/2). The last set of parameters are"
 			+ "\nnormalized by the diagonal elements.";
 	private transient int rank;
 	private transient double[] pos = null;

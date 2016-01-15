@@ -15,17 +15,19 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 
 
 /**
- * Class which expands on the AFunction class to give the properties of a pearsonVII. A 1D implementation
+ * Class which expands on the AFunction class to give the properties of a Pearson VII. A 1D implementation
  * function derived from Gozzo, F. (2004). 
  * First experiments at the Swiss Light Source Materials Science beamline powder diffractometer.
  * Journal of Alloys and Compounds, 362(1-2), 206-217. doi:10.1016/S0925-8388(03)00585-1
  */
 public class PearsonVII extends APeak implements IPeak {
 	private static final String NAME = "PearsonVII";
-	private static final String DESC = "I(2θ) = Imax * (w^2m / ( w^2 + (2^1/m − 1)*(2θ − 2θ_0)^2)^m) "
-			+ "\nwhere m can be chosen to suit a particular peak shape and w is related to the peak width. "
-			+ "\nSpecial cases of this function are that it becomes a Lorentzian as m → 1 and "
-			+ "\napproaches a Gaussian as m → ∞ (e.g. m > 10).";
+	private static final String DESC = "The Pearson type VII distribution."
+			+ "\n    y(x) = A / [ 1 + (x - posn)^2 / a^2 ]^m"
+			+ "\nwhere fwhm = 2*a*sqrt(2^(1/m) - 1), area = a * A * Beta(m + 1/2, 1/2), and power = m."
+			+ "\nWhen m nears 1 the peak becomes Lorentzian and as m approaches infinity, the peak becomes Gaussian."
+			+ PEAK_DESC;
+	private static final String[] LOCAL_PARAM_NAMES = new String[] { PARAM_NAMES[0], PARAM_NAMES[1], PARAM_NAMES[2], "power" };
 	private static final double[] PARAMS = new double[] { 0, 0, 0, 1.0 };
 
 	public PearsonVII() {
@@ -127,7 +129,7 @@ public class PearsonVII extends APeak implements IPeak {
 
 	@Override
 	protected void setNames() {
-		setNames(NAME, DESC, PARAM_NAMES);
+		setNames(NAME, DESC, LOCAL_PARAM_NAMES);
 	}
 
 	private transient double pos, halfwp, power;

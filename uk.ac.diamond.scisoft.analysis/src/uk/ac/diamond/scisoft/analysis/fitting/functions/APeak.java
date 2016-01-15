@@ -21,6 +21,11 @@ import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
  */
 public abstract class APeak extends AFunction implements IPeak {
 	protected static final String[] PARAM_NAMES = new String[]{"posn", "fwhm", "area"};
+	protected static final String PEAK_DESC = "\nA peak function is described by"
+			+ "\n    'posn' is the position of maximum of the peak,"
+			+ "\n    'fwhm' is the full-width at half-maximum value of the peak,"
+			+ "\n    'area' is the area of the peak.";
+
 	protected static final int POSN = 0;
 	protected static final int FWHM = 1;
 	protected static final int AREA = 2;

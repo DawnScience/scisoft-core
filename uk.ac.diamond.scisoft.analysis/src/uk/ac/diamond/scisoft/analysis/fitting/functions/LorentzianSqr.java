@@ -30,14 +30,10 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
  */
 public class LorentzianSqr extends APeak {
 	private static final String NAME = "LorentzianSqr";
-	private static final String DESC = "Similar to a Lorentzian, but smaller tails:\n"
-			+ "f(x; N, G, x0) =\n"
-			+ "    4*N/(G*pi) * 1/(1 + ( ( x-x0 ) / (G/2) )^2 )^2 \n"
-			+ "where\n"
-			+ "- N is the area (=height* G/2 * pi/2),\n"
-			+ "- x0 is the position of the peak (posn) and\n"
-			+ "- G is a width parameter\n"
-			+ "     G = fwhm / sqrt(sqrt(2.) - 1.)."; 
+	private static final String DESC = "Similar to a Lorentzian, but smaller tails."
+			+ "\n    y(x) = A / [1 + ((x-posn)/a)^2 ]^2"
+			+ "\nwhere fwhm = 2*a*sqrt(sqrt(2) - 1), and area = pi * a * A / 2." + PEAK_DESC;
+
 	private static final double[] PARAMS = new double[] { 0, 0, 0 };
 
 	public LorentzianSqr() { 
@@ -119,6 +115,7 @@ public class LorentzianSqr extends APeak {
 
 	// conversion between FWHM and parameter G in function:
 	private static final double CONST = 0.5/Math.sqrt(Math.sqrt(2.0) - 1.);
+
 	@Override
 	protected void calcCachedParameters() {
 		pos = getParameterValue(POSN);

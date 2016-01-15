@@ -18,8 +18,9 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
  */
 public class StraightLine extends AFunction {
 	private static final String NAME = "Linear";
-	private static final String DESC = "y(x) = m*x + c";
-	private static final String[] PARAM_NAMES = new String[]{"M", "Constant"};
+	private static final String DESC = "A linear function or straight line."
+			+ "\n    y(x) = m*x + c";
+	private static final String[] PARAM_NAMES = new String[]{"m", "c"};
 
 	/**
 	 * Basic constructor, not advisable to use.

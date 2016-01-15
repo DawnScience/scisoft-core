@@ -38,11 +38,15 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
  */
 public class Step extends AFunction {
 	private static String NAME = "Step";
-	private static String DESC = " f(x)=alpha_1f_1(x)+...+alpha_nf_n(x),"
-			+ "\nwhere alpha_i in R, f_i(x)=1 if x in [a_i,b_i) and 0 otherwise,"
-			+ "\nfor i=1, ..., n";
-	private static final String[] PARAM_NAMES = new String[] { "base", "pmin", "pmax", "width", "start", "outer",
-			"inner" };
+	private static String DESC = "A step function with inner and outer levels."
+			+ "\n    y(x) = base,                 if x < pmin or x > pmax,"
+			+ "\n         = base + outer + inner, if x in [left, right),"
+			+ "\n         = base + outer,         otherwise"
+			+ "\nwhere left = pmin + offset*(pmax - pmin - width), width = (pmax - pmin)*frac"
+			+ "\nand right = left + width";
+
+	private static final String[] PARAM_NAMES = new String[] { "base", "pmin", "pmax", "outer", "inner", 
+			"frac", "offset" };
 
 	public Step() {
 		super(new double[]{0,0,0,0,0,0,0});

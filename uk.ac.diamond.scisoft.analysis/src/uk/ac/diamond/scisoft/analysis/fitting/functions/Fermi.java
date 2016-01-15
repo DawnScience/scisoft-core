@@ -21,7 +21,8 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 public class Fermi extends AFunction implements Serializable {
 	
 	private static final String NAME = "Fermi";
-	private static final String DESC = "y(x) = scale / (exp((x - mu)/kT) + 1) + C";
+	private static final String DESC = "A Fermi-Dirac distribution."
+			+ "\n    y(x) = scale / (exp((x - mu)/kT) + 1) + C";
 	private static final String[] PARAM_NAMES = new String[]{"mu", "kT", "scale", "C"};
 	private static final double[] PARAMS = new double[]{0,0,0,0};
 

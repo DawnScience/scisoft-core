@@ -23,9 +23,9 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
  */
 public class PseudoVoigt extends APeak implements IPeak {
 	private static final String NAME = "PseudoVoigt";
-	private static final String DESC = "y(x) = I(2θ) = I_hkl *(η * L(2θ − 2θ_0) + (1 − η)* G(2θ − 2θ_0)) \nwhere, "
-			+ "respectively, L(2θ − 2θ_0) and G(2θ − 2θ_0) represent suitably normalised Lorentz \nand Gaussian "
-			+ "functions, and η (the \"Lorentz fraction\") and (1 − η) \nrepresent the fractions of each used.";
+	private static final String DESC = "A pseudo Voigt function defined by a linear mixture of Lorentzian and Gaussian functions"
+			+ "\nwhere l_fhwm is Lorentzian full-width at half-maximum, g_fhwm is the Gaussian full-width,"
+			+ "\narea is total area and mix is 0 for a pure Gaussian and 1 for a pure Lorentzian." + PEAK_DESC;
 	private static final String[] LOCAL_PARAM_NAMES = new String[] { "posn", "l_fwhm", "area", "g_fwhm", "mix" };
 	private static final double[] PARAMS = new double[] { 0, 0, 0, 0, 0 };
 

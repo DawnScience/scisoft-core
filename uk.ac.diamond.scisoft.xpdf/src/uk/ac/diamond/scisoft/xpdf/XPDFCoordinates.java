@@ -377,16 +377,15 @@ public class XPDFCoordinates {
 				return "Error getting axis metadata";
 			}
 		} else {
-			
-		}
-		try { 
-			if (input.getMetadata(DiffractionMetadata.class) == null ||
-					input.getMetadata(DiffractionMetadata.class).isEmpty() ||
-					input.getMetadata(DiffractionMetadata.class).get(0) == null ||
-					((DiffractionMetadata) input.getMetadata(DiffractionMetadata.class).get(0)).getDetector2DProperties() == null)
-				return "Detector calibration not found";
-		} catch (Exception e) {
-			return "Error getting detector calibration";
+			try { 
+				if (input.getMetadata(DiffractionMetadata.class) == null ||
+						input.getMetadata(DiffractionMetadata.class).isEmpty() ||
+						input.getMetadata(DiffractionMetadata.class).get(0) == null ||
+						((DiffractionMetadata) input.getMetadata(DiffractionMetadata.class).get(0)).getDetector2DProperties() == null)
+					return "Detector calibration not found";
+			} catch (Exception e) {
+				return "Error getting detector calibration";
+			}
 		}
 		return null;
 	}

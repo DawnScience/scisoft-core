@@ -18,7 +18,8 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
  */
 public class Offset extends AFunction {
 	private static final String NAME = "Offset";
-	private static final String DESCRIPTION = "y(x) = c";
+	private static final String DESCRIPTION = "An offset or constant."
+			+ "\n    y(x) = c";
 	private static final String[] PARAM_NAMES = new String[]{"c"};
 
 	/**

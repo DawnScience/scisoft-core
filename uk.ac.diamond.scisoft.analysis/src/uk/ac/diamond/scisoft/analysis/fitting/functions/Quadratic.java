@@ -21,7 +21,8 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
  */
 public class Quadratic extends AFunction {
 	private static final String NAME = "Quadratic";
-	private static final String DESC = "y(x) = ax^2 + bx + c";
+	private static final String DESC = "A quadratic function or parabola."
+			+ "\n    y(x) = a*x^2 + b*x + c";
 	private static final String[] PARAM_NAMES = new String[]{"a", "b", "c"};
 
 	/**

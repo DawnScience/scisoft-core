@@ -17,8 +17,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
  */
 public class CubicSpline extends AFunction {
 	private static String NAME = "CubicSpline";
-	private static String DESC = "y(x) = a + b*x + c*x^2 + d*x^3";
-	private static final String[] PARAM_NAMES = new String[]{"A", "B", "C", "D"};
+	private static String DESC = "Construct a cubic spline given points - this is not a fitting function";
 
 	private transient double[] a = null, b = null, c = null, d = null;
 
@@ -65,12 +64,7 @@ public class CubicSpline extends AFunction {
 
 	@Override
 	protected void setNames() {
-		name = NAME;
-		description = DESC;
-		for (int i = 0; i < PARAM_NAMES.length; i++) {
-			IParameter p = getParameter(i);
-			p.setName(PARAM_NAMES[i]);
-		}
+		setNames(NAME, DESC);
 	}
 
 	protected void generateSpline(double[] newx, double[] newy) throws IllegalArgumentException {

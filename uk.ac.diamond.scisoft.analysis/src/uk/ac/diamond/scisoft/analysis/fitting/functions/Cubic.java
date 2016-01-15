@@ -22,7 +22,8 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
  */
 public class Cubic extends AFunction {
 	private static final String NAME = "Cubic";
-	private static final String DESC = "y(x) = ax^3 + bx^2 + cx + d";
+	private static final String DESC = "A cubic function."
+			+ "\n    y(x) = a*x^3 + b*x^2 + c*x + d";
 	private static final String[] PARAM_NAMES = new String[]{"a", "b", "c", "d"};
 
 	/**

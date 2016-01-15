@@ -31,7 +31,8 @@ public class FermiGauss extends AFunction implements Serializable{
 	static final double K2EV_CONVERSION_FACTOR = 8.6173324e-5; // Boltzmann constant in eV/K
 
 	private static final String NAME = "Fermi * Gaussian";
-	private static final String DESC = "y(x) = [(scaleM * (x - mu) + scaleC) * Fermi(mu, kT, 1, 0) + C] * Gaussian(mu, fwhm, 1)";
+	private static final String DESC = "A Fermi factored Gaussian function that is also multiplied by a slope."
+			+ "\n    y(x) = [(scaleM * (x - mu) + scaleC) * Fermi(mu, kT, 1, 0) + C] * Gaussian(mu, fwhm, 1)";
 	private static final String[] PARAM_NAMES = new String[]{"mu", "T", "scaleM", "scaleC", "C", "fwhm"};
 	private static final double[] PARAMS = new double[] { 0, 0, 0, 0, 0, 0 };
 	

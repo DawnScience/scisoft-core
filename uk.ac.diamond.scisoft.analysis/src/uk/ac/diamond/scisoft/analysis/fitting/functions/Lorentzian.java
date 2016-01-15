@@ -24,7 +24,10 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
  */
 public class Lorentzian extends APeak {
 	private static final String NAME = "Lorentzian";
-	private static final String DESC = "y(x) = A x(half)^2 / ( x(half)^2 + (x-a)^2 )\nwhere A is the height\na is the position of the peak\nx(half) is the half width at half maximum, known as gamma";
+	private static final String DESC = "A Lorentzian function also known as a Breit-Wigner or Cauchy distribution."
+			+ "\n    y(x) = A a^2 / ( a^2 + (x - pos)^2 )"
+			+ "\nwhere fwhm = 2*a, and area = pi * a * A." + PEAK_DESC;
+
 	private static final double[] PARAMS = new double[] { 0, 0, 0 };
 
 	public Lorentzian() { 

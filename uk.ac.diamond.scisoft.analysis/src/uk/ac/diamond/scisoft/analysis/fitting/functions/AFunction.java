@@ -537,7 +537,6 @@ public abstract class AFunction implements IFunction, Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (dirty ? 1231 : 1237);
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + Arrays.hashCode(parameters);
 		return result;
@@ -552,8 +551,6 @@ public abstract class AFunction implements IFunction, Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		AFunction other = (AFunction) obj;
-		if (dirty != other.dirty)
-			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;

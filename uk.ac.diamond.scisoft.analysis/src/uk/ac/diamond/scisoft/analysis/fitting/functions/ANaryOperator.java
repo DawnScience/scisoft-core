@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IOperator;
+import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 
 /**
  * A n-ary operator that uses n > 0 functions
@@ -69,5 +70,13 @@ abstract public class ANaryOperator extends AOperator implements IOperator {
 	public void removeFunction(int index) {
 		functions.remove(index).setParentOperator(null);
 		updateParameters();
+	}
+
+	@Override
+	public void setMonitor(IMonitor monitor) {
+		super.setMonitor(monitor);
+		for (IFunction function : functions) {
+			function.setMonitor(monitor);
+		}
 	}
 }

@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.fitting;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
+import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
@@ -157,10 +158,13 @@ public class Fitter {
 		CompositeFunction comp = new CompositeFunction();
 		IDataset[] coords = new IDataset[] {xAxis};
 
+		IMonitor monitor = null;
 		for (int i = 0; i < functions.length; i++) {
 			comp.addFunction(functions[i]);
+			monitor = functions[i].getMonitor();
 		}
-
+		if (monitor != null)
+			comp.setMonitor(monitor);
 		// call the optimisation routine
 		optimizer.optimize(coords, yAxis, comp);
 

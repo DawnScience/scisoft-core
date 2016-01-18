@@ -48,7 +48,7 @@ public class PearsonVII extends APeak {
 	 */
 	public PearsonVII(double[] params) {
 		super(PARAMS.length);
-		fillParameters(params);
+		setParameterValues(params);
 
 		getParameter(FWHM).setLowerLimit(0.0);
 		getParameter(POWER).setLowerLimit(1.0);
@@ -57,7 +57,7 @@ public class PearsonVII extends APeak {
 
 	public PearsonVII(IParameter... params) {
 		super(PARAMS.length);
-		fillParameters(params);
+		setParameters(params);
 
 		getParameter(FWHM).setLowerLimit(0.0);
 		getParameter(POWER).setLowerLimit(1.0);
@@ -69,26 +69,10 @@ public class PearsonVII extends APeak {
 
 	public PearsonVII(IdentifiedPeak peakParameters) {
 		super(PARAMS.length); 
-		
-		// pos
-		double range = peakParameters.getMaxXVal()-peakParameters.getMinXVal();
+
+		setParameters(peakParameters);
+
 		IParameter p;
-		p = getParameter(POSN);
-		p.setValue(peakParameters.getPos());
-		p.setLimits(peakParameters.getMinXVal(), peakParameters.getMaxXVal());
-		
-		// fwhm
-		p = getParameter(FWHM);
-		p.setLimits(0, range*2);
-		p.setValue(peakParameters.getFWHM()/2);
-
-		// area
-		// better fitting is generally found if sigma expands into the peak.
-		p = getParameter(AREA);
-		p.setLimits(0, peakParameters.getHeight()*range*4);
-		p.setValue(peakParameters.getArea()/2);
-
-		// power
 		p = getParameter(POWER);
 		p.setValue(DEF_POWER);
 		p.setLimits(1.0, 10.0);

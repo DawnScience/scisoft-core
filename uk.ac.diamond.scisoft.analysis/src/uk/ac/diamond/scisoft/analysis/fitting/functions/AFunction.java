@@ -242,6 +242,15 @@ public abstract class AFunction implements IFunction, Serializable {
 		dirty = true;
 	}
 
+	protected void setParameters(IParameter... params) {
+		int nparams = Math.min(params.length, parameters.length);
+
+		for (int j = 0; j < nparams; j++) {
+			parameters[j].setValue(params[j].getValue());
+		}
+		dirty = true;
+	}
+
 	@Override
 	public String toString() {
 		StringBuffer out = new StringBuffer();

@@ -44,7 +44,7 @@ public class PseudoVoigt extends APeak {
 	 */
 	public PseudoVoigt(double position, double lorentzianFWHM, double area, double gaussianFWHM, double mix) {
 		super(PARAMS.length);
-		fillParameters(position, lorentzianFWHM, area, gaussianFWHM, mix);
+		setParameterValues(position, lorentzianFWHM, area, gaussianFWHM, mix);
 
 		getParameter(FWHM).setLowerLimit(0.0);
 		getParameter(FWHMG).setLowerLimit(0.0);
@@ -54,7 +54,7 @@ public class PseudoVoigt extends APeak {
 
 	public PseudoVoigt(double[] params) {
 		super(PARAMS.length);
-		fillParameters(params);
+		setParameterValues(params);
 
 		getParameter(FWHM).setLowerLimit(0.0);
 		getParameter(FWHMG).setLowerLimit(0.0);
@@ -69,7 +69,7 @@ public class PseudoVoigt extends APeak {
 	 */
 	public PseudoVoigt(IParameter... params) {
 		super(PARAMS.length);
-		fillParameters(params);
+		setParameters(params);
 
 		getParameter(FWHM).setLowerLimit(0.0);
 		getParameter(FWHMG).setLowerLimit(0.0);
@@ -83,7 +83,6 @@ public class PseudoVoigt extends APeak {
 	public PseudoVoigt(IdentifiedPeak peakParameters) {
 		super(PARAMS.length);
 
-		// Position
 		IParameter p;
 		p = getParameter(POSN);
 		double range = peakParameters.getMaxXVal()-peakParameters.getMinXVal();

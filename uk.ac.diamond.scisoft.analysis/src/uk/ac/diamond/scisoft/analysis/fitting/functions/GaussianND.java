@@ -177,6 +177,8 @@ public class GaussianND extends AFunction {
 //		logger.info("New pos at {}", pos);
 		norm = getParameterValue(n);
 		n++;
+		if (rank == 0)
+			return;
 		Array2DRowRealMatrix covar = (Array2DRowRealMatrix) MatrixUtils.createRealMatrix(rank, rank);
 		for (int i = 0; i < rank; i++) {
 			covar.setEntry(i, i, getParameterValue(n));
@@ -237,9 +239,11 @@ public class GaussianND extends AFunction {
 		double[] buffer = data.getData();
 		while (it.hasNext()) {
 			double[] v = coords.clone();
-			for (int i = 0; i < v.length; i++)
-				v[i] -= pos[i];
-
+			for (int i = 0; i < v.length; i++) {
+				v[i] -= pos.length > 0 ? pos[i] : 0;
+			}
+			if (invcov == null)
+				return;
 			double[] u = invcov.operate(v);
 			double arg = 0;
 			for (int i = 0; i < v.length; i++)

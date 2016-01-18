@@ -72,6 +72,8 @@ public class CubicSpline extends AFunction {
 		y = newy;
 
 		int n = 0;
+		if (x == null)
+			return;
 		if (x.length == y.length) {
 			n = x.length-1;
 		} else {
@@ -121,6 +123,8 @@ public class CubicSpline extends AFunction {
 
 	protected int getRegion(double xvalue) {
 		// get the region
+		if (x == null)
+			return 0;
 		for (int i = 0; i < x.length-1; i++) {
 			if (xvalue < x[i+1]) {
 				return i;
@@ -131,7 +135,8 @@ public class CubicSpline extends AFunction {
 
 	protected double evaluateSpline(double xvalue) {
 		int i = getRegion(xvalue);
-
+		if (x == null)
+			return 0;
 		double dx = (xvalue - x[i]);
 		double result = a[i] + dx * (b[i] + (dx * (c[i] + (dx * d[i]))));
 

@@ -36,6 +36,88 @@ public abstract class APeak extends AFunction implements IPeak {
 		super(n);
 	}
 
+	/**
+	 * Constructor which takes the three properties required, which are
+	 * 
+	 * <pre>
+	 *     Parameter 1	- Position
+	 *     Parameter 2 	- FWHM (full width at half maximum)
+	 *     Parameter 3 	- Area
+	 * </pre>
+	 * 
+	 * @param params
+	 */
+	public APeak(double... params) {
+		super(3);
+		if (params.length != 3) {
+			throw new IllegalArgumentException("A peak requires 3 parameters, and it has been given " + params.length);
+		}
+		getParameter(FWHM).setLowerLimit(0.0);
+	}
+
+	/**
+	 * Constructor which takes the three properties required, which are
+	 * 
+	 * <pre>
+	 *     Parameter 1	- Position
+	 *     Parameter 2 	- FWHM (full width at half maximum)
+	 *     Parameter 3 	- Area
+	 * </pre>
+	 * 
+	 * @param params
+	 */
+	public APeak(IParameter... params) {
+		super(3);
+		if (params.length != 3) {
+			throw new IllegalArgumentException("A peak requires 3 parameters, and it has been given " + params.length);
+		}
+		getParameter(FWHM).setLowerLimit(0.0);
+	}
+
+	public APeak(IdentifiedPeak peakParameters) {
+		super(3);
+
+		setParameters(peakParameters);
+	}
+
+	protected void setParameters(IdentifiedPeak peakParameters) {
+		double range = peakParameters.getMaxXVal() - peakParameters.getMinXVal();
+		double maxArea = peakParameters.getHeight() * range * 4;
+
+		IParameter p;
+		p = getParameter(POSN);
+		p.setValue(peakParameters.getPos());
+		p.setLimits(peakParameters.getMinXVal(), peakParameters.getMaxXVal());
+
+		p = getParameter(FWHM);
+		p.setLimits(0, range*2);
+		p.setValue(peakParameters.getFWHM() / 2);
+		
+		p = getParameter(AREA);
+		p.setLimits(-maxArea, maxArea);
+		p.setValue(peakParameters.getArea() / 2); // area better fitting is generally found if sigma expands into the peak.
+
+	}
+	
+	/**
+	 * Constructor which takes more sensible values for the parameters, which also incorporates the limits which they
+	 * can be in, reducing the overall complexity of the problem
+	 * 
+	 * @param minPeakPosition
+	 *            The minimum value of the peak position
+	 * @param maxPeakPosition
+	 *            The maximum value of the peak position
+	 * @param maxFWHM
+	 *            Full width at half maximum
+	 * @param maxArea
+	 *            The maximum area of the peak
+	 */
+	public APeak(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea) {
+		super(3);
+
+		internalSetPeakParameters(minPeakPosition, maxPeakPosition, maxFWHM, maxArea);
+	}
+
 	protected void internalSetPeakParameters(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea) {
 		IParameter p;
 		p = getParameter(POSN);

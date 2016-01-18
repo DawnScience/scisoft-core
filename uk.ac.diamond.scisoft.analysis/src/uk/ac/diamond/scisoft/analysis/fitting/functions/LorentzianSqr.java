@@ -52,39 +52,15 @@ public class LorentzianSqr extends APeak {
 	 * @param params
 	 */
 	public LorentzianSqr(double... params) {
-		super(PARAMS.length);
-		fillParameters(params);
-
-		getParameter(FWHM).setLowerLimit(0.0);
+		super(params);
 	}
 
 	public LorentzianSqr(IParameter... params) {
-		super(PARAMS.length);
-		fillParameters(params);
-
-		getParameter(FWHM).setLowerLimit(0.0);
+		super(params);
 	}
 
 	public LorentzianSqr(IdentifiedPeak peakParameters) {
-		super(PARAMS.length);
-
-		double range = peakParameters.getMaxXVal() - peakParameters.getMinXVal();
-		double maxArea = peakParameters.getHeight() * range * 4;
-
-		IParameter p;
-		p = getParameter(POSN);
-		p.setValue(peakParameters.getPos());
-		p.setLimits(peakParameters.getMinXVal(), peakParameters.getMaxXVal());
-
-		// fwhm
-		p = getParameter(FWHM);
-		p.setLimits(0, range*2);
-		p.setValue(peakParameters.getFWHM());
-
-		// area
-		p = getParameter(AREA);
-		p.setLimits(-maxArea, maxArea);
-		p.setValue(peakParameters.getArea()); // / 2); // GF: why by two (as in Lorentzian)?
+		super(peakParameters);
 	}
 
 	/**

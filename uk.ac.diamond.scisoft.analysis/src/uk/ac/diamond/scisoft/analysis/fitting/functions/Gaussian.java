@@ -39,42 +39,15 @@ public class Gaussian extends APeak {
 	 * @param params
 	 */
 	public Gaussian(double... params) {
-		super(PARAMS.length);
-		// make sure that there are 3 parameters, otherwise, throw a sensible error
-		if (params.length != PARAMS.length) {
-			throw new IllegalArgumentException("A Gaussian peak requires 3 parameters, and it has been given "+params.length);
-		}
-		fillParameters(params);
-		getParameter(FWHM).setLowerLimit(0.0);
+		super(params);
 	}
 
 	public Gaussian(IParameter... params) {
-		super(PARAMS.length);
-		if (params.length != PARAMS.length) 
-			throw new IllegalArgumentException("A Gaussian peak requires 3 parameters, and it has been given "+params.length);
-		fillParameters(params);
-		getParameter(FWHM).setLowerLimit(0.0);
+		super(params);
 	}
 
 	public Gaussian(IdentifiedPeak peakParameters) {
-		super(PARAMS.length); 
-		double range = peakParameters.getMaxXVal() - peakParameters.getMinXVal();
-		double fwhm2 = peakParameters.getFWHM() * 2;
-		double pos = peakParameters.getPos();
-		double maxArea = peakParameters.getHeight() * range * 4;
-
-		IParameter p;
-		p = getParameter(POSN);
-		p.setValue(pos);
-		p.setLimits(pos - fwhm2, pos + fwhm2);
-
-		p = getParameter(FWHM);
-		p.setLimits(0, range*2);
-		p.setValue(peakParameters.getFWHM() / 2);
-		
-		p = getParameter(AREA);
-		p.setLimits(-maxArea, maxArea);
-		p.setValue(peakParameters.getArea() / 2); // area better fitting is generally found if sigma expands into the peak.
+		super(peakParameters);
 	}
 
 	/**
@@ -91,9 +64,7 @@ public class Gaussian extends APeak {
 	 *            The maximum area of the peak
 	 */
 	public Gaussian(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea) {
-		super(PARAMS.length);
-
-		internalSetPeakParameters(minPeakPosition, maxPeakPosition, maxFWHM, maxArea);
+		super(minPeakPosition, maxPeakPosition, maxFWHM, maxArea);
 	}
 
 	@Override

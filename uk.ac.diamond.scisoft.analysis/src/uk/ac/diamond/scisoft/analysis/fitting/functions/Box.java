@@ -21,7 +21,7 @@ public class Box extends AFunction {
 
 	private static final String NAME = "Box";
 	private static final String DESC = "A rounded step function defined by Fermi functions."
-			+ "\n    y(x) = Fermi(mu1, kT1, scale) - Fermi(mu2,kT2, scale)";
+			+ "\n    y(x) = Fermi(x; mu1, kT1, scale) - Fermi(x; mu2,kT2, scale)";
 	private static final String[] paramNames = new String[]{"mu1", "kT1", "mu2", "kT2", "scale"};
 	private static final double[] params = new double[]{0,0,0,0,0};
 

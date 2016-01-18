@@ -264,6 +264,9 @@ public class Polynomial extends AFunction {
 	 * @return all roots or null if there is any problem finding the roots
 	 */
 	public Complex[] findRoots() {
+		if (isDirty()) {
+			calcCachedParameters();
+		}
 		return findRoots(a);
 	}
 

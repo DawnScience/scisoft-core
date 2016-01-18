@@ -320,7 +320,19 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 			setParameterValues(res instanceof ArrayRealVector ? ((ArrayRealVector) res).getDataRef() : res.toArray());
 			try {
 				RealVector err = result.getSigma(1e-14);
-				errors = err instanceof ArrayRealVector ? ((ArrayRealVector) err).getDataRef() : err.toArray();
+				
+//				sqrt(S / (n - m) * C[i][i]);
+				double c = result.getCost();
+				int n = data.getSize();
+				int m = getParameterValues().length;
+				
+				double[] s = err instanceof ArrayRealVector ? ((ArrayRealVector) err).getDataRef() : err.toArray();
+				
+				errors = new double[s.length];
+				
+				for (int i = 0; i < errors.length; i++) errors[i] = Math.sqrt(((c*c)/((n-m)) * (s[i]*s[i])));
+				
+				
 			} catch (SingularMatrixException e) {
 				logger.warn("Could not find errors as covariance matrix was singular");
 			}

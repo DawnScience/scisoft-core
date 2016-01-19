@@ -158,13 +158,10 @@ public class Fitter {
 		CompositeFunction comp = new CompositeFunction();
 		IDataset[] coords = new IDataset[] {xAxis};
 
-		IMonitor monitor = null;
 		for (int i = 0; i < functions.length; i++) {
 			comp.addFunction(functions[i]);
-			monitor = functions[i].getMonitor();
 		}
-		if (monitor != null)
-			comp.setMonitor(monitor);
+
 		// call the optimisation routine
 		optimizer.optimize(coords, yAxis, comp);
 

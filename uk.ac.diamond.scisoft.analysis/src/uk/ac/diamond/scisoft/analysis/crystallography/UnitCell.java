@@ -45,7 +45,7 @@ public class UnitCell extends LatticeCell {
 			setAngles(Arrays.copyOfRange(parameters, 3, 6));
 			makeBasisVectors();
 		} else if (parameters.length == 3) {
-			setLengths(parameters);
+			setLengths(parameters.clone());
 			setAngles(new double[] { 90, 90, 90 });
 
 			a = new Vector3d(lengths[0], 0, 0);

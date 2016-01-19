@@ -301,13 +301,14 @@ public class XPDFCalibration {
 		for (int iScatterer = nComponents-1; iScatterer > 0; iScatterer--){
 			// The innermost absorber here considered. Does not include the
 			// Scatterer, but does include the sample 
-			for (int iInnermostAbsorber = iScatterer - 1; iInnermostAbsorber >= 0; iInnermostAbsorber--){
+			for (int iInnermostAbsorber = iScatterer - 1; iInnermostAbsorber >= 0; iInnermostAbsorber--) {
 				// A product of absorption maps from (but excluding) the
 				// scatterer, to (and including) the innermost absorber
 				// Set the initial term of the partial product to be the absorber
 				Dataset subsetAbsorptionCorrection = this.absorptionMaps.getAbsorptionMap(iScatterer, iInnermostAbsorber);
-				for (int iAbsorber = iInnermostAbsorber+1; iAbsorber < iScatterer; iAbsorber++) 
-					subsetAbsorptionCorrection.imultiply(this.absorptionMaps.getAbsorptionMap(iScatterer, iAbsorber));
+				for (int iAbsorber = iInnermostAbsorber+1; iAbsorber < iScatterer; iAbsorber++)
+					subsetAbsorptionCorrection = Maths.multiply(subsetAbsorptionCorrection, this.absorptionMaps.getAbsorptionMap(iScatterer, iAbsorber));
+//					subsetAbsorptionCorrection.imultiply(this.absorptionMaps.getAbsorptionMap(iScatterer, iAbsorber));
 				// Subtract the scattered radiation, corrected for absorption, from the attenuator's radiation
 				absorptionTemporary.get(iInnermostAbsorber).isubtract(
 						Maths.divide(
@@ -335,7 +336,7 @@ public class XPDFCalibration {
 		// start with sample self-absorption
 		Dataset absorptionCorrection = this.absorptionMaps.getAbsorptionMap(0, 0);
 		for (int iAbsorber = 1; iAbsorber < nComponents; iAbsorber++)
-			absorptionCorrection.imultiply(absorptionMaps.getAbsorptionMap(0, iAbsorber));
+			absorptionCorrection = Maths.multiply(absorptionCorrection, absorptionMaps.getAbsorptionMap(0, iAbsorber));
 		
 		Dataset absCor = Maths.divide(absorptionTemporary.get(0), absorptionCorrection.reshape(absorptionCorrection.getSize()));
 //		Dataset absCor = Maths.divide(absorptionTemporary.get(0), absorptionCorrection.squeeze());

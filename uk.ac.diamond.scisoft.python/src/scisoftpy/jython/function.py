@@ -72,8 +72,8 @@ def _jfnclass(jclass):
             return self._jfn.calculatePartialDerivativeValues(toList(*coords))
 
         @_wrap
-        def residual(self, allvalues, data, *coords):
-            return self._jfn.residual(allvalues, data, *coords)
+        def residual(self, allvalues, data, weight, *coords):
+            return self._jfn.residual(allvalues, data, weight, *coords)
 
     return _JavaFunction
 

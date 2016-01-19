@@ -68,8 +68,8 @@ class Test(unittest.TestCase):
         d = f.calculateValues(x)
         dd = ff.calculateValues(x)
         
-        print f.residual(True, d, x)
-        print ff.residual(True, dd, x)
+        print f.residual(True, d, None, x)
+        print ff.residual(True, dd, None, x)
 
     def testFit(self):
         d = dnp.array([ 3.5733e+00, 2.1821e+00, 1.8313e+00, 1.9893e+00, 8.3145e-01,

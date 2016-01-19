@@ -52,6 +52,8 @@ public abstract class APeak extends AFunction implements IPeak {
 		if (params.length != 3) {
 			throw new IllegalArgumentException("A peak requires 3 parameters, and it has been given " + params.length);
 		}
+		setParameterValues(params);
+
 		getParameter(FWHM).setLowerLimit(0.0);
 	}
 
@@ -71,6 +73,8 @@ public abstract class APeak extends AFunction implements IPeak {
 		if (params.length != 3) {
 			throw new IllegalArgumentException("A peak requires 3 parameters, and it has been given " + params.length);
 		}
+		setParameters(params);
+
 		getParameter(FWHM).setLowerLimit(0.0);
 	}
 
@@ -96,9 +100,8 @@ public abstract class APeak extends AFunction implements IPeak {
 		p = getParameter(AREA);
 		p.setLimits(-maxArea, maxArea);
 		p.setValue(peakParameters.getArea() / 2); // area better fitting is generally found if sigma expands into the peak.
-
 	}
-	
+
 	/**
 	 * Constructor which takes more sensible values for the parameters, which also incorporates the limits which they
 	 * can be in, reducing the overall complexity of the problem

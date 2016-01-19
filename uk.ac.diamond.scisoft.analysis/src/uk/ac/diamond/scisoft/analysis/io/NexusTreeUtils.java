@@ -1035,6 +1035,11 @@ public class NexusTreeUtils {
 			}
 		}
 
+		if (getBeam) {
+			logger.error("Could not find beam in {}", link.getName());
+			throw new IllegalArgumentException("Could not find beam");
+		}
+
 		// Find all dependencies
 		Map<String, Transform> mtrans = new HashMap<String, Transform>();
 		for (Transform t: ftrans.values()) {

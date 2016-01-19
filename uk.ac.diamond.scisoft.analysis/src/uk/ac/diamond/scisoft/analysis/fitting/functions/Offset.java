@@ -28,12 +28,12 @@ public class Offset extends AFunction {
 	public Offset() {
 		super(1);
 	}
-	
+
 	/**
 	 * This constructor should always be kept just in case, very useful for automated systems
 	 * @param params
 	 */
-	public Offset(double[] params) {
+	public Offset(double... params) {
 		super(params);
 	}
 

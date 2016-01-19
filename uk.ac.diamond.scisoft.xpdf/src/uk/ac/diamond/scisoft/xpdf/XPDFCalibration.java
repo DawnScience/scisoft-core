@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.xpdf;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
 public class XPDFCalibration {
 
 	private LinkedList<Double> calibrationConstants;
+	private Double calibrationConstant0;
 	private XPDFQSquaredIntegrator qSquaredIntegrator;
 	private double selfScatteringDenominator;
 	private Dataset multipleScatteringCorrection;
@@ -99,9 +101,10 @@ public class XPDFCalibration {
 	 * 							the initial value of the calibration constant.
 	 */
 	public void initializeCalibrationConstant(double calibrationConstant) {
-		if (this.calibrationConstants == null || !this.calibrationConstants.isEmpty())
-			this.calibrationConstants = new LinkedList<Double>();
-		this.calibrationConstants.add(calibrationConstant);
+//		if (this.calibrationConstants == null || !this.calibrationConstants.isEmpty())
+//			this.calibrationConstants = new LinkedList<Double>();
+//		this.calibrationConstants.add(calibrationConstant);
+		calibrationConstant0 = calibrationConstant;
 	}
 
 	/**
@@ -387,7 +390,9 @@ public class XPDFCalibration {
 		// TODO: Solid angle correction do nothing
 		List<Dataset> solAng = new ArrayList<Dataset>();
 		for (Dataset targetComponent : backgroundSubtracted) {
-			Dataset solAngData = Maths.multiply(1.0, targetComponent);
+			Dataset cosTwoTheta = Maths.cos(coords.getTwoTheta());
+			Dataset solAngData = Maths.multiply(Maths.multiply(cosTwoTheta, cosTwoTheta), Maths.multiply(targetComponent, cosTwoTheta));
+//			Dataset solAngData = Maths.multiply(1.0, targetComponent);
 			if (propagateErrors && targetComponent.getError() != null)
 				solAngData.setError(targetComponent.getError());
 			solAng.add(solAngData);
@@ -422,6 +427,8 @@ public class XPDFCalibration {
 			fluorescenceCorrected.add(backgroundSubtracted.get(iContainer));
 		
 		Dataset absCor = null;
+		// Initialize the list of calibration constants with the predefined initial value.
+		calibrationConstants = new LinkedList<Double>(Arrays.asList(new Double[] {calibrationConstant0}));
 		for (int i = 0; i < nIterations; i++)
 			absCor = this.iterate(fluorescenceCorrected, propagateErrors);
 		return absCor;
@@ -460,6 +467,7 @@ public class XPDFCalibration {
 			
 		}
 		this.fluorescenceScale = minimalScale;
+		this.fluorescenceScale = 3640.0;
 	}
 
 	public void setDoFluorescence(boolean doIt) {

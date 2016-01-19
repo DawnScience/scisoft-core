@@ -30,7 +30,7 @@ public class SmoothGoldEdgeFunction extends AFunction implements
 	Dataset xds;
 	Dataset yds;
 	
-	private transient DoubleDataset smoothed;
+	private transient IDataset smoothed;
 	private transient PolynomialSplineFunction polySplineFunction;
 	private transient SimpleRegression lowerFit;
 	private transient SimpleRegression upperFit;
@@ -82,10 +82,11 @@ public class SmoothGoldEdgeFunction extends AFunction implements
 		this.yds = DatasetUtils.convertToDataset(data);
 		try {
 			// Smooth the data by the real ammount for the smoothed section of the process
-			this.smoothed = (DoubleDataset) ApachePolynomial.getPolynomialSmoothed(xds, yds, (int) Math.round(getParameterValue(0)), 3);
+			this.smoothed = ApachePolynomial.getPolynomialSmoothed(xds, yds, (int) Math.round(getParameterValue(0)), 3);
 			// Fit a polyline to this to allow for easy interpolation
-			this.polySplineFunction = new LinearInterpolator().interpolate(new DoubleDataset(xds).getData(), smoothed.getData());
-			
+			IDataset arg2 = DatasetUtils.cast(smoothed, Dataset.FLOAT64);
+			this.polySplineFunction = new LinearInterpolator().interpolate(new DoubleDataset(xds).getData(), ((DoubleDataset)arg2).getData());
+
 			lowerFit = new SimpleRegression();
 			double lowerProp = xds.getShape()[0]*getParameterValue(1);
 			for (int i = 0; i < lowerProp; i++ ) {
@@ -114,7 +115,8 @@ public class SmoothGoldEdgeFunction extends AFunction implements
 		double[] buffer = data.getData();
 		
 		double midpoint = (double) xds.mean();
-		
+		if (lowerFit == null || upperFit == null)
+			return;
 		double lowerPredict = lowerFit.predict(xds.getDouble(0));
 		double lowerEndValue = yds.getDouble(0);
 		double lowerMatch = lowerPredict - lowerEndValue;

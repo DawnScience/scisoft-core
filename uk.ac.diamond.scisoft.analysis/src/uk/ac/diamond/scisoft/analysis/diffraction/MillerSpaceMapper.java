@@ -335,6 +335,7 @@ public class MillerSpaceMapper {
 		DoubleDataset weight = (DoubleDataset) DatasetFactory.zeros(hShape, Dataset.FLOAT64);
 
 		mapToMillerSpace(tree, iters, map, weight);
+		Maths.dividez(map, weight, map); // normalize by tally
 
 		if (reduceToNonZeroBB) {
 			System.err.println("Reduced to non-zero bounding box: " + Arrays.toString(min) + " to " + Arrays.toString(max));
@@ -374,7 +375,6 @@ public class MillerSpaceMapper {
 		}
 
 		mapImages(tree, trans, images, iters, map, weight, ishape, upSampler);
-		Maths.dividez(map, weight, map); // normalize by tally
 	}
 
 	private void findBoundingBox(Tree tree, PositionIterator[] iters) {
@@ -660,6 +660,7 @@ public class MillerSpaceMapper {
 				Tree tree = trees[i];
 				mapToMillerSpace(tree, allIters[i], map, weight);
 			}
+			Maths.dividez(map, weight, map); // normalize by tally
 
 			if (reduceToNonZeroBB) {
 				System.err.println("Reduced to non-zero bounding box: " + Arrays.toString(min) + " to " + Arrays.toString(max));

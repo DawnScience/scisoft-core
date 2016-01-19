@@ -50,7 +50,7 @@ public class JythonPath {
 		"org.python.pydev",
 		"cbflib-0.9",
 		"org.apache.commons.codec",
-		"org.apache.commons.math", // Includes math3
+		"org.apache.commons.math3", // math3 only now
 		"uk.ac.diamond.CBFlib",
 		"uk.ac.diamond.jama",
 		"uk.ac.diamond.ejml",

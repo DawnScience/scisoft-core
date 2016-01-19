@@ -32,7 +32,6 @@ abstract public class AbstractPlotServer implements PlotServer {
 		guiStore = new HashMap<String, GuiBean>();
 		dataStore = new HashMap<String, DataBean>();
 		this.removeOnGet = removeOnGet;
-		
 	}
 
 	@Override
@@ -109,5 +108,4 @@ abstract public class AbstractPlotServer implements PlotServer {
 	protected Map<String, DataBean> getDataStore() {
 		return dataStore;
 	}
-	
 }

@@ -157,10 +157,6 @@ public class NelderMead extends AbstractOptimizer {
 	
 				simplex.generateStartingFitnesses();
 	
-				//for(int i = 0; i < 100*problemDefinition.getNumberOfParameters(); i++) {
-				//	simplex.iterate(problemDefinition);
-				//}
-				
 				int iterationCount = 0;
 				
 				do {

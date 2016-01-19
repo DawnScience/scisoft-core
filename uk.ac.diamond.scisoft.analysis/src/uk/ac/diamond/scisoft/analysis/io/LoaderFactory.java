@@ -120,7 +120,7 @@ public class LoaderFactory {
 		    registerLoader("osc",  RAxisImageLoader.class);
 		    registerLoader("cbf",  CBFLoader.class);
 		    registerLoader("img",  CrysalisLoader.class);
-			registerLoader("tif",  PixiumLoader.class);
+		    registerLoader("tif",  PixiumLoader.class);
 		    registerLoader("jpeg", JPEGLoader.class);
 		    registerLoader("jpg",  JPEGLoader.class);
 		    registerLoader("mccd", MARLoader.class);
@@ -137,8 +137,8 @@ public class LoaderFactory {
 		    registerLoader("hdf5", HDF5Loader.class);
 		    registerLoader("hd5",  HDF5Loader.class);
 		    registerLoader("mat",  HDF5Loader.class);
-		    registerLoader("nc",  HDF5Loader.class);
-		    
+		    registerLoader("nc",   HDF5Loader.class);
+
 		    registerLoader("tif",  PilatusTiffLoader.class);
 		    registerLoader("png",  PNGLoader.class);
 		    registerLoader("raw",  RawBinaryLoader.class);
@@ -155,16 +155,16 @@ public class LoaderFactory {
 		    registerLoader("txt",  SRSLoader.class);
 		    registerLoader("mca",  DatLoader.class);
 		    registerLoader("mca",  SRSLoader.class);
-		    registerLoader("tif",  TIFFImageLoader.class);		    
-		    registerLoader("tiff", TIFFImageLoader.class);		    
+		    registerLoader("tif",  TIFFImageLoader.class);
+		    registerLoader("tiff", TIFFImageLoader.class);
 		    registerLoader("zip",  XMapLoader.class);
 		    registerLoader("edf",  PilatusEdfLoader.class);
 		    registerLoader("pgm",  PgmLoader.class);
 		    registerLoader("f2d",  Fit2DLoader.class);
 		    registerLoader("msk",  Fit2DMaskLoader.class);
-		    registerLoader("mib", MerlinLoader.class);
-		    registerLoader("bmp", BitmapLoader.class);
-		    registerLoader("spe", SpeLoader.class);
+		    registerLoader("mib",  MerlinLoader.class);
+		    registerLoader("bmp",  BitmapLoader.class);
+		    registerLoader("spe",  SpeLoader.class);
 		    registerLoader("xmso", XMSOLoader.class);
 		    registerLoader("alba", AlbaLinkFileLoader.class);
 

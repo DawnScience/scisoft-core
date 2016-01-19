@@ -34,7 +34,7 @@ public class QSpace {
 		qScale=scale;
 		setDiffractionCrystalEnvironment(diffexp);
 	}
-	
+
 	public QSpace(DetectorProperties detprops, DiffractionCrystalEnvironment diffexp) {
 		this(detprops, diffexp, QSCALE_DEFAULT);
 	}

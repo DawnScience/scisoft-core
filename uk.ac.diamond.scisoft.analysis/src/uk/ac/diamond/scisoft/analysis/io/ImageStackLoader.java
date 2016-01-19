@@ -162,7 +162,7 @@ public class ImageStackLoader implements ILazyLoader {
 		} else {
 			path = dlsPath;
 		}
-        return path;
+		return path;
 	}
 
 	private static final boolean isWindows = System.getProperty("os.name").startsWith("Windows");

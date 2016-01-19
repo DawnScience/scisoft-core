@@ -98,11 +98,6 @@ public class GradientDescent extends AbstractOptimizer {
 			} else {
 				stepsize *= 0.75;
 			}
-			
-			//System.out.println("Value = "+ value + " :: testValue = " + testValue);
-			//System.out.println("Stepsize = " + stepsize +" :: Quality = " + problemDefinition.eval(solution) + " :: params " + solution[0] + " , " + solution [1] + " , " + solution[2] + " , " + solution[3]);
-			//System.out.println(problemDefinition.eval(solution) + " , " +solution[0] + " , " + solution [1] + " , " + solution[2]+ " , " + solution[3] );
-			//System.out.println(stepsize + " , " +stepweight[0] + " , " + stepweight [1] + " , " + stepweight[2]+ " , " + stepweight[3] );
 		}
 		
 		return solution;

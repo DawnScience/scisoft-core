@@ -194,7 +194,7 @@ public class DetectorPropertiesTest {
 	 */
 	@Test
 	public void testDetectorSize() {
-	DetectorProperties detector = new DetectorProperties(detectorOrigin, beamCentre, imageSizePix[0], imageSizePix[1], pixelSize,
+		DetectorProperties detector = new DetectorProperties(detectorOrigin, beamCentre, imageSizePix[0], imageSizePix[1], pixelSize,
 			pixelSize, orientationMatrix);
 		// detector size for assert
 		double detSizeX = detector.getDetectorSizeH();

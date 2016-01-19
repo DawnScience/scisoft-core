@@ -47,6 +47,7 @@ import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer;
 import org.apache.commons.math3.random.Well19937c;
 import org.apache.commons.math3.util.Pair;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
+import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
@@ -109,10 +110,13 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 		}
 
 		MultivariateJacobianFunction f = new MultivariateJacobianFunction() {
-			
 			@SuppressWarnings("null")
 			@Override
 			public Pair<RealVector, RealMatrix> value(RealVector point) {
+				IMonitor monitor = function.getMonitor();
+				if (monitor != null && monitor.isCancelled())
+					throw new IllegalArgumentException("Monitor cancelled");
+
 				if (point instanceof ArrayRealVector) {
 					setParameterValues(((ArrayRealVector) point).getDataRef());
 				} else {

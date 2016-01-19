@@ -15,6 +15,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IOperator;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
+import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,6 +118,9 @@ public class GeneticAlg extends AbstractOptimizer {
 		int iterationCount = 0;
 		
 		while (minval > qualityFactor) {
+			IMonitor monitor = function.getMonitor();
+			if (monitor != null && monitor.isCancelled())
+				throw new IllegalArgumentException("Monitor cancelled");
 			
 			double mean = 0;
 

@@ -428,6 +428,12 @@ public class AbstractDatasetTest {
 		assertEquals(5, ds.getShape()[1]);
 
 		int[] os, ns;
+		os = new int[] { 1, 1 };
+		ns = AbstractDataset.squeezeShape(os, false);
+		assertEquals(0, ns.length);
+		ns = AbstractDataset.squeezeShape(os, true);
+		assertEquals(0, ns.length);
+
 		os = new int[] { 2, 1, 5 };
 		ns = AbstractDataset.squeezeShape(os, false);
 		assertEquals(2, ns.length);

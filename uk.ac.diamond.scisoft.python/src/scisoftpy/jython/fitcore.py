@@ -51,13 +51,14 @@ def _createparams(np, params, bounds):
 
     for i in range(nbound):
         b = bounds.pop(0)
+        pli = pl[i]
         if b is not None:
             b = _asIterable(b)
             if b[0] is not None:
-                pl[i].lowerLimit = b[0]
+                pli.lowerLimit = b[0]
             if len(b) > 1:
                 if b[1] is not None:
-                    pl[i].upperLimit = b[1]
+                    pli.upperLimit = b[1]
 #    print [(p.value, p.lowerLimit, p.upperLimit) for p in pl]
     return pl
 

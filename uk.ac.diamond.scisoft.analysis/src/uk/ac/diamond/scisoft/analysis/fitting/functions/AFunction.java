@@ -246,7 +246,11 @@ public abstract class AFunction implements IFunction, Serializable {
 		int nparams = Math.min(params.length, parameters.length);
 
 		for (int j = 0; j < nparams; j++) {
-			parameters[j].setValue(params[j].getValue());
+			IParameter op = params[j];
+			IParameter np = parameters[j];
+			np.setValue(op.getValue());
+			np.setLimits(op.getLowerLimit(), op.getUpperLimit());
+			np.setFixed(op.isFixed());
 		}
 		dirty = true;
 	}

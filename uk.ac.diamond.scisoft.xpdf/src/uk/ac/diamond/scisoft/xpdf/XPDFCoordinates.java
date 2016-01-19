@@ -412,7 +412,7 @@ public class XPDFCoordinates {
 	 */
 	public Dataset getQIncrement() {
 		// The result is dq/dθ * dAngle in both one and two dimensions.
-			return Maths.multiply(getAngleIncrement(), Maths.multiply(4*Math.PI/2*wavelength, Maths.cos(Maths.multiply(0.5, twoTheta))));
+			return Maths.multiply(getAngleIncrement(), Maths.multiply(4*Math.PI/(2*wavelength), Maths.cos(Maths.multiply(0.5, twoTheta))));
 	}
 	
 	/**

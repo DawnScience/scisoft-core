@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright (c) 2012 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
@@ -28,7 +28,7 @@ public class Gaussian extends APeak {
 	}
 
 	/**
-	 * Constructor which takes the three properties required, which are
+	 * Constructor which takes the three parameters required, which are
 	 * 
 	 * <pre>
 	 *     Parameter 1	- Position

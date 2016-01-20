@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright (c) 2012 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials

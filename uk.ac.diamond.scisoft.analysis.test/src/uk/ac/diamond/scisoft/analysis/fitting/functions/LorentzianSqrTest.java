@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright (c) 2015 Gero Flucke, DESY.
  *
  * All rights reserved. This program and the accompanying materials

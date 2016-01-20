@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright (c) 2012 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
@@ -11,7 +11,6 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-
 
 /**
  * Class that wrappers the box function calculated as a difference of two Fermi functions

@@ -401,11 +401,11 @@ public class XPDFCalibration {
 	}
 	
 	private Dataset iterateCalibrate(int nIterations, boolean propagateErrors) {
-		// TODO: should be cos ^-3
 		List<Dataset> solAng = new ArrayList<Dataset>();
 		for (Dataset targetComponent : backgroundSubtracted) {
 			Dataset cosTwoTheta = Maths.cos(coords.getTwoTheta());
-			Dataset solAngData = Maths.multiply(Maths.multiply(cosTwoTheta, cosTwoTheta), Maths.multiply(targetComponent, cosTwoTheta));
+			// result = data /(cos 2θ)^3
+			Dataset solAngData = Maths.divide(Maths.divide(targetComponent, cosTwoTheta), Maths.multiply(cosTwoTheta, cosTwoTheta));
 //			Dataset solAngData = Maths.multiply(1.0, targetComponent);
 			if (propagateErrors && targetComponent.getError() != null)
 				solAngData.setError(targetComponent.getError());

@@ -401,7 +401,7 @@ public class XPDFCalibration {
 	}
 	
 	private Dataset iterateCalibrate(int nIterations, boolean propagateErrors) {
-		// TODO: Solid angle correction do nothing
+		// TODO: should be cos ^-3
 		List<Dataset> solAng = new ArrayList<Dataset>();
 		for (Dataset targetComponent : backgroundSubtracted) {
 			Dataset cosTwoTheta = Maths.cos(coords.getTwoTheta());

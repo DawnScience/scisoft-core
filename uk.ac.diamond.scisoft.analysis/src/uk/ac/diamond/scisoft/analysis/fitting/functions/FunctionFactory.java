@@ -18,6 +18,7 @@ import java.util.TreeMap;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
+import org.eclipse.dawnsci.analysis.api.fitting.functions.IPeak;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

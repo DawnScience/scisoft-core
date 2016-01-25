@@ -15,6 +15,7 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.dawnsci.analysis.api.fitting.functions.IPeak;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
@@ -23,11 +24,9 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.FunctionFactory;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.IPeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
@@ -189,9 +188,7 @@ public abstract class Generic1DFitterTestBase {
 
 	private void fittingTest(int[] peakPos, DoubleDataset data, Class<? extends IPeak> mypeakClass) {
 		//TODO FIXME Once Generic1DFitter updated, remove this cast.
-		@SuppressWarnings("unchecked")
-		Class<? extends APeak> peakClass = (Class<? extends APeak>)mypeakClass;
-		List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions(xAxis, data, peakClass, new GeneticAlg(0.0001, seed),
+		List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions(xAxis, data,mypeakClass, new GeneticAlg(0.0001, seed),
 				smoothing, numPeaks, threshold, autoStopping, backgroundDominated);
 
 		double[] fittedPeakPos = new double[fittedPeakList.size()];

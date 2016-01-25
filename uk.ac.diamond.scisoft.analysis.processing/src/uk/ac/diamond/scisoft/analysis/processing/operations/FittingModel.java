@@ -9,13 +9,12 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.fitting.functions.IPeak;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.IPeak;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 
 /**
@@ -75,7 +74,7 @@ public class FittingModel extends AbstractOperationModel {
 		return peakClass;
 	}
 
-	public void setPeak(Class<? extends APeak> peak) {
+	public void setPeak(Class<? extends IPeak> peak) {
 		this.peakClass = peak;
 	}
 

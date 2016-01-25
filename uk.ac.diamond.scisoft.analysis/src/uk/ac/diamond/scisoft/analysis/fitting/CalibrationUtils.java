@@ -11,11 +11,11 @@ package uk.ac.diamond.scisoft.analysis.fitting;
 
 import java.util.List;
 
+import org.eclipse.dawnsci.analysis.api.fitting.functions.IPeak;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
-import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 
 public class CalibrationUtils {
@@ -38,11 +38,10 @@ public class CalibrationUtils {
 	 * @param polynomialOrder
 	 *            The order of the polynomial with which to fit the mapping process from the old axis to the new
 	 * @return The new Axis with the same dimensionality as the original data
-	 * @throws Exception 
 	 */
 	public static Dataset mapAxis(Dataset data, Dataset originalAxis,
-			Dataset originalAxisApproximatePeakPositions, Dataset newAxisExactPeakPositions, Class<? extends APeak> peakClass,
-			int polynomialOrder) throws Exception {
+			Dataset originalAxisApproximatePeakPositions, Dataset newAxisExactPeakPositions, Class<? extends IPeak> peakClass,
+			int polynomialOrder) {
 
 		Dataset peakPositions = refinePeakPositions(data, originalAxis, originalAxisApproximatePeakPositions,
 				peakClass);
@@ -69,11 +68,11 @@ public class CalibrationUtils {
 	 * @return val
 	 */
 	public static Dataset refinePeakPositions(Dataset data, Dataset originalAxis,
-			Dataset originalAxisApproximatePeakPositions, Class<? extends APeak> peakClass) {
+			Dataset originalAxisApproximatePeakPositions, Class<? extends IPeak> peakClass) {
 		
 		int numPeaks = originalAxisApproximatePeakPositions.getSize();
 		
-		List<APeak> fitResult = Generic1DFitter.fitPeaks(originalAxis, data, peakClass, numPeaks );
+		List<IPeak> fitResult = Generic1DFitter.fitPeaks(originalAxis, data, peakClass, numPeaks );
 		
 		Dataset refinedPositions = selectSpecifiedPeaks(originalAxisApproximatePeakPositions, fitResult);
 		
@@ -87,7 +86,7 @@ public class CalibrationUtils {
 	 * @return the closest real peak position matches to the original positions.
 	 */
 	public static Dataset selectSpecifiedPeaks(Dataset originalAxisApproximatePeakPositions,
-			List<APeak> peakList) {
+			List<IPeak> peakList) {
 		
 		Dataset peakPositions = getPeakList(peakList);
 		Dataset resultPositions = new DoubleDataset(originalAxisApproximatePeakPositions.getShape());
@@ -106,7 +105,7 @@ public class CalibrationUtils {
 	 * @param peakList a list of APeak functions
 	 * @return the dataset of peak positions.
 	 */
-	public static Dataset getPeakList(List<APeak> peakList) {
+	public static Dataset getPeakList(List<IPeak> peakList) {
 		int n = peakList.size();
 		Dataset peakPositons = new DoubleDataset(n);
 		for (int i = 0; i < n; i++) {

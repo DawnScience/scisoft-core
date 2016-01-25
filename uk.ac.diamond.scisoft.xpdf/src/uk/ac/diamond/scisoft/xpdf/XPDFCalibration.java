@@ -412,7 +412,7 @@ public class XPDFCalibration {
 			solAng.add(solAngData);
 		}
 		
-		// fluorescence correction
+		// fluorescence correction woof woof!
 		List<Dataset> fluorescenceCorrected = new ArrayList<Dataset>();
 //		for (Dataset targetComponent : backgroundSubtracted) {
 		// Only correct fluorescence in the sample itself

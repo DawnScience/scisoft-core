@@ -84,9 +84,10 @@ public abstract class AFunction implements IFunction, Serializable {
 	 * @param numberOfParameters
 	 */
 	public AFunction(int numberOfParameters) {
-		fillParameters(new double[numberOfParameters]);
-
-		setNames();
+		parameters = new IParameter[numberOfParameters];
+		for (int i = 0; i < numberOfParameters; i++) {
+			parameters[i] = new Parameter();
+		}
 	}
 
 	/**
@@ -96,8 +97,9 @@ public abstract class AFunction implements IFunction, Serializable {
 	 *            An array of starting parameter values as doubles.
 	 */
 	public AFunction(double... params) {
-		fillParameters(params);
+		this(params.length);
 
+		setParameterValues(params);
 		setNames();
 	}
 
@@ -108,32 +110,10 @@ public abstract class AFunction implements IFunction, Serializable {
 	 *            An array of parameters
 	 */
 	public AFunction(IParameter... params) {
-		fillParameters(params);
+		this(params.length);
 
+		setParameters(params);
 		setNames();
-	}
-
-	protected void fillParameters(double... params) {
-		if (parameters == null) {
-			parameters = new IParameter[params.length];
-		}
-
-		int n = Math.min(params.length, parameters.length);
-		for (int i = 0; i < n; i++) {
-			parameters[i] = new Parameter(params[i]);
-		}
-	}
-
-	protected void fillParameters(IParameter... params) {
-		if (parameters == null) {
-			parameters = new IParameter[params.length];
-		}
-
-		int n = Math.min(params.length, parameters.length);
-		for (int i = 0; i < n; i++) {
-			IParameter p = params[i];
-			parameters[i] = new Parameter(p);
-		}
 	}
 
 	/**

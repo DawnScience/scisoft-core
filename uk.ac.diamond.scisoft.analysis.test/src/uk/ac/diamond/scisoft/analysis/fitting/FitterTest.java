@@ -18,7 +18,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Add;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Offset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Quadratic;
 
@@ -42,6 +44,36 @@ public class FitterTest {
 		Assert.assertEquals(pos, result.getParameterValue(0), 0.1);
 		Assert.assertEquals(fwhm, result.getParameterValue(1), 0.1);
 		Assert.assertEquals(area, result.getParameterValue(2), 0.1);
+	}
+
+	@Test
+	public void testGaussianOffsetFit() {
+		double pos = 14.5;
+		double fwhm = 4.5;
+		double area = 4.5;
+		double coff = 2.5;
+		Gaussian gauss = new Gaussian(pos,fwhm,area);
+		gauss.getParameter(0).setLimits(10, 19);
+		gauss.getParameter(1).setLimits(0, 9);
+		gauss.getParameter(2).setLimits(0, 45);
+		Offset off = new Offset(coff);
+		off.getParameter(0).setLimits(0, 5);
+		Add add = new Add();
+		add.addFunction(gauss);
+		add.addFunction(off);
+		DoubleDataset xAxis = (DoubleDataset) DatasetFactory.createRange(10, 20, 1, Dataset.FLOAT64);
+		DoubleDataset data = (DoubleDataset) DatasetFactory.createFromObject(new double[] {0, 1, 2, 3, 4, 5, 4, 3, 2, 1}, Dataset.FLOAT64);
+//		DoubleDataset ds = gauss.calculateValues(xAxis);
+
+		try {
+			Fitter.geneticFit(new Dataset[] {xAxis}, data, add);
+		} catch (Exception e) {
+		}
+
+		Assert.assertEquals(15.0, gauss.getParameterValue(0), 0.1);
+		Assert.assertEquals(5.2, gauss.getParameterValue(1), 0.1);
+		Assert.assertEquals(25.8, gauss.getParameterValue(2), 0.1);
+		Assert.assertEquals(0.0, off.getParameterValue(0), 0.1);
 	}
 
 	@Test

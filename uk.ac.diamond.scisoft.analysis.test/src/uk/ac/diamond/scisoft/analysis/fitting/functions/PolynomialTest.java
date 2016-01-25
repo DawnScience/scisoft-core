@@ -42,6 +42,24 @@ public class PolynomialTest {
 
 		dx = f.calculatePartialDerivativeValues(f.getParameter(3), xd);
 		Assert.assertArrayEquals(new double[] {1, 1, 1}, dx.getData(), ABS_TOL);
+
+		((Polynomial) f).setDegree(2);
+		Assert.assertEquals(3, f.getNoOfParameters());
+		f.setParameterValues(23., -10., 1.2);
+		Assert.assertArrayEquals(new double[] {23., -10., 1.2}, f.getParameterValues(), ABS_TOL);
+		Assert.assertEquals(23. + 10. + 1.2, f.val(-1), ABS_TOL);
+
+		dx = f.calculateValues(xd);
+		Assert.assertArrayEquals(new double[] {23. + 10. + 1.2, 1.2, 23.*4 - 10.*2 + 1.2}, dx.getData(), ABS_TOL);
+
+		dx = f.calculatePartialDerivativeValues(f.getParameter(0), xd);
+		Assert.assertArrayEquals(new double[] {1, 0, 4}, dx.getData(), ABS_TOL);
+
+		dx = f.calculatePartialDerivativeValues(f.getParameter(1), xd);
+		Assert.assertArrayEquals(new double[] {-1, 0, 2}, dx.getData(), ABS_TOL);
+
+		dx = f.calculatePartialDerivativeValues(f.getParameter(2), xd);
+		Assert.assertArrayEquals(new double[] {1, 1, 1}, dx.getData(), ABS_TOL);
 	}
 
 	@Test

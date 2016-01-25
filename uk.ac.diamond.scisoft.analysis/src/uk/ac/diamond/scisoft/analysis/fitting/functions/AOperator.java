@@ -219,12 +219,8 @@ abstract public class AOperator extends AFunction implements IOperator {
 	@Override
 	public AOperator copy() throws Exception {
 		Constructor<? extends AOperator> c = getClass().getConstructor();
-
-		IParameter[] localParameters = getParameters();
-			
 		AOperator operator = c.newInstance();
-		operator.fillParameters(localParameters); //Do we need to do this?
-		
+
 		for (IFunction f : getFunctions()) {
 			if (f == null) {
 				operator.addFunction(null);

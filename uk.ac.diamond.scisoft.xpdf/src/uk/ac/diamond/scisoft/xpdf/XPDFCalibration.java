@@ -412,7 +412,7 @@ public class XPDFCalibration {
 			solAng.add(solAngData);
 		}
 		
-		// fluorescence correction woof woof!
+		// fluorescence correction
 		List<Dataset> fluorescenceCorrected = new ArrayList<Dataset>();
 //		for (Dataset targetComponent : backgroundSubtracted) {
 		// Only correct fluorescence in the sample itself
@@ -507,7 +507,6 @@ public class XPDFCalibration {
 			
 		}
 		this.fluorescenceScale = minimalScale;
-		this.fluorescenceScale = 3640.0;
 	}
 
 	public void setDoFluorescence(boolean doIt) {

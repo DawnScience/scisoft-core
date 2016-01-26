@@ -54,6 +54,7 @@ public abstract class APeak extends AFunction implements IPeak {
 			throw new IllegalArgumentException("A peak requires 3 parameters, and it has been given " + params.length);
 		}
 		setParameterValues(params);
+		setNames();
 
 		getParameter(FWHM).setLowerLimit(0.0);
 	}
@@ -75,6 +76,7 @@ public abstract class APeak extends AFunction implements IPeak {
 			throw new IllegalArgumentException("A peak requires 3 parameters, and it has been given " + params.length);
 		}
 		setParameters(params);
+		setNames();
 
 		getParameter(FWHM).setLowerLimit(0.0);
 	}
@@ -83,6 +85,7 @@ public abstract class APeak extends AFunction implements IPeak {
 		super(3);
 
 		setParameters(peakParameters);
+		setNames();
 	}
 
 	protected void setParameters(IdentifiedPeak peakParameters) {
@@ -119,6 +122,7 @@ public abstract class APeak extends AFunction implements IPeak {
 	public APeak(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea) {
 		super(3);
 
+		setNames();
 		internalSetPeakParameters(minPeakPosition, maxPeakPosition, maxFWHM, maxArea);
 	}
 

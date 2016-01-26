@@ -446,8 +446,13 @@ public class OperatorTest {
 	}
 
 	private static final class TestGenericBinaryOperator extends ABinaryOperator {
+		public TestGenericBinaryOperator() {
+			super();
+		}
+
 		@Override
 		protected void setNames() {
+			setNames("Hello", "World");
 		}
 
 		@Override
@@ -463,8 +468,12 @@ public class OperatorTest {
 	@Test
 	public void testSetFunction() {
 		IOperator myOp = new TestGenericBinaryOperator();
+		assertEquals("Hello", myOp.getName());
+		assertEquals("World", myOp.getDescription());
 
 		myOp.setFunction(1, new Gaussian());
+		assertEquals("Hello", myOp.getName());
+		assertEquals("World", myOp.getDescription());
 		assertEquals(1, myOp.getNoOfFunctions());
 		assertEquals(2, myOp.getFunctions().length);
 		assertEquals(new Gaussian(), myOp.getFunction(1));
@@ -474,9 +483,13 @@ public class OperatorTest {
 	@Test
 	public void testNoOfFunctions() {
 		IOperator myOp = new TestGenericBinaryOperator();
+		assertEquals("Hello", myOp.getName());
+		assertEquals("World", myOp.getDescription());
 
 		myOp.addFunction(new Gaussian());
 		myOp.addFunction(new Gaussian());
+		assertEquals("Hello", myOp.getName());
+		assertEquals("World", myOp.getDescription());
 		assertEquals(2, myOp.getNoOfFunctions());
 		myOp.setFunction(0, null); // functions can be set to null(!)
 		assertEquals(1, myOp.getNoOfFunctions());

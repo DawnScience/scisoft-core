@@ -24,7 +24,7 @@ abstract public class AOperator extends AFunction implements IOperator {
 	protected List<IParameter> params; // unique parameters
 
 	public AOperator() {
-		super(0);
+		super();
 		params = new ArrayList<>();
 	}
 

@@ -314,7 +314,8 @@ public class XPDFCalibration {
 //					subsetAbsorptionCorrection.imultiply(this.absorptionMaps.getAbsorptionMap(iScatterer, iAbsorber));
 				// Subtract the scattered radiation, corrected for absorption, from the attenuator's radiation
 				absorptionTemporary.get(iInnermostAbsorber).isubtract(
-						Maths.divide(
+//						Maths.divide(
+						Maths.multiply(
 								absorptionTemporary.get(iScatterer),
 								subsetAbsorptionCorrection.reshape(subsetAbsorptionCorrection.getSize())));
 //								subsetAbsorptionCorrection.squeeze()));
@@ -326,7 +327,9 @@ public class XPDFCalibration {
 							absorptionTemporary.get(iInnermostAbsorber).getError() :
 								DoubleDataset.zeros(absorptionTemporary.get(iInnermostAbsorber));
 					Dataset scatterError = (absorptionTemporary.get(iScatterer).getError() != null) ?
-							Maths.divide(absorptionTemporary.get(iScatterer).getError(),
+//							Maths.divide(
+							Maths.multiply(
+									absorptionTemporary.get(iScatterer).getError(),
 									subsetAbsorptionCorrection.reshape(subsetAbsorptionCorrection.getSize())) :
 //									subsetAbsorptionCorrection.squeeze()) :
 								DoubleDataset.zeros(absorptionTemporary.get(iScatterer));

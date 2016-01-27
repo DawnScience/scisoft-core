@@ -13,12 +13,12 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IOperator;
+import org.eclipse.dawnsci.analysis.api.fitting.functions.IPeak;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.junit.Assert;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Add;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IdentifiedPeak;
@@ -52,7 +52,7 @@ public class OptimizerTest  {
 		double lowOffset = y.min().doubleValue();
 		double highOffset = (Double) y.mean();
 		Offset baseline = new Offset(lowOffset, highOffset);
-		APeak localPeak = new Gaussian(iniPeak);
+		IPeak localPeak = new Gaussian(iniPeak);
 		IOperator comp = new Add();
 		comp.addFunction(localPeak);
 		comp.addFunction(baseline);

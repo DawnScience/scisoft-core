@@ -677,7 +677,7 @@ public class MillerSpaceMapper {
 				createAxes(a, hShape, hMin, null, hDel);
 			}
 			saveVolume(output, map, a);
-		} catch (OutOfMemoryError e) {
+		} catch (IllegalArgumentException | OutOfMemoryError e) {
 			System.err.println("There is not enough memory to do this all at once!");
 			System.err.println("Now attempting to segment volume");
 			if (findImageBB) {
@@ -703,7 +703,7 @@ public class MillerSpaceMapper {
 					map = (DoubleDataset) DatasetFactory.zeros(tShape, Dataset.FLOAT64);
 					weight = (DoubleDataset) DatasetFactory.zeros(tShape, Dataset.FLOAT64);
 					break;
-				} catch (OutOfMemoryError ex) {
+				} catch (IllegalArgumentException | OutOfMemoryError ex) {
 					map = null;
 				}
 			}

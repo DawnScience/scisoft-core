@@ -51,6 +51,7 @@ public class Polynomial extends AFunction {
 	 */
 	public Polynomial(final int degree) {
 		super(degree + 1);
+		nparams = degree + 1;
 	}
 
 	/**
@@ -59,6 +60,7 @@ public class Polynomial extends AFunction {
 	 */
 	public Polynomial(double[] params) {
 		super(params);
+		nparams = params.length;
 	}
 
 	/**
@@ -67,6 +69,7 @@ public class Polynomial extends AFunction {
 	 */
 	public Polynomial(IParameter... params) {
 		super(params);
+		nparams = params.length;
 	}
 
 	/**
@@ -80,7 +83,7 @@ public class Polynomial extends AFunction {
 	public Polynomial(double[] min, double[] max) {
 		super(0);
 		if (min.length != max.length) {
-			throw new IllegalArgumentException("");
+			throw new IllegalArgumentException("Bound arrays must be of equal length");
 		}
 		nparams = min.length;
 		parameters = new Parameter[nparams];
@@ -94,42 +97,30 @@ public class Polynomial extends AFunction {
 
 	@Override
 	protected void setNames() {
-		int n = getNoOfParameters();
-		String[] paramNames = new String[n];
-		for (int i = 0; i < n; i++) {
+		String[] paramNames = new String[nparams];
+		for (int i = 0; i < nparams; i++) {
 			paramNames[i] = "a_" + i;
 		}
 
 		setNames(NAME, DESC, paramNames);
 	}
 
-	@Override
-	protected void fillParameters(double... params) {
-		super.fillParameters(params);
-		nparams = getNoOfParameters();
-	}
-
-	@Override
-	protected void fillParameters(IParameter... params) {
-		super.fillParameters(params);
-		nparams = getNoOfParameters();
-	}
-
 	private void calcCachedParameters() {
 		if (a == null) {
 			a = new double[nparams];
 		}
-		for (int i = 0; i < nparams; i++)
+		for (int i = 0; i < nparams; i++) {
 			a[i] = getParameterValue(i);
+		}
 
 		setDirty(false);
 	}
 
 	@Override
 	public double val(double... values) {
-		if (isDirty())
+		if (isDirty()) {
 			calcCachedParameters();
-
+		}
 		final double position = values[0];
 
 		double v = a[0];
@@ -231,16 +222,21 @@ public class Polynomial extends AFunction {
 	 * @param degree
 	 */
 	public void setDegree(int degree) {
-		parameters = null;
-		a = new double[degree + 1];
+		nparams = degree + 1;
+		parameters = new IParameter[nparams];
+		for (int i = 0; i < nparams; i++) {
+			parameters[i] = new Parameter();
+		}
+		dirty = false;
 
-		fillParameters(a);
+		setNames();
 
-		if (parent != null)
+		if (parent != null) {
 			parent.updateParameters();
+		}
 	}
 	
-	public String getStringEquation(){
+	public String getStringEquation() {
 		
 		StringBuilder out = new StringBuilder();
 		

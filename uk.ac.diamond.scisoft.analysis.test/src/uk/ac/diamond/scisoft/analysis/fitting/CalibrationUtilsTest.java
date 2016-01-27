@@ -11,18 +11,18 @@ package uk.ac.diamond.scisoft.analysis.fitting;
 
 import java.util.ArrayList;
 
+import org.eclipse.dawnsci.analysis.api.fitting.functions.IPeak;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 
 public class CalibrationUtilsTest {
 	
-	ArrayList<APeak> peaks= new ArrayList<APeak>();
+	ArrayList<IPeak> peaks= new ArrayList<IPeak>();
 	
 	@Before
 	public void initialize() {
@@ -33,7 +33,7 @@ public class CalibrationUtilsTest {
 
 	@Test
 	public void testGetPeakList() {
-		ArrayList<APeak> peaks = new ArrayList<APeak>();
+		ArrayList<IPeak> peaks = new ArrayList<IPeak>();
 		for (int i = 0; i < 20; i++) {
 			peaks.add(new Gaussian(i,1,1));
 		}

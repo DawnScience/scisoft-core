@@ -64,14 +64,14 @@ public class SmoothGoldEdgeFunction extends AFunction implements
 		// make sure that there are 2 parameters, otherwise, throw a sensible error
 		if (params.length != PARAMS.length) 
 			throw new IllegalArgumentException("A SmoothGoldEdgeFunction requires 2 parameters, and it has only been given "+params.length);
-		fillParameters(params);
+		setParameterValues(params);
 	}
 
 	public SmoothGoldEdgeFunction(IParameter... params) {
 		super(PARAMS.length);
 		if (params.length != PARAMS.length) 
 			throw new IllegalArgumentException("A SmoothGoldEdgeFunction requires 2 parameters, and it has only been given "+params.length);
-		fillParameters(params);
+		setParameters(params);
 	}
 
 	@Override

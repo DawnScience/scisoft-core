@@ -17,11 +17,9 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperationBase;
 
 import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 
 public class FittingOperation extends AbstractOperationBase<FittingModel, OperationData> {
@@ -41,7 +39,7 @@ public class FittingOperation extends AbstractOperationBase<FittingModel, Operat
 			}
 			List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions((Dataset)model.getxAxis(), 
 					                                                                  (Dataset)data, 
-					                                                                  (Class<? extends APeak>) model.getPeak(), model.createOptimizer(),
+					                                                                  model.getPeak(), model.createOptimizer(),
 					                                                                  model.getSmoothing(), model.getNumberOfPeaks(),
 					                                                                  model.getThreshold(), 
 					                                                                  model.isAutostopping(), model.isBackgrounddominated(), monitor);

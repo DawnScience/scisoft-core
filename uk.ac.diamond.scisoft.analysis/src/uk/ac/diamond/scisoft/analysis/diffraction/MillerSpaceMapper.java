@@ -60,6 +60,7 @@ interface PixelSplitter {
  */
 public class MillerSpaceMapper {
 	private String detectorPath;
+	private String timePath; // path to exposure dataset
 	private String dataPath;
 	private String samplePath;
 	private String attenuatorPath;
@@ -855,6 +856,19 @@ public class MillerSpaceMapper {
 				ILazyDataset images = node.getDataset();
 
 				Dataset trans = NexusTreeUtils.parseAttenuator(attenuatorPath, tree);
+				// factor in count time too
+				Dataset time = NexusTreeUtils.getDataset(timePath, tree);
+				if (time != null) {
+					if (time.getSize() != 1) {
+						int[] dshape = iters[0].getShape();
+						int[] tshape = time.getShapeRef();
+						if (!Arrays.equals(tshape, dshape)) {
+							throw new ScanFileHolderException(
+									"Exposure time shape does not match detector or sample scan shape");
+						}
+					}
+					trans = trans == null ? time : Maths.multiply(trans, time);
+				}
 
 				int rank = iters[1].getPos().length;
 				int[] ishape = Arrays.copyOfRange(images.getShape(), rank - 2, rank);
@@ -898,6 +912,19 @@ public class MillerSpaceMapper {
 			ILazyDataset images = node.getDataset();
 
 			Dataset trans = NexusTreeUtils.parseAttenuator(attenuatorPath, tree);
+			// factor in count time too
+			Dataset time = NexusTreeUtils.getDataset(timePath, tree);
+			if (time != null) {
+				if (time.getSize() != 1) {
+					int[] dshape = iters[0].getShape();
+					int[] tshape = time.getShapeRef();
+					if (!Arrays.equals(tshape, dshape)) {
+						throw new ScanFileHolderException(
+								"Exposure time shape does not match detector or sample scan shape");
+					}
+				}
+				trans = trans == null ? time : Maths.multiply(trans, time);
+			}
 
 			int rank = iters[1].getPos().length;
 			int[] ishape = Arrays.copyOfRange(images.getShape(), rank - 2, rank);

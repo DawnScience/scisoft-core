@@ -687,6 +687,30 @@ public class NexusTreeUtils {
 		return getAndCacheData(trans);
 	}
 
+	/**
+	 * Get a dataset
+	 * @param path
+	 * @param tree
+	 * @return dataset
+	 */
+	public static Dataset getDataset(String path, Tree tree) {
+		NodeLink link = tree.findNodeLink(path);
+
+		if (link == null) {
+			logger.warn("'{}' could not be found", path);
+			return null;
+		}
+
+		if (!link.isDestinationData()) {
+			logger.warn("'{}' was not a group", path);
+			return null;
+		}
+
+		DataNode node = (DataNode) link.getDestination();
+
+		return getAndCacheData(node);
+	}
+
 	public static int[] parseSubDetectorShape(Tree tree, NodeLink link) {
 		if (!link.isDestinationGroup()) {
 			logger.warn("'{}' was not a group", link.getName());

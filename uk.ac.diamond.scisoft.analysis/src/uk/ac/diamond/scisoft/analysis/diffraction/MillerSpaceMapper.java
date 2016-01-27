@@ -1237,7 +1237,7 @@ public class MillerSpaceMapper {
 		/**
 		 * @param millerStep sides of voxels in Miller space
 		 */
-		public void setMillerStep(double[] millerStep) {
+		public void setMillerStep(double... millerStep) {
 			this.millerStep = millerStep;
 		}
 
@@ -1328,7 +1328,7 @@ public class MillerSpaceMapper {
 		/**
 		 * @param otherPaths
 		 */
-		public void setOtherPaths(String[] otherPaths) {
+		public void setOtherPaths(String... otherPaths) {
 			this.otherPaths = otherPaths;
 		}
 
@@ -1372,7 +1372,7 @@ public class MillerSpaceMapper {
 		/**
 		 * @param qStep sides of voxels in q space (can be null)
 		 */
-		public void setqStep(double[] qStep) {
+		public void setqStep(double... qStep) {
 			this.qStep = qStep;
 		}
 

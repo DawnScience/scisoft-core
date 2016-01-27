@@ -51,6 +51,8 @@ public class XPDFCalibration {
 	private Dataset sampleFluorescence;
 	private double fluorescenceScale;
 	private Dataset sampleSelfScattering;
+
+	private int dataDimensions;
 	
 	private boolean doFluorescence;
 	
@@ -93,6 +95,7 @@ public class XPDFCalibration {
 		this.sampleFluorescence = (inCal.sampleFluorescence != null) ? inCal.sampleFluorescence.clone() : null;
 		this.fluorescenceScale = inCal.fluorescenceScale;
 		this.doFluorescence = inCal.doFluorescence;
+		this.dataDimensions = inCal.dataDimensions;
 	}
 
 	/**
@@ -191,6 +194,7 @@ public class XPDFCalibration {
 	
 	public void setCoordinates(XPDFCoordinates inCoords) {
 		this.coords = inCoords;
+		this.dataDimensions = inCoords.getTwoTheta().getShape().length;
 	}
 	
 	public void setDetector(XPDFDetector inTect) {
@@ -451,7 +455,18 @@ public class XPDFCalibration {
 	private void calibrateFluorescence(int nIterations) {
 		if (this.sampleFluorescence == null) return;
 		
-		final double minScale = 200, maxScale = 5000, nSteps = 20, stepScale = (maxScale-minScale)/nSteps;
+//		final double minScale = 200, maxScale = 5000, nSteps = 20, stepScale = (maxScale-minScale)/nSteps;
+		final double minScale, maxScale, nSteps;
+		if (this.dataDimensions == 1) {
+			minScale = 1;
+			maxScale = 1001;
+			nSteps = 100;
+		} else {
+			minScale = 200;
+			maxScale = 5000;
+			nSteps = 20;
+		}
+		final double stepScale = (maxScale-minScale)/nSteps;
 		final double fractionOfRange = 1/5.0;
 		double minimalScale = minScale;
 		double minimalValue = Double.POSITIVE_INFINITY;

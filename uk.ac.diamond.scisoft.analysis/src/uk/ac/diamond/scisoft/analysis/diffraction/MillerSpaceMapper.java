@@ -64,6 +64,7 @@ public class MillerSpaceMapper {
 	private String dataPath;
 	private String samplePath;
 	private String attenuatorPath;
+	private MillerSpaceMapperBean bean;
 	private double[] hDel; // sides of voxels in Miller space
 	private double[] hMin; // minimum
 	private double[] hMax; // maximum
@@ -251,21 +252,10 @@ public class MillerSpaceMapper {
 	}
 
 	/**
-	 * 
-	 * @param entryPath
-	 * @param instrument name of instrument in entry
-	 * @param attenuator name of attenuator in instrument
-	 * @param detector name of detector in instrument 
-	 * @param data name of data in detector
-	 * @param sample name of sample in entry
+	 * @param bean
 	 */
-	public MillerSpaceMapper(String entryPath, String instrument, String attenuator, String detector, String data, String sample) {
-		String instrumentPath = entryPath + Node.SEPARATOR + instrument + Node.SEPARATOR;
-		detectorPath = instrumentPath + detector;
-		attenuatorPath = instrumentPath + attenuator;
-		dataPath = detectorPath + Node.SEPARATOR + data;
-		samplePath = entryPath + Node.SEPARATOR + sample;
-		this.splitter = new NonSplitter();
+	public MillerSpaceMapper(MillerSpaceMapperBean bean) {
+		this.bean = bean.clone();
 	}
 
 	/**
@@ -360,6 +350,19 @@ public class MillerSpaceMapper {
 			if (!Arrays.equals(tshape, dshape)) {
 				throw new ScanFileHolderException("Attenuator transmission shape does not match detector or sample scan shape");
 			}
+		}
+
+		// factor in count time too
+		Dataset time = NexusTreeUtils.getDataset(timePath, tree);
+		if (time != null) {
+			if (time.getSize() != 1) {
+				int[] tshape = time.getShapeRef();
+				if (!Arrays.equals(tshape, dshape)) {
+					throw new ScanFileHolderException(
+							"Exposure time shape does not match detector or sample scan shape");
+				}
+			}
+			trans = trans == null ? time : Maths.multiply(trans, time);
 		}
 
 		DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
@@ -591,20 +594,18 @@ public class MillerSpaceMapper {
 		d.setAbs(index, d.getAbs(index) + v);
 	}
 
-	/**
-	 * Map images from given Nexus files to a volume in Miller (aka HKL) space and save to a HDF5 file
-	 * @param inputs paths to Nexus files
-	 * @param output path for saving HDF5 file
-	 * @param scale scale for upsampling images
-	 * @param reduceToNonZero if true, reduce output to sub-volume with non-zero data
-	 * @param mShape shape of volume in Miller space (can be null to be autoset)
-	 * @param mStart starting coordinates of volume (can be null to be autoset)
-	 * @param mDelta lengths of voxel sides
-	 * @throws ScanFileHolderException
-	 */
-	public void mapToVolumeFile(String[] inputs, String output, double scale, boolean reduceToNonZero, int[] mShape, double[] mStart, double[] mDelta) throws ScanFileHolderException {
+	private Dataset[] processBean() {
+		String instrumentPath = bean.getEntryPath() + Node.SEPARATOR + bean.getInstrumentName() + Node.SEPARATOR;
+		detectorPath = instrumentPath + bean.getDetectorName();
+		timePath = detectorPath + Node.SEPARATOR + "count_time";
+		attenuatorPath = instrumentPath + bean.getAttenuatorName();
+		dataPath = detectorPath + Node.SEPARATOR + bean.getDataName();
+		samplePath = bean.getEntryPath() + Node.SEPARATOR + bean.getSampleName();
+		this.splitter = createSplitter(bean.getSplitterName(), bean.getSplitterParameter());
+
 		Dataset[] a = new Dataset[3];
 		double[] mStop = new double[3];
+		double[] mDelta = bean.getMillerStep();
 		if (mDelta == null || mDelta.length == 0) {
 			throw new IllegalArgumentException("At least one length must be specified");
 		} else if (mDelta.length == 1) {
@@ -614,6 +615,8 @@ public class MillerSpaceMapper {
 			double d = mDelta[1];
 			mDelta = new double[] {mDelta[0], d, d};
 		}
+		int[] mShape = bean.getMillerShape();
+		double[] mStart = bean.getMillerStart();
 		if (mShape == null || mStart == null) {
 			findImageBB = true;
 			mShape = new int[3];
@@ -622,9 +625,26 @@ public class MillerSpaceMapper {
 			createAxes(a, mShape, mStart, mStop, mDelta);
 		}
 
-		setReduceToNonZeroData(reduceToNonZero);
-		setUpsamplingScale(scale);
+		setReduceToNonZeroData(bean.isReduceToNonZero());
+		setUpsamplingScale(bean.getScaleFactor());
 		setMillerSpaceBoundingBox(mShape, mStart, mStop, mDelta);
+
+		// TODO compensate for count_time and other optional stuff (ring current in NXinstrument / NXsource)
+		// output HKL list
+		// output q-space volume
+		// mask images
+		return a;
+	}
+
+	/**
+	 * Map images from given Nexus files to a volume in Miller (aka HKL) space and save to a HDF5 file
+	 * @throws ScanFileHolderException
+	 */
+	public void mapToVolumeFile() throws ScanFileHolderException {
+		
+		Dataset[] a = processBean();
+		String[] inputs = bean.getInputs();
+		String output = bean.getOutput();
 
 		int n = inputs.length;
 		Tree[] trees = new Tree[n];
@@ -957,8 +977,6 @@ public class MillerSpaceMapper {
 		}
 	}
 
-	private static final MillerSpaceMapper I16Mapper = new MillerSpaceMapper("/entry1", "instrument", "attenuator", "pil100k", "image_data", "sample");
-
 	/**
 	 * Process Nexus file for I16
 	 * @param input Nexus file
@@ -972,8 +990,9 @@ public class MillerSpaceMapper {
 	 * @throws ScanFileHolderException
 	 */
 	public static void processVolume(String input, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double... mDelta) throws ScanFileHolderException {
-		setI16Splitter(splitter, p);
-		I16Mapper.mapToVolumeFile(new String[] {input}, output, scale, false, mShape, mStart, mDelta);
+		setBean(I16MapperBean, input, output, splitter, p, scale, mShape, mStart, mDelta);
+		MillerSpaceMapper mapper = new MillerSpaceMapper(I16MapperBean);
+		mapper.mapToVolumeFile();
 	}
 
 	/**
@@ -988,8 +1007,7 @@ public class MillerSpaceMapper {
 	 * @throws ScanFileHolderException
 	 */
 	public static void processVolumeWithAutoBox(String input, String output, String splitter, double p, double scale, boolean reduceToNonZero, double... mDelta) throws ScanFileHolderException {
-		setI16Splitter(splitter, p);
-		I16Mapper.mapToVolumeFile(new String[] {input}, output, scale, reduceToNonZero, null, null, mDelta);
+		processVolumeWithAutoBox(new String[] {input}, output, splitter, p, scale, reduceToNonZero, mDelta);
 	}
 
 	/**
@@ -1004,22 +1022,513 @@ public class MillerSpaceMapper {
 	 * @throws ScanFileHolderException
 	 */
 	public static void processVolumeWithAutoBox(String[] inputs, String output, String splitter, double p, double scale, boolean reduceToNonZero, double... mDelta) throws ScanFileHolderException {
-		setI16Splitter(splitter, p);
-		I16Mapper.mapToVolumeFile(inputs, output, scale, reduceToNonZero, null, null, mDelta);
+		setBeanWithAutoBox(I16MapperBean, inputs, output, splitter, p, scale, reduceToNonZero, mDelta);
+		MillerSpaceMapper mapper = new MillerSpaceMapper(I16MapperBean);
+		mapper.mapToVolumeFile();
 	}
 
-	static void setI16Splitter(String splitter, double p) {
-		if (splitter == null || splitter.isEmpty()) {
-			return;
-		}
-		if (splitter.equals("gaussian")) {
-			I16Mapper.setSplitter(new GaussianSplitter(p));
+	static PixelSplitter createSplitter(String splitter, double p) {
+		if (splitter == null || splitter.isEmpty() || splitter.equals("nearest")) {
+			return new NonSplitter();
+		} else if (splitter.equals("gaussian")) {
+			return new GaussianSplitter(p);
 		} else if (splitter.equals("negexp")) {
-			I16Mapper.setSplitter(new ExponentialSplitter(p));
+			return new ExponentialSplitter(p);
 		} else if (splitter.equals("inverse")) {
-			I16Mapper.setSplitter(new InverseSplitter());
-		} else if (!splitter.equals("nearest")) {
-			throw new IllegalArgumentException("Splitter is not known");
+			return new InverseSplitter();
+		} 
+
+		throw new IllegalArgumentException("Splitter is not known");
+	}
+
+	private static final MillerSpaceMapperBean I16MapperBean = new MillerSpaceMapperBean();
+	static {
+		I16MapperBean.setEntryPath("/entry1");
+		I16MapperBean.setInstrumentName("instrument");
+		I16MapperBean.setAttenuatorName("attenuator");
+		I16MapperBean.setDetectorName("pil100k");
+		I16MapperBean.setDataName("image_data");
+		I16MapperBean.setSampleName("sample");
+	}
+
+	/**
+	 * Process Nexus files for I16 with automatic bounding box setting
+	 * @param inputs Nexus files
+	 * @param output name of HDF5 file to be created
+	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
+	 * @param p splitter parameter
+	 * @param scale upsampling factor
+	 * @param mDelta sides of voxels in Miller space
+	 * @param reduceToNonZero if true, reduce output to sub-volume with non-zero data
+	 */
+	public static void setBeanWithAutoBox(MillerSpaceMapperBean bean, String[] inputs, String output, String splitter, double p, double scale, boolean reduceToNonZero, double... mDelta) {
+		bean.setInputs(inputs);
+		bean.setOutput(output);
+		bean.setSplitterName(splitter);
+		bean.setSplitterParameter(p);
+		bean.setScaleFactor(scale);
+		bean.setReduceToNonZero(reduceToNonZero);
+		bean.setMillerShape(null);
+		bean.setMillerStart(null);
+		bean.setMillerStep(mDelta);
+	}
+
+	/**
+	 * Process Nexus file for I16
+	 * @param input Nexus file
+	 * @param output name of HDF5 file to be created
+	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
+	 * @param p splitter parameter
+	 * @param scale upsampling factor
+	 * @param mShape shape of output volume
+	 * @param mStart start coordinates in Miller space
+	 * @param mDelta sides of voxels in Miller space
+	 */
+	public static void setBean(MillerSpaceMapperBean bean, String input, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double... mDelta) {
+		bean.setInputs(input);
+		bean.setOutput(output);
+		bean.setSplitterName(splitter);
+		bean.setSplitterParameter(p);
+		bean.setScaleFactor(scale);
+		bean.setReduceToNonZero(false);
+		bean.setMillerShape(mShape);
+		bean.setMillerStart(mStart);
+		bean.setMillerStep(mDelta);
+	}
+
+	/**
+	 * This represents all of the input parameters and options for the mapper
+	 */
+	public static class MillerSpaceMapperBean implements Cloneable {
+		private String[] inputs;
+		private String output;
+		private String splitterName;
+		private double splitterParameter;
+		private double scaleFactor;
+
+		private int[] millerShape;
+		private double[] millerStart;
+		private double[] millerStep;
+
+		private boolean reduceToNonZero;
+
+		private String entryPath;
+		private String instrumentName;
+		private String attenuatorName;
+		private String detectorName;
+		private String dataName;
+		private String sampleName;
+		private String[] otherPaths;
+
+		private boolean millerList;
+
+		private int[] qShape;
+		private double[] qStart;
+		private double[] qStep;
+
+		public MillerSpaceMapperBean() {
+		}
+
+		/**
+		 * @return inputs Nexus files
+		 */
+		public String[] getInputs() {
+			return inputs;
+		}
+
+		/**
+		 * @param inputs Nexus files
+		 */
+		public void setInputs(String... inputs) {
+			this.inputs = inputs;
+		}
+
+		/**
+		 * @return output name of HDF5 file to be created
+		 */
+		public String getOutput() {
+			return output;
+		}
+
+		/**
+		 * @param output name of HDF5 file to be created
+		 */
+		public void setOutput(String output) {
+			this.output = output;
+		}
+
+		/**
+		 * @return name of pixel splitting algorithm
+		 */
+		public String getSplitterName() {
+			return splitterName;
+		}
+
+		/**
+		 * @param splitterName name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
+		 */
+		public void setSplitterName(String splitterName) {
+			this.splitterName = splitterName;
+		}
+
+		/**
+		 * @return value of pixel splitting parameter
+		 */
+		public double getSplitterParameter() {
+			return splitterParameter;
+		}
+
+		/**
+		 * @param splitterParameter splitter parameter (usually a scale length)
+		 */
+		public void setSplitterParameter(double splitterParameter) {
+			this.splitterParameter = splitterParameter;
+		}
+
+		/**
+		 * @return scale upsampling factor
+		 */
+		public double getScaleFactor() {
+			return scaleFactor;
+		}
+
+		/**
+		 * @param scaleFactor upsampling factor
+		 */
+		public void setScaleFactor(double scaleFactor) {
+			this.scaleFactor = scaleFactor;
+		}
+
+		/**
+		 * @return shape of volume in Miller space (can be null to be autoset)
+		 */
+		public int[] getMillerShape() {
+			return millerShape;
+		}
+
+		/**
+		 * @param millerShape shape of volume in Miller space (can be null to be autoset)
+		 */
+		public void setMillerShape(int[] millerShape) {
+			this.millerShape = millerShape;
+		}
+
+		/**
+		 * @return starting coordinates of volume (can be null to be autoset)
+		 */
+		public double[] getMillerStart() {
+			return millerStart;
+		}
+
+		/**
+		 * @param millerStart starting coordinates of volume (can be null to be autoset)
+		 */
+		public void setMillerStart(double[] millerStart) {
+			this.millerStart = millerStart;
+		}
+
+		/**
+		 * @return sides of voxels in Miller space
+		 */
+		public double[] getMillerStep() {
+			return millerStep;
+		}
+
+		/**
+		 * @param millerStep sides of voxels in Miller space
+		 */
+		public void setMillerStep(double[] millerStep) {
+			this.millerStep = millerStep;
+		}
+
+		/**
+		 * @return true if mapper attempts to reduce output to sub-volume with non-zero data
+		 */
+		public boolean isReduceToNonZero() {
+			return reduceToNonZero;
+		}
+
+		/**
+		 * @param reduceToNonZero if true, attempts to reduce output to sub-volume with non-zero data
+		 */
+		public void setReduceToNonZero(boolean reduceToNonZero) {
+			this.reduceToNonZero = reduceToNonZero;
+		}
+
+		public String getEntryPath() {
+			return entryPath;
+		}
+
+		/**
+		 * @param entryPath
+		 */
+		public void setEntryPath(String entryPath) {
+			this.entryPath = entryPath;
+		}
+
+		public String getInstrumentName() {
+			return instrumentName;
+		}
+
+		/**
+		 * @param instrumentName name of instrument in entry
+		 */
+		public void setInstrumentName(String instrumentName) {
+			this.instrumentName = instrumentName;
+		}
+
+		public String getAttenuatorName() {
+			return attenuatorName;
+		}
+
+		/**
+		 * @param attenuatorName name of attenuator in instrument
+		 */
+		public void setAttenuatorName(String attenuatorName) {
+			this.attenuatorName = attenuatorName;
+		}
+
+		public String getDetectorName() {
+			return detectorName;
+		}
+
+		/**
+		 * @param detectorName name of detector in instrument 
+		 */
+		public void setDetectorName(String detectorName) {
+			this.detectorName = detectorName;
+		}
+
+		public String getDataName() {
+			return dataName;
+		}
+
+		/**
+		 * @param dataName name of data in detector
+		 */
+		public void setDataName(String dataName) {
+			this.dataName = dataName;
+		}
+
+		public String getSampleName() {
+			return sampleName;
+		}
+
+		/**
+		 * @param sampleName name of sample in entry
+		 */
+		public void setSampleName(String sampleName) {
+			this.sampleName = sampleName;
+		}
+
+		public String[] getOtherPaths() {
+			return otherPaths;
+		}
+
+		/**
+		 * @param otherPaths
+		 */
+		public void setOtherPaths(String[] otherPaths) {
+			this.otherPaths = otherPaths;
+		}
+
+		public boolean isMillerList() {
+			return millerList;
+		}
+
+		/**
+		 * @param millerList if true, output list of hkls and corrected pixel intensities
+		 */
+		public void setMillerList(boolean millerList) {
+			this.millerList = millerList;
+		}
+
+		public int[] getqShape() {
+			return qShape;
+		}
+
+		/**
+		 * @param qShape shape of q space volume (can be null)
+		 */
+		public void setqShape(int[] qShape) {
+			this.qShape = qShape;
+		}
+
+		public double[] getqStart() {
+			return qStart;
+		}
+
+		/**
+		 * @param qStart starting coordinates of volume of q space (can be null)
+		 */
+		public void setqStart(double[] qStart) {
+			this.qStart = qStart;
+		}
+
+		public double[] getqStep() {
+			return qStep;
+		}
+
+		/**
+		 * @param qStep sides of voxels in q space (can be null)
+		 */
+		public void setqStep(double[] qStep) {
+			this.qStep = qStep;
+		}
+
+		@Override
+		protected MillerSpaceMapperBean clone() {
+			MillerSpaceMapperBean copy = null;
+			try {
+				copy = (MillerSpaceMapperBean) super.clone();
+				copy.inputs = Arrays.copyOf(inputs, inputs.length);
+				copy.otherPaths = otherPaths == null ? null : Arrays.copyOf(otherPaths, otherPaths.length);
+				copy.millerShape = millerShape == null ? null : Arrays.copyOf(millerShape, millerShape.length);
+				copy.millerStart = millerStart == null ? null : Arrays.copyOf(millerStart, millerStart.length);
+				copy.millerStep = millerStep == null ? null : Arrays.copyOf(millerStep, millerStep.length);
+				copy.qShape = qShape == null ? null : Arrays.copyOf(qShape, qShape.length);
+				copy.qStart = qStart == null ? null : Arrays.copyOf(qStart, qStart.length);
+				copy.qStep = qStep == null ? null : Arrays.copyOf(qStep, qStep.length);
+			} catch (CloneNotSupportedException e) {
+			}
+			return copy;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((attenuatorName == null) ? 0 : attenuatorName.hashCode());
+			result = prime * result + ((dataName == null) ? 0 : dataName.hashCode());
+			result = prime * result + ((detectorName == null) ? 0 : detectorName.hashCode());
+			result = prime * result + ((entryPath == null) ? 0 : entryPath.hashCode());
+			result = prime * result + Arrays.hashCode(inputs);
+			result = prime * result + ((instrumentName == null) ? 0 : instrumentName.hashCode());
+			result = prime * result + (millerList ? 1231 : 1237);
+			result = prime * result + Arrays.hashCode(millerShape);
+			result = prime * result + Arrays.hashCode(millerStart);
+			result = prime * result + Arrays.hashCode(millerStep);
+			result = prime * result + Arrays.hashCode(otherPaths);
+			result = prime * result + ((output == null) ? 0 : output.hashCode());
+			result = prime * result + Arrays.hashCode(qShape);
+			result = prime * result + Arrays.hashCode(qStart);
+			result = prime * result + Arrays.hashCode(qStep);
+			result = prime * result + (reduceToNonZero ? 1231 : 1237);
+			result = prime * result + ((sampleName == null) ? 0 : sampleName.hashCode());
+			long temp;
+			temp = Double.doubleToLongBits(scaleFactor);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			result = prime * result + ((splitterName == null) ? 0 : splitterName.hashCode());
+			temp = Double.doubleToLongBits(splitterParameter);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj instanceof MillerSpaceMapperBean)) {
+				return false;
+			}
+			MillerSpaceMapperBean other = (MillerSpaceMapperBean) obj;
+			if (attenuatorName == null) {
+				if (other.attenuatorName != null) {
+					return false;
+				}
+			} else if (!attenuatorName.equals(other.attenuatorName)) {
+				return false;
+			}
+			if (dataName == null) {
+				if (other.dataName != null) {
+					return false;
+				}
+			} else if (!dataName.equals(other.dataName)) {
+				return false;
+			}
+			if (detectorName == null) {
+				if (other.detectorName != null) {
+					return false;
+				}
+			} else if (!detectorName.equals(other.detectorName)) {
+				return false;
+			}
+			if (entryPath == null) {
+				if (other.entryPath != null) {
+					return false;
+				}
+			} else if (!entryPath.equals(other.entryPath)) {
+				return false;
+			}
+			if (!Arrays.equals(inputs, other.inputs)) {
+				return false;
+			}
+			if (instrumentName == null) {
+				if (other.instrumentName != null) {
+					return false;
+				}
+			} else if (!instrumentName.equals(other.instrumentName)) {
+				return false;
+			}
+			if (millerList != other.millerList) {
+				return false;
+			}
+			if (!Arrays.equals(millerShape, other.millerShape)) {
+				return false;
+			}
+			if (!Arrays.equals(millerStart, other.millerStart)) {
+				return false;
+			}
+			if (!Arrays.equals(millerStep, other.millerStep)) {
+				return false;
+			}
+			if (!Arrays.equals(otherPaths, other.otherPaths)) {
+				return false;
+			}
+			if (output == null) {
+				if (other.output != null) {
+					return false;
+				}
+			} else if (!output.equals(other.output)) {
+				return false;
+			}
+			if (!Arrays.equals(qShape, other.qShape)) {
+				return false;
+			}
+			if (!Arrays.equals(qStart, other.qStart)) {
+				return false;
+			}
+			if (!Arrays.equals(qStep, other.qStep)) {
+				return false;
+			}
+			if (reduceToNonZero != other.reduceToNonZero) {
+				return false;
+			}
+			if (sampleName == null) {
+				if (other.sampleName != null) {
+					return false;
+				}
+			} else if (!sampleName.equals(other.sampleName)) {
+				return false;
+			}
+			if (Double.doubleToLongBits(scaleFactor) != Double.doubleToLongBits(other.scaleFactor)) {
+				return false;
+			}
+			if (splitterName == null) {
+				if (other.splitterName != null) {
+					return false;
+				}
+			} else if (!splitterName.equals(other.splitterName)) {
+				return false;
+			}
+			if (Double.doubleToLongBits(splitterParameter) != Double.doubleToLongBits(other.splitterParameter)) {
+				return false;
+			}
+			return true;
 		}
 	}
 }

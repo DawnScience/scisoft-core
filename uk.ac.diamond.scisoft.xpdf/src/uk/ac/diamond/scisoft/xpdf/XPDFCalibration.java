@@ -420,7 +420,7 @@ public class XPDFCalibration {
 		List<Dataset> fluorescenceCorrected = new ArrayList<Dataset>();
 //		for (Dataset targetComponent : backgroundSubtracted) {
 		// Only correct fluorescence in the sample itself
-		Dataset targetComponent = backgroundSubtracted.get(0);
+		Dataset targetComponent = solAng.get(0);
 
 		if (doFluorescence) {
 //			Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.reshape(targetComponent.getSize())));

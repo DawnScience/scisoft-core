@@ -155,7 +155,7 @@ public class XPDFCoordinates {
 	 */
 	public void setTwoTheta(Dataset twoTheta) {
 		this.twoTheta = twoTheta;
-		if (phi == null) this.phi = Maths.add(DoubleDataset.zeros(this.twoTheta), Math.PI/2);
+		if (phi == null) this.phi = Maths.add(DoubleDataset.zeros(this.twoTheta), Math.toRadians(210));
 		setGammaDeltaFrom2ThetaPhi();
 		this.isAngleAuthorative = true;
 		invalidateData();

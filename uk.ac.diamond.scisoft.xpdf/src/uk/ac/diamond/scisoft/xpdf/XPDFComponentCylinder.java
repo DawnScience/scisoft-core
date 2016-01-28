@@ -337,7 +337,7 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 						attenuators,
 						attenuationsIn, attenuationsOut,
 						beamData,
-						doIncomingAbsorption, doOutgoingAbsorption, false);
+						doIncomingAbsorption, doOutgoingAbsorption, true);
 
 		// Upsample the fluorescence back to the original resolution and return
 		return XPDFRegrid.two(fluorescence, nXHigh, nYHigh);

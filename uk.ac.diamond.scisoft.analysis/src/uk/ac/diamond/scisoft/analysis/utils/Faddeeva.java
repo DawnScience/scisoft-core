@@ -162,6 +162,7 @@ public class Faddeeva {
 	}
 
 	// Commons math does not handle infinities in a useful manner
+	// see https://issues.apache.org/jira/browse/MATH-667
 	private static final Complex cexp(Complex z) {
 		if (z.getReal() < -Double.MAX_EXPONENT)
 			return Complex.ZERO;

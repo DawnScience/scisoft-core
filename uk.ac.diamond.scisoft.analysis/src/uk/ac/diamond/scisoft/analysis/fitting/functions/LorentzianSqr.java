@@ -45,7 +45,7 @@ public class LorentzianSqr extends APeak {
 	 * 
 	 * <pre>
 	 *     Parameter 1	- Position
-	 *     Parameter 2 	- full width at half maximum
+	 *     Parameter 2 	- FWHM (full width at half maximum)
 	 *     Parameter 3 	- Area
 	 * </pre>
 	 * 

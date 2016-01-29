@@ -39,7 +39,7 @@ public class Lorentzian extends APeak {
 	 * 
 	 * <pre>
 	 *     Parameter 1	- Position
-	 *     Parameter 2 	- half width at half maximum
+	 *     Parameter 2 	- FWHM (full width at half maximum)
 	 *     Parameter 3 	- Area
 	 * </pre>
 	 * 

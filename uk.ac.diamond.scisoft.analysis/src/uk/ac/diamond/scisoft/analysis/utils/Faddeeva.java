@@ -144,73 +144,99 @@ import org.apache.commons.math3.complex.Complex;
  * Ported to Java by Peter.Chang@diamond.ac.uk, 20160129
  */
 public class Faddeeva {
+
+	// Commons math does not handle infinities in a useful manner,
+	// (see https://issues.apache.org/jira/browse/MATH-667).
+	// So use a simple implementation internally
+
+	static class cmplx {
+		double r, i;
+		public cmplx() {
+		}
+
+		public cmplx(double x) {
+			r = x;
+		}
+		public cmplx(double x, double y) {
+			r = x;
+			i = y;
+		}
+
+		@Override
+		public String toString() {
+			return r + (i < 0 ? " - i" : " + i") + Math.abs(i) ;
+		}
+	}
+
+	private static cmplx ZERO = new cmplx(); 
+
+	private static final Complex C(cmplx z) {
+		return new Complex(z.r, z.i); 
+	}
+
 	// utilities to minimise difference in code
-	private static final Complex C(double x) {
-		return new Complex(x); 
+	private static final cmplx C(double x) {
+		return new cmplx(x); 
 	}
 
-	private static final Complex C(double x, double y) {
-		return new Complex(x, y); 
+	private static final cmplx C(double x, double y) {
+		return new cmplx(x, y); 
 	}
 
-	private static final double creal(Complex z) {
-		return z.getReal();
+	private static final double creal(cmplx z) {
+		return z.r;
 	}
 
-	private static final double cimag(Complex z) {
-		return z.getImaginary();
+	private static final double cimag(cmplx z) {
+		return z.i;
 	}
 
-	// Commons math does not handle infinities in a useful manner
-	// see https://issues.apache.org/jira/browse/MATH-667
-	private static final Complex cexp(Complex z) {
-		if (z.getReal() < -Double.MAX_EXPONENT)
-			return Complex.ZERO;
-		return z.exp();
+	private static final cmplx cexp(cmplx z) {
+		double r = Math.exp(z.r);
+		if (r == 0) {
+			return ZERO;
+		}
+		return new cmplx(r * Math.cos(z.i), r * Math.sin(z.i));
 	}
 
-	private static final Complex cmul(Complex a, Complex b) {
-		double ar = a.getReal();
-		double ai = a.getImaginary();
-		double br = b.getReal();
-		double bi = b.getImaginary();
-		return new Complex(ar*br - ai*bi, ar*bi + ai*br);
+	private static final cmplx cmul(cmplx a, cmplx b) {
+		return new cmplx(a.r*b.r - a.i*b.i, a.r*b.i + a.i*b.r);
 	}
 
-	private static final Complex cmul(double a, Complex b) {
-		return new Complex(a * b.getReal(), a * b.getImaginary());
+	private static final cmplx cmul(double a, cmplx b) {
+		return new cmplx(a * b.r, a * b.i);
 	}
 
-	private static final Complex cmul(Complex a, double b) {
-		return new Complex(b * a.getReal(), b * a.getImaginary());
+	private static final cmplx cmul(cmplx a, double b) {
+		return new cmplx(b * a.r, b * a.i);
 	}
 
-	private static final Complex cadd(Complex a, Complex b) {
-		return new Complex(a.getReal() + b.getReal(), a.getImaginary() + b.getImaginary());
+	private static final cmplx cadd(cmplx a, cmplx b) {
+		return new cmplx(a.r + b.r, a.i + b.i);
 	}
 
-	private static final Complex cadd(double a, Complex b) {
-		return new Complex(a + b.getReal(), b.getImaginary());
+	private static final cmplx cadd(double a, cmplx b) {
+		return new cmplx(a + b.r, b.i);
 	}
 
-//	private static final Complex cadd(Complex a, double b) {
-//		return new Complex(a.getReal() + b, a.getImaginary());
+//	private static final cmplx cadd(cmplx a, double b) {
+//		return new cmplx(a.r + b, a.i);
 //	}
 
-	private static final Complex csub(Complex a, Complex b) {
-		return new Complex(a.getReal() - b.getReal(), a.getImaginary() - b.getImaginary());
+	private static final cmplx csub(cmplx a, cmplx b) {
+		return new cmplx(a.r - b.r, a.i - b.i);
 	}
 
-	private static final Complex csub(double a, Complex b) {
-		return new Complex(a - b.getReal(), -b.getImaginary());
+	private static final cmplx csub(double a, cmplx b) {
+		return new cmplx(a - b.r, -b.i);
 	}
 
-	private static final Complex csub(Complex a, double b) {
-		return new Complex(a.getReal() - b, a.getImaginary());
+	private static final cmplx csub(cmplx a, double b) {
+		return new cmplx(a.r - b, a.i);
 	}
 
-	private static Complex cneg(Complex z) {
-		return new Complex(-z.getReal(), -z.getImaginary());
+	private static cmplx cneg(cmplx z) {
+		return new cmplx(-z.r, -z.i);
 	}
 
 	private static final double fabs(double x) {
@@ -245,7 +271,6 @@ public class Faddeeva {
 		return Double.isInfinite(x);
 	}
 
-	
 	private static final double Inf = Double.POSITIVE_INFINITY;
 	private static final double NaN = Double.NaN;
 	private static final double HUGE_VAL = Inf;
@@ -264,7 +289,11 @@ public class Faddeeva {
 	 * @return erfcx(z) = exp(z^2) erfc(z)
 	 */
 	public static Complex erfcx(Complex z, double relerr) {
-		return w(C(-cimag(z), creal(z)), relerr);
+		return C(erfcx_i(C(z.getReal(), z.getImaginary()), relerr));
+	}
+
+	private static cmplx erfcx_i(cmplx z, double relerr) {
+		return w_i(C(-cimag(z), creal(z)), relerr);
 	}
 
 	/**
@@ -300,6 +329,10 @@ public class Faddeeva {
 	 * @return erf(z)
 	 */
 	public static Complex erf(Complex z, double relerr) {
+		return C(erf_i(C(z.getReal(), z.getImaginary()), relerr));
+	}
+
+	private static cmplx erf_i(cmplx z, double relerr) {
 		double x = creal(z), y = cimag(z);
 
 		if (y == 0)
@@ -330,7 +363,7 @@ public class Faddeeva {
 			}
 			/*- don't use complex exp function, since that will produce spurious NaN
 			   values when multiplying w in an overflow situation. */
-			return csub(1.0, cmul(exp(mRe_z2), cmul(C(cos(mIm_z2), sin(mIm_z2)), w(C(-y, x), relerr))));
+			return csub(1.0, cmul(exp(mRe_z2), cmul(C(cos(mIm_z2), sin(mIm_z2)), w_i(C(-y, x), relerr))));
 		}
 		// else { // x < 0
 		if (x > -8e-2) { // duplicate from above to avoid fabs(x) call
@@ -344,18 +377,18 @@ public class Faddeeva {
 			return C(NaN, y == 0 ? 0 : NaN);
 		/*- don't use complex exp function, since that will produce spurious NaN
 		   values when multiplying w in an overflow situation. */
-		return csub(cmul(exp(mRe_z2), cmul(C(cos(mIm_z2), sin(mIm_z2)), w(C(y, -x), relerr))), 1.0);
+		return csub(cmul(exp(mRe_z2), cmul(C(cos(mIm_z2), sin(mIm_z2)), w_i(C(y, -x), relerr))), 1.0);
 	}
 
-	private static Complex taylor(Complex z, double mRe_z2, double mIm_z2) {
+	private static cmplx taylor(cmplx z, double mRe_z2, double mIm_z2) {
 		// Use Taylor series for small |z|, to avoid cancellation inaccuracy
 		// erf(z) = 2/sqrt(pi) * z * (1 - z^2/3 + z^4/10 - z^6/42 + z^8/216 + ...)
-		Complex mz2 = C(mRe_z2, mIm_z2); // -z^2
+		cmplx mz2 = C(mRe_z2, mIm_z2); // -z^2
 		return cmul(z, cadd(TAYLOR_COEFFS[0], cmul(mz2, cadd(TAYLOR_COEFFS[1],
 				cmul(mz2, cadd(TAYLOR_COEFFS[2], cmul(mz2, cadd(TAYLOR_COEFFS[3], cmul(mz2, TAYLOR_COEFFS[4])))))))));
 	}
 
-	private static Complex taylor_erfi(double x, double y) {
+	private static cmplx taylor_erfi(double x, double y) {
 		/*- for small |x| and small |xy|, 
 		  use Taylor series to avoid cancellation inaccuracy:
 		    erf(x+iy) = erf(iy)
@@ -385,7 +418,11 @@ public class Faddeeva {
 	 * @return erfi(z) = -i erf(iz)
 	 */
 	public static Complex erfi(Complex z, double relerr) {
-		Complex e = erf(C(-cimag(z), creal(z)), relerr);
+		return C(erfi_i(C(z.getReal(), z.getImaginary()), relerr));
+	}
+
+	private static cmplx erfi_i(cmplx z, double relerr) {
+		cmplx e = erf_i(C(-cimag(z), creal(z)), relerr);
 		return C(cimag(e), -creal(e));
 	}
 
@@ -413,12 +450,16 @@ public class Faddeeva {
 
 	/**
 	 * Compute the complementary error function for a complex argument
-	 * 
+	 *
 	 * @param z
 	 * @param relerr
 	 * @return erfc(z) = 1 - erfc(z)
 	 */
 	public static Complex erfc(Complex z, double relerr) {
+		return C(erfc_i(C(z.getReal(), z.getImaginary()), relerr));
+	}
+
+	private static cmplx erfc_i(cmplx z, double relerr) {
 		double x = creal(z), y = cimag(z);
 
 		if (x == 0.)
@@ -440,9 +481,9 @@ public class Faddeeva {
 			return C(x >= 0 ? 0.0 : 2.0);
 
 		if (x >= 0)
-			return cmul(cexp(C(mRe_z2, mIm_z2)), w(C(-y, x), relerr));
+			return cmul(cexp(C(mRe_z2, mIm_z2)), w_i(C(-y, x), relerr));
 		// else
-		return csub(2.0, cmul(cexp(C(mRe_z2, mIm_z2)), w(C(y, -x), relerr)));
+		return csub(2.0, cmul(cexp(C(mRe_z2, mIm_z2)), w_i(C(y, -x), relerr)));
 	}
 
 	/**
@@ -463,7 +504,11 @@ public class Faddeeva {
 	 * @param relerr
 	 * @return Dawson(z) = sqrt(pi)/2 * exp(-z^2) * erfi(z)
 	 */
-	static public Complex Dawson(Complex z, double relerr) {
+	public static Complex Dawson(Complex z, double relerr) {
+		return C(Dawson_i(C(z.getReal(), z.getImaginary()), relerr));
+	}
+
+	private static cmplx Dawson_i(cmplx z, double relerr) {
 		final double spi2 = SQRT_PI_OVER_TWO; // sqrt(pi)/2
 		final double x = creal(z), y = cimag(z);
 
@@ -483,7 +528,7 @@ public class Faddeeva {
 
 		double mRe_z2 = (y - x) * (x + y); // Re(-z^2), being careful of overflow
 		double mIm_z2 = -2 * x * y; // Im(-z^2)
-		Complex mz2 = C(mRe_z2, mIm_z2); // -z^2
+		cmplx mz2 = C(mRe_z2, mIm_z2); // -z^2
 
 		/*- Handle positive and negative x via different formulas,
 		 using the mirror symmetries of w, to avoid overflow/underflow
@@ -497,7 +542,7 @@ public class Faddeeva {
 					// goto taylor_realaxis;
 					return taylor_realaxis(x, y, spi2);
 			}
-			Complex res = csub(cexp(mz2), w(z, relerr));
+			cmplx res = csub(cexp(mz2), w_i(z, relerr));
 			return C(-cimag(res) * spi2, creal(res) * spi2);
 		}
 		// else { // y < 0
@@ -510,13 +555,13 @@ public class Faddeeva {
 				return taylor_realaxis(x, y, spi2);
 		} else if (isnan(y))
 			return C(x == 0 ? 0 : NaN, NaN);
-		Complex res = csub(w(cneg(z), relerr), cexp(mz2));
+		cmplx res = csub(w_i(cneg(z), relerr), cexp(mz2));
 		return C(-cimag(res) * spi2, creal(res) * spi2);
 	}
 
 	// Use Taylor series for small |z|, to avoid cancellation inaccuracy
 	//     dawson(z) = z - 2/3 z^3 + 4/15 z^5 + ...
-	private static Complex taylor2(Complex z, Complex mz2) {
+	private static cmplx taylor2(cmplx z, cmplx mz2) {
 	return cmul(z, cadd(1.,
 			cmul(mz2, cadd(0.6666666666666666666666666666666666666667,
 					cmul(mz2, 0.2666666666666666666666666666666666666667)))));
@@ -554,7 +599,7 @@ public class Faddeeva {
 	     Re dawson(x + iy) = [1 + y^2 (1 + y^2/2 - (xy)^2/3)] / (2x)
 	     Im dawson(x + iy) = y [ -1 - 2/3 y^2 + y^4/15 (2x^2 - 4) ] / (2x^2 - 1)
 	 */
-	static private Complex taylor_realaxis(double x, double y, double spi2) {
+	static private cmplx taylor_realaxis(double x, double y, double spi2) {
 		double x2 = x * x;
 		if (x2 > 1600) { // |x| > 40
 			double y2 = y * y;
@@ -658,6 +703,10 @@ public class Faddeeva {
 	 * @return w(z) = exp(-z^2) erfc(-iz)
 	 */
 	public static Complex w(Complex z, double relerr) {
+		return C(w_i(C(z.getReal(), z.getImaginary()), relerr));
+	}
+
+	private static cmplx w_i(cmplx z, double relerr) {
 		if (creal(z) == 0.0)
 			return C(erfcx(cimag(z)), creal(z)); // give correct sign of 0 in cimag(w)
 		else if (cimag(z) == 0)
@@ -680,7 +729,7 @@ public class Faddeeva {
 		double x = fabs(creal(z));
 		double y = cimag(z), ya = fabs(y);
 
-		Complex ret = Complex.ZERO; // return value
+		cmplx ret = ZERO; // return value
 
 		double sum1 = 0, sum2 = 0, sum3 = 0, sum4 = 0, sum5 = 0;
 

@@ -1041,14 +1041,24 @@ public class MillerSpaceMapper {
 		throw new IllegalArgumentException("Splitter is not known");
 	}
 
-	private static final MillerSpaceMapperBean I16MapperBean = new MillerSpaceMapperBean();
+	private static final MillerSpaceMapperBean I16MapperBean;
 	static {
-		I16MapperBean.setEntryPath("/entry1");
-		I16MapperBean.setInstrumentName("instrument");
-		I16MapperBean.setAttenuatorName("attenuator");
-		I16MapperBean.setDetectorName("pil100k");
-		I16MapperBean.setDataName("image_data");
-		I16MapperBean.setSampleName("sample");
+		I16MapperBean = createI16MapperBean();
+	}
+
+	/**
+	 * Create a bean with Nexus configuration that is specific to I16
+	 * @return bean
+	 */
+	public static MillerSpaceMapperBean createI16MapperBean() {
+		MillerSpaceMapperBean bean = new MillerSpaceMapperBean();
+		bean.setEntryPath("/entry1");
+		bean.setInstrumentName("instrument");
+		bean.setAttenuatorName("attenuator");
+		bean.setDetectorName("pil100k");
+		bean.setDataName("image_data");
+		bean.setSampleName("sample");
+		return bean;
 	}
 
 	/**

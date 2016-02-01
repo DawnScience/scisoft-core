@@ -161,6 +161,16 @@ public class QSpace {
 		return 2.*Math.asin(0.5*q.length()/kmod);
 	}
 
+	/**
+	 * Calculate solid angle subtended by pixel
+	 * @param x
+	 * @param y
+	 * @return solid angle
+	 */
+	public double calculateSolidAngle(final int x, final int y) {
+		return detProps.calculateSolidAngle(x, y);
+	}
+
 	@Override
 	public String toString() {
 		return detProps + "; " + getWavelength();

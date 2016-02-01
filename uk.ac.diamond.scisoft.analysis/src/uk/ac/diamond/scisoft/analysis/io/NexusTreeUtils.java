@@ -574,11 +574,9 @@ public class NexusTreeUtils {
 		}
 
 		Map<String, Transform> ftrans = new HashMap<String, Transform>();
-		for (NodeLink l : gNode) {
-			if (isNXClass(l.getDestination(), NX_TRANSFORMATIONS)) {
-				parseTransformations(path, l, ftrans, pos);
-				break;
-			}
+		NodeLink tl = findFirstNode(gNode, NX_TRANSFORMATIONS);
+		if (tl != null) {
+			parseTransformations(path, tl, ftrans, pos);
 		}
 
 		// initial dependency chain
@@ -1232,6 +1230,21 @@ public class NexusTreeUtils {
 		tv.offset = new Vector4d(o3);
 		tv.offset.setW(1);
 		return tv;
+	}
+
+	/**
+	 * Find node link to first item in group to be of given Nexus class
+	 * @param group
+	 * @param clazz
+	 * @return node link to first 
+	 */
+	public static NodeLink findFirstNode(GroupNode group, String clazz) {
+		for (NodeLink l : group) {
+			if (isNXClass(l.getDestination(), clazz)) {
+				return l;
+			}
+		}
+		return null;
 	}
 
 	/**

@@ -15,11 +15,10 @@ import static org.junit.Assert.assertArrayEquals;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
-import junit.framework.Assert;
-
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -221,6 +220,23 @@ public class DetectorPropertiesTest {
 				detector.pixelPosition(detectorCorners[6], detectorCorners[7]));
 		assertEquals(diagDetSize, px1topx4.length(), 0.00001);
 
+	}
+
+	@Test
+	public void testDetectorMethods() {
+		DetectorProperties detector = new DetectorProperties(detectorOrigin, beamCentre, imageSizePix[0], imageSizePix[1], pixelSize,
+				pixelSize, orientationMatrix);
+
+		Vector3d p = new Vector3d();
+		Vector3d c = new Vector3d();
+		for (int x = 0; x < imageSizePix[0]; x++) {
+			for (int y = 0; y < imageSizePix[1]; y++) {
+				detector.pixelPosition(x, y, p);
+				detector.pixelCoords(p, c);
+				assertEquals(x, c.x, 1);
+				assertEquals(y, c.y, 1);
+			}
+		}
 	}
 
 	/**
@@ -598,5 +614,15 @@ public class DetectorPropertiesTest {
 		Assert.assertEquals("M01", a.getM01(), c.getM01(), 1e-7);
 		Assert.assertEquals("M10", a.getM10(), c.getM10(), 1e-7);
 		Assert.assertEquals("M22", a.getM22(), c.getM22(), 1e-7);
+	}
+
+	@Test
+	public void testSolidAngle() {
+		Vector3d a = new Vector3d(1, -1, 1);
+		Vector3d b = new Vector3d(1, 1, 1);
+		Vector3d c = new Vector3d(1, -1, -1);
+		// half of a cube side
+		double s = DetectorProperties.calculatePlaneTriangleSolidAngle(a, b, c);
+		Assert.assertEquals(4.*Math.PI/12, s, 1e-12);
 	}
 }

@@ -1007,6 +1007,10 @@ public class NexusTreeUtils {
 	 */
 	public static int[] parseSampleScanShape(String path, Tree tree, int[] shape) {
 		NodeLink link = tree.findNodeLink(path);
+		if (link == null) {
+			logger.warn("'{}' could not be found", path);
+			return null;
+		}
 
 		if (!link.isDestinationGroup()) {
 			logger.warn("'{}' was not a group", link.getName());
@@ -1030,6 +1034,10 @@ public class NexusTreeUtils {
 
 	public static DiffractionSample parseSample(String path, Tree tree, int... pos) {
 		NodeLink link = tree.findNodeLink(path);
+		if (link == null) {
+			logger.warn("'{}' could not be found", path);
+			return null;
+		}
 
 		if (!link.isDestinationGroup()) {
 			logger.warn("'{}' was not a group", link.getName());
@@ -1070,6 +1078,10 @@ public class NexusTreeUtils {
 			String dpath = t.depend;
 			while (!dpath.equals(NX_TRANSFORMATIONS_ROOT) && !ftrans.containsKey(dpath) && !mtrans.containsKey(dpath)) {
 				NodeLink l = tree.findNodeLink(dpath);
+				if (l == null) {
+					logger.error("Could not find dependency: {}", dpath);
+					break;
+				}
 				try {
 					Transform nt = parseTransformation(dpath.substring(0, dpath.lastIndexOf(Node.SEPARATOR)), l, pos);
 					mtrans.put(nt.name, nt);

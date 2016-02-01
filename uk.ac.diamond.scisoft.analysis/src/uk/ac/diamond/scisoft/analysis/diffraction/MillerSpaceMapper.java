@@ -532,6 +532,7 @@ public class MillerSpaceMapper {
 
 				value = image.getDouble(y, x);
 				if (value > 0) {
+					value /= qspace.calculateSolidAngle(x, y);
 					if (reduceToNonZeroBB) {
 						minMax(min, max, hpos);
 					}

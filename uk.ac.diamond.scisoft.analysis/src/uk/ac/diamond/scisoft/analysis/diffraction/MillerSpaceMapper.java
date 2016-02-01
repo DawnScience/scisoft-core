@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.measure.unit.SI;
 import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
@@ -878,7 +879,7 @@ public class MillerSpaceMapper {
 
 				Dataset trans = NexusTreeUtils.parseAttenuator(attenuatorPath, tree);
 				// factor in count time too
-				Dataset time = NexusTreeUtils.getDataset(timePath, tree);
+				Dataset time = NexusTreeUtils.getDataset(timePath, tree, SI.SECOND);
 				if (time != null) {
 					if (time.getSize() != 1) {
 						int[] dshape = iters[0].getShape();

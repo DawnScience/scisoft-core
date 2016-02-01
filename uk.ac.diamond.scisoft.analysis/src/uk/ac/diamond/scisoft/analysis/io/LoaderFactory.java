@@ -70,9 +70,7 @@ import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
  * This class is going to be Deprecated please use ILoaderService where possible.
  * See org.eclipse.dawnsci.plotting.examples.Examples which receives OSGi services, including ILoaderService. 
  * 
- *  @deprecated - Please use ILoaderService.
  */
-@Deprecated
 public class LoaderFactory {
 
 	/**
@@ -978,6 +976,10 @@ public class LoaderFactory {
 	 */
 	public static void clear() {
 		dataCache.clear();
+	}
+	
+	public static void clear(final String filePath) {
+		dataCache.clear(filePath);
 	}
 
 }

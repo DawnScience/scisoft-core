@@ -13,6 +13,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
@@ -42,6 +43,12 @@ public class DataCache<T> {
 	
 	public void clear() {
 		cache.clear();
+	}
+	public void clear(String filePath) {
+		for (Iterator<CacheKey> it = cache.keySet().iterator();it.hasNext();) {
+			CacheKey key = it.next();
+			if (filePath.equals(key.getFilePath())) it.remove();
+		}
 	}
 	
 	public CacheKey createCacheKey(String path, boolean loadMeta) {

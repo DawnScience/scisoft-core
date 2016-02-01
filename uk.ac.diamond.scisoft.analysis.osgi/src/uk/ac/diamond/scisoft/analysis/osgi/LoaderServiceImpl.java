@@ -125,6 +125,10 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 	public void clearSoftReferenceCache() {
 		LoaderFactory.clear();
 	}
+	@Override
+	public void clearSoftReferenceCache(String filePath) {
+		LoaderFactory.clear(filePath);
+	}
 	
 
 	@Override

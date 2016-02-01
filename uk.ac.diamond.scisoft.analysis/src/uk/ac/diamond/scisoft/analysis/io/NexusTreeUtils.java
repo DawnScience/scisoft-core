@@ -692,6 +692,17 @@ public class NexusTreeUtils {
 	 * @return dataset
 	 */
 	public static Dataset getDataset(String path, Tree tree) {
+		return getDataset(path, tree, null);
+	}
+
+	/**
+	 * Get a dataset
+	 * @param path
+	 * @param tree
+	 * @param unit
+	 * @return dataset
+	 */
+	public static Dataset getDataset(String path, Tree tree, Unit<? extends Quantity> unit) {
 		NodeLink link = tree.findNodeLink(path);
 
 		if (link == null) {
@@ -705,8 +716,8 @@ public class NexusTreeUtils {
 		}
 
 		DataNode node = (DataNode) link.getDestination();
-
-		return getAndCacheData(node);
+		
+		return unit == null ? getAndCacheData(node) : getConvertedData(node, unit);
 	}
 
 	public static int[] parseSubDetectorShape(Tree tree, NodeLink link) {

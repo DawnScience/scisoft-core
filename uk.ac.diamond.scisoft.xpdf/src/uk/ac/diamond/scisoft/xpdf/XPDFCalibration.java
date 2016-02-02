@@ -462,8 +462,8 @@ public class XPDFCalibration {
 			maxScale = 1001;
 			nSteps = 100;
 		} else {
-			minScale = 200;
-			maxScale = 5000;
+			minScale = 1;
+			maxScale = 501;
 			nSteps = 20;
 		}
 		final double stepScale = (maxScale-minScale)/nSteps;

@@ -28,6 +28,8 @@ import junit.framework.TestCase;
 
 public class XPDFCylinderTest extends TestCase {
 
+	final static private String testDataDir = "/home/rkl37156/ceria_dean_data/testData/";
+	
 	public void testGetUpstreamPathLength() {
 //		fail("Temporary fail"); //TODO: remove
 		XPDFComponentCylinder cap = new XPDFComponentCylinder();
@@ -41,7 +43,7 @@ public class XPDFCylinderTest extends TestCase {
 		Dataset xi = new DoubleDataset(pathLengthExp);
 		
 		// Read the data from file
-		String fileDirectory = "/home/rkl37156/ceria_dean_data/";
+		String fileDirectory = testDataDir;
 		Dataset[] datasets = {pathLengthExp, r, xi};
 		String[] files = {"incoming", "sample_r", "sample_xi"};
 		
@@ -90,7 +92,7 @@ public class XPDFCylinderTest extends TestCase {
 		for (String angle : angles) {
 			
 			// Read the data from file
-			String fileDirectory = "/home/rkl37156/ceria_dean_data/";
+			String fileDirectory = testDataDir;
 			Dataset[] datasets = {pathLengthExp, r, xi};
 			String[] files = {"outgoing"+angle, "sample_r", "sample_xi"};
 
@@ -118,7 +120,7 @@ public class XPDFCylinderTest extends TestCase {
 			pathLength= cap.getDownstreamPathLength(x, y, z, 0.0, Math.toRadians(Double.parseDouble(angle)));
 
 			// TODO: remove temporary write command
-			try (Writer fileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("/home/rkl37156/ceria_dean_data/outgoing"+angle+".java.txt"), "utf-8"))) {
+			try (Writer fileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(testDataDir + "outgoing"+angle+".java.txt"), "utf-8"))) {
 				for (int i = 0; i<ySize; i++) {
 					for (int j = 0; j < xSize; j++) {
 						fileWriter.write(((Double) pathLength.getDouble(i, j)).toString()+" ");
@@ -191,14 +193,17 @@ public class XPDFCylinderTest extends TestCase {
 		beamData.setBeamWidth(0.07);
 		
 		// Read the target data, and also the angles (in radians) to run
-		String dataPath = "/home/rkl37156/ceria_dean_data/";
+		String dataPath = testDataDir;
 		IDataHolder dh = null;
 		String scattererName, attenuatorName;
 		scattererName = (isSampleScatterer) ? "sample" : "container";
 		attenuatorName = (isSampleAttenuator) ? "sample" : "container";
+		String filename = dataPath+scattererName + "_" + attenuatorName + "_abs.xy";
 		try {
-			dh = LoaderFactory.getData(dataPath+scattererName + "_" + attenuatorName + "_abs.xy");
+			dh = LoaderFactory.getData(filename);
 		} catch (Exception e) {
+			System.err.println("Error reading file: " + filename);
+			fail("Error reading file: " + filename);
 		}
 		Dataset delta1D = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_1").getSlice());
 		Dataset delta = new DoubleDataset(delta1D.getSize(), 1);
@@ -271,7 +276,7 @@ public class XPDFCylinderTest extends TestCase {
 			muOut.add(quartz.getAttenuationCoefficient(ceriumLines[iLine]));
 		
 			// Read the target data, and also the angles (in radians) to run
-			String dataPath = "/home/rkl37156/ceria_dean_data/testData/";
+			String dataPath = testDataDir;
 			IDataHolder dh = null;
 			String fluorName = "ceria";
 			String fluorNumber = ((Integer) (iLine+1)).toString();

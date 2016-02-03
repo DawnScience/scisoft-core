@@ -69,7 +69,7 @@ public class XPDFMetadataTest extends TestCase {
 		String dataPath = "/home/rkl37156/ceria_dean_data/testData/";
 		IDataHolder dh = null;
 		try {
-			dh = LoaderFactory.getData(dataPath+"ceria_total_fluorescence" + ".xy");
+			dh = LoaderFactory.getData(dataPath+"ceria_total_fluorescence2" + ".xy");
 		} catch (Exception e) {
 		}
 		Dataset delta1D = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_1").getSlice());
@@ -78,11 +78,18 @@ public class XPDFMetadataTest extends TestCase {
 		for (int i = 0; i<delta1D.getSize(); i++)
 			delta.set(delta1D.getDouble(i), i, 0);
 		Dataset gamma = DoubleDataset.zeros(delta);
+
+		// convert to radians, and rotate the detector
+		delta = Maths.toRadians(delta);
+		double rotationAngle = Math.toRadians(120.0);
+		// gamma is known to be zero, so just overwrite it
+		gamma = Maths.multiply(Math.sin(rotationAngle), delta);
+		delta = Maths.multiply(Math.cos(rotationAngle), delta);
 		
 		Dataset fluor = meta.getSampleFluorescence(gamma, delta);
 		Dataset squaredDiff = Maths.square(Maths.subtract(Maths.divide(fluor, fluorExp), 1));
 		double rmsError = Math.sqrt((double) squaredDiff.mean());
-		double maxError = 1e-2;
+		double maxError = 4e-2; // error versus python data, since XCOM and xraylib have different silica absorbances
 		assertTrue("Too large an error in ceria total fluorescence, " + rmsError, rmsError < maxError);
 	}
 	
@@ -132,7 +139,7 @@ public class XPDFMetadataTest extends TestCase {
 		XPDFDetector tect = new XPDFDetector();
 		tect.setThickness(0.5);
 		tect.setSubstance(new XPDFSubstance("caesium iodide", "CsI", 4.51, 1.0));
-		tect.setSolidAngle(1.0);
+		tect.setSolidAngle(0.1);
 		
 		meta.setDetector(tect);
 		

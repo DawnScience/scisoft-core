@@ -34,7 +34,7 @@ public class XPDFTargetComponentTest extends TestCase {
 //		double selfScatteringIntegralExpected = 463628.661954;
 		double selfScatteringIntegralExpected = 544918.666;
 		
-		String dataPath = "/home/rkl37156/ceria_dean_data/";
+		String dataPath = "/home/rkl37156/ceria_dean_data/testData/";
 		IDataHolder dh = null;
 		String scattererName, attenuatorName;
 		try {

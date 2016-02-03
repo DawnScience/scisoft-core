@@ -76,6 +76,14 @@ public class XPDFCoordinates {
 		this.cosTwoTheta = null;
 	}
 	
+	/**
+	 * Generates the XPDF coordinates from a input file.
+	 * <p>
+	 * In the 1D case, is obtains the axis metadata, and uses the
+	 * {@link XPDFTrace.isAxisAngle()} information to calculate either the angle
+	 * of the q dependence of the data.
+	 * @param input
+	 */
 	public XPDFCoordinates(Dataset input) {
 		XPDFMetadata theXPDFMetadata = input.getFirstMetadata(XPDFMetadata.class);
 		this.wavelength = theXPDFMetadata.getBeam().getBeamWavelength();

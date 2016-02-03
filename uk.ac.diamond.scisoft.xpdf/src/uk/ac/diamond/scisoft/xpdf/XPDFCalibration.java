@@ -192,23 +192,48 @@ public class XPDFCalibration {
 		this.absorptionMaps = new XPDFAbsorptionMaps(absorptionMaps);
 	}
 	
+	/**
+	 * Sets the coordinates over which to calibrate the data.
+	 * @param inCoords
+	 * 				the {@link XPDFCoordinates} object to be used.
+	 */
 	public void setCoordinates(XPDFCoordinates inCoords) {
 		this.coords = inCoords;
 		this.dataDimensions = inCoords.getTwoTheta().getShape().length;
 	}
 	
+	/**
+	 * Sets the detector data class to calibrate against.
+	 * @param inTect
+	 * 			the {@link XPDFDetector} object to be used.
+	 */
 	public void setDetector(XPDFDetector inTect) {
 		this.tect = inTect;
 	}
 	
+	/**
+	 * Sets the class which describes the incoming x-ray beam.
+	 * @param inBeam
+	 * 				the {@link XPDFBeamData} object to be used.
+	 */
 	public void setBeamData(XPDFBeamData inBeam) {
 		this.beamData = inBeam;
 	}
 	
+	/**
+	 * Sets the fluorescence at the detector on the same coordinates as the data.
+	 * @param sampleFluor
+	 * 					the {@link Dataset} containing the fluorescence data 
+	 */
 	public void setSampleFluorescence(Dataset sampleFluor) {
 		this.sampleFluorescence = sampleFluor;
 	}
 	
+	/**
+	 * Sets the target component which of the sample 
+	 * @param sample
+	 * 				the {@link XPDFTargetComponent} which will provide the sample self-scattering.
+	 */
 	public void setSelfScattering(XPDFTargetComponent sample) {
 		this.sampleSelfScattering = sample.getSelfScattering(coords);
 	}
@@ -395,6 +420,15 @@ public class XPDFCalibration {
 		return absCorP; 
 	}
 
+	/**
+	 * Performs the XPDF calibration.
+	 * <p>
+	 * Performs the XPDF calibration, including determining the optimum fluorescence scale.
+	 * @param nIterations
+	 * 					the number of iterations to make to calculate the
+	 * 					multiplicative calibration constant.
+	 * @return the calibrated XPDF data
+	 */
 	public Dataset calibrate(int nIterations) {
 		if (doFluorescence)
 				calibrateFluorescence(nIterations);
@@ -404,6 +438,17 @@ public class XPDFCalibration {
 		return absCor;
 	}
 	
+	/**
+	 * Performs the calibration iterations.
+	 * <p>
+	 * Perfoms the part of the calibration following the fluorescence scale determination. 
+	 * @param nIterations
+	 * 					the number of iterations to make to calculate the
+	 * 					multiplicative calibration constant.
+	 * @param propagateErrors
+	 * 						propagate errors, if they are found
+	 * @return the calibrated XPDF data
+	 */
 	private Dataset iterateCalibrate(int nIterations, boolean propagateErrors) {
 		List<Dataset> solAng = new ArrayList<Dataset>();
 		for (Dataset targetComponent : backgroundSubtracted) {
@@ -452,6 +497,17 @@ public class XPDFCalibration {
 		return absCor;
 	}
 	
+	/**
+	 * Calibrates the fluorescence.
+	 * <p>
+	 * This method loops over a range of different fluorescence multipliers.
+	 * The fluorescence is multiplied by this value, and subtracted from the
+	 * normalized data. A smoothed version of the resulting calibrated data is
+	 * then compared to the theoretical self-scattering. The multiplier that
+	 * gives the smallest difference is used. 
+	 * @param nIterations
+	 * 					the number of iterations to use in the calibration.
+	 */
 	private void calibrateFluorescence(int nIterations) {
 		if (this.sampleFluorescence == null) return;
 		
@@ -524,10 +580,25 @@ public class XPDFCalibration {
 		this.fluorescenceScale = minimalScale;
 	}
 
+	/**
+	 * Sets whether the calibration should estimate and subtract the fluorescence from the data. 
+	 * @param doIt
+	 * 			true indicates that the fluorescence subtraction should be performed.
+	 */
 	public void setDoFluorescence(boolean doIt) {
 		doFluorescence = doIt;
 	}
 	
+	/**
+	 * Generates a {@link IPixelIntegrationCache} to be used by the azimuthal integration.
+	 * @param q
+	 * 			the q axis to integrate on to.
+	 * @param md
+	 * 			the {@link IDiffractionMetadata} that provides the detector calibration.
+	 * @param shape
+	 * 			the shape of the data to be integrated.
+	 * @return the new {@link IPixelIntegrationCache}.
+	 */
 	private IPixelIntegrationCache getPICache(Dataset q, IDiffractionMetadata md, int[] shape) {
 		PixelIntegrationBean pIBean = new PixelIntegrationBean();
 		pIBean.setUsePixelSplitting(false);

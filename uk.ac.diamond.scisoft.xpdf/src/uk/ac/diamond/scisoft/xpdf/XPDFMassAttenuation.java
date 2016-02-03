@@ -38,6 +38,14 @@ public final class XPDFMassAttenuation {
 		return Xraylib.CS_Total(z, energy);
 	}
 	
+	/**
+	 * Returns the photoionization mass attenuation coefficient.
+	 * @param energy
+	 * 				energy of the attenuated photons in keV.
+	 * @param z
+	 * 			atomic number of the attenuating atoms.
+	 * @return the photoionization mass attenuation coefficient in cm²/g 
+	 */
 	public static double getPhoto(double energy, int z) {
 		return Xraylib.CS_Photo(z, energy);
 	}

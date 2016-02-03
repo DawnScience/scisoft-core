@@ -1,8 +1,23 @@
+/*-
+ * Copyright 2015 Diamond Light Source Ltd.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package uk.ac.diamond.scisoft.xpdf.operations;
 
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
+/**
+ * Model for defining the detector for XPDF processing.
+ * 
+ * @author Timothy Spain, timothy.spain@diamond.ac.uk
+ *
+ */
 public class XPDFDefineDetectorModel extends AbstractOperationModel {
 
 	@OperationModelField(hint="Enter a name for the detector", label = "Detector Name")

@@ -15,6 +15,11 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
+/**
+ * A helper class to check for the presence of features of the {@link XPDFMetadata} metadata.
+ * @author Timothy Spain, timothy.spain@diamond.ac.uk
+ *
+ */
 class XPDFOperationChecker {
 
 	public static void checkXPDFMetadata(IOperation<?,?> parentOp, IDataset theData, boolean needsSample, boolean needsBeam, boolean needsDetector) 

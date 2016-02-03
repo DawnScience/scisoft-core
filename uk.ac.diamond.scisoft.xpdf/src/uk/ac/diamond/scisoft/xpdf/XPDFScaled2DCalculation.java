@@ -11,18 +11,51 @@ package uk.ac.diamond.scisoft.xpdf;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
+/**
+ * A class that performs a given function at a reduced resolution.
+ * <p>
+ * Each subclass has a defined calculate method, which takes two
+ * {@link Dataset}s and returns another as a result. The calculation is
+ * performed at a reduced resolution compared, and the result scaled back up to
+ * the original resolution. 
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
+ *
+ */
 abstract public class XPDFScaled2DCalculation {
 
 	int maxGridSize;
 	
+	/**
+	 * Constructor specifying a maximum grid size.
+	 * @param maxGridSize
+	 * 					reduce the resolution of the calculation if the inputs
+	 * 					are larger than this size in total size
+	 */
 	public XPDFScaled2DCalculation(int maxGridSize) {
 		this.maxGridSize = maxGridSize;
 	}
-		
+	
+	/**
+	 * Performs a calculation taking two {@link Dataset}s and returning a third.
+	 * @param gamma
+	 * 			the first two dimensional parameter.
+	 * @param delta
+	 * 			the second two dimensional parameter.
+	 * @return the result of the specified function.
+	 */
 	protected Dataset calculate(Dataset gamma, Dataset delta) {
 		return null;
 	}
 	
+	/**
+	 * Provides the grid resizing for the scaled calculation.
+	 * @param gamma
+	 * 			the first two dimensional parameter of the {@link calculate()} method.
+	 * @param delta
+	 * 			the second two dimensional parameter of the {@link calculate()} method.
+	 * @return
+	 * 		the full resolution result of the calculation.
+	 */
 	final public Dataset run(Dataset gamma, Dataset delta) {
 		// Grid size for the high resolution data
 		int nXHigh = delta.getShape()[0];
@@ -45,10 +78,23 @@ abstract public class XPDFScaled2DCalculation {
 		return XPDFRegrid.two(resultLow, nXHigh, nYHigh);
 	}
 
+	/**
+	 * Performs a calculation taking a {@link Dataset} and returning a second.
+	 * @param twoTheta
+	 * 			the two dimensional parameter.
+	 * @return the result of the specified function.
+	 */
 	protected Dataset calculateTwoTheta(Dataset twoTheta) {
 		return null;
 	}
 	
+	/**
+	 * Provides the grid resizing for the scaled calculation.
+	 * @param twoTheta
+	 * 			the two dimensional parameter of the {@link calculateTwoTheta()} method.
+	 * @return
+	 * 		the full resolution result of the calculation.
+	 */
 	final public Dataset runTwoTheta(Dataset twoTheta) {
 		// Grid shape for the high resolution data
 		int nXHigh = twoTheta.getShape()[0];

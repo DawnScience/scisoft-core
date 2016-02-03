@@ -107,10 +107,25 @@ public class XPDFDetector {
 		this.thickness = thickness;
 	}
 
+	/**
+	 * Gets the solid angle of the detector.
+	 * <p>
+	 * Gets the solid angle subtended by the detector from the sample. 
+	 * @return the total solid angle the detector subtends from the sample.
+	 */
 	public double getSolidAngle() {
 		return solidAngleSubtended;
 	}
 
+	/**
+	 * 
+	 * Sets the solid angle of the detector.
+	 * <p>
+	 * Sets the solid angle subtended by the detector from the sample,
+	 * expressed in steradians. 
+	 * @param solidAngleSubtended
+	 * 							the total solid angle the detector subtends from the sample.
+	 */
 	public void setSolidAngle(double solidAngleSubtended) {
 		this.solidAngleSubtended = solidAngleSubtended;
 	}

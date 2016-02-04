@@ -74,14 +74,14 @@ public class Gaussian extends APeak {
 
 	private static final double CONST = Math.sqrt(4. * Math.log(2.));
 
-	private transient double pos, sigma;
+	private transient double pos, fr;
 
 	@Override
 	protected void calcCachedParameters() {
 		pos = getParameterValue(POSN);
-		sigma = getParameterValue(FWHM) / CONST;
+		fr = CONST / getParameterValue(FWHM);
 		double area = getParameterValue(AREA);
-		height = area / (Math.sqrt(Math.PI) * sigma);
+		height = fr * area / Math.sqrt(Math.PI);
 
 		setDirty(false);
 	}
@@ -91,7 +91,7 @@ public class Gaussian extends APeak {
 		if (isDirty())
 			calcCachedParameters();
 
-		double arg = (values[0] - pos) / sigma; 
+		double arg = fr * (values[0] - pos); 
 
 		return height * Math.exp(- arg * arg);
 	}
@@ -106,7 +106,7 @@ public class Gaussian extends APeak {
 		int i = 0;
 		double[] buffer = data.getData();
 		while (it.hasNext()) {
-			double arg = (coords[0] - pos) / sigma; 
+			double arg = fr * (coords[0] - pos); 
 
 			buffer[i++] = height * Math.exp(- arg * arg);
 		}

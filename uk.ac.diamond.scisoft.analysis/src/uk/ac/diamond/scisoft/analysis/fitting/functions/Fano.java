@@ -49,6 +49,7 @@ public class Fano extends AFunction {
 		if (params.length != PARAMS.length) {
 			throw new IllegalArgumentException("A Fano profile requires 4 parameters, and it has been given " + params.length);
 		}
+
 		setParameterValues(params);
 	}
 

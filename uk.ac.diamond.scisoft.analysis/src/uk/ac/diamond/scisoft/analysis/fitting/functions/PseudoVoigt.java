@@ -26,11 +26,15 @@ public class PseudoVoigt extends APeak {
 	private static final String DESC = "A pseudo Voigt function defined by a linear mixture of Lorentzian and Gaussian functions"
 			+ "\nwhere l_fhwm is Lorentzian full-width at half-maximum, g_fhwm is the Gaussian full-width,"
 			+ "\narea is total area and mix is 0 for a pure Gaussian and 1 for a pure Lorentzian." + PEAK_DESC;
+
 	private static final String[] LOCAL_PARAM_NAMES = new String[] { "posn", "l_fwhm", "area", "g_fwhm", "mix" };
-	private static final double[] PARAMS = new double[] { 0, 0, 0, 0, 0 };
+	private static final double[] PARAMS = new double[] { 0, 1, 1, 1, 0 };
+
+	private static final int FWHMG = AREA + 1;
+	private static final int MIX = FWHMG + 1;
 
 	public PseudoVoigt() {
-		this(PARAMS[0], PARAMS[1], PARAMS[2], PARAMS[3], PARAMS[4]);
+		this(PARAMS);
 	}
 
 	/**
@@ -76,9 +80,6 @@ public class PseudoVoigt extends APeak {
 		getParameter(MIX).setLowerLimit(0.0);
 		getParameter(MIX).setUpperLimit(1.0);
 	}
-
-	private static final int FWHMG = AREA + 1;
-	private static final int MIX = FWHMG + 1;
 
 	public PseudoVoigt(IdentifiedPeak peakParameters) {
 		super(PARAMS.length);

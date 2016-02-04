@@ -10,6 +10,15 @@ import uk.ac.diamond.scisoft.xpdf.XPDFDetector;
 import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
 
+/**
+ * Defines the detector for XPDF processing.
+ * <p>
+ * An Operation class to that gathers the definition of a detector and adds
+ * that information to the {@link XPDFMetadata} metadata.
+ * 
+ * @author Timothy Spain, timothy.spain@dimaond.ac.uk
+ *
+ */
 public class XPDFDefineDetectorOperation extends XPDFInsertXMetadataOperation<XPDFDefineDetectorModel, OperationData> {
 
 	protected OperationData process(IDataset input, IMonitor minotaur) throws OperationException {

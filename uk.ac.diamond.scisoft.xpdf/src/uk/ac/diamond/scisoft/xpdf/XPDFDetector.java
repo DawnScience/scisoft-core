@@ -40,26 +40,54 @@ public class XPDFDetector {
 	 * Applies a detector correction to a Dataset.
 	 * @param data
 	 * 			the data to be corrected
+	 * @param twoTheta
+	 * 			the Dataset of angles over which the data is to be corrected
 	 * @param beamEnergy
 	 * 			the beam energy at which the correction is to take place
 	 * @return the corrected data
 	 */
 	public Dataset applyTransmissionCorrection(Dataset data, Dataset twoTheta, double beamEnergy){
-		double mu = substance.getPhotoionizationCoefficient(beamEnergy);
-		return Maths.multiply(
-				data,
-				Maths.subtract(
-						1,
-						Maths.exp(
-								Maths.divide(
-										-mu*thickness,
-										Maths.cos(twoTheta)
-								)
+		return Maths.multiply(data, getTransmissionCorrection(twoTheta, beamEnergy));
+	}
+
+	
+	/**
+	 * Returns a multiplicative detector correction.
+	 * @param twoTheta
+	 * 			the Dataset of angles over which the data is to be corrected
+	 * @param beamEnergy
+	 * 			the beam energy at which the correction is to take place
+	 * @return the corrected data
+	 */
+	public Dataset getTransmissionCorrection(Dataset twoTheta, double beamEnergy){
+	
+		final double mu = substance.getPhotoionizationCoefficient(beamEnergy);
+		Dataset transmission = null;
+		if (twoTheta.getShape().length == 1) {
+			transmission = calculateTransmission(mu, twoTheta);
+		} else {
+			transmission = (new XPDFScaled2DCalculation(4096) {
+				@Override
+				protected Dataset calculateTwoTheta(Dataset twoThetaLow) {
+					return calculateTransmission(mu, twoThetaLow);
+				}
+			}).runTwoTheta(twoTheta);
+		}
+		return transmission;
+	}
+		
+	private Dataset calculateTransmission(double mu, Dataset twoTheta) {
+		return Maths.subtract(
+				1,
+				Maths.exp(
+						Maths.divide(
+								-mu*thickness,
+								Maths.cos(twoTheta)
 						)
 				)
 		);
 	}
-
+	
 	/**
 	 * Sets the substance of which the detector is made.
 	 * @param substance
@@ -79,10 +107,25 @@ public class XPDFDetector {
 		this.thickness = thickness;
 	}
 
+	/**
+	 * Gets the solid angle of the detector.
+	 * <p>
+	 * Gets the solid angle subtended by the detector from the sample. 
+	 * @return the total solid angle the detector subtends from the sample.
+	 */
 	public double getSolidAngle() {
 		return solidAngleSubtended;
 	}
 
+	/**
+	 * 
+	 * Sets the solid angle of the detector.
+	 * <p>
+	 * Sets the solid angle subtended by the detector from the sample,
+	 * expressed in steradians. 
+	 * @param solidAngleSubtended
+	 * 							the total solid angle the detector subtends from the sample.
+	 */
 	public void setSolidAngle(double solidAngleSubtended) {
 		this.solidAngleSubtended = solidAngleSubtended;
 	}

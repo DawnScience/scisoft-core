@@ -162,12 +162,23 @@ public class XPDFComponentForm {
 		return substance.getAttenuationCoefficient(beamEnergy);
 	}
 
+	/**
+	 * Determines whether the present sample and the last are similar enough to
+	 * avoid redoing the absorption maps.
+	 * @param inForm
+	 * 				the new {@link XPDFComponentForm} to be tested against this.
+	 * @return
+	 */
 	public boolean isEqualToForAbsorption(XPDFComponentForm inForm) {
 		return (inForm != null) &&
 				substance.isEqualToForAbsorption(inForm.substance) &&
 				geometry.isEqualToForAbsorption(inForm.geometry);
 	}
 
+	/**
+	 * Returns a reference to the substance member of this.
+	 * @return a reference to this instance's substance.
+	 */
 	public XPDFSubstance getSubstance() {
 		return substance;
 	}

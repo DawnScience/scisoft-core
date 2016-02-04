@@ -204,7 +204,17 @@ public class XPDFAbsorptionMaps {
 		return -1; // Ugh
 	}
 	
-
+	/**
+	 * Sets the streamality of the absorber relative to the scatterer.
+	 * @param formScatterer
+	 * 					scatterer the absorber is relative to
+	 * @param formAttenuator
+	 * 						the attenuator whose streamality is being set
+	 * @param isAttenuatorUp
+	 * 						is the attenuator upstream of the scatterer?
+	 * @param isAttenuatorDown
+	 * 						is the attenuator downstream of the scatterer?
+	 */
 	public void setStreamality(XPDFComponentForm formScatterer, XPDFComponentForm formAttenuator, boolean isAttenuatorUp, boolean isAttenuatorDown) {
 		isUpstreamMap.put(XPDFAbsorptionMaps.stringifier(this.indexFromForm(formScatterer), this.indexFromForm(formAttenuator)), isAttenuatorUp);
 		isDownstreamMap.put(XPDFAbsorptionMaps.stringifier(this.indexFromForm(formScatterer), this.indexFromForm(formAttenuator)), isAttenuatorDown);

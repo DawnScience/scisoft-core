@@ -179,7 +179,7 @@ public class XPDFTargetComponent {
 	}
 	
 	/**
-	 * Applie a multiple-scattering correction to the data.
+	 * Applies a multiple-scattering correction to the data.
 	 * @param multipleScatteringCorrection
 	 * 									the correction Dataset to apply.
 	 */

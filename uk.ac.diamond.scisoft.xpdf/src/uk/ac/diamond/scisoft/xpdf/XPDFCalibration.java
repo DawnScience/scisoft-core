@@ -14,10 +14,20 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
+import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperationBase;
+
+import uk.ac.diamond.scisoft.analysis.diffraction.powder.IPixelIntegrationCache;
+import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegration;
+import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationBean;
+import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationCache;
+import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 /**
  * A class for holding the information to calibrate the XPDF data.
@@ -40,6 +50,8 @@ public class XPDFCalibration {
 	private Dataset sampleFluorescence;
 	private double fluorescenceScale;
 	private Dataset sampleSelfScattering;
+
+	private int dataDimensions;
 	
 	private boolean doFluorescence;
 	
@@ -82,6 +94,7 @@ public class XPDFCalibration {
 		this.sampleFluorescence = (inCal.sampleFluorescence != null) ? inCal.sampleFluorescence.clone() : null;
 		this.fluorescenceScale = inCal.fluorescenceScale;
 		this.doFluorescence = inCal.doFluorescence;
+		this.dataDimensions = inCal.dataDimensions;
 	}
 
 	/**
@@ -178,22 +191,48 @@ public class XPDFCalibration {
 		this.absorptionMaps = new XPDFAbsorptionMaps(absorptionMaps);
 	}
 	
+	/**
+	 * Sets the coordinates over which to calibrate the data.
+	 * @param inCoords
+	 * 				the {@link XPDFCoordinates} object to be used.
+	 */
 	public void setCoordinates(XPDFCoordinates inCoords) {
 		this.coords = inCoords;
+		this.dataDimensions = inCoords.getTwoTheta().getShape().length;
 	}
 	
+	/**
+	 * Sets the detector data class to calibrate against.
+	 * @param inTect
+	 * 			the {@link XPDFDetector} object to be used.
+	 */
 	public void setDetector(XPDFDetector inTect) {
 		this.tect = inTect;
 	}
 	
+	/**
+	 * Sets the class which describes the incoming x-ray beam.
+	 * @param inBeam
+	 * 				the {@link XPDFBeamData} object to be used.
+	 */
 	public void setBeamData(XPDFBeamData inBeam) {
 		this.beamData = inBeam;
 	}
 	
+	/**
+	 * Sets the fluorescence at the detector on the same coordinates as the data.
+	 * @param sampleFluor
+	 * 					the {@link Dataset} containing the fluorescence data 
+	 */
 	public void setSampleFluorescence(Dataset sampleFluor) {
 		this.sampleFluorescence = sampleFluor;
 	}
 	
+	/**
+	 * Sets the target component which of the sample 
+	 * @param sample
+	 * 				the {@link XPDFTargetComponent} which will provide the sample self-scattering.
+	 */
 	public void setSelfScattering(XPDFTargetComponent sample) {
 		this.sampleSelfScattering = sample.getSelfScattering(coords);
 	}
@@ -317,8 +356,8 @@ public class XPDFCalibration {
 //						Maths.divide(
 						Maths.multiply(
 								absorptionTemporary.get(iScatterer),
-								subsetAbsorptionCorrection.reshape(subsetAbsorptionCorrection.getSize())));
-//								subsetAbsorptionCorrection.squeeze()));
+//								subsetAbsorptionCorrection.reshape(subsetAbsorptionCorrection.getSize())));
+								subsetAbsorptionCorrection.squeeze()));
 
 				// Error propagation. If either is present, then set an error on the result. Non-present errors are taken as zero (exact).
 				if (absorptionTemporary.get(iInnermostAbsorber).getError() != null ||
@@ -344,12 +383,12 @@ public class XPDFCalibration {
 		for (int iAbsorber = 1; iAbsorber < nComponents; iAbsorber++)
 			absorptionCorrection = Maths.multiply(absorptionCorrection, absorptionMaps.getAbsorptionMap(0, iAbsorber));
 		
-		Dataset absCor = Maths.divide(absorptionTemporary.get(0), absorptionCorrection.reshape(absorptionCorrection.getSize()));
-//		Dataset absCor = Maths.divide(absorptionTemporary.get(0), absorptionCorrection.squeeze());
+//		Dataset absCor = Maths.divide(absorptionTemporary.get(0), absorptionCorrection.reshape(absorptionCorrection.getSize()));
+		Dataset absCor = Maths.divide(absorptionTemporary.get(0), absorptionCorrection.getSliceView().squeeze());
 		// Error propagation
 		if (absorptionTemporary.get(0).getError() != null) {
-			absCor.setError(Maths.divide(absorptionTemporary.get(0).getError(), absorptionCorrection.reshape(absorptionCorrection.getSize())));
-//			absCor.setError(Maths.divide(absorptionTemporary.get(0).getError(), absorptionCorrection.squeeze()));
+//			absCor.setError(Maths.divide(absorptionTemporary.get(0).getError(), absorptionCorrection.reshape(absorptionCorrection.getSize())));
+			absCor.setError(Maths.divide(absorptionTemporary.get(0).getError(), absorptionCorrection.getSliceView().squeeze()));
 		}
 		
 		return absCor;
@@ -380,6 +419,15 @@ public class XPDFCalibration {
 		return absCorP; 
 	}
 
+	/**
+	 * Performs the XPDF calibration.
+	 * <p>
+	 * Performs the XPDF calibration, including determining the optimum fluorescence scale.
+	 * @param nIterations
+	 * 					the number of iterations to make to calculate the
+	 * 					multiplicative calibration constant.
+	 * @return the calibrated XPDF data
+	 */
 	public Dataset calibrate(int nIterations) {
 		if (doFluorescence)
 				calibrateFluorescence(nIterations);
@@ -389,12 +437,23 @@ public class XPDFCalibration {
 		return absCor;
 	}
 	
+	/**
+	 * Performs the calibration iterations.
+	 * <p>
+	 * Perfoms the part of the calibration following the fluorescence scale determination. 
+	 * @param nIterations
+	 * 					the number of iterations to make to calculate the
+	 * 					multiplicative calibration constant.
+	 * @param propagateErrors
+	 * 						propagate errors, if they are found
+	 * @return the calibrated XPDF data
+	 */
 	private Dataset iterateCalibrate(int nIterations, boolean propagateErrors) {
-		// TODO: Solid angle correction do nothing
 		List<Dataset> solAng = new ArrayList<Dataset>();
 		for (Dataset targetComponent : backgroundSubtracted) {
 			Dataset cosTwoTheta = Maths.cos(coords.getTwoTheta());
-			Dataset solAngData = Maths.multiply(Maths.multiply(cosTwoTheta, cosTwoTheta), Maths.multiply(targetComponent, cosTwoTheta));
+			// result = data /(cos 2θ)^3
+			Dataset solAngData = Maths.divide(Maths.divide(targetComponent, cosTwoTheta), Maths.multiply(cosTwoTheta, cosTwoTheta));
 //			Dataset solAngData = Maths.multiply(1.0, targetComponent);
 			if (propagateErrors && targetComponent.getError() != null)
 				solAngData.setError(targetComponent.getError());
@@ -405,11 +464,11 @@ public class XPDFCalibration {
 		List<Dataset> fluorescenceCorrected = new ArrayList<Dataset>();
 //		for (Dataset targetComponent : backgroundSubtracted) {
 		// Only correct fluorescence in the sample itself
-		Dataset targetComponent = backgroundSubtracted.get(0);
+		Dataset targetComponent = solAng.get(0);
 
 		if (doFluorescence) {
-			Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.reshape(targetComponent.getSize())));
-			//		Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.squeeze()));
+//			Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.reshape(targetComponent.getSize())));
+					Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.squeeze()));
 			if (propagateErrors && targetComponent.getError() != null)
 				if (sampleFluorescence.getError() != null)
 					fluorescenceCorrectedData.setError(
@@ -437,13 +496,43 @@ public class XPDFCalibration {
 		return absCor;
 	}
 	
+	/**
+	 * Calibrates the fluorescence.
+	 * <p>
+	 * This method loops over a range of different fluorescence multipliers.
+	 * The fluorescence is multiplied by this value, and subtracted from the
+	 * normalized data. A smoothed version of the resulting calibrated data is
+	 * then compared to the theoretical self-scattering. The multiplier that
+	 * gives the smallest difference is used. 
+	 * @param nIterations
+	 * 					the number of iterations to use in the calibration.
+	 */
 	private void calibrateFluorescence(int nIterations) {
 		if (this.sampleFluorescence == null) return;
 		
-		final double minScale = 1000, maxScale = 5000, nSteps = 150, stepScale = (maxScale-minScale)/nSteps;
+//		final double minScale = 200, maxScale = 5000, nSteps = 20, stepScale = (maxScale-minScale)/nSteps;
+		final double minScale, maxScale, nSteps;
+		if (this.dataDimensions == 1) {
+			minScale = 1;
+			maxScale = 1001;
+			nSteps = 100;
+		} else {
+			minScale = 1;
+			maxScale = 501;
+			nSteps = 20;
+		}
+		final double stepScale = (maxScale-minScale)/nSteps;
 		final double fractionOfRange = 1/5.0;
 		double minimalScale = minScale;
 		double minimalValue = Double.POSITIVE_INFINITY;
+		
+		// 2 D variables that do not need re-creating every time around the loop
+		Dataset truncatedQ = DoubleDataset.createRange(8, 32, 1.6);
+		
+		// Get the mask from the background subtracted sample data
+		ILazyDataset mask = AbstractOperationBase.getFirstMask(backgroundSubtracted.get(0));
+		IDataset m = (mask != null) ? mask.getSlice().squeeze() : null;
+
 		List<Double> fluorScales = new ArrayList<Double>(), fluorDiffs = new ArrayList<Double>();
 		for (double scale = minScale; scale < maxScale; scale += stepScale)
 			fluorScales.add(scale);
@@ -452,13 +541,31 @@ public class XPDFCalibration {
 			this.fluorescenceScale = scale;
 			Dataset absCor = this.iterateCalibrate(nIterations, false);
 			
-			// See how well the processed data matches the target
+			Dataset smoothed, truncatedSelfScattering = new DoubleDataset();
 			final int smoothLength = (int) Math.floor(absCor.getSize()*fractionOfRange);
-			Dataset covolver = Maths.divide(DoubleDataset.ones(smoothLength), smoothLength);
-			Dataset smoothed = Signal.convolveForOverlap(absCor, covolver, new int[] {0});
-			Dataset truncatedSelfScattering = sampleSelfScattering.getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
+			
+			// See how well the processed data matches the target. The output
+			// of this step should be a smoothed version of absCor and the
+			// self-scattering of the sample at the same abscissa values 
+			if (absCor.getShape().length == 1) {
+				// One dimensional version
+				Dataset covolver = Maths.divide(DoubleDataset.ones(smoothLength), smoothLength);
+				smoothed = Signal.convolveForOverlap(absCor, covolver, new int[] {0});
+				truncatedSelfScattering = sampleSelfScattering.getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
+				truncatedQ = coords.getQ().getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
+			} else {
+				// Set up the pixel integration information
+				IPixelIntegrationCache lcache = getPICache(truncatedQ, AbstractOperationBase.getFirstDiffractionMetadata(backgroundSubtracted.get(0)), backgroundSubtracted.get(0).getShape());
+
+				List<Dataset> out = PixelIntegration.integrate(absCor, m, lcache);
+				smoothed = out.remove(1);
+
+				out = PixelIntegration.integrate(sampleSelfScattering, m, lcache);
+				truncatedSelfScattering = out.remove(1);
+				
+				//truncatedSelfScattering = InterpolatorUtils.remap1D(sampleSelfScattering, coords.getQ(), truncatedQ);
+			}
 			Dataset difference = Maths.subtract(smoothed, truncatedSelfScattering);
-			Dataset truncatedQ = coords.getQ().getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
 			double absSummedDifference = Math.abs((double) Maths.multiply(difference, truncatedQ).sum());
 
 			fluorDiffs.add(absSummedDifference);
@@ -470,10 +577,38 @@ public class XPDFCalibration {
 			
 		}
 		this.fluorescenceScale = minimalScale;
-		this.fluorescenceScale = 3640.0;
 	}
 
+	/**
+	 * Sets whether the calibration should estimate and subtract the fluorescence from the data. 
+	 * @param doIt
+	 * 			true indicates that the fluorescence subtraction should be performed.
+	 */
 	public void setDoFluorescence(boolean doIt) {
 		doFluorescence = doIt;
+	}
+	
+	/**
+	 * Generates a {@link IPixelIntegrationCache} to be used by the azimuthal integration.
+	 * @param q
+	 * 			the q axis to integrate on to.
+	 * @param md
+	 * 			the {@link IDiffractionMetadata} that provides the detector calibration.
+	 * @param shape
+	 * 			the shape of the data to be integrated.
+	 * @return the new {@link IPixelIntegrationCache}.
+	 */
+	private IPixelIntegrationCache getPICache(Dataset q, IDiffractionMetadata md, int[] shape) {
+		PixelIntegrationBean pIBean = new PixelIntegrationBean();
+		pIBean.setUsePixelSplitting(false);
+		pIBean.setNumberOfBinsRadial(q.getSize());
+		pIBean.setxAxis(XAxis.Q);
+		pIBean.setRadialRange(new double[] {(double) q.min(), (double) q.max()});
+		pIBean.setAzimuthalRange(null);
+		pIBean.setTo1D(true);
+		pIBean.setLog(false);
+		pIBean.setShape(shape);
+		
+		return new PixelIntegrationCache(md, pIBean);
 	}
 }

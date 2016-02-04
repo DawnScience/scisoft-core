@@ -10,7 +10,6 @@
 package uk.ac.diamond.scisoft.xpdf;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 /**
@@ -24,7 +23,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
  */
 public class XPDFQSquaredIntegrator {
 
-	private Dataset q;
+	private Dataset q, dq;
 	private XPDFElectronCrossSections eXSections;
 	
 	/**
@@ -32,6 +31,7 @@ public class XPDFQSquaredIntegrator {
 	 */
 	public XPDFQSquaredIntegrator() {
 		q = null;
+		dq = null;
 		eXSections = null;
 	}
 
@@ -41,6 +41,7 @@ public class XPDFQSquaredIntegrator {
 	 */
 	public XPDFQSquaredIntegrator(XPDFCoordinates coordinates) { //Dataset twoTheta, XPDFBeamData beamData) {
 		q = coordinates.getQ();
+		dq = coordinates.getQIncrement();
 		//		q = beamData.getQFromTwoTheta(twoTheta);
 		eXSections = new XPDFElectronCrossSections();
 		eXSections.setCoordinates(coordinates);
@@ -55,6 +56,7 @@ public class XPDFQSquaredIntegrator {
 	 */
 	public XPDFQSquaredIntegrator(XPDFQSquaredIntegrator qq) {
 		this.q = qq.q;
+		this.dq = qq.dq;
 		this.eXSections = (qq.eXSections != null) ? qq.eXSections : null;
 	}
 
@@ -68,11 +70,18 @@ public class XPDFQSquaredIntegrator {
 	 * @return the integral over q².
 	 */
 	public double qSquaredIntegral(Dataset fn) {
-		Dataset dq = XPDFQSquaredIntegrator.differentiate1DDataset(q);
-		double dqScalar = dq.getDouble(0);
-		Dataset integrand = Maths.multiply(Maths.multiply(Maths.multiply(q, q), fn), dqScalar);
-		double integral = quadrate1DDataset(integrand);
+//		Dataset dq = XPDFQSquaredIntegrator.differentiate1DDataset(q);
+		double integral;
+		if (fn.getShape().length == 1) {
+			double dqScalar = dq.getDouble(0);
+			Dataset integrand = Maths.multiply(Maths.multiply(Maths.multiply(q, q), fn), dqScalar);
+			integral = quadrate1DDataset(integrand);
+		} else {
+			Dataset integrand = Maths.multiply(Maths.multiply(Maths.multiply(q, q), fn), dq);
+			integral = quadrate2DDataset(integrand);
+		}
 		return integral;
+		
 	}
 	
 	/**
@@ -99,34 +108,47 @@ public class XPDFQSquaredIntegrator {
 		return (double) integrand.sum();
 	}
 
+	// TODO:  a more sophisticated quadrature formula than the rectangle rule
 	/**
-	 * Finite difference approximation to a 1d Dataset.
-	 * <p>
-	 * Second order correct finite difference approximation to the first
-	 * derivative of a 1-d Dataset, with respect to the index
-	 * @param y
-	 * 			Values of the function.
-	 * @return second-order correct approximation to the function.
+	 * Calculates the 2 dimensional quadrature of a function.
+	 * @param integrand
+	 * 				integrand to be calculated.
+	 * @return quadrature of the integrand over the pixel positions.
 	 */
-	private static Dataset differentiate1DDataset(Dataset y) {
-		Dataset deriv = DoubleDataset.zeros(y);
-		if (y.getSize() > 1) {
-			if (y.getSize() == 2) {
-				double dderiv = y.getDouble(1) - y.getDouble(0);
-				deriv.set(dderiv, 0);
-				deriv.set(dderiv, 1);
-			} else {
-				// Three points or more
-				int iLast = y.getSize()-1;
-				// End points
-				deriv.set((-3*y.getDouble(0) + 4*y.getDouble(1) - y.getDouble(2))/2, 0);
-				deriv.set((y.getDouble(iLast-2) - 4*y.getDouble(iLast-1) + 3*y.getDouble(iLast))/2, iLast);
-				// The rest of the points
-				for (int i = 1; i < iLast; i++)
-					deriv.set((y.getDouble(i+1) - y.getDouble(i-1))/2, i);
-			}
-		}
-		return deriv;
+	private static double quadrate2DDataset(Dataset integrand) {
+		return (double) integrand.sum();
 	}
+
+	
+	
+//	/**
+//	 * Finite difference approximation to a 1d Dataset.
+//	 * <p>
+//	 * Second order correct finite difference approximation to the first
+//	 * derivative of a 1-d Dataset, with respect to the index
+//	 * @param y
+//	 * 			Values of the function.
+//	 * @return second-order correct approximation to the function.
+//	 */
+//	private static Dataset differentiate1DDataset(Dataset y) {
+//		Dataset deriv = DoubleDataset.zeros(y);
+//		if (y.getSize() > 1) {
+//			if (y.getSize() == 2) {
+//				double dderiv = y.getDouble(1) - y.getDouble(0);
+//				deriv.set(dderiv, 0);
+//				deriv.set(dderiv, 1);
+//			} else {
+//				// Three points or more
+//				int iLast = y.getSize()-1;
+//				// End points
+//				deriv.set((-3*y.getDouble(0) + 4*y.getDouble(1) - y.getDouble(2))/2, 0);
+//				deriv.set((y.getDouble(iLast-2) - 4*y.getDouble(iLast-1) + 3*y.getDouble(iLast))/2, iLast);
+//				// The rest of the points
+//				for (int i = 1; i < iLast; i++)
+//					deriv.set((y.getDouble(i+1) - y.getDouble(i-1))/2, i);
+//			}
+//		}
+//		return deriv;
+//	}
 
 }

@@ -6,12 +6,15 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: uk.ac.diamond.scisoft.xpdf.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.apache.commons.math3;bundle-version="[3.2.0,4.0.0)"
+ org.apache.commons.math3;bundle-version="[3.2.0,4.0.0)",
+ uk.ac.diamond.scisoft.analysis
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.github.tschoonj.xraylib,
+ javax.vecmath,
  org.apache.commons.lang;version="2.6.0",
  org.dawnsci.python.rpc,
  org.eclipse.dawnsci.analysis.api.dataset,
+ org.eclipse.dawnsci.analysis.api.diffraction,
  org.eclipse.dawnsci.analysis.api.metadata,
  org.eclipse.dawnsci.analysis.api.monitor,
  org.eclipse.dawnsci.analysis.api.processing,
@@ -20,9 +23,11 @@ Import-Package: com.github.tschoonj.xraylib,
  org.eclipse.dawnsci.analysis.dataset.metadata,
  org.eclipse.dawnsci.analysis.dataset.operations,
  uk.ac.diamond.scisoft.analysis.diffraction.powder,
+ uk.ac.diamond.scisoft.analysis.io,
  uk.ac.diamond.scisoft.analysis.processing.operations,
  uk.ac.diamond.scisoft.analysis.processing.operations.powder,
- uk.ac.diamond.scisoft.analysis.processing.operations.utils
+ uk.ac.diamond.scisoft.analysis.processing.operations.utils,
+ uk.ac.diamond.scisoft.analysis.roi
 Bundle-Vendor: Diamond Light Source
 Bundle-ActivationPolicy: lazy
 Export-Package: uk.ac.diamond.scisoft.xpdf;

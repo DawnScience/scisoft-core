@@ -158,7 +158,12 @@ public class XPDFElectronCrossSections {
 											Maths.divide(1, photonEnergyRatio)),
 									Maths.add(
 											-1,
-											Maths.square(Maths.cos(coordinates.getTwoTheta()))
+											Maths.square(
+													Maths.multiply(
+															Maths.cos(coordinates.getTwoTheta()),
+															Maths.cos(coordinates.getPhi())
+													)
+											)
 									)
 							)
 					)

@@ -14,7 +14,6 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.xpdf.XPDFAbsorptionMaps;
@@ -86,8 +85,10 @@ public class XPDFIterateCalibrationConstantOperation extends
 		theCalibration.setSampleIlluminatedAtoms(theXPDFMetadata.getSampleIlluminatedAtoms());
 		
 		// Get 2θ, the axis variable
+		if (XPDFCoordinates.coordinateMetadataProblems(DatasetUtils.convertToDataset(input)) != null)
+			throw new OperationException(this, XPDFCoordinates.coordinateMetadataProblems(DatasetUtils.convertToDataset(input)));
 		XPDFCoordinates coordinates = new XPDFCoordinates(DatasetUtils.convertToDataset(input));
-		Dataset twoTheta = coordinates.getTwoTheta();
+//		Dataset twoTheta = coordinates.getTwoTheta();
 		
 		// Set up the q² integrator class
 		theCalibration.setqSquaredIntegrator(new XPDFQSquaredIntegrator(coordinates));//twoTheta, theXPDFMetadata.getBeam()));
@@ -103,7 +104,8 @@ public class XPDFIterateCalibrationConstantOperation extends
 			synchronized (this) {
 				localAbsMaps = cachedAbsorptionMaps;
 				if (localAbsMaps == null || ((localAbsMaps != null) && !(localAbsMaps.checkFormList(theXPDFMetadata.getFormList())))) {
-					cachedAbsorptionMaps = localAbsMaps = theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DoubleDataset.zeros(twoTheta.reshape(twoTheta.getSize(), 1)));
+//					cachedAbsorptionMaps = localAbsMaps = theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DoubleDataset.zeros(twoTheta.reshape(twoTheta.getSize(), 1)));
+					cachedAbsorptionMaps = localAbsMaps = theXPDFMetadata.getAbsorptionMaps(coordinates.getDelta(), coordinates.getGamma());
 				}
 			}
 		}
@@ -114,7 +116,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 		theCalibration.setAbsorptionMaps(localAbsMaps);
 		if (model.isDoingFluorescence()) {
 			theCalibration.setDoFluorescence(true);
-			theCalibration.setSampleFluorescence(theXPDFMetadata.getSampleFluorescence(DoubleDataset.zeros(coordinates.getTwoTheta().reshape(coordinates.getTwoTheta().getSize(), 1)), coordinates.getTwoTheta().reshape(coordinates.getTwoTheta().getSize(), 1)));
+			theCalibration.setSampleFluorescence(theXPDFMetadata.getSampleFluorescence(coordinates.getGamma(), coordinates.getDelta()));
 		} else {
 			theCalibration.setDoFluorescence(false);
 		}

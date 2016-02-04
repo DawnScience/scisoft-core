@@ -8,12 +8,15 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
@@ -238,6 +241,15 @@ public class XPDFCylinderTest extends TestCase {
 		double[] bariumLines = new double[] {32.1936, 31.817, 36.3784, 4.4663, 4.8275};
 		double[] nickelLines = new double[] {7.4781};
 		
+		// create a map between fluorescence energies and target result file names
+		Map<Double, String> ceriaEnergyFileMap = new HashMap<Double, String>();
+		ceriaEnergyFileMap.put(34.720, "34720");
+		ceriaEnergyFileMap.put(34.279, "34279");
+		ceriaEnergyFileMap.put(39.258, "39258");
+		ceriaEnergyFileMap.put(40.236, "40236");
+		ceriaEnergyFileMap.put(4.840, "4840");
+		ceriaEnergyFileMap.put(5.263, "5263");
+		
 		XPDFComponentGeometry cap1mm= new XPDFComponentCylinder();
 		cap1mm.setDistances(0.5, 0.51);
 		cap1mm.setStreamality(true, true);
@@ -264,30 +276,41 @@ public class XPDFCylinderTest extends TestCase {
 		attenuators.add(cap1mm);
 		
 		List<Dataset> lineFluorescence = new ArrayList<Dataset>();
-		for (int iLine = 0; iLine < ceriumLines.length; iLine++) {
-		
+//		for (int iLine = 0; iLine < ceriumLines.length; iLine++) {
+		for (Map.Entry<Double, String> energyEntry : ceriaEnergyFileMap.entrySet()) {
+			double lineEnergy = energyEntry.getKey();
+			
 			List<Double> muIn = new ArrayList<Double>();
 			muIn.add(ceria.getAttenuationCoefficient(beamData.getBeamEnergy()));
 			muIn.add(quartz.getAttenuationCoefficient(beamData.getBeamEnergy()));
 
 			List<Double> muOut = new ArrayList<Double>();
-			muOut.add(ceria.getAttenuationCoefficient(ceriumLines[iLine]));
-			muOut.add(quartz.getAttenuationCoefficient(ceriumLines[iLine]));
+			muOut.add(ceria.getAttenuationCoefficient(lineEnergy));
+			muOut.add(quartz.getAttenuationCoefficient(lineEnergy));
 		
 			// Read the target data, and also the angles (in radians) to run
 			String dataPath = testDataDir;
 			IDataHolder dh = null;
 			String fluorName = "ceria";
-			String fluorNumber = ((Integer) (iLine+1)).toString();
+			String fluorNumber = energyEntry.getValue();
+			String fullFileName = dataPath+fluorName+ ".fluor." + fluorNumber + ".xy";
 			try {
-				dh = LoaderFactory.getData(dataPath+fluorName+ ".fluor" + fluorNumber + ".xy");
+				dh = LoaderFactory.getData(fullFileName);
 			} catch (Exception e) {
+				System.err.println("Error reading file: " + fullFileName);
+				fail("Error reading file: " + fullFileName);
 			}
 			Dataset delta1D = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_1").getSlice());
 			Dataset delta = new DoubleDataset(delta1D.getSize(), 1);
 			for (int i = 0; i<delta1D.getSize(); i++)
-				delta.set(delta1D.getDouble(i), i, 0);
+				delta.set(Math.toRadians(delta1D.getDouble(i)), i, 0);
 			Dataset gamma = DoubleDataset.zeros(delta);
+
+			// convert to radians, and rotate the detector
+			double rotationAngle = Math.toRadians(120.0);
+			// gamma is known to be zero, so just overwrite it
+			gamma = Maths.multiply(Math.sin(rotationAngle), delta);
+			delta = Maths.multiply(Math.cos(rotationAngle), delta);
 
 			Dataset expected = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_2").getSlice());
 
@@ -299,13 +322,81 @@ public class XPDFCylinderTest extends TestCase {
 			double sumError = (double) error.mean();
 			sumError = Math.sqrt(sumError);
 
-			assertTrue("Too large a difference, " + sumError + " between expected and calculated fluorescence for " + fluorName + " at " + ceriumLines[iLine] + "keV.",
+			assertTrue("Too large a difference, " + sumError + " between expected and calculated fluorescence for " + fluorName + " at " + lineEnergy + "keV.",
 					sumError < 8e-2);
 			lineFluorescence.add(ceriaFluor1);
 		}
 		
 		
 		
+	}
+	
+	public void testCeriaAbsorption() {
+
+		XPDFSubstance ceria = new XPDFSubstance("ceria", "CeO2", 7.65, 0.6);
+
+		XPDFComponentGeometry cap1mm= new XPDFComponentCylinder();
+		cap1mm.setDistances(0.5, 0.51);
+		cap1mm.setStreamality(true, true);
+		
+		XPDFComponentGeometry powder1mm = new XPDFComponentCylinder();
+		powder1mm.setDistances(0.0, 0.5);
+		powder1mm.setStreamality(true, true);
+		
+		XPDFComponentForm capForm = new XPDFComponentForm();
+		capForm.setGeom(cap1mm);
+		capForm.setMatName("SiO2");
+		XPDFTargetComponent quartzCap = new XPDFTargetComponent();
+		quartzCap.setForm(capForm);
+		quartzCap.setSample(false);
+		quartzCap.setName("quartz capillary");
+		
+		XPDFBeamData beamData = new XPDFBeamData();
+		beamData.setBeamEnergy(76.6);
+		beamData.setBeamHeight(0.07);
+		beamData.setBeamWidth(0.07);
+		
+		List<XPDFComponentGeometry> attenuators = new ArrayList<XPDFComponentGeometry>();
+		attenuators.add(powder1mm);
+		attenuators.add(cap1mm);
+
+		String[] scattererNames = {"NIST_Ceria", "QGCT_1mm"};
+		String[] absorberNames = scattererNames;
+		
+		double[] mus = {ceria.getAttenuationCoefficient(beamData.getBeamEnergy()),
+				capForm.getAttenuationCoefficient(beamData.getBeamEnergy())};
+		
+		String dataPath = "/home/rkl37156/ceria_dean_data/standards2015/absorption/";
+		String fileName = "NIST_Ceria";
+		IDataHolder dh = null;
+		
+		for (int iScatter = 0; iScatter < 2; iScatter++) {
+			for (int jAbsorber = 0; jAbsorber < 2; jAbsorber++) {
+				String fn = dataPath+fileName+"_"+scattererNames[iScatter] + "_in_" + absorberNames[jAbsorber]+ ".xy";
+				try {
+					dh = LoaderFactory.getData(fn);
+				} catch (Exception e) {
+					fail("File not found: " + fn);
+				}
+
+				Dataset delta1D = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_1").getSlice());
+				Dataset delta = new DoubleDataset(delta1D.getSize(), 1);
+				for (int i = 0; i<delta1D.getSize(); i++)
+					delta.set(delta1D.getDouble(i), i, 0);
+				Dataset gamma = DoubleDataset.zeros(delta);
+
+				Dataset expected = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_2").getSlice());
+				
+				// Calculate a result
+				Dataset result = attenuators.get(iScatter).calculateAbsorptionCorrections(gamma, delta, attenuators.get(jAbsorber), mus[jAbsorber], beamData, true, true);
+
+				Dataset difference = Maths.subtract(result, expected);
+				Dataset squareDifference = Maths.square(difference);
+				double rmsDifference = Math.sqrt((double) squareDifference.mean());
+				double maxDifference = 2e-2;
+				assertTrue("Absorption of " + scattererNames[iScatter] + " in " + absorberNames[jAbsorber] + " deviates too far from target values: "+ rmsDifference, rmsDifference < maxDifference);
+			}
+		}
 	}
 
 }

@@ -9,7 +9,6 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
-import org.eclipse.dawnsci.analysis.api.fitting.functions.IPeak;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.junit.Assert;
@@ -34,13 +33,14 @@ public class PseudoVoigtTest {
 		double h = 1.2 / (g + l);
 
 		Assert.assertEquals(h, f.val(23.), ABS_TOL);
+		Assert.assertEquals(h, f.getHeight(), ABS_TOL);
 
-		double dx = ((IPeak) f).getFWHM() / 2.;
+		double dx = f.getFWHM() / 2.;
 		Assert.assertEquals(0.5 * h, f.val(23. - dx), 1e-4);
 		Assert.assertEquals(0.5 * h, f.val(23. + dx), 1e-4);
 
 		Dataset x = DatasetUtils.linSpace(-20+23, 20+23, 401, Dataset.FLOAT64);
-		Dataset v = DatasetUtils.convertToDataset(f.calculateValues(x));
+		Dataset v = f.calculateValues(x);
 		double s = ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1));
 		Assert.assertEquals(1.2, s, 1e-1);
 	}
@@ -51,19 +51,19 @@ public class PseudoVoigtTest {
 
 		PseudoVoigt pv = new PseudoVoigt();
 		pv.setParameterValues(23., 2., 1.2, 2.3, 1);
-		Dataset pl = DatasetUtils.convertToDataset(pv.calculateValues(x));
+		Dataset pl = pv.calculateValues(x);
 
 		pv.setParameterValues(23., 2., 1.2, 2.3, 0);
-		Dataset pg = DatasetUtils.convertToDataset(pv.calculateValues(x));
+		Dataset pg = pv.calculateValues(x);
 
 		Lorentzian lf = new Lorentzian();
 		lf.setParameterValues(23., 2., 1.2);
-		Dataset l = DatasetUtils.convertToDataset(lf.calculateValues(x));
+		Dataset l = lf.calculateValues(x);
 		TestUtils.assertDatasetEquals(l, pl, REL_TOL, ABS_TOL);
 
 		Gaussian gf = new Gaussian();
 		gf.setParameterValues(23., 2.3, 1.2);
-		Dataset g = DatasetUtils.convertToDataset(gf.calculateValues(x));
+		Dataset g = gf.calculateValues(x);
 		TestUtils.assertDatasetEquals(g, pg, REL_TOL, ABS_TOL);
 	}
 }

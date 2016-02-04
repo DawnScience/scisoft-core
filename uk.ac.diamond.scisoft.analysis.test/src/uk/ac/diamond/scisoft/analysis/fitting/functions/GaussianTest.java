@@ -22,7 +22,7 @@ public class GaussianTest {
 
 	@Test
 	public void testFunction() {
-		AFunction f = new Gaussian();
+		APeak f = new Gaussian();
 		Assert.assertEquals(3, f.getNoOfParameters());
 		f.setParameterValues(23., 2., 1.2);
 		Assert.assertArrayEquals(new double[] {23., 2., 1.2}, f.getParameterValues(), ABS_TOL);
@@ -31,12 +31,13 @@ public class GaussianTest {
 		double cArea = 2 * Math.sqrt(Math.PI / (2. * tln2));
 		double h = 1.2 / cArea;
 		Assert.assertEquals(h, f.val(23.), ABS_TOL);
+		Assert.assertEquals(h, f.getHeight(), ABS_TOL);
 
 		Assert.assertEquals(0.5 * h, f.val(23. - 1), ABS_TOL);
 		Assert.assertEquals(0.5 * h, f.val(23. + 1), ABS_TOL);
 
 		Dataset x = DatasetUtils.linSpace(0, 46, 200, Dataset.FLOAT64);
-		Dataset v = DatasetUtils.convertToDataset(f.calculateValues(x));
+		Dataset v = f.calculateValues(x);
 		Assert.assertEquals(1.2, ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1)), ABS_TOL);
 
 		DoubleDataset xd = new DoubleDataset(new double[] {23. - 1, 23, 23. + 2});

@@ -9,7 +9,6 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
-import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.junit.Assert;
@@ -22,14 +21,15 @@ public class LorentzianSqrTest {
 	@Test
 	public void testFunction() 
 	{
- 		this.testLorentzianSqr(23., 2., 1.5); // as Lorentzian
-		this.testLorentzianSqr(1, 0.1, 10.); // area >> fwhm
-		this.testLorentzianSqr(999., .9, 1.1);// area ~ fwhm
-		this.testLorentzianSqr(-10., 10., 0.1);// area << fwhm
+ 		testLorentzianSqr(23., 2., 1.5); // as Lorentzian
+		testLorentzianSqr(1, 0.1, 10.); // area >> fwhm
+		testLorentzianSqr(999., .9, 1.1);// area ~ fwhm
+		testLorentzianSqr(-10., 10., 0.1);// area << fwhm
 	}
+
 	public void testLorentzianSqr(double pos, double fwhm, double area)
 	{
-		IFunction f = new LorentzianSqr();
+		APeak f = new LorentzianSqr();
 		// test number of parameters and whether parameters are correctly stored
 		Assert.assertEquals(3, f.getNoOfParameters());
 		f.setParameterValues(pos, fwhm, area);
@@ -39,6 +39,7 @@ public class LorentzianSqrTest {
 		double widthPar = fwhm / Math.sqrt(Math.sqrt(2.) - 1.);	
 		double height = area / (0.25 * Math.PI * widthPar);
 		Assert.assertEquals(height, f.val(pos), ABS_TOL);
+		Assert.assertEquals(height, f.getHeight(), ABS_TOL);
 		Assert.assertEquals(0.5 * height, f.val(pos - 0.5 * fwhm), ABS_TOL);
 		Assert.assertEquals(0.5 * height, f.val(pos + 0.5 * fwhm), ABS_TOL);
 
@@ -53,7 +54,7 @@ public class LorentzianSqrTest {
 			nBins += 1; // odd number of bins to get peak
 		}
 		Dataset x = DatasetUtils.linSpace(-50.*fwhm+pos, 50.*fwhm+pos, nBins, Dataset.FLOAT64);
-		Dataset v = DatasetUtils.convertToDataset(f2.calculateValues(x));
+		Dataset v = f2.calculateValues(x);
 		double s = ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1));
 		Assert.assertEquals(area, s, 1e-2); // relaxed tolerance: poor man's integration only...
 		// test that calculateValues(dataset) gives same as f.val(double)

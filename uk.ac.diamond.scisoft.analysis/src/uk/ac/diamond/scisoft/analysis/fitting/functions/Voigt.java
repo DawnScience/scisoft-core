@@ -73,8 +73,7 @@ public class Voigt extends APeak {
 		setNames(NAME, DESC, LOCAL_PARAM_NAMES);
 	}
 
-
-	private static final double CONST = Math.sqrt(8*Math.log(2.));
+	private static final double CONST = Math.sqrt(8 * Math.log(2.));
 
 	private transient double r, ft, fr, zi;
 
@@ -83,13 +82,13 @@ public class Voigt extends APeak {
 		r = getParameterValue(POSN);
 		double l = getParameterValue(FWHM) / 2.;
 		double sigma = getParameterValue(FWHMG) / CONST;
-		if (sigma < 5*Double.MIN_NORMAL) { // fix Lorentzian limit
-			sigma = 10*Double.MIN_NORMAL;
+		if (sigma < 5 * Double.MIN_NORMAL) { // fix Lorentzian limit
+			sigma = 10 * Double.MIN_NORMAL;
 		}
-		fr = Math.sqrt(0.5)/sigma;
+		fr = Math.sqrt(0.5) / sigma;
 		zi = fr * l;
-		ft = fr*getParameterValue(AREA)/Math.sqrt(Math.PI);
-		height = ft*Faddeeva.erfcx(zi);
+		ft = fr * getParameterValue(AREA) / Math.sqrt(Math.PI);
+		height = ft * Faddeeva.erfcx(zi);
 		setDirty(false);
 	}
 
@@ -99,10 +98,10 @@ public class Voigt extends APeak {
 			calcCachedParameters();
 		}
 
-		Complex z = new Complex(fr*(values[0] - r), zi);
+		Complex z = new Complex(fr * (values[0] - r), zi);
 		Complex w = Faddeeva.w(z, 0);
 
-		double result = ft*w.getReal();
+		double result = ft * w.getReal();
 		return result;
 	}
 
@@ -117,10 +116,10 @@ public class Voigt extends APeak {
 		int i = 0;
 		double[] buffer = data.getData();
 		while (it.hasNext()) {
-			Complex z = new Complex(fr*(coords[0] - r), zi);
+			Complex z = new Complex(fr * (coords[0] - r), zi);
 			Complex w = Faddeeva.w(z, 0);
 
-			buffer[i++] = ft*w.getReal();
+			buffer[i++] = ft * w.getReal();
 		}
 	}
 }

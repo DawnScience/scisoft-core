@@ -21,12 +21,13 @@ public class LorentzianTest {
 
 	@Test
 	public void testFunction() {
-		IFunction f = new Lorentzian();
+		APeak f = new Lorentzian();
 		Assert.assertEquals(3, f.getNoOfParameters());
 		f.setParameterValues(23., 2., 1.2);
 		Assert.assertArrayEquals(new double[] {23., 2., 1.2}, f.getParameterValues(), ABS_TOL);
 
 		double h = 1.2 / Math.PI;
+		Assert.assertEquals(h, f.getHeight(), ABS_TOL);
 		Assert.assertEquals(h, f.val(23.), ABS_TOL);
 
 		Assert.assertEquals(0.5 * h, f.val(23. - 1), ABS_TOL);
@@ -37,7 +38,7 @@ public class LorentzianTest {
 		Assert.assertTrue(f.equals(f2));
 		
 		Dataset x = DatasetUtils.linSpace(-100+23, 100+23, 201, Dataset.FLOAT64);
-		Dataset v = DatasetUtils.convertToDataset(f.calculateValues(x));
+		Dataset v = f.calculateValues(x);
 		double s = ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1));
 		Assert.assertEquals(1.2, s, 1e-2);
 

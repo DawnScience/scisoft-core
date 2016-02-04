@@ -51,7 +51,6 @@ public class Polynomial extends AFunction {
 	 */
 	public Polynomial(final int degree) {
 		super(degree + 1);
-		nparams = degree + 1;
 	}
 
 	/**
@@ -60,7 +59,6 @@ public class Polynomial extends AFunction {
 	 */
 	public Polynomial(double[] params) {
 		super(params);
-		nparams = params.length;
 	}
 
 	/**
@@ -69,7 +67,6 @@ public class Polynomial extends AFunction {
 	 */
 	public Polynomial(IParameter... params) {
 		super(params);
-		nparams = params.length;
 	}
 
 	/**
@@ -93,10 +90,15 @@ public class Polynomial extends AFunction {
 			a[i] = 0.5*(min[i] + max[i]);
 			parameters[i] = new Parameter(a[i], min[i], max[i]);
 		}
+
+		setNames();
 	}
 
 	@Override
 	protected void setNames() {
+		if (isDirty() && nparams < getNoOfParameters()) {
+			nparams = getNoOfParameters();
+		}
 		String[] paramNames = new String[nparams];
 		for (int i = 0; i < nparams; i++) {
 			paramNames[i] = "a_" + i;
@@ -223,11 +225,8 @@ public class Polynomial extends AFunction {
 	 */
 	public void setDegree(int degree) {
 		nparams = degree + 1;
-		parameters = new IParameter[nparams];
-		for (int i = 0; i < nparams; i++) {
-			parameters[i] = new Parameter();
-		}
-		dirty = false;
+		parameters = createParameters(nparams);
+		dirty = true;
 
 		setNames();
 

@@ -98,7 +98,7 @@ public abstract class AFunction implements IFunction, Serializable {
 		setNames();
 	}
 
-	private static IParameter[] createParameters(int numberOfParameters) {
+	protected static IParameter[] createParameters(int numberOfParameters) {
 		IParameter[] params = new IParameter[numberOfParameters];
 		for (int i = 0; i < numberOfParameters; i++) {
 			params[i] = new Parameter();

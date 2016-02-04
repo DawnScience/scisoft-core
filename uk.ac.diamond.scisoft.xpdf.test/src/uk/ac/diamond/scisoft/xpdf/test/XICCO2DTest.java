@@ -123,7 +123,8 @@ public class XICCO2DTest {
 		long diffTime = finishTime - startTime;
 		System.out.println("XPDFIterateCalcibrationConstantOperation took " + diffTime*0.001 + " s.");
 		
-		String referenceDataPath = "/dls/science/groups/das/ExampleData/i15-1/2015Oct.Standards/optimization reference/CeO2_NIST_8s_19slices_averaged_processed_160104_154754.nxs"; 
+//		String referenceDataPath = "/dls/science/groups/das/ExampleData/i15-1/2015Oct.Standards/optimization reference/CeO2_NIST_8s_19slices_averaged_processed_160104_154754.nxs"; 
+		String referenceDataPath = "/dls/science/groups/das/ExampleData/i15-1/2015Oct.Standards/optimization reference/CeO2_NIST_8s_19slices_averaged_processed_160204_122450.nxs";
 		IDataset referenceData = null;
 		try {
 			IDataHolder dh = LoaderFactory.getData(referenceDataPath);

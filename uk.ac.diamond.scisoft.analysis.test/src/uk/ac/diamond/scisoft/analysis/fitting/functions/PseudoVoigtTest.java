@@ -12,13 +12,15 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IPeak;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.junit.Assert;
 import org.junit.Test;
+
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 
 public class PseudoVoigtTest {
 
 	private static final double ABS_TOL = 1e-7;
+	private static final double REL_TOL = 1e-15;
 
 	@Test
 	public void testFunction() {
@@ -57,18 +59,11 @@ public class PseudoVoigtTest {
 		Lorentzian lf = new Lorentzian();
 		lf.setParameterValues(23., 2., 1.2);
 		Dataset l = DatasetUtils.convertToDataset(lf.calculateValues(x));
-		checkDatasets(pl, l);
+		TestUtils.assertDatasetEquals(l, pl, REL_TOL, ABS_TOL);
 
 		Gaussian gf = new Gaussian();
 		gf.setParameterValues(23., 2.3, 1.2);
 		Dataset g = DatasetUtils.convertToDataset(gf.calculateValues(x));
-		checkDatasets(pg, g);
-	}
-
-	private void checkDatasets(Dataset a, Dataset b) {
-		IndexIterator it = a.getIterator();
-		while (it.hasNext()) {
-			Assert.assertEquals(a.getElementDoubleAbs(it.index), b.getElementDoubleAbs(it.index), ABS_TOL);
-		}
+		TestUtils.assertDatasetEquals(g, pg, REL_TOL, ABS_TOL);
 	}
 }

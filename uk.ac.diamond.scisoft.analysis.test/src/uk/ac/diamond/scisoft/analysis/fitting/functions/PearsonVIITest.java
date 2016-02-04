@@ -12,13 +12,15 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.junit.Assert;
 import org.junit.Test;
+
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 
 public class PearsonVIITest {
 
 	private static final double ABS_TOL = 1e-7;
+	private static final double REL_TOL = 1e-15;
 
 	@Test
 	public void testFunction() {
@@ -54,19 +56,12 @@ public class PearsonVIITest {
 		Lorentzian lf = new Lorentzian();
 		lf.setParameterValues(23., 2., 1.2);
 		Dataset l = DatasetUtils.convertToDataset(lf.calculateValues(x));
-		checkDatasets(pl, l, ABS_TOL);
+		TestUtils.assertDatasetEquals(l, pl, REL_TOL, ABS_TOL);
 
 		Gaussian gf = new Gaussian();
 		double width = pv.getFWHM()*Math.sqrt(2 * Math.log(2.)/( (2*power - 3) * (Math.pow(2, 1/power) - 1)));
 		gf.setParameterValues(23., width, 1.2);
 		Dataset g = DatasetUtils.convertToDataset(gf.calculateValues(x));
-		checkDatasets(pg, g, 1e-6);
-	}
-
-	private void checkDatasets(Dataset a, Dataset b, double tol) {
-		IndexIterator it = a.getIterator();
-		while (it.hasNext()) {
-			Assert.assertEquals(a.getElementDoubleAbs(it.index), b.getElementDoubleAbs(it.index), tol);
-		}
+		TestUtils.assertDatasetEquals(g, pg, REL_TOL, 5*ABS_TOL);
 	}
 }

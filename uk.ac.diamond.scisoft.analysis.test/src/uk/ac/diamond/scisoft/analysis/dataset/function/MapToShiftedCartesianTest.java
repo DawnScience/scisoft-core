@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright (c) 2012 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
@@ -10,23 +10,24 @@
 package uk.ac.diamond.scisoft.analysis.dataset.function;
 
 
-import java.util.List;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import java.util.List;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
  *
  */
-public class MapToShiftedCartesianTest extends TestCase {
+public class MapToShiftedCartesianTest {
 	Dataset d = DatasetFactory.zeros(new int[] {10, 20}, Dataset.FLOAT64);
 
 	/**
 	 */
-	@Override
+	@Before
 	public void setUp() {
 		d.fill(1.);
 	}

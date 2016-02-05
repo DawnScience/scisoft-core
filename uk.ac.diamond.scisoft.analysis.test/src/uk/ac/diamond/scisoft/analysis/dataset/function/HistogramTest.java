@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright (c) 2012 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
@@ -9,24 +9,25 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset.function;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
  *
  */
-public class HistogramTest extends TestCase {
+public class HistogramTest {
 
 	DoubleDataset d = null;
 
 	/**
 	 */
-	@Override
+	@Before
 	public void setUp() {
 		d = (DoubleDataset) DatasetFactory.createRange(1.0, 2048.0, 1.0, Dataset.FLOAT64);
 	}

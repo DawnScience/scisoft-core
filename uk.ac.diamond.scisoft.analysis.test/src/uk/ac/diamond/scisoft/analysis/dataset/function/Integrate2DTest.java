@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright (c) 2012 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
@@ -9,10 +9,9 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset.function;
 
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDoubleDataset;
@@ -23,7 +22,7 @@ import org.junit.Test;
 /**
  *
  */
-public class Integrate2DTest extends TestCase {
+public class Integrate2DTest {
 
 	private void check1DArray(final Dataset a, final double[] d) {
 		assertEquals(1, a.getRank());

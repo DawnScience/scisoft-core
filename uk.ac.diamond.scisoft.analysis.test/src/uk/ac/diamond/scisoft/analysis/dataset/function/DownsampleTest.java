@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright (c) 2012 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
@@ -9,10 +9,9 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset.function;
 
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.downsample.DownsampleMode;
@@ -20,15 +19,16 @@ import org.eclipse.dawnsci.analysis.dataset.function.Downsample;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Test down-sampling class
  */
-public class DownsampleTest extends TestCase {
+public class DownsampleTest {
 	Dataset d;
 
-	@Override
+	@Before
 	public void setUp() {
 		d = DatasetFactory.createRange(24, Dataset.FLOAT32);
 		d.setShape(new int[] {4, 6});

@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright (c) 2014 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
@@ -10,8 +10,6 @@
 package uk.ac.diamond.scisoft.analysis.dataset.function;
 
 
-import junit.framework.TestCase;
-
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.junit.Test;
@@ -21,7 +19,7 @@ import uk.ac.diamond.scisoft.analysis.TestUtils;
 /**
  *
  */
-public class MapTo2DTest extends TestCase {
+public class MapTo2DTest {
 	Dataset d = DatasetFactory.createRange(200, Dataset.FLOAT64).reshape(20, 10);
 
 	/**

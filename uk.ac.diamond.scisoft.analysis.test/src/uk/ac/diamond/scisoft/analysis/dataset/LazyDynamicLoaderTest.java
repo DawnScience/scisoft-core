@@ -49,7 +49,7 @@ public class LazyDynamicLoaderTest {
 			slice.setSlice(0, shape[0]-1, shape[0], 1);
 			slice.setSlice(1, shape[1]-1, shape[1], 1);
 			IDataset s = dataset.getSlice(slice);
-			Assert.assertEquals((long)max,(long)s.max());
+			Assert.assertEquals(max, s.max().intValue());
 			max+=400;
 			
 			AxesMetadata axm = s.getFirstMetadata(AxesMetadata.class);

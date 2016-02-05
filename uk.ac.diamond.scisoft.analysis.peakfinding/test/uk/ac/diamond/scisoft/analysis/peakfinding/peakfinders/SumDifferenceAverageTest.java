@@ -14,11 +14,10 @@ import static org.junit.Assert.assertTrue;
 import java.util.Map;
 import java.util.TreeMap;
 
-import junit.framework.Assert;
-
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class SumDifferenceAverageTest {

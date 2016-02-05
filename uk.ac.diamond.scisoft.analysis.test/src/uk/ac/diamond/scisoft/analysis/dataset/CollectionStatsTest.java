@@ -17,9 +17,11 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.CollectionStats;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.junit.Assert;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.DoubleUtils;
+import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 
 
@@ -74,12 +76,14 @@ public class CollectionStatsTest {
 
    @Test
    public void testLarge() throws Exception {
-	   
-	   final long start = System.currentTimeMillis();
-	   final List<IDataset> images = new ArrayList<IDataset>(10);
-	   
-	   final File dir = new File(System.getProperty("GDALargeTestFilesLocation")+"/EDFLoaderTest/");
-	   final File[] files = dir.listFiles();
+		final long start = System.currentTimeMillis();
+		final List<IDataset> images = new ArrayList<IDataset>(10);
+		String testLocation = TestUtils.getGDALargeTestFilesLocation();
+		if (testLocation == null) {
+			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
+		}
+		final File dir = new File(testLocation, "EDFLoaderTest");
+		final File[] files = dir.listFiles();
 	   for (int i = 0; i < files.length; i++) {
 		   if (files[i].getName().startsWith("billeA")) {
 			   images.add(LoaderFactory.getData(files[i].getAbsolutePath(), null).getDataset(0));

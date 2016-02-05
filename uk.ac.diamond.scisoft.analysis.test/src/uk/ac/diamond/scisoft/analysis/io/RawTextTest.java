@@ -9,11 +9,10 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import junit.framework.Assert;
-
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -79,7 +78,8 @@ public class RawTextTest {
 		} catch (Exception e) {
 			throw new ScanFileHolderException("Problem testing rawOutput class", e);
 		}
-        if (dh==null || dh.getNames().length<1) throw new ScanFileHolderException("");
-        Assert.assertEquals("Datasets not equal", a, dh.getDataset(0));
+		if (dh == null || dh.getNames().length < 1)
+			throw new ScanFileHolderException("");
+		Assert.assertEquals("Datasets not equal", a, dh.getDataset(0));
 	}
 }

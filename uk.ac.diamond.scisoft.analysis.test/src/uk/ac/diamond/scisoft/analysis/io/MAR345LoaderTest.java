@@ -9,9 +9,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import static org.junit.Assert.assertTrue;
-import junit.framework.Assert;
-
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
@@ -19,6 +16,7 @@ import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -46,7 +44,7 @@ public class MAR345LoaderTest {
 		IDataHolder dh = LoaderFactory.getData(testfile, null);
         if (dh==null || dh.getNames().length<1) throw new Exception();
         		
-		assertTrue(dh.getName(0).contains(AbstractFileLoader.DEF_IMAGE_NAME));
+		Assert.assertTrue(dh.getName(0).contains(AbstractFileLoader.DEF_IMAGE_NAME));
 		
 		IDataset data = dh.getDataset(0);
 		checkImage(data);

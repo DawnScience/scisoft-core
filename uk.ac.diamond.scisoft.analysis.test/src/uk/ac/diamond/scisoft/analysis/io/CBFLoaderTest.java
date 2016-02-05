@@ -9,10 +9,10 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import junit.framework.Assert;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -149,6 +149,16 @@ public class CBFLoaderTest {
 	@Test
 	public void testExampleFile9() throws Exception {
 		new CBFLoader(testpath + "insulin_pilatus6mconverted_orig.cbf").loadFile();
+	}
+
+	/**
+	 *
+	 *
+	 * @throws Exception if the file could not be loaded
+	 */
+	@Test
+	public void testExample() throws Exception {
+		new CBFLoader("/scratch/images/i19/35dnba120k/35dnba120k01_00001.cbf").loadFile();
 	}
 
 	/**

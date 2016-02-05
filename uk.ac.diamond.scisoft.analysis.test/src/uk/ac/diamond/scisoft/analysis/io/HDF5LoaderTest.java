@@ -13,6 +13,12 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -102,7 +108,7 @@ public class HDF5LoaderTest {
 	}
 
 	@Test
-	public void testLoadingStrings() throws ScanFileHolderException {
+	public void testLoadingStrings() throws ScanFileHolderException, InterruptedException {
 		String n = TestFileFolder + "strings1d.h5";
 		HDF5Loader l = new HDF5Loader(n);
 
@@ -113,6 +119,7 @@ public class HDF5LoaderTest {
 		l = new HDF5Loader(n);
 
 		tree = l.loadTree(null);
+		Thread.sleep(6000);
 	}
 
 	@Test
@@ -432,6 +439,26 @@ public class HDF5LoaderTest {
 			assertTrue(d.getMetadata(AxesMetadata.class) != null);
 		} catch (Exception e) {
 		}
+
+		try {
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("/tmp/object.ser"));
+			oos.writeObject(d.getSlice());
+			oos.close();
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
+		}
+
+		try {
+			ObjectInputStream ois = new ObjectInputStream(new FileInputStream("/tmp/object.ser"));
+			Object od = ois.readObject();
+			ois.close();
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
+		} catch (ClassNotFoundException e) {
+		}
+
+		org.omg.CORBA.Any any = org.omg.CORBA.ORB.init().create_any();
+		any.insert_Value(d.getSlice());
 	}
 
 	@Test
@@ -503,5 +530,41 @@ public class HDF5LoaderTest {
 		System.err.println(Arrays.toString(dh.getNames()));
 		GroupNode g = l.tFile.getGroupNode();
 		assertEquals(0, g.getNumberOfNodelinks());
+	}
+
+	@Test
+	public void testLoadingExternal() throws ScanFileHolderException {
+		HDF5Loader l = new HDF5Loader("/dls/i12/data/2015/cm12163-2/rawdata/46923.nxs");
+		TreeFile t = l.loadTree();
+		NodeLink nl = t.findNodeLink("/entry1/instrument/pixium10_tif/image_data");
+		assertTrue(nl.isDestinationData());
+		DataNode d = (DataNode) nl.getDestination();
+		assertArrayEquals(new int[] {283, 2881, 2880}, d.getDataset().getShape());
+		assertArrayEquals(new long[] {-1, 2881, 2880}, d.getMaxShape());
+		assertArrayEquals(new long[] {1, 2881, 2880}, d.getChunkShape());
+	}
+
+	@Test
+	public void testLoadingImageStack() throws ScanFileHolderException {
+		HDF5Loader l = new HDF5Loader("/dls/i12/data/2015/ee12884-1/rawdata/55116.nxs");
+		TreeFile t = l.loadTree();
+		NodeLink nl = t.findNodeLink("/entry1/instrument/pixium10_tif/image_data");
+		assertTrue(nl.isDestinationData());
+		DataNode d = (DataNode) nl.getDestination();
+		assertArrayEquals(new int[] {2881, 2880}, d.getDataset().getShape());
+		assertArrayEquals(new long[] {2881, 2880}, d.getMaxShape());
+		assertArrayEquals(new long[] {2881, 2880}, d.getChunkShape());
+	}
+
+	@Test
+	public void testLoadingLegacy() throws ScanFileHolderException {
+		HDF5Loader l = new HDF5Loader("/scratch/GDALargeTestFiles/multiDetector.nxs");
+		TreeFile t = l.loadTree();
+//		NodeLink nl = t.findNodeLink("/entry1/instrument/pixium10_tif/image_data");
+//		assertTrue(nl.isDestinationData());
+//		DataNode d = (DataNode) nl.getDestination();
+//		assertArrayEquals(new int[] {2881, 2880}, d.getDataset().getShape());
+//		assertArrayEquals(new long[] {2881, 2880}, d.getMaxShape());
+//		assertArrayEquals(new long[] {2881, 2880}, d.getChunkShape());
 	}
 }

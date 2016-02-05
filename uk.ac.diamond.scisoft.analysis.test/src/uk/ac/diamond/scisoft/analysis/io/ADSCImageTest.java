@@ -14,13 +14,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import junit.framework.Assert;
-
 import org.apache.commons.lang.SerializationUtils;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.IExtendedMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

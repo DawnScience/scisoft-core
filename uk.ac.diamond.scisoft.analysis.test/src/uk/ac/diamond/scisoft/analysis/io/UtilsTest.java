@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -24,8 +25,6 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.junit.Test;
-
-import junit.framework.Assert;
 
 /**
  * Test IO utils
@@ -196,35 +195,35 @@ public class UtilsTest {
 		bis = "123456789012345678901";
 		bi = new BigInteger(bis);
 		double x = bi.doubleValue();
-		Assert.assertEquals("Double", bi.doubleValue(), Utils.parseValue(bis).doubleValue(), Math.abs(x)*1e-14);
+		assertEquals("Double", bi.doubleValue(), Utils.parseValue(bis).doubleValue(), Math.abs(x)*1e-14);
 		bis = "-123456789012345678901";
 		bi = new BigInteger(bis);
 		x = bi.doubleValue();
-		Assert.assertEquals("Double", bi.doubleValue(), Utils.parseValue(bis).doubleValue(), Math.abs(x)*1e-14);
+		assertEquals("Double", bi.doubleValue(), Utils.parseValue(bis).doubleValue(), Math.abs(x)*1e-14);
 	}
 
 	private void checkNumber(String text, Number value) {
 		Number n = Utils.parseValue(text);
 		if (value instanceof Long) {
-			Assert.assertTrue("Long", n instanceof Long);
+			assertTrue("Long", n instanceof Long);
 			long l = (Long) value;
-			Assert.assertEquals("Long", l, n.longValue());
+			assertEquals("Long", l, n.longValue());
 		} else if (value instanceof Integer) {
-			Assert.assertTrue("Integer", n instanceof Integer);
+			assertTrue("Integer", n instanceof Integer);
 			int i = (Integer) value;
-			Assert.assertEquals("Integer", i, n.intValue());
+			assertEquals("Integer", i, n.intValue());
 		} else if (value instanceof Short) {
-			Assert.assertTrue("Short", n instanceof Short);
+			assertTrue("Short", n instanceof Short);
 			short s = (Short) value;
-			Assert.assertEquals("Short", s, n.shortValue());
+			assertEquals("Short", s, n.shortValue());
 		} else if (value instanceof Byte) {
-			Assert.assertTrue("Byte", n instanceof Byte);
+			assertTrue("Byte", n instanceof Byte);
 			byte b = (Byte) value;
-			Assert.assertEquals("Byte", b, n.byteValue());
+			assertEquals("Byte", b, n.byteValue());
 		} else if (value instanceof Double) {
-			Assert.assertTrue("Double", n instanceof Double);
+			assertTrue("Double", n instanceof Double);
 			double d = (Double) value;
-			Assert.assertEquals("Double", d, n.doubleValue(), 1e-14*Math.abs(d));
+			assertEquals("Double", d, n.doubleValue(), 1e-14*Math.abs(d));
 		}
 	}
 
@@ -239,21 +238,21 @@ public class UtilsTest {
 		for (int i = 0; i < LENGTH; i++) {
 			intText[i] = a.getString(i);
 		}
-		Assert.assertEquals("Int", a.getInt(LENGTH/2), Utils.parseValue(intText[LENGTH/2]).intValue());
+		assertEquals("Int", a.getInt(LENGTH/2), Utils.parseValue(intText[LENGTH/2]).intValue());
 
 		a = Random.randint(-60000, 60000, new int[] {LENGTH});
 		String[] shortText = new String[LENGTH];
 		for (int i = 0; i < LENGTH; i++) {
 			shortText[i] = a.getString(i);
 		}
-		Assert.assertEquals("Short", a.getShort(LENGTH/2), Utils.parseValue(shortText[LENGTH/2]).shortValue());
+		assertEquals("Short", a.getShort(LENGTH/2), Utils.parseValue(shortText[LENGTH/2]).shortValue());
 
 		a = Random.randint(-128, 128, new int[] {LENGTH});
 		String[] byteText = new String[LENGTH];
 		for (int i = 0; i < LENGTH; i++) {
 			byteText[i] = a.getString(i);
 		}
-		Assert.assertEquals("Byte", a.getByte(LENGTH/2), Utils.parseValue(byteText[LENGTH/2]).byteValue());
+		assertEquals("Byte", a.getByte(LENGTH/2), Utils.parseValue(byteText[LENGTH/2]).byteValue());
 
 		a = Random.rand(-1e28, 1e28, new int[] {LENGTH});
 		String[] doubleText = new String[LENGTH];
@@ -261,7 +260,7 @@ public class UtilsTest {
 			doubleText[i] = a.getString(i);
 		}
 		double x = a.getDouble(LENGTH/2);
-		Assert.assertEquals("Double", x, Utils.parseValue(doubleText[LENGTH/2]).doubleValue(), 1e-7*Math.abs(x));
+		assertEquals("Double", x, Utils.parseValue(doubleText[LENGTH/2]).doubleValue(), 1e-7*Math.abs(x));
 
 		// timing
 		int REPEAT = 5;

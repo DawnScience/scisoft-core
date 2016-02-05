@@ -9,13 +9,11 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import static org.junit.Assert.assertTrue;
-import junit.framework.Assert;
-
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -43,7 +41,7 @@ public class MRCImageStackLoaderTest {
 		IDataHolder dh = LoaderFactory.getData(testfile, null);
         if (dh==null || dh.getNames().length<1) throw new Exception();
         		
-		assertTrue(dh.getName(0).contains(AbstractFileLoader.STACK_NAME));
+		Assert.assertTrue(dh.getName(0).contains(AbstractFileLoader.STACK_NAME));
 
 		ILazyDataset image = dh.getLazyDataset(0);
 		checkImage(image);

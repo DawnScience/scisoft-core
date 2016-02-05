@@ -11,13 +11,12 @@ package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.junit.Assert;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.roi.XAxis;
@@ -123,7 +122,7 @@ public class Compare2Dto1DIntegrationTest extends AbstractPixelIntegrationTestBa
 		Dataset max = Maths.subtract(d21, d1);
 		double test = max.max().doubleValue();
 		
-		Assert.assertTrue(max.max().doubleValue() < 0.0000000001);
+		Assert.assertTrue(test < 0.0000000001);
 		
 		bean = new PixelIntegrationBean();
 		bean.setAzimuthalIntegration(true);
@@ -190,7 +189,7 @@ public class Compare2Dto1DIntegrationTest extends AbstractPixelIntegrationTestBa
 		//not identical due to move of discontinuity
 		double test = max.max().doubleValue();
 		
-		Assert.assertTrue(max.max().doubleValue() < 110);
+		Assert.assertTrue(test < 110);
 		
 	}
 	

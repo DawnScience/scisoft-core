@@ -114,8 +114,9 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 			@Override
 			public Pair<RealVector, RealMatrix> value(RealVector point) {
 				IMonitor monitor = function.getMonitor();
-				if (monitor != null && monitor.isCancelled())
-					throw new IllegalArgumentException("Monitor cancelled");
+				if (monitor != null && monitor.isCancelled()) {
+					throw new IllegalMonitorStateException("Monitor cancelled");
+				}
 
 				if (point instanceof ArrayRealVector) {
 					setParameterValues(((ArrayRealVector) point).getDataRef());

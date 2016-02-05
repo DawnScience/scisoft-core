@@ -11,14 +11,10 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.xml.crypto.Data;
 
 import org.dawb.common.services.ServiceManager;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
@@ -41,16 +37,11 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
-import org.eclipse.dawnsci.hdf5.HierarchicalDataFactory;
 
 import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
-import uk.ac.diamond.scisoft.analysis.fitting.FittingConstants;
-import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.FittingConstants.FIT_ALGORITHMS;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
+import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Add;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 
@@ -111,7 +102,7 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 			Dataset[] traceROI = new Dataset[]{x, (Dataset) input};
 			
 			try {
-				traceROI = Generic1DFitter.xintersection(traceROI[0], traceROI[1],
+				traceROI = Generic1DFitter.selectInRange(traceROI[0], traceROI[1],
 						points[0],points[1]);
 			} catch (Throwable npe) {
 				throw new OperationException(this,npe.getMessage());

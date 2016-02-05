@@ -10,8 +10,8 @@
 package uk.ac.diamond.scisoft.analysis;
 
 import gda.observable.IObserver;
-import junit.framework.AssertionFailedError;
 
+import org.junit.AssumptionViolatedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,26 +75,26 @@ public class MockPlotServer extends AbstractPlotServer {
 
 	@Override
 	public void updateData(String guiName) throws Exception {
-		throw new AssertionFailedError("No Implementation, method should not be called.");
+		throw new AssumptionViolatedException("No Implementation, method should not be called.");
 	}
 
 	@Override
 	public boolean isServerLocal() throws Exception {
-		throw new AssertionFailedError("No Implementation, method should not be called.");
+		throw new AssumptionViolatedException("No Implementation, method should not be called.");
 	}
 
 	@Override
 	public void addIObserver(IObserver observer) {
-		throw new AssertionFailedError("No Implementation, method should not be called.");
+		throw new AssumptionViolatedException("No Implementation, method should not be called.");
 	}
 
 	@Override
 	public void deleteIObserver(IObserver observer) {
-		throw new AssertionFailedError("No Implementation, method should not be called.");
+		throw new AssumptionViolatedException("No Implementation, method should not be called.");
 	}
 
 	@Override
 	public void deleteIObservers() {
-		throw new AssertionFailedError("No Implementation, method should not be called.");
+		throw new AssumptionViolatedException("No Implementation, method should not be called.");
 	}
 }

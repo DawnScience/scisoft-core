@@ -9,11 +9,10 @@
 
 package uk.ac.diamond.scisoft.analysis;
 
-import junit.framework.AssertionFailedError;
-
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
+import org.junit.AssumptionViolatedException;
 
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiBean;
@@ -24,8 +23,8 @@ public class MockSDAPlotter implements ISDAPlotter {
 	/**
 	 * Common creator of exception so a single breakpoint can be placed to catch any calls.
 	 */
-	private AssertionFailedError newShouldNotBeCalled() {
-		return new AssertionFailedError("Methods in MockSDAPlotter should not be called");
+	private AssumptionViolatedException newShouldNotBeCalled() {
+		return new AssumptionViolatedException("Methods in MockSDAPlotter should not be called");
 	}
 
 	@Override

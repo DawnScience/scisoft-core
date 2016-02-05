@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright (c) 2012 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
@@ -9,14 +9,10 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
-
-import junit.framework.Assert;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
@@ -25,6 +21,7 @@ import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.EllipticalROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.HyperbolicROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.ParabolicROI;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -75,7 +72,7 @@ public class DSpacingTest {
 				average += dspacing[i++];
 			}
 			average = average / dspacing.length;
-			assertEquals(161, average, 1); // 171 <- is the old value but the method appears to be mathematically
+			Assert.assertEquals(161, average, 1); // 171 <- is the old value but the method appears to be mathematically
 											// correct
 		} catch (Exception e) {
 			e.printStackTrace();

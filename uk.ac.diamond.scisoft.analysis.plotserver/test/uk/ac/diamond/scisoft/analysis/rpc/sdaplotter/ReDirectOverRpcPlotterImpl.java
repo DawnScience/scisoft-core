@@ -9,11 +9,10 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.sdaplotter;
 
-import junit.framework.AssertionFailedError;
-
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
+import org.junit.AssumptionViolatedException;
 
 import uk.ac.diamond.scisoft.analysis.ISDAPlotter;
 import uk.ac.diamond.scisoft.analysis.SDAPlotter;
@@ -68,7 +67,7 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 
 	@Override
 	public void imagePlot(String plotName, String imageFileName) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to imageFileName argument");
+		throw new AssumptionViolatedException("Method unsupported in python due to imageFileName argument");
 	}
 
 	@Override
@@ -83,7 +82,7 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 
 	@Override
 	public void scatter2DPlot(String plotName, CompoundDataset[] coordPairs, IDataset[] sizes) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to CompoundDataset argument");
+		throw new AssumptionViolatedException("Method unsupported in python due to CompoundDataset argument");
 	}
 
 	@Override
@@ -128,7 +127,7 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 		request("updatestack", xValues, yValues, zValues, plotName);
 	}
 
-	private String getOrderStr(int order) throws AssertionFailedError {
+	private String getOrderStr(int order) throws AssumptionViolatedException {
 		String orderstr;
 		if (order == SDAPlotter.IMAGEORDERNONE)
 			orderstr = "none";
@@ -137,7 +136,7 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 		else if (order == SDAPlotter.IMAGEORDERALPHANUMERICAL)
 			orderstr = "alpha";
 		else
-			throw new AssertionFailedError("Unknown order string");
+			throw new AssumptionViolatedException("Unknown order string");
 		return orderstr;
 	}
 
@@ -150,17 +149,17 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	@Override
 	public void volumePlot(String viewName, String rawvolume, int headerSize, int voxelType, int xdim, int ydim,
 			int zdim) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to arguments other than data set and viewName");
+		throw new AssumptionViolatedException("Method unsupported in python due to arguments other than data set and viewName");
 	}
 
 	@Override
 	public void volumePlot(String viewName, IDataset volume) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to io save not implemented, see volume in plot.py");
+		throw new AssumptionViolatedException("Method unsupported in python due to io save not implemented, see volume in plot.py");
 	}
 
 	@Override
 	public void volumePlot(String viewName, String dsrvolume) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to arguments other than data set and viewName");
+		throw new AssumptionViolatedException("Method unsupported in python due to arguments other than data set and viewName");
 	}
 
 	@Override
@@ -176,33 +175,33 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 
 	@Override
 	public void resetAxes(String plotName) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to not being in plot.py");
+		throw new AssumptionViolatedException("Method unsupported in python due to not being in plot.py");
 	}
 
 	@Override
 	public void setupNewImageGrid(String viewName, int gridRows, int gridColumns) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to not being in plot.py");
+		throw new AssumptionViolatedException("Method unsupported in python due to not being in plot.py");
 	}
 
 	@Override
 	public void plotImageToGrid(String viewName, IDataset[] datasets, boolean store) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to not being in plot.py");
+		throw new AssumptionViolatedException("Method unsupported in python due to not being in plot.py");
 	}
 
 	@Override
 	public void plotImageToGrid(String viewName, String filename, int gridX, int gridY) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to not being in plot.py");
+		throw new AssumptionViolatedException("Method unsupported in python due to not being in plot.py");
 	}
 
 	@Override
 	public void plotImageToGrid(String viewName, IDataset dataset, int gridX, int gridY, boolean store)
 			throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to not being in plot.py");
+		throw new AssumptionViolatedException("Method unsupported in python due to not being in plot.py");
 	}
 
 	@Override
 	public void viewTree(String viewer, Tree tree) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python due to not being in plot.py");
+		throw new AssumptionViolatedException("Method unsupported in python due to not being in plot.py");
 	}
 
 	@Override
@@ -227,7 +226,7 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 
 	@Override
 	public GuiBean getGuiStateForPlotMode(String plotName, GuiPlotMode plotMode) {
-		throw new AssertionFailedError("Method unsupported in python due to not being in plot.py");
+		throw new AssumptionViolatedException("Method unsupported in python due to not being in plot.py");
 	}
 
 	@Override
@@ -237,16 +236,16 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 
 	@Override
 	public void createAxis(String plotName, String title, int side) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python, please use the py4j connection to maniplulate axes from cpython!");
+		throw new AssumptionViolatedException("Method unsupported in python, please use the py4j connection to maniplulate axes from cpython!");
 	}
 
 	@Override
 	public void renameActiveXAxis(String plotName, String xAxisTitle) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python, please use the py4j connection to maniplulate axes from cpython!");
+		throw new AssumptionViolatedException("Method unsupported in python, please use the py4j connection to maniplulate axes from cpython!");
 	}
 
 	@Override
 	public void renameActiveYAxis(String plotName, String yAxisTitle) throws Exception {
-		throw new AssertionFailedError("Method unsupported in python, please use the py4j connection to maniplulate axes from cpython!");
+		throw new AssumptionViolatedException("Method unsupported in python, please use the py4j connection to maniplulate axes from cpython!");
 	}
 }

@@ -31,7 +31,6 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.fitting.functions.APeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.FunctionFactory;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
@@ -153,7 +152,7 @@ public class FunctionsTest {
 		context.setDataDimensions(new int[]{1});
 		
 		// Cannot send a concrete GeneticAlg here because does not work in parallel.
-		fittingOp.setModel(new FittingModel(xAxis, FunctionFactory.getClassForPeakFn("PseudoVoigt"), GeneticAlg.class, 0.0001, seed, smoothing, numPeaks, threshold, autoStopping, backgroundDominated));      
+		fittingOp.setModel(new FittingModel(xAxis, FunctionFactory.getPeakFunctionClass("PseudoVoigt"), GeneticAlg.class, 0.0001, seed, smoothing, numPeaks, threshold, autoStopping, backgroundDominated));      
 	
 		count = 0;
 		context.setVisitor(new IExecutionVisitor.Stub() {

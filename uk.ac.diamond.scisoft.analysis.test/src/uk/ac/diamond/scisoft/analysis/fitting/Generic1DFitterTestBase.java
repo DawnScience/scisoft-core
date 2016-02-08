@@ -66,7 +66,7 @@ public abstract class Generic1DFitterTestBase {
 		}
 		DoubleDataset testingPeaks = generatePearsonVII(i);
 		try {
-			fittingTest(peakPos, testingPeaks, FunctionFactory.getClassForPeakFn("PearsonVII"));
+			fittingTest(peakPos, testingPeaks, FunctionFactory.getPeakFunctionClass("PearsonVII"));
 		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using " + name);
@@ -82,7 +82,7 @@ public abstract class Generic1DFitterTestBase {
 		}
 		DoubleDataset testingPeaks = generateGaussianPeaks(i);
 		try {
-			fittingTest(peakPos, testingPeaks, FunctionFactory.getClassForPeakFn("Gaussian"));
+			fittingTest(peakPos, testingPeaks, FunctionFactory.getPeakFunctionClass("Gaussian"));
 		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using " + name);
@@ -98,7 +98,7 @@ public abstract class Generic1DFitterTestBase {
 		}
 		DoubleDataset testingPeaks = generatePseudoVoigt(i);
 		try {
-			fittingTest(peakPos, testingPeaks, FunctionFactory.getClassForPeakFn("PseudoVoigt"));
+			fittingTest(peakPos, testingPeaks, FunctionFactory.getPeakFunctionClass("PseudoVoigt"));
 		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using " + name);
@@ -114,7 +114,7 @@ public abstract class Generic1DFitterTestBase {
 		}
 		DoubleDataset testingPeaks = generateLorentzianPeaks(i);
 		try {
-			fittingTest(peakPos, testingPeaks, FunctionFactory.getClassForPeakFn("Lorentzian"));
+			fittingTest(peakPos, testingPeaks, FunctionFactory.getPeakFunctionClass("Lorentzian"));
 		} catch (Exception e) {
 			System.out.println(e);
 			fail("The number of generated peaks did not match the number of peaks found using " + name);

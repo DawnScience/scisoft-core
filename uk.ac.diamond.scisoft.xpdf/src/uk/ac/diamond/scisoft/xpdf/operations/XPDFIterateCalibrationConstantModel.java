@@ -21,7 +21,13 @@ public class XPDFIterateCalibrationConstantModel extends AbstractOperationModel 
 	private boolean sortContainers = false;
 	@OperationModelField(hint="Do the fluorescence calculations as part of the calibration", label = "Correct fluorescence?")
 	private boolean doingFluorescence = true;
-
+	@OperationModelField(hint="Perform a real fluorescence calculation", label = "Calculate fluorescence?", enableif = "doingFluorescence == true")
+	private boolean calculatingFluorescence = true;
+	@OperationModelField(hint="Fixed user fluorescence scale", label = "Fluorescence scale", enableif = "calculatingFluorescence == false")
+	private double fluorescenceScale = 0.0;
+	@OperationModelField(hint="Regenegerate the absorption maps", label="Regenerate absorption maps")
+	private boolean regenerateAbsorptionMaps = false;
+	
 	public int getnIterations() {
 		return nIterations;
 	}
@@ -44,7 +50,30 @@ public class XPDFIterateCalibrationConstantModel extends AbstractOperationModel 
 	
 	public void setDoingFluorescence(boolean doFluorescence) {
 		firePropertyChange("doingFluorescence", this.doingFluorescence, this.doingFluorescence = doFluorescence);
-		
 	}
 	
+	public boolean isCalculatingFluorescence() {
+		return calculatingFluorescence;
+	}
+	
+	public void setCalculatingFluorescence(boolean calcFluorescence) {
+		firePropertyChange("calculatingFluorescence", this.calculatingFluorescence, this.calculatingFluorescence = calcFluorescence);
+	}
+	
+	public double getFluorescenceScale() {
+		return fluorescenceScale;
+	}
+	
+	public void setFluorescenceScale(double fluorescenceScale) {
+		firePropertyChange("fluorescenceScale", this.fluorescenceScale, this.fluorescenceScale = fluorescenceScale);
+	}
+
+	public boolean getRegenerateAbsorptionMaps() {
+		return regenerateAbsorptionMaps;
+	}
+
+	public void setRegenerateAbsorptionMaps(boolean regenerateAbsorptionMaps) {
+		firePropertyChange("regenerateAbsorptionMaps", this.regenerateAbsorptionMaps, this.regenerateAbsorptionMaps = regenerateAbsorptionMaps);
+	}
+
 }

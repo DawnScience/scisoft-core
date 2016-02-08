@@ -53,7 +53,10 @@ public class XPDFCalibration {
 
 	private int dataDimensions;
 	
+	// Perform any kind of fluorescence correction
 	private boolean doFluorescence;
+	// Perform the full fluorescence calibration, calculating the optimum fluorescence scale
+	private boolean doFluorescenceCalibration;
 	
 	/**
 	 * Empty constructor.
@@ -429,8 +432,8 @@ public class XPDFCalibration {
 	 * @return the calibrated XPDF data
 	 */
 	public Dataset calibrate(int nIterations) {
-		if (doFluorescence)
-				calibrateFluorescence(nIterations);
+		if (doFluorescence && doFluorescenceCalibration)
+			calibrateFluorescence(nIterations);
 		Dataset absCor = iterateCalibrate(nIterations, true);
 		System.err.println("Fluorescence scale = " + fluorescenceScale);
 		System.err.println("Calibration constant = " + calibrationConstants.getLast());
@@ -586,6 +589,26 @@ public class XPDFCalibration {
 	 */
 	public void setDoFluorescence(boolean doIt) {
 		doFluorescence = doIt;
+	}
+	
+	/**
+	 * Sets the calibration to perform the full fluorescence calibration.
+	 * <p>
+	 * Tells the calibration to do the full fluorescence calibration, including
+	 * calculating the optimum fluorescence scale. 
+	 */
+	public void performFullFluorescence() {
+		doFluorescenceCalibration = true;
+	}
+	
+	/**
+	 * Sets the calibration to use the fixed scale fluorescence calibration.
+	 * @param fixedFluorescenceScale
+	 * 								value to fix the fluorescence scale to
+	 */
+	public void setFixedFluorescence(double fixedFluorescenceScale) {
+		doFluorescenceCalibration = false;
+		fluorescenceScale = fixedFluorescenceScale;
 	}
 	
 	/**

@@ -100,10 +100,10 @@ public class XPDFIterateCalibrationConstantOperation extends
 		
 		// localized cache with a double null check with sprinkles on top
 		XPDFAbsorptionMaps localAbsMaps = cachedAbsorptionMaps;
-		if (localAbsMaps == null || ((localAbsMaps != null) && !(localAbsMaps.checkFormList(theXPDFMetadata.getFormList())))) {
+		if (localAbsMaps == null || !(localAbsMaps.checkFormList(theXPDFMetadata.getFormList())) || model.getRegenerateAbsorptionMaps() == true) {
 			synchronized (this) {
 				localAbsMaps = cachedAbsorptionMaps;
-				if (localAbsMaps == null || ((localAbsMaps != null) && !(localAbsMaps.checkFormList(theXPDFMetadata.getFormList())))) {
+				if (localAbsMaps == null || !(localAbsMaps.checkFormList(theXPDFMetadata.getFormList())) || model.getRegenerateAbsorptionMaps() == true) {
 //					cachedAbsorptionMaps = localAbsMaps = theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DoubleDataset.zeros(twoTheta.reshape(twoTheta.getSize(), 1)));
 					cachedAbsorptionMaps = localAbsMaps = theXPDFMetadata.getAbsorptionMaps(coordinates.getDelta(), coordinates.getGamma());
 				}
@@ -114,9 +114,15 @@ public class XPDFIterateCalibrationConstantOperation extends
 		theCalibration.setDetector(theXPDFMetadata.getDetector());
 //		theCalibration.setAbsorptionMaps(theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DoubleDataset.zeros(twoTheta.reshape(twoTheta.getSize(), 1))));
 		theCalibration.setAbsorptionMaps(localAbsMaps);
+		// Set the fluorescence parameters for the calibration. 
 		if (model.isDoingFluorescence()) {
 			theCalibration.setDoFluorescence(true);
 			theCalibration.setSampleFluorescence(theXPDFMetadata.getSampleFluorescence(coordinates.getGamma(), coordinates.getDelta()));
+			// Check for fixed scale fluorescence in the model, and set the fixed scale if necessary
+			if (model.isCalculatingFluorescence())
+				theCalibration.performFullFluorescence();
+			else
+				theCalibration.setFixedFluorescence(model.getFluorescenceScale());
 		} else {
 			theCalibration.setDoFluorescence(false);
 		}

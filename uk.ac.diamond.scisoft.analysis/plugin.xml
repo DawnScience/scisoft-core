@@ -80,6 +80,24 @@
             usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.FunctionType">
       </function>
       <function
+            class="uk.ac.diamond.scisoft.analysis.fitting.functions.Voigt"
+            id="uk.ac.diamond.scisoft.analysis.fitting.functions.Voigt"
+            name="Voigt"
+            usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.FunctionType">
+      </function>
+      <function
+            class="uk.ac.diamond.scisoft.analysis.fitting.functions.FanoGaussian"
+            id="uk.ac.diamond.scisoft.analysis.fitting.functions.FanoGaussian"
+            name="Fano-Gaussian"
+            usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.FunctionType">
+      </function>
+      <function
+            class="uk.ac.diamond.scisoft.analysis.fitting.functions.Fano"
+            id="uk.ac.diamond.scisoft.analysis.fitting.functions.Fano"
+            name="Fano"
+            usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.FunctionType">
+      </function>
+      <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial"
             id="uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial"
             name="Polynomial"

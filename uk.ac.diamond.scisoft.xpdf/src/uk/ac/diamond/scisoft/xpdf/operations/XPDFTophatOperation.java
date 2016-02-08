@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.xpdf.operations;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -20,9 +21,12 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
+import uk.ac.diamond.scisoft.analysis.dataset.function.Interpolation1D;
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
+import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 /**
@@ -35,10 +39,14 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, OperationData> {
 
 	
-	protected OperationData process(IDataset soq, IMonitor monitor) throws OperationException {
+	protected OperationData process(IDataset soqOr2Theta, IMonitor monitor) throws OperationException {
 	Dataset thSoq = null;
 
-	XPDFOperationChecker.checkXPDFMetadata(this, soq, true, false, false);
+	XPDFOperationChecker.checkXPDFMetadata(this, soqOr2Theta, true, false, false);
+	
+	// Interpolate the data to a momentum transfer axis
+	Dataset soq = interpolateToQ(DatasetUtils.convertToDataset(soqOr2Theta));
+	
 	// Number density and g0-1 from the sample material.
 	XPDFMetadata theXPDFMetadata = soq.getFirstMetadata(XPDFMetadata.class);
 
@@ -47,7 +55,7 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 	
 	double rMin = model.getrMin();
 	
-	XPDFCoordinates coordinates = new XPDFCoordinates(DatasetUtils.convertToDataset(soq));
+	XPDFCoordinates coordinates = new XPDFCoordinates(soq);
 	Dataset q = coordinates.getQ();
 
 	// Here r is merely a temporary coordinate system.
@@ -55,7 +63,7 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 
 	double tophatWidth = model.getTophatWidth();
 	
-	Dataset DPrimedoQ = doTophatConvolution(DatasetUtils.convertToDataset(soq), q, tophatWidth);
+	Dataset DPrimedoQ = doTophatConvolution(soq, q, tophatWidth);
 	thSoq = doTopHatConvolutionAndSubtraction(DPrimedoQ, q, r, rMin, tophatWidth, numberDensity, g0minus1);
 
 	return new OperationData(thSoq);
@@ -291,6 +299,49 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 		
 	}
 
+	/**
+	 * Interpolates a {@link Dataset} into momentum transfer coordinates
+	 * <p>
+	 * If the input Dataset indicates that the independent variable is
+	 * scattering angle (2θ), this method interpolates to a momentum transfer (q) grid  
+	 * @param input
+	 * 				input Dataset on a 2θ grid
+	 * @return the output Dataset on a q grid
+	 * 			
+	 */
+	public Dataset interpolateToQ(Dataset input) {
+		// If the XPDF metadata is not present, return the input, having done nothing 
+		try {
+			input.getMetadata(XPDFMetadata.class);
+		} catch (Exception e) {
+			return input;
+		}
+		// if the data is not on an angle axis, it is presumed to be momentum
+		// transfer
+		XPDFMetadata theXPDFMetadata = input.getFirstMetadata(XPDFMetadata.class);
+		if (!theXPDFMetadata.getSample().getTrace().isAxisAngle()) return input;
+		
+		XPDFCoordinates oldCoords = new XPDFCoordinates(input);
+		Dataset oldQ = oldCoords.getQ();
+		
+		Dataset newQ = DoubleDataset.createRange((double) oldQ.min(), (double) oldQ.max(), oldQ.getDouble(1)-oldQ.getDouble(0));
+		Dataset newData = DatasetUtils.convertToDataset(Interpolation1D.splineInterpolation(oldQ, input, newQ));
+		
+		// The data now does not have angle as its axis
+		XPDFMetadata newMetadata = new XPDFMetadataImpl((XPDFMetadataImpl) theXPDFMetadata);
+		
+		newMetadata.getSample().getTrace().setAxisAngle(false);
+		// Transfer the metadata across: we only need the XPDF metadata and the
+		// (new) axis metadata. It does not matter if the detector calibration
+		// is lost at this point
+		newData.addMetadata(newMetadata);
+		AxesMetadata newAxis = new AxesMetadataImpl(1);
+		newAxis.setAxis(0, newQ);
+		newData.addMetadata(newAxis);
+		
+		return newData;
+	}
+	
 	@Override
 	public String getId() {
 		return "uk.ac.diamond.scisoft.xpdf.operations.XPDFTophatOperation";

@@ -16,6 +16,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationOperation;
+import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 /**
@@ -37,6 +38,12 @@ public class XPDFAzimuthalIntegration<T extends AzimuthalPixelIntegrationModel> 
 	
 		XPDFMetadata xMeta = input.getFirstMetadata(XPDFMetadata.class);
 		OperationData superResult = super.process(input, monitor);
+
+		// The downstream processing relies on metadata to tell if the axis is 2θ or q
+		if (model.getAxisType() != XAxis.ANGLE) {
+			xMeta.getSample().getTrace().setAxisAngle(false);
+		}
+		
 		if (xMeta != null)
 			superResult.getData().setMetadata(xMeta);
 		return superResult;

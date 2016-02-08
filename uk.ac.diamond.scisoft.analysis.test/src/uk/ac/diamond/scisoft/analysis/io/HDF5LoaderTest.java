@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -53,6 +54,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 import org.eclipse.dawnsci.analysis.tree.impl.TreeImpl;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
@@ -60,6 +62,15 @@ import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 
 public class HDF5LoaderTest {
 	final static String TestFileFolder = "testfiles/gda/analysis/io/NexusLoaderTest/";
+	static String LargeTestFilesFolder;
+
+	@BeforeClass
+	static public void setUpClass() {
+		LargeTestFilesFolder = TestUtils.getGDALargeTestFilesLocation();
+		if( LargeTestFilesFolder == null){
+			fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
+		}
+	}
 
 	private void checkDataset(String name, IDataset data, int[] expectedShape) {
 		int[] shape = data.getShape();
@@ -199,7 +210,7 @@ public class HDF5LoaderTest {
 	
 
 	private void testLoadingNames(boolean async) throws ScanFileHolderException {
-		final String n = TestUtils.getGDALargeTestFilesLocation() + "327.nxs";
+		final String n = LargeTestFilesFolder + "327.nxs";
 		HDF5Loader l = new HDF5Loader(n);
 		l.setAsyncLoad(async);
 
@@ -286,7 +297,7 @@ public class HDF5LoaderTest {
 	@Test
 	public void testLoadingChunked() throws ScanFileHolderException {
 
-		final String n = TestUtils.getGDALargeTestFilesLocation() + "NexusUITest/sino.h5";
+		final String n = LargeTestFilesFolder + "NexusUITest/sino.h5";
 		long timeAtStartms = System.currentTimeMillis();
 
 		HDF5Loader l = new HDF5Loader(n);
@@ -351,7 +362,7 @@ public class HDF5LoaderTest {
 
 	@Test
 	public void testLoadingChunkedSpeed() throws Exception {
-		final String n = TestUtils.getGDALargeTestFilesLocation() + "NexusUITest/3dDataChunked.nxs";
+		final String n = LargeTestFilesFolder + "NexusUITest/3dDataChunked.nxs";
 		long timeAtStartms = System.currentTimeMillis();
 
 		HDF5Utils.loadDataset(n, "entry/instrument/detector/data", new int[] { 0, 0, 0 }, new int[] { 1, 1795, 2069 },
@@ -558,7 +569,7 @@ public class HDF5LoaderTest {
 
 	@Test
 	public void testLoadingLegacy() throws ScanFileHolderException {
-		HDF5Loader l = new HDF5Loader("/scratch/GDALargeTestFiles/multiDetector.nxs");
+		HDF5Loader l = new HDF5Loader(LargeTestFilesFolder + "multiDetector.nxs");
 		TreeFile t = l.loadTree();
 //		NodeLink nl = t.findNodeLink("/entry1/instrument/pixium10_tif/image_data");
 //		assertTrue(nl.isDestinationData());

@@ -26,7 +26,10 @@ Import-Package: com.github.tschoonj.xraylib,
  org.eclipse.dawnsci.plotting.api.trace,
  org.slf4j;version="1.7.6",
  uk.ac.diamond.scisoft.analysis.diffraction.powder,
+<<<<<<< Upstream, based on origin/master
  uk.ac.diamond.scisoft.analysis.io,
+=======
+>>>>>>> 412abb4 Conflict resolution?
  uk.ac.diamond.scisoft.analysis.processing.operations,
  uk.ac.diamond.scisoft.analysis.processing.operations.powder,
  uk.ac.diamond.scisoft.analysis.processing.operations.utils,

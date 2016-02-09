@@ -188,7 +188,9 @@ class XPDFGroupedTable extends Composite {
 		formData.right = new FormAttachment(100, 0);
 		headerButton.setLayoutData(formData);
 
-		headerButton.setText(groupName);
+		// An empty string makes the button collapse. Use a zero width,
+		// non-breaking space instead
+		headerButton.setText( (groupName.equals("")) ? "﻿" : groupName );
 
 		// Add the table that will hold this subset of the columns
 		Composite subTableCompo = new Composite(groupCompo, SWT.NONE);

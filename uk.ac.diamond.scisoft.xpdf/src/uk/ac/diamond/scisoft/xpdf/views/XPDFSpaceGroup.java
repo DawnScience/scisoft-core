@@ -45,7 +45,7 @@ class XPDFSpaceGroup {
 			return CrystalSystem.get(0);
 		else if (number < 16)
 			return CrystalSystem.get(1);
-		else if (number < 7)
+		else if (number < 74)
 			return CrystalSystem.get(2);
 		else if (number < 143)
 			return CrystalSystem.get(3);

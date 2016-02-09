@@ -76,23 +76,34 @@ public class SampleTestData {
 		case ("BTO"): { 
 			phase.setName("BTO");
 			phase.setSpaceGroup(99); // P4mm
+			phase.setUnitCellLengths(3.9945, 3.9945, 4.0296);
+			// Tetragonal, 90°, 90°, 90°
 			phase.addComment("barium titanate");
 			break;
 		}
 		case ("Calcium titanate"): {
 			phase.setName("calcium titanate");
 			phase.setSpaceGroup(62); // Pnma
+			phase.setUnitCellLengths(5.447, 7.654, 5.388);
+			// Orthorhombic, 90°, 90°, 90°
+			phase.addComment("perovskite");
 			break;
 		}
 		case ("TiO2"): {
 			phase.setName("TiO2");
 			phase.setSpaceGroup(123);  // P4mmm
+			phase.setUnitCellLengths(4.5939, 4.5939, 2.9588);
+			// Tetragonal, 90°, 90°, 90°
 			phase.addComment("titanium dioxide");
+			phase.addComment("or rutile");
 			break;
 		}
 		case ("cSiO2"): {
 			phase.setName("cSiO2");
 			phase.setSpaceGroup(152); // P3121
+			phase.setUnitCellLength(0, 4.9139);
+			phase.setUnitCellLength(2, 5.4056);
+			// Trigonal, 90°, 90°, 120°
 			phase.addComment("Crystalline silica,");
 			phase.addComment("also known as quartz");
 			break;
@@ -110,18 +121,24 @@ public class SampleTestData {
 		case ("ceria"): {
 			phase.setName("ceria");
 			phase.setSpaceGroup(225); //Fm-3m
+			phase.setUnitCellLength(0, 5.41165);
+			// Cubic, 90°, 90°, 90°
 			phase.addComment("I love you, ceria!");
 			break;
 		}
 		case ("microcline"): {
 			phase.setName("microcline");
 			phase.setSpaceGroup(2); // P-1
+			phase.setUnitCellLengths(8.5784, 12.96, 7.2112);
+			phase.setUnitCellAngles(90.3, 116.05, 89); // Triclinic
 			phase.addComment("bright blue");
 			break;
 		}
 		case ("cryolite"): {
 			phase.setName("cryolite");
 			phase.setSpaceGroup(10); // P2/m
+			phase.setUnitCellLengths(7.7564, 5.5959, 5.4024);
+			phase.setUnitCellAngle(1, 90.18); // Monoclinic
 			break;
 		}
 		default:

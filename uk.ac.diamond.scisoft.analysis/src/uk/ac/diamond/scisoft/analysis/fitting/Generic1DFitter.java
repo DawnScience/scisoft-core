@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright (c) 2012 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
@@ -19,6 +19,8 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IPeak;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
@@ -478,40 +480,20 @@ public class Generic1DFitter implements Serializable {
 		return ret;
 	}
 
-	
 	/**
-	 * Slices x and y using the x as the reference.
+	 * Select values in x and y according to if x lies in given range
 	 * @param x
 	 * @param y - may be null
 	 * @param startValue
 	 * @param endValue
-	 * @return x and y sliced to the startValue and endValue
+	 * @return x and y in range
 	 */
-	public static Dataset[] xintersection(Dataset x,
-			                                      Dataset y, 
-			                                      final double startValue, 
-			                                      final double endValue) {
-		
-		List<Double> cross = DatasetUtils.crossings(x, startValue);		
-		int    start = cross==null || cross.isEmpty() 
-				           ? 0
-				           : (int)Math.floor(cross.get(0)); // Lower value
-		
-		cross = DatasetUtils.crossings(x, endValue);		
-		int    stop  =  cross==null || cross.isEmpty() 
-				           ? x.getSize()-1
-				           : (int)Math.ceil(cross.get(cross.size()-1)); // Upper value
-		
-		if (start > stop) {
-			int tmp = stop;
-			stop = start;
-			start = tmp;
+	public static Dataset[] selectInRange(Dataset x, Dataset y, final double startValue, final double endValue) {
+		BooleanDataset allowed = Comparisons.withinRange(x, startValue, endValue);
+		if (Comparisons.allTrue(allowed)) {
+			return y == null ? new Dataset[] {x} : new Dataset[] {x, y};
 		}
-				           
-		x = x.getSlice(new int[] { start }, new int[] { stop }, null);
-		if (y != null)
-			y = y.getSlice(new int[] { start }, new int[] { stop }, null);		
-		
-		return (y != null) ? new Dataset[] { x, y } : new Dataset[] { x };
+		Dataset xs = x.getByBoolean(allowed);
+		return y == null ? new Dataset[] {xs} : new Dataset[] {xs, y.getByBoolean(allowed)};
 	}
 }

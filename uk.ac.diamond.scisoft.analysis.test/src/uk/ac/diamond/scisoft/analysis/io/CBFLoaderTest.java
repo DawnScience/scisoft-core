@@ -152,16 +152,6 @@ public class CBFLoaderTest {
 	}
 
 	/**
-	 *
-	 *
-	 * @throws Exception if the file could not be loaded
-	 */
-	@Test
-	public void testExample() throws Exception {
-		new CBFLoader("/scratch/images/i19/35dnba120k/35dnba120k01_00001.cbf").loadFile();
-	}
-
-	/**
 	 * Test Loading
 	 * 
 	 * @throws Exception if the loading fails

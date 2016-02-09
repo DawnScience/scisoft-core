@@ -379,8 +379,10 @@ public class Generic1DFitter implements Serializable {
 			xdata = xdata.getSlice(null, null, new int[]{-1});
 			ydata = ydata.getSlice(null, null, new int[]{-1});
 		}
-		
-		
+
+		// slightly less arbitrary scale for minimum height of peaks
+		final double scale = Math.max(Math.abs(ydata.min().doubleValue()), Math.abs(ydata.max().doubleValue())) * EPSILON;
+
 		Dataset data = Maths.derivative(xdata, ydata, smooth+1);
 		int backPos, forwardPos;
 		double backTotal, forwardTotal;
@@ -394,6 +396,8 @@ public class Generic1DFitter implements Serializable {
 				continue;
 			}
 
+			// found zero crossing from positive to negative (maximum)
+			// now, work out left and right height differences from local minima or edge
 			backTotal = 0;
 			// get the backwards points
 			while (backPos > 0) {
@@ -418,7 +422,7 @@ public class Generic1DFitter implements Serializable {
 				}
 			}
 			// this means a peak has been found
-			if (Math.min(backTotal, forwardTotal) > EPSILON) {
+			if (Math.min(backTotal, forwardTotal) > scale) {
 				int[] start = { backPos };
 				int[] stop = { forwardPos };
 				int[] step = { 1 };

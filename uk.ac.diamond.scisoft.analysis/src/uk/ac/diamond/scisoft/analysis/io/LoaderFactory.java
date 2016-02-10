@@ -77,7 +77,7 @@ public class LoaderFactory {
 	 * Logger for detailing any non-fatal problems (sorry but there are some)
 	 */
 	private static final Logger logger = LoggerFactory.getLogger(LoaderFactory.class);
-	
+
 	/**
 	 * DO NOT USE this constructor. It is used by OSGi for reflecting/instantiating the object
 	 * Ideally use ILoaderService available from OSGi but the static methods are still supported
@@ -91,6 +91,7 @@ public class LoaderFactory {
 	private static final Map<String, List<Class<? extends IFileLoader>>> LOADERS;
 	private static final Map<String, Class<? extends InputStream>>     UNZIPPERS;
 	private static final DataCache<IDataHolder> dataCache;
+	private static final Set<String> IGNORE_EXTS;
 
 	/**
 	 * 
@@ -111,6 +112,7 @@ public class LoaderFactory {
 		LOADERS   = new HashMap<String, List<Class<? extends IFileLoader>>>(19);
 		UNZIPPERS = new HashMap<String, Class<? extends InputStream>>(3);
 		dataCache = new DataCache<IDataHolder>();
+		IGNORE_EXTS   = new HashSet<String>(3);
 		
 		try {
 		    registerLoader("npy",  NumPyFileLoader.class);
@@ -173,6 +175,11 @@ public class LoaderFactory {
 		} catch (Exception ne) {
 			logger.error("Cannot register loader - ALL loader registration aborted!", ne);
 		}
+
+		// Ignore these extensions for loading dataset or metadata
+		// but can be overridden by the registered loaders
+		IGNORE_EXTS.add("py");
+		IGNORE_EXTS.add("exe");
 	}
 
 	/**
@@ -789,7 +796,7 @@ public class LoaderFactory {
 
 		if (LOADERS.containsKey(extension)) {
 			it = LOADERS.get(extension).iterator();
-		} else {
+		} else if (!IGNORE_EXTS.contains(extension)) {
 			// We may have a zipped file type that we support
 			final File file = new File(path);
 			final String regEx = ".+\\." + getLoaderExpression() + "\\." + getZipExpression();

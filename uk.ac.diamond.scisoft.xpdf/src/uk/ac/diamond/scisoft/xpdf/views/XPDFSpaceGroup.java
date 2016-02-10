@@ -9,11 +9,18 @@
 
 package uk.ac.diamond.scisoft.xpdf.views;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 class XPDFSpaceGroup {
 
 	private int number;
 	private static XPDFSpaceGroup[] groups;
-	static final int nGroups = 230;
+	static final int[] rhombGroups = {146, 148, 155, 160, 161, 166, 167};
+	static final int nGroupsFedorov = 230;
+	static final int nGroups = nGroupsFedorov + rhombGroups.length;
+	private static Map<Integer, Integer> hexagonalRhombohedralGroupMap = null;
 	
 	private XPDFSpaceGroup() {
 	}
@@ -41,22 +48,12 @@ class XPDFSpaceGroup {
 	public CrystalSystem getSystem() {
 		if (number < 1)
 			return null; // 0 is undefined
-		else if (number < 3)
-			return CrystalSystem.get(0);
-		else if (number < 16)
-			return CrystalSystem.get(1);
-		else if (number < 74)
-			return CrystalSystem.get(2);
-		else if (number < 143)
-			return CrystalSystem.get(3);
-		else if (number < 168)
-			return CrystalSystem.get(4);
-		else if (number < 195)
-			return CrystalSystem.get(5);
-		else if (number < nGroups+1)
-			return CrystalSystem.get(6);
 		else
-			return null;
+			for (int iGroup = 0; iGroup < CrystalSystem.nSystems; iGroup++) {
+				if (number <= CrystalSystem.highestGroups[iGroup])
+					return CrystalSystem.get(iGroup);
+			}
+			return null; // system not found
 	}
 	
 	private static void generateGroups() {
@@ -66,6 +63,43 @@ class XPDFSpaceGroup {
 			group.number = newGroup;
 			groups[newGroup] = group;
 		}
+		
+		// Also generate the mapping between rhombohedral and hexagonal groups
+		hexagonalRhombohedralGroupMap = new HashMap<Integer, Integer>();
+		for (int i = 0; i < nGroups-nGroupsFedorov; i++) {
+			hexagonalRhombohedralGroupMap.put(rhombGroups[i], nGroupsFedorov+i);
+			hexagonalRhombohedralGroupMap.put(nGroupsFedorov+i, rhombGroups[i]);
+		}
+	}
+	
+	/**
+	 * Returns the rhombohedral equivalent space group.
+	 * <p>
+	 * If this is the space group has a rhombohedral lattice, then return the
+	 * pseudo-space group representing its rhombohedral form. Otherwise, return this.
+	 * @return
+	 * 		the rhombohedral equivalent psuedo-space group, if it exists, else this.
+	 */
+	public XPDFSpaceGroup asRhombohedral() {
+		if (Arrays.asList(rhombGroups).contains(this.number)) {
+			return groups[hexagonalRhombohedralGroupMap.get(number)];
+		}
+		return this;
+	}
+	
+	/**
+	 * Returns the hexagonal equivalent space group.
+	 * <p>
+	 * If this is a pseudo-space group of a rhombohedral lattice, then return the
+	 * space group representing its hexagonal form. Otherwise, return this.
+	 * @return
+	 * 		the hexagonal equivalent space group, if it applicable, else this.
+	 */
+	public XPDFSpaceGroup asHexagonal() {
+		if (this.number > nGroupsFedorov) {
+			return groups[hexagonalRhombohedralGroupMap.get(number)];
+		}
+		return this;
 	}
 	
 	private static final String[] names = {
@@ -237,7 +271,7 @@ class XPDFSpaceGroup {
 		"P 3̅ 2/c 1",
 		"R 3̅ 2/m",
 		"R 3̅ 2/c",
-		"P 6",
+		"P 6", // Hexagonal 168-194
 		"P 6₁",
 		"P 6₅",
 		"P 6₂",
@@ -299,7 +333,16 @@ class XPDFSpaceGroup {
 		"F 4₁/d 3̅ 2/m",
 		"F 4₁/d 3̅ 2/c",
 		"I 4/m 3̅ 2/m",
-		"I 4₁/a 3̅ 2/d"};
+		"I 4₁/a 3̅ 2/d",
+		// Trigonal, rhombohedral basis 146, 148, 155, 160, 161, 166, 167
+		"R 3:R",
+		"R 3̅:R",
+		"R 3 2:R",
+		"R 3 m:R",
+		"R c 3:R",
+		"R 3̅ 2/m:R",
+		"R 3̅ 2/c:R"
+	};
 
 	private static final String[] shortNames = {
 		"-",
@@ -533,6 +576,14 @@ class XPDFSpaceGroup {
 		"Fd-3c",
 		"Im-3m",
 		"Ia-3d",
+		"R3:R",
+		"R-3:R",
+		"R32:R",
+		"R3m:R",
+		"R3c:R",
+		"R-3m:R",
+		"R-3c:R",
+
 	};
 
 }

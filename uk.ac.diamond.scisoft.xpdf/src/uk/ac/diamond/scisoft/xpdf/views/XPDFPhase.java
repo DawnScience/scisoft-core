@@ -9,8 +9,6 @@
 
 package uk.ac.diamond.scisoft.xpdf.views;
 
-import java.util.List;
-
 import org.apache.commons.math3.exception.OutOfRangeException;
 
 import uk.ac.diamond.scisoft.xpdf.XPDFComposition;
@@ -93,7 +91,10 @@ public class XPDFPhase {
 	}
 	
 	public void setCrystalSystem(CrystalSystem inSystem) {
-		system = inSystem;
+		if (system != inSystem) {
+			system = inSystem;
+			setSpaceGroup(CrystalSystem.lowestGroups[system.getOrdinal()]);
+		}
 	}
 	
 	public CrystalSystem getCrystalSystem() {

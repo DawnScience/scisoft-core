@@ -594,8 +594,6 @@ class PhaseGroupedTable {
 					CrystalSystem newSystem = CrystalSystem.get((int) value);
 					
 					phase.setCrystalSystem(newSystem);					
-					if (oldSystem != newSystem)
-						phase.setSpaceGroup(0);
 
 					v.refresh();
 				}
@@ -667,7 +665,9 @@ class PhaseGroupedTable {
 				@Override
 				protected void setValue(Object element, Object value) {
 					XPDFPhase phase = (XPDFPhase) element;
-					phase.setSpaceGroup((int) value + phase.getCrystalSystem().getGroups().get(0).getNumber());
+					int ordinalInSystem = (int) value;
+					int firstInSystem = phase.getCrystalSystem().getGroups().get(0).getNumber();
+					phase.setSpaceGroup(firstInSystem + ordinalInSystem);
 					v.refresh();
 				}
 				

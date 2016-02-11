@@ -38,14 +38,14 @@ public class Expression2DOperation<T extends Expression2DModel> extends Expressi
 		addAdditionalValues(input,engine);
 		
 		IDataset outdata = evaluateData(input, model.getDataExpression(),2);
-		IDataset outaxisx = evaluateData(axes[0], model.getAxisExpressionX(), 1);
-		IDataset outaxisy = evaluateData(axes[1], ((Expression2DModel)model).getAxisExpressionY(), 1);
+		IDataset outaxisx = evaluateData(axes[0], model.getAxisExpressionX(), axes[0].getRank());
+		IDataset outaxisy = evaluateData(axes[1], ((Expression2DModel)model).getAxisExpressionY(), axes[1].getRank());
 		
 		outdata.setName("custom_expression");
 		if (((Expression2DModel)model).getAxisExpressionY() != null && !((Expression2DModel)model).getAxisExpressionY().isEmpty()) outaxisy.setName("custom_y_axis");
-		outaxisy.setShape(new int[]{outaxisy.getShape()[0],1});
+		//outaxisy.setShape(new int[]{outaxisy.getShape()[0],1});
 		if (model.getAxisExpressionX() != null && !model.getAxisExpressionX().isEmpty()) outaxisx.setName("custom_x_axis");
-		outaxisx.setShape(new int[]{1,outaxisx.getShape()[0]});
+		//outaxisx.setShape(new int[]{1,outaxisx.getShape()[0]});
 		
 		if (Arrays.equals(input.getShape(), outdata.getShape())) {
 			copyMetadata(input, outdata);

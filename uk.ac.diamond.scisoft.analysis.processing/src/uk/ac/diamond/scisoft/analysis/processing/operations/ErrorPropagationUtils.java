@@ -14,6 +14,9 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 
+/**
+ * A class providing error propagating static methods
+ */
 public class ErrorPropagationUtils {
 
 	public static DoubleDataset[] multiplyWithError(Dataset input, Dataset error, double scale) {
@@ -34,16 +37,67 @@ public class ErrorPropagationUtils {
 		return new DoubleDataset[]{out,oute};
 	}
 	
-
+	/**
+	 * Adds a scalar to a Dataset, propagating uncertainties.
+	 * <p>
+	 * If the Dataset operand has uncertainty (error) metadata, then the errors
+	 * are correctly propagated to the uncertainty metadata of the resultant
+	 * Dataset.
+	 * @param a
+	 * 			Dataset operand
+	 * @param b
+	 * 			scalar operand
+	 * @return Dataset of the sum of a and b, with correctly propagated
+	 * 			uncertainties.
+	 */
 	public static DoubleDataset addWithUncertainty(Dataset a, double b) {
 		return operateWithUncertainty(a, b, new AddOp());
-	}
+	}	
+	/**
+	 * Subtracts a scalar from a Dataset, propagating uncertainties.
+	 * <p>
+	 * If the Dataset operand has uncertainty (error) metadata, then the errors
+	 * are correctly propagated to the uncertainty metadata of the resultant
+	 * Dataset.
+	 * @param a
+	 * 			Dataset operand
+	 * @param b
+	 * 			scalar operand
+	 * @return Dataset of the difference of a and b, with correctly propagated
+	 * 			uncertainties.
+	 */
 	public static DoubleDataset subtractWithUncertainty(Dataset a, double b) {
 		return operateWithUncertainty(a, b, new SubtractOp());
 	}
+	/**
+	 * Multiplies a Dataset by a scalar, propagating uncertainties.
+	 * <p>
+	 * If the Dataset operand has uncertainty (error) metadata, then the errors
+	 * are correctly propagated to the uncertainty metadata of the resultant
+	 * Dataset.
+	 * @param a
+	 * 			Dataset operand
+	 * @param b
+	 * 			scalar operand
+	 * @return Dataset of the product of a and b, with correctly propagated
+	 * 			uncertainties.
+	 */
 	public static DoubleDataset multiplyWithUncertainty(Dataset a, double b) {
 		return operateWithUncertainty(a, b, new MultiplyOp());
 	}
+	/**
+	 * Divides a Dataset by a scalar, propagating uncertainties.
+	 * <p>
+	 * If the Dataset operand has uncertainty (error) metadata, then the errors
+	 * are correctly propagated to the uncertainty metadata of the resultant
+	 * Dataset.
+	 * @param a
+	 * 			Dataset operand
+	 * @param b
+	 * 			scalar operand
+	 * @return Dataset of the ratio of a and b, with correctly propagated
+	 * 			uncertainties.
+	 */
 	public static DoubleDataset divideWithUncertainty(Dataset a, double b) {
 		return operateWithUncertainty(a, b, new DivideOp());
 	}

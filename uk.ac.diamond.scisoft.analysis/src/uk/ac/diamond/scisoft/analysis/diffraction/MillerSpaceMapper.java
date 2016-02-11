@@ -1191,13 +1191,34 @@ public class MillerSpaceMapper {
 	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
 	 * @param p splitter parameter
 	 * @param scale upsampling factor
-	 * @param mShape shape of output volume
+	 * @param mShape shape of Miller space volume
 	 * @param mStart start coordinates in Miller space
 	 * @param mDelta sides of voxels in Miller space
 	 * @throws ScanFileHolderException
 	 */
 	public static void processVolume(String input, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double... mDelta) throws ScanFileHolderException {
-		setBean(I16MapperBean, input, output, splitter, p, scale, mShape, mStart, mDelta);
+		setBean(I16MapperBean, input, output, splitter, p, scale, mShape, mStart, mDelta, null, null, null);
+		MillerSpaceMapper mapper = new MillerSpaceMapper(I16MapperBean);
+		mapper.mapToVolumeFile();
+	}
+
+	/**
+	 * Process Nexus file for I16
+	 * @param input Nexus file
+	 * @param output name of HDF5 file to be created
+	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
+	 * @param p splitter parameter
+	 * @param scale upsampling factor
+	 * @param mShape shape of Miller space volume
+	 * @param mStart start coordinates in Miller space
+	 * @param mDelta sides of voxels in Miller space
+	 * @param qShape shape of q space volume
+	 * @param qStart start coordinates in q space
+	 * @param qDelta sides of voxels in q space
+	 * @throws ScanFileHolderException
+	 */
+	public static void processBothVolumes(String input, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double[] mDelta, int[] qShape, double[] qStart, double[] qDelta) throws ScanFileHolderException {
+		setBean(I16MapperBean, input, output, splitter, p, scale, mShape, mStart, mDelta, qShape, qStart, qDelta);
 		MillerSpaceMapper mapper = new MillerSpaceMapper(I16MapperBean);
 		mapper.mapToVolumeFile();
 	}
@@ -1336,11 +1357,14 @@ public class MillerSpaceMapper {
 	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
 	 * @param p splitter parameter
 	 * @param scale upsampling factor
-	 * @param mShape shape of output volume
+	 * @param mShape shape of Miller space volume
 	 * @param mStart start coordinates in Miller space
 	 * @param mDelta sides of voxels in Miller space
+	 * @param qShape shape of q space volume
+	 * @param qStart start coordinates in q space
+	 * @param qDelta sides of voxels in q space
 	 */
-	public static void setBean(MillerSpaceMapperBean bean, String input, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double... mDelta) {
+	public static void setBean(MillerSpaceMapperBean bean, String input, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double[] mDelta, int[] qShape, double[] qStart, double[] qDelta) {
 		bean.setInputs(input);
 		bean.setOutput(output);
 		bean.setSplitterName(splitter);
@@ -1350,6 +1374,9 @@ public class MillerSpaceMapper {
 		bean.setMillerShape(mShape);
 		bean.setMillerStart(mStart);
 		bean.setMillerStep(mDelta);
+		bean.setQShape(qShape);
+		bean.setQStart(qStart);
+		bean.setQStep(qDelta);
 	}
 
 	/**

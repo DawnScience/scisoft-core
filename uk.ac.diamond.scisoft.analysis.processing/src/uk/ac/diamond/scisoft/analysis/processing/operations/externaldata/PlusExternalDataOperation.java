@@ -14,19 +14,17 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
-
-// Does not work in the Operations menu for a reason I cannot fathom. Use PlusExternalDataOperation instead. --TCS
-public class AddExternalDataOperation extends
+public class PlusExternalDataOperation extends
 		OperateOnExternalDataAbstractOperation<ExternalDataModel, OperationData> {
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.AddExternalDataOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusExternalDataOperation";
 	}
 
 	@Override
 	protected Dataset doMathematics(Dataset a, double b) {
-		return a;//ErrorPropagationUtils.addWithUncertainty(a, b);
+		return ErrorPropagationUtils.addWithUncertainty(a, b);
 	}
 
 }

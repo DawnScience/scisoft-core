@@ -651,7 +651,7 @@
             icon="icons/minus.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractExternalDataOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataModel"
-            name="Subtract External"
+            name="Subtract"
             visible="true">
       </operation>
       <operation
@@ -662,6 +662,16 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DivideExternalDataOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataModel"
             name="Divide"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.externaldata"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusExternalDataOperation"
+            description="Add external data to a Dataset"
+            icon="icons/plus.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusExternalDataOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataModel"
+            name="Add"
             visible="true">
       </operation>
    </extension>

@@ -9,16 +9,17 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
+import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
 public class AddExternalDataOperation extends
-		OperateOnExternalDataAbstractOperation {
+		OperateOnExternalDataAbstractOperation<ExternalDataModel, OperationData> {
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processin.operations.externalData.AddExternalDataOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.externalData.AddExternalDataOperation";
 	}
 
 	@Override

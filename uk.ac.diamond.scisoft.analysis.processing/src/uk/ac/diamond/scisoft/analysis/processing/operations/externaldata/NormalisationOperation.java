@@ -10,12 +10,13 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
+import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
 @Atomic
-public class NormalisationOperation extends OperateOnExternalDataAbstractOperation {
+public class NormalisationOperation extends OperateOnExternalDataAbstractOperation<ExternalDataModel, OperationData> {
 
 	@Override
 	public String getId() {

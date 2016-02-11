@@ -26,7 +26,7 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
-public abstract class OperateOnExternalDataAbstractOperation extends
+public abstract class OperateOnExternalDataAbstractOperation<T extends ExternalDataModel, D extends OperationData> extends
 		AbstractOperation<ExternalDataModel, OperationData> {
 	
 	@Override

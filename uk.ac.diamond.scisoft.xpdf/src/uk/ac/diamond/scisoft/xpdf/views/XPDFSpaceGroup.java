@@ -67,8 +67,8 @@ class XPDFSpaceGroup {
 		// Also generate the mapping between rhombohedral and hexagonal groups
 		hexagonalRhombohedralGroupMap = new HashMap<Integer, Integer>();
 		for (int i = 0; i < nGroups-nGroupsFedorov; i++) {
-			hexagonalRhombohedralGroupMap.put(rhombGroups[i], nGroupsFedorov+i);
-			hexagonalRhombohedralGroupMap.put(nGroupsFedorov+i, rhombGroups[i]);
+			hexagonalRhombohedralGroupMap.put(rhombGroups[i], nGroupsFedorov+1+i);
+			hexagonalRhombohedralGroupMap.put(nGroupsFedorov+1+i, rhombGroups[i]);
 		}
 	}
 	
@@ -81,7 +81,7 @@ class XPDFSpaceGroup {
 	 * 		the rhombohedral equivalent psuedo-space group, if it exists, else this.
 	 */
 	public XPDFSpaceGroup asRhombohedral() {
-		if (Arrays.asList(rhombGroups).contains(this.number)) {
+		if (this.hasRhombohedral()) {
 			return groups[hexagonalRhombohedralGroupMap.get(number)];
 		}
 		return this;
@@ -96,10 +96,28 @@ class XPDFSpaceGroup {
 	 * 		the hexagonal equivalent space group, if it applicable, else this.
 	 */
 	public XPDFSpaceGroup asHexagonal() {
-		if (this.number > nGroupsFedorov) {
+		if (this.isRhombohedral()) {
 			return groups[hexagonalRhombohedralGroupMap.get(number)];
 		}
 		return this;
+	}
+	
+	/**
+	 * Returns whether the space group has an alternative rhombohedral basis
+	 * @return
+	 * 		does this space group have a rhombohedral basis, and is it itself in the hexagonal basis
+	 */
+	public boolean hasRhombohedral() {
+		return Arrays.asList(rhombGroups).contains(this.number); 
+	}
+	
+	/**
+	 * Returns whether the space group is in a rhombohedral basis
+	 * @return
+	 * 		Returns whether the space group is a trigonal group represented in a rhombohedral basis 
+	 */
+	public boolean isRhombohedral() {
+		return this.number > nGroupsFedorov;
 	}
 	
 	private static final String[] names = {

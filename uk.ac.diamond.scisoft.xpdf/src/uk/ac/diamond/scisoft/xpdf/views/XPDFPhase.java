@@ -93,7 +93,21 @@ public class XPDFPhase {
 	public void setCrystalSystem(CrystalSystem inSystem) {
 		if (system != inSystem) {
 			system = inSystem;
-			setSpaceGroup(CrystalSystem.lowestGroups[system.getOrdinal()]);
+			// Check if the space group is a rhombohedral pseudo-space group,
+			// and check that we are changing to the hexagonal crystal system,
+			// that is, the crystal system of its alternative basis.
+			if (spaceGroup.isRhombohedral() && spaceGroup.asHexagonal().getSystem() == inSystem) {
+				setSpaceGroup(spaceGroup.asHexagonal());
+			} else
+				// Check if the space group has an alternative rhombohedral
+				// basis, and that we are changing the crystal system to the
+				// rhombohedral lattice, that is the same system as the
+				// alternative representation
+				if (spaceGroup.hasRhombohedral() && spaceGroup.asRhombohedral().getSystem() == inSystem) {
+					setSpaceGroup(spaceGroup.asRhombohedral());
+			} else {
+					setSpaceGroup(CrystalSystem.lowestGroups[system.getOrdinal()]);
+			}
 		}
 	}
 	
@@ -119,6 +133,10 @@ public class XPDFPhase {
 				if (CrystalSystem.get(i).getGroups().contains(this.spaceGroup))
 					this.setCrystalSystem(CrystalSystem.get(i));
 		}
+	}
+	
+	public void setSpaceGroup(XPDFSpaceGroup spaceGroup) {
+		this.setSpaceGroup(spaceGroup.getNumber());
 	}
 	
 	public XPDFSpaceGroup getSpaceGroup() {

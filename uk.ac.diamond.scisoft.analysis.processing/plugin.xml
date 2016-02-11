@@ -638,10 +638,40 @@
             category="uk.ac.diamond.scisoft.analysis.processing.externaldata"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyExternalDataOperation"
             description="Multiply dataset by external value"
-            icon="icons/decolor.png"
+            icon="icons/blue-cross.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyExternalDataOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataModel"
             name="Multiply"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.externaldata"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.AddExternalDataOperation"
+            description="Add an external value to dataset"
+            icon="icons/plus.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.AddExternalDataOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataModel"
+            name="Add"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.externaldata"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractExternalDataOperation"
+            description="Subtract external data from a dataset"
+            icon="icons/minus.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractExternalDataOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataModel"
+            name="Subtract"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.externaldata"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.NormalisationOperation"
+            description="Divide dataset by external value"
+            icon="icons/yellow-divide.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DivideExternalDataOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataModel"
+            name="Divide"
             visible="true">
       </operation>
    </extension>

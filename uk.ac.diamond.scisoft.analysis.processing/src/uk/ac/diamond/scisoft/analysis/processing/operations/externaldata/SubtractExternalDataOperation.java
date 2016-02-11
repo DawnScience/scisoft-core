@@ -1,5 +1,5 @@
 /*-
- * Copyright 2015 Diamond Light Source Ltd.
+ * Copyright 2016 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,24 +9,21 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
-import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
-@Atomic
-public class NormalisationOperation extends OperateOnExternalDataAbstractOperation {
+public class SubtractExternalDataOperation extends
+		OperateOnExternalDataAbstractOperation {
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.NormalisationOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractExternalDataOperation";
 	}
 
 	@Override
 	protected Dataset doMathematics(Dataset a, double b) {
-		return ErrorPropagationUtils.divideWithUncertainty(a, b);
+		return ErrorPropagationUtils.subtractWithUncertainty(a, b);
 	}
 
-
-	
 }

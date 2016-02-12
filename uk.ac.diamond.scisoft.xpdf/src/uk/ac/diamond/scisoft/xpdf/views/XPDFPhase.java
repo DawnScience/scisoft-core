@@ -97,14 +97,14 @@ public class XPDFPhase {
 			// and check that we are changing to the hexagonal crystal system,
 			// that is, the crystal system of its alternative basis.
 			if (spaceGroup.isRhombohedral() && spaceGroup.asHexagonal().getSystem() == inSystem) {
-				setSpaceGroup(spaceGroup.asHexagonal());
+				unitCelltoHexagonal();
 			} else
 				// Check if the space group has an alternative rhombohedral
 				// basis, and that we are changing the crystal system to the
 				// rhombohedral lattice, that is the same system as the
 				// alternative representation
 				if (spaceGroup.hasRhombohedral() && spaceGroup.asRhombohedral().getSystem() == inSystem) {
-					setSpaceGroup(spaceGroup.asRhombohedral());
+					unitCelltoRhombohedral();
 			} else {
 					setSpaceGroup(CrystalSystem.lowestGroups[system.getOrdinal()]);
 			}
@@ -121,22 +121,15 @@ public class XPDFPhase {
 	 * 					the space group structure to set
 	 */
 	public void setSpaceGroup(int spaceGroupIndex) {
-		// If we set a space group, the phase must be crystalline
-		this.setForm(XPDFPhaseForm.get(XPDFPhaseForm.Forms.CRYSTALLINE));
-
-		if (spaceGroupIndex >= 0 && spaceGroupIndex <= XPDFSpaceGroup.nGroups) {
-			this.spaceGroup = XPDFSpaceGroup.get(spaceGroupIndex);
-
-		if (spaceGroupIndex >= 1 && spaceGroupIndex <= XPDFSpaceGroup.nGroups)
-			// Find and set the crystal system, too
-			for (int i = 0; i < CrystalSystem.nSystems; i++)
-				if (CrystalSystem.get(i).getGroups().contains(this.spaceGroup))
-					this.setCrystalSystem(CrystalSystem.get(i));
-		}
+		this.setSpaceGroup(XPDFSpaceGroup.get(spaceGroupIndex));
 	}
 	
 	public void setSpaceGroup(XPDFSpaceGroup spaceGroup) {
-		this.setSpaceGroup(spaceGroup.getNumber());
+		// If we set a space group, the phase must be crystalline
+		this.setForm(XPDFPhaseForm.get(XPDFPhaseForm.Forms.CRYSTALLINE));
+
+		this.spaceGroup = spaceGroup;
+		this.system = spaceGroup.getSystem();
 	}
 	
 	public XPDFSpaceGroup getSpaceGroup() {
@@ -232,26 +225,50 @@ public class XPDFPhase {
 		return (comment != null) ? comment : "";
 	}
 
+	/**
+	 * Changes the present unit cell from hexagonal to rhombohedral.
+	 * <p> 
+	 * Changes the unit cell parameters from a hexagonal basis
+	 * (aac 90,90,120)to a rhombohedral basis (aaa, ααα), and sets the space
+	 * group to the rhombohedral equivalent.
+	 */
+	private void unitCelltoRhombohedral() {
+		setSpaceGroup(spaceGroup.asRhombohedral());
+
+		double ah = unitCellLengths[0], c = unitCellLengths[2];
+		// Convert them to the squared lengths
+		ah *= ah;
+		c *= c;
+		// Squared rhombohedral unit cell edge length 
+		double ar = ah/3 + c/9;
+		double alpha = Math.toDegrees( Math.acos((-ah/6 + c/9)/ar) );
+		// Make ar the length
+		ar = Math.sqrt(ar);
+		unitCellLengths[0] = unitCellLengths[1] = unitCellLengths[2] = ar;
+		unitCellDegrees[0] = unitCellDegrees[1] = unitCellDegrees[2] = alpha;
+	}
+	/**
+	 * Changes the present unit cell from rhombohedral to hexagonal.
+	 * <p> 
+	 * Changes the unit cell parameters from a rhombohedral basis (aaa, ααα)
+	 * to a hexagonal basis (aac 90,90,120), and sets the space
+	 * group to the hexagonal equivalent.
+	 */
+	private void unitCelltoHexagonal() {
+		setSpaceGroup(spaceGroup.asHexagonal());
+
+		double ar = unitCellLengths[0];
+		double cosAlpha = Math.cos(Math.toRadians(unitCellDegrees[0]));
+		// Convert to the squared length
+		ar *= ar;
+		// Calculate the squared unit cell lengths
+		double ah = 2*ar*(1-cosAlpha);
+		double c = 3*ar*(1+2*cosAlpha);
+		ah = Math.sqrt(ah);
+		c = Math.sqrt(c);
+		unitCellLengths[0] = unitCellLengths[1] = ah;
+		unitCellLengths[2] = c;
+		unitCellDegrees[0] = unitCellDegrees[1] = 90.0;
+		unitCellDegrees[2] = 120;
+	}
 }				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				

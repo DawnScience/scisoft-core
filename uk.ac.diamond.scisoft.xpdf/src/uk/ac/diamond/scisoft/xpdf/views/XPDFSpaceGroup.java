@@ -11,13 +11,14 @@ package uk.ac.diamond.scisoft.xpdf.views;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 class XPDFSpaceGroup {
 
 	private int number;
 	private static XPDFSpaceGroup[] groups;
-	static final int[] rhombGroups = {146, 148, 155, 160, 161, 166, 167};
+	static final Integer[] rhombGroups = {146, 148, 155, 160, 161, 166, 167};
 	static final int nGroupsFedorov = 230;
 	static final int nGroups = nGroupsFedorov + rhombGroups.length;
 	private static Map<Integer, Integer> hexagonalRhombohedralGroupMap = null;
@@ -108,6 +109,8 @@ class XPDFSpaceGroup {
 	 * 		does this space group have a rhombohedral basis, and is it itself in the hexagonal basis
 	 */
 	public boolean hasRhombohedral() {
+		List<Integer> rhombList = Arrays.asList(rhombGroups);
+		
 		return Arrays.asList(rhombGroups).contains(this.number); 
 	}
 	

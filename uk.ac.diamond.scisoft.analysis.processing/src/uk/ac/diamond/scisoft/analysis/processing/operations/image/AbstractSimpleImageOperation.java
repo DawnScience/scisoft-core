@@ -22,8 +22,8 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.utils.OperationServi
 
 public abstract class AbstractSimpleImageOperation <T extends IOperationModel> extends AbstractOperation<IOperationModel, OperationData> {
 
-	private IImageFilterService imageFilterService;
-	private IImageTransform imageTransformService;
+	protected IImageFilterService imageFilterService;
+	protected IImageTransform imageTransformService;
 
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		if (imageFilterService == null)

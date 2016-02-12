@@ -35,7 +35,6 @@ import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
-import uk.ac.diamond.scisoft.analysis.crystallography.UnitCell;
 import uk.ac.diamond.scisoft.analysis.dataset.function.BicubicInterpolator;
 import uk.ac.diamond.scisoft.analysis.io.NexusHDF5Loader;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
@@ -66,17 +65,36 @@ public class MillerSpaceMapper {
 	private String samplePath;
 	private String attenuatorPath;
 	private MillerSpaceMapperBean bean;
+
+	private double[] qDel; // sides of voxels in q space
+	private double[] qMin; // minimum
+	private double[] qMax; // maximum
+	private int[] qShape;
+
 	private double[] hDel; // sides of voxels in Miller space
 	private double[] hMin; // minimum
 	private double[] hMax; // maximum
 	private int[] hShape;
+
 	private boolean findImageBB; // find bounding box for image
 	private boolean reduceToNonZeroBB; // reduce data non-zero only
-	private int[] min;
-	private int[] max;
+	private int[] sMin; // shape min and max 
+	private int[] sMax;
 	private double scale; // image upsampling factor
 
 	private PixelSplitter splitter;
+
+	private double[] vDel;
+	private double[] vMin;
+	private double[] vMax;
+
+	private boolean hasDeleted;
+
+	private static final String VOLUME_NAME = "volume";
+	private static final String MILLER_VOLUME_DATA_PATH = "/entry1/reciprocal_space";
+	private static final String[] MILLER_VOLUME_AXES = new String[] {"h-axis", "k-axis", "l-axis"};
+	private static final String Q_VOLUME_DATA_PATH = "/entry1/q_space";
+	private static final String[] Q_VOLUME_AXES = new String[] {"x-axis", "y-axis", "z-axis"};
 
 	/**
 	 * This does not split pixel but places its value in the nearest voxel
@@ -274,6 +292,20 @@ public class MillerSpaceMapper {
 	}
 
 	/**
+	 * Set q space bounding box parameters
+	 * @param qShape shape of volume in Miller space
+	 * @param qStart starting coordinates of volume
+	 * @param qStop end coordinates
+	 * @param qDelta lengths of voxel sides
+	 */
+	public void setQSpaceBoundingBox(int[] qShape, double[] qStart, double[] qStop, double[] qDelta) {
+		this.qShape = qShape;
+		qMin = qStart;
+		qMax = qStop;
+		qDel = qDelta;
+	}
+
+	/**
 	 * Set to reduce output to sub-volume with non-zero data
 	 * @param reduceToNonZero
 	 */
@@ -297,6 +329,19 @@ public class MillerSpaceMapper {
 		this.splitter = splitter;
 	}
 
+	private int[] copyParameters(boolean mapQ) {
+		if (mapQ) {
+			vDel = qDel;
+			vMin = qMin;
+			vMax = qMax;
+			return qShape;
+		}
+		vDel = hDel;
+		vMin = hMin;
+		vMax = hMax;
+		return hShape;
+	}
+
 	/**
 	 * Map images from given Nexus file to a volume in Miller (aka HKL) space
 	 * @param filePath path to Nexus file
@@ -304,47 +349,78 @@ public class MillerSpaceMapper {
 	 * @throws ScanFileHolderException
 	 */
 	public Dataset mapToMillerSpace(String filePath) throws ScanFileHolderException {
+		if (hDel == null) {
+			throw new IllegalStateException("Miller space parameters have not been defined");
+		}
+		return mapToASpace(false, filePath);
+	}
+
+	/**
+	 * Map images from given Nexus file to a volume in q space
+	 * @param filePath path to Nexus file
+	 * @return dataset
+	 * @throws ScanFileHolderException
+	 */
+	public Dataset mapToQSpace(String filePath) throws ScanFileHolderException {
+		if (qDel == null) {
+			throw new IllegalStateException("q space parameters have not been defined");
+		}
+		return mapToASpace(true, filePath);
+	}
+
+	/**
+	 * Map images from given Nexus file to a volume in q space
+	 * @param mapQ
+	 * @param filePath path to Nexus file
+	 * @return dataset
+	 * @throws ScanFileHolderException
+	 */
+	private Dataset mapToASpace(boolean mapQ, String filePath) throws ScanFileHolderException {
+		int[] vShape = copyParameters(mapQ);
 		NexusHDF5Loader l = new NexusHDF5Loader();
 		l.setFile(filePath);
 		Tree tree = l.loadFile().getTree();
 		PositionIterator[] iters = getPositionIterators(tree);
-
+	
 		if (findImageBB) {
-			Arrays.fill(hMin, Double.POSITIVE_INFINITY);
-			Arrays.fill(hMax, Double.NEGATIVE_INFINITY);
-			findBoundingBox(tree, iters);
-			System.err.println("Extent of Miller space was found to be " + Arrays.toString(hMin) + " to " + Arrays.toString(hMax));
-			System.err.println("with shape = " + Arrays.toString(hShape));
+			Arrays.fill(vMin, Double.POSITIVE_INFINITY);
+			Arrays.fill(vMax, Double.NEGATIVE_INFINITY);
+
+			findBoundingBoxes(tree, iters);
+
+			System.err.println("Extent of the space was found to be " + Arrays.toString(vMin) + " to " + Arrays.toString(vMax));
+			System.err.println("with shape = " + Arrays.toString(vShape));
 		}
 
 		if (reduceToNonZeroBB) {
-			min = hShape.clone();
-			max = new int[3];
-			Arrays.fill(max, -1);
+			sMin = vShape.clone();
+			sMax = new int[3];
+			Arrays.fill(sMax, -1);
 		}
 
-		DoubleDataset map = (DoubleDataset) DatasetFactory.zeros(hShape, Dataset.FLOAT64);
-		DoubleDataset weight = (DoubleDataset) DatasetFactory.zeros(hShape, Dataset.FLOAT64);
+		DoubleDataset map = (DoubleDataset) DatasetFactory.zeros(vShape, Dataset.FLOAT64);
+		DoubleDataset weight = (DoubleDataset) DatasetFactory.zeros(vShape, Dataset.FLOAT64);
 
-		mapToMillerSpace(tree, iters, map, weight);
+		mapToASpace(mapQ, tree, iters, map, weight);
+
 		Maths.dividez(map, weight, map); // normalize by tally
-
+	
 		if (reduceToNonZeroBB) {
-			System.err.println("Reduced to non-zero bounding box: " + Arrays.toString(min) + " to " + Arrays.toString(max));
+			System.err.println("Reduced to non-zero bounding box: " + Arrays.toString(sMin) + " to " + Arrays.toString(sMax));
 			for (int i = 0; i < 3; i++) {
-				hMin[i] += min[i]*hDel[i];
-				max[i]++;
-				hShape[i] = max[i] - min[i];
+				vMin[i] += sMin[i]*vDel[i];
+				sMax[i]++;
+				vShape[i] = sMax[i] - sMin[i];
 			}
-			System.err.println("so now start = " + Arrays.toString(hMin) + " for shape = " + Arrays.toString(hShape));
-			map = (DoubleDataset) map.getSlice(min, max, null);
+			System.err.println("so now start = " + Arrays.toString(qMin) + " for shape = " + Arrays.toString(vShape));
+			map = (DoubleDataset) map.getSlice(sMin, sMax, null);
 		}
 		return map;
 	}
 
-	private void mapToMillerSpace(Tree tree, PositionIterator[] iters, DoubleDataset map, DoubleDataset weight) throws ScanFileHolderException {
+	private void mapToASpace(boolean mapQ, Tree tree, PositionIterator[] iters, DoubleDataset map, DoubleDataset weight) throws ScanFileHolderException {
 		int[] dshape = iters[0].getShape();
-
+	
 		Dataset trans = NexusTreeUtils.parseAttenuator(attenuatorPath, tree);
 		if (trans != null && trans.getSize() != 1) {
 			int[] tshape = trans.getShapeRef();
@@ -352,7 +428,7 @@ public class MillerSpaceMapper {
 				throw new ScanFileHolderException("Attenuator transmission shape does not match detector or sample scan shape");
 			}
 		}
-
+	
 		// factor in count time too
 		Dataset time = NexusTreeUtils.getDataset(timePath, tree);
 		if (time != null) {
@@ -365,12 +441,12 @@ public class MillerSpaceMapper {
 			}
 			trans = trans == null ? time : Maths.multiply(trans, time);
 		}
-
+	
 		DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
 		ILazyDataset images = node.getDataset();
 		int rank = images.getRank();
 		int[] ishape = Arrays.copyOfRange(images.getShape(), rank - 2, rank);
-
+	
 		BicubicInterpolator upSampler = null;
 		if (scale != 1) {
 			for (int i = 0; i < ishape.length; i++) {
@@ -379,10 +455,10 @@ public class MillerSpaceMapper {
 			upSampler = new BicubicInterpolator(ishape);
 		}
 
-		mapImages(tree, trans, images, iters, map, weight, ishape, upSampler);
+		mapImages(mapQ, tree, trans, images, iters, map, weight, ishape, upSampler);
 	}
 
-	private void findBoundingBox(Tree tree, PositionIterator[] iters) {
+	private void findBoundingBoxes(Tree tree, PositionIterator[] iters) {
 		PositionIterator diter = iters[0];
 		PositionIterator iter = iters[1];
 		int[] dpos = diter.getPos();
@@ -397,64 +473,108 @@ public class MillerSpaceMapper {
 			}
 			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, dpos);
 			DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
-			UnitCell ucell = sample.getUnitCell();
 			QSpace qspace = new QSpace(dp, env);
-			MillerSpace mspace = new MillerSpace(ucell, env.getOrientation());
+			if (qDel != null) {
+				calcVolume(qMin, qMax, qspace, null);
+			}
 
-			calcMillerVolume(hMin, hMax, qspace, mspace);
+			if (hDel != null) {
+				MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
+				calcVolume(hMin, hMax, qspace, mspace);
+			}
 		}
-		for (int i = 0; i < 3; i++) {
-			hMin[i] = hDel[i] * Math.floor(hMin[i] / hDel[i]);
-			hMax[i] = hDel[i] * (Math.ceil(hMax[i] / hDel[i]) + 1);
-			hShape[i] = (int) (Math.floor((hMax[i] - hMin[i] + hDel[i]) / hDel[i]));
+
+		if (qDel != null) {
+			for (int i = 0; i < 3; i++) {
+				qMin[i] = qDel[i] * Math.floor(qMin[i] / qDel[i]);
+				qMax[i] = qDel[i] * (Math.ceil(qMax[i] / qDel[i]) + 1);
+				qShape[i] = (int) (Math.floor((qMax[i] - qMin[i] + qDel[i]) / qDel[i]));
+			}
+		}
+
+		if (hDel != null) {
+			for (int i = 0; i < 3; i++) {
+				hMin[i] = hDel[i] * Math.floor(hMin[i] / hDel[i]);
+				hMax[i] = hDel[i] * (Math.ceil(hMax[i] / hDel[i]) + 1);
+				hShape[i] = (int) (Math.floor((hMax[i] - hMin[i] + hDel[i]) / hDel[i]));
+			}
 		}
 	}
 
-	private void calcMillerVolume(double[] mBeg, double[] mEnd, QSpace qspace, MillerSpace mspace) {
+	private void calcVolume(double[] vBeg, double[] vEnd, QSpace qspace, MillerSpace mspace) {
 		Vector3d q = new Vector3d();
 		Vector3d m = new Vector3d();
 		DetectorProperties dp = qspace.getDetectorProperties();
 		int x = dp.getPx();
 		int y = dp.getPy();
-	
-		qspace.qFromPixelPosition(0, 0, q);
-		mspace.h(q, null, m);
-		minMax(mBeg, mEnd, m);
-	
-		qspace.qFromPixelPosition(x/2, 0, q);
-		mspace.h(q, null, m);
-		minMax(mBeg, mEnd, m);
-	
-		qspace.qFromPixelPosition(x, 0, q);
-		mspace.h(q, null, m);
-		minMax(mBeg, mEnd, m);
-	
-		qspace.qFromPixelPosition(0, y/2, q);
-		mspace.h(q, null, m);
-		minMax(mBeg, mEnd, m);
-	
-		qspace.qFromPixelPosition(x/2, y/2, q);
-		mspace.h(q, null, m);
-		minMax(mBeg, mEnd, m);
-	
-		qspace.qFromPixelPosition(x, y/2, q);
-		mspace.h(q, null, m);
-		minMax(mBeg, mEnd, m);
-	
-		qspace.qFromPixelPosition(0, y, q);
-		mspace.h(q, null, m);
-		minMax(mBeg, mEnd, m);
-	
-		qspace.qFromPixelPosition(x/2, y, q);
-		mspace.h(q, null, m);
-		minMax(mBeg, mEnd, m);
-	
-		qspace.qFromPixelPosition(x, y, q);
-		mspace.h(q, null, m);
-		minMax(mBeg, mEnd, m);
+
+		if (mspace == null) {
+			qspace.qFromPixelPosition(0, 0, q);
+			minMax(vBeg, vEnd, q);
+		
+			qspace.qFromPixelPosition(x/2, 0, q);
+			minMax(vBeg, vEnd, q);
+		
+			qspace.qFromPixelPosition(x, 0, q);
+			minMax(vBeg, vEnd, q);
+		
+			qspace.qFromPixelPosition(0, y/2, q);
+			minMax(vBeg, vEnd, q);
+		
+			qspace.qFromPixelPosition(x/2, y/2, q);
+			minMax(vBeg, vEnd, q);
+		
+			qspace.qFromPixelPosition(x, y/2, q);
+			minMax(vBeg, vEnd, q);
+		
+			qspace.qFromPixelPosition(0, y, q);
+			minMax(vBeg, vEnd, q);
+		
+			qspace.qFromPixelPosition(x/2, y, q);
+			minMax(vBeg, vEnd, q);
+		
+			qspace.qFromPixelPosition(x, y, q);
+			minMax(vBeg, vEnd, q);
+		} else {
+			qspace.qFromPixelPosition(0, 0, q);
+			mspace.h(q, null, m);
+			minMax(vBeg, vEnd, m);
+
+			qspace.qFromPixelPosition(x / 2, 0, q);
+			mspace.h(q, null, m);
+			minMax(vBeg, vEnd, m);
+
+			qspace.qFromPixelPosition(x, 0, q);
+			mspace.h(q, null, m);
+			minMax(vBeg, vEnd, m);
+
+			qspace.qFromPixelPosition(0, y / 2, q);
+			mspace.h(q, null, m);
+			minMax(vBeg, vEnd, m);
+
+			qspace.qFromPixelPosition(x / 2, y / 2, q);
+			mspace.h(q, null, m);
+			minMax(vBeg, vEnd, m);
+
+			qspace.qFromPixelPosition(x, y / 2, q);
+			mspace.h(q, null, m);
+			minMax(vBeg, vEnd, m);
+
+			qspace.qFromPixelPosition(0, y, q);
+			mspace.h(q, null, m);
+			minMax(vBeg, vEnd, m);
+
+			qspace.qFromPixelPosition(x / 2, y, q);
+			mspace.h(q, null, m);
+			minMax(vBeg, vEnd, m);
+
+			qspace.qFromPixelPosition(x, y, q);
+			mspace.h(q, null, m);
+			minMax(vBeg, vEnd, m);
+		}
 	}
 
-	private void mapImages(Tree tree, Dataset trans, ILazyDataset images, PositionIterator[] iters,
+	private void mapImages(boolean mapQ, Tree tree, Dataset trans, ILazyDataset images, PositionIterator[] iters,
 			DoubleDataset map, DoubleDataset weight, int[] ishape, BicubicInterpolator upSampler) {
 		PositionIterator diter = iters[0];
 		PositionIterator iter = iters[1];
@@ -465,6 +585,7 @@ public class MillerSpaceMapper {
 		int[] stop = iter.getStop().clone();
 		int rank  = pos.length;
 		int srank = rank - 2;
+		MillerSpace mspace = null;
 
 		while (iter.hasNext() && diter.hasNext()) {
 			DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
@@ -479,9 +600,10 @@ public class MillerSpaceMapper {
 			}
 			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, dpos);
 			DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
-			UnitCell ucell = sample.getUnitCell();
 			QSpace qspace = new QSpace(dp, env);
-			MillerSpace mspace = new MillerSpace(ucell, env.getOrientation());
+			if (!mapQ) {
+				mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
+			}
 			Dataset image = DatasetUtils.convertToDataset(images.getSlice(pos, stop, null));
 			if (trans != null) {
 				if (trans.getSize() == 1) {
@@ -514,36 +636,54 @@ public class MillerSpaceMapper {
 	}
 
 	private void mapImage(int[] s, QSpace qspace, MillerSpace mspace, Dataset image, DoubleDataset map, DoubleDataset weight) {
-		int[] hpos = new int[3]; // voxel position
+		int[] pos = new int[3]; // voxel position
 		Vector3d q = new Vector3d();
-		Vector3d h = new Vector3d();
-		Vector3d dh = new Vector3d(); // delta in h
-
 		double value;
-//		double fkmod = 1e-6*qspace.getInitialWavevector().length();
 
-		for (int y = 0; y < s[0]; y++) {
-			for (int x = 0; x < s[1]; x++) {
-				qspace.qFromPixelPosition(x + 0.5, y + 0.5, q);
+		if (mspace == null) {
+			Vector3d dq = new Vector3d(); // delta in q
 
-				mspace.h(q, null, h);
-
-				if (!hToVoxel(h, dh, hpos))
-					continue;
-
-				value = image.getDouble(y, x);
-				if (value > 0) {
-					value /= qspace.calculateSolidAngle(x, y);
-					if (reduceToNonZeroBB) {
-						minMax(min, max, hpos);
+			for (int y = 0; y < s[0]; y++) {
+				for (int x = 0; x < s[1]; x++) {
+					value = image.getDouble(y, x);
+					if (value > 0) {
+						qspace.qFromPixelPosition(x + 0.5, y + 0.5, q);
+	
+						if (convertToVoxel(q, dq, pos)) {
+							value /= qspace.calculateSolidAngle(x, y);
+							if (reduceToNonZeroBB) {
+								minMax(sMin, sMax, pos);
+							}
+							splitter.splitValue(map, weight, vDel, dq, pos, value);
+						}
 					}
-					splitter.splitValue(map, weight, hDel, dh, hpos, value);
+				}
+			}
+		} else {
+			Vector3d h = new Vector3d();
+			Vector3d dh = new Vector3d(); // delta in h
+
+			for (int y = 0; y < s[0]; y++) {
+				for (int x = 0; x < s[1]; x++) {
+					value = image.getDouble(y, x);
+					if (value > 0) {
+						qspace.qFromPixelPosition(x + 0.5, y + 0.5, q);
+	
+						mspace.h(q, null, h);
+						if (convertToVoxel(h, dh, pos)) {
+							value /= qspace.calculateSolidAngle(x, y);
+							if (reduceToNonZeroBB) {
+								minMax(sMin, sMax, pos);
+							}
+							splitter.splitValue(map, weight, vDel, dh, pos, value);
+						}
+					}
 				}
 			}
 		}
 	}
 
-	private static void minMax(int[] min, int[] max, int[] p) {
+	private static void minMax(final int[] min, final int[] max, final int[] p) {
 		min[0] = Math.min(min[0], p[0]);
 		max[0] = Math.max(max[0], p[0]);
 		min[1] = Math.min(min[1], p[1]);
@@ -553,39 +693,39 @@ public class MillerSpaceMapper {
 	}
 
 	/**
-	 * Map from h to volume coords
-	 * @param h Miller indices
-	 * @param deltaH delta in Miller indices
+	 * Map from v to volume coords
+	 * @param v vector
+	 * @param deltaV delta in discrete space
 	 * @param pos volume coords
 	 * @return true if within bounds
 	 */
-	private boolean hToVoxel(final Vector3d h, final Vector3d deltaH, int[] pos) {
+	private boolean convertToVoxel(final Vector3d v, final Vector3d deltaV, final int[] pos) {
 		if (!findImageBB) {
-			if (h.x < hMin[0] || h.x >= hMax[0] || h.y < hMin[1] || h.y >= hMax[1] || 
-					h.z < hMin[2] || h.z >= hMax[2]) {
+			if (v.x < vMin[0] || v.x >= vMax[0] || v.y < vMin[1] || v.y >= vMax[1] || 
+					v.z < vMin[2] || v.z >= vMax[2]) {
 				return false;
 			}
 		}
 
 		int p;
-		double dh, hd;
+		double dv, vd;
 
-		dh = h.x - hMin[0];
-		hd = hDel[0];
-		p = (int) Math.floor(dh / hd);
-		deltaH.x = dh - p * hd;
+		dv = v.x - vMin[0];
+		vd = vDel[0];
+		p = (int) Math.floor(dv / vd);
+		deltaV.x = dv - p * vd;
 		pos[0] = p;
 
-		dh = h.y - hMin[1];
-		hd = hDel[1];
-		p = (int) Math.floor(dh / hd);
-		deltaH.y = dh - p * hd;
+		dv = v.y - vMin[1];
+		vd = vDel[1];
+		p = (int) Math.floor(dv / vd);
+		deltaV.y = dv - p * vd;
 		pos[1] = p;
 
-		dh = h.z - hMin[2];
-		hd = hDel[2];
-		p = (int) Math.floor(dh / hd);
-		deltaH.z = dh - p * hd;
+		dv = v.z - vMin[2];
+		vd = vDel[2];
+		p = (int) Math.floor(dv / vd);
+		deltaV.z = dv - p * vd;
 		pos[2] = p;
 
 		return true;
@@ -596,7 +736,7 @@ public class MillerSpaceMapper {
 		d.setAbs(index, d.getAbs(index) + v);
 	}
 
-	private Dataset[] processBean() {
+	private Dataset[][] processBean() {
 		String instrumentPath = bean.getEntryPath() + Node.SEPARATOR + bean.getInstrumentName() + Node.SEPARATOR;
 		detectorPath = instrumentPath + bean.getDetectorName();
 		timePath = detectorPath + Node.SEPARATOR + "count_time";
@@ -605,35 +745,58 @@ public class MillerSpaceMapper {
 		samplePath = bean.getEntryPath() + Node.SEPARATOR + bean.getSampleName();
 		this.splitter = createSplitter(bean.getSplitterName(), bean.getSplitterParameter());
 
-		Dataset[] a = new Dataset[3];
-		double[] mStop = new double[3];
-		double[] mDelta = bean.getMillerStep();
-		if (mDelta == null || mDelta.length == 0) {
-			throw new IllegalArgumentException("At least one length must be specified");
-		} else if (mDelta.length == 1) {
-			double d = mDelta[0];
-			mDelta = new double[] {d, d, d};
-		} else if (mDelta.length == 2) {
-			double d = mDelta[1];
-			mDelta = new double[] {mDelta[0], d, d};
+		Dataset[][] a = new Dataset[2][];
+		double[] qDelta = bean.getQStep();
+		a[0] = new Dataset[3];
+		if (qDelta != null && qDelta.length > 0) {
+			double[] qStop = new double[3];
+			if (qDelta.length == 1) {
+				double d = qDelta[0];
+				qDelta = new double[] {d, d, d};
+			} else if (qDelta.length == 2) {
+				double d = qDelta[1];
+				qDelta = new double[] {qDelta[0], d, d};
+			}
+			int[] qShape = bean.getQShape();
+			double[] qStart = bean.getQStart();
+			if (qShape == null || qStart == null) {
+				findImageBB = true;
+				qShape = new int[3];
+				qStart = new double[3];
+			} else {
+				createQSpaceAxes(a[0], qShape, qStart, qStop, qDelta);
+			}
+			setQSpaceBoundingBox(qShape, qStart, qStop, qDelta);
 		}
-		int[] mShape = bean.getMillerShape();
-		double[] mStart = bean.getMillerStart();
-		if (mShape == null || mStart == null) {
-			findImageBB = true;
-			mShape = new int[3];
-			mStart = new double[3];
-		} else {
-			createAxes(a, mShape, mStart, mStop, mDelta);
+
+		a[1] = new Dataset[3];
+		double[] mDelta = bean.getMillerStep();
+		if (mDelta != null && mDelta.length > 0) {
+			double[] mStop = new double[3];
+			if (mDelta.length == 1) {
+				double d = mDelta[0];
+				mDelta = new double[] { d, d, d };
+			} else if (mDelta.length == 2) {
+				double d = mDelta[1];
+				mDelta = new double[] { mDelta[0], d, d };
+			}
+			int[] mShape = bean.getMillerShape();
+			double[] mStart = bean.getMillerStart();
+			if (mShape == null || mStart == null) {
+				findImageBB = true;
+				mShape = new int[3];
+				mStart = new double[3];
+			} else {
+				createMillerSpaceAxes(a[1], mShape, mStart, mStop, mDelta);
+			}
+			setMillerSpaceBoundingBox(mShape, mStart, mStop, mDelta);
 		}
 
 		setReduceToNonZeroData(bean.isReduceToNonZero());
 		setUpsamplingScale(bean.getScaleFactor());
-		setMillerSpaceBoundingBox(mShape, mStart, mStop, mDelta);
 
 		// TODO compensate for count_time and other optional stuff (ring current in NXinstrument / NXsource)
 		// output HKL list
-		// output q-space volume
 		// mask images
 		return a;
 	}
@@ -643,8 +806,12 @@ public class MillerSpaceMapper {
 	 * @throws ScanFileHolderException
 	 */
 	public void mapToVolumeFile() throws ScanFileHolderException {
-		
-		Dataset[] a = processBean();
+		hasDeleted = false; // reset state
+
+		Dataset[][] a = processBean();
+		if (qDel == null && hDel == null) {
+			throw new IllegalStateException("Both q space and Miller space parameters have not been defined");
+		}
 		String[] inputs = bean.getInputs();
 		String output = bean.getOutput();
 
@@ -659,52 +826,85 @@ public class MillerSpaceMapper {
 		}
 
 		if (findImageBB) {
-			Arrays.fill(hMin, Double.POSITIVE_INFINITY);
-			Arrays.fill(hMax, Double.NEGATIVE_INFINITY);
+			if (qDel != null) {
+				Arrays.fill(qMin, Double.POSITIVE_INFINITY);
+				Arrays.fill(qMax, Double.NEGATIVE_INFINITY);
+			}
+			if (hDel != null) {
+				Arrays.fill(hMin, Double.POSITIVE_INFINITY);
+				Arrays.fill(hMax, Double.NEGATIVE_INFINITY);
+			}
 
 			for (int i = 0; i < n; i++) {
-				findBoundingBox(trees[i], allIters[i]);
+				findBoundingBoxes(trees[i], allIters[i]);
 			}
-			System.err.println("Extent of Miller space was found to be " + Arrays.toString(hMin) + " to " + Arrays.toString(hMax));
-			System.err.println("with shape = " + Arrays.toString(hShape));
+
+			if (qDel != null) {
+				System.err.println("Extent of q space was found to be " + Arrays.toString(qMin) + " to " + Arrays.toString(qMax));
+				System.err.println("with shape = " + Arrays.toString(qShape));
+			}
+			if (hDel != null) {
+				System.err.println("Extent of Miller space was found to be " + Arrays.toString(hMin) + " to " + Arrays.toString(hMax));
+				System.err.println("with shape = " + Arrays.toString(hShape));
+			}
 		}
+
+		if (qDel != null) {
+			processTrees(true, trees, allIters, output, a[0]);
+		}
+		if (hDel != null) {
+			processTrees(false, trees, allIters, output, a[1]);
+		}
+	}
+
+	private void processTrees(boolean mapQ, Tree[] trees, PositionIterator[][] allIters, String output, Dataset[] a) throws ScanFileHolderException {
+		int[] vShape = copyParameters(mapQ);
 
 		if (reduceToNonZeroBB) {
-			min = hShape.clone();
-			max = new int[3];
-			Arrays.fill(max, -1);
+			sMin = vShape.clone();
+			sMax = new int[3];
+			Arrays.fill(sMax, -1);
 		}
+		String volPath = mapQ ? Q_VOLUME_DATA_PATH : MILLER_VOLUME_DATA_PATH;
 
 		try {
-			DoubleDataset map = (DoubleDataset) DatasetFactory.zeros(hShape, Dataset.FLOAT64);
-			DoubleDataset weight = (DoubleDataset) DatasetFactory.zeros(hShape, Dataset.FLOAT64);
+			DoubleDataset map = (DoubleDataset) DatasetFactory.zeros(vShape, Dataset.FLOAT64);
+			DoubleDataset weight = (DoubleDataset) DatasetFactory.zeros(vShape, Dataset.FLOAT64);
 
-			for (int i = 0; i < n; i++) {
+			for (int i = 0; i < trees.length; i++) {
 				Tree tree = trees[i];
-				mapToMillerSpace(tree, allIters[i], map, weight);
+				mapToASpace(mapQ, tree, allIters[i], map, weight);
 			}
 			Maths.dividez(map, weight, map); // normalize by tally
 
 			if (reduceToNonZeroBB) {
-				System.err.println("Reduced to non-zero bounding box: " + Arrays.toString(min) + " to " + Arrays.toString(max));
+				System.err.println("Reduced to non-zero bounding box: " + Arrays.toString(sMin) + " to " + Arrays.toString(sMax));
 				for (int i = 0; i < 3; i++) {
-					hMin[i] += min[i]*hDel[i];
-					max[i]++;
-					hShape[i] = max[i] - min[i];
+					vMin[i] += vMin[i]*vDel[i];
+					sMax[i]++;
+					vShape[i] = sMax[i] - sMin[i];
 				}
-				System.err.println("so now start = " + Arrays.toString(hMin) + " for shape = " + Arrays.toString(hShape));
-				map = (DoubleDataset) map.getSlice(min, max, null);
+				System.err.println("so now start = " + Arrays.toString(vMin) + " for shape = " + Arrays.toString(vShape));
+				map = (DoubleDataset) map.getSlice(sMin, sMax, null);
 			}
 
 			if (findImageBB) {
-				createAxes(a, hShape, hMin, null, hDel);
+				if (mapQ) {
+					createQSpaceAxes(a, vShape, vMin, null, vDel);
+				} else {
+					createMillerSpaceAxes(a, vShape, vMin, null, vDel);
+				}
 			}
-			saveVolume(output, map, a);
+			if (!hasDeleted) {
+				HDF5FileFactory.deleteFile(output);
+				hasDeleted = true;
+			}
+			saveVolume(output, volPath, map, a);
 		} catch (IllegalArgumentException | OutOfMemoryError e) {
 			System.err.println("There is not enough memory to do this all at once!");
 			System.err.println("Now attempting to segment volume");
 			if (findImageBB) {
-				createAxes(a, hShape, hMin, null, hDel);
+				createMillerSpaceAxes(a, vShape, vMin, null, vDel);
 			}
 
 			// unset these as code does not or should not handle them
@@ -715,10 +915,10 @@ public class MillerSpaceMapper {
 			DoubleDataset map = null;
 			DoubleDataset weight = null;
 			// find biggest size that fits
-			int[] tShape = hShape.clone();
+			int[] tShape = vShape.clone();
 			while (true) {
 				parts++;
-				tShape[0] = (hShape[0] + parts - 1)/parts;
+				tShape[0] = (vShape[0] + parts - 1)/parts;
 				if (tShape[0] == 1) { // maybe use other dimensions too(!)
 					break;
 				}
@@ -736,25 +936,37 @@ public class MillerSpaceMapper {
 				throw e;
 			}
 			System.out.println("Mapping in " + parts + " parts");
-			HDF5FileFactory.deleteFile(output);
+			if (!hasDeleted) {
+				HDF5FileFactory.deleteFile(output);
+				hasDeleted = true;
+			}
 
-			int[] cShape = hShape.clone();
+			int[] cShape = vShape.clone();
 			cShape[0] = 1;
-			LazyWriteableDataset lazy = HDF5Utils.createLazyDataset(output, "/entry1/data", "volume", hShape, null, cShape, Dataset.FLOAT64, null, false);
-			mapAndSaveInParts(trees, allIters, lazy, parts, map, weight);
+			LazyWriteableDataset lazy = HDF5Utils.createLazyDataset(output, volPath, VOLUME_NAME, vShape, null, cShape, Dataset.FLOAT64, null, false);
+			mapAndSaveInParts(mapQ, trees, allIters, lazy, parts, map, weight);
 
-			saveAxesAndAttributes(output, a);
+			saveAxesAndAttributes(output, volPath, a);
 		}
 	}
 
-	private static void createAxes(Dataset[] a, int[] mShape, double[] mStart, double[] mStop, double[] mDelta) {
-		for (int i = 0; i < a.length; i++) {
+	private static void createQSpaceAxes(Dataset[] a, int[] mShape, double[] mStart, double[] mStop, double[] mDelta) {
+		createAxes(Q_VOLUME_AXES, a, mShape, mStart, mStop, mDelta);
+	}
+
+	private static void createMillerSpaceAxes(Dataset[] a, int[] mShape, double[] mStart, double[] mStop, double[] mDelta) {
+		createAxes(MILLER_VOLUME_AXES, a, mShape, mStart, mStop, mDelta);
+	}
+
+	private static void createAxes(String[] names, Dataset[] a, int[] mShape, double[] mStart, double[] mStop, double[] mDelta) {
+		for (int i = 0; i < names.length; i++) {
 			double mbeg = mStart[i];
 			double mend = mbeg + mShape[i] * mDelta[i];
 			if (mStop != null) {
 				mStop[i] = mend;
 			}
 			a[i] = DatasetUtils.linSpace(mbeg, mend - mDelta[i], mShape[i], Dataset.FLOAT64);
+			a[i].setName(names[i]);
 			System.out.print("Axis " + i + ": " + mbeg);
 			if (mShape[i] > 1) {
 				System.out.print(" -> " + a[i].getDouble(mShape[i] - 1));
@@ -795,24 +1007,23 @@ public class MillerSpaceMapper {
 	/**
 	 * Save volume and its axes to a HDF5 file
 	 * @param file path for saving HDF5 file
+	 * @param volPath path to NXdata
 	 * @param v volume dataset
 	 * @param axes axes datasets
 	 * @throws ScanFileHolderException
 	 */
-	public static void saveVolume(String file, Dataset v, Dataset... axes) throws ScanFileHolderException {
-		HDF5FileFactory.deleteFile(file);
-		v.setName("volume");
-		HDF5Utils.writeDataset(file, "/entry1/data", v);
-		saveAxesAndAttributes(file, axes);
+	private static void saveVolume(String file, String volPath, Dataset v, Dataset... axes) throws ScanFileHolderException {
+		v.setName(VOLUME_NAME);
+		HDF5Utils.writeDataset(file, volPath, v);
+		saveAxesAndAttributes(file, volPath, axes);
 	}
 
-	private static final String[] AXIS_NAME = new String[] {"h", "k", "l"};
-
-	private static void saveAxesAndAttributes(String file, Dataset... axes) throws ScanFileHolderException {
+	private static void saveAxesAndAttributes(String file, String volPath, Dataset... axes) throws ScanFileHolderException {
+		String[] axisNames = new String[axes.length];
 		for (int i = 0; i < axes.length; i++) {
 			Dataset x = axes[i];
-			x.setName(AXIS_NAME[i] + "-axis");
-			HDF5Utils.writeDataset(file, "/entry1/data", x);
+			axisNames[i] = x.getName();
+			HDF5Utils.writeDataset(file, volPath, x);
 		}
 
 		List<Dataset> attrs = new ArrayList<>();
@@ -822,27 +1033,21 @@ public class MillerSpaceMapper {
 		a.setName("NX_class");
 		attrs.add(a);
 
-		a = DatasetFactory.createFromObject("volume");
+		a = DatasetFactory.createFromObject(VOLUME_NAME);
 		a.setName("signal");
 		attrs.add(a);
 
-		a = DatasetFactory.createFromObject(new String[] {"h-axis", "k-axis", "l-axis"});
+		a = DatasetFactory.createFromObject(axisNames);
 		a.setName("axes");
 		attrs.add(a);
 
-		a = DatasetFactory.createFromObject(0);
-		a.setName("h-axis_indices");
-		attrs.add(a);
+		for (int i = 0; i < axisNames.length; i++) {
+			a = DatasetFactory.createFromObject(i);
+			a.setName(axisNames[i] + "_indices");
+			attrs.add(a);
+		}
 
-		a = DatasetFactory.createFromObject(1);
-		a.setName("k-axis_indices");
-		attrs.add(a);
-
-		a = DatasetFactory.createFromObject(2);
-		a.setName("l-axis_indices");
-		attrs.add(a);
-
-		HDF5Utils.writeAttributes(file, "/entry1/data", attrs.toArray(new Dataset[attrs.size()]));
+		HDF5Utils.writeAttributes(file, volPath, attrs.toArray(new Dataset[attrs.size()]));
 	}
 
 	/**
@@ -854,22 +1059,22 @@ public class MillerSpaceMapper {
 	 * @param weight 
 	 * @throws ScanFileHolderException
 	 */
-	private void mapAndSaveInParts(Tree[] trees, PositionIterator[][] allIters, LazyWriteableDataset output, int parts, DoubleDataset map, DoubleDataset weight) throws ScanFileHolderException {
+	private void mapAndSaveInParts(boolean mapQ, Tree[] trees, PositionIterator[][] allIters, LazyWriteableDataset output, int parts, DoubleDataset map, DoubleDataset weight) throws ScanFileHolderException {
 		int n = trees.length;
 
 		SliceND slice = new SliceND(hShape, null, map.getShapeRef(), null);
 		int ml = map.getShapeRef()[0]; // length of first dimension
-		int[] hstart = slice.getStart();
-		int[] hstop = slice.getStop();
-		double oMin = hMin[0];
-		double oMax = hMax[0];
+		int[] vstart = slice.getStart();
+		int[] vstop = slice.getStop();
+		double oMin = vMin[0];
+		double oMax = vMax[0];
 
 		Tree tree;
 		PositionIterator[] iters;
 		for (int p = 0; p < (parts-1); p++) {
 			// shift min
-			hMin[0] = oMin + hstart[0] * hDel[0];
-			hMax[0] = hMin[0] + ml * hDel[0];
+			vMin[0] = oMin + vstart[0] * vDel[0];
+			vMax[0] = vMin[0] + ml * vDel[0];
 
 			for (int t = 0; t < n; t++) {
 				tree = trees[t];
@@ -902,7 +1107,7 @@ public class MillerSpaceMapper {
 					upSampler = new BicubicInterpolator(ishape);
 				}
 
-				mapImages(tree, trans, images, iters, map, weight, ishape, upSampler);
+				mapImages(mapQ, tree, trans, images, iters, map, weight, ishape, upSampler);
 			}
 			Maths.dividez(map, weight, map); // normalize by tally
 
@@ -914,17 +1119,17 @@ public class MillerSpaceMapper {
 			}
 			map.fill(0);
 			weight.fill(0);
-			hstart[0] = hstop[0];
-			hstop[0] = hstart[0] + ml;
+			vstart[0] = vstop[0];
+			vstop[0] = vstart[0] + ml;
 		}
 
 		// last part
-		hMin[0] = oMin + hstart[0] * hDel[0];
-		hMax[0] = oMax;
-		int hl = hShape[0];
-		boolean overflow = hstop[0] > hl;
+		vMin[0] = oMin + vstart[0] * vDel[0];
+		vMax[0] = oMax;
+		int vl = hShape[0];
+		boolean overflow = vstop[0] > vl;
 		if (overflow) {
-			hstop[0] = hl;
+			vstop[0] = vl;
 		}
 
 		for (int t = 0; t < n; t++) {
@@ -958,14 +1163,14 @@ public class MillerSpaceMapper {
 				upSampler = new BicubicInterpolator(ishape);
 			}
 
-			mapImages(tree, trans, images, iters, map, weight, ishape, upSampler);
+			mapImages(mapQ, tree, trans, images, iters, map, weight, ishape, upSampler);
 		}
 		Maths.dividez(map, weight, map); // normalize by tally
 
 		DoubleDataset tmap;
 		if (overflow) {
 			int[] tstop = map.getShape();
-			tstop[0] = hstop[0] - hstart[0];
+			tstop[0] = vstop[0] - vstart[0];
 			tmap = (DoubleDataset) map.getSliceView(null, tstop, null);
 			slice.getShape()[0] = tstop[0];
 		} else {
@@ -986,13 +1191,34 @@ public class MillerSpaceMapper {
 	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
 	 * @param p splitter parameter
 	 * @param scale upsampling factor
-	 * @param mShape shape of output volume
+	 * @param mShape shape of Miller space volume
 	 * @param mStart start coordinates in Miller space
 	 * @param mDelta sides of voxels in Miller space
 	 * @throws ScanFileHolderException
 	 */
 	public static void processVolume(String input, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double... mDelta) throws ScanFileHolderException {
-		setBean(I16MapperBean, input, output, splitter, p, scale, mShape, mStart, mDelta);
+		setBean(I16MapperBean, input, output, splitter, p, scale, mShape, mStart, mDelta, null, null, null);
+		MillerSpaceMapper mapper = new MillerSpaceMapper(I16MapperBean);
+		mapper.mapToVolumeFile();
+	}
+
+	/**
+	 * Process Nexus file for I16
+	 * @param input Nexus file
+	 * @param output name of HDF5 file to be created
+	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
+	 * @param p splitter parameter
+	 * @param scale upsampling factor
+	 * @param mShape shape of Miller space volume
+	 * @param mStart start coordinates in Miller space
+	 * @param mDelta sides of voxels in Miller space
+	 * @param qShape shape of q space volume
+	 * @param qStart start coordinates in q space
+	 * @param qDelta sides of voxels in q space
+	 * @throws ScanFileHolderException
+	 */
+	public static void processBothVolumes(String input, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double[] mDelta, int[] qShape, double[] qStart, double[] qDelta) throws ScanFileHolderException {
+		setBean(I16MapperBean, input, output, splitter, p, scale, mShape, mStart, mDelta, qShape, qStart, qDelta);
 		MillerSpaceMapper mapper = new MillerSpaceMapper(I16MapperBean);
 		mapper.mapToVolumeFile();
 	}
@@ -1004,8 +1230,8 @@ public class MillerSpaceMapper {
 	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
 	 * @param p splitter parameter
 	 * @param scale upsampling factor
-	 * @param mDelta sides of voxels in Miller space
 	 * @param reduceToNonZero if true, reduce output to sub-volume with non-zero data
+	 * @param mDelta sides of voxels in Miller space
 	 * @throws ScanFileHolderException
 	 */
 	public static void processVolumeWithAutoBox(String input, String output, String splitter, double p, double scale, boolean reduceToNonZero, double... mDelta) throws ScanFileHolderException {
@@ -1019,12 +1245,47 @@ public class MillerSpaceMapper {
 	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
 	 * @param p splitter parameter
 	 * @param scale upsampling factor
-	 * @param mDelta sides of voxels in Miller space
 	 * @param reduceToNonZero if true, reduce output to sub-volume with non-zero data
+	 * @param mDelta sides of voxels in Miller space
 	 * @throws ScanFileHolderException
 	 */
 	public static void processVolumeWithAutoBox(String[] inputs, String output, String splitter, double p, double scale, boolean reduceToNonZero, double... mDelta) throws ScanFileHolderException {
-		setBeanWithAutoBox(I16MapperBean, inputs, output, splitter, p, scale, reduceToNonZero, mDelta);
+		setBeanWithAutoBox(I16MapperBean, inputs, output, splitter, p, scale, reduceToNonZero, mDelta, null);
+		MillerSpaceMapper mapper = new MillerSpaceMapper(I16MapperBean);
+		mapper.mapToVolumeFile();
+	}
+
+	/**
+	 * Process Nexus files for I16 with automatic bounding box setting
+	 * @param inputs Nexus files
+	 * @param output name of HDF5 file to be created
+	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
+	 * @param p splitter parameter
+	 * @param scale upsampling factor
+	 * @param reduceToNonZero if true, reduce output to sub-volume with non-zero data
+	 * @param qDelta sides of voxels in q space
+	 * @throws ScanFileHolderException
+	 */
+	public static void processQVolumeWithAutoBox(String[] inputs, String output, String splitter, double p, double scale, boolean reduceToNonZero, double... qDelta) throws ScanFileHolderException {
+		setBeanWithAutoBox(I16MapperBean, inputs, output, splitter, p, scale, reduceToNonZero, null, qDelta);
+		MillerSpaceMapper mapper = new MillerSpaceMapper(I16MapperBean);
+		mapper.mapToVolumeFile();
+	}
+
+	/**
+	 * Process Nexus files for I16 with automatic bounding box setting
+	 * @param inputs Nexus files
+	 * @param output name of HDF5 file to be created
+	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
+	 * @param p splitter parameter
+	 * @param scale upsampling factor
+	 * @param reduceToNonZero if true, reduce output to sub-volume with non-zero data
+	 * @param mDelta sides of voxels in Miller space
+	 * @param qDelta sides of voxels in q space
+	 * @throws ScanFileHolderException
+	 */
+	public static void processBothVolumesWithAutoBox(String[] inputs, String output, String splitter, double p, double scale, boolean reduceToNonZero, double[] mDelta, double[] qDelta) throws ScanFileHolderException {
+		setBeanWithAutoBox(I16MapperBean, inputs, output, splitter, p, scale, reduceToNonZero, mDelta, qDelta);
 		MillerSpaceMapper mapper = new MillerSpaceMapper(I16MapperBean);
 		mapper.mapToVolumeFile();
 	}
@@ -1070,10 +1331,11 @@ public class MillerSpaceMapper {
 	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
 	 * @param p splitter parameter
 	 * @param scale upsampling factor
-	 * @param mDelta sides of voxels in Miller space
 	 * @param reduceToNonZero if true, reduce output to sub-volume with non-zero data
+	 * @param mDelta sides of voxels in Miller space
+	 * @param qDelta sides of voxels in q space
 	 */
-	public static void setBeanWithAutoBox(MillerSpaceMapperBean bean, String[] inputs, String output, String splitter, double p, double scale, boolean reduceToNonZero, double... mDelta) {
+	public static void setBeanWithAutoBox(MillerSpaceMapperBean bean, String[] inputs, String output, String splitter, double p, double scale, boolean reduceToNonZero, double[] mDelta, double[] qDelta) {
 		bean.setInputs(inputs);
 		bean.setOutput(output);
 		bean.setSplitterName(splitter);
@@ -1083,6 +1345,9 @@ public class MillerSpaceMapper {
 		bean.setMillerShape(null);
 		bean.setMillerStart(null);
 		bean.setMillerStep(mDelta);
+		bean.setQShape(null);
+		bean.setQStart(null);
+		bean.setQStep(qDelta);
 	}
 
 	/**
@@ -1092,11 +1357,14 @@ public class MillerSpaceMapper {
 	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
 	 * @param p splitter parameter
 	 * @param scale upsampling factor
-	 * @param mShape shape of output volume
+	 * @param mShape shape of Miller space volume
 	 * @param mStart start coordinates in Miller space
 	 * @param mDelta sides of voxels in Miller space
+	 * @param qShape shape of q space volume
+	 * @param qStart start coordinates in q space
+	 * @param qDelta sides of voxels in q space
 	 */
-	public static void setBean(MillerSpaceMapperBean bean, String input, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double... mDelta) {
+	public static void setBean(MillerSpaceMapperBean bean, String input, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double[] mDelta, int[] qShape, double[] qStart, double[] qDelta) {
 		bean.setInputs(input);
 		bean.setOutput(output);
 		bean.setSplitterName(splitter);
@@ -1106,6 +1374,9 @@ public class MillerSpaceMapper {
 		bean.setMillerShape(mShape);
 		bean.setMillerStart(mStart);
 		bean.setMillerStep(mDelta);
+		bean.setQShape(qShape);
+		bean.setQStart(qStart);
+		bean.setQStep(qDelta);
 	}
 
 	/**
@@ -1355,36 +1626,36 @@ public class MillerSpaceMapper {
 			this.millerList = millerList;
 		}
 
-		public int[] getqShape() {
+		public int[] getQShape() {
 			return qShape;
 		}
 
 		/**
 		 * @param qShape shape of q space volume (can be null)
 		 */
-		public void setqShape(int[] qShape) {
+		public void setQShape(int[] qShape) {
 			this.qShape = qShape;
 		}
 
-		public double[] getqStart() {
+		public double[] getQStart() {
 			return qStart;
 		}
 
 		/**
 		 * @param qStart starting coordinates of volume of q space (can be null)
 		 */
-		public void setqStart(double[] qStart) {
+		public void setQStart(double[] qStart) {
 			this.qStart = qStart;
 		}
 
-		public double[] getqStep() {
+		public double[] getQStep() {
 			return qStep;
 		}
 
 		/**
 		 * @param qStep sides of voxels in q space (can be null)
 		 */
-		public void setqStep(double... qStep) {
+		public void setQStep(double... qStep) {
 			this.qStep = qStep;
 		}
 

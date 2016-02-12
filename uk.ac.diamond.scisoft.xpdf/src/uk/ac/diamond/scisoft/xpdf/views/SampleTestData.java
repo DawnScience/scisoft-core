@@ -141,6 +141,13 @@ public class SampleTestData {
 			phase.setUnitCellAngle(1, 90.18); // Monoclinic
 			break;
 		}
+		case ("ilmenite"): {
+			phase.setName("ilmenite");
+			phase.setSpaceGroup(148);
+			phase.setUnitCellLengths(5.08854, 0, 14.0924);
+			phase.addComment("ferrous titanate");
+			break;
+		}
 		default:
 		}
 		

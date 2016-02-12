@@ -18,6 +18,8 @@ public class SelectedFramesModel extends AbstractOperationModel {
 	private Integer startFrame = 0;
 	@OperationModelField(hint="Position of end dataset, leave empty to use a single dataset",label = "Last:" )
 	private Integer endFrame = 1;
+	@OperationModelField(hint="Scaling of the multiplying data", label="Scaling")
+	private double scaling = 1.0;
 	
 	public Integer getStartFrame() {
 		return startFrame;
@@ -35,4 +37,11 @@ public class SelectedFramesModel extends AbstractOperationModel {
 		firePropertyChange("endFrame", this.endFrame, this.endFrame = endFrame);
 	}
 
+	public double getScaling() {
+		return scaling;
+	}
+	
+	public void setScaling(double scaling) {
+		firePropertyChange("scaling", this.scaling, this.scaling = scaling);
+	}
 }

@@ -50,7 +50,7 @@ protected OperationData process(IDataset input, IMonitor monitor) throws Operati
 			bg = subtrahend;
 		}
 		
-		Dataset output = Maths.subtract(input, bg);
+		Dataset output = Maths.subtract(input, Maths.multiply(bg, model.getScaling()));
 		output.setError(getErrorDataset(DatasetUtils.convertToDataset(input),bg));
 		copyMetadata(input, output);
 		

@@ -1403,7 +1403,7 @@ public class MillerSpaceMapper {
 		private String sampleName;
 		private String[] otherPaths;
 
-		private boolean millerList;
+		private boolean listMillerEntries;
 
 		private int[] qShape;
 		private double[] qStart;
@@ -1615,15 +1615,15 @@ public class MillerSpaceMapper {
 			this.otherPaths = otherPaths;
 		}
 
-		public boolean isMillerList() {
-			return millerList;
+		public boolean isListMillerEntries() {
+			return listMillerEntries;
 		}
 
 		/**
-		 * @param millerList if true, output list of hkls and corrected pixel intensities
+		 * @param listMillerEntries if true, output list of hkls and corrected pixel intensities
 		 */
-		public void setMillerList(boolean millerList) {
-			this.millerList = millerList;
+		public void setListMillerEntries(boolean listMillerEntries) {
+			this.listMillerEntries = listMillerEntries;
 		}
 
 		public int[] getQShape() {
@@ -1687,7 +1687,7 @@ public class MillerSpaceMapper {
 			result = prime * result + ((entryPath == null) ? 0 : entryPath.hashCode());
 			result = prime * result + Arrays.hashCode(inputs);
 			result = prime * result + ((instrumentName == null) ? 0 : instrumentName.hashCode());
-			result = prime * result + (millerList ? 1231 : 1237);
+			result = prime * result + (listMillerEntries ? 1231 : 1237);
 			result = prime * result + Arrays.hashCode(millerShape);
 			result = prime * result + Arrays.hashCode(millerStart);
 			result = prime * result + Arrays.hashCode(millerStep);
@@ -1757,7 +1757,7 @@ public class MillerSpaceMapper {
 			} else if (!instrumentName.equals(other.instrumentName)) {
 				return false;
 			}
-			if (millerList != other.millerList) {
+			if (listMillerEntries != other.listMillerEntries) {
 				return false;
 			}
 			if (!Arrays.equals(millerShape, other.millerShape)) {

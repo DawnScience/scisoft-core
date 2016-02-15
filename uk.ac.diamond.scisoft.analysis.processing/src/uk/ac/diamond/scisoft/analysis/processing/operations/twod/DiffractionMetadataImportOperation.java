@@ -20,10 +20,12 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
-import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperationBase;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionMetaReader;
+
 
 @Atomic
 public class DiffractionMetadataImportOperation extends AbstractOperationBase<DiffractionMetadataImportModel, OperationData> {
@@ -40,11 +42,24 @@ public class DiffractionMetadataImportOperation extends AbstractOperationBase<Di
 	public OperationData execute(IDataset slice, IMonitor monitor)
 			throws OperationException {
 		
-		slice.setMetadata(getMeta(model,AbstractDataset.squeezeShape(slice.getShape(), false)));
+		SliceFromSeriesMetadata ssm = slice.getFirstMetadata(SliceFromSeriesMetadata.class);
+		String name = null;
+		String dsName = ssm.getDatasetName();
+
+		try {
+			String[] split = dsName.split("/");
+			if (split != null && split.length > 1) {
+				name = split[split.length-2];
+			}
+		} catch (Exception e) {
+
+
+		}
+		slice.setMetadata(getMeta(model,AbstractDataset.squeezeShape(slice.getShape(), false),name));
 		return new OperationData(slice);
 	}
 	
-	private IDiffractionMetadata getMeta(DiffractionMetadataImportModel mod, int[] shape) {
+	private IDiffractionMetadata getMeta(DiffractionMetadataImportModel mod, int[] shape, String name) {
 
 		IDiffractionMetadata lmeta = metadata;
 		if (lmeta == null) {
@@ -52,7 +67,7 @@ public class DiffractionMetadataImportOperation extends AbstractOperationBase<Di
 				lmeta = metadata;
 				if (lmeta == null) {
 					NexusDiffractionMetaReader reader = new NexusDiffractionMetaReader(mod.getFilePath());
-					IDiffractionMetadata md = reader.getDiffractionMetadataFromNexus(shape);
+					IDiffractionMetadata md = reader.getDiffractionMetadataFromNexus(shape, name);
 					if (!(reader.isPartialRead() || reader.isNcdRead())) throw new OperationException(this, "File does not contain metadata");
 					metadata = lmeta = md;
 					

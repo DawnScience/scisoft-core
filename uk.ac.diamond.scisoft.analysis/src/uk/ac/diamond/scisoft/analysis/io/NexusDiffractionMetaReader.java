@@ -75,7 +75,11 @@ public class NexusDiffractionMetaReader {
 	 * @param imageSize Size of the image the diffraction metadata is associated with in pixels (can be null)
 	 */
 	public IDiffractionMetadata getDiffractionMetadataFromNexus(int[] imageSize) {
-		return getDiffractionMetadataFromNexus(imageSize, null, null, null);
+		return getDiffractionMetadataFromNexus(imageSize, null, null, null, null);
+	}
+	
+	public IDiffractionMetadata getDiffractionMetadataFromNexus(int[] imageSize, String name) {
+		return getDiffractionMetadataFromNexus(imageSize, null, null, null, name);
 	}
 	
 	/**
@@ -88,7 +92,7 @@ public class NexusDiffractionMetaReader {
 	 * @param diffcrys Detector properties object to be populated from the nexus file
 	 */
 	public IDiffractionMetadata getDiffractionMetadataFromNexus(int[] imageSize,DetectorProperties detprop, DiffractionCrystalEnvironment diffcrys) {
-		return getDiffractionMetadataFromNexus(imageSize, detprop, diffcrys, null);
+		return getDiffractionMetadataFromNexus(imageSize, detprop, diffcrys, null, null);
 	}
 	
 	/**
@@ -102,6 +106,11 @@ public class NexusDiffractionMetaReader {
 	 * @param xyPixelSize Guess at pixel size. Will be used if pixel size not read.
 	 */
 	public IDiffractionMetadata getDiffractionMetadataFromNexus(int[] imageSize,DetectorProperties detprop, DiffractionCrystalEnvironment diffcrys, double[] xyPixelSize) {
+		return getDiffractionMetadataFromNexus(imageSize, detprop, diffcrys, xyPixelSize, null);
+	}
+	
+	
+	public IDiffractionMetadata getDiffractionMetadataFromNexus(int[] imageSize,DetectorProperties detprop, DiffractionCrystalEnvironment diffcrys, double[] xyPixelSize, String name) {
 		
 		if (!HierarchicalDataFactory.isHDF5(filePath)) return null;
 		
@@ -127,7 +136,7 @@ public class NexusDiffractionMetaReader {
 			if (nxInstruments != null) {
 				for (String inst : nxInstruments) {
 					nxInstrument =  inst;
-					nxDetector = findBestNXDetector(hiFile, inst, imageSize);
+					nxDetector = findBestNXDetector(hiFile, inst, imageSize, name);
 					if (nxDetector != null) {
 						break;
 					}
@@ -228,7 +237,7 @@ public class NexusDiffractionMetaReader {
 		return successMap.containsValue(true);
 	}
 	
-	private String findBestNXDetector(IHierarchicalDataFile file, String nxInstrument, int[] imageSize) throws Exception {
+	private String findBestNXDetector(IHierarchicalDataFile file, String nxInstrument, int[] imageSize, String name) throws Exception {
 		
 		//Find nxDetectors in instrument
 		// TODO should probably change to find data then locate correct
@@ -236,6 +245,34 @@ public class NexusDiffractionMetaReader {
 		List<String> nxDetectors = findNXDetectors(file, nxInstrument, DATA_NAME);
 
 		if (nxDetectors == null || nxDetectors.isEmpty()) return null;
+		
+		if (name != null) {
+			String nxDet = findNXDetectorByName(file, nxInstrument, name);
+			if (nxDet != null) {
+				String dataset = getDataset(file, nxDet, DATA_NAME);
+				long[] dataShape = null;
+				try {
+					dataShape = HierarchicalDataUtils.getDims(file, dataset);
+				} catch (Exception e) {
+				}
+				if (dataShape != null) {
+					boolean matchesX = false;
+					boolean matchesY = false;
+					for (long val : dataShape) {
+						if (val == imageSize[0])
+							matchesX = true;
+						else if (val == imageSize[1])
+							matchesY = true;
+					}
+					if (matchesX & matchesY) {
+						return nxDet;
+					}
+				}
+			}
+			
+			
+		}
+		
 		
 		if (imageSize == null) {
 			//only one NXdetector or we don't know the image size
@@ -673,6 +710,8 @@ public class NexusDiffractionMetaReader {
 		}
 		return detectorGroups;
 	}
+	
+	
 	
 	private String findNXDetectorByName(final IHierarchicalDataFile file, String nxInstrument, final String name) throws Exception {
 		

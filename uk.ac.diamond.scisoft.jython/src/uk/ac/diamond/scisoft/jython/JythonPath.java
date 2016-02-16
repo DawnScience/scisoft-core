@@ -92,14 +92,15 @@ public class JythonPath {
 		"org.ddogleg",
 		"org.dawnsci.persistence" // Required for I11 LDE script
 	};
+
 	/*
-	 * Plugins we want/don't want
+	 * Plugins we want
 	 */
 	private final static String[] pluginKeys = {
 		"org.eclipse.dawnsci.hdf5", // required for loading to work in client started from IDE
-		"org.eclipse.dawnsci.analysis.*", // includes api, dataset, tree, etc
+		"org.eclipse.dawnsci.analysis", // includes api, dataset, tree, etc
 		"org.eclipse.dawnsci.nexus", // required for loading to work in client started from IDE
-		"org.eclipse.dawnsci.plotting.*", // required to expose IRemotePlottingSystem to Jython
+		"org.eclipse.dawnsci.plotting", // required to expose IRemotePlottingSystem to Jython
 		"uk.ac.diamond.scisoft.analysis",
 		"uk.ac.diamond.scisoft.diffraction.powder",
 		"uk.ac.diamond.scisoft.python",
@@ -257,8 +258,7 @@ public class JythonPath {
 	 */
 	private static final List<File> findJars(File directory, Collection<String> extraPlugins) {
 		final List<File> jarFiles = new ArrayList<File>();
-	
-		
+
 		if (directory.isDirectory()) {
 			for (File file : directory.listFiles()) {
 				final String name = file.getName();
@@ -321,6 +321,7 @@ public class JythonPath {
 	private static boolean isRequired(File file, String[] keys) {
 		return isRequired(file, keys, null);
 	}
+
 	/**
 	 * Check whether a file is in given lists
 	 * @param file Filename to search for
@@ -331,12 +332,10 @@ public class JythonPath {
 		String filename = file.getName();
 //		logger.debug("Jar/dir found: {}", filename);
 		for (String key : keys) {
-			if (key!=null && key.endsWith(".*")) key = key.substring(0,key.length()-1);
 			if (filename.startsWith(key)) return true;
 		}
 		if (extraKeys != null) {
 			for (String key : extraKeys) {
-				if (key!=null && key.endsWith(".*")) key = key.substring(0,key.length()-1);
 				if (filename.startsWith(key)) return true;
 			}
 		}

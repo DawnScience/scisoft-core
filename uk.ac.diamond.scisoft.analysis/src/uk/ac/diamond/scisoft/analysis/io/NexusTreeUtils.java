@@ -11,10 +11,14 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Quantity;
@@ -439,13 +443,14 @@ public class NexusTreeUtils {
 		int[] shape = cData.getShape();
 		int rank = shape.length;
 
-		String[] axisArray = parseStringArrayAttr(gn, NX_AXES);
-		if (axisArray.length < rank) {
+		Set<String> namedAxes = new HashSet<>();
+		Collections.addAll(namedAxes, parseStringArrayAttr(gn, NX_AXES));
+		if (namedAxes.size() < rank) {
 			// missing axes???
 		}
 
 		List<ILazyDataset> axes = new ArrayList<ILazyDataset>();
-		for (String a : axisArray) {
+		for (String a : namedAxes) {
 			if (NX_AXES_EMPTY.equals(a)) {
 				continue;
 			}
@@ -455,30 +460,28 @@ public class NexusTreeUtils {
 				return false;
 			}
 
-			DataNode aNode = gn.getDataNode(a);
-			ILazyDataset aData = aNode.getDataset();
-			int[] ashape = aData.getShape();
-			int[] indices = parseIntArray(gn.getAttribute(a + NX_INDICES_SUFFIX));
-			if (indices.length != ashape.length) {
-				logger.error("Indices array of axis {} must have same length equal to its rank", a);
+			if (!addAxis(gn, a, rank, shape, axes)) {
 				return false;
 			}
-			for (int i : indices) {
-				if (i < 0 || i >= rank) {
-					logger.error("Index value ({}) for axis {} is out of bounds", i, a);
-					return false;
+		}
+
+		// Add other datasets that have _indices attributes too
+		Iterator<String> it = gn.getAttributeNameIterator();
+		while (it.hasNext()) {
+			String aName = it.next();
+			int i = aName.lastIndexOf(NX_INDICES_SUFFIX);
+			if (i > 0) {
+				String a = aName.substring(0, i);
+				if (!namedAxes.contains(a)) {
+					if (gn.containsDataNode(a)) {
+						if (!addAxis(gn, a, rank, shape, axes)) {
+							return false;
+						}
+					} else {
+						logger.warn("An index '{}' attribute refers to a missing dataset: {}", aName, a);
+					}
 				}
 			}
-			int arank = ashape.length;
-			if (arank != rank) { // broadcast axis dataset
-				int[] nshape = new int[rank];
-				Arrays.fill(nshape, 1);
-				for (int i : indices) {
-					nshape[i] = shape[i];
-				}
-				aData.setShape(nshape);
-			}
-			axes.add(aData);
 		}
 
 		List<ILazyDataset> axisList = new ArrayList<ILazyDataset>();
@@ -495,6 +498,34 @@ public class NexusTreeUtils {
 			axisList.clear();
 		}
 		cData.addMetadata(amd);
+		return true;
+	}
+
+	private static boolean addAxis(GroupNode gn, String a, int rank, int[] shape, List<ILazyDataset> axes) {
+		DataNode aNode = gn.getDataNode(a);
+		ILazyDataset aData = aNode.getDataset();
+		int[] ashape = aData.getShape();
+		int[] indices = parseIntArray(gn.getAttribute(a + NX_INDICES_SUFFIX));
+		if (indices.length != ashape.length) {
+			logger.error("Indices array of axis {} must have same length equal to its rank", a);
+			return false;
+		}
+		for (int i : indices) {
+			if (i < 0 || i >= rank) {
+				logger.error("Index value ({}) for axis {} is out of bounds", i, a);
+				return false;
+			}
+		}
+		int arank = ashape.length;
+		if (arank != rank) { // broadcast axis dataset
+			int[] nshape = new int[rank];
+			Arrays.fill(nshape, 1);
+			for (int i : indices) {
+				nshape[i] = shape[i];
+			}
+			aData.setShape(nshape);
+		}
+		axes.add(aData);
 		return true;
 	}
 

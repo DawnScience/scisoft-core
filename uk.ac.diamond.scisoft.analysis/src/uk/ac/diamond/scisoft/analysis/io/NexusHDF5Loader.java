@@ -18,10 +18,6 @@ import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 public class NexusHDF5Loader extends HDF5Loader {
 	@Override
 	public void augmentLink(NodeLink link) {
-		if (!link.isDestinationData()) {
-			logger.warn("Cannot augment non-data node: {}", link);
-			return;
-		}
 		try {
 			NexusTreeUtils.augmentNodeLink(fileName, link, true);
 		} catch (Exception e) {

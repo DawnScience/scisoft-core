@@ -524,6 +524,10 @@ public class HDF5Loader extends AbstractFileLoader {
 								logger.error("Could not load group {} in {}", oname, name);
 							} else {
 								group.addNode(oname, g);
+
+								if (NexusTreeUtils.isNXClass(g, NexusTreeUtils.NX_DATA)) {
+									augmentLink(group.getNodeLink(oname));
+								}
 							}
 						}
 					} else if (otype == HDF5Constants.H5O_TYPE_DATASET) {
@@ -593,12 +597,6 @@ public class HDF5Loader extends AbstractFileLoader {
 					H5.H5Gclose(gid);
 				} catch (HDF5Exception ex) {
 				}
-			}
-		}
-
-		if (NexusTreeUtils.isNXClass(group, NexusTreeUtils.NX_DATA)) {
-			for (NodeLink l : group) {
-				augmentLink(l);
 			}
 		}
 

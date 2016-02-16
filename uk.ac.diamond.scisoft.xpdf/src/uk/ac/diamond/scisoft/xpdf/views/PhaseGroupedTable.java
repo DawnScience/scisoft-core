@@ -873,7 +873,7 @@ class PhaseGroupedTable {
 				public String getText(Object element) {
 					XPDFPhase phase = (XPDFPhase) element;
 					if (!phase.isCrystalline()) {
-						// Non-crysatlline phase
+						// Non-crystalline phase
 						return "-";
 					} else {
 						int rawAngle = phase.getSpaceGroup().getSystem().getFixedAngles()[angleIndex];
@@ -918,8 +918,33 @@ class PhaseGroupedTable {
 	static class CompositionColumnInterface implements ColumnInterface {
 
 		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
+		public EditingSupport get(final ColumnViewer v) {
+			return new EditingSupport(v) {
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return false;
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				protected void setValue(Object element, Object value) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+			};
 		}
 
 		@Override
@@ -970,7 +995,7 @@ class PhaseGroupedTable {
 
 		@Override
 		public String getName() {
-			return "Density g cm⁻³";
+			return "Density (g cm⁻³)";
 		}
 
 		@Override
@@ -980,7 +1005,7 @@ class PhaseGroupedTable {
 
 		@Override
 		public boolean presentAsUneditable(Object element) {
-			return false;
+			return true;
 		}
 		
 	}

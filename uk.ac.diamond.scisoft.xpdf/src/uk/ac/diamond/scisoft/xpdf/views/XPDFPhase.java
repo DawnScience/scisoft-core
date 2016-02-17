@@ -9,6 +9,10 @@
 
 package uk.ac.diamond.scisoft.xpdf.views;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.math3.exception.OutOfRangeException;
 
 import uk.ac.diamond.scisoft.xpdf.XPDFComposition;
@@ -23,7 +27,10 @@ public class XPDFPhase {
 	private XPDFSpaceGroup spaceGroup;
 	private double[] unitCellLengths;
 	private double[] unitCellDegrees;
+	private Map<String, XPDFAtom> atoms;
+	
 	private static final int nDim = 3;
+
 	
 	/**
 	 * Default constructor
@@ -32,6 +39,7 @@ public class XPDFPhase {
 		unitCellLengths = new double[] {0, 0, 0}; // zero is meaningless, used as a default value
 		unitCellDegrees = new double[] {0, 0, 0}; // ditto
 		form = XPDFPhaseForm.get(XPDFPhaseForm.Forms.AMORPHOUS);
+		atoms = new HashMap<String, XPDFAtom>();
 	}
 	
 	/**
@@ -73,9 +81,25 @@ public class XPDFPhase {
 	/**
 	 * Adds an atom to a phase unit cell
 	 */
-	// TODO: Add the argument(s)
-	public void addAtom() {
-		
+	public void addAtom(String label, XPDFAtom atom) {
+		atoms.put(label, atom);
+	}
+
+	/**
+	 * Gets the atoms with the given label
+	 * @param label
+	 * 				label of the atom to be got
+	 * @return the atom with that label
+	 */
+	public XPDFAtom getAtom(String label) {
+		return atoms.get(label);
+	}
+	/**
+	 * Returns all atoms defined in the phase
+	 * @return a Collection of all the atoms in the phase
+	 */
+	public Collection<XPDFAtom> getAllAtoms() {
+		return atoms.values(); 
 	}
 	
 	public void setForm(XPDFPhaseForm formIn) {
@@ -270,5 +294,88 @@ public class XPDFPhase {
 		unitCellLengths[2] = c;
 		unitCellDegrees[0] = unitCellDegrees[1] = 90.0;
 		unitCellDegrees[2] = 120;
+	}
+
+	/**
+	 * Returns the chemical formula of this phase.
+	 * <p>
+	 * Returns the chemical formula of this phase in Hall notation.
+	 * @return chemical formula in Hall notation.
+	 */
+	public String getHallNotation() {
+		
+		final int nElements = 100; // Up to and including fermium
+		
+		final String[] elementSymbol = { "n",
+		"H","He","Li","Be","B","C","N","O","F","Ne",
+		"Na","Mg","Al","Si","P","S","Cl","Ar","K","Ca",
+		"Sc","Ti","V","Cr","Mn","Fe","Co","Ni","Cu","Zn",
+		"Ga","Ge","As","Se","Br","Kr","Rb","Sr","Y","Zr",
+        "Nb","Mo","Tc","Ru","Rh","Pd","Ag","Cd","In","Sn",
+        "Sb","Te","I","Xe","Cs","Ba","La","Ce","Pr","Nd",
+        "Pm","Sm","Eu","Gd","Tb","Dy","Ho","Er","Tm","Yb",
+        "Lu","Hf","Ta","W","Re","Os","Ir","Pt","Au","Hg",
+        "Tl","Pb","Bi","Po","At","Rn","Fr","Ra","Ac","Th",
+        "Pa","U","Np","Pu","Am","Cm","Bk","Cf","Es","Fm"};
+		
+		final int[] alphabeticElements = {
+				89, 47, 13, 95, 18, 33, 85, 79, 5, 56,
+				4, 83, 97, 35, 6, 20, 48, 58, 98, 17,
+				96, 27, 24, 55, 29, 66, 68, 99, 63, 9,
+				26, 100, 87, 31, 64, 32, 1, 2, 72, 80,
+				67, 53, 49, 77, 19, 36, 57, 3, 71, 12,
+				25, 42, 7, 11, 41, 60, 10, 28, 93, 8,
+				76, 15, 91, 82, 46, 61, 84, 59, 78, 94,
+				88, 37, 75, 45, 86, 44, 16, 51, 21, 34,
+				14, 62, 50, 38, 73, 65, 43, 52, 90, 22,
+				81, 69, 92, 23, 74, 54, 39, 70, 30, 40
+		};
+
+		
+		String hall = "";
+		
+		Map<Integer, Double> atomCount = new HashMap<Integer, Double>();
+		// Add up all the occupancies by element
+		for (XPDFAtom atom : atoms.values()) {
+			int z = atom.getAtomicNumber();
+			double n = atom.getOccupancy();
+			if (atomCount.containsKey(z)) {
+				atomCount.put(z, atomCount.get(z) + n);
+			} else {
+				atomCount.put(z, n);
+			}
+		}
+		// Do the special case for organic compounds
+		if (atomCount.containsKey(6)) {
+			hall += elementSymbol[6] + prettifyDouble(atomCount.get(6));
+			atomCount.remove(6);
+			if (atomCount.containsKey(1)) {
+				hall += elementSymbol[1] + prettifyDouble(atomCount.get(1));
+				atomCount.remove(1);
+			}
+		}
+		
+		// Do all the remaining elements in order
+		for (int i = 1; i < nElements; i++) { 
+			int z = alphabeticElements[i];
+			if (atomCount.containsKey(z))
+				hall += elementSymbol[z] + prettifyDouble(atomCount.get(z));
+		}
+		return hall;
+	}
+	
+	// Format the atom multiplicity as nicely as we can
+	private String prettifyDouble(double n) {
+		if (n == 1.0)
+			return "";
+		
+		String number = (n == Math.floor(n)) ? Integer.toString((int) n) :  Double.toString(n);
+		String normalNumbers = "0123456789.";
+		String subscriptNumbers = "₀₁₂₃₄₅₆₇₈₉.";
+		
+		for (int i = 0; i < normalNumbers.length(); i++ )
+			number = number.replace(normalNumbers.charAt(i), subscriptNumbers.charAt(i));
+		
+		return number;
 	}
 }				

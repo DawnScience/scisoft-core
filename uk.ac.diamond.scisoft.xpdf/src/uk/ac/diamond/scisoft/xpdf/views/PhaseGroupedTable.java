@@ -10,7 +10,6 @@
 package uk.ac.diamond.scisoft.xpdf.views;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,7 +37,6 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.DragDetectEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -955,7 +953,23 @@ class PhaseGroupedTable {
 
 		@Override
 		public ColumnLabelProvider getLabelProvider() {
-			return new DummyLabelProvider("Elements!");
+//			return new DummyLabelProvider("Elements!");
+			return new ColumnLabelProvider() {
+				
+				@Override
+				public String getText(Object element) {
+					return (element instanceof XPDFPhase) ?
+						((XPDFPhase) element).getHallNotation() :
+						"N/A";
+				}				
+				
+				@Override
+				public Font getFont(Object element) {
+					return (presentAsUneditable(element)) ?
+							JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT) :
+								JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);
+				}
+			};
 		}
 
 		@Override
@@ -1005,7 +1019,7 @@ class PhaseGroupedTable {
 
 		@Override
 		public boolean presentAsUneditable(Object element) {
-			return true;
+			return ((XPDFPhase) element).isCrystalline();
 		}
 		
 	}
@@ -1083,5 +1097,4 @@ class PhaseGroupedTable {
 	public void refresh() {
 		groupedTable.refresh();
 	}
-
 }

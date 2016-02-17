@@ -38,6 +38,18 @@ public class XPDFAtom {
 	}
 	
 	/**
+	 * Constructs an atom without displacement information
+	 * @param atomicNumber
+	 * @param occupancy
+	 * @param position
+	 */
+	public XPDFAtom(int atomicNumber, double occupancy, double[] position) {
+		this(atomicNumber);
+		this.setOccupancy(occupancy);
+		this.setPosition(position);
+	}
+	
+	/**
 	 * Sets the position of the atom within the unit cell.
 	 * <p>
 	 * Sets the position of the atom within the unit cell in units of ??? along ??? axes

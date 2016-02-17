@@ -356,12 +356,12 @@ public class XPDFPhase {
 		}
 		
 		// Do all the remaining elements in order
-		for (int i = 1; i < nElements; i++) { 
+		for (int i = 0; i < nElements; i++) { 
 			int z = alphabeticElements[i];
 			if (atomCount.containsKey(z))
 				hall += elementSymbol[z] + prettifyDouble(atomCount.get(z));
 		}
-		return hall;
+		return (hall.length() != 0) ? hall : "-";
 	}
 	
 	// Format the atom multiplicity as nicely as we can

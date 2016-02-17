@@ -13,8 +13,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 import org.eclipse.jface.action.MenuManager;
@@ -927,9 +929,13 @@ class PhaseGroupedTable {
 				protected CellEditor getCellEditor(Object element) {
 					return new DialogCellEditor(((TableViewer) v).getTable()) {
 						
+						private UnitCellDialog unitCell;
+						
 						@Override
 						protected Object openDialogBox(Control cellEditorWindow) {
-							MessageDialog.openInformation(cellEditorWindow.getShell(), "Test", "It works");
+							unitCell = new UnitCellDialog(cellEditorWindow.getShell());
+							unitCell.createDialogArea(((TableViewer) v).getTable());
+							unitCell.open();
 							return null;
 						}
 					    @Override
@@ -937,6 +943,24 @@ class PhaseGroupedTable {
 					           Button button = super.createButton(parent);
 					           button.setText("+");
 					           return button;
+					    }
+					    @Override
+					    protected Object doGetValue() {
+					    	// All phases are ferrous titanate
+					    	Map<String, XPDFAtom> atoms = new HashMap<String, XPDFAtom>();
+							atoms.put("Fe1", new XPDFAtom(26, 0.5, new double[] {0.333, 0.333, 0.333}));
+							atoms.put("Fe2", new XPDFAtom(26, 0.5, new double[] {0.667, 0.667, 0.667}));
+							atoms.put("Ti1", new XPDFAtom(22, 0.5, new double[] {0.167, 0.167, 0.167}));
+							atoms.put("Ti2", new XPDFAtom(22, 0.5, new double[] {0.833, 0.833, 0.833}));
+							atoms.put("O1", new XPDFAtom(8, 0.5, new double[] {0.583, 0.917, 0.250}));
+							atoms.put("O2", new XPDFAtom(8, 0.5, new double[] {0.917, 0.250, 0.583}));
+							atoms.put("O3", new XPDFAtom(8, 0.5, new double[] {0.250, 0.583, 0.917}));
+							atoms.put("O4", new XPDFAtom(8, 0.5, new double[] {-0.583, -0.917, -0.250}));
+							atoms.put("O5", new XPDFAtom(8, 0.5, new double[] {-0.917, -0.250, -0.583}));
+							atoms.put("O6", new XPDFAtom(8, 0.5, new double[] {-0.250, -0.583, -0.917}));
+							v.refresh();
+							return atoms;
+
 					    }
 					};
 				}
@@ -953,7 +977,21 @@ class PhaseGroupedTable {
 
 				@Override
 				protected void setValue(Object element, Object value) {
-					// Do nothing
+					if (value instanceof Map<?,?>) {
+						Map<?, ?> genericMap = (Map<?,?>) value;
+						Map<String, XPDFAtom> atomMap;
+						try {
+							atomMap = (Map<String, XPDFAtom>) genericMap;
+						} catch (ClassCastException cCE) {
+							return;
+						}
+						XPDFPhase phase = (XPDFPhase) element;
+						for (Map.Entry<String, XPDFAtom> entry : atomMap.entrySet()) {
+							phase.addAtom(entry.getKey(), entry.getValue());
+						}
+					}
+					v.refresh();
+					return;
 				}
 				
 			};

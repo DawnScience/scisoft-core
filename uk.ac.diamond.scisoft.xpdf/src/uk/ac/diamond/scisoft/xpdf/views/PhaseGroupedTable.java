@@ -18,12 +18,14 @@ import java.util.List;
 import java.util.TreeSet;
 
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.DialogCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -40,7 +42,9 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -921,25 +925,35 @@ class PhaseGroupedTable {
 
 				@Override
 				protected CellEditor getCellEditor(Object element) {
-					// TODO Auto-generated method stub
-					return null;
+					return new DialogCellEditor(((TableViewer) v).getTable()) {
+						
+						@Override
+						protected Object openDialogBox(Control cellEditorWindow) {
+							MessageDialog.openInformation(cellEditorWindow.getShell(), "Test", "It works");
+							return null;
+						}
+					    @Override
+					    protected Button createButton(Composite parent) {
+					           Button button = super.createButton(parent);
+					           button.setText("+");
+					           return button;
+					    }
+					};
 				}
 
 				@Override
 				protected boolean canEdit(Object element) {
-					return false;
+					return true;
 				}
 
 				@Override
 				protected Object getValue(Object element) {
-					// TODO Auto-generated method stub
-					return null;
+					return getLabelProvider().getText(element);
 				}
 
 				@Override
 				protected void setValue(Object element, Object value) {
-					// TODO Auto-generated method stub
-					
+					// Do nothing
 				}
 				
 			};

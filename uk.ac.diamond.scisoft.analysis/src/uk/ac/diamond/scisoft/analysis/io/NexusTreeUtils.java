@@ -444,7 +444,11 @@ public class NexusTreeUtils {
 		int rank = shape.length;
 
 		Set<String> namedAxes = new HashSet<>();
-		Collections.addAll(namedAxes, parseStringArrayAttr(gn, NX_AXES));
+		String[] tmp = parseStringArrayAttr(gn, NX_AXES);
+		if (tmp == null) {
+			return false;
+		}
+		Collections.addAll(namedAxes, tmp);
 		if (namedAxes.size() < rank) {
 			// missing axes???
 		}

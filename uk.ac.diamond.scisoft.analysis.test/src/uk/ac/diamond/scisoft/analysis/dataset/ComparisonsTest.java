@@ -257,4 +257,42 @@ public class ComparisonsTest {
 		float f = Float.NaN;
 		System.err.println(Double.isNaN(f));
 	}
+
+	@Test
+	public void testIsMonotonic() {
+		Assert.assertTrue(Comparisons.isMonotonic(1));
+		Assert.assertFalse(Comparisons.isMonotonic(Double.NaN));
+		Assert.assertTrue(Comparisons.isMonotonic(Double.POSITIVE_INFINITY));
+
+		Assert.assertFalse(Comparisons.isMonotonic(new double[] {Double.NaN, Double.NaN}));
+		Assert.assertTrue(Comparisons.isMonotonic(new double[] {Double.NaN, Double.POSITIVE_INFINITY}));
+		Assert.assertTrue(Comparisons.isMonotonic(new double[] {Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY}));
+		Assert.assertTrue(Comparisons.isMonotonic(new double[] {Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}));
+		Assert.assertTrue(Comparisons.isMonotonic(new double[] {Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}));
+
+		Assert.assertFalse(Comparisons.isMonotonic(new double[] {Double.NaN, Double.NaN, Double.NaN}));
+		Assert.assertTrue(Comparisons.isMonotonic(new double[] {Double.NaN, Double.NaN, Double.POSITIVE_INFINITY}));
+		Assert.assertTrue(Comparisons.isMonotonic(new double[] {Double.NaN, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY}));
+		Assert.assertTrue(Comparisons.isMonotonic(new double[] {Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}));
+		Assert.assertTrue(Comparisons.isMonotonic(new double[] {Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}));
+
+		Assert.assertTrue(Comparisons.isMonotonic(new double[] {Double.POSITIVE_INFINITY, Double.NaN, Double.NaN}));
+		Assert.assertTrue(Comparisons.isMonotonic(new double[] {Double.POSITIVE_INFINITY, Double.NaN, Double.POSITIVE_INFINITY}));
+		Assert.assertTrue(Comparisons.isMonotonic(new double[] {Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY}));
+		Assert.assertTrue(Comparisons.isMonotonic(new double[] {Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}));
+		Assert.assertTrue(Comparisons.isMonotonic(new double[] {Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}));
+		Assert.assertTrue(Comparisons.isMonotonic(new double[] {Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY}));
+		Assert.assertFalse(Comparisons.isMonotonic(new double[] {Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY}));
+
+		Assert.assertTrue(Comparisons.isMonotonic(new double[] {0, 1, 1, 2, 6, Double.NaN, Double.POSITIVE_INFINITY}));
+		Assert.assertTrue(Comparisons.isMonotonic(new double[] {0, -1, -1, -2, -6, Double.NaN, Double.NEGATIVE_INFINITY}));
+
+		Assert.assertFalse(Comparisons.isMonotonic(new double[] {0, 1, 0.5, 2, 6, Double.NaN, Double.POSITIVE_INFINITY}));
+		Assert.assertFalse(Comparisons.isMonotonic(new double[] {0, 0, -1, -0.2, -6, Double.NaN, Double.NEGATIVE_INFINITY}));
+
+		Assert.assertFalse(Comparisons.isStrictlyMonotonic(new double[] {0, 1, 1, 2, 6, Double.NaN, Double.POSITIVE_INFINITY}));
+		Assert.assertFalse(Comparisons.isStrictlyMonotonic(new double[] {0, 0, -1, -2, -6, Double.NaN, Double.NEGATIVE_INFINITY}));
+		Assert.assertTrue(Comparisons.isStrictlyMonotonic(new double[] {0, 1, 1.5, 2, 6, Double.NaN, Double.POSITIVE_INFINITY}));
+		Assert.assertTrue(Comparisons.isStrictlyMonotonic(new double[] {0.5, 0, -1, -2, -6, Double.NaN, Double.NEGATIVE_INFINITY}));
+	}
 }

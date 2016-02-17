@@ -143,9 +143,22 @@ public class SampleTestData {
 		}
 		case ("ilmenite"): {
 			phase.setName("ilmenite");
-			phase.setSpaceGroup(148);
-			phase.setUnitCellLengths(5.08854, 0, 14.0924);
+			phase.setSpaceGroup(XPDFSpaceGroup.get(148).asRhombohedral());
+			//phase.setUnitCellLengths(5.08854, 0, 14.0924); // Hexagonal setting axes
+			phase.setUnitCellLength(0, 5.54051);
+			phase.setUnitCellAngle(0, 54.6726);
 			phase.addComment("ferrous titanate");
+			// Like haematite, but with titanium. This is the rhombohedral setting
+			phase.addAtom("Fe1", new XPDFAtom(26, 0.5, new double[] {0.333, 0.333, 0.333}));
+			phase.addAtom("Fe2", new XPDFAtom(26, 0.5, new double[] {0.667, 0.667, 0.667}));
+			phase.addAtom("Ti1", new XPDFAtom(22, 0.5, new double[] {0.167, 0.167, 0.167}));
+			phase.addAtom("Ti2", new XPDFAtom(22, 0.5, new double[] {0.833, 0.833, 0.833}));
+			phase.addAtom("O1", new XPDFAtom(8, 0.5, new double[] {0.583, 0.917, 0.250}));
+			phase.addAtom("O2", new XPDFAtom(8, 0.5, new double[] {0.917, 0.250, 0.583}));
+			phase.addAtom("O3", new XPDFAtom(8, 0.5, new double[] {0.250, 0.583, 0.917}));
+			phase.addAtom("O4", new XPDFAtom(8, 0.5, new double[] {-0.583, -0.917, -0.250}));
+			phase.addAtom("O5", new XPDFAtom(8, 0.5, new double[] {-0.917, -0.250, -0.583}));
+			phase.addAtom("O6", new XPDFAtom(8, 0.5, new double[] {-0.250, -0.583, -0.917}));
 			break;
 		}
 		default:

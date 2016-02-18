@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -25,9 +26,6 @@ import javax.vecmath.Matrix4d;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector4d;
 
-import ncsa.hdf.object.FileFormat;
-import ncsa.hdf.object.h5.H5File;
-
 import org.apache.commons.math3.complex.Complex;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
@@ -40,8 +38,8 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
+import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
-import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.ComplexDoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -51,6 +49,8 @@ import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import ncsa.hdf.object.FileFormat;
+import ncsa.hdf.object.h5.H5File;
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 
@@ -174,6 +174,21 @@ public class HDF5LoaderTest {
 		assertEquals("Value in " + name, 1, dataset.getInt(0, 1));
 		assertEquals("Value in " + name, 5, dataset.getInt(1, 2));
 		assertEquals("Value in " + name, 37, dataset.getInt(12, 1));
+
+		GroupNode group = (GroupNode) tree.findNodeLink("/entry1/to/here").getDestination();
+		NodeLink link;
+		link = group.getNodeLink("source_g");
+		assertTrue(link.isDestinationSymbolic());
+		assertFalse(((SymbolicNode) link.getDestination()).isData());
+		assertTrue(((SymbolicNode) link.getDestination()).getNode() instanceof GroupNode);
+		link = group.getNodeLink("source_d");
+		assertTrue(link.isDestinationSymbolic());
+		assertTrue(((SymbolicNode) link.getDestination()).isData());
+		assertTrue(((SymbolicNode) link.getDestination()).getNode() instanceof DataNode);
+		link = group.getNodeLink("source_d2");
+		assertTrue(link.isDestinationSymbolic());
+		assertTrue(((SymbolicNode) link.getDestination()).isData());
+		assertTrue(((SymbolicNode) link.getDestination()).getNode() instanceof DataNode);
 
 		// external link
 		name = "external link";
@@ -368,11 +383,13 @@ public class HDF5LoaderTest {
 
 	@Test
 	public void testCanonicalization() {
-		String[] before = { "/asd/sdf/dfg/../ds/../../gfd", "/asd/asd/../as", "/asd/as/.././bad", "/asd/..", "/abal/." };
-		String[] after = { "/asd/gfd", "/asd/as", "/asd/bad", "/", "/abal" };
+		String[] before = { "./foo", "/asd/sdf/dfg/../ds/../../gfd", "/asd/asd/../as", "/asd/as/.././bad", "/asd/..", "/abal/.", "",
+				"../blah"};
+		String[] after = { "./foo", "/asd/gfd", "/asd/as", "/asd/bad", "/", "/abal", "", "../blah" };
 
-		for (int i = 0; i < before.length; i++)
+		for (int i = 0; i < before.length; i++) {
 			assertEquals("Path", after[i], TreeImpl.canonicalizePath(before[i]));
+		}
 	}
 
 	@Test
@@ -444,7 +461,7 @@ public class HDF5LoaderTest {
 			assertTrue(d.getMetadata(AxesMetadata.class) != null);
 		} catch (Exception e) {
 		}
-		}
+	}
 
 	@Test
 	public void testLoadingNexusDetector() throws ScanFileHolderException {

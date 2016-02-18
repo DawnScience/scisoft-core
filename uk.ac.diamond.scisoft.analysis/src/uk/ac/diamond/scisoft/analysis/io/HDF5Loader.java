@@ -562,7 +562,7 @@ public class HDF5Loader extends AbstractFileLoader {
 						continue;
 					}
 					// System.err.println("  -> " + linkName[0]);
-					SymbolicNode slink = TreeFactory.createSymbolicNode(oid, f, linkName[0]);
+					SymbolicNode slink = TreeFactory.createSymbolicNode(oid, f, group, linkName[0]);
 					group.addNode(oname, slink);
 				} else if (ltype == HDF5Constants.H5L_TYPE_EXTERNAL) {
 					// System.err.println("E: " + oname);
@@ -571,6 +571,7 @@ public class HDF5Loader extends AbstractFileLoader {
 					// System.err.println("  -> " + linkName[0] + " in " + linkName[1]);
 					if (t < 0) {
 						logger.error("Could not get value of link");
+						// TODO use the external link version of a symbolic node
 						continue;
 					}
 

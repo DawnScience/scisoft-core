@@ -674,6 +674,19 @@
             name="Add"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.TwoBoxMeanDifferenceOperation"
+            description="Difference between the mean of two boxes"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.TwoBoxMeanDifferenceOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.TwoBoxModel"
+            name="Two Box Mean Difference">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.TwoBoxMeanRatioOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.TwoBoxMeanRatioOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.TwoBoxModel"
+            name="Two Box Mean Ratio">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

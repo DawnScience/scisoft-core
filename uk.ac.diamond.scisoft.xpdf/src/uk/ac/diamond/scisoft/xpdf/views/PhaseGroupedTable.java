@@ -174,12 +174,10 @@ class PhaseGroupedTable {
 	}
 	
 	/**
-	 * Sets the input of the delegated viewer objects.
-	 * @param input
-	 * 				the object providing the input
+	 * Sets the input of the delegated viewer objects to the List of phases.
 	 */
-	public void setInput(Object input) {
-		groupedTable.setInput(input);
+	public void setInput() {
+		groupedTable.setInput(phases);
 	}
 	
 	/**
@@ -946,10 +944,12 @@ class PhaseGroupedTable {
 					    }
 					    @Override
 					    protected Object doGetValue() {
-							Map<String, XPDFAtom> atoms = unitCell.getAllAtoms();
-							v.refresh();
-							return atoms;
-
+					    	if (unitCell != null) {
+					    		Map<String, XPDFAtom> atoms = unitCell.getAllAtoms();
+					    		v.refresh();
+					    		return atoms;
+					    	}
+					    	else return null;
 					    }
 					};
 				}

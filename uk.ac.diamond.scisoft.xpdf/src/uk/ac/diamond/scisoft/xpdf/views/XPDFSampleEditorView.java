@@ -130,8 +130,8 @@ public class XPDFSampleEditorView extends ViewPart {
 		createPhaseLoadButtons(phaseButtonCompo);
 		createPhaseCentreButtons(phaseButtonCompo);
 		
-		sampleTable.setInput(getSite());
-		phaseTable.setInput(getSite());
+		sampleTable.setInput();
+		phaseTable.setInput();
 	}
 
 		

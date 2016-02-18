@@ -172,12 +172,10 @@ class SampleGroupedTable {
 	}
 		
 	/**
-	 * Sets the input of the delegated viewer objects.
-	 * @param input
-	 * 				the object providing the input
+	 * Sets the input of the delegated viewer objects to the List of samples.
 	 */
-	public void setInput(Object input) {
-		groupedTable.setInput(input);
+	public void setInput() {
+		groupedTable.setInput(samples);
 	}
 
 	/**

@@ -26,6 +26,7 @@ import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.message.DataMessageComponent;
 import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
+import org.eclipse.dawnsci.analysis.dataset.slicer.ISliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.Slicer;
@@ -68,7 +69,7 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 	
 	private static final Logger logger = LoggerFactory.getLogger(OperationSource.class);
 
-	private SliceViewIterator generator;
+	private ISliceViewIterator generator;
 	private ManagedMessage message;
 //	private Queue<SliceInfo>  queue;
 	private IOperationContext    context; // Might be null if pipeline rerun from UI

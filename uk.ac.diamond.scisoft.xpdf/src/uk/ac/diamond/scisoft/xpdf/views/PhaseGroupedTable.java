@@ -946,18 +946,7 @@ class PhaseGroupedTable {
 					    }
 					    @Override
 					    protected Object doGetValue() {
-					    	// All phases are ferrous titanate
-					    	Map<String, XPDFAtom> atoms = new HashMap<String, XPDFAtom>();
-							atoms.put("Fe1", new XPDFAtom(26, 0.5, new double[] {0.333, 0.333, 0.333}));
-							atoms.put("Fe2", new XPDFAtom(26, 0.5, new double[] {0.667, 0.667, 0.667}));
-							atoms.put("Ti1", new XPDFAtom(22, 0.5, new double[] {0.167, 0.167, 0.167}));
-							atoms.put("Ti2", new XPDFAtom(22, 0.5, new double[] {0.833, 0.833, 0.833}));
-							atoms.put("O1", new XPDFAtom(8, 0.5, new double[] {0.583, 0.917, 0.250}));
-							atoms.put("O2", new XPDFAtom(8, 0.5, new double[] {0.917, 0.250, 0.583}));
-							atoms.put("O3", new XPDFAtom(8, 0.5, new double[] {0.250, 0.583, 0.917}));
-							atoms.put("O4", new XPDFAtom(8, 0.5, new double[] {-0.583, -0.917, -0.250}));
-							atoms.put("O5", new XPDFAtom(8, 0.5, new double[] {-0.917, -0.250, -0.583}));
-							atoms.put("O6", new XPDFAtom(8, 0.5, new double[] {-0.250, -0.583, -0.917}));
+							Map<String, XPDFAtom> atoms = unitCell.getAllAtoms();
 							v.refresh();
 							return atoms;
 

@@ -1012,7 +1012,7 @@ class PhaseGroupedTable {
 				@Override
 				public String getText(Object element) {
 					return (element instanceof XPDFPhase) ?
-						((XPDFPhase) element).getHallNotation() :
+						((XPDFPhase) element).getHallNotation(true) :
 						"N/A";
 				}				
 				

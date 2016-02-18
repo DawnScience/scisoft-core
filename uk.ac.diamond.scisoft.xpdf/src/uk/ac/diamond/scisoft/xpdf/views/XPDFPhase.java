@@ -308,7 +308,7 @@ public class XPDFPhase {
 	 * Returns the chemical formula of this phase in Hall notation.
 	 * @return chemical formula in Hall notation.
 	 */
-	public String getHallNotation() {
+	public String getHallNotation(boolean reduceToPrimitive) {
 		
 		final int nElements = 100; // Up to and including fermium
 		
@@ -351,6 +351,11 @@ public class XPDFPhase {
 				atomCount.put(z, n);
 			}
 		}
+		
+		if (reduceToPrimitive) {
+		}
+		
+		
 		// Do the special case for organic compounds
 		if (atomCount.containsKey(6)) {
 			hall += elementSymbol[6] + prettifyDouble(atomCount.get(6));

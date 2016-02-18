@@ -9,8 +9,10 @@
 
 package uk.ac.diamond.scisoft.xpdf.views;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.math3.exception.OutOfRangeException;
@@ -100,6 +102,10 @@ public class XPDFPhase {
 	 */
 	public Collection<XPDFAtom> getAllAtoms() {
 		return atoms.values(); 
+	}
+	
+	public Collection<LabelledAtom> getLabelledAtoms() {
+		return LabelledAtom.fromMap(atoms);
 	}
 	
 	public void setForm(XPDFPhaseForm formIn) {
@@ -378,4 +384,31 @@ public class XPDFPhase {
 		
 		return number;
 	}
+	
+
+	public static class LabelledAtom {
+		private XPDFAtom atom;
+		private String label;
+		public LabelledAtom(String label, XPDFAtom atom) {
+			this.label = label;
+			this.atom = atom;
+		}
+		public String getLabel() {
+			return label;
+		}
+		public XPDFAtom getAtom() {
+			return atom;
+		}
+		public static Collection<LabelledAtom> fromMap(Map<String, XPDFAtom> map) {
+			if (map == null) return null;
+			List<LabelledAtom> latoms = new ArrayList<LabelledAtom>();
+			for (Map.Entry<String, XPDFAtom> entry : map.entrySet()) {
+				LabelledAtom latom = new XPDFPhase.LabelledAtom(entry.getKey(), entry.getValue());
+				latoms.add(latom);
+			}
+			return latoms;
+		}
+		
+	}
+
 }				

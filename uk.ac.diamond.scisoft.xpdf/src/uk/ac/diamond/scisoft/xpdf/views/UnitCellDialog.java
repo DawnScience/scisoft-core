@@ -1,6 +1,7 @@
 package uk.ac.diamond.scisoft.xpdf.views;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,26 +23,31 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import uk.ac.diamond.scisoft.xpdf.views.XPDFPhase.LabelledAtom;
+
 class UnitCellDialog extends Dialog {
 
+	private static Map<String, XPDFAtom> defaultAtoms;
 	private Map<String, XPDFAtom> atoms;
 	private XPDFGroupedTable groupedTable;
 	
 	protected UnitCellDialog(Shell parentShell) {
 		super(parentShell);
-		atoms = new HashMap<String, XPDFAtom>();
-    	// All phases are ferrous titanate
-		atoms.put("Fe1", new XPDFAtom(26, 0.5, new double[] {0.333, 0.333, 0.333}));
-		atoms.put("Fe2", new XPDFAtom(26, 0.5, new double[] {0.667, 0.667, 0.667}));
-		atoms.put("Ti1", new XPDFAtom(22, 0.5, new double[] {0.167, 0.167, 0.167}));
-		atoms.put("Ti2", new XPDFAtom(22, 0.5, new double[] {0.833, 0.833, 0.833}));
-		atoms.put("O1", new XPDFAtom(8, 0.5, new double[] {0.583, 0.917, 0.250}));
-		atoms.put("O2", new XPDFAtom(8, 0.5, new double[] {0.917, 0.250, 0.583}));
-		atoms.put("O3", new XPDFAtom(8, 0.5, new double[] {0.250, 0.583, 0.917}));
-		atoms.put("O4", new XPDFAtom(8, 0.5, new double[] {-0.583, -0.917, -0.250}));
-		atoms.put("O5", new XPDFAtom(8, 0.5, new double[] {-0.917, -0.250, -0.583}));
-		atoms.put("O6", new XPDFAtom(8, 0.5, new double[] {-0.250, -0.583, -0.917}));
 		
+		if (defaultAtoms == null) {
+			defaultAtoms = new HashMap<String, XPDFAtom>();
+			// All phases are ferrous titanate
+			defaultAtoms.put("Fe1", new XPDFAtom(26, 1.0, new double[] {0.333, 0.333, 0.333}));
+			defaultAtoms.put("Fe2", new XPDFAtom(26, 1.0, new double[] {0.667, 0.667, 0.667}));
+			defaultAtoms.put("Ti1", new XPDFAtom(22, 1.0, new double[] {0.167, 0.167, 0.167}));
+			defaultAtoms.put("Ti2", new XPDFAtom(22, 1.0, new double[] {0.833, 0.833, 0.833}));
+			defaultAtoms.put("O1", new XPDFAtom(8, 1.0, new double[] {0.583, 0.917, 0.250}));
+			defaultAtoms.put("O2", new XPDFAtom(8, 1.0, new double[] {0.917, 0.250, 0.583}));
+			defaultAtoms.put("O3", new XPDFAtom(8, 1.0, new double[] {0.250, 0.583, 0.917}));
+			defaultAtoms.put("O4", new XPDFAtom(8, 1.0, new double[] {-0.583, -0.917, -0.250}));
+			defaultAtoms.put("O5", new XPDFAtom(8, 1.0, new double[] {-0.917, -0.250, -0.583}));
+			defaultAtoms.put("O6", new XPDFAtom(8, 1.0, new double[] {-0.250, -0.583, -0.917}));
+		}		
 	}
 
 	@Override
@@ -127,18 +133,16 @@ class UnitCellDialog extends Dialog {
 		return atoms;
 	}
 
-	private class LabelledAtom {
-		private XPDFAtom atom;
-		private String label;
-		public LabelledAtom(String label, XPDFAtom atom) {
-			this.label = label;
-			this.atom = atom;
-		}
-		public String XPDFLabel() {
-			return label;
-		}
-		public XPDFAtom getAtom() {
-			return atom;
+	public void setAllAtoms(Map<String, XPDFAtom> atoms) {
+		this.setAllAtoms(LabelledAtom.fromMap(atoms));
+	}
+	
+	public void setAllAtoms(Collection<LabelledAtom> atoms) {
+		Collection<LabelledAtom> atoms2 = (atoms == null || atoms.size() == 0) ?
+			LabelledAtom.fromMap(defaultAtoms) : atoms;
+		this.atoms = new HashMap<String, XPDFAtom>();
+		for (LabelledAtom atom : atoms2) {
+			this.atoms.put(atom.getLabel(), atom.getAtom());
 		}
 	}
 	
@@ -154,12 +158,7 @@ class UnitCellDialog extends Dialog {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			List<LabelledAtom> latom = new ArrayList<LabelledAtom>();
-			for (Map.Entry<String, XPDFAtom> entry : atoms.entrySet()) {
-				latom.add(new LabelledAtom(entry.getKey(), entry.getValue()));
-			}
-			LabelledAtom[] aatom = latom.toArray(new LabelledAtom[latom.size()]);
-			return aatom;
+			return LabelledAtom.fromMap(atoms).toArray(new LabelledAtom[atoms.size()]);
 		}
 	}
 
@@ -251,7 +250,30 @@ class UnitCellDialog extends Dialog {
 
 		@Override
 		public ColumnLabelProvider getLabelProvider() {
-			return new DummyLabelProvider("Uuo");
+			return new ColumnLabelProvider() {		
+				
+				private final String[] elementSymbol = { "n",
+					"H","He","Li","Be","B","C","N","O","F","Ne",
+					"Na","Mg","Al","Si","P","S","Cl","Ar","K","Ca",
+					"Sc","Ti","V","Cr","Mn","Fe","Co","Ni","Cu","Zn",
+					"Ga","Ge","As","Se","Br","Kr","Rb","Sr","Y","Zr",
+			        "Nb","Mo","Tc","Ru","Rh","Pd","Ag","Cd","In","Sn",
+			        "Sb","Te","I","Xe","Cs","Ba","La","Ce","Pr","Nd",
+			        "Pm","Sm","Eu","Gd","Tb","Dy","Ho","Er","Tm","Yb",
+			        "Lu","Hf","Ta","W","Re","Os","Ir","Pt","Au","Hg",
+			        "Tl","Pb","Bi","Po","At","Rn","Fr","Ra","Ac","Th",
+			        "Pa","U","Np","Pu","Am","Cm","Bk","Cf","Es","Fm"};
+
+				@Override
+				public String getText(Object element) {
+					int atomicNumber = 0;
+					if (element instanceof LabelledAtom )
+						atomicNumber = ((LabelledAtom) element).getAtom().getAtomicNumber();
+					else if (element instanceof XPDFAtom)
+						atomicNumber = ((XPDFAtom) element).getAtomicNumber();
+					return elementSymbol[atomicNumber];
+				}
+			};
 		}
 
 		@Override
@@ -279,7 +301,16 @@ class UnitCellDialog extends Dialog {
 
 		@Override
 		public ColumnLabelProvider getLabelProvider() {
-			return new DummyLabelProvider("1");
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					if (element instanceof LabelledAtom) 
+						return ((LabelledAtom) element).getLabel();
+					else if (element instanceof XPDFAtom)
+						return "-";
+					else return "";
+				}
+			};
 		}
 
 		@Override
@@ -314,7 +345,19 @@ class UnitCellDialog extends Dialog {
 
 		@Override
 		public ColumnLabelProvider getLabelProvider() {
-			return new DummyLabelProvider("1");
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					XPDFAtom atom;
+					if (element instanceof LabelledAtom)
+						atom = ((LabelledAtom) element).getAtom();
+					else if (element instanceof XPDFAtom)
+						atom = (XPDFAtom) element;
+					else
+						return "";
+					return Double.toString(atom.getPosition()[axisIndex]);
+				}
+			};
 		}
 
 		@Override
@@ -342,7 +385,19 @@ class UnitCellDialog extends Dialog {
 
 		@Override
 		public ColumnLabelProvider getLabelProvider() {
-			return new DummyLabelProvider("♺");
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					XPDFAtom atom;
+					if (element instanceof LabelledAtom)
+						atom = ((LabelledAtom) element).getAtom();
+					else if (element instanceof XPDFAtom)
+						atom = (XPDFAtom) element;
+					else
+						return "";
+					return Double.toString(atom.getOccupancy());
+				}
+			};
 		}
 
 		@Override
@@ -370,7 +425,19 @@ class UnitCellDialog extends Dialog {
 
 		@Override
 		public ColumnLabelProvider getLabelProvider() {
-			return new DummyLabelProvider("0");
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					XPDFAtom atom;
+					if (element instanceof LabelledAtom)
+						atom = ((LabelledAtom) element).getAtom();
+					else if (element instanceof XPDFAtom)
+						atom = (XPDFAtom) element;
+					else
+						return "";
+					return Double.toString(atom.getIsotropicDisplacement());
+				}
+			};
 		}
 
 		@Override

@@ -50,6 +50,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.TableColumn;
 
+import uk.ac.diamond.scisoft.xpdf.views.XPDFPhase.LabelledAtom;
+
 /**
  * Display and edit phases for the XPDF project
  * @author Timothy Spain, timothy.spain@diamond.ac.uk
@@ -928,11 +930,13 @@ class PhaseGroupedTable {
 					return new DialogCellEditor(((TableViewer) v).getTable()) {
 						
 						private UnitCellDialog unitCell;
+						private Collection<LabelledAtom> atoms;
 						
 						@Override
 						protected Object openDialogBox(Control cellEditorWindow) {
 							unitCell = new UnitCellDialog(cellEditorWindow.getShell());
 							unitCell.createDialogArea(((TableViewer) v).getTable());
+							unitCell.setAllAtoms(atoms);
 							unitCell.open();
 							return null;
 						}
@@ -951,6 +955,11 @@ class PhaseGroupedTable {
 					    	}
 					    	else return null;
 					    }
+					    @Override
+					    protected void doSetValue(Object value) {
+					    	if (value instanceof Collection)
+					    		atoms = ((Collection<LabelledAtom>) value);
+					    }
 					};
 				}
 
@@ -961,7 +970,10 @@ class PhaseGroupedTable {
 
 				@Override
 				protected Object getValue(Object element) {
-					return getLabelProvider().getText(element);
+					if (element instanceof XPDFPhase)
+						return ((XPDFPhase) element).getLabelledAtoms();
+					else 
+						return getLabelProvider().getText(element);
 				}
 
 				@Override

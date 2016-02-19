@@ -189,7 +189,17 @@ public class HDF5LoaderTest {
 		assertTrue(link.isDestinationSymbolic());
 		assertTrue(((SymbolicNode) link.getDestination()).isData());
 		assertTrue(((SymbolicNode) link.getDestination()).getNode() instanceof DataNode);
-
+		link = group.getNodeLink("missing_g");
+		assertTrue(link.isDestinationSymbolic());
+		assertTrue(((SymbolicNode) link.getDestination()).isData()); // cannot tell with h5py...
+		assertEquals(null, ((SymbolicNode) link.getDestination()).getNode());
+		assertEquals("../nonlevel", ((SymbolicNode) link.getDestination()).getPath());
+		link = group.getNodeLink("missing_d");
+		assertTrue(link.isDestinationSymbolic());
+		assertTrue(((SymbolicNode) link.getDestination()).isData());
+		assertEquals(null, ((SymbolicNode) link.getDestination()).getNode());
+		assertEquals("../nonlevel/d", ((SymbolicNode) link.getDestination()).getPath());
+		
 		// external link
 		name = "external link";
 		list = tree.getGroupNode().getDatasets("d_el");
@@ -531,6 +541,6 @@ public class HDF5LoaderTest {
 		DataHolder dh = l.loadFile();
 		System.err.println(Arrays.toString(dh.getNames()));
 		GroupNode g = l.tFile.getGroupNode();
-		assertEquals(0, g.getNumberOfNodelinks());
+		assertEquals(1, g.getNumberOfNodelinks());
 	}
 }

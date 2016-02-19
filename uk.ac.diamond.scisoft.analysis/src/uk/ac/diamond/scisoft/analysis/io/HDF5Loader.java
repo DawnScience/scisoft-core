@@ -559,7 +559,6 @@ public class HDF5Loader extends AbstractFileLoader {
 					int t = H5.H5Lget_val(gid, oname, linkName, HDF5Constants.H5P_DEFAULT);
 					if (t < 0) {
 						logger.error("Could not get value of link");
-						continue;
 					}
 					// System.err.println("  -> " + linkName[0]);
 					SymbolicNode slink = TreeFactory.createSymbolicNode(oid, f, group, linkName[0]);
@@ -571,24 +570,25 @@ public class HDF5Loader extends AbstractFileLoader {
 					// System.err.println("  -> " + linkName[0] + " in " + linkName[1]);
 					if (t < 0) {
 						logger.error("Could not get value of link");
-						// TODO use the external link version of a symbolic node
-						continue;
 					}
 
 					String eName = linkName[1];
-					if (!(new File(eName).exists())) { // use directory of linking file
+					if (eName != null && !(new File(eName).exists())) { // use directory of linking file
 						logger.warn("Could not find external file {}, trying in {}", eName, f.getParentDirectory());
 						eName = new File(f.getParentDirectory(), new File(linkName[1]).getName()).getAbsolutePath();
 						if (!(new File(eName).exists())) { // append to directory of linking file
 							String eName2 = new File(f.getParentDirectory(),linkName[1]).getAbsolutePath();
 							logger.warn("Could not find external file {}, trying in {}", eName, eName2);
 							eName = eName2;
-						}						
+						}
 					}
-					if (new File(eName).exists()) {
+					if (eName != null && new File(eName).exists()) {
 						group.addNode(oname, getExternalNode(pool, f.getHostname(), eName, linkName[0], keepBitWidth));
 					} else {
-						logger.error("Could not find external file {}", eName);
+						eName = linkName[1];
+						SymbolicNode slink = TreeFactory.createSymbolicNode(oid, eName == null ? null : new URI(eName), group, linkName[0]);
+						group.addNode(oname, slink);
+						logger.warn("Could not find external file {} so adding symbolic node", eName);
 					}
 				}
 			}

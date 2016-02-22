@@ -121,7 +121,7 @@ class SampleGroupedTable {
 
 //		Make up the columns
 		for (int iGroup = 0; iGroup < groupNames.size(); iGroup++) {
-			groupedTable.createColumnGroup(groupNames.get(iGroup));
+			groupedTable.createColumnGroup(groupNames.get(iGroup), iGroup == groupNames.size() - 1);
 			for (int iColumn = 0; iColumn < groupedColumnInterfaces.get(iGroup).size(); iColumn++) {
 				ColumnInterface colI = groupedColumnInterfaces.get(iGroup).get(iColumn);
 				TableViewerColumn col = groupedTable.addColumn(groupNames.get(iGroup), SWT.NONE);

@@ -163,19 +163,19 @@ class XPDFGroupedTable extends Composite {
 	 * @param groupNameIn
 	 * 					the name to give the group of columns
 	 */
-	public void createColumnGroup(String groupNameIn) {
+	public void createColumnGroup(String groupNameIn, boolean isLastGroup) {
 		String groupName  = (groupNameIn != null) ? groupNameIn : "";
 		// Do not add duplicate named groups
 		if (!groupName.equals("") && groupNames.contains(groupName)) return;
 		// Otherwise, add a group with this name to the end of the list of groups
 		groupNames.add(groupName);
-		groupViewers.add(createColumnGroupInternal(tableCompo, groupName));
+		groupViewers.add(createColumnGroupInternal(tableCompo, groupName, isLastGroup));
 		groupWidths = Arrays.copyOf(groupWidths, groupWidths.length+1);
 		groupWidths[groupWidths.length-1] = 0;
 	}
 	
 	
-	private TableViewer createColumnGroupInternal(Composite parent, String groupName) {
+	private TableViewer createColumnGroupInternal(Composite parent, String groupName, boolean isLastGroup) {
 		Composite groupCompo = new Composite(parent, SWT.NONE);		
 		groupCompo.setLayout(new FormLayout());
 
@@ -203,7 +203,7 @@ class XPDFGroupedTable extends Composite {
 		subTableCompo.setLayoutData(formData);
 
 		// Define the sub-table
-		TableViewer tV = new TableViewer(subTableCompo);
+		TableViewer tV = new TableViewer(subTableCompo, SWT.NO_SCROLL | ((isLastGroup) ? SWT.V_SCROLL : SWT.NONE));
 
 		// Style of each sub-table
 		tV.getTable().setHeaderVisible(true);

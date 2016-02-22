@@ -63,6 +63,10 @@ public class UnitCellGroupedTable {
 		groupedTable.setInput(this.atoms);
 	}
 
+	public void refresh() {
+		groupedTable.refresh();
+	}
+	
 	private void createColumns() {
 		List<String> groupNames = new ArrayList<String>();
 		List<ColumnInterface> columnInterfaces;

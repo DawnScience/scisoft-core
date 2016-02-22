@@ -29,6 +29,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -222,6 +224,10 @@ class XPDFGroupedTable extends Composite {
 		tV.setLabelProvider(new SubTableLabelProvider(tV));
 
 		tV.addSelectionChangedListener(new SubTableSelectionChangedListener());
+		
+		// Synchronize scrolling
+		if (isLastGroup)
+			tV.getTable().getVerticalBar().addSelectionListener(new ScrollSynchronizer(tV));
 		
 		return tV;
 	}
@@ -461,5 +467,29 @@ class XPDFGroupedTable extends Composite {
 					cachedLabelProvider.getColumnText(element, columnIndex+getOffset()) :
 					null;
 		}
+	}
+	
+	class ScrollSynchronizer implements SelectionListener {
+
+		TableViewer Tv;
+		
+		public ScrollSynchronizer(TableViewer Tv) {
+			this.Tv = Tv;
+		}
+		
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			for (TableViewer iTV : groupViewers) {
+				if (iTV != Tv) { // yes, inequality by reference
+					iTV.getTable().setTopIndex(Tv.getTable().getTopIndex());
+				}
+			}
+		}
+
+		@Override
+		public void widgetDefaultSelected(SelectionEvent e) {
+			// TODO Auto-generated method stub
+		}
+		
 	}
 }

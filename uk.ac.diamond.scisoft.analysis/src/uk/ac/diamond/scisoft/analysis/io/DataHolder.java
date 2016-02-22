@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.IMetadataProvider;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
@@ -226,7 +227,8 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 */
 	@Override
 	public Dataset getDataset(int index) {
-		return DatasetUtils.convertToDataset(getLazyDataset(index));
+		ILazyDataset lazy = getLazyDataset(index);
+		return lazy instanceof IDataset ? DatasetUtils.convertToDataset((IDataset) lazy) : null;
 	}
 
 	/**
@@ -236,7 +238,8 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 */
 	@Override
 	public Dataset getDataset(String name) {
-		return DatasetUtils.convertToDataset(getLazyDataset(name));
+		ILazyDataset lazy = getLazyDataset(name);
+		return lazy instanceof IDataset ? DatasetUtils.convertToDataset((IDataset) lazy) : null;
 	}
 
 	/**

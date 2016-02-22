@@ -20,7 +20,6 @@ import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.python.core.Py;
 import org.python.core.PyArray;
 import org.python.core.PyComplex;
@@ -219,7 +218,7 @@ public class PythonUtils {
 		SliceData slice = convertPySlicesToSlice(indexes, shape);
 		IDataset dataSlice;
 		if (a instanceof IDataset) {
-			dataSlice = DatasetUtils.convertToDataset(a).getSliceView(slice.slice);
+			dataSlice = ((IDataset) a).getSliceView(slice.slice);
 		} else {
 			dataSlice = a.getSlice(slice.slice);
 		}

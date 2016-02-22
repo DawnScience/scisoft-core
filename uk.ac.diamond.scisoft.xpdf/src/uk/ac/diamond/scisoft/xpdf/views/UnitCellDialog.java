@@ -1,117 +1,69 @@
 package uk.ac.diamond.scisoft.xpdf.views;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.ColumnViewer;
-import org.eclipse.jface.viewers.EditingSupport;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import uk.ac.diamond.scisoft.xpdf.views.XPDFPhase.LabelledAtom;
 
 class UnitCellDialog extends Dialog {
 
-	private static Map<String, XPDFAtom> defaultAtoms;
 	private Map<String, XPDFAtom> atoms;
-	private XPDFGroupedTable groupedTable;
+//	private XPDFGroupedTable groupedTable;
+
+	private UnitCellGroupedTable cellTable;
+	
+	private Button addAtomButton;
+	private Button deleteAtomButton;
+	private Button copyAtomButton;
+	private Button clearAtomsButton;
+	
+	private Action addAtomAction;
+	private Action deleteAtomAction;
+	private Action copyAtomAction;
+	private Action clearAtomsAction;
 	
 	protected UnitCellDialog(Shell parentShell) {
 		super(parentShell);
-		
-		if (defaultAtoms == null) {
-			defaultAtoms = new HashMap<String, XPDFAtom>();
-			// All phases are ferrous titanate
-			defaultAtoms.put("Fe1", new XPDFAtom(26, 1.0, new double[] {0.333, 0.333, 0.333}));
-			defaultAtoms.put("Fe2", new XPDFAtom(26, 1.0, new double[] {0.667, 0.667, 0.667}));
-			defaultAtoms.put("Ti1", new XPDFAtom(22, 1.0, new double[] {0.167, 0.167, 0.167}));
-			defaultAtoms.put("Ti2", new XPDFAtom(22, 1.0, new double[] {0.833, 0.833, 0.833}));
-			defaultAtoms.put("O1", new XPDFAtom(8, 1.0, new double[] {0.583, 0.917, 0.250}));
-			defaultAtoms.put("O2", new XPDFAtom(8, 1.0, new double[] {0.917, 0.250, 0.583}));
-			defaultAtoms.put("O3", new XPDFAtom(8, 1.0, new double[] {0.250, 0.583, 0.917}));
-			defaultAtoms.put("O4", new XPDFAtom(8, 1.0, new double[] {-0.583, -0.917, -0.250}));
-			defaultAtoms.put("O5", new XPDFAtom(8, 1.0, new double[] {-0.917, -0.250, -0.583}));
-			defaultAtoms.put("O6", new XPDFAtom(8, 1.0, new double[] {-0.250, -0.583, -0.917}));
-		}		
 	}
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite) super.createDialogArea(parent);
 		container.setLayout(new GridLayout(4, true));
-		createUnitCellTable(container);
-		return container;
-	}
-		
-	private void createUnitCellTable(Composite parent) {		
 		GridData atomGD = new GridData();
-		atomGD.verticalAlignment = GridData.FILL;
+
+		atomGD.verticalAlignment = SWT.FILL;
 		atomGD.horizontalSpan = 3;
 		atomGD.grabExcessHorizontalSpace = true;
 		atomGD.grabExcessVerticalSpace = true;
-		atomGD.horizontalAlignment = GridData.FILL;
+		atomGD.horizontalAlignment = SWT.FILL;
+		atomGD.verticalSpan = 4;
 		
-		groupedTable = new XPDFGroupedTable(parent, SWT.NONE);
-		groupedTable.setLayoutData(atomGD);
-		createColumns();
-		groupedTable.setContentProvider(new AtomContentProvider());
-		groupedTable.setInput(atoms);
+		Composite cellTableCompo = new Composite(container, SWT.NONE);
+		cellTableCompo.setLayoutData(atomGD);
+		cellTableCompo.setLayout(new GridLayout(1, true));
+		
+		cellTable = new UnitCellGroupedTable(cellTableCompo, SWT.NONE);
+		cellTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		cellTable.setInput(atoms);
+
+		createAtomButtons(container);
+		
+		return container;
 	}
-	
-	private void createColumns() {
-		List<String> groupNames = new ArrayList<String>();
-		List<ColumnInterface> columnInterfaces;
-		List<List<ColumnInterface>> groupedColumnInterfaces = new ArrayList<List<ColumnInterface>>();
 		
-		groupNames.add("Atom");
-		columnInterfaces = new ArrayList<ColumnInterface>();
-		columnInterfaces.add(new ElementColumnInterface());
-		columnInterfaces.add(new LabelColumnInterface());
-		groupedColumnInterfaces.add(columnInterfaces);		
-		
-		groupNames.add("Position");
-		columnInterfaces = new ArrayList<ColumnInterface>();
-		columnInterfaces.add(new PositionColumnInterface(0));
-		columnInterfaces.add(new PositionColumnInterface(1));
-		columnInterfaces.add(new PositionColumnInterface(2));
-		groupedColumnInterfaces.add(columnInterfaces);		
-		
-		groupNames.add("");
-		columnInterfaces = new ArrayList<ColumnInterface>();
-		columnInterfaces.add(new OccupancyColumnInterface());
-		columnInterfaces.add(new adpColumnInterface());
-		groupedColumnInterfaces.add(columnInterfaces);		
-		
-		for (int iGroup = 0; iGroup < groupNames.size(); iGroup++) {
-			groupedTable.createColumnGroup(groupNames.get(iGroup));
-			for (int iColumn = 0; iColumn < groupedColumnInterfaces.get(iGroup).size(); iColumn++) {
-				ColumnInterface colI = groupedColumnInterfaces.get(iGroup).get(iColumn);
-				TableViewerColumn col = groupedTable.addColumn(groupNames.get(iGroup), SWT.NONE);
-				col.getColumn().setText(colI.getName());
-				groupedTable.setColumnWidth(col, colI.getWeight());
-				col.setLabelProvider(colI.getLabelProvider());
-				groupedTable.setColumnEditingSupport(col, colI);
-				// Sorting on column header button selection. See PhaseGroupedTable for reference
-				//				if (colI.getSelectionAdapter(this, col) != null) col.getColumn().addSelectionListener(colI.getSelectionAdapter(this, col));
-			}
-		}
-	}
-	
 	// Override to set the window text
 	@Override
 	protected void configureShell(Shell newShell) {
@@ -138,322 +90,35 @@ class UnitCellDialog extends Dialog {
 	}
 	
 	public void setAllAtoms(Collection<LabelledAtom> atoms) {
-		Collection<LabelledAtom> atoms2 = (atoms == null || atoms.size() == 0) ?
-			LabelledAtom.fromMap(defaultAtoms) : atoms;
 		this.atoms = new HashMap<String, XPDFAtom>();
-		for (LabelledAtom atom : atoms2) {
+		for (LabelledAtom atom : atoms) {
 			this.atoms.put(atom.getLabel(), atom.getAtom());
 		}
 	}
 	
-	private class AtomContentProvider implements IStructuredContentProvider {
-
-		@Override
-		public void dispose() {
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
-
-		@Override
-		public Object[] getElements(Object inputElement) {
-			return LabelledAtom.fromMap(atoms).toArray(new LabelledAtom[atoms.size()]);
-		}
+	private void createAtomButtons(Composite parent) {
+		addAtomButton = new Button(parent, SWT.PUSH);
+		addAtomButton.setText("Add");
+		addAtomButton.setToolTipText("Add a new atom to the unit cell");
+		addAtomButton.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 1, 1));
+		copyAtomButton = new Button(parent, SWT.PUSH);
+		copyAtomButton.setText("Copy");
+		copyAtomButton.setToolTipText("Copy the selected atom");
+		copyAtomButton.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 1, 1));
+		deleteAtomButton = new Button (parent, SWT.PUSH);
+		deleteAtomButton.setText("Delete");
+		deleteAtomButton.setToolTipText("Delete the selected atom");
+		deleteAtomButton.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 1, 1));
+		clearAtomsButton = new Button(parent, SWT.PUSH);
+		clearAtomsButton.setText("Clear");
+		clearAtomsButton.setToolTipText("Clear all atoms");
+		clearAtomsButton.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 1, 1));
 	}
 
-	private interface ColumnInterface extends EditingSupportFactory {
-//		public SelectionAdapter getSelectionAdapter(final UnitCellDialog uCD, final TableViewerColumn col);
-		public ColumnLabelProvider getLabelProvider();
-		public String getName();
-		public int getWeight();
-		public boolean presentAsUneditable(Object element);
-	}
-	static class DummyColumnInterface implements ColumnInterface {
-
-		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
-		}
-
-//		@Override
-//		public SelectionAdapter getSelectionAdapter(UnitCellDialog uCD,
-//				TableViewerColumn col) {
-//			return DummySelectionAdapter.get(uCD, col);
-//		}
-
-		@Override
-		public ColumnLabelProvider getLabelProvider() {
-			return new ColumnLabelProvider() {
-				@Override
-				public String getText(Object element) {
-					return "This space left intentionally blank";
-				}
-			};
-		}
-
-		@Override
-		public String getName() {
-			return "Column";
-		}
-
-		@Override
-		public int getWeight() {
-			return 10;
-		}
-
-		@Override
-		public boolean presentAsUneditable(Object element) {
-			return false;
-		}
-		
-	}
+//	private void createAtomActions() {
+//		addAtomAction = new Action() {
+//			
+//		};
+//	}
 	
-	static class DummyEditingSupport extends EditingSupport {
-		DummyEditingSupport(ColumnViewer v) {
-			super(v);
-		}
-		@Override
-		protected CellEditor getCellEditor(Object element) {
-			return null;
-		}
-		@Override
-		protected boolean canEdit(Object element) {
-			return false;
-		}
-		@Override
-		protected Object getValue(Object element) {
-			return null;
-		}
-		@Override
-		protected void setValue(Object element, Object value) {
-		}
-	}
-
-	static class DummyLabelProvider extends ColumnLabelProvider {
-		String text;
-		public DummyLabelProvider(String text) {
-			this.text = text;
-		}
-		@Override
-		public String getText(Object element) {
-			return text;
-		}
-	}
-
-	static class ElementColumnInterface implements ColumnInterface {
-
-		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
-		}
-
-		@Override
-		public ColumnLabelProvider getLabelProvider() {
-			return new ColumnLabelProvider() {		
-				
-				private final String[] elementSymbol = { "n",
-					"H","He","Li","Be","B","C","N","O","F","Ne",
-					"Na","Mg","Al","Si","P","S","Cl","Ar","K","Ca",
-					"Sc","Ti","V","Cr","Mn","Fe","Co","Ni","Cu","Zn",
-					"Ga","Ge","As","Se","Br","Kr","Rb","Sr","Y","Zr",
-			        "Nb","Mo","Tc","Ru","Rh","Pd","Ag","Cd","In","Sn",
-			        "Sb","Te","I","Xe","Cs","Ba","La","Ce","Pr","Nd",
-			        "Pm","Sm","Eu","Gd","Tb","Dy","Ho","Er","Tm","Yb",
-			        "Lu","Hf","Ta","W","Re","Os","Ir","Pt","Au","Hg",
-			        "Tl","Pb","Bi","Po","At","Rn","Fr","Ra","Ac","Th",
-			        "Pa","U","Np","Pu","Am","Cm","Bk","Cf","Es","Fm"};
-
-				@Override
-				public String getText(Object element) {
-					int atomicNumber = 0;
-					if (element instanceof LabelledAtom )
-						atomicNumber = ((LabelledAtom) element).getAtom().getAtomicNumber();
-					else if (element instanceof XPDFAtom)
-						atomicNumber = ((XPDFAtom) element).getAtomicNumber();
-					return elementSymbol[atomicNumber];
-				}
-			};
-		}
-
-		@Override
-		public String getName() {
-			return "Element";
-		}
-
-		@Override
-		public int getWeight() {
-			return 10;
-		}
-
-		@Override
-		public boolean presentAsUneditable(Object element) {
-			return false;
-		}
-	}
-
-	static class LabelColumnInterface implements ColumnInterface {
-
-		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
-		}
-
-		@Override
-		public ColumnLabelProvider getLabelProvider() {
-			return new ColumnLabelProvider() {
-				@Override
-				public String getText(Object element) {
-					if (element instanceof LabelledAtom) 
-						return ((LabelledAtom) element).getLabel();
-					else if (element instanceof XPDFAtom)
-						return "-";
-					else return "";
-				}
-			};
-		}
-
-		@Override
-		public String getName() {
-			return "Label";
-		}
-
-		@Override
-		public int getWeight() {
-			return 10;
-		}
-
-		@Override
-		public boolean presentAsUneditable(Object element) {
-			return false;
-		}
-	}
-	
-	static class PositionColumnInterface implements ColumnInterface {
-
-		static final String[] axisNames = {"x", "y", "z"};
-		private int axisIndex;
-		
-		public PositionColumnInterface(int axisIndex) {
-			this.axisIndex = axisIndex;
-		}
-		
-		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
-		}
-
-		@Override
-		public ColumnLabelProvider getLabelProvider() {
-			return new ColumnLabelProvider() {
-				@Override
-				public String getText(Object element) {
-					XPDFAtom atom;
-					if (element instanceof LabelledAtom)
-						atom = ((LabelledAtom) element).getAtom();
-					else if (element instanceof XPDFAtom)
-						atom = (XPDFAtom) element;
-					else
-						return "";
-					return Double.toString(atom.getPosition()[axisIndex]);
-				}
-			};
-		}
-
-		@Override
-		public String getName() {
-			return axisNames[axisIndex];
-		}
-
-		@Override
-		public int getWeight() {
-			return 10;
-		}
-
-		@Override
-		public boolean presentAsUneditable(Object element) {
-			return false;
-		}
-	}
-
-	static class OccupancyColumnInterface implements ColumnInterface {
-
-		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
-		}
-
-		@Override
-		public ColumnLabelProvider getLabelProvider() {
-			return new ColumnLabelProvider() {
-				@Override
-				public String getText(Object element) {
-					XPDFAtom atom;
-					if (element instanceof LabelledAtom)
-						atom = ((LabelledAtom) element).getAtom();
-					else if (element instanceof XPDFAtom)
-						atom = (XPDFAtom) element;
-					else
-						return "";
-					return Double.toString(atom.getOccupancy());
-				}
-			};
-		}
-
-		@Override
-		public String getName() {
-			return "Occupancy";
-		}
-
-		@Override
-		public int getWeight() {
-			return 10;
-		}
-
-		@Override
-		public boolean presentAsUneditable(Object element) {
-			return false;
-		}
-	}
-
-	static class adpColumnInterface implements ColumnInterface {
-
-		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
-		}
-
-		@Override
-		public ColumnLabelProvider getLabelProvider() {
-			return new ColumnLabelProvider() {
-				@Override
-				public String getText(Object element) {
-					XPDFAtom atom;
-					if (element instanceof LabelledAtom)
-						atom = ((LabelledAtom) element).getAtom();
-					else if (element instanceof XPDFAtom)
-						atom = (XPDFAtom) element;
-					else
-						return "";
-					return Double.toString(atom.getIsotropicDisplacement());
-				}
-			};
-		}
-
-		@Override
-		public String getName() {
-			return "Displacement";
-		}
-
-		@Override
-		public int getWeight() {
-			return 10;
-		}
-
-		@Override
-		public boolean presentAsUneditable(Object element) {
-			return false;
-		}
-	}
-
 }

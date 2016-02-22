@@ -91,12 +91,12 @@ public class XPDFCoordinates {
 		if (input.getShape().length == 1) {
 			AxesMetadata axes = input.getFirstMetadata(AxesMetadata.class);
 			if (theXPDFMetadata.getSample().getTrace().isAxisAngle()) {
-				this.setTwoTheta(Maths.toRadians(DatasetUtils.convertToDataset(axes.getAxis(0)[0].getSlice())));
+				this.setTwoTheta(Maths.toRadians(DatasetUtils.sliceAndConvertLazyDataset(axes.getAxis(0)[0])));
 				dAngle = differentiate1DDataset(twoTheta);
 				q = null;
 				x = null;
 			} else {
-				this.setQ(DatasetUtils.convertToDataset(axes.getAxis(0)[0].getSlice()));
+				this.setQ(DatasetUtils.sliceAndConvertLazyDataset(axes.getAxis(0)[0]));
 				twoTheta = null;
 			}		
 		} else {

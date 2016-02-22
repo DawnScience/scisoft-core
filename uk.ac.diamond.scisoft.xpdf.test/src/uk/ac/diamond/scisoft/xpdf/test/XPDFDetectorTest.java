@@ -25,8 +25,8 @@ public class XPDFDetectorTest extends TestCase {
 			System.err.println("File "+ dataPath+ "ceria"+photonEnergyeV+".before.xy" + " not found!");
 			return false;
 		}
-		Dataset delta = Maths.toRadians(DatasetUtils.convertToDataset(dh.getLazyDataset("Column_1").getSlice()));
-		Dataset before = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_2").getSlice());
+		Dataset delta = Maths.toRadians(DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_1")));
+		Dataset before = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_2"));
 
 		try {
 			dh = LoaderFactory.getData(dataPath+"ceria"+photonEnergyeV+".after.xy");
@@ -34,7 +34,7 @@ public class XPDFDetectorTest extends TestCase {
 			System.err.println("File "+ dataPath+ "ceria"+photonEnergyeV+".before.xy" + " not found!");
 			return false;
 		}
-		Dataset expected = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_2").getSlice());
+		Dataset expected = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_2"));
 		
 		XPDFCoordinates theCoords = new XPDFCoordinates();
 //		theCoords.setBeamData(theBeam);

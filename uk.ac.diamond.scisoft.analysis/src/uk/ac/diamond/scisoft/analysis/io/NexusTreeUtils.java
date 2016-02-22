@@ -1557,11 +1557,8 @@ public class NexusTreeUtils {
 		Dataset dataset;
 		if (ld instanceof Dataset) {
 			dataset = (Dataset) ld;
-		} else if (ld instanceof IDataset) {
-			dataset = DatasetUtils.convertToDataset(ld);
-			dNode.setDataset(dataset);
 		} else {
-			dataset = DatasetUtils.convertToDataset(ld.getSlice());
+			dataset = DatasetUtils.sliceAndConvertLazyDataset(ld);
 			dNode.setDataset(dataset);
 		}
 		if (dtype >= 0 && dataset.getDtype() != dtype) {

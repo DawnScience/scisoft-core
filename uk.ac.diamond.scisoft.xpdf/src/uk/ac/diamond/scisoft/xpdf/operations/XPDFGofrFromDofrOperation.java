@@ -40,14 +40,14 @@ public class XPDFGofrFromDofrOperation extends AbstractOperation<EmptyModel, Ope
 		XPDFMetadata theXPDFMetadata = dofr.getFirstMetadata(XPDFMetadata.class);
 		
 		if (dofr.getFirstMetadata(AxesMetadata.class) == null) throw new OperationException(this, "Axis metadata not found.");
-		Dataset r = DatasetUtils.convertToDataset(dofr.getFirstMetadata(AxesMetadata.class).getAxes()[0]);
+		Dataset r = DatasetUtils.sliceAndConvertLazyDataset(dofr.getFirstMetadata(AxesMetadata.class).getAxes()[0]);
 		
 		double numberDensity = theXPDFMetadata.getSample().getNumberDensity();
 		Dataset gofr = Maths.divide(Maths.divide(dofr, 4*Math.PI*numberDensity), r);
 		
 		// Error propagation
 		if (dofr.getError() != null){
-			Dataset dofrErrors = DatasetUtils.convertToDataset(dofr.getError().getSlice());
+			Dataset dofrErrors = DatasetUtils.sliceAndConvertLazyDataset(dofr.getError());
 			Dataset gofrErrors = Maths.divide(Maths.divide(dofrErrors, 4*Math.PI*numberDensity), r);
 			gofr.setError(gofrErrors);
 		}

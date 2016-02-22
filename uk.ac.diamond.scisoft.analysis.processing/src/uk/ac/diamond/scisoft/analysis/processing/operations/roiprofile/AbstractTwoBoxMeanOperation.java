@@ -42,7 +42,7 @@ public abstract class AbstractTwoBoxMeanOperation<T extends TwoBoxModel> extends
 		RectangularROI box2 = model.getBox2();
 		Dataset mask = null;
 		MaskMetadata mmd = input.getFirstMetadata(MaskMetadata.class);
-		if (mmd != null && mmd.getMask() != null) mask = DatasetUtils.convertToDataset(mmd.getMask().getSlice());
+		if (mmd != null && mmd.getMask() != null) mask = DatasetUtils.sliceAndConvertLazyDataset(mmd.getMask());
 		
 		Dataset data = DatasetUtils.convertToDataset(input);
 		

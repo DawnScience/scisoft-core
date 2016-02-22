@@ -68,7 +68,7 @@ public class XPDFNormalizeTracesOperation extends
 				((Dataset) process).idivide(normer);
 			
 				// Normalize the errors, if present
-				Dataset inputErrors = (input.getError() != null) ? DatasetUtils.convertToDataset(input.getError()) : null;
+				Dataset inputErrors = DatasetUtils.sliceAndConvertLazyDataset(input.getError());
 				if (inputErrors != null) {
 					Dataset processErrors = Maths.divide(inputErrors, normer);
 					process.setError(processErrors);

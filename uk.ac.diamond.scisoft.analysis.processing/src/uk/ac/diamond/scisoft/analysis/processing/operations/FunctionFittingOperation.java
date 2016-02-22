@@ -94,7 +94,7 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 			ILazyDataset[] firstAxes = getFirstAxes(input);
 			Dataset x = null;
 			if (firstAxes != null && firstAxes[0] != null) {
-				x = DatasetUtils.convertToDataset(firstAxes[0].getSlice());
+				x = DatasetUtils.sliceAndConvertLazyDataset(firstAxes[0]);
 			} else {
 				x = DatasetFactory.createRange(input.getSize(), Dataset.FLOAT64);
 			}

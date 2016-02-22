@@ -15,12 +15,10 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.image.AffineTransformImageModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.OperationServiceLoader;
 
 public class AffineTransformImageOperation extends AbstractSimpleImageOperation<AffineTransformImageModel> {
@@ -52,7 +50,7 @@ public class AffineTransformImageOperation extends AbstractSimpleImageOperation<
 					if (axes_found == false && m instanceof AxesMetadata) {
 						axes_found = true;
 						ILazyDataset[] axes = ((AxesMetadata) m).getAxes();
-						Dataset axis_old_x = DatasetUtils.convertToDataset(axes[0]);
+						Dataset axis_old_x = DatasetUtils.sliceAndConvertLazyDataset(axes[0]);
 						Dataset axis_new_x = null;
 						//check if axes is 1 or 2 dimensional
 						if (axis_old_x.getRank() == 1) {
@@ -74,7 +72,7 @@ public class AffineTransformImageOperation extends AbstractSimpleImageOperation<
 							}
 						}
 
-						Dataset axis_old_y = DatasetUtils.convertToDataset(axes[1]);
+						Dataset axis_old_y = DatasetUtils.sliceAndConvertLazyDataset(axes[1]);
 						Dataset axis_new_y = null;
 						//check if axes is 1 or 2 dimensional
 						if (axis_old_y.getRank() == 1) {

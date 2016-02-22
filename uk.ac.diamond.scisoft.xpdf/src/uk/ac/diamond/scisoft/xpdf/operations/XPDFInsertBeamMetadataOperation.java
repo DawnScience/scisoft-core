@@ -52,12 +52,12 @@ public class XPDFInsertBeamMetadataOperation extends XPDFInsertXMetadataOperatio
 		}
 		// Load the background from the designated xy file
 		if (model.getDataset().length() <= 0) throw new OperationException(this, "Undefined dataset");
-		Dataset bgTrace = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, model.getDataset()).getSliceView());
+		Dataset bgTrace = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, model.getDataset()));
 		checkDataAndAuxillaryDataMatch(input, bgTrace);
 		
 		try {
 			if (model.getErrorDataset().length() <= 0) throw new OperationException(this, "Undefined error dataset");
-			Dataset bgErrors = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, model.getErrorFilePath(), model.getErrorDataset()).getSliceView());
+			Dataset bgErrors = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(this, model.getErrorFilePath(), model.getErrorDataset()));
 			if (bgErrors != null)
 				checkDataAndAuxillaryDataMatch(bgTrace, bgErrors);
 				bgTrace.setError(bgErrors);

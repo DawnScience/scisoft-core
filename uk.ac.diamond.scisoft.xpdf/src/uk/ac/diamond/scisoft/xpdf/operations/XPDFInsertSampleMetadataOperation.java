@@ -114,7 +114,7 @@ public class XPDFInsertSampleMetadataOperation extends XPDFInsertXMetadataOperat
 		}
 		if (isErrorData && xyFilePath != null && model.getErrorDataset().length() > 0) {
 			try {
-				Dataset dataErrors = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, model.getErrorDataset()).getSliceView());
+				Dataset dataErrors = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, model.getErrorDataset()));
 				if (dataErrors != null) {
 					checkDataAndAuxillaryDataMatch(input, dataErrors);
 					input.setError(dataErrors);

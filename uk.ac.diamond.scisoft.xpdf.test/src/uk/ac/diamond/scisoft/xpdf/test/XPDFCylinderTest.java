@@ -207,12 +207,12 @@ public class XPDFCylinderTest extends TestCase {
 			System.err.println("Error reading file: " + filename);
 			fail("Error reading file: " + filename);
 		}
-		Dataset delta1D = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_1").getSlice());
+		Dataset delta1D = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_1"));
 		Dataset delta = new DoubleDataset(delta1D.getSize(), 1);
 		for (int i = 0; i<delta1D.getSize(); i++)
 			delta.set(delta1D.getDouble(i), i, 0);
 		Dataset gamma = DoubleDataset.zeros(delta);
-		Dataset expected = 	DatasetUtils.convertToDataset(dh.getLazyDataset("Column_2").getSlice());
+		Dataset expected = 	DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_2"));
 		expected.setShape(expected.getSize(), 1);
 		
 		Dataset calculated = scatterer.calculateAbsorptionCorrections(gamma, delta, attenuator, attenuationCoefficient, beamData, true, true);
@@ -300,7 +300,7 @@ public class XPDFCylinderTest extends TestCase {
 				System.err.println("Error reading file: " + fullFileName);
 				fail("Error reading file: " + fullFileName);
 			}
-			Dataset delta1D = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_1").getSlice());
+			Dataset delta1D = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_1"));
 			Dataset delta = new DoubleDataset(delta1D.getSize(), 1);
 			for (int i = 0; i<delta1D.getSize(); i++)
 				delta.set(Math.toRadians(delta1D.getDouble(i)), i, 0);
@@ -312,7 +312,7 @@ public class XPDFCylinderTest extends TestCase {
 			gamma = Maths.multiply(Math.sin(rotationAngle), delta);
 			delta = Maths.multiply(Math.cos(rotationAngle), delta);
 
-			Dataset expected = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_2").getSlice());
+			Dataset expected = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_2"));
 
 			Dataset ceriaFluor1 = powder1mm.calculateFluorescence(gamma, delta, attenuators, muIn, muOut, beamData, true, true);
 
@@ -379,13 +379,13 @@ public class XPDFCylinderTest extends TestCase {
 					fail("File not found: " + fn);
 				}
 
-				Dataset delta1D = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_1").getSlice());
+				Dataset delta1D = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_1"));
 				Dataset delta = new DoubleDataset(delta1D.getSize(), 1);
 				for (int i = 0; i<delta1D.getSize(); i++)
 					delta.set(delta1D.getDouble(i), i, 0);
 				Dataset gamma = DoubleDataset.zeros(delta);
 
-				Dataset expected = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_2").getSlice());
+				Dataset expected = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_2"));
 				
 				// Calculate a result
 				Dataset result = attenuators.get(iScatter).calculateAbsorptionCorrections(gamma, delta, attenuators.get(jAbsorber), mus[jAbsorber], beamData, true, true);

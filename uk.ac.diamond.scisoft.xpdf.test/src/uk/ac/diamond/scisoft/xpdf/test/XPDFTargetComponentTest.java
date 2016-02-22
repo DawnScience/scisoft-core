@@ -5,6 +5,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
+import junit.framework.TestCase;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
@@ -13,7 +14,6 @@ import uk.ac.diamond.scisoft.xpdf.XPDFComponentGeometry;
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFQSquaredIntegrator;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
-import junit.framework.TestCase;
 
 public class XPDFTargetComponentTest extends TestCase {
 
@@ -41,7 +41,7 @@ public class XPDFTargetComponentTest extends TestCase {
 			dh = LoaderFactory.getData(dataPath+"self_scattering.xy");
 		} catch (Exception e) {
 		}
-		Dataset twoTheta = Maths.toRadians(DatasetUtils.convertToDataset(dh.getLazyDataset("Column_1").getSliceView(new int[] {0},  new int[]{1951},  new int[] {1})));
+		Dataset twoTheta = Maths.toRadians(DatasetUtils.convertToDataset(dh.getLazyDataset("Column_1").getSlice(new int[] {0},  new int[]{1951},  new int[] {1})));
 
 		XPDFBeamData beamData = new XPDFBeamData();
 		beamData.setBeamEnergy(76.6);

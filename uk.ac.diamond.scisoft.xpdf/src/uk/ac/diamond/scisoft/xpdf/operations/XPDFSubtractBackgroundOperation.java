@@ -60,7 +60,7 @@ public class XPDFSubtractBackgroundOperation extends
 				((Dataset) process).isubtract(theXPDFMetadata.getBeam().getTrace().getTrace());
 				
 				// Propagate the errors
-				Dataset inputErrors = (input.getError() != null) ? DatasetUtils.convertToDataset(input.getError()) : null;
+				Dataset inputErrors = DatasetUtils.sliceAndConvertLazyDataset(input.getError());
 				Dataset processErrors = null;
 				if (inputErrors != null) {
 					Dataset	backgroundErrors = 	theXPDFMetadata.getBeam().getTrace().getTrace().getError();	

@@ -72,8 +72,8 @@ public class XPDFMetadataTest extends TestCase {
 			dh = LoaderFactory.getData(dataPath+"ceria_total_fluorescence2" + ".xy");
 		} catch (Exception e) {
 		}
-		Dataset delta1D = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_1").getSlice());
-		Dataset fluorExp = DatasetUtils.convertToDataset(dh.getLazyDataset("Column_2").getSlice());
+		Dataset delta1D = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_1"));
+		Dataset fluorExp = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_2"));
 		Dataset delta = new DoubleDataset(delta1D.getSize(), 1);
 		for (int i = 0; i<delta1D.getSize(); i++)
 			delta.set(delta1D.getDouble(i), i, 0);

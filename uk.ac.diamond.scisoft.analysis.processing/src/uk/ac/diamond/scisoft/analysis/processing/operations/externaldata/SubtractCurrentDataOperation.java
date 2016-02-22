@@ -88,7 +88,7 @@ protected OperationData process(IDataset input, IMonitor monitor) throws Operati
 		}
 		
 		if (lz.getRank() == dataDims.length) {
-			subtrahend = DatasetUtils.convertToDataset(lz.getSlice());
+			subtrahend = DatasetUtils.sliceAndConvertLazyDataset(lz);
 		} else {
 			subtrahend = LazyMaths.mean(s, e, lz, dataDims).squeeze();
 		}

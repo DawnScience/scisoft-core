@@ -326,7 +326,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 						name = axesNames.get(i)[j];
 						IDataset axDataset = ax.getSlice();
 						axDataset.setName(name);
-						if (axNames != null) axNames[count++] = name;
+						if (axNames != null && j == 0) axNames[count++] = name;
 						if (setDims.contains(i)) {
 							if(first) {
 								ILazyDataset error = axDataset.getError();

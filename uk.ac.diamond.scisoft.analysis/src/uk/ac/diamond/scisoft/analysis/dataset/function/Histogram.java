@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
@@ -62,7 +63,7 @@ public class Histogram implements DatasetToDatasetFunction {
 			throw new IllegalArgumentException("Given lower bound was higher than upper bound");
 		}
 
-		bins = (DoubleDataset) DatasetUtils.linSpace(min, max, nbins + 1, Dataset.FLOAT64);
+		bins = (DoubleDataset) DatasetFactory.createLinearSpace(min, max, nbins + 1, Dataset.FLOAT64);
 	}
 
 	/**
@@ -127,7 +128,7 @@ public class Histogram implements DatasetToDatasetFunction {
 		if (useEqualSpanBins) {
 			for (IDataset ds : datasets) {
 				if (bins == null) {
-					bins = (DoubleDataset) DatasetUtils.linSpace(ds.min().doubleValue(), ds.max().doubleValue(), nbins + 1, Dataset.FLOAT64);
+					bins = (DoubleDataset) DatasetFactory.createLinearSpace(ds.min().doubleValue(), ds.max().doubleValue(), nbins + 1, Dataset.FLOAT64);
 				}
 				final double[] edges = bins.getData();
 				final double lo = edges[0];
@@ -167,7 +168,7 @@ public class Histogram implements DatasetToDatasetFunction {
 		} else {
 			for (IDataset ds : datasets) {
 				if (bins == null) {
-					bins = (DoubleDataset) DatasetUtils.linSpace(ds.min().doubleValue(), ds.max().doubleValue(), nbins + 1, Dataset.FLOAT64);
+					bins = (DoubleDataset) DatasetFactory.createLinearSpace(ds.min().doubleValue(), ds.max().doubleValue(), nbins + 1, Dataset.FLOAT64);
 				}
 				final double[] edges = bins.getData();
 				final double lo = edges[0];
@@ -220,7 +221,7 @@ public class Histogram implements DatasetToDatasetFunction {
 	public void setMinMax(double min, double max) {
 		this.min = min;
 		this.max = max;
-		bins = (DoubleDataset) DatasetUtils.linSpace(min, max, nbins + 1, Dataset.FLOAT64);		
+		bins = (DoubleDataset) DatasetFactory.createLinearSpace(min, max, nbins + 1, Dataset.FLOAT64);		
 	}
 
 	/**

@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.analysis.roi.fitting;
 import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
@@ -70,7 +70,7 @@ public class CircleFitterTest {
 		double[] original = new double[] {50, 150, -0.30};
 
 		DoubleDataset theta;
-		theta = (DoubleDataset) DatasetUtils.linSpace(0, Math.PI, 5, Dataset.FLOAT64);
+		theta = (DoubleDataset) DatasetFactory.createLinearSpace(0, Math.PI, 5, Dataset.FLOAT64);
 
 		Dataset[] coords = CircleFitter.generateCoordinates(theta, original);
 

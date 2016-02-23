@@ -17,6 +17,7 @@ import org.apache.commons.math3.exception.TooManyEvaluationsException;
 import org.eclipse.dawnsci.analysis.api.fitting.IConicSectionFitter;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
@@ -94,7 +95,7 @@ public class EllipseFitterTest {
 		DoubleDataset theta;
 //		theta = new DoubleDataset(new double[] {0.1, 0.2, 0.25, 0.33, 0.35, 0.37, 0.43, });
 //		theta = Random.rand(0, 2*Math.PI, pts);
-		theta = (DoubleDataset) DatasetUtils.linSpace(0, 2*Math.PI, pts, Dataset.FLOAT64);
+		theta = (DoubleDataset) DatasetFactory.createLinearSpace(0, 2*Math.PI, pts, Dataset.FLOAT64);
 
 		Dataset[] coords = EllipseFitter.generateCoordinates(theta, original);
 

@@ -10,7 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -35,7 +35,7 @@ public class FanoGaussianTest {
 		Assert.assertEquals(hr, f.val(23.), ABS_TOL);
 
 		// check area
-		Dataset x = DatasetUtils.linSpace(-60+23, 60+23, 401, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(-60+23, 60+23, 401, Dataset.FLOAT64);
 		Dataset v = f.calculateValues(x);
 		double s = ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1));
 		Assert.assertEquals(4, s, 1.1e-1);
@@ -43,7 +43,7 @@ public class FanoGaussianTest {
 
 	@Test
 	public void testExtremes() {
-		Dataset x = DatasetUtils.linSpace(-20, 20, 401, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(-20, 20, 401, Dataset.FLOAT64);
 
 		FanoGaussian fg = new FanoGaussian();
 		fg.setParameterValues(0., 5., 4., 1.2, 6000);

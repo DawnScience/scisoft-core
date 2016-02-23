@@ -13,7 +13,7 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
@@ -55,7 +55,7 @@ public abstract class AbstractPixelIntegration2D extends AbstractPixelIntegratio
 			axis = Maths.add(binsChi.getSlice(new int[]{1}, null ,null), binsChi.getSlice(null, new int[]{-1},null));
 			axis.idivide(2);
 		} else {
-			axis = DatasetUtils.linSpace(azimuthalRange[0], azimuthalRange[1], nBinsChi, Dataset.FLOAT64);
+			axis = DatasetFactory.createLinearSpace(azimuthalRange[0], azimuthalRange[1], nBinsChi, Dataset.FLOAT64);
 		}
 		
 		axis.setName("azimuth");

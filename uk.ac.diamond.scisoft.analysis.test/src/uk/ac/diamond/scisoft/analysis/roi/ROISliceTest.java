@@ -12,7 +12,6 @@ package uk.ac.diamond.scisoft.analysis.roi;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.roi.LinearROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.ROISliceUtils;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
@@ -61,7 +60,7 @@ public class ROISliceTest {
 //		Dataset axis0 = DatasetUtils.linSpace(0, 9, 10, Dataset.FLOAT32);
 //		Dataset axis1 = DatasetUtils.linSpace(0, 19, 20, Dataset.FLOAT32);
 //		Dataset axis2 = DatasetUtils.linSpace(0, 29, 30, Dataset.FLOAT32);
-		Dataset axis3 = DatasetUtils.linSpace(0, 39, 40, Dataset.FLOAT32);
+		Dataset axis3 = DatasetFactory.createLinearSpace(0, 39, 40, Dataset.FLOAT32);
 		
 		//Create ROI and slices
 		RectangularROI roi = new RectangularROI(10, 10, 5, 5, 0);

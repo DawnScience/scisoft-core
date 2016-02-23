@@ -1330,12 +1330,12 @@ def linspace(start, stop, num=50, endpoint=True, retstep=False):
             start = start+0j
         if type(stop) is _types.IntType:
             stop = stop+0j
-        rresult = _dsutils.linSpace(start.real, stop.real, num, float64.value)
-        iresult = _dsutils.linSpace(start.imag, stop.imag, num, float64.value)
+        rresult = _df.createLinearSpace(start.real, stop.real, num, float64.value)
+        iresult = _df.createLinearSpace(start.imag, stop.imag, num, float64.value)
         result = Sciwrap(_complexdoubleds(rresult, iresult))
         del rresult, iresult
     else:
-        result = Sciwrap(_dsutils.linSpace(start, stop, num, dtype.value))
+        result = Sciwrap(_df.createLinearSpace(start, stop, num, dtype.value))
 
     if retstep:
         step = result[1] - result[0]
@@ -1351,7 +1351,7 @@ def logspace(start, stop, num=50, endpoint=True, base=10.0):
 
     if complex(start).imag == 0 and complex(stop).imag == 0:
         dtype = _getdtypefromobj(((start, stop)))
-        return _dsutils.logSpace(start, stop, num, base, dtype.value)
+        return _df.createLogSpace(start, stop, num, base, dtype.value)
     else:
         result = linspace(start, stop, num, endpoint)
         return _maths.power(base, result)

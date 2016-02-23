@@ -18,6 +18,7 @@ import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
@@ -179,7 +180,7 @@ public abstract class AbstractPixelIntegration {
 			axis = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
 			axis.idivide(2);
 		} else {
-			axis = DatasetUtils.linSpace(binRange[0], binRange[1], nbins, Dataset.FLOAT64);
+			axis = DatasetFactory.createLinearSpace(binRange[0], binRange[1], nbins, Dataset.FLOAT64);
 		}
 		
 		switch (xAxis) {
@@ -265,7 +266,7 @@ public abstract class AbstractPixelIntegration {
 		if (binRange != null) {
 			//range corresponds to bin centres
 			double shift = (binRange[1]- binRange[0])/(2*numBins);
-			return (DoubleDataset) DatasetUtils.linSpace(binRange[0]-shift, binRange[1]+shift, numBins + 1, Dataset.FLOAT64);
+			return (DoubleDataset) DatasetFactory.createLinearSpace(binRange[0]-shift, binRange[1]+shift, numBins + 1, Dataset.FLOAT64);
 		}
 		
 			
@@ -284,6 +285,6 @@ public abstract class AbstractPixelIntegration {
 			max = x > max ? x : max;
 		}
 
-		return (DoubleDataset) DatasetUtils.linSpace(min, max, numBins + 1, Dataset.FLOAT64);
+		return (DoubleDataset) DatasetFactory.createLinearSpace(min, max, numBins + 1, Dataset.FLOAT64);
 	}
 }

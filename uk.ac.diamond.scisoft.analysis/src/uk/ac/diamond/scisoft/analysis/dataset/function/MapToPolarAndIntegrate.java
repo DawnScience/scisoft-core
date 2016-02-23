@@ -376,8 +376,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			}
 		}
 		
-		Dataset rAxis = DatasetUtils.linSpace(vmin, vmax, nr, Dataset.FLOAT32);
-		Dataset angAxis = DatasetUtils.linSpace(sphi, ephi, np, Dataset.FLOAT32);
+		Dataset rAxis = DatasetFactory.createLinearSpace(vmin, vmax, nr, Dataset.FLOAT32);
+		Dataset angAxis = DatasetFactory.createLinearSpace(sphi, ephi, np, Dataset.FLOAT32);
 		return new Dataset[] {rAxis, angAxis};
 	}
 	

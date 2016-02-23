@@ -10,7 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -38,7 +38,7 @@ public class VoigtTest {
 		Assert.assertTrue(f.val(23. + dx) > h && f.val(23. + dx + 0.01) < h);
 
 		// check area
-		Dataset x = DatasetUtils.linSpace(-20+23, 20+23, 401, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(-20+23, 20+23, 401, Dataset.FLOAT64);
 		Dataset v = f.calculateValues(x);
 		double s = ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1));
 		Assert.assertEquals(1.2, s, 1e-1);
@@ -46,7 +46,7 @@ public class VoigtTest {
 
 	@Test
 	public void testExtremes() {
-		Dataset x = DatasetUtils.linSpace(-20+23, 20+23, 401, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(-20+23, 20+23, 401, Dataset.FLOAT64);
 
 		Voigt v = new Voigt();
 		v.setParameterValues(23., 2., 1.2, 0);

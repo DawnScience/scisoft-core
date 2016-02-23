@@ -20,6 +20,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
@@ -219,7 +220,7 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		double shift = (sp- st)/(2*nBins);
 		start = st - shift;
 		stop = sp + shift;
-		binEdges = DatasetUtils.linSpace(start,stop,nBins+1, Dataset.FLOAT64);
+		binEdges = DatasetFactory.createLinearSpace(start,stop,nBins+1, Dataset.FLOAT64);
 	}
 
 	@Override

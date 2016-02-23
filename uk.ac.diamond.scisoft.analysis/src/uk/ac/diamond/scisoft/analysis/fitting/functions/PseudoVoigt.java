@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
@@ -214,7 +215,7 @@ public class PseudoVoigt extends APeak {
 			calcCachedParameters();
 
 		double w = 2*(halfwl + halfwg);
-		Dataset x = DatasetUtils.linSpace(pos - w, pos + w, 200, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(pos - w, pos + w, 200, Dataset.FLOAT64);
 		DoubleDataset data = calculateValues(x);
 		data = (DoubleDataset) Maths.abs(data);
 		List<Double> crossings = DatasetUtils.crossings(x, data, height / 2);

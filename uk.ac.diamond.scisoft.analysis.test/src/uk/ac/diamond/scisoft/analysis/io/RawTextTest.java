@@ -11,7 +11,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -48,7 +48,7 @@ public class RawTextTest {
 	@Test
 	public void testSaveFile() throws ScanFileHolderException {
 		DataHolder dh = new DataHolder();
-		data = DatasetUtils.linSpace(0, 576000, range, Dataset.FLOAT64);
+		data = DatasetFactory.createLinearSpace(0, 576000, range, Dataset.FLOAT64);
 		data.setShape(sizex, sizey);
 		try {
 			dh.addDataset("testing data", data);

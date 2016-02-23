@@ -26,7 +26,6 @@ import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -257,7 +256,7 @@ public class SRSLoaderTest {
 		DataHolder dh = new DataHolder();
 		String fileName = "quoted.dat";
 		Dataset data1 = DatasetFactory.createRange(20, Dataset.INT32);
-		Dataset data2 = DatasetUtils.linSpace(0, 576000, 20, Dataset.FLOAT64);
+		Dataset data2 = DatasetFactory.createLinearSpace(0, 576000, 20, Dataset.FLOAT64);
 		try {
 			dh.addDataset("col1", data1);
 			dh.addDataset("testing data", data2);

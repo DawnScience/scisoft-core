@@ -1108,7 +1108,7 @@ public class MillerSpaceMapper {
 			if (mStop != null) {
 				mStop[i] = mend;
 			}
-			a[i] = DatasetUtils.linSpace(mbeg, mend - mDelta[i], mShape[i], Dataset.FLOAT64);
+			a[i] = DatasetFactory.createLinearSpace(mbeg, mend - mDelta[i], mShape[i], Dataset.FLOAT64);
 			a[i].setName(names[i]);
 			System.out.print("Axis " + i + ": " + mbeg);
 			if (mShape[i] > 1) {

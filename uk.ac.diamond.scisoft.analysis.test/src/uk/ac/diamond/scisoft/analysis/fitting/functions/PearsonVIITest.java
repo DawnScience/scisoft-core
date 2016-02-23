@@ -10,7 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -35,14 +35,14 @@ public class PearsonVIITest {
 		Assert.assertEquals(0.5 * h, f.val(23. - 1), ABS_TOL);
 		Assert.assertEquals(0.5 * h, f.val(23. + 1), ABS_TOL);
 
-		Dataset x = DatasetUtils.linSpace(-50+23, 50+23, 200, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(-50+23, 50+23, 200, Dataset.FLOAT64);
 		Dataset v = f.calculateValues(x);
 		Assert.assertEquals(1.2, ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1)), 1e-4);
 	}
 
 	@Test
 	public void testExtremes() {
-		Dataset x = DatasetUtils.linSpace(-20+23, 20+23, 401, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(-20+23, 20+23, 401, Dataset.FLOAT64);
 
 		PearsonVII pv = new PearsonVII();
 		pv.getParameter(3).setUpperLimit(Double.MAX_VALUE);

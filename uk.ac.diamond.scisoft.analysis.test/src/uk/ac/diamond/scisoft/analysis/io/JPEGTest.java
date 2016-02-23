@@ -17,6 +17,7 @@ import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.junit.BeforeClass;
@@ -61,7 +62,7 @@ public class JPEGTest {
 	public void testSaveFile() throws Exception {
 		String filePath = "testSaveFile.jpg";
 		DataHolder dha = new DataHolder();
-		data = DatasetUtils.linSpace(0, 255, range, Dataset.INT16);
+		data = DatasetFactory.createLinearSpace(0, 255, range, Dataset.INT16);
 		data.setShape(sizex, sizey);
 		dha.addDataset("testing data", data);
 		new JPEGScaledSaver(testScratchDirectoryName + filePath).saveFile(dha);
@@ -85,7 +86,7 @@ public class JPEGTest {
 	public void testLoaderFactory() throws Exception {
 		String filePath = "testLoaderFactory.jpg";
 		DataHolder dha = new DataHolder();
-		data = DatasetUtils.linSpace(0, 255, range, Dataset.INT16);
+		data = DatasetFactory.createLinearSpace(0, 255, range, Dataset.INT16);
 		data.setShape(sizex, sizey);
 		dha.addDataset("testing data", data);
 		new JPEGScaledSaver(testScratchDirectoryName + filePath).saveFile(dha);
@@ -103,7 +104,7 @@ public class JPEGTest {
 	public void manyImages() throws ScanFileHolderException {
 		String filePath = "manyImages.jpg";
 		DataHolder dha = new DataHolder();
-		data = DatasetUtils.linSpace(0, 255, range, Dataset.INT16);
+		data = DatasetFactory.createLinearSpace(0, 255, range, Dataset.INT16);
 		data.setShape(sizex, sizey);
 		for (int i = 0; i < 5; i++) {
 			dha.addDataset("testing data " + i, data);
@@ -120,7 +121,7 @@ public class JPEGTest {
 	public void manyImagesScaled() throws ScanFileHolderException {
 		String filePath = "manyImagesScaled.jpg";
 		DataHolder dha = new DataHolder();
-		data = DatasetUtils.linSpace(0, 250000, range, Dataset.INT32);
+		data = DatasetFactory.createLinearSpace(0, 250000, range, Dataset.INT32);
 		data.setShape(sizex, sizey);
 		for (int i = 0; i < 5; i++) {
 			dha.addDataset("testing data " + i, data);
@@ -138,7 +139,7 @@ public class JPEGTest {
 	public void compareDataset() throws ScanFileHolderException {
 		String filePath = "compareDataset.jpg";
 		DataHolder dha = new DataHolder();
-		data = DatasetUtils.linSpace(0, 255, range, Dataset.INT16);
+		data = DatasetFactory.createLinearSpace(0, 255, range, Dataset.INT16);
 		data.setShape(sizex, sizey);
 		dha.addDataset("testing data", data);
 		new JPEGSaver(testScratchDirectoryName + filePath).saveFile(dha);
@@ -161,7 +162,7 @@ public class JPEGTest {
 	public void compareScaledDataset() throws ScanFileHolderException {
 		String filePath = "compareScaledDataset.jpg";
 		DataHolder dha = new DataHolder();
-		data = DatasetUtils.linSpace(0, 250000, range, Dataset.FLOAT32);
+		data = DatasetFactory.createLinearSpace(0, 250000, range, Dataset.FLOAT32);
 		data.setShape(sizex, sizey);
 		dha.addDataset("testing data", data);
 		new JPEGScaledSaver(testScratchDirectoryName + filePath).saveFile(dha);
@@ -181,7 +182,7 @@ public class JPEGTest {
 	@Test
 	public void noEnding() throws Exception {
 		DataHolder dha = new DataHolder();
-		data = DatasetUtils.linSpace(0, 250000, range, Dataset.FLOAT32);
+		data = DatasetFactory.createLinearSpace(0, 250000, range, Dataset.FLOAT32);
 		data.setShape(sizex, sizey);
 		dha.addDataset("testing data", data);
 		new JPEGScaledSaver(testScratchDirectoryName + "noEnding.jpg").saveFile(dha);
@@ -199,7 +200,7 @@ public class JPEGTest {
 	public void incorrectEnding() throws Exception {
 		String filePath = "incorrectEnding.txt";
 		String filePath1 = "incorrectEnding1.txt";
-		data = DatasetUtils.linSpace(0, 126, range, Dataset.INT8);
+		data = DatasetFactory.createLinearSpace(0, 126, range, Dataset.INT8);
 		data.setShape(sizex, sizey);
 		DataHolder dha = new DataHolder();
 		dha.addDataset("testing data", data);

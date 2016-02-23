@@ -13,7 +13,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.junit.Before;
 import org.junit.Test;
@@ -134,7 +133,7 @@ public class HistogramTest {
 	@Test
 	public void testHistogram8() {
 		Histogram histo = new Histogram(50);
-		Dataset pd = histo.value(DatasetUtils.linSpace(0, 100, 101, Dataset.INT32)).get(0);
+		Dataset pd = histo.value(DatasetFactory.createLinearSpace(0, 100, 101, Dataset.INT32)).get(0);
 
 		assertEquals(50, pd.getSize());
 		assertEquals(2, pd.getInt(0));
@@ -150,7 +149,7 @@ public class HistogramTest {
 		long start = 0;
 
 		Histogram h = new Histogram(50);
-		Dataset d = DatasetUtils.linSpace(0, 100, 500000, Dataset.FLOAT64);
+		Dataset d = DatasetFactory.createLinearSpace(0, 100, 500000, Dataset.FLOAT64);
 		
 		Dataset a  = null;
 

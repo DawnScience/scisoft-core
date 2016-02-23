@@ -10,7 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -53,7 +53,7 @@ public class LorentzianSqrTest {
 		if ((nBins % 2) == 0) {
 			nBins += 1; // odd number of bins to get peak
 		}
-		Dataset x = DatasetUtils.linSpace(-50.*fwhm+pos, 50.*fwhm+pos, nBins, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(-50.*fwhm+pos, 50.*fwhm+pos, nBins, Dataset.FLOAT64);
 		Dataset v = f2.calculateValues(x);
 		double s = ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1));
 		Assert.assertEquals(area, s, 1e-2); // relaxed tolerance: poor man's integration only...

@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
@@ -56,7 +57,7 @@ public class NonPixelSplittingIntegrationGPU extends AbstractPixelIntegration {
 		
 		List<Dataset> result = new ArrayList<Dataset>();
 		if (binEdges == null) {
-			binEdges = (DoubleDataset) DatasetUtils.linSpace(radialArray[0].min().doubleValue(), radialArray[0].max().doubleValue(), nbins + 1, Dataset.FLOAT64);
+			binEdges = (DoubleDataset) DatasetFactory.createLinearSpace(radialArray[0].min().doubleValue(), radialArray[0].max().doubleValue(), nbins + 1, Dataset.FLOAT64);
 		}
 		final double[] edges = binEdges.getData();
 		final double lo = edges[0];

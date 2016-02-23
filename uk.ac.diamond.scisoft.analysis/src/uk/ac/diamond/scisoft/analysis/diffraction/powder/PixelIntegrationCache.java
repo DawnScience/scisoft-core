@@ -11,7 +11,7 @@ package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
@@ -238,7 +238,7 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 			double shift = 0;
 //			range corresponds to bin centres
 			if (isCentre) shift = (binRange[1]- binRange[0])/(2*numBins);
-			return (DoubleDataset) DatasetUtils.linSpace(binRange[0]-shift, binRange[1]+shift, numBins + 1, Dataset.FLOAT64);
+			return (DoubleDataset) DatasetFactory.createLinearSpace(binRange[0]-shift, binRange[1]+shift, numBins + 1, Dataset.FLOAT64);
 		}
 		
 			
@@ -255,7 +255,7 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 			max = x > max ? x : max;
 		}
 		//default range corresponds to bin edges
-		return (DoubleDataset) DatasetUtils.linSpace(min, max, numBins + 1, Dataset.FLOAT64);
+		return (DoubleDataset) DatasetFactory.createLinearSpace(min, max, numBins + 1, Dataset.FLOAT64);
 	}
 	
 	private static Dataset calculateRadialAxis(XAxis xAxis, int nBins, double[] binRange, DoubleDataset binEdges, boolean isLog, boolean isCentre) {
@@ -266,7 +266,7 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 			axis.idivide(2);
 		} else {
 			
-			axis = DatasetUtils.linSpace(binRange[0], binRange[1], nBins, Dataset.FLOAT64);
+			axis = DatasetFactory.createLinearSpace(binRange[0], binRange[1], nBins, Dataset.FLOAT64);
 	
 		}
 		
@@ -304,7 +304,7 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 			axis = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
 			axis.idivide(2);
 		} else {
-			axis = DatasetUtils.linSpace(binRange[0], binRange[1], nBins, Dataset.FLOAT64);
+			axis = DatasetFactory.createLinearSpace(binRange[0], binRange[1], nBins, Dataset.FLOAT64);
 		}
 
 		axis.setName("azimuthal angle (degrees)");

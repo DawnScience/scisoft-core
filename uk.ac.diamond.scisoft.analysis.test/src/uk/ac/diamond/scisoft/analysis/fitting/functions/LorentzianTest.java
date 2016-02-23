@@ -11,7 +11,7 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -37,7 +37,7 @@ public class LorentzianTest {
 		IFunction f2 = new Lorentzian(new double[] {23., 2., 1.2});
 		Assert.assertTrue(f.equals(f2));
 		
-		Dataset x = DatasetUtils.linSpace(-100+23, 100+23, 201, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(-100+23, 100+23, 201, Dataset.FLOAT64);
 		Dataset v = f.calculateValues(x);
 		double s = ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1));
 		Assert.assertEquals(1.2, s, 1e-2);

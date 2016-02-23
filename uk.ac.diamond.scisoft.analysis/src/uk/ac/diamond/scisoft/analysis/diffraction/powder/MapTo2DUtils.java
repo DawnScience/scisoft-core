@@ -31,9 +31,9 @@ public class MapTo2DUtils {
 	public static Dataset remap2Dto2DNonSplitting(Dataset original, Dataset xO, Dataset yO, double[] xRange, int xNumber, double[] yRange, int yNumber) {
 		
 		double shift = (xRange[1]- xRange[0])/(2*xNumber);
-		DoubleDataset xBins =  (DoubleDataset) DatasetUtils.linSpace(xRange[0]-shift, xRange[1]+shift, xNumber + 1, Dataset.FLOAT64);
+		DoubleDataset xBins =  (DoubleDataset) DatasetFactory.createLinearSpace(xRange[0]-shift, xRange[1]+shift, xNumber + 1, Dataset.FLOAT64);
 		shift = (yRange[1]- yRange[0])/(2*yNumber);
-		DoubleDataset yBins =  (DoubleDataset) DatasetUtils.linSpace(yRange[0]-shift, yRange[1]+shift, yNumber + 1, Dataset.FLOAT64);
+		DoubleDataset yBins =  (DoubleDataset) DatasetFactory.createLinearSpace(yRange[0]-shift, yRange[1]+shift, yNumber + 1, Dataset.FLOAT64);
 		
 		final double[] edgesQ = xBins.getData();
 		final double loQ = edgesQ[0];
@@ -89,9 +89,9 @@ public class MapTo2DUtils {
 	public static Dataset remap2Dto2DSplitting(IDataset original, IDataset xO, IDataset yO, double[] xRange, int xNumber, double[] yRange, int yNumber) {
 		
 		double shift = (xRange[1]- xRange[0])/(2*xNumber);
-		DoubleDataset xBins =  (DoubleDataset) DatasetUtils.linSpace(xRange[0]-shift, xRange[1]+shift, xNumber + 1, Dataset.FLOAT64);
+		DoubleDataset xBins =  (DoubleDataset) DatasetFactory.createLinearSpace(xRange[0]-shift, xRange[1]+shift, xNumber + 1, Dataset.FLOAT64);
 		shift = (yRange[1]- yRange[0])/(2*yNumber);
-		DoubleDataset yBins =  (DoubleDataset) DatasetUtils.linSpace(yRange[0]-shift, yRange[1]+shift, yNumber + 1, Dataset.FLOAT64);
+		DoubleDataset yBins =  (DoubleDataset) DatasetFactory.createLinearSpace(yRange[0]-shift, yRange[1]+shift, yNumber + 1, Dataset.FLOAT64);
 		
 		final double[] edgesQ = xBins.getData();
 		final double loQ = edgesQ[0];

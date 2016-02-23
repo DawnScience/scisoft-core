@@ -1090,18 +1090,18 @@ public class AbstractDatasetTest {
 
 	@Test
 	public void testSlicingViews() {
-		Dataset a, b, c;
-		a = DatasetFactory.createRange(32, Dataset.FLOAT64).reshape(4, 8);
+		DoubleDataset a, b, c;
+		a = (DoubleDataset) DatasetFactory.createRange(32, Dataset.FLOAT64).reshape(4, 8);
 		checkSliceView(a, new int[] {0, 1}, new int[] {3, 5}, new int[] {1, 2});
 		checkSliceView(a, new int[] {1, -1}, new int[] {-1, 3}, new int[] {1, -2});
 
-		a = DatasetFactory.createRange(60, Dataset.FLOAT64).reshape(6, 10);
+		a = (DoubleDataset) DatasetFactory.createRange(60, Dataset.FLOAT64).reshape(6, 10);
 		b = checkSliceView(a, new int[] {0, 1}, new int[] {6, 8}, new int[] {1, 2}); // 6x4
-		c = b.getSliceView(new int[] {0, 1}, new int[] {1, 4}, null);
+		c = (DoubleDataset) b.getSliceView(new int[] {0, 1}, new int[] {1, 4}, null);
 		c.setShape(3);
 		checkSliceView(b, new int[] {1, 0}, new int[] {5, 3}, new int[] {2, 1});
 		checkSliceView(b, new int[] {1, -1}, new int[] {5, 2}, new int[] {2, -1});
-		c = a.getSlice(new int[] {0, 1}, new int[] {6, 8}, new int[] {1, 2});
+		c = (DoubleDataset) a.getSlice(new int[] {0, 1}, new int[] {6, 8}, new int[] {1, 2});
 		b.setShape(2,3,4);
 		c.setShape(2,3,4);
 		assertEquals(c, b);
@@ -1127,9 +1127,9 @@ public class AbstractDatasetTest {
 		b = checkSliceView(a, new int[] {0, 1}, new int[] {6, 2}, new int[] {1, 2}); // 6x1
 	}
 
-	private Dataset checkSliceView(Dataset a, int[] start, int[] stop, int[] step) {
-		Dataset s = a.getSliceView(start, stop, step).squeeze();
-		Dataset t = a.getSlice(start, stop, step).squeeze();
+	private DoubleDataset checkSliceView(DoubleDataset a, int[] start, int[] stop, int[] step) {
+		DoubleDataset s = (DoubleDataset) a.getSliceView(start, stop, step).squeeze();
+		DoubleDataset t = (DoubleDataset) a.getSlice(start, stop, step).squeeze();
 		assertArrayEquals(t.getShape(), s.getShape());
 		assertEquals(t.toString(true), t, s);
 		IndexIterator iter = s.getIterator(true);
@@ -1139,6 +1139,9 @@ public class AbstractDatasetTest {
 			int[] p = s.getNDPosition(iter.index);
 			assertArrayEquals(Arrays.toString(pos) + " : " + Arrays.toString(p), pos, p);
 		}
+
+		// test for correct copying of non-contiguous datasets
+		assertArrayEquals(((DoubleDataset) t.flatten()).getData(), ((DoubleDataset) s.flatten()).getData(), 1e-15);
 
 		TestUtils.assertEquals("Max", t.max().doubleValue(), s.max().doubleValue());
 		TestUtils.assertEquals("Min", t.min().doubleValue(), s.min().doubleValue());

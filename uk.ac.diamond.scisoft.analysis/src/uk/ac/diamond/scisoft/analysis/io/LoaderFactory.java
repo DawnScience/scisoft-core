@@ -710,14 +710,14 @@ public class LoaderFactory {
 		// Makes the cache the DataHolder
         final IDataHolder holder = getData(path, true, mon);
         if (holder == null) return null;
-        try {
-            return holder.getDataset(name);
-        } catch (Exception ne) { // We try to load the data from the ILazyDataset
+        IDataset data = holder.getDataset(name);
+
+        if (data == null) { // We try to load the data from the ILazyDataset
         	final ILazyDataset lz = holder.getLazyDataset(name);
-        	IDataset loaded = lz.getSlice(); // Loads all data
-        	holder.addDataset(name, loaded); // We just loaded the data, cache it
-        	return loaded;
+        	data = lz.getSlice();
+        	holder.addDataset(name, data); // We just loaded the data, cache it
         }
+        return data;
 	}
 
 	/**

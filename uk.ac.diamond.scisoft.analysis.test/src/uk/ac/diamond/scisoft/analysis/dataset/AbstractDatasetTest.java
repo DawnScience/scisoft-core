@@ -1125,6 +1125,12 @@ public class AbstractDatasetTest {
 
 		b = checkSliceView(a, new int[] {0, 1}, new int[] {1, 8}, new int[] {1, 2}); // 1x4
 		b = checkSliceView(a, new int[] {0, 1}, new int[] {6, 2}, new int[] {1, 2}); // 6x1
+
+		// test special case of zero-rank dataset
+		a = (DoubleDataset) DatasetFactory.createFromObject(1., Dataset.FLOAT64);
+		b = (DoubleDataset) a.getSliceView();
+		b.setShape(1);
+		assertTrue(b.getIterator().hasNext());
 	}
 
 	private DoubleDataset checkSliceView(DoubleDataset a, int[] start, int[] stop, int[] step) {

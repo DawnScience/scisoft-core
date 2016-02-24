@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright (c) 2012 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
@@ -624,5 +624,27 @@ public class DetectorPropertiesTest {
 		// half of a cube side
 		double s = DetectorProperties.calculatePlaneTriangleSolidAngle(a, b, c);
 		Assert.assertEquals(4.*Math.PI/12, s, 1e-12);
+
+		// check cos(alpha)^3 for a triangle in y-z that recedes
+		double alpha = Math.toRadians(24.);
+		double ca = Math.cos(alpha);
+		double ta = Math.tan(alpha);
+		double side = 1;
+		double x, y;
+
+		double factor = ca * ca * ca;
+
+		for (x = 200; x < 2000; x += 50) {
+			y = ta*x;
+			a.set(x, y, -side);
+			b.set(x, y, side);
+			c.set(x, y + side, 0);
+	
+			s = DetectorProperties.calculatePlaneTriangleSolidAngle(a, b, c);
+			double r = side/x;
+			// ratio of solid angle subtended to that estimated by area by distance squared
+			// tends to cos(alpha)^3
+			Assert.assertEquals(factor, s/(r*r), factor*r/2.682);
+		}
 	}
 }

@@ -85,7 +85,7 @@ public class UnitCellGroupedTable {
 		columnInterfaces.add(new PositionColumnInterface(2));
 		groupedColumnInterfaces.add(columnInterfaces);		
 		
-		groupNames.add("");
+		groupNames.add("‍");
 		columnInterfaces = new ArrayList<ColumnInterface>();
 		columnInterfaces.add(new OccupancyColumnInterface());
 		columnInterfaces.add(new adpColumnInterface());

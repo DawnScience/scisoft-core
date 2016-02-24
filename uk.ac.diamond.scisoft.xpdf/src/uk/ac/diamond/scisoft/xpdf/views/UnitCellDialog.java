@@ -65,6 +65,12 @@ class UnitCellDialog extends Dialog {
 		createAtomButtons(container);
 		createAtomActions();
 		
+		createFirstRowFields(container);
+//		createPositionFields();
+//		createBUDropDown();
+//		createSUFields();
+//		createAnisoTable();
+		
 		return container;
 	}
 		
@@ -158,4 +164,7 @@ class UnitCellDialog extends Dialog {
 			
 	}
 	
+	private void createFirstRowFields(Composite parent) {
+		
+	}
 }

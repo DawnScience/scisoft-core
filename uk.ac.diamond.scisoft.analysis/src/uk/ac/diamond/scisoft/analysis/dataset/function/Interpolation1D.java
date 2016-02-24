@@ -19,6 +19,7 @@ import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
 import org.apache.commons.math3.exception.OutOfRangeException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
@@ -26,19 +27,19 @@ import org.eclipse.dawnsci.analysis.dataset.roi.ROISliceUtils;
 
 public class Interpolation1D {
 
-	public static IDataset splineInterpolation(IDataset x, IDataset y, IDataset xnew) {
+	public static Dataset splineInterpolation(IDataset x, IDataset y, IDataset xnew) {
 		
 		return interpolate(x,y, xnew, new SplineInterpolator());
 		
 	}
 	
-	public static IDataset linearInterpolation(IDataset x, IDataset y, IDataset xnew) {
+	public static Dataset linearInterpolation(IDataset x, IDataset y, IDataset xnew) {
 		
 		return interpolate(x,y, xnew, new LinearInterpolator());
 		
 	}
 	
-	public static IDataset interpolate(IDataset oldx, IDataset oldy, IDataset newx, UnivariateInterpolator interpolator) {
+	public static Dataset interpolate(IDataset oldx, IDataset oldy, IDataset newx, UnivariateInterpolator interpolator) {
 		
 		//TODO more sanity checks on inputs
 		
@@ -46,9 +47,10 @@ public class Interpolation1D {
 		DoubleDataset dy = (DoubleDataset)DatasetUtils.cast(oldy,Dataset.FLOAT64);
 		
 		boolean sorted = true;
-		double maxtest = oldx.getDouble(0);
-		for (int i = 1; i < ((Dataset)oldx).count(); i++) {
-			if (maxtest > oldx.getDouble(i))  {
+		double maxtest = dx.getDouble(0);
+		int count = dx.getSize();
+		for (int i = 1; i < count; i++) {
+			if (maxtest > dx.getDouble(i))  {
 				sorted = false;
 				break;
 			}
@@ -74,11 +76,11 @@ public class Interpolation1D {
 		
 		UnivariateFunction func = interpolator.interpolate(sortedx,sortedy);
 		
-		IDataset newy = newx.clone();
+		Dataset newy = DatasetFactory.zeros(newx.getShape(), Dataset.FLOAT64);
 		newy.setName(oldy.getName()+"_interpolated");
-		
+		count = newy.getSize();
 		double val = 0;
-		for (int i = 0; i < ((Dataset)newx).count(); i++) {
+		for (int i = 0; i < count; i++) {
 			
 			try {
 				val = func.value(newx.getDouble(i));

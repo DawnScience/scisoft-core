@@ -10,7 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.junit.Assert;
@@ -36,7 +36,7 @@ public class GaussianTest {
 		Assert.assertEquals(0.5 * h, f.val(23. - 1), ABS_TOL);
 		Assert.assertEquals(0.5 * h, f.val(23. + 1), ABS_TOL);
 
-		Dataset x = DatasetUtils.linSpace(0, 46, 200, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(0, 46, 200, Dataset.FLOAT64);
 		Dataset v = f.calculateValues(x);
 		Assert.assertEquals(1.2, ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1)), ABS_TOL);
 

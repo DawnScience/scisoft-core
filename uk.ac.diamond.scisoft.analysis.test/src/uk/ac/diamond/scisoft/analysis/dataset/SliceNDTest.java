@@ -711,4 +711,149 @@ public class SliceNDTest {
 		Assert.assertArrayEquals(new int[] {6}, slice.getStart());
 		Assert.assertArrayEquals(new int[] {-1}, slice.getStop());
 	}
+
+	@Test
+	public void testIsAll() {
+		int[] step;
+		int[] lstart;
+		int[] lstop;
+		SliceND slice;
+
+		step = new int[] {};
+		lstart = new int[] {};
+		lstop = new int[] {};
+		slice = new SliceND(new int[] {}, null, null, step);
+		Assert.assertTrue(slice.isAll());
+
+		step = new int[] {-1};
+		slice = new SliceND(new int[] {7}, null, null, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstart = new int[1];
+		lstop = new int[1];
+
+		step = new int[] {2};
+		slice = new SliceND(new int[] {7}, null, null, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstart[0] = 0;
+		slice = new SliceND(new int[] {7}, lstart, null, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstart[0] = 3;
+		slice = new SliceND(new int[] {7}, lstart, null, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstart[0] = -4;
+		slice = new SliceND(new int[] {7}, lstart, null, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstart[0] = -8;
+		slice = new SliceND(new int[] {7}, lstart, null, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstart[0] = 7;
+		slice = new SliceND(new int[] {7}, lstart, null, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstart[0] = 8;
+		slice = new SliceND(new int[] {7}, lstart, null, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstop[0] = 7;
+		slice = new SliceND(new int[] {7}, null, lstop, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstop[0] = -3;
+		slice = new SliceND(new int[] {7}, null, lstop, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstop[0] = 0;
+		slice = new SliceND(new int[] {7}, null, lstop, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstop[0] = -6;
+		slice = new SliceND(new int[] {7}, null, lstop, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstop[0] = -8;
+		slice = new SliceND(new int[] {7}, null, lstop, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstop[0] = 9;
+		slice = new SliceND(new int[] {7}, null, lstop, step);
+		Assert.assertFalse(slice.isAll());
+
+
+		step = new int[] {-2};
+
+		slice = new SliceND(new int[] {7}, null, null, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstart[0] = 0;
+		slice = new SliceND(new int[] {7}, lstart, null, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstart[0] = 3;
+		slice = new SliceND(new int[] {7}, lstart, null, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstart[0] = -4;
+		slice = new SliceND(new int[] {7}, lstart, null, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstart[0] = -8;
+		slice = new SliceND(new int[] {7}, lstart, null, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstart[0] = -7;
+		slice = new SliceND(new int[] {7}, lstart, null, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstart[0] = 7;
+		slice = new SliceND(new int[] {7}, lstart, null, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstart[0] = 8;
+		slice = new SliceND(new int[] {7}, lstart, null, step);
+		Assert.assertFalse(slice.isAll());
+
+
+		lstop[0] = 0;
+		slice = new SliceND(new int[] {7}, null, lstop, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstop[0] = 1;
+		slice = new SliceND(new int[] {7}, null, lstop, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstop[0] = -1;
+		slice = new SliceND(new int[] {7}, null, lstop, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstop[0] = -2;
+		slice = new SliceND(new int[] {7}, null, lstop, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstop[0] = -3;
+		slice = new SliceND(new int[] {7}, null, lstop, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstop[0] = -8;
+		slice = new SliceND(new int[] {7}, null, lstop, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstop[0] = -6;
+		slice = new SliceND(new int[] {7}, null, lstop, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstop[0] = 8;
+		slice = new SliceND(new int[] {7}, null, lstop, step);
+		Assert.assertFalse(slice.isAll());
+
+		lstop[0] = -8;
+		slice = new SliceND(new int[] {7}, null, lstop, step);
+		Assert.assertFalse(slice.isAll());
+
+	}
 }

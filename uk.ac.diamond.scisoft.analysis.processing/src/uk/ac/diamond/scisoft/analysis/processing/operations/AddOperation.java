@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 /**
  * Subtracts either one dataset from another or a scalar value from all values of a dataset.
@@ -20,7 +21,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 public class AddOperation extends AbstractMathsOperation<ValueModel, OperationData> {
 
 	protected IDataset operation(IDataset a, Object value) {
-		return ((Dataset) a).iadd(value);
+		return a instanceof Dataset ? ((Dataset) a).iadd(value) : Maths.add(a, value);
 	}
 
 	@Override

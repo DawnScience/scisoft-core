@@ -29,6 +29,7 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -179,7 +180,7 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver {
 	private static Dataset loadDataset(String fileName, int header, int[] shape) throws ScanFileHolderException {
 		IDataHolder holder = LoaderFactory.fetchData(fileName, false);
 		if (holder != null) {
-			return (Dataset) holder.getDataset(0);
+			return DatasetUtils.convertToDataset(holder.getDataset(0));
 		}
 		Dataset data = null;
 		FileInputStream fi = null;

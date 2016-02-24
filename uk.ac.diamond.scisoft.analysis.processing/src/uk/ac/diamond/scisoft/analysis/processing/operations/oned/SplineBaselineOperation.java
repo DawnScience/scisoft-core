@@ -97,7 +97,7 @@ public class SplineBaselineOperation extends AbstractOperation<SplineBaselineMod
 			break;
 		case 2:
 			// Subtract a linear fit
-			ybase = (Dataset) Interpolation1D.linearInterpolation(knots, ys, xaxis);
+			ybase = Interpolation1D.linearInterpolation(knots, ys, xaxis);
 
 			// Extrapolating function for the linear fit
 			PolynomialFunctionLagrangeForm linearLagrange = 
@@ -113,7 +113,7 @@ public class SplineBaselineOperation extends AbstractOperation<SplineBaselineMod
 			break;
 		default:
 			// Spline interpolation between the outer most knots
-			ybase = (Dataset) Interpolation1D.splineInterpolation(knots, ys, xaxis);
+			ybase = Interpolation1D.splineInterpolation(knots, ys, xaxis);
 			
 			// Extrapolation
 			final int degree = 3;
@@ -126,9 +126,9 @@ public class SplineBaselineOperation extends AbstractOperation<SplineBaselineMod
 			// next-to-end points and two equispaced points in between.
 			for (int i = 0; i <= degree; i++) {
 				lowerInterval[i] = ((degree-i)*knots.getDouble(0) + i*knots.getDouble(1))/degree;
-				lowerValues[i] = ((Dataset) Interpolation1D.splineInterpolation(knots, ys, new DoubleDataset(Arrays.copyOfRange(lowerInterval, i, i+1), 1))).getDouble(0);
+				lowerValues[i] = Interpolation1D.splineInterpolation(knots, ys, new DoubleDataset(Arrays.copyOfRange(lowerInterval, i, i+1), 1)).getDouble(0);
 				upperInterval[i] = ((degree-i)*knots.getDouble(knots.getSize()-2) + i*knots.getDouble(knots.getSize()-1))/degree;
-				upperValues[i] = ((Dataset) Interpolation1D.splineInterpolation(knots, ys, new DoubleDataset(Arrays.copyOfRange(upperInterval, i, i+1), 1))).getDouble(0);
+				upperValues[i] = Interpolation1D.splineInterpolation(knots, ys, new DoubleDataset(Arrays.copyOfRange(upperInterval, i, i+1), 1)).getDouble(0);
 			}
 			
 			// Lower (smaller value) and upper (larger value) extrapolating

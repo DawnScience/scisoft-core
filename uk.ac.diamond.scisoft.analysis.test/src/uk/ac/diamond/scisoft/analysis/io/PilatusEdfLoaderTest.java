@@ -15,6 +15,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -52,7 +53,7 @@ public class PilatusEdfLoaderTest {
 		IDataHolder dataHolder = LoaderFactory.getData(filePath, null);		 		
 	    if (dataHolder.toLazyMap().size()!=1) throw new Exception("Should only be one data set");
 
-	    final Dataset set = (Dataset)dataHolder.toLazyMap().values().iterator().next();
+	    final Dataset set = DatasetUtils.sliceAndConvertLazyDataset(dataHolder.toLazyMap().values().iterator().next());
 	    final int[] shape = set.getShape();
 	    if (shape[0]!=2048) throw new Exception("Wrong size of dimension 0, should be 2048!");
 	    if (shape[1]!=2048) throw new Exception("Wrong size of dimension 1, should be 2048!");

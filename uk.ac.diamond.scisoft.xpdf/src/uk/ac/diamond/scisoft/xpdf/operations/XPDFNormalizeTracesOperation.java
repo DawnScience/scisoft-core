@@ -48,7 +48,7 @@ public class XPDFNormalizeTracesOperation extends
 		
 		XPDFMetadata theXPDFMetadata =  null;
 		
-		IDataset process = new DoubleDataset(DatasetUtils.convertToDataset(input));
+		Dataset process = new DoubleDataset(DatasetUtils.convertToDataset(input));
 		
 		copyMetadata(input, process);
 		
@@ -65,7 +65,7 @@ public class XPDFNormalizeTracesOperation extends
 				// Normalize the Dataset
 				double normer = theXPDFMetadata.getSample().getTrace().getCountingTime()*
 						theXPDFMetadata.getSample().getTrace().getMonitorRelativeFlux();
-				((Dataset) process).idivide(normer);
+				process.idivide(normer);
 			
 				// Normalize the errors, if present
 				Dataset inputErrors = DatasetUtils.sliceAndConvertLazyDataset(input.getError());

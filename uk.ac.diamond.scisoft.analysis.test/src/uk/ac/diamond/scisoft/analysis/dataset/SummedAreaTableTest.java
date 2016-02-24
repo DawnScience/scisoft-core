@@ -207,7 +207,7 @@ public class SummedAreaTableTest {
 		
 		long start = System.currentTimeMillis();
 		final SummedAreaTable sum = new SummedAreaTable(image);
-		final Dataset fano   = (Dataset)sum.getFanoImage(box);
+		final Dataset fano   = sum.getFanoImage(box);
 		long end  = System.currentTimeMillis();
 		
 		if (!Arrays.equals(fano.getShape(), image.getShape())) throw new Exception("Fano image changed shape!");

@@ -187,14 +187,14 @@ public class MapTo2DUtils {
 		int[] sli = new int[d.getRank()];
 		Arrays.fill(sli, 1);
 		sli[dim] = 0;
-		IDataset dd = d.getSlice(sli, null, null);
+		Dataset dd = DatasetUtils.convertToDataset(d.getSlice(sli, null, null));
 		
 		Arrays.fill(sli, -1);
 		sli[dim] = d.getShape()[dim];
 		
-		IDataset d0 = d.getSlice(null, sli, null);
+		Dataset d0 = DatasetUtils.convertToDataset(d.getSlice(null, sli, null));
 		
-		((Dataset)dd).isubtract(d0);
+		dd.isubtract(d0);
 		dd = Maths.abs(dd);
 		
 		int nd = dim == 0 ? 1 : 0;
@@ -205,7 +205,7 @@ public class MapTo2DUtils {
 			IDataset pad = dd.getSlice(start,stop,null);
 			dd = DatasetUtils.append(dd, pad, nd);
 
-		((Dataset)dd).idivide(2);
+		dd.idivide(2);
 		return new Dataset[]{Maths.subtract(d, dd), Maths.add(d, dd)};
 	}
 }

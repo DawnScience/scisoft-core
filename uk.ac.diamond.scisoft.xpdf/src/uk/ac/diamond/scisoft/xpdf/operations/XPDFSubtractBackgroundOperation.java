@@ -42,7 +42,7 @@ public class XPDFSubtractBackgroundOperation extends
 		XPDFOperationChecker.checkXPDFMetadata(this, input, false, true, false);
 		XPDFMetadata theXPDFMetadata =  null;
 		
-		IDataset process = new DoubleDataset(DatasetUtils.convertToDataset(input));
+		Dataset process = new DoubleDataset(DatasetUtils.convertToDataset(input));
 		
 		copyMetadata(input, process);
 		
@@ -57,7 +57,7 @@ public class XPDFSubtractBackgroundOperation extends
 				// sets the isBackgroundSubtracted flag, but does not subtract the background from the (null) trace
 				theXPDFMetadata.getSample().setBackground(theXPDFMetadata.getBeam().getTrace());
 				// Subtract the background from the Dataset
-				((Dataset) process).isubtract(theXPDFMetadata.getBeam().getTrace().getTrace());
+				process.isubtract(theXPDFMetadata.getBeam().getTrace().getTrace());
 				
 				// Propagate the errors
 				Dataset inputErrors = DatasetUtils.sliceAndConvertLazyDataset(input.getError());

@@ -30,6 +30,7 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.RGBDataset;
 import org.slf4j.Logger;
@@ -231,7 +232,7 @@ public class JavaImageLoader extends AbstractFileLoader {
 		}
 		IDataHolder holder = LoaderFactory.fetchData(path, false, num);
 		if (holder != null) {
-			return (Dataset) holder.getDataset(0);
+			return DatasetUtils.convertToDataset(holder.getDataset(0));
 		}
 
 		File f = new File(path);

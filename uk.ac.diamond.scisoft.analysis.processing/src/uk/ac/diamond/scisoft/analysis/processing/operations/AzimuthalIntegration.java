@@ -40,7 +40,7 @@ public class AzimuthalIntegration extends AbstractIntegrationOperation<SectorInt
 		if (slice.getRank() != 2) {
 			slice = slice.getSliceView().squeeze(true);
 		}
-		final Dataset[] profile = ROIProfile.sector((Dataset)slice, mask, sector, false, true, false);
+		final Dataset[] profile = ROIProfile.sector(DatasetUtils.convertToDataset(slice), mask, sector, false, true, false);
 		
 		Dataset integral = profile[1];
 		integral.setName("Azimuthal Profile "+sector.getName());

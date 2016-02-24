@@ -111,7 +111,7 @@ public class CalibrationFactory {
 		final ClassLoader originalLoader = Thread.currentThread().getContextClassLoader();
 
 		final CompositeClassLoader customLoader = new CompositeClassLoader();
-		customLoader.add( CalibrationStandards.class.getClassLoader());
+		customLoader.add(CalibrationStandards.class.getClassLoader());
 		customLoader.add(Amount.class.getClassLoader());
 
 		AccessController.doPrivileged(new PrivilegedAction<Object>() {
@@ -121,11 +121,9 @@ public class CalibrationFactory {
 				return null;
 			}
 		});	
-			
+
 		return originalLoader;
 	}
-			
-
 
 	/**
 	 * TODO Best place to keep it? Seems to work when tested.

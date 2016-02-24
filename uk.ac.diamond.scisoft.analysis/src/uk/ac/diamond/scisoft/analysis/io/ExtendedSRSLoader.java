@@ -17,6 +17,7 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.io.SliceObject;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 
 /**
@@ -147,6 +148,6 @@ public class ExtendedSRSLoader extends SRSLoader {
 		final DataHolder dh = loadFile(mon);
 		ILazyDataset imageStack = dh.getLazyDataset(DATA_NAME);
 		// ImageStackLoader does load the Dataset at this point
-		return (Dataset) imageStack.getSlice(bean.getSliceStart(), bean.getSliceStop(), bean.getSliceStep());
+		return DatasetUtils.convertToDataset(imageStack.getSlice(bean.getSliceStart(), bean.getSliceStop(), bean.getSliceStep()));
 	}
 }

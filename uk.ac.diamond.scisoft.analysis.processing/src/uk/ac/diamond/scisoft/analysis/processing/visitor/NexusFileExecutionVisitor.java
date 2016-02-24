@@ -164,7 +164,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 		boolean fNNE = firstNonNullExecution.getAndSet(false);
 		
 		//Write data to file
-		final IDataset integrated = result.getData();
+		final Dataset integrated = DatasetUtils.convertToDataset(result.getData());
 		SliceFromSeriesMetadata metadata = integrated.getMetadata(SliceFromSeriesMetadata.class).get(0);
 		int[] dataDims = metadata.getDataDimensions();
 		int[] shape = metadata.getSubSampledShape();
@@ -219,7 +219,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 				synchronized (nexusFile) {
 					group = nexusFile.getGroup(intermediate + "/" + position + "-" + intermeadiateData.getName(), true);	
 				}
-				IDataset d = data.getData();
+				Dataset d = DatasetUtils.convertToDataset(data.getData());
 				
 				synchronized (nexusFile) {d.setName("data");
 					appendData(d,group, slices,shape, nexusFile);
@@ -245,7 +245,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 				if (auxData[i] instanceof IDataset) {
 					
 					try {
-						IDataset ds = (IDataset)auxData[i];
+						Dataset ds = DatasetUtils.convertToDataset((IDataset) auxData[i]);
 						String dsName = ds.getName();
 						GroupNode group;
 						synchronized (nexusFile) {
@@ -324,7 +324,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 						names[j] = santiziseName(name);
 						axesNames.putIfAbsent(i, names);
 						name = axesNames.get(i)[j];
-						IDataset axDataset = ax.getSlice();
+						Dataset axDataset = DatasetUtils.sliceAndConvertLazyDataset(ax);
 						axDataset.setName(name);
 						if (axNames != null && j == 0) axNames[count++] = name;
 						if (setDims.contains(i)) {
@@ -339,7 +339,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 								synchronized (nexusFile) {
 									nexusFile.toString();
 									nexusFile.createData(nexusFile.getGroup(groupName, true), axDataset.squeeze()).addAttribute(new AttributeImpl("axis", String.valueOf(i+1)));;
-									if (e != null) nexusFile.createData(nexusFile.getGroup(groupName, true), e.squeeze());
+									if (e != null) nexusFile.createData(nexusFile.getGroup(groupName, true), e);
 								}
 							}
 						} else {
@@ -355,7 +355,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 							ILazyDataset error = axDataset.getError();
 
 							if (error != null) {
-								IDataset e = error.getSlice();
+								Dataset e = DatasetUtils.sliceAndConvertLazyDataset(error);
 								e.setName(axDataset.getName() + "_errors");
 								synchronized (nexusFile) {
 									appendSingleValueAxis(e,groupName, oSlice,oShape, nexusFile,i);
@@ -401,7 +401,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 		return name;
 	}
 
-	private void appendSingleValueAxis(IDataset dataset, String group, Slice[] oSlice, int[] oShape, NexusFile file, int axisDim) throws Exception{
+	private void appendSingleValueAxis(Dataset dataset, String group, Slice[] oSlice, int[] oShape, NexusFile file, int axisDim) throws Exception{
 		dataset = dataset.getSliceView();
 		dataset.setShape(1);
 		DataNode dn = null;
@@ -413,7 +413,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 		}
 
 		ILazyWriteableDataset wds = dn.getWriteableDataset();
-		SliceND s = new SliceND(dataset.getShape(),determineMaxShape((Dataset)dataset),new Slice[]{oSlice[axisDim]});
+		SliceND s = new SliceND(dataset.getShape(),determineMaxShape(dataset),new Slice[]{oSlice[axisDim]});
 		wds.setSlice(null, dataset, s);
 	}
 
@@ -426,7 +426,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 	 * @param file
 	 * @throws Exception
 	 */
-	private void appendData(IDataset dataset, GroupNode group, Slice[] oSlice, int[] oShape, NexusFile file) throws Exception {
+	private void appendData(Dataset dataset, GroupNode group, Slice[] oSlice, int[] oShape, NexusFile file) throws Exception {
 		
 		if (AbstractDataset.squeezeShape(dataset.getShape(), false).length == 0) {
 			//padding slice and shape does not play nice with single values of rank != 0
@@ -456,14 +456,14 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 		}
 
 		ILazyWriteableDataset wds = dn.getWriteableDataset();
-		SliceND s = new SliceND(dataset.getShape(),determineMaxShape((Dataset)dataset),sliceOut);
+		SliceND s = new SliceND(dataset.getShape(),determineMaxShape(dataset),sliceOut);
 		wds.setSlice(null, dataset, s);
 
 
 		ILazyDataset error = dataset.getError();
 
 		if (error != null) {
-			IDataset e = error.getSlice();
+			Dataset e = DatasetUtils.sliceAndConvertLazyDataset(error);
 			e.setName("errors");
 			dn = null;
 			try {
@@ -474,7 +474,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 			}
 
 			ILazyWriteableDataset wdse = dn.getWriteableDataset();
-			s = new SliceND(e.getShape(),determineMaxShape((Dataset)e),sliceOut);
+			s = new SliceND(e.getShape(),determineMaxShape(e),sliceOut);
 			wdse.setSlice(null, dataset, s);
 		}
 

@@ -74,7 +74,7 @@ protected OperationData process(IDataset input, IMonitor monitor) throws Operati
 
 		if (model.getStartFrame() == null && model.getEndFrame() == null && subtractOneToOneIfMatch()) {
 			if (Arrays.equals(lz.getShape(), ssm.getSourceInfo().getParent().getShape())) {
-				return (Dataset)lz.getSlice(ssm.getSliceFromInput()).squeeze();
+				return DatasetUtils.convertToDataset(lz.getSlice(ssm.getSliceFromInput())).squeeze();
 			} 
 		}
 			

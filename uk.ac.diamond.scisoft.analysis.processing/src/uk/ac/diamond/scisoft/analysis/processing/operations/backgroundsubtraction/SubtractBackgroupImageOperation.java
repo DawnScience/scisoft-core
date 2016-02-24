@@ -6,16 +6,10 @@ import java.util.Arrays;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
-import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyMaths;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
-import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
@@ -42,7 +36,7 @@ public class SubtractBackgroupImageOperation extends AbstractImageSubtrationOper
 			ILazyDataset lzBg = dh.getLazyDataset(dsName);
 			
 			if (Arrays.equals(lzBg.getShape(), ssm.getSourceInfo().getParent().getShape())) {
-				bg = (Dataset)lzBg.getSlice(ssm.getSliceFromInput()).squeeze();
+				bg = DatasetUtils.convertToDataset(lzBg.getSlice(ssm.getSliceFromInput())).squeeze();
 			} else {
 				bg = LazyMaths.mean(lzBg, ssm.getDataDimensions()).squeeze();
 				image = bg;

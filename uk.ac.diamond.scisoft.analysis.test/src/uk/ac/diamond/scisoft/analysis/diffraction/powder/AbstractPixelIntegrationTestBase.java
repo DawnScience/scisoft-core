@@ -12,13 +12,13 @@ package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
@@ -28,12 +28,12 @@ public class AbstractPixelIntegrationTestBase {
 	//FIXME Should test against values from other popular data reduction programs
 	final static String testFileFolder = "testfiles/gda/analysis/io/Fit2dLoaderTest/";
 	
-	protected IDataset getData() {
+	protected Dataset getData() {
 		final String path = testFileFolder+"/test1.f2d";
-		IDataset data = null;
+		Dataset data = null;
 		try {
 			IDataHolder dataHolder = LoaderFactory.getData(path, null);
-			data = dataHolder.getDataset(0);
+			data = DatasetUtils.convertToDataset(dataHolder.getDataset(0));
 		} catch (Exception e) {
 		}
  		

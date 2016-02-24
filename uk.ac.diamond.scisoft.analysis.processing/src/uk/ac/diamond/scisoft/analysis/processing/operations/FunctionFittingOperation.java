@@ -99,10 +99,10 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 				x = DatasetFactory.createRange(input.getSize(), Dataset.FLOAT64);
 			}
 			
-			Dataset[] traceROI = new Dataset[]{x, (Dataset) input};
+			Dataset[] traceROI;
 			
 			try {
-				traceROI = Generic1DFitter.selectInRange(traceROI[0], traceROI[1],
+				traceROI = Generic1DFitter.selectInRange(x, DatasetUtils.convertToDataset(input),
 						points[0],points[1]);
 			} catch (Throwable npe) {
 				throw new OperationException(this,npe.getMessage());

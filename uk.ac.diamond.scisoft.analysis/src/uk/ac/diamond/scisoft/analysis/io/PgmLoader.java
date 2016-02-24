@@ -26,6 +26,7 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
 
@@ -125,7 +126,7 @@ public class PgmLoader extends AbstractFileLoader {
 	private static Dataset loadDataset(String fileName) throws ScanFileHolderException {
 		IDataHolder holder = LoaderFactory.fetchData(fileName, false);
 		if (holder != null) {
-			return (Dataset) holder.getDataset(0);
+			return DatasetUtils.convertToDataset(holder.getDataset(0));
 		}
 		File f = null;
 		FileInputStream fi = null;

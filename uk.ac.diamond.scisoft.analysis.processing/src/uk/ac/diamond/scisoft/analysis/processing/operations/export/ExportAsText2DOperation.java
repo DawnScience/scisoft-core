@@ -106,9 +106,9 @@ public class ExportAsText2DOperation extends AbstractOperation<ExportAsText1DMod
 		if (axes != null) lx = axes[1];
 		if (axes != null) ly = axes[0];
 		
-		IDataset outds = input.getSlice().clone();
+		Dataset outds = DatasetUtils.convertToDataset(input.getSlice()).clone();
 		outds.clearMetadata(null);
-		outds = ((Dataset)outds).transpose();
+		outds = outds.getTransposedView();
 		
 //		outds.squeeze().setShape(outds.getShape()[0],1);
 		

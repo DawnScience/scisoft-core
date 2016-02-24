@@ -19,6 +19,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PowderDataUtils;
@@ -61,7 +62,7 @@ public class ConvertAxisTypeOperation extends AbstractOperation<ConvertAxisTypeM
 		}
 
 		if ((axes != null) && (axes[0] !=null)) {
-			Dataset oldXAxis = (Dataset)axes[0];
+			Dataset oldXAxis = DatasetUtils.sliceAndConvertLazyDataset(axes[0]);
 
 			String axisName = oldXAxis.getName();
 			XAxis currentAxisType;

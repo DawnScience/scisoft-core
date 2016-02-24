@@ -11,7 +11,6 @@ package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -26,14 +25,14 @@ public class IntegrateOnesTest extends AbstractPixelIntegrationTestBase {
 
 	@Test
 	public void testNonSplitting1D() {
-		IDataset data = getData();
+		Dataset data = getData();
 		if (data == null) {
 			Assert.fail("Could not load test data");
 			return;
 		}
 		
 		IDiffractionMetadata meta = getDiffractionMetadata();
-		Dataset ones = DatasetFactory.ones((Dataset)data);
+		Dataset ones = DatasetFactory.ones(data);
 		
 		PixelIntegrationBean bean = new PixelIntegrationBean();
 		bean.setAzimuthalIntegration(true);
@@ -48,14 +47,14 @@ public class IntegrateOnesTest extends AbstractPixelIntegrationTestBase {
 	
 	@Test
 	public void testNonSplitting2D() {
-		IDataset data = getData();
+		Dataset data = getData();
 		if (data == null) {
 			Assert.fail("Could not load test data");
 			return;
 		}
 		
 		IDiffractionMetadata meta = getDiffractionMetadata();
-		Dataset ones = DatasetFactory.ones((Dataset)data);
+		Dataset ones = DatasetFactory.ones(data);
 		
 		PixelIntegrationBean bean = new PixelIntegrationBean();
 		bean.setAzimuthalIntegration(true);
@@ -78,14 +77,14 @@ public class IntegrateOnesTest extends AbstractPixelIntegrationTestBase {
 	
 	@Test
 	public void testSplitting1D() {
-		IDataset data = getData();
+		Dataset data = getData();
 		if (data == null) {
 			Assert.fail("Could not load test data");
 			return;
 		}
 		
 		IDiffractionMetadata meta = getDiffractionMetadata();
-		Dataset ones = DatasetFactory.ones((Dataset)data);
+		Dataset ones = DatasetFactory.ones(data);
 		
 		PixelIntegrationBean bean = new PixelIntegrationBean();
 		bean.setAzimuthalIntegration(true);
@@ -100,14 +99,14 @@ public class IntegrateOnesTest extends AbstractPixelIntegrationTestBase {
 	
 	@Test
 	public void testSplitting2D() {
-		IDataset data = getData();
+		Dataset data = getData();
 		if (data == null) {
 			Assert.fail("Could not load test data");
 			return;
 		}
 		
 		IDiffractionMetadata meta = getDiffractionMetadata();
-		Dataset ones = DatasetFactory.ones((Dataset)data);
+		Dataset ones = DatasetFactory.ones(data);
 		
 		PixelIntegrationBean bean = new PixelIntegrationBean();
 		bean.setAzimuthalIntegration(true);

@@ -4,14 +4,12 @@ import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 
@@ -59,7 +57,7 @@ public class SubtractBlankFrameOperation extends AbstractImageSubtrationOperatio
 		ILazyDataset bg = lzBg.getSliceView();
 		int[] ss = AbstractDataset.squeezeShape(bg.getShape(), false);
 		if (ss.length == 2) {
-			image = (Dataset)bg.getSlice().squeeze();
+			image = DatasetUtils.sliceAndConvertLazyDataset(bg).squeeze();
 		} else {
 			image = mean(startFrame, end, bg, dd).squeeze();
 		}

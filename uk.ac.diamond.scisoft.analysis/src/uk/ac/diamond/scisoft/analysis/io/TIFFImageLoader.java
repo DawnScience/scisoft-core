@@ -32,6 +32,7 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 
 import uk.ac.diamond.scisoft.analysis.io.tiff.Grey12bitTIFFReader;
 import uk.ac.diamond.scisoft.analysis.io.tiff.Grey12bitTIFFReaderSpi;
@@ -332,7 +333,7 @@ public class TIFFImageLoader extends JavaImageLoader {
 	private static Dataset readImage(String filename, ImageReader reader, boolean asGrey, boolean keepBitWidth, int num) throws IOException, ScanFileHolderException {
 		IDataHolder holder = LoaderFactory.fetchData(filename, false, num);
 		if (holder != null)
-			return (Dataset) holder.getDataset(0);
+			return DatasetUtils.convertToDataset(holder.getDataset(0));
 
 		int n = reader.getNumImages(true);
 

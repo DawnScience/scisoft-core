@@ -162,7 +162,7 @@ public class ADSCImageLoader extends AbstractFileLoader {
 	private static Dataset loadDataset(String fileName, int[] shape, int pointer, boolean keepBitWidth) throws ScanFileHolderException {
 		IDataHolder holder = LoaderFactory.fetchData(fileName, false);
 		if (holder != null) {
-			return (Dataset) holder.getDataset(0);
+			return DatasetUtils.convertToDataset(holder.getDataset(0));
 		}
 		RandomAccessFile raf = null;
 		try {

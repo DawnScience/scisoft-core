@@ -75,7 +75,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 		}
 		List<Dataset> backgroundSubtracted = new ArrayList<Dataset>();
 		// The 0th element is the sample
-		backgroundSubtracted.add((Dataset) input);
+		backgroundSubtracted.add(DatasetUtils.convertToDataset(input));
 		// Add the containers in order, innermost to outermost
 		for (XPDFTargetComponent container : theXPDFMetadata.getContainers()) {
 			backgroundSubtracted.add(container.getBackgroundSubtractedTrace());

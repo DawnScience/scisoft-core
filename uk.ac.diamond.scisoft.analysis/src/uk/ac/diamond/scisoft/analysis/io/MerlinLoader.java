@@ -236,16 +236,16 @@ public class MerlinLoader extends AbstractFileLoader {
 		if (loadLazily) {
 			ds = createLazyDataset(DATA_NAME, dtype, shape, new MerlinLoader(fileName));
 		} else if (shape.length == 3) {
-			ds = DatasetFactory.zeros(shape, dtype);
-
+			final Dataset tds = DatasetFactory.zeros(shape, dtype);
 			int[] start = new int[3];
 			int[] stop  = shape.clone();
 			int[] step  = new int[] {1,1,1};
 			for(int i = 0; i < shape[0]; i++) {
 				start[0] = i;
 				stop[0] = i + 1;
-				((Dataset) ds).setSlice(dataList.get(i), start, stop, step);
+				tds.setSlice(dataList.get(i), start, stop, step);
 			}
+			ds = tds;
 		} else {
 			ds = dataList.get(0);
 		}

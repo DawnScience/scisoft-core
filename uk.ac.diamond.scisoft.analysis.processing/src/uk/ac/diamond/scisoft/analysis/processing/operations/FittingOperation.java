@@ -17,6 +17,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperationBase;
 
 import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
@@ -34,18 +35,19 @@ public class FittingOperation extends AbstractOperationBase<FittingModel, Operat
 	public OperationData execute(IDataset data, IMonitor monitor) throws OperationException {
 		
 		try {
-			if (data.getRank() != 1) {
-				data = data.getSliceView().squeeze(true);
+			Dataset d = DatasetUtils.convertToDataset(data);
+			if (d.getRank() != 1) {
+				d = d.getSliceView().squeeze(true);
 			}
-			List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions((Dataset)model.getxAxis(), 
-					                                                                  (Dataset)data, 
+			List<CompositeFunction> fittedPeakList = Generic1DFitter.fitPeakFunctions(DatasetUtils.convertToDataset(model.getxAxis()), 
+					                                                                  d, 
 					                                                                  model.getPeak(), model.createOptimizer(),
 					                                                                  model.getSmoothing(), model.getNumberOfPeaks(),
 					                                                                  model.getThreshold(), 
 					                                                                  model.isAutostopping(), model.isBackgrounddominated(), monitor);
 			
 	        // Same original data but with some fitted peaks added to auxillary data.
-			return new OperationData(data, (Serializable)fittedPeakList);
+			return new OperationData(d, (Serializable)fittedPeakList);
 		} catch (Exception ne) {
 			throw new OperationException(this, ne);
 		}

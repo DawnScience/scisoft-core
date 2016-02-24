@@ -18,6 +18,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
@@ -53,10 +54,10 @@ public class IterativePolynomialBaselineSubtractionOperation extends
 		
 		if (axes == null || axes[0] == null) throw new OperationException(this, "Cannot fit without axes");
 		
-		Dataset axis = (Dataset)axes[0].getSlice();
+		Dataset axis = DatasetUtils.sliceAndConvertLazyDataset(axes[0]);
 		
 		Dataset[] aa = new Dataset[]{axis};
-		DoubleDataset data = new DoubleDataset((Dataset)input);
+		DoubleDataset data = new DoubleDataset(input.getShape());
 		Polynomial polyFit = null;
 		for (int i = 0; i < model.getnIterations(); i++) {
 			try {

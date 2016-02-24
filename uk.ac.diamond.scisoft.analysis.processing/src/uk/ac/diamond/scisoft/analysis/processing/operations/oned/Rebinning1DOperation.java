@@ -52,7 +52,7 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		
 		if (axes == null || axes[0] == null) throw new OperationException(this, "Cannot rebin if there is no axis");
 		
-		Dataset axis = (Dataset)axes[0].getSlice();
+		Dataset axis = DatasetUtils.sliceAndConvertLazyDataset(axes[0]);
 		
 		if (binEdges == null) {
 			nBins = model.getNumberOfBins() != null ? model.getNumberOfBins() : axis.getSize(); 
@@ -60,7 +60,7 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		}
 			
 		double[] edges = new double[]{binEdges.getElementDoubleAbs(0),binEdges.getElementDoubleAbs(nBins)};
-		IDataset rebinned = doRebinning(getMinMaxAxisArray(axis), (Dataset)input, nBins, edges);
+		IDataset rebinned = doRebinning(getMinMaxAxisArray(axis), DatasetUtils.convertToDataset(input), nBins, edges);
 		AxesMetadataImpl axm = new AxesMetadataImpl(1);
 		Dataset ax = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
 		ax.idivide(2);

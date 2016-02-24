@@ -22,8 +22,8 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.hdf5.operation.HierarchicalFileExecutionVisitor;
 import org.junit.BeforeClass;
@@ -687,8 +687,8 @@ public class HierarchicalFileExVisitorTest {
 		IDataset ae2 = DatasetFactory.createRange(30, Dataset.INT16);
 		ae2.setShape(new int[] {1,30,1});
 		
-		((Dataset)ax.getAxis(0)[0]).setError(ae1);
-		((Dataset)ax.getAxis(1)[0]).setError(ae2);
+		ax.getAxis(0)[0].setError(ae1);
+		ax.getAxis(1)[0].setError(ae2);
 
 		
 		final IOperationContext context = service.createContext();
@@ -783,9 +783,9 @@ public class HierarchicalFileExVisitorTest {
 	}
 	
 	private void compareDatasets(IDataset a, IDataset b) {
-		double sum = (Double)((Dataset)a).sum();
+		double sum = (Double) DatasetUtils.convertToDataset(a).sum();
 		assertFalse(sum == 0);
-		double sum1 = (Double)((Dataset)b).sum();
+		double sum1 = (Double) DatasetUtils.convertToDataset(b).sum();
 		assertTrue(sum1 == sum);
 	}
 	

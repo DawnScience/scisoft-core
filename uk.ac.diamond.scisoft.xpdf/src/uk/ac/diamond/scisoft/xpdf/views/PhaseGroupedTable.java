@@ -108,7 +108,7 @@ class PhaseGroupedTable {
 		columnInterfaces.add(new DensityColumnInterface());
 		groupedColumnInterfaces.add(columnInterfaces);
 		
-		groupNames.add("");
+		groupNames.add("‍");
 		columnInterfaces = new ArrayList<ColumnInterface>();
 		columnInterfaces.add(new CommentColumnInterface());
 		groupedColumnInterfaces.add(columnInterfaces);

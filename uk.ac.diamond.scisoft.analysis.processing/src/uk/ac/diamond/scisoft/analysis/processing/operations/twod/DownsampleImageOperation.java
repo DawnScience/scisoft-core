@@ -30,8 +30,8 @@ public class DownsampleImageOperation extends AbstractOperation<DownsampleImageM
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		ILazyDataset mask = getFirstMask(input);
 		
-		if (mask != null) {
-			Dataset m = (Dataset)mask.getSlice();
+		if (mask != null && input instanceof Dataset) {
+			Dataset m = DatasetUtils.sliceAndConvertLazyDataset(mask);
 			((Dataset)input).setByBoolean(Double.NaN, Comparisons.logicalNot(m));
 		}
 		
@@ -43,7 +43,7 @@ public class DownsampleImageOperation extends AbstractOperation<DownsampleImageM
 
 		input = DatasetUtils.cast(input, outputDatatype.getDatatype());
 
-		List<IDataset> out = downsample.value(input);
+		List<Dataset> out = downsample.value(input);
 		IDataset dataset = out.get(0);
 		dataset.setName("downsampled");
 		

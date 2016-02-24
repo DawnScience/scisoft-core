@@ -8,8 +8,9 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing.test;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.MaskMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
@@ -28,7 +29,6 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.roi.SectorROI;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationTransformer;
@@ -190,7 +190,7 @@ public class IntegrationTest {
 		final MaskMetadata mmd = new MaskMetadata() {
 			
 			@Override
-			public ILazyDataset getMask() {
+			public IDataset getMask() {
 				// TODO Auto-generated method stub
 				return mask;
 			}

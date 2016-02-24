@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
@@ -86,7 +87,7 @@ public class AxisValues implements Iterable<Double>, Serializable, Cloneable {
 		setValues(data);
 	}
 
-	public AxisValues(String name, Dataset data) {
+	public AxisValues(String name, IDataset data) {
 		this.name=name;
 		if (data!=null) setValues(data);
 	}
@@ -142,7 +143,7 @@ public class AxisValues implements Iterable<Double>, Serializable, Cloneable {
 	 * 
 	 * @param data
 	 */
-	public void setValues(Dataset data) {
+	public void setValues(IDataset data) {
 		values = (DoubleDataset) DatasetUtils.cast(data, Dataset.FLOAT64);
 		isDirty = true;
 	}

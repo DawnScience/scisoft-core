@@ -112,10 +112,10 @@ public class ErrorPropagationUtils {
 		
 		IndexIterator iter = input.getIterator();
 		
-		if (outputUncert != null) {
+		if (inputUncert != null) {
 			while(iter.hasNext()) {
 				output.setAbs(iter.index, uncertaintyOp.erator(input.getElementDoubleAbs(iter.index), oprahend));
-				outputUncert.setAbs(iter.index, uncertaintyOp.erator(input.getElementDoubleAbs(iter.index), oprahend));
+				outputUncert.setAbs(iter.index, uncertaintyOp.erator(inputUncert.getElementDoubleAbs(iter.index), oprahend));
 			}
 			output.setError(outputUncert);
 		} else {

@@ -305,14 +305,25 @@ class SampleGroupedTable {
 		showContainers(false);
 	}
 
+	/**
+	 * Returns whether the table is showing its samples 
+	 * @return is the table showing samples?
+	 */
 	public boolean isShowingSamples() {
 		return showSamples;
 	}
 	
+	/**
+	 * Returns whether the table is showing its containers 
+	 * @return is the table showing containers?
+	 */
 	public boolean isShowingContainers() {
 		return showContainers;
 	}
 	
+	/**
+	 * Refreshes the internal table
+	 */
 	public void refresh() {
 		groupedTable.refresh();
 	}
@@ -336,6 +347,13 @@ class SampleGroupedTable {
 		return selectedXPDFParameters;		
 	}
 
+	/**
+	 * Gets all the phases.
+	 * <p>
+	 * returns a List of all the {@link XPDFPhase} object of all the phases of
+	 * all the samples in the table.
+	 * @return a List of all phases.
+	 */
 	public List<XPDFPhase> getAllPhases() {
 		Set<XPDFPhase> usedPhases = new HashSet<XPDFPhase>();
 		for (XPDFSampleParameters sample : samples)
@@ -343,11 +361,16 @@ class SampleGroupedTable {
 			return new ArrayList<XPDFPhase>(usedPhases);
 	}
 	
+	/**
+	 * Create a context menu for the grouped table.
+	 * @param menuManager
+	 * 					Manager of the menu to be added.
+	 */
 	public void createContextMenu(MenuManager menuManager) {
 		groupedTable.createContextMenu(menuManager);			
 	}
 	
-	public SelectionAdapter getColumnSelectionAdapter(final TableColumn tableColumn, final Comparator<XPDFSampleParameters> comparator) {
+	private SelectionAdapter getColumnSelectionAdapter(final TableColumn tableColumn, final Comparator<XPDFSampleParameters> comparator) {
 		return new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -380,6 +403,11 @@ class SampleGroupedTable {
 		};
 	}
 
+	/**
+	 * Set the phase table related to this.
+	 * @param phaseTable
+	 * 					the phase table to be associated
+	 */
 	public void setPhaseTable(PhaseGroupedTable phaseTable) {
 		this.phaseTable = phaseTable;
 	}
@@ -404,7 +432,7 @@ class SampleGroupedTable {
 //		}	
 //	}
 
-	class SampleParametersContentProvider implements IStructuredContentProvider {
+	private class SampleParametersContentProvider implements IStructuredContentProvider {
 
 		public SampleParametersContentProvider() {
 			showSamples = true;
@@ -494,7 +522,7 @@ class SampleGroupedTable {
 //	}
 
 	// drag support for local moves. Copy data
-	class LocalDragSupportListener extends DragSourceAdapter {
+	private class LocalDragSupportListener extends DragSourceAdapter {
 		private XPDFGroupedTable gT;
 		public LocalDragSupportListener(XPDFGroupedTable gT) {
 			this.gT = gT;
@@ -506,7 +534,7 @@ class SampleGroupedTable {
 		}
 	}
 
-	class LocalViewerDropAdapterFactory implements ViewerDropAdapterFactory {
+	private class LocalViewerDropAdapterFactory implements ViewerDropAdapterFactory {
 		List<XPDFSampleParameters> samples;
 		XPDFGroupedTable groupedTable;
 		public LocalViewerDropAdapterFactory(List<XPDFSampleParameters> samples, XPDFGroupedTable groupedTable) {
@@ -520,7 +548,7 @@ class SampleGroupedTable {
 	}
 	
 	// Deals with both dragging and copy-dragging
-	class LocalViewerDropAdapter extends ViewerDropAdapter {
+	private class LocalViewerDropAdapter extends ViewerDropAdapter {
 		List<XPDFSampleParameters> samples;
 		XPDFGroupedTable groupedTable;
 
@@ -745,7 +773,7 @@ class SampleGroupedTable {
 	}
 
 
-	static class NameColumnInterface implements ColumnInterface {
+	private static class NameColumnInterface implements ColumnInterface {
 
 		@Override
 		public EditingSupport get(final ColumnViewer v) {
@@ -812,7 +840,7 @@ class SampleGroupedTable {
 
 	}
 
-	static class CodeColumnInterface implements ColumnInterface {
+	private static class CodeColumnInterface implements ColumnInterface {
 
 		@Override
 		public EditingSupport get(ColumnViewer v) {
@@ -876,7 +904,7 @@ class SampleGroupedTable {
 
 	}
 
-	class TypeColumnInterface implements ColumnInterface {
+	private class TypeColumnInterface implements ColumnInterface {
 
 		private final static String sampleString = "Sample";
 		private final static String containerString = "Container";
@@ -977,7 +1005,7 @@ class SampleGroupedTable {
 
 	}
 
-	static class PhaseColumnInterface implements ColumnInterface {
+	private static class PhaseColumnInterface implements ColumnInterface {
 
 		private String phasesString(Collection<XPDFPhase> phases) {
 			StringBuilder sb = new StringBuilder();
@@ -1057,7 +1085,7 @@ class SampleGroupedTable {
 
 	}
 
-	static class CompositionColumnInterface implements ColumnInterface {
+	private static class CompositionColumnInterface implements ColumnInterface {
 
 		@Override
 		public EditingSupport get(final ColumnViewer v) {
@@ -1125,7 +1153,7 @@ class SampleGroupedTable {
 
 	}
 
-	static class DensityColumnInterface implements ColumnInterface {
+	private static class DensityColumnInterface implements ColumnInterface {
 
 		@Override
 		public EditingSupport get(final ColumnViewer v) {
@@ -1192,7 +1220,7 @@ class SampleGroupedTable {
 
 	}
 
-	static class PackingColumnInterface implements ColumnInterface {
+	private static class PackingColumnInterface implements ColumnInterface {
 
 		@Override
 		public EditingSupport get(final ColumnViewer v) {
@@ -1260,7 +1288,7 @@ class SampleGroupedTable {
 
 	}
 
-	static class ShapeColumnInterface implements ColumnInterface {
+	private static class ShapeColumnInterface implements ColumnInterface {
 
 		private final static String cylinderString = "Cylinder";
 		final static String cylinderLowerString = "cylinder";
@@ -1363,7 +1391,7 @@ class SampleGroupedTable {
 
 	}
 
-	static class DimensionColumnInterface implements ColumnInterface {
+	private static class DimensionColumnInterface implements ColumnInterface {
 
 		private final static String cylinderString = "Cylinder";
 		private final static String plateString = "Plate";

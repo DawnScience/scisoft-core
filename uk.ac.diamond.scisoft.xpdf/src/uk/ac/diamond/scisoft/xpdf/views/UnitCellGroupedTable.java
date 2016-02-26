@@ -30,12 +30,25 @@ import org.eclipse.swt.widgets.Table;
 
 import uk.ac.diamond.scisoft.xpdf.views.XPDFPhase.LabelledAtom;
 
-public class UnitCellGroupedTable {
+/**
+ * Grouped table to edit the atoms in a unit cell
+ * @author Timothy Spain, timothy.spain@diamond.ac.uk
+ *
+ */
+class UnitCellGroupedTable {
 
 	private static Map<String, XPDFAtom> defaultAtoms;
 	private Map<String, XPDFAtom> atoms;
 	private XPDFGroupedTable groupedTable;
 
+	/**
+	 * Constructor for the table.
+	 * @param parent
+	 * 				Composite into which the table will be placed. Does not
+	 * need a {@link TableColumnLayout}. 
+	 * @param style
+	 * 				Style bits to apply to the table.
+	 */
 	public UnitCellGroupedTable(Composite parent, int style) {
 
 		if (defaultAtoms == null) {
@@ -59,19 +72,37 @@ public class UnitCellGroupedTable {
 
 	}
 	
+	/**
+	 * Sets the layout data to apply to the table as a whole
+	 * @param layout
+	 * 				the layout to be applied
+	 */
 	public void setLayoutData(Object layout) {
 		groupedTable.setLayoutData(layout);
 	}
 	
+	/**
+	 * Sets the data source of the table.
+	 * @param atoms
+	 * 				A Map between labels and atoms
+	 */
 	public void setInput(Map<String, XPDFAtom> atoms) {
 		this.atoms = atoms;
 		groupedTable.setInput(this.atoms);
 	}
 
+	/**
+	 * Refreshes the internal table.
+	 */
 	public void refresh() {
 		groupedTable.refresh();
 	}
 	
+	/**
+	 * Returns the Map of labels to atoms
+	 * @return
+	 * 		the map of labels to atoms in this unit cell.
+	 */
 	public Map<String, XPDFAtom> getAtoms() {
 		return atoms;
 	}
@@ -138,47 +169,48 @@ public class UnitCellGroupedTable {
 		public int getWeight();
 		public boolean presentAsUneditable(Object element);
 	}
-	static class DummyColumnInterface implements ColumnInterface {
 
-		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
-		}
-
+//	private static class DummyColumnInterface implements ColumnInterface {
+//
 //		@Override
-//		public SelectionAdapter getSelectionAdapter(UnitCellDialog uCD,
-//				TableViewerColumn col) {
-//			return DummySelectionAdapter.get(uCD, col);
+//		public EditingSupport get(ColumnViewer v) {
+//			return new DummyEditingSupport(v);
 //		}
-
-		@Override
-		public ColumnLabelProvider getLabelProvider() {
-			return new ColumnLabelProvider() {
-				@Override
-				public String getText(Object element) {
-					return "This space left intentionally blank";
-				}
-			};
-		}
-
-		@Override
-		public String getName() {
-			return "Column";
-		}
-
-		@Override
-		public int getWeight() {
-			return 10;
-		}
-
-		@Override
-		public boolean presentAsUneditable(Object element) {
-			return false;
-		}
-		
-	}
+//
+////		@Override
+////		public SelectionAdapter getSelectionAdapter(UnitCellDialog uCD,
+////				TableViewerColumn col) {
+////			return DummySelectionAdapter.get(uCD, col);
+////		}
+//
+//		@Override
+//		public ColumnLabelProvider getLabelProvider() {
+//			return new ColumnLabelProvider() {
+//				@Override
+//				public String getText(Object element) {
+//					return "This space left intentionally blank";
+//				}
+//			};
+//		}
+//
+//		@Override
+//		public String getName() {
+//			return "Column";
+//		}
+//
+//		@Override
+//		public int getWeight() {
+//			return 10;
+//		}
+//
+//		@Override
+//		public boolean presentAsUneditable(Object element) {
+//			return false;
+//		}
+//		
+//	}
 	
-	static class DummyEditingSupport extends EditingSupport {
+	private static class DummyEditingSupport extends EditingSupport {
 		DummyEditingSupport(ColumnViewer v) {
 			super(v);
 		}
@@ -199,18 +231,18 @@ public class UnitCellGroupedTable {
 		}
 	}
 
-	static class DummyLabelProvider extends ColumnLabelProvider {
-		String text;
-		public DummyLabelProvider(String text) {
-			this.text = text;
-		}
-		@Override
-		public String getText(Object element) {
-			return text;
-		}
-	}
+//	private static class DummyLabelProvider extends ColumnLabelProvider {
+//		String text;
+//		public DummyLabelProvider(String text) {
+//			this.text = text;
+//		}
+//		@Override
+//		public String getText(Object element) {
+//			return text;
+//		}
+//	}
 
-	static class ElementColumnInterface implements ColumnInterface {
+	private static class ElementColumnInterface implements ColumnInterface {
 
 		private final List<String> elementSymbol = Arrays.asList( new String[] { "?", 
 				"H","He","Li","Be","B","C","N","O","F","Ne",
@@ -302,7 +334,7 @@ public class UnitCellGroupedTable {
 		}
 	}
 
-	static class LabelColumnInterface implements ColumnInterface {
+	private class LabelColumnInterface implements ColumnInterface {
 
 		@Override
 		public EditingSupport get(final ColumnViewer v) {
@@ -363,7 +395,7 @@ public class UnitCellGroupedTable {
 		}
 	}
 	
-	static class PositionColumnInterface implements ColumnInterface {
+	private static class PositionColumnInterface implements ColumnInterface {
 
 		static final String[] axisNames = {"x", "y", "z"};
 		private int axisIndex;
@@ -410,7 +442,7 @@ public class UnitCellGroupedTable {
 		}
 	}
 
-	static class OccupancyColumnInterface implements ColumnInterface {
+	private static class OccupancyColumnInterface implements ColumnInterface {
 
 		@Override
 		public EditingSupport get(ColumnViewer v) {
@@ -450,7 +482,7 @@ public class UnitCellGroupedTable {
 		}
 	}
 
-	static class adpColumnInterface implements ColumnInterface {
+	private static class adpColumnInterface implements ColumnInterface {
 
 		@Override
 		public EditingSupport get(ColumnViewer v) {

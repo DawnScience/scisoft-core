@@ -1,3 +1,12 @@
+/*-
+ * Copyright 2016 Diamond Light Source Ltd.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package uk.ac.diamond.scisoft.xpdf.views;
 
 import java.util.Collection;
@@ -27,6 +36,11 @@ import org.eclipse.swt.widgets.Text;
 
 import uk.ac.diamond.scisoft.xpdf.views.XPDFPhase.LabelledAtom;
 
+/**
+ * Implements a dialog window for editing the unit cell of a phase.
+ * @author Timothy Spain, timothy.spain@diamond.ac.uk
+ *
+ */
 class UnitCellDialog extends Dialog {
 
 	private Map<String, XPDFAtom> atoms;
@@ -97,14 +111,28 @@ class UnitCellDialog extends Dialog {
 		return true;
 	}
 	
+	/**
+	 * Returns the present state of all atoms.
+	 * @return Map between the atoms and their labels.
+	 */
 	public Map<String, XPDFAtom> getAllAtoms() {
 		return atoms;
 	}
 
+	/**
+	 * Sets the atoms to be edited in the dialog.
+	 * @param atoms
+	 * 				A Map between labels and atoms.
+	 */
 	public void setAllAtoms(Map<String, XPDFAtom> atoms) {
 		this.setAllAtoms(LabelledAtom.fromMap(atoms));
 	}
 	
+	/**
+	 * Sets the atoms to be edited in the dialog.
+	 * @param atoms
+	 * 				A List of {@link LabelledAtom}s
+	 */
 	public void setAllAtoms(Collection<LabelledAtom> atoms) {
 		this.atoms = new HashMap<String, XPDFAtom>();
 		for (LabelledAtom atom : atoms) {
@@ -301,7 +329,7 @@ class UnitCellDialog extends Dialog {
 
 	}
 
-	public void createAnisoTable(Composite parent) {
+	private void createAnisoTable(Composite parent) {
 		Composite anisoCompo = new Composite(parent, SWT.BORDER);
 		anisoCompo.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, true, 3, 2));
 		anisoCompo.setLayout(new TableColumnLayout());

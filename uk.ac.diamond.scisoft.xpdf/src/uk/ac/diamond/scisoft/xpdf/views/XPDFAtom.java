@@ -50,6 +50,11 @@ public class XPDFAtom {
 		this.setPosition(position);
 	}
 	
+	/**
+	 * Sets the atomic number of the atom.
+	 * @param atomicNumber
+	 * 					the atomic number of the atom, such that hydrogen is 1.
+	 */
 	public void setAtomicNumber(int atomicNumber) {
 		this.atomicNumber = atomicNumber;
 	}

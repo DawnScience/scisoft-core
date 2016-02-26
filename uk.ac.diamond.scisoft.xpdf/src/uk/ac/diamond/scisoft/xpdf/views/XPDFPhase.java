@@ -19,6 +19,14 @@ import org.apache.commons.math3.exception.OutOfRangeException;
 
 import uk.ac.diamond.scisoft.xpdf.XPDFComposition;
 
+/**
+ * Holds the information for a phase.
+ * <p>
+ * The specifics of a phase can be stored here. The information is heavily
+ * skewed towards the needs of the XPDF project.
+ * @author Timothy Spain, timothy.spain@diamond.ac.uk
+ *
+ */
 public class XPDFPhase {
 
 	private String name;
@@ -104,22 +112,61 @@ public class XPDFPhase {
 		return atoms.values(); 
 	}
 	
+	/**
+	 * Returns all atoms defined in a phase, along with their labels.
+	 * @return the atoms in a phase and their labels, using the
+	 * {@link XPDFPhase.LabelledAtom} class.
+	 */
 	public Collection<LabelledAtom> getLabelledAtoms() {
 		return LabelledAtom.fromMap(atoms);
 	}
 	
+	/**
+	 * Sets the form of the phase.
+	 * <p>
+	 * Sets the form of the phase, from a choice of:
+	 * <ul>
+	 * <li> Amorphous </li>
+	 * <li> Glassy </li>
+	 * <li> Liquid </li>
+	 * <li> Crystalline. </li>
+	 * </ul>
+	 * @param formIn
+	 */
 	public void setForm(XPDFPhaseForm formIn) {
 		form = formIn;
 	}
 	
+	/**
+	 * Gets the form of the phase.
+	 * <p>
+	 * Gets the form of the phase, from a choice of:
+	 * <ul>
+	 * <li> Amorphous </li>
+	 * <li> Glassy </li>
+	 * <li> Liquid </li>
+	 * <li> Crystalline. </li>
+	 * </ul>
+	 * @return form of the phase.
+	 */
 	public XPDFPhaseForm getForm() {
 		return form;
 	}
 	
+	/**
+	 * Returns whether the phase is crystalline
+	 * @return whether the phase is crystalline.
+	 */
 	public boolean isCrystalline() {
 		return (form != null) ? form.isCrystalline() : false;
 	}
 	
+	/**
+	 * Sets the crystal system of the phase.
+	 * @param inSystem
+	 * 				Crystal system of the phase, as represented by a
+	 * 				{@link CrystalSystem}.
+	 */
 	public void setCrystalSystem(CrystalSystem inSystem) {
 		if (system != inSystem) {
 			system = inSystem;
@@ -141,6 +188,10 @@ public class XPDFPhase {
 		}
 	}
 	
+	/**
+	 * Gets the crystal system of the phase.
+	 * @return Crystal system of the phase.
+	 */
 	public CrystalSystem getCrystalSystem() {
 		return system;
 	}
@@ -148,12 +199,18 @@ public class XPDFPhase {
 	/**
 	 * Sets the space group symmetry of the unit cell
 	 * @param spaceGroupIndex
-	 * 					the space group structure to set
+	 * 					the space group to set by index
 	 */
 	public void setSpaceGroup(int spaceGroupIndex) {
 		this.setSpaceGroup(XPDFSpaceGroup.get(spaceGroupIndex));
 	}
 	
+	/**
+	 * Sets the space group of the phase.
+	 * @param spaceGroup
+	 * 					The space group of the phase, as represented by an
+	 * {@link XPDFSpaceGroup}.
+	 */
 	public void setSpaceGroup(XPDFSpaceGroup spaceGroup) {
 		// If we set a space group, the phase must be crystalline
 		this.setForm(XPDFPhaseForm.get(XPDFPhaseForm.Forms.CRYSTALLINE));
@@ -162,58 +219,123 @@ public class XPDFPhase {
 		this.system = spaceGroup.getSystem();
 	}
 	
+	/**
+	 * Gets the space group of the phase
+	 * @return The space group of the phase, as represented by an
+	 * {@link XPDFSpaceGroup}.
+	 */
 	public XPDFSpaceGroup getSpaceGroup() {
 		return spaceGroup;
 	}
 
+	/**
+	 * Sets the unit cell edge lengths.
+	 * @param length
+	 * 				a 3-element array of the edge lengths
+	 */
 	public void setUnitCellLengths(double[] lengths) {
 		for (int i = 0; i < nDim; i++)
 			unitCellLengths[i] = lengths[i];
 	}
 	
+	/**
+	 * Sets the unit cell edge lengths.
+	 * @param a
+	 * @param b
+	 * @param c Edge cell lengths
+	 */
 	public void setUnitCellLengths(double a, double b, double c) {
 		unitCellLengths[0] = a;
 		unitCellLengths[1] = b;
 		unitCellLengths[2] = c;
 	}
 	
+	/**
+	 * Sets a single unit cell edge length
+	 * @param dimension
+	 * 				zero-based index of the dimension to alter (unit cell edge
+	 * 				a is equivalent to index 0, &c.)
+	 * @param l
+	 * 			Length to set.
+	 */
 	public void setUnitCellLength(int dimension, double l) {
 		if (dimension < 0 || dimension >= nDim)
 			throw new OutOfRangeException(dimension, 0, nDim);
 		unitCellLengths[dimension] = l;
 	}
 	
+	/**
+	 * Gets the unit cell edge lengths of the phase.
+	 * @return unit cell edge lengths of the phase.
+	 */
 	public double[] getUnitCellLengths() {
 		return unitCellLengths;
 	}
 	
+	/**
+	 * Gets one unit cell edge length of the phase
+	 * @param dimension
+	 * 				zero-based index of the dimension to alter (unit cell edge
+	 * 				a is equivalent to index 0, &c.)
+	 * @return length of the unit cell edge
+	 */
 	public double getUnitCellLength(int dimension) {
 		if (dimension < 0 || dimension >= nDim)
 			throw new OutOfRangeException(dimension, 0, nDim);
 		return unitCellLengths[dimension];
 	}
 	
+	/**
+	 * Sets the unit cell edge angles.
+	 * @param length
+	 * 				a 3-element array of the edge angles in degrees.
+	 */
 	public void setUnitCellAngles(double[] angles) {
 		for (int i = 0; i < nDim; i++)
 			unitCellDegrees[i] = angles[i];
 	}
 	
+	/**
+	 * Sets the unit cell edge angles.
+	 * @param a
+	 * @param b
+	 * @param c Edge cell angles in degrees.
+	 */
 	public void setUnitCellAngles(double a, double b, double c) {
 		unitCellDegrees[0] = a;
 		unitCellDegrees[1] = b;
 		unitCellDegrees[2] = c;
 	}
 	
+	/**
+	 * Sets a single unit cell edge angle.
+	 * @param dimension
+	 * 				zero-based index of the dimension to alter (unit cell edge
+	 * 				angle α is equivalent to index 0, &c.)
+	 * @param a
+	 * 			angle to be set.
+	 */
 	public void setUnitCellAngle(int dimension, double a) {
 		if (dimension < 0 || dimension >= nDim)
 			throw new OutOfRangeException(dimension, 0, nDim);
 		unitCellDegrees[dimension] = a;
 	}
 	
+	/**
+	 * Gets the unit cell edge angles of the phase.
+	 * @return unit cell edge angles of the phase in degrees.
+	 */
 	public double[] getUnitCellAngle() {
 		return unitCellDegrees;
 	}
 	
+	/**
+	 * Gets one unit cell edge angle of the phase
+	 * @param dimension
+	 * 				zero-based index of the dimension to alter (unit cell edge
+	 * 				angle α is equivalent to index 0, &c.)
+	 * @return length of the unit cell edge
+	 */
 	public double getUnitCellAngle(int dimension) {
 		if (dimension < 0 || dimension >= nDim)
 			throw new OutOfRangeException(dimension, 0, nDim);
@@ -237,20 +359,38 @@ public class XPDFPhase {
 		return new XPDFComposition("");
 	}
 	
+	/**
+	 * Gets the volume of the unit cell
+	 * @return
+	 * 		the volume of the unit cell
+	 */
+	// TODO: Fix this for unit cell without 90° angles
 	public double getUnitCellVolume() {
 		return unitCellLengths[0] * unitCellLengths[1] * unitCellLengths[2];
 	}
 
+	/**
+	 * Adds a comment to the phase.
+	 * @param inComment
+	 * 					the comment to be added.
+	 */
 	public void addComment(String inComment) {
 		if (comment == null) comment = new String();
 		if (inComment != null)
 			comment += (comment.length() > 0) ? " " + inComment : inComment;
 	}
 	
+	/**
+	 * Clears the comment from this.
+	 */
 	public void clearComment() {
 		comment = new String();
 	}
 	
+	/**
+	 * Gets the comment for this.
+	 * @return the comment.
+	 */
 	public String getComment() {
 		return (comment != null) ? comment : "";
 	}
@@ -390,7 +530,13 @@ public class XPDFPhase {
 		return number;
 	}
 	
-
+	/**
+	 * A class hold both an atom and its label.
+	 * <p>
+	 * Provided as the class that will be used in the table for editing the unit cell.
+	 * @author Timothy Spain, timothy.spain@diamond.ac.uk
+	 *
+	 */
 	public static class LabelledAtom {
 		private XPDFAtom atom;
 		private String label;
@@ -398,15 +544,34 @@ public class XPDFPhase {
 			this.label = label;
 			this.atom = atom;
 		}
+		/**
+		 * Gets the label.
+		 * @return label.
+		 */
 		public String getLabel() {
 			return label;
 		}
+		/**
+		 * Sets the label
+		 * @param label
+		 */
 		public void setLabel(String label) {
 			this.label = label;
 		}
+		/**
+		 * Gets the atom.
+		 * @return atom.
+		 */
 		public XPDFAtom getAtom() {
 			return atom;
 		}
+		/**
+		 * Convert a Map of labels to atoms to a {@link Collection} of
+		 * labelled atoms.
+		 * @param map
+		 * 			the map of {@link String}s to {@link XPDFAtom}s to convert.
+		 * @return the converted {@link Collection} of {@link LabelledAtoms}.
+		 */
 		public static Collection<LabelledAtom> fromMap(Map<String, XPDFAtom> map) {
 			if (map == null) return null;
 			List<LabelledAtom> latoms = new ArrayList<LabelledAtom>();

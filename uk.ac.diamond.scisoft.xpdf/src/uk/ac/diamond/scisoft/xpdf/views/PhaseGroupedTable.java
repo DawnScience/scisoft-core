@@ -13,14 +13,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.CellEditor;
@@ -68,6 +66,14 @@ class PhaseGroupedTable {
 	private SampleGroupedTable sampleTable;
 	private List<XPDFPhase> visiblePhases;
 	
+	/**
+	 * Create an {@link XPDFGroupedTable} in Composite parent.
+	 * @param parent
+	 * 				Composite to receive the grouped table. Does not need a {@link ColumnTableLayout}.
+	 * @param style
+	 * 				Style bits for the underlying table.
+	 * 				
+	 */
 	public PhaseGroupedTable(Composite parent, int style) {
 		
 		phases = new ArrayList<XPDFPhase>();
@@ -155,7 +161,7 @@ class PhaseGroupedTable {
 	}
 
 	
-	class PhaseContentProvider implements IStructuredContentProvider {
+	private class PhaseContentProvider implements IStructuredContentProvider {
 
 		@Override
 		public void dispose() {
@@ -190,7 +196,7 @@ class PhaseGroupedTable {
 		groupedTable.setLayoutData(layout);
 	}
 
-	public SelectionAdapter getColumnSelectionAdapter(final TableColumn tableColumn, final Comparator<XPDFPhase> comparator) {
+	private SelectionAdapter getColumnSelectionAdapter(final TableColumn tableColumn, final Comparator<XPDFPhase> comparator) {
 		return new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -223,6 +229,11 @@ class PhaseGroupedTable {
 		};
 	}
 
+	/**
+	 * Sets the sample table to which this phase table refers.
+	 * @param sampleTable
+	 * 					the sample table to which this phase table refers.
+	 */
 	public void setSampleTable(SampleGroupedTable sampleTable) {
 		this.sampleTable = sampleTable;
 	}
@@ -240,15 +251,28 @@ class PhaseGroupedTable {
 		groupedTable.refresh();
 	}
 	
+	/**
+	 * Gets all the phases.
+	 * @return all the phases in the table, as a List.
+	 */
 	public List<XPDFPhase> getAll() {
 		return phases;
 	}
 	
+	/**
+	 * Removes several phases from the table.
+	 * @param phasesToGo
+	 * 					The objects of the phases to be removed.
+	 */
 	public void removeAll(Collection<XPDFPhase> phasesToGo) {
 		phases.removeAll(phasesToGo);
 		refresh();
 	}
 	
+	/**
+	 * Gets the phases selected in the table. 
+	 * @return A List of all the phases selected in the table.
+	 */
 	public List<XPDFPhase> getSelectedPhases() {
 		List<XPDFPhase> selectedPhases= new ArrayList<XPDFPhase>();
 		ISelection selection = groupedTable.getSelection();
@@ -264,6 +288,10 @@ class PhaseGroupedTable {
 		return selectedPhases;		
 	}
 	
+	/**
+	 * Add a context menu to this table.
+	 * @param menuManager context menu to add.
+	 */
 	public void createContextMenu(MenuManager menuManager) {
 		groupedTable.createContextMenu(menuManager);			
 	}
@@ -285,7 +313,7 @@ class PhaseGroupedTable {
 		}
 	}
 	
-	class LocalDragSupportListener extends DragSourceAdapter {
+	private class LocalDragSupportListener extends DragSourceAdapter {
 		private XPDFGroupedTable gT;
 		public LocalDragSupportListener(XPDFGroupedTable gT) {
 			this.gT = gT;
@@ -305,47 +333,47 @@ class PhaseGroupedTable {
 		public boolean presentAsUneditable(Object element);
 	}
 	
-	static class DummyColumnInterface implements ColumnInterface {
-
-		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
-		}
-
-		@Override
-		public SelectionAdapter getSelectionAdapter(PhaseGroupedTable tab,
-				TableViewerColumn col) {
-			return DummySelectionAdapter.get(tab, col);
-		}
-
-		@Override
-		public ColumnLabelProvider getLabelProvider() {
-			return new ColumnLabelProvider() {
-				@Override
-				public String getText(Object element) {
-					return "This space left intentionally blank";
-				}
-			};
-		}
-
-		@Override
-		public String getName() {
-			return "Column";
-		}
-
-		@Override
-		public int getWeight() {
-			return 10;
-		}
-
-		@Override
-		public boolean presentAsUneditable(Object element) {
-			return false;
-		}
-		
-	}
+//	private static class DummyColumnInterface implements ColumnInterface {
+//
+//		@Override
+//		public EditingSupport get(ColumnViewer v) {
+//			return new DummyEditingSupport(v);
+//		}
+//
+//		@Override
+//		public SelectionAdapter getSelectionAdapter(PhaseGroupedTable tab,
+//				TableViewerColumn col) {
+//			return DummySelectionAdapter.get(tab, col);
+//		}
+//
+//		@Override
+//		public ColumnLabelProvider getLabelProvider() {
+//			return new ColumnLabelProvider() {
+//				@Override
+//				public String getText(Object element) {
+//					return "This space left intentionally blank";
+//				}
+//			};
+//		}
+//
+//		@Override
+//		public String getName() {
+//			return "Column";
+//		}
+//
+//		@Override
+//		public int getWeight() {
+//			return 10;
+//		}
+//
+//		@Override
+//		public boolean presentAsUneditable(Object element) {
+//			return false;
+//		}
+//		
+//	}
 	
-	static class DummyEditingSupport extends EditingSupport {
+	private static class DummyEditingSupport extends EditingSupport {
 		DummyEditingSupport(ColumnViewer v) {
 			super(v);
 		}
@@ -366,7 +394,7 @@ class PhaseGroupedTable {
 		}
 	}
 
-	static class DummySelectionAdapter {
+	private static class DummySelectionAdapter {
 		public static SelectionAdapter get(PhaseGroupedTable tab,
 				TableViewerColumn col) {
 			return tab.getColumnSelectionAdapter(col.getColumn(), new Comparator<XPDFPhase>() {
@@ -378,7 +406,7 @@ class PhaseGroupedTable {
 		}
 	}
 	
-	static class DummyLabelProvider extends ColumnLabelProvider {
+	private static class DummyLabelProvider extends ColumnLabelProvider {
 		String text;
 		public DummyLabelProvider(String text) {
 			this.text = text;
@@ -389,7 +417,7 @@ class PhaseGroupedTable {
 		}
 	}
 	
-	static class NameColumnInterface implements ColumnInterface {
+	private static class NameColumnInterface implements ColumnInterface {
 
 		@Override
 		public EditingSupport get(final ColumnViewer v) {
@@ -457,7 +485,7 @@ class PhaseGroupedTable {
 		
 	}
 	
-	static class CodeColumnInterface implements ColumnInterface {
+	private static class CodeColumnInterface implements ColumnInterface {
 
 		@Override
 		public EditingSupport get(ColumnViewer v) {
@@ -501,7 +529,7 @@ class PhaseGroupedTable {
 		}
 	}
 	
-	static class FormColumnInterface implements ColumnInterface {
+	private static class FormColumnInterface implements ColumnInterface {
 		
 		@Override
 		public EditingSupport get(final ColumnViewer v) {
@@ -571,7 +599,7 @@ class PhaseGroupedTable {
 		
 	}
 	
-	static class CrystalColumnInterface implements ColumnInterface {
+	private static class CrystalColumnInterface implements ColumnInterface {
 
 		@Override
 		public EditingSupport get(final ColumnViewer v) {
@@ -640,7 +668,7 @@ class PhaseGroupedTable {
 		}
 	}
 
-	static class GroupColumnInterface implements ColumnInterface {
+	private static class GroupColumnInterface implements ColumnInterface {
 
 		@Override
 		public EditingSupport get(final ColumnViewer v) {
@@ -713,7 +741,7 @@ class PhaseGroupedTable {
 		
 	}
 	
-	static class UnitCellColumnInterface implements ColumnInterface {
+	private static class UnitCellColumnInterface implements ColumnInterface {
 		static final String[] axisNames = {"a", "b", "c"};
 		final int axisIndex;
 		
@@ -812,7 +840,7 @@ class PhaseGroupedTable {
 		}
 	}
 	
-	static class InternalAngleColumnInterface implements ColumnInterface {
+	private static class InternalAngleColumnInterface implements ColumnInterface {
 		static final String[] angleNames = {"α", "β", "γ"};
 		int angleIndex;
 		
@@ -919,7 +947,7 @@ class PhaseGroupedTable {
 		}
 	}
 	
-	static class CompositionColumnInterface implements ColumnInterface {
+	private static class CompositionColumnInterface implements ColumnInterface {
 
 		@Override
 		public EditingSupport get(final ColumnViewer v) {
@@ -1042,7 +1070,7 @@ class PhaseGroupedTable {
 		
 	}
 	
-	static class DensityColumnInterface implements ColumnInterface {
+	private static class DensityColumnInterface implements ColumnInterface {
 
 		@Override
 		public EditingSupport get(ColumnViewer v) {
@@ -1077,7 +1105,7 @@ class PhaseGroupedTable {
 		
 	}
 	
-	static class CommentColumnInterface implements ColumnInterface {
+	private static class CommentColumnInterface implements ColumnInterface {
 
 		@Override
 		public EditingSupport get(final ColumnViewer v) {

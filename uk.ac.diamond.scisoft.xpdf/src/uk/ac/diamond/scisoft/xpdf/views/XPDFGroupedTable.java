@@ -64,7 +64,15 @@ class XPDFGroupedTable extends Composite {
 	// the name of the header in which column occurs
 	private List<String> columnsToHeaderNames;
 	
-	
+	/**
+	 * Constructs a new XPDFGroupedTable, within a {@link Composite} parent,
+	 * with style bits style.
+	 * @param parent
+	 * 				Parent Composite into which the grouped table will be put.
+	 * Does not need TableColumnLayout
+	 * @param style
+	 * 			Style bits to apply to the table.
+	 */
 	public XPDFGroupedTable(Composite parent, int style) {
 		super(parent, style);
 

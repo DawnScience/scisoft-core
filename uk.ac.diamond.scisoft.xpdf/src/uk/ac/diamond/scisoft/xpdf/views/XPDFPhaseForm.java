@@ -12,6 +12,13 @@ package uk.ac.diamond.scisoft.xpdf.views;
 import java.util.Collection;
 import java.util.EnumMap;
 
+/**
+ * The possible forms a phase can take for XPDF.
+ * <p>
+ * The various forms are singleton classes.
+ * @author Timothy Spain, timothy.spain@diamond.ac.uk
+ *
+ */
 class XPDFPhaseForm {
 
 	private static EnumMap<Forms, XPDFPhaseForm> formMap;
@@ -19,6 +26,12 @@ class XPDFPhaseForm {
 	public enum Forms {AMORPHOUS, GLASSY, LIQUID, CRYSTALLINE};
 	private Forms form; 
 	
+	/**
+	 * Gets the {@link XPDFPhaseForm} pertaining to a the value of the enum.
+	 * @param inForm
+	 * 				enum of the form
+	 * @return object representing the form
+	 */
 	public static XPDFPhaseForm get(Forms inForm) {
 		if (formMap == null) 
 			generate();
@@ -39,19 +52,35 @@ class XPDFPhaseForm {
 		names.put(Forms.CRYSTALLINE, "Crystalline");
 	}
 
+	/**
+	 * Get all of the possible names of the forms.
+	 * @return array of names.
+	 */
 	public static String[] getNames() {
 		Collection<String> allNames = names.values();
 		return allNames.toArray(new String[allNames.size()]);
 	}
 	
+	/**
+	 * Gets the enum ordinal of the form.
+	 * @return ordinal of the associated enum
+	 */
 	public int getOrdinal() {
 		return form.ordinal();
 	}
 	
+	/**
+	 * Gets the name of the form.
+	 * @return name
+	 */
 	public String getName() {
 		return names.get(form);
 	}
 	
+	/**
+	 * Returns whether this form is crystalline.
+	 * @return true if the form is crystalline. 
+	 */
 	public boolean isCrystalline() {
 		return form == Forms.CRYSTALLINE;
 	}

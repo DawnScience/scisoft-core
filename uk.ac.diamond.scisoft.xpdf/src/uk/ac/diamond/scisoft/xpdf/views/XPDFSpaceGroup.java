@@ -11,9 +11,18 @@ package uk.ac.diamond.scisoft.xpdf.views;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+/**
+ * Parameterizes the properties of crystal space groups.
+ * <p>
+ * Parameterizes the properties of the 230 space groups, and 7 additional
+ * pseudo-groups parameterizing the rhombohedral basis for those trigonal space
+ * groups.
+ * @author Timothy Spain, timothy.spain@diamond.ac.uk
+ *
+ */
+// TODO: give the rhombohedral based pseudo-groups their actual number at the interface.
 class XPDFSpaceGroup {
 
 	private int number;
@@ -26,6 +35,12 @@ class XPDFSpaceGroup {
 	private XPDFSpaceGroup() {
 	}
 	
+	/**
+	 * Gets the space group with a given number.
+	 * @param groupNumber
+	 * 					number of the space group following the IUCr.
+	 * @return the object representing that space group
+	 */
 	public static XPDFSpaceGroup get(int groupNumber) {
 		if (groups == null) {
 			generateGroups();
@@ -34,18 +49,35 @@ class XPDFSpaceGroup {
 		return groups[groupNumber];
 	}
 	
+	/**
+	 * Gets the number of a space group.
+	 * @return
+	 */
 	public int getNumber() {
 		return number;
 	}
 	
+	/**
+	 * Gets the symbolic name of the space group.
+	 * @return the Hermann-Mauguin symbol of the space group.
+	 */
 	public String getName() {
 		return names[number];
 	}
 	
+	/**
+	 * Gets the typical short form of the space group.
+	 * @return the short-form Hermann-Maugin symbol of the space group.
+	 */
 	public String getShortName() {
 		return shortNames[number];
 	}
 	
+	/**
+	 * Gets the object representing the crystal system of which this space
+	 * group is a member 
+	 * @return the {@link CrystalSystem} of the space group.
+	 */
 	public CrystalSystem getSystem() {
 		if (number < 1)
 			return null; // 0 is undefined
@@ -109,8 +141,6 @@ class XPDFSpaceGroup {
 	 * 		does this space group have a rhombohedral basis, and is it itself in the hexagonal basis
 	 */
 	public boolean hasRhombohedral() {
-		List<Integer> rhombList = Arrays.asList(rhombGroups);
-		
 		return Arrays.asList(rhombGroups).contains(this.number); 
 	}
 	

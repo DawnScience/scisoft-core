@@ -23,16 +23,14 @@ import uk.ac.diamond.scisoft.xpdf.XPDFComponentPlate;
 import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 
+/**
+ * Holds the data relating to a sample.
+ * @author Timothy Spain, timothy.spain@dimaond.ac.uk
+ *
+ */
 public class XPDFSampleParameters {
-//	private String name;
 	private int id;
-//	private boolean isSample;
 	private List<XPDFPhase> phases;
-//	private XPDFSubstance substance;
-//	private double suggestedEnergy;
-//	private double suggestedCapDiameter;
-//	private String beamState;
-//	private String container;
 	private XPDFTargetComponent component;
 	
 	/**
@@ -43,6 +41,10 @@ public class XPDFSampleParameters {
 		this.phases = new ArrayList<XPDFPhase>();
 	}
 
+	/**
+	 * Construct a new sample parameters designated as an actual sample.
+	 * @param isSample
+	 */
 	public XPDFSampleParameters(boolean isSample) {
 		this();
 		this.component.setSample(isSample);
@@ -193,6 +195,10 @@ public class XPDFSampleParameters {
 //		this.container = container;
 //	}
 	
+	/**
+	 * Gets the name of the shape of the sample or container.
+	 * @return the name of the shape.
+	 */
 	public String getShapeName() {
 		if (getForm().getGeom() == null)
 			return "Defined by container";
@@ -202,6 +208,10 @@ public class XPDFSampleParameters {
 			return "Plate";
 	}
 	
+	/**
+	 * Sets the shape of the sample of container by name.
+	 * @param shapeName name of the shape.
+	 */
 	public void setShape(String shapeName) {
 		if (shapeName == null)
 			getForm().setGeom(null);
@@ -218,6 +228,11 @@ public class XPDFSampleParameters {
 			}
 	}
 	
+	/**
+	 * Gets the dimensions of the sample or container.
+	 * @return Size of the container as a 2-element array of floating point
+	 * numbers.
+	 */
 	public double[] getDimensions() {
 		if (getForm().getGeom() == null)
 			return null;
@@ -225,6 +240,12 @@ public class XPDFSampleParameters {
 			return getForm().getGeom().getDistances();
 	}
 
+	/**
+	 * Sets the dimensions of the sample or container.
+	 * @param dims
+	 * 			dimensions of the container as a pair of floating point
+	 * 			numbers.
+	 */
 	public void setDimensions(double[] dims) {
 		if (dims != null) {
 			if (dims.length == 1) {
@@ -235,6 +256,13 @@ public class XPDFSampleParameters {
 		}
 	}
 
+	/**
+	 * Sets the dimensions of the sample or container.
+	 * @param inDim
+	 * 				inner radius (cylinder) or up-stream distance (plate).
+	 * @param outDim
+	 * 				outer radius (cylinder) or down-stream distance (plate).
+	 */
 	public void setDimensions(double inDim, double outDim) {
 		getForm().getGeom().setDistances(inDim, outDim);
 	}

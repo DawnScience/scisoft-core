@@ -12,8 +12,28 @@ package uk.ac.diamond.scisoft.xpdf.views;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class to load test data for the XPDF unit cell editor.
+ * @author Timothy Spain, timothy.spain@diamond.ac.uk
+ *
+ */
 public class SampleTestData {
 
+	/**
+	 * Creates and returns a example {@link XPDFSample}.
+	 * <p>
+	 * Returns a sample object, bases on matching one of the given names:
+	 * <ul>
+	 * <li> Barium Titanate </li>
+	 * <li> Rutile </li>
+	 * <li> Quartz Capillary </li>
+	 * <li> ceria </li>
+	 * </ul>
+	 * @param name
+	 * 			name of the sample to create
+	 * @return
+	 * 		the object of the created sample.
+	 */
 	public static XPDFSampleParameters createTestSample(String name) {
 		XPDFSampleParameters sample  = new XPDFSampleParameters();
 		
@@ -69,6 +89,27 @@ public class SampleTestData {
 	}
 	
 	
+	/**
+	 * Creates and returns a example {@link XPDFPhase}.
+	 * <p>
+	 * Returns a phase object, bases on matching one of the given names:
+	 * <ul>
+	 * <li> BTO </li>
+	 * <li> Calcium titanate </li>
+	 * <li> TiO2 </li>
+	 * <li> cSiO2 </li>
+	 * <li> Crown Glass </li>
+	 * <li> Flint Glass </li>
+	 * <li> ceria </li>
+	 * <li> microcline </li>
+	 * <li> cryolite </li>
+	 * <li> ilmenite </li>
+	 * </ul>
+	 * @param name
+	 * 			name of the sample to create
+	 * @return
+	 * 		the object of the created sample.
+	 */
 	public static XPDFPhase createTestPhase(String name) {
 		XPDFPhase phase = new XPDFPhase();
 		

@@ -31,6 +31,11 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+/**
+ * The view containing the XPDF sample and phase editor.
+ * @author Timothy Spain, timothy.spain@diamond.ac.uk
+ *
+ */
 public class XPDFSampleEditorView extends ViewPart {
 	
 	private Button cifButton;
@@ -64,6 +69,13 @@ public class XPDFSampleEditorView extends ViewPart {
 	public XPDFSampleEditorView() {
 	}
 	
+	/**
+	 * Constructs the view within parent
+	 * @param parent
+	 * 				{@link Composite} to contain the view.
+	 * @param style
+	 * 			style bits to apply to the view (ignored)
+	 */
 	public XPDFSampleEditorView(Composite parent, int style) {
 		createPartControl(parent);
 	}
@@ -385,7 +397,7 @@ public class XPDFSampleEditorView extends ViewPart {
 	
 	// Action class that simulates the pair-distribution function of the given sample.
 	// At the moment, this plots the NIST ceria standard PDF
-	class SimulatePDFAction extends Action {
+	private class SimulatePDFAction extends Action {
 		@Override
 		public void run() {
 			List<XPDFSampleParameters> selectedXPDFParameters = sampleTable.getSelectedSamples();
@@ -469,7 +481,7 @@ public class XPDFSampleEditorView extends ViewPart {
 //	}
 	
 	// Sample data with integer multiplicities
-	class LoadTestDataAction extends Action {
+	private class LoadTestDataAction extends Action {
 
 		@Override
 		public void run() {

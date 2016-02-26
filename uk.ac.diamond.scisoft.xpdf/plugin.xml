@@ -110,14 +110,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.views">
-      <view
-            category="uk.ac.diamond.scisoft.xpdf.XPDFViews"
-            class="uk.ac.diamond.scisoft.xpdf.views.XPDFSampleView"
-            icon="icons/xpdfcontainer.png"
-            id="uk.ac.diamond.scisoft.xpdf.XPDFSampleView"
-            name="XPDF Sample View"
-            restorable="true">
-      </view>
       <category
             id="uk.ac.diamond.scisoft.xpdf.XPDFViews"
             name="XPDF Views">
@@ -127,7 +119,7 @@
             class="uk.ac.diamond.scisoft.xpdf.views.XPDFSampleEditorView"
             icon="icons/xpdfcontainer.png"
             id="uk.ac.diamond.scisoft.xpdf.XPDFSampleEditorView"
-            name="XPDF Sample Editor"
+            name="XPDF Sample Editor (Alpha)"
             restorable="true">
       </view>
    </extension>

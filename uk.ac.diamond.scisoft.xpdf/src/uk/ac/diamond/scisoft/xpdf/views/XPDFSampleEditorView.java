@@ -10,10 +10,8 @@
 package uk.ac.diamond.scisoft.xpdf.views;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -402,11 +400,8 @@ public class XPDFSampleEditorView extends ViewPart {
 			// the data there.
 			
 		// TODO: Do something with the data
-			for (Dataset pdf : simulatedPDFs) {
-				XPDFPopUpPlotDialog popUp = new XPDFPopUpPlotDialog(XPDFSampleEditorView.this.getViewSite().getShell(), null, (IDataset) pdf);
-				popUp.open();
-//				popUp.createDialogArea(XPDFSampleView.this.getViewSite().getShell().getParent());
-			}
+//			for (Dataset pdf : simulatedPDFs) {
+//			}
 		}
 	}
 

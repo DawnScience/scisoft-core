@@ -401,6 +401,9 @@ public class XPDFPhase {
 		public String getLabel() {
 			return label;
 		}
+		public void setLabel(String label) {
+			this.label = label;
+		}
 		public XPDFAtom getAtom() {
 			return atom;
 		}

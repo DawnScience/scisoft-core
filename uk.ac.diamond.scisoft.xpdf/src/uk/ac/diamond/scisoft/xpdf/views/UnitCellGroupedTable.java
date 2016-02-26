@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -69,6 +70,10 @@ public class UnitCellGroupedTable {
 
 	public void refresh() {
 		groupedTable.refresh();
+	}
+	
+	public Map<String, XPDFAtom> getAtoms() {
+		return atoms;
 	}
 	
 	private void createColumns() {
@@ -300,8 +305,32 @@ public class UnitCellGroupedTable {
 	static class LabelColumnInterface implements ColumnInterface {
 
 		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
+		public EditingSupport get(final ColumnViewer v) {
+			return new EditingSupport(v) {
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return new TextCellEditor(((TableViewer) v).getTable());
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return true;
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					return ((LabelledAtom) element).getLabel();
+				}
+
+				@Override
+				protected void setValue(Object element, Object value) {
+					if (element instanceof LabelledAtom)
+						((LabelledAtom) element).setLabel(value.toString());
+					v.refresh(element);
+				}
+				
+			};
 		}
 
 		@Override

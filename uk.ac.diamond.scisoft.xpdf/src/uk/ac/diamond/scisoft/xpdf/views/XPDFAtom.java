@@ -31,8 +31,8 @@ public class XPDFAtom {
 	 * @param atomicNumber
 	 * 					atomic number of the atom
 	 */
-	public XPDFAtom(int atomicNumber) {
-		this.atomicNumber = atomicNumber;
+	public XPDFAtom() {
+		atomicNumber = 0; // a new atom is a neutron?
 		position = new double[nDim];
 		atomicDisplacement = new double[nDim*nDim+1];
 	}
@@ -44,9 +44,14 @@ public class XPDFAtom {
 	 * @param position
 	 */
 	public XPDFAtom(int atomicNumber, double occupancy, double[] position) {
-		this(atomicNumber);
+		this();
+		this.setAtomicNumber(atomicNumber);
 		this.setOccupancy(occupancy);
 		this.setPosition(position);
+	}
+	
+	public void setAtomicNumber(int atomicNumber) {
+		this.atomicNumber = atomicNumber;
 	}
 	
 	/**

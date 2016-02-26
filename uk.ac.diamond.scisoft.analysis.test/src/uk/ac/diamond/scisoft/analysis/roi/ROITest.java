@@ -600,7 +600,22 @@ public class ROITest {
 		assertNull(p.findHorizontalIntersections(21));
 		double[] xi = p.findHorizontalIntersections(0);
 		assertArrayEquals(new double[]{-20, 20}, xi, ABS_TOL);
+	}
 
+	@Test
+	public void testPolylineROIEqualsCopy() {
+		PolylineROI polylineROI = new PolylineROI();
+		polylineROI.insertPoint(0, 0);
+		polylineROI.equals(polylineROI.copy());
+	}
+
+	@Test
+	public void testPolylineROIEqualsOtherWithSameStartPoint() {
+		PolylineROI polylineROI = new PolylineROI();
+		polylineROI.insertPoint(0, 0);
+		PolylineROI other = new PolylineROI();
+		other.insertPoint(0, 0);
+		polylineROI.equals(other);
 	}
 
 	@Test

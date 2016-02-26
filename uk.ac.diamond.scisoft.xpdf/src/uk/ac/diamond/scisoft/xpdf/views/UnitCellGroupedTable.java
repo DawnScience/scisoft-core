@@ -9,6 +9,7 @@
 package uk.ac.diamond.scisoft.xpdf.views;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,12 +17,15 @@ import java.util.Map;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
 
 import uk.ac.diamond.scisoft.xpdf.views.XPDFPhase.LabelledAtom;
 
@@ -203,27 +207,68 @@ public class UnitCellGroupedTable {
 
 	static class ElementColumnInterface implements ColumnInterface {
 
+		private final List<String> elementSymbol = Arrays.asList( new String[] { "?", 
+				"H","He","Li","Be","B","C","N","O","F","Ne",
+				"Na","Mg","Al","Si","P","S","Cl","Ar","K","Ca",
+				"Sc","Ti","V","Cr","Mn","Fe","Co","Ni","Cu","Zn",
+				"Ga","Ge","As","Se","Br","Kr","Rb","Sr","Y","Zr",
+		        "Nb","Mo","Tc","Ru","Rh","Pd","Ag","Cd","In","Sn",
+		        "Sb","Te","I","Xe","Cs","Ba","La","Ce","Pr","Nd",
+		        "Pm","Sm","Eu","Gd","Tb","Dy","Ho","Er","Tm","Yb",
+		        "Lu","Hf","Ta","W","Re","Os","Ir","Pt","Au","Hg",
+		        "Tl","Pb","Bi","Po","At","Rn","Fr","Ra","Ac","Th",
+		        "Pa","U","Np","Pu","Am","Cm","Bk","Cf","Es","Fm"}
+		);
+		private static final int elementOffset = 1; 
+
 		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
+		public EditingSupport get(final ColumnViewer v) {
+			return new EditingSupport(v) {
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					Table theTable =  ((TableViewer) v).getTable();
+					String[] elementStrings = elementSymbol.subList(elementOffset, elementSymbol.size()).toArray(new String[elementSymbol.size()-1]);
+					return new ComboBoxCellEditor(theTable, elementStrings);
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return true;
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					int atomicNumber;
+					if (element instanceof LabelledAtom) 
+						atomicNumber = ((LabelledAtom) element).getAtom().getAtomicNumber();
+					else if (element instanceof XPDFAtom)
+						atomicNumber = ((XPDFAtom) element).getAtomicNumber();
+					else
+						atomicNumber = elementOffset;
+					return atomicNumber - elementOffset;
+				}
+
+				@Override
+				protected void setValue(Object element, Object value) {
+					if (value instanceof Integer) {
+						int atomicNumber = (Integer) value;
+						atomicNumber += elementOffset;
+						if (element instanceof LabelledAtom) 
+							((LabelledAtom) element).getAtom().setAtomicNumber(atomicNumber);
+						else if (element instanceof XPDFAtom)
+							((XPDFAtom) element).setAtomicNumber(atomicNumber);
+					}
+					v.refresh(element);
+				}
+				
+			};
 		}
 
 		@Override
 		public ColumnLabelProvider getLabelProvider() {
 			return new ColumnLabelProvider() {		
 				
-				private final String[] elementSymbol = { "n",
-					"H","He","Li","Be","B","C","N","O","F","Ne",
-					"Na","Mg","Al","Si","P","S","Cl","Ar","K","Ca",
-					"Sc","Ti","V","Cr","Mn","Fe","Co","Ni","Cu","Zn",
-					"Ga","Ge","As","Se","Br","Kr","Rb","Sr","Y","Zr",
-			        "Nb","Mo","Tc","Ru","Rh","Pd","Ag","Cd","In","Sn",
-			        "Sb","Te","I","Xe","Cs","Ba","La","Ce","Pr","Nd",
-			        "Pm","Sm","Eu","Gd","Tb","Dy","Ho","Er","Tm","Yb",
-			        "Lu","Hf","Ta","W","Re","Os","Ir","Pt","Au","Hg",
-			        "Tl","Pb","Bi","Po","At","Rn","Fr","Ra","Ac","Th",
-			        "Pa","U","Np","Pu","Am","Cm","Bk","Cf","Es","Fm"};
-
 				@Override
 				public String getText(Object element) {
 					int atomicNumber = 0;
@@ -231,7 +276,7 @@ public class UnitCellGroupedTable {
 						atomicNumber = ((LabelledAtom) element).getAtom().getAtomicNumber();
 					else if (element instanceof XPDFAtom)
 						atomicNumber = ((XPDFAtom) element).getAtomicNumber();
-					return elementSymbol[atomicNumber];
+					return elementSymbol.get(atomicNumber);
 				}
 			};
 		}

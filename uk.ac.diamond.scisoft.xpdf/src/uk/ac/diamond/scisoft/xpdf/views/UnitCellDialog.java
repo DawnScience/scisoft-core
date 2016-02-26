@@ -150,7 +150,7 @@ class UnitCellDialog extends Dialog {
 				int i;
 				for (i = 0; atoms.containsKey(Integer.toString(i)); i++)
 					;
-				atoms.put(Integer.toString(i), new XPDFAtom(0));
+				atoms.put(Integer.toString(i), new XPDFAtom());
 				cellTable.refresh();
 			}
 		};

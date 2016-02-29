@@ -29,6 +29,7 @@ import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.OriginMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
+import org.eclipse.dawnsci.analysis.api.persistence.IPersistentNodeFactory;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -103,16 +104,19 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 		if (metadata != null && metadata.get(0) != null) origin = metadata.get(0);
 //		file = HierarchicalDataFactory.getWriter(filePath);
 		nexusFile = NexusFileHDF5.createNexusFile(filePath, swmring);
+		initGroups();
 		try {
 			// don't fail process because of error persisting models
-//			IPersistentFile pf = service.createPersistentFile(file);
-//			pf.setOperations(series);
-//			pf.setOperationDataOrigin(origin);
+			IPersistentNodeFactory pf = service.getPersistentNodeFactory();
+			GroupNode gn = pf.writeOperationsToGroup(series);
+			nexusFile.addNode("/" + ENTRY+"/process", gn);
+			GroupNode or = pf.writeOriginalDataInformation(origin);
+			nexusFile.addNode("/" + ENTRY+"/process/origin", or);
 		} catch (Exception e){
 			logger.error("Cant persist operations!", e);
 		}
 
-		initGroups();
+		
 		boolean groupCreated = false;
 		for (int i = 0; i < series.length; i++) {
 			if (series[i].isStoreOutput()) {
@@ -266,7 +270,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 						
 						updateAxes(ds, slices, shape, dataDims, "/"+ENTRY + "/" + AUX_GROUP +  "/" + position + "-" + intermeadiateData.getName() +"/"+  dsName, first);
 					} catch (Exception e) {
-						logger.error(e.getMessage());
+						logger.error(e.getMessage(), e);
 					}
 				}
 			}
@@ -337,7 +341,6 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 								}
 								
 								synchronized (nexusFile) {
-									nexusFile.toString();
 									nexusFile.createData(nexusFile.getGroup(groupName, true), axDataset.squeeze()).addAttribute(new AttributeImpl("axis", String.valueOf(i+1)));;
 									if (e != null) nexusFile.createData(nexusFile.getGroup(groupName, true), e);
 								}
@@ -370,7 +373,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 					synchronized (nexusFile) {
 						GroupNode group = nexusFile.getGroup(groupName, false);
 						nexusFile.addAttribute(group, new AttributeImpl("axes", DatasetFactory.createFromObject(axNames)));
-						axesNames = null;
+						axNames = null;
 					}
 				}
 
@@ -431,6 +434,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 		if (AbstractDataset.squeezeShape(dataset.getShape(), false).length == 0) {
 			//padding slice and shape does not play nice with single values of rank != 0
 			dataset = dataset.getSliceView().squeeze();
+//			dataset.setShape(new int[]{1});
 		}
 		
 		//determine the dimensions of the original data
@@ -441,16 +445,17 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 		long[] newShape = getNewShape(oShape, dataset.getShape(), dd);
 		
 		if (dataset.getRank() == 0) {
-			int[] shape = new int[newShape.length];
+//			int[] shape = new int[newShape.length];
+			int[] shape = newShape.length == 0 ? new int[1] : new int[newShape.length];
 			Arrays.fill(shape, 1);
 			dataset.setShape(shape);
 		}
 		
 		//write
 		DataNode dn = null;
-		try {
+		if (group.containsDataNode(dataset.getName())){
 			dn = file.getData(group,dataset.getName());
-		} catch (Exception e) {
+		} else {
 			createWriteableLazy(dataset, group);
 			dn = file.getData(group,dataset.getName());
 		}

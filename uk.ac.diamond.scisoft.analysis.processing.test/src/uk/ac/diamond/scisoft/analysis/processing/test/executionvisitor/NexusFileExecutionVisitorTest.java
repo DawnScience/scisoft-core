@@ -320,6 +320,9 @@ public class NexusFileExecutionVisitorTest {
 		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0").getShape());
 
 		testDataset( op11, "5,10,:", dh.getLazyDataset("/entry/result/data"));
+		
+		IDataset slice = dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getSlice();
+		slice.toString();
 			
 	}
 	
@@ -773,6 +776,49 @@ public class NexusFileExecutionVisitorTest {
 		assertTrue(dh.contains("/entry/intermediate/0-Junk2Dto2DOperation/Junk2Dto2DAx1"));
 		assertFalse(dh.contains("/entry/intermediate/0-Junk2Dto2DOperation/Junk2Dto2DAx11"));
 		
+			
+	}
+	
+	@Test
+	public void Process1DLineAs1DTo1DAux1D() throws Exception {
+		
+		int[] inputShape = new int[] {1100};
+		int[] auxShape = new int[]{1};
+		
+		ILazyDataset lazy = getLazyDataset(inputShape,1);
+		
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+//		context.setSlicing("all","all");
+		context.setDataDimensions(new int[]{0});
+		
+				
+		Junk1Dto1DAuxOperation op11 = new Junk1Dto1DAuxOperation();
+		op11.setModel(new Junk1DModel());
+		op11.setAuxShape(auxShape);
+		
+		final File tmp = File.createTempFile("Test", ".h5");
+		tmp.deleteOnExit();
+		tmp.createNewFile();
+		
+		context.setVisitor(new NexusFileExecutionVisitor(tmp.getAbsolutePath()));
+		context.setSeries(op11);
+		context.setExecutionType(type);
+		service.execute(context);
+		
+		
+		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
+		assertTrue(dh.contains("/entry/result/data"));
+		assertTrue(dh.contains("/entry/result/Junk1Dax"));
+		assertTrue(dh.contains("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data"));
+		
+		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
+		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+
+		IDataset slice = dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getSlice();
+		double d = slice.getDouble();
+		assertTrue(d != 0);
+		assertTrue(d != Double.NaN);
 			
 	}
 	

@@ -45,6 +45,7 @@ public class Junk1Dto1DAuxOperation extends Junk1Dto1DOperation {
 		DoubleDataset rand = Random.rand(auxShape);
 //		rand.squeeze();
 		rand.setName("singlevalue");
+		rand.iadd(10);
 		
 		d.setAuxData(rand);
 		

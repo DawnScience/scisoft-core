@@ -356,8 +356,33 @@ class XPDFPhase {
 	 * @return the crystallographic density of the phase in g cm⁻³.
 	 */
 	public double getDensity() {
-	
-		return 0.0;
+
+		// From Pure Appl. Chem., 2013, 85, pp.1047-1078, via http://www.chem.qmul.ac.uk/iupac/AtWt/
+		// With the neutron as the zero-th element
+
+		double[] atomicWeights = { 1.009,
+				1.008, 4.002602, 6.94, 9.0121831, 10.81, 12.011, 14.007, 15.999, 18.998403163, 20.1797,
+				22.98976928, 24.305, 26.9815385, 28.085, 30.973761998, 32.06, 35.45, 39.948, 39.0983, 40.078,
+				44.955908, 47.867, 50.9415, 51.9961, 54.938044, 55.845, 58.933194, 58.6934, 63.546, 65.38,
+				69.723, 72.630, 74.921595, 78.971, 79.904, 83.798, 85.4678, 87.62, 88.90584, 91.224,
+				92.90637, 95.95, 97, 101.07, 102.90550, 106.42, 107.8682, 112.414, 114.818, 118.710,
+				121.760, 127.60, 126.90447, 131.293, 132.90545196, 137.327, 138.90547, 140.116, 140.90766, 144.242,
+				145, 150.36, 151.964, 157.25, 158.92535, 162.500, 164.93033, 167.259, 168.93422, 173.045,
+				174.9668, 178.49, 180.94788, 183.84, 186.207, 190.23, 192.217, 195.084, 196.966569, 200.592,
+				204.38, 207.2, 208.98040, 209, 210, 222, 223, 226, 227, 232.0377,
+				231.03588, 238.02891, 237, 244, 243, 247, 247, 251, 252, 257
+		};
+		double unitCellAMU = 0.0;
+		for (XPDFAtom atom : atoms) {
+			unitCellAMU += atomicWeights[atom.getAtomicNumber()] * atom.getOccupancy();
+		}
+		double unitCellkg = unitCellAMU * 1.660539040e-27;
+		double unitCellm3 = getUnitCellVolume() * 1e-30;
+		
+		double unitCellSIDensity = unitCellkg/unitCellm3;
+		double unitCellCGSDensity = unitCellSIDensity * 1e6 / 1e3;
+
+		return (!atoms.isEmpty()) ? unitCellCGSDensity : 0.0;
 	}
 	
 	/**
@@ -374,9 +399,17 @@ class XPDFPhase {
 	 * @return
 	 * 		the volume of the unit cell
 	 */
-	// TODO: Fix this for unit cell without 90° angles
 	public double getUnitCellVolume() {
-		return unitCellLengths[0] * unitCellLengths[1] * unitCellLengths[2];
+		// Volume if all angles were 90°
+		double[] trueLengths = this.getUnitCellLengths(),
+				trueAngles = this.getUnitCellAngle();
+		double orthoVolume = trueLengths[0] * trueLengths[1] * trueLengths[2];
+		// Shape coefficient; angular dependency
+		double ca = Math.cos(Math.toRadians(trueAngles[0])),
+				cb = Math.cos(Math.toRadians(trueAngles[1])),
+				cg = Math.cos(Math.toRadians(trueAngles[2]));
+		double shapeCoefficient = Math.sqrt(1 - ca*ca - cb*cb - cg*cg + 2*ca*cb*cg);
+		return orthoVolume*shapeCoefficient;
 	}
 
 	/**

@@ -1080,7 +1080,23 @@ class PhaseGroupedTable {
 
 		@Override
 		public ColumnLabelProvider getLabelProvider() {
-			return new DummyLabelProvider("Density");
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					if (element instanceof XPDFPhase) {
+						return Double.toString(((XPDFPhase) element).getDensity());
+					} else {
+						return "-";
+					}
+				}
+
+				@Override
+				public Font getFont(Object element) {
+					return (presentAsUneditable((XPDFPhase) element)) ?
+							JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT) :
+								JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);
+				}
+			};
 		}
 
 		@Override

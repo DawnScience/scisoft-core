@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.ViewerDropAdapter;
  * @author Timothy Spain, timothy.spain@diamond.ac.uk
  *
  */
-public interface ViewerDropAdapterFactory {
+interface ViewerDropAdapterFactory {
 
 	public ViewerDropAdapter get(Viewer v);
 	

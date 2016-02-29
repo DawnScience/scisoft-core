@@ -27,7 +27,7 @@ import uk.ac.diamond.scisoft.xpdf.XPDFComposition;
  * @author Timothy Spain, timothy.spain@diamond.ac.uk
  *
  */
-public class XPDFPhase {
+class XPDFPhase {
 
 	private String name;
 	private int iDCode;

@@ -28,7 +28,7 @@ import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
  * @author Timothy Spain, timothy.spain@dimaond.ac.uk
  *
  */
-public class XPDFSampleParameters {
+class XPDFSampleParameters {
 	private int id;
 	private List<XPDFPhase> phases;
 	private XPDFTargetComponent component;

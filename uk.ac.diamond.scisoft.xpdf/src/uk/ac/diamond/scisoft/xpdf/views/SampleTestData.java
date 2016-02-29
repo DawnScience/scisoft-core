@@ -17,7 +17,7 @@ import java.util.List;
  * @author Timothy Spain, timothy.spain@diamond.ac.uk
  *
  */
-public class SampleTestData {
+class SampleTestData {
 
 	/**
 	 * Creates and returns a example {@link XPDFSample}.

@@ -16,7 +16,7 @@ import java.util.Arrays;
  * @author Timothy Spain, timothy.spain@diamond.ac.uk
  *
  */
-public class XPDFAtom {
+class XPDFAtom {
 
 	private static final int nDim = 3;
 	private String label;

@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.Viewer;
  * @author Timothy Spain, timothy.spain@diamond.ac.uk
  *
  */
-public interface EditingSupportFactory {
+interface EditingSupportFactory {
 	
 	EditingSupport get(final ColumnViewer v);
 

@@ -12,13 +12,14 @@ package uk.ac.diamond.scisoft.xpdf.views;
 import java.util.Arrays;
 
 /**
- * A class to hold the parameters on an individual atom within a unit cell
+ * A class to hold the parameters on an individual atom within a unit cell.
  * @author Timothy Spain, timothy.spain@diamond.ac.uk
  *
  */
 public class XPDFAtom {
 
 	private static final int nDim = 3;
+	private String label;
 	private double[] position;
 	private double occupancy;
 	private int atomicNumber;
@@ -27,18 +28,19 @@ public class XPDFAtom {
 	private double[] atomicDisplacement;
 
 	/**
-	 * Constructs a new atom with the given atomic number
+	 * Constructs a new atom with the given atomic number.
 	 * @param atomicNumber
 	 * 					atomic number of the atom
 	 */
 	public XPDFAtom() {
 		atomicNumber = 0; // a new atom is a neutron?
+		label = "";
 		position = new double[nDim];
 		atomicDisplacement = new double[nDim*nDim+1];
 	}
 	
 	/**
-	 * Constructs an atom without displacement information
+	 * Constructs an atom without a label or displacement information.
 	 * @param atomicNumber
 	 * @param occupancy
 	 * @param position
@@ -48,6 +50,55 @@ public class XPDFAtom {
 		this.setAtomicNumber(atomicNumber);
 		this.setOccupancy(occupancy);
 		this.setPosition(position);
+	}
+	
+	/**
+	 * Constructors an atom without displacement information.
+	 * @param label
+	 * @param atomicNumber
+	 * @param occupancy
+	 * @param position
+	 */
+	public XPDFAtom(String label, int atomicNumber, double occupancy, double[] position) {
+		this(atomicNumber, occupancy, position);
+		this.label = label;
+	}
+	
+	/**
+	 * Copy constructor.
+	 * @param inAtom
+	 * 				XPDFAtom to be copied
+	 */
+	public XPDFAtom(XPDFAtom inAtom) {
+		this(inAtom.getLabel(), inAtom.getAtomicNumber(), inAtom.getOccupancy(), inAtom.getPosition());
+	}
+	
+	/**
+	 * Copy constructor, giving the new atom a new label.
+	 * @param inAtom
+	 * 				atom to be copied.
+	 * @param newLabel
+	 * 				label to be applied to the new atom.
+	 */
+	public XPDFAtom(XPDFAtom inAtom, String newLabel) {
+		this(newLabel, inAtom.getAtomicNumber(), inAtom.getOccupancy(), inAtom.getPosition());
+	}
+	
+	/**
+	 * Sets the label of the atom.
+	 * @param label
+	 * 				label to give the atom
+	 */
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	
+	/**
+	 * Gets the label applied to the atom.
+	 * @return the atom's label.
+	 */
+	public String getLabel() {
+		return label;
 	}
 	
 	/**

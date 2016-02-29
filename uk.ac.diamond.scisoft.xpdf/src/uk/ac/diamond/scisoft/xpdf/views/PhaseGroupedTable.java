@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeSet;
 
 import org.eclipse.jface.action.MenuManager;
@@ -47,8 +46,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.TableColumn;
-
-import uk.ac.diamond.scisoft.xpdf.views.XPDFPhase.LabelledAtom;
 
 /**
  * Display and edit phases for the XPDF project
@@ -958,7 +955,7 @@ class PhaseGroupedTable {
 					return new DialogCellEditor(((TableViewer) v).getTable()) {
 						
 						private UnitCellDialog unitCell;
-						private Collection<LabelledAtom> atoms;
+						private List<XPDFAtom> atoms;
 						
 						@Override
 						protected Object openDialogBox(Control cellEditorWindow) {
@@ -977,16 +974,15 @@ class PhaseGroupedTable {
 					    @Override
 					    protected Object doGetValue() {
 					    	if (unitCell != null) {
-					    		Map<String, XPDFAtom> atoms = unitCell.getAllAtoms();
-					    		v.refresh();
-					    		return atoms;
+					    		return unitCell.getAllAtoms();
 					    	}
 					    	else return null;
 					    }
 					    @Override
 					    protected void doSetValue(Object value) {
-					    	if (value instanceof Collection)
-					    		atoms = ((Collection<LabelledAtom>) value);
+					    	if (value instanceof List<?>)
+					    		atoms = ((List<XPDFAtom>) value);
+//					    		unitCell.setAllAtoms((List<XPDFAtom>) value);
 					    }
 					};
 				}
@@ -999,25 +995,24 @@ class PhaseGroupedTable {
 				@Override
 				protected Object getValue(Object element) {
 					if (element instanceof XPDFPhase)
-						return ((XPDFPhase) element).getLabelledAtoms();
+						return ((XPDFPhase) element).getAllAtoms();
 					else 
 						return getLabelProvider().getText(element);
 				}
 
 				@Override
 				protected void setValue(Object element, Object value) {
-					if (value instanceof Map<?,?>) {
-						Map<?, ?> genericMap = (Map<?,?>) value;
-						Map<String, XPDFAtom> atomMap;
+					if (value instanceof List<?>) {
+						List<?> genericList= (List<?>) value;
+						List<XPDFAtom> atomList;
 						try {
-							atomMap = (Map<String, XPDFAtom>) genericMap;
+							atomList = (List<XPDFAtom>) genericList;
 						} catch (ClassCastException cCE) {
 							return;
 						}
 						XPDFPhase phase = (XPDFPhase) element;
-						for (Map.Entry<String, XPDFAtom> entry : atomMap.entrySet()) {
-							phase.addAtom(entry.getKey(), entry.getValue());
-						}
+						phase.clearAtoms();
+						phase.addAllAtoms(atomList);
 					}
 					v.refresh();
 					return;

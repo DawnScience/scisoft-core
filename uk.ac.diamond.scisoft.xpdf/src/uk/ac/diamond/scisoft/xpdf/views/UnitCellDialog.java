@@ -9,9 +9,8 @@
 
 package uk.ac.diamond.scisoft.xpdf.views;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
@@ -34,8 +33,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import uk.ac.diamond.scisoft.xpdf.views.XPDFPhase.LabelledAtom;
-
 /**
  * Implements a dialog window for editing the unit cell of a phase.
  * @author Timothy Spain, timothy.spain@diamond.ac.uk
@@ -43,7 +40,7 @@ import uk.ac.diamond.scisoft.xpdf.views.XPDFPhase.LabelledAtom;
  */
 class UnitCellDialog extends Dialog {
 
-	private Map<String, XPDFAtom> atoms;
+	private List<XPDFAtom> atoms;
 
 	private UnitCellGroupedTable cellTable;
 	
@@ -115,29 +112,23 @@ class UnitCellDialog extends Dialog {
 	 * Returns the present state of all atoms.
 	 * @return Map between the atoms and their labels.
 	 */
-	public Map<String, XPDFAtom> getAllAtoms() {
+	public List<XPDFAtom> getAllAtoms() {
 		return atoms;
 	}
 
 	/**
 	 * Sets the atoms to be edited in the dialog.
+	 * <p>
+	 * Takes a copy of the List of atoms to be edited within the dialog.
 	 * @param atoms
-	 * 				A Map between labels and atoms.
+	 * 				A List of {@link XPDFAtom}s
 	 */
-	public void setAllAtoms(Map<String, XPDFAtom> atoms) {
-		this.setAllAtoms(LabelledAtom.fromMap(atoms));
-	}
-	
-	/**
-	 * Sets the atoms to be edited in the dialog.
-	 * @param atoms
-	 * 				A List of {@link LabelledAtom}s
-	 */
-	public void setAllAtoms(Collection<LabelledAtom> atoms) {
-		this.atoms = new HashMap<String, XPDFAtom>();
-		for (LabelledAtom atom : atoms) {
-			this.atoms.put(atom.getLabel(), atom.getAtom());
+	public void setAllAtoms(List<XPDFAtom> atoms) {
+		this.atoms = new ArrayList<XPDFAtom>();
+		for (XPDFAtom atom : atoms) {
+			this.atoms.add(atom);
 		}
+//		this.atoms = atoms;
 	}
 	
 	private void createAtomButtons(Composite parent) {
@@ -175,10 +166,10 @@ class UnitCellDialog extends Dialog {
 		addAtomAction = new Action() {
 			@Override
 			public void run() {
-				int i;
-				for (i = 0; atoms.containsKey(Integer.toString(i)); i++)
-					;
-				atoms.put(Integer.toString(i), new XPDFAtom());
+//				int i;
+//				for (i = 0; atoms.containsKey(Integer.toString(i)); i++)
+//					;
+				atoms.add(new XPDFAtom());
 				cellTable.refresh();
 			}
 		};

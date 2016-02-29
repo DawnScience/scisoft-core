@@ -10,10 +10,9 @@ package uk.ac.diamond.scisoft.xpdf.views;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
@@ -28,8 +27,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 
-import uk.ac.diamond.scisoft.xpdf.views.XPDFPhase.LabelledAtom;
-
 /**
  * Grouped table to edit the atoms in a unit cell
  * @author Timothy Spain, timothy.spain@diamond.ac.uk
@@ -37,8 +34,8 @@ import uk.ac.diamond.scisoft.xpdf.views.XPDFPhase.LabelledAtom;
  */
 class UnitCellGroupedTable {
 
-	private static Map<String, XPDFAtom> defaultAtoms;
-	private Map<String, XPDFAtom> atoms;
+	private static List<XPDFAtom> defaultAtoms;
+	private List<XPDFAtom> atoms;
 	private XPDFGroupedTable groupedTable;
 
 	/**
@@ -52,18 +49,18 @@ class UnitCellGroupedTable {
 	public UnitCellGroupedTable(Composite parent, int style) {
 
 		if (defaultAtoms == null) {
-			defaultAtoms = new HashMap<String, XPDFAtom>();
+			defaultAtoms = new ArrayList<XPDFAtom>();
 			// All phases are ferrous titanate
-			defaultAtoms.put("Fe1", new XPDFAtom(26, 1.0, new double[] {0.333, 0.333, 0.333}));
-			defaultAtoms.put("Fe2", new XPDFAtom(26, 1.0, new double[] {0.667, 0.667, 0.667}));
-			defaultAtoms.put("Ti1", new XPDFAtom(22, 1.0, new double[] {0.167, 0.167, 0.167}));
-			defaultAtoms.put("Ti2", new XPDFAtom(22, 1.0, new double[] {0.833, 0.833, 0.833}));
-			defaultAtoms.put("O1", new XPDFAtom(8, 1.0, new double[] {0.583, 0.917, 0.250}));
-			defaultAtoms.put("O2", new XPDFAtom(8, 1.0, new double[] {0.917, 0.250, 0.583}));
-			defaultAtoms.put("O3", new XPDFAtom(8, 1.0, new double[] {0.250, 0.583, 0.917}));
-			defaultAtoms.put("O4", new XPDFAtom(8, 1.0, new double[] {-0.583, -0.917, -0.250}));
-			defaultAtoms.put("O5", new XPDFAtom(8, 1.0, new double[] {-0.917, -0.250, -0.583}));
-			defaultAtoms.put("O6", new XPDFAtom(8, 1.0, new double[] {-0.250, -0.583, -0.917}));
+			defaultAtoms.add(new XPDFAtom("Fe1", 26, 1.0, new double[] {0.333, 0.333, 0.333}));
+			defaultAtoms.add(new XPDFAtom("Fe2", 26, 1.0, new double[] {0.667, 0.667, 0.667}));
+			defaultAtoms.add(new XPDFAtom("Ti1", 22, 1.0, new double[] {0.167, 0.167, 0.167}));
+			defaultAtoms.add(new XPDFAtom("Ti2", 22, 1.0, new double[] {0.833, 0.833, 0.833}));
+			defaultAtoms.add(new XPDFAtom("O1", 8, 1.0, new double[] {0.583, 0.917, 0.250}));
+			defaultAtoms.add(new XPDFAtom("O2", 8, 1.0, new double[] {0.917, 0.250, 0.583}));
+			defaultAtoms.add(new XPDFAtom("O3", 8, 1.0, new double[] {0.250, 0.583, 0.917}));
+			defaultAtoms.add(new XPDFAtom("O4", 8, 1.0, new double[] {-0.583, -0.917, -0.250}));
+			defaultAtoms.add(new XPDFAtom("O5", 8, 1.0, new double[] {-0.917, -0.250, -0.583}));
+			defaultAtoms.add(new XPDFAtom("O6", 8, 1.0, new double[] {-0.250, -0.583, -0.917}));
 		}		
 
 		groupedTable = new XPDFGroupedTable(parent, SWT.NONE);
@@ -86,7 +83,7 @@ class UnitCellGroupedTable {
 	 * @param atoms
 	 * 				A Map between labels and atoms
 	 */
-	public void setInput(Map<String, XPDFAtom> atoms) {
+	public void setInput(List<XPDFAtom> atoms) {
 		this.atoms = atoms;
 		groupedTable.setInput(this.atoms);
 	}
@@ -103,7 +100,7 @@ class UnitCellGroupedTable {
 	 * @return
 	 * 		the map of labels to atoms in this unit cell.
 	 */
-	public Map<String, XPDFAtom> getAtoms() {
+	public List<XPDFAtom> getAtoms() {
 		return atoms;
 	}
 	
@@ -158,7 +155,7 @@ class UnitCellGroupedTable {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			return LabelledAtom.fromMap(atoms).toArray(new LabelledAtom[atoms.size()]);
+			return atoms.toArray(new XPDFAtom[atoms.size()]);
 		}
 	}
 
@@ -277,9 +274,7 @@ class UnitCellGroupedTable {
 				@Override
 				protected Object getValue(Object element) {
 					int atomicNumber;
-					if (element instanceof LabelledAtom) 
-						atomicNumber = ((LabelledAtom) element).getAtom().getAtomicNumber();
-					else if (element instanceof XPDFAtom)
+					if (element instanceof XPDFAtom)
 						atomicNumber = ((XPDFAtom) element).getAtomicNumber();
 					else
 						atomicNumber = elementOffset;
@@ -291,9 +286,7 @@ class UnitCellGroupedTable {
 					if (value instanceof Integer) {
 						int atomicNumber = (Integer) value;
 						atomicNumber += elementOffset;
-						if (element instanceof LabelledAtom) 
-							((LabelledAtom) element).getAtom().setAtomicNumber(atomicNumber);
-						else if (element instanceof XPDFAtom)
+						if (element instanceof XPDFAtom)
 							((XPDFAtom) element).setAtomicNumber(atomicNumber);
 					}
 					v.refresh(element);
@@ -309,9 +302,7 @@ class UnitCellGroupedTable {
 				@Override
 				public String getText(Object element) {
 					int atomicNumber = 0;
-					if (element instanceof LabelledAtom )
-						atomicNumber = ((LabelledAtom) element).getAtom().getAtomicNumber();
-					else if (element instanceof XPDFAtom)
+					if (element instanceof XPDFAtom)
 						atomicNumber = ((XPDFAtom) element).getAtomicNumber();
 					return elementSymbol.get(atomicNumber);
 				}
@@ -352,13 +343,13 @@ class UnitCellGroupedTable {
 
 				@Override
 				protected Object getValue(Object element) {
-					return ((LabelledAtom) element).getLabel();
+					return ((XPDFAtom) element).getLabel();
 				}
 
 				@Override
 				protected void setValue(Object element, Object value) {
-					if (element instanceof LabelledAtom)
-						((LabelledAtom) element).setLabel(value.toString());
+					if (element instanceof XPDFAtom)
+						((XPDFAtom) element).setLabel(value.toString());
 					v.refresh(element);
 				}
 				
@@ -370,11 +361,7 @@ class UnitCellGroupedTable {
 			return new ColumnLabelProvider() {
 				@Override
 				public String getText(Object element) {
-					if (element instanceof LabelledAtom) 
-						return ((LabelledAtom) element).getLabel();
-					else if (element instanceof XPDFAtom)
-						return "-";
-					else return "";
+					return (element instanceof XPDFAtom) ? ((XPDFAtom) element).getLabel() : "";  
 				}
 			};
 		}
@@ -414,14 +401,7 @@ class UnitCellGroupedTable {
 			return new ColumnLabelProvider() {
 				@Override
 				public String getText(Object element) {
-					XPDFAtom atom;
-					if (element instanceof LabelledAtom)
-						atom = ((LabelledAtom) element).getAtom();
-					else if (element instanceof XPDFAtom)
-						atom = (XPDFAtom) element;
-					else
-						return "";
-					return Double.toString(atom.getPosition()[axisIndex]);
+					return (element instanceof XPDFAtom) ? Double.toString(((XPDFAtom) element).getPosition()[axisIndex]) : "";
 				}
 			};
 		}
@@ -454,14 +434,7 @@ class UnitCellGroupedTable {
 			return new ColumnLabelProvider() {
 				@Override
 				public String getText(Object element) {
-					XPDFAtom atom;
-					if (element instanceof LabelledAtom)
-						atom = ((LabelledAtom) element).getAtom();
-					else if (element instanceof XPDFAtom)
-						atom = (XPDFAtom) element;
-					else
-						return "";
-					return Double.toString(atom.getOccupancy());
+					return (element instanceof XPDFAtom) ? Double.toString(((XPDFAtom) element).getOccupancy()) : "";
 				}
 			};
 		}
@@ -494,14 +467,7 @@ class UnitCellGroupedTable {
 			return new ColumnLabelProvider() {
 				@Override
 				public String getText(Object element) {
-					XPDFAtom atom;
-					if (element instanceof LabelledAtom)
-						atom = ((LabelledAtom) element).getAtom();
-					else if (element instanceof XPDFAtom)
-						atom = (XPDFAtom) element;
-					else
-						return "";
-					return Double.toString(atom.getIsotropicDisplacement());
+					return (element instanceof XPDFAtom) ? Double.toString(((XPDFAtom) element).getIsotropicDisplacement()) : "";
 				}
 			};
 		}

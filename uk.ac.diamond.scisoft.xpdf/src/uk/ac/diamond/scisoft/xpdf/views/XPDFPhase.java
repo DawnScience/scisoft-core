@@ -37,7 +37,7 @@ public class XPDFPhase {
 	private XPDFSpaceGroup spaceGroup;
 	private double[] unitCellLengths;
 	private double[] unitCellDegrees;
-	private Map<String, XPDFAtom> atoms;
+	private List<XPDFAtom> atoms;
 	
 	private static final int nDim = 3;
 
@@ -49,7 +49,7 @@ public class XPDFPhase {
 		unitCellLengths = new double[] {0, 0, 0}; // zero is meaningless, used as a default value
 		unitCellDegrees = new double[] {0, 0, 0}; // ditto
 		form = XPDFPhaseForm.get(XPDFPhaseForm.Forms.AMORPHOUS);
-		atoms = new HashMap<String, XPDFAtom>();
+		atoms = new ArrayList<XPDFAtom>();
 	}
 	
 	/**
@@ -91,34 +91,44 @@ public class XPDFPhase {
 	/**
 	 * Adds an atom to a phase unit cell
 	 */
-	public void addAtom(String label, XPDFAtom atom) {
-		atoms.put(label, atom);
+	public void addAtom(XPDFAtom atom) {
+		atoms.add(atom);
 	}
 
 	/**
-	 * Gets the atoms with the given label
+	 * Adds all the atoms in a {@link Collection}.
+	 * @param atoms
+	 * 				the new atoms to be added.
+	 */
+	public void addAllAtoms(Collection<? extends XPDFAtom> atoms) {
+		this.atoms.addAll(atoms);
+	}
+	
+	/**
+	 * Empties the phase of all its previously defined atoms.
+	 */
+	public void clearAtoms() {
+		atoms.clear();
+	}
+	
+	/**
+	 * Gets the first atom with the given label
 	 * @param label
 	 * 				label of the atom to be got
-	 * @return the atom with that label
+	 * @return the first atom with that label
 	 */
 	public XPDFAtom getAtom(String label) {
-		return atoms.get(label);
+		for (XPDFAtom atom : atoms)
+			if (atom.getLabel().equals(label))
+				return atom;
+		return null;
 	}
 	/**
 	 * Returns all atoms defined in the phase
 	 * @return a Collection of all the atoms in the phase
 	 */
 	public Collection<XPDFAtom> getAllAtoms() {
-		return atoms.values(); 
-	}
-	
-	/**
-	 * Returns all atoms defined in a phase, along with their labels.
-	 * @return the atoms in a phase and their labels, using the
-	 * {@link XPDFPhase.LabelledAtom} class.
-	 */
-	public Collection<LabelledAtom> getLabelledAtoms() {
-		return LabelledAtom.fromMap(atoms);
+		return atoms;
 	}
 	
 	/**
@@ -482,7 +492,7 @@ public class XPDFPhase {
 		
 		Map<Integer, Double> atomCount = new HashMap<Integer, Double>();
 		// Add up all the occupancies by element
-		for (XPDFAtom atom : atoms.values()) {
+		for (XPDFAtom atom : atoms) {
 			int z = atom.getAtomicNumber();
 			double n = atom.getOccupancy();
 			if (atomCount.containsKey(z)) {
@@ -530,58 +540,4 @@ public class XPDFPhase {
 		return number;
 	}
 	
-	/**
-	 * A class hold both an atom and its label.
-	 * <p>
-	 * Provided as the class that will be used in the table for editing the unit cell.
-	 * @author Timothy Spain, timothy.spain@diamond.ac.uk
-	 *
-	 */
-	public static class LabelledAtom {
-		private XPDFAtom atom;
-		private String label;
-		public LabelledAtom(String label, XPDFAtom atom) {
-			this.label = label;
-			this.atom = atom;
-		}
-		/**
-		 * Gets the label.
-		 * @return label.
-		 */
-		public String getLabel() {
-			return label;
-		}
-		/**
-		 * Sets the label
-		 * @param label
-		 */
-		public void setLabel(String label) {
-			this.label = label;
-		}
-		/**
-		 * Gets the atom.
-		 * @return atom.
-		 */
-		public XPDFAtom getAtom() {
-			return atom;
-		}
-		/**
-		 * Convert a Map of labels to atoms to a {@link Collection} of
-		 * labelled atoms.
-		 * @param map
-		 * 			the map of {@link String}s to {@link XPDFAtom}s to convert.
-		 * @return the converted {@link Collection} of {@link LabelledAtoms}.
-		 */
-		public static Collection<LabelledAtom> fromMap(Map<String, XPDFAtom> map) {
-			if (map == null) return null;
-			List<LabelledAtom> latoms = new ArrayList<LabelledAtom>();
-			for (Map.Entry<String, XPDFAtom> entry : map.entrySet()) {
-				LabelledAtom latom = new XPDFPhase.LabelledAtom(entry.getKey(), entry.getValue());
-				latoms.add(latom);
-			}
-			return latoms;
-		}
-		
-	}
-
 }				

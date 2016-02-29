@@ -201,4 +201,15 @@ public class XPDFAtom {
 	public double[] getAnisotropicDisplacement() {
 		return Arrays.copyOfRange(atomicDisplacement, 1, nDim*nDim+1);
 	}
+
+	/**
+	 * Set the position in a specific direction
+	 * @param axisIndex
+	 * 					axis of the coordinate to change. 0 is x, 2 is z
+	 * @param value
+	 * 				new value of the coordinate.
+	 */
+	public void setPosition(int axisIndex, Double value) {
+		position[axisIndex % 3] = value % 1.0;
+	}
 }

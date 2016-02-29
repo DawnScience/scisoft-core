@@ -14,12 +14,6 @@ import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.viewers.AbstractListViewer;
-import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -29,9 +23,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 
 /**
  * Implements a dialog window for editing the unit cell of a phase.
@@ -71,22 +63,16 @@ class UnitCellDialog extends Dialog {
 		atomGD.horizontalAlignment = SWT.FILL;
 		atomGD.verticalSpan = 4;
 		
-		Composite cellTableCompo = new Composite(container, SWT.NONE);
+		Composite cellTableCompo = new Composite(container, SWT.BORDER);
 		cellTableCompo.setLayoutData(atomGD);
 		cellTableCompo.setLayout(new GridLayout(1, true));
 		
-		cellTable = new UnitCellGroupedTable(cellTableCompo, SWT.NONE);
+		cellTable = new UnitCellGroupedTable(cellTableCompo, SWT.BORDER);
 		cellTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		cellTable.setInput(atoms);
 
 		createAtomButtons(container);
 		createAtomActions();
-		
-		createFirstRowFields(container);
-		createPositionFields(container);
-		createBUDropDown(container);
-		createSUFields(container);
-		createAnisoTable(container);
 		
 		return container;
 	}
@@ -166,9 +152,6 @@ class UnitCellDialog extends Dialog {
 		addAtomAction = new Action() {
 			@Override
 			public void run() {
-//				int i;
-//				for (i = 0; atoms.containsKey(Integer.toString(i)); i++)
-//					;
 				atoms.add(new XPDFAtom());
 				cellTable.refresh();
 			}
@@ -187,152 +170,5 @@ class UnitCellDialog extends Dialog {
 		clearAtomsAction.setText("Clear");
 		clearAtomsAction.setToolTipText("Clear all atoms");
 			
-	}
-	
-	private void createFirstRowFields(Composite parent) {
-		//TODO: remove borders
-		Composite elementCompo = new Composite(parent, SWT.BORDER);
-		elementCompo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		elementCompo.setLayout(new GridLayout(2, false));
-		Label elementLabel = new Label(elementCompo, SWT.BORDER);
-		elementLabel.setText("Element:");
-		elementLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
-		AbstractListViewer elementViewer = new ComboViewer(elementCompo, SWT.BORDER);
-		elementViewer.getControl().setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
-		final String[] elementSymbol = { "?",
-		"H","He","Li","Be","B","C","N","O","F","Ne",
-		"Na","Mg","Al","Si","P","S","Cl","Ar","K","Ca",
-		"Sc","Ti","V","Cr","Mn","Fe","Co","Ni","Cu","Zn",
-		"Ga","Ge","As","Se","Br","Kr","Rb","Sr","Y","Zr",
-        "Nb","Mo","Tc","Ru","Rh","Pd","Ag","Cd","In","Sn",
-        "Sb","Te","I","Xe","Cs","Ba","La","Ce","Pr","Nd",
-        "Pm","Sm","Eu","Gd","Tb","Dy","Ho","Er","Tm","Yb",
-        "Lu","Hf","Ta","W","Re","Os","Ir","Pt","Au","Hg",
-        "Tl","Pb","Bi","Po","At","Rn","Fr","Ra","Ac","Th",
-        "Pa","U","Np","Pu","Am","Cm","Bk","Cf","Es","Fm"};
-
-		elementViewer.add(elementSymbol);
-		
-		Composite labelCompo = new Composite(parent, SWT.BORDER);
-		labelCompo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		labelCompo.setLayout(new GridLayout(2, false));
-		Label labelLabel = new Label(labelCompo, SWT.BORDER);
-		labelLabel.setText("Label:");
-		labelLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
-		Text labelText = new Text(labelCompo, SWT.BORDER);
-		labelText.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
-		
-		Composite occupancyCompo = new Composite(parent, SWT.BORDER);
-		occupancyCompo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		occupancyCompo.setLayout(new GridLayout(2, false));
-		Label occupancyLabel = new Label(occupancyCompo, SWT.BORDER);
-		occupancyLabel.setText("Occupancy:");
-		occupancyLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
-		Text occupancyText = new Text(occupancyCompo, SWT.BORDER);
-		occupancyText.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
-		occupancyText.setText("1");
-		
-		Composite emptyCompo = new Composite(parent, SWT.BORDER);
-		emptyCompo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, true));
-		emptyCompo.setSize(occupancyCompo.getSize());
-
-	}
-	
-	private void createPositionFields(Composite parent) {
-		Composite xCompo = new Composite(parent, SWT.BORDER);
-		xCompo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		xCompo.setLayout(new GridLayout(2, false));
-		Label xLabel = new Label(xCompo, SWT.BORDER);
-		xLabel.setText("x:");
-		xLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
-		Text xText = new Text(xCompo, SWT.BORDER);
-		xText.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		xText.setText("0");
-		
-		Composite yCompo = new Composite(parent, SWT.BORDER);
-		yCompo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		yCompo.setLayout(new GridLayout(2, false));
-		Label yLabel = new Label(yCompo, SWT.BORDER);
-		yLabel.setText("y:");
-		yLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
-		Text yText = new Text(yCompo, SWT.BORDER);
-		yText.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		yText.setText("0");
-
-		Composite zCompo = new Composite(parent, SWT.BORDER);
-		zCompo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		zCompo.setLayout(new GridLayout(2, false));
-		Label zLabel = new Label(zCompo, SWT.BORDER);
-		zLabel.setText("z:");
-		zLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
-		Text zText = new Text(zCompo, SWT.BORDER);
-		zText.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		zText.setText("0");
-	}
-	
-	private void createBUDropDown(Composite parent) {
-		Composite bUCompo = new Composite(parent, SWT.BORDER);
-		bUCompo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		bUCompo.setLayout(new GridLayout(2, false));
-		Label bULabel = new Label(bUCompo, SWT.BORDER);
-		bULabel.setText("B/U:");
-		bULabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
-		AbstractListViewer bUViewer = new ComboViewer(bUCompo, SWT.NONE);
-		bUViewer.getControl().setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
-		bUViewer.add(new String[]{"B", "U"});
-		
-		
-	}
-
-	private void createSUFields(Composite parent) {
-		final int textBoxWidth = 200;
-		Composite suxCompo = new Composite(parent, SWT.BORDER);
-		suxCompo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		suxCompo.setLayout(new GridLayout(2, false));
-		Label suxLabel = new Label(suxCompo, SWT.BORDER);
-		suxLabel.setText("s.u. (x):");
-		suxLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
-		Text suxText = new Text(suxCompo, SWT.BORDER);
-		suxText.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		suxText.setSize(textBoxWidth, suxText.getSize().y);
-		suxText.setText("0");
-
-		Composite suyCompo = new Composite(parent, SWT.BORDER);
-		suyCompo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		suyCompo.setLayout(new GridLayout(2, false));
-		Label suyLabel = new Label(suyCompo, SWT.BORDER);
-		suyLabel.setText("s.u. (y):");
-		suyLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
-		Text suyText = new Text(suyCompo, SWT.BORDER);
-		suyText.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		suyText.setSize(textBoxWidth, 0);
-		suyText.setText("0");
-
-		Composite suzCompo = new Composite(parent, SWT.BORDER);
-		suzCompo.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		suzCompo.setLayout(new GridLayout(2, false));
-		Label suzLabel = new Label(suzCompo, SWT.BORDER);
-		suzLabel.setText("s.u. (z):");
-		suzLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
-		Text suzText = new Text(suzCompo, SWT.BORDER);
-		suzText.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		suzText.setText("0");
-
-	}
-
-	private void createAnisoTable(Composite parent) {
-		Composite anisoCompo = new Composite(parent, SWT.BORDER);
-		anisoCompo.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, true, 3, 2));
-		anisoCompo.setLayout(new TableColumnLayout());
-		TableViewer anisoViewer = new TableViewer(anisoCompo, SWT.NO_SCROLL);
-		
-		TableColumnLayout tCL = (TableColumnLayout) anisoCompo.getLayout();
-		
-		TableViewerColumn tVCX = new TableViewerColumn(anisoViewer, SWT.NONE);
-		tCL.setColumnData(tVCX.getColumn(), new ColumnWeightData(1, false));
-		TableViewerColumn tVCY = new TableViewerColumn(anisoViewer, SWT.NONE);
-		tCL.setColumnData(tVCY.getColumn(), new ColumnWeightData(1, false));
-		TableViewerColumn tVCZ = new TableViewerColumn(anisoViewer, SWT.NONE);
-		tCL.setColumnData(tVCZ.getColumn(), new ColumnWeightData(1, false));
 	}
 }

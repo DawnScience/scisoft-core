@@ -392,8 +392,40 @@ class UnitCellGroupedTable {
 		}
 		
 		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
+		public EditingSupport get(final ColumnViewer v) {
+			return new EditingSupport(v) {
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return new TextCellEditor(((TableViewer) v).getTable());
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return true;
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					return (element instanceof XPDFAtom) ? Double.toString(((XPDFAtom) element).getPosition()[axisIndex]) : null;
+				}
+
+				@Override
+				protected void setValue(Object element, Object value) {
+					if (element instanceof XPDFAtom && value instanceof String) {
+						String valueString = (String) value;
+						double coordinate = 0.0;
+						try {
+							coordinate = Double.parseDouble(valueString);
+						} catch (NumberFormatException nFE) {
+							 ;
+						}
+						((XPDFAtom) element).setPosition(axisIndex, coordinate);
+						v.refresh();
+					}
+				}
+				
+			};
 		}
 
 		@Override
@@ -425,8 +457,39 @@ class UnitCellGroupedTable {
 	private static class OccupancyColumnInterface implements ColumnInterface {
 
 		@Override
-		public EditingSupport get(ColumnViewer v) {
-			return new DummyEditingSupport(v);
+		public EditingSupport get(final ColumnViewer v) {
+			return new EditingSupport(v){
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return new TextCellEditor(((TableViewer) v).getTable());
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return true;
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					return (element instanceof XPDFAtom) ? Double.toString(((XPDFAtom) element).getOccupancy()) : null;
+				}
+
+				@Override
+				protected void setValue(Object element, Object value) {
+					if (element instanceof XPDFAtom && value instanceof String) {
+						String valueString = (String) value;
+						double occupancy = 0.0;
+						try {
+							occupancy = Double.parseDouble(valueString);
+						} catch (NumberFormatException nFE) {
+							 ;
+						}
+						((XPDFAtom) element).setOccupancy(occupancy);
+						v.refresh();
+					}
+				}
+			};
 		}
 
 		@Override
@@ -458,7 +521,7 @@ class UnitCellGroupedTable {
 	private static class adpColumnInterface implements ColumnInterface {
 
 		@Override
-		public EditingSupport get(ColumnViewer v) {
+		public EditingSupport get(final ColumnViewer v) {
 			return new DummyEditingSupport(v);
 		}
 

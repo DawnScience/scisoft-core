@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.xpdf.views;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -245,7 +246,7 @@ class XPDFPhase {
 	 */
 	public void setUnitCellLengths(double[] lengths) {
 		for (int i = 0; i < nDim; i++)
-			unitCellLengths[i] = lengths[i];
+			setUnitCellLength(i, lengths[i]);
 	}
 	
 	/**
@@ -255,13 +256,16 @@ class XPDFPhase {
 	 * @param c Edge cell lengths
 	 */
 	public void setUnitCellLengths(double a, double b, double c) {
-		unitCellLengths[0] = a;
-		unitCellLengths[1] = b;
-		unitCellLengths[2] = c;
+		setUnitCellLength(0, a);
+		setUnitCellLength(1, b);
+		setUnitCellLength(2, c);
 	}
 	
 	/**
-	 * Sets a single unit cell edge length
+	 * Sets a single unit cell edge length.
+	 * <p>
+	 * Sets the cell edge lengths, ensuring whatever consistency is required by
+	 * the crystal system.
 	 * @param dimension
 	 * 				zero-based index of the dimension to alter (unit cell edge
 	 * 				a is equivalent to index 0, &c.)
@@ -271,7 +275,17 @@ class XPDFPhase {
 	public void setUnitCellLength(int dimension, double l) {
 		if (dimension < 0 || dimension >= nDim)
 			throw new OutOfRangeException(dimension, 0, nDim);
-		unitCellLengths[dimension] = l;
+		int[] axisIndices = this.getCrystalSystem().getAxisIndices();
+		// get the principal cell edge dimension for this dimension
+		int principleEdge = axisIndices[dimension];
+		// get the list of the dimensions defined by this principle dimension
+		List<Integer> definedDimensions = new ArrayList<Integer>();
+		for (int i = 0; i < nDim; i++)
+			if (axisIndices[i] == principleEdge)
+				definedDimensions.add(i);
+
+		for (int edge : definedDimensions)
+			unitCellLengths[edge] = l;
 	}
 	
 	/**
@@ -302,7 +316,7 @@ class XPDFPhase {
 	 */
 	public void setUnitCellAngles(double[] angles) {
 		for (int i = 0; i < nDim; i++)
-			unitCellDegrees[i] = angles[i];
+			setUnitCellAngle(i, angles[i]);
 	}
 	
 	/**
@@ -312,13 +326,16 @@ class XPDFPhase {
 	 * @param c Edge cell angles in degrees.
 	 */
 	public void setUnitCellAngles(double a, double b, double c) {
-		unitCellDegrees[0] = a;
-		unitCellDegrees[1] = b;
-		unitCellDegrees[2] = c;
+		setUnitCellAngle(0, a);
+		setUnitCellAngle(1, b);
+		setUnitCellAngle(2, c);
 	}
 	
 	/**
 	 * Sets a single unit cell edge angle.
+	 * <p>
+	 * Sets the unit cell angles, guaranteeing consistency as defined by the
+	 * crystal system.
 	 * @param dimension
 	 * 				zero-based index of the dimension to alter (unit cell edge
 	 * 				angle α is equivalent to index 0, &c.)
@@ -328,7 +345,30 @@ class XPDFPhase {
 	public void setUnitCellAngle(int dimension, double a) {
 		if (dimension < 0 || dimension >= nDim)
 			throw new OutOfRangeException(dimension, 0, nDim);
-		unitCellDegrees[dimension] = a;
+		int[] fixedAngles = Arrays.copyOf(this.getCrystalSystem().getFixedAngles(), nDim);
+		// Check if the angle trying to be set is fixed: a non-negative integer
+		if (fixedAngles[dimension] >= 0)
+			return;
+		// Unmunge the axes to revert to the dimension index that defines this
+		// dimension
+		for (int dim = 0; dim < nDim; dim++)
+			if (fixedAngles[dim] > 0)
+				fixedAngles[dim] = dim;
+			else
+				fixedAngles[dim] = 1-fixedAngles[dim];
+		
+		// The index of the angle defining this one
+		int principleAngle = fixedAngles[dimension];
+		
+		// get the list of dimensions defined by this principle dimension
+		List<Integer> definedDimensions = new ArrayList<Integer>();
+		for (int i = 0; i < nDim; i++)
+			if (fixedAngles[i] == principleAngle)
+				definedDimensions.add(i);
+		
+		for (int angle : definedDimensions)
+			unitCellDegrees[angle] = a;
+	
 	}
 	
 	/**
@@ -380,7 +420,7 @@ class XPDFPhase {
 		double unitCellm3 = getUnitCellVolume() * 1e-30;
 		
 		double unitCellSIDensity = unitCellkg/unitCellm3;
-		double unitCellCGSDensity = unitCellSIDensity * 1e6 / 1e3;
+		double unitCellCGSDensity = unitCellSIDensity * 1e3 / 1e6;
 
 		return (!atoms.isEmpty()) ? unitCellCGSDensity : 0.0;
 	}

@@ -101,10 +101,10 @@
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
-            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFAzimuthalIntegration"
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFAzimuthalIntegrationOperation"
             icon="icons/xpdfazimuthal.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFAzimuthalIntegration"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationModel"
+            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFAzimuthalIntegrationModel"
             name="XPDF Azimuthal Integration">
       </operation>
    </extension>

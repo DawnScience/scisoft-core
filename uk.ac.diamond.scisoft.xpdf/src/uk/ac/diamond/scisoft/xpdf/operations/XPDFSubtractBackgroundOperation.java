@@ -79,7 +79,9 @@ public class XPDFSubtractBackgroundOperation extends
 						container.setBackground(theXPDFMetadata.getBeam().getTrace());
 				}
 			}
-		}		
+		}
+		process.setName("Background Subtracted");
+		
 		return new OperationData(process);
 	}
 	

@@ -53,6 +53,9 @@ public class XPDFGofrFromDofrOperation extends AbstractOperation<EmptyModel, Ope
 		}
 		
 		copyMetadata(dofr, gofr);
+		
+		gofr.setName("G(r)");
+		
 		return new OperationData(gofr);
 	}
 	

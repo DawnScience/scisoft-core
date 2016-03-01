@@ -89,7 +89,8 @@ public class XPDFNormalizeTracesOperation extends
 						container.getTrace().normalizeTrace();
 				}
 			}
-		}		
+		}
+		process.setName("Monitor Normalized");
 		return new OperationData(process);
 	}
 

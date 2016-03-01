@@ -133,6 +133,8 @@ public class XPDFLorchFTOperation extends
 		ax.addAxis(0, r);
 		dofr.addMetadata(ax);
 		
+		dofr.setName("D(r)");
+		
 		return new OperationData(dofr);
 	}
 	

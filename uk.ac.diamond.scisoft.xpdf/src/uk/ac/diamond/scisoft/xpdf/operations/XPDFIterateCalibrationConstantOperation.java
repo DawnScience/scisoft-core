@@ -136,6 +136,8 @@ public class XPDFIterateCalibrationConstantOperation extends
 		if (absCorError != null)
 			absCor.setError(absCorError);
 		
+		absCor.setName("Absorption Corrected");
+		
 		return new OperationData(absCor);
 	}
 	

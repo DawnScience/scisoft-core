@@ -66,6 +66,8 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 	Dataset DPrimedoQ = doTophatConvolution(soq, q, tophatWidth);
 	thSoq = doTopHatConvolutionAndSubtraction(DPrimedoQ, q, r, rMin, tophatWidth, numberDensity, g0minus1);
 
+	thSoq.setName("S(q)");
+	
 	return new OperationData(thSoq);
 	}
 	

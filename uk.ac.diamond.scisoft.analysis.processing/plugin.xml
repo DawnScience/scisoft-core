@@ -687,6 +687,13 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.TwoBoxModel"
             name="Two Box Mean Ratio">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.maskingCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.CoordinateMaskOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.CoordinateMaskOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.CoordinateMaskModel"
+            name="Mask by coordinate">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

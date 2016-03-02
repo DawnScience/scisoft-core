@@ -690,6 +690,7 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.maskingCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.CoordinateMaskOperation"
+            icon="icons/regionMask.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.CoordinateMaskOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.CoordinateMaskModel"
             name="Mask by coordinate">

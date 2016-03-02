@@ -20,10 +20,10 @@ import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.metadata.MaskMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
+import uk.ac.diamond.scisoft.analysis.dataset.function.MakeMask;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.roi.XAxis;
@@ -95,27 +95,13 @@ public class CoordinateMaskOperation extends
 
 		}
 		
-		// Set the mask based on the coordinates, depending on whether the user
-		// has chosen to mask inside or outside the range.
-		BooleanDataset coordinateMask = BooleanDataset.ones(input.getShape());
-		IndexIterator it = coordinateMask.getIterator();
+		MakeMask maskMaker = new MakeMask(coordinateRange[0], coordinateRange[1]);
+		// MakeMask makes BooleanDatasets
+		BooleanDataset coordinateMask = (BooleanDataset) maskMaker.value(coordinateArray).get(0); 
+		// Invert if required
+		if (model.isMaskedInside())
+			coordinateMask.isubtract(true);
 		
-		if (model.isMaskedInside()) {
-			while (it.hasNext()) {
-				double val = coordinateArray.getElementDoubleAbs(it.index);
-				if (val<coordinateRange[1] && val>coordinateRange[0]) {
-					coordinateMask.setObjectAbs(it.index,false);
-				}
-			}
-		} else {
-			while (it.hasNext()) {
-				double val = coordinateArray.getElementDoubleAbs(it.index);
-				if (val>coordinateRange[1] || val<coordinateRange[0]) {
-					coordinateMask.setObjectAbs(it.index,false);
-				}
-			}
-		}
-
 
 		// Get the input mask, and combine the two masks
 		IDataset inputMask = DatasetUtils.convertToDataset(getFirstMask(input));

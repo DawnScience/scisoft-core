@@ -449,6 +449,9 @@ public class MillerSpaceMapper {
 	
 		DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
 		ILazyDataset images = node.getDataset();
+		if (images == null) {
+			throw new ScanFileHolderException("Image data is empty");
+		}
 		int rank = images.getRank();
 		int[] ishape = Arrays.copyOfRange(images.getShape(), rank - 2, rank);
 	
@@ -488,6 +491,9 @@ public class MillerSpaceMapper {
 	
 		DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
 		ILazyDataset images = node.getDataset();
+		if (images == null) {
+			throw new ScanFileHolderException("Image data is empty");
+		}
 		int rank = images.getRank();
 		int[] ishape = Arrays.copyOfRange(images.getShape(), rank - 2, rank);
 
@@ -1126,6 +1132,9 @@ public class MillerSpaceMapper {
 
 		DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
 		ILazyDataset images = node.getDataset();
+		if (images == null) {
+			throw new ScanFileHolderException("Image data is empty");
+		}
 
 		PositionIterator diter = new PositionIterator(dshape);
 
@@ -1224,6 +1233,9 @@ public class MillerSpaceMapper {
 				iters = allIters[t];
 				DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
 				ILazyDataset images = node.getDataset();
+				if (images == null) {
+					throw new ScanFileHolderException("Image data is empty");
+				}
 
 				Dataset trans = NexusTreeUtils.parseAttenuator(attenuatorPath, tree);
 				// factor in count time too

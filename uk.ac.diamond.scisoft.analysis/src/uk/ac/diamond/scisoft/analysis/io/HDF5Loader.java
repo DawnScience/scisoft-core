@@ -649,7 +649,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			int i = path.lastIndexOf(Node.SEPARATOR);
 			final String sname = i >= 0 ? path.substring(i + 1) : path;
 			if (!createLazyDataset(f, d, path, sname, did, tid, keepBitWidth,
-					d.containsAttribute(DATA_FILENAME_ATTR_NAME))) {
+					d.containsAttribute(DATA_FILENAME_ATTR_NAME), loadLazily)) {
 				logger.error("Could not create a lazy dataset from {}", path);
 			}
 			if (pool != null)
@@ -761,12 +761,13 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * @param tid
 	 * @param keepBitWidth
 	 * @param useExternalFiles
+	 * @param loadLazily 
 	 * @return true if created
 	 * @throws Exception
 	 */
 	private static boolean createLazyDataset(final TreeFile file, final DataNode node,
 			final String nodePath, final String name, final long did, final long tid,
-			final boolean keepBitWidth, final boolean useExternalFiles) throws Exception {
+			final boolean keepBitWidth, final boolean useExternalFiles, boolean loadLazily) throws Exception {
 		long sid = -1, pid = -1;
 		long ntid = -1;
 		int rank;
@@ -890,11 +891,13 @@ public class HDF5Loader extends AbstractFileLoader {
 			return true;
 		}
 
-		// check for zero-sized datasets
-		long trueSize = AbstractDataset.calcLongSize(trueShape);
-		if (trueSize == 0) {
-			node.setEmpty();
-			return true;
+		if (!loadLazily) {
+			// check for zero-sized datasets
+			long trueSize = AbstractDataset.calcLongSize(trueShape);
+			if (trueSize == 0) {
+				node.setEmpty();
+				return true;
+			}
 		}
 
 		HDF5LazyLoader l = new HDF5LazyLoader(file.getHostname(), file.getFilename(), nodePath, name, trueShape, type.isize, type.dtype, extendUnsigned);
@@ -1143,12 +1146,13 @@ public class HDF5Loader extends AbstractFileLoader {
 								// create a new dataset
 								DataNode d = TreeFactory.createDataNode(oid);
 								if (!createLazyDataset(f, d, name + oname, oname, did, tid, keepBitWidth,
-										d.containsAttribute(DATA_FILENAME_ATTR_NAME))) {
+										d.containsAttribute(DATA_FILENAME_ATTR_NAME), loadLazily)) {
 									logger.error("Could not create a lazy dataset {} from {}", oname, name);
 									continue;
 								}
-								if (d.getDataset() != null)
+								if (d.getDataset() != null) {
 									list.add(d.getDataset());
+								}
 							} catch (HDF5Exception ex) {
 								logger.error(String.format("Could not open dataset (%s) %s in %s", name, oname, f), ex);
 							} finally {

@@ -162,17 +162,19 @@ public class MCALoader extends AbstractFileLoader {
 					continue;
 				array[channel_index++] = Double.parseDouble(text);
 			}
+			
 			scanner.close();
-			final Dataset counts =  DatasetFactory.createFromObject(array);
-			counts.setName("Counts_" + scan_number);
-			result.addDataset("Counts_" + scan_number, counts);
 			
 			if (zero != Double.NaN) {
-				Dataset energies = DatasetFactory.createRange(nchannels, Dataset.FLOAT64);
+				final Dataset energies = DatasetFactory.createRange(nchannels, Dataset.FLOAT64);
 				energies.imultiply(gain).iadd(zero);
 				energies.setName("Energy_" + scan_number);
 				result.addDataset("Energy_" + scan_number, energies);
 			}
+			
+			final Dataset counts =  DatasetFactory.createFromObject(array);
+			counts.setName("Counts_" + scan_number);
+			result.addDataset("Counts_" + scan_number, counts);
 			
 			if (loadMetadata) {
 				metadata = new ExtendedMetadata(new File(fileName));

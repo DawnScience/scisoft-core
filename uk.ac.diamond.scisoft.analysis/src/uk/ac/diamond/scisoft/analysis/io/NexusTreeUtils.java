@@ -48,11 +48,13 @@ import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
+import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.analysis.tree.impl.TreeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1650,5 +1652,100 @@ public class NexusTreeUtils {
 			return NonSI.DEGREE_ANGLE;
 		}
 		return attr != null ? Unit.valueOf(attr) : null;
+	}
+
+	/**
+	 * @param dp
+	 * @return group containing fields and classes for a detector
+	 */
+	public static GroupNode createNXDetector(DetectorProperties dp) {
+		GroupNode g = createNXGroup(NX_DETECTOR);
+
+		addDataNode(g, "distance", dp.getBeamCentreDistance(), "mm");
+
+		double[] bc = dp.getBeamCentreCoords();
+		addDataNode(g, "beam_center_x", dp.getHPxSize()*bc[0], "mm");
+		addDataNode(g, "beam_center_y", dp.getVPxSize()*bc[1], "mm");
+
+		addDataNode(g, DEPENDS_ON, "transformations/euler_c", null);
+
+		GroupNode sg = createNXGroup(NX_DETECTOR_MODULE);
+		g.addGroupNode("detector_module", sg);
+
+		addDataNode(sg, "data_origin", new int[] {0, 0}, null);
+		addDataNode(sg, "data_size", new int[] {dp.getPx(), dp.getPy()}, null);
+
+		double[] zeros = new double[3]; 
+		addNXTransform(sg, "module_offset", "mm", true, zeros, zeros, "mm", "../transformations/euler_c", 0);
+		addNXTransform(sg, "fast_pixel_direction", "mm", true, new double[] {-1,0,0}, zeros, "mm", "module_offset", dp.getHPxSize());
+		addNXTransform(sg, "slow_pixel_direction", "mm", true, new double[] {0,-1,0}, zeros, "mm", "module_offset", dp.getVPxSize());
+
+		sg = createNXGroup(NX_TRANSFORMATIONS);
+		g.addGroupNode("transformations", sg);
+		double[] angles = MatrixUtils.calculateFromOrientationEulerZYZ(dp.getOrientation());
+		// Euler ZYZ angles
+		addNXTransform(sg, "euler_a", "deg", false, new double[] {0,0,1}, zeros, "mm", "origin_offset", angles[0]);
+		addNXTransform(sg, "euler_b", "deg", false, new double[] {0,1,0}, zeros, "mm", "euler_a", angles[1]);
+		addNXTransform(sg, "euler_c", "deg", false, new double[] {0,0,1}, zeros, "mm", "euler_b", angles[2]);
+		Vector3d v = dp.getOrigin();
+		double[] dv = new double[3];
+		v.get(dv);
+		addNXTransform(sg, "origin_offset", "mm", true, dv, zeros, "mm", NX_TRANSFORMATIONS_ROOT, 1);
+
+		return g;
+	}
+
+	public static DataNode createNXTransform(String name, String units, boolean translation, double[] direction, double[] offset, String offsetUnits, String dependsOn, Object values) {
+		DataNode d = createDataNode(name, values, units);
+		d.addAttribute(TreeFactory.createAttribute("transformation_type", translation ? "translation" : "rotation"));
+		d.addAttribute(TreeFactory.createAttribute("vector", direction));
+		d.addAttribute(TreeFactory.createAttribute("offset", offset));
+		d.addAttribute(TreeFactory.createAttribute("offset_units", offsetUnits));
+		d.addAttribute(TreeFactory.createAttribute(DEPENDS_ON, dependsOn));
+		return d;
+	}
+
+	public static void addNXTransform(GroupNode group, String name, String units, boolean translation, double[] direction, double[] offset, String offsetUnits, String dependsOn, Object values) {
+		group.addDataNode(name, createNXTransform(name, units, translation, direction, offset, offsetUnits, dependsOn, values));
+	}
+
+	/**
+	 * @param nxClass
+	 * @return group of given NXclass
+	 */
+	public static GroupNode createNXGroup(String nxClass) {
+		GroupNode g = TreeFactory.createGroupNode(0);
+		g.addAttribute(TreeFactory.createAttribute(NX_CLASS, nxClass));
+
+		return g;
+	}
+
+	/**
+	 * Add a data note to a group
+	 * @param group
+	 * @param name
+	 * @param value
+	 * @param units can be null
+	 */
+	public static void addDataNode(GroupNode group, String name, Object value, String units) {
+		group.addDataNode(name, createDataNode(name, value, units));
+	}
+
+	/**
+	 * Create a data note
+	 * @param name
+	 * @param value
+	 * @param units can be null
+	 * @return data node
+	 */
+	public static DataNode createDataNode(String name, Object value, String units) {
+		DataNode d = TreeFactory.createDataNode(0);
+		if (units != null && !units.isEmpty()) {
+			d.addAttribute(TreeFactory.createAttribute(NX_UNITS, units));
+		}
+		Dataset vd = DatasetFactory.createFromObject(value);
+		vd.setName(name);
+		d.setDataset(vd);
+		return d;
 	}
 }

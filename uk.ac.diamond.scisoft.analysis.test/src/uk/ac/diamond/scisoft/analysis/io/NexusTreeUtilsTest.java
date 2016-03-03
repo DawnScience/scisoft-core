@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
@@ -25,6 +26,8 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.junit.Assert;
 import org.junit.Test;
+
+import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 
 public class NexusTreeUtilsTest {
 
@@ -234,5 +237,24 @@ public class NexusTreeUtilsTest {
 		Assert.assertArrayEquals(new int[] {5, 6, 1, 1}, a[0].getShape());
 		Assert.assertEquals("temp", a[1].getName());
 		Assert.assertArrayEquals(new int[] {5, 6, 1, 1}, a[1].getShape());
+	}
+
+	@Test
+	public void testNXDetectorCreationAndParsing() {
+		DetectorProperties det = DetectorProperties.getDefaultDetectorProperties(new int[] {200,100});
+		det.setOrientationEulerZYZ(Math.toRadians(10), Math.toRadians(20), Math.toRadians(25));
+
+		System.out.println("Fast pixel direction = " + det.getPixelRow());
+		System.out.println("Slow pixel direction = " + det.getPixelColumn());
+		GroupNode nxd = NexusTreeUtils.createNXDetector(det);
+		GroupNode instr = TreeFactory.createGroupNode(0);
+		instr.addGroupNode("detector", nxd);
+
+		Tree tree = TreeFactory.createTree(0, null);
+		tree.setGroupNode(instr);
+		DetectorProperties dp = NexusTreeUtils.parseDetector("/detector", tree, 0)[0];
+		MatrixUtils.isClose(det.getBeamVector(), dp.getBeamVector(), 1e-14, 1e-14);
+		MatrixUtils.isClose(det.getOrigin(), dp.getOrigin(), 1e-14, 1e-14);
+		MatrixUtils.isClose(det.getOrientation(), dp.getOrientation(), 1e-14, 1e-14);
 	}
 }

@@ -11,8 +11,10 @@ package uk.ac.diamond.scisoft.xpdf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
@@ -57,6 +59,9 @@ public class XPDFCalibration {
 	private boolean doFluorescence;
 	// Perform the full fluorescence calibration, calculating the optimum fluorescence scale
 	private boolean doFluorescenceCalibration;
+
+	// caching angular factors
+	Map<XPDFCoordinates, Dataset> cachedDeTran, cachedPolar;
 	
 	/**
 	 * Empty constructor.
@@ -69,6 +74,8 @@ public class XPDFCalibration {
 		nSampleIlluminatedAtoms = 1.0; // there must be at least one
 		backgroundSubtracted = new ArrayList<Dataset>();
 		doFluorescence = true;
+		cachedDeTran = new HashMap<XPDFCoordinates, Dataset>();
+		cachedPolar = new HashMap<XPDFCoordinates, Dataset>();
 	}
 	
 	/**
@@ -256,12 +263,20 @@ public class XPDFCalibration {
 	 */
 	private Dataset iterate(List<Dataset> fluorescenceCorrected, boolean propagateErrors) {
 		// Detector transmission correction
+		Dataset transmissionCorrection;
+		if (!cachedDeTran.containsKey(coords)) {
+			transmissionCorrection = tect.getTransmissionCorrection(coords.getTwoTheta(), beamData.getBeamEnergy());
+			cachedDeTran.put(coords, transmissionCorrection);
+		} else {
+			transmissionCorrection = cachedDeTran.get(coords);
+		}
+		
 		List<Dataset> deTran = new ArrayList<Dataset>();
 		for (Dataset componentTrace : fluorescenceCorrected) {
-			Dataset deTranData = tect.applyTransmissionCorrection(componentTrace, coords.getTwoTheta(), beamData.getBeamEnergy());
+			Dataset deTranData = Maths.multiply(componentTrace, transmissionCorrection);
 			// Error propagation
 			if (propagateErrors && componentTrace.getError() != null)
-				deTranData.setError(tect.applyTransmissionCorrection(componentTrace.getError(), coords.getTwoTheta(), beamData.getBeamEnergy()));
+				deTranData.setError(Maths.multiply(componentTrace.getError(), transmissionCorrection));
 			deTran.add(deTranData);
 		}
 		
@@ -404,18 +419,25 @@ public class XPDFCalibration {
 	 * @return the data corrected for the effects of polarization.
 	 */
 	private Dataset applyPolarizationConstant(Dataset absCor) {
-		final double sineFudge = 0.99;
-		Dataset polCor = 
-				Maths.multiply(
-						0.5,
-						Maths.add(
-								1,
-								Maths.subtract(
-										Maths.square(Maths.cos(coords.getTwoTheta())),
-										Maths.multiply(0.5*sineFudge, Maths.square(Maths.sin(coords.getTwoTheta())))
-										)
-								)
-						);
+		final double sineFudge = 0.99;		
+
+		Dataset polCor;
+		if (!cachedPolar.containsKey(coords)) {		
+			polCor = 
+			Maths.multiply(
+					0.5,
+					Maths.add(
+							1,
+							Maths.subtract(
+									Maths.square(coords.getCosTwoTheta()),
+									Maths.multiply(0.5*sineFudge, Maths.square(coords.getSinTwoTheta()))
+							)
+					)
+			);
+			cachedPolar.put(coords, polCor);
+		} else {
+			polCor = cachedPolar.get(coords);
+		}
 								
 		Dataset absCorP = Maths.multiply(absCor, polCor); 
 		

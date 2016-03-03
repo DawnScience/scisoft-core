@@ -38,7 +38,7 @@ public class XMSOLoader extends AbstractFileLoader {
 
 	@Override
 	protected void clearMetadata() {
-		//no metadata in SPE files
+		//no metadata in XMSO files
 	}
 	
 	@Override
@@ -47,18 +47,13 @@ public class XMSOLoader extends AbstractFileLoader {
 	}
 	
 	/**
-	 * Function that loads in the standard fio datafile
+	 * Function that loads in the standard XMSO datafile
 	 * 
 	 * @return The package which contains the data that has been loaded
 	 * @throws ScanFileHolderException
 	 */
 	@Override
 	public DataHolder loadFile(final IMonitor mon) throws ScanFileHolderException {
-        final DataHolder result = loadFile(-1, mon);
-		return result;
-	}
-	
-	private DataHolder loadFile(final int columnIndex, final IMonitor mon) throws ScanFileHolderException {
 		// first instantiate the return object.
 		final DataHolder result = new DataHolder();
 		// then try to read the file given
@@ -133,7 +128,7 @@ public class XMSOLoader extends AbstractFileLoader {
 			
 		} catch (Exception e) {
 			System.err.println("Exception message: " + e.getMessage());
-			throw new ScanFileHolderException("DatLoader.loadFile exception loading  " + fileName, e);
+			throw new ScanFileHolderException("XMSOLoader.loadFile exception loading  " + fileName, e);
 		}
 		
 		return result;

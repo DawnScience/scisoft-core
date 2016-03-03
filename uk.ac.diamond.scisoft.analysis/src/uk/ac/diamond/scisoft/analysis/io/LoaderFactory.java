@@ -153,6 +153,7 @@ public class LoaderFactory {
 		    registerLoader("rgb",  RGBTextLoader.class);
 		    registerLoader("txt",  DatLoader.class);
 		    registerLoader("txt",  SRSLoader.class);
+		    registerLoader("mca",  MCALoader.class);
 		    registerLoader("mca",  DatLoader.class);
 		    registerLoader("mca",  SRSLoader.class);
 		    registerLoader("tif",  TIFFImageLoader.class);

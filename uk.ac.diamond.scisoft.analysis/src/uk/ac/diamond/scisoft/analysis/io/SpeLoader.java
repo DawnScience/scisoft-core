@@ -45,7 +45,7 @@ public class SpeLoader extends AbstractFileLoader {
 	}
 	
 	/**
-	 * Function that loads in the standard fio datafile
+	 * Function that loads in the standard SPE datafile
 	 * 
 	 * @return The package which contains the data that has been loaded
 	 * @throws ScanFileHolderException
@@ -56,6 +56,7 @@ public class SpeLoader extends AbstractFileLoader {
 		return result;
 	}
 	
+	@SuppressWarnings("unused")
 	private DataHolder loadFile(final int columnIndex, final IMonitor mon) throws ScanFileHolderException {
 		// first instantiate the return object.
 		final DataHolder result = new DataHolder();
@@ -83,7 +84,7 @@ public class SpeLoader extends AbstractFileLoader {
 			set.setName("Spectrum");
 			result.addDataset("Spectrum", set);
 		} catch (Exception e) {
-			throw new ScanFileHolderException("DatLoader.loadFile exception loading  " + fileName, e);
+			throw new ScanFileHolderException("SpeLoader.loadFile exception loading  " + fileName, e);
 		} finally {
 			if (scanner != null)
 				scanner.close();

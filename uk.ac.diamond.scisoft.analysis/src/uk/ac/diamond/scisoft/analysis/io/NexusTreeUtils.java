@@ -951,6 +951,10 @@ public class NexusTreeUtils {
 		}
 		DataNode dNode = (DataNode) l.getDestination();
 		DoubleDataset ds = (DoubleDataset) getCastAndCacheData(dNode, Dataset.FLOAT64);
+		if (ds == null) {
+			logger.warn("Geometry subnode {} has an empty dataset", link.getName());
+			return;
+		}
 
 		int[] shape = ds.getShapeRef();
 		if (shape.length != 2 || shape[1] != (translate ? 3 : 6)) {
@@ -1008,7 +1012,11 @@ public class NexusTreeUtils {
 		DataNode wavelength = gNode.getDataNode("incident_wavelength");
 
 		Dataset w = getConvertedData(wavelength, NonSI.ANGSTROM);
-		sample.setWavelength(w.getElementDoubleAbs(0));
+		if (w == null) {
+			logger.warn("Wavelength {} was empty", link.getName());
+		} else {
+			sample.setWavelength(w.getElementDoubleAbs(0));
+		}
 	}
 
 	public static int[] parseNodeShape(Tree tree, NodeLink link, int[] shape) {
@@ -1018,8 +1026,13 @@ public class NexusTreeUtils {
 		}
 
 		DataNode dNode = (DataNode) link.getDestination();
+		ILazyDataset dataset = dNode.getDataset();
+		if (dataset == null) {
+			logger.warn("'{}' has an empty dataset", link.getName());
+			return null;
+		}
 
-		int[] nshape = dNode.getDataset().getShape();
+		int[] nshape = dataset.getShape();
 
 		String dep = parseStringAttr(dNode, DEPENDS_ON);
 
@@ -1215,6 +1228,10 @@ public class NexusTreeUtils {
 
 		DataNode dNode = (DataNode) link.getDestination();
 		Dataset dataset = getAndCacheData(dNode);
+		if (dataset == null) {
+			logger.warn("'{}' had an empty dataset", link.getName());
+			return null;
+		}
 
 		double value = dataset.getSize() == 1 ? dataset.getElementDoubleAbs(0) : dataset.getDouble(pos);
 		double[] vector = parseDoubleArray(dNode.getAttribute("vector"), 3);
@@ -1275,7 +1292,12 @@ public class NexusTreeUtils {
 		DataNode dNode = (DataNode) link.getDestination();
 		double[] vector = parseDoubleArray(dNode.getAttribute("vector"), 3);
 		Vector3d v3 = new Vector3d(vector);
-		double[] values = getConvertedData(dNode, SI.MILLIMETRE).getData();
+		DoubleDataset dataset = getConvertedData(dNode, SI.MILLIMETRE);
+		if (dataset == null) {
+			logger.warn("Transform {} has an empty dataset", link.getName());
+			return null;
+		}
+		double[] values = dataset.getData();
 		String type = parseStringAttr(dNode, "transformation_type");
 		if (!"translation".equals(type)) {
 			throw new IllegalArgumentException("Transformed vector node has wrong type");
@@ -1452,7 +1474,7 @@ public class NexusTreeUtils {
 	 */
 	public static int[] parseIntArray(Node n, int length) {
 		int[] array = parseIntArray(n);
-		if (array != null && array.length != length) {
+		if (array == null || array.length != length) {
 			throw new IllegalArgumentException("Data node does not have array of required length");
 		}
 		return array;
@@ -1461,13 +1483,16 @@ public class NexusTreeUtils {
 	/**
 	 * Parse elements of data node as integer array
 	 * @param n
-	 * @return integer array or null if not a data node
+	 * @return integer array or null if not a data node or data node is empty
 	 */
 	public static int[] parseIntArray(Node n) {
 		if (n == null || !(n instanceof DataNode))
 			return null;
 
 		IntegerDataset id = (IntegerDataset) getCastAndCacheData((DataNode) n, Dataset.INT32);
+		if (id == null) {
+			return null;
+		}
 		return id.getData();
 	}
 
@@ -1528,12 +1553,12 @@ public class NexusTreeUtils {
 	 * Parse elements of data node as integer array
 	 * @param n
 	 * @param length
-	 * @return integer array
+	 * @return double array
 	 * @throws IllegalArgumentException if node exists and is not of required length 
 	 */
 	public static double[] parseDoubleArray(Node n, int length) {
 		double[] array = parseDoubleArray(n);
-		if (array != null && array.length != length) {
+		if (array == null || array.length != length) {
 			throw new IllegalArgumentException("Data node does not have array of required length");
 		}
 		return array;
@@ -1542,13 +1567,17 @@ public class NexusTreeUtils {
 	/**
 	 * Parse elements of data node as double array
 	 * @param n
-	 * @return double array or null if not a data node
+	 * @return double array or null if not a data node or data node is empty
 	 */
 	public static double[] parseDoubleArray(Node n) {
-		if (n == null || !(n instanceof DataNode))
+		if (n == null || !(n instanceof DataNode)) {
 			return null;
+		}
 
 		DoubleDataset dd = (DoubleDataset) getCastAndCacheData((DataNode) n, Dataset.FLOAT64);
+		if (dd == null) {
+			return null;
+		}
 		return dd.getData();
 	}
 
@@ -1576,6 +1605,9 @@ public class NexusTreeUtils {
 	private static Dataset getCastAndCacheData(DataNode dNode, int dtype) {
 		ILazyDataset ld = dNode.getDataset();
 		Dataset dataset;
+		if (ld == null) {
+			return null;
+		}
 		if (ld instanceof Dataset) {
 			dataset = (Dataset) ld;
 		} else {
@@ -1591,8 +1623,10 @@ public class NexusTreeUtils {
 
 	private static DoubleDataset getConvertedData(DataNode data, Unit<? extends Quantity> unit) {
 		DoubleDataset values = (DoubleDataset) getCastAndCacheData(data, Dataset.FLOAT64);
-		values = values.clone(); // necessary to stop clobbering cached values
-		convertIfNecessary(unit, parseStringAttr(data, NX_UNITS), values.getData());
+		if (values != null) {
+			values = values.clone(); // necessary to stop clobbering cached values
+			convertIfNecessary(unit, parseStringAttr(data, NX_UNITS), values.getData());
+		}
 		return values;
 	}
 

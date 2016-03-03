@@ -1150,8 +1150,9 @@ public class HDF5Loader extends AbstractFileLoader {
 									logger.error("Could not create a lazy dataset {} from {}", oname, name);
 									continue;
 								}
-								if (d.getDataset() != null)
+								if (d.getDataset() != null) {
 									list.add(d.getDataset());
+								}
 							} catch (HDF5Exception ex) {
 								logger.error(String.format("Could not open dataset (%s) %s in %s", name, oname, f), ex);
 							} finally {

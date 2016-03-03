@@ -199,10 +199,18 @@ public class NexusTreeUtils {
 				}
 				if (gNode.containsDataNode(eName)) {
 					eData = gNode.getDataNode(eName).getDataset();
-					eData.setName(eName);
+					if (eData == null) {
+						logger.warn("Error dataset {} is empty", eName);
+					} else {
+						eData.setName(eName);
+					}
 				} else if (isSignal && gNode.containsDataNode(NX_ERRORS)) { // fall back for signal dataset
 					eData = gNode.getDataNode(NX_ERRORS).getDataset();
-					eData.setName(NX_ERRORS);
+					if (eData == null) {
+						logger.warn("Error dataset {} is empty", eName);
+					} else {
+						eData.setName(NX_ERRORS);
+					}
 				}
 			}
 			try {
@@ -231,6 +239,10 @@ public class NexusTreeUtils {
 
 			ILazyDataset a = d.getDataset();
 
+			if (a == null) {
+				logger.warn("Dataset {} is empty", l.getName());
+				continue;
+			}
 			try {
 				int[] ashape = a.getShape();
 
@@ -255,7 +267,11 @@ public class NexusTreeUtils {
 					}
 					if (gNode.containsDataNode(eName)) {
 						eData = gNode.getDataNode(eName).getDataset();
-						eData.setName(eName);
+						if (eData == null) {
+							logger.warn("Error dataset {} is empty", eName);
+						} else {
+							eData.setName(eName);
+						}
 						try {
 							a.setError(eData);
 						} catch (RuntimeException e) {
@@ -508,6 +524,11 @@ public class NexusTreeUtils {
 	private static boolean addAxis(GroupNode gn, String a, int rank, int[] shape, List<ILazyDataset> axes) {
 		DataNode aNode = gn.getDataNode(a);
 		ILazyDataset aData = aNode.getDataset();
+		if (aData == null) {
+			logger.error("Axis {} dataset is empty", a);
+			return false;
+		}
+
 		int[] ashape = aData.getShape();
 		int[] indices = parseIntArray(gn.getAttribute(a + NX_INDICES_SUFFIX));
 		if (indices.length != ashape.length) {

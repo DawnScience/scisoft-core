@@ -305,6 +305,18 @@ public class DetectorPropertiesTest {
 	}
 
 	@Test
+	public void testEulerZYZ() {
+		DetectorProperties det = DetectorProperties.getDefaultDetectorProperties(new int[] {100,100});
+		det.setOrientationEulerZYZ(Math.toRadians(10), Math.toRadians(20), Math.toRadians(25));
+		Matrix3d m = det.getOrientation();
+		Matrix3d me = MatrixUtils.createOrientationFromEulerZYZ(10, 20, 25);
+		MatrixUtils.isClose(me, m, 1e-14, 1e-14);
+
+		double[] angles = MatrixUtils.calculateFromOrientationEulerZYZ(m);
+		assertArrayEquals(new double[] {10, 20, 25}, angles, 1e-4);
+	}
+
+	@Test
 	public void testBeamCentreDistance() {
 		DetectorProperties det = new DetectorProperties(new Vector3d(500, 550, 600), 1000, 1100, 1, 1, null);
 		

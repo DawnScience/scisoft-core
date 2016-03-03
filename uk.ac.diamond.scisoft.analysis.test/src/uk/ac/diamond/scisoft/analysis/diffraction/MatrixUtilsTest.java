@@ -14,6 +14,7 @@ import static org.junit.Assert.fail;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 public class MatrixUtilsTest {
@@ -74,5 +75,21 @@ public class MatrixUtilsTest {
 		MatrixUtils.isClose(me, mi16, TOL, TOL);
 
 		System.err.println(MatrixUtils.createI16KappaRotation(10, 20, 30, 40));
+	}
+
+	@Test
+	public void testEuler() {
+		Matrix3d ma = MatrixUtils.createRotationFromEulerZYZ(10, 20, 25);
+
+		Vector3d va = new Vector3d(0, 0, 1);
+		ma.transform(va);
+		double ct = Math.cos(Math.toRadians(20));
+		double st = Math.sqrt(1 - ct*ct);
+		Vector3d vb = new Vector3d(st*Math.cos(Math.toRadians(25)), st*Math.sin(Math.toRadians(25)), ct);
+
+		MatrixUtils.isClose(vb, va, TOL, TOL);
+
+		double[] angles = MatrixUtils.calculateFromRotationEulerZYZ(ma);
+		Assert.assertArrayEquals(new double[] {10, 20, 25}, angles, TOL);
 	}
 }

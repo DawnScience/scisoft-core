@@ -117,7 +117,7 @@ public class MatrixUtils {
 		ori.setColumn(0, lx);
 		ori.setColumn(1, ly);
 		ori.setColumn(2, lz);
-		MatrixUtils.santise(ori);
+		santise(ori);
 		return ori;
 	}
 
@@ -150,7 +150,7 @@ public class MatrixUtils {
 		ori.setColumn(0, lx);
 		ori.setColumn(1, ly);
 		ori.setColumn(2, lz);
-		MatrixUtils.santise(ori);
+		santise(ori);
 		return ori;
 	}
 
@@ -253,10 +253,10 @@ public class MatrixUtils {
 	 * @return rotation matrix
 	 */
 	public static Matrix3d createI16KappaRotation(double phi, double kappa, double theta, double mu) {
-		Matrix3d rotn = MatrixUtils.createRotationMatrix(new Vector3d(1, 0, 0), mu);
-		rotn.mul(MatrixUtils.createRotationMatrix(new Vector3d(0, 1, 0), theta));
-		rotn.mul(MatrixUtils.createRotationMatrix(new Vector3d(0, COS_50, -SIN_50), kappa));
-		rotn.mul(MatrixUtils.createRotationMatrix(new Vector3d(0, 1, 0), phi));
+		Matrix3d rotn = createRotationMatrix(new Vector3d(1, 0, 0), mu);
+		rotn.mul(createRotationMatrix(new Vector3d(0, 1, 0), theta));
+		rotn.mul(createRotationMatrix(new Vector3d(0, COS_50, -SIN_50), kappa));
+		rotn.mul(createRotationMatrix(new Vector3d(0, 1, 0), phi));
 		return rotn;
 	}
 
@@ -270,10 +270,75 @@ public class MatrixUtils {
 	 * @return rotation matrix
 	 */
 	public static Matrix3d createI16EulerRotation(double phi, double chi, double eta, double mu) {
-		Matrix3d rotn = MatrixUtils.createRotationMatrix(new Vector3d(1, 0, 0), mu);
-		rotn.mul(MatrixUtils.createRotationMatrix(new Vector3d(0, 1, 0), eta));
-		rotn.mul(MatrixUtils.createRotationMatrix(new Vector3d(0, 0, 1), chi));
-		rotn.mul(MatrixUtils.createRotationMatrix(new Vector3d(0, 1, 0), phi));
+		Matrix3d rotn = createRotationMatrix(new Vector3d(1, 0, 0), mu);
+		rotn.mul(createRotationMatrix(new Vector3d(0, 1, 0), eta));
+		rotn.mul(createRotationMatrix(new Vector3d(0, 0, 1), chi));
+		rotn.mul(createRotationMatrix(new Vector3d(0, 1, 0), phi));
 		return rotn;
+	}
+
+	/**
+	 * Create matrix which describes a passive transformation from the laboratory
+	 * frame to the detector frame
+	 * All angles in degrees
+	 * @param alpha (+ve z)
+	 * @param beta (+ve y)
+	 * @param gamma (+ve z)
+	 * @return rotation matrix
+	 */
+	public static Matrix3d createOrientationFromEulerZYZ(double alpha, double beta, double gamma) {
+		Matrix3d rotn = createRotationFromEulerZYZ(gamma, beta, alpha);
+		rotn.transpose();
+		return rotn;
+	}
+
+	/**
+	 * Create matrix to rotate from local frame to laboratory frame.
+	 * All angles in degrees
+	 * @param alpha (+ve z)
+	 * @param beta (+ve y)
+	 * @param gamma (+ve z)
+	 * @return rotation matrix
+	 */
+	public static Matrix3d createRotationFromEulerZYZ(double alpha, double beta, double gamma) {
+		Matrix3d rotn = createRotationMatrix(new Vector3d(0, 0, 1), gamma);
+		rotn.mul(createRotationMatrix(new Vector3d(0, 1, 0), beta));
+		rotn.mul(createRotationMatrix(new Vector3d(0, 0, 1), alpha));
+		return rotn;
+	}
+
+	/**
+	 * Calculate Euler ZYZ angles from given rotation matrix
+	 * @param rotn active transformation from local to laboratory frame
+	 * @return angles in degrees
+	 */
+	public static double[] calculateFromRotationEulerZYZ(Matrix3d rotn) {
+		if (Math.abs(rotn.m22) == 1) {
+			double alpha = Math.atan2(-rotn.m01, rotn.m00);
+			return new double[] {Math.toDegrees(alpha), 0, 0};
+		}
+		double beta = Math.acos(rotn.m22);
+		double alpha = Math.atan2(rotn.m21, -rotn.m20);
+		double gamma = Math.atan2(rotn.m12, rotn.m02);
+
+		return new double[] {Math.toDegrees(alpha), Math.toDegrees(beta), Math.toDegrees(gamma)};
+	}
+
+	/**
+	 * Calculate Euler ZYZ angles from given rotation matrix
+	 * @param rotn passive rotation from laboratory to detector fram
+	 * @return angles in degrees
+	 */
+	public static double[] calculateFromOrientationEulerZYZ(Matrix3d rotn) {
+		Matrix3d inv = new Matrix3d();
+		inv.transpose(rotn);
+		double[] angles = calculateFromRotationEulerZYZ(inv);
+
+		// switch
+		double t = angles[2];
+		angles[2] = angles[0];
+		angles[0] = t;
+
+		return angles;
 	}
 }

@@ -102,7 +102,7 @@ public class XPDFElectronCrossSections {
 		if (this.thomson == null) {
 			thomson = Maths.multiply(
 					0.5*classicalElectronRadius*classicalElectronRadius, 
-					Maths.add(1, Maths.square(Maths.cos(coordinates.getTwoTheta())))
+					Maths.add(1, Maths.square(coordinates.getCosTwoTheta()))
 					);
 		}
 		return this.thomson;

@@ -1735,6 +1735,9 @@ public class AbstractDatasetTest {
 		e = (DoubleDataset) DatasetUtils.select(new BooleanDataset[] {d, g}, new Dataset[] {c, f}, -2.5);
 
 		checkDatasets(e, new DoubleDataset(new double[] {-2.5, 1, 2.9, -2.5, -7, -2.5}, 2, 3));
+
+		e = (DoubleDataset) DatasetUtils.select(d, c, -2);
+		checkDatasets(e, new DoubleDataset(new double[] {-2, 1, -2, -2, -7, -2}, 2, 3));
 	}
 
 	@Test
@@ -2009,9 +2012,9 @@ public class AbstractDatasetTest {
 		}
 	}
 
-    @Test
-    public void testDatasetVariance() {
-    	Random.seed(12345);
+	@Test
+	public void testDatasetVariance() {
+		Random.seed(12345);
 		final Dataset image = Maths.multiply(Random.rand(new int[] { 10, 10 }), 1);
 		double mean = ((Number) image.mean()).doubleValue();
 		Dataset square = Maths.square(Maths.subtract(image, mean));

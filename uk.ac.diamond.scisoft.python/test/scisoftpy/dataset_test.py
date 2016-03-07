@@ -883,6 +883,12 @@ class Test(unittest.TestCase):
         tm = np.select([np.array([[[False, True], [True, False]], [[True, True], [False, False]]])], [np.array(self.mm)], -2.3)
         self.checkitems([ [[-2.3, 2.], [6., -2.3]], [[20., 30.], [-2.3, -2.3]] ], tm)
 
+    def testWhere(self):
+        print 'test where'
+        t = np.array([[[-0.5, 0.1], [2, 0]], [[1.3, 1.4], [-10, -20]]])
+        tm = np.where(t > 0, np.array(self.mm), -2.3)
+        self.checkitems([ [[-2.3, 2.], [6., -2.3]], [[20., 30.], [-2.3, -2.3]] ], tm)
+
     def testPrint(self):
         print 'test print'
         a = np.arange(10)
@@ -922,6 +928,11 @@ class Test(unittest.TestCase):
             self.checkitems([4., 9.], a.max(1, True))
             self.checkitems([1, 1, 1, 1, 1], a.argmax(0, True))
             self.checkitems([4, 4], a.argmax(1, True))
+
+    def testIterate(self):
+        print 'test iterate'
+        l = [v for v in np.arange(3)]
+        self.assertEqual([0, 1, 2], l)
 
 if __name__ == "__main__":
     #import sys

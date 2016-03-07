@@ -115,7 +115,7 @@ def nonzero(a):
 def where(condition, x=None, y=None):
     '''Return items from x or y depending on condition'''
     if x and y:
-        return _dsutils.select(condition, (x, y), 0)
+        return _dsutils.select(condition, x, y)
     elif not x and not y:
         return _cmps.nonZero(condition)
     else:

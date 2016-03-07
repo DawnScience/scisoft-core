@@ -16,6 +16,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 
+import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractCompoundDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
@@ -586,14 +587,10 @@ public class AbstractCompoundDatasetTest {
 		assertEquals(5.0, error3.getElements(4).getDouble(0), 0.001);
 		assertEquals(4.0, error3.getElements(3).getDouble(50), 0.001);
 		assertEquals(5.0, error3.getElements(4).getDouble(99), 0.001);
-		
 	}
-	
-	
+
 	@Test
 	public void testInternalErrors() {
-		
-		
 		Dataset[] aa =  new Dataset[5];
 		for (int i = 0 ; i < 5; i++) {
 			aa[i] = DatasetFactory.createRange(100, Dataset.INT32);
@@ -629,5 +626,17 @@ public class AbstractCompoundDatasetTest {
 		assertEquals(9.0, ae.getElements(2).getDouble(99), 0.001);
 		assertEquals(16.0, ae.getElements(3).getDouble(99), 0.001);
 		assertEquals(25.0, ae.getElements(4).getDouble(99), 0.001);
+	}
+
+	@Test
+	public void testSlicing() {
+		CompoundDataset a;
+		a = DatasetFactory.createRange(3, 12, Dataset.INT32).reshape(3, 4);
+
+		a.setSlice(new short[] {-1, -2, -3},  new Slice(1, 3), new Slice(3,4));
+
+		assertArrayEquals(new int[] {0, 0, 0}, a.getIntArray(0, 0));
+		assertArrayEquals(new int[] {8, 0, 0}, a.getIntArray(2, 0));
+		assertArrayEquals(new int[] {-1, -2, -3}, a.getIntArray(2, 3));
 	}
 }

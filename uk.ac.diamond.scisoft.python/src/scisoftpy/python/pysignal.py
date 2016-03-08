@@ -16,10 +16,10 @@
 
 import numpy as _np #@UnresolvedImport @UnusedImport
 
-def correlate(a, v=None, mode='valid', old_behavior=False, axes=None):
+def correlate(a, v=None, mode='valid', axes=None):
     if v is None:
-        return _np.correlate(a, a, mode=mode, old_behavior=old_behavior)
-    return _np.correlate(a, v, mode=mode, old_behavior=old_behavior)
+        return _np.correlate(a, a, mode=mode)
+    return _np.correlate(a, v, mode=mode)
 
 def convolve(a, v, mode='full', axes=None):
     return _np.convolve(a, v, mode=mode)

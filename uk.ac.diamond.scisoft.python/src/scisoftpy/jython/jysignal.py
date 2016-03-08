@@ -24,10 +24,8 @@ from jycore import _wrap
 from jycore import asfarray as _asf
 
 @_wrap
-def correlate(f, g=None, mode='valid', old_behavior=False, axes=None):
+def correlate(f, g=None, mode='valid', axes=None):
     '''Perform a cross (or auto if g is None) correlation along given axes'''
-    if old_behavior:
-        raise NotImplementedError, "Not implemented"
 
     f = _asf(f)._jdataset()
     if g is None:

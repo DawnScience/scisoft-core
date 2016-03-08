@@ -239,9 +239,12 @@ public class NexusTreeUtilsTest {
 		Assert.assertArrayEquals(new int[] {5, 6, 1, 1}, a[1].getShape());
 	}
 
+	private static final double TOL = 1e-14;
+
 	@Test
 	public void testNXDetectorCreationAndParsing() {
 		DetectorProperties det = DetectorProperties.getDefaultDetectorProperties(new int[] {200,100});
+		det.setHPxSize(det.getHPxSize() * 2);
 		det.setOrientationEulerZYZ(Math.toRadians(10), Math.toRadians(20), Math.toRadians(25));
 
 		System.out.println("Fast pixel direction = " + det.getPixelRow());
@@ -253,8 +256,12 @@ public class NexusTreeUtilsTest {
 		Tree tree = TreeFactory.createTree(0, null);
 		tree.setGroupNode(instr);
 		DetectorProperties dp = NexusTreeUtils.parseDetector("/detector", tree, 0)[0];
-		MatrixUtils.isClose(det.getBeamVector(), dp.getBeamVector(), 1e-14, 1e-14);
-		MatrixUtils.isClose(det.getOrigin(), dp.getOrigin(), 1e-14, 1e-14);
-		MatrixUtils.isClose(det.getOrientation(), dp.getOrientation(), 1e-14, 1e-14);
+		MatrixUtils.isClose(det.getBeamVector(), dp.getBeamVector(), TOL, TOL);
+		MatrixUtils.isClose(det.getOrigin(), dp.getOrigin(), TOL, TOL);
+		MatrixUtils.isClose(det.getOrientation(), dp.getOrientation(), TOL, TOL);
+		Assert.assertEquals(det.getPx(), dp.getPx());
+		Assert.assertEquals(det.getPy(), dp.getPy());
+		Assert.assertEquals(det.getHPxSize(), dp.getHPxSize(), TOL);
+		Assert.assertEquals(det.getVPxSize(), dp.getVPxSize(), TOL);
 	}
 }

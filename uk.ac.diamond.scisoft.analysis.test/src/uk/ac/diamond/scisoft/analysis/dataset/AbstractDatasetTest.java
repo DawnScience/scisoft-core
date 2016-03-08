@@ -1735,6 +1735,9 @@ public class AbstractDatasetTest {
 		e = (DoubleDataset) DatasetUtils.select(new BooleanDataset[] {d, g}, new Dataset[] {c, f}, -2.5);
 
 		checkDatasets(e, new DoubleDataset(new double[] {-2.5, 1, 2.9, -2.5, -7, -2.5}, 2, 3));
+
+		e = (DoubleDataset) DatasetUtils.select(d, c, -2);
+		checkDatasets(e, new DoubleDataset(new double[] {-2, 1, -2, -2, -7, -2}, 2, 3));
 	}
 
 	@Test
@@ -2009,14 +2012,51 @@ public class AbstractDatasetTest {
 		}
 	}
 
-    @Test
-    public void testDatasetVariance() {
-    	Random.seed(12345);
+	@Test
+	public void testDatasetVariance() {
+		Random.seed(12345);
 		final Dataset image = Maths.multiply(Random.rand(new int[] { 10, 10 }), 1);
 		double mean = ((Number) image.mean()).doubleValue();
 		Dataset square = Maths.square(Maths.subtract(image, mean));
 		double var = ((Number) square.mean()).doubleValue();
 
 		Assert.assertEquals(var, image.variance(true).doubleValue(), var * 1.e-15);
-    }
+	}
+
+	@Test
+	public void testBroadcast() {
+		Dataset a = DatasetFactory.createRange(3, Dataset.INT32);
+		Dataset b = checkBroadcast2D(a, false, 2, 3);
+		Assert.assertEquals(1, b.getInt(0, 1));
+		Assert.assertEquals(1, b.getInt(1, 1));
+
+		a.setShape(3, 1);
+		b = checkBroadcast2D(a, true, 3, 4);
+		Assert.assertEquals(1, b.getInt(1, 0));
+		Assert.assertEquals(1, b.getInt(1, 1));
+	}
+
+	private Dataset checkBroadcast2D(Dataset a, boolean broadcastFirstDim, int... broadcastShape) {
+		Dataset b = a.getBroadcastView(broadcastShape);
+		Assert.assertArrayEquals(broadcastShape, b.getShape());
+		int size = AbstractDataset.calcSize(broadcastShape);
+		Assert.assertEquals(size, b.getSize());
+
+		IndexIterator it = b.getIterator(true);
+		int[] pos = it.getPos();
+		int i = 0;
+		while (it.hasNext()) {
+			i++;
+			if (broadcastFirstDim) {
+				Assert.assertEquals(a.getInt(pos[0], 0), b.getInt(pos));
+				Assert.assertEquals(a.getInt(pos[0], 0), b.getElementLongAbs(it.index));
+			} else {
+				Assert.assertEquals(a.getInt(pos[1]), b.getInt(pos));
+				Assert.assertEquals(a.getInt(pos[1]), b.getElementLongAbs(it.index));
+			}
+		}
+		Assert.assertEquals(size, i);
+
+		return b;
+	}
 }

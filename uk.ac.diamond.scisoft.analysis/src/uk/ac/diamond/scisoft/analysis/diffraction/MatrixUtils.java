@@ -313,10 +313,13 @@ public class MatrixUtils {
 	 * @return angles in degrees
 	 */
 	public static double[] calculateFromRotationEulerZYZ(Matrix3d rotn) {
-		if (Math.abs(rotn.m22) == 1) {
-			double alpha = Math.atan2(-rotn.m01, rotn.m00);
-			return new double[] {Math.toDegrees(alpha), 0, 0};
+		if (Math.abs(rotn.m22) == 1) { // special cases
+			double beta = rotn.m22 > 0 ? 0 : 180;
+			double sign = Math.signum(rotn.m22);
+			double alpha = Math.atan2(-sign*rotn.m01, sign*rotn.m00);
+			return new double[] {Math.toDegrees(alpha), beta, 0};
 		}
+
 		double beta = Math.acos(rotn.m22);
 		double alpha = Math.atan2(rotn.m21, -rotn.m20);
 		double gamma = Math.atan2(rotn.m12, rotn.m02);

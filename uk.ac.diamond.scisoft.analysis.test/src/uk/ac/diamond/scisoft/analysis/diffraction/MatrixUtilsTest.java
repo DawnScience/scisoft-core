@@ -91,5 +91,25 @@ public class MatrixUtilsTest {
 
 		double[] angles = MatrixUtils.calculateFromRotationEulerZYZ(ma);
 		Assert.assertArrayEquals(new double[] {10, 20, 25}, angles, TOL);
+
+		ma = MatrixUtils.createRotationFromEulerZYZ(190, 0, 0);
+		angles = MatrixUtils.calculateFromRotationEulerZYZ(ma);
+		Assert.assertArrayEquals(new double[] {-170, 0, 0}, angles, TOL);
+
+		ma = MatrixUtils.createRotationFromEulerZYZ(10, 0, 25);
+		angles = MatrixUtils.calculateFromRotationEulerZYZ(ma);
+		Assert.assertArrayEquals(new double[] {35, 0, 0}, angles, TOL);
+
+		ma = MatrixUtils.createRotationFromEulerZYZ(10, 180, 0);
+		angles = MatrixUtils.calculateFromRotationEulerZYZ(ma);
+		Assert.assertArrayEquals(new double[] {10, 180, 0}, angles, TOL);
+
+		ma = MatrixUtils.createRotationFromEulerZYZ(0, 180, 10);
+		angles = MatrixUtils.calculateFromRotationEulerZYZ(ma);
+		Assert.assertArrayEquals(new double[] {-10, 180, 0}, angles, TOL);
+
+		ma = MatrixUtils.createRotationFromEulerZYZ(10, 180, 25);
+		angles = MatrixUtils.calculateFromRotationEulerZYZ(ma);
+		Assert.assertArrayEquals(new double[] {-15, 180, 0}, angles, TOL);
 	}
 }

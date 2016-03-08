@@ -19,11 +19,11 @@ Key differences
  * Incomplete implementation all NumPy's methods
  * ndarray.get_elements method to get view of n-th elements of a compound array
 
-Implemented NumPy methods (1.7)
+Implemented NumPy methods (1.10)
  * Array attributes: shape, ndim, data, size, itemsize, nbytes, T, view, indices
  * Array methods: copy, fill, reshape, resize, transpose, flatten, squeeze,
    take, put, max, min, sum, prod, all, any, argmax, argmin, cumsum, cumprod
- * Array creation: array, zeros, ones, linspace, logspace, arange, diag, diagflat, meshgrid, indices
+ * Array creation: array, zeros, zeros_like, ones, ones_like, empty, full, full_like, eye, identity, linspace, logspace, arange, diag, diagflat, meshgrid, indices
  * Array manipulation: append, tile, repeat, concatenate, vstack,
    hstack, dstack, array_split, split, vsplit, hsplit, dsplit, roll, reshape, resize, ravel, rollaxis,
    atleast_1d, atleast_2d, atleast_3d

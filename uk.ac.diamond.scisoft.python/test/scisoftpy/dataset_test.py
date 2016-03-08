@@ -75,9 +75,32 @@ class Test(unittest.TestCase):
                     for k in range(ds.shape[2]):
                         self.assertEquals(convert(la[i][j][k]), ds[i, j, k])
 
+    def testZeros(self): # make new datasets with zeros
+        print "test zeros"
+        dds = np.zeros(3, dtype=np.float)
+        if isjava:
+            self.assertEquals(1, dds.dtype.elements)
+        self.assertEquals(1, dds.ndim)
+        self.assertEquals(3, dds.shape[0])
+        self.assertEquals(0, dds[0])
+        dds = np.zeros((2,3), dtype=np.float)
+        if isjava:
+            self.assertEquals(1, dds.dtype.elements)
+        self.assertEquals(2, dds.ndim)
+        self.assertEquals(2, dds.shape[0])
+        self.assertEquals(3, dds.shape[1])
+        self.assertEquals(0, dds[0,0])
+        dds = np.zeros_like(dds)
+        if isjava:
+            self.assertEquals(1, dds.dtype.elements)
+        self.assertEquals(2, dds.ndim)
+        self.assertEquals(2, dds.shape[0])
+        self.assertEquals(3, dds.shape[1])
+        self.assertEquals(0, dds[0,0])
+
     def testOnes(self): # make new datasets with ones
         print "test ones"
-        dds = np.ones(3, np.float)
+        dds = np.ones(3, dtype=np.float)
         if isjava:
             self.assertEquals(1, dds.dtype.elements)
         self.assertEquals(1, dds.ndim)
@@ -90,6 +113,63 @@ class Test(unittest.TestCase):
         self.assertEquals(2, dds.shape[0])
         self.assertEquals(3, dds.shape[1])
         self.assertEquals(1, dds[0,0])
+        dds = np.ones_like(dds)
+        if isjava:
+            self.assertEquals(1, dds.dtype.elements)
+        self.assertEquals(2, dds.ndim)
+        self.assertEquals(2, dds.shape[0])
+        self.assertEquals(3, dds.shape[1])
+        self.assertEquals(1, dds[0,0])
+
+    def testTwos(self): # make new datasets with twos
+        print "test twos"
+        dds = np.full(3, 2.)
+        if isjava:
+            self.assertEquals(1, dds.dtype.elements)
+        self.assertEquals(np.float64, dds.dtype)
+        self.assertEquals(1, dds.ndim)
+        self.assertEquals(3, dds.shape[0])
+        self.assertEquals(2., dds[0])
+        dds = np.full((2,3), 2.)
+        if isjava:
+            self.assertEquals(1, dds.dtype.elements)
+        self.assertEquals(np.float64, dds.dtype)
+        self.assertEquals(2, dds.ndim)
+        self.assertEquals(2, dds.shape[0])
+        self.assertEquals(3, dds.shape[1])
+        self.assertEquals(2., dds[0,0])
+        dds = np.full_like(dds, 2.)
+        if isjava:
+            self.assertEquals(1, dds.dtype.elements)
+        self.assertEquals(np.float64, dds.dtype)
+        self.assertEquals(2, dds.ndim)
+        self.assertEquals(2, dds.shape[0])
+        self.assertEquals(3, dds.shape[1])
+        self.assertEquals(2., dds[0,0])
+
+        dds = np.full(3, 2, dtype=np.float)
+        if isjava:
+            self.assertEquals(1, dds.dtype.elements)
+        self.assertEquals(np.float64, dds.dtype)
+        self.assertEquals(1, dds.ndim)
+        self.assertEquals(3, dds.shape[0])
+        self.assertEquals(2., dds[0])
+        dds = np.full((2,3), 2, dtype=np.float)
+        if isjava:
+            self.assertEquals(1, dds.dtype.elements)
+        self.assertEquals(np.float64, dds.dtype)
+        self.assertEquals(2, dds.ndim)
+        self.assertEquals(2, dds.shape[0])
+        self.assertEquals(3, dds.shape[1])
+        self.assertEquals(2., dds[0,0])
+        dds = np.full_like(dds, 2, dtype=np.float)
+        if isjava:
+            self.assertEquals(1, dds.dtype.elements)
+        self.assertEquals(np.float64, dds.dtype)
+        self.assertEquals(2, dds.ndim)
+        self.assertEquals(2, dds.shape[0])
+        self.assertEquals(3, dds.shape[1])
+        self.assertEquals(2., dds[0,0])
 
     def testCompound(self): # make new datasets with ones
         print "test compound"

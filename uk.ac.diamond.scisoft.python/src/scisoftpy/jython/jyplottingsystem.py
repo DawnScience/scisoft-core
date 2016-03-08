@@ -45,5 +45,4 @@ def createHistogramBound(position, r, g, b):
 Get any service from OSGi
 '''
 def getService(serviceClass):
-        
     raise Exception("definition not implemented for Jython : getService(...). TODO, implement it :)")

@@ -341,7 +341,8 @@ class JavaSaver(object):
         for k,v in dataholder.items():
             if k != "metadata":
                 v = _jinput(v)
-                jdh.addDataset(k, v)
+                if v is not None: # no lazy arrays supported yet
+                    jdh.addDataset(k, v)
 
         if "metadata" in dataholder:
             md = dict()

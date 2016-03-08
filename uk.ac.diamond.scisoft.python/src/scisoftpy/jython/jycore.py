@@ -180,6 +180,8 @@ def _jinput(arg): # strip for java input
         return [ _jinput(a) for a in arg if a is not None]
     elif isinstance(arg, ndarray):
         return arg._jdataset()
+    elif isinstance(arg, lazyarray):
+        return None # no equivalent at the moment
     elif isinstance(arg, complex):
         return _jcomplex(arg.real, arg.imag)
 

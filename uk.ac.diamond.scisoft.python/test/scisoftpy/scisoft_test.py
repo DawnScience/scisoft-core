@@ -105,7 +105,7 @@ class Test(unittest.TestCase):
         b.shape = [2,6]
         print b + 2
         print 2 + b
-        b += 2.
+        b += 2
         print b[1,3]
         b[0,5] = -2.3
         print b[0,2:5]

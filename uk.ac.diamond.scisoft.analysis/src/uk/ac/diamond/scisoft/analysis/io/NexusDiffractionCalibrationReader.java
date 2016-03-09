@@ -182,4 +182,34 @@ public class NexusDiffractionCalibrationReader {
 			}
 		};
 	}
+	
+	public static IDataset getDetectorPixelMaskFromNexus(final String filePath, final ILazyDataset parent) {
+		Tree tree = null;
+		IDataHolder dh;
+		try {
+			dh = LoaderFactory.getData(filePath);
+			tree = dh.getTree();
+		} catch (Exception e1) {
+			return null;
+		}
+
+		Map<String, NodeLink> dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getFinder(parent), true, null);
+		
+		if (dnl.size() != 1 && parent != null) dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getFinder(null), true, null);
+		
+		if (dnl.size() != 1) return null;
+		
+		String key = dnl.keySet().iterator().next();
+		NodeLink nl = dnl.get(key);
+		Node n = nl.getDestination();
+		
+		if (n instanceof GroupNode) {
+			GroupNode g = (GroupNode)n;
+			if (g.containsDataNode("pixel_mask")) {
+				return g.getDataNode("pixel_mask").getDataset().getSlice();
+			}
+		}
+		
+		return null;
+	}
 }

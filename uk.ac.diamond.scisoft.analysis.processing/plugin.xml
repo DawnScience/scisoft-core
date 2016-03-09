@@ -695,6 +695,13 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.CoordinateMaskModel"
             name="Mask by coordinate">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.ReadDetectorInformationOperation"
+            icon="icons/CalibrationRun.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.twod.ReadDetectorInformationOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.ReadDetectorInformationModel"
+            name="Read Nexus Detector Information">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

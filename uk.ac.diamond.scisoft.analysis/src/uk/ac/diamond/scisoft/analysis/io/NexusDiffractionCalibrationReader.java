@@ -50,44 +50,9 @@ public class NexusDiffractionCalibrationReader {
 			return null;
 		}
 
-
-		IFindInTree findid = new IFindInTree() {
-
-			@Override
-			public boolean found(NodeLink node) {
-
-				Node dest = node.getDestination();
-
-				if (dest instanceof GroupNode) {
-					GroupNode dgn = (GroupNode)dest;
-					Attribute attribute = dgn.getAttribute("NX_class");
-					if (attribute == null) return false;
-					String el = attribute.getFirstElement();
-					if (el == null) return false;
-
-					if (el.equals("NXdetector")){
-						
-						if (parent == null) return true;
-						
-						Collection<String> names = dgn.getNames();
-						for (String name : names) {
-							if (dgn.containsDataNode(name)) {
-								if (dgn.getDataNode(name).getDataset().equals(parent)) return true;
-							}
-						}
-						
-						if (dest instanceof DataNode){
-							return ((DataNode)dest).getDataset().equals(parent);
-						}
-					}
-				}
-
-				return false;
-
-			}
-		};
-
-		Map<String, NodeLink> dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), findid, true, null);
+		Map<String, NodeLink> dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getFinder(parent), true, null);
+		
+		if (dnl.size() != 1 && parent != null) dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getFinder(null), true, null);
 		
 		if (dnl.size() != 1) return null;
 		
@@ -178,5 +143,43 @@ public class NexusDiffractionCalibrationReader {
 		
 		return dp;
 		
+	}
+	
+	private static IFindInTree getFinder(final ILazyDataset parent) {
+		return new IFindInTree() {
+
+			@Override
+			public boolean found(NodeLink node) {
+
+				Node dest = node.getDestination();
+
+				if (dest instanceof GroupNode) {
+					GroupNode dgn = (GroupNode)dest;
+					Attribute attribute = dgn.getAttribute("NX_class");
+					if (attribute == null) return false;
+					String el = attribute.getFirstElement();
+					if (el == null) return false;
+
+					if (el.equals("NXdetector")){
+						
+						if (parent == null) return true;
+						
+						Collection<String> names = dgn.getNames();
+						for (String name : names) {
+							if (dgn.containsDataNode(name)) {
+								if (dgn.getDataNode(name).getDataset().equals(parent)) return true;
+							}
+						}
+						
+						if (dest instanceof DataNode){
+							return ((DataNode)dest).getDataset().equals(parent);
+						}
+					}
+				}
+
+				return false;
+
+			}
+		};
 	}
 }

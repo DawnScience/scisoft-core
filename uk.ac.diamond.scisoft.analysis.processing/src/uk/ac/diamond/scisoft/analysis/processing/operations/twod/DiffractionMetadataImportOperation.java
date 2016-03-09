@@ -12,6 +12,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
@@ -24,6 +25,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperationBase;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 
+import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionCalibrationReader;
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionMetaReader;
 
 
@@ -43,32 +45,20 @@ public class DiffractionMetadataImportOperation extends AbstractOperationBase<Di
 			throws OperationException {
 		
 		SliceFromSeriesMetadata ssm = slice.getFirstMetadata(SliceFromSeriesMetadata.class);
-		String name = null;
-		String dsName = ssm.getDatasetName();
 
-		try {
-			String[] split = dsName.split("/");
-			if (split != null && split.length > 1) {
-				name = split[split.length-2];
-			}
-		} catch (Exception e) {
-
-
-		}
-		slice.setMetadata(getMeta(model,AbstractDataset.squeezeShape(slice.getShape(), false),name));
+		slice.setMetadata(getMeta(model, ssm.getParent()));
 		return new OperationData(slice);
 	}
 	
-	private IDiffractionMetadata getMeta(DiffractionMetadataImportModel mod, int[] shape, String name) {
+	private IDiffractionMetadata getMeta(DiffractionMetadataImportModel mod, ILazyDataset parent) {
 
 		IDiffractionMetadata lmeta = metadata;
 		if (lmeta == null) {
 			synchronized(this) {
 				lmeta = metadata;
 				if (lmeta == null) {
-					NexusDiffractionMetaReader reader = new NexusDiffractionMetaReader(mod.getFilePath());
-					IDiffractionMetadata md = reader.getDiffractionMetadataFromNexus(shape, name);
-					if (!(reader.isPartialRead() || reader.isNcdRead())) throw new OperationException(this, "File does not contain metadata");
+					IDiffractionMetadata md = NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(mod.getFilePath(), parent);
+					if (md == null) throw new OperationException(this, "File does not contain metadata");
 					metadata = lmeta = md;
 					
 				}

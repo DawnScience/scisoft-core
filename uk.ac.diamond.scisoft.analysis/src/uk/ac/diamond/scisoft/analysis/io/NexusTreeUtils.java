@@ -25,6 +25,7 @@ import javax.measure.quantity.Quantity;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import javax.measure.unit.UnitFormat;
 import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Matrix4d;
@@ -96,9 +97,20 @@ public class NexusTreeUtils {
 	public static final String NX_TRANSFORMATIONS_ROOT = ".";
 	public static final String NX_SAMPLE = "NXsample";
 	public static final String NX_BEAM = "NXbeam";
+	public static final String NX_MONOCHROMATOR = "NXmonochromator";
 	public static final String NX_ATTENUATOR = "NXattenuator";
+	public static final String NX_DETECTOR_DISTANCE = "distance";
+	public static final String NX_DETECTOR_XPIXELSIZE = "x_pixel_size";
+	public static final String NX_DETECTOR_YPIXELSIZE = "y_pixel_size";
+	public static final String NX_DETECTOR_XBEAMCENTRE = "beam_center_y";
+	public static final String NX_DETECTOR_YBEAMCENTRE = "beam_center_x";
 
 	public static final String DEPENDS_ON = "depends_on";
+	
+	static {
+		UnitFormat.getInstance().alias(NonSI.ANGSTROM, "Angstrom");
+		UnitFormat.getInstance().alias(NonSI.DEGREE_ANGLE, "deg");
+	}
 
 	public static void augmentTree(Tree tree) {
 		augmentNodeLink(tree instanceof TreeFile ? ((TreeFile) tree).getFilename() : null, tree.getNodeLink(), true);
@@ -1022,7 +1034,63 @@ public class NexusTreeUtils {
 			sample.setWavelength(w.getElementDoubleAbs(0));
 		}
 	}
+	
+	public static void parseMonochromator(NodeLink link, DiffractionCrystalEnvironment sample) {
+		if (!link.isDestinationGroup()) {
+			logger.warn("'{}' was not a group", link.getName());
+			return;
+		}
 
+		GroupNode gNode = (GroupNode) link.getDestination();
+		
+		if (gNode.containsDataNode("wavelength")) {
+			DataNode wavelength = gNode.getDataNode("wavelength");
+
+			Dataset w = getConvertedData(wavelength, NonSI.ANGSTROM);
+			if (w == null) {
+				logger.warn("Wavelength {} was empty", link.getName());
+			} else {
+				sample.setWavelength(w.getElementDoubleAbs(0));
+				return;
+			}
+		}
+		
+		if (gNode.containsDataNode("energy")) {
+			DataNode energy = gNode.getDataNode("energy");
+			Dataset e = getConvertedData(energy, SI.KILO(NonSI.ELECTRON_VOLT));
+			if (e == null) {
+				logger.warn("Wavelength {} was empty", link.getName());
+			} else {
+				sample.setWavelengthFromEnergykeV((e.getElementDoubleAbs(0)));
+				return;
+			}
+		}
+		
+		
+	}
+
+	public static DetectorProperties parseSaxsDetector(NodeLink link) {
+		
+		GroupNode node = (GroupNode)link.getDestination();
+		DataNode distanceNode = node.getDataNode(NX_DETECTOR_DISTANCE);
+		double distanceMm = getConvertedData(distanceNode, SI.MILLIMETRE).get(0);
+		DataNode bxNode = node.getDataNode(NX_DETECTOR_XBEAMCENTRE);
+		double bx = bxNode.getDataset().getSlice().getDouble(0);
+		DataNode byNode = node.getDataNode(NX_DETECTOR_YBEAMCENTRE);
+		double by = byNode.getDataset().getSlice().getDouble(0);
+		DataNode pxNode = node.getDataNode(NX_DETECTOR_XPIXELSIZE);
+		double px = getConvertedData(pxNode, SI.MILLIMETRE).get(0);
+		DataNode pyNode = node.getDataNode(NX_DETECTOR_YPIXELSIZE);
+		double py = getConvertedData(pyNode, SI.MILLIMETRE).get(0);
+		DataNode dataNode = node.getDataNode(DATA);
+		long[] shape = dataNode.getMaxShape();
+		
+		DetectorProperties dp = new DetectorProperties(distanceMm, by*py, bx*px, (int)shape[shape.length-2], (int)shape[shape.length-1], py, px);
+		
+		return dp;
+		
+	}
+	
 	public static int[] parseNodeShape(String path, Tree tree, NodeLink link, int[] shape) {
 		if (!link.isDestinationData()) {
 			logger.warn("'{}' was not a dataset", link.getName());
@@ -1648,9 +1716,6 @@ public class NexusTreeUtils {
 	}
 
 	private static Unit<? extends Quantity> parseUnit(String attr) {
-		if ("deg".equals(attr)) {
-			return NonSI.DEGREE_ANGLE;
-		}
 		return attr != null ? Unit.valueOf(attr) : null;
 	}
 

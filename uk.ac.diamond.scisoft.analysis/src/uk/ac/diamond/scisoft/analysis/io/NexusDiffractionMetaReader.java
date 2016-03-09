@@ -30,6 +30,7 @@ import org.eclipse.dawnsci.hdf5.nexus.NexusFindDatasetByName;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFindGroupByAttributeText;
 import org.eclipse.dawnsci.hdf5.nexus.NexusUtils;
 
+@Deprecated
 public class NexusDiffractionMetaReader {
 	
 	public static final String NX_MONOCHROMATOR = "NXmonochromator";

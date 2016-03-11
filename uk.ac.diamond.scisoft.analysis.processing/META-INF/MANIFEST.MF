@@ -19,7 +19,7 @@ Bundle-ActivationPolicy: lazy
 Import-Package: com.fasterxml.jackson.annotation;version="2.2.0",
  org.dawb.common.services,
  org.osgi.framework;version="1.7.0",
- org.slf4j;version="1.7.6"
+ org.slf4j;version="[1.7.2,2.0.0)"
 Service-Component: OSGI-INF/*.xml
 Export-Package: uk.ac.diamond.scisoft.analysis.processing,
  uk.ac.diamond.scisoft.analysis.processing.operations,

@@ -7,5 +7,5 @@ Fragment-Host: uk.ac.diamond.scisoft.analysis.xmlrpc
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.junit;bundle-version="[4.10.0,5.0.0)"
 Import-Package: org.apache.commons.logging,
- org.slf4j;version="[1.7.6,1.7.7)"
+ org.slf4j;version="[1.7.2,2.0.0)"
 Bundle-Vendor: Diamond Light Source

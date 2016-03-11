@@ -12,7 +12,7 @@ Import-Package: org.dawnsci.conversion,
  org.dawnsci.persistence,
  org.eclipse.dawnsci.analysis.api.conversion,
  org.eclipse.ui.services,
- org.slf4j;version="1.7.6",
+ org.slf4j;version="[1.7.2,2.0.0)",
  uk.ac.diamond.scisoft.analysis.osgi
 Require-Bundle: org.junit;bundle-version="[4.10.0,5.0.0)",
  uk.ac.diamond.scisoft.analysis.processing.actor;bundle-version="1.0.0",

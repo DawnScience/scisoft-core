@@ -617,20 +617,15 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 		return out;
 	}
 	
-	private void createWriteableLazy(IDataset dataset, GroupNode group) {
-//		nexusFile.getData
+	private void createWriteableLazy(IDataset dataset, GroupNode group) throws Exception {
+
 		Dataset d = DatasetUtils.convertToDataset(dataset);
 		int[] mx = determineMaxShape(d);
-//		ILazySaver ls = new HDF5LazySaver(null, filePath, group, d.getName(), d.getShape(), d.getSize(),
-//				d.getDtype(), true, mx, d.getShape(), null);
+
 		ILazyWriteableDataset lwds = new LazyWriteableDataset(d.getName(), d.getDtype(), d.getShape(), mx, d.getShape(), null);
-		try {
-			DataNode data = nexusFile.createData(group, lwds);
-			data.toString();
-		} catch (NexusException e) {
-			// TODO Auto-generated catch block
-			logger.error("TODO put description of error here", e);
-		}
+		
+		nexusFile.createData(group, lwds, NexusFile.COMPRESSION_LZW_L1);
+
 	}
 	
 	private int[] determineMaxShape(Dataset d) {

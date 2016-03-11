@@ -153,7 +153,7 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 	}
 	
 	@Override
-	public AxesMetadata getAxesMetadata(ILazyDataset parent, String path, Map<Integer, String> axesNames) throws Exception {
+	public AxesMetadata getAxesMetadata(ILazyDataset parent, String path, Map<Integer, String> axesNames, boolean lazy) throws Exception {
 
 		AxesMetadataImpl axMeta = null;
 		int rank = parent.getRank();
@@ -175,7 +175,7 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 					if (axRank == rank || axRank == 1)	{
 						lazyDataset = lazyDataset.getSliceView();
 						lazyDataset.clearMetadata(AxesMetadata.class);
-						axMeta.setAxis(key-1, lazyDataset);
+						axMeta.setAxis(key-1, lazy ? lazyDataset : lazyDataset.getSlice());
 					} else {
 
 						int[] axShape = lazyDataset.getShape();
@@ -208,7 +208,7 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 						lazyDataset.clearMetadata(AxesMetadata.class);
 						lazyDataset.setShape(newShape);
 					}
-					axMeta.setAxis(key-1, lazyDataset);
+					axMeta.setAxis(key-1, lazy ? lazyDataset : lazyDataset.getSlice());
 				}
 				else {
 					axMeta.setAxis(key-1, new ILazyDataset[1]);

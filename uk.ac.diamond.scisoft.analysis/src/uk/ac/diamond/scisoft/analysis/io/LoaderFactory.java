@@ -142,6 +142,7 @@ public class LoaderFactory {
 		    registerLoader("tif",  PilatusTiffLoader.class);
 		    registerLoader("png",  PNGLoader.class);
 		    registerLoader("raw",  RawBinaryLoader.class);
+		    registerLoader("raw",  DatLoader.class);
 		    registerLoader("srs",  ExtendedSRSLoader.class);
 		    registerLoader("srs",  SRSLoader.class);
 		    registerLoader("dat",  DatLoader.class);

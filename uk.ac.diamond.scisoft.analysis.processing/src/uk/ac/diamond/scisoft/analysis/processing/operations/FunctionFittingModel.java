@@ -13,10 +13,22 @@ import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.FileType;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
+import uk.ac.diamond.scisoft.analysis.fitting.FittingConstants.FIT_ALGORITHMS;
+
 public class FunctionFittingModel extends AbstractOperationModel {
 
 	@OperationModelField(hint="Enter the path to the function file", file = FileType.EXISTING_FILE, label = "Function File")
 	private String filePath = "";
+	
+	private FIT_ALGORITHMS optimiser = FIT_ALGORITHMS.APACHELEVENBERGMAQUARDT;
+
+	public FIT_ALGORITHMS getOptimiser() {
+		return optimiser;
+	}
+
+	public void setOptimiser(FIT_ALGORITHMS optimiser) {
+		firePropertyChange("optimiser", this.optimiser, this.optimiser = optimiser);
+	}
 
 	public String getFilePath() {
 		return filePath;

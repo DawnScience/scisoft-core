@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+
 import org.dawb.common.services.ServiceManager;
+
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IDataBasedFunction;
@@ -25,9 +29,11 @@ import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistentFile;
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
@@ -38,19 +44,20 @@ import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 
-import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
 import uk.ac.diamond.scisoft.analysis.fitting.FittingConstants.FIT_ALGORITHMS;
 import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Add;
+import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
+import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 
+@Atomic
 public class FunctionFittingOperation extends AbstractOperation<FunctionFittingModel, OperationData> {
 
 	
-	private Add original;
-	private double[] points;
-	
+	private volatile FitInformation info;
+	private PropertyChangeListener listener;
 	
 	@Override
 	public String getId() {
@@ -59,37 +66,14 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 	
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
-		if (original == null) {
-			try {
-				IPersistenceService service = (IPersistenceService)ServiceManager.getService(IPersistenceService.class);
-				IPersistentFile pf = service.getPersistentFile(model.getFilePath());
-				Map<String, IFunction> functions = pf.getFunctions(monitor);
-				Map<String, IROI> rois = pf.getROIs(monitor);
-
-				IROI roi = rois.get("fit_region");
-				RectangularROI rr = null;
-
-				if (roi instanceof RectangularROI) {
-					rr = (RectangularROI)roi;
-				}
-
-				final double[] p1 = rr.getPointRef();
-				final double[] p2 = rr.getEndPoint();
-
-				points = new double[]{p1[0],p2[0]};
-
-				Add resultFunc = new Add();
-				for (Entry<String,IFunction> f : functions.entrySet()){
-					if (f.getKey().contains("initial")) continue;
-					resultFunc.addFunction(f.getValue());
-				}
-
-				original = (Add)resultFunc.copy();
-
-			} catch (Exception e) {
-				throw new OperationException(this, "Could not load functions from file");
-			}
+		FitInformation finfo = getFitInformation(model);
+		Add copy = null;
+		try {
+			copy = (Add)finfo.original.copy();
+		} catch (Exception e1) {
+			throw new OperationException(this, "Could not copy function!");
 		}
+				
 
 			ILazyDataset[] firstAxes = getFirstAxes(input);
 			Dataset x = null;
@@ -103,7 +87,7 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 			
 			try {
 				traceROI = Generic1DFitter.selectInRange(x, DatasetUtils.convertToDataset(input),
-						points[0],points[1]);
+						finfo.points[0],finfo.points[1]);
 			} catch (Throwable npe) {
 				throw new OperationException(this,npe.getMessage());
 			}
@@ -112,10 +96,10 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 			boolean success = true;
 			
 			try {
-				outfit = doFit(traceROI[0], traceROI[1], original, FIT_ALGORITHMS.APACHENELDERMEAD);
+				outfit = doFit(traceROI[0], traceROI[1], copy, model.getOptimiser());
 			} catch (Exception e) {
 				success = false;
-				outfit = original;
+				outfit = copy;
 			}
 				
 				List<IDataset> params = new ArrayList<IDataset>();
@@ -135,7 +119,7 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 						String pn = p.getName();
 						double v = p.getValue();
 						if (!success) v = Double.NaN;
-						String fullName = n +":"+pn;
+						String fullName = n +"_"+pn;
 						DoubleDataset d = new DoubleDataset(new double[]{v},new int[]{1});
 						d.setName(fullName);
 						d.squeeze();
@@ -145,18 +129,71 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 					IDataset outx = traceROI[0].getSliceView();
 					outx.setName(x.getName());
 					Dataset vals = outfit.calculateValues(outx);
-					vals = Maths.subtract(traceROI[1], vals);
-					vals.setName("residual");
+					vals.setName("function");
+					Dataset res = Maths.subtract(traceROI[1], vals);
+					res.setName("residual");
 					
 					AxesMetadataImpl ax = new AxesMetadataImpl(1);
 					ax.addAxis(0, outx);
 					vals.addMetadata(ax);
+					res.addMetadata(ax);
 					params.add(vals);
+					params.add(res);
 					
 				}
 				
 				return new OperationData(input, (Serializable[])params.toArray(new IDataset[params.size()]));
 				
+	}
+	
+	private FitInformation getFitInformation(FunctionFittingModel model) {
+		FitInformation localInfo = info;
+		if (localInfo == null) {
+			synchronized(this) {
+				localInfo = info;
+				if (localInfo == null) {
+
+					try {
+
+						IPersistenceService service = (IPersistenceService)ServiceManager.getService(IPersistenceService.class);
+						IPersistentFile pf = service.getPersistentFile(model.getFilePath());
+						Map<String, IFunction> functions = pf.getFunctions(null);
+						Map<String, IROI> rois = pf.getROIs(null);
+
+						IROI roi = rois.get("fit_region");
+						RectangularROI rr = null;
+
+						if (roi instanceof RectangularROI) {
+							rr = (RectangularROI)roi;
+						}
+
+						final double[] p1 = rr.getPointRef();
+						final double[] p2 = rr.getEndPoint();
+
+						double[] points = new double[]{p1[0],p2[0]};
+
+						Add resultFunc = new Add();
+						for (Entry<String,IFunction> f : functions.entrySet()){
+							if (f.getKey().contains("initial")) continue;
+							resultFunc.addFunction(f.getValue());
+						}
+
+						Add original = (Add)resultFunc.copy();
+
+						FitInformation i = new FitInformation();
+						i.original = original;
+						i.points = points;
+
+						info = localInfo = i;;
+
+					} catch (Exception e) {
+						throw new OperationException(this, "Could not load functions from file");
+					}
+				}
+			}
+		}
+		
+		return localInfo;
 	}
 
 	@Override
@@ -170,47 +207,56 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 	}
 
 	private Add doFit(Dataset x, Dataset y, Add resultFunction, FIT_ALGORITHMS algorithm) throws Exception{
-				double accuracy = 10e-5;
-				IFunction[] functionCopies = resultFunction.getFunctions();
-		//	logger.debug("Accuracy is set to {}", accuracy);
-		//	int algoId = prefs.getInt(FittingConstants.FIT_ALGORITHM);
-		//	FIT_ALGORITHMS algorithm = FIT_ALGORITHMS.fromId(algoId);
-
-		// We need to run the fit on a copy of the compFunction
-		//	// otherwise the fit will affect the input values.
-		//	Add compFunctionCopy = (Add) compFunction.copy();
-		//	IFunction[] functionCopies = compFunctionCopy.getFunctions();
+		double accuracy = 10e-5;
+		IFunction[] functionCopies = resultFunction.getFunctions();
+		for (IFunction function : functionCopies) {
+			if (function instanceof IDataBasedFunction) {
+				IDataBasedFunction dataBasedFunction = (IDataBasedFunction) function;
+				dataBasedFunction.setData(x, y);
+			}
+		}
+		IOptimizer optimizer = null;
 		switch (algorithm) {
 		default:
 		case APACHENELDERMEAD:
-			resultFunction = new Add();
-			for (IFunction function : functionCopies) {
-//				if (function instanceof APeak) {
-//					APeak p = (APeak)function;
-//					for (IParameter par : p.getParameters()) {
-//						if (!par.getName().equals("area")) {
-//							par.setFixed(true);
-//						}
-//					}
-//					
-//				}
-				resultFunction.addFunction(function);
-				if (function instanceof IDataBasedFunction) {
-					IDataBasedFunction dataBasedFunction = (IDataBasedFunction) function;
-					dataBasedFunction.setData(x, y);
-				}
-			}
-			
-			Fitter.ApacheNelderMeadFit(new Dataset[] { x }, y,
-					resultFunction);
+			optimizer = new ApacheOptimizer(Optimizer.SIMPLEX_NM);
 			break;
 		case GENETIC:
-			IOptimizer fitMethod = new GeneticAlg(accuracy);
-			resultFunction = Fitter
-					.fit(x, y, fitMethod, functionCopies);
+			optimizer = new GeneticAlg(accuracy);
+			break;
+		case APACHECONJUGATEGRADIENT:
+			optimizer = new ApacheOptimizer(Optimizer.CONJUGATE_GRADIENT);
+			break;
+		case APACHELEVENBERGMAQUARDT:
+			optimizer = new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT);
 			break;
 		}
-
+		optimizer.optimize(new IDataset[] {x}, y, resultFunction);
+	
 		return resultFunction;
+	}
+	
+	@Override
+	public void setModel(FunctionFittingModel model) {
+		
+		super.setModel(model);
+		if (listener == null) {
+			listener = new PropertyChangeListener() {
+				
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					info = null;
+				}
+			};
+		} else {
+			((AbstractOperationModel)this.model).removePropertyChangeListener(listener);
+		}
+		
+		((AbstractOperationModel)this.model).addPropertyChangeListener(listener);
+	}
+	
+	private class FitInformation {
+		public Add original;
+		public double[] points;
 	}
 }

@@ -702,6 +702,12 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.ReadDetectorInformationModel"
             name="Read Nexus Detector Information">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionFittingOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionFittingOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionFittingModel"
+            name="Fit Imported Function">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

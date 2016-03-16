@@ -462,12 +462,49 @@ class UnitCellGroupedTable {
 		}
 	}
 
-	private static class WyckoffColumnInterface implements ColumnInterface {
+	private class WyckoffColumnInterface implements ColumnInterface {
 
 		@Override
-		public EditingSupport get(ColumnViewer v) {
-			// TODO Auto-generated method stub
-			return null;
+		public EditingSupport get(final ColumnViewer v) {
+			return new EditingSupport(v) {
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					Table theTable = ((TableViewer) v).getTable();
+					String[] WyckoffStrings = Arrays.copyOfRange(XPDFSpaceGroup.allWyckoffLetters.split(""), 0, theGroup.getNWyckoffLetters());
+					return new ComboBoxCellEditor(theTable, WyckoffStrings);
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return true;
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					int letterIndex;
+					if (element instanceof XPDFAtom)
+						letterIndex = XPDFSpaceGroup.allWyckoffLetters.indexOf(((XPDFAtom) element).getWyckoffLetter());
+					else
+						letterIndex = 0;
+					
+					return letterIndex;
+				}
+
+				@Override
+				protected void setValue(Object element, Object value) {
+					int wyckoff;
+					if (value instanceof Integer) {
+						wyckoff = (Integer) value;
+					} else {
+						wyckoff = theGroup.getNWyckoffLetters()-1;
+					}
+					if (element instanceof XPDFAtom) {
+						((XPDFAtom) element).setWyckoffLetter(Character.toString(XPDFSpaceGroup.allWyckoffLetters.charAt(wyckoff)));
+					}
+					v.refresh(element);
+				}
+			};
 		}
 
 		@Override

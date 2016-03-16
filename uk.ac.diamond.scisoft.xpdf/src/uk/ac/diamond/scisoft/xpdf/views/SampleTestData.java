@@ -190,16 +190,16 @@ class SampleTestData {
 			phase.setUnitCellAngle(0, 54.6726);
 			phase.addComment("ferrous titanate");
 			// Like haematite, but with titanium. This is the rhombohedral setting
-			phase.addAtom(new XPDFAtom("Fe1", 26, 1.0, new double[] {0.333, 0.333, 0.333}));
-			phase.addAtom(new XPDFAtom("Fe2", 26, 1.0, new double[] {0.667, 0.667, 0.667}));
-			phase.addAtom(new XPDFAtom("Ti1", 22, 1.0, new double[] {0.167, 0.167, 0.167}));
-			phase.addAtom(new XPDFAtom("Ti2", 22, 1.0, new double[] {0.833, 0.833, 0.833}));
-			phase.addAtom(new XPDFAtom("O1", 8, 1.0, new double[] {0.583, 0.917, 0.250}));
-			phase.addAtom(new XPDFAtom("O2", 8, 1.0, new double[] {0.917, 0.250, 0.583}));
-			phase.addAtom(new XPDFAtom("O3", 8, 1.0, new double[] {0.250, 0.583, 0.917}));
-			phase.addAtom(new XPDFAtom("O4", 8, 1.0, new double[] {-0.583, -0.917, -0.250}));
-			phase.addAtom(new XPDFAtom("O5", 8, 1.0, new double[] {-0.917, -0.250, -0.583}));
-			phase.addAtom(new XPDFAtom("O6", 8, 1.0, new double[] {-0.250, -0.583, -0.917}));
+			phase.addAtom(new XPDFAtom("Fe1", 26, 1.0, new double[] {0.333, 0.333, 0.333}, "c"));
+//			phase.addAtom(new XPDFAtom("Fe2", 26, 1.0, new double[] {0.667, 0.667, 0.667}));
+			phase.addAtom(new XPDFAtom("Ti1", 22, 1.0, new double[] {0.167, 0.167, 0.167}, "c"));
+//			phase.addAtom(new XPDFAtom("Ti2", 22, 1.0, new double[] {0.833, 0.833, 0.833}));
+			phase.addAtom(new XPDFAtom("O1", 8, 1.0, new double[] {0.583, 0.917, 0.250}, "f"));
+//			phase.addAtom(new XPDFAtom("O2", 8, 1.0, new double[] {0.917, 0.250, 0.583}));
+//			phase.addAtom(new XPDFAtom("O3", 8, 1.0, new double[] {0.250, 0.583, 0.917}));
+//			phase.addAtom(new XPDFAtom("O4", 8, 1.0, new double[] {-0.583, -0.917, -0.250}));
+//			phase.addAtom(new XPDFAtom("O5", 8, 1.0, new double[] {-0.917, -0.250, -0.583}));
+//			phase.addAtom(new XPDFAtom("O6", 8, 1.0, new double[] {-0.250, -0.583, -0.917}));
 			break;
 		}
 		default:

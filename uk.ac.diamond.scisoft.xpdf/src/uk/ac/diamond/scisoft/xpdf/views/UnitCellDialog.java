@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 class UnitCellDialog extends Dialog {
 
 	private List<XPDFAtom> atoms;
+	private XPDFSpaceGroup theGroup;
 
 	private UnitCellGroupedTable cellTable;
 	
@@ -69,7 +70,7 @@ class UnitCellDialog extends Dialog {
 		
 		cellTable = new UnitCellGroupedTable(cellTableCompo, SWT.BORDER);
 		cellTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		cellTable.setInput(atoms);
+		cellTable.setInput(atoms, theGroup);
 
 		createAtomButtons(container);
 		createAtomActions();
@@ -86,7 +87,7 @@ class UnitCellDialog extends Dialog {
 	
 	@Override
 	protected Point getInitialSize() {
-		return new Point(640, 480);
+		return new Point(960, 480);
 	}
 
 	@Override
@@ -115,6 +116,15 @@ class UnitCellDialog extends Dialog {
 			this.atoms.add(atom);
 		}
 //		this.atoms = atoms;
+	}
+	
+	/**
+	 * Set the space group of the unit cell.
+	 * @param group
+	 * 				the space group object of this unit cell.
+	 */
+	public void setSpaceGroup(XPDFSpaceGroup group) {
+		this.theGroup = group;
 	}
 	
 	private void createAtomButtons(Composite parent) {

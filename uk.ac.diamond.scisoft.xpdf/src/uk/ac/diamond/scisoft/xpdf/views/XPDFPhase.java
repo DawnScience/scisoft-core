@@ -414,7 +414,7 @@ class XPDFPhase {
 		};
 		double unitCellAMU = 0.0;
 		for (XPDFAtom atom : atoms) {
-			unitCellAMU += atomicWeights[atom.getAtomicNumber()] * atom.getOccupancy();
+			unitCellAMU += atomicWeights[atom.getAtomicNumber()] * atom.getOccupancy() * spaceGroup.getSiteMultiplicity(atom.getWyckoffLetter());
 		}
 		double unitCellkg = unitCellAMU * 1.660539040e-27;
 		double unitCellm3 = getUnitCellVolume() * 1e-30;
@@ -568,6 +568,8 @@ class XPDFPhase {
 		for (XPDFAtom atom : atoms) {
 			int z = atom.getAtomicNumber();
 			double n = atom.getOccupancy();
+			// atoms are only defined for the Wyckoff positions
+			n *= spaceGroup.getSiteMultiplicity(atom.getWyckoffLetter());
 			if (atomCount.containsKey(z)) {
 				atomCount.put(z, atomCount.get(z) + n);
 			} else {

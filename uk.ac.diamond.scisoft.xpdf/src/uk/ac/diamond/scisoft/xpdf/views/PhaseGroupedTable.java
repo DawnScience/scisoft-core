@@ -951,7 +951,7 @@ class PhaseGroupedTable {
 			return new EditingSupport(v) {
 
 				@Override
-				protected CellEditor getCellEditor(Object element) {
+				protected CellEditor getCellEditor(final Object element) {
 					return new DialogCellEditor(((TableViewer) v).getTable()) {
 						
 						private UnitCellDialog unitCell;
@@ -962,6 +962,8 @@ class PhaseGroupedTable {
 							unitCell = new UnitCellDialog(cellEditorWindow.getShell());
 							unitCell.createDialogArea(((TableViewer) v).getTable());
 							unitCell.setAllAtoms(atoms);
+							if (element instanceof XPDFPhase)
+								unitCell.setSpaceGroup(((XPDFPhase) element).getSpaceGroup());
 							unitCell.open();
 							return null;
 						}

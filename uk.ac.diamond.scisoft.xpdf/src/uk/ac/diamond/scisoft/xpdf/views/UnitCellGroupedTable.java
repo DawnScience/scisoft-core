@@ -36,6 +36,7 @@ class UnitCellGroupedTable {
 
 	private static List<XPDFAtom> defaultAtoms;
 	private List<XPDFAtom> atoms;
+	private XPDFSpaceGroup theGroup;
 	private XPDFGroupedTable groupedTable;
 
 	/**
@@ -51,16 +52,16 @@ class UnitCellGroupedTable {
 		if (defaultAtoms == null) {
 			defaultAtoms = new ArrayList<XPDFAtom>();
 			// All phases are ferrous titanate
-			defaultAtoms.add(new XPDFAtom("Fe1", 26, 1.0, new double[] {0.333, 0.333, 0.333}));
-			defaultAtoms.add(new XPDFAtom("Fe2", 26, 1.0, new double[] {0.667, 0.667, 0.667}));
-			defaultAtoms.add(new XPDFAtom("Ti1", 22, 1.0, new double[] {0.167, 0.167, 0.167}));
-			defaultAtoms.add(new XPDFAtom("Ti2", 22, 1.0, new double[] {0.833, 0.833, 0.833}));
-			defaultAtoms.add(new XPDFAtom("O1", 8, 1.0, new double[] {0.583, 0.917, 0.250}));
-			defaultAtoms.add(new XPDFAtom("O2", 8, 1.0, new double[] {0.917, 0.250, 0.583}));
-			defaultAtoms.add(new XPDFAtom("O3", 8, 1.0, new double[] {0.250, 0.583, 0.917}));
-			defaultAtoms.add(new XPDFAtom("O4", 8, 1.0, new double[] {-0.583, -0.917, -0.250}));
-			defaultAtoms.add(new XPDFAtom("O5", 8, 1.0, new double[] {-0.917, -0.250, -0.583}));
-			defaultAtoms.add(new XPDFAtom("O6", 8, 1.0, new double[] {-0.250, -0.583, -0.917}));
+			defaultAtoms.add(new XPDFAtom("Fe1", 26, 1.0, new double[] {0.333, 0.333, 0.333}, "c"));
+//			defaultAtoms.add(new XPDFAtom("Fe2", 26, 1.0, new double[] {0.667, 0.667, 0.667}));
+			defaultAtoms.add(new XPDFAtom("Ti1", 22, 1.0, new double[] {0.167, 0.167, 0.167}, "c"));
+//			defaultAtoms.add(new XPDFAtom("Ti2", 22, 1.0, new double[] {0.833, 0.833, 0.833}));
+			defaultAtoms.add(new XPDFAtom("O1", 8, 1.0, new double[] {0.583, 0.917, 0.250}, "f"));
+//			defaultAtoms.add(new XPDFAtom("O2", 8, 1.0, new double[] {0.917, 0.250, 0.583}));
+//			defaultAtoms.add(new XPDFAtom("O3", 8, 1.0, new double[] {0.250, 0.583, 0.917}));
+//			defaultAtoms.add(new XPDFAtom("O4", 8, 1.0, new double[] {-0.583, -0.917, -0.250}));
+//			defaultAtoms.add(new XPDFAtom("O5", 8, 1.0, new double[] {-0.917, -0.250, -0.583}));
+//			defaultAtoms.add(new XPDFAtom("O6", 8, 1.0, new double[] {-0.250, -0.583, -0.917}));
 		}		
 
 		groupedTable = new XPDFGroupedTable(parent, SWT.NONE);
@@ -83,8 +84,9 @@ class UnitCellGroupedTable {
 	 * @param atoms
 	 * 				A Map between labels and atoms
 	 */
-	public void setInput(List<XPDFAtom> atoms) {
+	public void setInput(List<XPDFAtom> atoms, XPDFSpaceGroup group) {
 		this.atoms = atoms;
+		this.theGroup = group;
 		groupedTable.setInput(this.atoms);
 	}
 
@@ -120,6 +122,12 @@ class UnitCellGroupedTable {
 		columnInterfaces.add(new PositionColumnInterface(0));
 		columnInterfaces.add(new PositionColumnInterface(1));
 		columnInterfaces.add(new PositionColumnInterface(2));
+		groupedColumnInterfaces.add(columnInterfaces);		
+		
+		groupNames.add("Site");
+		columnInterfaces = new ArrayList<ColumnInterface>();
+		columnInterfaces.add(new WyckoffColumnInterface());
+		columnInterfaces.add(new MultiplicityColumnInterface());
 		groupedColumnInterfaces.add(columnInterfaces);		
 		
 		groupNames.add("‍");
@@ -167,45 +175,45 @@ class UnitCellGroupedTable {
 		public boolean presentAsUneditable(Object element);
 	}
 
-//	private static class DummyColumnInterface implements ColumnInterface {
-//
+	private static class DummyColumnInterface implements ColumnInterface {
+
+		@Override
+		public EditingSupport get(ColumnViewer v) {
+			return new DummyEditingSupport(v);
+		}
+
 //		@Override
-//		public EditingSupport get(ColumnViewer v) {
-//			return new DummyEditingSupport(v);
+//		public SelectionAdapter getSelectionAdapter(UnitCellDialog uCD,
+//				TableViewerColumn col) {
+//			return DummySelectionAdapter.get(uCD, col);
 //		}
-//
-////		@Override
-////		public SelectionAdapter getSelectionAdapter(UnitCellDialog uCD,
-////				TableViewerColumn col) {
-////			return DummySelectionAdapter.get(uCD, col);
-////		}
-//
-//		@Override
-//		public ColumnLabelProvider getLabelProvider() {
-//			return new ColumnLabelProvider() {
-//				@Override
-//				public String getText(Object element) {
-//					return "This space left intentionally blank";
-//				}
-//			};
-//		}
-//
-//		@Override
-//		public String getName() {
-//			return "Column";
-//		}
-//
-//		@Override
-//		public int getWeight() {
-//			return 10;
-//		}
-//
-//		@Override
-//		public boolean presentAsUneditable(Object element) {
-//			return false;
-//		}
-//		
-//	}
+
+		@Override
+		public ColumnLabelProvider getLabelProvider() {
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return "This space left intentionally blank";
+				}
+			};
+		}
+
+		@Override
+		public String getName() {
+			return "Column";
+		}
+
+		@Override
+		public int getWeight() {
+			return 10;
+		}
+
+		@Override
+		public boolean presentAsUneditable(Object element) {
+			return false;
+		}
+		
+	}
 	
 	private static class DummyEditingSupport extends EditingSupport {
 		DummyEditingSupport(ColumnViewer v) {
@@ -454,6 +462,82 @@ class UnitCellGroupedTable {
 		}
 	}
 
+	private static class WyckoffColumnInterface implements ColumnInterface {
+
+		@Override
+		public EditingSupport get(ColumnViewer v) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public ColumnLabelProvider getLabelProvider() {
+			return new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					if (element instanceof XPDFAtom) 
+						return ((XPDFAtom) element).getWyckoffLetter();
+					else
+						return "-";
+				}
+			};
+		}
+
+		@Override
+		public String getName() {
+			return "Wyckoff";
+		}
+
+		@Override
+		public int getWeight() {
+			return 10;
+		}
+
+		@Override
+		public boolean presentAsUneditable(Object element) {
+			return false;
+		}
+		
+	}
+
+	private class MultiplicityColumnInterface implements ColumnInterface {
+
+		@Override
+		public EditingSupport get(ColumnViewer v) {
+			return null;
+		}
+
+		@Override
+		public ColumnLabelProvider getLabelProvider() {
+			return new ColumnLabelProvider() {
+				
+				@Override
+				public String getText(Object element) {
+					if (element instanceof XPDFAtom) 
+						return Integer.toString(theGroup.getSiteMultiplicity(((XPDFAtom) element).getWyckoffLetter()));
+					else
+						return "-";
+				}
+			};
+		}
+
+		@Override
+		public String getName() {
+			return "Multiplicity";
+		}
+
+		@Override
+		public int getWeight() {
+			return 10;
+		}
+
+		@Override
+		public boolean presentAsUneditable(Object element) {
+			return true;
+		}
+		
+	}
+	
 	private static class OccupancyColumnInterface implements ColumnInterface {
 
 		@Override

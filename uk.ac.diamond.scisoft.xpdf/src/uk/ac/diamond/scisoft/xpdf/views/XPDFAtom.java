@@ -26,6 +26,7 @@ class XPDFAtom {
 	// atomic displacement parameters, a leading isotropic value, and 9
 	// anisotropic parameters
 	private double[] atomicDisplacement;
+	private String wyckoffLetter;
 
 	/**
 	 * Constructs a new atom with the given atomic number.
@@ -37,6 +38,7 @@ class XPDFAtom {
 		label = "";
 		position = new double[nDim];
 		atomicDisplacement = new double[nDim*nDim+1];
+		wyckoffLetter = "a";
 	}
 	
 	/**
@@ -45,11 +47,12 @@ class XPDFAtom {
 	 * @param occupancy
 	 * @param position
 	 */
-	public XPDFAtom(int atomicNumber, double occupancy, double[] position) {
+	public XPDFAtom(int atomicNumber, double occupancy, double[] position, String wyckoff) {
 		this();
 		this.setAtomicNumber(atomicNumber);
 		this.setOccupancy(occupancy);
 		this.setPosition(position);
+		this.setWyckoffLetter(wyckoff);
 	}
 	
 	/**
@@ -59,8 +62,8 @@ class XPDFAtom {
 	 * @param occupancy
 	 * @param position
 	 */
-	public XPDFAtom(String label, int atomicNumber, double occupancy, double[] position) {
-		this(atomicNumber, occupancy, position);
+	public XPDFAtom(String label, int atomicNumber, double occupancy, double[] position, String wyckoff) {
+		this(atomicNumber, occupancy, position, wyckoff);
 		this.label = label;
 	}
 	
@@ -70,7 +73,7 @@ class XPDFAtom {
 	 * 				XPDFAtom to be copied
 	 */
 	public XPDFAtom(XPDFAtom inAtom) {
-		this(inAtom.getLabel(), inAtom.getAtomicNumber(), inAtom.getOccupancy(), inAtom.getPosition());
+		this(inAtom.getLabel(), inAtom.getAtomicNumber(), inAtom.getOccupancy(), inAtom.getPosition(), inAtom.getWyckoffLetter());
 	}
 	
 	/**
@@ -81,7 +84,7 @@ class XPDFAtom {
 	 * 				label to be applied to the new atom.
 	 */
 	public XPDFAtom(XPDFAtom inAtom, String newLabel) {
-		this(newLabel, inAtom.getAtomicNumber(), inAtom.getOccupancy(), inAtom.getPosition());
+		this(newLabel, inAtom.getAtomicNumber(), inAtom.getOccupancy(), inAtom.getPosition(), inAtom.getWyckoffLetter());
 	}
 	
 	/**
@@ -211,5 +214,14 @@ class XPDFAtom {
 	 */
 	public void setPosition(int axisIndex, Double value) {
 		position[axisIndex % 3] = value % 1.0;
+	}
+	
+	public void setWyckoffLetter(String letter) {
+		if (XPDFSpaceGroup.allWyckoffLetters.contains(letter))
+			wyckoffLetter = letter;
+	}
+	
+	public String getWyckoffLetter() {
+		return wyckoffLetter;
 	}
 }

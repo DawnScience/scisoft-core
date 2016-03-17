@@ -376,7 +376,17 @@ class XPDFPhase {
 	 * @return unit cell edge angles of the phase in degrees.
 	 */
 	public double[] getUnitCellAngle() {
-		return unitCellDegrees;
+		double[] assignedAngles = Arrays.copyOf(unitCellDegrees, nDim);
+		// Account for fixed angles from the space group.
+		int[] fixedAngles = spaceGroup.getSystem().getFixedAngles();
+		
+		for (int i = 0; i < nDim; i++) {
+			int fixedAngle = fixedAngles[i];
+			if (fixedAngle > 0)
+				assignedAngles[i] = fixedAngle;
+		}
+		
+		return assignedAngles;
 	}
 	
 	/**

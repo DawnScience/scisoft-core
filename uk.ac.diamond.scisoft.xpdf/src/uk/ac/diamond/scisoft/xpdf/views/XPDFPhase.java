@@ -564,12 +564,15 @@ class XPDFPhase {
 		String hall = "";
 		
 		Map<Integer, Double> atomCount = new HashMap<Integer, Double>();
+		List<Integer> multiplicityCount = new ArrayList<Integer>();
 		// Add up all the occupancies by element
 		for (XPDFAtom atom : atoms) {
 			int z = atom.getAtomicNumber();
 			double n = atom.getOccupancy();
 			// atoms are only defined for the Wyckoff positions
-			n *= spaceGroup.getSiteMultiplicity(atom.getWyckoffLetter());
+			int multiplicity = spaceGroup.getSiteMultiplicity(atom.getWyckoffLetter()); 
+			multiplicityCount.add(multiplicity);
+			n *= multiplicity;
 			if (atomCount.containsKey(z)) {
 				atomCount.put(z, atomCount.get(z) + n);
 			} else {
@@ -578,6 +581,12 @@ class XPDFPhase {
 		}
 		
 		if (reduceToPrimitive) {
+			// The multiplicity list simply an array of the multiplicities of
+			// each position. Find the GCD of all the numbers.
+			int gcd = greatestCommonDivisor(multiplicityCount);
+			// Run through the map, dividing all data by GCD
+			for (Map.Entry<Integer, Double> entry : atomCount.entrySet())
+				atomCount.put(entry.getKey(), entry.getValue()/gcd);
 		}
 		
 		
@@ -615,4 +624,25 @@ class XPDFPhase {
 		return number;
 	}
 	
+	// Euclid's algorithm for GCD, recursively applied to a List of ints 
+	private int greatestCommonDivisor(List<Integer> values) {
+		if (values.size() < 1) return 1;
+		while (values.size() > 1) {
+			int currentSize = values.size(); // is at least 2
+			int a = values.remove(currentSize - 1);
+			int b = values.remove(currentSize - 2);
+			values.add(greatestCommonDivisor(a, b));
+		}
+		return values.get(0); // Return the one element
+	}
+	
+	// Euclid's algorithm for GCD
+	private int greatestCommonDivisor(int a, int b) {
+		while (b != 0) {
+			int t = b;
+			b = a % b;
+			a = t;
+		}
+		return a;
+	}
 }				

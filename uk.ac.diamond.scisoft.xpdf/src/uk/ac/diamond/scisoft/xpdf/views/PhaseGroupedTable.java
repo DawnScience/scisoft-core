@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.xpdf.views;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1086,7 +1087,8 @@ class PhaseGroupedTable {
 				@Override
 				public String getText(Object element) {
 					if (element instanceof XPDFPhase) {
-						return Double.toString(((XPDFPhase) element).getDensity());
+						DecimalFormat threeDP = new DecimalFormat("0.000"); 
+						return threeDP.format(((XPDFPhase) element).getDensity());
 					} else {
 						return "-";
 					}

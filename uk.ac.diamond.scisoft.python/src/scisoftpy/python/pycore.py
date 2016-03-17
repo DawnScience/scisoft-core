@@ -129,6 +129,10 @@ empty = _np.empty
 
 empty_like = _np.empty_like
 
+full = _np.full
+
+full_like = _np.full_like
+
 linspace = _np.linspace
 
 logspace = _np.logspace

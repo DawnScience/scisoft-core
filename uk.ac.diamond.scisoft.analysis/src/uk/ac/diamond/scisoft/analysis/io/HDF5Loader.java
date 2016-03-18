@@ -871,12 +871,12 @@ public class HDF5Loader extends AbstractFileLoader {
 			// interpret set of strings as the full path names to a group of external files that are stacked together
 
 			StringDataset ef = extractExternalFileNames(did, tid, type.vlen, trueShape);
-			ImageStackLoaderEx loader;
+			ImageStackLoader loader;
 			try {
-				loader = new ImageStackLoaderEx(ef, null);
+				loader = new ImageStackLoader(ef, null);
 			} catch (Exception e) {
 				try { // try again with known-to-be-good directory
-					loader = new ImageStackLoaderEx(ef, file.getParentDirectory());
+					loader = new ImageStackLoader(ef, file.getParentDirectory());
 				} catch (Exception e2) {
 					logger.error("Could creating loader from external files", e2);
 					return false;

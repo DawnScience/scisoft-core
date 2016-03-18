@@ -25,7 +25,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 
-public class ImageStackLoaderExTest {
+public class ImageStackLoaderTest {
 
 	static final int sizex = 10, sizey = 20, range = sizex * sizey;
 	static final double abserr = 2.0; // maximum permitted absolute error (remember that JPEGs are lossy)
@@ -38,24 +38,24 @@ public class ImageStackLoaderExTest {
 	@Test
 	public void testInvalidArguments() throws Exception {
 		try {
-			new ImageStackLoaderEx(null, (String[]) null);
+			new ImageStackLoader(null, (String[]) null);
 			fail();
 		} catch (IllegalArgumentException ex) {
 
 		}
 
-		String testScratchDirectoryName = TestUtils.setUpTest(ImageStackLoaderExTest.class, "test1DFiles", true);
+		String testScratchDirectoryName = TestUtils.setUpTest(ImageStackLoaderTest.class, "test1DFiles", true);
 
 
 		int[] multipliers= new int[]{2,3};
 		String[] imageFilenames = makeFiles(testScratchDirectoryName, multipliers);
 		int[] dimensions = new int[] { imageFilenames.length };
-		ImageStackLoaderEx loaderEx = new ImageStackLoaderEx(dimensions, imageFilenames);
+		ImageStackLoader loader = new ImageStackLoader(dimensions, imageFilenames);
 		int[] step = null;
-		int[] shape = loaderEx.getShape();
+		int[] shape = loader.getShape();
 		int[] stop = null;
 		int[] start = shape.clone();
-		Dataset d = loaderEx.getDataset(null, new SliceND(shape, start, stop, step));
+		Dataset d = loader.getDataset(null, new SliceND(shape, start, stop, step));
 		assertEquals(0, d.getSize());
 	}
 
@@ -71,16 +71,16 @@ public class ImageStackLoaderExTest {
 
 	@Test
 	public void testSingleFile() throws Exception {
-		String testScratchDirectoryName = TestUtils.setUpTest(ImageStackLoaderExTest.class, "testSingleFile", true);
+		String testScratchDirectoryName = TestUtils.setUpTest(ImageStackLoaderTest.class, "testSingleFile", true);
 
 		int[] multipliers= new int[]{7};
 		String[] imageFilenames = makeFiles(testScratchDirectoryName, multipliers);
 		int[] dimensions = new int[] { };
 		StringDataset strings = new StringDataset(imageFilenames, dimensions);
 		strings.squeeze(true);
-		ImageStackLoaderEx loaderEx = new ImageStackLoaderEx(strings, null);
-		assertEquals(Dataset.INT32, loaderEx.getDtype());
-		int[] shape = loaderEx.getShape();
+		ImageStackLoader loader = new ImageStackLoader(strings, null);
+		assertEquals(Dataset.INT32, loader.getDtype());
+		int[] shape = loader.getShape();
 		assertArrayEquals(new int[] { sizex, sizey }, shape);
 
 		//extract each image
@@ -89,7 +89,7 @@ public class ImageStackLoaderExTest {
 			int[] step = null;
 			int[] stop = new int[] { sizex, sizey };
 			int[] start = new int[] { 0, 0 };
-			Dataset dataset = loaderEx.getDataset(null, new SliceND(shape, start, stop, step));
+			Dataset dataset = loader.getDataset(null, new SliceND(shape, start, stop, step));
 			assertArrayEquals(new int[] { sizex, sizey }, dataset.getShape());
 			int int2 = dataset.getInt(sizex-1, sizex-1); //eye sets data along diagonal
 			assertEquals(multipliers[i], int2);
@@ -101,7 +101,7 @@ public class ImageStackLoaderExTest {
 			int[] step = null;
 			int[] stop = new int[] { sizex, sizey };
 			int[] start = new int[] { sizex-1, 0 };
-			Dataset dataset = loaderEx.getDataset(null, new SliceND(shape, start, stop, step));
+			Dataset dataset = loader.getDataset(null, new SliceND(shape, start, stop, step));
 			assertArrayEquals(new int[] { 1, sizey }, dataset.getShape());
 			int int2 = dataset.getInt(0, sizex-1); //eye sets data along diagonal
 			assertEquals(multipliers[i], int2);
@@ -111,15 +111,15 @@ public class ImageStackLoaderExTest {
 	
 	@Test
 	public void test1DFiles() throws Exception {
-		String testScratchDirectoryName = TestUtils.setUpTest(ImageStackLoaderExTest.class, "test1DFiles", true);
+		String testScratchDirectoryName = TestUtils.setUpTest(ImageStackLoaderTest.class, "test1DFiles", true);
 
 
 		int[] multipliers= new int[]{2,3};
 		String[] imageFilenames = makeFiles(testScratchDirectoryName, multipliers);
 		int[] dimensions = new int[] { imageFilenames.length };
-		ImageStackLoaderEx loaderEx = new ImageStackLoaderEx(dimensions, imageFilenames);
-		assertEquals(Dataset.INT32, loaderEx.getDtype());
-		int[] shape = loaderEx.getShape();
+		ImageStackLoader loader = new ImageStackLoader(dimensions, imageFilenames);
+		assertEquals(Dataset.INT32, loader.getDtype());
+		int[] shape = loader.getShape();
 		assertArrayEquals(new int[] { 2, sizex, sizey }, shape);
 
 		//extract each image
@@ -128,7 +128,7 @@ public class ImageStackLoaderExTest {
 			int[] step = null;
 			int[] stop = new int[] { i+1, sizex, sizey };
 			int[] start = new int[] { i, 0, 0 };
-			Dataset dataset = loaderEx.getDataset(null, new SliceND(shape, start, stop, step));
+			Dataset dataset = loader.getDataset(null, new SliceND(shape, start, stop, step));
 			assertArrayEquals(new int[] { 1, sizex, sizey }, dataset.getShape());
 			int int2 = dataset.getInt(0, sizex-1, sizex-1); //eye sets data along diagonal
 			assertEquals(multipliers[i], int2);
@@ -140,7 +140,7 @@ public class ImageStackLoaderExTest {
 			int[] step = null;
 			int[] stop = new int[] { i+1, sizex, sizey };
 			int[] start = new int[] { i, sizex-1, 0 };
-			Dataset dataset = loaderEx.getDataset(null, new SliceND(shape, start, stop, step));
+			Dataset dataset = loader.getDataset(null, new SliceND(shape, start, stop, step));
 			assertArrayEquals(new int[] { 1, 1, sizey }, dataset.getShape());
 			int int2 = dataset.getInt(0, 0, sizex-1); //eye sets data along diagonal
 			assertEquals(multipliers[i], int2);
@@ -150,15 +150,15 @@ public class ImageStackLoaderExTest {
 
 	@Test
 	public void test1DFilesSliceAcrossFiles() throws Exception {
-		String testScratchDirectoryName = TestUtils.setUpTest(ImageStackLoaderExTest.class, "test1DFilesSliceAcrossFiles", true);
+		String testScratchDirectoryName = TestUtils.setUpTest(ImageStackLoaderTest.class, "test1DFilesSliceAcrossFiles", true);
 
 
 		int[] multipliers= new int[]{2,3,4,5,6};
 		String[] imageFilenames = makeFiles(testScratchDirectoryName, multipliers);
 		int[] dimensions = new int[] { imageFilenames.length };
-		ImageStackLoaderEx loaderEx = new ImageStackLoaderEx(dimensions, imageFilenames);
-		assertEquals(Dataset.INT32, loaderEx.getDtype());
-		int[] shape = loaderEx.getShape();
+		ImageStackLoader loader = new ImageStackLoader(dimensions, imageFilenames);
+		assertEquals(Dataset.INT32, loader.getDtype());
+		int[] shape = loader.getShape();
 		assertArrayEquals(new int[] { multipliers.length, sizex, sizey }, shape);
 
 
@@ -167,7 +167,7 @@ public class ImageStackLoaderExTest {
 			int[] step = null;
 			int[] stop = new int[] { multipliers.length, sizex, sizey };
 			int[] start = new int[] { 0, 0, 0 };
-			Dataset dataset = loaderEx.getDataset(null, new SliceND(shape, start, stop, step));
+			Dataset dataset = loader.getDataset(null, new SliceND(shape, start, stop, step));
 			assertArrayEquals(stop, dataset.getShape());
 			int int2 = dataset.getInt(0, sizex-1, sizex-1); //eye sets data along diagonal
 			assertEquals(multipliers[0], int2);
@@ -180,7 +180,7 @@ public class ImageStackLoaderExTest {
 			int[] step = new int[] { 1, 1, 2 };
 			int[] stop = new int[] { multipliers.length, sizex, sizey };
 			int[] start = new int[] { 0, 0, 0 };
-			Dataset dataset = loaderEx.getDataset(null, new SliceND(shape, start, stop, step));
+			Dataset dataset = loader.getDataset(null, new SliceND(shape, start, stop, step));
 			assertArrayEquals(new int[] { multipliers.length, sizex, sizey/2 }, dataset.getShape());
 			int int2 = dataset.getInt(0, sizex-2, (sizex-1)/2); //eye sets data along diagonal
 			assertEquals(multipliers[0], int2);
@@ -193,7 +193,7 @@ public class ImageStackLoaderExTest {
 			int[] step = new int[] { 1, 2, 1 };
 			int[] stop = new int[] { multipliers.length, sizex, sizey };
 			int[] start = new int[] { 0, 0, 0 };
-			Dataset dataset = loaderEx.getDataset(null, new SliceND(shape, start, stop, step));
+			Dataset dataset = loader.getDataset(null, new SliceND(shape, start, stop, step));
 			assertArrayEquals(new int[] { multipliers.length, sizex/2, sizey }, dataset.getShape());
 			int int2 = dataset.getInt(0, sizex/2-1, sizex-2); //eye sets data along diagonal
 			assertEquals(multipliers[0], int2);
@@ -206,7 +206,7 @@ public class ImageStackLoaderExTest {
 			int[] step = null;
 			int[] stop = new int[] { multipliers.length, sizex, sizex };
 			int[] start = new int[] { 0, sizex-1, sizex-1 };
-			Dataset dataset = loaderEx.getDataset(null, new SliceND(shape, start, stop, step));
+			Dataset dataset = loader.getDataset(null, new SliceND(shape, start, stop, step));
 			assertArrayEquals(new int[] { multipliers.length, 1, 1 }, dataset.getShape());
 			for( int i=0; i< multipliers.length;i++){
 				int int2 = dataset.getInt(i, 0, 0); //eye sets data along diagonal
@@ -227,15 +227,15 @@ public class ImageStackLoaderExTest {
 
 	@Test
 	public void test2DFiles() throws Exception {
-		String testScratchDirectoryName = TestUtils.setUpTest(ImageStackLoaderExTest.class, "test2DFiles", true);
+		String testScratchDirectoryName = TestUtils.setUpTest(ImageStackLoaderTest.class, "test2DFiles", true);
 
 		final int firstDim=2, secondDim=3;
 		int[] multipliers= new int[]{1,2,3,4,5,6};
 		String[] imageFilenames = makeFiles(testScratchDirectoryName, multipliers);
 		int[] dimensions = new int[] { firstDim,secondDim };
-		ImageStackLoaderEx loaderEx = new ImageStackLoaderEx(dimensions, imageFilenames);
-		assertEquals(Dataset.INT32, loaderEx.getDtype());
-		int[] shape = loaderEx.getShape();
+		ImageStackLoader loader = new ImageStackLoader(dimensions, imageFilenames);
+		assertEquals(Dataset.INT32, loader.getDtype());
+		int[] shape = loader.getShape();
 		assertArrayEquals(new int[] { firstDim, secondDim, sizex, sizey }, shape);
 
 		//extract each images
@@ -245,7 +245,7 @@ public class ImageStackLoaderExTest {
 				int[] step = null;
 				int[] stop = new int[] { i+1, j+1, sizex, sizey };
 				int[] start = new int[] { i, j, 0, 0 };
-				Dataset dataset = loaderEx.getDataset(null, new SliceND(shape, start, stop, step));
+				Dataset dataset = loader.getDataset(null, new SliceND(shape, start, stop, step));
 				assertArrayEquals(new int[] { 1, 1, sizex, sizey }, dataset.getShape());
 				int int2 = dataset.getInt(0, 0,sizex-1, sizex-1); //eye sets data along diagonal
 				assertEquals("Check value for image i:" + i + " j:" +j,multipliers[i*3+j], int2);
@@ -260,7 +260,7 @@ public class ImageStackLoaderExTest {
 				int[] step = null;
 				int[] stop = new int[] { i+1, j+1, sizex, sizey };
 				int[] start = new int[] { i, j, sizex-1, 0 };
-				Dataset dataset = loaderEx.getDataset(null, new SliceND(shape, start, stop, step));
+				Dataset dataset = loader.getDataset(null, new SliceND(shape, start, stop, step));
 				assertArrayEquals(new int[] { 1, 1, 1, sizey }, dataset.getShape());
 				int int2 = dataset.getInt(0, 0, 0, sizex-1); //eye sets data along diagonal
 				assertEquals("Check value for image i:" + i + " j:" +j,multipliers[i*3+j], int2);
@@ -272,7 +272,7 @@ public class ImageStackLoaderExTest {
 			int[] step = null;
 			int[] stop = new int[] { firstDim, secondDim, sizex, sizey };
 			int[] start = new int[] { 0, 0, 0, 0 };
-			Dataset dataset = loaderEx.getDataset(null, new SliceND(shape, start, stop, step));
+			Dataset dataset = loader.getDataset(null, new SliceND(shape, start, stop, step));
 			assertArrayEquals(stop, dataset.getShape());
 			int int2 = dataset.getInt( 0, 0,sizex-1, sizex-1); //eye sets data along diagonal
 			assertEquals(multipliers[0], int2);
@@ -285,7 +285,7 @@ public class ImageStackLoaderExTest {
 			int[] step = new int[] { 1, 1, 1, 2 };
 			int[] stop = new int[] { firstDim, secondDim, sizex, sizey };
 			int[] start = new int[] { 0, 0, 0, 0 };
-			Dataset dataset = loaderEx.getDataset(null, new SliceND(shape, start, stop, step));
+			Dataset dataset = loader.getDataset(null, new SliceND(shape, start, stop, step));
 			assertArrayEquals(new int[] { firstDim, secondDim, sizex, sizey/2 }, dataset.getShape());
 			int int2 = dataset.getInt( 0, 0,sizex-2, (sizex-1)/2); //eye sets data along diagonal
 			assertEquals(multipliers[0], int2);
@@ -300,7 +300,7 @@ public class ImageStackLoaderExTest {
 			int[] step = null;
 			int[] stop = new int[] {firstDim, secondDim, sizex, sizex };
 			int[] start = new int[] { 0,0, sizex-1, sizex-1 };
-			Dataset dataset = loaderEx.getDataset(null, new SliceND(shape, start, stop, step));
+			Dataset dataset = loader.getDataset(null, new SliceND(shape, start, stop, step));
 			assertArrayEquals(new int[] {firstDim, secondDim, 1, 1 }, dataset.getShape());
 			for( int i=0; i< firstDim; i++)
 			{

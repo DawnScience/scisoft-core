@@ -318,6 +318,7 @@ public class NexusFileExecutionVisitorTest {
 		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
 		assertArrayEquals(new int[]{inputShape[0],inputShape[1]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getShape());
 		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0").getShape());
+		assertArrayEquals(new int[]{inputShape[1]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_1").getShape());
 
 		testDataset( op11, "5,10,:", dh.getLazyDataset("/entry/result/data"));
 		

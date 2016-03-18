@@ -1282,8 +1282,11 @@ def ones(shape, dtype=float64):
     return _df.ones(dtype.elements, asIterable(shape), dtype.value)
 
 @_wrap
-def ones_like(a):
-    return _df.zeros(a).fill(1)
+def ones_like(a, dtype=None):
+    o = _df.ones(a)
+    if dtype is not None:
+        o = o.cast(dtype.value)
+    return o
 
 @_wrapout
 def zeros(shape, dtype=float64, elements=None):
@@ -1300,12 +1303,39 @@ def zeros(shape, dtype=float64, elements=None):
     return _df.zeros(dtype.elements, asIterable(shape), dtype.value)
 
 @_wrap
-def zeros_like(a):
-    return _df.zeros(a)
+def zeros_like(a, dtype=None):
+    z = _df.zeros(a)
+    if dtype is not None:
+        dtype = _translatenativetype(dtype)
+        z = z.cast(dtype.value)
+    return z
 
 empty = zeros
 
 empty_like = zeros_like
+
+@_wrapout
+def full(shape, fill_value, dtype=None, elements=None):
+    '''Create a dataset filled with fill_value'''
+    if dtype is None:
+        dtype = _getdtypefromobj(fill_value)
+    else:
+        dtype = _translatenativetype(dtype)
+    if elements is not None:
+        if type(dtype) is _types.FunctionType:
+            dtype = dtype(elements)
+        else:
+            dtype.elements = elements
+    elif type(dtype) is _types.FunctionType:
+        raise ValueError, "Given data-type is a function and needs elements defining"
+
+    return _df.zeros(dtype.elements, asIterable(shape), dtype.value).fill(fill_value)
+
+def full_like(a, fill_value, dtype=None, elements=None):
+    f = full(a.shape, fill_value, elements=elements)
+    if dtype is not None:
+        f = f.astype(dtype)
+    return f
 
 def linspace(start, stop, num=50, endpoint=True, retstep=False):
     '''Create a 1D dataset from start to stop in given number of steps

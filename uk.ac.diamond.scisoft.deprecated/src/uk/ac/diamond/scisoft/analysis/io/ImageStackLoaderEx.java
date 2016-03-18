@@ -27,7 +27,9 @@ import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
  * shape of the first image
  * 
  * The type of the dataset is set to equal the type of the first image.
+ * @deprecated Use {@link ImageStackLoader} directly instead
  */
+@Deprecated
 public class ImageStackLoaderEx extends ImageStackLoader {
 	public ImageStackLoaderEx(int[] dimensions, String[] imageFilenames, String directory) throws Exception {
 		this(new StringDataset(imageFilenames, dimensions), null, directory);

@@ -279,7 +279,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 						holder.addDataset(name, ds);
 					}
 					if (useImageLoader) {
-						ImageStackLoaderEx loader;
+						ImageStackLoader loader;
 						try {
 							String[] oldpaths = sds.getData();
 							String[] paths = new String[oldpaths.length];
@@ -289,7 +289,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 								else
 									paths[j] = oldpaths[j];
 							}
-							loader = new ImageStackLoaderEx(sds.getShape(), paths);
+							loader = new ImageStackLoader(sds.getShape(), paths);
 							name += "_image";
 							LazyDataset lazyDataset = new LazyDataset(name, loader.getDtype(), loader.getShape(), loader);
 							holder.addDataset(name, lazyDataset);

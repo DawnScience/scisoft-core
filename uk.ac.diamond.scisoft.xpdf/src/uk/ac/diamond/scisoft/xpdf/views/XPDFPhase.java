@@ -378,14 +378,16 @@ class XPDFPhase {
 	public double[] getUnitCellAngle() {
 		double[] assignedAngles = Arrays.copyOf(unitCellDegrees, nDim);
 		// Account for fixed angles from the space group.
-		int[] fixedAngles = spaceGroup.getSystem().getFixedAngles();
+		int[] fixedAngles = (spaceGroup != null) ? spaceGroup.getSystem().getFixedAngles() : null;
 		
-		for (int i = 0; i < nDim; i++) {
-			int fixedAngle = fixedAngles[i];
-			if (fixedAngle > 0)
-				assignedAngles[i] = fixedAngle;
-		}
-		
+
+		if (fixedAngles != null) {
+			for (int i = 0; i < nDim; i++) {
+				int fixedAngle = fixedAngles[i];
+				if (fixedAngle > 0)
+					assignedAngles[i] = fixedAngle;
+			}
+		}		
 		return assignedAngles;
 	}
 	
@@ -441,7 +443,7 @@ class XPDFPhase {
 	 */
 	public XPDFComposition getComposition() {
 		
-		return new XPDFComposition("");
+		return new XPDFComposition(getHallNotation(true, false));
 	}
 	
 	/**
@@ -541,7 +543,7 @@ class XPDFPhase {
 	 * Returns the chemical formula of this phase in Hall notation.
 	 * @return chemical formula in Hall notation.
 	 */
-	public String getHallNotation(boolean reduceToPrimitive) {
+	public String getHallNotation(boolean reduceToPrimitive, boolean useSubscripts) {
 		
 		final int nElements = 100; // Up to and including fermium
 		
@@ -602,10 +604,10 @@ class XPDFPhase {
 		
 		// Do the special case for organic compounds
 		if (atomCount.containsKey(6)) {
-			hall += elementSymbol[6] + prettifyDouble(atomCount.get(6));
+			hall += elementSymbol[6] + prettifyDouble(atomCount.get(6), useSubscripts);
 			atomCount.remove(6);
 			if (atomCount.containsKey(1)) {
-				hall += elementSymbol[1] + prettifyDouble(atomCount.get(1));
+				hall += elementSymbol[1] + prettifyDouble(atomCount.get(1), useSubscripts);
 				atomCount.remove(1);
 			}
 		}
@@ -614,13 +616,16 @@ class XPDFPhase {
 		for (int i = 0; i < nElements; i++) { 
 			int z = alphabeticElements[i];
 			if (atomCount.containsKey(z))
-				hall += elementSymbol[z] + prettifyDouble(atomCount.get(z));
+				hall += elementSymbol[z] + prettifyDouble(atomCount.get(z), useSubscripts);
 		}
-		return (hall.length() != 0) ? hall : "-";
+		if (hall.length() != 0)
+			return hall;
+		else
+			return (useSubscripts) ? "-" : "";
 	}
 	
 	// Format the atom multiplicity as nicely as we can
-	private String prettifyDouble(double n) {
+	private String prettifyDouble(double n, boolean useSubscripts) {
 		if (n == 1.0)
 			return "";
 		
@@ -628,8 +633,9 @@ class XPDFPhase {
 		String normalNumbers = "0123456789.";
 		String subscriptNumbers = "₀₁₂₃₄₅₆₇₈₉.";
 		
-		for (int i = 0; i < normalNumbers.length(); i++ )
-			number = number.replace(normalNumbers.charAt(i), subscriptNumbers.charAt(i));
+		if (useSubscripts)
+			for (int i = 0; i < normalNumbers.length(); i++ )
+				number = number.replace(normalNumbers.charAt(i), subscriptNumbers.charAt(i));
 		
 		return number;
 	}

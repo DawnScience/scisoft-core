@@ -107,10 +107,12 @@ public class XPDFComposition {
 	 * 						format (for example, water is H2O, hexane is C6H14)
 	 */
 	public XPDFComposition(String materialFormula) {
+		this.atomCount = new HashMap<Integer, Double>();
+		if (materialFormula == null || materialFormula.length() == 0)
+			return;
 		// Get xraylib to do the heavy lifting
 		compoundData cD = Xraylib.CompoundParser(materialFormula);
 		// cD has a list of elements and mass fractions
-		this.atomCount = new HashMap<Integer, Double>();
 		double[] numberFractions = new double[cD.nElements];
 		double sumNum = 0;
 		for (int i = 0; i < cD.nElements; i++) {
@@ -337,6 +339,36 @@ public class XPDFComposition {
 	}
 
 	/**
+	 * Weights the composition by a constant factor
+	 * @param weight
+	 * 				the weigthing factor to apply
+	 */
+	public void weight(double weight) {
+		for (Map.Entry<Integer, Double> entry : atomCount.entrySet()) {
+			atomCount.put(entry.getKey(), entry.getValue()*weight);
+		}
+	}
+
+	/**
+	 * Adds all the atoms of another composition to this one.
+	 * @param compo2
+	 * 				the composition whose atoms to add
+	 */
+	public void add(XPDFComposition compo2) {
+		for (Map.Entry<Integer, Double> entry : compo2.atomCount.entrySet()) {
+			if (atomCount.containsKey(entry.getKey()))
+				atomCount.put(entry.getKey(), atomCount.get(entry.getKey()) + entry.getValue());
+			else
+				atomCount.put(entry.getKey(), entry.getValue());
+		}
+	}
+	
+	@Override
+	public String toString() {
+		return getHallNotation(true);
+	}
+	
+	/**
 	 * Returns a list of data about the strongest x-ray fluorescences.
 	 * @param energy
 	 * 				energy of the exciting beam in keV.
@@ -439,6 +471,79 @@ public class XPDFComposition {
 		return massAttenuation;
 	}
 
+	/**
+	 * Returns the chemical formula of this phase.
+	 * <p>
+	 * Returns the chemical formula of this phase in Hall notation.
+	 * @return chemical formula in Hall notation.
+	 */
+	public String getHallNotation(boolean useSubscripts) {
+		
+		final int nElements = 100; // Up to and including fermium
+		
+		final String[] elementSymbol = { "n",
+		"H","He","Li","Be","B","C","N","O","F","Ne",
+		"Na","Mg","Al","Si","P","S","Cl","Ar","K","Ca",
+		"Sc","Ti","V","Cr","Mn","Fe","Co","Ni","Cu","Zn",
+		"Ga","Ge","As","Se","Br","Kr","Rb","Sr","Y","Zr",
+        "Nb","Mo","Tc","Ru","Rh","Pd","Ag","Cd","In","Sn",
+        "Sb","Te","I","Xe","Cs","Ba","La","Ce","Pr","Nd",
+        "Pm","Sm","Eu","Gd","Tb","Dy","Ho","Er","Tm","Yb",
+        "Lu","Hf","Ta","W","Re","Os","Ir","Pt","Au","Hg",
+        "Tl","Pb","Bi","Po","At","Rn","Fr","Ra","Ac","Th",
+        "Pa","U","Np","Pu","Am","Cm","Bk","Cf","Es","Fm"};
+		
+		final int[] alphabeticElements = {
+				89, 47, 13, 95, 18, 33, 85, 79, 5, 56,
+				4, 83, 97, 35, 6, 20, 48, 58, 98, 17,
+				96, 27, 24, 55, 29, 66, 68, 99, 63, 9,
+				26, 100, 87, 31, 64, 32, 1, 2, 72, 80,
+				67, 53, 49, 77, 19, 36, 57, 3, 71, 12,
+				25, 42, 7, 11, 41, 60, 10, 28, 93, 8,
+				76, 15, 91, 82, 46, 61, 84, 59, 78, 94,
+				88, 37, 75, 45, 86, 44, 16, 51, 21, 34,
+				14, 62, 50, 38, 73, 65, 43, 52, 90, 22,
+				81, 69, 92, 23, 74, 54, 39, 70, 30, 40
+		};
+
+		
+		String hall = "";
+		Map<Integer, Double> atomCount = new HashMap<Integer, Double>(this.atomCount);
+		
+		// Do the special case for organic compounds
+		if (atomCount.containsKey(6)) {
+			hall += elementSymbol[6] + prettifyDouble(atomCount.get(6), useSubscripts);
+			atomCount.remove(6);
+			if (atomCount.containsKey(1)) {
+				hall += elementSymbol[1] + prettifyDouble(atomCount.get(1), useSubscripts);
+				atomCount.remove(1);
+			}
+		}
+		
+		// Do all the remaining elements in order
+		for (int i = 0; i < nElements; i++) { 
+			int z = alphabeticElements[i];
+			if (atomCount.containsKey(z))
+				hall += elementSymbol[z] + prettifyDouble(atomCount.get(z), useSubscripts);
+		}
+		return (hall.length() != 0) ? hall : "-";
+	}
+	
+	// Format the atom multiplicity as nicely as we can
+	private String prettifyDouble(double n, boolean useSubscripts) {
+		if (n == 1.0)
+			return "";
+		
+		String number = (n == Math.floor(n)) ? Integer.toString((int) n) :  Double.toString(n);
+		String normalNumbers = "0123456789.";
+		String subscriptNumbers = "₀₁₂₃₄₅₆₇₈₉.";
+		
+		if (useSubscripts)
+			for (int i = 0; i < normalNumbers.length(); i++ )
+				number = number.replace(normalNumbers.charAt(i), subscriptNumbers.charAt(i));
+		
+		return number;
+	}
 	
 }
 

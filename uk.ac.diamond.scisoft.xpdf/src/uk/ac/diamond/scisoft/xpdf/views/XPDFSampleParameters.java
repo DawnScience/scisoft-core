@@ -20,17 +20,19 @@ import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentForm;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentPlate;
+import uk.ac.diamond.scisoft.xpdf.XPDFComposition;
 import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 
 /**
  * Holds the data relating to a sample.
- * @author Timothy Spain, timothy.spain@dimaond.ac.uk
+ * @author Timothy Spain, timothy.spain@diamond.ac.uk
  *
  */
 class XPDFSampleParameters {
 	private int id;
 	private List<XPDFPhase> phases;
+	private List<Double> fractions; // mass fractions for the above phases.
 	private XPDFTargetComponent component;
 	
 	/**
@@ -39,6 +41,7 @@ class XPDFSampleParameters {
 	public XPDFSampleParameters() {
 		this.component = new XPDFTargetComponent();
 		this.phases = new ArrayList<XPDFPhase>();
+		this.fractions = new ArrayList<Double>();
 	}
 
 	/**
@@ -56,6 +59,7 @@ class XPDFSampleParameters {
 	public XPDFSampleParameters(XPDFSampleParameters inSamp) {
 		this.component = new XPDFTargetComponent(inSamp.component);
 		this.phases = new ArrayList<XPDFPhase>(inSamp.phases);
+		this.fractions = new ArrayList<Double>(inSamp.fractions);
 	}
 	
 	/**
@@ -96,6 +100,36 @@ class XPDFSampleParameters {
 		this.phases = phases;
 	}
 
+	public void addPhase(XPDFPhase phase) {
+		this.addPhase(phase, 1.0);
+	}
+	
+	public void addPhase(XPDFPhase phase, double weighting) {
+		phases.add(phase);
+		fractions.add(phases.indexOf(phase), weighting);
+	}
+	
+	public List<Double> getPhaseWeightings() {
+		return fractions;
+	}
+	
+	public void setPhaseWeightings(List<Double> weightings) {
+		fractions = weightings;
+	}
+	
+	public void setPhaseWeighting(XPDFPhase phase, double weighting) {
+		if (phases.contains(phase)) {
+			fractions.add(phases.indexOf(phase), weighting);
+		}
+	}
+	
+	public double getPhaseWeighting(XPDFPhase phase) {
+		if (phases.contains(phase))
+			return fractions.get(phases.indexOf(phase));
+		else
+			return 0.0;
+	}
+	
 	/**
 	 * @return the isSample
 	 */
@@ -136,7 +170,18 @@ class XPDFSampleParameters {
 	 * @return the ASCII formula of the substance
 	 */
 	public String getComposition() {
-		return getForm().getMaterialName();
+		List<XPDFComposition> phaseCompositions = new ArrayList<XPDFComposition>();
+		for (XPDFPhase phase : phases)
+			phaseCompositions.add(phase.getComposition());
+		double totalWeight = 0.0;
+		for (double weight : fractions)
+			totalWeight += weight;
+		for (XPDFComposition compo : phaseCompositions)
+			compo.weight(1.0/totalWeight);
+		XPDFComposition totalComposition = new XPDFComposition("");
+		for (XPDFComposition compo : phaseCompositions)
+			totalComposition.add(compo);
+		return totalComposition.getHallNotation(true);
 	}
 	/**
 	 * @param compoString
@@ -151,7 +196,16 @@ class XPDFSampleParameters {
 	 * @return the crystallographic density of the material in g/cm³.
 	 */
 	public double getDensity() {
-		return getForm().getDensity();
+		
+		// Weighted density of all phases
+		// TODO: check the weighting
+		double overallDensity = 0;
+		double totalWeight = 0.0;
+		for (double weight : fractions)
+			totalWeight += weight;
+		for (XPDFPhase phase : phases)
+			overallDensity += phase.getDensity()*getPhaseWeighting(phase)/totalWeight;
+		return overallDensity;
 	}
 	/**
 	 * @param density

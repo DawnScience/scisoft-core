@@ -13,19 +13,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.DialogCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -36,6 +43,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
@@ -46,9 +54,12 @@ import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
 
 /**
@@ -1007,11 +1018,18 @@ class SampleGroupedTable {
 
 	private static class PhaseColumnInterface implements ColumnInterface {
 
-		private String phasesString(Collection<XPDFPhase> phases) {
+		private String phasesString(Collection<WeightedPhase> phases) {
 			StringBuilder sb = new StringBuilder();
-			for (XPDFPhase phase : phases) {
-				sb.append(phase.getName());
-				sb.append(", ");
+			double totalWeight = 0.0;
+			for (WeightedPhase phase : phases) {
+				totalWeight += phase.getWeight();
+			}
+					
+			for (WeightedPhase phase : phases) {
+				sb.append(phase.getPhase().getName());
+				sb.append("(");
+				sb.append(Double.toString(phase.getWeight()/totalWeight));
+				sb.append("), ");
 			}
 			if (sb.length() > 2) sb.delete(sb.length()-2, sb.length());
 			return sb.toString();
@@ -1019,35 +1037,91 @@ class SampleGroupedTable {
 
 		@Override
 		public EditingSupport get(final ColumnViewer v) {
-			// TODO: Should interact with the phases table
 			return new EditingSupport(v) {
 
-				@Override
-				protected void setValue(Object element, Object value) {
-					String[] arrayOfPhases = ((String) value).split(","); 
-					List<XPDFPhase> listOfPhases = new ArrayList<XPDFPhase>();
-					for (int i = 0; i < arrayOfPhases.length; i++) {
-						XPDFPhase newPhase = new XPDFPhase();
-						newPhase.setName(arrayOfPhases[i].trim());
-						listOfPhases.add(newPhase);
-					}
-					((XPDFSampleParameters) element).setPhases(listOfPhases);
-					v.refresh();
-				}
-
-				@Override
-				protected Object getValue(Object element) {
-					return phasesString(((XPDFSampleParameters) element).getPhases());
-				}
+//				@Override
+//				protected void setValue(Object element, Object value) {
+//					((XPDFSampleParameters) element).setComposition((value != null) ? (String) value : null);
+//					v.refresh();
+//				}
 
 				@Override
 				protected CellEditor getCellEditor(Object element) {
-					return new TextCellEditor(((TableViewer) v).getTable());
+//					return new TextCellEditor(((TableViewer) v).getTable());
+					return new DialogCellEditor(((TableViewer) v).getTable()) {
+						
+						private CompositionDialog compoDialog;
+						private List<WeightedPhase> phases;
+						
+						@Override
+						protected Object openDialogBox(Control cellEditorWindow) {
+							compoDialog = new CompositionDialog(cellEditorWindow.getShell());
+							compoDialog.createDialogArea(((TableViewer) v).getTable());
+							compoDialog.setPhases(phases);
+							compoDialog.open();
+							return null;
+						}
+						
+						@Override
+						protected Button createButton(Composite parent) {
+							Button button = super.createButton(parent);
+							button.setText("+");
+							return button;
+						}
+						@Override
+						protected Object doGetValue() {
+							if (compoDialog != null) {
+								return compoDialog.getPhases();
+							} else {
+								return null;
+							}
+						}
+						@Override
+						protected void doSetValue(Object value) {
+							if (value instanceof List<?>)
+								phases = ((List<WeightedPhase>) value);
+						}
+						
+					};
+				}
+				@Override
+				protected Object getValue(Object element) {
+					if (element instanceof XPDFSampleParameters) {
+						// create a map of phases to fractions
+						XPDFSampleParameters sample = (XPDFSampleParameters) element;
+						List<XPDFPhase> phaseList = sample.getPhases();
+						List<Double> fractionList = sample.getPhaseWeightings();
+						List<WeightedPhase> weightedPhases = new ArrayList<WeightedPhase>();
+						for (int i = 0; i < phaseList.size(); i++)
+							weightedPhases.add(new WeightedPhase(phaseList.get(i), fractionList.get(i)));
+						return weightedPhases;
+					} else {
+						return getLabelProvider().getText(element);
+					}
+						
+				}
+				
+				@Override
+				protected void setValue(Object element, Object value) {
+					if (value instanceof List<?>) {
+						List<?> genericList = (List<?>) value;
+						List<WeightedPhase> phaseList;
+						try {
+							phaseList = (List<WeightedPhase>) genericList;
+						} catch (ClassCastException cCE) {
+							return;
+						}
+						XPDFSampleParameters sample = (XPDFSampleParameters) element;
+						sample.setPhases(new ArrayList<XPDFPhase>());
+						for (WeightedPhase phase : phaseList) {
+							sample.addPhase(phase.getPhase(), phase.getWeight());
+						}
+					}
 				}
 
 				@Override
 				protected boolean canEdit(Object element) {
-					return false;
+					return true;
 				}
 			};
 		}
@@ -1063,7 +1137,12 @@ class SampleGroupedTable {
 			return new ColumnLabelProvider() {
 				@Override
 				public String getText(Object element) {
-					return phasesString(((XPDFSampleParameters) element).getPhases());
+					XPDFSampleParameters sample = ((XPDFSampleParameters) element);
+					List<WeightedPhase> wPhases = new ArrayList<WeightedPhase>();
+					for (XPDFPhase phase : sample.getPhases()) {
+						wPhases.add(new WeightedPhase(phase, sample.getPhaseWeighting(phase)));
+					}
+					return phasesString(wPhases);
 				}
 			};
 		}
@@ -1088,32 +1167,30 @@ class SampleGroupedTable {
 	private static class CompositionColumnInterface implements ColumnInterface {
 
 		@Override
-		public EditingSupport get(final ColumnViewer v) {
-			// TODO: Should be uneditable, derived from the phases
+		public EditingSupport get(ColumnViewer v) {
 			return new EditingSupport(v) {
 
 				@Override
 				protected void setValue(Object element, Object value) {
-					((XPDFSampleParameters) element).setComposition((value != null) ? (String) value : null);
-					v.refresh();
 				}
 
 				@Override
 				protected Object getValue(Object element) {
-					return ((XPDFSampleParameters) element).getComposition();
+					return ((XPDFSampleParameters) element).getId();
 				}
 
 				@Override
 				protected CellEditor getCellEditor(Object element) {
-					return new TextCellEditor(((TableViewer) v).getTable());
+					return null;
 				}
 
 				@Override
 				protected boolean canEdit(Object element) {
-					return true;
+					return false;
 				}
 			};
 		}
+				
 
 		@Override
 		public SelectionAdapter getSelectionAdapter(SampleGroupedTable tab,
@@ -1133,6 +1210,13 @@ class SampleGroupedTable {
 				public String getText(Object element) {
 					return ((XPDFSampleParameters) element).getComposition();
 				}
+				
+				@Override
+				public Font getFont(Object element) {
+					return (presentAsUneditable((XPDFSampleParameters) element)) ?
+							JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT) :
+								JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);
+				}
 			};
 		}
 
@@ -1148,7 +1232,7 @@ class SampleGroupedTable {
 
 		@Override
 		public boolean presentAsUneditable(Object element) {
-			return false;
+			return true;
 		}
 
 	}
@@ -1200,6 +1284,13 @@ class SampleGroupedTable {
 				public String getText(Object element) {
 					return Double.toString(((XPDFSampleParameters) element).getDensity());
 				}
+
+				@Override
+				public Font getFont(Object element) {
+					return (presentAsUneditable((XPDFSampleParameters) element)) ?
+							JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT) :
+								JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);
+				}
 			};
 		}
 
@@ -1215,7 +1306,7 @@ class SampleGroupedTable {
 
 		@Override
 		public boolean presentAsUneditable(Object element) {
-			return false;
+			return true;
 		}
 
 	}
@@ -1403,9 +1494,10 @@ class SampleGroupedTable {
 				@Override
 				protected void setValue(Object element, Object value) {
 					String[] dimStrings = ((String) value).split(",", 2);
-					if (dimStrings.length == 1)
-						((XPDFSampleParameters) element).setDimensions(0, Double.parseDouble(dimStrings[0]));
-					else if (dimStrings.length > 1)
+					if (dimStrings.length == 1) {
+						if (!dimStrings[0].isEmpty())
+							((XPDFSampleParameters) element).setDimensions(0, Double.parseDouble(dimStrings[0]));
+					} else if (dimStrings.length > 1)
 						((XPDFSampleParameters) element).setDimensions(Double.parseDouble(dimStrings[0]), Double.parseDouble(dimStrings[1]));
 					v.refresh();
 				}
@@ -1483,4 +1575,88 @@ class SampleGroupedTable {
 
 	}
 
+	private static class WeightedPhase {
+		private XPDFPhase phase;
+		private double weight;
+		
+		public WeightedPhase(XPDFPhase phase, double weight) {
+			this.phase = phase;
+			this.weight = weight;
+		}
+		
+		public XPDFPhase getPhase() {
+			return phase;
+		}
+		
+		public double getWeight() {
+			return weight;
+		}
+		
+		public static List<WeightedPhase> makeWeightedPhases(List<XPDFPhase> phases, List<Double> weightings) {
+			List<WeightedPhase> wPhases = new ArrayList<WeightedPhase>();
+			for (XPDFPhase phase : phases) {
+				wPhases.add(new WeightedPhase(phase, weightings.get(phases.indexOf(phase))));
+			}
+			return wPhases;
+		}
+	}
+	
+	private static class CompositionDialog extends Dialog {
+		private List<WeightedPhase> phases;
+		private TableViewer phaseTable;
+		
+		protected CompositionDialog(Shell parentShell) {
+			super(parentShell);
+		}
+		
+		@Override
+		protected Control createDialogArea(Composite parent) {
+			Composite container = (Composite) super.createDialogArea(parent);
+			Composite tableHolder = new Composite(container, SWT.NONE);
+			tableHolder.setLayout(new TableColumnLayout());
+			phaseTable = new TableViewer(tableHolder, SWT.BORDER); 	
+			createColumns();
+			
+			return container;
+		}
+		
+		@Override
+		protected void configureShell(Shell newShell) {
+			super.configureShell(newShell);
+			newShell.setText("Sample Composition Editor");
+		}
+		
+		@Override
+		protected Point getInitialSize() {
+			return new Point(640, 480);
+		}
+		
+		@Override
+		protected boolean isResizable() {
+			return true;
+		}
+		
+		public List<WeightedPhase> getPhases() {
+			return phases;
+		}
+		
+		public void setPhases(List<WeightedPhase> phases) {
+			this.phases = new ArrayList<WeightedPhase>();
+			for (WeightedPhase phase : phases)
+				this.phases.add(phase);
+		}
+		
+		private void createColumns() {
+			TableViewerColumn phaseColumn = new TableViewerColumn(phaseTable, SWT.NONE, 0),
+					fractionColumn = new TableViewerColumn(phaseTable, SWT.NONE, 1);
+			phaseColumn.getColumn().setText("Phase");
+			fractionColumn.getColumn().setText("Fraction");
+			TableColumnLayout tCL = (TableColumnLayout) phaseTable.getTable().getParent().getLayout();
+			tCL.setColumnData(phaseColumn.getColumn(), new ColumnWeightData(20, false));
+			tCL.setColumnData(fractionColumn.getColumn(), new ColumnWeightData(10, false));
+			phaseColumn.setLabelProvider(new ColumnLabelProvider() {
+			});
+		}
+	}
+	
 }

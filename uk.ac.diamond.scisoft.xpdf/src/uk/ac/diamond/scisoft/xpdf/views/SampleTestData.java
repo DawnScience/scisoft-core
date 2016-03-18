@@ -40,10 +40,8 @@ class SampleTestData {
 		switch (name) {
 		case("Barium Titanate"): {
 			sample.setName("Barium Titanate");
-			List<XPDFPhase> phases = new ArrayList<XPDFPhase>();
-			phases.add(createTestPhase("BTO"));
-			phases.add(createTestPhase("Calcium titanate"));
-			sample.setPhases(phases);
+			sample.addPhase(createTestPhase("BTO"), 0.9);
+			sample.addPhase(createTestPhase("Calcium titanate"), 0.1);
 			sample.setComposition("Ba0.9Ca0.1TiO3"); // Should be "Ba0.9Ca0.1TiO3"
 			sample.setDensity(3.71);
 			sample.setAsSample();
@@ -51,9 +49,7 @@ class SampleTestData {
 		}
 		case("Rutile"): {
 			sample.setName("Rutile");
-			List<XPDFPhase> phases = new ArrayList<XPDFPhase>();
-			phases.add(createTestPhase("TiO2"));
-			sample.setPhases(phases);
+			sample.addPhase(createTestPhase("TiO2"));
 			sample.setComposition("TiO2");
 			sample.setDensity(6.67);
 			sample.setAsSample();
@@ -62,9 +58,7 @@ class SampleTestData {
 		case("Quartz Capillary"): {
 			sample.setName("Quartz Capillary");
 			sample.setAsContainer();
-			List<XPDFPhase> phases = new ArrayList<XPDFPhase>();
-			phases.add(createTestPhase("cSiO2"));
-			sample.setPhases(phases);
+			sample.addPhase(createTestPhase("cSiO2"));
 			sample.setComposition("SiO2");
 			sample.setDensity(2.65);
 			sample.setPackingFraction(1.0);
@@ -75,9 +69,7 @@ class SampleTestData {
 		case("ceria"): {
 			sample.setName("Ceria SRM");
 			sample.setAsSample();
-			List<XPDFPhase> phases = new ArrayList<XPDFPhase>();
-			phases.add(createTestPhase("ceria"));
-			sample.setPhases(phases);
+			sample.addPhase(createTestPhase("ceria"));
 			sample.setComposition("CeO2");
 			sample.setDensity(7.65);
 			break;
@@ -165,6 +157,8 @@ class SampleTestData {
 			phase.setUnitCellLength(0, 5.41165);
 			// Cubic, 90°, 90°, 90°
 			phase.addComment("I love you, ceria!");
+			phase.addAtom(new XPDFAtom("ox", 8, 1.0, new double[] {0.25,  0.25, 0.25}, "c"));
+			phase.addAtom(new XPDFAtom("ce", 58, 1.0, new double[] {0.0,  0.0, 0.0}, "a"));
 			break;
 		}
 		case ("microcline"): {

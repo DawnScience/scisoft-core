@@ -12,7 +12,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 @Atomic
 public class Junk1Dto1DAuxOperation extends Junk1Dto1DOperation {
 
-	int[] auxShape = new int[]{1};
+	int[] auxShape = new int[]{};
 	
 	@Override
 	public String getId() {

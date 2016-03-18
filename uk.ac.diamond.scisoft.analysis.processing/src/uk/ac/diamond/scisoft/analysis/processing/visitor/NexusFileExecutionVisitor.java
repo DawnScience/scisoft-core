@@ -295,6 +295,8 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 			//1D to 2D
 			setDims.add(dsShape.length-1);
 		}
+		
+		if (data.getSize() == 1) setDims.clear();
 
 		String[] axNames = null;
 		if (first) axNames = new String[data.getRank()];

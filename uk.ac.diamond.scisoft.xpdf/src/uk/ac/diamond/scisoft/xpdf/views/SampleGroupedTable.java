@@ -20,6 +20,9 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.TableColumnLayout;
@@ -1014,7 +1017,7 @@ class SampleGroupedTable {
 
 	}
 
-	private static class PhaseColumnInterface implements ColumnInterface {
+	private class PhaseColumnInterface implements ColumnInterface {
 
 		private String phasesString(Collection<WeightedPhase> phases) {
 			StringBuilder sb = new StringBuilder();
@@ -1609,9 +1612,11 @@ class SampleGroupedTable {
 		}
 	}
 	
-	private static class CompositionDialog extends Dialog {
+	private class CompositionDialog extends Dialog {
 		private List<WeightedPhase> phases;
-		private TableViewer phaseTable;
+		private TableViewer phaseTableViewer;
+		
+		private Action addPhaseAction, deletePhaseAction;
 		
 		protected CompositionDialog(Shell parentShell) {
 			super(parentShell);
@@ -1624,10 +1629,10 @@ class SampleGroupedTable {
 			Composite tableHolder = new Composite(container, SWT.NONE);
 			tableHolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			tableHolder.setLayout(new TableColumnLayout());
-			phaseTable = new TableViewer(tableHolder, SWT.BORDER); 	
+			phaseTableViewer = new TableViewer(tableHolder, SWT.BORDER); 	
 			createColumns();
-			phaseTable.getTable().setHeaderVisible(true);			
-			phaseTable.setContentProvider(new IStructuredContentProvider() {
+			phaseTableViewer.getTable().setHeaderVisible(true);			
+			phaseTableViewer.setContentProvider(new IStructuredContentProvider() {
 				
 				@Override
 				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
@@ -1645,11 +1650,34 @@ class SampleGroupedTable {
 				}
 			});
 			
-			phaseTable.setInput(phases);
+			phaseTableViewer.setInput(phases);
+			
+			// Add/remove phase actions
+			createActions();
 			
 			return container;
 		}
 		
+		private void createActions() {
+			addPhaseAction = new AddPhaseAction();
+			((AddPhaseAction) addPhaseAction).setPhaseTable(phaseTable);
+			deletePhaseAction = new DeletePhaseAction();
+			deletePhaseAction.setText("Delete");
+			deletePhaseAction.setToolTipText("Delete selected phases");
+			
+//			hookIntoContextMenu();
+			MenuManager menuMan = new MenuManager("#PopupMenu");
+			menuMan.setRemoveAllWhenShown(true);
+			menuMan.addMenuListener(new IMenuListener() {
+				
+				@Override
+				public void menuAboutToShow(IMenuManager manager) {
+					manager.add(deletePhaseAction);					
+				}
+			});
+			phaseTableViewer.getControl().setMenu(menuMan.createContextMenu(phaseTableViewer.getControl()));
+		}
+
 		@Override
 		protected void configureShell(Shell newShell) {
 			super.configureShell(newShell);
@@ -1677,11 +1705,11 @@ class SampleGroupedTable {
 		}
 		
 		private void createColumns() {
-			TableViewerColumn phaseColumn = new TableViewerColumn(phaseTable, SWT.NONE, 0),
-					fractionColumn = new TableViewerColumn(phaseTable, SWT.NONE, 1);
+			TableViewerColumn phaseColumn = new TableViewerColumn(phaseTableViewer, SWT.NONE, 0),
+					fractionColumn = new TableViewerColumn(phaseTableViewer, SWT.NONE, 1);
 			phaseColumn.getColumn().setText("Phase");
 			fractionColumn.getColumn().setText("Fraction");
-			TableColumnLayout tCL = (TableColumnLayout) phaseTable.getTable().getParent().getLayout();
+			TableColumnLayout tCL = (TableColumnLayout) phaseTableViewer.getTable().getParent().getLayout();
 			tCL.setColumnData(phaseColumn.getColumn(), new ColumnWeightData(20, false));
 			tCL.setColumnData(fractionColumn.getColumn(), new ColumnWeightData(10, false));
 			phaseColumn.setLabelProvider(new ColumnLabelProvider() {
@@ -1708,7 +1736,7 @@ class SampleGroupedTable {
 
 				@Override
 				protected CellEditor getCellEditor(Object element) {
-					return new TextCellEditor(((TableViewer) phaseTable).getTable());
+					return new TextCellEditor(((TableViewer) phaseTableViewer).getTable());
 				}
 
 				@Override
@@ -1724,11 +1752,45 @@ class SampleGroupedTable {
 				@Override
 				protected void setValue(Object element, Object value) {
 					((WeightedPhase) element).setWeight(Double.parseDouble((String) value));
-					phaseTable.refresh(element);
+					phaseTableViewer.refresh(element);
 				}
 				
 			});
 		}
-	}
 	
+		private class AddPhaseAction extends Action {
+			
+			private PhaseGroupedTable phaseTable;
+			
+			public void setPhaseTable(PhaseGroupedTable phaseTable) {
+				this.phaseTable = phaseTable;
+			}
+			
+			@Override
+			public void run() {
+				// Add an action from the list of phases in the phase table,
+				// excluding those already included in the sample
+				
+				List<XPDFPhase> availablePhases = new ArrayList<XPDFPhase>(phaseTable.getAll());
+				for (WeightedPhase phase : phases)
+					availablePhases.remove(phase.getPhase());
+				
+			}
+		}
+		
+		private class DeletePhaseAction extends Action {
+			
+			@Override
+			public void run() {
+
+				// Get the list of selected phases
+				IStructuredSelection selection = phaseTableViewer.getStructuredSelection();
+				for (Object selectedObject : selection.toList())
+					if (selectedObject instanceof WeightedPhase)
+						phases.remove((WeightedPhase) selectedObject);
+				phaseTableViewer.refresh();
+				
+			}
+		}
+	}
 }

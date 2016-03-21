@@ -126,21 +126,29 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 						params.add(d);
 					}
 					
-					IDataset outx = traceROI[0].getSliceView();
-					outx.setName(x.getName());
-					Dataset vals = outfit.calculateValues(outx);
-					vals.setName("function");
-					Dataset res = Maths.subtract(traceROI[1], vals);
-					res.setName("residual");
-					
-					AxesMetadataImpl ax = new AxesMetadataImpl(1);
-					ax.addAxis(0, outx);
-					vals.addMetadata(ax);
-					res.addMetadata(ax);
-					params.add(vals);
-					params.add(res);
-					
 				}
+				
+				IDataset outx = traceROI[0].getSliceView();
+				
+				String xName = x.getName();
+				if (xName == null || xName.isEmpty()) {
+					xName = "xAxis";
+				}
+				
+				outx.setName(xName);
+				Dataset vals = outfit.calculateValues(outx);
+				vals.setName("function");
+				Dataset res = Maths.subtract(traceROI[1], vals);
+				res.setName("residual");
+				
+				AxesMetadataImpl ax = new AxesMetadataImpl(1);
+				ax.addAxis(0, outx);
+				vals.addMetadata(ax);
+				ax = new AxesMetadataImpl(1);
+				ax.addAxis(0, outx);
+				res.addMetadata(ax);
+				params.add(vals);
+				params.add(res);
 				
 				return new OperationData(input, (Serializable[])params.toArray(new IDataset[params.size()]));
 				
@@ -178,8 +186,16 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 							resultFunc.addFunction(f.getValue());
 						}
 
+						if (resultFunc.getFunctions().length == 0) {
+							for (Entry<String,IFunction> f : functions.entrySet()){
+								resultFunc.addFunction(f.getValue());
+							}
+						}
+						
 						Add original = (Add)resultFunc.copy();
 
+						if (model.getOptimiser() == FIT_ALGORITHMS.APACHELEVENBERGMAQUARDT) clearRanges(original);
+						
 						FitInformation i = new FitInformation();
 						i.original = original;
 						i.points = points;
@@ -196,6 +212,15 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 		return localInfo;
 	}
 
+	private void clearRanges(Add function) {
+		IFunction[] functions = function.getFunctions();
+		for (IFunction f : functions) {
+			IParameter[] ps = f.getParameters();
+			for (IParameter p :ps) {
+				p.setLimits(-Double.MAX_VALUE, Double.MAX_VALUE);
+			}
+		}
+	}
 	@Override
 	public OperationRank getInputRank() {
 		return OperationRank.ONE;

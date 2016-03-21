@@ -100,6 +100,11 @@ class XPDFSampleParameters {
 		this.phases = phases;
 	}
 
+	public void clearPhases() {
+		this.phases = new ArrayList<XPDFPhase>();
+		this.fractions = new ArrayList<Double>();
+	}
+	
 	public void addPhase(XPDFPhase phase) {
 		this.addPhase(phase, 1.0);
 	}
@@ -177,7 +182,7 @@ class XPDFSampleParameters {
 		for (double weight : fractions)
 			totalWeight += weight;
 		for (XPDFComposition compo : phaseCompositions)
-			compo.weight(1.0/totalWeight);
+			compo.weight(fractions.get(phaseCompositions.indexOf(compo))/totalWeight);
 		XPDFComposition totalComposition = new XPDFComposition("");
 		for (XPDFComposition compo : phaseCompositions)
 			totalComposition.add(compo);

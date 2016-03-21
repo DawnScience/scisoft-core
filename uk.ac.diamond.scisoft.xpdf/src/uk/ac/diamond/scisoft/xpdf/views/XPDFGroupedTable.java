@@ -89,7 +89,7 @@ class XPDFGroupedTable extends Composite {
 		
 		dataTableCompo = new Composite(this, SWT.NONE);
 		dataTableCompo.setLayout(new TableColumnLayout());
-		dataViewer = new TableViewer(dataTableCompo, SWT.NO_SCROLL | SWT.V_SCROLL);
+		dataViewer = new TableViewer(dataTableCompo, SWT.NO_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		dataViewer.getTable().setHeaderVisible(true);
 		dataViewer.getTable().setLinesVisible(true);
 
@@ -312,6 +312,7 @@ class XPDFGroupedTable extends Composite {
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			ISelection selection = event.getSelection();
+			
 			if (selection instanceof IStructuredSelection) {
 				if (cachedUserSelectionChangedListener != null)
 					cachedUserSelectionChangedListener.selectionChanged(event);

@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -534,7 +535,14 @@ public class XPDFComposition {
 		if (n == 1.0)
 			return "";
 		
-		String number = (n == Math.floor(n)) ? Integer.toString((int) n) :  Double.toString(n);
+		// round to the nearest 1/1024 (can this be done in the DecimalFormat?)
+		double factor = 1024.0;
+		double nr = Math.round(factor*n)/factor;
+		
+		DecimalFormat formattor = new DecimalFormat( (nr == (double) Math.round(nr)) ? "0" : "0.000");
+		
+		String number = formattor.format(nr);
+		if ("1".equals(number)) number = "";
 		String normalNumbers = "0123456789.";
 		String subscriptNumbers = "₀₁₂₃₄₅₆₇₈₉.";
 		

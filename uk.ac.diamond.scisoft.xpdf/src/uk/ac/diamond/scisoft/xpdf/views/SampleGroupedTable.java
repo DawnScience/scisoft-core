@@ -9,14 +9,13 @@
 
 package uk.ac.diamond.scisoft.xpdf.views;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -27,7 +26,6 @@ import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -35,15 +33,12 @@ import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.DialogCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
@@ -55,6 +50,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -162,24 +159,24 @@ class SampleGroupedTable {
 		groupedTable.addDropSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[]{LocalSelectionTransfer.getTransfer()}, new LocalViewerDropAdapterFactory(samples, groupedTable));
 
 		// Set a SelectionChangedListener to filter the phases in the phases table, based on the selected samples
-		groupedTable.addSelectionChangedListener(new ISelectionChangedListener() {
-			
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-				if (selection.size() == 0) {
-					phaseTable.setVisiblePhases(new ArrayList<XPDFPhase>());
-				} else {
-//					List<XPDFPhase> visiblePhases = new ArrayList<XPDFPhase>();
-					Set<XPDFPhase> visiblePhases = new HashSet<XPDFPhase>();
-					for (Object oSample : selection.toList())
-						if (oSample instanceof XPDFSampleParameters)
-							visiblePhases.addAll(((XPDFSampleParameters) oSample).getPhases());
-					phaseTable.setVisiblePhases(visiblePhases);
-				}
-				phaseTable.refresh();
-			}
-		});
+//		groupedTable.addSelectionChangedListener(new ISelectionChangedListener() {
+//			
+//			@Override
+//			public void selectionChanged(SelectionChangedEvent event) {
+//				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+//				if (selection.size() == 0) {
+//					phaseTable.setVisiblePhases(new ArrayList<XPDFPhase>());
+//				} else {
+////					List<XPDFPhase> visiblePhases = new ArrayList<XPDFPhase>();
+//					Set<XPDFPhase> visiblePhases = new HashSet<XPDFPhase>();
+//					for (Object oSample : selection.toList())
+//						if (oSample instanceof XPDFSampleParameters)
+//							visiblePhases.addAll(((XPDFSampleParameters) oSample).getPhases());
+//					phaseTable.setVisiblePhases(visiblePhases);
+//				}
+//				phaseTable.refresh();
+//			}
+//		});
 	}
 		
 	/**
@@ -626,9 +623,10 @@ class SampleGroupedTable {
 		private boolean dropPhases(XPDFSampleParameters targetEntry) {
 			
 			for (Object phase : ((IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection()).toList()) {
-				List<XPDFPhase> phaseList = targetEntry.getPhases();
-				phaseList.add((XPDFPhase) phase);
-				targetEntry.setPhases(phaseList);
+				targetEntry.addPhase((XPDFPhase) phase);
+//				List<XPDFPhase> phaseList = targetEntry.getPhases();
+//				phaseList.add((XPDFPhase) phase);
+//				targetEntry.setPhases(phaseList);
 			}
 			
 			groupedTable.refresh();
@@ -1112,11 +1110,13 @@ class SampleGroupedTable {
 							return;
 						}
 						XPDFSampleParameters sample = (XPDFSampleParameters) element;
-						sample.setPhases(new ArrayList<XPDFPhase>());
+//						sample.setPhases(new ArrayList<XPDFPhase>());
+						sample.clearPhases();
 						for (WeightedPhase phase : phaseList) {
 							sample.addPhase(phase.getPhase(), phase.getWeight());
 						}
 					}
+					v.refresh();
 				}
 
 				@Override
@@ -1241,7 +1241,6 @@ class SampleGroupedTable {
 
 		@Override
 		public EditingSupport get(final ColumnViewer v) {
-			// TODO: Should be uneditable, derived from the phases
 			return new EditingSupport(v) {
 
 				@Override
@@ -1282,7 +1281,12 @@ class SampleGroupedTable {
 			return new ColumnLabelProvider() {
 				@Override
 				public String getText(Object element) {
-					return Double.toString(((XPDFSampleParameters) element).getDensity());
+					if (element instanceof XPDFSampleParameters) {
+						DecimalFormat threeDP = new DecimalFormat("0.000");
+						return threeDP.format(((XPDFSampleParameters) element).getDensity());
+					} else {
+						return "-";
+					}
 				}
 
 				@Override
@@ -1301,7 +1305,7 @@ class SampleGroupedTable {
 
 		@Override
 		public int getWeight() {
-			return 10;
+			return 8;
 		}
 
 		@Override
@@ -1369,7 +1373,7 @@ class SampleGroupedTable {
 
 		@Override
 		public int getWeight() {
-			return 5;
+			return 7;
 		}
 
 		@Override
@@ -1592,6 +1596,10 @@ class SampleGroupedTable {
 			return weight;
 		}
 		
+		public void setWeight(double weight) {
+			this.weight = weight;
+		}
+		
 		public static List<WeightedPhase> makeWeightedPhases(List<XPDFPhase> phases, List<Double> weightings) {
 			List<WeightedPhase> wPhases = new ArrayList<WeightedPhase>();
 			for (XPDFPhase phase : phases) {
@@ -1612,10 +1620,32 @@ class SampleGroupedTable {
 		@Override
 		protected Control createDialogArea(Composite parent) {
 			Composite container = (Composite) super.createDialogArea(parent);
+			container.setLayout(new GridLayout(1, true));
 			Composite tableHolder = new Composite(container, SWT.NONE);
+			tableHolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			tableHolder.setLayout(new TableColumnLayout());
 			phaseTable = new TableViewer(tableHolder, SWT.BORDER); 	
 			createColumns();
+			phaseTable.getTable().setHeaderVisible(true);			
+			phaseTable.setContentProvider(new IStructuredContentProvider() {
+				
+				@Override
+				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+					viewer.refresh();
+					
+				}
+				
+				@Override
+				public void dispose() {
+				}
+				
+				@Override
+				public Object[] getElements(Object inputElement) {
+					return phases.toArray(new WeightedPhase[phases.size()]);
+				}
+			});
+			
+			phaseTable.setInput(phases);
 			
 			return container;
 		}
@@ -1655,6 +1685,48 @@ class SampleGroupedTable {
 			tCL.setColumnData(phaseColumn.getColumn(), new ColumnWeightData(20, false));
 			tCL.setColumnData(fractionColumn.getColumn(), new ColumnWeightData(10, false));
 			phaseColumn.setLabelProvider(new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					if (element instanceof WeightedPhase) {
+						return ((WeightedPhase) element).getPhase().getName();
+					} else {
+						return "?";
+					}
+				}
+			});
+			fractionColumn.setLabelProvider(new ColumnLabelProvider() {
+				@Override
+				public String getText(Object element) {
+					if (element instanceof WeightedPhase) {
+						return Double.toString(((WeightedPhase) element).getWeight());
+					} else {
+						return "(?)";
+					}
+				}
+			});
+			fractionColumn.setEditingSupport(new EditingSupport(fractionColumn.getViewer()) {
+
+				@Override
+				protected CellEditor getCellEditor(Object element) {
+					return new TextCellEditor(((TableViewer) phaseTable).getTable());
+				}
+
+				@Override
+				protected boolean canEdit(Object element) {
+					return true;
+				}
+
+				@Override
+				protected Object getValue(Object element) {
+					return Double.toString(((WeightedPhase) element).getWeight());
+				}
+
+				@Override
+				protected void setValue(Object element, Object value) {
+					((WeightedPhase) element).setWeight(Double.parseDouble((String) value));
+					phaseTable.refresh(element);
+				}
+				
 			});
 		}
 	}

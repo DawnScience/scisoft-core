@@ -476,7 +476,7 @@ public class XPDFCalibration {
 	private Dataset iterateCalibrate(int nIterations, boolean propagateErrors) {
 		List<Dataset> solAng = new ArrayList<Dataset>();
 		for (Dataset targetComponent : backgroundSubtracted) {
-			Dataset cosTwoTheta = Maths.cos(coords.getTwoTheta());
+			Dataset cosTwoTheta = coords.getCosTwoTheta();
 			// result = data /(cos 2θ)^3
 			Dataset solAngData = Maths.divide(Maths.divide(targetComponent, cosTwoTheta), Maths.multiply(cosTwoTheta, cosTwoTheta));
 //			Dataset solAngData = Maths.multiply(1.0, targetComponent);
@@ -554,6 +554,14 @@ public class XPDFCalibration {
 		// 2 D variables that do not need re-creating every time around the loop
 		Dataset truncatedQ = DoubleDataset.createRange(8, 32, 1.6);
 		
+		// Set up the pixel integration information
+		IPixelIntegrationCache lcache;
+		if (backgroundSubtracted.get(0).getShape().length > 1) {
+			lcache = getPICache(truncatedQ, AbstractOperationBase.getFirstDiffractionMetadata(backgroundSubtracted.get(0)), backgroundSubtracted.get(0).getShape());
+		} else {
+			lcache = null;
+		}
+		
 		// Get the mask from the background subtracted sample data
 		ILazyDataset mask = AbstractOperationBase.getFirstMask(backgroundSubtracted.get(0));
 		IDataset m = (mask != null) ? mask.getSlice().squeeze() : null;
@@ -579,9 +587,6 @@ public class XPDFCalibration {
 				truncatedSelfScattering = sampleSelfScattering.getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
 				truncatedQ = coords.getQ().getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
 			} else {
-				// Set up the pixel integration information
-				IPixelIntegrationCache lcache = getPICache(truncatedQ, AbstractOperationBase.getFirstDiffractionMetadata(backgroundSubtracted.get(0)), backgroundSubtracted.get(0).getShape());
-
 				List<Dataset> out = PixelIntegration.integrate(absCor, m, lcache);
 				smoothed = out.remove(1);
 

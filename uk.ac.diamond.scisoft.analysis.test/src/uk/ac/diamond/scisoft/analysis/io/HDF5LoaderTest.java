@@ -50,8 +50,6 @@ import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import ncsa.hdf.object.FileFormat;
-import ncsa.hdf.object.h5.H5File;
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 
@@ -82,7 +80,6 @@ public class HDF5LoaderTest {
 
 	private void testLoadingSpeed(boolean async) {
 		List<Long> ourTimes = new ArrayList<Long>();
-		List<Long> theirTimes = new ArrayList<Long>();
 		String name = TestFileFolder + "manygroups.h5";
 //		String name = "/dls/sci-scratch/ExampleData/NeXus/XPDSi7x7_2010-07-08_23-00-50.nxs";
 
@@ -98,19 +95,10 @@ public class HDF5LoaderTest {
 			}
 			start += System.currentTimeMillis();
 			ourTimes.add(start);
-
-			start = -System.currentTimeMillis();
-			try {
-				new H5File(name, FileFormat.READ).open();
-			} catch (Exception e) {
-			}
-			start += System.currentTimeMillis();
-			theirTimes.add(start);
 		}
 
 		Collections.sort(ourTimes);
-		Collections.sort(theirTimes);
-		System.out.printf("Load took %d ms cf %d ms\n", ourTimes.get(0), theirTimes.get(0));
+		System.out.printf("Load took %d ms cf %d ms\n", ourTimes.get(0));
 	}
 
 	@Test

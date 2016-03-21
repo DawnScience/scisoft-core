@@ -873,14 +873,10 @@ public class HDF5Loader extends AbstractFileLoader {
 			StringDataset ef = extractExternalFileNames(did, tid, type.vlen, trueShape);
 			ImageStackLoader loader;
 			try {
-				loader = new ImageStackLoader(ef, null);
+				loader = new ImageStackLoader(ef, file.getParentDirectory());
 			} catch (Exception e) {
-				try { // try again with known-to-be-good directory
-					loader = new ImageStackLoader(ef, file.getParentDirectory());
-				} catch (Exception e2) {
-					logger.error("Could creating loader from external files", e2);
-					return false;
-				}
+				logger.error("Could creating loader from external files", e);
+				return false;
 			}
 			loader.setMaxShape(node.getMaxShape());
 			loader.squeeze();

@@ -575,12 +575,14 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.AverageSectionsOfFastestOperation"
+            icon="icons/meanfilt.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.AverageSectionsOfFastestOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.AverageSectionsOfFastestModel"
             name="Average Sections of Fastest Dimension">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.CentroidOperation"
+            icon="icons/blank.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.image.CentroidOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
             name="Centroid">
@@ -588,6 +590,7 @@
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.MinMaxNormalize"
             description="Normalize the minimum to zero and the maximum to one"
+            icon="icons/decolor.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.MinMaxNormalize"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
             name="Minimum Maximum Normalization">
@@ -621,6 +624,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.FileMetadataNormalisation"
+            icon="icons/decolor.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.FileMetadataNormalisation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.FileMetadataModel"
             name="Normalisation [metadata]">
@@ -677,12 +681,14 @@
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.TwoBoxMeanDifferenceOperation"
             description="Difference between the mean of two boxes"
+            icon="icons/box.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.TwoBoxMeanDifferenceOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.TwoBoxModel"
             name="Two Box Mean Difference">
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.TwoBoxMeanRatioOperation"
+            icon="icons/box.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.TwoBoxMeanRatioOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.TwoBoxModel"
             name="Two Box Mean Ratio">
@@ -704,6 +710,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionFittingOperation"
+            icon="icons/rollingball.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionFittingOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionFittingModel"
             name="Fit Imported Function">

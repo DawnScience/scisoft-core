@@ -690,7 +690,10 @@ class PhaseGroupedTable {
 				@Override
 				protected Object getValue(Object element) {
 					XPDFPhase phase = (XPDFPhase) element;
-					return phase.getSpaceGroup().getNumber() - phase.getCrystalSystem().getGroups().get(0).getNumber();
+					if (phase.getSpaceGroup() == null)
+						return 0;
+					else
+						return phase.getSpaceGroup().getNumber() - phase.getCrystalSystem().getGroups().get(0).getNumber();
 				}
 
 				@Override
@@ -716,8 +719,11 @@ class PhaseGroupedTable {
 			return new ColumnLabelProvider() {
 				@Override
 				public String getText(Object element) {
-					XPDFPhase phase = (XPDFPhase) element; 
-					return (phase.isCrystalline()) ? phase.getSpaceGroup().getName() : "-";
+					XPDFPhase phase = (XPDFPhase) element;
+					if (phase.isCrystalline())
+						if (phase.getSpaceGroup() != null)
+							return phase.getSpaceGroup().getName();
+					return "-";
 				}
 			};
 		}
@@ -798,7 +804,7 @@ class PhaseGroupedTable {
 				public String getText(Object element) {
 					XPDFPhase phase = (XPDFPhase) element;
 					String label;
-					if (!phase.isCrystalline())
+					if (!phase.isCrystalline() || phase.getSpaceGroup() == null)
 						label = "-";
 					else {
 						int axisIndexData = phase.getSpaceGroup().getSystem().getAxisIndices()[axisIndex];
@@ -834,7 +840,7 @@ class PhaseGroupedTable {
 		@Override
 		public boolean presentAsUneditable(Object element) {
 			XPDFPhase phase = (XPDFPhase) element;
-			return !phase.isCrystalline() || phase.getSpaceGroup().getSystem().getAxisIndices()[axisIndex] != axisIndex;
+			return !phase.isCrystalline() || phase.getSpaceGroup() == null || phase.getSpaceGroup().getSystem().getAxisIndices()[axisIndex] != axisIndex;
 		}
 	}
 	
@@ -902,7 +908,7 @@ class PhaseGroupedTable {
 				@Override
 				public String getText(Object element) {
 					XPDFPhase phase = (XPDFPhase) element;
-					if (!phase.isCrystalline()) {
+					if (!phase.isCrystalline() || phase.getSpaceGroup() == null) {
 						// Non-crystalline phase
 						return "-";
 					} else {
@@ -940,6 +946,7 @@ class PhaseGroupedTable {
 		public boolean presentAsUneditable(Object element) {
 			XPDFPhase phase = (XPDFPhase) element;
 			return !phase.isCrystalline() || 
+					phase.getSpaceGroup() == null ||
 					phase.getSpaceGroup().getSystem().getFixedAngles()[angleIndex] > 0 ||
 					-phase.getSpaceGroup().getSystem().getFixedAngles()[angleIndex]-1 != angleIndex;
 		}

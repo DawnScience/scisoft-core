@@ -181,20 +181,29 @@ class XPDFPhase {
 	public void setCrystalSystem(CrystalSystem inSystem) {
 		if (system != inSystem) {
 			system = inSystem;
-			// Check if the space group is a rhombohedral pseudo-space group,
-			// and check that we are changing to the hexagonal crystal system,
-			// that is, the crystal system of its alternative basis.
-			if (spaceGroup.isRhombohedral() && spaceGroup.asHexagonal().getSystem() == inSystem) {
-				unitCelltoHexagonal();
-			} else
-				// Check if the space group has an alternative rhombohedral
-				// basis, and that we are changing the crystal system to the
-				// rhombohedral lattice, that is the same system as the
-				// alternative representation
-				if (spaceGroup.hasRhombohedral() && spaceGroup.asRhombohedral().getSystem() == inSystem) {
-					unitCelltoRhombohedral();
-			} else {
-					setSpaceGroup(CrystalSystem.lowestGroups[system.getOrdinal()]);
+			if (spaceGroup != null) {
+			
+				// Check if the space group is a rhombohedral pseudo-space group,
+				// and check that we are changing to the hexagonal crystal system,
+				// that is, the crystal system of its alternative basis.
+				if (spaceGroup.isRhombohedral() && spaceGroup.asHexagonal().getSystem() == inSystem) {
+					unitCelltoHexagonal();
+				} else
+					// Check if the space group has an alternative rhombohedral
+					// basis, and that we are changing the crystal system to the
+					// rhombohedral lattice, that is the same system as the
+					// alternative representation
+					if (spaceGroup.hasRhombohedral() && spaceGroup.asRhombohedral().getSystem() == inSystem) {
+						unitCelltoRhombohedral();
+					} else {
+						// Changing arbitrary crystal systems
+						setSpaceGroup(CrystalSystem.lowestGroups[system.getOrdinal()]);
+						// Move all atoms to the 'general' Wyckoff position (the last defined)
+						// TODO: Recalculate Wyckoff symbol based on position, once this is possible.
+						for (XPDFAtom atom : atoms) {
+							atom.setWyckoffLetter(Character.toString(XPDFSpaceGroup.allWyckoffLetters.charAt(getSpaceGroup().getNWyckoffLetters()-1)));
+						}
+					}
 			}
 		}
 	}

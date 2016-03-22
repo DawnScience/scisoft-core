@@ -15,6 +15,7 @@ import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
@@ -40,20 +41,49 @@ public abstract class AbstractTwoBoxMeanOperation<T extends TwoBoxModel> extends
 		
 		RectangularROI box1 = model.getBox1();
 		RectangularROI box2 = model.getBox2();
-		Dataset mask = null;
-		MaskMetadata mmd = input.getFirstMetadata(MaskMetadata.class);
-		if (mmd != null && mmd.getMask() != null) mask = DatasetUtils.sliceAndConvertLazyDataset(mmd.getMask());
+//		Dataset mask = null;
+//		MaskMetadata mmd = input.getFirstMetadata(MaskMetadata.class);
+//		if (mmd != null && mmd.getMask() != null) mask = DatasetUtils.sliceAndConvertLazyDataset(mmd.getMask());
+//		
+//		Dataset data = DatasetUtils.convertToDataset(input);
+//		
+//		Dataset[] b1 = ROIProfile.boxMean(data, mask, box1, false);
+//		Dataset[] b2 = ROIProfile.boxMean(data, mask, box2, false);
 		
-		Dataset data = DatasetUtils.convertToDataset(input);
-		
-		Dataset[] b1 = ROIProfile.boxMean(data, mask, box1, false);
-		Dataset[] b2 = ROIProfile.boxMean(data, mask, box2, false);
-		
-		Dataset out = result(b1[0].getDouble(0), b2[0].getDouble(0)); 
+		long t = System.currentTimeMillis();
+		Dataset out = result(getMeanFromBox(input,box1), getMeanFromBox(input,box2));
+		System.out.println(System.currentTimeMillis()-t);
 		
 		return new OperationData(input, out);
 	}
 	
 	abstract protected Dataset result(double mean1, double mean2);
+	
+	public static double getMeanFromBox(IDataset input, RectangularROI roi){
+		
+		Dataset slice = getSliceFromBox(input, roi);
+		
+		MaskMetadata m = slice.getFirstMetadata(MaskMetadata.class);
+		
+		if (m != null && m.getMask() != null) slice = ROIProfile.nanalize(slice, (BooleanDataset)m.getMask().getSlice());
+		
+		return (double)slice.mean(true);
+	}
+	
+	public static Dataset getSliceFromBox(IDataset input, RectangularROI roi){
+		//data set shape corresponds to plot [y,x]
+		int[] spt = roi.getIntPoint();
+		int[] len = roi.getIntLengths();
+
+		final int xstart  = Math.max(0,  spt[0]);
+		final int xend   = Math.min(spt[0] + len[0],  input.getShape()[1]); 
+		final int ystart = Math.max(0,  spt[1]);
+		final int yend   = Math.min(spt[1] + len[1],  input.getShape()[0]);
+		
+		return DatasetUtils.convertToDataset(input.getSlice(new int[]{ystart,   xstart}, 
+				new int[]{yend,    xend},
+				new int[]{1,1}));
+		
+	}
 
 }

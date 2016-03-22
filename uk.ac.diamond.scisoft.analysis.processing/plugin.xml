@@ -715,6 +715,43 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionFittingModel"
             name="Fit Imported Function">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.scalar.MutliplyScalarOperation"
+            description="Multipy by a scalar"
+            icon="icons/blue-cross.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.scalar.MutliplyScalarOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.scalar.ScalarModel"
+            name="Multiply by Scalar">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.scalar.SubtractScalarOperation"
+            icon="icons/minus.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.scalar.SubtractScalarOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.scalar.ScalarModel"
+            name="Subtract Scalar">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.scalar.DivideScalarOperation"
+            icon="icons/yellow-divide.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.scalar.DivideScalarOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.scalar.ScalarModel"
+            name="Divide by Scalar">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.scalar.AddScalarOperation"
+            icon="icons/plus.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.scalar.AddScalarOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.scalar.ScalarModel"
+            name="Add Scalar">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxMeanOperation"
+            description="Returns mean values within a Box"
+            icon="icons/box.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxMeanOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxModel"
+            name="Box Mean">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

@@ -9,14 +9,15 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile;
 
+import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.IntegrationModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxIntegration.Direction;
 
-public class ImageIntegrationModel extends ImageIntegrationEncumbranceModel {
+public class ImageIntegrationModel extends AbstractOperationModel {
 
-	@OperationModelField(label="Direction of Integration", hint="The direction to integrate in.")
+	@OperationModelField(label="Direction of Profile", hint="The direction to see the profile in.")
 	private Direction direction = Direction.X;
 	@OperationModelField(label="Do average?", hint="Average the data along the chosen axis, rather than sum.")
 	private boolean doAverage = false;
@@ -36,8 +37,4 @@ public class ImageIntegrationModel extends ImageIntegrationEncumbranceModel {
 	public void setDoAverage(boolean doAverage) {
 		firePropertyChange("doAverage", this.doAverage, this.doAverage = doAverage);
 	}
-}
-
-class ImageIntegrationEncumbranceModel extends IntegrationModel {
-	
 }

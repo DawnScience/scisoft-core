@@ -16,7 +16,7 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxIntegr
 
 public class BoxIntegrationModel extends IntegrationModel {
 
-	@OperationModelField(label="Direction of Integration", hint="The direction to integrate in.")
+	@OperationModelField(label="Direction of Profile")
 	private Direction direction = Direction.X;
 
 	public BoxIntegrationModel() {

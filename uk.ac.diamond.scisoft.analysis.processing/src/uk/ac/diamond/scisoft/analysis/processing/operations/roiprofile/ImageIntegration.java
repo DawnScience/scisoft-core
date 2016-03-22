@@ -17,6 +17,7 @@ import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
@@ -25,7 +26,6 @@ import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.AbstractIntegrationOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxIntegration.Direction;
 
 /**
@@ -36,7 +36,7 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxIntegr
  * @since 2015-10-14
  */
 @Atomic
-public class ImageIntegration extends AbstractIntegrationOperation<ImageIntegrationModel> {
+public class ImageIntegration extends AbstractOperation<ImageIntegrationModel, OperationData> {
 
 	@Override
 	public String getId() {
@@ -83,6 +83,16 @@ public class ImageIntegration extends AbstractIntegrationOperation<ImageIntegrat
 		
 		return new OperationData(output);
 	
+	}
+
+	@Override
+	public OperationRank getInputRank() {
+		return OperationRank.TWO;
+	}
+
+	@Override
+	public OperationRank getOutputRank() {
+		return OperationRank.ONE;
 	}
 
 }

@@ -28,7 +28,7 @@ public class PtychoPerspective implements IPerspectiveFactory {
 		String editorArea = layout.getEditorArea();
 		IFolderLayout navigatorFolder = layout.createFolder("navigator-folder", IPageLayout.LEFT, 0.2f, editorArea);
 		navigatorFolder.addView("org.eclipse.ui.navigator.ProjectExplorer");
-		navigatorFolder.addView("uk.ac.diamond.sda.navigator.views.FileView");
+		navigatorFolder.addView("org.dawnsci.fileviewer.FileViewer");
 
 		String ptychoPlotViews = PtychoConstants.PTYCHOPLOTVIEWS;
 		String probePlot = ptychoPlotViews + "Probe";

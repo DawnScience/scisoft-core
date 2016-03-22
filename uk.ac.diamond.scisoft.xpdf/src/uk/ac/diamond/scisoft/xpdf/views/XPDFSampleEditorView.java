@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
+import org.eclipse.dawnsci.nexus.builder.impl.DefaultNexusFileBuilder;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -506,7 +509,14 @@ public class XPDFSampleEditorView extends ViewPart {
 			XPDFSampleParameters firstSelectedSample = sampleTable.getSelectedSamples().get(0);
 			String filename = "/home/rkl37156/" + firstSelectedSample.getName() + ".nxs";
 			
-			firstSelectedSample.writeNX(filename);
+			NexusFileBuilder builder = new DefaultNexusFileBuilder(filename);
+			
+			firstSelectedSample.writeNX(builder);
+			try {
+				builder.createFile();
+			} catch (NexusException nE) {
+				System.err.println("Error writing NeXus file to " + filename + ": " + nE.toString());
+			}
 		}
 	}
 }

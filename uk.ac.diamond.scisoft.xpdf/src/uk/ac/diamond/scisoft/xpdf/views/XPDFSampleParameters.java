@@ -16,6 +16,11 @@ import java.util.List;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
+import org.eclipse.dawnsci.nexus.NXentry;
+import org.eclipse.dawnsci.nexus.NXsample;
+import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.dawnsci.nexus.NexusNodeFactory;
+import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
 
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentForm;
@@ -339,15 +344,32 @@ class XPDFSampleParameters {
 	}
 
 	/**
-	 * Writes the parameters to a NeXus file.
+	 * Creates a NeXus data structure from the sample.
 	 * <p>
-	 * Writes the sample parameters to an XPDF NeXus file, as specified.
-	 * @param filename
-	 * 				location to write to. The caller should establish writability.
+	 * Creates an XPDF NeXus data structure, using the supplied Nexus File Builder, as specified.
+	 * @param builder
+	 * 				the {@link NexusFileBuilder} to write the sample data to
 	 */
-	public void writeNX(String filename) {
+	public void writeNX(NexusFileBuilder builder) {
 		
+		NexusNodeFactory noder = builder.getNodeFactory();
+		NXsample sample = noder.createNXsample();
+		NXentry sampleEntry;
+		try {
+			sampleEntry = builder.newEntry("entry1").getNXentry();
+		} catch (NexusException nE) {
+			System.err.println("Failed to create new entry with NeXus file builder: " + nE.toString());
+			return;
+		}
+		sampleEntry.setSample(sample);
 		
+		// begin building
+		sample.setNameScalar(getName());
+//		sample.setShort_titleScalar(getName());
+		sample.setDescriptionScalar(getName() + ", " + getComposition() + ", " + getShapeName());
+		// comments
+		// QR code
+		// components
 		
 	}
 	

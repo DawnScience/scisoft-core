@@ -338,6 +338,21 @@ class XPDFSampleParameters {
 		return dataString;
 	}
 
+	/**
+	 * Writes the parameters to a NeXus file.
+	 * <p>
+	 * Writes the sample parameters to an XPDF NeXus file, as specified.
+	 * @param filename
+	 * 				location to write to. The caller should establish writability.
+	 */
+	public void writeNX(String filename) {
+		
+		
+		
+	}
+	
+	
+	
 	// Simulate the pair distribution function of that this sample parameterizes
 	public Dataset getSimulatedPDF() {
 		// TODO Make this actually simulate a PDF

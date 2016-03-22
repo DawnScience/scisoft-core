@@ -164,14 +164,16 @@ public class XPDFSampleEditorView extends ViewPart {
 		pointBreakAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_CLEAR));
 		
 		// save the data
-		saveAction = new Action() {
-			@Override
-			public void run() {
-				for (XPDFSampleParameters sample : sampleTable.getAll())
-					System.err.println(sample.toString());
-			}
-		};
-		saveAction.setToolTipText("Save data to stderr");
+//		saveAction = new Action() {
+//			@Override
+//			public void run() {
+//				for (XPDFSampleParameters sample : sampleTable.getAll())
+//					System.err.println(sample.toString());
+//			}
+//		};
+//		saveAction.setToolTipText("Save data to stderr");
+		saveAction = new WriteNexusAction();
+		saveAction.setToolTipText("Write to a pre-specified NeXus file");
 		saveAction.setText("Save");
 		saveAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ETOOL_SAVE_EDIT));
 		
@@ -494,6 +496,17 @@ public class XPDFSampleEditorView extends ViewPart {
 			// quartz capillary
 			sampleTable.add(SampleTestData.createTestSample("Quartz Capillary"));
 		
+		}
+	}
+	
+	
+	private class WriteNexusAction extends Action {
+		@Override
+		public void run() {
+			XPDFSampleParameters firstSelectedSample = sampleTable.getSelectedSamples().get(0);
+			String filename = "/home/rkl37156/" + firstSelectedSample.getName() + ".nxs";
+			
+			firstSelectedSample.writeNX(filename);
 		}
 	}
 }

@@ -1528,7 +1528,7 @@ class SampleGroupedTable {
 					//				return (isCylinder || isPlate) ?
 					//						true :
 					//							false;
-					return presentAsUneditable((XPDFSampleParameters) element);
+					return !presentAsUneditable((XPDFSampleParameters) element);
 				}
 			};
 		}

@@ -159,7 +159,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 					result.addDataset(n, createLazyDataset(n, -1, new int[] {count}, new SRSLoader(fileName)));
 				}
 			} else {
-				convertToDatasets(result, vals, columns, isStoreStringValues(), isUseImageLoaderForStrings(), (new File(this.fileName)).getParent());
+				convertToDatasets(result, vals, columns, isStoreStringValues(), isUseImageLoaderForStrings(), (new File(fileName)).getParent());
 			}
 			if (result.size() == 0) throw new Exception("Cannot parse "+fileName+" into datasets!");
 
@@ -266,8 +266,9 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 	 * @param columns array of lists of data
 	 * @param storeStrings
 	 * @param useImageLoader
+	 * @param fileDirectory
 	 */
-	protected final void convertToDatasets(DataHolder holder, List<String> names, List<?>[] columns, boolean storeStrings, boolean useImageLoader, String file_directory) {
+	protected final void convertToDatasets(DataHolder holder, List<String> names, List<?>[] columns, boolean storeStrings, boolean useImageLoader, String fileDirectory) {
 		for (int i = 0, imax = names.size(); i < imax; i++) {
 			if (columns[i] != null) {
 				String name = names.get(i);
@@ -281,15 +282,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 					if (useImageLoader) {
 						ImageStackLoader loader;
 						try {
-							String[] oldpaths = sds.getData();
-							String[] paths = new String[oldpaths.length];
-							for (int j = 0; j < paths.length ; j++) {
-								if(!(new File(oldpaths[j])).exists())
-									paths[j] = (new File(file_directory, oldpaths[j])).getAbsolutePath();
-								else
-									paths[j] = oldpaths[j];
-							}
-							loader = new ImageStackLoader(sds.getShape(), paths);
+							loader = new ImageStackLoader(sds, fileDirectory);
 							name += "_image";
 							LazyDataset lazyDataset = new LazyDataset(name, loader.getDtype(), loader.getShape(), loader);
 							holder.addDataset(name, lazyDataset);

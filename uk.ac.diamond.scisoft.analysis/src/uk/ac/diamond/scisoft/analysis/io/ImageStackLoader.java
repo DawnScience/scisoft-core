@@ -45,7 +45,7 @@ public class ImageStackLoader implements ILazyLoader {
 	private int[] iShape; // image shape
 	private int[] shape;
 	private int dtype;
-	private String parent;
+	private File parent = null;
 	private Class<? extends IFileLoader> loaderClass;
 	private boolean onlyOne;
 	
@@ -77,11 +77,10 @@ public class ImageStackLoader implements ILazyLoader {
 	public ImageStackLoader(StringDataset imageFilenames, IDataHolder dh, String directory) throws Exception {
 		if (directory != null) {
 			File file = new File(directory); 
-			if (!file.isDirectory()) {
-				throw new IllegalArgumentException("Given directory is not a directory");
+			if (file.isDirectory()) {
+				parent = file;
 			}
 		}
-		parent = directory;
 
 		filenames = imageFilenames;
 		fShape = imageFilenames.getShapeRef();
@@ -104,16 +103,21 @@ public class ImageStackLoader implements ILazyLoader {
 	}
 
 	private IDataset getDatasetFromFile(int[] location, IMonitor mon) throws ScanFileHolderException {
-		// load the file
-		String filename = filenames.get(location);
-		filename = getLegalPath(filename);
-		if (parent != null) {
-			File f = new File(filename);
-			if (f.isAbsolute()) {
-				filename = f.getName();
+		File f = new File(getDLSWindowsPath(filenames.get(location)));
+		if (parent != null) { // try local directory first
+			File nf = new File(parent, f.getName());
+			if (nf.exists()) {
+				try {
+					return loadDataset(nf.getAbsolutePath(), mon);
+				} catch (Exception e) {
+				}
 			}
-			filename = new File(parent, filename).getAbsolutePath();
 		}
+
+		return loadDataset(f.getAbsolutePath(), mon);
+	}
+
+	private IDataset loadDataset(String filename, IMonitor mon) throws ScanFileHolderException {
 		IDataHolder data = null;
 		if (loaderClass != null) {
 			try {
@@ -152,17 +156,11 @@ public class ImageStackLoader implements ILazyLoader {
 	 * @param dlsPath
 	 * @return String in windows format.
 	 */
-	private static String getLegalPath(String dlsPath) {
-		if (dlsPath == null)
-			return null;
+	private static String getDLSWindowsPath(String dlsPath) {
+		if (!isWindows || dlsPath == null)
+			return dlsPath;
 
-		String path;
-		if (isWindows && dlsPath.startsWith("/dls/")) {
-			path = "\\\\Data.diamond.ac.uk\\" + dlsPath.substring(5);
-		} else {
-			path = dlsPath;
-		}
-		return path;
+		return dlsPath.startsWith("/dls/") ? "\\\\Data.diamond.ac.uk\\" + dlsPath.substring(5) : dlsPath;
 	}
 
 	private static final boolean isWindows = System.getProperty("os.name").startsWith("Windows");

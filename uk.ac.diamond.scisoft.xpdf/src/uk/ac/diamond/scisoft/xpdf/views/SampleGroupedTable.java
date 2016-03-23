@@ -1170,26 +1170,28 @@ class SampleGroupedTable {
 	private static class CompositionColumnInterface implements ColumnInterface {
 
 		@Override
-		public EditingSupport get(ColumnViewer v) {
+		public EditingSupport get(final ColumnViewer v) {
 			return new EditingSupport(v) {
 
 				@Override
 				protected void setValue(Object element, Object value) {
+					((XPDFSampleParameters) element).setComposition((String) value);
+					v.refresh(element);
 				}
 
 				@Override
 				protected Object getValue(Object element) {
-					return ((XPDFSampleParameters) element).getId();
+					return ((XPDFSampleParameters) element).getComposition();
 				}
 
 				@Override
 				protected CellEditor getCellEditor(Object element) {
-					return null;
+					return new TextCellEditor(((TableViewer) v).getTable());
 				}
 
 				@Override
 				protected boolean canEdit(Object element) {
-					return false;
+					return ((XPDFSampleParameters) element).getPhases().isEmpty();
 				}
 			};
 		}
@@ -1235,7 +1237,7 @@ class SampleGroupedTable {
 
 		@Override
 		public boolean presentAsUneditable(Object element) {
-			return true;
+			return !((XPDFSampleParameters) element).getPhases().isEmpty();
 		}
 
 	}
@@ -1264,7 +1266,7 @@ class SampleGroupedTable {
 
 				@Override
 				protected boolean canEdit(Object element) {
-					return true;
+					return ((XPDFSampleParameters) element).getPhases().isEmpty();
 				}
 			};
 		}
@@ -1313,7 +1315,7 @@ class SampleGroupedTable {
 
 		@Override
 		public boolean presentAsUneditable(Object element) {
-			return true;
+			return !((XPDFSampleParameters) element).getPhases().isEmpty();
 		}
 
 	}

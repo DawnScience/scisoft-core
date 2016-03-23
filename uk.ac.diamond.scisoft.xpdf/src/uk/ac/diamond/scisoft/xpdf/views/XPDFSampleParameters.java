@@ -180,25 +180,34 @@ class XPDFSampleParameters {
 	 * @return the ASCII formula of the substance
 	 */
 	public String getComposition() {
-		List<XPDFComposition> phaseCompositions = new ArrayList<XPDFComposition>();
-		for (XPDFPhase phase : phases)
-			phaseCompositions.add(phase.getComposition());
-		double totalWeight = 0.0;
-		for (double weight : fractions)
-			totalWeight += weight;
-		for (XPDFComposition compo : phaseCompositions)
-			compo.weight(fractions.get(phaseCompositions.indexOf(compo))/totalWeight);
-		XPDFComposition totalComposition = new XPDFComposition("");
-		for (XPDFComposition compo : phaseCompositions)
-			totalComposition.add(compo);
-		return totalComposition.getHallNotation(true);
+		
+		if (phases.isEmpty()) {
+			if (component.getForm() == null || component.getForm().getSubstance().getComposition() == null)
+				return "-";
+			else
+				return component.getForm().getSubstance().getComposition().getHallNotation(true);
+		} else {
+			List<XPDFComposition> phaseCompositions = new ArrayList<XPDFComposition>();
+			for (XPDFPhase phase : phases)
+				phaseCompositions.add(phase.getComposition());
+			double totalWeight = 0.0;
+			for (double weight : fractions)
+				totalWeight += weight;
+			for (XPDFComposition compo : phaseCompositions)
+				compo.weight(fractions.get(phaseCompositions.indexOf(compo))/totalWeight);
+			XPDFComposition totalComposition = new XPDFComposition("");
+			for (XPDFComposition compo : phaseCompositions)
+				totalComposition.add(compo);
+			return totalComposition.getHallNotation(true);
+		}
 	}
 	/**
 	 * @param compoString
 	 * 					the composition to be set
 	 */
 	public void setComposition(String compoString) {
-		getForm().setMatName(compoString);
+		if (phases.isEmpty())
+			getForm().setMatName(compoString);
 		// set the typical powder packing fraction
 		getForm().setPackingFraction(0.6);
 	}
@@ -207,15 +216,22 @@ class XPDFSampleParameters {
 	 */
 	public double getDensity() {
 		
-		// Weighted density of all phases
-		// TODO: check the weighting
-		double overallDensity = 0;
-		double totalWeight = 0.0;
-		for (double weight : fractions)
-			totalWeight += weight;
-		for (XPDFPhase phase : phases)
-			overallDensity += phase.getDensity()*getPhaseWeighting(phase)/totalWeight;
-		return overallDensity;
+		if (phases.isEmpty()) {
+			if (component != null && component.getForm() != null)
+				return component.getForm().getDensity();
+			else
+				return 0.0;
+		} else {
+			// Weighted density of all phases
+			// TODO: check the weighting
+			double overallDensity = 0;
+			double totalWeight = 0.0;
+			for (double weight : fractions)
+				totalWeight += weight;
+			for (XPDFPhase phase : phases)
+				overallDensity += phase.getDensity()*getPhaseWeighting(phase)/totalWeight;
+			return overallDensity;
+		}
 	}
 	/**
 	 * @param density

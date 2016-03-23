@@ -124,7 +124,7 @@ class SampleTestData {
 		}
 		case ("TiO2"): {
 			phase.setName("TiO2");
-			phase.setSpaceGroup(123);  // P4mmm
+			phase.setSpaceGroup(136);  // P42/mmm
 			phase.setUnitCellLengths(4.5939, 4.5939, 2.9588);
 			// Tetragonal, 90°, 90°, 90°
 			phase.addComment("titanium dioxide");

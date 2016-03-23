@@ -800,8 +800,8 @@ class PhaseGroupedTable {
 							tempPhase = new XPDFPhase(phase);
 					tempPhase.setUnitCellLength(axisIndex, newLength);
 					double newVolume = tempPhase.getUnitCellVolume();
-					// if the new unit cell volume is too small, return, having set nothing
-					if ( newVolume < 6.0) {
+					// if the new unit cell volume is too small, return, having set nothing. Allow 0, though
+					if ( newVolume < 6.0 && newVolume != 0.0) {
 						System.err.println("Unit cell volume unphysically small, V = " + newVolume + " Å³.");
 						return;
 					}

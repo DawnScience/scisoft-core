@@ -62,7 +62,7 @@ class XPDFPhase {
 	public XPDFPhase(XPDFPhase inPhase) {
 		this.name = new String(inPhase.name);
 //		this.iDCode do not copy iDCode
-		this.comment = new String(inPhase.comment);
+		this.comment = (inPhase.comment != null) ? new String(inPhase.comment) : null;
 		this.form = inPhase.form; // phase form...
 		this.system = inPhase.system; // ...crystal system ...
 		this.spaceGroup = inPhase.spaceGroup; // ... and space group are static

@@ -35,6 +35,10 @@ public class XPDFComposition {
 	 */
 	private Map<Integer, Double> atomCount;
 	private double electronOverlap;
+	
+	private static String normalNumbers = "0123456789.";
+	private static String subscriptNumbers = "₀₁₂₃₄₅₆₇₈₉.";
+
 //	/**
 //	 * Mean atomic mass of the elements.
 //	 */
@@ -111,6 +115,14 @@ public class XPDFComposition {
 		this.atomCount = new HashMap<Integer, Double>();
 		if (materialFormula == null || materialFormula.length() == 0)
 			return;
+
+		// replace subscripts with their ASCII equivalents, which look nice, but Xraylib does not like.
+		String asciified = new String(materialFormula);
+		for (int i = 0; i < normalNumbers.length(); i++)
+			asciified = asciified.replace(subscriptNumbers.charAt(i), normalNumbers.charAt(i));
+		// I keep using hyphens to denote empty compositions, and xraylib keeps not liking them.
+		asciified = asciified.replace("-", "");
+		
 		// Get xraylib to do the heavy lifting
 		compoundData cD = Xraylib.CompoundParser(materialFormula);
 		// cD has a list of elements and mass fractions
@@ -543,8 +555,6 @@ public class XPDFComposition {
 		
 		String number = formattor.format(nr);
 		if ("1".equals(number)) number = "";
-		String normalNumbers = "0123456789.";
-		String subscriptNumbers = "₀₁₂₃₄₅₆₇₈₉.";
 		
 		if (useSubscripts)
 			for (int i = 0; i < normalNumbers.length(); i++ )

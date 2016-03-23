@@ -54,11 +54,23 @@ class XPDFPhase {
 	}
 	
 	/**
-	 * Copy constructor
+	 * Copy constructor.
+	 * <p>
+	 * Does not generate an new id code
 	 * @param inPhase
 	 */
 	public XPDFPhase(XPDFPhase inPhase) {
-		//TODO copy some things
+		this.name = new String(inPhase.name);
+//		this.iDCode do not copy iDCode
+		this.comment = new String(inPhase.comment);
+		this.form = inPhase.form; // phase form...
+		this.system = inPhase.system; // ...crystal system ...
+		this.spaceGroup = inPhase.spaceGroup; // ... and space group are static
+		this.unitCellLengths = Arrays.copyOf(inPhase.unitCellLengths, nDim);
+		this.unitCellDegrees = Arrays.copyOf(inPhase.unitCellDegrees, nDim);
+		this.atoms = new ArrayList<XPDFAtom>();
+		for (XPDFAtom atom : inPhase.atoms)
+			this.atoms.add(new XPDFAtom(atom));
 	}
 	
 	/**

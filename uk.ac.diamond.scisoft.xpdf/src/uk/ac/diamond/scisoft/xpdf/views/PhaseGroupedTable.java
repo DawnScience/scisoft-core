@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.xpdf.views;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -41,6 +42,7 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -748,6 +750,11 @@ class PhaseGroupedTable {
 	private static class UnitCellColumnInterface implements ColumnInterface {
 		static final String[] axisNames = {"a", "b", "c"};
 		final int axisIndex;
+		static final int nDim = 3;
+		// minimum unit cell volume of 6 Å³, approximately the volume occupied
+		// by one carbon atom within the diamond structure (not the diamond
+		// unit cell volume)
+		static final double minimumVolume = 6.0; 
 		
 		public UnitCellColumnInterface(int axisIndex) {
 			this.axisIndex = axisIndex; 
@@ -784,7 +791,22 @@ class PhaseGroupedTable {
 						// Do nothing, get out of here
 						return;
 					}
-					((XPDFPhase) element).setUnitCellLength(axisIndex, newLength);
+					// validation: if an out of range number was entered, ignore the change, and return
+					// minimum unit cell edge is 0
+					if (newLength <= 0.0)
+						return;
+					// And check that the new length does not result in too small a unit cell.
+					XPDFPhase phase = (XPDFPhase) element,
+							tempPhase = new XPDFPhase(phase);
+					tempPhase.setUnitCellLength(axisIndex, newLength);
+					double newVolume = tempPhase.getUnitCellVolume();
+					// if the new unit cell volume is too small, return, having set nothing
+					if ( newVolume < 6.0) {
+						System.err.println("Unit cell volume unphysically small, V = " + newVolume + " Å³.");
+						return;
+					}
+					
+					phase.setUnitCellLength(axisIndex, newLength);
 					v.refresh();
 				}
 				
@@ -823,6 +845,15 @@ class PhaseGroupedTable {
 					return (presentAsUneditable((XPDFPhase) element)) ?
 							JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT) :
 								JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);
+				}
+
+				@Override
+				public Color getForeground(Object element) {
+					String axisString = getText(element);
+					for (String axisName : axisNames) 
+						if (axisName.equals(axisString))
+							return new Color(null, 255, 0, 0);
+					return new Color(null, 0, 0, 0);
 				}
 			};
 		}
@@ -889,6 +920,9 @@ class PhaseGroupedTable {
 						// Do nothing, get out of here
 						return;
 					}
+					// If the newly set angle is out of range, then return, having done nothing.
+					if (newAngle <= 0.0 || newAngle > 180.0)
+						return;
 					((XPDFPhase) element).setUnitCellAngle(angleIndex, newAngle);
 					v.refresh();
 				}
@@ -929,6 +963,15 @@ class PhaseGroupedTable {
 							JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT) :
 								JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);
 				}
+				
+				@Override
+				public Color getForeground(Object element) {
+					String angleString = getText(element);
+					for (String angleName : angleNames) 
+						if (angleName.equals(angleString))
+							return new Color(null, 255, 0, 0);
+					return new Color(null, 0, 0, 0);
+				}
 			};
 		}
 
@@ -945,10 +988,10 @@ class PhaseGroupedTable {
 		@Override
 		public boolean presentAsUneditable(Object element) {
 			XPDFPhase phase = (XPDFPhase) element;
-			return !phase.isCrystalline() || 
-					phase.getSpaceGroup() == null ||
-					phase.getSpaceGroup().getSystem().getFixedAngles()[angleIndex] > 0 ||
-					-phase.getSpaceGroup().getSystem().getFixedAngles()[angleIndex]-1 != angleIndex;
+			return !phase.isCrystalline() || // No unit cell, due to not being a crystal
+					phase.getSpaceGroup() == null || // -"-, due to undefined space group
+					phase.getSpaceGroup().getSystem().getFixedAngles()[angleIndex] > 0 || // fixed angles
+					-phase.getSpaceGroup().getSystem().getFixedAngles()[angleIndex]-1 != angleIndex; // adjustable angles, defined by other dimensions
 		}
 	}
 	

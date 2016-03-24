@@ -39,6 +39,7 @@ class XPDFAtom {
 		position = new double[nDim];
 		atomicDisplacement = new double[nDim*nDim+1];
 		wyckoffLetter = "a";
+		occupancy = 1.0;
 	}
 	
 	/**

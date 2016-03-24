@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.ComboBoxViewerCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -24,6 +25,10 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 
@@ -38,6 +43,7 @@ class UnitCellGroupedTable {
 	private List<XPDFAtom> atoms;
 	private XPDFSpaceGroup theGroup;
 	private XPDFGroupedTable groupedTable;
+	private boolean inhibitAddingAtom;
 
 	/**
 	 * Constructor for the table.
@@ -67,7 +73,43 @@ class UnitCellGroupedTable {
 		groupedTable = new XPDFGroupedTable(parent, SWT.NONE);
 		createColumns();
 		groupedTable.setContentProvider(new AtomContentProvider());
+		
+		inhibitAddingAtom = false;
+		
+		groupedTable.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+			}
 
+			@Override
+			public void mouseDown(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseUp(MouseEvent e) {
+				if (e.button == 1) {
+					if (!inhibitAddingAtom) {
+						atoms.add(new XPDFAtom());
+						groupedTable.refresh();
+					}
+				}
+				inhibitAddingAtom = false;
+			}
+			
+		});
+		groupedTable.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// If there is a selection event, inhibit the mouse up from adding an atom
+				inhibitAddingAtom = true;
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+			
+		});
 	}
 	
 	/**
@@ -271,6 +313,26 @@ class UnitCellGroupedTable {
 				protected CellEditor getCellEditor(Object element) {
 					Table theTable =  ((TableViewer) v).getTable();
 					String[] elementStrings = elementSymbol.subList(elementOffset, elementSymbol.size()).toArray(new String[elementSymbol.size()-1]);
+					ComboBoxViewerCellEditor theEditor = new ComboBoxViewerCellEditor(theTable) {
+////						@Override
+//						protected Object doGetValue() {
+//							return (Integer) getViewer().listGetSelectionIndices()[0];
+//						}
+					};
+					theEditor.setContentProvider(new IStructuredContentProvider() {
+						@Override
+						public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+						}
+						@Override
+						public void dispose() {
+						}
+						@Override
+						public Object[] getElements(Object inputElement) {
+							return elementSymbol.toArray(new String[elementSymbol.size()]);
+						}
+					});
+					theEditor.setInput(elementStrings);
+//					return theEditor;
 					return new ComboBoxCellEditor(theTable, elementStrings);
 				}
 

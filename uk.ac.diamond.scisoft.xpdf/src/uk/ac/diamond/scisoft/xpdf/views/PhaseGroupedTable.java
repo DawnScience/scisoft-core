@@ -35,6 +35,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceAdapter;
@@ -1007,6 +1008,7 @@ class PhaseGroupedTable {
 						
 						private UnitCellDialog unitCell;
 						private List<XPDFAtom> atoms;
+						private boolean wasOkayed;
 						
 						@Override
 						protected Object openDialogBox(Control cellEditorWindow) {
@@ -1015,7 +1017,9 @@ class PhaseGroupedTable {
 							unitCell.setAllAtoms(atoms);
 							if (element instanceof XPDFPhase)
 								unitCell.setSpaceGroup(((XPDFPhase) element).getSpaceGroup());
-							unitCell.open();
+							wasOkayed = true;
+							if (unitCell.open() != Window.OK)
+								wasOkayed = false;
 							return null;
 						}
 					    @Override
@@ -1026,16 +1030,15 @@ class PhaseGroupedTable {
 					    }
 					    @Override
 					    protected Object doGetValue() {
-					    	if (unitCell != null) {
+					    	if (unitCell != null && wasOkayed)
 					    		return unitCell.getAllAtoms();
-					    	}
-					    	else return null;
+					    	else
+					    		return atoms;
 					    }
 					    @Override
 					    protected void doSetValue(Object value) {
 					    	if (value instanceof List<?>)
 					    		atoms = ((List<XPDFAtom>) value);
-//					    		unitCell.setAllAtoms((List<XPDFAtom>) value);
 					    }
 					};
 				}

@@ -25,6 +25,8 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -747,20 +749,34 @@ class UnitCellGroupedTable {
 				}
 				@Override
 				public Object[] getElements(Object inputElement) {
-					return elementSymbol.toArray(new String[elementSymbol.size()]);
+					return Arrays.copyOfRange(elementSymbol.toArray(new String[elementSymbol.size()]), elementOffset, elementSymbol.size());
 				}
 			});
+			
+//			getViewer().getCombo().addKeyListener(new KeyListener() {
+//
+//				@Override
+//				public void keyPressed(KeyEvent e) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//
+//				@Override
+//				public void keyReleased(KeyEvent e) {
+//					// TODO Auto-generated method stub
+//					
+//				}
+//				
+//			});
 		}
 		// Sets the new value, and returns it to the calling EditorSupport, and its getValue() method, hence the name.
 		@Override
 		protected Object doGetValue() {
-			System.err.println("doGetValue(), " + getViewer().getCCombo().getSelectionIndex());
-			return (Integer) 3;
+			return getViewer().getCCombo().getSelectionIndex();
 		}
 		// Sets the previous value from the EditorSupport setValue() method.
 		@Override
 		protected void doSetValue(Object element) {
-			System.err.println(element.getClass());
 			if (element instanceof String)
 				z = elementSymbol.indexOf((String) element);
 			else if (element instanceof Integer)

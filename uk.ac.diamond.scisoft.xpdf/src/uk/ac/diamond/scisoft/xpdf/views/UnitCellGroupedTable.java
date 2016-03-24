@@ -289,7 +289,7 @@ class UnitCellGroupedTable {
 //		}
 //	}
 
-	private static class ElementColumnInterface implements ColumnInterface {
+	private class ElementColumnInterface implements ColumnInterface {
 
 		private final List<String> elementSymbol = Arrays.asList( new String[] { "?", 
 				"H","He","Li","Be","B","C","N","O","F","Ne",
@@ -313,27 +313,10 @@ class UnitCellGroupedTable {
 				protected CellEditor getCellEditor(Object element) {
 					Table theTable =  ((TableViewer) v).getTable();
 					String[] elementStrings = elementSymbol.subList(elementOffset, elementSymbol.size()).toArray(new String[elementSymbol.size()-1]);
-					ComboBoxViewerCellEditor theEditor = new ComboBoxViewerCellEditor(theTable) {
-////						@Override
-//						protected Object doGetValue() {
-//							return (Integer) getViewer().listGetSelectionIndices()[0];
-//						}
-					};
-					theEditor.setContentProvider(new IStructuredContentProvider() {
-						@Override
-						public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-						}
-						@Override
-						public void dispose() {
-						}
-						@Override
-						public Object[] getElements(Object inputElement) {
-							return elementSymbol.toArray(new String[elementSymbol.size()]);
-						}
-					});
+					ComboBoxViewerCellEditor theEditor = new ElementComboViewerEditor(theTable);
 					theEditor.setInput(elementStrings);
-//					return theEditor;
-					return new ComboBoxCellEditor(theTable, elementStrings);
+					return theEditor;
+//					return new ComboBoxCellEditor(theTable, elementStrings);
 				}
 
 				@Override
@@ -734,4 +717,57 @@ class UnitCellGroupedTable {
 		}
 	}
 
+	private class ElementComboViewerEditor extends ComboBoxViewerCellEditor {
+
+		private final List<String> elementSymbol = Arrays.asList( new String[] { "?", 
+				"H","He","Li","Be","B","C","N","O","F","Ne",
+				"Na","Mg","Al","Si","P","S","Cl","Ar","K","Ca",
+				"Sc","Ti","V","Cr","Mn","Fe","Co","Ni","Cu","Zn",
+				"Ga","Ge","As","Se","Br","Kr","Rb","Sr","Y","Zr",
+		        "Nb","Mo","Tc","Ru","Rh","Pd","Ag","Cd","In","Sn",
+		        "Sb","Te","I","Xe","Cs","Ba","La","Ce","Pr","Nd",
+		        "Pm","Sm","Eu","Gd","Tb","Dy","Ho","Er","Tm","Yb",
+		        "Lu","Hf","Ta","W","Re","Os","Ir","Pt","Au","Hg",
+		        "Tl","Pb","Bi","Po","At","Rn","Fr","Ra","Ac","Th",
+		        "Pa","U","Np","Pu","Am","Cm","Bk","Cf","Es","Fm"}
+		);
+		private static final int elementOffset = 1;
+		
+		private int z;
+
+		public ElementComboViewerEditor(Composite parent) {
+			super(parent);
+			
+			setContentProvider(new IStructuredContentProvider() {
+				@Override
+				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+				}
+				@Override
+				public void dispose() {
+				}
+				@Override
+				public Object[] getElements(Object inputElement) {
+					return elementSymbol.toArray(new String[elementSymbol.size()]);
+				}
+			});
+		}
+		// Sets the new value, and returns it to the calling EditorSupport, and its getValue() method, hence the name.
+		@Override
+		protected Object doGetValue() {
+			System.err.println("doGetValue(), " + getViewer().getCCombo().getSelectionIndex());
+			return (Integer) 3;
+		}
+		// Sets the previous value from the EditorSupport setValue() method.
+		@Override
+		protected void doSetValue(Object element) {
+			System.err.println(element.getClass());
+			if (element instanceof String)
+				z = elementSymbol.indexOf((String) element);
+			else if (element instanceof Integer)
+				z = (Integer) element;
+			
+		}
+		
+	}
+	
 }

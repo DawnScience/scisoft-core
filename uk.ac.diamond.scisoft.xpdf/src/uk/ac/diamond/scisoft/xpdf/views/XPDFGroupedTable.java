@@ -27,6 +27,8 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -366,5 +368,44 @@ class XPDFGroupedTable extends Composite {
 		dataViewer.getControl().setMenu(popupMenu);
 	}
 	
+	@Override
+	public void addMouseListener(MouseListener listener) {
+		dataViewer.getTable().addMouseListener(listener);
+	}
 	
+	@Override
+	public void removeMouseListener(MouseListener listener) {
+		dataViewer.getTable().removeMouseListener(listener);
+	}
+
+	/**
+	 * Adds the listener to the collection of listeners who will be notified
+	 * when the user changes the receiver's selection, by sending it one of the
+	 * messages defined in the SelectionListener interface.
+	 * <p>
+	 * When widgetSelected is called, the item field of the event object is
+	 * valid. If the receiver has the SWT.CHECK style and the check selection
+	 * changes, the event object detail field contains the value SWT.CHECK.
+	 * widgetDefaultSelected is typically called when an item is
+	 * double-clicked. The item field of the event object is valid for default
+	 * selection, but the detail field is not used.
+	 * <p>
+	 * Passes the listener through to the underlying {@link Table}.
+	 * @param listener
+	 * 				the listener which should be notified when the user changes the receiver's selection
+	 */
+	public void addSelectionListener(SelectionListener listener) {
+		dataViewer.getTable().addSelectionListener(listener);
+	}
+
+	/**
+	 * Removes the listener from the collection of listeners who will be notified when the user changes the receiver's selection.
+	 * <p>
+	 * Removes the listener from the underlying {@link Table}.
+	 * @param listener
+	 * 				 the listener which should no longer be notified.
+	 */
+	public void removeSelectionListener(SelectionListener listener) {
+		dataViewer.getTable().removeSelectionListener(listener);
+	}
 }

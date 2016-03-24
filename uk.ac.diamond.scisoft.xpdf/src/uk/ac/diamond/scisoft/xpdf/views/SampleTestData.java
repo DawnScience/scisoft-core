@@ -196,6 +196,15 @@ class SampleTestData {
 //			phase.addAtom(new XPDFAtom("O6", 8, 1.0, new double[] {-0.250, -0.583, -0.917}));
 			break;
 		}
+		case ("beryllium") : {
+			phase.setName("beryllium");
+			phase.setSpaceGroup(194); // P63/mmc, hexagonal
+			phase.setUnitCellLength(0, 2.29);
+			phase.setUnitCellLength(2, 3.58);
+			phase.addComment("elemental hcp beryllium");
+//			phase.addAtom(new XPDFAtom("Be1", 4, 1.0, new double[] {0,0,0}, "a"));
+			break;
+		}
 		default:
 		}
 		

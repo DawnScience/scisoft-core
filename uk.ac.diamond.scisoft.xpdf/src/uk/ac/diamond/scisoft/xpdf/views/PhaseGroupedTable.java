@@ -147,6 +147,7 @@ class PhaseGroupedTable {
 		testPhases.add(SampleTestData.createTestPhase("microcline"));
 		testPhases.add(SampleTestData.createTestPhase("cryolite"));
 		testPhases.add(SampleTestData.createTestPhase("ilmenite"));
+		testPhases.add(SampleTestData.createTestPhase("beryllium"));
 		addPhases(testPhases);
 
 	}

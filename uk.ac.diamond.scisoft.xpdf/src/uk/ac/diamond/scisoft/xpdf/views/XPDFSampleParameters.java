@@ -12,9 +12,13 @@ package uk.ac.diamond.scisoft.xpdf.views;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXsample;
@@ -386,7 +390,61 @@ class XPDFSampleParameters {
 		// comments
 		// QR code
 		// components
+		int nComp = phases.size();
+		// Use Java 8 streams to get the contents of the phases from the list of phases
+		sample.setComponent(new StringDataset(phases.stream().map(a -> a.getName()).collect(Collectors.toList()).toArray(new String[nComp]), new int[]{nComp}));
+		sample.setChemical_formula(new StringDataset(phases.stream().map(a -> a.getComposition().getHallNotation(false)).collect(Collectors.toList()).toArray(new String[nComp]), new int[]{nComp, 1}));
+		sample.setField("chemical_formula_weight", new DoubleDataset(ArrayUtils.toPrimitive(phases.stream().map(a -> a.getComposition().getFormulaMass()).collect(Collectors.toList()).toArray(new Double[nComp])), new int[]{nComp}));
+		// TODO: z_formula_per_unit_cell
+		// Unit cell parameters; is there a way to make an array of arrays into a Dataset?
+		double [] unitCellParams = new double[nComp*6];
+		final int nDim = 3;
+		for (int i = 0; i < phases.size(); i++)
+			for (int j = 0; j < nDim; j++) {
+				unitCellParams[i*2*nDim + j] = phases.get(i).getUnitCellLength(j);
+				unitCellParams[i*2*nDim + j + nDim] = phases.get(i).getUnitCellAngle(j);
+			}
+		sample.setUnit_cell(new DoubleDataset(unitCellParams, new int[]{nComp, 6}));
+		sample.setUnit_cell_volume(new DoubleDataset(ArrayUtils.toPrimitive(phases.stream().map(a -> a.getUnitCellVolume()).collect(Collectors.toList()).toArray(new Double[nComp])), new int[]{nComp}));
+		sample.setUnit_cell_class(new StringDataset(phases.stream().map(a -> a.getCrystalSystem().getName()).collect(Collectors.toList()).toArray(new String[nComp]), new int[]{nComp}));
+		sample.setUnit_cell_group(new StringDataset(phases.stream().map(a -> a.getSpaceGroup().getNumber() + ": " + a.getSpaceGroup().getName()).collect(Collectors.toList()).toArray(new String[nComp]), new int[]{nComp}));
 		
+		// TODO: Crystal structure
+		
+		// Densities and volume fractions and concentrations
+		DoubleDataset theoreticalDensities =  new DoubleDataset(ArrayUtils.toPrimitive(phases.stream().map(a -> a.getDensity()).collect(Collectors.toList()).toArray(new Double[nComp])), new int[]{nComp});
+		sample.setField("theoretical_density", theoreticalDensities);
+		// Assuming volume fraction of the total volume, not the non-void volume.
+		// TODO: sort out mass versus volume fractions
+		// mass fractions of the non-void matter
+		DoubleDataset massFractions = new DoubleDataset(ArrayUtils.toPrimitive(fractions.toArray(new Double[nComp])), new int[]{nComp});
+
+		// The overall density of the powder is the sum of masses divided by the sum of masses divided by densities
+		double overallDensity = ((double) massFractions.sum()) / ((double) Maths.divide(massFractions, theoreticalDensities).sum()); 
+		// The net density is the density of the powder times the volume fraction
+		sample.setDensityScalar(overallDensity * this.getPackingFraction());
+		
+		// volume fraction of the phase in the powder
+		DoubleDataset volumeFractions = (DoubleDataset) Maths.multiply(Maths.divide(massFractions, theoreticalDensities), overallDensity);
+		// volume fraction of the overall volume
+		volumeFractions.imultiply(this.getPackingFraction());
+		// concentrations: mass divided by total volume
+		DoubleDataset concentrations = (DoubleDataset) Maths.multiply(theoreticalDensities, volumeFractions);
+		sample.setConcentration(concentrations);
+		sample.setVolume_fraction(volumeFractions);
+		// total mass of the sample
+
+		// Actual beam added during data collection, proposed beam not contained in this class
+		{
+			// TODO: Theoretical PDF not yet calculable 
+		}
+		{
+			// Container not yet defined
+		}
+			// Dark frame added during data collection
+			// Calibration added during data collection (at least of the calibration)
+			// Mask added during data collection
+			// Sample images added during data collection
 	}
 	
 	

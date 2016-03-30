@@ -3,7 +3,7 @@
 	<name>uk.ac.diamond.scisoft.python</name>
 	<comment></comment>
 	<projects>
-		<project>ncsa.hdf</project>
+		<project>hdf.hdf5lib</project>
 		<project>org.eclipse.dawnsci.analysis.api</project>
 		<project>org.eclipse.dawnsci.analysis.dataset</project>
 		<project>org.eclipse.dawnsci.analysis.tree</project>

@@ -186,7 +186,13 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="ncsa.hdf"
+         id="hdf.hdf5lib"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="hdf.object"
          download-size="0"
          install-size="0"
          version="0.0.0"/>

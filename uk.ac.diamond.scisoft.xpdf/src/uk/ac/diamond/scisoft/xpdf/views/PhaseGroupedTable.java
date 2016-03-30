@@ -1031,10 +1031,18 @@ class PhaseGroupedTable {
 					    }
 					    @Override
 					    protected Object doGetValue() {
-					    	if (unitCell != null && wasOkayed)
-					    		return unitCell.getAllAtoms();
+					    	if (unitCell != null && wasOkayed) {
+					    		List<XPDFAtom> allAtoms = new ArrayList<XPDFAtom>(unitCell.getAllAtoms()),
+					    				badAtoms = new ArrayList<XPDFAtom>();
+					    		for (XPDFAtom atom : allAtoms)
+					    			if (atom.getAtomicNumber() < 1)
+					    				badAtoms.add(atom);
+					    		allAtoms.removeAll(badAtoms);
+					    		return allAtoms;
+					    		
+					    	}
 					    	else
-					    		return atoms;
+					    		return new ArrayList<XPDFAtom>(atoms);
 					    }
 					    @Override
 					    protected void doSetValue(Object value) {

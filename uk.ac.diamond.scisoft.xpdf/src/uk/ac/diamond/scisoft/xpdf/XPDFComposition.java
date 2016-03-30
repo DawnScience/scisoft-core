@@ -165,6 +165,15 @@ public class XPDFComposition {
 		return massSum/atomSum;
 	}
 
+	public double getFormulaMass() {
+		double massSum = 0.0;
+		for (Map.Entry<Integer, Double> element : atomCount.entrySet()) {
+			massSum += element.getValue() * Xraylib.AtomicWeight(element.getKey());
+		}
+		return massSum;
+	}
+	
+	
 	/**
 	 * Calculates the composition dependent part of the Krogh-Moe summation.
 	 * @return the part of the Krogh-Moe sum that depends on the composition,

@@ -422,7 +422,7 @@ class XPDFPhase {
 	public double getUnitCellAngle(int dimension) {
 		if (dimension < 0 || dimension >= nDim)
 			throw new OutOfRangeException(dimension, 0, nDim);
-		return unitCellDegrees[dimension];
+		return getUnitCellAngle()[dimension];
 	}
 	/**
 	 * Returns the density.

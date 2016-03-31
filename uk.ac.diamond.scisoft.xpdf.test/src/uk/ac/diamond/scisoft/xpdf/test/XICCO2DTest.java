@@ -29,6 +29,7 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskModel
 import uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.twod.DiffractionMetadataImportModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.twod.DiffractionMetadataImportOperation;
+import uk.ac.diamond.scisoft.xpdf.XPDFGeometryEnum;
 import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 import uk.ac.diamond.scisoft.xpdf.operations.XPDFDefineDetectorModel;
@@ -222,8 +223,8 @@ class CeriaSampleMetadataModel extends XPDFInsertSampleMetadataModel {
 		return 0.6;
 	}
 	@Override
-	public String getShape() {
-		return "cylinder";
+	public XPDFGeometryEnum getShape() {
+		return XPDFGeometryEnum.CYLINDER;
 	}
 	@Override
 	public double getInner() {
@@ -281,8 +282,8 @@ class OneMMContainerMetadataModel extends XPDFInsertContainerMetadataModel {
 		return 1.0;
 	}
 	@Override
-	public String getShape() {
-		return "cylinder";
+	public XPDFGeometryEnum getShape() {
+		return XPDFGeometryEnum.CYLINDER;
 	}
 	@Override
 	public double getInner() {

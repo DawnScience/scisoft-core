@@ -556,7 +556,7 @@ public class HDF5Loader extends AbstractFileLoader {
 				} else if (ltype == HDF5Constants.H5L_TYPE_SOFT) {
 					// System.err.println("S: " + oname);
 					String[] linkName = new String[1];
-					int t = H5.H5Lget_val(gid, oname, linkName, HDF5Constants.H5P_DEFAULT);
+					int t = H5.H5Lget_value(gid, oname, linkName, HDF5Constants.H5P_DEFAULT);
 					if (t < 0) {
 						logger.error("Could not get value of link");
 					}
@@ -566,7 +566,7 @@ public class HDF5Loader extends AbstractFileLoader {
 				} else if (ltype == HDF5Constants.H5L_TYPE_EXTERNAL) {
 					// System.err.println("E: " + oname);
 					String[] linkName = new String[2]; // file name and file path
-					int t = H5.H5Lget_val(gid, oname, linkName, HDF5Constants.H5P_DEFAULT);
+					int t = H5.H5Lget_value(gid, oname, linkName, HDF5Constants.H5P_DEFAULT);
 					// System.err.println("  -> " + linkName[0] + " in " + linkName[1]);
 					if (t < 0) {
 						logger.error("Could not get value of link");
@@ -850,7 +850,7 @@ public class HDF5Loader extends AbstractFileLoader {
 				Object data = d.getBuffer();
 
 				if (type.vlen) {
-					H5.H5DreadVL(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, (Object[]) data);
+					H5.H5Dread_VLStrings(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, (Object[]) data);
 				} else {
 					H5.H5Dread(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, data);
 				}
@@ -917,7 +917,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		Object data = d.getBuffer();
 
 		if (isVLEN) {
-			H5.H5DreadVL(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, (Object[]) data);
+			H5.H5Dread_VLStrings(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, (Object[]) data);
 		} else {
 			H5.H5Dread(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, data);
 		}

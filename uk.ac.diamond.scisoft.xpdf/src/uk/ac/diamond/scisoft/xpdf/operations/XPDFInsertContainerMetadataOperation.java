@@ -24,6 +24,7 @@ import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentForm;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentGeometry;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentPlate;
+import uk.ac.diamond.scisoft.xpdf.XPDFGeometryEnum;
 import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
@@ -45,13 +46,20 @@ public class XPDFInsertContainerMetadataOperation extends
 		XPDFComponentGeometry geomMeta = null;
 
 		// Read shape from the Model
-		String shape = model.getShape();
+		XPDFGeometryEnum shape = model.getShape();
 
-		if (shape.equals("cylinder")) {
+		switch (shape) {
+		case CYLINDER:
 			geomMeta = new XPDFComponentCylinder();
-		} else if (shape.equals("plate")) {
+			break;
+		case PLATE:
 			geomMeta = new XPDFComponentPlate();
+			break;
+		case DEFINED_BY_CONTAINER:
+		default:
+			throw new OperationException(this, "Containers must have a defined shape");	
 		}
+
 		// Read size data from the Model
 		double inner = model.getInner();
 		double outer = model.getOuter();

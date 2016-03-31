@@ -73,6 +73,14 @@ public class XPDFIterateCalibrationConstantOperation extends
 				}
 			}
 		}
+		
+		// Define the geometry of any components defined by their container(s).
+		try {
+			theXPDFMetadata.defineUndefinedSamplesContainers();
+		} catch (Exception e) {
+			throw new OperationException(this, "Could not define sample geometry: " + e.toString());
+		}
+		
 		List<Dataset> backgroundSubtracted = new ArrayList<Dataset>();
 		// The 0th element is the sample
 		backgroundSubtracted.add(DatasetUtils.convertToDataset(input));

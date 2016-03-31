@@ -290,6 +290,44 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 		totalSampleFluorescence.imultiply(tect.getSolidAngle());
 		return totalSampleFluorescence.squeeze();
 	}
+
+	@Override
+	public void defineUndefinedSamplesContainers() throws Exception {
+		// Do nothing if the geometry is defined
+		if (sampleData.getForm().getGeom() != null) return;
+		XPDFTargetComponent outwardContainer = null, inwardContainer = null;
+		// TODO: cope with the case where the sample is not the innermost component
+		{
+			inwardContainer = null;
+			outwardContainer = containerData.get(0);
+		}
+		// Assume an outward container exists
+		if (outwardContainer == null) throw new Exception("No outer container defined");
+		if (outwardContainer.getForm().getGeom() == null) throw new Exception("No geometry defined for the outer container");
+		if (inwardContainer != null && inwardContainer.getForm().getGeom() == null) throw new Exception("No geometry defined for the inner container");
+		if (inwardContainer != null && inwardContainer.getForm().getGeom().getShape() != outwardContainer.getForm().getGeom().getShape()) throw new Exception("Bounding container geometries differ") ;
+		// Check both containers have the same geometry
+		XPDFComponentGeometry geomMeta = null;
+		switch (outwardContainer.getForm().getGeom().getShape().toLowerCase()) {
+			case("cylinder") :
+				geomMeta = new XPDFComponentCylinder();
+			break;
+			case("plate") :
+				geomMeta = new XPDFComponentPlate();
+		}
+		double inner, outer;
+		if (inwardContainer == null) 
+			inner = 0.0;
+		else
+			inner = inwardContainer.getForm().getGeom().getDistances()[1];
+		
+		outer = outwardContainer.getForm().getGeom().getDistances()[0];
+		
+		geomMeta.setDistances(inner, outer);
+		
+		sampleData.getForm().setGeom(geomMeta);
+		
+	}
 	
 
 }

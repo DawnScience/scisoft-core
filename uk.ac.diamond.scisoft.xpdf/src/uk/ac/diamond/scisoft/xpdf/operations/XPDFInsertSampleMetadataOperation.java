@@ -24,6 +24,7 @@ import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentForm;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentGeometry;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentPlate;
+import uk.ac.diamond.scisoft.xpdf.XPDFGeometryEnum;
 import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 
@@ -44,19 +45,28 @@ public class XPDFInsertSampleMetadataOperation extends XPDFInsertXMetadataOperat
 		XPDFComponentGeometry geomMeta = null;
 
 		// Read shape from the Model
-		String shape = model.getShape();
+		XPDFGeometryEnum shape = model.getShape();
 
-		if (shape.equals("cylinder")) {
+		switch (shape) {
+		case CYLINDER :
 			geomMeta = new XPDFComponentCylinder();
-		} else if (shape.equals("plate")) {
+			break;
+		case PLATE:
 			geomMeta = new XPDFComponentPlate();
+			break;
+		case DEFINED_BY_CONTAINER:
+		default:
+			geomMeta = null;
 		}
+
 		// Read size data from the Model
 		double inner = model.getInner();
 		double outer = model.getOuter();
 		// samples have no streamality
 
-		geomMeta.setDistances(inner, outer);
+		// Null geometry doesn't need distances setting
+		if (geomMeta != null)
+			geomMeta.setDistances(inner, outer);
 
 		// Get the material data from the Model
 		String material = model.getMaterial();

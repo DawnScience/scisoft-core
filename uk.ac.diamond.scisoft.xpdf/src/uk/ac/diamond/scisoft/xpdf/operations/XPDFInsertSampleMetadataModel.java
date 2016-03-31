@@ -13,6 +13,8 @@ import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.FileType;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
+import uk.ac.diamond.scisoft.xpdf.XPDFGeometryEnum;
+
 public class XPDFInsertSampleMetadataModel extends AbstractOperationModel {
 
 	
@@ -33,7 +35,7 @@ public class XPDFInsertSampleMetadataModel extends AbstractOperationModel {
 	@OperationModelField(hint="Enter the sample packing fraction",label = "Sample Packing Fraction" )
 	private double packingFraction = 0.6;
 	@OperationModelField(hint="Enter the shape of the sample", label = "Sample Shape")
-	private String shape = "cylinder";
+	private XPDFGeometryEnum shape = XPDFGeometryEnum.CYLINDER;
 	@OperationModelField(hint="Enter an inner distance for the sample shape",label = "Sample Inner Distance (mm)" )
 	private double inner = 0.0;
 	@OperationModelField(hint="Enter an outer distance for the sample shape",label = "Sample Outer Distance (mm)" )
@@ -97,11 +99,11 @@ public class XPDFInsertSampleMetadataModel extends AbstractOperationModel {
 		firePropertyChange("packingFraction", this.packingFraction, this.packingFraction = packingFraction);
 	}
 
-	public String getShape() {
+	public XPDFGeometryEnum getShape() {
 		return shape;
 	}
 
-	public void setShape(String shape) {
+	public void setShape(XPDFGeometryEnum shape) {
 		firePropertyChange("shape", this.shape, this.shape = shape);
 	}
 

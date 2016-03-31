@@ -117,4 +117,12 @@ public interface XPDFMetadata extends MetadataType {
 	 * @return the dataset containing the total sample fluorescence.
 	 */
 	Dataset getSampleFluorescence(Dataset gamma, Dataset delta);
+
+	/**
+	 * Defines the geometry of undefined samples and containers.
+	 * <p>
+	 * Since samples are allowed to be defined by their containers, we need to
+	 * define their geometry at some point. This is that point.
+	 */
+	void defineUndefinedSamplesContainers() throws Exception;
 }

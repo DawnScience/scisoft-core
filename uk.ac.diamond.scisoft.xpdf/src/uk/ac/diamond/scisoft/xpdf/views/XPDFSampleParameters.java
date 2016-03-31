@@ -259,12 +259,12 @@ class XPDFSampleParameters {
 	}
 	
 	
-	/**
-	 * @return the attenuation coefficient at the suggested beam energy.
-	 */
-	public double getMu(double beamEnergy) {
-		return getForm().getAttenuationCoefficient(beamEnergy);
-	}
+//	/**
+//	 * @return the attenuation coefficient at the suggested beam energy.
+//	 */
+//	public double getMu(double beamEnergy) {
+//		return getForm().getAttenuationCoefficient(beamEnergy);
+//	}
 //	/**
 //	 * @return the chosen container description.
 //	 */
@@ -366,11 +366,14 @@ class XPDFSampleParameters {
 	/**
 	 * Creates a NeXus data structure from the sample.
 	 * <p>
-	 * Creates an XPDF NeXus data structure, using the supplied Nexus File Builder, as specified.
+	 * Creates an XPDF NeXus data structure, using the supplied Nexus File
+	 * Builder, as specified. Only works for samples, for now.
 	 * @param builder
 	 * 				the {@link NexusFileBuilder} to write the sample data to
 	 */
-	public void writeNX(NexusFileBuilder builder) {
+	public NXsample getNXsample(NexusFileBuilder builder) {
+		
+		if (!isSample()) return null;
 		
 		NexusNodeFactory noder = builder.getNodeFactory();
 		NXsample sample = noder.createNXsample();
@@ -379,7 +382,7 @@ class XPDFSampleParameters {
 			sampleEntry = builder.newEntry("entry1").getNXentry();
 		} catch (NexusException nE) {
 			System.err.println("Failed to create new entry with NeXus file builder: " + nE.toString());
-			return;
+			return null;
 		}
 		sampleEntry.setSample(sample);
 		
@@ -445,6 +448,7 @@ class XPDFSampleParameters {
 			// Calibration added during data collection (at least of the calibration)
 			// Mask added during data collection
 			// Sample images added during data collection
+		return sample;
 	}
 	
 	

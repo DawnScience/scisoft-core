@@ -511,7 +511,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			
 			NexusFileBuilder builder = new DefaultNexusFileBuilder(filename);
 			
-			firstSelectedSample.writeNX(builder);
+			firstSelectedSample.getNXsample(builder);
 			try {
 				builder.createFile();
 				System.err.println("Success writing NeXus file to " + filename);

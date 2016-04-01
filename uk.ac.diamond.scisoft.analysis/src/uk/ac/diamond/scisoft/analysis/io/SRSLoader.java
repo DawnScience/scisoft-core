@@ -49,6 +49,8 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 	private boolean storeStringValues = false;
 	private boolean useImageLoaderForStrings = true;
 
+	protected boolean checkForMoreMetadata = true;
+
 	public SRSLoader() {
 	}
 	
@@ -140,7 +142,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 					throw new ScanFileHolderException("Loader cancelled during reading!");
 				}
 				dataStr = dataStr.trim();
-				if (NUMBER_REGEX.matcher(dataStr).matches()) {
+				if (NUMBER_REGEX.matcher(dataStr).matches() || !checkForMoreMetadata) {
 					if (!loadLazily) {
 						parseColumns(SPLIT_REGEX.split(dataStr), columns);
 					}

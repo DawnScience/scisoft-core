@@ -25,7 +25,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
-import org.eclipse.dawnsci.hdf.object.operation.HierarchicalFileExecutionVisitor;
+import org.eclipse.dawnsci.hdf5.operation.HierarchicalFileExecutionVisitor;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -22,7 +22,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
-import org.eclipse.dawnsci.hdf.object.operation.HierarchicalFileExecutionVisitor;
+import org.eclipse.dawnsci.hdf5.operation.HierarchicalFileExecutionVisitor;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

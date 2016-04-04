@@ -98,7 +98,7 @@ public class HDF5LoaderTest {
 		}
 
 		Collections.sort(ourTimes);
-		System.out.printf("Load took %d ms\n", ourTimes.get(0));
+		System.out.printf("Load took %d ms cf %d ms\n", ourTimes.get(0));
 	}
 
 	@Test

@@ -95,26 +95,28 @@ public class CoordinateMaskOperation extends
 
 		}
 		
-		MakeMask maskMaker = new MakeMask(coordinateRange[0], coordinateRange[1]);
-		// MakeMask makes BooleanDatasets
-		BooleanDataset coordinateMask = (BooleanDataset) maskMaker.value(coordinateArray).get(0); 
-		// Invert if required
-		if (model.isMaskedInside())
-			coordinateMask.isubtract(true);
+		if (coordinateRange != null) {
 		
+			MakeMask maskMaker = new MakeMask(coordinateRange[0], coordinateRange[1]);
+			// MakeMask makes BooleanDatasets
+			BooleanDataset coordinateMask = (BooleanDataset) maskMaker.value(coordinateArray).get(0); 
+			// Invert if required
+			if (model.isMaskedInside())
+				coordinateMask.isubtract(true);
 
-		// Get the input mask, and combine the two masks
-		IDataset inputMask = DatasetUtils.convertToDataset(getFirstMask(input));
-		
-		if (inputMask == null) {
-			inputMask = coordinateMask;
-		} else {
-			inputMask = Comparisons.logicalAnd(inputMask, coordinateMask);
-		}
-		
-		MaskMetadata maskMetadata = new MaskMetadataImpl(inputMask);
-		input.setMetadata(maskMetadata);
-		
+
+			// Get the input mask, and combine the two masks
+			IDataset inputMask = DatasetUtils.convertToDataset(getFirstMask(input));
+
+			if (inputMask == null) {
+				inputMask = coordinateMask;
+			} else {
+				inputMask = Comparisons.logicalAnd(inputMask, coordinateMask);
+			}
+
+			MaskMetadata maskMetadata = new MaskMetadataImpl(inputMask);
+			input.setMetadata(maskMetadata);
+		}		
 		return new OperationData(input);
 	}
 

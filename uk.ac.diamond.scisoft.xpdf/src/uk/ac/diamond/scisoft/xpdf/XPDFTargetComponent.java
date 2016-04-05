@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.dawnsci.nexus.NXsample;
 
 /**
  * The properties of any component of the beam target, including both the
@@ -59,6 +60,20 @@ public class XPDFTargetComponent {
 		this.subBak = inComp.subBak != null ? inComp.subBak : null;
 		this.calCon = inComp.calCon != null ? inComp.calCon : null;
 		this.mulCor = inComp.mulCor != null ? inComp.mulCor : null;
+	}
+	
+	/**
+	 * Constructor from NXsample.
+	 * <p>
+	 * Constructor for NeXus objects that do not have geometry information
+	 * @param nxample
+	 * 				object describing the contents of the NeXus file 
+	 * @param geom
+	 * 			geometry of the component
+	 */
+	public XPDFTargetComponent(NXsample nxample, XPDFComponentGeometry geom) {
+		this.name = nxample.getNameScalar();
+		this.form = new XPDFComponentForm(nxample, geom);
 	}
 	
 	/**

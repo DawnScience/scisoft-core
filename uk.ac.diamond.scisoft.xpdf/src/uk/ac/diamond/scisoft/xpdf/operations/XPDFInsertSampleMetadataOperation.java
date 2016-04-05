@@ -10,14 +10,21 @@
 package uk.ac.diamond.scisoft.xpdf.operations;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.tree.IFindInTree;
+import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
+import org.eclipse.dawnsci.analysis.api.tree.Tree;
+import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.nexus.NXsample;
 
+import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamTrace;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
@@ -68,23 +75,42 @@ public class XPDFInsertSampleMetadataOperation extends XPDFInsertXMetadataOperat
 		if (geomMeta != null)
 			geomMeta.setDistances(inner, outer);
 
-		// Get the material data from the Model
-		String material = model.getMaterial();
-		double density = model.getDensity();
-		double packingFraction = model.getPackingFraction();
+		// Try to get a NeXus sample description. If it fails, get the data from the model
+		try {
+			String nxFilePath = model.getNexusFilePath();
+			// Empty file name? throw to get out of here
+			if (nxFilePath == null || nxFilePath.equals("")) throw new Exception("Empty filename");
 
-		formMeta.setMatName(material);
-		formMeta.setDensity(density);
-		formMeta.setPackingFraction(packingFraction);
-		formMeta.setGeom(geomMeta);
+			Tree fileTree = LoaderFactory.getData(nxFilePath, true, monitor).getTree();
+			NXsample nxample = TreeUtils.treeBreadthFirstSearch(fileTree.getGroupNode(), new IFindInTree() {
+				
+				@Override
+				public boolean found(NodeLink node) {
+					if (node instanceof NXsample)
+						return true;
+					
+					return false;
+				}
+			}, true, monitor).values().toArray(new NXsample[1])[0];
+			compMeta = new XPDFTargetComponent(nxample, geomMeta);
+			
+		} catch (Exception e) {
+			// Get the material data from the Model
+			String material = model.getMaterial();
+			double density = model.getDensity();
+			double packingFraction = model.getPackingFraction();
+			// Get sample name from the Model
+			String name = model.getSampleName();
 
-		compMeta.setForm(formMeta);
+			formMeta.setMatName(material);
+			formMeta.setDensity(density);
+			formMeta.setPackingFraction(packingFraction);
+			formMeta.setGeom(geomMeta);
 
-		// Get sample name from the Model
-		String name = model.getSampleName();
-
-		compMeta.setName(name);
-
+			compMeta.setForm(formMeta);
+			compMeta.setName(name);
+		}
+		
 		// Counting time and relative flux of the trace in the main Dataset
 		XPDFBeamTrace sampleTraceMeta = new XPDFBeamTrace();
 		sampleTraceMeta.setCountingTime(model.getCountingTime());

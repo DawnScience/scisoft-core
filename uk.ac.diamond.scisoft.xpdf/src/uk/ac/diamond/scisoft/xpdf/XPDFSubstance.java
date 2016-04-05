@@ -9,6 +9,9 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.dawnsci.nexus.NXsample;
+
 /**
  * Holds the details of a material, both chemical and physical.
  * @author Timothy Spain timothy.spain@diamond.ac.uk
@@ -62,6 +65,23 @@ public class XPDFSubstance {
 		this.packingFraction = packingFraction;
 	}
 	
+	/**
+	 * Constructor from NXsample.
+	 * 				object describing the contents of the NeXus file 
+	 * @param nxample
+	 * 			sample information from a NeXus file
+	 */
+	public XPDFSubstance(NXsample nxample) {
+		this.materialName = nxample.getChemical_formulaScalar();
+		this.materialComposition = new XPDFComposition(nxample.getChemical_formulaScalar());
+		// Sum of component packing fractions
+		this.packingFraction = (double) DatasetUtils.convertToDataset(nxample.getVolume_fraction()).sum();
+		// Sum of component concentrations
+		this.microMassDensity = (double) DatasetUtils.convertToDataset(nxample.getConcentration()).sum();
+		// Divide by total volume fraction to get the solid density. 
+		this.microMassDensity /= this.packingFraction;
+	}
+
 	/**
 	 * Getter for the name.
 	 * @return the material name.

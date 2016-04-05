@@ -22,26 +22,28 @@ public class XPDFInsertSampleMetadataModel extends AbstractOperationModel {
 	private String errorFilePath = "";
 	@OperationModelField(hint="Name of the dataset containing the errors", dataset = "errorFilePath", label = "Errors Dataset")
 	private String errorDataset = "";
-	@OperationModelField(hint="Enter a counting time for the experiment",label = "Counting Time (s)" )
+	@OperationModelField(hint="Enter a counting time for the experiment",label = "Counting Time", unit = "s" )
 	private double countingTime = 60.0;
 	@OperationModelField(hint="Enter the flux relative to the monitor",label = "Monitor Relative Flux" )
 	private double monitorRelativeFlux = 1.0;
-	@OperationModelField(hint="Enter an identifying name for the sample", label = "Sample Identifier")
+	@OperationModelField(hint="Enter an identifying name for the sample", label = "Sample Identifier")//, enableif = "nexusFilePath == \"\"")
 	private String sampleName = "Ceria SRM";
-	@OperationModelField(hint="Enter the IUPAC formula for the sample material", label = "Sample Material")
+	@OperationModelField(hint="Enter the IUPAC formula for the sample material", label = "Sample Material")//, enableif = "nexusFilePath == \"\"")
 	private String material = "CeO2";
-	@OperationModelField(hint="Enter the sample material density",label = "Sample Density (g/cm^3)" )
+	@OperationModelField(hint="Enter the sample material density",label = "Sample Density", unit = "g/cm³")//, enableif = "nexusFilePath == \"\"" )
 	private double density = 7.65;
-	@OperationModelField(hint="Enter the sample packing fraction",label = "Sample Packing Fraction" )
+	@OperationModelField(hint="Enter the sample packing fraction",label = "Sample Packing Fraction")//, enableif = "nexusFilePath == \"\"" )
 	private double packingFraction = 0.6;
 	@OperationModelField(hint="Enter the shape of the sample", label = "Sample Shape")
 	private XPDFGeometryEnum shape = XPDFGeometryEnum.CYLINDER;
-	@OperationModelField(hint="Enter an inner distance for the sample shape",label = "Sample Inner Distance (mm)" )
+	@OperationModelField(hint="Enter an inner distance for the sample shape",label = "Sample Inner Distance", unit = "mm" )
 	private double inner = 0.0;
-	@OperationModelField(hint="Enter an outer distance for the sample shape",label = "Sample Outer Distance (mm)" )
+	@OperationModelField(hint="Enter an outer distance for the sample shape",label = "Sample Outer Distance", unit = "mm" )
 	private double outer = 0.5;
 	@OperationModelField(hint="Enter whether the x-axis is angle or momentum transfer",label = "Is x-axis 2θ?" )
 	private boolean axisAngle = true;
+	@OperationModelField(hint="NeXus file containing the sample parameters", label = "Sample NeXus file", file = FileType.EXISTING_FILE)
+	private String nexusFilePath = "";
 	
 	public String getErrorFilePath() {
 		return errorFilePath;
@@ -139,4 +141,11 @@ public class XPDFInsertSampleMetadataModel extends AbstractOperationModel {
 		firePropertyChange("axisAngle", this.axisAngle, this.axisAngle = axisAngle);
 	}
 	
+	public String getNexusFilePath() {
+		return nexusFilePath;
+	}
+	
+	public void setNexusFilePath(String filePath) {
+		firePropertyChange("nexusFilePath", this.nexusFilePath, this.nexusFilePath = filePath);
+	}
 }

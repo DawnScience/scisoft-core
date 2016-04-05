@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.xpdf;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.nexus.NXsample;
 
 /**
  * 
@@ -47,6 +48,20 @@ public class XPDFComponentForm {
 				this.geometry = new XPDFComponentPlate(inForm.getGeom());
 			}
 		}
+	}
+
+	/**
+	 * Constructor from NXsample.
+	 * <p>
+	 * Constructor for NeXus objects that do not have geometry information
+	 * @param nxample
+	 * 				object describing the contents of the NeXus file 
+	 * @param geom
+	 * 			geometry of the component
+	 */
+	public XPDFComponentForm(NXsample nxample, XPDFComponentGeometry geom) {
+		this.geometry = geom;
+		this.substance = new XPDFSubstance(nxample);
 	}
 
 	/**

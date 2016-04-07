@@ -304,6 +304,16 @@ public abstract class AFunction implements IFunction, Serializable {
 	protected final static double R_TOLERANCE = 1e-9; // relative tolerance
 
 	/**
+	 * @param param
+	 * @param delta
+	 * @return true if delta is large enough to change the parameter value
+	 */
+	private static final boolean isDeltaLargeEnough(IParameter param, double delta) {
+		double v = Math.abs(param.getValue());
+		return delta*v > Math.ulp(v);
+	}
+
+	/**
 	 * @param abs
 	 * @param rel
 	 * @param param
@@ -320,8 +330,8 @@ public abstract class AFunction implements IFunction, Serializable {
 		double previousAbsDifference = Double.POSITIVE_INFINITY;
 		final double absDifferenceRatio = 1.00; 
 
-		while (delta > Double.MIN_NORMAL) {
-			delta *= DELTA_FACTOR;
+		delta *= DELTA_FACTOR;
+		while (isDeltaLargeEnough(param, delta)) {
 			current = numericalDerivative(delta, param, values);
 			acurrent = Math.abs(current);
 			absDifference = Math.abs(current - previous);
@@ -338,6 +348,7 @@ public abstract class AFunction implements IFunction, Serializable {
 			previousAbsDifference = absDifference;
 			previous = current;
 			aprevious = acurrent;
+			delta *= DELTA_FACTOR;
 		}
 		
 		return current;
@@ -448,8 +459,6 @@ public abstract class AFunction implements IFunction, Serializable {
 		calcNumericalDerivativeDataset(A_TOLERANCE, R_TOLERANCE, parameter, data, it);
 	}
 
-	private static final double SMALLEST_DELTA = Double.MIN_NORMAL * 1024 * 1024;
-
 	/**
 	 * Calculate partial derivatives up to tolerances
 	 * @param abs
@@ -464,8 +473,8 @@ public abstract class AFunction implements IFunction, Serializable {
 		fillWithNumericalDerivativeDataset(delta, param, previous, it);
 		DoubleDataset current = new DoubleDataset(it.getShape());
 
-		while (delta > SMALLEST_DELTA) {
-			delta *= DELTA_FACTOR;
+		delta *= DELTA_FACTOR;
+		while (isDeltaLargeEnough(param, delta)) {
 			fillWithNumericalDerivativeDataset(delta, param, current, it);
 			if (Comparisons.allCloseTo(previous, current, rel, abs))
 				break;
@@ -473,8 +482,9 @@ public abstract class AFunction implements IFunction, Serializable {
 			DoubleDataset temp = previous;
 			previous = current;
 			current = temp;
+			delta *= DELTA_FACTOR;
 		}
-//		if (delta <= SMALLEST_DELTA) {
+//		if (!isDeltaLargeEnough(param, delta)) {
 //			logger.warn("Numerical derivative did not converge!");
 //		}
 

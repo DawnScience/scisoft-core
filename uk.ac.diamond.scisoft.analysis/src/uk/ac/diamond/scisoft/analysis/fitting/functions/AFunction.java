@@ -310,7 +310,7 @@ public abstract class AFunction implements IFunction, Serializable {
 	 */
 	private static final boolean isDeltaLargeEnough(IParameter param, double delta) {
 		double v = Math.abs(param.getValue());
-		return delta*v > Math.ulp(v);
+		return (v == 0 ? delta : delta * v) > Math.ulp(v);
 	}
 
 	/**

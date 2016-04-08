@@ -19,11 +19,14 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.OperationServiceLoader;
 
 public class StitchingImagesOperation extends AbstractOperation<StitchingImagesModel, OperationData> {
 
+	private final Logger logger = LoggerFactory.getLogger(StitchingImagesOperation.class);
 	private List<IDataset> imageStack = new ArrayList<IDataset>();
 	private int counter;
 	private ILazyDataset parent;
@@ -61,7 +64,11 @@ public class StitchingImagesOperation extends AbstractOperation<StitchingImagesM
 			
 			if (imageStitchingService == null)
 				imageStitchingService = OperationServiceLoader.getImageStitchingService();
-			stitched = imageStitchingService.stitch(imageStack, rows, columns, fieldOfView, translations, useFeatureAssociation, monitor);
+			try {
+				stitched = imageStitchingService.stitch(imageStack, rows, columns, fieldOfView, translations, useFeatureAssociation, monitor);
+			} catch (Exception e) {
+				logger.error("Error running stitching process:", e);
+			}
 
 			SliceFromSeriesMetadata outsmm = ssm.clone();
 			for (int i = 0; i < ssm.getParent().getRank(); i++) {

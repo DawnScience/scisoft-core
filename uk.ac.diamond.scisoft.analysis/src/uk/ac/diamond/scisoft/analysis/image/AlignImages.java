@@ -228,16 +228,14 @@ public class AlignImages {
 		int index = 0;
 		int nr = rois.size();
 		// save on a temp file
-		String file = System.getProperty("java.io.tmpdir") + File.separator + "temp_aligned.h5";
+		String file = System.getProperty("java.io.tmpdir") + File.separator + "tmp_aligned.h5";
 		String path = "/entry/data/";
 		String name = "aligned";
 		File tmpFile = new File(file);
 		if(tmpFile.exists())
 			tmpFile.delete();
-		IDataset slice = data.getSlice(new Slice(0, data.getShape()[0], data.getShape()[1])).squeeze();
-		int dtype = AbstractDataset.getDType(slice);
 		ILazyWriteableDataset lazy = HDF5Utils.createLazyDataset(file, path, name, data.getShape(), null,
-				data.getShape(), dtype, null, false);
+				data.getShape(), AbstractDataset.FLOAT32, null, false);
 
 		if (nr > 0) {
 			if (nr < mode) { // clean up roi list

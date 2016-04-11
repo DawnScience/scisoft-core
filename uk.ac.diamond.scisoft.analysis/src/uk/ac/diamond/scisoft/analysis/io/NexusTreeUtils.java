@@ -109,6 +109,7 @@ public class NexusTreeUtils {
 	
 	static {
 		UnitFormat.getInstance().alias(NonSI.ANGSTROM, "Angstrom");
+		UnitFormat.getInstance().alias(NonSI.ANGSTROM, "angstrom");
 		UnitFormat.getInstance().alias(NonSI.DEGREE_ANGLE, "deg");
 	}
 

@@ -23,7 +23,7 @@ public class SubtractScalarOperation extends AbstractScalarMathsOperation<Scalar
 	protected IDataset doMaths(IDataset data, double value) {
 		
 		IDataset output = data.getSlice();
-		DatasetUtils.convertToDataset(output).iadd(value);
+		DatasetUtils.convertToDataset(output).isubtract(value);
 		
 		return output;
 

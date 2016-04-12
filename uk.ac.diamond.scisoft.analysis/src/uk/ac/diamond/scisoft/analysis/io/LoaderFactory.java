@@ -151,6 +151,7 @@ public class LoaderFactory {
 		    registerLoader("dat",  ExtendedSRSLoader.class);
 		    registerLoader("dat",  ExtendedSRSLoader2.class);
 		    registerLoader("dat",  SRSLoader.class);
+		    registerLoader("dat",  UViewDatLoader.class);
 		    registerLoader("csv",  CSVLoader.class);
 		    registerLoader("rgb",  RGBTextLoader.class);
 		    registerLoader("txt",  DatLoader.class);

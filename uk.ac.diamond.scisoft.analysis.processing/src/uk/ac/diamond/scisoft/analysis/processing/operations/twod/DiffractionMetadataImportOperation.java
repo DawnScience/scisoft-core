@@ -46,18 +46,18 @@ public class DiffractionMetadataImportOperation extends AbstractOperationBase<Di
 		
 		SliceFromSeriesMetadata ssm = slice.getFirstMetadata(SliceFromSeriesMetadata.class);
 
-		slice.setMetadata(getMeta(model, ssm.getParent()));
+		slice.setMetadata(getMeta(model, ssm.getParent(), ssm.getDatasetName()));
 		return new OperationData(slice);
 	}
 	
-	private IDiffractionMetadata getMeta(DiffractionMetadataImportModel mod, ILazyDataset parent) {
+	private IDiffractionMetadata getMeta(DiffractionMetadataImportModel mod, ILazyDataset parent, String name) {
 
 		IDiffractionMetadata lmeta = metadata;
 		if (lmeta == null) {
 			synchronized(this) {
 				lmeta = metadata;
 				if (lmeta == null) {
-					IDiffractionMetadata md = NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(mod.getFilePath(), parent);
+					IDiffractionMetadata md = NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(mod.getFilePath(), parent, name);
 					if (md == null) throw new OperationException(this, "File does not contain metadata");
 					metadata = lmeta = md;
 					

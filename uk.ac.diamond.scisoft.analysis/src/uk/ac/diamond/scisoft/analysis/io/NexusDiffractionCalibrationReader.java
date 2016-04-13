@@ -40,6 +40,11 @@ public class NexusDiffractionCalibrationReader {
 	
 	
 	public static IDiffractionMetadata getDiffractionMetadataFromNexus(final String filePath, final ILazyDataset parent) {
+		return getDiffractionMetadataFromNexus(filePath, parent, null);
+	}
+	
+	
+	public static IDiffractionMetadata getDiffractionMetadataFromNexus(final String filePath, final ILazyDataset parent, String datasetName) {
 
 		Tree tree = null;
 		IDataHolder dh;
@@ -52,7 +57,12 @@ public class NexusDiffractionCalibrationReader {
 
 		Map<String, NodeLink> dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getFinder(parent), true, null);
 		
-		if (dnl.size() != 1 && parent != null) dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getFinder(null), true, null);
+		if (dnl.size() != 1 && datasetName != null){
+			String s = stripDataName(datasetName);
+			dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getFinder(s), true, null);
+		}
+		
+		if (dnl.size() != 1 && parent != null) dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getFinder((ILazyDataset)null), true, null);
 		
 		if (dnl.size() != 1) return null;
 		
@@ -69,6 +79,12 @@ public class NexusDiffractionCalibrationReader {
 		if (dce == null) return null;
 		
 		return new DiffractionMetadata(filePath, dp, dce);
+	}
+	
+	private static String stripDataName(String dataName) {
+		String[] split = dataName.split("/");
+		if (split == null || split.length < 3) return null;
+		return split[split.length-2];
 	}
 	
 	private static IDiffractionMetadata trySAXS(NodeLink detectorLink, Tree tree, String path) {
@@ -183,6 +199,32 @@ public class NexusDiffractionCalibrationReader {
 		};
 	}
 	
+	private static IFindInTree getFinder(final String name) {
+		return new IFindInTree() {
+
+			@Override
+			public boolean found(NodeLink node) {
+
+				Node dest = node.getDestination();
+
+				if (dest instanceof GroupNode) {
+					GroupNode dgn = (GroupNode)dest;
+					Attribute attribute = dgn.getAttribute("NX_class");
+					if (attribute == null) return false;
+					String el = attribute.getFirstElement();
+					if (el == null) return false;
+
+					if (el.equals("NXdetector")){
+						return node.getName().equals(name);
+					}
+				}
+
+				return false;
+
+			}
+		};
+	}
+	
 	public static IDataset getDetectorPixelMaskFromNexus(final String filePath, final ILazyDataset parent) {
 		Tree tree = null;
 		IDataHolder dh;
@@ -195,7 +237,7 @@ public class NexusDiffractionCalibrationReader {
 
 		Map<String, NodeLink> dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getFinder(parent), true, null);
 		
-		if (dnl.size() != 1 && parent != null) dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getFinder(null), true, null);
+		if (dnl.size() != 1 && parent != null) dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getFinder((ILazyDataset)null), true, null);
 		
 		if (dnl.size() != 1) return null;
 		

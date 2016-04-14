@@ -107,6 +107,14 @@
             model="uk.ac.diamond.scisoft.xpdf.operations.XPDFAzimuthalIntegrationModel"
             name="XPDF Azimuthal Integration">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
+            class="uk.ac.diamond.scisoft.xpdf.operations.XPDFReadMetadataOperation"
+            icon="icons/xpdfbase.png"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XPDFReadMetadataOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            name="XPDF Read Metadata">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.ui.views">

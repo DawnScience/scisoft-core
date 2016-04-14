@@ -482,7 +482,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 
 			ILazyWriteableDataset wdse = dn.getWriteableDataset();
 			s = new SliceND(e.getShape(),determineMaxShape(e),sliceOut);
-			wdse.setSlice(null, dataset, s);
+			wdse.setSlice(null, e, s);
 		}
 
 		return;

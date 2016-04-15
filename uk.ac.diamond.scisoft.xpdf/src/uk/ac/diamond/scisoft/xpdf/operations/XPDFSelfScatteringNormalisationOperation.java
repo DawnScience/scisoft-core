@@ -12,6 +12,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
+import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
@@ -38,7 +39,11 @@ public class XPDFSelfScatteringNormalisationOperation extends
 		if (theXPDFMetadata.getSample() == null) throw new OperationException(this, "XPDF sample metadata not found.");
 		XPDFTargetComponent sample = theXPDFMetadata.getSample();
 		// Get the x variable
-		if (absCor.getFirstMetadata(AxesMetadata.class) == null) throw new OperationException(this, "Axis metadata not found.");
+		if (absCor.getShape().length == 1) {
+			if (absCor.getFirstMetadata(AxesMetadata.class) == null) throw new OperationException(this, "Axis metadata not found.");
+		} else if (absCor.getShape().length == 2) {
+			if (absCor.getFirstMetadata(DiffractionMetadata.class) == null) throw new OperationException(this, "Diffraction metadata not found.");
+		}
 		XPDFCoordinates coords = new XPDFCoordinates(DatasetUtils.convertToDataset(absCor));
 		soq = Maths.divide(Maths.subtract(absCor, sample.getSelfScattering(coords)), sample.getFSquared(coords));
 		Dataset soqError = null;

@@ -656,8 +656,10 @@ public class NexusTreeUtils {
 		String first = nl == null ? null : parseStringArray(nl.getDestination(), 1)[0];
 		if (first != null) {
 			first = canonicalizeDependsOn(path, first);
-			Transform ta = parseTransformation(first.substring(0, first.lastIndexOf(Node.SEPARATOR)), tree.findNodeLink(first), pos);
-			ftrans.put(first, ta);
+			if (!ftrans.containsKey(first)) {
+				Transform ta = parseTransformation(first.substring(0, first.lastIndexOf(Node.SEPARATOR)), tree.findNodeLink(first), pos);
+				ftrans.put(first, ta);
+			}
 		}
 
 		// Find all dependencies
@@ -1352,9 +1354,14 @@ public class NexusTreeUtils {
 	private static String canonicalizeDependsOn(String ppath, String dep) {
 		if (dep == null) {
 			dep = NX_TRANSFORMATIONS_ROOT;
-		} else if (!dep.startsWith(Tree.ROOT) && !dep.equals(NX_TRANSFORMATIONS_ROOT)) {
+		} else if (dep.equals(NX_TRANSFORMATIONS_ROOT)) {
+			// do nothing
+		} else if (dep.startsWith(RELATIVE_PREFIX)) {
 			dep = ppath.concat(Node.SEPARATOR).concat(dep);
 			dep = TreeImpl.canonicalizePath(dep);
+		} else if (!dep.startsWith(Tree.ROOT)) {
+			// assume absolute
+			dep = Tree.ROOT.concat(dep);
 		}
 		return dep;
 	}
@@ -1720,6 +1727,9 @@ public class NexusTreeUtils {
 		return attr != null ? Unit.valueOf(attr) : null;
 	}
 
+	private static final String RELATIVE_PREFIX = ".";
+	private static final String CURRENT_DIR_PREFIX = "./";
+
 	/**
 	 * @param dp
 	 * @return group containing fields and classes for a detector
@@ -1733,7 +1743,7 @@ public class NexusTreeUtils {
 		addDataNode(g, "beam_center_x", dp.getHPxSize()*bc[0], "mm");
 		addDataNode(g, "beam_center_y", dp.getVPxSize()*bc[1], "mm");
 
-		addDataNode(g, DEPENDS_ON, "transformations/euler_c", null);
+		addDataNode(g, DEPENDS_ON, CURRENT_DIR_PREFIX + "transformations/euler_c", null);
 
 		GroupNode sg = createNXGroup(NX_DETECTOR_MODULE);
 		g.addGroupNode("detector_module", sg);
@@ -1761,12 +1771,22 @@ public class NexusTreeUtils {
 		return g;
 	}
 
+	private static boolean addRelative(String dependsOn) {
+		if (dependsOn.equals(NX_TRANSFORMATIONS_ROOT) || dependsOn.startsWith(Tree.ROOT)) {
+			return false;
+		}
+		return !dependsOn.startsWith(RELATIVE_PREFIX);
+	}
+
 	public static DataNode createNXTransform(String name, String units, boolean translation, double[] direction, double[] offset, String offsetUnits, String dependsOn, Object values) {
 		DataNode d = createDataNode(name, values, units);
 		d.addAttribute(TreeFactory.createAttribute("transformation_type", translation ? "translation" : "rotation"));
 		d.addAttribute(TreeFactory.createAttribute("vector", direction));
 		d.addAttribute(TreeFactory.createAttribute("offset", offset));
 		d.addAttribute(TreeFactory.createAttribute("offset_units", offsetUnits));
+		if (addRelative(dependsOn)) {
+			dependsOn = CURRENT_DIR_PREFIX.concat(dependsOn);
+		}
 		d.addAttribute(TreeFactory.createAttribute(DEPENDS_ON, dependsOn));
 		return d;
 	}

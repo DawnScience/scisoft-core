@@ -105,7 +105,13 @@ public class ImageStackLoader implements ILazyLoader {
 	private IDataset getDatasetFromFile(int[] location, IMonitor mon) throws ScanFileHolderException {
 		File f = new File(getDLSWindowsPath(filenames.get(location)));
 		if (parent != null) { // try local directory first
-			File nf = new File(parent, f.getName());
+			File nf = null;
+			if (!f.isAbsolute()) { // try relative path first
+				nf = new File(parent, f.getPath());
+			}
+			if (nf == null || !nf.exists()) {
+				nf = new File(parent, f.getName());
+			}
 			if (nf.exists()) {
 				try {
 					return loadDataset(nf.getAbsolutePath(), mon);

@@ -1552,7 +1552,7 @@ public class MillerSpaceMapper {
 		bean.setQShape(null);
 		bean.setQStart(null);
 		bean.setQStep(qDelta);
-		bean.setListMillerEntries(true);
+		bean.setListMillerEntries(false);
 	}
 
 	/**

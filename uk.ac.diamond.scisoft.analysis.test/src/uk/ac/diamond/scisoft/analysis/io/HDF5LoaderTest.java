@@ -383,8 +383,8 @@ public class HDF5LoaderTest {
 	@Test
 	public void testCanonicalization() {
 		String[] before = { "./foo", "/asd/sdf/dfg/../ds/../../gfd", "/asd/asd/../as", "/asd/as/.././bad", "/asd/..", "/abal/.", "",
-				"../blah"};
-		String[] after = { "./foo", "/asd/gfd", "/asd/as", "/asd/bad", "/", "/abal", "", "../blah" };
+				"../blah", "/asd/sdf/././../ds", "/./sdf/././../ds"};
+		String[] after = { "./foo", "/asd/gfd", "/asd/as", "/asd/bad", "/", "/abal", "", "../blah", "/asd/ds", "/ds" };
 
 		for (int i = 0; i < before.length; i++) {
 			assertEquals("Path", after[i], TreeImpl.canonicalizePath(before[i]));

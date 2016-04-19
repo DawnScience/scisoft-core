@@ -9,12 +9,22 @@
 
 package uk.ac.diamond.scisoft.xpdf.operations;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.Slice;
+import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
+import org.eclipse.dawnsci.analysis.api.metadata.Reshapeable;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.dataset.impl.SliceIterator;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationOperation;
@@ -53,7 +63,24 @@ public class XPDFAzimuthalIntegrationOperation extends AbstractOperation<XPDFAzi
 		
 		internalOperation.setModel(internalModel);
 		
-		OperationData output = internalOperation.execute(input, monitor);
+		// Resize the data to be more like it was in the execute() method
+		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(input);
+		// Get the dimensions in the original data
+		int[] dataDims = ssm.getDataDimensions();
+		int maxDimension = Collections.max(Arrays.asList(ArrayUtils.toObject(dataDims)));
+		int[] newShape = new int[maxDimension+1];
+		int[] oldShape = input.getShape();
+		// All elements of the new shape are 1
+		Arrays.fill(newShape, 1);
+		// except those that are in the data
+		for (int dim = 0; dim < oldShape.length; dim++)
+			newShape[dataDims[dim]] = oldShape[dim]; 
+		
+		IDataset reshapedInput = input.clone();
+		// The reshaped data is now (hopefully) the same shape as input was in this.execute()
+		reshapedInput.resize(newShape);
+		
+		OperationData output = internalOperation.execute(reshapedInput, monitor);
 		
 		// Set the axis coordinate to q
 		if (xMeta != null) {

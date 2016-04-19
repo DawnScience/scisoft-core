@@ -104,6 +104,8 @@ public class NexusTreeUtils {
 	public static final String NX_DETECTOR_YPIXELSIZE = "y_pixel_size";
 	public static final String NX_DETECTOR_XBEAMCENTRE = "beam_center_y";
 	public static final String NX_DETECTOR_YBEAMCENTRE = "beam_center_x";
+	public static final String NX_DETECTOR_XPIXELNUMBER = "x_pixel_number";
+	public static final String NX_DETECTOR_YPIXELNUMER = "y_pixel_number";
 
 	public static final String DEPENDS_ON = "depends_on";
 	
@@ -1073,25 +1075,31 @@ public class NexusTreeUtils {
 	}
 
 	public static DetectorProperties parseSaxsDetector(NodeLink link) {
+		try {
+			GroupNode node = (GroupNode)link.getDestination();
+			DataNode distanceNode = node.getDataNode(NX_DETECTOR_DISTANCE);
+			double distanceMm = getConvertedData(distanceNode, SI.MILLIMETRE).get(0);
+			DataNode bxNode = node.getDataNode(NX_DETECTOR_XBEAMCENTRE);
+			double bx = bxNode.getDataset().getSlice().getDouble(0);
+			DataNode byNode = node.getDataNode(NX_DETECTOR_YBEAMCENTRE);
+			double by = byNode.getDataset().getSlice().getDouble(0);
+			DataNode pxNode = node.getDataNode(NX_DETECTOR_XPIXELSIZE);
+			double px = getConvertedData(pxNode, SI.MILLIMETRE).get(0);
+			DataNode pyNode = node.getDataNode(NX_DETECTOR_YPIXELSIZE);
+			double py = getConvertedData(pyNode, SI.MILLIMETRE).get(0);
+			DataNode nxNode = node.getDataNode(NX_DETECTOR_XPIXELNUMBER);
+			int nx = nxNode.getDataset().getSlice().getInt(0);
+			DataNode nyNode = node.getDataNode(NX_DETECTOR_XPIXELNUMBER);
+			int ny = nyNode.getDataset().getSlice().getInt(0);
+			
+			DetectorProperties dp = new DetectorProperties(distanceMm, by*py, bx*px, nx, ny, py, px);
+			
+			return dp;
+		} catch (Exception e) {
+			logger.debug("Could not read SAXS detector properties", e);
+		}
 		
-		GroupNode node = (GroupNode)link.getDestination();
-		DataNode distanceNode = node.getDataNode(NX_DETECTOR_DISTANCE);
-		double distanceMm = getConvertedData(distanceNode, SI.MILLIMETRE).get(0);
-		DataNode bxNode = node.getDataNode(NX_DETECTOR_XBEAMCENTRE);
-		double bx = bxNode.getDataset().getSlice().getDouble(0);
-		DataNode byNode = node.getDataNode(NX_DETECTOR_YBEAMCENTRE);
-		double by = byNode.getDataset().getSlice().getDouble(0);
-		DataNode pxNode = node.getDataNode(NX_DETECTOR_XPIXELSIZE);
-		double px = getConvertedData(pxNode, SI.MILLIMETRE).get(0);
-		DataNode pyNode = node.getDataNode(NX_DETECTOR_YPIXELSIZE);
-		double py = getConvertedData(pyNode, SI.MILLIMETRE).get(0);
-		DataNode dataNode = node.getDataNode(DATA);
-		long[] shape = dataNode.getMaxShape();
-		
-		DetectorProperties dp = new DetectorProperties(distanceMm, by*py, bx*px, (int)shape[shape.length-2], (int)shape[shape.length-1], py, px);
-		
-		return dp;
-		
+		return null;
 	}
 	
 	public static int[] parseNodeShape(String path, Tree tree, NodeLink link, int[] shape) {

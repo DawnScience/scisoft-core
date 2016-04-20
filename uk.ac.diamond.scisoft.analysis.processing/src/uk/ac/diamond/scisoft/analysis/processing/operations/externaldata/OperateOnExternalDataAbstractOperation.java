@@ -50,7 +50,7 @@ public abstract class OperateOnExternalDataAbstractOperation<T extends ExternalD
 		String externalDataPath = model.getFilePath();
 		// If no path is provided, then the external data comes from the
 		// data's own file
-		if (externalDataPath == null) externalDataPath = ssm.getFilePath();
+		if (externalDataPath == null || externalDataPath.isEmpty()) externalDataPath = ssm.getFilePath();
 		
 		ILazyDataset lz = ProcessingUtils.getLazyDataset(this, externalDataPath, model.getDatasetName());
 		IDataset val = null;

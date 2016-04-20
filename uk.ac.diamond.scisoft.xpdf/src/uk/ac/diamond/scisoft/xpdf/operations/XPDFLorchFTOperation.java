@@ -21,6 +21,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
@@ -61,20 +62,29 @@ public class XPDFLorchFTOperation extends
 		if (model.getMaxQ() < q.max().doubleValue()) {
 			// Find the point closest to the selected maximum Q value.
 			iCutoff= Maths.abs(Maths.subtract(q, model.getMaxQ())).minPos()[0];
-			if (model.isSeekNextZero()) {
-				// Find the next sign change. The minimum value of the array of
-				// numbers with the same value as the decrementing index
-				// counter, and the same sign as the data.
-				int iZeroCrossing = Maths.multiply(Maths.multiply(Maths.signum(thSoq).getSlice(new int[]{iCutoff}, new int[]{thSoq.getSize()}, new int[]{1}), DoubleDataset.createRange(q.getSize(), iCutoff, -1)), Math.signum(thSoq.getDouble(iCutoff-1))).minPos()[0];
-				// Otherwise, use the point closest to zero
-				if (iZeroCrossing == thSoq.getSize()-1-iCutoff) {
-					Dataset absVal = Maths.abs(thSoq.getSlice(new int[]{iCutoff}, new int[]{thSoq.getSize()}, new int[]{1})); 
-					iZeroCrossing = absVal.minPos()[0];
+			// Find the next zero or local minimum after the cutoff
+			if (model.isSeekNextZero() || model.isSeekNextExtremum()) {
+
+				// Get the data or the first derivative thereof above iCutoff
+				Dataset dataAboveCutoff = DatasetUtils.convertToDataset(thSoq.getSlice(new int[]{iCutoff}, new int[]{thSoq.getSize()}, new int[]{1}));
+				Dataset derivativeAboveCutoff = Maths.derivative(q, DatasetUtils.convertToDataset(thSoq), 5).getSlice(new int[]{iCutoff}, new int[]{thSoq.getSize()}, new int[]{1});
+				int iZeroCrossing = -1, iMinimum = -1;
+				if (model.isSeekNextZero())
+					iZeroCrossing = findFirstZeroCrossing(dataAboveCutoff);
+				if (model.isSeekNextExtremum())
+					iMinimum = findFirstZeroCrossing(derivativeAboveCutoff, CrossingDirection.POSITIVE);
+				// If there is not better cutoff (no zero crossing or minimum), then cut off hard at the cutoff value
+				if (iZeroCrossing != -1 && iMinimum != -1) {
+					iCutoff += Math.min(iZeroCrossing, iMinimum);
+				} else if (iZeroCrossing != -1) { // Otherwise, cut off by the valid value
+					iCutoff += iZeroCrossing;
+				} else if (iMinimum != -1) {
+					iCutoff += iMinimum;
 				}
-				iCutoff += iZeroCrossing;
 			}
 		}	
 		
+		System.err.println("Lorch cutoff at q = " + q.getDouble(iCutoff));
 		
 		Dataset r = DoubleDataset.createRange(model.getrStep()/2, model.getrMax(), model.getrStep());
 		Dataset hofr = doLorchFT(DatasetUtils.convertToDataset(thSoq).getSliceView(new int[]{0}, new int[]{iCutoff}, new int[]{1}),
@@ -202,4 +212,40 @@ public class XPDFLorchFTOperation extends
 		return OperationRank.ONE;
 	}
 
+	
+	private int findFirstZeroCrossing(Dataset y) {
+		return findFirstZeroCrossing(y, CrossingDirection.ANY);
+	}
+	
+	private int findFirstZeroCrossing(Dataset y, CrossingDirection c) {
+		IndexIterator iter = y.getIterator();
+		IndexIterator lastIter = y.getIterator();
+		iter.hasNext();
+		while(iter.hasNext() && lastIter.hasNext()) {
+			double sign0 = Math.signum(y.getElementDoubleAbs(lastIter.index));
+			double sign1 = Math.signum(y.getElementDoubleAbs(iter.index));
+			if (sign0 != sign1) {
+				if ( (sign1 == 1.0 && CrossingDirection.isPositive(c)) ||
+						(sign1 == -1.0 && CrossingDirection.isNegative(c)))
+					return iter.index;
+					
+			}
+		}
+		return -1;
+		
+	}
+	
+}
+
+enum CrossingDirection {
+	POSITIVE,
+	NEGATIVE,
+	ANY;
+	
+	static boolean isPositive(CrossingDirection c) {
+		return (c == POSITIVE || c == ANY);
+	}
+	static boolean isNegative(CrossingDirection c) {
+		return (c == NEGATIVE || c == ANY);
+	}
 }

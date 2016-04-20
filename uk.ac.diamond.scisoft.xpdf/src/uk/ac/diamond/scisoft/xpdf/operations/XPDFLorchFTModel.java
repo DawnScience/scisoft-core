@@ -24,7 +24,9 @@ public class XPDFLorchFTModel extends AbstractOperationModel {
 	@OperationModelField(hint="Enter the maximum Q up to which to take the transform.", label="Maximum Q")
 	private double maxQ = Double.POSITIVE_INFINITY;
 	@OperationModelField(hint="Seek the next zero after Qmax?", label="Seek next zero?")
-	private boolean seekNextZero = true;
+	private boolean seekNextZero = false;
+	@OperationModelField(hint="Seek the next extremum after Qmax?", label="Seek next minimum?")
+	private boolean seekNextExtremum = true;
 	
 	public double getrMax() {
 		return rMax;
@@ -55,5 +57,11 @@ public class XPDFLorchFTModel extends AbstractOperationModel {
 	}
 	public void setSeekNextZero(boolean seekNextZero) {
 		firePropertyChange("seekNextZero", this.seekNextZero, this.seekNextZero = seekNextZero);
+	}
+	public boolean isSeekNextExtremum() {
+		return seekNextExtremum;
+	}
+	public void setSeekNextExtremum(boolean seekNextExtremum) {
+		firePropertyChange("seekNextExtremum", this.seekNextExtremum, this.seekNextExtremum = seekNextExtremum);
 	}
 }

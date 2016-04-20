@@ -57,14 +57,14 @@ public class XPDFNormalizeTracesOperation extends
 		if (theXPDFMetadata != null) {
 			// Dataset trace, from the Sample metadata
 			if (theXPDFMetadata.getSample() != null && 
-					theXPDFMetadata.getSample().getTrace() != null && 
-					!theXPDFMetadata.getSample().getTrace().isNormalized() && 
+					theXPDFMetadata.getSampleTrace() != null && 
+					!theXPDFMetadata.getSampleTrace().isNormalized() && 
 					model.isNormalizeSample()) {
 				// sets the isNormalized flag, but does not normalize the (null) trace
-				theXPDFMetadata.getSample().getTrace().normalizeTrace();
+				theXPDFMetadata.getSampleTrace().normalizeTrace();
 				// Normalize the Dataset
-				double normer = theXPDFMetadata.getSample().getTrace().getCountingTime()*
-						theXPDFMetadata.getSample().getTrace().getMonitorRelativeFlux();
+				double normer = theXPDFMetadata.getSampleTrace().getCountingTime()*
+						theXPDFMetadata.getSampleTrace().getMonitorRelativeFlux();
 				process.idivide(normer);
 			
 				// Normalize the errors, if present
@@ -77,16 +77,16 @@ public class XPDFNormalizeTracesOperation extends
 			
 			// If there is a BeamData metadataset, normalize it
 			if (theXPDFMetadata.getBeam() != null && 
-					theXPDFMetadata.getBeam().getTrace() != null && 
+					theXPDFMetadata.getEmptyTrace() != null && 
 					model.isNormalizeBeam())
-				theXPDFMetadata.getBeam().getTrace().normalizeTrace();
+				theXPDFMetadata.getEmptyTrace().normalizeTrace();
 			
 			// For each container metadataset, normalize its beam trace
 			if (theXPDFMetadata.getContainers() != null && 
 					model.isNormalizeContainers()) {
 				for (XPDFTargetComponent container : theXPDFMetadata.getContainers()) {
-					if (container.getTrace() != null) 
-						container.getTrace().normalizeTrace();
+					if (theXPDFMetadata.getContainerTrace(container) != null) 
+						theXPDFMetadata.getContainerTrace(container);
 				}
 			}
 		}

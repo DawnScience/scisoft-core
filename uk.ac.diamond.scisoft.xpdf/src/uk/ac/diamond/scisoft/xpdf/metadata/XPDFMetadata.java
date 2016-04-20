@@ -17,6 +17,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
 import uk.ac.diamond.scisoft.xpdf.XPDFAbsorptionMaps;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
+import uk.ac.diamond.scisoft.xpdf.XPDFBeamTrace;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentForm;
 import uk.ac.diamond.scisoft.xpdf.XPDFDetector;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
@@ -125,4 +126,27 @@ public interface XPDFMetadata extends MetadataType {
 	 * define their geometry at some point. This is that point.
 	 */
 	void defineUndefinedSamplesContainers() throws Exception;
+	
+	/**
+	 * Returns the sample data parameters.
+	 * @return the sample data parameters.
+	 */
+	XPDFBeamTrace getSampleTrace();
+	
+	/**
+	 * Returns the empty beam data parameters.
+	 * @return the empty beam data parameters.
+	 */
+	XPDFBeamTrace getEmptyTrace();
+	
+	/**
+	 * Returns the container data parameters.
+	 * <p>
+	 * If the requested container exists in the metadata parameters, return
+	 * the parameters and data associated with it. Otherwise, return null.
+	 * @param container
+	 * 					{@link XPDFTargetComponent} object of the container for which the data is requested.
+	 * @return the associated data and beam parameters.
+	 */
+	XPDFBeamTrace getContainerTrace(XPDFTargetComponent container);
 }

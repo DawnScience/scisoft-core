@@ -48,22 +48,22 @@ public class XPDFSubtractBackgroundOperation extends
 		
 		theXPDFMetadata = process.getFirstMetadata(XPDFMetadata.class);
 		
-		if (theXPDFMetadata != null && theXPDFMetadata.getBeam() != null && theXPDFMetadata.getBeam().getTrace() != null) {
+		if (theXPDFMetadata != null && theXPDFMetadata.getEmptyTrace() != null ) {
 			// Dataset trace, from the Sample metadata
 			if (theXPDFMetadata.getSample() != null && 
-					theXPDFMetadata.getSample().getTrace() != null && 
-					!theXPDFMetadata.getSample().getTrace().isBackgroundSubtracted() && 
+					theXPDFMetadata.getSampleTrace() != null && 
+					!theXPDFMetadata.getSampleTrace().isBackgroundSubtracted() && 
 					model.isSubtractSampleBackground()) {
 				// sets the isBackgroundSubtracted flag, but does not subtract the background from the (null) trace
-				theXPDFMetadata.getSample().setBackground(theXPDFMetadata.getBeam().getTrace());
+				theXPDFMetadata.getSampleTrace().subtractBackground(theXPDFMetadata.getEmptyTrace());
 				// Subtract the background from the Dataset
-				process.isubtract(theXPDFMetadata.getBeam().getTrace().getTrace());
+				process.isubtract(theXPDFMetadata.getEmptyTrace().getTrace());
 				
 				// Propagate the errors
 				Dataset inputErrors = DatasetUtils.sliceAndConvertLazyDataset(input.getError());
 				Dataset processErrors = null;
 				if (inputErrors != null) {
-					Dataset	backgroundErrors = 	theXPDFMetadata.getBeam().getTrace().getTrace().getError();	
+					Dataset	backgroundErrors = 	theXPDFMetadata.getEmptyTrace().getTrace().getError();	
 					processErrors = (backgroundErrors != null) ? 
 							Maths.sqrt(Maths.add(Maths.square(inputErrors), Maths.square(backgroundErrors))) :
 								inputErrors;
@@ -75,8 +75,8 @@ public class XPDFSubtractBackgroundOperation extends
 						if (theXPDFMetadata.getContainers() != null && 
 					model.isSubtractContainersBackground()) {
 				for (XPDFTargetComponent container : theXPDFMetadata.getContainers()) {
-					if (container.getTrace() != null)
-						container.setBackground(theXPDFMetadata.getBeam().getTrace());
+					if (theXPDFMetadata.getContainerTrace(container) != null)
+						theXPDFMetadata.getContainerTrace(container).subtractBackground(theXPDFMetadata.getEmptyTrace());
 				}
 			}
 		}

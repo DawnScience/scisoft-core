@@ -321,7 +321,7 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 		// if the data is not on an angle axis, it is presumed to be momentum
 		// transfer
 		XPDFMetadata theXPDFMetadata = input.getFirstMetadata(XPDFMetadata.class);
-		if (!theXPDFMetadata.getSample().getTrace().isAxisAngle()) return input;
+		if (!theXPDFMetadata.getSampleTrace().isAxisAngle()) return input;
 		
 		XPDFCoordinates oldCoords = new XPDFCoordinates(input);
 		Dataset oldQ = oldCoords.getQ();
@@ -332,7 +332,7 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 		// The data now does not have angle as its axis
 		XPDFMetadata newMetadata = new XPDFMetadataImpl((XPDFMetadataImpl) theXPDFMetadata);
 		
-		newMetadata.getSample().getTrace().setAxisAngle(false);
+		newMetadata.getSampleTrace().setAxisAngle(false);
 		// Transfer the metadata across: we only need the XPDF metadata and the
 		// (new) axis metadata. It does not matter if the detector calibration
 		// is lost at this point

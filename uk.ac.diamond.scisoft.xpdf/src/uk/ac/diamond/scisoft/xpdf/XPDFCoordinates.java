@@ -90,7 +90,7 @@ public class XPDFCoordinates {
 
 		if (input.getShape().length == 1) {
 			AxesMetadata axes = input.getFirstMetadata(AxesMetadata.class);
-			if (theXPDFMetadata.getSample().getTrace().isAxisAngle()) {
+			if (theXPDFMetadata.getSampleTrace().isAxisAngle()) {
 				this.setTwoTheta(Maths.toRadians(DatasetUtils.sliceAndConvertLazyDataset(axes.getAxis(0)[0])));
 				dAngle = differentiate1DDataset(twoTheta);
 				q = null;

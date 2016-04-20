@@ -26,7 +26,6 @@ public class XPDFBeamData {
 	private double beamEnergy;
 	private double beamWidth;
 	private double beamHeight;
-	private XPDFBeamTrace trace;
 	private static final double hckeVAA = 12.39841974;// (17)
 
 	/**
@@ -37,7 +36,6 @@ public class XPDFBeamData {
 		this.beamEnergy = 0.0;
 		this.beamHeight = 0.0;
 		this.beamWidth = 0.0;
-		this.trace = null;
 	}
 
 	/**
@@ -50,7 +48,6 @@ public class XPDFBeamData {
 		this.beamEnergy = inBeam.beamEnergy;
 		this.beamHeight = inBeam.beamHeight;
 		this.beamWidth = inBeam.beamWidth;
-		this.trace = (XPDFBeamTrace) inBeam.trace.clone();
 	}
 
 	/**
@@ -135,25 +132,6 @@ public class XPDFBeamData {
 	 */
 	public void setBeamHeight(double beamHeight) {
 		this.beamHeight = beamHeight;
-	}
-
-	/**
-	 * Getter for the trace associated with the empty beam.
-	 * 
-	 * @return the XPDFBeamTrace associated with the empty beam.
-	 */
-	public XPDFBeamTrace getTrace() {
-		return trace;
-	}
-
-	/**
-	 * Set the trace associated with the empty beam.
-	 * 
-	 * @param trace
-	 *            the XPDFBeamTrace associated with the empty beam.
-	 */
-	public void setTrace(XPDFBeamTrace trace) {
-		this.trace = trace;
 	}
 
 	/**

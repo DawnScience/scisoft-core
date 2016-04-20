@@ -25,12 +25,8 @@ public class XPDFTargetComponent {
 
 	private String name;
 	private XPDFComponentForm form;
-	private XPDFBeamTrace trace;
-	boolean isSample;
+	private boolean isSample;
 	private double c3;
-	private Dataset subBak;
-	private Dataset calCon;
-	private Dataset mulCor;
 	
 	/**
 	 * Empty constructor.
@@ -38,12 +34,8 @@ public class XPDFTargetComponent {
 	public XPDFTargetComponent() {
 		this.name="";
 		this.form=null;
-		this.trace=null;
 		this.isSample=false;
 		this.c3 = 1.0;
-		this.subBak = null;
-		this.calCon = null;
-		this.mulCor = null;
 	}
 
 	/**
@@ -54,12 +46,8 @@ public class XPDFTargetComponent {
 	public XPDFTargetComponent(XPDFTargetComponent inComp) {
 		this.name = inComp.name;
 		this.form = inComp.form != null ? new XPDFComponentForm(inComp.form) : null;
-		this.trace = inComp.trace != null ? new XPDFBeamTrace(inComp.trace) : null;
 		this.isSample = inComp.isSample;
 		this.c3 = inComp.c3;
-		this.subBak = inComp.subBak != null ? inComp.subBak : null;
-		this.calCon = inComp.calCon != null ? inComp.calCon : null;
-		this.mulCor = inComp.mulCor != null ? inComp.mulCor : null;
 	}
 	
 	/**
@@ -95,19 +83,6 @@ public class XPDFTargetComponent {
 	}
 
 	/**
-	 * Setter for the trace.
-	 * <p>
-	 * Sets the trace which corresponds to the data take with the particular
-	 * component in the beam. 
-	 * @param trace
-	 * 				Dataset of the data taken with this component and its
-	 * 				containers in the beam.
-	 */
-	public void setTrace(XPDFBeamTrace trace) {
-		this.trace = trace;
-	}
-
-	/**
 	 * Setter for the isSample boolean.
 	 * @param isSample
 	 * 				is this the sample?
@@ -133,81 +108,11 @@ public class XPDFTargetComponent {
 	}
 
 	/**
-	 * Getter for the trace.
-	 * @return the trace of the data taken with this component in the beam.
-	 */
-	public XPDFBeamTrace getTrace() {
-		return trace;
-	}
-
-	/**
 	 * Returns whether this component is the sample.
 	 * @return a boolean as to whether this component is the sample.
 	 */
 	public boolean isSample() {
 		return isSample;
-	}
-
-	/**
-	 * Sets the trace counts.
-	 * @param sliceView
-	 * 				counts of the data taken with the component in the beam.
-	 */
-	public void setTraceCounts(Dataset sliceView) {
-		trace.setTrace(sliceView);
-	}
-	
-	/**
-	 * Sets the background trace.
-	 * @param background
-	 * 					the data taken with an empty beam.
-	 */
-	public void setBackground(XPDFBeamTrace background) {
-		trace.subtractBackground(background);
-		subBak = trace.getBackgroundSubtractedTrace(background);
-	}
-	
-	/**
-	 * Returns the data with the background subtracted.
-	 * @return the background subtracted data.
-	 */
-	public Dataset getBackgroundSubtractedTrace() {
-		return subBak;
-	}
-	
-	/**
-	 * Sets the calibration constant, and applies it to the data. 
-	 * @param c3
-	 * 			the XPDF calibration constant
-	 */
-	public void setCalibrationConstant(double c3) {
-		this.c3 = c3;
-		calCon = Maths.divide(this.subBak, this.c3);
-	}
-	
-	/**
-	 * Returns the calibrated trace.
-	 * @return the calibrated trace.
-	 */
-	public Dataset getCalibratedTrace() {
-		return calCon;
-	}
-	
-	/**
-	 * Applies a multiple-scattering correction to the data.
-	 * @param multipleScatteringCorrection
-	 * 									the correction Dataset to apply.
-	 */
-	public void setMultipleScatteringCorrection(Dataset multipleScatteringCorrection) {
-		mulCor = Maths.subtract(calCon, multipleScatteringCorrection);
-	}
-
-	/**
-	 * Gets the multiple-scattering corrected data.
-	 * @return the multiple scattering corrected data
-	 */
-	public Dataset getMultipleScatteringCorrectedTrace() {
-		return mulCor;
 	}
 
 	/**

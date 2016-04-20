@@ -119,10 +119,8 @@ public class XPDFInsertContainerMetadataOperation extends
 		containerTraceMeta.setTrace(contTrace);
 		// Assumes the axis is the same as the experimental data, if present.
 		if (input.getFirstMetadata(XPDFMetadata.class) != null && 
-				input.getFirstMetadata(XPDFMetadata.class).getSample() != null )
-			containerTraceMeta.setAxisAngle(input.getFirstMetadata(XPDFMetadata.class).getSample().getTrace().isAxisAngle());
-
-		compMeta.setTrace(containerTraceMeta);		
+				input.getFirstMetadata(XPDFMetadata.class).getSampleTrace() != null )
+			containerTraceMeta.setAxisAngle(input.getFirstMetadata(XPDFMetadata.class).getSampleTrace().isAxisAngle());
 
 		compMeta.setSample(false);
 
@@ -130,6 +128,7 @@ public class XPDFInsertContainerMetadataOperation extends
 		XPDFMetadataImpl theXPDFMetadata = getAndRemoveXPDFMetadata(input);
 		// add the container to the metadata
 		theXPDFMetadata.addContainer(compMeta);
+		theXPDFMetadata.setContainerTrace(compMeta, containerTraceMeta);
 		
 		input.setMetadata(theXPDFMetadata);
 		

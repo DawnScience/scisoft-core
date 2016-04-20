@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.xpdf;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,14 +33,20 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 	private XPDFBeamData beamData;
 	private XPDFAbsorptionMaps absorptionCorrectionMaps;
 	private XPDFDetector tect;
+	private Map<XPDFTargetComponent, XPDFBeamTrace> containerDataParameters;
+	private XPDFBeamTrace sampleParameters; // no data, that is the input
+	private XPDFBeamTrace emptyDataParameters;
 	
 	/**
 	 * Empty constructor.
 	 */
 	public XPDFMetadataImpl() {
 		sampleData = null;
+		sampleParameters = null;
 		containerData = new ArrayList<XPDFTargetComponent>();
+		containerDataParameters = new HashMap<XPDFTargetComponent, XPDFBeamTrace>();
 		beamData = null;
+		emptyDataParameters = null;
 		absorptionCorrectionMaps = null;
 		tect = null;
 	}
@@ -51,12 +58,23 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 	 */
 	public XPDFMetadataImpl(XPDFMetadataImpl inMeta) {
 		this.sampleData = (inMeta.sampleData != null) ? new XPDFTargetComponent(inMeta.sampleData) : null;
+		this.sampleParameters = (inMeta.sampleParameters != null) ? new XPDFBeamTrace(inMeta.getSampleTrace()) : null;
 		
+		// Copy the container parameters and the container data
 		this.containerData = new ArrayList<XPDFTargetComponent>();
-		for (XPDFTargetComponent container : inMeta.containerData)
-			if (container != null) this.containerData.add(new XPDFTargetComponent(container));
+		this.containerDataParameters = new HashMap<XPDFTargetComponent, XPDFBeamTrace>();
+		for (XPDFTargetComponent container : inMeta.containerData) {
+			if (container != null) {
+				XPDFTargetComponent newContainer = new XPDFTargetComponent(container);
+				this.containerData.add(newContainer);
+				this.containerDataParameters.put(newContainer, new XPDFBeamTrace(inMeta.getContainerTrace(container)));
+			}
+		}
+			
 		
 		this.beamData = (inMeta.beamData != null) ? new XPDFBeamData(inMeta.beamData) : null;
+		this.emptyDataParameters = (inMeta.getEmptyTrace() != null) ? new XPDFBeamTrace(inMeta.getEmptyTrace()) : null;
+		
 		this.absorptionCorrectionMaps = (inMeta.absorptionCorrectionMaps != null) ? new XPDFAbsorptionMaps(inMeta.absorptionCorrectionMaps) : null;
 		this.tect = (inMeta.tect != null) ? new XPDFDetector(inMeta.tect) : null;
 	}
@@ -328,6 +346,58 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 		sampleData.getForm().setGeom(geomMeta);
 		
 	}
+
+	@Override
+	public XPDFBeamTrace getSampleTrace() {
+		return sampleParameters;
+	}
+
+	/**
+	 * Sets the {@link XPDF BeamTrace} object of the sample.
+	 * <p>
+	 * The object contains the count time and the monitor-relative flux. The trace field should be null.
+	 * @param traceParameters
+	 * 						object to set.
+	 */
+	public void setSampleTrace(XPDFBeamTrace traceParameters) {
+		sampleParameters = new XPDFBeamTrace(traceParameters);
+	}
 	
+	@Override
+	public XPDFBeamTrace getEmptyTrace() {
+		return emptyDataParameters;
+	}
+
+	/**
+	 * Sets the {@link XPDF BeamTrace} object of the empty beam.
+	 * <p>
+	 * The object contains the count time and the monitor-relative flux.
+	 * @param traceDataParameters
+	 * 							object to set
+	 */
+	public void setEmptyTrace(XPDFBeamTrace traceDataParameters) {
+		emptyDataParameters = new XPDFBeamTrace(traceDataParameters);
+	}
+	
+	@Override
+	public XPDFBeamTrace getContainerTrace(XPDFTargetComponent container) {
+		if (!containerData.contains(container))
+			return null;
+		return containerDataParameters.get(container);
+	}
+	
+	/**
+	 * Sets the {@link XPDF BeamTrace} object of a specific container.
+	 * <p>
+	 * The object contains the count time and the monitor-relative flux. The 
+	 * container doesn't have to be in the List of containers, but probably should be. 
+	 * @param container
+	 * 					container to bind the data and parameters to.
+	 * @param traceDataParameters
+	 * 							object to set.
+	 */
+	public void setContainerTrace(XPDFTargetComponent container, XPDFBeamTrace traceDataParameters) {
+		containerDataParameters.put(container, new XPDFBeamTrace(traceDataParameters));
+	}
 
 }

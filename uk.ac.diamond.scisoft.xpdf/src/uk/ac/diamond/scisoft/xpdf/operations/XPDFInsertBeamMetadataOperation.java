@@ -73,14 +73,13 @@ public class XPDFInsertBeamMetadataOperation extends XPDFInsertXMetadataOperatio
 		bgMetadata.setTrace(bgTrace);
 		// Assumes the axis is the same as the experimental data, if present.
 		if (input.getFirstMetadata(XPDFMetadata.class) != null && 
-				input.getFirstMetadata(XPDFMetadata.class).getSample() != null )
-			bgMetadata.setAxisAngle(input.getFirstMetadata(XPDFMetadata.class).getSample().getTrace().isAxisAngle());
+				input.getFirstMetadata(XPDFMetadata.class).getSampleTrace() != null )
+			bgMetadata.setAxisAngle(input.getFirstMetadata(XPDFMetadata.class).getSampleTrace().isAxisAngle());
 
 		
-		beamMetadata.setTrace(bgMetadata);
-
 		XPDFMetadataImpl theXPDFMetadata = getAndRemoveXPDFMetadata(input);
 		theXPDFMetadata.setBeamData(beamMetadata);
+		theXPDFMetadata.setEmptyTrace(bgMetadata);
 		input.setMetadata(theXPDFMetadata);
 		
 		return new OperationData(input);

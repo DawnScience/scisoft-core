@@ -84,7 +84,7 @@ public class XPDFAzimuthalIntegrationOperation extends AbstractOperation<XPDFAzi
 		
 		// Set the axis coordinate to q
 		if (xMeta != null) {
-			xMeta.getSample().getTrace().setAxisAngle(false);
+			xMeta.getSampleTrace().setAxisAngle(false);
 		}
 		
 		output.getData().addMetadata(xMeta);

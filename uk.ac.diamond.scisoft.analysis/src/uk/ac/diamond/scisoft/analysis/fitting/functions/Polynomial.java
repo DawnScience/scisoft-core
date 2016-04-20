@@ -108,7 +108,7 @@ public class Polynomial extends AFunction {
 	}
 
 	private void calcCachedParameters() {
-		if (a == null) {
+		if (a == null || a.length != nparams) {
 			a = new double[nparams];
 		}
 		for (int i = 0; i < nparams; i++) {

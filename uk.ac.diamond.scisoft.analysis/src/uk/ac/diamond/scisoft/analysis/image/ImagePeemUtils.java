@@ -77,6 +77,55 @@ public class ImagePeemUtils {
 	}
 
 	/**
+	 * Given two 1 dimensional datasets containing a list of X positions and Y positions, this method returns an array of
+	 * steps between a X/Y position and its predecessor
+	 * 
+	 * @param psx
+	 * @param psy
+	 * @return translations in microns
+	 */
+	public static double[][][] getMotorTranslationsArray(IDataset psx, IDataset psy) {
+		int[] matrixSize = getColumnAndRowNumber(psx, psy);
+		int rows = matrixSize[1];
+		int columns = matrixSize[0];
+		double[][][] translations = new double[rows][columns][2];
+		int count = 0;
+		int xshift = rows;
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < columns; j++) {
+				double currentY = psy.getDouble(count);
+				double previousY = 0;
+				if (count >= 1)
+					previousY = psy.getDouble(count - 1);
+				if (j == 0) {
+					currentY = 0;
+					previousY = 0;
+				}
+
+				double currentX = psx.getDouble(count);
+				double previousX = 0;
+				if (i == 0) {
+					currentX = 0;
+					previousX = 0;
+				}
+
+				if (count >= xshift)
+					previousX = psx.getDouble(count - xshift);
+				double translX = (currentX - previousX) * 1000;
+				double translY = (currentY - previousY) * 1000;
+				if (translX == 0 && translY != 0)
+					translX = translY;
+				else if (translY == 0 && translX != 0)
+					translY = translX;
+				translations[i][j][0] = translX;
+				translations[i][j][1] = translY;
+				count++;
+			}
+		}
+		return translations;
+	}
+
+	/**
 	 * Given two 1 dimensional datasets containing a list of X positions and Y positions, this method returns a list of
 	 * steps between a X/Y position and its predecessor
 	 * 
@@ -87,10 +136,12 @@ public class ImagePeemUtils {
 	public static List<double[]> getMotorTranslations(IDataset psx, IDataset psy) {
 		int[] matrixSize = getColumnAndRowNumber(psx, psy);
 		List<double[]> translations = new ArrayList<double[]>();
+		int rows = matrixSize[1];
+		int columns = matrixSize[0];
 		int count = 0;
-		int xshift = matrixSize[0];
-		for (int i = 0; i < matrixSize[0]; i++) {
-			for (int j = 0; j < matrixSize[1]; j++) {
+		int xshift = rows;
+		for (int i = 0; i < columns; i++) {
+			for (int j = 0; j < rows; j++) {
 				double currentY = psy.getDouble(count);
 				double previousY = 0;
 				if (count >= 1)
@@ -122,6 +173,7 @@ public class ImagePeemUtils {
 		return translations;
 	}
 
+
 	/**
 	 * Returns the number of columns and rows given a list of X/Y positions by counting the number of times a
 	 * particular position is identical to its predecessor.
@@ -135,8 +187,8 @@ public class ImagePeemUtils {
 		int columns = 0, rows = 0, yIndex = 0;
 		// just return the integer value of the square root
 		int[] shape = psx.getShape();
-		rows = (int)Math.sqrt(shape[0]);
-		columns = shape[0] / rows;
-		return new int[] { columns, rows};
+		columns = (int)Math.sqrt(shape[0]);
+		rows = shape[0] / columns;
+		return new int[] { columns, rows };
 	}
 }

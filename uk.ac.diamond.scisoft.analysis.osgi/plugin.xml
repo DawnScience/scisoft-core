@@ -4,12 +4,6 @@
    <extension
          point="org.eclipse.ui.services">
       <serviceFactory
-            factoryClass="uk.ac.diamond.scisoft.analysis.osgi.LoaderServiceImpl">
-         <service
-               serviceClass="org.eclipse.dawnsci.analysis.api.io.ILoaderService">
-         </service>
-      </serviceFactory>
-      <serviceFactory
             factoryClass="uk.ac.diamond.scisoft.analysis.osgi.DatasetMathsServiceImpl">
          <service
                serviceClass="org.eclipse.dawnsci.analysis.api.dataset.IDatasetMathsService">

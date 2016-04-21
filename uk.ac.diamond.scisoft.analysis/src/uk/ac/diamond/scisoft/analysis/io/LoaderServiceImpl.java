@@ -6,7 +6,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */ 
-package uk.ac.diamond.scisoft.analysis.osgi;
+package uk.ac.diamond.scisoft.analysis.io;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
@@ -26,13 +25,6 @@ import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
-import org.eclipse.ui.services.AbstractServiceFactory;
-import org.eclipse.ui.services.IServiceLocator;
-
-import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
-import uk.ac.diamond.scisoft.analysis.osgi.preference.PreferenceConstants;
 
 /**
  * Provides a class which will use any loaders available to load a particular file
@@ -42,7 +34,7 @@ import uk.ac.diamond.scisoft.analysis.osgi.preference.PreferenceConstants;
  * @author gerring
  *
  */
-public class LoaderServiceImpl extends AbstractServiceFactory implements ILoaderService {
+public class LoaderServiceImpl implements ILoaderService {
 
 	static {
 		System.out.println("Starting loader service");
@@ -90,16 +82,6 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 		return LoaderFactory.getMetadata(filePath, mon);
 	}
 
-	@Override
-	public Object create(@SuppressWarnings("rawtypes") Class serviceInterface, 
-			             IServiceLocator parentLocator,
-			             IServiceLocator locator) {
-		
-        if (serviceInterface==ILoaderService.class) {
-        	return new LoaderServiceImpl();
-        }
-		return null;
-	}
 	
 	private IDiffractionMetadata lockedDiffractionMetaData;
 
@@ -134,17 +116,9 @@ public class LoaderServiceImpl extends AbstractServiceFactory implements ILoader
 	@Override
 	public Matcher getStackMatcher(String name) {
 		
-		IPreferenceStore store = new ScopedPreferenceStore(InstanceScope.INSTANCE, "uk.ac.diamond.scisoft.analysis.osgi");
-		if (System.getProperty(PreferenceConstants.DATASET_REGEXP)!=null) {
-			String regexp = System.getProperty(PreferenceConstants.DATASET_REGEXP);
-			store.setValue(PreferenceConstants.DATASET_REGEXP, regexp);
-		}
-
-		String regexp = store.getString(PreferenceConstants.DATASET_REGEXP);
-		if (regexp==null || "".equals(regexp)) regexp = "(.+)_(\\d+).";
-
 		int posExt = name.lastIndexOf(".");
 		if (posExt>-1) {
+			String regexp = LoaderFactory.getStackExpression();
 			String ext = name.substring(posExt + 1);
     		Pattern pattern = Pattern.compile(regexp+"\\.("+ext+")");
     		return pattern.matcher(name);

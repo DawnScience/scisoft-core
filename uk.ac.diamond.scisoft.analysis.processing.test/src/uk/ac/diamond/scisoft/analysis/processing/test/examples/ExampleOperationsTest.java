@@ -9,7 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.test.examples;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -21,10 +22,10 @@ import org.dawnsci.conversion.ConversionServiceImpl;
 import org.dawnsci.conversion.converters.util.LocalServiceManager;
 import org.dawnsci.persistence.PersistenceServiceCreator;
 import org.eclipse.dawnsci.analysis.api.conversion.IConversionContext;
+import org.eclipse.dawnsci.analysis.api.conversion.IConversionContext.ConversionScheme;
 import org.eclipse.dawnsci.analysis.api.conversion.IConversionService;
 import org.eclipse.dawnsci.analysis.api.conversion.IProcessingConversionInfo;
 import org.eclipse.dawnsci.analysis.api.conversion.ProcessingOutputType;
-import org.eclipse.dawnsci.analysis.api.conversion.IConversionContext.ConversionScheme;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
@@ -37,13 +38,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
-import uk.ac.diamond.scisoft.analysis.osgi.LoaderServiceImpl;
+import uk.ac.diamond.scisoft.analysis.io.LoaderServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
-import static org.junit.Assert.*;
 
 public class ExampleOperationsTest {
 	

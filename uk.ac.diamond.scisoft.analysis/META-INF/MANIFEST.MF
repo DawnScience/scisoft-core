@@ -50,3 +50,4 @@ Eclipse-BuddyPolicy: global
 Important-Note: This plugin SHOULD NOT be lazy activated because we always want this 
  plugin to be loaded to contribute the service.
 Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/*.xml

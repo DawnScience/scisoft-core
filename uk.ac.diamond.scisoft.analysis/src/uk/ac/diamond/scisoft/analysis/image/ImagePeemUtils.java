@@ -138,6 +138,25 @@ public class ImagePeemUtils {
 	}
 
 	/**
+	 * Fill an array with translation values
+	 * 
+	 * @param array
+	 * @param value
+	 * @param rows
+	 * @param columns
+	 * @return Filled array
+	 */
+	public static double[][][] fillArray(double[][][] array, double[] value, int rows, int columns) {
+		array = new double[columns][rows][2];
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < columns; j++) {
+				array[j][i] = value;
+			}
+		}
+		return array;
+	}
+
+	/**
 	 * Given two 1 dimensional datasets containing a list of X positions and Y positions, this method returns a list of
 	 * steps between a X/Y position and its predecessor
 	 * 

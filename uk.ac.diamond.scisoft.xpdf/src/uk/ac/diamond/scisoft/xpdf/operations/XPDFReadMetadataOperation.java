@@ -29,10 +29,14 @@ import org.eclipse.dawnsci.analysis.dataset.metadata.MaskMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
+import org.eclipse.dawnsci.nexus.NXbeam;
+import org.eclipse.dawnsci.nexus.NXdata;
+import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NexusUtils;
 
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionCalibrationReader;
+import uk.ac.diamond.scisoft.xpdf.XPDFBeamTrace;
 import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 
@@ -71,9 +75,10 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 			if (tree == null) throw new OperationException(this, "Error constructing file tree for " + ssm.getFilePath());
 
 			// sample details
-			if (model.isReadSampleInfo())
+			if (model.isReadSampleInfo()) {
 				readAndAddSampleInfo(xpdfMeta, tree, ssm.getParent());
-
+				readDataParameters(xpdfMeta, tree, ssm.getParent());
+			}
 			// beam details
 
 			// TODO: container details
@@ -90,23 +95,27 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 	private void readAndAddSampleInfo(XPDFMetadataImpl xpdfMeta, Tree tree,
 			ILazyDataset parent) {
 		// Get the map of names to samples
-		Map<String, NodeLink> nodeMap = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getSample(), true, null);
-
-		if (nodeMap.size() < 1) throw new OperationException(this, "Sample information requested, but no NXsample data was found.");
-		if (nodeMap.size() > 1) throw new OperationException(this, "Multiple NXsample data found. Giving up.");
-
-		// Get the first (only) NXsample
-		GroupNode sampleNode = (GroupNode) nodeMap.values().toArray(
-				new NodeLink[nodeMap.size()])[0].getDestination();
-		NXsample nxample = (NXsample) sampleNode;
-		
-//		NXsample nxample = (NXsample) nodeMap.values().toArray(new NodeLink[nodeMap.size()])[0].getDestination();
+		NXsample nxample = getNXsampleFromTree(xpdfMeta, tree, parent);
 		XPDFTargetComponent sampleCompo = new XPDFTargetComponent(nxample, null);
 		sampleCompo.setSample(true);
 		
 		xpdfMeta.setSampleData(sampleCompo);
 	}
 
+	private void readDataParameters(XPDFMetadataImpl xpdfMeta, Tree tree, ILazyDataset parent) {
+		// Get the first NXdata from the tree
+		NXdata data = getFirstSomething(tree, "NXdata");
+		double countTime = data.getDouble("count_time");
+		
+		XPDFBeamTrace sampleIntegration = new XPDFBeamTrace();
+		sampleIntegration.setAxisAngle(true);
+		sampleIntegration.setCountingTime(countTime);
+		sampleIntegration.setMonitorRelativeFlux(1.0); // FIXME: No value yet in the NeXus file, default to 1
+		
+		xpdfMeta.setSampleTrace(sampleIntegration);
+	}
+	
+	
 	// Get the mask
 	private void readAndAddDetectorCalibration(IDataset input, String filePath,
 			ILazyDataset parent) {
@@ -127,8 +136,28 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 		}
 	}
 
+	private NXsample getNXsampleFromTree(XPDFMetadataImpl xpdfMeta, Tree tree, ILazyDataset parent) {
+		Map<String, NodeLink> nodeMap = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getSample(), true, null);
+
+		if (nodeMap.size() < 1) throw new OperationException(this, "Sample information requested, but no NXsample data was found.");
+		if (nodeMap.size() > 1) throw new OperationException(this, "Multiple NXsample data found. Giving up.");
+
+		// Get the first (only) NXsample
+		GroupNode sampleNode = (GroupNode) nodeMap.values().toArray(
+				new NodeLink[nodeMap.size()])[0].getDestination();
+		NXsample nxample = (NXsample) sampleNode;
+
+		return nxample;
+	}
+	
 	// find me a sample
 	private static IFindInTree getSample() {
+		return getSomething("NXsample");
+	}
+	
+	// find me anything
+	private static IFindInTree getSomething(String NXclass) {
+		
 		return new IFindInTree() {
 
 			@Override
@@ -137,15 +166,25 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 					Attribute nxClass = ((GroupNode) node.getDestination()).getAttribute("NX_class");
 					if (nxClass != null
 							&& nxClass.getFirstElement() != null
-							&& nxClass.getFirstElement().equals("NXsample"))
+							&& nxClass.getFirstElement().equals(NXclass))
 						return true;
 				}
 				return false;
 			}
-
 		};
 	}
 	
+	private <T extends NXobject> T getFirstSomething(Tree tree, String NXclass) {
+
+		Map<String, NodeLink> nodeMap = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getSomething(NXclass), true, null);
+		GroupNode node = (GroupNode) nodeMap.values().toArray(
+				new NodeLink[nodeMap.size()])[0].getDestination();
+		// The cast has already been checked, since NXobject is a derived class of GroupNode
+		@SuppressWarnings("unchecked")
+		T tt = (T) node;
+		
+		return tt;
+	}
 	
 	
 	

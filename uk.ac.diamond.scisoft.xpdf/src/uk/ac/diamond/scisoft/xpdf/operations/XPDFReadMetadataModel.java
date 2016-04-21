@@ -6,7 +6,7 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 public class XPDFReadMetadataModel extends AbstractOperationModel {
 
 	@OperationModelField(label = "Read sample information")
-	private boolean readSampleInfo = false;
+	private boolean readSampleInfo = true;
 	@OperationModelField(label = "Read container information", enableif = "false")
 	private boolean readContainerInfo = false;
 	@OperationModelField(label = "Read container data", enableif = "false")

@@ -79,51 +79,8 @@ public class XPDFInsertSampleMetadataOperation extends XPDFInsertXMetadataOperat
 		if (geomMeta != null)
 			geomMeta.setDistances(inner, outer);
 
-		// Try to get a NeXus sample description. If it fails, get the data from the model
-		try {
-			String nxFilePath = model.getNexusFilePath();
-			// Empty file name? throw to get out of here
-			if (nxFilePath == null || nxFilePath.equals("")) throw new Exception("Empty filename");
-
-
-			// Nexus way
-			Tree fileTree = NexusUtils.loadNexusTree(NexusFileHDF5.openNexusFile(nxFilePath));
-			// HDF5 way; does not result in a Tree of NXxxx objects
-//			Tree fileTree = LoaderFactory.getData(nxFilePath, true, monitor).getTree();
-			Map<String, NodeLink> nodeMap = TreeUtils.treeBreadthFirstSearch(fileTree.getGroupNode(), new IFindInTree() {
-				
-				@Override
-				public boolean found(NodeLink node) {
-					if (node.getDestination() instanceof GroupNode) {
-						Attribute nxClass = ((GroupNode) node.getDestination()).getAttribute("NX_class");
-						if (nxClass != null &&
-								nxClass.getFirstElement() != null &&
-								nxClass.getFirstElement().equals("NXsample"))
-							return true;
-					}
-					return false;
-				}
-			}, true, monitor);
-			GroupNode sampleNode = (GroupNode) nodeMap.values().toArray(new NodeLink[nodeMap.size()])[0].getDestination();
-			NXsample nxample = (NXsample) sampleNode;//null;//(NXsample) 
-			compMeta = new XPDFTargetComponent(nxample, geomMeta);
-			
-		} catch (Exception e) {
-			// Get the material data from the Model
-			String material = model.getMaterial();
-			double density = model.getDensity();
-			double packingFraction = model.getPackingFraction();
-			// Get sample name from the Model
-			String name = model.getSampleName();
-
-			formMeta.setMatName(material);
-			formMeta.setDensity(density);
-			formMeta.setPackingFraction(packingFraction);
-			formMeta.setGeom(geomMeta);
-
-			compMeta.setForm(formMeta);
-			compMeta.setName(name);
-		}
+		// get the XPDF metadata object, or create a new one
+		XPDFMetadataImpl theXPDFMetadata = getAndRemoveXPDFMetadata(input);
 		
 		// Counting time and relative flux of the trace in the main Dataset
 		XPDFBeamTrace sampleTraceMeta = new XPDFBeamTrace();
@@ -131,14 +88,68 @@ public class XPDFInsertSampleMetadataOperation extends XPDFInsertXMetadataOperat
 		sampleTraceMeta.setMonitorRelativeFlux(model.getMonitorRelativeFlux());
 		sampleTraceMeta.setTrace(null);
 		sampleTraceMeta.setAxisAngle(model.isAxisAngle());
-		
-//		compMeta.setSampleTrace(sampleTraceMeta);		
-		
-		compMeta.setSample(true);
-		
-		XPDFMetadataImpl theXPDFMetadata = getAndRemoveXPDFMetadata(input);
-		theXPDFMetadata.setSampleData(compMeta);
+
 		theXPDFMetadata.setSampleTrace(sampleTraceMeta);
+		
+		if (!model.isInputNexus()) {
+			// Try to get a NeXus sample description. If it fails, get the data from the model
+			try {
+				String nxFilePath = model.getNexusFilePath();
+				// Empty file name? throw to get out of here
+				if (nxFilePath == null || nxFilePath.equals(""))
+					throw new Exception("Empty filename");
+
+				// Nexus way
+				Tree fileTree = NexusUtils.loadNexusTree(NexusFileHDF5
+						.openNexusFileReadOnly(nxFilePath));
+				// HDF5 way; does not result in a Tree of NXxxx objects
+				//			Tree fileTree = LoaderFactory.getData(nxFilePath, true, monitor).getTree();
+				Map<String, NodeLink> nodeMap = TreeUtils
+						.treeBreadthFirstSearch(fileTree.getGroupNode(),
+								new IFindInTree() {
+
+									@Override
+									public boolean found(NodeLink node) {
+										if (node.getDestination() instanceof GroupNode) {
+											Attribute nxClass = ((GroupNode) node
+													.getDestination())
+													.getAttribute("NX_class");
+											if (nxClass != null
+													&& nxClass
+															.getFirstElement() != null
+													&& nxClass
+															.getFirstElement()
+															.equals("NXsample"))
+												return true;
+										}
+										return false;
+									}
+								}, true, monitor);
+				GroupNode sampleNode = (GroupNode) nodeMap.values().toArray(
+						new NodeLink[nodeMap.size()])[0].getDestination();
+				NXsample nxample = (NXsample) sampleNode;//null;//(NXsample) 
+				compMeta = new XPDFTargetComponent(nxample, geomMeta);
+
+			} catch (Exception e) {
+				// Get the material data from the Model
+				String material = model.getMaterial();
+				double density = model.getDensity();
+				double packingFraction = model.getPackingFraction();
+				// Get sample name from the Model
+				String name = model.getSampleName();
+
+				formMeta.setMatName(material);
+				formMeta.setDensity(density);
+				formMeta.setPackingFraction(packingFraction);
+				formMeta.setGeom(geomMeta);
+
+				compMeta.setForm(formMeta);
+				compMeta.setName(name);
+			}
+			compMeta.setSample(true);
+
+			theXPDFMetadata.setSampleData(compMeta);
+		}
 		
 		// The metadata having been got, if there are any beam data already
 		// inserted, update the value of isAxisAngle.

@@ -44,6 +44,8 @@ public class XPDFInsertSampleMetadataModel extends AbstractOperationModel {
 	private boolean axisAngle = true;
 	@OperationModelField(hint="NeXus file containing the sample parameters", label = "Sample NeXus file", file = FileType.EXISTING_FILE)
 	private String nexusFilePath = "";
+	@OperationModelField(hint="Read sample parameters from the input NeXus file", label = "Physical Params From Input")
+	private boolean inputNexus = false;
 	
 	public String getErrorFilePath() {
 		return errorFilePath;
@@ -147,5 +149,13 @@ public class XPDFInsertSampleMetadataModel extends AbstractOperationModel {
 	
 	public void setNexusFilePath(String filePath) {
 		firePropertyChange("nexusFilePath", this.nexusFilePath, this.nexusFilePath = filePath);
+	}
+
+	public boolean isInputNexus() {
+		return inputNexus;
+	}
+
+	public void setInputNexus(boolean inputNexus) {
+		firePropertyChange("inputNexus", this.inputNexus, this.inputNexus = inputNexus);
 	}
 }

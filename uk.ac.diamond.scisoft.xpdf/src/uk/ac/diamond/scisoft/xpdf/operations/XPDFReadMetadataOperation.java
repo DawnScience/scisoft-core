@@ -13,7 +13,6 @@ import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -22,7 +21,6 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.IFindInTree;
-import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
@@ -30,13 +28,13 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
 import org.eclipse.dawnsci.analysis.dataset.metadata.MaskMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
 import org.eclipse.dawnsci.nexus.NXsample;
+import org.eclipse.dawnsci.nexus.NexusUtils;
 
-import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionCalibrationReader;
 import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
-import uk.ac.diamond.scisoft.xpdf.views.XPDFSampleEditorView;
 
 public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadataModel, OperationData> {
 
@@ -60,11 +58,12 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 			XPDFMetadataImpl xpdfMeta = new XPDFMetadataImpl();
 
 			// Get the NeXus file tree 
-			IDataHolder dh;
+//			IDataHolder dh;
 			Tree tree;
 			try {
-				dh = LoaderFactory.getData(ssm.getFilePath());
-				tree = dh.getTree();
+//				dh = LoaderFactory.getData(ssm.getFilePath());
+//				tree = dh.getTree();
+				tree = NexusUtils.loadNexusTree(NexusFileHDF5.openNexusFileReadOnly(ssm.getFilePath()));
 			} catch (Exception e1) {
 				throw new OperationException(this, e1);
 			}
@@ -80,20 +79,28 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 			// TODO: container details
 			// TODO: empty container data
 			// TODO: empty beam data
+
+			input.setMetadata(xpdfMeta);;
+			
 		}
+		
 		return new OperationData(input);
 	}
 
 	private void readAndAddSampleInfo(XPDFMetadataImpl xpdfMeta, Tree tree,
 			ILazyDataset parent) {
 		// Get the map of names to samples
-		Map<String, NodeLink> nodeMap = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getSample(), false, null);
+		Map<String, NodeLink> nodeMap = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getSample(), true, null);
 
 		if (nodeMap.size() < 1) throw new OperationException(this, "Sample information requested, but no NXsample data was found.");
-		if (nodeMap.size() > 1) throw new OperationException(this, "Mulitple NXsample data found. Giving up.");
+		if (nodeMap.size() > 1) throw new OperationException(this, "Multiple NXsample data found. Giving up.");
 
 		// Get the first (only) NXsample
-		NXsample nxample = nodeMap.values().toArray(new NXsample[nodeMap.size()])[0];
+		GroupNode sampleNode = (GroupNode) nodeMap.values().toArray(
+				new NodeLink[nodeMap.size()])[0].getDestination();
+		NXsample nxample = (NXsample) sampleNode;
+		
+//		NXsample nxample = (NXsample) nodeMap.values().toArray(new NodeLink[nodeMap.size()])[0].getDestination();
 		XPDFTargetComponent sampleCompo = new XPDFTargetComponent(nxample, null);
 		sampleCompo.setSample(true);
 		
@@ -126,21 +133,16 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 
 			@Override
 			public boolean found(NodeLink node) {
-
-				Node dest = node.getDestination();
-
-				if (dest instanceof GroupNode) {
-					Attribute classAttribute = ((GroupNode) dest).getAttribute("NX_class");
-					if (classAttribute == null) return false;
-					String className = classAttribute.getFirstElement();
-					if (className == null) return false;
-					
-					// No other constraints exist, other than it is a valid NXsample
-					if (className.equals("NXsample")) return true;
+				if (node.getDestination() instanceof GroupNode) {
+					Attribute nxClass = ((GroupNode) node.getDestination()).getAttribute("NX_class");
+					if (nxClass != null
+							&& nxClass.getFirstElement() != null
+							&& nxClass.getFirstElement().equals("NXsample"))
+						return true;
 				}
 				return false;
 			}
-			
+
 		};
 	}
 	

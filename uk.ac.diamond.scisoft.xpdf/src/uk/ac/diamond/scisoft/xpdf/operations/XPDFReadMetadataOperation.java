@@ -30,10 +30,13 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
 import org.eclipse.dawnsci.analysis.dataset.metadata.MaskMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.dawnsci.nexus.NXsample;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionCalibrationReader;
 import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
+import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
+import uk.ac.diamond.scisoft.xpdf.views.XPDFSampleEditorView;
 
 public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadataModel, OperationData> {
 
@@ -88,8 +91,13 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 
 		if (nodeMap.size() < 1) throw new OperationException(this, "Sample information requested, but no NXsample data was found.");
 		if (nodeMap.size() > 1) throw new OperationException(this, "Mulitple NXsample data found. Giving up.");
-	
+
+		// Get the first (only) NXsample
+		NXsample nxample = nodeMap.values().toArray(new NXsample[nodeMap.size()])[0];
+		XPDFTargetComponent sampleCompo = new XPDFTargetComponent(nxample, null);
+		sampleCompo.setSample(true);
 		
+		xpdfMeta.setSampleData(sampleCompo);
 	}
 
 	// Get the mask

@@ -57,7 +57,8 @@ public class IterativePolynomialBaselineSubtractionOperation extends
 		Dataset axis = DatasetUtils.sliceAndConvertLazyDataset(axes[0]);
 		
 		Dataset[] aa = new Dataset[]{axis};
-		DoubleDataset data = new DoubleDataset(input.getShape());
+		DoubleDataset data = (DoubleDataset)DatasetUtils.cast(input, Dataset.FLOAT64).clone();
+		
 		Polynomial polyFit = null;
 		for (int i = 0; i < model.getnIterations(); i++) {
 			try {

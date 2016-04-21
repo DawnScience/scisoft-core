@@ -1088,6 +1088,16 @@ public class NexusTreeUtils {
 			DataNode pyNode = node.getDataNode(NX_DETECTOR_YPIXELSIZE);
 			double py = getConvertedData(pyNode, SI.MILLIMETRE).get(0);
 			DataNode nxNode = node.getDataNode(NX_DETECTOR_XPIXELNUMBER);
+			
+			if (nxNode == null) {
+				DataNode dataNode = node.getDataNode(DATA);
+				if (dataNode == null) return null;
+				long[] shape = dataNode.getMaxShape();
+				DetectorProperties dp = new DetectorProperties(distanceMm, by*py, bx*px, (int)shape[shape.length-2], (int)shape[shape.length-1], py, px);
+				
+				return dp;
+			}
+			
 			int nx = nxNode.getDataset().getSlice().getInt(0);
 			DataNode nyNode = node.getDataNode(NX_DETECTOR_XPIXELNUMBER);
 			int ny = nyNode.getDataset().getSlice().getInt(0);

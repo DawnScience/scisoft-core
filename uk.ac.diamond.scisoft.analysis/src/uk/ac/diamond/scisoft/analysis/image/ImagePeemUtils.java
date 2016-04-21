@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.image;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -76,6 +77,12 @@ public class ImagePeemUtils {
 		return alpha - theta;
 	}
 
+	private static double round(double value) {
+		BigDecimal bd = new BigDecimal(Double.toString(value));
+		bd = bd.setScale(5, BigDecimal.ROUND_HALF_UP);
+		return bd.doubleValue();
+	}
+
 	/**
 	 * Given two 1 dimensional datasets containing a list of X positions and Y positions, this method returns an array of
 	 * steps between a X/Y position and its predecessor
@@ -88,38 +95,43 @@ public class ImagePeemUtils {
 		int[] matrixSize = getColumnAndRowNumber(psx, psy);
 		int rows = matrixSize[1];
 		int columns = matrixSize[0];
-		double[][][] translations = new double[rows][columns][2];
-		int count = 0;
-		int xshift = rows;
+		
+		List<Double> xShifts = new ArrayList<Double>(rows);
+		xShifts.add(0.0);
+		// get xshifts
+		for(int i = columns; i < psx.getSize(); i=i+columns) {
+			double previousX = psx.getDouble(i - columns);
+			double currentX = psx.getDouble(i);
+			double translX = (currentX - previousX) * 1000;
+			double rounded = round(translX);
+			xShifts.add(rounded);
+		}
+		// get yshifts
+		List<Double> yShifts = new ArrayList<Double>(columns);
+		yShifts.add(0.0);
+		for (int i = 1; i < psy.getSize(); i++) {
+			if (i % columns == 0) {
+				yShifts.add(0.0);
+			} else {
+				double previousY = psy.getDouble(i - 1);
+				double currentY = psy.getDouble(i);
+				double translY = (currentY - previousY) * 1000;
+				double rounded = round(translY);
+				yShifts.add(rounded);
+			}
+		}
+		// Fill translation array
+		double[][][] translations = new double[columns][rows][2];
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < columns; j++) {
-				double currentY = psy.getDouble(count);
-				double previousY = 0;
-				if (count >= 1)
-					previousY = psy.getDouble(count - 1);
-				if (j == 0) {
-					currentY = 0;
-					previousY = 0;
-				}
-
-				double currentX = psx.getDouble(count);
-				double previousX = 0;
-				if (i == 0) {
-					currentX = 0;
-					previousX = 0;
-				}
-
-				if (count >= xshift)
-					previousX = psx.getDouble(count - xshift);
-				double translX = (currentX - previousX) * 1000;
-				double translY = (currentY - previousY) * 1000;
-				if (translX == 0 && translY != 0)
-					translX = translY;
-				else if (translY == 0 && translX != 0)
-					translY = translX;
-				translations[i][j][0] = translX;
-				translations[i][j][1] = translY;
-				count++;
+				double x = xShifts.get(i);
+				double y = yShifts.get(j);
+				if (x == 0 && y != 0)
+					x = y;
+				if (x != 0 && y == 0)
+					y = x;
+				translations[j][i][0] = x;
+				translations[j][i][1] = y;
 			}
 		}
 		return translations;
@@ -187,8 +199,8 @@ public class ImagePeemUtils {
 		int columns = 0, rows = 0, yIndex = 0;
 		// just return the integer value of the square root
 		int[] shape = psx.getShape();
-		columns = (int)Math.sqrt(shape[0]);
-		rows = shape[0] / columns;
+		rows = (int)Math.sqrt(shape[0]);
+		columns = shape[0] / rows;
 		return new int[] { columns, rows };
 	}
 }

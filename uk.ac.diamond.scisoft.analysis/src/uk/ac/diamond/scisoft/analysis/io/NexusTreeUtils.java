@@ -659,7 +659,14 @@ public class NexusTreeUtils {
 		if (first != null) {
 			first = canonicalizeDependsOn(path, first);
 			if (!ftrans.containsKey(first)) {
-				Transform ta = parseTransformation(first.substring(0, first.lastIndexOf(Node.SEPARATOR)), tree.findNodeLink(first), pos);
+				NodeLink fnl = tree.findNodeLink(first);
+				if (fnl == null) {
+					first = CURRENT_DIR_PREFIX.concat(first);
+					fnl = tree.findNodeLink(first);
+					if (fnl == null) return null;
+				}
+				
+				Transform ta = parseTransformation(first.substring(0, first.lastIndexOf(Node.SEPARATOR)), fnl, pos);
 				ftrans.put(first, ta);
 			}
 		}

@@ -650,23 +650,16 @@ public class NexusTreeUtils {
 		Map<String, Transform> ftrans = new HashMap<String, Transform>();
 		NodeLink tl = findFirstNode(gNode, NX_TRANSFORMATIONS);
 		if (tl != null) {
-			parseTransformations(path, tl, ftrans, pos);
+			parseTransformations(path, tree, tl, ftrans, pos);
 		}
 
 		// initial dependency chain
 		NodeLink nl = gNode.getNodeLink(DEPENDS_ON);
 		String first = nl == null ? null : parseStringArray(nl.getDestination(), 1)[0];
 		if (first != null) {
-			first = canonicalizeDependsOn(path, first);
+			first = canonicalizeDependsOn(path, tree, first);
 			if (!ftrans.containsKey(first)) {
-				NodeLink fnl = tree.findNodeLink(first);
-				if (fnl == null) {
-					first = CURRENT_DIR_PREFIX.concat(first);
-					fnl = tree.findNodeLink(first);
-					if (fnl == null) return null;
-				}
-				
-				Transform ta = parseTransformation(first.substring(0, first.lastIndexOf(Node.SEPARATOR)), fnl, pos);
+				Transform ta = parseTransformation(first.substring(0, first.lastIndexOf(Node.SEPARATOR)), tree, tree.findNodeLink(first), pos);
 				ftrans.put(first, ta);
 			}
 		}
@@ -678,7 +671,7 @@ public class NexusTreeUtils {
 			while (!dpath.equals(NX_TRANSFORMATIONS_ROOT) && !ftrans.containsKey(dpath) && !mtrans.containsKey(dpath)) {
 				NodeLink l = tree.findNodeLink(dpath);
 				try {
-					Transform nt = parseTransformation(dpath.substring(0, dpath.lastIndexOf(Node.SEPARATOR)), l, pos);
+					Transform nt = parseTransformation(dpath.substring(0, dpath.lastIndexOf(Node.SEPARATOR)), tree, l, pos);
 					mtrans.put(nt.name, nt);
 //					System.err.println("Found " + nt.name + " which points to " + nt.depend);
 					dpath = nt.depend;
@@ -700,7 +693,7 @@ public class NexusTreeUtils {
 		List<DetectorProperties> detectors = new ArrayList<>();
 		for (NodeLink l : gNode) {
 			if (isNXClass(l.getDestination(), NX_DETECTOR_MODULE)) {
-				detectors.add(parseSubDetector(path + Node.SEPARATOR + l.getName(), ftrans, m, l, pos));
+				detectors.add(parseSubDetector(path + Node.SEPARATOR + l.getName(), tree, ftrans, m, l, pos));
 			}
 		}
 
@@ -827,7 +820,7 @@ public class NexusTreeUtils {
 		return shape;
 	}
 
-	public static DetectorProperties parseSubDetector(String path, Map<String, Transform> ftrans, Matrix4d m1, NodeLink link, int[] pos) {
+	public static DetectorProperties parseSubDetector(String path, Tree tree, Map<String, Transform> ftrans, Matrix4d m1, NodeLink link, int[] pos) {
 		if (!link.isDestinationGroup()) {
 			logger.warn("'{}' was not a group", link.getName());
 			return null;
@@ -848,16 +841,16 @@ public class NexusTreeUtils {
 				size = parseIntArray(l.getDestination(), 2);
 				break;
 			case "module_offset":
-				mo  = parseTransformation(path, l, pos);
+				mo  = parseTransformation(path, tree, l, pos);
 				if (mo != null) {
 					ftrans.put(mo.name, mo);
 				}
 				break;
 			case "fast_pixel_direction":
-				fpd = parseTransformedVectors(path, l);
+				fpd = parseTransformedVectors(path, tree, l);
  				break;
 			case "slow_pixel_direction":
-				spd = parseTransformedVectors(path, l);
+				spd = parseTransformedVectors(path, tree, l);
 				break;
 			default:
 				break;
@@ -1009,7 +1002,7 @@ public class NexusTreeUtils {
 		}
 	}
 
-	public static void parseTransformations(String path, NodeLink link, Map<String, Transform> ftrans, int[] pos) {
+	public static void parseTransformations(String path, Tree tree, NodeLink link, Map<String, Transform> ftrans, int[] pos) {
 		if (!link.isDestinationGroup()) {
 			logger.warn("'{}' was not a group", link.getName());
 			return;
@@ -1020,7 +1013,7 @@ public class NexusTreeUtils {
 		for (NodeLink l : gNode) {
 			Transform t = null;
 			try {
-				t = parseTransformation(gpath, l, pos);
+				t = parseTransformation(gpath, tree, l, pos);
 			} catch (Exception e) {
 //				logger.warn("Problem parsing transformation {}", l);
 			}
@@ -1134,7 +1127,7 @@ public class NexusTreeUtils {
 
 		int[] nshape = dataset.getShape();
 
-		String dep = canonicalizeDependsOn(path, parseStringAttr(dNode, DEPENDS_ON));
+		String dep = canonicalizeDependsOn(path, tree, parseStringAttr(dNode, DEPENDS_ON));
 
 		if (dep.equals(NX_TRANSFORMATIONS_ROOT)) {
 			return nshape;
@@ -1204,7 +1197,7 @@ public class NexusTreeUtils {
 			logger.error("Sample {} must have a {} field", link.getName(), DEPENDS_ON);
 			throw new IllegalArgumentException("Sample " + link.getName() + " must have a " + DEPENDS_ON + " field");
 		}
-		String dep = canonicalizeDependsOn(path, parseStringArray(nl.getDestination(), 1)[0]);
+		String dep = canonicalizeDependsOn(path, tree, parseStringArray(nl.getDestination(), 1)[0]);
 		return parseNodeShape(path, tree, tree.findNodeLink(dep), shape);
 	}
 
@@ -1234,7 +1227,7 @@ public class NexusTreeUtils {
 		Map<String, Transform> ftrans = new HashMap<String, Transform>();
 		for (NodeLink l : gNode) {
 			if (isNXClass(l.getDestination(), NX_TRANSFORMATIONS) && getTransformations) {
-				parseTransformations(path, l, ftrans, pos);
+				parseTransformations(path, tree, l, ftrans, pos);
 				getTransformations = false;
 			}
 			if (isNXClass(l.getDestination(), NX_BEAM) && getBeam) {
@@ -1259,7 +1252,7 @@ public class NexusTreeUtils {
 					break;
 				}
 				try {
-					Transform nt = parseTransformation(dpath.substring(0, dpath.lastIndexOf(Node.SEPARATOR)), l, pos);
+					Transform nt = parseTransformation(dpath.substring(0, dpath.lastIndexOf(Node.SEPARATOR)), tree, l, pos);
 					mtrans.put(nt.name, nt);
 //					System.err.println("Found " + nt.name + " which points to " + nt.depend);
 					dpath = nt.depend;
@@ -1284,7 +1277,7 @@ public class NexusTreeUtils {
 		Matrix3d m3 = new Matrix3d();
 		NodeLink nl = gNode.getNodeLink(DEPENDS_ON);
 		if (nl != null && nl.isDestinationData()) {
-			String dep = canonicalizeDependsOn(path, parseStringArray(nl.getDestination(), 1)[0]);
+			String dep = canonicalizeDependsOn(path, tree, parseStringArray(nl.getDestination(), 1)[0]);
 			Matrix4d m = calcForwardTransform(ftrans, dep);
 			m.getRotationScale(m3);
 		} else {
@@ -1319,7 +1312,7 @@ public class NexusTreeUtils {
 		return new UnitCell(parms);
 	}
 
-	public static Transform parseTransformation(String ppath, NodeLink link, int[] pos) {
+	public static Transform parseTransformation(String ppath, Tree tree, NodeLink link, int[] pos) {
 		if (!link.isDestinationData()) {
 			logger.warn("'{}' was not a dataset", link.getName());
 			return null;
@@ -1370,13 +1363,13 @@ public class NexusTreeUtils {
 
 		Transform t = new Transform();
 		t.name = ppath.concat(Node.SEPARATOR).concat(link.getName());
-		String dep = canonicalizeDependsOn(ppath, parseStringAttr(dNode, DEPENDS_ON));
+		String dep = canonicalizeDependsOn(ppath, tree, parseStringAttr(dNode, DEPENDS_ON));
 		t.depend = dep;
 		t.matrix = m4;
 		return t;
 	}
 
-	private static String canonicalizeDependsOn(String ppath, String dep) {
+	private static String canonicalizeDependsOn(String ppath, Tree tree, String dep) {
 		if (dep == null) {
 			dep = NX_TRANSFORMATIONS_ROOT;
 		} else if (dep.equals(NX_TRANSFORMATIONS_ROOT)) {
@@ -1385,13 +1378,19 @@ public class NexusTreeUtils {
 			dep = ppath.concat(Node.SEPARATOR).concat(dep);
 			dep = TreeImpl.canonicalizePath(dep);
 		} else if (!dep.startsWith(Tree.ROOT)) {
-			// assume absolute
-			dep = Tree.ROOT.concat(dep);
+			// check if absolute, if not assume relative 
+			String test = Tree.ROOT.concat(dep);
+			if (tree.findNodeLink(test) == null) {
+				dep =  ppath.concat(Node.SEPARATOR).concat(dep);
+				dep = TreeImpl.canonicalizePath(dep);
+			} else {
+				dep = test;
+			}
 		}
 		return dep;
 	}
 
-	public static TransformedVectors parseTransformedVectors(String path, NodeLink link) {
+	public static TransformedVectors parseTransformedVectors(String path, Tree tree, NodeLink link) {
 		if (!link.isDestinationData()) {
 			logger.warn("'{}' was not a dataset", link.getName());
 			return null;
@@ -1420,7 +1419,7 @@ public class NexusTreeUtils {
 		}
 
 		TransformedVectors tv = new TransformedVectors();
-		String dep = canonicalizeDependsOn(path, parseStringAttr(dNode, DEPENDS_ON));
+		String dep = canonicalizeDependsOn(path, tree, parseStringAttr(dNode, DEPENDS_ON));
 		tv.depend = dep;
 		tv.magnitudes = values;
 		tv.vector = new Vector4d(v3);

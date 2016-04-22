@@ -54,6 +54,8 @@ public class NexusDiffractionCalibrationReader {
 		} catch (Exception e1) {
 			return null;
 		}
+		
+		if (tree == null) return null;
 
 		Map<String, NodeLink> dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getFinder(parent), true, null);
 		

@@ -166,7 +166,7 @@ public class NexusTreeUtils {
 		}
 
 		// find possible long name
-		String string = parseStringAttr(dNode, NX_NAME);
+		String string = getFirstString(dNode.getAttribute(NX_NAME));
 		if (string != null && string.length() > 0) {
 			cData.setName(string);
 		}
@@ -190,7 +190,7 @@ public class NexusTreeUtils {
 				isSignal = false;
 			}
 		} else {
-			String sName = parseStringAttr(gNode, NX_SIGNAL);
+			String sName = getFirstString(dNode.getAttribute(NX_SIGNAL));
 			if (sName != null) {
 				if (gNode.containsDataNode(sName)) {
 					isSignal = dNode == gNode.getDataNode(sName);
@@ -265,7 +265,7 @@ public class NexusTreeUtils {
 				int[] ashape = a.getShape();
 
 				AxisChoice choice = new AxisChoice(a);
-				String n = parseStringAttr(d, NX_NAME);
+				String n = getFirstString(dNode.getAttribute(NX_NAME));
 				if (n != null)
 					choice.setLongName(n);
 
@@ -447,7 +447,7 @@ public class NexusTreeUtils {
 			return false;
 		}
 
-		String signal = parseStringAttr(gn, NX_SIGNAL);
+		String signal = getFirstString(gn.getAttribute(NX_SIGNAL));
 		if (signal == null) {
 			signal = DATA;
 		}
@@ -463,7 +463,7 @@ public class NexusTreeUtils {
 		}
 
 		// find possible @long_name
-		String string = parseStringAttr(dNode, NX_NAME);
+		String string = getFirstString(dNode.getAttribute(NX_NAME));
 		if (string != null && string.length() > 0) {
 			cData.setName(string);
 		}
@@ -478,7 +478,7 @@ public class NexusTreeUtils {
 		int rank = shape.length;
 
 		Set<String> namedAxes = new HashSet<>();
-		String[] tmp = parseStringArrayAttr(gn, NX_AXES);
+		String[] tmp = getStringArray(gn.getAttribute(NX_AXES));
 		if (tmp == null) {
 			return false;
 		}
@@ -705,14 +705,14 @@ public class NexusTreeUtils {
 		if (nl != null) {
 			Node n = nl.getDestination();
 			double[] c = parseDoubleArray(n, 1);
-			beamCentre[0] = convertIfNecessary(SI.MILLIMETRE, parseStringAttr(n, NX_UNITS), c[0]);
+			beamCentre[0] = convertIfNecessary(SI.MILLIMETRE, getFirstString(n.getAttribute(NX_UNITS)), c[0]);
 		}
 		
 		nl = gNode.getNodeLink("beam_centre_y");
 		if (nl != null) {
 			Node n = nl.getDestination();
 			double[] c = parseDoubleArray(n, 1);
-			beamCentre[1] = convertIfNecessary(SI.MILLIMETRE, parseStringAttr(n, NX_UNITS), c[1]);
+			beamCentre[1] = convertIfNecessary(SI.MILLIMETRE, getFirstString(n.getAttribute(NX_UNITS)), c[1]);
 		}
 
 		// determine beam direction from centre position
@@ -985,7 +985,7 @@ public class NexusTreeUtils {
 		Matrix4d m2 = new Matrix4d();
 		if (translate) {
 			da = da.clone(); // necessary to stop clobbering cached values
-			convertIfNecessary(SI.MILLIMETRE, parseStringAttr(dNode, NX_UNITS), da);
+			convertIfNecessary(SI.MILLIMETRE, getFirstString(dNode.getAttribute(NX_UNITS)), da);
 			m2.setIdentity();
 			m2.setColumn(3, da[0], da[1], da[2], 1);
 		} else {
@@ -1127,7 +1127,7 @@ public class NexusTreeUtils {
 
 		int[] nshape = dataset.getShape();
 
-		String dep = canonicalizeDependsOn(path, tree, parseStringAttr(dNode, DEPENDS_ON));
+		String dep = canonicalizeDependsOn(path, tree, getFirstString(dNode.getAttribute(DEPENDS_ON)));
 
 		if (dep.equals(NX_TRANSFORMATIONS_ROOT)) {
 			return nshape;
@@ -1329,8 +1329,8 @@ public class NexusTreeUtils {
 		double[] vector = parseDoubleArray(dNode.getAttribute("vector"), 3);
 		Vector3d v3 = new Vector3d(vector);
 		Matrix4d m4 = null;
-		String type = parseStringAttr(dNode, "transformation_type");
-		String units = parseStringAttr(dNode, NX_UNITS);
+		String type = getFirstString(dNode.getAttribute("transformation_type"));
+		String units = getFirstString(dNode.getAttribute(NX_UNITS));
 		switch(type) {
 		case "translation":
 			Matrix3d m3 = new Matrix3d();
@@ -1355,7 +1355,7 @@ public class NexusTreeUtils {
 			logger.error("Offset has wrong length");
 		}
 		if (offset != null) {
-			convertIfNecessary(SI.MILLIMETRE, parseStringAttr(dNode, "offset_units"), offset);
+			convertIfNecessary(SI.MILLIMETRE, getFirstString(dNode.getAttribute("offset_units")), offset);
 			for (int i = 0; i < 3; i++) {
 				m4.setElement(i, 3, offset[i] + m4.getElement(i, 3));
 			}
@@ -1363,7 +1363,7 @@ public class NexusTreeUtils {
 
 		Transform t = new Transform();
 		t.name = ppath.concat(Node.SEPARATOR).concat(link.getName());
-		String dep = canonicalizeDependsOn(ppath, tree, parseStringAttr(dNode, DEPENDS_ON));
+		String dep = canonicalizeDependsOn(ppath, tree, getFirstString(dNode.getAttribute(DEPENDS_ON)));
 		t.depend = dep;
 		t.matrix = m4;
 		return t;
@@ -1405,7 +1405,7 @@ public class NexusTreeUtils {
 			return null;
 		}
 		double[] values = dataset.getData();
-		String type = parseStringAttr(dNode, "transformation_type");
+		String type = getFirstString(dNode.getAttribute("transformation_type"));
 		if (!"translation".equals(type)) {
 			throw new IllegalArgumentException("Transformed vector node has wrong type");
 		}
@@ -1414,12 +1414,12 @@ public class NexusTreeUtils {
 		Vector3d o3 = new Vector3d();
 		double[] offset = parseDoubleArray(dNode.getAttribute("offset"), 3);
 		if (offset != null) {
-			convertIfNecessary(SI.MILLIMETRE, parseStringAttr(dNode, "offset_units"), offset);
+			convertIfNecessary(SI.MILLIMETRE, getFirstString(dNode.getAttribute("offset_units")), offset);
 			o3.set(offset);
 		}
 
 		TransformedVectors tv = new TransformedVectors();
-		String dep = canonicalizeDependsOn(path, tree, parseStringAttr(dNode, DEPENDS_ON));
+		String dep = canonicalizeDependsOn(path, tree, getFirstString(dNode.getAttribute(DEPENDS_ON)));
 		tv.depend = dep;
 		tv.magnitudes = values;
 		tv.vector = new Vector4d(v3);
@@ -1444,27 +1444,45 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * @param node
 	 * @param attr
 	 * @return string or null
 	 */
-	public static String parseStringAttr(Node node, String attr) {
-		Attribute stringAttr = node.getAttribute(attr);
-		return stringAttr != null && stringAttr.isString() ? stringAttr.getFirstElement() : null;
+	public static String getFirstString(Attribute attr) {
+		return attr != null && attr.isString() ? attr.getFirstElement() : null;
+	}
+
+	/**
+	 * @param attr
+	 * @return string or null
+	 */
+	public static String[] getStringArray(Attribute attr) {
+		if (attr == null || !attr.isString()) {
+			return null;
+		}
+	
+		return ((StringDataset) DatasetUtils.convertToDataset(attr.getValue())).getData();
 	}
 
 	/**
 	 * @param node
 	 * @param attr
 	 * @return string or null
+	 * @deprecated Use {@link #getFirstString(Attribute)}
 	 */
-	public static String[] parseStringArrayAttr(Node node, String attr) {
-		Attribute stringAttr = node.getAttribute(attr);
-		if (stringAttr == null || !stringAttr.isString()) {
-			return null;
-		}
+	@Deprecated
+	public static String parseStringAttr(Node node, String attr) {
+		return getFirstString(node.getAttribute(attr));
+	}
 
-		return ((StringDataset) DatasetUtils.convertToDataset(stringAttr.getValue())).getData();
+	/**
+	 * @param node
+	 * @param attr
+	 * @return string or null
+	 * @deprecated Use {@link #getStringArray(Attribute)}
+	 */
+	@Deprecated
+	public static String[] parseStringArrayAttr(Node node, String attr) {
+		return getStringArray(node.getAttribute(attr));
 	}
 
 	/**
@@ -1474,12 +1492,12 @@ public class NexusTreeUtils {
 	 * @return true if it does
 	 */
 	public static boolean isNXClass(Node node, String clazz) {
-		String nxClass = parseStringAttr(node, NX_CLASS);
+		String nxClass = getFirstString(node.getAttribute(NX_CLASS));
 		return clazz.equals(nxClass);
 	}
 
 	/**
-	 * Parse elements of attribute as string array
+	 * Parse elements of attribute as string array. Converts if parsable
 	 * @param attr
 	 * @return string array or null if attribute does not exist
 	 */
@@ -1492,7 +1510,7 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse elements of data node as string array
+	 * Parse elements of data node as string array. Converts if parsable
 	 * @param n
 	 * @return string array or null if not a data node
 	 */
@@ -1505,7 +1523,7 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse elements of data node as string array
+	 * Parse elements of data node as string array. Converts if parsable
 	 * @param n
 	 * @param length
 	 * @return string array
@@ -1520,7 +1538,7 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse first element of attribute as integer
+	 * Parse first element of attribute as integer. Converts if parsable
 	 * @param attr
 	 * @return integer
 	 */
@@ -1534,7 +1552,7 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse elements of attribute as integer array
+	 * Parse elements of attribute as integer array. Converts if parsable
 	 * @param attr
 	 * @param length
 	 * @return integer array
@@ -1549,7 +1567,7 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse elements of attribute as integer array
+	 * Parse elements of attribute as integer array. Converts if parsable
 	 * @param attr
 	 * @return integer array or null if attribute does not exist
 	 */
@@ -1573,7 +1591,7 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse elements of data node as integer array
+	 * Parse elements of data node as integer array. Converts if parsable
 	 * @param n
 	 * @param length
 	 * @return integer array
@@ -1588,7 +1606,7 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse elements of data node as integer array
+	 * Parse elements of data node as integer array. Converts if parsable
 	 * @param n
 	 * @return integer array or null if not a data node or data node is empty
 	 */
@@ -1604,7 +1622,7 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse first element of attribute as double
+	 * Parse first element of attribute as double. Converts if parsable
 	 * @param attr
 	 * @return double
 	 */
@@ -1618,7 +1636,7 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse elements of attribute as double array
+	 * Parse elements of attribute as double array. Converts if parsable
 	 * @param attr
 	 * @param length
 	 * @return double array
@@ -1633,7 +1651,7 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse elements of attribute as double array
+	 * Parse elements of attribute as double array. Converts if parsable
 	 * @param attr
 	 * @return double array or null if attribute does not exist
 	 */
@@ -1657,7 +1675,7 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse elements of data node as integer array
+	 * Parse elements of data node as double array. Converts if parsable
 	 * @param n
 	 * @param length
 	 * @return double array
@@ -1672,7 +1690,7 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse elements of data node as double array
+	 * Parse elements of data node as double array. Converts if parsable
 	 * @param n
 	 * @return double array or null if not a data node or data node is empty
 	 */
@@ -1688,6 +1706,11 @@ public class NexusTreeUtils {
 		return dd.getData();
 	}
 
+	/**
+	 * Parse out items which are comma- or colon-separated
+	 * @param s string can be enclosed by square brackets
+	 * @return arrays of strings
+	 */
 	private static String[] parseString(String s) {
 		s = s.trim();
 		if (s.startsWith("[")) { // strip opening and closing brackets
@@ -1732,7 +1755,7 @@ public class NexusTreeUtils {
 		DoubleDataset values = (DoubleDataset) getCastAndCacheData(data, Dataset.FLOAT64);
 		if (values != null) {
 			values = values.clone(); // necessary to stop clobbering cached values
-			convertIfNecessary(unit, parseStringAttr(data, NX_UNITS), values.getData());
+			convertIfNecessary(unit, getFirstString(data.getAttribute(NX_UNITS)), values.getData());
 		}
 		return values;
 	}

@@ -617,6 +617,14 @@ def scanforimages(path, order="none", prefix=None, suffices=None, columns=-1, ro
     maxint = ((1<<30) - 1) + (1<<30) # maximum value for signed 32-bit integer
     return _plot_scanforimages(name, path, _order(order), prefix, suffices, columns, rowMajor, maxint, 1)
 
+def _replace_roilist(rl, c): # replace first ROI in list which has the same name
+    name = c.name
+    for i in range(len(rl)):
+        r = rl[i]
+        if r.name == name:
+            rl[i] = c
+            return True
+    return False
 
 def getbean(name=None):
     '''Get GUI bean (contains information from named view)
@@ -626,9 +634,14 @@ def getbean(name=None):
     '''
     if name is None:
         name = _PVNAME
-    return _plot_getbean(name)
+    bean = _plot_getbean(name)
+    if parameters.roi in bean and parameters.roilist in bean:
+        # ensure same object is used
+        _replace_roilist(bean[parameters.roilist], bean[parameters.roi])
+    
+    return bean
 
-def setbean(bean, name=None):
+def setbean(bean, name=None, warn=True):
     '''Set GUI bean
 
     Arguments:
@@ -638,6 +651,12 @@ def setbean(bean, name=None):
     if name is None:
         name = _PVNAME
     if bean is not None:
+        if parameters.roi in bean and parameters.roilist in bean:
+            # ensure same object is used
+            cr = bean[parameters.roi]
+            if _replace_roilist(bean[parameters.roilist], cr) and warn:
+                print 'Warning: replaced', cr.name, 'in ROI list with current ROI'
+
         _plot_setbean(name, bean)
 
 def getdatabean(name=None):
@@ -694,14 +713,16 @@ def setroi(bean, roi=None, send=False, name=None):
     '''
     if name is None:
         name = _PVNAME
+    warn = True
     if roi is None:
         roi = bean
         send = True
         bean = getbean(name)
     if isinstance(bean, _guibean):
         bean[parameters.roi] = roi
+        warn = False
     if send:
-        setbean(bean, name)
+        setbean(bean, name, warn=warn)
     return bean
 
 def delroi(bean=None, roi=None, send=False, name=None):

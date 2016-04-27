@@ -458,7 +458,7 @@ public class NexusTreeUtils {
 		DataNode dNode = gn.getDataNode(signal);
 		ILazyDataset cData = dNode.getDataset();
 		if (cData == null || cData.getSize() == 0) {
-			logger.warn("Chosen data {}, has zero size", dNode);
+			logger.warn("Chosen data '{}', has zero size", signal);
 			return false;
 		}
 
@@ -494,13 +494,11 @@ public class NexusTreeUtils {
 			}
 
 			if (!gn.containsDataNode(a)) {
-				logger.error("Axis {} is missing", a);
+				logger.error("Axis '{}' is missing for '{}'", a, signal);
 				return false;
 			}
 
-			if (!addAxis(gn, a, rank, shape, axes)) {
-				return false;
-			}
+			addAxis(gn, a, rank, shape, axes);
 		}
 
 		// Add other datasets that have _indices attributes too
@@ -512,11 +510,13 @@ public class NexusTreeUtils {
 				String a = aName.substring(0, i);
 				if (!namedAxes.contains(a)) {
 					if (gn.containsDataNode(a)) {
-						if (!addAxis(gn, a, rank, shape, axes)) {
-							return false;
+						try {
+							addAxis(gn, a, rank, shape, axes);
+						} catch (IllegalArgumentException e) {
+							logger.warn("Ignoring axis '{}' for '{}': {}", a, signal, e.getMessage());
 						}
 					} else {
-						logger.warn("An index '{}' attribute refers to a missing dataset: {}", aName, a);
+						logger.warn("An index '{}' attribute refers to a missing dataset in '{}': {}", aName, signal, a);
 					}
 				}
 			}
@@ -539,24 +539,21 @@ public class NexusTreeUtils {
 		return true;
 	}
 
-	private static boolean addAxis(GroupNode gn, String a, int rank, int[] shape, List<ILazyDataset> axes) {
+	private static void addAxis(GroupNode gn, String a, int rank, int[] shape, List<ILazyDataset> axes) throws IllegalArgumentException {
 		DataNode aNode = gn.getDataNode(a);
 		ILazyDataset aData = aNode.getDataset();
 		if (aData == null) {
-			logger.error("Axis {} dataset is empty", a);
-			return false;
+			throw new IllegalArgumentException("Axis '" + a + "' dataset is empty");
 		}
 
 		int[] ashape = aData.getShape();
 		int[] indices = parseIntArray(gn.getAttribute(a + NX_INDICES_SUFFIX));
 		if (indices.length != ashape.length) {
-			logger.error("Indices array of axis {} must have same length equal to its rank", a);
-			return false;
+			throw new IllegalArgumentException("Indices array of axis '" + a + "' must have same length equal to its rank");
 		}
 		for (int i : indices) {
 			if (i < 0 || i >= rank) {
-				logger.error("Index value ({}) for axis {} is out of bounds", i, a);
-				return false;
+				throw new IllegalArgumentException("Index value (" + i + ") for axis '" + a + "' is out of bounds");
 			}
 		}
 		int arank = ashape.length;
@@ -566,10 +563,10 @@ public class NexusTreeUtils {
 			for (int i : indices) {
 				nshape[i] = shape[i];
 			}
+			aData = aData.clone();
 			aData.setShape(nshape);
 		}
 		axes.add(aData);
-		return true;
 	}
 
 	static class Transform {

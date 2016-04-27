@@ -44,7 +44,7 @@
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFGofrFromDofrOperation"
             icon="icons/xpdfsubbak.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFGofrFromDofrOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="XPDF D(r) to G(r)">
       </operation>
       <operation
@@ -52,7 +52,7 @@
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFTophatOperation"
             icon="icons/xpdftophat.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFTophatOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="XPDF Tophat background subtraction (soq to th_soq)">
       </operation>
       <operation
@@ -60,7 +60,7 @@
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFSelfScatteringNormalisationOperation"
             icon="icons/xpdfnormal.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFSelfScatteringNormalisationOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="XPDF Self-scattering and Normalisation (ABSCOR to soq)">
       </operation>
       <operation

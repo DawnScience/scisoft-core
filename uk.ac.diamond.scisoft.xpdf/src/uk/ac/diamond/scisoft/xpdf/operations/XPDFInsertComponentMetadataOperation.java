@@ -14,9 +14,8 @@ import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
-
-import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
 
 /**
  * Abstract class containing the common matters between sample and container 

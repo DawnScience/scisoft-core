@@ -17,11 +17,10 @@ import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.Centroid;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
-
-import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
 
 @Atomic
 public class CentroidOperation extends AbstractOperation<EmptyModel, OperationData> {

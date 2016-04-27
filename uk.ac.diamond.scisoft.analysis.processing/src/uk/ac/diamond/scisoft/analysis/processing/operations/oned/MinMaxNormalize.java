@@ -16,11 +16,10 @@ import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
-
-import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
 
 @Atomic
 public class MinMaxNormalize extends AbstractOperation<EmptyModel, OperationData> {

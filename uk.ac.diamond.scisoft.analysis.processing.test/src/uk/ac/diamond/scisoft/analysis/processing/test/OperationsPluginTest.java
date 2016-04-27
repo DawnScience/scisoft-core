@@ -17,12 +17,12 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
+import org.eclipse.dawnsci.analysis.api.processing.model.ValueModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
-import uk.ac.diamond.scisoft.analysis.processing.operations.ValueModel;
 
 /**
  * Must have OSGI so this is a junit plugin test.

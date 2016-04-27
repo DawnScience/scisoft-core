@@ -11,9 +11,7 @@ package uk.ac.diamond.scisoft.analysis.processing;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +42,6 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.DynamicSliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.ISliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceViewIterator;
-import org.eclipse.dawnsci.analysis.dataset.slicer.Slicer;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
 import org.eclipse.dawnsci.hdf.object.operation.HierarchicalFileExecutionVisitor;
 import org.eclipse.dawnsci.macro.api.IMacroService;
@@ -113,7 +110,8 @@ public class OperationServiceImpl implements IOperationService {
 	        validate(firstSlice, context.getSeries());
 	
 			List<SliceFromSeriesMetadata> meta = firstSlice.getMetadata(SliceFromSeriesMetadata.class);
-			SliceFromSeriesMetadata ssm = meta!=null && meta.size()>0 ? meta.get(0) : null;
+			// Bug in getMetadata(...) that sometimes the wrong metadata type can be returned.
+			SliceFromSeriesMetadata ssm = meta!=null && meta.size()>0 && meta.get(0) instanceof SliceFromSeriesMetadata ? meta.get(0) : null;
 			
 			SourceInformation ssource = null;
 			

@@ -303,7 +303,7 @@
             description="Subtract mean and divide by standard deviation to bring all XY data onto the same scale"
             icon="icons/snv.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.StandardNormalVariate"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="Standard Normal Variate"
             visible="true">
       </operation>
@@ -313,7 +313,7 @@
             description="Sets the current value of the data as the variance on the dataset"
             icon="icons/pois.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.PhotonCountingErrorOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="Set Poisson Error"
             visible="true">
       </operation>
@@ -370,7 +370,7 @@
             description="Average all the data into a single dataset"
             icon="icons/meanfilt.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.AveragingOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="Average All Data">
       </operation>
       <operation
@@ -480,7 +480,7 @@
             description="Averages the data along the fastest non-data dimension of the array. For example, if the data set shape is [a,b,c,X,Y] where X and Y are the data dimensions, c is the fastest axis (row-major order)"
             icon="icons/meanfilt.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.AverageFastestOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="Average Fastest Dimension Only">
       </operation>
       <operation
@@ -512,7 +512,7 @@
             description="Given a 3d dataset/stack of images, stitches the stack with feature association and/or image translations (mosaic)"
             icon="icons/stitch.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.StitchingImagesOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.StitchingImagesModel"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.StitchingImagesModel"
             name="Image Stitching"
             visible="true">
       </operation>
@@ -545,7 +545,7 @@
             description="Stops data being sent down the pipeline, used to not duplicate your data if you only need the auxiliary output"
             icon="icons/blank.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.NoDataOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="No Data">
       </operation>
       <operation
@@ -554,7 +554,7 @@
             description="Propagates the input data without modifying it, used to convert other data formats to nexus"
             icon="icons/unchanged.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.OriginalDataOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="No Change">
       </operation>
       <category
@@ -584,7 +584,7 @@
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.CentroidOperation"
             icon="icons/blank.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.image.CentroidOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="Centroid">
       </operation>
       <operation
@@ -592,7 +592,7 @@
             description="Normalize the minimum to zero and the maximum to one"
             icon="icons/decolor.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.MinMaxNormalize"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="Minimum Maximum Normalization">
       </operation>
       <operation
@@ -634,7 +634,7 @@
             class="uk.ac.diamond.scisoft.analysis.processing.operations.SleepOperation"
             description="Doesn&apos;t do anything but make the thread sleep. For testing purposes."
             id="uk.ac.diamond.scisoft.analysis.processing.operations.SleepOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.SleepModel"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.SleepModel"
             name="Sleep"
             visible="false">
       </operation>

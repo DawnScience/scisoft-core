@@ -33,6 +33,7 @@ import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
+import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
 import org.eclipse.dawnsci.hdf.object.operation.HierarchicalFileExecutionVisitor;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -41,7 +42,6 @@ import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.LoaderServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
-import uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 

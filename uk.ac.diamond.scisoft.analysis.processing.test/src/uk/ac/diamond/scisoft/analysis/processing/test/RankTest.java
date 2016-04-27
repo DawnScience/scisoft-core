@@ -23,6 +23,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
+import org.eclipse.dawnsci.analysis.api.processing.model.ValueModel;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
@@ -37,7 +38,6 @@ import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationTransform
 import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.operations.FunctionModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.SectorIntegrationModel;
-import uk.ac.diamond.scisoft.analysis.processing.operations.ValueModel;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 

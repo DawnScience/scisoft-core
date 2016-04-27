@@ -20,6 +20,7 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.processing.model.ValueModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -29,7 +30,6 @@ import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationTransformer;
 import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
-import uk.ac.diamond.scisoft.analysis.processing.operations.ValueModel;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 

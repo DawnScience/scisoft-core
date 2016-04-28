@@ -619,7 +619,7 @@ def _replace_roilist(rl, c): # replace first ROI in list which has the same name
     name = c.name
     for i in range(len(rl)):
         r = rl[i]
-        if r.name == name:
+        if r.name == name and r is not c:
             rl[i] = c
             return True
     return False
@@ -827,7 +827,16 @@ def setrois(bean, roilist=None, send=False, name=None):
                 if isinstance(r, rtype):
                     nlist.append(r)
         roilist = nlist
+
     bean[parameters.roilist] = roilist
+    if parameters.roi in bean: # replace current ROI with one from list
+        cr = bean[parameters.roi]
+        cname = cr.name
+        for r in roilist:
+            if r.name == cname:
+                bean[parameters.roi] = r
+                break
+
     if send:
         setbean(bean, name)
     return bean

@@ -20,7 +20,6 @@ import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -147,13 +146,8 @@ public class ImageStackLoader implements ILazyLoader {
 		}
 
 		IDataset dataset = data.getDataset(0);
-		IMetadata metadata = dataset.getMetadata();
-		if (metadata == null)
-			metadata = new Metadata();
-		((Metadata)metadata).setFilePath(filename);
-		dataset.setMetadata(metadata);
-		dataset.setName(filename);
-
+		IMetadata meta = data.getMetadata();
+		dataset.setMetadata(meta);
 		return dataset;
 	}
 

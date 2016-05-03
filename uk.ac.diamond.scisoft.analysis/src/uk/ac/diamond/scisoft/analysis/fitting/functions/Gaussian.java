@@ -10,7 +10,10 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
 
 /**
@@ -110,5 +113,63 @@ public class Gaussian extends APeak {
 
 			buffer[i++] = height * Math.exp(- arg * arg);
 		}
+	}
+	
+	@Override
+	public double partialDeriv(IParameter parameter, double... position) {
+		return super.partialDeriv(parameter, position);
+//		if (isDuplicated(parameter))
+//			return super.partialDeriv(parameter, position);
+//
+//		int i = indexOfParameter(parameter);
+//		final double x = position[0];
+//		switch (i) {
+//		case 0:
+//			return 2*height*fr*fr*(x-pos)*Math.exp(-(fr*fr)*(x-pos)*(x-pos));
+//		case 1:
+//			return -2*height*fr*fr*(x-pos)*Math.exp(-(fr*fr)*(x-pos)*(x-pos));
+//		case 2: {
+//			double arg = fr * (x - pos); 
+//			return height * Math.exp(- arg * arg);
+//		}
+//		default:
+//			return 0;
+//		}
+	}
+
+	public void superFillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it){
+		super.fillWithPartialDerivativeValues(parameter, data, it);
+	}
+	
+	@Override
+	public void fillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it) {
+		super.fillWithPartialDerivativeValues(parameter, data, it);
+//		int j = indexOfParameter(parameter);
+//
+//		it.reset();
+//		double[] coords = it.getCoordinates();
+//		int i = 0;
+//		double[] buffer = data.getData();
+//		switch (j) {
+//		case 0:
+//			while (it.hasNext()) {
+//				buffer[i++] = 2*height*fr*fr*(coords[0]-pos)*Math.exp(-(fr*fr)*(coords[0]-pos)*(coords[0]-pos));
+//			}
+//			break;
+//		case 1:
+//			while (it.hasNext()) {
+//				buffer[i++] = -2*height*fr*fr*(coords[0]-pos)*Math.exp(-(fr*fr)*(coords[0]-pos)*(coords[0]-pos));
+//			}
+//			break;
+//		case 2:{
+//			while (it.hasNext()) {
+//				double arg = fr * (coords[0] - pos); 
+//				buffer[i++] = height * Math.exp(- arg * arg);
+//			}
+//			break;
+//		}
+//		default:
+//			break;
+//		}
 	}
 }

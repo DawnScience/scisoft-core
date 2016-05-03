@@ -17,7 +17,6 @@ import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.api.processing.PlotAdditionalData;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
@@ -297,29 +296,6 @@ public class PixelIntegrationUtils {
 		return new int[]{metadata.getDetector2DProperties().getPy(), metadata.getDetector2DProperties().getPx()};
 	}
 	
-	public static int calculateNumberOfBins(IDiffractionMetadata metadata) {
-		
-		int[] shape = getShape(metadata);
-		double[] beamCentre = metadata.getDetector2DProperties().getBeamCentreCoords();
-
-		if (beamCentre[1] < shape[0] && beamCentre[1] > 0
-				&& beamCentre[0] < shape[1] && beamCentre[0] > 0) {
-			double[] farCorner = new double[]{0,0};
-			if (beamCentre[1] < shape[0]/2.0) farCorner[0] = shape[0];
-			if (beamCentre[0] < shape[1]/2.0) farCorner[1] = shape[1];
-			
-			return (int)Math.hypot(beamCentre[0]-farCorner[1], beamCentre[1]-farCorner[0]);
-		} else if (beamCentre[1] < shape[0] && beamCentre[1] > 0
-				&& (beamCentre[0] > shape[1] || beamCentre[0] < 0)) {
-				return shape[1];
-		} else if (beamCentre[0] < shape[1] && beamCentre[0] > 0
-				&& (beamCentre[1] > shape[0] || beamCentre[1] < 0)) {
-				return shape[0];
-		} else {
-			return (int)Math.hypot(shape[1], shape[0]);
-		}
-	}
-	
 	public static Dataset generate2Dfrom1D(IDataset[] xy1d, Dataset array2Dx) {
 		
 		DoubleDataset[] inXy1D = new DoubleDataset[2];
@@ -417,19 +393,5 @@ public class PixelIntegrationUtils {
 		th = Maths.cos(th);
 		s2.imultiply(th);
 		correctionArray.idivide(s2);
-	}
-	
-	private static final class CacheKey {
-		
-		private IDiffractionMetadata meta;
-		private XAxis axis;
-		private boolean minMax;
-		
-		public CacheKey(IDiffractionMetadata meta, XAxis axis, boolean minMax) {
-			this.meta = meta;
-			this.axis = axis;
-			this.minMax = minMax;
-		}
-		
 	}
 }

@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToShiftedCartesian;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
+import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
 
 public class AlignImages {
 	private static final Logger logger = LoggerFactory.getLogger(AlignImages.class);
@@ -228,7 +229,7 @@ public class AlignImages {
 		int index = 0;
 		int nr = rois.size();
 		// save on a temp file
-		String file = System.getProperty("java.io.tmpdir") + File.separator + "tmp_aligned.h5";
+		String file = FileUtils.getTempFilePath("aligned.h5");
 		String path = "/entry/data/";
 		String name = "aligned";
 		File tmpFile = new File(file);

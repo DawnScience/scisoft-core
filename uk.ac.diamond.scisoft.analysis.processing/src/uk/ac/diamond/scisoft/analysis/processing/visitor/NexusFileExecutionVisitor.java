@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -327,7 +328,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 						ILazyDataset ax = axis[j];
 						if (ax == null) continue;
 						String name = ax.getName();
-						names[j] = santiziseName(name);
+						names[j] = santiziseName(name, axesNames);
 						axesNames.putIfAbsent(i, names);
 						name = axesNames.get(i)[j];
 						Dataset axDataset = DatasetUtils.sliceAndConvertLazyDataset(ax);
@@ -383,7 +384,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 		}
 	}
 	
-	private String santiziseName(String name) {
+	private String santiziseName(String name, ConcurrentHashMap<Integer, String[]> names) {
 		//assume only our slicing puts [ in a axis name!
 		if (name.contains("[")) {
 			name = name.split("\\[")[0];
@@ -392,17 +393,33 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 		if (name.contains("/")) {
 			String[] split = name.split("/");
 			name = split[split.length-1];
-
-		}
-
-		//sanitize - can't have an axis called data
-		if (name == null || name.isEmpty() || name.equals("data")) {
-			int n = 0;
-			while(groupAxesNames.containsKey("axis" + n)) n++;
-
-			name = "axis" +n;
 		}
 		
+		if (name == null || name.isEmpty() || name.equals("data")) {
+			name = "axis";
+		}
+		
+		if (name != null) name = getNonDuplicateName(name, names);
+		
+		return name;
+	}
+	
+	
+	private String getNonDuplicateName(String name, ConcurrentHashMap<Integer, String[]> names) {
+
+		boolean duplicateName = true;
+		int n = 1;
+		while (duplicateName) {
+			duplicateName = false;
+			for (Entry<Integer, String[]> e : names.entrySet()) {
+				for (String s : e.getValue()) {
+					if (name.equals(s)) duplicateName = true;
+				}
+			}
+			
+			if (duplicateName) name = name+n++;
+		}
+
 		return name;
 	}
 

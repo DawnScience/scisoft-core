@@ -84,6 +84,7 @@ public class ImageThumbnailLoader {
 	}
 
 	private static final int DOWNSAMPLE_SIZE_IN_PIXELS = 96;
+
 	/**
 	 * Utility method for extracting the image Dataset from a
 	 * DataHolder, optionally scaling the data to a thumbnail
@@ -98,6 +99,33 @@ public class ImageThumbnailLoader {
 			                                final IDataHolder scan) {
 		if (scan != null && scan.size() > 0) {
 			IDataset ds = scan.getDataset(0);
+			return getSingleFromDataset(path, createThumbnail, ds);
+		}
+		Dataset ds_null = DatasetFactory.zeros(new int[] {DOWNSAMPLE_SIZE_IN_PIXELS, DOWNSAMPLE_SIZE_IN_PIXELS}, Dataset.BOOL);
+		ds_null.setName("Invalid Image");
+		return ds_null;
+	}
+
+	/**
+	 * Utility method for scaling a dataset to a thumbnail
+	 * 
+	 * @param path
+	 * @param ds
+	 * @return single data set
+	 */
+	public static IDataset getThumbnail(String path, IDataset ds) {
+		return getSingleFromDataset(path, true, ds);
+	}
+
+	/**
+	 * Utility method for scaling a dataset to a thumbnail
+	 * 
+	 * @param path
+	 * @param ds
+	 * @return single data set
+	 */
+	public static IDataset getSingleFromDataset(String path, boolean createThumbnail, IDataset ds) {
+		if (ds != null) {
 			if (ds.getRank() == 2) { // 2D datasets only!!!
 				int width = ds.getShape()[1];
 				int height = ds.getShape()[0];
@@ -110,8 +138,8 @@ public class ImageThumbnailLoader {
 				}
 				if (createThumbnail) {
 					int step;
-					step = Math.max(1, (width > height ? width : height)/ DOWNSAMPLE_SIZE_IN_PIXELS);
-					int[] stepping = new int[] {step, step};
+					step = Math.max(1, (width > height ? width : height) / DOWNSAMPLE_SIZE_IN_PIXELS);
+					int[] stepping = new int[] { step, step };
 					Downsample down = new Downsample(DownsampleMode.POINT, stepping);
 					Dataset ds_downsampled = down.value(ds).get(0);
 					ds_downsampled.setName(new String(path));

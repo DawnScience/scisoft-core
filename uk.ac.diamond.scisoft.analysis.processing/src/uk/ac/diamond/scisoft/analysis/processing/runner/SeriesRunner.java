@@ -145,8 +145,8 @@ public class SeriesRunner implements IOperationRunner {
 		
 		ISliceViewIterator iterator = null;
 		
-		if (context.getKey() != null) {
-			iterator = new DynamicSliceViewIterator((IDynamicDataset)context.getData(), (IDynamicDataset)context.getKey());
+		if (context.getLiveInfo() != null) {
+			iterator = new DynamicSliceViewIterator((IDynamicDataset)context.getData(), context.getLiveInfo().getKeys(), context.getLiveInfo().getComplete());
 		} else {
 			iterator = new SliceViewIterator(context.getData(), context.getSlicing(), context.getDataDimensions());
 		}

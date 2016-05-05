@@ -45,5 +45,10 @@ public class SleepOperation extends AbstractOperation<SleepModel, OperationData>
 	public OperationRank getOutputRank() {
 		return OperationRank.SAME;
 	}
+	
+	@Override
+	public String getName(){
+		return "Sleep";
+	}
 
 }

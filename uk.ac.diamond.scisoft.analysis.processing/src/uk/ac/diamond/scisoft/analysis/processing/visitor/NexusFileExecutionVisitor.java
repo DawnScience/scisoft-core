@@ -37,6 +37,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
+import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
@@ -64,6 +65,8 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 	private final String INTER_GROUP = "intermediate";
 	private final String AUX_GROUP = "auxiliary";
 	private final String ENTRY = "entry";
+	private final String LIVE = "live";
+	private final String FINISHED = "finished";
 
 	private Map<IOperation, AtomicBoolean> firstNotifyMap;
 	private Map<IOperation, Integer> positionMap;
@@ -146,6 +149,13 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 		group = nexusFile.getGroup("/" + ENTRY + "/" + RESULTS_GROUP, true);
 		nexusFile.addAttribute(group, new AttributeImpl("NX_class","NXdata"));
 		results = "/" + ENTRY + "/" + RESULTS_GROUP;
+		if (swmring) {
+			group = nexusFile.getGroup("/" + ENTRY + "/" + LIVE, true);
+			nexusFile.addAttribute(group, new AttributeImpl("NX_class","NXcollection"));
+			IDataset dataset = DatasetFactory.zeros(new int[]{1}, Dataset.INT32);
+			dataset.setName(FINISHED);
+			createWriteableLazy(dataset, group);
+		}
 	}
 
 	/**
@@ -507,7 +517,14 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 
 	@Override
 	public void close() throws Exception {
+		
 		if (nexusFile != null) {
+			
+			if (swmring) {
+				DataNode dn = nexusFile.getData(Node.SEPARATOR + ENTRY + Node.SEPARATOR + LIVE + Node.SEPARATOR + FINISHED);
+				dn.getWriteableDataset().setSlice(null, DatasetFactory.ones(new int[]{1}, Dataset.INT32), new SliceND(dn.getWriteableDataset().getShape()));
+			}
+			
 			nexusFile.flush();
 			nexusFile.close();
 		}

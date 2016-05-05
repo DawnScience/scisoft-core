@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.dataset.slicer;
 
 import static org.junit.Assert.*;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDynamicDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
@@ -25,7 +26,7 @@ public class DynamicSliceNDIteratorTest {
 		int[] shape = new int[]{1,1,100,100};
 		Dataset key = DatasetFactory.zeros(new int[]{1, 1}, Dataset.INT32);
 		
-		DynamicSliceNDIterator gsndi = new DynamicSliceNDIterator(shape, key);
+		DynamicSliceNDIterator gsndi = new DynamicSliceNDIterator(shape, key, key.getRank());
 		
 		assertFalse(gsndi.hasNext());
 		

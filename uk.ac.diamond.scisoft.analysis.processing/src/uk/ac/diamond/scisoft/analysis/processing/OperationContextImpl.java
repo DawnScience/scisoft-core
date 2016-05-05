@@ -11,6 +11,7 @@ import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
+import org.eclipse.dawnsci.analysis.api.processing.ILiveOperationInfo;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -28,7 +29,7 @@ public class OperationContextImpl implements IOperationContext {
 	// or
 	private String  filePath;
 	private String  datasetPath;
-	private ILazyDataset  key;
+	private ILiveOperationInfo  liveInfo;
 	// And
 	private SliceND slicing;
 	private int[] dataDimensions;
@@ -242,15 +243,7 @@ public class OperationContextImpl implements IOperationContext {
 	public void setPoolSize(int slugCount) {
 		this.poolSize = slugCount;
 	}
-	@Override
-	public void setKey(ILazyDataset key) {
-		this.key = key;
-		
-	}
-	@Override
-	public ILazyDataset getKey() {
-		return key;
-	}
+
 	@Override
 	public int[] getDataDimensions() {
 		return dataDimensions;
@@ -259,6 +252,15 @@ public class OperationContextImpl implements IOperationContext {
 	public void setDataDimensions(int[] dataDimensions) {
 		this.dataDimensions = dataDimensions;
 		
+	}
+	@Override
+	public void setLiveInfo(ILiveOperationInfo info) {
+		this.liveInfo = info;
+		
+	}
+	@Override
+	public ILiveOperationInfo getLiveInfo() {
+		return liveInfo;
 	}
 
 }

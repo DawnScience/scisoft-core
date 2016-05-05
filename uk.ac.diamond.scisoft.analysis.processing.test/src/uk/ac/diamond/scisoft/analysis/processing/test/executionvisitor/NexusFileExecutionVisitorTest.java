@@ -214,7 +214,7 @@ public class NexusFileExecutionVisitorTest {
 		tmp.deleteOnExit();
 		tmp.createNewFile();
 		
-		context.setVisitor(new NexusFileExecutionVisitor(tmp.getAbsolutePath()));
+		context.setVisitor(new NexusFileExecutionVisitor(tmp.getAbsolutePath(),true));
 		context.setSeries(op11);
 		context.setExecutionType(type);
 		service.execute(context);

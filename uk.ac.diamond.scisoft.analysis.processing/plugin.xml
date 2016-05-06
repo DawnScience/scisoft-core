@@ -752,6 +752,13 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxModel"
             name="Box Mean">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SubtractIntegratedXRegionsOperation"
+            description="Subtract the average of two regions in X from the signal region"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SubtractIntegratedXRegionsOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SubtractIntegratedXRegionsModel"
+            name="Subtract Average X Regions Integration">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

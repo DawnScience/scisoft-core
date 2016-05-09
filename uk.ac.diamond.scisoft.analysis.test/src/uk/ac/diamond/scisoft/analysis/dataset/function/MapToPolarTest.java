@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.dawnsci.analysis.dataset.impl.function.Sum;
 import org.junit.Before;
 import org.junit.Test;
 

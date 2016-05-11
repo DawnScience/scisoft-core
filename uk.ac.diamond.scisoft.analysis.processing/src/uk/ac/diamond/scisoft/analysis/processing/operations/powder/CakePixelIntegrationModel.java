@@ -14,7 +14,7 @@ import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 public class CakePixelIntegrationModel extends PixelIntegrationModel {
 
-	@OperationModelField(min=2,max=1000000, hint="Set number of bins for azimuthal axis",label = "Number of azimuthal bins" )
+	@OperationModelField(min=2,max=1000000, hint="Number of bins for azimuthal axis",label = "Number of azimuthal bins" )
 	private Integer numberOfBins2ndAxis = null;
 	@OperationModelField(hint="Set value for X axis after integration", label = "X axis")
 	private XAxis axisType = XAxis.Q;

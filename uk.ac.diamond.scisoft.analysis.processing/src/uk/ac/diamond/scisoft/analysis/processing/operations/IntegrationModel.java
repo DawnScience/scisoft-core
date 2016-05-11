@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class IntegrationModel extends AbstractOperationModel {
 
 	@JsonIgnore
-	@OperationModelField(hint="Define a region of interest directly.", label = "Region of Interest")
+	@OperationModelField(hint="Define the region of interest", label = "Region of Interest")
 	protected IROI region;
 
 	public IROI getRegion() {

@@ -13,7 +13,7 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class KernelWidthModel extends AbstractOperationModel {
 
-	@OperationModelField(hint="Set width of filter kernel in pixels", label = "Set Width")
+	@OperationModelField(hint="Width of filter kernel in pixels", label = "Kernel Width")
 	private int width = 3;
 
 	public int getWidth() {

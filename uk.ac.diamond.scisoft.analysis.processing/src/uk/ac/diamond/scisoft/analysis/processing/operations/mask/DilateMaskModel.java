@@ -13,7 +13,7 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class DilateMaskModel extends AbstractOperationModel {
 
-	@OperationModelField(hint="Increase size of masked areas but a set number of pixels", label = "Set dilation size")
+	@OperationModelField(hint="Increase size of masked areas by a set number of pixels", label = "Dilation Size")
 	private int numberOfPixelsToDilate = 1;
 
 	public int getNumberOfPixelsToDilate() {

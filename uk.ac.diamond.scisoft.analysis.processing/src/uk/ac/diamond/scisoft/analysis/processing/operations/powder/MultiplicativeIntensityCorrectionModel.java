@@ -13,17 +13,17 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class MultiplicativeIntensityCorrectionModel extends AbstractOperationModel {
 
-	@OperationModelField(label = "Solid angle",hint = "Check to apply the solid angle correction to the data")
+	@OperationModelField(label = "Solid angle",hint = "Apply solid angle correction to the data")
 	private boolean applySolidAngleCorrection = false;
-	@OperationModelField(label = "Polarisation",hint = "Check to apply the polarisation correction to the data")
+	@OperationModelField(label = "Polarisation",hint = "Apply the polarisation correction to the data")
 	private boolean applyPolarisationCorrection = false;
-	@OperationModelField(label = "Detector transmission",hint = "Check to apply the detector transmission correction to the data")
+	@OperationModelField(label = "Detector transmission",hint = "Apply the detector transmission correction to the data")
 	private boolean applyDetectorTransmissionCorrection = false;
-	@OperationModelField(label = "Polarisation factor",hint = "Polarisation factor value used in the polarisation correction")
+	@OperationModelField(label = "Polarisation factor",hint = "Value used in the polarisation correction")
 	private double polarisationFactor = 0.9;
-	@OperationModelField(label = "Polarisation angular offset", hint = "Set the offset of the polarisation relative to the detector")
+	@OperationModelField(label = "Polarisation angular offset", hint = "Offset of the polarisation relative to the detector")
 	private double polarisationAngularOffset = 0;
-	@OperationModelField(label = "Detector transmitted fraction", hint = "Set the fraction of radiation transmitted for the detector transmission correction")
+	@OperationModelField(label = "Detector transmitted fraction", hint = "Fraction of radiation transmitted for the detector transmission correction")
 	private double transmittedFraction = 0;
 	
 	public boolean isApplySolidAngleCorrection() {

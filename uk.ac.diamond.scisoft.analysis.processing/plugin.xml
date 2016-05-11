@@ -8,6 +8,7 @@
             description="Subtract one dataset from another or subtract a scalar value."
             icon="icons/minus.png"
             id="uk.ac.diamond.scisoft.analysis.processing.subtractOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.ValueModel"
             name="Subtract"
             visible="false">
       </operation>
@@ -16,6 +17,7 @@
             description="Add one dataset to another or add a scalar value."
             icon="icons/plus.png"
             id="uk.ac.diamond.scisoft.analysis.processing.addOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.ValueModel"
             name="Add"
             visible="false">
       </operation>
@@ -241,7 +243,7 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.expressions"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression1DOperation"
-            description="Custom mathematical operation, use &quot;data&quot; for the data variable and &quot;xaxis&quot; for the axis"
+            description="Custom mathematical operation, use &quot;data&quot; for the data variable and &quot;xaxis&quot; for the axis, use the dnp: and dat: namespaces to access different mathematical functions"
             icon="icons/exp1d.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression1DOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression1DModel"
@@ -251,7 +253,7 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.expressions"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DOperation"
-            description="Custom mathematical operation on an image, use &quot;data&quot; for the data variable and &quot;xaxis&quot; and &quot;yaxis&quot; for the axes"
+            description="Custom mathematical operation on an image, use &quot;data&quot; for the data variable and &quot;xaxis&quot; and &quot;yaxis&quot; for the axes, use the dnp: and dat: namespaces to access different mathematical functions"
             icon="icons/exp2d.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DModel"
@@ -261,7 +263,7 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.xrd2imageprocessing"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DDiffractionOperation"
-            description="Custom mathematical operation including q, tth, azimuth and energy"
+            description="Custom mathematical operation including q, tth, azimuth and energy, use the dnp: and dat: namespaces to access different mathematical functions"
             icon="icons/exp2dd.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DDiffractionOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expression2DModel"
@@ -758,6 +760,50 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SubtractIntegratedXRegionsOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SubtractIntegratedXRegionsModel"
             name="Subtract Average X Regions Integration">
+      </operation>
+      <category
+            id="uuk.ac.diamond.scisoft.analysis.processing.internaldata"
+            name="Internal Data">
+      </category>
+      <operation
+            category="uuk.ac.diamond.scisoft.analysis.processing.internaldata"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyInternalDataOperation"
+            description="Multiply dataset by internal value"
+            icon="icons/blue-cross.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyInternalDataOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.InternalDatasetNameModel"
+            name="Multiply"
+            visible="true">
+      </operation>
+      <operation
+            category="uuk.ac.diamond.scisoft.analysis.processing.internaldata"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractInternalDataOperation"
+            description="Subtract internal data from a dataset"
+            icon="icons/minus.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractInternalDataOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.InternalDatasetNameModel"
+            name="Subtract"
+            visible="true">
+      </operation>
+      <operation
+            category="uuk.ac.diamond.scisoft.analysis.processing.internaldata"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DivideInternalDataOperation"
+            description="Divide dataset by internal value"
+            icon="icons/yellow-divide.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DivideInternalDataOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.InternalDatasetNameModel"
+            name="Divide"
+            visible="true">
+      </operation>
+      <operation
+            category="uuk.ac.diamond.scisoft.analysis.processing.internaldata"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusInternalDataOperation"
+            description="Add internal data to a Dataset"
+            icon="icons/plus.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusInternalDataOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.InternalDatasetNameModel"
+            name="Add"
+            visible="true">
       </operation>
    </extension>
    <extension

@@ -14,7 +14,7 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class DiffractionMetadataImportModel extends AbstractOperationModel {
 
-	@OperationModelField(hint="Enter the path to the calibration NeXus file", file = FileType.EXISTING_FILE, label = "Select Calibration File:")
+	@OperationModelField(hint="Path to the calibration NeXus file", file = FileType.EXISTING_FILE, label = "Calibration File:")
 	private String filePath = "";
 
 	public String getFilePath() {

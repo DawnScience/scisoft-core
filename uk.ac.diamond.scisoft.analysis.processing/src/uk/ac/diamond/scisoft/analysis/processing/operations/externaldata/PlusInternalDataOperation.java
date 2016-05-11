@@ -13,25 +13,26 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
 @Atomic
-public class SubtractExternalDataOperation extends OperateOnDataAbstractOperation<ExternalDataModel> {
+public class PlusInternalDataOperation extends OperateOnDataAbstractOperation<InternalDatasetNameModel> {
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractExternalDataOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusInternalDataOperation";
 	}
 
 	@Override
 	protected Dataset doMathematics(Dataset a, double b) {
-		return ErrorPropagationUtils.subtractWithUncertainty(a, b);
+		return ErrorPropagationUtils.addWithUncertainty(a, b);
 	}
-	
+
 	@Override
 	protected String getFilePath(IDataset input) {
-		return ((ExternalDataModel)model).getFilePath();
+		return input.getFirstMetadata(SliceFromSeriesMetadata.class).getFilePath();
 	}
 
 }

@@ -21,6 +21,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.dawnsci.analysis.dataset.impl.Outliers;
 import org.eclipse.dawnsci.analysis.dataset.impl.Stats;
 
 public class PixelIntegration {
@@ -450,7 +451,6 @@ public class PixelIntegration {
 	
 	public static Dataset calculateOutlierMask(IDataset data, IDataset mask, IPixelIntegrationCache bean) {
 		
-		List<Dataset> result = new ArrayList<Dataset>();
 		
 		Dataset d = DatasetUtils.convertToDataset(data);
 		
@@ -463,7 +463,6 @@ public class PixelIntegration {
 		DoubleDataset intensity = new DoubleDataset(nbins);
 		
 		final int[] h = histo.getData();
-		final double[] in = intensity.getData();
 		
 		Dataset a = bean.getXAxisArray()[0];
 		
@@ -536,14 +535,10 @@ public class PixelIntegration {
 		double[] med = new double[h.length];
 		
 		for (int i = 0; i < h.length; i++) {
-			
-			DoubleDataset dd = dvals[i];
-			double median = (double)Stats.median(dd);
-			med[i] = median;
-			dd.isubtract(median);
-			Maths.abs(dd, dd);
-			median = (double)Stats.median(dd);
-			mad[i] = median;
+			if (dvals[i].getSize() == 0) continue;
+			double[] out = Outliers.medianAbsoluteDeviation(dvals[i]);
+			mad[i] = out[0];
+			med[i] = out[1];
 			
 			
 		}
@@ -575,7 +570,7 @@ public class PixelIntegration {
 			
 			if(p < h.length){
 				
-				if (mad[p] != 0 && sig > (med[p]+mad[p]*10)) mb.setAbs(iter.index,false);
+				if (mad[p] != 0 && sig-med[p] > (mad[p]*3)) mb.setAbs(iter.index,false);
 			}
 		}
 		

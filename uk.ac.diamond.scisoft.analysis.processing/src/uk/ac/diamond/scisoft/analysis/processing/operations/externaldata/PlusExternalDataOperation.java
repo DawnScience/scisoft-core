@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -16,8 +17,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
 @Atomic
-public class PlusExternalDataOperation extends
-		OperateOnExternalDataAbstractOperation<ExternalDataModel, OperationData> {
+public class PlusExternalDataOperation extends OperateOnDataAbstractOperation<ExternalDataModel> {
 
 	@Override
 	public String getId() {
@@ -27,6 +27,11 @@ public class PlusExternalDataOperation extends
 	@Override
 	protected Dataset doMathematics(Dataset a, double b) {
 		return ErrorPropagationUtils.addWithUncertainty(a, b);
+	}
+
+	@Override
+	protected String getFilePath(IDataset input) {
+		return ((ExternalDataModel)model).getFilePath();
 	}
 
 }

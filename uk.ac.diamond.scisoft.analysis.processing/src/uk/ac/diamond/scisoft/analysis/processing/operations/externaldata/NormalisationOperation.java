@@ -10,24 +10,13 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
-import org.eclipse.dawnsci.analysis.api.processing.OperationData;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-
-import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
 @Atomic
-public class NormalisationOperation extends OperateOnExternalDataAbstractOperation<ExternalDataModel, OperationData> {
+public class NormalisationOperation extends DivideExternalDataOperation {
 
 	@Override
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.NormalisationOperation";
 	}
-
-	@Override
-	protected Dataset doMathematics(Dataset a, double b) {
-		return ErrorPropagationUtils.divideWithUncertainty(a, b);
-	}
-
-
 	
 }

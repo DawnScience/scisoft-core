@@ -26,8 +26,7 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
-public abstract class OperateOnExternalDataAbstractOperation<T extends ExternalDataModel, D extends OperationData> extends
-		AbstractOperation<ExternalDataModel, OperationData> {
+public abstract class OperateOnDataAbstractOperation<T extends InternalDatasetNameModel> extends AbstractOperation<InternalDatasetNameModel, OperationData> {
 	
 	@Override
 	final public OperationRank getInputRank() {
@@ -47,12 +46,9 @@ public abstract class OperateOnExternalDataAbstractOperation<T extends ExternalD
 		
 		Dataset inputData = DatasetUtils.convertToDataset(input);
 		
-		String externalDataPath = model.getFilePath();
-		// If no path is provided, then the external data comes from the
-		// data's own file
-		if (externalDataPath == null || externalDataPath.isEmpty()) externalDataPath = ssm.getFilePath();
+		String dataPath = getFilePath(input);
 		
-		ILazyDataset lz = ProcessingUtils.getLazyDataset(this, externalDataPath, model.getDatasetName());
+		ILazyDataset lz = ProcessingUtils.getLazyDataset(this, dataPath, model.getDatasetName());
 		IDataset val = null;
 		
 		if (AbstractDataset.squeezeShape(lz.getShape(), false).length == 0) {
@@ -80,5 +76,7 @@ public abstract class OperateOnExternalDataAbstractOperation<T extends ExternalD
 		}
 	
 	protected abstract Dataset doMathematics(Dataset a, double b); 
+	
+	protected abstract String getFilePath(IDataset input);
 	
 }

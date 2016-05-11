@@ -14,10 +14,10 @@ import org.eclipse.dawnsci.analysis.api.processing.model.RangeType;
 
 public class XRegionProfileNormalizeModel extends AbstractOperationModel {
 
-	@OperationModelField(rangevalue = RangeType.XRANGE, hint="Set range in X direction (i.e. 10,20)", label = "X Range")
+	@OperationModelField(rangevalue = RangeType.XRANGE, hint="Range in X direction (i.e. 10,20)", label = "X Range")
 	private double[] xRange = new double[]{10,20};
 	
-	@OperationModelField(hint="Set the smoothing ammount of the integrated line", label = "Smoothing Width")
+	@OperationModelField(hint="Smoothing amount of the integrated line", label = "Smoothing Width")
 	private int smoothing = 5;
 	
 	public double[] getxRange() {

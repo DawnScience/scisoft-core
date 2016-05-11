@@ -387,11 +387,14 @@ public class OperationServiceImpl implements IOperationService {
 		if (models.containsKey(operationId)) {
 			return models.get(operationId);
 		}
-		IOperation<? extends IOperationModel, ? extends OperationData> op = create(operationId);
-		if (op instanceof AbstractOperationBase) {
-			return ((AbstractOperationBase)op).getModelClass();
-		}
-		return null; // Normally one of the above lines would throw an exception before this.
+		
+		throw new RuntimeException("Extension point must specify model class!");
+		
+//		IOperation<? extends IOperationModel, ? extends OperationData> op = create(operationId);
+//		if (op instanceof AbstractOperationBase) {
+//			return ((AbstractOperationBase)op).getModelClass();
+//		}
+//		return null; // Normally one of the above lines would throw an exception before this.
 	}
 
 	@Override
@@ -504,17 +507,16 @@ public class OperationServiceImpl implements IOperationService {
 	@Override
 	public IOperation<? extends IOperationModel, ? extends OperationData> create(String operationId) throws Exception {
 		checkOperations();
-		IOperation<? extends IOperationModel, ? extends OperationData> op = operations.get(operationId).getClass().newInstance();
+		IOperation op = operations.get(operationId).getClass().newInstance();
+		Class<? extends IOperationModel> modelClass = getModelClass(operationId);
+		if (modelClass == null) throw new RuntimeException("Model class not found! All operations require a model");
+			
+		op.setModel(modelClass.newInstance());
+		
 		if (op instanceof AbstractOperationBase) {
 			AbstractOperationBase<? extends IOperationModel, ? extends OperationData> aop = (AbstractOperationBase<? extends IOperationModel, ? extends OperationData>)op;
 			aop.setName(operations.get(operationId).getName());
 			aop.setDescription(operations.get(operationId).getDescription());
-			try {
-				Class modelType = aop.getModelClass();
-				((IOperation)aop).setModel((IOperationModel)modelType.newInstance());
-			} catch (Exception e) {
-				logger.debug("Could not add model",e);
-			}
 		}
 		return op;
 	}

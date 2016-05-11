@@ -14,7 +14,7 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class ImportMaskModel extends AbstractOperationModel {
 
-	@OperationModelField(hint="Enter the path to the mask file", file = FileType.EXISTING_FILE, label = "Mask File")
+	@OperationModelField(hint="Path to the mask file", file = FileType.EXISTING_FILE, label = "Mask File")
 	private String filePath = "";
 
 	public String getFilePath() {

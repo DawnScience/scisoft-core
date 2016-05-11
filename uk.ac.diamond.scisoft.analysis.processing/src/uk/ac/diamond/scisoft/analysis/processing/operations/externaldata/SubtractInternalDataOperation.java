@@ -9,24 +9,29 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
-import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
-
-// Does not work in the Operations menu for a reason I cannot fathom. Use PlusExternalDataOperation instead. --TCS
-public class AddExternalDataOperation extends
-		OperateOnExternalDataAbstractOperation<ExternalDataModel, OperationData> {
+@Atomic
+public class SubtractInternalDataOperation extends OperateOnDataAbstractOperation<InternalDatasetNameModel> {
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.AddExternalDataOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractInternalDataOperation";
 	}
 
 	@Override
 	protected Dataset doMathematics(Dataset a, double b) {
-		return a;//ErrorPropagationUtils.addWithUncertainty(a, b);
+		return ErrorPropagationUtils.subtractWithUncertainty(a, b);
+	}
+	
+	@Override
+	protected String getFilePath(IDataset input) {
+		return input.getFirstMetadata(SliceFromSeriesMetadata.class).getFilePath();
 	}
 
 }

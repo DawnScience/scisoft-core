@@ -64,9 +64,9 @@ public class MaskOutliersInQOperation extends AbstractOperation<EmptyModel, Oper
 		bean.setShape(input.getShape());
 		PixelIntegrationCache lcache = new PixelIntegrationCache(meta, bean);
 		
-		Dataset calculateOutlierMask = PixelIntegration.calculateOutlierMask(DatasetUtils.convertToDataset(input), null, lcache);
+//		Dataset calculateOutlierMask = PixelIntegration.calculateOutlierMask(DatasetUtils.convertToDataset(input), null, lcache);
 		
-		input.setMetadata(new MaskMetadataImpl(calculateOutlierMask));
+//		input.setMetadata(new MaskMetadataImpl(calculateOutlierMask));
 		
 		return new OperationData(input);
 	}

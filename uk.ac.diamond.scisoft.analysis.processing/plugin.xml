@@ -410,7 +410,7 @@
             description="Subtract a dataset (or average if stack) in the specified file"
             icon="icons/subblank.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractDataOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SelectedFramesModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataSelectedFramesModel"
             name="Subtract Data">
       </operation>
       <operation

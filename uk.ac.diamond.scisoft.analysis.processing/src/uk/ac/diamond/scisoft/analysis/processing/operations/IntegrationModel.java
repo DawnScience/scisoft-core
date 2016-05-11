@@ -12,11 +12,8 @@ import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public class IntegrationModel extends AbstractOperationModel {
 
-	@JsonIgnore
 	@OperationModelField(hint="Define the region of interest", label = "Region of Interest")
 	protected IROI region;
 

@@ -13,16 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
-import org.eclipse.dawnsci.analysis.dataset.impl.Outliers;
-import org.eclipse.dawnsci.analysis.dataset.impl.Stats;
+//import org.eclipse.dawnsci.analysis.dataset.impl.Outliers;
 
 public class PixelIntegration {
 
@@ -449,134 +446,134 @@ public class PixelIntegration {
 	}
 	
 	
-	public static Dataset calculateOutlierMask(IDataset data, IDataset mask, IPixelIntegrationCache bean) {
-		
-		
-		Dataset d = DatasetUtils.convertToDataset(data);
-		
-		int nbins = bean.getNumberOfBinsXAxis();
-		
-		final double lo = bean.getXBinEdgeMin();
-		final double hi = bean.getXBinEdgeMax();
-		final double span = (hi - lo)/bean.getNumberOfBinsXAxis();
-		IntegerDataset histo = new IntegerDataset(nbins);
-		DoubleDataset intensity = new DoubleDataset(nbins);
-		
-		final int[] h = histo.getData();
-		
-		Dataset a = bean.getXAxisArray()[0];
-		
-		double[] integrationRange = bean.getYAxisRange();
-		Dataset m = DatasetUtils.convertToDataset(mask);
-		Dataset r =  null;
-		if (bean.getYAxisArray() != null) {
-			r = bean.getYAxisArray()[0];
-		}
-
-		//iterate over dataset, binning values per pixel
-		IndexIterator iter = a.getIterator();
-
-		while (iter.hasNext()) {
-			final double val = a.getElementDoubleAbs(iter.index);
-			final double sig = d.getElementDoubleAbs(iter.index);
-			
-			if (m != null && !m.getElementBooleanAbs(iter.index)) continue;
-			
-			if (integrationRange != null && r != null) {
-				final double ra = r.getElementDoubleAbs(iter.index);
-				if (ra > integrationRange[1] || ra < integrationRange[0]) continue;
-			}
-
-			if (val < lo || val > hi) {
-				continue;
-			}
-
-			int p = (int) ((val-lo)/span);
-			
-			if(p < h.length){
-				if (sig != 0) h[p]++;
-			}
-		}
-		
-		iter.reset();
-		
-		double[][] vals = new double[h.length][];
-		int[] counters = new int[h.length];
-		
-		for (int i = 0; i < h.length ; i++) vals[i] = new double[h[i]];
-		
-		while (iter.hasNext()) {
-			final double val = a.getElementDoubleAbs(iter.index);
-			final double sig = d.getElementDoubleAbs(iter.index);
-			
-			if (m != null && !m.getElementBooleanAbs(iter.index)) continue;
-			
-			if (integrationRange != null && r != null) {
-				final double ra = r.getElementDoubleAbs(iter.index);
-				if (ra > integrationRange[1] || ra < integrationRange[0]) continue;
-			}
-
-			if (val < lo || val > hi) {
-				continue;
-			}
-
-			int p = (int) ((val-lo)/span);
-			
-			if(p < h.length){
-				if (sig != 0) vals[p][counters[p]++] = sig;
-			}
-		}
-		
-		DoubleDataset[] dvals = new DoubleDataset[h.length];
-		
-		for (int i = 0; i < h.length ; i++) dvals[i] = new DoubleDataset(vals[i],new int[]{vals[i].length});
-		
-		double[] mad = new double[h.length];
-		double[] med = new double[h.length];
-		
-		for (int i = 0; i < h.length; i++) {
-			if (dvals[i].getSize() == 0) continue;
-			double[] out = Outliers.medianAbsoluteDeviation(dvals[i]);
-			mad[i] = out[0];
-			med[i] = out[1];
-			
-			
-		}
-		
-		if (mask == null) {
-			mask = new BooleanDataset(data.getShape());
-			((BooleanDataset)mask).fill(true);
-		}
-		BooleanDataset mb = (BooleanDataset)mask;
-		
-		iter.reset();
-		
-		while (iter.hasNext()) {
-			final double val = a.getElementDoubleAbs(iter.index);
-			final double sig = d.getElementDoubleAbs(iter.index);
-			
-			if (m != null && !m.getElementBooleanAbs(iter.index)) continue;
-			
-			if (integrationRange != null && r != null) {
-				final double ra = r.getElementDoubleAbs(iter.index);
-				if (ra > integrationRange[1] || ra < integrationRange[0]) continue;
-			}
-
-			if (val < lo || val > hi) {
-				continue;
-			}
-
-			int p = (int) ((val-lo)/span);
-			
-			if(p < h.length){
-				
-				if (mad[p] != 0 && sig-med[p] > (mad[p]*3)) mb.setAbs(iter.index,false);
-			}
-		}
-		
-		
-		return mb;
-		
-	}
+//	public static Dataset calculateOutlierMask(IDataset data, IDataset mask, IPixelIntegrationCache bean) {
+//		
+//		
+//		Dataset d = DatasetUtils.convertToDataset(data);
+//		
+//		int nbins = bean.getNumberOfBinsXAxis();
+//		
+//		final double lo = bean.getXBinEdgeMin();
+//		final double hi = bean.getXBinEdgeMax();
+//		final double span = (hi - lo)/bean.getNumberOfBinsXAxis();
+//		IntegerDataset histo = new IntegerDataset(nbins);
+//		DoubleDataset intensity = new DoubleDataset(nbins);
+//		
+//		final int[] h = histo.getData();
+//		
+//		Dataset a = bean.getXAxisArray()[0];
+//		
+//		double[] integrationRange = bean.getYAxisRange();
+//		Dataset m = DatasetUtils.convertToDataset(mask);
+//		Dataset r =  null;
+//		if (bean.getYAxisArray() != null) {
+//			r = bean.getYAxisArray()[0];
+//		}
+//
+//		//iterate over dataset, binning values per pixel
+//		IndexIterator iter = a.getIterator();
+//
+//		while (iter.hasNext()) {
+//			final double val = a.getElementDoubleAbs(iter.index);
+//			final double sig = d.getElementDoubleAbs(iter.index);
+//			
+//			if (m != null && !m.getElementBooleanAbs(iter.index)) continue;
+//			
+//			if (integrationRange != null && r != null) {
+//				final double ra = r.getElementDoubleAbs(iter.index);
+//				if (ra > integrationRange[1] || ra < integrationRange[0]) continue;
+//			}
+//
+//			if (val < lo || val > hi) {
+//				continue;
+//			}
+//
+//			int p = (int) ((val-lo)/span);
+//			
+//			if(p < h.length){
+//				if (sig != 0) h[p]++;
+//			}
+//		}
+//		
+//		iter.reset();
+//		
+//		double[][] vals = new double[h.length][];
+//		int[] counters = new int[h.length];
+//		
+//		for (int i = 0; i < h.length ; i++) vals[i] = new double[h[i]];
+//		
+//		while (iter.hasNext()) {
+//			final double val = a.getElementDoubleAbs(iter.index);
+//			final double sig = d.getElementDoubleAbs(iter.index);
+//			
+//			if (m != null && !m.getElementBooleanAbs(iter.index)) continue;
+//			
+//			if (integrationRange != null && r != null) {
+//				final double ra = r.getElementDoubleAbs(iter.index);
+//				if (ra > integrationRange[1] || ra < integrationRange[0]) continue;
+//			}
+//
+//			if (val < lo || val > hi) {
+//				continue;
+//			}
+//
+//			int p = (int) ((val-lo)/span);
+//			
+//			if(p < h.length){
+//				if (sig != 0) vals[p][counters[p]++] = sig;
+//			}
+//		}
+//		
+//		DoubleDataset[] dvals = new DoubleDataset[h.length];
+//		
+//		for (int i = 0; i < h.length ; i++) dvals[i] = new DoubleDataset(vals[i],new int[]{vals[i].length});
+//		
+//		double[] mad = new double[h.length];
+//		double[] med = new double[h.length];
+//		
+//		for (int i = 0; i < h.length; i++) {
+//			if (dvals[i].getSize() == 0) continue;
+//			double[] out = Outliers.medianAbsoluteDeviation(dvals[i]);
+//			mad[i] = out[0];
+//			med[i] = out[1];
+//			
+//			
+//		}
+//		
+//		if (mask == null) {
+//			mask = new BooleanDataset(data.getShape());
+//			((BooleanDataset)mask).fill(true);
+//		}
+//		BooleanDataset mb = (BooleanDataset)mask;
+//		
+//		iter.reset();
+//		
+//		while (iter.hasNext()) {
+//			final double val = a.getElementDoubleAbs(iter.index);
+//			final double sig = d.getElementDoubleAbs(iter.index);
+//			
+//			if (m != null && !m.getElementBooleanAbs(iter.index)) continue;
+//			
+//			if (integrationRange != null && r != null) {
+//				final double ra = r.getElementDoubleAbs(iter.index);
+//				if (ra > integrationRange[1] || ra < integrationRange[0]) continue;
+//			}
+//
+//			if (val < lo || val > hi) {
+//				continue;
+//			}
+//
+//			int p = (int) ((val-lo)/span);
+//			
+//			if(p < h.length){
+//				
+//				if (mad[p] != 0 && sig-med[p] > (mad[p]*3)) mb.setAbs(iter.index,false);
+//			}
+//		}
+//		
+//		
+//		return mb;
+//		
+//	}
 }
 

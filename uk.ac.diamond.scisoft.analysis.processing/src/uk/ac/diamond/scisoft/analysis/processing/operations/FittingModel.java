@@ -13,8 +13,6 @@ import org.eclipse.dawnsci.analysis.api.fitting.functions.IPeak;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 
 /**
@@ -25,7 +23,6 @@ import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
  */
 public class FittingModel extends AbstractOperationModel {
 
-	@JsonIgnore
 	private IDataset xAxis;
 	private Class<? extends IPeak> peakClass;
 	private Class<? extends IOptimizer> optimizerClass;

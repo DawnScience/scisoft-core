@@ -25,7 +25,7 @@ public class PlusExternalDataOperation extends OperateOnDataAbstractOperation<Ex
 	}
 
 	@Override
-	protected Dataset doMathematics(Dataset a, double b) {
+	protected Dataset doMathematics(Dataset a, Dataset b) {
 		return ErrorPropagationUtils.addWithUncertainty(a, b);
 	}
 

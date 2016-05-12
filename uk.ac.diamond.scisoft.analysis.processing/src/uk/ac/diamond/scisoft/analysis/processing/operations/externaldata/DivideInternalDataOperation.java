@@ -25,7 +25,7 @@ public class DivideInternalDataOperation extends OperateOnDataAbstractOperation<
 	}
 
 	@Override
-	protected Dataset doMathematics(Dataset a, double b) {
+	protected Dataset doMathematics(Dataset a, Dataset b) {
 		return ErrorPropagationUtils.divideWithUncertainty(a, b);
 	}
 	

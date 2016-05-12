@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.scalar;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
@@ -23,7 +24,7 @@ public class MutliplyScalarOperation extends AbstractScalarMathsOperation<Scalar
 
 	@Override
 	protected IDataset doMaths(IDataset data, double value) {
-		return ErrorPropagationUtils.multiplyWithUncertainty(DatasetUtils.convertToDataset(data), value);
+		return ErrorPropagationUtils.multiplyWithUncertainty(DatasetUtils.convertToDataset(data),DatasetFactory.createFromObject(value));
 	}
 
 }

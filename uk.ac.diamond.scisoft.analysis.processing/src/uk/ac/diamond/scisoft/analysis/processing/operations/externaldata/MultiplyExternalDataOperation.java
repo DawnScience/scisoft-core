@@ -11,7 +11,6 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
-import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
@@ -25,7 +24,7 @@ public class MultiplyExternalDataOperation extends OperateOnDataAbstractOperatio
 	}
 
 	@Override
-	protected Dataset doMathematics(Dataset a, double b) {
+	protected Dataset doMathematics(Dataset a, Dataset b) {
 		return ErrorPropagationUtils.multiplyWithUncertainty(a, b);
 	}
 	

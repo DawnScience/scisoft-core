@@ -9,33 +9,20 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
+import java.util.Arrays;
+
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
+
+import uk.ac.diamond.scisoft.analysis.utils.SimpleUncertaintyPropagationMath;
 
 /**
  * A class providing error propagating static methods
  */
 public class ErrorPropagationUtils {
-
-	public static DoubleDataset[] multiplyWithError(Dataset input, Dataset error, double scale) {
-		
-		double tmp = 0;
-		DoubleDataset out = (DoubleDataset)DatasetFactory.zeros(input.getShape(), Dataset.FLOAT64);
-		DoubleDataset oute = input.getError() == null ? null : (DoubleDataset)DatasetFactory.zeros(input.getShape(), Dataset.FLOAT64);
-		double absScale = Math.abs(scale);
-		
-		for (int i = 0; i< input.getSize(); i++) {
-			tmp = input.getElementDoubleAbs(i);
-			out.setAbs(i, tmp*scale);
-			
-			if (oute != null) oute.setAbs(i, error.getElementDoubleAbs(i)*absScale);
-			
-		}
-		
-		return new DoubleDataset[]{out,oute};
-	}
 	
 	/**
 	 * Adds a scalar to a Dataset, propagating uncertainties.
@@ -50,9 +37,11 @@ public class ErrorPropagationUtils {
 	 * @return Dataset of the sum of a and b, with correctly propagated
 	 * 			uncertainties.
 	 */
-	public static DoubleDataset addWithUncertainty(Dataset a, double b) {
-		return operateWithUncertainty(a, b, new AddOp());
-	}	
+	
+	public static DoubleDataset addWithUncertainty(Dataset a, Dataset b) {
+		return operateWithUncertainty(a, b, new Add());
+	}
+	
 	/**
 	 * Subtracts a scalar from a Dataset, propagating uncertainties.
 	 * <p>
@@ -66,9 +55,11 @@ public class ErrorPropagationUtils {
 	 * @return Dataset of the difference of a and b, with correctly propagated
 	 * 			uncertainties.
 	 */
-	public static DoubleDataset subtractWithUncertainty(Dataset a, double b) {
-		return operateWithUncertainty(a, b, new SubtractOp());
+	
+	public static DoubleDataset subtractWithUncertainty(Dataset a, Dataset b) {
+		return operateWithUncertainty(a, b, new Subtract());
 	}
+	
 	/**
 	 * Multiplies a Dataset by a scalar, propagating uncertainties.
 	 * <p>
@@ -82,9 +73,11 @@ public class ErrorPropagationUtils {
 	 * @return Dataset of the product of a and b, with correctly propagated
 	 * 			uncertainties.
 	 */
-	public static DoubleDataset multiplyWithUncertainty(Dataset a, double b) {
-		return operateWithUncertainty(a, b, new MultiplyOp());
+	
+	public static DoubleDataset multiplyWithUncertainty(Dataset a, Dataset b) {
+		return operateWithUncertainty(a, b, new Multiply());
 	}
+	
 	/**
 	 * Divides a Dataset by a scalar, propagating uncertainties.
 	 * <p>
@@ -94,67 +87,158 @@ public class ErrorPropagationUtils {
 	 * @param a
 	 * 			Dataset operand
 	 * @param b
-	 * 			scalar operand
+	 * 			scalar or dataset operand
 	 * @return Dataset of the ratio of a and b, with correctly propagated
 	 * 			uncertainties.
 	 */
-	public static DoubleDataset divideWithUncertainty(Dataset a, double b) {
-		return operateWithUncertainty(a, b, new DivideOp());
+	
+	public static DoubleDataset divideWithUncertainty(Dataset a, Dataset b) {
+		return operateWithUncertainty(a, b, new Divide());
 	}
 	
-	private static DoubleDataset operateWithUncertainty(Dataset input, double oprahend, UncertaintyOp uncertaintyOp) {
-		DoubleDataset inputUncert;
-		DoubleDataset output, outputUncert;
+	private static DoubleDataset operateWithUncertainty(Dataset input, Dataset oprahend, UncertaintyOperator operator) {
+
+		if (oprahend.getSize() != 1 && input.getSize() != oprahend.getSize()) throw new IllegalArgumentException("Cannot process datasets of these shapes!");
 		
-		inputUncert = (input.getError() instanceof DoubleDataset) ? (DoubleDataset) input.getError() : null;
-		output = (DoubleDataset) DatasetFactory.zeros(input, Dataset.FLOAT64);
-		outputUncert = (inputUncert == null) ? null : (DoubleDataset) DatasetFactory.zeros(inputUncert, Dataset.FLOAT64);
-		
+		Dataset inputUncert = input.getError();
+		Dataset oprahendUncert = oprahend.getError();
+		DoubleDataset output = (DoubleDataset) DatasetFactory.zeros(input, Dataset.FLOAT64);
+		DoubleDataset outputUncert = (inputUncert == null) ? null : (DoubleDataset) DatasetFactory.zeros(inputUncert, Dataset.FLOAT64);
+		//assume data and errors are either not views or common views
 		IndexIterator iter = input.getIterator();
 		
-		if (inputUncert != null) {
+		if (oprahend.getSize() == 1) {
+			double val = oprahend.getDouble();
+			if (inputUncert != null) {
+				double[] out = new double[2];
+				while(iter.hasNext()) {
+					operator.operate(input.getElementDoubleAbs(iter.index), val, inputUncert.getElementDoubleAbs(iter.index), out);
+					output.setAbs(iter.index, out[0]);
+					outputUncert.setAbs(iter.index, out[1]);
+				}
+				output.setError(outputUncert);
+			} else {
+				while (iter.hasNext())
+					output.setAbs(iter.index, operator.operate(input.getElementDoubleAbs(iter.index), val));
+			}
+			
+			return output;
+		}
+		
+		if (inputUncert != null && oprahendUncert == null) {
+			double[] out = new double[2];
 			while(iter.hasNext()) {
-				output.setAbs(iter.index, uncertaintyOp.erator(input.getElementDoubleAbs(iter.index), oprahend));
-				outputUncert.setAbs(iter.index, uncertaintyOp.erator(inputUncert.getElementDoubleAbs(iter.index), oprahend));
+				operator.operate(input.getElementDoubleAbs(iter.index), oprahend.getElementDoubleAbs(iter.index), inputUncert.getElementDoubleAbs(iter.index), out);
+				output.setAbs(iter.index, out[0]);
+				outputUncert.setAbs(iter.index, out[1]);
+			}
+			output.setError(outputUncert);
+		} else if  (inputUncert != null && oprahendUncert != null) {
+			double[] out = new double[2];
+			while(iter.hasNext()) {
+				operator.operate(input.getElementDoubleAbs(iter.index), oprahend.getElementDoubleAbs(iter.index), inputUncert.getElementDoubleAbs(iter.index),oprahendUncert.getElementDoubleAbs(iter.index), out);
+				output.setAbs(iter.index, out[0]);
+				outputUncert.setAbs(iter.index, out[1]);
 			}
 			output.setError(outputUncert);
 		} else {
-			while (iter.hasNext())
-				output.setAbs(iter.index, uncertaintyOp.erator(input.getElementDoubleAbs(iter.index), oprahend));
+			while (iter.hasNext()){
+				output.setAbs(iter.index, operator.operate(input.getElementDoubleAbs(iter.index), oprahend.getElementDoubleAbs(iter.index)));
+			}
 		}
 		return output;
 	}
 
 }
 
-interface UncertaintyOp {
-	double erator(double a, double b);
+interface UncertaintyOperator {
+	void operate(double a, double b, double ae, double be, double[] out);
+	
+	void operate(double a, double b, double ae, double[] out);
+	
+	double operate(double a, double b);
 }
 
-class AddOp implements UncertaintyOp {
+class Add implements UncertaintyOperator {
+
 	@Override
-	public double erator(double a, double b) {
+	public void operate(double a, double b, double ae, double be, double[] out) {
+		SimpleUncertaintyPropagationMath.add(a, b, ae, be, out);
+	}
+
+	@Override
+	public void operate(double a, double b, double ae, double[] out) {
+		out[0] = a+b;
+		out[1] = ae;
+ 	}
+
+	@Override
+	public double operate(double a, double b) {
 		return a+b;
 	}
+
+
 }
 
-class SubtractOp implements UncertaintyOp {
+class Subtract implements UncertaintyOperator {
+
 	@Override
-	public double erator(double a, double b) {
+	public void operate(double a, double b, double ae, double be, double[] out) {
+		SimpleUncertaintyPropagationMath.subtract(a, b, ae, be, out);
+		
+	}
+
+	@Override
+	public void operate(double a, double b, double ae, double[] out) {
+		out[0] = a-b;
+		out[1] = ae;
+	}
+
+	@Override
+	public double operate(double a, double b) {
 		return a-b;
 	}
+
 }
 
-class MultiplyOp implements UncertaintyOp {
+class Multiply implements UncertaintyOperator {
+
 	@Override
-	public double erator(double a, double b) {
+	public void operate(double a, double b, double ae, double be, double[] out) {
+		SimpleUncertaintyPropagationMath.multiply(a, b, ae, be, out);
+		
+	}
+
+	@Override
+	public void operate(double a, double b, double ae, double[] out) {
+		SimpleUncertaintyPropagationMath.multiply(a, b, ae, out);
+		
+	}
+
+	@Override
+	public double operate(double a, double b) {
 		return a*b;
 	}
+
 }
 
-class DivideOp implements UncertaintyOp {
+class Divide implements UncertaintyOperator {
+
 	@Override
-	public double erator(double a, double b) {
+	public void operate(double a, double b, double ae, double be, double[] out) {
+		SimpleUncertaintyPropagationMath.divide(a, b, ae, be, out);
+		
+	}
+
+	@Override
+	public void operate(double a, double b, double ae, double[] out) {
+		SimpleUncertaintyPropagationMath.divide(a, b, ae, out);
+		
+	}
+
+	@Override
+	public double operate(double a, double b) {
 		return a/b;
 	}
+
 }

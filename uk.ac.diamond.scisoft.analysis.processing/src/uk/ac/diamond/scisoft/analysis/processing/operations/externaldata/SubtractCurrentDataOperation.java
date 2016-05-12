@@ -21,6 +21,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
@@ -29,6 +30,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 
+import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 public class SubtractCurrentDataOperation<T extends SelectedFramesModel> extends AbstractOperation<SelectedFramesModel, OperationData> {
@@ -50,8 +52,12 @@ protected OperationData process(IDataset input, IMonitor monitor) throws Operati
 			bg = subtrahend;
 		}
 		
-		Dataset output = Maths.subtract(input, Maths.multiply(bg, model.getScaling()));
-		output.setError(getErrorDataset(DatasetUtils.convertToDataset(input),bg));
+		if (bg.getError() != null && model.getScaling() != 1) {
+			bg = ErrorPropagationUtils.multiplyWithUncertainty(bg, DatasetFactory.createFromObject(model.getScaling()));
+		}
+		
+		DoubleDataset output = ErrorPropagationUtils.subtractWithUncertainty(DatasetUtils.convertToDataset(input), bg);
+		
 		copyMetadata(input, output);
 		
 		return new OperationData(output);

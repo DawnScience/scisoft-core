@@ -68,14 +68,14 @@ public abstract class OperateOnDataAbstractOperation<T extends InternalDatasetNa
 		if (val.getRank() != 0) throw new OperationException(this, "External data shape invalid");
 
 		Dataset output = new DoubleDataset();
-		output = doMathematics(inputData, val.getDouble());
+		output = doMathematics(inputData, DatasetUtils.convertToDataset(val));
 		// copy metadata, except for the error metadata
 		copyMetadata(input, output);
 		
 		return new OperationData(output);
 		}
 	
-	protected abstract Dataset doMathematics(Dataset a, double b); 
+	protected abstract Dataset doMathematics(Dataset a, Dataset b); 
 	
 	protected abstract String getFilePath(IDataset input);
 	

@@ -26,7 +26,7 @@ public class MultiplyInternalDataOperation extends OperateOnDataAbstractOperatio
 	}
 
 	@Override
-	protected Dataset doMathematics(Dataset a, double b) {
+	protected Dataset doMathematics(Dataset a, Dataset b) {
 		return ErrorPropagationUtils.multiplyWithUncertainty(a, b);
 	}
 	

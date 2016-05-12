@@ -25,7 +25,7 @@ public class SubtractInternalDataOperation extends OperateOnDataAbstractOperatio
 	}
 
 	@Override
-	protected Dataset doMathematics(Dataset a, double b) {
+	protected Dataset doMathematics(Dataset a, Dataset b) {
 		return ErrorPropagationUtils.subtractWithUncertainty(a, b);
 	}
 	

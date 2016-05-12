@@ -85,6 +85,7 @@ public class NexusTreeUtils {
 	public static final String NX_UNITS = "units";
 	public static final String NX_NAME = "long_name";
 	public static final String NX_INDICES_SUFFIX = "_indices";
+	public static final String NX_UNCERTAINTY_SUFFIX ="_uncertainty";
 	public static final String NX_AXES_EMPTY = ".";
 	public static final String SDS = "SDS";
 	public static final String DATA = "data";
@@ -520,6 +521,24 @@ public class NexusTreeUtils {
 					}
 				}
 			}
+			
+			i = aName.lastIndexOf(NX_UNCERTAINTY_SUFFIX);
+			if (i > 0) {
+				String a = aName.substring(0, i);
+				Attribute uncertAttr = gn.getAttribute(aName);
+				if (gn.containsDataNode(a) && uncertAttr != null && gn.containsDataNode(uncertAttr.getFirstElement())) {
+					DataNode d = gn.getDataNode(a);
+					DataNode e = gn.getDataNode(uncertAttr.getFirstElement());
+					if (Arrays.equals(d.getDataset().getShape(), e.getDataset().getShape())){
+						d.getDataset().setError(e.getDataset());
+					} else {
+						logger.warn("Dataset '{}' and error'{}' have incompatible shapes", aName, uncertAttr.getFirstElement());
+					}
+				} else {
+					logger.warn("Could not add errors for '{}', despite uncertainty attribute", aName);
+				}
+			}
+
 		}
 
 		List<ILazyDataset> axisList = new ArrayList<ILazyDataset>();

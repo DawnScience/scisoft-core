@@ -49,7 +49,7 @@ public class StitchingTwoImagesOperation extends AbstractOperation<StitchingTwoI
 			imageStitchingService = OperationServiceLoader.getImageStitchingService();
 		try {
 			imageB = LoaderFactory.getDataSet(filePath, dataName, monitor).squeeze();
-			stitched = imageStitchingService.stitch(imageB, dataset, new double[] {xTransl, yTransl});
+			stitched = imageStitchingService.stitch(dataset, imageB, new double[] {-xTransl, -yTransl});
 		} catch (Exception e) {
 			logger.error("Error running stitching process:", e);
 		}

@@ -17,7 +17,7 @@ import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
 /**
  * Test for RGBText Loader
@@ -34,8 +34,8 @@ public class RGBTextLoaderTest {
 	 */
 	@BeforeClass
 	static public void setUpClass() throws Exception {
-		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(RGBTextLoaderTest.class.getCanonicalName());
-		TestUtils.makeScratchDirectory(testScratchDirectoryName);
+		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(RGBTextLoaderTest.class.getCanonicalName());
+		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
 	}
 
 	/**

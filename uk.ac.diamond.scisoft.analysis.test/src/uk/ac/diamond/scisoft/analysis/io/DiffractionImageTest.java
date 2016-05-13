@@ -21,7 +21,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
 public class DiffractionImageTest {
 	static String testfile1 = null;
@@ -31,10 +31,7 @@ public class DiffractionImageTest {
 	static String TestFileFolder;
 	@BeforeClass
 	static public void setUpClass() {
-		TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		if (TestFileFolder == null) {
-			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
-		}
+		TestFileFolder = IOTestUtils.getGDALargeTestFilesLocation();
 		testfile1 = TestFileFolder + "ADSCImageTest/F6_1_001.img";
 		testfile2 = TestFileFolder + "MARImageTest/mar225_001.mccd";
 		testfile3 = TestFileFolder + "CBFLoaderTest/xtal5e_1_0010.cbf";

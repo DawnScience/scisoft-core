@@ -17,7 +17,7 @@ import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
 public class Fit2DLoaderTest {
 	
@@ -26,9 +26,9 @@ public class Fit2DLoaderTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(Fit2DLoaderTest.class.getCanonicalName());
+		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(Fit2DLoaderTest.class.getCanonicalName());
 
-	    TestUtils.makeScratchDirectory(testScratchDirectoryName);
+	    IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
 		
 	}
 	

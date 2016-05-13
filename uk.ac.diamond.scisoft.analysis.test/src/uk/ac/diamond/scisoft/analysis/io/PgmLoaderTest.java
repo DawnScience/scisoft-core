@@ -20,7 +20,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
 
 public class PgmLoaderTest {
@@ -31,8 +31,8 @@ public class PgmLoaderTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(PilatusEdfLoader.class.getCanonicalName());
-	    TestUtils.makeScratchDirectory(testScratchDirectoryName);
+		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(PilatusEdfLoader.class.getCanonicalName());
+		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
 	}
 
 	@Before

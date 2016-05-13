@@ -30,7 +30,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
 /**
  * Test for SRS Loader
@@ -47,8 +47,8 @@ public class SRSLoaderTest {
 	 */
 	@BeforeClass
 	static public void setUpClass() throws Exception {
-		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(SRSLoaderTest.class.getCanonicalName());
-		TestUtils.makeScratchDirectory(testScratchDirectoryName);
+		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(SRSLoaderTest.class.getCanonicalName());
+		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
 	}
 
 	/**

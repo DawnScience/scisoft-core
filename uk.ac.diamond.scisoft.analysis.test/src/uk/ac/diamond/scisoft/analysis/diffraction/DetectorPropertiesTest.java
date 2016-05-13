@@ -22,7 +22,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.PNGSaver;
 
@@ -80,9 +80,9 @@ public class DetectorPropertiesTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(DetectorPropertiesTest.class
+		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(DetectorPropertiesTest.class
 				.getCanonicalName());
-		TestUtils.makeScratchDirectory(testScratchDirectoryName);
+		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
 		DataHolder dh = new DataHolder();
 		DoubleDataset data = makeDiffImage();
 		dh.addDataset("testing data", data);

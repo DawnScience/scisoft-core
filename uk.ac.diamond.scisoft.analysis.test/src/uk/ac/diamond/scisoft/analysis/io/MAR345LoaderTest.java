@@ -20,7 +20,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
 /**
  */
@@ -31,10 +31,7 @@ public class MAR345LoaderTest {
 
 	@BeforeClass
 	static public void setUpClass() {
-		TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		if (TestFileFolder == null) {
-			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
-		}
+		TestFileFolder = IOTestUtils.getGDALargeTestFilesLocation();
 		TestFileFolder += "MAR3450LoaderTest/";
 		testfile = TestFileFolder + "image_130.mar3450";
 	}
@@ -42,8 +39,9 @@ public class MAR345LoaderTest {
 	@Test
 	public void testLoaderFactory() throws Exception {
 		IDataHolder dh = LoaderFactory.getData(testfile, null);
-        if (dh==null || dh.getNames().length<1) throw new Exception();
-        		
+		if (dh == null || dh.getNames().length < 1)
+			throw new Exception();
+
 		Assert.assertTrue(dh.getName(0).contains(AbstractFileLoader.DEF_IMAGE_NAME));
 		
 		IDataset data = dh.getDataset(0);

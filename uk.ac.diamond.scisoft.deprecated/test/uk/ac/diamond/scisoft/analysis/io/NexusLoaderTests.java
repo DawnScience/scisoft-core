@@ -20,7 +20,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 import gda.data.nexus.extractor.NexusExtractorException;
 import gda.data.nexus.tree.INexusTree;
 import gda.data.nexus.tree.NexusTreeNodeSelection;
-import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
 import java.io.StringReader;
 import java.util.Collections;
@@ -37,14 +37,12 @@ import org.junit.Test;
 import org.xml.sax.InputSource;
 
 public class NexusLoaderTests {
-	final static String TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
+	static String TestFileFolder;
 	
 
 	@Before
 	public void setUp() {
-		if( TestFileFolder == null){
-			Assert.fail("TestUtils.getGDALargeTestFilesLocation returned null - test aborted");
-		}
+		TestFileFolder = IOTestUtils.getGDALargeTestFilesLocation();
 	}
 
 	@After

@@ -20,7 +20,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
 /**
  *
@@ -32,7 +32,7 @@ public class RawBinaryTest {
 	static double testValue1, testValue2;
 	Dataset data;
 	int sizex = 240, sizey = 240, range = sizex * sizey;
-	
+
 	/**
 	 * Creates an empty directory for use by test code.
 	 * 
@@ -41,12 +41,10 @@ public class RawBinaryTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		testScratchDirectoryName = TestUtils
-				.generateDirectorynameFromClassname(RawBinaryTest.class
-						.getCanonicalName());
-		TestUtils.makeScratchDirectory(testScratchDirectoryName);
+		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(RawBinaryTest.class.getCanonicalName());
+		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
 	}	
-	
+
 	/* @throws ScanFileHolderException
 	 * 
 	 * Creates a random dataset and tries to save it as ASCII in a file

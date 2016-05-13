@@ -50,7 +50,7 @@ import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 
 public class HDF5LoaderTest {
@@ -59,10 +59,7 @@ public class HDF5LoaderTest {
 
 	@BeforeClass
 	static public void setUpClass() {
-		LargeTestFilesFolder = TestUtils.getGDALargeTestFilesLocation();
-		if( LargeTestFilesFolder == null){
-			fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
-		}
+		LargeTestFilesFolder = IOTestUtils.getGDALargeTestFilesLocation();
 	}
 
 	private void checkDataset(String name, IDataset data, int[] expectedShape) {

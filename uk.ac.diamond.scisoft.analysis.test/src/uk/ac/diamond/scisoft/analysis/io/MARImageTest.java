@@ -20,7 +20,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
 /**
  */
@@ -31,10 +31,7 @@ public class MARImageTest {
 
 	@BeforeClass
 	static public void setUpClass() {
-		TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		if (TestFileFolder == null) {
-			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
-		}
+		TestFileFolder = IOTestUtils.getGDALargeTestFilesLocation();
 		TestFileFolder += "MARImageTest/";
 		testfile1 = TestFileFolder + "in1187_sample1.mccd";
 		testfile2 = TestFileFolder + "mar225_001.mccd";

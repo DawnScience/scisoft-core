@@ -16,7 +16,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
 /**
  * set up file paths
@@ -36,8 +36,8 @@ public class RawTextTest {
 	 */
 	@BeforeClass
 	static public void setUpClass() throws Exception {
-		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(RawTextTest.class.getCanonicalName());
-		TestUtils.makeScratchDirectory(testScratchDirectoryName);
+		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(RawTextTest.class.getCanonicalName());
+		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
 	}
 
 	/**

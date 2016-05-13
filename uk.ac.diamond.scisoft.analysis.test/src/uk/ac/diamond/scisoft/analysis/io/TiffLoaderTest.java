@@ -20,6 +20,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 import uk.ac.diamond.scisoft.analysis.TestUtils;
 
 /**
@@ -36,17 +37,14 @@ public class TiffLoaderTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(TiffLoaderTest.class.getCanonicalName());
-        TestUtils.makeScratchDirectory(testScratchDirectoryName);
+		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(TiffLoaderTest.class.getCanonicalName());
+		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
 	}
 
 	static String TestFileFolder;
 	@BeforeClass
 	static public void setUpClass() {
-		TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		if (TestFileFolder == null) {
-			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
-		}
+		TestFileFolder = IOTestUtils.getGDALargeTestFilesLocation();
 		TestFileFolder += "PilatusTiffLoaderTest/";
 		testfile1 = TestFileFolder + "fcell_H_8GPa_20keV_18000s_0173.tif";
 		testfile2 = TestFileFolder + "ipp16.TIF";

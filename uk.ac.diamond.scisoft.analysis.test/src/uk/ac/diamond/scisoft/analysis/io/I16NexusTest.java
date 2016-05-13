@@ -9,8 +9,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import static org.junit.Assert.fail;
-
 import java.util.Arrays;
 
 import javax.vecmath.Matrix3d;
@@ -30,7 +28,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
 import uk.ac.diamond.scisoft.analysis.crystallography.ReciprocalCell;
 import uk.ac.diamond.scisoft.analysis.crystallography.UnitCell;
@@ -44,12 +42,8 @@ public class I16NexusTest {
 
 	@BeforeClass
 	static public void setUpClass() {
-		testFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		if (testFileFolder == null) {
-			fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
-		} else {
-			testFileFolder = testFileFolder.concat("DiffractionMapping/i16/");
-		}
+		testFileFolder = IOTestUtils.getGDALargeTestFilesLocation();
+		testFileFolder = testFileFolder.concat("DiffractionMapping/i16/");
 	}
 
 	@Test

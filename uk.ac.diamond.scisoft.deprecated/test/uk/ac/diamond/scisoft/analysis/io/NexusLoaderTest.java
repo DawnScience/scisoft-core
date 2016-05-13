@@ -36,7 +36,7 @@ import org.eclipse.dawnsci.nexus.NexusFile;
 import org.junit.Assert;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 import uk.ac.gda.util.OSUtils;
 
 /**
@@ -54,15 +54,15 @@ public class NexusLoaderTest {
 	 * @throws Exception if the test fails
 	 */
 	public void setUp(String name) throws Exception {
-		testScratchDirectoryName = TestUtils.setUpTest(NexusLoaderTest.class, name, true);
+		testScratchDirectoryName = IOTestUtils.setUpTest(NexusLoaderTest.class, name, true);
 	}
 
 	@Test
 	public void testLoadDifficultHdf5File() throws Exception {
-		TestUtils.skipTestIf(OSUtils.is32bitJVM(),
+		IOTestUtils.skipTestIf(OSUtils.is32bitJVM(),
 			this.getClass().getCanonicalName() + ".testLoadDifficultHdf5File skipped, since this test fails on a 32-bit JVM - see GDA-3611");
 		
-		final IDataHolder dh = LoaderFactory.getData(TestUtils.getGDALargeTestFilesLocation()+"/NexusUITest/ID22-ODA-MapSpectra.h5", null);
+		final IDataHolder dh = LoaderFactory.getData(IOTestUtils.getGDALargeTestFilesLocation()+"/NexusUITest/ID22-ODA-MapSpectra.h5", null);
 		assert dh!=null;
 		
 		final IDataset set = dh.getDataset("NXdata.data");
@@ -71,10 +71,10 @@ public class NexusLoaderTest {
 
 	@Test
 	public void testLoadAnotherDifficultHdf5File() throws Exception {
-		TestUtils.skipTestIf(OSUtils.is32bitJVM(),
+		IOTestUtils.skipTestIf(OSUtils.is32bitJVM(),
 			this.getClass().getCanonicalName() + ".testLoadDifficultHdf5File skipped, since this test fails on a 32-bit JVM - see GDA-3611");
 		
-		final IDataHolder dh = LoaderFactory.getData(TestUtils.getGDALargeTestFilesLocation()+"/NexusUITest/DCT_201006-good.h5", null);
+		final IDataHolder dh = LoaderFactory.getData(IOTestUtils.getGDALargeTestFilesLocation()+"/NexusUITest/DCT_201006-good.h5", null);
 		assert dh!=null;
 		
 		final IDataset set = dh.getDataset("NXdata.data");
@@ -235,7 +235,7 @@ public class NexusLoaderTest {
 	 */
 	@Test
 	public void testMultipleDetectorSameDataElements() throws Exception {
-		final String TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
+		final String TestFileFolder = IOTestUtils.getGDALargeTestFilesLocation();
 		if( TestFileFolder != null){
 			DataHolder shf  = new NexusLoader(TestFileFolder + "/multiDetector.nxs").loadFile();
 			String [] headings = shf.getNames();
@@ -256,7 +256,7 @@ public class NexusLoaderTest {
 	 */
 	@Test
 	public void testMultipleDetectorSameDataElementsNameDataSets() throws Exception {
-		final String TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
+		final String TestFileFolder = IOTestUtils.getGDALargeTestFilesLocation();
 		if( TestFileFolder != null){
 			Vector<String> dataSetNames = new Vector<String>();
 			dataSetNames.add("bottom");
@@ -283,7 +283,7 @@ public class NexusLoaderTest {
 	 */
 	@Test
 	public void testMultipleDetectorGetDataSetNames() throws Exception {
-		final String TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
+		final String TestFileFolder = IOTestUtils.getGDALargeTestFilesLocation();
 		if (TestFileFolder != null) {
 			List<String> dataSetNames = NexusLoader.getDatasetNames(TestFileFolder + "/multiDetector.nxs", null);
 			String[] headings = dataSetNames.toArray(new String[] {});
@@ -299,7 +299,7 @@ public class NexusLoaderTest {
 
 	@Test
 	public void testMeta() throws Exception {
-		final String TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
+		final String TestFileFolder = IOTestUtils.getGDALargeTestFilesLocation();
 		IMetaLoader l = new NexusLoader(TestFileFolder + "/multiDetector.nxs");
 		l.loadMetadata(null);
 		IMetadata meta = l.getMetadata();

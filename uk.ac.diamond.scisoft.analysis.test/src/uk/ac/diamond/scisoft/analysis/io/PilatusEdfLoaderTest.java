@@ -17,11 +17,10 @@ import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
 
 public class PilatusEdfLoaderTest {
@@ -32,13 +31,10 @@ public class PilatusEdfLoaderTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		if (TestFileFolder == null) {
-			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
-		}
-		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(PilatusEdfLoader.class.getCanonicalName());
+		TestFileFolder = IOTestUtils.getGDALargeTestFilesLocation();
+		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(PilatusEdfLoader.class.getCanonicalName());
 
-	    TestUtils.makeScratchDirectory(testScratchDirectoryName);
+		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
 		
 	}
 	

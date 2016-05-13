@@ -16,7 +16,7 @@ import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
 
 public class PilatusEdfLoaderThreadTest extends LoaderThreadTestBase {
@@ -26,9 +26,9 @@ public class PilatusEdfLoaderThreadTest extends LoaderThreadTestBase {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(PilatusEdfLoader.class.getCanonicalName());
+		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(PilatusEdfLoader.class.getCanonicalName());
 
-	    TestUtils.makeScratchDirectory(testScratchDirectoryName);
+		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
 		
 	}
 	

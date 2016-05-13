@@ -18,7 +18,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
 public class MARImageLoaderThreadTest extends LoaderThreadTestBase{
 	
@@ -28,10 +28,7 @@ public class MARImageLoaderThreadTest extends LoaderThreadTestBase{
 
 	@BeforeClass
 	static public void setUpClass() {
-		TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		if (TestFileFolder == null) {
-			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
-		}
+		TestFileFolder = IOTestUtils.getGDALargeTestFilesLocation();
 		TestFileFolder += "MARImageTest/";
 		testfile1 = TestFileFolder + "in1187_sample1.mccd";
 		testfile2 = TestFileFolder + "mar225_001.mccd";
@@ -55,7 +52,7 @@ public class MARImageLoaderThreadTest extends LoaderThreadTestBase{
 			hostname = "";
 		}
 		if (hostname.startsWith("p99-ws100")) {
-			TestUtils.skipTest(
+			IOTestUtils.skipTest(
 			this.getClass().getCanonicalName() + ".testWithTwentyThreads skipped, since test takes forever on our under-powered Ubuntu test box (" + hostname + ")");
 		}
 		try {

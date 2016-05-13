@@ -17,7 +17,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
 /**
  */
@@ -28,10 +28,7 @@ public class MRCImageStackLoaderTest {
 
 	@BeforeClass
 	static public void setUpClass() {
-		TestFileFolder = TestUtils.getGDALargeTestFilesLocation();
-		if (TestFileFolder == null) {
-			Assert.fail("TestUtils.getGDALargeTestFilesLocation() returned null - test aborted");
-		}
+		TestFileFolder = IOTestUtils.getGDALargeTestFilesLocation();
 		TestFileFolder += "MRCImageStackLoaderTest/";
 		testfile = TestFileFolder + "May10_15.48.32.mrc";
 	}
@@ -39,8 +36,9 @@ public class MRCImageStackLoaderTest {
 	@Test
 	public void testLoaderFactory() throws Exception {
 		IDataHolder dh = LoaderFactory.getData(testfile, null);
-        if (dh==null || dh.getNames().length<1) throw new Exception();
-        		
+		if (dh == null || dh.getNames().length < 1)
+			throw new Exception();
+
 		Assert.assertTrue(dh.getName(0).contains(AbstractFileLoader.STACK_NAME));
 
 		ILazyDataset image = dh.getLazyDataset(0);

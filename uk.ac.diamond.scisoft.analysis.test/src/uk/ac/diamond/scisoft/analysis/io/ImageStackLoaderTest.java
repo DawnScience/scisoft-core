@@ -23,7 +23,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.TestUtils;
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
 public class ImageStackLoaderTest {
 
@@ -44,7 +44,7 @@ public class ImageStackLoaderTest {
 
 		}
 
-		String testScratchDirectoryName = TestUtils.setUpTest(ImageStackLoaderTest.class, "test1DFiles", true);
+		String testScratchDirectoryName = IOTestUtils.setUpTest(ImageStackLoaderTest.class, "test1DFiles", true);
 
 
 		int[] multipliers= new int[]{2,3};
@@ -71,7 +71,7 @@ public class ImageStackLoaderTest {
 
 	@Test
 	public void testSingleFile() throws Exception {
-		String testScratchDirectoryName = TestUtils.setUpTest(ImageStackLoaderTest.class, "testSingleFile", true);
+		String testScratchDirectoryName = IOTestUtils.setUpTest(ImageStackLoaderTest.class, "testSingleFile", true);
 
 		int[] multipliers= new int[]{7};
 		String[] imageFilenames = makeFiles(testScratchDirectoryName, multipliers);
@@ -111,7 +111,7 @@ public class ImageStackLoaderTest {
 	
 	@Test
 	public void test1DFiles() throws Exception {
-		String testScratchDirectoryName = TestUtils.setUpTest(ImageStackLoaderTest.class, "test1DFiles", true);
+		String testScratchDirectoryName = IOTestUtils.setUpTest(ImageStackLoaderTest.class, "test1DFiles", true);
 
 
 		int[] multipliers= new int[]{2,3};
@@ -150,7 +150,7 @@ public class ImageStackLoaderTest {
 
 	@Test
 	public void test1DFilesSliceAcrossFiles() throws Exception {
-		String testScratchDirectoryName = TestUtils.setUpTest(ImageStackLoaderTest.class, "test1DFilesSliceAcrossFiles", true);
+		String testScratchDirectoryName = IOTestUtils.setUpTest(ImageStackLoaderTest.class, "test1DFilesSliceAcrossFiles", true);
 
 
 		int[] multipliers= new int[]{2,3,4,5,6};
@@ -227,7 +227,7 @@ public class ImageStackLoaderTest {
 
 	@Test
 	public void test2DFiles() throws Exception {
-		String testScratchDirectoryName = TestUtils.setUpTest(ImageStackLoaderTest.class, "test2DFiles", true);
+		String testScratchDirectoryName = IOTestUtils.setUpTest(ImageStackLoaderTest.class, "test2DFiles", true);
 
 		final int firstDim=2, secondDim=3;
 		int[] multipliers= new int[]{1,2,3,4,5,6};

@@ -514,10 +514,19 @@
             description="Given a 3d dataset/stack of images, stitches the stack with feature association and/or image translations (mosaic)"
             icon="icons/stitch.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.StitchingImagesOperation"
-            model="org.eclipse.dawnsci.analysis.api.processing.model.StitchingImagesModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.StitchingImagesModel"
             name="Image Stitching"
             visible="true">
       </operation>
+     <!-- <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.StitchingTwoImagesOperation"
+            description="Stitches two images together given X and Y translations"
+            icon="icons/stitch.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.StitchingTwoImagesOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.StitchingTwoImagesModel"
+            name="Image Stitching 2"
+            visible="true">
+      </operation> -->
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.DerivativeOperation"
             icon="icons/derivative.png"

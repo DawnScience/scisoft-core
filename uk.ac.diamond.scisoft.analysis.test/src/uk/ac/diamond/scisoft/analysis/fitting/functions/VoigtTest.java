@@ -9,12 +9,12 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import org.eclipse.dawnsci.analysis.asserts.TestUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.TestUtils;
 
 public class VoigtTest {
 

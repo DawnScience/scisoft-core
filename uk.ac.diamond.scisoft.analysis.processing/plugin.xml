@@ -518,15 +518,15 @@
             name="Image Stitching"
             visible="true">
       </operation>
-     <!-- <operation
+      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.StitchingTwoImagesOperation"
             description="Stitches two images together given X and Y translations"
             icon="icons/stitch.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.StitchingTwoImagesOperation"
-            model="org.eclipse.dawnsci.analysis.api.processing.model.StitchingTwoImagesModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.StitchingTwoImagesModel"
             name="Image Stitching 2"
             visible="true">
-      </operation> -->
+      </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.DerivativeOperation"
             icon="icons/derivative.png"

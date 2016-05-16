@@ -13,10 +13,10 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class ThresholdMaskModel extends AbstractOperationModel {
 
-	@OperationModelField(hint="The upper intensity, above which the mask will mask out the value. If you delete the value no upper intensity will be used for the mask.",label = "Lower Value")
+	@OperationModelField(hint="The upper intensity, above which the mask will mask out the value. If you delete the value no upper intensity will be used for the mask.",label = "Upper Value")
 	private Double upper;
 	
-	@OperationModelField(hint="The lower intensity, below which the mask will mask out the value. If you delete the value no lower intensity will be used for the mask.",label = "Upper Value")
+	@OperationModelField(hint="The lower intensity, below which the mask will mask out the value. If you delete the value no lower intensity will be used for the mask.",label = "Lower Value")
 	private Double lower;
 
 	public ThresholdMaskModel() {

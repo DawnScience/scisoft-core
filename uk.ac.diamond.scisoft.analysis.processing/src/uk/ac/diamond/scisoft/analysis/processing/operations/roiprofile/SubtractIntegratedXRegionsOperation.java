@@ -13,11 +13,14 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
+import org.eclipse.dawnsci.analysis.api.metadata.MaskMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
@@ -29,7 +32,6 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SubtractIntegratedXRegionsOperation";
 	}
 
@@ -101,11 +103,20 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 	
 	private Dataset getMean(IDataset input, int i0, int i1) {
 		int[] startStop = i0 < i1 ? new int[] {i0,i1} : new int[] {i1,i0}; 
-		//check for mask
 		SliceND s = new SliceND(input.getShape());
 		s.setSlice(1, startStop[0], startStop[1], 1);
-		Dataset d = DatasetUtils.convertToDataset(input.getSliceView(s));
-		Dataset mean = d.mean(1);
+		Dataset d = DatasetUtils.convertToDataset(input.getSlice(s));
+		MaskMetadata mmd = d.getFirstMetadata(MaskMetadata.class);
+		if (mmd != null) {
+			Dataset m = DatasetUtils.sliceAndConvertLazyDataset(mmd.getMask());
+			if (m instanceof BooleanDataset) {
+				d.setByBoolean(Double.NaN, Comparisons.logicalNot(m));
+			}
+			
+		}
+		Dataset mean = d.mean(true,1);
+		
+		DatasetUtils.makeFinite(mean);
 		
 		return mean;
 	}

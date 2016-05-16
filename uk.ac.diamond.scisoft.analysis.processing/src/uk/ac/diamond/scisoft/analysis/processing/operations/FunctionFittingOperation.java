@@ -127,6 +127,12 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 					}
 					
 				}
+				double r = outfit.residual(true, traceROI[1], null, new IDataset[] {traceROI[0]});
+				if (!success) r = Double.NaN;
+				Dataset residual = DatasetFactory.createFromObject(r);
+				residual.squeeze();
+				residual.setName("rms");
+				params.add(residual);
 				
 				IDataset outx = traceROI[0].getSliceView();
 				
@@ -257,7 +263,7 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 			break;
 		}
 		optimizer.optimize(new IDataset[] {x}, y, resultFunction);
-	
+
 		return resultFunction;
 	}
 	

@@ -805,6 +805,41 @@
             name="Add"
             visible="true">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.externaldata"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MutliplyExternalFrameOperation"
+            description="Multiply dataset by frame (or average of stack) from external file"
+            icon="icons/blue-cross.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MutliplyExternalFrameOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataSelectedFramesModel"
+            name="Multiply Frame">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.externaldata"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractExternalFrameOperation"
+            description="Subtract frame (or average of stack) from external file"
+            icon="icons/minus.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractExternalFrameOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataSelectedFramesModel"
+            name="Subtract Frame">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.externaldata"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DivideExternalFrameOperation"
+            description="Multiply dataset by frame (or average of stack) from external file"
+            icon="icons/yellow-divide.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DivideExternalFrameOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataSelectedFramesModel"
+            name="Divide Frame">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.AddExternalFrameOperation"
+            description="Add frame (or average of stack) from external file"
+            icon="icons/plus.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.AddExternalFrameOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataSelectedFramesModel"
+            name="Add Frame">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

@@ -9,29 +9,51 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
-import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
+import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
-public class SubtractDataOperation extends SubtractCurrentDataOperation<ExternalDataSelectedFramesModel> {
+@Atomic
+public class SubtractDataOperation extends FrameMathsOperation<ExternalDataSelectedFramesModel> {
 	
 	@Override
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractDataOperation";
 	}
-	
-	protected ILazyDataset getLazyDataset(SliceFromSeriesMetadata ssm){
-		return ProcessingUtils.getLazyDataset(this, ((ExternalDataSelectedFramesModel)model).getFilePath(), ((ExternalDataSelectedFramesModel)model).getDatasetName());
+
+	@Override
+	protected Dataset getData(IDataset ds) {
+		String path = ((ExternalDataSelectedFramesModel)model).getFilePath();
+		String dsName = ((ExternalDataSelectedFramesModel)model).getDatasetName();
+		
+		Dataset d = null;
+		
+		if (model.getStartFrame() == null && model.getEndFrame() == null){
+			d = DataUtils.getExternalFrameMatching(ds, model.getStartFrame(),model.getEndFrame(), path,dsName,this);
+		}
+		
+		if (d != null) return d;
+		
+		Dataset lFrame = data;
+		if (lFrame == null) {
+			synchronized(this) {
+				lFrame = data;
+				if (lFrame == null) {
+					lFrame = data = DataUtils.getExternalFrameAverage(ds, model.getStartFrame(),
+							model.getEndFrame(), path,dsName,this);
+				}
+			}
+		}
+		
+		return lFrame;
 	}
 
-	protected boolean subtractOneToOneIfMatch(){
-		return true;
+	@Override
+	protected Dataset performOperation(Dataset input, Dataset other) {
+		return ErrorPropagationUtils.subtractWithUncertainty(DatasetUtils.convertToDataset(input), other);
 	}
-
-	
-
-	
-
 
 }

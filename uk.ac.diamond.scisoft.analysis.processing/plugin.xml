@@ -438,6 +438,7 @@
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.AffineTransformImageOperation"
             description="Performs an affine transformation on the image"
+            icon="icons/unchanged.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.AffineTransformImageOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.image.AffineTransformImageModel"
             name="Affine Transformation"
@@ -510,6 +511,7 @@
             name="Binary Image">
       </category>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.externaldata"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.StitchingTwoImagesOperation"
             description="Stitches two images together given X and Y translations"
             icon="icons/stitch.png"
@@ -635,6 +637,7 @@
             category="uk.ac.diamond.scisoft.analysis.processing.utilities"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.SleepOperation"
             description="Doesn&apos;t do anything but make the thread sleep. For testing purposes."
+            icon="icons/unchanged.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.SleepOperation"
             model="org.eclipse.dawnsci.analysis.api.processing.model.SleepModel"
             name="Sleep"
@@ -757,6 +760,7 @@
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SubtractIntegratedXRegionsOperation"
             description="Subtract the average of two regions in X from the signal region"
+            icon="icons/unchanged.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SubtractIntegratedXRegionsOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SubtractIntegratedXRegionsModel"
             name="Subtract Average X Regions Integration">

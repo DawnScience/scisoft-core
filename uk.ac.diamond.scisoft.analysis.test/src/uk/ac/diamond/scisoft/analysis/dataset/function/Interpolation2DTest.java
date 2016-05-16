@@ -22,6 +22,8 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.dataset.function.Interpolation2D.BicubicInterpolationOutput;
+
 
 @SuppressWarnings("unused")
 public class Interpolation2DTest {
@@ -29,7 +31,8 @@ public class Interpolation2DTest {
 	private static Dataset x, y, xy;
 	private static Dataset testX = DatasetFactory.createFromObject(new double[]{1.33, 2.65, 55.05, 90.09}, Dataset.FLOAT64);
 	private static Dataset testY = DatasetFactory.createFromObject(new double[]{-36.789, 43.0652, 0.00006, 18.34}, Dataset.FLOAT64);
-	private static Dataset testXY = testFunction(testX, testY);
+	private static Dataset testXY1D = testFunction1D(testX, testY);
+	private static Dataset testXY2D = testFunction2D(testX, testY);
 	
 	@BeforeClass
 	public static void initTest() {
@@ -46,25 +49,54 @@ public class Interpolation2DTest {
 	}
 	
 	@Test
-	public void testBicubicInterpolation() {
-		Dataset test_results = Interpolation2D.bicubicInterpolation(x, y, xy, testX, testY);
+	public void testBicubicInterpolation1D() {
+		Dataset test_results = Interpolation2D.bicubicInterpolation(x, y, xy, testX, testY, BicubicInterpolationOutput.ONED);
 		//System.out.println("test_results: " + Arrays.toString((((DoubleDataset)test_results).getData())));
-		TestUtils.assertDatasetEquals(testXY, test_results, 0.01, 0.0);
+		TestUtils.assertDatasetEquals(testXY1D, test_results, 0.01, 0.0);
 	}
 
 	@Test
-	public void testPiecewiseBicubicSplineInterpolation() {
-		Dataset test_results = Interpolation2D.piecewiseBicubicSplineInterpolation(x, y, xy, testX, testY);
+	public void testPiecewiseBicubicSplineInterpolation1D() {
+		Dataset test_results = Interpolation2D.piecewiseBicubicSplineInterpolation(x, y, xy, testX, testY, BicubicInterpolationOutput.ONED);
 		//System.out.println("test_results: " + Arrays.toString((((DoubleDataset)test_results).getData())));
-		TestUtils.assertDatasetEquals(testXY, test_results, 0.02, 0.0);
+		TestUtils.assertDatasetEquals(testXY1D, test_results, 0.02, 0.0);
+	}
+
+	@Test
+	public void testBicubicInterpolation2D() {
+		Dataset test_results = Interpolation2D.bicubicInterpolation(x, y, xy, testX, testY, BicubicInterpolationOutput.TWOD);
+		//System.out.println("test_results: " + Arrays.toString((((DoubleDataset)test_results).getData())));
+		assertArrayEquals(new int[]{testX.getSize(),  testY.getSize()}, test_results.getShape());
+		TestUtils.assertDatasetEquals(testXY2D, test_results, 0.03, 0.0);
+	}
+
+	@Test
+	public void testPiecewiseBicubicSplineInterpolation2D() {
+		Dataset test_results = Interpolation2D.piecewiseBicubicSplineInterpolation(x, y, xy, testX, testY, BicubicInterpolationOutput.TWOD);
+		//System.out.println("test_results: " + Arrays.toString((((DoubleDataset)test_results).getData())));
+		assertArrayEquals(new int[]{testX.getSize(),  testY.getSize()}, test_results.getShape());
+		TestUtils.assertDatasetEquals(testXY2D, test_results, 0.02, 0.0);
 	}
 
 	public static double testFunction(double x, double y) {
 		return x*x + 3*x*y - y*y; 
 	}
 	
-	public static Dataset testFunction(Dataset datax, Dataset datay) {
+	public static Dataset testFunction1D(Dataset datax, Dataset datay) {
 		// x*x + 3*x*y - y*y;
 		return Maths.multiply(datax, datax).iadd(Maths.multiply(datax, datay).imultiply(3.0)).isubtract(Maths.multiply(datay, datay)); 
+	}
+	
+	public static Dataset testFunction2D(Dataset datax, Dataset datay) {
+		// x*x + 3*x*y - y*y;
+		Dataset rv = DatasetFactory.zeros(new int[]{datax.getSize(), datay.getSize()}, Dataset.FLOAT64);
+	
+		for (int i = 0 ; i < datax.getSize() ; i++) {
+			for (int j = 0 ; j < datay.getSize() ; j++) {
+				rv.set(testFunction(datax.getDouble(i), datay.getDouble(j)), i, j); 
+			}
+		}
+		
+		return rv;
 	}
 }

@@ -844,6 +844,20 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataSelectedFramesModel"
             name="Add Frame">
       </operation>
+       <operation
+             class="uk.ac.diamond.scisoft.analysis.processing.surfacescattering.Polynomial1DReflectivityOperation"
+             icon="icons/template.png"
+             id="uk.ac.diamond.scisoft.analysis.processing.surfacescattering.Polynomial1DReflectivityOperation"
+             model="uk.ac.diamond.scisoft.analysis.processing.surfacescattering.Polynomial1DReflectivityModel"
+             name="Polynomial1DReflectivityOperation">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.sxrdrods.RodScanPolynomial1DOperation"
+            icon="icons/template.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.sxrdrods.RodScanPolynomial1DOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.SXRDrods.RodScanPolynomial1DModel"
+            name="RodScanPolynomial1DOperation">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">
@@ -851,5 +865,4 @@
             class="uk.ac.diamond.scisoft.analysis.processing.Activator">
       </bundle>
    </extension>
-
 </plugin>

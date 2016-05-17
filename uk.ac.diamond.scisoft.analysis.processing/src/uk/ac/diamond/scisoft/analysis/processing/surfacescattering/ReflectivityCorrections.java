@@ -17,14 +17,8 @@ public class ReflectivityCorrections {
 	public static double reflectivityCorrectionsBatch(IDataset input, double  angularfudgefactor, double BeamHeight, double footprint) throws Exception {
 	
 		double theta;
-		//try {
+		
 		theta = ScanMetadata.getTheta(input);
-		//} catch (Exception e) {
-		//	Object logger;
-			// TODO Auto-generated catch block
-			//logger.error("TODO put description of error here", e);
-			//System.out.println("fucked up");
-		//} 
 		
 		System.out.println("theta:  " + " , " + theta);
 		

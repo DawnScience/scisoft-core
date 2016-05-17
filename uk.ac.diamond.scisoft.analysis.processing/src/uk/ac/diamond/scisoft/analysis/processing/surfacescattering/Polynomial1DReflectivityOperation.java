@@ -65,12 +65,7 @@ public class Polynomial1DReflectivityOperation extends AbstractOperation<Polynom
 	
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) {
-		
-//		int[][] modelInts = Polynomial1DReflectivityModelUnpacker.polynomial1DReflectivityUnpackerModelInts(model);
-//		double[] modelDouble = Polynomial1DReflectivityModelUnpacker.polynomial1DReflectivityUnpackerModelDoubles(model);
-//		String[] modelStrings = Polynomial1DReflectivityModelUnpacker.polynomial1DReflectivityUnpackerModelStrings(model);
-//		Direction modelDirection = Polynomial1DReflectivityModelUnpacker.polynomial1DReflectivityUnpackerModelDirection(model);
-//		
+
 		RectangularROI box = model.getBox();
 		
 		Dataset in1 = BoxSlicer.rOIBox(input, monitor, box.getIntLengths(), box.getIntPoint());
@@ -102,9 +97,6 @@ public class Polynomial1DReflectivityOperation extends AbstractOperation<Polynom
 
 		pBackgroundSubtracted.setName("PBackgroundSubtracted");
 
-		///# do a footprint correction.
-        //# assumes that the beam is gaussian in profile, with a FWHM of "beamheight".
-        //# footprint of sample is measured in mm.
 
 		double areaCorrection = 0;
 		
@@ -114,8 +106,6 @@ public class Polynomial1DReflectivityOperation extends AbstractOperation<Polynom
 					, model.getBeamHeight(), model.getFootprint());
 		} catch (Exception e1) {
 			System.out.println("failed to get areaCorrection");
-			
-			// TODO Auto-generated catch block
 		}
 		
 		pBackgroundSubtracted = Maths.divide(pBackgroundSubtracted,areaCorrection);

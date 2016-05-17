@@ -103,6 +103,6 @@ public class Polynomial1DReflectivityModel extends AbstractOperationModel {
 	public void setBox(RectangularROI box) {
 		firePropertyChange("box", this.box, this.box = box);
 	}
-	
+	//
 	
 }

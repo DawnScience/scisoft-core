@@ -122,5 +122,5 @@ public class BackgroundSetting{
 	
 	return in1Background;
 	}
-
+//
 }

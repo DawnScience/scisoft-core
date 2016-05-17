@@ -23,7 +23,7 @@ public class ScanMetadata {
 	private static final String qdcd_ = "qdcd_";
 	
 	
-	
+	//
 	public static SliceFromSeriesMetadata getSliceMetadata (IDataset input) {
 		
 		SliceFromSeriesMetadata ssm = input.getFirstMetadata(SliceFromSeriesMetadata.class);

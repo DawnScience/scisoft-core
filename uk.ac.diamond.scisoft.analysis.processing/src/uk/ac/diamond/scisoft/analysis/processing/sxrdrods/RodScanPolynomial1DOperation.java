@@ -119,5 +119,5 @@ public class RodScanPolynomial1DOperation extends AbstractOperation<RodScanPolyn
 		return new OperationData(in1, in1Background, pBackgroundSubtracted, fhkl, in1Sum, in1BackgroundSum, pBackgroundSubtractedSum, fhklSum);
 
 	}
-
+//
 }

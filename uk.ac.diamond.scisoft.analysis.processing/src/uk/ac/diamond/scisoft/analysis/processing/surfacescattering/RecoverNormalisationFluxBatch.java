@@ -31,7 +31,7 @@ public class RecoverNormalisationFluxBatch {
 			try { 
 				flux = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(null, tmp.getFilePath(), "ionc1")); 
 				theta = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(null, tmp.getFilePath(), "qsdcd"));
-				//experimentalTheta = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(null, tmp.getFilePath(), "sdcdtheta"));
+			
 			}
 			catch (Exception e){
 				System.out.println("No normalisation data available internally");
@@ -42,7 +42,7 @@ public class RecoverNormalisationFluxBatch {
 			try{
 				flux = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(null, path, "adc2")); 
 				theta = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(null, path, "qdcd_"));
-				//experimentalTheta = DatasetUtils.convertToDataset(ProcessingUtils.getLazyDataset(null, tmp.getFilePath(), "dcdtheta"));
+				
 			}
 			catch (Exception e){
 				System.out.println("No normalisation data availbale externally");

@@ -29,7 +29,7 @@ public class BoxSlicerRodScans {
 		Dataset in1 = DatasetUtils.convertToDataset(small1);
 		return in1;
 	}
-	
+	//
 	public static IDataset iAboveOrLeftBox (IDataset input , IMonitor monitor, 
 			int[] len, int[] pt, int boundaryBox, Direction direction) throws OperationException{
 		   

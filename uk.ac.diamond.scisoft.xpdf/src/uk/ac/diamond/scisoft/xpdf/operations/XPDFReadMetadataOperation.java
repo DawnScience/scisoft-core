@@ -31,13 +31,16 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
 import org.eclipse.dawnsci.nexus.NXbeam;
 import org.eclipse.dawnsci.nexus.NXdata;
+import org.eclipse.dawnsci.nexus.NXdetector;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NexusUtils;
 
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionCalibrationReader;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamTrace;
+import uk.ac.diamond.scisoft.xpdf.XPDFDetector;
 import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
+import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 
 public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadataModel, OperationData> {
@@ -85,6 +88,11 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 			// TODO: empty container data
 			// TODO: empty beam data
 
+			// detector physical details
+			if (model.isReadDetectorInfo()) {
+				readAndAddDetector(xpdfMeta, tree, ssm.getParent());
+			}
+			
 			input.setMetadata(xpdfMeta);;
 			
 		}
@@ -136,6 +144,33 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 		}
 	}
 
+	// Add the detector information to the XPDF metadata
+	private void readAndAddDetector(XPDFMetadataImpl xpdfMeta, Tree tree, ILazyDataset parent) {
+		// get the node describing the detector. Hard coded, following the I15-1 Nexus spec
+		GroupNode rootNode = tree.getGroupNode(),
+				entryNode = rootNode.getGroupNode("entry1"),
+				instrumentNode = entryNode.getGroupNode("instrument"),
+				hutchNode = instrumentNode.getGroupNode("experimental_hutch");
+		GroupNode tectNode = hutchNode.getGroupNode("detector_1");
+		NXdetector nxtect = (NXdetector) tectNode;
+		// simple values
+		XPDFDetector xpdftect = new XPDFDetector();
+		// substance
+		double density = nxtect.getDouble("sensor_density");
+		xpdftect.setSubstance(new XPDFSubstance(nxtect.getSensor_materialScalar(), nxtect.getSensor_materialScalar(), density, 1.0));
+		// thickness
+		xpdftect.setThickness(nxtect.getSensor_thicknessScalar());
+		// Solid angle. TODO: calculate the true solid angle
+		double solidAngle;
+			solidAngle = xpdftect.getSolidAngle();
+			// failure is assigning zero, not throwing an Exception
+			if (solidAngle == 0.0) solidAngle = 0.1;
+
+		xpdftect.setSolidAngle(solidAngle);
+		
+		xpdfMeta.setDetector(xpdftect);
+	}
+	
 	private NXsample getNXsampleFromTree(XPDFMetadataImpl xpdfMeta, Tree tree, ILazyDataset parent) {
 		Map<String, NodeLink> nodeMap = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getSample(), true, null);
 

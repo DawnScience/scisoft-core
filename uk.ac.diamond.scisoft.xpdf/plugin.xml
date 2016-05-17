@@ -52,7 +52,7 @@
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFTophatOperation"
             icon="icons/xpdftophat.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFTophatOperation"
-            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFTophatModel"
             name="XPDF Tophat background subtraction (soq to th_soq)">
       </operation>
       <operation

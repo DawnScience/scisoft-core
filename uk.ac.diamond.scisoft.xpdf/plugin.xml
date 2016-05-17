@@ -112,7 +112,7 @@
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFReadMetadataOperation"
             icon="icons/xpdfbase.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFReadMetadataOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.EmptyModel"
+            model="uk.ac.diamond.scisoft.xpdf.operations.XPDFReadMetadataModel"
             name="XPDF Read Metadata">
       </operation>
    </extension>

@@ -16,7 +16,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
 @Atomic
-public class DivideExternalDataOperation extends OperateOnDataAbstractOperation<ExternalDataModel> {
+public class DivideExternalDataOperation<T extends ExternalDataModel> extends OperateOnDataAbstractOperation<ExternalDataModel> {
 
 	@Override
 	public String getId() {

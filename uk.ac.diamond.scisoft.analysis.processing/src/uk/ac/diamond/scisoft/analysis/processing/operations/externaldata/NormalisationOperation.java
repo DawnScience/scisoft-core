@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 
 @Atomic
-public class NormalisationOperation extends DivideExternalDataOperation {
+public class NormalisationOperation extends DivideExternalDataOperation<ExternalDataModel> {
 
 	@Override
 	public String getId() {

@@ -533,9 +533,10 @@ public class OperationServiceImpl implements IOperationService {
 				
 				IOperation<? extends IOperationModel, ? extends OperationData> op = (IOperation<? extends IOperationModel, ? extends OperationData>) class1.newInstance();
 				if (operations==null) operations = new HashMap<String, IOperation<? extends IOperationModel, ? extends OperationData>>(31);
+				if (models == null) models = new HashMap<>();
 				
 				operations.put(op.getId(), op);
-
+				models.put(op.getId(), ((AbstractOperationBase)op).getModelClass());
 			}
 		}
 	}

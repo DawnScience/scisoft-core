@@ -855,7 +855,7 @@
             class="uk.ac.diamond.scisoft.analysis.processing.sxrdrods.RodScanPolynomial1DOperation"
             icon="icons/template.png"
             id="uk.ac.diamond.scisoft.analysis.processing.sxrdrods.RodScanPolynomial1DOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.SXRDrods.RodScanPolynomial1DModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.sxrdrods.RodScanPolynomial1DModel"
             name="RodScanPolynomial1DOperation">
       </operation>
    </extension>

@@ -22,6 +22,13 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 
+/** Two-dimensional interpolations of IDatasets.
+ *  
+ *  Essentially a wrapper around Apache Commons' {@link org.apache.commons.math3.analysis.interpolation.BivariateGridInterpolator} and related methods, with an interface very similar to the one found
+ *  in {@link Interpolation1D}
+ *  
+ *  @author Tom.Schoonjans@diamond.ac.uk
+ */
 public class Interpolation2D {
 
 	/** Determines whether the interpolation will be performed for newx and newy as pairs (in which case they need to have matching dimensions),
@@ -34,18 +41,55 @@ public class Interpolation2D {
 		TWOD
 	}
 	
-	public static Dataset bicubicInterpolation(IDataset oldx, IDataset oldy, IDataset oldxy, IDataset newx, IDataset newy, BicubicInterpolationOutput output_type) {
+	/** Perform a two-dimensional bicubic interpolation
+	 * 
+	 * @param oldx an IDataset containing a 1D array of X-values, sorted in increasing order, corresponding to the first dimension of <code>oldxy</code>
+	 * @param oldy an IDataset containing a 1D array of Y-values, sorted in increasing order, corresponding to the second dimension of <code>oldxy</code>
+	 * @param oldxy an IDataset containing a 2D grid of interpolation points
+	 * @param newx an IDataset containing a 1D array of X-values that will be sent to the interpolating function
+	 * @param newy an IDataset containing a 1D array of Y-values that will be sent to the interpolating function
+	 * @param output_type an {@link BicubicInterpolationOutput} that will determine how <code>newx</code> and <code>newy</code> will be interpreted, and therefore whether a 1D or 2D Dataset will be returned.
+	 * @return rank 1 or 2 Dataset, depending on <code>output_type}</code>
+	 * @throws NonMonotonicSequenceException
+	 * @throws NumberIsTooSmallException
+	 */
+	public static Dataset bicubicInterpolation(IDataset oldx, IDataset oldy, IDataset oldxy, IDataset newx, IDataset newy, BicubicInterpolationOutput output_type) throws NonMonotonicSequenceException, NumberIsTooSmallException {
 		
 		return interpolate(oldx, oldy, oldxy, newx, newy, new BicubicInterpolator(), output_type);
 		
 	}
 	
-	public static Dataset piecewiseBicubicSplineInterpolation(IDataset oldx, IDataset oldy, IDataset oldxy, IDataset newx, IDataset newy, BicubicInterpolationOutput output_type) {
+	/** Perform a two-dimensional piecewise-bicubic spline interpolation
+	 * 
+	 * @param oldx an IDataset containing a 1D array of X-values, sorted in increasing order, corresponding to the first dimension of <code>oldxy</code>
+	 * @param oldy an IDataset containing a 1D array of Y-values, sorted in increasing order, corresponding to the second dimension of <code>oldxy</code>
+	 * @param oldxy an IDataset containing a 2D grid of interpolation points
+	 * @param newx an IDataset containing a 1D array of X-values that will be sent to the interpolating function
+	 * @param newy an IDataset containing a 1D array of Y-values that will be sent to the interpolating function
+	 * @param output_type an {@link BicubicInterpolationOutput} that will determine how <code>newx</code> and <code>newy</code> will be interpreted, and therefore whether a 1D or 2D Dataset will be returned.
+	 * @return rank 1 or 2 Dataset, depending on <code>output_type}</code>
+	 * @throws NonMonotonicSequenceException
+	 * @throws NumberIsTooSmallException
+	 */
+	public static Dataset piecewiseBicubicSplineInterpolation(IDataset oldx, IDataset oldy, IDataset oldxy, IDataset newx, IDataset newy, BicubicInterpolationOutput output_type) throws NonMonotonicSequenceException, NumberIsTooSmallException {
 		
 		return interpolate(oldx,oldy, oldxy, newx, newy, new PiecewiseBicubicSplineInterpolator(), output_type);
 		
 	}
 	
+	/** Perform a two-dimensional interpolation
+	 * 
+	 * @param oldx an IDataset containing a 1D array of X-values, sorted in increasing order, corresponding to the first dimension of <code>oldxy</code>
+	 * @param oldy an IDataset containing a 1D array of Y-values, sorted in increasing order, corresponding to the second dimension of <code>oldxy</code>
+	 * @param oldxy an IDataset containing a 2D grid of interpolation points
+	 * @param newx an IDataset containing a 1D array of X-values that will be sent to the interpolating function
+	 * @param newy an IDataset containing a 1D array of Y-values that will be sent to the interpolating function
+	 * @param interpolator an instance of {@link org.apache.commons.math3.analysis.interpolation.BivariateGridInterpolator}
+	 * @param output_type an {@link BicubicInterpolationOutput} that will determine how <code>newx</code> and <code>newy</code> will be interpreted, and therefore whether a 1D or 2D Dataset will be returned.
+	 * @return rank 1 or 2 Dataset, depending on <code>output_type}</code>
+	 * @throws NonMonotonicSequenceException
+	 * @throws NumberIsTooSmallException
+	 */
 	public static Dataset interpolate(IDataset oldx, IDataset oldy, IDataset oldxy, IDataset newx, IDataset newy, BivariateGridInterpolator interpolator, BicubicInterpolationOutput output_type) throws NonMonotonicSequenceException, NumberIsTooSmallException {
 		
 		//check shapes

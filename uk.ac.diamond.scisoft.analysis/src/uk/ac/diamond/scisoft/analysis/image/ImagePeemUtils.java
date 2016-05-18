@@ -140,14 +140,13 @@ public class ImagePeemUtils {
 	/**
 	 * Fill an array with translation values
 	 * 
-	 * @param array
 	 * @param value
 	 * @param rows
 	 * @param columns
 	 * @return Filled array
 	 */
-	public static double[][][] fillArray(double[][][] array, double[] value, int rows, int columns) {
-		array = new double[columns][rows][2];
+	public static double[][][] fillArray(double[] value, int rows, int columns) {
+		double[][][] array = new double[columns][rows][2];
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < columns; j++) {
 				array[j][i] = value;

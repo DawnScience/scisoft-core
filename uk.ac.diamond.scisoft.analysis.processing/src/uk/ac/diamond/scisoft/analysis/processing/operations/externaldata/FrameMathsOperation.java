@@ -43,10 +43,10 @@ public abstract class FrameMathsOperation<T extends SelectedFramesModel> extends
 			d = data;
 		}
 
-		if (d.getError() != null && model.getScaling() != 1) {
+		if (model.getScaling() != 1) {
 			d = ErrorPropagationUtils.multiplyWithUncertainty(d, DatasetFactory.createFromObject(model.getScaling()));
 		}
-
+		
 		Dataset output = performOperation(DatasetUtils.convertToDataset(input), d);
 		copyMetadata(input, output);
 

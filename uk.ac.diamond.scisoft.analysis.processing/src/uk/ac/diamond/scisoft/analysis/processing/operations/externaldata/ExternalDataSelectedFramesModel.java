@@ -14,9 +14,9 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class ExternalDataSelectedFramesModel extends SelectedFramesModel {
 	
-	@OperationModelField(hint="Enter the path to the data file", file = FileType.EXISTING_FILE, label = "File")
+	@OperationModelField(hint="Enter the path to the data file", file = FileType.EXISTING_FILE, label = "File", fieldPosition = 0)
 	private String filePath = "";
-	@OperationModelField(dataset = "filePath", label = "Dataset")
+	@OperationModelField(dataset = "filePath", label = "Dataset",fieldPosition = 1)
 	private String datasetName = "";
 	
 

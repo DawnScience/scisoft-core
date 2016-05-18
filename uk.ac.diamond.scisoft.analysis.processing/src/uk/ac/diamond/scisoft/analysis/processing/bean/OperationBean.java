@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.processing.bean;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.eclipse.dawnsci.analysis.api.processing.IOperationBean;
 import org.eclipse.scanning.api.event.status.StatusBean;
 
 /**
@@ -22,7 +23,7 @@ import org.eclipse.scanning.api.event.status.StatusBean;
  * @author Matthew Gerring
  *
  */
-public class OperationBean extends StatusBean {
+public class OperationBean extends StatusBean implements IOperationBean {
 	
 	// The data
 	private String               filePath;              
@@ -48,6 +49,7 @@ public class OperationBean extends StatusBean {
 		return dataKey;
 	}
 
+	@Override
 	public void setDataKey(String dataKey) {
 		this.dataKey = dataKey;
 	}
@@ -77,6 +79,7 @@ public class OperationBean extends StatusBean {
 		return filePath;
 	}
 
+	@Override
 	public void setFilePath(String fileName) {
 		this.filePath = fileName;
 	}
@@ -85,6 +88,7 @@ public class OperationBean extends StatusBean {
 		return outputFilePath;
 	}
 
+	@Override
 	public void setOutputFilePath(String outputFilePath) {
 		this.outputFilePath = outputFilePath;
 	}
@@ -93,6 +97,7 @@ public class OperationBean extends StatusBean {
 		return datasetPath;
 	}
 
+	@Override
 	public void setDatasetPath(String datasetPath) {
 		this.datasetPath = datasetPath;
 	}
@@ -101,6 +106,7 @@ public class OperationBean extends StatusBean {
 		return slicing;
 	}
 
+	@Override
 	public void setSlicing(String slicing) {
 		this.slicing = slicing;
 	}
@@ -109,10 +115,12 @@ public class OperationBean extends StatusBean {
 		return persistencePath;
 	}
 
+	@Override
 	public void setPersistencePath(String persistencePath) {
 		this.persistencePath = persistencePath;
 	}
 	
+	@Override
 	public void setAxesNames(Map<Integer, String> axesNames) {
 		this.axesNames = axesNames;
 	}
@@ -198,6 +206,7 @@ public class OperationBean extends StatusBean {
 		return parallelTimeout;
 	}
 
+	@Override
 	public void setParallelTimeout(long parallelTimeout) {
 		this.parallelTimeout = parallelTimeout;
 	}
@@ -206,6 +215,7 @@ public class OperationBean extends StatusBean {
 		return deletePersistenceFile;
 	}
 
+	@Override
 	public void setDeletePersistenceFile(boolean deletePersistenceFile) {
 		this.deletePersistenceFile = deletePersistenceFile;
 	}
@@ -214,6 +224,7 @@ public class OperationBean extends StatusBean {
 		return xmx;
 	}
 
+	@Override
 	public void setXmx(String xmx) {
 		this.xmx = xmx;
 	}
@@ -222,6 +233,7 @@ public class OperationBean extends StatusBean {
 		return dataDimensions;
 	}
 
+	@Override
 	public void setDataDimensions(int[] dataDimensions) {
 		this.dataDimensions = dataDimensions;
 	}
@@ -230,6 +242,7 @@ public class OperationBean extends StatusBean {
 		return readable;
 	}
 
+	@Override
 	public void setReadable(boolean readable) {
 		this.readable = readable;
 	}

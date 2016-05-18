@@ -25,6 +25,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.IDynamicDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
+import org.eclipse.dawnsci.analysis.api.processing.IOperationBean;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationRunner;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationRunnerService;
@@ -50,6 +51,7 @@ import org.eclipse.dawnsci.macro.api.MacroEventObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.ac.diamond.scisoft.analysis.processing.bean.OperationBean;
 import uk.ac.diamond.scisoft.analysis.utils.ClassUtils;
 
 /**
@@ -548,5 +550,11 @@ public class OperationServiceImpl implements IOperationService {
 	public String getDescription(String id) throws Exception {
 		checkOperations();
 		return operations.get(id).getDescription();
+	}
+	
+	
+	@Override
+	public IOperationBean createBean() {
+		return new OperationBean();
 	}
  }

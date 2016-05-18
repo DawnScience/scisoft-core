@@ -521,6 +521,16 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.externaldata"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.ConcatenatingTwoDatasetsOperation"
+            description="Concatenate two datasets together, taking into account axes scaling"
+            icon="icons/stitch.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.ConcatenatingTwoDatasetsOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.ConcatenatingTwoDatasetsModel"
+            name="Dataset Concatenation"
+            visible="true">
+      </operation>
+      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.DerivativeOperation"
             icon="icons/derivative.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.DerivativeOperation"

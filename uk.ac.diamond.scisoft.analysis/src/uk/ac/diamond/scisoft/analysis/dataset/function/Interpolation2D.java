@@ -29,7 +29,7 @@ public class Interpolation2D {
 	 *  as input for the interpolations, resulting in a rank 2 dataset with shape {newx.getSize(), newy.getSize()}.
 	 *
 	 */
-	enum BicubicInterpolationOutput {
+	public enum BicubicInterpolationOutput {
 		ONED,
 		TWOD
 	}

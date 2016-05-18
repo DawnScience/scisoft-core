@@ -14,7 +14,7 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class ExternalDataModel extends InternalDatasetNameModel {
 
-	@OperationModelField(hint="Enter the path to the data file, leave blank to use the file being processed", file = FileType.EXISTING_FILE, label = "File")
+	@OperationModelField(hint="Enter the path to the data file, leave blank to use the file being processed", file = FileType.EXISTING_FILE, label = "File", fieldPosition = 0)
 	private String filePath = "";
 
 	public String getFilePath() {

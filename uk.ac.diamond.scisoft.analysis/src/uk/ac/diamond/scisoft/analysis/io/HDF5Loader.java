@@ -849,7 +849,7 @@ public class HDF5Loader extends AbstractFileLoader {
 				final Dataset d = DatasetFactory.zeros(type.isize, trueShape, type.dtype);
 				Object data = d.getBuffer();
 
-				if (type.vlen) {
+				if (type.isVariableLength) {
 					H5.H5Dread_VLStrings(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, (Object[]) data);
 				} else {
 					H5.H5Dread(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, data);
@@ -870,7 +870,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		if (type.dtype == Dataset.STRING && useExternalFiles) {
 			// interpret set of strings as the full path names to a group of external files that are stacked together
 
-			StringDataset ef = extractExternalFileNames(did, tid, type.vlen, trueShape);
+			StringDataset ef = extractExternalFileNames(did, tid, type.isVariableLength, trueShape);
 			ImageStackLoader loader;
 			try {
 				loader = new ImageStackLoader(ef, file.getParentDirectory());

@@ -9,6 +9,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.bean;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.processing.IOperationBean;
@@ -29,7 +30,7 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	private String               filePath;              
 	private String               datasetPath;
 	private String				 slicing;
-	private Map<Integer, String> axesNames;
+	private List<String>[] axesNames;
 	private String 				 outputFilePath;
 	private int[] 				 dataDimensions;
 	
@@ -121,11 +122,11 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	}
 	
 	@Override
-	public void setAxesNames(Map<Integer, String> axesNames) {
+	public void setAxesNames(List<String>[] axesNames) {
 		this.axesNames = axesNames;
 	}
 	
-	public Map<Integer, String> getAxesNames() {
+	public List<String>[] getAxesNames() {
 		return this.axesNames;
 	}
 

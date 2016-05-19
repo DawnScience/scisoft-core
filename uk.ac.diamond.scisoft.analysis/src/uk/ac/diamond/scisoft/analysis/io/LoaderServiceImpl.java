@@ -9,8 +9,10 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -126,30 +128,33 @@ public class LoaderServiceImpl implements ILoaderService {
 		return null;
 	}
 	
+	
 	@Override
-	public AxesMetadata getAxesMetadata(ILazyDataset parent, String path, Map<Integer, String> axesNames, boolean lazy) throws Exception {
-
+	public AxesMetadata getAxesMetadata(ILazyDataset parent, String path, List<String>[] axesNames, boolean lazy) throws Exception {
 		AxesMetadataImpl axMeta = null;
 		int rank = parent.getRank();
+		axMeta = new AxesMetadataImpl(rank);
+		if (axesNames == null) return axMeta;
+		if (axesNames.length != rank) throw new IllegalArgumentException("Array of name lists must be equal in length to the rank of the dataset");
 		int[] shape = parent.getShape();
-			axMeta = new AxesMetadataImpl(rank);
-			if (axesNames == null) return axMeta;
-			for (Integer key : axesNames.keySet()) {
-				String axesName = axesNames.get(key);
-				IDataHolder dataHolder = getData(path, null);
-				ILazyDataset lazyDataset = dataHolder.getLazyDataset(axesName);
+		IDataHolder dataHolder = getData(path, null);
+		for (int j = 0; j < axesNames.length; j++) {
+			if (axesNames[j] == null) continue;
+			for (String name : axesNames[j]) {
+				if (name == null) continue;
+				ILazyDataset lazyDataset = dataHolder.getLazyDataset(name);
 				if (lazyDataset == parent) throw new IllegalArgumentException("Axes metadata should not contain original dataset!");
 				if (lazyDataset!= null) {
 
 					if (lazyDataset.getName() == null || lazyDataset.getName().isEmpty()) {
-						lazyDataset.setName(axesName);
+						lazyDataset.setName(name);
 					}
 
 					int axRank = lazyDataset.getRank();
 					if (axRank == rank || axRank == 1)	{
 						lazyDataset = lazyDataset.getSliceView();
 						lazyDataset.clearMetadata(AxesMetadata.class);
-						axMeta.setAxis(key-1, lazy ? lazyDataset : lazyDataset.getSlice());
+						axMeta.addAxis(j, lazy ? lazyDataset : lazyDataset.getSlice());
 					} else {
 
 						int[] axShape = lazyDataset.getShape();
@@ -167,9 +172,9 @@ public class LoaderServiceImpl implements ILoaderService {
 							updateShape(i, max, shape, id, idx, found);
 
 						}
-						
+
 						boolean allFound = !Arrays.asList(found).contains(false);
-						
+
 						if (!allFound) {
 							throw new IllegalArgumentException("Axes shape not compatible!");
 						}
@@ -182,15 +187,34 @@ public class LoaderServiceImpl implements ILoaderService {
 						lazyDataset.clearMetadata(AxesMetadata.class);
 						lazyDataset.setShape(newShape);
 					}
-					axMeta.setAxis(key-1, lazy ? lazyDataset : lazyDataset.getSlice());
+					axMeta.setAxis(j, lazy ? lazyDataset : lazyDataset.getSlice());
 				}
 				else {
-					axMeta.setAxis(key-1, new ILazyDataset[1]);
+					axMeta.setAxis(j, new ILazyDataset[1]);
 				}
 			}
+		}
 
-			return axMeta;
+		return axMeta;
 	}
+	
+	@Override
+	public AxesMetadata getAxesMetadata(ILazyDataset parent, String path, Map<Integer, String> axesNames, boolean lazy) throws Exception {
+		
+		List<String>[] axesNameLists = new List[parent.getRank()];
+		
+		for (Integer key : axesNames.keySet()) {
+			if (axesNameLists[key-1] == null) {
+				axesNameLists[key-1] = new ArrayList<String>();
+			}
+			
+			axesNameLists[key-1].add(axesNames.get(key));
+		}
+		
+		return getAxesMetadata(parent, path, axesNames, lazy);
+
+	}
+
 	
 	private boolean updateShape(int i, int max, int[] shape, int id, int[] idx, Boolean[] found){
 		

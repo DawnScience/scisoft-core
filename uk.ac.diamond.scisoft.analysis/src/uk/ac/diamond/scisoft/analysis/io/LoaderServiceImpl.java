@@ -186,8 +186,9 @@ public class LoaderServiceImpl implements ILoaderService {
 						lazyDataset = lazyDataset.getSliceView();
 						lazyDataset.clearMetadata(AxesMetadata.class);
 						lazyDataset.setShape(newShape);
+						
+						axMeta.addAxis(j, lazy ? lazyDataset : lazyDataset.getSlice(),idx);
 					}
-					axMeta.setAxis(j, lazy ? lazyDataset : lazyDataset.getSlice());
 				}
 				else {
 					axMeta.setAxis(j, new ILazyDataset[1]);

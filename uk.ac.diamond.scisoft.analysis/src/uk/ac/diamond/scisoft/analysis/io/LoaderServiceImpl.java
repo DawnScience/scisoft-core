@@ -212,7 +212,7 @@ public class LoaderServiceImpl implements ILoaderService {
 			axesNameLists[key-1].add(axesNames.get(key));
 		}
 		
-		return getAxesMetadata(parent, path, axesNames, lazy);
+		return getAxesMetadata(parent, path, axesNameLists, lazy);
 
 	}
 

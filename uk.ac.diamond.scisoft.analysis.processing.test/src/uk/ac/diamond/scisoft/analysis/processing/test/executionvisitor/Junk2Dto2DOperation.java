@@ -83,4 +83,8 @@ public class Junk2Dto2DOperation extends AbstractOperation<Junk2Dto2Dmodel, Oper
 		
 		return new OperationData(out);
 	}
+	
+	public Class<Junk2Dto2Dmodel> getModelClass() {
+		return Junk2Dto2Dmodel.class;
+	}
 }

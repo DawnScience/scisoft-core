@@ -1,5 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.test.executionvisitor;
 
+import java.lang.reflect.ParameterizedType;
+
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
@@ -101,5 +103,10 @@ public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, Operatio
 		
 		return new OperationData(out);
 	}
+	
+	public Class<Junk1DModel> getModelClass() {
+		return Junk1DModel.class;
+	}
 
+	
 }

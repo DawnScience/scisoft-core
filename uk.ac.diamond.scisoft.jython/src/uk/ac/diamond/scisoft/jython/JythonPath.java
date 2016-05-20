@@ -108,10 +108,10 @@ public class JythonPath {
 		"uk.ac.gda.common",
 		"org.dawnsci.boofcv", //required for boofcv services
 		"org.ddogleg",
-		"ncsa.hdf",
+		"hdf.hdf5lib",
 		"org.dawnsci.persistence" // Required for I11 LDE script
 	};
-	
+
 	/**
 	 * Provides location of plugin files; behaviour depends whether we're running in eclipse
 	 * @param isRunningInEclipse Boolean, true if running in eclipse

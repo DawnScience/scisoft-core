@@ -13,7 +13,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -362,7 +361,7 @@ public class HDF5LoaderTest {
 		assertEquals("Value of sum", 64.191261, x, x * 1e-5);
 		long timeTaken = System.currentTimeMillis() - timeAtStartms;
 		System.out.printf("Time taken = %d ms\n", timeTaken);
-		assertTrue(timeTaken < 10000);
+		assertTrue("Time taken " + timeTaken + " < 12000", timeTaken < 12000);
 	}
 
 	@Test
@@ -374,7 +373,7 @@ public class HDF5LoaderTest {
 				new int[] { 1, 1, 1 }, -1, 1, false);
 		long timeTaken = System.currentTimeMillis() - timeAtStartms;
 		System.out.printf("Time taken = %d ms\n", timeTaken);
-		assertTrue(timeTaken < 10000);
+		assertTrue("Time taken " + timeTaken + " < 12000", timeTaken < 12000);
 	}
 
 	@Test

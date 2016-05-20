@@ -19,7 +19,6 @@ import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyWriteableDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
-import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -215,7 +214,9 @@ public class AlignImages {
 	 * @param monitor
 	 * @return aligned list of dataset
 	 */
-	public static ILazyDataset alignLazyWithROI(ILazyDataset data, List<List<double[]>> shifts, RectangularROI roi, int mode, IMonitor monitor) {
+	public static ILazyDataset alignLazyWithROI(ILazyDataset data, List<List<double[]>> shifts, RectangularROI roi,
+			int mode, IMonitor monitor) {
+
 		int nsets = data.getShape()[0] / mode;
 
 		if (roi == null)
@@ -228,12 +229,13 @@ public class AlignImages {
 
 		int index = 0;
 		int nr = rois.size();
+
 		// save on a temp file
 		String file = FileUtils.getTempFilePath("aligned.h5");
 		String path = "/entry/data/";
 		String name = "aligned";
 		File tmpFile = new File(file);
-		if(tmpFile.exists())
+		if (tmpFile.exists())
 			tmpFile.delete();
 		ILazyWriteableDataset lazy = HDF5Utils.createLazyDataset(file, path, name, data.getShape(), null,
 				data.getShape(), AbstractDataset.FLOAT32, null, false);
@@ -283,12 +285,12 @@ public class AlignImages {
 					// align rest of images
 					shifts.add(AlignImages.align(tImages, shifted, rois.get(p), true, topShifts.get(p), monitor));
 					shifted.remove(0); // remove unshifted anchor
-				
+
 					appendDataset(lazy, anchor, idx, monitor);
-					idx ++;
+					idx++;
 					for (int i = 0; i < shifted.size(); i++) {
 						appendDataset(lazy, shifted.get(i), idx, monitor);
-						idx ++;
+						idx++;
 					}
 
 				} catch (Exception e) {
@@ -299,25 +301,13 @@ public class AlignImages {
 				fromStart = !fromStart;
 				if (monitor != null) {
 					if (monitor.isCancelled()) {
-						// reload file
-						return getLazyData(file, path + name);
+						return lazy;
 					}
 					monitor.worked(1);
 				}
 			}
 		}
-		// reload file
-		return getLazyData(file, path + name);
-	}
-
-	private static ILazyDataset getLazyData(String filename, String node) {
-		ILazyDataset shifted = null;
-		try {
-			shifted = HDF5Utils.loadDataset(filename, node);
-		} catch (ScanFileHolderException e) {
-			logger .error("Could not reload the temp h5 file:", e);
-		}
-		return shifted;
+		return lazy;
 	}
 
 	private static void appendDataset(ILazyWriteableDataset lazy, IDataset data, int idx, IMonitor monitor) throws Exception {

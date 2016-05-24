@@ -25,7 +25,7 @@ public class OutlierStatsTest {
 		long t = System.currentTimeMillis();
 		double snNaive = Outliers.snNaive(randn);
 		System.out.println(System.currentTimeMillis()-t);
-		Assert.assertEquals(0.9978238112683145, snNaive, 1E-10);
+		Assert.assertEquals(0.9976411809392469, snNaive, 1E-10);
 		
 	}
 

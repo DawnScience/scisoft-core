@@ -375,43 +375,13 @@ public abstract class AFunction implements IFunction, Serializable {
 		return (maxval - minval) / (2. * dv);
 	}
 
-	/**
-	 * @param coords
-	 * @return a coordinate iterator
-	 */
-	final static public CoordinatesIterator createIterator(IDataset... coords) {
-		if (coords == null || coords.length == 0) {
-			logger.error("No coordinates given to evaluate function");
-			throw new IllegalArgumentException("No coordinates given to evaluate function");
-		}
-
-		CoordinatesIterator it;
-		int[] shape = coords[0].getShape();
-		if (coords.length == 1) {
-			it = coords[0].getElementsPerItem() == 1 ? new DatasetsIterator(coords) : new CoordinateDatasetIterator(coords[0]);
-		} else {
-			boolean same = true;
-			for (int i = 1; i < shape.length; i++) {
-				if (!Arrays.equals(shape, coords[i].getShape())) {
-					same = false;
-					break;
-				}
-			}
-			if (same && shape.length == 1) // override for 1D datasets
-				same = false;
-
-			it = same ? new DatasetsIterator(coords) : new HypergridIterator(coords);
-		}
-		return it;
-	}
-
-	final public CoordinatesIterator getIterator(IDataset... coords) {
-		return createIterator(coords);
-	}
-
 	@Override
 	public DoubleDataset calculateValues(IDataset... coords) {
-		CoordinatesIterator it = getIterator(coords);
+		return calculateValues(null, coords);
+	}
+
+	private DoubleDataset calculateValues(int[] outShape, IDataset... coords) {
+		CoordinatesIterator it = CoordinatesIterator.createIterator(outShape, coords);
 		DoubleDataset result = new DoubleDataset(it.getShape());
 		fillWithValues(result, it);
 		result.setName(name);
@@ -420,7 +390,11 @@ public abstract class AFunction implements IFunction, Serializable {
 
 	@Override
 	public DoubleDataset calculatePartialDerivativeValues(IParameter parameter, IDataset... coords) {
-		CoordinatesIterator it = getIterator(coords);
+		return calculatePartialDerivativeValues(null, parameter, coords);
+	}
+
+	private DoubleDataset calculatePartialDerivativeValues(int[] outShape, IParameter parameter, IDataset... coords) {
+		CoordinatesIterator it = CoordinatesIterator.createIterator(outShape, coords);
 		DoubleDataset result = new DoubleDataset(it.getShape());
 		if (indexOfParameter(parameter) >= 0)
 			internalFillWithPartialDerivativeValues(parameter, result, it);
@@ -533,7 +507,7 @@ public abstract class AFunction implements IFunction, Serializable {
 		double residual = 0;
 		if (allValues) {
 			DoubleDataset ddata = (DoubleDataset) DatasetUtils.convertToDataset(data).cast(Dataset.FLOAT64);
-			residual = ddata.residual(calculateValues(coords), DatasetUtils.convertToDataset(weight), false);
+			residual = ddata.residual(calculateValues(ddata.getShapeRef(), coords), DatasetUtils.convertToDataset(weight), false);
 		} else {
 			// stochastic sampling of coords;
 //			int NUMBER_OF_SAMPLES = 100;

@@ -99,7 +99,7 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 		final double[][] dm = new double[size][n];
 		if (function instanceof AFunction) {
 			afn = (AFunction) function;
-			it = afn.getIterator(coords);
+			it = CoordinatesIterator.createIterator(data == null ? null : data.getShapeRef(), coords);
 			vd = (DoubleDataset) DatasetFactory.zeros(coords[0].getShapeRef(), Dataset.FLOAT64);
 			pvd = vd.clone();
 		} else {

@@ -70,7 +70,7 @@ public class GaussianTest {
 
 		DoubleDataset[] coords = new DoubleDataset[] {DoubleDataset.createRange(15, 30, 0.25)};
 		DoubleDataset weight = null;
-		CoordinatesIterator it = f.getIterator(coords);
+		CoordinatesIterator it = CoordinatesIterator.createIterator(null, coords);
 		DoubleDataset current = new DoubleDataset(it.getShape());
 		DoubleDataset data = Random.randn(it.getShape());
 		f.fillWithValues(current, it);

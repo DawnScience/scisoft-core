@@ -151,7 +151,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 			return 0;
 
 		setParameterValues(parameters);
-		CoordinatesIterator it = AFunction.createIterator(coords);
+		CoordinatesIterator it = CoordinatesIterator.createIterator(data == null ? null : data.getShapeRef(), coords);
 		DoubleDataset result = new DoubleDataset(it.getShape());
 
 		return calculateNumericalDerivative(1e-15, 1e-9, parameter, result, it);

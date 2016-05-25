@@ -67,7 +67,7 @@ public class CompositeFunctionTest {
 
 		DoubleDataset[] coords = new DoubleDataset[] {DoubleDataset.createRange(15, 30, 0.25)};
 		DoubleDataset weight = null;
-		CoordinatesIterator it = cf.getIterator(coords);
+		CoordinatesIterator it = CoordinatesIterator.createIterator(null, coords);
 		DoubleDataset current = new DoubleDataset(it.getShape());
 		DoubleDataset data = Random.randn(it.getShape());
 		cf.fillWithValues(current, it);

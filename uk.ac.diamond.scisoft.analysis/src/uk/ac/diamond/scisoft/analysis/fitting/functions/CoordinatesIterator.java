@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
@@ -62,5 +63,53 @@ public abstract class CoordinatesIterator implements Iterator<double[]> {
 
 	public void reset() {
 		it.reset();
+	}
+
+	/**
+	 * Create a coordinates iterator from <tt>m</tt> independent coordinate datasets and
+	 * an optional output dataset shape of <tt>n</tt> dimensions.
+	 * <p>
+	 * The simplest mode (<tt>m</tt>=1) requires a single dataset which can be compound. The output
+	 * shape matches the input shape.
+	 * <p>
+	 * The next mode requires <tt>m</tt> nD datasets possessing the same shape and where each dataset
+	 * specifies one of <tt>m</tt> coordinates. The output shape matches the input shape. An exception
+	 * is made for matching 1D shapes where a hypergrid is used if no output shape is specified.
+	 * <p>
+	 * Most general mode has <tt>n = m</tt> and the coordinates evaluated on an nD hypergrid of
+	 * flattened input datasets. Its output shape is determined by sizes of the input datasets.
+	 *
+	 * @param outShape output dataset shape (can be null)
+	 * @param coords
+	 * @return a coordinates iterator
+	 */
+	static final public CoordinatesIterator createIterator(int[] outShape, IDataset... coords) {
+		if (coords == null || coords.length == 0) {
+			throw new IllegalArgumentException("No coordinates given to evaluate function");
+		}
+	
+		CoordinatesIterator it;
+		int[] shape = coords[0].getShape();
+		if (coords.length == 1) {
+			it = coords[0].getElementsPerItem() == 1 ? new DatasetsIterator(coords) : new CoordinateDatasetIterator(coords[0]);
+		} else {
+			boolean same = true;
+			for (int i = 1; i < coords.length; i++) {
+				if (!Arrays.equals(shape, coords[i].getShape())) {
+					same = false;
+					break;
+				}
+			}
+			if (same && shape.length == 1) { // may override for 1D datasets
+				same = outShape == null ? false : Arrays.equals(outShape, shape);
+			}
+	
+			it = same ? new DatasetsIterator(coords) : new HypergridIterator(coords);
+		}
+
+		if (outShape != null && !Arrays.equals(outShape, it.getShape())) {
+			throw new IllegalArgumentException("Iterator created does not match given output shape");
+		}
+		return it;
 	}
 }

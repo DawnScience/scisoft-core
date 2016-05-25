@@ -17,6 +17,9 @@ import org.junit.Test;
 
 public class OutlierStatsTest {
 	
+	// The expected value of the function, given the seed 3145 
+	double expected3145 = 0.9976411809392469;
+	
 	@Test
 	public void testSn() {
 		Random.seed(3145);
@@ -25,7 +28,19 @@ public class OutlierStatsTest {
 		long t = System.currentTimeMillis();
 		double snNaive = Outliers.snNaive(randn);
 		System.out.println(System.currentTimeMillis()-t);
-		Assert.assertEquals(0.9976411809392469, snNaive, 1E-10);
+		Assert.assertEquals(expected3145, snNaive, 1E-10);
+		
+	}
+
+	@Test
+	public void testSnFast() {
+		Random.seed(3145);
+		DoubleDataset randn = Random.randn(1, 1, new int[]{5000});
+		
+		long t = System.currentTimeMillis();
+		double snFast = Outliers.snFast(randn);
+		System.out.println(System.currentTimeMillis()-t);
+		Assert.assertEquals(expected3145, snFast, 1E-10);
 		
 	}
 

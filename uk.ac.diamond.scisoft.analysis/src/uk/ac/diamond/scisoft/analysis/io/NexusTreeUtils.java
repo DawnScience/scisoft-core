@@ -567,7 +567,9 @@ public class NexusTreeUtils {
 
 		int[] ashape = aData.getShape();
 		int[] indices = parseIntArray(gn.getAttribute(a + NX_INDICES_SUFFIX));
-		if (indices.length != ashape.length) {
+		if (indices == null) {
+			throw new IllegalArgumentException("No indices attribute for axis '" + a + "' in " + gn);
+		} else if (indices.length != ashape.length) {
 			throw new IllegalArgumentException("Indices array of axis '" + a + "' must have same length equal to its rank");
 		}
 		for (int i : indices) {

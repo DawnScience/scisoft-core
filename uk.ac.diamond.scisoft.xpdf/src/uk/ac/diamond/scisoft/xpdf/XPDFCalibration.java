@@ -17,6 +17,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
@@ -569,7 +574,7 @@ public class XPDFCalibration {
 		
 		if (this.sampleFluorescence == null) return;
 		
-//		final double minScale = 200, maxScale = 5000, nSteps = 20, stepScale = (maxScale-minScale)/nSteps;
+		// Set the fluorescence scales for one and two dimensions
 		final double minScale, maxScale, nSteps;
 		if (this.dataDimensions == 1) {
 			minScale = 1;
@@ -581,72 +586,30 @@ public class XPDFCalibration {
 			nSteps = 20;
 		}
 		final double stepScale = (maxScale-minScale)/nSteps;
-//		final double fractionOfRange = 1/5.0;
-//		double minimalScale = minScale;
-//		double minimalValue = Double.POSITIVE_INFINITY;
-		
-		// 2 D variables that do not need re-creating every time around the loop
-//		Dataset truncatedQ = DoubleDataset.createRange(8, 32, 1.6);
-		
-		// Set up the pixel integration information
-//		IPixelIntegrationCache lcache;
-//		if (backgroundSubtracted.get(0).getShape().length > 1) {
-//			lcache = getPICache(truncatedQ, AbstractOperationBase.getFirstDiffractionMetadata(backgroundSubtracted.get(0)), backgroundSubtracted.get(0).getShape());
-//		} else {
-//			lcache = null;
-//		}
-//		
-//		// Get the mask from the background subtracted sample data
-//		ILazyDataset mask = AbstractOperationBase.getFirstMask(backgroundSubtracted.get(0));
-//		IDataset m = (mask != null) ? mask.getSlice().squeeze() : null;
 
-//		List<Double> fluorScales = new ArrayList<Double>();//, fluorDiffs = new ArrayList<Double>();
-		Set<FluorescenceEvaluator> fluoroSet = new HashSet<XPDFCalibration.FluorescenceEvaluator>();
+		// Set of all results
+		Set<Future<Map<Double, Double>>> futureSet = new HashSet<Future<Map<Double, Double>>>();
+		
+		ExecutorService ravager = Executors.newSingleThreadExecutor();
+		
+		// Submit to the executor	
 		for (double scale = minScale; scale < maxScale; scale += stepScale)
-//			fluorScales.add(scale);
-			fluoroSet.add(new FluorescenceEvaluator(this, absorptionMaps, scale, calibrationConstant0, nIterations));
-			
-//		for (double scale = minScale; scale < maxScale; scale += stepScale) {
-		for (FluorescenceEvaluator fluoroVal : fluoroSet) {
-//			this.fluorescenceScale = scale;
-//			Dataset absCor = this.iterateCalibrate(nIterations, false);
-//			XPDFCalibration fluorCalibration = new XPDFCalibration(this);
-//			fluorCalibration.initializeCalibrationConstant(this.calibrationConstant0);
-//			fluorCalibration.setFixedFluorescence(scale);
-//			fluorCalibration.setAbsorptionMaps(absorptionMaps);
-//			Dataset absCor = fluorCalibration.iterateCalibrate(nIterations, false);
-//			
-//			Dataset smoothed, truncatedSelfScattering = new DoubleDataset();
-//			final int smoothLength = (int) Math.floor(absCor.getSize()*fractionOfRange);
-//			
-//			// See how well the processed data matches the target. The output
-//			// of this step should be a smoothed version of absCor and the
-//			// self-scattering of the sample at the same abscissa values 
-//			if (absCor.getShape().length == 1) {
-//				// One dimensional version
-//				Dataset covolver = Maths.divide(DoubleDataset.ones(smoothLength), smoothLength);
-//				smoothed = Signal.convolveForOverlap(absCor, covolver, new int[] {0});
-//				truncatedSelfScattering = sampleSelfScattering.getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
-//				truncatedQ = coords.getQ().getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
-//			} else {
-//				List<Dataset> out = PixelIntegration.integrate(absCor, m, lcache);
-//				smoothed = out.remove(1);
-//
-//				out = PixelIntegration.integrate(sampleSelfScattering, m, lcache);
-//				truncatedSelfScattering = out.remove(1);
-//				
-//				//truncatedSelfScattering = InterpolatorUtils.remap1D(sampleSelfScattering, coords.getQ(), truncatedQ);
-//			}
-//			Dataset difference = Maths.subtract(smoothed, truncatedSelfScattering);
-//			double absSummedDifference = Math.abs((double) Maths.multiply(difference, truncatedQ).sum());
-//
-//			fluorDiffs.add(absSummedDifference);
-			
-			
-//			Map<Double, Double> scaleDiff = fluoroVal.call();
-//			scaleDiff.put(scale, absSummedDifference);
-			
-			scaleToDifference.putAll(fluoroVal.call());
+			futureSet.add(ravager.submit(new FluorescenceEvaluator(this, absorptionMaps, scale, calibrationConstant0, nIterations)));
+		
+		// Spin, checking for results
+		while (!futureSet.isEmpty()) {
+			Set<Future<Map<Double, Double>>> doneThisTimeRound = new HashSet<Future<Map<Double, Double>>>();
+			for (Future<Map<Double, Double>> future : futureSet)
+				if (future.isDone()) {
+					try {
+						scaleToDifference.putAll(future.get());
+						doneThisTimeRound.add(future);
+					} catch (Exception e) {
+						// Do nothing!
+						// FIXME Do something!
+					}
+				}
+			futureSet.removeAll(doneThisTimeRound);
 		}
 		
 		double minimalScale = 0;
@@ -703,7 +666,7 @@ public class XPDFCalibration {
 		
 	}
 	
-	class FluorescenceEvaluator {
+	class FluorescenceEvaluator implements Callable<Map<Double, Double>>{
 		
 		XPDFCalibration fluorCalibration;
 		int nIterations;

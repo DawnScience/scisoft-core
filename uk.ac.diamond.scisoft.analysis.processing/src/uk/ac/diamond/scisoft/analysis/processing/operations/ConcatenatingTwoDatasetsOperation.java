@@ -50,11 +50,23 @@ public class ConcatenatingTwoDatasetsOperation extends AbstractOperation<Concate
 		int axis = model.getAxis().getAxis();
 		
 		//get the name of the incoming dataset
-		String dataName = ssm.getDatasetName();
+		String dataName = null;
+		if (model.getDatasetName().isEmpty()) {
+			dataName = ssm.getDatasetName();
+		} else {
+			dataName = model.getDatasetName();
+		}
 		IDataset dataset_new = null;
 		
 		try {
 			dataset_new = LoaderFactory.getDataSet(filePath, dataName, monitor);
+		} catch (NullPointerException e) {
+			// dataName looks invalid
+			if (model.getDatasetName().isEmpty()) {
+				throw new OperationException(this, "Previously used dataset name not found in file");
+			} else {
+				throw new OperationException(this, "Dataset name not found in file");
+			}
 		} catch (Exception e) {
 			logger.error("LoaderFactory.getDataSet exception", e);
 			throw new OperationException(this, e);

@@ -34,13 +34,25 @@ public class ConcatenatingTwoDatasetsModel extends ExternalDataModel {
 		}
 	}
 	
-	@OperationModelField(hint="The axis along which the concatenation will occur", editable = true, label = "Concatenation axis")
+	@OperationModelField(hint="Dataset name (leave empty to use input dataset name", editable = true, label = "Dataset name", fieldPosition = 1)
+	private String datasetName = "";
+	
+	@OperationModelField(hint="The axis along which the concatenation will occur", editable = true, label = "Concatenation axis", fieldPosition = 2)
 	private ConcatenationAxis axis = ConcatenationAxis.AXIS_0;
 	
 	public ConcatenationAxis getAxis() {
 		return axis;
 	}
+	
 	public void setAxis(ConcatenationAxis axis) {
 		firePropertyChange("axis", this.axis, this.axis = axis);
+	}
+	
+	public String getDatasetName() {
+		return datasetName;
+	}
+	
+	public void setDatasetName(String datasetName) {
+		firePropertyChange("datasetName", this.datasetName, this.datasetName = datasetName);
 	}
 }

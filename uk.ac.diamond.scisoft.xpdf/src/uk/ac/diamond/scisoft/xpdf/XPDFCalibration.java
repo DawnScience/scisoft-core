@@ -490,9 +490,9 @@ public class XPDFCalibration {
 	 * 					multiplicative calibration constant.
 	 * @return the calibrated XPDF data
 	 */
-	public Dataset calibrate(int nIterations) {
+	public Dataset calibrate(int nIterations, int nThreads) {
 		if (doFluorescence && doFluorescenceCalibration)
-			calibrateFluorescence(nIterations);
+			calibrateFluorescence(nIterations, nThreads);
 		Dataset absCor = iterateCalibrate(nIterations, true);
 		System.err.println("Fluorescence scale = " + fluorescenceScale);
 		System.err.println("Calibration constant = " + calibrationConstants.getLast());
@@ -569,7 +569,7 @@ public class XPDFCalibration {
 	 * @param nIterations
 	 * 					the number of iterations to use in the calibration.
 	 */
-	private void calibrateFluorescence(int nIterations) {
+	private void calibrateFluorescence(int nIterations, int nThreads) {
 		Map<Double, Double> scaleToDifference = new HashMap<Double, Double>();
 		
 		if (this.sampleFluorescence == null) return;
@@ -590,7 +590,9 @@ public class XPDFCalibration {
 		// Set of all results
 		Set<Future<Map<Double, Double>>> futureSet = new HashSet<Future<Map<Double, Double>>>();
 		
-		ExecutorService ravager = Executors.newSingleThreadExecutor();
+		ExecutorService ravager = 
+//				Executors.newSingleThreadExecutor();
+				Executors.newFixedThreadPool(nThreads);
 		
 		// Submit to the executor	
 		for (double scale = minScale; scale < maxScale; scale += stepScale)
@@ -611,6 +613,8 @@ public class XPDFCalibration {
 				}
 			futureSet.removeAll(doneThisTimeRound);
 		}
+		
+		ravager.shutdown();
 		
 		double minimalScale = 0;
 		double minimalDifference = Double.POSITIVE_INFINITY; 

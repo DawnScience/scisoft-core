@@ -27,6 +27,8 @@ public class XPDFIterateCalibrationConstantModel extends AbstractOperationModel 
 	private double fluorescenceScale = 0.0;
 	@OperationModelField(hint="Regenegerate the absorption maps", label="Regenerate absorption maps")
 	private boolean regenerateAbsorptionMaps = false;
+	@OperationModelField(hint="Number of parallel threads to use for the fluorescence calibration", label = "Parallel threads")
+	private int nThreads = 1;
 	
 	public int getnIterations() {
 		return nIterations;
@@ -74,6 +76,14 @@ public class XPDFIterateCalibrationConstantModel extends AbstractOperationModel 
 
 	public void setRegenerateAbsorptionMaps(boolean regenerateAbsorptionMaps) {
 		firePropertyChange("regenerateAbsorptionMaps", this.regenerateAbsorptionMaps, this.regenerateAbsorptionMaps = regenerateAbsorptionMaps);
+	}
+
+	public int getNThreads() {
+		return nThreads;
+	}
+	
+	public void setNThreads(int nThreads) {
+		firePropertyChange("nThreads", this.nThreads, this.nThreads = nThreads);
 	}
 
 }

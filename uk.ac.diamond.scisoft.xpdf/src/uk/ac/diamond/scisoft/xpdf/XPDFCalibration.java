@@ -12,9 +12,16 @@ package uk.ac.diamond.scisoft.xpdf;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
@@ -105,8 +112,38 @@ public class XPDFCalibration {
 		this.fluorescenceScale = inCal.fluorescenceScale;
 		this.doFluorescence = inCal.doFluorescence;
 		this.dataDimensions = inCal.dataDimensions;
+		this.coords = (inCal.coords != null) ? new XPDFCoordinates(inCal.coords) : null;
+		this.cachedDeTran = new HashMap<XPDFCoordinates, Dataset>();
+		this.cachedPolar = new HashMap<XPDFCoordinates, Dataset>();
+		this.sampleSelfScattering = (inCal.sampleSelfScattering != null) ? inCal.sampleSelfScattering : null;
+
 	}
 
+	public XPDFCalibration getShallowCopy() {
+		XPDFCalibration theCopy = new XPDFCalibration();
+		
+		theCopy.qSquaredIntegrator = this.qSquaredIntegrator;
+		theCopy.selfScatteringDenominator = this.selfScatteringDenominator;
+		theCopy.multipleScatteringCorrection = this.multipleScatteringCorrection;
+		theCopy.nSampleIlluminatedAtoms = this.nSampleIlluminatedAtoms;
+		theCopy.backgroundSubtracted = this.backgroundSubtracted;
+		theCopy.tect = this.tect;
+		theCopy.beamData = this.beamData;
+		theCopy.sampleFluorescence = this.sampleFluorescence;
+		theCopy.fluorescenceScale = this.fluorescenceScale;
+		theCopy.doFluorescence = this.doFluorescence;
+		theCopy.dataDimensions = this.dataDimensions;
+		theCopy.coords = this.coords;
+		theCopy.absorptionMaps = this.absorptionMaps;
+		theCopy.calibrationConstant0 = this.calibrationConstant0;
+		theCopy.sampleSelfScattering = this.sampleSelfScattering;
+		// in this shallow copy, the caches can even be shared
+		theCopy.cachedDeTran = this.cachedDeTran;
+		theCopy.cachedPolar = this.cachedPolar;
+		
+		return theCopy;
+	}
+	
 	/**
 	 * Gets the most recent calibration constant from the list.
 	 * @return the most recent calibration constant.
@@ -453,9 +490,9 @@ public class XPDFCalibration {
 	 * 					multiplicative calibration constant.
 	 * @return the calibrated XPDF data
 	 */
-	public Dataset calibrate(int nIterations) {
+	public Dataset calibrate(int nIterations, int nThreads) {
 		if (doFluorescence && doFluorescenceCalibration)
-			calibrateFluorescence(nIterations);
+			calibrateFluorescence(nIterations, nThreads);
 		Dataset absCor = iterateCalibrate(nIterations, true);
 		System.err.println("Fluorescence scale = " + fluorescenceScale);
 		System.err.println("Calibration constant = " + calibrationConstants.getLast());
@@ -532,10 +569,12 @@ public class XPDFCalibration {
 	 * @param nIterations
 	 * 					the number of iterations to use in the calibration.
 	 */
-	private void calibrateFluorescence(int nIterations) {
+	private void calibrateFluorescence(int nIterations, int nThreads) {
+		Map<Double, Double> scaleToDifference = new HashMap<Double, Double>();
+		
 		if (this.sampleFluorescence == null) return;
 		
-//		final double minScale = 200, maxScale = 5000, nSteps = 20, stepScale = (maxScale-minScale)/nSteps;
+		// Set the fluorescence scales for one and two dimensions
 		final double minScale, maxScale, nSteps;
 		if (this.dataDimensions == 1) {
 			minScale = 1;
@@ -547,11 +586,53 @@ public class XPDFCalibration {
 			nSteps = 20;
 		}
 		final double stepScale = (maxScale-minScale)/nSteps;
-		final double fractionOfRange = 1/5.0;
-		double minimalScale = minScale;
-		double minimalValue = Double.POSITIVE_INFINITY;
+
+		// Set of all results
+		Set<Future<Map<Double, Double>>> futureSet = new HashSet<Future<Map<Double, Double>>>();
 		
-		// 2 D variables that do not need re-creating every time around the loop
+		ExecutorService ravager = 
+//				Executors.newSingleThreadExecutor();
+				Executors.newFixedThreadPool(nThreads);
+		
+		// Submit to the executor	
+		for (double scale = minScale; scale < maxScale; scale += stepScale)
+			futureSet.add(ravager.submit(new FluorescenceEvaluator(this, absorptionMaps, scale, calibrationConstant0, nIterations)));
+		
+		// Spin, checking for results
+		while (!futureSet.isEmpty()) {
+			Set<Future<Map<Double, Double>>> doneThisTimeRound = new HashSet<Future<Map<Double, Double>>>();
+			for (Future<Map<Double, Double>> future : futureSet)
+				if (future.isDone()) {
+					try {
+						scaleToDifference.putAll(future.get());
+						doneThisTimeRound.add(future);
+					} catch (Exception e) {
+						// Do nothing!
+						// FIXME Do something!
+					}
+				}
+			futureSet.removeAll(doneThisTimeRound);
+		}
+		
+		ravager.shutdown();
+		
+		double minimalScale = 0;
+		double minimalDifference = Double.POSITIVE_INFINITY; 
+		// Get the scale with the minimum difference
+		for(Map.Entry<Double, Double> entry : scaleToDifference.entrySet()) {
+			if (entry.getValue() < minimalDifference) {
+				minimalDifference = entry.getValue();
+				minimalScale = entry.getKey();
+			}
+		}
+		this.fluorescenceScale = minimalScale;
+	}
+
+	private double integrateFluorescence(Dataset absCor) {
+		Dataset smoothed, truncatedSelfScattering = new DoubleDataset();
+		final double fractionOfRange = 1/5.0;
+		final int smoothLength = (int) Math.floor(absCor.getSize()*fractionOfRange);
+
 		Dataset truncatedQ = DoubleDataset.createRange(8, 32, 1.6);
 		
 		// Set up the pixel integration information
@@ -566,49 +647,52 @@ public class XPDFCalibration {
 		ILazyDataset mask = AbstractOperationBase.getFirstMask(backgroundSubtracted.get(0));
 		IDataset m = (mask != null) ? mask.getSlice().squeeze() : null;
 
-		List<Double> fluorScales = new ArrayList<Double>(), fluorDiffs = new ArrayList<Double>();
-		for (double scale = minScale; scale < maxScale; scale += stepScale)
-			fluorScales.add(scale);
-//		for (double scale = minScale; scale < maxScale; scale += stepScale) {
-		for (double scale : fluorScales) {
-			this.fluorescenceScale = scale;
-			Dataset absCor = this.iterateCalibrate(nIterations, false);
-			
-			Dataset smoothed, truncatedSelfScattering = new DoubleDataset();
-			final int smoothLength = (int) Math.floor(absCor.getSize()*fractionOfRange);
-			
-			// See how well the processed data matches the target. The output
-			// of this step should be a smoothed version of absCor and the
-			// self-scattering of the sample at the same abscissa values 
-			if (absCor.getShape().length == 1) {
-				// One dimensional version
-				Dataset covolver = Maths.divide(DoubleDataset.ones(smoothLength), smoothLength);
-				smoothed = Signal.convolveForOverlap(absCor, covolver, new int[] {0});
-				truncatedSelfScattering = sampleSelfScattering.getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
-				truncatedQ = coords.getQ().getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
-			} else {
-				List<Dataset> out = PixelIntegration.integrate(absCor, m, lcache);
-				smoothed = out.remove(1);
+		// See how well the processed data matches the target. The output
+		// of this step should be a smoothed version of absCor and the
+		// self-scattering of the sample at the same abscissa values 
+		if (absCor.getShape().length == 1) {
+			// One dimensional version
+			Dataset covolver = Maths.divide(DoubleDataset.ones(smoothLength), smoothLength);
+			smoothed = Signal.convolveForOverlap(absCor, covolver, new int[] {0});
+			truncatedSelfScattering = sampleSelfScattering.getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
+			truncatedQ = coords.getQ().getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
+		} else {
+			List<Dataset> out = PixelIntegration.integrate(absCor, m, lcache);
+			smoothed = out.remove(1);
 
-				out = PixelIntegration.integrate(sampleSelfScattering, m, lcache);
-				truncatedSelfScattering = out.remove(1);
-				
-				//truncatedSelfScattering = InterpolatorUtils.remap1D(sampleSelfScattering, coords.getQ(), truncatedQ);
-			}
-			Dataset difference = Maths.subtract(smoothed, truncatedSelfScattering);
-			double absSummedDifference = Math.abs((double) Maths.multiply(difference, truncatedQ).sum());
-
-			fluorDiffs.add(absSummedDifference);
+			out = PixelIntegration.integrate(sampleSelfScattering, m, lcache);
+			truncatedSelfScattering = out.remove(1);
 			
-			if (absSummedDifference < minimalValue) {
-				minimalScale = scale;
-				minimalValue = absSummedDifference;
-			}
-			
+			//truncatedSelfScattering = InterpolatorUtils.remap1D(sampleSelfScattering, coords.getQ(), truncatedQ);
 		}
-		this.fluorescenceScale = minimalScale;
+		Dataset difference = Maths.subtract(smoothed, truncatedSelfScattering);
+		return Math.abs((double) Maths.multiply(difference, truncatedQ).sum());
+		
 	}
+	
+	class FluorescenceEvaluator implements Callable<Map<Double, Double>>{
+		
+		XPDFCalibration fluorCalibration;
+		int nIterations;
+		double scale;
+		
+		public FluorescenceEvaluator(XPDFCalibration source, XPDFAbsorptionMaps absorptionMaps, double scale, double calCon0, int nIterations) {
+			fluorCalibration = source.getShallowCopy();
+			fluorCalibration.setFixedFluorescence(scale);
+			this.scale = scale;
+			this.nIterations = nIterations;
 
+		}
+		
+		public Map<Double, Double> call() {
+			Dataset absCor = fluorCalibration.iterateCalibrate(nIterations, false);
+			double difference = fluorCalibration.integrateFluorescence(absCor);
+			Map<Double, Double> diffMap = new HashMap<Double, Double>(1);
+			diffMap.put(scale, difference);
+			return diffMap;
+		}
+	}
+	
 	/**
 	 * Sets whether the calibration should estimate and subtract the fluorescence from the data. 
 	 * @param doIt

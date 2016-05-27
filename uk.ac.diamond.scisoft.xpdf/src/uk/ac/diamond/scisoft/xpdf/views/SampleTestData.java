@@ -139,6 +139,8 @@ class SampleTestData {
 			// Trigonal, 90°, 90°, 120°
 			phase.addComment("Crystalline silica,");
 			phase.addComment("also known as quartz");
+			phase.addAtom(new XPDFAtom("si", 14, 1.0, new double[] {0.46970, 0.00000, 0.33333}, "a"));
+			phase.addAtom(new XPDFAtom("ox", 8, 1.0, new double[] {0.41330, 0.26720, 0.77550}, "c")); // coordinates incorrect
 			break;
 		}
 		case ("Crown Glass"): {

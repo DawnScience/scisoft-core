@@ -375,7 +375,7 @@ class XPDFSampleParameters {
 	 */
 	public NXsample getNXsample(NexusFileBuilder builder) {
 		
-		if (!isSample()) return null;
+//		if (!isSample()) return null;
 		
 		NexusNodeFactory noder = builder.getNodeFactory();
 		NXsample sample = noder.createNXsample();
@@ -400,25 +400,28 @@ class XPDFSampleParameters {
 		sample.setComponent(new StringDataset(phases.stream().map(a -> a.getName()).collect(Collectors.toList()).toArray(new String[nComp]), new int[]{nComp}));
 		sample.setChemical_formula(new StringDataset(phases.stream().map(a -> a.getComposition().getHallNotation(false)).collect(Collectors.toList()).toArray(new String[nComp]), new int[]{nComp, 1}));
 		sample.setField("chemical_formula_weight", new DoubleDataset(ArrayUtils.toPrimitive(phases.stream().map(a -> a.getComposition().getFormulaMass()).collect(Collectors.toList()).toArray(new Double[nComp])), new int[]{nComp}));
+		
+		// Only samples are crystalline, so only they have unit cell parameters
+		if (isSample()) {
 		// TODO: z_formula_per_unit_cell
 		// Unit cell parameters; is there a way to make an array of arrays into a Dataset?
-		double [] unitCellParams = new double[nComp * 2*nDim];
-		for (int i = 0; i < phases.size(); i++)
-			for (int j = 0; j < nDim; j++) {
-				unitCellParams[i * 2*nDim + j] = phases.get(i).getUnitCellLength(j);
-				unitCellParams[i * 2*nDim + j + nDim] = phases.get(i).getUnitCellAngle(j);
-			}
-		sample.setUnit_cell(new DoubleDataset(unitCellParams, new int[]{nComp, 2*nDim}));
-		String aa = "angstrom", oo = "degrees";
-		sample.setAttribute("unit_cell", "units", new StringDataset( new String[]{aa, aa, aa, oo, oo, oo}, new int[]{2*nDim}));
-		sample.setAttribute("unit_cell", "signal", 0);
-		sample.setUnit_cell_volume(new DoubleDataset(ArrayUtils.toPrimitive(phases.stream().map(a -> a.getUnitCellVolume()).collect(Collectors.toList()).toArray(new Double[nComp])), new int[]{nComp}));
-		sample.setAttribute("unit_cell_volume", "units", aa+"³");
-		sample.setUnit_cell_class(new StringDataset(phases.stream().map(a -> a.getCrystalSystem().getName()).collect(Collectors.toList()).toArray(new String[nComp]), new int[]{nComp}));
-		sample.setUnit_cell_group(new StringDataset(phases.stream().map(a -> a.getSpaceGroup().getNumber() + ": " + a.getSpaceGroup().getName()).collect(Collectors.toList()).toArray(new String[nComp]), new int[]{nComp}));
-		
-		// TODO: Crystal structure
-		
+			double [] unitCellParams = new double[nComp * 2*nDim];
+			for (int i = 0; i < phases.size(); i++)
+				for (int j = 0; j < nDim; j++) {
+					unitCellParams[i * 2*nDim + j] = phases.get(i).getUnitCellLength(j);
+					unitCellParams[i * 2*nDim + j + nDim] = phases.get(i).getUnitCellAngle(j);
+				}
+			sample.setUnit_cell(new DoubleDataset(unitCellParams, new int[]{nComp, 2*nDim}));
+			String aa = "angstrom", oo = "degrees";
+			sample.setAttribute("unit_cell", "units", new StringDataset( new String[]{aa, aa, aa, oo, oo, oo}, new int[]{2*nDim}));
+			sample.setAttribute("unit_cell", "signal", 0);
+			sample.setUnit_cell_volume(new DoubleDataset(ArrayUtils.toPrimitive(phases.stream().map(a -> a.getUnitCellVolume()).collect(Collectors.toList()).toArray(new Double[nComp])), new int[]{nComp}));
+			sample.setAttribute("unit_cell_volume", "units", aa+"³");
+			sample.setUnit_cell_class(new StringDataset(phases.stream().map(a -> a.getCrystalSystem().getName()).collect(Collectors.toList()).toArray(new String[nComp]), new int[]{nComp}));
+			sample.setUnit_cell_group(new StringDataset(phases.stream().map(a -> a.getSpaceGroup().getNumber() + ": " + a.getSpaceGroup().getName()).collect(Collectors.toList()).toArray(new String[nComp]), new int[]{nComp}));
+
+			// TODO: Crystal structure
+		}
 		// Densities and volume fractions and concentrations
 		DoubleDataset theoreticalDensities =  new DoubleDataset(ArrayUtils.toPrimitive(phases.stream().map(a -> a.getDensity()).collect(Collectors.toList()).toArray(new Double[nComp])), new int[]{nComp});
 		sample.setField("theoretical_density", theoreticalDensities);

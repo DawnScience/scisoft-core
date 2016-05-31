@@ -22,12 +22,14 @@ import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXsample;
+import org.eclipse.dawnsci.nexus.NXshape;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
 
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentForm;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentGeometry;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentPlate;
 import uk.ac.diamond.scisoft.xpdf.XPDFComposition;
 import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
@@ -450,8 +452,20 @@ class XPDFSampleParameters {
 		{
 			// TODO: Theoretical PDF not yet calculable 
 		}
-		{
-			// Container not yet defined
+		// add a shape to the sample, if the geometry is not null.
+		if (component.getForm().getGeom() != null) {
+			NXshape shape = noder.createNXshape();
+			XPDFComponentGeometry geom = component.getForm().getGeom();
+			switch (geom.getShape().toLowerCase()) {
+			case ("cylinder") :
+				shape.setShapeScalar("nxcylinder");
+			break;
+			case ("plate") :
+				shape.setShapeScalar("nxbox");
+			break;
+			}
+			
+			sample.addGroupNode("shape", shape);
 		}
 			// Dark frame added during data collection
 			// Calibration added during data collection (at least of the calibration)

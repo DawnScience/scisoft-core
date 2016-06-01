@@ -28,7 +28,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl;
-import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationTransformer;
+import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationServiceHolder;
 import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
@@ -61,7 +61,7 @@ public class OperationsTest {
 		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
 		OperationRunnerImpl.setRunner(ExecutionType.GRAPH,    new GraphRunner());
 	
-		OperationTransformer.setOperationService(service);
+		OperationServiceHolder.setOperationService(service);
 	}
 	
 	

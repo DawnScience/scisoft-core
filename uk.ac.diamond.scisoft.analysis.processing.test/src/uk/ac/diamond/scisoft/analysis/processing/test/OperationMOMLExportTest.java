@@ -15,7 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
-import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationTransformer;
+import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationServiceHolder;
 import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphBuilder;
 import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationExporterImpl;
@@ -48,7 +48,7 @@ public class OperationMOMLExportTest {
 		OperationRunnerImpl.setRunner(ExecutionType.GRAPH,    new GraphRunner());
 		OperationExporterImpl.setRunner(ExecutionType.GRAPH,  new GraphBuilder());
 		
-		OperationTransformer.setOperationService(service);
+		OperationServiceHolder.setOperationService(service);
 	
 		final File output = File.createTempFile("data", ".nxs");
 		output.getParentFile().mkdirs();

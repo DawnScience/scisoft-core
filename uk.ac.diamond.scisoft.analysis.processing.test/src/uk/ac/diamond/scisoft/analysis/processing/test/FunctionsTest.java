@@ -38,7 +38,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
-import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationTransformer;
+import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationServiceHolder;
 import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.operations.FittingModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.FunctionModel;
@@ -65,7 +65,7 @@ public class FunctionsTest {
 		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
 		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
 		OperationRunnerImpl.setRunner(ExecutionType.GRAPH,    new GraphRunner());
-		OperationTransformer.setOperationService(service);
+		OperationServiceHolder.setOperationService(service);
 		
 		/*FunctionFactory has been set up as an OSGI service so need to register
 		 *function before it is called (or make this a JUnit PluginTest.

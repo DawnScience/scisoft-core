@@ -12,11 +12,9 @@ import org.dawb.passerelle.common.actors.AbstractDataMessageTransformer;
 import org.dawb.passerelle.common.message.MessageUtils;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
-import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.message.DataMessageComponent;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
-import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
@@ -27,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NameDuplicationException;
-import uk.ac.diamond.scisoft.analysis.processing.actor.Activator;
 
 import com.isencia.passerelle.actor.ProcessingException;
 import com.isencia.passerelle.util.ptolemy.IAvailableChoices;
@@ -44,18 +41,6 @@ public class OperationTransformer extends AbstractDataMessageTransformer impleme
 	
 	private static final Logger logger = LoggerFactory.getLogger(OperationTransformer.class);
 
-	private static IOperationService oservice;
-	public static void setOperationService(IOperationService s) {
-		oservice = s;
-	}
-	// Because actors can be instantiated outside OSGI by ptolemy,
-	// it can be that oservice is not set
-	private static IOperationService getOperationService() {
-		if (oservice==null) {
-			oservice = (IOperationService)Activator.getService(IOperationService.class);
-		}
-		return oservice;
-	}
 	/**
 	 * 
 	 */
@@ -81,7 +66,7 @@ public class OperationTransformer extends AbstractDataMessageTransformer impleme
 			@Override
 			public String[] getChoices() {
                 try {
-                	Collection<String> ops = getOperationService().getRegisteredOperations();
+                	Collection<String> ops = OperationServiceHolder.getOperationService().getRegisteredOperations();
                 	return ops.toArray(new String[ops.size()]);
                 } catch (Exception ne) {
                 	return new String[]{"Please select a Data File"};
@@ -90,9 +75,9 @@ public class OperationTransformer extends AbstractDataMessageTransformer impleme
 			@Override
 			public Map<String,String> getVisibleChoices() {
                 try {
-                  	Collection<String>  ops = getOperationService().getRegisteredOperations();
+                  	Collection<String>  ops = OperationServiceHolder.getOperationService().getRegisteredOperations();
                 	Map<String, String> ret = new HashMap<String, String>(ops.size());
-                	for (String id : ops) ret.put(id, getOperationService().getName(id));
+                	for (String id : ops) ret.put(id, OperationServiceHolder.getOperationService().getName(id));
                 	return ret;
                } catch (Exception ne) {
                 	return null;
@@ -112,7 +97,7 @@ public class OperationTransformer extends AbstractDataMessageTransformer impleme
 	@Override
 	public Class<? extends IOperationModel> getModelClass() throws Exception {
 		final String opId = operationId.getExpression();
-		if (opId !=null) return getOperationService().getModelClass(opId);
+		if (opId !=null) return OperationServiceHolder.getOperationService().getModelClass(opId);
 		return null;
  	}
 
@@ -206,8 +191,8 @@ public class OperationTransformer extends AbstractDataMessageTransformer impleme
 	}
 
 	private IOperation<? extends IOperationModel, ? extends OperationData> createOperation() throws Exception {
-        IOperation<IOperationModel, OperationData> op      = (IOperation<IOperationModel, OperationData>)getOperationService().create(operationId.getExpression());
-        IOperationModel omod = model.getValue(getOperationService().getModelClass(op.getId()));
+        IOperation<IOperationModel, OperationData> op      = (IOperation<IOperationModel, OperationData>)OperationServiceHolder.getOperationService().create(operationId.getExpression());
+        IOperationModel omod = model.getValue(OperationServiceHolder.getOperationService().getModelClass(op.getId()));
         op.setModel(omod);
         return op;
 	}

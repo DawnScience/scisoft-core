@@ -43,6 +43,7 @@ import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusUtils;
 
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionCalibrationReader;
+import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamTrace;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentGeometry;
@@ -93,15 +94,22 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 				readAndAddSampleInfo(xpdfMeta, tree, ssm.getParent());
 				readDataParameters(xpdfMeta, tree, ssm.getParent());
 			}
-			// beam details
 
-			// TODO: container details
-			if (model.isReadContainerInfo()) {
+			// container details and container data
+			if (model.isReadContainerInfo() || model.isReadContainerData()) {
 				readAndAddContainerInfo(xpdfMeta, tree, ssm.getParent());
 			}
-			// TODO: empty container data
-			// TODO: empty beam data
 
+			// empty beam data
+			if (model.isReadBeamData()) {
+				readAndAddBeamData(xpdfMeta, tree, ssm.getParent());
+			}
+			
+			// beam information (size, wavelength)
+			if (model.isReadBeamInfo()) {
+				readAndAddBeamInfo(xpdfMeta, tree, ssm.getParent());
+			}
+			
 			// detector physical details
 			if (model.isReadDetectorInfo()) {
 				readAndAddDetector(xpdfMeta, tree, ssm.getParent());
@@ -215,6 +223,79 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 			// Can't close the file? Oh well, never mind
 		}
 	}
+
+	/**
+	 * Adds the empty beam data.
+	 * <p>
+	 * By recursing through all the containers, following the 
+	 * 'inside_of_file_name' values, this method gets the data associated with
+	 * the outermost NeXus file. This is added to the XPDF metadata as the
+	 * empty beam data.
+	 * @param xpdfMeta
+	 * 				metadata object to add the data to
+	 * @param tree
+	 * 				the Nexus tree of the sample data
+	 * @param parent
+	 * 				sample data
+	 */
+	private void readAndAddBeamData(XPDFMetadataImpl xpdfMeta, Tree tree,
+			ILazyDataset parent) {
+
+		NexusFile beamFile, componentFile = null;
+		Tree componentTree = tree, beamTree;
+		while(true){
+			GroupNode containerFileNameNode = getFirstSomething(componentTree, "NXcontainer");
+			if (containerFileNameNode == null) {
+				// No NXcontainer found. This must be the outermost container, the I15-1 beam
+				beamTree = componentTree;
+				beamFile = componentFile;
+				break;
+			}
+			String componentFileName = containerFileNameNode.getDataNode("inside_of_file_name").getString();
+
+			// Now open the relevant file, and get the tree
+			try {
+				componentFile = NexusFileHDF5.openNexusFileReadOnly(componentFileName);
+				componentTree = NexusUtils.loadNexusTree(componentFile);
+			} catch (Exception e1) {
+				throw new OperationException(this, e1);
+			}
+			try{
+				if (componentFile != null) componentFile.close();
+			} catch (Exception e1) {
+				throw new OperationException(this, e1);
+			}
+			if (componentTree == null) throw new OperationException(this, "Error constructing container file tree from " + componentFileName);
+
+		}
+
+		// Empty beam data
+		XPDFBeamTrace containerTrace = traceFromTree(beamTree, true);
+		
+		xpdfMeta.setEmptyTrace(containerTrace);
+		
+		try {
+			if (beamFile != null) beamFile.close();
+		} catch (NexusException nE) {
+			// Can't close the file? Oh well, never mind
+		}
+	}
+	
+	private void readAndAddBeamInfo(XPDFMetadataImpl xpdfMeta, Tree tree, ILazyDataset parent) {
+		// Beam wavelength from the beam
+		NXbeam beamNode = getFirstSomething(tree, "NXbeam");
+		
+		XPDFBeamData beam = new XPDFBeamData();
+		beam.setBeamWavelength(beamNode.getIncident_wavelengthScalar());
+
+		// beam size from the slits
+		// TODO: get from the NeXus
+		beam.setBeamHeight(0.07);
+		beam.setBeamWidth(0.07);
+		
+		xpdfMeta.setBeamData(beam);
+	}
+	
 	
 	// Get the mask
 	private void readAndAddDetectorCalibration(IDataset input, String filePath,
@@ -304,6 +385,7 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 	private <T extends NXobject> T getFirstSomething(Tree tree, String NXclass) {
 
 		Map<String, NodeLink> nodeMap = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getSomething(NXclass), true, null);
+		if (nodeMap.size() == 0) return null;
 		GroupNode node = (GroupNode) nodeMap.values().toArray(
 				new NodeLink[nodeMap.size()])[0].getDestination();
 		// The cast has already been checked, since NXobject is a derived class of GroupNode

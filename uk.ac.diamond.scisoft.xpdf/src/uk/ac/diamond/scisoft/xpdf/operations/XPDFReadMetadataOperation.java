@@ -25,19 +25,28 @@ import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.metadata.MaskMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
 import org.eclipse.dawnsci.nexus.NXbeam;
+import org.eclipse.dawnsci.nexus.NXcontainer;
 import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXdetector;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NXsample;
+import org.eclipse.dawnsci.nexus.NXshape;
+import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusUtils;
 
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionCalibrationReader;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamTrace;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentGeometry;
+import uk.ac.diamond.scisoft.xpdf.XPDFComponentPlate;
 import uk.ac.diamond.scisoft.xpdf.XPDFDetector;
 import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
@@ -85,6 +94,9 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 			// beam details
 
 			// TODO: container details
+			if (model.isReadContainerInfo()) {
+				readAndAddContainerInfo(xpdfMeta, tree, ssm.getParent());
+			}
 			// TODO: empty container data
 			// TODO: empty beam data
 
@@ -111,18 +123,94 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 	}
 
 	private void readDataParameters(XPDFMetadataImpl xpdfMeta, Tree tree, ILazyDataset parent) {
+		XPDFBeamTrace sampleIntegration = traceFromTree(tree, false);
+		xpdfMeta.setSampleTrace(sampleIntegration);
+	}
+	
+	private XPDFBeamTrace traceFromTree(Tree tree, boolean addData) {
 		// Get the first NXdata from the tree
 		NXdata data = getFirstSomething(tree, "NXdata");
 		double countTime = data.getDouble("count_time");
 		
-		XPDFBeamTrace sampleIntegration = new XPDFBeamTrace();
-		sampleIntegration.setAxisAngle(true);
-		sampleIntegration.setCountingTime(countTime);
-		sampleIntegration.setMonitorRelativeFlux(1.0); // FIXME: No value yet in the NeXus file, default to 1
+		XPDFBeamTrace componentIntegration = new XPDFBeamTrace();
+		componentIntegration.setAxisAngle(true);
+		componentIntegration.setCountingTime(countTime);
+		componentIntegration.setMonitorRelativeFlux(1.0); // FIXME: No value yet in the NeXus file, default to 1
+
+		// Get the data from the tree, and add it to the BeamTrace
+		if (addData) {
+			Dataset dataset = DatasetUtils.convertToDataset(data.getData());
+			componentIntegration.setTrace(dataset);
+		}
 		
-		xpdfMeta.setSampleTrace(sampleIntegration);
+		return componentIntegration;
 	}
 	
+	/**
+	 * Gets the container metadata.
+	 * <p>
+	 * Using the inside_of_file_name attribute in the container data, the
+	 * container XPDFTargetComponent and XPDFBeamTrace are added to the XPDFMetadata. 
+	 * @param xpdfMeta
+	 * 				metadata object to add the container to
+	 * @param tree
+	 * 			the tree containing the location of the container file
+	 * @param parent
+	 * 				the dataset of the sample
+	 */
+	private void readAndAddContainerInfo(XPDFMetadataImpl xpdfMeta, Tree tree,
+			ILazyDataset parent) {
+		
+		GroupNode containerFileNameNode = getFirstSomething(tree, "NXcontainer");
+		String containerFileName = containerFileNameNode.getAttribute("inside_of_file_name").getFirstElement();
+		
+		// Now open the relevant file, and get the tree
+		NexusFile containerFile;
+		Tree containerTree;
+		try {
+			containerFile = NexusFileHDF5.openNexusFileReadOnly(containerFileName);
+			containerTree = NexusUtils.loadNexusTree(containerFile);
+		} catch (Exception e1) {
+			throw new OperationException(this, e1);
+		}
+		if (tree == null) throw new OperationException(this, "Error constructing container file tree from " + containerFileName);
+
+		// Component details (material, density &c.) of the container
+		NXsample nxampleContainer = getNXsampleFromTree(null, containerTree, null);
+		XPDFTargetComponent containerCompo = new XPDFTargetComponent(nxampleContainer, null);
+		containerCompo.setSample(false);
+		
+		// Shape of the container
+		NXcontainer container = nxampleContainer.getChild("container", NXcontainer.class);
+		NXshape shape = container.getChild("shape", NXshape.class);
+		XPDFComponentGeometry geom;
+		
+		// TODO: should this be moved to a factory class?
+		if (shape.getShapeScalar().toLowerCase() == "nxcylinder") {
+			geom = new XPDFComponentCylinder();
+			geom.setStreamality(true, true);
+			Dataset cylinderParameters = DatasetUtils.convertToDataset(shape.getSize());
+			double[] radii = new double[2];
+			radii[0] = cylinderParameters.getDouble(0, 0);
+			radii[1] = cylinderParameters.getDouble(1, 0);
+			geom.setDistances(radii[0], radii[1]);
+		} else { //if (shape.getShapeScalar().toLowerCase() == "nxbox") {
+			geom = new XPDFComponentPlate();
+		}
+		
+		containerCompo.getForm().setGeom(geom);
+		xpdfMeta.addContainer(containerCompo);
+		
+		// Container data
+		XPDFBeamTrace containerTrace = traceFromTree(containerTree, true);
+		xpdfMeta.setContainerTrace(containerCompo, containerTrace);		
+
+		try {
+			containerFile.close();
+		} catch (NexusException nE) {
+			// Can't close the file? Oh well, never mind
+		}
+	}
 	
 	// Get the mask
 	private void readAndAddDetectorCalibration(IDataset input, String filePath,

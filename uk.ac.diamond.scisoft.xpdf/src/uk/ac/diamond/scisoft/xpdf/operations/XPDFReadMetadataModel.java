@@ -8,15 +8,15 @@ public class XPDFReadMetadataModel extends AbstractOperationModel {
 	@OperationModelField(label = "Read sample information")
 	private boolean readSampleInfo = true;
 	@OperationModelField(label = "Read container information", enableif = "true")
-	private boolean readContainerInfo = false;
+	private boolean readContainerInfo = true;
 	@OperationModelField(label = "Read container data", enableif = "true")
-	private boolean readContainerData = false;
+	private boolean readContainerData = true;
 	@OperationModelField(label = "Read beam information")
-	private boolean readBeamInfo = false;
-	@OperationModelField(label = "Read beam data", enableif = "false")
-	private boolean readBeamData = false;
+	private boolean readBeamInfo = true;
+	@OperationModelField(label = "Read beam data", enableif = "true")
+	private boolean readBeamData = true;
 	@OperationModelField(label = "Read detector information")
-	private boolean readDetectorInfo = false;
+	private boolean readDetectorInfo = true;
 	@OperationModelField(label = "Read detector calibration")
 	private boolean readDetectorCal = true;
 	@OperationModelField(label = "Read mask")

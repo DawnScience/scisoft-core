@@ -141,7 +141,8 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 
 		// Get the data from the tree, and add it to the BeamTrace
 		if (addData) {
-			Dataset dataset = DatasetUtils.convertToDataset(data.getData());
+			ILazyDataset iLazyDataset = data.getDataNode("data").getDataset();
+			Dataset dataset = DatasetUtils.sliceAndConvertLazyDataset(iLazyDataset);
 			componentIntegration.setTrace(dataset);
 		}
 		

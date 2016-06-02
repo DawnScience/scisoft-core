@@ -45,6 +45,8 @@ _extra_suffices = { 'jpg' : ['jpeg'], 'tif' : ['tiff'], 'dat' : ['srs', 'dls'], 
 
 
 def _findsuffix(name, formats):
+    '''Parse name to find extension and match with loaders or fallback to those in extra suffices dict
+    '''
     bits = name.split('.')
     if len(bits) > 1:
         suffix = bits[-1].lower()
@@ -104,8 +106,16 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, war
             lformats.extend(_toList(format))
         
     if lformats is None:
-        # parse name to find extension and match with loader
         lformats = _findsuffix(name, _iformats)
+    else:
+        # reorder if suffix is known
+        sformats = _findsuffix(name, lformats)
+        if sformats:
+            tformats = [sf for sf in sformats if sf in lformats]
+            for lf in lformats:
+                if lf not in tformats:
+                    tformats.append(lf)
+            lformats = tformats
 
     if lformats: # remove unsupported
         for f in lformats:

@@ -186,10 +186,11 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 		// Shape of the container
 		NXcontainer container = nxampleContainer.getChild("container", NXcontainer.class);
 		NXshape shape = container.getChild("shape", NXshape.class);
-		XPDFComponentGeometry geom;
+		XPDFComponentGeometry geom = null;
 		
 		// TODO: should this be moved to a factory class?
-		if (shape.getShapeScalar().toLowerCase() == "nxcylinder") {
+		String shapeName = shape.getShapeScalar();
+		if ("nxcylinder".equalsIgnoreCase(shapeName)) {
 			geom = new XPDFComponentCylinder();
 			geom.setStreamality(true, true);
 			Dataset cylinderParameters = DatasetUtils.convertToDataset(shape.getSize());
@@ -197,7 +198,7 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 			radii[0] = cylinderParameters.getDouble(0, 0);
 			radii[1] = cylinderParameters.getDouble(1, 0);
 			geom.setDistances(radii[0], radii[1]);
-		} else { //if (shape.getShapeScalar().toLowerCase() == "nxbox") {
+		} else if ("nxbox".equalsIgnoreCase(shapeName)) {
 			geom = new XPDFComponentPlate();
 		}
 		

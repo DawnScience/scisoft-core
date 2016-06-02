@@ -79,7 +79,9 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 			try {
 //				dh = LoaderFactory.getData(ssm.getFilePath());
 //				tree = dh.getTree();
-				tree = NexusUtils.loadNexusTree(NexusFileHDF5.openNexusFileReadOnly(ssm.getFilePath()));
+				String nexusFilePath = ssm.getFilePath();
+				NexusFile nexusFile = NexusFileHDF5.openNexusFileReadOnly(nexusFilePath);
+				tree = NexusUtils.loadNexusTree(nexusFile);
 			} catch (Exception e1) {
 				throw new OperationException(this, e1);
 			}
@@ -162,7 +164,7 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 			ILazyDataset parent) {
 		
 		GroupNode containerFileNameNode = getFirstSomething(tree, "NXcontainer");
-		String containerFileName = containerFileNameNode.getAttribute("inside_of_file_name").getFirstElement();
+		String containerFileName = containerFileNameNode.getDataNode("inside_of_file_name").getString();//getAttribute("inside_of_file_name").getFirstElement();
 		
 		// Now open the relevant file, and get the tree
 		NexusFile containerFile;

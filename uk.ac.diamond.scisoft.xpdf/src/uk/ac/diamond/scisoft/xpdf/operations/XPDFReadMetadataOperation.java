@@ -35,9 +35,11 @@ import org.eclipse.dawnsci.nexus.NXbeam;
 import org.eclipse.dawnsci.nexus.NXcontainer;
 import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXdetector;
+import org.eclipse.dawnsci.nexus.NXinstrument;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NXshape;
+import org.eclipse.dawnsci.nexus.NXslit;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusUtils;
@@ -289,9 +291,10 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 		beam.setBeamWavelength(beamNode.getIncident_wavelengthScalar());
 
 		// beam size from the slits
-		// TODO: get from the NeXus
-		beam.setBeamHeight(0.07);
-		beam.setBeamWidth(0.07);
+		// Get the beam_defining aperture in the experimental hutch, as part of the instrument
+		NXslit definer = (NXslit) tree.getGroupNode().getGroupNode("entry1").getGroupNode("instrument").getGroupNode("experimental_hutch").getGroupNode("beam_defining_aperture");
+		beam.setBeamWidth((double) definer.getX_gapScalar());
+		beam.setBeamHeight((double) definer.getY_gapScalar());
 		
 		xpdfMeta.setBeamData(beam);
 	}

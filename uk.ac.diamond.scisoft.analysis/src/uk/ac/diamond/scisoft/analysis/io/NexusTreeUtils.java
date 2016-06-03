@@ -498,10 +498,15 @@ public class NexusTreeUtils {
 				logger.error("Axis '{}' is missing for '{}'", a, signal);
 				return false;
 			}
-
-			addAxis(gn, a, rank, shape, axes);
+			try {
+				addAxis(gn, a, rank, shape, axes);
+			} catch (IllegalArgumentException e) {
+				logger.warn("Ignoring axis '{}' for '{}': {}", a, signal, e.getMessage());
+			}
 		}
 
+		boolean foundSuffixedUncertainties = false;
+		
 		// Add other datasets that have _indices attributes too
 		Iterator<String> it = gn.getAttributeNameIterator();
 		while (it.hasNext()) {
@@ -531,6 +536,7 @@ public class NexusTreeUtils {
 					DataNode e = gn.getDataNode(uncertAttr.getFirstElement());
 					if (Arrays.equals(d.getDataset().getShape(), e.getDataset().getShape())){
 						d.getDataset().setError(e.getDataset());
+						foundSuffixedUncertainties = true;
 					} else {
 						logger.warn("Dataset '{}' and error'{}' have incompatible shapes", aName, uncertAttr.getFirstElement());
 					}
@@ -541,6 +547,33 @@ public class NexusTreeUtils {
 
 		}
 
+		// Try adding any dataset named 'errors' to the dataset with the signal
+		if (!foundSuffixedUncertainties) {
+			
+			// Get the first dataset marked as a signal. Do this by looping through the attributes again.
+			it = gn.getAttributeNameIterator();
+			String signalName = "";
+			while (it.hasNext()) {
+				String aName = it.next();
+				if (NX_SIGNAL.equalsIgnoreCase(aName)) 
+					signalName = gn.getAttribute(aName).getFirstElement();
+			}
+			DataNode signalNode = gn.getDataNode(signalName);
+			
+			// Check for a Dataset named as NX_ERRORS
+			String[] uncertaintyNames = new String[] {NX_ERRORS};
+			DataNode uncertaintyNode = null;
+			for (String uncertainName : uncertaintyNames) {
+				uncertaintyNode = gn.getDataNode(uncertainName);
+				if (uncertaintyNode != null) break;
+			}
+			// Found a valid-looking uncertainty DataNode? As well as a valid
+			// signal? Then add the uncertainty to the signal.
+			if (uncertaintyNode != null && signalNode != null) {
+				signalNode.getDataset().setError(uncertaintyNode.getDataset());
+			}
+		}
+		
 		List<ILazyDataset> axisList = new ArrayList<ILazyDataset>();
 		AxesMetadata amd = new AxesMetadataImpl(rank);
 		for (int i = 0; i < rank; i++) {

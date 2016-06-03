@@ -379,8 +379,8 @@ class XPDFSampleParameters {
 		
 //		if (!isSample()) return null;
 		
-		NexusNodeFactory noder = builder.getNodeFactory();
-		NXsample sample = noder.createNXsample();
+//		NexusNodeFactory noder = NexusNodeFactory;
+		NXsample sample = NexusNodeFactory.createNXsample();
 		NXentry sampleEntry;
 		try {
 			sampleEntry = builder.newEntry("entry1").getNXentry();
@@ -454,7 +454,7 @@ class XPDFSampleParameters {
 		}
 		// add a shape to the sample, if the geometry is not null.
 		if (component.getForm().getGeom() != null) {
-			NXshape shape = noder.createNXshape();
+			NXshape shape = NexusNodeFactory.createNXshape();
 			XPDFComponentGeometry geom = component.getForm().getGeom();
 			switch (geom.getShape().toLowerCase()) {
 			case ("cylinder") :

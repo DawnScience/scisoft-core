@@ -1,2 +1,3 @@
-export BUILDERS_DOCUMENTATION ?= $(shell cd ../../../../; pwd | sed 's/\(.*\)_git/\1/')/builders.dawn/documentation
-include $(BUILDERS_DOCUMENTATION)/common/MakefileCommon
+# need to add style files that are missing from texlive-2007.60 for sphinx 1.4.1
+export TEXINPUTS=$(shell pwd)/source:
+include MakefileOriginal

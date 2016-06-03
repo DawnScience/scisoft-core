@@ -146,13 +146,13 @@ def clear(name=None):
 _FILE_TYPES = {"SVG File":("svg",), "Postscript File":("ps", "eps"),
                "PNG/JPEG File":("png", "jpg", "jpeg")}
 
-def export(name=None, format=None, savepath=None):
+def export(path=None, format=None, name=None):
     '''Export plot to svg, png, jpg, eps, ps
 
     Argument:
-    name -- name of plot view to use (if None, use default name)
+    path -- full path and filename of the file to export to (if none, the filename will be 'exported.' + format)
     format -- format of the file to export to: can be 'svg', 'png', 'jpg', 'eps' or 'ps' (if None, svg is used by default)
-    savepath -- full path and filename of the file to export to (if none, the filename will be 'exported.' + format)
+    name -- name of plot view to use (if None, use default name)
     '''
     if name is None:
         name = _PVNAME
@@ -167,10 +167,10 @@ def export(name=None, format=None, savepath=None):
             break
     if not eformat:
         raise ValueError, "format '%s' is not known" % format
-    if savepath is None:
-        savepath = "exported." + format
+    if path is None:
+        path = "exported." + format
 
-    _plot_export(name, eformat, savepath)
+    _plot_export(name, eformat, path)
 
 '''
 Store a global list of x and y axes names in a per-horizontal/vertical dictionary per plot name

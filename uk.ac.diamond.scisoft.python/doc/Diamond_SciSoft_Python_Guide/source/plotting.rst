@@ -123,6 +123,16 @@ values in the plotted image or surface to the different colours.
 
 .. figure:: images/histogram.png
 
+Plots can be saved to a file::
+
+   dnp.plot.export(path, format, name)
+
+where ``path`` is the file name and path, ``format`` can be "svg" for Scalable
+Vector Graphics (default, if not specified), "png" for Portable Network Graphics,
+"jpeg" or "jpg" for JPEG format, "eps" or "ps" for (encapsulated) PostScript, and
+``name`` is the plot view name. These arguments are all optional and by default,
+the plot in "Plot 1" is saved as "exported.svg".
+
 Finally, a plot view can be cleared::
 
    dnp.plot.clear()

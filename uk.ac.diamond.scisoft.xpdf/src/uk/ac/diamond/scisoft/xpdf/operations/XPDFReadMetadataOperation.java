@@ -195,7 +195,7 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 		
 		// Shape of the container
 		NXcontainer container = nxampleContainer.getChild("container", NXcontainer.class);
-		NXshape shape = container.getChild("shape", NXshape.class);
+		NXshape shape = container.getShape();
 		XPDFComponentGeometry geom = null;
 		
 		// TODO: should this be moved to a factory class?

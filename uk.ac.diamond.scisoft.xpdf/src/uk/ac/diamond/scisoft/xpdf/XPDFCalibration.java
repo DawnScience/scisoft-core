@@ -582,52 +582,119 @@ public class XPDFCalibration {
 			nSteps = 100;
 		} else {
 			minScale = 1;
-			maxScale = 501;
+			maxScale = 601;
 			nSteps = 20;
 		}
 		final double stepScale = (maxScale-minScale)/nSteps;
 
-		// Set of all results
-		Set<Future<Map<Double, Double>>> futureSet = new HashSet<Future<Map<Double, Double>>>();
+		// Old gridded code
+		if (!true) {
+
+			// Set of all results
+			Set<Future<Map<Double, Double>>> futureSet = new HashSet<Future<Map<Double, Double>>>();
+
+			ExecutorService ravager = 
+					//				Executors.newSingleThreadExecutor();
+					Executors.newFixedThreadPool(nThreads);
+
 		
-		ExecutorService ravager = 
-//				Executors.newSingleThreadExecutor();
-				Executors.newFixedThreadPool(nThreads);
-		
-		// Submit to the executor	
-		for (double scale = minScale; scale < maxScale; scale += stepScale)
-			futureSet.add(ravager.submit(new FluorescenceEvaluator(this, absorptionMaps, scale, calibrationConstant0, nIterations)));
-		
-		// Spin, checking for results
-		while (!futureSet.isEmpty()) {
-			Set<Future<Map<Double, Double>>> doneThisTimeRound = new HashSet<Future<Map<Double, Double>>>();
-			for (Future<Map<Double, Double>> future : futureSet)
-				if (future.isDone()) {
-					try {
-						scaleToDifference.putAll(future.get());
-						doneThisTimeRound.add(future);
-					} catch (Exception e) {
-						// Do nothing!
-						// FIXME Do something!
+			// Submit to the executor	
+			for (double scale = minScale; scale < maxScale; scale += stepScale)
+				futureSet.add(ravager.submit(new FluorescenceEvaluator(this, absorptionMaps, scale, calibrationConstant0, nIterations)));
+
+			// Spin, checking for results
+			while (!futureSet.isEmpty()) {
+				Set<Future<Map<Double, Double>>> doneThisTimeRound = new HashSet<Future<Map<Double, Double>>>();
+				for (Future<Map<Double, Double>> future : futureSet)
+					if (future.isDone()) {
+						try {
+							scaleToDifference.putAll(future.get());
+							doneThisTimeRound.add(future);
+						} catch (Exception e) {
+							// Do nothing!
+							// FIXME Do something!
+						}
 					}
-				}
-			futureSet.removeAll(doneThisTimeRound);
-		}
-		
-		ravager.shutdown();
-		
-		double minimalScale = 0;
-		double minimalDifference = Double.POSITIVE_INFINITY; 
-		// Get the scale with the minimum difference
-		for(Map.Entry<Double, Double> entry : scaleToDifference.entrySet()) {
-			if (entry.getValue() < minimalDifference) {
-				minimalDifference = entry.getValue();
-				minimalScale = entry.getKey();
+				futureSet.removeAll(doneThisTimeRound);
 			}
+
+			ravager.shutdown();
+
+			double minimalScale = 0;
+			double minimalDifference = Double.POSITIVE_INFINITY; 
+			// Get the scale with the minimum difference
+			for(Map.Entry<Double, Double> entry : scaleToDifference.entrySet()) {
+				System.err.println("F = " + Double.toString(entry.getKey()) + ", C = " + Double.toString(entry.getValue()) + ", ln C - C0 = " + Double.toString(Math.log(entry.getValue() - scaleToDifference.get((Double) minScale))));
+				if (Math.abs(entry.getValue()) < minimalDifference) {
+					minimalDifference = Math.abs(entry.getValue());
+					minimalScale = entry.getKey();
+				}
+			}
+			this.fluorescenceScale = minimalScale;
+			System.err.println("Gridded fluoro scale = " + this.fluorescenceScale);
 		}
-		this.fluorescenceScale = minimalScale;
+		
+		// New bisection solver
+		ExecutorService annihilator = Executors.newSingleThreadExecutor();
+		double granularity = (maxScale - minScale)/nSteps/2;
+		double xLow = minScale, xHigh = maxScale;
+		double fLow = evaluateSingleFluorescence(annihilator, xLow, nIterations),
+				fHigh = evaluateSingleFluorescence(annihilator, xHigh, nIterations);
+		// If the selected range should not change sign, expand it until it does
+		while (Math.signum(fHigh) == Math.signum(fLow)) {
+			// Double the range, centred on the same point
+			double xDifference = xHigh - xLow; 
+			xHigh = xHigh + xDifference/2;
+			xLow = xLow - xDifference/2;
+					
+			fHigh = evaluateSingleFluorescence(annihilator, xHigh, nIterations);
+			fLow = evaluateSingleFluorescence(annihilator, xLow, nIterations);
+			System.err.println("Bisection fluoro scales " + Double.toString(xLow) + " to " + Double.toString(xHigh));
+		}
+			
+		// Reduce the range, while maintaining the condition that fHigh and fLow have opposite signs
+		while (xHigh - xLow > granularity) {
+			double xMid = (xHigh + xLow)/2;
+			double fMid = evaluateSingleFluorescence(annihilator, xMid, nIterations);
+			
+			if (Math.signum(fMid) == Math.signum(fLow)) {
+				xLow = xMid;
+				fLow = fMid;
+			} else {
+				xHigh = xMid;
+				fHigh = fMid;
+			}
+			System.err.println("Bisection fluoro scales " + Double.toString(xLow) + " to " + Double.toString(xHigh));
+		}
+		
+		// Linear interpolation of x over this range
+		double xZero = xLow - (xHigh - xLow)/(fHigh - fLow) * fLow;
+		this.fluorescenceScale = xZero;
 	}
 
+	// Bundle all the execution and waiting code and especially their try/catches into a function
+	private double evaluateSingleFluorescence(ExecutorService executor, double x, int nIterations) {
+		double fx = 0;
+		Future<Map<Double, Double>> initialFuture = executor.submit(new FluorescenceEvaluator(this, absorptionMaps, x, calibrationConstant0, nIterations));
+		try {
+			while (!initialFuture.isDone())
+			Thread.sleep(100);
+		} catch (InterruptedException iE) {
+			// do nothing; if sleep is interrupted, assume we can carry on
+		}
+		try {
+			Map<Double, Double> mDD = initialFuture.get();
+			for (Map.Entry<Double, Double> entry : mDD.entrySet())
+				fx = entry.getValue();
+		} catch (ExecutionException eE) {
+			// Don't care
+		} catch (InterruptedException iE) {
+			// Really don't care
+		}
+		return fx;
+		
+	}
+	
 	private double integrateFluorescence(Dataset absCor) {
 		Dataset smoothed, truncatedSelfScattering = new DoubleDataset();
 		final double fractionOfRange = 1/5.0;
@@ -666,7 +733,7 @@ public class XPDFCalibration {
 			//truncatedSelfScattering = InterpolatorUtils.remap1D(sampleSelfScattering, coords.getQ(), truncatedQ);
 		}
 		Dataset difference = Maths.subtract(smoothed, truncatedSelfScattering);
-		return Math.abs((double) Maths.multiply(difference, truncatedQ).sum());
+		return (double) Maths.multiply(difference, truncatedQ).sum();
 		
 	}
 	

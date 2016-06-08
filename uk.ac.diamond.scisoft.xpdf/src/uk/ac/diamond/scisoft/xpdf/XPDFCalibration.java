@@ -623,7 +623,7 @@ public class XPDFCalibration {
 			xLow = xLow - xDifference/2;
 
 			// Calculate the differences at the end points of the expanded range
-			Map<Double, Double> differences = evaluateSeveralFluoroScales(Arrays.asList(ArrayUtils.toObject(new double[] {xLow, xHigh})), nIterations, 2);
+			Map<Double, Double> differences = evaluateSeveralFluoroScales(Arrays.asList(ArrayUtils.toObject(new double[] {xLow, xHigh})), nIterations, Math.min(nThreads, 2));
 			fLow = differences.get(xLow);
 			fHigh = differences.get(xHigh);
 			System.err.println("Bisection fluoro scales " + Double.toString(xLow) + " to " + Double.toString(xHigh));
@@ -644,7 +644,7 @@ public class XPDFCalibration {
 				double x3Quarters = xHigh - xInterval;
 				// Calculate the difference values at the three quarter points
 				double[] xes = new double[] {xQuarter, xMid, x3Quarters};
-				Map<Double, Double> midScales = evaluateSeveralFluoroScales(Arrays.asList(ArrayUtils.toObject(xes)), nIterations, 3);
+				Map<Double, Double> midScales = evaluateSeveralFluoroScales(Arrays.asList(ArrayUtils.toObject(xes)), nIterations, Math.min(nThreads, 3));
 				fMid = midScales.get(xMid);
 
 				// Do the first bisection

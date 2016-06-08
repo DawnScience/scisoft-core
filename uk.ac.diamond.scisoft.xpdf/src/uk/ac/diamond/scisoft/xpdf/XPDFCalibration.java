@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.xpdf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -23,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
@@ -570,7 +572,6 @@ public class XPDFCalibration {
 	 * 					the number of iterations to use in the calibration.
 	 */
 	private void calibrateFluorescence(int nIterations, int nThreads) {
-		Map<Double, Double> scaleToDifference = new HashMap<Double, Double>();
 		
 		if (this.sampleFluorescence == null) return;
 		
@@ -588,43 +589,48 @@ public class XPDFCalibration {
 		final double stepScale = (maxScale-minScale)/nSteps;
 
 		// Old gridded code
-		if (!true) {
-
-			// Set of all results
-			Set<Future<Map<Double, Double>>> futureSet = new HashSet<Future<Map<Double, Double>>>();
-
-			ExecutorService ravager = 
-					//				Executors.newSingleThreadExecutor();
-					Executors.newFixedThreadPool(nThreads);
+		if (true) {
+//			Map<Double, Double> scaleToDifference = new HashMap<Double, Double>();
+//
+//			// Set of all results
+//			Set<Future<Map<Double, Double>>> futureSet = new HashSet<Future<Map<Double, Double>>>();
+//
+//			ExecutorService ravager = 
+//					//				Executors.newSingleThreadExecutor();
+//					Executors.newFixedThreadPool(nThreads);
 
 		
 			// Submit to the executor	
-			for (double scale = minScale; scale < maxScale; scale += stepScale)
-				futureSet.add(ravager.submit(new FluorescenceEvaluator(this, absorptionMaps, scale, calibrationConstant0, nIterations)));
+//			for (double scale = minScale; scale < maxScale; scale += stepScale)
+//				futureSet.add(ravager.submit(new FluorescenceEvaluator(this, absorptionMaps, scale, calibrationConstant0, nIterations)));
+//
+//			// Spin, checking for results
+//			while (!futureSet.isEmpty()) {
+//				Set<Future<Map<Double, Double>>> doneThisTimeRound = new HashSet<Future<Map<Double, Double>>>();
+//				for (Future<Map<Double, Double>> future : futureSet)
+//					if (future.isDone()) {
+//						try {
+//							scaleToDifference.putAll(future.get());
+//							doneThisTimeRound.add(future);
+//						} catch (Exception e) {
+//							// Do nothing!
+//							// FIXME Do something!
+//						}
+//					}
+//				futureSet.removeAll(doneThisTimeRound);
+//			}
+//
+//			ravager.shutdown();
 
-			// Spin, checking for results
-			while (!futureSet.isEmpty()) {
-				Set<Future<Map<Double, Double>>> doneThisTimeRound = new HashSet<Future<Map<Double, Double>>>();
-				for (Future<Map<Double, Double>> future : futureSet)
-					if (future.isDone()) {
-						try {
-							scaleToDifference.putAll(future.get());
-							doneThisTimeRound.add(future);
-						} catch (Exception e) {
-							// Do nothing!
-							// FIXME Do something!
-						}
-					}
-				futureSet.removeAll(doneThisTimeRound);
-			}
+//			DoubleDataset scales = DoubleDataset.createRange(minScale, maxScale, stepScale);
 
-			ravager.shutdown();
-
+			Map<Double, Double> scaleToDifference = evaluateSeveralFluoroScales(Arrays.asList(ArrayUtils.toObject(DoubleDataset.createRange(minScale, maxScale, stepScale).getData())), nIterations, nThreads);
+			
 			double minimalScale = 0;
 			double minimalDifference = Double.POSITIVE_INFINITY; 
 			// Get the scale with the minimum difference
 			for(Map.Entry<Double, Double> entry : scaleToDifference.entrySet()) {
-				System.err.println("F = " + Double.toString(entry.getKey()) + ", C = " + Double.toString(entry.getValue()) + ", ln C - C0 = " + Double.toString(Math.log(entry.getValue() - scaleToDifference.get((Double) minScale))));
+				System.err.println("F = " + Double.toString(entry.getKey()) + ", C = " + Double.toString(entry.getValue()));
 				if (Math.abs(entry.getValue()) < minimalDifference) {
 					minimalDifference = Math.abs(entry.getValue());
 					minimalScale = entry.getKey();
@@ -674,25 +680,45 @@ public class XPDFCalibration {
 
 	// Bundle all the execution and waiting code and especially their try/catches into a function
 	private double evaluateSingleFluorescence(ExecutorService executor, double x, int nIterations) {
-		double fx = 0;
-		Future<Map<Double, Double>> initialFuture = executor.submit(new FluorescenceEvaluator(this, absorptionMaps, x, calibrationConstant0, nIterations));
-		try {
-			while (!initialFuture.isDone())
-			Thread.sleep(100);
-		} catch (InterruptedException iE) {
-			// do nothing; if sleep is interrupted, assume we can carry on
+		return evaluateSeveralFluoroScales(Arrays.asList(new Double[] {x}), nIterations, 1).values().toArray(new Double[1])[0];
+	}
+	
+	// Common code to evaluate several fluorescence scales at the same time
+	private Map<Double, Double> evaluateSeveralFluoroScales(Collection<Double> scales, int nIterations, int nThreads) {
+		ExecutorService ravager = (scales.size() == 1) ? Executors.newSingleThreadExecutor() : Executors.newFixedThreadPool(nThreads);
+
+		// Set of all results
+		Set<Future<Map<Double, Double>>> futureSet = new HashSet<Future<Map<Double, Double>>>();
+		// Submit to the executor	
+		for (double scale : scales)
+			futureSet.add(ravager.submit(new FluorescenceEvaluator(this, absorptionMaps, scale, calibrationConstant0, nIterations)));
+
+		Map<Double, Double> scaleToDifference = new HashMap<Double, Double>();
+
+		// Spin, checking for results
+		while (!futureSet.isEmpty()) {
+			Set<Future<Map<Double, Double>>> doneThisTimeRound = new HashSet<Future<Map<Double, Double>>>();
+			for (Future<Map<Double, Double>> future : futureSet)
+				if (future.isDone()) {
+					try {
+						scaleToDifference.putAll(future.get());
+						doneThisTimeRound.add(future);
+					} catch (Exception e) {
+						// Do nothing!
+						// FIXME Do something!
+					}
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException iE) {
+						; // Do nothing: go to check on the results again 
+					}
+				}
+			futureSet.removeAll(doneThisTimeRound);
 		}
-		try {
-			Map<Double, Double> mDD = initialFuture.get();
-			for (Map.Entry<Double, Double> entry : mDD.entrySet())
-				fx = entry.getValue();
-		} catch (ExecutionException eE) {
-			// Don't care
-		} catch (InterruptedException iE) {
-			// Really don't care
-		}
-		return fx;
-		
+
+		ravager.shutdown();
+
+		return scaleToDifference;
 	}
 	
 	private double integrateFluorescence(Dataset absCor) {

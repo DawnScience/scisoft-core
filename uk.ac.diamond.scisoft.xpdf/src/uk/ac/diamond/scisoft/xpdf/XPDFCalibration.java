@@ -652,9 +652,11 @@ public class XPDFCalibration {
 			double xDifference = xHigh - xLow; 
 			xHigh = xHigh + xDifference/2;
 			xLow = xLow - xDifference/2;
-					
-			fHigh = evaluateSingleFluorescence(annihilator, xHigh, nIterations);
-			fLow = evaluateSingleFluorescence(annihilator, xLow, nIterations);
+
+			// Calculate the differences at the end points of the expanded range
+			Map<Double, Double> differences = evaluateSeveralFluoroScales(Arrays.asList(ArrayUtils.toObject(new double[] {xLow, xHigh})), nIterations, 2);
+			fLow = differences.get(xLow);
+			fHigh = differences.get(xHigh);
 			System.err.println("Bisection fluoro scales " + Double.toString(xLow) + " to " + Double.toString(xHigh));
 		}
 			

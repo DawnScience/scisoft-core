@@ -329,27 +329,33 @@ public class XPDFCalibration {
 			// Set the data
 			calCon.add(calConData);
 		}
-		
-		// Mulcor should be a LinkedList, so that we can get the last element simply
-		List<Dataset> mulCor = new ArrayList<Dataset>();
-		if (multipleScatteringCorrection != null) {
-			for (Dataset componentTrace : calCon) {
-				Dataset mulCorData = Maths.subtract(componentTrace, multipleScatteringCorrection);
-				// Error propagation: no change if the multiple scattering correction is taken as exact
-				if (propagateErrors && componentTrace.getError() != null)
-					mulCorData.setError(componentTrace.getError());
-				mulCor.add(mulCorData);
+
+		boolean doMultipleScattering = false;
+		Dataset absCor;
+		if (doMultipleScattering) {
+			// Mulcor should be a LinkedList, so that we can get the last element simply
+			List<Dataset> mulCor = new ArrayList<Dataset>();
+			if (multipleScatteringCorrection != null) {
+				for (Dataset componentTrace : calCon) {
+					Dataset mulCorData = Maths.subtract(componentTrace, multipleScatteringCorrection);
+					// Error propagation: no change if the multiple scattering correction is taken as exact
+					if (propagateErrors && componentTrace.getError() != null)
+						mulCorData.setError(componentTrace.getError());
+					mulCor.add(mulCorData);
+				}
+			} else {
+				for (Dataset componentTrace : calCon) {
+					Dataset mulCorData = Maths.subtract(componentTrace, 0);
+					//Error propagation
+					if (propagateErrors && componentTrace.getError() != null)
+						mulCorData.setError(componentTrace.getError());
+					mulCor.add(mulCorData);
+				}
 			}
+			absCor = applyCalibrationConstant(mulCor);
 		} else {
-			for (Dataset componentTrace : calCon) {
-				Dataset mulCorData = Maths.subtract(componentTrace, 0);
-				//Error propagation
-				if (propagateErrors && componentTrace.getError() != null)
-					mulCorData.setError(componentTrace.getError());
-				mulCor.add(mulCorData);
-			}
+			absCor = applyCalibrationConstant(calCon);
 		}
-		Dataset absCor = applyCalibrationConstant(mulCor);
 
 		absCor.idivide(nSampleIlluminatedAtoms);
 		if (propagateErrors && absCor.getError() != null)

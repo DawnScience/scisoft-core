@@ -637,8 +637,11 @@ public class XPDFCalibration {
 
 		boolean doQuadrisection = false;
 		
+		double xLinear = xHigh, xLinearLast = xLow;
 		// Reduce the range, while maintaining the condition that fHigh and fLow have opposite signs
-		while (xHigh - xLow > granularity) {
+		while (Math.abs(xLinear - xLinearLast) > granularity) {
+			
+			xLinearLast = xLinear;
 			
 			double xMid, fMid;
 			
@@ -679,12 +682,16 @@ public class XPDFCalibration {
 				fHigh = fMid;
 			}
 			
-			System.err.println("Bisection fluoro scales " + Double.toString(xLow) + " to " + Double.toString(xHigh));
+			// Calculate the linear interpolation of zero difference
+			xLinear = xLow - (xHigh - xLow)/(fHigh - fLow) * fLow;
+			
+			System.err.println("Bisection fluoro scales " + Double.toString(xLow) + " to " + Double.toString(xHigh) + 
+					". Linear solution: " + Double.toString(xLinear));
 		}
 		
 		// Linear interpolation of x over this range
-		double xZero = xLow - (xHigh - xLow)/(fHigh - fLow) * fLow;
-		this.fluorescenceScale = xZero;
+//		double xZero = xLow - (xHigh - xLow)/(fHigh - fLow) * fLow;
+		this.fluorescenceScale = xLinear;
 	}
 
 	// Bundle all the execution and waiting code and especially their try/catches into a function

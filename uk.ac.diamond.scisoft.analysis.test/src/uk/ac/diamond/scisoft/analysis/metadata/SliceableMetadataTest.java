@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
@@ -150,7 +151,7 @@ public class SliceableMetadataTest {
 	}
 
 	@Test
-	public void testSlicingSqueezedMetadata() {
+	public void testSlicingSqueezedMetadata() throws DatasetException {
 		final int[] shape = new int[] {1, 1, 128};
 		ILazyDataset ld = Random.lazyRand(Dataset.INT32, "Metadata1", shape);
 		SliceableTestMetadata md = new SliceableTestMetadata(ld, null, null, null, null);

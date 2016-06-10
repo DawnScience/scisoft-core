@@ -18,6 +18,7 @@ import static org.junit.Assert.fail;
 import java.util.Collection;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
@@ -165,7 +166,7 @@ public class SRSLoaderTest {
 	}
 	
 	@Test
-	public void testStoringStringFalseValidImages() throws ScanFileHolderException {
+	public void testStoringStringFalseValidImages() throws DatasetException, ScanFileHolderException {
 		DataHolder dh = testStoringStringValidImages(false);
 		{
 			ILazyDataset dataset = dh.getLazyDataset("filename");

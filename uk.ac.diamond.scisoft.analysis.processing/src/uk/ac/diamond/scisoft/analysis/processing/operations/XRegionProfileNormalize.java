@@ -8,6 +8,7 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
@@ -54,9 +55,14 @@ public class XRegionProfileNormalize extends AbstractOperation<XRegionProfileNor
 			// default to the pixel values
 			energyAxis = IntegerDataset.createRange(input.getShape()[1]);
 		}
-		
-		int minPos = Maths.abs(Maths.subtract(energyAxis.getSlice(), model.getxRange()[0])).argMin();
-		int maxPos = Maths.abs(Maths.subtract(energyAxis.getSlice(), model.getxRange()[1])).argMin();
+		Dataset eDataset;
+		try {
+			eDataset = DatasetUtils.convertToDataset(energyAxis.getSlice());
+		} catch (DatasetException e1) {
+			throw new OperationException(this, e1);
+		}
+		int minPos = Maths.abs(Maths.subtract(eDataset, model.getxRange()[0])).argMin();
+		int maxPos = Maths.abs(Maths.subtract(eDataset, model.getxRange()[1])).argMin();
 		
 		if (minPos == maxPos) {
 			throw new OperationException(this, "Select a range inside the X axis");

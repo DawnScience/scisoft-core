@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.xpdf.operations;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
@@ -68,10 +69,15 @@ public class XPDFNormalizeTracesOperation extends
 				process.idivide(normer);
 			
 				// Normalize the errors, if present
-				Dataset inputErrors = DatasetUtils.sliceAndConvertLazyDataset(input.getError());
-				if (inputErrors != null) {
-					Dataset processErrors = Maths.divide(inputErrors, normer);
-					process.setError(processErrors);
+				Dataset inputErrors;
+				try {
+					inputErrors = DatasetUtils.sliceAndConvertLazyDataset(input.getError());
+					if (inputErrors != null) {
+						Dataset processErrors = Maths.divide(inputErrors, normer);
+						process.setError(processErrors);
+					}
+				} catch (DatasetException e) {
+					throw new OperationException(this, e);
 				}
 			}
 			

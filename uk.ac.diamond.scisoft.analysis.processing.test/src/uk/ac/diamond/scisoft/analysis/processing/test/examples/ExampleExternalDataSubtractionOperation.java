@@ -13,6 +13,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
@@ -61,7 +62,12 @@ public class ExampleExternalDataSubtractionOperation extends
 
 			if (cdd == null) throw new OperationException(this, "Data not compatable");
 
-			Dataset mean = LazyMaths.mean(lz, cdd).squeeze();
+			Dataset mean;
+			try {
+				mean = LazyMaths.mean(lz, cdd).squeeze();
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 
 			if (!Arrays.equals(mean.getShape(), input.getShape())) throw new OperationException(this, "Data not compatable");
 			data = mean;

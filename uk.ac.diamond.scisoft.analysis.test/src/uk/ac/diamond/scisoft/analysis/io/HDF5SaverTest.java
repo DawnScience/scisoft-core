@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.IDynamicDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
@@ -68,7 +69,7 @@ public class HDF5SaverTest {
 		assertEquals(2, data.getShort(1, 2));
 	}
 
-	private Dataset checkOutput(String file, String path, String name, int[] shape) throws ScanFileHolderException {
+	private Dataset checkOutput(String file, String path, String name, int[] shape) throws ScanFileHolderException, DatasetException {
 		TreeFile tree = new HDF5Loader(file).loadTree();
 		NodeLink link = tree.findNodeLink(path + name);
 		assertEquals(name, link.getName());

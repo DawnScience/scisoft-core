@@ -198,9 +198,13 @@ public class JavaImageLoader extends AbstractFileLoader {
 				final String name = String.format(IMAGE_NAME_FORMAT, j);
 				LazyDataset lazy = createLazyDataset(name, dtype, shape, new LazyLoaderStub() {
 					@Override
-					public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
-						Dataset data = loadDataset(fileName, name, asGrey, keepBitWidth);
-						return data == null ? null : data.getSliceView(slice);
+					public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
+						try {
+							Dataset data = loadDataset(fileName, name, asGrey, keepBitWidth);
+							return data == null ? null : data.getSliceView(slice);
+						} catch (ScanFileHolderException e) {
+							throw new IOException(e);
+						}
 					}
 				});
 				output.addDataset(name, lazy);

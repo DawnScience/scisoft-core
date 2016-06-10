@@ -2,6 +2,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.expressions;
 
 import java.util.Arrays;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionEngine;
@@ -76,16 +77,17 @@ public class Expression2DOperation<T extends Expression2DModel> extends Expressi
 		IDataset axisx = null;
 		IDataset axisy = null;
 		if (axes != null ) {
-			if (axes[0] != null) {
-				axisx= axes[1].getSlice().squeeze();
-				
+			try {
+				if (axes[0] != null) {
+					axisx= axes[1].getSlice().squeeze();
+				}
+
+				if (axes[0] != null) {
+					axisy= axes[0].getSlice().squeeze();
+				}
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
 			}
-			
-			if (axes[0] != null) {
-				axisy= axes[0].getSlice().squeeze();
-				
-			}
-			
 		}
 		
 		if (axisx == null) axisx = DatasetFactory.createRange(input.getShape()[0], Dataset.FLOAT64);

@@ -174,14 +174,18 @@ public class FioLoader extends AbstractFileLoader {
 						private static final long serialVersionUID = LazyLoaderStub.serialVersionUID;
 
 						@Override
-						public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
+						public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 							FioLoader ldr = (FioLoader) getLoader();
 							if (ldr == null) {
 								return null;
 							}
 							IDataHolder holder = LoaderFactory.fetchData(fileName, loadMetadata, num);
 							if (holder == null) {
-								holder = ldr.loadFile(num, mon);
+								try {
+									holder = ldr.loadFile(num, mon);
+								} catch (ScanFileHolderException e) {
+									throw new IOException(e);
+								}
 								if (holder.getFilePath() == null) {
 									holder.setFilePath(fileName);
 								}

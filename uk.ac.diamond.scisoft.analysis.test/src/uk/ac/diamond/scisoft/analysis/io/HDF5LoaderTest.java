@@ -113,12 +113,12 @@ public class HDF5LoaderTest {
 	}
 
 	@Test
-	public void testLoadingTest() throws ScanFileHolderException {
+	public void testLoadingTest() throws Exception {
 		testLoadingTest(false);
 		testLoadingTest(true);
 	}
 
-	private void testLoadingTest(boolean async) throws ScanFileHolderException {
+	private void testLoadingTest(boolean async) throws Exception {
 		String n = TestFileFolder + "testlinks.nxs";
 		HDF5Loader l = new HDF5Loader(n);
 		l.setAsyncLoad(async);
@@ -230,7 +230,7 @@ public class HDF5LoaderTest {
 	}
 
 	@Test
-	public void testLoading() throws ScanFileHolderException {
+	public void testLoading() throws Exception {
 		String n = TestFileFolder + "FeKedge_1_15.nxs";
 		HDF5Loader l = new HDF5Loader(n);
 
@@ -299,7 +299,7 @@ public class HDF5LoaderTest {
 	}
 
 	@Test
-	public void testLoadingChunked() throws ScanFileHolderException {
+	public void testLoadingChunked() throws Exception {
 
 		final String n = LargeTestFilesFolder + "NexusUITest/sino.h5";
 		long timeAtStartms = System.currentTimeMillis();
@@ -403,7 +403,7 @@ public class HDF5LoaderTest {
 	}
 
 	@Test
-	public void testLoadingCompoundDatatype() throws ScanFileHolderException {
+	public void testLoadingCompoundDatatype() throws Exception {
 		String n = TestFileFolder + "h5py_complex.h5";
 		HDF5Loader l = new HDF5Loader(n);
 		DataHolder dh = l.loadFile();
@@ -508,7 +508,7 @@ public class HDF5LoaderTest {
 	}
 
 	@Test
-	public void testLoadingPercival() throws ScanFileHolderException {
+	public void testLoadingPercival() throws Exception {
 		String n = TestFileFolder + "KnifeQuadBPos1_2_21.h5";
 		HDF5Loader l = new HDF5Loader(n);
 		DataHolder dh = l.loadFile();

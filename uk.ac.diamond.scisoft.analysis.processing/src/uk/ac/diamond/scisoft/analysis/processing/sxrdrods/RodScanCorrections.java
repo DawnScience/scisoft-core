@@ -9,8 +9,10 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.sxrdrods;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
@@ -96,13 +98,13 @@ public class RodScanCorrections {
 		double pc = Math.PI/180;
 		
 		ILazyDataset alpha3 = ProcessingUtils.getLazyDataset(null, DiffData(input).getFilePath(), ALPHA);
-		IDataset alpha4 = DiffData(input).getMatchingSlice(alpha3);
+		IDataset alpha4 = getMatchingSlice(input, alpha3);
 		
 		ILazyDataset delta3 = ProcessingUtils.getLazyDataset(null, DiffData(input).getFilePath(), DELTA);
-		IDataset delta4 = DiffData(input).getMatchingSlice(delta3);
+		IDataset delta4 = getMatchingSlice(input, delta3);
 		
 		ILazyDataset gamma3 = ProcessingUtils.getLazyDataset(null, DiffData(input).getFilePath(), GAMMA);
-		IDataset gamma4 = DiffData(input).getMatchingSlice(gamma3);
+		IDataset gamma4 = getMatchingSlice(input, gamma3);
 		
 		Dataset a = Maths.multiply(alpha4,pc);
 		Dataset d = Maths.multiply(delta4,pc);
@@ -128,10 +130,10 @@ public class RodScanCorrections {
 		double pc = Math.PI/180;
 		
 		ILazyDataset delta3 = ProcessingUtils.getLazyDataset(null, DiffData(input).getFilePath(), DELTA);
-		IDataset delta4 = DiffData(input).getMatchingSlice(delta3);
+		IDataset delta4 = getMatchingSlice(input, delta3);
 		
 		ILazyDataset gamma3 = ProcessingUtils.getLazyDataset(null, DiffData(input).getFilePath(), GAMMA);
-		IDataset gamma4 = DiffData(input).getMatchingSlice(gamma3);
+		IDataset gamma4 = getMatchingSlice(input, gamma3);
 		
 		Dataset d = Maths.multiply(delta4,pc);
 		Dataset g = Maths.multiply(gamma4,pc);
@@ -171,8 +173,16 @@ public class RodScanCorrections {
 		if ((Math.pow(x,2) + (Math.pow(y,2)))> (0.25*Math.pow(sampleSize,2)));
 			q =0;
 		return q;
-	}	
-		
+	}
+
+	private static IDataset getMatchingSlice(IDataset input, ILazyDataset slice) {
+		try {
+			return DiffData(input).getMatchingSlice(slice);
+		} catch (DatasetException e) {
+			throw new OperationException(null, e);
+		}
+	}
+
 	public static Dataset areacor (IDataset input, boolean BeamCor, boolean Specular, 
 		double SampleSize, double OutPlaneSlits, double InPlaneSlits, double BeamInPlane, double BeamOutPlane, 
 		double DetectorSlits) {	
@@ -180,13 +190,13 @@ public class RodScanCorrections {
 		double pc = Math.PI/180;
 		
 		ILazyDataset alpha3 = ProcessingUtils.getLazyDataset(null, DiffData(input).getFilePath(), ALPHA);
-		IDataset alpha4 = DiffData(input).getMatchingSlice(alpha3);
+		IDataset alpha4 = getMatchingSlice(input, alpha3);
 		
 		ILazyDataset delta3 = ProcessingUtils.getLazyDataset(null, DiffData(input).getFilePath(), DELTA);
-		IDataset delta4 = DiffData(input).getMatchingSlice(delta3);
+		IDataset delta4 = getMatchingSlice(input, delta3);
 		
 		ILazyDataset gamma3 = ProcessingUtils.getLazyDataset(null, DiffData(input).getFilePath(), GAMMA);
-		IDataset gamma4 = DiffData(input).getMatchingSlice(gamma3);
+		IDataset gamma4 = getMatchingSlice(input, gamma3);
 		
 		Dataset a = Maths.multiply(alpha4,pc);
 		Dataset d = Maths.multiply(delta4,pc);

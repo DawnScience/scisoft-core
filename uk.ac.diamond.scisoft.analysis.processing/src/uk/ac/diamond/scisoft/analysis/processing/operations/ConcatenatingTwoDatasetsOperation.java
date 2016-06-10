@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 //import org.apache.commons.lang.ArrayUtils;
 import java.util.Arrays;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
@@ -174,14 +175,18 @@ public class ConcatenatingTwoDatasetsOperation extends AbstractOperation<Concate
 		return OperationRank.TWO;
 	}
 
-	private static Dataset getAxisDataset(ILazyDataset[] datasets, String datasetName) {
+	private Dataset getAxisDataset(ILazyDataset[] datasets, String datasetName) {
 		datasetName = datasetName.substring(0, datasetName.indexOf('['));
 		//System.out.println("datasetName: " + datasetName);
 		Dataset rv = null;
 		for (int i = 0 ; i < datasets.length ; i++) {
 			//System.out.println(datasets[i].getName());
 			if (datasets[i].getName().equals(datasetName)) {
-				rv = DatasetUtils.convertToDataset(datasets[i].getSlice());
+				try {
+					rv = DatasetUtils.convertToDataset(datasets[i].getSlice());
+				} catch (DatasetException e) {
+					throw new OperationException(this, e);
+				}
 				break;
 			}
 		}

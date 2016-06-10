@@ -20,6 +20,7 @@ import org.dawb.passerelle.common.message.Variable;
 import org.dawb.passerelle.common.parameter.ParameterUtils;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
@@ -369,7 +370,7 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 		public String getName() {
 			return slice.getName();
 		}
-		public IDataset getSlice() {
+		public IDataset getSlice() throws DatasetException {
 			IDataset s = slice.getSlice();
 			return s;
 		}

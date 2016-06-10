@@ -34,13 +34,13 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 
-import uk.ac.diamond.scisoft.analysis.io.tiff.Grey12bitTIFFReader;
-import uk.ac.diamond.scisoft.analysis.io.tiff.Grey12bitTIFFReaderSpi;
-
 import com.sun.media.imageio.plugins.tiff.TIFFDirectory;
 import com.sun.media.imageio.plugins.tiff.TIFFField;
 import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReader;
 import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
+
+import uk.ac.diamond.scisoft.analysis.io.tiff.Grey12bitTIFFReader;
+import uk.ac.diamond.scisoft.analysis.io.tiff.Grey12bitTIFFReaderSpi;
 
 /**
  * This class loads a TIFF image file
@@ -189,7 +189,7 @@ public class TIFFImageLoader extends JavaImageLoader {
 	private ILazyDataset createLazyDataset(final int dtype, final int... trueShape) {
 		LazyLoaderStub l = new LazyLoaderStub() {
 			@Override
-			public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
+			public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 				int[] lstart = slice.getStart();
 				int[] lstep  = slice.getStep();
 				int[] newShape = slice.getShape();
@@ -242,8 +242,8 @@ public class TIFFImageLoader extends JavaImageLoader {
 					} else {
 						d = loadData(mon, fileName, asGrey, keepBitWidth, dtype, shape, lstart, newShape, lstep);
 					}
-				} catch (Exception e) {
-					throw new ScanFileHolderException("Problem with TIFF loading", e);
+				} catch (ScanFileHolderException e) {
+					throw new IOException("Problem with TIFF loading", e);
 				}
 				return d;
 			}

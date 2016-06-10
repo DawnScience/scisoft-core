@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
@@ -41,7 +42,13 @@ public class MinMaxNormalize extends AbstractOperation<EmptyModel, OperationData
 		// Propagate errors. Ignores the error on the minimum and maximum values.
 		ILazyDataset el = input.getError();
 		IDataset eb = null;
-		if (el != null) eb = el.getSlice();
+		if (el != null) {
+			try {
+				eb = el.getSlice();
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
+		}
 		
 		if (eb != null) {
 			output.setError(Maths.divide(eb, range));

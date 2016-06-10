@@ -2,6 +2,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtracti
 
 import java.util.Arrays;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
@@ -57,7 +58,11 @@ public class SubtractBlankFrameOperation extends AbstractImageSubtrationOperatio
 		ILazyDataset bg = lzBg.getSliceView();
 		int[] ss = AbstractDataset.squeezeShape(bg.getShape(), false);
 		if (ss.length == 2) {
-			image = DatasetUtils.sliceAndConvertLazyDataset(bg).squeeze();
+			try {
+				image = DatasetUtils.sliceAndConvertLazyDataset(bg).squeeze();
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 		} else {
 			image = mean(startFrame, end, bg, dd).squeeze();
 		}
@@ -86,7 +91,12 @@ public class SubtractBlankFrameOperation extends AbstractImageSubtrationOperatio
 				end[i] = omit[i] ? shape[i] : pos[i] + 1;
 			}
 
-			Dataset ds = DatasetUtils.cast(data.getSlice(pos, end, st), Dataset.FLOAT64);
+			Dataset ds;
+			try {
+				ds = DatasetUtils.cast(data.getSlice(pos, end, st), Dataset.FLOAT64);
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 
 			if (average == null) {
 				average = ds;

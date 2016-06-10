@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.xpdf.operations;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
@@ -40,14 +41,24 @@ public class XPDFGofrFromDofrOperation extends AbstractOperation<EmptyModel, Ope
 		XPDFMetadata theXPDFMetadata = dofr.getFirstMetadata(XPDFMetadata.class);
 		
 		if (dofr.getFirstMetadata(AxesMetadata.class) == null) throw new OperationException(this, "Axis metadata not found.");
-		Dataset r = DatasetUtils.sliceAndConvertLazyDataset(dofr.getFirstMetadata(AxesMetadata.class).getAxes()[0]);
+		Dataset r;
+		try {
+			r = DatasetUtils.sliceAndConvertLazyDataset(dofr.getFirstMetadata(AxesMetadata.class).getAxes()[0]);
+		} catch (DatasetException e) {
+			throw new OperationException(this, e);
+		}
 		
 		double numberDensity = theXPDFMetadata.getSample().getNumberDensity();
 		Dataset gofr = Maths.divide(Maths.divide(dofr, 4*Math.PI*numberDensity), r);
 		
 		// Error propagation
 		if (dofr.getError() != null){
-			Dataset dofrErrors = DatasetUtils.sliceAndConvertLazyDataset(dofr.getError());
+			Dataset dofrErrors;
+			try {
+				dofrErrors = DatasetUtils.sliceAndConvertLazyDataset(dofr.getError());
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 			Dataset gofrErrors = Maths.divide(Maths.divide(dofrErrors, 4*Math.PI*numberDensity), r);
 			gofr.setError(gofrErrors);
 		}

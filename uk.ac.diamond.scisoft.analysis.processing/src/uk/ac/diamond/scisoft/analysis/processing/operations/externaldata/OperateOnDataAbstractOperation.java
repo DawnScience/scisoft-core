@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
 import java.util.Arrays;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
@@ -50,13 +51,17 @@ public abstract class OperateOnDataAbstractOperation<T extends InternalDatasetNa
 		
 		ILazyDataset lz = ProcessingUtils.getLazyDataset(this, dataPath, model.getDatasetName());
 		IDataset val = null;
-		
-		if (AbstractDataset.squeezeShape(lz.getShape(), false).length == 0) {
-			// scalar lz
-			val = lz.getSlice();
-		} else {
-			// vector lz
-			val = ssm.getMatchingSlice(lz);
+
+		try {
+			if (AbstractDataset.squeezeShape(lz.getShape(), false).length == 0) {
+				// scalar lz
+				val = lz.getSlice();
+			} else {
+				// vector lz
+				val = ssm.getMatchingSlice(lz);
+			}
+		} catch (DatasetException e) {
+			throw new OperationException(this, e);
 		}
 
 		// If a matching val was not found, throw

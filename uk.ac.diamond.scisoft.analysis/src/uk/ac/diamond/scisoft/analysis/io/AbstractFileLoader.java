@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
@@ -131,13 +132,17 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 		}
 
 		@Override
-		public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
+		public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 			if (loader == null) {
 				return null;
 			}
 			IDataHolder holder = LoaderFactory.fetchData(fileName, loadMetadata);
 			if (holder == null) {
-				holder = loader.loadFile(mon);
+				try {
+					holder = loader.loadFile(mon);
+				} catch (ScanFileHolderException e) {
+					throw new IOException(e);
+				}
 				if (holder.getFilePath() == null) {
 					holder.setFilePath(fileName);
 				}

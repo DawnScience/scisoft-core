@@ -85,9 +85,13 @@ public class PgmLoader extends AbstractFileLoader {
 			if (loadLazily) {
 				data = createLazyDataset(DEF_IMAGE_NAME, maxval < 256 ? Dataset.INT16 : Dataset.INT32, new int[] {height, width}, new LazyLoaderStub() {
 					@Override
-					public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
-						Dataset data = loadDataset(fileName);
-						return data == null ? null : data.getSliceView(slice);
+					public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
+						try {
+							Dataset data = loadDataset(fileName);
+							return data == null ? null : data.getSliceView(slice);
+						} catch (ScanFileHolderException e) {
+							throw new IOException(e);
+						}
 					}
 				});
 			} else {

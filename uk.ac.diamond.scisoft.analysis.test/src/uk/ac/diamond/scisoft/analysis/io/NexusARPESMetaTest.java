@@ -26,7 +26,7 @@ public class NexusARPESMetaTest {
 	final static String testFileFolder = "testfiles/gda/analysis/io/NexusARPESTest/";
 
 	@Test
-	public void testARPESLoader() {
+	public void testARPESLoader() throws Exception {
 		IDataHolder dh = null;
 
 		try {

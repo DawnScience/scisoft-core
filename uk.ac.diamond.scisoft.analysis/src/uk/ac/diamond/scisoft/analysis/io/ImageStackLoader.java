@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -171,7 +172,7 @@ public class ImageStackLoader implements ILazyLoader {
 	}
 
 	@Override
-	public Dataset getDataset(IMonitor mon, SliceND slice) throws ScanFileHolderException {
+	public Dataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 		int[] newShape = slice.getShape();
 
 		if (AbstractDataset.calcSize(newShape) == 0)
@@ -192,7 +193,12 @@ public class ImageStackLoader implements ILazyLoader {
 		int[] iShape = iSlice.getShape();
 		SliceND dSlice = it.getOutputSlice();
 		while (it.hasNext()) {
-			IDataset image = getDatasetFromFile(pos, mon).getSliceView(iSlice);
+			IDataset image;
+			try {
+				image = getDatasetFromFile(pos, mon).getSliceView(iSlice);
+			} catch (ScanFileHolderException e) {
+				throw new IOException(e);
+			}
 
 			image.setShape(iShape);
 			if (result == null) {

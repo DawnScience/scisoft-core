@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.xpdf;
 
 import javax.vecmath.Vector3d;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
@@ -90,6 +91,7 @@ public class XPDFCoordinates {
 
 		if (input.getShape().length == 1) {
 			AxesMetadata axes = input.getFirstMetadata(AxesMetadata.class);
+			try {
 			if (theXPDFMetadata.getSampleTrace().isAxisAngle()) {
 				this.setTwoTheta(Maths.toRadians(DatasetUtils.sliceAndConvertLazyDataset(axes.getAxis(0)[0])));
 				dAngle = differentiate1DDataset(twoTheta);
@@ -98,7 +100,9 @@ public class XPDFCoordinates {
 			} else {
 				this.setQ(DatasetUtils.sliceAndConvertLazyDataset(axes.getAxis(0)[0]));
 				twoTheta = null;
-			}		
+			} } catch (DatasetException e) {
+				throw new IllegalArgumentException("Could not get data from lazy dataset", e);
+			}
 		} else {
 			// 2D case. The caller should check for valid metadata first
 			DiffractionMetadata dMD = input.getFirstMetadata(DiffractionMetadata.class);

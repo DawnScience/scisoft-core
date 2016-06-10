@@ -17,6 +17,7 @@
 package uk.ac.diamond.scisoft.analysis.dataset;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -25,7 +26,6 @@ import java.util.Arrays;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
-import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
@@ -98,7 +98,7 @@ public class Nexus {
 				}
 
 				@Override
-				public Dataset getDataset(IMonitor mon, SliceND slice) throws ScanFileHolderException {
+				public Dataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 					int[] lstart = slice.getStart();
 					int[] lstep  = slice.getStep();
 					int[] newShape = slice.getShape();

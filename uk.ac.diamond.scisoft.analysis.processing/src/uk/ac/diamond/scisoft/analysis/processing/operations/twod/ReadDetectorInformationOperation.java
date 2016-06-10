@@ -11,7 +11,6 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.twod;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.lang.ProcessBuilder.Redirect;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
@@ -68,18 +67,22 @@ public class ReadDetectorInformationOperation extends AbstractOperation<ReadDete
 				localInfo = info;
 				if (localInfo == null) {
 					DetectorInformation i = new DetectorInformation();
-					if (model.isReadGeometry()) {
-						IDiffractionMetadata md = NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(path, parent);
+					try {
+						if (model.isReadGeometry()) {
+							IDiffractionMetadata md = NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(path, parent);
 //						if (md == null) throw new OperationException(this, "File does not contain metadata");
-						i.metadata = md;
-					}
-					
-					if (model.isReadMask()) {
-						IDataset d = NexusDiffractionCalibrationReader.getDetectorPixelMaskFromNexus(path, parent);
-						if (d != null) {
-							i.mask = Comparisons.equalTo(d, 0);
+							i.metadata = md;
 						}
+						
+						if (model.isReadMask()) {
+							IDataset d = NexusDiffractionCalibrationReader.getDetectorPixelMaskFromNexus(path, parent);
+							if (d != null) {
+								i.mask = Comparisons.equalTo(d, 0);
+							}
 //						else throw new OperationException(this, "File does not contain mask");
+						}
+					} catch (Exception e) {
+						throw new OperationException(this, e);
 					}
 					
 					if (i.mask == null && i.metadata == null) i = null;;

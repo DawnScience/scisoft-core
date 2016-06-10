@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
@@ -19,8 +20,6 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
-import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import uk.ac.diamond.scisoft.analysis.optimize.ApachePolynomial;
@@ -43,7 +42,11 @@ public class PolynomialSmoothingOperation extends AbstractOperation<PolynomialSm
 		if (firstAxes == null || firstAxes[0] == null) {
 			ax = DatasetFactory.createRange(input.getShape()[0], Dataset.INT64);
 		} else {
-			ax = firstAxes[0].getSlice();
+			try {
+				ax = firstAxes[0].getSlice();
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 		}
 		
 		Dataset out = DatasetUtils.convertToDataset(input);

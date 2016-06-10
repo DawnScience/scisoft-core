@@ -20,7 +20,7 @@ import java.util.Map.Entry;
 
 
 import org.dawb.common.services.ServiceManager;
-
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IDataBasedFunction;
@@ -78,7 +78,11 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 			ILazyDataset[] firstAxes = getFirstAxes(input);
 			Dataset x = null;
 			if (firstAxes != null && firstAxes[0] != null) {
-				x = DatasetUtils.sliceAndConvertLazyDataset(firstAxes[0]);
+				try {
+					x = DatasetUtils.sliceAndConvertLazyDataset(firstAxes[0]);
+				} catch (DatasetException e) {
+					throw new OperationException(this, e);
+				}
 			} else {
 				x = DatasetFactory.createRange(input.getSize(), Dataset.FLOAT64);
 			}

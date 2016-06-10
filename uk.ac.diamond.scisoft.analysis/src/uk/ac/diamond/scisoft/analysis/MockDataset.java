@@ -13,11 +13,11 @@ import java.io.Serializable;
 import java.text.Format;
 import java.util.List;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
-import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
@@ -70,7 +70,7 @@ public class MockDataset implements IDataset {
 
 	@Override
 	public IDataset getSlice(IMonitor monitor, int[] start, int[] stop, int[] step)
-			throws ScanFileHolderException {
+			throws DatasetException {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 
@@ -85,12 +85,12 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public IDataset getSlice(IMonitor monitor, Slice... slice) throws ScanFileHolderException {
+	public IDataset getSlice(IMonitor monitor, Slice... slice) throws DatasetException {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 
 	@Override
-	public IDataset getSlice(IMonitor monitor, SliceND slice) throws ScanFileHolderException {
+	public IDataset getSlice(IMonitor monitor, SliceND slice) throws DatasetException {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 

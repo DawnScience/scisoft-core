@@ -12,6 +12,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
@@ -56,8 +57,11 @@ public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrati
 		ILazyDataset mask = getFirstMask(input);
 		IDataset m = null;
 		if (mask != null) {
-			m = mask.getSlice().squeeze();
-
+			try {
+				m = mask.getSlice().squeeze();
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 		}
 
 		final List<Dataset> out = PixelIntegration.integrate(input,m,lcache);

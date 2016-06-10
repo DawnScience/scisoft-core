@@ -3,6 +3,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
@@ -42,7 +43,11 @@ public class RangeIntegration1DOperation extends AbstractOperation<RangeIntegrat
 		if (firstAxes == null || firstAxes[0] == null) {
 			axis = DatasetFactory.createRange(input.getSize(), Dataset.INT32);
 		} else {
-			axis = firstAxes[0].getSlice();
+			try {
+				axis = firstAxes[0].getSlice();
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 		}
 		
 		double[] integrationRange = model.getIntegrationRange();

@@ -128,10 +128,13 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver {
 			if (loadLazily) {
 				data = createLazyDataset(DEF_IMAGE_NAME, Dataset.INT32, shape, new LazyLoaderStub() {
 					@Override
-					public IDataset getDataset(IMonitor mon, SliceND slice)
-							throws Exception {
-						Dataset data = loadDataset(fileName, nheader, slice.getSourceShape());
-						return data.getSliceView(slice);
+					public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
+						try {
+							Dataset data = loadDataset(fileName, nheader, slice.getSourceShape());
+							return data.getSliceView(slice);
+						} catch (ScanFileHolderException e) {
+							throw new IOException(e);
+						}
 					}
 				});
 			} else {

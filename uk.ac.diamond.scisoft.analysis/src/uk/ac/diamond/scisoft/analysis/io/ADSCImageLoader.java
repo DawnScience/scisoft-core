@@ -132,9 +132,13 @@ public class ADSCImageLoader extends AbstractFileLoader {
 			if (loadLazily) {
 				data = createLazyDataset(DEF_IMAGE_NAME, Dataset.INT32, shape, new LazyLoaderStub() {
 					@Override
-					public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
-						Dataset tmp = loadDataset(fileName, slice.getSourceShape(), pointer, keepBitWidth);
-						return tmp == null ? null : tmp.getSliceView(slice);
+					public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
+						try {
+							Dataset tmp = loadDataset(fileName, slice.getSourceShape(), pointer, keepBitWidth);
+							return tmp == null ? null : tmp.getSliceView(slice);
+						} catch (ScanFileHolderException e) {
+							throw new IOException(e);
+						}
 					}
 				});
 			} else {

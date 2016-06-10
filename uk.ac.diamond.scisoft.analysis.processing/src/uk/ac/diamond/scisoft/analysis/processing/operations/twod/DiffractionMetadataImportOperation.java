@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.twod;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
@@ -20,13 +21,10 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
-
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperationBase;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionCalibrationReader;
-import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionMetaReader;
 
 
 @Atomic
@@ -57,7 +55,12 @@ public class DiffractionMetadataImportOperation extends AbstractOperationBase<Di
 			synchronized(this) {
 				lmeta = metadata;
 				if (lmeta == null) {
-					IDiffractionMetadata md = NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(mod.getFilePath(), parent, name);
+					IDiffractionMetadata md;
+					try {
+						md = NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(mod.getFilePath(), parent, name);
+					} catch (DatasetException e) {
+						throw new OperationException(this, e);
+					}
 					if (md == null) throw new OperationException(this, "File does not contain metadata");
 					metadata = lmeta = md;
 					

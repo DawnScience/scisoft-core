@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.xpdf.operations;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
@@ -60,7 +61,12 @@ public class XPDFSubtractBackgroundOperation extends
 				process.isubtract(theXPDFMetadata.getEmptyTrace().getTrace());
 				
 				// Propagate the errors
-				Dataset inputErrors = DatasetUtils.sliceAndConvertLazyDataset(input.getError());
+				Dataset inputErrors;
+				try {
+					inputErrors = DatasetUtils.sliceAndConvertLazyDataset(input.getError());
+				} catch (DatasetException e) {
+					throw new OperationException(this, e);
+				}
 				Dataset processErrors = null;
 				if (inputErrors != null) {
 					Dataset	backgroundErrors = 	theXPDFMetadata.getEmptyTrace().getTrace().getError();	

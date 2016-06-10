@@ -24,6 +24,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
@@ -769,7 +770,11 @@ public class XPDFCalibration {
 		
 		// Get the mask from the background subtracted sample data
 		ILazyDataset mask = AbstractOperationBase.getFirstMask(backgroundSubtracted.get(0));
-		IDataset m = (mask != null) ? mask.getSlice().squeeze() : null;
+		IDataset m = null;
+		try {
+			m = mask != null ? mask.getSlice().squeeze() : null;
+		} catch (DatasetException e) {
+		}
 
 		// See how well the processed data matches the target. The output
 		// of this step should be a smoothed version of absCor and the

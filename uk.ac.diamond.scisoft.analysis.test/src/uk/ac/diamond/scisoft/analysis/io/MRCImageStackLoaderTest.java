@@ -59,7 +59,7 @@ public class MRCImageStackLoaderTest {
 		checkImage(image);
 	}
 
-	private void checkImage(ILazyDataset image) { // 3838, 3710, 40
+	private void checkImage(ILazyDataset image) throws Exception { // 3838, 3710, 40
 		Assert.assertEquals(3, image.getRank());
 		Assert.assertEquals(40, image.getShape()[0]);
 		Assert.assertEquals(3710, image.getShape()[1]);

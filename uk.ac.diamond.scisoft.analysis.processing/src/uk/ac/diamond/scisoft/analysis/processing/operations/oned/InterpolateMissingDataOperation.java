@@ -23,6 +23,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetException;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
@@ -80,9 +81,18 @@ public class InterpolateMissingDataOperation extends AbstractOperation<Interpola
 		}
 		// Get the abscissae of the data, or build one
 		ILazyDataset[] abscissae = getFirstAxes(inputData);
-		Dataset abscissa = (abscissae != null && abscissae[0] != null) ? DatasetUtils.sliceAndConvertLazyDataset(abscissae[0]) : DoubleDataset.createRange(inputData.getSize());
-		
-		
+		Dataset abscissa = null;
+		if (abscissae != null && abscissae[0] != null) {
+			try {
+				abscissa = DatasetUtils.sliceAndConvertLazyDataset(abscissae[0]);
+			} catch (DatasetException e) {
+				// do nothing
+			}
+		}
+		if (abscissa == null) {
+			abscissa = DoubleDataset.createRange(inputData.getSize());
+		}
+
 		// To interpolate the missing data, we can assume an ordered grid,
 		// since missing data can be just left out of a collection of points
 		for (Entry<Integer, Integer> entry : missingDataBlocks.entrySet()) {

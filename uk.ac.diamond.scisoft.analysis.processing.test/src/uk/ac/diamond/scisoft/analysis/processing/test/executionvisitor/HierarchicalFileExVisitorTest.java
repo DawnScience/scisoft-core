@@ -11,6 +11,7 @@ import java.util.Collection;
 
 import org.dawb.common.services.ServiceManager;
 import org.dawnsci.persistence.PersistenceServiceCreator;
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
@@ -815,7 +816,7 @@ public class HierarchicalFileExVisitorTest {
 			
 	}
 	
-	private void testDataset(ITestOperation op, String slice, ILazyDataset lz) {
+	private void testDataset(ITestOperation op, String slice, ILazyDataset lz) throws DatasetException {
 		Slice[] slices = Slice.convertFromString(slice);
 		IDataset data = op.getTestData().getData();
 		IDataset out = lz.getSlice(slices);

@@ -122,7 +122,7 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 			}
 			
 			@Override
-			public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
+			public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 				int[] lstart = slice.getStart();
 				int[] lstep  = slice.getStep();
 				int[] newShape = slice.getShape();
@@ -175,8 +175,8 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 					} else {
 						d = loadData(mon, fileName, pos, dsize, dtype, signExtend, trueShape, lstart, newShape, lstep);
 					}
-				} catch (Exception e) {
-					throw new ScanFileHolderException("Problem with HDF library", e);
+				} catch (ScanFileHolderException e) {
+					throw new IOException("Problem with loading data", e);
 				}
 				return d;
 			}

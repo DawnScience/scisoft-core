@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
@@ -58,7 +59,13 @@ public class RawTextSaver implements IFileSaver {
 				logger.error("Cannot saved dataset '{}': this loader only supports 1D or 2D datasets", ld.getName());
 				continue;
 			}
-			IDataset data = (ld instanceof IDataset) ? (IDataset) ld : ld.getSlice();
+			IDataset data;
+			try {
+				data = (ld instanceof IDataset) ? (IDataset) ld : ld.getSlice();
+			} catch (DatasetException e1) {
+				logger.error("Could not get data from lazy dataset", e1);
+				throw new ScanFileHolderException("Could not get data from lazy dataset", e1);
+			}
 
 			FileWriter fw = null;
 			BufferedWriter bw = null;
@@ -69,9 +76,9 @@ public class RawTextSaver implements IFileSaver {
 					name = fileName;
 				} else {
 					try {
-						name = fileName.substring(0, (fileName.lastIndexOf(".")));
+						name = fileName.substring(0, fileName.lastIndexOf("."));
 						end = fileName.substring(fileName.lastIndexOf("."));
-					} catch (Exception e) {
+					} catch (IndexOutOfBoundsException e) {
 						name = fileName;
 					}
 

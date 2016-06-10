@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.xpdf.operations;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
@@ -96,18 +97,26 @@ public class XPDFInsertContainerMetadataOperation extends
 
 		// Load the container trace from the designated xy file
 		if (model.getDataset().length() <= 0) throw new OperationException(this, "Undefined dataset");
-		Dataset contTrace = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, model.getDataset()));
+		Dataset contTrace;
+		try {
+			contTrace = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, model.getDataset()));
+		} catch (DatasetException e) {
+			throw new OperationException(this, e);
+		}
 		// the container data shouldn't have extraneous dimensions
 		contTrace.squeezeEnds();
 		checkDataAndAuxillaryDataMatch(input, contTrace);
 		
 		try {
-			if (model.getErrorDataset().length() <= 0) throw new OperationException(this, "Undefined error dataset");
+			if (model.getErrorDataset().length() > 0) throw new OperationException(this, "Undefined error dataset");
 			Dataset contErrors = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(this, model.getErrorFilePath(), model.getErrorDataset()));
-			if (contErrors != null)
+			if (contErrors != null) {
 				checkDataAndAuxillaryDataMatch(contTrace, contErrors);
 				contTrace.setError(contErrors);
+			}
 		} catch (OperationException e) {
+			// catch and ignore; add no errors to the Dataset.
+		} catch (DatasetException e) {
 			// catch and ignore; add no errors to the Dataset.
 		}
 		

@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
@@ -52,7 +53,12 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		
 		if (axes == null || axes[0] == null) throw new OperationException(this, "Cannot rebin if there is no axis");
 		
-		Dataset axis = DatasetUtils.convertToDataset(axes[0].getSlice());
+		Dataset axis;
+		try {
+		    axis = DatasetUtils.convertToDataset(axes[0].getSlice());
+		} catch (DatasetException e) {
+			throw new OperationException(this, e);
+		}
 		
 		if (binEdges == null) {
 			nBins = model.getNumberOfBins() != null ? model.getNumberOfBins() : axis.getSize(); 

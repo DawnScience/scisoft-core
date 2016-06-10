@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 import java.util.Arrays;
 
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunctionLagrangeForm;
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
@@ -78,7 +79,11 @@ public class SplineBaselineOperation extends AbstractOperation<SplineBaselineMod
 		if (AbstractOperation.getFirstAxes(input) != null &&
 				AbstractOperation.getFirstAxes(input).length != 0 &&
 				AbstractOperation.getFirstAxes(input)[0] != null )
-			xaxis = DatasetUtils.sliceAndConvertLazyDataset(AbstractOperation.getFirstAxes(input)[0]);
+			try {
+				xaxis = DatasetUtils.sliceAndConvertLazyDataset(AbstractOperation.getFirstAxes(input)[0]);
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 		else
 			xaxis = DoubleDataset.createRange(input.getSize());
 		

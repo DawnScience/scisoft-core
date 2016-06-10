@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
@@ -66,7 +67,12 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 			b1 = getMean(input,(int)Math.round(backGroundRange1[0]), (int)Math.round(backGroundRange1[1]));
 		} else {
 			
-			Dataset x = DatasetUtils.sliceAndConvertLazyDataset(axm.getAxis(1)[0]);
+			Dataset x;
+			try {
+				x = DatasetUtils.sliceAndConvertLazyDataset(axm.getAxis(1)[0]);
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 			x.squeeze();
 			
 			signal = getMean(input,x,signalRange);
@@ -117,7 +123,12 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 		Dataset d = DatasetUtils.convertToDataset(input.getSlice(s));
 		MaskMetadata mmd = d.getFirstMetadata(MaskMetadata.class);
 		if (mmd != null) {
-			Dataset m = DatasetUtils.sliceAndConvertLazyDataset(mmd.getMask());
+			Dataset m;
+			try {
+				m = DatasetUtils.sliceAndConvertLazyDataset(mmd.getMask());
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 			if (m instanceof BooleanDataset) {
 				d.setByBoolean(Double.NaN, Comparisons.logicalNot(m));
 			}

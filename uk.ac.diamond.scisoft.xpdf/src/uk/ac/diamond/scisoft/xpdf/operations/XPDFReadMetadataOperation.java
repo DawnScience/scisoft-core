@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.xpdf.operations;
 
 import java.util.Map;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
@@ -35,7 +36,6 @@ import org.eclipse.dawnsci.nexus.NXbeam;
 import org.eclipse.dawnsci.nexus.NXcontainer;
 import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXdetector;
-import org.eclipse.dawnsci.nexus.NXinstrument;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NXshape;
@@ -152,7 +152,12 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 		// Get the data from the tree, and add it to the BeamTrace
 		if (addData) {
 			ILazyDataset iLazyDataset = data.getDataNode("data").getDataset();
-			Dataset dataset = DatasetUtils.sliceAndConvertLazyDataset(iLazyDataset);
+			Dataset dataset;
+			try {
+				dataset = DatasetUtils.sliceAndConvertLazyDataset(iLazyDataset);
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 			componentIntegration.setTrace(dataset);
 		}
 		
@@ -304,7 +309,12 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 	private void readAndAddDetectorCalibration(IDataset input, String filePath,
 			ILazyDataset parent) {
 		// TODO: This method does not cope with multiple detectors
-		IDiffractionMetadata diffraction = NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(filePath, parent);
+		IDiffractionMetadata diffraction;
+		try {
+			diffraction = NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(filePath, parent);
+		} catch (DatasetException e) {
+			throw new OperationException(this, e);
+		}
 		if (diffraction != null)
 			input.setMetadata(diffraction);
 	}
@@ -312,7 +322,12 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 	// Get the detector calibration
 	private void readAndAddMask(IDataset input, String filePath, ILazyDataset parent) {
 		// TODO: This method does not cope with multiple detectors
-		IDataset firstMask = NexusDiffractionCalibrationReader.getDetectorPixelMaskFromNexus(filePath, parent);
+		IDataset firstMask;
+		try {
+			firstMask = NexusDiffractionCalibrationReader.getDetectorPixelMaskFromNexus(filePath, parent);
+		} catch (Exception e) {
+			throw new OperationException(this, e);
+		}
 		IDataset firstBooleanMask;
 		if (firstMask != null) {
 			firstBooleanMask = Comparisons.equalTo(firstMask, 0);

@@ -1,6 +1,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.expressions;
 
-import org.dawb.common.services.ServiceManager;
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionEngine;
@@ -67,7 +67,11 @@ public class Expression1DOperation<T extends Expression1DModel> extends Abstract
 		ILazyDataset[] axes = getFirstAxes(input);
 		IDataset axis;
 		if (axes != null && axes[0] != null) {
-			axis= axes[0].getSlice();
+			try {
+				axis= axes[0].getSlice();
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 			engine.addLoadedVariable("xaxis", axis);
 		} else {
 			axis = DatasetFactory.createRange(input.getSize(), Dataset.FLOAT64);

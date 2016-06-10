@@ -8,6 +8,7 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
@@ -18,7 +19,6 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
-import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperationBase;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
@@ -55,15 +55,15 @@ public class ARPESAxisConversion extends AbstractOperationBase<ARPESAxisConversi
 		for (ILazyDataset axis : axesMetadata.getAxis(0)) {
 			if (axis != null) {
 				if (axis.getName().startsWith("sapolar")) {
-					IDataset axisData = axis.getSlice(new Slice(null));
-					Dataset kx = Maths.multiply(Maths.sin(Maths.toRadians(axisData)), k);
-					kx.iadd(model.getKxOffset());
-					kx.setName("kx");
-					
 					try {
+						IDataset axisData = axis.getSlice(new Slice(null));
+						Dataset kx = Maths.multiply(Maths.sin(Maths.toRadians(axisData)), k);
+						kx.iadd(model.getKxOffset());
+						kx.setName("kx");
+					
 						axesMetadata.setAxis(0, kx, axis);
 						break;
-					} catch (Exception e) {
+					} catch (DatasetException e) {
 						throw new OperationException(this, e);
 					}
 				}
@@ -73,14 +73,14 @@ public class ARPESAxisConversion extends AbstractOperationBase<ARPESAxisConversi
 		for (ILazyDataset axis : axesMetadata.getAxis(1)) {
 			if (axis != null) {
 				if (axis.getName().startsWith("angle")) {
-					IDataset axisData = axis.getSlice(new Slice(null));
-					Dataset ky = Maths.multiply(Maths.sin(Maths.toRadians(axisData)), k);
-					ky.iadd(model.getKyOffset());
-					ky.setName("ky");
 					try {
+						IDataset axisData = axis.getSlice(new Slice(null));
+						Dataset ky = Maths.multiply(Maths.sin(Maths.toRadians(axisData)), k);
+						ky.iadd(model.getKyOffset());
+						ky.setName("ky");
 						axesMetadata.setAxis(1, ky, axis);
 						break;
-					} catch (Exception e) {
+					} catch (DatasetException e) {
 						throw new OperationException(this, e);
 					}
 				}

@@ -16,6 +16,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
@@ -218,7 +219,7 @@ public class AxesMetadataTest {
 	}
 
     @Test
-    public void testAxesMetadataError() {
+    public void testAxesMetadataError() throws DatasetException {
            final int[] shape = new int[] { 1, 2, 3, 1 };
 
            int r = shape.length;
@@ -253,7 +254,7 @@ public class AxesMetadataTest {
     }
     
     @Test
-    public void testSliceFromView(){
+    public void testSliceFromView() throws DatasetException {
     	final int[] shape = new int[] { 3, 10, 11};
     	final int[] ashape = new int[] {3};
     	

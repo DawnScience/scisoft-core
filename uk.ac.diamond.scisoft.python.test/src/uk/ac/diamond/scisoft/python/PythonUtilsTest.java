@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.python;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
@@ -32,7 +33,7 @@ public class PythonUtilsTest {
 	}
 
 	@Test
-	public void testGetSlice() {
+	public void testGetSlice() throws DatasetException {
 		Dataset a;
 		IDataset b;
 		int[] shape;

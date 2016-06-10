@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
@@ -70,10 +71,13 @@ public abstract class AbstractCropOperation<T extends IOperationModel> extends A
 	}
 	
 	protected int getAxisIndex(ILazyDataset theAxis, Double value) {
-
-		return Maths.abs(Maths.subtract(theAxis.getSlice((Slice)null), value)).argMin();
+		try {
+			return Maths.abs(Maths.subtract(theAxis.getSlice((Slice) null), value)).argMin();
+		} catch (DatasetException e) {
+			throw new OperationException(this, e);
 		}
-	
+	}
+
 	/**
 	 * Returns user defined crop values from the model.
 	 * @return userVals

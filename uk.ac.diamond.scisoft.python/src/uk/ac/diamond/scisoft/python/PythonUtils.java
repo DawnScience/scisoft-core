@@ -14,6 +14,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.commons.math3.complex.Complex;
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
@@ -210,8 +211,9 @@ public class PythonUtils {
 	 * @param indexes
 	 *            can be a mixed array of integers or slices
 	 * @return dataset of specified sub-dataset
+	 * @throws DatasetException
 	 */
-	public static IDataset getSlice(final ILazyDataset a, final PyObject indexes) {
+	public static IDataset getSlice(final ILazyDataset a, final PyObject indexes) throws DatasetException {
 		int[] shape = a.getShape();
 		int orank = shape.length;
 

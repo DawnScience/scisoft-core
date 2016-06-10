@@ -33,6 +33,7 @@ import javax.vecmath.Vector3d;
 import javax.vecmath.Vector4d;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
@@ -1792,7 +1793,12 @@ public class NexusTreeUtils {
 		if (ld instanceof Dataset) {
 			dataset = (Dataset) ld;
 		} else {
-			dataset = DatasetUtils.sliceAndConvertLazyDataset(ld);
+			try {
+				dataset = DatasetUtils.sliceAndConvertLazyDataset(ld);
+			} catch (DatasetException e) {
+				logger.error("Could not get data from lazy dataset", e);
+				return null;
+			}
 			dNode.setDataset(dataset);
 		}
 		if (dtype >= 0 && dataset.getDtype() != dtype) {

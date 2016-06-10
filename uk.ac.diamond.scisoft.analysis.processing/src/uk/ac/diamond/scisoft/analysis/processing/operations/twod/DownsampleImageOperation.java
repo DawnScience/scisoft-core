@@ -2,6 +2,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.twod;
 
 import java.util.List;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.downsample.DownsampleMode;
@@ -31,7 +32,12 @@ public class DownsampleImageOperation extends AbstractOperation<DownsampleImageM
 		ILazyDataset mask = getFirstMask(input);
 		
 		if (mask != null && input instanceof Dataset) {
-			Dataset m = DatasetUtils.sliceAndConvertLazyDataset(mask);
+			Dataset m;
+			try {
+				m = DatasetUtils.sliceAndConvertLazyDataset(mask);
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 			((Dataset)input).setByBoolean(Double.NaN, Comparisons.logicalNot(m));
 		}
 		
@@ -66,7 +72,11 @@ public class DownsampleImageOperation extends AbstractOperation<DownsampleImageM
 				ILazyDataset[] o = new ILazyDataset[axis.length];
 				for (int j = 0; j < axis.length; j++) {
 					if (axis[j] != null) {
-						o[j] = dsax.value(axis[j].getSlice()).get(0);
+						try {
+							o[j] = dsax.value(axis[j].getSlice()).get(0);
+						} catch (DatasetException e) {
+							throw new OperationException(this, e);
+						}
 						o[j].setName(axis[j].getName());
 					}
 				}

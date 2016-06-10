@@ -61,7 +61,7 @@ public class I16NexusTest {
 	}
 
 	@Test
-	public void testLoadingI16NexusDirectBeam() throws ScanFileHolderException {
+	public void testLoadingI16NexusDirectBeam() throws Exception {
 		String n = testFileFolder +  "535432.nxs";
 		NexusHDF5Loader l = new NexusHDF5Loader();
 		l.setFile(n);
@@ -142,7 +142,7 @@ public class I16NexusTest {
 	}
 
 	@Test
-	public void testLoadingI16Nexus222() throws ScanFileHolderException {
+	public void testLoadingI16Nexus222() throws Exception {
 		String n = testFileFolder +  "535434.nxs";
 		NexusHDF5Loader l = new NexusHDF5Loader();
 		l.setFile(n);
@@ -218,7 +218,7 @@ public class I16NexusTest {
 
 	@Ignore
 	@Test
-	public void testLoadingI16Nexus220() throws ScanFileHolderException {
+	public void testLoadingI16Nexus220() throws Exception {
 		String n = testFileFolder +  "535436.nxs";
 		NexusHDF5Loader l = new NexusHDF5Loader();
 		l.setFile(n);

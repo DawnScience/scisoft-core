@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
@@ -40,7 +41,11 @@ public class DerivativeOperation extends AbstractOperation<DerivativeModel, Oper
 		if (firstAxes == null || firstAxes[0] == null) {
 			ax = DatasetFactory.createRange(input.getShape()[0], Dataset.INT64);
 		} else {
-			ax = firstAxes[0].getSlice();
+			try {
+				ax = firstAxes[0].getSlice();
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 		}
 		
 		Dataset out = DatasetUtils.convertToDataset(input);

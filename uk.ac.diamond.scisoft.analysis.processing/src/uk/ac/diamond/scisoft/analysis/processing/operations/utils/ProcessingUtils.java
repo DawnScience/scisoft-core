@@ -9,11 +9,12 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.utils;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
+import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
-import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 
@@ -37,6 +38,15 @@ public class ProcessingUtils {
 		
 		return lz;
 		
+	}
+
+	public static IDataset getDataset(IOperation op, String filepath, String datasetName) throws OperationException {
+		ILazyDataset lz = getLazyDataset(op, filepath, datasetName);
+		try {
+			return lz.getSlice();
+		} catch (DatasetException e) {
+			throw new OperationException(op, e);
+		}
 	}
 
 }

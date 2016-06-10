@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.export;
 
 import java.io.File;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
@@ -101,10 +102,10 @@ public class ExportAsText2DOperation extends AbstractOperation<ExportAsText1DMod
 		
 		ILazyDataset[] axes = getFirstAxes(input);
 		ILazyDataset lx = null;
-		ILazyDataset ly = null;
+//		ILazyDataset ly = null;
 		
 		if (axes != null) lx = axes[1];
-		if (axes != null) ly = axes[0];
+//		if (axes != null) ly = axes[0];
 		
 		Dataset outds = DatasetUtils.convertToDataset(input.getSlice()).clone();
 		outds.clearMetadata(null);
@@ -113,7 +114,12 @@ public class ExportAsText2DOperation extends AbstractOperation<ExportAsText1DMod
 //		outds.squeeze().setShape(outds.getShape()[0],1);
 		
 		if (lx != null) {
-			IDataset x = lx.getSliceView().getSlice().squeeze();
+			IDataset x;
+			try {
+				x = lx.getSliceView().getSlice().squeeze();
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 			x.setShape(x.getShape()[0],1);
 			int xtype = AbstractDataset.getDType(x);
 			int ytype = AbstractDataset.getDType(outds);

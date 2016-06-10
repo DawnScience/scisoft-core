@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyWriteableDataset;
@@ -177,16 +178,11 @@ public class AlignImages {
 				}
 				IDataset anchor = anchorList.get(p);
 				shifted.clear();
-				try {
-					// align rest of images
-					shifts.add(AlignImages.align(tImages, shifted, rois.get(p), true, topShifts.get(p), monitor));
-					shifted.remove(0); // remove unshifted anchor
-					shiftedImages.add(anchor); // add shifted anchor
-					shiftedImages.addAll(shifted); // add aligned images
-				} catch (Exception e) {
-					logger.warn("Problem with alignment: " + e);
-					return null;
-				}
+				// align rest of images
+				shifts.add(align(tImages, shifted, rois.get(p), true, topShifts.get(p), monitor));
+				shifted.remove(0); // remove unshifted anchor
+				shiftedImages.add(anchor); // add shifted anchor
+				shiftedImages.addAll(shifted); // add aligned images
 
 				fromStart = !fromStart;
 				if (monitor != null) {
@@ -270,20 +266,28 @@ public class AlignImages {
 			IDataset[] topImages = new IDataset[mode];
 			List<IDataset> anchorList = new ArrayList<IDataset>();
 			for (int i = 0; i < mode; i++) {
-				topImages[i] = data.getSlice(new Slice(i * nsets, data.getShape()[0], data.getShape()[1])).squeeze();
+				try {
+					topImages[i] = data.getSlice(new Slice(i * nsets, data.getShape()[0], data.getShape()[1])).squeeze();
+				} catch (DatasetException e) {
+					logger.error("Could not get slice of image", e);
+				}
 			}
 			// align top images
 			topShifts = align(topImages, anchorList, rois.get(0), true, null, monitor);
 			int idx = 0;
 			for (int p = 0; p < mode; p++) {
 				for (int i = 0; i < nsets; i++) {
-					tImages[i] = data.getSlice(new Slice(index++, data.getShape()[0], data.getShape()[1])).squeeze();
+					try {
+						tImages[i] = data.getSlice(new Slice(index++, data.getShape()[0], data.getShape()[1])).squeeze();
+					} catch (DatasetException e) {
+						logger.error("Could not get slice of image", e);
+					}
 				}
 				IDataset anchor = anchorList.get(p);
 				shifted.clear();
 				try {
 					// align rest of images
-					shifts.add(AlignImages.align(tImages, shifted, rois.get(p), true, topShifts.get(p), monitor));
+					shifts.add(align(tImages, shifted, rois.get(p), true, topShifts.get(p), monitor));
 					shifted.remove(0); // remove unshifted anchor
 
 					appendDataset(lazy, anchor, idx, monitor);
@@ -293,7 +297,7 @@ public class AlignImages {
 						idx++;
 					}
 
-				} catch (Exception e) {
+				} catch (DatasetException e) {
 					logger.warn("Problem with alignment: " + e);
 					return null;
 				}
@@ -310,7 +314,7 @@ public class AlignImages {
 		return lazy;
 	}
 
-	private static void appendDataset(ILazyWriteableDataset lazy, IDataset data, int idx, IMonitor monitor) throws Exception {
+	private static void appendDataset(ILazyWriteableDataset lazy, IDataset data, int idx, IMonitor monitor) throws DatasetException {
 		SliceND ndSlice = new SliceND(lazy.getShape(), new int[] {idx, 0, 0}, new int[] {(idx+1), data.getShape()[0], data.getShape()[1]}, null);
 		lazy.setSlice(monitor, data, ndSlice);
 	}

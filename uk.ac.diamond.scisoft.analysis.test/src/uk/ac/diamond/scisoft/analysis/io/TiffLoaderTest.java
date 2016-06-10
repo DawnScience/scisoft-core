@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
@@ -136,7 +137,7 @@ public class TiffLoaderTest {
 	}
 
 	@Test
-	public void testStackedFile() throws ScanFileHolderException {
+	public void testStackedFile() throws DatasetException, ScanFileHolderException {
 		ILazyDataset image = new TIFFImageLoader(TestFileFolder + "untitled1020.TIF").loadFile().getLazyDataset(0);
 		Assert.assertArrayEquals("Shape not equal", new int[] {3, 2048, 2048}, image.getShape());
 

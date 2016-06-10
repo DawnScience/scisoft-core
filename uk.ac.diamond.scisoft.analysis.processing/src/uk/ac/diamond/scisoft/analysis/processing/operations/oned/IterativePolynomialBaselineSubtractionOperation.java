@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
@@ -54,7 +55,12 @@ public class IterativePolynomialBaselineSubtractionOperation extends
 		
 		if (axes == null || axes[0] == null) throw new OperationException(this, "Cannot fit without axes");
 		
-		Dataset axis = DatasetUtils.sliceAndConvertLazyDataset(axes[0]);
+		Dataset axis;
+		try {
+			axis = DatasetUtils.sliceAndConvertLazyDataset(axes[0]);
+		} catch (DatasetException e) {
+			throw new OperationException(this, e);
+		}
 		
 		Dataset[] aa = new Dataset[]{axis};
 		DoubleDataset data = (DoubleDataset)DatasetUtils.cast(input, Dataset.FLOAT64).clone();

@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
 import java.util.Arrays;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
@@ -40,10 +41,14 @@ public class DataUtils {
 		
 		Dataset data = null;
 		
-		if (lz.getRank() == dataDims.length) {
-			data = DatasetUtils.sliceAndConvertLazyDataset(lz);
-		} else {
-			data = LazyMaths.mean(s, e, lz, dataDims).squeeze();
+		try {
+			if (lz.getRank() == dataDims.length) {
+				data = DatasetUtils.sliceAndConvertLazyDataset(lz);
+			} else {
+				data = LazyMaths.mean(s, e, lz, dataDims).squeeze();
+			}
+		} catch (DatasetException e1) {
+			throw new OperationException(null, e1);
 		}
 		
 		return data;
@@ -65,10 +70,14 @@ public class DataUtils {
 		
 		Dataset subtrahend = null;
 		
-		if (lz.getRank() == dataDims.length) {
-			subtrahend = DatasetUtils.sliceAndConvertLazyDataset(lz);
-		} else {
-			subtrahend = LazyMaths.mean(s, e, lz, dataDims).squeeze();
+		try {
+			if (lz.getRank() == dataDims.length) {
+				subtrahend = DatasetUtils.sliceAndConvertLazyDataset(lz);
+			} else {
+				subtrahend = LazyMaths.mean(s, e, lz, dataDims).squeeze();
+			}
+		} catch (DatasetException e1) {
+			throw new OperationException(op, e1);
 		}
 		
 		return subtrahend;
@@ -80,11 +89,13 @@ public class DataUtils {
 		ILazyDataset lz = ProcessingUtils.getLazyDataset(op, path, name);
 
 		if (Arrays.equals(lz.getShape(), ssm.getSourceInfo().getParent().getShape())) {
-			return DatasetUtils.convertToDataset(lz.getSlice(ssm.getSliceFromInput())).squeeze();
+			try {
+				return DatasetUtils.convertToDataset(lz.getSlice(ssm.getSliceFromInput())).squeeze();
+			} catch (DatasetException e) {
+				throw new OperationException(op, e);
+			}
 		} 
-		
+
 		return null;
-	
 	}
-	
 }

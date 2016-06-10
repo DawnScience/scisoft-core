@@ -1,5 +1,6 @@
 package uk.ac.diamond.scisoft.xpdf.test;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
@@ -28,7 +29,7 @@ public class XPDFTargetComponentTest extends TestCase {
 		
 	}
 
-	public void testGetSelfScattering() {
+	public void testGetSelfScattering() throws DatasetException {
 		XPDFTargetComponent ceriaComponent = generateCeriaComponent();
 
 //		double selfScatteringIntegralExpected = 463628.661954;

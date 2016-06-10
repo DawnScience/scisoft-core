@@ -7,8 +7,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.processing;
+package uk.ac.diamond.scisoft.analysis.processing.operations;
 
+import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
@@ -50,8 +51,12 @@ public abstract class AbstractCropOperation<T extends IOperationModel> extends A
 				indices[1][dim] = userVals[(cropRank-1)-dim][1] == null ? dataShape[dim] : (int)userVals[(cropRank-1)-dim][1].doubleValue();
 			}else {
 			//We do have axes, so get the indices of the user values
-				indices[0][dim] = userVals[(cropRank-1)-dim][0] == null ? 0 : getAxisIndex(axes[dim], userVals[(cropRank-1)-dim][0]);
-				indices[1][dim] = userVals[(cropRank-1)-dim][1] == null ? dataShape[dim] : getAxisIndex(axes[dim], userVals[(cropRank-1)-dim][1]);
+				try {
+					indices[0][dim] = userVals[(cropRank-1)-dim][0] == null ? 0 : getAxisIndex(axes[dim], userVals[(cropRank-1)-dim][0]);
+					indices[1][dim] = userVals[(cropRank-1)-dim][1] == null ? dataShape[dim] : getAxisIndex(axes[dim], userVals[(cropRank-1)-dim][1]);
+				} catch (DatasetException e) {
+					throw new OperationException(this, e);
+				}
 			}
 			
 			if (indices[0][dim] == indices[1][dim]) {
@@ -69,7 +74,7 @@ public abstract class AbstractCropOperation<T extends IOperationModel> extends A
 		return new OperationData(input.getSlice(indices[0], indices[1], null));
 	}
 	
-	protected int getAxisIndex(ILazyDataset theAxis, Double value) {
+	protected int getAxisIndex(ILazyDataset theAxis, Double value) throws DatasetException {
 
 		return Maths.abs(Maths.subtract(theAxis.getSlice((Slice)null), value)).argMin();
 		}

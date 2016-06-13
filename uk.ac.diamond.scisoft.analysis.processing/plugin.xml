@@ -868,6 +868,13 @@
             model="uk.ac.diamond.scisoft.analysis.processing.sxrdrods.RodScanPolynomial1DModel"
             name="RodScanPolynomial1DOperation">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutliersInQOperation"
+            icon="icons/template.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutliersInQOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutliersInQModel"
+            name="Mask Outliers in Q">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

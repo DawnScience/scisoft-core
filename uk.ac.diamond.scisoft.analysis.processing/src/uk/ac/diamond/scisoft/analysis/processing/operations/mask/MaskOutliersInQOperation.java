@@ -12,27 +12,25 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.mask;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.metadata.MaskMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
+import org.eclipse.dawnsci.analysis.api.processing.model.ValueModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.metadata.MaskMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
-import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram;
-import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegration;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationBean;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationCache;
-import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
-import uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationModel;
 import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
-public class MaskOutliersInQOperation extends AbstractOperation<EmptyModel, OperationData> {
+public class MaskOutliersInQOperation extends AbstractOperation<MaskOutliersInQModel, OperationData> {
 
 	@Override
 	public String getId() {
@@ -64,9 +62,18 @@ public class MaskOutliersInQOperation extends AbstractOperation<EmptyModel, Oper
 		bean.setShape(input.getShape());
 		PixelIntegrationCache lcache = new PixelIntegrationCache(meta, bean);
 		
-//		Dataset calculateOutlierMask = PixelIntegration.calculateOutlierMask(DatasetUtils.convertToDataset(input), null, lcache);
+		IDataset mask = null;
 		
-//		input.setMetadata(new MaskMetadataImpl(calculateOutlierMask));
+		if (input.getFirstMetadata(MaskMetadata.class) != null) {
+			MaskMetadata mm = input.getFirstMetadata(MaskMetadata.class);
+			if (mm.getMask() != null) {
+				mask = mm.getMask();
+			}
+		}
+		
+		Dataset calculateOutlierMask = PixelIntegration.calculateOutlierMask(DatasetUtils.convertToDataset(input), mask, lcache, model.getScale(),model.isLow(),model.isHigh());
+		
+		input.setMetadata(new MaskMetadataImpl(calculateOutlierMask));
 		
 		return new OperationData(input);
 	}

@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import ptolemy.data.expr.StringParameter;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.IllegalActionException;
+import ptolemy.kernel.util.Moveable;
 import ptolemy.kernel.util.NameDuplicationException;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 
@@ -63,7 +64,7 @@ import com.isencia.util.StringConvertor;
  * To avoid too much data in memory the Q size is defaulted on this class
  * 
  * @author Matthew Gerring
- *
+ * TODO Move {@link ISliceInformationProvider} out of {@link org.dawb.passerelle.actors.ui} an put in a more common location
  */
 public class OperationSource extends AbstractDataMessageSource implements ISliceInformationProvider {
 	
@@ -124,6 +125,7 @@ public class OperationSource extends AbstractDataMessageSource implements ISlice
 
 		
 		// Slicing
+		// * TODO use OSGi instead of having to use directly the implementation
 		slicing = new JSONSliceParameter(this, "Data Set Slice");
 		registerConfigurableParameter(slicing);
 		setDescription(slicing, Requirement.ESSENTIAL, VariableHandling.NONE, "Slicing can only be done if one dataset is being exctracted from the data at a time. Set the '"+datasetPath.getDisplayName()+"' attribute first. You can use expands inside the slicing dialog.");

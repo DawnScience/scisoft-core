@@ -34,7 +34,7 @@ import com.isencia.passerelle.util.ptolemy.StringChoiceParameter;
  * Transformer to run an operation. 
  * 
  * @author Matthew Gerring
- *
+ * TODO Move {@link IOperationModelInstanceProvider} out of {@link org.dawb.passerelle.actors.ui} an put in a more common location
  */
 public class OperationTransformer extends AbstractDataMessageTransformer implements IOperationModelInstanceProvider{
 	
@@ -54,7 +54,7 @@ public class OperationTransformer extends AbstractDataMessageTransformer impleme
 	 */
 	public final StringChoiceParameter                 operationId; 
 	/**
-	 * 
+	 * TODO use OSGi instead of having to use directly the implementation
 	 */
 	public final OperationModelParameter               model;
 

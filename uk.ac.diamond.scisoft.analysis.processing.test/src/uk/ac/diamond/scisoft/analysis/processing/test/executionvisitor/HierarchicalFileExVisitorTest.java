@@ -33,7 +33,6 @@ import org.junit.runners.Parameterized;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
-import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 import uk.ac.diamond.scisoft.analysis.processing.visitor.NexusFileExecutionVisitor;
@@ -54,7 +53,6 @@ public class HierarchicalFileExVisitorTest {
 		
 		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
 		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
-		OperationRunnerImpl.setRunner(ExecutionType.GRAPH,    new GraphRunner());
 		
 		ServiceManager.setService(IPersistenceService.class, PersistenceServiceCreator.createPersistenceService());
 		service = (IOperationService)Activator.getService(IOperationService.class);
@@ -64,7 +62,7 @@ public class HierarchicalFileExVisitorTest {
 	@Parameterized.Parameters
 	   public static Collection<?> params() {
 	      return Arrays.asList(new Object[] {new Object[]
-	         {ExecutionType.SERIES},new Object[]{ ExecutionType.GRAPH},new Object[]{ExecutionType.PARALLEL}
+	         {ExecutionType.SERIES},new Object[]{ExecutionType.PARALLEL}
 	         
 	      });
 	   }

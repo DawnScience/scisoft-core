@@ -9,7 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.test.executionvisitor;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
@@ -27,7 +28,6 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
-import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 
@@ -40,7 +40,6 @@ public class HierarchicalFileExVistWorkflowRunnerTest {
 		
 		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
 		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
-		OperationRunnerImpl.setRunner(ExecutionType.GRAPH,    new GraphRunner());
 		
 		ServiceManager.setService(IPersistenceService.class, PersistenceServiceCreator.createPersistenceService());
 		service = (IOperationService)Activator.getService(IOperationService.class);

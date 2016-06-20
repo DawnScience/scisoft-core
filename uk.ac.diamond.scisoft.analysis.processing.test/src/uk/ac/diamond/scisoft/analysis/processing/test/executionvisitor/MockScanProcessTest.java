@@ -9,11 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.test.executionvisitor;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -38,7 +34,6 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
-import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.operations.DataWrittenOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.SleepOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxMeanOperation;
@@ -58,7 +53,6 @@ public class MockScanProcessTest {
 		
 		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
 		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
-		OperationRunnerImpl.setRunner(ExecutionType.GRAPH,    new GraphRunner());
 		
 		ServiceManager.setService(IPersistenceService.class, PersistenceServiceCreator.createPersistenceService());
 		NexusFileExecutionVisitor.setPersistenceService(PersistenceServiceCreator.createPersistenceService());

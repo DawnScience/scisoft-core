@@ -23,13 +23,9 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.model.ValueModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl;
-import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationServiceHolder;
-import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 
@@ -59,9 +55,6 @@ public class OperationsTest {
 	
 		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
 		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
-		OperationRunnerImpl.setRunner(ExecutionType.GRAPH,    new GraphRunner());
-	
-		OperationServiceHolder.setOperationService(service);
 	}
 	
 	
@@ -103,12 +96,6 @@ public class OperationsTest {
 		service.execute(context);
 		if (counter!=1) throw new Exception("Unexpected execution amount "+counter);
 		
-		// Test in graph mode
-		counter = 0;
-		context.setExecutionType(ExecutionType.GRAPH);
-		service.execute(context);
-		if (counter!=1) throw new Exception("Unexpected execution amount "+counter);
-		
 	}
 
 	@Test
@@ -139,14 +126,6 @@ public class OperationsTest {
 		context.setSeries(subtract, add);
 		service.execute(context);
 		if (counter!=1) throw new Exception("Unexpected execution amount "+counter);
-		
-	
-		// Test in graph mode
-		counter = 0;
-		context.setExecutionType(ExecutionType.GRAPH);
-		service.execute(context);
-		if (counter!=1) throw new Exception("Unexpected execution amount "+counter);
-
 	}
 
 	private volatile int counter;
@@ -183,12 +162,6 @@ public class OperationsTest {
 		service.execute(context);	
 		if ( counter != 24 ) throw new Exception("The counter is "+counter);
 		
-	
-		// Test in graph mode
-		counter = 0;
-		context.setExecutionType(ExecutionType.GRAPH);
-		service.execute(context);
-		if ( counter != 24 ) throw new Exception("The counter is "+counter);
 	}
 
 	@Test
@@ -236,13 +209,6 @@ public class OperationsTest {
 		Thread.sleep(5000);
 		if ( counter < 23 ) throw new Exception("Not all jobs completed before timeout in parallel run! Loop count was : "+counter);
 	
-	
-		// Test in graph mode
-		counter = 0;
-		context.setExecutionType(ExecutionType.GRAPH);
-		context.setPoolSize(Runtime.getRuntime().availableProcessors());
-		service.execute(context);
-		
 		Thread.sleep(5000);
 		if ( counter != 24 ) throw new Exception("The counter is "+counter);
 
@@ -338,13 +304,6 @@ public class OperationsTest {
 		context.setSeries(subtract, add);	
 		context.setExecutionType(ExecutionType.PARALLEL);
 		service.execute(context);
-		Thread.sleep(3000);
-		assertEquals("Not all jobs completed before timeout in parallel run! counter: " + counter + ", expected: 24", 24, counter);
-
-		counter=0;
-	    context.setExecutionType(ExecutionType.GRAPH);
-	    context.setPoolSize(Runtime.getRuntime().availableProcessors());
-	    service.execute(context);
 		Thread.sleep(3000);
 		assertEquals("Not all jobs completed before timeout in parallel run! counter: " + counter + ", expected: 24", 24, counter);
 	}

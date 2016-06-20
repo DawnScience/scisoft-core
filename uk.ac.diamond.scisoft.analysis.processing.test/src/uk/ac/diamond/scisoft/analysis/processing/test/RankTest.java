@@ -32,8 +32,6 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.FunctionFactory;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
-import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationServiceHolder;
-import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.operations.FunctionModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.SectorIntegrationModel;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
@@ -58,8 +56,6 @@ public class RankTest {
 
 		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
 		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
-		OperationRunnerImpl.setRunner(ExecutionType.GRAPH,    new GraphRunner());
-		OperationServiceHolder.setOperationService(service);
 		
 		/*FunctionFactory has been set up as an OSGI service so need to register
 		 *function before it is called (or make this a JUnit PluginTest.
@@ -90,9 +86,6 @@ public class RankTest {
 		context.setSeries(function);
 		
         context.setExecutionType(ExecutionType.SERIES);
-        anyRank(context, service);
-        
-        context.setExecutionType(ExecutionType.GRAPH);
         anyRank(context, service);
 
 	}

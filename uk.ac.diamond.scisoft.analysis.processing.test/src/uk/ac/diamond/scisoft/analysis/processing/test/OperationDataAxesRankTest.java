@@ -29,8 +29,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
-import uk.ac.diamond.scisoft.analysis.processing.actor.actors.OperationServiceHolder;
-import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 
@@ -53,9 +51,6 @@ public class OperationDataAxesRankTest {
 		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.operations");
 		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
 		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
-		OperationRunnerImpl.setRunner(ExecutionType.GRAPH,    new GraphRunner());
-	
-		OperationServiceHolder.setOperationService(service);
 	}
 
 	@SuppressWarnings("unchecked")

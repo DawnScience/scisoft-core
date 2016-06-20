@@ -41,7 +41,6 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.LoaderServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
-import uk.ac.diamond.scisoft.analysis.processing.actor.runner.GraphRunner;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 
@@ -52,7 +51,6 @@ public class ExampleOperationsTest {
 		
 		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
 		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
-		OperationRunnerImpl.setRunner(ExecutionType.GRAPH,    new GraphRunner());
 		
 		ServiceManager.setService(IPersistenceService.class, PersistenceServiceCreator.createPersistenceService());
 		ServiceManager.setService(IConversionService.class, new ConversionServiceImpl());

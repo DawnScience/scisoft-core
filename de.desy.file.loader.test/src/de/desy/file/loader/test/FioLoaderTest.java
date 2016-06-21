@@ -12,7 +12,7 @@ public class FioLoaderTest {
 
 	@Test
 	public void testLoader() throws Exception {
-		FioLoader loader = new FioLoader("test/some.fio");
+		FioLoader loader = new FioLoader("resources/some.fio");
 		DataHolder dh = loader.loadFile();
 		assertEquals(5, dh.namesSize());
 		Dataset d = dh.getDataset(0);
@@ -24,7 +24,7 @@ public class FioLoaderTest {
 
 	@Test
 	public void testLazyLoader() throws Exception {
-		FioLoader loader = new FioLoader("test/some.fio");
+		FioLoader loader = new FioLoader("resources/some.fio");
 		loader.setLoadAllLazily(true);
 		DataHolder dh = loader.loadFile();
 		assertEquals(5, dh.namesSize());

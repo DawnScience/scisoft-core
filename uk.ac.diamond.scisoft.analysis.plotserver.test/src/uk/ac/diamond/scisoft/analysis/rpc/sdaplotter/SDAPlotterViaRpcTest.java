@@ -22,6 +22,7 @@ import uk.ac.diamond.scisoft.analysis.PythonHelper.PythonRunInfo;
 import uk.ac.diamond.scisoft.analysis.SDAPlotter;
 import uk.ac.diamond.scisoft.analysis.SDAPlotterImpl;
 import uk.ac.diamond.scisoft.analysis.SDAPlotterTestAbstract;
+import uk.ac.diamond.scisoft.analysis.plotserver.rpc.sdaplotter.ReDirectOverRpcPlotterImpl;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcException;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcGenericInstanceDispatcher;
 import uk.ac.diamond.scisoft.analysis.rpc.IAnalysisRpcHandler;

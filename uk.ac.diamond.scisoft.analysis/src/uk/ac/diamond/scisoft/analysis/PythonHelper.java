@@ -11,13 +11,16 @@ package uk.ac.diamond.scisoft.analysis;
 
 import java.io.IOException;
 
-import org.junit.Assert;
-import org.junit.Assume;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * To run tests that require Python, the execution environment must have a Python with NumPy installed.
  */
 public class PythonHelper {
+	
+	private static final Logger logger = LoggerFactory.getLogger(PythonHelper.class);
+
 	/**
 	 * Set to true to enable python tests
 	 */
@@ -142,7 +145,8 @@ public class PythonHelper {
 			String stderr = err.getContents();
 			String stdout = std.getContents();
 			boolean runSuccess = (!failOnAnyOutput || "".equals(stdout)) && "".equals(stderr);
-			Assert.assertTrue("Unexpected output on stderr:\n" + stderr + "\nor stdout:\n" + stdout + "\n", runSuccess);
+			if(!runSuccess)
+				throw new AssertionError("Unexpected output on stderr:\n" + stderr + "\nor stdout:\n" + stdout + "\n");
 			return stdout;
 		}
 
@@ -163,7 +167,8 @@ public class PythonHelper {
 
 	private static PythonRunInfo launch(String[] args, String[] envp) throws IOException {
 		// Short circuit tests when python isn't available
-		Assume.assumeTrue(enablePythonTests());
+		if (!enablePythonTests())
+			logger.error("Python not available");
 
 		PythonRunInfo pythonRunInfo = new PythonRunInfo();
 		pythonRunInfo.process = Runtime.getRuntime().exec(args, envp);

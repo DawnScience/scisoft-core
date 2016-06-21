@@ -20,6 +20,8 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
+import static org.junit.Assume.assumeTrue;
+
 public class MARImageLoaderThreadTest extends LoaderThreadTestBase{
 	
 	private static String TestFileFolder;
@@ -52,7 +54,7 @@ public class MARImageLoaderThreadTest extends LoaderThreadTestBase{
 			hostname = "";
 		}
 		if (hostname.startsWith("p99-ws100")) {
-			IOTestUtils.skipTest(
+			skipTest(
 			this.getClass().getCanonicalName() + ".testWithTwentyThreads skipped, since test takes forever on our under-powered Ubuntu test box (" + hostname + ")");
 		}
 		try {
@@ -66,7 +68,15 @@ public class MARImageLoaderThreadTest extends LoaderThreadTestBase{
 		}
 	}
 
-	
+	/**
+	 * Utility function to skip a JUnit test.
+	 * @param reason - explanation of why the test is skipped
+	 */
+	private static void skipTest(String reason) {
+		System.out.println("JUnit test skipped: " + reason);
+		assumeTrue(false);
+	}
+
 	@Override
 	public void doTestOfDataSet(int threadIndex) throws Exception{
 		@SuppressWarnings("unused")

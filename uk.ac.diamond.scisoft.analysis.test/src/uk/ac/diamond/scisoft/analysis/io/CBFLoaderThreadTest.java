@@ -17,6 +17,8 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 import uk.ac.diamond.scisoft.analysis.utils.OSUtils;
 
+import static org.junit.Assume.assumeTrue;
+
 /**
  *
  */
@@ -28,7 +30,7 @@ public class CBFLoaderThreadTest extends LoaderThreadTestBase {
 	
 	@BeforeClass
 	static public void setUpClass() {
-		IOTestUtils.skipTestIf(OSUtils.isWindowsOS(),
+		skipTestIf(OSUtils.isWindowsOS(),
 			".CBFLoaderThreadTest skipped, since currently failing on Windows");
 
 		TestFileFolder = IOTestUtils.getGDALargeTestFilesLocation();
@@ -37,7 +39,27 @@ public class CBFLoaderThreadTest extends LoaderThreadTestBase {
 		if (testpath.matches("^/[a-zA-Z]:.*")) // Windows path
 			testpath = testpath.substring(1); // strip leading slash
 	}
-	
+
+	/**
+	 * Utility function to skip a JUnit test if the specified condition is true.
+	 * If called from a method annotated with @Test, and condition is true, the @Test method will halt and be ignored (skipped).
+	 * If called from a method annotated with @Before or @BeforeClass, all @Test methods of the class are ignored (skipped).
+	 * 
+	 * Existing test runners (we're talking JUnit 4.5 and Ant 1.7.1, as bundled with Eclipse 3.5.1, don't have the concept of a
+	 * skipped test (tests are classified as either a pass or fail). Tests that fail an assumption are reported as passed.
+	 * 
+	 * Internally, a failing assumption throws an AssumptionViolatedException (in JUnit 4,5; this may have changed in later releases).
+	 * 
+	 * @param condition - boolean specifying whether the test method or test class is to be skipped
+	 * @param reason - explanation of why the test is skipped
+	 */
+	private static void skipTestIf(boolean condition, String reason) {
+		if (condition) {
+			System.out.println("JUnit test skipped: " + reason);
+			assumeTrue(false);
+		}
+	}
+
 	@Override
 	@Test
 	public void testInTestThread() throws Exception{

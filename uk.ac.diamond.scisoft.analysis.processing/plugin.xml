@@ -589,6 +589,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.AverageSectionsOfFastestOperation"
+            description="Averages sections of the data along the fastest non-data dimension of the array. For example, if the data set shape is [a,b,c,X,Y] where X and Y are the data dimensions, c is the fastest axis (row-major order)"
             icon="icons/meanfilt.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.AverageSectionsOfFastestOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.AverageSectionsOfFastestModel"
@@ -596,6 +597,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.CentroidOperation"
+            description="Determine the X and Y centroid values (saved to file)"
             icon="icons/blank.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.image.CentroidOperation"
             model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
@@ -638,6 +640,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.FileMetadataNormalisation"
+            description="Divide data by a value taken from the file metadata"
             icon="icons/decolor.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.FileMetadataNormalisation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.FileMetadataModel"
@@ -703,6 +706,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.TwoBoxMeanRatioOperation"
+            description="Ratio of the mean of two boxes"
             icon="icons/box.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.TwoBoxMeanRatioOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.TwoBoxModel"
@@ -711,6 +715,7 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.maskingCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.CoordinateMaskOperation"
+            description="Mask values inside, or outside a set co-ordinate range"
             icon="icons/regionMask.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.CoordinateMaskOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.CoordinateMaskModel"
@@ -718,6 +723,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.ReadDetectorInformationOperation"
+            description="Read calibration and mask from the NeXus file being processed"
             icon="icons/CalibrationRun.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.twod.ReadDetectorInformationOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.ReadDetectorInformationModel"
@@ -725,6 +731,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionFittingOperation"
+            description="Fit a function to the data, using a function generated in the function fitting tool and exported as a NeXus file"
             icon="icons/rollingball.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionFittingOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionFittingModel"
@@ -740,6 +747,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.scalar.SubtractScalarOperation"
+            description="Subtract a scalar"
             icon="icons/minus.png"
             id="uk.ac.diamond.scisoft.analysis.processing.scalar.SubtractScalarOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.scalar.ScalarModel"
@@ -747,6 +755,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.scalar.DivideScalarOperation"
+            description="Divide by a scalar"
             icon="icons/yellow-divide.png"
             id="uk.ac.diamond.scisoft.analysis.processing.scalar.DivideScalarOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.scalar.ScalarModel"
@@ -754,6 +763,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.scalar.AddScalarOperation"
+            description="Add a scalar"
             icon="icons/plus.png"
             id="uk.ac.diamond.scisoft.analysis.processing.scalar.AddScalarOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.scalar.ScalarModel"

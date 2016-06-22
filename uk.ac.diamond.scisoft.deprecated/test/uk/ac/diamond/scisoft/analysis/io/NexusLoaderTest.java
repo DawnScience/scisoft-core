@@ -38,6 +38,7 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 import uk.ac.gda.util.OSUtils;
+import static org.junit.Assume.assumeTrue;
 
 /**
  */
@@ -59,7 +60,7 @@ public class NexusLoaderTest {
 
 	@Test
 	public void testLoadDifficultHdf5File() throws Exception {
-		IOTestUtils.skipTestIf(OSUtils.is32bitJVM(),
+		skipTestIf(OSUtils.is32bitJVM(),
 			this.getClass().getCanonicalName() + ".testLoadDifficultHdf5File skipped, since this test fails on a 32-bit JVM - see GDA-3611");
 		
 		final IDataHolder dh = LoaderFactory.getData(IOTestUtils.getGDALargeTestFilesLocation()+"/NexusUITest/ID22-ODA-MapSpectra.h5", null);
@@ -71,7 +72,7 @@ public class NexusLoaderTest {
 
 	@Test
 	public void testLoadAnotherDifficultHdf5File() throws Exception {
-		IOTestUtils.skipTestIf(OSUtils.is32bitJVM(),
+		skipTestIf(OSUtils.is32bitJVM(),
 			this.getClass().getCanonicalName() + ".testLoadDifficultHdf5File skipped, since this test fails on a 32-bit JVM - see GDA-3611");
 		
 		final IDataHolder dh = LoaderFactory.getData(IOTestUtils.getGDALargeTestFilesLocation()+"/NexusUITest/DCT_201006-good.h5", null);
@@ -82,6 +83,25 @@ public class NexusLoaderTest {
 	}
 	
 
+	/**
+	 * Utility function to skip a JUnit test if the specified condition is true.
+	 * If called from a method annotated with @Test, and condition is true, the @Test method will halt and be ignored (skipped).
+	 * If called from a method annotated with @Before or @BeforeClass, all @Test methods of the class are ignored (skipped).
+	 * 
+	 * Existing test runners (we're talking JUnit 4.5 and Ant 1.7.1, as bundled with Eclipse 3.5.1, don't have the concept of a
+	 * skipped test (tests are classified as either a pass or fail). Tests that fail an assumption are reported as passed.
+	 * 
+	 * Internally, a failing assumption throws an AssumptionViolatedException (in JUnit 4,5; this may have changed in later releases).
+	 * 
+	 * @param condition - boolean specifying whether the test method or test class is to be skipped
+	 * @param reason - explanation of why the test is skipped
+	 */
+	private static void skipTestIf(boolean condition, String reason) {
+		if (condition) {
+			System.out.println("JUnit test skipped: " + reason);
+			assumeTrue(false);
+		}
+	}
 	
 	private void makeTestFile(String fileName, int[] dims) throws NexusException {
 		NexusFile file = NexusFileHDF5.createNexusFile(fileName);

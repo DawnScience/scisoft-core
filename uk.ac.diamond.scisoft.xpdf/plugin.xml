@@ -42,6 +42,7 @@
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFGofrFromDofrOperation"
+            description="Convert from the D(r) PDF to G(r)"
             icon="icons/xpdfsubbak.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFGofrFromDofrOperation"
             model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
@@ -50,6 +51,7 @@
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFTophatOperation"
+            description="Remove background using a tophat filter"
             icon="icons/xpdftophat.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFTophatOperation"
             model="uk.ac.diamond.scisoft.xpdf.operations.XPDFTophatModel"
@@ -58,6 +60,7 @@
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFSelfScatteringNormalisationOperation"
+            description="Calculate the theoretical self-scattring, and use it to normalise the data"
             icon="icons/xpdfnormal.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFSelfScatteringNormalisationOperation"
             model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
@@ -66,6 +69,7 @@
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFNormalizeTracesOperation"
+            description="Normalise all datasets according to their count time and relative flux"
             icon="icons/xpdfnormal.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFNormalizeTracesOperation"
             model="uk.ac.diamond.scisoft.xpdf.operations.XPDFNormalizeTracesModel"
@@ -74,6 +78,7 @@
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFSubtractBackgroundOperation"
+            description="Subtract the empty beam data from the sample and empty container data"
             icon="icons/xpdfsubbak.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFSubtractBackgroundOperation"
             model="uk.ac.diamond.scisoft.xpdf.operations.XPDFSubtractBackgroundModel"
@@ -82,6 +87,7 @@
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFIterateCalibrationConstantOperation"
+            description="Calibrate the data to best match the theoretical scattering, and subtract the sample fluorescence"
             icon="icons/xpdfxicco.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFIterateCalibrationConstantOperation"
             model="uk.ac.diamond.scisoft.xpdf.operations.XPDFIterateCalibrationConstantModel"
@@ -94,6 +100,7 @@
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFDefineDetectorOperation"
+            description="Define the detector parameters used to take the data"
             icon="icons/xpdfdetector.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFDefineDetectorOperation"
             model="uk.ac.diamond.scisoft.xpdf.operations.XPDFDefineDetectorModel"
@@ -102,6 +109,7 @@
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFAzimuthalIntegrationOperation"
+            description="An XPDF-specific version of the azimuthal integration Operation."
             icon="icons/xpdfazimuthal.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFAzimuthalIntegration"
             model="uk.ac.diamond.scisoft.xpdf.operations.XPDFAzimuthalIntegrationModel"
@@ -110,6 +118,7 @@
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFReadMetadataOperation"
+            description="Read the XPDF metadata from a NeXus file"
             icon="icons/xpdfbase.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XPDFReadMetadataOperation"
             model="uk.ac.diamond.scisoft.xpdf.operations.XPDFReadMetadataModel"

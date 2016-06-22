@@ -18,8 +18,8 @@
 		<condition property="plugin-uk.ac.diamond.scisoft.analysis.junit-tests.maxmemory" value="1280m">
 			<os family="windows" />
 		</condition>
-		<property name="plugin-uk.ac.diamond.scisoft.analysis.junit-tests.maxmemory" value="1536m" />
-		<junit-call description="${ant.project.name} Java JUnit tests" maxmemory="${plugin-uk.ac.diamond.scisoft.analysis.junit-tests.maxmemory}">
+		<property name="plugin-uk.ac.diamond.scisoft.analysis.test.junit-tests.maxmemory" value="1536m" />
+		<junit-call description="${ant.project.name} Java JUnit tests" maxmemory="${plugin-uk.ac.diamond.scisoft.analysis.test.junit-tests.maxmemory}">
 			<formatter type="xml" />
 			<classpath>
 				<pathelement location="${junitjar.loc}" />

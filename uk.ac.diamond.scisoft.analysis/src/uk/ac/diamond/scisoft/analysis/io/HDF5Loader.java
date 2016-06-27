@@ -928,8 +928,12 @@ public class HDF5Loader extends AbstractFileLoader {
 	}
 
 	@Override
-	public void loadMetadata(IMonitor mon) throws Exception {
-		loadTree(mon);
+	public void loadMetadata(IMonitor mon) throws IOException {
+		try {
+			loadTree(mon);
+		} catch (ScanFileHolderException e) {
+			throw new IOException(e);
+		}
 
 		DataHolder dh = new DataHolder();
 		dh.setFilePath(fileName);

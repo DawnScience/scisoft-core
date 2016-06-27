@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import java.io.IOException;
+
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 
@@ -29,7 +31,7 @@ public class ExtendedSRSLoader2 extends SRSLoader {
 	}
 
 	@Override
-	public void loadMetadata(IMonitor mon) throws Exception {
+	public void loadMetadata(IMonitor mon) throws IOException {
 		super.loadMetadata(mon);
 	}
 }

@@ -277,12 +277,16 @@ public class DatLoader extends AbstractFileLoader {
 
 
 	@Override
-	public void loadMetadata(final IMonitor mon) throws Exception {
+	public void loadMetadata(final IMonitor mon) throws IOException {
 
 		final BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
 		int count = 1;
 		try {
-			parseHeaders(br, null, mon);
+			try {
+				parseHeaders(br, null, mon);
+			} catch (Exception e) {
+				throw new IOException(e);
+			}
 			// We assume the rest of the lines not starting with # are all
 			// data lines in getting the meta data. We do not parse these lines.
 			String line=null;

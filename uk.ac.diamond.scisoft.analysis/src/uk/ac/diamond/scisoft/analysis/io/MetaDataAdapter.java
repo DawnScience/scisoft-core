@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.dawnsci.analysis.api.dataset.MetadataException;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 
 /**
@@ -61,12 +62,12 @@ public class MetaDataAdapter implements IMetadata {
 	}
 
 	@Override
-	public Serializable getMetaValue(String key) throws Exception {
+	public Serializable getMetaValue(String key) throws MetadataException {
 		return null;
 	}
 
 	@Override
-	public Collection<String> getMetaNames() throws Exception {
+	public Collection<String> getMetaNames() throws MetadataException {
 		return null;
 	}
 

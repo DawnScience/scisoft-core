@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.dataset.MetadataException;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
@@ -228,7 +229,7 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public <T extends MetadataType> List<T> getMetadata(Class<T> clazz) throws Exception {
+	public <T extends MetadataType> List<T> getMetadata(Class<T> clazz) throws MetadataException {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 	

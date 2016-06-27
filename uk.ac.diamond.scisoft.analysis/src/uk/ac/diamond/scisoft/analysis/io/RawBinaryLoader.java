@@ -187,7 +187,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 	}
 
 	@Override
-	public void loadMetadata(IMonitor mon) throws Exception {
+	public void loadMetadata(IMonitor mon) throws IOException {
 		File f = null;
 		FileInputStream fi = null;
 		try {
@@ -202,9 +202,9 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			readHeader(fBuffer);
 			metadata = createMetadata();
 		} catch (Exception ex) {
-			if (ex instanceof ScanFileHolderException)
-				throw (ScanFileHolderException) ex;
-			throw new ScanFileHolderException("There was a problem reading the Raw file", ex);			
+			if (ex instanceof IOException)
+				throw (IOException) ex;
+			throw new IOException("There was a problem reading the Raw file", ex);
 		} finally {
 			if (fi != null)
 				try {

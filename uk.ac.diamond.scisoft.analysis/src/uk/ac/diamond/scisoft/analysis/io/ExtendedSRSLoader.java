@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
@@ -118,7 +119,7 @@ public class ExtendedSRSLoader extends SRSLoader {
 	}
 
 	@Override
-	public void loadMetadata(IMonitor mon) throws Exception {
+	public void loadMetadata(IMonitor mon) throws IOException {
 		super.loadMetadata(mon);
 
 		// Cannot do this if decorator, this means that the I16 data folder would parse all

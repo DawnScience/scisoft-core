@@ -794,7 +794,7 @@ _diffrn_radiation_wavelength.wt 1.0
 	}
 
 	@Override
-	public void loadMetadata(IMonitor mon) throws Exception {
+	public void loadMetadata(IMonitor mon) throws IOException {
 		// We need to read the header completely
 		if (loadMetadata && metadata==null) { // We create something
 			metadata = new Metadata(metadataMap);

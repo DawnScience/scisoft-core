@@ -12,7 +12,6 @@ package uk.ac.diamond.scisoft.xpdf.operations;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
@@ -105,12 +104,7 @@ public class XPDFLorchFTOperation extends
 				// The vector to transform is zero, except at element iq it
 				// holds the uncertainty variance (error squared) of the data
 				// point at iq
-				IDataset sl;
-				try {
-					sl = thSoq.getError().getSlice();
-				} catch (DatasetException e) {
-					throw new OperationException(this, e);
-				}
+				IDataset sl = thSoq.getError().getSlice();
 				covarQ.set(Maths.square(sl.getDouble(iq)), 0);
 				Dataset qSlice = Maths.add(q.getDouble(iq), Maths.multiply(q.getDouble(3)-q.getDouble(2), DoubleDataset.createRange(0, 4, 1))); 
 						

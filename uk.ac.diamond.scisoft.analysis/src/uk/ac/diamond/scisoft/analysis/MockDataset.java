@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.MetadataException;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
@@ -254,12 +253,27 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public ILazyDataset getError() {
+	public boolean hasErrors() {
+		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
+	}
+
+	@Override
+	public IDataset getError() {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 
 	@Override
 	public void setError(Serializable errors) {
+		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
+	}
+
+	@Override
+	public double getError(int... pos) {
+		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
+	}
+
+	@Override
+	public double[] getErrorArray(int... pos) {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 

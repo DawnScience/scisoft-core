@@ -87,7 +87,7 @@ public class NumPyFileSaver implements IFileSaver {
 				throw new ScanFileHolderException("Dataset null at index " + i + " unsupported");
 			}
 			Dataset sdata = DatasetUtils.convertToDataset(dataset);
-			int dtype = sdata.getDtype();
+			int dtype = sdata.getDType();
 			DataTypeInfo dataTypeInfo;
 			dataTypeInfo = unsigned ? NumPyFile.unsignedNumPyTypeMap.get(dtype) : NumPyFile.numPyTypeMap.get(dtype);
 			if (dataTypeInfo == null) { // ignore unsigned flag if not found

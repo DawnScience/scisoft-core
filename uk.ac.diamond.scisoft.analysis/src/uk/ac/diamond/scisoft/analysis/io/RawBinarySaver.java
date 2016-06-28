@@ -105,7 +105,7 @@ public class RawBinarySaver implements IFileSaver {
 			}
 
 			Dataset sdata = DatasetUtils.convertToDataset(dh.getDataset(i));
-			int dtype = sdata.getDtype();
+			int dtype = sdata.getDType();
 			switch (dtype) {
 			case Dataset.ARRAYINT8:
 				dtype = Dataset.INT8;

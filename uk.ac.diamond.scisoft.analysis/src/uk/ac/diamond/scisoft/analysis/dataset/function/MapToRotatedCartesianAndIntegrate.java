@@ -129,7 +129,7 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 				return null;
 
 			Dataset ds = DatasetUtils.convertToDataset(ids);
-			final int dtype = AbstractDataset.getBestFloatDType(ds.getDtype());
+			final int dtype = AbstractDataset.getBestFloatDType(ds.getDType());
 			Dataset sumx = DatasetFactory.zeros(new int[] { h }, dtype);
 			Dataset sumy = DatasetFactory.zeros(new int[] { w }, dtype);
 			Dataset usumx = DatasetFactory.zeros(new int[] { h }, dtype);
@@ -182,7 +182,7 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 				return null;
 
 			Dataset ds = DatasetUtils.convertToDataset(ids);
-			final int dtype = AbstractDataset.getBestFloatDType(ds.getDtype());
+			final int dtype = AbstractDataset.getBestFloatDType(ds.getDType());
 			Dataset mx = DatasetFactory.zeros(new int[] { h }, dtype);
 			Dataset my = DatasetFactory.zeros(new int[] { w }, dtype);
 

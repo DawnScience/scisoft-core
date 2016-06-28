@@ -1801,7 +1801,7 @@ public class NexusTreeUtils {
 			}
 			dNode.setDataset(dataset);
 		}
-		if (dtype >= 0 && dataset.getDtype() != dtype) {
+		if (dtype >= 0 && dataset.getDType() != dtype) {
 			dataset = DatasetUtils.cast(dataset, dtype);
 			dNode.setDataset(dataset);
 		}

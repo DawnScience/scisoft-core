@@ -227,7 +227,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			final double dphi = (ephi - sphi) / np;
 			final double rdphi = dphi * erad;
 			
-			final int dtype = AbstractDataset.getBestFloatDType(ds.getDtype());
+			final int dtype = AbstractDataset.getBestFloatDType(ds.getDType());
 			Dataset sump = DatasetFactory.zeros(new int[] { nr }, dtype);
 			Dataset sumr = DatasetFactory.zeros(new int[] { np }, dtype);
 			
@@ -803,7 +803,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 					}
 				}
 				
-				final int dtype = AbstractDataset.getBestFloatDType(ids.getDtype());
+				final int dtype = AbstractDataset.getBestFloatDType(ids.getDType());
 				Dataset sump = DatasetFactory.zeros(new int[] { nr }, dtype);
 				Dataset sumr = DatasetFactory.zeros(new int[] { np }, dtype);
 				Dataset errsump = DatasetFactory.zeros(new int[] { nr }, Dataset.FLOAT64);

@@ -55,14 +55,14 @@ public class AffineTransformImageOperation extends AbstractSimpleImageOperation<
 						//check if axes is 1 or 2 dimensional
 						if (axis_old_x.getRank() == 1) {
 							//1D
-							axis_new_x = DatasetFactory.zeros(new int[]{out.getShape()[0]}, axis_old_x.getDtype());
+							axis_new_x = DatasetFactory.zeros(new int[]{out.getShape()[0]}, axis_old_x.getDType());
 							for (int i = 0 ; i < out.getShape()[0] ; i++) {
 								double new_value = axis_old_x.getDouble(0) + (axis_old_x.getDouble(axis_old_x.getShape()[0]-1) - axis_old_x.getDouble(0)) * i / (out.getShape()[0]-1);
 								axis_new_x.set(new_value, i);
 							}
 						} else {
 							//2D
-							axis_new_x = DatasetFactory.zeros(out.getShape(), axis_old_x.getDtype());
+							axis_new_x = DatasetFactory.zeros(out.getShape(), axis_old_x.getDType());
 							for (int i = 0 ; i < out.getShape()[0] ; i++) {
 								double new_value = axis_old_x.getDouble(0, 0) + (axis_old_x.getDouble(axis_old_x.getShape()[0]-1, 0) - axis_old_x.getDouble(0, 0)) * i / (out.getShape()[0]-1);
 								for (int j = 0 ; j < out.getShape()[1] ; j++) {
@@ -77,14 +77,14 @@ public class AffineTransformImageOperation extends AbstractSimpleImageOperation<
 						//check if axes is 1 or 2 dimensional
 						if (axis_old_y.getRank() == 1) {
 							//1D
-							axis_new_y = DatasetFactory.zeros(new int[]{out.getShape()[1]}, axis_old_y.getDtype());
+							axis_new_y = DatasetFactory.zeros(new int[]{out.getShape()[1]}, axis_old_y.getDType());
 							for (int j = 0 ; j < out.getShape()[1] ; j++) {
 								double new_value = axis_old_y.getDouble(0) + (axis_old_y.getDouble(axis_old_y.getShape()[0]-1) - axis_old_y.getDouble(0)) * j / (out.getShape()[1]-1);
 								axis_new_y.set(new_value, j);
 							}
 						} else {
 							//2D
-							axis_new_y = DatasetFactory.zeros(out.getShape(), axis_old_y.getDtype());
+							axis_new_y = DatasetFactory.zeros(out.getShape(), axis_old_y.getDType());
 							for (int j = 0 ; j < out.getShape()[1] ; j++) {
 								double new_value = axis_old_y.getDouble(0, 0) + (axis_old_y.getDouble(0, axis_old_y.getShape()[1]-1) - axis_old_y.getDouble(0, 0)) * j / (out.getShape()[1]-1);
 								for (int i = 0 ; i < out.getShape()[0] ; i++) {

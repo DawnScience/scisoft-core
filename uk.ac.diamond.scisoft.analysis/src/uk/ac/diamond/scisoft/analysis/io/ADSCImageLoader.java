@@ -224,7 +224,7 @@ public class ADSCImageLoader extends AbstractFileLoader {
 				data = (AbstractDataset) DatasetUtils.cast(data, Dataset.INT16);
 		}
 
-		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
+		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
 		int rank = shape.length;
 		for (int i = 0; i < rank; i++) {
 			hash = hash*17 + shape[i];

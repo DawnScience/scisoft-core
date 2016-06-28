@@ -69,7 +69,7 @@ public class RawBinaryTest {
 		try {
 			dh = new RawBinaryLoader(testScratchDirectoryName + filePath2D).loadFile();
 			Dataset data = dh.getDataset(0);
-			assertEquals(data.getDtype(), Dataset.FLOAT64);
+			assertEquals(data.getDType(), Dataset.FLOAT64);
 			assertEquals(data.getSize(), range);
 			assertEquals(data.getName(), "test 2D");
 			assertEquals(data.getShape().length, 2);
@@ -104,7 +104,7 @@ public class RawBinaryTest {
 		try {
 			dh = new RawBinaryLoader(testScratchDirectoryName + filePath1D).loadFile();
 			Dataset data = dh.getDataset(0);
-			assertEquals(data.getDtype(), Dataset.FLOAT32);
+			assertEquals(data.getDType(), Dataset.FLOAT32);
 			assertEquals(data.getSize(), range);
 			assertEquals(data.getName(), "test 1D");
 			assertEquals(data.getShape().length, 1);

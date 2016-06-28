@@ -514,7 +514,7 @@ public class HDF5LoaderTest {
 		DataHolder dh = l.loadFile();
 		System.err.println(Arrays.toString(dh.getNames()));
 		IDataset ds = dh.getLazyDataset("/KnifeQuadBPos1/10/Sample").getSlice();
-		assertEquals(Byte.class, ds.elementClass());
+		assertEquals(Byte.class, ds.getElementClass());
 		assertArrayEquals(new int[] {160, 210}, ds.getShape());
 		assertArrayEquals(new byte[] {87, 11, 1}, (byte[]) ds.getObject(0, 0));
 	}

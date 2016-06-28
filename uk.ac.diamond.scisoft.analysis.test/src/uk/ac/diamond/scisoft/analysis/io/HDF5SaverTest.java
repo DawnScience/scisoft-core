@@ -78,7 +78,7 @@ public class HDF5SaverTest {
 		DataNode d = (DataNode) link.getDestination();
 		ILazyDataset ds = d.getDataset();
 		assertArrayEquals(shape, ds.getShape());
-		assertEquals(Short.class, ds.elementClass());
+		assertEquals(Short.class, ds.getElementClass());
 		return DatasetUtils.sliceAndConvertLazyDataset(ds);
 	}
 

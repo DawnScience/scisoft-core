@@ -143,15 +143,15 @@ public class TiffLoaderTest {
 
 		IDataset d = image.getSlice(new Slice(1));
 		Assert.assertArrayEquals("Shape not equal", new int[] {1, 2048, 2048}, d.getShape());
-		Assert.assertEquals("Type is int32", Integer.class, d.elementClass());
+		Assert.assertEquals("Type is int32", Integer.class, d.getElementClass());
 
 		d = image.getSlice(new Slice(1, 3), new Slice(1));
 		Assert.assertArrayEquals("Shape not equal", new int[] {2, 1, 2048}, d.getShape());
-		Assert.assertEquals("Type is int32", Integer.class, d.elementClass());
+		Assert.assertEquals("Type is int32", Integer.class, d.getElementClass());
 
 		d = image.getSlice(new Slice(1, 3), new Slice(null, null, 4), new Slice(2, 25));
 		Assert.assertArrayEquals("Shape not equal", new int[] {2, 512, 23}, d.getShape());
-		Assert.assertEquals("Type is int32", Integer.class, d.elementClass());
+		Assert.assertEquals("Type is int32", Integer.class, d.getElementClass());
 	}
 
 	private void checkDataset(Dataset e, Dataset a) {

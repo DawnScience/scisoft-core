@@ -583,12 +583,12 @@ class ndarray(object):
     @property
     def itemsize(self):
         '''Return number of bytes per item'''
-        return self.__dataset.getItemsize()
+        return self.__dataset.getItemBytes()
 
     @property
     def nbytes(self):
         '''Return total bytes used by items of array'''
-        return self.__dataset.Nbytes()
+        return self.__dataset.getNbytes()
 
     @property
     def dtype(self):
@@ -602,20 +602,20 @@ class ndarray(object):
 
     @_wrapout
     def _get_real(self):
-        return self.__dataset.realView()
+        return self.__dataset.getRealView()
 
     def _set_real(self, value):
         value = fromDS(value)
         if isinstance(value, ndarray):
             value = value._jdataset()
-        _setslice(self.__dataset.realView(), value, None)
+        _setslice(self.__dataset.getRealView(), value, None)
 
     real = property(_get_real, _set_real)
 
     @_wrapout
     def _get_imag(self):
         if iscomplexobj(self):
-            return self.__dataset.imagView()
+            return self.__dataset.getImaginaryView()
         return zeros(self.shape, dtype=self.dtype)
 
     def _set_imag(self, value):
@@ -623,7 +623,7 @@ class ndarray(object):
             value = fromDS(value)
             if isinstance(value, ndarray):
                 value = value._jdataset()
-            _setslice(self.__dataset.imagView(), value, None)
+            _setslice(self.__dataset.getImaginaryView(), value, None)
 
     imag = property(_get_imag, _set_imag)
 

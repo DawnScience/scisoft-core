@@ -102,7 +102,7 @@ public class Integrate2D implements DatasetToDatasetFunction {
 			if (ny == 0)
 				ny = 1;
 
-			final int dtype = AbstractDataset.getBestFloatDType(ds.getDtype());
+			final int dtype = AbstractDataset.getBestFloatDType(ds.getDType());
 			final int is = ds.getElementsPerItem();
 			Dataset sumy = DatasetFactory.zeros(is, new int[] { nx }, dtype);
 			Dataset sumx = DatasetFactory.zeros(is, new int[] { ny }, dtype);

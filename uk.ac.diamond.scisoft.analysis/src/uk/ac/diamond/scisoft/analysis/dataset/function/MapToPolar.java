@@ -111,7 +111,7 @@ public class MapToPolar implements DatasetToDatasetFunction {
 				np = 1;
 
 			Dataset polarmap = DatasetFactory.zeros(new int[] { nr, np },
-					AbstractDataset.getBestFloatDType(ds.getDtype()));
+					AbstractDataset.getBestFloatDType(ds.getDType()));
 			Dataset unitpolarmap = DatasetFactory.zeros(polarmap); // unclipped polar of unit field
 
 			double rad, phi;

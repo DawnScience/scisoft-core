@@ -115,7 +115,7 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public Class<?> elementClass() {
+	public Class<?> getElementClass() {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 

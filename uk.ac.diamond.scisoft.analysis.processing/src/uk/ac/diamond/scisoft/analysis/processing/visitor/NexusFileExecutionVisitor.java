@@ -666,7 +666,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 		Dataset d = DatasetUtils.convertToDataset(dataset);
 		int[] mx = determineMaxShape(d);
 
-		ILazyWriteableDataset lwds = new LazyWriteableDataset(d.getName(), d.getDtype(), d.getShape(), mx, d.getShape(), null);
+		ILazyWriteableDataset lwds = new LazyWriteableDataset(d.getName(), d.getDType(), d.getShape(), mx, d.getShape(), null);
 		
 		nexusFile.createData(group, lwds, NexusFile.COMPRESSION_LZW_L1);
 

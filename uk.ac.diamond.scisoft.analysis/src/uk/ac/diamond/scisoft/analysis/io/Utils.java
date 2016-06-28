@@ -233,7 +233,7 @@ public class Utils {
 			pos += 4;
 		}
 
-		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
+		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
 		int[] shape = data.getShape();
 		int rank = shape.length;
 		for (int i = 0; i < rank; i++) {
@@ -274,7 +274,7 @@ public class Utils {
 			pos += 4;
 		}
 
-		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
+		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
 		int[] shape = data.getShape();
 		int rank = shape.length;
 		for (int i = 0; i < rank; i++) {
@@ -331,7 +331,7 @@ public class Utils {
 			}
 		}
 
-		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
+		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
 		int[] shape = data.getShape();
 		int rank = shape.length;
 		for (int i = 0; i < rank; i++) {
@@ -387,7 +387,7 @@ public class Utils {
 				pos += 2;
 			}
 		}
-		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
+		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
 		int[] shape = data.getShape();
 		int rank = shape.length;
 		for (int i = 0; i < rank; i++) {
@@ -428,7 +428,7 @@ public class Utils {
 			pos += 1;
 		}
 
-		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
+		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
 		int[] shape = data.getShape();
 		int rank = shape.length;
 		for (int i = 0; i < rank; i++) {
@@ -500,7 +500,7 @@ public class Utils {
 			pos += 4;
 		}
 
-		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
+		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
 		int[] shape = data.getShape();
 		int rank = shape.length;
 		for (int i = 0; i < rank; i++) {

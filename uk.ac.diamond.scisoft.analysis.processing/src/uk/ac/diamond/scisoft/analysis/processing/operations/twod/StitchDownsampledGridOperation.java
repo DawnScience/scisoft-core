@@ -86,7 +86,7 @@ public class StitchDownsampledGridOperation extends AbstractOperation<Downsample
 		int y = ds.getShape()[0]* yN;
 		
 		if (full == null) {
-			full = DatasetFactory.zeros(new int[]{y, x}, ds.getDtype());
+			full = DatasetFactory.zeros(new int[]{y, x}, ds.getDType());
 		}
 		
 		SliceND s = new SliceND(full.getShape());

@@ -71,7 +71,7 @@ public class SRSLoaderTest {
 
 			// now the file is loaded, check to make sure that it holds the right data
 			assertEquals("There is not the correct number of axis in the file", 7, dh.size());
-			int dt = dh.getDataset(6).getDtype();
+			int dt = dh.getDataset(6).getDType();
 			if (dt == Dataset.FLOAT32)
 				assertEquals("The file does not contain NANs", Float.NaN, dh.getDataset(6).getDouble(1), 10.);
 			if (dt == Dataset.FLOAT64)

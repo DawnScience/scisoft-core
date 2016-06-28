@@ -853,7 +853,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 				CompoundDataset cd = (CompoundDataset) v;
 				v = cd.getElements(0);
 			}
-			switch (v.getDtype()) {
+			switch (v.getDType()) {
 			case Dataset.BOOL:
 				v = v.cast(Dataset.FLOAT32);
 				break;

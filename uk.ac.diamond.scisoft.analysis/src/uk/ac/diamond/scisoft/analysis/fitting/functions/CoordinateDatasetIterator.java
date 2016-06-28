@@ -29,7 +29,7 @@ public class CoordinateDatasetIterator extends CoordinatesIterator {
 	public CoordinateDatasetIterator(IDataset value) {
 		if (!(value instanceof CompoundDataset)) {
 			int dtype = AbstractDataset.getBestDType(Dataset.ARRAYINT8,
-					AbstractDataset.getDTypeFromClass(value.elementClass()));
+					AbstractDataset.getDTypeFromClass(value.getElementClass()));
 			cvalue = (CompoundDataset) DatasetUtils.cast(value, dtype);
 		} else {
 			cvalue = (CompoundDataset) value;

@@ -22,6 +22,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
@@ -79,7 +80,13 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 		
 		if (signal == null || b0 == null || b1 == null) throw new OperationException(this, "Could not get sections of data!");
 		
+		Dataset ds = DatasetUtils.convertToDataset(input);
+		
+		double m = model.isUseFullFrameForRatio() ? (double)ds.sum(true) : (double)signal.sum(true);
+		
 		signal.isubtract((b0.iadd(b1).idivide(2)));
+		
+		double m2 = (double)signal.sum(true);
 		
 		if (axis1 != null) {
 			AxesMetadataImpl ax = new AxesMetadataImpl(1);
@@ -87,8 +94,10 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 			signal.addMetadata(ax);
 		}
 		
+		Dataset ratio = DatasetFactory.createFromObject(m2/m, Dataset.FLOAT64);
+		ratio.setName("ratio");
 		
-		return new OperationData(signal);
+		return new OperationData(signal, ratio);
 		
 	}
 	

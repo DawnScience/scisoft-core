@@ -108,33 +108,33 @@ public class Integrate2D implements DatasetToDatasetFunction {
 			Dataset sumx = DatasetFactory.zeros(is, new int[] { ny }, dtype);
 
 			if (is == 1) {
-				double csum;
-				for (int b = 0; b < ny; b++) {
-					csum = 0.0;
-					for (int a = 0; a < nx; a++) {
-						final double v = ds.getDouble(b + sy, a + sx);
+				double sumForThisRow;
+				for (int y = 0; y < ny; y++) {
+					sumForThisRow = 0.0;
+					for (int x = 0; x < nx; x++) {
+						final double v = ds.getDouble(y + sy, x + sx);
 						if (Double.isNaN(v)) continue; 
-						csum += v;
-						sumy.set(v + sumy.getDouble(a), a);
+						sumForThisRow += v;
+						sumy.set(v + sumy.getDouble(x), x);
 					}
-					sumx.set(csum, b);
+					sumx.set(sumForThisRow, y);
 				}
 			} else {
-				final double[] csums = new double[is];
-				final double[] xvalues = new double[is];
-				final double[] yvalues = new double[is];
-				for (int b = 0; b < ny; b++) {
-					Arrays.fill(csums, 0.);
-					for (int a = 0; a < nx; a++) {
-						((CompoundDataset) ds).getDoubleArray(xvalues, b + sy, a + sx);
-						((CompoundDataset) sumy).getDoubleArray(yvalues, a);
+				final double[] sumForThisRow = new double[is];
+				final double[] v = new double[is];
+				final double[] tempColumnSum = new double[is];
+				for (int y = 0; y < ny; y++) {
+					Arrays.fill(sumForThisRow, 0.);
+					for (int x = 0; x < nx; x++) {
+						((CompoundDataset) ds).getDoubleArray(v, y + sy, x + sx);
+						((CompoundDataset) sumy).getDoubleArray(tempColumnSum, x);
 						for (int j = 0; j < is; j++) {
-							csums[j] += xvalues[j];
-							yvalues[j] += xvalues[j];
+							sumForThisRow[j] += v[j];
+							tempColumnSum[j] += v[j];
 						}
-						sumy.set(yvalues, a);
+						sumy.set(tempColumnSum, x);
 					}
-					sumx.set(csums, b);
+					sumx.set(sumForThisRow, y);
 				}
 			}
 			result.add(sumx);

@@ -10,20 +10,22 @@
 package uk.ac.diamond.scisoft.analysis.dataset.function;
 
 
-import java.util.List;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import java.util.List;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.RGBDataset;
 import org.junit.Test;
 
 /**
  *
  */
-public class Integrate2DTest extends TestCase {
+public class Integrate2DTest {
 
 	private void check1DArray(final Dataset a, final double[] d) {
 		assertEquals(1, a.getRank());
@@ -80,6 +82,50 @@ public class Integrate2DTest extends TestCase {
 
 		check1DArray(dsets.get(1), new double[] {6., 8., 10., 12., 14., 16.});
 		check1DArray(d.sum(0), new double[] {6., 8., 10., 12., 14., 16.});
+	}
+
+	@Test
+	public void testRGBDatasetIntegration() {
+		
+		// Create a 2-row, 3-column dataset, where each item in the dataset has 3 elements.
+		RGBDataset ds = new RGBDataset(
+			new int[] { 1,  2,  3,  4,  5,  6},
+			new int[] {10, 11, 12, 13, 14, 15},
+			new int[] {20, 21, 22, 23, 24, 25},
+			2, 3);
+		
+		// The dataset looks like this:
+		// 
+		// red          green      blue
+		//  1  2  3     10 11 12   20 21 22
+		//  4  5  6     13 14 15   23 24 25
+		
+		assertEquals(6, ds.getSize());
+		assertEquals(3, ds.getElementsPerItem());
+		
+		assertArrayEquals(new short[] { 1,  2,  3,  4,  5,  6}, ds.getRedView().getData());
+		assertArrayEquals(new short[] {10, 11, 12, 13, 14, 15}, ds.getGreenView().getData());
+		assertArrayEquals(new short[] {20, 21, 22, 23, 24, 25}, ds.getBlueView().getData());
+		
+		// Do the integration
+		List<Dataset> calculated = new Integrate2D().value(ds);
+		
+		// We get back two datasets: sum of each row, which should have 2 items...
+		RGBDataset rowSums = (RGBDataset) calculated.get(0);
+		assertEquals(2, rowSums.getSize());
+		assertEquals(3, rowSums.getElementsPerItem());
+		
+		// ...and sum of each column, which should have 3 items
+		RGBDataset columnSums = (RGBDataset) calculated.get(1);
+		assertEquals(3, columnSums.getSize());
+		assertEquals(3, columnSums.getElementsPerItem());
+		
+		assertArrayEquals(new int[] {1+2+3, 10+11+12, 20+21+22}, rowSums.getIntArray(0));
+		assertArrayEquals(new int[] {4+5+6, 13+14+15, 23+24+25}, rowSums.getIntArray(1));
+		
+		assertArrayEquals(new int[] {1+4, 10+13, 20+23}, columnSums.getIntArray(0));
+		assertArrayEquals(new int[] {2+5, 11+14, 21+24}, columnSums.getIntArray(1));
+		assertArrayEquals(new int[] {3+6, 12+15, 22+25}, columnSums.getIntArray(2));
 	}
 
 }

@@ -596,6 +596,100 @@ public class XPDFCalibration {
 
 		boolean doGridded = false;
 		
+		if (!doGridded) {
+			// New bisection solver
+			ExecutorService annihilator = Executors.newSingleThreadExecutor();
+			double granularity = (maxScale - minScale) / nSteps / 2;
+			double xLow = minScale, xHigh = maxScale;
+			double fLow = evaluateSingleFluorescence(annihilator, xLow, nIterations),
+					fHigh = evaluateSingleFluorescence(annihilator, xHigh, nIterations);
+			// If the selected range should not change sign, expand it until it does
+			while (Math.signum(fHigh) == Math.signum(fLow)) {
+				// Double the range, centred on the same point
+				double xDifference = xHigh - xLow;
+				xLow = xLow - xDifference / 2;
+				xLow = Math.max(0, xLow);
+				xHigh = xLow + xDifference * 2;
+			
+				// Bisection cannot proceed if it cannot find a root, and in
+				// this case it does no good to expand the range without limit.
+				// If the bisection range exceeds 4× the gridded range, then
+				// stop and perform the gridded estimation of the fluorescence
+				// constant.
+				if ( (xHigh - xLow) > 4*(maxScale - minScale) ) {
+					doGridded = true;
+					break;
+				}
+				
+				// Calculate the differences at the end points of the expanded range
+				Map<Double, Double> differences = evaluateSeveralFluoroScales(
+						Arrays.asList(ArrayUtils.toObject(new double[] { xLow, xHigh })), nIterations,
+						Math.min(nThreads, 2));
+				fLow = differences.get(xLow);
+				fHigh = differences.get(xHigh);
+				System.err
+						.println("Bisection fluoro scales " + Double.toString(xLow) + " to " + Double.toString(xHigh));
+			}
+
+			if (!doGridded) {
+				boolean doQuadrisection = false;
+				double xLinear = xHigh, xLinearLast = xLow;
+				// Reduce the range, while maintaining the condition that fHigh and fLow have opposite signs
+				while (Math.abs(xLinear - xLinearLast) > granularity) {
+
+					xLinearLast = xLinear;
+
+					double xMid, fMid;
+
+					if (doQuadrisection) {
+						// Parallel quadrisection
+						double xInterval = (xHigh - xLow) / 4;
+						double xQuarter = xLow + xInterval;
+						xMid = xQuarter + xInterval;
+						double x3Quarters = xHigh - xInterval;
+						// Calculate the difference values at the three quarter points
+						double[] xes = new double[] { xQuarter, xMid, x3Quarters };
+						Map<Double, Double> midScales = evaluateSeveralFluoroScales(
+								Arrays.asList(ArrayUtils.toObject(xes)), nIterations, Math.min(nThreads, 3));
+						fMid = midScales.get(xMid);
+
+						// Do the first bisection
+						if (Math.signum(fMid) == Math.signum(fLow)) {
+							xLow = xMid;
+							fLow = fMid;
+							xMid = x3Quarters;
+						} else {
+							xHigh = xMid;
+							fHigh = fMid;
+							xMid = xQuarter;
+						}
+						fMid = midScales.get(xMid);
+					} else {
+						// Serial bisection
+						xMid = (xHigh + xLow) / 2;
+						fMid = evaluateSingleFluorescence(annihilator, xMid, nIterations);
+					}
+
+					// Do the bisection
+					if (Math.signum(fMid) == Math.signum(fLow)) {
+						xLow = xMid;
+						fLow = fMid;
+					} else {
+						xHigh = xMid;
+						fHigh = fMid;
+					}
+
+					// Calculate the linear interpolation of zero difference
+					xLinear = xLow - (xHigh - xLow) / (fHigh - fLow) * fLow;
+
+					System.err.println("Bisection fluoro scales " + Double.toString(xLow) + " to "
+							+ Double.toString(xHigh) + ". Linear solution: " + Double.toString(xLinear));
+				}
+				// Linear interpolation of x over this range
+				//		double xZero = xLow - (xHigh - xLow)/(fHigh - fLow) * fLow;
+				this.fluorescenceScale = xLinear;
+			}
+		}
 		// Old gridded code
 		if (doGridded) {
 
@@ -614,84 +708,6 @@ public class XPDFCalibration {
 			this.fluorescenceScale = minimalScale;
 			System.err.println("Gridded fluoro scale = " + this.fluorescenceScale);
 		}
-		
-		// New bisection solver
-		ExecutorService annihilator = Executors.newSingleThreadExecutor();
-		double granularity = (maxScale - minScale)/nSteps/2;
-		double xLow = minScale, xHigh = maxScale;
-		double fLow = evaluateSingleFluorescence(annihilator, xLow, nIterations),
-				fHigh = evaluateSingleFluorescence(annihilator, xHigh, nIterations);
-		// If the selected range should not change sign, expand it until it does
-		while (Math.signum(fHigh) == Math.signum(fLow)) {
-			// Double the range, centred on the same point
-			double xDifference = xHigh - xLow; 
-			xHigh = xHigh + xDifference/2;
-			xLow = xLow - xDifference/2;
-
-			// Calculate the differences at the end points of the expanded range
-			Map<Double, Double> differences = evaluateSeveralFluoroScales(Arrays.asList(ArrayUtils.toObject(new double[] {xLow, xHigh})), nIterations, Math.min(nThreads, 2));
-			fLow = differences.get(xLow);
-			fHigh = differences.get(xHigh);
-			System.err.println("Bisection fluoro scales " + Double.toString(xLow) + " to " + Double.toString(xHigh));
-		}
-
-		boolean doQuadrisection = false;
-		
-		double xLinear = xHigh, xLinearLast = xLow;
-		// Reduce the range, while maintaining the condition that fHigh and fLow have opposite signs
-		while (Math.abs(xLinear - xLinearLast) > granularity) {
-			
-			xLinearLast = xLinear;
-			
-			double xMid, fMid;
-			
-			if (doQuadrisection) {
-				// Parallel quadrisection
-				double xInterval = (xHigh - xLow)/4;
-				double xQuarter = xLow + xInterval;
-				xMid = xQuarter + xInterval;
-				double x3Quarters = xHigh - xInterval;
-				// Calculate the difference values at the three quarter points
-				double[] xes = new double[] {xQuarter, xMid, x3Quarters};
-				Map<Double, Double> midScales = evaluateSeveralFluoroScales(Arrays.asList(ArrayUtils.toObject(xes)), nIterations, Math.min(nThreads, 3));
-				fMid = midScales.get(xMid);
-
-				// Do the first bisection
-				if (Math.signum(fMid) == Math.signum(fLow)) {
-					xLow = xMid;
-					fLow = fMid;
-					xMid = x3Quarters;
-				} else {
-					xHigh = xMid;
-					fHigh = fMid;
-					xMid = xQuarter;
-				}
-				fMid = midScales.get(xMid);
-			} else {
-				// Serial bisection
-				xMid = (xHigh + xLow)/2;
-				fMid = evaluateSingleFluorescence(annihilator, xMid, nIterations);
-			}
-			
-			// Do the bisection
-			if (Math.signum(fMid) == Math.signum(fLow)) {
-				xLow = xMid;
-				fLow = fMid;
-			} else {
-				xHigh = xMid;
-				fHigh = fMid;
-			}
-			
-			// Calculate the linear interpolation of zero difference
-			xLinear = xLow - (xHigh - xLow)/(fHigh - fLow) * fLow;
-			
-			System.err.println("Bisection fluoro scales " + Double.toString(xLow) + " to " + Double.toString(xHigh) + 
-					". Linear solution: " + Double.toString(xLinear));
-		}
-		
-		// Linear interpolation of x over this range
-//		double xZero = xLow - (xHigh - xLow)/(fHigh - fLow) * fLow;
-		this.fluorescenceScale = xLinear;
 	}
 
 	// Bundle all the execution and waiting code and especially their try/catches into a function

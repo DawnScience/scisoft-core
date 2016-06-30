@@ -36,6 +36,9 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 	private Map<XPDFTargetComponent, XPDFBeamTrace> containerDataParameters;
 	private XPDFBeamTrace sampleParameters; // no data, that is the input
 	private XPDFBeamTrace emptyDataParameters;
+	private double calCon;
+	private double fluoro;
+	private double lorchCutOff;
 	
 	/**
 	 * Empty constructor.
@@ -398,6 +401,36 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 	 */
 	public void setContainerTrace(XPDFTargetComponent container, XPDFBeamTrace traceDataParameters) {
 		containerDataParameters.put(container, new XPDFBeamTrace(traceDataParameters));
+	}
+
+	@Override
+	public double getCalibrationConstant() {
+		return calCon;
+	}
+
+	@Override
+	public void setCalibrationConstant(double calCon) {
+		this.calCon = calCon;
+	}
+
+	@Override
+	public double getFluorescenceScale() {
+		return fluoro;
+	}
+
+	@Override
+	public void setFluorescenceScale(double scale) {
+		this.fluoro = scale;
+	}
+
+	@Override
+	public double getLorchCutOff() {
+		return lorchCutOff;
+	}
+
+	@Override
+	public void setLorchCutOff(double cutOff) {
+		this.lorchCutOff = cutOff;		
 	}
 
 }

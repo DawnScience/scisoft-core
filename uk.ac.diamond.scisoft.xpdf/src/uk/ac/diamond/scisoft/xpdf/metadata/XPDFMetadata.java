@@ -149,4 +149,46 @@ public interface XPDFMetadata extends MetadataType {
 	 * @return the associated data and beam parameters.
 	 */
 	XPDFBeamTrace getContainerTrace(XPDFTargetComponent container);
+	
+	/**
+	 * Gets the calibration constant used in the processing. 
+	 * @return the value of the calibration constant
+	 */
+	double getCalibrationConstant();
+	
+	/**
+	 * Sets the value of the calibration constant.
+	 * @param calCon
+	 * 				value of the calibration constant used
+	 */
+	void setCalibrationConstant(double calCon);
+	
+	/**
+	 * Gets the scaling factor used for subtracting the fluorescence.
+	 * @return the fluorescence scaling value used in the processing.
+	 */
+	double getFluorescenceScale();
+	
+	/**
+	 * Sets the value of the fluorescence scaling
+	 * @param scale
+	 * 				scaling of the fluorescence
+	 */
+	void setFluorescenceScale(double scale);
+	
+	/**
+	 * Gets the Lorch cut-off value.
+	 * @return point in momentum transfer space at which the Lorch Fourier
+	 * Transform was cut-off. In units of reciprocal angstroms.
+	 */
+	double getLorchCutOff();
+	
+	/**
+	 * Sets the Lorch cut-off value
+	 * @param cutOff
+	 * 				Value of momentum transfer at which the Lorch Fourier
+	 * Transform finished. 
+	 */
+	void setLorchCutOff(double cutOff);
+
 }

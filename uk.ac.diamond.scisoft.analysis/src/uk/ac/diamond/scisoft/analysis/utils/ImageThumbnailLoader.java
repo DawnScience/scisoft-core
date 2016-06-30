@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Diamond Light Source Ltd.
+ * Copyright (c) 2012-2016 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import uk.ac.diamond.scisoft.analysis.io.AbstractFileLoader;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.RawBinaryLoader;
+import uk.ac.diamond.scisoft.analysis.plotserver.DatasetWithAxisInformation;
 
 /**
  *
@@ -45,7 +46,24 @@ public class ImageThumbnailLoader {
 	 * @return Dataset
 	 */
 	public static IDataset loadImage(String filename, boolean createThumbnail, boolean loadMetadata) {
-		return loadImage(filename, createThumbnail, loadMetadata, null);
+		return loadImage(filename, null, createThumbnail, loadMetadata, null);
+	}
+
+	/**
+	 * see {@link LoaderFactory} getData(...) method
+	 * 
+	 * This implementation which does not loop over
+	 * loaders and cause out of memory error depending on how badly the loader is 
+	 * coded.
+	 * 
+	 * @param filename
+	 * @param additionalInfo
+	 * @param createThumbnail
+	 * @param loadMetadata
+	 * @return IDataset
+	 */
+	public static IDataset loadImage(String filename, Object additionalInfo, boolean createThumbnail, boolean loadMetadata) {
+		return loadImage(filename, additionalInfo, createThumbnail, loadMetadata, null);
 	}
 
 	/**
@@ -57,9 +75,27 @@ public class ImageThumbnailLoader {
 	 * 
 	 * @param filename
 	 * @param createThumbnail
-	 * @return Dataset
+	 * @param loadMetadata
+	 * @param monitor
+	 * @return IDataset
 	 */
 	public static IDataset loadImage(String filename, boolean createThumbnail, boolean loadMetadata, IMonitor monitor) {
+		return loadImage(filename, null, createThumbnail, loadMetadata, monitor);
+	}
+
+	/**
+	 * see {@link LoaderFactory} getData(...) method
+	 * 
+	 * This implementation which does not loop over
+	 * loaders and cause out of memory error depending on how badly the loader is 
+	 * coded.
+	 * 
+	 * @param filename
+	 * @param additionalInfo
+	 * @param createThumbnail
+	 * @return IDataset
+	 */
+	public static IDataset loadImage(String filename, Object additionalInfo, boolean createThumbnail, boolean loadMetadata, IMonitor monitor) {
 		
 		IDataHolder scan = null;
 		if (!filename.toLowerCase().endsWith(".raw")) {
@@ -67,7 +103,16 @@ public class ImageThumbnailLoader {
 			try {
 				scan = LoaderFactory.getData(filename, loadMetadata, monitor);
 			} catch (Exception e) {
-				logger.error("Cannot load "+filename, e);
+				logger.debug("Cannot load "+filename + ". Will try to load the dataset directly instead.");
+				try {
+					// try loading the additional Info
+					if (additionalInfo instanceof DatasetWithAxisInformation) {
+						DatasetWithAxisInformation data = (DatasetWithAxisInformation)additionalInfo;
+						return data.getData();
+					}
+				} catch (Exception ex) {
+					logger.error("Could not load data with additionalinfo: ", ex);
+				}
 			}
 //			start += System.nanoTime();
 //			logger.info("Loading {} took {}ms", filename, start/1000000);

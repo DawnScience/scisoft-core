@@ -23,6 +23,17 @@ public class SubtractIntegratedXRegionsModel extends AbstractOperationModel {
 	
 	@OperationModelField(rangevalue = RangeType.XRANGE,label = "Set background 2 range",hint="Please set two values, start and end, separated by a comma, for example 2,4. The values should match the axis . If you delete the text, the range is cleared and the whole range used.")
 	double[] background1 = null;
+	
+	@OperationModelField(label = "Use full image for ratio",hint="Ratio of background subtracted/un-subtracted also output, check to ratio against full image, rather than unsubtracted signal.")
+	boolean useFullFrameForRatio = false;
+	
+	public boolean isUseFullFrameForRatio() {
+		return useFullFrameForRatio;
+	}
+
+	public void setUseFullFrameForRatio(boolean useFullFrameForRatio) {
+		firePropertyChange("useFullFrameForRatio", this.useFullFrameForRatio, this.useFullFrameForRatio = useFullFrameForRatio);
+	}
 
 	public double[] getSignal() {
 		return signal;

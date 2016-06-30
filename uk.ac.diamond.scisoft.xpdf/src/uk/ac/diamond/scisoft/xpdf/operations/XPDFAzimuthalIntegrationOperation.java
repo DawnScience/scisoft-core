@@ -9,24 +9,19 @@
 
 package uk.ac.diamond.scisoft.xpdf.operations;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.Slice;
-import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
-import org.eclipse.dawnsci.analysis.api.metadata.Reshapeable;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.SliceIterator;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationOperation;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
@@ -45,7 +40,7 @@ public class XPDFAzimuthalIntegrationOperation extends AbstractOperation<XPDFAzi
 	
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
-	
+
 		// get the XPDF metadata
 		XPDFMetadata xMeta = input.getFirstMetadata(XPDFMetadata.class);
 		

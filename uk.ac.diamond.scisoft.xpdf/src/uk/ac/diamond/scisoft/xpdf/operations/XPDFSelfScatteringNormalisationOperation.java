@@ -54,7 +54,7 @@ public class XPDFSelfScatteringNormalisationOperation extends
 			soq.setError(soqError);
 
 		soq.setName("S(q)");
-		
+
 		return new OperationData(soq);
 	}
 	@Override

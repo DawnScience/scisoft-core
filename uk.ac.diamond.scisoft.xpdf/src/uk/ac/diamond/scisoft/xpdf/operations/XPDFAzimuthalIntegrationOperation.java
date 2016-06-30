@@ -84,14 +84,6 @@ public class XPDFAzimuthalIntegrationOperation extends AbstractOperation<XPDFAzi
 		
 		output.getData().addMetadata(xMeta);
 
-		// Add the S(q) results as an addition piece of auxilliary data
-		Serializable[] oldAuxData = output.getAuxData(), auxData = Arrays.copyOf(oldAuxData, oldAuxData.length+1);
-		IDataset sofq = output.getData();
-		sofq.setName("S(q)"); 
-		auxData[oldAuxData.length] = sofq;
-		output.setAuxData(auxData);
-
-		
 		return output;
 		
 //		OperationData superResult = super.process(input, monitor);

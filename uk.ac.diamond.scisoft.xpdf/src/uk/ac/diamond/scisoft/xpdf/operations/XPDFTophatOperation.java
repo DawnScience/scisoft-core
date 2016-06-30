@@ -68,7 +68,8 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 
 	thSoq.setName("S(q)");
 	
-	return new OperationData(thSoq);
+	// Add the filtered S(q) results as auxiliary data
+	return new OperationData(thSoq, thSoq);
 	}
 	
 	private Dataset doTopHatConvolutionAndSubtraction(Dataset dPrimedoQ, Dataset q, Dataset r, double rMin, double tophatWidth, double numberDensity, double g0Minus1) {

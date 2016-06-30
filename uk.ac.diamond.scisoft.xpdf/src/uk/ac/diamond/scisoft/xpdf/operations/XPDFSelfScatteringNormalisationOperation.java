@@ -54,8 +54,10 @@ public class XPDFSelfScatteringNormalisationOperation extends
 			soq.setError(soqError);
 
 		soq.setName("S(q)");
-		
-		return new OperationData(soq);
+
+		// Add the S(q) results as auxiliary data
+
+		return new OperationData(soq, soq);
 	}
 	@Override
 	public String getId() {

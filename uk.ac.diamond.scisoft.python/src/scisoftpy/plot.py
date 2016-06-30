@@ -515,9 +515,27 @@ def imagetogrid(im, name=None, x=None, y=None, store=None):
     if y is None:
         y = -1
     if store is None:
-        store = True
+        store = False
 
     _plot_imagetogrid(name, im, x, y, store)
+
+def imagetogrid(filename, name=None, x=None, y=None):
+    '''Plot images to the grid of an image explorer view
+
+    Arguments:
+    filename -- filename of image
+    name -- optional name of Image Explorer view to use (if None, default name - Image Explorer - will be used)
+    x -- optional : gridX use -1 to automatically place
+    y -- optional : gridY use -1 to automatically place
+    '''
+    if name is None:
+        name = 'Image Explorer'
+    if x is None:
+        x = -1
+    if y is None:
+        y = -1
+
+    _plot_imagetogrid(name, filename, x, y)
 
 def imagestogrid(im, name=None, store=None):
     '''Plot images to the grid of an image explorer view
@@ -530,7 +548,7 @@ def imagestogrid(im, name=None, store=None):
     if name is None:
         name = 'Image Explorer'
     if store is None:
-        store = True
+        store = False
 
     _plot_imagetogrid(name, im, store)
 

@@ -84,7 +84,9 @@ public class XPDFLorchFTOperation extends
 			}
 		}	
 		
-		System.err.println("Lorch cutoff at q = " + q.getDouble(iCutoff));
+		theXPDFMetadata.setLorchCutOff(q.getDouble(iCutoff));
+		
+		System.err.println("Lorch cutoff at q = " + theXPDFMetadata.getLorchCutOff());
 		
 		Dataset r = DoubleDataset.createRange(model.getrStep()/2, model.getrMax(), model.getrStep());
 		Dataset hofr = doLorchFT(DatasetUtils.convertToDataset(thSoq).getSliceView(new int[]{0}, new int[]{iCutoff}, new int[]{1}),

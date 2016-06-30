@@ -138,6 +138,10 @@ public class XPDFIterateCalibrationConstantOperation extends
 //			absCor = theCalibration.iterate(true);
 		absCor = theCalibration.calibrate(nIterations, model.getNThreads());
 		
+		// assign the calibration values to the XPDF metadata object
+		theXPDFMetadata.setCalibrationConstant(theCalibration.getCalibrationConstant());
+		theXPDFMetadata.setFluorescenceScale(theCalibration.getFluorescenceScale());
+		
 		// Copy metadata, but preserve the errors, if they exist.
 		Dataset absCorError = (absCor.getError() != null) ? absCor.getError() : null;
 		copyMetadata(input, absCor);

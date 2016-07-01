@@ -37,7 +37,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	}
 
 	/**
-	 * initialize parameters by finding unique and unfixed ones
+	 * Initialize parameters by finding unique and unfixed ones
 	 */
 	private void initializeParameters() {
 		params.clear();
@@ -66,6 +66,9 @@ public abstract class AbstractOptimizer implements IOptimizer {
 
 	@Override
 	public void optimize(IDataset[] coordinates, IDataset data, IFunction function) throws Exception {
+		if (data.getElementsPerItem() > 1) {
+			throw new IllegalArgumentException("The 'data' dataset must be elemental (or non-compound) as only scalar fitting functions are supported");
+		}
 		this.function = function;
 		int nc = coordinates.length;
 		this.coords = new DoubleDataset[nc];

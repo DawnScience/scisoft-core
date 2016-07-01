@@ -18,6 +18,7 @@ import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.processing.PlotAdditionalData;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
@@ -147,7 +148,14 @@ public class XPDFLorchFTOperation extends
 		
 		dofr.setName("D(r)");
 		
-		return new OperationData(dofr);
+		IDataset iCalCon = new DoubleDataset(new double[]{theXPDFMetadata.getCalibrationConstant()}, new int[]{1}),
+				iFluoro = new DoubleDataset(new double[]{theXPDFMetadata.getFluorescenceScale()}, new int[]{1}),
+				iLorch = new DoubleDataset(new double[]{theXPDFMetadata.getLorchCutOff()}, new int[]{1});
+		iCalCon.setName("Calibration constant");
+		iFluoro.setName("Fluorescence scaling");
+		iLorch.setName("Lorch transform cut off");
+		
+		return new OperationData(dofr, iCalCon, iFluoro, iLorch);
 	}
 	
 	private Dataset doLorchFT(Dataset thSoq, Dataset q, Dataset r, double lorchWidth, double numberDensity) {

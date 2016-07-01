@@ -915,73 +915,53 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 	@Override
 	public void setupNewImageGrid(String viewName, int gridRows, int gridColumns) throws Exception {
-		GuiBean guiBean = new GuiBean();
-		guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.IMGEXPL);
-		guiBean.put(GuiParameters.IMAGEGRIDSIZE, new Integer[] { gridRows, gridColumns });
-		setGuiBean(viewName, guiBean);
+//		GuiBean guiBean = new GuiBean();
+//		guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.IMGEXPL);
+//		guiBean.put(GuiParameters.IMAGEGRIDSIZE, new Integer[] { gridRows, gridColumns });
+//		setGuiBean(viewName, guiBean);
+		
+		DataBean databean = new DataBean();
+		databean.putGuiParameter(GuiParameters.PLOTMODE, GuiPlotMode.IMGEXPL);
+		databean.putGuiParameter(GuiParameters.IMAGEGRIDSIZE, new Integer[] { gridRows, gridColumns });
+		setDataBean(viewName, databean);
 	}
 
 	@Override
 	public void plotImageToGrid(String viewName, IDataset[] datasets, boolean store) throws Exception {
-		// GuiBean guiBean = getGuiStateForPlotMode(viewName, GuiPlotMode.MULTI2D);
-		GuiBean guiBean = new GuiBean();
-		guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.IMGEXPL);
-		DataHolder tHolder = new DataHolder();
-
 		for (int i = 0; i < datasets.length; i++) {
-			if (store) {
-				try {
-					String filename = saveTempFile(tHolder, datasets[i]);
-					guiBean.put(GuiParameters.FILENAME, filename);
-				} catch (ScanFileHolderException e) {
-					throw new Exception("Failed to save to temporary file");
-				}
-			} else {
-				guiBean.put(GuiParameters.FILENAME, datasets[i].getName());
-			}
-			setGuiBean(viewName, guiBean);
+			setDataBean(viewName, "", datasets[i], -1, -1);
 		}
 	}
 
 	@Override
 	public void plotImageToGrid(String viewName, String filename, int gridX, int gridY) throws Exception {
-		// GuiBean guiBean = getGuiStateForPlotMode(viewName, GuiPlotMode.MULTI2D);
-		GuiBean guiBean = new GuiBean();
-		guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.IMGEXPL);
-
-		guiBean.put(GuiParameters.FILENAME, filename);
-		if (gridX >= 0 && gridY >= 0) {
-			guiBean.put(GuiParameters.IMAGEGRIDXPOS, Integer.valueOf(gridX));
-			guiBean.put(GuiParameters.IMAGEGRIDYPOS, Integer.valueOf(gridY));
-		}
-		setGuiBean(viewName, guiBean);
+		setDataBean(viewName, filename, null, gridX, gridY);
 	}
 
 	@Override
 	public void plotImageToGrid(String viewName, IDataset dataset, int gridX, int gridY, boolean store)
 			throws Exception {
-		// GuiBean guiBean = getGuiStateForPlotMode(viewName, GuiPlotMode.MULTI2D);
+		setDataBean(viewName, "",dataset, gridX, gridY);
+	}
 
-		GuiBean guiBean = new GuiBean();
-		guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.IMGEXPL);
-
-		if (gridX >= 0 && gridY >= 0) {
-			guiBean.put(GuiParameters.IMAGEGRIDXPOS, Integer.valueOf(gridX));
-			guiBean.put(GuiParameters.IMAGEGRIDYPOS, Integer.valueOf(gridY));
-		}
-		if (store) {
-			DataHolder tHolder = new DataHolder();
-
-			try {
-				String filename = saveTempFile(tHolder, dataset);
-				guiBean.put(GuiParameters.FILENAME, filename);
-			} catch (ScanFileHolderException e) {
-				throw new Exception("Failed to save to temporary file");
-			}
+	private void setDataBean(String viewName, String filename, IDataset dataset, int gridX, int gridY) throws Exception {
+		DataBean databean = new DataBean();
+		List<DatasetWithAxisInformation> data = new ArrayList<DatasetWithAxisInformation>();
+		DatasetWithAxisInformation d = new DatasetWithAxisInformation();
+		if (dataset != null) {
+			d.setData((IDataset) dataset);
+			data.add(d);
+			databean.setData(data);
+			databean.putGuiParameter(GuiParameters.FILENAME, dataset.getName());
 		} else {
-			guiBean.put(GuiParameters.FILENAME, dataset.getName());
+			databean.putGuiParameter(GuiParameters.FILENAME, filename);
 		}
-		setGuiBean(viewName, guiBean);
+		databean.putGuiParameter(GuiParameters.PLOTMODE, GuiPlotMode.IMGEXPL);
+		if (gridX >= 0 && gridY >= 0) {
+			databean.putGuiParameter(GuiParameters.IMAGEGRIDXPOS, Integer.valueOf(gridX));
+			databean.putGuiParameter(GuiParameters.IMAGEGRIDYPOS, Integer.valueOf(gridY));
+		}
+		setDataBean(viewName, databean);
 	}
 
 	protected String saveTempFile(DataHolder tHolder, IDataset dataset) throws ScanFileHolderException {

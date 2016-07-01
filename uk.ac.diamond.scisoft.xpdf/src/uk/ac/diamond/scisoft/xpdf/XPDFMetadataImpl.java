@@ -80,6 +80,11 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 		
 		this.absorptionCorrectionMaps = (inMeta.absorptionCorrectionMaps != null) ? new XPDFAbsorptionMaps(inMeta.absorptionCorrectionMaps) : null;
 		this.tect = (inMeta.tect != null) ? new XPDFDetector(inMeta.tect) : null;
+		
+		// Copy the additional parameters
+		this.calCon = inMeta.calCon;
+		this.fluoro = inMeta.fluoro;
+		this.lorchCutOff = inMeta.lorchCutOff;
 	}
 	
 	/**

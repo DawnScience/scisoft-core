@@ -21,6 +21,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.PlotAdditionalData;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
@@ -90,7 +91,7 @@ public class XPDFLorchFTOperation extends
 		
 		System.err.println("Lorch cutoff at q = " + theXPDFMetadata.getLorchCutOff());
 		
-		Dataset r = DoubleDataset.createRange(model.getrStep()/2, model.getrMax(), model.getrStep());
+		Dataset r = DatasetFactory.createRange(DoubleDataset.class, model.getrStep()/2, model.getrMax(), model.getrStep());
 		Dataset hofr = doLorchFT(DatasetUtils.convertToDataset(thSoq).getSliceView(new int[]{0}, new int[]{iCutoff}, new int[]{1}),
 					q.getSliceView(new int[]{0}, new int[]{iCutoff}, new int[]{1}), r, model.getLorchWidth(), numberDensity);
 		// Error propagation: through the Fourier transform
@@ -101,21 +102,21 @@ public class XPDFLorchFTOperation extends
 			List<Dataset> sigmaF = new ArrayList<Dataset>(q.getSize());
 			
 			for (int iq = 0; iq < q.getSize(); iq++) {
-				Dataset covarQ = new DoubleDataset(4);
+				Dataset covarQ = DatasetFactory.zeros(DoubleDataset.class, 4);
 				// The vector to transform is zero, except at element iq it
 				// holds the uncertainty variance (error squared) of the data
 				// point at iq
 				IDataset sl = thSoq.getError().getSlice();
 				covarQ.set(Maths.square(sl.getDouble(iq)), 0);
-				Dataset qSlice = Maths.add(q.getDouble(iq), Maths.multiply(q.getDouble(3)-q.getDouble(2), DoubleDataset.createRange(0, 4, 1))); 
+				Dataset qSlice = Maths.add(q.getDouble(iq), Maths.multiply(q.getDouble(3)-q.getDouble(2), DatasetFactory.createRange(DoubleDataset.class, 0, 4, 1))); 
 						
 				// Transform this vector exactly as the data
 				sigmaF.add(iq, doLorchFT(covarQ, qSlice, r, model.getLorchWidth(), numberDensity));
 			}
 
-			Dataset hofrError = new DoubleDataset(hofr);
+			Dataset hofrError = hofr.copy(DoubleDataset.class);
 			for (int ir = 0; ir < r.getSize(); ir++) {
-				DoubleDataset covarQR = (DoubleDataset) DoubleDataset.zeros(q);
+				DoubleDataset covarQR = DatasetFactory.zeros(q, DoubleDataset.class);
 				// Create the vector to be transformed
 				for (int iq = 0; iq < q.getSize(); iq++) {
 					covarQR.setAbs(iq, sigmaF.get(iq).getDouble(ir));
@@ -150,9 +151,9 @@ public class XPDFLorchFTOperation extends
 		
 		dofr.setName("D(r)");
 		
-		IDataset iCalCon = new DoubleDataset(new double[]{theXPDFMetadata.getCalibrationConstant()}, new int[]{1}),
-				iFluoro = new DoubleDataset(new double[]{theXPDFMetadata.getFluorescenceScale()}, new int[]{1}),
-				iLorch = new DoubleDataset(new double[]{theXPDFMetadata.getLorchCutOff()}, new int[]{1});
+		IDataset iCalCon = DatasetFactory.createFromObject(new double[]{theXPDFMetadata.getCalibrationConstant()}),
+				iFluoro = DatasetFactory.createFromObject(new double[]{theXPDFMetadata.getFluorescenceScale()}),
+				iLorch = DatasetFactory.createFromObject(new double[]{theXPDFMetadata.getLorchCutOff()});
 		iCalCon.setName("Calibration constant");
 		iFluoro.setName("Fluorescence scaling");
 		iLorch.setName("Lorch transform cut off");
@@ -177,7 +178,7 @@ public class XPDFLorchFTOperation extends
 		// Calculate th_soq, if it does not exist
 		
 		
-		Dataset output = DoubleDataset.zeros(r);
+		Dataset output = DatasetFactory.zeros(r, DoubleDataset.class);
 		Dataset qhq = Maths.multiply(q, thSoq);
 		Dataset qd = Maths.multiply(q, lorchWidth);
 		Dataset lorch = 

@@ -22,6 +22,7 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 
@@ -93,7 +94,7 @@ public class PilatusEdfLoader extends AbstractFileLoader {
 					// this EDF loader supports only a subset of all possible datatypes
 					// an exception will be thrown when an unsupported datatype is encountered
 					if (dataType.equals("Float") || dataType.equals("FloatValue")) {
-						data = new FloatDataset(shape);
+						data = DatasetFactory.zeros(FloatDataset.class, shape);
 						if (le) {
 							Utils.readLeFloat(fi, (FloatDataset) data, index);
 						}
@@ -103,7 +104,7 @@ public class PilatusEdfLoader extends AbstractFileLoader {
 					} 
 					else if (dataType.contains("Short")) {
 						// 16 bit integers
-						data = new IntegerDataset(shape);
+						data = DatasetFactory.zeros(IntegerDataset.class, shape);
 						if (le)
 							Utils.readLeShort(fi, (IntegerDataset) data, index, signed);
 						else
@@ -114,7 +115,7 @@ public class PilatusEdfLoader extends AbstractFileLoader {
 						if (!signed) {
 							throw new ScanFileHolderException("32-bit unsigned integers are currently not supported");
 						}
-						data = new IntegerDataset(shape);
+						data = DatasetFactory.zeros(IntegerDataset.class, shape);
 						if (le)
 							Utils.readLeInt(fi, (IntegerDataset) data, index);
 						else

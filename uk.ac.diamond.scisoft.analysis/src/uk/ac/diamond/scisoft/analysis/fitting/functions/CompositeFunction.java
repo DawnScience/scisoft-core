@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IPeak;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
@@ -74,7 +75,7 @@ public class CompositeFunction extends Add {
 
 		DoubleDataset[] outputs = new DoubleDataset[noOfFunctions + 4];
 
-		outputs[0] = new DoubleDataset(DataValues);
+		outputs[0] = DataValues.clone();
 
 		// now add the data
 		outputs[1] = calculateValues(XValues);
@@ -87,7 +88,7 @@ public class CompositeFunction extends Add {
 		double offset = DataValues.min().doubleValue() - ((DataValues.max().doubleValue() - DataValues.min().doubleValue()) / 5.0);
 		outputs[2].isubtract(offset);
 
-		outputs[3] = new DoubleDataset(XValues.getShapeRef());
+		outputs[3] = DatasetFactory.zeros(DoubleDataset.class, XValues.getShapeRef());
 		outputs[3].setName("Error Offset");
 		outputs[3].fill(offset);
 

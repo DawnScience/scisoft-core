@@ -20,6 +20,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
 
@@ -100,7 +101,7 @@ public class XMapLoader extends AbstractFileLoader {
 								if (mappingMode1Data.channelSize[c] > 0) {
 									size[c] = mappingMode1Data.channelSize[c];
 									if (!loadLazily) {
-										ShortDataset temp = new ShortDataset(mappingMode1Data.channelSpectrum[c], 1,
+										ShortDataset temp = DatasetFactory.createFromObject(ShortDataset.class, mappingMode1Data.channelSpectrum[c], 1,
 												mappingMode1Data.channelSize[c]);
 										if (data[c] == null) {
 											// create the dataset

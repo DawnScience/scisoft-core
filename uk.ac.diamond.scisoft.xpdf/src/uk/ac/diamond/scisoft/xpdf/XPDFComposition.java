@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
@@ -265,7 +266,7 @@ public class XPDFComposition {
 	 * @return the mass weighted mean elastic scattering form factor.
 	 */
 	public Dataset getElasticScatteringFactor(Dataset x) {
-		Dataset fofx = DoubleDataset.zeros(x);
+		Dataset fofx = DatasetFactory.zeros(x, DoubleDataset.class);
 		
 		double totalAtoms = 0;
 		for (Map.Entry<Integer, Double> stoichiometry : atomCount.entrySet()) {
@@ -283,7 +284,7 @@ public class XPDFComposition {
 	 * @return the mass weighted mean squared elastic scattering form factor.
 	 */
 	public Dataset getElasticScatteringFactorSquared(Dataset x) {
-		Dataset fsquaredofx = DoubleDataset.zeros(x);
+		Dataset fsquaredofx = DatasetFactory.zeros(x, DoubleDataset.class);
 		
 		double totalAtoms = 0;
 		for (Map.Entry<Integer, Double> stoichiometry : atomCount.entrySet()) {
@@ -301,7 +302,7 @@ public class XPDFComposition {
 	 * @return the mass weighted mean inelastic scattering form factor.
 	 */
 	public Dataset getInelasticScatteringFactor(Dataset x) {
-		Dataset Sofx = DoubleDataset.zeros(x);
+		Dataset Sofx = DatasetFactory.zeros(x, DoubleDataset.class);
 		
 		double totalAtoms = 0;
 		for (Map.Entry<Integer, Double> stoichiometry : atomCount.entrySet()) {

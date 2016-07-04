@@ -44,7 +44,7 @@ public class ThresholdMask extends AbstractOperation<ThresholdMaskModel, Operati
 		Dataset in = DatasetUtils.convertToDataset(input);
 		
 		if (mask == null) {
-			mask = BooleanDataset.ones(input.getShape());
+			mask = DatasetFactory.ones(BooleanDataset.class, input.getShape());
 		} else {
 			mask = mask.getSlice();
 		}

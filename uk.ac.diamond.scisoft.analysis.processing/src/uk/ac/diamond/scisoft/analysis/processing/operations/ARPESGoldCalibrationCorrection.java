@@ -17,6 +17,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
@@ -70,7 +71,7 @@ public class ARPESGoldCalibrationCorrection extends AbstractOperation<ARPESGoldC
 		
 		// TODO Should be extracted to a method in interpolation utils
 		int[] shape = input.getShape();
-		DoubleDataset result = new DoubleDataset(shape);
+		DoubleDataset result = DatasetFactory.zeros(DoubleDataset.class, shape);
 		for(int y = 0; y < shape[0]; y++) {
 			int min = Math.max(differenceInts.getInt(0,y), 0);
 			int max = Math.min(shape[1]+differenceInts.getInt(0,y), shape[1]);

@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,7 +27,7 @@ public class OffsetTest {
 		Assert.assertArrayEquals(new double[] {23.}, f.getParameterValues(), ABS_TOL);
 		Assert.assertEquals(23., f.val(), ABS_TOL);
 
-		DoubleDataset xd = new DoubleDataset(new double[] {-1, 0, 2});
+		Dataset xd = DatasetFactory.createFromObject(new double[] {-1, 0, 2});
 		DoubleDataset dx;
 		dx = f.calculateValues(xd);
 		Assert.assertArrayEquals(new double[] {23., 23., 23.}, dx.getData(), ABS_TOL);

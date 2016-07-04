@@ -29,6 +29,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
@@ -100,7 +101,7 @@ public class XPDFCalibration {
 		}
 		this.qSquaredIntegrator = (inCal.qSquaredIntegrator != null) ? inCal.qSquaredIntegrator : null;
 		this.selfScatteringDenominator = inCal.selfScatteringDenominator;
-		this.multipleScatteringCorrection = (inCal.multipleScatteringCorrection != null) ? new DoubleDataset(inCal.multipleScatteringCorrection) : null;
+		this.multipleScatteringCorrection = (inCal.multipleScatteringCorrection != null) ? inCal.multipleScatteringCorrection.copy(DoubleDataset.class) : null;
 		this.nSampleIlluminatedAtoms = inCal.nSampleIlluminatedAtoms;
 		if (inCal.backgroundSubtracted != null) {
 			this.backgroundSubtracted = new ArrayList<Dataset>();
@@ -204,7 +205,7 @@ public class XPDFCalibration {
 	 * 									A zero Dataset.
 	 */
 	public void setMultipleScatteringCorrection(Dataset multipleScatteringCorrection) {
-		this.multipleScatteringCorrection = new DoubleDataset(multipleScatteringCorrection);
+		this.multipleScatteringCorrection = multipleScatteringCorrection.copy(DoubleDataset.class);
 	}
 
 	/**
@@ -394,7 +395,7 @@ public class XPDFCalibration {
 		// so copy to absorptionTemporary, an ArrayList.
 		List<Dataset> absorptionTemporary = new ArrayList<Dataset>();
 		for (Dataset data : mulCor) {
-			Dataset absTempData = new DoubleDataset(data);
+			Dataset absTempData = data.copy(DoubleDataset.class);
 			if (data.getError() != null)
 				absTempData.setError(data.getError());
 			absorptionTemporary.add(absTempData);
@@ -427,14 +428,14 @@ public class XPDFCalibration {
 						absorptionTemporary.get(iScatterer).getError() != null) {
 					Dataset innerError = (absorptionTemporary.get(iInnermostAbsorber).getError() != null) ?
 							absorptionTemporary.get(iInnermostAbsorber).getError() :
-								DoubleDataset.zeros(absorptionTemporary.get(iInnermostAbsorber));
+							DatasetFactory.zeros(absorptionTemporary.get(iInnermostAbsorber));
 					Dataset scatterError = (absorptionTemporary.get(iScatterer).getError() != null) ?
 //							Maths.divide(
 							Maths.multiply(
 									absorptionTemporary.get(iScatterer).getError(),
 									subsetAbsorptionCorrection.reshape(subsetAbsorptionCorrection.getSize())) :
 //									subsetAbsorptionCorrection.squeeze()) :
-								DoubleDataset.zeros(absorptionTemporary.get(iScatterer));
+									DatasetFactory.zeros(absorptionTemporary.get(iScatterer));
 					absorptionTemporary.get(iInnermostAbsorber).setError(Maths.sqrt(Maths.add(Maths.square(innerError), Maths.square(scatterError))));
 				}
 				
@@ -693,7 +694,7 @@ public class XPDFCalibration {
 		// Old gridded code
 		if (doGridded) {
 
-			Map<Double, Double> scaleToDifference = evaluateSeveralFluoroScales(Arrays.asList(ArrayUtils.toObject(DoubleDataset.createRange(minScale, maxScale, stepScale).getData())), nIterations, nThreads);
+			Map<Double, Double> scaleToDifference = evaluateSeveralFluoroScales(Arrays.asList(ArrayUtils.toObject(DatasetFactory.createRange(DoubleDataset.class, minScale, maxScale, stepScale).getData())), nIterations, nThreads);
 			
 			double minimalScale = 0;
 			double minimalDifference = Double.POSITIVE_INFINITY; 
@@ -754,11 +755,11 @@ public class XPDFCalibration {
 	}
 	
 	private double integrateFluorescence(Dataset absCor) {
-		Dataset smoothed, truncatedSelfScattering = new DoubleDataset();
+		Dataset smoothed, truncatedSelfScattering = DatasetFactory.zeros(DoubleDataset.class, null);
 		final double fractionOfRange = 1/5.0;
 		final int smoothLength = (int) Math.floor(absCor.getSize()*fractionOfRange);
 
-		Dataset truncatedQ = DoubleDataset.createRange(8, 32, 1.6);
+		Dataset truncatedQ = DatasetFactory.createRange(DoubleDataset.class, 8, 32, 1.6);
 		
 		// Set up the pixel integration information
 		IPixelIntegrationCache lcache;
@@ -781,7 +782,7 @@ public class XPDFCalibration {
 		// self-scattering of the sample at the same abscissa values 
 		if (absCor.getShape().length == 1) {
 			// One dimensional version
-			Dataset covolver = Maths.divide(DoubleDataset.ones(smoothLength), smoothLength);
+			Dataset covolver = Maths.divide(DatasetFactory.ones(DoubleDataset.class, smoothLength), smoothLength);
 			smoothed = Signal.convolveForOverlap(absCor, covolver, new int[] {0});
 			truncatedSelfScattering = sampleSelfScattering.getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
 			truncatedQ = coords.getQ().getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});

@@ -27,7 +27,7 @@ import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironmen
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,7 +103,7 @@ public class MAR345Loader extends AbstractFileLoader implements Serializable {
 		DataHolder result = new DataHolder();
 		ILazyDataset data = image == null ? createLazyDataset(DEF_IMAGE_NAME, Dataset.INT32,
 				new int[] {side,  side}, new MAR345Loader(fileName)) :
-				new IntegerDataset(image, side, side);
+					DatasetFactory.createFromObject(image, side, side);
 		result.addDataset(DEF_IMAGE_NAME, data);
 		if (loadMetadata) {
 			result.setMetadata(metadata);

@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.xpdf;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
@@ -85,7 +86,7 @@ public class XPDFComponentPlate extends XPDFComponentGeometry {
 	@Override
 	public Dataset getUpstreamPathLength(Dataset x, Dataset y, Dataset z) {
 		// Thickness of the plate
-		return Maths.multiply(DoubleDataset.ones(x), Math.abs(rInner -rOuter));
+		return DatasetFactory.zeros(x, DoubleDataset.class).fill(Math.abs(rInner -rOuter));
 	}
 
 	/**
@@ -95,7 +96,7 @@ public class XPDFComponentPlate extends XPDFComponentGeometry {
 	public Dataset getDownstreamPathLength(Dataset x, Dataset y, Dataset z,
 			double gamma, double delta) {
 		// Thickness of the plate, multiplied by the secant of the scattering angles
-		return Maths.multiply(DoubleDataset.ones(x), Math.abs(rInner - rOuter)/(Math.cos(gamma)*Math.cos(delta)));
+		return DatasetFactory.zeros(x, DoubleDataset.class).fill(Math.abs(rInner - rOuter)/(Math.cos(gamma)*Math.cos(delta)));
 	}
 
 	/**
@@ -118,13 +119,13 @@ public class XPDFComponentPlate extends XPDFComponentGeometry {
 		double dX = windowHeight/xSteps;
 		double dZ = thickness/zSteps;
 		
-		Dataset x1D = DoubleDataset.createRange(-windowHeight+dZ/2, windowHeight-dZ/2, dZ);
-		Dataset z1D = DoubleDataset.createRange(rInner+dX/2, rOuter-dX/2, dX);
+		Dataset x1D = DatasetFactory.createRange(DoubleDataset.class, -windowHeight+dZ/2, windowHeight-dZ/2, dZ);
+		Dataset z1D = DatasetFactory.createRange(DoubleDataset.class, rInner+dX/2, rOuter-dX/2, dX);
 		
 		// Account for the streamality of the plate. Can a plate be both upstream and downstream?
 		if (isUpstream && isDownstream) {
 			Dataset z1DTemp = z1D;
-			z1D = new DoubleDataset(2*z1D.getSize());
+			z1D = DatasetFactory.zeros(DoubleDataset.class, 2*z1D.getSize());
 			for (int i = 0; i < zSteps; i++) {
 				z1D.set(z1DTemp.getDouble(i), i);
 				z1D.set(z1DTemp.getDouble(i), 2*zSteps-1-i);
@@ -135,12 +136,12 @@ public class XPDFComponentPlate extends XPDFComponentGeometry {
 			; // Do nothing, the coordinates are correct
 		} else {
 			// No streamality is no attenuation. Return an attenuation array of 0
-			return DoubleDataset.zeros(gamma);
+			return DatasetFactory.zeros(gamma, DoubleDataset.class);
 		}
 		
 		// TODO: Is this the best way to expand a Dataset?
-		Dataset xPlate = new DoubleDataset(x1D.getSize(), z1D.getSize());
-		Dataset zPlate = new DoubleDataset(x1D.getSize(), z1D.getSize());
+		Dataset xPlate = DatasetFactory.zeros(DoubleDataset.class, x1D.getSize(), z1D.getSize());
+		Dataset zPlate = DatasetFactory.zeros(DoubleDataset.class, x1D.getSize(), z1D.getSize());
 		for (int i = 0; i<xSteps; i++) {
 			for (int k = 0; k<zSteps; k++) {
 				xPlate.set(x1D.getDouble(i), i, k);
@@ -149,7 +150,7 @@ public class XPDFComponentPlate extends XPDFComponentGeometry {
 		}
 		
 		// TODO: There has to be a better way to make a mask Dataset
-		Dataset illuminationPlate = DoubleDataset.ones(xPlate);
+		Dataset illuminationPlate = DatasetFactory.ones(xPlate);
 		for (int i=0; i<xPlate.getShape()[0]; i++){
 			for (int k=0; k<zPlate.getShape()[1]; k++) {
 				if (Math.abs(xPlate.getDouble(i, k)) > beamData.getBeamHeight()/2)
@@ -165,17 +166,17 @@ public class XPDFComponentPlate extends XPDFComponentGeometry {
 		if (doUpstreamAbsorption) {
 			upstreamPathLength = attenuatorGeometry.getUpstreamPathLength(xPlate, yPlate, zPlate);
 		} else {
-			upstreamPathLength = DoubleDataset.zeros(xPlate);
+			upstreamPathLength = DatasetFactory.zeros(xPlate);
 		}
 		
-		Dataset absorptionCorrection = new DoubleDataset(gamma);
+		Dataset absorptionCorrection = gamma.copy(DoubleDataset.class);
 		// Loop over all detector angles
 		for (int i = 0; i<gamma.getShape()[0]; i++) {
 			for (int k = 0; k<gamma.getShape()[1]; k++) {
 				if (doDownstreamAbsorption)
 					downstreamPathLength = attenuatorGeometry.getDownstreamPathLength(xPlate, yPlate, zPlate, gamma.getDouble(i, k), delta.getDouble(i, k));
 				else
-					downstreamPathLength = DoubleDataset.zeros(xPlate);
+					downstreamPathLength = DatasetFactory.zeros(xPlate);
 				
 				absorptionCorrection.set( (double)
 						Maths.multiply(

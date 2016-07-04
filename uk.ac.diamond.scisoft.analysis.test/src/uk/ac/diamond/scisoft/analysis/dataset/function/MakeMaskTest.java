@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.junit.Test;
 
 /**
@@ -29,7 +29,7 @@ public class MakeMaskTest {
 	public void testExecute() {
 		float[] x = {1.f, 2.f, 3.f, 4.f, 5.f};
 		double[] y = {0, 1, 1, 0, 0};
-		Dataset d = new FloatDataset(x, null);
+		Dataset d = DatasetFactory.createFromObject(x, null);
 		MakeMask m = new MakeMask(1.2, 3.5);
 		List<? extends Dataset> dsets = m.value(d);
 

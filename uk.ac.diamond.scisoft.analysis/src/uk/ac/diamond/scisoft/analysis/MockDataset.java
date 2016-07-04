@@ -138,7 +138,6 @@ public class MockDataset implements IDataset {
 	@Override
 	public void setShape(int... shape) {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
-		
 	}
 
 	@Override

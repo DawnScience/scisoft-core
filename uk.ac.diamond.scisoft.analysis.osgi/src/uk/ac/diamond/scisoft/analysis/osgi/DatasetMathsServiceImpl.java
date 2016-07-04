@@ -42,7 +42,7 @@ public class DatasetMathsServiceImpl extends AbstractServiceFactory implements I
 
 	@Override
 	public IDataset createDoubleDataset(double[] da, int... shape) {
-		return new DoubleDataset(da, shape);
+		return DatasetFactory.createFromObject(da, shape);
 	}
 
 	@Override

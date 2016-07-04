@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
 import org.dawb.common.services.ServiceManager;
 import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
@@ -38,7 +37,6 @@ import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
@@ -48,9 +46,9 @@ import uk.ac.diamond.scisoft.analysis.fitting.FittingConstants.FIT_ALGORITHMS;
 import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Add;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
+import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
-import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 
 @Atomic
 public class FunctionFittingOperation extends AbstractOperation<FunctionFittingModel, OperationData> {
@@ -124,7 +122,7 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 						double v = p.getValue();
 						if (!success) v = Double.NaN;
 						String fullName = n +"_"+pn;
-						DoubleDataset d = new DoubleDataset(new double[]{v},new int[]{1});
+						Dataset d = DatasetFactory.createFromObject(new double[]{v});
 						d.setName(fullName);
 						d.squeeze();
 						params.add(d);

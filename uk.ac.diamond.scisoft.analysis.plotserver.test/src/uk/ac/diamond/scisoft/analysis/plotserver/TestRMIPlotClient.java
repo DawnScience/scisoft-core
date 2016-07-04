@@ -9,7 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.plotserver;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 
 import uk.ac.diamond.scisoft.analysis.SDAPlotter;
 
@@ -22,7 +23,7 @@ public class TestRMIPlotClient {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		DoubleDataset yAxis = new DoubleDataset(new double[]{3,1,2,5,4,6,7,9,8,10}, 10);
+		Dataset yAxis = DatasetFactory.createFromObject(new double[]{3,1,2,5,4,6,7,9,8,10});
 		try {
 			SDAPlotter.plot("Plot 1", "TEST", yAxis);
 		} catch (Exception e) {

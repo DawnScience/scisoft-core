@@ -16,6 +16,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
 import org.eclipse.dawnsci.analysis.api.metadata.Sliceable;
 import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
 
@@ -25,7 +26,7 @@ public class SubMetadata extends SliceableTestMetadata {
 
 	public SubMetadata(ILazyDataset ld, DoubleDataset[] array, List<ShortDataset> list, Map<String, BooleanDataset> map, List<DoubleDataset[]> l2) {
 		super(ld, array, list, map, l2);
-		ldb = new DoubleDataset(ld.getShape());
+		ldb = DatasetFactory.zeros(DoubleDataset.class, ld.getShape());
 	}
 
 	public ILazyDataset getLazyDataset2() {

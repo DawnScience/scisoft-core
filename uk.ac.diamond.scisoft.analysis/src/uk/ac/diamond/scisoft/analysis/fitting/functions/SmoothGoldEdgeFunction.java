@@ -94,7 +94,7 @@ public class SmoothGoldEdgeFunction extends AFunction implements
 			this.smoothed = ApachePolynomial.getPolynomialSmoothed(xds, yds, (int) Math.round(getParameterValue(0)), 3);
 			// Fit a polyline to this to allow for easy interpolation
 			IDataset arg2 = DatasetUtils.cast(smoothed, Dataset.FLOAT64);
-			this.polySplineFunction = new LinearInterpolator().interpolate(new DoubleDataset(xds).getData(), ((DoubleDataset)arg2).getData());
+			this.polySplineFunction = new LinearInterpolator().interpolate(DatasetUtils.cast(DoubleDataset.class, xds).getData(), ((DoubleDataset)arg2).getData());
 
 			lowerFit = new SimpleRegression();
 			double lowerProp = xds.getShape()[0]*getParameterValue(1);

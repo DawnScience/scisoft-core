@@ -915,7 +915,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	 */
 	private static StringDataset extractExternalFileNames(final long did, final long tid, final boolean isVLEN, final int[] shape) throws Exception {
 
-		final StringDataset d = new StringDataset(shape);
+		final StringDataset d = DatasetFactory.zeros(StringDataset.class, shape);
 		Object data = d.getBuffer();
 
 		if (isVLEN) {

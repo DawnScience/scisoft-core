@@ -40,7 +40,7 @@ public class GaussianTest {
 		Dataset v = f.calculateValues(x);
 		Assert.assertEquals(1.2, ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1)), ABS_TOL);
 
-		DoubleDataset xd = new DoubleDataset(new double[] {23. - 1, 23, 23. + 2});
+		Dataset xd = DatasetFactory.createFromObject(new double[] {23. - 1, 23, 23. + 2});
 		DoubleDataset dx;
 		dx = f.calculateValues(xd);
 		Assert.assertArrayEquals(new double[] {0.5 * h, h, h/16.}, dx.getData(), ABS_TOL);
@@ -58,7 +58,7 @@ public class GaussianTest {
 		Assert.assertEquals(0.5 * h / 1.2, f.partialDeriv(f.getParameter(2), 23. - 1), ABS_TOL);
 		Assert.assertEquals(0.5 * h / 1.2,  f.partialDeriv(f.getParameter(2), 23. + 1), ABS_TOL);
 
-		xd = new DoubleDataset(new double[] {23. - 1, 23, 23. + 1});
+		xd = DatasetFactory.createFromObject(new double[] {23. - 1, 23, 23. + 1});
 		dx = f.calculatePartialDerivativeValues(f.getParameter(0), xd);
 		Assert.assertArrayEquals(new double[] {-0.5*c, 0, 0.5*c}, dx.getData(), ABS_TOL);
 
@@ -68,10 +68,10 @@ public class GaussianTest {
 		dx = f.calculatePartialDerivativeValues(f.getParameter(2), xd);
 		Assert.assertArrayEquals(new double[] {0.5*h/1.2, h/1.2, 0.5*h/1.2}, dx.getData(), ABS_TOL);
 
-		DoubleDataset[] coords = new DoubleDataset[] {DoubleDataset.createRange(15, 30, 0.25)};
+		DoubleDataset[] coords = new DoubleDataset[] {DatasetFactory.createRange(DoubleDataset.class, 15, 30, 0.25)};
 		DoubleDataset weight = null;
 		CoordinatesIterator it = CoordinatesIterator.createIterator(null, coords);
-		DoubleDataset current = new DoubleDataset(it.getShape());
+		DoubleDataset current = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 		DoubleDataset data = Random.randn(it.getShape());
 		f.fillWithValues(current, it);
 		double rd = data.residual(current, weight, false);

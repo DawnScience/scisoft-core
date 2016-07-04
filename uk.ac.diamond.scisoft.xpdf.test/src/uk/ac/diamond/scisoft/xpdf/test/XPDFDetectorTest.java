@@ -1,14 +1,14 @@
 package uk.ac.diamond.scisoft.xpdf.test;
 
-import junit.framework.TestCase;
-
 import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
+import junit.framework.TestCase;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFDetector;
@@ -40,7 +40,7 @@ public class XPDFDetectorTest extends TestCase {
 		XPDFCoordinates theCoords = new XPDFCoordinates();
 //		theCoords.setBeamData(theBeam);
 		theCoords.setEnergy(76.6);
-		theCoords.setGammaDelta(DoubleDataset.zeros(delta), delta);
+		theCoords.setGammaDelta(DatasetFactory.zeros(delta, DoubleDataset.class), delta);
 		
 		Dataset after = tect.applyTransmissionCorrection(before, theCoords.getTwoTheta(), Integer.parseInt(photonEnergyeV)*1e-3);
 		

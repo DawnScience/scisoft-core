@@ -18,6 +18,7 @@ import java.io.File;
 import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 import org.junit.Before;
@@ -76,7 +77,7 @@ public class ImageStackLoaderTest {
 		int[] multipliers= new int[]{7};
 		String[] imageFilenames = makeFiles(testScratchDirectoryName, multipliers);
 		int[] dimensions = new int[] { };
-		StringDataset strings = new StringDataset(imageFilenames, dimensions);
+		StringDataset strings = DatasetFactory.createFromObject(StringDataset.class, imageFilenames, dimensions);
 		strings.squeeze(true);
 		ImageStackLoader loader = new ImageStackLoader(strings, null);
 		assertEquals(Dataset.INT32, loader.getDtype());

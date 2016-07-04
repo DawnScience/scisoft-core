@@ -16,6 +16,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 
@@ -155,7 +156,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 
 		setParameterValues(parameters);
 		CoordinatesIterator it = CoordinatesIterator.createIterator(data == null ? null : data.getShapeRef(), coords);
-		DoubleDataset result = new DoubleDataset(it.getShape());
+		DoubleDataset result = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 
 		return calculateNumericalDerivative(1e-15, 1e-9, parameter, result, it);
 	}

@@ -15,6 +15,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
@@ -66,12 +67,12 @@ public class XPDFCoordinates {
 	 */
 	public XPDFCoordinates(XPDFCoordinates inCoords) {
 		this.wavelength = inCoords.wavelength;
-		this.twoTheta = (inCoords.twoTheta != null) ? new DoubleDataset(inCoords.twoTheta) : null;
-		this.phi = (inCoords.phi != null) ? new DoubleDataset(inCoords.phi) : null;
-		this.gamma = (inCoords.gamma != null) ? new DoubleDataset(inCoords.gamma) : null;
-		this.delta = (inCoords.delta != null) ? new DoubleDataset(inCoords.delta) : null;
-		this.q = (inCoords.q != null) ? new DoubleDataset(inCoords.q) : null;
-		this.x = (inCoords.x != null) ? new DoubleDataset(inCoords.x) : null;
+		this.twoTheta = (inCoords.twoTheta != null) ? inCoords.twoTheta.copy(DoubleDataset.class) : null;
+		this.phi = (inCoords.phi != null) ? inCoords.phi.copy(DoubleDataset.class) : null;
+		this.gamma = (inCoords.gamma != null) ? inCoords.gamma.copy(DoubleDataset.class) : null;
+		this.delta = (inCoords.delta != null) ? inCoords.delta.copy(DoubleDataset.class) : null;
+		this.q = (inCoords.q != null) ? inCoords.q.copy(DoubleDataset.class) : null;
+		this.x = (inCoords.x != null) ? inCoords.x.copy(DoubleDataset.class) : null;
 		this.isAngleAuthorative = inCoords.isAngleAuthorative;
 		this.sinTwoTheta = null;
 		this.cosTwoTheta = null;
@@ -108,9 +109,9 @@ public class XPDFCoordinates {
 			DiffractionMetadata dMD = input.getFirstMetadata(DiffractionMetadata.class);
 			DetectorProperties dP = dMD.getDetector2DProperties();
 			
-			Dataset localGamma = DoubleDataset.zeros(input);
-			Dataset localDelta = DoubleDataset.zeros(input);
-			dAngle = DoubleDataset.zeros(input);
+			Dataset localGamma = DatasetFactory.zeros(input, DoubleDataset.class);
+			Dataset localDelta = localGamma.clone();
+			dAngle = localGamma.clone();
 			
 			double pxArea = dP.getVPxSize() * dP.getHPxSize();
 			
@@ -167,7 +168,7 @@ public class XPDFCoordinates {
 	 */
 	public void setTwoTheta(Dataset twoTheta) {
 		this.twoTheta = twoTheta;
-		if (phi == null) this.phi = Maths.add(DoubleDataset.zeros(this.twoTheta), Math.toRadians(210));
+		if (phi == null) this.phi = DatasetFactory.zeros(this.twoTheta, DoubleDataset.class).fill(Math.toRadians(210));
 		setGammaDeltaFrom2ThetaPhi();
 		this.isAngleAuthorative = true;
 		invalidateData();
@@ -282,7 +283,7 @@ public class XPDFCoordinates {
 	 */
 	public Dataset getPhi() {
 		if (phi == null)
-			return DoubleDataset.zeros(getTwoTheta());
+			return DatasetFactory.zeros(getTwoTheta(), DoubleDataset.class);
 		else
 			return phi;
 	}
@@ -298,7 +299,7 @@ public class XPDFCoordinates {
 	 */
 	public Dataset getGamma() {
 		if (!isAngleAuthorative)
-			return DoubleDataset.zeros(getDelta());
+			return DatasetFactory.zeros(getDelta(), DoubleDataset.class);
 		else
 			return gamma;
 	}
@@ -437,7 +438,7 @@ public class XPDFCoordinates {
 	 * @return second-order correct approximation to derivative of the function.
 	 */
 	private static Dataset differentiate1DDataset(Dataset y) {
-		Dataset deriv = DoubleDataset.zeros(y);
+		Dataset deriv = DatasetFactory.zeros(y, DoubleDataset.class);
 		if (y.getSize() > 1) {
 			if (y.getSize() == 2) {
 				double dderiv = y.getDouble(1) - y.getDouble(0);

@@ -24,6 +24,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.roi.SectorROI;
@@ -62,7 +63,7 @@ public class IntegrationTest {
 	public void testAzimuthalSimpleMask() throws Exception {
 		
 		final IROI         sector = new SectorROI(500.0, 500.0, 20.0, 300.0,  Math.toRadians(90.0), Math.toRadians(180.0));
-		final BooleanDataset mask = BooleanDataset.ones(1000,1000);
+		final BooleanDataset mask = DatasetFactory.ones(BooleanDataset.class, 1000,1000);
 		
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 1000.0, 24, 1000, 1000));
@@ -98,7 +99,7 @@ public class IntegrationTest {
 	public void testAzimuthalThresholdMask() throws Exception {
 		
 		final IROI         sector = new SectorROI(500.0, 500.0, 20.0, 300.0,  Math.toRadians(90.0), Math.toRadians(180.0));
-		final BooleanDataset mask = BooleanDataset.ones(1000, 1000);
+		final BooleanDataset mask = DatasetFactory.ones(BooleanDataset.class, 1000, 1000);
 		
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 1000.0, 24, 1000, 1000));
@@ -139,7 +140,7 @@ public class IntegrationTest {
 	public void testAzimuthalThresholdMaskParallel() throws Exception {
 		
 		final IROI         sector = new SectorROI(500.0, 500.0, 20.0, 300.0,  Math.toRadians(90.0), Math.toRadians(180.0));
-		final BooleanDataset mask = BooleanDataset.ones(1000, 1000);
+		final BooleanDataset mask = DatasetFactory.ones(BooleanDataset.class, 1000, 1000);
 		
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 1000.0, 24, 1000, 1000));

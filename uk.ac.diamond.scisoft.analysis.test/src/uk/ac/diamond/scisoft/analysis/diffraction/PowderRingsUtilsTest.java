@@ -21,6 +21,7 @@ import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironmen
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.roi.CircularFitROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.CircularROI;
@@ -129,7 +130,7 @@ public class PowderRingsUtilsTest {
 		DetectorFitFunction f = PowderRingsUtils.createQFitFunction7(ells, det, wavelength, false);
 		f.setSpacings(list);
 		double[] init = new double[7];
-		DoubleDataset rms = new DoubleDataset(N_W, N_D, N_D, N_TD);
+		DoubleDataset rms = DatasetFactory.zeros(DoubleDataset.class, N_W, N_D, N_D, N_TD);
 		int t = 0;
 		init[2] = 0;
 		init[5] = 0;
@@ -155,7 +156,7 @@ public class PowderRingsUtilsTest {
 		DetectorFitFunction f = PowderRingsUtils.createQFitFunction4(ells, det, wavelength, false);
 		f.setSpacings(list);
 		double[] init = new double[4];
-		DoubleDataset rms = new DoubleDataset(N_W, N_D, N_D);
+		DoubleDataset rms = DatasetFactory.zeros(DoubleDataset.class, N_W, N_D, N_D);
 		int t = 0;
 		init[1] = 0;
 		for (int i = 0; i < N_W; i++) {

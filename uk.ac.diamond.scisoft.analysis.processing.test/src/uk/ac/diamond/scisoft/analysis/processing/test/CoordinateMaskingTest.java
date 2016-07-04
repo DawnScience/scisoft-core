@@ -15,6 +15,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.MaskMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
@@ -37,7 +38,7 @@ public class CoordinateMaskingTest {
 
 		final double lowerLimit = 0.1, upperLimit = 25.0;
 		
-		Dataset data = new DoubleDataset(2048, 2048);
+		Dataset data = DatasetFactory.zeros(DoubleDataset.class, 2048, 2048);
 		
 		data.setMetadata(new SliceFromSeriesMetadata(new SourceInformation("/dev/null", "", null)));
 		

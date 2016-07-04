@@ -243,7 +243,7 @@ public abstract class AbstractPixelIntegration {
 	protected Dataset mergeMaskAndRoi(int[] shape) {
 		
 		Dataset out;
-		if (mask == null) out = new BooleanDataset(shape);
+		if (mask == null) out = DatasetFactory.zeros(BooleanDataset.class, shape);
 		else out = mask.clone();
 		
 		PositionIterator pit = out.getPositionIterator();

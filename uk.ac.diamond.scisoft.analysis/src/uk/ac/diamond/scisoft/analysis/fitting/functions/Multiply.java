@@ -13,6 +13,7 @@ import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IOperator;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 
@@ -67,7 +68,7 @@ public class Multiply extends ANaryOperator implements IOperator {
 		if (imax == 1)
 			return;
 
-		DoubleDataset temp = new DoubleDataset(it.getShape());
+		DoubleDataset temp = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 		for (int i = 1; i < imax; i++) {
 			f = getFunction(i);
 			if (f == null)
@@ -125,11 +126,11 @@ public class Multiply extends ANaryOperator implements IOperator {
 		if (imax == 1)
 			return;
 
-		DoubleDataset val = new DoubleDataset(it.getShape());
-		DoubleDataset sum = new DoubleDataset(it.getShape());
+		DoubleDataset val = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
+		DoubleDataset sum = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 		DoubleDataset dif;
 		if (f != null) {
-			dif = new DoubleDataset(data); // copy derivatives and now store values
+			dif = data.clone(); // copy derivatives and now store values
 			if (f instanceof AFunction) {
 				((AFunction) f).fillWithValues(data, it);
 			} else {
@@ -140,7 +141,7 @@ public class Multiply extends ANaryOperator implements IOperator {
 				sum.iadd(dif);
 			}
 		} else {
-			dif = new DoubleDataset(it.getShape());
+			dif = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 			data.fill(1);
 		}
 		for (int i = 1; i < imax; i++) {

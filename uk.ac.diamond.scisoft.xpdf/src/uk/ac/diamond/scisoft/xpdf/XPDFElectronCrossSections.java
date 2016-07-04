@@ -117,7 +117,7 @@ public class XPDFElectronCrossSections {
 	 */
 	public static Dataset getThomsonCrossSection(XPDFCoordinates coords) {
 		IndexIterator iter = coords.getTwoTheta().getIterator();
-		DoubleDataset jJ = new DoubleDataset(coords.getTwoTheta());
+		DoubleDataset jJ = coords.getTwoTheta().copy(DoubleDataset.class);
 		
 		while (iter.hasNext())
 			 jJ.setAbs(iter.index, Xraylib.DCS_Thoms(coords.getTwoTheta().getElementDoubleAbs(iter.index))/Xraylib.DCS_Thoms(0));
@@ -176,7 +176,7 @@ public class XPDFElectronCrossSections {
 //											2,
 //											Maths.multiply(
 //													Maths.square(Maths.sin(coordinates.getTwoTheta())),
-//													Maths.square(Maths.sin(DoubleDataset.zeros(coordinates.getTwoTheta()))) // The azimuthal scattering angle is zero
+//													Maths.square(Maths.sin(DatasetFactory.zeros(coordinates.getTwoTheta()))) // The azimuthal scattering angle is zero
 //													)
 //											)
 //									)
@@ -197,7 +197,7 @@ public class XPDFElectronCrossSections {
 	 */
 	public static Dataset getKleinNishinaCrossSection(XPDFCoordinates coords, double beamEnergy) {
 		IndexIterator iter = coords.getTwoTheta().getIterator();
-		DoubleDataset oscarYoshio = new DoubleDataset(coords.getTwoTheta());
+		DoubleDataset oscarYoshio = coords.getTwoTheta().copy(DoubleDataset.class);
 		while (iter.hasNext())
 			oscarYoshio.setAbs(iter.index, Xraylib.DCS_KN(beamEnergy, coords.getTwoTheta().getElementDoubleAbs(iter.index))/Xraylib.DCS_KN(beamEnergy, 0.0));
 		

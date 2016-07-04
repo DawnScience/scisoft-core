@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 
 
@@ -41,8 +42,8 @@ public class MaximaDifference extends AbstractSignificanceFilter {
 		
 		//Calculate the differences between the position & each point across
 		//the two windows. N.B. left & right diffs are in opposite directions. 
-		IDataset leftDiffs = new DoubleDataset(windowSize);
-		IDataset rightDiffs = new DoubleDataset(windowSize);
+		IDataset leftDiffs = DatasetFactory.zeros(DoubleDataset.class, windowSize);
+		IDataset rightDiffs = DatasetFactory.zeros(DoubleDataset.class, windowSize);
 		for(int i = 0; i < windowSize; i++) {
 			leftDiffs.set(posVal-yData.getDouble(position-i-1), i);
 			rightDiffs.set(posVal-yData.getDouble(position+i+1), i);

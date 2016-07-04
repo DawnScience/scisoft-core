@@ -22,6 +22,7 @@ import java.nio.FloatBuffer;
 import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.junit.Test;
@@ -136,7 +137,7 @@ public class UtilsTest {
 		float[] answer = new float[] {0, 1, -2, -3};
 		fb.put(answer);
 
-		FloatDataset fd = new FloatDataset(4);
+		FloatDataset fd = DatasetFactory.zeros(FloatDataset.class, 4);
 		ByteArrayInputStream is = new ByteArrayInputStream(bb.array());
 		Utils.readBeFloat(is, fd, 0);
 		is.close();

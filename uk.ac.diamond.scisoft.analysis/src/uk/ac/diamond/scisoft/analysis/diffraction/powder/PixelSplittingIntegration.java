@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
@@ -86,8 +87,8 @@ public class PixelSplittingIntegration extends AbstractPixelIntegration1D {
 		final double lo = edges[0];
 		final double hi = edges[nbins];
 		final double span = (hi - lo)/nbins;
-		DoubleDataset histo = new DoubleDataset(nbins);
-		DoubleDataset intensity = new DoubleDataset(nbins);
+		DoubleDataset histo = DatasetFactory.zeros(DoubleDataset.class, nbins);
+		DoubleDataset intensity = DatasetFactory.zeros(DoubleDataset.class, nbins);
 		final double[] h = histo.getData();
 		final double[] in = intensity.getData();
 		if (span <= 0) {

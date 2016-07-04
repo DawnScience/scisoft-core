@@ -80,8 +80,8 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 	
 	private Dataset[] getMinMaxAxisArray(Dataset axis) {
 		
-		DoubleDataset minD = new DoubleDataset(axis.getShape());
-		DoubleDataset maxD = new DoubleDataset(axis.getShape());
+		DoubleDataset minD = DatasetFactory.zeros(DoubleDataset.class, axis.getShape());
+		DoubleDataset maxD = DatasetFactory.zeros(DoubleDataset.class, axis.getShape());
 		boolean reversed = false;
 		
 		//TODO handle high to low order
@@ -146,8 +146,8 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		final double lo = edges[0];
 		final double hi = edges[1];
 		final double span = (hi - lo)/nbins;
-		DoubleDataset histo = new DoubleDataset(nbins);
-		DoubleDataset intensity = new DoubleDataset(nbins);
+		DoubleDataset histo = DatasetFactory.zeros(DoubleDataset.class, nbins);
+		DoubleDataset intensity = DatasetFactory.zeros(DoubleDataset.class, nbins);
 		final double[] h = histo.getData();
 		final double[] in = intensity.getData();
 		

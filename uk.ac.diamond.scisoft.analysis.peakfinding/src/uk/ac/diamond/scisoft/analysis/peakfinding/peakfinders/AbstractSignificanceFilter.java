@@ -17,6 +17,7 @@ import java.util.TreeSet;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 
 /**
@@ -69,7 +70,7 @@ public abstract class AbstractSignificanceFilter extends AbstractPeakFinder {
 		
 		//Calculate the significance function for this data & its mean & SD
 		int nrPoints = yData.getSize();
-		Dataset significance = new DoubleDataset(yData.getShape());
+		Dataset significance = DatasetFactory.zeros(DoubleDataset.class, yData.getShape());
 		for (int i = windowSize; i <= (nrPoints-windowSize-1); i++) {
 			double posSig = calculateSignificance(i, windowSize, yData);
 			significance.set(posSig, i);

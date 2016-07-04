@@ -29,6 +29,7 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.slf4j.Logger;
@@ -138,7 +139,7 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver {
 					}
 				});
 			} else {
-				data = new IntegerDataset(shape);
+				data = DatasetFactory.zeros(IntegerDataset.class, shape);
 				Utils.readLeInt(fi, (IntegerDataset) data, 0);
 			}
 			data.setName(DEF_IMAGE_NAME);
@@ -194,7 +195,7 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver {
 
 			fi.skip(header);
 
-			data = new IntegerDataset(shape);
+			data = DatasetFactory.zeros(IntegerDataset.class, shape);
 			Utils.readLeInt(fi, (IntegerDataset) data, 0);
 			data.setName(DEF_IMAGE_NAME);
 			holder = new DataHolder();

@@ -16,6 +16,7 @@ import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
@@ -34,7 +35,7 @@ public class MissingDataTest {
 	@Before
 	public void setUp() throws Exception {
 		// Make sinus data
-		fullSine = Maths.sin(Maths.multiply(2*Math.PI, DoubleDataset.createRange(0.0, 1.0, 0.01)));
+		fullSine = Maths.sin(Maths.multiply(2*Math.PI, DatasetFactory.createRange(DoubleDataset.class, 0.0, 1.0, 0.01)));
 	}
 
 	@Test
@@ -42,17 +43,17 @@ public class MissingDataTest {
 		int start = 23, stop = 28, step = 1;
 		Slice missingSlice = new Slice(start, stop, step);
 		// positive infinity
-		Dataset infSine = new DoubleDataset(fullSine);
+		Dataset infSine = fullSine.clone();
 		infSine.setSlice(Double.POSITIVE_INFINITY, missingSlice);
 		infSine.addMetadata(new SliceFromSeriesMetadata(new SliceInformation(new SliceND(infSine.getShape()), new SliceND(infSine.getShape()), new SliceND(infSine.getShape()), infSine.getShape(), 1, 1)));
 		// Missing data indicator
 		double mdi = 2e30;
-		Dataset mdiSine = new DoubleDataset(fullSine);
+		Dataset mdiSine = fullSine.clone();
 		mdiSine.setSlice(mdi, missingSlice);
 		mdiSine = InterpolateMissingDataOperation.interpolateMissingData(mdiSine, mdi);
 		mdiSine.addMetadata(new SliceFromSeriesMetadata(new SliceInformation(new SliceND(infSine.getShape()), new SliceND(infSine.getShape()), new SliceND(infSine.getShape()), infSine.getShape(), 1, 1)));
 		// What the answer should be
-		Dataset interpolSine = new DoubleDataset(fullSine);
+		Dataset interpolSine = fullSine.clone();
 		for (int i = start; i < stop; i+=step) {
 			interpolSine.set((i-start+1) * (fullSine.getDouble(stop) - fullSine.getDouble(start-1)) / (stop - (start-1)) + fullSine.getDouble(start-1), i);
 		}
@@ -90,24 +91,24 @@ public class MissingDataTest {
 		int start = 23, stop = 28, step = 1;
 		Slice missingSlice = new Slice(start, stop, step);
 		// positive infinity
-		Dataset infSine = new DoubleDataset(fullSine);
+		Dataset infSine = fullSine.clone();
 		infSine.setSlice(Double.POSITIVE_INFINITY, missingSlice);
 		infSine = InterpolateMissingDataOperation.interpolateMissingData(infSine, null);
 		// negative infinity
-		Dataset minfSine = new DoubleDataset(fullSine);
+		Dataset minfSine = fullSine.clone();
 		minfSine.setSlice(Double.NEGATIVE_INFINITY, missingSlice);
 		minfSine = InterpolateMissingDataOperation.interpolateMissingData(minfSine, null);
 		// NaN
-		Dataset nanSine = new DoubleDataset(fullSine);
+		Dataset nanSine = fullSine.clone();
 		nanSine.setSlice(Double.NaN, missingSlice);
 		nanSine = InterpolateMissingDataOperation.interpolateMissingData(nanSine, null);
 		// Missing data indicator
 		double mdi = 2e30;
-		Dataset mdiSine = new DoubleDataset(fullSine);
+		Dataset mdiSine = fullSine.clone();
 		mdiSine.setSlice(mdi, missingSlice);
 		mdiSine = InterpolateMissingDataOperation.interpolateMissingData(mdiSine, mdi);
 		// What the answer should be
-		Dataset interpolSine = new DoubleDataset(fullSine);
+		Dataset interpolSine = fullSine.clone();
 		for (int i = start; i < stop; i+=step) {
 			interpolSine.set((i-start+1) * (fullSine.getDouble(stop) - fullSine.getDouble(start-1)) / (stop - (start-1)) + fullSine.getDouble(start-1), i);
 		}
@@ -129,13 +130,13 @@ public class MissingDataTest {
 	public void endpointReplacementTest() {
 		int firstData = 10, lastData = 87;
 		
-		Dataset interpolatedStart = new DoubleDataset(fullSine), missingStart = new DoubleDataset(fullSine);
+		Dataset interpolatedStart = fullSine.clone(), missingStart = fullSine.clone();
 		Slice startSlice = new Slice(0, firstData);
 		interpolatedStart.setSlice(fullSine.getDouble(firstData), startSlice);
 		missingStart.setSlice(Double.NaN, startSlice);
 		missingStart = InterpolateMissingDataOperation.interpolateMissingData(missingStart, null);
 		
-		Dataset interpolatedFinish = new DoubleDataset(fullSine), missingFinish = new DoubleDataset(fullSine);
+		Dataset interpolatedFinish = fullSine.clone(), missingFinish = fullSine.clone();
 		Slice finishSlice = new Slice(lastData+1, fullSine.getSize());
 		interpolatedFinish.setSlice(fullSine.getDouble(lastData), finishSlice);
 		missingFinish.setSlice(Double.POSITIVE_INFINITY, finishSlice);

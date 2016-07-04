@@ -112,7 +112,7 @@ public class Interpolation1D {
 		int[] dint = new int[d.getSize()];
 		for (int i = 0; i < dBox.length; i++) dint[i] = dBox[i];
 
-		return new IntegerDataset(dint, new int[]{dint.length});
+		return DatasetFactory.createFromObject(IntegerDataset.class, dint, null);
 	}
 	
 	private static int[] getCommonRangeIndicies(IDataset x1, IDataset x2) {

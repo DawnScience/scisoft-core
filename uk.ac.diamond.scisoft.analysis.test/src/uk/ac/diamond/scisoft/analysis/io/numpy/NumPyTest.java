@@ -131,7 +131,7 @@ public class NumPyTest {
 				boolarr[0] = true;
 			if (len > 100)
 				boolarr[100] = true;
-			ds = DatasetFactory.createFromObject(boolarr, abstractDatasetDataType);
+			ds = DatasetFactory.createFromObject(abstractDatasetDataType, boolarr);
 		}
 		if (addInf && len > 3) {
 			ds.set(Double.POSITIVE_INFINITY, 2);
@@ -172,7 +172,7 @@ public class NumPyTest {
 		Dataset loadedFile = NumPyFileLoader.loadFileHelper(loc.toString());
 		Dataset ds = createDataset();
 		if (unsigned)
-			ds = DatasetFactory.createFromObject(ds, unsigned);
+			ds = DatasetFactory.createFromObject(unsigned, ds);
 		Assert.assertEquals(toString(), ds, loadedFile);
 	}
 
@@ -199,7 +199,7 @@ public class NumPyTest {
 		Dataset act = NumPyFileLoader.loadFileHelper(loc.toString());
 
 		if (unsigned)
-			exp = DatasetFactory.createFromObject(exp, unsigned);
+			exp = DatasetFactory.createFromObject(unsigned, exp);
 		Assert.assertEquals(toString(), exp, act);
 	}
 

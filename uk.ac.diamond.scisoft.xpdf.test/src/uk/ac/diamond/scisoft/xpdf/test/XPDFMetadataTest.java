@@ -7,6 +7,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
@@ -75,10 +76,10 @@ public class XPDFMetadataTest extends TestCase {
 		}
 		Dataset delta1D = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_1"));
 		Dataset fluorExp = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_2"));
-		Dataset delta = new DoubleDataset(delta1D.getSize(), 1);
+		Dataset delta = DatasetFactory.zeros(DoubleDataset.class, delta1D.getSize(), 1);
 		for (int i = 0; i<delta1D.getSize(); i++)
 			delta.set(delta1D.getDouble(i), i, 0);
-		Dataset gamma = DoubleDataset.zeros(delta);
+		Dataset gamma = DatasetFactory.zeros(delta);
 
 		// convert to radians, and rotate the detector
 		delta = Maths.toRadians(delta);

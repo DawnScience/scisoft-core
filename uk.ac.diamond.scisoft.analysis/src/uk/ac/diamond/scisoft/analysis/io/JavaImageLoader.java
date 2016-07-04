@@ -308,7 +308,7 @@ public class JavaImageLoader extends AbstractFileLoader {
 					throw new ScanFileHolderException("Number of colour channels is less than three so cannot load and convert");
 				}
 
-				data = new RGBDataset(channels[0], channels[1], channels[2]);
+				data = DatasetUtils.createCompoundDataset(Dataset.RGB, channels);
 
 				if (asGrey)
 					data = ((RGBDataset) data).createGreyDataset(channels[0].getDType());

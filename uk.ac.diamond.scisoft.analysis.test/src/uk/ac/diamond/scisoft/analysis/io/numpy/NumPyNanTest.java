@@ -66,7 +66,7 @@ public class NumPyNanTest {
 
 	@Test
 	public void testSave() throws Exception {
-		Dataset ds = DatasetFactory.createFromObject(new double[] {Double.NaN, Double.NaN}, dtype);
+		Dataset ds = DatasetFactory.createFromObject(dtype, new double[] {Double.NaN, Double.NaN});
 		File loc = NumPyTest.getTempFile();
 		NumPyTest.saveNumPyFile(ds, loc, false);
 		StringBuilder script = new StringBuilder();

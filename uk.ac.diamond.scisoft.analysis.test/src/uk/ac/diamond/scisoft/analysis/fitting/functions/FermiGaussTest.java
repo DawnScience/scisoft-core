@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,7 +32,7 @@ public class FermiGaussTest {
 		Assert.assertEquals((2.5*w - 0.5) / 3 - 5.2, f.val(23. + w), ABS_TOL);
 		Assert.assertEquals((-2.5*w - 0.5) / 1.5 - 5.2, f.val(23. - w), ABS_TOL);
 
-		DoubleDataset xd = new DoubleDataset(new double[] {23. - w, 23, 23. + 2 * w});
+		Dataset xd = DatasetFactory.createFromObject(new double[] {23. - w, 23, 23. + 2 * w});
 		DoubleDataset fx;
 		fx = f.calculateValues(xd);
 		Assert.assertArrayEquals(new double[] {(-2.5*w - 0.5)/1.5 - 5.2, (2.5*0 - 0.5)/2. - 5.2,

@@ -445,7 +445,7 @@ def __cvt_jobj(obj, dtype=None, copy=True, force=False):
     else:
         dtype = _translatenativetype(dtype)
 
-    return _df.createFromObject(obj, dtype.value)
+    return _df.createFromObject(dtype.value, obj)
 
 # prevent incorrect coercion of Python booleans causing trouble with overloaded Java methods
 import java.lang.Boolean as _jbool #@UnresolvedImport

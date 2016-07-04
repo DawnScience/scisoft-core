@@ -135,7 +135,7 @@ public class Histogram implements DatasetToDatasetFunction {
 				final double hi = edges[nbins];
 				final double span = (hi - lo)/nbins;
 
-				IntegerDataset histo = new IntegerDataset(nbins);
+				IntegerDataset histo = DatasetFactory.zeros(IntegerDataset.class, nbins);
 				final int[] h = histo.getData();
 				if (span <= 0) {
 					h[0] = ds.getSize();
@@ -174,7 +174,7 @@ public class Histogram implements DatasetToDatasetFunction {
 				final double lo = edges[0];
 				final double hi = edges[nbins];
 
-				IntegerDataset histo = new IntegerDataset(nbins);
+				IntegerDataset histo = DatasetFactory.zeros(IntegerDataset.class, nbins);
 				final int[] h = histo.getData();
 				if (lo >= hi) {
 					h[0] = ds.getSize();

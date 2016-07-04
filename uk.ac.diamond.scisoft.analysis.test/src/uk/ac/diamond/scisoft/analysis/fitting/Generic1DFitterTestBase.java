@@ -175,7 +175,7 @@ public abstract class Generic1DFitterTestBase {
 	private DoubleDataset generateBackground() {
 		CompositeFunction comp = new CompositeFunction();
 		comp.addFunction(new Gaussian(-10, 10, dataRange / 4, dataRange / 2));
-		return comp.calculateValues(DoubleDataset.createRange(dataRange));
+		return comp.calculateValues(DatasetFactory.createRange(DoubleDataset.class, dataRange));
 	}
 
 	@SuppressWarnings("unused")

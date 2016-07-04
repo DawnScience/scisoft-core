@@ -457,8 +457,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				}
 			}
 			
-			result.add(new FloatDataset(azimuth, apts));
-			result.add(new FloatDataset(intensity, npts));
+			result.add(DatasetFactory.createFromObject(azimuth));
+			result.add(DatasetFactory.createFromObject(intensity));
 		}
 		return result;
 	}
@@ -511,8 +511,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			QSpaceProfileTask profileTask = new QSpaceProfileTask(nxstart, nx, nystart, ny, ds);
 			profileTask.setAxes(rAxis);
 			result.addAll(ProfileForkJoinPool.profileForkJoinPool.invoke(profileTask));
-			result.add(new FloatDataset()) ;
-			result.add(new FloatDataset()) ;
+			result.add(DatasetFactory.zeros(FloatDataset.class, null));
+			result.add(DatasetFactory.zeros(FloatDataset.class, null));
 			result.add(azAxis) ;
 			result.add(radAxis) ;
 		}
@@ -658,8 +658,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 					}
 				}
 				
-				result.add(new FloatDataset(azimuth, new int[] {apts})) ;
-				result.add(new FloatDataset(intensity, new int[] {npts})) ;
+				result.add(DatasetFactory.createFromObject(azimuth));
+				result.add(DatasetFactory.createFromObject(intensity));
 			}
 			
 		return result;

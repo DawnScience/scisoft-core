@@ -276,7 +276,7 @@ public class PythonUtils {
 	public static void setSlice(Dataset a, Object object, final PyObject indexes) {
 		if (a.isComplex() || a.getElementsPerItem() == 1) {
 			if (object instanceof PySequence) {
-				object = DatasetFactory.createFromObject(object, a.getDType());
+				object = DatasetFactory.createFromObject(a.getDType(), object);
 			}
 		}
 

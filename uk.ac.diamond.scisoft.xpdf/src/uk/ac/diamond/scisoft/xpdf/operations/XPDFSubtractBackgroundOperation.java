@@ -43,7 +43,7 @@ public class XPDFSubtractBackgroundOperation extends
 		XPDFOperationChecker.checkXPDFMetadata(this, input, false, true, false);
 		XPDFMetadata theXPDFMetadata =  null;
 		
-		Dataset process = new DoubleDataset(DatasetUtils.convertToDataset(input));
+		Dataset process = DatasetUtils.copy(DoubleDataset.class, input);
 		
 		copyMetadata(input, process);
 		

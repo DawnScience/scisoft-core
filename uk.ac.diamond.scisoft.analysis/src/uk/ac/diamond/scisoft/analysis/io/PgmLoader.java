@@ -26,6 +26,7 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
@@ -97,10 +98,10 @@ public class PgmLoader extends AbstractFileLoader {
 			} else {
 				// Now read the data
 				if (maxval < 256) {
-					data = new ShortDataset(height, width);
+					data = DatasetFactory.zeros(ShortDataset.class, height, width);
 					Utils.readByte(fi, (ShortDataset) data, index);
 				} else {
-					data = new IntegerDataset(height, width);
+					data = DatasetFactory.zeros(IntegerDataset.class, height, width);
 					Utils.readBeShort(fi, (IntegerDataset) data, index, false);
 				}
 				data.setName(DEF_IMAGE_NAME);
@@ -150,10 +151,10 @@ public class PgmLoader extends AbstractFileLoader {
 			Dataset data;
 			// Now read the data
 			if (maxval < 256) {
-				data = new ShortDataset(height, width);
+				data = DatasetFactory.zeros(ShortDataset.class, height, width);
 				Utils.readByte(fi, (ShortDataset) data, index);
 			} else {
-				data = new IntegerDataset(height, width);
+				data = DatasetFactory.zeros(IntegerDataset.class, height, width);
 				Utils.readBeShort(fi, (IntegerDataset) data, index, false);
 			}
 			data.setName(DEF_IMAGE_NAME);

@@ -21,6 +21,7 @@ import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 
 /**
  * This class should be used to load fit2d Mask datafiles created by fit2d
@@ -71,7 +72,7 @@ public class Fit2DMaskLoader extends AbstractFileLoader {
 				
 				fi.read(bufImage);
 				
-				data = new BooleanDataset(shape);
+				data = DatasetFactory.zeros(BooleanDataset.class, shape);
 				data.setName("Mask");
 				
 				boolean[] bdata = ((BooleanDataset)data).getData();

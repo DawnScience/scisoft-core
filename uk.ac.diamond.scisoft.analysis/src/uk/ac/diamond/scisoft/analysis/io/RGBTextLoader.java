@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 
 /**
@@ -127,7 +128,7 @@ public class RGBTextLoader extends CSVLoader {
 			if (!n.equals("row") && !n.equals("column")) {
 				int width = (int)rmax + 1;
 				int height = (int) cmax + 1;
-				DoubleDataset data = new DoubleDataset(new int[] { width, height });
+				DoubleDataset data = DatasetFactory.zeros(DoubleDataset.class, width, height);
 				data.fill(Double.NaN);
 				data.setName(n);
 				int idx = 0;

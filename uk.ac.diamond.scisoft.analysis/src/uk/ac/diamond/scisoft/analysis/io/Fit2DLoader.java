@@ -22,6 +22,7 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
 
 /**
@@ -83,7 +84,7 @@ public class Fit2DLoader extends AbstractFileLoader {
 			if (loadLazily) {
 				data = createLazyDataset(DATA_NAME, Dataset.FLOAT32, shape, new Fit2DLoader(fileName));
 			} else {
-				data = new FloatDataset(shape);
+				data = DatasetFactory.zeros(FloatDataset.class, shape);
 				Utils.readLeFloat(fi, (FloatDataset) data, index);
 			}
 				

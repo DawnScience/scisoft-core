@@ -108,7 +108,7 @@ public class AxisValues implements Iterable<Double>, Serializable, Cloneable {
 	 */
 	public void addValues(double... newValues) {
 		if (values == null) {
-			values = new DoubleDataset(newValues);
+			values = DatasetFactory.createFromObject(DoubleDataset.class, newValues);
 		} else {
 			int n = values.getSize();
 			values.resize(n + newValues.length);
@@ -134,7 +134,7 @@ public class AxisValues implements Iterable<Double>, Serializable, Cloneable {
 	 * @param v
 	 */
 	public void setValues(double[] v) {
-		values = new DoubleDataset(v);
+		values = DatasetFactory.createFromObject(DoubleDataset.class, v);
 		isDirty = true;
 	}
 

@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 
 /**
@@ -32,7 +33,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 @Deprecated
 public class ImageStackLoaderEx extends ImageStackLoader {
 	public ImageStackLoaderEx(int[] dimensions, String[] imageFilenames, String directory) throws Exception {
-		this(new StringDataset(imageFilenames, dimensions), null, directory);
+		this(DatasetFactory.createFromObject(StringDataset.class, imageFilenames, dimensions), null, directory);
 	}
 
 	public ImageStackLoaderEx(int[] dimensions, String[] imageFilenames) throws Exception {

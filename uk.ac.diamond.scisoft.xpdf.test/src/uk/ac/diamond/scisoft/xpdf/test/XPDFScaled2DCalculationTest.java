@@ -3,6 +3,7 @@ package uk.ac.diamond.scisoft.xpdf.test;
 import static org.junit.Assert.*;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
@@ -21,8 +22,8 @@ public class XPDFScaled2DCalculationTest {
 	public void setUp() throws Exception {
 		// Set up the full size arrays
 		// One dimensional arrays
-		theta = Maths.multiply(DoubleDataset.createRange(0.5, ny+0.5, 1.0), Math.PI/ny);
-		phi = Maths.multiply(DoubleDataset.createRange(0.5, nx+0.5, 1.0), 2*Math.PI/nx);
+		theta = Maths.multiply(DatasetFactory.createRange(DoubleDataset.class, 0.5, ny+0.5, 1.0), Math.PI/ny);
+		phi = Maths.multiply(DatasetFactory.createRange(DoubleDataset.class, 0.5, nx+0.5, 1.0), 2*Math.PI/nx);
 		// spread to two dimensions
 		theta = DatasetUtils.repeat(theta.reshape(1, ny), new int[]{nx}, 0);
 		phi = DatasetUtils.repeat(phi.reshape(nx, 1), new int[]{ny}, 1);

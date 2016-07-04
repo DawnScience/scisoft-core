@@ -17,6 +17,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
@@ -59,7 +60,7 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 	Dataset q = coordinates.getQ();
 
 	// Here r is merely a temporary coordinate system.
-	Dataset r = DoubleDataset.createRange(model.getrStep()/2, model.getrMax(), model.getrStep());
+	Dataset r = DatasetFactory.createRange(DoubleDataset.class, model.getrStep()/2, model.getrMax(), model.getrStep());
 
 	double tophatWidth = model.getTophatWidth();
 	
@@ -132,7 +133,7 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 //	for i in range(0,size(r)):
 //	    output[i] = (np.sin(q*r[i])*qhq).sum()
 //	output = output*(q[3]-q[2])*np.power(2.0*np.square(pi)*rho*r,-1)
-		Dataset output = DoubleDataset.zeros(r);
+		Dataset output = DatasetFactory.zeros(r, DoubleDataset.class);
 		Dataset qhq = Maths.multiply(q, fQ);
 		output = fourierGeneric(qhq, q, r);
 		output.imultiply(
@@ -152,7 +153,7 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 //	for i in range(0,size(q)):
 //	    output[i] = (np.sin(r*q[i])*rhr).sum()
 //	output = output*(r[3]-r[2])*4*pi*rho/q
-		Dataset output = DoubleDataset.zeros(q);
+		Dataset output = DatasetFactory.zeros(q, DoubleDataset.class);
 		Dataset rhr = Maths.multiply(r, fR);
 		output = fourierGeneric(rhr, r, q);
 		output.imultiply(Maths.divide((r.getDouble(3) - r.getDouble(2))*4.0*Math.PI*numberDensity, q));
@@ -167,7 +168,7 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 	 * 		The DST on the x axis
 	 */
 	private Dataset fourierGeneric(Dataset functionOnU, Dataset coordinateU, Dataset coordinateX) {
-		DoubleDataset dst = new DoubleDataset(coordinateX);
+		DoubleDataset dst = coordinateX.copy(DoubleDataset.class);
 		IndexIterator iterX = coordinateX.getIterator();
 		while (iterX.hasNext()) {
 			IndexIterator iterU = coordinateU.getIterator();
@@ -199,7 +200,7 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 		// Round to nearest odd integer
 		w = (2*Math.floor(w/2+0.5) + 1);
 		// Dataset to hold the result
-		Dataset hatted = DoubleDataset.zeros(soq);		
+		Dataset hatted = DatasetFactory.zeros(soq, DoubleDataset.class);		
 		// Length of the array
 //		int intn = soq.getShape()[0];
 		int intn = soq.getSize();
@@ -210,7 +211,7 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 //	  # now we have w points extra on the start and the end. 
 
 		// Add an extra w(+1?) points on the end and start of soq
-		Dataset wExtension = new DoubleDataset((int) w+1);
+		Dataset wExtension = DatasetFactory.zeros(DoubleDataset.class, (int) w+1);
 		Dataset soqX = DatasetUtils.append(soq, Maths.add(wExtension, soq.getDouble(intn-1)), 0);
 		soqX = DatasetUtils.append(Maths.add(wExtension, soq.getDouble(0)), soqX, 0);
 //
@@ -242,7 +243,7 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 			// This seems the most complex tophat convolution in the history of numerical analysis.
 			// I cannot understand it, I can only duplicate it.
 			
-			Dataset c = DoubleDataset.createRange(intr-w, intr+w+1, 1);
+			Dataset c = DatasetFactory.createRange(DoubleDataset.class, intr-w, intr+w+1, 1);
 			double r = intr;
 			// No mathematical operator overloading ;_;			
 			Dataset leadingFactor = Maths.multiply(3.0/2.0, Maths.divide(c, r));
@@ -254,8 +255,8 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 			// c_use in the python seems to only ever be False for the first element during the first iteration
 			// Use 1 and 0 instead of true and false
 			int firstValid = DatasetUtils.findIndexGreaterThan(c, w-r);
-			Dataset cUse = DoubleDataset.ones(c);
-			Dataset prefactor = DoubleDataset.ones(c);
+			Dataset cUse = DatasetFactory.ones(c);
+			Dataset prefactor = cUse.clone();
 			for (int i = 0; i < firstValid; i++) {
 				// TODO: Find a better way to do this
 				cUse.set(0.0, i);
@@ -325,7 +326,7 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 		XPDFCoordinates oldCoords = new XPDFCoordinates(input);
 		Dataset oldQ = oldCoords.getQ();
 		
-		Dataset newQ = DoubleDataset.createRange((double) oldQ.min(), (double) oldQ.max(), oldQ.getDouble(1)-oldQ.getDouble(0));
+		Dataset newQ = DatasetFactory.createRange(DoubleDataset.class, (double) oldQ.min(), (double) oldQ.max(), oldQ.getDouble(1)-oldQ.getDouble(0));
 		Dataset newData = DatasetUtils.convertToDataset(Interpolation1D.splineInterpolation(oldQ, input, newQ));
 		
 		// The data now does not have angle as its axis

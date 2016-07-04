@@ -161,7 +161,7 @@ public class PeakFittingEllipseFinder {
 			
 			try {
 				
-				DoubleDataset xData = DoubleDataset.createRange(sub.getSize());
+				DoubleDataset xData = DatasetFactory.createRange(DoubleDataset.class, sub.getSize());
 				int maxPos = sub.maxPos()[0];
 				g = new Gaussian(new double[]{maxPos,1,sub.getDouble(maxPos)});
 				Fitter.fit(xData, sub, new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT), g);

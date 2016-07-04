@@ -131,7 +131,7 @@ public class XPDFQSquaredIntegrator {
 //	 * @return second-order correct approximation to the function.
 //	 */
 //	private static Dataset differentiate1DDataset(Dataset y) {
-//		Dataset deriv = DoubleDataset.zeros(y);
+//		Dataset deriv = DatasetFactory.zeros(y, DoubleDataset.class);
 //		if (y.getSize() > 1) {
 //			if (y.getSize() == 2) {
 //				double dderiv = y.getDouble(1) - y.getDouble(0);

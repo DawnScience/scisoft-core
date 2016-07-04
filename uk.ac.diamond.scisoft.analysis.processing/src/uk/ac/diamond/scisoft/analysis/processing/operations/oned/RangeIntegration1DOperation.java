@@ -13,7 +13,6 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.roi.ROISliceUtils;
 
@@ -85,7 +84,7 @@ public class RangeIntegration1DOperation extends AbstractOperation<RangeIntegrat
 			out -= val;
 		}
 		
-		DoubleDataset aux = new DoubleDataset(new double[]{out}, new int[]{1});
+		Dataset aux = DatasetFactory.createFromObject(new double[]{out});
 		aux.setName("integrated");
 		aux.squeeze();
 		

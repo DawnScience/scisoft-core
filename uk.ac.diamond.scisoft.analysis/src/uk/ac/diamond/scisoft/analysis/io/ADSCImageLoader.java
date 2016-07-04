@@ -31,6 +31,7 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.slf4j.Logger;
@@ -203,7 +204,7 @@ public class ADSCImageLoader extends AbstractFileLoader {
 		raf.read(read);
 
 		// and put it into the dataset
-		data = new IntegerDataset(shape);
+		data = DatasetFactory.zeros(IntegerDataset.class, shape);
 		int[] databuf = ((IntegerDataset) data).getData();
 		int amax = Integer.MIN_VALUE;
 		int amin = Integer.MAX_VALUE;

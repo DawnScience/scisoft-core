@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.CollectionStats;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.junit.Test;
 
@@ -33,18 +34,18 @@ public class CollectionStatsTest {
    private static List<IDataset> SETS1D, SETS2D;
    static {
 	   SETS1D = new ArrayList<IDataset>(5);
-	   SETS1D.add(new DoubleDataset(new double[]{1,  2,1,  4,5  }, 5));
-	   SETS1D.add(new DoubleDataset(new double[]{500,2,1,  4,5  }, 5));
-	   SETS1D.add(new DoubleDataset(new double[]{1,  2,1,  4,5  }, 5));
-	   SETS1D.add(new DoubleDataset(new double[]{1,  2,3,  4,500}, 5));
-	   SETS1D.add(new DoubleDataset(new double[]{1,  2,300,4,5  }, 5));
+	   SETS1D.add(DatasetFactory.createFromObject(new double[]{1,  2,1,  4,5  }, 5));
+	   SETS1D.add(DatasetFactory.createFromObject(new double[]{500,2,1,  4,5  }, 5));
+	   SETS1D.add(DatasetFactory.createFromObject(new double[]{1,  2,1,  4,5  }, 5));
+	   SETS1D.add(DatasetFactory.createFromObject(new double[]{1,  2,3,  4,500}, 5));
+	   SETS1D.add(DatasetFactory.createFromObject(new double[]{1,  2,300,4,5  }, 5));
 	   
 	   SETS2D = new ArrayList<IDataset>(5);
-	   SETS2D.add(new DoubleDataset(new double[]{1,  2,1,4  }, 2,2));
-	   SETS2D.add(new DoubleDataset(new double[]{500,2,1,4  }, 2,2));
-	   SETS2D.add(new DoubleDataset(new double[]{1,  2,1,4  }, 2,2));
-	   SETS2D.add(new DoubleDataset(new double[]{1,  2,3,500}, 2,2));
-	   SETS2D.add(new DoubleDataset(new double[]{1,  2,300,4}, 2,2));
+	   SETS2D.add(DatasetFactory.createFromObject(new double[]{1,  2,1,4  }, 2,2));
+	   SETS2D.add(DatasetFactory.createFromObject(new double[]{500,2,1,4  }, 2,2));
+	   SETS2D.add(DatasetFactory.createFromObject(new double[]{1,  2,1,4  }, 2,2));
+	   SETS2D.add(DatasetFactory.createFromObject(new double[]{1,  2,3,500}, 2,2));
+	   SETS2D.add(DatasetFactory.createFromObject(new double[]{1,  2,300,4}, 2,2));
    }
    
    @Test

@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
@@ -291,7 +292,7 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 	 */
 	@Override
 	public Dataset getSampleFluorescence(Dataset gamma, Dataset delta) {
-		Dataset totalSampleFluorescence = DoubleDataset.zeros(gamma);
+		Dataset totalSampleFluorescence = DatasetFactory.zeros(gamma, DoubleDataset.class);
 		
 		XPDFCoordinates coords = new XPDFCoordinates();
 		coords.setGammaDelta(gamma, delta);

@@ -16,7 +16,7 @@ import java.util.List;
 import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.junit.Test;
 
 /**
@@ -52,7 +52,7 @@ public class Integrate2DTest {
 	@Test
 	public void testSimple() {
 		double[] dd = {0., 1., 2., 3., 4., 5.};
-		Dataset d = new DoubleDataset(dd).reshape(2,3);
+		Dataset d = DatasetFactory.createFromObject(dd, 2, 3);
 		Integrate2D int2d = new Integrate2D();
 		List<? extends Dataset> dsets = int2d.value(d);
 
@@ -70,7 +70,7 @@ public class Integrate2DTest {
 	@Test
 	public void testCompound() {
 		double[] dd = {0., 1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11.};
-		Dataset d = new CompoundDoubleDataset(2, dd, new int[] {2,3});
+		Dataset d = DatasetFactory.createFromObject(2, CompoundDoubleDataset.class, dd, 2, 3);
 		Integrate2D int2d = new Integrate2D();
 		List<? extends Dataset> dsets = int2d.value(d);
 

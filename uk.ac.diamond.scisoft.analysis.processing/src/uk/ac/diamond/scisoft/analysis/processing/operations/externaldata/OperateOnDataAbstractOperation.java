@@ -20,6 +20,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
@@ -72,7 +73,7 @@ public abstract class OperateOnDataAbstractOperation<T extends InternalDatasetNa
 		// A non-scalar val is an error at this point
 		if (val.getRank() != 0) throw new OperationException(this, "External data shape invalid");
 
-		Dataset output = new DoubleDataset();
+		Dataset output = DatasetFactory.zeros(DoubleDataset.class, null);
 		output = doMathematics(inputData, DatasetUtils.convertToDataset(val));
 		// copy metadata, except for the error metadata
 		copyMetadata(input, output);

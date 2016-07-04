@@ -23,6 +23,7 @@ import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironmen
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 
@@ -140,7 +141,7 @@ public class RAxisImageLoader extends AbstractFileLoader implements Serializable
 		raf.read(read); // read in all the data at once for speed.
 
 		// and put it into the dataset
-		AbstractDataset data = new IntegerDataset(shape);
+		AbstractDataset data = DatasetFactory.zeros(IntegerDataset.class, shape);
 		int[] databuf = ((IntegerDataset) data).getData();
 		int amax = Integer.MIN_VALUE;
 		int amin = Integer.MAX_VALUE;

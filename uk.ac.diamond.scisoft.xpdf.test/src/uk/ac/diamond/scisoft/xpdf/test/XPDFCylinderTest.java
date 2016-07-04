@@ -15,6 +15,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
@@ -39,10 +40,10 @@ public class XPDFCylinderTest extends TestCase {
 		cap.setStreamality(true, true);
 		
 		final int xSize = 64, ySize = 64;
-		Dataset pathLengthExp = new DoubleDataset(xSize, ySize); 
-		Dataset pathLength = new DoubleDataset(pathLengthExp);
-		Dataset r = new DoubleDataset(pathLengthExp);
-		Dataset xi = new DoubleDataset(pathLengthExp);
+		Dataset pathLengthExp = DatasetFactory.zeros(DoubleDataset.class, xSize, ySize); 
+		Dataset pathLength = DatasetFactory.zeros(pathLengthExp);
+		Dataset r = DatasetFactory.zeros(pathLengthExp);
+		Dataset xi = DatasetFactory.zeros(pathLengthExp);
 		
 		// Read the data from file
 		String fileDirectory = testDataDir;
@@ -68,7 +69,7 @@ public class XPDFCylinderTest extends TestCase {
 		}
 		Dataset x = Maths.multiply(r, Maths.sin(xi));
 		Dataset z = Maths.multiply(r, Maths.cos(xi));
-		Dataset y = DoubleDataset.zeros(x);
+		Dataset y = DatasetFactory.zeros(x);
 		pathLength = cap.getUpstreamPathLength(x, y, z);
 		
 		double rmsError = Math.sqrt((Double) Maths.square(Maths.subtract(pathLength, pathLengthExp)).mean());
@@ -83,10 +84,10 @@ public class XPDFCylinderTest extends TestCase {
 		cap.setStreamality(true, true);
 		
 		final int xSize = 64, ySize = 64;
-		Dataset pathLengthExp = new DoubleDataset(xSize, ySize); 
-		Dataset pathLength = new DoubleDataset(pathLengthExp);
-		Dataset r = new DoubleDataset(xSize, ySize);
-		Dataset xi = new DoubleDataset(r);
+		Dataset pathLengthExp = DatasetFactory.zeros(DoubleDataset.class, xSize, ySize); 
+		Dataset pathLength = DatasetFactory.zeros(pathLengthExp);
+		Dataset r = DatasetFactory.zeros(DoubleDataset.class, xSize, ySize);
+		Dataset xi = DatasetFactory.zeros(r);
 		
 		String[] angles = {"0.0", "15.0", "28.5", "29.5", "47.0"};
 		int nAngles = angles.length;
@@ -118,7 +119,7 @@ public class XPDFCylinderTest extends TestCase {
 
 			Dataset x = Maths.multiply(r, Maths.sin(xi));
 			Dataset z = Maths.multiply(r, Maths.cos(xi));
-			Dataset y = DoubleDataset.zeros(x);
+			Dataset y = DatasetFactory.zeros(x);
 			pathLength= cap.getDownstreamPathLength(x, y, z, 0.0, Math.toRadians(Double.parseDouble(angle)));
 
 			// TODO: remove temporary write command
@@ -208,10 +209,10 @@ public class XPDFCylinderTest extends TestCase {
 			fail("Error reading file: " + filename);
 		}
 		Dataset delta1D = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_1"));
-		Dataset delta = new DoubleDataset(delta1D.getSize(), 1);
+		Dataset delta = DatasetFactory.zeros(DoubleDataset.class, delta1D.getSize(), 1);
 		for (int i = 0; i<delta1D.getSize(); i++)
 			delta.set(delta1D.getDouble(i), i, 0);
-		Dataset gamma = DoubleDataset.zeros(delta);
+		Dataset gamma = DatasetFactory.zeros(delta);
 		Dataset expected = 	DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_2"));
 		expected.setShape(expected.getSize(), 1);
 		
@@ -301,10 +302,10 @@ public class XPDFCylinderTest extends TestCase {
 				fail("Error reading file: " + fullFileName);
 			}
 			Dataset delta1D = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_1"));
-			Dataset delta = new DoubleDataset(delta1D.getSize(), 1);
+			Dataset delta = DatasetFactory.zeros(DoubleDataset.class, delta1D.getSize(), 1);
 			for (int i = 0; i<delta1D.getSize(); i++)
 				delta.set(Math.toRadians(delta1D.getDouble(i)), i, 0);
-			Dataset gamma = DoubleDataset.zeros(delta);
+			Dataset gamma = DatasetFactory.zeros(delta);
 
 			// convert to radians, and rotate the detector
 			double rotationAngle = Math.toRadians(120.0);
@@ -380,10 +381,10 @@ public class XPDFCylinderTest extends TestCase {
 				}
 
 				Dataset delta1D = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_1"));
-				Dataset delta = new DoubleDataset(delta1D.getSize(), 1);
+				Dataset delta = DatasetFactory.zeros(DoubleDataset.class, delta1D.getSize(), 1);
 				for (int i = 0; i<delta1D.getSize(); i++)
 					delta.set(delta1D.getDouble(i), i, 0);
-				Dataset gamma = DoubleDataset.zeros(delta);
+				Dataset gamma = DatasetFactory.zeros(delta);
 
 				Dataset expected = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_2"));
 				

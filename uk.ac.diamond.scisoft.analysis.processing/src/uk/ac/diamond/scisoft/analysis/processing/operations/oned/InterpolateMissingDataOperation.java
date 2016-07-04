@@ -50,7 +50,7 @@ public class InterpolateMissingDataOperation extends AbstractOperation<Interpola
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 
-		Dataset inputData = new DoubleDataset(DatasetUtils.convertToDataset(input));
+		Dataset inputData = DatasetUtils.copy(DoubleDataset.class, input);
 		copyMetadata(input, inputData);
 		Double mdi = model.getMdi();
 
@@ -90,7 +90,7 @@ public class InterpolateMissingDataOperation extends AbstractOperation<Interpola
 			}
 		}
 		if (abscissa == null) {
-			abscissa = DoubleDataset.createRange(inputData.getSize());
+			abscissa = DatasetFactory.createRange(inputData.getSize());
 		}
 
 		// To interpolate the missing data, we can assume an ordered grid,

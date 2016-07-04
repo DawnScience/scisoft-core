@@ -8,6 +8,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
@@ -24,7 +25,7 @@ public class PhotonCountingErrorOperation extends AbstractOperation<EmptyModel, 
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 
-		DoubleDataset er = new DoubleDataset(input.getShape());
+		DoubleDataset er = DatasetFactory.zeros(DoubleDataset.class, input.getShape());
 		Dataset in = DatasetUtils.convertToDataset(input.getSliceView());
 		
 		IndexIterator i = in.getIterator();

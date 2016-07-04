@@ -134,7 +134,7 @@ public class NumPyFileLoader extends AbstractFileLoader {
 			}
 			data = RawBinaryLoader.loadRawDataset(fBuffer, dtype, isize, tSize, shape);
 			if (unsigned)
-				data = DatasetFactory.createFromObject(data, unsigned);
+				data = DatasetFactory.createFromObject(unsigned, data);
 		}
 		return data;
 	}

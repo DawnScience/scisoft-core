@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 
 /**
@@ -87,7 +88,7 @@ public class Box extends AFunction {
 	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
 		fermi1.fillWithValues(data, it);
 
-		DoubleDataset temp = new DoubleDataset(it.getShape());
+		DoubleDataset temp = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 		fermi1.fillWithValues(temp, it);
 		data.isubtract(temp);
 	}

@@ -14,11 +14,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
-import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXsample;
@@ -398,9 +397,9 @@ class XPDFSampleParameters {
 		// components
 		int nComp = phases.size();
 		// Use Java 8 streams to get the contents of the phases from the list of phases
-		sample.setComponent(new StringDataset(phases.stream().map(a -> a.getName()).collect(Collectors.toList()).toArray(new String[nComp]), new int[]{nComp}));
-		sample.setChemical_formula(new StringDataset(phases.stream().map(a -> a.getComposition().getHallNotation(false)).collect(Collectors.toList()).toArray(new String[nComp]), new int[]{nComp, 1}));
-		sample.setField("chemical_formula_weight", new DoubleDataset(ArrayUtils.toPrimitive(phases.stream().map(a -> a.getComposition().getFormulaMass()).collect(Collectors.toList()).toArray(new Double[nComp])), new int[]{nComp}));
+		sample.setComponent(DatasetFactory.createFromList(phases.stream().map(a -> a.getName()).collect(Collectors.toList())));
+		sample.setChemical_formula(DatasetFactory.createFromObject(phases.stream().map(a -> a.getComposition().getHallNotation(false)).collect(Collectors.toList()), nComp, 1));
+		sample.setField("chemical_formula_weight", DatasetFactory.createFromObject(phases.stream().map(a -> a.getComposition().getFormulaMass()).collect(Collectors.toList())));
 		
 		// Only samples are crystalline, so only they have unit cell parameters
 		if (isSample()) {
@@ -412,25 +411,25 @@ class XPDFSampleParameters {
 					unitCellParams[i * 2*nDim + j] = phases.get(i).getUnitCellLength(j);
 					unitCellParams[i * 2*nDim + j + nDim] = phases.get(i).getUnitCellAngle(j);
 				}
-			sample.setUnit_cell(new DoubleDataset(unitCellParams, new int[]{nComp, 2*nDim}));
+			sample.setUnit_cell(DatasetFactory.createFromObject(unitCellParams, nComp, 2*nDim));
 			String aa = "angstrom", oo = "degrees";
-			sample.setAttribute("unit_cell", "units", new StringDataset( new String[]{aa, aa, aa, oo, oo, oo}, new int[]{2*nDim}));
+			sample.setAttribute("unit_cell", "units", DatasetFactory.createFromObject(new String[]{aa, aa, aa, oo, oo, oo}));
 			sample.setAttribute("unit_cell", "signal", 0);
-			sample.setUnit_cell_volume(new DoubleDataset(ArrayUtils.toPrimitive(phases.stream().map(a -> a.getUnitCellVolume()).collect(Collectors.toList()).toArray(new Double[nComp])), new int[]{nComp}));
+			sample.setUnit_cell_volume(DatasetFactory.createFromList(phases.stream().map(a -> a.getUnitCellVolume()).collect(Collectors.toList())));
 			sample.setAttribute("unit_cell_volume", "units", aa+"³");
-			sample.setUnit_cell_class(new StringDataset(phases.stream().map(a -> a.getCrystalSystem().getName()).collect(Collectors.toList()).toArray(new String[nComp]), new int[]{nComp}));
-			sample.setUnit_cell_group(new StringDataset(phases.stream().map(a -> a.getSpaceGroup().getNumber() + ": " + a.getSpaceGroup().getName()).collect(Collectors.toList()).toArray(new String[nComp]), new int[]{nComp}));
+			sample.setUnit_cell_class(DatasetFactory.createFromList(phases.stream().map(a -> a.getCrystalSystem().getName()).collect(Collectors.toList())));
+			sample.setUnit_cell_group(DatasetFactory.createFromList(phases.stream().map(a -> a.getSpaceGroup().getNumber() + ": " + a.getSpaceGroup().getName()).collect(Collectors.toList())));
 
 			// TODO: Crystal structure
 		}
 		// Densities and volume fractions and concentrations
-		DoubleDataset theoreticalDensities =  new DoubleDataset(ArrayUtils.toPrimitive(phases.stream().map(a -> a.getDensity()).collect(Collectors.toList()).toArray(new Double[nComp])), new int[]{nComp});
+		DoubleDataset theoreticalDensities =  DatasetFactory.createFromList(DoubleDataset.class, phases.stream().map(a -> a.getDensity()).collect(Collectors.toList()));
 		sample.setField("theoretical_density", theoreticalDensities);
 		sample.setAttribute("theoretical_density", "units", "g cm⁻³");
 		// Assuming volume fraction of the total volume, not the non-void volume.
 		// TODO: sort out mass versus volume fractions
 		// mass fractions of the non-void matter
-		DoubleDataset massFractions = new DoubleDataset(ArrayUtils.toPrimitive(fractions.toArray(new Double[nComp])), new int[]{nComp});
+		DoubleDataset massFractions = DatasetFactory.createFromList(DoubleDataset.class, fractions);
 
 		// The overall density of the powder is the sum of masses divided by the sum of masses divided by densities
 		double overallDensity = ((double) massFractions.sum()) / ((double) Maths.divide(massFractions, theoreticalDensities).sum()); 
@@ -478,7 +477,7 @@ class XPDFSampleParameters {
 	// Simulate the pair distribution function of that this sample parameterizes
 	public Dataset getSimulatedPDF() {
 		// TODO Make this actually simulate a PDF
-		Dataset r = DoubleDataset.createRange(0.01, 50.0, 0.02);
+		Dataset r = DatasetFactory.createRange(DoubleDataset.class, 0.01, 50.0, 0.02);
 		Dataset ceria = DoubleDataset.createFromList(Arrays.asList(new Double[]
 				{
 				-0.051018955, -0.14392168, -0.21143420, -0.24290696, -0.23565999,

@@ -33,7 +33,6 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Stats;
 import org.eclipse.dawnsci.analysis.dataset.roi.CircularROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.EllipticalFitROI;
@@ -232,7 +231,7 @@ public class PowderRingsUtils {
 			values[i++] = image.getDouble(pos[1], pos[0]);
 		}
 
-		DoubleDataset pixels = new DoubleDataset(values);
+		Dataset pixels = DatasetFactory.createFromObject(values);
 //		System.err.println(pixels.toString(true));
 
 		// threshold with population stats from maxima

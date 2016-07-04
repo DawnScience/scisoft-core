@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 
 import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
@@ -548,7 +549,7 @@ public class SDAPlotter {
 			throw new Exception(msg);
 		}
 
-		IntegerDataset sizes = new IntegerDataset(xCoords.getSize());
+		IntegerDataset sizes = DatasetFactory.zeros(IntegerDataset.class, xCoords.getSize());
 		sizes.fill(size);
 
 		getPlotterImpl().scatter2DPlot(plotName, xCoords, yCoords, sizes);
@@ -566,7 +567,7 @@ public class SDAPlotter {
 			throws Exception {
 		IntegerDataset[] pSizes = new IntegerDataset[sizes.length];
 		for (int i = 0; i < sizes.length; i++) {
-			pSizes[i] = new IntegerDataset(coordPairs[i].getShape()[0]);
+			pSizes[i] = DatasetFactory.zeros(IntegerDataset.class, coordPairs[i].getShape()[0]);
 			pSizes[i].fill(sizes[i]);
 		}
 
@@ -630,7 +631,7 @@ public class SDAPlotter {
 			throw new Exception(msg);
 		}
 
-		IntegerDataset sizes = new IntegerDataset(xCoords.getSize());
+		IntegerDataset sizes = DatasetFactory.zeros(IntegerDataset.class, xCoords.getSize());
 		sizes.fill(size);
 		getPlotterImpl().scatter2DPlotOver(plotName, xCoords, yCoords, sizes);
 	}
@@ -652,7 +653,7 @@ public class SDAPlotter {
 			throw new Exception(msg);
 		}
 
-		IntegerDataset sizes = new IntegerDataset(xCoords.getSize());
+		IntegerDataset sizes = DatasetFactory.zeros(IntegerDataset.class, xCoords.getSize());
 		sizes.fill(size);
 		getPlotterImpl().scatter3DPlot(plotName, xCoords, yCoords, zCoords, sizes);
 	}
@@ -688,7 +689,7 @@ public class SDAPlotter {
 			throw new Exception(msg);
 		}
 
-		IntegerDataset sizes = new IntegerDataset(xCoords.getSize());
+		IntegerDataset sizes = DatasetFactory.zeros(IntegerDataset.class, xCoords.getSize());
 		sizes.fill(size);
 		getPlotterImpl().scatter3DPlotOver(plotName, xCoords, yCoords, zCoords, sizes);
 	}

@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IPeak;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 
@@ -89,7 +90,7 @@ public class CalibrationUtils {
 			List<IPeak> peakList) {
 		
 		Dataset peakPositions = getPeakList(peakList);
-		Dataset resultPositions = new DoubleDataset(originalAxisApproximatePeakPositions.getShape());
+		Dataset resultPositions = DatasetFactory.zeros(DoubleDataset.class, originalAxisApproximatePeakPositions.getShape());
 		
 		for (int i = 0; i < originalAxisApproximatePeakPositions.getSize(); i++) {
 			Dataset compare = Maths.subtract(peakPositions, originalAxisApproximatePeakPositions.getDouble(i));
@@ -107,7 +108,7 @@ public class CalibrationUtils {
 	 */
 	public static Dataset getPeakList(List<IPeak> peakList) {
 		int n = peakList.size();
-		Dataset peakPositons = new DoubleDataset(n);
+		Dataset peakPositons = DatasetFactory.zeros(DoubleDataset.class, n);
 		for (int i = 0; i < n; i++) {
 			peakPositons.set(peakList.get(i).getPosition(), i);
 		}

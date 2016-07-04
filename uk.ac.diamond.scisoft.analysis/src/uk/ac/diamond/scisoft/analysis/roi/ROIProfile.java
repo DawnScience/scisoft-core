@@ -529,7 +529,7 @@ public class ROIProfile {
 	 */
 	public static FloatDataset nanalize(Dataset data, BooleanDataset mask) {
 		
-		FloatDataset nanalized = new FloatDataset(data.getShape());
+		FloatDataset nanalized = DatasetFactory.zeros(FloatDataset.class, data.getShape());
 		float[]      buffer    = nanalized.getData();
 		IndexIterator it        = data.getIterator();
 		for (int i = 0; it.hasNext(); i++) {

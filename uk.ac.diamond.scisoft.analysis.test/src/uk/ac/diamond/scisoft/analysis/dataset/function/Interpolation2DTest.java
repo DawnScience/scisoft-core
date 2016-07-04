@@ -29,8 +29,8 @@ import uk.ac.diamond.scisoft.analysis.dataset.function.Interpolation2D.BicubicIn
 public class Interpolation2DTest {
 
 	private static Dataset x, y, xy;
-	private static Dataset testX = DatasetFactory.createFromObject(new double[]{1.33, 2.65, 55.05, 90.09}, Dataset.FLOAT64);
-	private static Dataset testY = DatasetFactory.createFromObject(new double[]{-36.789, 43.0652, 0.00006, 18.34}, Dataset.FLOAT64);
+	private static Dataset testX = DatasetFactory.createFromObject(Dataset.FLOAT64, new double[]{1.33, 2.65, 55.05, 90.09});
+	private static Dataset testY = DatasetFactory.createFromObject(Dataset.FLOAT64, new double[]{-36.789, 43.0652, 0.00006, 18.34});
 	private static Dataset testXY1D = testFunction1D(testX, testY);
 	private static Dataset testXY2D = testFunction2D(testX, testY);
 	

@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
@@ -51,7 +52,7 @@ public class MandelbrotSet implements DatasetToDatasetFunction {
 			throw new IllegalArgumentException("Need both axes to be 1d datasets");
 		}
 
-		IntegerDataset count = new IntegerDataset(yaxis.getShape()[0], xaxis.getShape()[0]);
+		IntegerDataset count = DatasetFactory.zeros(IntegerDataset.class, yaxis.getShapeRef()[0], xaxis.getShapeRef()[0]);
 
 		List<Dataset> result = new ArrayList<Dataset>();
 

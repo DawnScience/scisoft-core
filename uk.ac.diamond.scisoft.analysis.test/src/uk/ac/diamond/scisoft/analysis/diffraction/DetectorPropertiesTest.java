@@ -17,6 +17,7 @@ import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -51,7 +52,7 @@ public class DetectorPropertiesTest {
 	static double ttheta = Math.toRadians(11.5);
 
 	private static DoubleDataset makeDiffImage() {
-		DoubleDataset data = new DoubleDataset(ishape[1], ishape[0]);
+		DoubleDataset data = DatasetFactory.zeros(DoubleDataset.class, ishape[1], ishape[0]);
 		double rho = origin[2] * Math.tan(ttheta);
 
 		double dphi = 45.;

@@ -19,7 +19,9 @@ import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
@@ -53,7 +55,7 @@ public class SplineBaselineOperation extends AbstractOperation<SplineBaselineMod
 		
 		Arrays.sort(xknots);
 		
-		return new DoubleDataset(xknots, xknots.length);
+		return DatasetFactory.createFromObject(xknots);
 	}
 
 
@@ -85,7 +87,7 @@ public class SplineBaselineOperation extends AbstractOperation<SplineBaselineMod
 				throw new OperationException(this, e);
 			}
 		else
-			xaxis = DoubleDataset.createRange(input.getSize());
+			xaxis = DatasetFactory.createRange(DoubleDataset.class, input.getSize());
 		
 		// y values at the xs
 		Dataset ys = Maths.interpolate(xaxis, input, knots, null, null);
@@ -94,11 +96,11 @@ public class SplineBaselineOperation extends AbstractOperation<SplineBaselineMod
 		
 		switch (knots.getSize()) {
 		case 0:
-			ybase = DoubleDataset.zeros(xaxis);
+			ybase = DatasetFactory.zeros(xaxis, DoubleDataset.class);
 			break;
 		case 1:
 			// Subtract a constant
-			ybase = Maths.multiply(ys.getDouble(0), DoubleDataset.ones(xaxis));
+			ybase = Maths.multiply(ys.getDouble(0), DatasetFactory.ones(xaxis, DoubleDataset.class));
 			break;
 		case 2:
 			// Subtract a linear fit
@@ -131,9 +133,9 @@ public class SplineBaselineOperation extends AbstractOperation<SplineBaselineMod
 			// next-to-end points and two equispaced points in between.
 			for (int i = 0; i <= degree; i++) {
 				lowerInterval[i] = ((degree-i)*knots.getDouble(0) + i*knots.getDouble(1))/degree;
-				lowerValues[i] = Interpolation1D.splineInterpolation(knots, ys, new DoubleDataset(Arrays.copyOfRange(lowerInterval, i, i+1), 1)).getDouble(0);
+				lowerValues[i] = Interpolation1D.splineInterpolation(knots, ys, DatasetFactory.createFromObject(Arrays.copyOfRange(lowerInterval, i, i+1))).getDouble(0);
 				upperInterval[i] = ((degree-i)*knots.getDouble(knots.getSize()-2) + i*knots.getDouble(knots.getSize()-1))/degree;
-				upperValues[i] = Interpolation1D.splineInterpolation(knots, ys, new DoubleDataset(Arrays.copyOfRange(upperInterval, i, i+1), 1)).getDouble(0);
+				upperValues[i] = Interpolation1D.splineInterpolation(knots, ys, DatasetFactory.createFromObject(Arrays.copyOfRange(upperInterval, i, i+1))).getDouble(0);
 			}
 			
 			// Lower (smaller value) and upper (larger value) extrapolating

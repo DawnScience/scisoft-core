@@ -48,7 +48,7 @@ public class MapToRotatedCartesianAndIntegrateTest {
 	@Test
 	public void testMapToRotatedCartesianAndIntegrateMasked() {
 		MapToRotatedCartesianAndIntegrate mp = new MapToRotatedCartesianAndIntegrate(100,70,50,30,45.);
-		BooleanDataset m = new BooleanDataset(d.getShape());
+		BooleanDataset m = DatasetFactory.zeros(BooleanDataset.class, d.getShape());
 		m.fill(true);
 		mp.setMask(m);
 		Dataset pd = mp.value(d).get(0);

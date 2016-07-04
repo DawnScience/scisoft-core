@@ -19,6 +19,11 @@
 
 import numpy as _np #@UnresolvedImport
 
+from distutils.version import LooseVersion
+
+_np_version_cur = LooseVersion(_np.version.version)
+_is_np_version_ge_1_8 = _np_version_cur >= LooseVersion('1.8')
+
 newaxis = _np.newaxis
 
 ndarray = _np.ndarray
@@ -129,9 +134,9 @@ empty = _np.empty
 
 empty_like = _np.empty_like
 
-full = _np.full
-
-full_like = _np.full_like
+if _is_np_version_ge_1_8 :
+    full = _np.full
+    full_like = _np.full_like
 
 linspace = _np.linspace
 

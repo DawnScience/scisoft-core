@@ -119,7 +119,7 @@ public class XYImagePixelCache implements IPixelIntegrationCache {
 	private static Dataset calculateAxis(int nBins, double[] binRange){
 		
 //		double shift = (binRange[1]- binRange[0])/(2*nBins);
-//		return (DoubleDataset) DatasetUtils.linSpace(binRange[0]-shift, binRange[1]+shift, nBins + 1, Dataset.FLOAT64);
+//		return DatasetFactory.createLinearSpace(binRange[0]-shift, binRange[1]+shift, nBins + 1, Dataset.FLOAT64);
 		
 		return DatasetFactory.createLinearSpace(binRange[0], binRange[1], nBins, Dataset.FLOAT64);
 	}

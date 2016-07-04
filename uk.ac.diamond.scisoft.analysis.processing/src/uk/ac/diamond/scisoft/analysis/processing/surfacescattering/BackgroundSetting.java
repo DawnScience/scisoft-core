@@ -93,7 +93,7 @@ public class BackgroundSetting{
 			
 			Dataset e = DatasetFactory.zeros(tempshape, Dataset.INT64);
 					//(int[] {length1,0}, Dataset.INT);
-			e = DatasetUtils.linSpace(boundaryBox, length1 + boundaryBox, length1, Dataset.INT);
+			e = DatasetFactory.createLinearSpace(boundaryBox, length1 + boundaryBox, length1, Dataset.INT);
 
 			strip[i] = (Dataset) polyFit.calculateValues(e);
 				

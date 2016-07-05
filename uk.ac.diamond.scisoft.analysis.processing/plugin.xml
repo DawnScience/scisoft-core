@@ -654,7 +654,7 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.SleepOperation"
             model="org.eclipse.dawnsci.analysis.api.processing.model.SleepModel"
             name="Sleep"
-            visible="false">
+            visible="true">
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.externaldata"

@@ -885,6 +885,13 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutliersInQModel"
             name="Mask Outliers in Q">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.InterpolateMissingDataOperation"
+            icon="icons/rollingball.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.InterpolateMissingDataOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.InterpolateMissingDataModel"
+            name="Interpolate Missing Data">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

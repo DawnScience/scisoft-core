@@ -70,18 +70,17 @@ public class InterpolateMissingDataOperation extends AbstractOperation<Interpola
 				int missingBlockStart = iter.index;
 				int missingBlockLength = 1;
 				while(iter.hasNext()) {
-					if (isMissing.getAbs(iter.index)) {
+					if (isMissing.getAbs(iter.index))
 						missingBlockLength++;
-					} else {
-						missingDataBlocks.put(missingBlockStart, missingBlockLength);
+					else
 						break;
-					}
 				}
+				missingDataBlocks.put(missingBlockStart, missingBlockLength);
 			}
 		}
 		// Get the abscissae of the data, or build one
 		ILazyDataset[] abscissae = getFirstAxes(inputData);
-		Dataset abscissa = (abscissae[0] != null) ? DatasetUtils.sliceAndConvertLazyDataset(abscissae[0]) : DoubleDataset.createRange(inputData.getSize());
+		Dataset abscissa = (abscissae != null && abscissae[0] != null) ? DatasetUtils.sliceAndConvertLazyDataset(abscissae[0]) : DoubleDataset.createRange(inputData.getSize());
 		
 		
 		// To interpolate the missing data, we can assume an ordered grid,

@@ -20,7 +20,6 @@ import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
 import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;

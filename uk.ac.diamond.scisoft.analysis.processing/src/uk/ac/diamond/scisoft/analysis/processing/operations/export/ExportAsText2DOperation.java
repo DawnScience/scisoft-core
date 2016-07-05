@@ -22,7 +22,7 @@ import org.eclipse.dawnsci.analysis.api.processing.IExportOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DTypeUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
@@ -121,8 +121,8 @@ public class ExportAsText2DOperation extends AbstractOperation<ExportAsText1DMod
 				throw new OperationException(this, e);
 			}
 			x.setShape(x.getShape()[0],1);
-			int xtype = AbstractDataset.getDType(x);
-			int ytype = AbstractDataset.getDType(outds);
+			int xtype = DTypeUtils.getDType(x);
+			int ytype = DTypeUtils.getDType(outds);
 			if (xtype != ytype) {
 				if (xtype > ytype) {
 					outds = DatasetUtils.cast(outds, xtype);

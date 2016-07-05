@@ -21,7 +21,6 @@ import org.eclipse.dawnsci.analysis.api.dataset.ILazyWriteableDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Image;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
@@ -234,7 +233,7 @@ public class AlignImages {
 		if (tmpFile.exists())
 			tmpFile.delete();
 		ILazyWriteableDataset lazy = HDF5Utils.createLazyDataset(file, path, name, data.getShape(), null,
-				data.getShape(), AbstractDataset.FLOAT32, null, false);
+				data.getShape(), Dataset.FLOAT32, null, false);
 
 		if (nr > 0) {
 			if (nr < mode) { // clean up roi list

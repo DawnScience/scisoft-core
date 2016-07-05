@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DTypeUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
@@ -129,7 +129,7 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 				return null;
 
 			Dataset ds = DatasetUtils.convertToDataset(ids);
-			final int dtype = AbstractDataset.getBestFloatDType(ds.getDType());
+			final int dtype = DTypeUtils.getBestFloatDType(ds.getDType());
 			Dataset sumx = DatasetFactory.zeros(new int[] { h }, dtype);
 			Dataset sumy = DatasetFactory.zeros(new int[] { w }, dtype);
 			Dataset usumx = DatasetFactory.zeros(new int[] { h }, dtype);
@@ -182,7 +182,7 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 				return null;
 
 			Dataset ds = DatasetUtils.convertToDataset(ids);
-			final int dtype = AbstractDataset.getBestFloatDType(ds.getDType());
+			final int dtype = DTypeUtils.getBestFloatDType(ds.getDType());
 			Dataset mx = DatasetFactory.zeros(new int[] { h }, dtype);
 			Dataset my = DatasetFactory.zeros(new int[] { w }, dtype);
 

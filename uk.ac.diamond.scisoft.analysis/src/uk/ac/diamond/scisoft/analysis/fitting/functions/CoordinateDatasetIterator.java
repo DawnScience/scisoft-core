@@ -10,8 +10,8 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DTypeUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
@@ -28,8 +28,8 @@ public class CoordinateDatasetIterator extends CoordinatesIterator {
 	 */
 	public CoordinateDatasetIterator(IDataset value) {
 		if (!(value instanceof CompoundDataset)) {
-			int dtype = AbstractDataset.getBestDType(Dataset.ARRAYINT8,
-					AbstractDataset.getDTypeFromClass(value.getElementClass()));
+			int dtype = DTypeUtils.getBestDType(Dataset.ARRAYINT8,
+					DTypeUtils.getDTypeFromClass(value.getElementClass()));
 			cvalue = (CompoundDataset) DatasetUtils.cast(value, dtype);
 		} else {
 			cvalue = (CompoundDataset) value;

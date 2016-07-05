@@ -125,7 +125,7 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public int getItemsize() {
+	public int getItemBytes() {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 

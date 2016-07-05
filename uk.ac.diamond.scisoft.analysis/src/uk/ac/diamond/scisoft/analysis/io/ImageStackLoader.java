@@ -23,6 +23,7 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
 import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DTypeUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
@@ -94,7 +95,7 @@ public class ImageStackLoader implements ILazyLoader {
 			loaderClass = dh.getLoaderClass();
 		}
 		onlyOne = imageFilenames.getSize() == 1;
-		dtype = AbstractDataset.getDType(dataSetFromFile);
+		dtype = DTypeUtils.getDType(dataSetFromFile);
 		iShape = dataSetFromFile.getShape();
 		shape = Arrays.copyOf(fShape, fRank + iShape.length);
 		for (int i = 0; i < iShape.length; i++) {

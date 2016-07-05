@@ -15,8 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DTypeUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
@@ -102,7 +102,7 @@ public class Integrate2D implements DatasetToDatasetFunction {
 			if (ny == 0)
 				ny = 1;
 
-			final int dtype = AbstractDataset.getBestFloatDType(ds.getDType());
+			final int dtype = DTypeUtils.getBestFloatDType(ds.getDType());
 			final int is = ds.getElementsPerItem();
 			Dataset sumy = DatasetFactory.zeros(is, new int[] { nx }, dtype);
 			Dataset sumx = DatasetFactory.zeros(is, new int[] { ny }, dtype);

@@ -21,12 +21,12 @@ Core package contains wrappers for Java dataset classes
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset as _ds
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset as _lds
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset as _abstractds
+import org.eclipse.dawnsci.analysis.dataset.impl.DTypeUtils as _dtutils
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory as _df
 
 import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset as _booleands
 import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset as _integerds
 import org.eclipse.dawnsci.analysis.dataset.impl.RGBDataset as _rgbds
-import org.eclipse.dawnsci.analysis.dataset.impl.ComplexDoubleDataset as _complexdoubleds
 
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils as _dsutils
 from uk.ac.diamond.scisoft.python.PythonUtils import convertToJava as _cvt2j
@@ -105,7 +105,7 @@ __jcdtype2jytype = { _ds.ARRAYINT8 : cint8, _ds.ARRAYINT16 : cint16,
 
 # get dtype from object
 def _getdtypefromobj(jobj):
-    jdtype = _abstractds.getDTypeFromObject(jobj)
+    jdtype = _dtutils.getDTypeFromObject(jobj)
     if jdtype in __jdtype2jytype:
         return __jdtype2jytype[jdtype]
     raise ValueError, "Java dataset type unknown"
@@ -1365,7 +1365,7 @@ def linspace(start, stop, num=50, endpoint=True, retstep=False):
             stop = stop+0j
         rresult = _df.createLinearSpace(start.real, stop.real, num, float64.value)
         iresult = _df.createLinearSpace(start.imag, stop.imag, num, float64.value)
-        result = Sciwrap(_complexdoubleds(rresult, iresult))
+        result = Sciwrap(_dsutils.createCompoundDataset(complex128.value, (rresult, iresult)))
         del rresult, iresult
     else:
         result = Sciwrap(_df.createLinearSpace(start, stop, num, dtype.value))

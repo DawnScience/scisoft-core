@@ -42,9 +42,9 @@ import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DTypeUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.LazyDynamicDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
@@ -692,7 +692,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		try {
 			for (Dataset a : HDF5Utils.readAttributes(id)) {
 				Attribute h = TreeFactory.createAttribute(a.getName(), a);
-				h.setTypeName(DatasetUtils.getDTypeName(a));
+				h.setTypeName(DTypeUtils.getDTypeName(a));
 				nn.addAttribute(h);
 				if (a.getName().equals(NAPIMOUNT)) {
 					hasNAPIMount = true;

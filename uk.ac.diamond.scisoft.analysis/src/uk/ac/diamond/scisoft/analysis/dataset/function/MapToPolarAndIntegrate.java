@@ -24,7 +24,7 @@ import javax.vecmath.Vector3d;
 
 import org.apache.commons.math3.util.MathUtils;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DTypeUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
@@ -227,7 +227,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			final double dphi = (ephi - sphi) / np;
 			final double rdphi = dphi * erad;
 			
-			final int dtype = AbstractDataset.getBestFloatDType(ds.getDType());
+			final int dtype = DTypeUtils.getBestFloatDType(ds.getDType());
 			Dataset sump = DatasetFactory.zeros(new int[] { nr }, dtype);
 			Dataset sumr = DatasetFactory.zeros(new int[] { np }, dtype);
 			
@@ -803,7 +803,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 					}
 				}
 				
-				final int dtype = AbstractDataset.getBestFloatDType(ids.getDType());
+				final int dtype = DTypeUtils.getBestFloatDType(ids.getDType());
 				Dataset sump = DatasetFactory.zeros(new int[] { nr }, dtype);
 				Dataset sumr = DatasetFactory.zeros(new int[] { np }, dtype);
 				Dataset errsump = DatasetFactory.zeros(new int[] { nr }, Dataset.FLOAT64);

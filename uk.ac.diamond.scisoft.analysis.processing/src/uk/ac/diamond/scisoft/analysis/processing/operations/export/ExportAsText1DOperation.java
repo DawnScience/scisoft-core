@@ -13,7 +13,7 @@ import org.eclipse.dawnsci.analysis.api.processing.IExportOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
+import org.eclipse.dawnsci.analysis.dataset.impl.DTypeUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
@@ -106,8 +106,8 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 				throw new OperationException(this, e);
 			}
 			x.setShape(x.getShape()[0],1);
-			int xtype = AbstractDataset.getDType(x);
-			int ytype = AbstractDataset.getDType(outds);
+			int xtype = DTypeUtils.getDType(x);
+			int ytype = DTypeUtils.getDType(outds);
 			if (xtype != ytype) {
 				if (xtype > ytype) {
 					outds = DatasetUtils.cast(outds, xtype);
@@ -128,8 +128,8 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 				throw new OperationException(this, e1);
 			}
 			e.setShape(e.getShape()[0],1);
-			int etype = AbstractDataset.getDType(e);
-			int ytype = AbstractDataset.getDType(outds);
+			int etype = DTypeUtils.getDType(e);
+			int ytype = DTypeUtils.getDType(outds);
 			if (etype != ytype) {
 				if (etype > ytype) {
 					outds = DatasetUtils.cast(outds, etype);

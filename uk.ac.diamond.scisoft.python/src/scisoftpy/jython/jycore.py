@@ -33,6 +33,7 @@ from uk.ac.diamond.scisoft.python.PythonUtils import convertToJava as _cvt2j
 from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
 from uk.ac.diamond.scisoft.python.PythonUtils import setSlice as _setslice
 from uk.ac.diamond.scisoft.python.PythonUtils import convertToSlice as _cvt2js
+from uk.ac.diamond.scisoft.python.PythonUtils import createFromObject as _create
 
 import org.apache.commons.math3.complex.Complex as _jcomplex #@UnresolvedImport
 
@@ -111,7 +112,7 @@ def _getdtypefromobj(jobj):
 
 # get dtype from Java dataset
 def _getdtypefromjdataset(jobj):
-    d = jobj.getDtype()
+    d = jobj.getDType()
     if d in __jdtype2jytype:
         return __jdtype2jytype[d]
     if d in __jcdtype2jytype:
@@ -414,7 +415,7 @@ def __cvt_jobj(obj, dtype=None, copy=True, force=False):
 
     if isinstance(obj, _ds):
         if copy:
-            if dtype is None or _translatenativetype(dtype).value == obj.dtype:
+            if dtype is None or _translatenativetype(dtype).value == obj.getDType():
                 return obj.clone()
             else:
                 return obj.cast(_translatenativetype(dtype).value)
@@ -445,7 +446,7 @@ def __cvt_jobj(obj, dtype=None, copy=True, force=False):
     else:
         dtype = _translatenativetype(dtype)
 
-    return _df.createFromObject(dtype.value, obj)
+    return _create(dtype.value, obj)
 
 # prevent incorrect coercion of Python booleans causing trouble with overloaded Java methods
 import java.lang.Boolean as _jbool #@UnresolvedImport
@@ -839,7 +840,7 @@ class ndarray(object):
     @_wrapout
     def sum(self, axis=None, dtype=None): #@ReservedAssignment
         if dtype is None:
-            dtval = self.__dataset.getDtype()
+            dtval = self.__dataset.getDType()
         else:
             dtval = _translatenativetype(dtype).value
         if axis is None:
@@ -904,7 +905,7 @@ class ndarray(object):
     @_wrapout
     def prod(self, axis=None, dtype=None):
         if dtype is None:
-            dtval = self.__dataset.getDtype()
+            dtval = self.__dataset.getDType()
         else:
             dtval = _translatenativetype(dtype).value
         if axis is None:

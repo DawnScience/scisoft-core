@@ -284,4 +284,17 @@ public class PythonUtils {
 		SliceData slice = convertPySlicesToSlice(indexes, shape);
 		a.setSlice(object, slice.slice);
 	}
+
+	/**
+	 * Create a dataset from object (as workaround for Jython's funky dispatcher calling wrong method)
+	 * @param dtype
+	 * @param obj
+	 *            can be a Java list, array or Number
+	 * @return dataset
+	 * @throws IllegalArgumentException if dataset type is not known
+	 */
+	public static Dataset createFromObject(final Integer dtype, final Object obj) {
+		return DatasetFactory.createFromObject(dtype, obj, null);
+	}
+
 }

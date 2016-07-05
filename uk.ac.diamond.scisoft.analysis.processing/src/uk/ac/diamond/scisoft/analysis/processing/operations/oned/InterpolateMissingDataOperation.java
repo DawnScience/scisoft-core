@@ -48,11 +48,19 @@ public class InterpolateMissingDataOperation extends AbstractOperation<Interpola
 
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
-		BooleanDataset isMissing = Comparisons.logicalNot(Comparisons.isFinite(input));
-		// Also add missing data values, if defined
+
+		Dataset inputData = new DoubleDataset(DatasetUtils.convertToDataset(input));
+		copyMetadata(input, inputData);
 		Double mdi = model.getMdi();
+
+		return new OperationData(interpolateMissingData(inputData, mdi));
+	}
+	
+	public static Dataset interpolateMissingData(Dataset inputData, Double mdi) {
+		BooleanDataset isMissing = Comparisons.logicalNot(Comparisons.isFinite(inputData));
+		// Also add missing data values, if defined
 		if (mdi != null) {
-			isMissing = Comparisons.logicalOr(isMissing, Comparisons.equalTo(input, mdi));
+			isMissing = Comparisons.logicalOr(isMissing, Comparisons.equalTo(inputData, mdi));
 		}
 		// RLE the missing data blocks. Stored in a map of first element to length of block
 		Map<Integer, Integer> missingDataBlocks = new TreeMap<Integer, Integer>();
@@ -72,11 +80,9 @@ public class InterpolateMissingDataOperation extends AbstractOperation<Interpola
 			}
 		}
 		// Get the abscissae of the data, or build one
-		ILazyDataset[] abscissae = getFirstAxes(input);
-		Dataset abscissa = (abscissae[0] != null) ? DatasetUtils.sliceAndConvertLazyDataset(abscissae[0]) : DoubleDataset.createRange(input.getSize());
+		ILazyDataset[] abscissae = getFirstAxes(inputData);
+		Dataset abscissa = (abscissae[0] != null) ? DatasetUtils.sliceAndConvertLazyDataset(abscissae[0]) : DoubleDataset.createRange(inputData.getSize());
 		
-		Dataset inputData = new DoubleDataset(DatasetUtils.convertToDataset(input));
-		copyMetadata(input, inputData);
 		
 		// To interpolate the missing data, we can assume an ordered grid,
 		// since missing data can be just left out of a collection of points
@@ -98,6 +104,6 @@ public class InterpolateMissingDataOperation extends AbstractOperation<Interpola
 				}
 			}
 		}
-		return new OperationData(inputData);
+		return inputData;
 	}
 }

@@ -22,7 +22,9 @@ Require-Bundle: javax.vecmath;bundle-version="1.5.2",
  org.eclipse.dawnsci.hdf5;bundle-version="1.2.0",
  org.apache.commons.lang;bundle-version="2.6.0",
  com.googlecode.efficient-java-matrix-library.core;bundle-version="[0.26.0,0.27.0)",
- org.ddogleg;bundle-version="[0.6.0,0.7.0)"
+ org.ddogleg;bundle-version="[0.6.0,0.7.0)",
+ com.thoughtworks.xstream,
+ uk.ac.diamond.jama
 Export-Package: uk.ac.diamond.scisoft.analysis,
  uk.ac.diamond.scisoft.analysis.axis,
  uk.ac.diamond.scisoft.analysis.crystallography,
@@ -41,9 +43,7 @@ Export-Package: uk.ac.diamond.scisoft.analysis,
 Bundle-ClassPath: .,
  jars/it.tidalwave.imageio.raw-1.6.1.jar,
  jars/jai_imageio.jar
-Import-Package: Jama,
- com.thoughtworks.xstream.core.util,
- org.slf4j;version="[1.7.2,2.0.0)"
+Import-Package: org.slf4j;version="[1.7.2,2.0.0)"
 Eclipse-BuddyPolicy: global
 Important-Note: This plugin SHOULD NOT be lazy activated because we always want this 
  plugin to be loaded to contribute the service.

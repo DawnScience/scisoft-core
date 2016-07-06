@@ -11,7 +11,6 @@ package uk.ac.diamond.scisoft.analysis.processing.test;
 import java.util.Collection;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
@@ -23,10 +22,11 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.ValueModel;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
-import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.roi.SectorROI;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.BooleanDataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.Random;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

@@ -11,11 +11,7 @@ package uk.ac.diamond.scisoft.xpdf.operations;
 
 import java.util.Map;
 
-import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -25,10 +21,6 @@ import org.eclipse.dawnsci.analysis.api.tree.IFindInTree;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.metadata.MaskMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
@@ -43,6 +35,14 @@ import org.eclipse.dawnsci.nexus.NXslit;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusUtils;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Comparisons;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetException;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.metadata.internal.MaskMetadataImpl;
 
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionCalibrationReader;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;

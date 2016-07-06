@@ -9,7 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.instancedispatcher;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiPlotMode;

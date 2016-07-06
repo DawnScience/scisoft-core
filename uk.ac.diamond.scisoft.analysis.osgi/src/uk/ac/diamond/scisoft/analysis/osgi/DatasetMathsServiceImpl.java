@@ -8,12 +8,12 @@
  */
 
 package uk.ac.diamond.scisoft.analysis.osgi;
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.dataset.IDatasetMathsService;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Stats;
+import org.eclipse.january.dataset.DTypeUtils;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Stats;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -31,13 +31,13 @@ public class DatasetMathsServiceImpl extends AbstractServiceFactory implements I
 	}
 	
 	@Override
-	public IDataset createRange(double stop, int dtype) {
-		return DatasetFactory.createRange(stop, dtype);
+	public IDataset createRange(double stop, final Class<?> clazz) {
+		return DatasetFactory.createRange(stop, DTypeUtils.getDTypeFromClass(clazz));
 	}
 
 	@Override
-	public IDataset createRange(double start, double stop, double step, int dtype) {
-		return DatasetFactory.createRange(start, stop, step, dtype);
+	public IDataset createRange(double start, double stop, double step, final Class<?> clazz) {
+		return DatasetFactory.createRange(start, stop, step, DTypeUtils.getDTypeFromClass(clazz));
 	}
 
 	@Override

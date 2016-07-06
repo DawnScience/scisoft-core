@@ -15,16 +15,16 @@ import javax.vecmath.Vector3d;
 
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.LinearAlgebra;
+import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.dataset.PositionIterator;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
-import org.eclipse.dawnsci.analysis.dataset.impl.LinearAlgebra;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
-import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.roi.XAxis;

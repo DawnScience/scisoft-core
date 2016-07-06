@@ -10,9 +10,9 @@
 package uk.ac.diamond.scisoft.analysis.dataset.function;
 
 
-import org.eclipse.dawnsci.analysis.asserts.TestUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.january.asserts.TestUtils;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.junit.Test;
 
 /**

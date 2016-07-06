@@ -11,14 +11,14 @@ package uk.ac.diamond.scisoft.analysis.roi;
 
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.roi.GridPreferences;
 import org.eclipse.dawnsci.analysis.dataset.roi.GridROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.LinearROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.SectorROI;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.junit.Test;
 
 /**

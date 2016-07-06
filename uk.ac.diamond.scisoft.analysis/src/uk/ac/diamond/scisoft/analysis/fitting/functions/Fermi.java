@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import java.io.Serializable;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.dataset.DoubleDataset;
 
 /**
  * Class that wrappers the Fermi function from Fermi-Dirac distribution

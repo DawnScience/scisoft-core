@@ -1,12 +1,13 @@
 package uk.ac.diamond.scisoft.xpdf.test;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
-
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFElectronCrossSections;
+
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.Maths;
+
 import junit.framework.TestCase;
 
 public class XPDFEXSTest extends TestCase {

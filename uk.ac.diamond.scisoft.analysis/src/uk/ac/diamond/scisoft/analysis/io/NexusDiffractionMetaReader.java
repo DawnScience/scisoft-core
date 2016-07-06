@@ -18,9 +18,6 @@ import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
-import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.hdf.object.H5Utils;
 import org.eclipse.dawnsci.hdf.object.HierarchicalDataFactory;
 import org.eclipse.dawnsci.hdf.object.HierarchicalDataUtils;
@@ -29,6 +26,9 @@ import org.eclipse.dawnsci.hdf.object.nexus.IFindInNexus;
 import org.eclipse.dawnsci.hdf.object.nexus.NexusFindDatasetByName;
 import org.eclipse.dawnsci.hdf.object.nexus.NexusFindGroupByAttributeText;
 import org.eclipse.dawnsci.hdf.object.nexus.NexusUtils;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 
 @Deprecated
 public class NexusDiffractionMetaReader {

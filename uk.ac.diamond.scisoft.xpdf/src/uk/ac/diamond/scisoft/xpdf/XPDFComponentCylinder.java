@@ -12,11 +12,11 @@ package uk.ac.diamond.scisoft.xpdf;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.Maths;
 
 /**
  * The class for cylindrical components of the experimental target. This class

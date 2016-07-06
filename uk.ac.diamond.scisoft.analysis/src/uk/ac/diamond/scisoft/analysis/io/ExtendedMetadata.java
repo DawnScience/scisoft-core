@@ -13,9 +13,9 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.eclipse.dawnsci.analysis.api.metadata.IExtendedMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
+import org.eclipse.january.metadata.IExtendedMetadata;
+import org.eclipse.january.metadata.IMetadata;
+import org.eclipse.january.metadata.Metadata;
 
 public class ExtendedMetadata extends Metadata implements IExtendedMetadata {
 	private static final long serialVersionUID = IMetadata.serialVersionUID;

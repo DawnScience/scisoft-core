@@ -1,7 +1,7 @@
 package de.desy.file.loader.test;
 
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

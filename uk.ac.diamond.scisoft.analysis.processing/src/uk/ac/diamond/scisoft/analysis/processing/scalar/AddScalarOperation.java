@@ -9,8 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.scalar;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
 
 public class AddScalarOperation extends AbstractScalarMathsOperation<ScalarModel> {
 

@@ -9,8 +9,8 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.Maths;
 
 //TODO: Move back to uk.ac.diamond.scisoft.xpdf once the NPEs are solved
 

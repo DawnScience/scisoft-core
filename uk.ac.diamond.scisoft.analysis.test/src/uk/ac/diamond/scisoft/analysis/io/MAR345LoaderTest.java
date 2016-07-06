@@ -9,13 +9,13 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.metadata.IMetadata;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;

@@ -12,10 +12,10 @@ package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
+import org.eclipse.january.dataset.Comparisons;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IndexIterator;
 import org.junit.Assert;
 import org.junit.Test;
 

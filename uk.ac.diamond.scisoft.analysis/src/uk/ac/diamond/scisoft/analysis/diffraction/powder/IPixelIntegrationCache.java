@@ -9,7 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.january.dataset.Dataset;
 
 public interface IPixelIntegrationCache {
 

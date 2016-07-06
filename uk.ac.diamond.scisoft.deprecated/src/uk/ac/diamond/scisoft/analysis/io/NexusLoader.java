@@ -26,15 +26,15 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.io.SliceObject;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.metadata.IMetadata;
+import org.eclipse.january.metadata.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

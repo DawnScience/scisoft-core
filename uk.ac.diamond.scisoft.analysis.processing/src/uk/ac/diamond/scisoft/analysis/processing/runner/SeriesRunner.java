@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.IDynamicDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
@@ -21,6 +18,9 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.SliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceVisitor;
 import org.eclipse.dawnsci.analysis.dataset.slicer.Slicer;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IDynamicDataset;
+import org.eclipse.january.dataset.Slice;
 
 /**
  * Runs a pipeline by looping the services of operations.

@@ -13,14 +13,14 @@ import java.io.Serializable;
 import java.text.Format;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.MetadataException;
-import org.eclipse.dawnsci.analysis.api.dataset.Slice;
-import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.DatasetException;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.MetadataException;
+import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.metadata.IMetadata;
+import org.eclipse.january.metadata.MetadataType;
 
 public class MockDataset implements IDataset {
 	@Override

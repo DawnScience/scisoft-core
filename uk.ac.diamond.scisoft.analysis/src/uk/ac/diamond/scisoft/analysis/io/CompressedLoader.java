@@ -22,10 +22,10 @@ import java.util.zip.ZipInputStream;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.io.IMetaLoader;
+import org.eclipse.january.metadata.IMetadata;
+import org.eclipse.january.metadata.Metadata;
 
 import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
 

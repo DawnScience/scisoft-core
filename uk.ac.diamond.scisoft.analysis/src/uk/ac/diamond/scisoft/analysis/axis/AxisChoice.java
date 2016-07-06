@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.analysis.axis;
 import java.util.Arrays;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 
 /**
  * Class to hold a possible choice of axis for a dataset, the signal dataset, that is to be

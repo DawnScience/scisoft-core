@@ -13,8 +13,8 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
-import org.eclipse.dawnsci.analysis.api.dataset.MetadataException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
+import org.eclipse.january.dataset.MetadataException;
+import org.eclipse.january.metadata.IMetadata;
 
 /**
  * <b>Do not use</b> this where metadata can be accessible from Jython because the anonymous class adapter pattern

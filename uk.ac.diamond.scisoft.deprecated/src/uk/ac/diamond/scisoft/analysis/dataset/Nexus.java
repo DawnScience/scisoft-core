@@ -23,13 +23,13 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
-import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
 import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.LazyDataset;
+import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.io.ILazyLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

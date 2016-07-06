@@ -23,7 +23,7 @@ import gda.data.nexus.tree.NexusTreeTopNode;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Simple class which wraps a nexus structure and provides some easy methods for extracting data from it.

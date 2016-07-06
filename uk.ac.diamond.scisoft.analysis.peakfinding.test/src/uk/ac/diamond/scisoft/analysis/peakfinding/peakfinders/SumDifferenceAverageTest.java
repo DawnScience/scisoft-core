@@ -16,7 +16,7 @@ import java.util.TreeMap;
 
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinder;
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.january.dataset.Dataset;
 import org.junit.Assert;
 import org.junit.Test;
 

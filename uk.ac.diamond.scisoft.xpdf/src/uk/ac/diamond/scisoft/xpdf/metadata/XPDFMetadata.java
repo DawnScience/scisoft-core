@@ -12,8 +12,8 @@ package uk.ac.diamond.scisoft.xpdf.metadata;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.metadata.MetadataType;
 
 import uk.ac.diamond.scisoft.xpdf.XPDFAbsorptionMaps;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;

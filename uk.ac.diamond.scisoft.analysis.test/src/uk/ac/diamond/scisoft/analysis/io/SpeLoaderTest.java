@@ -2,7 +2,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import static org.junit.Assert.*;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.january.dataset.Dataset;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;

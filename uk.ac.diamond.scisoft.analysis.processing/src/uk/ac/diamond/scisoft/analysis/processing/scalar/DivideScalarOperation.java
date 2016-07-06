@@ -9,9 +9,9 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.scalar;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 

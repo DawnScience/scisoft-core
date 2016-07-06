@@ -14,7 +14,7 @@ import java.io.File;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
+import org.eclipse.january.metadata.IMetadata;
 
 public class DiffractionMetadata extends ExtendedMetadata implements IDiffractionMetadata {
 	private static final long serialVersionUID = IMetadata.serialVersionUID;

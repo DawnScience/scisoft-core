@@ -11,11 +11,11 @@ package uk.ac.diamond.scisoft.analysis.fitting;
 
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IOperator;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IPeak;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
 import org.junit.Assert;
 import org.junit.Test;
 

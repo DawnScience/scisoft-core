@@ -9,21 +9,21 @@
 
 package uk.ac.diamond.scisoft.xpdf.operations;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
-import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.Interpolation1D;
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;

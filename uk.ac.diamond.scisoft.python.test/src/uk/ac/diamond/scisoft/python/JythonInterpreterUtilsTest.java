@@ -9,8 +9,8 @@
 
 package uk.ac.diamond.scisoft.python;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.junit.Test;
 import org.python.core.PyFloat;
 import org.python.core.PyObjectDerived;

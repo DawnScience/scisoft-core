@@ -13,10 +13,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.january.dataset.CompoundDataset;
+import org.eclipse.january.dataset.CompoundDoubleDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.junit.Test;
 
 /**

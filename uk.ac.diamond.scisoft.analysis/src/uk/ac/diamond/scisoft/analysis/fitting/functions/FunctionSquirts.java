@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Used to transmit functions over rmi, including abstract data sets.

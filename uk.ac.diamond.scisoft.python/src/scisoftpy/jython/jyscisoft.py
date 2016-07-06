@@ -18,10 +18,10 @@
 Scisoft-only package
 '''
 
-import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset as _compoundds
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths as _maths
-import org.eclipse.dawnsci.analysis.dataset.impl.Stats as _stats
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils as _dsutils
+import org.eclipse.january.dataset.CompoundDataset as _compoundds
+import org.eclipse.january.dataset.Maths as _maths
+import org.eclipse.january.dataset.Stats as _stats
+import org.eclipse.january.dataset.DatasetUtils as _dsutils
 
 from jycore import _wrap
 from jycore import _wrapin

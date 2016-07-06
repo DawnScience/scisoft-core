@@ -9,8 +9,8 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.nexus.NXsample;
+import org.eclipse.january.dataset.DatasetUtils;
 
 /**
  * Holds the details of a material, both chemical and physical.

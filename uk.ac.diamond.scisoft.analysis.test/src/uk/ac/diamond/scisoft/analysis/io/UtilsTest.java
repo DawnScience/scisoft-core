@@ -21,10 +21,10 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Random;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.FloatDataset;
+import org.eclipse.january.dataset.Random;
 import org.junit.Test;
 
 /**

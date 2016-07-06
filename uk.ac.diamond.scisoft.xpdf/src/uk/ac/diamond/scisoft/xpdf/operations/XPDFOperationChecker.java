@@ -9,9 +9,9 @@
 
 package uk.ac.diamond.scisoft.xpdf.operations;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 

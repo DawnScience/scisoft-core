@@ -11,8 +11,8 @@ package uk.ac.diamond.scisoft.analysis.optimize;
 
 import java.io.Serializable;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
+import org.eclipse.january.dataset.IDataset;
 
 /**
  * The interface for the optimizers

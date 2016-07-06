@@ -14,7 +14,7 @@ import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.NonSquareMatrixException;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

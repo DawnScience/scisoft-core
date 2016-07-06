@@ -9,10 +9,10 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.surfacescattering;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 

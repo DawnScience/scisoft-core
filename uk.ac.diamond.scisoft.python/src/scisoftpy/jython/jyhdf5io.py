@@ -21,8 +21,8 @@ from uk.ac.diamond.scisoft.analysis.io import HDF5Loader as _hdf5loader
 from org.eclipse.dawnsci.analysis.api.tree import Tree as _jtree
 from org.eclipse.dawnsci.analysis.api.tree import TreeFile as _jtreefile
 from org.eclipse.dawnsci.analysis.api.tree import DataNode as _jdnode
-from org.eclipse.dawnsci.analysis.dataset.impl import Dataset as _dataset
-from org.eclipse.dawnsci.analysis.dataset.impl import LazyDataset as _ldataset
+from org.eclipse.january.dataset import Dataset as _dataset
+from org.eclipse.january.dataset import LazyDataset as _ldataset
 
 from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
 

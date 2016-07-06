@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
 import org.eclipse.dawnsci.nexus.builder.impl.DefaultNexusFileBuilder;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.junit.Before;
 import org.junit.Test;
 

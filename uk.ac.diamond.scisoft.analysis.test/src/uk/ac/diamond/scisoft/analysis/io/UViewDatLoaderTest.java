@@ -16,13 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.LazyDataset;
+import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.metadata.IMetadata;
 import org.junit.Test;
 
 public class UViewDatLoaderTest {

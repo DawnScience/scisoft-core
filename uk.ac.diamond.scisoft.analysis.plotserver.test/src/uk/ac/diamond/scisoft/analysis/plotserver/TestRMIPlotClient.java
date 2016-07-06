@@ -9,8 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.plotserver;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 
 import uk.ac.diamond.scisoft.analysis.SDAPlotter;
 

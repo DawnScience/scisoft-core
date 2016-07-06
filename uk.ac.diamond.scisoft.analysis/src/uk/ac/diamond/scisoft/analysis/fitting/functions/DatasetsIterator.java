@@ -11,8 +11,8 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import java.util.Arrays;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.PositionIterator;
 
 /**
  * An iterator over the common input shape whose points have coordinates given by the

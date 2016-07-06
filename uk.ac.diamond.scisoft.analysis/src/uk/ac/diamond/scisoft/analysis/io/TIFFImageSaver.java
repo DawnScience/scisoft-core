@@ -22,7 +22,7 @@ import javax.imageio.stream.ImageOutputStream;
 import javax.media.jai.PlanarImage;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
+import org.eclipse.january.metadata.IMetadata;
 
 /**
  * This class saves a DataHolder as a TIFF image file.

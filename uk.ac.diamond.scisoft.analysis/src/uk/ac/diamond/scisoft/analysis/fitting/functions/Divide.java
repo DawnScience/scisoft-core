@@ -11,10 +11,10 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IOperator;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 
 /**
  * Divide two functions (missing functions are treated as unity)

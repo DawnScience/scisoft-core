@@ -12,10 +12,10 @@ package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 import static org.junit.Assert.assertArrayEquals;
 
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IndexIterator;
 import org.junit.Test;
 
 public class IntensityCorrectionsTest extends AbstractPixelIntegrationTestBase {

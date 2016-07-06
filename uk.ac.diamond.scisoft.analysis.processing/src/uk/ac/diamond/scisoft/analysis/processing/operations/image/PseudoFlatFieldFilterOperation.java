@@ -9,11 +9,11 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.image;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.DTypeUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.Image;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.DTypeUtils;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
 
 public class PseudoFlatFieldFilterOperation extends AbstractSimpleImageOperation<KernelWidthModel> {
 

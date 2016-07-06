@@ -17,8 +17,8 @@ import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -9,7 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.january.dataset.IDataset;
 
 
 /**

@@ -11,7 +11,7 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.apache.commons.math3.complex.Complex;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.dataset.DoubleDataset;
 
 import uk.ac.diamond.scisoft.analysis.utils.Faddeeva;
 

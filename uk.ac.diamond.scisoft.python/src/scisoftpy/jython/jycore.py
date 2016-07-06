@@ -18,17 +18,17 @@
 Core package contains wrappers for Java dataset classes
 '''
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset as _ds
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset as _lds
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset as _abstractds
-import org.eclipse.dawnsci.analysis.dataset.impl.DTypeUtils as _dtutils
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory as _df
+import org.eclipse.january.dataset.Dataset as _ds
+import org.eclipse.january.dataset.LazyDataset as _lds
+import org.eclipse.january.dataset.AbstractDataset as _abstractds
+import org.eclipse.january.dataset.DTypeUtils as _dtutils
+import org.eclipse.january.dataset.DatasetFactory as _df
 
-import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset as _booleands
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset as _integerds
-import org.eclipse.dawnsci.analysis.dataset.impl.RGBDataset as _rgbds
+import org.eclipse.january.dataset.BooleanDataset as _booleands
+import org.eclipse.january.dataset.IntegerDataset as _integerds
+import org.eclipse.january.dataset.RGBDataset as _rgbds
 
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils as _dsutils
+import org.eclipse.january.dataset.DatasetUtils as _dsutils
 from uk.ac.diamond.scisoft.python.PythonUtils import convertToJava as _cvt2j
 from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
 from uk.ac.diamond.scisoft.python.PythonUtils import setSlice as _setslice

@@ -13,8 +13,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
+import org.eclipse.january.dataset.IDataset;
 
 public interface IPeakFindingData {
 

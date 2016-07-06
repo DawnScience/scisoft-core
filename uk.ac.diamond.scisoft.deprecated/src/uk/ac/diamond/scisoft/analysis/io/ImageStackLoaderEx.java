@@ -10,8 +10,8 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.StringDataset;
 
 /**
  * Class to create dataset from a list of filenames.

@@ -10,8 +10,8 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 
 /**
  * Class that wrappers the box function calculated as a difference of two Fermi functions

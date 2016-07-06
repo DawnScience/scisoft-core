@@ -11,8 +11,8 @@ package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 
 import java.util.Arrays;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 
 public class XYImagePixelCache implements IPixelIntegrationCache {
 

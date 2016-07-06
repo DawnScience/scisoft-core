@@ -11,10 +11,10 @@ package uk.ac.diamond.scisoft.analysis.processing.test.examples;
 
 import java.io.File;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.hdf.object.HierarchicalDataFactory;
 import org.eclipse.dawnsci.hdf.object.IHierarchicalDataFile;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 
 public class ExampleDataUtils {
 

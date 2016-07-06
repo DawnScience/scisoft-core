@@ -11,14 +11,14 @@ package uk.ac.diamond.scisoft.xpdf;
 
 import javax.vecmath.Vector3d;
 
-import org.eclipse.dawnsci.analysis.api.dataset.DatasetException;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
-import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetException;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.metadata.AxesMetadata;
 
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;

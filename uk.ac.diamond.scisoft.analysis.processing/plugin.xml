@@ -887,7 +887,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.InterpolateMissingDataOperation"
-            icon="icons/rollingball.png"
+            icon="icons/missinginterpol.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.InterpolateMissingDataOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.InterpolateMissingDataModel"
             name="Interpolate Missing Data">

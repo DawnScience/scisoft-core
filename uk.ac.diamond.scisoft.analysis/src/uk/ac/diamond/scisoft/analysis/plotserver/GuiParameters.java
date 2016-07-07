@@ -218,7 +218,7 @@ public final class GuiParameters implements Serializable {
 	/**
 	 * Session store for all the images in the ImageGridView for retrieval at next startup.
 	 * <p>
-	 * The Images are as a list of {@link GridImageEntry}
+	 * The Images are as a list of uk.ac.diamond.scisoft.imagegrid.gridentry.GridImageEntry
 	 */
 	public static final GuiParameters IMAGEGRIDSTORE = new GuiParameters("ImageGridStore", List.class); // List<GridImageEntry>
 

@@ -45,7 +45,7 @@
       <view
             allowMultiple="false"
             category="uk.ac.diamond.scisoft.ptychography.rcp.category"
-            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            class="org.eclipse.dawnsci.plotting.api.VanillaPlottingSystemView"
             icon="icons/chart_curve.png"
             id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewProbeComplex"
             name="Probe Complex"
@@ -54,7 +54,7 @@
       <view
             allowMultiple="false"
             category="uk.ac.diamond.scisoft.ptychography.rcp.category"
-            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            class="org.eclipse.dawnsci.plotting.api.VanillaPlottingSystemView"
             icon="icons/chart_curve.png"
             id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewProbePhase"
             name="Probe Phase"
@@ -63,7 +63,7 @@
       <view
             allowMultiple="false"
             category="uk.ac.diamond.scisoft.ptychography.rcp.category"
-            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            class="org.eclipse.dawnsci.plotting.api.VanillaPlottingSystemView"
             icon="icons/chart_curve.png"
             id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewProbeModulus"
             name="Probe Modulus"
@@ -72,7 +72,7 @@
       <view
             allowMultiple="false"
             category="uk.ac.diamond.scisoft.ptychography.rcp.category"
-            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            class="org.eclipse.dawnsci.plotting.api.VanillaPlottingSystemView"
             icon="icons/chart_curve.png"
             id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewObjectModulus"
             name="Object Modulus"
@@ -81,7 +81,7 @@
       <view
             allowMultiple="false"
             category="uk.ac.diamond.scisoft.ptychography.rcp.category"
-            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            class="org.eclipse.dawnsci.plotting.api.VanillaPlottingSystemView"
             icon="icons/chart_curve.png"
             id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewObjectComplex"
             name="Object Complex"
@@ -90,7 +90,7 @@
       <view
             allowMultiple="false"
             category="uk.ac.diamond.scisoft.ptychography.rcp.category"
-            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            class="org.eclipse.dawnsci.plotting.api.VanillaPlottingSystemView"
             icon="icons/chart_curve.png"
             id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewObjectPhase"
             name="Object Phase"
@@ -99,7 +99,7 @@
       <view
             allowMultiple="false"
             category="uk.ac.diamond.scisoft.ptychography.rcp.category"
-            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            class="org.eclipse.dawnsci.plotting.api.VanillaPlottingSystemView"
             icon="icons/chart_curve.png"
             id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewRelativeScanPosOriginal"
             name="Relative Scan Positions - Original"
@@ -108,7 +108,7 @@
       <view
             allowMultiple="false"
             category="uk.ac.diamond.scisoft.ptychography.rcp.category"
-            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            class="org.eclipse.dawnsci.plotting.api.VanillaPlottingSystemView"
             icon="icons/chart_curve.png"
             id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewRelativeScanPosCorrected"
             name="Relative Scan Positions - Corrected"
@@ -117,7 +117,7 @@
       <view
             allowMultiple="false"
             category="uk.ac.diamond.scisoft.ptychography.rcp.category"
-            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            class="org.eclipse.dawnsci.plotting.api.VanillaPlottingSystemView"
             icon="icons/chart_curve.png"
             id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewRMSE"
             name="RMSE"
@@ -126,7 +126,7 @@
       <view
             allowMultiple="false"
             category="uk.ac.diamond.scisoft.ptychography.rcp.category"
-            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            class="org.eclipse.dawnsci.plotting.api.VanillaPlottingSystemView"
             icon="icons/chart_curve.png"
             id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewDeadPixels"
             name="Dead Pixels"
@@ -135,7 +135,7 @@
       <view
             allowMultiple="false"
             category="uk.ac.diamond.scisoft.ptychography.rcp.category"
-            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            class="org.eclipse.dawnsci.plotting.api.VanillaPlottingSystemView"
             icon="icons/chart_curve.png"
             id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewRecordedDiffPattern"
             name="Recorded Diffraction Pattern"
@@ -144,7 +144,7 @@
       <view
             allowMultiple="false"
             category="uk.ac.diamond.scisoft.ptychography.rcp.category"
-            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            class="org.eclipse.dawnsci.plotting.api.VanillaPlottingSystemView"
             icon="icons/chart_curve.png"
             id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewDiffPatternEstimate"
             name="Diffraction Pattern Estimate"

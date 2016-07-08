@@ -50,7 +50,7 @@ public class ImageStackLoader implements ILazyLoader {
 	private Class<? extends IFileLoader> loaderClass;
 	private boolean onlyOne;
 	
-	public int getDtype() {
+	public int getDType() {
 		return dtype;
 	}
 

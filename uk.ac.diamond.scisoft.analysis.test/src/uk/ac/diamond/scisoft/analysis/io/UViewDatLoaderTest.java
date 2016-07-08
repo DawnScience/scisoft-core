@@ -66,7 +66,7 @@ public class UViewDatLoaderTest {
 			paths.add(i, "testfiles/gda/analysis/io/UViewDatLoaderTest/movie_22_00000" + (i+1) + ".dat");
 		}
 		ImageStackLoader loader = new ImageStackLoader(paths, null);
-		ILazyDataset lazy = new LazyDataset("Image stack", loader.getDtype(), loader.getShape(), loader);
+		ILazyDataset lazy = new LazyDataset("Image stack", loader.getDType(), loader.getShape(), loader);
 
 		assertArrayEquals("Shapes are the same", loader.getShape(), lazy.getShape());
 		IDataset slice = lazy.getSlice(new Slice(0, lazy.getShape()[0], lazy.getShape()[1])).squeeze();

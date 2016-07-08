@@ -167,7 +167,7 @@ public class Nexus {
 				}
 			};
 
-			groupDataset = new LazyDataset(name, groupData.getDtype(), trueShape.clone(), l);
+			groupDataset = new LazyDataset(name, groupData.getDType(), trueShape.clone(), l);
 		} else {
 			Dataset dataset = groupData.toDataset(false);
 			dataset.setName(name);

@@ -149,7 +149,7 @@ public class AlbaLinkFileLoader extends AbstractFileLoader {
 					for (String key : mapString.keySet()){
 						try {
 							ImageStackLoader l = new ImageStackLoader(mapString.get(key), null);
-							ILazyDataset lz = new LazyDataset(key, l.getDtype(), l.getShape(), l);
+							ILazyDataset lz = new LazyDataset(key, l.getDType(), l.getShape(), l);
 							result.addDataset(key, lz);
 						} catch (Exception e) {
 						}

@@ -614,7 +614,7 @@ public class LoaderFactory {
 				
 				if (files==null || files.size()<2) continue;
 	 			ImageStackLoader loader = new ImageStackLoader(files, holder, mon);
-				LazyDataset lazyDataset = new LazyDataset(name, loader.getDtype(), loader.getShape(), loader);
+				LazyDataset lazyDataset = new LazyDataset(name, loader.getDType(), loader.getShape(), loader);
 				ret.put(name, lazyDataset);
 			}
 			

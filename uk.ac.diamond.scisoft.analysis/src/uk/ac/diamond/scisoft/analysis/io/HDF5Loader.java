@@ -889,7 +889,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			// set dataset information again as loader now has correct shapes
 			node.setMaxShape(loader.getMaxShape());
 			node.setChunkShape(loader.getChunkShape());
-			node.setDataset(new LazyDataset(name, loader.getDtype(), loader.getShape(), loader));
+			node.setDataset(new LazyDataset(name, loader.getDType(), loader.getShape(), loader));
 			return true;
 		}
 

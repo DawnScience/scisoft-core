@@ -80,7 +80,7 @@ public class ImageStackLoaderTest {
 		StringDataset strings = DatasetFactory.createFromObject(StringDataset.class, imageFilenames, dimensions);
 		strings.squeeze(true);
 		ImageStackLoader loader = new ImageStackLoader(strings, null);
-		assertEquals(Dataset.INT32, loader.getDtype());
+		assertEquals(Dataset.INT32, loader.getDType());
 		int[] shape = loader.getShape();
 		assertArrayEquals(new int[] { sizex, sizey }, shape);
 
@@ -119,7 +119,7 @@ public class ImageStackLoaderTest {
 		String[] imageFilenames = makeFiles(testScratchDirectoryName, multipliers);
 		int[] dimensions = new int[] { imageFilenames.length };
 		ImageStackLoader loader = new ImageStackLoader(dimensions, imageFilenames);
-		assertEquals(Dataset.INT32, loader.getDtype());
+		assertEquals(Dataset.INT32, loader.getDType());
 		int[] shape = loader.getShape();
 		assertArrayEquals(new int[] { 2, sizex, sizey }, shape);
 
@@ -158,7 +158,7 @@ public class ImageStackLoaderTest {
 		String[] imageFilenames = makeFiles(testScratchDirectoryName, multipliers);
 		int[] dimensions = new int[] { imageFilenames.length };
 		ImageStackLoader loader = new ImageStackLoader(dimensions, imageFilenames);
-		assertEquals(Dataset.INT32, loader.getDtype());
+		assertEquals(Dataset.INT32, loader.getDType());
 		int[] shape = loader.getShape();
 		assertArrayEquals(new int[] { multipliers.length, sizex, sizey }, shape);
 
@@ -235,7 +235,7 @@ public class ImageStackLoaderTest {
 		String[] imageFilenames = makeFiles(testScratchDirectoryName, multipliers);
 		int[] dimensions = new int[] { firstDim,secondDim };
 		ImageStackLoader loader = new ImageStackLoader(dimensions, imageFilenames);
-		assertEquals(Dataset.INT32, loader.getDtype());
+		assertEquals(Dataset.INT32, loader.getDType());
 		int[] shape = loader.getShape();
 		assertArrayEquals(new int[] { firstDim, secondDim, sizex, sizey }, shape);
 

@@ -56,7 +56,7 @@ public class ExtendedSRSLoader extends SRSLoader {
 		}
 
 		if (loader != null) {
-			LazyDataset lazyDataset = new LazyDataset(DATA_NAME, loader.getDtype(), loader.getShape(), loader);
+			LazyDataset lazyDataset = new LazyDataset(DATA_NAME, loader.getDType(), loader.getShape(), loader);
 			currentDataHolder.addDataset(lazyDataset.getName(), lazyDataset);
 			datasetNames.add(lazyDataset.getName());
 			dataShapes.put(lazyDataset.getName(), lazyDataset.getShape());

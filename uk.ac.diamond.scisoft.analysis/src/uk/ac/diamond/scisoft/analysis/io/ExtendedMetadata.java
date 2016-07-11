@@ -27,15 +27,23 @@ public class ExtendedMetadata extends Metadata implements IExtendedMetadata {
 	private Date lastModified = null;
 	private Date date;
 
+	public ExtendedMetadata() {
+	}
+
 	/**
 	 * This constructor will take a reference to a file and populate some of the metadata. This
 	 * should be used in conjunction with populating the rest of the metadata
 	 */
 	public ExtendedMetadata(File f) {
 		super();
-		setFile(f);
+		initialize(f);
 	}
 
+	@Override
+	public void initialize(File f) {
+		setFile(f);
+	}
+	
 	void setFile(File f) {
 		if (f != null) {
 			filesize = f.length();

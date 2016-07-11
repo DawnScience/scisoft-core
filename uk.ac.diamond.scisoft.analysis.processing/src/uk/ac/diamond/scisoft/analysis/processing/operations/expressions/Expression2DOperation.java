@@ -7,14 +7,15 @@ import org.eclipse.dawnsci.analysis.api.expressions.IExpressionService;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetException;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.metadata.internal.AxesMetadataImpl;
+import org.eclipse.january.metadata.MetadataFactory;
 
 public class Expression2DOperation<T extends Expression2DModel> extends Expression1DOperation<Expression2DModel> {
 
@@ -52,7 +53,12 @@ public class Expression2DOperation<T extends Expression2DModel> extends Expressi
 			copyMetadata(input, outdata);
 		}
 		
-		AxesMetadata am = new AxesMetadataImpl(2);
+		AxesMetadata am;
+		try {
+			am = MetadataFactory.createMetadata(AxesMetadata.class, 2);
+		} catch (MetadataException e) {
+			throw new OperationException(this, e);
+		}
 		am.setAxis(0, outaxisy);
 		am.setAxis(1, outaxisx);
 		outdata.setMetadata(am);

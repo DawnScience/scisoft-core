@@ -15,6 +15,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -23,7 +24,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.metadata.internal.AxesMetadataImpl;
+import org.eclipse.january.metadata.MetadataFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.Interpolation1D;
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
@@ -337,7 +338,12 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 		// (new) axis metadata. It does not matter if the detector calibration
 		// is lost at this point
 		newData.addMetadata(newMetadata);
-		AxesMetadata newAxis = new AxesMetadataImpl(1);
+		AxesMetadata newAxis;
+		try {
+			newAxis = MetadataFactory.createMetadata(AxesMetadata.class, 1);
+		} catch (MetadataException e) {
+			throw new OperationException(this, e);
+		}
 		newAxis.setAxis(0, newQ);
 		newData.addMetadata(newAxis);
 		

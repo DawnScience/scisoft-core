@@ -1,19 +1,19 @@
 package uk.ac.diamond.scisoft.analysis.processing.test.executionvisitor;
 
-import java.lang.reflect.ParameterizedType;
-
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Random;
-import org.eclipse.january.metadata.internal.AxesMetadataImpl;
-import org.eclipse.january.metadata.internal.ErrorMetadataImpl;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.ErrorMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 
 @Atomic
 public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, OperationData> implements ITestOperation {
@@ -88,7 +88,12 @@ public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, Operatio
 				ax1.setError(DatasetFactory.createRange(1, x+1,1, Dataset.INT16));
 			}
 			
-			AxesMetadataImpl am = new AxesMetadataImpl(1);
+			AxesMetadata am;
+			try {
+				am = MetadataFactory.createMetadata(AxesMetadata.class, 1);
+			} catch (MetadataException e) {
+				throw new OperationException(this, e);
+			}
 			am.addAxis(0, ax1);
 			
 			out.setMetadata(am);
@@ -96,7 +101,12 @@ public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, Operatio
 		
 		if (withErrors) {
 			IDataset error = Random.rand(new int[] {x});
-			ErrorMetadataImpl em = new ErrorMetadataImpl();
+			ErrorMetadata em;
+			try {
+				em = MetadataFactory.createMetadata(ErrorMetadata.class);
+			} catch (MetadataException e) {
+				throw new OperationException(this, e);
+			}
 			em.setError(error);
 			out.setMetadata(em);
 		}

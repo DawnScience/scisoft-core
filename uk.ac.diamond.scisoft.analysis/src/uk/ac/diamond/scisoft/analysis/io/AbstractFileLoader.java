@@ -22,7 +22,6 @@ import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.io.ILazyLoader;
 import org.eclipse.january.io.IMetaLoader;
 import org.eclipse.january.metadata.IMetadata;
-import org.eclipse.january.metadata.Metadata;
 
 /**
  * A class which can be extended when implementing IFileLoader
@@ -61,7 +60,7 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 	}
 
 	protected boolean loadMetadata = true;
-	protected Metadata metadata;
+	protected IMetadata metadata;
 	protected boolean loadLazily = false;
 
 	abstract protected void clearMetadata();

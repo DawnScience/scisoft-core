@@ -1,8 +1,8 @@
 package uk.ac.diamond.scisoft.xpdf.test;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetException;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;

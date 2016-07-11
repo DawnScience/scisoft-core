@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
-import org.eclipse.january.dataset.MetadataException;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.metadata.IMetadata;
 
 /**
@@ -28,17 +28,19 @@ public class MetaDataAdapter implements IMetadata {
 
 	public MetaDataAdapter() {
 	}
+
 	public MetaDataAdapter(String filePath) {
+		initialize(filePath);
+	}
+
+	public void initialize(String filePath) {
 		this.filePath=filePath;
 	}
 
-	public MetaDataAdapter(Collection<String> names) {
-		this.adapterDataNames = names;
-	}
-
-	public MetaDataAdapter(Collection<String> names, final Collection<Serializable> userObjects) {
-		this.adapterDataNames = names;
-		this.adapterUserObjects = userObjects;
+	@Override
+	public void initialize(Map<String, ? extends Serializable> metadata) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -73,18 +75,10 @@ public class MetaDataAdapter implements IMetadata {
 
 	@Override
 	public IMetadata clone() {
-		
-		MetaDataAdapter ret = null;
-		if (adapterUserObjects == null) {
-			if (adapterDataNames == null) {
-				ret = new MetaDataAdapter();
-			} else {
-			    ret = new MetaDataAdapter(adapterDataNames);
-			}
-		} else {
-		    ret = new MetaDataAdapter(adapterDataNames, adapterUserObjects);
-		}
+		MetaDataAdapter ret = new MetaDataAdapter();
 		ret.setFilePath(getFilePath());
+		ret.adapterUserObjects = adapterUserObjects;
+		ret.adapterDataNames = adapterDataNames;
 		return ret;
 	}
 	
@@ -93,7 +87,23 @@ public class MetaDataAdapter implements IMetadata {
 		return filePath;
 	}
 
+	@Override
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
+	}
+
+	@Override
+	public void addDataInfo(String n, int... shape) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void addNames(Collection<String> names) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void setMetadata(Map<String, ? extends Serializable> map) {
+		// TODO Auto-generated method stub
 	}
 }

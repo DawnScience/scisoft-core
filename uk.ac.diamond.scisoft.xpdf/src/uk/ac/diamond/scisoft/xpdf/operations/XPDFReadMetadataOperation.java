@@ -35,14 +35,16 @@ import org.eclipse.dawnsci.nexus.NXslit;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusUtils;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetException;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.metadata.internal.MaskMetadataImpl;
+import org.eclipse.january.metadata.MaskMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionCalibrationReader;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
@@ -331,7 +333,13 @@ public class XPDFReadMetadataOperation extends AbstractOperation<XPDFReadMetadat
 		IDataset firstBooleanMask;
 		if (firstMask != null) {
 			firstBooleanMask = Comparisons.equalTo(firstMask, 0);
-			input.setMetadata(new MaskMetadataImpl(firstBooleanMask));
+			MaskMetadata mm;
+			try {
+				mm = MetadataFactory.createMetadata(MaskMetadata.class, firstBooleanMask);
+			} catch (MetadataException e) {
+				throw new OperationException(this, e);
+			}
+			input.setMetadata(mm);
 		}
 	}
 

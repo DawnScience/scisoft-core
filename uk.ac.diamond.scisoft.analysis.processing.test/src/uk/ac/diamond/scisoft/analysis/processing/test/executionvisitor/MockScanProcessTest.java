@@ -27,7 +27,8 @@ import org.eclipse.dawnsci.analysis.api.processing.model.SleepModel;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.january.dataset.IDynamicDataset;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.metadata.internal.AxesMetadataImpl;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -146,7 +147,7 @@ public class MockScanProcessTest {
 		
 		ILazyDataset lz = dh.getLazyDataset(data);
 		
-		AxesMetadataImpl ax = new AxesMetadataImpl(4);
+		AxesMetadata ax = MetadataFactory.createMetadata(AxesMetadata.class, 4);
 		ax.addAxis(0, dh.getLazyDataset(ax0));
 		ax.addAxis(1, dh.getLazyDataset(ax1));
 		ax.addAxis(2, dh.getLazyDataset(ax2));

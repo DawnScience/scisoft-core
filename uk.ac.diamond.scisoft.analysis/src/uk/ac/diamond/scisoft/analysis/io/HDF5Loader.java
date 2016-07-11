@@ -53,6 +53,7 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.LazyDataset;
 import org.eclipse.january.dataset.LazyDynamicDataset;
 import org.eclipse.january.dataset.StringDataset;
+import org.eclipse.january.metadata.IMetadata;
 import org.eclipse.january.metadata.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -961,7 +962,8 @@ public class HDF5Loader extends AbstractFileLoader {
 		dh.clear();
 		dh.setTree(tree);
 		if (withMetadata) {
-			Metadata metadata = new Metadata(aMap);
+			IMetadata metadata = new Metadata();
+			metadata.initialize(aMap);
 			if (tree instanceof TreeFile)
 				metadata.setFilePath(((TreeFile) tree).getFilename());
 			for (Entry<String, ILazyDataset> e : lMap.entrySet()) {

@@ -10,15 +10,16 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.function.Downsample;
 import org.eclipse.dawnsci.analysis.dataset.function.DownsampleDatatype;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetException;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.metadata.internal.AxesMetadataImpl;
+import org.eclipse.january.metadata.MetadataFactory;
 
 @Atomic
 public class DownsampleImageOperation extends AbstractOperation<DownsampleImageModel, OperationData> {
@@ -61,7 +62,12 @@ public class DownsampleImageOperation extends AbstractOperation<DownsampleImageM
 		}
 		
 		if (ml != null && !ml.isEmpty() && ml.get(0).getAxes() != null) {
-			AxesMetadata axm = new AxesMetadataImpl(2);
+			AxesMetadata axm;
+			try {
+				axm = MetadataFactory.createMetadata(AxesMetadata.class, 2);
+			} catch (MetadataException e1) {
+				throw new OperationException(this, e1);
+			}
 			AxesMetadata inm = ml.get(0);
 			
 			int rank = inm.getAxes().length;

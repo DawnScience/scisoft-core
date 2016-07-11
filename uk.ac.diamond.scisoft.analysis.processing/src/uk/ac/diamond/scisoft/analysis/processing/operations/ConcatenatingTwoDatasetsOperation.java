@@ -16,15 +16,16 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetException;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.metadata.internal.AxesMetadataImpl;
+import org.eclipse.january.metadata.MetadataFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,7 +137,12 @@ public class ConcatenatingTwoDatasetsOperation extends AbstractOperation<Concate
 			
 		if (axes_old0 != null && axes_new0 != null && axes_old1 != null && axes_new1 != null) {
 			data_concat = Interpolation2D.bicubicInterpolation(axes_concat_mean_old0, axes_concat_mean_old1, data_concat, axes_concat_mean_new0, axes_concat_mean_new1, BicubicInterpolationOutput.TWOD);
-			AxesMetadataImpl axma = new AxesMetadataImpl(2);
+			AxesMetadata axma;
+			try {
+				axma = MetadataFactory.createMetadata(AxesMetadata.class, 2);
+			} catch (MetadataException e) {
+				throw new OperationException(this, e);
+			}
 			//restore 2D nature of axes through concatenating the 1D axes
 			//this will need to be revised when a user wants to use this feature with 1D axes for a 2D dataset!!!
 			IDataset[] temp = new IDataset[data_concat.getShape()[1]];

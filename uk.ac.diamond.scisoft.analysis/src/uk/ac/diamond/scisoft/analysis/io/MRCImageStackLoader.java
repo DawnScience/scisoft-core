@@ -245,7 +245,8 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 	
 	private int readMetadata(BufferedInputStream bi) throws IOException, ScanFileHolderException {
 		int pos =readHeader(bi);
-		metadata = new Metadata(headers);
+		metadata = new Metadata();
+		metadata.initialize(headers);
 		return pos;
 	}
 

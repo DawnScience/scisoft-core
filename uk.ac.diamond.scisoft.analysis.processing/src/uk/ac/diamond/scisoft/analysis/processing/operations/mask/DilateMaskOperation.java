@@ -15,11 +15,12 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.metadata.MaskMetadata;
-import org.eclipse.january.metadata.internal.MaskMetadataImpl;
+import org.eclipse.january.metadata.MetadataFactory;
 
 public class DilateMaskOperation extends AbstractOperation<DilateMaskModel, OperationData> {
 
@@ -53,7 +54,12 @@ public class DilateMaskOperation extends AbstractOperation<DilateMaskModel, Oper
 		
 		not = Comparisons.logicalNot(not);
 		
-		MaskMetadata mm = new MaskMetadataImpl(not);
+		MaskMetadata mm;
+		try {
+			mm = MetadataFactory.createMetadata(MaskMetadata.class, not);
+		} catch (MetadataException e) {
+			throw new OperationException(this, e);
+		}
 		input.setMetadata(mm);
 		
 		return new OperationData(input);

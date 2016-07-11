@@ -123,7 +123,8 @@ public class CBFLoader extends AbstractFileLoader {
 			output.setMetadata(metadata);
 			// We need to read the header completely
 			if (loadMetadata && metadata==null) { // We create something
-				metadata = new Metadata(metadataMap);
+				metadata = new Metadata();
+				metadata.initialize(metadataMap);
 				metadata.setFilePath(fileName);
 			}
 		}
@@ -458,7 +459,8 @@ _diffrn_radiation_wavelength.wt 1.0
 			metadata.addDataInfo(DEF_IMAGE_NAME, getInteger("numPixels_x"), getInteger("numPixels_y"));
 			metadata.setMetadata(metadataMap);
 		} catch (ScanFileHolderException e) {
-			metadata = new Metadata(metadataMap);
+			metadata = new Metadata();
+			metadata.initialize(metadataMap);
 		}
 		metadata.setFilePath(fileName);
 	}
@@ -797,7 +799,8 @@ _diffrn_radiation_wavelength.wt 1.0
 	public void loadMetadata(IMonitor mon) throws IOException {
 		// We need to read the header completely
 		if (loadMetadata && metadata==null) { // We create something
-			metadata = new Metadata(metadataMap);
+			metadata = new Metadata();
+			metadata.initialize(metadataMap);
 			metadata.setFilePath(fileName);
 		}
 	}

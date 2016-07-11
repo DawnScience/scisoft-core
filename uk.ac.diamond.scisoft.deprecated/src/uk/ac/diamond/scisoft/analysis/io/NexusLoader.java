@@ -407,7 +407,7 @@ public class NexusLoader extends AbstractFileLoader {
 	
 	@Override
 	public IMetadata getMetadata() {
-		Metadata md = new Metadata();
+		IMetadata md = new Metadata();
 		for (Entry<String, int[]> e : allDataSetRanks.entrySet()) {
 			md.addDataInfo(e.getKey(), e.getValue());
 		}

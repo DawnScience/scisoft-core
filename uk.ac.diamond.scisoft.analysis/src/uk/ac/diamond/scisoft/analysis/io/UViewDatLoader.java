@@ -120,7 +120,8 @@ public class UViewDatLoader extends AbstractFileLoader {
 
 	private int readMetadata(BufferedInputStream bi) throws IOException {
 		int pos = readHeader(bi);
-		metadata = new Metadata(headers);
+		metadata = new Metadata();
+		metadata.initialize(headers);
 		return pos;
 	}
 

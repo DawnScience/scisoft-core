@@ -14,15 +14,17 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetException;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
-import org.eclipse.january.metadata.internal.AxesMetadataImpl;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 
 @Atomic
 public class DerivativeOperation extends AbstractOperation<DerivativeModel, OperationData> {
@@ -55,7 +57,12 @@ public class DerivativeOperation extends AbstractOperation<DerivativeModel, Oper
 			out = Maths.derivative(a, out, model.getSmoothing());
 		}
 		
-		AxesMetadataImpl axm = new AxesMetadataImpl(1);
+		AxesMetadata axm;
+		try {
+			axm = MetadataFactory.createMetadata(AxesMetadata.class, 1);
+		} catch (MetadataException e) {
+			throw new OperationException(this, e);
+		}
 		axm.setAxis(0, a);
 		out.setMetadata(axm);
 		

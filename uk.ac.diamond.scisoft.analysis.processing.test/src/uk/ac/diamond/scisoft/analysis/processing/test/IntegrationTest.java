@@ -195,6 +195,12 @@ public class IntegrationTest {
 			public MaskMetadata clone() {
 				return null;
 			}
+
+			@Override
+			public void initialize(IDataset mask) {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 		
 		final IOperation maskOp = new AbstractOperation<IOperationModel, OperationData>() {

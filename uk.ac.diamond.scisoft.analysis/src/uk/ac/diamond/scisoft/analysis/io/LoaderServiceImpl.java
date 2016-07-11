@@ -26,7 +26,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.IMetadata;
-import org.eclipse.january.metadata.internal.AxesMetadataImpl;
+import org.eclipse.january.metadata.MetadataFactory;
 
 /**
  * Provides a class which will use any loaders available to load a particular file
@@ -131,9 +131,9 @@ public class LoaderServiceImpl implements ILoaderService {
 	
 	@Override
 	public AxesMetadata getAxesMetadata(ILazyDataset parent, String path, List<String>[] axesNames, boolean lazy) throws Exception {
-		AxesMetadataImpl axMeta = null;
+		AxesMetadata axMeta = null;
 		int rank = parent.getRank();
-		axMeta = new AxesMetadataImpl(rank);
+		axMeta = MetadataFactory.createMetadata(AxesMetadata.class, rank);
 		if (axesNames == null) return axMeta;
 		if (axesNames.length != rank) throw new IllegalArgumentException("Array of name lists must be equal in length to the rank of the dataset");
 		int[] shape = parent.getShape();

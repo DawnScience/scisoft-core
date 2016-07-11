@@ -220,7 +220,8 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver {
 	}
 
 	private void createMetadata(ILazyDataset data) {
-		metadata = new Metadata(textMetadata);
+		metadata = new Metadata();
+		metadata.initialize(textMetadata);
 		metadata.addDataInfo(DEF_IMAGE_NAME, data.getShape());
 		metadata.setFilePath(fileName);
 	}

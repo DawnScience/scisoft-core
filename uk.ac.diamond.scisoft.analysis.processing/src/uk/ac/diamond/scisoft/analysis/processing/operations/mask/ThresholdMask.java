@@ -16,6 +16,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -23,7 +24,7 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.metadata.MaskMetadata;
-import org.eclipse.january.metadata.internal.MaskMetadataImpl;
+import org.eclipse.january.metadata.MetadataFactory;
 
 @Atomic
 public class ThresholdMask extends AbstractOperation<ThresholdMaskModel, OperationData> {
@@ -70,7 +71,12 @@ public class ThresholdMask extends AbstractOperation<ThresholdMaskModel, Operati
 			}
 		}
 
-		MaskMetadata mm = new MaskMetadataImpl(mask);
+		MaskMetadata mm;
+		try {
+			mm = MetadataFactory.createMetadata(MaskMetadata.class, mask);
+		} catch (MetadataException e) {
+			throw new OperationException(this, e);
+		}
 		input.setMetadata(mm);
 
 		return new OperationData(input);

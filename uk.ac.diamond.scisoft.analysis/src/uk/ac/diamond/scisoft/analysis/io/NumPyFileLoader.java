@@ -23,6 +23,7 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.metadata.IMetadata;
 import org.eclipse.january.metadata.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -217,8 +218,8 @@ public class NumPyFileLoader extends AbstractFileLoader {
 		return dataset;
 	}
 
-	private Metadata createMetadata(String path, DataTypeInfo info) {
-		Metadata md = new Metadata();
+	private IMetadata createMetadata(String path, DataTypeInfo info) {
+		IMetadata md = new Metadata();
 		md.setFilePath(path);
 		md.addDataInfo(path, info.getShape());
 		return md;

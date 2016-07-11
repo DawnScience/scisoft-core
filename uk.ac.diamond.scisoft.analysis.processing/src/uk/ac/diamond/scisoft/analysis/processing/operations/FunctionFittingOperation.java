@@ -32,15 +32,17 @@ import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetException;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
-import org.eclipse.january.metadata.internal.AxesMetadataImpl;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 
 import uk.ac.diamond.scisoft.analysis.fitting.FittingConstants.FIT_ALGORITHMS;
 import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
@@ -149,12 +151,17 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 				Dataset res = Maths.subtract(traceROI[1], vals);
 				res.setName("residual");
 				
-				AxesMetadataImpl ax = new AxesMetadataImpl(1);
-				ax.addAxis(0, outx);
-				vals.addMetadata(ax);
-				ax = new AxesMetadataImpl(1);
-				ax.addAxis(0, outx);
-				res.addMetadata(ax);
+				try {
+					AxesMetadata ax;
+					ax = MetadataFactory.createMetadata(AxesMetadata.class, 1);
+					ax.addAxis(0, outx);
+					vals.addMetadata(ax);
+					ax = MetadataFactory.createMetadata(AxesMetadata.class, 1);
+					ax.addAxis(0, outx);
+					res.addMetadata(ax);
+				} catch (MetadataException e) {
+					throw new OperationException(this, e);
+				}
 				params.add(vals);
 				params.add(res);
 				

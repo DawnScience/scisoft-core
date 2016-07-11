@@ -13,10 +13,10 @@ import java.io.Serializable;
 import java.text.Format;
 import java.util.List;
 
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.DatasetException;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.MetadataException;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.metadata.IMetadata;

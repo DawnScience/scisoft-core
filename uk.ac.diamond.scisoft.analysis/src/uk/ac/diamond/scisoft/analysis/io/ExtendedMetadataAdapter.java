@@ -36,6 +36,15 @@ public class ExtendedMetadataAdapter extends MetaDataAdapter implements IExtende
 	 * should be used in conjunction with populating the rest of the metadata
 	 */
 	public ExtendedMetadataAdapter(File f) {
+		initialize(f);
+	}
+
+	/**
+	 * This method initializes a reference to a file and populate some of the metadata. This
+	 * should be used in conjunction with populating the rest of the metadata
+	 */
+	@Override
+	public void initialize(File f) {
 		filesize = f.length();
 		filename = f.getName();
 		lastModified = new Date(f.lastModified());

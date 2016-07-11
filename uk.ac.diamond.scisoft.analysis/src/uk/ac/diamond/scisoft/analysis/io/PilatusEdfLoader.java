@@ -160,7 +160,8 @@ public class PilatusEdfLoader extends AbstractFileLoader {
 	}
 
 	private void createMetadata() {
-		metadata = new Metadata(textMetadata);
+		metadata = new Metadata();
+		metadata.initialize(textMetadata);
 		metadata.setFilePath(fileName);
 		metadata.addDataInfo(DATA_NAME, Integer.parseInt(textMetadata.get("Dim_2")),
 				Integer.parseInt(textMetadata.get("Dim_1")));

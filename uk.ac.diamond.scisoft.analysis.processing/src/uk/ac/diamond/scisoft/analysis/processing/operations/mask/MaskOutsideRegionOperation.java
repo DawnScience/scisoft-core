@@ -11,13 +11,14 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.metadata.MaskMetadata;
-import org.eclipse.january.metadata.internal.MaskMetadataImpl;
+import org.eclipse.january.metadata.MetadataFactory;
 
 @Atomic
 public class MaskOutsideRegionOperation extends AbstractOperation<MaskOutsideRegionModel, OperationData> {
@@ -35,8 +36,12 @@ public class MaskOutsideRegionOperation extends AbstractOperation<MaskOutsideReg
 		IDataset m = generateMaskFromROI(model.getRegion(), input.getShape());
 		if (mask != null) m = Comparisons.logicalAnd(mask, m);
 
-		
-		MaskMetadata mm = new MaskMetadataImpl(m);
+		MaskMetadata mm;
+		try {
+			mm = MetadataFactory.createMetadata(MaskMetadata.class, mask);
+		} catch (MetadataException e) {
+			throw new OperationException(this, e);
+		}
 		input.setMetadata(mm);
 		
 		return new OperationData(input);

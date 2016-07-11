@@ -45,6 +45,7 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.ShortDataset;
+import org.eclipse.january.metadata.IMetadata;
 import org.eclipse.january.metadata.Metadata;
 
 /**
@@ -216,8 +217,8 @@ public class RawBinaryLoader extends AbstractFileLoader {
 		}
 	}
 
-	private Metadata createMetadata() {
-		Metadata md = new Metadata();
+	private IMetadata createMetadata() {
+		IMetadata md = new Metadata();
 		md.setFilePath(fileName);
 		md.addDataInfo(dName, shape);
 		return md;

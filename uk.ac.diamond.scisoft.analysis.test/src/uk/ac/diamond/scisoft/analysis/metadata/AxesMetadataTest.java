@@ -16,26 +16,27 @@ import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetException;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Random;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.metadata.internal.AxesMetadataImpl;
-import org.eclipse.january.metadata.internal.ErrorMetadataImpl;
+import org.eclipse.january.metadata.ErrorMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 import org.junit.Test;
 
 public class AxesMetadataTest {
 
 	@Test
-	public void testAxesMetadata() {
+	public void testAxesMetadata() throws MetadataException {
 		final int[] shape = new int[] {1, 1, 2, 3, 4, 1, 1};
 
 		int r = shape.length;
-		AxesMetadataImpl amd = new AxesMetadataImpl(r);
+		AxesMetadata amd = MetadataFactory.createMetadata(AxesMetadata.class, r);
 		for (int i = 0; i < r; i++) {
 			DoubleDataset[] array = new DoubleDataset[i + 1];
 			for (int j = 0; j < (i + 1) ; j++) {
@@ -114,13 +115,13 @@ public class AxesMetadataTest {
 	}
 
 	@Test
-	public void testAxesMetadataReshape() {
+	public void testAxesMetadataReshape() throws MetadataException {
 		final int[] shape = new int[] { 1, 2, 3, 1 };
 		final int[] reshape = new int[] { 1, 1, 2, 3, 1 };
 
 		int r = shape.length;
 		int[] nShape = new int[r];
-		AxesMetadataImpl amd = new AxesMetadataImpl(r);
+		AxesMetadata amd = MetadataFactory.createMetadata(AxesMetadata.class, r);
 		for (int i = 0; i < r; i++) {
 			Arrays.fill(nShape, 1);
 			nShape[i] = shape[i];
@@ -140,7 +141,7 @@ public class AxesMetadataTest {
 
 		ILazyDataset dataset = Random.lazyRand(Dataset.INT32, "Main", shape);
 
-		AxesMetadataImpl amd = new AxesMetadataImpl(r);
+		AxesMetadata amd = MetadataFactory.createMetadata(AxesMetadata.class, r);
 		dataset.addMetadata(amd);
 
 		ILazyDataset v = dataset.getSliceView();
@@ -159,30 +160,29 @@ public class AxesMetadataTest {
 	}
 
 	@Test
-	public void testAxesMetadataRecursion() {
+	public void testAxesMetadataRecursion() throws MetadataException {
 		final int[] shape = new int[] { 1, 2, 3, 1 };
 
 		int r = shape.length;
 
 		ILazyDataset axis = Random.lazyRand(Dataset.INT32, "axis", 2);
-		AxesMetadataImpl amd = new AxesMetadataImpl(1);
+		AxesMetadata amd = MetadataFactory.createMetadata(AxesMetadata.class, 1);
 		amd.setAxis(0, Random.lazyRand(Dataset.INT32, "axis2", 2));
 		axis.addMetadata(amd);
 
-		amd = new AxesMetadataImpl(r);
+		amd = MetadataFactory.createMetadata(AxesMetadata.class, r);
 		amd.setAxis(1, axis);
 		ILazyDataset dataset = Random.lazyRand(Dataset.INT32, "Main", shape);
 		dataset.addMetadata(amd);
 
 		dataset.setShape(2,3,1,1);
 
-		
-		ErrorMetadataImpl emd = new ErrorMetadataImpl();
+		ErrorMetadata emd = MetadataFactory.createMetadata(ErrorMetadata.class);
 		ILazyDataset axisErr = Random.lazyRand(Dataset.INT32, "axis2_err", 2);
 		emd.setError(axisErr);
 		axis.addMetadata(emd);
 
-		amd = new AxesMetadataImpl(1);
+		amd = MetadataFactory.createMetadata(AxesMetadata.class, 1);
 		amd.setAxis(0, axis);
 		axisErr.addMetadata(amd);
 
@@ -196,7 +196,7 @@ public class AxesMetadataTest {
 		final int[] shape = new int[] { 1, 2, 3, 4 };
 		int r = shape.length;
 		int[] nShape = new int[r];
-		AxesMetadata amd = new AxesMetadataImpl(r);
+		AxesMetadata amd = MetadataFactory.createMetadata(AxesMetadata.class, r);
 		for (int i = 0; i < r; i++) {
 			Arrays.fill(nShape, 1);
 			nShape[i] = shape[i];
@@ -225,11 +225,11 @@ public class AxesMetadataTest {
            int r = shape.length;
 
            ILazyDataset axis = Random.lazyRand(Dataset.INT32, "axis", 2);
-           AxesMetadataImpl amd = new AxesMetadataImpl(1);
+           AxesMetadata amd = MetadataFactory.createMetadata(AxesMetadata.class, 1);
            amd.setAxis(0, Random.lazyRand(Dataset.INT32, "axis2", 2));
            axis.addMetadata(amd);
 
-           amd = new AxesMetadataImpl(r);
+           amd = MetadataFactory.createMetadata(AxesMetadata.class, r);
            amd.setAxis(1, axis);
            ILazyDataset dataset = Random.lazyRand(Dataset.INT32, "Main", shape);
            dataset.addMetadata(amd);
@@ -241,7 +241,7 @@ public class AxesMetadataTest {
 
            ILazyDataset axisErr = Random.lazyRand(Dataset.INT32, "axis2_err", 2);
 
-           amd = new AxesMetadataImpl(1);
+           amd = MetadataFactory.createMetadata(AxesMetadata.class, 1);
            amd.setAxis(0, axis);
            axisErr.addMetadata(amd);
            axis.setError(axisErr);
@@ -261,7 +261,7 @@ public class AxesMetadataTest {
     	ILazyDataset dataset = Random.lazyRand(Dataset.INT32, "Main", shape);
     	ILazyDataset ax = Random.lazyRand(Dataset.INT32, "Axis", ashape);
     	
-    	AxesMetadataImpl amd = new AxesMetadataImpl(shape.length);
+    	AxesMetadata amd = MetadataFactory.createMetadata(AxesMetadata.class, shape.length);
         amd.setAxis(0, ax);
         dataset.setMetadata(amd); 
         

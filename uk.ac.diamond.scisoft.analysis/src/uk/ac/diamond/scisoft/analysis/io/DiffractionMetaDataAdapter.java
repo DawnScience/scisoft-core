@@ -26,11 +26,17 @@ public class DiffractionMetaDataAdapter extends ExtendedMetadataAdapter implemen
 	private DetectorProperties            originalProp, clonedProp;
 	
 	public DiffractionMetaDataAdapter() {
-		
+		super();
 	}
 
-	public DiffractionMetaDataAdapter(File f) {
-		super(f);
+	@Override
+	public void initialize(String filename) {
+		super.initialize(filename == null ?  null : new File(filename));
+	}
+
+	@Override
+	public void initialize(String filename, DetectorProperties props, DiffractionCrystalEnvironment env) {
+		initialize(filename);
 	}
 
 	@Override
@@ -63,4 +69,5 @@ public class DiffractionMetaDataAdapter extends ExtendedMetadataAdapter implemen
 	public DiffractionCrystalEnvironment getOriginalDiffractionCrystalEnvironment() {
 		return originalEnv;
 	}
+
 }

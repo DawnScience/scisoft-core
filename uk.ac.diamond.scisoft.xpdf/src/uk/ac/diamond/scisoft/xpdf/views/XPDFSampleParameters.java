@@ -20,11 +20,13 @@ import org.eclipse.dawnsci.nexus.NXshape;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.Maths;
-import org.eclipse.january.metadata.internal.AxesMetadataImpl;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentForm;
@@ -949,9 +951,13 @@ class XPDFSampleParameters {
 				 -0.47070180, 0.53828262, 1.6889007, 2.8603225, 3.9334130
 				}));
 		
-		AxesMetadataImpl theRAxis = new AxesMetadataImpl(1);
-		theRAxis.setAxis(0, r);
-		ceria.setMetadata(theRAxis);
+		try {
+			AxesMetadata theRAxis = MetadataFactory.createMetadata(AxesMetadata.class, 1);
+			theRAxis.setAxis(0, r);
+			ceria.setMetadata(theRAxis);
+		} catch (MetadataException e) {
+			// do nothing
+		}
 		
 		return ceria;
 	}

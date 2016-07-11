@@ -14,8 +14,8 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.ErrorMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 import org.eclipse.january.metadata.MetadataType;
-import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +92,7 @@ public class AffineTransformImageOperation extends AbstractSimpleImageOperation<
 								}
 							}
 						}
-						AxesMetadataImpl amd = new AxesMetadataImpl(2);
+						AxesMetadata amd = MetadataFactory.createMetadata(AxesMetadata.class, 2);
 						axis_new_x.setName(axis_old_x.getName());
 						axis_new_y.setName(axis_old_y.getName());
 						amd.setAxis(0, axis_new_x);

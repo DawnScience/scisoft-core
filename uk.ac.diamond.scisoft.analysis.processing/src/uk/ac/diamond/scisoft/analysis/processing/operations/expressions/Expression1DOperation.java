@@ -6,14 +6,15 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetException;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.metadata.internal.AxesMetadataImpl;
+import org.eclipse.january.metadata.MetadataFactory;
 
 public class Expression1DOperation<T extends Expression1DModel> extends AbstractOperation<Expression1DModel ,OperationData> {
 
@@ -45,7 +46,12 @@ public class Expression1DOperation<T extends Expression1DModel> extends Abstract
 		outdata.setName("custom_expression");
 		if (model.getAxisExpressionX() != null && !model.getAxisExpressionX().isEmpty()) outaxis.setName("custom_x_axis");
 		
-		AxesMetadata am = new AxesMetadataImpl(1);
+		AxesMetadata am;
+		try {
+			am = MetadataFactory.createMetadata(AxesMetadata.class, 1);
+		} catch (MetadataException e) {
+			throw new OperationException(this, e);
+		}
 		am.setAxis(0, outaxis);
 		outdata.setMetadata(am);
 		

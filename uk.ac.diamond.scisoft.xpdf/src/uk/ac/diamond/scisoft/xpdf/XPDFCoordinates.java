@@ -12,8 +12,8 @@ package uk.ac.diamond.scisoft.xpdf;
 import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetException;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;

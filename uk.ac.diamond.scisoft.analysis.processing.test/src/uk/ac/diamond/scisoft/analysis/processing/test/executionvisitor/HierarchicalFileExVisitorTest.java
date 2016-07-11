@@ -17,8 +17,9 @@ import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.hdf.object.operation.HierarchicalFileExecutionVisitor;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetException;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
@@ -26,7 +27,7 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.LazyDataset;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.metadata.internal.AxesMetadataImpl;
+import org.eclipse.january.metadata.MetadataFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -639,7 +640,7 @@ public class HierarchicalFileExVisitorTest {
 		int[] inputShape = new int[] {10,1000,1100};
 		
 		ILazyDataset lazy = getLazyDataset(inputShape,0);
-		lazy.addMetadata(new AxesMetadataImpl(3));
+		lazy.addMetadata(MetadataFactory.createMetadata(AxesMetadata.class, 3));
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
@@ -740,7 +741,7 @@ public class HierarchicalFileExVisitorTest {
 		int[] inputShape = new int[] {10,1000,1100};
 		
 		ILazyDataset lazy = getLazyDataset(inputShape,0);
-		lazy.addMetadata(new AxesMetadataImpl(3));
+		lazy.addMetadata(MetadataFactory.createMetadata(AxesMetadata.class, 3));
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
@@ -845,24 +846,26 @@ public class HierarchicalFileExVisitorTest {
 		ILazyDataset lz = LazyDataset.createLazyDataset(DatasetFactory.ones(dsShape, Dataset.INT32));
 		
 		if (withAxes > 0) {
-			AxesMetadataImpl am = new AxesMetadataImpl(dsShape.length);
-			
-			for (int j = 0; j < withAxes; j++) {
-				for (int i = 0; i < dsShape.length; i++) {
-					Dataset ax = DatasetFactory.createRange(0, dsShape[i], 1, Dataset.INT16);
-					ax.iadd(j);
-					int[] shape = new int[dsShape.length];
-					Arrays.fill(shape, 1);
-					shape[i] = dsShape[i];
-					ax.setShape(shape);
-					if (j == 0) ax.setName("Axis_" + String.valueOf(i));
-					else ax.setName("Axis_" + String.valueOf(i)+"_"+String.valueOf(j));
-					am.addAxis(i, ax);
+			AxesMetadata am = null;
+			try {
+				am = MetadataFactory.createMetadata(AxesMetadata.class, dsShape.length);
+				for (int j = 0; j < withAxes; j++) {
+					for (int i = 0; i < dsShape.length; i++) {
+						Dataset ax = DatasetFactory.createRange(0, dsShape[i], 1, Dataset.INT16);
+						ax.iadd(j);
+						int[] shape = new int[dsShape.length];
+						Arrays.fill(shape, 1);
+						shape[i] = dsShape[i];
+						ax.setShape(shape);
+						if (j == 0) ax.setName("Axis_" + String.valueOf(i));
+						else ax.setName("Axis_" + String.valueOf(i)+"_"+String.valueOf(j));
+						am.addAxis(i, ax);
+					}
 				}
+			} catch (MetadataException e) {
+				// do nothing
 			}
-			
-			
-			
+
 			lz.setMetadata(am);
 		}
 		

@@ -45,9 +45,10 @@ import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.analysis.tree.impl.TreeImpl;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.AbstractDataset;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetException;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
@@ -56,8 +57,9 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.StringDataset;
 import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.IMetadata;
 import org.eclipse.january.metadata.Metadata;
-import org.eclipse.january.metadata.internal.AxesMetadataImpl;
+import org.eclipse.january.metadata.MetadataFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -176,7 +178,7 @@ public class NexusTreeUtils {
 		// Fix to http://jira.diamond.ac.uk/browse/DAWNSCI-333. We put the path in the meta
 		// data in order to put a title containing the file in the plot.
 		if (filePath != null) {
-			final Metadata meta = new Metadata();
+			final IMetadata meta = new Metadata();
 			meta.setFilePath(filePath);
 			cData.setMetadata(meta);
 			// TODO Maybe	dNode.getAttributeNameIterator()
@@ -405,7 +407,13 @@ public class NexusTreeUtils {
 		}
 
 		List<ILazyDataset> axisList = new ArrayList<ILazyDataset>();
-		AxesMetadata amd = new AxesMetadataImpl(rank);
+		AxesMetadata amd;
+		try {
+			amd = MetadataFactory.createMetadata(AxesMetadata.class, rank);
+		} catch (MetadataException e) {
+			logger.error("Problem creating metadata", e);
+			return;
+		}
 		for (int i = 0; i < rank; i++) {
 			int len = shape[i];
 			for (AxisChoice c : choices) {
@@ -576,7 +584,12 @@ public class NexusTreeUtils {
 		}
 		
 		List<ILazyDataset> axisList = new ArrayList<ILazyDataset>();
-		AxesMetadata amd = new AxesMetadataImpl(rank);
+		AxesMetadata amd;
+		try {
+			amd = MetadataFactory.createMetadata(AxesMetadata.class, rank);
+		} catch (MetadataException e) {
+			return false;
+		}
 		for (int i = 0; i < rank; i++) {
 			int len = shape[i];
 			for (ILazyDataset a : axes) {

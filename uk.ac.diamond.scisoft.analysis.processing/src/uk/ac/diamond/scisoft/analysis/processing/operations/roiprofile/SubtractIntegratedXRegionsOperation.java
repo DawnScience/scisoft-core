@@ -14,11 +14,12 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetException;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
@@ -27,7 +28,7 @@ import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MaskMetadata;
-import org.eclipse.january.metadata.internal.AxesMetadataImpl;
+import org.eclipse.january.metadata.MetadataFactory;
 
 @Atomic
 public class SubtractIntegratedXRegionsOperation extends AbstractOperation<SubtractIntegratedXRegionsModel, OperationData> {
@@ -95,7 +96,12 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 		double m2 = (double)signal.sum(true);
 		
 		if (axis1 != null) {
-			AxesMetadataImpl ax = new AxesMetadataImpl(1);
+			AxesMetadata ax;
+			try {
+				ax = MetadataFactory.createMetadata(AxesMetadata.class, 1);
+			} catch (MetadataException e) {
+				throw new OperationException(this, e);
+			}
 			ax.setAxis(0, axis1);
 			signal.addMetadata(ax);
 		}

@@ -11,9 +11,9 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.asserts.TestUtils;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetException;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;

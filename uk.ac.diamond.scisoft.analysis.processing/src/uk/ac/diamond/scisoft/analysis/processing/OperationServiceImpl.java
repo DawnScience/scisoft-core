@@ -43,11 +43,11 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
 import org.eclipse.dawnsci.hdf.object.operation.HierarchicalFileExecutionVisitor;
 import org.eclipse.dawnsci.macro.api.IMacroService;
 import org.eclipse.dawnsci.macro.api.MacroEventObject;
-import org.eclipse.january.dataset.AbstractDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IDynamicDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.LazyDynamicDataset;
+import org.eclipse.january.dataset.ShapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -264,7 +264,7 @@ public class OperationServiceImpl implements IOperationService {
         
         int[] squeezedShape = null;
         
-        if (firstSlice != null) squeezedShape = AbstractDataset.squeezeShape(firstSlice.getShape(), false);
+        if (firstSlice != null) squeezedShape = ShapeUtils.squeezeShape(firstSlice.getShape(), false);
         
         if (series[0].getInputRank().isDiscrete() && firstSlice != null) {
         	

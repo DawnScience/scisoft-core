@@ -45,13 +45,13 @@ import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.eclipse.dawnsci.hdf5.HDF5Utils.DatasetType;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.AbstractDataset;
 import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.LazyDataset;
 import org.eclipse.january.dataset.LazyDynamicDataset;
+import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.StringDataset;
 import org.eclipse.january.metadata.IMetadata;
 import org.eclipse.january.metadata.Metadata;
@@ -896,7 +896,7 @@ public class HDF5Loader extends AbstractFileLoader {
 
 		if (!loadLazily) {
 			// check for zero-sized datasets
-			long trueSize = AbstractDataset.calcLongSize(trueShape);
+			long trueSize = ShapeUtils.calcLongSize(trueShape);
 			if (trueSize == 0) {
 				node.setEmpty();
 				return true;

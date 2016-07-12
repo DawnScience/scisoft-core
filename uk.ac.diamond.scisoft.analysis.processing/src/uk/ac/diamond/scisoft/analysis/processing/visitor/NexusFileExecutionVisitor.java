@@ -35,7 +35,6 @@ import org.eclipse.dawnsci.analysis.tree.impl.AttributeImpl;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.AbstractDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -43,6 +42,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
 import org.eclipse.january.dataset.LazyWriteableDataset;
+import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.metadata.AxesMetadata;
@@ -467,7 +467,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 	 */
 	private void appendData(Dataset dataset, GroupNode group, Slice[] oSlice, int[] oShape, NexusFile file) throws Exception {
 		
-		if (AbstractDataset.squeezeShape(dataset.getShape(), false).length == 0) {
+		if (ShapeUtils.squeezeShape(dataset.getShape(), false).length == 0) {
 			//padding slice and shape does not play nice with single values of rank != 0
 			dataset = dataset.getSliceView().squeeze();
 //			dataset.setShape(new int[]{1});
@@ -570,7 +570,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 	 */
 	private Slice[] getUpdatedSliceArray(int[] oShape, int[] dsShape, Slice[] oSlice, int[] datadims) {
 
-		if (AbstractDataset.squeezeShape(dsShape, false).length == 0) {
+		if (ShapeUtils.squeezeShape(dsShape, false).length == 0) {
 			List<Slice> l = new LinkedList<Slice>(Arrays.asList(oSlice));
 			for (int i =  datadims.length-1; i >= 0; i--) {
 				l.remove(datadims[i]);
@@ -617,7 +617,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 	 */
 	private long[] getNewShape(int[]oShape, int[] dsShape, int[] dd) {
 
-		if (AbstractDataset.squeezeShape(dsShape, false).length == 0) {
+		if (ShapeUtils.squeezeShape(dsShape, false).length == 0) {
 			List<Integer> l = new LinkedList<Integer>();
 			for (int i : oShape) l.add(i);
 			for (int i =  dd.length-1; i >= 0; i--) {

@@ -18,12 +18,12 @@ import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.AbstractDataset;
 import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.SliceNDIterator;
 import org.eclipse.january.dataset.StringDataset;
@@ -176,7 +176,7 @@ public class ImageStackLoader implements ILazyLoader {
 	public Dataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 		int[] newShape = slice.getShape();
 
-		if (AbstractDataset.calcSize(newShape) == 0)
+		if (ShapeUtils.calcSize(newShape) == 0)
 			return DatasetFactory.zeros(newShape, dtype);
 
 		int iRank = iShape.length;
@@ -187,7 +187,7 @@ public class ImageStackLoader implements ILazyLoader {
 			missing[i] = start + i;
 		}
 		SliceNDIterator it = new SliceNDIterator(slice, missing);
-		Dataset result = onlyOne || AbstractDataset.calcSize(it.getShape()) == 1 ? null : DatasetFactory.zeros(newShape, dtype);
+		Dataset result = onlyOne || ShapeUtils.calcSize(it.getShape()) == 1 ? null : DatasetFactory.zeros(newShape, dtype);
 
 		int[] pos = it.getUsedPos();
 		SliceND iSlice = it.getOmittedSlice();

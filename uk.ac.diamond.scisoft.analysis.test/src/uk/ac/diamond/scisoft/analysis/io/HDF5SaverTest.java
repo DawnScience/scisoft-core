@@ -22,13 +22,13 @@ import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.eclipse.january.DatasetException;
-import org.eclipse.january.dataset.AbstractDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IDynamicDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.SliceNDIterator;
@@ -57,7 +57,7 @@ public class HDF5SaverTest {
 
 		SliceND slice = new SliceND(shape, mshape, new Slice(1, 3), new Slice(null, null, 2));
 		System.out.println(slice);
-		IDataset data = DatasetFactory.createRange(1, AbstractDataset.calcSize(slice.getShape()) + 1, 1, dtype);
+		IDataset data = DatasetFactory.createRange(1, ShapeUtils.calcSize(slice.getShape()) + 1, 1, dtype);
 		System.out.println(data);
 		data.setShape(slice.getShape());
 		HDF5Utils.setDatasetSlice(file, path, name, slice, data);

@@ -20,8 +20,8 @@ Core package contains wrappers for Java dataset classes
 
 import org.eclipse.january.dataset.Dataset as _ds
 import org.eclipse.january.dataset.LazyDataset as _lds
-import org.eclipse.january.dataset.AbstractDataset as _abstractds
 import org.eclipse.january.dataset.DTypeUtils as _dtutils
+import org.eclipse.january.dataset.ShapeUtils as _sutils
 import org.eclipse.january.dataset.DatasetFactory as _df
 
 import org.eclipse.january.dataset.BooleanDataset as _booleands
@@ -1655,7 +1655,7 @@ def unravel_index(indices, dims):
     if isinstance(indices, (tuple, list)):
         indices = ndarray(buffer=indices)._jdataset()
     if not isinstance(indices, _ds):
-        return tuple(_abstractds.getNDPositionFromShape(indices, dims))
+        return tuple(_sutils.getNDPositionFromShape(indices, dims))
     return tuple(_dsutils.calcPositionsFromIndexes(indices, dims))
 
 

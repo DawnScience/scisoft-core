@@ -47,7 +47,6 @@ import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.analysis.tree.impl.TreeImpl;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.MetadataException;
-import org.eclipse.january.dataset.AbstractDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -55,6 +54,7 @@ import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.StringDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.IMetadata;
@@ -1204,8 +1204,8 @@ public class NexusTreeUtils {
 	}
 
 	private static int[] checkShapes(int[] nshape, int[] dshape) {
-		int nsize = AbstractDataset.calcSize(nshape);
-		int dsize = AbstractDataset.calcSize(dshape);
+		int nsize = ShapeUtils.calcSize(nshape);
+		int dsize = ShapeUtils.calcSize(dshape);
 		if (nsize != 1 && dsize != 1) {
 			if (nsize != dsize) {
 				throw new IllegalArgumentException("Non-trivial shapes must have same size");

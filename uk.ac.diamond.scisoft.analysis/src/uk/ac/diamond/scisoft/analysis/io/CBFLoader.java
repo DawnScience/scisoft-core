@@ -39,6 +39,7 @@ import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.metadata.Metadata;
 import org.iucr.cbflib.SWIGTYPE_p_p_char;
 import org.iucr.cbflib.cbf;
@@ -494,7 +495,7 @@ _diffrn_radiation_wavelength.wt 1.0
 		metadataMap.put("numPixels_x", String.valueOf(imageOrien.shape[1]));
 		metadataMap.put("numPixels_y", String.valueOf(imageOrien.shape[0]));
 
-		long numPixels = AbstractDataset.calcLongSize(imageOrien.shape);
+		long numPixels = ShapeUtils.calcLongSize(imageOrien.shape);
 
 		if (numPixels != elnum.value()) {
 			throw new ScanFileHolderException("Mismatch of CBF binary data size: " + numPixels + " cf " + elnum.value());

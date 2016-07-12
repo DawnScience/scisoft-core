@@ -7,12 +7,12 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.AbstractDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.PositionIterator;
+import org.eclipse.january.dataset.ShapeUtils;
 
 public class SubtractBlankFrameOperation extends AbstractImageSubtrationOperation<SubtractBlankFrameModel> {
 	
@@ -56,7 +56,7 @@ public class SubtractBlankFrameOperation extends AbstractImageSubtrationOperatio
 		if (end <= startFrame) throw new OperationException(this,"End cannot be before or the same as start");
 
 		ILazyDataset bg = lzBg.getSliceView();
-		int[] ss = AbstractDataset.squeezeShape(bg.getShape(), false);
+		int[] ss = ShapeUtils.squeezeShape(bg.getShape(), false);
 		if (ss.length == 2) {
 			try {
 				image = DatasetUtils.sliceAndConvertLazyDataset(bg).squeeze();

@@ -19,10 +19,10 @@ import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
-import org.eclipse.january.dataset.AbstractDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.junit.Assert;
 import org.junit.Test;
@@ -203,7 +203,7 @@ public class NexusTreeUtilsTest {
 			for (int i = 0; i < rank; i++) {
 				ILazyDataset[] ds = amd.getAxis(i);
 				for (ILazyDataset l : ds) {
-					Assert.assertTrue(AbstractDataset.areShapesBroadcastCompatible(l.getShape(), shape));
+					Assert.assertTrue(ShapeUtils.areShapesBroadcastCompatible(l.getShape(), shape));
 				}
 			}
 		} catch (Exception e) {

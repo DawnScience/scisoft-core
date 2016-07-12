@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.january.dataset.AbstractDataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.metadata.Metadata;
 
 /**
@@ -74,7 +74,7 @@ public class RawTextLoader extends AbstractFileLoader {
 					l = br.readLine();
 				}
 				shape[0] = rows;
-				data = createLazyDataset(DEF_IMAGE_NAME, -1, AbstractDataset.squeezeShape(shape, false),
+				data = createLazyDataset(DEF_IMAGE_NAME, -1, ShapeUtils.squeezeShape(shape, false),
 						new RawTextLoader(fileName));
 			} else {
 				List<Object[]> rows = new ArrayList<Object[]>();

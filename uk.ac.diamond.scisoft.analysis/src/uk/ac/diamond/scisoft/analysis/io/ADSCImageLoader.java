@@ -26,13 +26,10 @@ import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironmen
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.AbstractDataset;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.SliceND;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,7 +141,8 @@ public class ADSCImageLoader extends AbstractFileLoader {
 				});
 			} else {
 				raf.seek(pointer);
-				data = createDataset(raf, shape, keepBitWidth);
+				data = Utils.createDataset(raf, shape, keepBitWidth);
+				data.setName(DEF_IMAGE_NAME);
 			}
 			output.addDataset(ADSC_IMAGE_NAME, data);
 			if (loadMetadata) {
@@ -175,7 +173,9 @@ public class ADSCImageLoader extends AbstractFileLoader {
 			raf = new RandomAccessFile(fileName, "r");
 			raf.seek(pointer);
 
-			Dataset data = createDataset(raf, shape, keepBitWidth);
+			Dataset data = Utils.createDataset(raf, shape, keepBitWidth);
+			data.setName(DEF_IMAGE_NAME);
+
 			holder = new DataHolder();
 			holder.setLoaderClass(ADSCImageLoader.class);
 			holder.setFilePath(fileName);
@@ -193,49 +193,6 @@ public class ADSCImageLoader extends AbstractFileLoader {
 			}
 			throw new ScanFileHolderException("There was a problem loading or reading metadata", e);
 		}
-	}
-
-	private static Dataset createDataset(RandomAccessFile raf, int[] shape, boolean keepBitWidth) throws IOException {
-		AbstractDataset data;
-
-		// read in all the data at once for speed.
-
-		byte[] read = new byte[shape[0] * shape[1] * 2];
-		raf.read(read);
-
-		// and put it into the dataset
-		data = DatasetFactory.zeros(IntegerDataset.class, shape);
-		int[] databuf = ((IntegerDataset) data).getData();
-		int amax = Integer.MIN_VALUE;
-		int amin = Integer.MAX_VALUE;
-		int hash = 0;
-		for (int i = 0, j = 0; i < databuf.length; i++, j += 2) {
-			int value = Utils.leInt(read[j], read[j + 1]);
-			hash = (hash * 19 + value);
-			databuf[i] = value;
-			if (value > amax) {
-				amax = value;
-			}
-			if (value < amin) {
-				amin = value;
-			}
-		}
-
-		if (keepBitWidth||amax < (1 << 15)) {
-				data = (AbstractDataset) DatasetUtils.cast(data, Dataset.INT16);
-		}
-
-		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
-		int rank = shape.length;
-		for (int i = 0; i < rank; i++) {
-			hash = hash*17 + shape[i];
-		}
-		data.setStoredValue(AbstractDataset.STORE_MAX, amax);
-		data.setStoredValue(AbstractDataset.STORE_MIN, amin);
-		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
-
-		data.setName(DEF_IMAGE_NAME);
-		return data;
 	}
 
 	/**

@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2012 Diamond Light Source Ltd.
+/*-
+ * Copyright (c) 2012-2016 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -21,6 +21,9 @@ import org.apache.xmlrpc.server.PropertyHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcServer;
 import org.apache.xmlrpc.server.XmlRpcServerConfigImpl;
 import org.apache.xmlrpc.webserver.WebServer;
+import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcException;
+import org.eclipse.dawnsci.analysis.api.rpc.IAnalysisRpcHandler;
+import org.eclipse.dawnsci.analysis.api.rpc.IAnalysisRpcServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +42,7 @@ import uk.ac.diamond.scisoft.analysis.rpc.internal.HandlerRequestProcessorFactor
  * 
  * @see AnalysisRpcBasicTest See the Ananlysis Rpc Basic Test for an example of use
  */
-public class AnalysisRpcServer {
+public class AnalysisRpcServer implements IAnalysisRpcServer {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisRpcServer.class);
 
 	private XmlRpcServer xmlRpcServer;
@@ -79,49 +82,22 @@ public class AnalysisRpcServer {
 		serverConfig.setContentLengthOptional(false);
 	}
 
-	/**
-	 * Register a new handler for AnalysisRpc to delegate incoming calls to.
-	 * 
-	 * @param name
-	 *            the registered name
-	 * @param handler
-	 *            the handler to delegate calls to
-	 * @see IAnalysisRpcHandler
-	 */
+	@Override
 	public void addHandler(String name, IAnalysisRpcHandler handler) {
 		handlers.put(name, handler);
 	}
 
-	/**
-	 * Remove an existing handler from the server. This is an unusual operation to do and exists mostly to enable
-	 * testing.
-	 * 
-	 * @param serviceName
-	 *            to unregister
-	 */
+	@Override
 	public void removeHandler(String serviceName) {
 		handlers.remove(serviceName);
 	}
 
-	/**
-	 * Get the handler registered with the given name. This is an unusual operation to do and exists mostly to enable
-	 * testing.
-	 * 
-	 * @param serviceName
-	 *            to query
-	 * @return handler associated with this service or <code>null</code> if none registered.
-	 */
+	@Override
 	public IAnalysisRpcHandler getHandler(String serviceName) {
 		return handlers.get(serviceName);
 	}
 
-	/**
-	 * Start the server. The server can be started before all handlers are added.
-	 * 
-	 * @throws AnalysisRpcException
-	 *             if there is an exception starting the underlying XML-RPC server. The underlying {@link IOException}
-	 *             is wrapped.
-	 */
+	@Override
 	public void start() throws AnalysisRpcException {
 		try {
 			webServer.start();
@@ -131,13 +107,12 @@ public class AnalysisRpcServer {
 		}
 	}
 
-	/**
-	 * Shutdown the server and stop servicing requests.
-	 */
+	@Override
 	public void shutdown() {
 		webServer.shutdown();
 	}
 
+	@Override
 	public IAnalysisRpcHandler getDestination(String destination) {
 		return handlers.get(destination);
 	}
@@ -146,14 +121,7 @@ public class AnalysisRpcServer {
 		return flattener;
 	}
 
-	/**
-	 * Returns the port, on which the AnalysisRpcServer is running. This method may be invoked after {@link #start()}
-	 * only.
-	 * <p>
-	 * For example, it may be useful to call {@link #getPort()} if the server is created on port 0 (auto assign a port)
-	 * 
-	 * @return Port number
-	 */
+	@Override
 	public int getPort() {
 		return webServer.getPort();
 	}

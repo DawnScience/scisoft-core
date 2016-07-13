@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.plotserver.rpc.sdaplotter;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcException;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
 
@@ -19,7 +20,6 @@ import uk.ac.diamond.scisoft.analysis.plotserver.DataBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiPlotMode;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcClient;
-import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcException;
 
 /**
  * Note, if you add a new method here, make sure you add a test for it in {@link AllPyPlotMethodsTest}

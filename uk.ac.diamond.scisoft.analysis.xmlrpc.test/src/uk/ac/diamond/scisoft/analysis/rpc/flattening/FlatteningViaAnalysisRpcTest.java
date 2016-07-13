@@ -9,13 +9,13 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.flattening;
 
+import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcException;
+import org.eclipse.dawnsci.analysis.api.rpc.IAnalysisRpcHandler;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcClient;
-import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcException;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcServer;
-import uk.ac.diamond.scisoft.analysis.rpc.IAnalysisRpcHandler;
 
 public class FlatteningViaAnalysisRpcTest extends FlatteningTestAbstract {
 	private static AnalysisRpcServer server;

@@ -10,12 +10,12 @@
 package uk.ac.diamond.scisoft.analysis;
 
 import org.eclipse.dawnsci.analysis.api.ServerProvider;
+import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcException;
+import org.eclipse.dawnsci.analysis.api.rpc.IAnalysisRpcHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcException;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcServer;
-import uk.ac.diamond.scisoft.analysis.rpc.IAnalysisRpcHandler;
 
 /**
  * A simple interface to Analysis RPC so that classes can be exported using the defaults encoded in this class.

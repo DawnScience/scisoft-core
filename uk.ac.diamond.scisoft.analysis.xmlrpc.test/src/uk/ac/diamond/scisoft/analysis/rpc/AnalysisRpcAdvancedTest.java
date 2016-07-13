@@ -9,6 +9,9 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc;
 
+import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcException;
+import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcRemoteException;
+import org.eclipse.dawnsci.analysis.api.rpc.IAnalysisRpcHandler;
 import org.junit.Assert;
 import org.junit.Test;
 

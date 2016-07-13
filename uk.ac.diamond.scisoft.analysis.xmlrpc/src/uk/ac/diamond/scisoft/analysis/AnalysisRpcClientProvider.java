@@ -10,16 +10,17 @@
 package uk.ac.diamond.scisoft.analysis;
 
 import org.eclipse.dawnsci.analysis.api.AbstractClientProvider;
+import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcException;
+import org.eclipse.dawnsci.analysis.api.rpc.IAnalysisRpcClient;
 
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcClient;
-import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcException;
 
 /**
  * A simple interface to Java RMI so that objects can be exported using the defaults encoded in this class.
  */
 public class AnalysisRpcClientProvider extends AbstractClientProvider {
 	private static AnalysisRpcClientProvider instance = new AnalysisRpcClientProvider();
-	private AnalysisRpcClient analysisRpcClient;
+	private IAnalysisRpcClient analysisRpcClient;
 
 	/**
 	 * Get Instance of provider

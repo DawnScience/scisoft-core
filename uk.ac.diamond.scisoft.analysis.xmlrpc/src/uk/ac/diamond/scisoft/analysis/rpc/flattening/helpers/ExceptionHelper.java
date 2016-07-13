@@ -11,7 +11,8 @@ package uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers;
 
 import java.util.Map;
 
-import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcRemoteException;
+import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcRemoteException;
+
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 
 public class ExceptionHelper extends MapFlatteningHelper<Exception> {

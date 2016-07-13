@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.rpc.sdaplotter;
 
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.rpc.IAnalysisRpcHandler;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.junit.Assert;
@@ -21,7 +22,6 @@ import uk.ac.diamond.scisoft.analysis.MockSDAPlotter;
 import uk.ac.diamond.scisoft.analysis.SDAPlotter;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcGenericInstanceDispatcher;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcServer;
-import uk.ac.diamond.scisoft.analysis.rpc.IAnalysisRpcHandler;
 
 /**
  * This test is to make sure we can change the analysis rpc port that scisoftpy connects to.

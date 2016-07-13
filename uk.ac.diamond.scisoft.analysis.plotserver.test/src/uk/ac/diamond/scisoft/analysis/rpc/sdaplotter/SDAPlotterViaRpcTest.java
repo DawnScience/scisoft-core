@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.sdaplotter;
 
+import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcException;
+import org.eclipse.dawnsci.analysis.api.rpc.IAnalysisRpcHandler;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -23,9 +25,7 @@ import uk.ac.diamond.scisoft.analysis.SDAPlotter;
 import uk.ac.diamond.scisoft.analysis.SDAPlotterImpl;
 import uk.ac.diamond.scisoft.analysis.SDAPlotterTestAbstract;
 import uk.ac.diamond.scisoft.analysis.plotserver.rpc.sdaplotter.ReDirectOverRpcPlotterImpl;
-import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcException;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcGenericInstanceDispatcher;
-import uk.ac.diamond.scisoft.analysis.rpc.IAnalysisRpcHandler;
 
 /**
  * We are going to test little snippets of python that perform the same plotting over AnalysisRpc as we do locally.

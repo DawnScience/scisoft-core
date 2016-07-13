@@ -25,6 +25,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
+import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcRemoteException;
 import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
@@ -57,7 +58,6 @@ import uk.ac.diamond.scisoft.analysis.plotserver.FileOperationBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiParameters;
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiPlotMode;
-import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcRemoteException;
 import uk.ac.diamond.scisoft.analysis.rpc.internal.AnalysisRpcDoubleParser;
 
 abstract public class FlatteningTestAbstract {

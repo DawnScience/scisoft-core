@@ -9,7 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.flattening;
 
-import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcException;
+import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcException;
 
 public class FlatteningViaAnalysisRpcToPythonAndRunLocalLoopbackTest extends FlatteningViaAnalysisRpcToPythonTestAbstract {
 

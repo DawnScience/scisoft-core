@@ -9,31 +9,12 @@ Require-Bundle: org.eclipse.ui,
  org.apache.commons.math3;bundle-version="[3.2.0,4.0.0)",
  uk.ac.diamond.scisoft.analysis,
  org.eclipse.dawnsci.nexus,
- org.eclipse.dawnsci.analysis.api
+ uk.ac.diamond.scisoft.analysis.processing,
+ org.eclipse.dawnsci.hdf5
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.github.tschoonj.xraylib,
  javax.vecmath,
- org.apache.commons.lang;version="2.6.0",
- org.dawnsci.python.rpc,
- org.eclipse.dawnsci.analysis.api.dataset,
- org.eclipse.dawnsci.analysis.api.diffraction,
- org.eclipse.dawnsci.analysis.api.metadata,
- org.eclipse.dawnsci.analysis.api.monitor,
- org.eclipse.dawnsci.analysis.api.processing,
- org.eclipse.dawnsci.analysis.api.processing.model,
- org.eclipse.dawnsci.analysis.dataset.impl,
- org.eclipse.dawnsci.analysis.dataset.metadata,
- org.eclipse.dawnsci.analysis.dataset.operations,
- org.eclipse.dawnsci.hdf5.nexus,
- org.eclipse.dawnsci.plotting.api,
- org.eclipse.dawnsci.plotting.api.trace,
- org.slf4j;version="1.7.6",
- uk.ac.diamond.scisoft.analysis.diffraction.powder,
- uk.ac.diamond.scisoft.analysis.io,
- uk.ac.diamond.scisoft.analysis.processing.operations,
- uk.ac.diamond.scisoft.analysis.processing.operations.powder,
- uk.ac.diamond.scisoft.analysis.processing.operations.utils,
- uk.ac.diamond.scisoft.analysis.roi
+ org.apache.commons.lang;version="2.6.0"
 Bundle-Vendor: Diamond Light Source
 Bundle-ActivationPolicy: lazy
 Export-Package: uk.ac.diamond.scisoft.xpdf;

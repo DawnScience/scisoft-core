@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.xpdf.views;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Parameterizes the properties of crystal space groups.
@@ -35,6 +36,15 @@ class XPDFSpaceGroup {
 	
 	public static final String allWyckoffLetters = "abcdefghijklmnopqrstuvwxyzα"; 
 	
+	private static Pattern spacePattern = null;
+	final static int base10 = 10;
+	private static final String normalNumbers = "0123456789.";
+	private static final String subscriptNumbers = "₀₁₂₃₄₅₆₇₈₉.";
+	private static Pattern[] subscriptPatterns = null;
+	private static Pattern overbarPattern = null;
+	private static Pattern trueMinusPattern = null;
+	private static Pattern hyphenMinusPattern = null;
+	
 	private XPDFSpaceGroup() {
 	}
 	
@@ -50,6 +60,35 @@ class XPDFSpaceGroup {
 		}
 		// Watch out for off by 1 errors
 		return groups[groupNumber];
+	}
+	
+	public static XPDFSpaceGroup get(String name) {
+		// search long names, stripping spaces, converting subscripts to ASCII numerals, and overbars to leading hyphen-minuses
+		String normalizedName = simplifyLongName(name);
+		for (int iLongName = 1; iLongName < names.length; iLongName ++) {
+			String normalizedLongName = simplifyLongName(names[iLongName]);
+			if (normalizedLongName.equals(normalizedName))
+				return get(iLongName);
+		}
+		
+		normalizedName = simplifyShortName(name);
+		for (int iShortName = 1; iShortName < shortNames.length; iShortName++) {
+			String normalizedShortName = simplifyShortName(shortNames[iShortName]);
+			if (normalizedShortName.equals(normalizedName))
+				return get(iShortName);
+		}
+		// we have got here without finding a valid group. Has the writer of
+		// the file forgotten to include a minus sign? Let's see. Only check
+		// the short names in this case.
+		String deminusedName = simplifyShortName(stripMinuses(name));
+		for (int iShortName = 1; iShortName < shortNames.length; iShortName++) {
+			String normalizedShortName = simplifyShortName(stripMinuses(shortNames[iShortName]));
+			if (normalizedShortName.equals(deminusedName))
+				return get(iShortName);
+		}
+		
+		// return the null group
+		return get(0);
 	}
 	
 	/**
@@ -90,6 +129,54 @@ class XPDFSpaceGroup {
 					return CrystalSystem.get(iGroup);
 			}
 			return null; // system not found
+	}
+	
+	// Simplify the long form of a Hermann-Maugin name. Strip out spaces,
+	// convert subscripts to ASCII numerals, convert overbars to leading
+	// hyphen-minuses, convert Unicode minuses to hyphen-minuses
+	private static String simplifyLongName(String name) {
+
+		if (spacePattern == null)
+			compilePatterns();
+
+		// strip out all spaces
+		String stripSpaces = simplifyShortName(name);
+		// translate subscripts to ASCII
+		String desubscript = stripSpaces;
+		for (int i = 0; i < base10; i++)
+			desubscript = subscriptPatterns[i].matcher(desubscript).replaceAll(Integer.toString(i));
+		// convert overbars to hyphen-minuses
+		String deoverbar = overbarPattern.matcher(desubscript).replaceAll("-$1");
+		// convert real minuses to (ugh) hyphen-minuses
+		String hyphenate = trueMinusPattern.matcher(deoverbar).replaceAll("-");
+		
+		return hyphenate;
+	}
+	
+	// Simplify the short form of a Hermann-Maugin name. Strip out spaces
+	private static String simplifyShortName(String name) {
+		if (spacePattern == null) 
+			compilePatterns();
+		// strip out all spaces
+		String stripSpaces = spacePattern.matcher(name).replaceAll("");
+		
+		return stripSpaces;
+	}
+
+	private static String stripMinuses(String name) {
+		if (spacePattern == null)
+			compilePatterns();
+		return hyphenMinusPattern.matcher(name).replaceAll("");
+	}
+	
+	private static void compilePatterns() {
+		spacePattern = Pattern.compile(" +");
+		subscriptPatterns = new Pattern[base10];
+		for (int i = 0; i < base10; i++)
+			subscriptPatterns[i] = Pattern.compile(Character.toString(subscriptNumbers.charAt(i)));
+		overbarPattern = Pattern.compile("(\\p{Digit})\u0305");
+		trueMinusPattern = Pattern.compile("\u2212");
+		hyphenMinusPattern = Pattern.compile("-");
 	}
 	
 	private static void generateGroups() {
@@ -973,6 +1060,17 @@ class XPDFSpaceGroup {
 
 	};
 
+	
+	public static void main(String[] args) {
+		String sg225hm = "F 4/m -3 2/m";
+		System.out.println(sg225hm + "->" + Pattern.compile(" +").matcher(sg225hm).replaceAll(""));
+		System.out.println(names[225] + "->" + simplifyLongName(names[225]));
+		System.out.println(names[138] + "->" + simplifyLongName(names[138]));
+		System.out.println(names[230] + "->" + simplifyLongName(names[230]));
+		System.out.println(get("Fm3m").getNumber());
+		
+	}
+	
 }
 	
 	

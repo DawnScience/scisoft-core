@@ -892,6 +892,13 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.InterpolateMissingDataModel"
             name="Interpolate Missing Data">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.StitchDownsampledGridOperation"
+            icon="icons/template.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.twod.StitchDownsampledGridOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DownsampleGridModel"
+            name="Stitch Downsampled Grid">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

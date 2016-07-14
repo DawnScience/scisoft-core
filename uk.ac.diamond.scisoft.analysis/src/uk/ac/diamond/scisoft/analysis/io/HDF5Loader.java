@@ -565,7 +565,7 @@ public class HDF5Loader extends AbstractFileLoader {
 					group.addNode(oname, slink);
 				} else if (ltype == HDF5Constants.H5L_TYPE_EXTERNAL) {
 					// System.err.println("E: " + oname);
-					String[] linkName = new String[2]; // file name and file path
+					String[] linkName = new String[2]; // object path and file path
 					int t = H5.H5Lget_value(gid, oname, linkName, HDF5Constants.H5P_DEFAULT);
 					// System.err.println("  -> " + linkName[0] + " in " + linkName[1]);
 					if (t < 0) {
@@ -573,13 +573,19 @@ public class HDF5Loader extends AbstractFileLoader {
 					}
 
 					String eName = linkName[1];
-					if (eName != null && !(new File(eName).exists())) { // use directory of linking file
-						logger.warn("Could not find external file {}, trying in {}", eName, f.getParentDirectory());
-						eName = new File(f.getParentDirectory(), new File(linkName[1]).getName()).getAbsolutePath();
-						if (!(new File(eName).exists())) { // append to directory of linking file
-							String eName2 = new File(f.getParentDirectory(),linkName[1]).getAbsolutePath();
-							logger.warn("Could not find external file {}, trying in {}", eName, eName2);
-							eName = eName2;
+					if (eName != null) {
+						File ef = new File(eName);
+						if (!ef.exists()) { // use directory of linking file
+							String parent = f.getParentDirectory();
+							if (ef.isAbsolute()) {
+								logger.warn("Could not find external file {}, trying in {}", eName, parent);
+							}
+							eName = new File(parent, ef.getName()).getAbsolutePath();
+							if (!(new File(eName).exists())) { // append to directory of linking file
+								String eName2 = new File(parent, linkName[1]).getAbsolutePath();
+								logger.warn("Could not find external file {}, trying {}", eName, eName2);
+								eName = eName2;
+							}
 						}
 					}
 					if (eName != null && new File(eName).exists()) {

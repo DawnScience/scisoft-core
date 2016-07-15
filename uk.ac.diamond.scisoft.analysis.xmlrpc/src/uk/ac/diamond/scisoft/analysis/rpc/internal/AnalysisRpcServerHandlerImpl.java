@@ -9,9 +9,10 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.internal;
 
-import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcException;
+import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcException;
+import org.eclipse.dawnsci.analysis.api.rpc.IAnalysisRpcHandler;
+
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcServer;
-import uk.ac.diamond.scisoft.analysis.rpc.IAnalysisRpcHandler;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 
 /**

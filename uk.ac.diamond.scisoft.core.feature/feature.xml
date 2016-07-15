@@ -81,12 +81,6 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="uk.ac.diamond.scisoft.python"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="uk.ac.diamond.org.apache.xmlrpc.client"
          download-size="0"
          install-size="0"
@@ -140,12 +134,6 @@ limitations under the License.
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="uk.ac.diamond.jython"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
    <plugin
          id="javax.vecmath"
@@ -295,13 +283,6 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="uk.ac.diamond.scisoft.jython"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="uk.ac.diamond.scisoft.analysis.peakfinding"
          download-size="0"
          install-size="0"
@@ -317,6 +298,13 @@ limitations under the License.
 
    <plugin
          id="org.apache.commons.codec"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.sf.py4j"
          download-size="0"
          install-size="0"
          version="0.0.0"

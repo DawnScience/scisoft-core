@@ -9,7 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.internal;
 
-import uk.ac.diamond.scisoft.analysis.rpc.IAnalysisRpcHandler;
+import org.eclipse.dawnsci.analysis.api.rpc.IAnalysisRpcHandler;
 
 /**
  * This interface is responsible for the actual flattening and unflattening on the server side.

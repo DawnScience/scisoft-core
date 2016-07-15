@@ -11,13 +11,13 @@ package uk.ac.diamond.scisoft.analysis;
 
 import gda.observable.IObservable;
 
+import org.eclipse.dawnsci.analysis.api.rpc.IAnalysisRpcHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.plotserver.RMIPlotServer;
 import uk.ac.diamond.scisoft.analysis.plotserver.SimplePlotServer;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcGenericInstanceDispatcher;
-import uk.ac.diamond.scisoft.analysis.rpc.IAnalysisRpcHandler;
 
 /**
  * Class that provides a PlotServer to the rest of the gui. The PlotServer instance is set by the plugin activator if

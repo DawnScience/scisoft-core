@@ -91,7 +91,7 @@ public class AnalysisRpcExceptionsTest {
 			Assert.fail("No exception raised");
 		} catch (AnalysisRpcException e) {			
 			Assert.assertTrue(e.getCause() instanceof AnalysisRpcRemoteException);
-			Assert.assertEquals("uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcException: No handler registered for " + CAT_TWO_STRINGS + " invalid", e.getCause().getMessage());
+			Assert.assertEquals("org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcException: No handler registered for " + CAT_TWO_STRINGS + " invalid", e.getCause().getMessage());
 		}
 	}
 	

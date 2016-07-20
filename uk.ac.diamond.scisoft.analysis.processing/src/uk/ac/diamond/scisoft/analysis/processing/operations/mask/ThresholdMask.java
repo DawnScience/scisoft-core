@@ -43,7 +43,11 @@ public class ThresholdMask extends AbstractOperation<ThresholdMaskModel, Operati
 		Dataset mask = DatasetUtils.convertToDataset(getFirstMask(input));
 		Dataset in = DatasetUtils.convertToDataset(input);
 		
-		if (mask == null) mask = BooleanDataset.ones(input.getShape());
+		if (mask == null) {
+			mask = BooleanDataset.ones(input.getShape());
+		} else {
+			mask = mask.getSlice();
+		}
 		
 		if (!Arrays.equals(input.getShape(), mask.getShape())) {
 			throw new OperationException(this, "Mask is incorrect shape!");

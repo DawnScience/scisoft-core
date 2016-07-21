@@ -22,6 +22,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
+import org.eclipse.dawnsci.analysis.dataset.impl.LinearAlgebra;
 import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
 
@@ -351,16 +352,69 @@ public class PixelIntegrationUtils {
 		return correctionValue/cor;
 	}
 	
+	/**
+	 * Corrects an intensity value for the effect of polarisation on the
+	 * scattering intensity
+	 * @param correctionValue
+	 * 						the value to be corrected
+	 * @param tth
+	 * 			The 2θ scattering angle between the incident and scattered
+	 * 			beams
+	 * @param angle
+	 * 				The azimuthal angle between the scattered beam and the
+	 * 				polarisation of the incident beam
+	 * @param factor
+	 *				The fraction of the beam which is polarised. Takes
+	 *				the value 1.0 for a perfectly polarised beam, and
+	 *				0.0 for an unpolarised beam.
+	 * @return The scattered intensity without the effects of polarisation.
+	 */
 	public static double polarisationCorrection(double correctionValue, double tth, double angle, double factor) {
 		//R Kahn et al, J Appl Cryst 15 330 (1982)
 		//pol(th) = 1/2[1+cos2(tth) - f*cos(2*azimuthal)sin2(tth)
 		
 		double cosSq = Math.pow(Math.cos(tth),2);
-		//use 1-cos2(tth) instead of sin2(tth)
-		double sub = (1-cosSq)*Math.cos(angle*2)*factor;
-		
-		double cor = (cosSq +1 - sub)/2;
+//		//use 1-cos2(tth) instead of sin2(tth)
+//		double sub = (1-cosSq)*Math.cos(angle*2)*factor;
+//		
+//		double cor = (cosSq +1 - sub)/2;
+		double cor = polarisationCorrectionFactor(cosSq, (1-cosSq)*Math.cos(angle*2), factor);
 		return correctionValue/cor;
+	}
+	
+	/**
+	 * Corrects an intensity value according to the polarisation.
+	 * @param uncorrectedValue
+	 * 							the value to be polarisation corrected
+	 * @param incidentBeam
+	 * 					the direction vector of the incident beam
+	 * @param scatteredBeam
+	 * 					the direction vector of the scattered beam
+	 * @param polarizationPlaneNormal
+	 * 								the normal vector to the plane of polarisation
+	 * @param polarizationFactor
+	 *							The fraction of the beam which is polarised. Takes
+	 *							the value 1.0 for a perfectly polarised beam, and
+	 *							0.0 for an unpolarised beam.
+	 * @return The scattered intensity without the effects of polarisation.
+	 */
+	public static double polarisationCorrection(double uncorrectedValue, Dataset scatteredBeam, Dataset incidentBeam, Dataset polarizationPlaneNormal, double polarizationFactor) {
+		Dataset s0 = Maths.divide(incidentBeam, LinearAlgebra.norm(incidentBeam)),
+				s1 = Maths.divide(scatteredBeam, LinearAlgebra.norm(scatteredBeam)),
+				pn = Maths.divide(polarizationPlaneNormal, LinearAlgebra.norm(polarizationPlaneNormal));
+		
+		double cosineTerm = Maths.square(LinearAlgebra.dotProduct(s1, s0)).getDouble(0);
+		double sineTerm = 1 - cosineTerm;
+		double azimuthalTerm = 2*Maths.square(LinearAlgebra.dotProduct(s1, pn)).getDouble(0);
+		double azimuthalSineTerm  = sineTerm - azimuthalTerm;
+		
+		double cor = polarisationCorrectionFactor(cosineTerm, azimuthalSineTerm, polarizationFactor);
+		return uncorrectedValue/cor;
+	}
+	
+	// does the common mathematics between the angle and vector versions of the polarization correction for a single value
+	private static double polarisationCorrectionFactor(double cosineTerm, double azimuthalSineTerm, double polarisationFactor) {
+		return 1./2 * (1 + cosineTerm + polarisationFactor * azimuthalSineTerm);
 	}
 	
 	public static double detectorTranmissionCorrection(double correctionValue, double tth, double transmissionFactor) {
@@ -378,22 +432,94 @@ public class PixelIntegrationUtils {
 		correctionArray.idivide(cor);
 	}
 	
+	/**
+ 	 * Applies the polarisation correction to a Dataset.
+	 * <p>
+	 * The beam and scattered beam parameters are defined by angles, stored in
+	 * {@link Dataset}s.
+	 *
+	 * @param correctionArray
+	 * 						A {@link Dataset} of values to be corrected.
+	 * @param tth
+	 * 			A {@link Dataset} of the 2θ scattering angle for each data
+	 * 			point.
+	 * @param angle
+	 * 				A {@link Dataset} of the azimuthal angle of the scattered
+	 * 				beam relative to the plane of polarisation of the incident
+	 * 				beam. 
+	 * @param factor
+	 *				The fraction of the beam which is polarised. Takes
+	 *				the value 1.0 for a perfectly polarised beam, and
+	 *				0.0 for an unpolarised beam.
+	 * 
+	 */
 	public static void polarisationCorrection(Dataset correctionArray, Dataset tth, Dataset angle, double factor) {
 		//R Kahn et al, J Appl Cryst 15 330 (1982)
 		//pol(th) = 1/2[1+cos2(tth) - f*cos(2*azimuthal)sin2(tth)
 		
-		Dataset cosSq = Maths.cos(tth);
-		cosSq.ipower(2);
+		Dataset cosineTerm = Maths.cos(tth);
+		cosineTerm.ipower(2);
 		
 		//use 1-cos2(tth) instead of sin2(tth)
-		Dataset sub = Maths.subtract(1, cosSq);
-		sub.imultiply(Maths.cos(Maths.multiply(angle,2)));
-		sub.imultiply(factor);
+		Dataset azimuthalSineTerm = Maths.subtract(1, cosineTerm);
+		azimuthalSineTerm.imultiply(Maths.cos(Maths.multiply(angle,2)));
+		azimuthalSineTerm.imultiply(factor);
 		
-		Dataset cor = Maths.add(cosSq, 1);
-		cor.isubtract(sub);
-		cor.idivide(2);
+//		Dataset cor = Maths.add(cosSq, 1);
+//		cor.isubtract(sub);
+//		cor.idivide(2);
+		Dataset cor = polarisationCorrectionFactor(cosineTerm, azimuthalSineTerm, factor);
 		correctionArray.idivide(cor);
+	}
+
+	/**
+	 * Applies the polarisation correction to a Dataset.
+	 * <p>
+	 * The beam and scattered beam parameters are defined by vectors, stored in
+	 * {@link Dataset}s.
+	 * @param correctionArray
+	 * 						A {@link Dataset} of n values to be corrected.
+	 * @param scatteredBeam
+	 * 						A {@link Dataset} of n×3 values describing the
+	 * 						direction vectors of the beam for each data value.
+	 * @param incidentBeam
+	 * 						A {@link Dataset} of 3 values representing the
+	 * 						direction vector of the incident beam
+	 * @param polarizationPlaneNormal
+	 * 						A {@link Dataset} of 3 values describing the normal
+	 * 						vector to the plan of polarisation of the incident
+	 * 						beam. Should be orthogonal to the incident beam
+	 * 						vector.
+	 * @param polarizationFactor
+	 * 						The fraction of the beam which is polarised. Takes
+	 * 						the value 1.0 for a perfectly polarised beam, and
+	 * 						0.0 for an unpolarised beam.
+	 */
+	public static void polarisationCorrection(Dataset correctionArray, Dataset scatteredBeam, Dataset incidentBeam, Dataset polarizationPlaneNormal, double polarizationFactor) {
+		// Normalize the static data
+		Dataset s0 = Maths.divide(incidentBeam, LinearAlgebra.norm(incidentBeam)),
+				pn = Maths.divide(polarizationPlaneNormal, LinearAlgebra.norm(polarizationPlaneNormal));
+		
+		// Normalize the scattered beam data
+		Dataset s1 = scatteredBeam;
+		
+		// Dot products of the scattered beam directions with the incident beam and polarization normal
+		Dataset s1s0 = LinearAlgebra.dotProduct(s1, s0);
+		Dataset s1pn = LinearAlgebra.dotProduct(s1, pn);
+		
+		Dataset cosineTerm = Maths.square(s1s0);
+		Dataset sineTerm = Maths.subtract(1, cosineTerm);
+		Dataset azimuthalTerm = Maths.multiply(2, s1pn);
+		Dataset azimuthalSineTerm = Maths.subtract(sineTerm, azimuthalTerm);
+		
+		Dataset cor = polarisationCorrectionFactor(cosineTerm, azimuthalSineTerm, polarizationFactor);
+		
+		correctionArray.idivide(cor);
+	}
+	
+	// Performs the common calculations for the angle and vector forms of the polarization correction for Datasets
+	private static Dataset polarisationCorrectionFactor(Dataset cosineTerm, Dataset azimuthalSineTerm, double polarizationFactor) {
+		return Maths.subtract(1, cosineTerm).isubtract(Maths.multiply(polarizationFactor, azimuthalSineTerm)).idivide(2);
 	}
 	
 	public static void detectorTranmissionCorrection(Dataset correctionArray, Dataset tth, double transmissionFactor) {

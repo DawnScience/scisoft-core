@@ -52,7 +52,7 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		
 		if (axes == null || axes[0] == null) throw new OperationException(this, "Cannot rebin if there is no axis");
 		
-		Dataset axis = DatasetUtils.sliceAndConvertLazyDataset(axes[0]);
+		Dataset axis = DatasetUtils.convertToDataset(axes[0].getSlice());
 		
 		if (binEdges == null) {
 			nBins = model.getNumberOfBins() != null ? model.getNumberOfBins() : axis.getSize(); 

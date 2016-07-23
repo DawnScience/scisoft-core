@@ -66,11 +66,11 @@ public class CoordinateMaskOperation extends
 		if (diffractionMD != null) {
 			switch (theAxis) {
 			case Q:
-				coordinateArray = PixelIntegrationUtils.generateQArray(diffractionMD);
+				coordinateArray = PixelIntegrationUtils.generateQArray(input.getShape(),diffractionMD);
 				break;
 			case ANGLE:
 				// In degrees
-				coordinateArray = PixelIntegrationUtils.generate2ThetaArrayRadians(diffractionMD);
+				coordinateArray = PixelIntegrationUtils.generate2ThetaArrayRadians(input.getShape(),diffractionMD);
 				coordinateArray.imultiply(180/Math.PI);
 				break;
 			case PIXEL:

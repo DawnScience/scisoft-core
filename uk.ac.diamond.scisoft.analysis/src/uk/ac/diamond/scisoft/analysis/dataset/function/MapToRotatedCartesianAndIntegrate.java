@@ -12,14 +12,14 @@ package uk.ac.diamond.scisoft.analysis.dataset.function;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
+import org.eclipse.january.dataset.DTypeUtils;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Maths;
 
 /**
  * Map and integrate a 2D dataset from Cartesian to rotated Cartesian coordinates, sum over each axis
@@ -129,7 +129,7 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 				return null;
 
 			Dataset ds = DatasetUtils.convertToDataset(ids);
-			final int dtype = AbstractDataset.getBestFloatDType(ds.getDtype());
+			final int dtype = DTypeUtils.getBestFloatDType(ds.getDType());
 			Dataset sumx = DatasetFactory.zeros(new int[] { h }, dtype);
 			Dataset sumy = DatasetFactory.zeros(new int[] { w }, dtype);
 			Dataset usumx = DatasetFactory.zeros(new int[] { h }, dtype);
@@ -182,7 +182,7 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 				return null;
 
 			Dataset ds = DatasetUtils.convertToDataset(ids);
-			final int dtype = AbstractDataset.getBestFloatDType(ds.getDtype());
+			final int dtype = DTypeUtils.getBestFloatDType(ds.getDType());
 			Dataset mx = DatasetFactory.zeros(new int[] { h }, dtype);
 			Dataset my = DatasetFactory.zeros(new int[] { w }, dtype);
 

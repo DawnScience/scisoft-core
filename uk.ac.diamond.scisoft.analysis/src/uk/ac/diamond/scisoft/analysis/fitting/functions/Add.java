@@ -14,8 +14,9 @@ import java.io.Serializable;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IOperator;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 
 /**
  * Add several functions (missing functions are treated as zero)
@@ -66,7 +67,7 @@ public class Add extends ANaryOperator implements IOperator, Serializable {
 		if (imax == 1)
 			return;
 
-		DoubleDataset temp = new DoubleDataset(it.getShape());
+		DoubleDataset temp = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 		for (int i = 1; i < imax; i++) {
 			f = getFunction(i);
 			if (f == null)
@@ -115,7 +116,7 @@ public class Add extends ANaryOperator implements IOperator, Serializable {
 		if (imax == 1)
 			return;
 
-		DoubleDataset temp = new DoubleDataset(it.getShape());
+		DoubleDataset temp = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 		for (int i = 1; i < imax; i++) {
 			f = getFunction(i);
 			if (f == null || indexOfParameter(f, param) < 0)

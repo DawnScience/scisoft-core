@@ -26,7 +26,6 @@ import org.eclipse.dawnsci.analysis.api.conversion.IConversionContext.Conversion
 import org.eclipse.dawnsci.analysis.api.conversion.IConversionService;
 import org.eclipse.dawnsci.analysis.api.conversion.IProcessingConversionInfo;
 import org.eclipse.dawnsci.analysis.api.conversion.ProcessingOutputType;
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
@@ -35,6 +34,7 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
 import org.eclipse.dawnsci.hdf.object.operation.HierarchicalFileExecutionVisitor;
+import org.eclipse.january.dataset.IDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

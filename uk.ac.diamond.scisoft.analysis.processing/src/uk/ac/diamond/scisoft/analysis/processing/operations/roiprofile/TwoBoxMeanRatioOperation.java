@@ -10,8 +10,8 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile;
 
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 
 @Atomic
 public class TwoBoxMeanRatioOperation extends AbstractTwoBoxMeanOperation<TwoBoxModel> {

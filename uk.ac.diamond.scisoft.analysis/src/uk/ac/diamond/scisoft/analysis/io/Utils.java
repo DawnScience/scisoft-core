@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -22,14 +23,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
+import org.eclipse.january.dataset.AbstractDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.FloatDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.ShortDataset;
+import org.eclipse.january.dataset.Slice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -233,7 +237,7 @@ public class Utils {
 			pos += 4;
 		}
 
-		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
+		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
 		int[] shape = data.getShape();
 		int rank = shape.length;
 		for (int i = 0; i < rank; i++) {
@@ -274,7 +278,7 @@ public class Utils {
 			pos += 4;
 		}
 
-		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
+		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
 		int[] shape = data.getShape();
 		int rank = shape.length;
 		for (int i = 0; i < rank; i++) {
@@ -331,7 +335,7 @@ public class Utils {
 			}
 		}
 
-		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
+		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
 		int[] shape = data.getShape();
 		int rank = shape.length;
 		for (int i = 0; i < rank; i++) {
@@ -387,7 +391,7 @@ public class Utils {
 				pos += 2;
 			}
 		}
-		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
+		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
 		int[] shape = data.getShape();
 		int rank = shape.length;
 		for (int i = 0; i < rank; i++) {
@@ -428,7 +432,7 @@ public class Utils {
 			pos += 1;
 		}
 
-		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
+		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
 		int[] shape = data.getShape();
 		int rank = shape.length;
 		for (int i = 0; i < rank; i++) {
@@ -500,7 +504,7 @@ public class Utils {
 			pos += 4;
 		}
 
-		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
+		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
 		int[] shape = data.getShape();
 		int rank = shape.length;
 		for (int i = 0; i < rank; i++) {
@@ -622,6 +626,48 @@ public class Utils {
 				data.add(dataset);
 			}
 		}
+		return data;
+	}
+
+	static Dataset createDataset(RandomAccessFile raf, int[] shape, boolean keepBitWidth) throws IOException {
+		AbstractDataset data;
+	
+		// read in all the data at once for speed.
+	
+		byte[] read = new byte[shape[0] * shape[1] * 2];
+		raf.read(read);
+	
+		// and put it into the dataset
+		data = DatasetFactory.zeros(IntegerDataset.class, shape);
+		int[] databuf = ((IntegerDataset) data).getData();
+		int amax = Integer.MIN_VALUE;
+		int amin = Integer.MAX_VALUE;
+		int hash = 0;
+		for (int i = 0, j = 0; i < databuf.length; i++, j += 2) {
+			int value = leInt(read[j], read[j + 1]);
+			hash = (hash * 19 + value);
+			databuf[i] = value;
+			if (value > amax) {
+				amax = value;
+			}
+			if (value < amin) {
+				amin = value;
+			}
+		}
+	
+		if (keepBitWidth||amax < (1 << 15)) {
+				data = (AbstractDataset) DatasetUtils.cast(data, Dataset.INT16);
+		}
+	
+		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
+		int rank = shape.length;
+		for (int i = 0; i < rank; i++) {
+			hash = hash*17 + shape[i];
+		}
+		data.setStoredValue(AbstractDataset.STORE_MAX, amax);
+		data.setStoredValue(AbstractDataset.STORE_MIN, amin);
+		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
+	
 		return data;
 	}
 }

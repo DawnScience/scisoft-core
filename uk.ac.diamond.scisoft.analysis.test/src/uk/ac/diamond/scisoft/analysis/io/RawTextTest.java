@@ -10,8 +10,8 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;

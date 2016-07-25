@@ -9,10 +9,10 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IndexIterator;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,7 +36,7 @@ public class FitterTest {
 		double fwhm = 3.0;
 		double area = 4.0;
 		Gaussian gauss = new Gaussian(pos,fwhm,area);
-		DoubleDataset xAxis = DoubleDataset.createRange(-10.0,10.0,0.1);
+		DoubleDataset xAxis = DatasetFactory.createRange(DoubleDataset.class, -10.0,10.0,0.1);
 		DoubleDataset ds = gauss.calculateValues(xAxis);
 		
 		AFunction result = Fitter.GaussianFit(ds, xAxis);
@@ -62,7 +62,7 @@ public class FitterTest {
 		add.addFunction(gauss);
 		add.addFunction(off);
 		DoubleDataset xAxis = (DoubleDataset) DatasetFactory.createRange(10, 20, 1, Dataset.FLOAT64);
-		DoubleDataset data = (DoubleDataset) DatasetFactory.createFromObject(new double[] {0, 1, 2, 3, 4, 5, 4, 3, 2, 1}, Dataset.FLOAT64);
+		DoubleDataset data = (DoubleDataset) DatasetFactory.createFromObject(Dataset.FLOAT64, new double[] {0, 1, 2, 3, 4, 5, 4, 3, 2, 1});
 //		DoubleDataset ds = gauss.calculateValues(xAxis);
 
 		try {
@@ -82,7 +82,7 @@ public class FitterTest {
 		double fwhm = 3.0;
 		double area = 4.0;
 		Gaussian gauss = new Gaussian(pos,fwhm,area);
-		DoubleDataset xAxis = DoubleDataset.createRange(-10.0,10.0,0.1);
+		DoubleDataset xAxis = DatasetFactory.createRange(DoubleDataset.class, -10.0,10.0,0.1);
 		DoubleDataset ds = gauss.calculateValues(xAxis);
 		
 		NDGaussianFitResult result = Fitter.NDGaussianSimpleFit(ds, xAxis);
@@ -104,11 +104,11 @@ public class FitterTest {
 		double yAxisStep = 0.2;
 		
 		Gaussian gauss1 = new Gaussian(pos1,fwhm1,area1);
-		DoubleDataset xAxis = DoubleDataset.createRange(-10.0,10.0,xAxisStep);
+		DoubleDataset xAxis = DatasetFactory.createRange(DoubleDataset.class, -10.0,10.0,xAxisStep);
 		DoubleDataset ds1 = gauss1.calculateValues(xAxis);
 		
 		Gaussian gauss2 = new Gaussian(pos2,fwhm2,area2);
-		DoubleDataset yAxis = DoubleDataset.createRange(-20.0,20.0,yAxisStep);
+		DoubleDataset yAxis = DatasetFactory.createRange(DoubleDataset.class, -20.0,20.0,yAxisStep);
 		DoubleDataset ds2 = gauss2.calculateValues(yAxis);
 		
 		DoubleDataset ds = (DoubleDataset) DatasetFactory.zeros(new int[] {xAxis.getShape()[0],xAxis.getShape()[0]} , Dataset.FLOAT64);
@@ -134,8 +134,8 @@ public class FitterTest {
 
 	@Test
 	public void testLLSquareFit() {
-		DoubleDataset x = new DoubleDataset(new double[] {102,134,156});
-		DoubleDataset y = new DoubleDataset(new double[] {102.1,134.2,156.3});
+		Dataset x = DatasetFactory.createFromObject(new double[] {102,134,156});
+		Dataset y = DatasetFactory.createFromObject(new double[] {102.1,134.2,156.3});
 
 		Quadratic q = new Quadratic(new double[] {0, 1, 0});
 		try {
@@ -152,8 +152,8 @@ public class FitterTest {
 
 	@Test
 	public void testPolyFit() {
-		DoubleDataset x = new DoubleDataset(new double[] {102,134,156});
-		DoubleDataset y = new DoubleDataset(new double[] {102.1,134.2,156.3});
+		Dataset x = DatasetFactory.createFromObject(new double[] {102,134,156});
+		Dataset y = DatasetFactory.createFromObject(new double[] {102.1,134.2,156.3});
 
 		try {
 			Polynomial fit = Fitter.polyFit(new Dataset[] {x}, y, 1e-6, 2);

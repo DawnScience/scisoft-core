@@ -10,15 +10,16 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.io.SliceObject;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.LazyDataset;
 
 /**
  * This class loads an SRS data file and also images from a Dectris Pilatus detector
@@ -55,7 +56,7 @@ public class ExtendedSRSLoader extends SRSLoader {
 		}
 
 		if (loader != null) {
-			LazyDataset lazyDataset = new LazyDataset(DATA_NAME, loader.getDtype(), loader.getShape(), loader);
+			LazyDataset lazyDataset = new LazyDataset(DATA_NAME, loader.getDType(), loader.getShape(), loader);
 			currentDataHolder.addDataset(lazyDataset.getName(), lazyDataset);
 			datasetNames.add(lazyDataset.getName());
 			dataShapes.put(lazyDataset.getName(), lazyDataset.getShape());
@@ -118,7 +119,7 @@ public class ExtendedSRSLoader extends SRSLoader {
 	}
 
 	@Override
-	public void loadMetadata(IMonitor mon) throws Exception {
+	public void loadMetadata(IMonitor mon) throws IOException {
 		super.loadMetadata(mon);
 
 		// Cannot do this if decorator, this means that the I16 data folder would parse all

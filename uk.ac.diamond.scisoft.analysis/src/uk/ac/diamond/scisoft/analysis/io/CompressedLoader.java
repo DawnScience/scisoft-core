@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.regex.Matcher;
@@ -21,10 +22,10 @@ import java.util.zip.ZipInputStream;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.io.IMetaLoader;
+import org.eclipse.january.metadata.IMetadata;
+import org.eclipse.january.metadata.Metadata;
 
 import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
 
@@ -88,10 +89,14 @@ public class CompressedLoader extends AbstractFileLoader {
 	}
 	
 	@Override
-	public void loadMetadata(IMonitor mon) throws Exception {
-		loader.loadFile(mon);
-    }
-	
+	public void loadMetadata(IMonitor mon) throws IOException {
+		try {
+			loader.loadFile(mon);
+		} catch (ScanFileHolderException e) {
+			throw new IOException(e);
+		}
+	}
+
 	@Override
 	public IMetadata getMetadata() {
 		if (loader instanceof IMetaLoader) return ((IMetaLoader)loader).getMetadata();

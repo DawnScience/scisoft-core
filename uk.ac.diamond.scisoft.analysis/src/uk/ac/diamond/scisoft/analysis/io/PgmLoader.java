@@ -18,17 +18,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.ShortDataset;
+import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.metadata.Metadata;
 
 /**
  * This class should be used to load .pgm datafiles (Portable Grey Map)
@@ -85,18 +86,22 @@ public class PgmLoader extends AbstractFileLoader {
 			if (loadLazily) {
 				data = createLazyDataset(DEF_IMAGE_NAME, maxval < 256 ? Dataset.INT16 : Dataset.INT32, new int[] {height, width}, new LazyLoaderStub() {
 					@Override
-					public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
-						Dataset data = loadDataset(fileName);
-						return data == null ? null : data.getSliceView(slice);
+					public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
+						try {
+							Dataset data = loadDataset(fileName);
+							return data == null ? null : data.getSliceView(slice);
+						} catch (ScanFileHolderException e) {
+							throw new IOException(e);
+						}
 					}
 				});
 			} else {
 				// Now read the data
 				if (maxval < 256) {
-					data = new ShortDataset(height, width);
+					data = DatasetFactory.zeros(ShortDataset.class, height, width);
 					Utils.readByte(fi, (ShortDataset) data, index);
 				} else {
-					data = new IntegerDataset(height, width);
+					data = DatasetFactory.zeros(IntegerDataset.class, height, width);
 					Utils.readBeShort(fi, (IntegerDataset) data, index, false);
 				}
 				data.setName(DEF_IMAGE_NAME);
@@ -146,10 +151,10 @@ public class PgmLoader extends AbstractFileLoader {
 			Dataset data;
 			// Now read the data
 			if (maxval < 256) {
-				data = new ShortDataset(height, width);
+				data = DatasetFactory.zeros(ShortDataset.class, height, width);
 				Utils.readByte(fi, (ShortDataset) data, index);
 			} else {
-				data = new IntegerDataset(height, width);
+				data = DatasetFactory.zeros(IntegerDataset.class, height, width);
 				Utils.readBeShort(fi, (IntegerDataset) data, index, false);
 			}
 			data.setName(DEF_IMAGE_NAME);
@@ -234,7 +239,8 @@ public class PgmLoader extends AbstractFileLoader {
 	}
 
 	private void createMetadata() {
-		metadata = new Metadata(textMetadata);
+		metadata = new Metadata();
+		metadata.initialize(textMetadata);
 		metadata.setFilePath(fileName);
 		metadata.addDataInfo(DATA_NAME, Integer.parseInt(textMetadata.get("Height")), Integer.parseInt(textMetadata.get("Width")));
 	}

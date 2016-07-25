@@ -12,15 +12,16 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.image;
 import java.io.Serializable;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.Centroid;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IDataset;
 
 @Atomic
 public class CentroidOperation extends AbstractOperation<EmptyModel, OperationData> {
@@ -35,9 +36,9 @@ public class CentroidOperation extends AbstractOperation<EmptyModel, OperationDa
 		
 		Centroid c = new Centroid();
 		List<Double> value = c.value(dataset);
-		DoubleDataset x = new DoubleDataset(new double[]{value.get(1).doubleValue()}, new int[]{1});
+		Dataset x = DatasetFactory.createFromObject(new double[]{value.get(1).doubleValue()});
 		x.setName("centroid_x");
-		DoubleDataset y = new DoubleDataset(new double[]{value.get(0).doubleValue()}, new int[]{1});
+		Dataset y = DatasetFactory.createFromObject(new double[]{value.get(0).doubleValue()});
 		y.setName("centroid_y");
 		
 		return new OperationData(dataset, new Serializable[]{x,y});

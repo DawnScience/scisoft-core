@@ -14,13 +14,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
-import org.eclipse.dawnsci.analysis.api.metadata.Reshapeable;
-import org.eclipse.dawnsci.analysis.api.metadata.Sliceable;
-import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.ShortDataset;
+import org.eclipse.january.dataset.BooleanDataset;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.ShortDataset;
+import org.eclipse.january.metadata.MetadataType;
+import org.eclipse.january.metadata.Reshapeable;
+import org.eclipse.january.metadata.Sliceable;
 
 public class SliceableTestMetadata implements MetadataType {
 

@@ -16,16 +16,9 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import gda.data.nexus.extractor.NexusExtractor;
-import gda.data.nexus.extractor.NexusExtractorException;
-import gda.data.nexus.extractor.NexusGroupData;
-import gda.data.nexus.tree.INexusTree;
-import gda.data.nexus.tree.NexusTreeBuilder;
-import gda.data.nexus.tree.NexusTreeNodeSelection;
-
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,18 +26,24 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.io.SliceObject;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.metadata.IMetadata;
+import org.eclipse.january.metadata.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gda.data.nexus.extractor.NexusExtractor;
+import gda.data.nexus.extractor.NexusExtractorException;
+import gda.data.nexus.extractor.NexusGroupData;
+import gda.data.nexus.tree.INexusTree;
+import gda.data.nexus.tree.NexusTreeBuilder;
+import gda.data.nexus.tree.NexusTreeNodeSelection;
 import uk.ac.diamond.scisoft.analysis.dataset.Nexus;
 
 /**
@@ -397,14 +396,18 @@ public class NexusLoader extends AbstractFileLoader {
 	private Map<String, int[]>   allDataSetRanks;
 	
 	@Override
-	public void loadMetadata(final IMonitor mon) throws Exception {
-		allDataSetNames = getDatasetNames(fileName, mon);
+	public void loadMetadata(final IMonitor mon) throws IOException {
+		try {
+			allDataSetNames = getDatasetNames(fileName, mon);
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
 		allDataSetRanks = getDataShapes(fileName, allDataSetNames, mon);
 	}
 	
 	@Override
 	public IMetadata getMetadata() {
-		Metadata md = new Metadata();
+		IMetadata md = new Metadata();
 		for (Entry<String, int[]> e : allDataSetRanks.entrySet()) {
 			md.addDataInfo(e.getKey(), e.getValue());
 		}

@@ -27,12 +27,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.io.SliceObject;
-import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
@@ -41,19 +38,23 @@ import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyDynamicDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5LazyLoader;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.eclipse.dawnsci.hdf5.HDF5Utils.DatasetType;
 import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.DTypeUtils;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.LazyDataset;
+import org.eclipse.january.dataset.LazyDynamicDataset;
+import org.eclipse.january.dataset.ShapeUtils;
+import org.eclipse.january.dataset.StringDataset;
+import org.eclipse.january.metadata.IMetadata;
+import org.eclipse.january.metadata.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -692,7 +693,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		try {
 			for (Dataset a : HDF5Utils.readAttributes(id)) {
 				Attribute h = TreeFactory.createAttribute(a.getName(), a);
-				h.setTypeName(DatasetUtils.getDTypeName(a));
+				h.setTypeName(DTypeUtils.getDTypeName(a));
 				nn.addAttribute(h);
 				if (a.getName().equals(NAPIMOUNT)) {
 					hasNAPIMount = true;
@@ -889,13 +890,13 @@ public class HDF5Loader extends AbstractFileLoader {
 			// set dataset information again as loader now has correct shapes
 			node.setMaxShape(loader.getMaxShape());
 			node.setChunkShape(loader.getChunkShape());
-			node.setDataset(new LazyDataset(name, loader.getDtype(), loader.getShape(), loader));
+			node.setDataset(new LazyDataset(name, loader.getDType(), loader.getShape(), loader));
 			return true;
 		}
 
 		if (!loadLazily) {
 			// check for zero-sized datasets
-			long trueSize = AbstractDataset.calcLongSize(trueShape);
+			long trueSize = ShapeUtils.calcLongSize(trueShape);
 			if (trueSize == 0) {
 				node.setEmpty();
 				return true;
@@ -915,7 +916,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	 */
 	private static StringDataset extractExternalFileNames(final long did, final long tid, final boolean isVLEN, final int[] shape) throws Exception {
 
-		final StringDataset d = new StringDataset(shape);
+		final StringDataset d = DatasetFactory.zeros(StringDataset.class, shape);
 		Object data = d.getBuffer();
 
 		if (isVLEN) {
@@ -928,8 +929,12 @@ public class HDF5Loader extends AbstractFileLoader {
 	}
 
 	@Override
-	public void loadMetadata(IMonitor mon) throws Exception {
-		loadTree(mon);
+	public void loadMetadata(IMonitor mon) throws IOException {
+		try {
+			loadTree(mon);
+		} catch (ScanFileHolderException e) {
+			throw new IOException(e);
+		}
 
 		DataHolder dh = new DataHolder();
 		dh.setFilePath(fileName);
@@ -957,7 +962,8 @@ public class HDF5Loader extends AbstractFileLoader {
 		dh.clear();
 		dh.setTree(tree);
 		if (withMetadata) {
-			Metadata metadata = new Metadata(aMap);
+			IMetadata metadata = new Metadata();
+			metadata.initialize(aMap);
 			if (tree instanceof TreeFile)
 				metadata.setFilePath(((TreeFile) tree).getFilename());
 			for (Entry<String, ILazyDataset> e : lMap.entrySet()) {

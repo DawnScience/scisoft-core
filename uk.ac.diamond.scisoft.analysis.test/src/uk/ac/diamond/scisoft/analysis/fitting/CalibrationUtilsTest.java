@@ -12,8 +12,8 @@ package uk.ac.diamond.scisoft.analysis.fitting;
 import java.util.ArrayList;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IPeak;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -11,21 +11,22 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.twod;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.lang.ProcessBuilder.Redirect;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
-import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
-import org.eclipse.dawnsci.analysis.dataset.metadata.MaskMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.Comparisons;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.metadata.MaskMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionCalibrationReader;
 
@@ -54,7 +55,13 @@ public class ReadDetectorInformationOperation extends AbstractOperation<ReadDete
 		DetectorInformation d = getDetectorInformation(model,ssm.getFilePath(), ssm.getParent());
 		input.setMetadata(d.metadata);
 		if (d.mask != null) {
-			input.setMetadata(new MaskMetadataImpl(d.mask));
+			MaskMetadata mm;
+			try {
+				mm = MetadataFactory.createMetadata(MaskMetadata.class, d.mask);
+			} catch (MetadataException e) {
+				throw new OperationException(this, e);
+			}
+			input.setMetadata(mm);
 		}
 		
 		return new OperationData(input);
@@ -68,18 +75,22 @@ public class ReadDetectorInformationOperation extends AbstractOperation<ReadDete
 				localInfo = info;
 				if (localInfo == null) {
 					DetectorInformation i = new DetectorInformation();
-					if (model.isReadGeometry()) {
-						IDiffractionMetadata md = NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(path, parent);
+					try {
+						if (model.isReadGeometry()) {
+							IDiffractionMetadata md = NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(path, parent);
 //						if (md == null) throw new OperationException(this, "File does not contain metadata");
-						i.metadata = md;
-					}
-					
-					if (model.isReadMask()) {
-						IDataset d = NexusDiffractionCalibrationReader.getDetectorPixelMaskFromNexus(path, parent);
-						if (d != null) {
-							i.mask = Comparisons.equalTo(d, 0);
+							i.metadata = md;
 						}
+						
+						if (model.isReadMask()) {
+							IDataset d = NexusDiffractionCalibrationReader.getDetectorPixelMaskFromNexus(path, parent);
+							if (d != null) {
+								i.mask = Comparisons.equalTo(d, 0);
+							}
 //						else throw new OperationException(this, "File does not contain mask");
+						}
+					} catch (Exception e) {
+						throw new OperationException(this, e);
 					}
 					
 					if (i.mask == null && i.metadata == null) i = null;;

@@ -22,24 +22,25 @@ import java.util.HashMap;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.AbstractDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.ShapeUtils;
+import org.eclipse.january.metadata.Metadata;
 import org.iucr.cbflib.SWIGTYPE_p_p_char;
 import org.iucr.cbflib.cbf;
 import org.iucr.cbflib.cbf_handle_struct;
@@ -123,7 +124,8 @@ public class CBFLoader extends AbstractFileLoader {
 			output.setMetadata(metadata);
 			// We need to read the header completely
 			if (loadMetadata && metadata==null) { // We create something
-				metadata = new Metadata(metadataMap);
+				metadata = new Metadata();
+				metadata.initialize(metadataMap);
 				metadata.setFilePath(fileName);
 			}
 		}
@@ -458,7 +460,8 @@ _diffrn_radiation_wavelength.wt 1.0
 			metadata.addDataInfo(DEF_IMAGE_NAME, getInteger("numPixels_x"), getInteger("numPixels_y"));
 			metadata.setMetadata(metadataMap);
 		} catch (ScanFileHolderException e) {
-			metadata = new Metadata(metadataMap);
+			metadata = new Metadata();
+			metadata.initialize(metadataMap);
 		}
 		metadata.setFilePath(fileName);
 	}
@@ -492,7 +495,7 @@ _diffrn_radiation_wavelength.wt 1.0
 		metadataMap.put("numPixels_x", String.valueOf(imageOrien.shape[1]));
 		metadataMap.put("numPixels_y", String.valueOf(imageOrien.shape[0]));
 
-		long numPixels = AbstractDataset.calcLongSize(imageOrien.shape);
+		long numPixels = ShapeUtils.calcLongSize(imageOrien.shape);
 
 		if (numPixels != elnum.value()) {
 			throw new ScanFileHolderException("Mismatch of CBF binary data size: " + numPixels + " cf " + elnum.value());
@@ -688,7 +691,7 @@ _diffrn_radiation_wavelength.wt 1.0
 		rsize.delete();
 		bid.delete();
 
-		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
+		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
 		int rank = shape.length;
 		for (int i = 0; i < rank; i++) {
 			hash = hash*17 + shape[i];
@@ -794,10 +797,11 @@ _diffrn_radiation_wavelength.wt 1.0
 	}
 
 	@Override
-	public void loadMetadata(IMonitor mon) throws Exception {
+	public void loadMetadata(IMonitor mon) throws IOException {
 		// We need to read the header completely
 		if (loadMetadata && metadata==null) { // We create something
-			metadata = new Metadata(metadataMap);
+			metadata = new Metadata();
+			metadata.initialize(metadataMap);
 			metadata.setFilePath(fileName);
 		}
 	}

@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.analysis.fitting;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;

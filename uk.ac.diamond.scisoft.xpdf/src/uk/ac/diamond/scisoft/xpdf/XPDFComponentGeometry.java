@@ -11,7 +11,7 @@ package uk.ac.diamond.scisoft.xpdf;
 
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * The class for cylindrical components of the experimental target. This class

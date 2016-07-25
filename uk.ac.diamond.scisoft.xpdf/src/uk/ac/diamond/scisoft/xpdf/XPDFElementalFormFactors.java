@@ -9,10 +9,9 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
-//import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IndexIterator;
 
 import com.github.tschoonj.xraylib.Xraylib;
 
@@ -40,7 +39,7 @@ public class XPDFElementalFormFactors {
 //	 */
 //	private static Dataset genericFormFactor(double[] a, double[] b, double c, Dataset x) {
 //		final int nTerms = 5;
-//		Dataset formFactor = DoubleDataset.zeros(x);
+//		Dataset formFactor = DatasetFactory.zeros(x, DoubleDataset.class);
 //		Dataset xsq = Maths.square(x);
 //		for (int i = 0; i < nTerms; i++)
 //			formFactor.iadd(Maths.multiply(a[i], Maths.exp(Maths.multiply(-b[i], xsq))));
@@ -59,7 +58,7 @@ public class XPDFElementalFormFactors {
 	 */
 	public static Dataset sofx(int z, Dataset x) {
 		IndexIterator iter = x.getIterator();
-		DoubleDataset sofx = new DoubleDataset(x);
+		DoubleDataset sofx = x.copy(DoubleDataset.class);
 		while (iter.hasNext())
 			sofx.setAbs(iter.index,
 					(x.getElementDoubleAbs(iter.index) <= 0.0) ?
@@ -78,7 +77,7 @@ public class XPDFElementalFormFactors {
 	 */
 	public static Dataset fofx(int z, Dataset x) {
 		IndexIterator iter = x.getIterator();
-		DoubleDataset fofx = new DoubleDataset(x);
+		DoubleDataset fofx = x.copy(DoubleDataset.class);
 		while (iter.hasNext())
 			fofx.setAbs(iter.index, (x.getElementDoubleAbs(iter.index) <= 0.0) ? 
 					z : Xraylib.FF_Rayl(z, x.getElementDoubleAbs(iter.index)));

@@ -14,15 +14,16 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IOperator;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Comparisons;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -382,7 +383,7 @@ public abstract class AFunction implements IFunction, Serializable {
 
 	private DoubleDataset calculateValues(int[] outShape, IDataset... coords) {
 		CoordinatesIterator it = CoordinatesIterator.createIterator(outShape, coords);
-		DoubleDataset result = new DoubleDataset(it.getShape());
+		DoubleDataset result = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 		fillWithValues(result, it);
 		result.setName(name);
 		return result;
@@ -395,7 +396,7 @@ public abstract class AFunction implements IFunction, Serializable {
 
 	private DoubleDataset calculatePartialDerivativeValues(int[] outShape, IParameter parameter, IDataset... coords) {
 		CoordinatesIterator it = CoordinatesIterator.createIterator(outShape, coords);
-		DoubleDataset result = new DoubleDataset(it.getShape());
+		DoubleDataset result = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 		if (indexOfParameter(parameter) >= 0)
 			internalFillWithPartialDerivativeValues(parameter, result, it);
 		result.setName(name);
@@ -442,10 +443,10 @@ public abstract class AFunction implements IFunction, Serializable {
 	 * @param it
 	 */
 	protected void calcNumericalDerivativeDataset(double abs, double rel, IParameter param, DoubleDataset data, CoordinatesIterator it) {
-		DoubleDataset previous = new DoubleDataset(it.getShape());
+		DoubleDataset previous = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 		double delta = DELTA;
 		fillWithNumericalDerivativeDataset(delta, param, previous, it);
-		DoubleDataset current = new DoubleDataset(it.getShape());
+		DoubleDataset current = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 
 		delta *= DELTA_FACTOR;
 		while (isDeltaLargeEnough(param, delta)) {
@@ -482,7 +483,7 @@ public abstract class AFunction implements IFunction, Serializable {
 		it.reset();
 		param.setValue(v - dv);
 		dirty = true;
-		DoubleDataset temp = new DoubleDataset(it.getShape());
+		DoubleDataset temp = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 		fillWithValues(temp, it);
 		data.isubtract(temp);
 		data.imultiply(0.5/dv);

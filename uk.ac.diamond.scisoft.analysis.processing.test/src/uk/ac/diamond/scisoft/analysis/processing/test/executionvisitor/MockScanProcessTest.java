@@ -16,8 +16,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.dawb.common.services.ServiceManager;
 import org.dawnsci.persistence.PersistenceServiceCreator;
-import org.eclipse.dawnsci.analysis.api.dataset.IDynamicDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
@@ -26,8 +24,11 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.SleepModel;
-import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
+import org.eclipse.january.dataset.IDynamicDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -146,7 +147,7 @@ public class MockScanProcessTest {
 		
 		ILazyDataset lz = dh.getLazyDataset(data);
 		
-		AxesMetadataImpl ax = new AxesMetadataImpl(4);
+		AxesMetadata ax = MetadataFactory.createMetadata(AxesMetadata.class, 4);
 		ax.addAxis(0, dh.getLazyDataset(ax0));
 		ax.addAxis(1, dh.getLazyDataset(ax1));
 		ax.addAxis(2, dh.getLazyDataset(ax2));

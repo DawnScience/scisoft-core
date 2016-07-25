@@ -11,21 +11,22 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.export;
 
 import java.io.File;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.IExportOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.DTypeUtils;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.Slice;
 
 import uk.ac.diamond.scisoft.analysis.io.ASCIIDataWithHeadingSaver;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
@@ -101,10 +102,10 @@ public class ExportAsText2DOperation extends AbstractOperation<ExportAsText1DMod
 		
 		ILazyDataset[] axes = getFirstAxes(input);
 		ILazyDataset lx = null;
-		ILazyDataset ly = null;
+//		ILazyDataset ly = null;
 		
 		if (axes != null) lx = axes[1];
-		if (axes != null) ly = axes[0];
+//		if (axes != null) ly = axes[0];
 		
 		Dataset outds = DatasetUtils.convertToDataset(input.getSlice()).clone();
 		outds.clearMetadata(null);
@@ -113,10 +114,15 @@ public class ExportAsText2DOperation extends AbstractOperation<ExportAsText1DMod
 //		outds.squeeze().setShape(outds.getShape()[0],1);
 		
 		if (lx != null) {
-			IDataset x = lx.getSliceView().getSlice().squeeze();
+			IDataset x;
+			try {
+				x = lx.getSliceView().getSlice().squeeze();
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 			x.setShape(x.getShape()[0],1);
-			int xtype = AbstractDataset.getDType(x);
-			int ytype = AbstractDataset.getDType(outds);
+			int xtype = DTypeUtils.getDType(x);
+			int ytype = DTypeUtils.getDType(outds);
 			if (xtype != ytype) {
 				if (xtype > ytype) {
 					outds = DatasetUtils.cast(outds, xtype);

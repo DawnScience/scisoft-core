@@ -9,15 +9,15 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IOperator;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
-import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Slice;
 
 /**
  * Convolve two functions where the second function is the kernel
@@ -39,7 +39,7 @@ public class Convolve extends ABinaryOperator implements IOperator {
 
 	@Override
 	public double val(double... values) {
-		DoubleDataset v = calculateValues(new CompoundDoubleDataset(values.length, values, 1));
+		DoubleDataset v = calculateValues(DatasetFactory.createFromObject(values.length, Dataset.ARRAYFLOAT64, values, 1));
 		return v.getAbs(0);
 	}
 
@@ -56,7 +56,7 @@ public class Convolve extends ABinaryOperator implements IOperator {
 
 	private static Dataset calcConvolution(DoubleDataset signal, Dataset kernel) {
 		int l = signal.getSize();
-		DoubleDataset padded = new DoubleDataset(2*l - 1);
+		DoubleDataset padded = DatasetFactory.zeros(DoubleDataset.class, 2*l - 1);
 		int hl = l/2;
 		padded.setSlice(signal.getAbs(0), new Slice(0, hl));
 		padded.setSlice(signal, new Slice(hl, hl + l));

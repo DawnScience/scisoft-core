@@ -13,13 +13,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 
 /**
  * Copy of Histogram class as base for nonpixelsplitting integration
@@ -99,12 +100,12 @@ public class NonPixelSplittingIntegration extends AbstractPixelIntegration1D {
 		final double lo = edges[0];
 		final double hi = edges[nbins];
 		final double span = (hi - lo)/nbins;
-		IntegerDataset histo = new IntegerDataset(nbins);
-		DoubleDataset intensity = new DoubleDataset(nbins);
+		IntegerDataset histo = DatasetFactory.zeros(IntegerDataset.class, nbins);
+		DoubleDataset intensity = DatasetFactory.zeros(DoubleDataset.class, nbins);
 		DoubleDataset error = null;
 		double[] eb = null;
 		if (e != null) {
-			error = new DoubleDataset(nbins);
+			error = DatasetFactory.zeros(DoubleDataset.class, nbins);
 			eb = error.getData();
 		}
 		

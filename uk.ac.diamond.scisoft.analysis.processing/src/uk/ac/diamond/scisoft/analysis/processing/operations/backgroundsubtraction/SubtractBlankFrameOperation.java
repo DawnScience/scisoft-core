@@ -2,16 +2,17 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtracti
 
 import java.util.Arrays;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.PositionIterator;
+import org.eclipse.january.dataset.ShapeUtils;
 
 public class SubtractBlankFrameOperation extends AbstractImageSubtrationOperation<SubtractBlankFrameModel> {
 	
@@ -55,9 +56,13 @@ public class SubtractBlankFrameOperation extends AbstractImageSubtrationOperatio
 		if (end <= startFrame) throw new OperationException(this,"End cannot be before or the same as start");
 
 		ILazyDataset bg = lzBg.getSliceView();
-		int[] ss = AbstractDataset.squeezeShape(bg.getShape(), false);
+		int[] ss = ShapeUtils.squeezeShape(bg.getShape(), false);
 		if (ss.length == 2) {
-			image = DatasetUtils.sliceAndConvertLazyDataset(bg).squeeze();
+			try {
+				image = DatasetUtils.sliceAndConvertLazyDataset(bg).squeeze();
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 		} else {
 			image = mean(startFrame, end, bg, dd).squeeze();
 		}
@@ -86,7 +91,12 @@ public class SubtractBlankFrameOperation extends AbstractImageSubtrationOperatio
 				end[i] = omit[i] ? shape[i] : pos[i] + 1;
 			}
 
-			Dataset ds = DatasetUtils.cast(data.getSlice(pos, end, st), Dataset.FLOAT64);
+			Dataset ds;
+			try {
+				ds = DatasetUtils.cast(data.getSlice(pos, end, st), Dataset.FLOAT64);
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 
 			if (average == null) {
 				average = ds;

@@ -11,9 +11,9 @@ package uk.ac.diamond.scisoft.analysis.dataset.function;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.junit.Before;
 import org.junit.Test;
 

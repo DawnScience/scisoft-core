@@ -25,12 +25,12 @@ import java.util.regex.Pattern;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileSaver;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.LazyDataset;
+import org.eclipse.january.dataset.StringDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -276,7 +276,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 				String name = names.get(i);
 				final Dataset ds = DatasetFactory.createFromObject(columns[i]);
 				ds.setName(name);
-				if (ds.getDtype() == Dataset.STRING) {
+				if (ds.getDType() == Dataset.STRING) {
 					StringDataset sds = (StringDataset) ds;
 					if (storeStrings) {
 						holder.addDataset(name, ds);
@@ -286,7 +286,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 						try {
 							loader = new ImageStackLoader(sds, fileDirectory);
 							name += "_image";
-							LazyDataset lazyDataset = new LazyDataset(name, loader.getDtype(), loader.getShape(), loader);
+							LazyDataset lazyDataset = new LazyDataset(name, loader.getDType(), loader.getShape(), loader);
 							holder.addDataset(name, lazyDataset);
 							if (dataShapes!=null) dataShapes.put(name, lazyDataset.getShape());
 						} catch (Exception ex) {

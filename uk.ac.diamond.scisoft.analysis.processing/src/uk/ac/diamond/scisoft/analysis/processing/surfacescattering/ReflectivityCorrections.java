@@ -10,7 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.surfacescattering;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.january.dataset.IDataset;
 
 public class ReflectivityCorrections {
 

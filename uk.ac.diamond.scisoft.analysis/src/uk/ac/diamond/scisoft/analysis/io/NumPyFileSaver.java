@@ -18,12 +18,12 @@ import java.nio.channels.FileChannel;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileSaver;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.io.NumPyFile.DataTypeInfo;
 
@@ -87,7 +87,7 @@ public class NumPyFileSaver implements IFileSaver {
 				throw new ScanFileHolderException("Dataset null at index " + i + " unsupported");
 			}
 			Dataset sdata = DatasetUtils.convertToDataset(dataset);
-			int dtype = sdata.getDtype();
+			int dtype = sdata.getDType();
 			DataTypeInfo dataTypeInfo;
 			dataTypeInfo = unsigned ? NumPyFile.unsignedNumPyTypeMap.get(dtype) : NumPyFile.numPyTypeMap.get(dtype);
 			if (dataTypeInfo == null) { // ignore unsigned flag if not found

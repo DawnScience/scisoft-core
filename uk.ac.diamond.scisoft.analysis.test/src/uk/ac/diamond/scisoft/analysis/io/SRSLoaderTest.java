@@ -18,14 +18,15 @@ import static org.junit.Assert.fail;
 import java.util.Collection;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.DTypeUtils;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.metadata.IMetadata;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -70,7 +71,7 @@ public class SRSLoaderTest {
 
 			// now the file is loaded, check to make sure that it holds the right data
 			assertEquals("There is not the correct number of axis in the file", 7, dh.size());
-			int dt = dh.getDataset(6).getDtype();
+			int dt = dh.getDataset(6).getDType();
 			if (dt == Dataset.FLOAT32)
 				assertEquals("The file does not contain NANs", Float.NaN, dh.getDataset(6).getDouble(1), 10.);
 			if (dt == Dataset.FLOAT64)
@@ -122,7 +123,7 @@ public class SRSLoaderTest {
 		IDataHolder dh = LoaderFactory.getData("testfiles/gda/analysis/io/SRSLoaderTest/96356.dat", null);
         if (dh==null || dh.getNames().length<1) throw new Exception();
 		assertEquals("There is not the correct number of axis in the file", 7, dh.size());
-		int dt = AbstractDataset.getDType(dh.getDataset(6));
+		int dt = DTypeUtils.getDType(dh.getDataset(6));
 		if (dt == Dataset.FLOAT32)
 			assertEquals("The file does not contain NANs", Float.NaN, dh.getDataset(6).getDouble(1), 10.);
 		if (dt == Dataset.FLOAT64)
@@ -165,7 +166,7 @@ public class SRSLoaderTest {
 	}
 	
 	@Test
-	public void testStoringStringFalseValidImages() throws ScanFileHolderException {
+	public void testStoringStringFalseValidImages() throws DatasetException, ScanFileHolderException {
 		DataHolder dh = testStoringStringValidImages(false);
 		{
 			ILazyDataset dataset = dh.getLazyDataset("filename");

@@ -9,8 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.optimize;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
 
 import Jama.Matrix;
 

@@ -10,7 +10,6 @@ package uk.ac.diamond.scisoft.analysis.processing.test;
 
 import java.util.Collection;
 
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
@@ -18,7 +17,8 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.ValueModel;
-import org.eclipse.dawnsci.analysis.dataset.impl.Random;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Random;
 import org.junit.Ignore;
 import org.junit.Test;
 

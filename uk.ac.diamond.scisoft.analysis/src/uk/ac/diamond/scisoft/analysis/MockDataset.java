@@ -13,14 +13,14 @@ import java.io.Serializable;
 import java.text.Format;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.Slice;
-import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
-import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.metadata.IMetadata;
+import org.eclipse.january.metadata.MetadataType;
 
 public class MockDataset implements IDataset {
 	@Override
@@ -70,7 +70,7 @@ public class MockDataset implements IDataset {
 
 	@Override
 	public IDataset getSlice(IMonitor monitor, int[] start, int[] stop, int[] step)
-			throws ScanFileHolderException {
+			throws DatasetException {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 
@@ -85,12 +85,12 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public IDataset getSlice(IMonitor monitor, Slice... slice) throws ScanFileHolderException {
+	public IDataset getSlice(IMonitor monitor, Slice... slice) throws DatasetException {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 
 	@Override
-	public IDataset getSlice(IMonitor monitor, SliceND slice) throws ScanFileHolderException {
+	public IDataset getSlice(IMonitor monitor, SliceND slice) throws DatasetException {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 
@@ -115,7 +115,7 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public Class<?> elementClass() {
+	public Class<?> getElementClass() {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 
@@ -125,7 +125,7 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public int getItemsize() {
+	public int getItemBytes() {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 
@@ -138,7 +138,6 @@ public class MockDataset implements IDataset {
 	@Override
 	public void setShape(int... shape) {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
-		
 	}
 
 	@Override
@@ -228,7 +227,7 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public <T extends MetadataType> List<T> getMetadata(Class<T> clazz) throws Exception {
+	public <T extends MetadataType> List<T> getMetadata(Class<T> clazz) throws MetadataException {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 	
@@ -253,12 +252,27 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public ILazyDataset getError() {
+	public boolean hasErrors() {
+		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
+	}
+
+	@Override
+	public IDataset getError() {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 
 	@Override
 	public void setError(Serializable errors) {
+		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
+	}
+
+	@Override
+	public double getError(int... pos) {
+		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
+	}
+
+	@Override
+	public double[] getErrorArray(int... pos) {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 

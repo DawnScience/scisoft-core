@@ -21,10 +21,11 @@ import org.ddogleg.solver.PolynomialOps;
 import org.ddogleg.solver.PolynomialRoots;
 import org.ddogleg.solver.RootFinderType;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.Maths;
 import org.ejml.data.Complex64F;
 
 /**
@@ -205,7 +206,7 @@ public class Polynomial extends AFunction {
 	 */
 	public DoubleDataset makeMatrix(Dataset coords) {
 		final int rows = coords.getSize();
-		DoubleDataset matrix = new DoubleDataset(rows, nparams);
+		DoubleDataset matrix = DatasetFactory.zeros(DoubleDataset.class, rows, nparams);
 
 		for (int i = 0; i < rows; i++) {
 			final double x = coords.getDouble(i);

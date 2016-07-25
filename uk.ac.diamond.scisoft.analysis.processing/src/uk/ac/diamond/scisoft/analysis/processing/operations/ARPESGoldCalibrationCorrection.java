@@ -8,18 +8,19 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.Slice;
-import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.metadata.AxesMetadata;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 
@@ -70,7 +71,7 @@ public class ARPESGoldCalibrationCorrection extends AbstractOperation<ARPESGoldC
 		
 		// TODO Should be extracted to a method in interpolation utils
 		int[] shape = input.getShape();
-		DoubleDataset result = new DoubleDataset(shape);
+		DoubleDataset result = DatasetFactory.zeros(DoubleDataset.class, shape);
 		for(int y = 0; y < shape[0]; y++) {
 			int min = Math.max(differenceInts.getInt(0,y), 0);
 			int max = Math.min(shape[1]+differenceInts.getInt(0,y), shape[1]);

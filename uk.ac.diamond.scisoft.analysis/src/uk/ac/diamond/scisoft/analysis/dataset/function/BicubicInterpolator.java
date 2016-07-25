@@ -12,11 +12,12 @@ package uk.ac.diamond.scisoft.analysis.dataset.function;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
 
 /**
  * Function acts as a 2D interpolator using cubic interpolation 
@@ -126,7 +127,7 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 				throw new IllegalArgumentException("Shape must be 2D");
 			}
 			// first create the dataset which we will put the data into
-			DoubleDataset dds = new DoubleDataset(shape);		
+			DoubleDataset dds = DatasetFactory.zeros(DoubleDataset.class, shape);
 
 			// calculate the new step size
 			double dx = (dShape[0] - 1.0) / (shape[0] - 1.0);

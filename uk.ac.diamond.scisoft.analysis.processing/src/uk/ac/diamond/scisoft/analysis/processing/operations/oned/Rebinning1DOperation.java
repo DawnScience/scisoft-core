@@ -12,21 +12,24 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
-import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 
 public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, OperationData> {
 
@@ -52,7 +55,12 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		
 		if (axes == null || axes[0] == null) throw new OperationException(this, "Cannot rebin if there is no axis");
 		
-		Dataset axis = DatasetUtils.convertToDataset(axes[0].getSlice());
+		Dataset axis;
+		try {
+		    axis = DatasetUtils.convertToDataset(axes[0].getSlice());
+		} catch (DatasetException e) {
+			throw new OperationException(this, e);
+		}
 		
 		if (binEdges == null) {
 			nBins = model.getNumberOfBins() != null ? model.getNumberOfBins() : axis.getSize(); 
@@ -61,7 +69,12 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 			
 		double[] edges = new double[]{binEdges.getElementDoubleAbs(0),binEdges.getElementDoubleAbs(nBins)};
 		IDataset rebinned = doRebinning(getMinMaxAxisArray(axis), DatasetUtils.convertToDataset(input), nBins, edges);
-		AxesMetadataImpl axm = new AxesMetadataImpl(1);
+		AxesMetadata axm;
+		try {
+			axm = MetadataFactory.createMetadata(AxesMetadata.class, 1);
+		} catch (MetadataException e) {
+			throw new OperationException(this, e);
+		}
 		Dataset ax = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
 		ax.idivide(2);
 		ax.setName(axis.getName());
@@ -74,8 +87,8 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 	
 	private Dataset[] getMinMaxAxisArray(Dataset axis) {
 		
-		DoubleDataset minD = new DoubleDataset(axis.getShape());
-		DoubleDataset maxD = new DoubleDataset(axis.getShape());
+		DoubleDataset minD = DatasetFactory.zeros(DoubleDataset.class, axis.getShape());
+		DoubleDataset maxD = DatasetFactory.zeros(DoubleDataset.class, axis.getShape());
 		boolean reversed = false;
 		
 		//TODO handle high to low order
@@ -140,8 +153,8 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		final double lo = edges[0];
 		final double hi = edges[1];
 		final double span = (hi - lo)/nbins;
-		DoubleDataset histo = new DoubleDataset(nbins);
-		DoubleDataset intensity = new DoubleDataset(nbins);
+		DoubleDataset histo = DatasetFactory.zeros(DoubleDataset.class, nbins);
+		DoubleDataset intensity = DatasetFactory.zeros(DoubleDataset.class, nbins);
 		final double[] h = histo.getData();
 		final double[] in = intensity.getData();
 		

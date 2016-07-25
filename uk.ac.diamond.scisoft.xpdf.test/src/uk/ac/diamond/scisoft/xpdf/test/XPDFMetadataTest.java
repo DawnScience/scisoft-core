@@ -5,11 +5,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.Maths;
 
+import junit.framework.TestCase;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
@@ -20,7 +23,6 @@ import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
 import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
-import junit.framework.TestCase;
 
 @SuppressWarnings("deprecation")
 public class XPDFMetadataTest extends TestCase {
@@ -62,7 +64,7 @@ public class XPDFMetadataTest extends TestCase {
 	}
 
 	
-	public void testFluorescence() {
+	public void testFluorescence() throws DatasetException {
 		// Test the fluorescence of the NIST ceria standards, obtained 2015-10
 		XPDFMetadata meta = buildNistCeria();
 		
@@ -74,10 +76,10 @@ public class XPDFMetadataTest extends TestCase {
 		}
 		Dataset delta1D = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_1"));
 		Dataset fluorExp = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_2"));
-		Dataset delta = new DoubleDataset(delta1D.getSize(), 1);
+		Dataset delta = DatasetFactory.zeros(DoubleDataset.class, delta1D.getSize(), 1);
 		for (int i = 0; i<delta1D.getSize(); i++)
 			delta.set(delta1D.getDouble(i), i, 0);
-		Dataset gamma = DoubleDataset.zeros(delta);
+		Dataset gamma = DatasetFactory.zeros(delta);
 
 		// convert to radians, and rotate the detector
 		delta = Maths.toRadians(delta);

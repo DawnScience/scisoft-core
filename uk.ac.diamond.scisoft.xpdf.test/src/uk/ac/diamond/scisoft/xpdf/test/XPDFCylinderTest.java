@@ -13,12 +13,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.Maths;
 
+import junit.framework.TestCase;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
@@ -26,7 +28,6 @@ import uk.ac.diamond.scisoft.xpdf.XPDFComponentForm;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentGeometry;
 import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
-import junit.framework.TestCase;
 
 public class XPDFCylinderTest extends TestCase {
 
@@ -39,10 +40,10 @@ public class XPDFCylinderTest extends TestCase {
 		cap.setStreamality(true, true);
 		
 		final int xSize = 64, ySize = 64;
-		Dataset pathLengthExp = new DoubleDataset(xSize, ySize); 
-		Dataset pathLength = new DoubleDataset(pathLengthExp);
-		Dataset r = new DoubleDataset(pathLengthExp);
-		Dataset xi = new DoubleDataset(pathLengthExp);
+		Dataset pathLengthExp = DatasetFactory.zeros(DoubleDataset.class, xSize, ySize); 
+		Dataset pathLength = DatasetFactory.zeros(pathLengthExp);
+		Dataset r = DatasetFactory.zeros(pathLengthExp);
+		Dataset xi = DatasetFactory.zeros(pathLengthExp);
 		
 		// Read the data from file
 		String fileDirectory = testDataDir;
@@ -68,7 +69,7 @@ public class XPDFCylinderTest extends TestCase {
 		}
 		Dataset x = Maths.multiply(r, Maths.sin(xi));
 		Dataset z = Maths.multiply(r, Maths.cos(xi));
-		Dataset y = DoubleDataset.zeros(x);
+		Dataset y = DatasetFactory.zeros(x);
 		pathLength = cap.getUpstreamPathLength(x, y, z);
 		
 		double rmsError = Math.sqrt((Double) Maths.square(Maths.subtract(pathLength, pathLengthExp)).mean());
@@ -83,10 +84,10 @@ public class XPDFCylinderTest extends TestCase {
 		cap.setStreamality(true, true);
 		
 		final int xSize = 64, ySize = 64;
-		Dataset pathLengthExp = new DoubleDataset(xSize, ySize); 
-		Dataset pathLength = new DoubleDataset(pathLengthExp);
-		Dataset r = new DoubleDataset(xSize, ySize);
-		Dataset xi = new DoubleDataset(r);
+		Dataset pathLengthExp = DatasetFactory.zeros(DoubleDataset.class, xSize, ySize); 
+		Dataset pathLength = DatasetFactory.zeros(pathLengthExp);
+		Dataset r = DatasetFactory.zeros(DoubleDataset.class, xSize, ySize);
+		Dataset xi = DatasetFactory.zeros(r);
 		
 		String[] angles = {"0.0", "15.0", "28.5", "29.5", "47.0"};
 		int nAngles = angles.length;
@@ -118,7 +119,7 @@ public class XPDFCylinderTest extends TestCase {
 
 			Dataset x = Maths.multiply(r, Maths.sin(xi));
 			Dataset z = Maths.multiply(r, Maths.cos(xi));
-			Dataset y = DoubleDataset.zeros(x);
+			Dataset y = DatasetFactory.zeros(x);
 			pathLength= cap.getDownstreamPathLength(x, y, z, 0.0, Math.toRadians(Double.parseDouble(angle)));
 
 			// TODO: remove temporary write command
@@ -138,7 +139,7 @@ public class XPDFCylinderTest extends TestCase {
 		}		
 	}
 	
-	public void testAbsorptionCorrections() {
+	public void testAbsorptionCorrections() throws DatasetException {
 
 //		fail("Temporary fail"); //TODO: remove
 		double rmsError = absorptionCorrectionCommon(true, true);
@@ -146,7 +147,7 @@ public class XPDFCylinderTest extends TestCase {
 		assertTrue("Error in sample-sample absorption correction too large: " + rmsError, rmsError < rmsErrorTarget);
 	}
 
-	public void testAbsorptionCorrectionsSC() {
+	public void testAbsorptionCorrectionsSC() throws DatasetException {
 
 //		fail("Temporary fail"); //TODO: remove
 		double rmsError = absorptionCorrectionCommon(true, false);
@@ -154,7 +155,7 @@ public class XPDFCylinderTest extends TestCase {
 		assertTrue("Error in sample-capillary absorption correction too large: " + rmsError, rmsError < rmsErrorTarget);		
 	}
 
-	public void testAbsorptionCorrectionsCS() {
+	public void testAbsorptionCorrectionsCS() throws DatasetException {
 
 //		fail("Temporary fail"); //TODO: remove
 		double rmsError = absorptionCorrectionCommon(false, true);
@@ -162,7 +163,7 @@ public class XPDFCylinderTest extends TestCase {
 		assertTrue("Error in capillary-sample absorption correction too large: " + rmsError, rmsError < rmsErrorTarget);
 	}
 	
-	public void testAbsorptionCorrectionsCC() {
+	public void testAbsorptionCorrectionsCC() throws DatasetException {
 
 //		fail("Temporary fail"); //TODO: remove
 		double rmsError = absorptionCorrectionCommon(false, false);
@@ -170,7 +171,7 @@ public class XPDFCylinderTest extends TestCase {
 		assertTrue("Error in capillary-capillary absorption correction too large: " + rmsError, rmsError < rmsErrorTarget);
 	}
 	
-	public double absorptionCorrectionCommon(boolean isSampleScatterer, boolean isSampleAttenuator) {
+	public double absorptionCorrectionCommon(boolean isSampleScatterer, boolean isSampleAttenuator) throws DatasetException {
 		// Make the two components as ComponentGeometries
 		XPDFComponentGeometry sample = new XPDFComponentCylinder();
 		XPDFComponentGeometry capillary = new XPDFComponentCylinder();
@@ -208,10 +209,10 @@ public class XPDFCylinderTest extends TestCase {
 			fail("Error reading file: " + filename);
 		}
 		Dataset delta1D = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_1"));
-		Dataset delta = new DoubleDataset(delta1D.getSize(), 1);
+		Dataset delta = DatasetFactory.zeros(DoubleDataset.class, delta1D.getSize(), 1);
 		for (int i = 0; i<delta1D.getSize(); i++)
 			delta.set(delta1D.getDouble(i), i, 0);
-		Dataset gamma = DoubleDataset.zeros(delta);
+		Dataset gamma = DatasetFactory.zeros(delta);
 		Dataset expected = 	DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_2"));
 		expected.setShape(expected.getSize(), 1);
 		
@@ -230,7 +231,7 @@ public class XPDFCylinderTest extends TestCase {
 	//
 	///////////////////////////////////////////////////////////////////////////
 	
-	public void testFluorescence() {
+	public void testFluorescence() throws DatasetException {
 		
 		XPDFSubstance ceria = new XPDFSubstance("ceria", "CeO2", 7.65, 0.6);
 		XPDFSubstance bto = new XPDFSubstance("BTO", "BaTiO3", 6.05, 0.6);
@@ -301,10 +302,10 @@ public class XPDFCylinderTest extends TestCase {
 				fail("Error reading file: " + fullFileName);
 			}
 			Dataset delta1D = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_1"));
-			Dataset delta = new DoubleDataset(delta1D.getSize(), 1);
+			Dataset delta = DatasetFactory.zeros(DoubleDataset.class, delta1D.getSize(), 1);
 			for (int i = 0; i<delta1D.getSize(); i++)
 				delta.set(Math.toRadians(delta1D.getDouble(i)), i, 0);
-			Dataset gamma = DoubleDataset.zeros(delta);
+			Dataset gamma = DatasetFactory.zeros(delta);
 
 			// convert to radians, and rotate the detector
 			double rotationAngle = Math.toRadians(120.0);
@@ -331,7 +332,7 @@ public class XPDFCylinderTest extends TestCase {
 		
 	}
 	
-	public void testCeriaAbsorption() {
+	public void testCeriaAbsorption() throws DatasetException {
 
 		XPDFSubstance ceria = new XPDFSubstance("ceria", "CeO2", 7.65, 0.6);
 
@@ -380,10 +381,10 @@ public class XPDFCylinderTest extends TestCase {
 				}
 
 				Dataset delta1D = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_1"));
-				Dataset delta = new DoubleDataset(delta1D.getSize(), 1);
+				Dataset delta = DatasetFactory.zeros(DoubleDataset.class, delta1D.getSize(), 1);
 				for (int i = 0; i<delta1D.getSize(); i++)
 					delta.set(delta1D.getDouble(i), i, 0);
-				Dataset gamma = DoubleDataset.zeros(delta);
+				Dataset gamma = DatasetFactory.zeros(delta);
 
 				Dataset expected = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("Column_2"));
 				

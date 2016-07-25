@@ -18,11 +18,11 @@ import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.metadata.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +67,7 @@ public class UViewDatLoader extends AbstractFileLoader {
 			int height = (int) headers.get(BinaryKey.HEIGHT.toString());
 			IntegerDataset imagedata = (IntegerDataset) DatasetFactory.zeros(
 					new int[] { width, height },
-					AbstractDataset.INT32);
+					Dataset.INT32);
 
 			Utils.readLeShort(in, imagedata, pos, false);
 			result.addDataset(DEF_IMAGE_NAME, imagedata);
@@ -120,7 +120,8 @@ public class UViewDatLoader extends AbstractFileLoader {
 
 	private int readMetadata(BufferedInputStream bi) throws IOException {
 		int pos = readHeader(bi);
-		metadata = new Metadata(headers);
+		metadata = new Metadata();
+		metadata.initialize(headers);
 		return pos;
 	}
 

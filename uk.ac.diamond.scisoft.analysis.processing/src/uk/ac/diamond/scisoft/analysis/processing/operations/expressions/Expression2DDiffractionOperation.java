@@ -1,9 +1,9 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.expressions;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionEngine;
-import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
 

@@ -11,9 +11,10 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IOperator;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 
 /**
  * Divide two functions (missing functions are treated as unity)
@@ -55,7 +56,7 @@ public class Divide extends ABinaryOperator implements IOperator {
 
 		if (fb != null) {
 			if (fb instanceof AFunction) {
-				DoubleDataset temp = new DoubleDataset(it.getShape());
+				DoubleDataset temp = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 				((AFunction) fb).fillWithValues(temp, it);
 				data.idivide(temp);
 			} else {
@@ -107,7 +108,7 @@ public class Divide extends ABinaryOperator implements IOperator {
 			b.imultiply(b);
 			Dataset a;
 			if (fa instanceof AFunction) {
-				a = new DoubleDataset(it.getShape());
+				a = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 				((AFunction) fa).fillWithValues((DoubleDataset) a, it);
 			} else {
 				a = DatasetUtils.convertToDataset(fa.calculateValues(it.getValues()));

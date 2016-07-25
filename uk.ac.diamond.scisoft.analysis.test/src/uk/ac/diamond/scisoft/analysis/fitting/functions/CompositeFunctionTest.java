@@ -9,10 +9,10 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Random;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.Random;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -40,7 +40,7 @@ public class CompositeFunctionTest {
 		Assert.assertEquals(x, cf.val(-1), ABS_TOL);
 		Assert.assertEquals(x, cf.calculateValues(DatasetFactory.createRange(-2., 2., 1, Dataset.INT16)).getDouble(1), ABS_TOL);
 
-		DoubleDataset xd = new DoubleDataset(new double[] {-1, 0, 2});
+		Dataset xd = DatasetFactory.createFromObject(new double[] {-1, 0, 2});
 		DoubleDataset dx;
 
 		dx = cf.calculateValues(xd);
@@ -65,10 +65,10 @@ public class CompositeFunctionTest {
 		dx = cf.calculatePartialDerivativeValues(cf.getParameter(5), xd);
 		Assert.assertArrayEquals(new double[] {1, 1, 1}, dx.getData(), ABS_TOL);
 
-		DoubleDataset[] coords = new DoubleDataset[] {DoubleDataset.createRange(15, 30, 0.25)};
+		DoubleDataset[] coords = new DoubleDataset[] {DatasetFactory.createRange(DoubleDataset.class, 15, 30, 0.25)};
 		DoubleDataset weight = null;
 		CoordinatesIterator it = CoordinatesIterator.createIterator(null, coords);
-		DoubleDataset current = new DoubleDataset(it.getShape());
+		DoubleDataset current = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 		DoubleDataset data = Random.randn(it.getShape());
 		cf.fillWithValues(current, it);
 		double rd = data.residual(current, weight, false);

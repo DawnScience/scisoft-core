@@ -192,7 +192,7 @@ class passThroughHelper(object):
         return self.canflatten(obj)
 
 class ndArrayHelper(flatteningHelper):
-    TYPE_NAME = "org.eclipse.dawnsci.analysis.dataset.impl.Dataset"
+    TYPE_NAME = "org.eclipse.january.dataset.Dataset"
     FILENAME = "filename"
     DELETEFILEAFTERLOAD = "deletefile"
     INDEX = "index"

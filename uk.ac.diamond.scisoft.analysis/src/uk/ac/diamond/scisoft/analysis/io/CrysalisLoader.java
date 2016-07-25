@@ -20,17 +20,18 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileSaver;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.metadata.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,14 +129,17 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver {
 			if (loadLazily) {
 				data = createLazyDataset(DEF_IMAGE_NAME, Dataset.INT32, shape, new LazyLoaderStub() {
 					@Override
-					public IDataset getDataset(IMonitor mon, SliceND slice)
-							throws Exception {
-						Dataset data = loadDataset(fileName, nheader, slice.getSourceShape());
-						return data.getSliceView(slice);
+					public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
+						try {
+							Dataset data = loadDataset(fileName, nheader, slice.getSourceShape());
+							return data.getSliceView(slice);
+						} catch (ScanFileHolderException e) {
+							throw new IOException(e);
+						}
 					}
 				});
 			} else {
-				data = new IntegerDataset(shape);
+				data = DatasetFactory.zeros(IntegerDataset.class, shape);
 				Utils.readLeInt(fi, (IntegerDataset) data, 0);
 			}
 			data.setName(DEF_IMAGE_NAME);
@@ -191,7 +195,7 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver {
 
 			fi.skip(header);
 
-			data = new IntegerDataset(shape);
+			data = DatasetFactory.zeros(IntegerDataset.class, shape);
 			Utils.readLeInt(fi, (IntegerDataset) data, 0);
 			data.setName(DEF_IMAGE_NAME);
 			holder = new DataHolder();
@@ -216,7 +220,8 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver {
 	}
 
 	private void createMetadata(ILazyDataset data) {
-		metadata = new Metadata(textMetadata);
+		metadata = new Metadata();
+		metadata.initialize(textMetadata);
 		metadata.addDataInfo(DEF_IMAGE_NAME, data.getShape());
 		metadata.setFilePath(fileName);
 	}

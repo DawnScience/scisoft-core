@@ -1,13 +1,13 @@
 package uk.ac.diamond.scisoft.xpdf.test;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.Maths;
 
 import com.github.tschoonj.xraylib.Xraylib;
 
-import uk.ac.diamond.scisoft.xpdf.XPDFElementalFormFactors;
 import junit.framework.TestCase;
+import uk.ac.diamond.scisoft.xpdf.XPDFElementalFormFactors;
 
 public class XPDFFormFactorTest extends TestCase {
 
@@ -63,25 +63,25 @@ public class XPDFFormFactorTest extends TestCase {
 		       -32.74341646, -32.85979471, -32.864574  , -32.864574  , -32.864574};
 		
 		int z = 8;
-		Dataset O = XPDFElementalFormFactors.fofx(z, DoubleDataset.array(xValues()));
+		Dataset O = XPDFElementalFormFactors.fofx(z, DatasetFactory.createFromObject(xValues()));
 		difference = Maths.subtract(O, Oexp);
 		accuracy = Math.sqrt((double) Maths.square(difference).max());
 		assertTrue("Error in oxygen form factor too high", accuracy < accuracyTarget*z);
 
 		z = 14;
-		Dataset Si = XPDFElementalFormFactors.fofx(z, DoubleDataset.array(xValues()));
+		Dataset Si = XPDFElementalFormFactors.fofx(z, DatasetFactory.createFromObject(xValues()));
 		difference = Maths.subtract(Si, Siexp);
 		accuracy = Math.sqrt((double) Maths.square(difference).max());
 		assertTrue("Error in silicon form factor too high", accuracy < accuracyTarget*z);
 		
 		z = 58;
-		Dataset Ce = XPDFElementalFormFactors.fofx(z, DoubleDataset.array(xValues()));
+		Dataset Ce = XPDFElementalFormFactors.fofx(z, DatasetFactory.createFromObject(xValues()));
 		difference = Maths.subtract(Ce, Ceexp);
 		accuracy = Math.sqrt((double) Maths.square(difference).max());
 //		assertTrue("Error in cerium form factor too high", accuracy < accuracyTarget*z);  // Form factors should not be negative
 		
 		z = 74;
-		Dataset W = XPDFElementalFormFactors.fofx(z, DoubleDataset.array(xValues()));
+		Dataset W = XPDFElementalFormFactors.fofx(z, DatasetFactory.createFromObject(xValues()));
 		difference = Maths.subtract(W, Wexp);
 		accuracy = Math.sqrt((double) Maths.square(difference).max());
 //		assertTrue("Error in tungsten form factor too high", accuracy < accuracyTarget*z); // Form factors should not be negative
@@ -158,25 +158,25 @@ public class XPDFFormFactorTest extends TestCase {
 		         7.40000000e+01,   7.40000000e+01,   7.40000000e+01};
 		
 		int z = 8;
-		Dataset O = XPDFElementalFormFactors.sofx(z, DoubleDataset.array(xValues()));
+		Dataset O = XPDFElementalFormFactors.sofx(z, DatasetFactory.createFromObject(xValues()));
 		difference = Maths.subtract(O, Oexp);
 		accuracy = Math.sqrt((double) Maths.square(difference).max());
 		assertTrue("Error in oxygen form factor too high", accuracy < accuracyTarget*z);
 		
 		z = 14;
-		Dataset Si = XPDFElementalFormFactors.sofx(14, DoubleDataset.array(xValues()));
+		Dataset Si = XPDFElementalFormFactors.sofx(14, DatasetFactory.createFromObject(xValues()));
 		difference = Maths.subtract(Si, Siexp);
 		accuracy = Math.sqrt((double) Maths.square(difference).max());
 		assertTrue("Error in silicon form factor too high", accuracy < accuracyTarget*z);
 		
 		z = 58;
-		Dataset Ce = XPDFElementalFormFactors.sofx(58, DoubleDataset.array(xValues()));
+		Dataset Ce = XPDFElementalFormFactors.sofx(58, DatasetFactory.createFromObject(xValues()));
 		difference = Maths.subtract(Ce, Ceexp);
 		accuracy = Math.sqrt((double) Maths.square(difference).max());
 		assertTrue("Error in cerium form factor too high", accuracy < accuracyTarget*z);
 		
 		z = 74;
-		Dataset W = XPDFElementalFormFactors.sofx(74, DoubleDataset.array(xValues()));
+		Dataset W = XPDFElementalFormFactors.sofx(74, DatasetFactory.createFromObject(xValues()));
 		difference = Maths.subtract(W, Wexp);
 		accuracy = Math.sqrt((double) Maths.square(difference).max());
 		assertTrue("Error in tungsten form factor too high", accuracy < accuracyTarget*74);
@@ -194,8 +194,8 @@ public class XPDFFormFactorTest extends TestCase {
 	public void testXraylibValues() {
 		
 		double[] xes = xValues();
-		Dataset Of = XPDFElementalFormFactors.fofx(8, DoubleDataset.array(xes));
-		Dataset Os = XPDFElementalFormFactors.sofx(8, DoubleDataset.array(xes));
+		Dataset Of = XPDFElementalFormFactors.fofx(8, DatasetFactory.createFromObject(xes));
+		Dataset Os = XPDFElementalFormFactors.sofx(8, DatasetFactory.createFromObject(xes));
 		double[] Oflib = new double[xes.length];
 		double[] Oslib = new double[xes.length];
 		for (int i = 1; i < xes.length; i++) {

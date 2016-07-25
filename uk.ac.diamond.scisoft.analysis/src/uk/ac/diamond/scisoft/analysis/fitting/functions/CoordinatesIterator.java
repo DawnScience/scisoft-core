@@ -12,8 +12,8 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IndexIterator;
 
 /**
  * <p>Class to provide iteration through a set of coordinates

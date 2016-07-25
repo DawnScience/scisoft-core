@@ -1,19 +1,20 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.expressions;
 
-import org.dawb.common.services.ServiceManager;
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionEngine;
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionService;
-import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 
 public class Expression1DOperation<T extends Expression1DModel> extends AbstractOperation<Expression1DModel ,OperationData> {
 
@@ -45,7 +46,12 @@ public class Expression1DOperation<T extends Expression1DModel> extends Abstract
 		outdata.setName("custom_expression");
 		if (model.getAxisExpressionX() != null && !model.getAxisExpressionX().isEmpty()) outaxis.setName("custom_x_axis");
 		
-		AxesMetadata am = new AxesMetadataImpl(1);
+		AxesMetadata am;
+		try {
+			am = MetadataFactory.createMetadata(AxesMetadata.class, 1);
+		} catch (MetadataException e) {
+			throw new OperationException(this, e);
+		}
 		am.setAxis(0, outaxis);
 		outdata.setMetadata(am);
 		
@@ -67,7 +73,11 @@ public class Expression1DOperation<T extends Expression1DModel> extends Abstract
 		ILazyDataset[] axes = getFirstAxes(input);
 		IDataset axis;
 		if (axes != null && axes[0] != null) {
-			axis= axes[0].getSlice();
+			try {
+				axis= axes[0].getSlice();
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 			engine.addLoadedVariable("xaxis", axis);
 		} else {
 			axis = DatasetFactory.createRange(input.getSize(), Dataset.FLOAT64);

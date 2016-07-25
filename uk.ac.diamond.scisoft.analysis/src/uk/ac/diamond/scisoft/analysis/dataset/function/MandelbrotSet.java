@@ -12,12 +12,13 @@ package uk.ac.diamond.scisoft.analysis.dataset.function;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.IntegerDataset;
 
 /**
  * Calculate a dataset of recursion values where a value less than the given maximum indicate a position in the
@@ -51,7 +52,7 @@ public class MandelbrotSet implements DatasetToDatasetFunction {
 			throw new IllegalArgumentException("Need both axes to be 1d datasets");
 		}
 
-		IntegerDataset count = new IntegerDataset(yaxis.getShape()[0], xaxis.getShape()[0]);
+		IntegerDataset count = DatasetFactory.zeros(IntegerDataset.class, yaxis.getShapeRef()[0], xaxis.getShapeRef()[0]);
 
 		List<Dataset> result = new ArrayList<Dataset>();
 

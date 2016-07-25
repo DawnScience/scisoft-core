@@ -16,14 +16,14 @@ import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.commons.math3.exception.TooManyEvaluationsException;
 import org.eclipse.dawnsci.analysis.api.fitting.IConicSectionFitter;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
-import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.roi.fitting.AngleDerivativeFunction;
 import org.eclipse.dawnsci.analysis.dataset.roi.fitting.EllipseFitter;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.dataset.Random;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -93,7 +93,7 @@ public class EllipseFitterTest {
 	void checkGeneratedEllipse(int pts, double std, double... original) {
 		Random.seed(1277);
 		DoubleDataset theta;
-//		theta = new DoubleDataset(new double[] {0.1, 0.2, 0.25, 0.33, 0.35, 0.37, 0.43, });
+//		theta = DatasetFactory.createFromObject(DoubleDataset.class, new double[] {0.1, 0.2, 0.25, 0.33, 0.35, 0.37, 0.43, });
 //		theta = Random.rand(0, 2*Math.PI, pts);
 		theta = (DoubleDataset) DatasetFactory.createLinearSpace(0, 2*Math.PI, pts, Dataset.FLOAT64);
 
@@ -101,8 +101,8 @@ public class EllipseFitterTest {
 
 		Dataset x;
 		Dataset y;
-//		x = new DoubleDataset(new double[] {242.34, 188.08, 300.04, 188.90, 300.97, 103.80, 157.67, 141.81, 302.64, 266.58});
-//		y = new DoubleDataset(new double[] {-262.478, 147.192, -107.673, 136.293, -118.735, 217.387, 166.996, 192.521, -55.201, 17.826});
+//		x = DatasetFactory.createFromObject(new double[] {242.34, 188.08, 300.04, 188.90, 300.97, 103.80, 157.67, 141.81, 302.64, 266.58});
+//		y = DatasetFactory.createFromObject(new double[] {-262.478, 147.192, -107.673, 136.293, -118.735, 217.387, 166.996, 192.521, -55.201, 17.826});
 		x = Maths.add(coords[0], Random.randn(0.0, std, theta.getShape()));
 		y = Maths.add(coords[1], Random.randn(0.0, std, theta.getShape()));
 		System.err.println(x.toString(true));

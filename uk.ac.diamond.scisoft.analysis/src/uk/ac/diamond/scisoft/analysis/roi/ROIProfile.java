@@ -12,19 +12,19 @@ package uk.ac.diamond.scisoft.analysis.roi;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.LineSample;
 import org.eclipse.dawnsci.analysis.dataset.roi.LinearROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.SectorROI;
+import org.eclipse.january.dataset.BooleanDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.FloatDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.Maths;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.Integrate2D;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToPolarAndIntegrate;
@@ -529,7 +529,7 @@ public class ROIProfile {
 	 */
 	public static FloatDataset nanalize(Dataset data, BooleanDataset mask) {
 		
-		FloatDataset nanalized = new FloatDataset(data.getShape());
+		FloatDataset nanalized = DatasetFactory.zeros(FloatDataset.class, data.getShape());
 		float[]      buffer    = nanalized.getData();
 		IndexIterator it        = data.getIterator();
 		for (int i = 0; it.hasNext(); i++) {

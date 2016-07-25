@@ -9,12 +9,12 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
-import org.eclipse.dawnsci.analysis.api.dataset.Slice;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
 import org.eclipse.dawnsci.analysis.dataset.roi.LinearROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.ROISliceUtils;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.Slice;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -57,9 +57,9 @@ public class ROISliceTest {
 		//TODO test different dimensions
 		//Create ND array and axes
 		Dataset input = DatasetFactory.ones(new int[] {10,20,30,40}, Dataset.FLOAT32);
-//		Dataset axis0 = DatasetUtils.linSpace(0, 9, 10, Dataset.FLOAT32);
-//		Dataset axis1 = DatasetUtils.linSpace(0, 19, 20, Dataset.FLOAT32);
-//		Dataset axis2 = DatasetUtils.linSpace(0, 29, 30, Dataset.FLOAT32);
+//		Dataset axis0 = DatasetFactory.createLinearSpace(0, 9, 10, Dataset.FLOAT32);
+//		Dataset axis1 = DatasetFactory.createLinearSpace(0, 19, 20, Dataset.FLOAT32);
+//		Dataset axis2 = DatasetFactory.createLinearSpace(0, 29, 30, Dataset.FLOAT32);
 		Dataset axis3 = DatasetFactory.createLinearSpace(0, 39, 40, Dataset.FLOAT32);
 		
 		//Create ROI and slices
@@ -97,10 +97,10 @@ public class ROISliceTest {
 	@Test
 	public void getDatasetLineROINDSlices() throws Exception {
 		Dataset input = DatasetFactory.ones(new int[] {10,20,30,40}, Dataset.FLOAT32);
-//		Dataset axis0 = DatasetUtils.linSpace(0, 9, 10, Dataset.FLOAT32);
-//		Dataset axis1 = DatasetUtils.linSpace(0, 19, 20, Dataset.FLOAT32);
-//		Dataset axis2 = DatasetUtils.linSpace(0, 29, 30, Dataset.FLOAT32);
-//		Dataset axis3 = DatasetUtils.linSpace(0, 39, 40, Dataset.FLOAT32);
+//		Dataset axis0 = DatasetFactory.createLinearSpace(0, 9, 10, Dataset.FLOAT32);
+//		Dataset axis1 = DatasetFactory.createLinearSpace(0, 19, 20, Dataset.FLOAT32);
+//		Dataset axis2 = DatasetFactory.createLinearSpace(0, 29, 30, Dataset.FLOAT32);
+//		Dataset axis3 = DatasetFactory.createLinearSpace(0, 39, 40, Dataset.FLOAT32);
 		
 		LinearROI roi = new LinearROI(new double[]{2.0,2.0}, new double[]{15.0,20.0});
 		

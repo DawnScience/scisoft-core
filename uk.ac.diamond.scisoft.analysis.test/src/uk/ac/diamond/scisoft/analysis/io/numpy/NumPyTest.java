@@ -17,8 +17,8 @@ import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -131,7 +131,7 @@ public class NumPyTest {
 				boolarr[0] = true;
 			if (len > 100)
 				boolarr[100] = true;
-			ds = DatasetFactory.createFromObject(boolarr, abstractDatasetDataType);
+			ds = DatasetFactory.createFromObject(abstractDatasetDataType, boolarr);
 		}
 		if (addInf && len > 3) {
 			ds.set(Double.POSITIVE_INFINITY, 2);
@@ -172,7 +172,7 @@ public class NumPyTest {
 		Dataset loadedFile = NumPyFileLoader.loadFileHelper(loc.toString());
 		Dataset ds = createDataset();
 		if (unsigned)
-			ds = DatasetFactory.createFromObject(ds, unsigned);
+			ds = DatasetFactory.createFromObject(unsigned, ds);
 		Assert.assertEquals(toString(), ds, loadedFile);
 	}
 
@@ -199,7 +199,7 @@ public class NumPyTest {
 		Dataset act = NumPyFileLoader.loadFileHelper(loc.toString());
 
 		if (unsigned)
-			exp = DatasetFactory.createFromObject(exp, unsigned);
+			exp = DatasetFactory.createFromObject(unsigned, exp);
 		Assert.assertEquals(toString(), exp, act);
 	}
 

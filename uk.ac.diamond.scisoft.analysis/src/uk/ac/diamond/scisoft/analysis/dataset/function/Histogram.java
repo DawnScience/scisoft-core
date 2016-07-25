@@ -13,16 +13,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
+import org.eclipse.january.dataset.Comparisons;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.Maths;
 
 /**
  * Find histogram of each dataset and return pairs of 1D integer dataset of bin counts
@@ -135,7 +135,7 @@ public class Histogram implements DatasetToDatasetFunction {
 				final double hi = edges[nbins];
 				final double span = (hi - lo)/nbins;
 
-				IntegerDataset histo = new IntegerDataset(nbins);
+				IntegerDataset histo = DatasetFactory.zeros(IntegerDataset.class, nbins);
 				final int[] h = histo.getData();
 				if (span <= 0) {
 					h[0] = ds.getSize();
@@ -174,7 +174,7 @@ public class Histogram implements DatasetToDatasetFunction {
 				final double lo = edges[0];
 				final double hi = edges[nbins];
 
-				IntegerDataset histo = new IntegerDataset(nbins);
+				IntegerDataset histo = DatasetFactory.zeros(IntegerDataset.class, nbins);
 				final int[] h = histo.getData();
 				if (lo >= hi) {
 					h[0] = ds.getSize();

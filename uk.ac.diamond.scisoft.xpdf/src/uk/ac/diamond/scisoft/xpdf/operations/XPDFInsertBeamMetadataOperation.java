@@ -9,15 +9,15 @@
 
 package uk.ac.diamond.scisoft.xpdf.operations;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-//import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
@@ -52,14 +52,24 @@ public class XPDFInsertBeamMetadataOperation extends XPDFInsertXMetadataOperatio
 		}
 		// Load the background from the designated xy file
 		if (model.getDataset().length() <= 0) throw new OperationException(this, "Undefined dataset");
-		Dataset bgTrace = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, model.getDataset()));
+		Dataset bgTrace;
+		try {
+			bgTrace = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, model.getDataset()));
+		} catch (DatasetException e) {
+			throw new OperationException(this, e);
+		}
 		// the beam background shouldn't have extraneous dimensions
 		bgTrace.squeezeEnds();
 		checkDataAndAuxillaryDataMatch(input, bgTrace);
 		
 		try {
 			if (model.getErrorDataset().length() <= 0) throw new OperationException(this, "Undefined error dataset");
-			Dataset bgErrors = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(this, model.getErrorFilePath(), model.getErrorDataset()));
+			Dataset bgErrors;
+			try {
+				bgErrors = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(this, model.getErrorFilePath(), model.getErrorDataset()));
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 			if (bgErrors != null)
 				checkDataAndAuxillaryDataMatch(bgTrace, bgErrors);
 				bgTrace.setError(bgErrors);

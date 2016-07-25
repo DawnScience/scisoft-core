@@ -56,6 +56,7 @@ public class JythonPath {
 		"uk.ac.diamond.ejml",
 		"uk.ac.diamond.ddogleg",
 		"org.apache.commons.lang",
+		"org.eclipse.january",
 		"org.eclipse.dawnsci.analysis", // Includes api, dataset, tree, etc
 		"org.eclipse.dawnsci.nexus", // required for loading to work in client started from IDE
 		"org.eclipse.dawnsci.plotting.api",
@@ -97,6 +98,7 @@ public class JythonPath {
 	 * Plugins we want
 	 */
 	private final static String[] pluginKeys = {
+		"org.eclipse.january",
 		"org.eclipse.dawnsci.hdf5", // required for loading to work in client started from IDE
 		"org.eclipse.dawnsci.analysis", // includes api, dataset, tree, etc
 		"org.eclipse.dawnsci.nexus", // required for loading to work in client started from IDE

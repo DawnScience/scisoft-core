@@ -12,10 +12,11 @@ package uk.ac.diamond.scisoft.xpdf;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.Maths;
 
 /**
  * The class for cylindrical components of the experimental target. This class
@@ -133,7 +134,7 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 			double gamma, double delta) {
 		double cd = Math.cos(delta), sd = Math.sin(delta);
 		double cgamma = Math.cos(gamma);
-		DoubleDataset lambda = new DoubleDataset(xSet);
+		DoubleDataset lambda = xSet.copy(DoubleDataset.class);
 		IndexIterator iter = xSet.getIterator();
 		
 		while(iter.hasNext()) {
@@ -290,7 +291,7 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 //	}
 	
 	private Dataset thicknessAtDistanceFromRadiusExplicit(Dataset pSet, Dataset zSet) {
-		DoubleDataset lSet = new DoubleDataset(zSet.getShape());
+		DoubleDataset lSet = DatasetFactory.zeros(DoubleDataset.class, zSet.getShape());
 		IndexIterator iter = zSet.getIterator();
 		
 		while (iter.hasNext()) {
@@ -360,7 +361,7 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 			xiMax = Math.PI;
 		} else {
 			if (!(doIncomingAbsorption || doOutgoingAbsorption))
-				return DoubleDataset.zeros(gamma);
+				return DatasetFactory.zeros(gamma, DoubleDataset.class);
 			arc = Math.PI;
 			if (doOutgoingAbsorption) {
 				xiMin = -Math.PI/2;
@@ -383,14 +384,14 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 		double dR = thickness/rSteps;
 		double dXi = (arc)/xiSteps;
 		
-		Dataset r1D = DoubleDataset.createRange(rInner+dR/2, rOuter-dR/2+dR/1e6, dR);
-		Dataset xi1D = DoubleDataset.createRange(xiMin+dXi/2, xiMax-dXi/2+dXi/1e6, dXi);
+		Dataset r1D = DatasetFactory.createRange(DoubleDataset.class, rInner+dR/2, rOuter-dR/2+dR/1e6, dR);
+		Dataset xi1D = DatasetFactory.createRange(DoubleDataset.class, xiMin+dXi/2, xiMax-dXi/2+dXi/1e6, dXi);
 		
 
 		// Expand the one dimensional coordinates to a two dimensional grid
 		// TODO: Is this the best way to expand a Dataset?
-		Dataset rCylinder = new DoubleDataset(r1D.getSize(), xi1D.getSize());
-		Dataset xiCylinder = new DoubleDataset(r1D.getSize(), xi1D.getSize());
+		Dataset rCylinder = DatasetFactory.zeros(DoubleDataset.class, r1D.getSize(), xi1D.getSize());
+		Dataset xiCylinder = DatasetFactory.zeros(DoubleDataset.class, r1D.getSize(), xi1D.getSize());
 		for (int i = 0; i<rSteps; i++) {
 			for (int k = 0; k<xiSteps; k++) {
 				rCylinder.set(r1D.getDouble(i), i, k);
@@ -399,12 +400,12 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 		}
 
 		Dataset xPlate = Maths.multiply(rCylinder, Maths.sin(xiCylinder));
-		Dataset yPlate = DoubleDataset.zeros(xPlate);
+		Dataset yPlate = DatasetFactory.zeros(xPlate);
 		Dataset zPlate = Maths.multiply(rCylinder, Maths.cos(xiCylinder));
 		
 		// Create a mask of the illuminated atoms in the cylinder.
 		// TODO: There has to be a better way to make a mask Dataset
-		Dataset illuminationPlate = DoubleDataset.ones(xPlate);
+		Dataset illuminationPlate = DatasetFactory.ones(xPlate);
 		for (int i=0; i<xPlate.getShape()[0]; i++){
 			for (int k=0; k<xPlate.getShape()[1]; k++) {
 				if (Math.abs(xPlate.getDouble(i, k)) > beamData.getBeamHeight()/2)
@@ -429,11 +430,11 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 		// For every direction, get the per-atom absorption of the radiation
 		// scattered by this object, as attenuated by all the attenuating
 		// objects.
-		DoubleDataset attenuation = new DoubleDataset(gamma);
+		DoubleDataset attenuation = gamma.copy(DoubleDataset.class);
 		
 		// The amount of absorption experienced by photons reaching the grid
 		// point from all considered attenuators
-		Dataset inboundAttenuation = DoubleDataset.ones(rCylinder);
+		Dataset inboundAttenuation = DatasetFactory.ones(rCylinder);
 		
 		// The upstream path length for each point is independent of scattering
 		// angle.
@@ -443,7 +444,7 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 			if (doIncomingAbsorption) {
 				upstreamPathLength = attenuators.get(iAttenuator).getUpstreamPathLength(xPlate, yPlate, zPlate);
 			} else {
-				upstreamPathLength = DoubleDataset.zeros(xPlate);
+				upstreamPathLength = DatasetFactory.zeros(xPlate);
 			}
 
 			double upstreamAttenuation = attenuationsIn.get(iAttenuator);
@@ -454,14 +455,14 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 		
 		while(iterAngle.hasNext()) {
 			//  Attenuation by all considered components, in the direction given by iterAngle at all grid points 
-			Dataset outboundAttenuation = DoubleDataset.ones(rCylinder);
+			Dataset outboundAttenuation = DatasetFactory.ones(rCylinder);
 			for (int iAttenuator = 0; iAttenuator < attenuators.size(); iAttenuator++) {
 				// Attenuation by this component, in the given direction, at all grid points
 				Dataset downstreamPathLength;
 				if (doOutgoingAbsorption)
 					downstreamPathLength = attenuators.get(iAttenuator).getDownstreamPathLength(xPlate, yPlate, zPlate, gamma.getElementDoubleAbs(iterAngle.index), delta.getElementDoubleAbs(iterAngle.index));
 				else
-					downstreamPathLength = DoubleDataset.zeros(xPlate);
+					downstreamPathLength = DatasetFactory.zeros(xPlate);
 
 				double downstreamAttenuation = attenuationsOut.get(iAttenuator);
 				outboundAttenuation.imultiply(Maths.exp(Maths.multiply(-downstreamAttenuation, downstreamPathLength)));

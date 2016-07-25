@@ -18,9 +18,9 @@
 Maths package
 '''
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset as _ds
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths as _maths
-import org.eclipse.dawnsci.analysis.dataset.impl.Stats as _stats
+import org.eclipse.january.dataset.Dataset as _ds
+import org.eclipse.january.dataset.Maths as _maths
+import org.eclipse.january.dataset.Stats as _stats
 
 import types as _types
 
@@ -411,7 +411,7 @@ def histogram(a, bins=10, range=None, normed=False, weights=None, new=None): #@R
     from jycore import asDatasetList as _asList
     return h.value(_asList(a))
 
-import org.eclipse.dawnsci.analysis.dataset.impl.LinearAlgebra as _linalg
+import org.eclipse.january.dataset.LinearAlgebra as _linalg
 
 @_wrap
 def dot(a, b):
@@ -466,7 +466,7 @@ def tensordot(a, b, axes=2):
 @_wrap
 def trace(a, offset=0, axis1=0, axis2=1, dtype=None):
     if dtype is None:
-        dtype = a.getDtype()
+        dtype = a.getDType()
     else:
         dtype = dtype.value
 

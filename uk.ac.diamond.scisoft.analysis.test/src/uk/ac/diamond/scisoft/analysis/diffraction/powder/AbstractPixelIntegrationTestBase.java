@@ -16,9 +16,10 @@ import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
+import org.eclipse.january.dataset.BooleanDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
 
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
@@ -73,7 +74,7 @@ public class AbstractPixelIntegrationTestBase {
 	}
 	
 	protected Dataset getMask(int[] shape){
-		BooleanDataset mask = new BooleanDataset(shape);
+		BooleanDataset mask = DatasetFactory.zeros(BooleanDataset.class, shape);
 		
 		for (int i = 100; i < 1000; i++) 
 			for (int j = 100; j < 1000; j++) 

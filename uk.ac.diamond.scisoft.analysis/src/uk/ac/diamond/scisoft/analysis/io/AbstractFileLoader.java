@@ -10,18 +10,18 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.File;
+import java.io.IOException;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
-import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetaLoader;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.LazyDataset;
+import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.io.ILazyLoader;
+import org.eclipse.january.io.IMetaLoader;
+import org.eclipse.january.metadata.IMetadata;
 
 /**
  * A class which can be extended when implementing IFileLoader
@@ -60,7 +60,7 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 	}
 
 	protected boolean loadMetadata = true;
-	protected Metadata metadata;
+	protected IMetadata metadata;
 	protected boolean loadLazily = false;
 
 	abstract protected void clearMetadata();
@@ -86,7 +86,7 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 	}
 
 	@Override
-	public void loadMetadata(IMonitor mon) throws Exception {
+	public void loadMetadata(IMonitor mon) throws IOException {
 		if (metadata != null)
 			return;
 
@@ -94,7 +94,11 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 		boolean oldLazily = loadLazily;
 		loadMetadata = true;
 		loadLazily = true;
-		loadFile(mon);
+		try {
+			loadFile(mon);
+		} catch (ScanFileHolderException e) {
+			throw new IOException(e);
+		}
 		loadMetadata = oldMeta;
 		loadLazily = oldLazily;
 	}
@@ -131,13 +135,17 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 		}
 
 		@Override
-		public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
+		public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 			if (loader == null) {
 				return null;
 			}
 			IDataHolder holder = LoaderFactory.fetchData(fileName, loadMetadata);
 			if (holder == null) {
-				holder = loader.loadFile(mon);
+				try {
+					holder = loader.loadFile(mon);
+				} catch (ScanFileHolderException e) {
+					throw new IOException(e);
+				}
 				if (holder.getFilePath() == null) {
 					holder.setFilePath(fileName);
 				}

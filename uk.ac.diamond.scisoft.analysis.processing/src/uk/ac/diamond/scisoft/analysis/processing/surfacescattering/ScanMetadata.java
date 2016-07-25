@@ -9,11 +9,10 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.surfacescattering;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
@@ -41,11 +40,12 @@ public class ScanMetadata {
 			ILazyDataset dcdthetaL = ProcessingUtils.getLazyDataset(null, getSliceMetadata(input).getFilePath(), "dcdtheta");
 			dcdtheta = getSliceMetadata(input).getMatchingSlice(dcdthetaL);
 			
-		} catch (Exception e){
-		    try{
-		    	ILazyDataset dcdthetaL = ProcessingUtils.getLazyDataset(null, getSliceMetadata(input).getFilePath(), "sdcdtheta");
+		} catch (DatasetException e){
+			try {
+				ILazyDataset dcdthetaL = ProcessingUtils.getLazyDataset(null, getSliceMetadata(input).getFilePath(),
+						"sdcdtheta");
 				dcdtheta = getSliceMetadata(input).getMatchingSlice(dcdthetaL);
-			} catch (Exception e2){
+			} catch (DatasetException e2){
 				System.out.println("No theta parameter");
 				throw new Exception("No theta parameter");
 			}
@@ -57,7 +57,7 @@ public class ScanMetadata {
 	}
 	
 	public IDataset  getqdcd(IDataset input) {
-		IDataset qdcdDataset = ProcessingUtils.getLazyDataset(null, getSliceMetadata(input).getFilePath(), "qdcd").getSlice();
+		IDataset qdcdDataset = ProcessingUtils.getDataset(null, getSliceMetadata(input).getFilePath(), "qdcd");
 		return qdcdDataset;
 		
 	}
@@ -69,13 +69,13 @@ public class ScanMetadata {
 	}
 	
 
-	public ILazyDataset adc2DataLazy (Polynomial1DReflectivityModel model) {
-		ILazyDataset adc2data = ProcessingUtils.getLazyDataset(null, model.getPath(), adc2).getSlice();
+	public IDataset adc2DataLazy (Polynomial1DReflectivityModel model) {
+		IDataset adc2data = ProcessingUtils.getDataset(null, model.getPath(), adc2);
 		 return adc2data;
 	}
 		 
-	public ILazyDataset qdcd_dataDataLazy (Polynomial1DReflectivityModel model) {	 
-		ILazyDataset qdcd_data = ProcessingUtils.getLazyDataset(null, model.getPath(), qdcd_).getSlice();
+	public IDataset qdcd_dataDataLazy (Polynomial1DReflectivityModel model) {	 
+		IDataset qdcd_data = ProcessingUtils.getDataset(null, model.getPath(), qdcd_);
 		 return qdcd_data;
 	}
 

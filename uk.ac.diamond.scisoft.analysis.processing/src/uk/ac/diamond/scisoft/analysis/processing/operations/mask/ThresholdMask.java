@@ -10,19 +10,21 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.mask;
 
 import java.util.Arrays;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.MaskMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
-import org.eclipse.dawnsci.analysis.dataset.metadata.MaskMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.BooleanDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.metadata.MaskMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 
 @Atomic
 public class ThresholdMask extends AbstractOperation<ThresholdMaskModel, OperationData> {
@@ -44,7 +46,7 @@ public class ThresholdMask extends AbstractOperation<ThresholdMaskModel, Operati
 		Dataset in = DatasetUtils.convertToDataset(input);
 		
 		if (mask == null) {
-			mask = BooleanDataset.ones(input.getShape());
+			mask = DatasetFactory.ones(BooleanDataset.class, input.getShape());
 		} else {
 			mask = mask.getSlice();
 		}
@@ -69,7 +71,12 @@ public class ThresholdMask extends AbstractOperation<ThresholdMaskModel, Operati
 			}
 		}
 
-		MaskMetadata mm = new MaskMetadataImpl(mask);
+		MaskMetadata mm;
+		try {
+			mm = MetadataFactory.createMetadata(MaskMetadata.class, mask);
+		} catch (MetadataException e) {
+			throw new OperationException(this, e);
+		}
 		input.setMetadata(mm);
 
 		return new OperationData(input);

@@ -9,9 +9,10 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.Maths;
 
 /**
  * A static class providing a method to regrid rectangular gridded two-dimensional data.
@@ -38,10 +39,10 @@ public class XPDFRegrid {
 		
 		int oldX = input.getShape()[0], oldY = input.getShape()[1];
 		
-		Dataset newXInOldX = Maths.multiply(Maths.divide(DoubleDataset.createRange(newX), newX-1), oldX-1);
-		Dataset newYInOldY = Maths.multiply(Maths.divide(DoubleDataset.createRange(newY), newY-1), oldY-1);
+		Dataset newXInOldX = Maths.multiply(Maths.divide(DatasetFactory.createRange(DoubleDataset.class, newX), newX-1), oldX-1);
+		Dataset newYInOldY = Maths.multiply(Maths.divide(DatasetFactory.createRange(DoubleDataset.class, newY), newY-1), oldY-1);
 
-		Dataset output = new DoubleDataset(newX, newY);
+		Dataset output = DatasetFactory.zeros(DoubleDataset.class, newX, newY);
 		
 		for (int i = 0; i < newX-1; i++) {
 			int xIndex = (int) newXInOldX.getDouble(i);

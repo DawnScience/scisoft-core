@@ -11,18 +11,20 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
 import java.util.Arrays;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.ShapeUtils;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
@@ -50,13 +52,17 @@ public abstract class OperateOnDataAbstractOperation<T extends InternalDatasetNa
 		
 		ILazyDataset lz = ProcessingUtils.getLazyDataset(this, dataPath, model.getDatasetName());
 		IDataset val = null;
-		
-		if (AbstractDataset.squeezeShape(lz.getShape(), false).length == 0) {
-			// scalar lz
-			val = lz.getSlice();
-		} else {
-			// vector lz
-			val = ssm.getMatchingSlice(lz);
+
+		try {
+			if (ShapeUtils.squeezeShape(lz.getShape(), false).length == 0) {
+				// scalar lz
+				val = lz.getSlice();
+			} else {
+				// vector lz
+				val = ssm.getMatchingSlice(lz);
+			}
+		} catch (DatasetException e) {
+			throw new OperationException(this, e);
 		}
 
 		// If a matching val was not found, throw
@@ -67,7 +73,7 @@ public abstract class OperateOnDataAbstractOperation<T extends InternalDatasetNa
 		// A non-scalar val is an error at this point
 		if (val.getRank() != 0) throw new OperationException(this, "External data shape invalid");
 
-		Dataset output = new DoubleDataset();
+		Dataset output = DatasetFactory.zeros(DoubleDataset.class, null);
 		output = doMathematics(inputData, DatasetUtils.convertToDataset(val));
 		// copy metadata, except for the error metadata
 		copyMetadata(input, output);

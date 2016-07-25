@@ -1,11 +1,13 @@
 package uk.ac.diamond.scisoft.xpdf.test;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
-
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFElectronCrossSections;
+
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.Maths;
+
 import junit.framework.TestCase;
 
 public class XPDFEXSTest extends TestCase {
@@ -16,7 +18,7 @@ public class XPDFEXSTest extends TestCase {
 	public void testGetThomsonCrossSection() {
 
 		// 1D testing
-		Dataset twoTheta = DoubleDataset.createRange(0, Math.toRadians(45.0), Math.toRadians(0.05));
+		Dataset twoTheta = DatasetFactory.createRange(DoubleDataset.class, 0, Math.toRadians(45.0), Math.toRadians(0.05));
 		XPDFCoordinates coords = new XPDFCoordinates();
 		coords.setTwoTheta(twoTheta);
 		XPDFElectronCrossSections xECS = new XPDFElectronCrossSections();
@@ -35,7 +37,7 @@ public class XPDFEXSTest extends TestCase {
 
 	public void testGetKleinNishinaCrossSection() {
 		// 1D testing
-		Dataset twoTheta = DoubleDataset.createRange(0, Math.toRadians(39.02), Math.toRadians(0.02));
+		Dataset twoTheta = DatasetFactory.createRange(DoubleDataset.class, 0, Math.toRadians(39.02), Math.toRadians(0.02));
 		XPDFCoordinates coords = new XPDFCoordinates();
 		coords.setTwoTheta(twoTheta);
 		XPDFElectronCrossSections xECS = new XPDFElectronCrossSections();
@@ -55,7 +57,7 @@ public class XPDFEXSTest extends TestCase {
 
 	// Values from DSK's python version for 0 to 39° in steps of 0.02° at 76.6 keV
 	private Dataset testKN() {
-		return new DoubleDataset(new double[] {
+		return DatasetFactory.createFromObject(new double[] {
 				1.        , 0.99999992, 0.99999968, 0.99999929, 0.99999873,
 				0.99999802, 0.99999715, 0.99999612, 0.99999493, 0.99999359,
 				0.99999208, 0.99999042, 0.9999886 , 0.99998662, 0.99998448,

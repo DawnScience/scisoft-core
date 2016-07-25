@@ -21,15 +21,15 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
-import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.RGBDataset;
+import org.eclipse.january.dataset.CompoundDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.RGBDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -853,7 +853,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 				CompoundDataset cd = (CompoundDataset) v;
 				v = cd.getElements(0);
 			}
-			switch (v.getDtype()) {
+			switch (v.getDType()) {
 			case Dataset.BOOL:
 				v = v.cast(Dataset.FLOAT32);
 				break;

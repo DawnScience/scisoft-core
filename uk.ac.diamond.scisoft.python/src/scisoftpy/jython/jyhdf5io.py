@@ -21,8 +21,8 @@ from uk.ac.diamond.scisoft.analysis.io import HDF5Loader as _hdf5loader
 from org.eclipse.dawnsci.analysis.api.tree import Tree as _jtree
 from org.eclipse.dawnsci.analysis.api.tree import TreeFile as _jtreefile
 from org.eclipse.dawnsci.analysis.api.tree import DataNode as _jdnode
-from org.eclipse.dawnsci.analysis.dataset.impl import Dataset as _dataset
-from org.eclipse.dawnsci.analysis.dataset.impl import LazyDataset as _ldataset
+from org.eclipse.january.dataset import Dataset as _dataset
+from org.eclipse.january.dataset import LazyDataset as _ldataset
 
 from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
 
@@ -37,7 +37,7 @@ from ..nexus.hdf5 import HDF5tree as _tree
 from ..nexus.hdf5 import HDF5group as _group
 from ..nexus.hdf5 import HDF5dataset as _hdataset
 
-from jycore import asarray, _isslice, _getdtypefromjdataset, _wrapout, Sciwrap
+from jycore import asarray, _isslice, _getdtypefromjdataset, _wrapout, Sciwrap, asIterable
 
 def _toslice(rank, key):
     '''Transform key to proper slice if necessary
@@ -91,7 +91,7 @@ class SDS(_hdataset):
         if isinstance(data, _ldataset):
             isslice, key = _toslice(self.rank, key)
             if not isslice: # single item
-                key = tuple([ slice(k,k+1) for k in key ])
+                key = tuple([ slice(k,k+1) for k in asIterable(key) ])
                 v = _getslice(data, key)
                 v = v.getAbs(0)
             else:

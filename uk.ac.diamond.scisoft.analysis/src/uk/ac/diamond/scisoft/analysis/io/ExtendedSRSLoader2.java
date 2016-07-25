@@ -9,8 +9,10 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import java.io.IOException;
+
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.january.IMonitor;
 
 /**
  * This class loads an SRS data file where the first column of the srs file might be non-numerical
@@ -29,7 +31,7 @@ public class ExtendedSRSLoader2 extends SRSLoader {
 	}
 
 	@Override
-	public void loadMetadata(IMonitor mon) throws Exception {
+	public void loadMetadata(IMonitor mon) throws IOException {
 		super.loadMetadata(mon);
 	}
 }

@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
+import org.eclipse.january.dataset.CompoundDataset;
+import org.eclipse.january.dataset.DTypeUtils;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
 
 /**
  * Integrate 2D dataset and return list of two 1D datasets for individual sums over the two dimensions
@@ -102,7 +102,7 @@ public class Integrate2D implements DatasetToDatasetFunction {
 			if (ny == 0)
 				ny = 1;
 
-			final int dtype = AbstractDataset.getBestFloatDType(ds.getDtype());
+			final int dtype = DTypeUtils.getBestFloatDType(ds.getDType());
 			final int is = ds.getElementsPerItem();
 			Dataset sumy = DatasetFactory.zeros(is, new int[] { nx }, dtype);
 			Dataset sumx = DatasetFactory.zeros(is, new int[] { ny }, dtype);

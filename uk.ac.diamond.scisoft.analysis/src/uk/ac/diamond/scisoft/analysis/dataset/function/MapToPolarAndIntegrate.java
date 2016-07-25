@@ -23,15 +23,15 @@ import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 
 import org.apache.commons.math3.util.MathUtils;
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
+import org.eclipse.january.dataset.DTypeUtils;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.FloatDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Maths;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.roi.XAxis;
@@ -227,7 +227,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			final double dphi = (ephi - sphi) / np;
 			final double rdphi = dphi * erad;
 			
-			final int dtype = AbstractDataset.getBestFloatDType(ds.getDtype());
+			final int dtype = DTypeUtils.getBestFloatDType(ds.getDType());
 			Dataset sump = DatasetFactory.zeros(new int[] { nr }, dtype);
 			Dataset sumr = DatasetFactory.zeros(new int[] { np }, dtype);
 			
@@ -457,8 +457,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				}
 			}
 			
-			result.add(new FloatDataset(azimuth, apts));
-			result.add(new FloatDataset(intensity, npts));
+			result.add(DatasetFactory.createFromObject(azimuth));
+			result.add(DatasetFactory.createFromObject(intensity));
 		}
 		return result;
 	}
@@ -511,8 +511,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			QSpaceProfileTask profileTask = new QSpaceProfileTask(nxstart, nx, nystart, ny, ds);
 			profileTask.setAxes(rAxis);
 			result.addAll(ProfileForkJoinPool.profileForkJoinPool.invoke(profileTask));
-			result.add(new FloatDataset()) ;
-			result.add(new FloatDataset()) ;
+			result.add(DatasetFactory.zeros(FloatDataset.class, null));
+			result.add(DatasetFactory.zeros(FloatDataset.class, null));
 			result.add(azAxis) ;
 			result.add(radAxis) ;
 		}
@@ -658,8 +658,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 					}
 				}
 				
-				result.add(new FloatDataset(azimuth, new int[] {apts})) ;
-				result.add(new FloatDataset(intensity, new int[] {npts})) ;
+				result.add(DatasetFactory.createFromObject(azimuth));
+				result.add(DatasetFactory.createFromObject(intensity));
 			}
 			
 		return result;
@@ -803,7 +803,7 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 					}
 				}
 				
-				final int dtype = AbstractDataset.getBestFloatDType(ids.getDtype());
+				final int dtype = DTypeUtils.getBestFloatDType(ids.getDType());
 				Dataset sump = DatasetFactory.zeros(new int[] { nr }, dtype);
 				Dataset sumr = DatasetFactory.zeros(new int[] { np }, dtype);
 				Dataset errsump = DatasetFactory.zeros(new int[] { nr }, Dataset.FLOAT64);

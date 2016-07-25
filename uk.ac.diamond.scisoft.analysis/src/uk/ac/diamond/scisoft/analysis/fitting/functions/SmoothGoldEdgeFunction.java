@@ -12,12 +12,12 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IDataBasedFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CoordinatesIterator;
@@ -94,7 +94,7 @@ public class SmoothGoldEdgeFunction extends AFunction implements
 			this.smoothed = ApachePolynomial.getPolynomialSmoothed(xds, yds, (int) Math.round(getParameterValue(0)), 3);
 			// Fit a polyline to this to allow for easy interpolation
 			IDataset arg2 = DatasetUtils.cast(smoothed, Dataset.FLOAT64);
-			this.polySplineFunction = new LinearInterpolator().interpolate(new DoubleDataset(xds).getData(), ((DoubleDataset)arg2).getData());
+			this.polySplineFunction = new LinearInterpolator().interpolate(DatasetUtils.cast(DoubleDataset.class, xds).getData(), ((DoubleDataset)arg2).getData());
 
 			lowerFit = new SimpleRegression();
 			double lowerProp = xds.getShape()[0]*getParameterValue(1);

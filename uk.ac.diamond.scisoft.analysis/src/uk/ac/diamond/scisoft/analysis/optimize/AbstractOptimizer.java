@@ -12,12 +12,13 @@ package uk.ac.diamond.scisoft.analysis.optimize;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CoordinatesIterator;
@@ -155,7 +156,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 
 		setParameterValues(parameters);
 		CoordinatesIterator it = CoordinatesIterator.createIterator(data == null ? null : data.getShapeRef(), coords);
-		DoubleDataset result = new DoubleDataset(it.getShape());
+		DoubleDataset result = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 
 		return calculateNumericalDerivative(1e-15, 1e-9, parameter, result, it);
 	}

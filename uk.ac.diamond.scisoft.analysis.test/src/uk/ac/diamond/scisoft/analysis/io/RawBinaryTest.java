@@ -11,12 +11,12 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.january.dataset.DTypeUtils;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -69,7 +69,7 @@ public class RawBinaryTest {
 		try {
 			dh = new RawBinaryLoader(testScratchDirectoryName + filePath2D).loadFile();
 			Dataset data = dh.getDataset(0);
-			assertEquals(data.getDtype(), Dataset.FLOAT64);
+			assertEquals(data.getDType(), Dataset.FLOAT64);
 			assertEquals(data.getSize(), range);
 			assertEquals(data.getName(), "test 2D");
 			assertEquals(data.getShape().length, 2);
@@ -104,7 +104,7 @@ public class RawBinaryTest {
 		try {
 			dh = new RawBinaryLoader(testScratchDirectoryName + filePath1D).loadFile();
 			Dataset data = dh.getDataset(0);
-			assertEquals(data.getDtype(), Dataset.FLOAT32);
+			assertEquals(data.getDType(), Dataset.FLOAT32);
 			assertEquals(data.getSize(), range);
 			assertEquals(data.getName(), "test 1D");
 			assertEquals(data.getShape().length, 1);
@@ -131,7 +131,7 @@ public class RawBinaryTest {
 		dh = LoaderFactory.getData(testScratchDirectoryName + filePath1D, null);
 		if (dh==null || dh.getNames().length<1) throw new Exception();
 		IDataset data = dh.getDataset(0);
-		assertEquals(AbstractDataset.getDType(data), Dataset.INT16);
+		assertEquals(DTypeUtils.getDType(data), Dataset.INT16);
 		assertEquals(data.getSize(), range);
 		assertEquals(data.getName(), "test factory");
 		assertEquals(data.getShape().length, 1);

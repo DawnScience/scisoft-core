@@ -13,8 +13,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.junit.Test;
 
 public class BicubicInterpolatorTest {
@@ -37,7 +38,7 @@ public class BicubicInterpolatorTest {
 	@Test
 	public void testGenerateSurroundingPoints() {
 
-		DoubleDataset ds = DoubleDataset.createRange(0.0, 9.0, 1.0);
+		DoubleDataset ds = DatasetFactory.createRange(DoubleDataset.class, 0.0, 9.0, 1.0);
 		ds = (DoubleDataset) ds.reshape(3, 3);
 		int[] shape = ds.getShapeRef();
 
@@ -59,7 +60,7 @@ public class BicubicInterpolatorTest {
 
 	@Test
 	public void testValue() {
-		DoubleDataset ds = DoubleDataset.createRange(0.0, 9.0, 1.0);
+		DoubleDataset ds = DatasetFactory.createRange(DoubleDataset.class, 0.0, 9.0, 1.0);
 		ds = (DoubleDataset) ds.reshape(3, 3);
 
 		BicubicInterpolator bicube = new BicubicInterpolator(new int[] { 5, 5 });

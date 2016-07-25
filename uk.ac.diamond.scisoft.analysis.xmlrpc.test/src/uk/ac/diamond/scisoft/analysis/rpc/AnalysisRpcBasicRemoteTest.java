@@ -9,9 +9,9 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.Maths;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -1,13 +1,14 @@
 package uk.ac.diamond.scisoft.xpdf.test;
 
-import junit.framework.TestCase;
-
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.Maths;
 
+import junit.framework.TestCase;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFDetector;
@@ -16,7 +17,7 @@ import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
 @SuppressWarnings("deprecation")
 public class XPDFDetectorTest extends TestCase {
 
-	public boolean doTestApplyCorrection(XPDFDetector tect, String photonEnergyeV) {
+	public boolean doTestApplyCorrection(XPDFDetector tect, String photonEnergyeV) throws DatasetException {
 		String dataPath = "/home/rkl37156/ceria_dean_data/testData/";
 		IDataHolder dh = null;
 		try {
@@ -39,7 +40,7 @@ public class XPDFDetectorTest extends TestCase {
 		XPDFCoordinates theCoords = new XPDFCoordinates();
 //		theCoords.setBeamData(theBeam);
 		theCoords.setEnergy(76.6);
-		theCoords.setGammaDelta(DoubleDataset.zeros(delta), delta);
+		theCoords.setGammaDelta(DatasetFactory.zeros(delta, DoubleDataset.class), delta);
 		
 		Dataset after = tect.applyTransmissionCorrection(before, theCoords.getTwoTheta(), Integer.parseInt(photonEnergyeV)*1e-3);
 		
@@ -51,32 +52,32 @@ public class XPDFDetectorTest extends TestCase {
 		return rmsError < maxError;
 	}
 
-	public void test76600() {
+	public void test76600() throws DatasetException {
 		String photonEnergyeV = "76600";
 		assertTrue("Error in detector correction at "+photonEnergyeV+" eV", doTestApplyCorrection(buildDetector(), photonEnergyeV));
 	}
 	
-	public void test39258() {
+	public void test39258() throws DatasetException {
 		String photonEnergyeV = "39258";
 		assertTrue("Error in detector correction at "+photonEnergyeV+" eV", doTestApplyCorrection(buildDetector(), photonEnergyeV));
 	}
 	
-	public void test34720() {
+	public void test34720() throws DatasetException {
 		String photonEnergyeV = "34720";
 		assertTrue("Error in detector correction at "+photonEnergyeV+" eV", doTestApplyCorrection(buildDetector(), photonEnergyeV));
 	}
 	
-	public void test34279() {
+	public void test34279() throws DatasetException {
 		String photonEnergyeV = "34279";
 		assertTrue("Error in detector correction at "+photonEnergyeV+" eV", doTestApplyCorrection(buildDetector(), photonEnergyeV));
 	}
 	
-	public void test5263() {
+	public void test5263() throws DatasetException {
 		String photonEnergyeV = "5263";
 		assertTrue("Error in detector correction at "+photonEnergyeV+" eV", doTestApplyCorrection(buildDetector(), photonEnergyeV));
 	}
 	
-	public void test4840() {
+	public void test4840() throws DatasetException {
 		String photonEnergyeV = "4840";
 		assertTrue("Error in detector correction at "+photonEnergyeV+" eV", doTestApplyCorrection(buildDetector(), photonEnergyeV));
 	}

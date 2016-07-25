@@ -16,24 +16,25 @@ import java.util.List;
 import javax.measure.unit.SI;
 import javax.vecmath.Vector3d;
 
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyWriteableDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyWriteableDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
-import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
 import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.ILazyWriteableDataset;
+import org.eclipse.january.dataset.LazyWriteableDataset;
+import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.dataset.PositionIterator;
+import org.eclipse.january.dataset.SliceND;
 
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
 import uk.ac.diamond.scisoft.analysis.dataset.function.BicubicInterpolator;
@@ -406,7 +407,13 @@ public class MillerSpaceMapper {
 		DoubleDataset map = (DoubleDataset) DatasetFactory.zeros(vShape, Dataset.FLOAT64);
 		DoubleDataset weight = (DoubleDataset) DatasetFactory.zeros(vShape, Dataset.FLOAT64);
 
-		mapToASpace(mapQ, tree, iters, map, weight);
+		try {
+			mapToASpace(mapQ, tree, iters, map, weight);
+		} catch (ScanFileHolderException sfhe) {
+			throw sfhe;
+		} catch (DatasetException e) {
+			throw new ScanFileHolderException("Could not get data from lazy dataset", e);
+		}
 
 		Maths.dividez(map, weight, map); // normalize by tally
 	
@@ -423,7 +430,7 @@ public class MillerSpaceMapper {
 		return map;
 	}
 
-	private void mapToASpace(boolean mapQ, Tree tree, PositionIterator[] iters, DoubleDataset map, DoubleDataset weight) throws ScanFileHolderException {
+	private void mapToASpace(boolean mapQ, Tree tree, PositionIterator[] iters, DoubleDataset map, DoubleDataset weight) throws ScanFileHolderException, DatasetException {
 		int[] dshape = iters[0].getShape();
 	
 		Dataset trans = NexusTreeUtils.parseAttenuator(attenuatorPath, tree);
@@ -466,7 +473,7 @@ public class MillerSpaceMapper {
 		mapImages(mapQ, tree, trans, images, iters, map, weight, ishape, upSampler);
 	}
 
-	private void listToASpace(Tree tree, PositionIterator[] iters, ILazyWriteableDataset lazy) throws ScanFileHolderException {
+	private void listToASpace(Tree tree, PositionIterator[] iters, ILazyWriteableDataset lazy) throws ScanFileHolderException, DatasetException {
 		int[] dshape = iters[0].getShape();
 		Dataset trans = NexusTreeUtils.parseAttenuator(attenuatorPath, tree);
 		if (trans != null && trans.getSize() != 1) {
@@ -508,6 +515,11 @@ public class MillerSpaceMapper {
 		doImages(tree, trans, images, iters, lazy, ishape, upSampler);
 	}
 
+	/**
+	 * Find bounding boxes in reciprocal space and q-space
+	 * @param tree
+	 * @param iters
+	 */
 	private void findBoundingBoxes(Tree tree, PositionIterator[] iters) {
 		PositionIterator diter = iters[0];
 		PositionIterator iter = iters[1];
@@ -625,7 +637,7 @@ public class MillerSpaceMapper {
 	}
 
 	private void mapImages(boolean mapQ, Tree tree, Dataset trans, ILazyDataset images, PositionIterator[] iters,
-			DoubleDataset map, DoubleDataset weight, int[] ishape, BicubicInterpolator upSampler) {
+			DoubleDataset map, DoubleDataset weight, int[] ishape, BicubicInterpolator upSampler) throws DatasetException {
 		PositionIterator diter = iters[0];
 		PositionIterator iter = iters[1];
 		iter.reset();
@@ -787,7 +799,7 @@ public class MillerSpaceMapper {
 	}
 
 	private void doImages(Tree tree, Dataset trans, ILazyDataset images, PositionIterator[] iters,
-			ILazyWriteableDataset lazy, int[] ishape, BicubicInterpolator upSampler) throws ScanFileHolderException {
+			ILazyWriteableDataset lazy, int[] ishape, BicubicInterpolator upSampler) throws DatasetException, ScanFileHolderException {
 		PositionIterator diter = iters[0];
 		PositionIterator iter = iters[1];
 		iter.reset();
@@ -852,7 +864,7 @@ public class MillerSpaceMapper {
 		stop[0] = shape[0] + length;
 		try {
 			lazy.setSlice(null, sdata, start, stop, null);
-		} catch (Exception e) {
+		} catch (DatasetException e) {
 			throw new ScanFileHolderException("Could not write list", e);
 		}
 	}
@@ -993,20 +1005,26 @@ public class MillerSpaceMapper {
 			}
 		}
 
-		if (qDel != null) {
-			processTrees(true, trees, allIters, output, a[0]);
-		}
-
-		if (hDel != null) {
-			processTrees(false, trees, allIters, output, a[1]);
-		}
-
-		if (listMillerEntries) {
-			processTreesForList(trees, allIters, output);
+		try {
+			if (qDel != null) {
+				processTrees(true, trees, allIters, output, a[0]);
+			}
+	
+			if (hDel != null) {
+				processTrees(false, trees, allIters, output, a[1]);
+			}
+	
+			if (listMillerEntries) {
+				processTreesForList(trees, allIters, output);
+			}
+		} catch (ScanFileHolderException sfhe) {
+			throw sfhe;
+		} catch (DatasetException e) {
+			throw new ScanFileHolderException("Could not get data from lazy dataset", e);
 		}
 	}
 
-	private void processTrees(boolean mapQ, Tree[] trees, PositionIterator[][] allIters, String output, Dataset[] a) throws ScanFileHolderException {
+	private void processTrees(boolean mapQ, Tree[] trees, PositionIterator[][] allIters, String output, Dataset[] a) throws ScanFileHolderException, DatasetException {
 		int[] vShape = copyParameters(mapQ);
 
 		if (reduceToNonZeroBB) {
@@ -1209,9 +1227,10 @@ public class MillerSpaceMapper {
 	 * @param parts 
 	 * @param map 
 	 * @param weight 
-	 * @throws ScanFileHolderException
+	 * @throws ScanFileHolderException 
+	 * @throws DatasetException 
 	 */
-	private void mapAndSaveInParts(boolean mapQ, Tree[] trees, PositionIterator[][] allIters, LazyWriteableDataset output, int parts, DoubleDataset map, DoubleDataset weight) throws ScanFileHolderException {
+	private void mapAndSaveInParts(boolean mapQ, Tree[] trees, PositionIterator[][] allIters, LazyWriteableDataset output, int parts, DoubleDataset map, DoubleDataset weight) throws ScanFileHolderException, DatasetException {
 		int n = trees.length;
 
 		SliceND slice = new SliceND(hShape, null, map.getShapeRef(), null);
@@ -1268,7 +1287,7 @@ public class MillerSpaceMapper {
 
 			try {
 				output.setSlice(map, slice);
-			} catch (Exception e) {
+			} catch (DatasetException e) {
 				System.err.println("Could not saving part of volume");
 				throw new ScanFileHolderException("Could not saving part of volume", e);
 			}
@@ -1339,7 +1358,7 @@ public class MillerSpaceMapper {
 		}
 	}
 
-	private void processTreesForList(Tree[] trees, PositionIterator[][] allIters, String output) throws ScanFileHolderException {
+	private void processTreesForList(Tree[] trees, PositionIterator[][] allIters, String output) throws ScanFileHolderException, DatasetException {
 		if (!hasDeleted) {
 			HDF5FileFactory.deleteFile(output);
 			hasDeleted = true;

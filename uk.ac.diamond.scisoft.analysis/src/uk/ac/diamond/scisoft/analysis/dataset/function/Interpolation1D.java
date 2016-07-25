@@ -17,13 +17,13 @@ import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
 import org.apache.commons.math3.exception.OutOfRangeException;
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
 import org.eclipse.dawnsci.analysis.dataset.roi.ROISliceUtils;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 
 public class Interpolation1D {
 
@@ -112,7 +112,7 @@ public class Interpolation1D {
 		int[] dint = new int[d.getSize()];
 		for (int i = 0; i < dBox.length; i++) dint[i] = dBox[i];
 
-		return new IntegerDataset(dint, new int[]{dint.length});
+		return DatasetFactory.createFromObject(IntegerDataset.class, dint, null);
 	}
 	
 	private static int[] getCommonRangeIndicies(IDataset x1, IDataset x2) {

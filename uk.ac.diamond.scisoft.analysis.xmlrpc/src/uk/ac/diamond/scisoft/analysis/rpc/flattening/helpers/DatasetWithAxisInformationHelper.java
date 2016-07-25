@@ -11,7 +11,7 @@ package uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers;
 
 import java.util.Map;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
+import org.eclipse.january.dataset.Dataset;
 
 import uk.ac.diamond.scisoft.analysis.plotserver.AxisMapBean;
 import uk.ac.diamond.scisoft.analysis.plotserver.DatasetWithAxisInformation;

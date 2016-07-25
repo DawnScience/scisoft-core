@@ -10,9 +10,6 @@ package uk.ac.diamond.scisoft.analysis.processing.test;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.MaskMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
@@ -23,10 +20,14 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
-import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Random;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.roi.SectorROI;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.BooleanDataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Random;
+import org.eclipse.january.metadata.MaskMetadata;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -62,7 +63,7 @@ public class IntegrationTest {
 	public void testAzimuthalSimpleMask() throws Exception {
 		
 		final IROI         sector = new SectorROI(500.0, 500.0, 20.0, 300.0,  Math.toRadians(90.0), Math.toRadians(180.0));
-		final BooleanDataset mask = BooleanDataset.ones(1000,1000);
+		final BooleanDataset mask = DatasetFactory.ones(BooleanDataset.class, 1000,1000);
 		
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 1000.0, 24, 1000, 1000));
@@ -98,7 +99,7 @@ public class IntegrationTest {
 	public void testAzimuthalThresholdMask() throws Exception {
 		
 		final IROI         sector = new SectorROI(500.0, 500.0, 20.0, 300.0,  Math.toRadians(90.0), Math.toRadians(180.0));
-		final BooleanDataset mask = BooleanDataset.ones(1000, 1000);
+		final BooleanDataset mask = DatasetFactory.ones(BooleanDataset.class, 1000, 1000);
 		
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 1000.0, 24, 1000, 1000));
@@ -139,7 +140,7 @@ public class IntegrationTest {
 	public void testAzimuthalThresholdMaskParallel() throws Exception {
 		
 		final IROI         sector = new SectorROI(500.0, 500.0, 20.0, 300.0,  Math.toRadians(90.0), Math.toRadians(180.0));
-		final BooleanDataset mask = BooleanDataset.ones(1000, 1000);
+		final BooleanDataset mask = DatasetFactory.ones(BooleanDataset.class, 1000, 1000);
 		
 		final IOperationContext context = service.createContext();
 		context.setData(Random.rand(0.0, 1000.0, 24, 1000, 1000));
@@ -193,6 +194,12 @@ public class IntegrationTest {
 			@Override
 			public MaskMetadata clone() {
 				return null;
+			}
+
+			@Override
+			public void initialize(IDataset mask) {
+				// TODO Auto-generated method stub
+				
 			}
 		};
 		

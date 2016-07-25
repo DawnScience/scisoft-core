@@ -11,9 +11,9 @@ package uk.ac.diamond.scisoft.xpdf;
 
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.nexus.NXsample;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.Maths;
 
 /**
  * The properties of any component of the beam target, including both the

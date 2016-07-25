@@ -17,16 +17,16 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
-import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.IMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 
 /**
  * Provides a class which will use any loaders available to load a particular file
@@ -131,9 +131,9 @@ public class LoaderServiceImpl implements ILoaderService {
 	
 	@Override
 	public AxesMetadata getAxesMetadata(ILazyDataset parent, String path, List<String>[] axesNames, boolean lazy) throws Exception {
-		AxesMetadataImpl axMeta = null;
+		AxesMetadata axMeta = null;
 		int rank = parent.getRank();
-		axMeta = new AxesMetadataImpl(rank);
+		axMeta = MetadataFactory.createMetadata(AxesMetadata.class, rank);
 		if (axesNames == null) return axMeta;
 		if (axesNames.length != rank) throw new IllegalArgumentException("Array of name lists must be equal in length to the rank of the dataset");
 		int[] shape = parent.getShape();

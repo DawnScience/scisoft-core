@@ -10,7 +10,9 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.apache.commons.math3.complex.Complex;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -26,7 +28,7 @@ public class PolynomialTest {
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2}, f.getParameterValues(), ABS_TOL);
 		Assert.assertEquals(-23. - 10. - 1.2 - 5.2, f.val(-1), ABS_TOL);
 
-		DoubleDataset xd = new DoubleDataset(new double[] {-1, 0, 2});
+		Dataset xd = DatasetFactory.createFromObject(new double[] {-1, 0, 2});
 		DoubleDataset dx;
 		dx = f.calculateValues(xd);
 		Assert.assertArrayEquals(new double[] {-23. - 10. - 1.2 - 5.2, -5.2, 23.*8 - 10.*4 + 1.2*2 - 5.2}, dx.getData(), ABS_TOL);

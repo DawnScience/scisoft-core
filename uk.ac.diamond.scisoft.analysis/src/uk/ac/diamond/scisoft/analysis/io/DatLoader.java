@@ -25,11 +25,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -277,12 +277,16 @@ public class DatLoader extends AbstractFileLoader {
 
 
 	@Override
-	public void loadMetadata(final IMonitor mon) throws Exception {
+	public void loadMetadata(final IMonitor mon) throws IOException {
 
 		final BufferedReader br = new BufferedReader(new FileReader(new File(fileName)));
 		int count = 1;
 		try {
-			parseHeaders(br, null, mon);
+			try {
+				parseHeaders(br, null, mon);
+			} catch (Exception e) {
+				throw new IOException(e);
+			}
 			// We assume the rest of the lines not starting with # are all
 			// data lines in getting the meta data. We do not parse these lines.
 			String line=null;

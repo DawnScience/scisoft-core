@@ -14,12 +14,9 @@ import java.util.Map;
 
 import javax.vecmath.Matrix3d;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
@@ -28,9 +25,13 @@ import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 
 
 /**
@@ -39,12 +40,12 @@ import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 public class NexusDiffractionCalibrationReader {
 	
 	
-	public static IDiffractionMetadata getDiffractionMetadataFromNexus(final String filePath, final ILazyDataset parent) {
+	public static IDiffractionMetadata getDiffractionMetadataFromNexus(final String filePath, final ILazyDataset parent) throws DatasetException {
 		return getDiffractionMetadataFromNexus(filePath, parent, null);
 	}
 	
 	
-	public static IDiffractionMetadata getDiffractionMetadataFromNexus(final String filePath, final ILazyDataset parent, String datasetName) {
+	public static IDiffractionMetadata getDiffractionMetadataFromNexus(final String filePath, final ILazyDataset parent, String datasetName) throws DatasetException {
 
 		Tree tree = null;
 		IDataHolder dh;
@@ -89,7 +90,7 @@ public class NexusDiffractionCalibrationReader {
 		return split[split.length-2];
 	}
 	
-	private static IDiffractionMetadata trySAXS(NodeLink detectorLink, Tree tree, String path) {
+	private static IDiffractionMetadata trySAXS(NodeLink detectorLink, Tree tree, String path) throws DatasetException {
 		DetectorProperties saxs = NexusTreeUtils.parseSaxsDetector(detectorLink);
 		if (saxs == null) return null;
 		legacySupport(saxs,detectorLink);
@@ -144,7 +145,7 @@ public class NexusDiffractionCalibrationReader {
 		return dnl1.get(key);
 	}
 	
-	private static DetectorProperties legacySupport(DetectorProperties dp, NodeLink nl) {
+	private static DetectorProperties legacySupport(DetectorProperties dp, NodeLink nl) throws DatasetException {
 		
 		Node n = nl.getDestination();
 		if (n instanceof GroupNode) {
@@ -227,7 +228,7 @@ public class NexusDiffractionCalibrationReader {
 		};
 	}
 	
-	public static IDataset getDetectorPixelMaskFromNexus(final String filePath, final ILazyDataset parent) {
+	public static IDataset getDetectorPixelMaskFromNexus(final String filePath, final ILazyDataset parent) throws Exception {
 		Tree tree = null;
 		IDataHolder dh;
 		try {

@@ -12,17 +12,15 @@ package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
-//import org.eclipse.dawnsci.analysis.dataset.impl.Outliers;
-import org.eclipse.dawnsci.analysis.dataset.impl.Outliers;
-import org.eclipse.dawnsci.analysis.dataset.impl.Stats;
+import org.eclipse.january.dataset.BooleanDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.Outliers;
 
 public class PixelIntegration {
 
@@ -50,12 +48,12 @@ public class PixelIntegration {
 		final double lo = bean.getXBinEdgeMin();
 		final double hi = bean.getXBinEdgeMax();
 		final double span = (hi - lo)/bean.getNumberOfBinsXAxis();
-		IntegerDataset histo = new IntegerDataset(nbins);
-		DoubleDataset intensity = new DoubleDataset(nbins);
+		IntegerDataset histo = DatasetFactory.zeros(IntegerDataset.class, nbins);
+		DoubleDataset intensity = DatasetFactory.zeros(DoubleDataset.class, nbins);
 		DoubleDataset error = null;
 		double[] eb = null;
 		if (e != null) {
-			error = new DoubleDataset(nbins);
+			error = DatasetFactory.zeros(DoubleDataset.class, nbins);
 			eb = error.getData();
 		}
 		
@@ -130,12 +128,12 @@ public class PixelIntegration {
 		final double lo = bean.getXBinEdgeMin();
 		final double hi = bean.getXBinEdgeMax();
 		final double span = (hi - lo)/bean.getNumberOfBinsXAxis();
-		DoubleDataset histo = new DoubleDataset(nbins);
-		DoubleDataset intensity = new DoubleDataset(nbins);
+		DoubleDataset histo = DatasetFactory.zeros(DoubleDataset.class, nbins);
+		DoubleDataset intensity = DatasetFactory.zeros(DoubleDataset.class, nbins);
 		DoubleDataset error = null;
 		double[] eb = null;
 		if (e != null) {
-			error = new DoubleDataset(nbins);
+			error = DatasetFactory.zeros(DoubleDataset.class, nbins);
 			eb = error.getData();
 		}
 		
@@ -324,8 +322,8 @@ public class PixelIntegration {
 		final double maxY = bean.getYBinEdgeMax();
 		final double spanY = (maxY - minY)/nYBins;
 
-		DoubleDataset histo = new DoubleDataset(nYBins, nXBins);
-		DoubleDataset intensity = new DoubleDataset(nYBins, nXBins);
+		DoubleDataset histo = DatasetFactory.zeros(DoubleDataset.class, nYBins, nXBins);
+		DoubleDataset intensity = DatasetFactory.zeros(DoubleDataset.class, nYBins, nXBins);
 		//			final double[] h = histo.getData();
 		//			final double[] in = intensity.getData();
 		//			if (spanQ <= 0) {
@@ -459,8 +457,8 @@ public class PixelIntegration {
 		final double lo = bean.getXBinEdgeMin();
 		final double hi = bean.getXBinEdgeMax();
 		final double span = (hi - lo)/bean.getNumberOfBinsXAxis();
-		IntegerDataset histo = new IntegerDataset(nbins);
-		DoubleDataset intensity = new DoubleDataset(nbins);
+		IntegerDataset histo = DatasetFactory.zeros(IntegerDataset.class, nbins);
+//		DoubleDataset intensity = DatasetFactory.zeros(DoubleDataset.class, nbins);
 		
 		final int[] h = histo.getData();
 		
@@ -473,7 +471,7 @@ public class PixelIntegration {
 			r = bean.getYAxisArray()[0];
 		}
 
-		BooleanDataset mb = new BooleanDataset(data.getShape());
+		BooleanDataset mb = DatasetFactory.zeros(BooleanDataset.class, data.getShape());
 		//iterate over dataset, binning values per pixel
 		IndexIterator iter = a.getIterator();
 
@@ -535,7 +533,7 @@ public class PixelIntegration {
 		
 		DoubleDataset[] dvals = new DoubleDataset[h.length];
 		
-		for (int i = 0; i < h.length ; i++) dvals[i] = new DoubleDataset(vals[i],new int[]{vals[i].length});
+		for (int i = 0; i < h.length ; i++) dvals[i] = DatasetFactory.createFromObject(DoubleDataset.class, vals[i]);
 		
 		double[] mad = new double[h.length];
 		double[] med = new double[h.length];

@@ -9,7 +9,9 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,7 +27,7 @@ public class StraightLineTest {
 		Assert.assertArrayEquals(new double[] {23., -10.}, f.getParameterValues(), ABS_TOL);
 		Assert.assertEquals(23. - 10., f.val(1), ABS_TOL);
 
-		DoubleDataset xd = new DoubleDataset(new double[] {-1, 0, 2});
+		Dataset xd = DatasetFactory.createFromObject(new double[] {-1, 0, 2});
 		DoubleDataset dx;
 		dx = f.calculateValues(xd);
 		Assert.assertArrayEquals(new double[] {-23. - 10, -10, 23.*2 - 10.}, dx.getData(), ABS_TOL);

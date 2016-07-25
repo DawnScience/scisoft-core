@@ -14,15 +14,15 @@ import java.util.Arrays;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.PositionIterator;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -61,7 +61,7 @@ public class I16NexusTest {
 	}
 
 	@Test
-	public void testLoadingI16NexusDirectBeam() throws ScanFileHolderException {
+	public void testLoadingI16NexusDirectBeam() throws Exception {
 		String n = testFileFolder +  "535432.nxs";
 		NexusHDF5Loader l = new NexusHDF5Loader();
 		l.setFile(n);
@@ -142,7 +142,7 @@ public class I16NexusTest {
 	}
 
 	@Test
-	public void testLoadingI16Nexus222() throws ScanFileHolderException {
+	public void testLoadingI16Nexus222() throws Exception {
 		String n = testFileFolder +  "535434.nxs";
 		NexusHDF5Loader l = new NexusHDF5Loader();
 		l.setFile(n);
@@ -218,7 +218,7 @@ public class I16NexusTest {
 
 	@Ignore
 	@Test
-	public void testLoadingI16Nexus220() throws ScanFileHolderException {
+	public void testLoadingI16Nexus220() throws Exception {
 		String n = testFileFolder +  "535436.nxs";
 		NexusHDF5Loader l = new NexusHDF5Loader();
 		l.setFile(n);

@@ -17,14 +17,10 @@ import java.util.HashMap;
 
 import javax.vecmath.Vector3d;
 
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 
 /**
  * Class to load Rigaku images. Class returns a DataHolder that is called from the ScanFileHolder class.
@@ -112,7 +108,7 @@ public class RAxisImageLoader extends AbstractFileLoader implements Serializable
 			if (loadLazily) {
 				data = createLazyDataset(DEF_IMAGE_NAME, DATA_NAME, -1, shape, new RAxisImageLoader(fileName));
 			} else {
-				data = readDataset(shape, raf);
+				data = Utils.createDataset(raf, shape, keepBitWidth);
 				data.setName(DEF_IMAGE_NAME);
 			}
 
@@ -132,45 +128,6 @@ public class RAxisImageLoader extends AbstractFileLoader implements Serializable
 		}
 
 		return output;
-	}
-
-	private ILazyDataset readDataset(int[] shape, RandomAccessFile raf) throws IOException {
-		byte[] read = new byte[shape[0] * shape[1] * 2];
-		
-		raf.read(read); // read in all the data at once for speed.
-
-		// and put it into the dataset
-		AbstractDataset data = new IntegerDataset(shape);
-		int[] databuf = ((IntegerDataset) data).getData();
-		int amax = Integer.MIN_VALUE;
-		int amin = Integer.MAX_VALUE;
-		int hash = 0;
-		for (int i = 0, j = 0; i < databuf.length; i++) {
-			int value = Utils.beInt(read[j++], read[j++]);
-			hash = hash * 19 + value;
-			databuf[i] = value;
-			if (value > amax) {
-				amax = value;
-			}
-			if (value < amin) {
-				amin = value;
-			}
-	
-		}
-		if (keepBitWidth || amax < (1 << 15)) {
-			data = (AbstractDataset) DatasetUtils.cast(data, Dataset.INT16);
-		}
-
-		hash = hash*19 + data.getDtype()*17 + data.getElementsPerItem();
-		int rank = shape.length;
-		for (int i = 0; i < rank; i++) {
-			hash = hash*17 + shape[i];
-		}
-		data.setStoredValue(AbstractDataset.STORE_MAX, amax);
-		data.setStoredValue(AbstractDataset.STORE_MIN, amin);
-		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
-
-		return data;
 	}
 
 	/**

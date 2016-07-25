@@ -6,15 +6,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.xpdf.XPDFAbsorptionMaps;
 import uk.ac.diamond.scisoft.xpdf.XPDFCalibration;
@@ -112,7 +112,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 			synchronized (this) {
 				localAbsMaps = cachedAbsorptionMaps;
 				if (localAbsMaps == null || !(localAbsMaps.checkFormList(theXPDFMetadata.getFormList())) || model.getRegenerateAbsorptionMaps() == true) {
-//					cachedAbsorptionMaps = localAbsMaps = theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DoubleDataset.zeros(twoTheta.reshape(twoTheta.getSize(), 1)));
+//					cachedAbsorptionMaps = localAbsMaps = theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DatasetFactory.zeros(DoubleDataset.class, twoTheta.reshape(twoTheta.getSize(), 1)));
 					cachedAbsorptionMaps = localAbsMaps = theXPDFMetadata.getAbsorptionMaps(coordinates.getDelta(), coordinates.getGamma());
 				}
 			}
@@ -120,7 +120,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 		
 		theCalibration.setBeamData(theXPDFMetadata.getBeam());
 		theCalibration.setDetector(theXPDFMetadata.getDetector());
-//		theCalibration.setAbsorptionMaps(theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DoubleDataset.zeros(twoTheta.reshape(twoTheta.getSize(), 1))));
+//		theCalibration.setAbsorptionMaps(theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DatasetFactory.zeros(DoubleDataset.class, twoTheta.reshape(twoTheta.getSize(), 1))));
 		theCalibration.setAbsorptionMaps(localAbsMaps);
 		// Set the fluorescence parameters for the calibration. 
 		if (model.isDoingFluorescence()) {

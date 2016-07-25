@@ -17,13 +17,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.FloatDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.metadata.Metadata;
 
 /**
  * This class should be used to load ESRF datafiles created by the Pilatus detector system
@@ -93,7 +94,7 @@ public class PilatusEdfLoader extends AbstractFileLoader {
 					// this EDF loader supports only a subset of all possible datatypes
 					// an exception will be thrown when an unsupported datatype is encountered
 					if (dataType.equals("Float") || dataType.equals("FloatValue")) {
-						data = new FloatDataset(shape);
+						data = DatasetFactory.zeros(FloatDataset.class, shape);
 						if (le) {
 							Utils.readLeFloat(fi, (FloatDataset) data, index);
 						}
@@ -103,7 +104,7 @@ public class PilatusEdfLoader extends AbstractFileLoader {
 					} 
 					else if (dataType.contains("Short")) {
 						// 16 bit integers
-						data = new IntegerDataset(shape);
+						data = DatasetFactory.zeros(IntegerDataset.class, shape);
 						if (le)
 							Utils.readLeShort(fi, (IntegerDataset) data, index, signed);
 						else
@@ -114,7 +115,7 @@ public class PilatusEdfLoader extends AbstractFileLoader {
 						if (!signed) {
 							throw new ScanFileHolderException("32-bit unsigned integers are currently not supported");
 						}
-						data = new IntegerDataset(shape);
+						data = DatasetFactory.zeros(IntegerDataset.class, shape);
 						if (le)
 							Utils.readLeInt(fi, (IntegerDataset) data, index);
 						else
@@ -159,7 +160,8 @@ public class PilatusEdfLoader extends AbstractFileLoader {
 	}
 
 	private void createMetadata() {
-		metadata = new Metadata(textMetadata);
+		metadata = new Metadata();
+		metadata.initialize(textMetadata);
 		metadata.setFilePath(fileName);
 		metadata.addDataInfo(DATA_NAME, Integer.parseInt(textMetadata.get("Dim_2")),
 				Integer.parseInt(textMetadata.get("Dim_1")));

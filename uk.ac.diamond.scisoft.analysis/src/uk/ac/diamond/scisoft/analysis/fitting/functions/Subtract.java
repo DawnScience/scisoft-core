@@ -11,7 +11,8 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IOperator;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 
 /**
  * Subtract two functions (missing functions are treated as zero)
@@ -53,7 +54,7 @@ public class Subtract extends ABinaryOperator implements IOperator {
 
 		if (fb != null) {
 			if (fb instanceof AFunction) {
-				DoubleDataset temp = new DoubleDataset(it.getShape());
+				DoubleDataset temp = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 				((AFunction) fb).fillWithValues(temp, it);
 				data.isubtract(temp);
 			} else {
@@ -87,7 +88,7 @@ public class Subtract extends ABinaryOperator implements IOperator {
 
 		if (fb != null && indexOfParameter(fb, param) >= 0) {
 			if (fb instanceof AFunction) {
-				DoubleDataset temp = new DoubleDataset(it.getShape());
+				DoubleDataset temp = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 				((AFunction) fb).fillWithPartialDerivativeValues(param, temp, it);
 				data.isubtract(temp);
 			} else {

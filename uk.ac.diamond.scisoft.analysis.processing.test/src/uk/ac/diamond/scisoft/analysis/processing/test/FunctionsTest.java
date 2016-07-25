@@ -14,20 +14,20 @@ import static org.junit.Assert.assertEquals;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
-import org.eclipse.dawnsci.analysis.dataset.impl.AggregateDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.AggregateDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Maths;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -262,7 +262,7 @@ public class FunctionsTest {
 	private DoubleDataset generateBackground() {
 		CompositeFunction comp = new CompositeFunction();
 		comp.addFunction(new Gaussian(-10, 10, dataRange / 4, dataRange / 2));
-		return comp.calculateValues(DoubleDataset.createRange(dataRange));
+		return comp.calculateValues(DatasetFactory.createRange(DoubleDataset.class, dataRange));
 	}
 
 	

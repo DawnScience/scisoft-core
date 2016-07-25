@@ -21,13 +21,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,7 +103,7 @@ public class MAR345Loader extends AbstractFileLoader implements Serializable {
 		DataHolder result = new DataHolder();
 		ILazyDataset data = image == null ? createLazyDataset(DEF_IMAGE_NAME, Dataset.INT32,
 				new int[] {side,  side}, new MAR345Loader(fileName)) :
-				new IntegerDataset(image, side, side);
+					DatasetFactory.createFromObject(image, side, side);
 		result.addDataset(DEF_IMAGE_NAME, data);
 		if (loadMetadata) {
 			result.setMetadata(metadata);

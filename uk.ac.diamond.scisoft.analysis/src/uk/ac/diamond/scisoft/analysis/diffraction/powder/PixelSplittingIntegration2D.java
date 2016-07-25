@@ -13,12 +13,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.FloatDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.FloatDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 
 public class PixelSplittingIntegration2D extends AbstractPixelIntegration2D {
 
@@ -63,8 +64,8 @@ public class PixelSplittingIntegration2D extends AbstractPixelIntegration2D {
 		final double hiChi = edgesChi[nBinsChi];
 		final double spanChi = (hiChi - loChi)/nBinsChi;
 
-		FloatDataset histo = new FloatDataset(nBinsChi, nbins);
-		FloatDataset intensity = new FloatDataset(nBinsChi, nbins);
+		FloatDataset histo = DatasetFactory.zeros(FloatDataset.class, nBinsChi, nbins);
+		FloatDataset intensity = DatasetFactory.zeros(FloatDataset.class, nBinsChi, nbins);
 		//			final double[] h = histo.getData();
 		//			final double[] in = intensity.getData();
 		//			if (spanQ <= 0) {

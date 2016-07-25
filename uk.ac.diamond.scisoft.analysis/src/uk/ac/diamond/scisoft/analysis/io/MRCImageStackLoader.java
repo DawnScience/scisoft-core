@@ -18,18 +18,18 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
-import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.LazyDataset;
+import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.io.ILazyLoader;
+import org.eclipse.january.metadata.IMetadata;
+import org.eclipse.january.metadata.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,7 +122,7 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 			}
 			
 			@Override
-			public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
+			public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 				int[] lstart = slice.getStart();
 				int[] lstep  = slice.getStep();
 				int[] newShape = slice.getShape();
@@ -175,8 +175,8 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 					} else {
 						d = loadData(mon, fileName, pos, dsize, dtype, signExtend, trueShape, lstart, newShape, lstep);
 					}
-				} catch (Exception e) {
-					throw new ScanFileHolderException("Problem with HDF library", e);
+				} catch (ScanFileHolderException e) {
+					throw new IOException("Problem with loading data", e);
 				}
 				return d;
 			}
@@ -245,7 +245,8 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 	
 	private int readMetadata(BufferedInputStream bi) throws IOException, ScanFileHolderException {
 		int pos =readHeader(bi);
-		metadata = new Metadata(headers);
+		metadata = new Metadata();
+		metadata.initialize(headers);
 		return pos;
 	}
 

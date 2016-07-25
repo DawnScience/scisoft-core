@@ -11,8 +11,8 @@ package uk.ac.diamond.scisoft.analysis.dataset.function;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.junit.Test;
 
 public class MedianTest {
@@ -21,7 +21,7 @@ public class MedianTest {
 	public void testExecute() {
 		double[] x = {1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11., 12.};
 		
-		Dataset d = new DoubleDataset(x);
+		Dataset d = DatasetFactory.createFromObject(x);
 		//Test for single dataset
 		Median m = new Median(5);
 		Dataset filterResults = m.value(d).get(0);

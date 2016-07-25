@@ -14,12 +14,13 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.commons.math3.complex.Complex;
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.Slice;
-import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.dataset.SliceND;
 import org.python.core.Py;
 import org.python.core.PyArray;
 import org.python.core.PyComplex;
@@ -210,8 +211,9 @@ public class PythonUtils {
 	 * @param indexes
 	 *            can be a mixed array of integers or slices
 	 * @return dataset of specified sub-dataset
+	 * @throws DatasetException
 	 */
-	public static IDataset getSlice(final ILazyDataset a, final PyObject indexes) {
+	public static IDataset getSlice(final ILazyDataset a, final PyObject indexes) throws DatasetException {
 		int[] shape = a.getShape();
 		int orank = shape.length;
 
@@ -274,7 +276,7 @@ public class PythonUtils {
 	public static void setSlice(Dataset a, Object object, final PyObject indexes) {
 		if (a.isComplex() || a.getElementsPerItem() == 1) {
 			if (object instanceof PySequence) {
-				object = DatasetFactory.createFromObject(object, a.getDtype());
+				object = DatasetFactory.createFromObject(a.getDType(), object);
 			}
 		}
 
@@ -282,4 +284,17 @@ public class PythonUtils {
 		SliceData slice = convertPySlicesToSlice(indexes, shape);
 		a.setSlice(object, slice.slice);
 	}
+
+	/**
+	 * Create a dataset from object (as workaround for Jython's funky dispatcher calling wrong method)
+	 * @param dtype
+	 * @param obj
+	 *            can be a Java list, array or Number
+	 * @return dataset
+	 * @throws IllegalArgumentException if dataset type is not known
+	 */
+	public static Dataset createFromObject(final Integer dtype, final Object obj) {
+		return DatasetFactory.createFromObject(dtype, obj, null);
+	}
+
 }

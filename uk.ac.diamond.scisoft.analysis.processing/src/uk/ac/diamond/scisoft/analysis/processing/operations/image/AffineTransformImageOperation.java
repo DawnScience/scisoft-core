@@ -2,20 +2,20 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.image;
 
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.image.IImageTransform;
-import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.ErrorMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.MetadataType;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.ErrorMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
+import org.eclipse.january.metadata.MetadataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,14 +55,14 @@ public class AffineTransformImageOperation extends AbstractSimpleImageOperation<
 						//check if axes is 1 or 2 dimensional
 						if (axis_old_x.getRank() == 1) {
 							//1D
-							axis_new_x = DatasetFactory.zeros(new int[]{out.getShape()[0]}, axis_old_x.getDtype());
+							axis_new_x = DatasetFactory.zeros(new int[]{out.getShape()[0]}, axis_old_x.getDType());
 							for (int i = 0 ; i < out.getShape()[0] ; i++) {
 								double new_value = axis_old_x.getDouble(0) + (axis_old_x.getDouble(axis_old_x.getShape()[0]-1) - axis_old_x.getDouble(0)) * i / (out.getShape()[0]-1);
 								axis_new_x.set(new_value, i);
 							}
 						} else {
 							//2D
-							axis_new_x = DatasetFactory.zeros(out.getShape(), axis_old_x.getDtype());
+							axis_new_x = DatasetFactory.zeros(out.getShape(), axis_old_x.getDType());
 							for (int i = 0 ; i < out.getShape()[0] ; i++) {
 								double new_value = axis_old_x.getDouble(0, 0) + (axis_old_x.getDouble(axis_old_x.getShape()[0]-1, 0) - axis_old_x.getDouble(0, 0)) * i / (out.getShape()[0]-1);
 								for (int j = 0 ; j < out.getShape()[1] ; j++) {
@@ -77,14 +77,14 @@ public class AffineTransformImageOperation extends AbstractSimpleImageOperation<
 						//check if axes is 1 or 2 dimensional
 						if (axis_old_y.getRank() == 1) {
 							//1D
-							axis_new_y = DatasetFactory.zeros(new int[]{out.getShape()[1]}, axis_old_y.getDtype());
+							axis_new_y = DatasetFactory.zeros(new int[]{out.getShape()[1]}, axis_old_y.getDType());
 							for (int j = 0 ; j < out.getShape()[1] ; j++) {
 								double new_value = axis_old_y.getDouble(0) + (axis_old_y.getDouble(axis_old_y.getShape()[0]-1) - axis_old_y.getDouble(0)) * j / (out.getShape()[1]-1);
 								axis_new_y.set(new_value, j);
 							}
 						} else {
 							//2D
-							axis_new_y = DatasetFactory.zeros(out.getShape(), axis_old_y.getDtype());
+							axis_new_y = DatasetFactory.zeros(out.getShape(), axis_old_y.getDType());
 							for (int j = 0 ; j < out.getShape()[1] ; j++) {
 								double new_value = axis_old_y.getDouble(0, 0) + (axis_old_y.getDouble(0, axis_old_y.getShape()[1]-1) - axis_old_y.getDouble(0, 0)) * j / (out.getShape()[1]-1);
 								for (int i = 0 ; i < out.getShape()[0] ; i++) {
@@ -92,7 +92,7 @@ public class AffineTransformImageOperation extends AbstractSimpleImageOperation<
 								}
 							}
 						}
-						AxesMetadataImpl amd = new AxesMetadataImpl(2);
+						AxesMetadata amd = MetadataFactory.createMetadata(AxesMetadata.class, 2);
 						axis_new_x.setName(axis_old_x.getName());
 						axis_new_y.setName(axis_old_y.getName());
 						amd.setAxis(0, axis_new_x);

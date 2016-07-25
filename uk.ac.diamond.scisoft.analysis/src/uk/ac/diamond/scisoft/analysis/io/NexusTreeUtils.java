@@ -33,12 +33,8 @@ import javax.vecmath.Vector3d;
 import javax.vecmath.Vector4d;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
-import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
@@ -47,16 +43,23 @@ import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
-import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.analysis.tree.impl.TreeImpl;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.ShapeUtils;
+import org.eclipse.january.dataset.StringDataset;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.IMetadata;
+import org.eclipse.january.metadata.Metadata;
+import org.eclipse.january.metadata.MetadataFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -175,7 +178,7 @@ public class NexusTreeUtils {
 		// Fix to http://jira.diamond.ac.uk/browse/DAWNSCI-333. We put the path in the meta
 		// data in order to put a title containing the file in the plot.
 		if (filePath != null) {
-			final Metadata meta = new Metadata();
+			final IMetadata meta = new Metadata();
 			meta.setFilePath(filePath);
 			cData.setMetadata(meta);
 			// TODO Maybe	dNode.getAttributeNameIterator()
@@ -404,7 +407,13 @@ public class NexusTreeUtils {
 		}
 
 		List<ILazyDataset> axisList = new ArrayList<ILazyDataset>();
-		AxesMetadata amd = new AxesMetadataImpl(rank);
+		AxesMetadata amd;
+		try {
+			amd = MetadataFactory.createMetadata(AxesMetadata.class, rank);
+		} catch (MetadataException e) {
+			logger.error("Problem creating metadata", e);
+			return;
+		}
 		for (int i = 0; i < rank; i++) {
 			int len = shape[i];
 			for (AxisChoice c : choices) {
@@ -575,7 +584,12 @@ public class NexusTreeUtils {
 		}
 		
 		List<ILazyDataset> axisList = new ArrayList<ILazyDataset>();
-		AxesMetadata amd = new AxesMetadataImpl(rank);
+		AxesMetadata amd;
+		try {
+			amd = MetadataFactory.createMetadata(AxesMetadata.class, rank);
+		} catch (MetadataException e) {
+			return false;
+		}
 		for (int i = 0; i < rank; i++) {
 			int len = shape[i];
 			for (ILazyDataset a : axes) {
@@ -1190,8 +1204,8 @@ public class NexusTreeUtils {
 	}
 
 	private static int[] checkShapes(int[] nshape, int[] dshape) {
-		int nsize = AbstractDataset.calcSize(nshape);
-		int dsize = AbstractDataset.calcSize(dshape);
+		int nsize = ShapeUtils.calcSize(nshape);
+		int dsize = ShapeUtils.calcSize(dshape);
 		if (nsize != 1 && dsize != 1) {
 			if (nsize != dsize) {
 				throw new IllegalArgumentException("Non-trivial shapes must have same size");
@@ -1792,10 +1806,15 @@ public class NexusTreeUtils {
 		if (ld instanceof Dataset) {
 			dataset = (Dataset) ld;
 		} else {
-			dataset = DatasetUtils.sliceAndConvertLazyDataset(ld);
+			try {
+				dataset = DatasetUtils.sliceAndConvertLazyDataset(ld);
+			} catch (DatasetException e) {
+				logger.error("Could not get data from lazy dataset", e);
+				return null;
+			}
 			dNode.setDataset(dataset);
 		}
-		if (dtype >= 0 && dataset.getDtype() != dtype) {
+		if (dtype >= 0 && dataset.getDType() != dtype) {
 			dataset = DatasetUtils.cast(dataset, dtype);
 			dNode.setDataset(dataset);
 		}

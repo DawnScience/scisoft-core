@@ -22,17 +22,17 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.RGBDataset;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.LazyDataset;
+import org.eclipse.january.dataset.RGBDataset;
+import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.metadata.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -198,9 +198,13 @@ public class JavaImageLoader extends AbstractFileLoader {
 				final String name = String.format(IMAGE_NAME_FORMAT, j);
 				LazyDataset lazy = createLazyDataset(name, dtype, shape, new LazyLoaderStub() {
 					@Override
-					public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
-						Dataset data = loadDataset(fileName, name, asGrey, keepBitWidth);
-						return data == null ? null : data.getSliceView(slice);
+					public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
+						try {
+							Dataset data = loadDataset(fileName, name, asGrey, keepBitWidth);
+							return data == null ? null : data.getSliceView(slice);
+						} catch (ScanFileHolderException e) {
+							throw new IOException(e);
+						}
 					}
 				});
 				output.addDataset(name, lazy);
@@ -304,10 +308,10 @@ public class JavaImageLoader extends AbstractFileLoader {
 					throw new ScanFileHolderException("Number of colour channels is less than three so cannot load and convert");
 				}
 
-				data = new RGBDataset(channels[0], channels[1], channels[2]);
+				data = DatasetUtils.createCompoundDataset(Dataset.RGB, channels);
 
 				if (asGrey)
-					data = ((RGBDataset) data).createGreyDataset(channels[0].getDtype());
+					data = ((RGBDataset) data).createGreyDataset(channels[0].getDType());
 			}
 		} catch (Exception e) {
 			throw new ScanFileHolderException("There was a problem loading the image", e);

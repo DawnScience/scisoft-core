@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.analysis.io.emulated;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
+import org.eclipse.january.IMonitor;
 
 import uk.ac.diamond.scisoft.analysis.io.TIFFImageLoader;
 

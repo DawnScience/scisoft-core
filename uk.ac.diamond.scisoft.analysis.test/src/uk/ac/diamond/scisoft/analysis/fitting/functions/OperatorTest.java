@@ -18,8 +18,10 @@ import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IOperator;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Random;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.Random;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -45,7 +47,7 @@ public class OperatorTest {
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2, 4.2, -7.5}, op.getParameterValues(), ABS_TOL);
 		Assert.assertEquals(-23. - 10. - 1.2 - 5.2 - 4.2 - 7.5, op.val(-1), ABS_TOL);
 
-		DoubleDataset xd = new DoubleDataset(new double[] {-1, 0, 2});
+		Dataset xd = DatasetFactory.createFromObject(new double[] {-1, 0, 2});
 		DoubleDataset dx;
 
 		dx = op.calculateValues(xd);
@@ -70,10 +72,10 @@ public class OperatorTest {
 		dx = op.calculatePartialDerivativeValues(op.getParameter(5), xd);
 		Assert.assertArrayEquals(new double[] {1, 1, 1}, dx.getData(), ABS_TOL);
 
-		DoubleDataset[] coords = new DoubleDataset[] {DoubleDataset.createRange(15, 30, 0.25)};
+		DoubleDataset[] coords = new DoubleDataset[] {DatasetFactory.createRange(DoubleDataset.class, 15, 30, 0.25)};
 		DoubleDataset weight = null;
 		CoordinatesIterator it = CoordinatesIterator.createIterator(null, coords);
-		DoubleDataset current = new DoubleDataset(it.getShape());
+		DoubleDataset current = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 		DoubleDataset data = Random.randn(it.getShape());
 		op.fillWithValues(current, it);
 		double rd = data.residual(current, weight, false);
@@ -99,7 +101,7 @@ public class OperatorTest {
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2, 4.2, -7.5}, op.getParameterValues(), ABS_TOL);
 		Assert.assertEquals((-23. - 10. - 1.2 - 5.2) * (- 4.2 - 7.5), op.val(-1), ABS_TOL);
 
-		DoubleDataset xd = new DoubleDataset(new double[] {-1, 0, 2});
+		Dataset xd = DatasetFactory.createFromObject(new double[] {-1, 0, 2});
 		DoubleDataset dx;
 
 		dx = op.calculateValues(xd);
@@ -145,7 +147,7 @@ public class OperatorTest {
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2, -4.2, 7.5}, op.getParameterValues(), ABS_TOL);
 		Assert.assertEquals(-23. - 10. - 1.2 - 5.2 - 4.2 - 7.5, op.val(-1), ABS_TOL);
 
-		DoubleDataset xd = new DoubleDataset(new double[] {-1, 0, 2});
+		Dataset xd = DatasetFactory.createFromObject(new double[] {-1, 0, 2});
 		DoubleDataset dx;
 
 		dx = op.calculateValues(xd);
@@ -189,7 +191,7 @@ public class OperatorTest {
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2, 4.2, -7.5}, op.getParameterValues(), ABS_TOL);
 		Assert.assertEquals((-23. - 10. - 1.2 - 5.2) / (- 4.2 - 7.5), op.val(-1), ABS_TOL);
 
-		DoubleDataset xd = new DoubleDataset(new double[] {-1, 0, 2});
+		Dataset xd = DatasetFactory.createFromObject(new double[] {-1, 0, 2});
 		DoubleDataset dx;
 
 		dx = op.calculateValues(xd);
@@ -253,7 +255,7 @@ public class OperatorTest {
 	public void testConvolve() {
 		double w = 110 * Math.log(2)*FermiGauss.K2EV_CONVERSION_FACTOR;
 
-		DoubleDataset xd = new DoubleDataset(new double[] {23. - w, 23, 23. + 2 * w});
+		Dataset xd = DatasetFactory.createFromObject(new double[] {23. - w, 23, 23. + 2 * w});
 
 		AFunction f = new Fermi();
 		f.setParameterValues(23., 110*FermiGauss.K2EV_CONVERSION_FACTOR, 1, 0);

@@ -8,20 +8,22 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.Slice;
-import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.metadata.AxesMetadata;
 
 import uk.ac.diamond.scisoft.analysis.optimize.ApachePolynomial;
 
@@ -52,11 +54,16 @@ public class XRegionProfileNormalize extends AbstractOperation<XRegionProfileNor
 		
 		if (energyAxis == null) {
 			// default to the pixel values
-			energyAxis = IntegerDataset.createRange(input.getShape()[1]);
+			energyAxis = DatasetFactory.createRange(IntegerDataset.class, input.getShape()[1]);
 		}
-		
-		int minPos = Maths.abs(Maths.subtract(energyAxis.getSlice(), model.getxRange()[0])).argMin();
-		int maxPos = Maths.abs(Maths.subtract(energyAxis.getSlice(), model.getxRange()[1])).argMin();
+		Dataset eDataset;
+		try {
+			eDataset = DatasetUtils.convertToDataset(energyAxis.getSlice());
+		} catch (DatasetException e1) {
+			throw new OperationException(this, e1);
+		}
+		int minPos = Maths.abs(Maths.subtract(eDataset, model.getxRange()[0])).argMin();
+		int maxPos = Maths.abs(Maths.subtract(eDataset, model.getxRange()[1])).argMin();
 		
 		if (minPos == maxPos) {
 			throw new OperationException(this, "Select a range inside the X axis");
@@ -74,7 +81,7 @@ public class XRegionProfileNormalize extends AbstractOperation<XRegionProfileNor
 		Dataset smoothedProfile = regionProfile;
 		
 		try {
-			Dataset xAxis = DoubleDataset.createRange(regionProfile.getShape()[0]);
+			Dataset xAxis = DatasetFactory.createRange(DoubleDataset.class, regionProfile.getShape()[0]);
 			smoothedProfile = ApachePolynomial.getPolynomialSmoothed(xAxis, regionProfile, model.getSmoothing(), 3);
 		} catch (Exception e) {
 			throw new OperationException(this, e);

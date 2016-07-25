@@ -9,24 +9,26 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
-import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.MaskMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
-import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.BooleanDataset;
+import org.eclipse.january.dataset.Comparisons;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MaskMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 
 @Atomic
 public class SubtractIntegratedXRegionsOperation extends AbstractOperation<SubtractIntegratedXRegionsModel, OperationData> {
@@ -66,7 +68,12 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 			b1 = getMean(input,(int)Math.round(backGroundRange1[0]), (int)Math.round(backGroundRange1[1]));
 		} else {
 			
-			Dataset x = DatasetUtils.sliceAndConvertLazyDataset(axm.getAxis(1)[0]);
+			Dataset x;
+			try {
+				x = DatasetUtils.sliceAndConvertLazyDataset(axm.getAxis(1)[0]);
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 			x.squeeze();
 			
 			signal = getMean(input,x,signalRange);
@@ -89,7 +96,12 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 		double m2 = (double)signal.sum(true);
 		
 		if (axis1 != null) {
-			AxesMetadataImpl ax = new AxesMetadataImpl(1);
+			AxesMetadata ax;
+			try {
+				ax = MetadataFactory.createMetadata(AxesMetadata.class, 1);
+			} catch (MetadataException e) {
+				throw new OperationException(this, e);
+			}
 			ax.setAxis(0, axis1);
 			signal.addMetadata(ax);
 		}
@@ -117,7 +129,12 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 		Dataset d = DatasetUtils.convertToDataset(input.getSlice(s));
 		MaskMetadata mmd = d.getFirstMetadata(MaskMetadata.class);
 		if (mmd != null) {
-			Dataset m = DatasetUtils.sliceAndConvertLazyDataset(mmd.getMask());
+			Dataset m;
+			try {
+				m = DatasetUtils.sliceAndConvertLazyDataset(mmd.getMask());
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 			if (m instanceof BooleanDataset) {
 				d.setByBoolean(Double.NaN, Comparisons.logicalNot(m));
 			}

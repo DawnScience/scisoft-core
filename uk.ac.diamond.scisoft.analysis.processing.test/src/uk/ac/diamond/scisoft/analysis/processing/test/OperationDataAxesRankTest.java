@@ -6,10 +6,6 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
@@ -20,11 +16,16 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.Random;
-import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.Random;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -449,7 +450,7 @@ public class OperationDataAxesRankTest {
 //		}, di);
 //	}
 	
-	private ILazyDataset getDataset() {
+	private ILazyDataset getDataset() throws MetadataException {
 		int[] dsShape = new int[]{24, 1000, 1000};
 		
 		ILazyDataset lz = Random.lazyRand("test", dsShape);
@@ -463,7 +464,7 @@ public class OperationDataAxesRankTest {
 		final IDataset axDataset3 = DatasetFactory.createRange(1000,Dataset.INT32);
 		axDataset3.setShape(new int[] {1,1,1000});
 
-		AxesMetadataImpl am = new AxesMetadataImpl(3);
+		AxesMetadata am = MetadataFactory.createMetadata(AxesMetadata.class, 3);
 		am.addAxis(0, axDataset1);
 		am.addAxis(1, axDataset2);
 		am.addAxis(2, axDataset3);
@@ -483,7 +484,12 @@ public class OperationDataAxesRankTest {
 			ax1.setShape(new int[]{5,1});
 			Dataset ax2 = DatasetFactory.createRange(10, Dataset.INT16);
 			ax2.setShape(new int[]{1,10});
-			AxesMetadataImpl md = new AxesMetadataImpl(2);
+			AxesMetadata md;
+			try {
+				md = MetadataFactory.createMetadata(AxesMetadata.class, 2);
+			} catch (MetadataException e) {
+				throw new OperationException(this, e);
+			}
 			md.addAxis(0, ax1);
 			md.addAxis(1, ax2);
 			ones.setMetadata(md);
@@ -513,7 +519,12 @@ public class OperationDataAxesRankTest {
 		
 		protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 			
-			Dataset ones = getNew2dDataset();
+			Dataset ones;
+			try {
+				ones = getNew2dDataset();
+			} catch (MetadataException e) {
+				throw new OperationException(this, e);
+			}
 			
 			return new OperationData(ones);
 		}
@@ -541,7 +552,12 @@ public class OperationDataAxesRankTest {
 		
 		protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 			
-			Dataset ones = getNew1dDataset();
+			Dataset ones;
+			try {
+				ones = getNew1dDataset();
+			} catch (MetadataException e) {
+				throw new OperationException(this, e);
+			}
 			
 			return new OperationData(ones);
 		}
@@ -572,7 +588,12 @@ public class OperationDataAxesRankTest {
 			Dataset ones = DatasetFactory.ones(new int[] {10}, Dataset.INT16);
 			Dataset ax1 = DatasetFactory.createRange(10, Dataset.INT16);
 			ax1.setShape(new int[]{10});
-			AxesMetadataImpl md = new AxesMetadataImpl(1);
+			AxesMetadata md;
+			try {
+				md = MetadataFactory.createMetadata(AxesMetadata.class, 1);
+			} catch (MetadataException e) {
+				throw new OperationException(this, e);
+			}
 			md.addAxis(0, ax1);
 			ones.setMetadata(md);
 			
@@ -601,11 +622,15 @@ public class OperationDataAxesRankTest {
 	
 		protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 	
-			if (input.getRank() == 2) {
-				return new OperationData(getNew2dDataset());
-			}
-			else if (input.getRank() == 1) {
-				return new OperationData(getNew1dDataset());
+			try {
+				if (input.getRank() == 2) {
+					return new OperationData(getNew2dDataset());
+				}
+				else if (input.getRank() == 1) {
+					return new OperationData(getNew1dDataset());
+				}
+			} catch (MetadataException e) {
+				throw new OperationException(this, e);
 			}
 			throw new OperationException(this, "rank is invalid for this test - must be 1 or 2");
 		}
@@ -627,13 +652,13 @@ public class OperationDataAxesRankTest {
 	
 	}
 	
-	public static Dataset getNew2dDataset() {
+	public static Dataset getNew2dDataset() throws MetadataException {
 		Dataset ones = DatasetFactory.ones(new int[] {5, 10}, Dataset.INT16);
 		Dataset ax1 = DatasetFactory.createRange(5, Dataset.INT16);
 		ax1.setShape(new int[]{5,1});
 		Dataset ax2 = DatasetFactory.createRange(10, Dataset.INT16);
 		ax2.setShape(new int[]{1,10});
-		AxesMetadataImpl md = new AxesMetadataImpl(2);
+		AxesMetadata md = MetadataFactory.createMetadata(AxesMetadata.class, 2);
 		md.addAxis(0, ax1);
 		md.addAxis(1, ax2);
 		ones.setMetadata(md);
@@ -641,11 +666,11 @@ public class OperationDataAxesRankTest {
 	}
 	
 
-	public static Dataset getNew1dDataset() {
+	public static Dataset getNew1dDataset() throws MetadataException {
 		Dataset ones = DatasetFactory.ones(new int[] {10}, Dataset.INT16);
 		Dataset ax1 = DatasetFactory.createRange(10, Dataset.INT16);
 		ax1.setShape(new int[]{10});
-		AxesMetadataImpl md = new AxesMetadataImpl(1);
+		AxesMetadata md = MetadataFactory.createMetadata(AxesMetadata.class, 1);
 		md.addAxis(0, ax1);
 		ones.setMetadata(md);
 		return ones;

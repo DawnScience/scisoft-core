@@ -9,7 +9,9 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -33,7 +35,7 @@ public class FanoTest {
 		Assert.assertEquals(ha, f.val(23. - w), ABS_TOL);
 		Assert.assertEquals(hb, f.val(23. + w), ABS_TOL);
 
-		DoubleDataset xd = new DoubleDataset(new double[] {23. - w, 23, 23. + w});
+		Dataset xd = DatasetFactory.createFromObject(new double[] {23. - w, 23, 23. + w});
 		DoubleDataset dx;
 		dx = f.calculateValues(xd);
 		Assert.assertArrayEquals(new double[] {ha, hr, hb}, dx.getData(), ABS_TOL);

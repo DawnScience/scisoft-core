@@ -9,20 +9,19 @@
 package uk.ac.diamond.scisoft.analysis.processing.test;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.Random;
-import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.hdf.object.operation.HierarchicalFileExecutionVisitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.Random;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -70,7 +69,7 @@ private static IOperationService service;
 		axDataset3.setShape(new int[] {1,1,100});
 		axDataset3.setName("x");
 		
-		AxesMetadataImpl am = new AxesMetadataImpl(3);
+		AxesMetadata am = MetadataFactory.createMetadata(AxesMetadata.class, 3);
 		am.addAxis(0, axDataset1);
 		am.addAxis(1, axDataset2);
 		am.addAxis(2, axDataset3);

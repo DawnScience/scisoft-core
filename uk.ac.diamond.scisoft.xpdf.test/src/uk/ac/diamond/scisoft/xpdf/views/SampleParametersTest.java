@@ -20,11 +20,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
 import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
 import org.eclipse.dawnsci.nexus.builder.impl.DefaultNexusFileBuilder;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -264,14 +263,14 @@ public class SampleParametersTest {
 		
 		assertEquals("NX name incorrect", sample.getName(), nxample.getNameScalar());
 		assertEquals("NX description incorrect", sample.getName() + ", " + sample.getComposition() + ", " + sample.getShapeName(), nxample.getDescriptionScalar());
-		assertEquals("NX component names incorrect", new StringDataset(sample.getPhases().stream().map(a -> a.getName()).collect(Collectors.toList()).toArray(new String[nCompo])), nxample.getComponent());
-		assertEquals("NX component formulae incorrect", new StringDataset(sample.getPhases().stream().map(a -> a.getComposition().getHallNotation(false)).collect(Collectors.toList()).toArray(new String[nCompo]), new int[]{nCompo, 1}), nxample.getChemical_formula()); 
-		assertEquals("NX formula weight incorrect", new DoubleDataset(ArrayUtils.toPrimitive(sample.getPhases().stream().map(a -> a.getComposition().getFormulaMass()).collect(Collectors.toList()).toArray(new Double[nCompo])), new int[]{nCompo}), nxample.getDataset("chemical_formula_weight"));
+		assertEquals("NX component names incorrect", DatasetFactory.createFromList(sample.getPhases().stream().map(a -> a.getName()).collect(Collectors.toList())), nxample.getComponent());
+		assertEquals("NX component formulae incorrect", DatasetFactory.createFromObject(sample.getPhases().stream().map(a -> a.getComposition().getHallNotation(false)).collect(Collectors.toList()), nCompo, 1), nxample.getChemical_formula()); 
+		assertEquals("NX formula weight incorrect", DatasetFactory.createFromList(sample.getPhases().stream().map(a -> a.getComposition().getFormulaMass()).collect(Collectors.toList())), nxample.getDataset("chemical_formula_weight"));
 		// unit cell parameters...
-		assertEquals("NX unit cell volume incorrect", new DoubleDataset(ArrayUtils.toPrimitive(sample.getPhases().stream().map(a -> a.getUnitCellVolume()).collect(Collectors.toList()).toArray(new Double[nCompo])), new int[]{nCompo}), nxample.getUnit_cell_volume());
-		assertEquals("NX unit cell class incorrect", new StringDataset(sample.getPhases().stream().map(a -> a.getCrystalSystem().getName()).collect(Collectors.toList()).toArray(new String[nCompo]), new int[]{nCompo}), nxample.getUnit_cell_class());
-		assertEquals("NX unit cell space group incorrect", new StringDataset(sample.getPhases().stream().map(a -> a.getSpaceGroup().getNumber() + ": " + a.getSpaceGroup().getName()).collect(Collectors.toList()).toArray(new String[nCompo]), new int[]{nCompo}), nxample.getUnit_cell_group());
-		assertEquals("NX theoretical densities incorrect", new DoubleDataset(ArrayUtils.toPrimitive(sample.getPhases().stream().map(a -> a.getDensity()).collect(Collectors.toList()).toArray(new Double[nCompo])), new int[]{nCompo}), nxample.getDataset("theoretical_density"));
+		assertEquals("NX unit cell volume incorrect", DatasetFactory.createFromList(sample.getPhases().stream().map(a -> a.getUnitCellVolume()).collect(Collectors.toList())), nxample.getUnit_cell_volume());
+		assertEquals("NX unit cell class incorrect", DatasetFactory.createFromList(sample.getPhases().stream().map(a -> a.getCrystalSystem().getName()).collect(Collectors.toList())), nxample.getUnit_cell_class());
+		assertEquals("NX unit cell space group incorrect", DatasetFactory.createFromList(sample.getPhases().stream().map(a -> a.getSpaceGroup().getNumber() + ": " + a.getSpaceGroup().getName()).collect(Collectors.toList())), nxample.getUnit_cell_group());
+		assertEquals("NX theoretical densities incorrect", DatasetFactory.createFromList(sample.getPhases().stream().map(a -> a.getDensity()).collect(Collectors.toList())), nxample.getDataset("theoretical_density"));
 		
 	}
 

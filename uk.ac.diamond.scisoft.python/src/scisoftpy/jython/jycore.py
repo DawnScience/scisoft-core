@@ -18,21 +18,22 @@
 Core package contains wrappers for Java dataset classes
 '''
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset as _ds
-import org.eclipse.dawnsci.analysis.dataset.impl.LazyDataset as _lds
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset as _abstractds
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory as _df
+import org.eclipse.january.dataset.Dataset as _ds
+import org.eclipse.january.dataset.LazyDataset as _lds
+import org.eclipse.january.dataset.DTypeUtils as _dtutils
+import org.eclipse.january.dataset.ShapeUtils as _sutils
+import org.eclipse.january.dataset.DatasetFactory as _df
 
-import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset as _booleands
-import org.eclipse.dawnsci.analysis.dataset.impl.IntegerDataset as _integerds
-import org.eclipse.dawnsci.analysis.dataset.impl.RGBDataset as _rgbds
-import org.eclipse.dawnsci.analysis.dataset.impl.ComplexDoubleDataset as _complexdoubleds
+import org.eclipse.january.dataset.BooleanDataset as _booleands
+import org.eclipse.january.dataset.IntegerDataset as _integerds
+import org.eclipse.january.dataset.RGBDataset as _rgbds
 
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils as _dsutils
+import org.eclipse.january.dataset.DatasetUtils as _dsutils
 from uk.ac.diamond.scisoft.python.PythonUtils import convertToJava as _cvt2j
 from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
 from uk.ac.diamond.scisoft.python.PythonUtils import setSlice as _setslice
 from uk.ac.diamond.scisoft.python.PythonUtils import convertToSlice as _cvt2js
+from uk.ac.diamond.scisoft.python.PythonUtils import createFromObject as _create
 
 import org.apache.commons.math3.complex.Complex as _jcomplex #@UnresolvedImport
 
@@ -104,14 +105,14 @@ __jcdtype2jytype = { _ds.ARRAYINT8 : cint8, _ds.ARRAYINT16 : cint16,
 
 # get dtype from object
 def _getdtypefromobj(jobj):
-    jdtype = _abstractds.getDTypeFromObject(jobj)
+    jdtype = _dtutils.getDTypeFromObject(jobj)
     if jdtype in __jdtype2jytype:
         return __jdtype2jytype[jdtype]
     raise ValueError, "Java dataset type unknown"
 
 # get dtype from Java dataset
 def _getdtypefromjdataset(jobj):
-    d = jobj.getDtype()
+    d = jobj.getDType()
     if d in __jdtype2jytype:
         return __jdtype2jytype[d]
     if d in __jcdtype2jytype:
@@ -414,7 +415,7 @@ def __cvt_jobj(obj, dtype=None, copy=True, force=False):
 
     if isinstance(obj, _ds):
         if copy:
-            if dtype is None or _translatenativetype(dtype).value == obj.dtype:
+            if dtype is None or _translatenativetype(dtype).value == obj.getDType():
                 return obj.clone()
             else:
                 return obj.cast(_translatenativetype(dtype).value)
@@ -445,7 +446,7 @@ def __cvt_jobj(obj, dtype=None, copy=True, force=False):
     else:
         dtype = _translatenativetype(dtype)
 
-    return _df.createFromObject(obj, dtype.value)
+    return _create(dtype.value, obj)
 
 # prevent incorrect coercion of Python booleans causing trouble with overloaded Java methods
 import java.lang.Boolean as _jbool #@UnresolvedImport
@@ -583,12 +584,12 @@ class ndarray(object):
     @property
     def itemsize(self):
         '''Return number of bytes per item'''
-        return self.__dataset.getItemsize()
+        return self.__dataset.getItemBytes()
 
     @property
     def nbytes(self):
         '''Return total bytes used by items of array'''
-        return self.__dataset.Nbytes()
+        return self.__dataset.getNbytes()
 
     @property
     def dtype(self):
@@ -602,20 +603,20 @@ class ndarray(object):
 
     @_wrapout
     def _get_real(self):
-        return self.__dataset.realView()
+        return self.__dataset.getRealView()
 
     def _set_real(self, value):
         value = fromDS(value)
         if isinstance(value, ndarray):
             value = value._jdataset()
-        _setslice(self.__dataset.realView(), value, None)
+        _setslice(self.__dataset.getRealView(), value, None)
 
     real = property(_get_real, _set_real)
 
     @_wrapout
     def _get_imag(self):
         if iscomplexobj(self):
-            return self.__dataset.imagView()
+            return self.__dataset.getImaginaryView()
         return zeros(self.shape, dtype=self.dtype)
 
     def _set_imag(self, value):
@@ -623,7 +624,7 @@ class ndarray(object):
             value = fromDS(value)
             if isinstance(value, ndarray):
                 value = value._jdataset()
-            _setslice(self.__dataset.imagView(), value, None)
+            _setslice(self.__dataset.getImaginaryView(), value, None)
 
     imag = property(_get_imag, _set_imag)
 
@@ -839,7 +840,7 @@ class ndarray(object):
     @_wrapout
     def sum(self, axis=None, dtype=None): #@ReservedAssignment
         if dtype is None:
-            dtval = self.__dataset.getDtype()
+            dtval = self.__dataset.getDType()
         else:
             dtval = _translatenativetype(dtype).value
         if axis is None:
@@ -904,7 +905,7 @@ class ndarray(object):
     @_wrapout
     def prod(self, axis=None, dtype=None):
         if dtype is None:
-            dtval = self.__dataset.getDtype()
+            dtval = self.__dataset.getDType()
         else:
             dtval = _translatenativetype(dtype).value
         if axis is None:
@@ -1364,7 +1365,7 @@ def linspace(start, stop, num=50, endpoint=True, retstep=False):
             stop = stop+0j
         rresult = _df.createLinearSpace(start.real, stop.real, num, float64.value)
         iresult = _df.createLinearSpace(start.imag, stop.imag, num, float64.value)
-        result = Sciwrap(_complexdoubleds(rresult, iresult))
+        result = Sciwrap(_dsutils.createCompoundDataset(complex128.value, (rresult, iresult)))
         del rresult, iresult
     else:
         result = Sciwrap(_df.createLinearSpace(start, stop, num, dtype.value))
@@ -1654,7 +1655,7 @@ def unravel_index(indices, dims):
     if isinstance(indices, (tuple, list)):
         indices = ndarray(buffer=indices)._jdataset()
     if not isinstance(indices, _ds):
-        return tuple(_abstractds.getNDPositionFromShape(indices, dims))
+        return tuple(_sutils.getNDPositionFromShape(indices, dims))
     return tuple(_dsutils.calcPositionsFromIndexes(indices, dims))
 
 

@@ -10,11 +10,13 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.File;
+import java.io.Serializable;
+import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
+import org.eclipse.january.metadata.IMetadata;
 
 public class DiffractionMetadata extends ExtendedMetadata implements IDiffractionMetadata {
 	private static final long serialVersionUID = IMetadata.serialVersionUID;
@@ -22,9 +24,24 @@ public class DiffractionMetadata extends ExtendedMetadata implements IDiffractio
 	private DetectorProperties props, oProps;
 	private DiffractionCrystalEnvironment env, oEnv;
 
+	public DiffractionMetadata() {
+		super();
+	}
+
 	public DiffractionMetadata(String filename, DetectorProperties props, DiffractionCrystalEnvironment env) {
-		super((filename != null) ? new File(filename) : null);
+		super();
+		initialize(filename, props, env);
+	}
+
+	@Override
+	public void initialize(String filename, DetectorProperties props, DiffractionCrystalEnvironment env) {
+		setFile(filename == null ?  null : new File(filename));
 		setDiffractionMetadata(props, env);
+	}
+
+	@Override
+	public void initialize(Map<String, ? extends Serializable> metadata) {
+		super.initialize(metadata);
 	}
 
 	void setDiffractionMetadata(DetectorProperties props, DiffractionCrystalEnvironment env) {

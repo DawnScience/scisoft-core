@@ -30,13 +30,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.SliceND;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -174,14 +174,18 @@ public class FioLoader extends AbstractFileLoader {
 						private static final long serialVersionUID = LazyLoaderStub.serialVersionUID;
 
 						@Override
-						public IDataset getDataset(IMonitor mon, SliceND slice) throws Exception {
+						public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 							FioLoader ldr = (FioLoader) getLoader();
 							if (ldr == null) {
 								return null;
 							}
 							IDataHolder holder = LoaderFactory.fetchData(fileName, loadMetadata, num);
 							if (holder == null) {
-								holder = ldr.loadFile(num, mon);
+								try {
+									holder = ldr.loadFile(num, mon);
+								} catch (ScanFileHolderException e) {
+									throw new IOException(e);
+								}
 								if (holder.getFilePath() == null) {
 									holder.setFilePath(fileName);
 								}

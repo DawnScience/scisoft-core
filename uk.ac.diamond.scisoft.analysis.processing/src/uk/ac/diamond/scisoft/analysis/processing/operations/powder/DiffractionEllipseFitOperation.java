@@ -11,18 +11,19 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 
 import java.io.Serializable;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.roi.IParametricROI;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.roi.EllipticalFitROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.PolylineROI;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.DSpacing;
 import uk.ac.diamond.scisoft.analysis.diffraction.PeakFittingEllipseFinder;
@@ -67,16 +68,16 @@ public class DiffractionEllipseFitOperation extends AbstractOperation<Diffractio
 			
 		}
 		
-		DoubleDataset r = new DoubleDataset(new double[]{rms}, new int[]{1});
+		Dataset r = DatasetFactory.createFromObject(new double[]{rms});
 		r.setName("rms");
 		
-		DoubleDataset ax = new DoubleDataset(semi, new int[]{2});
+		Dataset ax = DatasetFactory.createFromObject(semi);
 		ax.setName("semi-axes");
 		
-		DoubleDataset po = new DoubleDataset(point, new int[]{2});
+		Dataset po = DatasetFactory.createFromObject(point);
 		po.setName("centre");
 		
-		DoubleDataset a = new DoubleDataset(new double[]{ang}, new int[]{1});
+		Dataset a = DatasetFactory.createFromObject(new double[]{ang});
 		a.setName("angle");
 
 		return new OperationData(input, new Serializable[]{r,ax,po,a});

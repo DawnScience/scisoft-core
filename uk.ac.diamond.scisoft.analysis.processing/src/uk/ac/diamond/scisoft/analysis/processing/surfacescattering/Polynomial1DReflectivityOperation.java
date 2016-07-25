@@ -9,18 +9,20 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.surfacescattering;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.Maths;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.Interpolation1D;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
@@ -57,8 +59,8 @@ public class Polynomial1DReflectivityOperation extends AbstractOperation<Polynom
 	@Override
 	public void init() {
 		if (((boolean) (model.getPath()).equalsIgnoreCase("NO")) == false) { 
-			adc2data = ProcessingUtils.getLazyDataset(this, model.getPath(), adc2).getSlice();
-			qdcd_data = ProcessingUtils.getLazyDataset(this, model.getPath(), qdcd_).getSlice();
+			adc2data = ProcessingUtils.getDataset(this, model.getPath(), adc2);
+			qdcd_data = ProcessingUtils.getDataset(this, model.getPath(), qdcd_);
 			
 		}
 	}
@@ -116,15 +118,15 @@ public class Polynomial1DReflectivityOperation extends AbstractOperation<Polynom
 		Dataset[] fluxData = RecoverNormalisationFluxBatch.normalisationFlux(input, model.getPath());
 		
 		ILazyDataset qdcd = null;
-		
 		if ((boolean) (model.getPath().equalsIgnoreCase("NO") ||(model.getPath().equalsIgnoreCase(null)))){
-			qdcd = ProcessingUtils.getLazyDataset(this, model.getPath(), "qsdcd").getSlice();
-			m = tmp1.getMatchingSlice(qdcd);
+			qdcd = ProcessingUtils.getDataset(this, model.getPath(), "qsdcd");
+		} else {
+			qdcd = ProcessingUtils.getDataset(this,tmp1.getFilePath(), "qdcd");
 		}
-		
-		else{
-			qdcd = ProcessingUtils.getLazyDataset(this,tmp1.getFilePath(), "qdcd").getSlice();
+		try {
 			m = tmp1.getMatchingSlice(qdcd);
+		} catch (DatasetException e) {
+			throw new OperationException(this, e);
 		}
 		
 		Dataset flux =  (Dataset) Interpolation1D.splineInterpolation(fluxData[0], fluxData[1], m);;
@@ -160,8 +162,3 @@ public class Polynomial1DReflectivityOperation extends AbstractOperation<Polynom
 
 	}
 }
-
-
-
-
-

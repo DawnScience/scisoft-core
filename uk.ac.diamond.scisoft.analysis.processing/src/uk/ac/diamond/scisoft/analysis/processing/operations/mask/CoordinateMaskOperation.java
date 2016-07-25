@@ -9,19 +9,20 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.mask;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.MaskMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Comparisons;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.metadata.MaskMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.BooleanDataset;
+import org.eclipse.january.dataset.Comparisons;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.metadata.MaskMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.MakeMask;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
@@ -114,7 +115,12 @@ public class CoordinateMaskOperation extends
 				inputMask = Comparisons.logicalAnd(inputMask, coordinateMask);
 			}
 
-			MaskMetadata maskMetadata = new MaskMetadataImpl(inputMask);
+			MaskMetadata maskMetadata;
+			try {
+				maskMetadata = MetadataFactory.createMetadata(MaskMetadata.class, inputMask);
+			} catch (MetadataException e) {
+				throw new OperationException(this, e);
+			}
 			input.setMetadata(maskMetadata);
 		}		
 		return new OperationData(input);

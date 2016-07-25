@@ -11,15 +11,16 @@ package uk.ac.diamond.scisoft.analysis.processing.test;
 
 import static org.junit.Assert.*;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.MaskMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.metadata.MaskMetadata;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
@@ -37,7 +38,7 @@ public class CoordinateMaskingTest {
 
 		final double lowerLimit = 0.1, upperLimit = 25.0;
 		
-		Dataset data = new DoubleDataset(2048, 2048);
+		Dataset data = DatasetFactory.zeros(DoubleDataset.class, 2048, 2048);
 		
 		data.setMetadata(new SliceFromSeriesMetadata(new SourceInformation("/dev/null", "", null)));
 		

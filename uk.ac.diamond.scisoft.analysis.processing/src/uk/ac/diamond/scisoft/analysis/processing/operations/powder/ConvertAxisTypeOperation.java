@@ -11,16 +11,17 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.metadata.AxesMetadata;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PowderDataUtils;
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
@@ -62,7 +63,12 @@ public class ConvertAxisTypeOperation extends AbstractOperation<ConvertAxisTypeM
 		}
 
 		if ((axes != null) && (axes[0] !=null)) {
-			Dataset oldXAxis = DatasetUtils.sliceAndConvertLazyDataset(axes[0]);
+			Dataset oldXAxis;
+			try {
+				oldXAxis = DatasetUtils.sliceAndConvertLazyDataset(axes[0]);
+			} catch (DatasetException e) {
+				throw new OperationException(this, e);
+			}
 
 			String axisName = oldXAxis.getName();
 			XAxis currentAxisType;

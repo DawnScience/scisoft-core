@@ -9,12 +9,12 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.CompoundDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.PositionIterator;
+import org.eclipse.january.dataset.CompoundDataset;
+import org.eclipse.january.dataset.DTypeUtils;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.PositionIterator;
 
 /**
  * An iterator over a dataset whose items are coordinates
@@ -28,8 +28,8 @@ public class CoordinateDatasetIterator extends CoordinatesIterator {
 	 */
 	public CoordinateDatasetIterator(IDataset value) {
 		if (!(value instanceof CompoundDataset)) {
-			int dtype = AbstractDataset.getBestDType(Dataset.ARRAYINT8,
-					AbstractDataset.getDTypeFromClass(value.elementClass()));
+			int dtype = DTypeUtils.getBestDType(Dataset.ARRAYINT8,
+					DTypeUtils.getDTypeFromClass(value.getElementClass()));
 			cvalue = (CompoundDataset) DatasetUtils.cast(value, dtype);
 		} else {
 			cvalue = (CompoundDataset) value;

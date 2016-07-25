@@ -12,11 +12,11 @@ package uk.ac.diamond.scisoft.analysis.io;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.api.metadata.ARPESMetadata;
 import org.eclipse.dawnsci.analysis.dataset.metadata.ARPESMetadataImpl;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.metadata.ARPESMetadata;
 import org.junit.Test;
 
 public class NexusARPESMetaTest {
@@ -26,7 +26,7 @@ public class NexusARPESMetaTest {
 	final static String testFileFolder = "testfiles/gda/analysis/io/NexusARPESTest/";
 
 	@Test
-	public void testARPESLoader() {
+	public void testARPESLoader() throws Exception {
 		IDataHolder dh = null;
 
 		try {

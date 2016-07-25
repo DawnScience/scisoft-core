@@ -12,9 +12,10 @@ package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 import static org.junit.Assert.assertArrayEquals;
 
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IndexIterator;
 import org.junit.Test;
 
 public class IntensityCorrectionsTest extends AbstractPixelIntegrationTestBase {
@@ -25,7 +26,7 @@ public class IntensityCorrectionsTest extends AbstractPixelIntegrationTestBase {
 		IDiffractionMetadata md = getDiffractionMetadata();
 		
 		int[] shape = new int[]{2048,2048};
-		DoubleDataset correctionArray = new DoubleDataset(shape);
+		DoubleDataset correctionArray = DatasetFactory.zeros(DoubleDataset.class, shape);
 		correctionArray.iadd(1);
 		
 		Dataset tth = PixelIntegrationUtils.generate2ThetaArrayRadians(md);
@@ -36,7 +37,7 @@ public class IntensityCorrectionsTest extends AbstractPixelIntegrationTestBase {
 		
 		System.out.println(stop-start);
 		
-		DoubleDataset correctionArray2 = new DoubleDataset(shape);
+		DoubleDataset correctionArray2 = DatasetFactory.zeros(DoubleDataset.class, shape);
 		correctionArray2.iadd(1);
 		
 		start = System.currentTimeMillis();
@@ -57,7 +58,7 @@ public class IntensityCorrectionsTest extends AbstractPixelIntegrationTestBase {
 		IDiffractionMetadata md = getDiffractionMetadata();
 		
 		int[] shape = new int[]{2048,2048};
-		DoubleDataset correctionArray = new DoubleDataset(shape);
+		DoubleDataset correctionArray = DatasetFactory.zeros(DoubleDataset.class, shape);
 		correctionArray.iadd(1);
 		
 		Dataset tth = PixelIntegrationUtils.generate2ThetaArrayRadians(md);
@@ -70,7 +71,7 @@ public class IntensityCorrectionsTest extends AbstractPixelIntegrationTestBase {
 		System.out.println(stop-start);
 		System.out.println(correctionArray.getAbs(0));
 		
-		DoubleDataset correctionArray2 = new DoubleDataset(shape);
+		DoubleDataset correctionArray2 = DatasetFactory.zeros(DoubleDataset.class, shape);
 		correctionArray2.iadd(1);
 		start = System.currentTimeMillis();
 		IndexIterator it = correctionArray.getIterator();
@@ -89,7 +90,7 @@ public class IntensityCorrectionsTest extends AbstractPixelIntegrationTestBase {
 		IDiffractionMetadata md = getDiffractionMetadata();
 		
 		int[] shape = new int[]{2048,2048};
-		DoubleDataset correctionArray = new DoubleDataset(shape);
+		DoubleDataset correctionArray = DatasetFactory.zeros(DoubleDataset.class, shape);
 		correctionArray.iadd(1);
 		
 		Dataset tth = PixelIntegrationUtils.generate2ThetaArrayRadians(md);
@@ -100,7 +101,7 @@ public class IntensityCorrectionsTest extends AbstractPixelIntegrationTestBase {
 		
 		System.out.println(stop-start);
 		
-		DoubleDataset correctionArray2 = new DoubleDataset(shape);
+		DoubleDataset correctionArray2 = DatasetFactory.zeros(DoubleDataset.class, shape);
 		correctionArray2.iadd(1);
 		
 		start = System.currentTimeMillis();

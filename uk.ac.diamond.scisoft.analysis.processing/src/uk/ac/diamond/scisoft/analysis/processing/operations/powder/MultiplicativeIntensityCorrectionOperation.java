@@ -11,17 +11,18 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.IndexIterator;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
 
@@ -55,7 +56,7 @@ public class MultiplicativeIntensityCorrectionOperation extends
 		if (correction == null) correction = calculateCorrectionArray(input, metadata);
 		
 		Dataset in = DatasetUtils.convertToDataset(input);
-		DoubleDataset out = new DoubleDataset(in.getShape());
+		DoubleDataset out = DatasetFactory.zeros(DoubleDataset.class, in.getShape());
 		Dataset error = in.getError();
 		if (error != null) error = error.getSlice();
 
@@ -108,7 +109,7 @@ public class MultiplicativeIntensityCorrectionOperation extends
 		
 		MultiplicativeIntensityCorrectionModel m = (MultiplicativeIntensityCorrectionModel)model;
 		
-		DoubleDataset cor = new DoubleDataset(data.getShape());
+		DoubleDataset cor = DatasetFactory.zeros(DoubleDataset.class, data.getShape());
 
 		Dataset tth = PixelIntegrationUtils.generate2ThetaArrayRadians(data.getShape(), md);
 		

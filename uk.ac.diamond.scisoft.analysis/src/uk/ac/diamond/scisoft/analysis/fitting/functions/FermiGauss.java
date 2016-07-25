@@ -11,12 +11,13 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import java.io.Serializable;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Maths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,7 +120,7 @@ public class FermiGauss extends AFunction implements Serializable {
 			calcCachedParameters();
 		}
 
-		Dataset fermiDS = getFermiDS(new DoubleDataset(values, new int[] {values.length}));
+		Dataset fermiDS = getFermiDS(DatasetFactory.createFromObject(values));
 		return fermiDS.getDouble(0);
 	}
 
@@ -142,7 +143,7 @@ public class FermiGauss extends AFunction implements Serializable {
 		DoubleDataset gaussDS = gauss.calculateValues(xAxis);
 		gaussDS.idivide(gaussDS.sum());
 		int length = fermiDS.getShapeRef()[0];
-		DoubleDataset s1 = DoubleDataset.ones(length*2-1);
+		DoubleDataset s1 = DatasetFactory.ones(DoubleDataset.class, length*2-1);
 		s1.setSlice(fermiDS.getDouble(0), new int[] {0}, new int[] {length/2}, new int[] {1});
 		s1.setSlice(fermiDS, new int[] {length/2}, new int[] {length*3/2}, new int[] {1});
 		s1.setSlice(fermiDS.getDouble(length-1), new int[] {length*3/2}, new int[] {length*2-1}, new int[] {1});

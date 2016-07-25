@@ -11,20 +11,22 @@ import java.util.Collection;
 
 import org.dawb.common.services.ServiceManager;
 import org.dawnsci.persistence.PersistenceServiceCreator;
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.Slice;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.api.metadata.AxesMetadata;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.Random;
-import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.Random;
+import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -644,7 +646,7 @@ public class NexusFileExecutionVisitorTest {
 		int[] inputShape = new int[] {10,1000,1100};
 		
 		ILazyDataset lazy = getLazyDataset(inputShape,0);
-		lazy.addMetadata(new AxesMetadataImpl(3));
+		lazy.addMetadata(MetadataFactory.createMetadata(AxesMetadata.class, 3));
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
@@ -745,7 +747,7 @@ public class NexusFileExecutionVisitorTest {
 		int[] inputShape = new int[] {10,1000,1100};
 		
 		ILazyDataset lazy = getLazyDataset(inputShape,0);
-		lazy.addMetadata(new AxesMetadataImpl(3));
+		lazy.addMetadata(MetadataFactory.createMetadata(AxesMetadata.class, 3));
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
@@ -821,7 +823,7 @@ public class NexusFileExecutionVisitorTest {
 			
 	}
 	
-	private void testDataset(ITestOperation op, String slice, ILazyDataset lz) {
+	private void testDataset(ITestOperation op, String slice, ILazyDataset lz) throws DatasetException {
 		Slice[] slices = Slice.convertFromString(slice);
 		IDataset data = op.getTestData().getData();
 		IDataset out = lz.getSlice(slices);
@@ -849,24 +851,27 @@ public class NexusFileExecutionVisitorTest {
 		ILazyDataset lz = Random.lazyRand("test", dsShape);
 		
 		if (withAxes > 0) {
-			AxesMetadataImpl am = new AxesMetadataImpl(dsShape.length);
-			
-			for (int j = 0; j < withAxes; j++) {
-				for (int i = 0; i < dsShape.length; i++) {
-					Dataset ax = DatasetFactory.createRange(0, dsShape[i], 1, Dataset.INT16);
-					ax.iadd(j);
-					int[] shape = new int[dsShape.length];
-					Arrays.fill(shape, 1);
-					shape[i] = dsShape[i];
-					ax.setShape(shape);
-					if (j == 0) ax.setName("Axis_" + String.valueOf(i));
-					else ax.setName("Axis_" + String.valueOf(i)+"_"+String.valueOf(j));
-					am.addAxis(i, ax);
+			AxesMetadata am  = null;
+			try {
+				am = MetadataFactory.createMetadata(AxesMetadata.class, dsShape.length);
+
+				for (int j = 0; j < withAxes; j++) {
+					for (int i = 0; i < dsShape.length; i++) {
+						Dataset ax = DatasetFactory.createRange(0, dsShape[i], 1, Dataset.INT16);
+						ax.iadd(j);
+						int[] shape = new int[dsShape.length];
+						Arrays.fill(shape, 1);
+						shape[i] = dsShape[i];
+						ax.setShape(shape);
+						if (j == 0) ax.setName("Axis_" + String.valueOf(i));
+						else ax.setName("Axis_" + String.valueOf(i)+"_"+String.valueOf(j));
+						am.addAxis(i, ax);
+					}
 				}
+			} catch (MetadataException e) {
+				// do nothing
 			}
-			
-			
-			
+
 			lz.setMetadata(am);
 		}
 		

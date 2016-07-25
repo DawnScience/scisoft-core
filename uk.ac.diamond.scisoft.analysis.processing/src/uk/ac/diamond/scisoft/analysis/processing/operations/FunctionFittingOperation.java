@@ -18,15 +18,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
 import org.dawb.common.services.ServiceManager;
-
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IDataBasedFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistentFile;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
@@ -35,22 +30,27 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
-import org.eclipse.dawnsci.analysis.dataset.metadata.AxesMetadataImpl;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 
 import uk.ac.diamond.scisoft.analysis.fitting.FittingConstants.FIT_ALGORITHMS;
 import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Add;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
+import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
-import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 
 @Atomic
 public class FunctionFittingOperation extends AbstractOperation<FunctionFittingModel, OperationData> {
@@ -78,7 +78,11 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 			ILazyDataset[] firstAxes = getFirstAxes(input);
 			Dataset x = null;
 			if (firstAxes != null && firstAxes[0] != null) {
-				x = DatasetUtils.sliceAndConvertLazyDataset(firstAxes[0]);
+				try {
+					x = DatasetUtils.sliceAndConvertLazyDataset(firstAxes[0]);
+				} catch (DatasetException e) {
+					throw new OperationException(this, e);
+				}
 			} else {
 				x = DatasetFactory.createRange(input.getSize(), Dataset.FLOAT64);
 			}
@@ -120,7 +124,7 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 						double v = p.getValue();
 						if (!success) v = Double.NaN;
 						String fullName = n +"_"+pn;
-						DoubleDataset d = new DoubleDataset(new double[]{v},new int[]{1});
+						Dataset d = DatasetFactory.createFromObject(new double[]{v});
 						d.setName(fullName);
 						d.squeeze();
 						params.add(d);
@@ -147,12 +151,17 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 				Dataset res = Maths.subtract(traceROI[1], vals);
 				res.setName("residual");
 				
-				AxesMetadataImpl ax = new AxesMetadataImpl(1);
-				ax.addAxis(0, outx);
-				vals.addMetadata(ax);
-				ax = new AxesMetadataImpl(1);
-				ax.addAxis(0, outx);
-				res.addMetadata(ax);
+				try {
+					AxesMetadata ax;
+					ax = MetadataFactory.createMetadata(AxesMetadata.class, 1);
+					ax.addAxis(0, outx);
+					vals.addMetadata(ax);
+					ax = MetadataFactory.createMetadata(AxesMetadata.class, 1);
+					ax.addAxis(0, outx);
+					res.addMetadata(ax);
+				} catch (MetadataException e) {
+					throw new OperationException(this, e);
+				}
 				params.add(vals);
 				params.add(res);
 				

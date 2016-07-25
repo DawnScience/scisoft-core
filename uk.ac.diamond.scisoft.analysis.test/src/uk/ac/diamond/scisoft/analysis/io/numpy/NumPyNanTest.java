@@ -15,8 +15,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,14 +59,14 @@ public class NumPyNanTest {
 
 		Dataset loadedFile = NumPyFileLoader.loadFileHelper(loc.toString());
 		Assert.assertTrue(ArrayUtils.isEquals(new int[] {2}, loadedFile.getShape()));
-		Assert.assertEquals(dtype, loadedFile.getDtype());
+		Assert.assertEquals(dtype, loadedFile.getDType());
 		Assert.assertTrue(Double.isNaN(loadedFile.getDouble(0)));
 		Assert.assertTrue(Double.isNaN(loadedFile.getDouble(1)));
 	}
 
 	@Test
 	public void testSave() throws Exception {
-		Dataset ds = DatasetFactory.createFromObject(new double[] {Double.NaN, Double.NaN}, dtype);
+		Dataset ds = DatasetFactory.createFromObject(dtype, new double[] {Double.NaN, Double.NaN});
 		File loc = NumPyTest.getTempFile();
 		NumPyTest.saveNumPyFile(ds, loc, false);
 		StringBuilder script = new StringBuilder();

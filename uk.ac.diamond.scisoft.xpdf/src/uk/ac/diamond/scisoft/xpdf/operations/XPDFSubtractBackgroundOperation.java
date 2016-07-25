@@ -9,17 +9,18 @@
 
 package uk.ac.diamond.scisoft.xpdf.operations;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.DoubleDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Maths;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Maths;
 
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
@@ -42,7 +43,7 @@ public class XPDFSubtractBackgroundOperation extends
 		XPDFOperationChecker.checkXPDFMetadata(this, input, false, true, false);
 		XPDFMetadata theXPDFMetadata =  null;
 		
-		Dataset process = new DoubleDataset(DatasetUtils.convertToDataset(input));
+		Dataset process = DatasetUtils.copy(DoubleDataset.class, input);
 		
 		copyMetadata(input, process);
 		
@@ -60,7 +61,12 @@ public class XPDFSubtractBackgroundOperation extends
 				process.isubtract(theXPDFMetadata.getEmptyTrace().getTrace());
 				
 				// Propagate the errors
-				Dataset inputErrors = DatasetUtils.sliceAndConvertLazyDataset(input.getError());
+				Dataset inputErrors;
+				try {
+					inputErrors = DatasetUtils.sliceAndConvertLazyDataset(input.getError());
+				} catch (DatasetException e) {
+					throw new OperationException(this, e);
+				}
 				Dataset processErrors = null;
 				if (inputErrors != null) {
 					Dataset	backgroundErrors = 	theXPDFMetadata.getEmptyTrace().getTrace().getError();	

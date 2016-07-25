@@ -10,23 +10,25 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDataset;
-import org.eclipse.dawnsci.analysis.api.dataset.SliceND;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
-import org.eclipse.dawnsci.analysis.api.io.ILazyLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
-import org.eclipse.dawnsci.analysis.api.monitor.IMonitor;
-import org.eclipse.dawnsci.analysis.dataset.impl.AbstractDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetUtils;
-import org.eclipse.dawnsci.analysis.dataset.impl.SliceNDIterator;
-import org.eclipse.dawnsci.analysis.dataset.impl.StringDataset;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.DTypeUtils;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ShapeUtils;
+import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.dataset.SliceNDIterator;
+import org.eclipse.january.dataset.StringDataset;
+import org.eclipse.january.io.ILazyLoader;
+import org.eclipse.january.metadata.IMetadata;
 
 /**
  * Class to create dataset from a dataset of filenames.
@@ -48,7 +50,7 @@ public class ImageStackLoader implements ILazyLoader {
 	private Class<? extends IFileLoader> loaderClass;
 	private boolean onlyOne;
 	
-	public int getDtype() {
+	public int getDType() {
 		return dtype;
 	}
 
@@ -62,7 +64,7 @@ public class ImageStackLoader implements ILazyLoader {
 	}
 
 	public ImageStackLoader(int[] dimensions, String[] imageFilenames, String directory) throws Exception {
-		this(new StringDataset(imageFilenames, dimensions), null, directory);
+		this(DatasetFactory.createFromObject(StringDataset.class, imageFilenames, dimensions), null, directory);
 	}
 
 	public ImageStackLoader(int[] dimensions, String[] imageFilenames) throws Exception {
@@ -93,7 +95,7 @@ public class ImageStackLoader implements ILazyLoader {
 			loaderClass = dh.getLoaderClass();
 		}
 		onlyOne = imageFilenames.getSize() == 1;
-		dtype = AbstractDataset.getDType(dataSetFromFile);
+		dtype = DTypeUtils.getDType(dataSetFromFile);
 		iShape = dataSetFromFile.getShape();
 		shape = Arrays.copyOf(fShape, fRank + iShape.length);
 		for (int i = 0; i < iShape.length; i++) {
@@ -171,10 +173,10 @@ public class ImageStackLoader implements ILazyLoader {
 	}
 
 	@Override
-	public Dataset getDataset(IMonitor mon, SliceND slice) throws ScanFileHolderException {
+	public Dataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 		int[] newShape = slice.getShape();
 
-		if (AbstractDataset.calcSize(newShape) == 0)
+		if (ShapeUtils.calcSize(newShape) == 0)
 			return DatasetFactory.zeros(newShape, dtype);
 
 		int iRank = iShape.length;
@@ -185,14 +187,19 @@ public class ImageStackLoader implements ILazyLoader {
 			missing[i] = start + i;
 		}
 		SliceNDIterator it = new SliceNDIterator(slice, missing);
-		Dataset result = onlyOne || AbstractDataset.calcSize(it.getShape()) == 1 ? null : DatasetFactory.zeros(newShape, dtype);
+		Dataset result = onlyOne || ShapeUtils.calcSize(it.getShape()) == 1 ? null : DatasetFactory.zeros(newShape, dtype);
 
 		int[] pos = it.getUsedPos();
 		SliceND iSlice = it.getOmittedSlice();
 		int[] iShape = iSlice.getShape();
 		SliceND dSlice = it.getOutputSlice();
 		while (it.hasNext()) {
-			IDataset image = getDatasetFromFile(pos, mon).getSliceView(iSlice);
+			IDataset image;
+			try {
+				image = getDatasetFromFile(pos, mon).getSliceView(iSlice);
+			} catch (ScanFileHolderException e) {
+				throw new IOException(e);
+			}
 
 			image.setShape(iShape);
 			if (result == null) {

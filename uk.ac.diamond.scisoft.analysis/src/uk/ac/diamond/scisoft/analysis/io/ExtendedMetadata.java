@@ -13,9 +13,9 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.eclipse.dawnsci.analysis.api.metadata.IExtendedMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.IMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.Metadata;
+import org.eclipse.january.metadata.IExtendedMetadata;
+import org.eclipse.january.metadata.IMetadata;
+import org.eclipse.january.metadata.Metadata;
 
 public class ExtendedMetadata extends Metadata implements IExtendedMetadata {
 	private static final long serialVersionUID = IMetadata.serialVersionUID;
@@ -27,15 +27,23 @@ public class ExtendedMetadata extends Metadata implements IExtendedMetadata {
 	private Date lastModified = null;
 	private Date date;
 
+	public ExtendedMetadata() {
+	}
+
 	/**
 	 * This constructor will take a reference to a file and populate some of the metadata. This
 	 * should be used in conjunction with populating the rest of the metadata
 	 */
 	public ExtendedMetadata(File f) {
 		super();
-		setFile(f);
+		initialize(f);
 	}
 
+	@Override
+	public void initialize(File f) {
+		setFile(f);
+	}
+	
 	void setFile(File f) {
 		if (f != null) {
 			filesize = f.length();

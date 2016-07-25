@@ -11,9 +11,9 @@ package uk.ac.diamond.scisoft.analysis.dataset.function;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.BooleanDataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.Dataset;
-import org.eclipse.dawnsci.analysis.dataset.impl.DatasetFactory;
+import org.eclipse.january.dataset.BooleanDataset;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,7 +48,7 @@ public class MapToRotatedCartesianAndIntegrateTest {
 	@Test
 	public void testMapToRotatedCartesianAndIntegrateMasked() {
 		MapToRotatedCartesianAndIntegrate mp = new MapToRotatedCartesianAndIntegrate(100,70,50,30,45.);
-		BooleanDataset m = new BooleanDataset(d.getShape());
+		BooleanDataset m = DatasetFactory.zeros(BooleanDataset.class, d.getShape());
 		m.fill(true);
 		mp.setMask(m);
 		Dataset pd = mp.value(d).get(0);

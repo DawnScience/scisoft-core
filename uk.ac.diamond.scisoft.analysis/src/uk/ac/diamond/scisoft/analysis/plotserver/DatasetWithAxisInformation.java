@@ -44,7 +44,7 @@ public class DatasetWithAxisInformation implements Serializable {
 	 * Clears metadata from dataset
 	 */
 	public void clearMetadata() {
-		data = data.getView();
+		data = data.getView(false);
 		data.clearMetadata(null);
 	}
 

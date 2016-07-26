@@ -696,7 +696,7 @@ class ndarray(object):
     def view(self, cls=None):
         '''Return a view of dataset'''
         if cls is None or cls == self.__class__:
-            return self.__dataset.getView()
+            return self.__dataset.getView(True)
         else:
             return cast(self, cls.dtype)
 
@@ -1173,7 +1173,7 @@ class ndarray(object):
         if n >= me or n < 0:
             raise IndexError, "Element number is out of range"
         if me == 1:
-            return self.__dataset.getView()
+            return self.__dataset.getView(True)
         return self.__dataset.getElements(n)
 
 class ndarrayRGB(ndarray):

@@ -60,7 +60,7 @@ public class SliceableTestMetadata implements MetadataType {
 		} else {
 			dds = new DoubleDataset[stm.dds.length];
 			for (int i = 0; i < dds.length; i++) {
-				dds[i] = stm.dds[i].getView();
+				dds[i] = stm.dds[i].getView(true);
 			}
 		}
 
@@ -69,7 +69,7 @@ public class SliceableTestMetadata implements MetadataType {
 		} else {
 			lds = new ArrayList<>();
 			for (ShortDataset d : stm.lds) {
-				lds.add(d.getView());
+				lds.add(d.getView(true));
 			}
 		}
 
@@ -78,7 +78,7 @@ public class SliceableTestMetadata implements MetadataType {
 		} else {
 			mds = new HashMap<>();
 			for (String s : stm.mds.keySet()) {
-				mds.put(s, stm.mds.get(s).getView());
+				mds.put(s, stm.mds.get(s).getView(true));
 			}
 		}
 
@@ -89,7 +89,7 @@ public class SliceableTestMetadata implements MetadataType {
 			for (DoubleDataset[] da : stm.l2deep) {
 				DoubleDataset[] ta = new DoubleDataset[da.length];
 				for (int i = 0; i < ta.length; i++) {
-					ta[i] = da[i].getView();
+					ta[i] = da[i].getView(true);
 				}
 				l2deep.add(ta);
 			}

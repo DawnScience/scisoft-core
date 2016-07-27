@@ -202,12 +202,12 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public int[] minPos() {
+	public int[] minPos(boolean... switches) {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 
 	@Override
-	public int[] maxPos() {
+	public int[] maxPos(boolean... switches) {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 

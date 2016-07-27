@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.january.dataset.AbstractDataset;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -34,6 +34,8 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.metadata.MetadataFactory;
+import org.eclipse.january.metadata.StatisticsMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -237,15 +239,24 @@ public class Utils {
 			pos += 4;
 		}
 
-		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
-		int[] shape = data.getShape();
-		int rank = shape.length;
-		for (int i = 0; i < rank; i++) {
-			hash = hash*17 + shape[i];
+		storeStats(data, amax, amin, hash);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static void storeStats(Dataset data, Number max, Number min, int hash) {
+		StatisticsMetadata<Number> stats = data.getFirstMetadata(StatisticsMetadata.class);
+		if (stats == null) {
+			try {
+				stats = MetadataFactory.createMetadata(StatisticsMetadata.class, data);
+			} catch (MetadataException e) {
+				logger.error("Could not create max/min metadata", e);
+				return;
+			}
 		}
-		data.setStoredValue(AbstractDataset.STORE_MAX, amax);
-		data.setStoredValue(AbstractDataset.STORE_MIN, amin);
-		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
+
+		stats.setMaximumMinimum(max, min);
+		stats.setHash(hash*19 + data.getDType()*17 + data.getElementsPerItem());
+		data.addMetadata(stats);
 	}
 
 	/**
@@ -278,15 +289,7 @@ public class Utils {
 			pos += 4;
 		}
 
-		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
-		int[] shape = data.getShape();
-		int rank = shape.length;
-		for (int i = 0; i < rank; i++) {
-			hash = hash*17 + shape[i];
-		}
-		data.setStoredValue(AbstractDataset.STORE_MAX, amax);
-		data.setStoredValue(AbstractDataset.STORE_MIN, amin);
-		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
+		storeStats(data, amax, amin, hash);
 	}
 
 	/**
@@ -335,15 +338,7 @@ public class Utils {
 			}
 		}
 
-		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
-		int[] shape = data.getShape();
-		int rank = shape.length;
-		for (int i = 0; i < rank; i++) {
-			hash = hash*17 + shape[i];
-		}
-		data.setStoredValue(AbstractDataset.STORE_MAX, amax);
-		data.setStoredValue(AbstractDataset.STORE_MIN, amin);
-		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
+		storeStats(data, amax, amin, hash);
 	}
 
 	/**
@@ -391,15 +386,8 @@ public class Utils {
 				pos += 2;
 			}
 		}
-		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
-		int[] shape = data.getShape();
-		int rank = shape.length;
-		for (int i = 0; i < rank; i++) {
-			hash = hash*17 + shape[i];
-		}
-		data.setStoredValue(AbstractDataset.STORE_MAX, amax);
-		data.setStoredValue(AbstractDataset.STORE_MIN, amin);
-		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
+
+		storeStats(data, amax, amin, hash);
 	}
 
 	/**
@@ -432,15 +420,7 @@ public class Utils {
 			pos += 1;
 		}
 
-		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
-		int[] shape = data.getShape();
-		int rank = shape.length;
-		for (int i = 0; i < rank; i++) {
-			hash = hash*17 + shape[i];
-		}
-		data.setStoredValue(AbstractDataset.STORE_MAX, amax);
-		data.setStoredValue(AbstractDataset.STORE_MIN, amin);
-		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
+		storeStats(data, amax, amin, hash);
 	}
 
 	/**
@@ -493,7 +473,7 @@ public class Utils {
 			bdata[2] = buf[pos + 2];
 			bdata[3] = buf[pos + 3];
 			value = byteBuffer.getFloat(0);
-			hash = (hash * 19 + value);
+			hash = hash * 19 + Float.floatToRawIntBits(value);
 			fdata[i] = value;
 			if (value > fmax) {
 				fmax = value;
@@ -504,15 +484,7 @@ public class Utils {
 			pos += 4;
 		}
 
-		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
-		int[] shape = data.getShape();
-		int rank = shape.length;
-		for (int i = 0; i < rank; i++) {
-			hash = hash*17 + shape[i];
-		}
-		data.setStoredValue(AbstractDataset.STORE_MAX, fmax);
-		data.setStoredValue(AbstractDataset.STORE_MIN, fmin);
-		data.setStoredValue(AbstractDataset.STORE_HASH, (int)hash);
+		storeStats(data, fmax, fmin, (int) hash);
 	}
 
 	private static final Pattern EXP_REGEX = Pattern.compile("[eE]");
@@ -651,7 +623,7 @@ public class Utils {
 	}
 
 	static Dataset createDataset(RandomAccessFile raf, int[] shape, boolean keepBitWidth) throws IOException {
-		AbstractDataset data;
+		Dataset data;
 	
 		// read in all the data at once for speed.
 	
@@ -677,17 +649,10 @@ public class Utils {
 		}
 	
 		if (keepBitWidth||amax < (1 << 15)) {
-				data = (AbstractDataset) DatasetUtils.cast(data, Dataset.INT16);
+			data = DatasetUtils.cast(data, Dataset.INT16);
 		}
-	
-		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
-		int rank = shape.length;
-		for (int i = 0; i < rank; i++) {
-			hash = hash*17 + shape[i];
-		}
-		data.setStoredValue(AbstractDataset.STORE_MAX, amax);
-		data.setStoredValue(AbstractDataset.STORE_MIN, amin);
-		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
+
+		storeStats(data, amax, amin, hash);
 	
 		return data;
 	}

@@ -791,7 +791,7 @@ class ndarray(object):
             return self.__dataset.max(_empty_boolean_array)
         else:
             if ignore_nans:
-                return self.__dataset.max(_jtrue, _jint(axis))
+                return self.__dataset.max(_jint(axis), _jtrue)
             return self.__dataset.max(axis)
 
     @_wrapout
@@ -802,7 +802,7 @@ class ndarray(object):
             return self.__dataset.min(_empty_boolean_array)
         else:
             if ignore_nans:
-                return self.__dataset.min(_jtrue, _jint(axis))
+                return self.__dataset.min(_jint(axis), _jtrue)
             return self.__dataset.min(axis)
 
     @_wrapout
@@ -813,7 +813,7 @@ class ndarray(object):
             return self.__dataset.argMax()
         else:
             if ignore_nans:
-                return self.__dataset.argMax(_jtrue, _jint(axis))
+                return self.__dataset.argMax(_jint(axis), _jtrue)
             return self.__dataset.argMax(axis)
 
     @_wrapout
@@ -824,7 +824,7 @@ class ndarray(object):
             return self.__dataset.argMin()
         else:
             if ignore_nans:
-                return self.__dataset.argMin(_jtrue, _jint(axis))
+                return self.__dataset.argMin(_jint(axis), _jtrue)
             return self.__dataset.argMin(axis)
 
     @_wrapout

@@ -31,7 +31,7 @@ import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.AbstractDataset;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -41,6 +41,8 @@ import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.metadata.Metadata;
+import org.eclipse.january.metadata.MetadataFactory;
+import org.eclipse.january.metadata.StatisticsMetadata;
 import org.iucr.cbflib.SWIGTYPE_p_p_char;
 import org.iucr.cbflib.cbf;
 import org.iucr.cbflib.cbf_handle_struct;
@@ -518,15 +520,10 @@ _diffrn_radiation_wavelength.wt 1.0
 		return imageOrien;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Dataset readCBFBinaryData(cbf_handle_struct chs, ImageOrientation imageOrien) throws ScanFileHolderException {
 
 		int[] shape = imageOrien.getShape();
-		AbstractDataset data;
-		try {
-			data = (AbstractDataset) DatasetFactory.zeros(shape, imageOrien.getDType());
-		} catch (Exception eb) {
-			throw new ScanFileHolderException("CBFLoader failed when creating a Dataset for the data", eb);
-		}
 		int xLength = shape[1];
 		int yLength = shape[0];
 		boolean xIncreasing = imageOrien.isXIncreasing();
@@ -598,6 +595,13 @@ _diffrn_radiation_wavelength.wt 1.0
 		CBFError.errorChecker(cbf.cbf_rewind_column(chs));
 		CBFError.errorChecker(cbf.cbf_find_column(chs, "data"));
 
+		Dataset data = DatasetFactory.zeros(shape, imageOrien.getDType());
+		StatisticsMetadata<Number> stats = null;
+		try {
+			stats = MetadataFactory.createMetadata(StatisticsMetadata.class, data);
+		} catch (MetadataException e) {
+			logger.error("Could not create max/min metadata", e);
+		}
 		if (data instanceof DoubleDataset) {
 			DoubleBuffer ddata;
 			try {
@@ -615,35 +619,37 @@ _diffrn_radiation_wavelength.wt 1.0
 				throw new ScanFileHolderException("Mismatch of CBF binary data size");
 			}
 
-			double[] dArray = ((DoubleDataset) data).getData();
-
-			// map from CBF data to dataset
-			double amax = -Double.MAX_VALUE;
-			double amin = Double.MAX_VALUE;
-			double dhash = 0;
-			for (int j = 0; j < rows; j++) {
-				position = start;
-				for (int i = 0; i < cols; i++) {
-					double value = ddata.get(position);
-					position += cstep;
-					if (Double.isInfinite(value) || Double.isNaN(value))
-						dhash = (dhash * 19) % Integer.MAX_VALUE;
-					else
-						dhash = (dhash * 19 + value) % Integer.MAX_VALUE;
-					dArray[index++] = value;
-					if (value > amax) {
-						amax = value;
+			if (stats != null) {
+				double[] dArray = ((DoubleDataset) data).getData();
+	
+				// map from CBF data to dataset
+				double amax = -Double.MAX_VALUE;
+				double amin = Double.MAX_VALUE;
+				double dhash = 0;
+				for (int j = 0; j < rows; j++) {
+					position = start;
+					for (int i = 0; i < cols; i++) {
+						double value = ddata.get(position);
+						position += cstep;
+						if (Double.isInfinite(value) || Double.isNaN(value))
+							dhash = (dhash * 19) % Integer.MAX_VALUE;
+						else
+							dhash = (dhash * 19 + value) % Integer.MAX_VALUE;
+						dArray[index++] = value;
+						if (value > amax) {
+							amax = value;
+						}
+						if (value < amin) {
+							amin = value;
+						}
 					}
-					if (value < amin) {
-						amin = value;
-					}
+					start += rstep;
 				}
-				start += rstep;
+				hash = (int) dhash;
+
+				stats.setMaximumMinimum(amax, amin);
+				ddata = null;
 			}
-			hash = (int) dhash;
-			data.setStoredValue(AbstractDataset.STORE_MAX, amax);
-			data.setStoredValue(AbstractDataset.STORE_MIN, amin);
-			ddata = null;
 		} else {
 			IntBuffer idata;
 			try {
@@ -662,45 +668,43 @@ _diffrn_radiation_wavelength.wt 1.0
 				throw new ScanFileHolderException("Mismatch of CBF binary data size");
 			}
 
-			int[] dArray = ((IntegerDataset) data).getData();
-			int amax = Integer.MIN_VALUE;
-			int amin = Integer.MAX_VALUE;
-
-			for (int j = 0; j < rows; j++) {
-				position = start;
-				for (int i = 0; i < cols; i++) {
-					int value = idata.get(position);
-					position += cstep;
-					hash = hash * 19 + value;
-					dArray[index++] = value;
-					if (value > amax) {
-						amax = value;
+			if (stats != null) {
+				int[] dArray = ((IntegerDataset) data).getData();
+				int amax = Integer.MIN_VALUE;
+				int amin = Integer.MAX_VALUE;
+	
+				for (int j = 0; j < rows; j++) {
+					position = start;
+					for (int i = 0; i < cols; i++) {
+						int value = idata.get(position);
+						position += cstep;
+						hash = hash * 19 + value;
+						dArray[index++] = value;
+						if (value > amax) {
+							amax = value;
+						}
+						if (value < amin) {
+							amin = value;
+						}
 					}
-					if (value < amin) {
-						amin = value;
-					}
+					start += rstep;
 				}
-				start += rstep;
-			}
 
-			data.setStoredValue(AbstractDataset.STORE_MAX, amax);
-			data.setStoredValue(AbstractDataset.STORE_MIN, amin);
-			idata = null;
+				stats.setMaximumMinimum(amax, amin);
+				idata = null;
+			}
 		}
 
 		rsize.delete();
 		bid.delete();
 
-		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
-		int rank = shape.length;
-		for (int i = 0; i < rank; i++) {
-			hash = hash*17 + shape[i];
+		if (stats != null) {
+			hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
+			stats.setHash(hash);
+			data.addMetadata(stats);
 		}
-		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
-
 		return data;
 	}
-
 
 	private int getInteger(String key) throws ScanFileHolderException {
 		try {

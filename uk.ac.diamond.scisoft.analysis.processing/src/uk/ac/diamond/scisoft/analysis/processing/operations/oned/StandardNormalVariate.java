@@ -25,7 +25,7 @@ public class StandardNormalVariate extends AbstractOperation<EmptyModel, Operati
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		Dataset values = DatasetUtils.convertToDataset(input);
 		double mean = (Double) values.mean(true);
-		double std = values.stdDeviation().doubleValue();
+		double std = values.stdDeviation();
 		Dataset output = Maths.subtract(input,mean);
 		output.idivide(std);
 		

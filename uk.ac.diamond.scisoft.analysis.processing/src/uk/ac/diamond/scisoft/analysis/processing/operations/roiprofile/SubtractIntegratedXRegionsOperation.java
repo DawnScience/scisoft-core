@@ -146,7 +146,7 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 			}
 			
 		}
-		Dataset mean = d.mean(true,1);
+		Dataset mean = d.mean(1,true);
 		
 		DatasetUtils.makeFinite(mean);
 		

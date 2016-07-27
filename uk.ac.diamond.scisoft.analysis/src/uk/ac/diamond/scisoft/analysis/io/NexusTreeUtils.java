@@ -55,6 +55,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.ShapeUtils;
+import org.eclipse.january.dataset.Stats;
 import org.eclipse.january.dataset.StringDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.IMetadata;
@@ -444,6 +445,128 @@ public class NexusTreeUtils {
 			axisList.clear();
 		}
 		cData.addMetadata(amd);
+	}
+	
+	
+	public static ILazyDataset getAugmentedSignalDataset(GroupNode gn) {
+		
+		boolean is2014 = parseNXdataAndAugment(gn);
+		
+		if (is2014) {
+			String signal = getFirstString(gn.getAttribute(NX_SIGNAL));
+			if (signal == null) {
+				signal = DATA;
+			}
+			return gn.getDataNode(signal).getDataset();
+		}
+		
+		ILazyDataset signal = parseLegacyNXdataAndAugment(gn); 
+		
+		return signal;
+	}
+	
+	/**
+	 * Parse strict old NXdata class and augment with metadata
+	 * Group must have 1 signal tagged dataset, axes datasets must be tagged, labelled
+	 * from left, starting with 1.
+	 * @param gn
+	 * @return signal dataset if conforms to standard
+	 */
+	public static ILazyDataset parseLegacyNXdataAndAugment(GroupNode gn) {
+		
+		if (!isNXClass(gn, NX_DATA)) {
+			logger.warn("'{}' was not an {} class", gn, NX_DATA);
+			return null;
+		}
+		
+		Iterator<String> it = gn.getNodeNameIterator();
+		
+		String signal = null;
+		List<AxisChoice> choices = new ArrayList<>();
+		
+		while (it.hasNext()) {
+			String name = it.next();
+			if (gn.containsDataNode(name)) {
+				DataNode dataNode = gn.getDataNode(name);
+				Attribute attribute = dataNode.getAttribute(NX_SIGNAL);
+				if (attribute != null) {
+					if (parseFirstInt(attribute) == 1 && signal == null) {
+						signal = name;
+					} else {
+						logger.warn("Bad signal tagging in {}", gn);
+						return null;
+					}
+				} else {
+					attribute = dataNode.getAttribute(NX_AXIS);
+					if (attribute != null) {
+						int[] intArray = parseIntArray(attribute);
+						if (intArray != null) {
+							AxisChoice choice = new AxisChoice(dataNode.getDataset());
+							choice.setIndexMapping(intArray);
+							if (gn.getAttribute(NX_PRIMARY) != null) {
+								choice.setPrimary(1);
+							}
+							choices.add(choice);
+						}
+					}
+				}
+			}
+		}
+		
+		if (signal == null) return null;
+		
+		ILazyDataset lz = gn.getDataNode(signal).getDataset().getSliceView();
+		lz.clearMetadata(null);
+		
+		if (!choices.isEmpty()) {
+			try {
+				AxesMetadata axm = MetadataFactory.createMetadata(AxesMetadata.class, lz.getRank());
+				for (AxisChoice choice : choices) {
+					int[] m = choice.getIndexMapping();
+					//only rank 1 or 2 axis for now...
+					if (m.length == 2) {
+						for (int i = 0 ; i < m.length;i++) m[i]--;
+						try {
+							Dataset x = DatasetUtils.sliceAndConvertLazyDataset(choice.getValues());
+							Dataset m0 = Stats.median(x, 0);
+							Dataset m1 = Stats.median(x, 1);
+							
+							double max0 = m0.max(true).doubleValue();
+							double min0 = m0.min(true).doubleValue();
+							
+							double max1 = m1.max(true).doubleValue();
+							double min1 = m1.min(true).doubleValue();
+							
+							double p0 = max0-min0;
+							double p1 = max1-min1;
+							
+							int index = p0 > p1 ? 0 : 1;
+							
+							axm.addAxis(index, choice.getValues().getSliceView(), m);
+							
+						} catch (DatasetException e) {
+							logger.error("TODO put description of error here", e);
+						}
+					} else if (m.length == 1) {
+						axm.addAxis(m[0]-1, choice.getValues());
+					}
+				}
+				
+				lz.addMetadata(axm);
+				
+			} catch (MetadataException e) {
+				logger.error("Could not create Axes Metadata!", e);
+			}
+		}
+		
+		if (gn.containsDataNode(NX_ERRORS)) {
+			ILazyDataset lze = gn.getDataNode(NX_ERRORS).getDataset();
+			if (Arrays.equals(lz.getShape(), lze.getShape())) {
+				lz.setError(lze);
+			}
+		}
+		
+		return lz;
 	}
 
 	/**

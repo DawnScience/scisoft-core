@@ -99,6 +99,14 @@
             visible="false">
       </operation>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.SavitzkyGolayOperation"
+            description="Apply Savitzky-Golay filtering"
+            icon="icons/polysmooth.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.SavitzkyGolayOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.SavitzkyGolayModel"
+            name="Savitzky-Golay filtering">
+      </operation>
+      <operation
             category="uk.ac.diamond.scisoft.analysis.processing.xrd2imageprocessing"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DiffractionMetadataImportOperation"
             description="Import the experimental detector geometry and x-ray energy (can be determined in powder calibration perspective). Required for operations which transform data to 2 theta/q/d-space."

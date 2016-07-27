@@ -41,9 +41,9 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	// and client do not share disk, it will not work.
 	private String               persistencePath;
 
-	private long                 parallelTimeout=5000;
 	private String 				 xmx;
 	private boolean				 readable = false;
+	private boolean				 parallelizable = true;
 	private String				 dataKey;
 	
 	public String getDataKey() {
@@ -70,7 +70,6 @@ public class OperationBean extends StatusBean implements IOperationBean {
         this.datasetPath     = db.datasetPath;
         this.slicing         = db.slicing;
         this.persistencePath = db.persistencePath;
-        this.parallelTimeout = db.parallelTimeout;
         this.deletePersistenceFile = db.deletePersistenceFile;
         this.xmx = db.xmx;
 	}
@@ -140,7 +139,6 @@ public class OperationBean extends StatusBean implements IOperationBean {
 		result = prime * result + (deletePersistenceFile ? 1231 : 1237);
 		result = prime * result + ((filePath == null) ? 0 : filePath.hashCode());
 		result = prime * result + ((outputFilePath == null) ? 0 : outputFilePath.hashCode());
-		result = prime * result + (int) (parallelTimeout ^ (parallelTimeout >>> 32));
 		result = prime * result + ((persistencePath == null) ? 0 : persistencePath.hashCode());
 		result = prime * result + (readable ? 1231 : 1237);
 		result = prime * result + ((slicing == null) ? 0 : slicing.hashCode());
@@ -181,8 +179,6 @@ public class OperationBean extends StatusBean implements IOperationBean {
 				return false;
 		} else if (!outputFilePath.equals(other.outputFilePath))
 			return false;
-		if (parallelTimeout != other.parallelTimeout)
-			return false;
 		if (persistencePath == null) {
 			if (other.persistencePath != null)
 				return false;
@@ -203,15 +199,6 @@ public class OperationBean extends StatusBean implements IOperationBean {
 		return true;
 	}
 
-	public long getParallelTimeout() {
-		return parallelTimeout;
-	}
-
-	@Override
-	public void setParallelTimeout(long parallelTimeout) {
-		this.parallelTimeout = parallelTimeout;
-	}
-
 	public boolean isDeletePersistenceFile() {
 		return deletePersistenceFile;
 	}
@@ -229,9 +216,14 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	public void setXmx(String xmx) {
 		this.xmx = xmx;
 	}
-
-	public int[] getDataDimensions() {
-		return dataDimensions;
+	
+	public int[] getDataDimensions(int rank) {
+		if (dataDimensions[0] > -1) return dataDimensions;
+		int[] dims = new int[dataDimensions.length];
+		for (int i = 0; i < dataDimensions.length; i++) dims[i] = rank + dataDimensions[i];
+		Arrays.sort(dims);
+		
+		return dims;
 	}
 
 	@Override
@@ -246,5 +238,14 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	@Override
 	public void setReadable(boolean readable) {
 		this.readable = readable;
+	}
+	
+	public boolean isParallelizable() {
+		return parallelizable;
+	}
+
+	@Override
+	public void setParallelizable(boolean parallelizable) {
+		this.parallelizable = parallelizable;
 	}
 }

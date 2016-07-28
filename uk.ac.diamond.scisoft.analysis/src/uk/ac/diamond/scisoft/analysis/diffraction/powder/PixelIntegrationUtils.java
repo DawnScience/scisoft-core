@@ -374,12 +374,12 @@ public class PixelIntegrationUtils {
 		//pol(th) = 1/2[1+cos2(tth) - f*cos(2*azimuthal)sin2(tth)
 		
 		double cosSq = Math.pow(Math.cos(tth),2);
-//		//use 1-cos2(tth) instead of sin2(tth)
+		//use 1-cos2(tth) instead of sin2(tth)
 //		double sub = (1-cosSq)*Math.cos(angle*2)*factor;
 //		
 //		double cor = (cosSq +1 - sub)/2;
-		double cor = polarisationCorrectionFactor(cosSq, (1-cosSq)*Math.cos(angle*2), factor);
-		return correctionValue/cor;
+		double corCommon = polarisationCorrectionFactor(cosSq, (1-cosSq)*Math.cos(angle*2), factor);
+		return correctionValue/corCommon;
 	}
 	
 	/**
@@ -414,7 +414,7 @@ public class PixelIntegrationUtils {
 	
 	// does the common mathematics between the angle and vector versions of the polarization correction for a single value
 	private static double polarisationCorrectionFactor(double cosineTerm, double azimuthalSineTerm, double polarisationFactor) {
-		return 1./2 * (1 + cosineTerm + polarisationFactor * azimuthalSineTerm);
+		return 1./2 * (1 + cosineTerm - polarisationFactor * azimuthalSineTerm);
 	}
 	
 	public static double detectorTranmissionCorrection(double correctionValue, double tth, double transmissionFactor) {
@@ -463,13 +463,13 @@ public class PixelIntegrationUtils {
 		//use 1-cos2(tth) instead of sin2(tth)
 		Dataset azimuthalSineTerm = Maths.subtract(1, cosineTerm);
 		azimuthalSineTerm.imultiply(Maths.cos(Maths.multiply(angle,2)));
-		azimuthalSineTerm.imultiply(factor);
-		
-//		Dataset cor = Maths.add(cosSq, 1);
-//		cor.isubtract(sub);
+//		azimuthalSineTerm.imultiply(factor);
+//		
+//		Dataset cor = Maths.add(cosineTerm, 1);
+//		cor.isubtract(azimuthalSineTerm);
 //		cor.idivide(2);
-		Dataset cor = polarisationCorrectionFactor(cosineTerm, azimuthalSineTerm, factor);
-		correctionArray.idivide(cor);
+		Dataset corCommon = polarisationCorrectionFactor(cosineTerm, azimuthalSineTerm, factor);
+		correctionArray.idivide(corCommon);
 	}
 
 	/**
@@ -519,7 +519,7 @@ public class PixelIntegrationUtils {
 	
 	// Performs the common calculations for the angle and vector forms of the polarization correction for Datasets
 	private static Dataset polarisationCorrectionFactor(Dataset cosineTerm, Dataset azimuthalSineTerm, double polarizationFactor) {
-		return Maths.subtract(1, cosineTerm).isubtract(Maths.multiply(polarizationFactor, azimuthalSineTerm)).idivide(2);
+		return (Maths.add(1, cosineTerm).isubtract(Maths.multiply(polarizationFactor, azimuthalSineTerm))).idivide(2);
 	}
 	
 	public static void detectorTranmissionCorrection(Dataset correctionArray, Dataset tth, double transmissionFactor) {

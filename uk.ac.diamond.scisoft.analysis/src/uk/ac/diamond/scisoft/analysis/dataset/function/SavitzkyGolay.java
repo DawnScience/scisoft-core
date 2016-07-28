@@ -137,7 +137,7 @@ public class SavitzkyGolay {
 			
 		RealMatrix rvMatrix = D.preMultiply(dataMatrix);
 		
-		rv = new DoubleDataset(Stream.of(rvMatrix.getData()).flatMapToDouble(Arrays::stream).toArray(), data.getShape());
+		rv = DatasetFactory.createFromObject(Stream.of(rvMatrix.getData()).flatMapToDouble(Arrays::stream).toArray(), data.getShape());
 		
 		return rv;
 	}

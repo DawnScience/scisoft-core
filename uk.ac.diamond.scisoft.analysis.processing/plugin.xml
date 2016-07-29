@@ -907,6 +907,42 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DownsampleGridModel"
             name="Stitch Downsampled Grid">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.TwoDPolynomialBackgroundFitAndSubtract"
+            icon="icons/template.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.TwoDPolynomialBackgroundFitAndSubtract"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.BoxSlicerModel"
+            name="TwoD fitting and subtraction for SXRD and reflectivity">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SXRDRodScansGeometricCorrectionsOperation"
+            icon="icons/template.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SXRDRodScansGeometricCorrectionsOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.Polynomial2DReflectivityModel"
+            name="Geometric corrections for SXRD">
+      </operation>
+            <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SXRDRodScanFinalExtraction"
+            icon="icons/template.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SXRDRodScanFinalExtraction"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.Polynomial2DReflectivityModel"
+            name="Final corrections for SXRD">
+      </operation>
+            <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.ReflectivityGeometricCorrectionOperation"
+            icon="icons/template.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.ReflectivityGeometricCorrectionOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.Polynomial2DReflectivityModel"
+            name="Geometric corrections for Reflectivity">
+      </operation>
+            <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.ReflectivityFluxCorrectionOperation"
+            icon="icons/template.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.ReflectivityFluxCorrectionOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.Polynomial2DReflectivityModel"
+            name="Flux corrections for Reflectivity">
+      </operation>
+     
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

@@ -99,3 +99,5 @@ public class ScanMetadata {
 	}
 
 }
+
+//TEST

@@ -11,8 +11,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd
 
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
-import org.eclipse.january.IMonitor;
+import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation; import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -52,3 +51,5 @@ public class SXRDRodScanFinalExtraction extends AbstractOperation<RodScanPolynom
 		
 	}
 }
+
+//TEST

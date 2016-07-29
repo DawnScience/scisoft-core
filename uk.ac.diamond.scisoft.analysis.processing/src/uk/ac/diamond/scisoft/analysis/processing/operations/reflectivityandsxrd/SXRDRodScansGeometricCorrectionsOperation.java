@@ -75,4 +75,6 @@ public class SXRDRodScansGeometricCorrectionsOperation extends AbstractOperation
 		return new OperationData (input1, input1Sum);
 	}
 	
+	
 }
+//TEST

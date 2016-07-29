@@ -66,3 +66,4 @@ public class ReflectivityGeometricCorrectionOperation extends AbstractOperation<
 		return new OperationData(output, outputSum);
 	}
 }
+//TEST

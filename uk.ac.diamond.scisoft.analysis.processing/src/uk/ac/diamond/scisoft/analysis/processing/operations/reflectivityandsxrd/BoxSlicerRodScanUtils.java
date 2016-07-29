@@ -298,6 +298,7 @@ public class BoxSlicerRodScanUtils {
 				}	
 			}
 			
-		return mask;
-	}	
+		return mask; 
+		}	
 }
+//TEST 

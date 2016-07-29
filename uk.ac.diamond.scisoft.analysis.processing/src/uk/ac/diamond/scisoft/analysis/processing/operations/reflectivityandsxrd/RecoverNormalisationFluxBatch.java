@@ -60,3 +60,5 @@ public class RecoverNormalisationFluxBatch {
 
 	}
 }
+
+//TEST

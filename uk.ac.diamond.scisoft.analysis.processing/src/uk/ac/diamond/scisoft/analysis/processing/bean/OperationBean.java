@@ -10,41 +10,61 @@ package uk.ac.diamond.scisoft.analysis.processing.bean;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.processing.IOperationBean;
 import org.eclipse.scanning.api.event.status.StatusBean;
 
 /**
- * Bean to serialise with JSON and be sent to the server.
+ * Bean to serialise with JSON and be sent to the server,
+ * and deserialise in the processing headless runner.
  * 
  * JSON is used rather than the direct object because we may want to have
- * a python server.
- * 
- * @author Matthew Gerring
- *
+ * a python server, and JSON files allow the headless runner input file
+ * to be built by hand
  */
 public class OperationBean extends StatusBean implements IOperationBean {
 	
-	// The data
 	private String               filePath;              
-	private String               datasetPath;
-	private String				 slicing;
-	private List<String>[] axesNames;
+	private String               datasetPath; // can be to NXdata node
+	private String				 slicing; //can be null
+	private List<String>[] 	  	 axesNames; //can be null
 	private String 				 outputFilePath;
-	private int[] 				 dataDimensions;
+	private int[] 				 dataDimensions; //e.g. [1,2] for stack of images or [-1,-2]
 	
 	// The pipeline that we need to run
 	// The pipeline is saved shared disk at
 	// the moment in order to be run on the cluster.
 	// This is not ideal because if the consumer 
 	// and client do not share disk, it will not work.
-	private String               persistencePath;
-
+	private String               processingPath;
+	//memory for processing vm
 	private String 				 xmx;
-	private boolean				 readable = false;
+	//use multiple cores
 	private boolean				 parallelizable = true;
+	//make the output file readable (SWMR)
+	private boolean				 readable = false;
+	//node where the unique/finished datasets are located (live processing)
 	private String				 dataKey;
+	//clear processing file at finish
+	private boolean   			 deleteProcessingFile = true;
+	
+	@Override
+	public void merge(StatusBean with) {
+        super.merge(with);
+        OperationBean db = (OperationBean)with;
+        this.filePath             = db.filePath;
+        this.datasetPath          = db.datasetPath;
+        this.slicing              = db.slicing;
+        this.axesNames 		      = db.axesNames.clone();
+        this.outputFilePath       = db.outputFilePath;
+        this.dataDimensions       = db.dataDimensions.clone(); 
+        this.processingPath       = db.processingPath;
+        this.xmx 			      = db.xmx;
+        this.parallelizable       = db.parallelizable;
+        this.readable 		 	  = db.readable;
+        this.dataKey         	  = db.dataKey;
+        this.deleteProcessingFile = db.deleteProcessingFile;
+	}
 	
 	public String getDataKey() {
 		return dataKey;
@@ -54,26 +74,6 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	public void setDataKey(String dataKey) {
 		this.dataKey = dataKey;
 	}
-
-	// Tidying stuff
-	private boolean deletePersistenceFile = true;
-	
-	public OperationBean(){
-		
-	}
-
-	@Override
-	public void merge(StatusBean with) {
-        super.merge(with);
-        OperationBean db = (OperationBean)with;
-        this.filePath        = db.filePath;
-        this.datasetPath     = db.datasetPath;
-        this.slicing         = db.slicing;
-        this.persistencePath = db.persistencePath;
-        this.deletePersistenceFile = db.deletePersistenceFile;
-        this.xmx = db.xmx;
-	}
-	
 
 	public String getFilePath() {
 		return filePath;
@@ -111,13 +111,13 @@ public class OperationBean extends StatusBean implements IOperationBean {
 		this.slicing = slicing;
 	}
 
-	public String getPersistencePath() {
-		return persistencePath;
+	public String getProcessingPath() {
+		return processingPath;
 	}
 
 	@Override
-	public void setPersistencePath(String persistencePath) {
-		this.persistencePath = persistencePath;
+	public void setProcessingPath(String processingPath) {
+		this.processingPath = processingPath;
 	}
 	
 	@Override
@@ -128,84 +128,14 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	public List<String>[] getAxesNames() {
 		return this.axesNames;
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((axesNames == null) ? 0 : axesNames.hashCode());
-		result = prime * result + Arrays.hashCode(dataDimensions);
-		result = prime * result + ((datasetPath == null) ? 0 : datasetPath.hashCode());
-		result = prime * result + (deletePersistenceFile ? 1231 : 1237);
-		result = prime * result + ((filePath == null) ? 0 : filePath.hashCode());
-		result = prime * result + ((outputFilePath == null) ? 0 : outputFilePath.hashCode());
-		result = prime * result + ((persistencePath == null) ? 0 : persistencePath.hashCode());
-		result = prime * result + (readable ? 1231 : 1237);
-		result = prime * result + ((slicing == null) ? 0 : slicing.hashCode());
-		result = prime * result + ((xmx == null) ? 0 : xmx.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		OperationBean other = (OperationBean) obj;
-		if (axesNames == null) {
-			if (other.axesNames != null)
-				return false;
-		} else if (!axesNames.equals(other.axesNames))
-			return false;
-		if (!Arrays.equals(dataDimensions, other.dataDimensions))
-			return false;
-		if (datasetPath == null) {
-			if (other.datasetPath != null)
-				return false;
-		} else if (!datasetPath.equals(other.datasetPath))
-			return false;
-		if (deletePersistenceFile != other.deletePersistenceFile)
-			return false;
-		if (filePath == null) {
-			if (other.filePath != null)
-				return false;
-		} else if (!filePath.equals(other.filePath))
-			return false;
-		if (outputFilePath == null) {
-			if (other.outputFilePath != null)
-				return false;
-		} else if (!outputFilePath.equals(other.outputFilePath))
-			return false;
-		if (persistencePath == null) {
-			if (other.persistencePath != null)
-				return false;
-		} else if (!persistencePath.equals(other.persistencePath))
-			return false;
-		if (readable != other.readable)
-			return false;
-		if (slicing == null) {
-			if (other.slicing != null)
-				return false;
-		} else if (!slicing.equals(other.slicing))
-			return false;
-		if (xmx == null) {
-			if (other.xmx != null)
-				return false;
-		} else if (!xmx.equals(other.xmx))
-			return false;
-		return true;
-	}
-
+	
 	public boolean isDeletePersistenceFile() {
-		return deletePersistenceFile;
+		return deleteProcessingFile;
 	}
 
 	@Override
-	public void setDeletePersistenceFile(boolean deletePersistenceFile) {
-		this.deletePersistenceFile = deletePersistenceFile;
+	public void setDeleteProcessingFile(boolean deleteProcessingFile) {
+		this.deleteProcessingFile = deleteProcessingFile;
 	}
 
 	public String getXmx() {
@@ -247,5 +177,81 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	@Override
 	public void setParallelizable(boolean parallelizable) {
 		this.parallelizable = parallelizable;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Arrays.hashCode(axesNames);
+		result = prime * result + Arrays.hashCode(dataDimensions);
+		result = prime * result + ((dataKey == null) ? 0 : dataKey.hashCode());
+		result = prime * result + ((datasetPath == null) ? 0 : datasetPath.hashCode());
+		result = prime * result + (deleteProcessingFile ? 1231 : 1237);
+		result = prime * result + ((filePath == null) ? 0 : filePath.hashCode());
+		result = prime * result + ((outputFilePath == null) ? 0 : outputFilePath.hashCode());
+		result = prime * result + (parallelizable ? 1231 : 1237);
+		result = prime * result + ((processingPath == null) ? 0 : processingPath.hashCode());
+		result = prime * result + (readable ? 1231 : 1237);
+		result = prime * result + ((slicing == null) ? 0 : slicing.hashCode());
+		result = prime * result + ((xmx == null) ? 0 : xmx.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		OperationBean other = (OperationBean) obj;
+		if (!Arrays.equals(axesNames, other.axesNames))
+			return false;
+		if (!Arrays.equals(dataDimensions, other.dataDimensions))
+			return false;
+		if (dataKey == null) {
+			if (other.dataKey != null)
+				return false;
+		} else if (!dataKey.equals(other.dataKey))
+			return false;
+		if (datasetPath == null) {
+			if (other.datasetPath != null)
+				return false;
+		} else if (!datasetPath.equals(other.datasetPath))
+			return false;
+		if (deleteProcessingFile != other.deleteProcessingFile)
+			return false;
+		if (filePath == null) {
+			if (other.filePath != null)
+				return false;
+		} else if (!filePath.equals(other.filePath))
+			return false;
+		if (outputFilePath == null) {
+			if (other.outputFilePath != null)
+				return false;
+		} else if (!outputFilePath.equals(other.outputFilePath))
+			return false;
+		if (parallelizable != other.parallelizable)
+			return false;
+		if (processingPath == null) {
+			if (other.processingPath != null)
+				return false;
+		} else if (!processingPath.equals(other.processingPath))
+			return false;
+		if (readable != other.readable)
+			return false;
+		if (slicing == null) {
+			if (other.slicing != null)
+				return false;
+		} else if (!slicing.equals(other.slicing))
+			return false;
+		if (xmx == null) {
+			if (other.xmx != null)
+				return false;
+		} else if (!xmx.equals(other.xmx))
+			return false;
+		return true;
 	}
 }

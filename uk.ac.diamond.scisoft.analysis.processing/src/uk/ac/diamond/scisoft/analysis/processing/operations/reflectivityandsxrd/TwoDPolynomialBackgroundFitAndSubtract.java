@@ -20,15 +20,16 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.LinearAlgebra;
 import org.eclipse.january.dataset.Maths;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial2D;
 import uk.ac.diamond.scisoft.analysis.optimize.LinearLeastSquares;
 
-public class TwoDPolynomialBackgroundFitAndSubtract extends AbstractOperation<BoxSlicerModel, OperationData> {
-
-	/*Cuts out the region of interest and fits it with a 2D polynomial background.
+/**
+ * Cuts out the region of interest and fits it with a 2D polynomial background.
  */
+public class TwoDPolynomialBackgroundFitAndSubtract extends AbstractOperation<BoxSlicerModel, OperationData> {
 	
 	private Polynomial2D g2;
 	
@@ -49,7 +50,7 @@ public class TwoDPolynomialBackgroundFitAndSubtract extends AbstractOperation<Bo
 	
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) {
-	
+		
 		RectangularROI box = model.getBox();
 	
 		Dataset in1 = BoxSlicerRodScanUtils.rOIBox(input, monitor, box.getIntLengths(), box.getIntPoint());
@@ -62,20 +63,23 @@ public class TwoDPolynomialBackgroundFitAndSubtract extends AbstractOperation<Bo
 		Dataset[] fittingBackground = BoxSlicerRodScanUtils.LeftRightTopBottomBoxes(input, monitor, box.getIntLengths(),
 				box.getIntPoint(), model.getBoundaryBox());
 	
-		LinearLeastSquares tFit = new LinearLeastSquares(0.0000000000000000000001);
+//		LinearLeastSquares tFit = new LinearLeastSquares(0.0000000000000000000001);
 		
 		Dataset offset = DatasetFactory.ones(fittingBackground[2].getShape(), Dataset.FLOAT64);
-	
+		
 		Dataset intermediateFitTest = Maths.add(offset, fittingBackground[2]);
-	
 		Dataset matrix = LinearLeastSquaresServicesForSXRD.polynomial2DLinearLeastSquaresMatrixGenerator(
 				model.getFitPower(), fittingBackground[0], fittingBackground[1]);
-	
-		Dataset zSigma =
-		LinearLeastSquaresServicesForSXRD.polynomial2DLinearLeastSquaresSigmaGenerator
-		(intermediateFitTest);
 		
-		double[] params = tFit.solve(matrix, intermediateFitTest, zSigma);
+//		Dataset zSigma =
+//		LinearLeastSquaresServicesForSXRD.polynomial2DLinearLeastSquaresSigmaGenerator
+//		(intermediateFitTest);
+		
+		DoubleDataset test = (DoubleDataset)LinearAlgebra.solveSVD(matrix, intermediateFitTest);
+		double[] params = test.getData();
+		
+//		double[] params = tFit.solve(matrix, intermediateFitTest, zSigma);
+		
 		
 		DoubleDataset in1Background = g2.getOutputValues0(params, box.getIntLengths(), model.getBoundaryBox(),
 				model.getFitPower());
@@ -108,4 +112,3 @@ public class TwoDPolynomialBackgroundFitAndSubtract extends AbstractOperation<Bo
 	}
 
 }
-//TEST

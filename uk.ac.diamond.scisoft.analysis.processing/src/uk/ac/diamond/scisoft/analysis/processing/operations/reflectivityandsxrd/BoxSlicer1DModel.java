@@ -62,4 +62,4 @@ public class BoxSlicer1DModel extends AbstractOperationModel {
 		firePropertyChange("fitPower", this.fitPower, this.fitPower= fitPower);
 	}
 }
-//TEST
+//TEST1

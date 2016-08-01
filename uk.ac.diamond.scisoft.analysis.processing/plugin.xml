@@ -918,14 +918,14 @@
             class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SXRDRodScansGeometricCorrectionsOperation"
             icon="icons/template.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SXRDRodScansGeometricCorrectionsOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.Polynomial2DReflectivityModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.RodScanPolynomial2DModel"
             name="Geometric corrections for SXRD">
       </operation>
             <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SXRDRodScanFinalExtraction"
             icon="icons/template.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SXRDRodScanFinalExtraction"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.Polynomial2DReflectivityModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.RodScanPolynomial2DModel"
             name="Final corrections for SXRD">
       </operation>
             <operation

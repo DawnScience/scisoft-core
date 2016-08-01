@@ -86,6 +86,8 @@ public class MRCImageStackLoaderTest {
 		Assert.assertEquals(1, subImage.getShape()[0]);
 		Assert.assertEquals(3710, subImage.getShape()[1]);
 		Assert.assertEquals(3838/2, subImage.getShape()[2]);
+
+		Assert.assertEquals(Short.class, subImage.getElementClass());
 	}
 
 	@Test
@@ -100,10 +102,30 @@ public class MRCImageStackLoaderTest {
 
 		IDataset subImage;
 		subImage = image.getSlice(new Slice(1), null, null);
+		Assert.assertEquals(Integer.class, subImage.getElementClass());
 		Assert.assertEquals(3, subImage.getRank());
 		Assert.assertEquals(1, subImage.getShape()[0]);
 		Assert.assertEquals(4096, subImage.getShape()[1]);
 		Assert.assertEquals(4096, subImage.getShape()[2]);
 	}
 
+	@Test
+	public void testLoadFile3() throws Exception {
+		DataHolder dh = new MRCImageStackLoader(TestFileFolder + "perforin-PrePore0_10_001[0.00]-11233-0001.mrc").loadFile();
+
+		ILazyDataset image = dh.getLazyDataset(0);
+		
+		Assert.assertEquals(3, image.getRank());
+		Assert.assertEquals(1, image.getShape()[0]);
+		Assert.assertEquals(3710, image.getShape()[1]);
+		Assert.assertEquals(3838, image.getShape()[2]);
+
+		IDataset subImage;
+		subImage = image.getSlice(new Slice(1), null, null);
+		Assert.assertEquals(Float.class, subImage.getElementClass());
+		Assert.assertEquals(3, subImage.getRank());
+		Assert.assertEquals(1, subImage.getShape()[0]);
+		Assert.assertEquals(3710, subImage.getShape()[1]);
+		Assert.assertEquals(3838, subImage.getShape()[2]);
+	}
 }

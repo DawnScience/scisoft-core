@@ -22,6 +22,7 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
@@ -38,6 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MRCImageStackLoader extends AbstractFileLoader implements Serializable {
 	protected static final Logger logger = LoggerFactory.getLogger(MRCImageStackLoader.class);
+	private boolean isLittleEndian;
 
 	public MRCImageStackLoader(String filename) {
 		this.fileName = filename;
@@ -106,8 +108,8 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 	private ILazyDataset createDataset(final long pos, final int mode, final int width, final int height, final int depth) throws ScanFileHolderException {
 		final int[] trueShape = new int[] {depth, height, width};
 		final int type = modeToDtype.get(mode);
-		if (type != Dataset.INT16) { // TODO support other modes
-			throw new ScanFileHolderException("Only 16-bit integers is currently supported");
+		if (type != Dataset.INT16 && type != Dataset.FLOAT32) { // TODO support other modes
+			throw new ScanFileHolderException("Only 16-bit integers and 32-bit floats are currently supported");
 		}
 
 		final int dsize = modeToDsize.get(mode);
@@ -170,10 +172,10 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 							}
 						}
 
-						d = loadData(mon, fileName, pos, dsize, dtype, signExtend, trueShape, tstart, tsize, tstep);
+						d = loadData(mon, fileName, pos, isLittleEndian, dsize, dtype, signExtend, trueShape, tstart, tsize, tstep);
 						d.setShape(newShape); // squeeze shape back
 					} else {
-						d = loadData(mon, fileName, pos, dsize, dtype, signExtend, trueShape, lstart, newShape, lstep);
+						d = loadData(mon, fileName, pos, isLittleEndian, dsize, dtype, signExtend, trueShape, lstart, newShape, lstep);
 					}
 				} catch (ScanFileHolderException e) {
 					throw new IOException("Problem with loading data", e);
@@ -186,7 +188,7 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 		return new LazyDataset(STACK_NAME, dtype, 1, trueShape.clone(), l);
 	}
 
-	private static Dataset loadData(IMonitor mon, String filename, long pos, int dsize, int dtype, boolean signExtend, int[] shape, int[] start, int[] count, int[] step) throws ScanFileHolderException {
+	private static Dataset loadData(IMonitor mon, String filename, long pos, boolean isLE, int dsize, int dtype, boolean signExtend, int[] shape, int[] start, int[] count, int[] step) throws ScanFileHolderException {
 		File f = null;
 		BufferedInputStream bi = null;
 
@@ -197,7 +199,8 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 
 		Dataset d = DatasetFactory.zeros(count, dtype);
 
-		IntegerDataset image = (IntegerDataset) DatasetFactory.zeros(new int[] {shape[1], shape[2]}, Dataset.INT32);
+		int idtype = dtype == Dataset.FLOAT32 ? Dataset.FLOAT32 : Dataset.INT32;
+		Dataset image = DatasetFactory.zeros(new int[] {shape[1], shape[2]}, idtype);
 		try {
 			bi = new BufferedInputStream(new FileInputStream(f));
 
@@ -216,7 +219,21 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 			bi.skip(pos);
 			pos = (step[0] - 1) * imageSize;
 			do { // TODO maybe read smaller chunk of image...
-				Utils.readLeShort(bi, image, 0, signExtend);
+				if (dtype == Dataset.INT16) {
+					if (isLE) {
+						Utils.readLeShort(bi, (IntegerDataset) image, 0, signExtend);
+					} else {
+						Utils.readBeShort(bi, (IntegerDataset) image, 0, signExtend);
+					}
+				} else if (dtype == Dataset.FLOAT32) {
+					if (isLE) {
+						Utils.readLeFloat(bi, (FloatDataset) image, 0);
+					} else {
+						Utils.readBeFloat(bi, (FloatDataset) image, 0);
+					}
+				} else {
+					
+				}
 				dataStop[0] = dataStart[0] + 1;
 				d.setSlice(image.getSliceView(imageStart, imageStop, imageStep), dataStart, dataStop, null);
 				if (mon != null) {
@@ -243,19 +260,31 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 		return d;
 	}
 	
-	private int readMetadata(BufferedInputStream bi) throws IOException, ScanFileHolderException {
-		int pos =readHeader(bi);
+	private int readMetadata(BufferedInputStream bis) throws IOException, ScanFileHolderException {
+		byte[] header = new byte[HEADER_SIZE];
+		if (bis.read(header) != HEADER_SIZE) {
+			throw new ScanFileHolderException("Could not read header");
+		}
+		isLittleEndian = true;
+		int pos = readHeader(header);
+		if (pos < 0) {
+			isLittleEndian = false;
+			pos = readHeader(header);
+			if (pos < 0) {
+				throw new ScanFileHolderException("Could not parse header by either endianness");
+			}
+		}
 		metadata = new Metadata();
 		metadata.initialize(headers);
 		return pos;
 	}
 
 	private static final int HEADER_SIZE = 1024;
-	private static final int LABEL_LENGTH = 80;
 
 	enum KeyType {
 		UNUSED(0), // for skipping
 		CHARS(1),
+		BYTE(1),
 		SHORT(2),
 		INT(4),
 		FLOAT(4),
@@ -287,7 +316,7 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 		SPACEGROUP,      // space group
 		NEXT,            // extended header size in bytes
 		ID(KeyType.SHORT), // ID is now 0 as of IMOD 4.2.23
-		UNSUED1(30, KeyType.UNUSED),  // not used
+		UNUSED1(30, KeyType.UNUSED),  // not used
 		INT(KeyType.SHORT), // 
 		REAL(KeyType.SHORT), // 
 		UNUSED2(20, KeyType.UNUSED),  // not used
@@ -297,7 +326,11 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 		                 // 4 = origin is stored with sign inverted from definition below
 		DATATYPE(6, KeyType.SHORT), // six data type indicators
 		TILTANGLES(6, KeyType.FLOAT), // six tilt angles
-		MRCHEADER(24, KeyType.UNUSED), // 24-bytes of MRC header can be old or new
+		// 24-bytes of MRC header assumed to be new type
+		ORG(3, KeyType.FLOAT), // x,y,z origin
+		CMAP(4, KeyType.CHARS), // contains "MAP "
+		STAMP(4, KeyType.BYTE), // First two bytes have 17 and 17 for big-endian or 68 and 65 (DA) for little-endian
+		RMS(1, KeyType.FLOAT), // RMS deviation of densities from mean density
 		LABELS,          // number of labels
 		LABELTEXT(800, KeyType.CHARS), // 10 label strings of 80 characters
 		;
@@ -361,14 +394,10 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 		return (Integer) s;
 	}
 
-	private int readHeader(BufferedInputStream bis) throws IOException, ScanFileHolderException {
+	private int readHeader(byte[] header) throws IOException, ScanFileHolderException {
 		headers.clear();
 
 		int pos = 0;
-		byte[] header = new byte[HEADER_SIZE];
-		if (bis.read(header) != HEADER_SIZE) {
-			throw new ScanFileHolderException("Could not read header");
-		}
 
 		// Assume little endian byte-order
 		for (BinaryKey k : BinaryKey.values()) {
@@ -377,13 +406,17 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 			case UNUSED:
 				break;
 			case CHARS:
-				s = Utils.getString(header, pos, LABEL_LENGTH).trim();
+				s = Utils.getString(header, pos, k.next).trim();
+				break;
+			case BYTE:
+				s = Arrays.copyOfRange(header, pos, pos + k.next);
 				break;
 			case SHORT:
-				s = Utils.leInt(header[pos], header[pos + 1]);
+				s = isLittleEndian ? Utils.leInt(header[pos], header[pos + 1]) : Utils.beInt(header[pos], header[pos + 1]);
 				break;
 			case INT:
-				s= Utils.leInt(header[pos], header[pos + 1], header[pos + 2], header[pos + 3]);
+				s = isLittleEndian ? Utils.leInt(header[pos], header[pos + 1], header[pos + 2], header[pos + 3]) :
+					Utils.beInt(header[pos], header[pos + 1], header[pos + 2], header[pos + 3]);
 				break;
 			case FLOAT:
 				break;
@@ -395,7 +428,10 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 
 		assert pos == 1024;
 
-		// advance position but TODO currently does not read in extra header info
+		if (getInteger(BinaryKey.WIDTH) < 0 || getInteger(BinaryKey.HEIGHT) < 0) {
+			// signal that the byte order may be wrong as width and/or height are negative
+			return -1;
+		}
 		pos += getInteger(BinaryKey.NEXT);
 
 		return pos;

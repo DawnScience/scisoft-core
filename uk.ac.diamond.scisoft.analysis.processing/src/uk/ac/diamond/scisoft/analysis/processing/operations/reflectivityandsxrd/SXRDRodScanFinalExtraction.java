@@ -26,7 +26,7 @@ public class SXRDRodScanFinalExtraction extends AbstractOperation<RodScanPolynom
 	
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.reflectivityandsxrd.SXRDRodScanFinalExtraction";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SXRDRodScanFinalExtraction";
 	}
 	
 	@Override

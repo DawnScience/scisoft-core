@@ -31,7 +31,7 @@ public class ReflectivityGeometricCorrectionOperation extends AbstractOperation<
 	
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.reflectivityandsxrd.ReflectivityGeometricCorrectionOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.ReflectivityGeometricCorrectionOperation";
 	}
 
 	@Override

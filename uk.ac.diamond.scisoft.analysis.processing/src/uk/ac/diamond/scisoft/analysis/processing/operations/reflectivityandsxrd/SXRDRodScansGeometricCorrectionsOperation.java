@@ -24,7 +24,7 @@ public class SXRDRodScansGeometricCorrectionsOperation extends AbstractOperation
 		
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.reflectivityandsxrd.SXRDRodScansGeometricCorrectionsOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SXRDRodScansGeometricCorrectionsOperation";
 	}
 	
 	@Override

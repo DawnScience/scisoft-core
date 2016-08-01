@@ -34,7 +34,7 @@ public class TwoDPolynomialBackgroundFitAndSubtract extends AbstractOperation<Bo
 	
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.reflectivityandsxrd.TwoDPolynomialBackgroundFitAndSubtract";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.TwoDPolynomialBackgroundFitAndSubtract";
 	}
 
 	@Override

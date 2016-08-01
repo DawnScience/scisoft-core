@@ -28,7 +28,7 @@ public class ReflectivityFluxCorrectionOperation extends AbstractOperation<Polyn
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.reflectivityandsxrd.ReflectivityFluxCorrectionOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.ReflectivityFluxCorrectionOperation";
 	}
 	
 	@Override

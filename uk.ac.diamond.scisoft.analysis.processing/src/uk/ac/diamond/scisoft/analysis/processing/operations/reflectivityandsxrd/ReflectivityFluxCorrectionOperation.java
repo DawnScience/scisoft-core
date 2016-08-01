@@ -57,7 +57,7 @@ public class ReflectivityFluxCorrectionOperation extends AbstractOperation<Polyn
 		
 		if ((boolean) (model.getPath().equalsIgnoreCase("NO") ||(model.getPath().equalsIgnoreCase(null)))){
 			try {
-				qdcd = ProcessingUtils.getLazyDataset(this, model.getPath(), ReflectivityMetadataTitles.getqsdcd()).getSlice();
+				qdcd = ProcessingUtils.getLazyDataset(this, input.getFirstMetadata(SliceFromSeriesMetadata.class).getFilePath(), ReflectivityMetadataTitles.getqsdcd()).getSlice();
 				m = tmp1.getMatchingSlice(qdcd);
 			} catch (OperationException e) {
 				// TODO Auto-generated catch block
@@ -78,6 +78,8 @@ public class ReflectivityFluxCorrectionOperation extends AbstractOperation<Polyn
 			}
 		}
 		
+		
+		//test
 		Dataset flux =  (Dataset) Interpolation1D.splineInterpolation(fluxData[0], fluxData[1], m);;
 
 		

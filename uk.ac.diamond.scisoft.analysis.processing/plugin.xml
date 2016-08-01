@@ -942,6 +942,13 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.Polynomial2DReflectivityModel"
             name="Flux corrections for Reflectivity">
       </operation>
+                  <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.OneDPolynomialBackgroundFitAndSubtract"
+            icon="icons/template.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.OneDPolynomialBackgroundFitAndSubtract"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.BoxSlicer1DModel"
+            name="OneD fitting and subtraction for SXRD and reflectivity">
+      </operation>
      
    </extension>
    <extension

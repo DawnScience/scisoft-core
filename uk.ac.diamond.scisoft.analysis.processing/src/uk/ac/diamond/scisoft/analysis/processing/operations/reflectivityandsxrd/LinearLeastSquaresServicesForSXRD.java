@@ -16,36 +16,39 @@ import org.eclipse.january.dataset.SliceND;
 public class LinearLeastSquaresServicesForSXRD {
 
 	
-	public static Dataset polynomial2DLinearLeastSquaresMatrixGenerator (int degree, Dataset X, Dataset Y){
+	public static Dataset polynomial2DLinearLeastSquaresMatrixGenerator (int degree, Dataset xValues, Dataset yValues){
 		
 		int noParams = (int) Math.pow(degree+1, 2);
-		int datasize = X.getShape()[0];
+		int datasize = xValues.getShape()[0];
 		
 		
 		Dataset testMatrix = DatasetFactory.ones(new int[] {datasize, noParams}, Dataset.FLOAT64);
 		
-		SliceND s = new SliceND(testMatrix.getShape());
-		s.setSlice(1, 0, 1, 1);
-		testMatrix.setSlice(X, s);
+		int[] pos = new int[]{0,0};
+		for (int i = 0; i < datasize; i++) {
+			testMatrix.set(xValues.getObject(i), pos);
+			pos[0]++;
+		}
 		
 		int p = 0;
 		
+		double check = (degree+1)*(degree+1);
 		
 		for (int k =0; k<datasize; k++){
+			
+			double x = xValues.getDouble(k);
+			double y = yValues.getDouble(k);
+			
 			for (int i =0; i<degree+1 ; i++){
+				double xFunc = Math.pow(x, i);
 				for (int j=0; j<degree+1; j++){
 					
-					double x = X.getDouble(k);
-					double y = Y.getDouble(k);
-					
-					double xFunc = Math.pow(x, i);
 					double yFunc = Math.pow(y, j);
-					
 					
 					testMatrix.set(xFunc*yFunc, k, p);
 					
 					p++;
-					if(p == (degree+1)*(degree+1)){
+					if(p == check){
 						p=0;
 					}
 					

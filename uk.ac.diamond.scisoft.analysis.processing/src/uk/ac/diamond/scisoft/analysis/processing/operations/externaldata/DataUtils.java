@@ -98,4 +98,16 @@ public class DataUtils {
 
 		return null;
 	}
+	
+	public static int calculateFastestDimension(int[] dataDims, int[] shape) {
+		int[] dd = dataDims.clone();
+		Arrays.sort(dd);
+		
+		for (int i = shape.length-1; i > -1; i--) {
+			int key = Arrays.binarySearch(dd, i);
+			if (key < 0) return i;
+		}
+		
+		return -1;	
+	}
 }

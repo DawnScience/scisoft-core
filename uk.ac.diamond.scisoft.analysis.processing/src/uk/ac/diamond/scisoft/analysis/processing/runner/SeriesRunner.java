@@ -9,6 +9,7 @@ import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationRunner;
+import org.eclipse.dawnsci.analysis.api.processing.ISavesToFile;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.dataset.slicer.DynamicSliceViewIterator;
@@ -21,6 +22,8 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IDynamicDataset;
 import org.eclipse.january.dataset.Slice;
+
+import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadataImpl;
 
 /**
  * Runs a pipeline by looping the services of operations.
@@ -86,11 +89,17 @@ public class SeriesRunner implements IOperationRunner {
 						//ignore
 					}
 				}
-
+				
+				String outputFile = null;
+				
+				if (visitor instanceof ISavesToFile) outputFile = ((ISavesToFile)visitor).getFileName();
+				
 				OperationData  data = new OperationData(slice, (Serializable[])null);
 				long start = System.currentTimeMillis();
 				for (IOperation<?,?> i : context.getSeries()) {
 
+					OperationMetadataImpl operationMeta = new OperationMetadataImpl(outputFile, context.getSeries(), i);
+					data.getData().setMetadata(operationMeta);
 					if (context.getMonitor() != null) {
 						String update = "";
 						if (fullssm != null) {

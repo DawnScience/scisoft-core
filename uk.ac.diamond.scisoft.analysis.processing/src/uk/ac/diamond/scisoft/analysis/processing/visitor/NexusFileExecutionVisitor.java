@@ -25,6 +25,7 @@ import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistentNodeFactory;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
+import org.eclipse.dawnsci.analysis.api.processing.ISavesToFile;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
@@ -52,7 +53,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 
-public class NexusFileExecutionVisitor implements IExecutionVisitor {
+public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFile {
 	
 	private static IPersistenceService service;
 	public static void setPersistenceService(IPersistenceService s) { // Injected
@@ -287,6 +288,11 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor {
 				}
 			}
 		}
+	}
+	
+	@Override
+	public String getFileName() {
+		return filePath;
 	}
 
 	private void updateAxes(IDataset data, Slice[] oSlice, int[] oShape, int[] dataDims, String groupName, boolean first) throws Exception {

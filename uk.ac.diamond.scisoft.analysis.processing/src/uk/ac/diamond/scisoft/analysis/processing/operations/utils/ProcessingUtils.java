@@ -16,7 +16,7 @@ import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 
-import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
+import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 
 public class ProcessingUtils {
 	
@@ -25,7 +25,7 @@ public class ProcessingUtils {
 		IDataHolder dh = null;
 		
 		try {
-			dh = LoaderFactory.getData(filepath);
+			dh = LocalServiceManager.getLoaderService().getData(filepath,null);
 		} catch (Exception e) {
 			//ignore
 		}

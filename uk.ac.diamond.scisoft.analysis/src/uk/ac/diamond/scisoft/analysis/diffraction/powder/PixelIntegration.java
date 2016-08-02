@@ -533,13 +533,13 @@ public class PixelIntegration {
 		
 		DoubleDataset[] dvals = new DoubleDataset[h.length];
 		
-		for (int i = 0; i < h.length ; i++) dvals[i] = DatasetFactory.createFromObject(DoubleDataset.class, vals[i]);
+		for (int i = 0; i < h.length ; i++) dvals[i] = vals[i].length == 0 ? null : DatasetFactory.createFromObject(DoubleDataset.class, vals[i] );
 		
 		double[] mad = new double[h.length];
 		double[] med = new double[h.length];
 		
 		for (int i = 0; i < h.length; i++) {
-			if (dvals[i].getSize() == 0) continue;
+			if (dvals[i] == null || dvals[i].getSize() == 0) continue;
 			double out[] = Outliers.medianAbsoluteDeviation(dvals[i]);
 			mad[i] = out[0];
 //			double ma = (double)Stats.median(dvals[i]);

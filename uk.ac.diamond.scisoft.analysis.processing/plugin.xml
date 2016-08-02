@@ -963,9 +963,18 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.BoxSlicer1DModel"
             name="Final extraction for SXRD">
       </operation>
-     
-     
-     
+       		<operation
+            category="uk.ac.diamond.scisoft.analysis.processing.processing_operations"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractWithProcessing"
+            icon="icons/minus.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractWithProcessing"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataSelectedFramesModel"
+            name="Subtract Frame">
+       </operation>
+            <category
+            id="uk.ac.diamond.scisoft.analysis.processing.processing_operations"
+            name="Match Processed BETA">
+       </category>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

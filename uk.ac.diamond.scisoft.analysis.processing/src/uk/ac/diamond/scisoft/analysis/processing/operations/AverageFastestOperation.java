@@ -23,6 +23,8 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.RunningAverage;
 import org.eclipse.january.dataset.Slice;
 
+import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DataUtils;
+
 public class AverageFastestOperation extends AbstractOperation<EmptyModel, OperationData> implements IExportOperation {
 
 	private RunningAverage average;
@@ -55,7 +57,7 @@ public class AverageFastestOperation extends AbstractOperation<EmptyModel, Opera
 		
 		if (average == null) {
 			average = new RunningAverage(input);
-			if (fastestDimension < 0) fastestDimension = calculateFastestDimension(ssm.getDataDimensions(),ssm.getSubSampledShape());
+			if (fastestDimension < 0) fastestDimension = DataUtils.calculateFastestDimension(ssm.getDataDimensions(),ssm.getSubSampledShape());
 			if (fastestDimension < 0) throw new OperationException(this, "Cannot average this data, it has no, non-data dimensions!");
 		} else {
 			average.update(input);
@@ -75,18 +77,6 @@ public class AverageFastestOperation extends AbstractOperation<EmptyModel, Opera
 		}
 		
 		return null;
-	}
-	
-	private int calculateFastestDimension(int[] dataDims, int[] shape) {
-		int[] dd = dataDims.clone();
-		Arrays.sort(dd);
-		
-		for (int i = shape.length-1; i > -1; i--) {
-			int key = Arrays.binarySearch(dd, i);
-			if (key < 0) return i;
-		}
-		
-		return -1;	
 	}
 	
 	private boolean isLastSlice(Slice[] outputSlice, int[] outputShape, int dim) {

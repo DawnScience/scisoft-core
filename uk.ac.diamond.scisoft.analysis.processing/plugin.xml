@@ -942,13 +942,29 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.Polynomial2DReflectivityModel"
             name="Flux corrections for Reflectivity">
       </operation>
-                  <operation
+            <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.OneDPolynomialBackgroundFitAndSubtract"
             icon="icons/template.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.OneDPolynomialBackgroundFitAndSubtract"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.BoxSlicer1DModel"
             name="OneD fitting and subtraction for SXRD and reflectivity">
       </operation>
+            <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.ReflectivityFinalExtraction"
+            icon="icons/template.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.ReflectivityFinalExtraction"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.BoxSlicer1DModel"
+            name="Final extraction for reflectivity">
+      </operation>
+     		<operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SXRDRodScanFinalExtraction"
+            icon="icons/template.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SXRDRodScanFinalExtraction"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.BoxSlicer1DModel"
+            name="Final extraction for SXRD">
+      </operation>
+     
+     
      
    </extension>
    <extension

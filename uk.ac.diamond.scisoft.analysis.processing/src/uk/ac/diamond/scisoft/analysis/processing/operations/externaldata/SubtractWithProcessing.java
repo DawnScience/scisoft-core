@@ -28,7 +28,11 @@ public class SubtractWithProcessing extends FrameMathsOperation<ExternalDataSele
 	@Override
 	protected Dataset getData(IDataset ds) {
 		OperationMetadata om = ds.getFirstMetadata(OperationMetadata.class);
-		return om.process(((ExternalDataSelectedFramesModel)model).getFilePath(), ((ExternalDataSelectedFramesModel)model).getDatasetName(), ds.getFirstMetadata(SliceFromSeriesMetadata.class),model.getStartFrame(),model.getEndFrame());
+		Dataset processed = om.process(((ExternalDataSelectedFramesModel)model).getFilePath(),
+									 ((ExternalDataSelectedFramesModel)model).getDatasetName(),
+									 ds.getFirstMetadata(SliceFromSeriesMetadata.class),model.getStartFrame(),
+									 model.getEndFrame());
+		return processed.imultiply(model.getScaling());
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.io.File;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.IExportOperation;
+import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -20,12 +21,15 @@ import org.eclipse.january.dataset.Slice;
 
 import uk.ac.diamond.scisoft.analysis.io.ASCIIDataWithHeadingSaver;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
+import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadata;
+import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadataImpl;
 
 @Atomic
 public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DModel, OperationData> implements IExportOperation {
 
 	private static final String EXPORT = "export";
 	private static final String DEFAULT_EXT = "dat";
+	private static final String FOLDER_EXT = "_ascii";
 	
 	@Override
 	public String getId() {
@@ -35,60 +39,7 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
-		if (model.getOutputDirectoryPath() == null || model.getOutputDirectoryPath().isEmpty()) throw new OperationException(this, "Output directory not set!");
-		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(input);
-		
-		String filename = EXPORT;
-		String slice ="";
-		String ext = DEFAULT_EXT;
-		
-		if (model.isIncludeSliceName()) {
-			slice = Slice.createString(ssm.getSliceFromInput());
-		}
-		
-		int c = ssm.getSliceInfo().getSliceNumber();
-		String count = "";
-		if (model.getZeroPad() != null && model.getZeroPad() >= 1) {
-			count = String.format("%0" + String.valueOf(model.getZeroPad()) + "d", c);
-		} else {
-			count =String.valueOf(c);
-		}
-		
-		if (model.getExtension() != null) ext = model.getExtension();
-		
-		String fn = ssm.getSourceInfo().getFilePath();
-		if (fn != null) {
-			File f = new File(fn);
-			filename = getFileNameNoExtension(f.getName());
-		}
-		
-		String postfix = "";
-		
-		if (model.getSuffix() != null) {
-			postfix = model.getSuffix();
-		}
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append(model.getOutputDirectoryPath());
-		sb.append(File.separator);
-		sb.append(filename);
-		sb.append("_");
-		if (!slice.isEmpty()) {
-			sb.append("[");
-			slice = slice.replace(":", ";");
-			sb.append(slice);
-			sb.append("]");
-			sb.append("_");
-		}
-		if (!postfix.isEmpty()) {
-			sb.append(postfix);
-			sb.append("_");
-		}
-		sb.append(count);
-		sb.append(".");
-		sb.append(ext);
-		
-		String fileName = sb.toString();
+		String fileName = getFilePath( model, input, this);
 		
 		ILazyDataset[] axes = getFirstAxes(input);
 		
@@ -164,10 +115,90 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 		return OperationRank.ONE;
 	}
 	
-	private String getFileNameNoExtension(String fileName) {
+	private static String getFileNameNoExtension(String fileName) {
 		int posExt = fileName.lastIndexOf(".");
 		// No File Extension
 		return posExt == -1 ? fileName : fileName.substring(0, posExt);
+	}
+	
+	public static String getFilePath(ExportAsText1DModel model, IDataset input, IOperation op) {
+		String outputDirectory = null;
+		
+		if (model.getOutputDirectoryPath() != null && !model.getOutputDirectoryPath().isEmpty()) {
+			outputDirectory = model.getOutputDirectoryPath();
+		} else {
+			OperationMetadata omd = input.getFirstMetadata(OperationMetadata.class);
+			if (omd.getOutputFilename() != null) {
+				File f = new File(omd.getOutputFilename());
+				outputDirectory = f.getParent();
+			}
+		}
+		
+		if (outputDirectory == null || outputDirectory.isEmpty()) throw new OperationException(op, "Output directory not set!");
+		
+		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(input);
+		
+		String filename = EXPORT;
+		
+		String fn = ssm.getSourceInfo().getFilePath();
+		if (fn != null) {
+			File f = new File(fn);
+			filename = getFileNameNoExtension(f.getName());
+		}
+		
+		if (model.isMakeFolder()) {
+			String innerDirName = File.separator + filename + FOLDER_EXT;
+			outputDirectory += innerDirName;
+			File f = new File(outputDirectory);
+			if (!f.exists()) f.mkdir();
+		}
+		
+		String slice ="";
+		String ext = DEFAULT_EXT;
+		
+		if (model.isIncludeSliceName()) {
+			slice = Slice.createString(ssm.getSliceFromInput());
+		}
+		
+		int c = ssm.getSliceInfo().getSliceNumber();
+		String count = "";
+		if (model.getZeroPad() != null && model.getZeroPad() >= 1) {
+			count = String.format("%0" + String.valueOf(model.getZeroPad()) + "d", c);
+		} else {
+			count =String.valueOf(c);
+		}
+		
+		if (model.getExtension() != null) ext = model.getExtension();
+		
+		
+		
+		String postfix = "";
+		
+		if (model.getSuffix() != null) {
+			postfix = model.getSuffix();
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append(outputDirectory);
+		sb.append(File.separator);
+		sb.append(filename);
+		sb.append("_");
+		if (!slice.isEmpty()) {
+			sb.append("[");
+			slice = slice.replace(":", ";");
+			sb.append(slice);
+			sb.append("]");
+			sb.append("_");
+		}
+		if (!postfix.isEmpty()) {
+			sb.append(postfix);
+			sb.append("_");
+		}
+		sb.append(count);
+		sb.append(".");
+		sb.append(ext);
+		
+		return sb.toString();
 	}
 
 }

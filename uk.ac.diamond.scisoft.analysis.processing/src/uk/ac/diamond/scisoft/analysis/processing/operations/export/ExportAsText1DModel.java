@@ -16,6 +16,8 @@ public class ExportAsText1DModel extends AbstractOperationModel {
 	private Integer zeroPad = 5;
 	@OperationModelField(label = "Suffix", hint = "Custom suffix to be appended to the file name, leave blank for no suffix")
 	private String suffix = "";
+	@OperationModelField(label = "In separate folder", hint = "Put text files in new folder named after input data file")
+	private boolean makeFolder = false;
 
 	public String getExtension() {
 		return extension;
@@ -57,4 +59,11 @@ public class ExportAsText1DModel extends AbstractOperationModel {
 		firePropertyChange("suffix", this.suffix, this.suffix = suffix);
 	}
 	
+	public boolean isMakeFolder() {
+		return makeFolder;
+	}
+
+	public void setMakeFolder(boolean makeFolder) {
+		firePropertyChange("makeFolder", this.makeFolder, this.makeFolder = makeFolder);
+	}
 }

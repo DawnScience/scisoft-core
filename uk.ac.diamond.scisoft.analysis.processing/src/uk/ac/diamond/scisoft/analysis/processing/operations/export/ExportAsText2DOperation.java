@@ -18,7 +18,6 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
-import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.DTypeUtils;
@@ -26,7 +25,6 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.dataset.Slice;
 
 import uk.ac.diamond.scisoft.analysis.io.ASCIIDataWithHeadingSaver;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
@@ -45,60 +43,7 @@ public class ExportAsText2DOperation extends AbstractOperation<ExportAsText1DMod
 
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
-		if (model.getOutputDirectoryPath() == null || model.getOutputDirectoryPath().isEmpty()) throw new OperationException(this, "Output directory not set!");
-		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(input);
-		
-		String filename = EXPORT;
-		String slice ="";
-		String ext = DEFAULT_EXT;
-		
-		if (model.isIncludeSliceName()) {
-			slice = Slice.createString(ssm.getSliceFromInput());
-		}
-		
-		int c = ssm.getSliceInfo().getSliceNumber();
-		String count = "";
-		if (model.getZeroPad() != null && model.getZeroPad() >= 1) {
-			count = String.format("%0" + String.valueOf(model.getZeroPad()) + "d", c);
-		} else {
-			count =String.valueOf(c);
-		}
-		
-		if (model.getExtension() != null) ext = model.getExtension();
-		
-		String fn = ssm.getSourceInfo().getFilePath();
-		if (fn != null) {
-			File f = new File(fn);
-			filename = getFileNameNoExtension(f.getName());
-		}
-		
-		String postfix = "";
-		
-		if (model.getSuffix() != null) {
-			postfix = model.getSuffix();
-		}
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append(model.getOutputDirectoryPath());
-		sb.append(File.separator);
-		sb.append(filename);
-		sb.append("_");
-		if (!slice.isEmpty()) {
-			sb.append("[");
-			slice = slice.replace(":", ";");
-			sb.append(slice);
-			sb.append("]");
-			sb.append("_");
-		}
-		if (!postfix.isEmpty()) {
-			sb.append(postfix);
-			sb.append("_");
-		}
-		sb.append(count);
-		sb.append(".");
-		sb.append(ext);
-		
-		String fileName = sb.toString();
+		String fileName = ExportAsText1DOperation.getFilePath( model, input, this);
 		
 		ILazyDataset[] axes = getFirstAxes(input);
 		ILazyDataset lx = null;
@@ -169,11 +114,4 @@ public class ExportAsText2DOperation extends AbstractOperation<ExportAsText1DMod
 	public OperationRank getOutputRank() {
 		return OperationRank.TWO;
 	}
-	
-	private String getFileNameNoExtension(String fileName) {
-		int posExt = fileName.lastIndexOf(".");
-		// No File Extension
-		return posExt == -1 ? fileName : fileName.substring(0, posExt);
-	}
-	
 }

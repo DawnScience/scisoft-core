@@ -17,12 +17,14 @@ import java.util.List;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.SliceNDIterator;
@@ -49,6 +51,7 @@ public class ImageStackLoader implements ILazyLoader {
 	private File parent = null;
 	private Class<? extends IFileLoader> loaderClass;
 	private boolean onlyOne;
+	private String datasetName;
 	
 	public int getDType() {
 		return dtype;
@@ -76,6 +79,10 @@ public class ImageStackLoader implements ILazyLoader {
 	}
 
 	public ImageStackLoader(StringDataset imageFilenames, IDataHolder dh, String directory) throws Exception {
+		this(imageFilenames,dh,directory,null);
+	}
+	
+	public ImageStackLoader(StringDataset imageFilenames, IDataHolder dh, String directory, String datasetName) throws Exception {
 		if (directory != null) {
 			File file = new File(directory); 
 			if (file.isDirectory()) {
@@ -85,13 +92,14 @@ public class ImageStackLoader implements ILazyLoader {
 
 		filenames = imageFilenames;
 		fShape = imageFilenames.getShapeRef();
+		this.datasetName = datasetName;
 		int fRank = fShape.length;
 		// load the first image to get the shape of the whole thing
-		IDataset dataSetFromFile;
+		ILazyDataset dataSetFromFile;
 		if (dh == null || dh.getNames().length == 0) {
 			dataSetFromFile = getDatasetFromFile(new int[fRank], null);
 		} else {
-			dataSetFromFile = dh.getDataset(0);
+			dataSetFromFile = datasetName == null ? dh.getDataset(0) : dh.getDataset(datasetName);
 			loaderClass = dh.getLoaderClass();
 		}
 		onlyOne = imageFilenames.getSize() == 1;
@@ -103,7 +111,7 @@ public class ImageStackLoader implements ILazyLoader {
 		}
 	}
 
-	private IDataset getDatasetFromFile(int[] location, IMonitor mon) throws ScanFileHolderException {
+	private ILazyDataset getDatasetFromFile(int[] location, IMonitor mon) throws ScanFileHolderException {
 		File f = new File(getDLSWindowsPath(filenames.get(location)));
 		if (parent != null) { // try local directory first
 			File nf = null;
@@ -124,7 +132,7 @@ public class ImageStackLoader implements ILazyLoader {
 		return loadDataset(f.getAbsolutePath(), mon);
 	}
 
-	private IDataset loadDataset(String filename, IMonitor mon) throws ScanFileHolderException {
+	private ILazyDataset loadDataset(String filename, IMonitor mon) throws ScanFileHolderException {
 		IDataHolder data = null;
 		if (loaderClass != null) {
 			try {
@@ -146,8 +154,18 @@ public class ImageStackLoader implements ILazyLoader {
 		if (loaderClass == null) {
 			loaderClass = data.getLoaderClass();
 		}
-
-		IDataset dataset = data.getDataset(0);
+		
+		IDataset dataset = null;
+		if (datasetName != null) {
+			try {
+				dataset = data.getLazyDataset(datasetName).getSlice();
+			} catch (DatasetException e) {
+				throw new ScanFileHolderException("Could no slice data", e);
+			}
+		} else {
+			dataset = data.getDataset(0);
+		}
+		
 		IMetadata meta = data.getMetadata();
 		dataset.setMetadata(meta);
 		return dataset;
@@ -196,8 +214,8 @@ public class ImageStackLoader implements ILazyLoader {
 		while (it.hasNext()) {
 			IDataset image;
 			try {
-				image = getDatasetFromFile(pos, mon).getSliceView(iSlice);
-			} catch (ScanFileHolderException e) {
+				image = getDatasetFromFile(pos, mon).getSlice(iSlice);
+			} catch (Exception e) {
 				throw new IOException(e);
 			}
 

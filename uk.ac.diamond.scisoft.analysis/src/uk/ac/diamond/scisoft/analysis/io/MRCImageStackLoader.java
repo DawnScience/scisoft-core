@@ -206,7 +206,7 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 
 			// flip each image row-wise as origin is bottom-left
 			int[] imageStart = new int[] {start[1] + (count[1] - 1)* step[1], start[2]};
-			int[] imageStop  = new int[] {start[1], start[2] + count[2] * step[2]};
+			int[] imageStop  = new int[] {start[1] - step[1] - shape[1], start[2] + count[2] * step[2]};
 			int[] imageStep  = new int[] {-step[1], step[2]};
 //			int[] imageStart = new int[] {start[1], start[2]};
 //			int[] imageStop  = new int[] {start[1] + count[1] * step[1], start[2] + count[2] * step[2]};

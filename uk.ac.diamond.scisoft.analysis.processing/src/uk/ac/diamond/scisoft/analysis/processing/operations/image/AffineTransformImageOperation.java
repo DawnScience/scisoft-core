@@ -1,21 +1,19 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.image;
 
-import java.util.List;
-
 import org.eclipse.dawnsci.analysis.api.image.IImageTransform;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.metadata.ErrorMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
-import org.eclipse.january.metadata.MetadataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,70 +40,76 @@ public class AffineTransformImageOperation extends AbstractSimpleImageOperation<
 		if (input.getShape()[0] == out.getShape()[0] && input.getShape()[1] == out.getShape()[1]) {
 			copyMetadata(input, out);
 		} else {
-			try {
-				List<MetadataType> metadata = input.getMetadata(null);
-				boolean axes_found = false;
-				for (MetadataType m : metadata) {
-					if (m instanceof ErrorMetadata) continue;
-					if (axes_found == false && m instanceof AxesMetadata) {
-						axes_found = true;
-						ILazyDataset[] axes = ((AxesMetadata) m).getAxes();
-						Dataset axis_old_x = DatasetUtils.sliceAndConvertLazyDataset(axes[0]);
-						Dataset axis_new_x = null;
-						//check if axes is 1 or 2 dimensional
-						if (axis_old_x.getRank() == 1) {
-							//1D
-							axis_new_x = DatasetFactory.zeros(new int[]{out.getShape()[0]}, axis_old_x.getDType());
-							for (int i = 0 ; i < out.getShape()[0] ; i++) {
-								double new_value = axis_old_x.getDouble(0) + (axis_old_x.getDouble(axis_old_x.getShape()[0]-1) - axis_old_x.getDouble(0)) * i / (out.getShape()[0]-1);
-								axis_new_x.set(new_value, i);
-							}
-						} else {
-							//2D
-							axis_new_x = DatasetFactory.zeros(out.getShape(), axis_old_x.getDType());
-							for (int i = 0 ; i < out.getShape()[0] ; i++) {
-								double new_value = axis_old_x.getDouble(0, 0) + (axis_old_x.getDouble(axis_old_x.getShape()[0]-1, 0) - axis_old_x.getDouble(0, 0)) * i / (out.getShape()[0]-1);
-								for (int j = 0 ; j < out.getShape()[1] ; j++) {
-									//System.out.println("i: " + i + " j: " + j);
-									axis_new_x.set(new_value, i, j);
-								}
+			copyMetadata(input, out, false);
+			ILazyDataset[] axes = getFirstAxes(input);
+			if (axes != null) {
+				Dataset axis_new_x = null;
+				Dataset axis_new_y = null;
+				
+				if (axes[0] != null) {
+					Dataset axis_old_x = null;
+					try {
+						axis_old_x = DatasetUtils.sliceAndConvertLazyDataset(axes[0]);
+					} catch (DatasetException e) {
+						throw new OperationException(this, e);
+					}
+					//check if axes is 1 or 2 dimensional
+					if (axis_old_x.getRank() == 1) {
+						//1D
+						axis_new_x = DatasetFactory.zeros(new int[]{out.getShape()[0]}, axis_old_x.getDType());
+						for (int i = 0 ; i < out.getShape()[0] ; i++) {
+							double new_value = axis_old_x.getDouble(0) + (axis_old_x.getDouble(axis_old_x.getShape()[0]-1) - axis_old_x.getDouble(0)) * i / (out.getShape()[0]-1);
+							axis_new_x.set(new_value, i);
+						}
+					} else {
+						//2D
+						axis_new_x = DatasetFactory.zeros(out.getShape(), axis_old_x.getDType());
+						for (int i = 0 ; i < out.getShape()[0] ; i++) {
+							double new_value = axis_old_x.getDouble(0, 0) + (axis_old_x.getDouble(axis_old_x.getShape()[0]-1, 0) - axis_old_x.getDouble(0, 0)) * i / (out.getShape()[0]-1);
+							for (int j = 0 ; j < out.getShape()[1] ; j++) {
+								//System.out.println("i: " + i + " j: " + j);
+								axis_new_x.set(new_value, i, j);
 							}
 						}
-
-						Dataset axis_old_y = DatasetUtils.sliceAndConvertLazyDataset(axes[1]);
-						Dataset axis_new_y = null;
-						//check if axes is 1 or 2 dimensional
-						if (axis_old_y.getRank() == 1) {
-							//1D
-							axis_new_y = DatasetFactory.zeros(new int[]{out.getShape()[1]}, axis_old_y.getDType());
-							for (int j = 0 ; j < out.getShape()[1] ; j++) {
-								double new_value = axis_old_y.getDouble(0) + (axis_old_y.getDouble(axis_old_y.getShape()[0]-1) - axis_old_y.getDouble(0)) * j / (out.getShape()[1]-1);
-								axis_new_y.set(new_value, j);
-							}
-						} else {
-							//2D
-							axis_new_y = DatasetFactory.zeros(out.getShape(), axis_old_y.getDType());
-							for (int j = 0 ; j < out.getShape()[1] ; j++) {
-								double new_value = axis_old_y.getDouble(0, 0) + (axis_old_y.getDouble(0, axis_old_y.getShape()[1]-1) - axis_old_y.getDouble(0, 0)) * j / (out.getShape()[1]-1);
-								for (int i = 0 ; i < out.getShape()[0] ; i++) {
-									axis_new_y.set(new_value, i, j);
-								}
-							}
-						}
-						AxesMetadata amd = MetadataFactory.createMetadata(AxesMetadata.class, 2);
-						axis_new_x.setName(axis_old_x.getName());
-						axis_new_y.setName(axis_old_y.getName());
-						amd.setAxis(0, axis_new_x);
-						amd.setAxis(1, axis_new_y);
-						out.setMetadata(amd);
 					}
-					else {
-						out.setMetadata(m);
-					}
+					axis_new_x.setName(axis_old_x.getName());
 				}
-
-			} catch (Exception e) {
-				e.printStackTrace();
+				if (axes[1] != null) {
+					Dataset axis_old_y = null;
+					try {
+						axis_old_y = DatasetUtils.sliceAndConvertLazyDataset(axes[1]);
+					} catch (DatasetException e) {
+						throw new OperationException(this, e);
+					}
+					//check if axes is 1 or 2 dimensional
+					if (axis_old_y.getRank() == 1) {
+						//1D
+						axis_new_y = DatasetFactory.zeros(new int[]{out.getShape()[1]}, axis_old_y.getDType());
+						for (int j = 0 ; j < out.getShape()[1] ; j++) {
+							double new_value = axis_old_y.getDouble(0) + (axis_old_y.getDouble(axis_old_y.getShape()[0]-1) - axis_old_y.getDouble(0)) * j / (out.getShape()[1]-1);
+							axis_new_y.set(new_value, j);
+						}
+					} else {
+						//2D
+						axis_new_y = DatasetFactory.zeros(out.getShape(), axis_old_y.getDType());
+						for (int j = 0 ; j < out.getShape()[1] ; j++) {
+							double new_value = axis_old_y.getDouble(0, 0) + (axis_old_y.getDouble(0, axis_old_y.getShape()[1]-1) - axis_old_y.getDouble(0, 0)) * j / (out.getShape()[1]-1);
+							for (int i = 0 ; i < out.getShape()[0] ; i++) {
+								axis_new_y.set(new_value, i, j);
+							}
+						}
+					}
+					axis_new_y.setName(axis_old_y.getName());
+				}
+				AxesMetadata amd = null;
+				try {
+					amd = MetadataFactory.createMetadata(AxesMetadata.class, 2);
+				} catch (MetadataException e) {
+					throw new OperationException(this, e);
+				}
+				amd.setAxis(0, axis_new_x);
+				amd.setAxis(1, axis_new_y);
+				out.addMetadata(amd);
 			}
 		}
 

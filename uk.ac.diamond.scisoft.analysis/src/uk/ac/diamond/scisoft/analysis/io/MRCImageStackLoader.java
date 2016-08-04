@@ -204,13 +204,12 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 		try {
 			bi = new BufferedInputStream(new FileInputStream(f));
 
-			// flip each image row-wise as origin is bottom-left
-			int[] imageStart = new int[] {start[1] + (count[1] - 1)* step[1], start[2]};
-			int[] imageStop  = new int[] {start[1] - step[1] - shape[1], start[2] + count[2] * step[2]};
-			int[] imageStep  = new int[] {-step[1], step[2]};
-//			int[] imageStart = new int[] {start[1], start[2]};
-//			int[] imageStop  = new int[] {start[1] + count[1] * step[1], start[2] + count[2] * step[2]};
-//			int[] imageStep  = new int[] {step[1], step[2]};
+			int[] imageStart = new int[] {start[1], start[2]};
+			int[] imageStop  = new int[] {start[1] + count[1] * step[1], start[2] + count[2] * step[2]};
+			int[] imageStep  = new int[] {step[1], step[2]};
+			SliceND imageSlice = new SliceND(image.getShapeRef(), imageStart, imageStop, imageStep);
+			imageSlice.flip(0); // flip each image row-wise as origin is bottom-left
+
 			int[] dataStart = new int[d.getRank()];
 			int[] dataStop = count.clone();
 
@@ -235,7 +234,7 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 					
 				}
 				dataStop[0] = dataStart[0] + 1;
-				d.setSlice(image.getSliceView(imageStart, imageStop, imageStep), dataStart, dataStop, null);
+				d.setSlice(image.getSliceView(imageSlice), dataStart, dataStop, null);
 				if (mon != null) {
 					mon.worked(1);
 				}

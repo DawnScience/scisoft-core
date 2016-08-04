@@ -908,6 +908,14 @@
             name="Stitch Downsampled Grid">
       </operation>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.TransposeOperation"
+            icon="icons/template.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.twod.TransposeOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="Transpose Data"
+            description="Transpose a 2D dataset, including its axes">
+      </operation>
+      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.TwoDPolynomialBackgroundFitAndSubtract"
             icon="icons/template.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.TwoDPolynomialBackgroundFitAndSubtract"

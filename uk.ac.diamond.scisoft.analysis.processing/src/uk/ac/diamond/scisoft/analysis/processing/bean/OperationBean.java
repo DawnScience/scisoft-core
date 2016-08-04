@@ -23,7 +23,7 @@ import org.eclipse.scanning.api.event.status.StatusBean;
  * to be built by hand
  */
 public class OperationBean extends StatusBean implements IOperationBean {
-	
+
 	private String               filePath;              
 	private String               datasetPath; // can be to NXdata node
 	private String				 slicing; //can be null
@@ -37,10 +37,11 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	// This is not ideal because if the consumer 
 	// and client do not share disk, it will not work.
 	private String               processingPath;
+
 	//memory for processing vm
 	private String 				 xmx;
 	//use multiple cores
-	private boolean				 parallelizable = true;
+	private int					 numberOfCores = 1;
 	//make the output file readable (SWMR)
 	private boolean				 readable = false;
 	//node where the unique/finished datasets are located (live processing)
@@ -60,7 +61,7 @@ public class OperationBean extends StatusBean implements IOperationBean {
         this.dataDimensions       = db.dataDimensions.clone(); 
         this.processingPath       = db.processingPath;
         this.xmx 			      = db.xmx;
-        this.parallelizable       = db.parallelizable;
+        this.numberOfCores		  = db.numberOfCores;
         this.readable 		 	  = db.readable;
         this.dataKey         	  = db.dataKey;
         this.deleteProcessingFile = db.deleteProcessingFile;
@@ -169,16 +170,15 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	public void setReadable(boolean readable) {
 		this.readable = readable;
 	}
+
+	public int getNumberOfCores() {
+		return numberOfCores;
+	}
+
+	public void setNumberOfCores(int numberOfCores) {
+		this.numberOfCores = numberOfCores;
+	}
 	
-	public boolean isParallelizable() {
-		return parallelizable;
-	}
-
-	@Override
-	public void setParallelizable(boolean parallelizable) {
-		this.parallelizable = parallelizable;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -189,8 +189,8 @@ public class OperationBean extends StatusBean implements IOperationBean {
 		result = prime * result + ((datasetPath == null) ? 0 : datasetPath.hashCode());
 		result = prime * result + (deleteProcessingFile ? 1231 : 1237);
 		result = prime * result + ((filePath == null) ? 0 : filePath.hashCode());
+		result = prime * result + numberOfCores;
 		result = prime * result + ((outputFilePath == null) ? 0 : outputFilePath.hashCode());
-		result = prime * result + (parallelizable ? 1231 : 1237);
 		result = prime * result + ((processingPath == null) ? 0 : processingPath.hashCode());
 		result = prime * result + (readable ? 1231 : 1237);
 		result = prime * result + ((slicing == null) ? 0 : slicing.hashCode());
@@ -228,12 +228,12 @@ public class OperationBean extends StatusBean implements IOperationBean {
 				return false;
 		} else if (!filePath.equals(other.filePath))
 			return false;
+		if (numberOfCores != other.numberOfCores)
+			return false;
 		if (outputFilePath == null) {
 			if (other.outputFilePath != null)
 				return false;
 		} else if (!outputFilePath.equals(other.outputFilePath))
-			return false;
-		if (parallelizable != other.parallelizable)
 			return false;
 		if (processingPath == null) {
 			if (other.processingPath != null)

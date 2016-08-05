@@ -22,6 +22,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
+import uk.ac.diamond.scisoft.analysis.io.LoaderServiceImpl;
+import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.twod.DiffractionMetadataImportModel;
@@ -50,6 +52,7 @@ public class XICCO2DTest {
 	public void setUp() throws Exception {
 		// Set up a File Service for ImportMaskMetadata
 		ServiceManager.setService(IPersistenceService.class, PersistenceServiceCreator.createPersistenceService());
+		LocalServiceManager.setLoaderService(new LoaderServiceImpl());
 	}
 
 	@After

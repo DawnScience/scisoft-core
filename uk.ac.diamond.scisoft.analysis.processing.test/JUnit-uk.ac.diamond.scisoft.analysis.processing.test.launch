@@ -17,5 +17,5 @@
 <stringAttribute key="org.eclipse.jdt.junit.TEST_KIND" value="org.eclipse.jdt.junit.loader.junit4"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value=""/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="uk.ac.diamond.scisoft.analysis.processing.test"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-DGDALargeTestFilesLocation=${project_loc:GDALargeTestFiles}/ -XX:MaxPermSize=256m -Xms256m -Xmx1536m"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-DGDALargeTestFilesLocation=${GDALargeTestFiles_loc} -XX:MaxPermSize=256m -Xms256m -Xmx1536m"/>
 </launchConfiguration>

@@ -149,10 +149,11 @@ public class IOTestUtils {
 
 	/**
 	 * @return String pointing to the top of the hierarchy of large test files used in GDA tests.
-	 * Set using vmarg e.g. -DGDALargeTestFilesLocation=/scratch/largetestfiles/ or import the directory as 
-	 * a Eclipse project and use -DGDALargeTestFilesLocation=${project_loc:GDALargeTestFiles}/.
-	 * Note that it contains the final File.separatorChar so simply concat the result with the filename required
-	 * to get the full path.
+	 * Set using vmarg e.g. -DGDALargeTestFilesLocation=/scratch/largetestfiles/
+	 *   note that the value should end with a File.separatorChar so simply concat the result with the filename required to get the full path.
+	 * For running tests within the Eclipse IDE:
+	 *   set GDALargeTestFiles_loc in Windows --> Preferences --> Run/Debug --> String Substitution
+	 *   set "-DGDALargeTestFilesLocation=${GDALargeTestFiles_loc}" in the test launcher's VM Arguments section
 	 * @throws AssertionError if the path is not defined, does not exist or is not readable
 	 */
 	public static String getGDALargeTestFilesLocation() throws AssertionError {

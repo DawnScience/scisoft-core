@@ -262,8 +262,10 @@ public class ROIProfile {
 	 */
 	public static Dataset[] boxMean(Dataset data, Dataset mask, RectangularROI rroi, boolean maskWithNans) {
 		if(data == null) return null;
-		int[] spt = rroi.getIntPoint();
-		int[] len = rroi.getIntLengths();
+		double[] spoint = rroi.getPoint();
+		double[] leng = rroi.getLengths();
+		int[] spt = new int[] { (int) Math.round(spoint[0]), (int) Math.round(spoint[1]) };
+		int[] len = new int[] { (int) Math.round(leng[0]), (int) Math.round(leng[1]) };
 		double ang = rroi.getAngle();
 		boolean clip = rroi.isClippingCompensation();
 		Dataset[] profiles = new Dataset[] { null, null };

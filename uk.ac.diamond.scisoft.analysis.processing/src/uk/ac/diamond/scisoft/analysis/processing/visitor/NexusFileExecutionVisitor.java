@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.eclipse.dawnsci.analysis.api.metadata.UnitMetadata;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistentNodeFactory;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
@@ -361,7 +362,12 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 								}
 								
 								synchronized (nexusFile) {
-									nexusFile.createData(nexusFile.getGroup(groupName, true), axDataset.squeeze()).addAttribute(new AttributeImpl("axis", String.valueOf(i+1)));
+									DataNode dn = nexusFile.createData(nexusFile.getGroup(groupName, true), axDataset.squeeze());
+									dn.addAttribute(new AttributeImpl("axis", String.valueOf(i+1)));
+									UnitMetadata unit = axDataset.getFirstMetadata(UnitMetadata.class);
+									if (unit != null) {
+										nexusFile.addAttribute(dn,new AttributeImpl(NexusTreeUtils.NX_UNITS,unit.toString()));
+									}
 									if (e != null) {
 										nexusFile.createData(nexusFile.getGroup(groupName, true), e);
 										nexusFile.addAttribute(groupName, new AttributeImpl(axDataset.getName() + NexusTreeUtils.NX_UNCERTAINTY_SUFFIX, e.getName()));
@@ -674,8 +680,12 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 
 		ILazyWriteableDataset lwds = new LazyWriteableDataset(d.getName(), d.getDType(), d.getShape(), mx, d.getShape(), null);
 		
-		nexusFile.createData(group, lwds, NexusFile.COMPRESSION_LZW_L1);
-
+		DataNode dn = nexusFile.createData(group, lwds, NexusFile.COMPRESSION_LZW_L1);
+		
+		UnitMetadata unit = dataset.getFirstMetadata(UnitMetadata.class);
+		if (unit != null) {
+			nexusFile.addAttribute(dn,new AttributeImpl(NexusTreeUtils.NX_UNITS,unit.toString()));
+		}
 	}
 	
 	private int[] determineMaxShape(Dataset d) {

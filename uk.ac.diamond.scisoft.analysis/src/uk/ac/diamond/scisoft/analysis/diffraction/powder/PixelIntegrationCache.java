@@ -9,14 +9,22 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 
+import javax.measure.unit.NonSI;
+import javax.measure.unit.ProductUnit;
+import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
+
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
+import org.eclipse.dawnsci.analysis.api.metadata.UnitMetadata;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
 
+import uk.ac.diamond.scisoft.analysis.crystallography.ScatteringVector;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
+import uk.ac.diamond.scisoft.analysis.metadata.UnitMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 public class PixelIntegrationCache implements IPixelIntegrationCache {
@@ -277,21 +285,30 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 			}
 		}
 		
+		String name = null;
+		UnitMetadata unit = null;
+		
 		switch (xAxis) {
 		case Q:
-			axis.setName("q");
+			name = "q";
+			unit = new UnitMetadataImpl(new ProductUnit<>(Unit.ONE.divide(NonSI.ANGSTROM)));
 			break;
 		case ANGLE:
-			axis.setName("2theta");
+			name = "2-theta";
+			unit = new UnitMetadataImpl(NonSI.DEGREE_ANGLE);
 			break;
 		case RESOLUTION:
 			axis = Maths.divide((2*Math.PI), axis);
-			axis.setName("d-spacing");
+			name = "d-spacing";
+			unit = new UnitMetadataImpl(NonSI.ANGSTROM);
 			break;
 		case PIXEL:
-			axis.setName("pixel");
+			name = "pixel";
+			unit = new UnitMetadataImpl(NonSI.PIXEL);
 			break;
 		}
+		axis.setMetadata(unit);
+		axis.setName(name);
 		
 		return axis;
 	}

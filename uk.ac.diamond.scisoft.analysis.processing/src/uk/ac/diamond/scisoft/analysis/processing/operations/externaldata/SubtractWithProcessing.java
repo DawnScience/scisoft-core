@@ -46,7 +46,7 @@ public class SubtractWithProcessing extends FrameMathsOperation<ExternalDataSele
 			throw new OperationException(this, "Can't load data!");
 		}
 		
-		Dataset processed = om.process(((ExternalDataSelectedFramesModel)model).getFilePath(),
+		Dataset processed = om.process(filePath,
 									 ((ExternalDataSelectedFramesModel)model).getDatasetName(),
 									 ds.getFirstMetadata(SliceFromSeriesMetadata.class),model.getStartFrame(),
 									 model.getEndFrame());

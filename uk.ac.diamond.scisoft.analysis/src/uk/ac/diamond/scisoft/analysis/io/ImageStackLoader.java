@@ -155,11 +155,11 @@ public class ImageStackLoader implements ILazyLoader {
 			loaderClass = data.getLoaderClass();
 		}
 		
-		IDataset dataset = null;
+		ILazyDataset dataset = null;
 		if (datasetName != null) {
 			try {
-				dataset = data.getLazyDataset(datasetName).getSlice();
-			} catch (DatasetException e) {
+				dataset = data.getLazyDataset(datasetName);
+			} catch (Exception e) {
 				throw new ScanFileHolderException("Could no slice data", e);
 			}
 		} else {

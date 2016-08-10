@@ -21,6 +21,8 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
+import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationBean;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
@@ -100,7 +102,6 @@ public class OperationServiceImpl implements IOperationService {
 			throw new OperationException(null, "No operation list defined, call setSeries(...) with something meaningful please!");
 		}
 		
-		
 		// We check the pipeline ranks are ok
 		try {
 	        
@@ -111,6 +112,21 @@ public class OperationServiceImpl implements IOperationService {
 			assert(it.hasNext());
 	        IDataset firstSlice = it.next().getSlice();
 	        validate(firstSlice, context.getSeries());
+	        
+	        ExecutionType executionType = context.getExecutionType();
+	        
+	        
+	        if (executionType == ExecutionType.PARALLEL){
+	        	IOperation[] operationSeries = context.getSeries();
+				for (IOperation op : operationSeries) {
+					Atomic atomic = op.getClass().getAnnotation(Atomic.class);
+					if (atomic == null) {
+						executionType = ExecutionType.SERIES;
+						logger.info("Switching to series runner!");
+						break;
+					}
+				}
+	        }
 	
 			List<SliceFromSeriesMetadata> meta = firstSlice.getMetadata(SliceFromSeriesMetadata.class);
 			// Bug in getMetadata(...) that sometimes the wrong metadata type can be returned.

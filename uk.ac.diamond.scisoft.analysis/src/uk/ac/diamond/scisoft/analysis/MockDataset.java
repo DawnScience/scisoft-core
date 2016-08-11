@@ -227,12 +227,12 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public <T extends MetadataType> List<T> getMetadata(Class<T> clazz) throws MetadataException {
+	public <S extends MetadataType, T extends S> List<S> getMetadata(Class<T> clazz) throws MetadataException {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 	
 	@Override
-	public <T extends MetadataType> T getFirstMetadata(Class<T> clazz) {
+	public <S extends MetadataType, T extends S> S getFirstMetadata(Class<T> clazz) {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 	

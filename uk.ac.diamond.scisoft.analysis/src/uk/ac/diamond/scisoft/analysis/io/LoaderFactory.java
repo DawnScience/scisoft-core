@@ -171,6 +171,7 @@ public class LoaderFactory {
 		    registerLoader("spe",  SpeLoader.class);
 		    registerLoader("xmso", XMSOLoader.class);
 		    registerLoader("alba", AlbaLinkFileLoader.class);
+		    registerLoader("dawn", DAWNLinkLoader.class);
 
 		    registerUnzip("gz",  GZIPInputStream.class);
 		    registerUnzip("zip", ZipInputStream.class);
@@ -718,6 +719,7 @@ public class LoaderFactory {
 
         if (data == null) { // We try to load the data from the ILazyDataset
         	final ILazyDataset lz = holder.getLazyDataset(name);
+        	if (lz == null) return null;
         	data = lz.getSlice();
         	holder.addDataset(name, data); // We just loaded the data, cache it
         }

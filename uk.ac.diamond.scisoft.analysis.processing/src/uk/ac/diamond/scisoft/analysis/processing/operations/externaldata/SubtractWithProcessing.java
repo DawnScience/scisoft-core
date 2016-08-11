@@ -10,11 +10,14 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
 
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 
+import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadata;
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
@@ -28,7 +31,22 @@ public class SubtractWithProcessing extends FrameMathsOperation<ExternalDataSele
 	@Override
 	protected Dataset getData(IDataset ds) {
 		OperationMetadata om = ds.getFirstMetadata(OperationMetadata.class);
-		Dataset processed = om.process(((ExternalDataSelectedFramesModel)model).getFilePath(),
+		String filePath = ((ExternalDataSelectedFramesModel)model).getFilePath();
+		if (filePath == null) {
+			SliceFromSeriesMetadata ssm = ds.getFirstMetadata(SliceFromSeriesMetadata.class);
+			filePath = ssm.getFilePath();
+		}
+		
+		try {
+			IDataHolder dh = LocalServiceManager.getLoaderService().getData(filePath, null);
+			if (!dh.contains(((ExternalDataSelectedFramesModel)model).getDatasetName())){
+				return null;
+			}
+		} catch (Exception e) {
+			throw new OperationException(this, "Can't load data!");
+		}
+		
+		Dataset processed = om.process(filePath,
 									 ((ExternalDataSelectedFramesModel)model).getDatasetName(),
 									 ds.getFirstMetadata(SliceFromSeriesMetadata.class),model.getStartFrame(),
 									 model.getEndFrame());
@@ -37,6 +55,7 @@ public class SubtractWithProcessing extends FrameMathsOperation<ExternalDataSele
 
 	@Override
 	protected Dataset performOperation(Dataset input, Dataset other) {
+		if (other == null) return input.getSliceView();
 		return ErrorPropagationUtils.subtractWithUncertainty(DatasetUtils.convertToDataset(input), other);
 	}
 }

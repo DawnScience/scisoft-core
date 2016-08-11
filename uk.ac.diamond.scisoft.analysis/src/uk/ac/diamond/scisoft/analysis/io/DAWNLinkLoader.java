@@ -87,6 +87,7 @@ public class DAWNLinkLoader extends AbstractFileLoader {
 					if (!metadataMap.containsKey(DIRECTORY)) throw new ScanFileHolderException("No " + DIRECTORY +" in header");
 					
 					String base = metadataMap.get(DIRECTORY);
+					if (!base.endsWith(File.separator)) base += File.separator;
 					
 					String[] split = line.split("\t");
 					if (cols == null) throw new ScanFileHolderException("No header!");
@@ -122,7 +123,7 @@ public class DAWNLinkLoader extends AbstractFileLoader {
 					
 					line = nextLine;
 					
-					while (line != null) {
+					while (line != null && !line.isEmpty()) {
 						split = line.split("\t");
 						if (cols.length != split.length) {
 							throw new ScanFileHolderException("Columns not the same length");
@@ -146,21 +147,11 @@ public class DAWNLinkLoader extends AbstractFileLoader {
 					}
 					
 					for (String key : datasetSet){
-						try {
 							StringDataset ds = DatasetFactory.createFromObject(StringDataset.class,filename);
 							ImageStackLoader l = new ImageStackLoader(ds, null,null,key);
 							ILazyDataset lz = new LazyDataset(key, l.getDType(), l.getShape(), l);
 							result.addDataset(key, lz);
-						} catch (Exception e) {
-							e.printStackTrace();
-							e.toString();
-							throw new ScanFileHolderException("could not read data!");
-						}
-						
-						
-						
 					}
-					
 					
 				} catch (Exception e) {
 					throw new ScanFileHolderException("DatLoader.loadFile exception loading  " + fileName, e);

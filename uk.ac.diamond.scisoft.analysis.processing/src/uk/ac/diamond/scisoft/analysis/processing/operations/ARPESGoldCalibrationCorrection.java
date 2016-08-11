@@ -67,15 +67,15 @@ public class ARPESGoldCalibrationCorrection extends AbstractOperation<ARPESGoldC
 		
 		double meanSteps = (xAxis.max().doubleValue()-xAxis.min().doubleValue())/(float)xAxis.getShape()[1];
 		
-		Dataset differenceInts = Maths.floor(Maths.divide(differences, meanSteps));
+		Dataset differenceInts = Maths.floor(Maths.divide(differences, meanSteps)).squeeze();
 		
 		// TODO Should be extracted to a method in interpolation utils
 		int[] shape = input.getShape();
 		DoubleDataset result = DatasetFactory.zeros(DoubleDataset.class, shape);
 		for(int y = 0; y < shape[0]; y++) {
-			int min = Math.max(differenceInts.getInt(0,y), 0);
-			int max = Math.min(shape[1]+differenceInts.getInt(0,y), shape[1]);
-			int ref = Math.min(differenceInts.getInt(0,y), 0) * -1;
+			int min = Math.max(differenceInts.getInt(y), 0);
+			int max = Math.min(shape[1]+differenceInts.getInt(y), shape[1]);
+			int ref = Math.min(differenceInts.getInt(y), 0) * -1;
 			for(int xx = min; xx < max; xx++) {
 				result.set(input.getObject(y,xx), y,ref);
 				ref++;

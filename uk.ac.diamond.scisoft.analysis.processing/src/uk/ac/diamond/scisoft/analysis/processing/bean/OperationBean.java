@@ -56,9 +56,9 @@ public class OperationBean extends StatusBean implements IOperationBean {
         this.filePath             = db.filePath;
         this.datasetPath          = db.datasetPath;
         this.slicing              = db.slicing;
-        this.axesNames 		      = db.axesNames.clone();
+        this.axesNames 		      = db.axesNames == null ? null : db.axesNames.clone();
         this.outputFilePath       = db.outputFilePath;
-        this.dataDimensions       = db.dataDimensions.clone(); 
+        this.dataDimensions       = db.axesNames == null ? null : db.dataDimensions.clone(); 
         this.processingPath       = db.processingPath;
         this.xmx 			      = db.xmx;
         this.numberOfCores		  = db.numberOfCores;
@@ -148,13 +148,17 @@ public class OperationBean extends StatusBean implements IOperationBean {
 		this.xmx = xmx;
 	}
 	
-	public int[] getDataDimensions(int rank) {
+	public int[] getDataDimensionsForRank(int rank) {
 		if (dataDimensions[0] > -1) return dataDimensions;
 		int[] dims = new int[dataDimensions.length];
 		for (int i = 0; i < dataDimensions.length; i++) dims[i] = rank + dataDimensions[i];
 		Arrays.sort(dims);
 		
 		return dims;
+	}
+	
+	public int[] getDataDimensions() {
+		return dataDimensions;
 	}
 
 	@Override

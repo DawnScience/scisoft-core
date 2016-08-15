@@ -101,7 +101,7 @@ public class Histogram implements DatasetToDatasetFunction {
 		bins = (DoubleDataset) DatasetUtils.cast(DatasetUtils.convertToDataset(edges), Dataset.FLOAT64);
 
 		// check for increasing order
-		Dataset sorted = DatasetUtils.sort(bins, null);
+		Dataset sorted = DatasetUtils.sort(bins);
 		if (!Comparisons.allTrue(Comparisons.almostEqualTo(bins, sorted, 1e-8, 1e-8))) {
 			throw new IllegalArgumentException("Bin edges should be given in increasing order");
 		}

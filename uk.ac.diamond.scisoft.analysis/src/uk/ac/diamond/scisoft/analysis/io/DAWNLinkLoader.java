@@ -36,6 +36,8 @@ public class DAWNLinkLoader extends AbstractFileLoader {
 	private static String DIRECTORY = "DIR_NAME";
 	private static String DATA_KEY = "DATASET_NAME";
 	private static String FILE_NAME = "FILE_NAME";
+	private static String SHAPE_KEY = "SHAPE";
+	private int[] shape;
 	
 	@Override
 	public IDataHolder loadFile() throws ScanFileHolderException {
@@ -69,7 +71,10 @@ public class DAWNLinkLoader extends AbstractFileLoader {
 							String key = split[0].trim();
 							if (DATA_KEY.equals(key)) {
 								datasetSet.add(split[1].trim());
-							} else {
+							} else if (SHAPE_KEY.equals(key)) {
+								setShape(split);
+							}else {
+							
 								metadataMap.put(split[0].trim(),split[1].trim());
 							}
 						}
@@ -146,8 +151,16 @@ public class DAWNLinkLoader extends AbstractFileLoader {
 						result.addDataset(key, d);
 					}
 					
+					if (shape != null) {
+						int size = filename.size();
+						int total = 1;
+						for (int i = 0; i < shape.length;i++) total *=shape[i];
+						
+						if (size != total) shape = null;
+					}
+					
 					for (String key : datasetSet){
-							StringDataset ds = DatasetFactory.createFromObject(StringDataset.class,filename);
+							StringDataset ds = DatasetFactory.createFromObject(StringDataset.class,filename, shape);
 							ImageStackLoader l = new ImageStackLoader(ds, null,null,key);
 							ILazyDataset lz = new LazyDataset(key, l.getDType(), l.getShape(), l);
 							result.addDataset(key, lz);
@@ -166,6 +179,23 @@ public class DAWNLinkLoader extends AbstractFileLoader {
 		return result;
 	}
 
+	private void setShape(String[] strings) {
+		if (strings.length < 2) return;
+		
+		String[] split = strings[1].split(",");
+		int[] s = new int[split.length];
+		try {
+			for (int i = 0; i < s.length ; i++) {
+				s[i] = Integer.parseInt(split[i].trim());
+			}
+			
+			shape = s;
+			
+		} catch (Exception e) {
+			//TODO
+		}
+	}
+	
 	@Override
 	protected void clearMetadata() {
 

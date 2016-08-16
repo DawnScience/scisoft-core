@@ -13,15 +13,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
@@ -720,35 +720,37 @@ public class XPDFCalibration {
 	private Map<Double, Double> evaluateSeveralFluoroScales(Collection<Double> scales, int nIterations, int nThreads) {
 		ExecutorService ravager = (scales.size() == 1) ? Executors.newSingleThreadExecutor() : Executors.newFixedThreadPool(nThreads);
 
+		AtomicInteger completionCounter = new AtomicInteger(0);
+		final int numberToCalculate = scales.size();
 		// Set of all results
-		Set<Future<Map<Double, Double>>> futureSet = new HashSet<Future<Map<Double, Double>>>();
+		Map<Double, Future<Double>> futureMap = new HashMap<Double, Future<Double>>();
 		// Submit to the executor	
 		for (double scale : scales)
-			futureSet.add(ravager.submit(new FluorescenceEvaluator(this, absorptionMaps, scale, calibrationConstant0, nIterations)));
+			futureMap.put(scale, ravager.submit(new FluorescenceEvaluator(this, absorptionMaps, scale, calibrationConstant0, nIterations, completionCounter)));
 
 		Map<Double, Double> scaleToDifference = new HashMap<Double, Double>();
 
-		// Spin, checking for results
-		while (!futureSet.isEmpty()) {
-			Set<Future<Map<Double, Double>>> doneThisTimeRound = new HashSet<Future<Map<Double, Double>>>();
-			for (Future<Map<Double, Double>> future : futureSet)
-				if (future.isDone()) {
-					try {
-						scaleToDifference.putAll(future.get());
-						doneThisTimeRound.add(future);
-					} catch (Exception e) {
-						// Do nothing!
-						// FIXME Do something!
-					}
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException iE) {
-						; // Do nothing: go to check on the results again 
-					}
-				}
-			futureSet.removeAll(doneThisTimeRound);
-		}
+		// Spin, checking if all the threads have completed
+		while (completionCounter.get() < numberToCalculate)
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException iE) {
+				; // Do nothing: go to check on the results again 
+			}
 
+		// Get all the results
+		
+		for (Map.Entry<Double, Future<Double>> scaleNFuture : futureMap.entrySet())
+			try {
+				scaleToDifference.put(scaleNFuture.getKey(), scaleNFuture.getValue().get());
+			} catch (ExecutionException eE) {
+				// Do nothing!
+				// FIXME Do something!
+			} catch (InterruptedException iE) {
+				// Do nothing!
+				// FIXME Do something!
+			}
+		
 		ravager.shutdown();
 
 		return scaleToDifference;
@@ -800,26 +802,26 @@ public class XPDFCalibration {
 		
 	}
 	
-	class FluorescenceEvaluator implements Callable<Map<Double, Double>>{
+	class FluorescenceEvaluator implements Callable<Double>{
 		
 		XPDFCalibration fluorCalibration;
 		int nIterations;
 		double scale;
+		AtomicInteger counter;
 		
-		public FluorescenceEvaluator(XPDFCalibration source, XPDFAbsorptionMaps absorptionMaps, double scale, double calCon0, int nIterations) {
+		public FluorescenceEvaluator(XPDFCalibration source, XPDFAbsorptionMaps absorptionMaps, double scale, double calCon0, int nIterations, AtomicInteger counter) {
 			fluorCalibration = source.getShallowCopy();
 			fluorCalibration.setFixedFluorescence(scale);
 			this.scale = scale;
 			this.nIterations = nIterations;
-
+			this.counter = counter;
 		}
 		
-		public Map<Double, Double> call() {
+		public Double call() {
 			Dataset absCor = fluorCalibration.iterateCalibrate(nIterations, false);
 			double difference = fluorCalibration.integrateFluorescence(absCor);
-			Map<Double, Double> diffMap = new HashMap<Double, Double>(1);
-			diffMap.put(scale, difference);
-			return diffMap;
+			counter.incrementAndGet();
+			return difference;
 		}
 	}
 	

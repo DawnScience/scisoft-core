@@ -55,6 +55,8 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 		double[] backGroundRange0 = model.getBackground0();
 		double[] backGroundRange1 = model.getBackground1();
 		
+		if (signalRange == null || backGroundRange0 == null || backGroundRange1 == null) throw new OperationException(this, "Signal and background regions must be defined!");
+		
 		AxesMetadata axm = input.getFirstMetadata(AxesMetadata.class);
 		
 		Dataset signal = null;

@@ -849,20 +849,6 @@
             name="Add Frame">
       </operation>
       <operation
-             class="uk.ac.diamond.scisoft.analysis.processing.surfacescattering.Polynomial1DReflectivityOperation"
-             icon="icons/template.png"
-             id="uk.ac.diamond.scisoft.analysis.processing.surfacescattering.Polynomial1DReflectivityOperation"
-             model="uk.ac.diamond.scisoft.analysis.processing.surfacescattering.Polynomial1DReflectivityModel"
-             name="Polynomial1DReflectivityOperation">
-      </operation>
-      <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.sxrdrods.RodScanPolynomial1DOperation"
-            icon="icons/template.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.sxrdrods.RodScanPolynomial1DOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.sxrdrods.RodScanPolynomial1DModel"
-            name="RodScanPolynomial1DOperation">
-      </operation>
-      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutliersInQOperation"
             icon="icons/template.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutliersInQOperation"
@@ -892,60 +878,44 @@
             description="Transpose a 2D dataset, including its axes">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction2d"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.TwoDPolynomialBackgroundFitAndSubtract"
             icon="icons/template.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.TwoDPolynomialBackgroundFitAndSubtract"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.BoxSlicerModel"
-            name="TwoD fitting and subtraction for SXRD and reflectivity">
+            name="Polynomial Background Subtraction 2D">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.SXRD"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SXRDRodScansGeometricCorrectionsOperation"
             icon="icons/template.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SXRDRodScansGeometricCorrectionsOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.RodScanPolynomial2DModel"
-            name="Geometric corrections for SXRD">
+            name="Geometric Corrections">
       </operation>
       <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SXRDRodScanFinalExtraction"
-            icon="icons/template.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SXRDRodScanFinalExtraction"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.RodScanPolynomial2DModel"
-            name="Final corrections for SXRD">
-      </operation>
-      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.Reflectivity"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.ReflectivityGeometricCorrectionOperation"
             icon="icons/template.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.ReflectivityGeometricCorrectionOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.Polynomial2DReflectivityModel"
-            name="Geometric corrections for Reflectivity">
+            name="Geometric Corrections">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.Reflectivity"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.ReflectivityFluxCorrectionOperation"
             icon="icons/template.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.ReflectivityFluxCorrectionOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.Polynomial2DReflectivityModel"
-            name="Flux corrections for Reflectivity">
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.FluxCorrectionModel"
+            name="Flux Corrections">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction2d"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.OneDPolynomialBackgroundFitAndSubtract"
             icon="icons/template.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.OneDPolynomialBackgroundFitAndSubtract"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.BoxSlicer1DModel"
-            name="OneD fitting and subtraction for SXRD and reflectivity">
-      </operation>
-      <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.ReflectivityFinalExtraction"
-            icon="icons/template.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.ReflectivityFinalExtraction"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.BoxSlicer1DModel"
-            name="Final extraction for reflectivity">
-      </operation>
-      <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SXRDRodScanFinalExtraction"
-            icon="icons/template.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SXRDRodScanFinalExtraction"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.BoxSlicer1DModel"
-            name="Final extraction for SXRD">
+            name="Polynomial Background Subtraction 1D Approximation">
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.processing_operations"
@@ -966,6 +936,25 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.FilterDataModel"
             description="Filter data by removing rows and/or columns that do no meet a condition"
             name="Filter data">
+      </operation>
+      <category
+            id="uk.ac.diamond.scisoft.analysis.processing.SXRD"
+            name="SXRD">
+      </category>
+      <category
+            id="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction2d"
+            name="Background Subtraction 2D">
+      </category>
+      <category
+            id="uk.ac.diamond.scisoft.analysis.processing.Reflectivity"
+            name="Reflectivity">
+      </category>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.SumOperation"
+            description="Saves the sum of the data (and the sum of the square root) pass the input data down the pipeline"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.SumOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="Sum">
       </operation>
    </extension>
    <extension

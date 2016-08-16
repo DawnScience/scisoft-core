@@ -26,17 +26,6 @@ public class Polynomial2DReflectivityModel extends AbstractOperationModel {
 	
 	@OperationModelField(label="angular fudge factor", hint = "angular fudge factor" )
 	private double angularFudgeFactor = 1;
-	
-	@OperationModelField(label="Path to normalisation file", hint = "Path to normalisation file" )
-	private String path = "/scratch/233990.dat";
-	
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		firePropertyChange("path", this.path, this.path= path);
-	}
 
 	public double getAngularFudgeFactor() {
 		return angularFudgeFactor;

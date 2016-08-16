@@ -82,14 +82,10 @@ public class XPDFQSquaredIntegrator {
 		} else {
 //			Dataset integrand = Maths.multiply(Maths.multiply(Maths.multiply(q, q), fn), dq);
 //			integral = quadrate2DDataset(integrand);
+
 			// Integrate by the 2D rectangle rule, summing values as they are calculated
-//			long t = System.currentTimeMillis();
+			// using Java 8 streams, in parallel, (for now)
 			integral = IntStream.range(0, fn.getSize()).parallel().mapToDouble(i -> fn.getElementDoubleAbs(i) * q.getElementDoubleAbs(i) * q.getElementDoubleAbs(i) * dq.getElementDoubleAbs(i)).sum();
-//			System.out.println(System.currentTimeMillis()-t);
-//			IndexIterator iter = fn.getIterator();
-//			while(iter.hasNext())
-//				integral += fn.getElementDoubleAbs(iter.index) * q.getElementDoubleAbs(iter.index) * q.getElementDoubleAbs(iter.index) * dq.getElementDoubleAbs(iter.index);
-//		
 		}
 		return integral;
 		

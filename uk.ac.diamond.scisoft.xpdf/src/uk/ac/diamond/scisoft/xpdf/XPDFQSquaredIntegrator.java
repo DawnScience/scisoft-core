@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.xpdf;
 
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
 
 /**
@@ -77,8 +78,14 @@ public class XPDFQSquaredIntegrator {
 			Dataset integrand = Maths.multiply(Maths.multiply(Maths.multiply(q, q), fn), dqScalar);
 			integral = quadrate1DDataset(integrand);
 		} else {
-			Dataset integrand = Maths.multiply(Maths.multiply(Maths.multiply(q, q), fn), dq);
-			integral = quadrate2DDataset(integrand);
+//			Dataset integrand = Maths.multiply(Maths.multiply(Maths.multiply(q, q), fn), dq);
+//			integral = quadrate2DDataset(integrand);
+			// Integrate by the 2D rectangle rule, summing values as they are calculated
+			integral = 0;
+			IndexIterator iter = fn.getIterator();
+			while(iter.hasNext())
+				integral += fn.getElementDoubleAbs(iter.index) * q.getElementDoubleAbs(iter.index) * q.getElementDoubleAbs(iter.index) * dq.getElementDoubleAbs(iter.index);
+		
 		}
 		return integral;
 		
@@ -115,6 +122,7 @@ public class XPDFQSquaredIntegrator {
 	 * 				integrand to be calculated.
 	 * @return quadrature of the integrand over the pixel positions.
 	 */
+	@SuppressWarnings("unused")
 	private static double quadrate2DDataset(Dataset integrand) {
 		return (double) integrand.sum();
 	}

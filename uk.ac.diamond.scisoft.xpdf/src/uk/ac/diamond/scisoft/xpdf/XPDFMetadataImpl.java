@@ -11,8 +11,16 @@ package uk.ac.diamond.scisoft.xpdf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -296,23 +304,37 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 		
 		XPDFCoordinates coords = new XPDFCoordinates();
 		coords.setGammaDelta(gamma, delta);
+
+		ExecutorService ravager = Executors.newFixedThreadPool(4); // Why not 4?
+		AtomicInteger counter = new AtomicInteger(0);
+		long nLines = 0;
+		Set<Future<Dataset>> futureSet = new HashSet<Future<Dataset>>();
 		
 		for (XPDFFluorescentLine line : sampleData.getFluorescences(getBeam().getBeamEnergy())) {
-			List<XPDFComponentGeometry> attenuators = new ArrayList<XPDFComponentGeometry>();
-			List<Double> attenuationsIn = new ArrayList<Double>(),
-					attenuationsOut = new ArrayList<Double>();
-			for (XPDFComponentForm componentForm : this.getFormList()) {
-				attenuators.add(componentForm.getGeom());
-				attenuationsIn.add(componentForm.getSubstance().getAttenuationCoefficient(beamData.getBeamEnergy()));
-				attenuationsOut.add(componentForm.getSubstance().getAttenuationCoefficient(line.getEnergy()));
-			}
-			Dataset oneLineFluorescence = sampleData.getForm().getGeom().calculateFluorescence(gamma, delta, attenuators, attenuationsIn, attenuationsOut, beamData, true, true);
-			double lineXSection = line.getCrossSection();
-			double lineNumberDensity = sampleData.getNumberDensity(line.getFluorescentZ());
-			oneLineFluorescence.imultiply(lineXSection*lineNumberDensity);
-			Dataset detectorCorrectedOLF = tect.applyTransmissionCorrection(oneLineFluorescence, coords.getTwoTheta(), line.getEnergy());
-			totalSampleFluorescence.iadd(detectorCorrectedOLF);	
+			futureSet.add(ravager.submit(new SampleFluorescenceLineEvaluator(coords, getFormList(), getSampleData(), line, counter)));
+			nLines++;
 		}
+		
+		// Spin, checking if all the threads have completed
+		while (counter.get() < nLines)
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException iE) {
+				; // Do nothing: go to check on the results again 
+			}
+
+		// Gather the parallel results
+		for (Future<Dataset> lineFuture: futureSet)
+			try {
+				totalSampleFluorescence.iadd(lineFuture.get());
+			} catch (ExecutionException eE) {
+				// Do nothing!
+				// FIXME Do something!
+			} catch (InterruptedException iE) {
+				// Do nothing!
+				// FIXME Do something!
+			}
+		ravager.shutdown();
 		
 		totalSampleFluorescence.imultiply(tect.getSolidAngle());
 		return totalSampleFluorescence.squeeze();
@@ -439,4 +461,40 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 		this.lorchCutOff = cutOff;		
 	}
 
+	private class SampleFluorescenceLineEvaluator implements Callable<Dataset>{
+		private XPDFCoordinates coords;
+		private List<XPDFComponentForm> attenuatorForms;
+		private XPDFTargetComponent sample;
+		private XPDFFluorescentLine line;
+		private AtomicInteger counter;
+	
+		public SampleFluorescenceLineEvaluator(XPDFCoordinates coords, List<XPDFComponentForm> attenuatorForms, XPDFTargetComponent sample, XPDFFluorescentLine line, AtomicInteger counter) {
+			this.coords = coords;
+			this.attenuatorForms = attenuatorForms;
+			this.sample = sample;
+			this.line = line;
+			this.counter = counter;
+		}
+		
+		public Dataset call() {
+			List<XPDFComponentGeometry> attenuators = new ArrayList<XPDFComponentGeometry>();
+			List<Double> attenuationsIn = new ArrayList<Double>(),
+					attenuationsOut = new ArrayList<Double>();
+			for (XPDFComponentForm componentForm : attenuatorForms) {
+				attenuators.add(componentForm.getGeom());
+				attenuationsIn.add(componentForm.getSubstance().getAttenuationCoefficient(beamData.getBeamEnergy()));
+				attenuationsOut.add(componentForm.getSubstance().getAttenuationCoefficient(line.getEnergy()));
+			}
+			Dataset oneLineFluorescence = sampleData.getForm().getGeom().calculateFluorescence(coords.getGamma(), coords.getDelta(), attenuators, attenuationsIn, attenuationsOut, beamData, true, true);
+			double lineXSection = line.getCrossSection();
+			double lineNumberDensity = sampleData.getNumberDensity(line.getFluorescentZ());
+			oneLineFluorescence.imultiply(lineXSection*lineNumberDensity);
+			Dataset detectorCorrectedOLF = tect.applyTransmissionCorrection(oneLineFluorescence, coords.getTwoTheta(), line.getEnergy());
+			counter.incrementAndGet();
+			return detectorCorrectedOLF;	
+
+		}
+	
+	}
+	
 }

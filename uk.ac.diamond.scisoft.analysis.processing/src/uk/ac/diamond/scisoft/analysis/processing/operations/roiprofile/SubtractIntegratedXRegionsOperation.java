@@ -96,6 +96,7 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 		signal.isubtract((b0.iadd(b1).idivide(2)));
 		
 		double m2 = (double)signal.sum(true);
+		if (model.isUseFullFrameForRatio()) m2 = m2*nSignal[0];
 		
 		if (axis1 != null) {
 			AxesMetadata ax;
@@ -108,6 +109,7 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 			signal.addMetadata(ax);
 		}
 		
+		System.out.println(m2/m);
 		Dataset ratio = DatasetFactory.createFromObject(new Double(m2/m));
 		ratio.setName("ratio");
 		

@@ -142,7 +142,7 @@ public class XPDFTargetComponent {
 	 * @return the summed squared elastic scattering form factor of the atoms
 	 * 			in the material.
 	 */
-	public Object getFSquared(XPDFCoordinates coords) {
+	public Dataset getFSquared(XPDFCoordinates coords) {
 		return form.getSubstance().getComposition().getElasticScatteringFactorSquared(coords.getX());
 	}
 

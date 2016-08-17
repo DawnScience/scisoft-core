@@ -578,8 +578,13 @@ public class XPDFCalibration {
 		Dataset absCor = null;
 		// Initialize the list of calibration constants with the predefined initial value.
 		calibrationConstants = new LinkedList<Double>(Arrays.asList(new Double[] {calibrationConstant0}));
-		for (int i = 0; i < nIterations; i++)
+		// Iterate until a hardcoded precision is achieved
+		final double calibrationPrecision = 1e-6;
+		do
 			absCor = this.iterate(fluorescenceCorrected, propagateErrors);
+		while (Math.abs(calibrationConstants.getLast()/calibrationConstants.get(calibrationConstants.size()-2) - 1) > calibrationPrecision);
+//		for (int i = 0; i < nIterations; i++)
+//			absCor = this.iterate(fluorescenceCorrected, propagateErrors);
 		return absCor;
 	}
 	

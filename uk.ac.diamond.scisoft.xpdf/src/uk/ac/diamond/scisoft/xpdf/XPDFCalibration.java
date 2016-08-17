@@ -540,7 +540,7 @@ public class XPDFCalibration {
 		for (Dataset targetComponent : backgroundSubtracted) {
 			Dataset cosTwoTheta = coords.getCosTwoTheta();
 			// result = data /(cos 2θ)^3
-			Dataset solAngData = Maths.divide(Maths.divide(targetComponent, cosTwoTheta), Maths.multiply(cosTwoTheta, cosTwoTheta));
+			Dataset solAngData = Maths.divide(Maths.divide(targetComponent, cosTwoTheta), Maths.square(cosTwoTheta));
 //			Dataset solAngData = Maths.multiply(1.0, targetComponent);
 			if (propagateErrors && targetComponent.getError() != null)
 				solAngData.setError(targetComponent.getError());

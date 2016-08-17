@@ -206,6 +206,10 @@ public class CalibrationStandards implements Serializable, Cloneable {
 		calibrant.addHKL(new HKL(0, 0, 11, Amount.valueOf(0.53073, NANOMETRE)));
 		calibrant.addHKL(new HKL(0, 0, 12, Amount.valueOf(0.48650, NANOMETRE)));
 		calibrant.addHKL(new HKL(0, 0, 13, Amount.valueOf(0.44908, NANOMETRE)));
+		calibrant.addHKL(new HKL(0, 0, 14, Amount.valueOf(0.417, NANOMETRE)));
+		//doublet from gisax.com
+		calibrant.addHKL(new HKL(Amount.valueOf(0.458996, NANOMETRE)));
+		calibrant.addHKL(new HKL(Amount.valueOf(0.45300, NANOMETRE)));
 		tmp.put(calibrant.getName(), calibrant);
 		        
 		

@@ -55,17 +55,21 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 		double[] backGroundRange0 = model.getBackground0();
 		double[] backGroundRange1 = model.getBackground1();
 		
+		if (signalRange == null || backGroundRange0 == null || backGroundRange1 == null) throw new OperationException(this, "Signal and background regions must be defined!");
+		
 		AxesMetadata axm = input.getFirstMetadata(AxesMetadata.class);
 		
 		Dataset signal = null;
 		Dataset b0 = null;
 		Dataset b1 = null;
 		ILazyDataset[] axis1 = null;
+		int[] nSignal = new int[1];
+		int[] nOther = new int[1];
 		
 		if (axm == null || axm.getAxis(1) == null || axm.getAxis(1)[0] == null) {
-			signal = getMean(input,(int)Math.round(signalRange[0]), (int)Math.round(signalRange[1]));
-			b0 = getMean(input,(int)Math.round(backGroundRange0[0]), (int)Math.round(backGroundRange0[1]));
-			b1 = getMean(input,(int)Math.round(backGroundRange1[0]), (int)Math.round(backGroundRange1[1]));
+			signal = getMean(input,(int)Math.round(signalRange[0]), (int)Math.round(signalRange[1]),nSignal);
+			b0 = getMean(input,(int)Math.round(backGroundRange0[0]), (int)Math.round(backGroundRange0[1]),nOther);
+			b1 = getMean(input,(int)Math.round(backGroundRange1[0]), (int)Math.round(backGroundRange1[1]),nOther);
 		} else {
 			
 			Dataset x;
@@ -76,9 +80,9 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 			}
 			x.squeeze();
 			
-			signal = getMean(input,x,signalRange);
-			b0 = getMean(input,x,backGroundRange0);
-			b1 = getMean(input,x,backGroundRange1);
+			signal = getMean(input,x,signalRange,nSignal);
+			b0 = getMean(input,x,backGroundRange0,nOther);
+			b1 = getMean(input,x,backGroundRange1,nOther);
 			ILazyDataset[] axis = axm.getAxis(0);
 			axis1 = axis.clone();
 			for (int i = 0; i < axis1.length; i++) axis1[i] = axis1[i] == null ? null : axis1[i].getSliceView().squeezeEnds();
@@ -94,6 +98,7 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 		signal.isubtract((b0.iadd(b1).idivide(2)));
 		
 		double m2 = (double)signal.sum(true);
+		if (model.isUseFullFrameForRatio()) m2 = m2*nSignal[0];
 		
 		if (axis1 != null) {
 			AxesMetadata ax;
@@ -106,24 +111,25 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 			signal.addMetadata(ax);
 		}
 		
-		Dataset ratio = DatasetFactory.createFromObject(m2/m, Dataset.FLOAT64);
+		System.out.println(m2/m);
+		Dataset ratio = DatasetFactory.createFromObject(new Double(m2/m));
 		ratio.setName("ratio");
 		
 		return new OperationData(signal, ratio);
 		
 	}
 	
-	private Dataset getMean(IDataset input, Dataset x, double[] vals) {
+	private Dataset getMean(IDataset input, Dataset x, double[] vals, int[] number) {
 		
 		int x0 = Maths.abs(Maths.subtract(x, vals[0])).argMin();
 		int x1 = Maths.abs(Maths.subtract(x, vals[1])).argMin();
-		
-		return getMean(input, x0, x1);
+		return getMean(input, x0, x1, number);
 		
 	}
 	
-	private Dataset getMean(IDataset input, int i0, int i1) {
-		int[] startStop = i0 < i1 ? new int[] {i0,i1} : new int[] {i1,i0}; 
+	private Dataset getMean(IDataset input, int i0, int i1, int[] number) {
+		int[] startStop = i0 < i1 ? new int[] {i0,i1} : new int[] {i1,i0};
+		number[0] = startStop[1]-startStop[0];
 		SliceND s = new SliceND(input.getShape());
 		s.setSlice(1, startStop[0], startStop[1], 1);
 		Dataset d = DatasetUtils.convertToDataset(input.getSlice(s));

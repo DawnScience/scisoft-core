@@ -24,7 +24,7 @@ import org.eclipse.january.dataset.Maths;
 import uk.ac.diamond.scisoft.analysis.dataset.function.Interpolation1D;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
-public class ReflectivityFluxCorrectionOperation extends AbstractOperation<Polynomial2DReflectivityModel, OperationData> {
+public class ReflectivityFluxCorrectionOperation extends AbstractOperation<FluxCorrectionModel, OperationData> {
 
 	@Override
 	public String getId() {

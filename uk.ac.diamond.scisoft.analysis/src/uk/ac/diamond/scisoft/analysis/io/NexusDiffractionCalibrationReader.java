@@ -91,7 +91,12 @@ public class NexusDiffractionCalibrationReader {
 	}
 	
 	private static IDiffractionMetadata trySAXS(NodeLink detectorLink, Tree tree, String path) throws DatasetException {
-		DetectorProperties saxs = NexusTreeUtils.parseSaxsDetector(detectorLink);
+		DetectorProperties saxs = null;
+		try {
+			saxs = NexusTreeUtils.parseSaxsDetector(detectorLink);
+		} catch (Exception e) {
+			//TODO warn
+		}
 		if (saxs == null) return null;
 		legacySupport(saxs,detectorLink);
 		DiffractionCrystalEnvironment dce = tryBeam(tree);

@@ -77,7 +77,7 @@ public class ScanMetadata {
 	}
 	
 
-	public ILazyDataset adc2DataLazy (Polynomial2DReflectivityModel model) {
+	public ILazyDataset adc2DataLazy (FluxCorrectionModel model) {
 		ILazyDataset adc2data= null;
 		try {
 			adc2data = ProcessingUtils.getLazyDataset(null, model.getPath(), ReflectivityMetadataTitles.getadc2()).getSlice();
@@ -87,7 +87,7 @@ public class ScanMetadata {
 		 return adc2data;
 	}
 		 
-	public ILazyDataset qdcd_dataDataLazy (Polynomial2DReflectivityModel model) {	 
+	public ILazyDataset qdcd_dataDataLazy (FluxCorrectionModel model) {	 
 		ILazyDataset qdcd_data= null;
 		try {
 			qdcd_data = ProcessingUtils.getLazyDataset(null, model.getPath(), ReflectivityMetadataTitles.getqdcd_()).getSlice();

@@ -49,7 +49,7 @@ public class RodScanPolynomial2DModel extends AbstractOperationModel {
 		@OperationModelField(label="Detector Slits", hint = "Detector Slits" )
 		private double DetectorSlits = 10;
 		
-		@OperationModelField(label="Scaling/Normalisation Factor", hint = "Scaling/Normalisation Factor, if in reflectivity mode, \n note that this will be the division factor, \n in CRT mode, the multiplying factor (don't blame me)." )
+		@OperationModelField(label="Scaling/Normalisation Factor", hint = "Scaling/Normalisation Factor, if in reflectivity mode, \n note that this will be the division factor, \n in CRT mode, the multiplying factor" )
 		private double ScalingFactor = 10;
 		
 		@OperationModelField(label="Reflectivity a", hint = "Reflectivity a" )

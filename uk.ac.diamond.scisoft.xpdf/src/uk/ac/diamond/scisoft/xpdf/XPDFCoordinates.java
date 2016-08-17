@@ -89,7 +89,6 @@ public class XPDFCoordinates {
 	 * @param input
 	 */
 	public XPDFCoordinates(Dataset input) {
-		long t0 = System.nanoTime();
 		XPDFMetadata theXPDFMetadata = input.getFirstMetadata(XPDFMetadata.class);
 		this.wavelength = theXPDFMetadata.getBeam().getBeamWavelength();
 
@@ -134,7 +133,6 @@ public class XPDFCoordinates {
 		}
 		this.sinTwoTheta = null;
 		this.cosTwoTheta = null;
-		System.err.println("XPDFCoords ctor: " + (System.nanoTime() - t0)*1e-9 + " s");
 	}
 	
 	/**

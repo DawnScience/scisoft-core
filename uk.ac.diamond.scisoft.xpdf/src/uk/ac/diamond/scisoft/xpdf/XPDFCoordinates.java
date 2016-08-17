@@ -108,7 +108,6 @@ public class XPDFCoordinates {
 				throw new IllegalArgumentException("Could not get data from lazy dataset", e);
 			}
 		} else {
-			long t01 = System.nanoTime();
 			// 2D case. The caller should check for valid metadata first
 			DiffractionMetadata dMD = input.getFirstMetadata(DiffractionMetadata.class);
 			DetectorProperties dP = dMD.getDetector2DProperties();
@@ -118,9 +117,6 @@ public class XPDFCoordinates {
 			dAngle = localGamma.clone();
 			
 			double pxArea = dP.getVPxSize() * dP.getHPxSize();
-			
-			System.err.println("XPDFCoords ctor before 2D loop: " + (System.nanoTime() - t01)*1e-9 + " s");
-			t01 = System.nanoTime();
 			
 			for (int i = 0; i < input.getShape()[0]; i++) {
 				for (int j = 0; j < input.getShape()[1]; j++) {
@@ -132,11 +128,8 @@ public class XPDFCoordinates {
 					dAngle.set(pxArea/pixelPosition.lengthSquared(), i, j); // No problem setting dAngle directly
 				}
 			}
-			System.err.println("XPDFCoords ctor 2D loop: " + (System.nanoTime() - t01)*1e-9 + " s");
-			t01 = System.nanoTime();
 			
 			this.setGammaDelta(localGamma, localDelta);
-			System.err.println("XPDFCoords data settting: " + (System.nanoTime() - t01)*1e-9 + " s");
 			
 		}
 		this.sinTwoTheta = null;

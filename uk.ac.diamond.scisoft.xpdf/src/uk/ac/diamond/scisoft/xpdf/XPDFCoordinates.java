@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
+import java.util.stream.IntStream;
+
 import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
@@ -87,6 +89,7 @@ public class XPDFCoordinates {
 	 * @param input
 	 */
 	public XPDFCoordinates(Dataset input) {
+		long t0 = System.nanoTime();
 		XPDFMetadata theXPDFMetadata = input.getFirstMetadata(XPDFMetadata.class);
 		this.wavelength = theXPDFMetadata.getBeam().getBeamWavelength();
 
@@ -105,6 +108,7 @@ public class XPDFCoordinates {
 				throw new IllegalArgumentException("Could not get data from lazy dataset", e);
 			}
 		} else {
+			long t01 = System.nanoTime();
 			// 2D case. The caller should check for valid metadata first
 			DiffractionMetadata dMD = input.getFirstMetadata(DiffractionMetadata.class);
 			DetectorProperties dP = dMD.getDetector2DProperties();
@@ -114,6 +118,9 @@ public class XPDFCoordinates {
 			dAngle = localGamma.clone();
 			
 			double pxArea = dP.getVPxSize() * dP.getHPxSize();
+			
+			System.err.println("XPDFCoords ctor before 2D loop: " + (System.nanoTime() - t01)*1e-9 + " s");
+			t01 = System.nanoTime();
 			
 			for (int i = 0; i < input.getShape()[0]; i++) {
 				for (int j = 0; j < input.getShape()[1]; j++) {
@@ -125,10 +132,16 @@ public class XPDFCoordinates {
 					dAngle.set(pxArea/pixelPosition.lengthSquared(), i, j); // No problem setting dAngle directly
 				}
 			}
+			System.err.println("XPDFCoords ctor 2D loop: " + (System.nanoTime() - t01)*1e-9 + " s");
+			t01 = System.nanoTime();
+			
 			this.setGammaDelta(localGamma, localDelta);
+			System.err.println("XPDFCoords data settting: " + (System.nanoTime() - t01)*1e-9 + " s");
+			
 		}
 		this.sinTwoTheta = null;
 		this.cosTwoTheta = null;
+		System.err.println("XPDFCoords ctor: " + (System.nanoTime() - t0)*1e-9 + " s");
 	}
 	
 	/**
@@ -214,8 +227,14 @@ public class XPDFCoordinates {
 	public void setGammaDelta(Dataset gamma, Dataset delta) {
 		this.gamma = gamma;
 		this.delta = delta;
-		this.twoTheta = Maths.arccos(Maths.multiply(Maths.cos(delta), Maths.cos(gamma)));
-		this.phi = Maths.arctan2(Maths.negative(Maths.sin(this.delta)), Maths.tan(this.gamma));
+//		this.twoTheta = Maths.arccos(Maths.multiply(Maths.cos(delta), Maths.cos(gamma)));
+//		this.phi = Maths.arctan2(Maths.negative(Maths.sin(this.delta)), Maths.tan(this.gamma));
+		
+		twoTheta = DatasetFactory.createFromObject(IntStream.range(0,gamma.getSize()).parallel().
+				mapToDouble(i -> Math.acos(Math.cos(delta.getElementDoubleAbs(i)) * Math.cos(gamma.getElementDoubleAbs(i)))).toArray(), gamma.getShape());
+		phi = DatasetFactory.createFromObject(IntStream.range(0,gamma.getSize()).parallel().
+				mapToDouble(i -> Math.atan2(-Math.sin(delta.getElementDoubleAbs(i)), Math.tan(gamma.getElementDoubleAbs(i)))).toArray(), gamma.getShape());
+		
 		this.isAngleAuthorative = true;
 		invalidateData();
 	}

@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.python;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
@@ -18,6 +19,8 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.python.core.CompileMode;
+import org.python.core.CompilerFlags;
 import org.python.core.Py;
 import org.python.core.PyInteger;
 import org.python.core.PyList;
@@ -102,4 +105,42 @@ public class PythonUtilsTest {
 
 	}
 
+	@Test
+	public void testCompiler() throws Exception {
+		// check out different compile modes that Jython supports
+		testCompile(false);
+		testCompile(true);
+	}
+
+	private void testCompile(boolean isSingle) throws Exception {
+		CompileMode mode = isSingle? CompileMode.single : CompileMode.exec; // NB "eval" is not available in Jython nor documented in CPython
+		String filename = "<input>";
+		CompilerFlags flags = new CompilerFlags();
+
+		PyObject ret = Py.compile_command_flags("", filename, mode, flags, false);
+		System.out.println(ret);
+
+		ret = Py.compile_command_flags("1", filename, mode, flags, false);
+		System.out.println(ret);
+
+		ret = Py.compile_command_flags("print 2", filename, mode, flags, false);
+		System.out.println(ret);
+
+		ret = Py.compile_command_flags("if True: print 42", filename, mode, flags, false);
+		if (isSingle) {
+			assertEquals(Py.None, ret);
+		}
+		System.out.println(ret);
+
+		try {
+			ret = Py.compile_command_flags("if True:", filename, mode, flags, false);
+			if (isSingle) {
+				assertEquals(Py.None, ret);
+			} else {
+				fail();
+			}
+			System.out.println(ret);
+		} catch (Exception e) {
+		}
+	}
 }

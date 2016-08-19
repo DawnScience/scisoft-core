@@ -1531,6 +1531,8 @@ def dsplit(ary, indices_or_sections):
 
 @_wrap
 def sort(a, axis=-1):
+    if axis is None:
+        return _dsutils.sort(a)
     return _dsutils.sort(a, axis)
 
 @_wrap

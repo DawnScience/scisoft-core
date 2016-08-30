@@ -43,7 +43,7 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 		
 		ILazyDataset[] axes = getFirstAxes(input);
 		
-		ILazyDataset lx = axes[0];
+		ILazyDataset lx = axes != null ? axes[0] : null;
 		
 		IDataset outds = input.getSlice().clone();
 		

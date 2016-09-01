@@ -156,16 +156,6 @@
       </category>
    </extension>
    <extension
-         point="org.dawnsci.introRegister">
-      <introPageRegister
-            class="uk.ac.diamond.scisoft.ptychography.rcp.PtychoPerspectiveLaunch"
-            description="Opens the Ptychography perspective"
-            icon="icons/chart_curve.png"
-            id="uk.ac.diamond.scisoft.intro.PtychographyPerspective"
-            name="Ptychography">
-      </introPageRegister>
-   </extension>
-   <extension
          point="org.eclipse.ui.preferencePages">
       <page
             category="org.dawnsci.preferences.root"

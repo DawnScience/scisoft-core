@@ -45,7 +45,7 @@ public class ImageStackLoaderTest {
 
 		}
 
-		String testScratchDirectoryName = IOTestUtils.setUpTest(ImageStackLoaderTest.class, "test1DFiles", true);
+		String testScratchDirectoryName = IOTestUtils.setUpTest(ImageStackLoaderTest.class, "testInvalid", true);
 
 
 		int[] multipliers= new int[]{2,3};

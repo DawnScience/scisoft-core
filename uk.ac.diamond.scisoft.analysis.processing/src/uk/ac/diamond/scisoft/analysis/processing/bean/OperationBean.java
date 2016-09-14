@@ -48,7 +48,7 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	private String				 dataKey;
 	//clear processing file at finish
 	private boolean   			 deleteProcessingFile = true;
-	
+
 	@Override
 	public void merge(StatusBean with) {
         super.merge(with);
@@ -130,7 +130,7 @@ public class OperationBean extends StatusBean implements IOperationBean {
 		return this.axesNames;
 	}
 	
-	public boolean isDeletePersistenceFile() {
+	public boolean isDeleteProcessingFile() {
 		return deleteProcessingFile;
 	}
 
@@ -200,6 +200,16 @@ public class OperationBean extends StatusBean implements IOperationBean {
 		result = prime * result + ((slicing == null) ? 0 : slicing.hashCode());
 		result = prime * result + ((xmx == null) ? 0 : xmx.hashCode());
 		return result;
+	}
+	
+	private String publisherURI = null;
+	
+	public String getPublisherURI() {
+		return publisherURI;
+	}
+
+	public void setPublisherURI(String publisherURI) {
+		this.publisherURI = publisherURI;
 	}
 
 	@Override

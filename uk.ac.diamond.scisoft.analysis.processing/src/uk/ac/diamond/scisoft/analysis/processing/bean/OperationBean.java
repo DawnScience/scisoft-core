@@ -48,6 +48,9 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	private String				 dataKey;
 	//clear processing file at finish
 	private boolean   			 deleteProcessingFile = true;
+	
+	//URI to publish updates to
+	private String publisherURI = null;
 
 	@Override
 	public void merge(StatusBean with) {
@@ -65,6 +68,7 @@ public class OperationBean extends StatusBean implements IOperationBean {
         this.readable 		 	  = db.readable;
         this.dataKey         	  = db.dataKey;
         this.deleteProcessingFile = db.deleteProcessingFile;
+        this.publisherURI         = db.publisherURI;
 	}
 	
 	public String getDataKey() {
@@ -182,7 +186,15 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	public void setNumberOfCores(int numberOfCores) {
 		this.numberOfCores = numberOfCores;
 	}
-	
+
+	public String getPublisherURI() {
+		return publisherURI;
+	}
+
+	public void setPublisherURI(String publisherURI) {
+		this.publisherURI = publisherURI;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -196,20 +208,11 @@ public class OperationBean extends StatusBean implements IOperationBean {
 		result = prime * result + numberOfCores;
 		result = prime * result + ((outputFilePath == null) ? 0 : outputFilePath.hashCode());
 		result = prime * result + ((processingPath == null) ? 0 : processingPath.hashCode());
+		result = prime * result + ((publisherURI == null) ? 0 : publisherURI.hashCode());
 		result = prime * result + (readable ? 1231 : 1237);
 		result = prime * result + ((slicing == null) ? 0 : slicing.hashCode());
 		result = prime * result + ((xmx == null) ? 0 : xmx.hashCode());
 		return result;
-	}
-	
-	private String publisherURI = null;
-	
-	public String getPublisherURI() {
-		return publisherURI;
-	}
-
-	public void setPublisherURI(String publisherURI) {
-		this.publisherURI = publisherURI;
 	}
 
 	@Override
@@ -254,6 +257,11 @@ public class OperationBean extends StatusBean implements IOperationBean {
 				return false;
 		} else if (!processingPath.equals(other.processingPath))
 			return false;
+		if (publisherURI == null) {
+			if (other.publisherURI != null)
+				return false;
+		} else if (!publisherURI.equals(other.publisherURI))
+			return false;
 		if (readable != other.readable)
 			return false;
 		if (slicing == null) {
@@ -268,4 +276,6 @@ public class OperationBean extends StatusBean implements IOperationBean {
 			return false;
 		return true;
 	}
+
+
 }

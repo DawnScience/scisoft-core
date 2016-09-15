@@ -216,7 +216,13 @@ meshgrid = _np.meshgrid
 
 indices = _np.indices
 
+fliplr = _np.fliplr
+
+flipud = _np.flipud
+
 roll = _np.roll
+
+rot90 = _np.rot90
 
 rollaxis = _np.rollaxis
 

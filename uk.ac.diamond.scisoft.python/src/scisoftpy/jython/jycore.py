@@ -1629,8 +1629,20 @@ def indices(dimensions, dtype=int32):
     return ind
 
 @_wrap
+def fliplr(a):
+    return _dsutils.flipLeftRight(a)
+
+@_wrap
+def flipud(a):
+    return _dsutils.flipUpDown(a)
+
+@_wrap
 def roll(a, shift, axis=None):
     return _dsutils.roll(a, shift, axis)
+
+@_wrap
+def rot90(a, k=1):
+    return _dsutils.rotate90(a, k)
 
 @_wrap
 def rollaxis(a, axis, start=0):

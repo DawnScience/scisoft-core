@@ -280,7 +280,9 @@ public class JavaImageLoader extends AbstractFileLoader {
 	}
 
 	protected void createMetadata(DataHolder output, @SuppressWarnings("unused") ImageReader reader) {
-		metadata = new Metadata();
+		if (metadata == null) {
+			metadata = new Metadata();
+		}
 		metadata.setFilePath(fileName);
 		for (String n : output.getNames()) {
 			ILazyDataset lazy = output.getLazyDataset(n);

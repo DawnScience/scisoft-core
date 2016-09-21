@@ -33,6 +33,7 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.metadata.IMetadata;
 
 import com.sun.media.imageio.plugins.tiff.TIFFDirectory;
 import com.sun.media.imageio.plugins.tiff.TIFFField;
@@ -169,7 +170,8 @@ public class TIFFImageLoader extends JavaImageLoader {
 				image = createDataset(reader.read(0));
 			}
 			image.setName(DEF_IMAGE_NAME);
-			image.setMetadata(metadata);
+			if (metadata != null)
+				mergeMetadata(image);
 			output.addDataset(DEF_IMAGE_NAME, image);
 		} else if (allSame) {
 			ILazyDataset ld = createLazyDataset(dtype, n, height, width);
@@ -183,6 +185,27 @@ public class TIFFImageLoader extends JavaImageLoader {
 			createMetadata(output, reader);
 			metadata.setMetadata(metadataMap);
 			output.setMetadata(metadata);
+		}
+	}
+
+	private void mergeMetadata(ILazyDataset image) {
+		IMetadata imd;
+		try {
+			imd = image.getMetadata();
+			if (imd == null)
+				return;
+
+			HashMap<String, Serializable> map = new HashMap<String, Serializable>();
+			for (String m : imd.getMetaNames()) {
+				map.put(m, imd.getMetaValue(m));
+			}
+			for (String m : metadata.getMetaNames()) {
+				map.put(m, imd.getMetaValue(m));
+			}
+			metadata.setMetadata(map);
+			image.clearMetadata(IMetadata.class);
+			image.setMetadata(metadata);
+		} catch (Exception e) {
 		}
 	}
 

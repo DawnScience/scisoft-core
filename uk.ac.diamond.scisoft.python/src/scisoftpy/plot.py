@@ -502,7 +502,7 @@ def imagetogrid(im, name=None, x=None, y=None, store=None):
     '''Plot images to the grid of an image explorer view
 
     Arguments:
-    im -- images dataset
+    im -- images dataset or filename
     name -- optional name of Image Explorer view to use (if None, default name - Image Explorer - will be used)
     x -- optional : gridX use -1 to automatically place
     y -- optional : gridY use -1 to automatically place
@@ -517,25 +517,10 @@ def imagetogrid(im, name=None, x=None, y=None, store=None):
     if store is None:
         store = False
 
-    _plot_imagetogrid(name, im, x, y, store)
-
-def imagetogrid(filename, name=None, x=None, y=None):
-    '''Plot images to the grid of an image explorer view
-
-    Arguments:
-    filename -- filename of image
-    name -- optional name of Image Explorer view to use (if None, default name - Image Explorer - will be used)
-    x -- optional : gridX use -1 to automatically place
-    y -- optional : gridY use -1 to automatically place
-    '''
-    if name is None:
-        name = 'Image Explorer'
-    if x is None:
-        x = -1
-    if y is None:
-        y = -1
-
-    _plot_imagetogrid(name, filename, x, y)
+    if isinstance(im, basestring):
+        _plot_imagetogrid(name, im, x, y)
+    else:
+        _plot_imagetogrid(name, im, x, y, store)
 
 def imagestogrid(im, name=None, store=None):
     '''Plot images to the grid of an image explorer view
@@ -1029,8 +1014,17 @@ def createColor(r, g, b):
 Creates a color that can be used with the plotting system
 For instance to set trace color.
 '''  
-def createHistogramBound(position, r, g, b):    
-    return _ps.createHistogramBound(position,r,g,b)
+def createHistogramBound(position, r, g=None, b=None):
+    rgb = []
+    if r:
+        rgb.append(r)
+    if g:
+        rgb.append(g)
+    if b:
+        rgb.append(b)
+    if len(rgb) == 0:
+        rgb = None
+    return _ps.createHistogramBound(position, rgb)
 
 '''
 Get an implementation of an OSGi service

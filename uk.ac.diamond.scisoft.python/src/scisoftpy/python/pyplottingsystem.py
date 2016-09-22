@@ -40,7 +40,7 @@ def createColor(r, g, b):
 '''
 Creates a histogram bound which is a color and a position for the bound
 '''   
-def createHistogramBound(position, r, g, b):    
+def createHistogramBound(position, rgb):    
 
     global _gateway
     if _gateway is None:
@@ -50,7 +50,7 @@ def createHistogramBound(position, r, g, b):
 
     java_import(jvm, 'org.eclipse.dawnsci.plotting.api.histogram.*')
     
-    return jvm.HistogramBound(position, r, g, b)
+    return jvm.HistogramBound(position, rgb)
 
 
 '''

@@ -1014,8 +1014,17 @@ def createColor(r, g, b):
 Creates a color that can be used with the plotting system
 For instance to set trace color.
 '''  
-def createHistogramBound(position, r, g, b):    
-    return _ps.createHistogramBound(position,r,g,b)
+def createHistogramBound(position, r, g=None, b=None):
+    rgb = []
+    if r:
+        rgb.append(r)
+    if g:
+        rgb.append(g)
+    if b:
+        rgb.append(b)
+    if len(rgb) == 0:
+        rgb = None
+    return _ps.createHistogramBound(position, rgb)
 
 '''
 Get an implementation of an OSGi service

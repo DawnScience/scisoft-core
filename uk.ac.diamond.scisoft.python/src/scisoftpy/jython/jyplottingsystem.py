@@ -29,12 +29,12 @@ def createColor(r, g, b):
 '''
 Creates a histogram bound which is a color and a position for the bound
 '''   
-def createHistogramBound(position, r, g, b):    
+def createHistogramBound(position, rgb):    
 
     try:
         import org.eclipse.dawnsci.plotting.api.histogram.HistogramBound as HistogramBound
     
-        return HistogramBound(position, r, g, b)
+        return HistogramBound(position, rgb)
     
     except Exception, e:
         print >> sys.stderr, "Could not create HistogramBound, maybe jython interpreter old config"

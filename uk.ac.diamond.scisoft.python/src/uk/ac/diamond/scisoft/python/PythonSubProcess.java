@@ -106,9 +106,12 @@ public class PythonSubProcess {
 		public void run() {
 			while (alive) {
 				try {
+					//the original code does not handle any error. On any python error l=null returned which set alive=false
 					String l = stream.readLine();
 					if (l == null) { // die if stream has ended
 						alive = false;
+					} else if (l.contains("Error")) {
+						System.out.println(l);
 					} else {
 						out.add(l);
 					}

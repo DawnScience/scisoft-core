@@ -941,7 +941,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	@Override
 	public void plotImageToGrid(String viewName, IDataset dataset, int gridX, int gridY, boolean store)
 			throws Exception {
-		setDataBean(viewName, "",dataset, gridX, gridY);
+		setDataBean(viewName, "", dataset, gridX, gridY);
 	}
 
 	private void setDataBean(String viewName, String filename, IDataset dataset, int gridX, int gridY) throws Exception {

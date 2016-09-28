@@ -116,7 +116,7 @@ public class Histogram implements DatasetToDatasetFunction {
 
 	/**
 	 * @param datasets input datasets
-	 * @return a list of 1D datasets which are histograms
+	 * @return a list of 1D datasets which are histograms and bins
 	 */
 	@Override
 	public List<Dataset> value(IDataset... datasets) {

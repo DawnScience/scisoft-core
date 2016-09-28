@@ -149,7 +149,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		dh.setTree(tree);
 		updateDataHolder(dh, loadMetadata);
 		if (loadMetadata) {
-			metadata = (Metadata) dh.getMetadata();
+			metadata = dh.getMetadata();
 		}
 		return dh;
 	}
@@ -173,7 +173,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		@Override
 		public void run() {
 			try {
-				long fid = HDF5FileFactory.acquireFile(fileName, false);
+				long fid = HDF5FileFactory.acquireFile(fileName, false).getID();
 
 				if (!monitorIncrement(mon)) {
 					return;
@@ -253,7 +253,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			waitForSyncLimit();
 		} else {
 			try {
-				long fid = HDF5FileFactory.acquireFile(fileName, false);
+				long fid = HDF5FileFactory.acquireFile(fileName, false).getID();
 
 				if (!monitorIncrement(mon)) {
 					return null;
@@ -714,7 +714,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		}
 
 		try {
-			long fid = HDF5FileFactory.acquireFile(path, false);
+			long fid = HDF5FileFactory.acquireFile(path, false).getID();
 
 			final long oid = path.hashCode(); // include file name in ID
 			TreeFile f = TreeFactory.createTreeFile(oid, path);
@@ -941,7 +941,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		dh.setTree(tFile);
 
 		updateDataHolder(dh, true);
-		metadata = (Metadata) dh.getMetadata();
+		metadata = dh.getMetadata();
 	}
 
 	/**
@@ -1067,7 +1067,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		}
 
 		try {
-			long fid = HDF5FileFactory.acquireFile(fileName, false);
+			long fid = HDF5FileFactory.acquireFile(fileName, false).getID();
 			if (!monitorIncrement(mon)) {
 				return null;
 			}

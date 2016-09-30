@@ -513,7 +513,7 @@ public class XPDFSampleEditorView extends ViewPart {
 			
 			firstSelectedSample.getNXsample(builder);
 			try {
-				builder.createFile();
+				builder.createFile(false);
 				System.err.println("Success writing NeXus file to " + filename);
 			} catch (NexusException nE) {
 				System.err.println("Error writing NeXus file to " + filename + ": " + nE.toString());

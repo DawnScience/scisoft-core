@@ -9,8 +9,11 @@ import javax.xml.xpath.XPathFactory;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -102,9 +105,9 @@ public class XMSOLoader extends AbstractFileLoader {
 				energies[i] = Double.parseDouble(energies_list.item(i).getFirstChild().getNodeValue());
 			}
 			
-			Dataset set =  DatasetFactory.createFromObject(energies);
-			set.setName("Energy (keV)");
-			result.addDataset("Energy (keV)", set);
+			Dataset energiesDS =  DatasetFactory.createFromObject(energies);
+			energiesDS.setName("Energy (keV)");
+			result.addDataset("Energy (keV)", energiesDS);
 
 			//convoluted data
 			for (int interaction = first_interaction ; interaction <= n_interactions ; interaction++) {
@@ -113,7 +116,17 @@ public class XMSOLoader extends AbstractFileLoader {
 				for (int i = 0 ; i < nchannels ; i++) {
 					counts[i] = Double.parseDouble(counts_list.item(i).getFirstChild().getNodeValue());
 				}
-				set = DatasetFactory.createFromObject(counts);
+				Dataset set = DatasetFactory.createFromObject(counts);
+				
+				// add energies as x-axis
+				try {
+					AxesMetadata amd = MetadataFactory.createMetadata(AxesMetadata.class, 1);
+					amd.setAxis(0, energiesDS);
+					set.addMetadata(amd);
+				} catch (MetadataException e) {
+					logger.error("Could not created AxesMetadata: ", e);
+				}
+				
 				if (interaction == 1) {
 					set.setName("Counts after 1 interaction");
 					result.addDataset("Counts after 1 interaction", set);
@@ -127,7 +140,7 @@ public class XMSOLoader extends AbstractFileLoader {
 			
 			
 		} catch (Exception e) {
-			System.err.println("Exception message: " + e.getMessage());
+			logger.error("Exception message: {}", e.getMessage());
 			throw new ScanFileHolderException("XMSOLoader.loadFile exception loading  " + fileName, e);
 		}
 		

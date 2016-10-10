@@ -146,9 +146,7 @@ public class LoaderServiceImpl implements ILoaderService {
 				if (lazyDataset == parent) throw new IllegalArgumentException("Axes metadata should not contain original dataset!");
 				if (lazyDataset!= null) {
 
-					if (lazyDataset.getName() == null || lazyDataset.getName().isEmpty()) {
-						lazyDataset.setName(name);
-					}
+					lazyDataset.setName(name);
 
 					int axRank = lazyDataset.getRank();
 					if (axRank == rank || axRank == 1)	{

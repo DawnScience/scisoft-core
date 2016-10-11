@@ -277,5 +277,10 @@ public class OperationBean extends StatusBean implements IOperationBean {
 		return true;
 	}
 
+	@Override
+	public void setScanRank(int scanRank) {
+		//FIXME
+	}
+
 
 }

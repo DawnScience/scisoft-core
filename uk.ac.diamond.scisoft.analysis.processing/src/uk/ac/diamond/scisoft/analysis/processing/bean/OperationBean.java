@@ -294,5 +294,9 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	public void setScanRank(int scanRank) {
 		this.scanRank = scanRank;
 	}
+	
+	public Integer getScanRank() {
+		return scanRank;
+	}
 
 }

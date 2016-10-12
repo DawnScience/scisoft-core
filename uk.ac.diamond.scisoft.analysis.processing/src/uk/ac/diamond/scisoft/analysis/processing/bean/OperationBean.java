@@ -30,6 +30,7 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	private List<String>[] 	  	 axesNames; //can be null
 	private String 				 outputFilePath;
 	private int[] 				 dataDimensions; //e.g. [1,2] for stack of images or [-1,-2]
+	private Integer 			 scanRank = null; // used instead of the dataDimensions
 	
 	// The pipeline that we need to run
 	// The pipeline is saved shared disk at
@@ -153,6 +154,18 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	}
 	
 	public int[] getDataDimensionsForRank(int rank) {
+		
+		if (scanRank != null) {
+			int detectorRank = rank-scanRank;
+			int[] dd = new int[detectorRank];
+			
+			for (int i = 0; i < detectorRank; i++) {
+				dd[i] = -(detectorRank-i);
+			}
+			
+			return dd;
+		}
+		
 		if (dataDimensions[0] > -1) return dataDimensions;
 		int[] dims = new int[dataDimensions.length];
 		for (int i = 0; i < dataDimensions.length; i++) dims[i] = rank + dataDimensions[i];
@@ -279,8 +292,7 @@ public class OperationBean extends StatusBean implements IOperationBean {
 
 	@Override
 	public void setScanRank(int scanRank) {
-		//FIXME
+		this.scanRank = scanRank;
 	}
-
 
 }

@@ -291,7 +291,7 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	}
 
 	@Override
-	public void setScanRank(int scanRank) {
+	public void setScanRank(Integer scanRank) {
 		this.scanRank = scanRank;
 	}
 	

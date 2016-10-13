@@ -113,15 +113,13 @@ public class OperationServiceImpl implements IOperationService {
 	        IDataset firstSlice = it.next().getSlice();
 	        validate(firstSlice, context.getSeries());
 	        
-	        ExecutionType executionType = context.getExecutionType();
 	        
-	        
-	        if (executionType == ExecutionType.PARALLEL){
+	        if (context.getExecutionType() == ExecutionType.PARALLEL){
 	        	IOperation[] operationSeries = context.getSeries();
 				for (IOperation op : operationSeries) {
 					Atomic atomic = op.getClass().getAnnotation(Atomic.class);
 					if (atomic == null) {
-						executionType = ExecutionType.SERIES;
+						context.setExecutionType(ExecutionType.SERIES);
 						logger.info("Switching to series runner!");
 						break;
 					}

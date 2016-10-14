@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.dawnsci.analysis.api.operation">
+      <operation
+            class="org.dawnsci.surfacescatter.Polynomial1DReflectivityOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.surfacescattering.Polynomial1DReflectivityOperation"
+            model="org.dawnsci.surfacescatter.Polynomial1DReflectivityModel"
+            name="Test New Location"
+            visible="true">
+      </operation>
+   </extension>
+
+</plugin>

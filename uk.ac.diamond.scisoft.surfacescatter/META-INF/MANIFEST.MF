@@ -9,3 +9,4 @@ Require-Bundle: org.eclipse.january;bundle-version="1.0.0",
  org.eclipse.dawnsci.analysis.dataset,
  uk.ac.diamond.scisoft.analysis.processing,
  uk.ac.diamond.scisoft.analysis
+Bundle-Vendor: Diamond Light Source

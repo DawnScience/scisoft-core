@@ -8,5 +8,10 @@ Require-Bundle: org.eclipse.january;bundle-version="1.0.0",
  org.eclipse.dawnsci.analysis.api;bundle-version="1.1.0",
  org.eclipse.dawnsci.analysis.dataset,
  uk.ac.diamond.scisoft.analysis.processing,
- uk.ac.diamond.scisoft.analysis
+ uk.ac.diamond.scisoft.analysis,
+ org.eclipse.swt,
+ org.eclipse.dawnsci.plotting.api,
+ log4j.over.slf4j,
+ org.dawb.common.ui,
+ slf4j.api
 Bundle-Vendor: Diamond Light Source

@@ -1026,6 +1026,22 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.SurfaceScatteringRemappingModel"
             name="Grazing Incidence Scattering Remapping">
       </operation>
+       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.TrackingWork2"
+            icon="icons/template.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.TrackingWork2"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.BoxSlicerModel"
+            description="Tracking experiment"
+            name="Tracking experiment">
+      </operation>
+       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.ReflectivityFinalExtraction"
+            icon="icons/template.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.ReflectivityFinalExtraction"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.Polynomial2DReflectivityModel"
+            description="Reflectivity Final Extraction"
+            name="Reflectivity Final Extraction">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

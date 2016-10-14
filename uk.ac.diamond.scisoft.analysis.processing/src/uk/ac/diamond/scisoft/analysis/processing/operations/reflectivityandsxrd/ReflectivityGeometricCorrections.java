@@ -23,7 +23,7 @@ public class ReflectivityGeometricCorrections {
 		double theta = ScanMetadata.getTheta(input);
 		
 		NormalDistribution beamfootprint  = new NormalDistribution(0, (1e-3*BeamHeight/2*Math.sqrt(2*Math.log(2) - 0.5)));
-		double areaCorrection = 2*(beamfootprint.cumulativeProbability((footprint*Math.sin((theta + angularfudgefactor)*Math.PI/180))));
+		double areaCorrection = 2*(beamfootprint.cumulativeProbability((footprint*Math.sin((theta + angularfudgefactor)*Math.PI/180))/2));
 		
 		return areaCorrection;
 	}

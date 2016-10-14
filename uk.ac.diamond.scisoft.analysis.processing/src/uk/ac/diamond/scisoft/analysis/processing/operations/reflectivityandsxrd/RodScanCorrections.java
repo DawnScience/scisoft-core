@@ -110,14 +110,14 @@ public class RodScanCorrections {
 		ILazyDataset gamma3 = ProcessingUtils.getLazyDataset(null, DiffData(input).getFilePath(), GAMMA);
 		IDataset gamma4 = DiffData(input).getMatchingSlice(gamma3);
 		
-		Dataset a = Maths.multiply(alpha4,pc);
-		Dataset d = Maths.multiply(delta4,pc);
+		Dataset a = Maths.multiply(alpha3,pc);
+		Dataset d = Maths.multiply(delta3,pc);
 		Dataset g = Maths.multiply(gamma4,pc);
 		
-		System.out.println("alpha4 rank: " + alpha4.getRank());
-		System.out.println("alpha4 first value:" + alpha4.getDouble(0));
-		System.out.println("delta4 rank: " + delta4.getRank());
-		System.out.println("gamma4 rank: " + gamma4.getRank());
+//		System.out.println("alpha4 rank: " + alpha4.getRank());
+//		System.out.println("alpha4 first value:" + alpha4.getDouble(0));
+//		System.out.println("delta4 rank: " + delta4.getRank());
+//		System.out.println("gamma4 rank: " + gamma4.getRank());
 		
 		
 		Dataset lorentzcor = Maths.multiply(Maths.cos(d),(Maths.sin(Maths.subtract(g, a)))); 

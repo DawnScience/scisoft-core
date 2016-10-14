@@ -52,7 +52,7 @@ public class BackgroundSetting{
 			i1[j] = j;
 		}
 
-		for (int j = 0; j < len[1]; j++) {
+		for (int j = 0; j < i2.length; j++) {
 			i2[j] = j;
 		}
 

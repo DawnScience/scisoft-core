@@ -1,7 +1,8 @@
 package org.dawnsci.surfacescatter;
 
-import org.dawnsci.spectrum.ui.wizard.AnalaysisMethodologies.FitPower;
-import org.dawnsci.spectrum.ui.wizard.AnalaysisMethodologies.Methodology;
+import org.dawnsci.surfacescatter.AnalaysisMethodologies;
+import org.dawnsci.surfacescatter.AnalaysisMethodologies.FitPower;
+import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;

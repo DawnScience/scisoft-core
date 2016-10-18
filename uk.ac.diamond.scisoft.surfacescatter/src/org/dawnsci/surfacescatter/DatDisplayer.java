@@ -1,4 +1,5 @@
 package org.dawnsci.surfacescatter;
+
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;

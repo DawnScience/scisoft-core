@@ -4,9 +4,9 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
-import org.dawnsci.spectrum.ui.wizard.AnalaysisMethodologies.Methodology;
-import org.dawnsci.spectrum.ui.wizard.TrackingMethodology.TrackerType1;
-import org.dawnsci.spectrum.ui.wizard.AnalaysisMethodologies.FitPower;
+import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
+import org.dawnsci.surfacescatter.TrackingMethodology.TrackerType1;
+import org.dawnsci.surfacescatter.AnalaysisMethodologies.FitPower;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;

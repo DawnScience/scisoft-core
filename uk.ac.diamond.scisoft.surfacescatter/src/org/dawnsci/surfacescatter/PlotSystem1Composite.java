@@ -6,9 +6,14 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import org.apache.log4j.spi.LoggerFactory;
+import org.dawb.common.ui.widgets.ActionBarWrapper;
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.FitPower;
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
 import org.dawnsci.surfacescatter.TrackingMethodology.TrackerType1;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.dawnsci.plotting.api.PlotType;
 import org.eclipse.dawnsci.plotting.api.PlottingFactory;
@@ -31,7 +36,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class PlotSystem1Composite extends Composite {
 
-	private final static Logger logger = LoggerFactory.getLogger(PlotSystem1Composite.class);
+//	private final static Logger logger = LoggerFactory.getLogger(PlotSystem1Composite.class);
 
     private IPlottingSystem<Composite> plotSystem1;
     private IDataset image1;
@@ -45,6 +50,7 @@ public class PlotSystem1Composite extends Composite {
     private Text boundaryBoxText;
     private SuperModel sm;
     private DataModel dm;
+    private String[] methodologies;
 	
     private ExampleModel model;
     
@@ -64,7 +70,7 @@ public class PlotSystem1Composite extends Composite {
         	
 			plotSystem1 = PlottingFactory.createPlottingSystem();
 		} catch (Exception e2) {
-			logger.error("Can't make plotting system", e2);
+			
 		}
 
         this.createContents(model, gm, customComposite, correctionSelection, trackingMarker); 
@@ -92,6 +98,9 @@ public class PlotSystem1Composite extends Composite {
 	    boundaryBoxText = new Text(methodSetting, SWT.SINGLE);
 	    boundaryBoxText.setText("Boundary Box");
 
+	    
+	    //methodologies = new String[AnalaysisMethodologies.Methodology.values().length];
+	    
 	    for(Methodology  t: AnalaysisMethodologies.Methodology.values()){
 	    	comboDropDown0.add(AnalaysisMethodologies.toString(t));
 	    }
@@ -296,6 +305,71 @@ public class PlotSystem1Composite extends Composite {
 	   return returns;
    }
    
+   public Combo[] getCombos(){
+	   return new Combo[] {comboDropDown0, comboDropDown1, comboDropDown2};
+   }
+   
+   public void setMethodologyDropDown(String in){
+	   Methodology in1 = AnalaysisMethodologies.toMethodology(in);
+	   setMethodologyDropDown(in1);
+   }
+   
+   public void setMethodologyDropDown(Methodology in){
+	   for (int i =0 ; i<AnalaysisMethodologies.Methodology.values().length; i++){
+			  if ( in == AnalaysisMethodologies.Methodology.values()[i]){
+				  comboDropDown0.select(i);
+			  }
+		  }
+	   }
+	   
+	   
+	   
+   
+   
+   
+   
+   public void setFitPowerDropDown(FitPower m){
+		  for (int i =0 ; i<AnalaysisMethodologies.FitPower.values().length; i++){
+			  if ( m == AnalaysisMethodologies.FitPower.values()[i]){
+				  comboDropDown1.select(i);
+			  }
+		  }
+   }
+   
+   public void setFitPowerDropDown(int in){
+	   FitPower in1 = AnalaysisMethodologies.toFitPower(in);
+	   setFitPowerDropDown(in1);
+   }
+   
+   
+   public void setFitPowerDropDown1(String in){
+		  FitPower m = AnalaysisMethodologies.toFitPower(Integer.parseInt(in));
+		  setFitPowerDropDown(m);
+	}
+      
+	   
+   public void setTrackerTypeDropDown(TrackerType1 m){
+		  for (int i =0 ; i<TrackingMethodology.TrackerType1.values().length; i++){
+			  if ( m == TrackingMethodology.TrackerType1.values()[i]){
+				  comboDropDown2.select(i);
+			  }
+		  }
+   }
+   
+   public void setTrackerTypeDropDown(String in){
+	   TrackerType1 m = TrackingMethodology.toTracker1(in);
+	   setTrackerTypeDropDown(m);
+   }
+   
+   public void setBoundaryBox (int in){
+	   boundaryBoxText.setText(String.valueOf(in));
+   }
+   
+
+   public void setBoundaryBox (String in){
+	   boundaryBoxText.setText(in);
+   }
+   
    public Button getRunButton(){
 	   return button1;
    }
@@ -333,7 +407,6 @@ class operationJob extends Job {
 
 
 	
-	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		Display.getDefault().asyncExec(new Runnable() {
 

@@ -13,5 +13,13 @@ Require-Bundle: org.eclipse.january;bundle-version="1.0.0",
  org.eclipse.dawnsci.plotting.api,
  log4j.over.slf4j,
  org.dawb.common.ui,
- slf4j.api
-Bundle-Vendor: Diamond Light Source
+ slf4j.api,
+ org.dawnsci.spectrum.ui,
+ org.eclipse.ui,
+ org.eclipse.e4.ui.di,
+ org.eclipse.core.runtime
+Import-Package: org.apache.commons.lang;version="2.6.0",
+ org.dawnsci.boofcv,
+ org.eclipse.jface.dialogs,
+ org.eclipse.jface.wizard
+Export-Package: org.dawnsci.surfacescatter

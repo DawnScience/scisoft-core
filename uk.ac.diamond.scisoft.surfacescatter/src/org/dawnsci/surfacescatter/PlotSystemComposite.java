@@ -38,10 +38,7 @@ public class PlotSystemComposite extends Composite {
     public PlotSystemComposite(Composite parent, int style
     		,ArrayList<ExampleModel> models, SuperModel sm , IDataset image) {
         super(parent, style);
-        
-        
-        
-        
+
         this.sm=sm;
         this.models = models;
         this.model = models.get(sm.getSelection());
@@ -195,6 +192,11 @@ public class PlotSystemComposite extends Composite {
 	    slider.setMaximum(model1.getDatImages().getShape()[0]);
 	    slider.setIncrement(1);
 	    slider.setThumb(1);
+	}
+	
+	public void setRegion(int[][] lenpt){
+		RectangularROI newROI = new RectangularROI(lenpt[1][0],lenpt[1][1],lenpt[0][0],lenpt[0][1],0);
+		region.setROI(newROI);
 	}
 }
     

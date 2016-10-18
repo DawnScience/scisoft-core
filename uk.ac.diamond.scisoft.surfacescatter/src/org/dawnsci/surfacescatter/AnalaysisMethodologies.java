@@ -36,9 +36,19 @@ public class AnalaysisMethodologies {
 		else if (in.equals("2D")){
 			return Methodology.TWOD;
 		}
+		
+		else if (in.equals("TWOD")){
+			return Methodology.TWOD;
+		}
+		
 		else if (in.equals("2D Tracking")){
 			return Methodology.TWOD_TRACKING;
 		}
+		
+		else if (in.equals("TWOD_TRACKING")){
+			return Methodology.TWOD_TRACKING;
+		}
+		
 		else if (in.equals("Second Background Box")){
 			return Methodology.SECOND_BACKGROUND_BOX;
 		}
@@ -94,5 +104,39 @@ public class AnalaysisMethodologies {
 	}
 	
 	
-	
+	public static FitPower toFitPower(String in){
+		
+		if(in.equals("0")){
+			return FitPower.ZERO;
+		}
+		else if(in.equals("ZERO")){
+			return FitPower.ZERO;
+		}
+		else if (in.equals("1")){
+			return FitPower.ONE;
+		}
+		else if (in.equals("ONE")){
+			return FitPower.ONE;
+		}
+		else if (in.equals("2")){
+			return FitPower.TWO;
+		}
+		else if (in.equals("TWO")){
+			return FitPower.TWO;
+		}
+		
+		else if (in.equals("3")){
+			return FitPower.THREE;
+		}
+		else if (in.equals("THREE")){
+			return FitPower.THREE;
+		}
+		else if (in.equals("4")){
+			return FitPower.FOUR;
+		}
+		else if (in.equals("FOUR")){
+			return FitPower.FOUR;
+		}
+		return null;
+	}
 }

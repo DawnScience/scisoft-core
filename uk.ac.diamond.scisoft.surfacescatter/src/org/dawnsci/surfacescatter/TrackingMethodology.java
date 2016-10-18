@@ -1,6 +1,6 @@
 package org.dawnsci.surfacescatter;
 
-import org.dawnsci.spectrum.ui.wizard.AnalaysisMethodologies.Methodology;
+import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
 import org.eclipse.dawnsci.analysis.api.image.IImageTracker.TrackerType;
 
 public class TrackingMethodology {

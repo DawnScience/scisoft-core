@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import org.dawnsci.spectrum.ui.wizard.AnalaysisMethodologies.Methodology;
+import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;

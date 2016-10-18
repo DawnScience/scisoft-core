@@ -21,19 +21,22 @@ public class FittingParametersInputReader {
 		FittingParameters fp = new FittingParameters();
 	    
 		
-	    while (in.hasNext()) {
-	        if(!in.next().startsWith("#")){
-		    	String[] columns = in.next().split("	");
+	    while (in.hasNextLine()) {
+	        String next = in.nextLine();
+	    	if(!next.startsWith("#")){
+		    	String[] columns = next.split("	");
 	            fp.setPt0(Integer.parseInt(columns[0]));
 	            fp.setPt1(Integer.parseInt(columns[1]));
 	            fp.setLen0(Integer.parseInt(columns[2]));
 	            fp.setLen1(Integer.parseInt(columns[3]));
 	            fp.setBgMethod(AnalaysisMethodologies.toMethodology(columns[4]));
 	            fp.setTracker(TrackingMethodology.toTracker1(columns[5]));
-	            fp.setFitPower(AnalaysisMethodologies.toFitPower(Integer.parseInt(columns[6])));
-		        fp.setBoundaryBox(Integer.parseInt(columns[6]));
+	            fp.setFitPower(AnalaysisMethodologies.toFitPower(columns[6]));
+		        fp.setBoundaryBox(Integer.parseInt(columns[7]));
 	        }
 	    }
+	    
+	    in.close();
 	    
 	    return fp;
 	}

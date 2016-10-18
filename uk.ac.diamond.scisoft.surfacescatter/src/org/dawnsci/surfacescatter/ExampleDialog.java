@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
-import org.dawnsci.fileviewer.FileViewer;
-import org.dawnsci.spectrum.ui.wizard.AnalaysisMethodologies.FitPower;
-import org.dawnsci.spectrum.ui.wizard.AnalaysisMethodologies.Methodology;
+
+import org.dawnsci.surfacescatter.AnalaysisMethodologies.FitPower;
+import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
 //import org.dawnsci.spectrum.ui.wizard.operationJob1.MovieJob;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -55,7 +55,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 
@@ -77,20 +79,32 @@ public class ExampleDialog extends Dialog {
 	private DatDisplayer datDisplayer;
 	private PrintWriter writer;
 	private GeometricParametersWindows paramField;
-	
+	private Shell parentShell;
 	
 	public ExampleDialog(Shell parentShell, String[] datFilenames) {
 		super(parentShell);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
+		this.parentShell = parentShell;
 		this.filepaths = datFilenames;
+		//createDialogArea(parentShell.getParent());
 
 	}
 	
 	
+	 @Override
+     public void create() {
+             super.create();
+//             setTitle("This is my first custom dialog");
+//             setMessage("This is a TitleAreaDialog", IMessageProvider.INFORMATION);
+     }
+
 
 	@Override
-	  protected Control createDialogArea(Composite parent) {
-	    final Composite container = (Composite) super.createDialogArea(parent);
-	    GridLayout gridLayout = new GridLayout(4, true);
+	protected Control createDialogArea(Composite parent) {
+		
+		final Composite container = (Composite) super.createDialogArea(parent);
+
+		GridLayout gridLayout = new GridLayout(4, true);
 	    container.setLayout(gridLayout);			
 	    sm = new SuperModel();
 	
@@ -169,15 +183,7 @@ public class ExampleDialog extends Dialog {
 				}
 			}
 		});
-////////////////////////////Window 0/////////////////////////////////////////////		
-//		try{
-//			FileViewer fV = new FileViewer();
-//			
-//		}
-//		catch(Exception e7){
-//			
-//		}
-//		
+
 
 ///////////////////////////Window 1////////////////////////////////////////////////////
 		try {
@@ -1006,7 +1012,7 @@ public class ExampleDialog extends Dialog {
     	
     });
 
-///////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////Proceed Button///////////////////////////////////////////////////
 	    
 	    customComposite1.getProceedButton().addSelectionListener(new SelectionListener() {
 
@@ -1081,13 +1087,36 @@ public class ExampleDialog extends Dialog {
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog fd = new FileDialog(getParentShell(), SWT.OPEN); 
 				
-				String title = "r";
+				String stitle = "r";
+				String path = "p";
 				
 				if (fd.open() != null) {
-					 title = fd.getFileName();
+					stitle = fd.getFileName();
+					path = fd.getFilterPath();
+					System.out.println(path);
+					System.out.println(stitle);
+				
 				}
 				
-				FittingParametersInputReader.reader(title);
+				String title = path + File.separator + stitle;
+				
+				FittingParameters fp = FittingParametersInputReader.reader(title);
+				
+				ExampleModel m = models.get(sm.getSelection());
+				
+				m.setLenPt(fp.getLenpt());
+				m.setTrackerType(fp.getTracker());
+				m.setFitPower(fp.getFitPower());
+				m.setBoundaryBox(fp.getBoundaryBox());
+				m.setMethodology(fp.getBgMethod());
+				
+				customComposite1.setMethodologyDropDown(fp.getBgMethod());
+				customComposite1.setFitPowerDropDown(fp.getFitPower());
+				customComposite1.setTrackerTypeDropDown(fp.getTracker());
+				customComposite1.setBoundaryBox(fp.getBoundaryBox());
+				
+				customComposite.setRegion(fp.getLenpt());
+				customComposite.redraw();
 			}
 			
 			@Override
@@ -1103,22 +1132,33 @@ public class ExampleDialog extends Dialog {
 		
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FileDialog fd = new FileDialog(getParentShell(), SWT.SAVE); 
+				System.out.println("test statement");
 				
+				FileDialog fd = new FileDialog(getParentShell(), SWT.SAVE); 
+				System.out.println("test statement");
 				ExampleModel m = models.get(sm.getSelection());
 	
 				String stitle = "r";
+				String path = "p";
+				
 				
 				if (fd.open() != null) {
 					stitle = fd.getFileName();
+					path = fd.getFilterPath();
+					System.out.println(path);
+					System.out.println(stitle);
+				
 				}
+				
 
 				
 				
 				
 				String s = gms.get(sm.getSelection()).getSavePath();
-				String title = s + File.separator + stitle + "_Output.txt";
-						
+				String title = path + File.separator + stitle + ".txt";
+				System.out.println("test statement");
+				System.out.println(title);
+				
 				FittingParametersOutput.FittingParametersOutputTest(title, 
 						m.getLenPt()[1][0], m.getLenPt()[1][1],
 						m.getLenPt()[0][0], m.getLenPt()[0][1], 

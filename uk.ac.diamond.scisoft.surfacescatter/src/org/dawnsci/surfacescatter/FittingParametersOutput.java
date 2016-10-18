@@ -7,9 +7,9 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.dawnsci.spectrum.ui.wizard.AnalaysisMethodologies.FitPower;
-import org.dawnsci.spectrum.ui.wizard.AnalaysisMethodologies.Methodology;
-import org.dawnsci.spectrum.ui.wizard.TrackingMethodology.TrackerType1;
+import org.dawnsci.surfacescatter.AnalaysisMethodologies.FitPower;
+import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
+import org.dawnsci.surfacescatter.TrackingMethodology.TrackerType1;
 
 public class FittingParametersOutput {
 	
@@ -19,7 +19,7 @@ public class FittingParametersOutput {
 			TrackerType1 tracker, FitPower fitPower, int boundaryBox){
 		
 		try {
-			File file = new File(title + "_Output.txt");
+			File file = new File(title);
 			//file.getParentFile().mkdirs(); 
 			file.createNewFile();
 			writer = new PrintWriter(file);
@@ -41,7 +41,7 @@ public class FittingParametersOutput {
 		
 		
 		writer.println(Integer.toString(pt0) +"	"+ Integer.toString(pt1) +"	"+ Integer.toString(len0) + 
-			"	"+ Integer.toString(len1) + "	"+ bgMethod.toString() + "	"+  tracker.toString() 
+			"	"+ Integer.toString(len1) + "	"+ AnalaysisMethodologies.toString(bgMethod) + "	"+  TrackingMethodology.toString(tracker) 
 			+ "	"+ fitPower.toString() + "	"+ Integer.toString(boundaryBox));
 		
 		writer.close();

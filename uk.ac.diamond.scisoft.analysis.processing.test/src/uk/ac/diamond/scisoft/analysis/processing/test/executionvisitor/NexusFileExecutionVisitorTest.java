@@ -112,6 +112,46 @@ public class NexusFileExecutionVisitorTest {
 	}
 	
 	@Test
+	public void Process3DStackAsAnyTo1D() throws Exception {
+		
+		int[] inputShape = new int[] {10,1000,1100};
+		
+		ILazyDataset lazy = getLazyDataset(inputShape,1);
+		
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+//		context.setSlicing("all");
+		context.setDataDimensions(new int[]{1,2});
+		
+		JunkAnyto1DOperation op = new JunkAnyto1DOperation();
+		op.setModel(new Junk1DModel());
+		
+		final File tmp = File.createTempFile("Test", ".h5");
+		tmp.deleteOnExit();
+		tmp.createNewFile();
+
+		context.setVisitor(new NexusFileExecutionVisitor(tmp.getAbsolutePath()));
+		context.setSeries(op);
+		context.setExecutionType(type);
+		service.execute(context);
+
+		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
+		assertTrue(dh.contains("/entry/result/data"));
+		assertTrue(dh.contains("/entry/result/Axis_0"));
+		assertTrue(dh.contains("/entry/result/Junk1Dax"));
+
+		assertArrayEquals(new int[]{inputShape[0],op.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
+		assertArrayEquals(new int[]{op.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+
+		testDataset(op, "9,:", dh.getLazyDataset("/entry/result/data"));
+		testDataset(op, "5,:", dh.getLazyDataset("/entry/result/data"));
+		testDataset(op, "0,:", dh.getLazyDataset("/entry/result/data"));
+
+		
+	}
+	
+	@Test
 	public void Process4DStackAs2DTo1D() throws Exception {
 		
 		int[] inputShape = new int[] {5,10,1000,1100};
@@ -149,6 +189,45 @@ public class NexusFileExecutionVisitorTest {
 		assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
 
 		testDataset( op21, "3,5,:",dh.getLazyDataset("/entry/result/data"));
+			
+	}
+
+	@Test
+	public void Process4DStackAsAnyTo1D() throws Exception {
+		
+		int[] inputShape = new int[] {5,10,1000,1100};
+		
+		ILazyDataset lazy = getLazyDataset(inputShape,1);
+		
+		
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+//		context.setSlicing("all","all");
+		context.setDataDimensions(new int[]{2,3});
+		
+		JunkAnyto1DOperation op = new JunkAnyto1DOperation();
+		op.setModel(new Junk1DModel());
+		
+		final File tmp = File.createTempFile("Test", ".h5");
+		tmp.deleteOnExit();
+		tmp.createNewFile();
+		
+		context.setVisitor(new NexusFileExecutionVisitor(tmp.getAbsolutePath()));
+		context.setSeries(op);
+		context.setExecutionType(type);
+		service.execute(context);
+		
+		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
+		assertTrue(dh.contains("/entry/result/data"));
+		assertTrue(dh.contains("/entry/result/Axis_0"));
+		assertTrue(dh.contains("/entry/result/Junk1Dax"));
+		
+		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
+		assertArrayEquals(new int[]{inputShape[1]}, dh.getLazyDataset("/entry/result/Axis_1").getShape());
+		assertArrayEquals(new int[]{op.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+
+		testDataset(op, "3,5,:",dh.getLazyDataset("/entry/result/data"));
 			
 	}
 	

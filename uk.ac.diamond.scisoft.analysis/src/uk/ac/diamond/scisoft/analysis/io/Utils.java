@@ -603,6 +603,22 @@ public class Utils {
 	 * @throws Exception
 	 */
 	public static List<IDataset> loadData(List<IDataset> data, String[] filePaths) throws Exception {
+		return loadData(data, filePaths, null);
+	}
+
+	/**
+	 * Loads a list of files (through a string array) and returns a list of IDataset
+	 * 
+	 * @param data
+	 *            output of data loaded (Optional)
+	 * @param filePaths
+	 *            file paths of files to be loaded
+	 * @param dataname
+	 *            name of data to load in case multiple data is available
+	 * @return data loaded
+	 * @throws Exception
+	 */
+	public static List<IDataset> loadData(List<IDataset> data, String[] filePaths, String dataname) throws Exception {
 		if (data == null)
 			data = new ArrayList<IDataset>(filePaths.length);
 		for (int i = 0; i < filePaths.length; i++) {
@@ -610,7 +626,12 @@ public class Utils {
 			holder = LoaderFactory.getData(filePaths[i]);
 			File file = new File(filePaths[i]);
 			String filename = file.getName();
-			ILazyDataset lazy = holder.getLazyDataset(0);
+			ILazyDataset lazy = null;
+			if (dataname != null) {
+				lazy = holder.getLazyDataset(dataname);
+			} else {
+				lazy = holder.getLazyDataset(0);
+			}
 			int[] shape = lazy.getShape();
 			if (shape[0] > 1 && lazy.getRank() == 3) { // 3d dataset
 				for (int j = 0; j < shape[0]; j++) {

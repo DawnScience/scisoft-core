@@ -15,6 +15,8 @@ public class FittingParameters {
 	private FitPower fitPower;
 	private int boundaryBox;
 	private int[][] lenpt = new int[2][2];
+	private int sliderPos;
+	private String file;
 	
 	public int getPt0() {
 		return pt0;
@@ -76,6 +78,18 @@ public class FittingParameters {
 	}
 	public void setLenpt(int[][] lenpt) {
 		this.lenpt = lenpt;
+	}
+	public int getSliderPos() {
+		return sliderPos;
+	}
+	public void setSliderPos(int sliderPos) {
+		this.sliderPos = sliderPos;
+	}
+	public String getFile() {
+		return file;
+	}
+	public void setFile(String file) {
+		this.file = file;
 	}
 	
 }

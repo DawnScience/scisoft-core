@@ -57,18 +57,19 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 
 public class ExampleDialog extends Dialog {
 	
-	final private String[] filepaths;
+	private String[] filepaths;
 	private PlotSystemComposite customComposite;
 	private SuperSashPlotSystem2Composite customComposite2;
 	private PlotSystem1Composite customComposite1;
 	private PlotSystem3Composite customComposite3;
-	private MultipleOutputCurves outputCurves;
+	private MultipleOutputCurvesTable outputCurves;
 	private int imageNo;
 	private OutputMovie outputMovie;
 	private AggregateDataset aggDat;
@@ -91,12 +92,7 @@ public class ExampleDialog extends Dialog {
 	}
 	
 	
-	 @Override
-     public void create() {
-             super.create();
-//             setTitle("This is my first custom dialog");
-//             setMessage("This is a TitleAreaDialog", IMessageProvider.INFORMATION);
-     }
+
 
 
 	@Override
@@ -108,8 +104,7 @@ public class ExampleDialog extends Dialog {
 	    container.setLayout(gridLayout);			
 	    sm = new SuperModel();
 	
-		DataModel dm = new DataModel();
-		GeometricParametersModel gm = new GeometricParametersModel();
+		
 	    
 		ArrayList<ILazyDataset> arrayILD = new ArrayList<ILazyDataset>();
 		gms = new ArrayList<GeometricParametersModel>();
@@ -119,21 +114,21 @@ public class ExampleDialog extends Dialog {
 		
 		for (int id = 0; id<filepaths.length; id++){ 
 			try {
-				IDataHolder dh1 =LoaderFactory.getData(filepaths[id]);
-				ILazyDataset ild =dh1.getLazyDataset(gm.getImageName());
 				models.add(new ExampleModel());
 				dms.add(new DataModel());
-				dms.get(id).setName(StringUtils.substringAfterLast(sm.getFilepaths()[id], "/"));
+				gms.add(new GeometricParametersModel());
+				IDataHolder dh1 =LoaderFactory.getData(filepaths[id]);
+				ILazyDataset ild =dh1.getLazyDataset(gms.get(sm.getSelection()).getImageName());
+				dms.get(id).setName(StringUtils.substringAfterLast(sm.getFilepaths()[id], File.separator));
 				models.get(id).setDatImages(ild);
 				models.get(id).setFilepath(filepaths[id]);
-				//java.util.List<ILazyDataset> list1 = dh1.getList();
-				gms.add(new GeometricParametersModel());
+				
 				if (sm.getCorrectionSelection() == 0){
-					ILazyDataset ildx =dh1.getLazyDataset(gm.getxName()); 
+					ILazyDataset ildx =dh1.getLazyDataset(gms.get(sm.getSelection()).getxName()); 
 					models.get(id).setDatX(ildx);
 				}
 				else if (sm.getCorrectionSelection() == 1){
-					ILazyDataset ildx =dh1.getLazyDataset(gm.getxNameRef()); 
+					ILazyDataset ildx =dh1.getLazyDataset(gms.get(sm.getSelection()).getxNameRef()); 
 					models.get(id).setDatX(ildx);
 					
 					ILazyDataset dcdtheta = dh1.getLazyDataset( ReflectivityMetadataTitlesForDialog.getdcdtheta());
@@ -166,29 +161,32 @@ public class ExampleDialog extends Dialog {
 			}
 		}
 		
-		gm.addPropertyChangeListener(new PropertyChangeListener(){
+		for (GeometricParametersModel gm : gms){
+		
+			gm.addPropertyChangeListener(new PropertyChangeListener(){
 
-			public void propertyChange(PropertyChangeEvent evt) {
-				for (int id = 0; id<filepaths.length; id++){ 
-					try {
-						IDataHolder dh1 =LoaderFactory.getData(filepaths[id]);
-						ILazyDataset ild =dh1.getLazyDataset(gm.getImageName()); 
-						models.get(id).setDatImages(ild);
-					} 
-					
-					catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+				public void propertyChange(PropertyChangeEvent evt) {
+					for (int id = 0; id<filepaths.length; id++){ 
+						try {
+							IDataHolder dh1 =LoaderFactory.getData(filepaths[id]);
+							ILazyDataset ild =dh1.getLazyDataset(gms.get(sm.getSelection()).getImageName()); 
+							models.get(id).setDatImages(ild);
+						} 
+						
+						catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
 				}
-			}
-		});
+			});
+		}
 
 
 ///////////////////////////Window 1////////////////////////////////////////////////////
 		try {
 			
-			datDisplayer = new DatDisplayer(container, SWT.NONE, sm);
+			datDisplayer = new DatDisplayer(container, SWT.NONE, sm, filepaths);
 			datDisplayer.setLayout(new GridLayout());
 			datDisplayer.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
 			
@@ -219,7 +217,7 @@ public class ExampleDialog extends Dialog {
 	    
 ///////////////////////////Window 4////////////////////////////////////////////////////
 	    try {
-			outputCurves = new MultipleOutputCurves(container, SWT.NONE, models, dms, sm);
+			outputCurves = new MultipleOutputCurvesTable(container, SWT.NONE, models, dms, sm);
 			outputCurves.setLayout(new GridLayout());
 			outputCurves.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		} catch (Exception e) {
@@ -373,7 +371,7 @@ public class ExampleDialog extends Dialog {
 				oJ.setSuperModel(sm);
 				oJ.setDm(dms.get(sm.getSelection()));
 				oJ.setModel(models.get(sm.getSelection()));
-				oJ.setGeoModel(gm);;
+				oJ.setGeoModel(gms.get(sm.getSelection()));;
 				oJ.setPlotSystem(customComposite1.getPlotSystem());
 				oJ.schedule();	
 //				oJ.run(null);
@@ -406,7 +404,7 @@ public class ExampleDialog extends Dialog {
 			}
 			
 			public void roiStandard(ROIEvent evt){	
-				imageNo = ClosestNoFinder.closestNoPos(outputCurves.getRegionNo().getROI().getPointX(), dm.getxList());
+				imageNo = ClosestNoFinder.closestNoPos(outputCurves.getRegionNo().getROI().getPointX(), dms.get(sm.getSelection()).getxList());
 				models.get(sm.getSelection()).setOutputNo(imageNo);
 				System.out.println("ImageNo: " + models.get(sm.getSelection()).getOutputNo());
 			}
@@ -582,6 +580,98 @@ public class ExampleDialog extends Dialog {
 				}
 	    });
 		
+/////////////////////////////////////////////////////////////////////
+/////////////////////////Resized Green ROI///////////////////////// 	    
+///////////////////////////////////////////////////////////////////
+	    
+	    customComposite.getGreenRegion().addROIListener(new IROIListener() {
+			
+			@Override
+			public void roiSelected(ROIEvent evt) {
+				roiModStandard(evt);
+				
+			}
+			
+			@Override
+			public void roiDragged(ROIEvent evt) {
+				roiModStandard(evt);
+			}
+			
+			@Override
+			public void roiChanged(ROIEvent evt) {
+				roiModStandard(evt);
+			}
+			
+			public void roiModStandard(ROIEvent evt) {
+				
+				customComposite2.updateImage(PlotSystem2DataSetter.PlotSystem2DataSetter1(models.get(sm.getSelection())));
+				
+				customComposite2.getPlotSystem1().clear();
+				customComposite2.getPlotSystem1().addTrace(VerticalHorizontalSlices.horizontalslice(customComposite2));
+				customComposite2.getPlotSystem1().repaint();
+				customComposite2.getPlotSystem1().autoscaleAxes();
+				
+				customComposite2.getPlotSystem3().clear();
+				customComposite2.getPlotSystem3().addTrace(VerticalHorizontalSlices.verticalslice(customComposite2));
+				customComposite2.getPlotSystem3().repaint();
+				customComposite2.getPlotSystem3().autoscaleAxes();
+				
+				
+				if (customComposite2.getBackgroundButton().getSelection()){
+					
+					
+						SliceND slice = new SliceND(models.get(sm.getSelection()).getDatImages().getShape());
+						int sel = models.get(sm.getSelection()).getImageNumber();
+						slice.setSlice(0, sel, sel+1, 1);
+						IDataset j = null;
+						try {
+							j = models.get(sm.getSelection()).getDatImages().getSlice(slice);
+						} catch (Exception e1){
+							e1.printStackTrace();
+						}
+						
+						j.squeeze();
+						
+						IDataset background = DummyProcessingClass.DummyProcess(sm, j, models.get(sm.getSelection()),
+								dms.get(sm.getSelection()), gms.get(sm.getSelection()), 
+								customComposite, paramField.getTabFolder().getSelectionIndex(), sel, 0);
+						dms.get(sm.getSelection()).setSlicerBackground(background);
+						
+						ILineTrace lt1 = VerticalHorizontalSlices.horizontalslice(customComposite2);
+						ILineTrace lt2 = VerticalHorizontalSlices.horizontalsliceBackgroundSubtracted(customComposite2, background);
+						
+						IDataset backSubTop = Maths.subtract(lt1.getYData(), lt2.getYData());
+						IDataset xTop = lt1.getXData();
+						ILineTrace lt12BackSub = customComposite2.getPlotSystem1().createLineTrace("background slice");
+						lt12BackSub.setData( xTop, backSubTop);
+						
+						
+						ILineTrace lt3 = VerticalHorizontalSlices.verticalslice(customComposite2);
+						ILineTrace lt4 = VerticalHorizontalSlices.verticalsliceBackgroundSubtracted(customComposite2,background);
+						
+						IDataset backSubSide = Maths.subtract(lt3.getYData(), lt4.getYData());
+						IDataset xSide = lt3.getYData();
+						ILineTrace lt34BackSub = customComposite2.getPlotSystem3().createLineTrace("background slice");
+						lt34BackSub.setData(backSubSide,xSide);
+						
+						customComposite2.getPlotSystem1().clear();
+						customComposite2.getPlotSystem1().addTrace(lt1);
+						customComposite2.getPlotSystem1().addTrace(lt2);
+						customComposite2.getPlotSystem1().addTrace(lt12BackSub);
+						customComposite2.getPlotSystem1().repaint();
+						customComposite2.getPlotSystem1().autoscaleAxes();
+						
+						customComposite2.getPlotSystem3().clear();
+						customComposite2.getPlotSystem3().addTrace(lt3);
+						customComposite2.getPlotSystem3().addTrace(lt4);
+						customComposite2.getPlotSystem3().addTrace(lt34BackSub);
+						customComposite2.getPlotSystem3().repaint();
+						customComposite2.getPlotSystem3().autoscaleAxes();
+					}
+			}
+		});
+		    
+	    
 	    
 //////////////////////////////////////////////////////////////////////////////////
 	    /////////////////Slider///////////////////////////
@@ -677,7 +767,7 @@ public class ExampleDialog extends Dialog {
 			
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				System.out.println("I got fired off 2 ");
+//				System.out.println("I got fired off 2 ");
 				customComposite.setModels(models.get(sm.getSelection()));
 
 				IDataset jl = PlotSystemCompositeDataSetter.imageSetter(models.get(sm.getSelection()), 0);
@@ -694,9 +784,7 @@ public class ExampleDialog extends Dialog {
 				customComposite2.getPlotSystem3().addTrace(VerticalHorizontalSlices.verticalslice(customComposite2));
 				customComposite2.getPlotSystem3().repaint();
 				customComposite2.getPlotSystem3().autoscaleAxes();
-				
-				
-				
+
 			}
 		});
 	    
@@ -708,107 +796,139 @@ public class ExampleDialog extends Dialog {
 		CharSequence f = "Fhkl";
 		CharSequence i = "Intensity";
 	    
-	    for( Button b: outputCurves.getDatSelector()){
-	    	b.addSelectionListener(new SelectionListener() {
+		outputCurves.getDatTable().addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				int det = 0;
+	    		
+	    		for(ITrace tr : outputCurves.getPlotSystem().getTraces()){
+	    			if (tr.getName().contains(f)){
+	    				det +=1;
+	    			}
+	    			else{
+	    				det-=1;
+	    			}
+	    		}
 				
-	    	
-				@Override
-				public void widgetSelected(SelectionEvent e) {
+				outputCurves.getPlotSystem().clear();
+				
+				ArrayList<TableItem> items = new ArrayList<>();
+				
+				for (int ni = 0; ni<outputCurves.getDatTable().getItemCount(); ni++){
 					
-					int det = 0;
-		    		
-		    		for(ITrace tr : outputCurves.getPlotSystem().getTraces()){
-		    			if (tr.getName().contains(f)){
-		    				det +=1;
-		    			}
-		    			else{
-		    				det-=1;
-		    			}
-		    		}
+					TableItem no = outputCurves.getDatTable().getItem(ni);
 					
-					outputCurves.getPlotSystem().clear();
-					for(Button b :outputCurves.getDatSelector()){
-						if (b.getSelection()){
-							ILineTrace lte = outputCurves.getPlotSystem().createLineTrace(b.getText());
+					if (no.getChecked()){
+						items.add(no);
+					}
+				}
+				
+				for(TableItem b :items){
+					
+						ILineTrace lte = outputCurves.getPlotSystem().createLineTrace(b.getText());
 
-							int p = (Arrays.asList(datDisplayer.getSelector().getItems())).indexOf(b.getText());
+						int p = (Arrays.asList(datDisplayer.getList().getItems())).indexOf(b.getText());
+						
+						if (dms.get(p).getyList() == null || dms.get(p).getxList() == null) {
 							
-							if (dms.get(p).getyList() == null || dms.get(p).getxList() == null) {
-								
-								IDataset filler  = dms.get(0).backupDataset();
-								lte.setData(filler, filler);
-							} else {
- 								if (det>=0){
- 									lte.setData(dms.get(p).xIDataset(),dms.get(p).yIDatasetFhkl());
- 									lte.setName(b.getText() + "_Fhkl");
- 								}
- 								else{
- 									lte.setData(dms.get(p).xIDataset(),dms.get(p).yIDataset());
- 									lte.setName(b.getText() + "_Intensity");
- 								}
-							}
-							
-							outputCurves.getPlotSystem().addTrace(lte);
+							IDataset filler  = dms.get(0).backupDataset();
+							lte.setData(filler, filler);
+						} else {
+								if (det>=0){
+									lte.setData(dms.get(p).xIDataset(),dms.get(p).yIDatasetFhkl());
+									lte.setName(b.getText() + "_Fhkl");
+								}
+								else{
+									lte.setData(dms.get(p).xIDataset(),dms.get(p).yIDataset());
+									lte.setName(b.getText() + "_Intensity");
+								}
 						}
+						
+						outputCurves.getPlotSystem().addTrace(lte);
 					}
-					
-					
-					try{
-					     if (outputCurves.getSc().getSelection() == true){
-					    	 if (CurveStateIdentifier.CurveStateIdentifier1(outputCurves.getPlotSystem()) == "f"){
-					    		 ILineTrace sct = outputCurves.getPlotSystem().createLineTrace("Spliced Curve_Fhkl");
-						    	 System.out.println("sct name:  " + sct.getName());
-									sct.setData(sm.getSplicedCurveX(), sm.getSplicedCurveYFhkl());
-									outputCurves.getPlotSystem().addTrace(sct);
-					    	 } else{
-					    		 ILineTrace sct = outputCurves.getPlotSystem().createLineTrace("Spliced Curve_Intensity");
-					    		 System.out.println("sct name:  " + sct.getName());
-								 sct.setData(sm.getSplicedCurveX(), sm.getSplicedCurveY());
-								 outputCurves.getPlotSystem().addTrace(sct);
-					    	 }
-					     }
-					    	 
-					     else{
-					    	 
-					    	 CharSequence chsq = "Spliced Curve";
-					     
-					    	 for(ITrace tr : outputCurves.getPlotSystem().getTraces()){
-									if (tr.getName().contains(chsq)){
-										outputCurves.getPlotSystem().removeTrace(tr);
-									}
-									else{
-										
-									}
-					    	 }
-					     }
-					}
-					catch (Exception e1){
-						e1.printStackTrace();
-					}
-					
+				
+				
+				
+				try{
+				     if (outputCurves.getSc().getSelection() == true){
+				    	 if (CurveStateIdentifier.CurveStateIdentifier1(outputCurves.getPlotSystem()) == "f"){
+				    		 ILineTrace sct = outputCurves.getPlotSystem().createLineTrace("Spliced Curve_Fhkl");
+					    	 System.out.println("sct name:  " + sct.getName());
+								sct.setData(sm.getSplicedCurveX(), sm.getSplicedCurveYFhkl());
+								outputCurves.getPlotSystem().addTrace(sct);
+				    	 } else{
+				    		 ILineTrace sct = outputCurves.getPlotSystem().createLineTrace("Spliced Curve_Intensity");
+				    		 System.out.println("sct name:  " + sct.getName());
+							 sct.setData(sm.getSplicedCurveX(), sm.getSplicedCurveY());
+							 outputCurves.getPlotSystem().addTrace(sct);
+				    	 }
+				     }
+				    	 
+				     else{
+				    	 
+				    	 CharSequence chsq = "Spliced Curve";
+				     
+				    	 for(ITrace tr : outputCurves.getPlotSystem().getTraces()){
+								if (tr.getName().contains(chsq)){
+									outputCurves.getPlotSystem().removeTrace(tr);
+								}
+								else{
+									
+								}
+				    	 }
+				     }
+				}
+				catch (Exception e1){
+					e1.printStackTrace();
 				}
 				
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
-	    	});
-		}
+			}
+			
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+	    
+	    	
+				
 	    
 /////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////Overlap setup////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
+//////////////////////////////////Keywords:  spliced, splice, overlap
+///////////////////////////////////curves
 	    
 	    
 	    outputCurves.getOverlap().addSelectionListener(new SelectionListener() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+								
+				ArrayList<TableItem> items = new ArrayList<>();
+				
+				for (int ni = 0; ni<outputCurves.getDatTable().getItemCount(); ni++){
+					
+					TableItem no = outputCurves.getDatTable().getItem(ni);
+					
+					if (no.getChecked()){
+						items.add(no);
+					}
+				}
+				
+				TableItem[] selectedTableItems = new TableItem[items.size()];
+				
+				for (int na = 0; na<items.size(); na++){
+					
+					selectedTableItems[na] = items.get(na);
+				}
 				
 				StitchedOutput.curveStitch(outputCurves.getPlotSystem(),
-						outputCurves.getDatSelector(),
+						selectedTableItems,
 						dms, sm, datDisplayer);
 				
 				outputCurves.addToDatSelector();
@@ -851,15 +971,30 @@ public class ExampleDialog extends Dialog {
 			}
 		});
 
-///////////////////////////Save Spliced Curve GenX/////////////////////////////////////////////////
+///////////////////////////Save Spliced Curve GenX//////////////////////////
+/////////////////////////Keywords: save, output, GenX file, output curve, spliced curve
+	    
 	    outputCurves.getSave().addSelectionListener(new SelectionListener() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
 				
-				String firstFile = StringUtils.substringBeforeLast(outputCurves.getPlotSystem().getTraces().iterator().next().getName(), ".");
+				FileDialog fd = new FileDialog(getParentShell(), SWT.OPEN); 
 				
+				String stitle = "r";
+				String path = "p";
+				
+				if (fd.open() != null) {
+					stitle = fd.getFileName();
+					path = fd.getFilterPath();
+					System.out.println(path);
+					System.out.println(stitle);
+				
+				}
+				
+				String title = path + File.separator + stitle;
+				
+	
 				String[] dmnames= new String [dms.size()];
 				
 				for (int v = 0; v<dms.size(); v++){
@@ -870,12 +1005,11 @@ public class ExampleDialog extends Dialog {
 				
 				IDataset outputDatY = DatasetFactory.ones(new int[] {1});
 				
-				
 				String s = gms.get(sm.getSelection()).getSavePath();
 
 				
 				try {
-					File file = new File(s + File.separator + firstFile + "_Output.txt");
+					File file = new File(title);
 					//file.getParentFile().mkdirs(); 
 					file.createNewFile();
 					writer = new PrintWriter(file);
@@ -886,7 +1020,6 @@ public class ExampleDialog extends Dialog {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				
 				
 				SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
 			    Date now = new Date();
@@ -899,8 +1032,6 @@ public class ExampleDialog extends Dialog {
 				ILazyDataset h = SXRDGeometricCorrections.geth(models.get(sm.getSelection()));
 				ILazyDataset k = SXRDGeometricCorrections.getk(models.get(sm.getSelection()));
 				ILazyDataset l = SXRDGeometricCorrections.getl(models.get(sm.getSelection()));
-				
-				
 				
 				for (int tn = 0 ; tn< dmnames.length; tn++){
 					if (outputCurves.getPlotSystem().getTraces().iterator().next().getName().contains(dmnames[tn])){
@@ -1109,6 +1240,8 @@ public class ExampleDialog extends Dialog {
 				m.setFitPower(fp.getFitPower());
 				m.setBoundaryBox(fp.getBoundaryBox());
 				m.setMethodology(fp.getBgMethod());
+				m.setSliderPos(fp.getSliderPos());
+				
 				
 				customComposite1.setMethodologyDropDown(fp.getBgMethod());
 				customComposite1.setFitPowerDropDown(fp.getFitPower());
@@ -1132,10 +1265,8 @@ public class ExampleDialog extends Dialog {
 		
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println("test statement");
 				
 				FileDialog fd = new FileDialog(getParentShell(), SWT.SAVE); 
-				System.out.println("test statement");
 				ExampleModel m = models.get(sm.getSelection());
 	
 				String stitle = "r";
@@ -1150,19 +1281,16 @@ public class ExampleDialog extends Dialog {
 				
 				}
 				
-
-				
-				
-				
 				String s = gms.get(sm.getSelection()).getSavePath();
 				String title = path + File.separator + stitle + ".txt";
-				System.out.println("test statement");
 				System.out.println(title);
 				
 				FittingParametersOutput.FittingParametersOutputTest(title, 
 						m.getLenPt()[1][0], m.getLenPt()[1][1],
 						m.getLenPt()[0][0], m.getLenPt()[0][1], 
-						m.getMethodology(), m.getTrackerType(), m.getFitPower(), m.getBoundaryBox());
+						m.getMethodology(), m.getTrackerType(), 
+						m.getFitPower(), m.getBoundaryBox(), 
+						m.getSliderPos(), m.getFilepath());
 		}
 		
 		@Override
@@ -1172,8 +1300,106 @@ public class ExampleDialog extends Dialog {
 		}
 		});	    
 			    
-			    
-			    
+/////////////////////////// Load / Select Files from tree//////////////////////////////////////////////////			    
+		datDisplayer.getSelectFiles().addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				FileDialog fd = new FileDialog(getParentShell(), SWT.MULTI); 
+	
+				String[] stitle = new String [] {"empty"};
+				String path = "p";
+				
+				
+				if (fd.open() != null) {
+					stitle = fd.getFileNames();
+					path = fd.getFilterPath();
+				}
+				
+				
+				String[] newPaths = new String[stitle.length];
+				
+				for(int i =0; i<stitle.length; i++){
+					newPaths[i] = path + File.separator + stitle[i];
+				}
+			
+				gms.clear();
+				dms.clear();
+				models.clear();
+				datDisplayer.getList().removeAll();
+				sm.clearFilepaths();
+				
+				filepaths = newPaths;
+				sm.setFilepaths(filepaths);
+				sm.setSelection(0);
+				
+				for (int id = 0; id<stitle.length; id++){ 
+					try {
+						
+						dms.add(new DataModel());
+						gms.add(new GeometricParametersModel());
+						
+						IDataHolder dh1 =LoaderFactory.getData(filepaths[id]);
+						ILazyDataset ild =dh1.getLazyDataset(gms.get(sm.getSelection()).getImageName());
+						models.add(new ExampleModel());
+						
+						dms.get(id).setName(StringUtils.substringAfterLast(sm.getFilepaths()[id], File.separator));
+						models.get(id).setDatImages(ild);
+						models.get(id).setFilepath(filepaths[id]);
+						
+						customComposite.getBoxPosition(id);
+						
+						if (sm.getCorrectionSelection() == 0){
+							ILazyDataset ildx =dh1.getLazyDataset(gms.get(sm.getSelection()).getxName()); 
+							models.get(id).setDatX(ildx);
+						}
+						else if (sm.getCorrectionSelection() == 1){
+							ILazyDataset ildx =dh1.getLazyDataset(gms.get(sm.getSelection()).getxNameRef()); 
+							models.get(id).setDatX(ildx);
+							
+							ILazyDataset dcdtheta = dh1.getLazyDataset( ReflectivityMetadataTitlesForDialog.getdcdtheta());
+							models.get(id).setDcdtheta(dcdtheta);
+							
+							ILazyDataset qdcd = dh1.getLazyDataset( ReflectivityMetadataTitlesForDialog.getqdcd());
+							models.get(id).setQdcd(qdcd);
+								
+								
+							if (dcdtheta == null){
+								try{
+							    	dcdtheta = dh1.getLazyDataset(ReflectivityMetadataTitlesForDialog.getsdcdtheta());
+							    	models.get(id).setDcdtheta(dcdtheta);
+								} catch (Exception e2){
+									System.out.println("can't get dcdtheta");
+								}
+							}
+							else{
+							}
+							
+							
+						}
+						else{
+						}	
+					
+					datDisplayer.setList(filepaths);
+					outputCurves.setDatTable(sm);
+					
+					} 
+					
+					catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 			    
 ///////////////////////////////////////////////////////////////////////////////////////////////
 	    customComposite2.getLeft().addControlListener(new ControlListener() {
@@ -1268,11 +1494,11 @@ public class ExampleDialog extends Dialog {
 						IDataHolder dh1 =LoaderFactory.getData(filepaths[id]);
 						
 						if (sm.getCorrectionSelection() == 0){
-							ILazyDataset ildx =dh1.getLazyDataset(gm.getxName()); 
+							ILazyDataset ildx =dh1.getLazyDataset(gms.get(sm.getSelection()).getxName()); 
 							models.get(id).setDatX(ildx);
 						}
 						else if (sm.getCorrectionSelection() == 1){
-							ILazyDataset ildx =dh1.getLazyDataset(gm.getxNameRef()); 
+							ILazyDataset ildx =dh1.getLazyDataset(gms.get(sm.getSelection()).getxNameRef()); 
 							models.get(id).setDatX(ildx);
 							
 							ILazyDataset dcdtheta = dh1.getLazyDataset(ReflectivityMetadataTitlesForDialog.getdcdtheta());
@@ -1282,7 +1508,7 @@ public class ExampleDialog extends Dialog {
 							models.get(id).setQdcd(qdcd);
 							
 							if ((boolean) (gms.get(id).getFluxPath().equalsIgnoreCase("NO") 
-									||(gm.getFluxPath().equalsIgnoreCase(null)))) {
+									||(gms.get(sm.getSelection()).getFluxPath().equalsIgnoreCase(null)))) {
 								try { 
 									ILazyDataset flux = dh1.getLazyDataset( ReflectivityMetadataTitlesForDialog.getionc1());
 									models.get(id).setFlux(flux);
@@ -1395,7 +1621,7 @@ public class ExampleDialog extends Dialog {
 					oJ.setSuperModel(sm);
 					oJ.setDm(dms.get(g));
 					oJ.setModel(models.get(g));
-					oJ.setGeoModel(gm);;
+					oJ.setGeoModel(gms.get(sm.getSelection()));
 					oJ.setPlotSystem(customComposite1.getPlotSystem());
 					oJ.run(null);	
 					System.out.println("g value: " + g);
@@ -1604,7 +1830,7 @@ public class ExampleDialog extends Dialog {
 		private DataModel dm;
 		private PlotSystemComposite plotSystemComposite;
 		private int imageNo;
-		private MultipleOutputCurves outputCurves;
+		private MultipleOutputCurvesTable outputCurves;
 		
 		
 		public void setPlotSystemComposite(PlotSystemComposite customComposite) {
@@ -1664,7 +1890,7 @@ public class ExampleDialog extends Dialog {
 		private DataModel dm;
 		private ExampleModel model;
 		private IPlottingSystem<Composite> plotSystem;
-		private MultipleOutputCurves outputCurves;
+		private MultipleOutputCurvesTable outputCurves;
 		private GeometricParametersModel gm;
 		private SuperModel sm;
 		private PlotSystem1Composite customComposite1;
@@ -1687,7 +1913,7 @@ public class ExampleDialog extends Dialog {
 			this.customComposite1 = customComposite1;
 		}
 		
-		public void setOutputCurves(MultipleOutputCurves outputCurves) {
+		public void setOutputCurves(MultipleOutputCurvesTable outputCurves) {
 			this.outputCurves = outputCurves;
 		}
 		
@@ -1737,7 +1963,7 @@ public class ExampleDialog extends Dialog {
 			if (model.getSliderPos() == 0){ 
 				for ( k = 0; k<model.getDatImages().getShape()[0]; k++){
 					
-					System.out.println("k value :   " + k);
+//					System.out.println("k value :   " + k);
 					
 					int trackingMarker = 0;
 					IDataset j = null;
@@ -1752,7 +1978,7 @@ public class ExampleDialog extends Dialog {
 							//slice.setSlice(0, 0, 1, 1);
 							dm.addxList(model.getDatImages().getShape()[0], k,(model.getDatX().getSlice(slicex)).getDouble(0));
 							
-							System.out.println("Added to xList:  " + k);
+//							System.out.println("Added to xList:  " + k);
 								
 						} catch (DatasetException e2) {
 								// TODO Auto-generated catch block
@@ -1764,7 +1990,7 @@ public class ExampleDialog extends Dialog {
 								//slice.setSlice(0, 0, 1, 1);
 							dm.addxList(model.getDatImages().getShape()[0], k,(model.getDatX().getSlice(slicex)).getDouble(0));
 							
-							System.out.println("Added to xList:  " + k);
+//							System.out.println("Added to xList:  " + k);
 							
 						} catch (DatasetException e2) {
 								// TODO Auto-generated catch block

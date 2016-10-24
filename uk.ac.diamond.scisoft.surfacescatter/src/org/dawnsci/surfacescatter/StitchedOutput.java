@@ -11,6 +11,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TableItem;
 
 public class StitchedOutput {
 	
@@ -19,17 +20,16 @@ public class StitchedOutput {
 //	private static double correctionRatio;
 //	private static double correctionRatioFhkl;
 	
-	public  static IDataset[][] curveStitch (IPlottingSystem<Composite> plotSystem, ArrayList<Button> datSelector
+	public  static IDataset[][] curveStitch (IPlottingSystem<Composite> plotSystem, TableItem[] selectedTableItems
 			, ArrayList<DataModel> dms, SuperModel sm, DatDisplayer datDisplayer ){
 		
 		ArrayList<IDataset> xArrayList = new ArrayList<>();
 		ArrayList<IDataset> yArrayList = new ArrayList<>();
 		ArrayList<IDataset> yArrayListFhkl = new ArrayList<>();
 		
-		for(int b = 0;b<datSelector.size();b++){
-			if (datSelector.get(b).getSelection()){
+		for(int b = 0;b<selectedTableItems.length;b++){
 				
-				int p = (Arrays.asList(datDisplayer.getSelector().getItems())).indexOf(datSelector.get(b).getText());
+				int p = (Arrays.asList(datDisplayer.getList().getItems())).indexOf(selectedTableItems[b].getText());
 				
 				if (dms.get(p).getyList() == null || dms.get(p).getxList() == null) {
 					
@@ -38,7 +38,7 @@ public class StitchedOutput {
 						yArrayList.add(dms.get(p).yIDataset());
 						yArrayListFhkl.add(dms.get(p).yIDatasetFhkl());
 		    		}
-				}
+				
 		}
 		
 		IDataset[] xArray= new IDataset[xArrayList.size()];

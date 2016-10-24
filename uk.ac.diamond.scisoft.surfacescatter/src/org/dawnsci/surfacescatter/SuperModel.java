@@ -15,6 +15,10 @@ public class SuperModel {
 	private IDataset splicedCurveYFhkl;
 	private int correctionSelection = 0;
 
+	public void clearFilepaths(){
+		filepaths = null;
+	}
+	
 	public String[] getFilepaths() {
 		return filepaths;
 	}

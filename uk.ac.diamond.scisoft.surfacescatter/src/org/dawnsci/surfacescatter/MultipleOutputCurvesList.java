@@ -13,6 +13,7 @@ import org.eclipse.dawnsci.plotting.api.region.IRegion;
 import org.eclipse.dawnsci.plotting.api.region.IRegion.RegionType;
 import org.eclipse.dawnsci.plotting.api.trace.ILineTrace;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -25,7 +26,7 @@ import org.eclipse.swt.widgets.List;
 import uk.ac.diamond.scisoft.analysis.io.ASCIIDataWithHeadingSaver;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 
-public class MultipleOutputCurves extends Composite {
+public class MultipleOutputCurvesList extends Composite {
 
 	private IPlottingSystem<Composite> plotSystem4;
 	private IRegion imageNo;
@@ -41,8 +42,9 @@ public class MultipleOutputCurves extends Composite {
 	private Group overlapSelection;
 	private Composite parent;
 	private List datList;
+	private ScrolledComposite datScrolled;
 	
-	public MultipleOutputCurves(Composite parent, int style, ArrayList<ExampleModel> models, ArrayList<DataModel> dms,
+	public MultipleOutputCurvesList(Composite parent, int style, ArrayList<ExampleModel> models, ArrayList<DataModel> dms,
 			SuperModel sm) {
 		super(parent, style);
 
@@ -65,8 +67,25 @@ public class MultipleOutputCurves extends Composite {
 	}
 
 	public void createContents(ExampleModel model, SuperModel sm, DataModel dm) {
-
-		datSelection = new Group(this, SWT.NULL);
+		
+		Group topGroup = new Group(this, SWT.NULL);
+		topGroup.setText("Data Selection");
+		GridLayout topGroupLayout = new GridLayout(1, true);
+		GridData topGroupData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		topGroupData.minimumWidth = 50;
+		topGroup.setLayout(topGroupLayout);
+		topGroup.setLayoutData(topGroupData);
+		
+		
+		datScrolled = new ScrolledComposite(topGroup, SWT.V_SCROLL);
+		GridLayout datScrolledLayout = new GridLayout(1, true);
+		GridData datScrolledData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		datScrolled.setLayout(datScrolledLayout);
+		datScrolled.setLayoutData(datScrolledData);
+		
+		
+		datSelection = new Group(datScrolled, SWT.NULL);
+		
 		GridLayout datSelectionLayout = new GridLayout(4, true);
 		GridData datSelectionData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		datSelectionData.minimumWidth = 50;
@@ -75,11 +94,16 @@ public class MultipleOutputCurves extends Composite {
 		datSelection.setText("Available Data Files");
 
 		datSelector = new ArrayList<Button>();
-
+		
 		for (int i = 0; i < sm.getFilepaths().length; i++) {
 			datSelector.add(new Button(datSelection, SWT.CHECK));
 			datSelector.get(i).setText(StringUtils.substringAfterLast(sm.getFilepaths()[i], "/"));
 		}
+		
+		datScrolled.setContent(datSelection);
+		datScrolled.setExpandHorizontal(true);
+		datScrolled.setExpandVertical(true);
+		datScrolled.setMinSize(datSelector.get(0).computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		
 		overlapSelection = new Group(this, SWT.NULL);
 		GridLayout overlapSelectionLayout = new GridLayout(4, true);
@@ -239,5 +263,15 @@ public class MultipleOutputCurves extends Composite {
 	public Button getSave(){
 		return save;
 	}
+	
+	public void setDatSelector(SuperModel sm){
+		datSelector.clear();
+		for (int i = 0; i < sm.getFilepaths().length; i++) {
+			datSelector.add(new Button(datSelection, SWT.CHECK));
+			datSelector.get(i).setText(StringUtils.substringAfterLast(sm.getFilepaths()[i], "/"));
+		}
+		this.layout();
+	}
+	
 	
 }

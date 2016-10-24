@@ -16,7 +16,7 @@ public class FittingParametersOutput {
 	private static PrintWriter writer;
 
 	public static void FittingParametersOutputTest (String title, int pt0, int pt1, int len0, int len1, Methodology bgMethod,
-			TrackerType1 tracker, FitPower fitPower, int boundaryBox){
+			TrackerType1 tracker, FitPower fitPower, int boundaryBox, int sliderPos, String sourceFile){
 		
 		try {
 			File file = new File(title);
@@ -37,12 +37,12 @@ public class FittingParametersOutput {
 	    
 		writer.println("# Test file created: " + strDate);
 		writer.println("# Headers: ");
-		writer.println("#pt[0]	pt[1]	len[0]	len[1]	BgMethod	Tracker	FitPower	BoundaryBox");
+		writer.println("#pt[0]	pt[1]	len[0]	len[1]	BgMethod	Tracker	FitPower	BoundaryBox 	 SliderPosition	File");
 		
 		
 		writer.println(Integer.toString(pt0) +"	"+ Integer.toString(pt1) +"	"+ Integer.toString(len0) + 
 			"	"+ Integer.toString(len1) + "	"+ AnalaysisMethodologies.toString(bgMethod) + "	"+  TrackingMethodology.toString(tracker) 
-			+ "	"+ fitPower.toString() + "	"+ Integer.toString(boundaryBox));
+			+ "	"+ fitPower.toString() + "	"+ Integer.toString(boundaryBox)  + "	"+ Integer.toString(sliderPos)  + "	"+ sourceFile);
 		
 		writer.close();
 	}

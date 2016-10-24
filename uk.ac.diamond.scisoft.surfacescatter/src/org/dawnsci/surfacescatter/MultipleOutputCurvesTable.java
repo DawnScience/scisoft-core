@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
 import org.dawb.common.ui.widgets.ActionBarWrapper;
-import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.dawnsci.plotting.api.PlotType;
 import org.eclipse.dawnsci.plotting.api.PlottingFactory;
@@ -13,6 +11,7 @@ import org.eclipse.dawnsci.plotting.api.region.IRegion;
 import org.eclipse.dawnsci.plotting.api.region.IRegion.RegionType;
 import org.eclipse.dawnsci.plotting.api.trace.ILineTrace;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -21,18 +20,17 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 
-import uk.ac.diamond.scisoft.analysis.io.ASCIIDataWithHeadingSaver;
-import uk.ac.diamond.scisoft.analysis.io.DataHolder;
-
-public class MultipleOutputCurves extends Composite {
+public class MultipleOutputCurvesTable extends Composite {
 
 	private IPlottingSystem<Composite> plotSystem4;
 	private IRegion imageNo;
 	private ILineTrace lt;
 	private ExampleModel model;
 	private DataModel dm;
-	private ArrayList<Button> datSelector;
+	private ArrayList<TableItem> datSelector;
 	private Button overlap;
 	private Button sc;
 	private Button save;
@@ -41,8 +39,10 @@ public class MultipleOutputCurves extends Composite {
 	private Group overlapSelection;
 	private Composite parent;
 	private List datList;
+	private ScrolledComposite datScrolled;
+	private Table datTable;
 	
-	public MultipleOutputCurves(Composite parent, int style, ArrayList<ExampleModel> models, ArrayList<DataModel> dms,
+	public MultipleOutputCurvesTable (Composite parent, int style, ArrayList<ExampleModel> models, ArrayList<DataModel> dms,
 			SuperModel sm) {
 		super(parent, style);
 
@@ -65,20 +65,29 @@ public class MultipleOutputCurves extends Composite {
 	}
 
 	public void createContents(ExampleModel model, SuperModel sm, DataModel dm) {
-
-		datSelection = new Group(this, SWT.NULL);
-		GridLayout datSelectionLayout = new GridLayout(4, true);
-		GridData datSelectionData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		datSelectionData.minimumWidth = 50;
-		datSelection.setLayout(datSelectionLayout);
-		datSelection.setLayoutData(datSelectionData);
-		datSelection.setText("Available Data Files");
-
-		datSelector = new ArrayList<Button>();
-
+		
+//		Group topGroup = new Group(this, SWT.NULL);
+//		topGroup.setText("Data Selection");
+//		GridLayout topGroupLayout = new GridLayout(1, true);
+//		GridData topGroupData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+//		topGroupData.heightHint = 30;
+//		topGroupData.minimumWidth = 50;
+//		topGroup.setLayout(topGroupLayout);
+//		topGroup.setLayoutData(topGroupData);
+//		
+		datTable = new Table(this, SWT.MULTI | SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
+		GridData datTableData = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+		datTableData.heightHint = 5;
+		datTable.setLayoutData(datTableData);
+//		datTable.setHeaderVisible(true);
+		
+		
+		datSelector = new ArrayList<>();
+		
 		for (int i = 0; i < sm.getFilepaths().length; i++) {
-			datSelector.add(new Button(datSelection, SWT.CHECK));
-			datSelector.get(i).setText(StringUtils.substringAfterLast(sm.getFilepaths()[i], "/"));
+			TableItem it = new  TableItem(datTable, SWT.NONE);
+			it.setText(StringUtils.substringAfterLast(sm.getFilepaths()[i], "/"));
+			datSelector.add(it);
 		}
 		
 		overlapSelection = new Group(this, SWT.NULL);
@@ -135,7 +144,6 @@ public class MultipleOutputCurves extends Composite {
 		try {
 			imageNo = plotSystem4.createRegion("Image", RegionType.XAXIS_LINE);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -184,26 +192,17 @@ public class MultipleOutputCurves extends Composite {
 		} else if (intensity == true) {
 			lt.setData(dm1.xIDataset(), dm1.yIDataset());
 			lt.setName(dm1.getName()+ "_Intensity");
-//			System.out.println("doin' intensity");
 		
 		}else{
 			lt.setData(dm1.xIDataset(), dm1.yIDatasetFhkl());
 			lt.setName(dm1.getName()+ "_Fhkl");
-//			System.out.println("doin' fhkl");
 		}
 		
-//		System.out.println("IN MultipleOutput updateCuve");
-//		System.out.println("dm1 xIDataset: " + dm1.xIDataset().getSize());
-//		System.out.println("dm1 yIDataset: " + dm1.yIDataset().getSize());
 		plotSystem4.clear();
 		plotSystem4.addTrace(lt);
 		plotSystem4.repaint();
 		
 
-	}
-
-	public ArrayList<Button> getDatSelector() {
-		return datSelector;
 	}
 	
 	public Button getOverlap(){
@@ -240,4 +239,20 @@ public class MultipleOutputCurves extends Composite {
 		return save;
 	}
 	
+	public void setDatTable(SuperModel sm){
+		datTable.removeAll();;
+		for (int i = 0; i < sm.getFilepaths().length; i++) {
+			TableItem it = new  TableItem(datTable, SWT.NONE);
+			it.setText(StringUtils.substringAfterLast(sm.getFilepaths()[i], "/"));
+		}
+		this.layout();
+	}
+	
+	public Table getDatTable(){
+		return datTable;
+	}
+	
+	public ArrayList<TableItem> getDatSelector(){
+		return datSelector;
+	}
 }

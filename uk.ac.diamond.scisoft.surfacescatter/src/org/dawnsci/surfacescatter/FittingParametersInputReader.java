@@ -33,6 +33,9 @@ public class FittingParametersInputReader {
 	            fp.setTracker(TrackingMethodology.toTracker1(columns[5]));
 	            fp.setFitPower(AnalaysisMethodologies.toFitPower(columns[6]));
 		        fp.setBoundaryBox(Integer.parseInt(columns[7]));
+		        fp.setSliderPos(Integer.parseInt(columns[8]));
+		        fp.setFile(columns[9]);
+		        
 	        }
 	    }
 	    

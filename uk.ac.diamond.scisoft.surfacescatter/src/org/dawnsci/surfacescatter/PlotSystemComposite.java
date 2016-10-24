@@ -17,6 +17,7 @@ import org.eclipse.january.dataset.SliceND;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
@@ -71,7 +72,7 @@ public class PlotSystemComposite extends Composite {
 //        slider = new Slider(this, SWT.HORIZONTAL);
         
         slider.setMinimum(0);
-	    slider.setMaximum(model.getDatImages().getShape()[0]);
+	    slider.setMaximum(models.get(sm.getSelection()).getDatImages().getShape()[0]);
 	    slider.setIncrement(1);
 	    slider.setThumb(1);
         
@@ -198,6 +199,12 @@ public class PlotSystemComposite extends Composite {
 		RectangularROI newROI = new RectangularROI(lenpt[1][0],lenpt[1][1],lenpt[0][0],lenpt[0][1],0);
 		region.setROI(newROI);
 	}
+
+	public IRegion getGreenRegion(){
+		return region;
+	}
+
+
 }
     
 

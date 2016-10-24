@@ -43,6 +43,7 @@ import uk.ac.diamond.scisoft.analysis.io.LoaderServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
+import uk.ac.diamond.scisoft.analysis.processing.visitor.NexusFileExecutionVisitor;
 
 public class ExampleOperationsTest {
 	
@@ -102,7 +103,7 @@ public class ExampleOperationsTest {
 
 			@Override
 			public IExecutionVisitor getExecutionVisitor(String fileName) {
-				return new HierarchicalFileExecutionVisitor(fileName);
+				return new NexusFileExecutionVisitor(fileName);
 			}
 
 			@Override
@@ -199,7 +200,7 @@ public class ExampleOperationsTest {
 
 			@Override
 			public IExecutionVisitor getExecutionVisitor(String fileName) {
-				return new HierarchicalFileExecutionVisitor(fileName);
+				return new NexusFileExecutionVisitor(fileName);
 			}
 
 			@Override
@@ -284,7 +285,7 @@ public class ExampleOperationsTest {
 
 			@Override
 			public IExecutionVisitor getExecutionVisitor(String fileName) {
-				return new HierarchicalFileExecutionVisitor(fileName);
+				return new NexusFileExecutionVisitor(fileName);
 			}
 
 			@Override

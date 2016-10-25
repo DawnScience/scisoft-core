@@ -234,7 +234,7 @@ class NXLoader(HDF5Loader):
         elif node.name == '/':
             g = _nx.NXroot(node.filename, attrs)
         else:
-            g = _nx.NXgroup(attrs, parent)
+            g = _nx.NXobject(attrs, parent)
 
         return g
 

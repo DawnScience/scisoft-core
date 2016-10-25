@@ -31,7 +31,10 @@ class NeXusError(Exception):
     '''NeXus Error'''
     pass
 
-class NXgroup(_group):
+class NXobject(_group):
+    '''
+    NXobject is the base object of NeXus and is a group
+    '''
     def __init__(self, attrs={}, parent=None):
         _group.__init__(self, attrs, parent)
         self.nxname = self.__class__.__name__
@@ -43,9 +46,9 @@ class NXgroup(_group):
 
 class NXroot(_tree):
     '''
-    NXroot node. This is a subclass of the NXgroup class.
+    NXroot node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     def __init__(self, filename, attrs={}):
         _tree.__init__(self, filename, attrs)
@@ -56,9 +59,9 @@ class NXroot(_tree):
         _tree.init_group(self, nodes)
         self.nxname = n
 
-class NXentry(NXgroup):
+class NXentry(NXobject):
     '''
-    NXentry node. This is a subclass of the NXgroup class.
+    NXentry node. This is a subclass of the NXobject class.
 
     Each NXdata and NXmonitor object of the same name will be added
     together, raising an NeXusError if any of the groups do not exist 
@@ -67,7 +70,7 @@ class NXentry(NXgroup):
     contained in the first group. Note that other extensible data, such 
     as the run duration, are not currently added together. 
 
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     def __add__(self, other):
         '''
@@ -113,9 +116,9 @@ class NXentry(NXgroup):
         except KeyError:
             raise NeXusError, "Inconsistency between two NXentry groups"
 
-class NXdata(NXgroup):
+class NXdata(NXobject):
     '''
-    NXdata node. This is a subclass of the NXgroup class.
+    NXdata node. This is a subclass of the NXobject class.
     
     The constructor assumes that the first argument contains the signal and
     the second contains either the axis, for one-dimensional data, or a list
@@ -152,11 +155,11 @@ class NXdata(NXgroup):
           @axes = axis1:axis2
           @signal = 1    
 
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 #    def __init__(self, signal=None, axes=(), *items, **opts):
-#        NXgroup.__init__(self, *items, **opts)
+#        NXobject.__init__(self, *items, **opts)
 #        if signal is not None:
 #            signalname = self._setSDS(signal, "signal")
 #            self.__dict__[signalname].signal = 1
@@ -176,7 +179,7 @@ class NXmonitor(NXdata):
     '''
     NXmonitor node. This is a subclass of the NXdata class.
     
-    See the NXdata and NXgroup documentation for more details.
+    See the NXdata and NXobject documentation for more details.
     '''
     pass
 #    def __init__(self, signal=None, axes=(), *items, **opts):
@@ -184,308 +187,395 @@ class NXmonitor(NXdata):
 #        if "nxname" not in opts.keys():
 #            self.nxname = "monitor"
 
-class NXsample(NXgroup):
+class NXaperture(NXobject):
     '''
-    NXsample node. This is a subclass of the NXgroup class.
+    NXaperture node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXinstrument(NXgroup):
+class NXattenuator(NXobject):
     '''
-    NXinstrument node. This is a subclass of the NXgroup class.
+    NXattenuator node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXaperture(NXgroup):
+class NXbeam(NXobject):
     '''
-    NXaperture node. This is a subclass of the NXgroup class.
+    NXbeam node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXattenuator(NXgroup):
+class NXbeam_stop(NXobject):
     '''
-    NXattenuator node. This is a subclass of the NXgroup class.
+    NXbeam_stop node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXbeam_stop(NXgroup):
+class NXbending_magnet(NXobject):
     '''
-    NXbeam_stop node. This is a subclass of the NXgroup class.
+    NXbending_magnet node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXbending_magnet(NXgroup):
+class NXcapillary(NXobject):
     '''
-    NXbending_magnet node. This is a subclass of the NXgroup class.
+    NXcapillary node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXcollimator(NXgroup):
+class NXcharacterization(NXobject):
     '''
-    NXcollimator node. This is a subclass of the NXgroup class.
+    NXcharacterization node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXcrystal(NXgroup):
+class NXcite(NXobject):
     '''
-    NXcrystal node. This is a subclass of the NXgroup class.
+    NXcite node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXdetector(NXgroup):
+class NXcollection(NXobject):
     '''
-    NXdetector node. This is a subclass of the NXgroup class.
+    NXcollection node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXdisk_chopper(NXgroup):
+class NXcollimator(NXobject):
     '''
-    NXdisk_chopper node. This is a subclass of the NXgroup class.
+    NXcollimator node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXfermi_chopper(NXgroup):
+class NXcrystal(NXobject):
     '''
-    NXfermi_chopper node. This is a subclass of the NXgroup class.
+    NXcrystal node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXfilter(NXgroup):
+class NXdetector(NXobject):
     '''
-    NXfilter node. This is a subclass of the NXgroup class.
+    NXdetector node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXflipper(NXgroup):
+class NXdetector_group(NXobject):
     '''
-    NXflipper node. This is a subclass of the NXgroup class.
+    NXdetector_group node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXguide(NXgroup):
+class NXdetector_module(NXobject):
     '''
-    NXguide node. This is a subclass of the NXgroup class.
+    NXdetector_module node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXinsertion_device(NXgroup):
+class NXdisk_chopper(NXobject):
     '''
-    NXinsertion_device node. This is a subclass of the NXgroup class.
+    NXdisk_chopper node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXmirror(NXgroup):
+class NXenvironment(NXobject):
     '''
-    NXmirror node. This is a subclass of the NXgroup class.
+    NXenvironment node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXmoderator(NXgroup):
+class NXevent_data(NXobject):
     '''
-    NXmoderator node. This is a subclass of the NXgroup class.
+    NXevent_data node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXmonochromator(NXgroup):
+class NXfermi_chopper(NXobject):
     '''
-    NXmonochromator node. This is a subclass of the NXgroup class.
+    NXfermi_chopper node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXpolarizer(NXgroup):
+class NXfilter(NXobject):
     '''
-    NXpolarizer node. This is a subclass of the NXgroup class.
+    NXfilter node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXpositioner(NXgroup):
+class NXflipper(NXobject):
     '''
-    NXpositioner node. This is a subclass of the NXgroup class.
+    NXflipper node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXsource(NXgroup):
+class NXfresnel_zone_plate(NXobject):
     '''
-    NXsource node. This is a subclass of the NXgroup class.
+    NXfresnel_zone_plate node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXvelocity_selector(NXgroup):
+class NXgeometry(NXobject):
     '''
-    NXvelocity_selector node. This is a subclass of the NXgroup class.
+    NXgeometry node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXevent_data(NXgroup):
+class NXgrating(NXobject):
     '''
-    NXevent_data node. This is a subclass of the NXgroup class.
+    NXgrating node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXuser(NXgroup):
+class NXguide(NXobject):
     '''
-    NXuser node. This is a subclass of the NXgroup class.
+    NXguide node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXparameter(NXgroup):
+class NXinsertion_device(NXobject):
     '''
-    NXparameter node. This is a subclass of the NXgroup class.
+    NXinsertion_device node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXprocess(NXgroup):
+class NXinstrument(NXobject):
     '''
-    NXprocess node. This is a subclass of the NXgroup class.
+    NXinstrument node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXcharacterization(NXgroup):
+class NXlog(NXobject):
     '''
-    NXcharacterization node. This is a subclass of the NXgroup class.
+    NXlog node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXlog(NXgroup):
+class NXmirror(NXobject):
     '''
-    NXlog node. This is a subclass of the NXgroup class.
+    NXmirror node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-
-class NXnote(NXgroup):
+class NXmoderator(NXobject):
     '''
-    NXnote node. This is a subclass of the NXgroup class.
+    NXmoderator node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXbeam(NXgroup):
+class NXmonochromator(NXobject):
     '''
-    NXbeam node. This is a subclass of the NXgroup class.
+    NXmonochromator node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXgeometry(NXgroup):
+class NXnote(NXobject):
     '''
-    NXgeometry node. This is a subclass of the NXgroup class.
+    NXnote node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXtranslation(NXgroup):
+class NXorientation(NXobject):
     '''
-    NXtranslation node. This is a subclass of the NXgroup class.
+    NXorientation node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXshape(NXgroup):
+class NXparameters(NXobject):
     '''
-    NXshape node. This is a subclass of the NXgroup class.
+    NXparameters node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXorientation(NXgroup):
+class NXpinhole(NXobject):
     '''
-    NXorientation node. This is a subclass of the NXgroup class.
+    NXpinhole node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXenvironment(NXgroup):
+class NXpolarizer(NXobject):
     '''
-    NXenvironment node. This is a subclass of the NXgroup class.
+    NXpolarizer node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXsensor(NXgroup):
+class NXpositioner(NXobject):
     '''
-    NXsensor node. This is a subclass of the NXgroup class.
+    NXpositioner node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXgoniometer(NXgroup):
+class NXprocess(NXobject):
     '''
-    NXgoniometer node. This is a subclass of the NXgroup class.
+    NXprocess node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
     '''
     pass
 
-class NXgrating(NXgroup):
+class NXsample(NXobject):
     '''
-    NXgrating node. This is a subclass of the NXgroup class.
+    NXsample node. This is a subclass of the NXobject class.
     
-    See the NXgroup documentation for more details.
+    See the NXobject documentation for more details.
+    '''
+    pass
+
+class NXsample_component(NXobject):
+    '''
+    NXsample_component node. This is a subclass of the NXobject class.
+    
+    See the NXobject documentation for more details.
+    '''
+    pass
+
+class NXsensor(NXobject):
+    '''
+    NXsensor node. This is a subclass of the NXobject class.
+    
+    See the NXobject documentation for more details.
+    '''
+    pass
+
+class NXshape(NXobject):
+    '''
+    NXshape node. This is a subclass of the NXobject class.
+    
+    See the NXobject documentation for more details.
+    '''
+    pass
+
+class NXslit(NXobject):
+    '''
+    NXslit node. This is a subclass of the NXobject class.
+    
+    See the NXobject documentation for more details.
+    '''
+    pass
+
+class NXsource(NXobject):
+    '''
+    NXsource node. This is a subclass of the NXobject class.
+    
+    See the NXobject documentation for more details.
+    '''
+    pass
+
+class NXsubentry(NXobject):
+    '''
+    NXsubentry node. This is a subclass of the NXobject class.
+    
+    See the NXobject documentation for more details.
+    '''
+    pass
+
+class NXtransformations(NXobject):
+    '''
+    NXtransformations node. This is a subclass of the NXobject class.
+    
+    See the NXobject documentation for more details.
+    '''
+    pass
+
+class NXtranslation(NXobject):
+    '''
+    NXtranslation node. This is a subclass of the NXobject class.
+    
+    See the NXobject documentation for more details.
+    '''
+    pass
+
+class NXuser(NXobject):
+    '''
+    NXuser node. This is a subclass of the NXobject class.
+    
+    See the NXobject documentation for more details.
+    '''
+    pass
+
+class NXvelocity_selector(NXobject):
+    '''
+    NXvelocity_selector node. This is a subclass of the NXobject class.
+    
+    See the NXobject documentation for more details.
+    '''
+    pass
+
+class NXxraylens(NXobject):
+    '''
+    NXxraylens node. This is a subclass of the NXobject class.
+    
+    See the NXobject documentation for more details.
     '''
     pass
 

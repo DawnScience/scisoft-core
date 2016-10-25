@@ -27,7 +27,9 @@ import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.dawnsci.plotting.api.region.IROIListener;
+import org.eclipse.dawnsci.plotting.api.region.IRegion;
 import org.eclipse.dawnsci.plotting.api.region.ROIEvent;
+import org.eclipse.dawnsci.plotting.api.region.IRegion.RegionType;
 import org.eclipse.dawnsci.plotting.api.trace.ILineTrace;
 import org.eclipse.dawnsci.plotting.api.trace.ITrace;
 import org.eclipse.e4.ui.di.UISynchronize;
@@ -48,6 +50,7 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -406,7 +409,7 @@ public class ExampleDialog extends Dialog {
 			public void roiStandard(ROIEvent evt){	
 				imageNo = ClosestNoFinder.closestNoPos(outputCurves.getRegionNo().getROI().getPointX(), dms.get(sm.getSelection()).getxList());
 				models.get(sm.getSelection()).setOutputNo(imageNo);
-				System.out.println("ImageNo: " + models.get(sm.getSelection()).getOutputNo());
+//				System.out.println("ImageNo: " + models.get(sm.getSelection()).getOutputNo());
 			}
 			
 		});
@@ -474,15 +477,34 @@ public class ExampleDialog extends Dialog {
 //			}
 //		});
 //	    
-////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////Take Output Marker///////////////////////////////////////////////////
+/////////////////////////////////Keywords: display, selected image, output curve to output movie, get image///////////////////////////
+	   //////////////////////////////////////////////
 	    
 	    outputMovie.getOutputControl().addSelectionListener(new SelectionListener() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				outputMovie.getPlotSystem().updatePlot2D(dms.get(sm.getSelection()).getOutputDatArray().get(ClosestNoFinder.closestNoPos(outputCurves.getRegionNo().getROI().getPointX(),
-						dms.get(sm.getSelection()).getxList())), null,null);
-				System.out.println("DatArray size:  " + dms.get(sm.getSelection()).getOutputDatArray().size());
+
+				if(outputCurves.getRegionNo()!=null){
+					outputMovie.getPlotSystem().updatePlot2D(dms.get(sm.getSelection()).getOutputDatArray().get(ClosestNoFinder.closestNoPos(outputCurves.getRegionNo().getROI().getPointX(),
+							dms.get(sm.getSelection()).getxList())), null,null);
+					System.out.println("DatArray size:  " + dms.get(sm.getSelection()).getOutputDatArray().size());
+				}
+				else{
+					IRegion pr = null;
+					try {
+						pr = outputCurves.getPlotSystem().createRegion("Image", RegionType.XAXIS_LINE);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+					outputMovie.getPlotSystem().updatePlot2D(
+							dms.get(sm.getSelection()).getOutputDatArray().get(ClosestNoFinder.closestNoPos(pr.getROI().getPointX(),
+							dms.get(sm.getSelection()).getxList())), null,null);
+					System.out.println("DatArray size:  " + dms.get(sm.getSelection()).getOutputDatArray().size());
+					
+					
+				}
 			}
 			
 			@Override
@@ -516,7 +538,9 @@ public class ExampleDialog extends Dialog {
 				}
 	        });
 	    
-//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////Output Curves marker/////////////////////////////
+//////////////////////////////Keywords: Marker, line region, image finder//////////////////
+//////////////////////////////////////////////////////////////////////////
 	    outputCurves.getRegionNo().addROIListener(new IROIListener() {
 			
 			@Override
@@ -544,7 +568,7 @@ public class ExampleDialog extends Dialog {
 				if (outputMovie.getOutputControl().getSelection() == true){
 				
 					models.get(sm.getSelection()).setOutputNo(imageNo);
-					System.out.println("ImageNo: " + models.get(sm.getSelection()).getOutputNo());
+//					System.out.println("ImageNo: " + models.get(sm.getSelection()).getOutputNo());
 					
 					operationJob2 oJ2 = new operationJob2();
 					
@@ -554,8 +578,8 @@ public class ExampleDialog extends Dialog {
 					oJ2.setImageNo(imageNo);
 					
 					models.get(sm.getSelection()).setOutputNo(imageNo);
-					System.out.println("ImageNo: " + models.get(sm.getSelection()).getOutputNo());
-					
+//					System.out.println("ImageNo: " + models.get(sm.getSelection()).getOutputNo());
+					oJ2.setOutputCurves(outputCurves);
 					oJ2.setDm(dms.get(sm.getSelection()));
 					oJ2.setModel(models.get(sm.getSelection()));
 					oJ2.setOutputMovie(outputMovie);
@@ -847,6 +871,7 @@ public class ExampleDialog extends Dialog {
 						}
 						
 						outputCurves.getPlotSystem().addTrace(lte);
+						outputCurves.getPlotSystem().autoscaleAxes();
 					}
 				
 				
@@ -884,6 +909,8 @@ public class ExampleDialog extends Dialog {
 					e1.printStackTrace();
 				}
 				
+				outputCurves.getPlotSystem().autoscaleAxes();
+			
 			}
 			
 			
@@ -892,6 +919,8 @@ public class ExampleDialog extends Dialog {
 				// TODO Auto-generated method stub
 				
 			}
+			
+			
 		});
 		
 	    
@@ -1073,6 +1102,9 @@ public class ExampleDialog extends Dialog {
 		});
 	 
 ////////////////////////////////////////////////////////////////////////////////////
+///////////////////////Background slice viewer//////////////////////////////////////
+/////////////////Keywords: cross hairs viewer, image examiner/////////////////////////////
+////////////////////////////////////////////////////////////////////////
 	    
 	    customComposite2.getRegions()[0].addROIListener(new IROIListener(){
 	    		@Override
@@ -1270,7 +1302,7 @@ public class ExampleDialog extends Dialog {
 				ExampleModel m = models.get(sm.getSelection());
 	
 				String stitle = "r";
-				String path = "p";
+	 			String path = "p";
 				
 				
 				if (fd.open() != null) {
@@ -1284,7 +1316,7 @@ public class ExampleDialog extends Dialog {
 				String s = gms.get(sm.getSelection()).getSavePath();
 				String title = path + File.separator + stitle + ".txt";
 				System.out.println(title);
-				
+		
 				FittingParametersOutput.FittingParametersOutputTest(title, 
 						m.getLenPt()[1][0], m.getLenPt()[1][1],
 						m.getLenPt()[0][0], m.getLenPt()[0][1], 
@@ -1553,7 +1585,7 @@ public class ExampleDialog extends Dialog {
 	    
 ///////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////Mass Runner//////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////	    
+/////////////////////////Keywords: Run all, run files, series runner////////////////////////////////////////////////////////////////	    
 	    
 	    datDisplayer.getMassRunner().addSelectionListener(new SelectionListener() {
 			
@@ -1597,8 +1629,7 @@ public class ExampleDialog extends Dialog {
 				        models.get(g).setMethodology((Methodology.values()[ab[0]]));
 				       	models.get(g).setFitPower(FitPower.values()[ab[1]]);
 				       	models.get(g).setBoundaryBox(ab[2]);
-								
-				             	
+				       	models.get(g).setTrackerType(customComposite1.getTrackerTypeDropDown());
 		             	models.get(g).setTrackerCoordinates(new double[] {currentTrackerPos[1], currentTrackerPos[0]});
 		             	models.get(g).setLenPt(currentLenPt);
 				             	
@@ -1739,13 +1770,65 @@ public class ExampleDialog extends Dialog {
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(800, 600);
+		Rectangle rect = PlatformUI.getWorkbench().getWorkbenchWindows()[0].getShell().getBounds();
+//		    System.out.println("Display Bounds=" + display.getBounds() + " Display ClientArea="
+//		        + display.getClientArea());
+
+		int h = rect.height;
+		int w = rect.width;
+		
+//		display.dispose();
+		
+		return new Point((int) Math.round(0.6*w), (int) Math.round(0.8*h));
 	}
 	
 	@Override
 	  protected boolean isResizable() {
 	    return true;
 	}
+	
+	public void roiStandard1(ROIEvent evt){	
+		
+		imageNo = ClosestNoFinder.closestNoPos(outputCurves.getRegionNo().getROI().getPointX(), dms.get(sm.getSelection()).getxList());
+		
+		if (outputMovie.getOutputControl().getSelection() == true){
+		
+			models.get(sm.getSelection()).setOutputNo(imageNo);
+//			System.out.println("ImageNo: " + models.get(sm.getSelection()).getOutputNo());
+			
+			operationJob2 oJ2 = new operationJob2();
+			
+			oJ2.setDm(dms.get(sm.getSelection()));
+			oJ2.setModel(models.get(sm.getSelection()));
+		
+			oJ2.setImageNo(imageNo);
+			
+			models.get(sm.getSelection()).setOutputNo(imageNo);
+//			System.out.println("ImageNo: " + models.get(sm.getSelection()).getOutputNo());
+			
+			oJ2.setDm(dms.get(sm.getSelection()));
+			oJ2.setModel(models.get(sm.getSelection()));
+			oJ2.setOutputMovie(outputMovie);
+			oJ2.setPlotSystem(outputMovie.getPlotSystem());
+			
+			oJ2.schedule();
+		}
+		if (customComposite.getOutputControl().getSelection() == true){
+			
+			operationJob3 oJ3 = new operationJob3();
+			
+			oJ3.setDm(dms.get(sm.getSelection()));
+			oJ3.setModel(models.get(sm.getSelection()));
+		
+			oJ3.setImageNo(imageNo);
+			oJ3.setPlotSystemComposite(customComposite);
+			
+			oJ3.schedule();
+			
+			
+		}
+		}
+	
 }	
 	
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -1849,6 +1932,9 @@ public class ExampleDialog extends Dialog {
 			this.plotSystem = plotSystem;
 		}
 		
+		public void setOutputCurves(MultipleOutputCurvesTable outputCurves) {
+			this.outputCurves = outputCurves;
+		}
 
 		public void setDm(DataModel dm) {
 			this.dm = dm;
@@ -1869,9 +1955,12 @@ public class ExampleDialog extends Dialog {
 				
 			@Override
 			public void run() {
-	
-				outputMovie.getPlotSystem().
-				updatePlot2D(dm.getOutputDatArray().get(ClosestNoFinder.closestNoPos(outputCurves.getRegionNo().getROI().getPointX(), dm.getxList())), null, null);
+				IRegion t = outputCurves.getRegionNo();
+				IROI u = t.getROI();
+				double v = u.getPointX();
+				int w = ClosestNoFinder.closestNoPos(v, dm.getxList());
+				IDataset x = dm.getOutputDatArray().get(w);
+				outputMovie.getPlotSystem().updatePlot2D(x, null, null);
 			}
 			});
 			
@@ -2107,10 +2196,6 @@ public class ExampleDialog extends Dialog {
 					});
 				}
 			
-			
-				
-				
-				
 				for ( k = model.getSliderPos(); k<model.getDatImages().getShape()[0]; k++){
 					
 					int trackingMarker = 2;
@@ -2130,11 +2215,9 @@ public class ExampleDialog extends Dialog {
 						
 					if(sm.getCorrectionSelection() == 0){
 						try {
-							//slice.setSlice(0, 0, 1, 1);
+							
 							dm.addxList(model.getDatImages().getShape()[0], k,(model.getDatX().getSlice(slicex)).getDouble(0));
 							
-//							System.out.println("Added to xList:  " + k);
-								
 						} catch (DatasetException e2) {
 								// TODO Auto-generated catch block
 							e2.printStackTrace();
@@ -2166,7 +2249,6 @@ public class ExampleDialog extends Dialog {
 					IDataset output1 = DummyProcessingClass.DummyProcess(sm, j, model,dm, gm, 
 							customComposite, correctionSelection, k, trackingMarker);
 							
-//					System.out.println("Added to yList:  " + k);
 	
 					Display.getDefault().syncExec(new Runnable() {
 							
@@ -2194,9 +2276,7 @@ public class ExampleDialog extends Dialog {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-	    		
-//	    		System.out.println("Length of xlist: " + dm.getxList().size());
-//	    		System.out.println("Length of ylist: " + dm.getyList().size());
+
 			
 			
 		return Status.OK_STATUS;

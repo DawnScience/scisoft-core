@@ -356,6 +356,10 @@ public class PlotSystem1Composite extends Composite {
 		  }
    }
    
+   public TrackerType1 getTrackerTypeDropDown(){
+	   return TrackingMethodology.toTracker1(comboDropDown2.getText());
+   }
+   
    public void setTrackerTypeDropDown(String in){
 	   TrackerType1 m = TrackingMethodology.toTracker1(in);
 	   setTrackerTypeDropDown(m);

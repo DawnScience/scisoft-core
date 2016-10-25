@@ -48,6 +48,7 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.LazyDataset;
 import org.eclipse.january.dataset.LazyDynamicDataset;
@@ -790,6 +791,9 @@ public class HDF5Loader extends AbstractFileLoader {
 
 			ntid = H5.H5Tget_native_type(tid);
 			type = HDF5Utils.getDatasetType(tid, ntid);
+			if (type.name != null) {
+				node.setTypeName(type.name);
+			}
 
 			try {
 				pid = H5.H5Dget_create_plist(did);
@@ -853,7 +857,7 @@ public class HDF5Loader extends AbstractFileLoader {
 
 		if (trueShape.length == 1 && trueShape[0] == 1 && maxShape.length == 1 && maxShape[0] == 1) { // special case for single values
 			try {
-				final Dataset d = DatasetFactory.zeros(type.isize, trueShape, type.dtype);
+				Dataset d = DatasetFactory.zeros(type.isize, trueShape, type.dtype);
 				Object data = d.getBuffer();
 
 				if (type.isVariableLength) {
@@ -862,8 +866,12 @@ public class HDF5Loader extends AbstractFileLoader {
 					H5.H5Dread(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, data);
 				}
 
+				if (type.unsigned) {
+					d = DatasetUtils.makeUnsigned(d);
+				}
 				d.setName(name);
 				node.setDataset(d);
+				node.setTypeName(DTypeUtils.getDTypeName(d));
 				return true;
 			} catch (HDF5Exception ex) {
 				logger.error("Could not read single value dataset", ex);

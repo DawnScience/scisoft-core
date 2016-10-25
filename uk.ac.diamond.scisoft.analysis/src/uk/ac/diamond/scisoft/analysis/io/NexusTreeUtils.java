@@ -111,6 +111,7 @@ public class NexusTreeUtils {
 	public static final String NX_DETECTOR_YBEAMCENTRE = "beam_center_x";
 	public static final String NX_DETECTOR_XPIXELNUMBER = "x_pixel_number";
 	public static final String NX_DETECTOR_YPIXELNUMER = "y_pixel_number";
+	public static final String NX_AXES_SET = "_demand";
 
 	public static final String DEPENDS_ON = "depends_on";
 	
@@ -450,19 +451,12 @@ public class NexusTreeUtils {
 	
 	public static ILazyDataset getAugmentedSignalDataset(GroupNode gn) {
 		
-		boolean is2014 = parseNXdataAndAugment(gn);
+		ILazyDataset is2014 = parseNXdataAndAugmentStrict(gn);
 		
-		if (is2014) {
-			String signal = getFirstString(gn.getAttribute(NX_SIGNAL));
-			if (signal == null) {
-				signal = DATA;
-			}
-			return gn.getDataNode(signal).getDataset();
-		}
+		if (is2014 != null) return is2014;
 		
-		ILazyDataset signal = parseLegacyNXdataAndAugment(gn); 
-		
-		return signal;
+		return parseLegacyNXdataAndAugment(gn); 
+
 	}
 	
 	/**
@@ -725,9 +719,130 @@ public class NexusTreeUtils {
 			axisList.clear();
 		}
 		cData.addMetadata(amd);
+		dNode.setAugmented();
 		return true;
 	}
+	
+	/**
+	 * Strict parse new style (2014) NXdata class and augment with metadata
+	 * @param gn
+	 * @return ILazyDataset with meatadata
+	 */
+	public static ILazyDataset parseNXdataAndAugmentStrict(GroupNode gn) {
+		if (!isNXClass(gn, NX_DATA)) {
+			logger.warn("'{}' was not an {} class", gn, NX_DATA);
+			return null;
+		}
 
+		String signal = getFirstString(gn.getAttribute(NX_SIGNAL));
+		if (signal == null) {
+			signal = DATA;
+		}
+		if (!gn.containsDataNode(signal)) {
+			return null;
+		}
+
+		DataNode dNode = gn.getDataNode(signal);
+		ILazyDataset cData = dNode.getDataset();
+		if (cData == null || cData.getSize() == 0) {
+			logger.warn("Chosen data '{}', has zero size", signal);
+			return null;
+		}
+
+		// find possible @long_name
+		String string = getFirstString(dNode.getAttribute(NX_NAME));
+		if (string != null && string.length() > 0) {
+			cData.setName(string);
+		}
+
+		String[] tmp = getStringArray(gn.getAttribute(NX_AXES));
+		if (tmp == null) {
+			return null;
+		}
+		
+		Iterator<String> it = gn.getAttributeNameIterator();
+		Set<String> s = new HashSet<String>();
+		while(it.hasNext()) s.add(it.next());
+		parseAllAnnotations(signal, cData, gn, tmp,s);
+		
+		return cData;
+	}
+	
+	private static void parseAllAnnotations(String signalName, ILazyDataset lz, GroupNode gn, String[] primaryAxes, Set<String> annotations) {
+		
+		AxesMetadata ax = null;
+		try {
+			ax = MetadataFactory.createMetadata(AxesMetadata.class, lz.getRank());
+		} catch (MetadataException e) {
+			logger.error("TODO put description of error here", e);
+			return;
+		}
+		
+		if (annotations.contains(signalName+NX_UNCERTAINTY_SUFFIX)) {
+			DataNode dn = gn.getDataNode(signalName+NX_UNCERTAINTY_SUFFIX);
+			ILazyDataset sv = dn.getDataset().getSliceView();
+			lz.setError(sv);
+		}
+		
+		for (int i = 0; i < primaryAxes.length; i++) {
+			if (NX_AXES_EMPTY.equals(primaryAxes[i])) continue;
+			updateMetadata(primaryAxes[i], gn, annotations, ax, i);
+		}
+		
+		updateMetadata(annotations.iterator().next(), gn, annotations, ax, -1);
+		
+		lz.setMetadata(ax);
+		
+	}
+	
+	private static void updateMetadata(String name, GroupNode gn, Set<String> allAnnotations, AxesMetadata metadata, int primaryDimension) {
+		if (name.endsWith(NX_AXES_SET)) {
+			if (allAnnotations.contains(name + NX_INDICES_SUFFIX)) {
+				int[] indices = parseIntArray(gn.getAttribute(name + NX_INDICES_SUFFIX));
+				ILazyDataset view = gn.getDataNode(name).getDataset().getSliceView();
+				view.setName(name);
+				metadata.addAxis(primaryDimension, view,indices);
+				allAnnotations.remove(name + NX_INDICES_SUFFIX);
+			}
+			
+			String rb = name.substring(0, name.length() - NX_AXES_SET.length());
+			
+			if (gn.containsDataNode(rb) && allAnnotations.contains(rb + NX_INDICES_SUFFIX)) {
+				int[] indices = parseIntArray(gn.getAttribute(rb + NX_INDICES_SUFFIX));
+				ILazyDataset view = gn.getDataNode(rb).getDataset().getSliceView();
+				view.setName(rb);
+				metadata.addAxis(primaryDimension, view,indices);
+				allAnnotations.remove(rb + NX_INDICES_SUFFIX);
+				allAnnotations.remove(rb);
+			}
+		} else {
+			if (name.endsWith(NX_INDICES_SUFFIX)) {
+				String not_indices = name.substring(0, name.length() - NX_INDICES_SUFFIX.length());
+				if (allAnnotations.contains(not_indices)) {
+					int[] indices = parseIntArray(gn.getAttribute(name));
+					ILazyDataset view = gn.getDataNode(not_indices).getDataset().getSliceView();
+					view.setName(name);
+					metadata.addAxis(primaryDimension, view,indices);
+					allAnnotations.remove(not_indices);
+				}
+			} else {
+				if (allAnnotations.contains(name + NX_INDICES_SUFFIX)) {
+					int[] indices = parseIntArray(gn.getAttribute(name + NX_INDICES_SUFFIX));
+					ILazyDataset view = gn.getDataNode(name).getDataset().getSliceView();
+					view.setName(name);
+					metadata.addAxis(primaryDimension, view,indices);
+					allAnnotations.remove(name + NX_INDICES_SUFFIX);
+				}
+			}
+		}
+		
+		allAnnotations.remove(name);
+		
+		Iterator<String> it = allAnnotations.iterator();
+		
+		if (primaryDimension == -1 && it.hasNext()) updateMetadata(it.next(), gn, allAnnotations, metadata, -1);
+	}
+	
 	private static void addAxis(GroupNode gn, String a, int rank, int[] shape, List<ILazyDataset> axes) throws IllegalArgumentException {
 		DataNode aNode = gn.getDataNode(a);
 		ILazyDataset aData = aNode.getDataset();

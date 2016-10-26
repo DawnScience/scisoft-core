@@ -555,6 +555,7 @@
             model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="No Change">
       </operation>
+      
       <category
             id="uk.ac.diamond.scisoft.analysis.processing.error"
             name="Error">
@@ -768,6 +769,26 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SubtractIntegratedXRegionsOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SubtractIntegratedXRegionsModel"
             name="Subtract Average X Regions Integration">
+      </operation>
+            <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.tempCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.HermanOrientationOperation"
+            description="Perform a Herman Orientation calculation on a region of an image"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.HermanOrientationOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.HermanOrientationModel"
+            name="Herman Orientation"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.tempCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.image.FourierTransformImageOperation"
+            description="Perform a 2D Fourier transform on an image"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.FourierTransformImageOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.image.FourierTransformImageModel"
+            name="Image Fourier Transform"
+            visible="true">
       </operation>
       <category
             id="uuk.ac.diamond.scisoft.analysis.processing.internaldata"

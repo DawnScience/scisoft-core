@@ -771,7 +771,6 @@
             name="Subtract Average X Regions Integration">
       </operation>
             <operation
-            category="uk.ac.diamond.scisoft.analysis.processing.tempCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.HermanOrientationOperation"
             description="Perform a Herman Orientation calculation on a region of an image"
             icon="icons/mask.png"
@@ -781,7 +780,6 @@
             visible="true">
       </operation>
       <operation
-            category="uk.ac.diamond.scisoft.analysis.processing.tempCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.FourierTransformImageOperation"
             description="Perform a 2D Fourier transform on an image"
             icon="icons/mask.png"

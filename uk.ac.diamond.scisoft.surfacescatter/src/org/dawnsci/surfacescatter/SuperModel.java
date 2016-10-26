@@ -14,7 +14,21 @@ public class SuperModel {
 	private IDataset splicedCurveY;
 	private IDataset splicedCurveYFhkl;
 	private int correctionSelection = 0;
-
+	private IDataset splicedCurveYError;
+	private IDataset splicedCurveYFhklError;
+	private IDataset splicedCurveYErrorMax;
+	private IDataset splicedCurveYErrorMin;
+	private IDataset splicedCurveYFhklErrorMax;
+	private IDataset splicedCurveYFhklErrorMin;
+	
+//	sortedYArrayCorrectedErrorMax
+//	sortedYArrayCorrectedFhklErrorMax
+//	sortedYArrayCorrectedErrorMin
+//	sortedYArrayCorrectedFhklErrorMin
+//	sortedYArrayCorrectedError
+//	sortedYArrayCorrectedFhklError
+	
+	
 	public void clearFilepaths(){
 		filepaths = null;
 	}
@@ -82,6 +96,54 @@ public class SuperModel {
 
 	public void setCorrectionSelection(int correctionSelection) {
 		this.correctionSelection = correctionSelection;
+	}
+
+	public IDataset getSplicedCurveYError() {
+		return splicedCurveYError;
+	}
+
+	public void setSplicedCurveYError(IDataset splicedCurveYError) {
+		this.splicedCurveYError = splicedCurveYError;
+	}
+
+	public IDataset getSplicedCurveYFhklError() {
+		return splicedCurveYFhklError;
+	}
+
+	public void setSplicedCurveYFhklError(IDataset splicedCurveYFhklError) {
+		this.splicedCurveYFhklError = splicedCurveYFhklError;
+	}
+
+	public IDataset getSplicedCurveYErrorMax() {
+		return splicedCurveYErrorMax;
+	}
+
+	public void setSplicedCurveYErrorMax(IDataset splicedCurveYErrorMax) {
+		this.splicedCurveYErrorMax = splicedCurveYErrorMax;
+	}
+
+	public IDataset getSplicedCurveYErrorMin() {
+		return splicedCurveYErrorMin;
+	}
+
+	public void setSplicedCurveYErrorMin(IDataset splicedCurveYErrorMin) {
+		this.splicedCurveYErrorMin = splicedCurveYErrorMin;
+	}
+
+	public IDataset getSplicedCurveYFhklErrorMax() {
+		return splicedCurveYFhklErrorMax;
+	}
+
+	public void setSplicedCurveYFhklErrorMax(IDataset splicedCurveYFhklErrorMax) {
+		this.splicedCurveYFhklErrorMax = splicedCurveYFhklErrorMax;
+	}
+
+	public IDataset getSplicedCurveYFhklErrorMin() {
+		return splicedCurveYFhklErrorMin;
+	}
+
+	public void setSplicedCurveYFhklErrorMin(IDataset splicedCurveYFhklErrorMin) {
+		this.splicedCurveYFhklErrorMin = splicedCurveYFhklErrorMin;
 	}
 	
 }

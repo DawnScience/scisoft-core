@@ -32,6 +32,7 @@ import org.eclipse.dawnsci.plotting.api.region.ROIEvent;
 import org.eclipse.dawnsci.plotting.api.region.IRegion.RegionType;
 import org.eclipse.dawnsci.plotting.api.trace.ILineTrace;
 import org.eclipse.dawnsci.plotting.api.trace.ITrace;
+import org.eclipse.dawnsci.plotting.api.trace.ILineTrace.TraceType;
 import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.AggregateDataset;
@@ -956,7 +957,7 @@ public class ExampleDialog extends Dialog {
 					selectedTableItems[na] = items.get(na);
 				}
 				
-				StitchedOutput.curveStitch(outputCurves.getPlotSystem(),
+				StitchedOutputWithErrors.curveStitch(outputCurves.getPlotSystem(),
 						selectedTableItems,
 						dms, sm, datDisplayer);
 				
@@ -1240,8 +1241,7 @@ public class ExampleDialog extends Dialog {
 			}
 	    	
 	    });
-	    
-	    
+
 ////////////////////////////////Load Fit Parameters////////////////////////////////////////
 	    
 	    customComposite1.getLoadButton().addSelectionListener(new SelectionListener() {
@@ -1448,7 +1448,11 @@ public class ExampleDialog extends Dialog {
 				
 			}
 		});
-////////////////////////////////////////////////////////////////////////////////////
+	    
+/////////////////////////////////////////////////////////////////////////////////////////	    
+//////////////////////////////////Background Curves in cross sections Plotsystem2////////
+/////////////////////////////////////////////////////////////////////////////////////////
+	    
 	    customComposite2.getBackgroundButton().addSelectionListener(new SelectionListener() {
 			
 			@Override
@@ -1584,8 +1588,9 @@ public class ExampleDialog extends Dialog {
 		});
 	    
 ///////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////Mass Runner//////////////////////////////////////////////////
-/////////////////////////Keywords: Run all, run files, series runner////////////////////////////////////////////////////////////////	    
+////////////////////////////Mass Runner////////////////////////////////////////////////////
+/////////////////////////Keywords: Run all, run files, series runner///////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
 	    
 	    datDisplayer.getMassRunner().addSelectionListener(new SelectionListener() {
 			
@@ -1656,16 +1661,7 @@ public class ExampleDialog extends Dialog {
 					oJ.setPlotSystem(customComposite1.getPlotSystem());
 					oJ.run(null);	
 					System.out.println("g value: " + g);
-//					do{
-//						
-//					}
-//					while(oJ.getState() == Job.RUNNING);
-//					try {
-//						oJ.join();
-//					} catch (InterruptedException e1) {
-//						// TODO Auto-generated catch block
-//						e1.printStackTrace();
-//					}
+
 				}
 			}
 			
@@ -1750,17 +1746,154 @@ public class ExampleDialog extends Dialog {
 			
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
+				
+			}
+		});
+	    
+/////////////////////////////////////////////////////////////////////////////////////
+////////////////////Errors on Curves ////////////////////////////////////////////////
+///////////////Keywords: output curves, errors///////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+	    
+	    
+	    outputCurves.getErrors().addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				int te = 0;
+				int det = 0;
+				CharSequence c = "Error";
+				CharSequence d = "Spliced";
+				
+				ArrayList<ITrace> al = new ArrayList<>();;
+				
+				for(ITrace trac : outputCurves.getPlotSystem().getTraces()){
+					if (trac != null){
+						al.add(trac);
+					}
+				}
+				
+				for(int tr = 0; tr<al.size(); tr++){
+					
+					if(al.get(tr).getName().contains(c) == true){
+						te+=1;
+						al.remove(tr);
+					}else{
+						
+					}
+					
+					if (al.get(tr).getName().contains(f)){
+	    				det +=1;
+	    			}else{
+	    				det-=1;
+	    			}
+				}
+				
+				ArrayList<TableItem> items = new ArrayList<>();
+				
+				for (int ni = 0; ni<outputCurves.getDatTable().getItemCount(); ni++){
+					
+					TableItem no = outputCurves.getDatTable().getItem(ni);
+					
+					if (no.getChecked()){
+						items.add(no);
+					}
+				}
+				
+				for(ITrace tra : al){
+					outputCurves.getPlotSystem().addTrace(tra);
+				}
+				
+				if (te == 0){
+					for (TableItem b : items){
+						
+						ILineTrace ltmax = outputCurves.getPlotSystem().createLineTrace(b.getText() + "_MaxError");
+						ILineTrace ltmin = outputCurves.getPlotSystem().createLineTrace(b.getText() + "_MinError");
+						
+						int p = (Arrays.asList(datDisplayer.getList().getItems())).indexOf(b.getText());
+						
+						if (dms.get(p).getyList() == null || dms.get(p).getxList() == null) {
+							
+						} 
+						else {
+								if (det>=0){
+									ltmax.setData(dms.get(p).xIDataset(),dms.get(p).getYIDatasetFhklMax());
+									ltmax.setName(b.getText() + "_FhklMaxError");
+									
+									ltmin.setData(dms.get(p).xIDataset(),dms.get(p).getYIDatasetFhklMin());
+									ltmin.setName(b.getText() + "_FhklMinError");
+	
+								}
+								else{
+									ltmax.setData(dms.get(p).xIDataset(),dms.get(p).getYIDatasetMax());
+									ltmax.setName(b.getText() + "_IntensityMaxError");
+									
+									ltmin.setData(dms.get(p).xIDataset(),dms.get(p).getYIDatasetMin());
+									ltmin.setName(b.getText() + "_IntensityMinError");
+	
+								}
+						}
+						
+						outputCurves.getPlotSystem().addTrace(ltmax);
+						outputCurves.getPlotSystem().addTrace(ltmin);
+						
+						ltmax.setTraceType(TraceType.DASH_LINE);
+						ltmin.setTraceType(TraceType.DASH_LINE);
+						
+						outputCurves.getPlotSystem().autoscaleAxes();
+					}
+					
+					if (outputCurves.getSc() != null){
+						for(ITrace tr : outputCurves.getPlotSystem().getTraces()){
+							
+							if(tr.getName().contains(d) == true){
+							
+								ILineTrace spmax = outputCurves.getPlotSystem().createLineTrace("Spliced_MaxError");
+								ILineTrace spmin = outputCurves.getPlotSystem().createLineTrace("Spliced_MinError");
+								
+								if (det>=0){
+									spmax.setData(sm.getSplicedCurveX(),sm.getSplicedCurveYFhklErrorMax());
+									spmax.setName("Spliced_FhklMaxError");
+									
+									spmin.setData(sm.getSplicedCurveX(),sm.getSplicedCurveYFhklErrorMin());
+									spmin.setName("Spliced_FhklMinError");
+		
+								}
+								else{
+									spmax.setData(sm.getSplicedCurveX(),sm.getSplicedCurveYErrorMax());
+									spmax.setName("Spliced_IntensityMaxError");
+									
+									spmin.setData(sm.getSplicedCurveX(),sm.getSplicedCurveYErrorMin());
+									spmin.setName("Spliced_IntensityMinError");
+								}
+	
+							}
+						}
+					}
+					outputCurves.getErrors().setText("Errors");
+				}
+				else{
+					outputCurves.getErrors().setText("Errors");
+				}
+				
+			}
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
 				
 			}
 		});
 	    
-/////////////////////////////////////////////////////////////////////////////////////	    
+	    
+	    
+	    
+	    
+	    
+//////////////////////////////////////////////////////////////////////////////////////	    
+	    
 	    return container;
 	}
-	
-	
-
 	
 	@Override
 	protected void configureShell(Shell newShell) {
@@ -1771,13 +1904,8 @@ public class ExampleDialog extends Dialog {
 	@Override
 	protected Point getInitialSize() {
 		Rectangle rect = PlatformUI.getWorkbench().getWorkbenchWindows()[0].getShell().getBounds();
-//		    System.out.println("Display Bounds=" + display.getBounds() + " Display ClientArea="
-//		        + display.getClientArea());
-
 		int h = rect.height;
 		int w = rect.width;
-		
-//		display.dispose();
 		
 		return new Point((int) Math.round(0.6*w), (int) Math.round(0.8*h));
 	}

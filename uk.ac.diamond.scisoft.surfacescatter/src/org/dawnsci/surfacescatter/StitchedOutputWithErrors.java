@@ -9,11 +9,10 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableItem;
 
-public class StitchedOutput {
+public class StitchedOutputWithErrors {
 	
 	private static double attenuationFactor;
 	private static double attenuationFactorFhkl;
@@ -27,6 +26,8 @@ public class StitchedOutput {
 		ArrayList<IDataset> yArrayList = new ArrayList<>();
 		ArrayList<IDataset> yArrayListFhkl = new ArrayList<>();
 		
+		ArrayList<IDataset> yArrayListError = new ArrayList<>();
+		ArrayList<IDataset> yArrayListFhklError = new ArrayList<>();
 		
 		
 		for(int b = 0;b<selectedTableItems.length;b++){
@@ -35,27 +36,37 @@ public class StitchedOutput {
 				
 				if (dms.get(p).getyList() == null || dms.get(p).getxList() == null) {
 					
-				} else {
-						xArrayList.add(dms.get(p).xIDataset());
-						yArrayList.add(dms.get(p).yIDataset());
-						yArrayListFhkl.add(dms.get(p).yIDatasetFhkl());
-		    		}
+				} 
+				else {
+					xArrayList.add(dms.get(p).xIDataset());
+					yArrayList.add(dms.get(p).yIDataset());
+					yArrayListFhkl.add(dms.get(p).yIDatasetFhkl());
+					yArrayListError.add(dms.get(p).yIDatasetError());
+					yArrayListFhklError.add(dms.get(p).yIDatasetFhklError());
+				}
 				
 		}
 		
 		IDataset[] xArray= new IDataset[xArrayList.size()];
 		IDataset[] yArray= new IDataset[yArrayList.size()];
+		IDataset[] yArrayError= new IDataset[yArrayListError.size()];
 		IDataset[] yArrayFhkl= new IDataset[yArrayListFhkl.size()];
+		IDataset[] yArrayFhklError= new IDataset[yArrayListFhklError.size()];
 		
 		for (int b = 0; b< xArrayList.size(); b++){
 			xArray[b] = xArrayList.get(b);
 			yArray[b] = yArrayList.get(b);
 			yArrayFhkl[b] = yArrayListFhkl.get(b);
+			yArrayError[b]=yArrayListError.get(b);
+			yArrayFhklError[b]=yArrayListFhklError.get(b);
 		}
 		
 		IDataset[] xArrayCorrected = xArray.clone();
 		IDataset[] yArrayCorrected = yArray.clone();
 		IDataset[] yArrayCorrectedFhkl = yArrayFhkl.clone();
+		
+		IDataset[] yArrayCorrectedError = yArrayError.clone();
+		IDataset[] yArrayCorrectedFhklError = yArrayFhklError.clone();
 		
 		
 		IDataset[][] attenuatedDatasets = new IDataset[2][];
@@ -143,7 +154,9 @@ public class StitchedOutput {
 					yArrayCorrected[k+1] = Maths.multiply(yArray[k+1],attenuationFactor);
 					yArrayCorrectedFhkl[k+1] = Maths.multiply(yArrayFhkl[k+1],attenuationFactorFhkl);
 					
-						
+					yArrayCorrectedError[k+1] = Maths.multiply(yArrayError[k+1],attenuationFactor);
+					yArrayCorrectedFhklError[k+1] = Maths.multiply(yArrayFhklError[k+1],attenuationFactorFhkl);
+					
 					System.out.println("attenuation factor:  " + attenuationFactor + "   k:   " +k);
 					System.out.println("attenuation factor Fhkl:  " + attenuationFactorFhkl + "   k:   " +k);
 						
@@ -155,21 +168,51 @@ public class StitchedOutput {
 		attenuatedDatasetsFhkl[0] = yArrayCorrectedFhkl;
 		attenuatedDatasetsFhkl[1] = xArrayCorrected;
 
-		Dataset[] sortedAttenuatedDatasets = new Dataset[3];
+		Dataset[] sortedAttenuatedDatasets = new Dataset[7];
 		
-		sortedAttenuatedDatasets[0]=DatasetUtils.convertToDataset(DatasetUtils.concatenate(attenuatedDatasets[0], 0));
-		sortedAttenuatedDatasets[1]=DatasetUtils.convertToDataset(DatasetUtils.concatenate(attenuatedDatasets[1], 0));
-		sortedAttenuatedDatasets[2]=DatasetUtils.convertToDataset(DatasetUtils.concatenate(attenuatedDatasetsFhkl[0], 0));
+		sortedAttenuatedDatasets[0]=DatasetUtils.convertToDataset(DatasetUtils.concatenate(attenuatedDatasets[0], 0)); ///yArray Intensity
+		sortedAttenuatedDatasets[1]=DatasetUtils.convertToDataset(DatasetUtils.concatenate(attenuatedDatasets[1], 0)); ///xArray
+		sortedAttenuatedDatasets[2]=DatasetUtils.convertToDataset(DatasetUtils.concatenate(attenuatedDatasetsFhkl[0], 0)); //////yArray Fhkl
 
+		Dataset sortedYArrayCorrectedError= (DatasetUtils.convertToDataset(DatasetUtils.concatenate(yArrayCorrectedError, 0)));
+		Dataset sortedYArrayCorrectedFhklError= (DatasetUtils.convertToDataset(DatasetUtils.concatenate(yArrayCorrectedFhklError, 0)));
+		
+		
+		
 		DatasetUtils.sort(sortedAttenuatedDatasets[1],
 				sortedAttenuatedDatasets[0]);
 		
 		DatasetUtils.sort(sortedAttenuatedDatasets[1],
 				sortedAttenuatedDatasets[2]);
 		
+		DatasetUtils.sort(sortedAttenuatedDatasets[1],
+				sortedYArrayCorrectedError);
+		
+		DatasetUtils.sort(sortedAttenuatedDatasets[1],
+				sortedYArrayCorrectedFhklError);
+		
+		Dataset sortedYArrayCorrectedErrorMax = Maths.add(sortedYArrayCorrectedError, sortedAttenuatedDatasets[0]);
+		Dataset sortedYArrayCorrectedFhklErrorMax = Maths.add(sortedYArrayCorrectedFhklError, sortedAttenuatedDatasets[2]);
+		
+		sortedAttenuatedDatasets[3] = sortedYArrayCorrectedErrorMax;
+		sortedAttenuatedDatasets[4] = sortedYArrayCorrectedFhklErrorMax;
+		
+		Dataset sortedYArrayCorrectedErrorMin = Maths.subtract(sortedAttenuatedDatasets[0], sortedYArrayCorrectedError);
+		Dataset sortedYArrayCorrectedFhklErrorMin = Maths.add(sortedAttenuatedDatasets[2], sortedYArrayCorrectedFhklError);
+
+		sortedAttenuatedDatasets[5] = sortedYArrayCorrectedErrorMin;
+		sortedAttenuatedDatasets[6] = sortedYArrayCorrectedFhklErrorMin;
+		
+		
 		sm.setSplicedCurveY(sortedAttenuatedDatasets[0]);
 		sm.setSplicedCurveX(sortedAttenuatedDatasets[1]);
 		sm.setSplicedCurveYFhkl(sortedAttenuatedDatasets[2]);
+		sm.setSplicedCurveYError(sortedYArrayCorrectedError);
+		sm.setSplicedCurveYFhklError(sortedYArrayCorrectedFhklError);
+		sm.setSplicedCurveYErrorMax(sortedYArrayCorrectedErrorMax);
+		sm.setSplicedCurveYErrorMin(sortedYArrayCorrectedErrorMin);
+		sm.setSplicedCurveYFhklErrorMax(sortedYArrayCorrectedFhklErrorMax);
+		sm.setSplicedCurveYFhklErrorMin(sortedYArrayCorrectedFhklErrorMin);
 		
 		return null;
 	}

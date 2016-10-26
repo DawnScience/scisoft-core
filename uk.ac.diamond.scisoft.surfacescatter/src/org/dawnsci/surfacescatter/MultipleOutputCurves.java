@@ -41,6 +41,7 @@ public class MultipleOutputCurves extends Composite {
 	private Group overlapSelection;
 	private Composite parent;
 	private List datList;
+	private Button errors;
 	
 	public MultipleOutputCurves(Composite parent, int style, ArrayList<ExampleModel> models, ArrayList<DataModel> dms,
 			SuperModel sm) {
@@ -82,12 +83,16 @@ public class MultipleOutputCurves extends Composite {
 		}
 		
 		overlapSelection = new Group(this, SWT.NULL);
-		GridLayout overlapSelectionLayout = new GridLayout(4, true);
+		GridLayout overlapSelectionLayout = new GridLayout(5, true);
 		GridData overlapSelectionData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		overlapSelectionData.minimumWidth = 50;
 		overlapSelection.setLayout(overlapSelectionLayout);
 		overlapSelection.setLayoutData(overlapSelectionData);
 		overlapSelection.setText("Overlap Controls");
+		
+		errors = new Button(overlapSelection, SWT.PUSH);
+		errors.setText("Errors");
+		
 		
 		overlap = new Button(overlapSelection, SWT.PUSH);
 		overlap.setText("Overlap");
@@ -238,6 +243,10 @@ public class MultipleOutputCurves extends Composite {
 	
 	public Button getSave(){
 		return save;
+	}
+	
+	public Button getErrors(){
+		return errors;
 	}
 	
 }

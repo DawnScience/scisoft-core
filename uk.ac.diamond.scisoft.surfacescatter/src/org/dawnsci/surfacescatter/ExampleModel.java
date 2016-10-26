@@ -26,13 +26,13 @@ public class ExampleModel {
 	private IDataset currentImage;
 	private ArrayList<ILazyDataset> arrayILD;
 	private ILazyDataset datImages;
-	private int sliderPos;
+	private int sliderPos = 0;
 	private float iterationMarker =0;
 	private AggregateDataset aggDat;
 	private RectangularROI box;
 	private IDataset input; 
-	private int boundaryBox;
-	private Methodology methodology;
+	private int boundaryBox = 10;
+	private Methodology methodology = Methodology.TWOD;
 	private double[] trackerCoordinates = {100,100,110,100,110,100,110,110};
 	private String filepath;
 	private double outputNo;
@@ -42,7 +42,8 @@ public class ExampleModel {
 	private ILazyDataset qdcd;
 	private ILazyDataset flux;
 	private ILazyDataset theta;
-	private TrackerType1 trackerType;
+	private TrackerType1 trackerType = TrackerType1.TLD;
+	private FitPower fitPower = FitPower.THREE;
 	
 	public IDataset getInput() {
 		return input;
@@ -69,9 +70,6 @@ public class ExampleModel {
 	public void setMethodology(Methodology methodology) {
 		this.methodology = methodology;
 	}
-
-	private FitPower fitPower;
-
 	
 	public int getBoundaryBox() {
 		return boundaryBox;

@@ -35,12 +35,13 @@ public class MultipleOutputCurvesTable extends Composite {
 	private Button sc;
 	private Button save;
 	private Button intensitySelect;
-	private Group datSelection;
+//	private Group datSelection;
 	private Group overlapSelection;
 	private Composite parent;
 	private List datList;
-	private ScrolledComposite datScrolled;
+//	private ScrolledComposite datScrolled;
 	private Table datTable;
+	private Button errors;
 	
 	public MultipleOutputCurvesTable (Composite parent, int style, ArrayList<ExampleModel> models, ArrayList<DataModel> dms,
 			SuperModel sm) {
@@ -97,6 +98,9 @@ public class MultipleOutputCurvesTable extends Composite {
 		overlapSelection.setLayout(overlapSelectionLayout);
 		overlapSelection.setLayoutData(overlapSelectionData);
 		overlapSelection.setText("Overlap Controls");
+		
+		errors = new Button(overlapSelection, SWT.PUSH);
+		errors.setText("Errors");
 		
 		overlap = new Button(overlapSelection, SWT.PUSH);
 		overlap.setText("Overlap");
@@ -255,4 +259,10 @@ public class MultipleOutputCurvesTable extends Composite {
 	public ArrayList<TableItem> getDatSelector(){
 		return datSelector;
 	}
+	
+	
+	public Button getErrors(){
+		return errors;
+	}
+	
 }

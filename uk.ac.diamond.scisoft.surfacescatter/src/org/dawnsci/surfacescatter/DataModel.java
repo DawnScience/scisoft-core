@@ -11,6 +11,7 @@ import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Maths;
 
 import uk.ac.diamond.scisoft.analysis.io.DataSetProvider;
 
@@ -18,7 +19,9 @@ public class DataModel {
 	
 	private ArrayList<Double> xList;
 	private ArrayList<Double> yList;
+	private ArrayList<Double> yListError;
 	private ArrayList<Double> yListFhkl;
+	private ArrayList<Double> yListFhklError;
 	private ArrayList<Double> zList;
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private ArrayList<IDataset> outputDatArray;
@@ -30,6 +33,10 @@ public class DataModel {
 	private String name;
 	private int[][] initialLenPt;
 	private IDataset initialDataset;
+	private IDataset yIDatasetMax;
+	private IDataset yIDatasetFhklMax;
+	private IDataset yIDatasetMin;
+	private IDataset yIDatasetFhklMin;
 	
 	public IROI getBackgroundROI(){
 		return backgroundROI;
@@ -116,6 +123,12 @@ public class DataModel {
 	
 	public void setyList(ArrayList<Double> yList) {
 		this.yList = yList;
+		yListError = new ArrayList<Double>();
+		
+		for(int i = 0; i <yList.size(); i++){
+			yListError.add(Math.sqrt(yList.get(i)));
+		}
+		
 		firePropertyChange("yList", this.yList,
 				this.yList= yList);
 	}
@@ -135,46 +148,93 @@ public class DataModel {
 		if (yList==null){
 			yList = new ArrayList<Double>();
 		}
+		if (yListError==null){
+			yListError = new ArrayList<Double>();
+		}
 
 		ArrayList<Double> yList1 = new ArrayList<Double>();
 		yList1 = (ArrayList<Double>) yList.clone();
 		yList1.add(y);
+		
+		ArrayList<Double> yListError1 = new ArrayList<Double>();
+		yListError1 = (ArrayList<Double>) yListError.clone();
+		yListError1.add(Math.sqrt(y));
+		
+		yListError = yListError1;
+		
 		firePropertyChange("yList", this.yList,
 				this.yList= yList1);
 	}
 	
 	public void addyList(int l, int k, double y){
+		
 		if (yList==null){
 			yList = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
 				  yList.add(0.0);
 				}
 		}
-
+		
+		if (yListError==null){
+			yListError = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				  yListError.add(0.0);
+				}
+		}
+		
+		ArrayList<Double> yList2 = new ArrayList<Double>();
+		
+		yList2 = (ArrayList<Double>) yListError.clone();
+		yList2.set(k,Math.sqrt(y));
+		
+		yListError = yList2;
+		
 		ArrayList<Double> yList1 = new ArrayList<Double>();
 		yList1 = (ArrayList<Double>) yList.clone();
 		yList1.set(k, y);
+		
 		firePropertyChange("yList", this.yList,
 				this.yList= yList1);
 	}
 	
 	
 	public void addyListFhkl(double y){
+		
 		if (yListFhkl==null){
 			yListFhkl = new ArrayList<Double>();
 		}
+		
+		if (yListFhklError==null){
+			yListFhklError = new ArrayList<Double>();
+		}
+
+		ArrayList<Double> yListFhklError1 = new ArrayList<Double>();
+		yListFhklError1 = (ArrayList<Double>) yListFhklError.clone();
+		yListFhklError1.add(Math.sqrt(y));
+		
+		yListFhklError = yListFhklError1;
+		
 		ArrayList<Double> yList1 = new ArrayList<Double>();
 		yList1 = (ArrayList<Double>) yListFhkl.clone();
 		yList1.add(y);
+		
 		firePropertyChange("yListFhkl", this.yListFhkl,
 				this.yListFhkl= yList1);
 	}
 	
 	public void addyListFhkl(int l, int k, double y){
+		
 		if (yListFhkl==null){
 			yListFhkl = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
 				  yListFhkl.add(0.0);
+				}
+		}
+		
+		if (yListFhklError==null){
+			yListFhklError = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				  yListFhklError.add(0.0);
 				}
 		}
 		
@@ -183,10 +243,16 @@ public class DataModel {
 		yList1 = (ArrayList<Double>) yListFhkl.clone();
 		yList1.set(k,y);
 		
+		ArrayList<Double> yList2 = new ArrayList<Double>();
+		
+		yList2 = (ArrayList<Double>) yListFhklError.clone();
+		yList2.set(k,Math.sqrt(y));
+		
+		yListFhklError = yList2;
+		
 		firePropertyChange("yListFhkl", this.yListFhkl,
 				this.yListFhkl= yList1);
 	}
-
 
 	public void addxList(double x){
 		if (xList==null){
@@ -271,6 +337,23 @@ public class DataModel {
 		return yOut;
 	}
 	
+	public IDataset yIDatasetError(){
+		if (yListError==null){
+			yListError = new ArrayList<Double>();
+		}
+
+		ArrayList<Double> yListc = (ArrayList<Double>) yListError.clone();
+		
+		ArrayList<Double> zero = new ArrayList<Double>();
+		
+		zero.add(0.0);
+		
+		yListc.removeAll(zero);
+		
+		IDataset yOut = DatasetFactory.createFromList(yListc);
+		return yOut;
+	}
+	
 	public IDataset yIDatasetFhkl(){
 		if (yListFhkl==null){
 			yListFhkl = new ArrayList<Double>();
@@ -288,6 +371,26 @@ public class DataModel {
 		
 		return yOut;
 	}
+	
+
+	public IDataset yIDatasetFhklError(){
+		if (yListFhklError==null){
+			yListFhklError = new ArrayList<Double>();
+		}
+
+		ArrayList<Double> yListFhklc =  (ArrayList<Double>) yListFhklError.clone();
+		
+		ArrayList<Double> zero = new ArrayList<Double>();
+		
+		zero.add(0.0);
+		
+		yListFhklc.removeAll(zero);
+		
+		IDataset yOut = DatasetFactory.createFromList(yListFhklc);
+		
+		return yOut;
+	}
+
 	
 	public IDataset xIDataset(){
 		if (xList==null){
@@ -370,6 +473,11 @@ public class DataModel {
 
 	public void setyListFhkl(ArrayList<Double> yListFhkl) {
 		this.yListFhkl = yListFhkl;
+		yListFhklError = new ArrayList<Double>();
+		
+		for(int i = 0; i <yListFhkl.size(); i++){
+			yListFhklError.add(Math.sqrt(yListFhkl.get(i)));
+		}
 	}
 
 	public String getName() {
@@ -395,6 +503,42 @@ public class DataModel {
 	public void setInitialDataset(IDataset initialDataset) {
 		this.initialDataset = initialDataset;
 	}
+
+	public ArrayList<Double> getyListError() {
+		return yListError;
+	}
+
+	public void setyListError(ArrayList<Double> yListError) {
+		this.yListError = yListError;
+	}
+
+	public ArrayList<Double> getyListFhklError() {
+		return yListFhklError;
+	}
+
+	public void setyListFhklError(ArrayList<Double> yListFhklError) {
+		this.yListFhklError = yListFhklError;
+	}
 	
+	public IDataset getYIDatasetMax(){
+		yIDatasetMax = Maths.add(yIDataset(), yIDatasetError());
+		return yIDatasetMax;
+	}
 	
+	public IDataset getYIDatasetFhklMax(){
+		yIDatasetFhklMax = Maths.add(yIDatasetFhkl(), yIDatasetFhklError());
+		return yIDatasetFhklMax;
+	}
+	
+	public IDataset getYIDatasetMin(){
+		yIDatasetMin = Maths.subtract(yIDataset(), yIDatasetError());
+		return yIDatasetMin;
+	}
+	
+	public IDataset getYIDatasetFhklMin(){
+		yIDatasetFhklMin = Maths.subtract(yIDatasetFhkl(), yIDatasetFhklError());
+		return yIDatasetFhklMin;
+	}
+
 }
+

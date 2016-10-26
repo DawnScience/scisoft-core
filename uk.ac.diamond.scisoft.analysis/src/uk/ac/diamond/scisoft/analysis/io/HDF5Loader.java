@@ -822,18 +822,10 @@ public class HDF5Loader extends AbstractFileLoader {
 				}
 			}
 
-			if (rank == 0) {
-				// a single data point
-				rank = 1;
-				dims = new long[1];
-				dims[0] = 1;
-				node.setMaxShape(dims);
-			} else {
-				dims = new long[rank];
-				long[] maxDims = new long[rank];
-				H5.H5Sget_simple_extent_dims(sid, dims, maxDims);
-				node.setMaxShape(maxDims);
-			}
+			dims = new long[rank];
+			long[] maxDims = new long[rank];
+			H5.H5Sget_simple_extent_dims(sid, dims, maxDims);
+			node.setMaxShape(maxDims);
 		} catch (HDF5Exception ex) {
 			logger.error("Could not get data space information", ex);
 			return false;
@@ -855,7 +847,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		trueShape = HDF5Utils.toIntArray(dims);
 		int[] maxShape = HDF5Utils.toIntArray(node.getMaxShape());
 
-		if (trueShape.length == 1 && trueShape[0] == 1 && maxShape.length == 1 && maxShape[0] == 1) { // special case for single values
+		if (rank == 0 || (trueShape.length == 1 && trueShape[0] == 1 && maxShape.length == 1 && maxShape[0] == 1)) { // special case for single values
 			try {
 				Dataset d = DatasetFactory.zeros(type.isize, trueShape, type.dtype);
 				Object data = d.getBuffer();

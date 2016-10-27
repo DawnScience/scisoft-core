@@ -143,7 +143,7 @@ public class ExampleOperationsTest {
 		IDataHolder dh = LoaderFactory.getData(result.getAbsolutePath());
 
 		IDataset d1 = dh.getLazyDataset("/entry/result/data").getSlice();
-		double val = d1.getDouble(0);
+		double val = d1.getDouble(0, 0, 0);
 		assertEquals(100, val, 0);
 
 		IDataset a1 = dh.getLazyDataset("/entry/result/axis1").getSlice();
@@ -239,7 +239,7 @@ public class ExampleOperationsTest {
 		IDataHolder dh = LoaderFactory.getData(result.getAbsolutePath());
 
 		IDataset d1 = dh.getLazyDataset("/entry/result/data").getSlice();
-		double val = d1.getDouble(0);
+		double val = d1.getDouble(0, 0, 0, 0);
 		assertEquals(0, val, 0);
 		
 	}
@@ -324,7 +324,7 @@ public class ExampleOperationsTest {
 		IDataHolder dh = LoaderFactory.getData(result.getAbsolutePath());
 
 		IDataset d1 = dh.getLazyDataset("/entry/result/data").getSlice();
-		double val = d1.getDouble(0);
+		double val = d1.getDouble(0, 0, 0);
 		assertEquals(1, val, 0);
 		
 	}

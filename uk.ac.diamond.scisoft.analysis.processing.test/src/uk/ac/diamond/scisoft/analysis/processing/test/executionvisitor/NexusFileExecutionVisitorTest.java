@@ -817,7 +817,7 @@ public class NexusFileExecutionVisitorTest {
 		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
 
 		IDataset slice = dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getSlice();
-		double d = slice.getDouble();
+		double d = slice.getDouble(0);
 		assertTrue(d != 0);
 		assertTrue(d != Double.NaN);
 			

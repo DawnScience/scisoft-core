@@ -66,8 +66,8 @@ public class RGBTextLoaderTest {
 		if (dh == null || dh.getNames().length < 1)
 			throw new Exception();
 		assertEquals("There is not the correct number of axis in the file", 7, dh.size());
-		assertNotSame("The file does not contain NANs", Double.NaN, dh.getDataset(6).getDouble(1));
-		assertEquals("The file does not contain data as well", 0.1, dh.getDataset(0).getDouble(1), 1.);
+		assertNotSame("The file does not contain NANs", Double.NaN, dh.getDataset(6).getDouble(1, 0));
+		assertEquals("The file does not contain data as well", 0.1, dh.getDataset(0).getDouble(1, 0), 1.);
 	}
 
 	@Test

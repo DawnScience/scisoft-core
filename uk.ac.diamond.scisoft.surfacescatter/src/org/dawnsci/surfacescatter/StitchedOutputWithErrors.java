@@ -198,7 +198,7 @@ public class StitchedOutputWithErrors {
 		sortedAttenuatedDatasets[4] = sortedYArrayCorrectedFhklErrorMax;
 		
 		Dataset sortedYArrayCorrectedErrorMin = Maths.subtract(sortedAttenuatedDatasets[0], sortedYArrayCorrectedError);
-		Dataset sortedYArrayCorrectedFhklErrorMin = Maths.add(sortedAttenuatedDatasets[2], sortedYArrayCorrectedFhklError);
+		Dataset sortedYArrayCorrectedFhklErrorMin = Maths.subtract(sortedAttenuatedDatasets[2], sortedYArrayCorrectedFhklError);
 
 		sortedAttenuatedDatasets[5] = sortedYArrayCorrectedErrorMin;
 		sortedAttenuatedDatasets[6] = sortedYArrayCorrectedFhklErrorMin;

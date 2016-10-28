@@ -34,6 +34,7 @@ public class PlotSystemComposite extends Composite {
     private GeometricParametersModel gm;
     private ArrayList<ExampleModel> models;
     private SuperModel sm;
+    private Button zoom;
     
      
     public PlotSystemComposite(Composite parent, int style
@@ -135,9 +136,13 @@ public class PlotSystemComposite extends Composite {
 				models.get(sm.getSelection()).setBox(startROI);
 				
 			}
-
+			
 		});
         
+		
+		zoom = new Button (this, SWT.PUSH);
+        zoom.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        zoom.setText("Zoom and set");
     }
 		
    
@@ -202,6 +207,10 @@ public class PlotSystemComposite extends Composite {
 
 	public IRegion getGreenRegion(){
 		return region;
+	}
+	
+	public Button getZoom(){
+		return zoom;
 	}
 
 

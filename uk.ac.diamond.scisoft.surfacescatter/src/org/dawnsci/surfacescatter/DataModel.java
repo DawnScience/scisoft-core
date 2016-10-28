@@ -156,11 +156,11 @@ public class DataModel {
 		yList1 = (ArrayList<Double>) yList.clone();
 		yList1.add(y);
 		
-		ArrayList<Double> yListError1 = new ArrayList<Double>();
-		yListError1 = (ArrayList<Double>) yListError.clone();
-		yListError1.add(Math.sqrt(y));
+		ArrayList<Double> yListError2 = new ArrayList<Double>();
+		yListError2 = (ArrayList<Double>) yListError.clone();
+		yListError2.add(Math.sqrt(y));
 		
-		yListError = yListError1;
+		yListError = yListError2;
 		
 		firePropertyChange("yList", this.yList,
 				this.yList= yList1);

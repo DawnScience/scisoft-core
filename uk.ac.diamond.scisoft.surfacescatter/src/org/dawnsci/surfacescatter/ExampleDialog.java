@@ -14,10 +14,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.FitPower;
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
-//import org.dawnsci.spectrum.ui.wizard.operationJob1.MovieJob;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -28,12 +26,11 @@ import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.dawnsci.plotting.api.region.IROIListener;
 import org.eclipse.dawnsci.plotting.api.region.IRegion;
-import org.eclipse.dawnsci.plotting.api.region.ROIEvent;
 import org.eclipse.dawnsci.plotting.api.region.IRegion.RegionType;
+import org.eclipse.dawnsci.plotting.api.region.ROIEvent;
 import org.eclipse.dawnsci.plotting.api.trace.ILineTrace;
-import org.eclipse.dawnsci.plotting.api.trace.ITrace;
 import org.eclipse.dawnsci.plotting.api.trace.ILineTrace.TraceType;
-import org.eclipse.e4.ui.di.UISynchronize;
+import org.eclipse.dawnsci.plotting.api.trace.ITrace;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.AggregateDataset;
 import org.eclipse.january.dataset.Dataset;
@@ -54,12 +51,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
@@ -94,10 +89,6 @@ public class ExampleDialog extends Dialog {
 		//createDialogArea(parentShell.getParent());
 
 	}
-	
-	
-
-
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
@@ -871,24 +862,24 @@ public class ExampleDialog extends Dialog {
 								}
 						}
 						
-						outputCurves.getPlotSystem().addTrace(lte);
-						outputCurves.getPlotSystem().autoscaleAxes();
-					}
+					outputCurves.getPlotSystem().addTrace(lte);
+					outputCurves.getPlotSystem().autoscaleAxes();
+				}
 				
 				
 				
 				try{
 				     if (outputCurves.getSc().getSelection() == true){
-				    	 if (CurveStateIdentifier.CurveStateIdentifier1(outputCurves.getPlotSystem()) == "f"){
+				    	 if (CurveStateIdentifier.CurveStateIdentifier1(outputCurves.getPlotSystem())[0] == "f"){
 				    		 ILineTrace sct = outputCurves.getPlotSystem().createLineTrace("Spliced Curve_Fhkl");
-					    	 System.out.println("sct name:  " + sct.getName());
+//					    	 System.out.println("sct name:  " + sct.getName());
 								sct.setData(sm.getSplicedCurveX(), sm.getSplicedCurveYFhkl());
 								outputCurves.getPlotSystem().addTrace(sct);
 				    	 } else{
 				    		 ILineTrace sct = outputCurves.getPlotSystem().createLineTrace("Spliced Curve_Intensity");
 				    		 System.out.println("sct name:  " + sct.getName());
 							 sct.setData(sm.getSplicedCurveX(), sm.getSplicedCurveY());
-							 outputCurves.getPlotSystem().addTrace(sct);
+//							 outputCurves.getPlotSystem().addTrace(sct);
 				    	 }
 				     }
 				    	 
@@ -963,7 +954,7 @@ public class ExampleDialog extends Dialog {
 				
 				outputCurves.addToDatSelector();
 					
-				String bi =  CurveStateIdentifier.CurveStateIdentifier1(outputCurves.getPlotSystem());
+				String[] bi =  CurveStateIdentifier.CurveStateIdentifier1(outputCurves.getPlotSystem());
 				
 				CharSequence chsq = "Spliced Curve";
 			     
@@ -976,13 +967,13 @@ public class ExampleDialog extends Dialog {
 					}
 		    	 }
 				
-				if (bi =="f"){
+				if (bi[0] =="f"){
 					ILineTrace sct = outputCurves.getPlotSystem().createLineTrace("Spliced Curve_Fhkl");
 					sct.setData(sm.getSplicedCurveX(), sm.getSplicedCurveYFhkl());
 					outputCurves.getPlotSystem().addTrace(sct);
 					outputCurves.getPlotSystem().autoscaleAxes();
 					}
-				else if(bi =="i"){
+				else if(bi[0] =="i"){
 					ILineTrace sct = outputCurves.getPlotSystem().createLineTrace("Spliced Curve_Intensity");
 					sct.setData(sm.getSplicedCurveX(), sm.getSplicedCurveY());
 					outputCurves.getPlotSystem().addTrace(sct);
@@ -1031,7 +1022,7 @@ public class ExampleDialog extends Dialog {
 					dmnames[v] = dms.get(v).getName();
 				}
 				
-				String fr = CurveStateIdentifier.CurveStateIdentifier1(outputCurves.getPlotSystem());
+				String[] fr = CurveStateIdentifier.CurveStateIdentifier1(outputCurves.getPlotSystem());
 				
 				IDataset outputDatY = DatasetFactory.ones(new int[] {1});
 				
@@ -1066,7 +1057,7 @@ public class ExampleDialog extends Dialog {
 				for (int tn = 0 ; tn< dmnames.length; tn++){
 					if (outputCurves.getPlotSystem().getTraces().iterator().next().getName().contains(dmnames[tn])){
 						IDataset outputDatX = dms.get(tn).xIDataset();
-						if (fr == "f"){
+						if (fr[0] == "f"){
 							 outputDatY = dms.get(tn).yIDatasetFhkl();
 						}
 						else{
@@ -1407,8 +1398,6 @@ public class ExampleDialog extends Dialog {
 							}
 							else{
 							}
-							
-							
 						}
 						else{
 						}	
@@ -1684,53 +1673,129 @@ public class ExampleDialog extends Dialog {
 				
 				String[] dmnames= new String [dms.size()];
 				
-				CharSequence chsq = "Spliced Curve";
+				CharSequence chsq = "Spliced";
+				CharSequence err = "Error";
+				CharSequence min = "Min";
 				
 				for (int v = 0; v<dms.size(); v++){
 					dmnames[v] = dms.get(v).getName();
 				}
 				
-				String fr = CurveStateIdentifier.CurveStateIdentifier1(outputCurves.getPlotSystem());
+				String[] fr = CurveStateIdentifier.CurveStateIdentifier1(outputCurves.getPlotSystem());
 				
 				ArrayList<ILineTrace> traceList = new ArrayList<>();
 				
 				for(ITrace tr : outputCurves.getPlotSystem().getTraces()){
 				
 					ILineTrace lt = outputCurves.getPlotSystem().createLineTrace("Holder");
+					String j =tr.getName();
 					
-					if(tr.getName().contains(chsq) == false){
-						if (fr == "f"){
-							lt.setName(tr.getName().replace(f, i));
+					if(j.contains(chsq) == false && j.contains(err) == false ){
+						if (fr[0] == "f"){
+							lt.setName(j.replace(f, i));
 							for (int tn = 0 ; tn< dmnames.length; tn++){
-								if (tr.getName().contains(dmnames[tn])){
+								if (j.contains(dmnames[tn])){
 									lt.setData(dms.get(tn).xIDataset(), dms.get(tn).yIDataset());
+									break;
 								}
 							}
 						}
 						else{
-							lt.setName(tr.getName().replace(i, f));
+							lt.setName(j.replace(i, f));
 							for (int tn = 0 ; tn< dmnames.length; tn++){
-								if (tr.getName().contains(dmnames[tn])){
+								if (j.contains(dmnames[tn])){
 									lt.setData(dms.get(tn).xIDataset(), dms.get(tn).yIDatasetFhkl());
+									break;
 								}
 							}
 						}
 					}
-					else{
-						if (fr == "f"){
-							lt.setName(tr.getName().replace(f, i));
-							lt.setData(sm.getSplicedCurveX(), sm.getSplicedCurveY());
+					
+					else if(j.contains(chsq) == false && j.contains(err) == true ){
+						if(j.contains(min) == false){
+							if (fr[0] == "f"){
+								lt.setName(j.replace(f, i));
+									for (int tn = 0 ; tn< dmnames.length; tn++){
+										if (j.contains(dmnames[tn])){
+											IDataset yErrMax = Maths.add(dms.get(tn).yIDataset(), dms.get(tn).yIDatasetError());
+											lt.setData(dms.get(tn).xIDataset(), yErrMax);
+											break;
+										}
+									}
 							}
-						else{
-							lt.setName(tr.getName().replace(i, f));
-							lt.setData(sm.getSplicedCurveX(), sm.getSplicedCurveYFhkl());
+							else{
+								lt.setName(j.replace(i, f));
+								for (int tn = 0 ; tn< dmnames.length; tn++){
+									if (j.contains(dmnames[tn])){
+										IDataset yFhklErrMax = Maths.add(dms.get(tn).yIDatasetFhkl(), dms.get(tn).yIDatasetFhklError());
+										lt.setData(dms.get(tn).xIDataset(), yFhklErrMax);
+										break;
+									}
+								}
 							}
 						}
+						
+						else{
+							if (fr[0] == "f"){
+								lt.setName(j.replace(f, i));
+								for (int tn = 0 ; tn< dmnames.length; tn++){
+									if (j.contains(dmnames[tn])){
+										IDataset yErrMin = Maths.subtract(dms.get(tn).yIDataset(), dms.get(tn).yIDatasetError());
+										lt.setData(dms.get(tn).xIDataset(), yErrMin);
+										break;
+									}
+								}
+							}
+							else{
+								lt.setName(j.replace(i, f));
+								for (int tn = 0 ; tn< dmnames.length; tn++){
+									if (j.contains(dmnames[tn])){
+										IDataset yFhklErrMin = Maths.subtract(dms.get(tn).yIDatasetFhkl(), dms.get(tn).yIDatasetFhklError());
+										lt.setData(dms.get(tn).xIDataset(), yFhklErrMin);
+										break;
+									}
+								}
+							}
+						}
+					}	
 					
-					traceList.add(lt);		
+					else if(j.contains(chsq) == true && j.contains(err) == false ){
+						if (fr[0] == "f"){
+							lt.setName(j.replace(f, i));
+							lt.setData(sm.getSplicedCurveX(), sm.getSplicedCurveY());
+						}
+						else{
+							lt.setName(j.replace(i, f));
+							lt.setData(sm.getSplicedCurveX(), sm.getSplicedCurveYFhkl());
+						}
 					}
+					
+					else if(j.contains(chsq) == true && j.contains(err) == true ){
+						if(j.contains(min) == false){
+							if (fr[0] == "f"){
+								lt.setName(j.replace(f, i));
+								lt.setData(sm.getSplicedCurveX(), sm.getSplicedCurveYErrorMax());
+							}
+							else{
+								lt.setName(j.replace(i, f));
+								lt.setData(sm.getSplicedCurveX(), sm.getSplicedCurveYFhklErrorMax());
+							}
+						}
+						else{
+							if (fr[0] == "f"){
+								lt.setName(j.replace(f, i));
+								lt.setData(sm.getSplicedCurveX(), sm.getSplicedCurveYErrorMin());
+							}
+							else{
+								lt.setName(j.replace(i, f));
+								lt.setData(sm.getSplicedCurveX(), sm.getSplicedCurveYFhklErrorMin());
+							}
+						}
+					}
+					traceList.add(lt);		
+				}
 				
-				if (fr == "f"){
+				if (fr[0] == "f"){
 					outputCurves.getIntensity().setText("Fhkl?");
 				}
 				else{
@@ -1738,9 +1803,17 @@ public class ExampleDialog extends Dialog {
 				}
 				
 				outputCurves.getPlotSystem().clear();
+				
+				System.out.println("traceList:" + traceList.size());
+				
 				for (ILineTrace ltr : traceList){
 					outputCurves.getPlotSystem().addTrace(ltr);
+					System.out.println("ltr.getName:" + ltr.getName());
 				}
+				
+				
+				
+				
 				outputCurves.getPlotSystem().autoscaleAxes();	
 			}
 			
@@ -1761,34 +1834,15 @@ public class ExampleDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				
-				int te = 0;
-				int det = 0;
-				CharSequence c = "Error";
 				CharSequence d = "Spliced";
+				String[] dmnames= new String [dms.size()];
 				
-				ArrayList<ITrace> al = new ArrayList<>();;
-				
-				for(ITrace trac : outputCurves.getPlotSystem().getTraces()){
-					if (trac != null){
-						al.add(trac);
-					}
+				for (int v = 0; v<dms.size(); v++){
+					dmnames[v] = dms.get(v).getName();
 				}
 				
-				for(int tr = 0; tr<al.size(); tr++){
-					
-					if(al.get(tr).getName().contains(c) == true){
-						te+=1;
-						al.remove(tr);
-					}else{
-						
-					}
-					
-					if (al.get(tr).getName().contains(f)){
-	    				det +=1;
-	    			}else{
-	    				det-=1;
-	    			}
-				}
+				ArrayList<ILineTrace> traceList = new ArrayList<>();
+				String[] fr = CurveStateIdentifier.CurveStateIdentifier1(outputCurves.getPlotSystem());
 				
 				ArrayList<TableItem> items = new ArrayList<>();
 				
@@ -1801,83 +1855,143 @@ public class ExampleDialog extends Dialog {
 					}
 				}
 				
-				for(ITrace tra : al){
-					outputCurves.getPlotSystem().addTrace(tra);
-				}
-				
-				if (te == 0){
-					for (TableItem b : items){
+				for (TableItem b : items){
+					
+					ILineTrace ltmax = outputCurves.getPlotSystem().createLineTrace(b.getText() + "_MaxError");
+					ILineTrace ltmin = outputCurves.getPlotSystem().createLineTrace(b.getText() + "_MinError");
+					ILineTrace r = outputCurves.getPlotSystem().createLineTrace(b.getText());
+					
+					int p = (Arrays.asList(datDisplayer.getList().getItems())).indexOf(b.getText());
 						
-						ILineTrace ltmax = outputCurves.getPlotSystem().createLineTrace(b.getText() + "_MaxError");
-						ILineTrace ltmin = outputCurves.getPlotSystem().createLineTrace(b.getText() + "_MinError");
-						
-						int p = (Arrays.asList(datDisplayer.getList().getItems())).indexOf(b.getText());
-						
-						if (dms.get(p).getyList() == null || dms.get(p).getxList() == null) {
+					if (dms.get(p).getyList() == null || dms.get(p).getxList() == null) {
+						ltmax.dispose();
+						ltmin.dispose();
+						r.dispose();
+					} 
+					else {
+						if (fr[0] == "f"){
+							ltmax.setData(dms.get(p).xIDataset(),dms.get(p).getYIDatasetFhklMax());
+							ltmax.setName(b.getText() + "_FhklMaxError");
 							
-						} 
-						else {
-								if (det>=0){
-									ltmax.setData(dms.get(p).xIDataset(),dms.get(p).getYIDatasetFhklMax());
-									ltmax.setName(b.getText() + "_FhklMaxError");
+							ltmin.setData(dms.get(p).xIDataset(),dms.get(p).getYIDatasetFhklMin());
+							ltmin.setName(b.getText() + "_FhklMinError");
 									
-									ltmin.setData(dms.get(p).xIDataset(),dms.get(p).getYIDatasetFhklMin());
-									ltmin.setName(b.getText() + "_FhklMinError");
-	
-								}
-								else{
-									ltmax.setData(dms.get(p).xIDataset(),dms.get(p).getYIDatasetMax());
-									ltmax.setName(b.getText() + "_IntensityMaxError");
+							r.setData(dms.get(p).xIDataset(), dms.get(p).yIDatasetFhkl());
+							}
+						else{
+							ltmax.setData(dms.get(p).xIDataset(),dms.get(p).getYIDatasetMax());
+							ltmax.setName(b.getText() + "_IntensityMaxError");
 									
-									ltmin.setData(dms.get(p).xIDataset(),dms.get(p).getYIDatasetMin());
-									ltmin.setName(b.getText() + "_IntensityMinError");
-	
-								}
+							ltmin.setData(dms.get(p).xIDataset(),dms.get(p).getYIDatasetMin());
+							ltmin.setName(b.getText() + "_IntensityMinError");
+									
+									
+							r.setData(dms.get(p).xIDataset(), dms.get(p).yIDataset());
+							}
 						}
 						
-						outputCurves.getPlotSystem().addTrace(ltmax);
-						outputCurves.getPlotSystem().addTrace(ltmin);
-						
-						ltmax.setTraceType(TraceType.DASH_LINE);
-						ltmin.setTraceType(TraceType.DASH_LINE);
-						
-						outputCurves.getPlotSystem().autoscaleAxes();
-					}
+					ltmax.setTraceType(TraceType.DASH_LINE);
+					ltmin.setTraceType(TraceType.DASH_LINE);
 					
-					if (outputCurves.getSc() != null){
-						for(ITrace tr : outputCurves.getPlotSystem().getTraces()){
-							
+					traceList.add(r);
+					
+					if (fr[1] == "n"){
+						traceList.add(ltmax);
+						traceList.add(ltmin);
+					}else{
+						ltmin.dispose();
+						ltmax.dispose();
+					}
+				}
+					
+				if (outputCurves.getSc() != null){
+					
+					for(ITrace tr : outputCurves.getPlotSystem().getTraces()){
+						if(tr !=null){
 							if(tr.getName().contains(d) == true){
-							
+								
 								ILineTrace spmax = outputCurves.getPlotSystem().createLineTrace("Spliced_MaxError");
 								ILineTrace spmin = outputCurves.getPlotSystem().createLineTrace("Spliced_MinError");
-								
-								if (det>=0){
+								ILineTrace sp = outputCurves.getPlotSystem().createLineTrace("Spliced");
+									
+								if (fr[0] == "f"){
 									spmax.setData(sm.getSplicedCurveX(),sm.getSplicedCurveYFhklErrorMax());
 									spmax.setName("Spliced_FhklMaxError");
 									
 									spmin.setData(sm.getSplicedCurveX(),sm.getSplicedCurveYFhklErrorMin());
 									spmin.setName("Spliced_FhklMinError");
-		
+										
+									sp.setData(sm.getSplicedCurveX(),sm.getSplicedCurveYFhkl());
+									sp.setName("Spliced_Fhkl");		
 								}
 								else{
 									spmax.setData(sm.getSplicedCurveX(),sm.getSplicedCurveYErrorMax());
 									spmax.setName("Spliced_IntensityMaxError");
-									
+										
 									spmin.setData(sm.getSplicedCurveX(),sm.getSplicedCurveYErrorMin());
 									spmin.setName("Spliced_IntensityMinError");
+									
+									sp.setData(sm.getSplicedCurveX(),sm.getSplicedCurveY());
+									sp.setName("Spliced_Intensity");
 								}
-	
+								
+								spmax.setTraceType(TraceType.DASH_LINE);
+								spmin.setTraceType(TraceType.DASH_LINE);
+								
+								traceList.add(sp);
+								
+								if (fr[1] == "n"){
+									traceList.add(spmax);
+									traceList.add(spmin);
+								}else{
+									spmin.dispose();
+									spmax.dispose();
+								}
 							}
 						}
 					}
-					outputCurves.getErrors().setText("Errors");
 				}
-				else{
-					outputCurves.getErrors().setText("Errors");
+					
+				outputCurves.getPlotSystem().clear();
+				
+				for (ILineTrace ltr : traceList){
+					if (ltr != null){
+						outputCurves.getPlotSystem().addTrace(ltr);
+					}
 				}
 				
+				outputCurves.getPlotSystem().autoscaleAxes();	
 			}
+
+	    	
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	    
+//////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////Generate Zoom///////////////////////////////////////
+/////////////////////Keywords: Zoom, slices, pop out, it/////////////////////
+	    
+	    customComposite.getZoom().addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				RegionSetterZoomed zoom = new RegionSetterZoomed(getParentShell()
+						, SWT.OPEN, sm, dms, filepaths, models); 
+				
+				zoom.open();
+				
+				String stitle = "r";
+				String path = "p";
+				
+//				if (zoom.open()) {
+//					
+//				}
+			}
+			
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
@@ -1887,12 +2001,10 @@ public class ExampleDialog extends Dialog {
 	    
 	    
 	    
-	    
-	    
-	    
 //////////////////////////////////////////////////////////////////////////////////////	    
-	    
+
 	    return container;
+//////////////////END OF DIALOG COMPOSITE.///////////////////////////////////////////
 	}
 	
 	@Override

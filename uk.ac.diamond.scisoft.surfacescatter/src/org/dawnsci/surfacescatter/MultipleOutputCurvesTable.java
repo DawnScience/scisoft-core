@@ -11,7 +11,6 @@ import org.eclipse.dawnsci.plotting.api.region.IRegion;
 import org.eclipse.dawnsci.plotting.api.region.IRegion.RegionType;
 import org.eclipse.dawnsci.plotting.api.trace.ILineTrace;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -35,11 +34,7 @@ public class MultipleOutputCurvesTable extends Composite {
 	private Button sc;
 	private Button save;
 	private Button intensitySelect;
-//	private Group datSelection;
 	private Group overlapSelection;
-	private Composite parent;
-	private List datList;
-//	private ScrolledComposite datScrolled;
 	private Table datTable;
 	private Button errors;
 	
@@ -49,7 +44,6 @@ public class MultipleOutputCurvesTable extends Composite {
 
 		new Label(this, SWT.NONE).setText("Output Curves");
 
-		this.parent = parent;
 		this.model = models.get(sm.getSelection());
 		this.dm = dms.get(sm.getSelection());
 	
@@ -67,21 +61,10 @@ public class MultipleOutputCurvesTable extends Composite {
 
 	public void createContents(ExampleModel model, SuperModel sm, DataModel dm) {
 		
-//		Group topGroup = new Group(this, SWT.NULL);
-//		topGroup.setText("Data Selection");
-//		GridLayout topGroupLayout = new GridLayout(1, true);
-//		GridData topGroupData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-//		topGroupData.heightHint = 30;
-//		topGroupData.minimumWidth = 50;
-//		topGroup.setLayout(topGroupLayout);
-//		topGroup.setLayoutData(topGroupData);
-//		
 		datTable = new Table(this, SWT.MULTI | SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
 		GridData datTableData = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
 		datTableData.heightHint = 5;
 		datTable.setLayoutData(datTableData);
-//		datTable.setHeaderVisible(true);
-		
 		
 		datSelector = new ArrayList<>();
 		
@@ -124,9 +107,9 @@ public class MultipleOutputCurvesTable extends Composite {
 
 		plotSystem4.createPlotPart(this, "ExamplePlot", actionBarComposite, PlotType.IMAGE, null);
 		
-		String t = CurveStateIdentifier.CurveStateIdentifier1(plotSystem4);
+		String[] t = CurveStateIdentifier.CurveStateIdentifier1(plotSystem4);
 		
-		if(t == "f"){
+		if(t[0] == "f"){
 			lt = plotSystem4.createLineTrace(dm.getName() + "_Fhkl");
 		}
 		else{
@@ -136,7 +119,7 @@ public class MultipleOutputCurvesTable extends Composite {
 		if (dm.getyList() == null || dm.getxList() == null) {
 			lt.setData(dm.backupDataset(), dm.backupDataset());
 		} else {
-			if (t == "f"){
+			if (t[0] == "f"){
 				lt.setData(dm.yIDatasetFhkl(), dm.xIDataset());
 			}
 			else{

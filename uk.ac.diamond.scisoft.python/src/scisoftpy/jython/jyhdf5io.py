@@ -145,11 +145,7 @@ class HDF5Loader(object):
         while it.hasNext():
             n = it.next()
             v = node.getAttribute(n).getValue()
-            if v.size == 1:
-                v = v.getObject([0])
-            else:
-                v = Sciwrap(v)
-            attrs.append((n, v))
+            attrs.append((n, Sciwrap(v)))
 
         if link.isDestinationGroup():
             name = link.getName()

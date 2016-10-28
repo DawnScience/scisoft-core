@@ -142,7 +142,7 @@ public class NexusTreeUtilsTest {
 		Dataset axis;
 
 		axis = DatasetFactory.createRange(shape[0], Dataset.INT16);
-		axis.setName("polar_angle_demand");
+		axis.setName("polar_angle_set");
 		axes.add(new AxisDataset(0, axis, 0));
 
 		axis = DatasetFactory.createRange(shape[1], Dataset.INT16);

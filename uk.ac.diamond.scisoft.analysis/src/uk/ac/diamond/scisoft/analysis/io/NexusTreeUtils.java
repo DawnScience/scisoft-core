@@ -111,7 +111,7 @@ public class NexusTreeUtils {
 	public static final String NX_DETECTOR_YBEAMCENTRE = "beam_center_x";
 	public static final String NX_DETECTOR_XPIXELNUMBER = "x_pixel_number";
 	public static final String NX_DETECTOR_YPIXELNUMER = "y_pixel_number";
-	public static final String NX_AXES_SET = "_demand";
+	public static final String NX_AXES_SET = "_set";
 
 	public static final String DEPENDS_ON = "depends_on";
 	

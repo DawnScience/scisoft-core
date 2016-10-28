@@ -9,7 +9,9 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
@@ -27,9 +29,9 @@ import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.processing.operations.mask.CoordinateMaskModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.mask.CoordinateMaskOperation;
+import uk.ac.diamond.scisoft.analysis.processing.operations.mask.CoordinateMaskOperation.MaskAxis;
 import uk.ac.diamond.scisoft.analysis.processing.operations.twod.DiffractionMetadataImportModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.twod.DiffractionMetadataImportOperation;
-import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 public class CoordinateMaskingTest {
 
@@ -48,7 +50,7 @@ public class CoordinateMaskingTest {
 		
 		CoordinateMaskModel model = new CoordinateMaskModel();
 		
-		model.setCoordinateType(XAxis.Q);
+		model.setCoordinateType(MaskAxis.Q);
 		model.setCoordinateRange(new double[] {lowerLimit, upperLimit});
 		
 		Dataset mask = DatasetUtils.convertToDataset(getMask(intermediateData, model));
@@ -78,6 +80,41 @@ public class CoordinateMaskingTest {
 	@Test
 	public void testGetOutputRank() {
 		assertEquals("Coordinate masking Operation output rank not as expected:", OperationRank.TWO, new CoordinateMaskOperation().getOutputRank());
+	}
+	
+	@Test
+	public void testMetadatalessPixelMasking() {
+		final double lowerLimit = 400, upperLimit = 800;
+		final int size = 2048, halfSize = size/2;
+		double sqrt2 = 1.4142135623730951;
+
+		Dataset data = DatasetFactory.zeros(DoubleDataset.class, size, size);
+		data.setMetadata(new SliceFromSeriesMetadata(new SourceInformation("/dev/null", "", null)));
+		
+		CoordinateMaskModel model = new CoordinateMaskModel();
+		
+		model.setCoordinateType(MaskAxis.PIXEL);
+		model.setCoordinateRange(new double[] {lowerLimit, upperLimit});
+		model.setMaskedInside(true);
+
+		Dataset ringMask = DatasetUtils.convertToDataset(getMask(data, model));
+		
+		// Test some points
+		assertTrue("Central pixel incorrectly masked", getMaskRelativeToCentre(ringMask, 0, 0, halfSize));
+		assertTrue("Inner edge pixel incorrectly masked", getMaskRelativeToCentre(ringMask, (int) lowerLimit-1, 0, halfSize));
+		assertTrue("Inner edge pixel incorrectly masked", getMaskRelativeToCentre(ringMask, (int) (lowerLimit/sqrt2), (int) (lowerLimit/sqrt2), halfSize));
+		assertTrue("Inner edge pixel incorrectly unmasked", !getMaskRelativeToCentre(ringMask, (int) lowerLimit+1, 0, halfSize));
+		assertTrue("Inner edge pixel incorrectly unmasked", !getMaskRelativeToCentre(ringMask, (int) (lowerLimit/sqrt2) + 1, (int) (lowerLimit/sqrt2) + 1, halfSize));
+		assertTrue("Outer edge pixel incorrectly masked", !getMaskRelativeToCentre(ringMask, (int) upperLimit-1, 0, halfSize));
+		assertTrue("Outer edge pixel incorrectly masked", !getMaskRelativeToCentre(ringMask, (int) (upperLimit/sqrt2), (int) (upperLimit/sqrt2), halfSize));
+		assertTrue("Outer edge pixel incorrectly unmasked", getMaskRelativeToCentre(ringMask, (int) (upperLimit+1), 0, halfSize));
+		assertTrue("Outer edge pixel incorrectly unmasked", getMaskRelativeToCentre(ringMask, (int) (upperLimit/sqrt2 + 1), (int) (upperLimit/sqrt2 + 1), halfSize));
+		
+		
+	}
+	
+	private boolean getMaskRelativeToCentre(IDataset mask, int iCentre, int jCentre, int halfsize) {
+		return mask.getBoolean(iCentre + halfsize, jCentre + halfsize);
 	}
 	
 	// sets diffraction metadata, gets the q array (element 0) and the data to pass on (element 1) 

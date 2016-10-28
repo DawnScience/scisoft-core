@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.mask;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
-import uk.ac.diamond.scisoft.analysis.roi.XAxis;
+import uk.ac.diamond.scisoft.analysis.processing.operations.mask.CoordinateMaskOperation.MaskAxis;
 
 public class CoordinateMaskModel extends AbstractOperationModel {
 	
@@ -20,7 +20,7 @@ public class CoordinateMaskModel extends AbstractOperationModel {
 	double[] coordinateRange = null;
 
 	@OperationModelField(hint="Set coordinate for to mask over", label = "Coordinate")
-	private XAxis coordinateType = XAxis.Q;
+	private MaskAxis coordinateType = MaskAxis.Q;
 
 	@OperationModelField(label = "Mask range?", hint="Mask over the range when checked, outside the range otherwise")
 	private boolean maskedInside = false;
@@ -41,11 +41,11 @@ public class CoordinateMaskModel extends AbstractOperationModel {
 		firePropertyChange("coordinateRange", this.coordinateRange, this.coordinateRange = coordinateRange);
 	}
 	
-	public XAxis getCoordinateType() {
+	public MaskAxis getCoordinateType() {
 		return this.coordinateType;
 	}
 	
-	public void setCoordinateType(XAxis coordinateType) {
+	public void setCoordinateType(MaskAxis coordinateType) {
 		firePropertyChange("coordinateType", this.coordinateType, this.coordinateType = coordinateType);
 	}
 	

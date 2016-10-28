@@ -19,8 +19,11 @@ import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.MaskMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 
@@ -56,7 +59,7 @@ public class CoordinateMaskOperation extends
 			throws OperationException {
 		
 		// Assume q
-		XAxis theAxis = model.getCoordinateType();
+		MaskAxis theAxis = model.getCoordinateType();
 		double coordinateRange[] = model.getCoordinateRange();
 		//TODO: get data from an external data source, rather than the
 		// diffraction calibration, if not present
@@ -74,25 +77,34 @@ public class CoordinateMaskOperation extends
 				coordinateArray = PixelIntegrationUtils.generate2ThetaArrayRadians(input.getShape(),diffractionMD);
 				coordinateArray.imultiply(180/Math.PI);
 				break;
+			case AZIMUTHAL_ANGLE:
+				coordinateArray = PixelIntegrationUtils.generateAzimuthalArray(input.getShape(), diffractionMD, false);
+				break;
 			case PIXEL:
-			case RESOLUTION:
+				double[] beamCentre = diffractionMD.getOriginalDetector2DProperties().getBeamCentreCoords();
+				coordinateArray = DatasetFactory.zeros(DoubleDataset.class, input.getShape());
+				for (int i = 0; i < input.getShape()[0]; i++)
+					for (int j = 0; j < input.getShape()[1]; j++)
+						coordinateArray.set(Math.sqrt(square(i-beamCentre[0]) + square(j-beamCentre[1])), i, j);
+				break;
 			default:
 				throw new OperationException(this, "This coordinate is not yet supported");
 			}
 		} else {
-			throw new OperationException(this, "Dataset-based masking not yet supported");
-
-//			// Trace metadata
-//			String xyFilePath = "";
-//			try {
-//				xyFilePath = "/home/rkl37156";//model.getFilePath();
-//			} catch (Exception e) {
-//				throw new OperationException(this, "Could not find " + xyFilePath);
-//			}
-//
-//			// Load the container trace from the designated xy file
-////			if (model.getDataset().length() <= 0) throw new OperationException(this, "Undefined dataset");
-//			coordinateArray = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(this, xyFilePath, "entry1/q"/*model.getDataset()*/));
+			switch (theAxis) {
+			case PIXEL:
+				double[] beamCentre = new double[]{input.getShape()[0]*0.5, input.getShape()[1]*0.5};
+				coordinateArray = DatasetFactory.zeros(DoubleDataset.class, input.getShape());
+				for (int i = 0; i < input.getShape()[0]; i++)
+					for (int j = 0; j < input.getShape()[1]; j++)
+						coordinateArray.set(Math.sqrt(square(i-beamCentre[0]) + square(j-beamCentre[1])), i, j);
+			break;
+			case ANGLE:
+			case AZIMUTHAL_ANGLE:
+			case Q:
+			default:
+				throw new OperationException(this, "Dataset-based masking not yet supported");
+			}
 
 		}
 		
@@ -126,4 +138,15 @@ public class CoordinateMaskOperation extends
 		return new OperationData(input);
 	}
 
+	
+	public enum MaskAxis {
+		ANGLE,
+		PIXEL,
+		Q,
+		AZIMUTHAL_ANGLE
+	}
+	
+	private double square(double x) {
+		return x*x;
+	}
 }

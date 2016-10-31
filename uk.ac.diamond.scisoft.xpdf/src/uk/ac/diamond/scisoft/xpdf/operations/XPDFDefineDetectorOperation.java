@@ -48,7 +48,7 @@ public class XPDFDefineDetectorOperation extends XPDFInsertXMetadataOperation<XP
 
 	@Override
 	public OperationRank getOutputRank() {
-		return OperationRank.ANY;
+		return OperationRank.SAME;
 	}
 
 }

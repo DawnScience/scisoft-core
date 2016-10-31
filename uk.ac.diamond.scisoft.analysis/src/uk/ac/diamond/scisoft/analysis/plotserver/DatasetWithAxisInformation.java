@@ -37,7 +37,14 @@ public class DatasetWithAxisInformation implements Serializable {
 	 *            The data to set.
 	 */
 	public void setData(IDataset data) {
-		this.data = DatasetUtils.convertToDataset(data);
+		Dataset tmp = DatasetUtils.convertToDataset(data);
+		if (tmp.getStrides() != null) {
+			// workaround deserialization problem where base is not set as it is transient
+			// this can cause NPEs when base is subsequently used
+			tmp = tmp.getSlice();
+			tmp.setName(data.getName());
+		}
+		this.data = tmp;
 	}
 
 	/**

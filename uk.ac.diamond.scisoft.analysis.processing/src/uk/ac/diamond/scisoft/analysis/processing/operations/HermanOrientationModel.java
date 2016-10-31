@@ -34,15 +34,6 @@ public class HermanOrientationModel extends IntegrationModel {
 		
 		NumberOfPis(int pis) {
 			this.pis = pis;
-//			if (piDescriptor == "Half Pi") {
-//				this.pis = 1;
-//			}
-//			else if (piDescriptor == "Pi") {
-//				this.pis = 2;
-//			}
-//			else {
-//				this.pis = 2;
-//			}
 		}
 		
 		public int getNumberOfPis() {

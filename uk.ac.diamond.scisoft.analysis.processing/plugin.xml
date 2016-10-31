@@ -573,6 +573,14 @@
             name="Export to Text File [Image]">
       </operation>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportImageOperation"
+            description="Export 2D detector data as either TIFF or PNG images"
+            icon="icons/exptext.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportImageOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportImageModel"
+            name="Export to Image File [Image]">
+      </operation>
+      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.AverageSectionsOfFastestOperation"
             description="Averages sections of the data along the fastest non-data dimension of the array. For example, if the data set shape is [a,b,c,X,Y] where X and Y are the data dimensions, c is the fastest axis (row-major order)"
             icon="icons/meanfilt.png"

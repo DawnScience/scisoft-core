@@ -80,7 +80,6 @@ public class OperationServiceImpl implements IOperationService {
 	private Map<String, OperationCategory>                                                           categoryId;
 	private Map<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>>  categoryOp;
 	private Map<String, String>                                                                      opIdCategory;
-	private Map<String, String>                                                                      operationdialogId;
 	
 	private final static Logger logger = LoggerFactory.getLogger(OperationServiceImpl.class);
 	
@@ -253,7 +252,6 @@ public class OperationServiceImpl implements IOperationService {
 		categoryOp = new HashMap<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>>(7);		
 		categoryId = new HashMap<String, OperationCategory>(7);
 		opIdCategory = new HashMap<String, String>();
-		operationdialogId = new HashMap<String, String>();
 		
 		IConfigurationElement[] eles = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.operation");
 		for (IConfigurationElement e : eles) {
@@ -305,16 +303,6 @@ public class OperationServiceImpl implements IOperationService {
 				models.put(id, ((IOperationModel)e.createExecutableExtension("model")).getClass());
 			}
 			
-		}
-		eles = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.operationdialog");
-		for (IConfigurationElement e : eles) {
-			if (!e.getName().equals("operationdialog")) continue;
-			final String id = e.getAttribute("id");
-			final String operationid = e.getAttribute("operationid");
-			String old = operationdialogId.put(operationid, id);
-			if (old != null) {
-				logger.warn("OperationDialog has been changed from {} to {} for operation {}", old, id, operationid);
-			}
 		}
 	}
 	
@@ -488,14 +476,6 @@ public class OperationServiceImpl implements IOperationService {
 		return operations.get(id).getDescription();
 	}
 
-	@Override
-	public String getOperationDialogId(String id) throws Exception {
-		checkOperations();
-		if (!operationdialogId.containsKey(id))
-			throw new Exception("Operationdialog id not found!");
-		return operationdialogId.get(id);
-	}
-	
 	@Override
 	public IOperationBean createBean() {
 		return new OperationBean();

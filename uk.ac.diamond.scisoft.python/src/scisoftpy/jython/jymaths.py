@@ -405,14 +405,17 @@ def histogram(a, bins=10, range=None, normed=False, weights=None, density=None):
 
     h = None
     if range is None:
+        if not isinstance(bins, int):
+            bins = _asarray(bins)._jdataset()
         h = _histo(bins)
     elif len(range) != 2:
         raise ValueError, "Need two values in range"
     else:
         h = _histo(bins, range[0], range[1])
 
-    from jycore import asDatasetList as _asList
-    return h.value(_asList(a))
+    if not isinstance(a, _ds):
+        a = _asarray(a)._jdataset()
+    return h.value(a)
 
 import org.eclipse.january.dataset.LinearAlgebra as _linalg
 

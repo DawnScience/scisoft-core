@@ -558,6 +558,18 @@ class Test(unittest.TestCase):
         self.checkitems([[0,1,2,3],[0,1,2,3],[0,1,2,3],[0,1,2,3],[0,1,2,3],[0,1,2,3]], xy[1])
         self.checkitems([[0,0,0,0], [1,1,1,1], [2,2,2,2], [3,3,3,3], [4,4,4,4], [5,5,5,5]], xy[0])
 
+    def testHistogram(self):
+        print 'Histogram testing'
+        h, v = np.histogram([1, 2, 1], bins=[0, 1, 2, 3])
+        self.checkitems([0, 2, 1], h)
+        self.checkitems([0, 1, 2, 3], v)
+        h, v = np.histogram([0, 1, 2, 1], bins=2)
+        self.checkitems([1, 3], h)
+        self.checkitems([0, 1, 2], v)
+        h, v = np.histogram(np.arange(4), bins=np.arange(5))
+        self.checkitems([1, 1, 1, 1], h)
+        self.checkitems([0, 1, 2, 3, 4, 5], v)
+
 if __name__ == "__main__":
     #import sys
     #sys.argv = ['', 'Test.testName']

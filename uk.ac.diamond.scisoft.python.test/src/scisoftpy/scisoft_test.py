@@ -448,12 +448,14 @@ class Test(unittest.TestCase):
     def testRoots(self):
         print 'Roots testing'
         rts = np.roots([1, 0, -1])
+        rts.real.sort()
         self.checkitems([-1, 1], rts.real)
         self.checkitems([0, 0], rts.imag)
         rts = np.roots([1, 2, 1])
         self.checkitems([-1, -1], rts.real)
         self.checkitems([0, 0], rts.imag)
         rts = np.roots([1, 0, 1])
+        rts.real.sort()
         self.checkitems([0, 0], rts.real)
         self.checkitems([1, -1], rts.imag)
         rts = np.roots([3.2, 2, 1])

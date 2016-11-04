@@ -22,6 +22,7 @@ from uk.ac.diamond.scisoft.analysis.fitting.functions import Parameter as _param
 from uk.ac.diamond.scisoft.analysis.fitting.functions import AFunction as _absfn
 from uk.ac.diamond.scisoft.analysis.fitting.functions import CompositeFunction as _compfn
 from uk.ac.diamond.scisoft.analysis.fitting import Fitter as _fitter
+from org.eclipse.dawnsci.analysis.api.fitting.functions import IOperator as _operator
 
 import scisoftpy as _dnp
 _asIterable = _dnp.asIterable
@@ -284,13 +285,20 @@ class fitresult(object):
     area = property(_area)
 
     def __str__(self):
-        nf = self.func.noOfFunctions
         out = "Fit parameters:\n"
-        for n in range(nf):
+        if isinstance(self.func, _operator):
+            nf = self.func.noOfFunctions
+            for n in range(nf):
+                f = self.func.getFunction(n)
+                p = [q for q in f.getParameterValues()]
+                np = len(p)
+                out += "    function '%s' (%d) has %d parameters = %s\n" % (f.name, n, np, p)
+        else:
             f = self.func.getFunction(n)
             p = [q for q in f.getParameterValues()]
             np = len(p)
-            out += "    function '%s' (%d) has %d parameters = %s\n" % (f.name, n, np, p)
+            out += "    function '%s' has %d parameters = %s\n" % (f.name, np, p)
+            
         return out
 
 import inspect as _inspect

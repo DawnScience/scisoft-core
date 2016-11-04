@@ -39,7 +39,7 @@ Implemented NumPy methods (1.10)
  * Linear algebra: trace, tensordot, eig, eigvals, cholesky, qr, svd, norm, cond, det, solve, inv, pinv, matrix_power
  * Rounding: rint, ceil, floor, trunc, fix
  * Bitwise: bitwise_and, bitwise_or, bitwise_xor, invert, left_shift, right_shift
- * Stats: amax, amin, ptp, mean, std, var, cumprod, cumsum
+ * Stats: amax, amin, ptp, mean, std, var, cumprod, cumsum, histogram
  * Random: rand, randint, random_integer, randn, exponential, poisson, seed
 
 Non-NumPy

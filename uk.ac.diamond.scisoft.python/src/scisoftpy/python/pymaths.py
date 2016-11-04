@@ -142,6 +142,8 @@ cumsum = _np.cumsum
 
 diff = _np.diff
 
+histogram = _np.histogram
+
 dot = _np.dot
 vdot = _np.vdot
 inner = _np.inner

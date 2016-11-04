@@ -45,7 +45,7 @@ floatmax = _jmax # maximum float value (use sys.float_info.max for 2.6+)
 from jycore import _wrap
 from jycore import asarray as _asarray
 from jycore import float64 as _f64
-from jycore import _translatenativetype
+#from jycore import _translatenativetype
 
 # these functions call (wrapped) instance methods
 def prod(a, axis=None, dtype=None):
@@ -395,10 +395,13 @@ def diff(a, order=1, axis=-1):
 import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram as _histo
 
 @_wrap
-def histogram(a, bins=10, range=None, normed=False, weights=None, new=None): #@ReservedAssignment
+def histogram(a, bins=10, range=None, normed=False, weights=None, density=None): #@ReservedAssignment
     '''Histogram of input'''
-    if normed or weights or new:
+    if normed or weights or density:
         raise ValueError, "Option not supported yet"
+
+    if isinstance(bins, str):
+        raise ValueError, "bin string option not supported yet"
 
     h = None
     if range is None:

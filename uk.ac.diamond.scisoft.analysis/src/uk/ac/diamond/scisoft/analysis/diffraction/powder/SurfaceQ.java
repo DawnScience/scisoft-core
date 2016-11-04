@@ -19,8 +19,11 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.LinearAlgebra;
 import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.dataset.PositionIterator;
 
+import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
+import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 /**
  * Calculates the perpendicular and surface parallel momentum change for
@@ -122,8 +125,8 @@ public class SurfaceQ {
 	 * @return an array of {@link Dataset}s containing minimum and maximum of
 	 * 			the momentum transfer perpendicular to the scattering surface.
 	 */
-	public DoubleDataset[] qPerpendicularMinMax(DiffractionMetadata dm) {
-		return qPerpParaMinMax(dm, true);
+	public DoubleDataset[] qPerpendicularMinMax(DiffractionMetadata dm, int[] shape) {
+		return qPerpParaMinMax(dm, shape, true);
 	}
 
 	/**
@@ -138,8 +141,8 @@ public class SurfaceQ {
 	 * 			the magnitude of the momentum transfer parallel to the
 	 * 			scattering surface.
 	 */
-	public DoubleDataset[] qParallelMinMax(DiffractionMetadata dm) {
-		return qPerpParaMinMax(dm, false);
+	public DoubleDataset[] qParallelMinMax(DiffractionMetadata dm, int[] shape) {
+		return qPerpParaMinMax(dm, shape, false);
 	}
 
 	/**
@@ -203,18 +206,18 @@ public class SurfaceQ {
 	}
 	
 	// Extract all the common boilerplate for getting the min and max values of the coordinate out of a pixel
-	private DoubleDataset[] qPerpParaMinMax(DiffractionMetadata dm, boolean isPerpendicular) {
+	private DoubleDataset[] qPerpParaMinMax(DiffractionMetadata dm, int[] shape, boolean isPerpendicular) {
 		// For diffraction metadata, we can assume that the beam is on the +ve z-axis
 		DoubleDataset incidentBeam = (DoubleDataset) DatasetFactory.createFromList(Dataset.FLOAT64, Arrays.asList(0.0, 0.0, 1.0));
 		DetectorProperties dp = dm.getDetector2DProperties();
 		double beamEnergy = 2*Math.PI*hBarC/dm.getDiffractionCrystalEnvironment().getWavelength();
 
-		DoubleDataset qMin = DatasetFactory.zeros(dp.getPx(), dp.getPy());
-		DoubleDataset qMax = DatasetFactory.zeros(dp.getPx(), dp.getPy());
+		DoubleDataset qMin = DatasetFactory.zeros(shape);
+		DoubleDataset qMax = DatasetFactory.zeros(shape);
 
 		// Get the detector size in each direction
-		for (int ix = dp.getPx(); ix >= 0; ix--){
-			for (int jy = dp.getPy(); jy >= 0; jy--) {
+		for (int ix = shape[0]-1; ix >= 0; ix--){
+			for (int jy = shape[1]-1; jy >= 0; jy--) {
 				// Initialize the min and max values to the opposite extrema
 				double qMinScalar = Double.MAX_VALUE,
 						qMaxScalar = -Double.MAX_VALUE;
@@ -237,6 +240,71 @@ public class SurfaceQ {
 		
 		return new DoubleDataset[] {qMin, qMax};
 	}
+	
+	public static Dataset[] generateMinMaxParallelPerpendicularArrays(int[] shape, QSpace qSpace, Vector3d surface) {
+		
+		if (qSpace == null) return null;
+		
+		surface.normalize();
+		
+		Dataset perArrayMax = DatasetFactory.zeros(shape, Dataset.FLOAT64);
+		Dataset perArrayMin = DatasetFactory.zeros(shape, Dataset.FLOAT64);
+		Dataset parArrayMax = DatasetFactory.zeros(shape, Dataset.FLOAT64);
+		Dataset parArrayMin = DatasetFactory.zeros(shape, Dataset.FLOAT64);
+
+		PositionIterator iter = perArrayMax.getPositionIterator();
+		int[] pos = iter.getPos();
+		
+		Vector3d[] vs = new Vector3d[4];
+		
+		vs[0] = new Vector3d();
+		vs[1] = new Vector3d();
+		vs[2] = new Vector3d();
+		vs[3] = new Vector3d();
+		
+		Vector3d s = new Vector3d(surface);
+		
+		double[] out = new double[2];
+		double[] valsPar = new double[4];
+		double[] valsPer = new double[4];
+		
+		while (iter.hasNext()) {
+
+		qSpace.qFromPixelPosition(pos[1], pos[0],vs[0]);
+		qSpace.qFromPixelPosition(pos[1]+1, pos[0],vs[1]);
+		qSpace.qFromPixelPosition(pos[1], pos[0]+1,vs[2]);
+		qSpace.qFromPixelPosition(pos[1]+1, pos[0],vs[3]);
+
+		for (int i = 0 ; i < 4 ; i++) {
+			calculate(s, vs[i], out);
+			valsPer[i] = out[0];
+			valsPar[i] = out[1];
+			s.set(surface);
+		}
+		
+		Arrays.sort(valsPar);
+		Arrays.sort(valsPer);
+		
+		perArrayMax.set(valsPer[3],pos);
+		perArrayMin.set(valsPer[0],pos);
+		parArrayMax.set(valsPar[3],pos);
+		parArrayMin.set(valsPar[0],pos);
+		
+		
+		}
+		return new Dataset[]{perArrayMin,perArrayMax,parArrayMin,parArrayMax};
+	}
+	
+	private static void calculate(Vector3d surface, Vector3d v, double[] out) {
+		//perp
+		out[0] = v.dot(surface);
+		surface.scale(out[0]);
+		v.sub(surface);
+		//parr
+		out[1] = v.length();
+	}
+	
+	
 	
 	// Static functions
 	

@@ -991,6 +991,12 @@
             model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="Sum">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.SurfaceScatteringRemappingOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.SurfaceScatteringRemappingOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="Surface Scattering Remapping">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

@@ -3,6 +3,7 @@
 	<name>uk.ac.diamond.scisoft.python.test</name>
 	<comment></comment>
 	<projects>
+		<project>uk.ac.diamond.scisoft.python</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

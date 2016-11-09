@@ -373,6 +373,9 @@ def line(x, y=None, title=None, name=None):
     >>> ycos = dnp.cos(dnp.radians(degs))
     >>> dnp.plot.line([rads, {"degrees":degs}], [ysin, {("cos","right"):ycos}])
 
+    Finally, key labels can be added to each line by specifying a tuple of dataset and string
+    for each y dataset.
+    >>> dnp.plot.line([rads, {"degrees":degs}], [(ysin, "sin in rads") , {("cos", "right"):(ycos, "cos in degs")}])
     '''
     if name is None:
         name = _PVNAME
@@ -387,6 +390,9 @@ def addline(x, y=None, title=None, name=None):
     y -- dataset or list of datasets
     title -- title of plot
     name -- name of plot view to use (if None, use default name)
+    
+    See also:
+    line
     '''
     if name is None:
         name = _PVNAME

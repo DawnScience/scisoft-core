@@ -597,6 +597,14 @@
             name="Centroid">
       </operation>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.image.DifferentialPhaseContrast"
+            description="Determine the X and Y phase contrast values (saved to file)"
+            icon="icons/blank.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.image.DifferentialPhaseContrast"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.image.DifferentialPhaseContrastModel"
+            name="Differential Phase Contrast">
+      </operation>
+      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.MinMaxNormalize"
             description="Normalize the minimum to zero and the maximum to one"
             icon="icons/decolor.png"

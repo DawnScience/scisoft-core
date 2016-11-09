@@ -184,7 +184,10 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver {
 	private static Dataset loadDataset(String fileName, int header, int[] shape) throws ScanFileHolderException {
 		IDataHolder holder = LoaderFactory.fetchData(fileName, false);
 		if (holder != null) {
-			return DatasetUtils.convertToDataset(holder.getDataset(0));
+			IDataset data = holder.getDataset(0);
+			if (data != null) {
+				return DatasetUtils.convertToDataset(data);
+			}
 		}
 		Dataset data = null;
 		FileInputStream fi = null;

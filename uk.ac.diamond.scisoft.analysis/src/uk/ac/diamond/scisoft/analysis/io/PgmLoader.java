@@ -131,7 +131,10 @@ public class PgmLoader extends AbstractFileLoader {
 	private static Dataset loadDataset(String fileName) throws ScanFileHolderException {
 		IDataHolder holder = LoaderFactory.fetchData(fileName, false);
 		if (holder != null) {
-			return DatasetUtils.convertToDataset(holder.getDataset(0));
+			IDataset data = holder.getDataset(0);
+			if (data != null) {
+				return DatasetUtils.convertToDataset(data);
+			}
 		}
 		File f = null;
 		FileInputStream fi = null;

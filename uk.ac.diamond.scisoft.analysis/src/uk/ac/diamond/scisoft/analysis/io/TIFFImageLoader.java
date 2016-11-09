@@ -355,8 +355,12 @@ public class TIFFImageLoader extends JavaImageLoader {
 
 	private static Dataset readImage(String filename, ImageReader reader, boolean asGrey, boolean keepBitWidth, int num) throws IOException, ScanFileHolderException {
 		IDataHolder holder = LoaderFactory.fetchData(filename, false, num);
-		if (holder != null)
-			return DatasetUtils.convertToDataset(holder.getDataset(0));
+		if (holder != null) {
+			IDataset data = holder.getDataset(0);
+			if (data != null) {
+				return DatasetUtils.convertToDataset(data);
+			}
+		}
 
 		int n = reader.getNumImages(true);
 

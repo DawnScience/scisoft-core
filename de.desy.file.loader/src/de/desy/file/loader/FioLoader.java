@@ -35,6 +35,7 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.SliceND;
 import org.slf4j.Logger;
@@ -180,20 +181,25 @@ public class FioLoader extends AbstractFileLoader {
 								return null;
 							}
 							IDataHolder holder = LoaderFactory.fetchData(fileName, loadMetadata, num);
-							if (holder == null) {
-								try {
-									holder = ldr.loadFile(num, mon);
-								} catch (ScanFileHolderException e) {
-									throw new IOException(e);
+							if (holder != null) {
+								IDataset data = holder.getDataset(n);
+								if (data != null) {
+									return DatasetUtils.convertToDataset(data).getSliceView(slice);
 								}
-								if (holder.getFilePath() == null) {
-									holder.setFilePath(fileName);
-								}
-								if (holder.getLoaderClass() == null) {
-									holder.setLoaderClass(ldr.getClass());
-								}
-								LoaderFactory.cacheData(holder, num);
 							}
+
+							try {
+								holder = ldr.loadFile(num, mon);
+							} catch (ScanFileHolderException e) {
+								throw new IOException(e);
+							}
+							if (holder.getFilePath() == null) {
+								holder.setFilePath(fileName);
+							}
+							if (holder.getLoaderClass() == null) {
+								holder.setLoaderClass(ldr.getClass());
+							}
+							LoaderFactory.cacheData(holder, num);
 
 							return holder.getDataset(n).getSliceView(slice);
 						}

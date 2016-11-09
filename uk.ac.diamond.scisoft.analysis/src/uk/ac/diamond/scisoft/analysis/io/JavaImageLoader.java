@@ -236,7 +236,10 @@ public class JavaImageLoader extends AbstractFileLoader {
 		}
 		IDataHolder holder = LoaderFactory.fetchData(path, false, num);
 		if (holder != null) {
-			return DatasetUtils.convertToDataset(holder.getDataset(0));
+			IDataset data = holder.getDataset(0);
+			if (data != null) {
+				return DatasetUtils.convertToDataset(data);
+			}
 		}
 
 		File f = new File(path);

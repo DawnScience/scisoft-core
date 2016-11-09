@@ -16,6 +16,7 @@ import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.LazyDataset;
 import org.eclipse.january.dataset.SliceND;
@@ -140,20 +141,25 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 				return null;
 			}
 			IDataHolder holder = LoaderFactory.fetchData(fileName, loadMetadata);
-			if (holder == null) {
-				try {
-					holder = loader.loadFile(mon);
-				} catch (ScanFileHolderException e) {
-					throw new IOException(e);
+			if (holder != null) {
+				IDataset data = name == null ? holder.getDataset(0) : holder.getDataset(name);
+				if (data != null) {
+					return DatasetUtils.convertToDataset(data).getSliceView(slice);
 				}
-				if (holder.getFilePath() == null) {
-					holder.setFilePath(fileName);
-				}
-				if (holder.getLoaderClass() == null) {
-					holder.setLoaderClass(loader.getClass());
-				}
-				LoaderFactory.cacheData(holder);
 			}
+
+			try {
+				holder = loader.loadFile(mon);
+			} catch (ScanFileHolderException e) {
+				throw new IOException(e);
+			}
+			if (holder.getFilePath() == null) {
+				holder.setFilePath(fileName);
+			}
+			if (holder.getLoaderClass() == null) {
+				holder.setLoaderClass(loader.getClass());
+			}
+			LoaderFactory.cacheData(holder);
 			IDataset data = name == null ? holder.getDataset(0) : holder.getDataset(name);
 			return data.getSliceView(slice);
 		}

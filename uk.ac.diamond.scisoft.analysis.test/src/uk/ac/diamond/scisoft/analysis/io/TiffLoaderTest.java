@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.asserts.TestUtils;
@@ -151,6 +152,20 @@ public class TiffLoaderTest {
 
 		d = image.getSlice(new Slice(1, 3), new Slice(null, null, 4), new Slice(2, 25));
 		Assert.assertArrayEquals("Shape not equal", new int[] {2, 512, 23}, d.getShape());
+		Assert.assertEquals("Type is int32", Integer.class, d.getElementClass());
+	}
+
+	@Test
+	public void testCachedLazyStackedFile() throws Exception {
+		String file = TestFileFolder + "untitled1020.TIF";
+		LoaderFactory.clear(file);
+		LoaderFactory.cacheData(LoaderFactory.getData(file, false, true, true, null), 0);
+		IFileLoader loader = new TIFFImageLoader(file);
+		ILazyDataset image = loader.loadFile().getLazyDataset(0);
+		Assert.assertArrayEquals("Shape not equal", new int[] {3, 2048, 2048}, image.getShape());
+
+		IDataset d = image.getSlice(new Slice(1));
+		Assert.assertArrayEquals("Shape not equal", new int[] {1, 2048, 2048}, d.getShape());
 		Assert.assertEquals("Type is int32", Integer.class, d.getElementClass());
 	}
 

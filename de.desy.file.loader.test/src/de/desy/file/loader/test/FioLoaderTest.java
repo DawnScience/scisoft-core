@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
+import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import de.desy.file.loader.FioLoader;
 
 public class FioLoaderTest {
@@ -25,6 +26,23 @@ public class FioLoaderTest {
 	@Test
 	public void testLazyLoader() throws Exception {
 		FioLoader loader = new FioLoader("resources/some.fio");
+		loader.setLoadAllLazily(true);
+		DataHolder dh = loader.loadFile();
+		assertEquals(5, dh.namesSize());
+		ILazyDataset d = dh.getLazyDataset(0);
+		assertEquals(544, d.getSize());
+		assertEquals(11710, d.getSlice().getDouble(10), 0);
+
+		d = dh.getLazyDataset(2);
+		assertEquals(145.3369, d.getSlice().getDouble(10), 0);
+	}
+
+	@Test
+	public void testCachedLazyLoader() throws Exception {
+		String file = "resources/some.fio";
+		LoaderFactory.clear(file);
+		LoaderFactory.cacheData(LoaderFactory.getData(file, false, true, true, null), 0);
+		FioLoader loader = new FioLoader(file);
 		loader.setLoadAllLazily(true);
 		DataHolder dh = loader.loadFile();
 		assertEquals(5, dh.namesSize());

@@ -93,7 +93,7 @@ public class ConcatenatingTwoDatasetsOperation extends AbstractOperation<Concate
 			
 		} catch (Exception e) {
 			// no axes were found which makes concatenation a lot easier!
-			//System.out.println("Exception: " + e.getMessage());
+			// System.out.println("Exception: " + e.getMessage());
 		}
 	
 		Dataset axes_concat_mean_old0 = null;
@@ -168,6 +168,7 @@ public class ConcatenatingTwoDatasetsOperation extends AbstractOperation<Concate
 				outsmm.reducedDimensionToSingular(i);
 		}
 		data_concat.addMetadata(outsmm);
+		data_concat.setName("Concatenated datasets");
 		return new OperationData(data_concat);
 	}
 
@@ -183,10 +184,12 @@ public class ConcatenatingTwoDatasetsOperation extends AbstractOperation<Concate
 
 	private Dataset getAxisDataset(ILazyDataset[] datasets, String datasetName) {
 		datasetName = datasetName.substring(0, datasetName.indexOf('['));
-		//System.out.println("datasetName: " + datasetName);
+		// chop of 'dirpath'
+		datasetName = datasetName.substring(datasetName.lastIndexOf('/')+1);
+		// System.out.println("datasetName: " + datasetName);
 		Dataset rv = null;
 		for (int i = 0 ; i < datasets.length ; i++) {
-			//System.out.println(datasets[i].getName());
+			// System.out.println(datasets[i].getName());
 			if (datasets[i].getName().equals(datasetName)) {
 				try {
 					rv = DatasetUtils.convertToDataset(datasets[i].getSlice());

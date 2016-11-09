@@ -71,45 +71,45 @@ public class DatasetWithAxisInformation implements Serializable {
 	}
 	
 	/**
-	 * This method builds the axis information into the base dataset
+	 * This method builds the axis information into the 1D dataset
 	 * 
-	 * @param yAxis
+	 * @param data
 	 *            The dataset which is to be plotted
 	 * @return The dataset with Axis info included
 	 */
-	public static DatasetWithAxisInformation createAxisDataSet(IDataset yAxis) {
-		return createAxisDataSet(yAxis, AxisMapBean.XAXIS);
+	public static DatasetWithAxisInformation createAxisDataSet(IDataset data) {
+		return createAxisDataSet(data, AxisMapBean.XAXIS);
 	}
 
 	/**
-	 * This method builds the axis information into the base dataset
-	 * @param yAxis
+	 * This method builds the axis information into the 1D dataset
+	 * @param data
 	 * @param axisDatasetID
 	 * @return dataset with axis info
 	 */
-	public static DatasetWithAxisInformation createAxisDataSet(IDataset yAxis, String axisDatasetID) {
-		return createAxisDataSet(yAxis, new String[] {axisDatasetID}, null);
+	public static DatasetWithAxisInformation createAxisDataSet(IDataset data, String axisDatasetID) {
+		return createAxisDataSet(data, new String[] {axisDatasetID}, null);
 	}
 
 	/**
-	 * This method builds the axis information into the base dataset
-	 * @param yAxis
+	 * This method builds the axis information into the 1D dataset
+	 * @param data
 	 * @param axisDatasetID
 	 * @param axisName
 	 * @return dataset with axis info
 	 */
-	public static DatasetWithAxisInformation createAxisDataSet(IDataset yAxis, String axisDatasetID, String axisName) {
-		return createAxisDataSet(yAxis, new String[] {axisDatasetID}, new String[] {axisName});
+	public static DatasetWithAxisInformation createAxisDataSet(IDataset data, String axisDatasetID, String axisName) {
+		return createAxisDataSet(data, new String[] {axisDatasetID}, new String[] {axisName});
 	}
 
 	/**
-	 * This method builds the axis information into the base dataset
-	 * @param yAxis
+	 * This method builds the axis information into the nD dataset
+	 * @param data
 	 * @param axisDatasetIDs
 	 * @param axisNames can be null or contain nulls
 	 * @return dataset with axis info
 	 */
-	public static DatasetWithAxisInformation createAxisDataSet(IDataset yAxis, String[] axisDatasetIDs, String[] axisNames) {
+	public static DatasetWithAxisInformation createAxisDataSet(IDataset data, String[] axisDatasetIDs, String[] axisNames) {
 		DatasetWithAxisInformation axisData = new DatasetWithAxisInformation();
 		AxisMapBean axisMapBean = new AxisMapBean();
 		axisMapBean.setAxisID(axisDatasetIDs.clone());
@@ -117,7 +117,7 @@ public class DatasetWithAxisInformation implements Serializable {
 			axisMapBean.setAxisNames(axisNames.clone());
 		}
 		axisData.setAxisMap(axisMapBean);
-		axisData.setData(yAxis);
+		axisData.setData(data);
 		return axisData;
 	}	
 

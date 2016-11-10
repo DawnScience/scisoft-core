@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import org.dawnsci.surfacescatter.ui.PlotSystemComposite;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -110,7 +111,9 @@ public class SliceIterationRunner {
 					
 				j.squeeze();
 				
-				final IDataset output1 = DummyProcessingClass.DummyProcess(sm ,j, model,dm, gm, customComposite, correctionSelection, k, trackingMarker);
+				final IDataset output1 = DummyProcessingClass.DummyProcess(sm ,j, 
+						model,dm, gm, customComposite.getPlotSystem(),
+						correctionSelection, k, trackingMarker);
 
 			plotSystem.clear();
 //			plotSystem.createPlot2D(output1, null, null);

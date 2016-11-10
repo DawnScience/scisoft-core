@@ -34,15 +34,16 @@ public class SecondConstantROI{
 	private static Dataset output;
 	private static IRegion background;
 	
-	public static Dataset secondROIConstantBg(IDataset input, ExampleModel model, PlotSystemComposite customComposite, DataModel dm){
+	public static Dataset secondROIConstantBg(IDataset input, ExampleModel model, IPlottingSystem<Composite> pS,
+			DataModel dm){
 		
 		int[] len = model.getLenPt()[0];
 		int[] pt = model.getLenPt()[1];
 		
 		Dataset in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input,len, pt);
 		
-		@SuppressWarnings("unchecked")
-		IPlottingSystem<Composite> pS = customComposite.getPlotSystem();
+//		@SuppressWarnings("unchecked")
+//		IPlottingSystem<Composite> pS = customComposite.getPlotSystem();
 		
 		if (pS.getRegion("Background Region")==null){
 		

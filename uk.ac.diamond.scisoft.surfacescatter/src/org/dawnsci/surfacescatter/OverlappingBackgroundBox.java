@@ -41,7 +41,7 @@ public class OverlappingBackgroundBox{
 	private static Dataset output;
 	private static IRegion background;
 	
-	public static Dataset OverlappingBgBox(IDataset input, ExampleModel model, PlotSystemComposite customComposite, DataModel dm){
+	public static Dataset OverlappingBgBox(IDataset input, ExampleModel model, IPlottingSystem<Composite> pS, DataModel dm){
 		
 		int[] len = model.getLenPt()[0];
 		int[] pt = model.getLenPt()[1];
@@ -53,8 +53,8 @@ public class OverlappingBackgroundBox{
 		if ((int) Math.pow(AnalaysisMethodologies.toInt(model.getFitPower()) + 1, 2) != g2.getNoOfParameters())
 			g2 = new Polynomial2D(AnalaysisMethodologies.toInt(model.getFitPower()));
 		
-		@SuppressWarnings("unchecked")
-		IPlottingSystem<Composite> pS = customComposite.getPlotSystem();
+//		@SuppressWarnings("unchecked")
+//		 = customComposite.getPlotSystem();
 		
 		if (pS.getRegion("Background Region")==null){
 		

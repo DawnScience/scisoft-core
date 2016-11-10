@@ -15,11 +15,14 @@ public class DummyProcessingClass {
 	
 	@SuppressWarnings("incomplete-switch")
 	public static IDataset DummyProcess(SuperModel sm, IDataset input, ExampleModel model
-			, DataModel dm, GeometricParametersModel gm, PlotSystemComposite customComposite, int correctionSelector, int k, int trackingMarker){
+			, DataModel dm, GeometricParametersModel gm, IPlottingSystem<Composite> pS, int correctionSelector, int k, int trackingMarker){
+		
+//		 PlotSystemComposite customComposite
+		
 		
 		IDataset output =null;
-		@SuppressWarnings("unchecked")
-		IPlottingSystem<Composite> pS = customComposite.getPlotSystem();
+//		@SuppressWarnings("unchecked")
+//		IPlottingSystem<Composite> pS = customComposite.getPlotSystem();
 		
 		switch(model.getMethodology()){
 			case TWOD_TRACKING:
@@ -40,10 +43,10 @@ public class DummyProcessingClass {
 				output = TwoDFitting.TwoDFitting1(input, model);
 				break;
 			case SECOND_BACKGROUND_BOX:
-				output = SecondConstantROI.secondROIConstantBg(input, model, customComposite, dm);
+				output = SecondConstantROI.secondROIConstantBg(input, model, pS, dm);
 				break;
 			case OVERLAPPING_BACKGROUND_BOX:
-				output = OverlappingBackgroundBox.OverlappingBgBox(input, model, customComposite, dm);
+				output = OverlappingBackgroundBox.OverlappingBgBox(input, model, pS, dm);
 				break;
 		}
 		
@@ -84,7 +87,7 @@ public class DummyProcessingClass {
 			
 		}
 		try {
-			Thread.sleep(75);
+			Thread.sleep(0);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

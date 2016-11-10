@@ -2,7 +2,10 @@ package org.dawnsci.surfacescatter;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
+import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 
 public class SuperModel {
@@ -20,13 +23,12 @@ public class SuperModel {
 	private IDataset splicedCurveYErrorMin;
 	private IDataset splicedCurveYFhklErrorMax;
 	private IDataset splicedCurveYFhklErrorMin;
-	
-//	sortedYArrayCorrectedErrorMax
-//	sortedYArrayCorrectedFhklErrorMax
-//	sortedYArrayCorrectedErrorMin
-//	sortedYArrayCorrectedFhklErrorMin
-//	sortedYArrayCorrectedError
-//	sortedYArrayCorrectedFhklError
+	private Dataset imageStack;
+	private Dataset sortedX;
+	private Dataset nullImage;
+	private TreeMap sortedImages;
+	private Dataset[] images;
+
 	
 	
 	public void clearFilepaths(){
@@ -35,6 +37,18 @@ public class SuperModel {
 	
 	public String[] getFilepaths() {
 		return filepaths;
+	}
+	
+	public void resetSplicedCurves(){
+		splicedCurveX = null;
+		splicedCurveY = null;
+		splicedCurveYError = null;
+		splicedCurveYErrorMax = null;
+		splicedCurveYErrorMin = null;
+		splicedCurveYFhkl = null;
+		splicedCurveYFhklError = null;
+		splicedCurveYFhklErrorMax = null;
+		splicedCurveYFhklErrorMin = null;
 	}
 
 	public void setFilepaths(String[] filepaths) {
@@ -144,6 +158,46 @@ public class SuperModel {
 
 	public void setSplicedCurveYFhklErrorMin(IDataset splicedCurveYFhklErrorMin) {
 		this.splicedCurveYFhklErrorMin = splicedCurveYFhklErrorMin;
+	}
+
+	public Dataset getImageStack() {
+		return imageStack;
+	}
+
+	public void setImageStack(Dataset imageStack) {
+		this.imageStack = imageStack;
+	}
+
+	public Dataset getSortedX() {
+		return sortedX;
+	}
+
+	public void setSortedX(Dataset sortedX) {
+		this.sortedX = sortedX;
+	}
+
+	public Dataset getNullImage() {
+		return nullImage;
+	}
+
+	public void setNullImage(Dataset nullImage) {
+		this.nullImage = nullImage;
+	}
+
+	public TreeMap getSortedImages() {
+		return sortedImages;
+	}
+
+	public void setSortedImages(TreeMap sortedImages) {
+		this.sortedImages = sortedImages;
+	}
+
+	public Dataset[] getImages() {
+		return images;
+	}
+
+	public void setImages(Dataset[] images) {
+		this.images = images;
 	}
 	
 }

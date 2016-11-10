@@ -3,6 +3,7 @@ package org.dawnsci.surfacescatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.dawnsci.surfacescatter.ui.DatDisplayer;
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -161,8 +162,7 @@ public class StitchedOutput {
 		sortedAttenuatedDatasets[1]=DatasetUtils.convertToDataset(DatasetUtils.concatenate(attenuatedDatasets[1], 0));
 		sortedAttenuatedDatasets[2]=DatasetUtils.convertToDataset(DatasetUtils.concatenate(attenuatedDatasetsFhkl[0], 0));
 
-		DatasetUtils.sort(sortedAttenuatedDatasets[1],
-				sortedAttenuatedDatasets[0]);
+		
 		
 		DatasetUtils.sort(sortedAttenuatedDatasets[1],
 				sortedAttenuatedDatasets[2]);

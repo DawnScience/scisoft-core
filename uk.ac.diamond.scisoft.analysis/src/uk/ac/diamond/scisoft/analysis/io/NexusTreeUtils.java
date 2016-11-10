@@ -1630,6 +1630,9 @@ public class NexusTreeUtils {
 
 		double value = dataset.getSize() == 1 ? dataset.getElementDoubleAbs(0) : dataset.getDouble(pos);
 		double[] vector = parseDoubleArray(dNode.getAttribute("vector"), 3);
+		if (vector == null) {
+			return null;
+		}
 		Vector3d v3 = new Vector3d(vector);
 		Matrix4d m4 = null;
 		String type = getFirstString(dNode.getAttribute("transformation_type"));

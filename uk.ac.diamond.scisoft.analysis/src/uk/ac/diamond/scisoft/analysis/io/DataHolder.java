@@ -296,6 +296,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	/**
 	 * @return Number of unique dataset names
 	 */
+	@Deprecated
 	@Override
 	public int namesSize() {
 		return size();

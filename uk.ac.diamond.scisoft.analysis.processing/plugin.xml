@@ -994,7 +994,7 @@
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.SurfaceScatteringRemappingOperation"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.SurfaceScatteringRemappingOperation"
-            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.SurfaceScatteringRemappingModel"
             name="Surface Scattering Remapping">
       </operation>
    </extension>

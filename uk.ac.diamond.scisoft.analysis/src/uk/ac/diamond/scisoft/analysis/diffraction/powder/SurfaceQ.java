@@ -241,20 +241,39 @@ public class SurfaceQ {
 		return new DoubleDataset[] {qMin, qMax};
 	}
 	
+	/**
+	 * Generates arrays of the maximum and minimum momentum transfer values.
+	 * <p>
+	 * Relative to the surface with normal vector surface, this method
+	 * calculates the maximum and minimum values of the surface perpendicular
+	 * and surface parallel components of the momentum transfer vector.  
+	 * @param shape
+	 * 				shape of the final Dataset.
+	 * @param qSpace
+	 * 				object which generates the momentum transfer for each pixel.
+	 * @param surface
+	 * 				surface normal vector. Can be unnormalized.
+	 * @return The maximum and minimum components, ordered as: perpendicular
+	 * 		minimum, perpendicular maximum, parallel minimum, parallel maximum.
+	 */
 	public static Dataset[] generateMinMaxParallelPerpendicularArrays(int[] shape, QSpace qSpace, Vector3d surface) {
 		
 		if (qSpace == null) return null;
 		
+		// Normalize the surface normal vector
 		surface.normalize();
 		
+		// Generate the arrays before the per-pixel iteration
 		Dataset perArrayMax = DatasetFactory.zeros(shape, Dataset.FLOAT64);
 		Dataset perArrayMin = DatasetFactory.zeros(shape, Dataset.FLOAT64);
 		Dataset parArrayMax = DatasetFactory.zeros(shape, Dataset.FLOAT64);
 		Dataset parArrayMin = DatasetFactory.zeros(shape, Dataset.FLOAT64);
 
+		// define iterators
 		PositionIterator iter = perArrayMax.getPositionIterator();
 		int[] pos = iter.getPos();
 		
+		// An array of pre-allocated vectors
 		Vector3d[] vs = new Vector3d[4];
 		
 		vs[0] = new Vector3d();
@@ -262,29 +281,66 @@ public class SurfaceQ {
 		vs[2] = new Vector3d();
 		vs[3] = new Vector3d();
 		
+		// Copy of surface
 		Vector3d s = new Vector3d(surface);
 		
 		double[] out = new double[2];
 		double[] valsPar = new double[4];
 		double[] valsPer = new double[4];
 		
+		// The vector determining the sign of the in-plane momentum change.
+		Vector3d qplus = new Vector3d();
+		qplus.cross(new Vector3d(0., 0., 1.), surface);
+		
+		// Per pixel iteration
 		while (iter.hasNext()) {
-
+		
+		// momentum transfer values at each corner of the pixel 
 		qSpace.qFromPixelPosition(pos[1], pos[0],vs[0]);
 		qSpace.qFromPixelPosition(pos[1]+1, pos[0],vs[1]);
 		qSpace.qFromPixelPosition(pos[1], pos[0]+1,vs[2]);
 		qSpace.qFromPixelPosition(pos[1]+1, pos[0],vs[3]);
 
+		// Loop over the four corners and assign the perpendicular and parallel
+		// components at each corner
 		for (int i = 0 ; i < 4 ; i++) {
-			calculate(s, vs[i], out);
+			calculate(s, vs[i], qplus, out);
 			valsPer[i] = out[0];
 			valsPar[i] = out[1];
 			s.set(surface);
 		}
 		
+		// Sum the parallel values over the pixel to determine whether it is a
+		// positive or a negative pixel.
+		double parSign = Math.signum(valsPar[0] + valsPar[1] + valsPar[2] + valsPar[3]); 
+		double parMax = Double.NEGATIVE_INFINITY,
+				parMin = Double.POSITIVE_INFINITY;
+		double parSignMean = 0.;
+		int parSignCount= 0;
+		
+		for (int i = 0; i < 4; i++) {
+			if (Math.signum(valsPar[i]) == parSign) {
+				parSignMean += valsPar[i];
+				parSignCount++;
+				if (valsPar[i] < parMin)
+					parMin = valsPar[i];
+				if (valsPar[i] > parMax)
+					parMax = valsPar[i];
+			}
+		}
+		
+		parSignMean /= parSignCount;
+		
+		for (int i = 0; i < 4; i++) {
+			if (Math.signum(valsPar[i]) != parSign)
+				valsPar[i] = parSignMean;
+		}
+		
+		// Sort the corners
 		Arrays.sort(valsPar);
 		Arrays.sort(valsPer);
 		
+		// Assign minima and maxima to the output datasets
 		perArrayMax.set(valsPer[3],pos);
 		perArrayMin.set(valsPer[0],pos);
 		parArrayMax.set(valsPar[3],pos);
@@ -295,13 +351,23 @@ public class SurfaceQ {
 		return new Dataset[]{perArrayMin,perArrayMax,parArrayMin,parArrayMax};
 	}
 	
-	private static void calculate(Vector3d surface, Vector3d v, double[] out) {
+	/**
+	 * Returns the projection and residual of one vector against another 
+	 * @param surface
+	 * 				the reference vector projected onto
+	 * @param v
+	 * 			the vector to be projected
+	 * @param out
+	 * 			The projection (element[0]) and length of the remaining vector 
+	 * 			(element[1]).
+	 */
+	private static void calculate(Vector3d surface, Vector3d v, Vector3d qplus, double[] out) {
 		//perp
 		out[0] = v.dot(surface);
 		surface.scale(out[0]);
 		v.sub(surface);
 		//parr
-		out[1] = v.length();
+		out[1] = v.length() * Math.signum(qplus.dot(v));
 	}
 	
 	

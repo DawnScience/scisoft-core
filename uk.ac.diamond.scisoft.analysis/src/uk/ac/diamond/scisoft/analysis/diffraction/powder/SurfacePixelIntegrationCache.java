@@ -41,28 +41,36 @@ public class SurfacePixelIntegrationCache implements IPixelIntegrationCache {
 	
 	private int[] shape;
 	
-	public SurfacePixelIntegrationCache(IDiffractionMetadata dMeta, int[] shape) {
+	private int binsPara, binsPerp;
+	
+	public SurfacePixelIntegrationCache(IDiffractionMetadata dMeta, int[] shape, double pitchDegrees, double rollDegrees, int binsPara, int binsPerp) {
 		this.dMeta = dMeta;
 		this.shape = shape;
-		initialize();
+		
+		this.binsPara = binsPara;
+		this.binsPerp = binsPerp;
+		initialize(Math.toRadians(pitchDegrees), Math.toRadians(rollDegrees));
+		
 	}
 	
-	private void initialize() {
+	private void initialize(double pitch, double roll) {
 		SurfaceQ sq = new SurfaceQ();
-
+		
 		//perpendicular[0,1] parrallel[2,3]
-		Dataset[] arrays = SurfaceQ.generateMinMaxParallelPerpendicularArrays(shape, new QSpace(dMeta.getDetector2DProperties(), dMeta.getDiffractionCrystalEnvironment()), new Vector3d(1., 0, 1));
-		xArray = new Dataset[]{arrays[0], arrays[1]};
-		yArray = new Dataset[]{arrays[2], arrays[3]};
+		Dataset[] arrays = SurfaceQ.generateMinMaxParallelPerpendicularArrays(shape, new QSpace(dMeta.getDetector2DProperties(), dMeta.getDiffractionCrystalEnvironment()), new Vector3d(-Math.sin(roll), Math.cos(roll)*Math.cos(pitch), -Math.sin(pitch)));
+		// xArray is ±q∥
+		xArray = new Dataset[]{arrays[2], arrays[3]};
+		// yArray is q⊥
+		yArray = new Dataset[]{arrays[0], arrays[1]};
 		
 		xRange = new double[]{xArray[0].min().doubleValue(),xArray[0].max().doubleValue()};
-		yRange = new double[]{yArray[0].min().doubleValue(),yArray[0].max().doubleValue()};
+		yRange = new double[]{0., yArray[0].max().doubleValue()};
 		
-		binEdgesX = calculateBins(xArray,1000);
-		binEdgesY = calculateBins(yArray,1000);
+		binEdgesX = calculateBins(xArray, this.binsPara, false);
+		binEdgesY = calculateBins(yArray, this.binsPerp, true);
 		
-		xAxis = calculateAxis(1000, binEdgesX, "q_par");
-		yAxis = calculateAxis(1000, binEdgesY, "q_per");
+		xAxis = calculateAxis(this.binsPara, binEdgesX, "q_par");
+		yAxis = calculateAxis(this.binsPerp, binEdgesY, "q_per");
 	}
 	
 	@Override
@@ -97,12 +105,12 @@ public class SurfacePixelIntegrationCache implements IPixelIntegrationCache {
 
 	@Override
 	public int getNumberOfBinsXAxis() {
-		return 1000;
+		return this.binsPara;
 	}
 
 	@Override
 	public int getNumberOfBinsYAxis() {
-		return 1000;
+		return this.binsPerp;
 	}
 
 	@Override
@@ -158,7 +166,7 @@ public class SurfacePixelIntegrationCache implements IPixelIntegrationCache {
 		return axis;
 	}
 	
-	private static DoubleDataset calculateBins(Dataset[] arrays, int numBins) {
+	private static DoubleDataset calculateBins(Dataset[] arrays, int numBins, boolean positiveOnly) {
 		
 		double min = Double.MAX_VALUE;
 		double max = -Double.MAX_VALUE;
@@ -173,7 +181,7 @@ public class SurfacePixelIntegrationCache implements IPixelIntegrationCache {
 			max = x > max ? x : max;
 		}
 		//default range corresponds to bin edges
-		return (DoubleDataset) DatasetFactory.createLinearSpace(min, max, numBins + 1, Dataset.FLOAT64);
+		return (DoubleDataset) DatasetFactory.createLinearSpace( ((positiveOnly) ? 0. : min), max, numBins + 1, Dataset.FLOAT64);
 	}
 
 }

@@ -30,7 +30,7 @@ import org.eclipse.january.metadata.MetadataFactory;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegration;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.SurfacePixelIntegrationCache;
 
-public class SurfaceScatteringRemappingOperation extends AbstractOperation<EmptyModel, OperationData> {
+public class SurfaceScatteringRemappingOperation extends AbstractOperation<SurfaceScatteringRemappingModel, OperationData> {
 
 	@Override
 	public String getId() {
@@ -54,7 +54,10 @@ public class SurfaceScatteringRemappingOperation extends AbstractOperation<Empty
 		
 		if (md == null) throw new OperationException(this, "Remapping requires a calibration to be loaded");
 		
-		SurfacePixelIntegrationCache cache = new SurfacePixelIntegrationCache(md, input.getShape());
+		SurfacePixelIntegrationCache cache = 
+				new SurfacePixelIntegrationCache(md, input.getShape(), 
+					model.getPitch(), model.getRoll(),
+					model.getBinsPara(), model.getBinsPerp());
 		
 		IDataset mask = null;
 		
@@ -78,6 +81,10 @@ public class SurfaceScatteringRemappingOperation extends AbstractOperation<Empty
 		data.setMetadata(amd);
 		
 		return new OperationData(data);
+//		Dataset debugData = cache.getXAxisArray()[0];
+//		debugData.setMetadata(amd);
+		
+//		return new OperationData(debugData);
 	}
 	
 

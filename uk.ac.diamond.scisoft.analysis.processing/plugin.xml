@@ -998,4 +998,11 @@
             class="uk.ac.diamond.scisoft.analysis.processing.Activator">
       </bundle>
    </extension>
+   <extension
+         point="org.eclipse.dawnsci.analysis.api.classregistry">
+      <classregistry
+            class="uk.ac.diamond.scisoft.analysis.processing.ProcessingClassRegistry"
+            id="uk.ac.diamond.scisoft.analysis.processing.processingClassRegistry">
+      </classregistry>
+   </extension>
 </plugin>

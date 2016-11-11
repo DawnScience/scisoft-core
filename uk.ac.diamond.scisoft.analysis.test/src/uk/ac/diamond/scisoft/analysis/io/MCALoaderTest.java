@@ -22,7 +22,7 @@ public class MCALoaderTest {
 		double zero_1 = Double.parseDouble((String) metadata.getMetaValue("zero_1"));
 		assertEquals(0.008024, gain_1, 1E-5);
 		assertEquals(-0.01266, zero_1, 1E-5);
-		assertEquals(2, dh.namesSize());
+		assertEquals(2, dh.size());
 		DoubleDataset Energy_1 = (DoubleDataset) dh.getDataset("Energy_1");
 		DoubleDataset Counts_1 = (DoubleDataset) dh.getDataset("Counts_1");
 		assertEquals(2048, Energy_1.getSize());

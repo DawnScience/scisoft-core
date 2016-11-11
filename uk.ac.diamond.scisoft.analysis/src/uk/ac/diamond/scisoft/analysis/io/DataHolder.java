@@ -69,8 +69,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 * This must create the three objects which will be put into the ScanFileHolder
 	 */
 	public DataHolder() {
-		nameDataMappings = new LinkedHashMap<String, ILazyDataset>();
-		metadata = new Metadata();
+		this(new Metadata());
 	}
 
 	/**
@@ -106,7 +105,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	}
 
 	/**
-	 * Adds a dataset and its name into the two vectors of the Object.
+	 * Adds an entry to the holder
 	 * 
 	 * Replaces any datasets of the same name already existing.
 	 *  
@@ -114,6 +113,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 *            the name of the dataset which is to be added
 	 * @param dataset
 	 *            the actual data of the dataset
+	 * @return true if this replaces an existing entry
 	 */
 	@Override
 	public boolean addDataset(String name, ILazyDataset dataset) {
@@ -123,7 +123,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	}
 
 	/**
-	 * Adds a dataset, metadata and its name. This is for Diffraction data
+	 * Adds an entry with metadata
 	 * 
 	 * Replaces any datasets of the same name already existing.
 	 * 
@@ -133,6 +133,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 *            the actual data of the dataset.
 	 * @param metadata
 	 *            the metadata that is associated with the dataset
+	 * @return true if this replaces an existing entry
 	 */
 	public boolean addDataset(String name, ILazyDataset dataset, IMetadata metadata) {
 		boolean ret = addDataset(name, dataset);
@@ -183,7 +184,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	}
 
 	/**
-	 * @return List of datasets
+	 * @return List of (potential lazy) datasets
 	 */
 	@Override
 	public List<ILazyDataset> getList() {
@@ -193,7 +194,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	/**
 	 * This pulls out the dataset which could be lazy, maintaining its laziness.
 	 * @param index
-	 * @return Generic dataset with given index in holder or null if it does not exist
+	 * @return dataset with given index in holder or null if it does not exist
 	 */
 	@Override
 	public ILazyDataset getLazyDataset(int index) {
@@ -205,7 +206,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	/**
 	 * This pulls out the dataset which could be lazy, maintaining its laziness.
 	 * @param name
-	 * @return Generic dataset with given name or null if it does not exist
+	 * @return dataset with given name or null if it does not exist
 	 */
 	@Override
 	public ILazyDataset getLazyDataset(String name) {
@@ -277,12 +278,11 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	 */
 	@Override
 	public String getName(final int index) {
-		try {
-			List<String> keys = new ArrayList<String>(nameDataMappings.keySet());
-			return keys.get(index);
-		} catch( IndexOutOfBoundsException e ) {
+		if (index < 0 || index >= size()) {
 			return null;
 		}
+		List<String> keys = new ArrayList<String>(nameDataMappings.keySet());
+		return keys.get(index);
 	}
 
 	/**
@@ -324,7 +324,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	}
 
 	/**
-	 * @return class
+	 * @return class of file loader or null if class is not found by class loader
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
@@ -409,4 +409,8 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return nameDataMappings.toString();
+	}
 }

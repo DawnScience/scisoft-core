@@ -15,7 +15,7 @@ public class FioLoaderTest {
 	public void testLoader() throws Exception {
 		FioLoader loader = new FioLoader("resources/some.fio");
 		DataHolder dh = loader.loadFile();
-		assertEquals(5, dh.namesSize());
+		assertEquals(5, dh.size());
 		Dataset d = dh.getDataset(0);
 		assertEquals(544, d.getSize());
 		assertEquals(11710, d.getDouble(10), 0);
@@ -28,7 +28,7 @@ public class FioLoaderTest {
 		FioLoader loader = new FioLoader("resources/some.fio");
 		loader.setLoadAllLazily(true);
 		DataHolder dh = loader.loadFile();
-		assertEquals(5, dh.namesSize());
+		assertEquals(5, dh.size());
 		ILazyDataset d = dh.getLazyDataset(0);
 		assertEquals(544, d.getSize());
 		assertEquals(11710, d.getSlice().getDouble(10), 0);
@@ -45,7 +45,7 @@ public class FioLoaderTest {
 		FioLoader loader = new FioLoader(file);
 		loader.setLoadAllLazily(true);
 		DataHolder dh = loader.loadFile();
-		assertEquals(5, dh.namesSize());
+		assertEquals(5, dh.size());
 		ILazyDataset d = dh.getLazyDataset(0);
 		assertEquals(544, d.getSize());
 		assertEquals(11710, d.getSlice().getDouble(10), 0);

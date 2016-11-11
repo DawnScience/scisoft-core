@@ -13,7 +13,7 @@ public class XMSOLoaderTest {
 	public void testXMSOLoaderString() throws Exception {
 		XMSOLoader loader = new XMSOLoader("testfiles/gda/analysis/io/XMSOLoaderTest/srm1155.xmso");
 		DataHolder dh = loader.loadFile();
-		assertEquals(5, dh.namesSize());
+		assertEquals(5, dh.size());
 		Dataset d = dh.getDataset(0);
 		assertEquals(2048, d.getSize());
 		assertEquals(0.149149, d.getDouble(10), 1E-7);

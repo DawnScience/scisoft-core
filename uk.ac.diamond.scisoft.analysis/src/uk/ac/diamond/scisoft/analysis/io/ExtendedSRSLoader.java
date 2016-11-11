@@ -39,6 +39,10 @@ public class ExtendedSRSLoader extends SRSLoader {
 	}
 
 	private void appendPilatusData(DataHolder currentDataHolder, IMonitor mon) {
+		if (loadLazily) {
+			// as columns are loaded lazily, there is no path dataset
+			return;
+		}
 
 		ImageStackLoader loader = null;
 

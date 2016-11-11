@@ -159,7 +159,7 @@ public class TiffLoaderTest {
 	public void testCachedLazyStackedFile() throws Exception {
 		String file = TestFileFolder + "untitled1020.TIF";
 		LoaderFactory.clear(file);
-		LoaderFactory.cacheData(LoaderFactory.getData(file, false, true, true, null), 0);
+		LoaderFactory.cacheData(LoaderFactory.getData(file, false, true, true, null));
 		IFileLoader loader = new TIFFImageLoader(file);
 		ILazyDataset image = loader.loadFile().getLazyDataset(0);
 		Assert.assertArrayEquals("Shape not equal", new int[] {3, 2048, 2048}, image.getShape());

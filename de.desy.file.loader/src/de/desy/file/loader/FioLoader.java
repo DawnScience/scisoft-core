@@ -189,19 +189,28 @@ public class FioLoader extends AbstractFileLoader {
 							}
 
 							try {
-								holder = ldr.loadFile(num, mon);
+								IDataHolder nHolder = ldr.loadFile(num, mon);
+								if (holder != null) { // update old holder
+									for (String dn : nHolder.getNames()) {
+										holder.addDataset(dn, nHolder.getLazyDataset(dn));
+									}
+									holder.setMetadata(nHolder.getMetadata());
+									if (holder.getLoaderClass() == null) {
+										holder.setLoaderClass(ldr.getClass());
+									}
+								} else {
+									if (nHolder.getFilePath() == null) {
+										nHolder.setFilePath(fileName);
+									}
+									if (nHolder.getLoaderClass() == null) {
+										nHolder.setLoaderClass(ldr.getClass());
+									}
+									LoaderFactory.cacheData(nHolder, num);
+								}
+								return nHolder.getDataset(n).getSliceView(slice);
 							} catch (ScanFileHolderException e) {
 								throw new IOException(e);
 							}
-							if (holder.getFilePath() == null) {
-								holder.setFilePath(fileName);
-							}
-							if (holder.getLoaderClass() == null) {
-								holder.setLoaderClass(ldr.getClass());
-							}
-							LoaderFactory.cacheData(holder, num);
-
-							return holder.getDataset(n).getSliceView(slice);
 						}
 					}));
 				}		

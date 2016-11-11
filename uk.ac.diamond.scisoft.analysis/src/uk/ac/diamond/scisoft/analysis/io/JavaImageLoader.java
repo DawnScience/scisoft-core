@@ -196,11 +196,12 @@ public class JavaImageLoader extends AbstractFileLoader {
 				SampleModel sm = it.next().getSampleModel();
 				int dtype = AWTImageUtils.getDTypeFromImage(sm, keepBitWidth)[0];
 				final String name = String.format(IMAGE_NAME_FORMAT, j);
+				final int num = j;
 				LazyDataset lazy = createLazyDataset(name, dtype, shape, new LazyLoaderStub() {
 					@Override
 					public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 						try {
-							Dataset data = loadDataset(fileName, name, asGrey, keepBitWidth);
+							Dataset data = loadDataset(fileName, name, num, asGrey, keepBitWidth);
 							return data == null ? null : data.getSliceView(slice);
 						} catch (ScanFileHolderException e) {
 							throw new IOException(e);
@@ -221,22 +222,10 @@ public class JavaImageLoader extends AbstractFileLoader {
 		return output.getNames().length > 0;
 	}
 
-	private static Dataset loadDataset(String path, String name, boolean asGrey, boolean keepBitWidth) throws ScanFileHolderException {
-		if (!name.startsWith(IMAGE_NAME_PREFIX)) {
-			throw new ScanFileHolderException("Dataset of name '" + name + "' does not contain prefix " + IMAGE_NAME_PREFIX);
-		}
-		String number = name.substring(IMAGE_NAME_PREFIX.length());
-		int num = -1;
-		try {
-			num = Integer.parseInt(number) - 1;
-		} catch (NumberFormatException e) {
-		}
-		if (num < 0) {
-			throw new ScanFileHolderException("Dataset of name '" + name + "' does not contain image number");
-		}
+	private static Dataset loadDataset(String path, String name, int num, boolean asGrey, boolean keepBitWidth) throws ScanFileHolderException {
 		IDataHolder holder = LoaderFactory.fetchData(path, false, num);
 		if (holder != null) {
-			IDataset data = holder.getDataset(0);
+			IDataset data = holder.getDataset(name);
 			if (data != null) {
 				return DatasetUtils.convertToDataset(data);
 			}
@@ -263,11 +252,14 @@ public class JavaImageLoader extends AbstractFileLoader {
 			try {
 				data = createDataset(reader.read(num), asGrey, keepBitWidth);
 				data.setName(name);
-				holder = new DataHolder();
-				holder.setLoaderClass(JavaImageLoader.class);
-				holder.setFilePath(path);
+
+				if (holder == null) {
+					holder = new DataHolder();
+					holder.setLoaderClass(JavaImageLoader.class);
+					holder.setFilePath(path);
+					LoaderFactory.cacheData(holder, num);
+				}
 				holder.addDataset(name, data);
-				LoaderFactory.cacheData(holder, num);
 				return data;
 			} catch (IndexOutOfBoundsException e) {
 				throw new ScanFileHolderException("Image number is incorrect");

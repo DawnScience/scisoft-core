@@ -201,11 +201,14 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver {
 			data = DatasetFactory.zeros(IntegerDataset.class, shape);
 			Utils.readLeInt(fi, (IntegerDataset) data, 0);
 			data.setName(DEF_IMAGE_NAME);
-			holder = new DataHolder();
-			holder.setLoaderClass(CrysalisLoader.class);
-			holder.setFilePath(fileName);
+
+			if (holder == null) {
+				holder = new DataHolder();
+				holder.setLoaderClass(CrysalisLoader.class);
+				holder.setFilePath(fileName);
+				LoaderFactory.cacheData(holder);
+			}
 			holder.addDataset(DEF_IMAGE_NAME, data);
-			LoaderFactory.cacheData(holder);
 			return data;
 		} catch (Exception e) {
 			logger.error("File failed to load {} with error: {}" , fileName, e);

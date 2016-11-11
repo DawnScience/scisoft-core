@@ -354,9 +354,10 @@ public class TIFFImageLoader extends JavaImageLoader {
 	}
 
 	private static Dataset readImage(String filename, ImageReader reader, boolean asGrey, boolean keepBitWidth, int num) throws IOException, ScanFileHolderException {
+		String imageName = String.format(IMAGE_NAME_FORMAT, num + 1);
 		IDataHolder holder = LoaderFactory.fetchData(filename, false, num);
 		if (holder != null) {
-			IDataset data = holder.getDataset(0);
+			IDataset data = holder.getDataset(imageName);
 			if (data != null) {
 				return DatasetUtils.convertToDataset(data);
 			}
@@ -373,11 +374,13 @@ public class TIFFImageLoader extends JavaImageLoader {
 		}
 
 		Dataset d = createDataset(input, asGrey, keepBitWidth);
-		holder = new DataHolder();
-		holder.setLoaderClass(TIFFImageLoader.class);
-		holder.setFilePath(filename);
-		holder.addDataset(DEF_IMAGE_NAME, d);
-		LoaderFactory.cacheData(holder, num);
+		if (holder == null) {
+			holder = new DataHolder();
+			holder.setLoaderClass(TIFFImageLoader.class);
+			holder.setFilePath(filename);
+			LoaderFactory.cacheData(holder, num);
+		}
+		holder.addDataset(imageName, d);
 		return d;
 	}
 

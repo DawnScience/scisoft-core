@@ -25,6 +25,10 @@ public class DataCache<T> {
 
 
 	private static final String NO_CACHING = "uk.ac.diamond.scisoft.analysis.io.nocaching";
+
+	// used when we are caching items do not have an image number
+	private static final int NOT_A_SINGLE_IMAGE = -1;
+
 	/**
 	 * A caching mechanism using soft references. Soft references attempt to keep things
 	 * in memory until the system is short on memory. Hashtable used because it is synchronized
@@ -55,7 +59,8 @@ public class DataCache<T> {
 		final CacheKey key = new CacheKey();
 		key.setFilePath(path);
 		key.setMetadata(loadMeta);
-        return key;
+		key.setImageNumber(NOT_A_SINGLE_IMAGE);
+		return key;
 	}
 
 	/**
@@ -149,7 +154,21 @@ public class DataCache<T> {
 	 * @param holder
 	 */
 	public void cacheData(T holder) {
-		cacheData(holder, 0);
+		internalCacheData(holder, NOT_A_SINGLE_IMAGE);
+	}
+
+	/**
+	 * Store data into cache
+	 * 
+     *
+	 * @param holder
+	 * @param imageNumber must be non-negative
+	 */
+	public void cacheData(T holder, int imageNumber) {
+		if (imageNumber < 0) {
+			throw new IllegalArgumentException("Image number must be non-negative");
+		}
+		internalCacheData(holder, imageNumber);
 	}
 
 	/**
@@ -159,7 +178,7 @@ public class DataCache<T> {
 	 * @param holder
 	 * @param imageNumber
 	 */
-	public void cacheData(T holder, int imageNumber) {
+	private void internalCacheData(T holder, int imageNumber) {
 		final CacheKey key = new CacheKey();
 		if (holder instanceof IDataHolder) {
 			IDataHolder h = (IDataHolder)holder;
@@ -180,7 +199,7 @@ public class DataCache<T> {
 	 * @return data or null if not in cache
 	 */
 	public T fetchData(String path, boolean willLoadMetadata) {
-		return fetchData(path, willLoadMetadata, 0);
+		return internalFetchData(path, willLoadMetadata, NOT_A_SINGLE_IMAGE);
 	}
 
 	/**
@@ -192,6 +211,21 @@ public class DataCache<T> {
 	 * @return data or null if not in cache
 	 */
 	public T fetchData(String path, boolean willLoadMetadata, int imageNumber) {
+		if (imageNumber < 0) {
+			throw new IllegalArgumentException("Image number must be non-negative");
+		}
+		return internalFetchData(path, willLoadMetadata, imageNumber);
+	}
+
+	/**
+	 * Fetch data from cache
+     *
+	 * @param path
+	 * @param willLoadMetadata dictates whether metadata is not loaded (if possible)
+	 * @param imageNumber
+	 * @return data or null if not in cache
+	 */
+	private T internalFetchData(String path, boolean willLoadMetadata, int imageNumber) {
 		final CacheKey key = new CacheKey();
 		key.setFilePath(path);
 		key.setMetadata(willLoadMetadata);

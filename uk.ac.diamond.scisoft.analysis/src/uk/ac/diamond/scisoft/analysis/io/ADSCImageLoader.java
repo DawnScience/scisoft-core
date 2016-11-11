@@ -179,11 +179,13 @@ public class ADSCImageLoader extends AbstractFileLoader {
 			Dataset data = Utils.createDataset(raf, shape, keepBitWidth);
 			data.setName(DEF_IMAGE_NAME);
 
-			holder = new DataHolder();
-			holder.setLoaderClass(ADSCImageLoader.class);
-			holder.setFilePath(fileName);
+			if (holder == null) {
+				holder = new DataHolder();
+				holder.setLoaderClass(ADSCImageLoader.class);
+				holder.setFilePath(fileName);
+				LoaderFactory.cacheData(holder);
+			}
 			holder.addDataset(ADSC_IMAGE_NAME, data);
-			LoaderFactory.cacheData(holder);
 			return data;
 		} catch (FileNotFoundException fnf) {
 			throw new ScanFileHolderException("File not found", fnf);

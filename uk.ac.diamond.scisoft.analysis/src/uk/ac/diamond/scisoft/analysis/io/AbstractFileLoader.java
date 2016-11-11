@@ -149,17 +149,28 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 			}
 
 			try {
-				holder = loader.loadFile(mon);
+				IDataHolder nHolder = loader.loadFile(mon);
+				if (holder != null) { // update old holder
+					for (String dn : nHolder.getNames()) {
+						holder.addDataset(dn, nHolder.getLazyDataset(dn));
+					}
+					holder.setMetadata(nHolder.getMetadata());
+					if (holder.getLoaderClass() == null) {
+						holder.setLoaderClass(loader.getClass());
+					}
+				} else {
+					if (nHolder.getFilePath() == null) {
+						nHolder.setFilePath(fileName);
+					}
+					if (nHolder.getLoaderClass() == null) {
+						nHolder.setLoaderClass(loader.getClass());
+					}
+					LoaderFactory.cacheData(nHolder);
+					holder = nHolder;
+				}
 			} catch (ScanFileHolderException e) {
 				throw new IOException(e);
 			}
-			if (holder.getFilePath() == null) {
-				holder.setFilePath(fileName);
-			}
-			if (holder.getLoaderClass() == null) {
-				holder.setLoaderClass(loader.getClass());
-			}
-			LoaderFactory.cacheData(holder);
 			IDataset data = name == null ? holder.getDataset(0) : holder.getDataset(name);
 			return data.getSliceView(slice);
 		}

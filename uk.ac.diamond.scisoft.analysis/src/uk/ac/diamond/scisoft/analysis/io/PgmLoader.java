@@ -131,7 +131,7 @@ public class PgmLoader extends AbstractFileLoader {
 	private static Dataset loadDataset(String fileName) throws ScanFileHolderException {
 		IDataHolder holder = LoaderFactory.fetchData(fileName, false);
 		if (holder != null) {
-			IDataset data = holder.getDataset(0);
+			IDataset data = holder.getDataset(DEF_IMAGE_NAME);
 			if (data != null) {
 				return DatasetUtils.convertToDataset(data);
 			}
@@ -161,11 +161,14 @@ public class PgmLoader extends AbstractFileLoader {
 				Utils.readBeShort(fi, (IntegerDataset) data, index, false);
 			}
 			data.setName(DEF_IMAGE_NAME);
-			holder = new DataHolder();
-			holder.setLoaderClass(PgmLoader.class);
-			holder.setFilePath(fileName);
+
+			if (holder == null) {
+				holder = new DataHolder();
+				holder.setLoaderClass(PgmLoader.class);
+				holder.setFilePath(fileName);
+				LoaderFactory.cacheData(holder);
+			}
 			holder.addDataset(DEF_IMAGE_NAME, data);
-			LoaderFactory.cacheData(holder);
 			return data;
 		} catch (Exception e) {
 			throw new ScanFileHolderException("File failed to load " + fileName, e);

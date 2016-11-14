@@ -12,6 +12,8 @@ package uk.ac.diamond.scisoft.analysis.processing;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.net.ssl.SSLEngineResult.Status;
+
 import org.eclipse.dawnsci.analysis.api.persistence.IClassRegistry;
 
 import uk.ac.diamond.scisoft.analysis.processing.bean.OperationBean;
@@ -22,6 +24,7 @@ public class ProcessingClassRegistry implements IClassRegistry {
 	public ProcessingClassRegistry() {
 		idMap = new HashMap<String, Class<?>>();
 		idMap.put(OperationBean.class.getSimpleName(), OperationBean.class);
+		idMap.put(Status.class.getSimpleName(), Status.class);
 	}
 
 	@Override

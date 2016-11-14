@@ -11,10 +11,8 @@ package uk.ac.diamond.scisoft.analysis.processing;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.net.ssl.SSLEngineResult.Status;
-
 import org.eclipse.dawnsci.analysis.api.persistence.IClassRegistry;
+import org.eclipse.scanning.api.event.status.Status;
 
 import uk.ac.diamond.scisoft.analysis.processing.bean.OperationBean;
 

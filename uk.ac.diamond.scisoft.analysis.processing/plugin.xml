@@ -995,7 +995,7 @@
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.SurfaceScatteringRemappingOperation"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.SurfaceScatteringRemappingOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.SurfaceScatteringRemappingModel"
-            name="Surface Scattering Remapping">
+            name="Grazing Incidence Scattering Remapping">
       </operation>
    </extension>
    <extension

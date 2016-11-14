@@ -24,7 +24,7 @@ public class ProcessingClassRegistry implements IClassRegistry {
 	public ProcessingClassRegistry() {
 		idMap = new HashMap<String, Class<?>>();
 		idMap.put(OperationBean.class.getSimpleName(), OperationBean.class);
-		idMap.put(Status.class.getSimpleName(), Status.class);
+//		idMap.put(Status.class.getSimpleName(), Status.class);
 	}
 
 	@Override

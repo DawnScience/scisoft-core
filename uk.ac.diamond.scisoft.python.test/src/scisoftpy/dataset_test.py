@@ -343,6 +343,23 @@ class Test(unittest.TestCase):
         dds = np.arange(12,2,-3)
         self.checkitems(range(12,2,-3), dds)
 
+    def testSpace(self):
+        print "test space"
+        dds = np.linspace(0, 11, 12)
+        self.checkitems(range(12), dds)
+        dds = np.linspace(0, 11, 12, dtype=np.int32)
+        self.checkitems(range(12), dds, toInt)
+        dds = np.linspace(0, 5, 11)
+        self.checkitems([0.5*i for i in range(11)], dds)
+        dds = np.linspace(0, 5, 11, dtype=np.int32)
+        self.checkitems([i/2 for i in range(11)], dds, toInt)
+
+        import math
+        dds = np.logspace(0,2,5)
+        self.checkitems([math.pow(10.,0.5*i) for i in range(5)], dds)
+        dds = np.logspace(0,2,5, dtype=np.int32)
+        self.checkitems([1, 3, 10, 31, 100], dds, toInt)
+
     def checkitemsadd(self, la, lb, ds, convert=toAny):
         if ds.ndim == 1:
             for i in range(ds.shape[0]):

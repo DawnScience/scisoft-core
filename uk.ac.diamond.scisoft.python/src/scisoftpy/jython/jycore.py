@@ -1338,7 +1338,7 @@ def full_like(a, fill_value, dtype=None, elements=None):
         f = f.astype(dtype)
     return f
 
-def linspace(start, stop, num=50, endpoint=True, retstep=False):
+def linspace(start, stop, num=50, endpoint=True, retstep=False, dtype=None):
     '''Create a 1D dataset from start to stop in given number of steps
     
     Arguments:
@@ -1351,10 +1351,12 @@ def linspace(start, stop, num=50, endpoint=True, retstep=False):
     if not endpoint:
         stop = ((num - 1) * stop + start)/num
 
-    dtype = _getdtypefromobj(((start, stop)))
+    dtype = _translatenativetype(dtype)
+    if dtype is None:
+        dtype = _getdtypefromobj(((start, stop)))
 
-    if dtype.value < float64.value:
-        dtype = float64
+        if dtype.value < float64.value:
+            dtype = float64
 
     if dtype.value >= complex64.value:
         dtype = complex128
@@ -1377,16 +1379,22 @@ def linspace(start, stop, num=50, endpoint=True, retstep=False):
         return result
 
 @_wrap
-def logspace(start, stop, num=50, endpoint=True, base=10.0):
+def logspace(start, stop, num=50, endpoint=True, base=10.0, dtype=None):
     '''Create a 1D dataset of values equally spaced on a logarithmic scale'''
     if not endpoint:
         stop = ((num - 1) * stop + start)/num
 
+    dtype = _translatenativetype(dtype)
     if complex(start).imag == 0 and complex(stop).imag == 0:
-        dtype = _getdtypefromobj(((start, stop)))
+        if dtype is None:
+            dtype = _getdtypefromobj(((start, stop)))
+
+            if dtype.value < float64.value:
+                dtype = float64
+
         return _df.createLogSpace(start, stop, num, base, dtype.value)
     else:
-        result = linspace(start, stop, num, endpoint)
+        result = linspace(start, stop, num, endpoint, False, dtype)
         return _maths.power(base, result)
 
 @_wrap

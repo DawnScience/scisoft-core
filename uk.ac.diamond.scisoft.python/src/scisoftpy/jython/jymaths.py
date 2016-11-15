@@ -45,7 +45,7 @@ floatmax = _jmax # maximum float value (use sys.float_info.max for 2.6+)
 from jycore import _wrap
 from jycore import asarray as _asarray
 from jycore import float64 as _f64
-#from jycore import _translatenativetype
+from jycore import _translatenativetype
 
 # these functions call (wrapped) instance methods
 def prod(a, axis=None, dtype=None):
@@ -471,12 +471,13 @@ def tensordot(a, b, axes=2):
 
 @_wrap
 def trace(a, offset=0, axis1=0, axis2=1, dtype=None):
+    dtype = _translatenativetype(dtype)
     if dtype is None:
-        dtype = a.getDType()
+        dtval = a.getDType()
     else:
-        dtype = dtype.value
+        dtval = dtype.value
 
-    return _linalg.trace(a, offset).cast(dtype)
+    return _linalg.trace(a, offset).cast(dtval)
 
 @_wrap
 def cross(a, b, axisa=-1, axisb=-1, axisc=-1, axis=None):

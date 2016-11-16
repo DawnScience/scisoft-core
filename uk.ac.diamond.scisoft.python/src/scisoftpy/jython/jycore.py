@@ -121,9 +121,11 @@ def _getdtypefromjdataset(jobj):
 
 # check for native python type
 def _translatenativetype(dtype):
-    if isinstance(dtype, _dtype) or dtype in __jcdtype2jytype.values():
+    if dtype is None:
+        return None
+    elif isinstance(dtype, _dtype) or dtype in __jcdtype2jytype.values():
         return dtype
-    if dtype is int:
+    elif dtype is int:
         return int32
     elif dtype is float:
         return float64
@@ -259,6 +261,7 @@ def asDataset(data, dtype=None, force=False):
     Used for arithmetic ops to coerce a sequence to a dataset otherwise leave as single item
     '''
     if isinstance(data, ndarray):
+        dtype = _translatenativetype(dtype)
         if dtype is None or dtype == data.dtype:
             return data
         return ndarray(buffer=data, dtype=dtype, copy=False)
@@ -298,8 +301,7 @@ def asfarray(data, dtype=None):
         return jdata
 
     dt = _getdtypefromjdataset(jdata)
-    if dtype is not None:
-        dtype = _translatenativetype(dtype)
+    dtype = _translatenativetype(dtype)
     if dtype is None or dtype.value not in _floattype:
         if dt.elements == 1:
             return jdata.cast(_ds.FLOAT64)
@@ -413,16 +415,17 @@ def __cvt_jobj(obj, dtype=None, copy=True, force=False):
     if isinstance(obj, ndarray):
         obj = obj._jdataset()
 
+    dtype = _translatenativetype(dtype)
     if isinstance(obj, _ds):
         if copy:
-            if dtype is None or _translatenativetype(dtype).value == obj.getDType():
+            if dtype is None or dtype.value == obj.getDType():
                 return obj.clone()
             else:
-                return obj.cast(_translatenativetype(dtype).value)
+                return obj.cast(dtype.value)
         else:
             if dtype is None:
                 return obj
-            return obj.cast(_translatenativetype(dtype).value)
+            return obj.cast(dtype.value)
 
     if not isinstance(obj, list):
         if isinstance(obj, _matrix): # cope with JAMA matrices
@@ -443,8 +446,6 @@ def __cvt_jobj(obj, dtype=None, copy=True, force=False):
 
     if dtype is None:
         dtype = _getdtypefromobj(obj)
-    else:
-        dtype = _translatenativetype(dtype)
 
     return _create(dtype.value, obj)
 
@@ -471,6 +472,7 @@ class lazyarray(object):
         self.__shape = shape
         self.rank = len(shape)
 
+        dtype = _translatenativetype(dtype)
         if dtype is None:
             if isinstance(dataset, _lds) or isinstance(dataset, _ds):
                 dtype = _getdtypefromjdataset(dataset)
@@ -839,16 +841,18 @@ class ndarray(object):
 
     @_wrapout
     def sum(self, axis=None, dtype=None): #@ReservedAssignment
+        dtype = _translatenativetype(dtype)
         if dtype is None:
             dtval = self.__dataset.getDType()
         else:
-            dtval = _translatenativetype(dtype).value
+            dtval = dtype.value
         if axis is None:
             return self.__dataset.typedSum(dtval)
         else:
             return self.__dataset.typedSum(dtval, axis)
 
     def cumsum(self, axis=None, dtype=None):
+        dtype = _translatenativetype(dtype)
         if dtype is None:
             dtype = self.dtype
         return _maths.cumsum(self, axis).astype(dtype)
@@ -904,16 +908,18 @@ class ndarray(object):
 
     @_wrapout
     def prod(self, axis=None, dtype=None):
+        dtype = _translatenativetype(dtype)
         if dtype is None:
             dtval = self.__dataset.getDType()
         else:
-            dtval = _translatenativetype(dtype).value
+            dtval = dtype.value
         if axis is None:
             return self.__dataset.typedProduct(dtval)
         else:
             return self.__dataset.typedProduct(dtval, axis)
 
     def cumprod(self, axis=None, dtype=None):
+        dtype = _translatenativetype(dtype)
         if dtype is None:
             dtype = self.dtype
         return _maths.cumprod(self, axis).astype(dtype)
@@ -1185,30 +1191,27 @@ class ndarrayRGB(ndarray):
 
     @_wrapout
     def get_red(self, dtype=None):
+        dtype = _translatenativetype(dtype)
         if dtype is None:
             dtype = int16
-        else:
-            dtype = _translatenativetype(dtype)
         if dtype != int16:
             return self._jdataset().createRedDataset(dtype.value)
         return self._jdataset().getRedView()
 
     @_wrapout
     def get_green(self, dtype=None):
+        dtype = _translatenativetype(dtype)
         if dtype is None:
             dtype = int16
-        else:
-            dtype = _translatenativetype(dtype)
         if dtype != int16:
             return self._jdataset().createGreenDataset(dtype.value)
         return self._jdataset().getGreenView()
 
     @_wrapout
     def get_blue(self, dtype=None):
+        dtype = _translatenativetype(dtype)
         if dtype is None:
             dtype = int16
-        else:
-            dtype = _translatenativetype(dtype)
         if dtype != int16:
             return self._jdataset().createBlueDataset(dtype.value)
         return self._jdataset().getBlueView()
@@ -1220,10 +1223,9 @@ class ndarrayRGB(ndarray):
         Arguments:
         cweights -- optional set of weight for combining the colour channel
         dtype    -- optional dataset type (default is int16)'''
+        dtype = _translatenativetype(dtype)
         if dtype is None:
             dtype = int16
-        else:
-            dtype = _translatenativetype(dtype)
         if cweights:
             cweights = asIterable(cweights)
             if len(cweights) != 3:
@@ -1256,6 +1258,7 @@ def arange(start, stop=None, step=1, dtype=None):
     if stop is None:
         stop = start
         start = 0
+    dtype = _translatenativetype(dtype)
     if dtype is None:
         if type(start) is _types.ComplexType or type(stop) is _types.ComplexType or type(step) is _types.ComplexType: 
             dtype = complex128
@@ -1265,8 +1268,6 @@ def arange(start, stop=None, step=1, dtype=None):
             dtype = int32
         else:
             raise ValueError, "Unknown or invalid type of input value"
-    else:
-        dtype = _translatenativetype(dtype)
     if dtype == bool:
         return None
 
@@ -1286,6 +1287,7 @@ def ones(shape, dtype=float64):
 def ones_like(a, dtype=None):
     o = _df.ones(a)
     if dtype is not None:
+        dtype = _translatenativetype(dtype)
         o = o.cast(dtype.value)
     return o
 
@@ -1318,10 +1320,9 @@ empty_like = zeros_like
 @_wrapout
 def full(shape, fill_value, dtype=None, elements=None):
     '''Create a dataset filled with fill_value'''
+    dtype = _translatenativetype(dtype)
     if dtype is None:
         dtype = _getdtypefromobj(fill_value)
-    else:
-        dtype = _translatenativetype(dtype)
     if elements is not None:
         if type(dtype) is _types.FunctionType:
             dtype = dtype(elements)
@@ -1338,7 +1339,7 @@ def full_like(a, fill_value, dtype=None, elements=None):
         f = f.astype(dtype)
     return f
 
-def linspace(start, stop, num=50, endpoint=True, retstep=False):
+def linspace(start, stop, num=50, endpoint=True, retstep=False, dtype=None):
     '''Create a 1D dataset from start to stop in given number of steps
     
     Arguments:
@@ -1351,10 +1352,12 @@ def linspace(start, stop, num=50, endpoint=True, retstep=False):
     if not endpoint:
         stop = ((num - 1) * stop + start)/num
 
-    dtype = _getdtypefromobj(((start, stop)))
+    dtype = _translatenativetype(dtype)
+    if dtype is None:
+        dtype = _getdtypefromobj(((start, stop)))
 
-    if dtype.value < float64.value:
-        dtype = float64
+        if dtype.value < float64.value:
+            dtype = float64
 
     if dtype.value >= complex64.value:
         dtype = complex128
@@ -1377,16 +1380,22 @@ def linspace(start, stop, num=50, endpoint=True, retstep=False):
         return result
 
 @_wrap
-def logspace(start, stop, num=50, endpoint=True, base=10.0):
+def logspace(start, stop, num=50, endpoint=True, base=10.0, dtype=None):
     '''Create a 1D dataset of values equally spaced on a logarithmic scale'''
     if not endpoint:
         stop = ((num - 1) * stop + start)/num
 
+    dtype = _translatenativetype(dtype)
     if complex(start).imag == 0 and complex(stop).imag == 0:
-        dtype = _getdtypefromobj(((start, stop)))
+        if dtype is None:
+            dtype = _getdtypefromobj(((start, stop)))
+
+            if dtype.value < float64.value:
+                dtype = float64
+
         return _df.createLogSpace(start, stop, num, base, dtype.value)
     else:
-        result = linspace(start, stop, num, endpoint)
+        result = linspace(start, stop, num, endpoint, False, dtype)
         return _maths.power(base, result)
 
 @_wrap

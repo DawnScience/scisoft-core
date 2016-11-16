@@ -342,6 +342,9 @@ public class PixelIntegration {
 		Dataset m = DatasetUtils.convertToDataset(mask);
 		
 		IndexIterator iter = x0.getIterator();
+		
+		int[] setPos = new int[]{0,0};
+		
 		while (iter.hasNext()) {
 
 			if (m != null && !m.getElementBooleanAbs(iter.index)) continue;
@@ -395,7 +398,8 @@ public class PixelIntegration {
 				for (int j = minBinY; j <= maxBinY; j++) {
 					if (j < 0 || j >= nYBins) continue;
 
-					int[] setPos = new int[]{j,i};
+					setPos[0] = j;
+					setPos[1]= i;
 					double val = histo.get(setPos);
 
 					double modify = partialScale;

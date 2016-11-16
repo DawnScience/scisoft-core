@@ -818,11 +818,11 @@ public class NexusTreeUtils {
 		} else {
 			if (name.endsWith(NX_INDICES_SUFFIX)) {
 				String not_indices = name.substring(0, name.length() - NX_INDICES_SUFFIX.length());
-				if (allAnnotations.contains(not_indices)) {
+				if (gn.containsDataNode(not_indices)) {
 					int[] indices = parseIntArray(gn.getAttribute(name));
 					ILazyDataset view = gn.getDataNode(not_indices).getDataset().getSliceView();
-					view.setName(name);
-					metadata.addAxis(primaryDimension, view,indices);
+					view.setName(not_indices);
+					metadata.addAxis(primaryDimension == -1 ? indices[indices.length-1] : primaryDimension, view,indices);
 					allAnnotations.remove(not_indices);
 				}
 			} else {
@@ -830,7 +830,7 @@ public class NexusTreeUtils {
 					int[] indices = parseIntArray(gn.getAttribute(name + NX_INDICES_SUFFIX));
 					ILazyDataset view = gn.getDataNode(name).getDataset().getSliceView();
 					view.setName(name);
-					metadata.addAxis(primaryDimension, view,indices);
+					metadata.addAxis(primaryDimension == -1 ? indices[indices.length-1] : primaryDimension, view,indices);
 					allAnnotations.remove(name + NX_INDICES_SUFFIX);
 				}
 			}

@@ -54,10 +54,15 @@ public class SurfaceScatteringRemappingOperation extends AbstractOperation<Surfa
 		
 		if (md == null) throw new OperationException(this, "Remapping requires a calibration to be loaded");
 		
+		int[] shape = input.getShape();
+		
+		if (model.getBinsPara() != null) shape[1] = model.getBinsPara();
+		if (model.getBinsPerp() != null) shape[0] = model.getBinsPerp();
+		
 		SurfacePixelIntegrationCache cache = 
 				new SurfacePixelIntegrationCache(md, input.getShape(), 
 					model.getPitch(), model.getRoll(),
-					model.getBinsPara(), model.getBinsPerp());
+					shape[1], shape[0]);
 		
 		IDataset mask = null;
 		

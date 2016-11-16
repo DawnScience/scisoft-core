@@ -21,10 +21,10 @@ public class SurfaceScatteringRemappingModel extends AbstractOperationModel {
 	double roll;
 	
 	@OperationModelField(hint="Number of bins for the surface parallel component", label = "Para. component bins")
-	int binsPara = 1000;
+	Integer binsPara = null;
 	
 	@OperationModelField(hint="Number of bins for the surface perpendicular component", label = "Perp. component bins")
-	int binsPerp = 1000;
+	Integer binsPerp = null;
 	
 	public void setPitch(double pitch) {
 		firePropertyChange("pitch", this.pitch, this.pitch = pitch);
@@ -42,19 +42,19 @@ public class SurfaceScatteringRemappingModel extends AbstractOperationModel {
 		return roll;
 	}
 
-	public void setBinsPara(int binsPara) {
+	public void setBinsPara(Integer binsPara) {
 		firePropertyChange("binsPara", this.binsPara, this.binsPara = binsPara);
 	}
 	
-	public int getBinsPara() {
+	public Integer getBinsPara() {
 		return binsPara;
 	}
 	
-	public void setBinsPerp(int binsPerp) {
+	public void setBinsPerp(Integer binsPerp) {
 		firePropertyChange("binsPerp", this.binsPerp, this.binsPerp = binsPerp);
 	}
 	
-	public int getBinsPerp() {
+	public Integer getBinsPerp() {
 		return binsPerp;
 	}
 	

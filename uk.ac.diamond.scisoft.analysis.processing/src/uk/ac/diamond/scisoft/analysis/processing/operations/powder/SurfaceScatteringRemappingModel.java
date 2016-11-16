@@ -26,10 +26,16 @@ public class SurfaceScatteringRemappingModel extends AbstractOperationModel {
 	@OperationModelField(hint="Number of bins for the surface perpendicular component", label = "Perp. component bins")
 	Integer binsPerp = null;
 	
+	@OperationModelField(label = "Perp. range",hint="Two values, start and end, separated by a comma i.e. 2,4.The values should be in q.If you delete the text, the range is cleared and the whole image used.")
+	double[] perpRange = null;
+	
+	@OperationModelField(label = "Para. range",hint="Two values, start and end, separated by a comma i.e. 2,4.The values should be in q.If you delete the text, the range is cleared and the whole image used.")
+	double[] parRange = null;
+	
 	public void setPitch(double pitch) {
 		firePropertyChange("pitch", this.pitch, this.pitch = pitch);
 	}
-	
+
 	public double getPitch() {
 		return pitch;
 	}
@@ -56,6 +62,22 @@ public class SurfaceScatteringRemappingModel extends AbstractOperationModel {
 	
 	public Integer getBinsPerp() {
 		return binsPerp;
+	}
+	
+	public double[] getPerpRange() {
+		return perpRange;
+	}
+
+	public void setPerpRange(double[] perpRange) {
+		firePropertyChange("perpRange", this.perpRange, this.perpRange = perpRange);
+	}
+
+	public double[] getParRange() {
+		return parRange;
+	}
+	
+	public void setParRange(double[] parRange) {
+		firePropertyChange("parRange", this.parRange, this.parRange = parRange);
 	}
 	
 }

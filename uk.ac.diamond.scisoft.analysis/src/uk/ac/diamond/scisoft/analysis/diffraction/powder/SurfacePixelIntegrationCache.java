@@ -17,11 +17,9 @@ import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
-import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 
 public class SurfacePixelIntegrationCache implements IPixelIntegrationCache {
 
@@ -43,9 +41,20 @@ public class SurfacePixelIntegrationCache implements IPixelIntegrationCache {
 	
 	private int binsPara, binsPerp;
 	
-	public SurfacePixelIntegrationCache(IDiffractionMetadata dMeta, int[] shape, double pitchDegrees, double rollDegrees, int binsPara, int binsPerp) {
+	public SurfacePixelIntegrationCache(IDiffractionMetadata dMeta, int[] shape, double pitchDegrees, double rollDegrees, int binsPara, int binsPerp, double[] paraRange, double[] perpRange) {
 		this.dMeta = dMeta;
 		this.shape = shape;
+		
+		if (paraRange != null) {
+			paraRange = paraRange.clone();
+			Arrays.sort(paraRange);
+			this.xRange = paraRange;
+		}
+		if (perpRange != null) {
+			perpRange = perpRange.clone();
+			Arrays.sort(perpRange);
+			this.yRange = perpRange;
+		}
 		
 		this.binsPara = binsPara;
 		this.binsPerp = binsPerp;
@@ -63,14 +72,11 @@ public class SurfacePixelIntegrationCache implements IPixelIntegrationCache {
 		// yArray is q⊥
 		yArray = new Dataset[]{arrays[0], arrays[1]};
 		
-		xRange = new double[]{xArray[0].min().doubleValue(),xArray[0].max().doubleValue()};
-		yRange = new double[]{0., yArray[0].max().doubleValue()};
+		binEdgesX = calculateBins(xArray, this.binsPara, xRange);
+		binEdgesY = calculateBins(yArray, this.binsPerp, yRange);
 		
-		binEdgesX = calculateBins(xArray, this.binsPara, false);
-		binEdgesY = calculateBins(yArray, this.binsPerp, true);
-		
-		xAxis = calculateAxis(this.binsPara, binEdgesX, "q_par");
-		yAxis = calculateAxis(this.binsPerp, binEdgesY, "q_per");
+		xAxis = calculateAxis(binEdgesX, "q_par");
+		yAxis = calculateAxis(binEdgesY, "q_per");
 	}
 	
 	@Override
@@ -153,7 +159,7 @@ public class SurfacePixelIntegrationCache implements IPixelIntegrationCache {
 		return false;
 	}
 	
-	private static Dataset calculateAxis(int nBins, DoubleDataset binEdges, String name){
+	private static Dataset calculateAxis(DoubleDataset binEdges, String name){
 		
 		Dataset axis = null;
 
@@ -166,7 +172,15 @@ public class SurfacePixelIntegrationCache implements IPixelIntegrationCache {
 		return axis;
 	}
 	
-	private static DoubleDataset calculateBins(Dataset[] arrays, int numBins, boolean positiveOnly) {
+	private static DoubleDataset calculateBins(Dataset[] arrays, int numBins, double[] binRange) {
+		
+		if (binRange != null) {
+			double shift = 0;
+//			range corresponds to bin centres
+			shift = (binRange[1]- binRange[0])/(2*numBins);
+			return (DoubleDataset) DatasetFactory.createLinearSpace(binRange[0]-shift, binRange[1]+shift, numBins + 1, Dataset.FLOAT64);
+		}
+
 		
 		double min = Double.MAX_VALUE;
 		double max = -Double.MAX_VALUE;
@@ -181,7 +195,7 @@ public class SurfacePixelIntegrationCache implements IPixelIntegrationCache {
 			max = x > max ? x : max;
 		}
 		//default range corresponds to bin edges
-		return (DoubleDataset) DatasetFactory.createLinearSpace( ((positiveOnly) ? 0. : min), max, numBins + 1, Dataset.FLOAT64);
+		return (DoubleDataset) DatasetFactory.createLinearSpace(min, max, numBins + 1, Dataset.FLOAT64);
 	}
 
 }

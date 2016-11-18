@@ -188,15 +188,14 @@ public class JavaImageLoader extends AbstractFileLoader {
 	}
 
 	protected boolean createLazyDatasets(DataHolder output, ImageReader reader) {
-		int j = 1; // start at 1
 		for (int i = 0; true; i++) {
 			try {
 				int[] shape = new int[] {reader.getHeight(i), reader.getWidth(i)};
 				Iterator<ImageTypeSpecifier> it = reader.getImageTypes(i);
 				SampleModel sm = it.next().getSampleModel();
 				int dtype = AWTImageUtils.getDTypeFromImage(sm, keepBitWidth)[0];
-				final String name = String.format(IMAGE_NAME_FORMAT, j);
-				final int num = j;
+				final String name = String.format(IMAGE_NAME_FORMAT, i + 1);
+				final int num = i;
 				LazyDataset lazy = createLazyDataset(name, dtype, shape, new LazyLoaderStub() {
 					@Override
 					public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
@@ -214,10 +213,9 @@ public class JavaImageLoader extends AbstractFileLoader {
 			} catch (IndexOutOfBoundsException e) {
 				break;
 			} catch (Exception e) {
-				logger.warn("Could not get height or width for image {}", j);
+				logger.warn("Could not get height or width for image {}", i);
 				continue;
 			}
-			j++;
 		}
 		return output.getNames().length > 0;
 	}

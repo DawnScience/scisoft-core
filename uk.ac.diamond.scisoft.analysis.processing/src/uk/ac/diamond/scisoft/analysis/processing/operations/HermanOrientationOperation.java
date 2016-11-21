@@ -152,7 +152,7 @@ public class HermanOrientationOperation extends AbstractOperation<HermanOrientat
 		// Level two of the loop, this is to loop through the data points in the frame
 		for(int loopIter = 0; loopIter < dataSize; loopIter++) {
 			// To save this from being calculated many times
-			loopStepRadianValue = integrationStartInRadians + (integrationRadianStep * loopIter);
+			loopStepRadianValue = integrationRadianStep * loopIter;
 			loopStepDegreeValue = loopStepRadianValue / (Math.PI / 180);
 			// The component parts of the fraction
 			fractionNumerator += Math.pow(Math.cos(loopStepRadianValue), 2) * Math.sin(loopStepRadianValue) * reducedData.getDouble(loopIter);

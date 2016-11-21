@@ -299,6 +299,26 @@
             visible="false">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw1DBackgroundSubtractionOperation"
+            description="Perform a background subtraction on a reduced dataset"
+            icon="icons/subblank.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw1DBackgroundSubtractionOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw1DBackgroundSubtractionModel"
+            name="Background subtraction for diffracting but not absorbing samples in 1D"
+            visible="true">
+      </operation>
+            <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw2DBackgroundSubtractionOperation"
+            description="Perform a background subtraction on a reduced dataset"
+            icon="icons/subblank.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw2DBackgroundSubtractionOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw2DBackgroundSubtractionModel"
+            name="Background subtraction for diffracting but not absorbing samples in 2D"
+            visible="true">
+      </operation>
+      <operation
             category="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.XRegionProfileNormalize"
             description="A filter which normalises the data frame by the profile of the selected region of the X axis."

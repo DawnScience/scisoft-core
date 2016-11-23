@@ -69,7 +69,7 @@ public class UViewDatLoaderTest {
 		ILazyDataset lazy = new LazyDataset("Image stack", loader.getDType(), loader.getShape(), loader);
 
 		assertArrayEquals("Shapes are the same", loader.getShape(), lazy.getShape());
-		IDataset slice = lazy.getSlice(new Slice(0, lazy.getShape()[0], lazy.getShape()[1])).squeeze();
+		IDataset slice = lazy.getSlice(new Slice(1)).squeeze();
 		if (slice.getShape()[0]!=512) throw new Exception("The width value of the dataset should be 512!");
 		if (slice.getShape()[1]!=512) throw new Exception("The height value of the dataset should be 512!");
 		if (slice.getDouble(new int[] {0, 0})!=202.0d) throw new Exception("The first value of the dataset should be 202!");

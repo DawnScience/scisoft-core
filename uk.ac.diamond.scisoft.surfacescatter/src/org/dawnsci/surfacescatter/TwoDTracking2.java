@@ -331,9 +331,12 @@ public class TwoDTracking2 {
 				} catch (Exception e) {
 
 				}
-				model.setTrackerCoordinates(
-						new double[] { initialLocation[1], initialLocation[0], initialLocation[5], initialLocation[0],
-								initialLocation[1], initialLocation[2], initialLocation[5], initialLocation[2] });
+				
+				model.setTrackerCoordinates(initialLocation);
+						
+//						
+//						new double[] { initialLocation[1], initialLocation[0], initialLocation[5], initialLocation[0],
+//								initialLocation[1], initialLocation[2], initialLocation[5], initialLocation[2] });
 				model.setInput(input);
 				location = initialLocation;
 				sm.addLocationList(k, location);
@@ -388,9 +391,9 @@ public class TwoDTracking2 {
 				} catch (Exception e) {
 
 				}
-				model.setTrackerCoordinates(
-						new double[] { initialLocation[1], initialLocation[0], initialLocation[5], initialLocation[0],
-								initialLocation[1], initialLocation[2], initialLocation[5], initialLocation[2] });
+				model.setTrackerCoordinates(initialLocation);
+//								[1], initialLocation[0], initialLocation[5], initialLocation[0],
+//								initialLocation[1], initialLocation[2], initialLocation[5], initialLocation[2] });
 				model.setInput(input);
 				location = initialLocation;
 			}

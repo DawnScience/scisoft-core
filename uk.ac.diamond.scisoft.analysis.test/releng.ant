@@ -19,7 +19,9 @@
 			<os family="windows" />
 		</condition>
 		<property name="plugin-uk.ac.diamond.scisoft.analysis.test.junit-tests.maxmemory" value="1536m" />
-		<junit-call description="${ant.project.name} Java JUnit tests" maxmemory="${plugin-uk.ac.diamond.scisoft.analysis.test.junit-tests.maxmemory}">
+		<junit-call description="${ant.project.name} Java JUnit tests"
+			maxmemory="${plugin-uk.ac.diamond.scisoft.analysis.test.junit-tests.maxmemory}"
+			timeout="180000000">  <!-- lots if tests here, a longer timeout than the default is required when running on a slow machine -->
 			<formatter type="xml" />
 			<classpath>
 				<pathelement location="${junitjar.loc}" />
@@ -60,11 +62,13 @@
 			<batchtest todir="@{report.dir}">
 				<fileset dir="${plugin.basedir}/src">
 					<include name="**/*Loader*Test.java" />
+					<exclude name="**/*PluginTest.java" />
 				</fileset>
 			</batchtest>
 			<batchtest todir="@{report.dir}">
 				<fileset dir="${plugin.basedir}/src">
 					<include name="**/NumPy*Test.java" />
+					<exclude name="**/*PluginTest.java" />
 				</fileset>
 			</batchtest>
 		</junit-call>

@@ -20,8 +20,9 @@ public class StitchedOutput {
 	private static double attenuationFactorFhkl;
 //	private static double correctionRatio;
 //	private static double correctionRatioFhkl;
+//	IPlottingSystem<Composite> plotSystem,
 	
-	public  static IDataset[][] curveStitch (IPlottingSystem<Composite> plotSystem, TableItem[] selectedTableItems
+	public  static IDataset[][] curveStitch (TableItem[] selectedTableItems
 			, ArrayList<DataModel> dms, SuperModel sm, DatDisplayer datDisplayer ){
 		
 		ArrayList<IDataset> xArrayList = new ArrayList<>();

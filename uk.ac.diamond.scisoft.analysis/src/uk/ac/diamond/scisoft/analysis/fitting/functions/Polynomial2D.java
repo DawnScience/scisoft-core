@@ -166,6 +166,9 @@ public class Polynomial2D extends AFunction {
 					temp += v;
 				}
 			}
+//			if (temp<0){
+//				temp=0;
+//			}
 			buffer[i++] = temp;	
 		}
 		

@@ -44,6 +44,23 @@ public class TrackingMethodology {
 		return null;
 	}
 
+	
+	public static TrackerType1 intToTracker1(int in){
+		
+		if (in == 0){
+			return TrackerType1.TLD;
+		}
+		else if (in == 1){
+			return TrackerType1.CIRCULANT;
+		}
+		else if (in == 2){
+			return TrackerType1.SPARSEFLOW;
+		}
+		else if (in == 3){
+			return TrackerType1.SPARSEFLOW;
+		}
+		return null;
+	}
 
 	public static TrackerType toTT (TrackerType1 tt){
 		

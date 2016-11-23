@@ -9,9 +9,7 @@
 
 package org.dawnsci.surfacescatter;
 
-import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
@@ -33,24 +31,22 @@ public class TwoDFitting{
 	public static Dataset TwoDFitting1(IDataset input, ExampleModel model){
 		g2 = null;
 		
-		RectangularROI box = model.getBox();
-
+		
 		int[] len = model.getLenPt()[0];
 		int[] pt = model.getLenPt()[1];
 		
 		Dataset in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input,len, pt);
 	
-		if (g2 == null)
+		if (g2 == null){
 			g2 = new Polynomial2D(AnalaysisMethodologies.toInt(model.getFitPower()));
-		if ((int) Math.pow(AnalaysisMethodologies.toInt(model.getFitPower()) + 1, 2) != g2.getNoOfParameters())
+		}
+		if ((int) Math.pow(AnalaysisMethodologies.toInt(model.getFitPower()) + 1, 2) != g2.getNoOfParameters()){
 			g2 = new Polynomial2D(AnalaysisMethodologies.toInt(model.getFitPower()));
+		}
 	
 		Dataset[] fittingBackground = BoxSlicerRodScanUtilsForDialog.LeftRightTopBottomBoxes(input, len,
 				pt, model.getBoundaryBox());
-		
-		Dataset offset = DatasetFactory.ones(fittingBackground[2].getShape(), Dataset.FLOAT64);
-		
-		Dataset intermediateFitTest = Maths.add(offset, fittingBackground[2]);
+
 		Dataset matrix = LinearLeastSquaresServicesForDialog.polynomial2DLinearLeastSquaresMatrixGenerator(
 				AnalaysisMethodologies.toInt(model.getFitPower()), fittingBackground[0], fittingBackground[1]);
 		
@@ -58,8 +54,12 @@ public class TwoDFitting{
 
 			@Override
 			public void run() {
-			DoubleDataset test = (DoubleDataset)LinearAlgebra.solveSVD(matrix, intermediateFitTest);
+			DoubleDataset test = (DoubleDataset)LinearAlgebra.solveSVD(matrix, fittingBackground[2]);
 			double[] params = test.getData();
+			
+//			for (int i = 0 ; i<params.length; i++){
+//				System.out.println("params["+i+"] : " + params[i]);
+//			}
 			
 			DoubleDataset in1Background = g2.getOutputValues0(params, len, model.getBoundaryBox(),
 					AnalaysisMethodologies.toInt(model.getFitPower()));
@@ -94,5 +94,6 @@ public class TwoDFitting{
 		return output;
 	}
 	
-
+	
+	
 }

@@ -1042,6 +1042,14 @@
             description="Reflectivity Final Extraction"
             name="Reflectivity Final Extraction">
       </operation>
+       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.sxrdrods.TestImageGenerator"
+            icon="icons/template.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.sxrdrods.TestImageGenerator"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.Polynomial2DReflectivityModel"
+            description="Test Image Generator - Experimental only"
+            name="Test Image Generator">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

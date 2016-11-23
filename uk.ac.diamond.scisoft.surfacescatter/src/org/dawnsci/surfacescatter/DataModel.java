@@ -37,6 +37,7 @@ public class DataModel {
 	private IDataset yIDatasetFhklMax;
 	private IDataset yIDatasetMin;
 	private IDataset yIDatasetFhklMin;
+	private ArrayList<double[]> locationList; 
 	
 	public IROI getBackgroundROI(){
 		return backgroundROI;
@@ -267,7 +268,7 @@ public class DataModel {
 	
 	
 	public void addxList(int l, int k, double x){
-		if (xList==null){
+		if (xList==null || xList.isEmpty()){
 			xList = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
 				  xList.add(0.0);
@@ -405,6 +406,7 @@ public class DataModel {
 		
 		xListc.removeAll(zero);
 		
+
 		IDataset xOut = DatasetFactory.createFromList(xListc);
 		
 		return xOut;
@@ -538,6 +540,14 @@ public class DataModel {
 	public IDataset getYIDatasetFhklMin(){
 		yIDatasetFhklMin = Maths.subtract(yIDatasetFhkl(), yIDatasetFhklError());
 		return yIDatasetFhklMin;
+	}
+
+	public ArrayList<double[]> getLocationList() {
+		return locationList;
+	}
+
+	public void setLocationList(ArrayList<double[]> locationList) {
+		this.locationList = locationList;
 	}
 
 }

@@ -29,7 +29,7 @@ public class ExampleModel {
 	private int sliderPos = 0;
 	private float iterationMarker =0;
 	private AggregateDataset aggDat;
-	private RectangularROI box;
+	private IRectangularROI box;
 	private IDataset input; 
 	private int boundaryBox = 10;
 	private Methodology methodology = Methodology.TWOD;
@@ -87,11 +87,11 @@ public class ExampleModel {
 		this.fitPower = fitPower1;
 	}
 
-	public RectangularROI getBox() {
+	public IRectangularROI getBox() {
 		return box;
 	}
 
-	public void setBox(RectangularROI box) {
+	public void setBox(IRectangularROI box) {
 		firePropertyChange("box", this.box, this.box= box);
 	}
 

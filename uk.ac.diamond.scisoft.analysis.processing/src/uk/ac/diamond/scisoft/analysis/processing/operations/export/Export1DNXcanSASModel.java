@@ -17,55 +17,15 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 
 
-// The model for an Image exporting plug-in for the processing perspective
-// Currently it will export either a 32-bit TIFF or a 16-bit PNG file. PNG saving may well result in data loss...
-// It is intended for PUBLICATION saving only but this may be foolish to assume.
+//The model for exporting a NXcanSAS file 
+
 
 // @author Tim Snow
 
-public class ExportImageModel extends AbstractOperationModel{
 
-	
-	// Let's give the user a fixed choice on the file format...
-	enum FileFormatEnum {
-		TIFF(1),
-		PNG(2);
-		
-		private final int fileFormatEnum;
-		
-		FileFormatEnum(int fileFormatEnum) {
-			this.fileFormatEnum = fileFormatEnum;
-		}
-		
-		public int getFileFormat() {
-			return this.fileFormatEnum;
-		}
-		
-		@Override
-		public String toString() {
-			switch (this.fileFormatEnum) {
-				case 1:		return String.format("TIFF File");
-				case 2:		return String.format("PNG File");
-				default:	return String.format("Error!");
-			}
-		}
-	}
+// Let's find somewhere to save this file!
+public class Export1DNXcanSASModel extends AbstractOperationModel{
 
-	
-	// Should we be exporting a TIFF or PNG file?
-	@OperationModelField(label = "File Type", hint = "Pick whether to export as PNG or TIFF files. PNG files will be exported as 16-bit, TIFF as 32-bit. EXPORTING TO PNG MAY RESULT IN LOSS OF INTENSITY RESOLUTION!", fieldPosition = 1)
-	private FileFormatEnum fileFormatEnum = FileFormatEnum.TIFF;
-
-	// Now the getters and setters
-	public FileFormatEnum getFileFormatEnum() {
-		return fileFormatEnum;
-	}
-
-	public void setFileFormatEnum(FileFormatEnum fileFormatEnum) {
-		firePropertyChange("FileFormatEnum", this.fileFormatEnum, this.fileFormatEnum = fileFormatEnum);
-	}
-
-	
 	// Where should we be exporting to?	
 	@OperationModelField(label = "Output Directory", hint="Enter the path to output directory", file = FileType.EXISTING_FOLDER, fieldPosition = 2)
 	private String outputDirectoryPath = "";
@@ -91,5 +51,5 @@ public class ExportImageModel extends AbstractOperationModel{
 
 	public void setPaddingZeros(Integer paddingZeros) {
 		firePropertyChange("paddingZeros", this.paddingZeros, this.paddingZeros = paddingZeros);
-	}	
+	}
 }

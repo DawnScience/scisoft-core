@@ -230,6 +230,15 @@
             visible="true">
       </operation>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.export.Export1DNXcanSASOperation"
+            description="Save XY data to a NXcanSAS file"
+            icon="icons/exptext.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.export.Export1DNXcanSASOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.export.Export1DNXcanSASModel"
+            name="Export to NXcanSAS File"
+            visible="true">
+      </operation>
+      <operation
             category="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DownsampleImageOperation"
             description="Downsample an image using the corner, mean, min, or max value. The type the output data should take (int, float etc) can also be specified"
@@ -306,7 +315,7 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw1DBackgroundSubtractionOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw1DBackgroundSubtractionModel"
             name="Background subtraction for diffracting but not absorbing samples in 1D"
-            visible="false">
+            visible="true">
       </operation>
             <operation
             category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
@@ -316,7 +325,7 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw2DBackgroundSubtractionOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw2DBackgroundSubtractionModel"
             name="Background subtraction for diffracting but not absorbing samples in 2D"
-            visible="false">
+            visible="true">
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"

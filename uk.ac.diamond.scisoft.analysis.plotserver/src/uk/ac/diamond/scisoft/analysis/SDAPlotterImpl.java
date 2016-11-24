@@ -196,15 +196,21 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		} else {
 			if (xValues.length != yValues.length)
 				throw new IllegalArgumentException("# xValues does not match # yValues");
-			Map<IDataset, String> cache = new HashMap<IDataset, String>();
+			Map<String, IDataset> cache = new HashMap<String, IDataset>();
 			int l = 0; // last axis number
 			for (int i = 0; i < xValues.length; i++) {
 				IDataset x = xValues[i];
-				String xid = cache.get(x);
+				String xid = null;
+				for (String s : cache.keySet()) {
+					if (cache.get(s) == x) {
+						xid = s;
+						break;
+					}
+				}
 				if (xid == null) {
 					xid = l == 0 ? AxisMapBean.XAXIS : AxisMapBean.XAXIS + l;
 					l++;
-					cache.put(x, xid);
+					cache.put(xid, x);
 				}
 				String xan = null;
 				if (xAxisNames != null) {

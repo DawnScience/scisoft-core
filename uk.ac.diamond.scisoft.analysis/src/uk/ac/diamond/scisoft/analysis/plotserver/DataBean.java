@@ -96,7 +96,14 @@ public class DataBean implements Serializable {
 	 * @param axisDataset
 	 */
 	public void addAxis(String axisID, IDataset axisDataset) {
-		axisData.put(axisID, DatasetUtils.convertToDataset(axisDataset));
+		Dataset tmp = DatasetUtils.convertToDataset(axisDataset);
+		if (tmp.getStrides() != null) {
+			// workaround deserialization problem where base is not set as it is transient
+			// this can cause NPEs when base is subsequently used
+			tmp = tmp.getSlice();
+			tmp.setName(axisDataset.getName());
+		}
+		axisData.put(axisID, tmp);
 	}
 
 	/**

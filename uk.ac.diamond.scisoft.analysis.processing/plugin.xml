@@ -315,7 +315,7 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw1DBackgroundSubtractionOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw1DBackgroundSubtractionModel"
             name="Background subtraction for diffracting but not absorbing samples in 1D"
-            visible="true">
+            visible="false">
       </operation>
             <operation
             category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
@@ -325,7 +325,7 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw2DBackgroundSubtractionOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw2DBackgroundSubtractionModel"
             name="Background subtraction for diffracting but not absorbing samples in 2D"
-            visible="true">
+            visible="false">
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"

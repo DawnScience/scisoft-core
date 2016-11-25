@@ -33,6 +33,7 @@ import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.processing.IExportOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
@@ -48,7 +49,7 @@ import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 
 
 //Let's save this file.
-public class Export1DNXcanSASOperation extends AbstractOperation<Export1DNXcanSASModel, OperationData> {
+public class Export1DNXcanSASOperation extends AbstractOperation<Export1DNXcanSASModel, OperationData> implements IExportOperation {
 
 	@Override
 	public String getId() {

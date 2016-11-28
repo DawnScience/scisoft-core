@@ -31,7 +31,7 @@ public class PgmLoaderTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(PilatusEdfLoader.class.getCanonicalName());
+		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(PgmLoaderTest.class.getCanonicalName());
 		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
 	}
 

@@ -32,7 +32,7 @@ public class PilatusEdfLoaderTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		TestFileFolder = IOTestUtils.getGDALargeTestFilesLocation();
-		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(PilatusEdfLoader.class.getCanonicalName());
+		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(PilatusEdfLoaderTest.class.getCanonicalName());
 
 		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
 		

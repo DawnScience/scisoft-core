@@ -83,8 +83,8 @@ Functions available:
     Check also in maths, comparisons, fft, random, io, plot and signal sub-modules
 '''
 import sys
-if sys.hexversion < 0x02040000:
-    raise 'Must use python of at least version 2.4'
+if sys.hexversion < 0x02070000:
+    raise 'Must use python of at least version 2.7'
 
 import os
 if os.name == 'java':

@@ -20,6 +20,7 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.LazyMaths;
+import org.eclipse.january.dataset.ShapeUtils;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
@@ -70,9 +71,12 @@ public class DataUtils {
 		
 		Dataset subtrahend = null;
 		
+		int[] shape = ShapeUtils.squeezeShape(lz.getShape(), false);
+		
 		try {
-			if (lz.getRank() == dataDims.length) {
+			if (shape.length == dataDims.length) {
 				subtrahend = DatasetUtils.sliceAndConvertLazyDataset(lz);
+				subtrahend.squeeze();
 			} else {
 				subtrahend = LazyMaths.mean(s, e, lz, dataDims).squeeze();
 			}

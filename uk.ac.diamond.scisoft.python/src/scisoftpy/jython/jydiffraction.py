@@ -18,6 +18,7 @@
 Diffraction package
 '''
 
+import org.eclipse.dawnsci.analysis.api.diffraction as _api_dfn
 import uk.ac.diamond.scisoft.analysis.diffraction as _dfn
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToQSpace as _maptoqspace #@UnresolvedImport
 
@@ -33,7 +34,7 @@ def loadimages(name, asdict=False):
     else:
         return images
 
-class environ(_dfn.DiffractionCrystalEnvironment):
+class environ(_api_dfn.DiffractionCrystalEnvironment):
     def __init__(self, wavelength=None, energy=None):
         '''Create a diffraction environment
         
@@ -45,12 +46,12 @@ class environ(_dfn.DiffractionCrystalEnvironment):
         if not wavelength and not energy:
             raise ValueError, "Must specify either wavelength or energy"
         if wavelength:
-            super(_dfn.DiffractionCrystalEnvironment, self).__init__(wavelength)
+            super(_api_dfn.DiffractionCrystalEnvironment, self).__init__(wavelength)
         else:
-            super(_dfn.DiffractionCrystalEnvironment, self).__init__()
+            super(_api_dfn.DiffractionCrystalEnvironment, self).__init__()
             self.setWavelengthFromEnergykeV(energy)
 
-class detector(_dfn.DetectorProperties):
+class detector(_api_dfn.DetectorProperties):
     def __init__(self, shape, size, orientation, origin, beam=None):
         '''Create a detector
         
@@ -62,9 +63,9 @@ class detector(_dfn.DetectorProperties):
         beam -- unit vector in direction of beam, defaults to positive z-axis
         '''
         if beam:
-            super(_dfn.DetectorProperties, self).__init__(origin, beam, shape[1], shape[0], size[1], size[0], orientation)
+            super(_api_dfn.DetectorProperties, self).__init__(origin, beam, shape[1], shape[0], size[1], size[0], orientation)
         else:
-            super(_dfn.DetectorProperties, self).__init__(origin, shape[1], shape[0], size[1], size[0], orientation)
+            super(_api_dfn.DetectorProperties, self).__init__(origin, shape[1], shape[0], size[1], size[0], orientation)
 
 class qspace(_dfn.QSpace):
     '''q space'''

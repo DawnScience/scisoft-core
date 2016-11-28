@@ -92,15 +92,12 @@ if os.name == 'java':
     from jython.jymaths import *
     from jython.jycomparisons import *
     from jython.jyscisoft import *
-
-    import image
 else:
     from python.pycore import *
     from python.pymaths import *
     from python.pycomparisons import *
     from python.pyscisoft import *
 
-from signal import convolve, correlate
 
 '''
 Imports should work with python+numpy only agreed with MB 11 Nov 2011
@@ -156,6 +153,18 @@ try:
     import fft
 except Exception, e:
     print >> sys.stderr, "Could not import fft routines"
+    print >> sys.stderr, e
+
+try:
+    from signal import convolve, correlate
+except Exception, e:
+    print >> sys.stderr, "Could not import some signal routines"
+    print >> sys.stderr, e
+
+try:
+    import image
+except Exception, e:
+    print >> sys.stderr, "Could not import image routines"
     print >> sys.stderr, e
 
 try:

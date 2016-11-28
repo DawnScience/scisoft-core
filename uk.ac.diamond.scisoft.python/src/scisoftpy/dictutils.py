@@ -101,7 +101,7 @@ def make_safe(items, warn=True):
     
     return zip(keys, vals)
 
-from _external.ordereddict import OrderedDict as _odict
+from collections import OrderedDict as _odict
 
 class ListDict(object):
     '''
@@ -482,5 +482,5 @@ def _test_subclass():
 
 if __name__ == "__main__":
     _test_setting_listdict()
-#    _test_setting_listdict(inter=False)
-#    _test_subclass()
+    _test_setting_listdict(inter=False)
+    _test_subclass()

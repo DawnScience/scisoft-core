@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 2012 Diamond Light Source Ltd.
+ * Copyright (c) 2012-2016 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -32,11 +32,11 @@ public class FermiGauss extends AFunction implements Serializable {
 
 	private static final String NAME = "Fermi-Gaussian";
 	private static final String DESC = "A Fermi function that is also multiplied by a slope then convolved with a Gaussian."
-			+ "\n    y(x) = Convolve((scaleM * (x - mu) + scaleC) * Fermi(x; mu, kT, 1, 0) + C, Gaussian(x; 0, fwhm, 1)]";
-	private static final String[] PARAM_NAMES = new String[]{"mu", "T", "scaleM", "scaleC", "C", "fwhm"};
+			+ "\n    y(x) = Convolve((DOSheight * (x - mu) + DOSheight) * Fermi(x; mu, kT, 1, 0) + BKheight, Gaussian(x; 0, fwhm, 1)]";
+	private static final String[] PARAM_NAMES = new String[]{"mu", "T", "DOSslope", "DOSheight", "BKheight", "fwhm"};
 	private static final double[] PARAMS = new double[] { 0, 0, 0, 0, 0, 0 };
 	
-	private transient double mu, kT, scaleM, scaleC, offset, temperature, fwhm;
+	private transient double mu, kT, dosSlope, dosheight, offset, temperature, fwhm;
 
 	public FermiGauss() {
 		this(PARAMS);
@@ -56,18 +56,18 @@ public class FermiGauss extends AFunction implements Serializable {
 	 * @param maxMu
 	 * @param minkT
 	 * @param maxkT
-	 * @param minScaleM
-	 * @param maxScaleM
-	 * @param minScaleC
-	 * @param maxScaleC
-	 * @param minC
-	 * @param maxC
+	 * @param minDOSslope
+	 * @param maxDOSslope
+	 * @param minDOSheight
+	 * @param maxDOSheight
+	 * @param minBKheight
+	 * @param maxBKheight
 	 * @param minFWHM
 	 * @param maxFWHM
 	 */
 	public FermiGauss(double minMu, double maxMu, double minkT, double maxkT,
-					double minScaleM, double maxScaleM, double minScaleC, double maxScaleC,
-					double minC, double maxC, double minFWHM, double maxFWHM) {
+					double minDOSslope, double maxDOSslope, double minDOSheight, double maxDOSheight,
+					double minBKheight, double maxBKheight, double minFWHM, double maxFWHM) {
 
 		super(NUMBER_OF_PARAMETERS);
 
@@ -81,16 +81,16 @@ public class FermiGauss extends AFunction implements Serializable {
 		p.setValue((minkT + maxkT) / 2.0);
 
 		p = getParameter(2);
-		p.setLimits(minScaleM, maxScaleM);
-		p.setValue((minScaleM + maxScaleM) / 2.0);
+		p.setLimits(minDOSslope, maxDOSslope);
+		p.setValue((minDOSslope + maxDOSslope) / 2.0);
 
 		p = getParameter(3);
-		p.setLimits(minScaleC, maxScaleC);
-		p.setValue((minScaleC + maxScaleC) / 2.0);
+		p.setLimits(minDOSheight, maxDOSheight);
+		p.setValue((minDOSheight + maxDOSheight) / 2.0);
 
 		p = getParameter(4);
-		p.setLimits(minC, maxC);
-		p.setValue((minC + maxC) / 2.0);
+		p.setLimits(minBKheight, maxBKheight);
+		p.setValue((minBKheight + maxBKheight) / 2.0);
 
 		p = getParameter(5);
 		p.setLimits(minFWHM, maxFWHM);
@@ -105,8 +105,8 @@ public class FermiGauss extends AFunction implements Serializable {
 	private void calcCachedParameters() {
 		mu = getParameterValue(0);
 		temperature = getParameterValue(1);
-		scaleM = getParameterValue(2);
-		scaleC = getParameterValue(3);
+		dosSlope = getParameterValue(2);
+		dosheight = getParameterValue(3);
 		offset = getParameterValue(4);
 		fwhm = getParameterValue(5);
 		kT = temp2eV(temperature);
@@ -157,7 +157,7 @@ public class FermiGauss extends AFunction implements Serializable {
 		}
 
 		Fermi fermi = new Fermi(mu, kT, 1.0, 0.0);
-		StraightLine sl = new StraightLine(new double[] {scaleM, scaleC});
+		StraightLine sl = new StraightLine(new double[] {dosSlope, dosheight});
 		Dataset fermiDS = fermi.calculateValues(xAxis);
 		DoubleDataset slDS = sl.calculateValues(Maths.subtract(xAxis,mu));
 		fermiDS.imultiply(slDS);

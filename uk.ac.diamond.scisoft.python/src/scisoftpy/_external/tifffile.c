@@ -10,7 +10,13 @@ Refer to the tifffile.py module for documentation and tests.
 :Organization:
   Laboratory for Fluorescence Dynamics, University of California, Irvine
 
-:Version: 2013.01.18
+:Version: 2016.04.13
+
+Requirements
+------------
+* `CPython 2.7 or 3.5 <http://www.python.org>`_
+* `Numpy 1.10 <http://www.numpy.org>`_
+* A Python distutils compatible C compiler  (build)
 
 Install
 -------
@@ -26,8 +32,8 @@ Use this Python distutils setup script to build the extension module::
 
 License
 -------
-Copyright (c) 2008-2013, Christoph Gohlke
-Copyright (c) 2008-2013, The Regents of the University of California
+Copyright (c) 2008-2016, Christoph Gohlke
+Copyright (c) 2008-2016, The Regents of the University of California
 Produced at the Laboratory for Fluorescence Dynamics
 All rights reserved.
 
@@ -56,9 +62,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
 
-#define _VERSION_ "2013.01.18"
+#define _VERSION_ "2016.04.13"
 
 #define WIN32_LEAN_AND_MEAN
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 
 #include "Python.h"
 #include "string.h"
@@ -80,7 +87,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #define NO_ERROR 0
 #define VALUE_ERROR -1
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && _MSC_VER < 1600
 typedef unsigned __int8  uint8_t;
 typedef unsigned __int16  uint16_t;
 typedef unsigned __int32  uint32_t;
@@ -89,17 +96,23 @@ typedef unsigned __int64  uint64_t;
 typedef __int64  ssize_t;
 typedef signed __int64  intptr_t;
 typedef unsigned __int64  uintptr_t;
-#define SSIZE_MAX (9223372036854775808)
 #else
 typedef int ssize_t;
 typedef _W64 signed int  intptr_t;
 typedef _W64 unsigned int  uintptr_t;
-#define SSIZE_MAX (2147483648)
 #endif
 #else
 /* non MS compilers */
 #include <stdint.h>
 #include <limits.h>
+#endif
+
+#ifndef SSIZE_MAX
+#ifdef _WIN64
+#define SSIZE_MAX (9223372036854775808L)
+#else
+#define SSIZE_MAX (2147483648)
+#endif
 #endif
 
 #define SWAP2BYTES(x) \
@@ -346,6 +359,94 @@ int unpackbits(
 /*****************************************************************************/
 /* Python functions */
 
+
+/** Reverse bits in bytes of byte string or ndarray. */
+char py_reverse_bitorder_doc[] =
+    "Reverse bits in each byte of byte string or numpy array.";
+
+static PyObject*
+py_reverse_bitorder(PyObject *obj, PyObject *args)
+{
+    PyObject *dataobj = NULL;
+    PyObject *result = NULL;
+    PyArray_Descr *dtype = NULL;
+    PyArrayIterObject *iter = NULL;
+    unsigned char *dataptr = NULL;
+    unsigned char *resultptr = NULL;
+    Py_ssize_t size, stride;
+    Py_ssize_t i, j;
+    int axis = -1;
+
+    if (!PyArg_ParseTuple(args, "O", &dataobj))
+        return NULL;
+
+    Py_INCREF(dataobj);
+
+    if (PyBytes_Check(dataobj)) {
+        dataptr = (unsigned char *)PyBytes_AS_STRING(dataobj);
+        size = PyBytes_GET_SIZE(dataobj);
+
+        result = PyBytes_FromStringAndSize(NULL, size);
+        if (result == NULL) {
+            PyErr_Format(PyExc_MemoryError, "unable to allocate result");
+            goto _fail;
+        }
+        resultptr = (unsigned char *)PyBytes_AS_STRING(result);
+
+        Py_BEGIN_ALLOW_THREADS
+        for (i = 0; i < size; i++) {
+            /* http://graphics.stanford.edu/~seander/bithacks.html
+               #ReverseByteWith64Bits */
+            *resultptr++ = (unsigned char)(((*dataptr++ * 0x80200802ULL) &
+                                     0x0884422110ULL) * 0x0101010101ULL >> 32);
+        }
+        Py_END_ALLOW_THREADS
+
+        Py_DECREF(dataobj);
+        return result;
+    }
+    else if (PyArray_Check(dataobj)) {
+        dtype = PyArray_DTYPE((PyArrayObject*) dataobj);
+        if (dtype->elsize == 0) {
+            PyErr_Format(PyExc_ValueError, "can not handle dtype");
+            goto _fail;
+        }
+        iter = (PyArrayIterObject *)PyArray_IterAllButAxis(dataobj, &axis);
+        size = PyArray_DIM((PyArrayObject *)dataobj, axis);
+        stride = PyArray_STRIDE((PyArrayObject *)dataobj, axis);
+        stride -= dtype->elsize;
+
+        Py_BEGIN_ALLOW_THREADS
+        while (iter->index < iter->size) {
+            dataptr = (unsigned char *)iter->dataptr;
+            for(i = 0; i < size; i++) {
+                for(j = 0; j < dtype->elsize; j++) {
+                    *dataptr++ = (unsigned char)(((*dataptr * 0x80200802ULL) &
+                                     0x0884422110ULL) * 0x0101010101ULL >> 32);
+                }
+                dataptr += stride;
+            }
+            PyArray_ITER_NEXT(iter);
+        }
+        Py_END_ALLOW_THREADS
+
+        Py_DECREF(iter);
+        Py_DECREF(dataobj);
+        Py_RETURN_NONE;
+    }
+    else {
+        PyErr_Format(PyExc_TypeError, "not a byte string or ndarray");
+        goto _fail;
+    }
+
+  _fail:
+    Py_XDECREF(dataobj);
+    Py_XDECREF(result);
+    Py_XDECREF(iter);
+    return NULL;
+}
+
+
 /** Unpack tightly packed integers. */
 char py_unpackints_doc[] = "Unpack groups of bits into numpy array.";
 
@@ -373,8 +474,8 @@ py_unpackints(PyObject *obj, PyObject *args, PyObject *kwds)
     Py_INCREF(byteobj);
 
     if (((itemsize < 1) || (itemsize > 32)) && (itemsize != 64)) {
-         PyErr_Format(PyExc_ValueError, "itemsize out of range");
-         goto _fail;
+        PyErr_Format(PyExc_ValueError, "itemsize out of range");
+        goto _fail;
     }
 
     if (!PyBytes_Check(byteobj)) {
@@ -387,12 +488,12 @@ py_unpackints(PyObject *obj, PyObject *args, PyObject *kwds)
     bytesize = (int)ceil(itemsize / 8.0);
     storagesize = bytesize < 3 ? bytesize : bytesize > 4 ? 8 : 4;
     if ((encoded_len < bytesize) || (encoded_len > SSIZE_MAX / storagesize)) {
-         PyErr_Format(PyExc_ValueError, "data size out of range");
-         goto _fail;
+        PyErr_Format(PyExc_ValueError, "data size out of range");
+        goto _fail;
     }
     if (dtype->elsize != storagesize) {
-         PyErr_Format(PyExc_TypeError, "dtype.elsize doesn't fit itemsize");
-         goto _fail;
+        PyErr_Format(PyExc_TypeError, "dtype.elsize does not fit itemsize");
+        goto _fail;
     }
 
     if (runlen == 0) {
@@ -414,17 +515,16 @@ py_unpackints(PyObject *obj, PyObject *args, PyObject *kwds)
     decoded = (char *)PyArray_DATA(result);
 
     for (i = 0; i < decoded_len; i+=runlen) {
-        if (NO_ERROR !=
-            unpackbits((unsigned char *) encoded,
-                       (ssize_t) encoded_len,
-                       (int) itemsize,
-                       (ssize_t) runlen,
-                       (unsigned char *) decoded)) {
-             PyErr_Format(PyExc_ValueError, "unpackbits() failed");
-             goto _fail;
+        if (NO_ERROR != unpackbits((unsigned char *) encoded,
+                                   (ssize_t) encoded_len,
+                                   (int) itemsize,
+                                   (ssize_t) runlen,
+                                   (unsigned char *) decoded)) {
+                PyErr_Format(PyExc_ValueError, "unpackbits() failed");
+                goto _fail;
             }
         encoded += (Py_ssize_t)(((uint64_t)runlen * (uint64_t)itemsize +
-                   (uint64_t)skipbits) / 8);
+                                                      (uint64_t)skipbits) / 8);
         decoded += runlen * storagesize;
     }
 
@@ -433,19 +533,22 @@ py_unpackints(PyObject *obj, PyObject *args, PyObject *kwds)
         case 2: {
             uint16_t *d = (uint16_t *)PyArray_DATA(result);
             for (i = 0; i < PyArray_SIZE(result); i++) {
-                *d = SWAP2BYTES(*d); d++;
+                *d = SWAP2BYTES(*d);
+                d++;
             }
             break; }
         case 4: {
             uint32_t *d = (uint32_t *)PyArray_DATA(result);
             for (i = 0; i < PyArray_SIZE(result); i++) {
-                *d = SWAP4BYTES(*d); d++;
+                *d = SWAP4BYTES(*d);
+                d++;
             }
             break; }
         case 8: {
             uint64_t *d = (uint64_t *)PyArray_DATA(result);
             for (i = 0; i < PyArray_SIZE(result); i++) {
-                *d = SWAP8BYTES(*d); d++;
+                *d = SWAP8BYTES(*d);
+                d++;
             }
             break; }
         }
@@ -513,7 +616,7 @@ py_decodepackbits(PyObject *obj, PyObject *args)
     }
     Py_END_ALLOW_THREADS
 
-    result = PyBytes_FromStringAndSize(0, decoded_len);
+    result = PyBytes_FromStringAndSize(NULL, decoded_len);
     if (result == NULL) {
         PyErr_Format(PyExc_MemoryError, "failed to allocate decoded string");
         goto _fail;
@@ -638,7 +741,7 @@ py_decodelzw(PyObject *obj, PyObject *args)
     table_len = 258;
     bitw = 9;
     shr = 23;
-    mask = 4286578688;
+    mask = 4286578688u;
     bitcount = 0;
     result_len = 0;
     code = 0;
@@ -670,16 +773,19 @@ py_decodelzw(PyObject *obj, PyObject *args)
             }
             bitw = 9;
             shr = 23;
-            mask = 4286578688;
+            mask = 4286578688u;
 
-            /* read next code */
-            code = *((unsigned int *)((void *)(encoded + (bitcount / 8))));
-            if (little_endian)
-                code = SWAP4BYTES(code);
-            code <<= bitcount % 8;
-            code &= mask;
-            code >>= shr;
-            bitcount += bitw;
+            /* read next code, skip clearcodes */
+            /* TODO: bounds checking */
+            do {
+                code = *((unsigned int *)((void *)(encoded + (bitcount / 8))));
+                if (little_endian)
+                    code = SWAP4BYTES(code);
+                code <<= bitcount % 8;
+                code &= mask;
+                code >>= shr;
+                bitcount += bitw;
+            } while (code == 256);
 
             if (code == 257) /* end of information */
                 break;
@@ -692,7 +798,7 @@ py_decodelzw(PyObject *obj, PyObject *args)
                 newresult = table[code];
                 newresult->ref++;
                 result_len += newresult->len;
-                 *(struct BYTE_STRING **)decoded_ptr++ = newresult;
+                *(struct BYTE_STRING **)decoded_ptr++ = newresult;
             }
         } else {
             if (code < table_len) {
@@ -716,7 +822,7 @@ py_decodelzw(PyObject *obj, PyObject *args)
                 if (oldcode < 256) {
                     newentry->len = 2;
                     newentry->str = table2 + (oldcode << 9) +
-                                    ((unsigned char)c << 1);
+                                                       ((unsigned char)c << 1);
                 } else {
                     len = table[oldcode]->len;
                     newentry->len = len + 1;
@@ -757,25 +863,25 @@ py_decodelzw(PyObject *obj, PyObject *args)
             case 511:
                 bitw = 10;
                 shr = 22;
-                mask = 4290772992;
+                mask = 4290772992u;
                 break;
             case 1023:
                 bitw = 11;
                 shr = 21;
-                mask = 4292870144;
+                mask = 4292870144u;
                 break;
             case 2047:
                 bitw = 12;
                 shr = 20;
-                mask = 4293918720;
+                mask = 4293918720u;
         }
     }
 
     PyEval_RestoreThread(_save);
 
     if (code != 257) {
-        PyErr_WarnEx(NULL,
-            "py_decodelzw encountered unexpected end of stream", 1);
+        PyErr_WarnEx(
+            NULL, "py_decodelzw encountered unexpected end of stream", 1);
     }
 
     /* result = ''.join(decoded) */
@@ -865,13 +971,15 @@ char module_doc[] =
 
 static PyMethodDef module_methods[] = {
 #if MSB
-    {"unpackints", (PyCFunction)py_unpackints, METH_VARARGS|METH_KEYWORDS,
+    {"unpack_ints", (PyCFunction)py_unpackints, METH_VARARGS|METH_KEYWORDS,
         py_unpackints_doc},
 #endif
-    {"decodelzw", (PyCFunction)py_decodelzw, METH_VARARGS,
+    {"decode_lzw", (PyCFunction)py_decodelzw, METH_VARARGS,
         py_decodelzw_doc},
-    {"decodepackbits", (PyCFunction)py_decodepackbits, METH_VARARGS,
+    {"decode_packbits", (PyCFunction)py_decodepackbits, METH_VARARGS,
         py_decodepackbits_doc},
+    {"reverse_bitorder", (PyCFunction)py_reverse_bitorder, METH_VARARGS,
+        py_reverse_bitorder_doc},
     {NULL, NULL, 0, NULL} /* Sentinel */
 };
 
@@ -894,15 +1002,15 @@ static int module_clear(PyObject *m) {
 }
 
 static struct PyModuleDef moduledef = {
-        PyModuleDef_HEAD_INIT,
-        "_tifffile",
-        NULL,
-        sizeof(struct module_state),
-        module_methods,
-        NULL,
-        module_traverse,
-        module_clear,
-        NULL
+    PyModuleDef_HEAD_INIT,
+    "_tifffile",
+    NULL,
+    sizeof(struct module_state),
+    module_methods,
+    NULL,
+    module_traverse,
+    module_clear,
+    NULL
 };
 
 #define INITERROR return NULL
@@ -922,7 +1030,8 @@ init_tifffile(void)
     PyObject *module;
 
     char *doc = (char *)PyMem_Malloc(sizeof(module_doc) + sizeof(_VERSION_));
-    sprintf(doc, module_doc, _VERSION_);
+    PyOS_snprintf(doc, sizeof(module_doc) + sizeof(_VERSION_),
+                  module_doc, _VERSION_);
 
 #if PY_MAJOR_VERSION >= 3
     moduledef.m_doc = doc;

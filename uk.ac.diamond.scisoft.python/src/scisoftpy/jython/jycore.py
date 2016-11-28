@@ -145,6 +145,8 @@ complex = complex #@ReservedAssignment
 
 from jarray import array as _array
 _arraytype = type(_array([0], 'f')) # this is used for testing if returned object is a Java array
+from jarray import zeros as _zeros
+_empty_boolean_array = _zeros(0, 'z') # this is used for resolving some overloaded methods
 
 import java.util.List as _jlist #@UnresolvedImport
 import java.util.Map as _jmap #@UnresolvedImport
@@ -785,7 +787,7 @@ class ndarray(object):
         if axis is None:
             if ignore_nans:
                 return self.__dataset.max(_jtrue)
-            return self.__dataset.max()
+            return self.__dataset.max(_empty_boolean_array)
         else:
             if ignore_nans:
                 return self.__dataset.max(_jtrue, _jint(axis))
@@ -796,7 +798,7 @@ class ndarray(object):
         if axis is None:
             if ignore_nans:
                 return self.__dataset.min(_jtrue)
-            return self.__dataset.min()
+            return self.__dataset.min(_empty_boolean_array)
         else:
             if ignore_nans:
                 return self.__dataset.min(_jtrue, _jint(axis))
@@ -860,7 +862,7 @@ class ndarray(object):
     @_wrapout
     def mean(self, axis=None):
         if axis is None:
-            return self.__dataset.mean()
+            return self.__dataset.mean(_empty_boolean_array)
         else:
             return self.__dataset.mean(axis)
 

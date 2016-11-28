@@ -84,6 +84,9 @@ class fitfunc(_absfn):
         self.args = args
         self.name = name
 
+    def setNames(self):
+        pass
+
     @_wrap
     def val(self, coords):
         '''Evaluate function at single set of coordinates
@@ -413,6 +416,9 @@ def _polycoeff(roots):
 
 from uk.ac.diamond.scisoft.analysis.fitting.functions import Polynomial as _poly
 
+from jarray import zeros as _zeros
+_empty_int_array = _zeros(0, 'i') # this is used for resolving some overloaded methods
+
 class poly1d(object):
     '''1D polynomial class'''
     def __init__(self, c_or_r, r=False, variable=None):
@@ -483,7 +489,7 @@ class poly1d(object):
     def __call__(self, a):
         v = self._poly.calculateValues([_asDS(a, force=True)._jdataset()])
         if v.getRank() == 0:
-            return v.getDouble()
+            return v.getDouble(_empty_int_array)
         return _asDS(v)
 
 @_wrapin

@@ -19,6 +19,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.dawb.common.util.eclipse.BundleUtils;
+import org.python.core.PyList;
+import org.python.core.PyString;
 import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
 import org.python.util.PythonInterpreter;
@@ -113,7 +115,10 @@ public class JythonInterpreterUtils {
 		
 		//Create object to give access to python system
 		PySystemState state = new PySystemState();
-		
+		// prevent problem in warnings.py where it expects len(sys.argv) > 0
+		state.argv = new PyList();
+		state.argv.add(new PyString(postProperties.getProperty("python.executable")));
+
 		//This adds an external classloader & reports classpath
 		if (classLoader!=null) state.setClassLoader(classLoader);
 		logger.info("Class loader is {}", classLoader);

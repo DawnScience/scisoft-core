@@ -782,6 +782,9 @@ public class StitchedOutputWithErrors {
 		Dataset sortedYArrayCorrectedErrorMax = Maths.add(sortedYArrayCorrectedError, sortedAttenuatedDatasets[0]);
 		Dataset sortedYArrayCorrectedFhklErrorMax = Maths.add(sortedYArrayCorrectedFhklError, sortedAttenuatedDatasets[2]);
 		
+		sortedAttenuatedDatasets[0].setError(sortedYArrayCorrectedError);
+		sortedAttenuatedDatasets[2].setError(sortedYArrayCorrectedFhklError);
+		
 		sortedAttenuatedDatasets[3] = sortedYArrayCorrectedErrorMax;
 		sortedAttenuatedDatasets[4] = sortedYArrayCorrectedFhklErrorMax;
 		

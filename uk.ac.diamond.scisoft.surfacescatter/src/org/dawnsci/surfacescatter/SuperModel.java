@@ -41,6 +41,7 @@ public class SuperModel {
 	private ArrayList<IDataset> outputDatArray;
 	private ArrayList<IDataset> backgroundDatArray;
 	private ArrayList<double[]> locationList; 
+	private int[][] initialLenPt;
 	
 	
 	
@@ -455,7 +456,7 @@ public class SuperModel {
 				newValue);
 	}
 
-	public IDataset getSplicedCurveX() {
+	public IDataset getSplicedCurveX() {		
 		return splicedCurveX;
 	}
 
@@ -464,6 +465,7 @@ public class SuperModel {
 	}
 
 	public IDataset getSplicedCurveY() {
+		splicedCurveY.setError(splicedCurveYError);
 		return splicedCurveY;
 	}
 
@@ -472,6 +474,7 @@ public class SuperModel {
 	}
 
 	public IDataset getSplicedCurveYFhkl() {
+		splicedCurveYFhkl.setError(splicedCurveYFhklError);
 		return splicedCurveYFhkl;
 	}
 
@@ -627,5 +630,13 @@ public class SuperModel {
 		locationList1.set(k,in);
 		firePropertyChange("locationList", this.locationList,
 				this.locationList= locationList1);
+	}
+
+	public int[][] getInitialLenPt() {
+		return initialLenPt;
+	}
+
+	public void setInitialLenPt(int[][] initialLenPt) {
+		this.initialLenPt = initialLenPt;
 	}
 }

@@ -24,7 +24,8 @@ public class DummyProcessingClass {
 										IPlottingSystem<Composite> pS, 
 										int correctionSelector, 
 										int k, 
-										int trackingMarker){		
+										int trackingMarker,
+										int selection){		
 		
 		IDataset output =null;	
 		
@@ -36,7 +37,7 @@ public class DummyProcessingClass {
 				else{
 				}				
 				TwoDTracking twoDTracking = new TwoDTracking();
-				output = twoDTracking.TwoDTracking1(sm, input, model, dm, trackingMarker, k);
+				output = twoDTracking.TwoDTracking1(sm, input, model, dm, trackingMarker, k, selection);
 				break;
 			case TWOD:
 				if (pS.getRegion("Background Region")!=null){
@@ -98,7 +99,7 @@ public class DummyProcessingClass {
 		}
 		
 		
-		Dataset yValue = Maths.multiply(output, correction);
+		Dataset yValue = Maths.multiply(output, correction.getDouble(k));
 		
 		
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
@@ -112,7 +113,7 @@ public class DummyProcessingClass {
 	}
 	
 	@SuppressWarnings("incomplete-switch")
-	public static IDataset DummyProcess(SuperModel sm, 
+	public static IDataset DummyProcess0(SuperModel sm, 
 										IDataset input, 
 										ExampleModel model, 
 										DataModel dm, 
@@ -135,7 +136,7 @@ public class DummyProcessingClass {
 				else{
 				}				
 				TwoDTracking twoDTracking = new TwoDTracking();
-				output = twoDTracking.TwoDTracking1(sm, input, model, dm, trackingMarker, k);
+				output = twoDTracking.TwoDTracking1(sm, input, model, dm, trackingMarker, k,selection);
 				break;
 			case TWOD:
 				if (pS.getRegion("Background Region")!=null){
@@ -197,7 +198,7 @@ public class DummyProcessingClass {
 		}
 		
 		
-		Dataset yValue = Maths.multiply(output, correction);
+		Dataset yValue = Maths.multiply(output, correction.getDouble(k));
 		
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
@@ -226,7 +227,8 @@ public class DummyProcessingClass {
 										IPlottingSystem<Composite> pS, 
 										int correctionSelector, 
 										int k, 
-										int trackingMarker){		
+										int trackingMarker,
+										int selection){		
 		
 		IDataset output =null;	
 		
@@ -238,7 +240,7 @@ public class DummyProcessingClass {
 				else{
 				}				
 				TwoDTracking twoDTracking = new TwoDTracking();
-				output = twoDTracking.TwoDTracking1(sm, input, model, dm, trackingMarker, k);
+				output = twoDTracking.TwoDTracking1(sm, input, model, dm, trackingMarker, k, selection);
 				break;
 			case TWOD:
 				if (pS.getRegion("Background Region")!=null){
@@ -300,7 +302,7 @@ public class DummyProcessingClass {
 		}
 		
 		
-		Dataset yValue = Maths.multiply(output, correction);
+		Dataset yValue = Maths.multiply(output, correction.getDouble(k));
 		
 		
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
@@ -345,7 +347,8 @@ public class DummyProcessingClass {
 													dm, 
 													trackingMarker, 
 													k,
-													locationList);
+													locationList,
+													selection);
 				break;
 			case TWOD:
 				if (pS.getRegion("Background Region")!=null){
@@ -364,9 +367,8 @@ public class DummyProcessingClass {
 		}
 		
 		Dataset correction = DatasetFactory.zeros(new int[] {1}, Dataset.FLOAT64);
-		
 		if (correctionSelector == 0){
-			
+					
 			try {
 				correction = Maths.multiply(SXRDGeometricCorrections.lorentz(model), SXRDGeometricCorrections.areacor(model
 						, gm.getBeamCorrection(), gm.getSpecular(),  gm.getSampleSize()
@@ -394,7 +396,6 @@ public class DummyProcessingClass {
 				e.printStackTrace();
 			}
 
-			
 		}
 		else{
 			
@@ -405,9 +406,8 @@ public class DummyProcessingClass {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		Dataset yValue = Maths.multiply(output, correction);
+			
+		Dataset yValue = Maths.multiply(output, correction.getDouble(k));
 		
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);

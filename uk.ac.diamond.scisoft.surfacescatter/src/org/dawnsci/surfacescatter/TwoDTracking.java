@@ -42,7 +42,8 @@ public class TwoDTracking {
 								  ExampleModel model, 
 								  DataModel dm, 
 								  int trackingMarker, 
-								  int k) {
+								  int k,
+								  int selection) {
 
 		len = model.getLenPt()[0];
 		pt = model.getLenPt()[1];
@@ -222,7 +223,8 @@ public class TwoDTracking {
 			location = model.getTrackerCoordinates();
 		}
 		
-		sm.addLocationList(k, location);
+		sm.addLocationList(selection, location);
+		dm.addLocationList(model.getDatImages().getShape()[0], k, location);
 		
 		len = model.getLenPt()[0];
 		pt = model.getLenPt()[1];

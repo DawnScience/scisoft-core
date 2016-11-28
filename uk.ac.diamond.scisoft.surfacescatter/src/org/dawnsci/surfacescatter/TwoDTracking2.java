@@ -43,7 +43,8 @@ public class TwoDTracking2 {
 								  SuperModel sm, 
 								  DataModel dm, 
 								  int trackingMarker, 
-								  int k) {
+								  int k,
+								  int selection) {
 	
 		this.sm = sm;
 		len = model.getLenPt()[0];
@@ -230,7 +231,8 @@ public class TwoDTracking2 {
 			location = model.getTrackerCoordinates();
 		}
 		
-		sm.addLocationList(k, location);
+		sm.addLocationList(selection, location);
+		dm.addLocationList(model.getDatImages().getShape()[0], k, location);
 		
 		len = model.getLenPt()[0];
 		pt = model.getLenPt()[1];
@@ -309,7 +311,8 @@ public class TwoDTracking2 {
 								  DataModel dm, 
 								  int trackingMarker, 
 								  int k,
-								  double[] seedLocation) {
+								  double[] seedLocation,
+								  int selection) {
 
 		this.sm = sm;
 		 
@@ -494,7 +497,9 @@ public class TwoDTracking2 {
 			location = model.getTrackerCoordinates();
 		}
 		
-		sm.addLocationList(k, location);
+		sm.addLocationList(selection, location);
+		dm.addLocationList(model.getDatImages().getShape()[0], k, location);
+		
 		
 		len = model.getLenPt()[0];
 		pt = model.getLenPt()[1];

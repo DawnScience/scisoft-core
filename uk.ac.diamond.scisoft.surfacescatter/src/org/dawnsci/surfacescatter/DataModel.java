@@ -38,6 +38,7 @@ public class DataModel {
 	private IDataset yIDatasetMin;
 	private IDataset yIDatasetFhklMin;
 	private ArrayList<double[]> locationList; 
+	private double[] seedLocation;
 	
 	public IROI getBackgroundROI(){
 		return backgroundROI;
@@ -319,6 +320,7 @@ public class DataModel {
 		backgroundDatArray = null;
 		initialDataset = null;
 		initialLenPt = null;
+		locationList = null;
 	}
 
 	public IDataset yIDataset(){
@@ -335,6 +337,7 @@ public class DataModel {
 		yListc.removeAll(zero);
 		
 		IDataset yOut = DatasetFactory.createFromList(yListc);
+		yOut.setError(Maths.sqrt(yOut));
 		return yOut;
 	}
 	
@@ -369,7 +372,7 @@ public class DataModel {
 		yListFhklc.removeAll(zero);
 		
 		IDataset yOut = DatasetFactory.createFromList(yListFhklc);
-		
+		yOut.setError(Maths.sqrt(yOut));
 		return yOut;
 	}
 	
@@ -549,6 +552,29 @@ public class DataModel {
 	public void setLocationList(ArrayList<double[]> locationList) {
 		this.locationList = locationList;
 	}
+	
+	public void addLocationList(int l, int k, double[] location){
+		if (locationList==null || locationList.isEmpty()){
+			locationList = new ArrayList<double[]>();
+			for (int i = 0; i < l; i++) {
+				locationList.add(new double[]{0,0,0,0,0,0,0,0});
+				}
+		}
+		
+		ArrayList<double[]> locationList1 = new ArrayList<double[]>();
+		locationList1 = (ArrayList<double[]>) locationList.clone();
+		locationList1.set(k, location);
+		firePropertyChange("locationList", this.locationList,
+				this.locationList= locationList1);
+	}
 
+	public double[] getSeedLocation() {
+		return seedLocation;
+	}
+
+	public void setSeedLocation(double[] seedLocation) {
+		this.seedLocation = seedLocation;
+	}
+	
 }
 

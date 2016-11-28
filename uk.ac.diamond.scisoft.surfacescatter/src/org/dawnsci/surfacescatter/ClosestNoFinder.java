@@ -23,6 +23,22 @@ public class ClosestNoFinder {
 
 	}
 	
+	public static double closestNo (double myNum, Dataset numbers){
+		
+		
+		double distance = Math.abs(numbers.getDouble(0) - myNum);
+		int idx = 0;
+		for(int c = 1; c < numbers.getSize(); c++){
+		    double cdistance = Math.abs(numbers.getDouble(c) - myNum);
+		    if(cdistance < distance){
+		        idx = c;
+		        distance = cdistance;
+		    }
+		}
+		return numbers.getDouble(idx);
+
+		}
+	
 	
 	public static int closestNoPos (double myNum, ArrayList<Double> numbers){
 		
@@ -63,16 +79,26 @@ public class ClosestNoFinder {
 		double[] test = new double[] {0,0,0,0,0,0,0,0};
 		double distance = Math.abs(numbers.getDouble(0) - myNum);
 		int idx = 0;
-		for(int c = 1; c < numbers.getSize(); c++){
+		
+		for(int d =0; d<numbers.getSize(); d++){
+			if(test.equals(Arrays.equals(locationList.get(d), test) == false) & Arrays.equals(locationList.get(d), null) == false){
+				idx = d;
+				distance = Math.abs(numbers.getDouble(0) - myNum);
+				break;
+			}
+		}
+		
+		
+		for(int c = 0; c < numbers.getSize(); c++){
 		    double cdistance = Math.abs(numbers.getDouble(c)- myNum);
-		    if((cdistance < distance) & (Arrays.equals(locationList.get(c), test) == false)){
+		    if((cdistance < distance) & (Arrays.equals(locationList.get(c), test) == false) & Arrays.equals(locationList.get(c), null) == false){
 		        idx = c;
 		        distance = cdistance;
 		    }
 		}
 		return idx;
 
-		}
+	}
 	
 	
 	public static int closestNoWithoutDone (double myNum, 
@@ -84,9 +110,17 @@ public class ClosestNoFinder {
 		double distance = Math.abs(numbers.getDouble(0) - myNum);
 		int idx = 0;
 		
+		for(int d =0; d<numbers.getSize(); d++){
+			if(test.equals(doneArray[filepathSortedArray[d]]) == false){
+				idx = d;
+				distance = Math.abs(numbers.getDouble(0) - myNum);
+				break;
+			}
+		}
+		
 		for(int c = 1; c < numbers.getSize(); c++){
 			double cdistance = Math.abs(numbers.getDouble(c)- myNum);
-			if((cdistance < distance) & (doneArray[filepathSortedArray[c]] != test)){
+			if((cdistance < distance) & (test.equals(doneArray[filepathSortedArray[c]]) == false)){
 				idx = c;
 				distance = cdistance;
 			}
@@ -116,9 +150,17 @@ public class ClosestNoFinder {
 		double distance = Math.abs(numbers.getDouble(0) - myNum);
 		int idx = 0;
 		
+		for(int d =0; d<numbers.getSize(); d++){
+			if(test.equals(doneArray[filepathSortedArray[d]])){
+				idx = d;
+				distance = Math.abs(numbers.getDouble(0) - myNum);
+				break;
+			}
+		}
+		
 		for(int c = 1; c < numbers.getSize(); c++){
 			double cdistance = Math.abs(numbers.getDouble(c)- myNum);
-			if((cdistance < distance) & (doneArray[filepathSortedArray[c]] == test)){
+			if((cdistance < distance) & (test.equals(doneArray[filepathSortedArray[c]]))){
 				idx = c;
 				distance = cdistance;
 			}
@@ -126,7 +168,5 @@ public class ClosestNoFinder {
 		return idx;
 
 	}
-	
-	
 	
 }

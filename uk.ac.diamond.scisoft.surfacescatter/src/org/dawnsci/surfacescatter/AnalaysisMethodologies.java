@@ -83,6 +83,23 @@ public class AnalaysisMethodologies {
 		return (Integer) null;
 	}
 	
+	public static String toString (FitPower num){
+		
+		switch(num){
+			case ZERO:
+				return "0";
+			case ONE:
+				return "1";
+			case TWO:
+				return "2";
+			case THREE:
+				return "3";
+			case FOUR:
+				return "4";
+		}
+		return (String) null;
+	}
+	
 	public static FitPower toFitPower(int in){
 		
 		if(in == 0){

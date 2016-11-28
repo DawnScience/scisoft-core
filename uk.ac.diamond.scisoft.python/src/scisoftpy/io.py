@@ -65,7 +65,7 @@ def setloadwarning(warn):
     global _LDRWARN
     _LDRWARN = warn
 
-def load(name, format=None, formats=None, withmetadata=True, ascolour=False, warn=None, **kwarg):
+def load(name, format=None, formats=None, withmetadata=True, ascolour=False, warn=None, **kwarg):  # @ReservedAssignment
     '''Load a file and return a list of datasets (or a dictionary of datasets) and
     optionally a dictionary of metadata items
 
@@ -183,7 +183,7 @@ def save(name, data, format=None, range=(), autoscale=False, signed=True, bits=N
                 if range[0] >= range[1]:
                     raise ValueError, "Given minimum must be less than maximum"
             if format is None:
-                format = _findsuffix(name, _soformats)[0]
+                format = _findsuffix(name, _soformats)[0]  # @ReservedAssignment
 #            print "scaled save format", format
             sclass = _soformats[format]
             if autoscale:
@@ -192,7 +192,7 @@ def save(name, data, format=None, range=(), autoscale=False, signed=True, bits=N
                 saver = sclass(name, range[0], range[1])
         else:
             if format is None:
-                format = _findsuffix(name, _oformats)[0]
+                format = _findsuffix(name, _oformats)[0]  # @ReservedAssignment
 #            print "save format", format, "as", name
             sclass = _oformats[format]
             if sclass is None:

@@ -17,7 +17,7 @@
 
 from ..nexus.hdf5 import HDF5dataset as _dataset
 
-from .pycore import ndarray, asarray
+# from .pycore import ndarray, asarray
 
 class SDS(_dataset):
     def __init__(self, dataset, attrs={}, parent=None):

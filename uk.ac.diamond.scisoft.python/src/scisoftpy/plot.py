@@ -146,7 +146,7 @@ def clear(name=None):
 _FILE_TYPES = {"SVG File":("svg",), "Postscript File":("ps", "eps"),
                "PNG/JPEG File":("png", "jpg", "jpeg")}
 
-def export(path=None, format=None, name=None):
+def export(path=None, format=None, name=None):  # @ReservedAssignment
     '''Export plot to svg, png, jpg, eps, ps
 
     Argument:
@@ -157,9 +157,9 @@ def export(path=None, format=None, name=None):
     if name is None:
         name = _PVNAME
     if format is None:
-        format = "svg"
+        format = "svg"  # @ReservedAssignment
     else:
-        format = format.lower()
+        format = format.lower()  # @ReservedAssignment
     eformat = None
     for f in _FILE_TYPES:
         if format in _FILE_TYPES[f]:
@@ -996,9 +996,9 @@ viewnexus = viewtree
 
 
 if os.name == 'java':
-    import jython.jyplottingsystem as _ps
+    import jython.jyplottingsystem as _ps  # @UnusedImport
 else:
-    import python.pyplottingsystem as _ps
+    import python.pyplottingsystem as _ps  # @Reimport
 
 
 '''

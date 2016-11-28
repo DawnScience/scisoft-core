@@ -299,7 +299,7 @@ class ndarrayRGB(ndarray):
     Wrap RGB dataset
     """
 
-    def __new__(cls, shape, dtype=rgb, buffer=None, offset=0, strides=None, order=None):
+    def __new__(cls, shape, dtype=rgb, buffer=None, offset=0, strides=None, order=None):  # @ReservedAssignment
         obj = super(ndarrayRGB, cls).__new__(cls, shape, dtype, buffer, offset, strides, order)
         obj._oldshape = shape
         return obj

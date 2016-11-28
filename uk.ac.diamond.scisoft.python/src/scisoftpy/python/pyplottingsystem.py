@@ -2,7 +2,7 @@
 Python side implementation of DatasetManager connection
 '''
 
-import pyplot as _plot # We are going to reuse its _get_rpcclient()
+# import pyplot as _plot # We are going to reuse its _get_rpcclient()
 
 from py4j.java_gateway import JavaGateway, java_import
 

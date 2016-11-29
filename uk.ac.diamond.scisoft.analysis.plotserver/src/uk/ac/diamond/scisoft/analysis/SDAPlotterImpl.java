@@ -130,6 +130,8 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		lplot(plotName, title, validateAllXValues(xValues, yValues), yValues, null, new String[] {xAxisName}, new String[] {yAxisName}, GuiParameters.PLOTOP_UPDATE);
 	}
 
+	private final static String EMPTY = "";
+
 	/**
 	 * Plot line(s) in named view
 	 * @param plotName
@@ -174,6 +176,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 			String xan = null;
 			if (xAxisNames != null && xAxisNames.length > 0) {
 				xan = xAxisNames[0];
+				xValues[0].setName(EMPTY); // empty dataset name to avoid confusion
 			} else {
 				xan = AxisMapBean.XAXIS;
 			}
@@ -209,6 +212,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 				String xan = null;
 				if (xAxisNames != null) {
 					xan = xAxisNames.length >= xValues.length ? xAxisNames[i] : xAxisNames[0];
+					x.setName(EMPTY); 
 				} else {
 					xan = AxisMapBean.XAXIS; // single axis
 				}

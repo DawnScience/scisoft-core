@@ -572,7 +572,10 @@ class Test(unittest.TestCase):
         self.checkitems([1, 1, 1, 1], h)
         self.checkitems([0, 1, 2, 3, 4, 5], v)
 
-if __name__ == "__main__":
-    #import sys
-    #sys.argv = ['', 'Test.testName']
-    unittest.main()#defaultTest='Test.testQuantile')
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
+    return suite 
+
+if __name__ == '__main__':
+    unittest.TextTestRunner(verbosity=2).run(suite())

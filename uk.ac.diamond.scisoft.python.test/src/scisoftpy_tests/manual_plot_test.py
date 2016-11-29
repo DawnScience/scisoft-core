@@ -15,7 +15,7 @@
 ###
 
 '''
-Run this test manually to sanity check plotting in a running SDA when this 
+Run this test manually to sanity check plotting in a running DAWN when this 
 script is launched from the host Eclipse Dev.
 If launched as jython, will use RMI to access plotserver
 If launched as python, will use AnalysisRpc to access plotserver, via SDAPlotter

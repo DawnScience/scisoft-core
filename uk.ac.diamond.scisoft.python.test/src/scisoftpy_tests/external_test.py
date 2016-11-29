@@ -26,7 +26,11 @@ import scisoftpy as dnp
 
 import shutil
 
+
 class Test(unittest.TestCase):
+    from os import path
+    epath_list = [path.dirname(__file__)]
+
     def checkArgs(self, arg):
         d = save_args(arg)
         a = load_args(d)
@@ -115,31 +119,31 @@ class Test(unittest.TestCase):
     def testException(self):
 #        from external_functions import funexception
 #        funexception()
-        efunexception = dnp.external.create_function("funexception", "external_functions", dls_module=True)
+        efunexception = dnp.external.create_function("funexception", "external_functions", extra_path=Test.epath_list, dls_module=True)
         self.assertRaises(ValueError, efunexception)
 #        efunexception()
 
     def testSciPy(self):
-        efun = dnp.external.create_function("funscipy", "external_functions", dls_module="scipy/0.10.0")
+        efun = dnp.external.create_function("funscipy", "external_functions", extra_path=Test.epath_list, dls_module="scipy/0.10.0")
         print '0.10.0',
         self.assertEquals(efun(), '0.10.0')
         print 'passed'
 
     def testArrayScalar(self):
-        efun = dnp.external.create_function("funarrayscalar", "external_functions", dls_module=True)
+        efun = dnp.external.create_function("funarrayscalar", "external_functions", extra_path=Test.epath_list, dls_module=True)
         a = 2+3j, 1., 123, True
         print a,
         self.assertEquals(efun(), a)
         print 'passed'
 
     def testSpeed(self):
-        efun = dnp.external.create_function("fun", "external_functions", dls_module=True, keep=False)
+        efun = dnp.external.create_function("fun", "external_functions", extra_path=Test.epath_list, dls_module=True, keep=False)
         import time
         t = time.clock()
         for _i in xrange(10):
             efun()
         print time.clock() - t
-        efun = dnp.external.create_function("fun", "external_functions", dls_module=True, keep=True)
+        efun = dnp.external.create_function("fun", "external_functions", extra_path=Test.epath_list, dls_module=True, keep=True)
         t = time.clock()
         for _i in xrange(10):
             efun()
@@ -152,8 +156,10 @@ class Test(unittest.TestCase):
         print py.communicate("for i in range(4): print i\n")
         py.stop()
 
-if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
-    unittest.main()
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
+    return suite 
 
-
+if __name__ == '__main__':
+    unittest.TextTestRunner(verbosity=2).run(suite())

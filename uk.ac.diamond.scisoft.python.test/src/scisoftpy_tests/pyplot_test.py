@@ -67,7 +67,10 @@ class Test(unittest.TestCase):
     def testOrderInvalid(self):
         self.assertRaises(KeyError, self.plot.plot_orders.__getitem__, 'unknown_order')
 
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
+    return suite 
 
-if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
-    unittest.main()
+if __name__ == '__main__':
+    unittest.TextTestRunner(verbosity=2).run(suite())

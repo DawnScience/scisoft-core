@@ -90,7 +90,10 @@ class Test(unittest.TestCase):
             for y in range(4):
                 self.tryImageShift(x,y)
 
-if __name__ == "__main__":
-    import sys;
-    sys.argv = ['', 'Test.testShifts']
-    unittest.main()
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
+    return suite 
+
+if __name__ == '__main__':
+    unittest.TextTestRunner(verbosity=2).run(suite())

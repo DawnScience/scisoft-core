@@ -84,9 +84,9 @@ class Test(unittest.TestCase):
     
      
     def _flattenAndUnflatten(self, inObj, expectedObj=None, expectedType=None):
-        if expectedObj == None:
+        if expectedObj is None:
             expectedObj = inObj;
-        if expectedType == None and expectedObj != None:
+        if expectedType is None and expectedObj is not None:
             expectedType = type(expectedObj)
             
             
@@ -439,8 +439,11 @@ class Test(unittest.TestCase):
         
     def testUnFlattenableUnsupported(self):
         self.assertRaises(TypeError, dnp.flatten.unflatten, object())
-        
-        
-if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
-    unittest.main()
+
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
+    return suite 
+
+if __name__ == '__main__':
+    unittest.TextTestRunner(verbosity=2).run(suite())

@@ -145,7 +145,10 @@ class Test(unittest.TestCase):
 
         dsa = np.arange(12, dtype=np.complex)
 
-if __name__ == "__main__":
-    #import sys
-    #sys.argv = ['', 'Test.testCorrelate']
-    unittest.main()
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
+    return suite 
+
+if __name__ == '__main__':
+    unittest.TextTestRunner(verbosity=2).run(suite())

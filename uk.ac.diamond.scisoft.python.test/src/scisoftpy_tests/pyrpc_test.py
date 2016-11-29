@@ -45,7 +45,10 @@ class Test(unittest.TestCase):
             rpcserver.shutdown()
             rpcserver.close()
 
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
+    return suite 
 
-if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
-    unittest.main()
+if __name__ == '__main__':
+    unittest.TextTestRunner(verbosity=2).run(suite())

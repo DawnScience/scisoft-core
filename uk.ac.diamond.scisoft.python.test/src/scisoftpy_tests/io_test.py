@@ -177,7 +177,11 @@ class Test(unittest.TestCase):
             d = self.load("null.dat")
         except Exception, e:
             print "Expected exception caught:", e
-        
-if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
-    unittest.main()
+
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
+    return suite 
+
+if __name__ == '__main__':
+    unittest.TextTestRunner(verbosity=2).run(suite())

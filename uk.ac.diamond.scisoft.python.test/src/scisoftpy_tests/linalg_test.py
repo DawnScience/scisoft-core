@@ -98,6 +98,10 @@ class Test(unittest.TestCase):
         a = np.array([[1, 2], [3, 4]])
         self.assertAlmostEqual(-2.0, np.linalg.det(a))
 
-if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
-    unittest.main()
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
+    return suite 
+
+if __name__ == '__main__':
+    unittest.TextTestRunner(verbosity=2).run(suite())

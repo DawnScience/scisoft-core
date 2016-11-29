@@ -23,9 +23,12 @@ import unittest
 
 import scisoftpy as dnp
 
-TestFolder = "../../../uk.ac.diamond.scisoft.analysis.test/testfiles/"
-IOTestFolder = TestFolder + "gda/analysis/io/NexusLoaderTest/"
-OutTestFolder = TestFolder + "../test-scratch/"
+from os import path
+local_path = path.dirname(__file__)
+
+TestFolder = path.join(local_path, "../../../uk.ac.diamond.scisoft.analysis.test/testfiles")
+IOTestFolder = path.join(TestFolder, "gda/analysis/io/NexusLoaderTest/")
+OutTestFolder = path.join(TestFolder, "../test-scratch/")
 
 class Test(unittest.TestCase):
     def testLoadingNX(self):
@@ -60,10 +63,12 @@ class Test(unittest.TestCase):
 #        print t['entry1/instrument/FFI0/../../']
 
     def save(self, name, data, testfolder=TestFolder):
-        path = testfolder + name
-        dnp.io.save(path, data)
+        dnp.io.save(path.join(testfolder, name), data)
 
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
+    return suite 
 
-if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
-    unittest.main()
+if __name__ == '__main__':
+    unittest.TextTestRunner(verbosity=2).run(suite())

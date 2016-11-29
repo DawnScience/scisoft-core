@@ -7,10 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.processing.sxrdrods;
+package org.dawnsci.surfacescatter;
 
-import org.dawnsci.surfacescatter.ExampleModel;
-import org.dawnsci.surfacescatter.TwoDFitting;
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.FitPower;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -23,29 +21,32 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
 
-import uk.ac.diamond.scisoft.analysis.processing.surfacescattering.BackgroundSetting;
-import uk.ac.diamond.scisoft.analysis.processing.surfacescattering.BoxSlicer;
+//import uk.ac.diamond.scisoft.analysis.processing.surfacescattering.BackgroundSetting;
+//import uk.ac.diamond.scisoft.analysis.processing.surfacescattering.BoxSlicer;
+//import uk.ac.diamond.scisoft.analysis.processing.sxrdrods.RodScanPolynomial1DModel;
 
-public class TestImageGenerator extends AbstractOperation<RodScanPolynomial1DModel, OperationData> {
+public class TestImageGenerator{ 
+//extends AbstractOperation<RodScanPolynomial1DModel, OperationData> {
 
 	
-	@Override
-	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.sxrdrods.TestImageGenerator";
-	}
+//	@Override
+//	public String getId() {
+//		return "uk.ac.diamond.scisoft.analysis.processing.sxrdrods.TestImageGenerator";
+//	}
+//		
+//	@Override
+//	public OperationRank getInputRank() {
+//		return OperationRank.TWO ;
+//	}
+//
+//	@Override
+//	public OperationRank getOutputRank() {
+//		return OperationRank.TWO ;
+//	}
 		
-	@Override
-	public OperationRank getInputRank() {
-		return OperationRank.TWO ;
-	}
-
-	@Override
-	public OperationRank getOutputRank() {
-		return OperationRank.TWO ;
-	}
-		
-	@Override
-	protected OperationData process(IDataset input, IMonitor monitor) {
+	
+	protected IDataset process(IDataset input, IMonitor monitor) {
+//	OperationData process(IDataset input, IMonitor monitor) {
 		
 
 		ExampleModel m = new ExampleModel();
@@ -88,8 +89,9 @@ public class TestImageGenerator extends AbstractOperation<RodScanPolynomial1DMod
 		
 		IDataset output = TwoDFitting.TwoDFitting1(input1, m);
 		
-		return new OperationData(output);
+//		return new OperationData(output);
 
+		return output;
 	}
 //
 

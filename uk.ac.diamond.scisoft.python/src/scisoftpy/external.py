@@ -523,6 +523,18 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
             raise RuntimeError, "Cannot create function as it needs to be in a module of its own"
         if module is None:
             module = fn.__module__
+        p = _path.dirname(fn.__code__.co_filename)
+        if '.' in module: # peel off first part of path if necessary
+            module_parts = module.split('.')
+            p_parts = _path.split(p)
+            for m in reversed(module_parts):
+                if m == p_parts[1]:
+                    p = p_parts[0]
+                    p_parts = _path.split(p)
+    else: # use caller's directory
+        import inspect
+        fr = inspect.stack()[1]
+        p = _path.dirname(fr[1])
 
     ldpath = None
     if dls_module:
@@ -532,7 +544,8 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
             exe, path, ldpath = get_dls_module()
     exe, path, ldpath = pyenv(exe, path, ldpath)
 
-    p = find_module_path(path, module)
+    if p is None:
+        p = find_module_path(path, module)
     if p is None:
         p = find_module_path(sys.path, module)
     if p and p not in path:

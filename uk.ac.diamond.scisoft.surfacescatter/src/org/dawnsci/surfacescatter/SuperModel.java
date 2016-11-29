@@ -110,6 +110,22 @@ public class SuperModel {
 				this.backgroundDatArray= backgroundDatArray1);
 	}
 	
+	public void addBackgroundDatArray(int l, int k, IDataset in){
+		
+		if (backgroundDatArray==null){
+			backgroundDatArray = new ArrayList<IDataset>();
+			for (int i = 0; i < l; i++) {
+				backgroundDatArray.add(DatasetFactory.zeros(new int[] {2,2}));
+				}
+		}
+		
+		
+		ArrayList<IDataset> backgroundDatArray1 = new ArrayList<IDataset>();
+		backgroundDatArray1 = (ArrayList<IDataset>) backgroundDatArray.clone();
+		backgroundDatArray1.set(k,in);
+		firePropertyChange("backgroundDatArray", this.backgroundDatArray,
+				this.backgroundDatArray= backgroundDatArray1);
+	}
 	
 
 	public IDataset yIDataset(){

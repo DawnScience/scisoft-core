@@ -53,7 +53,7 @@ public class PolynomialOverlap {
 		lValuesHolder2[0] = lValues;
 		
 		
-		Polynomial polyFitYValues = Fitter.polyFit(lValuesHolder, yValues, 1e-30,fitPower);
+		Polynomial polyFitYValues = Fitter.polyFit(lValuesHolder2, yValues, 1e-30,fitPower);
 		Polynomial polyFitXValues = Fitter.polyFit(lValuesHolder2, xValues, 1e-30,fitPower);
 		
 		Dataset desiredlDat = DatasetFactory.zeros(1);

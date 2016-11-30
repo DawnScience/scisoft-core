@@ -3,7 +3,7 @@ package org.dawnsci.surfacescatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.dawnsci.surfacescatter.ui.DatDisplayer;
+//import org.dawnsci.surfacescatter.ui.DatDisplayer;
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -22,8 +22,9 @@ public class StitchedOutput {
 //	private static double correctionRatioFhkl;
 //	IPlottingSystem<Composite> plotSystem,
 	
-	public  static IDataset[][] curveStitch (TableItem[] selectedTableItems
-			, ArrayList<DataModel> dms, SuperModel sm, DatDisplayer datDisplayer ){
+	public  static IDataset[][] curveStitch (TableItem[] selectedTableItems,
+											 ArrayList<DataModel> dms, 
+											 SuperModel sm){
 		
 		ArrayList<IDataset> xArrayList = new ArrayList<>();
 		ArrayList<IDataset> yArrayList = new ArrayList<>();
@@ -31,19 +32,19 @@ public class StitchedOutput {
 		
 		
 		
-		for(int b = 0;b<selectedTableItems.length;b++){
-				
-				int p = (Arrays.asList(datDisplayer.getList().getItems())).indexOf(selectedTableItems[b].getText());
-				
-				if (dms.get(p).getyList() == null || dms.get(p).getxList() == null) {
-					
-				} else {
-						xArrayList.add(dms.get(p).xIDataset());
-						yArrayList.add(dms.get(p).yIDataset());
-						yArrayListFhkl.add(dms.get(p).yIDatasetFhkl());
-		    		}
-				
-		}
+//		for(int b = 0;b<selectedTableItems.length;b++){
+//				
+//				int p = (Arrays.asList(datDisplayer.getList().getItems())).indexOf(selectedTableItems[b].getText());
+//				
+//				if (dms.get(p).getyList() == null || dms.get(p).getxList() == null) {
+//					
+//				} else {
+//						xArrayList.add(dms.get(p).xIDataset());
+//						yArrayList.add(dms.get(p).yIDataset());
+//						yArrayListFhkl.add(dms.get(p).yIDatasetFhkl());
+//		    		}
+//				
+//		}
 		
 		IDataset[] xArray= new IDataset[xArrayList.size()];
 		IDataset[] yArray= new IDataset[yArrayList.size()];

@@ -9,7 +9,7 @@ import org.dawnsci.surfacescatter.BoxSlicerRodScanUtilsForDialog;
 import org.dawnsci.surfacescatter.ExampleModel;
 import org.dawnsci.surfacescatter.TwoDFitting;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;                                                                              
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;

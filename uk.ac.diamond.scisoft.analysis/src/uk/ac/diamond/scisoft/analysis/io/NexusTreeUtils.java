@@ -134,7 +134,12 @@ public class NexusTreeUtils {
 	public static void augmentNodeLink(String filePath, NodeLink link, final boolean isAxisFortranOrder) {
 		if (link.isDestinationSymbolic()) {
 			SymbolicNode sn = (SymbolicNode) link.getDestination();
-			augmentNodeLink(filePath, sn.getNodeLink(), isAxisFortranOrder);
+			NodeLink nl = sn.getNodeLink();
+			if (nl == null) {
+				logger.warn("Symbolic link {} from {} cannot be resolved", link, filePath);
+			} else {
+				augmentNodeLink(filePath, nl, isAxisFortranOrder);
+			}
 			return;
 		}
 

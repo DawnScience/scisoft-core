@@ -27,7 +27,7 @@ import org.eclipse.january.dataset.SliceND;
 public class BoxSlicerRodScanUtilsForDialog {
 	
 	
-	private static int DEBUG = 1;
+	private static int DEBUG = 0;
 	/*
 	 * Slices n dices an image as required to produce background data.
 	 * 
@@ -159,9 +159,9 @@ public class BoxSlicerRodScanUtilsForDialog {
 			for (int j = 0; j<(len[0] + 2*boundaryBox);j++){
 
 				if ((j<boundaryBox || j>=(boundaryBox+len[0]))||(i<boundaryBox || i>=(boundaryBox+len[1]))){
-					if(DEBUG ==1 && i == 83){
-						System.out.println("What's wrong?");
-					}
+//					if(DEBUG ==1 && i == 83){
+//						System.out.println("What's wrong?");
+//					}
 					xset.set(i, l);
 					yset.set(j, l);
 					zset.set(regionOfRegard.getDouble(i, j), l);

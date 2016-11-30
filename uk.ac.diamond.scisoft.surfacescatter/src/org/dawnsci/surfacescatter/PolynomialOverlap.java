@@ -66,10 +66,10 @@ public class PolynomialOverlap {
 		double yValue = yValueDat.getDouble(0);
 		double xValue = xValueDat.getDouble(0);
 		
-		double[] output = new double[] {xValue, yValue,
-									    (xValue + len[1]), yValue,
-										xValue, (yValue +len[0]),
-										(xValue + len[1]), (yValue +len[0])}; 
+		double[] output = new double[] {yValue, xValue, 
+									    yValue, (xValue + len[1]), 
+										(yValue +len[0]), xValue, 
+										(yValue +len[0]), (xValue + len[1])}; 
 		
 		return output;
 	}

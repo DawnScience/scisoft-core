@@ -64,7 +64,6 @@ import hdf.hdf5lib.HDF5Constants;
 import hdf.hdf5lib.HDFNativeData;
 import hdf.hdf5lib.exceptions.HDF5Exception;
 import hdf.hdf5lib.structs.H5G_info_t;
-import hdf.hdf5lib.structs.H5L_info_t;
 import hdf.hdf5lib.structs.H5O_info_t;
 
 /**
@@ -474,36 +473,30 @@ public class HDF5Loader extends AbstractFileLoader {
 				nelems = LIMIT;
 			}
 
-			int[] oTypes = new int[nelems];
-			int[] lTypes = new int[nelems];
-			long[] oids = new long[nelems];
-			String[] oNames = new String[nelems];
-			try {
-				H5.H5Gget_obj_info_all(fid, name, oNames, oTypes, lTypes, oids, HDF5Constants.H5_INDEX_NAME);
-			} catch (HDF5Exception ex) {
-				logger.error("Could not get objects info in group", ex);
-				return null;
-			}
+			final int[] lTypes = new int[1];
+			final String[] oNames = new String[1];
 
-			String oname;
-			int otype;
-			int ltype;
-
-			// Iterate through the file to see members of the group
+			// Iterate through the group to see its members
 			for (int i = 0; i < nelems; i++) {
-				oname = oNames[i];
-				if (oname == null) {
+				try {
+					H5.H5Gget_obj_info_idx(fid, name, i, oNames, lTypes);
+				} catch (HDF5Exception ex) {
+					logger.error("Could not get object info for {}-th link in group", i, ex);
 					continue;
 				}
-				otype = oTypes[i];
-				ltype = lTypes[i];
-				oid = createObjectID(f.getID(), oids[i]);
-				if (ltype == -1) { // need to handle cases where the get_info call fails
-					H5L_info_t info = H5.H5Lget_info(fid, name + Node.SEPARATOR + oname, HDF5Constants.H5P_DEFAULT);
-					ltype = info.type; // not worth getting object type as it has already failed
-				}
+				final String oname = oNames[0];
+				final int ltype = lTypes[0];
 
 				if (ltype == HDF5Constants.H5L_TYPE_HARD) {
+					final int otype;
+					try {
+						H5O_info_t info = H5.H5Oget_info_by_name(gid, oname, HDF5Constants.H5P_DEFAULT);
+						oid = createObjectID(f.getID(), info.addr);
+						otype = info.type;
+					} catch (HDF5Exception ex) {
+						logger.error("Could not get object info for {} in group", name, ex);
+						continue;
+					}
 					if (otype == HDF5Constants.H5O_TYPE_GROUP) {
 						if (oid != DEFAULT_OBJECT_ID && pool != null && pool.containsKey(oid)) {
 							Node p = pool.get(oid);

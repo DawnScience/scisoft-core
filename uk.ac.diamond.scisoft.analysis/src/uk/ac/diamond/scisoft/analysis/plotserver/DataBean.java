@@ -65,7 +65,8 @@ public class DataBean implements Serializable {
 		bean.axisData.putAll(axisData);
 		bean.trees.addAll(trees);
 		bean.guiPlotMode = guiPlotMode;
-		bean.plotParameters = plotParameters.copy();
+		if (plotParameters != null)
+			bean.plotParameters = plotParameters.copy();
 		return bean;
 	}
 	

@@ -820,7 +820,7 @@ def delroi(bean=None, roi=None, send=False, name=None):
 from scisoftpy.dictutils import ListDict
 
 class roi_list(ListDict):
-    def __init__(self, data=None):
+    def __init__(self, data=[]):
         super(roi_list, self).__init__(data=data, warn=False, lock=False, interactive=False)
 
 def getrois(bean=None, roi=None, name=None):

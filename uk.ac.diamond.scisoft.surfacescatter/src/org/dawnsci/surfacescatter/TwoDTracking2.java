@@ -75,7 +75,7 @@ public class TwoDTracking2 {
 								initialLocation[1], initialLocation[2], initialLocation[5], initialLocation[2] });
 				model.setInput(input);
 				location = initialLocation;
-				sm.addLocationList(k, location);
+//				sm.addLocationList(k, location);
 			}
 
 			else {
@@ -89,7 +89,7 @@ public class TwoDTracking2 {
 						model.setTrackerCoordinates(location);
 					}
 					
-					sm.addLocationList(k, location);
+//					sm.addLocationList(k, location);
 					
 					int[] len1 = model.getLenPt()[0];
 
@@ -99,7 +99,7 @@ public class TwoDTracking2 {
 					newLenPt[1] = newPt;
 					model.setLenPt(newLenPt);
 					model.setInput(input);
-					sm.addLocationList(k, location);
+//					sm.addLocationList(k, location);
 //					System.out.println("~~~~~~~~~~~~~~~~~~~success!~~~~~~~~~~~~~~~~~");
 				} catch (Exception e) {
 					System.out.println(
@@ -133,7 +133,7 @@ public class TwoDTracking2 {
 								initialLocation[1], initialLocation[2], initialLocation[5], initialLocation[2] });
 				model.setInput(input);
 				location = initialLocation;
-				sm.addLocationList(k, location);
+//				sm.addLocationList(k, location);
 			}
 
 			else {
@@ -155,7 +155,7 @@ public class TwoDTracking2 {
 					newLenPt[1] = newPt;
 					model.setLenPt(newLenPt);
 					model.setInput(input);
-					sm.addLocationList(k, location);
+//					sm.addLocationList(k, location);
 //					System.out.println("~~~~~~~~~~~~~~~~~~~success!~~~~~~~~~~~~~~~~~");
 				} catch (Exception e) {
 					System.out.println(
@@ -217,7 +217,7 @@ public class TwoDTracking2 {
 					newLenPt[1] = newPt;
 					model.setLenPt(newLenPt);
 					model.setInput(input);
-					sm.addLocationList(k, location);
+//					sm.addLocationList(k, location);
 //					System.out.println("~~~~~~~~~~~~~~~~~~~success!~~~~~~~~~~~~~~~~~");
 				} catch (Exception e) {
 					System.out.println(
@@ -323,14 +323,17 @@ public class TwoDTracking2 {
 		
 		if (trackingMarker == 0) {
 			if (model.getInput() == null) {
-//				len = model.getLenPt()[0];
-//				pt = model.getLenPt()[1];
-
-//				in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input, len, pt);
+				
 				tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 
 				initialLocation = seedLocation;
 				
+				int[] newPt = new int[] { (int) initialLocation[0], (int) initialLocation[1] };
+				int[][] newLenPt = new int[2][];
+				newLenPt[0] = model.getLenPt()[0];
+				newLenPt[1] = newPt;
+				model.setLenPt(newLenPt);
+								
 				try {
 					tracker.initialize(input, initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
 				} catch (Exception e) {
@@ -344,7 +347,7 @@ public class TwoDTracking2 {
 //								initialLocation[1], initialLocation[2], initialLocation[5], initialLocation[2] });
 				model.setInput(input);
 				location = initialLocation;
-				sm.addLocationList(k, location);
+//				sm.addLocationList(k, location);
 			}
 
 			else {
@@ -358,7 +361,7 @@ public class TwoDTracking2 {
 						model.setTrackerCoordinates(location);
 					}
 					
-					sm.addLocationList(k, location);
+//					sm.addLocationList(k, location);
 					
 					int[] len1 = model.getLenPt()[0];
 
@@ -368,7 +371,7 @@ public class TwoDTracking2 {
 					newLenPt[1] = newPt;
 					model.setLenPt(newLenPt);
 					model.setInput(input);
-					sm.addLocationList(k, location);
+//					sm.addLocationList(k, location);
 //					System.out.println("~~~~~~~~~~~~~~~~~~~success!~~~~~~~~~~~~~~~~~");
 				} catch (Exception e) {
 					System.out.println(
@@ -390,7 +393,14 @@ public class TwoDTracking2 {
 				tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 
 				initialLocation = seedLocation;
-				sm.addLocationList(k, location);
+//			
+				int[] newPt = new int[] { (int) initialLocation[0], (int) initialLocation[1] };
+				int[][] newLenPt = new int[2][];
+				newLenPt[0] = model.getLenPt()[0];
+				newLenPt[1] = newPt;
+				model.setLenPt(newLenPt);
+				
+				
 				try {
 					tracker.initialize(input, initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
 				} catch (Exception e) {
@@ -423,7 +433,7 @@ public class TwoDTracking2 {
 					}
 
 					
-					sm.addLocationList(k, model.getTrackerCoordinates());
+//					sm.addLocationList(k, model.getTrackerCoordinates());
 //					System.out.println("~~~~~~~~~~~~~~~~~~~success!~~~~~~~~~~~~~~~~~");
 				
 				} catch (Exception e) {
@@ -462,7 +472,7 @@ public class TwoDTracking2 {
 //				model.setTrackerCoordinates(new double[] { location[1], location[0], location[5], location[0],
 //						location[1], initialLocation[2], location[5], location[2] });
 				model.setInput(input);
-				sm.addLocationList(k, location);
+//				sm.addLocationList(k, location);
 			}
 
 			else {
@@ -480,10 +490,10 @@ public class TwoDTracking2 {
 						newLenPt[1] = newPt;
 						model.setLenPt(newLenPt);
 						model.setInput(input);
-						sm.addLocationList(k, location);
+//						sm.addLocationList(k, location);
 					}
 					else{
-						sm.addLocationList(k, model.getTrackerCoordinates());
+//						sm.addLocationList(k, model.getTrackerCoordinates());
 					}
 					
 //					System.out.println("~~~~~~~~~~~~~~~~~~~success!~~~~~~~~~~~~~~~~~");

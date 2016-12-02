@@ -72,7 +72,7 @@ public class TwoDTracking {
 								initialLocation[1], initialLocation[2], initialLocation[5], initialLocation[2] });
 				model.setInput(input);
 				location = initialLocation;
-				sm.addLocationList(k, location);
+//				sm.addLocationList(k, location);
 			}
 
 			else {

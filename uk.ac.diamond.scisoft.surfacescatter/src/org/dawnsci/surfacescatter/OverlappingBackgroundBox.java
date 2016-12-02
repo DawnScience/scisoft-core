@@ -11,6 +11,8 @@ package org.dawnsci.surfacescatter;
 
 import java.util.ArrayList;
 
+import org.eclipse.dawnsci.analysis.api.roi.IROI;
+import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.dawnsci.plotting.api.region.IROIListener;
@@ -40,11 +42,19 @@ public class OverlappingBackgroundBox{
 	private static Polynomial2D g2;
 	private static Dataset output;
 	private static IRegion background;
+	private static IRegion ssvsBackground;
 	
-	public static Dataset OverlappingBgBox(IDataset input, ExampleModel model, IPlottingSystem<Composite> pS, DataModel dm){
+	public static Dataset OverlappingBgBox(IDataset input, 
+										   ExampleModel model, 
+										   SuperModel sm, 
+										   IPlottingSystem<Composite> pS, 
+										   IPlottingSystem<Composite> ssvsPS){
 		
 		int[] len = model.getLenPt()[0];
 		int[] pt = model.getLenPt()[1];
+		
+		Display display = Display.getCurrent();
+        Color red = display.getSystemColor(SWT.COLOR_RED);
 		
 		Dataset in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input,len, pt);
 		
@@ -53,8 +63,6 @@ public class OverlappingBackgroundBox{
 		if ((int) Math.pow(AnalaysisMethodologies.toInt(model.getFitPower()) + 1, 2) != g2.getNoOfParameters())
 			g2 = new Polynomial2D(AnalaysisMethodologies.toInt(model.getFitPower()));
 		
-//		@SuppressWarnings("unchecked")
-//		 = customComposite.getPlotSystem();
 		
 		if (pS.getRegion("Background Region")==null){
 		
@@ -64,17 +72,43 @@ public class OverlappingBackgroundBox{
 				e.printStackTrace();
 			}
 			pS.addRegion(background);
-			RectangularROI newROI = new RectangularROI(10,10,50,50,0);
+			IRectangularROI newROI = (IRectangularROI) sm.getBackgroundROI();
 			background.setROI(newROI);
 			
-			Display display = Display.getCurrent();
-	        Color red = display.getSystemColor(SWT.COLOR_RED);
 			background.setRegionColor(red);
-	        dm.setBackgroundROI(newROI);
+	        sm.setBackgroundROI(newROI);
 		}
 		else{
 			background = pS.getRegion("Background Region");
 		}
+		
+		if (ssvsPS.getRegion("ssvs Background Region")==null){
+			
+			try {
+				ssvsBackground =ssvsPS.createRegion("ssvs Background Region", RegionType.BOX);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			ssvsPS.addRegion(ssvsBackground);
+			IRectangularROI ssvsNewROI = (IRectangularROI) sm.getBackgroundROI();
+			ssvsBackground.setROI(ssvsNewROI);
+			
+			ssvsBackground.setRegionColor(red);
+		}
+		else{
+			ssvsPS.removeRegion(ssvsPS.getRegion("ssvs Background Region"));
+			try {
+				ssvsBackground =ssvsPS.createRegion("ssvs Background Region", RegionType.BOX);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			ssvsPS.addRegion(ssvsBackground);
+			IRectangularROI ssvsNewROI = (IRectangularROI) sm.getBackgroundROI();
+			ssvsBackground.setROI(ssvsNewROI);
+			
+			ssvsBackground.setRegionColor(red);
+		}
+		
 
         background.addROIListener(new IROIListener() {
 
@@ -94,18 +128,51 @@ public class OverlappingBackgroundBox{
 			}
 			
 			public void roiStandard(ROIEvent evt) {
-				dm.setBackgroundROI(background.getROI());
+				sm.setBackgroundROI(background.getROI());
+				
+				IRectangularROI redRectangle = background.getROI().getBounds();
+				int[] Len = redRectangle.getIntLengths();
+				int[] Pt = redRectangle.getIntPoint();
+				int[][] LenPt = {Len,Pt};
+				
+				RectangularROI newROI = new RectangularROI(LenPt[1][0],
+														   LenPt[1][1],
+														   LenPt[0][0],
+														   LenPt[0][1],0);
+				ssvsBackground.setROI(newROI);
+				
 			}
 
 		});
         
         
-        int[] backLen = dm.getBackgroundLenPt()[0];
-        int[] backPt = dm.getBackgroundLenPt()[1];
+        ssvsBackground.addROIListener(new IROIListener() {
+
+			@Override
+			public void roiDragged(ROIEvent evt) {
+				roiStandard(evt);
+			}
+
+			@Override
+			public void roiChanged(ROIEvent evt) {
+				roiStandard(evt);
+			}
+
+			@Override
+			public void roiSelected(ROIEvent evt) {
+				roiStandard(evt);
+			}
+			
+			public void roiStandard(ROIEvent evt) {
+				sm.setBackgroundROI(background.getROI());
+			}
+
+		});
         
-//		Dataset backgroundDataset = BoxSlicerRodScanUtilsForDialog.rOIBox(input, 
-//				dm.getBackgroundLenPt()[0], 
-//				dm.getBackgroundLenPt()[1]);
+        
+        
+        int[] backLen = sm.getBackgroundLenPt()[0];
+        int[] backPt = sm.getBackgroundLenPt()[1];
         
         BackgroundRegionArrays br = new BackgroundRegionArrays();
         
@@ -120,7 +187,6 @@ public class OverlappingBackgroundBox{
 					br.zArrayAdd(input.getDouble(i,j));
 				}
 		}
-		
 		
 		Dataset xBackgroundDat = DatasetFactory.createFromObject(br.getXArray());
 		Dataset yBackgroundDat = DatasetFactory.createFromObject(br.getYArray());

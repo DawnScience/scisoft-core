@@ -219,6 +219,9 @@ public class StitchedOutputWithErrors {
 		sortedAttenuatedDatasets[5] = sortedYArrayCorrectedErrorMin;
 		sortedAttenuatedDatasets[6] = sortedYArrayCorrectedFhklErrorMin;
 		
+		sortedAttenuatedDatasets[0].setError(sortedYArrayCorrectedError);
+		sortedAttenuatedDatasets[2].setError(sortedYArrayCorrectedFhklError);
+		
 		
 		sm.setSplicedCurveY(sortedAttenuatedDatasets[0]);
 		sm.setSplicedCurveX(sortedAttenuatedDatasets[1]);

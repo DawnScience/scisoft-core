@@ -21,7 +21,8 @@ public class DummyProcessingClass {
 										ExampleModel model, 
 										DataModel dm, 
 										GeometricParametersModel gm, 
-										IPlottingSystem<Composite> pS, 
+										IPlottingSystem<Composite> pS,
+										IPlottingSystem<Composite> ssvsPS,
 										int correctionSelector, 
 										int k, 
 										int trackingMarker,
@@ -51,7 +52,11 @@ public class DummyProcessingClass {
 				output = SecondConstantROI.secondROIConstantBg(input, model, pS, dm);
 				break;
 			case OVERLAPPING_BACKGROUND_BOX:
-				output = OverlappingBackgroundBox.OverlappingBgBox(input, model, pS, dm);
+				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
+																   model, 
+																   sm, 
+																   pS, 
+																   ssvsPS);
 				break;
 		}
 		
@@ -119,6 +124,7 @@ public class DummyProcessingClass {
 										DataModel dm, 
 										GeometricParametersModel gm, 
 										IPlottingSystem<Composite> pS, 
+										IPlottingSystem<Composite> ssvsPS,
 										int correctionSelector, 
 										int k, 
 										int trackingMarker,
@@ -150,7 +156,7 @@ public class DummyProcessingClass {
 				output = SecondConstantROI.secondROIConstantBg(input, model, pS, dm);
 				break;
 			case OVERLAPPING_BACKGROUND_BOX:
-				output = OverlappingBackgroundBox.OverlappingBgBox(input, model, pS, dm);
+				output = OverlappingBackgroundBox.OverlappingBgBox(input, model, sm, pS, ssvsPS);
 				break;
 		}
 		
@@ -225,6 +231,7 @@ public class DummyProcessingClass {
 										DataModel dm, 
 										GeometricParametersModel gm, 
 										IPlottingSystem<Composite> pS, 
+										IPlottingSystem<Composite> ssvsPS,
 										int correctionSelector, 
 										int k, 
 										int trackingMarker,
@@ -254,7 +261,7 @@ public class DummyProcessingClass {
 				output = SecondConstantROI.secondROIConstantBg(input, model, pS, dm);
 				break;
 			case OVERLAPPING_BACKGROUND_BOX:
-				output = OverlappingBackgroundBox.OverlappingBgBox(input, model, pS, dm);
+				output = OverlappingBackgroundBox.OverlappingBgBox(input, model, sm, pS, ssvsPS);
 				break;
 		}
 		
@@ -323,6 +330,7 @@ public class DummyProcessingClass {
 										DataModel dm, 
 										GeometricParametersModel gm, 
 										IPlottingSystem<Composite> pS, 
+										IPlottingSystem<Composite> ssvsPS,
 										int correctionSelector, 
 										int k, 
 										int trackingMarker,
@@ -362,7 +370,7 @@ public class DummyProcessingClass {
 				output = SecondConstantROI.secondROIConstantBg(input, model, pS, dm);
 				break;
 			case OVERLAPPING_BACKGROUND_BOX:
-				output = OverlappingBackgroundBox.OverlappingBgBox(input, model, pS, dm);
+				output = OverlappingBackgroundBox.OverlappingBgBox(input, model, sm, pS, ssvsPS);
 				break;
 		}
 		

@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.eclipse.dawnsci.analysis.api.roi.IROI;
+import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
@@ -42,7 +45,44 @@ public class SuperModel {
 	private ArrayList<IDataset> backgroundDatArray;
 	private ArrayList<double[]> locationList; 
 	private int[][] initialLenPt;
+	private boolean errorDisplayFlag = true;
+	private IRectangularROI backgroundROI = new RectangularROI(10,10,50,50,0);
+	private int[][] backgroundLenPt;
+	private RectangularROI backgroundBox;
 	
+	
+	public int[][] getBackgroundLenPt() {
+		return backgroundLenPt;
+	}
+
+	public void setBackgroundLenPt(int[][] backgroundLenPt) {
+		this.backgroundLenPt = backgroundLenPt;
+	}
+
+	public RectangularROI getBackgroundBox() {
+		return backgroundBox;
+	}
+
+	public void setBackgroundBox(RectangularROI backgroundBox) {
+		this.backgroundBox = backgroundBox;
+	}
+	
+	public IROI getBackgroundROI(){
+		return backgroundROI;
+	}
+	
+	public void setBackgroundROI(IROI backgroundROI){
+		IRectangularROI bounds = backgroundROI.getBounds();
+		int[] len = bounds.getIntLengths();
+		int[] pt = bounds.getIntPoint();
+		int[][] lenpt = new int[2][];
+		lenpt[0]=len;
+		lenpt[1]=pt;
+		firePropertyChange("backgroundROI", this.backgroundROI, this.backgroundROI= (IRectangularROI) backgroundROI);
+		this.setBackgroundLenPt(lenpt);
+		firePropertyChange("backgroundLenPt", this.backgroundLenPt, this.backgroundLenPt= lenpt);
+		
+	}
 	
 	
 	
@@ -641,6 +681,8 @@ public class SuperModel {
 				}
 		}
 		
+		System.out.println("Added location at k = " + k);
+		
 		ArrayList<double[]> locationList1 = new ArrayList<double[]>();
 		locationList1 = (ArrayList<double[]>) locationList.clone();
 		locationList1.set(k,in);
@@ -654,5 +696,13 @@ public class SuperModel {
 
 	public void setInitialLenPt(int[][] initialLenPt) {
 		this.initialLenPt = initialLenPt;
+	}
+
+	public boolean isErrorDisplayFlag() {
+		return errorDisplayFlag;
+	}
+
+	public void setErrorDisplayFlag(boolean errorDisplayFlag) {
+		this.errorDisplayFlag = errorDisplayFlag;
 	}
 }

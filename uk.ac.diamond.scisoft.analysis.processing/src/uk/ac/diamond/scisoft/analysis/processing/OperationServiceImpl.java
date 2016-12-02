@@ -108,7 +108,7 @@ public class OperationServiceImpl implements IOperationService {
 	        ISliceViewIterator it = null;
 	        
 	        if (context.getLiveInfo() == null) it = new SliceViewIterator(context.getData(), context.getSlicing(), context.getDataDimensions());
-	        else it = new DynamicSliceViewIterator((IDynamicDataset)context.getData(), context.getLiveInfo().getKeys(), context.getLiveInfo().getComplete());
+	        else it = new DynamicSliceViewIterator((IDynamicDataset)context.getData(), context.getLiveInfo().getKeys(), context.getLiveInfo().getComplete(), context.getDataDimensions().length);
 			assert(it.hasNext());
 	        IDataset firstSlice = it.next().getSlice();
 	        validate(firstSlice, context.getSeries());

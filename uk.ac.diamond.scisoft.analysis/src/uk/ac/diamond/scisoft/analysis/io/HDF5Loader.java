@@ -568,22 +568,49 @@ public class HDF5Loader extends AbstractFileLoader {
 					}
 
 					String eName = linkName[1];
+					boolean exists = false;
 					if (eName != null) {
+						String parent = f.getParentDirectory();
 						File ef = new File(eName);
-						if (!ef.exists()) { // use directory of linking file
-							String parent = f.getParentDirectory();
-							if (ef.isAbsolute()) {
-								logger.warn("Could not find external file {}, trying in {}", eName, parent);
+						logger.debug("Looking for external file {}", eName);
+						if (!ef.isAbsolute()) {
+							exists = ef.exists();
+							if (!exists) { // use directory of linking file
+								logger.warn("Could not find external relative file, now trying in {}", parent);
+								File ref = new File(parent, ef.getName());
+								exists = ref.exists();
+								if (!exists) {
+									// append to directory of linking file
+									File ref2 = new File(parent, eName);
+									if (ref2.equals(ref)) {
+										ref = ref2;
+									} else {
+										logger.warn("Could not find external relative file, finally trying {}", ref2);
+									}
+								}
+								eName = ref.getAbsolutePath();
+								ef = ref;
 							}
-							eName = new File(parent, ef.getName()).getAbsolutePath();
-							if (!(new File(eName).exists())) { // append to directory of linking file
-								String eName2 = new File(parent, linkName[1]).getAbsolutePath();
-								logger.warn("Could not find external file {}, trying {}", eName, eName2);
-								eName = eName2;
+						} else {
+							// first try to find in directory of current file
+							File ref = new File(parent, ef.getName());
+							exists = ref.exists();
+							if (exists) {
+								eName = ref.getAbsolutePath();
+								ef = ref;
+								logger.debug("Found external file {} in {}", ef.getName(), parent);
+							}
+						}
+
+						if (!exists) {
+							exists = ef.exists();
+							eName = ef.getAbsolutePath();
+							if (exists) {
+								logger.debug("Finally found external file {}", eName);
 							}
 						}
 					}
-					if (eName != null && new File(eName).exists()) {
+					if (exists) {
 						group.addNode(oname, getExternalNode(pool, f.getHostname(), eName, linkName[0], keepBitWidth));
 					} else {
 						eName = linkName[1];

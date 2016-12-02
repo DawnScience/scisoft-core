@@ -108,7 +108,7 @@ class ListDict(object):
     Combined list/ordered dictionary class. Keys to the dictionary can be exposed as attributes.
     This supports all dictionary methods, pop, append, extend, index, remove and del
     '''
-    def __init__(self, data=None, warn=True, lock=False, interactive=True):
+    def __init__(self, data=[], warn=True, lock=False, interactive=True):
         '''
         A dictionary or list of tuples of key/value pairs. If lock=True,
         keys cannot be reassigned without first deleting the item. If interactive=True,

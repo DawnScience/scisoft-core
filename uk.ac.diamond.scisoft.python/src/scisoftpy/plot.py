@@ -141,6 +141,7 @@ def clear(name=None):
     '''
     if name is None:
         name = _PVNAME
+    _clear_axis(name)
     _plot_clear(name)
 
 _FILE_TYPES = {"SVG File":("svg",), "Postscript File":("ps", "eps"),
@@ -234,7 +235,7 @@ def _parselinearg(x, y, title, name):
 _AXES_SIDES = { 'x':{'default':_plot.axis_bottom, 'top':_plot.axis_top, 'bottom':_plot.axis_bottom},
               'y':{'default':_plot.axis_left, 'left':_plot.axis_left, 'right':_plot.axis_right} }
 
-def _setup_axes(al, dirn, name):
+def _setup_axes(al, dirn, name, allow_rename):
     c = 0 # count use of default axis
     for a in al:
         if type(a) is _types.DictType: # has axis name
@@ -246,7 +247,7 @@ def _setup_axes(al, dirn, name):
         else:
             c += 1
 
-    rename = c == 0
+    rename = c == 0 and allow_rename
     an = []
     for a in al:
         if type(a) is _types.DictType: # has axis name
@@ -292,15 +293,16 @@ def _clear_axis(name):
 def _process_line(x, y, title, name, mode):
     name, t, xl, yl = _parselinearg(x, y, title, name)
 
-    if mode is None:
+    allow_rename = mode is None
+    if allow_rename:
         _plot_clear(name)
         _clear_axis(name)
 
     if xl is not None:
-        ax = _setup_axes(xl, 'x', name)
+        ax = _setup_axes(xl, 'x', name, allow_rename)
     else:
         ax = None
-    ay = _setup_axes(yl, 'y', name)
+    ay = _setup_axes(yl, 'y', name, allow_rename)
 
     # generate list of axes
     xs = []
@@ -818,7 +820,7 @@ def delroi(bean=None, roi=None, send=False, name=None):
 from scisoftpy.dictutils import ListDict
 
 class roi_list(ListDict):
-    def __init__(self, data=None):
+    def __init__(self, data=[]):
         super(roi_list, self).__init__(data=data, warn=False, lock=False, interactive=False)
 
 def getrois(bean=None, roi=None, name=None):

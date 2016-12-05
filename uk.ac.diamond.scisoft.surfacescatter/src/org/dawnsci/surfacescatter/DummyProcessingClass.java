@@ -65,6 +65,30 @@ public class DummyProcessingClass {
 																   ssvsPS,
 																   selection);
 				break;
+			case X:
+				
+				Polynomial1DXBgSubtraction p1DXbg = new Polynomial1DXBgSubtraction();
+				
+				output = p1DXbg.Polynomial1DXBgSubtraction1(sm,
+														    input, 
+															model, 
+															dm,
+															k,
+															selection);
+		
+				break;
+			case Y:
+				
+				Polynomial1DYBgSubtraction p1DYbg = new Polynomial1DYBgSubtraction();
+				
+				output = p1DYbg.Polynomial1DXBgSubtraction1(sm,
+														    input, 
+															model, 
+															dm,
+															k,
+															selection);
+		
+				break;
 		}
 		
 		Dataset correction = DatasetFactory.zeros(new int[] {1}, Dataset.FLOAT64);

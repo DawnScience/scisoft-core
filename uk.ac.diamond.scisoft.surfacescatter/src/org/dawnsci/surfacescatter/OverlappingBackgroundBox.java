@@ -178,14 +178,16 @@ public class OverlappingBackgroundBox{
         
         
 		for (int i = backPt[0]; i<backPt[0]+backLen[0]; i++){
-			for(int j = backPt[1]; i<backPt[1]+backLen[1]; i++)
-				if((i<pt[0]||i>=(pt[0]+len[0]))&&(j<pt[1]||j>=(pt[1]+len[1]))){
+			for(int j = backPt[1]; j<backPt[1]+backLen[1]; j++){
+				
+				if((i<pt[0]||i>=(pt[0]+len[0]))||(j<pt[1]||j>=(pt[1]+len[1]))){
 				}
 				else{
 					br.xArrayAdd(i);
 					br.yArrayAdd(j);
 					br.zArrayAdd(input.getDouble(i,j));
 				}
+			}
 		}
 		
 		Dataset xBackgroundDat = DatasetFactory.createFromObject(br.getXArray());

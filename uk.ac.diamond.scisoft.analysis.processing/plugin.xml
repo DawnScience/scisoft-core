@@ -239,6 +239,15 @@
             visible="true">
       </operation>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.export.Export2DBSLOperation"
+            description="Save 2D detector images to a BSL file"
+            icon="icons/exptext.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.export.Export2DBSLOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.export.Export2DBSLModel"
+            name="Export to BSL"
+            visible="true">
+      </operation>
+      <operation
             category="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DownsampleImageOperation"
             description="Downsample an image using the corner, mean, min, or max value. The type the output data should take (int, float etc) can also be specified"

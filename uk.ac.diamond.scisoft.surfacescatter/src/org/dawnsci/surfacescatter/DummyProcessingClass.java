@@ -49,14 +49,21 @@ public class DummyProcessingClass {
 				output = TwoDFitting.TwoDFitting1(input, model);
 				break;
 			case SECOND_BACKGROUND_BOX:
-				output = SecondConstantROI.secondROIConstantBg(input, model, pS, dm);
+				output = SecondConstantROI.secondROIConstantBg(input, 
+															   model, 
+															   sm,
+															   pS, 
+															   ssvsPS,
+															   dm,
+															   selection);
 				break;
 			case OVERLAPPING_BACKGROUND_BOX:
 				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
 																   model, 
 																   sm, 
 																   pS, 
-																   ssvsPS);
+																   ssvsPS,
+																   selection);
 				break;
 		}
 		
@@ -153,10 +160,21 @@ public class DummyProcessingClass {
 				output = TwoDFitting.TwoDFitting1(input, model);
 				break;
 			case SECOND_BACKGROUND_BOX:
-				output = SecondConstantROI.secondROIConstantBg(input, model, pS, dm);
+				output = SecondConstantROI.secondROIConstantBg(input, 
+															   model,
+															   sm,
+															   pS,
+															   ssvsPS,
+															   dm,
+															   selection);
 				break;
 			case OVERLAPPING_BACKGROUND_BOX:
-				output = OverlappingBackgroundBox.OverlappingBgBox(input, model, sm, pS, ssvsPS);
+				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
+																   model, 
+																   sm, 
+																   pS, 
+																   ssvsPS,
+																   selection);
 				break;
 		}
 		
@@ -258,10 +276,21 @@ public class DummyProcessingClass {
 				output = TwoDFitting.TwoDFitting1(input, model);
 				break;
 			case SECOND_BACKGROUND_BOX:
-				output = SecondConstantROI.secondROIConstantBg(input, model, pS, dm);
+				output = SecondConstantROI.secondROIConstantBg(input, 
+															   model,
+															   sm,
+															   pS,
+															   ssvsPS,
+															   dm,
+															   selection);
 				break;
 			case OVERLAPPING_BACKGROUND_BOX:
-				output = OverlappingBackgroundBox.OverlappingBgBox(input, model, sm, pS, ssvsPS);
+				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
+																   model, 
+																   sm, 
+																   pS, 
+																   ssvsPS,
+																   selection);
 				break;
 		}
 		
@@ -336,7 +365,7 @@ public class DummyProcessingClass {
 										int trackingMarker,
 										int selection,
 										double[]locationList){		
-		
+		////////////////////////////////NB selection is position in the sorted list of the whole rod k is position in the .dat file
 		IDataset output =null;	
 		
 		
@@ -367,10 +396,21 @@ public class DummyProcessingClass {
 				output = TwoDFitting.TwoDFitting1(input, model);
 				break;
 			case SECOND_BACKGROUND_BOX:
-				output = SecondConstantROI.secondROIConstantBg(input, model, pS, dm);
+				output = SecondConstantROI.secondROIConstantBg(input, 
+						   									   model,
+						   									   sm,
+						   									   pS,
+						   									   ssvsPS,
+						   									   dm,
+						   									   selection);
 				break;
 			case OVERLAPPING_BACKGROUND_BOX:
-				output = OverlappingBackgroundBox.OverlappingBgBox(input, model, sm, pS, ssvsPS);
+				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
+																   model, 
+																   sm, 
+																   pS, 
+																   ssvsPS,
+																   selection);
 				break;
 		}
 		

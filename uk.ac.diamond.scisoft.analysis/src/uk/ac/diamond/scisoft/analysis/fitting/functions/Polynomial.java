@@ -48,6 +48,7 @@ public class Polynomial extends AFunction {
 
 	/**
 	 * Make a polynomial of given degree (0 - constant, 1 - linear, 2 - quadratic, etc)
+	 * 
 	 * @param degree
 	 */
 	public Polynomial(final int degree) {
@@ -56,6 +57,7 @@ public class Polynomial extends AFunction {
 
 	/**
 	 * Make a polynomial with given parameters
+	 * 
 	 * @param params
 	 */
 	public Polynomial(double[] params) {
@@ -64,6 +66,7 @@ public class Polynomial extends AFunction {
 
 	/**
 	 * Make a polynomial with given parameters
+	 * 
 	 * @param params
 	 */
 	public Polynomial(IParameter... params) {
@@ -88,7 +91,7 @@ public class Polynomial extends AFunction {
 		a = new double[nparams];
 
 		for (int i = 0; i < nparams; i++) {
-			a[i] = 0.5*(min[i] + max[i]);
+			a[i] = 0.5 * (min[i] + max[i]);
 			parameters[i] = new Parameter(a[i], min[i], max[i]);
 		}
 
@@ -175,7 +178,6 @@ public class Polynomial extends AFunction {
 		}
 	}
 
-
 	@Override
 	public void fillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it) {
 		Dataset pos = DatasetUtils.convertToDataset(it.getValues()[0]);
@@ -200,7 +202,8 @@ public class Polynomial extends AFunction {
 	/**
 	 * Create a 2D dataset which contains in each row a coordinate raised to n-th powers.
 	 * <p>
-	 * This is for solving the linear least squares problem 
+	 * This is for solving the linear least squares problem
+	 * 
 	 * @param coords
 	 * @return matrix
 	 */
@@ -222,6 +225,7 @@ public class Polynomial extends AFunction {
 
 	/**
 	 * Set the degree after a class instantiation
+	 * 
 	 * @param degree
 	 */
 	public void setDegree(int degree) {
@@ -235,28 +239,29 @@ public class Polynomial extends AFunction {
 			parent.updateParameters();
 		}
 	}
-	
+
 	public String getStringEquation() {
-		
+
 		StringBuilder out = new StringBuilder();
-		
+
 		DecimalFormat df = new DecimalFormat("0.#####E0");
-		
-		for (int i = nparams-1; i >= 2; i--) {
-			out.append(df.format(parameters[nparams - 1 -i].getValue()));
+
+		for (int i = nparams - 1; i >= 2; i--) {
+			out.append(df.format(parameters[nparams - 1 - i].getValue()));
 			out.append(String.format("x^%d + ", i));
 		}
-		
+
 		if (nparams >= 2)
-			out.append(df.format(parameters[nparams-2].getValue()) + "x + ");
+			out.append(df.format(parameters[nparams - 2].getValue()) + "x + ");
 		if (nparams >= 1)
-			out.append(df.format(parameters[nparams-1].getValue()));
-		
+			out.append(df.format(parameters[nparams - 1].getValue()));
+
 		return out.toString();
 	}
 
 	/**
 	 * Find all roots
+	 * 
 	 * @return all roots or null if there is any problem finding the roots
 	 */
 	public Complex[] findRoots() {
@@ -268,6 +273,7 @@ public class Polynomial extends AFunction {
 
 	/**
 	 * Find all roots
+	 * 
 	 * @param coeffs
 	 * @return all roots or null if there is any problem finding the roots
 	 */
@@ -306,8 +312,8 @@ public class Polynomial extends AFunction {
 			public int compare(Complex o1, Complex o2) {
 				double a = o1.getReal();
 				double b = o2.getReal();
-				
-				double u = 10*Math.ulp(Math.max(Math.abs(a), Math.abs(b)));
+
+				double u = 10 * Math.ulp(Math.max(Math.abs(a), Math.abs(b)));
 				if (Math.abs(a - b) > u)
 					return a < b ? -1 : 1;
 

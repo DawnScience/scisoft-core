@@ -245,15 +245,15 @@ public class TwoDTracking {
 		Dataset[] fittingBackground = BoxSlicerRodScanUtilsForDialog.LeftRightTopBottomBoxes(input, len, pt,
 				model.getBoundaryBox());
 
-		Dataset offset = DatasetFactory.ones(fittingBackground[2].getShape(), Dataset.FLOAT64);
+//		Dataset offset = DatasetFactory.ones(fittingBackground[2].getShape(), Dataset.FLOAT64);
 
 		System.out.println("Tracker position:  " + location[0] + " , " + location[1]);
 
-		Dataset intermediateFitTest = Maths.add(offset, fittingBackground[2]);
+//		Dataset intermediateFitTest = Maths.add(offset, fittingBackground[2]);
 		Dataset matrix = LinearLeastSquaresServicesForDialog.polynomial2DLinearLeastSquaresMatrixGenerator(
 				AnalaysisMethodologies.toInt(model.getFitPower()), fittingBackground[0], fittingBackground[1]);
 
-		DoubleDataset test = (DoubleDataset) LinearAlgebra.solveSVD(matrix, intermediateFitTest);
+		DoubleDataset test = (DoubleDataset) LinearAlgebra.solveSVD(matrix, fittingBackground[2]);
 		double[] params = test.getData();
 
 		DoubleDataset in1Background = g2.getOutputValues0(params, len, model.getBoundaryBox(),

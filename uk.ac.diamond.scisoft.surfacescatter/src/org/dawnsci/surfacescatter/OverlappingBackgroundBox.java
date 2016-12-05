@@ -48,7 +48,8 @@ public class OverlappingBackgroundBox{
 										   ExampleModel model, 
 										   SuperModel sm, 
 										   IPlottingSystem<Composite> pS, 
-										   IPlottingSystem<Composite> ssvsPS){
+										   IPlottingSystem<Composite> ssvsPS,
+										   int selection){
 		
 		int[] len = model.getLenPt()[0];
 		int[] pt = model.getLenPt()[1];
@@ -197,6 +198,20 @@ public class OverlappingBackgroundBox{
 		Dataset matrix = LinearLeastSquaresServicesForDialog.polynomial2DLinearLeastSquaresMatrixGenerator(
 				AnalaysisMethodologies.toInt(model.getFitPower()), xBackgroundDat, yBackgroundDat);
 		
+		
+		 double[] location = new double[] { (double) sm.getBackgroundLenPt()[1][1], 
+				   (double) sm.getBackgroundLenPt()[1][0], 
+				   (double) (sm.getBackgroundLenPt()[1][1] + sm.getBackgroundLenPt()[0][1]), 
+				   (double) (sm.getBackgroundLenPt()[1][0]),
+				   (double) sm.getBackgroundLenPt()[1][1], 
+				   (double) sm.getBackgroundLenPt()[1][0] + sm.getBackgroundLenPt()[0][0], 
+				   (double) (sm.getBackgroundLenPt()[1][1] + sm.getBackgroundLenPt()[0][1]), 
+				   (double) (sm.getBackgroundLenPt()[1][0] + sm.getBackgroundLenPt()[0][0]) };
+
+		 sm.addLocationList(selection, location);
+		
+		
+		
 		Display.getDefault().syncExec(new Runnable() {
 
 			@Override
@@ -217,6 +232,9 @@ public class OverlappingBackgroundBox{
 					in1Background.setObjectAbs(it.index, 0);
 			}
 		
+			System.out.println("background sum: " + in1Background.sum());
+			
+			
 			Dataset pBackgroundSubtracted = Maths.subtract(in1, in1Background, null);
 		
 			pBackgroundSubtracted.setName("pBackgroundSubtracted");

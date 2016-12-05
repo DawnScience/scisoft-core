@@ -585,6 +585,7 @@ public class HDF5Loader extends AbstractFileLoader {
 									if (ref2.equals(ref)) {
 										ref = ref2;
 									} else {
+										ref = ref2;
 										logger.warn("Could not find external relative file, finally trying {}", ref2);
 									}
 								}

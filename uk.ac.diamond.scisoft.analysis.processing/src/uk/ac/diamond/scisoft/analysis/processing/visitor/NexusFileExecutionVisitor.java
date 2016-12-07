@@ -111,6 +111,11 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		if (metadata != null && metadata.get(0) != null) origin = metadata.get(0);
 //		file = HierarchicalDataFactory.getWriter(filePath);
 		nexusFile = NexusFileHDF5.createNexusFile(filePath, swmring);
+		
+		if (nexusFile instanceof NexusFileHDF5 && swmring) {
+			((NexusFileHDF5)nexusFile).setCacheDataset(true);
+		}
+		
 		initGroups();
 		try {
 			// don't fail process because of error persisting models
@@ -197,14 +202,16 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 				GroupNode group = nexusFile.getGroup(results,false);
 				nexusFile.addAttribute(group,new AttributeImpl(NexusTreeUtils.NX_SIGNAL,integrated.getName()));
 				if (nexusFile instanceof NexusFileHDF5 && swmring) {
+					((NexusFileHDF5)nexusFile).setCacheDataset(true);
+					logger.debug("Caching");
 					((NexusFileHDF5)nexusFile).activateSwmrMode();
 					logger.debug("SWMR-ING");
 				}
 			}
 		}
-		synchronized (nexusFile) {
-			nexusFile.flush();
-		}
+//		synchronized (nexusFile) {
+//			nexusFile.flush();
+//		}
 	}
 
 	@Override
@@ -682,7 +689,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 
 		ILazyWriteableDataset lwds = new LazyWriteableDataset(d.getName(), d.getDType(), d.getShape(), mx, d.getShape(), null);
 		
-		DataNode dn = nexusFile.createData(group, lwds, NexusFile.COMPRESSION_LZW_L1);
+		DataNode dn = nexusFile.createData(group, lwds, NexusFile.COMPRESSION_NONE);
 		
 		UnitMetadata unit = dataset.getFirstMetadata(UnitMetadata.class);
 		if (unit != null) {

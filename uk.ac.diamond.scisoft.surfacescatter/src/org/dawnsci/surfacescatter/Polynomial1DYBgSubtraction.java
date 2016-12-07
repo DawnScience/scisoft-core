@@ -42,11 +42,17 @@ public class Polynomial1DYBgSubtraction {
 		
 		IDataset[] background = new IDataset[2];
 				
-		background[0] = BoxSlicerRodScanUtilsForDialog.iBelowOrRightBox(input, len, pt
-													, model.getBoundaryBox(), Methodology.X);
+		background[0] = BoxSlicerRodScanUtilsForDialog.iBelowOrRightBox(input, 
+																		len, 
+																		pt,
+																		model.getBoundaryBox(), 
+																		Methodology.Y);
 		
-		background[1] = BoxSlicerRodScanUtilsForDialog.iAboveOrLeftBox(input, len, pt
-				, model.getBoundaryBox(), Methodology.X);
+		background[1] = BoxSlicerRodScanUtilsForDialog.iAboveOrLeftBox(input, 
+																	   len, 
+																	   pt,
+																	   model.getBoundaryBox(), 
+																	   Methodology.Y);
 		
 		
 		Dataset in1Background = DatasetFactory.zeros(in1.getShape(), Dataset.FLOAT64);

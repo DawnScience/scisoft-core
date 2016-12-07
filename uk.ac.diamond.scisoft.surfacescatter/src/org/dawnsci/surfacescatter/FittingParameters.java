@@ -17,6 +17,7 @@ public class FittingParameters {
 	private int[][] lenpt = new int[2][2];
 	private int sliderPos;
 	private String file;
+	private double xValue;
 	
 	public int getPt0() {
 		return pt0;
@@ -90,6 +91,12 @@ public class FittingParameters {
 	}
 	public void setFile(String file) {
 		this.file = file;
+	}
+	public void setXValue(double xValue){
+		this.xValue = xValue;
+	}
+	public double getXValue(){
+		return xValue;
 	}
 	
 }

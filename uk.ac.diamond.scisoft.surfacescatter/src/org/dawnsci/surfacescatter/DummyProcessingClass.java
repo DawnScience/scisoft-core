@@ -1,21 +1,17 @@
 package org.dawnsci.surfacescatter;
 
-import java.util.ArrayList;
-
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.swt.widgets.Composite;
 
 public class DummyProcessingClass {
 	
 	
-	@SuppressWarnings("incomplete-switch")
 	public static IDataset DummyProcess(SuperModel sm, 
 										IDataset input, 
 										ExampleModel model, 
@@ -40,15 +36,23 @@ public class DummyProcessingClass {
 				TwoDTracking twoDTracking = new TwoDTracking();
 				output = twoDTracking.TwoDTracking1(sm, input, model, dm, trackingMarker, k, selection);
 				break;
+				
 			case TWOD:
 				if (pS.getRegion("Background Region")!=null){
 					pS.removeRegion(pS.getRegion("Background Region"));
 				}
 				else{
 				}
-				output = TwoDFitting.TwoDFitting1(input, model);
+				output = TwoDFitting.TwoDFitting1(input,
+												  model,
+												  sm,
+												  selection);
 				break;
+				
 			case SECOND_BACKGROUND_BOX:
+				if (pS.getRegion("Background Region")!=null){
+					pS.removeRegion(pS.getRegion("Background Region"));
+				}
 				output = SecondConstantROI.secondROIConstantBg(input, 
 															   model, 
 															   sm,
@@ -57,6 +61,7 @@ public class DummyProcessingClass {
 															   dm,
 															   selection);
 				break;
+				
 			case OVERLAPPING_BACKGROUND_BOX:
 				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
 																   model, 
@@ -65,7 +70,11 @@ public class DummyProcessingClass {
 																   ssvsPS,
 																   selection);
 				break;
+				
 			case X:
+				if (pS.getRegion("Background Region")!=null){
+					pS.removeRegion(pS.getRegion("Background Region"));
+				}
 				
 				Polynomial1DXBgSubtraction p1DXbg = new Polynomial1DXBgSubtraction();
 				
@@ -77,7 +86,11 @@ public class DummyProcessingClass {
 															selection);
 		
 				break;
+				
 			case Y:
+				if (pS.getRegion("Background Region")!=null){
+					pS.removeRegion(pS.getRegion("Background Region"));
+				}
 				
 				Polynomial1DYBgSubtraction p1DYbg = new Polynomial1DYBgSubtraction();
 				
@@ -181,9 +194,15 @@ public class DummyProcessingClass {
 				}
 				else{
 				}
-				output = TwoDFitting.TwoDFitting1(input, model);
+				output = TwoDFitting.TwoDFitting1(input,
+						  						  model,
+						  						  sm,
+						  						  selection);
 				break;
 			case SECOND_BACKGROUND_BOX:
+				if (pS.getRegion("Background Region")!=null){
+					pS.removeRegion(pS.getRegion("Background Region"));
+				}
 				output = SecondConstantROI.secondROIConstantBg(input, 
 															   model,
 															   sm,
@@ -193,6 +212,9 @@ public class DummyProcessingClass {
 															   selection);
 				break;
 			case OVERLAPPING_BACKGROUND_BOX:
+				if (pS.getRegion("Background Region")!=null){
+					pS.removeRegion(pS.getRegion("Background Region"));
+				}
 				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
 																   model, 
 																   sm, 
@@ -297,9 +319,15 @@ public class DummyProcessingClass {
 				}
 				else{
 				}
-				output = TwoDFitting.TwoDFitting1(input, model);
+				output = TwoDFitting.TwoDFitting1(input,
+						  					      model,
+						  					      sm,
+						  					      selection);	
 				break;
 			case SECOND_BACKGROUND_BOX:
+				if (pS.getRegion("Background Region")!=null){
+					pS.removeRegion(pS.getRegion("Background Region"));
+				}
 				output = SecondConstantROI.secondROIConstantBg(input, 
 															   model,
 															   sm,
@@ -309,6 +337,9 @@ public class DummyProcessingClass {
 															   selection);
 				break;
 			case OVERLAPPING_BACKGROUND_BOX:
+				if (pS.getRegion("Background Region")!=null){
+					pS.removeRegion(pS.getRegion("Background Region"));
+				}
 				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
 																   model, 
 																   sm, 
@@ -417,9 +448,15 @@ public class DummyProcessingClass {
 				}
 				else{
 				}
-				output = TwoDFitting.TwoDFitting1(input, model);
+				output = TwoDFitting.TwoDFitting1(input,
+						  						  model,
+						  						  sm,
+						  						  selection);
 				break;
 			case SECOND_BACKGROUND_BOX:
+				if (pS.getRegion("Background Region")!=null){
+					pS.removeRegion(pS.getRegion("Background Region"));
+				}
 				output = SecondConstantROI.secondROIConstantBg(input, 
 						   									   model,
 						   									   sm,
@@ -429,6 +466,9 @@ public class DummyProcessingClass {
 						   									   selection);
 				break;
 			case OVERLAPPING_BACKGROUND_BOX:
+				if (pS.getRegion("Background Region")!=null){
+					pS.removeRegion(pS.getRegion("Background Region"));
+				}
 				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
 																   model, 
 																   sm, 

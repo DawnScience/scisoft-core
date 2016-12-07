@@ -28,7 +28,12 @@ public class TwoDFitting{
 	private static Dataset output;
 	private static Polynomial2D g2;
 	
-	public static Dataset TwoDFitting1(IDataset input, ExampleModel model){
+	public static Dataset TwoDFitting1(IDataset input, 
+									   ExampleModel model,
+									   SuperModel sm,
+									   int selection){
+		
+		
 		g2 = null;
 		
 		
@@ -91,6 +96,18 @@ public class TwoDFitting{
 			
 			}
 		});
+		
+		 double[] location = new double[] { (double) sm.getInitialLenPt()[1][1], 
+				   (double) sm.getInitialLenPt()[1][0], 
+				   (double) (sm.getInitialLenPt()[1][1] + sm.getInitialLenPt()[0][1]), 
+				   (double) (sm.getInitialLenPt()[1][0]),
+				   (double) sm.getInitialLenPt()[1][1], 
+				   (double) sm.getInitialLenPt()[1][0] + sm.getInitialLenPt()[0][0], 
+				   (double) (sm.getInitialLenPt()[1][1] + sm.getInitialLenPt()[0][1]), 
+				   (double) (sm.getInitialLenPt()[1][0] + sm.getInitialLenPt()[0][0]) };
+
+		sm.addLocationList(selection, location);
+		
 		return output;
 	}
 	

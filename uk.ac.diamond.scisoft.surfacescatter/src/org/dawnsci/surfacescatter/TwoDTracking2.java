@@ -237,18 +237,13 @@ public class TwoDTracking2 {
 		len = model.getLenPt()[0];
 		pt = model.getLenPt()[1];
 
-//		in1 = BoxSlicerRodScanUtilsForDialog.rOIHalfBox(input, len, pt);
 		in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input, len, pt);
-
-		//in1 = (Dataset) PlotSystem2DataSetter.PlotSystem2DataSetter1(model);
 		
 		if (g2 == null)
 			g2 = new Polynomial2D(AnalaysisMethodologies.toInt(model.getFitPower()));
 		if ((int) Math.pow(AnalaysisMethodologies.toInt(model.getFitPower()) + 1, 2) != g2.getNoOfParameters())
 			g2 = new Polynomial2D(AnalaysisMethodologies.toInt(model.getFitPower()));
 
-//		Dataset[] fittingBackground = BoxSlicerRodScanUtilsForDialog.LeftRightTopBottomHalfBoxes(input, len, pt,
-//				model.getBoundaryBox());
 		
 		Dataset[] fittingBackground = BoxSlicerRodScanUtilsForDialog.LeftRightTopBottomBoxes(input, len, pt,
 				model.getBoundaryBox());
@@ -276,8 +271,6 @@ public class TwoDTracking2 {
 		}
 
 		dm.addBackgroundDatArray(in1Background);
-		
-		
 		
 		Dataset pBackgroundSubtracted = Maths.subtract(in1, in1Background, null);
 
@@ -317,9 +310,6 @@ public class TwoDTracking2 {
 								  int selection) {
 
 		this.sm = sm;
-		 
-
-//		initialLocation = seedLocation;
 		
 		if (trackingMarker == 0) {
 			if (model.getInput() == null) {
@@ -341,13 +331,9 @@ public class TwoDTracking2 {
 				}
 				
 				model.setTrackerCoordinates(initialLocation);
-						
-//						
-//						new double[] { initialLocation[1], initialLocation[0], initialLocation[5], initialLocation[0],
-//								initialLocation[1], initialLocation[2], initialLocation[5], initialLocation[2] });
+				
 				model.setInput(input);
 				location = initialLocation;
-//				sm.addLocationList(k, location);
 			}
 
 			else {
@@ -361,8 +347,6 @@ public class TwoDTracking2 {
 						model.setTrackerCoordinates(location);
 					}
 					
-//					sm.addLocationList(k, location);
-					
 					int[] len1 = model.getLenPt()[0];
 
 					int[] newPt = new int[] { (int) location[0], (int) location[1] };
@@ -371,8 +355,7 @@ public class TwoDTracking2 {
 					newLenPt[1] = newPt;
 					model.setLenPt(newLenPt);
 					model.setInput(input);
-//					sm.addLocationList(k, location);
-//					System.out.println("~~~~~~~~~~~~~~~~~~~success!~~~~~~~~~~~~~~~~~");
+
 				} catch (Exception e) {
 					System.out.println(
 							"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Failed to track");
@@ -389,7 +372,6 @@ public class TwoDTracking2 {
 				dm.setInitialDataset(input);
 				dm.setInitialLenPt(new int[][] {len, pt });
 
-//				in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input, len, pt);
 				tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 
 				initialLocation = seedLocation;
@@ -407,8 +389,6 @@ public class TwoDTracking2 {
 
 				}
 				model.setTrackerCoordinates(initialLocation);
-//								[1], initialLocation[0], initialLocation[5], initialLocation[0],
-//								initialLocation[1], initialLocation[2], initialLocation[5], initialLocation[2] });
 				model.setInput(input);
 				location = initialLocation;
 			}
@@ -432,10 +412,6 @@ public class TwoDTracking2 {
 						model.setInput(input);
 					}
 
-					
-//					sm.addLocationList(k, model.getTrackerCoordinates());
-//					System.out.println("~~~~~~~~~~~~~~~~~~~success!~~~~~~~~~~~~~~~~~");
-				
 				} catch (Exception e) {
 					System.out.println(
 							"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Failed to track");
@@ -511,23 +487,16 @@ public class TwoDTracking2 {
 		
 		sm.addLocationList(selection, location);
 		dm.addLocationList(model.getDatImages().getShape()[0], k, location);
-		
-		
+				
 		len = model.getLenPt()[0];
 		pt = model.getLenPt()[1];
 
-//		in1 = BoxSlicerRodScanUtilsForDialog.rOIHalfBox(input, len, pt);
 		in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input, len, pt);
 
-		//in1 = (Dataset) PlotSystem2DataSetter.PlotSystem2DataSetter1(model);
-		
 		if (g2 == null)
 			g2 = new Polynomial2D(AnalaysisMethodologies.toInt(model.getFitPower()));
 		if ((int) Math.pow(AnalaysisMethodologies.toInt(model.getFitPower()) + 1, 2) != g2.getNoOfParameters())
 			g2 = new Polynomial2D(AnalaysisMethodologies.toInt(model.getFitPower()));
-
-//		Dataset[] fittingBackground = BoxSlicerRodScanUtilsForDialog.LeftRightTopBottomHalfBoxes(input, len, pt,
-//				model.getBoundaryBox());
 		
 		Dataset[] fittingBackground = BoxSlicerRodScanUtilsForDialog.LeftRightTopBottomBoxes(input, len, pt,
 				model.getBoundaryBox());
@@ -569,8 +538,6 @@ public class TwoDTracking2 {
 		}
 
 		Dataset output = DatasetUtils.cast(pBackgroundSubtracted, Dataset.FLOAT64);
-
-		// dm.addOutputDatArray(output);
 
 		output.setName("Region of Interest, polynomial background removed");
 

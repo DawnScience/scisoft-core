@@ -93,8 +93,7 @@ public class SuperModel {
 		yListFhkl =null;
 		outputDatArray =null;
 		backgroundDatArray = null;
-//		initialDataset = null;
-//		initialLenPt = null;
+
 	}
 	
 	public ArrayList<IDataset> getOutputDatArray() {
@@ -257,9 +256,6 @@ public class SuperModel {
 		
 		return xOut;
 	}
-	
-	
-	
 
 	public ArrayList<Double> getyList() {
 		return yList;
@@ -348,8 +344,6 @@ public class SuperModel {
 		outputDatArray = null;
 		
 	}
-	
-	
 	
 	public void addyListFhkl(double y){
 		

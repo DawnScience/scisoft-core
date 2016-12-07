@@ -34,7 +34,8 @@ public class FittingParametersInputReader {
 	            fp.setFitPower(AnalaysisMethodologies.toFitPower(columns[6]));
 		        fp.setBoundaryBox(Integer.parseInt(columns[7]));
 		        fp.setSliderPos(Integer.parseInt(columns[8]));
-		        fp.setFile(columns[9]);
+		        fp.setXValue(Double.parseDouble(columns[9]));
+		        fp.setFile(columns[10]);
 		        
 	        }
 	    }

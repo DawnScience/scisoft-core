@@ -144,7 +144,7 @@ public class BackgroundSetting{
 			case Y:
 				length = len[0];
 				length1 = len[1];
-	
+				direction = 0;
 				break;
 			}
 			
@@ -173,13 +173,22 @@ public class BackgroundSetting{
 			
 			
 			
+
 			for (int i = 0; i < length; i++) {
 				
 				for (int j = 0; j < 2 * boundaryBox; j++) {
-		
-					double test = backGroundData.getDouble(i,j);
-					c.set(test, j);
+					switch (direction1){
+						case X:
+						
+							double test = backGroundData.getDouble(i,j);
+							c.set(test, j);
+							break;
+						case Y:
 							
+							test = backGroundData.getDouble(j, i);
+							c.set(test, j);
+							break;
+					}				
 				}
 				Dataset temp[] = {fullBack};
 				

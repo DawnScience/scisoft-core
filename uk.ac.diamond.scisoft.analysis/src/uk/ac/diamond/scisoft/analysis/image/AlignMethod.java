@@ -9,7 +9,7 @@
 package uk.ac.diamond.scisoft.analysis.image;
 
 public enum AlignMethod {
-	WITH_ROI(0), AFFINE_TRANSFORM(1);
+	WITH_ROI(0), HESSIAN_REGISTRATION(1);
 	private int idx;
 
 	private AlignMethod(int idx) {
@@ -29,7 +29,7 @@ public enum AlignMethod {
 		case 0:
 			return WITH_ROI;
 		case 1:
-			return AFFINE_TRANSFORM;
+			return HESSIAN_REGISTRATION;
 		default:
 			break;
 		}

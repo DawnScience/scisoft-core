@@ -202,8 +202,6 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 				GroupNode group = nexusFile.getGroup(results,false);
 				nexusFile.addAttribute(group,new AttributeImpl(NexusTreeUtils.NX_SIGNAL,integrated.getName()));
 				if (nexusFile instanceof NexusFileHDF5 && swmring) {
-					((NexusFileHDF5)nexusFile).setCacheDataset(true);
-					logger.debug("Caching");
 					((NexusFileHDF5)nexusFile).activateSwmrMode();
 					logger.debug("SWMR-ING");
 				}
@@ -385,21 +383,22 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 						} else {
 							synchronized (nexusFile) {
 								appendSingleValueAxis(axDataset,groupName, oSlice,oShape, nexusFile,i);
-							}
-							if (first) {
-								synchronized (nexusFile) {
+
+								if (first) {
+
 									nexusFile.getData(groupName +"/" +axDataset.getName()).addAttribute(new AttributeImpl("axis", String.valueOf(i+1)));
+
 								}
-							}
 
-							ILazyDataset error = axDataset.getError();
+								ILazyDataset error = axDataset.getError();
 
-							if (error != null) {
-								Dataset e = DatasetUtils.sliceAndConvertLazyDataset(error);
-								e.setName(axDataset.getName() + "_errors");
-								synchronized (nexusFile) {
+								if (error != null) {
+									Dataset e = DatasetUtils.sliceAndConvertLazyDataset(error);
+									e.setName(axDataset.getName() + "_errors");
+
 									appendSingleValueAxis(e,groupName, oSlice,oShape, nexusFile,i);
 								}
+								nexusFile.flush();
 							}
 						}
 

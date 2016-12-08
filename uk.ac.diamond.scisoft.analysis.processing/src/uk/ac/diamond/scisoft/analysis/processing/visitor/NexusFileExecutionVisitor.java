@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.dawnsci.analysis.api.metadata.UnitMetadata;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
@@ -84,6 +85,9 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	private NexusFile nexusFile;
 	
 	private boolean swmring = false;
+	
+	private AtomicInteger count = new AtomicInteger(0);
+	private int flushEvery = 50;
 
 	private final static Logger logger = LoggerFactory.getLogger(NexusFileExecutionVisitor.class);
 	
@@ -208,9 +212,18 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 				}
 			}
 		}
-//		synchronized (nexusFile) {
-//			nexusFile.flush();
-//		}
+		
+		int i = count.getAndIncrement();
+		
+		if (nexusFile instanceof NexusFileHDF5 && swmring && i%flushEvery == 0) {
+			synchronized (nexusFile) {
+				((NexusFileHDF5)nexusFile).flushAllCachedDatasets();
+			}
+		}
+		
+		
+		
+		
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 
 public class ClosestNoFinder {
 
@@ -70,7 +71,24 @@ public class ClosestNoFinder {
 		}
 		return idx;
 
+	}
+	
+	public static int closestIntegerInStack (double myNum, int noImages){
+		
+		Dataset numbers = DatasetFactory.createRange(noImages-1, Dataset.INT);
+		
+		double distance = Math.abs(numbers.getDouble(0) - myNum);
+		int idx = 0;
+		for(int c = 1; c < numbers.getSize(); c++){
+		    double cdistance = Math.abs(numbers.getDouble(c)- myNum);
+		    if(cdistance < distance){
+		        idx = c;
+		        distance = cdistance;
+		    }
 		}
+		return idx;
+
+	}
 	
 	public static int closestNoWithLocation (double myNum, 
 											 Dataset numbers,

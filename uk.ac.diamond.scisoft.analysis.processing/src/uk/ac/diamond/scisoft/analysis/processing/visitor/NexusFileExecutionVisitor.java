@@ -113,6 +113,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		nexusFile = NexusFileHDF5.createNexusFile(filePath, swmring);
 		
 		if (nexusFile instanceof NexusFileHDF5 && swmring) {
+			logger.debug("CACHING DATASETS");
 			((NexusFileHDF5)nexusFile).setCacheDataset(true);
 		}
 		
@@ -203,7 +204,6 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 				nexusFile.addAttribute(group,new AttributeImpl(NexusTreeUtils.NX_SIGNAL,integrated.getName()));
 				if (nexusFile instanceof NexusFileHDF5 && swmring) {
 					((NexusFileHDF5)nexusFile).activateSwmrMode();
-					nexusFile.flush();
 					logger.debug("SWMR-ING");
 				}
 			}
@@ -475,9 +475,9 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		ILazyWriteableDataset wds = dn.getWriteableDataset();
 		SliceND s = new SliceND(dataset.getShape(),determineMaxShape(dataset),new Slice[]{oSlice[axisDim]});
 		wds.setSlice(null, dataset, s);
-		if (nexusFile instanceof NexusFileHDF5 && swmring) {
-			((NexusFileHDF5)nexusFile).flushCachedDataset(group+"/"+dataset.getName());
-		}
+//		if (nexusFile instanceof NexusFileHDF5 && swmring) {
+//			((NexusFileHDF5)nexusFile).flushCachedDataset(group+"/"+dataset.getName());
+//		}
 	}
 
 	/**

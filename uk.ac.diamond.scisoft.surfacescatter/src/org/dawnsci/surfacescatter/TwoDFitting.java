@@ -9,6 +9,8 @@
 
 package org.dawnsci.surfacescatter;
 
+import java.util.Arrays;
+
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
@@ -51,7 +53,11 @@ public class TwoDFitting{
 	
 		Dataset[] fittingBackground = BoxSlicerRodScanUtilsForDialog.LeftRightTopBottomBoxes(input, len,
 				pt, model.getBoundaryBox());
-
+		
+		if(Arrays.equals(fittingBackground[0].getShape(),(new int[] {2,2})) && fittingBackground.length == 1){
+			return (Dataset) fittingBackground[0];
+		}
+		
 		Dataset matrix = LinearLeastSquaresServicesForDialog.polynomial2DLinearLeastSquaresMatrixGenerator(
 				AnalaysisMethodologies.toInt(model.getFitPower()), fittingBackground[0], fittingBackground[1]);
 		

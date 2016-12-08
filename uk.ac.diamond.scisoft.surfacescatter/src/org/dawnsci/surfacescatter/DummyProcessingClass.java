@@ -1,5 +1,7 @@
 package org.dawnsci.surfacescatter;
 
+import java.util.Arrays;
+
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
@@ -35,6 +37,9 @@ public class DummyProcessingClass {
 				}				
 				TwoDTracking twoDTracking = new TwoDTracking();
 				output = twoDTracking.TwoDTracking1(sm, input, model, dm, trackingMarker, k, selection);
+				
+				
+				
 				break;
 				
 			case TWOD:
@@ -94,7 +99,7 @@ public class DummyProcessingClass {
 				
 				Polynomial1DYBgSubtraction p1DYbg = new Polynomial1DYBgSubtraction();
 				
-				output = p1DYbg.Polynomial1DXBgSubtraction1(sm,
+				output = p1DYbg.Polynomial1DYBgSubtraction1(sm,
 														    input, 
 															model, 
 															dm,
@@ -103,6 +108,11 @@ public class DummyProcessingClass {
 		
 				break;
 		}
+		
+		if(Arrays.equals(output.getShape(), (new int[] {2,2}))){
+			return output;
+		}
+		
 		
 		Dataset correction = DatasetFactory.zeros(new int[] {1}, Dataset.FLOAT64);
 		

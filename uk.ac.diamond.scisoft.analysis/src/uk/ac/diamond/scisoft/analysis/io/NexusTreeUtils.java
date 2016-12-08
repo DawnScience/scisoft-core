@@ -1338,16 +1338,24 @@ public class NexusTreeUtils {
 		}
 
 		GroupNode gNode = (GroupNode) link.getDestination();
-		DataNode wavelength = gNode.getDataNode("incident_wavelength");
 
-		Dataset w = getConvertedData(wavelength, NonSI.ANGSTROM);
-		if (w == null) {
-			logger.warn("Wavelength {} was empty", link.getName());
+		DataNode wavelength = gNode.getDataNode("incident_wavelength");
+		if (wavelength == null) {
+			logger.warn("Wavelength was missing in {}", link.getName());
 		} else {
+			Dataset w = getConvertedData(wavelength, NonSI.ANGSTROM);
 			sample.setWavelength(w.getElementDoubleAbs(0));
 		}
+
+		DataNode energy = gNode.getDataNode("incident_energy");
+		if (energy == null) {
+			logger.warn("Energy was missing in {}", link.getName());
+		} else {
+			Dataset e = getConvertedData(energy, SI.KILO(NonSI.ELECTRON_VOLT));
+			sample.setWavelengthFromEnergykeV(e.getElementDoubleAbs(0));
+		}
 	}
-	
+
 	public static void parseMonochromator(NodeLink link, DiffractionCrystalEnvironment sample) {
 		if (!link.isDestinationGroup()) {
 			logger.warn("'{}' was not a group", link.getName());
@@ -1355,31 +1363,24 @@ public class NexusTreeUtils {
 		}
 
 		GroupNode gNode = (GroupNode) link.getDestination();
-		
-		if (gNode.containsDataNode("wavelength")) {
-			DataNode wavelength = gNode.getDataNode("wavelength");
 
+		DataNode wavelength = gNode.getDataNode("wavelength");
+		if (wavelength == null) {
+			logger.warn("Wavelength was missing in {}", link.getName());
+		} else {
 			Dataset w = getConvertedData(wavelength, NonSI.ANGSTROM);
-			if (w == null) {
-				logger.warn("Wavelength {} was empty", link.getName());
-			} else {
-				sample.setWavelength(w.getElementDoubleAbs(0));
-				return;
-			}
+			sample.setWavelength(w.getElementDoubleAbs(0));
+			return;
 		}
-		
-		if (gNode.containsDataNode("energy")) {
-			DataNode energy = gNode.getDataNode("energy");
+
+		DataNode energy = gNode.getDataNode("energy");
+		if (energy == null) {
+			logger.warn("Energy was missing in {}", link.getName());
+		} else {
 			Dataset e = getConvertedData(energy, SI.KILO(NonSI.ELECTRON_VOLT));
-			if (e == null) {
-				logger.warn("Wavelength {} was empty", link.getName());
-			} else {
-				sample.setWavelengthFromEnergykeV((e.getElementDoubleAbs(0)));
-				return;
-			}
+			sample.setWavelengthFromEnergykeV((e.getElementDoubleAbs(0)));
+			return;
 		}
-		
-		
 	}
 
 	public static DetectorProperties parseSaxsDetector(NodeLink link) {

@@ -174,59 +174,83 @@ public class BackgroundSetting{
 			
 			
 
-			for (int i = 0; i < length; i++) {
-				
-				for (int j = 0; j < 2 * boundaryBox; j++) {
-					switch (direction1){
-						case X:
+//			cConstructionLoop: 
+				for (int i = 0; i < length; i++) {
+					
+					for (int j = 0; j < 2 * boundaryBox; j++) {
+						switch (direction1){
+							case X:
+								
+								try{
+									double test = backGroundData.getDouble(i,j);
+									c.set(test, j);
+								}
+								catch(ArrayIndexOutOfBoundsException e){
+									Dataset errorDat = DatasetFactory.zeros(new int [] {2,2});
+//									break cConstructionLoop;
+									return errorDat;
+									
+								}
+								
+								break;
+								
+							case Y:
+															
+								try{
+									double test = backGroundData.getDouble(j, i);
+									c.set(test, j);
+								}
+								catch(ArrayIndexOutOfBoundsException e){
+									
+									Dataset errorDat = DatasetFactory.zeros(new int [] {2,2});
+//									break cConstructionLoop;
+									return errorDat;
+								}
+								
+								break;
+						}				
+					}
+					Dataset temp[] = {fullBack};
+					
+					Polynomial polyFit = Fitter.polyFit(temp, c, 1e-5,fitpower);
+					//Dataset[] e = new Dataset[1];
+					
+					int[] tempshape = {length1 , 0};
+					
+					Dataset e = DatasetFactory.zeros(tempshape, Dataset.INT64);
+							//(int[] {length1,0}, Dataset.INT);
+					e = DatasetFactory.createLinearSpace(boundaryBox, length1 + boundaryBox, length1, Dataset.INT);
+	
+					strip[i] = (Dataset) polyFit.calculateValues(e);
 						
-							double test = backGroundData.getDouble(i,j);
-							c.set(test, j);
+					
+					IndexIterator it = strip[i].getIterator();
+					
+					while (it.hasNext()) {
+						double v = in1Background.getElementDoubleAbs(it.index);
+						if (v < 0) in1Background.setObjectAbs(it.index, 0);
+					}
+								
+					
+					for (int k = 0; k < length1; k++) {
+						switch (direction1){
+						case X:
+							in1Background.set(strip[i].getObject(k), i, k);
 							break;
 						case Y:
-							
-							test = backGroundData.getDouble(j, i);
-							c.set(test, j);
+							in1Background.set(strip[i].getObject(k), k, i);
 							break;
-					}				
-				}
-				Dataset temp[] = {fullBack};
-				
-				Polynomial polyFit = Fitter.polyFit(temp, c, 1e-5,fitpower);
-				//Dataset[] e = new Dataset[1];
-				
-				int[] tempshape = {length1 , 0};
-				
-				Dataset e = DatasetFactory.zeros(tempshape, Dataset.INT64);
-						//(int[] {length1,0}, Dataset.INT);
-				e = DatasetFactory.createLinearSpace(boundaryBox, length1 + boundaryBox, length1, Dataset.INT);
-
-				strip[i] = (Dataset) polyFit.calculateValues(e);
-					
-				
-				IndexIterator it = strip[i].getIterator();
-				
-				while (it.hasNext()) {
-					double v = in1Background.getElementDoubleAbs(it.index);
-					if (v < 0) in1Background.setObjectAbs(it.index, 0);
-				}
-							
-				
-				for (int k = 0; k < length1; k++) {
-					switch (direction1){
-					case X:
-						in1Background.set(strip[i].getObject(k), i, k);
-						break;
-					case Y:
-						in1Background.set(strip[i].getObject(k), k, i);
-						break;
+						}
 					}
+					//Test
 				}
-				//Test
-			}
 			
 		
-		return in1Background;
-		}
+			return in1Background;
+			}
 //
+		Dataset errorDat = DatasetFactory.zeros(new int [] {2,2});
+		
+//		return errorDat;
+		
 }

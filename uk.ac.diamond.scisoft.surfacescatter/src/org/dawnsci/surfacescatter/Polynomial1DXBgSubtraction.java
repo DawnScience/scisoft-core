@@ -9,6 +9,8 @@
 
 package org.dawnsci.surfacescatter;
 
+import java.util.Arrays;
+
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.january.dataset.Dataset;
@@ -49,16 +51,21 @@ public class Polynomial1DXBgSubtraction {
 				, model.getBoundaryBox(), Methodology.X);
 		
 		
-		Dataset in1Background = DatasetFactory.zeros(in1.getShape(), Dataset.FLOAT64);
+		Dataset in2Background = DatasetFactory.zeros(in1.getShape(), Dataset.FLOAT64);
 		
-		in1Background = BackgroundSetting.rOIBackground1(background, 
-														 in1Background,
+		Dataset in1Background = BackgroundSetting.rOIBackground1(background, 
+														 in2Background,
 														 len,
 														 pt, 
 														 model.getBoundaryBox(), 
 														 AnalaysisMethodologies.toInt(model.getFitPower()), 
 														 Methodology.X);
 				
+		if(Arrays.equals(in1Background.getShape() , new int[] {2,2}) ){
+//			&& ((Dataset) in1Background).sum().equals(0.0)
+			return (IDataset) in1Background;
+		}
+		
 		IndexIterator it = in1Background.getIterator();
 		
 		while (it.hasNext()) {
@@ -80,13 +87,13 @@ public class Polynomial1DXBgSubtraction {
 		
 		
 		 double[] location = new double[] { (double) sm.getInitialLenPt()[1][1], 
-				   (double) sm.getInitialLenPt()[1][0], 
-				   (double) (sm.getInitialLenPt()[1][1] + sm.getInitialLenPt()[0][1]), 
-				   (double) (sm.getInitialLenPt()[1][0]),
-				   (double) sm.getInitialLenPt()[1][1], 
-				   (double) sm.getInitialLenPt()[1][0] + sm.getInitialLenPt()[0][0], 
-				   (double) (sm.getInitialLenPt()[1][1] + sm.getInitialLenPt()[0][1]), 
-				   (double) (sm.getInitialLenPt()[1][0] + sm.getInitialLenPt()[0][0]) };
+				   							(double) sm.getInitialLenPt()[1][0], 
+				   							(double) (sm.getInitialLenPt()[1][1] + sm.getInitialLenPt()[0][1]), 
+				   							(double) (sm.getInitialLenPt()[1][0]),
+				   							(double) sm.getInitialLenPt()[1][1], 
+				   							(double) sm.getInitialLenPt()[1][0] + sm.getInitialLenPt()[0][0], 
+				   							(double) (sm.getInitialLenPt()[1][1] + sm.getInitialLenPt()[0][1]), 
+				   							(double) (sm.getInitialLenPt()[1][0] + sm.getInitialLenPt()[0][0]) };
 
 		sm.addLocationList(selection, location);
 	

@@ -9,6 +9,8 @@
 
 package org.dawnsci.surfacescatter;
 
+import java.util.Arrays;
+
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.january.dataset.Dataset;
@@ -25,7 +27,7 @@ public class Polynomial1DYBgSubtraction {
 
 	
 	
-	public IDataset Polynomial1DXBgSubtraction1 (SuperModel sm, 
+	public IDataset Polynomial1DYBgSubtraction1 (SuperModel sm, 
 												 IDataset input, 
 												 ExampleModel model, 
 												 DataModel dm, 
@@ -64,7 +66,13 @@ public class Polynomial1DYBgSubtraction {
 														 model.getBoundaryBox(), 
 														 AnalaysisMethodologies.toInt(model.getFitPower()), 
 														 Methodology.Y);
-				
+		
+		
+		if(Arrays.equals(in1Background.getShape(),(new int[] {2,2}))){
+			return (IDataset) in1Background;
+		}
+		
+		
 		IndexIterator it = in1Background.getIterator();
 		
 		while (it.hasNext()) {

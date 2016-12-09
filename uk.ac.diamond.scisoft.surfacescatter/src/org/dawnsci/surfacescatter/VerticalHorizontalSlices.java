@@ -105,9 +105,9 @@ public class VerticalHorizontalSlices {
 	}
 	
 	public static ILineTrace horizontalsliceBackgroundSubtracted(IRectangularROI horizontalSliceBounds,
-			IPlottingSystem<Composite> pS, 
-			IDataset background,
-			IROI green){
+																 IPlottingSystem<Composite> pS, 
+																 IDataset background,
+																 IROI green){
 		
 		
 		int[] lenh =horizontalSliceBounds.getIntLengths();

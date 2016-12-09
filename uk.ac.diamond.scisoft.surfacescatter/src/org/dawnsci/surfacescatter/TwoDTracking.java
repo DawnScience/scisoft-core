@@ -9,6 +9,8 @@
 
 package org.dawnsci.surfacescatter;
 
+import java.util.Arrays;
+
 import org.dawnsci.boofcv.BoofCVImageTrackerServiceCreator;
 import org.eclipse.dawnsci.analysis.api.image.IImageTracker;
 import org.eclipse.dawnsci.analysis.api.image.IImageTracker.TrackerType;
@@ -51,6 +53,12 @@ public class TwoDTracking {
 		initialLocation = new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
 				(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0]) };
 
+		if (trackingMarker == 3){
+			model.setInput(null);
+			trackingMarker = 0;
+		}
+		
+		
 		if (trackingMarker == 0) {
 			if (model.getInput() == null) {
 				len = model.getLenPt()[0];
@@ -239,12 +247,15 @@ public class TwoDTracking {
 		if ((int) Math.pow(AnalaysisMethodologies.toInt(model.getFitPower()) + 1, 2) != g2.getNoOfParameters())
 			g2 = new Polynomial2D(AnalaysisMethodologies.toInt(model.getFitPower()));
 
-//		Dataset[] fittingBackground = BoxSlicerRodScanUtilsForDialog.LeftRightTopBottomHalfBoxes(input, len, pt,
-//				model.getBoundaryBox());
 		
 		Dataset[] fittingBackground = BoxSlicerRodScanUtilsForDialog.LeftRightTopBottomBoxes(input, len, pt,
 				model.getBoundaryBox());
 
+		if(Arrays.equals(fittingBackground[0].getShape(),(new int[] {2,2}))){
+			return (IDataset) fittingBackground[0];
+		}
+		
+		
 //		Dataset offset = DatasetFactory.ones(fittingBackground[2].getShape(), Dataset.FLOAT64);
 
 		System.out.println("Tracker position:  " + location[0] + " , " + location[1]);
@@ -282,8 +293,6 @@ public class TwoDTracking {
 		}
 
 		Dataset output = DatasetUtils.cast(pBackgroundSubtracted, Dataset.FLOAT64);
-
-		// dm.addOutputDatArray(output);
 
 		output.setName("Region of Interest, polynomial background removed");
 

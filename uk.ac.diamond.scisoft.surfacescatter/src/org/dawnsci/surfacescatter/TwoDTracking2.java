@@ -9,6 +9,8 @@
 
 package org.dawnsci.surfacescatter;
 
+import java.util.Arrays;
+
 import org.dawnsci.boofcv.BoofCVImageTrackerServiceCreator;
 import org.eclipse.dawnsci.analysis.api.image.IImageTracker;
 import org.eclipse.dawnsci.analysis.api.image.IImageTracker.TrackerType;
@@ -248,6 +250,10 @@ public class TwoDTracking2 {
 		Dataset[] fittingBackground = BoxSlicerRodScanUtilsForDialog.LeftRightTopBottomBoxes(input, len, pt,
 				model.getBoundaryBox());
 
+		if(Arrays.equals(fittingBackground[0].getShape(),(new int[] {2,2})) && fittingBackground.length == 1){
+			return (IDataset) fittingBackground[0];
+		}
+		
 		Dataset offset = DatasetFactory.ones(fittingBackground[2].getShape(), Dataset.FLOAT64);
 
 		System.out.println("Tracker position:  " + location[1] + " , " + location[0]);
@@ -500,6 +506,10 @@ public class TwoDTracking2 {
 		
 		Dataset[] fittingBackground = BoxSlicerRodScanUtilsForDialog.LeftRightTopBottomBoxes(input, len, pt,
 				model.getBoundaryBox());
+		
+		if(fittingBackground[0].getShape().equals(new int[] {2,2}) && fittingBackground.length == 1){
+			return (IDataset) fittingBackground[0];
+		}
 
 		Dataset offset = DatasetFactory.ones(fittingBackground[2].getShape(), Dataset.FLOAT64);
 

@@ -164,8 +164,17 @@ public class BoxSlicerRodScanUtilsForDialog {
 //					}
 					xset.set(i, l);
 					yset.set(j, l);
-					zset.set(regionOfRegard.getDouble(i, j), l);
-					l++;
+					try{
+						zset.set(regionOfRegard.getDouble(i, j), l);
+					}
+					catch(ArrayIndexOutOfBoundsException e){
+						
+						Dataset[] errorDatArray = new Dataset[1];
+						Dataset errorDat = DatasetFactory.zeros(new int [] {2,2});
+						errorDatArray[0] = errorDat;
+						return errorDatArray;
+					}
+						l++;
 				}
 				else{
 					}
@@ -204,7 +213,16 @@ public class BoxSlicerRodScanUtilsForDialog {
 				if ((j<boundaryBox || j>=(boundaryBox+len[0]))||(i<boundaryBox || i>=(boundaryBox+len[1]))){
 					xset.set(i, l);
 					yset.set(j, l);
-					zset.set(regionOfRegard.getDouble(i, j), l);
+					try{
+						zset.set(regionOfRegard.getDouble(i, j), l);
+					}
+					catch(ArrayIndexOutOfBoundsException e){
+						
+						Dataset[] errorDatArray = new Dataset[1];
+						Dataset errorDat = DatasetFactory.zeros(new int [] {2,2});
+						errorDatArray[0] = errorDat;
+						return errorDatArray;
+					}
 					l++;
 				}
 				else{

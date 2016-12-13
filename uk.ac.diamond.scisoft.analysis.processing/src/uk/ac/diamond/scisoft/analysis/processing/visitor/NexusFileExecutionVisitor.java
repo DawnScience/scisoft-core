@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.visitor;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -22,6 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
 import org.eclipse.dawnsci.analysis.api.metadata.UnitMetadata;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistentNodeFactory;
@@ -33,6 +36,8 @@ import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
+import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
+import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.tree.impl.AttributeImpl;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
@@ -54,6 +59,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
+import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 
 public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFile {
 	
@@ -84,6 +90,8 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	private String filePath;
 	private NexusFile nexusFile;
 	
+	private String originalFilePath;
+	
 	private boolean swmring = false;
 	
 	private AtomicInteger count = new AtomicInteger(0);
@@ -91,11 +99,16 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 
 	private final static Logger logger = LoggerFactory.getLogger(NexusFileExecutionVisitor.class);
 	
-	public NexusFileExecutionVisitor(String filePath, boolean swmr) {
+	public NexusFileExecutionVisitor(String filePath, boolean swmr, String originalFilePath) {
 		this.filePath = filePath;
 		firstNotifyMap = new ConcurrentHashMap<IOperation, AtomicBoolean>();
 		positionMap = new ConcurrentHashMap<IOperation, Integer>();
 		this.swmring = swmr;
+		this.originalFilePath = originalFilePath;
+	}
+	
+	public NexusFileExecutionVisitor(String filePath, boolean swmr) {
+		this(filePath,swmr,null);
 	}
 	
 	public NexusFileExecutionVisitor(String filePath) {
@@ -168,6 +181,31 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			IDataset dataset = DatasetFactory.zeros(new int[]{1}, Dataset.INT32);
 			dataset.setName(FINISHED);
 			createWriteableLazy(dataset, group);
+		}
+				if (originalFilePath != null) {
+			try {
+				ILoaderService loaderService = LocalServiceManager.getLoaderService();
+				IDataHolder dh = loaderService.getData(originalFilePath, null);
+				Tree tree = dh.getTree();
+				if (tree == null) return;
+				NodeLink nl = tree.getNodeLink();
+				nl.toString();
+				Node d = nl.getDestination();
+				if (d instanceof GroupNode) {
+					GroupNode gn = (GroupNode)d;
+					Map<String, GroupNode> groupNodeMap = gn.getGroupNodeMap();
+					Set<String> keys = groupNodeMap.keySet();
+					for (String key : keys) {
+						String updatedName = "raw_" + key;
+						int count = 0;
+						while(keys.contains(updatedName)) updatedName = "raw_" + key + count++;
+						nexusFile.linkExternal(new URI("nxfile://"+originalFilePath+"#"+key),"/"+updatedName , true);
+					}
+				}
+			} catch (Exception e) {
+				logger.error("Could not link original file", e);
+			}
+			
 		}
 	}
 

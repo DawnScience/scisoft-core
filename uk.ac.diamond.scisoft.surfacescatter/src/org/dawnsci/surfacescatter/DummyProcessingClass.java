@@ -14,6 +14,8 @@ import org.eclipse.swt.widgets.Composite;
 public class DummyProcessingClass {
 	
 	
+	private static Dataset yValue;
+	
 	public static IDataset DummyProcess(SuperModel sm, 
 										IDataset input, 
 										ExampleModel model, 
@@ -131,6 +133,8 @@ public class DummyProcessingClass {
 			} catch (DatasetException e) {
 	
 			}
+			
+			yValue = Maths.multiply(output, correction.getDouble(k));
 		}
 		
 		else if (correctionSelector ==1){
@@ -138,14 +142,21 @@ public class DummyProcessingClass {
 			try {
 				correction = DatasetFactory.createFromObject(GeometricCorrectionsReflectivityMethod.reflectivityCorrectionsBatch(model.getDcdtheta(), k, sm, input, gm.getAngularFudgeFactor(), 
 						gm.getBeamHeight(), gm.getFootprint()));
-				correction = Maths.multiply(correction, 
-						ReflectivityFluxCorrectionsForDialog.reflectivityFluxCorrections(gm.getFluxPath(), model.getQdcdDat().getDouble(k), model));
+				
+				Dataset ref = 
+						ReflectivityFluxCorrectionsForDialog.reflectivityFluxCorrections(gm.getFluxPath(), 
+																						 model.getQdcdDat().getDouble(k), 
+																						 model);
+				
+				correction = Maths.multiply(correction, ref);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-			
+			yValue = Maths.multiply(output, correction.getDouble(0));
+//			double normalisation  = 1/output.getDouble(0);
+//			yValue = Maths.multiply(normalisation, yValue);
 		}
 		else{
 			
@@ -158,7 +169,7 @@ public class DummyProcessingClass {
 		}
 		
 		
-		Dataset yValue = Maths.multiply(output, correction.getDouble(k));
+		
 		
 		
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
@@ -251,6 +262,8 @@ public class DummyProcessingClass {
 			} catch (DatasetException e) {
 	
 			}
+			
+			yValue = Maths.multiply(output, correction.getDouble(k));
 		}
 		
 		else if (correctionSelector ==1){
@@ -266,6 +279,9 @@ public class DummyProcessingClass {
 			}
 
 			
+			yValue = Maths.multiply(output, correction.getDouble(0));
+//			double normalisation  = 1/output.getDouble(0);
+//			yValue = Maths.multiply(normalisation, yValue);
 		}
 		else{
 			
@@ -278,7 +294,7 @@ public class DummyProcessingClass {
 		}
 		
 		
-		Dataset yValue = Maths.multiply(output, correction.getDouble(k));
+//		Dataset yValue = Maths.multiply(output, correction.getDouble(k));
 		
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
@@ -376,6 +392,7 @@ public class DummyProcessingClass {
 			} catch (DatasetException e) {
 	
 			}
+			yValue = Maths.multiply(output, correction.getDouble(k));
 		}
 		
 		else if (correctionSelector ==1){
@@ -390,9 +407,15 @@ public class DummyProcessingClass {
 				e.printStackTrace();
 			}
 
+//			double normalisation  = 1/output.getDouble(0);
 			
+			yValue = Maths.multiply(output, correction.getDouble(0));
+//			yValue = Maths.multiply(normalisation, yValue);
 		}
 		else{
+			
+			
+			
 			
 		}
 		try {
@@ -403,7 +426,7 @@ public class DummyProcessingClass {
 		}
 		
 		
-		Dataset yValue = Maths.multiply(output, correction.getDouble(k));
+//		Dataset yValue = Maths.multiply(output, correction.getDouble(k));
 		
 		
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
@@ -504,6 +527,7 @@ public class DummyProcessingClass {
 			} catch (DatasetException e) {
 	
 			}
+			yValue = Maths.multiply(output, correction.getDouble(k));
 		}
 		
 		else if (correctionSelector ==1){
@@ -518,6 +542,9 @@ public class DummyProcessingClass {
 				e.printStackTrace();
 			}
 
+			yValue = Maths.multiply(output, correction.getDouble(0));
+//			double normalisation  = 1/output.getDouble(0);
+//			yValue = Maths.multiply(normalisation, yValue);
 		}
 		else{
 			
@@ -529,7 +556,7 @@ public class DummyProcessingClass {
 			e.printStackTrace();
 		}
 			
-		Dataset yValue = Maths.multiply(output, correction.getDouble(k));
+//		Dataset yValue = Maths.multiply(output, correction.getDouble(k));
 		
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);

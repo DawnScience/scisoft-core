@@ -194,7 +194,7 @@ public class SecondConstantROI{
 		while (it1.hasNext()) {
 			double q = pBackgroundSubtracted.getElementDoubleAbs(it1.index);
 			if (q < 0)
-				pBackgroundSubtracted.setObjectAbs(it1.index, 0);
+				pBackgroundSubtracted.setObjectAbs(it1.index, 0.1);
 		}
 			
 		output = DatasetUtils.cast(pBackgroundSubtracted, Dataset.FLOAT64);

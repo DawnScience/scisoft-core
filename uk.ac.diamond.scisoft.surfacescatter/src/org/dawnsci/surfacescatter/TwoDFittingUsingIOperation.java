@@ -25,7 +25,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial2D;
 /**
  * Cuts out the region of interest and fits it with a 2D polynomial background.
  */
-public class TwoDFitting{
+public class TwoDFittingUsingIOperation{
 	
 	private static Dataset output;
 	private static Polynomial2D g2;

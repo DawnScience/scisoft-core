@@ -275,7 +275,7 @@ public class TwoDTracking {
 		while (it.hasNext()) {
 			double v = in1Background.getElementDoubleAbs(it.index);
 			if (v < 0)
-				in1Background.setObjectAbs(it.index, 0);
+				in1Background.setObjectAbs(it.index, 0.1);
 		}
 
 		dm.addBackgroundDatArray(in1Background);

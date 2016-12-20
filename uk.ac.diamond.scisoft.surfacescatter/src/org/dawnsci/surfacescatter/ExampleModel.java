@@ -243,8 +243,6 @@ public class ExampleModel {
 		
 	}
 
-	
-
 	public void setQdcd(ILazyDataset qdcd) {
 		this.qdcd = qdcd;
 	}

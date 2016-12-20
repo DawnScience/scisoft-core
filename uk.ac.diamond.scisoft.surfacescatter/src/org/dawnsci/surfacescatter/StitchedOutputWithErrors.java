@@ -222,6 +222,28 @@ public class StitchedOutputWithErrors {
 		sortedAttenuatedDatasets[0].setError(sortedYArrayCorrectedError);
 		sortedAttenuatedDatasets[2].setError(sortedYArrayCorrectedFhklError);
 		
+		if(sm.getCorrectionSelection() == 1){
+			
+			double normalisation = 1/sortedAttenuatedDatasets[0].getDouble(0);
+			sortedAttenuatedDatasets[0] = 
+					Maths.multiply(sortedAttenuatedDatasets[0], normalisation);
+			
+			sortedYArrayCorrectedError = Maths.multiply(sortedYArrayCorrectedError, normalisation);
+			
+			
+			double normalisationFhkl = 1/sortedAttenuatedDatasets[2].getDouble(0);
+			sortedAttenuatedDatasets[2] = 
+					Maths.multiply(sortedAttenuatedDatasets[2], normalisation);
+		
+			sortedYArrayCorrectedFhklError = Maths.multiply(sortedYArrayCorrectedFhklError, normalisationFhkl);
+			
+			
+			sortedAttenuatedDatasets[0].setError(sortedYArrayCorrectedError);
+			sortedAttenuatedDatasets[2].setError(sortedYArrayCorrectedFhklError);
+			
+			
+			
+		}
 		
 		sm.setSplicedCurveY(sortedAttenuatedDatasets[0]);
 		sm.setSplicedCurveX(sortedAttenuatedDatasets[1]);
@@ -401,6 +423,28 @@ public class StitchedOutputWithErrors {
 		sortedAttenuatedDatasets[5] = sortedYArrayCorrectedErrorMin;
 		sortedAttenuatedDatasets[6] = sortedYArrayCorrectedFhklErrorMin;
 		
+		if(sm.getCorrectionSelection() == 1){
+				
+				double normalisation = 1/sortedAttenuatedDatasets[0].getDouble(0);
+				sortedAttenuatedDatasets[0] = 
+						Maths.multiply(sortedAttenuatedDatasets[0], normalisation);
+				
+				sortedYArrayCorrectedError = Maths.multiply(sortedYArrayCorrectedError, normalisation);
+				
+				
+				double normalisationFhkl = 1/sortedAttenuatedDatasets[2].getDouble(0);
+				sortedAttenuatedDatasets[2] = 
+						Maths.multiply(sortedAttenuatedDatasets[2], normalisation);
+			
+				sortedYArrayCorrectedFhklError = Maths.multiply(sortedYArrayCorrectedFhklError, normalisationFhkl);
+				
+				
+				sortedAttenuatedDatasets[0].setError(sortedYArrayCorrectedError);
+				sortedAttenuatedDatasets[2].setError(sortedYArrayCorrectedFhklError);
+				
+				
+				
+		}
 		
 		sm.setSplicedCurveY(sortedAttenuatedDatasets[0]);
 		sm.setSplicedCurveX(sortedAttenuatedDatasets[1]);
@@ -595,7 +639,29 @@ public class StitchedOutputWithErrors {
 		
 		sortedAttenuatedDatasets[5] = sortedYArrayCorrectedErrorMin;
 		sortedAttenuatedDatasets[6] = sortedYArrayCorrectedFhklErrorMin;
-
+		
+		if(sm.getCorrectionSelection() == 1){
+			
+			double normalisation = 1/sortedAttenuatedDatasets[0].getDouble(0);
+			sortedAttenuatedDatasets[0] = 
+					Maths.multiply(sortedAttenuatedDatasets[0], normalisation);
+			
+			sortedYArrayCorrectedError = Maths.multiply(sortedYArrayCorrectedError, normalisation);
+			
+			
+			double normalisationFhkl = 1/sortedAttenuatedDatasets[2].getDouble(0);
+			sortedAttenuatedDatasets[2] = 
+					Maths.multiply(sortedAttenuatedDatasets[2], normalisation);
+		
+			sortedYArrayCorrectedFhklError = Maths.multiply(sortedYArrayCorrectedFhklError, normalisationFhkl);
+			
+			
+			sortedAttenuatedDatasets[0].setError(sortedYArrayCorrectedError);
+			sortedAttenuatedDatasets[2].setError(sortedYArrayCorrectedFhklError);
+			
+			
+			
+		}
 
 		sm.setSplicedCurveY(sortedAttenuatedDatasets[0]);
 		sm.setSplicedCurveX(sortedAttenuatedDatasets[1]);

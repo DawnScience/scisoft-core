@@ -44,7 +44,7 @@ public class SuperModel {
 	private ArrayList<IDataset> outputDatArray;
 	private ArrayList<IDataset> backgroundDatArray;
 	private ArrayList<double[]> locationList; 
-	private int[][] initialLenPt;
+	private int[][] initialLenPt = new int[][] {{10, 10}, {50, 50}};
 	private boolean errorDisplayFlag = true;
 	private IRectangularROI backgroundROI = new RectangularROI(10,10,50,50,0);
 	private int[][] backgroundLenPt;

@@ -34,6 +34,7 @@ public class VerticalHorizontalSlices {
 			a = iih.getShape()[0];
 		}
 		
+		
 		for(int iy = 0;iy<lenh[0];iy++){
 			
 //			System.out.println("iy : " +iy);
@@ -52,9 +53,6 @@ public class VerticalHorizontalSlices {
 		
 		ILineTrace lt1 = pS.createLineTrace("horizontal slice");
 		lt1.setData(xhrange, iihdata);
-		
-	 
-		
 		
 		return lt1;
 	}

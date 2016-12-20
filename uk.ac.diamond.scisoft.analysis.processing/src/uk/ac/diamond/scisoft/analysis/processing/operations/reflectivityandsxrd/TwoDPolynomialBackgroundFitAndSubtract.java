@@ -62,24 +62,15 @@ public class TwoDPolynomialBackgroundFitAndSubtract extends AbstractOperation<Bo
 	
 		Dataset[] fittingBackground = BoxSlicerRodScanUtils.LeftRightTopBottomBoxes(input, monitor, box.getIntLengths(),
 				box.getIntPoint(), model.getBoundaryBox());
-	
-//		LinearLeastSquares tFit = new LinearLeastSquares(0.0000000000000000000001);
-		
+			
 		Dataset offset = DatasetFactory.ones(fittingBackground[2].getShape(), Dataset.FLOAT64);
 		
 		Dataset intermediateFitTest = Maths.add(offset, fittingBackground[2]);
 		Dataset matrix = LinearLeastSquaresServicesForSXRD.polynomial2DLinearLeastSquaresMatrixGenerator(
 				model.getFitPower(), fittingBackground[0], fittingBackground[1]);
 		
-//		Dataset zSigma =
-//		LinearLeastSquaresServicesForSXRD.polynomial2DLinearLeastSquaresSigmaGenerator
-//		(intermediateFitTest);
-		
 		DoubleDataset test = (DoubleDataset)LinearAlgebra.solveSVD(matrix, intermediateFitTest);
 		double[] params = test.getData();
-		
-//		double[] params = tFit.solve(matrix, intermediateFitTest, zSigma);
-		
 		
 		DoubleDataset in1Background = g2.getOutputValues0(params, box.getIntLengths(), model.getBoundaryBox(),
 				model.getFitPower());

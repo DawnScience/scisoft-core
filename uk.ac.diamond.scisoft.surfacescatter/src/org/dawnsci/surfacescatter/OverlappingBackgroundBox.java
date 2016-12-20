@@ -229,7 +229,7 @@ public class OverlappingBackgroundBox{
 			while (it.hasNext()) {
 				double v = in1Background.getElementDoubleAbs(it.index);
 				if (v < 0)
-					in1Background.setObjectAbs(it.index, 0);
+					in1Background.setObjectAbs(it.index, 0.1);
 			}
 		
 			System.out.println("background sum: " + in1Background.sum());
@@ -244,7 +244,7 @@ public class OverlappingBackgroundBox{
 			while (it1.hasNext()) {
 				double q = pBackgroundSubtracted.getElementDoubleAbs(it1.index);
 				if (q < 0)
-					pBackgroundSubtracted.setObjectAbs(it1.index, 0);
+					pBackgroundSubtracted.setObjectAbs(it1.index, 0.1);
 			}
 			
 			output = DatasetUtils.cast(pBackgroundSubtracted, Dataset.FLOAT64);

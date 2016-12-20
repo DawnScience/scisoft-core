@@ -37,6 +37,7 @@ public class RecoverNormalisationFluxBatchForDialog {
 		
 		
 		if (model.getFlux() == null) {
+			
 			try{ 
 				IDataHolder dh1 =LoaderFactory.getData(path);
 				flux =dh1.getLazyDataset(ReflectivityMetadataTitlesForDialog.getadc2()); 
@@ -47,7 +48,17 @@ public class RecoverNormalisationFluxBatchForDialog {
 			}
 			catch (Exception e){
 				System.out.println("No normalisation data availbale externally");
-				}
+			}
+		
+			try { 
+				flux = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(null, model.getFilepath(), "ionc1")); 
+				theta = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(null, model.getFilepath(), "qsdcd"));
+			
+			}
+			catch (Exception e){
+				System.out.println("No normalisation data available internally");
+				
+			}
 		}
 		
 		else{

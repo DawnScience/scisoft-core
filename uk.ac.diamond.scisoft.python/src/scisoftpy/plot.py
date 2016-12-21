@@ -443,11 +443,11 @@ def _process_image(x, y, im, name, resetaxes):
         _clear_axis(name)
 
     if x is not None:
-        ax = _setup_axes([x], 'x', name)[0]
+        ax = _setup_axes([x], 'x', name, resetaxes)[0]
     else:
         ax = None
     if y is not None:
-        ay = _setup_axes([y], 'y', name)[0]
+        ay = _setup_axes([y], 'y', name, resetaxes)[0]
     else:
         ay = None
 

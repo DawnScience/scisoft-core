@@ -11,6 +11,11 @@ package org.dawnsci.surfacescatter;
 
 import java.util.Arrays;
 
+import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
@@ -21,19 +26,35 @@ import org.eclipse.january.dataset.Maths;
 import org.eclipse.swt.widgets.Display;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial2D;
+import uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.BoxSlicerModel;
 
 /**
  * Cuts out the region of interest and fits it with a 2D polynomial background.
  */
-public class TwoDFittingUsingIOperation{
+public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingModel, OperationData> {
 	
 	private static Dataset output;
 	private static Polynomial2D g2;
 	
-	public static Dataset TwoDFitting1(IDataset input, 
-									   ExampleModel model,
-									   SuperModel sm,
-									   int selection){
+	@Override
+	public String getId() {
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.TwoDPolynomialBackgroundFitAndSubtract";
+	}
+
+	@Override
+	public OperationRank getInputRank() {
+		return OperationRank.TWO ;
+	}
+
+	@Override
+	public OperationRank getOutputRank() {
+		return OperationRank.TWO ;
+	}
+	
+	
+	@Override	
+	protected OperationData process(IDataset input, 
+									    IMonitor monitor){
 		
 		
 		g2 = null;
@@ -55,7 +76,8 @@ public class TwoDFittingUsingIOperation{
 				pt, model.getBoundaryBox());
 		
 		if(Arrays.equals(fittingBackground[0].getShape(),(new int[] {2,2})) && fittingBackground.length == 1){
-			return (Dataset) fittingBackground[0];
+			double[] location=  new double[] {2,2};
+			return new OperationData( fittingBackground[0], location);
 		}
 		
 		Dataset matrix = LinearLeastSquaresServicesForDialog.polynomial2DLinearLeastSquaresMatrixGenerator(
@@ -67,15 +89,10 @@ public class TwoDFittingUsingIOperation{
 			public void run() {
 			DoubleDataset test = (DoubleDataset)LinearAlgebra.solveSVD(matrix, fittingBackground[2]);
 			double[] params = test.getData();
-			
-//			for (int i = 0 ; i<params.length; i++){
-//				System.out.println("params["+i+"] : " + params[i]);
-//			}
-			
+						
 			DoubleDataset in1Background = g2.getOutputValues0(params, len, model.getBoundaryBox(),
 					AnalaysisMethodologies.toInt(model.getFitPower()));
-		
-	
+
 			IndexIterator it = in1Background.getIterator();
 		
 			while (it.hasNext()) {
@@ -103,19 +120,21 @@ public class TwoDFittingUsingIOperation{
 			}
 		});
 		
-		 double[] location = new double[] { (double) sm.getInitialLenPt()[1][1], 
-				   (double) sm.getInitialLenPt()[1][0], 
-				   (double) (sm.getInitialLenPt()[1][1] + sm.getInitialLenPt()[0][1]), 
-				   (double) (sm.getInitialLenPt()[1][0]),
-				   (double) sm.getInitialLenPt()[1][1], 
-				   (double) sm.getInitialLenPt()[1][0] + sm.getInitialLenPt()[0][0], 
-				   (double) (sm.getInitialLenPt()[1][1] + sm.getInitialLenPt()[0][1]), 
-				   (double) (sm.getInitialLenPt()[1][0] + sm.getInitialLenPt()[0][0]) };
+		 double[] location = new double[] { (double) model.getInitialLenPt()[1][1], 
+				   (double) model.getInitialLenPt()[1][0], 
+				   (double) (model.getInitialLenPt()[1][1] + model.getInitialLenPt()[0][1]), 
+				   (double) (model.getInitialLenPt()[1][0]),
+				   (double) model.getInitialLenPt()[1][1], 
+				   (double) model.getInitialLenPt()[1][0] + model.getInitialLenPt()[0][0], 
+				   (double) (model.getInitialLenPt()[1][1] + model.getInitialLenPt()[0][1]), 
+				   (double) (model.getInitialLenPt()[1][0] + model.getInitialLenPt()[0][0]) };
 
-		sm.addLocationList(selection, location);
+//		sm.addLocationList(selection, location);
 		
-		return output;
+		return new OperationData(output, location);
 	}
+
+	
 	
 	
 	

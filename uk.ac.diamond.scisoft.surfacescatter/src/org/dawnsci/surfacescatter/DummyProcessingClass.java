@@ -1,14 +1,21 @@
 package org.dawnsci.surfacescatter;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.metadata.Metadata;
 import org.eclipse.swt.widgets.Composite;
 
 public class DummyProcessingClass {
@@ -37,8 +44,25 @@ public class DummyProcessingClass {
 				}
 				else{
 				}				
-				TwoDTracking twoDTracking = new TwoDTracking();
-				output = twoDTracking.TwoDTracking1(sm, input, model, dm, trackingMarker, k, selection);
+//				TwoDTracking twoDTracking = new TwoDTracking();
+//				output = twoDTracking.TwoDTracking1(sm, input, model, dm, trackingMarker, k, selection);
+				
+				AgnosticTrackerHandler ath = new AgnosticTrackerHandler();
+				
+				ath.TwoDTracking3(sm, 
+								  input, 
+								  model, 
+								  dm, 
+								  trackingMarker, 
+								  k, 
+								  selection);
+				
+				OperationData outputOD= TwoDFittingIOp(model,
+													   input,
+													   sm);
+				output = outputOD.getData();
+				double[] loc =  (double[]) outputOD.getAuxData()[0];
+				sm.addLocationList(loc);
 				
 				
 				
@@ -50,10 +74,18 @@ public class DummyProcessingClass {
 				}
 				else{
 				}
-				output = TwoDFitting.TwoDFitting1(input,
-												  model,
-												  sm,
-												  selection);
+//				output = TwoDFitting.TwoDFitting1(input,
+//												  model,
+//												  sm,
+//												  selection);
+				
+				OperationData outputOD1= TwoDFittingIOp(model,
+						   input,
+						   sm);
+				output = outputOD1.getData();
+				double[] loc1 =  (double[]) outputOD1.getAuxData()[0];
+				sm.addLocationList(loc1);	
+				
 				break;
 				
 			case SECOND_BACKGROUND_BOX:
@@ -206,8 +238,30 @@ public class DummyProcessingClass {
 				}
 				else{
 				}				
-				TwoDTracking twoDTracking = new TwoDTracking();
-				output = twoDTracking.TwoDTracking1(sm, input, model, dm, trackingMarker, k,selection);
+//				TwoDTracking twoDTracking = new TwoDTracking();
+//				output = twoDTracking.TwoDTracking1(sm, input, model, dm, trackingMarker, k,selection);
+				
+				AgnosticTrackerHandler ath = new AgnosticTrackerHandler();
+				
+				ath.TwoDTracking3(sm,
+								  input, 
+								  model,
+								  dm, 
+								  trackingMarker, 
+								  k,
+								  selection);
+				
+
+				OperationData outputOD= TwoDFittingIOp(model,
+													   input,
+													   sm);
+				output = outputOD.getData();
+				double[] loc =  (double[]) outputOD.getAuxData()[0];
+				sm.addLocationList(loc);
+				
+				
+				
+				
 				break;
 			case TWOD:
 				if (pS.getRegion("Background Region")!=null){
@@ -215,10 +269,18 @@ public class DummyProcessingClass {
 				}
 				else{
 				}
-				output = TwoDFitting.TwoDFitting1(input,
-						  						  model,
-						  						  sm,
-						  						  selection);
+//				output = TwoDFitting.TwoDFitting1(input,
+//						  						  model,
+//						  						  sm,
+//						  						  selection);
+				
+				OperationData outputOD1= TwoDFittingIOp(model,
+						   input,
+						   sm);
+				output = outputOD1.getData();
+				double[] loc1 =  (double[]) outputOD1.getAuxData()[0];
+				sm.addLocationList(loc1);	
+				
 				break;
 			case SECOND_BACKGROUND_BOX:
 				if (pS.getRegion("Background Region")!=null){
@@ -336,8 +398,26 @@ public class DummyProcessingClass {
 				}
 				else{
 				}				
-				TwoDTracking twoDTracking = new TwoDTracking();
-				output = twoDTracking.TwoDTracking1(sm, input, model, dm, trackingMarker, k, selection);
+//				TwoDTracking twoDTracking = new TwoDTracking();
+//				output = twoDTracking.TwoDTracking1(sm, input, model, dm, trackingMarker, k, selection);
+				
+				AgnosticTrackerHandler ath = new AgnosticTrackerHandler();
+							
+				ath.TwoDTracking3(sm, 
+								  input, 
+								  model, 
+								  dm, 
+								  trackingMarker, 
+								  k, 
+								  selection);
+				
+				OperationData outputOD= TwoDFittingIOp(model,
+													   input,
+													   sm);
+				output = outputOD.getData();
+				double[] loc =  (double[]) outputOD.getAuxData()[0];
+				sm.addLocationList(loc);
+				
 				break;
 			case TWOD:
 				if (pS.getRegion("Background Region")!=null){
@@ -345,10 +425,20 @@ public class DummyProcessingClass {
 				}
 				else{
 				}
-				output = TwoDFitting.TwoDFitting1(input,
-						  					      model,
-						  					      sm,
-						  					      selection);	
+				
+				OperationData outputOD1= TwoDFittingIOp(model,
+						   input,
+						   sm);
+				
+				
+
+				output = outputOD1.getData();
+				double[] loc1 =  (double[]) outputOD1.getAuxData()[0];
+				sm.addLocationList(loc1);		
+//						TwoDFitting1(input,
+//						  					      model,
+//						  					      sm,
+//						  					      selection);	
 				break;
 			case SECOND_BACKGROUND_BOX:
 				if (pS.getRegion("Background Region")!=null){
@@ -465,26 +555,53 @@ public class DummyProcessingClass {
 				}
 				else{
 				}				
-				TwoDTracking2 twoDTracking = new TwoDTracking2();
-				output = twoDTracking.TwoDTracking1(input, 
-													model,
-													sm,
-													dm, 
-													trackingMarker, 
-													k,
-													locationList,
-													selection);
+//				TwoDTracking2 twoDTracking = new TwoDTracking2();
+				AgnosticTrackerHandler ath = new AgnosticTrackerHandler();
+				
+				ath.TwoDTracking1(input, 
+						model,
+						sm,
+						dm, 
+						trackingMarker, 
+						k,
+						locationList,
+						selection);
+				
+
+				OperationData outputOD= TwoDFittingIOp(model,
+													   input,
+													   sm);
+				output = outputOD.getData();
+				double[] loc =  (double[]) outputOD.getAuxData()[0];
+				sm.addLocationList(loc);
+				
+				
+//				output = twoDTracking.TwoDTracking1(input, 
+//													model,
+//													sm,
+//													dm, 
+//													trackingMarker, 
+//													k,
+//													locationList,
+//													selection);
 				break;
+				
 			case TWOD:
 				if (pS.getRegion("Background Region")!=null){
 					pS.removeRegion(pS.getRegion("Background Region"));
 				}
 				else{
 				}
-				output = TwoDFitting.TwoDFitting1(input,
-						  						  model,
-						  						  sm,
-						  						  selection);
+
+				
+				
+				OperationData outputOD1= TwoDFittingIOp(model,
+													   input,
+													   sm);
+				output = outputOD1.getData();
+				double[] loc1 = (double[]) outputOD1.getAuxData()[0] ;
+				sm.addLocationList(loc1);	
+				
 				break;
 			case SECOND_BACKGROUND_BOX:
 				if (pS.getRegion("Background Region")!=null){
@@ -574,5 +691,40 @@ public class DummyProcessingClass {
 		return output;
 	}
 	
+	
+	public static OperationData TwoDFittingIOp(ExampleModel model,
+										IDataset input,
+										SuperModel sm){
+		
+		TwoDFittingModel tdfm = new TwoDFittingModel();
+		tdfm.setInitialLenPt(sm.getInitialLenPt());
+		tdfm.setLenPt(model.getLenPt());
+		tdfm.setFitPower(model.getFitPower());
+		tdfm.setBoundaryBox(model.getBoundaryBox());
+		
+		Metadata md = new Metadata();
+		IDataset dummyMD = DatasetFactory.zeros(new int [] {2,2});
+		Map<String, Integer> dumMap = new HashMap<String, Integer>();
+		dumMap.put("one", 1);
+		md.initialize(dumMap);
+		
+		ILazyDataset  ild = null;
+		
+		SourceInformation  si =new SourceInformation("dummy", "dummy2", ild);
+		
+		SliceFromSeriesMetadata sfsm = new SliceFromSeriesMetadata(si);
+		
+		input.setMetadata(sfsm);
+		
+		input.setMetadata(md);
+		
+		TwoDFittingUsingIOperation tdfuio = new TwoDFittingUsingIOperation();
+		tdfuio.setModel(tdfm);
+		
+		return tdfuio.execute(input, null);
+		
+//		return outputOD.getData();
+		
+	}
 	
 }

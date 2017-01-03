@@ -53,7 +53,6 @@
 					<exclude name="**/FlatteningViaAnalysisRpcToPythonAndRunLocalLoopbackTest.java" />
 					<exclude name="**/FlatteningViaXmlRpcToPythonTest.java" />
 					<exclude name="**/FlatteningViaXmlRpcToPythonAndRunPythonFlattenTest.java" />
-					<exclude name="**/SDAPlotterViaRpcTest.java" />
 				</fileset>
 			</batchtest>
 		</junit-call>

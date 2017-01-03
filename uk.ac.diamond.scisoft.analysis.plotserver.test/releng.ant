@@ -51,6 +51,8 @@
 				<fileset dir="${plugin.basedir}/src">
 					<include name="**/*Test.java" />
 					<exclude name="**/*PluginTest.java" />
+					<!-- skip some tests that fail intermittently under Jenkins, possibly because test jobs run in parallel -->
+					<exclude name="**/SDAPlotterViaRpcTest.java" />
 				</fileset>
 			</batchtest>
 		</junit-call>

@@ -186,4 +186,4 @@ public class Export1DNXcanSASOperation extends AbstractOperation<Export1DNXcanSA
 		nexusFileReference.addNode("/sasentry", nxEntry);
 		nexusFileReference.addNode("/sasentry/sasdata", nxData);
 	}
-}
+} 

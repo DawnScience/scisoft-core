@@ -612,12 +612,21 @@ public class StitchedOutputWithErrors {
 		Dataset sortedYArrayCorrectedFhklError= (DatasetUtils.convertToDataset(DatasetUtils.concatenate(yArrayCorrectedFhklError, 0)));
 		
 		
+		if (sortedAttenuatedDatasets[1].getSize() != 
+				sortedAttenuatedDatasets[0].getSize()){
+			System.out.println("array mismatch");
+		} 
 		
 		DatasetUtils.sort(sortedAttenuatedDatasets[1],
 				sortedAttenuatedDatasets[0]);
 		
 		DatasetUtils.sort(sortedAttenuatedDatasets[1],
 				sortedAttenuatedDatasets[2]);
+		
+		if (sortedAttenuatedDatasets[1].getSize() != 
+				sortedYArrayCorrectedError.getSize()){
+			System.out.println("array mismatch");
+		}
 		
 		DatasetUtils.sort(sortedAttenuatedDatasets[1],
 				sortedYArrayCorrectedError);

@@ -21,6 +21,8 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.SliceND;
 
 
@@ -171,13 +173,23 @@ public class BoxSlicerRodScanUtilsForDialog {
 						
 						Dataset[] errorDatArray = new Dataset[1];
 						Dataset errorDat = DatasetFactory.zeros(new int [] {2,2});
+						IndexIterator it1 = ((Dataset) errorDat).getIterator();
+						
+						while (it1.hasNext()) {
+							double q = ((Dataset) errorDat).getElementDoubleAbs(it1.index);
+							if (q <= 0)
+								((Dataset) errorDat).setObjectAbs(it1.index, 0.1);
+						}
+						
 						errorDatArray[0] = errorDat;
 						return errorDatArray;
 					}
 						l++;
 				}
 				else{
+					
 					}
+				
 				}
 		}	
 		
@@ -220,6 +232,7 @@ public class BoxSlicerRodScanUtilsForDialog {
 						
 						Dataset[] errorDatArray = new Dataset[1];
 						Dataset errorDat = DatasetFactory.zeros(new int [] {2,2});
+						Maths.add(errorDat, 0.1);
 						errorDatArray[0] = errorDat;
 						return errorDatArray;
 					}

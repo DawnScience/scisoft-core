@@ -16,6 +16,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.Maths;
 
 import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
@@ -187,7 +188,7 @@ public class BackgroundSetting{
 								}
 								catch(ArrayIndexOutOfBoundsException e){
 									Dataset errorDat = DatasetFactory.zeros(new int [] {2,2});
-//									break cConstructionLoop;
+									Maths.add(errorDat, 0.1);
 									return errorDat;
 									
 								}
@@ -203,7 +204,7 @@ public class BackgroundSetting{
 								catch(ArrayIndexOutOfBoundsException e){
 									
 									Dataset errorDat = DatasetFactory.zeros(new int [] {2,2});
-//									break cConstructionLoop;
+									Maths.add(errorDat, 0.1);
 									return errorDat;
 								}
 								
@@ -249,7 +250,7 @@ public class BackgroundSetting{
 			return in1Background;
 			}
 //
-		Dataset errorDat = DatasetFactory.zeros(new int [] {2,2});
+//		Dataset errorDat = DatasetFactory.zeros(new int [] {2,2});
 		
 //		return errorDat;
 		

@@ -14,6 +14,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.Metadata;
 import org.eclipse.swt.widgets.Composite;
@@ -143,7 +144,22 @@ public class DummyProcessingClass {
 				break;
 		}
 		
+		IndexIterator it1 = ((Dataset) output).getIterator();
+		
+		while (it1.hasNext()) {
+			double q = ((Dataset) output).getElementDoubleAbs(it1.index);
+			if (q <= 0)
+				((Dataset) output).setObjectAbs(it1.index, 0.1);
+		}
+		
 		if(Arrays.equals(output.getShape(), (new int[] {2,2}))){
+			IndexIterator it11 = ((Dataset) output).getIterator();
+			
+			while (it11.hasNext()) {
+				double q = ((Dataset) output).getElementDoubleAbs(it11.index);
+				if (q <= 0)
+					((Dataset) output).setObjectAbs(it11.index, 0.1);
+			}
 			return output;
 		}
 		
@@ -162,6 +178,9 @@ public class DummyProcessingClass {
 				correction = Maths.multiply(
 						SXRDGeometricCorrections.polarisation(model, gm.getInplanePolarisation(), gm.getOutplanePolarisation()),
 						correction);
+				if (correction.getDouble(0) ==0){
+					correction.set(0.001, 0);
+				}
 			} catch (DatasetException e) {
 	
 			}
@@ -181,6 +200,9 @@ public class DummyProcessingClass {
 																						 model);
 				
 				correction = Maths.multiply(correction, ref);
+				if (correction.getDouble(0) ==0){
+					correction.set(0.001, 0);
+				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -203,13 +225,14 @@ public class DummyProcessingClass {
 		
 		
 		
-		
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
 		
 		dm.addyList(model.getDatImages().getShape()[0], k ,intensity);
 		dm.addyListFhkl(model.getDatImages().getShape()[0], k ,fhkl);
 		dm.addOutputDatArray(model.getDatImages().getShape()[0], k ,output);
+		
+		
 		
 		return output;
 	}
@@ -307,6 +330,14 @@ public class DummyProcessingClass {
 				break;
 		}
 		
+		IndexIterator it1 = ((Dataset) output).getIterator();
+		
+		while (it1.hasNext()) {
+			double q = ((Dataset) output).getElementDoubleAbs(it1.index);
+			if (q <= 0)
+				((Dataset) output).setObjectAbs(it1.index, 0.1);
+		}
+		
 		Dataset correction = DatasetFactory.zeros(new int[] {1}, Dataset.FLOAT64);
 		
 		if (correctionSelector == 0){
@@ -321,6 +352,10 @@ public class DummyProcessingClass {
 				correction = Maths.multiply(
 						SXRDGeometricCorrections.polarisation(model, gm.getInplanePolarisation(), gm.getOutplanePolarisation()),
 						correction);
+				
+				if (correction.getDouble(0) ==0){
+					correction.set(0.001, 0);
+				}
 			} catch (DatasetException e) {
 	
 			}
@@ -335,6 +370,10 @@ public class DummyProcessingClass {
 						gm.getBeamHeight(), gm.getFootprint()));
 				correction = Maths.multiply(correction, 
 						ReflectivityFluxCorrectionsForDialog.reflectivityFluxCorrections(gm.getFluxPath(), model.getQdcdDat().getDouble(k), model));
+				if (correction.getDouble(0) ==0){
+					correction.set(0.001, 0);
+				}
+
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -361,6 +400,9 @@ public class DummyProcessingClass {
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
 		
+
+		
+		
 		dm.addyList(model.getDatImages().getShape()[0], k ,intensity);
 		dm.addyListFhkl(model.getDatImages().getShape()[0], k ,fhkl);
 		dm.addOutputDatArray(model.getDatImages().getShape()[0], k ,output);
@@ -370,6 +412,7 @@ public class DummyProcessingClass {
 		sm.addyList(sm.getImages().length, selection ,intensity);
 		sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
 		sm.addOutputDatArray(sm.getImages().length, selection ,output);
+		
 		
 		return output;
 	}
@@ -465,6 +508,14 @@ public class DummyProcessingClass {
 				break;
 		}
 		
+		IndexIterator it1 = ((Dataset) output).getIterator();
+		
+		while (it1.hasNext()) {
+			double q = ((Dataset) output).getElementDoubleAbs(it1.index);
+			if (q <= 0)
+				((Dataset) output).setObjectAbs(it1.index, 0.1);
+		}
+		
 		Dataset correction = DatasetFactory.zeros(new int[] {1}, Dataset.FLOAT64);
 		
 		if (correctionSelector == 0){
@@ -479,6 +530,9 @@ public class DummyProcessingClass {
 				correction = Maths.multiply(
 						SXRDGeometricCorrections.polarisation(model, gm.getInplanePolarisation(), gm.getOutplanePolarisation()),
 						correction);
+				if (correction.getDouble(0) ==0){
+					correction.set(0.001, 0);
+				}
 			} catch (DatasetException e) {
 	
 			}
@@ -492,6 +546,10 @@ public class DummyProcessingClass {
 						gm.getBeamHeight(), gm.getFootprint()));
 				correction = Maths.multiply(correction, 
 						ReflectivityFluxCorrectionsForDialog.reflectivityFluxCorrections(gm.getFluxPath(), model.getQdcdDat().getDouble(k), model));
+				if (correction.getDouble(0) ==0){
+					correction.set(0.001, 0);
+				}
+				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -570,20 +628,15 @@ public class DummyProcessingClass {
 
 				OperationData outputOD= TwoDFittingIOp(model,
 													   input,
+
+													   
 													   sm);
 				output = outputOD.getData();
 				double[] loc =  (double[]) outputOD.getAuxData()[0];
 				sm.addLocationList(loc);
 				
 				
-//				output = twoDTracking.TwoDTracking1(input, 
-//													model,
-//													sm,
-//													dm, 
-//													trackingMarker, 
-//													k,
-//													locationList,
-//													selection);
+
 				break;
 				
 			case TWOD:
@@ -628,6 +681,15 @@ public class DummyProcessingClass {
 				break;
 		}
 		
+		IndexIterator it1 = ((Dataset) output).getIterator();
+		
+		while (it1.hasNext()) {
+			double q = ((Dataset) output).getElementDoubleAbs(it1.index);
+			if (q <= 0)
+				((Dataset) output).setObjectAbs(it1.index, 0.1);
+		}
+		
+		
 		Dataset correction = DatasetFactory.zeros(new int[] {1}, Dataset.FLOAT64);
 		if (correctionSelector == 0){
 					
@@ -641,6 +703,9 @@ public class DummyProcessingClass {
 				correction = Maths.multiply(
 						SXRDGeometricCorrections.polarisation(model, gm.getInplanePolarisation(), gm.getOutplanePolarisation()),
 						correction);
+				if (correction.getDouble(0) ==0){
+					correction.set(0.001, 0);
+				}
 			} catch (DatasetException e) {
 	
 			}
@@ -654,14 +719,17 @@ public class DummyProcessingClass {
 						gm.getBeamHeight(), gm.getFootprint()));
 				correction = Maths.multiply(correction, 
 						ReflectivityFluxCorrectionsForDialog.reflectivityFluxCorrections(gm.getFluxPath(), model.getQdcdDat().getDouble(k), model));
+				if (correction.getDouble(0) ==0){
+					correction.set(0.001, 0);
+				}
+			
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
 			yValue = Maths.multiply(output, correction.getDouble(0));
-//			double normalisation  = 1/output.getDouble(0);
-//			yValue = Maths.multiply(normalisation, yValue);
+
 		}
 		else{
 			
@@ -672,9 +740,9 @@ public class DummyProcessingClass {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-			
-//		Dataset yValue = Maths.multiply(output, correction.getDouble(k));
+
 		
+				
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
 		

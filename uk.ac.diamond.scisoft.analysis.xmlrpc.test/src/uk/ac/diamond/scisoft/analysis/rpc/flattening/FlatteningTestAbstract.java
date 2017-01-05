@@ -69,6 +69,22 @@ abstract public class FlatteningTestAbstract {
 
 	protected static IRootFlattener flattener;
 
+	/**
+	 * This toggles whether to use NaNs, infinities in tests.
+	 * <p>
+	 * Note NaN, +/-Inf only work if AnalysisRpc is in the loop or Java is talking to Java.
+	 * <p>
+	 * Note the subclasses that do not support it don't matter because they were written simply to identify these types
+	 * of issues.
+	 * See {@link AnalysisRpcDoubleParser}
+	 */
+	protected static boolean handleDoubleSpecials = true;
+
+	protected RectangularROI createRectangularROI() {
+		// now the rectangular ROI null constructor will have NaNs in some fields
+		return handleDoubleSpecials ? new RectangularROI() : new RectangularROI(10, 0);
+	}
+
 	@BeforeClass
 	public static void setUp() {
 		flattener = new RootFlattener();
@@ -235,20 +251,13 @@ abstract public class FlatteningTestAbstract {
 		flattenAndUnflatten(Double.MAX_VALUE);
 	}
 
-	/**
-	 * Note NaN, +/-Inf only work if AnalysisRpc is in the loop or Java is talking to Java. Therefore this method
-	 * overridden by classes that don't support it. Open hierarchy to see where this test really exists.
-	 * <p>
-	 * Note the subclasses that do not support it don't matter because they were written simply to identify these types
-	 * of issues.
-	 *
-	 * @See {@link AnalysisRpcDoubleParser}
-	 */
 	@Test
 	public void testDoubleSpecialValues() {
-		flattenAndUnflatten(Double.NaN);
-		flattenAndUnflatten(Double.NEGATIVE_INFINITY);
-		flattenAndUnflatten(Double.POSITIVE_INFINITY);
+		if (handleDoubleSpecials) {
+			flattenAndUnflatten(Double.NaN);
+			flattenAndUnflatten(Double.NEGATIVE_INFINITY);
+			flattenAndUnflatten(Double.POSITIVE_INFINITY);
+		}
 	}
 
 	@Test
@@ -300,14 +309,14 @@ abstract public class FlatteningTestAbstract {
 		// arrays of other types come out as arrays if the class of each element of the array is the same
 		flattenAndUnflatten(new String[] { "one", "two" }, new String[] { "one", "two" }); // String[] --> String[]
 		flattenAndUnflatten(new Object[] { "one", "two" }, new String[] { "one", "two" }); // Object[] --> String[]
-		flattenAndUnflatten(new Object[] { new RectangularROI(), new RectangularROI() }, new RectangularROI[] {
-				new RectangularROI(), new RectangularROI() }); // Object[] --> RectangularROI[]
-		flattenAndUnflatten(new Object[] { new RectangularROI(), new LinearROI() }, new IROI[] {
-				new RectangularROI(), new LinearROI() }); // ROIBase[] --> ROIBase[]
-		flattenAndUnflatten(new Object[] { new Integer(0), new RectangularROI(), new LinearROI() }, new Object[] {
-				new Integer(0), new RectangularROI(), new LinearROI() }); // Object[] --> Object[]
-		flattenAndUnflatten(new Object[] { new RectangularROI(), new LinearROI(), new Integer(0) }, new Object[] {
-				new RectangularROI(), new LinearROI(), new Integer(0) }); // Object[] --> Object[]
+		flattenAndUnflatten(new Object[] { createRectangularROI(), createRectangularROI() }, new RectangularROI[] {
+				createRectangularROI(), createRectangularROI() }); // Object[] --> RectangularROI[]
+		flattenAndUnflatten(new Object[] { createRectangularROI(), new LinearROI() }, new IROI[] {
+				createRectangularROI(), new LinearROI() }); // ROIBase[] --> ROIBase[]
+		flattenAndUnflatten(new Object[] { new Integer(0), createRectangularROI(), new LinearROI() }, new Object[] {
+				new Integer(0), createRectangularROI(), new LinearROI() }); // Object[] --> Object[]
+		flattenAndUnflatten(new Object[] { createRectangularROI(), new LinearROI(), new Integer(0) }, new Object[] {
+				createRectangularROI(), new LinearROI(), new Integer(0) }); // Object[] --> Object[]
 
 		// arrays with some (but not all) nulls follow the rule above
 		flattenAndUnflatten(new String[] { null, "two" }, new String[] { null, "two" }); // String[] --> String[]
@@ -327,8 +336,8 @@ abstract public class FlatteningTestAbstract {
 		flattenAndUnflatten(new IDataset[] { intDataset, fltDataset });
 		flattenAndUnflatten(new IntegerDataset[] { intDataset, intDataset });
 		// IROI[]
-		flattenAndUnflatten(new IROI[] { new RectangularROI(), new SectorROI() });
-		flattenAndUnflatten(new RectangularROI[] { new RectangularROI(), new RectangularROI() });
+		flattenAndUnflatten(new IROI[] { createRectangularROI(), new SectorROI() });
+		flattenAndUnflatten(new RectangularROI[] { createRectangularROI(), createRectangularROI() });
 	}
 
 	@Test
@@ -336,7 +345,7 @@ abstract public class FlatteningTestAbstract {
 		ArrayList<RectangularROI> rects = new ArrayList<RectangularROI>();
 		rects.add(new RectangularROI(15, 0.2));
 		rects.add(new RectangularROI(10.1, 11.2, 0));
-		rects.add(new RectangularROI());
+		rects.add(createRectangularROI());
 
 		// Lists are to the same type as every element in the array if they are all the same class...
 		flattenAndUnflatten(rects, rects.toArray(new RectangularROI[0]));
@@ -649,7 +658,7 @@ abstract public class FlatteningTestAbstract {
 		flattenAndUnflatten(ints);
 		flattenAndUnflatten(ArrayUtils.toObject(ints), ints);
 
-		double[] doubles = { 1.4, 12.6, 0 };
+		double[] doubles = { 1.4, 12.6, 0, handleDoubleSpecials ? Double.NaN : -1.5 };
 		flattenAndUnflatten(doubles);
 		flattenAndUnflatten(ArrayUtils.toObject(doubles), doubles);
 

@@ -15,11 +15,9 @@ import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.PythonHelper;
 import uk.ac.diamond.scisoft.analysis.PythonHelper.PythonRunInfo;
-import uk.ac.diamond.scisoft.analysis.rpc.internal.AnalysisRpcDoubleParser;
 
 abstract public class FlatteningViaXmlRpcToPythonTestAbstract extends ExplicitFlatteningTestAbstract {
 	private static PythonRunInfo pythonRunInfo;
@@ -36,6 +34,16 @@ abstract public class FlatteningViaXmlRpcToPythonTestAbstract extends ExplicitFl
 		config.setServerURL(new URL("http://127.0.0.1:8713/xmlrpc"));
 		client = new XmlRpcClient();
 		client.setConfig(config);
+
+		/*
+		 * Set to false as tests fail because the loopback XML-RPC Client and Server
+		 * don't have the type managers written to deal with the special values. The
+		 * "special" XML-RPC client and server used by AnalysisRpc solves the issue,
+		 * hence the tests are enabled with that server is on.
+		 * 
+		 * @see AnalysisRpcDoubleParser
+		 */
+		handleDoubleSpecials = false;
 	}
 
 	@AfterClass
@@ -53,18 +61,5 @@ abstract public class FlatteningViaXmlRpcToPythonTestAbstract extends ExplicitFl
 			pythonRunInfo.getStdout(true);
 			throw new RuntimeException("Python script unexpectedly terminated");
 		}
-	}
-
-	/**
-	 * This test fails because the loopback XML-RPC Client and Server don't have the type managers written to deal with
-	 * the special values. The "special" XML-RPC client and server used by AnalysisRpc solves the issue, hence the test
-	 * is enabled with that server is on.
-	 * 
-	 * @see AnalysisRpcDoubleParser
-	 */
-	@Override
-	@Test
-	public void testDoubleSpecialValues() {
-		// test does not apply
 	}
 }

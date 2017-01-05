@@ -20,17 +20,21 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+
 // Imports from org.eclipse.january
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.dataset.DatasetFactory;
 
 // Imports from org.eclipse.dawnsci
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
+import org.eclipse.dawnsci.analysis.tree.impl.DataNodeImpl;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.IExportOperation;
@@ -112,7 +116,6 @@ public class Export1DNXcanSASOperation extends AbstractOperation<Export1DNXcanSA
 			nxData.addDataNode("Idev", NexusTreeUtils.createDataNode("Idev", dataForOutput, "1/cm"));
 		}
 		
-		
 		try {
 			// Create the file and get ready to write
 			NexusFile nexusFileReference = new NexusFileHDF5(filePath);
@@ -161,11 +164,18 @@ public class Export1DNXcanSASOperation extends AbstractOperation<Export1DNXcanSA
 		nxEntry.addAttribute(TreeFactory.createAttribute("NX_class", "NXentry"));
 		nxEntry.addAttribute(TreeFactory.createAttribute("canSAS_class", "SASentry"));
 		nxEntry.addAttribute(TreeFactory.createAttribute("default", "sasdata"));
-		nxEntry.addAttribute(TreeFactory.createAttribute("definition", "NXcanSAS"));
-		nxEntry.addAttribute(TreeFactory.createAttribute("run", fileName));
-		nxEntry.addAttribute(TreeFactory.createAttribute("title", fileTitle));
 		nxEntry.addAttribute(TreeFactory.createAttribute("version", "1.0"));
-
+		// These next three require fields with values not attributes
+		DataNode definitionDataNote = new DataNodeImpl(1);
+		definitionDataNote.setDataset(DatasetFactory.createFromObject("NXcanSAS"));
+		nxEntry.addDataNode("definition", definitionDataNote);
+		DataNode runDataNote = new DataNodeImpl(1);
+		runDataNote.setDataset(DatasetFactory.createFromObject(fileName));
+		nxEntry.addDataNode("run", runDataNote);
+		DataNode titleDataNote = new DataNodeImpl(1);
+		titleDataNote.setDataset(DatasetFactory.createFromObject(fileTitle));
+		nxEntry.addDataNode("title", titleDataNote);
+		
 		// The SASdata class SDS classes of I & Q (I_err too!) with attributes for each SDS class e.g. I_axes = Q, Q_indicies 0.
 		GroupNode nxData = TreeFactory.createGroupNode(0);
 		nxData.addAttribute(TreeFactory.createAttribute("NX_class", "NXdata"));

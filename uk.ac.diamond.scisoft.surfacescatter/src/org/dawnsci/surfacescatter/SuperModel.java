@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.eclipse.dawnsci.analysis.api.image.IImageTracker;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
@@ -29,7 +30,7 @@ public class SuperModel {
 	private IDataset splicedCurveYFhklErrorMax;
 	private IDataset splicedCurveYFhklErrorMin;
 	private Dataset imageStack;
-	private Dataset sortedX;
+	private Dataset sortedX; // this the scanned variable, e.g. l or qdcd
 	private Dataset nullImage;
 	@SuppressWarnings("rawtypes")
 	private TreeMap sortedImages;
@@ -49,7 +50,16 @@ public class SuperModel {
 	private IRectangularROI backgroundROI = new RectangularROI(10,10,50,50,0);
 	private int[][] backgroundLenPt;
 	private RectangularROI backgroundBox;
+	private IImageTracker tracker;
+	private IImageTracker initialTracker;
+	private ArrayList<double[]> trackerLocationList;
+	private ArrayList<Double> trackerKList;
 	
+	
+	public void resetTrackers(){
+		tracker = null;
+		initialTracker = null;
+	}
 	
 	public int[][] getBackgroundLenPt() {
 		return backgroundLenPt;
@@ -93,7 +103,9 @@ public class SuperModel {
 		yListFhkl =null;
 		outputDatArray =null;
 		backgroundDatArray = null;
-
+		trackerLocationList = null;
+		trackerKList = null;
+		locationList = null;
 	}
 	
 	public ArrayList<IDataset> getOutputDatArray() {
@@ -683,6 +695,69 @@ public class SuperModel {
 		firePropertyChange("locationList", this.locationList,
 				this.locationList= locationList1);
 	}
+	
+	public void addTrackerLocationList(double[] in){
+		
+		if (trackerLocationList==null){
+			trackerLocationList = new ArrayList<double[]>();
+		}
+		
+		ArrayList<double[]> trackerLocationList1 = new ArrayList<double[]>();
+		trackerLocationList1 = (ArrayList<double[]>) trackerLocationList.clone();
+		trackerLocationList1.add(in);
+		firePropertyChange("trackerLocationList", this.trackerLocationList,
+				this.trackerLocationList= trackerLocationList1);
+	}
+	
+	public void addTrackerLocationList(int k, double[] in){
+		if (trackerLocationList==null){
+			trackerLocationList = new ArrayList<double[]>();
+		
+			for (int i = 0; i < images.length; i++) {
+				trackerLocationList.add(new double[] {0,0,0,0,0,0,0,0});
+				}
+		}
+		
+		System.out.println("Added tracker location at k = " + k);
+		
+		ArrayList<double[]> trackerLocationList1 = new ArrayList<double[]>();
+		trackerLocationList1 = (ArrayList<double[]>) trackerLocationList.clone();
+		trackerLocationList1.set(k,in);
+		firePropertyChange("trackerLocationList", this.trackerLocationList,
+				this.trackerLocationList= trackerLocationList1);
+	}
+	
+	public void addtrackerKList(double in){
+		
+		if (trackerKList==null){
+			trackerKList = new ArrayList<Double>();
+		}
+		
+		ArrayList<Double> trackerKList1 = new ArrayList<Double>();
+		trackerKList1 = (ArrayList<Double>) trackerKList.clone();
+		trackerKList1.add(in);
+		firePropertyChange("trackerKList", this.trackerKList,
+				this.trackerKList= trackerKList1);
+	}
+	
+	public void addtrackerKList(int k, double in){
+		if (trackerKList==null){
+			trackerKList = new ArrayList<Double>();
+		
+			for (int i = 0; i < images.length; i++) {
+				trackerKList.add((double) 2000000);
+				}
+		}
+		
+		System.out.println("Added tracker location at k = " + k);
+		
+		ArrayList<Double> trackerKList1 = new ArrayList<Double>();
+		trackerKList1 = (ArrayList<Double>) trackerKList.clone();
+		trackerKList1.set(k,in);
+		firePropertyChange("trackerKList", this.trackerKList,
+				this.trackerKList= trackerKList1);
+	}
+	
 
 	public int[][] getInitialLenPt() {
 		return initialLenPt;
@@ -698,5 +773,37 @@ public class SuperModel {
 
 	public void setErrorDisplayFlag(boolean errorDisplayFlag) {
 		this.errorDisplayFlag = errorDisplayFlag;
+	}
+
+	public IImageTracker getTracker() {
+		return tracker;
+	}
+
+	public void setTracker(IImageTracker tracker) {
+		this.tracker = tracker;
+	}
+
+	public IImageTracker getInitialTracker() {
+		return initialTracker;
+	}
+
+	public void setInitialTracker(IImageTracker initialTracker) {
+		this.initialTracker = initialTracker;
+	}
+
+	public ArrayList<double[]> getTrackerLocationList() {
+		return trackerLocationList;
+	}
+
+	public void setTrackerLocationList(ArrayList<double[]> trackerLocationList) {
+		this.trackerLocationList = trackerLocationList;
+	}
+
+	public ArrayList<Double> getTrackerKList() {
+		return trackerKList;
+	}
+
+	public void setTrackerKList(ArrayList<Double> trackerKList) {
+		this.trackerKList = trackerKList;
 	}
 }

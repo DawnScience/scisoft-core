@@ -12,11 +12,11 @@ package org.dawnsci.surfacescatter;
 import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
-import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
@@ -24,9 +24,7 @@ import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.LinearAlgebra;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.swt.widgets.Display;
-
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial2D;
-import uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.BoxSlicerModel;
 
 /**
  * Cuts out the region of interest and fits it with a 2D polynomial background.
@@ -65,6 +63,19 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 		
 		Dataset in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input,len, pt);
 	
+		if(Arrays.equals(in1.getShape(), new int[] {len[1], len[0]}) == false){
+			double[] location=  new double[] {2,2};
+			Dataset errorDat = DatasetFactory.zeros(new int [] {2,2});
+			IndexIterator it2 = errorDat.getIterator();
+			while (it2.hasNext()) {
+				double q = errorDat.getElementDoubleAbs(it2.index);
+				if (q <= 0)
+					errorDat.setObjectAbs(it2.index, 0.1);
+			}
+			return new OperationData( errorDat, location);
+		}
+		
+		
 		if (g2 == null){
 			g2 = new Polynomial2D(AnalaysisMethodologies.toInt(model.getFitPower()));
 		}
@@ -75,7 +86,7 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 		Dataset[] fittingBackground = BoxSlicerRodScanUtilsForDialog.LeftRightTopBottomBoxes(input, len,
 				pt, model.getBoundaryBox());
 		
-		if(Arrays.equals(fittingBackground[0].getShape(),(new int[] {2,2})) && fittingBackground.length == 1){
+		if(Arrays.equals(fittingBackground[0].getShape(),(new int[] {2,2}))){
 			double[] location=  new double[] {2,2};
 			return new OperationData( fittingBackground[0], location);
 		}
@@ -97,7 +108,7 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 		
 			while (it.hasNext()) {
 				double v = in1Background.getElementDoubleAbs(it.index);
-				if (v < 0)
+				if (v <= 0)
 					in1Background.setObjectAbs(it.index, 0.1);
 			}
 		
@@ -109,8 +120,8 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 		
 			while (it1.hasNext()) {
 				double q = pBackgroundSubtracted.getElementDoubleAbs(it1.index);
-				if (q < 0)
-					pBackgroundSubtracted.setObjectAbs(it1.index, 0);
+				if (q <= 0)
+					pBackgroundSubtracted.setObjectAbs(it1.index, 0.1);
 			}
 			
 			output = DatasetUtils.cast(pBackgroundSubtracted, Dataset.FLOAT64);

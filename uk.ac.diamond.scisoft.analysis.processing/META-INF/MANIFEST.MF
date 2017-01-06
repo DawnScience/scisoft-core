@@ -14,7 +14,8 @@ Require-Bundle: org.eclipse.january;bundle-version="1.0.0",
  org.apache.commons.beanutils;bundle-version="1.9.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Import-Package: org.dawb.common.services,
+Import-Package: org.apache.commons.lang;version="2.6.0",
+ org.dawb.common.services,
  org.dawnsci.boofcv,
  org.eclipse.scanning.api.event.status,
  org.osgi.framework;version="1.7.0",

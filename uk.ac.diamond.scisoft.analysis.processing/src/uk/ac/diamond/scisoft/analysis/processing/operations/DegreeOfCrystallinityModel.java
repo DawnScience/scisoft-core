@@ -9,10 +9,10 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.FileType;
-import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 import org.eclipse.dawnsci.analysis.api.processing.model.RangeType;
+import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
+import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 
 
 // More information and the equation for the Degree of Crystallinity operation can be found in:

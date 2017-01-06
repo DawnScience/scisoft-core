@@ -12,24 +12,23 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 // Imports from java
 import java.util.Arrays;
 
-// Imports from org.eclipse.january
-import org.eclipse.dawnsci.analysis.api.processing.OperationData;
-import org.eclipse.dawnsci.analysis.api.processing.OperationException;
-import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+//Imports from org.eclipse.dawnsci
 import org.eclipse.dawnsci.analysis.dataset.roi.ROISliceUtils;
-import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
-import org.eclipse.dawnsci.nexus.NexusException;
-import org.eclipse.dawnsci.nexus.NexusFile;
+import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+
+//Imports from org.eclipse.january
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.dataset.DatasetFactory;
 
+//Imports from org.eclipse.dawnsci
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
-// Imports from org.eclipse.dawnsci
 
 //More information and the equation for the Degree of Crystallinity operation can be found in:
 //The SAXS Guide - 3rd Edition - Heimo Schnablegger & Yashveer Singh - ISBN 9783900323882 - Published by Anton Paar GmbH, Austria

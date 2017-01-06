@@ -4,7 +4,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.api.roi.IROI;
+import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
@@ -17,7 +20,10 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.Metadata;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 
 public class DummyProcessingClass {
 	
@@ -62,9 +68,12 @@ public class DummyProcessingClass {
 													   input,
 													   sm);
 				output = outputOD.getData();
-				double[] loc =  (double[]) outputOD.getAuxData()[0];
-				sm.addLocationList(loc);
 				
+				double[] loc =  (double[]) outputOD.getAuxData()[0];
+				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[1];
+				
+				sm.addLocationList(selection,loc);
+				sm.setTemporaryBackgroundHolder(temporaryBackground);
 				
 				
 				break;
@@ -75,31 +84,33 @@ public class DummyProcessingClass {
 				}
 				else{
 				}
-//				output = TwoDFitting.TwoDFitting1(input,
-//												  model,
-//												  sm,
-//												  selection);
 				
 				OperationData outputOD1= TwoDFittingIOp(model,
 						   input,
 						   sm);
 				output = outputOD1.getData();
+				
 				double[] loc1 =  (double[]) outputOD1.getAuxData()[0];
-				sm.addLocationList(loc1);	
+				sm.addLocationList(selection,loc1);	
+				
+				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[1];
+				
+				sm.setTemporaryBackgroundHolder(temporaryBackground1);
 				
 				break;
 				
 			case SECOND_BACKGROUND_BOX:
-				if (pS.getRegion("Background Region")!=null){
-					pS.removeRegion(pS.getRegion("Background Region"));
-				}
-				output = SecondConstantROI.secondROIConstantBg(input, 
-															   model, 
-															   sm,
-															   pS, 
-															   ssvsPS,
-															   dm,
-															   selection);
+				
+				output = secondConstantROIMethod(sm,
+												 model,
+										 		 input,  
+										 		 dm, 
+										 		 pS,
+										 		 ssvsPS,
+										 		 selection);	
+				
+				
+				
 				break;
 				
 			case OVERLAPPING_BACKGROUND_BOX:
@@ -115,16 +126,18 @@ public class DummyProcessingClass {
 				if (pS.getRegion("Background Region")!=null){
 					pS.removeRegion(pS.getRegion("Background Region"));
 				}
+						
+				OperationData outputOD2= OneDFittingIOp(model,
+						   								input,
+						   								sm,
+						   								Methodology.X);
+				output = outputOD2.getData();
+				double[] loc2 =  (double[]) outputOD2.getAuxData()[0];
+				sm.addLocationList(selection,loc2);
 				
-				Polynomial1DXBgSubtraction p1DXbg = new Polynomial1DXBgSubtraction();
-				
-				output = p1DXbg.Polynomial1DXBgSubtraction1(sm,
-														    input, 
-															model, 
-															dm,
-															k,
-															selection);
-		
+				IDataset temporaryBackground2 = (IDataset) outputOD2.getAuxData()[1];
+				sm.setTemporaryBackgroundHolder(temporaryBackground2);
+								
 				break;
 				
 			case Y:
@@ -132,14 +145,17 @@ public class DummyProcessingClass {
 					pS.removeRegion(pS.getRegion("Background Region"));
 				}
 				
-				Polynomial1DYBgSubtraction p1DYbg = new Polynomial1DYBgSubtraction();
+				OperationData outputOD3= OneDFittingIOp(model,
+														input,
+														sm,
+														Methodology.Y);
+				output = outputOD3.getData();
+				double[] loc3 =  (double[]) outputOD3.getAuxData()[0];
+				sm.addLocationList(selection,loc3);
 				
-				output = p1DYbg.Polynomial1DYBgSubtraction1(sm,
-														    input, 
-															model, 
-															dm,
-															k,
-															selection);
+				IDataset temporaryBackground3 = (IDataset) outputOD3.getAuxData()[1];
+				sm.setTemporaryBackgroundHolder(temporaryBackground3);
+				
 		
 				break;
 		}
@@ -237,7 +253,6 @@ public class DummyProcessingClass {
 		return output;
 	}
 	
-	@SuppressWarnings("incomplete-switch")
 	public static IDataset DummyProcess0(SuperModel sm, 
 										IDataset input, 
 										ExampleModel model, 
@@ -279,10 +294,12 @@ public class DummyProcessingClass {
 													   input,
 													   sm);
 				output = outputOD.getData();
+				
 				double[] loc =  (double[]) outputOD.getAuxData()[0];
-				sm.addLocationList(loc);
+				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[1];
 				
-				
+				sm.addLocationList(selection,loc);
+				sm.setTemporaryBackgroundHolder(temporaryBackground);
 				
 				
 				break;
@@ -302,21 +319,28 @@ public class DummyProcessingClass {
 						   sm);
 				output = outputOD1.getData();
 				double[] loc1 =  (double[]) outputOD1.getAuxData()[0];
-				sm.addLocationList(loc1);	
+				sm.addLocationList(selection,loc1);	
+				
+				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[1];
+
+				sm.setTemporaryBackgroundHolder(temporaryBackground1);
+				
 				
 				break;
 			case SECOND_BACKGROUND_BOX:
-				if (pS.getRegion("Background Region")!=null){
-					pS.removeRegion(pS.getRegion("Background Region"));
-				}
-				output = SecondConstantROI.secondROIConstantBg(input, 
-															   model,
-															   sm,
-															   pS,
-															   ssvsPS,
-															   dm,
-															   selection);
+
+				output = secondConstantROIMethod(sm,
+						 model,
+				 		 input,  
+				 		 dm, 
+				 		 pS,
+				 		 ssvsPS,
+				 		 selection);	
+
+
+				
 				break;
+				
 			case OVERLAPPING_BACKGROUND_BOX:
 				if (pS.getRegion("Background Region")!=null){
 					pS.removeRegion(pS.getRegion("Background Region"));
@@ -328,8 +352,46 @@ public class DummyProcessingClass {
 																   ssvsPS,
 																   selection);
 				break;
-		}
 		
+			case X:
+				if (pS.getRegion("Background Region")!=null){
+					pS.removeRegion(pS.getRegion("Background Region"));
+				}
+													
+				OperationData outputOD2= OneDFittingIOp(model,
+						   								input,
+						   								sm,
+						   								Methodology.X);
+				output = outputOD2.getData();
+				double[] loc2 =  (double[]) outputOD2.getAuxData()[0];
+				sm.addLocationList(selection,loc2);
+				
+				IDataset temporaryBackground2 = (IDataset) outputOD2.getAuxData()[1];
+				sm.setTemporaryBackgroundHolder(temporaryBackground2);
+
+				break;
+											
+			case Y:
+				if (pS.getRegion("Background Region")!=null){
+					pS.removeRegion(pS.getRegion("Background Region"));
+				}
+											
+				OperationData outputOD3= OneDFittingIOp(model,
+														input,
+														sm,
+														Methodology.Y);
+				output = outputOD3.getData();
+				double[] loc3 =  (double[]) outputOD3.getAuxData()[0];
+				sm.addLocationList(selection,loc3);
+									
+				IDataset temporaryBackground3 = (IDataset) outputOD3.getAuxData()[1];
+				sm.setTemporaryBackgroundHolder(temporaryBackground3);
+				
+				
+				break;
+		}
+	
+				
 		IndexIterator it1 = ((Dataset) output).getIterator();
 		
 		while (it1.hasNext()) {
@@ -419,7 +481,6 @@ public class DummyProcessingClass {
 	
 	
 	
-	@SuppressWarnings("incomplete-switch")
 	public static IDataset DummyProcess1(SuperModel sm, 
 										IDataset input, 
 										ExampleModel model, 
@@ -458,8 +519,12 @@ public class DummyProcessingClass {
 													   input,
 													   sm);
 				output = outputOD.getData();
+				
 				double[] loc =  (double[]) outputOD.getAuxData()[0];
-				sm.addLocationList(loc);
+				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[1];
+				
+				sm.addLocationList(selection,loc);
+				sm.setTemporaryBackgroundHolder(temporaryBackground);
 				
 				break;
 			case TWOD:
@@ -477,24 +542,27 @@ public class DummyProcessingClass {
 
 				output = outputOD1.getData();
 				double[] loc1 =  (double[]) outputOD1.getAuxData()[0];
-				sm.addLocationList(loc1);		
-//						TwoDFitting1(input,
-//						  					      model,
-//						  					      sm,
-//						  					      selection);	
+				sm.addLocationList(selection,loc1);		
+
+				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[1];
+				
+				sm.setTemporaryBackgroundHolder(temporaryBackground1);
+				
 				break;
 			case SECOND_BACKGROUND_BOX:
-				if (pS.getRegion("Background Region")!=null){
-					pS.removeRegion(pS.getRegion("Background Region"));
-				}
-				output = SecondConstantROI.secondROIConstantBg(input, 
-															   model,
-															   sm,
-															   pS,
-															   ssvsPS,
-															   dm,
-															   selection);
+
+				output = secondConstantROIMethod(sm,
+						 model,
+				 		 input,  
+				 		 dm, 
+				 		 pS,
+				 		 ssvsPS,
+				 		 selection);	
+
+
+				
 				break;
+				
 			case OVERLAPPING_BACKGROUND_BOX:
 				if (pS.getRegion("Background Region")!=null){
 					pS.removeRegion(pS.getRegion("Background Region"));
@@ -505,6 +573,43 @@ public class DummyProcessingClass {
 																   pS, 
 																   ssvsPS,
 																   selection);
+				break;
+				
+			case X:
+				if (pS.getRegion("Background Region")!=null){
+					pS.removeRegion(pS.getRegion("Background Region"));
+				}
+													
+				OperationData outputOD2= OneDFittingIOp(model,
+						   								input,
+						   								sm,
+						   								Methodology.X);
+				output = outputOD2.getData();
+				double[] loc2 =  (double[]) outputOD2.getAuxData()[0];
+				sm.addLocationList(selection,loc2);
+				
+				IDataset temporaryBackground2 = (IDataset) outputOD2.getAuxData()[1];
+				sm.setTemporaryBackgroundHolder(temporaryBackground2);
+									
+				break;
+											
+			case Y:
+				if (pS.getRegion("Background Region")!=null){
+					pS.removeRegion(pS.getRegion("Background Region"));
+				}
+											
+				OperationData outputOD3= OneDFittingIOp(model,
+														input,
+														sm,
+														Methodology.Y);
+				output = outputOD3.getData();
+				double[] loc3 =  (double[]) outputOD3.getAuxData()[0];
+				sm.addLocationList(selection,loc3);
+				
+				IDataset temporaryBackground3 = (IDataset) outputOD3.getAuxData()[1];
+				sm.setTemporaryBackgroundHolder(temporaryBackground3);
+				
+									
 				break;
 		}
 		
@@ -588,7 +693,6 @@ public class DummyProcessingClass {
 	}
 	
 	
-	@SuppressWarnings("incomplete-switch")
 	public static IDataset DummyProcess1(SuperModel sm, 
 										IDataset input, 
 										ExampleModel model, 
@@ -633,9 +737,11 @@ public class DummyProcessingClass {
 													   sm);
 				output = outputOD.getData();
 				double[] loc =  (double[]) outputOD.getAuxData()[0];
-				sm.addLocationList(loc);
+				sm.addLocationList(selection,loc);
 				
+				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[1];
 				
+				sm.setTemporaryBackgroundHolder(temporaryBackground);
 
 				break;
 				
@@ -653,20 +759,26 @@ public class DummyProcessingClass {
 													   sm);
 				output = outputOD1.getData();
 				double[] loc1 = (double[]) outputOD1.getAuxData()[0] ;
-				sm.addLocationList(loc1);	
+				sm.addLocationList(selection,loc1);	
+				
+				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[1];
+				
+			
+				sm.setTemporaryBackgroundHolder(temporaryBackground1);
 				
 				break;
 			case SECOND_BACKGROUND_BOX:
-				if (pS.getRegion("Background Region")!=null){
-					pS.removeRegion(pS.getRegion("Background Region"));
-				}
-				output = SecondConstantROI.secondROIConstantBg(input, 
-						   									   model,
-						   									   sm,
-						   									   pS,
-						   									   ssvsPS,
-						   									   dm,
-						   									   selection);
+
+				output = secondConstantROIMethod(sm,
+						 model,
+				 		 input,  
+				 		 dm, 
+				 		 pS,
+				 		 ssvsPS,
+				 		 selection);	
+
+
+				
 				break;
 			case OVERLAPPING_BACKGROUND_BOX:
 				if (pS.getRegion("Background Region")!=null){
@@ -678,6 +790,43 @@ public class DummyProcessingClass {
 																   pS, 
 																   ssvsPS,
 																   selection);
+				break;
+				
+			case X:
+				if (pS.getRegion("Background Region")!=null){
+					pS.removeRegion(pS.getRegion("Background Region"));
+				}
+													
+				OperationData outputOD2= OneDFittingIOp(model,
+						   								input,
+						   								sm,
+						   								Methodology.X);
+				output = outputOD2.getData();
+				double[] loc2 =  (double[]) outputOD2.getAuxData()[0];
+				sm.addLocationList(selection,loc2);
+											
+				IDataset temporaryBackground2 = (IDataset) outputOD2.getAuxData()[1];
+				sm.setTemporaryBackgroundHolder(temporaryBackground2);
+				
+											
+				break;
+											
+			case Y:
+				if (pS.getRegion("Background Region")!=null){
+					pS.removeRegion(pS.getRegion("Background Region"));
+				}
+											
+				OperationData outputOD3= OneDFittingIOp(model,
+														input,
+														sm,
+														Methodology.Y);
+				output = outputOD3.getData();
+				double[] loc3 =  (double[]) outputOD3.getAuxData()[0];
+				sm.addLocationList(selection,loc3);
+									
+				IDataset temporaryBackground3 = (IDataset) outputOD3.getAuxData()[1];
+				sm.setTemporaryBackgroundHolder(temporaryBackground3);
+				
 				break;
 		}
 		
@@ -795,4 +944,166 @@ public class DummyProcessingClass {
 		
 	}
 	
+	
+	public static OperationData OneDFittingIOp(ExampleModel model,
+											   IDataset input,
+					                           SuperModel sm,
+					                           AnalaysisMethodologies.Methodology am){
+		
+		OneDFittingModel odfm = new OneDFittingModel();
+		odfm.setInitialLenPt(sm.getInitialLenPt());
+		odfm.setLenPt(model.getLenPt());
+		odfm.setFitPower(model.getFitPower());
+		odfm.setBoundaryBox(model.getBoundaryBox());
+		odfm.setDirection(am);
+		
+		Metadata md = new Metadata();
+		IDataset dummyMD = DatasetFactory.zeros(new int [] {2,2});
+		Map<String, Integer> dumMap = new HashMap<String, Integer>();
+		dumMap.put("one", 1);
+		md.initialize(dumMap);
+		
+		ILazyDataset  ild = null;
+		
+		SourceInformation  si =new SourceInformation("dummy", "dummy2", ild);
+		
+		SliceFromSeriesMetadata sfsm = new SliceFromSeriesMetadata(si);
+		
+		input.setMetadata(sfsm);
+		
+		input.setMetadata(md);
+		
+		OneDFittingUsingIOperation odfuio = new OneDFittingUsingIOperation();
+		odfuio.setModel(odfm);
+		
+		return odfuio.execute(input, null);
+
+	}
+
+	public static OperationData SecondConstantBackgroundROIFittingIOp(ExampleModel model,
+			   														  IDataset input,
+			   														  SuperModel sm,
+			   														  IPlottingSystem<Composite> pS,
+			   														  IPlottingSystem<Composite> ssvsPS){
+
+		SecondConstantROIBackgroundSubtractionModel scrbm 
+					= new SecondConstantROIBackgroundSubtractionModel();
+		scrbm.setInitialLenPt(sm.getInitialLenPt());
+		scrbm.setLenPt(model.getLenPt());
+		scrbm.setFitPower(model.getFitPower());
+		scrbm.setBoundaryBox(model.getBoundaryBox());
+		scrbm.setPlottingSystem(pS);
+		scrbm.setSPlottingSystem(ssvsPS);
+		
+		if (sm.getBackgroundROI() != null){
+			IRectangularROI bounds = sm.getBackgroundROI().getBounds();
+			int[] len = bounds.getIntLengths();
+			int[] pt = bounds.getIntPoint();
+		
+			if (Arrays.equals(len,new int[] {50, 50}) == false || 
+					Arrays.equals(pt,new int[] {10, 10}) == false){
+			
+				scrbm.setBackgroundROI(sm.getBackgroundROI().getBounds());
+			}
+		}
+		
+		Metadata md = new Metadata();
+		IDataset dummyMD = DatasetFactory.zeros(new int [] {2,2});
+		Map<String, Integer> dumMap = new HashMap<String, Integer>();
+		dumMap.put("one", 1);
+		md.initialize(dumMap);
+		
+		ILazyDataset  ild = null;
+		
+		SourceInformation  si =new SourceInformation("dummy", "dummy2", ild);
+		
+		SliceFromSeriesMetadata sfsm = new SliceFromSeriesMetadata(si);
+		
+		input.setMetadata(sfsm);
+		
+		input.setMetadata(md);
+		
+		SecondConstantROIUsingIOperation scrbio 
+				= new SecondConstantROIUsingIOperation();
+		scrbio.setModel(scrbm);
+		
+		return scrbio.execute(input, null);
+
+	}
+
+	
+	public static IDataset secondConstantROIMethod(SuperModel sm, 
+											ExampleModel model,
+											IDataset input,  
+											DataModel dm, 
+											IPlottingSystem<Composite> pS,
+											IPlottingSystem<Composite> ssvsPS,
+											int selection){		
+		
+		Display display = Display.getCurrent();
+        Color magenta = display.getSystemColor(SWT.COLOR_DARK_MAGENTA);
+		
+		if (pS.getRegion("Background Region")!=null){
+			IRectangularROI bounds = pS.getRegion("Background Region").getROI().getBounds();
+			int[] len = bounds.getIntLengths();
+			int[] pt = bounds.getIntPoint();
+		
+			if (Arrays.equals(len,new int[] {50, 50}) == false || 
+					Arrays.equals(pt,new int[] {10, 10}) == false){
+			
+				sm.setBackgroundROI((IROI) pS.getRegion("Background Region").getROI());
+				dm.setBackgroundROI((IROI) pS.getRegion("Background Region").getROI());;
+			}
+			
+			pS.getRegion("Background Region").setRegionColor(magenta);
+			
+		}
+		
+		if (ssvsPS.getRegion("ssvs Background Region")!=null){
+			
+			IRectangularROI bounds = ssvsPS.getRegion("ssvs Background Region").getROI().getBounds();
+			int[] len = bounds.getIntLengths();
+			int[] pt = bounds.getIntPoint();
+		
+			if (Arrays.equals(len,new int[] {50, 50}) == false || 
+					Arrays.equals(pt,new int[] {10, 10}) == false){
+			
+				sm.setBackgroundROI((IROI) ssvsPS.getRegion("ssvs Background Region").getROI());
+				dm.setBackgroundROI((IROI) ssvsPS.getRegion("ssvs Background Region").getROI());;
+			}
+			
+
+			ssvsPS.getRegion("ssvs Background Region").setRegionColor(magenta);
+			
+		}			
+		
+		OperationData outputOD4 = SecondConstantBackgroundROIFittingIOp(model, 
+																		input, 
+																		sm,
+																		pS,
+																		ssvsPS);
+
+		IDataset output = outputOD4.getData();
+		double[] loc4 =  (double[]) outputOD4.getAuxData()[0];
+		sm.addLocationList(selection,loc4);
+
+		if ((IROI) outputOD4.getAuxData()[1] != null){
+			IRectangularROI bounds = ((IROI) outputOD4.getAuxData()[1]).getBounds();
+			int[] len = bounds.getIntLengths();
+			int[] pt = bounds.getIntPoint();
+		
+			if (Arrays.equals(len,new int[] {50, 50}) == false || 
+					Arrays.equals(pt,new int[] {10, 10}) == false){
+			
+				sm.setBackgroundROI((IROI) outputOD4.getAuxData()[1]);
+				dm.setBackgroundROI((IROI) outputOD4.getAuxData()[1]);;
+			}
+		}
+		
+		sm.setTemporaryBackgroundHolder((IDataset) outputOD4.getAuxData()[2]);
+		
+		
+		return output;
+	}
+
 }

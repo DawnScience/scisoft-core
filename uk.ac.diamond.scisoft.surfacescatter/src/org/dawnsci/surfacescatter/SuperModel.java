@@ -45,7 +45,7 @@ public class SuperModel {
 	private ArrayList<IDataset> outputDatArray;
 	private ArrayList<IDataset> backgroundDatArray;
 	private ArrayList<double[]> locationList; 
-	private int[][] initialLenPt = new int[][] {{10, 10}, {50, 50}};
+	private int[][] initialLenPt = new int[][] {{50, 50}, {10, 10}};
 	private boolean errorDisplayFlag = true;
 	private IRectangularROI backgroundROI = new RectangularROI(10,10,50,50,0);
 	private int[][] backgroundLenPt;
@@ -54,8 +54,17 @@ public class SuperModel {
 	private IImageTracker initialTracker;
 	private ArrayList<double[]> trackerLocationList;
 	private ArrayList<Double> trackerKList;
+	private IDataset temporaryBackgroundHolder; // in1Background
 	
 	
+	public IDataset getTemporaryBackgroundHolder() {
+		return temporaryBackgroundHolder;
+	}
+
+	public void setTemporaryBackgroundHolder(IDataset temporaryBackgroundHolder) {
+		this.temporaryBackgroundHolder = temporaryBackgroundHolder;
+	}
+
 	public void resetTrackers(){
 		tracker = null;
 		initialTracker = null;
@@ -93,8 +102,6 @@ public class SuperModel {
 		firePropertyChange("backgroundLenPt", this.backgroundLenPt, this.backgroundLenPt= lenpt);
 		
 	}
-	
-	
 	
 	public void resetAll(){
 		
@@ -687,7 +694,7 @@ public class SuperModel {
 				}
 		}
 		
-		System.out.println("Added location at k = " + k);
+//		System.out.println("Added location at k = " + k);
 		
 		ArrayList<double[]> locationList1 = new ArrayList<double[]>();
 		locationList1 = (ArrayList<double[]>) locationList.clone();
@@ -718,7 +725,7 @@ public class SuperModel {
 				}
 		}
 		
-		System.out.println("Added tracker location at k = " + k);
+//		System.out.println("Added tracker location at k = " + k);
 		
 		ArrayList<double[]> trackerLocationList1 = new ArrayList<double[]>();
 		trackerLocationList1 = (ArrayList<double[]>) trackerLocationList.clone();
@@ -749,7 +756,7 @@ public class SuperModel {
 				}
 		}
 		
-		System.out.println("Added tracker location at k = " + k);
+//		System.out.println("Added tracker location at k = " + k);
 		
 		ArrayList<Double> trackerKList1 = new ArrayList<Double>();
 		trackerKList1 = (ArrayList<Double>) trackerKList.clone();

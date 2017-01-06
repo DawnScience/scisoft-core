@@ -19,7 +19,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
 
-public class Polynomial1DYBgSubtraction {
+public class Polynomial1DXYBgSubtraction {
 	
 	private int[] len;
 	private int[] pt;
@@ -27,12 +27,13 @@ public class Polynomial1DYBgSubtraction {
 
 	
 	
-	public IDataset Polynomial1DYBgSubtraction1 (SuperModel sm, 
+	public IDataset Polynomial1DXYBgSubtraction1 (SuperModel sm, 
 												 IDataset input, 
 												 ExampleModel model, 
 												 DataModel dm, 
 												 int k,
-												 int selection) {
+												 int selection,
+												 AnalaysisMethodologies.Methodology am) {
 
 		len = sm.getInitialLenPt()[0];
 		pt = sm.getInitialLenPt()[1];
@@ -48,13 +49,13 @@ public class Polynomial1DYBgSubtraction {
 																		len, 
 																		pt,
 																		model.getBoundaryBox(), 
-																		Methodology.Y);
+																		am);
 		
 		background[1] = BoxSlicerRodScanUtilsForDialog.iAboveOrLeftBox(input, 
 																	   len, 
 																	   pt,
 																	   model.getBoundaryBox(), 
-																	   Methodology.Y);
+																	   am);
 		
 		
 		Dataset in1Background = DatasetFactory.zeros(in1.getShape(), Dataset.FLOAT64);
@@ -65,19 +66,20 @@ public class Polynomial1DYBgSubtraction {
 														 pt, 
 														 model.getBoundaryBox(), 
 														 AnalaysisMethodologies.toInt(model.getFitPower()), 
-														 Methodology.Y);
+														 am);
 		
 		
 		if(Arrays.equals(in1Background.getShape(),(new int[] {2,2}))){
 			return (IDataset) in1Background;
 		}
 		
-		
 		IndexIterator it = in1Background.getIterator();
 		
 		while (it.hasNext()) {
 			double v = in1Background.getElementDoubleAbs(it.index);
-			if (v < 0) in1Background.setObjectAbs(it.index, 0);
+			if (v < 0) {
+				in1Background.setObjectAbs(it.index, 0);
+			}
 		}
 
 		Dataset pBackgroundSubtracted = Maths.subtract(in1, in1Background, null);
@@ -89,18 +91,20 @@ public class Polynomial1DYBgSubtraction {
 		
 		while (it1.hasNext()) {
 			double q = pBackgroundSubtracted.getElementDoubleAbs(it1.index);
-			if (q < 0) pBackgroundSubtracted.setObjectAbs(it1.index, 0);
+			if (q < 0){
+			           pBackgroundSubtracted.setObjectAbs(it1.index, 0);
+			}
 		}
 		
 		
-		 double[] location = new double[] { (double) sm.getInitialLenPt()[1][1], 
-				   (double) sm.getInitialLenPt()[1][0], 
-				   (double) (sm.getInitialLenPt()[1][1] + sm.getInitialLenPt()[0][1]), 
-				   (double) (sm.getInitialLenPt()[1][0]),
-				   (double) sm.getInitialLenPt()[1][1], 
-				   (double) sm.getInitialLenPt()[1][0] + sm.getInitialLenPt()[0][0], 
-				   (double) (sm.getInitialLenPt()[1][1] + sm.getInitialLenPt()[0][1]), 
-				   (double) (sm.getInitialLenPt()[1][0] + sm.getInitialLenPt()[0][0]) };
+		double[] location = new double[] { (double) sm.getInitialLenPt()[1][1], 
+				   							(double) sm.getInitialLenPt()[1][0], 
+				   							(double) (sm.getInitialLenPt()[1][1] + sm.getInitialLenPt()[0][1]), 
+				   							(double) (sm.getInitialLenPt()[1][0]),
+				   							(double) sm.getInitialLenPt()[1][1], 
+				   							(double) sm.getInitialLenPt()[1][0] + sm.getInitialLenPt()[0][0], 
+				   							(double) (sm.getInitialLenPt()[1][1] + sm.getInitialLenPt()[0][1]), 
+				   							(double) (sm.getInitialLenPt()[1][0] + sm.getInitialLenPt()[0][0]) };
 
 		sm.addLocationList(selection, location);
 	

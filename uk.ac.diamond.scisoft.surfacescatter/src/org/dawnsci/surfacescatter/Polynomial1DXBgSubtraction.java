@@ -34,6 +34,7 @@ public class Polynomial1DXBgSubtraction {
 												 int k,
 												 int selection) {
 
+		
 		len = sm.getInitialLenPt()[0];
 		pt = sm.getInitialLenPt()[1];
 
@@ -44,25 +45,31 @@ public class Polynomial1DXBgSubtraction {
 		
 		IDataset[] background = new IDataset[2];
 				
-		background[0] = BoxSlicerRodScanUtilsForDialog.iBelowOrRightBox(input, len, pt
-													, model.getBoundaryBox(), Methodology.X);
+		background[0] = BoxSlicerRodScanUtilsForDialog.iBelowOrRightBox(input, 
+																		len, 
+																		pt, 
+																		model.getBoundaryBox(), 
+																		Methodology.X);
 		
-		background[1] = BoxSlicerRodScanUtilsForDialog.iAboveOrLeftBox(input, len, pt
-				, model.getBoundaryBox(), Methodology.X);
+		background[1] = BoxSlicerRodScanUtilsForDialog.iAboveOrLeftBox(input, 
+																	   len, 
+																	   pt, 
+																	   model.getBoundaryBox(), 
+																	   Methodology.X);
 		
 		
-		Dataset in2Background = DatasetFactory.zeros(in1.getShape(), Dataset.FLOAT64);
+		Dataset in1Background = DatasetFactory.zeros(in1.getShape(), Dataset.FLOAT64);
 		
-		Dataset in1Background = BackgroundSetting.rOIBackground1(background, 
-														 in2Background,
+		in1Background = BackgroundSetting.rOIBackground1(background, 
+														 in1Background,
 														 len,
 														 pt, 
 														 model.getBoundaryBox(), 
 														 AnalaysisMethodologies.toInt(model.getFitPower()), 
 														 Methodology.X);
-				
+		
+		
 		if(Arrays.equals(in1Background.getShape() , new int[] {2,2}) ){
-//			&& ((Dataset) in1Background).sum().equals(0.0)
 			return (IDataset) in1Background;
 		}
 		
@@ -84,11 +91,13 @@ public class Polynomial1DXBgSubtraction {
 		
 		while (it1.hasNext()) {
 			double q = pBackgroundSubtracted.getElementDoubleAbs(it1.index);
-			if (q < 0) pBackgroundSubtracted.setObjectAbs(it1.index, 0);
+			if (q < 0){
+				pBackgroundSubtracted.setObjectAbs(it1.index, 0);
+			}
 		}
 		
 		
-		 double[] location = new double[] { (double) sm.getInitialLenPt()[1][1], 
+		double[] location = new double[] { (double) sm.getInitialLenPt()[1][1], 
 				   							(double) sm.getInitialLenPt()[1][0], 
 				   							(double) (sm.getInitialLenPt()[1][1] + sm.getInitialLenPt()[0][1]), 
 				   							(double) (sm.getInitialLenPt()[1][0]),

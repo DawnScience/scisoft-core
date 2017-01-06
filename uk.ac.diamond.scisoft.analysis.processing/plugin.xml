@@ -834,6 +834,15 @@
             visible="true">
       </operation>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.DegreeOfCrystallinityOperation"
+            description="Calculate the degree of crystallinity from an amorphous background"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.DegreeOfCrystallinityOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.DegreeOfCrystallinityModel"
+            name="Degree of Crystallinity"
+            visible="true">
+      </operation>
+      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.FourierTransformImageOperation"
             description="Perform a 2D Fourier transform on an image"
             icon="icons/mask.png"

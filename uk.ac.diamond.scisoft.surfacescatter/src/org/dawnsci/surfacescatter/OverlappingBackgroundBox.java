@@ -232,8 +232,8 @@ public class OverlappingBackgroundBox{
 					in1Background.setObjectAbs(it.index, 0.1);
 			}
 		
-			System.out.println("background sum: " + in1Background.sum());
-			
+//			System.out.println("background sum: " + in1Background.sum());
+//			
 			
 			Dataset pBackgroundSubtracted = Maths.subtract(in1, in1Background, null);
 		

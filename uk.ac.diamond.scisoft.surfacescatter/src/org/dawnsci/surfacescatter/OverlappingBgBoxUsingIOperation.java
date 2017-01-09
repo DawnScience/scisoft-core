@@ -18,15 +18,19 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.LinearAlgebra;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-public class SecondConstantROIUsingIOperation 
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial2D;
+
+public class OverlappingBgBoxUsingIOperation 
 	extends AbstractOperation<SecondConstantROIBackgroundSubtractionModel, OperationData> {
 
+	private static Polynomial2D g2;
 		private static Dataset output;
 		private static IRegion background;
 		private static IRegion ssvsBackground;
@@ -57,10 +61,14 @@ public class SecondConstantROIUsingIOperation
 			IPlottingSystem<Composite> pS = model.getPlottingSystem();
 			IPlottingSystem<Composite> ssvsPS = model.getSPlottingSystem();
 			
+			if (g2 == null)
+				g2 = new Polynomial2D(AnalaysisMethodologies.toInt(model.getFitPower()));
+			if ((int) Math.pow(AnalaysisMethodologies.toInt(model.getFitPower()) + 1, 2) != g2.getNoOfParameters())
+				g2 = new Polynomial2D(AnalaysisMethodologies.toInt(model.getFitPower()));
 			
 			
 			Display display = Display.getCurrent();
-	        Color magenta = display.getSystemColor(SWT.COLOR_DARK_MAGENTA);
+	        Color red = display.getSystemColor(SWT.COLOR_RED);
 			
 			Dataset in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input,len, pt);
 			
@@ -75,7 +83,7 @@ public class SecondConstantROIUsingIOperation
 				IRectangularROI newROI = (IRectangularROI) model.getBackgroundROI();
 				background.setROI(newROI);
 				
-				background.setRegionColor(magenta);
+				background.setRegionColor(red);
 		        model.setBackgroundROI(newROI);
 			}
 			else{
@@ -94,7 +102,7 @@ public class SecondConstantROIUsingIOperation
 				IRectangularROI ssvsNewROI = (IRectangularROI) model.getBackgroundROI();
 				ssvsBackground.setROI(ssvsNewROI);
 				
-				ssvsBackground.setRegionColor(magenta);
+				ssvsBackground.setRegionColor(red);
 			}
 			else{
 				ssvsPS.removeRegion(ssvsPS.getRegion("ssvs Background Region"));
@@ -107,7 +115,7 @@ public class SecondConstantROIUsingIOperation
 				IRectangularROI ssvsNewROI = (IRectangularROI) model.getBackgroundROI();
 				ssvsBackground.setROI(ssvsNewROI);
 				
-				ssvsBackground.setRegionColor(magenta);
+				ssvsBackground.setRegionColor(red);
 			}
 
 	        background.addROIListener(new IROIListener() {
@@ -131,9 +139,9 @@ public class SecondConstantROIUsingIOperation
 					
 					model.setBackgroundROI(background.getROI().getBounds());
 					
-					IRectangularROI magentaRectangle = background.getROI().getBounds();
-					int[] Len = magentaRectangle.getIntLengths();
-					int[] Pt = magentaRectangle.getIntPoint();
+					IRectangularROI redRectangle = background.getROI().getBounds();
+					int[] Len = redRectangle.getIntLengths();
+					int[] Pt = redRectangle.getIntPoint();
 					int[][] LenPt = {Len,Pt};
 					
 					RectangularROI newROI = new RectangularROI(LenPt[1][0],
@@ -169,6 +177,34 @@ public class SecondConstantROIUsingIOperation
 
 			});
 	        
+
+	        int[] backLen = model.getBackgroundLenPt()[0];
+	        int[] backPt = model.getBackgroundLenPt()[1];
+	        
+	        BackgroundRegionArrays br = new BackgroundRegionArrays();
+	        
+	        
+			for (int i = backPt[0]; i<backPt[0]+backLen[0]; i++){
+				for(int j = backPt[1]; j<backPt[1]+backLen[1]; j++){
+					
+					if((i<pt[0]||i>=(pt[0]+len[0]))||(j<pt[1]||j>=(pt[1]+len[1]))){
+					}
+					else{
+						br.xArrayAdd(i);
+						br.yArrayAdd(j);
+						br.zArrayAdd(input.getDouble(i,j));
+					}
+				}
+			}
+			
+			Dataset xBackgroundDat = DatasetFactory.createFromObject(br.getXArray());
+			Dataset yBackgroundDat = DatasetFactory.createFromObject(br.getYArray());
+			Dataset zBackgroundDat = DatasetFactory.createFromObject(br.getZArray());
+			
+			Dataset matrix = LinearLeastSquaresServicesForDialog.polynomial2DLinearLeastSquaresMatrixGenerator(
+					AnalaysisMethodologies.toInt(model.getFitPower()), xBackgroundDat, yBackgroundDat);
+			
+	        
 	        
 	        double[] location = new double[] { (double) model.getBackgroundLenPt()[1][1], 
 	        								   (double) model.getBackgroundLenPt()[1][0], 
@@ -178,30 +214,29 @@ public class SecondConstantROIUsingIOperation
 	        								   (double) model.getBackgroundLenPt()[1][0] + model.getBackgroundLenPt()[0][0], 
 	        								   (double) (model.getBackgroundLenPt()[1][1] + model.getBackgroundLenPt()[0][1]), 
 	        								   (double) (model.getBackgroundLenPt()[1][0] + model.getBackgroundLenPt()[0][0]) };
-	        	        
-			Dataset backgroundDataset = BoxSlicerRodScanUtilsForDialog.rOIBox(input, 
-					model.getBackgroundLenPt()[0], 
-					model.getBackgroundLenPt()[1]);
+	        	  
 	        
-	        IndexIterator it0 = backgroundDataset.getIterator();
+	        
+	        DoubleDataset test = (DoubleDataset)LinearAlgebra.solveSVD(matrix, zBackgroundDat);
+			double[] params = test.getData();
 			
-	        double bgSum = 0;
-	        
-	        while (it0.hasNext()) {
-				bgSum += backgroundDataset.getElementDoubleAbs(it0.index);
-	        }
-	        
-	        double bgAv = bgSum/(backgroundDataset.count()); 
-	        
-	        in1Background = DatasetFactory.zeros(in1.getShape());
-	        
-			Dataset pBackgroundSubtracted = Maths.subtract(in1, bgAv, null);
-					
-//			IndexIterator it1 = pBackgroundSubtracted.getIterator();
+			in1Background = g2.getOutputValues0(params, len, model.getBoundaryBox(),
+					AnalaysisMethodologies.toInt(model.getFitPower()));
+		
+//			IndexIterator it0 = in1Background.getIterator();
 //			
+//			while (it0.hasNext()) {
+//				double q = in1Background.getElementDoubleAbs(it0.index);
+//				if (q < 0)
+//					in1Background.setObjectAbs(it0.index, 0.1);
+//			}
+			
+			Dataset pBackgroundSubtracted = Maths.subtract(in1, in1Background, null);
+					
+			IndexIterator it1 = pBackgroundSubtracted.getIterator();
+			
 //			while (it1.hasNext()) {
 //				double q = pBackgroundSubtracted.getElementDoubleAbs(it1.index);
-//				in1Background.setObjectAbs(it1.index, bgAv);
 //				if (q < 0)
 //					pBackgroundSubtracted.setObjectAbs(it1.index, 0.1);
 //			}

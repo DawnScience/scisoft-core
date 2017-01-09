@@ -29,6 +29,7 @@ public class DummyProcessingClass {
 	
 	
 	private static Dataset yValue;
+	private static int DEBUG = 1;
 	
 	public static IDataset DummyProcess(SuperModel sm, 
 										IDataset input, 
@@ -114,12 +115,22 @@ public class DummyProcessingClass {
 				break;
 				
 			case OVERLAPPING_BACKGROUND_BOX:
-				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
-																   model, 
-																   sm, 
-																   pS, 
-																   ssvsPS,
-																   selection);
+//				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
+//																   model, 
+//																   sm, 
+//																   pS, 
+//																   ssvsPS,
+//																   selection);
+				
+
+				output = secondConstantROIMethod(sm,
+						 model,
+				 		 input,  
+				 		 dm, 
+				 		 pS,
+				 		 ssvsPS,
+				 		 selection);	
+				
 				break;
 				
 			case X:
@@ -160,13 +171,13 @@ public class DummyProcessingClass {
 				break;
 		}
 		
-		IndexIterator it1 = ((Dataset) output).getIterator();
+//		IndexIterator it1 = ((Dataset) output).getIterator();
 		
-		while (it1.hasNext()) {
-			double q = ((Dataset) output).getElementDoubleAbs(it1.index);
-			if (q <= 0)
-				((Dataset) output).setObjectAbs(it1.index, 0.1);
-		}
+//		while (it1.hasNext()) {
+//			double q = ((Dataset) output).getElementDoubleAbs(it1.index);
+//			if (q <= 0)
+//				((Dataset) output).setObjectAbs(it1.index, 0.1);
+//		}
 		
 		if(Arrays.equals(output.getShape(), (new int[] {2,2}))){
 			IndexIterator it11 = ((Dataset) output).getIterator();
@@ -180,57 +191,14 @@ public class DummyProcessingClass {
 		}
 		
 		
-		Dataset correction = DatasetFactory.zeros(new int[] {1}, Dataset.FLOAT64);
+		yValue = correctionMethod(model, 
+								  sm, 
+								  gm, 
+								  k, 
+								  output,
+								  input);
 		
-		if (correctionSelector == 0){
-			
-			try {
-				correction = Maths.multiply(SXRDGeometricCorrections.lorentz(model), SXRDGeometricCorrections.areacor(model
-						, gm.getBeamCorrection(), gm.getSpecular(),  gm.getSampleSize()
-						, gm.getOutPlaneSlits(), gm.getInPlaneSlits(), gm.getBeamInPlane()
-						, gm.getBeamOutPlane(), gm.getDetectorSlits()));
-				correction = Maths.multiply(SXRDGeometricCorrections.polarisation(model, gm.getInplanePolarisation()
-						, gm.getOutplanePolarisation()), correction);
-				correction = Maths.multiply(
-						SXRDGeometricCorrections.polarisation(model, gm.getInplanePolarisation(), gm.getOutplanePolarisation()),
-						correction);
-				if (correction.getDouble(0) ==0){
-					correction.set(0.001, 0);
-				}
-			} catch (DatasetException e) {
-	
-			}
-			
-			yValue = Maths.multiply(output, correction.getDouble(k));
-		}
 		
-		else if (correctionSelector ==1){
-
-			try {
-				correction = DatasetFactory.createFromObject(GeometricCorrectionsReflectivityMethod.reflectivityCorrectionsBatch(model.getDcdtheta(), k, sm, input, gm.getAngularFudgeFactor(), 
-						gm.getBeamHeight(), gm.getFootprint()));
-				
-				Dataset ref = 
-						ReflectivityFluxCorrectionsForDialog.reflectivityFluxCorrections(gm.getFluxPath(), 
-																						 model.getQdcdDat().getDouble(k), 
-																						 model);
-				
-				correction = Maths.multiply(correction, ref);
-				if (correction.getDouble(0) ==0){
-					correction.set(0.001, 0);
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			yValue = Maths.multiply(output, correction.getDouble(0));
-//			double normalisation  = 1/output.getDouble(0);
-//			yValue = Maths.multiply(normalisation, yValue);
-		}
-		else{
-			
-		}
 		try {
 			Thread.sleep(0);
 		} catch (InterruptedException e) {
@@ -245,10 +213,11 @@ public class DummyProcessingClass {
 		Double fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
 		
 		dm.addyList(model.getDatImages().getShape()[0], k ,intensity);
+		debug("intensity added to dm: " + intensity + "   local k: " + k);
 		dm.addyListFhkl(model.getDatImages().getShape()[0], k ,fhkl);
 		dm.addOutputDatArray(model.getDatImages().getShape()[0], k ,output);
 		
-		
+		debug("intensity added to dm: " + intensity + "   local k: " + k);
 		
 		return output;
 	}
@@ -342,15 +311,26 @@ public class DummyProcessingClass {
 				break;
 				
 			case OVERLAPPING_BACKGROUND_BOX:
-				if (pS.getRegion("Background Region")!=null){
-					pS.removeRegion(pS.getRegion("Background Region"));
-				}
-				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
-																   model, 
-																   sm, 
-																   pS, 
-																   ssvsPS,
-																   selection);
+//				if (pS.getRegion("Background Region")!=null){
+//					pS.removeRegion(pS.getRegion("Background Region"));
+//				}
+//				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
+//																   model, 
+//																   sm, 
+//																   pS, 
+//																   ssvsPS,
+//																   selection);
+				
+
+				output = secondConstantROIMethod(sm,
+						 model,
+				 		 input,  
+				 		 dm, 
+				 		 pS,
+				 		 ssvsPS,
+				 		 selection);	
+				
+				
 				break;
 		
 			case X:
@@ -391,64 +371,22 @@ public class DummyProcessingClass {
 				break;
 		}
 	
-				
-		IndexIterator it1 = ((Dataset) output).getIterator();
+//				
+//		IndexIterator it1 = ((Dataset) output).getIterator();
+//		
+//		while (it1.hasNext()) {
+//			double q = ((Dataset) output).getElementDoubleAbs(it1.index);
+//			if (q <= 0)
+//				((Dataset) output).setObjectAbs(it1.index, 0.1);
+//		}
 		
-		while (it1.hasNext()) {
-			double q = ((Dataset) output).getElementDoubleAbs(it1.index);
-			if (q <= 0)
-				((Dataset) output).setObjectAbs(it1.index, 0.1);
-		}
-		
-		Dataset correction = DatasetFactory.zeros(new int[] {1}, Dataset.FLOAT64);
-		
-		if (correctionSelector == 0){
-			
-			try {
-				correction = Maths.multiply(SXRDGeometricCorrections.lorentz(model), SXRDGeometricCorrections.areacor(model
-						, gm.getBeamCorrection(), gm.getSpecular(),  gm.getSampleSize()
-						, gm.getOutPlaneSlits(), gm.getInPlaneSlits(), gm.getBeamInPlane()
-						, gm.getBeamOutPlane(), gm.getDetectorSlits()));
-				correction = Maths.multiply(SXRDGeometricCorrections.polarisation(model, gm.getInplanePolarisation()
-						, gm.getOutplanePolarisation()), correction);
-				correction = Maths.multiply(
-						SXRDGeometricCorrections.polarisation(model, gm.getInplanePolarisation(), gm.getOutplanePolarisation()),
-						correction);
-				
-				if (correction.getDouble(0) ==0){
-					correction.set(0.001, 0);
-				}
-			} catch (DatasetException e) {
-	
-			}
-			
-			yValue = Maths.multiply(output, correction.getDouble(k));
-		}
-		
-		else if (correctionSelector ==1){
+		yValue = correctionMethod(model, 
+				  sm, 
+				  gm, 
+				  k, 
+				  output,
+				  input);
 
-			try {
-				correction = DatasetFactory.createFromObject(GeometricCorrectionsReflectivityMethod.reflectivityCorrectionsBatch(model.getDcdtheta(), k, sm, input, gm.getAngularFudgeFactor(), 
-						gm.getBeamHeight(), gm.getFootprint()));
-				correction = Maths.multiply(correction, 
-						ReflectivityFluxCorrectionsForDialog.reflectivityFluxCorrections(gm.getFluxPath(), model.getQdcdDat().getDouble(k), model));
-				if (correction.getDouble(0) ==0){
-					correction.set(0.001, 0);
-				}
-
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			
-			yValue = Maths.multiply(output, correction.getDouble(0));
-//			double normalisation  = 1/output.getDouble(0);
-//			yValue = Maths.multiply(normalisation, yValue);
-		}
-		else{
-			
-		}
 		try {
 			Thread.sleep(0);
 		} catch (InterruptedException e) {
@@ -475,6 +413,7 @@ public class DummyProcessingClass {
 		sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
 		sm.addOutputDatArray(sm.getImages().length, selection ,output);
 		
+		debug("intensity added to dm: " + intensity + "   local k: " + k);
 		
 		return output;
 	}
@@ -564,15 +503,23 @@ public class DummyProcessingClass {
 				break;
 				
 			case OVERLAPPING_BACKGROUND_BOX:
-				if (pS.getRegion("Background Region")!=null){
-					pS.removeRegion(pS.getRegion("Background Region"));
-				}
-				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
-																   model, 
-																   sm, 
-																   pS, 
-																   ssvsPS,
-																   selection);
+				
+				
+//				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
+//																   model, 
+//																   sm, 
+//																   pS, 
+//																   ssvsPS,
+//																   selection);
+				
+				output = secondConstantROIMethod(sm,
+						 model,
+				 		 input,  
+				 		 dm, 
+				 		 pS,
+				 		 ssvsPS,
+				 		 selection);	
+				
 				break;
 				
 			case X:
@@ -613,64 +560,21 @@ public class DummyProcessingClass {
 				break;
 		}
 		
-		IndexIterator it1 = ((Dataset) output).getIterator();
+//		IndexIterator it1 = ((Dataset) output).getIterator();
+//		
+//		while (it1.hasNext()) {
+//			double q = ((Dataset) output).getElementDoubleAbs(it1.index);
+//			if (q <= 0)
+//				((Dataset) output).setObjectAbs(it1.index, 0.1);
+//		}
 		
-		while (it1.hasNext()) {
-			double q = ((Dataset) output).getElementDoubleAbs(it1.index);
-			if (q <= 0)
-				((Dataset) output).setObjectAbs(it1.index, 0.1);
-		}
-		
-		Dataset correction = DatasetFactory.zeros(new int[] {1}, Dataset.FLOAT64);
-		
-		if (correctionSelector == 0){
-			
-			try {
-				correction = Maths.multiply(SXRDGeometricCorrections.lorentz(model), SXRDGeometricCorrections.areacor(model
-						, gm.getBeamCorrection(), gm.getSpecular(),  gm.getSampleSize()
-						, gm.getOutPlaneSlits(), gm.getInPlaneSlits(), gm.getBeamInPlane()
-						, gm.getBeamOutPlane(), gm.getDetectorSlits()));
-				correction = Maths.multiply(SXRDGeometricCorrections.polarisation(model, gm.getInplanePolarisation()
-						, gm.getOutplanePolarisation()), correction);
-				correction = Maths.multiply(
-						SXRDGeometricCorrections.polarisation(model, gm.getInplanePolarisation(), gm.getOutplanePolarisation()),
-						correction);
-				if (correction.getDouble(0) ==0){
-					correction.set(0.001, 0);
-				}
-			} catch (DatasetException e) {
-	
-			}
-			yValue = Maths.multiply(output, correction.getDouble(k));
-		}
-		
-		else if (correctionSelector ==1){
+		yValue = correctionMethod(model, 
+				  sm, 
+				  gm, 
+				  k, 
+				  output,
+				  input);
 
-			try {
-				correction = DatasetFactory.createFromObject(GeometricCorrectionsReflectivityMethod.reflectivityCorrectionsBatch(model.getDcdtheta(), k, sm, input, gm.getAngularFudgeFactor(), 
-						gm.getBeamHeight(), gm.getFootprint()));
-				correction = Maths.multiply(correction, 
-						ReflectivityFluxCorrectionsForDialog.reflectivityFluxCorrections(gm.getFluxPath(), model.getQdcdDat().getDouble(k), model));
-				if (correction.getDouble(0) ==0){
-					correction.set(0.001, 0);
-				}
-				
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-//			double normalisation  = 1/output.getDouble(0);
-			
-			yValue = Maths.multiply(output, correction.getDouble(0));
-//			yValue = Maths.multiply(normalisation, yValue);
-		}
-		else{
-			
-			
-			
-			
-		}
 		try {
 			Thread.sleep(0);
 		} catch (InterruptedException e) {
@@ -688,6 +592,8 @@ public class DummyProcessingClass {
 		dm.addyList(model.getDatImages().getShape()[0], k ,intensity);
 		dm.addyListFhkl(model.getDatImages().getShape()[0], k ,fhkl);
 		dm.addOutputDatArray(model.getDatImages().getShape()[0], k ,output);
+		
+		debug("intensity added to dm: " + intensity + "   local k: " + k);
 		
 		return output;
 	}
@@ -781,15 +687,27 @@ public class DummyProcessingClass {
 				
 				break;
 			case OVERLAPPING_BACKGROUND_BOX:
-				if (pS.getRegion("Background Region")!=null){
-					pS.removeRegion(pS.getRegion("Background Region"));
-				}
-				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
-																   model, 
-																   sm, 
-																   pS, 
-																   ssvsPS,
-																   selection);
+//				if (pS.getRegion("Background Region")!=null){
+//					pS.removeRegion(pS.getRegion("Background Region"));
+//				}
+//				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
+//																   model, 
+//																   sm, 
+//																   pS, 
+//																   ssvsPS,
+//																   selection);
+//				
+//				
+
+				output = secondConstantROIMethod(sm,
+						 model,
+				 		 input,  
+				 		 dm, 
+				 		 pS,
+				 		 ssvsPS,
+				 		 selection);	
+				
+				
 				break;
 				
 			case X:
@@ -830,59 +748,22 @@ public class DummyProcessingClass {
 				break;
 		}
 		
-		IndexIterator it1 = ((Dataset) output).getIterator();
+//		IndexIterator it1 = ((Dataset) output).getIterator();
+//		
+//		while (it1.hasNext()) {
+//			double q = ((Dataset) output).getElementDoubleAbs(it1.index);
+//			if (q <= 0)
+//				((Dataset) output).setObjectAbs(it1.index, 0.1);
+//		}
+//		
 		
-		while (it1.hasNext()) {
-			double q = ((Dataset) output).getElementDoubleAbs(it1.index);
-			if (q <= 0)
-				((Dataset) output).setObjectAbs(it1.index, 0.1);
-		}
-		
-		
-		Dataset correction = DatasetFactory.zeros(new int[] {1}, Dataset.FLOAT64);
-		if (correctionSelector == 0){
-					
-			try {
-				correction = Maths.multiply(SXRDGeometricCorrections.lorentz(model), SXRDGeometricCorrections.areacor(model
-						, gm.getBeamCorrection(), gm.getSpecular(),  gm.getSampleSize()
-						, gm.getOutPlaneSlits(), gm.getInPlaneSlits(), gm.getBeamInPlane()
-						, gm.getBeamOutPlane(), gm.getDetectorSlits()));
-				correction = Maths.multiply(SXRDGeometricCorrections.polarisation(model, gm.getInplanePolarisation()
-						, gm.getOutplanePolarisation()), correction);
-				correction = Maths.multiply(
-						SXRDGeometricCorrections.polarisation(model, gm.getInplanePolarisation(), gm.getOutplanePolarisation()),
-						correction);
-				if (correction.getDouble(0) ==0){
-					correction.set(0.001, 0);
-				}
-			} catch (DatasetException e) {
-	
-			}
-			yValue = Maths.multiply(output, correction.getDouble(k));
-		}
-		
-		else if (correctionSelector ==1){
+		yValue = correctionMethod(model, 
+				  sm, 
+				  gm, 
+				  k, 
+				  output,
+				  input);
 
-			try {
-				correction = DatasetFactory.createFromObject(GeometricCorrectionsReflectivityMethod.reflectivityCorrectionsBatch(model.getDcdtheta(), k, sm, input, gm.getAngularFudgeFactor(), 
-						gm.getBeamHeight(), gm.getFootprint()));
-				correction = Maths.multiply(correction, 
-						ReflectivityFluxCorrectionsForDialog.reflectivityFluxCorrections(gm.getFluxPath(), model.getQdcdDat().getDouble(k), model));
-				if (correction.getDouble(0) ==0){
-					correction.set(0.001, 0);
-				}
-			
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			yValue = Maths.multiply(output, correction.getDouble(0));
-
-		}
-		else{
-			
-		}
 		try {
 			Thread.sleep(0);
 		} catch (InterruptedException e) {
@@ -904,6 +785,8 @@ public class DummyProcessingClass {
 		sm.addyList(sm.getImages().length, selection ,intensity);
 		sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
 		sm.addOutputDatArray(sm.getImages().length, selection ,output);
+		
+		debug("intensity added to dm: " + intensity + "   local k: " + k);
 		
 		return output;
 	}
@@ -1042,6 +925,7 @@ public class DummyProcessingClass {
 		
 		Display display = Display.getCurrent();
         Color magenta = display.getSystemColor(SWT.COLOR_DARK_MAGENTA);
+        Color red = display.getSystemColor(SWT.COLOR_RED);
 		
 		if (pS.getRegion("Background Region")!=null){
 			IRectangularROI bounds = pS.getRegion("Background Region").getROI().getBounds();
@@ -1075,14 +959,32 @@ public class DummyProcessingClass {
 
 			ssvsPS.getRegion("ssvs Background Region").setRegionColor(magenta);
 			
-		}			
+		}	
 		
-		OperationData outputOD4 = SecondConstantBackgroundROIFittingIOp(model, 
-																		input, 
-																		sm,
-																		pS,
-																		ssvsPS);
-
+		OperationData outputOD4 = null;
+		
+		if(model.getMethodology() == Methodology.SECOND_BACKGROUND_BOX){
+		
+			
+			
+			outputOD4 = SecondConstantBackgroundROIFittingIOp(model, 
+															  input, 
+															  sm,
+															  pS,
+															  ssvsPS);
+		}
+		
+		else if(model.getMethodology() == Methodology.OVERLAPPING_BACKGROUND_BOX){
+			
+			pS.getRegion("Background Region").setRegionColor(red);
+			
+			outputOD4 = OverlappingBackgroundROIFittingIOp(model, 
+														   input, 
+														   sm,
+														   pS,
+														   ssvsPS);
+		}
+		
 		IDataset output = outputOD4.getData();
 		double[] loc4 =  (double[]) outputOD4.getAuxData()[0];
 		sm.addLocationList(selection,loc4);
@@ -1105,5 +1007,169 @@ public class DummyProcessingClass {
 		
 		return output;
 	}
+	
+	public static OperationData OverlappingBackgroundROIFittingIOp(ExampleModel model,
+				  												   IDataset input,
+				  												   SuperModel sm,
+				  												   IPlottingSystem<Composite> pS,
+				  												   IPlottingSystem<Composite> ssvsPS){
 
+		SecondConstantROIBackgroundSubtractionModel scrbm 
+			= new SecondConstantROIBackgroundSubtractionModel();
+		
+		scrbm.setInitialLenPt(sm.getInitialLenPt());
+		scrbm.setLenPt(model.getLenPt());
+		scrbm.setFitPower(model.getFitPower());
+		scrbm.setBoundaryBox(model.getBoundaryBox());
+		scrbm.setPlottingSystem(pS);
+		scrbm.setSPlottingSystem(ssvsPS);
+		
+		if (sm.getBackgroundROI() != null){
+			IRectangularROI bounds = sm.getBackgroundROI().getBounds();
+			int[] len = bounds.getIntLengths();
+			int[] pt = bounds.getIntPoint();
+			
+			if (Arrays.equals(len,new int[] {50, 50}) == false || 
+				Arrays.equals(pt,new int[] {10, 10}) == false){
+			
+				scrbm.setBackgroundROI(sm.getBackgroundROI().getBounds());
+			}
+		}
+		
+		Metadata md = new Metadata();
+		IDataset dummyMD = DatasetFactory.zeros(new int [] {2,2});
+		Map<String, Integer> dumMap = new HashMap<String, Integer>();
+		dumMap.put("one", 1);
+		md.initialize(dumMap);
+		
+		ILazyDataset  ild = null;
+		
+		SourceInformation  si =new SourceInformation("dummy", "dummy2", ild);
+		
+		SliceFromSeriesMetadata sfsm = new SliceFromSeriesMetadata(si);
+		
+		input.setMetadata(sfsm);
+		
+		input.setMetadata(md);
+		
+		OverlappingBgBoxUsingIOperation obbio 
+			= new OverlappingBgBoxUsingIOperation();
+		
+		obbio.setModel(scrbm);
+		
+		return obbio.execute(input, null);
+	
+	}
+	
+	public static Dataset correctionMethod(ExampleModel model, 
+									SuperModel sm, 
+									GeometricParametersModel gm, 
+									int k, 
+									IDataset output,
+									IDataset input){
+		
+		Dataset correction = DatasetFactory.zeros(new int[] {1}, Dataset.FLOAT64);
+		int correctionSelector = sm.getCorrectionSelection();
+		
+		yValue = DatasetFactory.zeros(new int[] {1}, Dataset.ARRAYFLOAT64);
+		
+		if (correctionSelector == 0){
+			
+			try {
+				correction = Maths.multiply(SXRDGeometricCorrections.lorentz(model), SXRDGeometricCorrections.areacor(model
+						, gm.getBeamCorrection(), gm.getSpecular(),  gm.getSampleSize()
+						, gm.getOutPlaneSlits(), gm.getInPlaneSlits(), gm.getBeamInPlane()
+						, gm.getBeamOutPlane(), gm.getDetectorSlits()));
+				correction = Maths.multiply(SXRDGeometricCorrections.polarisation(model, gm.getInplanePolarisation()
+						, gm.getOutplanePolarisation()), correction);
+				correction = Maths.multiply(
+						SXRDGeometricCorrections.polarisation(model, gm.getInplanePolarisation(), gm.getOutplanePolarisation()),
+						correction);
+				if (correction.getDouble(0) ==0){
+					correction.set(0.001, 0);
+				}
+			} catch (DatasetException e) {
+	
+			}
+			
+			yValue = Maths.multiply(output, correction.getDouble(k));
+			
+			debug("Correction Value at local k:  " + Double.toString(correction.getDouble(k)) + "  local k: " + k); 
+		}
+		
+		else if (correctionSelector ==1){
+
+			try {
+				correction = DatasetFactory.createFromObject(GeometricCorrectionsReflectivityMethod.reflectivityCorrectionsBatch(model.getDcdtheta(), k, sm, input, gm.getAngularFudgeFactor(), 
+						gm.getBeamHeight(), gm.getFootprint()));
+				
+				Dataset ref = 
+						ReflectivityFluxCorrectionsForDialog.reflectivityFluxCorrections(gm.getFluxPath(), 
+																						 model.getQdcdDat().getDouble(k), 
+																						 model);
+				
+				correction = Maths.multiply(correction, ref);
+				if (correction.getDouble(0) ==0){
+					correction.set(0.001, 0);
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			yValue = Maths.multiply(output, correction.getDouble(0));
+//			double normalisation  = 1/output.getDouble(0);
+//			yValue = Maths.multiply(normalisation, yValue);
+		}
+		
+		
+		else if (correctionSelector ==2){
+
+			try {
+				correction = DatasetFactory.createFromObject(GeometricCorrectionsReflectivityMethod.reflectivityCorrectionsBatch(model.getDcdtheta(), k, sm, input, gm.getAngularFudgeFactor(), 
+						gm.getBeamHeight(), gm.getFootprint()));
+				
+//				Dataset ref = 
+//						ReflectivityFluxCorrectionsForDialog.reflectivityFluxCorrections(gm.getFluxPath(), 
+//																						 model.getQdcdDat().getDouble(k), 
+//																						 model);
+				
+//				correction = ref;
+				if (correction.getDouble(0) ==0){
+					correction.set(0.001, 0);
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			yValue = Maths.multiply(output, correction.getDouble(0));
+//			double normalisation  = 1/output.getDouble(0);
+//			yValue = Maths.multiply(normalisation, yValue);
+		}
+		
+		else if (correctionSelector ==3){
+
+			yValue = Maths.multiply(output, 1);
+
+		}
+		
+		else{	
+		}
+	
+		Double intensity = (Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum();
+	
+		debug("Correction Value:  " + Double.toString(correction.getDouble(0)));
+		debug("output sum: " + Double.toString(intensity));
+		
+		return yValue;
+	}
+	
+	
+	private static void debug(String output) {
+		if (DEBUG == 1) {
+			System.out.println(output);
+		}
+	}
+	
 }

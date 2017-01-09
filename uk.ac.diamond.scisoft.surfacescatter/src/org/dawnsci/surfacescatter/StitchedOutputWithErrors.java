@@ -460,7 +460,7 @@ public class StitchedOutputWithErrors {
 	}
 	
 	public static IDataset[] curveStitch4 (ArrayList<DataModel> dms, 
-											SuperModel sm){
+										   SuperModel sm){
 		
 		ArrayList<IDataset> xArrayList = new ArrayList<>();
 		ArrayList<IDataset> yArrayList = new ArrayList<>();
@@ -649,7 +649,9 @@ public class StitchedOutputWithErrors {
 		sortedAttenuatedDatasets[5] = sortedYArrayCorrectedErrorMin;
 		sortedAttenuatedDatasets[6] = sortedYArrayCorrectedFhklErrorMin;
 		
-		if(sm.getCorrectionSelection() == 1){
+		if(sm.getCorrectionSelection() == 1||
+		   sm.getCorrectionSelection() == 2||	
+		   sm.getCorrectionSelection() == 3){
 			
 			double normalisation = 1/sortedAttenuatedDatasets[0].getDouble(0);
 			sortedAttenuatedDatasets[0] = 
@@ -681,6 +683,9 @@ public class StitchedOutputWithErrors {
 		sm.setSplicedCurveYErrorMin(sortedYArrayCorrectedErrorMin);
 		sm.setSplicedCurveYFhklErrorMax(sortedYArrayCorrectedFhklErrorMax);
 		sm.setSplicedCurveYFhklErrorMin(sortedYArrayCorrectedFhklErrorMin);
+		
+		
+		
 		
 		return sortedAttenuatedDatasets;
 	}	

@@ -115,25 +115,25 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 					}
 
 				}
-				IndexIterator it = in1Background.getIterator();
-
-				while (it.hasNext()) {
-					double v = in1Background.getElementDoubleAbs(it.index);
-					if (v <= 0)
-						in1Background.setObjectAbs(it.index, 0.1);
-				}
+//				IndexIterator it = in1Background.getIterator();
+//
+//				while (it.hasNext()) {
+//					double v = in1Background.getElementDoubleAbs(it.index);
+//					if (v <= 0)
+//						in1Background.setObjectAbs(it.index, 0.1);
+//				}
 
 				Dataset pBackgroundSubtracted = Maths.subtract(in1, in1Background, null);
 
 				IndexIterator it1 = pBackgroundSubtracted.getIterator();
 
-				while (it1.hasNext()) {
-					double q = pBackgroundSubtracted.getElementDoubleAbs(it1.index);
-
-					if (q <= 0) {
-						pBackgroundSubtracted.setObjectAbs(it1.index, 0.1);
-					}
-				}
+//				while (it1.hasNext()) {
+//					double q = pBackgroundSubtracted.getElementDoubleAbs(it1.index);
+//
+//					if (q <= 0) {
+//						pBackgroundSubtracted.setObjectAbs(it1.index, 0.1);
+//					}
+//				}
 				output = DatasetUtils.cast(pBackgroundSubtracted, Dataset.FLOAT64);
 
 				output.setName("Region of Interest, polynomial background removed");

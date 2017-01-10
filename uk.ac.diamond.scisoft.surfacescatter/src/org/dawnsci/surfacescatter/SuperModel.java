@@ -55,8 +55,18 @@ public class SuperModel {
 	private ArrayList<double[]> trackerLocationList;
 	private ArrayList<Double> trackerKList;
 	private IDataset temporaryBackgroundHolder; // in1Background
+	private Boolean trackerOn = false;
+	private int[][] boxOffsetLenPt = new int[][] {{0,0},{25,25}};
 	
 	
+	public Boolean getTrackerOn() {
+		return trackerOn;
+	}
+
+	public void setTrackerOn(Boolean trackerOn) {
+		this.trackerOn = trackerOn;
+	}
+
 	public IDataset getTemporaryBackgroundHolder() {
 		return temporaryBackgroundHolder;
 	}
@@ -113,6 +123,7 @@ public class SuperModel {
 		trackerLocationList = null;
 		trackerKList = null;
 		locationList = null;
+//		boxOffsetLenPt = null;
 	}
 	
 	public ArrayList<IDataset> getOutputDatArray() {
@@ -812,5 +823,13 @@ public class SuperModel {
 
 	public void setTrackerKList(ArrayList<Double> trackerKList) {
 		this.trackerKList = trackerKList;
+	}
+
+	public int[][] getBoxOffsetLenPt() {
+		return boxOffsetLenPt;
+	}
+
+	public void setBoxOffsetLenPt(int[][] boxOffsetLenPt) {
+		this.boxOffsetLenPt = boxOffsetLenPt;
 	}
 }

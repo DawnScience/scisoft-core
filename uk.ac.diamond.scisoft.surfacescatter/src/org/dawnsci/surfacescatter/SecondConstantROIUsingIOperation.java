@@ -197,14 +197,14 @@ public class SecondConstantROIUsingIOperation
 	        
 			Dataset pBackgroundSubtracted = Maths.subtract(in1, bgAv, null);
 					
-//			IndexIterator it1 = pBackgroundSubtracted.getIterator();
-//			
-//			while (it1.hasNext()) {
-//				double q = pBackgroundSubtracted.getElementDoubleAbs(it1.index);
-//				in1Background.setObjectAbs(it1.index, bgAv);
+			IndexIterator it1 = pBackgroundSubtracted.getIterator();
+			
+			while (it1.hasNext()) {
+				double q = pBackgroundSubtracted.getElementDoubleAbs(it1.index);
+				in1Background.setObjectAbs(it1.index, bgAv);
 //				if (q < 0)
 //					pBackgroundSubtracted.setObjectAbs(it1.index, 0.1);
-//			}
+			}
 				
 			output = DatasetUtils.cast(pBackgroundSubtracted, Dataset.FLOAT64);
 				

@@ -739,8 +739,8 @@ public class AgnosticTrackerHandler {
 					}
 			
 					int[] len1 = model.getLenPt()[0];
-			
-					int[] newPt = new int[] { (int) location[0], (int) location[1] };
+			////////////////////AAAAAAAAARRRRRRRRGH??????????????
+					int[] newPt = new int[] { (int) location[1], (int) location[0] };
 					int[][] newLenPt = new int[2][];
 					newLenPt[0] = len1;
 					newLenPt[1] = newPt;
@@ -816,7 +816,7 @@ public class AgnosticTrackerHandler {
 				
 				int[] len1 = model.getLenPt()[0];
 				
-				int[] newPt = new int[] { (int) location[0], (int) location[1] };
+				int[] newPt = new int[] { (int) location[1], (int) location[0] };
 				int[][] newLenPt = new int[2][];
 				newLenPt[0] = len1;
 				newLenPt[1] = newPt;
@@ -917,7 +917,7 @@ public class AgnosticTrackerHandler {
 				}
 				
 				int[] len1 = model.getLenPt()[0];
-				
+				///////////////////////////////????????????????
 				int[] newPt = new int[] { (int) location[0], (int) location[1] };
 				int[][] newLenPt = new int[2][];
 				newLenPt[0] = len1;

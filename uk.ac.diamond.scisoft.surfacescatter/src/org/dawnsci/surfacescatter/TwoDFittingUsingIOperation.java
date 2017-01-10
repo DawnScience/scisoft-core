@@ -141,15 +141,15 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 			}
 		});
 
-		double[] location = new double[] { (double) model.getInitialLenPt()[1][1],
-				(double) model.getInitialLenPt()[1][0],
-				(double) (model.getInitialLenPt()[1][1] + model.getInitialLenPt()[0][1]),
-				(double) (model.getInitialLenPt()[1][0]), (double) model.getInitialLenPt()[1][1],
-				(double) model.getInitialLenPt()[1][0] + model.getInitialLenPt()[0][0],
-				(double) (model.getInitialLenPt()[1][1] + model.getInitialLenPt()[0][1]),
-				(double) (model.getInitialLenPt()[1][0] + model.getInitialLenPt()[0][0]) };
+//		double[] location = new double[] { (double) model.getInitialLenPt()[1][1],
+//				(double) model.getInitialLenPt()[1][0],
+//				(double) (model.getInitialLenPt()[1][1] + model.getInitialLenPt()[0][1]),
+//				(double) (model.getInitialLenPt()[1][0]), (double) model.getInitialLenPt()[1][1],
+//				(double) model.getInitialLenPt()[1][0] + model.getInitialLenPt()[0][0],
+//				(double) (model.getInitialLenPt()[1][1] + model.getInitialLenPt()[0][1]),
+//				(double) (model.getInitialLenPt()[1][0] + model.getInitialLenPt()[0][0]) };
 
-		return new OperationData(output, location, in1Background);
+		return new OperationData(output, in1Background);
 	}
 
 	private void debug(String output) {

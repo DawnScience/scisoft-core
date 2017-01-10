@@ -70,10 +70,10 @@ public class DummyProcessingClass {
 													   sm);
 				output = outputOD.getData();
 				
-				double[] loc =  (double[]) outputOD.getAuxData()[0];
-				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[1];
+//				double[] loc =  (double[]) outputOD.getAuxData()[0];
+				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[0];
 				
-				sm.addLocationList(selection,loc);
+//				sm.addLocationList(selection,loc);
 				sm.setTemporaryBackgroundHolder(temporaryBackground);
 				
 				
@@ -102,6 +102,18 @@ public class DummyProcessingClass {
 				
 			case SECOND_BACKGROUND_BOX:
 				
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
+					
+					ath1.TwoDTracking3(sm, 
+									  input, 
+									  model, 
+									  dm, 
+									  trackingMarker, 
+									  k, 
+									  selection);
+				}
+				
 				output = secondConstantROIMethod(sm,
 												 model,
 										 		 input,  
@@ -115,12 +127,19 @@ public class DummyProcessingClass {
 				break;
 				
 			case OVERLAPPING_BACKGROUND_BOX:
-//				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
-//																   model, 
-//																   sm, 
-//																   pS, 
-//																   ssvsPS,
-//																   selection);
+				
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
+					
+					ath1.TwoDTracking3(sm, 
+									  input, 
+									  model, 
+									  dm, 
+									  trackingMarker, 
+									  k, 
+									  selection);
+				}
+				
 				
 
 				output = secondConstantROIMethod(sm,
@@ -137,17 +156,31 @@ public class DummyProcessingClass {
 				if (pS.getRegion("Background Region")!=null){
 					pS.removeRegion(pS.getRegion("Background Region"));
 				}
-						
+				
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
+					
+					ath1.TwoDTracking3(sm, 
+									  input, 
+									  model, 
+									  dm, 
+									  trackingMarker, 
+									  k, 
+									  selection);
+				}
+				
+				
 				OperationData outputOD2= OneDFittingIOp(model,
 						   								input,
 						   								sm,
 						   								Methodology.X);
 				output = outputOD2.getData();
-				double[] loc2 =  (double[]) outputOD2.getAuxData()[0];
-				sm.addLocationList(selection,loc2);
+//				double[] loc2 =  (double[]) outputOD2.getAuxData()[0];
+//				sm.addLocationList(selection,loc2);
 				
 				IDataset temporaryBackground2 = (IDataset) outputOD2.getAuxData()[1];
 				sm.setTemporaryBackgroundHolder(temporaryBackground2);
+//				
 								
 				break;
 				
@@ -156,13 +189,25 @@ public class DummyProcessingClass {
 					pS.removeRegion(pS.getRegion("Background Region"));
 				}
 				
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
+					
+					ath1.TwoDTracking3(sm, 
+									  input, 
+									  model, 
+									  dm, 
+									  trackingMarker, 
+									  k, 
+									  selection);
+				}
+				
 				OperationData outputOD3= OneDFittingIOp(model,
 														input,
 														sm,
 														Methodology.Y);
 				output = outputOD3.getData();
-				double[] loc3 =  (double[]) outputOD3.getAuxData()[0];
-				sm.addLocationList(selection,loc3);
+//				double[] loc3 =  (double[]) outputOD3.getAuxData()[0];
+//				sm.addLocationList(selection,loc3);
 				
 				IDataset temporaryBackground3 = (IDataset) outputOD3.getAuxData()[1];
 				sm.setTemporaryBackgroundHolder(temporaryBackground3);
@@ -236,8 +281,6 @@ public class DummyProcessingClass {
 		
 		IDataset output =null;	
 		
-		
-		
 		switch(model.getMethodology()){
 			case TWOD_TRACKING:
 				if (pS.getRegion("Background Region")!=null){
@@ -264,10 +307,10 @@ public class DummyProcessingClass {
 													   sm);
 				output = outputOD.getData();
 				
-				double[] loc =  (double[]) outputOD.getAuxData()[0];
-				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[1];
+//				double[] loc =  (double[]) outputOD.getAuxData()[0];
+				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[0];
 				
-				sm.addLocationList(selection,loc);
+//				sm.addLocationList(selection,loc);
 				sm.setTemporaryBackgroundHolder(temporaryBackground);
 				
 				
@@ -298,6 +341,20 @@ public class DummyProcessingClass {
 				break;
 			case SECOND_BACKGROUND_BOX:
 
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
+					
+					ath1.TwoDTracking3(sm,
+									  input, 
+									  model,
+									  dm, 
+									  trackingMarker, 
+									  k,
+									  selection);
+			
+				}
+				
+				
 				output = secondConstantROIMethod(sm,
 						 model,
 				 		 input,  
@@ -311,15 +368,19 @@ public class DummyProcessingClass {
 				break;
 				
 			case OVERLAPPING_BACKGROUND_BOX:
-//				if (pS.getRegion("Background Region")!=null){
-//					pS.removeRegion(pS.getRegion("Background Region"));
-//				}
-//				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
-//																   model, 
-//																   sm, 
-//																   pS, 
-//																   ssvsPS,
-//																   selection);
+		
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
+					
+					ath1.TwoDTracking3(sm,
+									  input, 
+									  model,
+									  dm, 
+									  trackingMarker, 
+									  k,
+									  selection);
+			
+				}
 				
 
 				output = secondConstantROIMethod(sm,
@@ -337,14 +398,29 @@ public class DummyProcessingClass {
 				if (pS.getRegion("Background Region")!=null){
 					pS.removeRegion(pS.getRegion("Background Region"));
 				}
-													
+				
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
+					
+					ath1.TwoDTracking3(sm,
+									  input, 
+									  model,
+									  dm, 
+									  trackingMarker, 
+									  k,
+									  selection);
+			
+				}
+				
+				
+				
 				OperationData outputOD2= OneDFittingIOp(model,
 						   								input,
 						   								sm,
 						   								Methodology.X);
 				output = outputOD2.getData();
-				double[] loc2 =  (double[]) outputOD2.getAuxData()[0];
-				sm.addLocationList(selection,loc2);
+//				double[] loc2 =  (double[]) outputOD2.getAuxData()[0];
+//				sm.addLocationList(selection,loc2);
 				
 				IDataset temporaryBackground2 = (IDataset) outputOD2.getAuxData()[1];
 				sm.setTemporaryBackgroundHolder(temporaryBackground2);
@@ -355,14 +431,28 @@ public class DummyProcessingClass {
 				if (pS.getRegion("Background Region")!=null){
 					pS.removeRegion(pS.getRegion("Background Region"));
 				}
-											
+				
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath2 = new AgnosticTrackerHandler();
+					
+					ath2.TwoDTracking3(sm,
+									  input, 
+									  model,
+									  dm, 
+									  trackingMarker, 
+									  k,
+									  selection);
+			
+					
+				}
+				
 				OperationData outputOD3= OneDFittingIOp(model,
 														input,
 														sm,
 														Methodology.Y);
 				output = outputOD3.getData();
-				double[] loc3 =  (double[]) outputOD3.getAuxData()[0];
-				sm.addLocationList(selection,loc3);
+//				double[] loc3 =  (double[]) outputOD3.getAuxData()[0];
+//				sm.addLocationList(selection,loc3);
 									
 				IDataset temporaryBackground3 = (IDataset) outputOD3.getAuxData()[1];
 				sm.setTemporaryBackgroundHolder(temporaryBackground3);
@@ -459,10 +549,10 @@ public class DummyProcessingClass {
 													   sm);
 				output = outputOD.getData();
 				
-				double[] loc =  (double[]) outputOD.getAuxData()[0];
-				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[1];
+//				double[] loc =  (double[]) outputOD.getAuxData()[0];
+				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[0];
 				
-				sm.addLocationList(selection,loc);
+//				sm.addLocationList(selection,loc);
 				sm.setTemporaryBackgroundHolder(temporaryBackground);
 				
 				break;
@@ -490,6 +580,19 @@ public class DummyProcessingClass {
 				break;
 			case SECOND_BACKGROUND_BOX:
 
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
+					
+					ath1.TwoDTracking3(sm, 
+									  input, 
+									  model, 
+									  dm, 
+									  trackingMarker, 
+									  k, 
+									  selection);
+					
+				}
+				
 				output = secondConstantROIMethod(sm,
 						 model,
 				 		 input,  
@@ -511,6 +614,18 @@ public class DummyProcessingClass {
 //																   pS, 
 //																   ssvsPS,
 //																   selection);
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
+					
+					ath1.TwoDTracking3(sm, 
+									  input, 
+									  model, 
+									  dm, 
+									  trackingMarker, 
+									  k, 
+									  selection);
+					
+				}
 				
 				output = secondConstantROIMethod(sm,
 						 model,
@@ -526,14 +641,27 @@ public class DummyProcessingClass {
 				if (pS.getRegion("Background Region")!=null){
 					pS.removeRegion(pS.getRegion("Background Region"));
 				}
-													
+				
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
+					
+					ath1.TwoDTracking3(sm, 
+									  input, 
+									  model, 
+									  dm, 
+									  trackingMarker, 
+									  k, 
+									  selection);
+					
+				}
+				
 				OperationData outputOD2= OneDFittingIOp(model,
 						   								input,
 						   								sm,
 						   								Methodology.X);
 				output = outputOD2.getData();
-				double[] loc2 =  (double[]) outputOD2.getAuxData()[0];
-				sm.addLocationList(selection,loc2);
+//				double[] loc2 =  (double[]) outputOD2.getAuxData()[0];
+//				sm.addLocationList(selection,loc2);
 				
 				IDataset temporaryBackground2 = (IDataset) outputOD2.getAuxData()[1];
 				sm.setTemporaryBackgroundHolder(temporaryBackground2);
@@ -544,14 +672,28 @@ public class DummyProcessingClass {
 				if (pS.getRegion("Background Region")!=null){
 					pS.removeRegion(pS.getRegion("Background Region"));
 				}
-											
+				
+
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
+					
+					ath1.TwoDTracking3(sm, 
+									  input, 
+									  model, 
+									  dm, 
+									  trackingMarker, 
+									  k, 
+									  selection);	
+				}
+				
+				
 				OperationData outputOD3= OneDFittingIOp(model,
 														input,
 														sm,
 														Methodology.Y);
 				output = outputOD3.getData();
-				double[] loc3 =  (double[]) outputOD3.getAuxData()[0];
-				sm.addLocationList(selection,loc3);
+//				double[] loc3 =  (double[]) outputOD3.getAuxData()[0];
+//				sm.addLocationList(selection,loc3);
 				
 				IDataset temporaryBackground3 = (IDataset) outputOD3.getAuxData()[1];
 				sm.setTemporaryBackgroundHolder(temporaryBackground3);
@@ -637,15 +779,13 @@ public class DummyProcessingClass {
 				
 
 				OperationData outputOD= TwoDFittingIOp(model,
-													   input,
-
-													   
+													   input, 
 													   sm);
 				output = outputOD.getData();
-				double[] loc =  (double[]) outputOD.getAuxData()[0];
-				sm.addLocationList(selection,loc);
+//				double[] loc =  (double[]) outputOD.getAuxData()[0];
+//				sm.addLocationList(selection,loc);
 				
-				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[1];
+				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[0];
 				
 				sm.setTemporaryBackgroundHolder(temporaryBackground);
 
@@ -675,6 +815,19 @@ public class DummyProcessingClass {
 				break;
 			case SECOND_BACKGROUND_BOX:
 
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
+					
+					ath1.TwoDTracking1(input, 
+							model,
+							sm,
+							dm, 
+							trackingMarker, 
+							k,
+							locationList,
+							selection);
+				}
+	
 				output = secondConstantROIMethod(sm,
 						 model,
 				 		 input,  
@@ -699,6 +852,19 @@ public class DummyProcessingClass {
 //				
 //				
 
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
+					
+					ath1.TwoDTracking1(input, 
+							model,
+							sm,
+							dm, 
+							trackingMarker, 
+							k,
+							locationList,
+							selection);
+				}
+				
 				output = secondConstantROIMethod(sm,
 						 model,
 				 		 input,  
@@ -714,14 +880,30 @@ public class DummyProcessingClass {
 				if (pS.getRegion("Background Region")!=null){
 					pS.removeRegion(pS.getRegion("Background Region"));
 				}
-													
+				
+				
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
+					
+					ath1.TwoDTracking1(input, 
+							model,
+							sm,
+							dm, 
+							trackingMarker, 
+							k,
+							locationList,
+							selection);
+					
+				}
+				
+				
 				OperationData outputOD2= OneDFittingIOp(model,
 						   								input,
 						   								sm,
 						   								Methodology.X);
 				output = outputOD2.getData();
-				double[] loc2 =  (double[]) outputOD2.getAuxData()[0];
-				sm.addLocationList(selection,loc2);
+//				double[] loc2 =  (double[]) outputOD2.getAuxData()[0];
+//				sm.addLocationList(selection,loc2);
 											
 				IDataset temporaryBackground2 = (IDataset) outputOD2.getAuxData()[1];
 				sm.setTemporaryBackgroundHolder(temporaryBackground2);
@@ -733,14 +915,30 @@ public class DummyProcessingClass {
 				if (pS.getRegion("Background Region")!=null){
 					pS.removeRegion(pS.getRegion("Background Region"));
 				}
-											
+			
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath2 = new AgnosticTrackerHandler();
+					
+					ath2.TwoDTracking1(input, 
+							model,
+							sm,
+							dm, 
+							trackingMarker, 
+							k,
+							locationList,
+							selection);
+					
+
+
+				}
+				
 				OperationData outputOD3= OneDFittingIOp(model,
 														input,
 														sm,
 														Methodology.Y);
 				output = outputOD3.getData();
-				double[] loc3 =  (double[]) outputOD3.getAuxData()[0];
-				sm.addLocationList(selection,loc3);
+//				double[] loc3 =  (double[]) outputOD3.getAuxData()[0];
+//				sm.addLocationList(selection,loc3);
 									
 				IDataset temporaryBackground3 = (IDataset) outputOD3.getAuxData()[1];
 				sm.setTemporaryBackgroundHolder(temporaryBackground3);
@@ -825,6 +1023,50 @@ public class DummyProcessingClass {
 		
 //		return outputOD.getData();
 		
+	}
+	
+	public static IDataset caseXY(SuperModel sm,
+								  ExampleModel model,
+								  DataModel dm,
+								  int k,
+								  int trackingMarker,
+								  int selection,
+								  double[] locationList,
+								  IDataset input,
+								  IPlottingSystem<Composite> pS,
+								  AnalaysisMethodologies.Methodology am){
+		
+		if (pS.getRegion("Background Region")!=null){
+			pS.removeRegion(pS.getRegion("Background Region"));
+		}
+		
+		
+		if(sm.getTrackerOn()){
+			AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
+			
+			ath1.TwoDTracking1(input, 
+					model,
+					sm,
+					dm, 
+					trackingMarker, 
+					k,
+					locationList,
+					selection);
+			
+		}
+		
+		
+		OperationData outputOD2= OneDFittingIOp(model,
+				   								input,
+				   								sm,
+				   								am);
+		IDataset output = outputOD2.getData();
+
+									
+		IDataset temporaryBackground2 = (IDataset) outputOD2.getAuxData()[1];
+		sm.setTemporaryBackgroundHolder(temporaryBackground2);
+		
+		return output;
 	}
 	
 	
@@ -926,6 +1168,7 @@ public class DummyProcessingClass {
 		Display display = Display.getCurrent();
         Color magenta = display.getSystemColor(SWT.COLOR_DARK_MAGENTA);
         Color red = display.getSystemColor(SWT.COLOR_RED);
+
 		
 		if (pS.getRegion("Background Region")!=null){
 			IRectangularROI bounds = pS.getRegion("Background Region").getROI().getBounds();
@@ -976,18 +1219,22 @@ public class DummyProcessingClass {
 		
 		else if(model.getMethodology() == Methodology.OVERLAPPING_BACKGROUND_BOX){
 			
-			pS.getRegion("Background Region").setRegionColor(red);
+//			pS.getRegion("Background Region").setRegionColor(red);
 			
 			outputOD4 = OverlappingBackgroundROIFittingIOp(model, 
 														   input, 
 														   sm,
 														   pS,
 														   ssvsPS);
+			if(outputOD4.getAuxData()[3] != null){
+				sm.setBoxOffsetLenPt((int[][]) outputOD4.getAuxData()[3]);
+			}
+			
 		}
 		
 		IDataset output = outputOD4.getData();
-		double[] loc4 =  (double[]) outputOD4.getAuxData()[0];
-		sm.addLocationList(selection,loc4);
+//		double[] loc4 =  (double[]) outputOD4.getAuxData()[0];
+//		sm.addLocationList(selection,loc4);
 
 		if ((IROI) outputOD4.getAuxData()[1] != null){
 			IRectangularROI bounds = ((IROI) outputOD4.getAuxData()[1]).getBounds();
@@ -1001,6 +1248,7 @@ public class DummyProcessingClass {
 				dm.setBackgroundROI((IROI) outputOD4.getAuxData()[1]);;
 			}
 		}
+		
 		
 		sm.setTemporaryBackgroundHolder((IDataset) outputOD4.getAuxData()[2]);
 		
@@ -1023,6 +1271,11 @@ public class DummyProcessingClass {
 		scrbm.setBoundaryBox(model.getBoundaryBox());
 		scrbm.setPlottingSystem(pS);
 		scrbm.setSPlottingSystem(ssvsPS);
+		scrbm.setTrackerOn(sm.getTrackerOn());
+		
+		if(sm.getBoxOffsetLenPt() != null){
+			scrbm.setBoxOffsetLenPt(sm.getBoxOffsetLenPt());
+		}
 		
 		if (sm.getBackgroundROI() != null){
 			IRectangularROI bounds = sm.getBackgroundROI().getBounds();

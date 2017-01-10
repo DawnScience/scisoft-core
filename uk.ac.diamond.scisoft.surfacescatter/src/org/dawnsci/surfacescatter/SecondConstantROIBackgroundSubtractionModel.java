@@ -29,6 +29,7 @@ public class SecondConstantROIBackgroundSubtractionModel extends AbstractOperati
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private IRectangularROI initialBackgroundROI = new RectangularROI(10,10,50,50,0);
 	private int[][] backgroundLenPt;
+	private int[][] boxOffsetLenPt =null;
 	
 	public int[][] getBackgroundLenPt() {
 		return backgroundLenPt;
@@ -44,6 +45,18 @@ public class SecondConstantROIBackgroundSubtractionModel extends AbstractOperati
 
 	public void setInitialBackgroundROI(IRectangularROI initialBackgroundROI) {
 		this.initialBackgroundROI = initialBackgroundROI;
+	}
+
+	@OperationModelField(label="trackerOn", hint = "Are you tracking?" )
+	private Boolean trackerOn = false;
+	
+	
+	public Boolean getTrackerOn() {
+		return trackerOn;
+	}
+
+	public void setTrackerOn(Boolean trackerOn) {
+		firePropertyChange("trackerOn", this.trackerOn, this.trackerOn = trackerOn);
 	}
 
 	@OperationModelField(label="backgroundROI", hint = "backgroundROI?" )
@@ -203,6 +216,14 @@ public class SecondConstantROIBackgroundSubtractionModel extends AbstractOperati
 
 	public void setInitialLenPt(int[][] initialLenPt) {
 		this.initialLenPt = initialLenPt;
+	}
+
+	public int[][] getBoxOffsetLenPt() {
+		return boxOffsetLenPt;
+	}
+
+	public void setBoxOffsetLenPt(int[][] boxOffsetLenPt) {
+		this.boxOffsetLenPt = boxOffsetLenPt;
 	}
 
 	

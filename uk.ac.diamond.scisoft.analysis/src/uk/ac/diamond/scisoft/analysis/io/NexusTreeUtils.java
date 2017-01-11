@@ -215,7 +215,7 @@ public class NexusTreeUtils {
 		}
 
 		// add errors
-		ILazyDataset eData = cData.getError();
+		ILazyDataset eData = cData.getErrors();
 		String cName;
 		String eName;
 
@@ -243,7 +243,7 @@ public class NexusTreeUtils {
 				}
 			}
 			try {
-				cData.setError(eData);
+				cData.setErrors(eData);
 			} catch (RuntimeException e) {
 				logger.warn("Could not set error ({}) for node as it was not broadcastable: {}", eData, link);
 			}
@@ -289,7 +289,7 @@ public class NexusTreeUtils {
 				}
 				
 				// add errors
-				if (a.getError() == null) {
+				if (a.getErrors() == null) {
 					eName = cName + NX_ERRORS_SUFFIX;
 					if (!gNode.containsDataNode(eName) && !cName.equals(l.getName())) {
 						eName = l.getName() + NX_ERRORS_SUFFIX;
@@ -302,7 +302,7 @@ public class NexusTreeUtils {
 							eData.setName(eName);
 						}
 						try {
-							a.setError(eData);
+							a.setErrors(eData);
 						} catch (RuntimeException e) {
 							logger.warn("Could not set error ({}) for node as it was not broadcastable: {}", eData, l);
 						}
@@ -561,7 +561,7 @@ public class NexusTreeUtils {
 		if (gn.containsDataNode(NX_ERRORS)) {
 			ILazyDataset lze = gn.getDataNode(NX_ERRORS).getDataset();
 			if (Arrays.equals(lz.getShape(), lze.getShape())) {
-				lz.setError(lze);
+				lz.setErrors(lze);
 			}
 		}
 		
@@ -666,7 +666,7 @@ public class NexusTreeUtils {
 					DataNode d = gn.getDataNode(a);
 					DataNode e = gn.getDataNode(uncertAttr.getFirstElement());
 					if (Arrays.equals(d.getDataset().getShape(), e.getDataset().getShape())){
-						d.getDataset().setError(e.getDataset());
+						d.getDataset().setErrors(e.getDataset());
 						foundSuffixedUncertainties = true;
 					} else {
 						logger.warn("Dataset '{}' and error'{}' have incompatible shapes", aName, uncertAttr.getFirstElement());
@@ -701,7 +701,7 @@ public class NexusTreeUtils {
 			// Found a valid-looking uncertainty DataNode? As well as a valid
 			// signal? Then add the uncertainty to the signal.
 			if (uncertaintyNode != null && signalNode != null) {
-				signalNode.getDataset().setError(uncertaintyNode.getDataset());
+				signalNode.getDataset().setErrors(uncertaintyNode.getDataset());
 			}
 		}
 		
@@ -786,7 +786,7 @@ public class NexusTreeUtils {
 		if (annotations.contains(signalName+NX_UNCERTAINTY_SUFFIX)) {
 			DataNode dn = gn.getDataNode(signalName+NX_UNCERTAINTY_SUFFIX);
 			ILazyDataset sv = dn.getDataset().getSliceView();
-			lz.setError(sv);
+			lz.setErrors(sv);
 		}
 		
 		for (int i = 0; i < primaryAxes.length; i++) {

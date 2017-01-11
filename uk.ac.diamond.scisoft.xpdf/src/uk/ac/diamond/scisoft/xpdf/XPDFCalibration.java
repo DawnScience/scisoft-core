@@ -318,8 +318,8 @@ public class XPDFCalibration {
 			Dataset deTranData = DatasetFactory.createFromObject(IntStream.range(0, componentTrace.getSize()).parallel().mapToDouble(i-> componentTrace.getElementDoubleAbs(i) * transmissionCorrection.getElementDoubleAbs(i)).toArray(), componentTrace.getShape()); 
 			
 			// Error propagation
-			if (propagateErrors && componentTrace.getError() != null)
-				deTranData.setError(Maths.multiply(componentTrace.getError(), transmissionCorrection));
+			if (propagateErrors && componentTrace.getErrors() != null)
+				deTranData.setErrors(Maths.multiply(componentTrace.getErrors(), transmissionCorrection));
 			deTran.add(deTranData);
 		}
 		
@@ -331,8 +331,8 @@ public class XPDFCalibration {
 			Dataset calConData = DatasetFactory.createFromObject(IntStream.range(0, componentTrace.getSize()).parallel().mapToDouble(i-> componentTrace.getElementDoubleAbs(i) / lastCalCon).toArray(), componentTrace.getShape()); 
 		
 			// Error propagation
-			if (propagateErrors && componentTrace.getError() != null)
-				calConData.setError(Maths.divide(componentTrace.getError(), calibrationConstants.getLast()));
+			if (propagateErrors && componentTrace.getErrors() != null)
+				calConData.setErrors(Maths.divide(componentTrace.getErrors(), calibrationConstants.getLast()));
 			// Set the data
 			calCon.add(calConData);
 		}
@@ -346,8 +346,8 @@ public class XPDFCalibration {
 				for (Dataset componentTrace : calCon) {
 					Dataset mulCorData = Maths.subtract(componentTrace, multipleScatteringCorrection);
 					// Error propagation: no change if the multiple scattering correction is taken as exact
-					if (propagateErrors && componentTrace.getError() != null)
-						mulCorData.setError(componentTrace.getError());
+					if (propagateErrors && componentTrace.getErrors() != null)
+						mulCorData.setErrors(componentTrace.getErrors());
 					mulCor.add(mulCorData);
 				}
 			} else {
@@ -355,8 +355,8 @@ public class XPDFCalibration {
 //					Dataset mulCorData = Maths.subtract(componentTrace, 0);
 					Dataset mulCorData = DatasetFactory.createFromObject(IntStream.range(0, componentTrace.getSize()).parallel().mapToDouble(i -> componentTrace.getElementDoubleAbs(i) - 0.0), componentTrace.getShape());
 					//Error propagation
-					if (propagateErrors && componentTrace.getError() != null)
-						mulCorData.setError(componentTrace.getError());
+					if (propagateErrors && componentTrace.getErrors() != null)
+						mulCorData.setErrors(componentTrace.getErrors());
 					mulCor.add(mulCorData);
 				}
 			}
@@ -366,8 +366,8 @@ public class XPDFCalibration {
 		}
 
 		absCor.idivide(nSampleIlluminatedAtoms);
-		if (propagateErrors && absCor.getError() != null)
-			absCor.getError().idivide(nSampleIlluminatedAtoms);
+		if (propagateErrors && absCor.getErrors() != null)
+			absCor.getErrors().idivide(nSampleIlluminatedAtoms);
 
 		Dataset absCorP = applyPolarizationConstant(absCor);
 		
@@ -403,8 +403,8 @@ public class XPDFCalibration {
 		List<Dataset> absorptionTemporary = new ArrayList<Dataset>();
 		for (Dataset data : mulCor) {
 			Dataset absTempData = data.copy(DoubleDataset.class);
-			if (data.getError() != null)
-				absTempData.setError(data.getError());
+			if (data.getErrors() != null)
+				absTempData.setErrors(data.getErrors());
 			absorptionTemporary.add(absTempData);
 		}
 		
@@ -436,19 +436,19 @@ public class XPDFCalibration {
 				absorptionTemporary.set(iInnermostAbsorber, DatasetFactory.createFromObject(IntStream.range(0, innermostTemporary.getSize()).parallel().mapToDouble( i -> innermostTemporary.getElementDoubleAbs(i) - scattererTemporary.getElementDoubleAbs(i) * subsetAbsorptionCorrection.getElementDoubleAbs(i)).toArray(), innermostTemporary.getShape()));
 				
 				// Error propagation. If either is present, then set an error on the result. Non-present errors are taken as zero (exact).
-				if (absorptionTemporary.get(iInnermostAbsorber).getError() != null ||
-						absorptionTemporary.get(iScatterer).getError() != null) {
-					Dataset innerError = (absorptionTemporary.get(iInnermostAbsorber).getError() != null) ?
-							absorptionTemporary.get(iInnermostAbsorber).getError() :
+				if (absorptionTemporary.get(iInnermostAbsorber).getErrors() != null ||
+						absorptionTemporary.get(iScatterer).getErrors() != null) {
+					Dataset innerError = (absorptionTemporary.get(iInnermostAbsorber).getErrors() != null) ?
+							absorptionTemporary.get(iInnermostAbsorber).getErrors() :
 							DatasetFactory.zeros(absorptionTemporary.get(iInnermostAbsorber));
-					Dataset scatterError = (absorptionTemporary.get(iScatterer).getError() != null) ?
+					Dataset scatterError = (absorptionTemporary.get(iScatterer).getErrors() != null) ?
 //							Maths.divide(
 							Maths.multiply(
-									absorptionTemporary.get(iScatterer).getError(),
+									absorptionTemporary.get(iScatterer).getErrors(),
 									subsetAbsorptionCorrection.reshape(subsetAbsorptionCorrection.getSize())) :
 //									subsetAbsorptionCorrection.squeeze()) :
 									DatasetFactory.zeros(absorptionTemporary.get(iScatterer));
-					absorptionTemporary.get(iInnermostAbsorber).setError(Maths.sqrt(Maths.add(Maths.square(innerError), Maths.square(scatterError))));
+					absorptionTemporary.get(iInnermostAbsorber).setErrors(Maths.sqrt(Maths.add(Maths.square(innerError), Maths.square(scatterError))));
 				}
 				
 			}
@@ -465,9 +465,9 @@ public class XPDFCalibration {
 //		Dataset absCor = Maths.divide(absorptionTemporary.get(0), absorptionCorrection.getSliceView().squeeze());
 		Dataset absCor = DatasetFactory.createFromObject(IntStream.range(0, sampleTemporary.getSize()).parallel().mapToDouble(i -> sampleTemporary.getElementDoubleAbs(i) / absorptionCorrection.getElementDoubleAbs(i)).toArray(), sampleTemporary.getShape());
 		// Error propagation
-		if (absorptionTemporary.get(0).getError() != null) {
+		if (absorptionTemporary.get(0).getErrors() != null) {
 //			absCor.setError(Maths.divide(absorptionTemporary.get(0).getError(), absorptionCorrection.reshape(absorptionCorrection.getSize())));
-			absCor.setError(Maths.divide(absorptionTemporary.get(0).getError(), absorptionCorrection.getSliceView().squeeze()));
+			absCor.setErrors(Maths.divide(absorptionTemporary.get(0).getErrors(), absorptionCorrection.getSliceView().squeeze()));
 		}
 		
 		return absCor;
@@ -551,8 +551,8 @@ public class XPDFCalibration {
 			// result = data /(cos 2θ)^3
 			Dataset solAngData = Maths.divide(Maths.divide(targetComponent, cosTwoTheta), Maths.square(cosTwoTheta));
 //			Dataset solAngData = Maths.multiply(1.0, targetComponent);
-			if (propagateErrors && targetComponent.getError() != null)
-				solAngData.setError(targetComponent.getError());
+			if (propagateErrors && targetComponent.getErrors() != null)
+				solAngData.setErrors(targetComponent.getErrors());
 			solAng.add(solAngData);
 		}
 		
@@ -565,18 +565,18 @@ public class XPDFCalibration {
 		if (doFluorescence) {
 //			Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.reshape(targetComponent.getSize())));
 					Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.squeeze()));
-			if (propagateErrors && targetComponent.getError() != null)
-				if (sampleFluorescence.getError() != null)
-					fluorescenceCorrectedData.setError(
+			if (propagateErrors && targetComponent.getErrors() != null)
+				if (sampleFluorescence.getErrors() != null)
+					fluorescenceCorrectedData.setErrors(
 							Maths.sqrt(
 									Maths.add(
-											Maths.square(targetComponent.getError()),
-											Maths.square(sampleFluorescence.getError())
+											Maths.square(targetComponent.getErrors()),
+											Maths.square(sampleFluorescence.getErrors())
 											)
 									)
 							);
 				else
-					fluorescenceCorrectedData.setError(targetComponent.getError());
+					fluorescenceCorrectedData.setErrors(targetComponent.getErrors());
 			fluorescenceCorrected.add(fluorescenceCorrectedData);
 		} else {
 			fluorescenceCorrected.add(targetComponent);

@@ -236,9 +236,9 @@ public class StitchedOutputWithErrors {
 		sortedAttenuatedDatasets[6] = sortedYArrayCorrectedFhklErrorMin;
 		sortedAttenuatedDatasets[9] = sortedYArrayCorrectedRawErrorMin;
 		
-		sortedAttenuatedDatasets[0].setError(sortedYArrayCorrectedError);
-		sortedAttenuatedDatasets[2].setError(sortedYArrayCorrectedFhklError);
-		sortedAttenuatedDatasets[7].setError(sortedYArrayCorrectedRawError);
+		sortedAttenuatedDatasets[0].setErrors(sortedYArrayCorrectedError);
+		sortedAttenuatedDatasets[2].setErrors(sortedYArrayCorrectedFhklError);
+		sortedAttenuatedDatasets[7].setErrors(sortedYArrayCorrectedRawError);
 		
 		if(MethodSetting.toInt(sm.getCorrectionSelection()) == 1||
 		   MethodSetting.toInt(sm.getCorrectionSelection()) == 2||	
@@ -263,9 +263,9 @@ public class StitchedOutputWithErrors {
 		
 			sortedYArrayCorrectedRawError = Maths.multiply(sortedYArrayCorrectedFhklError, normalisationRaw);
 			
-			sortedAttenuatedDatasets[0].setError(sortedYArrayCorrectedError);
-			sortedAttenuatedDatasets[2].setError(sortedYArrayCorrectedFhklError);
-			sortedAttenuatedDatasets[7].setError(sortedYArrayCorrectedRawError);
+			sortedAttenuatedDatasets[0].setErrors(sortedYArrayCorrectedError);
+			sortedAttenuatedDatasets[2].setErrors(sortedYArrayCorrectedFhklError);
+			sortedAttenuatedDatasets[7].setErrors(sortedYArrayCorrectedRawError);
 			
 		}
 		
@@ -465,8 +465,8 @@ public class StitchedOutputWithErrors {
 				sortedYArrayCorrectedFhklError = Maths.multiply(sortedYArrayCorrectedFhklError, normalisationFhkl);
 				
 				
-				sortedAttenuatedDatasets[0].setError(sortedYArrayCorrectedError);
-				sortedAttenuatedDatasets[2].setError(sortedYArrayCorrectedFhklError);
+				sortedAttenuatedDatasets[0].setErrors(sortedYArrayCorrectedError);
+				sortedAttenuatedDatasets[2].setErrors(sortedYArrayCorrectedFhklError);
 				
 		}
 		
@@ -697,9 +697,9 @@ public class StitchedOutputWithErrors {
 		Dataset sortedYArrayCorrectedFhklErrorMax = Maths.add(sortedYArrayCorrectedFhklError, sortedAttenuatedDatasets[2]);
 		Dataset sortedYArrayCorrectedRawErrorMax = Maths.add(sortedYArrayCorrectedRawError, sortedAttenuatedDatasets[7]);
 		
-		sortedAttenuatedDatasets[0].setError(sortedYArrayCorrectedError);
-		sortedAttenuatedDatasets[2].setError(sortedYArrayCorrectedFhklError);
-		sortedAttenuatedDatasets[7].setError(sortedYArrayCorrectedRawError);
+		sortedAttenuatedDatasets[0].setErrors(sortedYArrayCorrectedError);
+		sortedAttenuatedDatasets[2].setErrors(sortedYArrayCorrectedFhklError);
+		sortedAttenuatedDatasets[7].setErrors(sortedYArrayCorrectedRawError);
 		
 		sortedAttenuatedDatasets[3] = sortedYArrayCorrectedErrorMax;
 		sortedAttenuatedDatasets[4] = sortedYArrayCorrectedFhklErrorMax;
@@ -740,9 +740,9 @@ public class StitchedOutputWithErrors {
 		
 			
 			
-			sortedAttenuatedDatasets[0].setError(sortedYArrayCorrectedError);
-			sortedAttenuatedDatasets[2].setError(sortedYArrayCorrectedFhklError);
-			sortedAttenuatedDatasets[7].setError(sortedYArrayCorrectedRawError);
+			sortedAttenuatedDatasets[0].setErrors(sortedYArrayCorrectedError);
+			sortedAttenuatedDatasets[2].setErrors(sortedYArrayCorrectedFhklError);
+			sortedAttenuatedDatasets[7].setErrors(sortedYArrayCorrectedRawError);
 		}
 
 		sm.setSplicedCurveY(sortedAttenuatedDatasets[0]);

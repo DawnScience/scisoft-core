@@ -29,7 +29,7 @@ public class StandardNormalVariate extends AbstractOperation<EmptyModel, Operati
 		Dataset output = Maths.subtract(input,mean);
 		output.idivide(std);
 		
-		ILazyDataset el = input.getError();
+		ILazyDataset el = input.getErrors();
 		IDataset eb = null;
 		if (el != null) {
 			try {
@@ -42,7 +42,7 @@ public class StandardNormalVariate extends AbstractOperation<EmptyModel, Operati
 		copyMetadata(input, output);
 		
 		if (eb != null) {
-			output.setError(Maths.divide(eb, std));
+			output.setErrors(Maths.divide(eb, std));
 		}
 		
 		return new OperationData(output);

@@ -10,6 +10,7 @@ import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
 
@@ -435,15 +436,18 @@ public class DataModel {
 //			IDataset yOut = DatasetFactory.ones(new int[] {1});
 		}
 		
+		Dataset errors = DatasetFactory.zeros(DoubleDataset.class, yOut.getShape());
+		
 		for(int i =0; i< yOut.getSize(); i++){
-			
-			if(yOut.getDouble(i) >= 0){
-				yOut.setError(Maths.sqrt(yOut));
+			double y = yOut.getDouble(i);
+			if(y >= 0){
+				errors.set(Math.sqrt(y), i);
 			}
 			else{
-				yOut.setError(0.001);
+				errors.set(0.001, i);
 			}
 		}
+		yOut.setErrors(errors);
 			
 		return yOut;
 	}
@@ -472,10 +476,10 @@ public class DataModel {
 		for(int i =0; i< yOut.getSize(); i++){
 			
 			if(yOut.getDouble(i) >= 0){
-				yOut.setError(Maths.sqrt(yOut));
+				yOut.setErrors(Maths.sqrt(yOut));
 			}
 			else{
-				yOut.setError(0.001);
+				yOut.setErrors(0.001);
 			}
 		}
 			
@@ -560,7 +564,7 @@ public class DataModel {
 			}
 		}
 			
-			yOut.setError(Maths.sqrt(yOutError));
+			yOut.setErrors(Maths.sqrt(yOutError));
 		return yOut;
 	}
 	

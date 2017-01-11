@@ -7,7 +7,7 @@ Bundle-Activator: uk.ac.diamond.scisoft.xpdf.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.apache.commons.math3;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.january;bundle-version="1.0.0",
+ org.eclipse.january;bundle-version="2.0.0",
  org.eclipse.dawnsci.analysis.api,
  uk.ac.diamond.scisoft.analysis,
  org.eclipse.dawnsci.nexus,

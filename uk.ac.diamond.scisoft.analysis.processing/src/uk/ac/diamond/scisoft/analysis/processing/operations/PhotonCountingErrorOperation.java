@@ -36,7 +36,7 @@ public class PhotonCountingErrorOperation extends AbstractOperation<EmptyModel, 
 			er.setAbs(i.index, Math.sqrt(val));
 		}
 		
-		in.setError(er);
+		in.setErrors(er);
 
 		return new OperationData(in);
 	}

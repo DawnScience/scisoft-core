@@ -95,7 +95,7 @@ public class XPDFLorchFTOperation extends
 		Dataset hofr = doLorchFT(DatasetUtils.convertToDataset(thSoq).getSliceView(new int[]{0}, new int[]{iCutoff}, new int[]{1}),
 					q.getSliceView(new int[]{0}, new int[]{iCutoff}, new int[]{1}), r, model.getLorchWidth(), numberDensity);
 		// Error propagation: through the Fourier transform
-		if (thSoq.getError() != null) {
+		if (thSoq.getErrors() != null) {
 			// Prepare the Datasets to receive the transformed values. They all
 			// need to be held at the same time to allow for the (logical)
 			// transpose
@@ -106,7 +106,7 @@ public class XPDFLorchFTOperation extends
 				// The vector to transform is zero, except at element iq it
 				// holds the uncertainty variance (error squared) of the data
 				// point at iq
-				IDataset sl = thSoq.getError().getSlice();
+				IDataset sl = thSoq.getErrors().getSlice();
 				covarQ.set(Maths.square(sl.getDouble(iq)), 0);
 				Dataset qSlice = Maths.add(q.getDouble(iq), Maths.multiply(q.getDouble(3)-q.getDouble(2), DatasetFactory.createRange(DoubleDataset.class, 0, 4, 1))); 
 						
@@ -130,16 +130,16 @@ public class XPDFLorchFTOperation extends
 				
 				hofrError.set(Maths.sqrt(doLorchFT(covarQR, q, rSubset, model.getLorchWidth(), numberDensity).getDouble(0)), ir);
 			}
-			hofr.setError(hofrError);
+			hofr.setErrors(hofrError);
 		}
 		
 		Dataset gofr = Maths.divide(hofr, g0minus1);
-		if (hofr.getError() != null)
-			gofr.setError(Maths.divide(hofr.getError(), g0minus1));
+		if (hofr.getErrors() != null)
+			gofr.setErrors(Maths.divide(hofr.getErrors(), g0minus1));
 
 		Dataset dofr = Maths.multiply(Maths.multiply(gofr, r), 4*Math.PI * numberDensity);
-		if (gofr.getError() != null)
-			dofr.setError(Maths.multiply(gofr.getError(), Maths.multiply(r, 4*Math.PI*numberDensity)));
+		if (gofr.getErrors() != null)
+			dofr.setErrors(Maths.multiply(gofr.getErrors(), Maths.multiply(r, 4*Math.PI*numberDensity)));
 		
 		dofr.setMetadata(theXPDFMetadata);
 		

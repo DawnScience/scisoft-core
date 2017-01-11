@@ -114,7 +114,7 @@ public class XPDFInsertContainerMetadataOperation extends
 			Dataset contErrors = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(this, model.getErrorFilePath(), model.getErrorDataset()));
 			if (contErrors != null) {
 				checkDataAndAuxillaryDataMatch(contTrace, contErrors);
-				contTrace.setError(contErrors);
+				contTrace.setErrors(contErrors);
 			}
 		} catch (OperationException e) {
 			// catch and ignore; add no errors to the Dataset.

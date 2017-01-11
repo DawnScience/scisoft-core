@@ -49,7 +49,7 @@ public class GeneralDetectorErrorOperation extends AbstractOperation<GeneralDete
 			er.setAbs(i.index, Math.sqrt(val));
 		}
 		
-		in.setError(er);
+		in.setErrors(er);
 
 		return new OperationData(in);
 	}

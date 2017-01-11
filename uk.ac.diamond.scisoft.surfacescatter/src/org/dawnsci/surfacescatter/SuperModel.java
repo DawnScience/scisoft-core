@@ -843,7 +843,7 @@ public class SuperModel {
 	}
 
 	public IDataset getSplicedCurveY() {
-		splicedCurveY.setError(splicedCurveYError);
+		splicedCurveY.setErrors(splicedCurveYError);
 		return splicedCurveY;
 	}
 
@@ -852,7 +852,7 @@ public class SuperModel {
 	}
 
 	public IDataset getSplicedCurveYFhkl() {
-		splicedCurveYFhkl.setError(splicedCurveYFhklError);
+		splicedCurveYFhkl.setErrors(splicedCurveYFhklError);
 		return splicedCurveYFhkl;
 	}
 

@@ -100,8 +100,8 @@ public class ErrorPropagationUtils {
 
 		if (oprahend.getSize() != 1 && input.getSize() != oprahend.getSize()) throw new IllegalArgumentException("Cannot process datasets of these shapes!");
 		
-		Dataset inputUncert = input.getError();
-		Dataset oprahendUncert = oprahend.getError();
+		Dataset inputUncert = input.getErrors();
+		Dataset oprahendUncert = oprahend.getErrors();
 		DoubleDataset output = (DoubleDataset) DatasetFactory.zeros(input, Dataset.FLOAT64);
 		DoubleDataset outputUncert = (inputUncert == null) ? null : (DoubleDataset) DatasetFactory.zeros(inputUncert, Dataset.FLOAT64);
 		//assume data and errors are either not views or common views
@@ -116,7 +116,7 @@ public class ErrorPropagationUtils {
 					output.setAbs(iter.index, out[0]);
 					outputUncert.setAbs(iter.index, out[1]);
 				}
-				output.setError(outputUncert);
+				output.setErrors(outputUncert);
 			} else {
 				while (iter.hasNext())
 					output.setAbs(iter.index, operator.operate(input.getElementDoubleAbs(iter.index), val));
@@ -132,7 +132,7 @@ public class ErrorPropagationUtils {
 				output.setAbs(iter.index, out[0]);
 				outputUncert.setAbs(iter.index, out[1]);
 			}
-			output.setError(outputUncert);
+			output.setErrors(outputUncert);
 		} else if  (inputUncert != null && oprahendUncert != null) {
 			double[] out = new double[2];
 			while(iter.hasNext()) {
@@ -140,7 +140,7 @@ public class ErrorPropagationUtils {
 				output.setAbs(iter.index, out[0]);
 				outputUncert.setAbs(iter.index, out[1]);
 			}
-			output.setError(outputUncert);
+			output.setErrors(outputUncert);
 		} else {
 			while (iter.hasNext()){
 				output.setAbs(iter.index, operator.operate(input.getElementDoubleAbs(iter.index), oprahend.getElementDoubleAbs(iter.index)));

@@ -100,7 +100,7 @@ public class Export1DNXcanSASOperation extends AbstractOperation<Export1DNXcanSA
 		axesForOutput = Maths.multiply(axesForOutput, 10);
 		
 		// Get the error data so that it's a nice array for outputting
-		IDataset errorForOutput = input.getError();
+		IDataset errorForOutput = input.getErrors();
 
 		// The SASdata class SDS classes of I & Q (I_err too!) with attributes for each SDS class e.g. I_axes = Q, Q_indicies 0.
 		GroupNode nxData = TreeFactory.createGroupNode(0);

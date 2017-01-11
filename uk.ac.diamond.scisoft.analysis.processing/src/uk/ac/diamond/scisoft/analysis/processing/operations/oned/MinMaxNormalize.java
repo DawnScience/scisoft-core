@@ -40,7 +40,7 @@ public class MinMaxNormalize extends AbstractOperation<EmptyModel, OperationData
 		output.idivide(range);
 
 		// Propagate errors. Ignores the error on the minimum and maximum values.
-		ILazyDataset el = input.getError();
+		ILazyDataset el = input.getErrors();
 		IDataset eb = null;
 		if (el != null) {
 			try {
@@ -51,7 +51,7 @@ public class MinMaxNormalize extends AbstractOperation<EmptyModel, OperationData
 		}
 		
 		if (eb != null) {
-			output.setError(Maths.divide(eb, range));
+			output.setErrors(Maths.divide(eb, range));
 		}
 
 		// Transfer axes

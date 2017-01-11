@@ -69,7 +69,7 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 			outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
 		}
 		
-		ILazyDataset error = input.getError();
+		ILazyDataset error = input.getErrors();
 		
 		if (error != null) {
 			IDataset e;

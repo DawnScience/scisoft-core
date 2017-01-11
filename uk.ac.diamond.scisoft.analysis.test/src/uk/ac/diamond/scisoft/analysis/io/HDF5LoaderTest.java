@@ -451,7 +451,7 @@ public class HDF5LoaderTest {
 		l.setFile(n);
 		DataHolder dh = l.loadFile();
 		ILazyDataset d = dh.getLazyDataset("/entry1/Pilatus2M_processing/SectorIntegration/data");
-		assertTrue(d.getError() == null);
+		assertTrue(d.getErrors() == null);
 		try {
 			assertTrue(d.getMetadata(AxesMetadata.class) != null);
 		} catch (Exception e) {

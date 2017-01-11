@@ -57,7 +57,7 @@ public class MultiplicativeIntensityCorrectionOperation extends
 		
 		Dataset in = DatasetUtils.convertToDataset(input);
 		DoubleDataset out = DatasetFactory.zeros(DoubleDataset.class, in.getShape());
-		Dataset error = in.getError();
+		Dataset error = in.getErrors();
 		if (error != null) error = error.getSlice();
 
 		IndexIterator i = in.getIterator();
@@ -71,7 +71,7 @@ public class MultiplicativeIntensityCorrectionOperation extends
 		}
 		
 		copyMetadata(input, out);
-		out.setError(error);
+		out.setErrors(error);
 		
 		return new OperationData(out);
 	}

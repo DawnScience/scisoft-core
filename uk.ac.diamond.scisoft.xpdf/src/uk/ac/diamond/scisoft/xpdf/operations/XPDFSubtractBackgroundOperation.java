@@ -63,18 +63,18 @@ public class XPDFSubtractBackgroundOperation extends
 				// Propagate the errors
 				Dataset inputErrors;
 				try {
-					inputErrors = DatasetUtils.sliceAndConvertLazyDataset(input.getError());
+					inputErrors = DatasetUtils.sliceAndConvertLazyDataset(input.getErrors());
 				} catch (DatasetException e) {
 					throw new OperationException(this, e);
 				}
 				Dataset processErrors = null;
 				if (inputErrors != null) {
-					Dataset	backgroundErrors = 	theXPDFMetadata.getEmptyTrace().getTrace().getError();	
+					Dataset	backgroundErrors = 	theXPDFMetadata.getEmptyTrace().getTrace().getErrors();	
 					processErrors = (backgroundErrors != null) ? 
 							Maths.sqrt(Maths.add(Maths.square(inputErrors), Maths.square(backgroundErrors))) :
 								inputErrors;
 				}
-				process.setError(processErrors);
+				process.setErrors(processErrors);
 			}
 			
 			// For each container metadataset, subtract the background from it

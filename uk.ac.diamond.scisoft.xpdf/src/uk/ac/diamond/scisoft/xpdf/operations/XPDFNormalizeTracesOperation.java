@@ -71,10 +71,10 @@ public class XPDFNormalizeTracesOperation extends
 				// Normalize the errors, if present
 				Dataset inputErrors;
 				try {
-					inputErrors = DatasetUtils.sliceAndConvertLazyDataset(input.getError());
+					inputErrors = DatasetUtils.sliceAndConvertLazyDataset(input.getErrors());
 					if (inputErrors != null) {
 						Dataset processErrors = Maths.divide(inputErrors, normer);
-						process.setError(processErrors);
+						process.setErrors(processErrors);
 					}
 				} catch (DatasetException e) {
 					throw new OperationException(this, e);

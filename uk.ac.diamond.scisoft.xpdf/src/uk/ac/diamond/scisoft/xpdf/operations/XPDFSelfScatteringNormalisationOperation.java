@@ -47,11 +47,11 @@ public class XPDFSelfScatteringNormalisationOperation extends
 		XPDFCoordinates coords = new XPDFCoordinates(DatasetUtils.convertToDataset(absCor));
 		soq = Maths.divide(Maths.subtract(absCor, sample.getSelfScattering(coords)), sample.getFSquared(coords));
 		Dataset soqError = null;
-		if (absCor.getError() != null)
-			soqError = Maths.divide(absCor.getError(), sample.getFSquared(coords));
+		if (absCor.getErrors() != null)
+			soqError = Maths.divide(absCor.getErrors(), sample.getFSquared(coords));
 		copyMetadata(absCor, soq);
 		if (soqError != null)
-			soq.setError(soqError);
+			soq.setErrors(soqError);
 
 		soq.setName("S(q)");
 

@@ -56,9 +56,47 @@ public class SuperModel {
 	private ArrayList<Double> trackerKList;
 	private IDataset temporaryBackgroundHolder; // in1Background
 	private Boolean trackerOn = false;
-	private int[][] boxOffsetLenPt = new int[][] {{0,0},{25,25}};
+	private int[][] boxOffsetLenPt;
+	private ArrayList<Integer> imageRefList;
+	private TreeMap<Integer, Dataset> som;
+	private int numberOfImages;
+	private String imageFolderPath;
+
 	
 	
+	
+	public String getImageFolderPath() {
+		return imageFolderPath;
+	}
+
+	public void setImageFolderPath(String imageFolderPath) {
+		this.imageFolderPath = imageFolderPath;
+	}
+
+	public int getNumberOfImages() {
+		return numberOfImages;
+	}
+
+	public void setNumberOfImages(int numberOfImages) {
+		this.numberOfImages = numberOfImages;
+	}
+
+	public TreeMap<Integer, Dataset> getSom() {
+		return som;
+	}
+
+	public void setSom(TreeMap<Integer, Dataset> som) {
+		this.som = som;
+	}
+
+	public ArrayList<Integer> getImageRefList() {
+		return imageRefList;
+	}
+
+	public void setImageRefList(ArrayList<Integer> imageRefList) {
+		this.imageRefList = imageRefList;
+	}
+
 	public Boolean getTrackerOn() {
 		return trackerOn;
 	}

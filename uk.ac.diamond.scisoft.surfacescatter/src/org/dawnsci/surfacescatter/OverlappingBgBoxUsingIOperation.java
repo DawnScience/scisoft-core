@@ -1,24 +1,23 @@
 package org.dawnsci.surfacescatter;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.dawnsci.plotting.api.region.IROIListener;
 import org.eclipse.dawnsci.plotting.api.region.IRegion;
-import org.eclipse.dawnsci.plotting.api.region.ROIEvent;
 import org.eclipse.dawnsci.plotting.api.region.IRegion.RegionType;
+import org.eclipse.dawnsci.plotting.api.region.ROIEvent;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.LinearAlgebra;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.swt.SWT;
@@ -35,9 +34,11 @@ public class OverlappingBgBoxUsingIOperation
 		private static Dataset output;
 		private static IRegion background;
 		private static IRegion ssvsBackground;
+		private static IRegion offsetCheat;
 		private DoubleDataset in1Background;
 		private int[][] newOffsetLenPt;
-		private int[][] newOffsetLenPt1;
+//		private int[][] newOffsetLenPt1;
+		private static int DEBUG =1;
 		
 		@Override
 		public String getId() {
@@ -61,7 +62,13 @@ public class OverlappingBgBoxUsingIOperation
 			int[] len = model.getLenPt()[0];
 			int[] pt = model.getLenPt()[1];
 			
-			newOffsetLenPt = model.getBoxOffsetLenPt();
+			debug("pt[0]: " + pt[0]);
+			debug("pt[1]: " + pt[1]);
+			
+//			
+//			if (model.getBoxOffsetLenPt() != null){
+//				newOffsetLenPt = model.getBoxOffsetLenPt();
+//			}
 			
 			IPlottingSystem<Composite> pS = model.getPlottingSystem();
 			IPlottingSystem<Composite> ssvsPS = model.getSPlottingSystem();
@@ -74,9 +81,39 @@ public class OverlappingBgBoxUsingIOperation
 			
 			Display display = Display.getCurrent();
 	        Color red = display.getSystemColor(SWT.COLOR_RED);
+	        Color gray = display.getSystemColor(SWT.COLOR_GRAY);
+	        
 			
 			Dataset in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input,len, pt);
 			
+			if(model.getTrackingMarker()!=3){
+				for(IRegion oc :ssvsPS.getRegions()){
+					
+					CharSequence s= "offsetCheat";
+					String name = oc.getName();
+					
+					if(name.contains(s)){
+
+						String arraySubString = StringUtils.substringBetween(name, "||");
+						String[] offsetLenPtAsStrings = StringUtils.split(arraySubString);
+						
+						int[] offsetLen = new int[2];
+						int[] offsetPt = new int[2];
+						newOffsetLenPt = new int[2][2];
+						
+						offsetLen[0] = Integer.valueOf(offsetLenPtAsStrings[0]);
+						offsetLen[1] = Integer.valueOf(offsetLenPtAsStrings[1]);
+						
+						offsetPt[0] = Integer.valueOf(offsetLenPtAsStrings[2]);
+						offsetPt[1] = Integer.valueOf(offsetLenPtAsStrings[3]);
+						
+						newOffsetLenPt[0] = offsetLen;
+						newOffsetLenPt[1] = offsetPt;
+						
+						model.setBoxOffsetLenPt(newOffsetLenPt);
+					}
+				}
+			}
 			if (pS.getRegion("Background Region")==null){
 				
 				try {
@@ -87,20 +124,35 @@ public class OverlappingBgBoxUsingIOperation
 				pS.addRegion(background);
 //				IRectangularROI newROI = (IRectangularROI) model.getBackgroundROI();
 				
-				int[] offsetLen = model.getBoxOffsetLenPt()[0];
-				int[] offsetPt = model.getBoxOffsetLenPt()[1];
+				if (model.getBoxOffsetLenPt()!=null){
 				
-				int pt0 = pt[0] + offsetPt[0];
-				int pt1 = pt[1] + offsetPt[1];
+					int[] offsetLen = newOffsetLenPt[0];
+					int[] offsetPt = newOffsetLenPt[1];
+					
+					int pt0 = pt[0] + offsetPt[0];
+					int pt1 = pt[1] + offsetPt[1];
+					
+					int len0 = len[0] + offsetLen[0];
+					int len1 = len[1] + offsetLen[1];
 				
-				int len0 = len[0] + offsetLen[0];
-				int len1 = len[1] + offsetLen[1];
-				
-				IRectangularROI newROI = new RectangularROI(pt0,pt1,len0,len1,0);
+					IRectangularROI newROI = new RectangularROI(pt0,pt1,len0,len1,0);
 //				IRectangularROI ssvsOffsetBackgroundROI = new RectangularROI(pt0,pt1,len0,len1,0)
 				
+					background.setROI(newROI);
+				}
 				
-				background.setROI(newROI);
+				else{
+		
+					int pt0 = pt[0] + 25;
+					int pt1 = pt[1] + 25;
+					
+					int len0 = len[0] + 0;
+					int len1 = len[1] + 0;
+				
+					IRectangularROI newROI = new RectangularROI(pt0,pt1,len0,len1,0);
+				
+					background.setROI(newROI);
+				}
 				
 				background.setRegionColor(red);
 				
@@ -109,22 +161,25 @@ public class OverlappingBgBoxUsingIOperation
 				background = pS.getRegion("Background Region");
 				background.setRegionColor(red);
 				
+				if (model.getBoxOffsetLenPt()!=null){
+//					model.getTrackingMarker() == 3 &&  
+					int[] offsetLen = model.getBoxOffsetLenPt()[0];
+					int[] offsetPt = model.getBoxOffsetLenPt()[1];
+					
+					int pt0 = pt[0] + offsetPt[0];
+					int pt1 = pt[1] + offsetPt[1];
+					
+					int len0 = len[0] + offsetLen[0];
+					int len1 = len[1] + offsetLen[1];
+					
+					IRectangularROI newROI = new RectangularROI(pt0,pt1,len0,len1,0);
 				
+					background.setROI(newROI);
+				}
 
-				int[] offsetLen = model.getBoxOffsetLenPt()[0];
-				int[] offsetPt = model.getBoxOffsetLenPt()[1];
-				
-				int pt0 = pt[0] + offsetPt[0];
-				int pt1 = pt[1] + offsetPt[1];
-				
-				int len0 = len[0] + offsetLen[0];
-				int len1 = len[1] + offsetLen[1];
-				
-				IRectangularROI newROI = new RectangularROI(pt0,pt1,len0,len1,0);
-//				IRectangularROI ssvsOffsetBackgroundROI = new RectangularROI(pt0,pt1,len0,len1,0)
-				
-				
-				background.setROI(newROI);
+				else{
+					
+				}
 				
 				background.setRegionColor(red);
 			}
@@ -139,21 +194,38 @@ public class OverlappingBgBoxUsingIOperation
 				}
 				ssvsPS.addRegion(ssvsBackground);
 				
-				int[] offsetLen = model.getBoxOffsetLenPt()[0];
-				int[] offsetPt = model.getBoxOffsetLenPt()[1];
+				if (model.getBoxOffsetLenPt()!=null){
+					
+					int[] offsetLen = model.getBoxOffsetLenPt()[0];
+					int[] offsetPt = model.getBoxOffsetLenPt()[1];
+					
+					int pt0 = pt[0] + offsetPt[0];
+					int pt1 = pt[1] + offsetPt[1];
+					
+					int len0 = len[0] + offsetLen[0];
+					int len1 = len[1] + offsetLen[1];
 				
-				int pt0 = pt[0] + offsetPt[0];
-				int pt1 = pt[1] + offsetPt[1];
+					IRectangularROI newROI = new RectangularROI(pt0,pt1,len0,len1,0);
+					
+					ssvsBackground.setROI(newROI);
+				}
 				
-				int len0 = len[0] + offsetLen[0];
-				int len1 = len[1] + offsetLen[1];
+				else{
+		
+					int pt0 = pt[0] + 25;
+					int pt1 = pt[1] + 25;
+					
+					int len0 = len[0] + 0;
+					int len1 = len[1] + 0;
 				
-				IRectangularROI ssvsNewROI = new RectangularROI(pt0,pt1,len0,len1,0);
+					IRectangularROI newROI = new RectangularROI(pt0,pt1,len0,len1,0);
 				
-				ssvsBackground.setROI(ssvsNewROI);
+					ssvsBackground.setROI(newROI);
+				}
 				
 				ssvsBackground.setRegionColor(red);
 			}
+			
 			else{
 				ssvsPS.removeRegion(ssvsPS.getRegion("ssvs Background Region"));
 				try {
@@ -162,20 +234,6 @@ public class OverlappingBgBoxUsingIOperation
 					e.printStackTrace();
 				}
 				ssvsPS.addRegion(ssvsBackground);
-			
-				int[] offsetLen = model.getBoxOffsetLenPt()[0];
-				int[] offsetPt = model.getBoxOffsetLenPt()[1];
-				
-				int pt0 = pt[0] + offsetPt[0];
-				int pt1 = pt[1] + offsetPt[1];
-				
-				int len0 = len[0] + offsetLen[0];
-				int len1 = len[1] + offsetLen[1];
-				
-				IRectangularROI ssvsNewROI = new RectangularROI(pt0,pt1,len0,len1,0);
-			
-				ssvsBackground.setROI(ssvsNewROI);
-				
 				ssvsBackground.setRegionColor(red);
 			}
 			
@@ -190,14 +248,22 @@ public class OverlappingBgBoxUsingIOperation
 				int len0 = len[0] + offsetLen[0];
 				int len1 = len[1] + offsetLen[1];
 				
-				IRectangularROI offsetBackgroundROI = new RectangularROI(pt0,pt1,len0,len1,0);
+//				IRectangularROI offsetBackgroundROI = new RectangularROI(pt0,pt1,len0,len1,0);
 				IRectangularROI ssvsOffsetBackgroundROI = new RectangularROI(pt0,pt1,len0,len1,0);
-				
-				background.setROI(offsetBackgroundROI);
+
 				ssvsBackground.setROI(ssvsOffsetBackgroundROI);
 			}
 			else{
 				
+				int pt0 = pt[0] + 25;
+				int pt1 = pt[1] + 25;
+				
+				int len0 = len[0] + 0;
+				int len1 = len[1] + 0;
+			
+				IRectangularROI newROI = new RectangularROI(pt0,pt1,len0,len1,0);
+			
+				ssvsBackground.setROI(newROI);
 			}
 			
 
@@ -224,7 +290,7 @@ public class OverlappingBgBoxUsingIOperation
 					
 					IRectangularROI redRectangle = background.getROI().getBounds();
 					int[] redLen = redRectangle.getIntLengths();
-					int[] redPt = redRectangle.getIntPoint();
+					int[] redPt = redRectangle.getIntPoint();//getIntPoint();
 					int[][] redLenPt = {redLen,redPt};
 					
 					RectangularROI newROI = new RectangularROI(redLenPt[1][0],
@@ -233,16 +299,61 @@ public class OverlappingBgBoxUsingIOperation
 															   redLenPt[0][1],0);
 					ssvsBackground.setROI(newROI);
 					
-					newOffsetLenPt1 = new int[2][2];
+					newOffsetLenPt = new int[2][2];
 					
-					newOffsetLenPt1[0][0]  = len[0] - redLen[0];
-					newOffsetLenPt1[0][1]  = len[1] - redLen[1];
+					newOffsetLenPt[0][0]  =  -len[0] + redLen[0];
+					newOffsetLenPt[0][1]  =  -len[1] + redLen[1];
 					
 					
-					newOffsetLenPt1[1][0]  = pt[0] - redPt[0];
-					newOffsetLenPt1[1][1]  = pt[1] - redPt[1];
+					newOffsetLenPt[1][0]  = -pt[0] + redPt[0];
+					newOffsetLenPt[1][1]  = -pt[1] + redPt[1];
 					
-					model.setBoxOffsetLenPt(newOffsetLenPt1);
+					 
+					model.setBoxOffsetLenPt(newOffsetLenPt);
+					
+					try {
+						
+						int probe = 0;
+						
+						for(IRegion oc :ssvsPS.getRegions()){
+							
+							CharSequence s= "offsetCheat";
+							String name = oc.getName();
+							
+							if(name.contains(s)){
+								probe+=1;
+							}
+						}
+						
+						if (probe == 0){ 
+							offsetCheat =ssvsPS.createRegion("offsetCheat||" +String.valueOf(model.getBoxOffsetLenPt()[0][0]) + " "
+																		 +String.valueOf(model.getBoxOffsetLenPt()[0][1]) + " " 
+																		 +String.valueOf(model.getBoxOffsetLenPt()[1][0]) + " "
+																		 +String.valueOf(model.getBoxOffsetLenPt()[1][1]) + " "
+																		 +"||", 
+																		 RegionType.BOX);
+							
+							IRectangularROI newROI1 = new RectangularROI(10,10,10,10,0);
+						
+							offsetCheat.setROI(newROI1);
+						}
+						
+						else{
+							offsetCheat.setName("offsetCheat||" +String.valueOf(model.getBoxOffsetLenPt()[0][0]) + " "
+																		 +String.valueOf(model.getBoxOffsetLenPt()[0][1]) + " " 
+																		 +String.valueOf(model.getBoxOffsetLenPt()[1][0]) + " "
+																		 +String.valueOf(model.getBoxOffsetLenPt()[1][1]) + " "
+																		 +"||");
+						}
+						offsetCheat.setRegionColor(red);
+						
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					ssvsPS.addRegion(offsetCheat);
+		        
+					
 				}
 
 			});
@@ -270,27 +381,65 @@ public class OverlappingBgBoxUsingIOperation
 //
 //			});
 	        
-	        int[] backLen = new int[2];
-	        int[] backPt = new int[2];
 	        
-	        if(newOffsetLenPt1 == null){ 
+	        if(newOffsetLenPt!=null){
+	        	
+	        	try {
+					
+					int probe = 0;
+					
+					for(IRegion oc :ssvsPS.getRegions()){
+						
+						CharSequence s= "offsetCheat";
+						String name = oc.getName();
+						
+						if(name.contains(s)){
+							probe+=1;
+						}
+					}
+					
+					if (probe == 0){ 
+						offsetCheat =ssvsPS.createRegion("offsetCheat||" +String.valueOf(model.getBoxOffsetLenPt()[0][0]) + " "
+																	 +String.valueOf(model.getBoxOffsetLenPt()[0][1]) + " " 
+																	 +String.valueOf(model.getBoxOffsetLenPt()[1][0]) + " "
+																	 +String.valueOf(model.getBoxOffsetLenPt()[1][1]) + " "
+																	 +"||", 
+																	 RegionType.BOX);
+						
+						IRectangularROI newROI1 = new RectangularROI(10,10,10,10,0);
+					
+						offsetCheat.setROI(newROI1);
+					}
+					
+					else{
+						offsetCheat.setName("offsetCheat||" +String.valueOf(model.getBoxOffsetLenPt()[0][0]) + " "
+																	 +String.valueOf(model.getBoxOffsetLenPt()[0][1]) + " " 
+																	 +String.valueOf(model.getBoxOffsetLenPt()[1][0]) + " "
+																	 +String.valueOf(model.getBoxOffsetLenPt()[1][1]) + " "
+																	 +"||");
+					}
+					offsetCheat.setRegionColor(red);
+					ssvsPS.addRegion(offsetCheat);
+					
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 	        
-	        	backLen = background.getROI().getBounds().getIntLengths();
-	        	backPt = background.getROI().getBounds().getIntPoint();
+				
+			}
 	        	
-//	        	
-//		        backLen = model.getBackgroundLenPt()[0];
-//		        backPt = model.getBackgroundLenPt()[1];
-	        }
+	        	
 	        
-	        else{
-	        	
-	        	backLen[0] = model.getLenPt()[0][0] + newOffsetLenPt[0][0];
-	        	backLen[0] = model.getLenPt()[0][1] + newOffsetLenPt[0][1];
-	        	
-	        	backPt[0] = model.getLenPt()[1][0] + newOffsetLenPt[1][0];
-	        	backPt[0] = model.getLenPt()[1][1] + newOffsetLenPt[1][1];
-	        }
+	        
+	        
+	        int[] backLen = background.getROI().getBounds().getIntLengths();
+	        int[] backPt = background.getROI().getBounds().getIntPoint();
+	        
+	        debug("backPt[0]: " + backPt[0]);
+			debug("backPt[1]: " + backPt[1]);
+			
+	        
 	        
 	        BackgroundRegionArrays br = new BackgroundRegionArrays();
 	        
@@ -314,18 +463,18 @@ public class OverlappingBgBoxUsingIOperation
 			
 			Dataset matrix = LinearLeastSquaresServicesForDialog.polynomial2DLinearLeastSquaresMatrixGenerator(
 					AnalaysisMethodologies.toInt(model.getFitPower()), xBackgroundDat, yBackgroundDat);
-			
+			double[] location = null;
 	        
-	        
-	        double[] location = new double[] { (double) model.getBackgroundLenPt()[1][1], 
-	        								   (double) model.getBackgroundLenPt()[1][0], 
-	        								   (double) (model.getBackgroundLenPt()[1][1] + model.getBackgroundLenPt()[0][1]), 
-	        								   (double) (model.getBackgroundLenPt()[1][0]),
-	        								   (double) model.getBackgroundLenPt()[1][1], 
-	        								   (double) model.getBackgroundLenPt()[1][0] + model.getBackgroundLenPt()[0][0], 
-	        								   (double) (model.getBackgroundLenPt()[1][1] + model.getBackgroundLenPt()[0][1]), 
-	        								   (double) (model.getBackgroundLenPt()[1][0] + model.getBackgroundLenPt()[0][0]) };
-	        	  
+//	        
+//	        double[] location = new double[] { (double) model.getBackgroundLenPt()[1][1], 
+//	        								   (double) model.getBackgroundLenPt()[1][0], 
+//	        								   (double) (model.getBackgroundLenPt()[1][1] + model.getBackgroundLenPt()[0][1]), 
+//	        								   (double) (model.getBackgroundLenPt()[1][0]),
+//	        								   (double) model.getBackgroundLenPt()[1][1], 
+//	        								   (double) model.getBackgroundLenPt()[1][0] + model.getBackgroundLenPt()[0][0], 
+//	        								   (double) (model.getBackgroundLenPt()[1][1] + model.getBackgroundLenPt()[0][1]), 
+//	        								   (double) (model.getBackgroundLenPt()[1][0] + model.getBackgroundLenPt()[0][0]) };
+//	        	  
 	        
 	        
 	        DoubleDataset test = (DoubleDataset)LinearAlgebra.solveSVD(matrix, zBackgroundDat);
@@ -341,9 +490,16 @@ public class OverlappingBgBoxUsingIOperation
 //				if (q < 0)
 //					in1Background.setObjectAbs(it0.index, 0.1);
 //			}
+			Dataset pBackgroundSubtracted = DatasetFactory.zeros(new int[] {2}, Dataset.ARRAYFLOAT64);
 			
-			Dataset pBackgroundSubtracted = Maths.subtract(in1, in1Background, null);
-					
+			try{
+				pBackgroundSubtracted = Maths.subtract(in1, in1Background, null);
+			}
+			catch(Exception e){
+				debug("uh fuck");
+			}
+			
+			
 //			IndexIterator it1 = pBackgroundSubtracted.getIterator();
 			
 //			while (it1.hasNext()) {
@@ -364,4 +520,10 @@ public class OverlappingBgBoxUsingIOperation
 			
 		}
 	
+		private void debug (String output) {
+			if (DEBUG == 1) {
+				System.out.println(output);
+			}
+		}
+		
 }

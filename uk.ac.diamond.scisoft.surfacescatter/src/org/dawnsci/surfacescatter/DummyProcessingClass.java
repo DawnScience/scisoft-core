@@ -1,5 +1,7 @@
 package org.dawnsci.surfacescatter;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -91,10 +93,10 @@ public class DummyProcessingClass {
 						   sm);
 				output = outputOD1.getData();
 				
-				double[] loc1 =  (double[]) outputOD1.getAuxData()[0];
-				sm.addLocationList(selection,loc1);	
-				
-				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[1];
+//				double[] loc1 =  (double[]) outputOD1.getAuxData()[0];
+//				sm.addLocationList(selection,loc1);	
+//				
+				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[0];
 				
 				sm.setTemporaryBackgroundHolder(temporaryBackground1);
 				
@@ -120,7 +122,8 @@ public class DummyProcessingClass {
 										 		 dm, 
 										 		 pS,
 										 		 ssvsPS,
-										 		 selection);	
+										 		 selection,
+										 		 trackingMarker);	
 				
 				
 				
@@ -148,7 +151,8 @@ public class DummyProcessingClass {
 				 		 dm, 
 				 		 pS,
 				 		 ssvsPS,
-				 		 selection);	
+				 		 selection,
+				 		 trackingMarker);	
 				
 				break;
 				
@@ -330,10 +334,10 @@ public class DummyProcessingClass {
 						   input,
 						   sm);
 				output = outputOD1.getData();
-				double[] loc1 =  (double[]) outputOD1.getAuxData()[0];
-				sm.addLocationList(selection,loc1);	
+//				double[] loc1 =  (double[]) outputOD1.getAuxData()[0];
+//				sm.addLocationList(selection,loc1);	
 				
-				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[1];
+				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[0];
 
 				sm.setTemporaryBackgroundHolder(temporaryBackground1);
 				
@@ -361,7 +365,8 @@ public class DummyProcessingClass {
 				 		 dm, 
 				 		 pS,
 				 		 ssvsPS,
-				 		 selection);	
+				 		 selection,
+				 		 trackingMarker);	
 
 
 				
@@ -389,7 +394,8 @@ public class DummyProcessingClass {
 				 		 dm, 
 				 		 pS,
 				 		 ssvsPS,
-				 		 selection);	
+				 		 selection,
+				 		 trackingMarker);	
 				
 				
 				break;
@@ -556,6 +562,7 @@ public class DummyProcessingClass {
 				sm.setTemporaryBackgroundHolder(temporaryBackground);
 				
 				break;
+				
 			case TWOD:
 				if (pS.getRegion("Background Region")!=null){
 					pS.removeRegion(pS.getRegion("Background Region"));
@@ -573,7 +580,7 @@ public class DummyProcessingClass {
 				double[] loc1 =  (double[]) outputOD1.getAuxData()[0];
 				sm.addLocationList(selection,loc1);		
 
-				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[1];
+				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[0];
 				
 				sm.setTemporaryBackgroundHolder(temporaryBackground1);
 				
@@ -599,7 +606,8 @@ public class DummyProcessingClass {
 				 		 dm, 
 				 		 pS,
 				 		 ssvsPS,
-				 		 selection);	
+				 		 selection,
+				 		 trackingMarker);	
 
 
 				
@@ -633,7 +641,8 @@ public class DummyProcessingClass {
 				 		 dm, 
 				 		 pS,
 				 		 ssvsPS,
-				 		 selection);	
+				 		 selection,
+				 		 trackingMarker);	
 				
 				break;
 				
@@ -807,7 +816,7 @@ public class DummyProcessingClass {
 				double[] loc1 = (double[]) outputOD1.getAuxData()[0] ;
 				sm.addLocationList(selection,loc1);	
 				
-				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[1];
+				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[0];
 				
 			
 				sm.setTemporaryBackgroundHolder(temporaryBackground1);
@@ -834,7 +843,8 @@ public class DummyProcessingClass {
 				 		 dm, 
 				 		 pS,
 				 		 ssvsPS,
-				 		 selection);	
+				 		 selection,
+				 		 trackingMarker);	
 
 
 				
@@ -871,7 +881,8 @@ public class DummyProcessingClass {
 				 		 dm, 
 				 		 pS,
 				 		 ssvsPS,
-				 		 selection);	
+				 		 selection,
+				 		trackingMarker);	
 				
 				
 				break;
@@ -1083,7 +1094,7 @@ public class DummyProcessingClass {
 		odfm.setDirection(am);
 		
 		Metadata md = new Metadata();
-		IDataset dummyMD = DatasetFactory.zeros(new int [] {2,2});
+//		IDataset dummyMD = DatasetFactory.zeros(new int [] {2,2});
 		Map<String, Integer> dumMap = new HashMap<String, Integer>();
 		dumMap.put("one", 1);
 		md.initialize(dumMap);
@@ -1163,7 +1174,8 @@ public class DummyProcessingClass {
 											DataModel dm, 
 											IPlottingSystem<Composite> pS,
 											IPlottingSystem<Composite> ssvsPS,
-											int selection){		
+											int selection,
+											int trackingMarker){		
 		
 		Display display = Display.getCurrent();
         Color magenta = display.getSystemColor(SWT.COLOR_DARK_MAGENTA);
@@ -1225,7 +1237,8 @@ public class DummyProcessingClass {
 														   input, 
 														   sm,
 														   pS,
-														   ssvsPS);
+														   ssvsPS,
+														   trackingMarker);
 			if(outputOD4.getAuxData()[3] != null){
 				sm.setBoxOffsetLenPt((int[][]) outputOD4.getAuxData()[3]);
 			}
@@ -1260,7 +1273,8 @@ public class DummyProcessingClass {
 				  												   IDataset input,
 				  												   SuperModel sm,
 				  												   IPlottingSystem<Composite> pS,
-				  												   IPlottingSystem<Composite> ssvsPS){
+				  												   IPlottingSystem<Composite> ssvsPS,
+				  												   int trackingMarker){
 
 		SecondConstantROIBackgroundSubtractionModel scrbm 
 			= new SecondConstantROIBackgroundSubtractionModel();
@@ -1272,10 +1286,20 @@ public class DummyProcessingClass {
 		scrbm.setPlottingSystem(pS);
 		scrbm.setSPlottingSystem(ssvsPS);
 		scrbm.setTrackerOn(sm.getTrackerOn());
+		scrbm.setTrackingMarker(trackingMarker);
 		
 		if(sm.getBoxOffsetLenPt() != null){
 			scrbm.setBoxOffsetLenPt(sm.getBoxOffsetLenPt());
 		}
+		
+		scrbm.addPropertyChangeListener("boxOffsetLenPt", new PropertyChangeListener() {
+			
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				sm.setBoxOffsetLenPt(scrbm.getBoxOffsetLenPt());
+				
+			}
+		});
 		
 		if (sm.getBackgroundROI() != null){
 			IRectangularROI bounds = sm.getBackgroundROI().getBounds();

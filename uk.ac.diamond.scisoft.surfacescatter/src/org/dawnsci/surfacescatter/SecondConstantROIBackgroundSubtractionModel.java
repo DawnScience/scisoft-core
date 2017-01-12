@@ -59,6 +59,18 @@ public class SecondConstantROIBackgroundSubtractionModel extends AbstractOperati
 		firePropertyChange("trackerOn", this.trackerOn, this.trackerOn = trackerOn);
 	}
 
+	@OperationModelField(label="trackingrMarker", hint = "is this a new track (if so, set to 3), or part of a tracked series (set to 1 or 2)" )
+	private int trackingMarker = 1;
+	
+	
+	public int getTrackingMarker() {
+		return trackingMarker;
+	}
+
+	public void setTrackingMarker(int trackingMarker) {
+		firePropertyChange("trackingMarker", this.trackingMarker, this.trackingMarker = trackingMarker);
+	}
+
 	@OperationModelField(label="backgroundROI", hint = "backgroundROI?" )
 	private IRectangularROI backgroundROI = new RectangularROI(10,10,50,50,0);;
 	

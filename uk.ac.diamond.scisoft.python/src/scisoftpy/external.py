@@ -316,6 +316,8 @@ else:
     from threading import Thread
     from subprocess import Popen, PIPE
     cmds='''import sys
+# Started by create_function with keep=True (default),
+# this is a kept-alive process to serve an external function
 while True:
   print 'READY'
   sys.stdout.flush()

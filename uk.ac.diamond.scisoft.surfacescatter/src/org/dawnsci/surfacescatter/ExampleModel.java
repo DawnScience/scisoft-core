@@ -41,7 +41,7 @@ public class ExampleModel {
 	private ILazyDataset flux;
 	private ILazyDataset theta;
 	private TrackerType1 trackerType = TrackerType1.TLD;
-	private FitPower fitPower = FitPower.THREE;
+	private FitPower fitPower = FitPower.ONE;
 	
 	public IDataset getInput() {
 		return input;

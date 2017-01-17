@@ -830,6 +830,36 @@
       </category>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.GuinierFittingOperation"
+            description="Fit reduced data to the Guinier equation to determine radius of gyration value"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.GuinierFittingOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.GuinierFittingModel"
+            name="Guinier Plot"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.KratkyFittingOperation"
+            description="Fit reduced data to the Kratky equation to quantify the nature of a biological macromolecule"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.KratkyFittingOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.KratkyFittingModel"
+            name="Kratky Plot"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.PorodFittingOperation"
+            description="Fit reduced data to the Porod equation to investigate the shape of a polymer chain"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.PorodFittingOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.PorodFittingModel"
+            name="Porod Plot"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.HermanOrientation1DOperation"
             description="Perform a Herman Orientation calculation on a region of an reduced lineplot"
             icon="icons/mask.png"
@@ -847,6 +877,16 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.HermanOrientationModel"
             name="Herman Orientation - From image"
             visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.InvariantOperation"
+            description="Invariant Calculation"
+            icon="icons/unchanged.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.InvariantOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.InvariantMoel"
+            name="Invariance"
+            visible="false">
       </operation>
       <operation
              category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"

@@ -230,6 +230,15 @@
             visible="true">
       </operation>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsATSASOperation"
+            description="Save XY data as an ATSAS file"
+            icon="icons/exptext.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsATSASOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsATSASModel"
+            name="Export to ATSAS File"
+            visible="true">
+      </operation>
+      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.export.Export1DNXcanSASOperation"
             description="Save XY data to a NXcanSAS file"
             icon="icons/exptext.png"

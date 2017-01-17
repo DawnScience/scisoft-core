@@ -107,15 +107,21 @@ public class Export1DNXcanSASOperation extends AbstractOperation<Export1DNXcanSA
 		nxData.addAttribute(TreeFactory.createAttribute("Q_indices", Long.valueOf(0)));
 		
 		// Then we add the data
-		nxData.addDataNode("I", NexusTreeUtils.createDataNode("I", dataForOutput, "1/cm"));
+		DataNode sasDataNode = new DataNodeImpl(1);
+		sasDataNode.setDataset(dataForOutput);
+		sasDataNode.addAttribute(TreeFactory.createAttribute("units", "1/cm"));
+		//nxData.addDataNode("I", NexusTreeUtils.createDataNode("I", dataForOutput, "1/cm"));
 		nxData.addDataNode("Q", NexusTreeUtils.createDataNode("Q", axesForOutput, "1/A"));
 		
 		// And any error values, if present
 		if (errorForOutput != null) {
-			nxData.addAttribute(TreeFactory.createAttribute("I_uncertainties", "Idev"));
+			sasDataNode.addAttribute(TreeFactory.createAttribute("uncertainties", "Idev"));
+			//nxData.addAttribute(TreeFactory.createAttribute("I/uncertainties", "Idev"));
 			nxData.addDataNode("Idev", NexusTreeUtils.createDataNode("Idev", dataForOutput, "1/cm"));
 		}
 		
+		nxData.addDataNode("I", sasDataNode);
+
 		try {
 			// Create the file and get ready to write
 			NexusFile nexusFileReference = new NexusFileHDF5(filePath);
@@ -173,7 +179,7 @@ public class Export1DNXcanSASOperation extends AbstractOperation<Export1DNXcanSA
 		runDataNote.setDataset(DatasetFactory.createFromObject(fileName));
 		nxEntry.addDataNode("run", runDataNote);
 		DataNode titleDataNote = new DataNodeImpl(1);
-		titleDataNote.setDataset(DatasetFactory.createFromObject(fileTitle));
+		titleDataNote.setDataset(DatasetFactory.createFromObject(fileName));
 		nxEntry.addDataNode("title", titleDataNote);
 		
 		// The SASdata class SDS classes of I & Q (I_err too!) with attributes for each SDS class e.g. I_axes = Q, Q_indicies 0.

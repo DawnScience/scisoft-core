@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.processing.operations;
+package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 import org.eclipse.dawnsci.analysis.api.processing.model.FileType;
 import org.eclipse.dawnsci.analysis.api.processing.model.RangeType;

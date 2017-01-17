@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.processing.operations;
+package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 // Imports from java
 import java.util.Arrays;
@@ -42,7 +42,7 @@ public class DegreeOfCrystallinityOperation extends AbstractOperation<DegreeOfCr
 	// Let's give this process an ID tag
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.DegreeOfCrystallinityOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.saxs.DegreeOfCrystallinityOperation";
 	}
 
 	// Before we start, let's make sure we know how many dimensions of data are
@@ -99,7 +99,7 @@ public class DegreeOfCrystallinityOperation extends AbstractOperation<DegreeOfCr
 		double qSquaredSampleMinusAmorphousIntegral = 0.00;
 		double qSquaredSampleIntegral = 0.00;
 
-		// Do the integrationHerman Orientation Factor
+		// Do the integration
 		for (int loopIter = indexes[0]; loopIter < indexes[1]; loopIter++) {
 			qSquaredSampleMinusAmorphousIntegral += Math.pow(axesDataset.getDouble(loopIter), 2)
 					* (dataDataset.getDouble(loopIter) - amorphousDataset.getDouble(loopIter));

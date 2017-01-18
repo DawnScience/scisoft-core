@@ -1124,6 +1124,12 @@
             description="Reflectivity Final Extraction"
             name="Reflectivity Final Extraction">
       </operation>
+      <operation
+             class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SimpleSectorIntegrationOperation"
+             id="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SimpleSectorIntegrationOperation"
+             model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SimpleSectorIntegrationModel"
+             name="Simple Sector Integration">
+       </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

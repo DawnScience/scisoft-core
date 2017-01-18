@@ -1,8 +1,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.export;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
@@ -24,7 +22,6 @@ import org.eclipse.january.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.io.ASCIIDataWithHeadingSaver;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadata;
-import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadataImpl;
 
 @Atomic
 public class ExportAsATSASOperation extends AbstractOperation<ExportAsATSASModel, OperationData> implements IExportOperation {
@@ -32,7 +29,6 @@ public class ExportAsATSASOperation extends AbstractOperation<ExportAsATSASModel
 	private static final String EXPORT = "export";
 	private static final String DEFAULT_EXT = "dat";
 	private static final String FOLDER_EXT = "_atsas";
-	private static final String headerFilename = "";
 	
 	@Override
 	public String getId() {
@@ -96,13 +92,19 @@ public class ExportAsATSASOperation extends AbstractOperation<ExportAsATSASModel
 		
 		ASCIIDataWithHeadingSaver saver = new ASCIIDataWithHeadingSaver(fileName);
 		
+		int posExt = fileName.lastIndexOf("_");
+		int posSlash = fileName.lastIndexOf("/") + 1;
+		// No File Extension
+		String runName = posExt == -1 ? fileName : fileName.substring(0, posExt);
+		runName = posSlash == -1 ? runName : runName.substring(posSlash);
+		
 		// Default ATSAS header is four lines long...
 		String fileHeader
 		;
 		if (error != null) {
-			fileHeader = "# Diamond Light Source Ltd.\n# Results Export File\n# Dataset name: " + fileName + "\n# q(1/A)\tIntensity\tError";		}
+			fileHeader = "# Diamond Light Source Ltd.\n# Results Export File\n# Dataset name: " + runName + "\n# q(1/A)\tIntensity\tError";		}
 		else {
-			fileHeader = "# Diamond Light Source Ltd.\n# Results Export File\n# Dataset name: " + fileName + "\n# q(1/A)\tIntensity";
+			fileHeader = "# Diamond Light Source Ltd.\n# Results Export File\n# Dataset name: " + runName + "\n# q(1/A)\tIntensity";
 		}
 		
 		DataHolder dh = new DataHolder();
@@ -131,7 +133,6 @@ public class ExportAsATSASOperation extends AbstractOperation<ExportAsATSASModel
 	private static String getFileNameNoExtension(String fileName) {
 		int posExt = fileName.lastIndexOf(".");
 		// No File Extension
-		String temp = posExt == -1 ? fileName : fileName.substring(0, posExt);
 		return posExt == -1 ? fileName : fileName.substring(0, posExt);
 	}
 	

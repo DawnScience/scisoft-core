@@ -888,16 +888,6 @@
             visible="true">
       </operation>
       <operation
-            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.InvariantOperation"
-            description="Invariant Calculation"
-            icon="icons/unchanged.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.InvariantOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.InvariantMoel"
-            name="Invariance"
-            visible="false">
-      </operation>
-      <operation
              category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
              class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.CinaderOrientationOperation"
              description="Perform a Cinader and Burghardt degree of orientation calculation"
@@ -905,7 +895,7 @@
              id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.CinaderOrientationOperation"
              model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.CinaderOrientationModel"
              name="Degree of Orientation">
-       </operation>
+      </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.DegreeOfCrystallinityOperation"

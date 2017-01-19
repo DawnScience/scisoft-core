@@ -609,7 +609,7 @@ public class NexusTreeUtils {
 		int[] shape = cData.getShape();
 		int rank = shape.length;
 
-		Set<String> namedAxes = new HashSet<>();
+		List<String> namedAxes = new ArrayList<>();
 		String[] tmp = getStringArray(gn.getAttribute(NX_AXES));
 		if (tmp == null) {
 			return false;

@@ -1047,7 +1047,7 @@ public class MillerSpaceMapper {
 			if (reduceToNonZeroBB) {
 				System.err.println("Reduced to non-zero bounding box: " + Arrays.toString(sMin) + " to " + Arrays.toString(sMax));
 				for (int i = 0; i < 3; i++) {
-					vMin[i] += vMin[i]*vDel[i];
+					vMin[i] += sMin[i]*vDel[i];
 					sMax[i]++;
 					vShape[i] = sMax[i] - sMin[i];
 				}
@@ -1144,9 +1144,9 @@ public class MillerSpaceMapper {
 
 	private PositionIterator[] getPositionIterators(Tree tree) throws ScanFileHolderException {
 		int[] dshape = NexusTreeUtils.parseDetectorScanShape(detectorPath, tree);
-		System.err.println(Arrays.toString(dshape));
+//		System.err.println(Arrays.toString(dshape));
 		dshape = NexusTreeUtils.parseSampleScanShape(samplePath, tree, dshape);
-		System.err.println(Arrays.toString(dshape));
+//		System.err.println(Arrays.toString(dshape));
 
 		DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
 		ILazyDataset images = node.getDataset();

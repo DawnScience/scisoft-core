@@ -58,7 +58,7 @@ public class DiffractionEllipseFitOperation extends AbstractOperation<Diffractio
 		double[] point = new double[2];
 		double ang = 0;
 		
-		if (points != null && points.getNumberOfPoints() < 3) {
+		if (points != null && points.getNumberOfPoints() > 3) {
 
 			EllipticalFitROI efroi = PowderRingsUtils.fitAndTrimOutliers(null, points, 2, false);
 			rms = efroi.getRMS();

@@ -7,12 +7,17 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.processing.operations;
+package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
-import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
-import uk.ac.diamond.scisoft.analysis.processing.operations.IntegrationModel;
-import org.eclipse.dawnsci.analysis.dataset.roi.RingROI;
+
+// Imports from org.eclipse.dawnsci
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.RingROI;
+import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
+
+// Imports from uk.ac.diamond.scisoft
+import uk.ac.diamond.scisoft.analysis.processing.operations.IntegrationModel;
+
 
 // More information and the equation for the Herman Orientation Factor can be found in:
 // Crystallization and orientation studies in polypropylene/single wall carbon nanotube composite
@@ -21,11 +26,12 @@ import org.eclipse.dawnsci.analysis.api.roi.IROI;
 
 // @author Tim Snow
 
-// The model for a DAWN process to perform a Herman Orientation calculation on a given image
-public class HermanOrientationModel extends IntegrationModel {
+// The model for a DAWN process to perform a Herman Orientation calculation on a given reduced dataset
+public class HermanOrientation1DModel extends IntegrationModel {
 
 
-	// Let's give the user a fixed choice on the integration range so they don't go too nuts...
+	// Let's give the user a fixed choice on the integration range so they don't go too nuts...import org.eclipse.january.dataset.ILazyDataset;
+
 	enum NumberOfPis {
 		HALF_PI(1),
 		WHOLE_PI(2);
@@ -81,12 +87,12 @@ public class HermanOrientationModel extends IntegrationModel {
 
 
 	// Now let's get the user to tell us where the centre of the beam is and which ring they're interested in evaluating
-	public HermanOrientationModel() {
+	public HermanOrientation1DModel() {
 		super();
 		setRegion(new RingROI());
 	}
 
-	public HermanOrientationModel(IROI region) {
+	public HermanOrientation1DModel(IROI region) {
 		super();
 		//setRegion(sector);
 		firePropertyChange("region", this.region, this.region = region);

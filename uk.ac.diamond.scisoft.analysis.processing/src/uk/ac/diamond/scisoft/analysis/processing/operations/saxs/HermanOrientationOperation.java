@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.processing.operations;
+package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 
 //import org.apache.commons.lang.ArrayUtils;
@@ -32,9 +32,9 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
+import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.HermanOrientationModel.NumberOfPis;
 // Imports from uk.ac.diamond
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
-import uk.ac.diamond.scisoft.analysis.processing.operations.HermanOrientationModel.NumberOfPis;
 
 
 // More information and the equation for the Herman Orientation Factor can be found in:
@@ -51,7 +51,7 @@ public class HermanOrientationOperation extends AbstractOperation<HermanOrientat
 	// Let's give this process an ID tag
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.HermanOrientationOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.saxs.HermanOrientationOperation";
 	}
 
 

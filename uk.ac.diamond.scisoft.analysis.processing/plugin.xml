@@ -230,6 +230,15 @@
             visible="true">
       </operation>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsATSASOperation"
+            description="Save XY data as an ATSAS file"
+            icon="icons/exptext.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsATSASOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsATSASModel"
+            name="Export to ATSAS File"
+            visible="true">
+      </operation>
+      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.export.Export1DNXcanSASOperation"
             description="Save XY data to a NXcanSAS file"
             icon="icons/exptext.png"
@@ -824,21 +833,76 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SubtractIntegratedXRegionsModel"
             name="Subtract Average X Regions Integration">
       </operation>
-            <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.HermanOrientationOperation"
-            description="Perform a Herman Orientation calculation on a region of an image"
+      <category
+            id="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            name="SAXS">
+      </category>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.GuinierFittingOperation"
+            description="Fit reduced data to the Guinier equation to determine radius of gyration value"
             icon="icons/mask.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.HermanOrientationOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.HermanOrientationModel"
-            name="Herman Orientation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.GuinierFittingOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.GuinierFittingModel"
+            name="Guinier Plot"
             visible="true">
       </operation>
       <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.DegreeOfCrystallinityOperation"
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.KratkyFittingOperation"
+            description="Fit reduced data to the Kratky equation to quantify the nature of a biological macromolecule"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.KratkyFittingOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.KratkyFittingModel"
+            name="Kratky Plot"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.PorodFittingOperation"
+            description="Fit reduced data to the Porod equation to investigate the shape of a polymer chain"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.PorodFittingOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.PorodFittingModel"
+            name="Porod Plot"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.HermanOrientation1DOperation"
+            description="Perform a Herman Orientation calculation on a region of an reduced lineplot"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.HermanOrientation1DOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.HermanOrientation1DModel"
+            name="Herman Orientation - From line plot"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.HermanOrientationOperation"
+            description="Perform a Herman Orientation calculation on a region of an image"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.HermanOrientationOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.HermanOrientationModel"
+            name="Herman Orientation - From image"
+            visible="true">
+      </operation>
+      <operation
+             category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+             class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.CinaderOrientationOperation"
+             description="Perform a Cinader and Burghardt degree of orientation calculation"
+             icon="icons/unchanged.png"
+             id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.CinaderOrientationOperation"
+             model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.CinaderOrientationModel"
+             name="Degree of Orientation">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.DegreeOfCrystallinityOperation"
             description="Calculate the degree of crystallinity from an amorphous background"
             icon="icons/mask.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.DegreeOfCrystallinityOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.DegreeOfCrystallinityModel"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.DegreeOfCrystallinityOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.DegreeOfCrystallinityModel"
             name="Degree of Crystallinity"
             visible="true">
       </operation>
@@ -1060,6 +1124,12 @@
             description="Reflectivity Final Extraction"
             name="Reflectivity Final Extraction">
       </operation>
+      <operation
+             class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SimpleSectorIntegrationOperation"
+             id="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SimpleSectorIntegrationOperation"
+             model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SimpleSectorIntegrationModel"
+             name="Simple Sector Integration">
+       </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

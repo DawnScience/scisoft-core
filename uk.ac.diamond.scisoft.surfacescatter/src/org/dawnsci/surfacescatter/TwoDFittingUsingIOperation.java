@@ -35,7 +35,7 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 	private static Dataset output;
 	private static Polynomial2D g2;
 	private static int DEBUG = 1;
-	private DoubleDataset in1Background;
+	private IDataset in1Background;
 	
 	@Override
 	public String getId() {
@@ -92,64 +92,21 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 		Dataset matrix = LinearLeastSquaresServicesForDialog.polynomial2DLinearLeastSquaresMatrixGenerator(
 				AnalaysisMethodologies.toInt(model.getFitPower()), fittingBackground[0], fittingBackground[1]);
 
-		Display.getDefault().syncExec(new Runnable() {
-
-			@Override
-			public void run() {
 				DoubleDataset test = (DoubleDataset) LinearAlgebra.solveSVD(matrix, fittingBackground[2]);
 				double[] params = test.getData();
 
-				in1Background = g2.getOutputValues0(params, len, model.getBoundaryBox(),
+				in1Background = g2.getOutputValues2(params, len, model.getBoundaryBox(),
 						AnalaysisMethodologies.toInt(model.getFitPower()));
 
-				if (model.getFitPower() == FitPower.ZERO) {
-
-					double probe = in1Background.get(0, 0);
-
-					IndexIterator check = in1Background.getIterator();
-
-					while (check.hasNext()) {
-						double v = in1Background.getElementDoubleAbs(check.index);
-						if (v != probe)
-							debug("caution background inaccurate!");
-					}
-
-				}
-//				IndexIterator it = in1Background.getIterator();
-//
-//				while (it.hasNext()) {
-//					double v = in1Background.getElementDoubleAbs(it.index);
-//					if (v <= 0)
-//						in1Background.setObjectAbs(it.index, 0.1);
-//				}
 
 				Dataset pBackgroundSubtracted = Maths.subtract(in1, in1Background, null);
 
-				IndexIterator it1 = pBackgroundSubtracted.getIterator();
-
-//				while (it1.hasNext()) {
-//					double q = pBackgroundSubtracted.getElementDoubleAbs(it1.index);
-//
-//					if (q <= 0) {
-//						pBackgroundSubtracted.setObjectAbs(it1.index, 0.1);
-//					}
-//				}
 				output = DatasetUtils.cast(pBackgroundSubtracted, Dataset.FLOAT64);
 
 				output.setName("Region of Interest, polynomial background removed");
-
-			}
-		});
-
-//		double[] location = new double[] { (double) model.getInitialLenPt()[1][1],
-//				(double) model.getInitialLenPt()[1][0],
-//				(double) (model.getInitialLenPt()[1][1] + model.getInitialLenPt()[0][1]),
-//				(double) (model.getInitialLenPt()[1][0]), (double) model.getInitialLenPt()[1][1],
-//				(double) model.getInitialLenPt()[1][0] + model.getInitialLenPt()[0][0],
-//				(double) (model.getInitialLenPt()[1][1] + model.getInitialLenPt()[0][1]),
-//				(double) (model.getInitialLenPt()[1][0] + model.getInitialLenPt()[0][0]) };
-
-		return new OperationData(output, in1Background);
+		
+				
+		return new OperationData(output, (IDataset) in1Background);
 	}
 
 	private void debug(String output) {

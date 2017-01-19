@@ -177,7 +177,21 @@ public class DataModel {
 				}
 		}
 		
+		if (yList.isEmpty()){
+			yList = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				  yList.add(0.0);
+				}
+		}
+		
 		if (yListError==null){
+			yListError = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				  yListError.add(0.0);
+				}
+		}
+		
+		if (yListError.isEmpty()){
 			yListError = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
 				  yListError.add(0.0);
@@ -233,7 +247,22 @@ public class DataModel {
 				}
 		}
 		
+		if (yListFhkl.isEmpty()){
+			yListFhkl = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				  yListFhkl.add(0.0);
+				}
+		}
+		
+		
 		if (yListFhklError==null){
+			yListFhklError = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				  yListFhklError.add(0.0);
+				}
+		}
+		
+		if (yListFhklError.isEmpty()){
 			yListFhklError = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
 				  yListFhklError.add(0.0);
@@ -269,7 +298,15 @@ public class DataModel {
 	
 	
 	public void addxList(int l, int k, double x){
-		if (xList==null || xList.isEmpty()){
+		if (xList==null){
+			xList = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				  xList.add(0.0);
+				}
+		}
+		
+		
+		if (xList.isEmpty()){
 			xList = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
 				  xList.add(0.0);
@@ -316,6 +353,8 @@ public class DataModel {
 		xList =null;
 		yList =null;
 		yListFhkl =null;
+		yListFhklError = null;
+		yListError = null;
 		outputDatArray =null;
 		backgroundDatArray = null;
 		initialDataset = null;
@@ -336,8 +375,14 @@ public class DataModel {
 		
 		yListc.removeAll(zero);
 		
-		IDataset yOut = DatasetFactory.createFromList(yListc);
-		yOut.setError(Maths.sqrt(yOut));
+		IDataset yOut = DatasetFactory.ones(new int[] {1});
+		try{
+			yOut = DatasetFactory.createFromList(yListc);
+		}
+		catch(Exception n){
+//			IDataset yOut = DatasetFactory.ones(new int[] {1});
+		}
+			yOut.setError(Maths.sqrt(yOut));
 		return yOut;
 	}
 	
@@ -354,7 +399,15 @@ public class DataModel {
 		
 		yListc.removeAll(zero);
 		
-		IDataset yOut = DatasetFactory.createFromList(yListc);
+		IDataset yOut = DatasetFactory.ones(new int[] {1});
+		
+		try{
+			yOut = DatasetFactory.createFromList(yListc);
+		}
+		catch(Exception x){
+			
+		}
+		
 		return yOut;
 	}
 	
@@ -370,8 +423,13 @@ public class DataModel {
 		zero.add(0.0);
 		
 		yListFhklc.removeAll(zero);
-		
-		IDataset yOut = DatasetFactory.createFromList(yListFhklc);
+		IDataset yOut = DatasetFactory.ones(new int[] {1});
+		try{
+			yOut = DatasetFactory.createFromList(yListFhklc);
+		}
+		catch(Exception x){
+			
+		}
 		yOut.setError(Maths.sqrt(yOut));
 		return yOut;
 	}
@@ -390,7 +448,13 @@ public class DataModel {
 		
 		yListFhklc.removeAll(zero);
 		
-		IDataset yOut = DatasetFactory.createFromList(yListFhklc);
+		IDataset yOut = DatasetFactory.ones(new int[] {1});
+		try{
+			yOut = DatasetFactory.createFromList(yListFhklc);
+		}
+		catch(Exception n){
+
+		}
 		
 		return yOut;
 	}
@@ -409,8 +473,13 @@ public class DataModel {
 		
 		xListc.removeAll(zero);
 		
+		IDataset xOut = DatasetFactory.ones(new int[] {1});
+		try{
+			xOut = DatasetFactory.createFromList(xListc);
+		}
+		catch(Exception n){
 
-		IDataset xOut = DatasetFactory.createFromList(xListc);
+		}
 		
 		return xOut;
 	}

@@ -24,6 +24,7 @@ import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
 import org.ejml.data.Complex64F;
 
 /**
@@ -268,6 +269,36 @@ public class Polynomial2D extends AFunction {
 		return output1;
 	}
 	
+	
+	public IDataset getOutputValues2 (double[] d,int[] len, int boundaryBox, int fitPower ) {
+		
+		IDataset output1 = DatasetFactory.zeros(new int[] {len[1], len[0]});//new DoubleDataset(len[1], len[0]);
+		
+		for (int k=boundaryBox; k<boundaryBox+len[1]; k++){
+			for (int l=boundaryBox; l<boundaryBox+len[0]; l++){
+				
+				double temp = 0;
+				double x = k;
+				double y = l;
+			
+				for (int j = 0; j < (fitPower+1); j++) {
+					for (int i = 0; i < (fitPower+1); i++) {
+						try{
+							double v = d[(j*(fitPower+1)+i)]*Math.pow(x, j)*Math.pow(y, i);
+							temp += v;
+						}
+						catch (ArrayIndexOutOfBoundsException exc){
+							
+						}
+					}
+				}
+				
+				output1.set(temp, k-boundaryBox, l-boundaryBox);
+			}
+		}
+	
+		return output1;
+}
 	
 	
 //	@Override

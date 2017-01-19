@@ -198,6 +198,14 @@ public class SuperModel {
 				}
 		}
 		
+		if (outputDatArray.size() == 0){
+			outputDatArray = new ArrayList<IDataset>();
+			for (int i = 0; i < l; i++) {
+				outputDatArray.add(DatasetFactory.zeros(new int[] {2,2}));
+				}
+		}
+		
+		
 		ArrayList<IDataset> outputDatArray1 = new ArrayList<IDataset>();
 		outputDatArray1 = (ArrayList<IDataset>) outputDatArray.clone();
 		outputDatArray1.set(k,in);
@@ -219,13 +227,18 @@ public class SuperModel {
 	
 	public void addBackgroundDatArray(int l, int k, IDataset in){
 		
-		if (backgroundDatArray==null){
+		if (backgroundDatArray==null ){
 			backgroundDatArray = new ArrayList<IDataset>();
 			for (int i = 0; i < l; i++) {
 				backgroundDatArray.add(DatasetFactory.zeros(new int[] {2,2}));
 				}
 		}
-		
+		if (backgroundDatArray.isEmpty()){
+			backgroundDatArray = new ArrayList<IDataset>();
+			for (int i = 0; i < l; i++) {
+				backgroundDatArray.add(DatasetFactory.zeros(new int[] {2,2}));
+				}
+		}
 		
 		ArrayList<IDataset> backgroundDatArray1 = new ArrayList<IDataset>();
 		backgroundDatArray1 = (ArrayList<IDataset>) backgroundDatArray.clone();
@@ -383,12 +396,28 @@ public class SuperModel {
 				}
 		}
 		
+		if (yList.size() == 0){
+			yList = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				  yList.add(0.0);
+				}
+		}
+		
 		if (yListError==null){
 			yListError = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
 				  yListError.add(0.0);
 				}
 		}
+		
+
+		if (yListError.size() == 0){
+			yListError = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				  yListError.add(0.0);
+				}
+		}
+		
 		
 		ArrayList<Double> yList2 = new ArrayList<Double>();
 		
@@ -446,7 +475,22 @@ public class SuperModel {
 				}
 		}
 		
+		if (yListFhkl.size() == 0){
+			yListFhkl = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				  yListFhkl.add(0.0);
+				}
+		}
+		
+		
 		if (yListFhklError==null){
+			yListFhklError = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				  yListFhklError.add(0.0);
+				}
+		}
+		
+		if (yListFhklError.size() == 0){
 			yListFhklError = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
 				  yListFhklError.add(0.0);
@@ -488,6 +532,14 @@ public class SuperModel {
 				  xList.add(0.0);
 				}
 		}
+		
+		if (xList.size() == 0){
+			xList = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				  xList.add(0.0);
+				}
+		}
+		
 		
 		ArrayList<Double> xList1 = new ArrayList<Double>();
 		xList1 = (ArrayList<Double>) xList.clone();
@@ -774,6 +826,14 @@ public class SuperModel {
 				}
 		}
 		
+		if (trackerLocationList.size() == 0){
+			trackerLocationList = new ArrayList<double[]>();
+		
+			for (int i = 0; i < images.length; i++) {
+				trackerLocationList.add(new double[] {0,0,0,0,0,0,0,0});
+				}
+		}
+		
 //		System.out.println("Added tracker location at k = " + k);
 		
 		ArrayList<double[]> trackerLocationList1 = new ArrayList<double[]>();
@@ -798,6 +858,15 @@ public class SuperModel {
 	
 	public void addtrackerKList(int k, double in){
 		if (trackerKList==null){
+			trackerKList = new ArrayList<Double>();
+		
+			for (int i = 0; i < images.length; i++) {
+				trackerKList.add((double) 2000000);
+				}
+		}
+		
+		
+		if (trackerKList.size() == 0){
 			trackerKList = new ArrayList<Double>();
 		
 			for (int i = 0; i < images.length; i++) {

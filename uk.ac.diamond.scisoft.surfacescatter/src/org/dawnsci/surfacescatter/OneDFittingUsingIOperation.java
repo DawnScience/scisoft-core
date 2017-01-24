@@ -61,8 +61,6 @@ public class OneDFittingUsingIOperation extends AbstractOperation<OneDFittingMod
 		pt = model.getLenPt()[1];
 
 		
-//		RectangularROI box = sm.getBackgroundBox();
-		
 		Dataset in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input, len, pt);
 		
 		IDataset[] background = new IDataset[2];

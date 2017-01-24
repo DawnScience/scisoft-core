@@ -61,10 +61,19 @@ public class SuperModel {
 	private TreeMap<Integer, Dataset> som;
 	private int numberOfImages;
 	private String imageFolderPath;
+	private int startFrame;
 
 	
 	
 	
+	public int getStartFrame() {
+		return startFrame;
+	}
+
+	public void setStartFrame(int startFrame) {
+		this.startFrame = startFrame;
+	}
+
 	public String getImageFolderPath() {
 		return imageFolderPath;
 	}

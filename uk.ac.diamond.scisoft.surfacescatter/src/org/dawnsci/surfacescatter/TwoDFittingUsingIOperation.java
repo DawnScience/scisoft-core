@@ -60,17 +60,16 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 		int[] len = model.getLenPt()[0];
 		int[] pt = model.getLenPt()[1];
 
+		debug("pt[0]:  " + pt[0] + "  pt[1]:  " + pt[1] + "  in the 2D bg subtraction operation");
+		
+		
 		Dataset in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input, len, pt);
 
 		if (Arrays.equals(in1.getShape(), new int[] { len[1], len[0] }) == false) {
-			double[] location = new double[] { 2, 2 };
+			IDataset location = DatasetFactory.ones(new int[] {2,2});
 			Dataset errorDat = DatasetFactory.zeros(new int[] { 2, 2 });
 			IndexIterator it2 = errorDat.getIterator();
-			while (it2.hasNext()) {
-				double q = errorDat.getElementDoubleAbs(it2.index);
-				if (q <= 0)
-					errorDat.setObjectAbs(it2.index, 0.1);
-			}
+
 			return new OperationData(errorDat, location);
 		}
 
@@ -85,7 +84,7 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 				model.getBoundaryBox());
 
 		if (Arrays.equals(fittingBackground[0].getShape(), (new int[] { 2, 2 }))) {
-			double[] location = new double[] { 2, 2 };
+			IDataset location = DatasetFactory.ones(new int[] {2,2});
 			return new OperationData(fittingBackground[0], location);
 		}
 

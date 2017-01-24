@@ -360,6 +360,7 @@ public class DataModel {
 		initialDataset = null;
 		initialLenPt = null;
 		locationList = null;
+		
 	}
 
 	public IDataset yIDataset(){

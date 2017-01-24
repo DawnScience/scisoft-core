@@ -17,6 +17,7 @@ import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IndexIterator;
@@ -31,7 +32,7 @@ public class DummyProcessingClass {
 	
 	
 	private static Dataset yValue;
-	private static int DEBUG = 1;
+	private static int DEBUG = 0;
 	
 	public static IDataset DummyProcess(SuperModel sm, 
 										IDataset input, 
@@ -54,7 +55,7 @@ public class DummyProcessingClass {
 				}
 				else{
 				}				
-				
+				debug("What the fuck");
 				AgnosticTrackerHandler ath = new AgnosticTrackerHandler();
 				
 				ath.TwoDTracking3(sm, 
@@ -67,11 +68,21 @@ public class DummyProcessingClass {
 				
 				OperationData outputOD= TwoDFittingIOp(model,
 													   input,
-													   sm);
+													   sm,
+													   k,
+													   trackingMarker);
 				output = outputOD.getData();
-
-				IDataset temporaryBackground =  (IDataset) outputOD.getAuxData()[0];
-
+				
+				IDataset temporaryBackground = DatasetFactory.ones(new int[] {1});
+				
+				try{
+					temporaryBackground =  (IDataset) outputOD.getAuxData()[0];
+				}
+				catch(Exception f){
+//					DoubleDataset temporaryBackground1 =  (DoubleDataset) outputOD.getAuxData()[0];
+//					temporaryBackground = (IDataset) temporaryBackground1;
+				}
+				
 				sm.setTemporaryBackgroundHolder(temporaryBackground);
 				
 				break;
@@ -88,13 +99,16 @@ public class DummyProcessingClass {
 				int[] len = sm.getInitialLenPt()[0];
 				int[] pt = sm.getInitialLenPt()[1];
 					
-				sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-				(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+				sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]),
+						(double) (pt[1]), (double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]),
+						(double) (pt[1] + len[1])});
 				
 				
 				OperationData outputOD1= TwoDFittingIOp(model,
 						   input,
-						   sm);
+						   sm,
+						   k,
+						   trackingMarker);
 				output = outputOD1.getData();
 				
 //				double[] loc1 =  (double[]) outputOD1.getAuxData()[0];
@@ -125,8 +139,8 @@ public class DummyProcessingClass {
 					len = sm.getInitialLenPt()[0];
 					pt = sm.getInitialLenPt()[1];
 					
-					sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-					(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+					(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
 				output = secondConstantROIMethod(sm,
@@ -161,8 +175,8 @@ public class DummyProcessingClass {
 					len = sm.getInitialLenPt()[0];
 					pt = sm.getInitialLenPt()[1];
 					
-					sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-					(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
 				
@@ -200,8 +214,8 @@ public class DummyProcessingClass {
 					len = sm.getInitialLenPt()[0];
 					pt = sm.getInitialLenPt()[1];
 					
-					sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-					(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
 				
@@ -241,8 +255,8 @@ public class DummyProcessingClass {
 					len = sm.getInitialLenPt()[0];
 					pt = sm.getInitialLenPt()[1];
 					
-					sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-					(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
 				OperationData outputOD3= OneDFittingIOp(model,
@@ -300,11 +314,20 @@ public class DummyProcessingClass {
 		
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
+				
+//				
 		
-		dm.addyList(model.getDatImages().getShape()[0], k ,intensity);
-		debug("intensity added to dm: " + intensity + "   local k: " + k + "   selection: " + selection);
-		dm.addyListFhkl(model.getDatImages().getShape()[0], k ,fhkl);
-		dm.addOutputDatArray(model.getDatImages().getShape()[0], k ,output);
+		if (trackingMarker !=3 ){
+			dm.addyList(model.getDatImages().getShape()[0], k ,intensity);
+			dm.addyListFhkl(model.getDatImages().getShape()[0], k ,fhkl);
+			dm.addOutputDatArray(model.getDatImages().getShape()[0], k ,output);
+			
+//			sm.yListReset();
+			
+			sm.addyList(sm.getImages().length, selection ,intensity);
+			sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
+			sm.addOutputDatArray(sm.getImages().length, selection ,output);
+		}
 		
 		return output;
 	}
@@ -346,11 +369,25 @@ public class DummyProcessingClass {
 
 				OperationData outputOD= TwoDFittingIOp(model,
 													   input,
-													   sm);
+													   sm,
+													   k,
+													   trackingMarker);
 				output = outputOD.getData();
 				
 //				double[] loc =  (double[]) outputOD.getAuxData()[0];
-				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[0];
+//				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[0];
+				IDataset temporaryBackground = DatasetFactory.ones(new int[] {1});
+				
+//				try{
+					temporaryBackground =  (IDataset) outputOD.getAuxData()[0];
+//				}
+//				catch(Exception f){
+//					DoubleDataset temporaryBackground1 =  (DoubleDataset) outputOD.getAuxData()[0];
+//					temporaryBackground = (IDataset) temporaryBackground1;
+//				}
+				
+				
+				
 				
 //				sm.addLocationList(selection,loc);
 				sm.setTemporaryBackgroundHolder(temporaryBackground);
@@ -372,13 +409,15 @@ public class DummyProcessingClass {
 				int[] len = sm.getInitialLenPt()[0];
 				int[] pt = sm.getInitialLenPt()[1];
 					
-				sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-				(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+				sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+						(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				
 				
 				OperationData outputOD1= TwoDFittingIOp(model,
 						   input,
-						   sm);
+						   sm,
+						   k,
+						   trackingMarker);
 				output = outputOD1.getData();
 //				double[] loc1 =  (double[]) outputOD1.getAuxData()[0];
 //				sm.addLocationList(selection,loc1);	
@@ -409,8 +448,8 @@ public class DummyProcessingClass {
 					len = sm.getInitialLenPt()[0];
 					pt = sm.getInitialLenPt()[1];
 					
-					sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-					(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
 				output = secondConstantROIMethod(sm,
@@ -446,8 +485,8 @@ public class DummyProcessingClass {
 					len = sm.getInitialLenPt()[0];
 					pt = sm.getInitialLenPt()[1];
 					
-					sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-					(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 
 				output = secondConstantROIMethod(sm,
@@ -485,8 +524,8 @@ public class DummyProcessingClass {
 					len = sm.getInitialLenPt()[0];
 					pt = sm.getInitialLenPt()[1];
 					
-					sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-					(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
 				OperationData outputOD2= OneDFittingIOp(model,
@@ -526,8 +565,8 @@ public class DummyProcessingClass {
 					len = sm.getInitialLenPt()[0];
 					pt = sm.getInitialLenPt()[1];
 					
-					sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-					(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
 				OperationData outputOD3= OneDFittingIOp(model,
@@ -576,17 +615,17 @@ public class DummyProcessingClass {
 		
 
 		
-		
-		dm.addyList(model.getDatImages().getShape()[0], k ,intensity);
-		dm.addyListFhkl(model.getDatImages().getShape()[0], k ,fhkl);
-		dm.addOutputDatArray(model.getDatImages().getShape()[0], k ,output);
-		
-		sm.yListReset();
-		
-		sm.addyList(sm.getImages().length, selection ,intensity);
-		sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
-		sm.addOutputDatArray(sm.getImages().length, selection ,output);
-		
+		if (trackingMarker !=3 ){
+			dm.addyList(model.getDatImages().getShape()[0], k ,intensity);
+			dm.addyListFhkl(model.getDatImages().getShape()[0], k ,fhkl);
+			dm.addOutputDatArray(model.getDatImages().getShape()[0], k ,output);
+			
+			sm.yListReset();
+			
+			sm.addyList(sm.getImages().length, selection ,intensity);
+			sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
+			sm.addOutputDatArray(sm.getImages().length, selection ,output);
+		}
 		debug("intensity added to dm: " + intensity + "   local k: " + k + "   selection: " + selection);
 		
 		return output;
@@ -630,7 +669,9 @@ public class DummyProcessingClass {
 				
 				OperationData outputOD= TwoDFittingIOp(model,
 													   input,
-													   sm);
+													   sm,
+													   k,
+													   trackingMarker);
 				output = outputOD.getData();
 				
 //				double[] loc =  (double[]) outputOD.getAuxData()[0];
@@ -652,13 +693,15 @@ public class DummyProcessingClass {
 				int[] len = sm.getInitialLenPt()[0];
 				int[] pt = sm.getInitialLenPt()[1];
 					
-				sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-				(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+				sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+						(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				
 				
 				OperationData outputOD1= TwoDFittingIOp(model,
 						   input,
-						   sm);
+						   sm,
+						   k,
+						   trackingMarker);
 				
 				
 
@@ -691,8 +734,8 @@ public class DummyProcessingClass {
 					len = sm.getInitialLenPt()[0];
 					pt = sm.getInitialLenPt()[1];
 					
-					sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-					(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				output = secondConstantROIMethod(sm,
 						 model,
@@ -734,8 +777,8 @@ public class DummyProcessingClass {
 					len = sm.getInitialLenPt()[0];
 					pt = sm.getInitialLenPt()[1];
 					
-					sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-					(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				output = secondConstantROIMethod(sm,
 						 model,
@@ -771,8 +814,8 @@ public class DummyProcessingClass {
 					len = sm.getInitialLenPt()[0];
 					pt = sm.getInitialLenPt()[1];
 					
-					sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-					(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
 				OperationData outputOD2= OneDFittingIOp(model,
@@ -811,8 +854,8 @@ public class DummyProcessingClass {
 					len = sm.getInitialLenPt()[0];
 					pt = sm.getInitialLenPt()[1];
 					
-					sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-					(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
 				OperationData outputOD3= OneDFittingIOp(model,
@@ -859,9 +902,21 @@ public class DummyProcessingClass {
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
 		
-		dm.addyList(model.getDatImages().getShape()[0], k ,intensity);
-		dm.addyListFhkl(model.getDatImages().getShape()[0], k ,fhkl);
-		dm.addOutputDatArray(model.getDatImages().getShape()[0], k ,output);
+		
+		
+		
+		if (trackingMarker !=3 ){
+			dm.addyList(model.getDatImages().getShape()[0], k ,intensity);
+			dm.addyListFhkl(model.getDatImages().getShape()[0], k ,fhkl);
+			dm.addOutputDatArray(model.getDatImages().getShape()[0], k ,output);
+			
+			sm.yListReset();
+			
+			sm.addyList(sm.getImages().length, selection ,intensity);
+			sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
+			sm.addOutputDatArray(sm.getImages().length, selection ,output);
+		}
+		
 		
 		debug("intensity added to dm: " + intensity + "   local k: " + k + "   selection: " + selection);
 		
@@ -908,7 +963,9 @@ public class DummyProcessingClass {
 
 				OperationData outputOD= TwoDFittingIOp(model,
 													   input, 
-													   sm);
+													   sm,
+													   k,
+													   trackingMarker);
 				output = outputOD.getData();
 //				double[] loc =  (double[]) outputOD.getAuxData()[0];
 //				sm.addLocationList(selection,loc);
@@ -930,14 +987,15 @@ public class DummyProcessingClass {
 				int[] len = sm.getInitialLenPt()[0];
 				int[] pt = sm.getInitialLenPt()[1];
 					
-				sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-				(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
-				
+				sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+						(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				
 				
 				OperationData outputOD1= TwoDFittingIOp(model,
 													   input,
-													   sm);
+													   sm,
+													   k,
+													   trackingMarker);
 				output = outputOD1.getData();
 //				double[] loc1 = (double[]) outputOD1.getAuxData()[0] ;
 //				sm.addLocationList(selection,loc1);	
@@ -968,8 +1026,8 @@ public class DummyProcessingClass {
 					len = sm.getInitialLenPt()[0];
 					pt = sm.getInitialLenPt()[1];
 					
-					sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-					(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 	
 				output = secondConstantROIMethod(sm,
@@ -1015,8 +1073,8 @@ public class DummyProcessingClass {
 					len = sm.getInitialLenPt()[0];
 					pt = sm.getInitialLenPt()[1];
 					
-					sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-					(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
 				output = secondConstantROIMethod(sm,
@@ -1056,8 +1114,8 @@ public class DummyProcessingClass {
 					len = sm.getInitialLenPt()[0];
 					pt = sm.getInitialLenPt()[1];
 					
-					sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-					(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
 				
@@ -1101,8 +1159,8 @@ public class DummyProcessingClass {
 					len = sm.getInitialLenPt()[0];
 					pt = sm.getInitialLenPt()[1];
 					
-					sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-					(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
 				OperationData outputOD3= OneDFittingIOp(model,
@@ -1147,16 +1205,18 @@ public class DummyProcessingClass {
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
 		
-		dm.addyList(model.getDatImages().getShape()[0], k, intensity);
-		dm.addyListFhkl(model.getDatImages().getShape()[0], k, fhkl);
-		dm.addOutputDatArray(model.getDatImages().getShape()[0], k,output);
 		
-		sm.yListReset();
-		
-		sm.addyList(sm.getImages().length, selection ,intensity);
-		sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
-		sm.addOutputDatArray(sm.getImages().length, selection ,output);
-		
+		if (trackingMarker !=3 ){
+			dm.addyList(model.getDatImages().getShape()[0], k ,intensity);
+			dm.addyListFhkl(model.getDatImages().getShape()[0], k ,fhkl);
+			dm.addOutputDatArray(model.getDatImages().getShape()[0], k ,output);
+			
+			sm.yListReset();
+			
+			sm.addyList(sm.getImages().length, selection ,intensity);
+			sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
+			sm.addOutputDatArray(sm.getImages().length, selection ,output);
+		}
 		debug("intensity added to dm: " + intensity + "   local k: " + k + "   selection: " + selection);
 		
 		return output;
@@ -1165,16 +1225,37 @@ public class DummyProcessingClass {
 	
 	public static OperationData TwoDFittingIOp(ExampleModel model,
 										IDataset input,
-										SuperModel sm){
+										SuperModel sm,
+										int k,
+										int trackingMarker){
 		
 		TwoDFittingModel tdfm = new TwoDFittingModel();
 		tdfm.setInitialLenPt(sm.getInitialLenPt());
-		tdfm.setLenPt(model.getLenPt());
+		
+		if (trackingMarker != 3){
+			double[] p = sm.getLocationList().get(k);
+			System.out.println("Interesting.....");
+			int[] pt = new int[]{(int) p[0], (int) p[1]}; 
+			int[] len = sm.getInitialLenPt()[0]; 
+			int[][] lenPt = new int[][] {len,pt};
+			if(p[0] != 0 && p[1] != 0){
+				tdfm.setLenPt(lenPt);
+			}
+			else{
+				tdfm.setLenPt(sm.getInitialLenPt());
+			}
+			
+		}
+		else{
+			tdfm.setLenPt(sm.getInitialLenPt());
+		}
+		
+//		tdfm.setLenPt(sm.getInitialLenPt());
 		tdfm.setFitPower(model.getFitPower());
 		tdfm.setBoundaryBox(model.getBoundaryBox());
 		
 		Metadata md = new Metadata();
-		IDataset dummyMD = DatasetFactory.zeros(new int [] {2,2});
+//		IDataset dummyMD = DatasetFactory.zeros(new int [] {2,2});
 		Map<String, Integer> dumMap = new HashMap<String, Integer>();
 		dumMap.put("one", 1);
 		md.initialize(dumMap);
@@ -1234,8 +1315,8 @@ public class DummyProcessingClass {
 			int[] len = sm.getInitialLenPt()[0];
 			int[] pt = sm.getInitialLenPt()[1];
 			
-			sm.addLocationList(selection,new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-			(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0])});
+			sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+					(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 		}
 		
 		

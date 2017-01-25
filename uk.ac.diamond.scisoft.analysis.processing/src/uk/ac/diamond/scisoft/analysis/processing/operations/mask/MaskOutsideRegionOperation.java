@@ -38,10 +38,11 @@ public class MaskOutsideRegionOperation extends AbstractOperation<MaskOutsideReg
 
 		MaskMetadata mm;
 		try {
-			mm = MetadataFactory.createMetadata(MaskMetadata.class, mask);
+			mm = MetadataFactory.createMetadata(MaskMetadata.class, m);
 		} catch (MetadataException e) {
 			throw new OperationException(this, e);
 		}
+		input = input.getSliceView();
 		input.setMetadata(mm);
 		
 		return new OperationData(input);

@@ -16,7 +16,7 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.IntegrationModel;
 public class MaskOutsideRegionModel extends IntegrationModel {
 
 	public MaskOutsideRegionModel() {
-		region = new RectangularROI();
+		region = new RectangularROI(0,0,10,10, 0);
 	}
 	
 }

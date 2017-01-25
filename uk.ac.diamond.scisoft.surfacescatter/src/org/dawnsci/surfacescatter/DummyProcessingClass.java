@@ -32,7 +32,7 @@ public class DummyProcessingClass {
 	
 	
 	private static Dataset yValue;
-	private static int DEBUG = 0;
+	private static int DEBUG = 1;
 	
 	public static IDataset DummyProcess(SuperModel sm, 
 										IDataset input, 
@@ -313,8 +313,10 @@ public class DummyProcessingClass {
 		
 		
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
-		Double fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
-				
+		Double fhkl = (double) 0.001;
+		if (intensity >=0){
+			fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
+		}		
 //				
 		
 		if (trackingMarker !=3 ){
@@ -327,6 +329,9 @@ public class DummyProcessingClass {
 			sm.addyList(sm.getImages().length, selection ,intensity);
 			sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
 			sm.addOutputDatArray(sm.getImages().length, selection ,output);
+			
+			
+			debug("  intensity:  " + intensity + "   k: " + k);
 		}
 		
 		return output;
@@ -353,8 +358,6 @@ public class DummyProcessingClass {
 				}
 				else{
 				}				
-//				TwoDTracking twoDTracking = new TwoDTracking();
-//				output = twoDTracking.TwoDTracking1(sm, input, model, dm, trackingMarker, k,selection);
 				
 				AgnosticTrackerHandler ath = new AgnosticTrackerHandler();
 				
@@ -533,8 +536,6 @@ public class DummyProcessingClass {
 						   								sm,
 						   								Methodology.X);
 				output = outputOD2.getData();
-//				double[] loc2 =  (double[]) outputOD2.getAuxData()[0];
-//				sm.addLocationList(selection,loc2);
 				
 				IDataset temporaryBackground2 = (IDataset) outputOD2.getAuxData()[1];
 				sm.setTemporaryBackgroundHolder(temporaryBackground2);
@@ -574,8 +575,6 @@ public class DummyProcessingClass {
 														sm,
 														Methodology.Y);
 				output = outputOD3.getData();
-//				double[] loc3 =  (double[]) outputOD3.getAuxData()[0];
-//				sm.addLocationList(selection,loc3);
 									
 				IDataset temporaryBackground3 = (IDataset) outputOD3.getAuxData()[1];
 				sm.setTemporaryBackgroundHolder(temporaryBackground3);
@@ -611,8 +610,10 @@ public class DummyProcessingClass {
 //		Dataset yValue = Maths.multiply(output, correction.getDouble(k));
 		
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
-		Double fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
-		
+		Double fhkl = (double) 0.001;
+		if (intensity >=0){
+			fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
+		}	
 
 		
 		if (trackingMarker !=3 ){
@@ -620,11 +621,13 @@ public class DummyProcessingClass {
 			dm.addyListFhkl(model.getDatImages().getShape()[0], k ,fhkl);
 			dm.addOutputDatArray(model.getDatImages().getShape()[0], k ,output);
 			
-			sm.yListReset();
+//			sm.yListReset();
 			
 			sm.addyList(sm.getImages().length, selection ,intensity);
 			sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
 			sm.addOutputDatArray(sm.getImages().length, selection ,output);
+			
+			debug("  intensity:  " + intensity + "   k: " + k);
 		}
 		debug("intensity added to dm: " + intensity + "   local k: " + k + "   selection: " + selection);
 		
@@ -900,9 +903,10 @@ public class DummyProcessingClass {
 		
 		
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
-		Double fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
-		
-		
+		Double fhkl = (double) 0.001;
+		if (intensity >=0){
+			fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
+		}	
 		
 		
 		if (trackingMarker !=3 ){
@@ -910,11 +914,13 @@ public class DummyProcessingClass {
 			dm.addyListFhkl(model.getDatImages().getShape()[0], k ,fhkl);
 			dm.addOutputDatArray(model.getDatImages().getShape()[0], k ,output);
 			
-			sm.yListReset();
+//			sm.yListReset();
 			
 			sm.addyList(sm.getImages().length, selection ,intensity);
 			sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
 			sm.addOutputDatArray(sm.getImages().length, selection ,output);
+			
+			debug("  intensity:  " + intensity + "   k: " + k);
 		}
 		
 		
@@ -1203,19 +1209,23 @@ public class DummyProcessingClass {
 		
 				
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
-		Double fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
-		
+		Double fhkl = (double) 0.001;
+		if (intensity >=0){
+			fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
+		}	
 		
 		if (trackingMarker !=3 ){
 			dm.addyList(model.getDatImages().getShape()[0], k ,intensity);
 			dm.addyListFhkl(model.getDatImages().getShape()[0], k ,fhkl);
 			dm.addOutputDatArray(model.getDatImages().getShape()[0], k ,output);
 			
-			sm.yListReset();
+//			sm.yListReset();
 			
 			sm.addyList(sm.getImages().length, selection ,intensity);
 			sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
 			sm.addOutputDatArray(sm.getImages().length, selection ,output);
+			
+			debug("  intensity:  " + intensity + "   k: " + k);
 		}
 		debug("intensity added to dm: " + intensity + "   local k: " + k + "   selection: " + selection);
 		

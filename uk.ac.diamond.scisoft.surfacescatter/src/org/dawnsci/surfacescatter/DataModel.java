@@ -383,7 +383,16 @@ public class DataModel {
 		catch(Exception n){
 //			IDataset yOut = DatasetFactory.ones(new int[] {1});
 		}
-			yOut.setError(Maths.sqrt(yOut));
+		
+		IDataset yOutError = yOut.clone();
+		
+		for(int i =0; i< yOut.getSize(); i++){
+			if(yOutError.getDouble(i) <= 0){
+				yOutError.set((double) 0.001, i);
+			}
+		}
+			
+			yOut.setError(Maths.sqrt(yOutError));
 		return yOut;
 	}
 	

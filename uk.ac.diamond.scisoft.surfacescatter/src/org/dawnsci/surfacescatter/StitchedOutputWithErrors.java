@@ -614,8 +614,11 @@ public class StitchedOutputWithErrors {
 		
 		if (sortedAttenuatedDatasets[1].getSize() != 
 				sortedAttenuatedDatasets[0].getSize()){
-			System.out.println("array mismatch");
+			System.out.println("array mismatch, sortedAttenuatedDatasets[1].getSize():  " + sortedAttenuatedDatasets[1].getSize() 
+					+ "  sortedAttenuatedDatasets[0].getSize():  " + sortedAttenuatedDatasets[0].getSize());
 		} 
+		
+		
 		
 		DatasetUtils.sort(sortedAttenuatedDatasets[1],
 				sortedAttenuatedDatasets[0]);

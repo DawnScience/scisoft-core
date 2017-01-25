@@ -31,6 +31,7 @@ public class AgnosticTrackerHandler {
 	private int[] pt;
 	private SuperModel sm;
 	private int DEBUG = 1;
+	private boolean isTheTrackingMarkerNot3 = true;
 
 	public void TwoDTracking0(IDataset input, 
 								  ExampleModel model,
@@ -44,10 +45,6 @@ public class AgnosticTrackerHandler {
 		len = model.getLenPt()[0];
 		pt = model.getLenPt()[1];
 		 
-
-//		initialLocation = new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-//				(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0]) };
-
 		if (trackingMarker == 0) {
 			if (model.getInput() == null) {
 				len = model.getLenPt()[0];
@@ -63,19 +60,13 @@ public class AgnosticTrackerHandler {
 				
 				debug("TwoDTracking0 initialLocation[0]:  " +  initialLocation[0] + "TwoDTrackign3 initialLocation[1]:  " +  initialLocation[1] );
 				
-//				
-//				initialLocation = new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]),
-//						(double) (pt[1]), (double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]),
-//						(double) (pt[1] + len[1]) };
 				
 				try {
 					tracker.initialize(input, initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
 				} catch (Exception e) {
 
 				}
-//				model.setTrackerCoordinates(
-//						new double[] { initialLocation[1], initialLocation[0], initialLocation[5], initialLocation[0],
-//								initialLocation[1], initialLocation[2], initialLocation[5], initialLocation[2] });
+
 				model.setInput(input);
 				location = initialLocation;
 				
@@ -687,7 +678,7 @@ public class AgnosticTrackerHandler {
 //		initialLocation = new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
 //		(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0]) };
 		
-		boolean isTheTrackingMarkerNot3 = true;
+		isTheTrackingMarkerNot3 = true;
 		
 		if (trackingMarker == 3){
 			model.setInput(null);

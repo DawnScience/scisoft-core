@@ -103,6 +103,8 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 				output = DatasetUtils.cast(pBackgroundSubtracted, Dataset.FLOAT64);
 
 				output.setName("Region of Interest, polynomial background removed");
+				
+	
 		
 				
 		return new OperationData(output, (IDataset) in1Background);

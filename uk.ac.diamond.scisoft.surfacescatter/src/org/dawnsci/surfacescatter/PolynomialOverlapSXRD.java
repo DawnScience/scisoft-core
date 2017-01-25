@@ -16,7 +16,6 @@ public class PolynomialOverlapSXRD {
 		Polynomial polyFitLower = Fitter.polyFit(xLowerDataset, yLowerDataset, 1e-5,power);
 		Polynomial polyFitHigher = Fitter.polyFit(xHigherDataset, yHigherDataset, 1e-5,power);
 		
-//		Dataset calculatedValuesHigher = polyFitHigher.calculateValues(xLowerDataset);
 		Dataset calculatedValuesHigher = polyFitHigher.calculateValues(xHigherDataset);
 		Dataset calculatedValuesLower = polyFitLower.calculateValues(xLowerDataset);
 		

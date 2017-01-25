@@ -58,7 +58,7 @@ def save_args(arg, dir=None): #@ReservedAssignment
     d = _tmp.mkdtemp(prefix='ef-args', dir=dir)
     _n, tree = _pickle(d, arg, 0) # pickle non-sequences
     try: # now do argument structure
-        f = open(_path.join(d, "tree.pkl"), 'w')
+        f = open(_path.join(d, 'tree.pkl'), 'w')
         _psave(tree, f)
     except:
         raise
@@ -66,8 +66,6 @@ def save_args(arg, dir=None): #@ReservedAssignment
         f.close()
 
     return d
-
-from scisoftpy.io import save as _asave, load as _aload
 
 def _pickle(p, arg, n):
     '''Create structure of all data recursively and replace objects with name.
@@ -89,11 +87,12 @@ def _pickle(p, arg, n):
             return n, tuple(l)
         return n, l
     elif isinstance(arg, ndarray):
-        name = "p%03d.npy" % n
+        name = 'p{:03d}.npy'.format(n)
+        from scisoftpy.io import save as _asave
         _asave(_path.join(p, name), arg)
         return n+1, name
     else:
-        name = "p%03d.pkl" % n
+        name = 'p{:03d}.pkl'.format(n)
         if isinstance(arg, ndgeneric):
             arg = scalarToPython(arg)
         try:
@@ -104,6 +103,8 @@ def _pickle(p, arg, n):
         else:
             f.close()
         return n+1, name
+
+import sys
 
 def load_args(d):
     '''Load arguments from files in a temporary directory
@@ -118,10 +119,11 @@ def load_args(d):
                 f = open(fn, 'r')
                 fdict[fa] = _pload(f)
             except :
-                print
+                sys.stderr.write('Could not \n')
             finally:
                 f.close()
         else:
+            from scisoftpy.io import load as _aload
             fdict[fa] = _aload(fn)[0]
             
     return _recreate_args(fdict['tree.pkl'], fdict)
@@ -144,8 +146,6 @@ def _recreate_args(arg, fdict):
         return l
     else:
         return fdict[arg]
-
-import sys
 
 def wrapper(func):
     '''Decorator to run a function
@@ -214,7 +214,7 @@ def pyenv(exe=None, path=None, ldpath=None):
                 pkg = p
                 break
         else:
-            raise RuntimeError, "Cannot find ScisoftPy in PYTHONPATH"
+            raise RuntimeError('Cannot find ScisoftPy in PYTHONPATH')
     else:
         pkg, _t = _path.split(h)
     pypath.insert(0, pkg)
@@ -229,18 +229,18 @@ def get_dls_module(module='numpy', module_init='/etc/profile.d/modules.sh'):
         return _dls_modules[module]
 
     if sys.platform == 'win32':
-        raise ValueError, "Cannot use dls_module argument on Windows"
+        raise ValueError('Cannot use dls_module argument on Windows')
     elif sys.platform == 'darwin':
-        raise ValueError, "Cannot use dls_module argument on Mac OS X"
+        raise ValueError('Cannot use dls_module argument on Mac OS X')
     elif not sys.platform.startswith('linux') and not sys.platform.startswith('java'):
-        print "Warning dls_module argument may not work"
+        print('Warning dls_module argument may not work')
 
     env = dict(_env)
     env.pop('PYTHONPATH', None)
     import subprocess as sub
     p = sub.Popen(['bash', '-l'], shell=False, env=env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
-    p.stdin.write('source %s\n' % module_init)
-    p.stdin.write('module load %s\n' % module)
+    p.stdin.write('source {}\n'.format(module_init))
+    p.stdin.write('module load {}\n'.format(module))
     p.stdin.write('pyexe=$(which python)\n')
     p.stdin.write('echo "EXEC:$pyexe"\n')
     p.stdin.write('echo "PATH:$PYTHONPATH"\n')
@@ -248,7 +248,7 @@ def get_dls_module(module='numpy', module_init='/etc/profile.d/modules.sh'):
     p.stdin.close()
     exe, path, ldpath = parse_for_env(p.stdout)
     if exe is None:
-        raise RuntimeError, "Problem with running external process: %s" % p.stderr.read()
+        raise RuntimeError('Problem with running external process: ' + p.stderr.read())
     _dls_modules[module] = exe, path, ldpath
     return exe, path, ldpath
 
@@ -258,8 +258,8 @@ def get_python():
     import subprocess as sub
     p = sub.Popen('python', shell=False, env=env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
     p.stdin.write('import sys\n')
-    p.stdin.write('print "EXEC|%s" % sys.executable\n')
-    p.stdin.write('print "PATH|%s" % "|".join(sys.path)\n')
+    p.stdin.write('print("EXEC|" + sys.executable)\n')
+    p.stdin.write('print("PATH|" + "|".join(sys.path))\n')
     p.stdin.write('import os\n')
     p.stdin.write('if sys.platform == "win32":\n')
     p.stdin.write('    key = "PATH"\n')
@@ -268,11 +268,11 @@ def get_python():
     p.stdin.write('else:\n')
     p.stdin.write('    key = "LD_LIBRARY_PATH"\n')
     p.stdin.write('lp = os.environ[key].split(os.pathsep)\n')
-    p.stdin.write('print "LDPATH|%s" % "|".join(lp)\n')
+    p.stdin.write('print("LDPATH|" + "|".join(lp))\n')
     p.stdin.close()
     exe, path, ldpath = parse_for_env(p.stdout, sep='|')
     if exe is None:
-        raise RuntimeError, "Problem with running external process: %s" % p.stderr.read()
+        raise RuntimeError('Problem with running external process: ' + p.stderr.read())
     return exe, path, ldpath
 
 def parse_for_env(stream, sep=':'):
@@ -299,7 +299,7 @@ if _isjava:
     _cached_pyenv = get_python()
 
 def find_module_path(path, module):
-    modulefile = module +".py"
+    modulefile = module + '.py'
     for p in path:
         p = _path.abspath(p)
         if _path.exists(_path.join(p, module)):
@@ -319,7 +319,7 @@ else:
 # Started by create_function with keep=True (default),
 # this is a kept-alive process to serve an external function
 while True:
-  print 'READY'
+  print('READY')
   sys.stdout.flush()
   l = sys.stdin.readline()
   if not l:
@@ -358,7 +358,7 @@ while True:
     class PythonSubProcess(object):
         READY = 'READY\n'
         TIMEOUT = 0.005
-        def __init__(self, exe="python", env=None):
+        def __init__(self, exe='python', env=None):
             self.proc = Popen([exe, '-c', cmds], bufsize=1, env=env, stdin=PIPE, stdout=PIPE, stderr=PIPE)
             self.out = StreamHandler(self.proc.stdout)
             self.err = StreamHandler(self.proc.stderr)
@@ -369,11 +369,11 @@ while True:
             l = self.out.readline()
             if l != self.READY:
                 if l is None:
-                    l = "None"
+                    l = 'None'
                 el = self.err.readline(self.TIMEOUT)
                 if el is None:
-                    el = "None"
-                raise OSError, "Problem with python subprocess not being ready: " + l + "; " + el
+                    el = 'None'
+                raise OSError('Problem with python subprocess not being ready: ' + l + '; ' + el)
 
         def communicate(self, text):
             self._send(text)
@@ -384,7 +384,7 @@ while True:
                 if l == self.READY:
                     break
                 results.append(l)
-            lines = ["".join(results)]
+            lines = [''.join(results)]
             results = []
             while True:
                 l = self.err.readline(self.TIMEOUT)
@@ -392,7 +392,7 @@ while True:
                     break
                 results.append(l)
             if len(results) > 0:
-                lines.append("".join(results))
+                lines.append(''.join(results))
             else:
                 lines.append(None)
             return lines
@@ -406,7 +406,7 @@ while True:
         def stop(self):
             self.stdin.close()
 
-#PYDEV_SRC="/scratch/eclipse441_64/plugins/org.python.pydev_3.9.2.201502050007/pysrc"
+#PYDEV_SRC='/scratch/eclipse441_64/plugins/org.python.pydev_3.9.2.201502050007/pysrc'
 
 class ExternalFunction(object):
     '''Emulates a function object with an attached python process
@@ -428,16 +428,16 @@ class ExternalFunction(object):
     def _mk_process(self):
         self.proc = PythonSubProcess(self.exe, self.env)
 #         self.proc.stdin.write('import sys\n')
-#         self.proc.stdin.write('sys.path.append("%s")\n' % PYDEV_SRC)
+#         self.proc.stdin.write('sys.path.append("{}")\n'.format(PYDEV_SRC))
         _out, err = self.proc.communicate('from scisoftpy import external as _fwext\n')
         if err:
-            raise RuntimeError, "Problem with import: %s" % err
-        _out, err = self.proc.communicate('from %s import %s\n' % (self.mod, self.func))
+            raise RuntimeError('Problem with import: ' + err)
+        _out, err = self.proc.communicate('from {} import {}\n'.format(self.mod, self.func))
         if err:
-            raise RuntimeError, "Problem with import: %s" % err
-        _out, err = self.proc.communicate('_fwwrapped = _fwext.wrapper(%s)\n' % self.func)
+            raise RuntimeError('Problem with import: ' + err)
+        _out, err = self.proc.communicate('_fwwrapped = _fwext.wrapper({})\n'.format(self.func))
         if err:
-            raise RuntimeError, "Problem with wrapping: %s" % err
+            raise RuntimeError('Problem with wrapping: ' + err)
 
     def stop(self):
         '''Stop process
@@ -455,19 +455,19 @@ class ExternalFunction(object):
         try:
             if not self.keep or not self.proc:
                 self._mk_process()
-            out, err = self.proc.communicate('_fwiarg, _fwikwarg = _fwext.load_args(\"%s\")\n' % argsdir)
-#             print >> sys.stderr, "1Out:", out
-#             print >> sys.stderr, "1Err:", err
+            out, err = self.proc.communicate('_fwiarg, _fwikwarg = _fwext.load_args(\"{}\")\n'.format(argsdir))
+#             sys.stderr.write('1Out: ' + out + '\n')
+#             sys.stderr.write('1Err: ' + err + '\n')
             if err:
-                raise RuntimeError, "Problem with running external process: %s" % err
+                raise RuntimeError('Problem with running external process: ' + err)
 
-            out, err = self.proc.communicate('print "FWOUT:|%s|" % _fwext.save_args(_fwwrapped(*_fwiarg, **_fwikwarg))\n')
-#             print >> sys.stderr, "2Out:", out
-#             print >> sys.stderr, "2Err:", err
+            out, err = self.proc.communicate('print("FWOUT:|{}|".format(_fwext.save_args(_fwwrapped(*_fwiarg, **_fwikwarg))))\n')
+#             sys.stderr.write('2Out: ' + out + '\n')
+#             sys.stderr.write('2Err: ' + err + '\n')
 
             if out:
                 for l in out.splitlines():
-#                     print >> sys.stderr, "3Out:", l
+#                     sys.stderr.write('3Out: ' + out + '\n')
                     if not l:
                         continue
                     l = l.strip()
@@ -479,15 +479,15 @@ class ExternalFunction(object):
                                 ret, err = load_args(d)
                                 if err:
                                     import traceback
-                                    print >> sys.stderr, '\n'.join(traceback.format_list(err[2]))
+                                    sys.stderr.write('\n'.join(traceback.format_list(err[2])) + '\n')
                                     raise err[1]
                                 return ret
                             finally:
                                 shutil.rmtree(d)
                     else:
-                        print l
+                        print(l)
             if err:
-                raise RuntimeError, "Problem with saving results: %s" % err
+                raise RuntimeError('Problem with saving results: ' + err)
         finally:
             shutil.rmtree(argsdir)
             if not self.keep:
@@ -507,7 +507,7 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
     returns a function object
 
     For example, you have a module called blah with a function foo then
-    >>> ext_foo = create_function("foo", "blah", dls_module=True)
+    >>> ext_foo = create_function('foo', 'blah', dls_module=True)
     >>> ext_foo(1.2, 3.4, k=True)
     
     If blah is in your current python path then,
@@ -522,7 +522,7 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
         fn = function
         function = fn.__name__
         if fn.__module__ == '__main__':
-            raise RuntimeError, "Cannot create function as it needs to be in a module of its own"
+            raise RuntimeError('Cannot create function as it needs to be in a module of its own')
         if module is None:
             module = fn.__module__
         p = _path.dirname(fn.__code__.co_filename)
@@ -557,7 +557,7 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
             p = find_module_path(extra_path, module)
         path = extra_path + path
     if p is None:
-        raise ValueError, "Cannot find module in path: try specifying it in extra_path"
+        raise ValueError('Cannot find module in path: try specifying it in extra_path')
     env = dict(_env)
     env['PYTHONPATH'] = os.pathsep.join(path)
     if ldpath:

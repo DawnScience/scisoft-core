@@ -797,6 +797,23 @@ class Test(unittest.TestCase):
         s = dr[:,np.newaxis,...,np.newaxis].shape
         print s
         self.assertEquals(s, (3,1,5,1))
+        a = np.zeros((5,4))
+        b = np.arange(5.)
+        a[:,2] = b
+        self.checkitems(b, a[:,2])
+        a.fill(0)
+        try:
+            b.shape = (5,1)
+            a[:,2] = b
+            raise AssertionError, 'Should have raised an error'
+        except:
+            pass
+        try:
+            b.shape = (1,5,1)
+            a[:,2] = b
+            raise AssertionError, 'Should have raised an error'
+        except:
+            pass
 
     def testTake(self):
         print 'test take'

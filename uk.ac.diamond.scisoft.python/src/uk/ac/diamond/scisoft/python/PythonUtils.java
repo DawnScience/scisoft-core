@@ -280,8 +280,35 @@ public class PythonUtils {
 			}
 		}
 
-		int[] shape = a.getShape();
-		SliceData slice = convertPySlicesToSlice(indexes, shape);
+		SliceData slice = convertPySlicesToSlice(indexes, a.getShapeRef());
+		if (object instanceof IDataset) {
+			IDataset d = (IDataset) object;
+			// need to check slice data for dimensions to add
+			int[] sshape = slice.slice.getShape();
+			int srank = sshape.length;
+			int drank = d.getRank();
+
+			if (drank > srank) {
+				throw new IllegalArgumentException("Input dataset shape has rank greater than allowed by subject dataset");
+			}
+			boolean[] sdim = slice.sdim;
+			int sliced = 0; // count sliced dimensions
+			for (boolean b : sdim) {
+				if (!b) {
+					sliced++;
+				}
+			}
+			if (drank == sliced) {
+				int[] dshape = d.getShape();
+				int[] nshape = new int[srank];
+				for (int i = 0, j= 0; i < srank; i++) {
+					nshape[i] = sdim[i] ? dshape[j++] : sshape[i];
+				}
+				d = d.getSliceView();
+				d.setShape(nshape);
+				object = d;
+			}
+		}
 		a.setSlice(object, slice.slice);
 	}
 

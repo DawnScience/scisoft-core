@@ -128,9 +128,13 @@ public class DataModel {
 		yListError = new ArrayList<Double>();
 		
 		for(int i = 0; i <yList.size(); i++){
-			yListError.add(Math.sqrt(yList.get(i)));
+			if (yList.get(i) >= 0){
+				yListError.add(Math.sqrt(yList.get(i)));
+			}
+			else{
+				yListError.add(0.0001);
+			}
 		}
-		
 		firePropertyChange("yList", this.yList,
 				this.yList= yList);
 	}
@@ -160,8 +164,13 @@ public class DataModel {
 		
 		ArrayList<Double> yListError2 = new ArrayList<Double>();
 		yListError2 = (ArrayList<Double>) yListError.clone();
-		yListError2.add(Math.sqrt(y));
 		
+		if(y>=0){
+			yListError2.add(Math.sqrt(y));
+		}
+		else{
+			yListError2.add(0.00001);
+		}
 		yListError = yListError2;
 		
 		firePropertyChange("yList", this.yList,
@@ -173,36 +182,42 @@ public class DataModel {
 		if (yList==null){
 			yList = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  yList.add(0.0);
+				  yList.add((double) 1000000000);
 				}
 		}
 		
 		if (yList.isEmpty()){
 			yList = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  yList.add(0.0);
+				  yList.add((double) 1000000000);
 				}
 		}
 		
 		if (yListError==null){
 			yListError = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  yListError.add(0.0);
+				  yListError.add((double) 1000000000);
 				}
 		}
 		
 		if (yListError.isEmpty()){
 			yListError = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  yListError.add(0.0);
+				  yListError.add((double) 1000000000);
 				}
 		}
 		
 		ArrayList<Double> yList2 = new ArrayList<Double>();
 		
 		yList2 = (ArrayList<Double>) yListError.clone();
-		yList2.set(k,Math.sqrt(y));
-		
+	
+		if(y>=0){
+			yList2.set(k,Math.sqrt(y));
+		}
+		else{
+			yList2.set(k, 0.00001);
+		}
+			
 		yListError = yList2;
 		
 		ArrayList<Double> yList1 = new ArrayList<Double>();
@@ -226,7 +241,13 @@ public class DataModel {
 
 		ArrayList<Double> yListFhklError1 = new ArrayList<Double>();
 		yListFhklError1 = (ArrayList<Double>) yListFhklError.clone();
-		yListFhklError1.add(Math.sqrt(y));
+		
+		if(y>=0){
+			yListFhklError1.add(Math.sqrt(y));
+		}
+		else{
+			yListFhklError1.add(0.00001);
+		}
 		
 		yListFhklError = yListFhklError1;
 		
@@ -243,14 +264,14 @@ public class DataModel {
 		if (yListFhkl==null){
 			yListFhkl = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  yListFhkl.add(0.0);
+				  yListFhkl.add((double) 1000000000);
 				}
 		}
 		
 		if (yListFhkl.isEmpty()){
 			yListFhkl = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  yListFhkl.add(0.0);
+				  yListFhkl.add((double) 1000000000);
 				}
 		}
 		
@@ -258,14 +279,14 @@ public class DataModel {
 		if (yListFhklError==null){
 			yListFhklError = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  yListFhklError.add(0.0);
+				  yListFhklError.add((double) 1000000000);
 				}
 		}
 		
 		if (yListFhklError.isEmpty()){
 			yListFhklError = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  yListFhklError.add(0.0);
+				  yListFhklError.add((double) 1000000000);
 				}
 		}
 		
@@ -277,7 +298,14 @@ public class DataModel {
 		ArrayList<Double> yList2 = new ArrayList<Double>();
 		
 		yList2 = (ArrayList<Double>) yListFhklError.clone();
-		yList2.set(k,Math.sqrt(y));
+		
+		if(y>=0){
+			yList2.set(k, Math.sqrt(y));
+		}
+		else{
+			yList2.set(k,0.00001);
+		}
+		
 		
 		yListFhklError = yList2;
 		
@@ -301,7 +329,7 @@ public class DataModel {
 		if (xList==null){
 			xList = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  xList.add(0.0);
+				  xList.add((double) 1000000000);
 				}
 		}
 		
@@ -309,7 +337,7 @@ public class DataModel {
 		if (xList.isEmpty()){
 			xList = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  xList.add(0.0);
+				  xList.add((double) 1000000000);
 				}
 		}
 		
@@ -372,7 +400,7 @@ public class DataModel {
 		
 		ArrayList<Double> zero = new ArrayList<Double>();
 		
-		zero.add(0.0);
+		zero.add((double)1000000000);
 		
 		yListc.removeAll(zero);
 		
@@ -384,15 +412,16 @@ public class DataModel {
 //			IDataset yOut = DatasetFactory.ones(new int[] {1});
 		}
 		
-		IDataset yOutError = yOut.clone();
-		
 		for(int i =0; i< yOut.getSize(); i++){
-			if(yOutError.getDouble(i) <= 0){
-				yOutError.set((double) 0.001, i);
+			
+			if(yOut.getDouble(i) >= 0){
+				yOut.setError(Maths.sqrt(yOut));
+			}
+			else{
+				yOut.setError(0.001);
 			}
 		}
 			
-			yOut.setError(Maths.sqrt(yOutError));
 		return yOut;
 	}
 	
@@ -405,7 +434,7 @@ public class DataModel {
 		
 		ArrayList<Double> zero = new ArrayList<Double>();
 		
-		zero.add(0.0);
+		zero.add((double) 1000000000);
 		
 		yListc.removeAll(zero);
 		
@@ -430,7 +459,7 @@ public class DataModel {
 		
 		ArrayList<Double> zero = new ArrayList<Double>();
 		
-		zero.add(0.0);
+		zero.add((double) 1000000000);
 		
 		yListFhklc.removeAll(zero);
 		IDataset yOut = DatasetFactory.ones(new int[] {1});
@@ -440,7 +469,16 @@ public class DataModel {
 		catch(Exception x){
 			
 		}
-		yOut.setError(Maths.sqrt(yOut));
+
+		IDataset yOutError = yOut.clone();
+		
+		for(int i =0; i< yOut.getSize(); i++){
+			if(yOutError.getDouble(i) <= 0){
+				yOutError.set((double) 0.001, i);
+			}
+		}
+			
+			yOut.setError(Maths.sqrt(yOutError));
 		return yOut;
 	}
 	
@@ -454,7 +492,7 @@ public class DataModel {
 		
 		ArrayList<Double> zero = new ArrayList<Double>();
 		
-		zero.add(0.0);
+		zero.add((double) 1000000000);
 		
 		yListFhklc.removeAll(zero);
 		
@@ -479,7 +517,7 @@ public class DataModel {
 		
 		ArrayList<Double> zero = new ArrayList<Double>();
 		
-		zero.add(0.0);
+		zero.add((double) 1000000000);
 		
 		xListc.removeAll(zero);
 		
@@ -558,9 +596,18 @@ public class DataModel {
 	public void setyListFhkl(ArrayList<Double> yListFhkl) {
 		this.yListFhkl = yListFhkl;
 		yListFhklError = new ArrayList<Double>();
+		ArrayList<Double> yListFhklClone  = new ArrayList<Double>();
+
+		yListFhklClone = (ArrayList<Double>) yListFhkl.clone();
 		
+		for(int i =0; i< yListFhklClone.size(); i++){
+			if(yListFhklClone.get(i) <= 0){
+				yListFhklClone.set(i, (double) 0.001);
+			}
+		}
+			
 		for(int i = 0; i <yListFhkl.size(); i++){
-			yListFhklError.add(Math.sqrt(yListFhkl.get(i)));
+			yListFhklError.add(Math.sqrt(yListFhklClone.get(i)));
 		}
 	}
 
@@ -578,6 +625,8 @@ public class DataModel {
 
 	public void setInitialLenPt(int[][] initialLenPt) {
 		this.initialLenPt = initialLenPt;
+		
+		
 	}
 
 	public IDataset getInitialDataset() {

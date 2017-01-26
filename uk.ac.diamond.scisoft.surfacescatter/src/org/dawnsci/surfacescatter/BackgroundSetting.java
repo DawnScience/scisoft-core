@@ -131,7 +131,7 @@ public class BackgroundSetting{
 		public static Dataset rOIBackground1(IDataset[] Background,  Dataset in1Background, 
 				int[] len, int[] pt,  int boundaryBox, int fitpower, Methodology direction1){
 			
-			Integer direction = 0;
+			Integer direction = 1;
 			int length = len[1];
 			int length1 = len[0];
 			
@@ -145,7 +145,7 @@ public class BackgroundSetting{
 			case Y:
 				length = len[0];
 				length1 = len[1];
-				direction = 1;
+				direction = 0;
 				break;
 			}
 			
@@ -183,7 +183,7 @@ public class BackgroundSetting{
 							case X:
 								
 								try{
-									double test = backGroundData.getDouble(j,i);
+									double test = backGroundData.getDouble(i,j);
 									c.set(test, j);
 								}
 								catch(ArrayIndexOutOfBoundsException e){
@@ -198,7 +198,7 @@ public class BackgroundSetting{
 							case Y:
 //								System.out.println("J:  " + j + "   I:  " + i);					
 								try{
-									double test = backGroundData.getDouble(i, j);
+									double test = backGroundData.getDouble(j, i);
 									c.set(test, j);
 								}
 								catch(ArrayIndexOutOfBoundsException e){

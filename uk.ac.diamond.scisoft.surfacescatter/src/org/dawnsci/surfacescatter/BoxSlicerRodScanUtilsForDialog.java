@@ -65,14 +65,14 @@ public class BoxSlicerRodScanUtilsForDialog {
 		   		SliceND slice2 = new SliceND(input.getShape());
 //				slice2.setSlice(0, pt[0], pt[0] + len[0], 1);
 //				slice2.setSlice(1, pt[1] + len[1], pt[1] + len[1] + boundaryBox, 1);
-		   		slice2.setSlice(1,  pt[0] + len[0], pt[0]+ len[0] + boundaryBox, 1);
-				slice2.setSlice(0, pt[1], pt[1] + len[1], 1);
+		   		slice2.setSlice(1,  pt[0], pt[0]+ len[0], 1);
+				slice2.setSlice(0, pt[1]+ len[1], pt[1] + len[1] + boundaryBox, 1);
 				IDataset small2 = input.getSlice(slice2);
 				return small2;
 		   	case X:
 		   		SliceND slice4 = new SliceND(input.getShape());
-				slice4.setSlice(0, pt[0] + len[0], pt[0]+ len[0] + boundaryBox, 1);
-				slice4.setSlice(1, pt[1], pt[1] + len[1], 1);
+				slice4.setSlice(1, pt[0] + len[0], pt[0]+ len[0] + boundaryBox, 1);
+				slice4.setSlice(0, pt[1], pt[1] + len[1], 1);
 				IDataset small4 = input.getSlice(slice4);
 				return small4;
 		   }
@@ -93,8 +93,8 @@ public class BoxSlicerRodScanUtilsForDialog {
 				return small0;
 		   	case X:
 		   		SliceND slice3 = new SliceND(input.getShape());
-				slice3.setSlice(0, pt[0] - boundaryBox, pt[0], 1);
-				slice3.setSlice(1, pt[1], pt[1] +len[1], 1);
+				slice3.setSlice(1, pt[0] - boundaryBox, pt[0], 1);
+				slice3.setSlice(0, pt[1], pt[1] +len[1], 1);
 				IDataset small3 = input.getSlice(slice3);
 				return small3;
 		   }
@@ -107,8 +107,8 @@ public class BoxSlicerRodScanUtilsForDialog {
 		   
 	
 		   	SliceND slice0 = new SliceND(input.getShape());
-			slice0.setSlice(1, pt[0]-boundaryBox, pt[0]+len[0]+boundaryBox, 1);
-			slice0.setSlice(0, pt[1]-boundaryBox, pt[1] + len[1] + boundaryBox, 1);
+			slice0.setSlice(0, pt[0]-boundaryBox, pt[0]+len[0]+boundaryBox, 1);
+			slice0.setSlice(1, pt[1]-boundaryBox, pt[1] + len[1] + boundaryBox, 1);
 			IDataset small0 = input.getSlice(slice0);
 			Dataset small0d = DatasetUtils.cast(small0, Dataset.FLOAT64);
 			

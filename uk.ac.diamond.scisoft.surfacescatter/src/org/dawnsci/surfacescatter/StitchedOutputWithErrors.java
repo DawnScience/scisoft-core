@@ -1,21 +1,15 @@
 package org.dawnsci.surfacescatter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-
-
 
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
-import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
-import org.eclipse.osgi.internal.debug.Debug;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TableItem;
 
 public class StitchedOutputWithErrors {
 	

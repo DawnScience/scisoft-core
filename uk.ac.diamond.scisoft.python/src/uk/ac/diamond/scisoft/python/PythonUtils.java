@@ -11,10 +11,12 @@ package uk.ac.diamond.scisoft.python;
 
 import java.lang.reflect.Array;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.math3.complex.Complex;
 import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.BroadcastUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
@@ -96,9 +98,11 @@ public class PythonUtils {
 	}
 
 	static class SliceData {
-		SliceND slice;  // slices
-		boolean[] sdim; // flag which dimensions are sliced
-		int[] axes;  // new axes
+		SliceND slice; // slices
+		/**
+		 * Required or output shape
+		 */
+		int[] shape;
 	}
 
 	/**
@@ -112,7 +116,6 @@ public class PythonUtils {
 		PyObject indices[] = indexes instanceof PySequenceList ? ((PySequenceList) indexes).getArray() : new PyObject[] { indexes };
 
 		int orank = shape.length;
-		SliceData slice = new SliceData();
 
 		int na = 0; // count new axes
 		int nc = 0; // count collapsed dimensions
@@ -130,22 +133,22 @@ public class PythonUtils {
 		}
 
 		int spare = orank - nc - ns; // number of spare dimensions
-		slice.slice = new SliceND(shape);
-		slice.axes = new int[na];
-		slice.sdim = new boolean[orank]; // flag which dimensions are sliced
+		SliceND slice = new SliceND(shape);
 
 		boolean hasEllipse = false;
+		boolean[] sdim = new boolean[orank]; // flag which dimensions are sliced
+		int[] axes = new int[na]; // new axes
 		int i = 0;
 		int a = 0; // new axes
 		int c = 0; // collapsed dimensions
 		for (int j = 0; i < orank && j < indices.length; j++) {
 			PyObject index = indices[j];
 			if (index instanceof PyEllipsis) {
-				slice.sdim[i++] = true;
+				sdim[i++] = true;
 				if (!hasEllipse) { // pad out with full slices on first ellipse
 					hasEllipse = true;
 					for (int k = 0; k < spare; k++) {
-						slice.sdim[i++] = true;
+						sdim[i++] = true;
 					}
 				}
 			} else if (index instanceof PyInteger) {
@@ -156,17 +159,16 @@ public class PythonUtils {
 				if (n < 0) {
 					n += shape[i];
 				}
-				slice.sdim[i] = false; // nb specifying indexes whilst using slices will reduce rank
-				slice.slice.setSlice(i++, n, n + 1, 1);
+				sdim[i] = false; // nb specifying indexes whilst using slices will reduce rank
+				slice.setSlice(i++, n, n + 1, 1);
 				c++;
 			} else if (index instanceof PySlice) {
 				PySlice pyslice = (PySlice) index;
-				slice.sdim[i] = true;
-				slice.slice.setSlice(i++, pyslice.start instanceof PyNone ? null : ((PyInteger) pyslice.start).getValue(),
-						pyslice.stop instanceof PyNone ? null : ((PyInteger) pyslice.stop).getValue(),
-						pyslice.step instanceof PyNone ? 1 : ((PyInteger) pyslice.step).getValue());
+				sdim[i] = true;
+				Slice nslice = convertToSlice(pyslice);
+				slice.setSlice(i++, nslice.getStart(), nslice.getStop(), nslice.getStep());
 			} else if (index instanceof PyNone) { // newaxis
-				slice.axes[a++] = (hasEllipse ? j + spare : j) - c;
+				axes[a++] = (hasEllipse ? j + spare : j) - c;
 			} else {
 				throw new IllegalArgumentException("Unexpected item in indexing");
 			}
@@ -174,14 +176,40 @@ public class PythonUtils {
 
 		assert nc == c;
 		while (i < orank) {
-			slice.sdim[i++] = true;
+			sdim[i++] = true;
 		}
 		while (a < na) {
-			slice.axes[a] = i - c + a;
+			axes[a] = i - c + a;
 			a++;
 		}
 
-		return slice;
+		int[] sShape = slice.getShape();
+		int[] newShape = new int[orank - nc];
+		i = 0;
+		for (int j = 0; i < orank; i++) {
+			if (sdim[i]) {
+				newShape[j++] = sShape[i];
+			}
+		}
+
+		if (na > 0) {
+			int[] oldShape = newShape;
+			newShape = new int[newShape.length + na];
+			i = 0;
+			for (int k = 0, j = 0; i < newShape.length; i++) {
+				if (k < na && i == axes[k]) {
+					k++;
+					newShape[i] = 1;
+				} else {
+					newShape[i] = oldShape[j++];
+				}
+			}
+		}
+
+		SliceData sd = new SliceData();
+		sd.slice = slice;
+		sd.shape = newShape;
+		return sd;
 	}
 
 	/**
@@ -215,7 +243,6 @@ public class PythonUtils {
 	 */
 	public static IDataset getSlice(final ILazyDataset a, final PyObject indexes) throws DatasetException {
 		int[] shape = a.getShape();
-		int orank = shape.length;
 
 		SliceData slice = convertPySlicesToSlice(indexes, shape);
 		IDataset dataSlice;
@@ -224,42 +251,8 @@ public class PythonUtils {
 		} else {
 			dataSlice = a.getSlice(slice.slice);
 		}
+		dataSlice.setShape(slice.shape);
 
-		// removed dimensions that were not sliced (i.e. that were indexed with an integer)
-		int rank = 0;
-		for (int i = 0; i < orank; i++) {
-			if (slice.sdim[i])
-				rank++;
-		}
-
-		if (rank < orank) {
-			int[] oldShape = dataSlice.getShape();
-			int[] newShape = new int[rank];
-			int j = 0;
-			for (int i = 0; i < orank; i++) {
-				if (slice.sdim[i]) {
-					newShape[j++] = oldShape[i];
-				}
-			}
-			dataSlice.setShape(newShape);
-		}
-
-		int n = slice.axes.length;
-		if (n > 0) {
-			int[] oldShape = dataSlice.getShape();
-			int[] newShape = new int[rank + n];
-			int j = 0;
-			int k = 0;
-			for (int i = 0; i < newShape.length; i++) {
-				if (k < n && i == slice.axes[k]) {
-					k++;
-					newShape[i] = 1;
-				} else {
-					newShape[i] = oldShape[j++];
-				}
-			}
-			dataSlice.setShape(newShape);
-		}
 		return dataSlice;
 	}
 
@@ -283,31 +276,34 @@ public class PythonUtils {
 		SliceData slice = convertPySlicesToSlice(indexes, a.getShapeRef());
 		if (object instanceof IDataset) {
 			IDataset d = (IDataset) object;
-			// need to check slice data for dimensions to add
-			int[] sshape = slice.slice.getShape();
-			int srank = sshape.length;
-			int drank = d.getRank();
 
-			if (drank > srank) {
-				throw new IllegalArgumentException("Input dataset shape has rank greater than allowed by subject dataset");
-			}
-			boolean[] sdim = slice.sdim;
-			int sliced = 0; // count sliced dimensions
-			for (boolean b : sdim) {
-				if (!b) {
-					sliced++;
+			int[] iShape = d instanceof Dataset ? ((Dataset) d).getShapeRef() : d.getShape();
+			int[] sShape = slice.slice.getShape();
+			if (!Arrays.equals(iShape, slice.shape)) { // check input shape matches required one
+				try {
+					if (iShape.length > slice.shape.length) {
+						BroadcastUtils.broadcastShapesToMax(iShape, slice.shape);
+						iShape = slice.shape;
+					} else {
+						iShape = BroadcastUtils.broadcastShapesToMax(slice.shape, iShape).get(0);
+					}
+				} catch (IllegalArgumentException e) {
+					throw new IllegalArgumentException("Input dataset shape must match slice shape");
 				}
-			}
-			if (drank == sliced) {
-				int[] dshape = d.getShape();
-				int[] nshape = new int[srank];
-				for (int i = 0, j= 0; i < srank; i++) {
-					nshape[i] = sdim[i] ? dshape[j++] : sshape[i];
+			} else if (!Arrays.equals(iShape, sShape)) { // check input shape matches slice shape
+				if (iShape.length > sShape.length) {
+					BroadcastUtils.broadcastShapesToMax(iShape, sShape);
 				}
-				d = d.getSliceView();
-				d.setShape(nshape);
-				object = d;
+				iShape = sShape;
 			}
+
+			d = d.getSliceView();
+			try {
+				d.setShape(iShape);
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException("Input dataset could not be set to slice shape");
+			}
+			object = d;
 		}
 		a.setSlice(object, slice.slice);
 	}

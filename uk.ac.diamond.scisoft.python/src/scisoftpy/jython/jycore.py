@@ -613,7 +613,7 @@ class ndarray(object):
         value = fromDS(value)
         if isinstance(value, ndarray):
             value = value._jdataset()
-        _setslice(self.__dataset.getRealView(), value, None)
+        _setslice(self.__dataset.getRealView(), value, Ellipsis)
 
     real = property(_get_real, _set_real)
 
@@ -628,7 +628,7 @@ class ndarray(object):
             value = fromDS(value)
             if isinstance(value, ndarray):
                 value = value._jdataset()
-            _setslice(self.__dataset.getImaginaryView(), value, None)
+            _setslice(self.__dataset.getImaginaryView(), value, Ellipsis)
 
     imag = property(_get_imag, _set_imag)
 

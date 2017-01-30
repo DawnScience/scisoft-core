@@ -55,21 +55,22 @@ public class DummyProcessingClass {
 				}
 				else{
 				}				
-				debug("What the fuck");
-				AgnosticTrackerHandler ath = new AgnosticTrackerHandler();
 				
-				ath.TwoDTracking3(sm, 
-								  input, 
-								  model, 
-								  dm, 
-								  trackingMarker, 
-								  k, 
-								  selection);
+				AgnosticTrackerHandler ath = new AgnosticTrackerHandler();
+				if(trackingMarker != 3){
+					ath.TwoDTracking3(sm, 
+									  input, 
+									  model, 
+									  dm, 
+									  trackingMarker, 
+									  k, 
+									  selection);
+				}
 				
 				OperationData outputOD= TwoDFittingIOp(model,
 													   input,
 													   sm,
-													   k,
+													   selection,
 													   trackingMarker);
 				output = outputOD.getData();
 				
@@ -107,7 +108,7 @@ public class DummyProcessingClass {
 				OperationData outputOD1= TwoDFittingIOp(model,
 						   input,
 						   sm,
-						   k,
+						   selection,
 						   trackingMarker);
 				output = outputOD1.getData();
 				
@@ -373,7 +374,7 @@ public class DummyProcessingClass {
 				OperationData outputOD= TwoDFittingIOp(model,
 													   input,
 													   sm,
-													   k,
+													   selection,
 													   trackingMarker);
 				output = outputOD.getData();
 				
@@ -419,7 +420,7 @@ public class DummyProcessingClass {
 				OperationData outputOD1= TwoDFittingIOp(model,
 						   input,
 						   sm,
-						   k,
+						   selection,
 						   trackingMarker);
 				output = outputOD1.getData();
 //				double[] loc1 =  (double[]) outputOD1.getAuxData()[0];
@@ -673,7 +674,7 @@ public class DummyProcessingClass {
 				OperationData outputOD= TwoDFittingIOp(model,
 													   input,
 													   sm,
-													   k,
+													   selection,
 													   trackingMarker);
 				output = outputOD.getData();
 				
@@ -703,7 +704,7 @@ public class DummyProcessingClass {
 				OperationData outputOD1= TwoDFittingIOp(model,
 						   input,
 						   sm,
-						   k,
+						   selection,
 						   trackingMarker);
 				
 				
@@ -770,7 +771,7 @@ public class DummyProcessingClass {
 									  model, 
 									  dm, 
 									  trackingMarker, 
-									  k, 
+									  selection, 
 									  selection);
 					
 				}
@@ -970,7 +971,7 @@ public class DummyProcessingClass {
 				OperationData outputOD= TwoDFittingIOp(model,
 													   input, 
 													   sm,
-													   k,
+													   selection,
 													   trackingMarker);
 				output = outputOD.getData();
 //				double[] loc =  (double[]) outputOD.getAuxData()[0];
@@ -1000,7 +1001,7 @@ public class DummyProcessingClass {
 				OperationData outputOD1= TwoDFittingIOp(model,
 													   input,
 													   sm,
-													   k,
+													   selection,
 													   trackingMarker);
 				output = outputOD1.getData();
 //				double[] loc1 = (double[]) outputOD1.getAuxData()[0] ;
@@ -1182,15 +1183,6 @@ public class DummyProcessingClass {
 				
 				break;
 		}
-		
-//		IndexIterator it1 = ((Dataset) output).getIterator();
-//		
-//		while (it1.hasNext()) {
-//			double q = ((Dataset) output).getElementDoubleAbs(it1.index);
-//			if (q <= 0)
-//				((Dataset) output).setObjectAbs(it1.index, 0.1);
-//		}
-//		
 		
 		yValue = correctionMethod(model, 
 				  sm, 

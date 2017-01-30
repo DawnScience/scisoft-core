@@ -107,8 +107,8 @@ public class BoxSlicerRodScanUtilsForDialog {
 		   
 	
 		   	SliceND slice0 = new SliceND(input.getShape());
-			slice0.setSlice(0, pt[0]-boundaryBox, pt[0]+len[0]+boundaryBox, 1);
-			slice0.setSlice(1, pt[1]-boundaryBox, pt[1] + len[1] + boundaryBox, 1);
+			slice0.setSlice(1, pt[0]-boundaryBox, pt[0]+len[0]+boundaryBox, 1);
+			slice0.setSlice(0, pt[1]-boundaryBox, pt[1] + len[1] + boundaryBox, 1);
 			IDataset small0 = input.getSlice(slice0);
 			Dataset small0d = DatasetUtils.cast(small0, Dataset.FLOAT64);
 			

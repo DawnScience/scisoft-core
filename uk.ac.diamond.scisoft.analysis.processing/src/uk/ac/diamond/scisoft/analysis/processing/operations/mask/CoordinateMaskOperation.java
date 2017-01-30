@@ -85,7 +85,8 @@ public class CoordinateMaskOperation extends
 				coordinateArray = DatasetFactory.zeros(DoubleDataset.class, input.getShape());
 				for (int i = 0; i < input.getShape()[0]; i++)
 					for (int j = 0; j < input.getShape()[1]; j++)
-						coordinateArray.set(Math.sqrt(square(i-beamCentre[0]) + square(j-beamCentre[1])), i, j);
+						// The elements of getBeamCentreCoords are transposed from those of getShape
+						coordinateArray.set(Math.sqrt(square(i-beamCentre[1]) + square(j-beamCentre[0])), i, j);
 				break;
 			default:
 				throw new OperationException(this, "This coordinate is not yet supported");

@@ -399,6 +399,14 @@
             name="Crop Data [1D]">
       </operation>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Trim1DOperation"
+            description="Crop XY data to a specified range"
+            icon="icons/Crop_nD.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Trim1DOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.Trim1DModel"
+            name="Trim Data [1D]">
+      </operation>
+      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.AveragingOperation"
             description="Average all the data into a single dataset"
             icon="icons/meanfilt.png"

@@ -681,6 +681,15 @@ public class DataModel {
 		this.locationList = locationList;
 	}
 	
+	public void addLocationList(int l , int k, int[] in){
+		double[] inDouble = new double[in.length]; 
+		for (int i = 0; i<in.length; i++){
+			inDouble[i] = (double)in[i];
+		}
+		addLocationList(l, k, inDouble);
+		
+	}
+
 	public void addLocationList(int l, int k, double[] location){
 		if (locationList==null || locationList.isEmpty()){
 			locationList = new ArrayList<double[]>();

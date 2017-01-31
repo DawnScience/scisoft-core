@@ -408,6 +408,65 @@ public class BoxSlicerRodScanUtilsForDialog {
 			}
 			
 		return mask; 
-		}	
+		}
+	
+	
+	public static double[] backgroundBoxForDsiplay(int[][] lenpt, 
+												   int bgBox, 
+												   AnalaysisMethodologies.Methodology am){
+		
+		double[] bgLen = new double[] {(double) lenpt[0][0] , (double) lenpt[0][1]}; 
+		double[] bgPt = new double[] {(double) lenpt[1][0] , (double) lenpt[1][1]};
+		
+		switch(am){
+			case  TWOD_TRACKING:
+				bgLen[0] = bgLen[0] + 2*bgBox;
+				bgLen[1] = bgLen[1] + 2*bgBox;
+				
+				bgPt[0] = bgPt[0] - bgBox;
+				bgPt[1] = bgPt[1] - bgBox;
+				
+				return new double[] {bgPt[0], bgPt[1], bgLen[0], bgLen[1], 0};
+			
+			case  TWOD:
+				bgLen[0] = bgLen[0] + 2*bgBox;
+				bgLen[1] = bgLen[1] + 2*bgBox;
+				
+				bgPt[0] = bgPt[0] - bgBox;
+				bgPt[1] = bgPt[1] - bgBox;
+				
+				return new double[] {bgPt[0], bgPt[1], bgLen[0], bgLen[1], 0};
+				
+			case  X:
+				bgLen[0] = bgLen[0] + 2*bgBox;
+				bgLen[1] = bgLen[1];
+				
+				bgPt[0] = bgPt[0] - bgBox;
+				bgPt[1] = bgPt[1];
+				
+				return new double[] {bgPt[0], bgPt[1], bgLen[0], bgLen[1], 0};
+				
+			case  Y:
+				bgLen[0] = bgLen[0];
+				bgLen[1] = bgLen[1] + 2*bgBox;
+				
+				bgPt[0] = bgPt[0];
+				bgPt[1] = bgPt[1] - bgBox;
+				
+				return new double[] {bgPt[0], bgPt[1], bgLen[0], bgLen[1], 0};
+				
+			case  OVERLAPPING_BACKGROUND_BOX:
+				
+				return new double[] {0, 0, 0, 0, 0};
+				
+				
+			case  SECOND_BACKGROUND_BOX:
+				
+				return new double[] {0, 0, 0, 0, 0};
+				
+		}
+		
+		return null;
+	}
 }
 //TEST 

@@ -366,8 +366,16 @@ public class AgnosticTrackerHandler {
 		
 		if (isTheTrackingMarkerNot3){
 			
-			sm.addLocationList(selection, location);
-			dm.addLocationList(model.getDatImages().getShape()[0], k, location);
+			int[] localPt = new int[] {(int) (location[0]), (int) (location[1])};
+			int[] localLen = new int[] {(int) ((int)location[2] - (int)location[0]), (int) ((int)location[5] -(int)location[1])};
+			localLen = sm.getInitialLenPt()[0];
+			int[] localLocation = new int[] { localPt[0], localPt[1], (localPt[0] + localLen[0]),
+					(localPt[1]), localPt[0], localPt[1] + localLen[1], (localPt[0] + localLen[0]),
+					(localPt[1] + localLen[1]) };
+			
+			 
+			sm.addLocationList(selection, localLocation);
+			dm.addLocationList(model.getDatImages().getShape()[0], k, localLocation);
 			debug("location[0]:  " + location[0] + "  location[1]:  " + location[1] + "  selection" + selection);
 		}
 	}
@@ -668,8 +676,17 @@ public class AgnosticTrackerHandler {
 		
 		if (isTheTrackingMarkerNot3){
 			
-			sm.addLocationList(selection, location);
-			dm.addLocationList(model.getDatImages().getShape()[0], k, location);
+			int[] localPt = new int[] {(int) (location[0]), (int) (location[1])};
+			int[] localLen = new int[] {(int) ((int)location[2] - (int)location[0]), (int) ((int)location[5] -(int)location[1])};
+			localLen = sm.getInitialLenPt()[0];
+			int[] localLocation = new int[] { localPt[0], localPt[1], (localPt[0] + localLen[0]),
+					(localPt[1]), localPt[0], localPt[1] + localLen[1], (localPt[0] + localLen[0]),
+					(localPt[1] + localLen[1]) };
+			
+			 
+			sm.addLocationList(selection, localLocation);
+			dm.addLocationList(model.getDatImages().getShape()[0], k, localLocation);
+		
 			debug("location[0]:  " + location[0] + "  location[1]:  " + location[1] + "  selection" + selection);
 		}
 		
@@ -995,8 +1012,16 @@ public class AgnosticTrackerHandler {
 		
 		if (isTheTrackingMarkerNot3){
 		
-			sm.addLocationList(selection, location);
-			dm.addLocationList(model.getDatImages().getShape()[0], k, location);
+			int[] localPt = new int[] {(int) (location[0]), (int) (location[1])};
+			int[] localLen = new int[] {(int) ((int)location[2] - (int)location[0]), (int) ((int)location[5] -(int)location[1])};
+			localLen = sm.getInitialLenPt()[0];
+			int[] localLocation = new int[] { localPt[0], localPt[1], (localPt[0] + localLen[0]),
+					(localPt[1]), localPt[0], localPt[1] + localLen[1], (localPt[0] + localLen[0]),
+					(localPt[1] + localLen[1]) };
+			
+			 
+			sm.addLocationList(selection, localLocation);
+			dm.addLocationList(model.getDatImages().getShape()[0], k, localLocation);
 			debug("location[0]:  " + location[0] + "  location[1]:  " + location[1] + "  selection" + selection);
 		}
 	}

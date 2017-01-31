@@ -89,20 +89,32 @@ public class DummyProcessingClass {
 				break;
 				
 			case TWOD:
+				
 				if (pS.getRegion("Background Region")!=null){
 					pS.removeRegion(pS.getRegion("Background Region"));
 				}
 				else{
 				}
 				
-				
-					
 				int[] len = sm.getInitialLenPt()[0];
 				int[] pt = sm.getInitialLenPt()[1];
+				
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
-				sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]),
-						(double) (pt[1]), (double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]),
-						(double) (pt[1] + len[1])});
+					ath1.TwoDTracking3(sm, 
+									  input, 
+									  model, 
+									  dm, 
+									  trackingMarker, 
+									  k, 
+									  selection);
+				}
+				
+				else{	
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+					(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
+				}
 				
 				
 				OperationData outputOD1= TwoDFittingIOp(model,

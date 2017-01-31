@@ -16,7 +16,7 @@ public class VerticalHorizontalSlices {
 			IPlottingSystem<Composite> pS, IDataset ii,  IROI green){
 	
 		int[] lenh =horizontalSliceBounds.getIntLengths();
-		lenh[0]= green.getBounds().getIntLengths()[0];
+		lenh[0]= green.getBounds().getIntLengths()[1];
 		if (green.getBounds().getIntLengths()[1] < lenh[1]){
 			lenh[1] = green.getBounds().getIntLengths()[1];
 		}
@@ -63,7 +63,7 @@ public class VerticalHorizontalSlices {
 
 		
 		int[] lenv =verticalSliceBounds.getIntLengths();
-		lenv[1]= green.getBounds().getIntLengths()[1];
+		lenv[1]= green.getBounds().getIntLengths()[0];
 		if (green.getBounds().getIntLengths()[0] < lenv[0]){
 			lenv[0] = green.getBounds().getIntLengths()[0];
 		}
@@ -110,7 +110,7 @@ public class VerticalHorizontalSlices {
 		
 		int[] lenh =horizontalSliceBounds.getIntLengths();
 		
-		lenh[0]= green.getBounds().getIntLengths()[0];
+		lenh[0]= green.getBounds().getIntLengths()[1];
 		
 		if (green.getBounds().getIntLengths()[1] < lenh[1]){
 			lenh[1] = green.getBounds().getIntLengths()[1];
@@ -157,7 +157,7 @@ public class VerticalHorizontalSlices {
 			IROI green){
 		
 		int[] lenv =verticalSliceBounds.getIntLengths();
-		lenv[1]= green.getBounds().getIntLengths()[1];
+		lenv[1]= green.getBounds().getIntLengths()[0];
 		if (green.getBounds().getIntLengths()[0] < lenv[0]){
 			lenv[0] = green.getBounds().getIntLengths()[0];
 		}

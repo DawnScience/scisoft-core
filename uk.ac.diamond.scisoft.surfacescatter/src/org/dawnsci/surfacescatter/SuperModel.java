@@ -795,6 +795,14 @@ public class SuperModel {
 				this.locationList= locationList1);
 	}
 	
+	public void addLocationList(int k, int[] in){
+		double[] inDouble = new double[in.length]; 
+		for (int i = 0; i<in.length; i++){
+			inDouble[i] = (double)in[i];
+		}
+		addLocationList(k, inDouble);
+		
+	}
 	public void addLocationList(int k, double[] in){
 		if (locationList==null){
 			locationList = new ArrayList<double[]>();

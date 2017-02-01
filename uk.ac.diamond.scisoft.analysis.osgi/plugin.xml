@@ -9,11 +9,6 @@
                serviceClass="org.eclipse.dawnsci.analysis.api.dataset.IDatasetMathsService">
          </service>
       </serviceFactory>
-      <serviceFactory
-            factoryClass="uk.ac.diamond.scisoft.analysis.osgi.ClassLoaderServiceImpl">
-         <service
-               serviceClass="py4j.ClassLoaderService"></service>
-      </serviceFactory>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

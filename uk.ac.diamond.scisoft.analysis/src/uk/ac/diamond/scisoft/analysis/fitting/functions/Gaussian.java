@@ -10,11 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
-import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.dataset.Maths;
-
 
 /**
  * Class which expands on the AFunction class to give the properties of a Gaussian. A 1D implementation
@@ -75,34 +71,35 @@ public class Gaussian extends APeak {
 		setNames(NAME, DESC, PARAM_NAMES);
 	}
 
-	private static final double CONST = Math.sqrt(4. * Math.log(2.));
+	private static final double CONST_A = Math.sqrt(4. * Math.log(2.));
+	private static final double CONST_B = 1.0 / Math.sqrt(Math.PI);
 
 	private transient double pos, fr;
 
 	@Override
 	protected void calcCachedParameters() {
 		pos = getParameterValue(POSN);
-		fr = CONST / getParameterValue(FWHM);
-		double area = getParameterValue(AREA);
-		height = fr * area / Math.sqrt(Math.PI);
+		fr = CONST_A / getParameterValue(FWHM);
+		height = fr * CONST_B * getParameterValue(AREA);
 
 		setDirty(false);
 	}
 
 	@Override
 	public double val(double... values) {
-		if (isDirty())
+		if (isDirty()) {
 			calcCachedParameters();
+		}
 
-		double arg = fr * (values[0] - pos); 
-
-		return height * Math.exp(- arg * arg);
+		final double arg = fr * (values[0] - pos); 
+		return height * Math.exp(-(arg * arg));
 	}
 
 	@Override
 	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
-		if (isDirty())
+		if (isDirty()) {
 			calcCachedParameters();
+		}
 
 		it.reset();
 		double[] coords = it.getCoordinates();
@@ -111,65 +108,79 @@ public class Gaussian extends APeak {
 		while (it.hasNext()) {
 			double arg = fr * (coords[0] - pos); 
 
-			buffer[i++] = height * Math.exp(- arg * arg);
+			buffer[i++] = height * Math.exp(-(arg * arg));
 		}
 	}
 	
 	@Override
 	public double partialDeriv(IParameter parameter, double... position) {
-		return super.partialDeriv(parameter, position);
-//		if (isDuplicated(parameter))
-//			return super.partialDeriv(parameter, position);
-//
-//		int i = indexOfParameter(parameter);
-//		final double x = position[0];
-//		switch (i) {
-//		case 0:
-//			return 2*height*fr*fr*(x-pos)*Math.exp(-(fr*fr)*(x-pos)*(x-pos));
-//		case 1:
-//			return -2*height*fr*fr*(x-pos)*Math.exp(-(fr*fr)*(x-pos)*(x-pos));
-//		case 2: {
-//			double arg = fr * (x - pos); 
-//			return height * Math.exp(- arg * arg);
-//		}
-//		default:
-//			return 0;
-//		}
+		if (isDirty()) {
+			calcCachedParameters();
+		}
+
+		if (isDuplicated(parameter)) {
+			return super.partialDeriv(parameter, position);
+		}
+
+		int i = indexOfParameter(parameter);
+		final double del = position[0] - pos;
+		final double arg = fr * del;
+
+		switch (i) {
+		case 0:
+			return 2*height*arg*fr*Math.exp(-(arg * arg));
+		case 1:
+			final double sqarg = arg * arg;
+			return fr*height*(2*sqarg - 1)*Math.exp(-sqarg)/CONST_A;
+		case 2:
+			return CONST_B * fr * Math.exp(-(arg * arg));
+		default:
+			return 0;
+		}
 	}
 
-	public void superFillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it){
-		super.fillWithPartialDerivativeValues(parameter, data, it);
-	}
-	
 	@Override
 	public void fillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it) {
-		super.fillWithPartialDerivativeValues(parameter, data, it);
-//		int j = indexOfParameter(parameter);
-//
-//		it.reset();
-//		double[] coords = it.getCoordinates();
-//		int i = 0;
-//		double[] buffer = data.getData();
-//		switch (j) {
-//		case 0:
-//			while (it.hasNext()) {
-//				buffer[i++] = 2*height*fr*fr*(coords[0]-pos)*Math.exp(-(fr*fr)*(coords[0]-pos)*(coords[0]-pos));
-//			}
-//			break;
-//		case 1:
-//			while (it.hasNext()) {
-//				buffer[i++] = -2*height*fr*fr*(coords[0]-pos)*Math.exp(-(fr*fr)*(coords[0]-pos)*(coords[0]-pos));
-//			}
-//			break;
-//		case 2:{
-//			while (it.hasNext()) {
-//				double arg = fr * (coords[0] - pos); 
-//				buffer[i++] = height * Math.exp(- arg * arg);
-//			}
-//			break;
-//		}
-//		default:
-//			break;
-//		}
+		if (isDirty()) {
+			calcCachedParameters();
+		}
+
+		if (isDuplicated(parameter)) {
+			super.fillWithPartialDerivativeValues(parameter, data, it);
+			return;
+		}
+
+		int j = indexOfParameter(parameter);
+
+		it.reset();
+		double[] coords = it.getCoordinates();
+		int i = 0;
+		double[] buffer = data.getData();
+		switch (j) {
+		case 0:
+			while (it.hasNext()) {
+				final double del = coords[0] - pos;
+				final double arg = fr * del;
+				buffer[i++] = 2*height*arg*fr*Math.exp(-(arg * arg));
+			}
+			break;
+		case 1:
+			while (it.hasNext()) {
+				final double del = coords[0] - pos;
+				final double arg = fr * del;
+				final double sqarg = arg * arg;
+				buffer[i++] = fr*height*(2*sqarg - 1)*Math.exp(-sqarg)/CONST_A;
+			}
+			break;
+		case 2:
+			while (it.hasNext()) {
+				final double del = coords[0] - pos;
+				final double arg = fr * del;
+				buffer[i++] = CONST_B * fr * Math.exp(-(arg * arg));
+			}
+			break;
+		default:
+			break;
+		}
 	}
 }

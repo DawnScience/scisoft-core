@@ -57,11 +57,13 @@ public class SuperModel {
 	private IDataset temporaryBackgroundHolder; // in1Background
 	private Boolean trackerOn = false;
 	private int[][] boxOffsetLenPt;
+	private int[][] permanentBoxOffsetLenPt;
 	private ArrayList<Integer> imageRefList;
 	private TreeMap<Integer, Dataset> som;
 	private int numberOfImages;
 	private String imageFolderPath;
 	private int startFrame;
+
 
 	
 	
@@ -955,5 +957,13 @@ public class SuperModel {
 
 	public void setBoxOffsetLenPt(int[][] boxOffsetLenPt) {
 		this.boxOffsetLenPt = boxOffsetLenPt;
+	}
+
+	public int[][] getPermanentBoxOffsetLenPt() {
+		return permanentBoxOffsetLenPt;
+	}
+
+	public void setPermanentBoxOffsetLenPt(int[][] permanentBoxOffsetLenPt) {
+		this.permanentBoxOffsetLenPt = permanentBoxOffsetLenPt;
 	}
 }

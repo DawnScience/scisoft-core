@@ -1385,9 +1385,10 @@ public class DummyProcessingClass {
 
 	public static OperationData SecondConstantBackgroundROIFittingIOp(ExampleModel model,
 			   														  IDataset input,
-			   														  SuperModel sm,
-			   														  IPlottingSystem<Composite> pS,
-			   														  IPlottingSystem<Composite> ssvsPS){
+			   														  SuperModel sm
+//			   														  IPlottingSystem<Composite> pS,
+//			   														  IPlottingSystem<Composite> ssvsPS
+			   														  ){
 
 		SecondConstantROIBackgroundSubtractionModel scrbm 
 					= new SecondConstantROIBackgroundSubtractionModel();
@@ -1395,19 +1396,11 @@ public class DummyProcessingClass {
 		scrbm.setLenPt(model.getLenPt());
 		scrbm.setFitPower(model.getFitPower());
 		scrbm.setBoundaryBox(model.getBoundaryBox());
-		scrbm.setPlottingSystem(pS);
-		scrbm.setSPlottingSystem(ssvsPS);
+//		scrbm.setPlottingSystem(pS);
+//		scrbm.setSPlottingSystem(ssvsPS);
 		
-		if (sm.getBackgroundROI() != null){
-			IRectangularROI bounds = sm.getBackgroundROI().getBounds();
-			int[] len = bounds.getIntLengths();
-			int[] pt = bounds.getIntPoint();
-		
-			if (Arrays.equals(len,new int[] {50, 50}) == false || 
-					Arrays.equals(pt,new int[] {10, 10}) == false){
-			
-				scrbm.setBackgroundROI(sm.getBackgroundROI().getBounds());
-			}
+		if (sm.getBackgroundLenPt() != null){
+				scrbm.setBackgroundLenPt(sm.getBackgroundLenPt());
 		}
 		
 		Metadata md = new Metadata();
@@ -1444,44 +1437,44 @@ public class DummyProcessingClass {
 											int selection,
 											int trackingMarker){		
 		
-		Display display = Display.getCurrent();
-        Color magenta = display.getSystemColor(SWT.COLOR_DARK_MAGENTA);
-        Color red = display.getSystemColor(SWT.COLOR_RED);
+//		Display display = Display.getCurrent();
+//        Color magenta = display.getSystemColor(SWT.COLOR_DARK_MAGENTA);
+//        Color red = display.getSystemColor(SWT.COLOR_RED);
 
 		
-		if (pS.getRegion("Background Region")!=null){
-			IRectangularROI bounds = pS.getRegion("Background Region").getROI().getBounds();
-			int[] len = bounds.getIntLengths();
-			int[] pt = bounds.getIntPoint();
-		
-			if (Arrays.equals(len,new int[] {50, 50}) == false || 
-					Arrays.equals(pt,new int[] {10, 10}) == false){
-			
-				sm.setBackgroundROI((IROI) pS.getRegion("Background Region").getROI());
-				dm.setBackgroundROI((IROI) pS.getRegion("Background Region").getROI());;
-			}
-			
-			pS.getRegion("Background Region").setRegionColor(magenta);
-			
-		}
-		
-		if (ssvsPS.getRegion("ssvs Background Region")!=null){
-			
-			IRectangularROI bounds = ssvsPS.getRegion("ssvs Background Region").getROI().getBounds();
-			int[] len = bounds.getIntLengths();
-			int[] pt = bounds.getIntPoint();
-		
-			if (Arrays.equals(len,new int[] {50, 50}) == false || 
-					Arrays.equals(pt,new int[] {10, 10}) == false){
-			
-				sm.setBackgroundROI((IROI) ssvsPS.getRegion("ssvs Background Region").getROI());
-				dm.setBackgroundROI((IROI) ssvsPS.getRegion("ssvs Background Region").getROI());;
-			}
-			
-
-			ssvsPS.getRegion("ssvs Background Region").setRegionColor(magenta);
-			
-		}	
+//		if (pS.getRegion("Background Region")!=null){
+//			IRectangularROI bounds = pS.getRegion("Background Region").getROI().getBounds();
+//			int[] len = bounds.getIntLengths();
+//			int[] pt = bounds.getIntPoint();
+//		
+//			if (Arrays.equals(len,new int[] {50, 50}) == false || 
+//					Arrays.equals(pt,new int[] {10, 10}) == false){
+//			
+//				sm.setBackgroundROI((IROI) pS.getRegion("Background Region").getROI());
+//				dm.setBackgroundROI((IROI) pS.getRegion("Background Region").getROI());;
+//			}
+//			
+//			pS.getRegion("Background Region").setRegionColor(magenta);
+//			
+//		}
+//		
+//		if (ssvsPS.getRegion("ssvs Background Region")!=null){
+//			
+//			IRectangularROI bounds = ssvsPS.getRegion("ssvs Background Region").getROI().getBounds();
+//			int[] len = bounds.getIntLengths();
+//			int[] pt = bounds.getIntPoint();
+//		
+//			if (Arrays.equals(len,new int[] {50, 50}) == false || 
+//					Arrays.equals(pt,new int[] {10, 10}) == false){
+//			
+//				sm.setBackgroundROI((IROI) ssvsPS.getRegion("ssvs Background Region").getROI());
+//				dm.setBackgroundROI((IROI) ssvsPS.getRegion("ssvs Background Region").getROI());;
+//			}
+//			
+//
+//			ssvsPS.getRegion("ssvs Background Region").setRegionColor(magenta);
+//			
+//		}	
 		
 		OperationData outputOD4 = null;
 		
@@ -1491,9 +1484,10 @@ public class DummyProcessingClass {
 			
 			outputOD4 = SecondConstantBackgroundROIFittingIOp(model, 
 															  input, 
-															  sm,
-															  pS,
-															  ssvsPS);
+															  sm
+//															  pS,
+//															  ssvsPS
+															  );
 		}
 		
 		else if(model.getMethodology() == Methodology.OVERLAPPING_BACKGROUND_BOX){
@@ -1559,26 +1553,31 @@ public class DummyProcessingClass {
 			scrbm.setBoxOffsetLenPt(sm.getBoxOffsetLenPt());
 		}
 		
-		scrbm.addPropertyChangeListener("boxOffsetLenPt", new PropertyChangeListener() {
-			
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				sm.setBoxOffsetLenPt(scrbm.getBoxOffsetLenPt());
-				
-			}
-		});
 		
-		if (sm.getBackgroundROI() != null){
-			IRectangularROI bounds = sm.getBackgroundROI().getBounds();
-			int[] len = bounds.getIntLengths();
-			int[] pt = bounds.getIntPoint();
-			
-			if (Arrays.equals(len,new int[] {50, 50}) == false || 
-				Arrays.equals(pt,new int[] {10, 10}) == false){
-			
-				scrbm.setBackgroundROI(sm.getBackgroundROI().getBounds());
-			}
+		if(sm.getPermanentBoxOffsetLenPt()!= null){
+			scrbm.setBoxOffsetLenPt(sm.getPermanentBoxOffsetLenPt());
 		}
+		
+//		scrbm.addPropertyChangeListener("boxOffsetLenPt", new PropertyChangeListener() {
+//			
+//			@Override
+//			public void propertyChange(PropertyChangeEvent evt) {
+//				sm.setBoxOffsetLenPt(scrbm.getBoxOffsetLenPt());
+//				
+//			}
+//		});
+//		
+		
+		scrbm.setBackgroundLenPt(sm.getBackgroundLenPt());
+	
+//		if (sm.getBackgroundROI() != null){
+//			IRectangularROI bounds = sm.getBackgroundROI().getBounds();
+//			int[] len = bounds.getIntLengths();
+//			int[] pt = bounds.getIntPoint();
+//			
+//			scrbm.setBackgroundLenPt(new int[][] {{pt[0], pt[1]}, {len[0], len[1]}});
+//			
+//		}
 		
 		Metadata md = new Metadata();
 		IDataset dummyMD = DatasetFactory.zeros(new int [] {2,2});

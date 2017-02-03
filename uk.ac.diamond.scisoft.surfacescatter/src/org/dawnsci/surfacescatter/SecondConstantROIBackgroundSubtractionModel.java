@@ -15,8 +15,6 @@ import java.beans.PropertyChangeSupport;
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.FitPower;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
-import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
-import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.swt.widgets.Composite;
@@ -27,7 +25,7 @@ public class SecondConstantROIBackgroundSubtractionModel extends AbstractOperati
 	private int loopNo = 0;
 	private IDataset input;
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
-	private IRectangularROI initialBackgroundROI = new RectangularROI(10,10,50,50,0);
+//	private IRectangularROI initialBackgroundROI = new RectangularROI(10,10,50,50,0);
 	private int[][] backgroundLenPt;
 	private int[][] boxOffsetLenPt =null;
 	
@@ -39,13 +37,13 @@ public class SecondConstantROIBackgroundSubtractionModel extends AbstractOperati
 		this.backgroundLenPt = backgroundLenPt;
 	}
 	
-	public IRectangularROI getInitialBackgroundROI() {
-		return initialBackgroundROI;
-	}
-
-	public void setInitialBackgroundROI(IRectangularROI initialBackgroundROI) {
-		this.initialBackgroundROI = initialBackgroundROI;
-	}
+//	public IRectangularROI getInitialBackgroundROI() {
+//		return initialBackgroundROI;
+//	}
+//
+//	public void setInitialBackgroundROI(IRectangularROI initialBackgroundROI) {
+//		this.initialBackgroundROI = initialBackgroundROI;
+//	}
 
 	@OperationModelField(label="trackerOn", hint = "Are you tracking?" )
 	private Boolean trackerOn = false;
@@ -71,23 +69,23 @@ public class SecondConstantROIBackgroundSubtractionModel extends AbstractOperati
 		firePropertyChange("trackingMarker", this.trackingMarker, this.trackingMarker = trackingMarker);
 	}
 
-	@OperationModelField(label="backgroundROI", hint = "backgroundROI?" )
-	private IRectangularROI backgroundROI = new RectangularROI(10,10,50,50,0);;
-	
-	public IRectangularROI getBackgroundROI() {
-		return backgroundROI;
-	}
-
-	public void setBackgroundROI(IRectangularROI backgroundROI) {
-		IRectangularROI bounds = backgroundROI.getBounds();
-		int[] len = bounds.getIntLengths();
-		int[] pt = bounds.getIntPoint();
-		int[][] lenpt = new int[2][];
-		lenpt[0]=len;
-		lenpt[1]=pt;
-		this.setBackgroundLenPt(lenpt);
-		firePropertyChange("backgroundROI", this.backgroundROI, this.backgroundROI = backgroundROI);
-	}
+//	@OperationModelField(label="backgroundROI", hint = "backgroundROI?" )
+//	private IRectangularROI backgroundROI = new RectangularROI(10,10,50,50,0);;
+//	
+//	public IRectangularROI getBackgroundROI() {
+//		return backgroundROI;
+//	}
+//
+//	public void setBackgroundROI(IRectangularROI backgroundROI) {
+//		IRectangularROI bounds = backgroundROI.getBounds();
+//		int[] len = bounds.getIntLengths();
+//		int[] pt = bounds.getIntPoint();
+//		int[][] lenpt = new int[2][];
+//		lenpt[0]=len;
+//		lenpt[1]=pt;
+//		this.setBackgroundLenPt(lenpt);
+//		firePropertyChange("backgroundROI", this.backgroundROI, this.backgroundROI = backgroundROI);
+//	}
 	
 	
 	@OperationModelField(label="Tracker Reset", hint = "Reset Tracker?" )
@@ -139,7 +137,7 @@ public class SecondConstantROIBackgroundSubtractionModel extends AbstractOperati
 	@OperationModelField(label="Boundary Box size (pixels)", hint = "Size of the boundary box used for background calculation" )
 	private int boundaryBox = 20;
 
-	private RectangularROI box = new RectangularROI(100d, 100d, 10d, 10d, 0d);
+//	private RectangularROI box = new RectangularROI(100d, 100d, 10d, 10d, 0d);
 	
 	public int getBoundaryBox() {
 		return boundaryBox;
@@ -149,14 +147,14 @@ public class SecondConstantROIBackgroundSubtractionModel extends AbstractOperati
 		firePropertyChange("boundaryBox", this.boundaryBox, this.boundaryBox = boundaryBox);
 	}
 
-	public RectangularROI getBox() {
-		return box;
-	}
-	
-	public void setBox(RectangularROI box) {
-		firePropertyChange("box", this.box, this.box = box);
-	}
-	
+//	public RectangularROI getBox() {
+//		return box;
+//	}
+//	
+//	public void setBox(RectangularROI box) {
+//		firePropertyChange("box", this.box, this.box = box);
+//	}
+//	
 	@OperationModelField(label="Fit power", hint = "Fit power" )
 	private FitPower fitPower = FitPower.THREE;
 	

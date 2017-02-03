@@ -411,7 +411,7 @@ public class BoxSlicerRodScanUtilsForDialog {
 		}
 	
 	
-	public static double[] backgroundBoxForDsiplay(int[][] lenpt, 
+	public static double[] backgroundBoxForDisplay(int[][] lenpt, 
 												   int bgBox, 
 												   AnalaysisMethodologies.Methodology am){
 		

@@ -1138,6 +1138,12 @@
              model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SimpleSectorIntegrationModel"
              name="Simple Sector Integration">
        </operation>
+       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.filter.FilterXYbyRatioOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.filter.FilterXYbyRatioOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.filter.FilterXYbyRatioModel"
+            name="Filter Stack by Ratio">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

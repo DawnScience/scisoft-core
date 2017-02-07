@@ -394,7 +394,7 @@ public class HDF5Loader extends AbstractFileLoader {
 				logger.error("Unknown object type");
 			}
 		} catch (HDF5Exception ex) {
-			logger.error("Could not find info about object {}" + name);
+			logger.error("Could not find info about object {}", name, ex);
 		}
 		return null;
 	}
@@ -683,7 +683,7 @@ public class HDF5Loader extends AbstractFileLoader {
 				pool.put(oid, d);
 			return d;
 		} catch (HDF5Exception ex) {
-			logger.error(String.format("Could not open dataset %s in %s", path, f), ex);
+			logger.error("Could not open dataset {} in {}", path, f, ex);
 		} finally {
 			if (tid != -1) {
 				try {
@@ -1005,10 +1005,10 @@ public class HDF5Loader extends AbstractFileLoader {
 						if (localattr == null) continue;
 						String localname = localattr.toString();
 						if (localname == null || localname.isEmpty()) continue;
-						if (lMap.keySet().contains(localname)) continue;
+						if (lMap.containsKey(localname)) continue;
 						dh.addDataset(localname, l);
 					} catch (Exception ex) {
-						logger.info("seen an exception populating local nexus name for "+n, ex);
+						logger.info("Seen an exception populating local nexus name for {}", n, ex);
 					}
 				}
 			}
@@ -1181,7 +1181,7 @@ public class HDF5Loader extends AbstractFileLoader {
 									list.add(d.getDataset());
 								}
 							} catch (HDF5Exception ex) {
-								logger.error(String.format("Could not open dataset (%s) %s in %s", name, oname, f), ex);
+								logger.error("Could not open dataset ({}) {} in {}", name, oname, f, ex);
 							} finally {
 								if (tid >= 0) {
 									try {

@@ -84,7 +84,8 @@ public class HermanOrientation1DOperation extends AbstractOperation<HermanOrient
 		
 		// Before setting the angle to investigate
 		double integrationStartInDegrees = model.getIntegrationStartAngle();
-		double integrationStopInDegrees = (180 / Math.PI) * hermanPiRange;
+		double originalIntegrationStopInDegrees = ((180 / Math.PI) * hermanPiRange) + integrationStartInDegrees;
+		double correctedIntegrationStopInDegrees = originalIntegrationStopInDegrees;
 		
 		// Prepare to move out of the dataset and into an array
 		float axes[] = new float[dataLength];
@@ -107,12 +108,12 @@ public class HermanOrientation1DOperation extends AbstractOperation<HermanOrient
 		}
 		
 		// Find the upper limit
-		if (integrationStopInDegrees >= 360.0) {
-			integrationStopInDegrees = integrationStopInDegrees - 360.0;
+		if (originalIntegrationStopInDegrees >= 180.0) {
+			correctedIntegrationStopInDegrees = originalIntegrationStopInDegrees - 360;
 		}
 		
 		for (int loopIter = 0; loopIter < dataLength; loopIter ++) {
-			if (axes[loopIter] >= integrationStopInDegrees) {
+			if (axes[loopIter] >= correctedIntegrationStopInDegrees) {
 				endIndex = loopIter;
 				break;
 			}
@@ -121,15 +122,15 @@ public class HermanOrientation1DOperation extends AbstractOperation<HermanOrient
 		// Now let's calculate the Herman Orientation Factor
 		double hermanOrientationFactor = 0;
 		
-		if (integrationStopInDegrees <= 360.0) {
-			// Either if both limits are within 360 degrees
+		if (originalIntegrationStopInDegrees <= 180.0) {
+			// Either if both limits are within 180 degrees
 			data = Arrays.copyOfRange(data, startIndex, endIndex);
 			integrationRadianStep = hermanPiRange / data.length;
 			hermanOrientationFactor = hermanIntegrator(data, integrationRadianStep);
 		}
 		else {
 			// Or if we have to loop around encompassing two ranges
-			data = ArrayUtils.addAll(Arrays.copyOfRange(data, 0, endIndex), Arrays.copyOfRange(data, startIndex, dataLength));
+			data = ArrayUtils.addAll(Arrays.copyOfRange(data, startIndex, dataLength), Arrays.copyOfRange(data, 0, endIndex));
 			integrationRadianStep = hermanPiRange / data.length;
 			hermanOrientationFactor = hermanIntegrator(data, integrationRadianStep);			
 		}
@@ -154,17 +155,17 @@ public class HermanOrientation1DOperation extends AbstractOperation<HermanOrient
 		}
 		
 		// Create the axis as a fixed length tied to the data array
-		metadata.setAxis(0, DatasetFactory.createRange(0.00, hermanPiRange, integrationRadianStep, Dataset.ARRAYFLOAT64));
+		metadata.setAxis(0, DatasetFactory.createRange(0.00, ((180 / Math.PI) * hermanPiRange), ((180 / Math.PI) * integrationRadianStep), Dataset.FLOAT64));
 		
 		// Create the data dataset...
-		Dataset a = DatasetFactory.createFromObject(Dataset.ARRAYFLOAT64, data);
+		Dataset hermanRadialData = DatasetFactory.createFromObject(Dataset.FLOAT64, data);
 		// and stick in the axis metadata
-		a.setMetadata(metadata);
+		hermanRadialData.setMetadata(metadata);
 		
 		// Finally, we can create a new OperationData object for DAWN and return the Herman Orientation Factor
 		OperationData toReturn = new OperationData();
 		// Fill it
-		toReturn.setData(a);
+		toReturn.setData(hermanRadialData);
 		toReturn.setAuxData(hermanOrientationDataset);
 		
 		// And then return it		

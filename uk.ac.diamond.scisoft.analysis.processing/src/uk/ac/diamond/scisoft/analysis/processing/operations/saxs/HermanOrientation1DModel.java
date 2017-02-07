@@ -11,12 +11,8 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 
 // Imports from org.eclipse.dawnsci
-import org.eclipse.dawnsci.analysis.api.roi.IROI;
-import org.eclipse.dawnsci.analysis.dataset.roi.RingROI;
+import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
-
-// Imports from uk.ac.diamond.scisoft
-import uk.ac.diamond.scisoft.analysis.processing.operations.IntegrationModel;
 
 
 // More information and the equation for the Herman Orientation Factor can be found in:
@@ -27,7 +23,7 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.IntegrationModel;
 // @author Tim Snow
 
 // The model for a DAWN process to perform a Herman Orientation calculation on a given reduced dataset
-public class HermanOrientation1DModel extends IntegrationModel {
+public class HermanOrientation1DModel extends AbstractOperationModel {
 
 
 	// Let's give the user a fixed choice on the integration range so they don't go too nuts...import org.eclipse.january.dataset.ILazyDataset;
@@ -86,19 +82,6 @@ public class HermanOrientation1DModel extends IntegrationModel {
 	}
 
 
-	// Now let's get the user to tell us where the centre of the beam is and which ring they're interested in evaluating
-	public HermanOrientation1DModel() {
-		super();
-		setRegion(new RingROI());
-	}
-
-	public HermanOrientation1DModel(IROI region) {
-		super();
-		//setRegion(sector);
-		firePropertyChange("region", this.region, this.region = region);
-	}
-
-	
 	// Finally, see if the user wants to use a non-standard C value for the calculation
 	@OperationModelField(label = "Herman C Value", hint = "Leave this set to 1, unless you have a good reason. See DOI: 10.1016/S0032-3861(03)00073-9 for more information about this variable.", fieldPosition = 3)
 	private double hermanCValue = 1.00;

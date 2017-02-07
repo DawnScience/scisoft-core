@@ -576,14 +576,14 @@ public class HDF5Loader extends AbstractFileLoader {
 						if (!ef.isAbsolute()) {
 							exists = ef.exists();
 							if (!exists) { // use directory of linking file
-								logger.warn("Could not find external relative file, now trying in {}", parent);
+								logger.debug("Could not find external relative file, now trying in {}", parent);
 								File ref = new File(parent, ef.getName());
 								exists = ref.exists();
 								if (!exists) {
 									// append to directory of linking file
 									File ref2 = new File(parent, eName);
 									if (!ref2.equals(ref)) {
-										logger.warn("Could not find external relative file, finally trying {}", ref2);
+										logger.debug("Could not find external relative file, finally trying {}", ref2);
 										ref = ref2;
 									}
 								}

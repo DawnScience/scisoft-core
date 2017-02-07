@@ -222,7 +222,6 @@ public class AlignImages {
 		if (shifts == null)
 			shifts = new ArrayList<List<double[]>>();
 
-		int index = 0;
 		int nr = rois.size();
 
 		// save on a temp file
@@ -232,8 +231,11 @@ public class AlignImages {
 		File tmpFile = new File(file);
 		if (tmpFile.exists())
 			tmpFile.delete();
-		ILazyWriteableDataset lazy = HDF5Utils.createLazyDataset(file, path, name, data.getShape(), null,
-				data.getShape(), Dataset.FLOAT32, null, false);
+
+		int[] shape = data.getShape();
+		int[] chunking = new int[] {1, shape[1], shape[2]};
+		ILazyWriteableDataset lazy = HDF5Utils.createLazyDataset(file, path, name, shape, null,
+				chunking, Dataset.FLOAT32, null, false);
 
 		if (nr > 0) {
 			if (nr < mode) { // clean up roi list
@@ -266,18 +268,20 @@ public class AlignImages {
 			List<IDataset> anchorList = new ArrayList<IDataset>();
 			for (int i = 0; i < mode; i++) {
 				try {
-					topImages[i] = data.getSlice(new Slice(i * nsets, data.getShape()[0], data.getShape()[1])).squeeze();
+					int n = i * nsets;
+					topImages[i] = data.getSlice(new Slice(n, n+1)).squeeze();
 				} catch (DatasetException e) {
 					logger.error("Could not get slice of image", e);
 				}
 			}
 			// align top images
 			topShifts = align(topImages, anchorList, rois.get(0), true, null, monitor);
+			int index = 0;
 			int idx = 0;
 			for (int p = 0; p < mode; p++) {
 				for (int i = 0; i < nsets; i++) {
 					try {
-						tImages[i] = data.getSlice(new Slice(index++, data.getShape()[0], data.getShape()[1])).squeeze();
+						tImages[i] = data.getSlice(new Slice(index++, index)).squeeze();
 					} catch (DatasetException e) {
 						logger.error("Could not get slice of image", e);
 					}
@@ -314,7 +318,8 @@ public class AlignImages {
 	}
 
 	private static void appendDataset(ILazyWriteableDataset lazy, IDataset data, int idx, IMonitor monitor) throws DatasetException {
-		SliceND ndSlice = new SliceND(lazy.getShape(), new int[] {idx, 0, 0}, new int[] {(idx+1), data.getShape()[0], data.getShape()[1]}, null);
+		int[] shape = lazy.getShape();
+		SliceND ndSlice = new SliceND(shape, new int[] {idx, 0, 0}, new int[] {idx + 1, shape[1], shape[2]}, null);
 		lazy.setSlice(monitor, data, ndSlice);
 	}
 }

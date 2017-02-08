@@ -11,10 +11,10 @@ package uk.ac.diamond.scisoft.analysis.image;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.Image;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROIList;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
@@ -29,7 +29,7 @@ import org.eclipse.january.dataset.SliceND;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.function.MapToShiftedCartesian;
+import uk.ac.diamond.scisoft.analysis.dataset.function.RegisterImage;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
 
@@ -62,20 +62,24 @@ public class AlignImages {
 		} else {
 			shift.add(new double[] {0., 0.});
 		}
+
 		shifted.add(anchor);
-		for (int i = 1; i < length; i++) {
-			IDataset image = list.get(i);
-			
-			double[] s = Image.findTranslation2D(anchor, image, roi);
+		RegisterImage registerImage = new RegisterImage();
+		registerImage.setReference(anchor);
+		registerImage.setRectangle(roi);
+		IDataset[] originals = Arrays.copyOfRange(images, 1, length);
+		List<Dataset> output = registerImage.value(originals);
+		
+		for (int i = 0; i < length - 1; i++) {
+			double[] s = (double[]) output.get(2*i).getBuffer();
 			// We add the preShift to the shift data
 			if (preShift != null) {
 				s[0] += preShift[0];
 				s[1] += preShift[1];
 			}
 			shift.add(s);
-			MapToShiftedCartesian map = new MapToShiftedCartesian(s[0], s[1]);
-			Dataset data = map.value(image).get(0);
-			data.setName("aligned_" + image.getName());
+			Dataset data = output.get(2*i + 1);
+			data.setName("aligned_" + originals[i].getName());
 			shifted.add(data);
 			if (monitor != null) {
 				if(monitor.isCancelled())

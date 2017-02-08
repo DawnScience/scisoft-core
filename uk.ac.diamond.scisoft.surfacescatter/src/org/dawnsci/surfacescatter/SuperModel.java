@@ -13,6 +13,7 @@ import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 
 public class SuperModel {
 
@@ -29,12 +30,12 @@ public class SuperModel {
 	private IDataset splicedCurveYErrorMin;
 	private IDataset splicedCurveYFhklErrorMax;
 	private IDataset splicedCurveYFhklErrorMin;
-	private Dataset imageStack;
+	private ILazyDataset imageStack;
 	private Dataset sortedX; // this the scanned variable, e.g. l or qdcd
 	private Dataset nullImage;
 	@SuppressWarnings("rawtypes")
 	private TreeMap sortedImages;
-	private Dataset[] images;
+	private ILazyDataset[] images;
 	private int[] filepathsSortedArray;
 	private int sliderPos;
 	private ArrayList<Double> xList;
@@ -719,11 +720,11 @@ public class SuperModel {
 		this.splicedCurveYFhklErrorMin = splicedCurveYFhklErrorMin;
 	}
 
-	public Dataset getImageStack() {
+	public ILazyDataset getImageStack() {
 		return imageStack;
 	}
 
-	public void setImageStack(Dataset imageStack) {
+	public void setImageStack(ILazyDataset imageStack) {
 		this.imageStack = imageStack;
 	}
 
@@ -751,11 +752,11 @@ public class SuperModel {
 		this.sortedImages = sortedImages;
 	}
 
-	public Dataset[] getImages() {
+	public ILazyDataset[] getImages() {
 		return images;
 	}
 
-	public void setImages(Dataset[] images) {
+	public void setImages(ILazyDataset[] images) {
 		this.images = images;
 	}
 

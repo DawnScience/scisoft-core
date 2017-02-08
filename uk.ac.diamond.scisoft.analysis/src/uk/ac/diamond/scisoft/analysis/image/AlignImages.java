@@ -214,8 +214,6 @@ public class AlignImages {
 
 		int nsets = data.getShape()[0] / mode;
 
-		if (roi == null)
-			return null;
 		RectangularROIList rois = new RectangularROIList();
 		rois.add(roi);
 

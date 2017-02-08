@@ -147,8 +147,8 @@ public class StitchedOutput {
 					yArrayCorrectedFhkl[k+1] = Maths.multiply(yArrayFhkl[k+1],attenuationFactorFhkl);
 					
 						
-					System.out.println("attenuation factor:  " + attenuationFactor + "   k:   " +k);
-					System.out.println("attenuation factor Fhkl:  " + attenuationFactorFhkl + "   k:   " +k);
+//					System.out.println("attenuation factor:  " + attenuationFactor + "   k:   " +k);
+//					System.out.println("attenuation factor Fhkl:  " + attenuationFactorFhkl + "   k:   " +k);
 						
 					}
 

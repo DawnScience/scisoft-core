@@ -164,12 +164,7 @@ public class VerticalHorizontalSlices {
 			IDataset background,
 			IROI green){
 		
-//		
-//		lenh[0]= green.getBounds().getIntLengths()[0];
-//		
-//		if (green.getBounds().getIntLengths()[1] < lenh[1]){
-//			lenh[1] = green.getBounds().getIntLengths()[1];
-//		}
+
 		
 		int[] lenv =verticalSliceBounds.getIntLengths();
 		lenv[1]= green.getBounds().getIntLengths()[1];

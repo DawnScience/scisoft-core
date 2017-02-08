@@ -66,13 +66,13 @@ public class StitchedOutputWithErrors {
 		for(int k =0;k<=d-1;k++){
 			
 			if(DEBUG ==1){
-				System.out.println("k in Stitchedoutput:" + k);
+//				System.out.println("k in Stitchedoutput:" + k);
 			}
 			
 			if( model.getROIListElement(k)!= null){
 				
 				
-				System.out.println("k in Stitchedoutput:" + k);
+//				System.out.println("k in Stitchedoutput:" + k);
 				IRectangularROI box = model.getROIListElement(k).getBounds();////////////////////////aaaaaarrrrrrggggghhhjhj
 //				model.getROIListElement(k).getPoint();
 				
@@ -89,11 +89,11 @@ public class StitchedOutputWithErrors {
 				
 				for (int k=0; k<model.getROIList().size();k++){
 					
-					System.out.println("k: " +k);
+//					System.out.println("k: " +k);
 					
 					if( model.getROIListElement(k)!= null){
 						
-						System.out.println("k after check: " +k);
+//						System.out.println("k after check: " +k);
 						
 						ArrayList<Integer> overlapLower = new ArrayList<Integer>();
 						ArrayList<Integer> overlapHigher = new ArrayList<Integer>();
@@ -152,7 +152,7 @@ public class StitchedOutputWithErrors {
 							double  correctionRatioFhkl = PolynomialOverlapSXRD.correctionRatio(xLowerDataset, yLowerDatasetFhkl, 
 									xHigherDataset, yHigherDatasetFhkl, attenuationFactorFhkl,4);
 							
-							System.out.println("k just before correctionratio: " +k);
+//							System.out.println("k just before correctionratio: " +k);
 							
 							attenuationFactor = correctionRatio;
 							attenuationFactorFhkl = correctionRatioFhkl;
@@ -167,8 +167,8 @@ public class StitchedOutputWithErrors {
 					yArrayCorrectedError[k+1] = Maths.multiply(yArrayError[k+1],attenuationFactor);
 					yArrayCorrectedFhklError[k+1] = Maths.multiply(yArrayFhklError[k+1],attenuationFactorFhkl);
 					
-					System.out.println("attenuation factor:  " + attenuationFactor + "   k:   " +k);
-					System.out.println("attenuation factor Fhkl:  " + attenuationFactorFhkl + "   k:   " +k);
+//					System.out.println("attenuation factor:  " + attenuationFactor + "   k:   " +k);
+//					System.out.println("attenuation factor Fhkl:  " + attenuationFactorFhkl + "   k:   " +k);
 						
 					}
 
@@ -371,8 +371,8 @@ public class StitchedOutputWithErrors {
 					yArrayCorrectedError[k+1] = Maths.multiply(yArrayError[k+1],attenuationFactor);
 					yArrayCorrectedFhklError[k+1] = Maths.multiply(yArrayFhklError[k+1],attenuationFactorFhkl);
 					
-					System.out.println("attenuation factor:  " + attenuationFactor + "   k:   " +k);
-					System.out.println("attenuation factor Fhkl:  " + attenuationFactorFhkl + "   k:   " +k);
+//					System.out.println("attenuation factor:  " + attenuationFactor + "   k:   " +k);
+//					System.out.println("attenuation factor Fhkl:  " + attenuationFactorFhkl + "   k:   " +k);
 						
 					}
 
@@ -585,8 +585,8 @@ public class StitchedOutputWithErrors {
 			yArrayCorrectedError[k+1] = Maths.multiply(yArrayError[k+1],attenuationFactor);
 			yArrayCorrectedFhklError[k+1] = Maths.multiply(yArrayFhklError[k+1],attenuationFactorFhkl);
 			
-			System.out.println("attenuation factor:  " + attenuationFactor + "   k:   " +k);
-			System.out.println("attenuation factor Fhkl:  " + attenuationFactorFhkl + "   k:   " +k);
+//			System.out.println("attenuation factor:  " + attenuationFactor + "   k:   " +k);
+//			System.out.println("attenuation factor Fhkl:  " + attenuationFactorFhkl + "   k:   " +k);
 			
 		}
 
@@ -608,8 +608,8 @@ public class StitchedOutputWithErrors {
 		
 		if (sortedAttenuatedDatasets[1].getSize() != 
 				sortedAttenuatedDatasets[0].getSize()){
-			System.out.println("array mismatch, sortedAttenuatedDatasets[1].getSize():  " + sortedAttenuatedDatasets[1].getSize() 
-					+ "  sortedAttenuatedDatasets[0].getSize():  " + sortedAttenuatedDatasets[0].getSize());
+//			System.out.println("array mismatch, sortedAttenuatedDatasets[1].getSize():  " + sortedAttenuatedDatasets[1].getSize() 
+//					+ "  sortedAttenuatedDatasets[0].getSize():  " + sortedAttenuatedDatasets[0].getSize());
 		} 
 		
 		
@@ -622,7 +622,7 @@ public class StitchedOutputWithErrors {
 		
 		if (sortedAttenuatedDatasets[1].getSize() != 
 				sortedYArrayCorrectedError.getSize()){
-			System.out.println("array mismatch");
+//			System.out.println("array mismatch");
 		}
 		
 		DatasetUtils.sort(sortedAttenuatedDatasets[1],

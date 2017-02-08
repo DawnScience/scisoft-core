@@ -31,7 +31,7 @@ public class AgnosticTrackerHandler {
 	private int[] len;
 	private int[] pt;
 	private SuperModel sm;
-	private int DEBUG = 1;
+	private int DEBUG = 0;
 	private boolean isTheTrackingMarkerNot3 = true;
 
 	public void TwoDTracking0(IDataset input, 

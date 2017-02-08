@@ -32,7 +32,7 @@ public class DummyProcessingClass {
 	
 	
 	private static Dataset yValue;
-	private static int DEBUG = 1;
+	private static int DEBUG = 0;
 	
 	public static IDataset DummyProcess(SuperModel sm, 
 										IDataset input, 
@@ -344,7 +344,7 @@ public class DummyProcessingClass {
 			sm.addOutputDatArray(sm.getImages().length, selection ,output);
 			
 			
-			debug("  intensity:  " + intensity + "   k: " + k);
+//			debug("  intensity:  " + intensity + "   k: " + k);
 		}
 		
 		return output;
@@ -640,9 +640,9 @@ public class DummyProcessingClass {
 			sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
 			sm.addOutputDatArray(sm.getImages().length, selection ,output);
 			
-			debug("  intensity:  " + intensity + "   k: " + k);
+//			debug("  intensity:  " + intensity + "   k: " + k);
 		}
-		debug("intensity added to dm: " + intensity + "   local k: " + k + "   selection: " + selection);
+//		debug("intensity added to dm: " + intensity + "   local k: " + k + "   selection: " + selection);
 		
 		return output;
 	}
@@ -1248,7 +1248,7 @@ public class DummyProcessingClass {
 		
 		if (trackingMarker != 3){
 			double[] p = sm.getLocationList().get(k);
-			System.out.println("Interesting.....");
+//			System.out.println("Interesting.....");
 			int[] pt = new int[]{(int) p[0], (int) p[1]}; 
 			int[] len = sm.getInitialLenPt()[0]; 
 			int[][] lenPt = new int[][] {len,pt};
@@ -1637,7 +1637,7 @@ public class DummyProcessingClass {
 			
 			yValue = Maths.multiply(output, correction.getDouble(k));
 			
-			debug("Correction Value at local k:  " + Double.toString(correction.getDouble(k)) + "  local k: " + k); 
+//			debug("Correction Value at local k:  " + Double.toString(correction.getDouble(k)) + "  local k: " + k); 
 		}
 		
 		else if (correctionSelector ==1){
@@ -1702,8 +1702,8 @@ public class DummyProcessingClass {
 	
 		Double intensity = (Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum();
 	
-		debug("Correction Value:  " + Double.toString(correction.getDouble(0)));
-		debug("output sum: " + Double.toString(intensity));
+//		debug("Correction Value:  " + Double.toString(correction.getDouble(0)));
+//		debug("output sum: " + Double.toString(intensity));
 		
 		return yValue;
 	}

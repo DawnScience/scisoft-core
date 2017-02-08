@@ -34,7 +34,7 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 
 	private static Dataset output;
 	private static Polynomial2D g2;
-	private static int DEBUG = 1;
+	private static int DEBUG = 0;
 	private IDataset in1Background;
 	
 	@Override
@@ -60,7 +60,7 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 		int[] len = model.getLenPt()[0];
 		int[] pt = model.getLenPt()[1];
 
-		debug("pt[0]:  " + pt[0] + "  pt[1]:  " + pt[1] + "  in the 2D bg subtraction operation");
+//		debug("pt[0]:  " + pt[0] + "  pt[1]:  " + pt[1] + "  in the 2D bg subtraction operation");
 		
 		
 		Dataset in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input, len, pt);

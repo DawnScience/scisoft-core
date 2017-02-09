@@ -424,10 +424,32 @@ public class DummyProcessingClass {
 				
 				int[] len = sm.getInitialLenPt()[0];
 				int[] pt = sm.getInitialLenPt()[1];
-					
-				sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
-						(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
+					
+					ath1.TwoDTracking3(sm, 
+									  input, 
+									  model, 
+									  dm, 
+									  trackingMarker, 
+									  k, 
+									  selection);
+				}
+				
+				else{	
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+					(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
+				}
+				
+				
+				
+				
+				
+//					
+//				sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+//						(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
+//				
 				
 				OperationData outputOD1= TwoDFittingIOp(model,
 						   input,
@@ -705,12 +727,28 @@ public class DummyProcessingClass {
 				else{
 				}
 				
-				
-				int[] len = sm.getInitialLenPt()[0];
-				int[] pt = sm.getInitialLenPt()[1];
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
-				sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
-						(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
+					ath1.TwoDTracking3(sm, 
+									  input, 
+									  model, 
+									  dm, 
+									  trackingMarker, 
+									  k, 
+									  selection);
+					
+				}
+
+				else{
+					
+					int[] len = sm.getInitialLenPt()[0];
+					int[] pt = sm.getInitialLenPt()[1];
+					
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
+				}
+				
 				
 				
 				OperationData outputOD1= TwoDFittingIOp(model,
@@ -747,8 +785,8 @@ public class DummyProcessingClass {
 
 				else{
 					
-					len = sm.getInitialLenPt()[0];
-					pt = sm.getInitialLenPt()[1];
+					int[] len = sm.getInitialLenPt()[0];
+					int[]  pt = sm.getInitialLenPt()[1];
 					
 					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
 							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
@@ -790,8 +828,8 @@ public class DummyProcessingClass {
 
 				else{
 					
-					len = sm.getInitialLenPt()[0];
-					pt = sm.getInitialLenPt()[1];
+					int[] len = sm.getInitialLenPt()[0];
+					int[] pt = sm.getInitialLenPt()[1];
 					
 					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
 							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
@@ -827,8 +865,8 @@ public class DummyProcessingClass {
 
 				else{
 					
-					len = sm.getInitialLenPt()[0];
-					pt = sm.getInitialLenPt()[1];
+					int[] len = sm.getInitialLenPt()[0];
+					int[] pt = sm.getInitialLenPt()[1];
 					
 					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
 							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
@@ -867,8 +905,8 @@ public class DummyProcessingClass {
 
 				else{
 					
-					len = sm.getInitialLenPt()[0];
-					pt = sm.getInitialLenPt()[1];
+					int[] len = sm.getInitialLenPt()[0];
+					int[] pt = sm.getInitialLenPt()[1];
 					
 					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
 							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
@@ -1003,12 +1041,30 @@ public class DummyProcessingClass {
 				}
 				
 				
-				int[] len = sm.getInitialLenPt()[0];
-				int[] pt = sm.getInitialLenPt()[1];
+				if(sm.getTrackerOn()){
+					AgnosticTrackerHandler ath2 = new AgnosticTrackerHandler();
 					
-				sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
-						(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
-				
+					ath2.TwoDTracking1(input, 
+							model,
+							sm,
+							dm, 
+							trackingMarker, 
+							k,
+							locationList,
+							selection);
+					
+
+
+				}
+
+				else{
+					
+					int[] len = sm.getInitialLenPt()[0];
+					int[] pt = sm.getInitialLenPt()[1];
+					
+					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
+							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
+				}
 				
 				OperationData outputOD1= TwoDFittingIOp(model,
 													   input,
@@ -1042,8 +1098,8 @@ public class DummyProcessingClass {
 
 				else{
 					
-					len = sm.getInitialLenPt()[0];
-					pt = sm.getInitialLenPt()[1];
+					int[] len = sm.getInitialLenPt()[0];
+					int[] pt = sm.getInitialLenPt()[1];
 					
 					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
 							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
@@ -1089,8 +1145,8 @@ public class DummyProcessingClass {
 
 				else{
 					
-					len = sm.getInitialLenPt()[0];
-					pt = sm.getInitialLenPt()[1];
+					int[] len = sm.getInitialLenPt()[0];
+					int[] pt = sm.getInitialLenPt()[1];
 					
 					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
 							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
@@ -1130,8 +1186,8 @@ public class DummyProcessingClass {
 
 				else{
 					
-					len = sm.getInitialLenPt()[0];
-					pt = sm.getInitialLenPt()[1];
+					int[] len = sm.getInitialLenPt()[0];
+					int[] pt = sm.getInitialLenPt()[1];
 					
 					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
 							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
@@ -1175,8 +1231,8 @@ public class DummyProcessingClass {
 
 				else{
 					
-					len = sm.getInitialLenPt()[0];
-					pt = sm.getInitialLenPt()[1];
+					int[] len = sm.getInitialLenPt()[0];
+					int[] pt = sm.getInitialLenPt()[1];
 					
 					sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
 							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});

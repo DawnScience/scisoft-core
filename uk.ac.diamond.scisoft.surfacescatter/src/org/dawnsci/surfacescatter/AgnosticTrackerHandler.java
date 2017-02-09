@@ -243,7 +243,18 @@ public class AgnosticTrackerHandler {
 					tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 					
 					try {
-						tracker.initialize(dm.getInitialDataset(), initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
+						
+						location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(sm.getTrackerLocationList(), 
+								  sm.getSortedX(), 
+								  sm.getInitialLenPt()[0],
+								  selection);
+						
+						debug("TwoDTrackign3 interpolated location for trackingMarker = 2 ; location[0]:  " +  location[0] + "    TwoDTrackign3 location[1]:  " +  location[1] );
+						
+						
+						tracker.initialize(dm.getInitialDataset(), location, TrackingMethodology.toTT(model.getTrackerType()));
+		
+						
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -581,7 +592,17 @@ public class AgnosticTrackerHandler {
 					tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 					
 					try {
-						tracker.initialize(dm.getInitialDataset(), initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
+						
+						location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(sm.getTrackerLocationList(), 
+								  sm.getSortedX(), 
+								  sm.getInitialLenPt()[0],
+								  selection);
+						
+						debug("TwoDTrackign3 interpolated location for trackingMarker = 2 ; location[0]:  " +  location[0] + "    TwoDTrackign3 location[1]:  " +  location[1] );
+						
+						
+						tracker.initialize(dm.getInitialDataset(), location, TrackingMethodology.toTT(model.getTrackerType()));
+						
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -908,6 +929,13 @@ public class AgnosticTrackerHandler {
 				
 				debug("trackign mrker 2; TwoDTrackign3 initialLocation[0]:  " +  initialLocation[0] + "    TwoDTrackign3 initialLocation[1]:  " +  initialLocation[1] );
 				
+				location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(sm.getTrackerLocationList(), 
+						  sm.getSortedX(), 
+						  sm.getInitialLenPt()[0],
+						  selection);
+				
+				debug("TwoDTrackign3 interpolated location for trackingMarker = 2 ; location[0]:  " +  location[0] + "    TwoDTrackign3 location[1]:  " +  location[1] );
+				
 				
 				if (sm.getInitialTracker() != null){
 					tracker = sm.getInitialTracker();
@@ -916,7 +944,16 @@ public class AgnosticTrackerHandler {
 				else{
 					tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 					try {
-						tracker.initialize(dm.getInitialDataset(), initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
+						
+						location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(sm.getTrackerLocationList(), 
+								  sm.getSortedX(), 
+								  sm.getInitialLenPt()[0],
+								  selection);
+						
+						debug("TwoDTrackign3 interpolated location for trackingMarker = 2 ; location[0]:  " +  location[0] + "    TwoDTrackign3 location[1]:  " +  location[1] );
+						
+						
+						tracker.initialize(dm.getInitialDataset(), location, TrackingMethodology.toTT(model.getTrackerType()));
 					} catch (Exception e) {
 						debug("Failed to initialise tracker in TwoDTracking3 ");
 					}

@@ -915,6 +915,16 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.InvariantOperation"
+            description="Calculate the invariance from a sample with scatter meaured in absolute units against q"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.Invariant"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="Invariance Calculation"
+            visible="true">
+      </operation>
+      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.image.FourierTransformImageOperation"
             description="Perform a 2D Fourier transform on an image"
             icon="icons/mask.png"

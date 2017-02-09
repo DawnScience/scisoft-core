@@ -624,7 +624,7 @@
             description="Save image as text with x axis as first column, use with caution, files can get very large"
             icon="icons/exptext.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText2DOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText1DModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.export.ExportAsText2DModel"
             name="Export to Text File [Image]">
       </operation>
       <operation

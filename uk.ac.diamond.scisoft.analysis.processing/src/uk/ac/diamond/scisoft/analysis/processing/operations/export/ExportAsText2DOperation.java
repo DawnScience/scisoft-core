@@ -18,6 +18,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceViewIterator;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.DTypeUtils;
@@ -30,7 +31,7 @@ import uk.ac.diamond.scisoft.analysis.io.ASCIIDataWithHeadingSaver;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 
 @Atomic
-public class ExportAsText2DOperation extends AbstractOperation<ExportAsText1DModel, OperationData> implements IExportOperation {
+public class ExportAsText2DOperation extends AbstractOperation<ExportAsText2DModel, OperationData> implements IExportOperation {
 
 	private static final String EXPORT = "export";
 	private static final String DEFAULT_EXT = "dat";
@@ -42,8 +43,6 @@ public class ExportAsText2DOperation extends AbstractOperation<ExportAsText1DMod
 	
 
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
-		
-		String fileName = ExportAsText1DOperation.getFilePath( model, input, this);
 		
 		ILazyDataset[] axes = getFirstAxes(input);
 		ILazyDataset lx = null;
@@ -57,9 +56,8 @@ public class ExportAsText2DOperation extends AbstractOperation<ExportAsText1DMod
 		outds = outds.getTransposedView();
 		
 //		outds.squeeze().setShape(outds.getShape()[0],1);
-		
+		IDataset x = null;
 		if (lx != null) {
-			IDataset x;
 			try {
 				x = lx.getSliceView().getSlice().squeeze();
 			} catch (DatasetException e) {
@@ -75,30 +73,40 @@ public class ExportAsText2DOperation extends AbstractOperation<ExportAsText1DMod
 					x = DatasetUtils.cast(x, ytype);
 				}
 			}
-			outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
 		}
 		
 		
-		ASCIIDataWithHeadingSaver saver = new ASCIIDataWithHeadingSaver(fileName);
-		
-//		if (ly != null) {
-//			IDataset d = ly.getSlice();
-//			String name = d.getName() == null ? "" : d.getName();
-//			List<String> head = new ArrayList<String>();
-//			if (lx != null) head.add(lx.getName());
-//			for (int i = 0; i < ly.getSize(); i++) {
-//				head.add(name.replace(" ", "_") + d.getObject(i).toString());
-//			}
-//			saver.setHeadings(head);
-//		}
-		
-		
-		DataHolder dh = new DataHolder();
-		dh.addDataset("Export", outds);
-		try {
-			saver.saveFile(dh);
-		} catch (ScanFileHolderException e) {
-			throw new OperationException(this, "Error saving text file! (Do you have write access?)");
+		if (model.isSplitColumns()) {
+			
+			int count = 0;
+			SliceViewIterator it = new SliceViewIterator(input, null, new int[]{1});
+			while (it.hasNext()) {
+				String fileName = ExportAsText1DOperation.getFilePath( model, input, this, count++);
+				ASCIIDataWithHeadingSaver saver = new ASCIIDataWithHeadingSaver(fileName);
+				try {
+					outds = DatasetUtils.convertToDataset(it.next().getSlice()).transpose();
+					outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
+					DataHolder dh = new DataHolder();
+					dh.addDataset("Export", outds);
+					saver.saveFile(dh);
+				} catch (Exception e) {
+					throw new OperationException(this, "Error saving text file! (Do you have write access?)");
+				}
+			}
+			
+		} else {
+			String fileName = ExportAsText1DOperation.getFilePath( model, input, this, -1);
+			outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
+			ASCIIDataWithHeadingSaver saver = new ASCIIDataWithHeadingSaver(fileName);
+			
+			DataHolder dh = new DataHolder();
+			dh.addDataset("Export", outds);
+			try {
+				saver.saveFile(dh);
+			} catch (ScanFileHolderException e) {
+				throw new OperationException(this, "Error saving text file! (Do you have write access?)");
+			}
+			
 		}
 		
 		return new OperationData(input);

@@ -39,7 +39,7 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
-		String fileName = getFilePath( model, input, this);
+		String fileName = getFilePath( model, input, this, -1);
 		
 		ILazyDataset[] axes = getFirstAxes(input);
 		
@@ -121,7 +121,7 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 		return posExt == -1 ? fileName : fileName.substring(0, posExt);
 	}
 	
-	public static String getFilePath(ExportAsText1DModel model, IDataset input, IOperation op) {
+	public static String getFilePath(ExportAsText1DModel model, IDataset input, IOperation op, int split) {
 		String outputDirectory = null;
 		
 		if (model.getOutputDirectoryPath() != null && !model.getOutputDirectoryPath().isEmpty()) {
@@ -195,6 +195,11 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 			sb.append("_");
 		}
 		sb.append(count);
+		
+		if (split != -1) {
+			sb.append("_");
+			sb.append(split);
+		}
 		sb.append(".");
 		sb.append(ext);
 		

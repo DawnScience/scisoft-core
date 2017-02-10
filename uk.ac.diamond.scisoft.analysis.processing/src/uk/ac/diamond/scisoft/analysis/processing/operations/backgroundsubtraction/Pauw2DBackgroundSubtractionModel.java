@@ -32,24 +32,24 @@ public class Pauw2DBackgroundSubtractionModel extends AbstractOperationModel {
 
 	// @OperationModelField annotations for the UI element creation
 	// Get the location of the background file
-	@OperationModelField(hint="Absolute intensity scan, e.g. glassy carbon, file path", file = FileType.EXISTING_FILE, label = "Absolute scan file", fieldPosition = 0)
-	private String absoluteScanFilePath = "/scratch/Dawn/runtime-uk.ac.diamond.dawn.product/I22 Workspace/Andy/Pauw/Glassy Carbon.nxs";
+	@OperationModelField(hint="Beamline background scan, e.g. blank beamline, file path", file = FileType.EXISTING_FILE, label = "Beamline background file", fieldPosition = 0)
+	private String beamlineBackgroundScanFilePath = "Beamline background.nxs";
 	
 	// Set up the getter...
-	public String getAbsoluteScanFilePath() {
-		return absoluteScanFilePath;
+	public String getBeamlineBackgroundScanFilePath() {
+		return beamlineBackgroundScanFilePath;
 	}
 
 	// and setter.
-	public void setAbsoluteScanFilePath(String absoluteScanFilePath) {
-		firePropertyChange("absoluteScanFilePath", this.absoluteScanFilePath, this.absoluteScanFilePath = absoluteScanFilePath);
+	public void setBeamlineBackgroundScanFilePath(String beamlineBackgroundScanFilePath) {
+		firePropertyChange("beamlineBackgroundScanFilePath", this.beamlineBackgroundScanFilePath, this.beamlineBackgroundScanFilePath = beamlineBackgroundScanFilePath);
 	}
 
 
 	// @OperationModelField annotations for the UI element creation
 	// Get the location of the background file
 	@OperationModelField(hint="Background intensity scan, e.g. cell with solvent, file path", file = FileType.EXISTING_FILE, label = "Background scan file", fieldPosition = 1)
-	private String backgroundScanFilePath = "/scratch/Dawn/runtime-uk.ac.diamond.dawn.product/I22 Workspace/Andy/Pauw/Average Background.nxs";
+	private String backgroundScanFilePath = "Background.nxs";
 	
 	// Set up the getter...
 	public String getBackgroundScanFilePath() {
@@ -63,56 +63,8 @@ public class Pauw2DBackgroundSubtractionModel extends AbstractOperationModel {
 
 
 	// @OperationModelField annotations for the UI element creation
-	// Get the internal filepath of the sample thickness
-	@OperationModelField(dataset = "backgroundScanFilePath", label = "Original file path", fieldPosition = 2)
-	private String originalFilePath = "/entry/process/origin/path";
-	
-	// Set up the getter...
-	public String getOriginalFilePath() {
-		return originalFilePath;
-	}
-
-	// and setter.
-	public void setOriginalFilePath(String originalFilePath) {
-		firePropertyChange("originalFilePath", this.originalFilePath, this.originalFilePath = originalFilePath);
-	}
-	
-
-	// @OperationModelField annotations for the UI element creation
-	// Get the internal filepath of the sample thickness
-	@OperationModelField(dataset = "backgroundScanFilePath", label = "Processed data path", fieldPosition = 3)
-	private String processedDataPath = "/entry/result/data";
-	
-	// Set up the getter...
-	public String getProcessedDataPath() {
-		return processedDataPath;
-	}
-
-	// and setter.
-	public void setProcessedDataPath(String processedDataPath) {
-		firePropertyChange("processedDataPath", this.processedDataPath, this.processedDataPath = processedDataPath);
-	}
-
-	
-	// @OperationModelField annotations for the UI element creation
-	// Get the internal filepath of the sample thickness
-	@OperationModelField(dataset = "backgroundScanFilePath", label = "Processed error data path", fieldPosition = 4)
-	private String processedErrorPath = "/entry/result/error";
-	
-	// Set up the getter...
-	public String getProcessedErrorPath() {
-		return processedDataPath;
-	}
-
-	// and setter.
-	public void setProcessedErrorPath(String processedErrorPath) {
-		firePropertyChange("processedErrorPath", this.processedErrorPath, this.processedErrorPath = processedErrorPath);
-	}
-	
-	
-	// @OperationModelField annotations for the UI element creation
 	// Get the internal filepath of the background thickness
-	@OperationModelField(dataset = "filePath", label = "Detector image path", fieldPosition = 5)
+	@OperationModelField(dataset = "filePath", label = "Detector image path", fieldPosition = 2)
 	private String detectorDataPath = "/entry1/detector/data";
 	
 	// Set up the getter...
@@ -128,8 +80,8 @@ public class Pauw2DBackgroundSubtractionModel extends AbstractOperationModel {
 	
 	// @OperationModelField annotations for the UI element creation
 	// Get the internal filepath of the sample thickness
-	@OperationModelField(dataset = "filePath", label = "Scan time path", fieldPosition = 6)
-	private String scanTimePath = "/entry1/detector/count_time";
+	@OperationModelField(dataset = "filePath", label = "Scan time path", fieldPosition = 3)
+	private String scanTimePath = "/entry1/instrument/detector/count_time";
 	
 	// Set up the getter...
 	public String getScanTimePath() {
@@ -144,7 +96,7 @@ public class Pauw2DBackgroundSubtractionModel extends AbstractOperationModel {
 
 	// @OperationModelField annotations for the UI element creation
 	// Get the internal filepath of the sample thickness
-	@OperationModelField(dataset = "filePath", label = "Sample thickness path", fieldPosition = 7)
+	@OperationModelField(dataset = "filePath", label = "Sample thickness path", fieldPosition = 4)
 	private String thicknessPath = "/entry1/sample/thickness";
 	
 	// Set up the getter...
@@ -160,7 +112,7 @@ public class Pauw2DBackgroundSubtractionModel extends AbstractOperationModel {
 
 	// @OperationModelField annotations for the UI element creation
 	// Get the internal filepath of the sample I_0
-	@OperationModelField(dataset = "filePath", label = "I(0) path",fieldPosition = 8)
+	@OperationModelField(dataset = "filePath", label = "I(0) path",fieldPosition = 5)
 	private String iZeroPath = "/entry1/I0/data";
 	
 	// Set up the getter...
@@ -176,7 +128,7 @@ public class Pauw2DBackgroundSubtractionModel extends AbstractOperationModel {
 
 	// @OperationModelField annotations for the UI element creation
 	// Get the internal filepath of the sample I_t
-	@OperationModelField(dataset = "filePath", label = "I(t) path",fieldPosition = 9)
+	@OperationModelField(dataset = "filePath", label = "I(t) path",fieldPosition = 6)
 	private String iTransmissionPath = "/entry1/It/data";
 	
 	// Set up the getter...

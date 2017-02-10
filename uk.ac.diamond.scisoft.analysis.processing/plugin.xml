@@ -335,15 +335,15 @@
             name="Background subtraction for diffracting but not absorbing samples in 1D"
             visible="false">
       </operation>
-            <operation
+      <operation
             category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw2DBackgroundSubtractionOperation"
-            description="Perform a background subtraction on a reduced dataset"
+            description="Perform background subtraction for diffracting but not absorbing samples in 2D using a blank beamline and a empty cell combined with I0 and It values"
             icon="icons/subblank.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw2DBackgroundSubtractionOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw2DBackgroundSubtractionModel"
-            name="Background subtraction for diffracting but not absorbing samples in 2D"
-            visible="false">
+            name="Image background subtraction - Automatic"
+            visible="true">
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"

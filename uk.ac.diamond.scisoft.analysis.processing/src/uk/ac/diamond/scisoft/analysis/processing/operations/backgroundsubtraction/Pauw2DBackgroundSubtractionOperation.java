@@ -13,11 +13,13 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtracti
 // Imports from org.eclipse
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
-import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+
 
 // Imports from uk.ac.diamond
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
@@ -62,83 +64,98 @@ public class Pauw2DBackgroundSubtractionOperation extends AbstractOperation<Pauw
 	@Override
 	public OperationData process(IDataset sampleDataset, IMonitor monitor) throws OperationException {
 
-		// Get metadata about the file/frame passed to this process
-		SliceFromSeriesMetadata sliceSeriesMetadata = getSliceSeriesMetadata(sampleDataset);
+		String beamlineBackgroundFilePath = model.getBeamlineBackgroundScanFilePath();
+		double beamlineBackgroundIZero = (ProcessingUtils.getDataset(this, beamlineBackgroundFilePath, model.getIZeroPath())).getDouble(0);
+		double beamlineBackgroundITransmission = (ProcessingUtils.getDataset(this, beamlineBackgroundFilePath, model.getITransmissionPath())).getDouble(0);
+		// Not needed but left in case of need to debug
+		// double beamlineBackgroundScanTime = (ProcessingUtils.getDataset(this, beamlineBackgroundFilePath, model.getScanTimePath())).getDouble(0);
 
-		// Get the absolute scan file name and then from there extract out the thickness, I_0 and I_t values as floats.
-		String absoluteFilePath = model.getAbsoluteScanFilePath();
-		String originalAbsoluteFilePath = (ProcessingUtils.getDataset(this, absoluteFilePath, model.getOriginalFilePath())).getString();
-		double absoluteScanTime = (ProcessingUtils.getDataset(this, originalAbsoluteFilePath, model.getScanTimePath())).getDouble(0);
-
-		// Get the background file name and then from there extract out the thickness, I_0 and I_t values as floats.
+		// Now calculate the absorption coefficient
+		double iTransmissionCorrection = beamlineBackgroundIZero / beamlineBackgroundITransmission;
+		beamlineBackgroundITransmission *= iTransmissionCorrection;
+		// Not needed but left in case of need to debug
+		// double beamlineBackgroundLinearAbsorptionCoefficient = (-Math.log(beamlineBackgroundITransmission / beamlineBackgroundIZero));
+		
+		// Get the background file name and then from there extract out the thickness, I_0 and I_t values and scan time.
 		String backgroundFilePath = model.getBackgroundScanFilePath();
-		String originalBackgroundFilePath = (ProcessingUtils.getDataset(this, backgroundFilePath, model.getOriginalFilePath())).getString();
-		double backgroundThickness = (ProcessingUtils.getDataset(this, originalBackgroundFilePath, model.getThicknessPath())).getDouble(0);
-		double backgroundIZero = (ProcessingUtils.getDataset(this, originalBackgroundFilePath, model.getIZeroPath())).getDouble(0);
-		double backgroundITransmission = (ProcessingUtils.getDataset(this, originalBackgroundFilePath, model.getITransmissionPath())).getDouble(0);
-		double backgroundScanTime = (ProcessingUtils.getDataset(this, originalBackgroundFilePath, model.getScanTimePath())).getDouble(0);
+		double backgroundIZero = (ProcessingUtils.getDataset(this, backgroundFilePath, model.getIZeroPath())).getDouble(0);
+		double backgroundITransmission = (ProcessingUtils.getDataset(this, backgroundFilePath, model.getITransmissionPath())).getDouble(0);
+		double backgroundScanTime = (ProcessingUtils.getDataset(this, backgroundFilePath, model.getScanTimePath())).getDouble(0);
+		// Apparently it is not necessary to deduce this as it cancels out, however, it is left here in case
+		//double backgroundThickness = (ProcessingUtils.getDataset(this, backgroundFilePath, model.getThicknessPath())).getDouble(0);
 
-		// Get the file/frame path and then from there extract out the thickness, I_0 and I_t values as floats.
+		// Now calculate the absorption coefficient
+		backgroundITransmission *= iTransmissionCorrection;
+		double backgroundLinearAbsorptionCoefficient = (-Math.log(backgroundITransmission / backgroundIZero)); // Ditto line 83/84 // backgroundThickness;
+		
+		// Then do the same for the sample file
 		String sampleFilePath = getSliceSeriesMetadata(sampleDataset).getFilePath();
 		double sampleThickness = (ProcessingUtils.getDataset(this, sampleFilePath, model.getThicknessPath())).getDouble(0);
 		double sampleIZero = (ProcessingUtils.getDataset(this, sampleFilePath, model.getIZeroPath())).getDouble(0);
 		double sampleITransmission = (ProcessingUtils.getDataset(this, sampleFilePath, model.getITransmissionPath())).getDouble(0);
 		double sampleScanTime = (ProcessingUtils.getDataset(this, sampleFilePath, model.getScanTimePath())).getDouble(0);
 
-		// All scan times should match the sample, we shall assume that scaling is LINEAR here, so let's make up some factors
-		double absoluteIntensityCorrector = sampleScanTime / absoluteScanTime;
+		// Now calculate the absorption coefficient
+		sampleITransmission *= iTransmissionCorrection;
+		double sampleLinearAbsorptionCoefficient = (-Math.log(sampleITransmission / sampleIZero)) / sampleThickness;
+
+		// The background scan time should match the sample, we're assuming that the scaling is LINEAR here.
 		double backgroundIntensityCorrector = sampleScanTime / backgroundScanTime;
+		// Not needed but left in case of need to debug
+		// double beamlineBackgroundIntensityCorrector = sampleScanTime / beamlineBackgroundScanTime;
 
-		// Get the datasets from the disk
-		IDataset absoluteScanDataset = ProcessingUtils.getDataset(this, absoluteFilePath, model.getProcessedDataPath());
-		IDataset backgroundDataset = ProcessingUtils.getDataset(this, backgroundFilePath, model.getProcessedDataPath());
-
-		// Get the error datasets from the disk
-		IDataset sampleErrorset = sampleDataset.getError();
-		IDataset absoluteErrorset = ProcessingUtils.getDataset(this, absoluteFilePath, model.getProcessedErrorPath());
-		IDataset backgroundErrorset = ProcessingUtils.getDataset(this, backgroundFilePath, model.getProcessedErrorPath());
-		
-		// Now we can calculate the required absorption coefficients
-		// TODO Serious thinking about whether this is good - should we be halving the background abs coeff as it passes through two walls?
-		double backgroundLinearAbsorptionCoefficient = 0.98;//backgroundITransmission / backgroundIZero;
-		double sampleLinearAbsorptionCoefficient = 0.74;//sampleITransmission / sampleIZero;
+		// Get the background dataset from the disk
+		IDataset backgroundDataset = ProcessingUtils.getDataset(this, backgroundFilePath, model.getDetectorDataPath());
+		// Not needed but left in case of need to debug
+		// IDataset beamlineBackgroundDataset = ProcessingUtils.getDataset(this, beamlineBackgroundFilePath, model.getDetectorDataPath());
 		
 		// The equation we're going to solve takes the form:
-		// TODO Fill this in!
+		// P_2 = (1/D_2) * ( (I_s) / (I_0 e^(-(2 * a_1 * D_1 + a_2 * D_2))) - ((I_b) / (I_0 * e^(-2 * a_1 * D_1)))) 
 		
-		// Sort out all the factors for the equation
-		double sampleFractionFactor = Math.exp(-((2 * backgroundLinearAbsorptionCoefficient * backgroundThickness) + (sampleLinearAbsorptionCoefficient * sampleThickness)));
-		double backgroundFractionFactor = Math.exp(-(2 * backgroundLinearAbsorptionCoefficient * backgroundThickness));
+		// Calculate any known factors going in...
 		double equationPrefactor = 1 / sampleThickness;
-	
-		// Find the size for the loopIters
-		int[] detectorShape = absoluteScanDataset.getShape();
+		double scatteredFactor = Math.exp(-sampleLinearAbsorptionCoefficient);
+		double backgroundFactor = Math.exp(-backgroundLinearAbsorptionCoefficient);
+
+		// Find the size for the loopIters		
+		int[] detectorShape = sampleDataset.getShape();
+		int detectorShapeLength = detectorShape.length;
+		int detectorIndexX = detectorShapeLength - 2;
+		int detectorIndexY = detectorShapeLength - 1;
 		
-		for (int loopIterOne = 0; loopIterOne < detectorShape[2]; loopIterOne ++) {
-			for (int loopIterTwo = 0; loopIterTwo < detectorShape[3]; loopIterTwo ++) {
-				// First the detector pixel intensities
-				double firstTerm = sampleDataset.getDouble(loopIterOne, loopIterTwo) / (absoluteScanDataset.getDouble(0, 0, loopIterOne, loopIterTwo) * sampleFractionFactor * absoluteIntensityCorrector);
-				double secondTerm = (backgroundDataset.getDouble(0, 0, loopIterOne, loopIterTwo) * backgroundIntensityCorrector) / (absoluteScanDataset.getDouble(0, 0, loopIterOne, loopIterTwo) * backgroundFractionFactor * absoluteIntensityCorrector);
-				double equationSolution = sampleDataset.getDouble(loopIterOne, loopIterTwo) * equationPrefactor * (firstTerm - secondTerm);
-				sampleDataset.set(equationSolution, loopIterOne, loopIterTwo);
+		// Find a detector frame on the backgroundDataset
+		int[] backgroundShape = backgroundDataset.getShape();
+		int backgroundShapeLength = backgroundShape.length;
+		int[] backgroundDetectorIndicies = new int[backgroundShapeLength];
 				
-				// Then the errors
-				firstTerm = sampleErrorset.getDouble(loopIterOne, loopIterTwo) / (absoluteErrorset.getDouble(0, 0, loopIterOne, loopIterTwo) * sampleFractionFactor * absoluteIntensityCorrector);
-				secondTerm = (backgroundErrorset.getDouble(0, 0, loopIterOne, loopIterTwo) * backgroundIntensityCorrector) / (absoluteErrorset.getDouble(0, 0, loopIterOne, loopIterTwo) * backgroundFractionFactor * absoluteIntensityCorrector);
-				equationSolution = sampleErrorset.getDouble(loopIterOne, loopIterTwo) * equationPrefactor * (firstTerm - secondTerm);
-				sampleErrorset.set(equationSolution, loopIterOne, loopIterTwo);
+		// Create a home for the subtracted data
+		DoubleDataset resultDataset = DatasetFactory.zeros(detectorShape);
+		
+		for (int loopIterOne = 0; loopIterOne < detectorShape[detectorIndexX]; loopIterOne ++) {
+			for (int loopIterTwo = 0; loopIterTwo < detectorShape[detectorIndexY]; loopIterTwo ++) {
+				// Set up the backgroundDetector indices for later
+				backgroundDetectorIndicies[backgroundShapeLength - 2] = loopIterOne;
+				backgroundDetectorIndicies[backgroundShapeLength - 1] = loopIterTwo;
+				
+				// Perform the mathematics one fraction at a time
+				double firstFraction = sampleDataset.getDouble(loopIterOne, loopIterTwo) / (sampleIZero * Math.exp(-scatteredFactor));
+				double secondFraction = (backgroundDataset.getDouble(backgroundDetectorIndicies) * backgroundIntensityCorrector) / (backgroundIZero * Math.exp(-backgroundFactor));
+				double sampleScatterProbability = equationPrefactor * (firstFraction - secondFraction);
+				
+				// Normalise the the background I0 value
+				sampleScatterProbability *= beamlineBackgroundIZero;
+				
+				// Then place the final result into the result dataset
+				resultDataset.set(sampleScatterProbability, loopIterOne, loopIterTwo);
 			}
 		}
-			
-		// Stick the errors back in
-		sampleDataset.setError(sampleErrorset);
 		
 		// Finally, we can create the operation data object that will hold this
 		OperationData toReturn = new OperationData();
+
 		// Fill it
 		toReturn.setData(sampleDataset);
-		// toReturn.setData(backgroundSubtractedData);
-		//backgroundSubtractedData = null;
+		toReturn.setData(resultDataset);
 		
 		// And then return it		
 		return toReturn;	

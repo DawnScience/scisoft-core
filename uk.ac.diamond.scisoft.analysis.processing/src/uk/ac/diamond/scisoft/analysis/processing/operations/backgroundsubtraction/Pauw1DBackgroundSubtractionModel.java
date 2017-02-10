@@ -33,7 +33,7 @@ public class Pauw1DBackgroundSubtractionModel extends AbstractOperationModel {
 	// @OperationModelField annotations for the UI element creation
 	// Get the location of the background file
 	@OperationModelField(hint="Enter the path to the original background file", file = FileType.EXISTING_FILE, label = "Reduced absolute scan file", fieldPosition = 0)
-	private String absoluteScanFilepath = "/scratch/Dawn/runtime-uk.ac.diamond.dawn.product/I22 Workspace/Data/i22-361563_processed_161117_164518.nxs";
+	private String absoluteScanFilepath = "Glassy Carbon.nxs";
 	
 	// Set up the getter...
 	public String getAbsoluteScanFilepath() {
@@ -49,7 +49,7 @@ public class Pauw1DBackgroundSubtractionModel extends AbstractOperationModel {
 	// @OperationModelField annotations for the UI element creation
 	// Get the location of the background file
 	@OperationModelField(hint="Enter the path to the original background file", file = FileType.EXISTING_FILE, label = "Original background file", fieldPosition = 1)
-	private String backgroundFilePath = "/scratch/Dawn/runtime-uk.ac.diamond.dawn.product/I22 Workspace/Data/i22-361563.nxs";
+	private String backgroundFilePath = "Cell Background.nxs";
 	
 	// Set up the getter...
 	public String getBackgroundFilePath() {

@@ -1154,6 +1154,13 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.filter.FilterXYbyRatioModel"
             name="Filter Stack by Ratio">
       </operation>
+       <operation
+             class="uk.ac.diamond.scisoft.analysis.processing.operations.fitting.FitPeakToRowsOperation"
+             description="Fit a single peak down the rows of an image within a specified range"
+             id="uk.ac.diamond.scisoft.analysis.processing.operations.fitting.FitPeakToRowsOperation"
+             model="uk.ac.diamond.scisoft.analysis.processing.operations.fitting.FitPeakToRowsModel"
+             name="Fit Peak to Image Rows">
+       </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

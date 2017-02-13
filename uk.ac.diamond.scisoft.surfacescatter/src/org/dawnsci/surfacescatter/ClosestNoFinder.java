@@ -75,7 +75,7 @@ public class ClosestNoFinder {
 	
 	public static int closestIntegerInStack (double myNum, int noImages){
 		
-		Dataset numbers = DatasetFactory.createRange(noImages-1, Dataset.INT);
+		Dataset numbers = DatasetFactory.createRange(noImages, Dataset.INT);
 		
 		double distance = Math.abs(numbers.getDouble(0) - myNum);
 		int idx = 0;

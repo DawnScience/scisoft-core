@@ -847,6 +847,16 @@
       </category>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.AbsoluteIntensityCalibrationOperation"
+            description="Calculate a scaling factor between a standard and a scanned calibrant"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.AbsoluteIntensityCalibrationOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.AbsoluteIntensityCalibrationModel"
+            name="Absolute Intensity Calibration"
+            visible="true">
+      </operation>      
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.GuinierFittingOperation"
             description="Fit reduced data to the Guinier equation to determine radius of gyration value"
             icon="icons/mask.png"

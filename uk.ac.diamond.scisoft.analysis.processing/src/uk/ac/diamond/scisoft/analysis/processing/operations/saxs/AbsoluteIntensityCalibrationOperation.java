@@ -195,7 +195,11 @@ public class AbsoluteIntensityCalibrationOperation extends AbstractOperation<Abs
 		String errorDatasetTitle = "Scaling Standard Deviation is " + Double.toString(absoluteScalingFactorStdDev);
 		absoluteScalingFactorErrorDataset.setName(errorDatasetTitle);
 		absoluteScalingFactorErrorDataset.set(absoluteScalingFactorStdDev, 0);
-
+		
+		// Also, sneakily, update the UI
+		model.setScalingFactor(absoluteScalingFactor);
+		model.setScalingFactorError(absoluteScalingFactorStdDev);
+		
 		// Now we create a dataset for the calibrant data
 		AxesMetadata axisMetadata = null;
 		// Which has to be passed through a try/catch statement

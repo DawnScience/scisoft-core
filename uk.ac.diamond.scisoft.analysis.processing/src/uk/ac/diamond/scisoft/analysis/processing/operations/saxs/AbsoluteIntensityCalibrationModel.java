@@ -63,4 +63,34 @@ public class AbsoluteIntensityCalibrationModel extends AbstractOperationModel {
 	public void setRadialRange(double[] radialRange) {
 		firePropertyChange("radialRange", this.radialRange, this.radialRange = radialRange);
 	}	
+
+	// Sneakily show the user the scaling factor
+	@OperationModelField(label = "Scaling Factor",hint="A quick way to show the user the scaling factor in lieu of not being able to achieve this in another fashion.", editable = false, fieldPosition = 100)
+	double scalingFactor = 0.00;
+
+	// Set up the getter...
+	public double getScalingFactor() {
+		return scalingFactor;
+	}	
+	
+	// and setter.
+	public void setScalingFactor(double scalingFactor) {
+		firePropertyChange("scalingFactor", this.scalingFactor, this.scalingFactor = scalingFactor);
+	}	
+
+	// Sneakily show the user the scaling factor
+	@OperationModelField(label = "Scaling Factor Standard Deviation",hint="A quick way to show the user the scaling factor standard deviation in lieu of not being able to achieve this in another fashion.", editable = false, fieldPosition = 100)
+	double scalingFactorError = 0.00;
+
+	// Set up the getter...
+	public double getScalingFactorError() {
+		return scalingFactorError;
+	}	
+	
+	// and setter.
+	public void setScalingFactorError(double scalingFactorError) {
+		firePropertyChange("scalingFactorError", this.scalingFactorError, this.scalingFactorError = scalingFactorError);
+	}	
 }
+
+

@@ -79,7 +79,7 @@ public class FunctionsTest {
 		context.setDataDimensions(new int[]{0});
 
 
-		final IOperation functionOp = service.findFirst("function");
+		final IOperation functionOp = service.findFirst("uk.ac.diamond.scisoft.analysis.processing.operations.functionOperation");
 		
 		// y(x) = a_0 x^n + a_1 x^(n-1) + a_2 x^(n-2) + ... + a_(n-1) x + a_n
 		final IFunction poly = FunctionFactory.getFunction("Polynomial", 3/*x^2*/, 5.3/*x*/, 9.4/*m*/);
@@ -138,7 +138,7 @@ public class FunctionsTest {
 	public void testPseudoVoigtGenetic() throws Exception {
 		
 
-		final IOperation fittingOp = service.findFirst("fitting");
+		final IOperation fittingOp = service.findFirst("uk.ac.diamond.scisoft.analysis.processing.operations.fittingOperation");
 		
 		// We do 10 Peak fits
 		final Dataset     pseudo = generatePseudoVoigt(defaultPeakPos.length);
@@ -191,7 +191,7 @@ public class FunctionsTest {
 	public void testPseudoVoigtGeneticParallel() throws Exception {
 		
 
-		final IOperation fittingOp = service.findFirst("fitting");
+		final IOperation fittingOp = service.findFirst("uk.ac.diamond.scisoft.analysis.processing.operations.fittingOperation");
 		
 		// We do 10 Peak fits
 		final Dataset     pseudo = generatePseudoVoigt(defaultPeakPos.length);

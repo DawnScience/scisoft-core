@@ -271,7 +271,7 @@ public class RankTest {
 		context.setDataDimensions(new int[]{1,2});
 
 		final IOperation add      = service.findFirst("add");
-		final IOperation fitting  = service.findFirst("fitting");
+		final IOperation fitting  = service.findFirst("uk.ac.diamond.scisoft.analysis.processing.operations.fittingOperation");
 		context.setSeries(add, fitting);
 		
 		// This order is not ok.

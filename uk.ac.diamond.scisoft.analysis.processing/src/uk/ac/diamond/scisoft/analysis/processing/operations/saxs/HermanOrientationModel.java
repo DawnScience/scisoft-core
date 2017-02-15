@@ -68,7 +68,7 @@ public class HermanOrientationModel extends IntegrationModel {
 	//@OperationModelField annotations for the UI setup
 	// First the start angle of the integration N.B. 0 = North, going clockwise.
 	@OperationModelField(label = "Start Angle", hint = "A value between zero and 180 degrees, where zero is north and increasing angle goes clockwise", fieldPosition = 2)
-	private double integrationStartAngle = 135.00;
+	private double integrationStartAngle = 0.00;
 
 	// Now the getters and setters
 	public double getIntegrationStartAngle() {

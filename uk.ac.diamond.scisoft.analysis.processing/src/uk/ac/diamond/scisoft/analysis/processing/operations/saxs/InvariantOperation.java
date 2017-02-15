@@ -27,6 +27,7 @@ import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.dataset.DatasetFactory;
 
 // A method to calculate the absolute scatter
+// From: Small-angle scattering of x-rays, A. Guinier & G. Fournet, Wiley & Sons, London, 1955 pp 75-81.
 public class InvariantOperation extends AbstractOperation<EmptyModel, OperationData> {
 
 	@Override

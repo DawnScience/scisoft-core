@@ -54,6 +54,7 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 // Imports from uk.ac.diamond
 import uk.ac.diamond.scisoft.analysis.io.DatLoader;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
+import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 
 
 // @author Tim Snow
@@ -63,6 +64,7 @@ import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 // As in: F.Ilavsky G. Long J. Quintana A. Allen & P. Jemian, Metallurgical and Materials Transactions A, 2010, 41, 1151-1158, DOI: 10.1007/s11661-009-9950-x
 
 @PlotAdditionalData(onInput = false, dataName = "Calibrant")
+
 public class AbsoluteIntensityCalibrationOperation extends AbstractOperation<AbsoluteIntensityCalibrationModel, OperationData> {
 
 	
@@ -110,19 +112,31 @@ public class AbsoluteIntensityCalibrationOperation extends AbstractOperation<Abs
 		
 		// Next we shall populate the calibrant dataset
 		try {
-			// By opening the default file
-			URL calibrantFileURL = new URL(model.getAbsoluteScanFilePath());
-			DatLoader calibrantDataLoader = new DatLoader(FileLocator.resolve(calibrantFileURL).getPath());
-			DataHolder calibrantData = calibrantDataLoader.loadFile();
-			// and extracting out the relevant datasets
-			calibrantQdataset = (DoubleDataset) calibrantData.getDataset(0);
-			calibrantIdataset = (DoubleDataset) calibrantData.getDataset(1);
+			if (model.getUseInternalCalibrant() == true) {
+				// By opening the default file
+				URL calibrantFileURL = new URL("platform:/plugin/uk.ac.diamond.scisoft.analysis.processing/data/GlassyCarbon_T.dat");
+				DatLoader calibrantDataLoader = new DatLoader(FileLocator.resolve(calibrantFileURL).getPath());
+				DataHolder calibrantData = calibrantDataLoader.loadFile();
+				// and extracting out the relevant datasets
+				calibrantQdataset = (DoubleDataset) calibrantData.getDataset(0);
+				calibrantIdataset = (DoubleDataset) calibrantData.getDataset(1);
+			}
+			else {
+				// Or by opening a different file
+				String filePath = model.getAbsoluteScanFilePath();
+				DataHolder calibrantData = (DataHolder) LoaderFactory.getData(filePath);
+				// and extracting out the relevant datasets
+				calibrantQdataset = (DoubleDataset) calibrantData.getDataset(0);
+				calibrantIdataset = (DoubleDataset) calibrantData.getDataset(1);
+			}
 		} // Performing error handling where required
 		catch (IOException ioError) {
 			throw new OperationException(this, ioError);
 		} // Throwing the appropriate OperationExceptions
 		catch (ScanFileHolderException fileError) {
 			throw new OperationException(this, fileError);
+		} catch (Exception loaderFactoryError) {
+			throw new OperationException(this, loaderFactoryError);
 		}
 
 		// Then we shall populate the input datasets

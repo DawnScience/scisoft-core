@@ -25,9 +25,19 @@ import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 public class AbsoluteIntensityCalibrationModel extends AbstractOperationModel {
 
 
+	private boolean useInternalCalibrant = true;
+	
+	public boolean getUseInternalCalibrant() {
+		return useInternalCalibrant;
+	}
+	
+	public void setUseInternalCalibrant(boolean useInternalCalibrant) {
+		firePropertyChange("useInternalCalibrant", this.useInternalCalibrant, this.useInternalCalibrant = useInternalCalibrant);
+	}
+	
 	// Get the location of the calibration file
-	@OperationModelField(hint="Absolute intensity calibration, e.g. glassy carbon, file path", file = FileType.EXISTING_FILE, label = "Calibration file", fieldPosition = 0)
-	private String absoluteScanFilePath = "platform:/plugin/uk.ac.diamond.scisoft.analysis.processing/data/GlassyCarbon_T.dat";
+	@OperationModelField(hint="Absolute intensity calibration, e.g. glassy carbon, file path", file = FileType.EXISTING_FILE, label = "Calibration file", fieldPosition = 2, enableif = "useInternalCalibrant == false")
+	private String absoluteScanFilePath = "GlassyCarbon_T.dat";
 	
 	// Set up the getter...
 	public String getAbsoluteScanFilePath() {
@@ -41,7 +51,7 @@ public class AbsoluteIntensityCalibrationModel extends AbstractOperationModel {
 
 	
 	// Get the range over which the calibration is performed
-	@OperationModelField(rangevalue = RangeType.XRANGE, label = "Radial range",hint="Two values, start and end, separated by a comma i.e. 2,4.The values should match the axis selected (i.e. q, 2 theta, pixel).If you delete the text, the range is cleared and the whole lineplot is used.")
+	@OperationModelField(rangevalue = RangeType.XRANGE, label = "Radial range",hint="Two values, start and end, separated by a comma i.e. 2,4.The values should match the axis selected (i.e. q, 2 theta, pixel).If you delete the text, the range is cleared and the whole lineplot is used.", fieldPosition = 1)
 	double[] radialRange = null;
 
 	// Set up the getter...

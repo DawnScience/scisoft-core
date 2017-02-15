@@ -52,7 +52,7 @@ public class AbsoluteIntensityCalibrationModel extends AbstractOperationModel {
 	
 	// Get the range over which the calibration is performed
 	@OperationModelField(rangevalue = RangeType.XRANGE, label = "Radial range",hint="Two values, start and end, separated by a comma i.e. 2,4.The values should match the axis selected (i.e. q, 2 theta, pixel).If you delete the text, the range is cleared and the whole lineplot is used.", fieldPosition = 1)
-	double[] radialRange = null;
+	double[] radialRange = {0.015, 0.15};
 
 	// Set up the getter...
 	public double[] getRadialRange() {

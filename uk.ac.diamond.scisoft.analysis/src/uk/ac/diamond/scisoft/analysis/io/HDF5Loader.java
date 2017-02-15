@@ -494,7 +494,7 @@ public class HDF5Loader extends AbstractFileLoader {
 						oid = createObjectID(f.getID(), info.addr);
 						otype = info.type;
 					} catch (HDF5Exception ex) {
-						logger.error("Could not get object info for {} in group", name, ex);
+						logger.error("Could not get object info for {} in group {}", oname, name, ex);
 						continue;
 					}
 					if (otype == HDF5Constants.H5O_TYPE_GROUP) {
@@ -544,16 +544,16 @@ public class HDF5Loader extends AbstractFileLoader {
 						if (n != null)
 							group.addNode(oname, n);
 					} else if (otype == HDF5Constants.H5O_TYPE_NAMED_DATATYPE) {
-						logger.error("Named datatype not supported"); // TODO
+						logger.error("Named datatype not supported for {}", oname); // TODO
 					} else {
-						logger.error("Something wrong with hardlinked object");
+						logger.error("Something wrong with hardlinked object {}", oname);
 					}
 				} else if (ltype == HDF5Constants.H5L_TYPE_SOFT) {
 					// System.err.println("S: " + oname);
 					String[] linkName = new String[1];
 					int t = H5.H5Lget_value(gid, oname, linkName, HDF5Constants.H5P_DEFAULT);
 					if (t < 0) {
-						logger.error("Could not get value of link");
+						logger.warn("Could not get value of link  for {} in {}", oname, name);
 					}
 					// System.err.println("  -> " + linkName[0]);
 					SymbolicNode slink = TreeFactory.createSymbolicNode(oid, f, group, linkName[0]);
@@ -564,7 +564,7 @@ public class HDF5Loader extends AbstractFileLoader {
 					int t = H5.H5Lget_value(gid, oname, linkName, HDF5Constants.H5P_DEFAULT);
 					// System.err.println("  -> " + linkName[0] + " in " + linkName[1]);
 					if (t < 0) {
-						logger.error("Could not get value of link");
+						logger.error("Could not get value of link for {} in {}", oname, name);
 					}
 
 					String eName = linkName[1];

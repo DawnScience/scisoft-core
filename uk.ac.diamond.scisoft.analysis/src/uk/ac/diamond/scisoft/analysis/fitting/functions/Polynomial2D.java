@@ -25,6 +25,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Maths;
 import org.ejml.data.Complex64F;
 
 /**
@@ -227,6 +228,35 @@ public class Polynomial2D extends AFunction {
 		
 	}
 	
+	public DoubleDataset getOutputValuesOverlapping (double[] d,int[] len, int[] boundaryBox, int fitPower ) {
+		
+		DoubleDataset output1 = DatasetFactory.zeros(new int[] {len[0], len[1]});//new DoubleDataset(len[1], len[0]);
+		
+		for (int k=-1*(boundaryBox[1]); k<(-1*(boundaryBox[1]))+len[1]; k++){
+			for (int l=-1*(boundaryBox[0]); l<(-1*(boundaryBox[0]))+len[0]; l++){
+				
+				double temp = 0;
+				double x = k;
+				double y = l;
+			
+				for (int j = 0; j < (fitPower+1); j++) {
+					for (int i = 0; i < (fitPower+1); i++) {
+						try{
+							double v = d[(j*(fitPower+1)+i)]*Math.pow(x, j)*Math.pow(y, i);
+							temp += v;
+						}
+						catch (ArrayIndexOutOfBoundsException exc){
+							
+						}
+					}
+				}
+				
+				output1.set(temp, l-(-1*boundaryBox[0]), k-(-1*boundaryBox[1]));
+			}
+		}
+	
+		return output1;
+}
 	
 
 

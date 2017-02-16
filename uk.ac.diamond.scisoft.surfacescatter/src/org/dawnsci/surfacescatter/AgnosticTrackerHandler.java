@@ -917,11 +917,7 @@ public class AgnosticTrackerHandler {
 				
 				len = dm.getInitialLenPt()[0];
 				pt = dm.getInitialLenPt()[1];
-				
-//				initialLocation = new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]),
-//						(double) (pt[0]), (double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]),
-//						(double) (pt[0] + len[0]) };
-				
+							
 				
 				initialLocation = new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]),
 						(double) (pt[1]), (double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]),

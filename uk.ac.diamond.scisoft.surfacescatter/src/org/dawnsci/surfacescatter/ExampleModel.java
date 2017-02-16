@@ -32,6 +32,7 @@ public class ExampleModel {
 	private int boundaryBox = 10;
 	private Methodology methodology = Methodology.TWOD;
 	private double[] trackerCoordinates = {100,100,110,100,110,100,110,110};
+	private double[] intialTrackerCoordinates = {100,100,110,100,110,100,110,110};
 	private String filepath;
 	private double outputNo;
 	private ILazyDataset DatX;
@@ -267,6 +268,14 @@ public class ExampleModel {
 
 	public void setTrackerType(TrackerType1 trackerType) {
 		this.trackerType = trackerType;
+	}
+
+	public double[] getIntialTrackerCoordinates() {
+		return intialTrackerCoordinates;
+	}
+
+	public void setIntialTrackerCoordinates(double[] intialTrackerCoordinates) {
+		this.intialTrackerCoordinates = intialTrackerCoordinates;
 	}
 	
 	

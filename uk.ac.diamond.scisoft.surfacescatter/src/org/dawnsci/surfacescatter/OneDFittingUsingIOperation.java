@@ -26,8 +26,8 @@ import org.eclipse.january.dataset.Maths;
 public class OneDFittingUsingIOperation extends AbstractOperation<OneDFittingModel, OperationData> {
 	
 	private static Dataset output;
-	private int[] len;
-	private int[] pt;
+//	private int[] len;
+//	private int[] pt;
 	private Dataset in1Background;
 
 
@@ -57,8 +57,8 @@ public class OneDFittingUsingIOperation extends AbstractOperation<OneDFittingMod
 //												 int selection,
 //												 AnalaysisMethodologies.Methodology am) {
 
-		len = model.getLenPt()[0];
-		pt = model.getLenPt()[1];
+		int[] len = model.getLenPt()[0];
+		int[] pt = model.getLenPt()[1];
 
 		
 		Dataset in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input, len, pt);

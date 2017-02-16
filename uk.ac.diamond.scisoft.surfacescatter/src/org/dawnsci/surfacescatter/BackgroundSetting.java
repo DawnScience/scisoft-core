@@ -126,7 +126,6 @@ public class BackgroundSetting{
 	}
 	
 	
-		
 		@SuppressWarnings("incomplete-switch")
 		public static Dataset rOIBackground1(IDataset[] Background,  Dataset in1Background, 
 				int[] len, int[] pt,  int boundaryBox, int fitpower, Methodology direction1){
@@ -158,7 +157,7 @@ public class BackgroundSetting{
 				i1[j] = j;
 			}
 
-			for (int j = 0; j < len[1]; j++) {
+			for (int j = 0; j < length1; j++) {
 				i2[j] = j;
 			}
 

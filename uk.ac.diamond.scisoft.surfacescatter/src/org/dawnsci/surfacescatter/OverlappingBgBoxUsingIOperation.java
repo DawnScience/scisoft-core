@@ -122,7 +122,7 @@ public class OverlappingBgBoxUsingIOperation
 				pBackgroundSubtracted = Maths.subtract(in1, in1Background, null);
 			}
 			catch(Exception e){
-				debug("uh fuck");
+				debug("error in second overlapping background subtraction IOperation");
 			}
 			
 				

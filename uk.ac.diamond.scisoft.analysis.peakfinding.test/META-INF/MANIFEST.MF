@@ -7,3 +7,4 @@ Fragment-Host: uk.ac.diamond.scisoft.analysis.peakfinding
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.junit;bundle-version="[4.12.0,5.0.0)"
 Bundle-Vendor: Diamond Light Source
+Import-Package: uk.ac.diamond.scisoft.analysis.fitting.functions

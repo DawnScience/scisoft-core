@@ -5,9 +5,42 @@
          point="org.eclipse.dawnsci.analysis.api.peakfinder">
       <peakFinder
             class="uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders.MaximaDifference"
-            id="uk.ac.diamond.scisoft.analysis.peakfinding.peakFinder1"
+            id="Maxima Difference"
             name="Maxima Difference">
       </peakFinder>
+      <peakFinder
+            class="uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders.AverageWindowAverageDiffs"
+            id="Avg Window Diff"
+            name="Avg Window Diff">
+      </peakFinder>
+      <peakFinder
+            class="uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders.SumDifferenceAverage"
+            id="Sum Diff"
+            name="Sum Diff">
+      </peakFinder>
+      <peakFinder
+            class="uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders.AutoPeakFinder"
+            id="AutoPeakfinder"
+            name="AutoPeakfinder">
+      </peakFinder>
+      <peakFinder
+            class="uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders.WaveletTransformPeakFinds"
+            id="Wavelet Transform"
+            name="Wavelet Transform">
+      </peakFinder>
+   </extension>
+   <extension
+         point="uk.ac.diamond.scisoft.analysis.fitting.function">
+      <function
+            class="uk.ac.diamond.scisoft.analysis.peakfinding.MexicanHatWavelet"
+            id="uk.ac.diamond.scisoft.analysis.peakfinding.MexicanHatWavelet"
+            name="Mexican Hat Wavelet"
+            usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.FunctionType">
+      </function>
+      <usecase
+            id="uk.ac.diamond.scisoft.analysis.peakfinding.usecase2"
+            name="uk.ac.diamond.scisoft.analysis.peakfinding.usecase2">
+      </usecase>
    </extension>
 
 </plugin>

@@ -329,7 +329,6 @@ public class SXRDGeometricCorrections {
 								
 								if (fb!=0 && fo!=0 && fd !=0){
 									
-									System.out.println("@@@@@@@@@@~~~~~~~~~~~~~~~~~~$$$$$$$$$$$$$$$$$$$REALRESULT!{{{{{{}}}}}}}}}}}}}}}}$$$$$$$$$$$$$$$%%%%%%%%%%");
 									
 									if(fb != 0){
 										System.out.println("fb :  " + fb + "  x = " +x + "  y = " +y);

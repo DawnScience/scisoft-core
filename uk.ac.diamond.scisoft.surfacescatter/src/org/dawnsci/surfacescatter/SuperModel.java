@@ -64,10 +64,35 @@ public class SuperModel {
 	private int numberOfImages;
 	private String imageFolderPath;
 	private int startFrame;
+	private ArrayList<Double> lorentzCorrection;
+	private ArrayList<Double> areaCorrection;
+	private ArrayList<Double> polarisation;
+	
+	public ArrayList<Double> getAreaCorrection() {
+		return areaCorrection;
+	}
+
+	public void setAreaCorrection(ArrayList<Double> areaCorrection) {
+		this.areaCorrection = areaCorrection;
+	}
 
 
-	
-	
+	public ArrayList<Double> getPolarisation() {
+		return polarisation;
+	}
+
+	public void setPolarisation(ArrayList<Double> polarisation) {
+		this.polarisation = polarisation;
+	}
+
+	public ArrayList<Double> getLorentzCorrection() {
+		return lorentzCorrection;
+	}
+
+	public void setLorentzCorrection(ArrayList<Double> lorentzCorrection) {
+		this.lorentzCorrection = lorentzCorrection;
+	}
+
 	
 	public int getStartFrame() {
 		return startFrame;
@@ -173,6 +198,10 @@ public class SuperModel {
 		trackerLocationList = null;
 		trackerKList = null;
 		locationList = null;
+		polarisation = null;
+		lorentzCorrection = null;
+		areaCorrection = null;
+		
 //		boxOffsetLenPt = null;
 	}
 	
@@ -446,6 +475,120 @@ public class SuperModel {
 				this.yList= yList1);
 	}
 	
+	public void addLorentz(double y){
+		if (lorentzCorrection==null){
+			lorentzCorrection= new ArrayList<Double>();
+		}
+		
+		ArrayList<Double> lorentzCorrection1 = new ArrayList<Double>();
+		lorentzCorrection1 = (ArrayList<Double>) lorentzCorrection.clone();
+		lorentzCorrection1.add(y);
+		
+	
+		firePropertyChange("lorentzCorrection", this.lorentzCorrection,
+				this.lorentzCorrection= lorentzCorrection1);
+	}
+	
+	public void addLorentz(int l, int k, double y){
+		
+		if (lorentzCorrection==null){
+			lorentzCorrection= new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				lorentzCorrection.add(0.0);
+				}
+		}
+		
+		if (lorentzCorrection.size() == 0){
+			lorentzCorrection = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				lorentzCorrection.add(0.0);
+				}
+		}
+				
+		ArrayList<Double> lorentzCorrection1 = new ArrayList<Double>();
+		lorentzCorrection1 = (ArrayList<Double>) lorentzCorrection.clone();
+		lorentzCorrection1.set(k, y);
+		
+		firePropertyChange("lorentzCorrection", this.lorentzCorrection,
+				this.lorentzCorrection= lorentzCorrection1);
+	}
+	
+	public void addPolarisation(double y){
+		if (polarisation==null){
+			polarisation= new ArrayList<Double>();
+		}
+		
+		ArrayList<Double> polarisation1 = new ArrayList<Double>();
+		polarisation1 = (ArrayList<Double>) polarisation.clone();
+		polarisation1.add(y);
+		
+	
+		firePropertyChange("polarisation", this.polarisation,
+				this.polarisation= polarisation1);
+	}
+	
+	public void addPolarisation(int l, int k, double y){
+		
+		if (polarisation==null){
+			polarisation= new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				polarisation.add(0.0);
+				}
+		}
+		
+		if (polarisation.size() == 0){
+			polarisation = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				polarisation.add(0.0);
+				}
+		}
+				
+		ArrayList<Double> polarisation1 = new ArrayList<Double>();
+		polarisation1 = (ArrayList<Double>) polarisation.clone();
+		polarisation1.set(k, y);
+		
+		firePropertyChange("polarisation", this.polarisation,
+				this.polarisation= polarisation1);
+	}
+	
+	public void addAreaCorrection(double y){
+		if (areaCorrection==null){
+			areaCorrection= new ArrayList<Double>();
+		}
+		
+		ArrayList<Double> areaCorrection1 = new ArrayList<Double>();
+		areaCorrection1 = (ArrayList<Double>) areaCorrection.clone();
+		areaCorrection1.add(y);
+		
+	
+		firePropertyChange("areaCorrection", this.areaCorrection,
+				this.areaCorrection= areaCorrection1);
+	}
+	
+	public void addAreaCorrection(int l, int k, double y){
+		
+		if (areaCorrection==null){
+			areaCorrection= new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				areaCorrection.add(0.0);
+				}
+		}
+		
+		if (areaCorrection.size() == 0){
+			areaCorrection = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				areaCorrection.add(0.0);
+				}
+		}
+				
+		ArrayList<Double> areaCorrection1 = new ArrayList<Double>();
+		areaCorrection1 = (ArrayList<Double>) areaCorrection.clone();
+		areaCorrection1.set(k, y);
+		
+		firePropertyChange("areaCorrection", this.areaCorrection,
+				this.areaCorrection= areaCorrection1);
+	}
+		
 	public void yListReset(){
 		
 		yList = null;

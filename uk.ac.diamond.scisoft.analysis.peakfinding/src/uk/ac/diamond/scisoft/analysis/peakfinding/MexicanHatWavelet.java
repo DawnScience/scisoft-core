@@ -33,12 +33,23 @@ public class MexicanHatWavelet extends AFunction {
 	
 	private static final String[] PARAM_NAMES = new String[]{"width", "posn"};
 	
+
+	public MexicanHatWavelet() {
+		this(PARAM_NAMES);
+	}
+	
 	public MexicanHatWavelet(double numPoints,double width ){
 		super(numPoints,width);
 		getParameter(0).setValue(numPoints);
 		getParameter(1).setValue(width);
 	}
 	
+	public MexicanHatWavelet(String[] paramNames) {
+		//Default values
+		super(100,10);
+	}
+	
+
 	@Override
 	public double val(double... values) {
 		double timePos = values[0];

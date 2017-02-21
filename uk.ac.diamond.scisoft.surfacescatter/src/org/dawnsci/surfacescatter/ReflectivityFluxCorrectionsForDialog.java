@@ -27,10 +27,6 @@ public class ReflectivityFluxCorrectionsForDialog{
 	
 	protected static Dataset reflectivityFluxCorrections (String path, Double k, ExampleModel model){
 
-		/*
-		 * Method takes in a 2D image (Dataset) and returns flux corrected image.
-		 */
-
 		Dataset m = DatasetFactory.zeros(new int[] {1});
 		
 		m.set(k, 0);
@@ -73,6 +69,28 @@ public class ReflectivityFluxCorrectionsForDialog{
 		
 		return output;
 		}
+	
+	
+	
+	protected static double reflectivityFluxCorrectionsDouble (String path, Double k, ExampleModel model){
+
+		Dataset m = DatasetFactory.zeros(new int[] {1});
+		
+		m.set(k, 0);
+		
+		
+		Dataset[] fluxData = RecoverNormalisationFluxBatchForDialog.normalisationFlux(path, model);
+
+		System.out.println("m shape:  " + m.getShape()[0]);
+		
+		Dataset flux =  (Dataset) Interpolation1D.splineInterpolation(fluxData[0], fluxData[1], m);;
+
+		
+		double output = Math.floorDiv((long)1,(long)flux.getDouble(0));
+		
+		return output;
+		}
+	
 }
 //test
 

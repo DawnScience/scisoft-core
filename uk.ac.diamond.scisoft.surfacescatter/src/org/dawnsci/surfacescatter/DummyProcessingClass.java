@@ -116,9 +116,7 @@ public class DummyProcessingClass {
 						   trackingMarker);
 				output = outputOD1.getData();
 				
-//				double[] loc1 =  (double[]) outputOD1.getAuxData()[0];
-//				sm.addLocationList(selection,loc1);	
-////				
+
 				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[0];
 				
 				sm.setTemporaryBackgroundHolder(temporaryBackground1);
@@ -607,14 +605,6 @@ public class DummyProcessingClass {
 				break;
 		}
 	
-//				
-//		IndexIterator it1 = ((Dataset) output).getIterator();
-//		
-//		while (it1.hasNext()) {
-//			double q = ((Dataset) output).getElementDoubleAbs(it1.index);
-//			if (q <= 0)
-//				((Dataset) output).setObjectAbs(it1.index, 0.1);
-//		}
 		
 		yValue = correctionMethod(model, 
 				  sm, 
@@ -630,9 +620,7 @@ public class DummyProcessingClass {
 			e.printStackTrace();
 		}
 		
-		
-//		Dataset yValue = Maths.multiply(output, correction.getDouble(k));
-		
+	
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double fhkl = (double) 0.001;
 		if (intensity >=0){
@@ -676,10 +664,7 @@ public class DummyProcessingClass {
 		
 		switch(model.getMethodology()){
 			case TWOD_TRACKING:
-								
-//				TwoDTracking twoDTracking = new TwoDTracking();
-//				output = twoDTracking.TwoDTracking1(sm, input, model, dm, trackingMarker, k, selection);
-				
+												
 				AgnosticTrackerHandler ath = new AgnosticTrackerHandler();
 							
 				ath.TwoDTracking3(sm, 
@@ -741,8 +726,6 @@ public class DummyProcessingClass {
 				
 
 				output = outputOD1.getData();
-//				double[] loc1 =  (double[]) outputOD1.getAuxData()[0];
-//				sm.addLocationList(selection,loc1);		
 
 				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[0];
 				
@@ -789,12 +772,6 @@ public class DummyProcessingClass {
 			case OVERLAPPING_BACKGROUND_BOX:
 				
 				
-//				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
-//																   model, 
-//																   sm, 
-//																   pS, 
-//																   ssvsPS,
-//																   selection);
 				if(sm.getTrackerOn()){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
@@ -932,11 +909,7 @@ public class DummyProcessingClass {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-//		Dataset yValue = Maths.multiply(output, correction.getDouble(k));
-		
-		
+				
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double fhkl = (double) 0.001;
 		if (intensity >=0){
@@ -1013,13 +986,7 @@ public class DummyProcessingClass {
 				break;
 				
 			case TWOD:
-//				if (pS.getRegion("Background Region")!=null){
-//					pS.removeRegion(pS.getRegion("Background Region"));
-//				}
-//				else{
-//				}
-				
-				
+			
 				if(sm.getTrackerOn()){
 					AgnosticTrackerHandler ath2 = new AgnosticTrackerHandler();
 					
@@ -1051,8 +1018,6 @@ public class DummyProcessingClass {
 													   selection,
 													   trackingMarker);
 				output = outputOD1.getData();
-//				double[] loc1 = (double[]) outputOD1.getAuxData()[0] ;
-//				sm.addLocationList(selection,loc1);	
 				
 				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[0];
 				
@@ -1098,17 +1063,6 @@ public class DummyProcessingClass {
 				
 				break;
 			case OVERLAPPING_BACKGROUND_BOX:
-//				if (pS.getRegion("Background Region")!=null){
-//					pS.removeRegion(pS.getRegion("Background Region"));
-//				}
-//				output = OverlappingBackgroundBox.OverlappingBgBox(input, 
-//																   model, 
-//																   sm, 
-//																   pS, 
-//																   ssvsPS,
-//																   selection);
-//				
-//				
 
 				if(sm.getTrackerOn()){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
@@ -1180,9 +1134,7 @@ public class DummyProcessingClass {
 						   								trackingMarker,
 						   								k);
 				output = outputOD2.getData();
-//				double[] loc2 =  (double[]) outputOD2.getAuxData()[0];
-//				sm.addLocationList(selection,loc2);
-											
+
 				IDataset temporaryBackground2 = (IDataset) outputOD2.getAuxData()[1];
 				sm.setTemporaryBackgroundHolder(temporaryBackground2);
 				
@@ -1630,7 +1582,8 @@ public class DummyProcessingClass {
 									IDataset output,
 									IDataset input){
 		
-		Dataset correction = DatasetFactory.zeros(new int[] {1}, Dataset.FLOAT64);
+//		Dataset correction = DatasetFactory.zeros(new int[] {1}, Dataset.FLOAT64);
+		double correction = 0.001;
 		int correctionSelector = sm.getCorrectionSelection();
 		
 		yValue = DatasetFactory.zeros(new int[] {1}, Dataset.ARRAYFLOAT64);
@@ -1638,23 +1591,29 @@ public class DummyProcessingClass {
 		if (correctionSelector == 0){
 			
 			try {
-				correction = Maths.multiply(SXRDGeometricCorrections.lorentz(model), SXRDGeometricCorrections.areacor(model
+				double lorentz = SXRDGeometricCorrections.lorentz(model).getDouble(k);
+				sm.addLorentz(sm.getImages().length, k, lorentz);
+				
+				double areaCorrection = SXRDGeometricCorrections.areacor(model
 						, gm.getBeamCorrection(), gm.getSpecular(),  gm.getSampleSize()
 						, gm.getOutPlaneSlits(), gm.getInPlaneSlits(), gm.getBeamInPlane()
-						, gm.getBeamOutPlane(), gm.getDetectorSlits()));
-				correction = Maths.multiply(SXRDGeometricCorrections.polarisation(model, gm.getInplanePolarisation()
-						, gm.getOutplanePolarisation()), correction);
-				correction = Maths.multiply(
-						SXRDGeometricCorrections.polarisation(model, gm.getInplanePolarisation(), gm.getOutplanePolarisation()),
-						correction);
-				if (correction.getDouble(0) ==0){
-					correction.set(0.001, 0);
+						, gm.getBeamOutPlane(), gm.getDetectorSlits()).getDouble(k);
+				sm.addAreaCorrection(sm.getImages().length, k, areaCorrection);
+				
+				double polarisation = SXRDGeometricCorrections.polarisation(model, gm.getInplanePolarisation()
+						, gm.getOutplanePolarisation()).getDouble(k);
+				sm.addPolarisation(sm.getImages().length, k, polarisation);
+				
+				correction = lorentz* polarisation * areaCorrection;
+
+				if (correction ==0){
+					correction = 0.001;
 				}
 			} catch (DatasetException e) {
 	
 			}
 			
-			yValue = Maths.multiply(output, correction.getDouble(k));
+			yValue = Maths.multiply(output, correction);
 			
 //			debug("Correction Value at local k:  " + Double.toString(correction.getDouble(k)) + "  local k: " + k); 
 		}
@@ -1662,24 +1621,24 @@ public class DummyProcessingClass {
 		else if (correctionSelector ==1){
 
 			try {
-				correction = DatasetFactory.createFromObject(GeometricCorrectionsReflectivityMethod.reflectivityCorrectionsBatch(model.getDcdtheta(), k, sm, input, gm.getAngularFudgeFactor(), 
+				correction = (GeometricCorrectionsReflectivityMethod.reflectivityCorrectionsBatch(model.getDcdtheta(), k, sm, input, gm.getAngularFudgeFactor(), 
 						gm.getBeamHeight(), gm.getFootprint()));
 				
-				Dataset ref = 
-						ReflectivityFluxCorrectionsForDialog.reflectivityFluxCorrections(gm.getFluxPath(), 
+				double ref = 
+						ReflectivityFluxCorrectionsForDialog.reflectivityFluxCorrectionsDouble(gm.getFluxPath(), 
 																						 model.getQdcdDat().getDouble(k), 
 																						 model);
 				
-				correction = Maths.multiply(correction, ref);
-				if (correction.getDouble(0) ==0){
-					correction.set(0.001, 0);
+				correction = Math.multiplyExact((long)correction, (long)ref);
+				if (correction ==0){
+					correction = 0.001;
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-			yValue = Maths.multiply(output, correction.getDouble(0));
+			yValue = Maths.multiply(output, correction);
 //			double normalisation  = 1/output.getDouble(0);
 //			yValue = Maths.multiply(normalisation, yValue);
 		}
@@ -1688,7 +1647,7 @@ public class DummyProcessingClass {
 		else if (correctionSelector ==2){
 
 			try {
-				correction = DatasetFactory.createFromObject(GeometricCorrectionsReflectivityMethod.reflectivityCorrectionsBatch(model.getDcdtheta(), k, sm, input, gm.getAngularFudgeFactor(), 
+				correction = (GeometricCorrectionsReflectivityMethod.reflectivityCorrectionsBatch(model.getDcdtheta(), k, sm, input, gm.getAngularFudgeFactor(), 
 						gm.getBeamHeight(), gm.getFootprint()));
 				
 //				Dataset ref = 
@@ -1697,15 +1656,15 @@ public class DummyProcessingClass {
 //																						 model);
 				
 //				correction = ref;
-				if (correction.getDouble(0) ==0){
-					correction.set(0.001, 0);
+				if (correction ==0){
+					correction = 0.001;
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-			yValue = Maths.multiply(output, correction.getDouble(0));
+			yValue = Maths.multiply(output, correction);
 //			double normalisation  = 1/output.getDouble(0);
 //			yValue = Maths.multiply(normalisation, yValue);
 		}

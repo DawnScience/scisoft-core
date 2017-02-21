@@ -89,13 +89,11 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	private ConcurrentHashMap<String,ConcurrentHashMap<Integer, String[]>> groupAxesNames = new ConcurrentHashMap<String,ConcurrentHashMap<Integer,String[]>>();
 	private String filePath;
 	private NexusFile nexusFile;
+	private long lastFlush = 0;
 	
 	private String originalFilePath;
 	
 	private boolean swmring = false;
-	
-	private AtomicInteger count = new AtomicInteger(0);
-	private int flushEvery = 50;
 
 	private final static Logger logger = LoggerFactory.getLogger(NexusFileExecutionVisitor.class);
 	
@@ -128,11 +126,8 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		if (metadata != null && metadata.get(0) != null) origin = metadata.get(0);
 //		file = HierarchicalDataFactory.getWriter(filePath);
 		nexusFile = NexusFileHDF5.createNexusFile(filePath, swmring);
-		
-		if (nexusFile instanceof NexusFileHDF5 && swmring) {
-			logger.debug("CACHING DATASETS");
-			((NexusFileHDF5)nexusFile).setCacheDataset(true);
-		}
+		nexusFile.setCacheDataset(true);
+
 		
 		initGroups();
 		try {
@@ -161,7 +156,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			}
 		}
 		
-
+		lastFlush = System.currentTimeMillis();
 	}
 
 	/**
@@ -182,7 +177,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			dataset.setName(FINISHED);
 			createWriteableLazy(dataset, group);
 		}
-				if (originalFilePath != null) {
+		if (originalFilePath != null) {
 			try {
 				ILoaderService loaderService = LocalServiceManager.getLoaderService();
 				IDataHolder dh = loaderService.getData(originalFilePath, null);
@@ -205,7 +200,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			} catch (Exception e) {
 				logger.error("Could not link original file", e);
 			}
-			
+
 		}
 	}
 
@@ -251,17 +246,15 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			}
 		}
 		
-		int i = count.getAndIncrement();
-		
-		if (nexusFile instanceof NexusFileHDF5 && swmring && i%flushEvery == 0) {
-			synchronized (nexusFile) {
+
+		synchronized (nexusFile) {
+			long time = System.currentTimeMillis();
+			if (time - lastFlush > 2000) {
+				lastFlush = time;
 				((NexusFileHDF5)nexusFile).flushAllCachedDatasets();
 			}
+
 		}
-		
-		
-		
-		
 	}
 
 	@Override
@@ -526,9 +519,6 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		ILazyWriteableDataset wds = dn.getWriteableDataset();
 		SliceND s = new SliceND(dataset.getShape(),determineMaxShape(dataset),new Slice[]{oSlice[axisDim]});
 		wds.setSlice(null, dataset, s);
-//		if (nexusFile instanceof NexusFileHDF5 && swmring) {
-//			((NexusFileHDF5)nexusFile).flushCachedDataset(group+"/"+dataset.getName());
-//		}
 	}
 
 	/**

@@ -6,12 +6,14 @@ import static org.junit.Assert.fail;
 
 import org.dawb.common.services.ServiceManager;
 import org.dawnsci.persistence.PersistenceServiceCreator;
+import org.dawnsci.persistence.ServiceLoader;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
+import org.eclipse.dawnsci.hdf5.nexus.NexusFileFactoryHDF5;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
@@ -50,6 +52,8 @@ public class XICCO2DTest {
 
 	@Before
 	public void setUp() throws Exception {
+		// Set factory for test
+		ServiceLoader.setNexusFactory(new NexusFileFactoryHDF5());
 		// Set up a File Service for ImportMaskMetadata
 		ServiceManager.setService(IPersistenceService.class, PersistenceServiceCreator.createPersistenceService());
 		LocalServiceManager.setLoaderService(new LoaderServiceImpl());

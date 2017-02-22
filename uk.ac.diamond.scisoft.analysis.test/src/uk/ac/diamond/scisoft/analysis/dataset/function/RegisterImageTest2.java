@@ -21,7 +21,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class RegisterImageTest {
+public class RegisterImageTest2 {
 	private static final int MAX = 6;
 	private static final double X_DELTA = 2.4;
 	private static final double Y_DELTA = 0.4;
@@ -29,13 +29,13 @@ public class RegisterImageTest {
 	private static final int Y_SIZE = 256;
 	
 	private static final int START = 3; // start divder
-	private static final int MARGIN = 5; // margin for ROI
+	private static final int MARGIN = 10; // margin for ROI
 	private static final double OBJECT_X = 42.3;
 	private static final double OBJECT_Y = 27.5;
 
 	@Test
 	public void testRegisterSynthetic() {
-		testRegisterSynthetic(null, 0.173);
+		testRegisterSynthetic(null, 0.09);
 	}
 
 	@Test
@@ -46,17 +46,18 @@ public class RegisterImageTest {
 		end[1] += 2*OBJECT_Y + MAX*Y_DELTA + MARGIN;
 		RectangularROI roi = new RectangularROI(start, end);
 		System.err.println(roi);
-		testRegisterSynthetic(roi, 0.176);
+		testRegisterSynthetic(roi, 0.41);
 	}
 
 	private void testRegisterSynthetic(IRectangularROI roi, double delta) {
 		double[][] shifts = generateShifts(MAX);
 		System.err.println(Arrays.deepToString(shifts));
 		IDataset[] images = createTestImages(shifts, Y_SIZE, X_SIZE);
-		IDataset anchor = images[0];
 
-		RegisterImage reg = new RegisterImage();
-		reg.setReference(anchor);
+		RegisterImage2 reg = new RegisterImage2();
+		DoubleDataset filter = DatasetFactory.ones(DoubleDataset.class, 9, 9);
+		filter.imultiply(1./ ((Number) filter.sum()).doubleValue());
+		reg.setFilter(filter);
 		reg.setRectangle(roi);
 		List<? extends IDataset> coords = reg.value(images);
 		for (int i = 0; i < MAX; i++) {

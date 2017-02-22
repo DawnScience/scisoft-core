@@ -25,8 +25,8 @@ public class ImageUtils {
 	 * and are the maximum in each window
 	 * @param data
 	 * @param window size of window
-	 * @param low lower threshold value
-	 * @param high upper threshold value
+	 * @param low lower threshold value for centre of peak
+	 * @param high upper threshold value for centre of peak
 	 * @return list of their sum and centroids (as coordinates in N x rank dataset)
 	 */
 	public static List<Dataset> findWindowedPeaks(Dataset data, int window, double low, double high) {

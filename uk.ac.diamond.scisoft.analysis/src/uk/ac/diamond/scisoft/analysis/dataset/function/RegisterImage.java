@@ -33,6 +33,8 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 
 /**
  * Register images using a phase correlation method that has sub-pixel accuracy
+ * <p>
+ * This fails for noisy, relatively featureless images
  */
 public class RegisterImage implements DatasetToDatasetFunction {
 
@@ -42,9 +44,12 @@ public class RegisterImage implements DatasetToDatasetFunction {
 	private int[] shape;
 	private int[] pShape; // padded shape
 	private Dataset window; // window function
-	private Dataset fAnchor; // conjugate of windowed anchor
+	private Dataset cfAnchor; // conjugate transform of windowed anchor
+	private Dataset fAnchor; // transform of windowed anchor
 	private SliceND slice = null;
 	private boolean dirty = true;
+	private Dataset tFilter = null;
+	private Dataset filter;
 
 	public RegisterImage() {
 	}
@@ -60,7 +65,7 @@ public class RegisterImage implements DatasetToDatasetFunction {
 
 		anchor = reference;
 		shape = anchor.getShape();
-		dirty  = true;
+		dirty = true;
 	}
 
 	private int[] padShape(int[] shape) {
@@ -90,18 +95,47 @@ public class RegisterImage implements DatasetToDatasetFunction {
 
 		window = LinearAlgebra.outerProduct(Signal.tukeyWindow(wShape[0], tukeyWidth), Signal.tukeyWindow(wShape[1], tukeyWidth));
 
-		fAnchor = Maths.conjugate(FFT.fftn(preprocess(anchor), pShape, null));
-		dirty  = false;
+		if (filter != null) {
+			Dataset nfilter = DatasetFactory.zeros(pShape);
+			nfilter.setSlice(filter, null, filter.getShapeRef(), null);
+			tFilter = FFT.fftn(nfilter, pShape, null);
+		}
+		fAnchor = pTF(anchor);
+		cfAnchor = Maths.conjugate(fAnchor);
+		dirty = false;
 	}
 
-	private Dataset preprocess(IDataset image) {
+	/**
+	 * Set filter to use for convolving images
+	 * @param filter
+	 */
+	public void setFilter(IDataset filter) {
+		this.filter = DatasetUtils.convertToDataset(filter);
+		dirty = true;
+	}
+
+	/**
+	 * Preprocess, transform and filter
+	 * @param image
+	 * @return result
+	 */
+	public Dataset pTF(IDataset image) {
 		// TODO use gradient images (dx, dy) as complex pair
-		return DatasetUtils.cast(DoubleDataset.class, image.getSlice(slice)).isubtract(image.mean()).imultiply(window);
+		DoubleDataset preprocessed = DatasetUtils.cast(DoubleDataset.class, image.getSlice(slice)).isubtract(image.mean()).imultiply(window);
+		Dataset transform = FFT.fftn(preprocessed, pShape, null);
+		if (tFilter  != null) {
+			transform.imultiply(tFilter);
+		}
+		return transform;
 	}
 
+	/**
+	 * Set width for window function
+	 * @param width
+	 */
 	public void setWindowFunction(double width) {
 		tukeyWidth = width;
-		dirty  = true;
+		dirty = true;
 	}
 
 	/**
@@ -110,7 +144,7 @@ public class RegisterImage implements DatasetToDatasetFunction {
 	 */
 	public void setRectangle(IRectangularROI rectangle) {
 		roi = rectangle;
-		dirty  = true;
+		dirty = true;
 	}
 
 	/**
@@ -131,10 +165,10 @@ public class RegisterImage implements DatasetToDatasetFunction {
 			}
 
 			Dataset pCorrelation = phaseCorrelate(d);
-//			shifts = calcForooshShift(pCorrelation);
-//			System.err.println("Foroosh : " + Arrays.toString(shifts));
-//			shifts = findCentroid(pCorrelation, Math.min(pCorrelation.getShapeRef()[0], 7));
-//			System.err.println("Centroid: " + Arrays.toString(shifts));
+			shifts = calcForooshShift(pCorrelation);
+			System.err.println("Foroosh : " + Arrays.toString(shifts));
+			shifts = findCentroid(pCorrelation, Math.min(pCorrelation.getShapeRef()[0], 7));
+			System.err.println("Centroid: " + Arrays.toString(shifts));
 			shifts = fitGaussians(pCorrelation, Math.min(pCorrelation.getShapeRef()[0], 11));
 			System.err.println("Fit     : " + Arrays.toString(shifts));
 			result.add(DatasetFactory.createFromObject(shifts));
@@ -149,25 +183,93 @@ public class RegisterImage implements DatasetToDatasetFunction {
 	 * @param im
 	 * @return return central region of phase correlation
 	 */
-	protected Dataset phaseCorrelate(IDataset im) {
+	public Dataset phaseCorrelate(IDataset im) {
 		if (dirty) {
 			update();
 		}
 
-		Dataset fImage = FFT.fftn(preprocess(im), pShape, null);
+		Dataset fImage = pTF(im);
 
 		// phase correlate
-		Dataset spectrum = Maths.phaseAsComplexNumber(fImage.imultiply(fAnchor), true);
-		// spectrum = Maths.phaseAsComplexNumber(Maths.dividez(fAnchor, fImage), true); // more stable???
+//		Dataset spectrum = Maths.phaseAsComplexNumber(fImage.imultiply(cfAnchor), true);
+		Dataset spectrum = Maths.phaseAsComplexNumber(Maths.dividez(fImage, fAnchor), true); // more stable???
 
 		Dataset pc = FFT.ifftn(spectrum, pShape, null).getRealView();
 
 		return FFT.fftshift(pc, null);
 	}
 
+	/**
+	 * @param im
+	 * @return return central region of phase correlation
+	 */
+	public Dataset phaseCorrelate2(IDataset im) {
+		if (dirty) {
+			update();
+		}
+
+		Dataset fImage = pTF(im);
+
+		// phase correlate
+		Dataset spectrum = Maths.phaseAsComplexNumber(fImage.imultiply(cfAnchor), true);
+//		Dataset spectrum = Maths.phaseAsComplexNumber(Maths.dividez(fImage, fAnchor), true); // more stable???
+
+		Dataset pc = FFT.ifftn(spectrum, pShape, null).getRealView();
+
+		return FFT.fftshift(pc, null);
+	}
+
+	/**
+	 * @param im
+	 * @return return central region of cross-correlation
+	 */
+	public Dataset crossCorrelate(IDataset im) {
+		if (dirty) {
+			update();
+		}
+
+		Dataset fImage = pTF(im);
+
+		Dataset spectrum = fImage.imultiply(cfAnchor);
+
+		Dataset cc = FFT.ifftn(spectrum, pShape, null).getRealView();
+
+		return FFT.fftshift(cc, null);
+	}
+
+	/**
+	 * @param im
+	 * @param factor
+	 * @return return central region of cross-correlation
+	 */
+	public Dataset crossCorrelate(IDataset im, int factor) {
+		if (dirty) {
+			update();
+		}
+
+		Dataset fImage = pTF(im);
+		Dataset spectrum = fImage.imultiply(cfAnchor);
+		int[] nshape;
+		if (factor > 1) {
+			nshape = pShape.clone();
+			for (int i = 0; i < nshape.length; i++) {
+				nshape[i] *= factor;
+			}
+			spectrum = FFT.zeroPad(spectrum, nshape, true);
+		} else {
+			nshape = pShape;
+		}
+
+		Dataset cc = FFT.ifftn(spectrum, nshape, null).getRealView();
+
+		return FFT.fftshift(cc, null);
+	}
+
+	// Foroosh et al, "Extension of Phase Correlation to Subpixel Registration",
+	// IEEE Trans. Image Processing, v11n3, 188-200 (2002)
 	protected double[] calcForooshShift(Dataset pc) {
 		int[] maxpos = pc.maxPos(); // peak pos
-//		System.out.println("Max: " + Arrays.toString(maxpos));
+		System.out.println("Max: " + Arrays.toString(maxpos));
 		double c0 = pc.getDouble(maxpos);
 		double[] shifts = new double[2];
 		for (int i = 0; i < 2; i++) {

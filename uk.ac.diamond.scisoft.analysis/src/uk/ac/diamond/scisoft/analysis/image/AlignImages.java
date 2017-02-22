@@ -15,12 +15,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROIList;
+import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
@@ -29,7 +34,7 @@ import org.eclipse.january.dataset.SliceND;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.function.RegisterImage;
+import uk.ac.diamond.scisoft.analysis.dataset.function.RegisterImage2;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
 
@@ -41,50 +46,41 @@ public class AlignImages {
 	 * @param images datasets
 	 * @param shifted images
 	 * @param roi
-	 * @param fromStart direction of image alignment: should currently be set to true 
-	 * (the method needs to be re-modified to take into account the flip mode)
 	 * @param preShift
 	 * @param monitor
 	 * @return shifts
 	 */
-	public static List<double[]> align(final IDataset[] images, final List<IDataset> shifted, 
-			final RectangularROI roi, final boolean fromStart, double[] preShift, IMonitor monitor) {
-		List<IDataset> list = new ArrayList<IDataset>();
+	public static List<double[]> align(final IDataset[] images, final List<Dataset> shifted, 
+			final RectangularROI roi, double[] preShift, IMonitor monitor) {
+		List<IDataset> list = new ArrayList<>();
 		Collections.addAll(list, images);
-		if (!fromStart) {
-			Collections.reverse(list);
-		}
-		final IDataset anchor = list.get(0);
-		final int length = list.size();
-		final List<double[]> shift = new ArrayList<double[]>();
-		if (preShift != null) {
-			shift.add(preShift);
-		} else {
-			shift.add(new double[] {0., 0.});
-		}
 
-		shifted.add(anchor);
-		RegisterImage registerImage = new RegisterImage();
-		registerImage.setReference(anchor);
+		RegisterImage2 registerImage = new RegisterImage2();
 		registerImage.setRectangle(roi);
-		IDataset[] originals = Arrays.copyOfRange(images, 1, length);
-		List<Dataset> output = registerImage.value(originals);
+		registerImage.setMonitor(monitor);
+
+		// low-pass filter by averaging 9x9 pixels
+		DoubleDataset filter = DatasetFactory.ones(DoubleDataset.class, 9, 9);
+		filter.imultiply(1./ ((Number) filter.sum()).doubleValue());
+		registerImage.setFilter(filter);
+		registerImage.setShiftImage(shifted != null);
+
+		List<Dataset> output = registerImage.value(images);
+		final int length = output.size();
 		
-		for (int i = 0; i < length - 1; i++) {
-			double[] s = (double[]) output.get(2*i).getBuffer();
+		final List<double[]> shift = new ArrayList<>();
+		for (int i = 0; i < length; i+=2) {
+			double[] s = (double[]) output.get(i).getBuffer();
 			// We add the preShift to the shift data
 			if (preShift != null) {
 				s[0] += preShift[0];
 				s[1] += preShift[1];
 			}
 			shift.add(s);
-			Dataset data = output.get(2*i + 1);
-			data.setName("aligned_" + originals[i].getName());
-			shifted.add(data);
-			if (monitor != null) {
-				if(monitor.isCancelled())
-					return shift;
-				monitor.worked(1);
+			if (shifted != null) {
+				Dataset data = output.get(i + 1);
+				data.setName("aligned_" + images[i/2].getName());
+				shifted.add(data);
 			}
 		}
 		return shift;
@@ -95,11 +91,10 @@ public class AlignImages {
 	 * @param files
 	 * @param shifted images
 	 * @param roi
-	 * @param fromStart
 	 * @param preShift
 	 * @return shifts
 	 */
-	public static List<double[]> align(final String[] files, final List<IDataset> shifted, final RectangularROI roi, final boolean fromStart, final double[] preShift, IMonitor monitor) {
+	public static List<double[]> align(final String[] files, final List<Dataset> shifted, final RectangularROI roi, final double[] preShift, IMonitor monitor) {
 		IDataset[] images = new IDataset[files.length];
 
 		for (int i = 0; i < files.length; i++) {
@@ -111,7 +106,7 @@ public class AlignImages {
 			}
 		}
 
-		return align(images, shifted, roi, fromStart, preShift, monitor);
+		return align(images, shifted, roi, preShift, monitor);
 	}
 
 	/**
@@ -129,16 +124,14 @@ public class AlignImages {
 	public static List<IDataset> alignWithROI(List<IDataset> data, List<List<double[]>> shifts, RectangularROI roi, int mode, IMonitor monitor) {
 		int nsets = data.size() / mode;
 
-		if (roi == null)
-			return null;
 		RectangularROIList rois = new RectangularROIList();
 		rois.add(roi);
 
 		if (shifts == null)
-			shifts = new ArrayList<List<double[]>>();
-		List<IDataset> shiftedImages = new ArrayList<IDataset>();
+			shifts = new ArrayList<>();
 
-		int index = 0;
+		List<IDataset> shiftedImages = new ArrayList<>();
+
 		int nr = rois.size();
 		if (nr > 0) {
 			if (nr < mode) { // clean up roi list
@@ -161,33 +154,57 @@ public class AlignImages {
 			}
 
 			IDataset[] tImages = new IDataset[nsets];
-			List<IDataset> shifted = new ArrayList<IDataset>(nsets);
-			boolean fromStart = false;
+			List<Dataset> shifted = new ArrayList<>(nsets);
 			// align first images across columns:
 			// Example: [0,1,2]-[3,4,5]-[6,7,8]-[9,10,11] for 12 images on 4 columns
 			// with images 0,3,6,9 as the top images of each column.
-			List<double[]> topShifts = new ArrayList<double[]>();
-			IDataset[] topImages = new IDataset[mode];
-			List<IDataset> anchorList = new ArrayList<IDataset>();
-			for (int i = 0; i < mode; i++) {
-				topImages[i] = data.get(i * nsets);
-			}
-			// align top images
-			topShifts = align(topImages, anchorList, rois.get(0), true, null, monitor);
 
+			Dataset anchor = null;
+			int index = 0;
 			for (int p = 0; p < mode; p++) {
+				RectangularROI croi = rois.get(p);
 				for (int i = 0; i < nsets; i++) {
 					tImages[i] = data.get(index++);
 				}
-				IDataset anchor = anchorList.get(p);
-				shifted.clear();
-				// align rest of images
-				shifts.add(align(tImages, shifted, rois.get(p), true, topShifts.get(p), monitor));
-				shifted.remove(0); // remove unshifted anchor
-				shiftedImages.add(anchor); // add shifted anchor
-				shiftedImages.addAll(shifted); // add aligned images
 
-				fromStart = !fromStart;
+				shifted.clear();
+				// align a column
+				List<double[]> nshifts = align(tImages, shifted, croi, null, monitor);
+
+				// create anchor by summing
+				Dataset canchor = DatasetFactory.zeros(DoubleDataset.class, tImages[0].getShape());
+				for (Dataset d : shifted) {
+					canchor.iadd(d);
+				}
+				if (anchor == null) {
+					anchor = canchor;
+				} else {
+					// align with first column's anchor
+					double[] topShift = align(new IDataset[] {anchor, canchor}, null, croi, null, monitor).get(1);
+					logger.info("Top shift: {}", Arrays.toString(topShift));
+					// align with new pre-shift
+					if (monitor != null) {
+						monitor.subTask("Re-shift images to first image");
+					}
+					for (int i = 0; i < nsets; i++) {
+						double[] cshift = nshifts.get(i);
+						cshift[0] += topShift[0];
+						cshift[1] += topShift[1];
+						logger.info("New shifts for {}: {}", i, Arrays.toString(cshift));
+						Dataset cimage = RegisterImage2.shiftImage(DatasetUtils.convertToDataset(tImages[i]), cshift);
+						cimage.setName(shifted.get(i).getName());
+						shifted.set(i, cimage);
+						if (monitor != null) {
+							if (monitor.isCancelled()) {
+								return shiftedImages;
+							}
+							monitor.worked(1);
+						}
+					}
+				}
+				shifts.add(nshifts);
+				shiftedImages.addAll(shifted);
+
 				if (monitor != null) {
 					if (monitor.isCancelled())
 						return shiftedImages;
@@ -222,23 +239,29 @@ public class AlignImages {
 		rois.add(roi);
 
 		if (shifts == null)
-			shifts = new ArrayList<List<double[]>>();
+			shifts = new ArrayList<>();
 
-		int nr = rois.size();
 
 		// save on a temp file
 		String file = FileUtils.getTempFilePath("aligned.h5");
 		String path = "/entry/data/";
 		String name = "aligned";
 		File tmpFile = new File(file);
-		if (tmpFile.exists())
+		if (tmpFile.exists()) {
+			try {
+				HDF5FileFactory.releaseFile(file, true);
+			} catch (ScanFileHolderException e) {
+				logger.error("Could not close file {}", file, e);
+			}
 			tmpFile.delete();
+		}
 
 		int[] shape = data.getShape();
 		int[] chunking = new int[] {1, shape[1], shape[2]};
 		ILazyWriteableDataset lazy = HDF5Utils.createLazyDataset(file, path, name, shape, null,
 				chunking, Dataset.FLOAT32, null, false);
 
+		int nr = rois.size();
 		if (nr > 0) {
 			if (nr < mode) { // clean up roi list
 				if (mode == 2) {
@@ -260,61 +283,169 @@ public class AlignImages {
 			}
 
 			IDataset[] tImages = new IDataset[nsets];
-			List<IDataset> shifted = new ArrayList<IDataset>(nsets);
-			boolean fromStart = false;
+			List<Dataset> shifted = new ArrayList<>(nsets);
 			// align first images across columns:
 			// Example: [0,1,2]-[3,4,5]-[6,7,8]-[9,10,11] for 12 images on 4 columns
 			// with images 0,3,6,9 as the top images of each column.
-			List<double[]> topShifts = new ArrayList<double[]>();
-			IDataset[] topImages = new IDataset[mode];
-			List<IDataset> anchorList = new ArrayList<IDataset>();
-			for (int i = 0; i < mode; i++) {
-				try {
-					int n = i * nsets;
-					topImages[i] = data.getSlice(new Slice(n, n+1)).squeeze();
-				} catch (DatasetException e) {
-					logger.error("Could not get slice of image", e);
-				}
-			}
-			// align top images
-			topShifts = align(topImages, anchorList, rois.get(0), true, null, monitor);
+			Dataset anchor = null;
 			int index = 0;
 			int idx = 0;
 			for (int p = 0; p < mode; p++) {
+				RectangularROI croi = rois.get(p);
+				if (monitor != null) {
+					monitor.subTask("Loading images");
+				}
 				for (int i = 0; i < nsets; i++) {
 					try {
-						tImages[i] = data.getSlice(new Slice(index++, index)).squeeze();
+						tImages[i] = data.getSlice(monitor, new Slice(index++, index)).squeeze();
 					} catch (DatasetException e) {
 						logger.error("Could not get slice of image", e);
 					}
 				}
-				IDataset anchor = anchorList.get(p);
+
 				shifted.clear();
 				try {
-					// align rest of images
-					shifts.add(align(tImages, shifted, rois.get(p), true, topShifts.get(p), monitor));
-					shifted.remove(0); // remove unshifted anchor
+					// align a column
+					List<double[]> nshifts = align(tImages, shifted, croi, null, monitor);
 
-					appendDataset(lazy, anchor, idx, monitor);
-					idx++;
-					for (int i = 0; i < shifted.size(); i++) {
+					// create anchor by summing
+					Dataset canchor = DatasetFactory.zeros(DoubleDataset.class, tImages[0].getShape());
+					for (Dataset d : shifted) {
+						canchor.iadd(d);
+					}
+					if (anchor == null) {
+						anchor = canchor;
+					} else {
+						// align with first column's anchor
+						double[] topShift = align(new IDataset[] {anchor, canchor}, null, croi, null, monitor).get(1);
+						logger.info("Top shift: {}", Arrays.toString(topShift));
+						// align with new pre-shift
+						if (monitor != null) {
+							monitor.subTask("Re-shift images to first image");
+						}
+						for (int i = 0; i < nsets; i++) {
+							double[] cshift = nshifts.get(i);
+							cshift[0] += topShift[0];
+							cshift[1] += topShift[1];
+							logger.info("New shifts for {}: {}", i, Arrays.toString(cshift));
+							Dataset cimage = RegisterImage2.shiftImage(DatasetUtils.convertToDataset(tImages[i]), cshift);
+							cimage.setName(shifted.get(i).getName());
+							shifted.set(i, cimage);
+							if (monitor != null) {
+								if (monitor.isCancelled()) {
+									return lazy;
+								}
+								monitor.worked(1);
+							}
+						}
+					}
+					shifts.add(nshifts);
+					if (monitor != null) {
+						monitor.subTask("Writing shifted images");
+					}
+					for (int i = 0; i < nsets; i++) {
 						appendDataset(lazy, shifted.get(i), idx, monitor);
 						idx++;
 					}
-
 				} catch (DatasetException e) {
 					logger.warn("Problem with alignment: " + e);
 					return null;
 				}
 
-				fromStart = !fromStart;
-				if (monitor != null) {
-					if (monitor.isCancelled()) {
-						return lazy;
-					}
-					monitor.worked(1);
-				}
 			}
+		}
+		try {
+			HDF5FileFactory.releaseFile(file, true);
+		} catch (ScanFileHolderException e) {
+			logger.error("Could not close file {}", file, e);
+		}
+		return lazy;
+	}
+
+	/**
+	 * Aligns images from a lazy dataset and returns a lazy dataset. This alignment process saves the aligned data in an
+	 * hdf5 file saved on disk and this method can be used without running into a MemoryOverflowError.
+	 * <p>
+	 * This is the modeless alignment routine that uses all the images at once.
+	 * 
+	 * @param data
+	 *            original list of dataset to be aligned
+	 * @param shifts
+	 *            output where to put resulting shifts
+	 * @param roi
+	 *            rectangular ROI used for the alignment
+	 * @param monitor
+	 * @return aligned list of dataset
+	 */
+	public static ILazyDataset alignLazyWithROI(ILazyDataset data, List<List<double[]>> shifts, RectangularROI roi,
+			IMonitor monitor) {
+
+		int nsets = data.getShape()[0];
+
+		if (shifts == null)
+			shifts = new ArrayList<>();
+
+		// save on a temp file
+		String file = FileUtils.getTempFilePath("aligned.h5");
+		String path = "/entry/data/";
+		String name = "aligned";
+		File tmpFile = new File(file);
+		if (tmpFile.exists()) {
+			try {
+				HDF5FileFactory.releaseFile(file, true);
+			} catch (ScanFileHolderException e) {
+				logger.error("Could not close file {}", file, e);
+			}
+			tmpFile.delete();
+		}
+
+		int[] shape = data.getShape();
+		int[] chunking = new int[] {1, shape[1], shape[2]};
+		ILazyWriteableDataset lazy = HDF5Utils.createLazyDataset(file, path, name, shape, null,
+				chunking, Dataset.FLOAT32, null, false);
+
+		IDataset[] tImages = new IDataset[nsets];
+		List<Dataset> shifted = new ArrayList<>(nsets);
+		int index = 0;
+		int idx = 0;
+		if (monitor != null) {
+			monitor.subTask("Loading images");
+		}
+		for (int i = 0; i < nsets; i++) {
+			try {
+				tImages[i] = data.getSlice(monitor, new Slice(index++, index)).squeeze();
+			} catch (DatasetException e) {
+				logger.error("Could not get slice of image", e);
+			}
+		}
+		shifted.clear();
+		try {
+			// align a column
+			List<double[]> nshifts = align(tImages, shifted, roi, null, monitor);
+
+			if (monitor != null) {
+				monitor.subTask("Writing shifted images");
+			}
+			shifts.add(nshifts);
+			for (int i = 0; i < nsets; i++) {
+				appendDataset(lazy, shifted.get(i), idx, monitor);
+				idx++;
+			}
+		} catch (DatasetException e) {
+			logger.warn("Problem with alignment: " + e);
+			return null;
+		}
+
+		if (monitor != null) {
+			if (monitor.isCancelled()) {
+				return lazy;
+			}
+			monitor.worked(1);
+		}
+		try {
+			HDF5FileFactory.releaseFile(file, true);
+		} catch (ScanFileHolderException e) {
+			logger.error("Could not close file {}", file, e);
 		}
 		return lazy;
 	}

@@ -21,10 +21,11 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.metadata.MetadataFactory;
-
+import org.eclipse.january.metadata.MetadataType;
 // Imports from org.eclipse.dawnsci
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.processing.PlotAdditionalData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionEngine;
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionService;
@@ -43,6 +44,8 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expressi
 
 // The operation to take a region of reduced SAXS data, obtain a Guinier plot and fit, as well as
 // information that, ultimately, provides information about the shape of the molecule
+
+@PlotAdditionalData(onInput = false, dataName = "Fitted line from ln(I) vs q^2 plot")
 public class KratkyFittingOperation extends AbstractOperation<KratkyFittingModel, OperationData>{
 
 	// First let's declare our process ID tag
@@ -187,7 +190,8 @@ public class KratkyFittingOperation extends AbstractOperation<KratkyFittingModel
 
 		// Filling the object with the processed x axis slice
 		xAxisMetadata.setAxis(0, processedXSlice);
-
+		MetadataType fitAxisMetadata = xAxisMetadata.clone();
+		
 		// And then placing this in the processedYSlice
 		processedYSlice.setMetadata(xAxisMetadata);
 	
@@ -206,6 +210,7 @@ public class KratkyFittingOperation extends AbstractOperation<KratkyFittingModel
 		// Creating a home for the fit data
 		Dataset fitDataset = DatasetFactory.createFromObject(fittedYSlice, fittedYSlice.getShape());
 		fitDataset.setName("Fitted line from ln(I) vs q^2 plot");
+		fitDataset.setMetadata(fitAxisMetadata);
 
 		// Before creating the OperationData object to save everything in
 		OperationData toReturn = new OperationData();

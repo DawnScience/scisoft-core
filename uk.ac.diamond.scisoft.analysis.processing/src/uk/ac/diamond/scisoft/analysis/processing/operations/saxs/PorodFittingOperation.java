@@ -21,10 +21,11 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.metadata.MetadataFactory;
-
+import org.eclipse.january.metadata.MetadataType;
 // Imports from org.eclipse.dawnsci
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.processing.PlotAdditionalData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionEngine;
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionService;
@@ -43,6 +44,8 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expressi
 
 //The operation to take a region of reduced SAXS data, obtain a Porod plot and fit, as well as
 //information that, ultimately, provides structural information
+
+@PlotAdditionalData(onInput = false, dataName = "Live Setup Plot Data")
 public class PorodFittingOperation extends AbstractOperation<PorodFittingModel, OperationData>{
 
 	// First let's declare our process ID tag
@@ -163,7 +166,8 @@ public class PorodFittingOperation extends AbstractOperation<PorodFittingModel, 
 		double intercept = porodFit.getParameterValue(1);
 
 		// Just for the user's sanity, create the line of best fit as well
-		Dataset fittedYSlice = null;
+		Dataset fittedYLogSlice = null;
+		Dataset fittedYIQSlice = null;
 		
 		// Load in the processed x axis to recreate the fitted line
 		expressionEngine.addLoadedVariable("xaxis", processedLogXSlice);
@@ -171,12 +175,20 @@ public class PorodFittingOperation extends AbstractOperation<PorodFittingModel, 
 		// Assuming there were nice numbers, regenerate from the x-axis
 		if (Double.isFinite(gradient) && Double.isFinite(intercept)) {
 			yExpressionString = "xaxis * " + gradient + " + " + intercept;
-			fittedYSlice = evaluateData(yExpressionString);
+			fittedYLogSlice = evaluateData(yExpressionString);
+			fittedYIQSlice = fittedYLogSlice.clone();
+			
+			for (int loopIter = 0; loopIter < fittedYLogSlice.getSize(); loopIter ++) {
+				double loopVariable = Math.exp(fittedYLogSlice.getDouble(loopIter)) * Math.pow(processedXSlice.getDouble(loopIter), 4);
+				fittedYIQSlice.set(loopVariable, loopIter);
+			}
+			
 		}
 		else {
 			// If the values from the fit are bad, create a null dataset of the length of the x axis
 			yExpressionString = "xaxis * 0";
-			fittedYSlice = evaluateData(yExpressionString);
+			fittedYLogSlice = evaluateData(yExpressionString);
+			//fittedYIQSlice = evaluateData(yExpressionString);
 		}
 		
 		// Now let's prepare to return these values, first by creating a home for the gradient data
@@ -204,9 +216,12 @@ public class PorodFittingOperation extends AbstractOperation<PorodFittingModel, 
 		logYDataset.setName("log(I) axis");
 		
 		// Creating a home for the fit data
-		Dataset fitDataset = DatasetFactory.createFromObject(fittedYSlice, fittedYSlice.getShape());
+		Dataset fitDataset = DatasetFactory.createFromObject(fittedYLogSlice, fittedYLogSlice.getShape());
 		fitDataset.setName("Fitted line from log(I) vs log(q) data");
 
+		// Creating a home for the fit data
+		Dataset fitPlotDataset = null;
+		
 		// Before creating the OperationData object to save everything in
 		OperationData toReturn = new OperationData();
 
@@ -219,28 +234,39 @@ public class PorodFittingOperation extends AbstractOperation<PorodFittingModel, 
 		} catch (MetadataException xAxisError) {
 			throw new OperationException(this, xAxisError.getMessage());
 		}
+		
+		// Before the case/switch let's create everything
+		MetadataType fitAxisMetadata = null;
 
 		// Now, based on the user input, get ready to display the plot
 		// In the future, if more than two cases are required, the filling could be out sourced as a method
 		switch (model.getPlotView()) {
 			case IQ4_Q :	// Filling the object with the processed x axis slice
 							xAxisMetadata.setAxis(0, processedXSlice);
+							fitAxisMetadata = xAxisMetadata.clone();
 							// And then placing this in the processedYSlice
 							processedYSlice.setMetadata(xAxisMetadata);
+							fitPlotDataset = fittedYIQSlice;
+							fitPlotDataset.setMetadata(fitAxisMetadata);
+							fitPlotDataset.setName("Live Setup Plot Data");
 							// Filling it with data
 							toReturn.setData(processedYSlice);
 							// And all the other variables
-							toReturn.setAuxData(gradientDataset, interceptDataset, fitDataset, logXDataset, logYDataset);
+							toReturn.setAuxData(gradientDataset, interceptDataset, fitDataset, logXDataset, logYDataset, fitPlotDataset);
 							break;
 						
 			case LOG_LOG:	// Filling the object with the processed x axis slice
 							xAxisMetadata.setAxis(0, processedLogXSlice);
+							fitAxisMetadata = xAxisMetadata.clone();
 							// And then placing this in the processedYSlice
 							processedLogYSlice.setMetadata(xAxisMetadata);
+							fitPlotDataset = fitDataset.clone();
+							fitPlotDataset.setMetadata(fitAxisMetadata);
+							fitPlotDataset.setName("Live Setup Plot Data");
 							// Filling it with data
 							toReturn.setData(processedLogYSlice);
 							// And all the other variables
-							toReturn.setAuxData(gradientDataset, interceptDataset, fitDataset, xDataset, yDataset);
+							toReturn.setAuxData(gradientDataset, interceptDataset, fitDataset, xDataset, yDataset, fitPlotDataset);
 							break;
 						
 			default:		System.err.println("This shouldn't have occured, the enum switch in PorodFittingOperation is broken!");

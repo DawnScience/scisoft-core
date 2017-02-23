@@ -123,7 +123,7 @@ public class FitPeakToRowsOperation extends AbstractOperation<FitPeakToRowsModel
 				position.set(f.getFunctions()[0].getParameter(0).getValue(), count++);
 				
 			} catch (Exception e) {
-				logger.error("Fitting failed");
+				//no logging required, the NaN value shows the fit has failed
 			}
 		}
 		

@@ -15,7 +15,7 @@ public class GeometricParametersModel {
 	private Double inPlaneSlits = 0.5;
 	private Double inplanePolarisation = 0.0;
 	private Double outPlaneSlits = 0.5;
-	private Double outplanePolarisation =1.0;
+	private Double outplanePolarisation = 1.0;
 	private Double reflectivityA = 1.0;
 	private Double sampleSize = 10.0;
 	private Double normalisationFactor = 10.0;

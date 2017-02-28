@@ -55,6 +55,16 @@ public class KratkyFittingOperation extends AbstractOperation<KratkyFittingModel
 	}
 
 	
+	// Then we'll create some placeholders for data to be stored in
+	private Dataset processedXSlice;
+	private Dataset processedYSlice;
+	
+	
+	// Expression strings for Porod plotting
+	final public String xExpressionStringKratky = "xaxis";  // In essence, nothing but included just in case.
+	final public String yExpressionStringKratky = "dnp:power(xaxis, 2) * data";
+
+	
 	// In order to do our mathematics, we shall instantiate an expression and regression engine
 	private IExpressionEngine expressionEngine;
 
@@ -75,19 +85,7 @@ public class KratkyFittingOperation extends AbstractOperation<KratkyFittingModel
 
 	// Now let's define the main calculation process
 	@Override
-	public OperationData process(IDataset inputDataset, IMonitor monitor) throws OperationException {
-
-		// First up, let's check that our expression engine is set up properly
-		if (expressionEngine == null) {
-			try {
-				IExpressionService service = ExpressionServiceHolder.getExpressionService();
-				expressionEngine = service.getExpressionEngine();
-			} catch (Exception engineError) {
-				// If not, we'll raise an error
-				throw new OperationException(this, engineError.getMessage());
-			}
-		}
-		
+	public OperationData process(IDataset inputDataset, IMonitor monitor) throws OperationException {	
 		// Next, we'll extract out the x axis (q) dataset from the input
 		Dataset xAxis;
 		// Just in case we don't have an x-axis (as we really need an x axis)
@@ -103,73 +101,24 @@ public class KratkyFittingOperation extends AbstractOperation<KratkyFittingModel
 		// Get out the start and end values of the Guinier range
 		double[] kratkyROI = model.getKratkyRange();
 		
-		// Create some placeholders
-		int startIndex = 0;
-		int endIndex = 0;
-		
-		// Assuming that we've been given some values
-		if (kratkyROI == null) {
-			startIndex = 0;
-			endIndex = inputDataset.getSize();
-		} // Go and find them!
-		else {
-			// Just to make sure the indexing is right, lowest number first
-			if (kratkyROI[0] < kratkyROI[1]) {
-				startIndex = DatasetUtils.findIndexGreaterThanOrEqualTo(xAxis, kratkyROI[0]);
-				endIndex = DatasetUtils.findIndexGreaterThanOrEqualTo(xAxis, kratkyROI[1]);	
-			} // Or we handle for this
-			else {
-				startIndex = DatasetUtils.findIndexGreaterThanOrEqualTo(xAxis, kratkyROI[1]);
-				endIndex = DatasetUtils.findIndexGreaterThanOrEqualTo(xAxis, kratkyROI[0]);
-			}
-		}
-		
-		// Next up, we'll slice the datasets down to the size of interest
-		Slice regionOfInterest = new Slice(startIndex, endIndex, 1);
-		Dataset xSlice = xAxis.getSlice(regionOfInterest);
-		Dataset ySlice = yAxis.getSlice(regionOfInterest);
-		
-		// Then add these slices to the expression engine
-		expressionEngine.addLoadedVariable("xaxis", xSlice);
-		expressionEngine.addLoadedVariable("data", ySlice);
-		
-		// The hard-coded variables for the Guinier Fitting
-		String yExpressionString = "dnp:power(xaxis, 2) * data";
-
-		// Do the processing
-		Dataset processedXSlice = xSlice;
-		Dataset processedYSlice = evaluateData(yExpressionString);
-		
-		// Set the names
-		processedXSlice.setName("q");
-		processedYSlice.setName("I * q^2");
-
-		// Set up a place to place the fitting parameters
-		//StraightLine kratkyFit = new StraightLine();
-		Polynomial kratkyFit = new Polynomial(2);
-		
-		// Try to do the fitting on the new processed slices
-		try {
-			//Fitter.llsqFit(new Dataset[] {processedXSlice}, processedYSlice, kratkyFit);
-			Fitter.polyFit(new Dataset[] {processedXSlice}, processedYSlice, 1e-15, kratkyFit);
-		} catch (Exception fittingError) {
-			System.err.println("Exception performing linear fit in KratkyFittingOperation(): " + fittingError.toString());
-		}
+		// Perform the Kratky fitting
+		Polynomial kratkyFit = this.fitKratkyData(xAxis, yAxis, kratkyROI, inputDataset.getSize());
 		
 		// Extract out the fitting parameters
 		double xSquaredGradient = kratkyFit.getParameterValue(0);
 		double xGradient = kratkyFit.getParameterValue(1);
-		double intercept = kratkyFit.getParameterValue(2);
+		double constant = kratkyFit.getParameterValue(2);
 
 		// Just for the user's sanity, create the line of best fit as well
+		String yExpressionString;
 		Dataset fittedYSlice = null;
 		
 		// Load in the processed x axis to recreate the fitted line
-		expressionEngine.addLoadedVariable("xaxis", processedXSlice);
+		expressionEngine.addLoadedVariable("xaxis", this.processedXSlice);
 
 		// Assuming there were nice numbers, regenerate from the x-axis
-		if (Double.isFinite(xGradient) && Double.isFinite(intercept)) {
-			yExpressionString = "(" + xSquaredGradient + " * xaxis * xaxis) + (xaxis * " + xGradient + ") + " + intercept;
+		if (Double.isFinite(xGradient) && Double.isFinite(constant)) {
+			yExpressionString = "(" + xSquaredGradient + " * xaxis * xaxis) + (xaxis * " + xGradient + ") + " + constant;
 			fittedYSlice = evaluateData(yExpressionString);
 		}
 		else {
@@ -189,18 +138,18 @@ public class KratkyFittingOperation extends AbstractOperation<KratkyFittingModel
 		}
 
 		// Filling the object with the processed x axis slice
-		xAxisMetadata.setAxis(0, processedXSlice);
+		xAxisMetadata.setAxis(0, this.processedXSlice);
 		MetadataType fitAxisMetadata = xAxisMetadata.clone();
 		
-		// And then placing this in the processedYSlice
-		processedYSlice.setMetadata(xAxisMetadata);
+		// And then placing this in the this.processedYSlice
+		this.processedYSlice.setMetadata(xAxisMetadata);
 	
 		// Creating a home for the gradient data
 		Dataset gradientDataset = DatasetFactory.createFromObject(xGradient, 1);
 		gradientDataset.setName("x term from I * q^2 vs q fit");
 
 		// Creating a home for the intercept data
-		Dataset interceptDataset = DatasetFactory.createFromObject(intercept, 1);
+		Dataset interceptDataset = DatasetFactory.createFromObject(constant, 1);
 		interceptDataset.setName("c term from I * q^2 vs q fit");
 
 		// Creating a home for the intercept data
@@ -215,7 +164,7 @@ public class KratkyFittingOperation extends AbstractOperation<KratkyFittingModel
 		// Before creating the OperationData object to save everything in
 		OperationData toReturn = new OperationData();
 		// Filling it with data
-		toReturn.setData(processedYSlice);
+		toReturn.setData(this.processedYSlice);
 		// And all the other variables
 		toReturn.setAuxData(gradientDataset, interceptDataset, fitDataset, xSquaredGradientDataset);
 		
@@ -253,5 +202,73 @@ public class KratkyFittingOperation extends AbstractOperation<KratkyFittingModel
 
 		// Now, return it 
 		return output;
+	}
+	
+	
+	// A method to fit data, within limits and calculate the Kratky fit returning the fitting parameters for plotting later
+	public Polynomial fitKratkyData(Dataset xAxis, Dataset yAxis, double[] kratkyROI, int dataLength) {
+		// First up, let's check that our expression engine is set up properly
+		if (expressionEngine == null) {
+			try {
+				IExpressionService service = ExpressionServiceHolder.getExpressionService();
+				expressionEngine = service.getExpressionEngine();
+			} catch (Exception engineError) {
+				// If not, we'll raise an error
+				throw new OperationException(this, engineError.getMessage());
+			}
+		}
+		
+		// Create some placeholders
+		int startIndex = 0;
+		int endIndex = 0;
+		
+		// Assuming that we've been given some values
+		if (kratkyROI == null) {
+			startIndex = 0;
+			endIndex = dataLength;
+		} // Go and find them!
+		else {
+			// Just to make sure the indexing is right, lowest number first
+			if (kratkyROI[0] < kratkyROI[1]) {
+				startIndex = DatasetUtils.findIndexGreaterThanOrEqualTo(xAxis, kratkyROI[0]);
+				endIndex = DatasetUtils.findIndexGreaterThanOrEqualTo(xAxis, kratkyROI[1]);	
+			} // Or we handle for this
+			else {
+				startIndex = DatasetUtils.findIndexGreaterThanOrEqualTo(xAxis, kratkyROI[1]);
+				endIndex = DatasetUtils.findIndexGreaterThanOrEqualTo(xAxis, kratkyROI[0]);
+			}
+		}
+		
+		// Next up, we'll slice the datasets down to the size of interest
+		Slice regionOfInterest = new Slice(startIndex, endIndex, 1);
+		Dataset xSlice = xAxis.getSlice(regionOfInterest);
+		Dataset ySlice = yAxis.getSlice(regionOfInterest);
+		
+		// Then add these slices to the expression engine
+		expressionEngine.addLoadedVariable("xaxis", xSlice);
+		expressionEngine.addLoadedVariable("data", ySlice);
+		
+		// Do the processing
+		this.processedXSlice = xSlice;
+		this.processedYSlice = evaluateData(this.yExpressionStringKratky);
+		
+		// Set the names
+		this.processedXSlice.setName("q");
+		this.processedYSlice.setName("I * q^2");
+
+		// Set up a place to place the fitting parameters
+		//StraightLine kratkyFit = new StraightLine();
+		Polynomial kratkyFit = new Polynomial(2);
+		
+		// Try to do the fitting on the new processed slices
+		try {
+			//Fitter.llsqFit(new Dataset[] {this.processedXSlice}, this.processedYSlice, kratkyFit);
+			Fitter.polyFit(new Dataset[] {this.processedXSlice}, this.processedYSlice, 1e-15, kratkyFit);
+		} catch (Exception fittingError) {
+			System.err.println("Exception performing linear fit in KratkyFittingOperation(): " + fittingError.toString());
+		}
+		
+		// Then return it
+		return kratkyFit;
 	}
 }

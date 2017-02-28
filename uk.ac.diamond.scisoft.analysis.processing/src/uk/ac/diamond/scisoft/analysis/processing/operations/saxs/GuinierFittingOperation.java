@@ -157,10 +157,10 @@ public class GuinierFittingOperation extends AbstractOperation<GuinierFittingMod
 		
 		// Extract out the fitting parameters
 		double gradient = guinierFit.getParameterValue(0);
-		double intercept = guinierFit.getParameterValue(1);
+		double constant = guinierFit.getParameterValue(1);
 
 		// Do some simple calculations
-		double I0 = Math.exp(intercept);
+		double I0 = Math.exp(constant);
 		double Rg = Math.sqrt(-3.0 * gradient);
 		
 		// Perform a quick sanity check
@@ -175,8 +175,8 @@ public class GuinierFittingOperation extends AbstractOperation<GuinierFittingMod
 		expressionEngine.addLoadedVariable("xaxis", processedXSlice);
 
 		// Assuming there were nice numbers, regenerate from the x-axis
-		if (Double.isFinite(gradient) && Double.isFinite(intercept)) {
-			yExpressionString = "xaxis * " + gradient + " + " + intercept;
+		if (Double.isFinite(gradient) && Double.isFinite(constant)) {
+			yExpressionString = "xaxis * " + gradient + " + " + constant;
 			fittedYSlice = evaluateData(yExpressionString);
 		}
 		else {
@@ -208,7 +208,7 @@ public class GuinierFittingOperation extends AbstractOperation<GuinierFittingMod
 		gradientDataset.setName("Gradient of ln(I) vs q^2 plot fit");
 
 		// Creating a home for the intercept data
-		Dataset interceptDataset = DatasetFactory.createFromObject(intercept, 1);
+		Dataset interceptDataset = DatasetFactory.createFromObject(constant, 1);
 		interceptDataset.setName("Intercept of ln(I) vs q^2 plot fit");
 
 		// Creating a home for the I0 data

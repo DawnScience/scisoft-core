@@ -29,6 +29,7 @@ import org.eclipse.january.metadata.MetadataFactory;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.apache.commons.math3.complex.Complex;
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionEngine;
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionService;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
@@ -50,6 +51,9 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.KratkyFittingOp
 // @author Tim Snow, adapted from original plug-in set by Tim Spain.
 
 
+// A processing plugin to calculate the mean thickness of mineral crystals, for more information see:
+//
+// P. Fratzl, S. Schreiber and K. Klaushofer, Connective Tissue Research, 1996, 14, 247-254, DOI: 10.3109/03008209609005268
 //
 public class TParameterOperation extends AbstractOperation<TParameterModel, OperationData>{
 
@@ -117,7 +121,7 @@ public class TParameterOperation extends AbstractOperation<TParameterModel, Oper
 		// Then do the fitting
 		StraightLine porodFit = porodFitting.fitPorodData(xAxis, yAxis, porodROI, dataLength);
 		Polynomial kratkyFit = kratkyFitting.fitKratkyData(xAxis, yAxis, kratkyROI, dataLength);
-			
+		
 		// Extract out the Porod fitting parameters
 		double porodGradient = porodFit.getParameterValue(0);
 		double porodConstant = porodFit.getParameterValue(1);
@@ -189,10 +193,20 @@ public class TParameterOperation extends AbstractOperation<TParameterModel, Oper
 		
 		// Now that all the UI has been calculated and that we have all the required values, let's do the T-Parameter mathematics
 		// High-q and low-q fitted integrals 
+		// First find the intercept for the Kratky plot
+		Complex[] kratkyRoots = Polynomial.findRoots(kratkyFit.getParameterValue(0), kratkyFit.getParameterValue(1), kratkyFit.getParameterValue(2));
+		double kratkyIntercept = 0.00;
+		// Sifting through the results to find the largest, non-imaginary, result
+		for (int loopIter = 0; loopIter < kratkyRoots.length; loopIter ++) {
+			if (kratkyRoots[loopIter].getImaginary() == 0.00) {
+				if (kratkyRoots[loopIter].getReal() > kratkyIntercept) {
+					kratkyIntercept = kratkyRoots[loopIter].getReal();
+				}
+			}
+		}
+		// Do the calculations
 		double jPorod = porodConstant / porodROI[0];
-		double jKratky = 1.00;
-		// TODO DELETE ABOVE LINE RE-IMPLEMENT LINE BELOW
-		//double jKratky = tP.getKratkyIntegral(); // Still need to work on this
+		double jKratky = kratkyROI[0] * (kratkyIntercept + kratkyGradient * kratkyROI[0]);
 		// Experimental integral
 		double jExp;
 
@@ -214,12 +228,12 @@ public class TParameterOperation extends AbstractOperation<TParameterModel, Oper
 		jExp = (double) Maths.multiply(integrand, dq).sum();
 		// Add any bits between the pieces of the integral
 		jExp = (xAxis.getDouble(lowerKratkyIndex) - kratkyROI[0]) * inputDataset.getDouble(lowerKratkyIndex) + jExp + (xAxis.getDouble(lowerPorodIndex) - kratkyROI[0]) * ((lowerKratkyIndex != inputDataset.getSize() - 1) ? inputDataset.getDouble(lowerKratkyIndex+1) : inputDataset.getDouble(lowerKratkyIndex));
-		double j = jKratky + jExp + jPorod;
+		double jTerm = jKratky + jExp + jPorod;
 		
-		double t = 4/(Math.PI * porodConstant) * j;
-		System.out.println("T = " + t);
+		double tParameter = (4 * jTerm) / (Math.PI * porodConstant);
+		System.out.println("T = " + tParameter);
 
-		Dataset tParameterDataset = DatasetFactory.createFromObject(new double[] {t});
+		Dataset tParameterDataset = DatasetFactory.createFromObject(new double[] {tParameter});
 		tParameterDataset.setName("Crystallite thickness");
 		
 		// With all this in hand, let's return the data!

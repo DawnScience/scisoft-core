@@ -20,7 +20,10 @@ import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 //@author Tim Snow, adapted from original plug-in set by Tim Spain.
 
 
-// 
+// A processing plugin to calculate the mean thickness of mineral crystals, for more information see:
+//
+// P. Fratzl, S. Schreiber and K. Klaushofer, Connective Tissue Research, 1996, 14, 247-254, DOI: 10.3109/03008209609005268
+//
 public class TParameterModel extends AbstractOperationModel {
 
 		// Get the region of interest for where to perform the Guinier analysis

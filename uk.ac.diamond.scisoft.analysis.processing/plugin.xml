@@ -941,8 +941,8 @@
             icon="icons/mask.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.TParameterOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.TParameterModel"
-            name="T Parameter (all-in-one)"
-            visible="false">
+            name="T Parameter Calculation"
+            visible="true">
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"

@@ -909,7 +909,7 @@
              category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
              class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.CinaderOrientationOperation"
              description="Perform a Cinader and Burghardt degree of orientation calculation"
-             icon="icons/unchanged.png"
+             icon="icons/mask.png"
              id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.CinaderOrientationOperation"
              model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.CinaderOrientationModel"
              name="Degree of Orientation">
@@ -932,6 +932,26 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.Invariant"
             model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="Invariance Calculation"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.TParameterOperation"
+            description="Calculate the T parameter value from SAXS data"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.TParameterOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.TParameterModel"
+            name="T Parameter Calculation"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.SaxsPlotOperation"
+            description="Modify the representation of small angle data for many common techniques/analyses"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.SaxsPlotOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.SaxsPlotModel"
+            name="SAXS Plots"
             visible="true">
       </operation>
       <operation
@@ -1171,6 +1191,13 @@
              model="uk.ac.diamond.scisoft.analysis.processing.operations.fitting.FitPeakToRowsModel"
              name="Fit Peak to Image Rows">
        </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.fitting.LinearFittingOperation"
+            description="Fit an entire, or a section of a, lineplot to y = mx + c"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.fitting.LinearFittingOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.fitting.LinearFittingModel"
+            name="Linear Fitting Operation">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

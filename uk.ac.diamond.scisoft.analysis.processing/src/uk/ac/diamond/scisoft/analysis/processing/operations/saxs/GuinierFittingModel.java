@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 2016 Diamond Light Source Ltd.
+ * Copyright (c) 2017 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -13,7 +13,6 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 // Imports from org.eclipse.dawnsci
 import org.eclipse.dawnsci.analysis.api.processing.model.RangeType;
-
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 
@@ -26,7 +25,8 @@ import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 public class GuinierFittingModel extends AbstractOperationModel {
 
 	
-	// Let's give the user a fixed choice on the integration range so they don't go too nuts...
+	// For later...
+	// It would be useful to tailor the fit according to the anticipated shape of object scattering radiation
 	enum SampleShape {
 		PLAIN(1),
 		SPHERE(2),

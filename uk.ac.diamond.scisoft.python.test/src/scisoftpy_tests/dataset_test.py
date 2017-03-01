@@ -1079,6 +1079,11 @@ class Test(unittest.TestCase):
         l = [v for v in np.arange(3)]
         self.assertEqual([0, 1, 2], l)
 
+    def testCopy(self):
+        print 'test copy'
+        a = np.array(self.q)
+        self.checkitems(self.q, np.copy(a))
+
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))

@@ -320,4 +320,17 @@ public class PythonUtils {
 		return DatasetFactory.createFromObject(dtype, obj, null);
 	}
 
+	/**
+	 * Create dataset with items ranging from given start to given stop in given steps
+	 * <p>
+	 * Use this to get around the overloaded method problem in Jython
+	 * @param start
+	 * @param stop
+	 * @param step
+	 * @param dtype
+	 * @return a new 1D dataset of given type, filled with values determined by parameters
+	 */
+	public static Dataset createRange(final double start, final double stop, final double step, final int dtype) {
+		return DatasetFactory.createRange(start, stop, step, dtype);
+	}
 }

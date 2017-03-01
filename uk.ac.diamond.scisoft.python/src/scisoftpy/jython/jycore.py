@@ -34,6 +34,7 @@ from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
 from uk.ac.diamond.scisoft.python.PythonUtils import setSlice as _setslice
 from uk.ac.diamond.scisoft.python.PythonUtils import convertToSlice as _cvt2js
 from uk.ac.diamond.scisoft.python.PythonUtils import createFromObject as _create
+from uk.ac.diamond.scisoft.python.PythonUtils import createRange as _createRange
 
 import org.apache.commons.math3.complex.Complex as _jcomplex #@UnresolvedImport
 
@@ -403,7 +404,7 @@ def _contains_ints_bools_newaxis(sequence):
         return False
 
     for s in sequence:
-        if isinstance(s, _integerds) or isinstance(s, _booleands):
+        if isinstance(s, (_integerds, _booleands)):
             return True
 
     for s in sequence:
@@ -528,7 +529,7 @@ class ndarray(object):
     '''
     Class to hold special methods and non-overloading names
     '''
-    def __init__(self, shape=None, dtype=None, buffer=None, copy=False): # @ReservedAssignment
+    def __init__(self, shape=None, dtype=None, buffer=None, copy=False): #@ReservedAssignment
         # check what buffer is and convert if necessary
         if buffer is not None:
             self.__dataset = __cvt_jobj(_jinput(buffer), dtype=dtype, copy=copy, force=True)
@@ -1200,7 +1201,7 @@ class ndarrayRGB(ndarray):
     '''
     Wrap RGB dataset
     '''
-    def __init__(self, shape=None, dtype=None, buffer=None, copy=False): # @ReservedAssignment
+    def __init__(self, shape=None, dtype=None, buffer=None, copy=False): #@ReservedAssignment
         super(ndarrayRGB, self).__init__(shape=shape, dtype=dtype, buffer=buffer, copy=copy)
 
     @_wrapout
@@ -1285,7 +1286,7 @@ def arange(start, stop=None, step=1, dtype=None):
     if dtype == bool:
         return None
 
-    return _df.createRange(start, stop, step, dtype.value)
+    return _createRange(start, stop, step, dtype.value)
 
 def array(obj, dtype=None, copy=True):
     '''Create a dataset of given type from a sequence or JAMA matrix'''
@@ -1581,6 +1582,10 @@ def append(arr, values, axis=None):
 @_wrap
 def cast(a, dtype):
     return _dsutils.cast(a, dtype.value)
+
+@_wrapout
+def copy(a):
+    return a.__copy__()
 
 def reshape(a, newshape):
     return asDataset(a).reshape(newshape)

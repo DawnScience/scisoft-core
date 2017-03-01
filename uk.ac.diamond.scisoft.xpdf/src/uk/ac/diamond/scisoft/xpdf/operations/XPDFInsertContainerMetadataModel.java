@@ -26,7 +26,7 @@ public class XPDFInsertContainerMetadataModel extends AbstractOperationModel {
 	private String errorFilePath = "";
 	@OperationModelField(hint="Name of the dataset containing the errors", dataset = "errorFilePath", label = "Errors Dataset")
 	private String errorDataset = "";
-	@OperationModelField(hint="Enter a counting time for the experiment",label = "Counting Time (s)" )
+	@OperationModelField(hint="Enter a counting time for the experiment",label = "Counting Time", unit = "s" )
 	private double countingTime = 60.0;
 	@OperationModelField(hint="Enter the flux relative to the monitor",label = "Monitor Relative Flux" )
 	private double monitorRelativeFlux = 1.0;
@@ -34,15 +34,15 @@ public class XPDFInsertContainerMetadataModel extends AbstractOperationModel {
 	private String containerName = "SiO2 capillary";
 	@OperationModelField(hint="Enter the IUPAC formula for the container material", label = "Container Material")
 	private String material = "SiO2";
-	@OperationModelField(hint="Enter the container material density",label = "Container Density (g/cm^3)" )
+	@OperationModelField(hint="Enter the container material density",label = "Container Density", unit = "g/cm⁻³" )
 	private double density = 2.65;
 	@OperationModelField(hint="Enter the container packing fraction",label = "Container Packing Fraction" )
 	private double packingFraction = 1.0;
 	@OperationModelField(hint="Enter the shape of the container", label = "Container Shape")
 	private XPDFGeometryEnum shape = XPDFGeometryEnum.CYLINDER;
-	@OperationModelField(hint="Enter an inner distance for the container shape",label = "Container Inner Distance (mm)" )
+	@OperationModelField(hint="Enter an inner distance for the container shape",label = "Container Inner Distance", unit = "mm" )
 	private double inner = 0.5;
-	@OperationModelField(hint="Enter an outer distance for the container shape",label = "Container Outer Distance (mm)" )
+	@OperationModelField(hint="Enter an outer distance for the container shape",label = "Container Outer Distance", unit = "mm" )
 	private double outer = 0.51;
 	@OperationModelField(hint="Enter whether the container exists upstream of the container",label = "Container is Upstream?" )
 	private boolean upstream = true;

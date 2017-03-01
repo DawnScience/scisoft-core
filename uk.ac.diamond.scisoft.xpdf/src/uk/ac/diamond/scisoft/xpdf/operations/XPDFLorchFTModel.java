@@ -15,13 +15,13 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 public class XPDFLorchFTModel extends AbstractOperationModel {
 
 	// TODO: Change defaults to real defaults, rather than ceria SRM defaults
-	@OperationModelField(hint="Enter the maximum radius to consider", label="Rmax (Angstroms)")
+	@OperationModelField(hint="Enter the maximum radius to consider", label="Rmax", unit = "Å")
 	private double rMax = 50.0;
-	@OperationModelField(hint="Enter the radius increment", label="Rstep (Angstroms)")
+	@OperationModelField(hint="Enter the radius increment", label="Rstep", unit = "Å")
 	private double rStep = 0.02;
 	@OperationModelField(hint="Enter the width of the Lorch Fourier filter", label="Lorch width")
 	private double lorchWidth = 0.2;
-	@OperationModelField(hint="Enter the maximum Q up to which to take the transform.", label="Maximum Q")
+	@OperationModelField(hint="Enter the maximum Q up to which to take the transform.", label="Maximum Q", unit = "Å⁻¹")
 	private double maxQ = Double.POSITIVE_INFINITY;
 	@OperationModelField(hint="Seek the next zero after Qmax?", label="Seek next zero?")
 	private boolean seekNextZero = false;

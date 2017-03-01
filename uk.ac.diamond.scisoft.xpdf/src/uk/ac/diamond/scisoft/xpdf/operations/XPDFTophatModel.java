@@ -15,13 +15,13 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 public class XPDFTophatModel extends AbstractOperationModel {
 
 	// TODO: Change defaults to real defaults, rather than ceria SRM defaults
-	@OperationModelField(hint="Enter the minimum radius to consider", label="Rmin (Angstroms)")
+	@OperationModelField(hint="Enter the minimum radius to consider", label="Rmin", unit = "Å")
 	private double rMin = 1.85;
-	@OperationModelField(hint="Enter the maximum radius to consider", label="Rmax (Angstroms)")
+	@OperationModelField(hint="Enter the maximum radius to consider", label="Rmax", unit = "A")
 	private double rMax = 50.0;
-	@OperationModelField(hint="Enter the radius increment", label="Rstep (Angstroms)")
+	@OperationModelField(hint="Enter the radius increment", label="Rstep", unit = "Å")
 	private double rStep = 0.02;
-	@OperationModelField(hint="Enter the width of the Tophat filter", label="Tophat width (Angstroms)")
+	@OperationModelField(hint="Enter the width of the Tophat filter", label="Tophat width", unit = "Å")
 	private double tophatWidth = 3.0;
 	
 	public double getrMin() {

@@ -24,11 +24,11 @@ public class XPDFDefineDetectorModel extends AbstractOperationModel {
 	private String detectorName = "Perkin Elmer";
 	@OperationModelField(hint="Enter the IUPAC formula detector material", label = "Detector Material")
 	private String detectorMaterial = "CsI";
-	@OperationModelField(hint="Enter the detector material density",label = "Detector Density (g/cm^3)" )
+	@OperationModelField(hint="Enter the detector material density",label = "Detector Density", unit = "g cm⁻³" )
 	private double density = 4.51;
-	@OperationModelField(hint="Enter the detector thickness",label = "Detector Thickness (mm)" )
+	@OperationModelField(hint="Enter the detector thickness",label = "Detector Thickness", unit = "mm" )
 	private double thickness = 0.5;
-	@OperationModelField(hint="Enter the solid angle subtended by the detector",label = "Solid Angle (sr)" )
+	@OperationModelField(hint="Enter the solid angle subtended by the detector",label = "Solid Angle", unit = "sr" )
 	private double solidAngle = 0.1;
 
 	public String getDetectorName() {

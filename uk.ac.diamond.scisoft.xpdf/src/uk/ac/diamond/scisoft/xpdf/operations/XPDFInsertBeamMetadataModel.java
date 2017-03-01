@@ -23,13 +23,13 @@ public class XPDFInsertBeamMetadataModel extends AbstractOperationModel {
 	private String errorFilePath = "";
 	@OperationModelField(hint="Name of the dataset containing the errors", dataset = "errorFilePath", label = "Errors Dataset")
 	private String errorDataset = "";
-	@OperationModelField(hint="Enter the beam energy", label = "Beam Energy (keV)")
+	@OperationModelField(hint="Enter the beam energy", label = "Beam Energy", unit = "keV")
 	private double beamEnergy = 76.6;
-	@OperationModelField(hint="Enter the beam height", label = "Beam Height (mm)")
+	@OperationModelField(hint="Enter the beam height", label = "Beam Height", unit = "mm")
 	private double beamHeight = 0.07;
-	@OperationModelField(hint="Enter the beam width", label = "Beam Width (mm)")
+	@OperationModelField(hint="Enter the beam width", label = "Beam Width", unit = "mm")
 	private double beamWidth = 0.07;
-	@OperationModelField(hint="Enter the experiment counting time", label = "Counting Time (s)")
+	@OperationModelField(hint="Enter the experiment counting time", label = "Counting Time", unit = "s")
 	private double countingTime = 60.0;
 	@OperationModelField(hint="Enter the relative flux", label = "Monitor Relative Flux")
 	private double monitorRelativeFlux = 1.0;

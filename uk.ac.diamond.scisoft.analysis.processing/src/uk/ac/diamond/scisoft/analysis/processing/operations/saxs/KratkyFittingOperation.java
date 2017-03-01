@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 2016 Diamond Light Source Ltd.
+ * Copyright (c) 2017 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -22,6 +22,7 @@ import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.metadata.MetadataFactory;
 import org.eclipse.january.metadata.MetadataType;
+
 // Imports from org.eclipse.dawnsci
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -42,7 +43,7 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expressi
 // @author Tim Snow
 
 
-// The operation to take a region of reduced SAXS data, obtain a Guinier plot and fit, as well as
+// The operation to take a region of reduced SAXS data, obtain a Kratky plot and fit, as well as
 // information that, ultimately, provides information about the shape of the molecule
 
 @PlotAdditionalData(onInput = false, dataName = "Fitted line from ln(I) vs q^2 plot")
@@ -60,7 +61,7 @@ public class KratkyFittingOperation extends AbstractOperation<KratkyFittingModel
 	private Dataset processedYSlice;
 	
 	
-	// Expression strings for Porod plotting
+	// Expression strings for Kratky plotting
 	final public String xExpressionStringKratky = "xaxis";  // In essence, nothing but included just in case.
 	final public String yExpressionStringKratky = "dnp:power(xaxis, 2) * data";
 
@@ -149,8 +150,8 @@ public class KratkyFittingOperation extends AbstractOperation<KratkyFittingModel
 		gradientDataset.setName("x term from I * q^2 vs q fit");
 
 		// Creating a home for the intercept data
-		Dataset interceptDataset = DatasetFactory.createFromObject(constant, 1);
-		interceptDataset.setName("c term from I * q^2 vs q fit");
+		Dataset constantDataset = DatasetFactory.createFromObject(constant, 1);
+		constantDataset.setName("c term from I * q^2 vs q fit");
 
 		// Creating a home for the intercept data
 		Dataset xSquaredGradientDataset = DatasetFactory.createFromObject(xSquaredGradient, 1);
@@ -166,7 +167,7 @@ public class KratkyFittingOperation extends AbstractOperation<KratkyFittingModel
 		// Filling it with data
 		toReturn.setData(this.processedYSlice);
 		// And all the other variables
-		toReturn.setAuxData(gradientDataset, interceptDataset, fitDataset, xSquaredGradientDataset);
+		toReturn.setAuxData(gradientDataset, constantDataset, fitDataset, xSquaredGradientDataset);
 		
 		// And then returning it		
 		return toReturn;
@@ -257,12 +258,10 @@ public class KratkyFittingOperation extends AbstractOperation<KratkyFittingModel
 		this.processedYSlice.setName("I * q^2");
 
 		// Set up a place to place the fitting parameters
-		//StraightLine kratkyFit = new StraightLine();
 		Polynomial kratkyFit = new Polynomial(2);
 		
 		// Try to do the fitting on the new processed slices
 		try {
-			//Fitter.llsqFit(new Dataset[] {this.processedXSlice}, this.processedYSlice, kratkyFit);
 			Fitter.polyFit(new Dataset[] {this.processedXSlice}, this.processedYSlice, 1e-15, kratkyFit);
 		} catch (Exception fittingError) {
 			System.err.println("Exception performing linear fit in KratkyFittingOperation(): " + fittingError.toString());

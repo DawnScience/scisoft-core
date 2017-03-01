@@ -1191,6 +1191,13 @@
              model="uk.ac.diamond.scisoft.analysis.processing.operations.fitting.FitPeakToRowsModel"
              name="Fit Peak to Image Rows">
        </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.fitting.LinearFittingOperation"
+            description="Fit an entire, or a section of a, lineplot to y = mx + c"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.fitting.LinearFittingOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.fitting.LinearFittingModel"
+            name="Linear Fitting Operation">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

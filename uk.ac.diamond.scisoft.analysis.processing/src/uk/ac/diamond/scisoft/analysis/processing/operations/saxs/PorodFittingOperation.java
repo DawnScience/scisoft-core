@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 2016 Diamond Light Source Ltd.
+ * Copyright (c) 2017 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -22,6 +22,7 @@ import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.metadata.MetadataFactory;
 import org.eclipse.january.metadata.MetadataType;
+
 // Imports from org.eclipse.dawnsci
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -87,7 +88,7 @@ public class PorodFittingOperation extends AbstractOperation<PorodFittingModel, 
 	// Now let's define the main calculation process
 	@Override
 	public OperationData process(IDataset inputDataset, IMonitor monitor) throws OperationException {
-		// Get out the start and end values of the Guinier range
+		// Get out the start and end values of the Porod range
 		double[] porodROI = model.getPorodRange();
 		
 		// Next, we'll extract out the x axis (q) dataset from the input
@@ -140,23 +141,23 @@ public class PorodFittingOperation extends AbstractOperation<PorodFittingModel, 
 		Dataset gradientDataset = DatasetFactory.createFromObject(gradient, 1);
 		gradientDataset.setName("Gradient of log(I) vs log(q) fit");
 
-		// Then creating a home for the intercept data
-		Dataset interceptDataset = DatasetFactory.createFromObject(constant, 1);
-		interceptDataset.setName("Intercept of log(I) vs log(q) fit");
+		// Then creating a home for the constant variable
+		Dataset constantDataset = DatasetFactory.createFromObject(constant, 1);
+		constantDataset.setName("Intercept of log(I) vs log(q) fit");
 
-		// Creating a home for the intercept data
+		// Creating a home for the q axis
 		Dataset xDataset = DatasetFactory.createFromObject(this.processedXSlice, this.processedXSlice.getShape());
 		xDataset.setName("q axis");
 
-		// Creating a home for the intercept data
+		// Creating a home for the I*q^4 data
 		Dataset yDataset = DatasetFactory.createFromObject(this.processedYSlice, this.processedYSlice.getShape());
 		yDataset.setName("I * q^4 axis");
 		
-		// Creating a home for the intercept data
+		// Creating a home for the log q axis
 		Dataset logXDataset = DatasetFactory.createFromObject(this.processedLogXSlice, this.processedLogXSlice.getShape());
 		logXDataset.setName("log(q) axis");
 
-		// Creating a home for the intercept data
+		// Creating a home for the log I data
 		Dataset logYDataset = DatasetFactory.createFromObject(this.processedLogYSlice, this.processedLogYSlice.getShape());
 		logYDataset.setName("log(I) axis");
 		
@@ -184,7 +185,7 @@ public class PorodFittingOperation extends AbstractOperation<PorodFittingModel, 
 		MetadataType fitAxisMetadata = null;
 
 		// Now, based on the user input, get ready to display the plot
-		// In the future, if more than two cases are required, the filling could be out sourced as a method
+		// In the future, if more than two cases are required, the filling could be outsourced as a method
 		switch (model.getPlotView()) {
 			case IQ4_Q :	// Filling the object with the processed x axis slice
 							xAxisMetadata.setAxis(0, this.processedXSlice);
@@ -197,7 +198,7 @@ public class PorodFittingOperation extends AbstractOperation<PorodFittingModel, 
 							// Filling it with data
 							toReturn.setData(this.processedYSlice);
 							// And all the other variables
-							toReturn.setAuxData(gradientDataset, interceptDataset, fitDataset, logXDataset, logYDataset, fitPlotDataset);
+							toReturn.setAuxData(gradientDataset, constantDataset, fitDataset, logXDataset, logYDataset, fitPlotDataset);
 							break;
 						
 			case LOG_LOG:	// Filling the object with the processed x axis slice
@@ -211,7 +212,7 @@ public class PorodFittingOperation extends AbstractOperation<PorodFittingModel, 
 							// Filling it with data
 							toReturn.setData(this.processedLogYSlice);
 							// And all the other variables
-							toReturn.setAuxData(gradientDataset, interceptDataset, fitDataset, xDataset, yDataset, fitPlotDataset);
+							toReturn.setAuxData(gradientDataset, constantDataset, fitDataset, xDataset, yDataset, fitPlotDataset);
 							break;
 						
 			default:		System.err.println("This shouldn't have occured, the enum switch in PorodFittingOperation is broken!");

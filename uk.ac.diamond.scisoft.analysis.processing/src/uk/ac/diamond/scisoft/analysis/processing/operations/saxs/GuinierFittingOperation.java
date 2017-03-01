@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 2016 Diamond Light Source Ltd.
+ * Copyright (c) 2017 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -22,6 +22,7 @@ import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.metadata.MetadataFactory;
 import org.eclipse.january.metadata.MetadataType;
+
 // Imports from org.eclipse.dawnsci
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -76,7 +77,6 @@ public class GuinierFittingOperation extends AbstractOperation<GuinierFittingMod
 	// Now let's define the main calculation process
 	@Override
 	public OperationData process(IDataset inputDataset, IMonitor monitor) throws OperationException {
-
 		// First up, let's check that our expression engine is set up properly
 		if (expressionEngine == null) {
 			try {
@@ -208,8 +208,8 @@ public class GuinierFittingOperation extends AbstractOperation<GuinierFittingMod
 		gradientDataset.setName("Gradient of ln(I) vs q^2 plot fit");
 
 		// Creating a home for the intercept data
-		Dataset interceptDataset = DatasetFactory.createFromObject(constant, 1);
-		interceptDataset.setName("Intercept of ln(I) vs q^2 plot fit");
+		Dataset constantDataset = DatasetFactory.createFromObject(constant, 1);
+		constantDataset.setName("Intercept of ln(I) vs q^2 plot fit");
 
 		// Creating a home for the I0 data
 		Dataset iZeroDataset = DatasetFactory.createFromObject(I0, 1);
@@ -228,7 +228,7 @@ public class GuinierFittingOperation extends AbstractOperation<GuinierFittingMod
 		// Filling it with data
 		toReturn.setData(processedYSlice);
 		// And all the other variables
-		toReturn.setAuxData(gradientDataset, interceptDataset, fitDataset, iZeroDataset, rgDataset);
+		toReturn.setAuxData(gradientDataset, constantDataset, fitDataset, iZeroDataset, rgDataset);
 		
 		// And then returning it		
 		return toReturn;

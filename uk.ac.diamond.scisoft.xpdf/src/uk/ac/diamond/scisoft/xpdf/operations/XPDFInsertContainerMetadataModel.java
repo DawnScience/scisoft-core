@@ -48,6 +48,8 @@ public class XPDFInsertContainerMetadataModel extends AbstractOperationModel {
 	private boolean upstream = true;
 	@OperationModelField(hint="Enter whether the container exists downstream of the container",label = "Container is Downstream?" )
 	private boolean downstream = true;
+	@OperationModelField(hint="Angle of the capillary. 0°:|, 90°:—", label = "Container Angle", unit = "°")
+	private double containerAngle = 0.0;
 	
 	public String getFilePath() {
 		return filePath;
@@ -169,4 +171,12 @@ public class XPDFInsertContainerMetadataModel extends AbstractOperationModel {
 		firePropertyChange("downstream", this.downstream, this.downstream = downstream);
 	}
 
+	public double getContainerAngle() {
+		return this.containerAngle;
+	}
+	public void setContainerAngle(double containerAngle) {
+		double detentContainerAngle = (containerAngle < 45.0) ? 0.0 : 90.0;
+		firePropertyChange("containerAngle", this.containerAngle, this.containerAngle = detentContainerAngle);
+	}
+	
 }

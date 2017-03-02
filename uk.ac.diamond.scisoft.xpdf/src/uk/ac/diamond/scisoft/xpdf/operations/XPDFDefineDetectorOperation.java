@@ -28,6 +28,7 @@ public class XPDFDefineDetectorOperation extends XPDFInsertXMetadataOperation<XP
 		tect.setSubstance(new XPDFSubstance(model.getDetectorName(), model.getDetectorMaterial(), model.getDensity(), 1.0));
 		tect.setThickness(model.getThickness());
 		tect.setSolidAngle(model.getSolidAngle());
+		tect.setEulerAnglesinDegrees(0, 0, model.getDetectorAngle());
 		
 		theXPDFMetadata.setDetector(tect);
 		

@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
+import java.util.Arrays;
+
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.Maths;
 
@@ -17,12 +19,16 @@ public class XPDFDetector {
 	private XPDFSubstance substance;
 	private double thickness;
 	private double solidAngleSubtended;
+	// Euler angles of the detector in radians
+	protected double[] eulerAngles;
+
 	
 	/**
 	 * Default constructor.
 	 */
 	public XPDFDetector() {
 		substance = null;
+		this.eulerAngles = new double[] {0, 0, 0};
 	}
 	
 	/**
@@ -34,6 +40,7 @@ public class XPDFDetector {
 		this.substance = (inTect.substance != null) ? new XPDFSubstance(inTect.substance) : null;
 		this.thickness = inTect.thickness;
 		this.solidAngleSubtended = inTect.solidAngleSubtended;
+		this.eulerAngles = Arrays.copyOf(inTect.eulerAngles, 3);
 	}
 
 	/**
@@ -130,4 +137,46 @@ public class XPDFDetector {
 		this.solidAngleSubtended = solidAngleSubtended;
 	}
 
+	/**
+	 *  Sets the Euler angles in radians
+	 * @param eulerAngles
+	 * 					Euler angles in radians ordered as pitch, yaw, roll.
+	 */
+	public void setEulerAngles(double[] eulerAngles) {
+		this.eulerAngles = Arrays.copyOf(eulerAngles, 3);
+	}
+	/**
+	 *  Sets the individual Euler angles in radians
+	 * @param pitch	Pitch angle in radians
+	 * @param yaw	Yaw angle in radians
+	 * @param roll	Roll angle in radians
+	 */
+	public void setEulerAngles(double pitch, double yaw, double roll) {
+		this.setEulerAngles(new double[] {pitch, yaw, roll});
+	}
+	/**
+	 *  Sets the individual Euler angles in degrees of arc
+	 * @param pitch Pitch angle in degrees of arc
+	 * @param yaw	Yaw angle in degrees of arc
+	 * @param roll  Roll angle in degrees of arc
+	 */
+	public void setEulerAnglesinDegrees(double pitch, double yaw, double roll) {
+		this.setEulerAngles(Math.toRadians(pitch), Math.toRadians(yaw), Math.toRadians(roll));
+	}
+	/**
+	 *  Gets the Euler angles as an array
+	 * @return Euler angles as (pitch, yaw, roll) in radians.
+	 */
+	public double[] getEulerAngles() {
+		return Arrays.copyOf(eulerAngles, 3);
+	}
+	/**
+	 *  Gets the Euler angles as an array in degrees of arc
+	 * @return Euler angles as (pitch, yaw, roll) in degrees
+	 */
+	public double[] getEulerAnglesinDegrees() {
+		return new double[] {Math.toDegrees(eulerAngles[0]), Math.toDegrees(eulerAngles[1]), Math.toDegrees(eulerAngles[2])};
+	}
+
+	
 }

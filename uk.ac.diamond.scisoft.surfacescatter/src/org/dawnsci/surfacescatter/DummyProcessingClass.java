@@ -1,11 +1,8 @@
 package org.dawnsci.surfacescatter;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
@@ -17,16 +14,12 @@ import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.Metadata;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 public class DummyProcessingClass {
 	
@@ -280,13 +273,7 @@ public class DummyProcessingClass {
 				break;
 		}
 		
-//		IndexIterator it1 = ((Dataset) output).getIterator();
-		
-//		while (it1.hasNext()) {
-//			double q = ((Dataset) output).getElementDoubleAbs(it1.index);
-//			if (q <= 0)
-//				((Dataset) output).setObjectAbs(it1.index, 0.1);
-//		}
+
 		
 		if(Arrays.equals(output.getShape(), (new int[] {2,2}))){
 			IndexIterator it11 = ((Dataset) output).getIterator();
@@ -304,6 +291,7 @@ public class DummyProcessingClass {
 								  sm, 
 								  gm, 
 								  k, 
+								  selection,
 								  output,
 								  input);
 		
@@ -320,24 +308,24 @@ public class DummyProcessingClass {
 		
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double fhkl = (double) 0.001;
-		if (intensity >=0){
-			fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
+			if (intensity >=0){
+				fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
 		}		
-//				
+			
 		
 		if (trackingMarker !=3 ){
+			
 			dm.addyList(model.getDatImages().getShape()[0], k ,intensity);
 			dm.addyListFhkl(model.getDatImages().getShape()[0], k ,fhkl);
 			dm.addOutputDatArray(model.getDatImages().getShape()[0], k ,output);
+			dm.addYListRaw(model.getDatImages().getShape()[0], k ,sm.getCurrentRawIntensity());
 			
-//			sm.yListReset();
 			
 			sm.addyList(sm.getImages().length, selection ,intensity);
 			sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
 			sm.addOutputDatArray(sm.getImages().length, selection ,output);
 			
 			
-//			debug("  intensity:  " + intensity + "   k: " + k);
 		}
 		
 		return output;
@@ -378,34 +366,16 @@ public class DummyProcessingClass {
 													   selection,
 													   trackingMarker);
 				output = outputOD.getData();
-				
-//				double[] loc =  (double[]) outputOD.getAuxData()[0];
-//				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[0];
+
 				IDataset temporaryBackground = DatasetFactory.ones(new int[] {1});
 				
-//				try{
-					temporaryBackground =  (IDataset) outputOD.getAuxData()[0];
-//				}
-//				catch(Exception f){
-//					DoubleDataset temporaryBackground1 =  (DoubleDataset) outputOD.getAuxData()[0];
-//					temporaryBackground = (IDataset) temporaryBackground1;
-//				}
-				
-				
-				
-				
-//				sm.addLocationList(selection,loc);
+				temporaryBackground =  (IDataset) outputOD.getAuxData()[0];
+
 				sm.setTemporaryBackgroundHolder(temporaryBackground);
 				
 				
 				break;
 			case TWOD:
-				
-//				output = TwoDFitting.TwoDFitting1(input,
-//						  						  model,
-//						  						  sm,
-//						  						  selection);
-				
 				
 				int[] len = sm.getInitialLenPt()[0];
 				int[] pt = sm.getInitialLenPt()[1];
@@ -427,23 +397,12 @@ public class DummyProcessingClass {
 					(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
-				
-				
-				
-				
-//					
-//				sm.addLocationList(selection,new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
-//						(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
-//				
-				
 				OperationData outputOD1= TwoDFittingIOp(model,
 						   input,
 						   sm,
 						   selection,
 						   trackingMarker);
 				output = outputOD1.getData();
-//				double[] loc1 =  (double[]) outputOD1.getAuxData()[0];
-//				sm.addLocationList(selection,loc1);	
 				
 				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[0];
 
@@ -610,6 +569,7 @@ public class DummyProcessingClass {
 				  sm, 
 				  gm, 
 				  k, 
+				  selection,
 				  output,
 				  input);
 
@@ -632,17 +592,14 @@ public class DummyProcessingClass {
 			dm.addyList(model.getDatImages().getShape()[0], k ,intensity);
 			dm.addyListFhkl(model.getDatImages().getShape()[0], k ,fhkl);
 			dm.addOutputDatArray(model.getDatImages().getShape()[0], k ,output);
-			
-//			sm.yListReset();
+			dm.addYListRaw(model.getDatImages().getShape()[0], k ,sm.getCurrentRawIntensity());
 			
 			sm.addyList(sm.getImages().length, selection ,intensity);
 			sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
 			sm.addOutputDatArray(sm.getImages().length, selection ,output);
 			
-//			debug("  intensity:  " + intensity + "   k: " + k);
 		}
-//		debug("intensity added to dm: " + intensity + "   local k: " + k + "   selection: " + selection);
-		
+
 		return output;
 	}
 	
@@ -682,10 +639,8 @@ public class DummyProcessingClass {
 													   trackingMarker);
 				output = outputOD.getData();
 				
-//				double[] loc =  (double[]) outputOD.getAuxData()[0];
 				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[0];
-				
-//				sm.addLocationList(selection,loc);
+
 				sm.setTemporaryBackgroundHolder(temporaryBackground);
 				
 				break;
@@ -838,8 +793,6 @@ public class DummyProcessingClass {
 						   								trackingMarker,
 						   								k);
 				output = outputOD2.getData();
-//				double[] loc2 =  (double[]) outputOD2.getAuxData()[0];
-//				sm.addLocationList(selection,loc2);
 				
 				IDataset temporaryBackground2 = (IDataset) outputOD2.getAuxData()[1];
 				sm.setTemporaryBackgroundHolder(temporaryBackground2);
@@ -878,8 +831,6 @@ public class DummyProcessingClass {
 						   								trackingMarker,
 						   								k);
 				output = outputOD3.getData();
-//				double[] loc3 =  (double[]) outputOD3.getAuxData()[0];
-//				sm.addLocationList(selection,loc3);
 				
 				IDataset temporaryBackground3 = (IDataset) outputOD3.getAuxData()[1];
 				sm.setTemporaryBackgroundHolder(temporaryBackground3);
@@ -887,19 +838,12 @@ public class DummyProcessingClass {
 									
 				break;
 		}
-		
-//		IndexIterator it1 = ((Dataset) output).getIterator();
-//		
-//		while (it1.hasNext()) {
-//			double q = ((Dataset) output).getElementDoubleAbs(it1.index);
-//			if (q <= 0)
-//				((Dataset) output).setObjectAbs(it1.index, 0.1);
-//		}
-		
+				
 		yValue = correctionMethod(model, 
 				  sm, 
 				  gm, 
 				  k, 
+				  selection,
 				  output,
 				  input);
 
@@ -921,8 +865,7 @@ public class DummyProcessingClass {
 			dm.addyList(model.getDatImages().getShape()[0], k ,intensity);
 			dm.addyListFhkl(model.getDatImages().getShape()[0], k ,fhkl);
 			dm.addOutputDatArray(model.getDatImages().getShape()[0], k ,output);
-			
-//			sm.yListReset();
+			dm.addYListRaw(model.getDatImages().getShape()[0], k ,sm.getCurrentRawIntensity());
 			
 			sm.addyList(sm.getImages().length, selection ,intensity);
 			sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
@@ -957,7 +900,6 @@ public class DummyProcessingClass {
 		switch(model.getMethodology()){
 			case TWOD_TRACKING:
 								
-//				TwoDTracking2 twoDTracking = new TwoDTracking2();
 				AgnosticTrackerHandler ath = new AgnosticTrackerHandler();
 				
 				ath.TwoDTracking1(input, 
@@ -976,8 +918,6 @@ public class DummyProcessingClass {
 													   selection,
 													   trackingMarker);
 				output = outputOD.getData();
-//				double[] loc =  (double[]) outputOD.getAuxData()[0];
-//				sm.addLocationList(selection,loc);
 				
 				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[0];
 				
@@ -1176,9 +1116,7 @@ public class DummyProcessingClass {
 														trackingMarker,
 														k);
 				output = outputOD3.getData();
-//				double[] loc3 =  (double[]) outputOD3.getAuxData()[0];
-//				sm.addLocationList(selection,loc3);
-									
+
 				IDataset temporaryBackground3 = (IDataset) outputOD3.getAuxData()[1];
 				sm.setTemporaryBackgroundHolder(temporaryBackground3);
 				
@@ -1189,6 +1127,7 @@ public class DummyProcessingClass {
 				  sm, 
 				  gm, 
 				  k, 
+				  selection,
 				  output,
 				  input);
 
@@ -1211,9 +1150,8 @@ public class DummyProcessingClass {
 			dm.addyList(model.getDatImages().getShape()[0], k ,intensity);
 			dm.addyListFhkl(model.getDatImages().getShape()[0], k ,fhkl);
 			dm.addOutputDatArray(model.getDatImages().getShape()[0], k ,output);
-			
-//			sm.yListReset();
-			
+			dm.addYListRaw(model.getDatImages().getShape()[0], k ,sm.getCurrentRawIntensity());
+		
 			sm.addyList(sm.getImages().length, selection ,intensity);
 			sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
 			sm.addOutputDatArray(sm.getImages().length, selection ,output);
@@ -1576,13 +1514,13 @@ public class DummyProcessingClass {
 	}
 	
 	public static Dataset correctionMethod(ExampleModel model, 
-									SuperModel sm, 
-									GeometricParametersModel gm, 
-									int k, 
-									IDataset output,
-									IDataset input){
+										   SuperModel sm, 
+										   GeometricParametersModel gm, 
+										   int k,
+										   int selection,
+										   IDataset output,
+										   IDataset input){
 		
-//		Dataset correction = DatasetFactory.zeros(new int[] {1}, Dataset.FLOAT64);
 		double correction = 0.001;
 		int correctionSelector = sm.getCorrectionSelection();
 		
@@ -1591,18 +1529,22 @@ public class DummyProcessingClass {
 		if (correctionSelector == 0){
 			
 			try {
+				
 				double lorentz = SXRDGeometricCorrections.lorentz(model).getDouble(k);
 				sm.addLorentz(sm.getImages().length, k, lorentz);
+				sm.setCurrentLorentzCorrection(lorentz);
 				
 				double areaCorrection = SXRDGeometricCorrections.areacor(model
 						, gm.getBeamCorrection(), gm.getSpecular(),  gm.getSampleSize()
 						, gm.getOutPlaneSlits(), gm.getInPlaneSlits(), gm.getBeamInPlane()
 						, gm.getBeamOutPlane(), gm.getDetectorSlits()).getDouble(k);
 				sm.addAreaCorrection(sm.getImages().length, k, areaCorrection);
+				sm.setCurrentAreaCorrection(areaCorrection);
 				
 				double polarisation = SXRDGeometricCorrections.polarisation(model, gm.getInplanePolarisation()
 						, gm.getOutplanePolarisation()).getDouble(k);
 				sm.addPolarisation(sm.getImages().length, k, polarisation);
+				sm.setCurrentPolarisationCorrection(polarisation);
 				
 				correction = lorentz* polarisation * areaCorrection;
 
@@ -1615,7 +1557,6 @@ public class DummyProcessingClass {
 			
 			yValue = Maths.multiply(output, correction);
 			
-//			debug("Correction Value at local k:  " + Double.toString(correction.getDouble(k)) + "  local k: " + k); 
 		}
 		
 		else if (correctionSelector ==1){
@@ -1634,13 +1575,10 @@ public class DummyProcessingClass {
 					correction = 0.001;
 				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
 			yValue = Maths.multiply(output, correction);
-//			double normalisation  = 1/output.getDouble(0);
-//			yValue = Maths.multiply(normalisation, yValue);
 		}
 		
 		
@@ -1665,8 +1603,7 @@ public class DummyProcessingClass {
 			}
 
 			yValue = Maths.multiply(output, correction);
-//			double normalisation  = 1/output.getDouble(0);
-//			yValue = Maths.multiply(normalisation, yValue);
+
 		}
 		
 		else if (correctionSelector ==3){
@@ -1679,9 +1616,12 @@ public class DummyProcessingClass {
 		}
 	
 		Double intensity = (Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum();
-	
-//		debug("Correction Value:  " + Double.toString(correction.getDouble(0)));
-//		debug("output sum: " + Double.toString(intensity));
+		
+		sm.setCurrentRawIntensity(intensity);
+		sm.addYListRawIntensity(sm.getNumberOfImages(),
+								selection,
+								intensity);
+		
 		
 		return yValue;
 	}

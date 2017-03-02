@@ -22,6 +22,8 @@ public class DataModel {
 	private ArrayList<Double> yListError;
 	private ArrayList<Double> yListFhkl;
 	private ArrayList<Double> yListFhklError;
+	private ArrayList<Double> yListRaw;
+	private ArrayList<Double> yListRawError;
 	private ArrayList<Double> zList;
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private ArrayList<IDataset> outputDatArray;
@@ -39,6 +41,24 @@ public class DataModel {
 	private IDataset yIDatasetFhklMin;
 	private ArrayList<double[]> locationList; 
 	private double[] seedLocation;
+	
+	
+	public ArrayList<Double> getyListRaw() {
+		return yListRaw;
+	}
+
+	public void setyListRaw(ArrayList<Double> yListRaw) {
+		this.yListRaw = yListRaw;
+	}
+
+	public ArrayList<Double> getyListRawError() {
+		return yListRawError;
+	}
+
+	public void setyListRawError(ArrayList<Double> yListRawError) {
+		this.yListRawError = yListRawError;
+	}
+
 	
 	public IROI getBackgroundROI(){
 		return backgroundROI;
@@ -383,11 +403,14 @@ public class DataModel {
 		yListFhkl =null;
 		yListFhklError = null;
 		yListError = null;
+		yListRaw =null;
+		yListRawError = null;
 		outputDatArray =null;
 		backgroundDatArray = null;
 		initialDataset = null;
 		initialLenPt = null;
 		locationList = null;
+		
 		
 	}
 
@@ -425,12 +448,71 @@ public class DataModel {
 		return yOut;
 	}
 	
+	public IDataset yRawIDataset(){
+		if (yListRaw==null){
+			yListRaw = new ArrayList<Double>();
+		}
+
+		ArrayList<Double> yListRawc = (ArrayList<Double>) yListRaw.clone();
+		
+		ArrayList<Double> zero = new ArrayList<Double>();
+		
+		zero.add((double)1000000000);
+		
+		yListRawc.removeAll(zero);
+		
+		IDataset yOut = DatasetFactory.ones(new int[] {1});
+		try{
+			yOut = DatasetFactory.createFromList(yListRawc);
+		}
+		catch(Exception n){
+//			IDataset yOut = DatasetFactory.ones(new int[] {1});
+		}
+		
+		for(int i =0; i< yOut.getSize(); i++){
+			
+			if(yOut.getDouble(i) >= 0){
+				yOut.setError(Maths.sqrt(yOut));
+			}
+			else{
+				yOut.setError(0.001);
+			}
+		}
+			
+		return yOut;
+	}
+	
 	public IDataset yIDatasetError(){
 		if (yListError==null){
 			yListError = new ArrayList<Double>();
 		}
 
 		ArrayList<Double> yListc = (ArrayList<Double>) yListError.clone();
+		
+		ArrayList<Double> zero = new ArrayList<Double>();
+		
+		zero.add((double) 1000000000);
+		
+		yListc.removeAll(zero);
+		
+		IDataset yOut = DatasetFactory.ones(new int[] {1});
+		
+		try{
+			yOut = DatasetFactory.createFromList(yListc);
+		}
+		catch(Exception x){
+			
+		}
+		
+		return yOut;
+	}
+	
+	public IDataset yRawIDatasetError(){
+		if (yListRawError==null){
+			yListRawError = new ArrayList<Double>();
+		}
+
+		ArrayList<Double> yListc = (ArrayList<Double>) yListRawError.clone();
 		
 		ArrayList<Double> zero = new ArrayList<Double>();
 		
@@ -691,6 +773,7 @@ public class DataModel {
 	}
 
 	public void addLocationList(int l, int k, double[] location){
+		
 		if (locationList==null || locationList.isEmpty()){
 			locationList = new ArrayList<double[]>();
 			for (int i = 0; i < l; i++) {
@@ -713,5 +796,152 @@ public class DataModel {
 		this.seedLocation = seedLocation;
 	}
 	
+	
+	public void addYListRaw(int l,
+							int k,
+							double y){
+//		
+//		dataArrayListManager(yListRaw, 
+//							 yListRawError, 
+//							 l,
+//							 k,
+//							 y);
+		
+		firePropertyChange("yListRaw", this.yListRaw,
+				this.yListRaw= yListRaw);
+		
+		
+		if (yListRaw==null){
+			yListRaw = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				yListRaw.add((double)1000000000);
+			}
+		}
+		
+		if (yListRaw.size() == 0){
+			yListRaw = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				yListRaw.add((double)1000000000);
+			}
+		}
+	
+	
+		if (yListRawError==null){
+			yListRawError = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				yListRawError.add((double)1000000000);
+			}
+		}
+	
+		if (yListRawError.size() == 0){
+			yListRawError = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				yListRawError.add((double)1000000000);
+			}
+		}
+	
+		ArrayList<Double> yList1 = new ArrayList<Double>();
+		
+		yList1 = (ArrayList<Double>) yListRaw.clone();
+		yList1.set(k,y);
+		yListRaw = yList1;
+		
+		ArrayList<Double> yList2 = new ArrayList<Double>();
+		
+		yList2 = (ArrayList<Double>) yListRawError.clone();
+		yList2.set(k,Math.sqrt(y));
+		
+		yListRawError = yList2;
+		
+		firePropertyChange("yListRaw", this.yListRaw,
+				this.yListRaw= yListRaw);
+		
+
+	}	
+		
+	
+	
+	public void addYListRaw(double y){
+		addToDataArray(yListRaw, yListRawError, y);
+		
+		firePropertyChange("yListRaw", this.yListRaw,
+				this.yListRaw= yListRaw);
+		
+	}
+	
+	public void addToDataArray(ArrayList<Double> dataArray,
+							   ArrayList<Double> dataArrayError,
+							   double y){
+
+		if (dataArray==null){
+			dataArray = new ArrayList<Double>();
+		}
+	
+		if (dataArrayError==null){
+			dataArrayError = new ArrayList<Double>();
+		}
+	
+		ArrayList<Double> dataArrayError1 = new ArrayList<Double>();
+		dataArrayError1 = (ArrayList<Double>) dataArrayError.clone();
+		dataArrayError1.add(Math.sqrt(y));
+	
+		dataArrayError = dataArrayError1;
+	
+		ArrayList<Double> yList1 = new ArrayList<Double>();
+		yList1 = (ArrayList<Double>) dataArray.clone();
+		yList1.add(y);
+		
+		dataArray= yList1;
+	}
+	
+	public void dataArrayListManager(ArrayList<Double> dataArray,
+											ArrayList<Double> dataArrayError,
+											int l, 
+											int k, 
+											double y){
+				
+		if (dataArray==null){
+			dataArray = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				dataArray.add((double)1000000000);
+			}
+		}
+		
+		if (dataArray.size() == 0){
+		dataArray = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				dataArray.add((double)1000000000);
+			}
+		}
+	
+	
+		if (dataArrayError==null){
+			dataArrayError = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				dataArrayError.add((double)1000000000);
+			}
+		}
+	
+		if (dataArrayError.size() == 0){
+			dataArrayError = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				dataArrayError.add((double)1000000000);
+			}
+		}
+	
+		ArrayList<Double> yList1 = new ArrayList<Double>();
+		
+		yList1 = (ArrayList<Double>) dataArray.clone();
+		yList1.set(k,y);
+		dataArray = yList1;
+		
+		ArrayList<Double> yList2 = new ArrayList<Double>();
+		
+		yList2 = (ArrayList<Double>) dataArrayError.clone();
+		yList2.set(k,Math.sqrt(y));
+		
+		dataArrayError = yList2;
+
+	}	
 }
 

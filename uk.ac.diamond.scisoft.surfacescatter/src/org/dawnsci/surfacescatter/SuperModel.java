@@ -43,6 +43,8 @@ public class SuperModel {
 	private ArrayList<Double> yListError;
 	private ArrayList<Double> yListFhkl;
 	private ArrayList<Double> yListFhklError;
+	private ArrayList<Double> yListRawIntensity;
+	private ArrayList<Double> yListRawIntensityError;
 	private ArrayList<IDataset> outputDatArray;
 	private ArrayList<IDataset> backgroundDatArray;
 	private ArrayList<double[]> locationList; 
@@ -67,7 +69,29 @@ public class SuperModel {
 	private ArrayList<Double> lorentzCorrection;
 	private ArrayList<Double> areaCorrection;
 	private ArrayList<Double> polarisation;
+	private double currentPolarisationCorrection;
+	private double currentLorentzCorrection;
+	private double currentAreaCorrection;
+	private double currentRawIntensity;
+	private IDataset splicedCurveYRaw;
+	private IDataset splicedCurveYRawError;
 	
+	public IDataset getSplicedCurveYRaw() {
+		return splicedCurveYRaw;
+	}
+
+	public void setSplicedCurveYRaw(IDataset splicedCurveYRaw) {
+		this.splicedCurveYRaw = splicedCurveYRaw;
+	}
+
+	public IDataset getSplicedCurveYRawError() {
+		return splicedCurveYRawError;
+	}
+
+	public void setSplicedCurveYRawError(IDataset splicedCurveYRawError) {
+		this.splicedCurveYRawError = splicedCurveYRawError;
+	}
+
 	public ArrayList<Double> getAreaCorrection() {
 		return areaCorrection;
 	}
@@ -193,6 +217,7 @@ public class SuperModel {
 		xList =null;
 		yList =null;
 		yListFhkl =null;
+		yListRawIntensity =null;
 		outputDatArray =null;
 		backgroundDatArray = null;
 		trackerLocationList = null;
@@ -1110,4 +1135,145 @@ public class SuperModel {
 	public void setPermanentBoxOffsetLenPt(int[][] permanentBoxOffsetLenPt) {
 		this.permanentBoxOffsetLenPt = permanentBoxOffsetLenPt;
 	}
+
+	public double getCurrentPolarisationCorrection() {
+		return currentPolarisationCorrection;
+	}
+
+	public void setCurrentPolarisationCorrection(double currentPolarisationCorrection) {
+		this.currentPolarisationCorrection = currentPolarisationCorrection;
+	}
+
+	public double getCurrentLorentzCorrection() {
+		return currentLorentzCorrection;
+	}
+
+	public void setCurrentLorentzCorrection(double currentLorentzCorrection) {
+		this.currentLorentzCorrection = currentLorentzCorrection;
+	}
+
+	public double getCurrentAreaCorrection() {
+		return currentAreaCorrection;
+	}
+
+	public void setCurrentAreaCorrection(double currentAreaCorrection) {
+		this.currentAreaCorrection = currentAreaCorrection;
+	}
+
+	public double getCurrentRawIntensity() {
+		return currentRawIntensity;
+	}
+
+	public void setCurrentRawIntensity(double currentRawIntensity) {
+		this.currentRawIntensity = currentRawIntensity;
+	}
+	
+	
+	public void  addYListRawIntensity(double y){
+		
+		addToDataArray(yListRawIntensity,
+					   yListRawIntensityError,
+					   y);
+		
+		firePropertyChange("yListRawIntensity", this.yListRawIntensity,
+				this.yListFhkl= yListRawIntensity);
+		
+	}
+	
+	
+	public void  addYListRawIntensity(int l ,
+									  int k,
+									  double y){
+		
+		dataArrayListManager(yListRawIntensity,
+					         yListRawIntensityError,
+					         l,
+					         k,
+					         y);
+		
+		firePropertyChange("yListRawIntensity", this.yListRawIntensity,
+				this.yListFhkl= yListRawIntensity);
+		
+	}
+	
+	
+	public void addToDataArray(ArrayList<Double> dataArray,
+							   ArrayList<Double> dataArrayError,
+							   double y){
+		
+		if (dataArray==null){
+			dataArray = new ArrayList<Double>();
+		}
+		
+		if (dataArrayError==null){
+			dataArrayError = new ArrayList<Double>();
+		}
+
+		ArrayList<Double> dataArrayError1 = new ArrayList<Double>();
+		dataArrayError1 = (ArrayList<Double>) dataArrayError.clone();
+		dataArrayError1.add(Math.sqrt(y));
+		
+		dataArrayError = dataArrayError1;
+		
+		ArrayList<Double> yList1 = new ArrayList<Double>();
+		yList1 = (ArrayList<Double>) dataArray.clone();
+		yList1.add(y);
+		
+		dataArray= yList1;
+
+	}
+	
+	public static void dataArrayListManager(ArrayList<Double> dataArray,
+											ArrayList<Double> dataArrayError,
+											int l, 
+											int k, 
+											double y){
+		
+		if (dataArray==null){
+			dataArray = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				dataArray.add(0.0);
+				}
+		}
+		
+		if (dataArray.size() == 0){
+			dataArray = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				dataArray.add(0.0);
+				}
+		}
+		
+		
+		if (dataArrayError==null){
+			dataArrayError = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				dataArrayError.add(0.0);
+				}
+		}
+		
+		if (dataArrayError.size() == 0){
+			dataArrayError = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				dataArrayError.add(0.0);
+				}
+		}
+		
+		ArrayList<Double> yList1 = new ArrayList<Double>();
+		
+		yList1 = (ArrayList<Double>) dataArray.clone();
+		yList1.set(k,y);
+		dataArray = yList1;
+		
+		ArrayList<Double> yList2 = new ArrayList<Double>();
+		
+		yList2 = (ArrayList<Double>) dataArrayError.clone();
+		yList2.set(k,Math.sqrt(y));
+		
+		dataArrayError = yList2;
+
+	}
+	
+	
+	
+	
 }

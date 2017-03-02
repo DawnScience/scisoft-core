@@ -867,8 +867,11 @@ class Test(unittest.TestCase):
     def testSums(self):
         print 'test sum'
         ds = np.arange(12).reshape((3,4))
+        self.assertEquals(ds.sum(), 66)
         self.assertEquals(np.sum(ds), 66)
+        self.checkitems([12, 15, 18, 21], ds.sum(0))
         self.checkitems([12, 15, 18, 21], np.sum(ds, 0))
+        self.checkitems([ 6, 22, 38], ds.sum(1))
         self.checkitems([ 6, 22, 38], np.sum(ds, 1))
         lds = np.arange(1024*1024, dtype=np.int32)
         self.assertEquals(np.sum(lds, dtype=np.int32), -524288)

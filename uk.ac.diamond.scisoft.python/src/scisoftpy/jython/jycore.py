@@ -842,23 +842,11 @@ class ndarray(object):
 
     # MISSING: round, trace
 
-    @_wrapout
-    def sum(self, axis=None, dtype=None): #@ReservedAssignment
-        dtype = _translatenativetype(dtype)
-        if dtype is None:
-            dtval = self.__dataset.getDType()
-        else:
-            dtval = dtype.value
-        if axis is None:
-            return self.__dataset.typedSum(dtval)
-        else:
-            return self.__dataset.typedSum(dtval, axis)
+    def sum(self, axis=None, dtype=None):
+        return _maths.sum(self, axis, dtype)
 
     def cumsum(self, axis=None, dtype=None):
-        dtype = _translatenativetype(dtype)
-        if dtype is None:
-            dtype = self.dtype
-        return _maths.cumsum(self, axis).astype(dtype)
+        return _maths.cumsum(self, axis, dtype)
 
     @_wrapout
     def mean(self, axis=None):
@@ -869,38 +857,17 @@ class ndarray(object):
 
     @_wrapout
     def var(self, axis=None, ddof=0):
-        if ddof == 1:
-            if axis is None:
-                return self.__dataset.variance()
-            else:
-                return self.__dataset.variance(axis)
-        else:
-            if axis is None:
-                v = self.__dataset.variance()
-                n = self.__dataset.count()
-            else:
-                v = Sciwrap(self.__dataset.variance(axis))
-                n = Sciwrap(self.__dataset.count(axis))
-            f = (n - 1.)/(n - ddof)
-            return v * f
+        is_pop = ddof == 0
+        if axis is None:
+            return self.__dataset.variance(is_pop)
+        return self.__dataset.variance(axis, is_pop)
 
     @_wrapout
     def std(self, axis=None, ddof=0):
-        if ddof == 1:
-            if axis is None:
-                return self.__dataset.stdDeviation()
-            else:
-                return self.__dataset.stdDeviation(axis)
-        else:
-            if axis is None:
-                s = self.__dataset.stdDeviation()
-                n = self.__dataset.count()
-            else:
-                s = Sciwrap(self.__dataset.stdDeviation(axis))
-                n = Sciwrap(self.__dataset.count(axis))
-            import math as _mm
-            f = _mm.sqrt((n - 1.)/(n - ddof))
-            return s * f
+        is_pop = ddof == 0
+        if axis is None:
+            return self.__dataset.stdDeviation(is_pop)
+        return self.__dataset.stdDeviation(axis, is_pop)
 
     @_wrapout
     def rms(self, axis=None):
@@ -909,23 +876,11 @@ class ndarray(object):
         else:
             return self.__dataset.rootMeanSquare(axis)
 
-    @_wrapout
     def prod(self, axis=None, dtype=None):
-        dtype = _translatenativetype(dtype)
-        if dtype is None:
-            dtval = self.__dataset.getDType()
-        else:
-            dtval = dtype.value
-        if axis is None:
-            return self.__dataset.typedProduct(dtval)
-        else:
-            return self.__dataset.typedProduct(dtval, axis)
+        return _maths.prod(self, axis, dtype)
 
     def cumprod(self, axis=None, dtype=None):
-        dtype = _translatenativetype(dtype)
-        if dtype is None:
-            dtype = self.dtype
-        return _maths.cumprod(self, axis).astype(dtype)
+        return _maths.cumprod(self, axis, dtype)
 
     @_wrapout
     def all(self, axis=None): #@ReservedAssignment

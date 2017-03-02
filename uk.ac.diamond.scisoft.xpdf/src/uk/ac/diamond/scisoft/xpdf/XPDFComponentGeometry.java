@@ -209,8 +209,6 @@ public abstract class XPDFComponentGeometry {
 	 */
 	public abstract Dataset getUpstreamPathLength(Dataset x, Dataset y, Dataset z);
 
-	/*
-	 */
 	/**
 	 * Returns the path length downstream of the given points, in the given direction.
 	 * <p>
@@ -229,10 +227,6 @@ public abstract class XPDFComponentGeometry {
 	 * @param z
 	 * 			distance along the beam. z increases in the direction the beam
 	 * 			propagates.
-	 * @param gamma
-	 * 			vertical scattering angle in radians.
-	 * @param delta
-	 * 			horizontal scattering angle in radians.
 	 * @return the path length downstream of every point defined.
 	 */
 	 public abstract Dataset getDownstreamPathLength(Dataset x, Dataset y,

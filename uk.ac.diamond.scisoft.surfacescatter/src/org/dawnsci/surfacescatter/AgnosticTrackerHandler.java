@@ -23,6 +23,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial2D;
 public class AgnosticTrackerHandler {
 
 	private IImageTracker tracker = null;
+	private IImageTracker tracker1 = null;
 	private Polynomial2D g2;
 	private double[] location;
 	private double[] initialLocation;
@@ -54,6 +55,7 @@ public class AgnosticTrackerHandler {
 //				in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input, len, pt);
 				
 				tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
+				tracker1 = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 
 				initialLocation = new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]),
 						(double) (pt[1]), (double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]),
@@ -67,6 +69,7 @@ public class AgnosticTrackerHandler {
 				
 				try {
 					tracker.initialize(input, initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
+					tracker1.initialize(input, initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
 				} catch (Exception e) {
 
 				}
@@ -75,7 +78,7 @@ public class AgnosticTrackerHandler {
 				location = initialLocation;
 				
 				sm.setTracker(tracker);
-				sm.setInitialTracker(tracker);
+				sm.setInitialTracker(tracker1);
 				sm.addTrackerLocationList(selection, location);
 //				sm.addLocationList(k, location);
 			}
@@ -150,12 +153,14 @@ public class AgnosticTrackerHandler {
 			
 //				in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input, len, pt);
 				tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
+				tracker1 = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 
 				initialLocation = new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]),
 						(double) (pt[1]), (double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]),
 						(double) (pt[1] + len[1]) };
 				try {
 					tracker.initialize(input, initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
+					tracker1.initialize(input, initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
 				} catch (Exception e) {
 
 				}
@@ -167,7 +172,7 @@ public class AgnosticTrackerHandler {
 				
 				sm.addTrackerLocationList(selection, location);
 				sm.setTracker(tracker);
-				sm.setInitialTracker(tracker);
+				sm.setInitialTracker(tracker1);
 
 //				sm.addLocationList(k, location);
 			}
@@ -308,12 +313,11 @@ public class AgnosticTrackerHandler {
 																				  selection);
 				}
 				
-//				model.setTrackerCoordinates(new double[] { location[1], location[0], location[5], location[0],
-//						location[1], initialLocation[2], location[5], location[2] });
+
 				model.setInput(input);
 
 				sm.setTracker(tracker);
-//				sm.setInitialTracker(tracker);
+
 				
 			}
 
@@ -415,7 +419,8 @@ public class AgnosticTrackerHandler {
 			if (model.getInput() == null) {
 				
 				tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
-
+				tracker1 = BoofCVImageTrackerServiceCreator.createImageTrackerService();
+				
 				initialLocation = seedLocation;
 				
 				int[] newPt = new int[] { (int) initialLocation[0], (int) initialLocation[1] };
@@ -426,6 +431,7 @@ public class AgnosticTrackerHandler {
 								
 				try {
 					tracker.initialize(input, initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
+					tracker1.initialize(input, initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
 				} catch (Exception e) {
 
 				}
@@ -435,7 +441,7 @@ public class AgnosticTrackerHandler {
 				model.setInput(input);
 				location = initialLocation;
 				sm.setTracker(tracker);
-				sm.setInitialTracker(tracker);
+				sm.setInitialTracker(tracker1);
 				sm.addTrackerLocationList(selection, location);
 			}
 
@@ -501,6 +507,7 @@ public class AgnosticTrackerHandler {
 				dm.setInitialLenPt(new int[][] {len, pt });
 
 				tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
+				tracker1 = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 
 				initialLocation = seedLocation;
 //			
@@ -513,6 +520,7 @@ public class AgnosticTrackerHandler {
 				
 				try {
 					tracker.initialize(input, initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
+					tracker1.initialize(input, initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
 				} catch (Exception e) {
 					debug("Failed to initialise tracker in TwoDTracking1");
 				}
@@ -521,7 +529,7 @@ public class AgnosticTrackerHandler {
 				location = initialLocation;
 				sm.addTrackerLocationList(selection, location);
 				sm.setTracker(tracker);
-				sm.setInitialTracker(tracker);
+				sm.setInitialTracker(tracker1);
 				
 			}
 
@@ -742,6 +750,7 @@ public class AgnosticTrackerHandler {
 				pt = sm.getInitialLenPt()[1];
 		
 				tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
+				tracker1 = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 						
 				initialLocation = new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]),
 						(double) (pt[1]), (double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]),
@@ -753,6 +762,7 @@ public class AgnosticTrackerHandler {
 				
 				try {
 					tracker.initialize(input, initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
+					tracker1.initialize(input, initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
 				} catch (Exception e) {
 					debug("Failed to initialise tracker in TwoDTracking3");
 				}
@@ -762,11 +772,11 @@ public class AgnosticTrackerHandler {
 								initialLocation[4], initialLocation[5], initialLocation[6], initialLocation[7] });
 				model.setInput(input);
 				location = initialLocation;
-				//sm.addLocationList(k, location);
+				
 				if (isTheTrackingMarkerNot3){
 					sm.setTracker(tracker);
 				}
-				sm.setInitialTracker(tracker);
+				sm.setInitialTracker(tracker1);
 				sm.addTrackerLocationList(selection, location);
 			}
 		
@@ -832,6 +842,7 @@ public class AgnosticTrackerHandler {
 				dm.setInitialLenPt(new int[][] {len, pt });
 		
 				tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
+				tracker1 = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 				
 				initialLocation = new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]),
 						(double) (pt[1]), (double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]),
@@ -842,6 +853,7 @@ public class AgnosticTrackerHandler {
 				
 				try {
 					tracker.initialize(input, initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
+					tracker1.initialize(input, initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
 				} catch (Exception e) {
 					debug("Failed to iniitiliase tracker in TwoDTracking3");
 				}
@@ -854,7 +866,7 @@ public class AgnosticTrackerHandler {
 					sm.setTracker(tracker);
 				}
 				sm.addTrackerLocationList(selection, location);
-				sm.setInitialTracker(tracker);
+				sm.setInitialTracker(tracker1);
 			}
 		
 		else {

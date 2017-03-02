@@ -66,15 +66,17 @@ public class XPDFInsertContainerMetadataOperation extends
 		double outer = model.getOuter();
 		boolean is_up = model.isUpstream();
 		boolean is_down = model.isDownstream();
+		double roll = model.getContainerAngle();
 		
 		geomMeta.setDistances(inner, outer);
 		geomMeta.setStreamality(is_up, is_down);
-				
+		geomMeta.setEulerAnglesinDegrees(0, 0, roll);
+		
 		// Get the material data from the Model
 		String material = model.getMaterial();
 		double density = model.getDensity();
 		double packingFraction = model.getPackingFraction();
-
+		
 		formMeta.setMatName(material);
 		formMeta.setDensity(density);
 		formMeta.setPackingFraction(packingFraction);

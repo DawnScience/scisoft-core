@@ -19,7 +19,14 @@ import org.eclipse.january.dataset.Maths;
 /**
  * The class for cylindrical components of the experimental target. This class
  * is <code>public</code> because it needs to be visible in the
- * uk...xpdf.operations package
+ * uk...xpdf.operations package.
+ * 
+ * Interpretation of Euler angles:
+ * At zero Euler angles, the plate is perpendicular to the beam, with edges
+ * vertical and horizontal. Yaw and pitch both tilt the plate non-perpendicular
+ * to the beam. Roll is the angle of the edges to the lab frame horizontal and
+ * vertical.
+ *  
  * @author Timothy Spain timothy.spain@diamond.ac.uk
  * @since 2015-09-11
  *

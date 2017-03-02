@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.january.dataset.Dataset;
@@ -30,6 +31,9 @@ public abstract class XPDFComponentGeometry {
 	protected boolean isUpstream, isDownstream;
 	
 	protected int gridSize;
+	
+	// Euler angles of the component in radians
+	protected double[] eulerAngles;
 
 	/**
 	 * Empty constructor
@@ -40,6 +44,7 @@ public abstract class XPDFComponentGeometry {
 		this.isUpstream = false;
 		this.isDownstream = false;
 		this.gridSize = 4096;
+		this.eulerAngles = new double[] {0, 0, 0};
 	}
 
 	/**
@@ -53,6 +58,7 @@ public abstract class XPDFComponentGeometry {
 		this.isUpstream = inGeom.isUpstream;
 		this.isDownstream = inGeom.isDownstream;
 		this.gridSize = inGeom.gridSize;
+		this.eulerAngles = Arrays.copyOf(inGeom.eulerAngles, 3);
 	}
 
 	/**
@@ -124,6 +130,48 @@ public abstract class XPDFComponentGeometry {
 	public void setGridSize(int gridSize) {
 		this.gridSize = gridSize;
 	}
+	
+	/**
+	 *  Sets the Euler angles in radians
+	 * @param eulerAngles
+	 * 					Euler angles in radians ordered as pitch, yaw, roll.
+	 */
+	public void setEulerAngles(double[] eulerAngles) {
+		this.eulerAngles = Arrays.copyOf(eulerAngles, 3);
+	}
+	/**
+	 *  Sets the individual Euler angles in radians
+	 * @param pitch	Pitch angle in radians
+	 * @param yaw	Yaw angle in radians
+	 * @param roll	Roll angle in radians
+	 */
+	public void setEulerAngles(double pitch, double yaw, double roll) {
+		this.setEulerAngles(new double[] {pitch, yaw, roll});
+	}
+	/**
+	 *  Sets the individual Euler angles in degrees of arc
+	 * @param pitch Pitch angle in degrees of arc
+	 * @param yaw	Yaw angle in degrees of arc
+	 * @param roll  Roll angle in degrees of arc
+	 */
+	public void setEulerAnglesinDegrees(double pitch, double yaw, double roll) {
+		this.setEulerAngles(Math.toRadians(pitch), Math.toRadians(yaw), Math.toRadians(roll));
+	}
+	/**
+	 *  Gets the Euler angles as an array
+	 * @return Euler angles as (pitch, yaw, roll) in radians.
+	 */
+	public double[] getEulerAngles() {
+		return Arrays.copyOf(eulerAngles, 3);
+	}
+	/**
+	 *  Gets the Euler angles as an array in degrees of arc
+	 * @return Euler angles as (pitch, yaw, roll) in degrees
+	 */
+	public double[] getEulerAnglesinDegrees() {
+		return new double[] {Math.toDegrees(eulerAngles[0]), Math.toDegrees(eulerAngles[1]), Math.toDegrees(eulerAngles[2])};
+	}
+	
 	
 	// return the volume of this component illuminated by the beam geometry
 	// encapsulated in beamData

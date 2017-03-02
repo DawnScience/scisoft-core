@@ -21,13 +21,20 @@ import org.eclipse.january.dataset.Maths;
 /**
  * The class for cylindrical components of the experimental target. This class
  * is <code>public</code> because it needs to be visible in the
- * uk...xpdf.operations package
+ * uk...xpdf.operations package.
+ * 
+ * Interpretation of Euler angles:
+ * The zero Euler angle is aligned with the long axis horizontal and
+ * perpendicular to the beam. If the cylinder remains perpendicular to the
+ * beam, then yaw is zero. Pitch is always zero, due to the rotational
+ * symmetry. Roll is the angle of the symmetry axis to the horizontal.
+ * 
  * @author Timothy Spain timothy.spain@diamond.ac.uk
  * @since 2015-09-11
  *
  */
 public class XPDFComponentCylinder extends XPDFComponentGeometry {
-
+	
 	/**
 	 * Empty constructor
 	 */

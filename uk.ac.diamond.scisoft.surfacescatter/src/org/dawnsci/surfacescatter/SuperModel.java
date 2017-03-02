@@ -117,7 +117,6 @@ public class SuperModel {
 		this.lorentzCorrection = lorentzCorrection;
 	}
 
-	
 	public int getStartFrame() {
 		return startFrame;
 	}
@@ -208,8 +207,7 @@ public class SuperModel {
 		lenpt[1]=pt;
 		firePropertyChange("backgroundROI", this.backgroundROI, this.backgroundROI= (IRectangularROI) backgroundROI);
 		this.setBackgroundLenPt(lenpt);
-		firePropertyChange("backgroundLenPt", this.backgroundLenPt, this.backgroundLenPt= lenpt);
-		
+		firePropertyChange("backgroundLenPt", this.backgroundLenPt, this.backgroundLenPt= lenpt);	
 	}
 	
 	public void resetAll(){
@@ -227,7 +225,6 @@ public class SuperModel {
 		lorentzCorrection = null;
 		areaCorrection = null;
 		
-//		boxOffsetLenPt = null;
 	}
 	
 	public ArrayList<IDataset> getOutputDatArray() {

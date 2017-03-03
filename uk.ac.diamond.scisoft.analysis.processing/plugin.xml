@@ -415,6 +415,20 @@
             name="Average All Data">
       </operation>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.AxisPullthroughOperation"
+            description="An operation to pull multiple axes through processing"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.AxisPullthroughOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.AxisPullthroughModel"
+            name="Axis Pullthrough">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.DataPullthroughOperation"
+            description="An operation to pull selected datasets through processing"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.DataPullthroughOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.DataPullthroughModel"
+            name="Data Pullthrough">
+      </operation>
+      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.Crop2DOperation"
             description="Crop an image to a specified size"
             icon="icons/Crop_nD.png"

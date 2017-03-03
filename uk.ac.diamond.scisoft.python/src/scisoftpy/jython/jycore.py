@@ -662,7 +662,7 @@ class ndarray(object):
                 for a in args:
                     if a:
                         raise IndexError, "index out of bounds"
-            r = self.__dataset.getObject([])
+            r = self.__dataset.getObject()
         else:
             if index is None:
                 raise ValueError, "Need an integer or a tuple of integers"
@@ -792,7 +792,7 @@ class ndarray(object):
         else:
             if ignore_nans:
                 return self.__dataset.max(_jint(axis), _jtrue)
-            return self.__dataset.max(axis)
+            return self.__dataset.max(_jint(axis))
 
     @_wrapout
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
@@ -803,36 +803,36 @@ class ndarray(object):
         else:
             if ignore_nans:
                 return self.__dataset.min(_jint(axis), _jtrue)
-            return self.__dataset.min(axis)
+            return self.__dataset.min(_jint(axis))
 
     @_wrapout
     def argmax(self, axis=None, ignore_nans=False):
         if axis is None:
             if ignore_nans:
                 return self.__dataset.argMax(_jtrue)
-            return self.__dataset.argMax()
+            return self.__dataset.argMax(_empty_boolean_array)
         else:
             if ignore_nans:
                 return self.__dataset.argMax(_jint(axis), _jtrue)
-            return self.__dataset.argMax(axis)
+            return self.__dataset.argMax(_jint(axis))
 
     @_wrapout
     def argmin(self, axis=None, ignore_nans=False):
         if axis is None:
             if ignore_nans:
                 return self.__dataset.argMin(_jtrue)
-            return self.__dataset.argMin()
+            return self.__dataset.argMin(_empty_boolean_array)
         else:
             if ignore_nans:
                 return self.__dataset.argMin(_jint(axis), _jtrue)
-            return self.__dataset.argMin(axis)
+            return self.__dataset.argMin(_jint(axis))
 
     @_wrapout
     def ptp(self, axis=None):
         if axis is None:
-            return self.__dataset.peakToPeak()
+            return self.__dataset.peakToPeak(_empty_boolean_array)
         else:
-            return self.__dataset.peakToPeak(axis)
+            return self.__dataset.peakToPeak(_jint(axis))
 
     def clip(self, a_min, a_max):
         return _maths.clip(self, a_min, a_max)
@@ -853,28 +853,28 @@ class ndarray(object):
         if axis is None:
             return self.__dataset.mean(_empty_boolean_array)
         else:
-            return self.__dataset.mean(axis)
+            return self.__dataset.mean(_jint(axis))
 
     @_wrapout
     def var(self, axis=None, ddof=0):
-        is_pop = ddof == 0
+        is_pop = _jbool(ddof == 0)
         if axis is None:
             return self.__dataset.variance(is_pop)
-        return self.__dataset.variance(axis, is_pop)
+        return self.__dataset.variance(_jint(axis), is_pop)
 
     @_wrapout
     def std(self, axis=None, ddof=0):
-        is_pop = ddof == 0
+        is_pop = _jbool(ddof == 0)
         if axis is None:
             return self.__dataset.stdDeviation(is_pop)
-        return self.__dataset.stdDeviation(axis, is_pop)
+        return self.__dataset.stdDeviation(_jint(axis), is_pop)
 
     @_wrapout
     def rms(self, axis=None):
         if axis is None:
             return self.__dataset.rootMeanSquare()
         else:
-            return self.__dataset.rootMeanSquare(axis)
+            return self.__dataset.rootMeanSquare(_jint(axis))
 
     def prod(self, axis=None, dtype=None):
         return _maths.prod(self, axis, dtype)
@@ -912,7 +912,7 @@ class ndarray(object):
     def __eq__(self, o):
         e = _cmps.equal(self, o)
         if self.ndim == 0 and self.size == 1:
-            return e._jdataset().getBoolean([])
+            return e._jdataset().getBoolean()
         return e
 
     def __ne__(self, o):

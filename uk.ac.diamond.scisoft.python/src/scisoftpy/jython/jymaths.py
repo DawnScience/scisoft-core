@@ -42,10 +42,10 @@ nan = _jnan
 
 floatmax = _jmax # maximum float value (use sys.float_info.max for 2.6+)
 
-from jycore import _wrap
+from jycore import _wrap, _jint
 from jycore import asarray as _asarray
 from jycore import float64 as _f64
-from jycore import _translatenativetype
+from jycore import _translatenativetype, _empty_boolean_array
 
 # these functions can call (wrapped) instance methods
 @_wrap
@@ -53,8 +53,8 @@ def prod(a, axis=None, dtype=None):
     '''Product of input'''
     if dtype is None:
         if axis is None:
-            return a.product()
-        return a.product(axis)
+            return a.product(_empty_boolean_array)
+        return a.product(_jint(axis))
     dtval = _translatenativetype(dtype).value
     if axis is None:
         return _stats.typedProduct(a, dtval)
@@ -65,8 +65,8 @@ def sum(a, axis=None, dtype=None): #@ReservedAssignment
     '''Sum of input'''
     if dtype is None:
         if axis is None:
-            return a.sum()
-        return a.sum(axis)
+            return a.sum(_empty_boolean_array)
+        return a.sum(_jint(axis))
     dtval = _translatenativetype(dtype).value
     if axis is None:
         return _stats.typedSum(a, dtval)
@@ -396,7 +396,7 @@ def cumprod(a, axis=None, dtype=None):
     if axis is None:
         return _stats.cumulativeProduct(a)
     else:
-        return _stats.cumulativeProduct(a, axis)
+        return _stats.cumulativeProduct(a, _jint(axis))
 
 @_wrap
 def cumsum(a, axis=None, dtype=None):
@@ -407,7 +407,7 @@ def cumsum(a, axis=None, dtype=None):
     if axis is None:
         return _stats.cumulativeSum(a)
     else:
-        return _stats.cumulativeSum(a, axis)
+        return _stats.cumulativeSum(a, _jint(axis))
 
 @_wrap
 def diff(a, order=1, axis=-1):

@@ -882,6 +882,35 @@ class Test(unittest.TestCase):
         self.checkitems([[0, 1, 2, 3], [4, 6, 8, 10], [12, 15, 18, 21]], np.cumsum(ds, 0))
         self.checkitems([[0, 1, 3, 6], [4, 9, 15, 22], [8, 17, 27, 38]], np.cumsum(ds, 1))
 
+    def testStats(self):
+        print 'test stats'
+        a = np.arange(12.).reshape(4,3)
+        self.assertEquals(11, a.argmax())
+        self.assertEquals(0, a.argmin())
+        self.assertEquals(11., a.max())
+        self.assertEquals(0., a.min())
+        self.assertEquals(5.5, a.mean())
+        self.assertAlmostEquals(11.9166666667, a.var())
+        self.assertAlmostEquals(3.45205252953, a.std())
+        self.assertAlmostEquals(66., a.sum())
+        self.assertAlmostEquals(0., a.prod())
+
+        self.checkitems([2, 2, 2, 2], a.argmax(1))
+        self.checkitems([0, 0, 0, 0], a.argmin(1))
+        self.checkitems([2.,5.,8.,11.], a.max(1))
+        self.checkitems([0., 3., 6., 9.], a.min(1))
+        self.checkitems([1., 4., 7., 10.], a.mean(1))
+        b = 2./3
+        self.checkitems([b, b, b, b], a.var(1))
+        self.checkitems([1., 1., 1., 1.], a.var(1, ddof=1))
+        b = np.sqrt(b)
+        self.checkitems([b, b, b, b], a.std(1))
+        self.checkitems([1., 1., 1., 1.], a.std(1, ddof=1))
+        self.checkitems([3., 12., 21., 30.], a.sum(1))
+        self.checkitems([0., 60., 336., 990.], a.prod(1))
+        # a.rms()  
+        # a.rms(1) 
+
     def testGDA2270(self):
         print 'test negative indices'
         ds = np.arange(10.)

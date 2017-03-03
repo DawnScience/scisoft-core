@@ -374,6 +374,9 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 		
 		geomMeta.setDistances(inner, outer);
 		
+		// the sample orientation in space should match its container
+		geomMeta.setEulerAngles(outwardContainer.getForm().getGeom().getEulerAngles());
+		
 		sampleData.getForm().setGeom(geomMeta);
 		
 	}

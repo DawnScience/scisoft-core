@@ -9,7 +9,8 @@
 package uk.ac.diamond.scisoft.analysis.image;
 
 public enum AlignMethod {
-	WITH_ROI(0), HESSIAN_REGISTRATION(1);
+	WHOLE_IMAGE(0),
+	WITH_ROI(1), HESSIAN_REGISTRATION(2);
 	private int idx;
 
 	private AlignMethod(int idx) {
@@ -27,8 +28,10 @@ public enum AlignMethod {
 	public static AlignMethod getAlignMethod(int idx) {
 		switch (idx) {
 		case 0:
-			return WITH_ROI;
+			return WHOLE_IMAGE;
 		case 1:
+			return WITH_ROI;
+		case 2:
 			return HESSIAN_REGISTRATION;
 		default:
 			break;

@@ -110,6 +110,8 @@ public class AlignImages {
 	}
 
 	/**
+	 * <p>
+	 * If mode = 0 then alignment routine is modeless and uses all the images at once.
 	 * @param data
 	 *            original list of dataset to be aligned
 	 * @param shifts
@@ -117,11 +119,15 @@ public class AlignImages {
 	 * @param roi
 	 *            rectangular ROI used for the alignment
 	 * @param mode
-	 *            number of columns used: can be 2 or 4
+	 *            number of columns used: can be 0, 2 or 4
 	 * @param monitor
 	 * @return aligned list of dataset
 	 */
 	public static List<IDataset> alignWithROI(List<IDataset> data, List<List<double[]>> shifts, RectangularROI roi, int mode, IMonitor monitor) {
+		if (mode == 0) {
+			return alignWithROI(data, shifts, roi, monitor);
+		}
+
 		int nsets = data.size() / mode;
 
 		RectangularROIList rois = new RectangularROIList();
@@ -216,9 +222,38 @@ public class AlignImages {
 	}
 
 	/**
+	 * @param data
+	 *            original list of dataset to be aligned
+	 * @param shifts
+	 *            output where to put resulting shifts
+	 * @param roi
+	 *            rectangular ROI used for the alignment
+	 * @param monitor
+	 * @return aligned list of dataset
+	 */
+	private static List<IDataset> alignWithROI(List<IDataset> data, List<List<double[]>> shifts, RectangularROI roi, IMonitor monitor) {
+
+		if (shifts == null)
+			shifts = new ArrayList<>();
+
+		int nsets = data.size();
+		List<IDataset> shiftedImages = new ArrayList<>(nsets);
+		IDataset[] tImages = data.toArray(new IDataset[0]);
+		List<Dataset> shifted = new ArrayList<>(nsets);
+
+		List<double[]> nshifts = align(tImages, shifted, roi, null, monitor);
+
+		shifts.add(nshifts);
+		shiftedImages.addAll(shifted);
+
+		return shiftedImages;
+	}
+
+	/**
 	 * Aligns images from a lazy dataset and returns a lazy dataset. This alignment process saves the aligned data in an
 	 * hdf5 file saved on disk and this method can be used without running into a MemoryOverflowError.
-	 * 
+	 * <p>
+	 * If mode = 0 then alignment routine is modeless and uses all the images at once.
 	 * @param data
 	 *            original list of dataset to be aligned
 	 * @param shifts
@@ -226,12 +261,16 @@ public class AlignImages {
 	 * @param roi
 	 *            rectangular ROI used for the alignment
 	 * @param mode
-	 *            number of columns used: can be 2 or 4
+	 *            number of columns used: can be 0, 2 or 4
 	 * @param monitor
 	 * @return aligned list of dataset
 	 */
 	public static ILazyDataset alignLazyWithROI(ILazyDataset data, List<List<double[]>> shifts, RectangularROI roi,
 			int mode, IMonitor monitor) {
+
+		if (mode == 0) {
+			return alignLazyWithROI(data, shifts, roi, monitor);
+		}
 
 		int nsets = data.getShape()[0] / mode;
 
@@ -377,7 +416,7 @@ public class AlignImages {
 	 * @param monitor
 	 * @return aligned list of dataset
 	 */
-	public static ILazyDataset alignLazyWithROI(ILazyDataset data, List<List<double[]>> shifts, RectangularROI roi,
+	private static ILazyDataset alignLazyWithROI(ILazyDataset data, List<List<double[]>> shifts, RectangularROI roi,
 			IMonitor monitor) {
 
 		int nsets = data.getShape()[0];

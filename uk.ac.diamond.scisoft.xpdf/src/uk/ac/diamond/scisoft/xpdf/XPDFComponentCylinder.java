@@ -138,9 +138,15 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 	
 	
 	private Dataset getDownstreamPathLengthExplicit(Dataset xSet, Dataset ySet, Dataset zSet,
-			double gamma, double delta) {
-		double cd = Math.cos(delta), sd = Math.sin(delta);
-		double cgamma = Math.cos(gamma);
+			double gamma0, double delta0) {
+		
+		// Undo the roll of the capillary, and get the effective (γ,δ) angles
+		double sinGamma = Math.sin(gamma0)*Math.cos(eulerAngles[2]) - Math.cos(gamma0)*Math.sin(delta0)*Math.sin(eulerAngles[2]);
+		double tanDelta = Math.tan(delta0)*Math.cos(eulerAngles[2]) + Math.tan(gamma0)/Math.cos(delta0)*Math.sin(eulerAngles[2]);
+		
+		double cd = 1/Math.sqrt(1+square(tanDelta)), sd = tanDelta*cd;
+		double cgamma = Math.sqrt(1-square(sinGamma));
+		
 		DoubleDataset lambda = xSet.copy(DoubleDataset.class);
 		IndexIterator iter = xSet.getIterator();
 		
@@ -406,17 +412,30 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 			}
 		}
 
+		// From the later definitions of angles, with zero detector and
+		// capillary roll, x is vertical, y is horizontal, along the capillary
+		// axis, z is along the incident beam. Yes, this is confusing when
+		// compared to the lab frame
 		Dataset xPlate = Maths.multiply(rCylinder, Maths.sin(xiCylinder));
 		Dataset yPlate = DatasetFactory.zeros(xPlate);
 		Dataset zPlate = Maths.multiply(rCylinder, Maths.cos(xiCylinder));
 		
+		// Roll the coordinates
+		Dataset tempPlate = Maths.add(Maths.multiply(Math.cos(eulerAngles[2]), xPlate), Maths.multiply(Math.sin(eulerAngles[2]), yPlate));
+		yPlate = Maths.add(Maths.multiply(-Math.sin(eulerAngles[2]), xPlate), Maths.multiply(Math.cos(eulerAngles[2]), yPlate));
+		//zPlate = zPlate;
+		xPlate = tempPlate;
+				
 		// Create a mask of the illuminated atoms in the cylinder.
 		// TODO: There has to be a better way to make a mask Dataset
 		Dataset illuminationPlate = DatasetFactory.ones(xPlate);
 		for (int i=0; i<xPlate.getShape()[0]; i++){
 			for (int k=0; k<xPlate.getShape()[1]; k++) {
-				if (Math.abs(xPlate.getDouble(i, k)) > beamData.getBeamHeight()/2)
-					illuminationPlate.set(0.0, i, k);
+//				if (Math.abs(xPlate.getDouble(i, k)) > beamData.getBeamHeight()/2)
+				// Elliptical beam shape 
+				if (square(xPlate.getDouble(i, k)/(beamData.getBeamHeight()/2)) + 
+						square(yPlate.getDouble(i, k)/(beamData.getBeamWidth()/2)) > 1)
+				illuminationPlate.set(0.0, i, k);
 			}
 		}
 		
@@ -487,6 +506,10 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 			attenuation.setAbs(iterAngle.index, illuminatedScattering/normalizationVolume);
 		}
 		return attenuation;		
+	}
+	
+	private double square(double x) {
+		return x*x;
 	}
 	
 }

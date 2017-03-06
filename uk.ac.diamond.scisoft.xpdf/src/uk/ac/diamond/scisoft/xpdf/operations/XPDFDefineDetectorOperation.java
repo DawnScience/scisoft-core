@@ -16,7 +16,7 @@ import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
  * An Operation class to that gathers the definition of a detector and adds
  * that information to the {@link XPDFMetadata} metadata.
  * 
- * @author Timothy Spain, timothy.spain@dimaond.ac.uk
+ * @author Timothy Spain, timothy.spain@diamond.ac.uk
  *
  */
 public class XPDFDefineDetectorOperation extends XPDFInsertXMetadataOperation<XPDFDefineDetectorModel, OperationData> {

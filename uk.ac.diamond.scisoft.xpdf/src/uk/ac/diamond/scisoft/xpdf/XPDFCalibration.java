@@ -481,20 +481,29 @@ public class XPDFCalibration {
 	 */
 	private Dataset applyPolarizationConstant(Dataset absCor) {
 		final double sineFudge = 0.99;		
-
+		final double polarizationFraction = 1.0;
 		Dataset polCor;
+
 		if (!cachedPolar.containsKey(coords)) {		
-			polCor = 
-			Maths.multiply(
-					0.5,
-					Maths.add(
-							1,
-							Maths.subtract(
-									Maths.square(coords.getCosTwoTheta()),
-									Maths.multiply(0.5*sineFudge, Maths.square(coords.getSinTwoTheta()))
-							)
-					)
-			);
+			// The azimuthal dependence or the mean value thereof, f(φ)
+			Dataset azimuthalFactor;
+			
+			if (absCor.getShape().length == 1) {
+				// One dimensional: f(φ) = c/2 sin² 2θ
+				azimuthalFactor = Maths.multiply(0.5*sineFudge, Maths.square(coords.getSinTwoTheta()));
+			} else {
+				// Two dimensional: f(φ) = f_pol cos 2φ sin² 2θ
+				azimuthalFactor =
+						Maths.multiply(
+								polarizationFraction,
+								Maths.multiply(
+										Maths.cos(Maths.multiply(2, coords.getPhi())),
+										Maths.square(coords.getSinTwoTheta())
+								)
+						);
+			}
+			// 1/2 (1 + cos² 2θ - f(φ))
+			polCor = Maths.multiply(0.5, Maths.add(1, Maths.subtract(Maths.square(coords.getCosTwoTheta()), azimuthalFactor)));
 			cachedPolar.put(coords, polCor);
 		} else {
 			polCor = cachedPolar.get(coords);

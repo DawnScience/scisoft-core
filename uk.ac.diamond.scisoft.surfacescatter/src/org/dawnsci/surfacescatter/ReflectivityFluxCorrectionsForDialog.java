@@ -91,6 +91,26 @@ public class ReflectivityFluxCorrectionsForDialog{
 		return output;
 		}
 	
+	
+	public static double reflectivityFluxCorrectionsDouble (String path, Double k, String filepath){
+
+		Dataset m = DatasetFactory.zeros(new int[] {1});
+		
+		m.set(k, 0);
+		
+		
+		Dataset[] fluxData = RecoverNormalisationFluxBatchForDialog.normalisationFlux(path, filepath);
+
+		System.out.println("m shape:  " + m.getShape()[0]);
+		
+		Dataset flux =  (Dataset) Interpolation1D.splineInterpolation(fluxData[0], fluxData[1], m);;
+
+		
+		double output = Math.floorDiv((long)1,(long)flux.getDouble(0));
+		
+		return output;
+		}
+	
 }
 //test
 

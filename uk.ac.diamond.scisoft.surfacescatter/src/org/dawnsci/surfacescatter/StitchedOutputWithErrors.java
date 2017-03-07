@@ -2,6 +2,7 @@ package org.dawnsci.surfacescatter;
 
 import java.util.ArrayList;
 
+import org.dawnsci.surfacescatter.MethodSettingEnum.MethodSetting;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.january.dataset.Dataset;
@@ -239,9 +240,9 @@ public class StitchedOutputWithErrors {
 		sortedAttenuatedDatasets[2].setError(sortedYArrayCorrectedFhklError);
 		sortedAttenuatedDatasets[7].setError(sortedYArrayCorrectedRawError);
 		
-		if(sm.getCorrectionSelection() == 1||
-		   sm.getCorrectionSelection() == 2||	
-		   sm.getCorrectionSelection() == 3){
+		if(MethodSetting.toInt(sm.getCorrectionSelection()) == 1||
+		   MethodSetting.toInt(sm.getCorrectionSelection()) == 2||	
+		   MethodSetting.toInt(sm.getCorrectionSelection()) == 3){
 			
 			double normalisation = 1/sortedAttenuatedDatasets[0].getDouble(0);
 			sortedAttenuatedDatasets[0] = 
@@ -448,7 +449,7 @@ public class StitchedOutputWithErrors {
 		sortedAttenuatedDatasets[5] = sortedYArrayCorrectedErrorMin;
 		sortedAttenuatedDatasets[6] = sortedYArrayCorrectedFhklErrorMin;
 		
-		if(sm.getCorrectionSelection() == 1){
+		if(MethodSetting.toInt(sm.getCorrectionSelection()) == 1){
 				
 				double normalisation = 1/sortedAttenuatedDatasets[0].getDouble(0);
 				sortedAttenuatedDatasets[0] = 
@@ -714,9 +715,9 @@ public class StitchedOutputWithErrors {
 		sortedAttenuatedDatasets[6] = sortedYArrayCorrectedFhklErrorMin;
 		sortedAttenuatedDatasets[9] = sortedYArrayCorrectedRawErrorMin;
 		
-		if(sm.getCorrectionSelection() == 1||
-		   sm.getCorrectionSelection() == 2||	
-		   sm.getCorrectionSelection() == 3){
+		if(MethodSetting.toInt(sm.getCorrectionSelection()) == 1||
+		   MethodSetting.toInt(sm.getCorrectionSelection()) == 2||	
+		   MethodSetting.toInt(sm.getCorrectionSelection()) == 3){
 			
 			double normalisation = 1/sortedAttenuatedDatasets[0].getDouble(0);
 			sortedAttenuatedDatasets[0] = 

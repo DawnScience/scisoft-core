@@ -9,19 +9,12 @@
 
 package org.dawnsci.surfacescatter;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.january.DatasetException;
-import org.eclipse.january.dataset.AggregateDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
-import org.eclipse.january.dataset.SliceND;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 
@@ -44,7 +37,23 @@ public class SXRDGeometricCorrections {
 		IDataHolder dh1 = null;
 			
 		try {
-				dh1 = LoaderFactory.getData(model.getFilepath());			
+			dh1 = LoaderFactory.getData(model.getFilepath());			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		ILazyDataset ild =dh1.getLazyDataset(choice); 
+
+		return ild;
+	}
+	
+	public static ILazyDataset DiffData (String filepath, String choice) {
+		
+		IDataHolder dh1 = null;
+			
+		try {
+			dh1 = LoaderFactory.getData(filepath);			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -57,11 +66,9 @@ public class SXRDGeometricCorrections {
 
 	
 	public static ILazyDataset getArb(ExampleModel model, String choice) {
-		SliceND slice1 = new SliceND(new int[] {1});
-		slice1.setSlice(0, model.getImageNumber(), model.getImageNumber()+1, 1);
 		ILazyDataset arb = null;
 		arb =  DiffData(model, choice);
-//		arb.squeezeEnds();
+
 		return arb;
 	}
 	
@@ -113,33 +120,28 @@ public class SXRDGeometricCorrections {
 		double pc = Math.PI/180;
 		
 		ILazyDataset alpha3 = getAlpha(model);
-				//ProcessingUtils.getLazyDataset(null, DiffData(input).getFilePath(), ALPHA);
-	//	SliceND slicea = new SliceND(alpha3.getShape());
-	//	IDataset alpha4 = alpha3.getSlice(slicea);
 		
 		ILazyDataset delta3 = getDelta(model);
-//		SliceND sliced = new SliceND(alpha3.getShape());
-//		IDataset delta4 = delta3.getSlice(sliced);
 		
 		ILazyDataset gamma3 = getGamma(model);
-//		SliceND sliceg = new SliceND(gamma3.getShape());
-//		IDataset gamma4 = gamma3.getSlice(sliceg);
-//		
+
 		Dataset a = Maths.multiply(alpha3,pc);
 		Dataset d = Maths.multiply(delta3,pc);
 		Dataset g = Maths.multiply(gamma3,pc);
-//		
-//		System.out.println("alpha4 rank: " + alpha3.getRank());
-//		System.out.println("alpha4 first value:" + alpha4.getDouble(0));
-//		System.out.println("delta4 rank: " + delta4.getRank());
-//		System.out.println("gamma4 rank: " + gamma4.getRank());
-		
 		
 		Dataset lorentzcor = Maths.multiply(Maths.cos(d),(Maths.sin(Maths.subtract(g, a)))); 
 		
-//		System.out.println("lorentzcor rank: " + lorentzcor.getRank());
-		
 		return lorentzcor;
+
+	}
+	
+	public static Dataset lorentz (String filepath) throws DatasetException{	
+		
+		ExampleModel model = new ExampleModel();
+		
+		model.setFilepath(filepath);
+		
+		return lorentz(model);
 
 	}
 	
@@ -149,13 +151,9 @@ public class SXRDGeometricCorrections {
 		double pc = Math.PI/180;
 		
 		ILazyDataset delta3 = getDelta(model);
-//		SliceND sliced = new SliceND(delta3.getShape());
-//		IDataset delta4 = delta3.getSlice(sliced);
-//		
+
 		ILazyDataset gamma3 = getGamma(model);
-//		SliceND sliceg = new SliceND(gamma3.getShape());
-//		IDataset gamma4 = gamma3.getSlice(sliceg);
-//		
+
 		Dataset d = Maths.multiply(delta3,pc);
 		Dataset g = Maths.multiply(gamma3,pc);
 		
@@ -172,9 +170,21 @@ public class SXRDGeometricCorrections {
 		Dataset polar = Maths.divide(1,(Maths.add((Maths.multiply(OPdat,outplane)),(Maths.multiply(IPdat,inplane)))));
 		return polar;
 	}
+	
+	public static Dataset polarisation (String filepath, double IP, double OP) throws DatasetException{	
+		
+		ExampleModel model = new ExampleModel();
+		
+		model.setFilepath(filepath);
+		
+		return polarisation(model, IP, OP);
+	}
+	
 
 	public static double f_beam(double x, double z, double InPlaneSlits, double OutPlaneSlits, double BeamInPlane, double BeamOutPlane){
+		
 		double w = (Math.exp(-2.77 * Math.pow(x, 2)/Math.pow(BeamInPlane, 2)) * Math.exp(-2.77 * Math.pow(z, 2)/Math.pow(BeamOutPlane, 2)));
+		
 		if (Math.abs(x) > InPlaneSlits/2){
 			w = 0; 
 		}
@@ -203,7 +213,7 @@ public class SXRDGeometricCorrections {
 		else{
 			q = 1;
 		}
-//		Dataset q1 = DatasetFactory.createFromObject(q);
+
 		return q;
 	}	
 		
@@ -214,19 +224,11 @@ public class SXRDGeometricCorrections {
 		double pc = Math.PI/180;
 		
 		ILazyDataset alpha3 = getAlpha(model);
-		//ProcessingUtils.getLazyDataset(null, DiffData(input).getFilePath(), ALPHA);
-//		SliceND slicea = new SliceND(alpha3.getShape());
-//		IDataset alpha4 = alpha3.getSlice(slicea);
-//		
-		ILazyDataset delta3 = getDelta(model);
-//		SliceND sliced = new SliceND(alpha3.getShape());
-//		IDataset delta4 = delta3.getSlice(sliced);
-//		
-		ILazyDataset gamma3 = getGamma(model);
-//		SliceND sliceg = new SliceND(gamma3.getShape());
-//		IDataset gamma4 = gamma3.getSlice(sliceg);
-
 		
+		ILazyDataset delta3 = getDelta(model);
+	
+		ILazyDataset gamma3 = getGamma(model);
+	
 		Dataset a = Maths.multiply(alpha3,pc);
 		Dataset d = Maths.multiply(delta3,pc);
 		Dataset g = Maths.multiply(gamma3,pc);
@@ -394,4 +396,25 @@ public class SXRDGeometricCorrections {
 	}	
 	
 
+	public static Dataset areacor (String filepath, boolean BeamCor, boolean Specular, 
+			double SampleSize, double OutPlaneSlits, double InPlaneSlits, double BeamInPlane, double BeamOutPlane, 
+			double DetectorSlits) throws DatasetException {	
+		
+		ExampleModel model = new ExampleModel();
+		
+		model.setFilepath(filepath);
+		
+		return areacor (model, 
+				        BeamCor, 
+				        Specular, 
+				        SampleSize,  
+				        OutPlaneSlits, 
+				        InPlaneSlits, 
+				        BeamInPlane, 
+				        BeamOutPlane, 
+				        DetectorSlits);
+	}
+
+	
+	
 }

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
+import org.dawnsci.surfacescatter.MethodSettingEnum.MethodSetting;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
@@ -223,8 +224,6 @@ public class DummyProcessingClass {
 						   								trackingMarker,
 						   								k);
 				output = outputOD2.getData();
-//				double[] loc2 =  (double[]) outputOD2.getAuxData()[0];
-//				sm.addLocationList(selection,loc2);
 				
 				IDataset temporaryBackground2 = (IDataset) outputOD2.getAuxData()[1];
 				sm.setTemporaryBackgroundHolder(temporaryBackground2);
@@ -263,8 +262,6 @@ public class DummyProcessingClass {
 						   								trackingMarker,
 						   								k);
 				output = outputOD3.getData();
-//				double[] loc3 =  (double[]) outputOD3.getAuxData()[0];
-//				sm.addLocationList(selection,loc3);
 				
 				IDataset temporaryBackground3 = (IDataset) outputOD3.getAuxData()[1];
 				sm.setTemporaryBackgroundHolder(temporaryBackground3);
@@ -1191,12 +1188,10 @@ public class DummyProcessingClass {
 			tdfm.setLenPt(sm.getInitialLenPt());
 		}
 		
-//		tdfm.setLenPt(sm.getInitialLenPt());
 		tdfm.setFitPower(model.getFitPower());
 		tdfm.setBoundaryBox(model.getBoundaryBox());
 		
 		Metadata md = new Metadata();
-//		IDataset dummyMD = DatasetFactory.zeros(new int [] {2,2});
 		Map<String, Integer> dumMap = new HashMap<String, Integer>();
 		dumMap.put("one", 1);
 		md.initialize(dumMap);
@@ -1263,8 +1258,8 @@ public class DummyProcessingClass {
 		odfm.setDirection(am);
 		
 		if (trackingMarker != 3){
+			
 			double[] p = sm.getLocationList().get(k);
-//			System.out.println("Interesting.....");
 			int[] pt = new int[]{(int) p[0], (int) p[1]}; 
 			int[] len = sm.getInitialLenPt()[0]; 
 			int[][] lenPt = new int[][] {len,pt};
@@ -1280,12 +1275,8 @@ public class DummyProcessingClass {
 			odfm.setLenPt(sm.getInitialLenPt());
 		}
 		
-		
-		
-		
-		
+				
 		Metadata md = new Metadata();
-//		IDataset dummyMD = DatasetFactory.zeros(new int [] {2,2});
 		Map<String, Integer> dumMap = new HashMap<String, Integer>();
 		dumMap.put("one", 1);
 		md.initialize(dumMap);
@@ -1522,7 +1513,7 @@ public class DummyProcessingClass {
 										   IDataset input){
 		
 		double correction = 0.001;
-		int correctionSelector = sm.getCorrectionSelection();
+		int correctionSelector = MethodSetting.toInt(sm.getCorrectionSelection());
 		
 		yValue = DatasetFactory.zeros(new int[] {1}, Dataset.ARRAYFLOAT64);
 		
@@ -1562,8 +1553,8 @@ public class DummyProcessingClass {
 		else if (correctionSelector ==1){
 
 			try {
-				correction = (GeometricCorrectionsReflectivityMethod.reflectivityCorrectionsBatch(model.getDcdtheta(), k, sm, input, gm.getAngularFudgeFactor(), 
-						gm.getBeamHeight(), gm.getFootprint()));
+				correction = GeometricCorrectionsReflectivityMethod.reflectivityCorrectionsBatch(model.getDcdtheta(), k, gm.getAngularFudgeFactor(), 
+						gm.getBeamHeight(), gm.getFootprint());
 				
 				double ref = 
 						ReflectivityFluxCorrectionsForDialog.reflectivityFluxCorrectionsDouble(gm.getFluxPath(), 
@@ -1571,6 +1562,7 @@ public class DummyProcessingClass {
 																						 model);
 				
 				correction = Math.multiplyExact((long)correction, (long)ref);
+				
 				if (correction ==0){
 					correction = 0.001;
 				}
@@ -1585,15 +1577,9 @@ public class DummyProcessingClass {
 		else if (correctionSelector ==2){
 
 			try {
-				correction = (GeometricCorrectionsReflectivityMethod.reflectivityCorrectionsBatch(model.getDcdtheta(), k, sm, input, gm.getAngularFudgeFactor(), 
+				correction = (GeometricCorrectionsReflectivityMethod.reflectivityCorrectionsBatch(model.getDcdtheta(), k, gm.getAngularFudgeFactor(), 
 						gm.getBeamHeight(), gm.getFootprint()));
 				
-//				Dataset ref = 
-//						ReflectivityFluxCorrectionsForDialog.reflectivityFluxCorrections(gm.getFluxPath(), 
-//																						 model.getQdcdDat().getDouble(k), 
-//																						 model);
-				
-//				correction = ref;
 				if (correction ==0){
 					correction = 0.001;
 				}

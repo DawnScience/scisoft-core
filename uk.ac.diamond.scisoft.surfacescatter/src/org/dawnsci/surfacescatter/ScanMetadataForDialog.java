@@ -37,9 +37,9 @@ public class ScanMetadataForDialog {
 //	}
 	
 	
-	public static double getTheta(ILazyDataset dcdtheta, int k, IDataset input, SuperModel sm) throws Exception {
+	public static double getTheta(ILazyDataset dcdtheta, int k) throws Exception {
 				
-		IDataset dcdthetaout = null;
+//		IDataset dcdthetaout = null;
 		
 //		try{
 //

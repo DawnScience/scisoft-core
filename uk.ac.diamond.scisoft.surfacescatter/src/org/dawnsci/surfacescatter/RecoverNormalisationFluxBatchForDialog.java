@@ -81,6 +81,16 @@ public class RecoverNormalisationFluxBatchForDialog {
 		return fluxData;
 
 	}
+	
+	public static Dataset[] normalisationFlux(String path, String filepath){
+	
+		ExampleModel model = new ExampleModel();
+		model.setFilepath(filepath);
+		
+		return normalisationFlux(path, model);
+
+	}
+	
 }
 
 //TEST

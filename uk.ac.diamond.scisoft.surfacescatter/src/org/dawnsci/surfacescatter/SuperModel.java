@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.dawnsci.surfacescatter.MethodSettingEnum.MethodSetting;
 import org.eclipse.dawnsci.analysis.api.image.IImageTracker;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
@@ -23,7 +24,7 @@ public class SuperModel {
 	private IDataset splicedCurveX;
 	private IDataset splicedCurveY;
 	private IDataset splicedCurveYFhkl;
-	private int correctionSelection = 0;
+	private MethodSetting correctionSelection = MethodSetting.SXRD;
 	private IDataset splicedCurveYError;
 	private IDataset splicedCurveYFhklError;
 	private IDataset splicedCurveYErrorMax;
@@ -64,7 +65,7 @@ public class SuperModel {
 	private ArrayList<Integer> imageRefList;
 	private TreeMap<Integer, Dataset> som;
 	private int numberOfImages;
-	private String imageFolderPath;
+	private String imageFolderPath = null;
 	private int startFrame;
 	private ArrayList<Double> lorentzCorrection;
 	private ArrayList<Double> areaCorrection;
@@ -75,6 +76,7 @@ public class SuperModel {
 	private double currentRawIntensity;
 	private IDataset splicedCurveYRaw;
 	private IDataset splicedCurveYRawError;
+	private String saveFolder;
 	
 	public IDataset getSplicedCurveYRaw() {
 		return splicedCurveYRaw;
@@ -829,11 +831,11 @@ public class SuperModel {
 		this.splicedCurveYFhkl = splicedCurveYFhkl;
 	}
 
-	public int getCorrectionSelection() {
+	public MethodSetting getCorrectionSelection() {
 		return correctionSelection;
 	}
 
-	public void setCorrectionSelection(int correctionSelection) {
+	public void setCorrectionSelection(MethodSetting correctionSelection) {
 		this.correctionSelection = correctionSelection;
 	}
 
@@ -1268,6 +1270,14 @@ public class SuperModel {
 		
 		dataArrayError = yList2;
 
+	}
+
+	public String getSaveFolder() {
+		return saveFolder;
+	}
+
+	public void setSaveFolder(String saveFolder) {
+		this.saveFolder = saveFolder;
 	}
 	
 	

@@ -201,8 +201,15 @@ public class VerticalHorizontalSlices {
 			iivdata.set(ixsum, iy);
 		}
 		
-		IDataset xvrange = DatasetFactory.createRange(ptv[1]+lenv[1], ptv[1], -1, Dataset.FLOAT64);
+		IDataset xvrange = null;
 		
+		try{
+			xvrange = DatasetFactory.createRange(ptv[1]+lenv[1], ptv[1], -1, Dataset.FLOAT64);
+		}
+		catch(IllegalArgumentException r){
+			r.printStackTrace();
+			xvrange = DatasetFactory.createRange(ptv[1], ptv[1]+lenv[1], 1, Dataset.FLOAT64);
+		}
 		ILineTrace lt3 = pS.createLineTrace("background sub slice");
 		lt3.setData(iivdata, xvrange);
 		

@@ -68,14 +68,9 @@ public class TwoDFitting{
 			DoubleDataset test = (DoubleDataset)LinearAlgebra.solveSVD(matrix, fittingBackground[2]);
 			double[] params = test.getData();
 			
-//			for (int i = 0 ; i<params.length; i++){
-//				System.out.println("params["+i+"] : " + params[i]);
-//			}
-			
 			DoubleDataset in1Background = g2.getOutputValues0(params, len, model.getBoundaryBox(),
 					AnalaysisMethodologies.toInt(model.getFitPower()));
 		
-	
 			IndexIterator it = in1Background.getIterator();
 		
 			while (it.hasNext()) {

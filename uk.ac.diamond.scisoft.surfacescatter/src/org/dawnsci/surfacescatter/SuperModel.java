@@ -981,9 +981,7 @@ public class SuperModel {
 				locationList.add(new double[] {0,0,0,0,0,0,0,0});
 				}
 		}
-		
-//		System.out.println("Added location at k = " + k);
-		
+				
 		ArrayList<double[]> locationList1 = new ArrayList<double[]>();
 		locationList1 = (ArrayList<double[]>) locationList.clone();
 		locationList1.set(k,in);

@@ -4,7 +4,6 @@
 package org.dawnsci.surfacescatter.test;
 
 import static org.junit.Assert.*;
-
 import org.dawnsci.boofcv.BoofCVImageTrackerServiceCreator;
 import org.eclipse.dawnsci.analysis.api.image.IImageTracker;
 import org.eclipse.dawnsci.analysis.api.image.IImageTracker.TrackerType;
@@ -28,18 +27,18 @@ public class TrackingTest1 {
 	
 	public void dataGenerator(){
 		
-		data = DatasetFactory.zeros(new int[] {1000, 1000});
-		data2 = DatasetFactory.zeros(new int[] {1000, 1000});
+		data = DatasetFactory.ones(new int[] {1000, 1000});
+		data2 = DatasetFactory.ones(new int[] {1000, 1000});
 		
-		for(int i = 100; i<200; i++){
-			for(int j = 100; j<200; j++){
-				data.set(10, i,j);
+		for(int i = 100; i<110; i++){
+			for(int j = 100; j<110; j++){
+				data.set(100, i,j);
 			}
 		}
 		
-		for(int i1 = 110; i1<210; i1++){
-			for(int j1 = 110; j1<210; j1++){
-				data2.set(10, i1,j1);
+		for(int i1 = 120; i1<130; i1++){
+			for(int j1 = 120; j1<130; j1++){
+				data2.set(100, i1,j1);
 			}
 		}
 		
@@ -59,18 +58,49 @@ public class TrackingTest1 {
 		
 		dataGenerator();
 		
-		double[] originalLocation = new double[] { 90, 90, 210, 90, 90, 210, 210, 210 };
+		int[] localPt = new int[] {90,90};
+		int[] localLen = new int[] {120,120};
+		
+		
+		int[] localLocation = new int[] { localPt[0], localPt[1], (localPt[0] + localLen[0]),
+				(localPt[1]), localPt[0], localPt[1] + localLen[1], (localPt[0] + localLen[0]),
+				(localPt[1] + localLen[1]) };
+		
+		double[] startLocation = new double[8];
+		
+		for(int i =0; i<8; i++){
+			startLocation[i] = (double) localLocation[i];
+		}
+	
 		// initialize tracker
 		
 		tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
-		tracker.initialize(data, originalLocation, TrackerType.TLD);
+		tracker.initialize(data, startLocation , TrackerType.TLD);
 		// run tracker against second image
 		double[] location = tracker.track(data2);
-		System.out.println("location: " + location[0] + location[1] + location[2] + location[3] + location[4] + location[5] + location[6] + location[7]);
-		double[] locationExpected = new double[] { 100, 100, 220,
-				100, 100, 220, 220, 220};
+//		System.out.println("location: " + location[0] +" , "
+//										+ location[1] + " , "
+//										+location[2] + " , "
+//										+location[3] + " , "
+//										+location[4] + " , "+
+//										location[5] + " , "+
+//										location[6] + " , "+
+//										location[7]);
+//		
 		
-		assertTrue(location.equals(locationExpected));
+		Double[] trackedLocation = new Double[8];
+		
+		for(int i =0; i<8; i++){
+			trackedLocation[i] = (double) ((int) Math.round(location[i]));
+		}
+		
+		
+		
+		Double[] locationExpected = new Double[] { (double) 110, (double) 110, (double) 230,
+				(double) 110,(double) 230, (double) 230, (double)110,(double) 230};
+		
+		
+		assertArrayEquals(trackedLocation,locationExpected);
 
 	}
 	

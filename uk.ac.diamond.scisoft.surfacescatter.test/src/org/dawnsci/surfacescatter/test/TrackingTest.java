@@ -1,26 +1,17 @@
 package org.dawnsci.surfacescatter.test;
 
-
-
 import org.dawnsci.boofcv.BoofCVImageTrackerServiceCreator;
 import org.eclipse.dawnsci.analysis.api.image.IImageTracker;
 import org.eclipse.dawnsci.analysis.api.image.IImageTracker.TrackerType;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 
-
-import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
-
 public class TrackingTest {
 
 	private IImageTracker tracker;
-
-//	private String dataname = "image-01";
 	private IDataset data;
 	private IDataset data2;
 
-	
-	
 	public void dataGenerator(){
 		
 		data = DatasetFactory.zeros(new int[] {1000, 1000});

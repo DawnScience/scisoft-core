@@ -11,13 +11,11 @@ import org.eclipse.swt.widgets.Slider;
 
 public class ImageSlicerUtils {
 
-	
-		public static IDataset ImageSliceUpdate(Slider slider, ILazyDataset aggDat, IRegion region){
+			public static IDataset ImageSliceUpdate(Slider slider, ILazyDataset aggDat, IRegion region){
 			
 			int selection = slider.getSelection();
 			SliceND slice1 = new SliceND(aggDat.getShape());
 			slice1.setSlice(0, selection, selection+1, 1);
-			
 			
 			//int[] len 
 			IROI box = region.getROI();
@@ -26,16 +24,10 @@ public class ImageSlicerUtils {
 			int[] pt = bounds.getIntPoint();
 			
 
-			//slice1.setSlice(2, (int) Math.round(pt[0]-(0.5*len[0])), (int) Math.round(pt[0] + (0.5*len[0])), 1);
-			//slice1.setSlice(1, (int) Math.round(pt[1]-(0.5*len[1])), (int) Math.round(pt[1] + (0.5*len[1])), 1);
-			
 			slice1.setSlice(2, (int) Math.round(pt[0]), (int) Math.round(pt[0] + (len[0])), 1);
 			slice1.setSlice(1, (int) Math.round(pt[1]), (int) Math.round(pt[1] + (len[1])), 1);
 
 
-			
-			//IDataset image2 = image.getSlice(slice1);
-			
 			IDataset j = null;
 			try {
 				j = aggDat.getSlice(slice1);
@@ -58,9 +50,6 @@ public class ImageSlicerUtils {
 			int[] len = LenPt[0];
 			int[] pt = LenPt[1];
 			
-
-			//slice1.setSlice(2, (int) Math.round(pt[0]-(0.5*len[0])), (int) Math.round(pt[0] + (0.5*len[0])), 1);
-			//slice1.setSlice(1, (int) Math.round(pt[1]-(0.5*len[1])), (int) Math.round(pt[1] + (0.5*len[1])), 1);
 			
 			slice1.setSlice(2, (int) Math.round(pt[0]), (int) Math.round(pt[0] + (len[0])), 1);
 			slice1.setSlice(1, (int) Math.round(pt[1]), (int) Math.round(pt[1] + (len[1])), 1);

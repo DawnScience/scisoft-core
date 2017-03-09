@@ -3,9 +3,7 @@ package org.dawnsci.surfacescatter;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
-import java.util.SortedMap;
 import java.util.TreeMap;
-
 import org.dawnsci.surfacescatter.MethodSettingEnum.MethodSetting;
 import org.eclipse.dawnsci.analysis.api.image.IImageTracker;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;

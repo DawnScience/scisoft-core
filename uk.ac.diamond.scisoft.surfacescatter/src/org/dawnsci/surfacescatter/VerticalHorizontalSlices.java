@@ -3,7 +3,6 @@ package org.dawnsci.surfacescatter;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
-import org.eclipse.dawnsci.plotting.api.region.IRegion;
 import org.eclipse.dawnsci.plotting.api.trace.ILineTrace;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -16,7 +15,6 @@ public class VerticalHorizontalSlices {
 			IPlottingSystem<Composite> pS, IDataset ii,  IROI green){
 	
 		int[] lenh =horizontalSliceBounds.getIntLengths();
-//		int[] lenh = new int[] {lenh1[1], lenh1[0]};
 		
 		lenh[0]= green.getBounds().getIntLengths()[0];
 		if (green.getBounds().getIntLengths()[1] < lenh[1]){
@@ -36,10 +34,7 @@ public class VerticalHorizontalSlices {
 			a = iih.getShape()[0];
 		}
 		
-		
 		for(int iy = 0;iy<lenh[0];iy++){
-			
-//			System.out.println("iy : " +iy);
 			
 			double ixsum = 0;
 			
@@ -61,21 +56,14 @@ public class VerticalHorizontalSlices {
 	
 	public static ILineTrace verticalslice(IRectangularROI verticalSliceBounds,
 			IDataset ii, IPlottingSystem<Composite> pS, IROI green){
-		
 
-//		lenh[0]= green.getBounds().getIntLengths()[0];
-//		
-//		if (green.getBounds().getIntLengths()[1] < lenh[1]){
-//			lenh[1] = green.getBounds().getIntLengths()[1];
-//		}
-		
 		
 		int[] lenv =verticalSliceBounds.getIntLengths();
 		lenv[1]= green.getBounds().getIntLengths()[1];
 		if (green.getBounds().getIntLengths()[0] < lenv[0]){
 			lenv[0] = green.getBounds().getIntLengths()[0];
 		}
-//		lenv[1] = lenv[1]-1;
+
 		int[] ptv = verticalSliceBounds.getIntPoint();
 		int[][] lenptv = new int[][] {lenv,ptv};
 		

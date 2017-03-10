@@ -585,6 +585,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.DerivativeOperation"
+            description="Return the derivative of the input data"
             icon="icons/derivative.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.DerivativeOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.DerivativeModel"
@@ -592,6 +593,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.PolynomialSmoothingOperation"
+            description="Apply a polynomial smoothing filter to the input data"
             icon="icons/polysmooth.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.PolynomialSmoothingOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.PolynomialSmoothModel"
@@ -1058,6 +1060,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutliersInQOperation"
+            description="Mask outliers in a range of q, using the median absolute deviation value multiplied by a scale to determine the outlier value"
             icon="icons/template.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutliersInQOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutliersInQModel"
@@ -1065,6 +1068,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.InterpolateMissingDataOperation"
+            description="Interpolate across a bad or missing data point"
             icon="icons/missinginterpol.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.InterpolateMissingDataOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.InterpolateMissingDataModel"
@@ -1072,6 +1076,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.StitchDownsampledGridOperation"
+            description="Stitch images into a grid the same as the scan shape"
             icon="icons/template.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.twod.StitchDownsampledGridOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DownsampleGridModel"
@@ -1166,6 +1171,7 @@
       </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.SurfaceScatteringRemappingOperation"
+            description="Re-map grazing incidence scattering data to q parallel vs q perpendicular"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.SurfaceScatteringRemappingOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.SurfaceScatteringRemappingModel"
             name="Grazing Incidence Scattering Remapping">
@@ -1187,16 +1193,18 @@
             name="Reflectivity Final Extraction">
       </operation>
       <operation
-             class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SimpleSectorIntegrationOperation"
-             id="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SimpleSectorIntegrationOperation"
-             model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SimpleSectorIntegrationModel"
-             name="Simple Sector Integration">
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SimpleSectorIntegrationOperation"
+            description="Integrate around the azimuth of the sector, producing a radial profile against pixel"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SimpleSectorIntegrationOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.SimpleSectorIntegrationModel"
+            name="Simple Sector Integration">
        </operation>
        <operation
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.filter.FilterXYbyRatioOperation"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.filter.FilterXYbyRatioOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.filter.FilterXYbyRatioModel"
-            name="Filter Stack by Ratio">
+             class="uk.ac.diamond.scisoft.analysis.processing.operations.filter.FilterXYbyRatioOperation"
+             description="Filter data from a stack based on the ratio of two areas"
+             id="uk.ac.diamond.scisoft.analysis.processing.operations.filter.FilterXYbyRatioOperation"
+             model="uk.ac.diamond.scisoft.analysis.processing.operations.filter.FilterXYbyRatioModel"
+             name="Filter Stack by Ratio">
       </operation>
        <operation
              class="uk.ac.diamond.scisoft.analysis.processing.operations.fitting.FitPeakToRowsOperation"

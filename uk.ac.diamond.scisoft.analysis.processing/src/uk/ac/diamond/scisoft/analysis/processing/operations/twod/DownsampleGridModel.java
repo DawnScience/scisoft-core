@@ -14,7 +14,7 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class DownsampleGridModel extends AbstractOperationModel {
 
-	@OperationModelField(label = "Approximage image size", hint = "Size of the largest dimension of the output image, setting to large may cause memory issues.")
+	@OperationModelField(label = "Approx. image size", hint = "Size of the largest dimension of the output image, setting to large may cause memory issues.")
 	private int imageSize = 10000;
 
 	public int getImageSize() {

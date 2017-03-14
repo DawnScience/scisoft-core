@@ -114,7 +114,7 @@ public class AbsoluteIntensityCalibrationOperation extends AbstractOperation<Abs
 		try {
 			if (model.getUseInternalCalibrant() == true) {
 				// By opening the default file
-				URL calibrantFileURL = this.getClass().getResource("/data/GlassyCarbon_T.dat");
+				URL calibrantFileURL = this.getClass().getResource("data/GlassyCarbon_T.dat");
 				DatLoader calibrantDataLoader = new DatLoader(FileLocator.resolve(calibrantFileURL).getPath());
 				DataHolder calibrantData = calibrantDataLoader.loadFile();
 				// and extracting out the relevant datasets

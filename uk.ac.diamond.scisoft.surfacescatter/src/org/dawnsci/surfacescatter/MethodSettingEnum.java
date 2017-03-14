@@ -6,7 +6,7 @@ public class MethodSettingEnum {
 		SXRD,
 		Reflectivity_with_Flux_Correction, 
 		Reflectivity_without_Flux_Correction,
-		NO_Correction;
+		Reflectivity_NO_Correction;
 
 		public static String toString(MethodSetting methodology){
 			
@@ -17,8 +17,8 @@ public class MethodSettingEnum {
 					return "Reflectivity with Flux Correction";
 				case Reflectivity_without_Flux_Correction:
 					return "Reflectivity without Flux Correction";
-				case NO_Correction:
-					return "NO Corrections";
+				case Reflectivity_NO_Correction:
+					return "Reflectivity with NO Corrections";
 			}
 			return null;
 		}
@@ -36,7 +36,7 @@ public class MethodSettingEnum {
 			}
 			
 			else if (in.equals("NO Correction")){
-				return MethodSetting.NO_Correction;
+				return MethodSetting.Reflectivity_NO_Correction;
 			}
 			
 			return null;
@@ -54,7 +54,7 @@ public class MethodSettingEnum {
 				return 2;
 			}
 			
-			else if (in.equals(MethodSetting.NO_Correction)){
+			else if (in.equals(MethodSetting.Reflectivity_NO_Correction)){
 				return 3;
 			}
 			
@@ -74,7 +74,7 @@ public class MethodSettingEnum {
 			}
 			
 			else if (in == 3){
-				return MethodSetting.NO_Correction;
+				return MethodSetting.Reflectivity_NO_Correction;
 			}
 			
 			return null;

@@ -75,7 +75,35 @@ public class SuperModel {
 	private IDataset splicedCurveYRaw;
 	private IDataset splicedCurveYRawError;
 	private String saveFolder;
+	private ArrayList<Double> reflectivityAreaCorrection;
+	private double currentReflectivityAreaCorrection;
+	private ArrayList<Double> reflectivityFluxCorrection;
+	private double currentReflectivityFluxCorrection;
 	
+	public ArrayList<Double> getReflectivityFluxCorrection() {
+		return reflectivityFluxCorrection;
+	}
+
+	public double getCurrentReflectivityAreaCorrection() {
+		return currentReflectivityAreaCorrection;
+	}
+
+	public void setCurrentReflectivityAreaCorrection(double currentReflectivityAreaCorrection) {
+		this.currentReflectivityAreaCorrection = currentReflectivityAreaCorrection;
+	}
+
+	public double getCurrentReflectivityFluxCorrection() {
+		return currentReflectivityFluxCorrection;
+	}
+
+	public void setCurrentReflectivityFluxCorrection(double currentReflectivityFluxCorrection) {
+		this.currentReflectivityFluxCorrection = currentReflectivityFluxCorrection;
+	}
+
+	public void setReflectivityFluxCorrection(ArrayList<Double> reflectivityFluxCorrection) {
+		this.reflectivityFluxCorrection = reflectivityFluxCorrection;
+	}
+
 	public IDataset getSplicedCurveYRaw() {
 		return splicedCurveYRaw;
 	}
@@ -224,6 +252,8 @@ public class SuperModel {
 		polarisation = null;
 		lorentzCorrection = null;
 		areaCorrection = null;
+		reflectivityAreaCorrection = null;
+		reflectivityFluxCorrection = null;
 		
 	}
 	
@@ -1171,7 +1201,7 @@ public class SuperModel {
 					   y);
 		
 		firePropertyChange("yListRawIntensity", this.yListRawIntensity,
-				this.yListFhkl= yListRawIntensity);
+				this.yListRawIntensity = yListRawIntensity);
 		
 	}
 	
@@ -1187,7 +1217,7 @@ public class SuperModel {
 					         y);
 		
 		firePropertyChange("yListRawIntensity", this.yListRawIntensity,
-				this.yListFhkl= yListRawIntensity);
+				this.yListRawIntensity= yListRawIntensity);
 		
 	}
 	
@@ -1216,6 +1246,21 @@ public class SuperModel {
 		
 		dataArray= yList1;
 
+	}
+	
+	public void addToDataArray(ArrayList<Double> dataArray,
+							   double y){
+
+		if (dataArray==null){
+			dataArray = new ArrayList<Double>();
+		}
+		
+		ArrayList<Double> yList1 = new ArrayList<Double>();
+		yList1 = (ArrayList<Double>) dataArray.clone();
+		yList1.add(y);
+		
+		dataArray= yList1;
+		
 	}
 	
 	public static void dataArrayListManager(ArrayList<Double> dataArray,
@@ -1267,6 +1312,33 @@ public class SuperModel {
 		dataArrayError = yList2;
 
 	}
+	
+	public static void dataArrayListManager(ArrayList<Double> dataArray,
+											int l, 
+											int k, 
+											double y){
+
+		if (dataArray==null){
+			dataArray = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				dataArray.add(0.0);
+			}
+		}
+		
+		if (dataArray.size() == 0){
+			dataArray = new ArrayList<Double>();
+			for (int i = 0; i < l; i++) {
+				dataArray.add(0.0);
+			}
+		}
+		
+		ArrayList<Double> yList1 = new ArrayList<Double>();
+		
+		yList1 = (ArrayList<Double>) dataArray.clone();
+		yList1.set(k,y);
+		dataArray = yList1;
+	}
+	
 
 	public String getSaveFolder() {
 		return saveFolder;
@@ -1275,7 +1347,64 @@ public class SuperModel {
 	public void setSaveFolder(String saveFolder) {
 		this.saveFolder = saveFolder;
 	}
+
+	public ArrayList<Double> getReflectivityAreaCorrection() {
+		return reflectivityAreaCorrection;
+	}
+
+	public void setReflectivityAreaCorrection(ArrayList<Double> reflectivityAreaCorrection) {
+		this.reflectivityAreaCorrection = reflectivityAreaCorrection;
+	}
 	
+	public void  addReflectivityAreaCorrection(double y){
+		
+		addToDataArray(reflectivityAreaCorrection,
+					   y);
+		
+		firePropertyChange("reflectivityAreaCorrection", this.reflectivityAreaCorrection,
+				this.reflectivityAreaCorrection= reflectivityAreaCorrection);
+		
+	}
+	
+	
+	public void  addReflectivityAreaCorrection(int l ,
+											   int k,
+											   double y){
+		
+		dataArrayListManager(reflectivityAreaCorrection,
+					         l,
+					         k,
+					         y);
+		
+		firePropertyChange("reflectivityAreaCorrection", this.reflectivityAreaCorrection,
+				this.reflectivityAreaCorrection= reflectivityAreaCorrection);
+		
+	}
+	
+	public void  addReflectivityFluxCorrection(double y){
+		
+		addToDataArray(reflectivityFluxCorrection,
+					   y);
+		
+		firePropertyChange("reflectivityFluxCorrection", this.reflectivityFluxCorrection,
+				this.reflectivityFluxCorrection = reflectivityFluxCorrection);
+		
+	}
+	
+	
+	public void  addReflectivityFluxCorrection(int l ,
+											   int k,
+											   double y){
+		
+		dataArrayListManager(reflectivityFluxCorrection,
+					         l,
+					         k,
+					         y);
+		
+		firePropertyChange("reflectivityFluxCorrection", this.reflectivityFluxCorrection,
+				this.reflectivityFluxCorrection= reflectivityFluxCorrection);
+		
+	}
 	
 	
 	

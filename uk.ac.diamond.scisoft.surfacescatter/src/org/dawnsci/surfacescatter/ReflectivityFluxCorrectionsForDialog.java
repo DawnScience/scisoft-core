@@ -9,18 +9,11 @@
 
 package org.dawnsci.surfacescatter;
 
-import org.eclipse.dawnsci.analysis.api.processing.OperationException;
-import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
-import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
-import org.eclipse.january.dataset.SliceND;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.Interpolation1D;
-import uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.RecoverNormalisationFluxBatch;
 
 public class ReflectivityFluxCorrectionsForDialog{
 

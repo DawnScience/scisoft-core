@@ -1172,7 +1172,6 @@ public class DummyProcessingClass {
 		
 		if (trackingMarker != 3){
 			double[] p = sm.getLocationList().get(k);
-//			System.out.println("Interesting.....");
 			int[] pt = new int[]{(int) p[0], (int) p[1]}; 
 			int[] len = sm.getInitialLenPt()[0]; 
 			int[][] lenPt = new int[][] {len,pt};
@@ -1563,6 +1562,12 @@ public class DummyProcessingClass {
 				
 				correction = Math.multiplyExact((long)correction, (long)ref);
 				
+				sm.addReflectivityAreaCorrection(sm.getImages().length, k, correction);
+				sm.addReflectivityFluxCorrection(sm.getImages().length, k, ref);
+				
+				sm.setCurrentReflectivityAreaCorrection(correction);
+				sm.setCurrentReflectivityFluxCorrection(ref);
+				
 				if (correction ==0){
 					correction = 0.001;
 				}
@@ -1579,6 +1584,10 @@ public class DummyProcessingClass {
 			try {
 				correction = (GeometricCorrectionsReflectivityMethod.reflectivityCorrectionsBatch(model.getDcdtheta(), k, gm.getAngularFudgeFactor(), 
 						gm.getBeamHeight(), gm.getFootprint()));
+				
+				sm.addReflectivityAreaCorrection(sm.getImages().length, k, correction);
+				sm.setCurrentReflectivityAreaCorrection(correction);
+				
 				
 				if (correction ==0){
 					correction = 0.001;

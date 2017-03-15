@@ -230,13 +230,14 @@ public class ExampleModel {
 
 	public Dataset getQdcdDat() {
 		
-		SliceND sl = new SliceND(qdcd.getShape());
+		
 		try {
+			SliceND sl = new SliceND(qdcd.getShape());
 			Dataset QdcdDat = (Dataset) qdcd.getSlice(sl);
 			return QdcdDat;
-		} catch (DatasetException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
 			return null;
 		}
 		

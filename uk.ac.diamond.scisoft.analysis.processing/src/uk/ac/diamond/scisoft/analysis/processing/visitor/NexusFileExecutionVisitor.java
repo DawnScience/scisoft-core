@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.visitor;
 
+import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
@@ -125,7 +126,12 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		List<SliceFromSeriesMetadata> metadata = data.getMetadata(SliceFromSeriesMetadata.class);
 		if (metadata != null && metadata.get(0) != null) origin = metadata.get(0);
 //		file = HierarchicalDataFactory.getWriter(filePath);
-		nexusFile = NexusFileHDF5.createNexusFile(filePath, swmring);
+		if (new File(filePath).exists() && !swmring) {
+			nexusFile = NexusFileHDF5.openNexusFile(filePath);
+		} else {
+			nexusFile = NexusFileHDF5.createNexusFile(filePath, swmring);
+		}
+		
 		nexusFile.setCacheDataset(true);
 
 		
@@ -745,6 +751,10 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		int[] maxShape = d.getShape().clone();
 		for (int i = 0; i < maxShape.length; i++) if (maxShape[i] == 1) maxShape[i] = -1;
 		return maxShape;
+	}
+	@Override
+	public void includeLinkTo(String fileName) {
+		originalFilePath = fileName;
 	}
 
 }

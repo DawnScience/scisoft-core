@@ -72,10 +72,7 @@ public class PolynomialOverlap {
 										(yValue +len[0]), (xValue + len[1])}; 
 		
 		
-//		double[] output = new double[] {xValue, yValue, 
-//									    xValue, (yValue + len[0]), 
-//									    (xValue +len[1]), yValue, 
-//									    (xValue +len[1]), (yValue + len[0])};
+
 		
 		return output;
 	}

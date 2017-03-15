@@ -1317,7 +1317,6 @@ public class DummyProcessingClass {
 		
 		if (trackingMarker != 3){
 			double[] p = sm.getLocationList().get(k);
-//			System.out.println("Interesting.....");
 			int[] pt = new int[]{(int) p[0], (int) p[1]}; 
 			int[] len = sm.getInitialLenPt()[0]; 
 			int[][] lenPt = new int[][] {len,pt};

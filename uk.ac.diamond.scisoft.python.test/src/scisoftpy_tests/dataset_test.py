@@ -912,7 +912,38 @@ class Test(unittest.TestCase):
 #            ds.extendible = True
 #            ds[10] = 0.
 
-    def testBoolean(self):
+    def testBooleanMethods(self):
+        print 'test boolean methods'
+        a = np.array([True, False])
+
+        self.checkitems([False, False], a & False)
+        b = a.copy()
+        b &= False
+        self.checkitems([False, False], b)
+        self.checkitems(a, a & True)
+        b = a.copy()
+        b &= True
+        self.checkitems(a, b)
+
+        self.checkitems([True, False], a | False)
+        b = a.copy()
+        b |= False
+        self.checkitems([True, False], b)
+        self.checkitems([True, True], a | True)
+        b = a.copy()
+        b |= True
+        self.checkitems([True, True], b)
+
+        self.checkitems([True, False], a ^ False)
+        b = a.copy()
+        b ^= False
+        self.checkitems([True, False], b)
+        self.checkitems([False, True], a ^ True)
+        b = a.copy()
+        b ^= True
+        self.checkitems([False, True], b)
+
+    def testBooleanAccessors(self):
         print 'test boolean get and set'
         tm = np.array(self.mm)
         c = tm > 11.6

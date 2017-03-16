@@ -528,7 +528,7 @@ class ndarray(object):
     '''
     Class to hold special methods and non-overloading names
     '''
-    def __init__(self, shape=None, dtype=None, buffer=None, copy=False):
+    def __init__(self, shape=None, dtype=None, buffer=None, copy=False): # @ReservedAssignment
         # check what buffer is and convert if necessary
         if buffer is not None:
             self.__dataset = __cvt_jobj(_jinput(buffer), dtype=dtype, copy=copy, force=True)
@@ -1004,17 +1004,17 @@ class ndarray(object):
     def __rshift__(self, o):
         return _maths.right_shift(self, asDataset(o))
     def __and__(self, o):
-        d = asDataset(o)
+        d = asDataset(o, force=True)
         if self.dtype is bool and d.dtype is bool:
             return _cmps.logical_and(self, d)
         return _maths.bitwise_and(self, d)
     def __or__(self, o):
-        d = asDataset(o)
+        d = asDataset(o, force=True)
         if self.dtype is bool and d.dtype is bool:
             return _cmps.logical_or(self, d)
         return _maths.bitwise_or(self, d)
     def __xor__(self, o):
-        d = asDataset(o)
+        d = asDataset(o, force=True)
         if self.dtype is bool and d.dtype is bool:
             return _cmps.logical_xor(self, d)
         return _maths.bitwise_xor(self, d)
@@ -1061,13 +1061,22 @@ class ndarray(object):
         _maths.right_shift(self, o, self)
         return self
     def __iand__(self, o):
-        _maths.bitwise_and(self, o, self)
+        if self.dtype is bool:
+            _cmps.logical_and(self, o, self)
+        else:
+            _maths.bitwise_and(self, o, self)
         return self
     def __ior__(self, o):
-        _maths.bitwise_or(self, o, self)
+        if self.dtype is bool:
+            _cmps.logical_or(self, o, self)
+        else:
+            _maths.bitwise_or(self, o, self)
         return self
     def __ixor__(self, o):
-        _maths.bitwise_xor(self, o, self)
+        if self.dtype is bool:
+            _cmps.logical_xor(self, o, self)
+        else:
+            _maths.bitwise_xor(self, o, self)
         return self
 
     # Special methods
@@ -1188,7 +1197,7 @@ class ndarrayRGB(ndarray):
     '''
     Wrap RGB dataset
     '''
-    def __init__(self, shape=None, dtype=None, buffer=None, copy=False):
+    def __init__(self, shape=None, dtype=None, buffer=None, copy=False): # @ReservedAssignment
         super(ndarrayRGB, self).__init__(shape=shape, dtype=dtype, buffer=buffer, copy=copy)
 
     @_wrapout

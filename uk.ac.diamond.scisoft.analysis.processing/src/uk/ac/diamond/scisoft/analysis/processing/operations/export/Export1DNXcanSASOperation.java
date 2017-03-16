@@ -24,9 +24,10 @@ import java.util.Date;
 // Imports from org.eclipse.january
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.dataset.DatasetFactory;
-
+import org.eclipse.january.dataset.DatasetUtils;
 // Imports from org.eclipse.dawnsci
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusException;
@@ -96,6 +97,7 @@ public class Export1DNXcanSASOperation extends AbstractOperation<Export1DNXcanSA
 
 		// Get the axis data so that it's a nice array for outputting
 		IDataset axesForOutput = (IDataset) input.getFirstMetadata(AxesMetadata.class).getAxes()[0];
+		axesForOutput = Maths.multiply(axesForOutput, 10);
 		
 		// Get the error data so that it's a nice array for outputting
 		IDataset errorForOutput = input.getError();
@@ -109,15 +111,15 @@ public class Export1DNXcanSASOperation extends AbstractOperation<Export1DNXcanSA
 		// Then we add the data
 		DataNode sasDataNode = new DataNodeImpl(1);
 		sasDataNode.setDataset(dataForOutput);
-		sasDataNode.addAttribute(TreeFactory.createAttribute("units", "1/cm"));
+		sasDataNode.addAttribute(TreeFactory.createAttribute("units", "arbitrary"));
 		//nxData.addDataNode("I", NexusTreeUtils.createDataNode("I", dataForOutput, "1/cm"));
-		nxData.addDataNode("Q", NexusTreeUtils.createDataNode("Q", axesForOutput, "1/A"));
+		nxData.addDataNode("Q", NexusTreeUtils.createDataNode("Q", axesForOutput, "1/nm"));
 		
 		// And any error values, if present
 		if (errorForOutput != null) {
 			sasDataNode.addAttribute(TreeFactory.createAttribute("uncertainties", "Idev"));
 			//nxData.addAttribute(TreeFactory.createAttribute("I/uncertainties", "Idev"));
-			nxData.addDataNode("Idev", NexusTreeUtils.createDataNode("Idev", dataForOutput, "1/cm"));
+			nxData.addDataNode("Idev", NexusTreeUtils.createDataNode("Idev", dataForOutput, "arbitrary"));
 		}
 		
 		nxData.addDataNode("I", sasDataNode);

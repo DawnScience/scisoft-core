@@ -4,6 +4,7 @@
 	<comment></comment>
 	<projects>
 		<project>hdf.hdf5lib</project>
+		<project>org.dawnsci.boofcv</project>
 		<project>org.eclipse.dawnsci.analysis.api</project>
 		<project>org.eclipse.dawnsci.analysis.dataset</project>
 		<project>org.eclipse.dawnsci.analysis.tree</project>

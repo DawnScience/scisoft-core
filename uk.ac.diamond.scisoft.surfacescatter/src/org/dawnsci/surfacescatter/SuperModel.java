@@ -60,6 +60,7 @@ public class SuperModel {
 	private Boolean trackerOn = false;
 	private int[][] boxOffsetLenPt;
 	private int[][] permanentBoxOffsetLenPt;
+	private int[][] permanentBackgroundLenPt;
 	private ArrayList<Integer> imageRefList;
 	private TreeMap<Integer, Dataset> som;
 	private int numberOfImages;
@@ -1404,6 +1405,14 @@ public class SuperModel {
 		firePropertyChange("reflectivityFluxCorrection", this.reflectivityFluxCorrection,
 				this.reflectivityFluxCorrection= reflectivityFluxCorrection);
 		
+	}
+
+	public int[][] getPermanentBackgroundLenPt() {
+		return permanentBackgroundLenPt;
+	}
+
+	public void setPermanentBackgroundLenPt(int[][] permanentBackgroundLenPt) {
+		this.permanentBackgroundLenPt = permanentBackgroundLenPt;
 	}
 	
 	

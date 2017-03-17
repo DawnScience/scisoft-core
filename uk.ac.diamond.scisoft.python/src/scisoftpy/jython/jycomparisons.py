@@ -78,19 +78,19 @@ def logical_not(a):
     return _cmps.logicalNot(a)
 
 @_wrap
-def logical_and(a, b):
+def logical_and(a, b, out=None):
     '''Return true if a != 0 && b != 0, itemwise'''
-    return _cmps.logicalAnd(a, b)
+    return _cmps.logicalAnd(a, b, out)
 
 @_wrap
-def logical_or(a, b):
+def logical_or(a, b, out=None):
     '''Return true if a != 0 || b != 0, itemwise'''
-    return _cmps.logicalOr(a, b)
+    return _cmps.logicalOr(a, b, out)
 
 @_wrap
-def logical_xor(a, b):
+def logical_xor(a, b, out=None):
     '''Return true if a != 0 ^ b != 0, itemwise'''
-    return _cmps.logicalXor(a, b)
+    return _cmps.logicalXor(a, b, out)
 
 
 @_wrap

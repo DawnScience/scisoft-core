@@ -21,8 +21,6 @@ public class SecondConstantROIUsingIOperation
 	extends AbstractOperation<SecondConstantROIBackgroundSubtractionModel, OperationData> {
 
 		private static Dataset output;
-//		private static IRegion background;
-//		private static IRegion ssvsBackground;
 		private DoubleDataset in1Background;
 		
 		@Override
@@ -46,131 +44,8 @@ public class SecondConstantROIUsingIOperation
 			
 			int[] len = model.getLenPt()[0];
 			int[] pt = model.getLenPt()[1];
-			
-			IPlottingSystem<Composite> pS = model.getPlottingSystem();
-			IPlottingSystem<Composite> ssvsPS = model.getSPlottingSystem();
-			
-			
-			
-//			Display display = Display.getCurrent();
-//	        Color magenta = display.getSystemColor(SWT.COLOR_DARK_MAGENTA);
-//			
+					
 			Dataset in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input,len, pt);
-//			
-//			if (pS.getRegion("Background Region")==null){
-//				
-//				try {
-//					background =pS.createRegion("Background Region", RegionType.BOX);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//				pS.addRegion(background);
-//				IRectangularROI newROI = (IRectangularROI) model.getBackgroundROI();
-//				background.setROI(newROI);
-//				
-//				background.setRegionColor(magenta);
-//		        model.setBackgroundROI(newROI);
-//			}
-//			else{
-//				background = pS.getRegion("Background Region");
-//			}
-//			
-			
-//			if (ssvsPS.getRegion("ssvs Background Region")==null){
-//				
-//				try {
-//					ssvsBackground =ssvsPS.createRegion("ssvs Background Region", RegionType.BOX);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//				ssvsPS.addRegion(ssvsBackground);
-//				IRectangularROI ssvsNewROI = (IRectangularROI) model.getBackgroundROI();
-//				ssvsBackground.setROI(ssvsNewROI);
-//				
-//				ssvsBackground.setRegionColor(magenta);
-//			}
-//			else{
-//				ssvsPS.removeRegion(ssvsPS.getRegion("ssvs Background Region"));
-//				try {
-//					ssvsBackground =ssvsPS.createRegion("ssvs Background Region", RegionType.BOX);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//				ssvsPS.addRegion(ssvsBackground);
-//				IRectangularROI ssvsNewROI = (IRectangularROI) model.getBackgroundROI();
-//				ssvsBackground.setROI(ssvsNewROI);
-//				
-//				ssvsBackground.setRegionColor(magenta);
-//			}
-
-//	        background.addROIListener(new IROIListener() {
-//
-//				@Override
-//				public void roiDragged(ROIEvent evt) {
-//					roiStandard(evt);
-//				}
-//
-//				@Override
-//				public void roiChanged(ROIEvent evt) {
-//					roiStandard(evt);
-//				}
-//
-//				@Override
-//				public void roiSelected(ROIEvent evt) {
-//					roiStandard(evt);
-//				}
-//				
-//				public void roiStandard(ROIEvent evt) {
-//					
-//					model.setBackgroundROI(background.getROI().getBounds());
-//					
-//					IRectangularROI magentaRectangle = background.getROI().getBounds();
-//					int[] Len = magentaRectangle.getIntLengths();
-//					int[] Pt = magentaRectangle.getIntPoint();
-//					int[][] LenPt = {Len,Pt};
-//					
-//					RectangularROI newROI = new RectangularROI(LenPt[1][0],
-//															   LenPt[1][1],
-//															   LenPt[0][0],
-//															   LenPt[0][1],0);
-////					ssvsBackground.setROI(newROI);
-//					
-//				}
-//
-//			});
-	        
-//	        ssvsBackground.addROIListener(new IROIListener() {
-//
-//				@Override
-//				public void roiDragged(ROIEvent evt) {
-//					roiStandard(evt);
-//				}
-//
-//				@Override
-//				public void roiChanged(ROIEvent evt) {
-//					roiStandard(evt);
-//				}
-//
-//				@Override
-//				public void roiSelected(ROIEvent evt) {
-//					roiStandard(evt);
-//				}
-//				
-//				public void roiStandard(ROIEvent evt) {
-//					model.setBackgroundROI(background.getROI().getBounds());
-//				}
-//
-//			});
-	        
-	        
-//	        double[] location = new double[] { (double) model.getBackgroundLenPt()[1][1], 
-//	        								   (double) model.getBackgroundLenPt()[1][0], 
-//	        								   (double) (model.getBackgroundLenPt()[1][1] + model.getBackgroundLenPt()[0][1]), 
-//	        								   (double) (model.getBackgroundLenPt()[1][0]),
-//	        								   (double) model.getBackgroundLenPt()[1][1], 
-//	        								   (double) model.getBackgroundLenPt()[1][0] + model.getBackgroundLenPt()[0][0], 
-//	        								   (double) (model.getBackgroundLenPt()[1][1] + model.getBackgroundLenPt()[0][1]), 
-//	        								   (double) (model.getBackgroundLenPt()[1][0] + model.getBackgroundLenPt()[0][0]) };
 	        	        
 			Dataset backgroundDataset = BoxSlicerRodScanUtilsForDialog.rOIBox(input, 
 					model.getBackgroundLenPt()[0], 
@@ -195,8 +70,7 @@ public class SecondConstantROIUsingIOperation
 			while (it1.hasNext()) {
 				double q = pBackgroundSubtracted.getElementDoubleAbs(it1.index);
 				in1Background.setObjectAbs(it1.index, bgAv);
-//				if (q < 0)
-//					pBackgroundSubtracted.setObjectAbs(it1.index, 0.1);
+
 			}
 				
 			output = DatasetUtils.cast(pBackgroundSubtracted, Dataset.FLOAT64);

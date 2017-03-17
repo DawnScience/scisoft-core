@@ -8,7 +8,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 
 public class TrackerLocationInterpolation {
 	
-	public static int DEBUG = 1 ;
+	public static int DEBUG = 0 ;
 	
 	public static double[] trackerInterpolationInterpolator0(ArrayList<double[]> trackerLocations, 
 														    Dataset sortedX,

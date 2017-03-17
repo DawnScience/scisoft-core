@@ -26,6 +26,7 @@ import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
 
 
 // Imports from org.eclipse.core
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.FileLocator;
 
 
@@ -49,6 +50,10 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.processing.PlotAdditionalData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+
+
+// Imports from org.osgi
+import org.osgi.framework.Bundle;
 
 
 // Imports from uk.ac.diamond
@@ -114,7 +119,8 @@ public class AbsoluteIntensityCalibrationOperation extends AbstractOperation<Abs
 		try {
 			if (model.getUseInternalCalibrant() == true) {
 				// By opening the default file
-				URL calibrantFileURL = this.getClass().getResource("data/GlassyCarbon_T.dat");
+				Bundle bundle = Platform.getBundle("uk.ac.diamond.scisoft.analysis.processing");
+				URL calibrantFileURL = bundle.getEntry("data/GlassyCarbon_T.dat");
 				DatLoader calibrantDataLoader = new DatLoader(FileLocator.resolve(calibrantFileURL).getPath());
 				DataHolder calibrantData = calibrantDataLoader.loadFile();
 				// and extracting out the relevant datasets

@@ -30,7 +30,7 @@ import org.eclipse.january.dataset.IDataset;
 public abstract class AbstractSignificanceFilter extends AbstractPeakFinder {
 	
 	private String WINDOWSIZE = "Window size";
-	private String NRSTDDEVS = "Sstandard deviation filter";
+	private String NRSTDDEVS = "Standard deviation filter";
 	
 	/**
 	 * Set's values of parameters needed for filtering significance function.
@@ -64,8 +64,8 @@ public abstract class AbstractSignificanceFilter extends AbstractPeakFinder {
 		Integer nrStdDevs;
 		Integer windowSize;
 		try {
-			nrStdDevs = (Integer)getParameterValue("nrStdDevs");
-			windowSize = (Integer)getParameterValue("windowSize");
+			nrStdDevs = (Integer)getParameterValue(NRSTDDEVS);
+			windowSize = (Integer)getParameterValue(WINDOWSIZE);
 		} catch(Exception e) {
 			logger.error("Could not find specified peak finding parameters");
 			return null;

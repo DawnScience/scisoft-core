@@ -33,12 +33,11 @@ public class SumDifferenceAverageTest {
 	public void parametersCheck() throws Exception {
 		Map<String, IPeakFinderParameter> paramSet = avgDiff.getParameters();
 		Assert.assertEquals(2, paramSet.size());
+		assertTrue(paramSet.containsKey("Window size"));
+		assertTrue(paramSet.containsKey("Standard deviation filter"));
 		
-		assertTrue(paramSet.containsKey("windowSize"));
-		assertTrue(paramSet.containsKey("nrStdDevs"));
-		
-		Assert.assertEquals(50, avgDiff.getParameterValue("windowSize"));
-		Assert.assertEquals(3, avgDiff.getParameterValue("nrStdDevs"));
+		Assert.assertEquals(50, avgDiff.getParameterValue("Window size"));
+		Assert.assertEquals(3, avgDiff.getParameterValue("Standard deviation filter"));
 	}
 	
 	@Test

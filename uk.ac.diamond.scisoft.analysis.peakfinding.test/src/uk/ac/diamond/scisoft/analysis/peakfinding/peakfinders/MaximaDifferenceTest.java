@@ -40,9 +40,8 @@ public class MaximaDifferenceTest {
 	public void parametersCheck() throws Exception {
 		Map<String, IPeakFinderParameter> paramSet = maxDiff.getParameters();
 		Assert.assertEquals(2, paramSet.size());
-		
-		assertTrue(paramSet.containsKey("windowSize"));
-		assertTrue(paramSet.containsKey("nrStdDevs"));
+		assertTrue(paramSet.containsKey( "Window size"));
+		assertTrue(paramSet.containsKey("Standard deviation filter"));
 	}
 	
 	@Test

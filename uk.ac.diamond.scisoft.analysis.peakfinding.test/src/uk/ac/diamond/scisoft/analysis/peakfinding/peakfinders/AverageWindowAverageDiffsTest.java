@@ -40,15 +40,15 @@ public class AverageWindowAverageDiffsTest {
 		Map<String, IPeakFinderParameter> paramSet = winAvgDiff.getParameters();
 		assertEquals(2, paramSet.size());
 		
-		assertTrue(paramSet.containsKey("windowSize"));
-		assertTrue(paramSet.containsKey("nrStdDevs"));
+		assertTrue(paramSet.containsKey("Window size"));
+		assertTrue(paramSet.containsKey("Standard deviation filter"));
+
+		assertEquals(50, winAvgDiff.getParameterValue("Window size"));
+		assertEquals(3, winAvgDiff.getParameterValue("Standard deviation filter"));
 		
-		assertEquals(50, winAvgDiff.getParameterValue("windowSize"));
-		assertEquals(3, winAvgDiff.getParameterValue("nrStdDevs"));
-		
-		winAvgDiff.setParameterValue("windowSize", 45);
-		assertEquals(45, winAvgDiff.getParameterValue("windowSize"));
-		winAvgDiff.setParameterValue("windowSize", 50);
+		winAvgDiff.setParameterValue("Window size", 45);
+		assertEquals(45, winAvgDiff.getParameterValue("Window size"));
+		winAvgDiff.setParameterValue("Window size", 50);
 	}
 	
 	@Test

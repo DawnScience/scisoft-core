@@ -99,11 +99,12 @@ public class WaveletTransformPeakFindsTest {
 		//Size 1 for peaks
 		Assert.assertEquals(5, paramSet.size());
 
-		assertTrue(paramSet.containsKey("widthSz"));
-		assertTrue(paramSet.containsKey("noisePerc"));
-		assertTrue(paramSet.containsKey("minSNR"));
-		assertTrue(paramSet.containsKey("minLength"));
-		assertTrue(paramSet.containsKey("gapThresh"));
+		assertTrue(paramSet.containsKey("Conolve Width Size"));
+		assertTrue(paramSet.containsKey("Minimum signal to noise ratio"));
+		assertTrue(paramSet.containsKey("Noise percentile"));
+		assertTrue(paramSet.containsKey("Minimum ridge length"));
+		assertTrue(paramSet.containsKey("Gap threshold"));
+
 	}
 	
 	@Test

@@ -43,7 +43,7 @@ public class AutoPeakFinderTest {
 		Map<String, IPeakFinderParameter> paramSet = ampd.getParameters();
 		Assert.assertEquals(1, paramSet.size());
 
-		assertTrue(paramSet.containsKey("fitDegree"));
+		assertTrue(paramSet.containsKey("Fit Degree"));
 	}
 
 	@Test

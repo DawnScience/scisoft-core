@@ -156,6 +156,7 @@ public class SeriesRunner implements IOperationRunner {
 		
 		if (context.getLiveInfo() != null) {
 			iterator = new DynamicSliceViewIterator((IDynamicDataset)context.getData(), context.getLiveInfo().getKeys(), context.getLiveInfo().getComplete(), context.getDataDimensions().length);
+			((DynamicSliceViewIterator)iterator).setMaxTimeout((int)context.getParallelTimeout());
 		} else {
 			iterator = new SliceViewIterator(context.getData(), context.getSlicing(), context.getDataDimensions());
 		}

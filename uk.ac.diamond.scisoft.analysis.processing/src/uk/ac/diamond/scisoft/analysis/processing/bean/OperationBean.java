@@ -227,10 +227,20 @@ public class OperationBean extends StatusBean implements IOperationBean {
 		return timeOut;
 	}
 
+	@Override
 	public void setTimeOut(int timeOut) {
 		this.timeOut = timeOut;
 	}
+
+	@Override
+	public void setLinkParentEntry(boolean linkEntry) {
+		this.linkEntry = linkEntry;
+	}
 	
+	public boolean getLinkParentEntry() {
+		return linkEntry;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -241,6 +251,7 @@ public class OperationBean extends StatusBean implements IOperationBean {
 		result = prime * result + ((datasetPath == null) ? 0 : datasetPath.hashCode());
 		result = prime * result + (deleteProcessingFile ? 1231 : 1237);
 		result = prime * result + ((filePath == null) ? 0 : filePath.hashCode());
+		result = prime * result + (linkEntry ? 1231 : 1237);
 		result = prime * result + numberOfCores;
 		result = prime * result + ((outputFilePath == null) ? 0 : outputFilePath.hashCode());
 		result = prime * result + ((processingPath == null) ? 0 : processingPath.hashCode());
@@ -283,6 +294,8 @@ public class OperationBean extends StatusBean implements IOperationBean {
 				return false;
 		} else if (!filePath.equals(other.filePath))
 			return false;
+		if (linkEntry != other.linkEntry)
+			return false;
 		if (numberOfCores != other.numberOfCores)
 			return false;
 		if (outputFilePath == null) {
@@ -320,13 +333,5 @@ public class OperationBean extends StatusBean implements IOperationBean {
 		} else if (!xmx.equals(other.xmx))
 			return false;
 		return true;
-	}
-
-	public void setLinkParentEntry(boolean linkEntry) {
-		this.linkEntry = linkEntry;
-	}
-	
-	public boolean getLinkParentEntry() {
-		return linkEntry;
 	}
 }

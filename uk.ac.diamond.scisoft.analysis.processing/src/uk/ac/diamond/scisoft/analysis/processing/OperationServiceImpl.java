@@ -110,6 +110,10 @@ public class OperationServiceImpl implements IOperationService {
 	        if (context.getLiveInfo() == null) it = new SliceViewIterator(context.getData(), context.getSlicing(), context.getDataDimensions());
 	        else it = new DynamicSliceViewIterator((IDynamicDataset)context.getData(), context.getLiveInfo().getKeys(), context.getLiveInfo().getComplete(), context.getDataDimensions().length);
 	        
+	        if (it instanceof DynamicSliceViewIterator) {
+	        	((DynamicSliceViewIterator)it).setMaxTimeout((int)context.getParallelTimeout());
+	        }
+	        
 	        if (!it.hasNext()){
 	        	logger.debug("Iterator has no slices ready");
 	        	it.reset();

@@ -23,9 +23,6 @@ unittest.TestProgram(argv=["scisoft_test"])
 import unittest
 import scisoftpy as np
 
-import os
-isjava = os.name == 'java'
-
 def toInt(o):
     return int(o)
 
@@ -120,8 +117,9 @@ class Test(unittest.TestCase):
     def testReshape(self):
         print 'Reshape testing'
         a = np.arange(10.)
-        a.reshape(2,5)
-        a.reshape((2,5))
+        self.assertEqual((2,5), a.reshape(2,5).shape)
+        self.assertEqual((2,5), a.reshape((2,5)).shape)
+        self.assertEqual((5,2), a.reshape(5,-1).shape)
 
     def testResize(self):
         print 'Resize testing'
@@ -165,22 +163,26 @@ class Test(unittest.TestCase):
         ca[1:,3:] = (3,-4)
         self.assertEquals(ca[2,3][0], 3)
         self.assertEquals(ca[2,3][1], -4)
-        if isjava:
-            ia = np.array([2, -7])
-            print 'Integer index testing'
-            ca = oa.copy()
-            cb = ca[ia]
-            print cb
-            self.assertEquals(cb.shape[0], 2)
-            self.assertEquals(cb[0][0], 4)
-            self.assertEquals(cb[0][1], 5)
-            self.assertEquals(cb[1][0], 10)
-            self.assertEquals(cb[1][1], 11)
-            ca[ia] = [1,2]
-            self.assertEquals(ca[0,2][0], 1)
-            self.assertEquals(ca[0,2][1], 2)
-            self.assertEquals(ca[1,1][0], 1)
-            self.assertEquals(ca[1,1][1], 2)
+
+        ia = np.array([2, -3])
+        print 'Integer index testing'
+        ca = oa.copy()
+        print ca
+        cb = ca[ia]
+        print cb
+        self.assertEquals(cb.shape[0], 2)
+        self.assertEquals(cb[0,0][0], 16)
+        self.assertEquals(cb[0,0][1], 17)
+        self.assertEquals(cb[1,0][0], 0)
+        self.assertEquals(cb[1,0][1], 1)
+        print np.compoundarray(np.array([1,2]))
+        ca[ia] = np.compoundarray(np.array([1,2]))
+        self.assertEquals(ca[0,2][0], 1)
+        self.assertEquals(ca[0,2][1], 2)
+        self.assertEquals(ca[1,1][0], 10)
+        self.assertEquals(ca[1,1][1], 11)
+
+        ca[ia] = (1,2) # this works too
 
         print 'Boolean index testing'
         ba = np.array([[0, 0, 1, 0], [1, 0, 0, 0], [0, 1, 0, 1]], dtype=np.bool)
@@ -221,7 +223,9 @@ class Test(unittest.TestCase):
             else:
                 sys.executable = sys.__file__ #@UndefinedVariable
 
-        help(np)
+        # silence output
+        # help(np)
+        self.assertTrue(len(np.__doc__) > 500)
 
     def testCentroid(self):
         print 'Centroid testing'

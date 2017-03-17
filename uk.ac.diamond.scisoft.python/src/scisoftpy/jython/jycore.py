@@ -370,7 +370,7 @@ def _toslice(rank, key):
                 nkeys.append(k)
         key = nkeys
     elif isinstance(key, ndarray):
-        return False, key._jdataset()
+        return False, (key._jdataset(),)
 
     if adv:
         return False, [k if not isinstance(k, slice) else _cvt2js(k) for k in key]
@@ -1099,7 +1099,6 @@ class ndarray(object):
 
     @_wrapout
     def __getitem__(self, key):
-# FIXME add advanced integers indexing
         isslice, key = _toslice(self.ndim, key)
         try:
             if not isslice:
@@ -1110,7 +1109,7 @@ class ndarray(object):
                 if _contains_ints_bools_newaxis(key):
                     return self.__dataset.getByIndexes(key)
                 return self.__dataset.getObject(key)
-    
+
             return _getslice(self.__dataset, key)
         except _jarrayindex_exception:
             raise IndexError
@@ -1121,6 +1120,10 @@ class ndarray(object):
             value = value._jdataset()
         else:
             value = _cvt2j(value)
+
+        # workaround lack of broadcasting support in setters for compound datasets
+        if self.dtype.elements > 1 and isinstance(value, _ds) and value.getSize() == 1:
+            value = value.getBuffer()
 
         isslice, key = _toslice(self.ndim, key)
 
@@ -1133,7 +1136,7 @@ class ndarray(object):
                 if _contains_ints_bools_newaxis(key):
                     return self.__dataset.setByIndexes(value, key)
                 return self.__dataset.set(value, key)
-    
+
             _setslice(self.__dataset, value, key)
             return self
         except _jarrayindex_exception:
@@ -1717,3 +1720,4 @@ def ravel_multi_index(multi_index, dims, mode='raise'):
     if single:
         return pos.getObject([])
     return pos
+

@@ -264,8 +264,8 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 					nexusFile.activateSwmrMode();
 					logger.debug("SWMR-ING");
 				}
-				flushDatasets();
-			}	
+			}
+			flushDatasets();
 		}
 	}
 	
@@ -274,6 +274,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		if (time - lastFlush > 2000) {
 			lastFlush = time;
 			((NexusFileHDF5)nexusFile).flushAllCachedDatasets();
+			logger.debug("Flushing");
 		}
 	}
 

@@ -50,8 +50,13 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	//clear processing file at finish
 	private boolean   			 deleteProcessingFile = true;
 	
+	//time out for live processing
+	private int timeOut = 60000;
+
 	//URI to publish updates to
 	private String publisherURI = null;
+	
+	private boolean linkEntry = true;
 
 	@Override
 	public void merge(StatusBean with) {
@@ -70,6 +75,7 @@ public class OperationBean extends StatusBean implements IOperationBean {
         this.dataKey         	  = db.dataKey;
         this.deleteProcessingFile = db.deleteProcessingFile;
         this.publisherURI         = db.publisherURI;
+        this.timeOut 			  = db.timeOut;
 	}
 	
 	public String getDataKey() {
@@ -209,6 +215,23 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	}
 
 	@Override
+	public void setScanRank(Integer scanRank) {
+		this.scanRank = scanRank;
+	}
+	
+	public Integer getScanRank() {
+		return scanRank;
+	}
+	
+	public int getTimeOut() {
+		return timeOut;
+	}
+
+	public void setTimeOut(int timeOut) {
+		this.timeOut = timeOut;
+	}
+	
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
@@ -223,7 +246,9 @@ public class OperationBean extends StatusBean implements IOperationBean {
 		result = prime * result + ((processingPath == null) ? 0 : processingPath.hashCode());
 		result = prime * result + ((publisherURI == null) ? 0 : publisherURI.hashCode());
 		result = prime * result + (readable ? 1231 : 1237);
+		result = prime * result + ((scanRank == null) ? 0 : scanRank.hashCode());
 		result = prime * result + ((slicing == null) ? 0 : slicing.hashCode());
+		result = prime * result + timeOut;
 		result = prime * result + ((xmx == null) ? 0 : xmx.hashCode());
 		return result;
 	}
@@ -277,10 +302,17 @@ public class OperationBean extends StatusBean implements IOperationBean {
 			return false;
 		if (readable != other.readable)
 			return false;
+		if (scanRank == null) {
+			if (other.scanRank != null)
+				return false;
+		} else if (!scanRank.equals(other.scanRank))
+			return false;
 		if (slicing == null) {
 			if (other.slicing != null)
 				return false;
 		} else if (!slicing.equals(other.slicing))
+			return false;
+		if (timeOut != other.timeOut)
 			return false;
 		if (xmx == null) {
 			if (other.xmx != null)
@@ -290,13 +322,11 @@ public class OperationBean extends StatusBean implements IOperationBean {
 		return true;
 	}
 
-	@Override
-	public void setScanRank(Integer scanRank) {
-		this.scanRank = scanRank;
+	public void setLinkParentEntry(boolean linkEntry) {
+		this.linkEntry = linkEntry;
 	}
 	
-	public Integer getScanRank() {
-		return scanRank;
+	public boolean getLinkParentEntry() {
+		return linkEntry;
 	}
-
 }

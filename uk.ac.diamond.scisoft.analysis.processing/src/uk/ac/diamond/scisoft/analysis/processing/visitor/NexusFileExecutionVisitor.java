@@ -82,6 +82,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	private Map<IOperation, AtomicBoolean> firstNotifyMap;
 	private Map<IOperation, Integer> positionMap;
 	private AtomicBoolean firstNonNullExecution = new AtomicBoolean(true);
+	private AtomicBoolean nullReturnSWMRMode = new AtomicBoolean(false);
 
 	private String results;
 	private String intermediate;
@@ -226,7 +227,23 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	@Override
 	public void executed(OperationData result, IMonitor monitor) throws Exception {
 		
-		if (result == null) return;
+		if (result == null && !swmring) return;
+		
+		if (result == null && swmring && !nullReturnSWMRMode.get()) {
+			nullReturnSWMRMode.set(true);
+			synchronized (nexusFile) {
+				if (swmring) {
+					nexusFile.activateSwmrMode();
+					logger.debug("SWMR-ING");
+				}
+			}
+		}
+		
+		if (nullReturnSWMRMode.get()) {
+			flushDatasets();
+			return;
+		}
+		
 		//not threadsafe but closer
 		boolean fNNE = firstNonNullExecution.getAndSet(false);
 		
@@ -240,26 +257,23 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		integrated.setName("data");
 		synchronized (nexusFile) {
 			appendData(integrated,nexusFile.getGroup(results,false), slices,shape, nexusFile);
-		}
-		if (fNNE){
-			synchronized (nexusFile) {
+			if (fNNE){
 				GroupNode group = nexusFile.getGroup(results,false);
 				nexusFile.addAttribute(group,new AttributeImpl(NexusTreeUtils.NX_SIGNAL,integrated.getName()));
-				if (nexusFile instanceof NexusFileHDF5 && swmring) {
-					((NexusFileHDF5)nexusFile).activateSwmrMode();
+				if (swmring) {
+					nexusFile.activateSwmrMode();
 					logger.debug("SWMR-ING");
 				}
-			}
+				flushDatasets();
+			}	
 		}
-		
-
-		synchronized (nexusFile) {
-			long time = System.currentTimeMillis();
-			if (time - lastFlush > 2000) {
-				lastFlush = time;
-				((NexusFileHDF5)nexusFile).flushAllCachedDatasets();
-			}
-
+	}
+	
+	private void flushDatasets() {
+		long time = System.currentTimeMillis();
+		if (time - lastFlush > 2000) {
+			lastFlush = time;
+			((NexusFileHDF5)nexusFile).flushAllCachedDatasets();
 		}
 	}
 

@@ -20,6 +20,7 @@ import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.ILiveOperationInfo;
+import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
@@ -36,6 +37,7 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.operations.DataWrittenOperation;
+import uk.ac.diamond.scisoft.analysis.processing.operations.NoDataOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.SleepOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxMeanOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxModel;
@@ -77,7 +79,7 @@ public class MockScanProcessTest {
 		tmpProc.deleteOnExit();
 		tmpProc.createNewFile();
 		
-		starProcessing(ste2, tmpProc, tmp);
+		starProcessing(ste2, tmpProc, tmp, false);
 		ste2.shutdown();
 		
 		while (!ste.awaitTermination(200,TimeUnit.MILLISECONDS) || !ste2.awaitTermination(200,TimeUnit.MILLISECONDS)) {
@@ -87,6 +89,34 @@ public class MockScanProcessTest {
 		ste.toString();
 		
 	}
+	
+	@Test
+	public void testNoDataOut() throws Exception {
+		int sleep = 200;
+		int[] dataShape = {5,10,101,102};
+		ExecutorService ste = Executors.newSingleThreadExecutor();
+		final File tmp = File.createTempFile("Test", ".h5");
+		tmp.deleteOnExit();
+		tmp.createNewFile();
+		startMockScan(dataShape, sleep,ste,tmp);
+		ste.shutdown();
+		
+		ExecutorService ste2 = Executors.newSingleThreadExecutor();
+		final File tmpProc = File.createTempFile("Test", ".h5");
+		tmpProc.deleteOnExit();
+		tmpProc.createNewFile();
+		
+		starProcessing(ste2, tmpProc, tmp, true);
+		ste2.shutdown();
+		
+		while (!ste.awaitTermination(200,TimeUnit.MILLISECONDS) || !ste2.awaitTermination(200,TimeUnit.MILLISECONDS)) {
+			//nothing
+		}
+		
+		ste.toString();
+		
+	}
+	
 	
 	private void startMockScan(int[] shape, int sleep, ExecutorService ste, File tmp) throws Exception{
 		
@@ -121,7 +151,7 @@ public class MockScanProcessTest {
 		
 	}
 	
-	private void starProcessing(ExecutorService ste, File tmpProc, File tmp) throws Exception{
+	private void starProcessing(ExecutorService ste, File tmpProc, File tmp, boolean noData) throws Exception{
 		
 		String data = "/entry/result/data";
 		String key = "/entry/auxiliary/1-DataWritten/key/data";
@@ -170,21 +200,35 @@ public class MockScanProcessTest {
 			}
 		});
 		
+		IOperation[] ops = new IOperation[noData ? 3 : 2];
+		
 		BoxMeanOperation bmo = new BoxMeanOperation();
+		bmo.setName("BoxMean");
 		BoxModel bmm = new BoxModel();
 		bmm.setBox(new RectangularROI(10,10, 10, 10, 0));
 		bmo.setModel(bmm);
+		
+		ops[0] = bmo;
 		
 		DownsampleImageOperation dso = new DownsampleImageOperation();
 		DownsampleImageModel dsm = new DownsampleImageModel();
 		dsm.setDownsampleSizeY(10);
 		dsm.setDownsampleSizeX(10);
 		dso.setModel(dsm);
+		
+		ops[1] = dso;
+		
+		if (noData) {
+			NoDataOperation ndo = new NoDataOperation();
+			ndo.setModel(new EmptyModel());
+			ops[2] = ndo;
+		}
+		
 
 		//FIXME or rather fix swmr. Not currently testing swmr since wont read from a 
 		//different thread to writing thread
 		context.setVisitor(new NexusFileExecutionVisitor(tmpProc.getAbsolutePath(),true));
-		context.setSeries(bmo,dso);
+		context.setSeries(ops);
 		context.setExecutionType(ExecutionType.SERIES);
 		
 		ste.submit(new Runnable() {

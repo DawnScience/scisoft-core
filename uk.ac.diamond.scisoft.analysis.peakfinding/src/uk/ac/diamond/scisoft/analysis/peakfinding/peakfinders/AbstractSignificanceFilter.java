@@ -29,6 +29,9 @@ import org.eclipse.january.dataset.IDataset;
  */
 public abstract class AbstractSignificanceFilter extends AbstractPeakFinder {
 	
+	private String WINDOWSIZE = "Window size";
+	private String NRSTDDEVS = "Sstandard deviation filter";
+	
 	/**
 	 * Set's values of parameters needed for filtering significance function.
 	 * @throws Exception 
@@ -36,8 +39,8 @@ public abstract class AbstractSignificanceFilter extends AbstractPeakFinder {
 	public AbstractSignificanceFilter() {
 		super();
 		try {
-			initialiseParameter("windowSize", true, 50);
-			initialiseParameter("nrStdDevs", true, 3);
+			initialiseParameter(WINDOWSIZE, true, 50);
+			initialiseParameter(NRSTDDEVS, true, 1);
 		} catch (Exception e) {
 			System.out.println(e);
 			logger.error("Problem initialising "+this.getName()+" peak finder: e");

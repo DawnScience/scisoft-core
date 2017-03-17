@@ -48,6 +48,8 @@ public class AutoPeakFinder extends AbstractPeakFinder {
 
 	private final static String NAME = "Auto Peakfinder";
 
+	private String FITDEGREENAME = "Fit Degree"; 
+	
 	@Override
 	protected void setName() {
 		this.name = NAME;
@@ -60,7 +62,7 @@ public class AutoPeakFinder extends AbstractPeakFinder {
 	public AutoPeakFinder() {
 		super();
 		try {
-			initialiseParameter("fitDegree", true, 6);
+			initialiseParameter(FITDEGREENAME, true, 6);
 		} catch (Exception e) {
 			System.out.println(e);
 			logger.error("Problem initialising " + this.getName() + " peak finder: e");
@@ -71,7 +73,7 @@ public class AutoPeakFinder extends AbstractPeakFinder {
 
 	public void loadParam() {
 		try {
-			fitDegree = (Integer) getParameterValue("fitDegree");
+			fitDegree = (Integer) getParameterValue(FITDEGREENAME);
 		} catch (Exception e) {
 			logger.error("Could not find specified peak finding parameters");
 		}

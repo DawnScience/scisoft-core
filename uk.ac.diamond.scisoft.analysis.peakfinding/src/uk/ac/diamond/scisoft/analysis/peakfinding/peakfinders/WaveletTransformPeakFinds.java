@@ -63,6 +63,16 @@ public class WaveletTransformPeakFinds extends AbstractPeakFinder {
 
 	public final static String NAME = "WaveletTransformPeaks";
 
+	
+	/*PARAMETER NAMES*/
+	//TODO: because of the way the dynamcially loaded configurables exist a neater name should be set here
+	private String WIDTHSIZENAME = "Conolve Width Size";
+	private String MINSNRATIO = "Minimum signal to noise ratio";// ;
+	private String NOISEPERCNAME = "Noise percentile";//=10;
+	private String MINLENGTHNAME = "Minimum ridge length";
+	private String GAPTHRESHNAME = "Gap threshold"; 
+	
+	
 	/*
 	 * The width size the convulation of signal data will step through. 
 	 * 
@@ -95,11 +105,11 @@ public class WaveletTransformPeakFinds extends AbstractPeakFinder {
 	
 	public void loadParam() {
 		try {
-			widthSzParam = (double) getParameterValue("widthSz");
-			minSNR = (double) getParameterValue("minSNR");
-			noisePerc = (double) getParameterValue("noisePerc");
-			minLength = (double) getParameterValue("minLength");
-			gapThresh = (double) getParameterValue("gapThresh");
+			widthSzParam = (double) getParameterValue(WIDTHSIZENAME);
+			minSNR = (double) getParameterValue(MINSNRATIO);
+			noisePerc = (double) getParameterValue(NOISEPERCNAME);
+			minLength = (double) getParameterValue(MINLENGTHNAME);
+			gapThresh = (double) getParameterValue(GAPTHRESHNAME);
 		} catch (Exception e) {
 			logger.error("Could not find specified peak finding parameters");
 		}
@@ -109,11 +119,11 @@ public class WaveletTransformPeakFinds extends AbstractPeakFinder {
 	public WaveletTransformPeakFinds() {
 		super();
 		try {
-			initialiseParameter("widthSz", false, 1.0);
-			initialiseParameter("minSNR", false, 1.0);
-			initialiseParameter("noisePerc", false, 10.0);
-			initialiseParameter("minLength", false, 0.0);
-			initialiseParameter("gapThresh", false, 2.0);
+			initialiseParameter(WIDTHSIZENAME, false, 1.0);
+			initialiseParameter(MINSNRATIO, false, 1.0);
+			initialiseParameter(NOISEPERCNAME, false, 10.0);
+			initialiseParameter(MINLENGTHNAME, false, 0.0);
+			initialiseParameter(GAPTHRESHNAME, false, 2.0);
 		} catch (Exception e) {
 			System.out.println(e);
 			logger.error("Problem initialising " + this.getName() + " peak finder: e");

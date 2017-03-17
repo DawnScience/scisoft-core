@@ -1220,6 +1220,13 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.fitting.LinearFittingModel"
             name="Linear Fitting Operation">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.SumFramesOperation"
+            description="Collect all frames and return the sum"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.SumFramesOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="Sum Frames">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

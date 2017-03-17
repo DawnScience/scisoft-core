@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
+import org.eclipse.dawnsci.analysis.api.processing.IExportOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -20,7 +21,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 
-public class SumFramesOperation extends AbstractOperation<EmptyModel, OperationData> {
+public class SumFramesOperation extends AbstractOperation<EmptyModel, OperationData> implements IExportOperation {
 
 	private Dataset sum;
 	private int count;

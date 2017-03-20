@@ -5,6 +5,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import org.dawnsci.surfacescatter.MethodSettingEnum.MethodSetting;
+import org.dawnsci.surfacescatter.ProcessingMethodsEnum.ProccessingMethod;
 import org.eclipse.dawnsci.analysis.api.image.IImageTracker;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
@@ -80,7 +81,16 @@ public class SuperModel {
 	private double currentReflectivityAreaCorrection;
 	private ArrayList<Double> reflectivityFluxCorrection;
 	private double currentReflectivityFluxCorrection;
+	private ProccessingMethod processingMethodSelection = ProcessingMethodsEnum.ProccessingMethod.AUTOMATIC;
 	
+	public ProccessingMethod getProcessingMethodSelection() {
+		return processingMethodSelection;
+	}
+
+	public void setProcessingMethodSelection(ProcessingMethodsEnum.ProccessingMethod processingMethodSelection) {
+		this.processingMethodSelection = processingMethodSelection;
+	}
+
 	public ArrayList<Double> getReflectivityFluxCorrection() {
 		return reflectivityFluxCorrection;
 	}

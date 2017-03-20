@@ -119,11 +119,11 @@ public class XPDFBeamTrace {
 	 */
 	public void normalizeTrace() {
 		if (trace != null) {
-			Dataset traceErrors = (trace.getError() != null) ? trace.getError() : null;
+			Dataset traceErrors = (trace.getErrors() != null) ? trace.getErrors() : null;
 			trace = getNormalizedTrace();
 			// Normalize the errors, too
 			if (traceErrors != null)
-				trace.setError(Maths.divide(traceErrors, this.countingTime*this.monitorRelativeFlux));
+				trace.setErrors(Maths.divide(traceErrors, this.countingTime*this.monitorRelativeFlux));
 		}
 		isNormalized = true;
 	}
@@ -159,13 +159,13 @@ public class XPDFBeamTrace {
 	 */
 	public void subtractBackground(XPDFBeamTrace background) {
 		if (trace != null) {
-			Dataset traceErrors = (trace.getError() != null) ? trace.getError() : null;
+			Dataset traceErrors = (trace.getErrors() != null) ? trace.getErrors() : null;
 			trace = getBackgroundSubtractedTrace(background);
 			if (traceErrors != null) {
-				Dataset subErrors = (background.getNormalizedTrace().getError() != null) ?
-						Maths.sqrt(Maths.add(Maths.square(traceErrors), Maths.square(background.getNormalizedTrace().getError()))) :
+				Dataset subErrors = (background.getNormalizedTrace().getErrors() != null) ?
+						Maths.sqrt(Maths.add(Maths.square(traceErrors), Maths.square(background.getNormalizedTrace().getErrors()))) :
 							traceErrors;
-						trace.setError(subErrors);
+						trace.setErrors(subErrors);
 			}
 		}
 		isBackgroundSubtracted = true;

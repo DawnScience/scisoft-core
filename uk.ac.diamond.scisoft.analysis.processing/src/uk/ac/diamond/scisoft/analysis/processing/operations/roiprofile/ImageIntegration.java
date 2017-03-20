@@ -69,7 +69,7 @@ public class ImageIntegration extends AbstractOperation<ImageIntegrationModel, O
 
 		// Sum or mean along the axis, according to the Model selections
 		int axis = (model.getDirection() == Direction.X) ? 0 : 1;
-		Dataset output = (model.isDoAverage()) ? nannyInput.mean(true, axis) : nannyInput.sum(true, axis);
+		Dataset output = (model.isDoAverage()) ? nannyInput.mean(axis, true) : nannyInput.sum(axis, true);
 		
 		// copy axes to the new data
 		ILazyDataset[] oldAxes = AbstractOperation.getFirstAxes(input);

@@ -425,7 +425,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 						if (axNames != null && j == 0) axNames[count++] = name;
 						if (setDims.contains(i)) {
 							if(first) {
-								ILazyDataset error = axDataset.getError();
+								ILazyDataset error = axDataset.getErrors();
 								IDataset e = null;
 								if (error != null) {
 									e = error.getSlice().squeeze();
@@ -456,7 +456,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 
 								}
 
-								ILazyDataset error = axDataset.getError();
+								ILazyDataset error = axDataset.getErrors();
 
 								if (error != null) {
 									Dataset e = DatasetUtils.sliceAndConvertLazyDataset(error);
@@ -587,7 +587,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		wds.setSlice(null, dataset, s);
 
 
-		ILazyDataset error = dataset.getError();
+		ILazyDataset error = dataset.getErrors();
 
 		if (error != null) {
 			Dataset e = DatasetUtils.sliceAndConvertLazyDataset(error);

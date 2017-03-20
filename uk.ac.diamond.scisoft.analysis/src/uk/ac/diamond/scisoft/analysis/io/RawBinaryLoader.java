@@ -26,7 +26,7 @@ import java.nio.channels.FileChannel.MapMode;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.AbstractDataset;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.ByteDataset;
 import org.eclipse.january.dataset.ComplexDoubleDataset;
@@ -47,6 +47,8 @@ import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.metadata.IMetadata;
 import org.eclipse.january.metadata.Metadata;
+import org.eclipse.january.metadata.MetadataFactory;
+import org.eclipse.january.metadata.StatisticsMetadata;
 
 /**
  * Load datasets in a Diamond specific raw format
@@ -245,7 +247,9 @@ public class RawBinaryLoader extends AbstractFileLoader {
 	 */
 	public static Dataset loadRawDataset(ByteBuffer fBuffer, int dtype, int isize, int tSize, int[] shape)
 			throws ScanFileHolderException {
-		AbstractDataset data = null;
+		Dataset data = null;
+		@SuppressWarnings("rawtypes")
+		StatisticsMetadata stats = null;
 		int hash = 0;
 		double dhash = 0;
 		switch (dtype) {
@@ -268,8 +272,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 					minA = false;
 			}
 			data = b;
-			data.setStoredValue(AbstractDataset.STORE_MAX, maxA);
-			data.setStoredValue(AbstractDataset.STORE_MIN, minA);
+			stats = storeStats(data, maxA ? 1 : 0, minA ? 1 : 0);
 			break;
 		case Dataset.INT8:
 			ByteDataset i8 = DatasetFactory.zeros(ByteDataset.class, shape);
@@ -290,8 +293,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 					minB = v;
 			}
 			data = i8;
-			data.setStoredValue(AbstractDataset.STORE_MAX, maxB);
-			data.setStoredValue(AbstractDataset.STORE_MIN, minB);
+			stats = storeStats(data, maxB, minB);
 			break;
 		case Dataset.INT16:
 			ShortDataset i16 = DatasetFactory.zeros(ShortDataset.class, shape);
@@ -313,8 +315,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 					minS = v;
 			}
 			data = i16;
-			data.setStoredValue(AbstractDataset.STORE_MAX, maxS);
-			data.setStoredValue(AbstractDataset.STORE_MIN, minS);
+			stats = storeStats(data, maxS, minS);
 			break;
 		case Dataset.INT32:
 			IntegerDataset i32 = DatasetFactory.zeros(IntegerDataset.class, shape);
@@ -336,8 +337,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 					minI = v;
 			}
 			data = i32;
-			data.setStoredValue(AbstractDataset.STORE_MAX, maxI);
-			data.setStoredValue(AbstractDataset.STORE_MIN, minI);
+			stats = storeStats(data, maxI, minI);
 			break;
 		case Dataset.INT64:
 			LongDataset i64 = DatasetFactory.zeros(LongDataset.class, shape);
@@ -359,8 +359,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 					minL = v;
 			}
 			data = i64;
-			data.setStoredValue(AbstractDataset.STORE_MAX, maxL);
-			data.setStoredValue(AbstractDataset.STORE_MIN, minL);
+			stats = storeStats(data, maxL, minL);
 			break;
 		case Dataset.ARRAYINT8:
 			CompoundByteDataset ci8 = DatasetFactory.zeros(isize, CompoundByteDataset.class, shape);
@@ -451,8 +450,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 					minF = v;
 			}
 			data = f32;
-			data.setStoredValue(AbstractDataset.STORE_MAX, maxF);
-			data.setStoredValue(AbstractDataset.STORE_MIN, minF);
+			stats = storeStats(data, maxF, minF);
 			hash = (int) dhash;
 			break;
 		case Dataset.ARRAYFLOAT32:
@@ -528,8 +526,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 					minD = v;
 			}
 			data = f64;
-			data.setStoredValue(AbstractDataset.STORE_MAX, maxD);
-			data.setStoredValue(AbstractDataset.STORE_MIN, minD);
+			stats = storeStats(data, maxD, minD);
 			hash = (int) dhash;
 			break;
 		case Dataset.ARRAYFLOAT64:
@@ -577,11 +574,32 @@ public class RawBinaryLoader extends AbstractFileLoader {
 		}
 
 		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
-		int rank = shape.length;
-		for (int i = 0; i < rank; i++) {
-			hash = hash*17 + shape[i];
+		if (stats == null) {
+			try {
+				stats = MetadataFactory.createMetadata(StatisticsMetadata.class, data);
+			} catch (MetadataException e) {
+				throw new ScanFileHolderException("Could not create hash metadata", e);
+			}
+			data.addMetadata(stats);
 		}
-		data.setStoredValue(AbstractDataset.STORE_HASH, hash);
+		stats.setHash(hash);
+
 		return data;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static StatisticsMetadata storeStats(Dataset data, Number max, Number min) throws ScanFileHolderException {
+		StatisticsMetadata<Number> stats = data.getFirstMetadata(StatisticsMetadata.class);
+		if (stats == null) {
+			try {
+				stats = MetadataFactory.createMetadata(StatisticsMetadata.class, data);
+			} catch (MetadataException e) {
+				throw new ScanFileHolderException("Could not create max/min metadata", e);
+			}
+		}
+
+		stats.setMaximumMinimum(max, min);
+		data.addMetadata(stats);
+		return stats;
 	}
 }

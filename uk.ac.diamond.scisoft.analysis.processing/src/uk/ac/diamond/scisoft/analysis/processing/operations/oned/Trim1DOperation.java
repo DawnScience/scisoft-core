@@ -60,7 +60,7 @@ public class Trim1DOperation extends AbstractOperation<Trim1DModel, OperationDat
 		// Get the axis and other metadata from the input dataset
 		ILazyDataset[] axes = getFirstAxes(inputDataset);
 		SliceFromSeriesMetadata inputMetadata = getSliceSeriesMetadata(someData);
-		IDataset inputError = inputDataset.getError();
+		IDataset inputError = inputDataset.getErrors();
 
 		// Work out the size of the trim required
 		double startTrim = model.getMin();
@@ -138,7 +138,7 @@ public class Trim1DOperation extends AbstractOperation<Trim1DModel, OperationDat
 		// Then sticking back in all the previous data
 		outputDataset.setMetadata(inputMetadata);
 		outputDataset.setMetadata(axisValues);
-		outputDataset.setError(outputError);
+		outputDataset.setErrors(outputError);
 		
 		// Create the return variable
 		OperationData toReturn = new OperationData();

@@ -109,20 +109,20 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 		// Error propagation
 		// Calculate thBoq error.
 		// Just pass-through at the moment
-		if (dPrimedoQ.getError() != null) {
-			thBoq.setError(dPrimedoQ.getError());
+		if (dPrimedoQ.getErrors() != null) {
+			thBoq.setErrors(dPrimedoQ.getErrors());
 		}
 		
 		Dataset thSoq = Maths.subtract(dPrimedoQ, thBoq);
 		// Error propagation: assume that thBoq has a valid error iff dPrimedoQ does
-		Dataset thSoqError = (dPrimedoQ.getError() != null) ?
-				Maths.sqrt(Maths.add(Maths.square(dPrimedoQ.getError()), Maths.square(thBoq.getError()))) :
+		Dataset thSoqError = (dPrimedoQ.getErrors() != null) ?
+				Maths.sqrt(Maths.add(Maths.square(dPrimedoQ.getErrors()), Maths.square(thBoq.getErrors()))) :
 					null;
 		thSoq.set(0.0, 0);
 
 		// copy metadata
 		copyMetadata(dPrimedoQ, thSoq);
-		if (thSoqError != null ) thSoq.setError(thSoqError);
+		if (thSoqError != null ) thSoq.setErrors(thSoqError);
 		
 		return thSoq;
 	}
@@ -284,9 +284,9 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 		}
 		
 		// Error propagation: error on hatted
-		if (soq.getError() != null) {
+		if (soq.getErrors() != null) {
 			// Pass-through
-			hatted.setError(soq.getError());
+			hatted.setErrors(soq.getErrors());
 		}
 		
 //        obj.th_DprimedoQ = obj.soq - XPDFFT.topHatConvolutionSubtraction(obj.Q,\
@@ -294,8 +294,8 @@ public class XPDFTophatOperation extends AbstractOperation<XPDFTophatModel, Oper
 		Dataset result = Maths.subtract(soq, hatted);
 		copyMetadata(soq, result);
 		// Error propagation: assume that hatted has a valid error iff soq does
-		if (soq.getError() != null) {
-			result.setError(Maths.sqrt(Maths.add(Maths.square(soq.getError()), Maths.square(hatted.getError()))));
+		if (soq.getErrors() != null) {
+			result.setErrors(Maths.sqrt(Maths.add(Maths.square(soq.getErrors()), Maths.square(hatted.getErrors()))));
 		}
 		
 		return result;

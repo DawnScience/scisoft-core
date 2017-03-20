@@ -41,7 +41,7 @@ public abstract class AbstractPixelIntegration1D extends AbstractPixelIntegratio
 	protected void processAndAddToResult(Dataset intensity, Dataset histo, List<Dataset> result,
 			 double[] binRange, String name) {
 		
-		Dataset error = intensity.getError();
+		Dataset error = intensity.getErrors();
 		if (error != null) {
 			error.idivide(histo);
 			DatasetUtils.makeFinite(error);
@@ -70,7 +70,7 @@ public abstract class AbstractPixelIntegration1D extends AbstractPixelIntegratio
 			result.add(intensity);
 		}
 		
-		result.get(1).setError(error);
+		result.get(1).setErrors(error);
 		
 	}
 }

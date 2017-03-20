@@ -72,7 +72,7 @@ public class XPDFInsertBeamMetadataOperation extends XPDFInsertXMetadataOperatio
 			}
 			if (bgErrors != null)
 				checkDataAndAuxillaryDataMatch(bgTrace, bgErrors);
-				bgTrace.setError(bgErrors);
+				bgTrace.setErrors(bgErrors);
 		} catch (OperationException e) {
 			// catch and ignore; add no errors to the Dataset.
 		}

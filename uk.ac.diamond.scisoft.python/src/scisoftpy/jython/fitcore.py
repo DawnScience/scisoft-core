@@ -284,7 +284,7 @@ class fitresult(object):
         '''Area or hypervolume under fit assuming coordinates are uniformly spaced
         '''
         deltax = self._calcdelta(self.coords)
-        return _sciwrap(self.func.calculateValues(_jinput(self.coords)).sum()) * deltax
+        return _sciwrap(self.func.calculateValues(_jinput(self.coords))).sum() * deltax
     area = property(_area)
 
     def __str__(self):

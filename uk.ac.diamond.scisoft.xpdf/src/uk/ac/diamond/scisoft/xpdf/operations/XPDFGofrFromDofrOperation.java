@@ -52,15 +52,15 @@ public class XPDFGofrFromDofrOperation extends AbstractOperation<EmptyModel, Ope
 		Dataset gofr = Maths.divide(Maths.divide(dofr, 4*Math.PI*numberDensity), r);
 		
 		// Error propagation
-		if (dofr.getError() != null){
+		if (dofr.getErrors() != null){
 			Dataset dofrErrors;
 			try {
-				dofrErrors = DatasetUtils.sliceAndConvertLazyDataset(dofr.getError());
+				dofrErrors = DatasetUtils.sliceAndConvertLazyDataset(dofr.getErrors());
 			} catch (DatasetException e) {
 				throw new OperationException(this, e);
 			}
 			Dataset gofrErrors = Maths.divide(Maths.divide(dofrErrors, 4*Math.PI*numberDensity), r);
-			gofr.setError(gofrErrors);
+			gofr.setErrors(gofrErrors);
 		}
 		
 		copyMetadata(dofr, gofr);

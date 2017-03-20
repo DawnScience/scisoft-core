@@ -192,6 +192,8 @@ append = _np.append
 
 cast = _np.cast
 
+copy = _np.copy
+
 reshape = _np.reshape
 
 resize = _np.resize

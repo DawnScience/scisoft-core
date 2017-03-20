@@ -688,8 +688,8 @@ public class HierarchicalFileExVisitorTest {
 		IDataset ae2 = DatasetFactory.createRange(30, Dataset.INT16);
 		ae2.setShape(new int[] {1,30,1});
 		
-		ax.getAxis(0)[0].setError(ae1);
-		ax.getAxis(1)[0].setError(ae2);
+		ax.getAxis(0)[0].setErrors(ae1);
+		ax.getAxis(1)[0].setErrors(ae2);
 
 		
 		final IOperationContext context = service.createContext();

@@ -34,6 +34,7 @@ from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
 from uk.ac.diamond.scisoft.python.PythonUtils import setSlice as _setslice
 from uk.ac.diamond.scisoft.python.PythonUtils import convertToSlice as _cvt2js
 from uk.ac.diamond.scisoft.python.PythonUtils import createFromObject as _create
+from uk.ac.diamond.scisoft.python.PythonUtils import createRange as _createRange
 
 import org.apache.commons.math3.complex.Complex as _jcomplex #@UnresolvedImport
 
@@ -403,7 +404,7 @@ def _contains_ints_bools_newaxis(sequence):
         return False
 
     for s in sequence:
-        if isinstance(s, _integerds) or isinstance(s, _booleands):
+        if isinstance(s, (_integerds, _booleands)):
             return True
 
     for s in sequence:
@@ -528,7 +529,7 @@ class ndarray(object):
     '''
     Class to hold special methods and non-overloading names
     '''
-    def __init__(self, shape=None, dtype=None, buffer=None, copy=False): # @ReservedAssignment
+    def __init__(self, shape=None, dtype=None, buffer=None, copy=False): #@ReservedAssignment
         # check what buffer is and convert if necessary
         if buffer is not None:
             self.__dataset = __cvt_jobj(_jinput(buffer), dtype=dtype, copy=copy, force=True)
@@ -661,7 +662,7 @@ class ndarray(object):
                 for a in args:
                     if a:
                         raise IndexError, "index out of bounds"
-            r = self.__dataset.getObject([])
+            r = self.__dataset.getObject()
         else:
             if index is None:
                 raise ValueError, "Need an integer or a tuple of integers"
@@ -790,8 +791,8 @@ class ndarray(object):
             return self.__dataset.max(_empty_boolean_array)
         else:
             if ignore_nans:
-                return self.__dataset.max(_jtrue, _jint(axis))
-            return self.__dataset.max(axis)
+                return self.__dataset.max(_jint(axis), _jtrue)
+            return self.__dataset.max(_jint(axis))
 
     @_wrapout
     def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
@@ -801,37 +802,37 @@ class ndarray(object):
             return self.__dataset.min(_empty_boolean_array)
         else:
             if ignore_nans:
-                return self.__dataset.min(_jtrue, _jint(axis))
-            return self.__dataset.min(axis)
+                return self.__dataset.min(_jint(axis), _jtrue)
+            return self.__dataset.min(_jint(axis))
 
     @_wrapout
     def argmax(self, axis=None, ignore_nans=False):
         if axis is None:
             if ignore_nans:
                 return self.__dataset.argMax(_jtrue)
-            return self.__dataset.argMax()
+            return self.__dataset.argMax(_empty_boolean_array)
         else:
             if ignore_nans:
-                return self.__dataset.argMax(_jtrue, _jint(axis))
-            return self.__dataset.argMax(axis)
+                return self.__dataset.argMax(_jint(axis), _jtrue)
+            return self.__dataset.argMax(_jint(axis))
 
     @_wrapout
     def argmin(self, axis=None, ignore_nans=False):
         if axis is None:
             if ignore_nans:
                 return self.__dataset.argMin(_jtrue)
-            return self.__dataset.argMin()
+            return self.__dataset.argMin(_empty_boolean_array)
         else:
             if ignore_nans:
-                return self.__dataset.argMin(_jtrue, _jint(axis))
-            return self.__dataset.argMin(axis)
+                return self.__dataset.argMin(_jint(axis), _jtrue)
+            return self.__dataset.argMin(_jint(axis))
 
     @_wrapout
     def ptp(self, axis=None):
         if axis is None:
-            return self.__dataset.peakToPeak()
+            return self.__dataset.peakToPeak(_empty_boolean_array)
         else:
-            return self.__dataset.peakToPeak(axis)
+            return self.__dataset.peakToPeak(_jint(axis))
 
     def clip(self, a_min, a_max):
         return _maths.clip(self, a_min, a_max)
@@ -841,90 +842,45 @@ class ndarray(object):
 
     # MISSING: round, trace
 
-    @_wrapout
-    def sum(self, axis=None, dtype=None): #@ReservedAssignment
-        dtype = _translatenativetype(dtype)
-        if dtype is None:
-            dtval = self.__dataset.getDType()
-        else:
-            dtval = dtype.value
-        if axis is None:
-            return self.__dataset.typedSum(dtval)
-        else:
-            return self.__dataset.typedSum(dtval, axis)
+    def sum(self, axis=None, dtype=None):
+        return _maths.sum(self, axis, dtype)
 
     def cumsum(self, axis=None, dtype=None):
-        dtype = _translatenativetype(dtype)
-        if dtype is None:
-            dtype = self.dtype
-        return _maths.cumsum(self, axis).astype(dtype)
+        return _maths.cumsum(self, axis, dtype)
 
     @_wrapout
     def mean(self, axis=None):
         if axis is None:
             return self.__dataset.mean(_empty_boolean_array)
         else:
-            return self.__dataset.mean(axis)
+            return self.__dataset.mean(_jint(axis))
 
     @_wrapout
     def var(self, axis=None, ddof=0):
-        if ddof == 1:
-            if axis is None:
-                return self.__dataset.variance()
-            else:
-                return self.__dataset.variance(axis)
-        else:
-            if axis is None:
-                v = self.__dataset.variance()
-                n = self.__dataset.count()
-            else:
-                v = Sciwrap(self.__dataset.variance(axis))
-                n = Sciwrap(self.__dataset.count(axis))
-            f = (n - 1.)/(n - ddof)
-            return v * f
+        is_pop = _jbool(ddof == 0)
+        if axis is None:
+            return self.__dataset.variance(is_pop)
+        return self.__dataset.variance(_jint(axis), is_pop)
 
     @_wrapout
     def std(self, axis=None, ddof=0):
-        if ddof == 1:
-            if axis is None:
-                return self.__dataset.stdDeviation()
-            else:
-                return self.__dataset.stdDeviation(axis)
-        else:
-            if axis is None:
-                s = self.__dataset.stdDeviation()
-                n = self.__dataset.count()
-            else:
-                s = Sciwrap(self.__dataset.stdDeviation(axis))
-                n = Sciwrap(self.__dataset.count(axis))
-            import math as _mm
-            f = _mm.sqrt((n - 1.)/(n - ddof))
-            return s * f
+        is_pop = _jbool(ddof == 0)
+        if axis is None:
+            return self.__dataset.stdDeviation(is_pop)
+        return self.__dataset.stdDeviation(_jint(axis), is_pop)
 
     @_wrapout
     def rms(self, axis=None):
         if axis is None:
             return self.__dataset.rootMeanSquare()
         else:
-            return self.__dataset.rootMeanSquare(axis)
+            return self.__dataset.rootMeanSquare(_jint(axis))
 
-    @_wrapout
     def prod(self, axis=None, dtype=None):
-        dtype = _translatenativetype(dtype)
-        if dtype is None:
-            dtval = self.__dataset.getDType()
-        else:
-            dtval = dtype.value
-        if axis is None:
-            return self.__dataset.typedProduct(dtval)
-        else:
-            return self.__dataset.typedProduct(dtval, axis)
+        return _maths.prod(self, axis, dtype)
 
     def cumprod(self, axis=None, dtype=None):
-        dtype = _translatenativetype(dtype)
-        if dtype is None:
-            dtype = self.dtype
-        return _maths.cumprod(self, axis).astype(dtype)
+        return _maths.cumprod(self, axis, dtype)
 
     @_wrapout
     def all(self, axis=None): #@ReservedAssignment
@@ -956,7 +912,7 @@ class ndarray(object):
     def __eq__(self, o):
         e = _cmps.equal(self, o)
         if self.ndim == 0 and self.size == 1:
-            return e._jdataset().getBoolean([])
+            return e._jdataset().getBoolean()
         return e
 
     def __ne__(self, o):
@@ -1200,7 +1156,7 @@ class ndarrayRGB(ndarray):
     '''
     Wrap RGB dataset
     '''
-    def __init__(self, shape=None, dtype=None, buffer=None, copy=False): # @ReservedAssignment
+    def __init__(self, shape=None, dtype=None, buffer=None, copy=False): #@ReservedAssignment
         super(ndarrayRGB, self).__init__(shape=shape, dtype=dtype, buffer=buffer, copy=copy)
 
     @_wrapout
@@ -1285,7 +1241,7 @@ def arange(start, stop=None, step=1, dtype=None):
     if dtype == bool:
         return None
 
-    return _df.createRange(start, stop, step, dtype.value)
+    return _createRange(start, stop, step, dtype.value)
 
 def array(obj, dtype=None, copy=True):
     '''Create a dataset of given type from a sequence or JAMA matrix'''
@@ -1581,6 +1537,10 @@ def append(arr, values, axis=None):
 @_wrap
 def cast(a, dtype):
     return _dsutils.cast(a, dtype.value)
+
+@_wrapout
+def copy(a):
+    return a.__copy__()
 
 def reshape(a, newshape):
     return asDataset(a).reshape(newshape)

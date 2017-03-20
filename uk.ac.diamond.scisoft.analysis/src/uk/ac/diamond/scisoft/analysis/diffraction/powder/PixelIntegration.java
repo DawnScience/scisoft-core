@@ -41,7 +41,7 @@ public class PixelIntegration {
 		List<Dataset> result = new ArrayList<Dataset>();
 		
 		Dataset d = DatasetUtils.convertToDataset(data);
-		Dataset e = d.getError();
+		Dataset e = d.getErrors();
 		
 		int nbins = bean.getNumberOfBinsXAxis();
 		
@@ -121,7 +121,7 @@ public class PixelIntegration {
 		List<Dataset> result = new ArrayList<Dataset>();
 		
 		Dataset d = DatasetUtils.convertToDataset(data);
-		Dataset e = d.getError();
+		Dataset e = d.getErrors();
 		
 		int nbins = bean.getNumberOfBinsXAxis();
 		
@@ -430,7 +430,7 @@ public class PixelIntegration {
 	
 	private static void processAndAddToResult(Dataset intensity, Dataset histo, List<Dataset> result, IPixelIntegrationCache bean, boolean is2d) {
 		
-		Dataset error = intensity.getError();
+		Dataset error = intensity.getErrors();
 		
 		if (error != null) {
 			error.idivide(histo);
@@ -446,7 +446,7 @@ public class PixelIntegration {
 		result.add(intensity);
 		if (is2d) result.add(bean.getYAxis());
 
-		result.get(1).setError(error);
+		result.get(1).setErrors(error);
 		
 	}
 	

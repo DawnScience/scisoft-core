@@ -140,10 +140,10 @@ public class XPDFIterateCalibrationConstantOperation extends
 		
 		
 		// Copy metadata, but preserve the errors, if they exist.
-		Dataset absCorError = (absCor.getError() != null) ? absCor.getError() : null;
+		Dataset absCorError = (absCor.getErrors() != null) ? absCor.getErrors() : null;
 		copyMetadata(input, absCor);
 		if (absCorError != null)
-			absCor.setError(absCorError);
+			absCor.setErrors(absCorError);
 
 		theXPDFMetadata = absCor.getFirstMetadata(XPDFMetadata.class);
 		// assign the calibration values to the XPDF metadata object

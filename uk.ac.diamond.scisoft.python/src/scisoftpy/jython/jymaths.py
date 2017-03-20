@@ -42,19 +42,35 @@ nan = _jnan
 
 floatmax = _jmax # maximum float value (use sys.float_info.max for 2.6+)
 
-from jycore import _wrap
+from jycore import _wrap, _jint
 from jycore import asarray as _asarray
 from jycore import float64 as _f64
-from jycore import _translatenativetype
+from jycore import _translatenativetype, _empty_boolean_array
 
-# these functions call (wrapped) instance methods
+# these functions can call (wrapped) instance methods
+@_wrap
 def prod(a, axis=None, dtype=None):
     '''Product of input'''
-    return a.prod(axis, dtype)
+    if dtype is None:
+        if axis is None:
+            return a.product(_empty_boolean_array)
+        return a.product(_jint(axis))
+    dtval = _translatenativetype(dtype).value
+    if axis is None:
+        return _stats.typedProduct(a, dtval)
+    return _stats.typedProduct(a, dtval, axis)
 
+@_wrap
 def sum(a, axis=None, dtype=None): #@ReservedAssignment
     '''Sum of input'''
-    return a.sum(axis, dtype)
+    if dtype is None:
+        if axis is None:
+            return a.sum(_empty_boolean_array)
+        return a.sum(_jint(axis))
+    dtval = _translatenativetype(dtype).value
+    if axis is None:
+        return _stats.typedSum(a, dtval)
+    return _stats.typedSum(a, dtval, axis)
 
 def mean(a, axis=None):
     '''Arithmetic mean of input'''
@@ -372,20 +388,26 @@ def median(a, axis=None):
         return _stats.median(a, axis)
 
 @_wrap
-def cumprod(a, axis=None):
+def cumprod(a, axis=None, dtype=None):
     '''Cumulative product of input'''
+    dtype = _translatenativetype(dtype)
+    if dtype is not None:
+        a = a.cast(_translatenativetype(dtype).value)
     if axis is None:
         return _stats.cumulativeProduct(a)
     else:
-        return _stats.cumulativeProduct(a, axis)
+        return _stats.cumulativeProduct(a, _jint(axis))
 
 @_wrap
-def cumsum(a, axis=None):
+def cumsum(a, axis=None, dtype=None):
     '''Cumulative sum of input'''
+    dtype = _translatenativetype(dtype)
+    if dtype is not None:
+        a = a.cast(_translatenativetype(dtype).value)
     if axis is None:
         return _stats.cumulativeSum(a)
     else:
-        return _stats.cumulativeSum(a, axis)
+        return _stats.cumulativeSum(a, _jint(axis))
 
 @_wrap
 def diff(a, order=1, axis=-1):

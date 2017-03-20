@@ -202,12 +202,12 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public int[] minPos() {
+	public int[] minPos(boolean... switches) {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 
 	@Override
-	public int[] maxPos() {
+	public int[] maxPos(boolean... switches) {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 
@@ -257,12 +257,12 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public IDataset getError() {
+	public IDataset getErrors() {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 
 	@Override
-	public void setError(Serializable errors) {
+	public void setErrors(Serializable errors) {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 
@@ -277,7 +277,7 @@ public class MockDataset implements IDataset {
 	}
 
 	@Override
-	public <T extends MetadataType> void clearMetadata(Class<T> clazz) {
+	public void clearMetadata(Class<? extends MetadataType> clazz) {
 		throw new UnsupportedOperationException("Methods in MockDataset should not be called");
 	}
 }

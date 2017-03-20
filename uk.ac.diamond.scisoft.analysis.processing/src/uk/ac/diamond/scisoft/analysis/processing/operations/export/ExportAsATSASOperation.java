@@ -68,7 +68,7 @@ public class ExportAsATSASOperation extends AbstractOperation<ExportAsATSASModel
 			outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
 		}
 		
-		ILazyDataset error = input.getError();
+		ILazyDataset error = input.getErrors();
 		
 		if (error != null) {
 			IDataset e;

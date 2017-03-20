@@ -132,8 +132,8 @@ public class AbsoluteIntensityCalibrationOperation extends AbstractOperation<Abs
 				String filePath = model.getAbsoluteScanFilePath();
 				DataHolder calibrantData = (DataHolder) LoaderFactory.getData(filePath);
 				// and extracting out the relevant datasets
-				calibrantQdataset = (DoubleDataset) calibrantData.getDataset(0);
-				calibrantIdataset = (DoubleDataset) calibrantData.getDataset(1);
+				calibrantQdataset = (DoubleDataset) calibrantData.getDataset(0).squeezeEnds();
+				calibrantIdataset = (DoubleDataset) calibrantData.getDataset(1).squeezeEnds();
 			}
 		} // Performing error handling where required
 		catch (IOException ioError) {

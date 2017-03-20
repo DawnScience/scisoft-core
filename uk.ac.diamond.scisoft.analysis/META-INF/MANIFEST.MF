@@ -44,6 +44,7 @@ Bundle-ClassPath: .,
  jars/it.tidalwave.imageio.raw-1.6.1.jar,
  jars/jai_imageio.jar
 Import-Package: Jama,
+ org.eclipse.january.dataset,
  org.slf4j;version="[1.7.2,2.0.0)"
 Eclipse-BuddyPolicy: global
 Important-Note: This plugin SHOULD NOT be lazy activated because we always want this 

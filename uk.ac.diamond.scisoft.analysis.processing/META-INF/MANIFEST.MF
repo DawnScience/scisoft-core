@@ -17,6 +17,7 @@ Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.lang;version="2.6.0",
  org.dawb.common.services,
  org.dawnsci.boofcv,
+ org.eclipse.january.dataset,
  org.eclipse.scanning.api.event.status,
  org.osgi.framework;version="1.7.0",
  org.slf4j;version="1.7.6"

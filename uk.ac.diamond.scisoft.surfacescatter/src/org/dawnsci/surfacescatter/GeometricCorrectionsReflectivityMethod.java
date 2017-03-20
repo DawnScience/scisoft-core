@@ -8,8 +8,8 @@
 
 package org.dawnsci.surfacescatter;
 
+
 import org.apache.commons.math3.distribution.NormalDistribution;
-import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 /**Calculates the geometric correction factors for X-ray reflectivity. Outputs a single double.
  * 

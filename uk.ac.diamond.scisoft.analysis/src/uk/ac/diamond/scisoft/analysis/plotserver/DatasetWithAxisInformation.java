@@ -44,15 +44,16 @@ public class DatasetWithAxisInformation implements Serializable {
 			tmp = tmp.getSlice();
 			tmp.setName(data.getName());
 		}
-		this.data = tmp;
+		this.data = clearMetadata(tmp);
 	}
 
 	/**
 	 * Clears metadata from dataset
 	 */
-	public void clearMetadata() {
+	private static Dataset clearMetadata(Dataset data) {
 		data = data.getView(false);
 		data.clearMetadata(null);
+		return data;
 	}
 
 	/**

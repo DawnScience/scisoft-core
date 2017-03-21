@@ -66,9 +66,7 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 			nBins = model.getNumberOfBins() != null ? model.getNumberOfBins() : axis.getSize(); 
 			updateStartStop(axis);
 		}
-			
-		double[] edges = new double[]{binEdges.getElementDoubleAbs(0),binEdges.getElementDoubleAbs(nBins)};
-		IDataset rebinned = doRebinning(getMinMaxAxisArray(axis), DatasetUtils.convertToDataset(input), nBins, edges);
+
 		AxesMetadata axm;
 		try {
 			axm = MetadataFactory.createMetadata(AxesMetadata.class, 1);
@@ -77,6 +75,9 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		}
 		Dataset ax = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
 		ax.idivide(2);
+		
+		double[] edges = new double[]{binEdges.getElementDoubleAbs(0),binEdges.getElementDoubleAbs(nBins)};
+		IDataset rebinned = doRebinning(getMinMaxAxisArray(axis), DatasetUtils.convertToDataset(input), nBins, edges, ax.clone());
 		ax.setName(axis.getName());
 		axm.setAxis(0, ax);
 		rebinned.setMetadata(axm);
@@ -148,28 +149,37 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 	}
 	
 	
-	private IDataset doRebinning(Dataset[] minMaxAxis, Dataset data, int nbins, double[] edges) {
+	private IDataset doRebinning(Dataset[] minMaxAxis, Dataset data, int nbins, double[] edges, Dataset ax) {
 		
+		Dataset d = DatasetUtils.convertToDataset(data);
+		Dataset e = d.getErrors();
+
 		final double lo = edges[0];
 		final double hi = edges[1];
 		final double span = (hi - lo)/nbins;
 		DoubleDataset histo = DatasetFactory.zeros(DoubleDataset.class, nbins);
 		DoubleDataset intensity = DatasetFactory.zeros(DoubleDataset.class, nbins);
+		DoubleDataset error = null;
+		double[] eb = null;
+		if (e != null) {
+			error = DatasetFactory.zeros(DoubleDataset.class, nbins);
+			eb = error.getData();
+		}
+
 		final double[] h = histo.getData();
 		final double[] in = intensity.getData();
 		
 		//TODO when span <= 0
 		
 		IndexIterator it = data.getIterator();
-
+		// double[] integrationRange = {ax.getDouble(0), ax.getDouble(-1)};
 
 		while (it.hasNext()) {
 			
 			//scale if pixel range not fully covered by bin range
 			
 			double rangeScale = 1;
-			//TODO calcuate scaling
-			
+
 			double sig = data.getElementDoubleAbs(it.index);
 			double aMin = minMaxAxis[0].getElementDoubleAbs(it.index);
 			double aMax = minMaxAxis[1].getElementDoubleAbs(it.index);
@@ -190,6 +200,12 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 			if (minBin == maxBin) {
 				h[minBin]++;
 				in[minBin] += sig;
+				
+				if (e!=null) {
+					final double std = e.getElementDoubleAbs(it.index)*rangeScale;
+					eb[minBin] += (std*std);
+				}
+				
 			} else {
 				
 				double iPerPixel = 1/(maxBinExact-minBinExact);
@@ -211,6 +227,11 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 					if (i >= h.length || i < 0) continue; 
 					h[i]+=iPerPixel;
 					in[i] += (sig*iPerPixel);
+					
+					if (e!=null) {
+						final double std = e.getElementDoubleAbs(it.index)*iPerPixel;
+						eb[i] += (std*std);
+					}
 				}
 				
 			}
@@ -218,7 +239,7 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		
 		intensity.idivide(histo);
 		DatasetUtils.makeFinite(intensity);
-		
+		if (eb != null) intensity.setErrorBuffer(eb);
 		intensity.setName(data.getName() + "_integrated");
 		
 		return intensity;

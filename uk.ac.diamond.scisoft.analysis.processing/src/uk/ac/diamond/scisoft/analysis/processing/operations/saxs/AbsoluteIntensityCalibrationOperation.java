@@ -121,11 +121,10 @@ public class AbsoluteIntensityCalibrationOperation extends AbstractOperation<Abs
 				// By opening the default file
 				Bundle bundle = Platform.getBundle("uk.ac.diamond.scisoft.analysis.processing");
 				URL calibrantFileURL = bundle.getEntry("data/GlassyCarbon_T.dat");
-				DatLoader calibrantDataLoader = new DatLoader(FileLocator.resolve(calibrantFileURL).getPath());
-				DataHolder calibrantData = calibrantDataLoader.loadFile();
+				DataHolder calibrantData = (DataHolder) LoaderFactory.getData(FileLocator.resolve(calibrantFileURL).getPath());
 				// and extracting out the relevant datasets
-				calibrantQdataset = (DoubleDataset) calibrantData.getDataset(0);
-				calibrantIdataset = (DoubleDataset) calibrantData.getDataset(1);
+				calibrantQdataset = (DoubleDataset) calibrantData.getDataset(0).squeezeEnds();
+				calibrantIdataset = (DoubleDataset) calibrantData.getDataset(1).squeezeEnds();
 			}
 			else {
 				// Or by opening a different file

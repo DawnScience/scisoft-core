@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.Centroid;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.SliceND;
 
@@ -41,7 +42,7 @@ public class ImageUtils {
 		for (int i = 0; i < rank; i++) {
 			ub[i] = shape[i] - window;
 		}
-		Dataset base = DatasetFactory.createRange(window, Dataset.FLOAT64);
+		Dataset base = DatasetFactory.createRange(DoubleDataset.class, window);
 		base.iadd(0.5); // shift to centre of pixel
 		Dataset[] bases = new Dataset[rank];
 		for (int i = 0; i < rank; i++) {
@@ -77,8 +78,13 @@ public class ImageUtils {
 		}
 
 		List<Dataset> list = new ArrayList<>();
-		list.add(DatasetFactory.createFromList(sum));
-		list.add(DatasetFactory.createFromList(centroid).reshape(sum.size(), rank));
+		if (sum.size() == 0) {
+			list.add(DatasetFactory.zeros(0));
+			list.add(DatasetFactory.zeros(0, rank));
+		} else {
+			list.add(DatasetFactory.createFromList(sum));
+			list.add(DatasetFactory.createFromList(centroid).reshape(sum.size(), rank));
+		}
 		return list;
 	}
 

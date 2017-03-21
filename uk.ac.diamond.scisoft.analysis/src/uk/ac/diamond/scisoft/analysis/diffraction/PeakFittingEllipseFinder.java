@@ -146,7 +146,7 @@ public class PeakFittingEllipseFinder {
 			sub.isubtract(min);
 			
 			double s = (Double)Stats.median(sub.getSlice(new int[] {0}, new int[] {3}, new int[] {1}));
-			double en = (Double)Stats.median(sub.getSlice(new int[] {sub.getSize()-5}, new int[] {sub.getSize()-1}, new int[] {1}));
+			double en = (Double)Stats.median(sub.getSlice(new int[] {sub.getSize()-3}, new int[] {sub.getSize()}, new int[] {1}));
 			
 			double m = (s-en)/(0-sub.getSize()-1);
 			double c = s;

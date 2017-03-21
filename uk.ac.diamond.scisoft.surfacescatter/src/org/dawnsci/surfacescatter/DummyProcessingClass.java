@@ -300,9 +300,6 @@ public class DummyProcessingClass {
 			e.printStackTrace();
 		}
 		
-		
-		
-		
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double fhkl = (double) 0.001;
 			if (intensity >=0){

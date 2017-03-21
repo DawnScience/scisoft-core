@@ -144,16 +144,16 @@ public class CinaderOrientationOperation extends AbstractOperation<CinaderOrient
 			
 			// Make sure that the angle makes sense according to the number of folds of symmetry
 			switch (symmetryFolds) {
-				case 1:	if (angle >= 180.0) {
-							angle -= 180.0;
+				case 1:	if (angle >= Math.PI) {
+							angle -= Math.PI;
 						}
 						break;
-				case 2:	if (angle >= 270.0) {
-							angle -= 270.0;
-						} else if (angle >= 180.0) {
-							angle -= 180.0;
-						} else if (angle >= 90.0) {
-							angle -= 90.0;
+				case 2:	if (angle >= (1.5 * Math.PI)) {
+							angle -= (1.5 * Math.PI);
+						} else if (angle >= Math.PI) {
+							angle -= Math.PI;
+						} else if (angle >= (Math.PI / 2)) {
+							angle -= (Math.PI / 2);
 						}
 						break;
 			}

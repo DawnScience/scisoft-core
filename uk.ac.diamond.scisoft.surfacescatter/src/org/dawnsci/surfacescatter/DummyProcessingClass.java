@@ -34,7 +34,7 @@ public class DummyProcessingClass {
 										DataModel dm, 
 										GeometricParametersModel gm, 
 										IPlottingSystem<Composite> pS,
-										IPlottingSystem<Composite> ssvsPS,
+//										IPlottingSystem<Composite> ssvsPS,
 										int correctionSelector, 
 										int k, 
 										int trackingMarker,
@@ -47,7 +47,7 @@ public class DummyProcessingClass {
 								
 				
 				AgnosticTrackerHandler ath = new AgnosticTrackerHandler();
-				if(trackingMarker != 3){
+				if(trackingMarker != 3 && trackingMarker != 4 ){
 					ath.TwoDTracking3(sm, 
 									  input, 
 									  model, 
@@ -145,7 +145,7 @@ public class DummyProcessingClass {
 										 		 input,  
 										 		 dm, 
 										 		 pS,
-										 		 ssvsPS,
+//										 		 ssvsPS,
 										 		 selection,
 										 		 trackingMarker,
 										 		 k);	
@@ -185,7 +185,7 @@ public class DummyProcessingClass {
 				 		 input,  
 				 		 dm, 
 				 		 pS,
-				 		 ssvsPS,
+//				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
 				 		 k);	
@@ -436,7 +436,7 @@ public class DummyProcessingClass {
 				 		 input,  
 				 		 dm, 
 				 		 pS,
-				 		 ssvsPS,
+//				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
 				 		 k);	
@@ -474,7 +474,7 @@ public class DummyProcessingClass {
 				 		 input,  
 				 		 dm, 
 				 		 pS,
-				 		 ssvsPS,
+//				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
 				 		 k);	
@@ -712,7 +712,7 @@ public class DummyProcessingClass {
 				 		 input,  
 				 		 dm, 
 				 		 pS,
-				 		 ssvsPS,
+//				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
 				 		 k);	
@@ -750,7 +750,7 @@ public class DummyProcessingClass {
 				 		 input,  
 				 		 dm, 
 				 		 pS,
-				 		 ssvsPS,
+//				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
 				 		 k);	
@@ -991,7 +991,7 @@ public class DummyProcessingClass {
 				 		 input,  
 				 		 dm, 
 				 		 pS,
-				 		 ssvsPS,
+//				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
 				 		 k);	
@@ -1028,7 +1028,7 @@ public class DummyProcessingClass {
 				 		 input,  
 				 		 dm, 
 				 		 pS,
-				 		 ssvsPS,
+//				 		 ssvsPS,
 				 		 selection,
 				 		trackingMarker,
 				 		k);	
@@ -1363,7 +1363,7 @@ public class DummyProcessingClass {
 											IDataset input,  
 											DataModel dm, 
 											IPlottingSystem<Composite> pS,
-											IPlottingSystem<Composite> ssvsPS,
+//											IPlottingSystem<Composite> ssvsPS,
 											int selection,
 											int trackingMarker,
 											int k){		
@@ -1392,7 +1392,7 @@ public class DummyProcessingClass {
 														   input, 
 														   sm,
 														   pS,
-														   ssvsPS,
+//														   ssvsPS,
 														   trackingMarker,
 														   k);
 			if(outputOD4.getAuxData()[3] != null){
@@ -1427,7 +1427,7 @@ public class DummyProcessingClass {
 				  												   IDataset input,
 				  												   SuperModel sm,
 				  												   IPlottingSystem<Composite> pS,
-				  												   IPlottingSystem<Composite> ssvsPS,
+//				  												   IPlottingSystem<Composite> ssvsPS,
 				  												   int trackingMarker,
 				  												   int k){
 

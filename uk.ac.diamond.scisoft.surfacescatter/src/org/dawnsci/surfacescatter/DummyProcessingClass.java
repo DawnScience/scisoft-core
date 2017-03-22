@@ -54,7 +54,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection);
+									  selection,
+									  pS);
 				}
 				
 				OperationData outputOD= TwoDFittingIOp(model,
@@ -94,7 +95,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection);
+									  selection,
+									  pS);
 				}
 				
 				else{	
@@ -128,7 +130,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection);
+									  selection,
+									  pS);
 				}
 				
 				else{
@@ -166,7 +169,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection);
+									  selection,
+									  pS);
 				}
 
 				else{
@@ -204,7 +208,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection);
+									  selection,
+									  pS);
 				}
 
 				else{
@@ -243,7 +248,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection);
+									  selection,
+									  pS);
 				}
 
 				else{
@@ -350,8 +356,9 @@ public class DummyProcessingClass {
 								  model,
 								  dm, 
 								  trackingMarker, 
-								  k,
-								  selection);
+								  k, 
+									  selection,
+									  pS);
 				
 
 				OperationData outputOD= TwoDFittingIOp(model,
@@ -382,8 +389,9 @@ public class DummyProcessingClass {
 									  model, 
 									  dm, 
 									  trackingMarker, 
-									  k, 
-									  selection);
+									   k, 
+									  selection,
+									  pS);
 				}
 				
 				else{	
@@ -415,7 +423,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k,
-									  selection);
+									  selection,
+									  pS);
 			
 				}
 
@@ -453,7 +462,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k,
-									  selection);
+									  selection,
+									  pS);
 			
 				}
 
@@ -491,7 +501,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k,
-									  selection);
+									  selection,
+									  pS);
 			
 				}
 				
@@ -529,7 +540,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k,
-									  selection);
+									  selection,
+									  pS);
 			
 					
 				}
@@ -624,7 +636,8 @@ public class DummyProcessingClass {
 								  dm, 
 								  trackingMarker, 
 								  k, 
-								  selection);
+								  selection,
+								  pS);
 				
 				OperationData outputOD= TwoDFittingIOp(model,
 													   input,
@@ -650,8 +663,9 @@ public class DummyProcessingClass {
 									  model, 
 									  dm, 
 									  trackingMarker, 
-									  k, 
-									  selection);
+									   k, 
+									  selection,
+									  pS);
 					
 				}
 
@@ -691,8 +705,9 @@ public class DummyProcessingClass {
 									  model, 
 									  dm, 
 									  trackingMarker, 
-									  k, 
-									  selection);
+									   k, 
+									  selection,
+									  pS);
 					
 				}
 
@@ -730,7 +745,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  selection, 
-									  selection);
+									  selection,
+									  pS);
 					
 				}
 
@@ -766,7 +782,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection
+									  selection,
+									  pS
 									  );
 					
 				}
@@ -805,8 +822,9 @@ public class DummyProcessingClass {
 									  model, 
 									  dm, 
 									  trackingMarker, 
-									  k, 
-									  selection);	
+									   k, 
+									  selection,
+									  pS);	
 				}
 
 				else{
@@ -903,7 +921,8 @@ public class DummyProcessingClass {
 						trackingMarker, 
 						k,
 						locationList,
-						selection);
+						selection,
+						pS);
 				
 
 				OperationData outputOD= TwoDFittingIOp(model,
@@ -931,7 +950,8 @@ public class DummyProcessingClass {
 							trackingMarker, 
 							k,
 							locationList,
-							selection);
+							selection,
+							pS);
 					
 
 
@@ -971,7 +991,8 @@ public class DummyProcessingClass {
 							trackingMarker, 
 							k,
 							locationList,
-							selection);
+							selection,
+							pS);
 				}
 
 				else{
@@ -1008,7 +1029,8 @@ public class DummyProcessingClass {
 							trackingMarker, 
 							k,
 							locationList,
-							selection);
+							selection,
+							pS);
 				}
 
 				else{
@@ -1047,7 +1069,8 @@ public class DummyProcessingClass {
 							trackingMarker, 
 							k,
 							locationList,
-							selection);
+							selection,
+							pS);
 					
 				}
 
@@ -1088,7 +1111,8 @@ public class DummyProcessingClass {
 							trackingMarker, 
 							k,
 							locationList,
-							selection);
+							selection,
+							pS);
 					
 
 

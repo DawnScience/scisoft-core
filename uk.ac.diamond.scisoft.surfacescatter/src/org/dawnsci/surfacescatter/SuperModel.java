@@ -82,6 +82,16 @@ public class SuperModel {
 	private ArrayList<Double> reflectivityFluxCorrection;
 	private double currentReflectivityFluxCorrection;
 	private ProccessingMethod processingMethodSelection = ProcessingMethodsEnum.ProccessingMethod.AUTOMATIC;
+	private ArrayList<double[][]> interpolatorBoxes;
+	
+	public void addToInterpolatorBoxes(double[][] box){
+		
+		if(interpolatorBoxes ==null | interpolatorBoxes.size() ==0){
+			interpolatorBoxes = new ArrayList<>();
+		}
+		
+		interpolatorBoxes.add(box);
+	}
 	
 	public ProccessingMethod getProcessingMethodSelection() {
 		return processingMethodSelection;
@@ -1423,6 +1433,14 @@ public class SuperModel {
 
 	public void setPermanentBackgroundLenPt(int[][] permanentBackgroundLenPt) {
 		this.permanentBackgroundLenPt = permanentBackgroundLenPt;
+	}
+
+	public ArrayList<int[][]> getInterpolatorBoxes() {
+		return interpolatorBoxes;
+	}
+
+	public void setInterpolatorBoxes(ArrayList<int[][]> interpolatorBoxes) {
+		this.interpolatorBoxes = interpolatorBoxes;
 	}
 	
 	

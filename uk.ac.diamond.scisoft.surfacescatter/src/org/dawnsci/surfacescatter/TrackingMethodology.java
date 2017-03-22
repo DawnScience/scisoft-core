@@ -9,7 +9,8 @@ public class TrackingMethodology {
 		TLD,
 		CIRCULANT,
 		SPARSEFLOW,
-		MEANSHIFTCOMANICIU2003;
+		MEANSHIFTCOMANICIU2003,
+		INTERPOLATION;
 	}
 
 	public static String toString(TrackerType1 tt){
@@ -23,6 +24,8 @@ public class TrackingMethodology {
 				return "Sparse Flow";
 			case MEANSHIFTCOMANICIU2003:
 				return "Mean Shift";
+			case INTERPOLATION:
+				return "Interpolation";
 		}
 		return null;
 	}
@@ -39,7 +42,10 @@ public class TrackingMethodology {
 			return TrackerType1.SPARSEFLOW;
 		}
 		else if (in.equals("MEANSHIFTCOMANICIU2003")){
-			return TrackerType1.SPARSEFLOW;
+			return TrackerType1.MEANSHIFTCOMANICIU2003;
+		}
+		else if (in.equals("Interpolation")){
+			return TrackerType1.INTERPOLATION;
 		}
 		return null;
 	}
@@ -57,7 +63,10 @@ public class TrackingMethodology {
 			return TrackerType1.SPARSEFLOW;
 		}
 		else if (in == 3){
-			return TrackerType1.SPARSEFLOW;
+			return TrackerType1.MEANSHIFTCOMANICIU2003;
+		}
+		else if (in == 4){
+			return TrackerType1.INTERPOLATION;
 		}
 		return null;
 	}
@@ -73,6 +82,8 @@ public class TrackingMethodology {
 				return TrackerType.SPARSEFLOW;
 			case MEANSHIFTCOMANICIU2003:
 				return TrackerType.MEANSHIFTCOMANICIU2003;
+			case INTERPOLATION:
+				return null;
 		}
 		return null;
 	}

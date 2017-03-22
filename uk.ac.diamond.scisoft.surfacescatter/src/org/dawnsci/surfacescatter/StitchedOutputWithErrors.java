@@ -17,7 +17,7 @@ public class StitchedOutputWithErrors {
 	private static double attenuationFactor;
 	private static double attenuationFactorFhkl;
 	private static double attenuationFactorRaw;
-	private static int DEBUG =1;
+	private static int DEBUG =0;
 
 
 	

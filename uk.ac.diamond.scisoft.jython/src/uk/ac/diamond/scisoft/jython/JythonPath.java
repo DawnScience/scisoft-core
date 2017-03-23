@@ -53,8 +53,8 @@ public class JythonPath {
 		"org.apache.commons.math3", // math3 only now
 		"uk.ac.diamond.CBFlib",
 		"uk.ac.diamond.jama",
-		"uk.ac.diamond.ejml",
-		"uk.ac.diamond.ddogleg",
+		"com.googlecode.efficient-java-matrix-library.core",
+		"org.ddogleg",
 		"org.apache.commons.lang",
 		"org.eclipse.january",
 		"org.eclipse.dawnsci.analysis", // Includes api, dataset, tree, etc

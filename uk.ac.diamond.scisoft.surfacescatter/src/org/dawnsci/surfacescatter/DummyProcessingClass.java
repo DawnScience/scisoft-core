@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
 import org.dawnsci.surfacescatter.MethodSettingEnum.MethodSetting;
+import org.dawnsci.surfacescatter.ProcessingMethodsEnum.ProccessingMethod;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
@@ -47,7 +48,7 @@ public class DummyProcessingClass {
 								
 				
 				AgnosticTrackerHandler ath = new AgnosticTrackerHandler();
-				if(trackingMarker != 3 && trackingMarker != 4 ){
+				if(trackingMarker != 3 && trackingMarker != 4 && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					ath.TwoDTracking3(sm, 
 									  input, 
 									  model, 
@@ -86,7 +87,7 @@ public class DummyProcessingClass {
 				int[] len = sm.getInitialLenPt()[0];
 				int[] pt = sm.getInitialLenPt()[1];
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -121,7 +122,7 @@ public class DummyProcessingClass {
 				
 			case SECOND_BACKGROUND_BOX:
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -160,7 +161,7 @@ public class DummyProcessingClass {
 				
 			case OVERLAPPING_BACKGROUND_BOX:
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -199,7 +200,7 @@ public class DummyProcessingClass {
 			case X:
 				
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -239,7 +240,7 @@ public class DummyProcessingClass {
 			case Y:
 				
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -381,7 +382,7 @@ public class DummyProcessingClass {
 				int[] len = sm.getInitialLenPt()[0];
 				int[] pt = sm.getInitialLenPt()[1];
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -414,7 +415,7 @@ public class DummyProcessingClass {
 				break;
 			case SECOND_BACKGROUND_BOX:
 
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm,
@@ -453,7 +454,7 @@ public class DummyProcessingClass {
 				
 			case OVERLAPPING_BACKGROUND_BOX:
 		
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm,
@@ -492,7 +493,7 @@ public class DummyProcessingClass {
 			case X:
 				
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm,
@@ -531,7 +532,7 @@ public class DummyProcessingClass {
 			case Y:
 				
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath2 = new AgnosticTrackerHandler();
 					
 					ath2.TwoDTracking3(sm,
@@ -655,7 +656,7 @@ public class DummyProcessingClass {
 			case TWOD:
 				
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -697,7 +698,7 @@ public class DummyProcessingClass {
 				break;
 			case SECOND_BACKGROUND_BOX:
 
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -736,7 +737,7 @@ public class DummyProcessingClass {
 			case OVERLAPPING_BACKGROUND_BOX:
 				
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -773,7 +774,7 @@ public class DummyProcessingClass {
 			case X:
 				
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -814,7 +815,7 @@ public class DummyProcessingClass {
 				
 				
 
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -940,7 +941,7 @@ public class DummyProcessingClass {
 				
 			case TWOD:
 			
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath2 = new AgnosticTrackerHandler();
 					
 					ath2.TwoDTracking1(input, 
@@ -981,7 +982,7 @@ public class DummyProcessingClass {
 				break;
 			case SECOND_BACKGROUND_BOX:
 
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking1(input, 
@@ -1019,7 +1020,7 @@ public class DummyProcessingClass {
 				break;
 			case OVERLAPPING_BACKGROUND_BOX:
 
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking1(input, 
@@ -1059,7 +1060,7 @@ public class DummyProcessingClass {
 				
 				
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking1(input, 
@@ -1101,7 +1102,7 @@ public class DummyProcessingClass {
 			case Y:
 				
 			
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath2 = new AgnosticTrackerHandler();
 					
 					ath2.TwoDTracking1(input, 

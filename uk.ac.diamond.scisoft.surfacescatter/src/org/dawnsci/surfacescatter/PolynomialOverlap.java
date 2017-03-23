@@ -1,5 +1,7 @@
 package org.dawnsci.surfacescatter;
 
+import java.util.ArrayList;
+
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.Maths;
@@ -76,5 +78,8 @@ public class PolynomialOverlap {
 		
 		return output;
 	}
+	
+	
+	
 		
 }

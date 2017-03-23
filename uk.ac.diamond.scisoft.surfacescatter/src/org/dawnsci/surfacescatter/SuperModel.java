@@ -10,6 +10,7 @@ import org.eclipse.dawnsci.analysis.api.image.IImageTracker;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
+import org.eclipse.dawnsci.plotting.api.region.IRegion;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
@@ -83,14 +84,33 @@ public class SuperModel {
 	private double currentReflectivityFluxCorrection;
 	private ProccessingMethod processingMethodSelection = ProcessingMethodsEnum.ProccessingMethod.AUTOMATIC;
 	private ArrayList<double[][]> interpolatorBoxes;
+	private ArrayList<IRegion> interpolatorRegions;
+	private ArrayList<double[][]> interpolatedLenPts;
 	
+	public ArrayList<double[][]> getInterpolatedLenPts() {
+		return interpolatedLenPts;
+	}
+
+	public void setInterpolatedLenPts(ArrayList<double[][]> intepolatedLenPts) {
+		this.interpolatedLenPts = intepolatedLenPts;
+	}
+
 	public void addToInterpolatorBoxes(double[][] box){
 		
-		if(interpolatorBoxes ==null | interpolatorBoxes.size() ==0){
+		if(interpolatorBoxes == null){
 			interpolatorBoxes = new ArrayList<>();
 		}
 		
 		interpolatorBoxes.add(box);
+	}
+	
+	public void addToInterpolatorRegions(IRegion box){
+		
+		if(interpolatorRegions ==null){
+			interpolatorRegions = new ArrayList<>();
+		}
+		
+		interpolatorRegions.add(box);
 	}
 	
 	public ProccessingMethod getProcessingMethodSelection() {
@@ -1435,12 +1455,20 @@ public class SuperModel {
 		this.permanentBackgroundLenPt = permanentBackgroundLenPt;
 	}
 
-	public ArrayList<int[][]> getInterpolatorBoxes() {
+	public ArrayList<double[][]> getInterpolatorBoxes() {
 		return interpolatorBoxes;
 	}
 
-	public void setInterpolatorBoxes(ArrayList<int[][]> interpolatorBoxes) {
+	public void setInterpolatorBoxes(ArrayList<double[][]> interpolatorBoxes) {
 		this.interpolatorBoxes = interpolatorBoxes;
+	}
+
+	public ArrayList<IRegion> getInterpolatorRegions() {
+		return interpolatorRegions;
+	}
+
+	public void setInterpolatorRegions(ArrayList<IRegion> interpolatorRegions) {
+		this.interpolatorRegions = interpolatorRegions;
 	}
 	
 	

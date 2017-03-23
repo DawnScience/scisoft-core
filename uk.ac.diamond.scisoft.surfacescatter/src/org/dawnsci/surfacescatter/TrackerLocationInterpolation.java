@@ -6,6 +6,9 @@ import java.util.Arrays;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 
+import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
+
 public class TrackerLocationInterpolation {
 	
 	public static int DEBUG = 0 ;
@@ -15,7 +18,6 @@ public class TrackerLocationInterpolation {
 														    int[] len,
 														    int k){
 		
-//		sm.getSortedX()
 			ArrayList<Double> lList = new ArrayList<Double>();  
 			ArrayList<Double> xList = new ArrayList<Double>();
 			ArrayList<Double> yList = new ArrayList<Double>();
@@ -50,11 +52,6 @@ public class TrackerLocationInterpolation {
 			}
 			
 			
-			
-			
-			
-			
-			
 			double[] seedLocation = PolynomialOverlap.extrapolatedLocation(sortedX.getDouble(k),
 																		   lValues, 
 																		   xValues, 
@@ -68,55 +65,6 @@ public class TrackerLocationInterpolation {
 		
 		return seedLocation;
 	}
-
-	
-	public static double[] trackerInterpolationInterpolator1(SuperModel sm, 
-															 int k){
-	
-//		if(dm.getLocationList() == null){
-//			
-//			int seedIndex = 
-//					ClosestNoFinder.closestNoWithLocation(sm.getSortedX().getDouble(k),
-//														  sm.getSortedX(), 
-//														  sm.getLocationList());
-//	
-//			int nearestCompletedDatFileNo = sm.getFilepathsSortedArray()[seedIndex];
-//			
-//			
-//			ArrayList<double[]> seedList = dms.get(nearestCompletedDatFileNo).getLocationList();
-//			ArrayList<Double> lList = dms.get(nearestCompletedDatFileNo).getxList();
-//			
-//			Dataset yValues = DatasetFactory.zeros(seedList.size());
-//			Dataset xValues = DatasetFactory.zeros(seedList.size());
-//			Dataset lValues = DatasetFactory.zeros(seedList.size());
-//			
-//			for(int op = 0; op<seedList.size(); op++){
-//				
-//				double x = seedList.get(op)[1];
-//				double y = seedList.get(op)[0];
-//				double l = lList.get(op);
-//				
-//				xValues.set(x, op);
-//				yValues.set(y, op);
-//				lValues.set(l, op);
-//	
-//			}
-//			
-//			double[] seedLocation = PolynomialOverlap.extrapolatedLocation(sm.getSortedX().getDouble(k),
-//																		   lValues, 
-//																		   xValues, 
-//																		   yValues, 
-//																		   sm.getInitialLenPt()[0],
-//																		   1);
-//			dm.setSeedLocation(seedLocation);
-//			
-//			debug("!!!!!!!!!!!!!!!     }}}}}{{{{{{{{ seedlocation[0] : " + seedLocation[0] +" + " + "seedlocation[1] :" + seedLocation[1]);
-//		
-//		}	
-	
-		return null;
-	}
-	
 	
 	public static double[] trackerInterpolationInterpolator3(ArrayList<double[]> trackerLocations, 
 															 Dataset sortedX,
@@ -162,17 +110,7 @@ public class TrackerLocationInterpolation {
 			
 		}
 				
-//		for(int op = 0; op<xList.size(); op++){
-//		
-//			double x = xList.get(op);
-//			double y = yList.get(op);
-//			double l = lList.get(op);
-//			
-//			xValues.set(x, op);
-//			yValues.set(y, op);
-//			lValues.set(l, op);
-//		
-//		}
+
 				
 		double[] seedLocation = PolynomialOverlap.extrapolatedLocation(sortedX.getDouble(k),
 																	   lValues, 
@@ -187,6 +125,11 @@ public class TrackerLocationInterpolation {
 		
 		return seedLocation;
 	}
+	
+	
+	
+	
+	
 	
 	
 	

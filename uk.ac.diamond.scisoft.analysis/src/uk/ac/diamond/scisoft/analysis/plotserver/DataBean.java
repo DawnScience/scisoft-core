@@ -19,6 +19,7 @@ import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.metadata.StatisticsMetadata;
 
 /**
  * This bean contains all the information required by a GUI to perform a plot,
@@ -92,20 +93,29 @@ public class DataBean implements Serializable {
 	}
 
 	/**
+	 * Sanitise dataset
+	 */
+	static Dataset santiseDataset(IDataset data) {
+		Dataset tmp = DatasetUtils.convertToDataset(data);
+		if (tmp.getStrides() != null) {
+			// workaround deserialization problem where base is not set as it is transient
+			// this can cause NPEs when base is subsequently used
+			tmp = tmp.getSlice();
+			tmp.setName(data.getName());
+		}
+		tmp = tmp.getView(false);
+		tmp.clearMetadata(StatisticsMetadata.class);
+		return tmp;
+	}
+
+	/**
 	 * Adds the provided axis data to the bean
 	 * 
 	 * @param axisID
 	 * @param axisDataset
 	 */
 	public void addAxis(String axisID, IDataset axisDataset) {
-		Dataset tmp = DatasetUtils.convertToDataset(axisDataset);
-		if (tmp.getStrides() != null) {
-			// workaround deserialization problem where base is not set as it is transient
-			// this can cause NPEs when base is subsequently used
-			tmp = tmp.getSlice();
-			tmp.setName(axisDataset.getName());
-		}
-		axisData.put(axisID, tmp);
+		axisData.put(axisID, santiseDataset(axisDataset));
 	}
 
 	/**

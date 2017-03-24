@@ -12,7 +12,6 @@ package uk.ac.diamond.scisoft.analysis.plotserver;
 import java.io.Serializable;
 
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 
 /**
@@ -37,23 +36,7 @@ public class DatasetWithAxisInformation implements Serializable {
 	 *            The data to set.
 	 */
 	public void setData(IDataset data) {
-		Dataset tmp = DatasetUtils.convertToDataset(data);
-		if (tmp.getStrides() != null) {
-			// workaround deserialization problem where base is not set as it is transient
-			// this can cause NPEs when base is subsequently used
-			tmp = tmp.getSlice();
-			tmp.setName(data.getName());
-		}
-		this.data = clearMetadata(tmp);
-	}
-
-	/**
-	 * Clears metadata from dataset
-	 */
-	private static Dataset clearMetadata(Dataset data) {
-		data = data.getView(false);
-		data.clearMetadata(null);
-		return data;
+		this.data = DataBean.santiseDataset(data);
 	}
 
 	/**

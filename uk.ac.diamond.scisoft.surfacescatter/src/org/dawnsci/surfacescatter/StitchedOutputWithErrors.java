@@ -565,12 +565,12 @@ public class StitchedOutputWithErrors {
 
 
 			for(int l=0; l<xArrayCorrected[k].getSize();l++){
-				if (xArrayCorrected[k].getDouble(l)>=maxMinArray[k][1]){
+				if (xArrayCorrected[k].getDouble(l)>=(maxMinArray[k+1][1] - 0.001*maxMinArray[k+1][1])){
 					overlapLower.add(l);
 				}
 			}	
 			for(int m=0; m<xArrayCorrected[k+1].getSize();m++){
-				if (xArrayCorrected[k+1].getDouble(m)<maxMinArray[k][0]){
+				if (xArrayCorrected[k+1].getDouble(m)<=(maxMinArray[k][0] + 0.001 * maxMinArray[k][0])){
 					overlapHigher.add(m);
 				}
 			}
@@ -619,13 +619,13 @@ public class StitchedOutputWithErrors {
 					yHigherDatasetRaw = DatasetFactory.createFromObject(yHigherListRaw);	
 				}
 
-				double correctionRatio = PolynomialOverlapSXRD.correctionRatio(xLowerDataset, yLowerDataset, 
+				double correctionRatio = PolynomialOverlapSXRD.correctionRatio1(xLowerDataset, yLowerDataset, 
 						xHigherDataset, yHigherDataset, attenuationFactor,4);
 
-				double  correctionRatioFhkl = PolynomialOverlapSXRD.correctionRatio(xLowerDataset, yLowerDatasetFhkl, 
+				double  correctionRatioFhkl = PolynomialOverlapSXRD.correctionRatio1(xLowerDataset, yLowerDatasetFhkl, 
 						xHigherDataset, yHigherDatasetFhkl, attenuationFactorFhkl,4);
 				
-				double  correctionRatioRaw = PolynomialOverlapSXRD.correctionRatio(xLowerDataset, yLowerDatasetRaw, 
+				double  correctionRatioRaw = PolynomialOverlapSXRD.correctionRatio1(xLowerDataset, yLowerDatasetRaw, 
 						xHigherDataset, yHigherDatasetRaw, attenuationFactorRaw,4);
 
 				attenuationFactor = correctionRatio;

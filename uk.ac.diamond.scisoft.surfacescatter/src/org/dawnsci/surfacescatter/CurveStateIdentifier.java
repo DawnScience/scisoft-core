@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Composite;
 
 public class CurveStateIdentifier {
 	
-	public static String[] CurveStateIdentifier1(IPlottingSystem<Composite> pS){
+	public static String[] CurveStateIdentifier1(IPlottingSystem<Composite> pS, IntensityDisplayEnum ids){
 		
 		CharSequence f = "Fhkl";
 		CharSequence i = "Intensity";

@@ -187,7 +187,8 @@ limitations under the License.
          id="hdf.object"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.dawnsci.hdf5"
@@ -261,19 +262,22 @@ limitations under the License.
          id="org.ddogleg"
          download-size="0"
          install-size="0"
-         version="0.6.0.SNAPSHOT"/>
+         version="0.6.0.SNAPSHOT"
+         unpack="false"/>
 
    <plugin
          id="com.googlecode.efficient-java-matrix-library.core"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.georegression"
          download-size="0"
          install-size="0"
-         version="0.7.0"/>
+         version="0.7.0"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.dawnsci.analysis.tree"

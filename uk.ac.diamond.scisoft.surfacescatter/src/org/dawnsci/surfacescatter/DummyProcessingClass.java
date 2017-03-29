@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
 import org.dawnsci.surfacescatter.MethodSettingEnum.MethodSetting;
+import org.dawnsci.surfacescatter.ProcessingMethodsEnum.ProccessingMethod;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
@@ -34,7 +35,7 @@ public class DummyProcessingClass {
 										DataModel dm, 
 										GeometricParametersModel gm, 
 										IPlottingSystem<Composite> pS,
-										IPlottingSystem<Composite> ssvsPS,
+//										IPlottingSystem<Composite> ssvsPS,
 										int correctionSelector, 
 										int k, 
 										int trackingMarker,
@@ -47,14 +48,15 @@ public class DummyProcessingClass {
 								
 				
 				AgnosticTrackerHandler ath = new AgnosticTrackerHandler();
-				if(trackingMarker != 3){
+				if(trackingMarker != 3 && trackingMarker != 4 && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					ath.TwoDTracking3(sm, 
 									  input, 
 									  model, 
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection);
+									  selection,
+									  pS);
 				}
 				
 				OperationData outputOD= TwoDFittingIOp(model,
@@ -85,7 +87,7 @@ public class DummyProcessingClass {
 				int[] len = sm.getInitialLenPt()[0];
 				int[] pt = sm.getInitialLenPt()[1];
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -94,7 +96,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection);
+									  selection,
+									  pS);
 				}
 				
 				else{	
@@ -119,7 +122,7 @@ public class DummyProcessingClass {
 				
 			case SECOND_BACKGROUND_BOX:
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -128,7 +131,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection);
+									  selection,
+									  pS);
 				}
 				
 				else{
@@ -145,7 +149,7 @@ public class DummyProcessingClass {
 										 		 input,  
 										 		 dm, 
 										 		 pS,
-										 		 ssvsPS,
+//										 		 ssvsPS,
 										 		 selection,
 										 		 trackingMarker,
 										 		 k);	
@@ -157,7 +161,7 @@ public class DummyProcessingClass {
 				
 			case OVERLAPPING_BACKGROUND_BOX:
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -166,7 +170,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection);
+									  selection,
+									  pS);
 				}
 
 				else{
@@ -185,7 +190,7 @@ public class DummyProcessingClass {
 				 		 input,  
 				 		 dm, 
 				 		 pS,
-				 		 ssvsPS,
+//				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
 				 		 k);	
@@ -195,7 +200,7 @@ public class DummyProcessingClass {
 			case X:
 				
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -204,7 +209,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection);
+									  selection,
+									  pS);
 				}
 
 				else{
@@ -234,7 +240,7 @@ public class DummyProcessingClass {
 			case Y:
 				
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -243,7 +249,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection);
+									  selection,
+									  pS);
 				}
 
 				else{
@@ -293,15 +300,12 @@ public class DummyProcessingClass {
 								  input);
 		
 		
-		try {
-			Thread.sleep(0);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-		
+//		try {
+////			Thread.sleep(0);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double fhkl = (double) 0.001;
@@ -353,8 +357,9 @@ public class DummyProcessingClass {
 								  model,
 								  dm, 
 								  trackingMarker, 
-								  k,
-								  selection);
+								  k, 
+									  selection,
+									  pS);
 				
 
 				OperationData outputOD= TwoDFittingIOp(model,
@@ -377,7 +382,7 @@ public class DummyProcessingClass {
 				int[] len = sm.getInitialLenPt()[0];
 				int[] pt = sm.getInitialLenPt()[1];
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -385,8 +390,9 @@ public class DummyProcessingClass {
 									  model, 
 									  dm, 
 									  trackingMarker, 
-									  k, 
-									  selection);
+									   k, 
+									  selection,
+									  pS);
 				}
 				
 				else{	
@@ -409,7 +415,7 @@ public class DummyProcessingClass {
 				break;
 			case SECOND_BACKGROUND_BOX:
 
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm,
@@ -418,7 +424,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k,
-									  selection);
+									  selection,
+									  pS);
 			
 				}
 
@@ -436,7 +443,7 @@ public class DummyProcessingClass {
 				 		 input,  
 				 		 dm, 
 				 		 pS,
-				 		 ssvsPS,
+//				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
 				 		 k);	
@@ -447,7 +454,7 @@ public class DummyProcessingClass {
 				
 			case OVERLAPPING_BACKGROUND_BOX:
 		
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm,
@@ -456,7 +463,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k,
-									  selection);
+									  selection,
+									  pS);
 			
 				}
 
@@ -474,7 +482,7 @@ public class DummyProcessingClass {
 				 		 input,  
 				 		 dm, 
 				 		 pS,
-				 		 ssvsPS,
+//				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
 				 		 k);	
@@ -485,7 +493,7 @@ public class DummyProcessingClass {
 			case X:
 				
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm,
@@ -494,7 +502,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k,
-									  selection);
+									  selection,
+									  pS);
 			
 				}
 				
@@ -523,7 +532,7 @@ public class DummyProcessingClass {
 			case Y:
 				
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath2 = new AgnosticTrackerHandler();
 					
 					ath2.TwoDTracking3(sm,
@@ -532,7 +541,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k,
-									  selection);
+									  selection,
+									  pS);
 			
 					
 				}
@@ -627,7 +637,8 @@ public class DummyProcessingClass {
 								  dm, 
 								  trackingMarker, 
 								  k, 
-								  selection);
+								  selection,
+								  pS);
 				
 				OperationData outputOD= TwoDFittingIOp(model,
 													   input,
@@ -645,7 +656,7 @@ public class DummyProcessingClass {
 			case TWOD:
 				
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -653,8 +664,9 @@ public class DummyProcessingClass {
 									  model, 
 									  dm, 
 									  trackingMarker, 
-									  k, 
-									  selection);
+									   k, 
+									  selection,
+									  pS);
 					
 				}
 
@@ -686,7 +698,7 @@ public class DummyProcessingClass {
 				break;
 			case SECOND_BACKGROUND_BOX:
 
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -694,8 +706,9 @@ public class DummyProcessingClass {
 									  model, 
 									  dm, 
 									  trackingMarker, 
-									  k, 
-									  selection);
+									   k, 
+									  selection,
+									  pS);
 					
 				}
 
@@ -712,7 +725,7 @@ public class DummyProcessingClass {
 				 		 input,  
 				 		 dm, 
 				 		 pS,
-				 		 ssvsPS,
+//				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
 				 		 k);	
@@ -724,7 +737,7 @@ public class DummyProcessingClass {
 			case OVERLAPPING_BACKGROUND_BOX:
 				
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -733,7 +746,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  selection, 
-									  selection);
+									  selection,
+									  pS);
 					
 				}
 
@@ -750,7 +764,7 @@ public class DummyProcessingClass {
 				 		 input,  
 				 		 dm, 
 				 		 pS,
-				 		 ssvsPS,
+//				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
 				 		 k);	
@@ -760,7 +774,7 @@ public class DummyProcessingClass {
 			case X:
 				
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -769,7 +783,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection
+									  selection,
+									  pS
 									  );
 					
 				}
@@ -800,7 +815,7 @@ public class DummyProcessingClass {
 				
 				
 
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking3(sm, 
@@ -808,8 +823,9 @@ public class DummyProcessingClass {
 									  model, 
 									  dm, 
 									  trackingMarker, 
-									  k, 
-									  selection);	
+									   k, 
+									  selection,
+									  pS);	
 				}
 
 				else{
@@ -906,7 +922,8 @@ public class DummyProcessingClass {
 						trackingMarker, 
 						k,
 						locationList,
-						selection);
+						selection,
+						pS);
 				
 
 				OperationData outputOD= TwoDFittingIOp(model,
@@ -924,7 +941,7 @@ public class DummyProcessingClass {
 				
 			case TWOD:
 			
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath2 = new AgnosticTrackerHandler();
 					
 					ath2.TwoDTracking1(input, 
@@ -934,7 +951,8 @@ public class DummyProcessingClass {
 							trackingMarker, 
 							k,
 							locationList,
-							selection);
+							selection,
+							pS);
 					
 
 
@@ -964,7 +982,7 @@ public class DummyProcessingClass {
 				break;
 			case SECOND_BACKGROUND_BOX:
 
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking1(input, 
@@ -974,7 +992,8 @@ public class DummyProcessingClass {
 							trackingMarker, 
 							k,
 							locationList,
-							selection);
+							selection,
+							pS);
 				}
 
 				else{
@@ -991,7 +1010,7 @@ public class DummyProcessingClass {
 				 		 input,  
 				 		 dm, 
 				 		 pS,
-				 		 ssvsPS,
+//				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
 				 		 k);	
@@ -1001,7 +1020,7 @@ public class DummyProcessingClass {
 				break;
 			case OVERLAPPING_BACKGROUND_BOX:
 
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking1(input, 
@@ -1011,7 +1030,8 @@ public class DummyProcessingClass {
 							trackingMarker, 
 							k,
 							locationList,
-							selection);
+							selection,
+							pS);
 				}
 
 				else{
@@ -1028,7 +1048,7 @@ public class DummyProcessingClass {
 				 		 input,  
 				 		 dm, 
 				 		 pS,
-				 		 ssvsPS,
+//				 		 ssvsPS,
 				 		 selection,
 				 		trackingMarker,
 				 		k);	
@@ -1040,7 +1060,7 @@ public class DummyProcessingClass {
 				
 				
 				
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath1 = new AgnosticTrackerHandler();
 					
 					ath1.TwoDTracking1(input, 
@@ -1050,7 +1070,8 @@ public class DummyProcessingClass {
 							trackingMarker, 
 							k,
 							locationList,
-							selection);
+							selection,
+							pS);
 					
 				}
 
@@ -1081,7 +1102,7 @@ public class DummyProcessingClass {
 			case Y:
 				
 			
-				if(sm.getTrackerOn()){
+				if(sm.getTrackerOn() && sm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerHandler ath2 = new AgnosticTrackerHandler();
 					
 					ath2.TwoDTracking1(input, 
@@ -1091,7 +1112,8 @@ public class DummyProcessingClass {
 							trackingMarker, 
 							k,
 							locationList,
-							selection);
+							selection,
+							pS);
 					
 
 
@@ -1363,7 +1385,7 @@ public class DummyProcessingClass {
 											IDataset input,  
 											DataModel dm, 
 											IPlottingSystem<Composite> pS,
-											IPlottingSystem<Composite> ssvsPS,
+//											IPlottingSystem<Composite> ssvsPS,
 											int selection,
 											int trackingMarker,
 											int k){		
@@ -1392,7 +1414,7 @@ public class DummyProcessingClass {
 														   input, 
 														   sm,
 														   pS,
-														   ssvsPS,
+//														   ssvsPS,
 														   trackingMarker,
 														   k);
 			if(outputOD4.getAuxData()[3] != null){
@@ -1427,7 +1449,7 @@ public class DummyProcessingClass {
 				  												   IDataset input,
 				  												   SuperModel sm,
 				  												   IPlottingSystem<Composite> pS,
-				  												   IPlottingSystem<Composite> ssvsPS,
+//				  												   IPlottingSystem<Composite> ssvsPS,
 				  												   int trackingMarker,
 				  												   int k){
 

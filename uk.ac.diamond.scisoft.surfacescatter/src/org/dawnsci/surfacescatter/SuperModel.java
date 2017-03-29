@@ -5,10 +5,12 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import org.dawnsci.surfacescatter.MethodSettingEnum.MethodSetting;
+import org.dawnsci.surfacescatter.ProcessingMethodsEnum.ProccessingMethod;
 import org.eclipse.dawnsci.analysis.api.image.IImageTracker;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
+import org.eclipse.dawnsci.plotting.api.region.IRegion;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
@@ -80,7 +82,45 @@ public class SuperModel {
 	private double currentReflectivityAreaCorrection;
 	private ArrayList<Double> reflectivityFluxCorrection;
 	private double currentReflectivityFluxCorrection;
+	private ProccessingMethod processingMethodSelection = ProcessingMethodsEnum.ProccessingMethod.AUTOMATIC;
+	private ArrayList<double[][]> interpolatorBoxes;
+	private ArrayList<IRegion> interpolatorRegions;
+	private ArrayList<double[][]> interpolatedLenPts;
 	
+	public ArrayList<double[][]> getInterpolatedLenPts() {
+		return interpolatedLenPts;
+	}
+
+	public void setInterpolatedLenPts(ArrayList<double[][]> intepolatedLenPts) {
+		this.interpolatedLenPts = intepolatedLenPts;
+	}
+
+	public void addToInterpolatorBoxes(double[][] box){
+		
+		if(interpolatorBoxes == null){
+			interpolatorBoxes = new ArrayList<>();
+		}
+		
+		interpolatorBoxes.add(box);
+	}
+	
+	public void addToInterpolatorRegions(IRegion box){
+		
+		if(interpolatorRegions ==null){
+			interpolatorRegions = new ArrayList<>();
+		}
+		
+		interpolatorRegions.add(box);
+	}
+	
+	public ProccessingMethod getProcessingMethodSelection() {
+		return processingMethodSelection;
+	}
+
+	public void setProcessingMethodSelection(ProcessingMethodsEnum.ProccessingMethod processingMethodSelection) {
+		this.processingMethodSelection = processingMethodSelection;
+	}
+
 	public ArrayList<Double> getReflectivityFluxCorrection() {
 		return reflectivityFluxCorrection;
 	}
@@ -1413,6 +1453,22 @@ public class SuperModel {
 
 	public void setPermanentBackgroundLenPt(int[][] permanentBackgroundLenPt) {
 		this.permanentBackgroundLenPt = permanentBackgroundLenPt;
+	}
+
+	public ArrayList<double[][]> getInterpolatorBoxes() {
+		return interpolatorBoxes;
+	}
+
+	public void setInterpolatorBoxes(ArrayList<double[][]> interpolatorBoxes) {
+		this.interpolatorBoxes = interpolatorBoxes;
+	}
+
+	public ArrayList<IRegion> getInterpolatorRegions() {
+		return interpolatorRegions;
+	}
+
+	public void setInterpolatorRegions(ArrayList<IRegion> interpolatorRegions) {
+		this.interpolatorRegions = interpolatorRegions;
 	}
 	
 	

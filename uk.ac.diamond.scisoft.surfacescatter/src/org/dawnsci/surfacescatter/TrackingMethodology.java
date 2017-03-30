@@ -1,6 +1,5 @@
 package org.dawnsci.surfacescatter;
 
-import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
 import org.eclipse.dawnsci.analysis.api.image.IImageTracker.TrackerType;
 
 public class TrackingMethodology {
@@ -10,7 +9,8 @@ public class TrackingMethodology {
 		CIRCULANT,
 		SPARSEFLOW,
 		MEANSHIFTCOMANICIU2003,
-		INTERPOLATION;
+		INTERPOLATION,
+		SPLINE_INTERPOLATION;
 	}
 
 	public static String toString(TrackerType1 tt){
@@ -26,6 +26,8 @@ public class TrackingMethodology {
 				return "Mean Shift";
 			case INTERPOLATION:
 				return "Interpolation";
+			case SPLINE_INTERPOLATION:
+				return "Spline Interpolation";
 		}
 		return null;
 	}
@@ -46,6 +48,9 @@ public class TrackingMethodology {
 		}
 		else if (in.equals("Interpolation")){
 			return TrackerType1.INTERPOLATION;
+		}
+		else if (in.equals("Spline Interpolation")){
+			return TrackerType1.SPLINE_INTERPOLATION;
 		}
 		return null;
 	}
@@ -68,6 +73,9 @@ public class TrackingMethodology {
 		else if (in == 4){
 			return TrackerType1.INTERPOLATION;
 		}
+		else if (in == 5){
+			return TrackerType1.SPLINE_INTERPOLATION;
+		}
 		return null;
 	}
 
@@ -84,7 +92,10 @@ public class TrackingMethodology {
 				return TrackerType.MEANSHIFTCOMANICIU2003;
 			case INTERPOLATION:
 				return null;
-		}
+			case SPLINE_INTERPOLATION:
+				return null;
+			}
+		
 		return null;
 	}
 

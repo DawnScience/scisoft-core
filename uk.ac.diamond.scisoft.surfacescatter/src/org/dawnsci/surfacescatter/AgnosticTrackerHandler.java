@@ -23,7 +23,6 @@ public class AgnosticTrackerHandler {
 	private IImageTracker tracker1 = null;
 	private double[] location;
 	private double[] initialLocation;
-	private double[] trackerInput;
 	private int[] len;
 	private int[] pt;
 	private SuperModel sm;
@@ -44,7 +43,8 @@ public class AgnosticTrackerHandler {
 		pt = model.getLenPt()[1];
 		 
 		
-		if(model.getTrackerType() != TrackingMethodology.TrackerType1.INTERPOLATION){
+		if(model.getTrackerType() != TrackingMethodology.TrackerType1.INTERPOLATION 
+				&& model.getTrackerType() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
 			
 			if (trackingMarker == 0) {
 				if (model.getInput() == null) {
@@ -440,7 +440,7 @@ public class AgnosticTrackerHandler {
 		this.sm = sm;
 		
 		
-		if(model.getTrackerType() != TrackingMethodology.TrackerType1.INTERPOLATION){
+		if(model.getTrackerType() != TrackingMethodology.TrackerType1.INTERPOLATION && model.getTrackerType() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
 			
 			
 			if (trackingMarker == 0) {
@@ -787,7 +787,7 @@ public class AgnosticTrackerHandler {
 //		initialLocation = new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
 //		(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0]) };
 		
-		if(model.getTrackerType() != TrackingMethodology.TrackerType1.INTERPOLATION){
+		if(model.getTrackerType() != TrackingMethodology.TrackerType1.INTERPOLATION && model.getTrackerType() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
 			
 			
 			
@@ -1154,66 +1154,66 @@ public class AgnosticTrackerHandler {
 		
 	}
 		
-	private double[] convertLenPttoTrackerInput(double[] len, double[] pt){
-		
-		return trackerInput = new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]),
-				(double) (pt[0]), (double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]),
-				(double) (pt[0] + len[0]) };
-	}
-	
-	private double[] convertLenPttoTrackerInput(double[][] lenpt){
-		
-		double[] len = lenpt[0];
-		double[] pt = lenpt[1];
-		
-		return trackerInput = new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]),
-				(double) (pt[0]), (double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]),
-				(double) (pt[0] + len[0]) };
-	}
-	
-	
-	private int[][] convertTrackerOutputToLenPt(int[] trackeroutput){
-		
-		int[] len = new int[] {(trackeroutput[7] - trackeroutput[1]),(trackeroutput[6] - trackeroutput[0])} ;
-		int[] pt = new int[] {trackeroutput[1], trackeroutput[0]};
-		
-		return new int[][] {len,pt};
-	}
-	
-	private int[] convertLenPttoTrackerInput(int[] len, int[] pt){
-		
-		return new int[] { (int) pt[1], (int) pt[0], (int) (pt[1] + len[1]),
-				(int) (pt[0]), (int) pt[1], (int) pt[0] + len[0], (int) (pt[1] + len[1]),
-				(int) (pt[0] + len[0]) };
-	}
-	
-	private double[] convertLenPttoTrackerInput1(int[] len, int[] pt){
-		
-		return new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]),
-				(double) (pt[0]), (double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]),
-				(double) (pt[0] + len[0]) };
-	}
+//	private double[] convertLenPttoTrackerInput(double[] len, double[] pt){
+//		
+//		return trackerInput = new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]),
+//				(double) (pt[0]), (double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]),
+//				(double) (pt[0] + len[0]) };
+//	}
+//	
+//	private double[] convertLenPttoTrackerInput(double[][] lenpt){
+//		
+//		double[] len = lenpt[0];
+//		double[] pt = lenpt[1];
+//		
+//		return trackerInput = new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]),
+//				(double) (pt[0]), (double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]),
+//				(double) (pt[0] + len[0]) };
+//	}
 	
 	
-	private int[] convertLenPttoTrackerInput(int[][] lenpt){
-		
-		int[] len = lenpt[0];
-		int[] pt = lenpt[1];
-		
-		return new int[] {  pt[1], pt[0], (pt[1] + len[1]),
-				(pt[0]), pt[1], pt[0] + len[0], (pt[1] + len[1]),
-				(int) (pt[0] + len[0]) };
-	}
-	
-	
-	private double[][] convertTrackerOutputToLenPt(double[] trackeroutput){
-		
-		double[] len = new double[] {(trackeroutput[7] - trackeroutput[1]),(trackeroutput[6] - trackeroutput[0])} ;
-		double[] pt = new double[] {trackeroutput[1], trackeroutput[0]};
-		
-		return new double[][] {len,pt};
-	}
-	
+//	private int[][] convertTrackerOutputToLenPt(int[] trackeroutput){
+//		
+//		int[] len = new int[] {(trackeroutput[7] - trackeroutput[1]),(trackeroutput[6] - trackeroutput[0])} ;
+//		int[] pt = new int[] {trackeroutput[1], trackeroutput[0]};
+//		
+//		return new int[][] {len,pt};
+//	}
+//	
+//	private int[] convertLenPttoTrackerInput(int[] len, int[] pt){
+//		
+//		return new int[] { (int) pt[1], (int) pt[0], (int) (pt[1] + len[1]),
+//				(int) (pt[0]), (int) pt[1], (int) pt[0] + len[0], (int) (pt[1] + len[1]),
+//				(int) (pt[0] + len[0]) };
+//	}
+//	
+//	private double[] convertLenPttoTrackerInput1(int[] len, int[] pt){
+//		
+//		return new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]),
+//				(double) (pt[0]), (double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]),
+//				(double) (pt[0] + len[0]) };
+//	}
+//	
+//	
+//	private int[] convertLenPttoTrackerInput(int[][] lenpt){
+//		
+//		int[] len = lenpt[0];
+//		int[] pt = lenpt[1];
+//		
+//		return new int[] {  pt[1], pt[0], (pt[1] + len[1]),
+//				(pt[0]), pt[1], pt[0] + len[0], (pt[1] + len[1]),
+//				(int) (pt[0] + len[0]) };
+//	}
+//	
+//	
+//	private double[][] convertTrackerOutputToLenPt(double[] trackeroutput){
+//		
+//		double[] len = new double[] {(trackeroutput[7] - trackeroutput[1]),(trackeroutput[6] - trackeroutput[0])} ;
+//		double[] pt = new double[] {trackeroutput[1], trackeroutput[0]};
+//		
+//		return new double[][] {len,pt};
+//	}
+//	
 	
 	private void debug (String output) {
 		if (DEBUG == 1) {

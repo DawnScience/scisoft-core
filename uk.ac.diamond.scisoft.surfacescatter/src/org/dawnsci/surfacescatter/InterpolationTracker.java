@@ -16,8 +16,6 @@ public class InterpolationTracker {
 
 		int fitPower = 1;
 		
-		int bs = boxes.size();
-		
 		Dataset xpts = DatasetFactory.zeros(new int[] {boxes.size()}, Dataset.ARRAYFLOAT64);
 		Dataset ypts = DatasetFactory.zeros(new int[] {boxes.size()}, Dataset.ARRAYFLOAT64);
 		Dataset xlens = DatasetFactory.zeros(new int[] {boxes.size()}, Dataset.ARRAYFLOAT64);

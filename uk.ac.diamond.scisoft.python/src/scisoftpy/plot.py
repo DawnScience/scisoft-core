@@ -686,15 +686,6 @@ def scanforimages(path, order="none", prefix=None, suffices=None, columns=-1, ro
     maxint = ((1<<30) - 1) + (1<<30) # maximum value for signed 32-bit integer
     return _plot_scanforimages(name, path, _order(order), prefix, suffices, columns, rowMajor, maxint, 1)
 
-def _replace_roilist(rl, c): # replace first ROI in list which has the same name
-    name = c.name
-    for i in range(len(rl)):
-        r = rl[i]
-        if r.name == name and r is not c:
-            rl[i] = c
-            return True
-    return False
-
 def _get_roi(rl, name): # get first ROI in list that has given name
     for r in rl:
         if r.name == name:
@@ -705,11 +696,11 @@ def _set_roi(rl, roi, warn): # replace first ROI in list that has given name
     name = roi.name
     for i, r in enumerate(rl):
         if r.name == name:
-            rl[i] = r
+            rl[i] = roi
             if warn:
                 print 'Warning: replaced', name, 'in ROI list with current ROI'
             return
-    rl.append(r) # or append to list
+    rl.append(roi) # or append to list
 
 def getbean(name=None):
     '''Get GUI bean (contains information from named view)
@@ -720,10 +711,11 @@ def getbean(name=None):
     if name is None:
         name = _PVNAME
     bean = _plot_getbean(name)
-    if parameters.roi in bean:
+    if parameters.roi in bean and parameters.roilist in bean:
         bean_name = bean[parameters.roi]
         # need to present bean with roi instead of name
-        bean[parameters.roi] = _get_roi(bean[parameters.roilist], bean_name)
+        if bean[parameters.roilist]:
+            bean[parameters.roi] = _get_roi(bean[parameters.roilist], bean_name)
     
     return bean
 
@@ -737,13 +729,17 @@ def setbean(bean, name=None, warn=True):
     if name is None:
         name = _PVNAME
     if bean is not None:
-        if parameters.roi in bean and parameters.roilist in bean:
+        if parameters.roi in bean:
             # ensure current roi is in list
+            nbean = _guibean(bean)
             cr = bean[parameters.roi]
-            bean[parameters.roi] = cr.name
-            _set_roi(bean[parameters.roilist], cr, warn)
+            nbean[parameters.roi] = cr.name
+            if not parameters.roilist in nbean or not nbean[parameters.roilist]:
+                nbean[parameters.roilist] = roi._create_list(cr)
+            _set_roi(nbean[parameters.roilist], cr, warn)
+            bean = nbean
 
-        _plot_setbean(name, bean)
+        _plot_setbean(name, nbean)
 
 def getdatabean(name=None):
     '''Get data bean (contains data from named view)

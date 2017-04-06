@@ -121,14 +121,12 @@ from jybeans import parameters as _jyparams
 from jybeans import guibean as _guibean
 from uk.ac.diamond.scisoft.analysis.plotserver import GuiBean as _jyguibean
 
-from jyroi import _roi_wrap, _create_list, _jroi, _roi_list
+from jyroi import _roi_wrap, _create_list, _roi_list
 
 def _wrap_gui_bean(ob, nb):
     for k in ob:
         v = ob[k]
-        if k == _jyparams.roi:
-            v = _roi_wrap(v)
-        elif k == _jyparams.roilist:
+        if k == _jyparams.roilist:
             if v:
                 l = _create_list(v[0])
                 for r in v:
@@ -142,10 +140,7 @@ def _wrap_gui_bean(ob, nb):
 def _unwrap_gui_bean(ob, nb):
     for k in ob:
         v = ob[k]
-        if k == _jyparams.roi:
-            if v is not None and not isinstance(v, _jroi):
-                v = v._jroi()
-        elif k == _jyparams.roilist:
+        if k == _jyparams.roilist:
             if isinstance(v, _roi_list):
                 v = v._jroilist()
         nb[k] = v

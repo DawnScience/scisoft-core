@@ -695,6 +695,22 @@ def _replace_roilist(rl, c): # replace first ROI in list which has the same name
             return True
     return False
 
+def _get_roi(rl, name): # get first ROI in list that has given name
+    for r in rl:
+        if r.name == name:
+            return r
+    return None
+
+def _set_roi(rl, roi, warn): # replace first ROI in list that has given name
+    name = roi.name
+    for i, r in enumerate(rl):
+        if r.name == name:
+            rl[i] = r
+            if warn:
+                print 'Warning: replaced', name, 'in ROI list with current ROI'
+            return
+    rl.append(r) # or append to list
+
 def getbean(name=None):
     '''Get GUI bean (contains information from named view)
 
@@ -704,9 +720,10 @@ def getbean(name=None):
     if name is None:
         name = _PVNAME
     bean = _plot_getbean(name)
-    if parameters.roi in bean and parameters.roilist in bean:
-        # ensure same object is used
-        _replace_roilist(bean[parameters.roilist], bean[parameters.roi])
+    if parameters.roi in bean:
+        bean_name = bean[parameters.roi]
+        # need to present bean with roi instead of name
+        bean[parameters.roi] = _get_roi(bean[parameters.roilist], bean_name)
     
     return bean
 
@@ -721,10 +738,10 @@ def setbean(bean, name=None, warn=True):
         name = _PVNAME
     if bean is not None:
         if parameters.roi in bean and parameters.roilist in bean:
-            # ensure same object is used
+            # ensure current roi is in list
             cr = bean[parameters.roi]
-            if _replace_roilist(bean[parameters.roilist], cr) and warn:
-                print 'Warning: replaced', cr.name, 'in ROI list with current ROI'
+            bean[parameters.roi] = cr.name
+            _set_roi(bean[parameters.roilist], cr, warn)
 
         _plot_setbean(name, bean)
 
@@ -812,7 +829,7 @@ def delroi(bean=None, roi=None, send=False, name=None):
     if parameters.roi in bean:
         if roi is None or isinstance(bean[parameters.roi], roi):
             bean[parameters.roi] = None
-
+            # TODO remove from ROI list?
     if send:
         setbean(bean, name)
     return bean

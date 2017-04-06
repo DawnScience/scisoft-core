@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.GridPreferences;
 import org.eclipse.dawnsci.analysis.dataset.roi.ROIList;
 
@@ -130,9 +129,9 @@ public final class GuiParameters implements Serializable {
 	public static final GuiParameters TITLE = new GuiParameters("Title", String.class);
 
 	/**
-	 * Specifies the ROI data
+	 * Specifies the ROI name
 	 */
-	public static final GuiParameters ROIDATA = new GuiParameters("ROI", IROI.class);
+	public static final GuiParameters ROIDATA = new GuiParameters("ROI", String.class);
 
 	/**
 	 * Specifies the ROI data list

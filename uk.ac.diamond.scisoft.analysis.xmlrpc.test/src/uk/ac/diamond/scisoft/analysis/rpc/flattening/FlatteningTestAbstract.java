@@ -390,7 +390,11 @@ abstract public class FlatteningTestAbstract {
 		bean.put(GuiParameters.TITLE, "My Amazing Plot!");
 		bean.put(GuiParameters.PLOTID, UUID.fromString("93dfd804-85ba-4074-afce-d621f7f2aac6"));
 		RectangularROI rect = new RectangularROI(1.1, -2, 5.0, 10.0, 0.6, true);
-		bean.put(GuiParameters.ROIDATA, rect);
+		rect.setName("Rect 1");
+		bean.put(GuiParameters.ROIDATA, rect.getName());
+		RectangularROIList list = new RectangularROIList();
+		list.add(rect);
+		bean.put(GuiParameters.ROIDATALIST, list);
 		ArrayList<String> fileList = new ArrayList<String>();
 		fileList.add("File1.plot");
 		fileList.add("File2.plot");

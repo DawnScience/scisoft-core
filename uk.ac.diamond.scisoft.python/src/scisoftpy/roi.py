@@ -58,6 +58,8 @@ sector_list = sectlist = _roi.sector_list
 circle_list = _roi.circle_list
 ellipse_list = _roi.ellipse_list
 
+_create_list = _roi._create_list
+
 from scisoftpy.dictutils import ListDict
 
 class roi_dict(ListDict):

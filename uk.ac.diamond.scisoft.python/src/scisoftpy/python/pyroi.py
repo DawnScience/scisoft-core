@@ -298,4 +298,20 @@ class circle_list(roi_list):
 class ellipse_list(roi_list):
     _pcls = ellipse
 
+def _create_list(arg):
+    if isinstance(arg, sector):
+        return sector_list()
+    elif isinstance(arg, rectangle):
+        return rectangle_list()
+    elif isinstance(arg, point):
+        return point_list()
+    elif isinstance(arg, line):
+        return line_list()
+    elif isinstance(arg, ellipse):
+        return ellipse_list()
+    elif isinstance(arg, circle):
+        return circle_list()
+    raise ValueError, "ROI not recognised"
+
+
 from pyprofile import profile  # @UnusedImport

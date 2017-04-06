@@ -132,11 +132,15 @@ public class NumPyFileSaver implements IFileSaver {
 			formatBuilder.append("', 'fortran_order': False, 'shape': (");
 			formatBuilder.append(shapeTuple); // e.g. 100, or 100, 100
 			formatBuilder.append("), }");
-			int hdrSize = formatBuilder.length() + NumPyFile.magic.length + 2 /* header size */;
-			hdrSize = ((hdrSize + 15) / 16) * 16; // round up header length to multiple of 16
-			while (formatBuilder.length() + NumPyFile.magic.length + 2 < hdrSize) {
+			/* header size */
+			int hdrSize = formatBuilder.length() + NumPyFile.magic.length + 2 + 1; // +1 for the newline
+			// header is padded with spaces and exactly one newline to reach multiple of 16 bytes
+			int padding_required = 16 - (hdrSize % 16);
+			hdrSize += padding_required;
+			while (padding_required-- > 0) {
 				formatBuilder.append(' ');
 			}
+			formatBuilder.append('\n');
 
 			byte[] formatBytes;
 			try {

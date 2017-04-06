@@ -227,6 +227,8 @@ public class SplineInterpolationTracker {
 													  1e-30, 
 													  1);	
 
+//		Polynomial Test = Fitter.
+		
 		Dataset calculatedBelowRangeValues = polyFitBelowRange.calculateValues(belowRangeInput);
 		
 		Dataset[] fullRange = new Dataset[] {calculatedBelowRangeValues,

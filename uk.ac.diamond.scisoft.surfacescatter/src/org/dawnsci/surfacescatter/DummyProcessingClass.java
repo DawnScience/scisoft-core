@@ -28,6 +28,7 @@ public class DummyProcessingClass {
 	
 	private static Dataset yValue;
 	private static int DEBUG = 0;
+	private static OperationData outputOD;
 	
 	public static IDataset DummyProcess(SuperModel sm, 
 										IDataset input, 
@@ -59,11 +60,28 @@ public class DummyProcessingClass {
 									  pS);
 				}
 				
-				OperationData outputOD= TwoDFittingIOp(model,
-													   input,
-													   sm,
-													   selection,
-													   trackingMarker);
+				if(AnalaysisMethodologies.toInt(model.getFitPower())<5){
+								  outputOD= TwoDFittingIOp(model,
+														   input,
+														   sm,
+														   selection,
+														   trackingMarker);
+				}
+				else if (model.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_GAUSSIAN){
+					outputOD= TwoDGaussianFittingIOp(model,
+							   input,
+							   sm,
+							   selection,
+							   trackingMarker);
+				}
+				else if (model.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_EXPONENTIAL){
+					outputOD= TwoDExponentialFittingIOp(model,
+							   input,
+							   sm,
+							   selection,
+							   trackingMarker);
+				}
+			
 				output = outputOD.getData();
 				
 				IDataset temporaryBackground = DatasetFactory.ones(new int[] {1});
@@ -106,15 +124,37 @@ public class DummyProcessingClass {
 				}
 				
 				
-				OperationData outputOD1= TwoDFittingIOp(model,
-						   input,
-						   sm,
-						   selection,
-						   trackingMarker);
-				output = outputOD1.getData();
+
+				if(AnalaysisMethodologies.toInt(model.getFitPower())<5){
+								  outputOD= TwoDFittingIOp(model,
+														   input,
+														   sm,
+														   selection,
+														   trackingMarker);
+				}
+				else if (model.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_GAUSSIAN){
+					outputOD= TwoDGaussianFittingIOp(model,
+							   input,
+							   sm,
+							   selection,
+							   trackingMarker);
+				}
+				else if (model.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_EXPONENTIAL){
+					outputOD= TwoDExponentialFittingIOp(model,
+							   input,
+							   sm,
+							   selection,
+							   trackingMarker);
+				}
+				
+				
+				
+				
+				
+				output = outputOD.getData();
 				
 
-				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[0];
+				IDataset temporaryBackground1 = (IDataset) outputOD.getAuxData()[0];
 				
 				sm.setTemporaryBackgroundHolder(temporaryBackground1);
 				
@@ -149,7 +189,6 @@ public class DummyProcessingClass {
 										 		 input,  
 										 		 dm, 
 										 		 pS,
-//										 		 ssvsPS,
 										 		 selection,
 										 		 trackingMarker,
 										 		 k);	
@@ -190,7 +229,6 @@ public class DummyProcessingClass {
 				 		 input,  
 				 		 dm, 
 				 		 pS,
-//				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
 				 		 k);	
@@ -232,8 +270,7 @@ public class DummyProcessingClass {
 				output = outputOD2.getData();
 				
 				IDataset temporaryBackground2 = (IDataset) outputOD2.getAuxData()[1];
-				sm.setTemporaryBackgroundHolder(temporaryBackground2);
-//				
+				sm.setTemporaryBackgroundHolder(temporaryBackground2);		
 								
 				break;
 				
@@ -300,13 +337,6 @@ public class DummyProcessingClass {
 								  input);
 		
 		
-//		try {
-////			Thread.sleep(0);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double fhkl = (double) 0.001;
 			if (intensity >=0){
@@ -361,19 +391,40 @@ public class DummyProcessingClass {
 									  selection,
 									  pS);
 				
-
-				OperationData outputOD= TwoDFittingIOp(model,
-													   input,
-													   sm,
-													   selection,
-													   trackingMarker);
-				output = outputOD.getData();
-
-				IDataset temporaryBackground = DatasetFactory.ones(new int[] {1});
+				if(AnalaysisMethodologies.toInt(model.getFitPower())<5){
+					  outputOD= TwoDFittingIOp(model,
+											   input,
+											   sm,
+											   selection,
+											   trackingMarker);
+				}
+				else if (model.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_GAUSSIAN){
+					outputOD= TwoDGaussianFittingIOp(model,
+							   input,
+							   sm,
+							   selection,
+							   trackingMarker);
+				}
+				else if (model.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_EXPONENTIAL){
+					outputOD= TwoDExponentialFittingIOp(model,
+							   input,
+							   sm,
+							   selection,
+							   trackingMarker);
+				}
 				
-				temporaryBackground =  (IDataset) outputOD.getAuxData()[0];
+			
+				
+				
+				
+				
+				output = outputOD.getData();
+				
+			
+				IDataset temporaryBackground1 = (IDataset) outputOD.getAuxData()[0];
+			
 
-				sm.setTemporaryBackgroundHolder(temporaryBackground);
+				sm.setTemporaryBackgroundHolder(temporaryBackground1);
 				
 				
 				break;
@@ -400,15 +451,36 @@ public class DummyProcessingClass {
 					(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
-				OperationData outputOD1= TwoDFittingIOp(model,
-						   input,
-						   sm,
-						   selection,
-						   trackingMarker);
-				output = outputOD1.getData();
+				if(AnalaysisMethodologies.toInt(model.getFitPower())<5){
+					  outputOD= TwoDFittingIOp(model,
+											   input,
+											   sm,
+											   selection,
+											   trackingMarker);
+				}
+				else if (model.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_GAUSSIAN){
+					outputOD= TwoDGaussianFittingIOp(model,
+							   input,
+							   sm,
+							   selection,
+							   trackingMarker);
+				}
+				else if (model.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_EXPONENTIAL){
+					outputOD= TwoDExponentialFittingIOp(model,
+							   input,
+							   sm,
+							   selection,
+							   trackingMarker);
+				}
 				
-				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[0];
-
+				
+				
+				
+				
+				output = outputOD.getData();
+				
+			
+				temporaryBackground1 = (IDataset) outputOD.getAuxData()[0];
 				sm.setTemporaryBackgroundHolder(temporaryBackground1);
 				
 				
@@ -640,11 +712,33 @@ public class DummyProcessingClass {
 								  selection,
 								  pS);
 				
-				OperationData outputOD= TwoDFittingIOp(model,
-													   input,
-													   sm,
-													   selection,
-													   trackingMarker);
+				
+				if(AnalaysisMethodologies.toInt(model.getFitPower())<5){
+					  outputOD= TwoDFittingIOp(model,
+											   input,
+											   sm,
+											   selection,
+											   trackingMarker);
+				}
+				else if (model.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_GAUSSIAN){
+					outputOD= TwoDGaussianFittingIOp(model,
+							   input,
+							   sm,
+							   selection,
+							   trackingMarker);
+				}
+				else if (model.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_EXPONENTIAL){
+					outputOD= TwoDExponentialFittingIOp(model,
+							   input,
+							   sm,
+							   selection,
+							   trackingMarker);
+				}
+				
+				
+				
+				
+				
 				output = outputOD.getData();
 				
 				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[0];
@@ -681,17 +775,37 @@ public class DummyProcessingClass {
 				
 				
 				
-				OperationData outputOD1= TwoDFittingIOp(model,
-						   input,
-						   sm,
-						   selection,
-						   trackingMarker);
+				
+				if(AnalaysisMethodologies.toInt(model.getFitPower())<5){
+					  outputOD= TwoDFittingIOp(model,
+											   input,
+											   sm,
+											   selection,
+											   trackingMarker);
+				}
+				else if (model.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_GAUSSIAN){
+					outputOD= TwoDGaussianFittingIOp(model,
+							   input,
+							   sm,
+							   selection,
+							   trackingMarker);
+				}
+				else if (model.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_EXPONENTIAL){
+					outputOD= TwoDExponentialFittingIOp(model,
+							   input,
+							   sm,
+							   selection,
+							   trackingMarker);
+				}
 				
 				
-
-				output = outputOD1.getData();
-
-				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[0];
+				
+				
+				
+				output = outputOD.getData();
+				
+			
+				IDataset temporaryBackground1 = (IDataset) outputOD.getAuxData()[0];
 				
 				sm.setTemporaryBackgroundHolder(temporaryBackground1);
 				
@@ -926,16 +1040,40 @@ public class DummyProcessingClass {
 						pS);
 				
 
-				OperationData outputOD= TwoDFittingIOp(model,
-													   input, 
-													   sm,
-													   selection,
-													   trackingMarker);
+				
+				if(AnalaysisMethodologies.toInt(model.getFitPower())<5){
+					  outputOD= TwoDFittingIOp(model,
+											   input,
+											   sm,
+											   selection,
+											   trackingMarker);
+				}
+				else if (model.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_GAUSSIAN){
+					outputOD= TwoDGaussianFittingIOp(model,
+							   input,
+							   sm,
+							   selection,
+							   trackingMarker);
+				}
+				else if (model.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_EXPONENTIAL){
+					outputOD= TwoDExponentialFittingIOp(model,
+							   input,
+							   sm,
+							   selection,
+							   trackingMarker);
+				}
+				
+				
+				
+				
+				
 				output = outputOD.getData();
 				
-				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[0];
+			
+				IDataset temporaryBackground1 = (IDataset) outputOD.getAuxData()[0];
+
 				
-				sm.setTemporaryBackgroundHolder(temporaryBackground);
+				sm.setTemporaryBackgroundHolder(temporaryBackground1);
 
 				break;
 				
@@ -967,15 +1105,36 @@ public class DummyProcessingClass {
 							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
-				OperationData outputOD1= TwoDFittingIOp(model,
-													   input,
-													   sm,
-													   selection,
-													   trackingMarker);
-				output = outputOD1.getData();
+				if(AnalaysisMethodologies.toInt(model.getFitPower())<5){
+					  outputOD= TwoDFittingIOp(model,
+											   input,
+											   sm,
+											   selection,
+											   trackingMarker);
+				}
+				else if (model.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_GAUSSIAN){
+					outputOD= TwoDGaussianFittingIOp(model,
+							   input,
+							   sm,
+							   selection,
+							   trackingMarker);
+				}
+				else if (model.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_EXPONENTIAL){
+					outputOD= TwoDExponentialFittingIOp(model,
+							   input,
+							   sm,
+							   selection,
+							   trackingMarker);
+				}
 				
-				IDataset temporaryBackground1 = (IDataset) outputOD1.getAuxData()[0];
 				
+				
+				
+				
+				output = outputOD.getData();
+				
+			
+				temporaryBackground1 = (IDataset) outputOD.getAuxData()[0];				
 			
 				sm.setTemporaryBackgroundHolder(temporaryBackground1);
 				
@@ -1233,6 +1392,113 @@ public class DummyProcessingClass {
 		return tdfuio.execute(input, null);
 		
 	}
+	
+	public static OperationData TwoDGaussianFittingIOp(ExampleModel model,
+														IDataset input,
+														SuperModel sm,
+														int k,
+														int trackingMarker){
+
+		TwoDFittingModel tdfm = new TwoDFittingModel();
+		tdfm.setInitialLenPt(sm.getInitialLenPt());
+		
+		if (trackingMarker != 3){
+			double[] p = sm.getLocationList().get(k);
+			int[] pt = new int[]{(int) p[0], (int) p[1]}; 
+			int[] len = sm.getInitialLenPt()[0]; 
+			int[][] lenPt = new int[][] {len,pt};
+			if(p[0] != 0 && p[1] != 0){
+				tdfm.setLenPt(lenPt);
+			}
+			else{
+				tdfm.setLenPt(sm.getInitialLenPt());
+			}
+		}
+		
+		else{
+			tdfm.setLenPt(sm.getInitialLenPt());
+		}
+		
+		tdfm.setFitPower(model.getFitPower());
+		tdfm.setBoundaryBox(model.getBoundaryBox());
+		
+		Metadata md = new Metadata();
+		Map<String, Integer> dumMap = new HashMap<String, Integer>();
+		dumMap.put("one", 1);
+		md.initialize(dumMap);
+		
+		ILazyDataset  ild = null;
+		
+		SourceInformation  si =new SourceInformation("dummy", "dummy2", ild);
+		
+		SliceFromSeriesMetadata sfsm = new SliceFromSeriesMetadata(si);
+		
+		input.setMetadata(sfsm);
+		
+		input.setMetadata(md);
+		
+		TwoDGaussianFittingUsingIOperation tdgfuio = new TwoDGaussianFittingUsingIOperation();
+		tdgfuio.setModel(tdfm);
+		
+		return tdgfuio.execute(input, null);
+		
+	}
+	
+	public static OperationData TwoDExponentialFittingIOp(ExampleModel model,
+			IDataset input,
+			SuperModel sm,
+			int k,
+			int trackingMarker){
+
+
+		TwoDFittingModel tdfm = new TwoDFittingModel();
+		tdfm.setInitialLenPt(sm.getInitialLenPt());
+		
+		if (trackingMarker != 3){
+			double[] p = sm.getLocationList().get(k);
+			int[] pt = new int[]{(int) p[0], (int) p[1]}; 
+			int[] len = sm.getInitialLenPt()[0]; 
+			int[][] lenPt = new int[][] {len,pt};
+			
+			if(p[0] != 0 && p[1] != 0){
+				tdfm.setLenPt(lenPt);
+			}
+			
+			else{
+				tdfm.setLenPt(sm.getInitialLenPt());
+			}
+		}
+		
+		else{
+			tdfm.setLenPt(sm.getInitialLenPt());
+		}
+		
+		tdfm.setFitPower(model.getFitPower());
+		tdfm.setBoundaryBox(model.getBoundaryBox());
+		
+		Metadata md = new Metadata();
+		Map<String, Integer> dumMap = new HashMap<String, Integer>();
+		dumMap.put("one", 1);
+		md.initialize(dumMap);
+		
+		ILazyDataset  ild = null;
+		
+		SourceInformation  si =new SourceInformation("dummy", "dummy2", ild);
+		
+		SliceFromSeriesMetadata sfsm = new SliceFromSeriesMetadata(si);
+		
+		input.setMetadata(sfsm);
+		
+		input.setMetadata(md);
+		
+		RefinedTwoDExponentialFittingUsingIOperation rtdefuio = new RefinedTwoDExponentialFittingUsingIOperation();
+		rtdefuio.setModel(tdfm);
+		
+		return rtdefuio.execute(input, null);
+		
+	}
+	
+	
 	
 	public static IDataset caseXY(SuperModel sm,
 								  ExampleModel model,

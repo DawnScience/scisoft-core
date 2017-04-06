@@ -61,7 +61,7 @@ public class AnalaysisMethodologies {
 	
 	
 	public enum FitPower {
-		ZERO, ONE, TWO, THREE ,FOUR
+		ZERO, ONE, TWO, THREE ,FOUR, TWOD_GAUSSIAN, TWOD_EXPONENTIAL
 	}
 	
 	
@@ -79,6 +79,10 @@ public class AnalaysisMethodologies {
 				return 3;
 			case FOUR:
 				return 4;
+			case TWOD_GAUSSIAN:
+				return 5;
+			case TWOD_EXPONENTIAL:
+				return 6;
 		}
 		return (Integer) null;
 	}
@@ -96,6 +100,10 @@ public class AnalaysisMethodologies {
 				return "3";
 			case FOUR:
 				return "4";
+			case TWOD_GAUSSIAN:
+				return "2D Gaussian";
+			case TWOD_EXPONENTIAL:
+				return "2D Exponential";
 		}
 		return (String) null;
 	}
@@ -116,6 +124,12 @@ public class AnalaysisMethodologies {
 		}
 		else if (in == 4){
 			return FitPower.FOUR;
+		}
+		else if (in == 5){
+			return FitPower.TWOD_GAUSSIAN;
+		}
+		else if (in == 6){
+			return FitPower.TWOD_EXPONENTIAL;
 		}
 		return null;
 	}
@@ -153,6 +167,12 @@ public class AnalaysisMethodologies {
 		}
 		else if (in.equals("FOUR")){
 			return FitPower.FOUR;
+		}
+		else if (in.equals("2D Gaussian")){
+			return FitPower.TWOD_GAUSSIAN;
+		}
+		else if (in.equals("2D Exponential")){
+			return FitPower.TWOD_EXPONENTIAL;
 		}
 		return null;
 	}

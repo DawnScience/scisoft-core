@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.complex.Complex;
 import org.ddogleg.solver.PolynomialOps;
@@ -25,7 +24,6 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.Maths;
 import org.ejml.data.Complex64F;
 
 /**
@@ -328,7 +326,7 @@ public class Polynomial2D extends AFunction {
 		}
 	
 		return output1;
-}
+	}
 	
 	
 //	@Override

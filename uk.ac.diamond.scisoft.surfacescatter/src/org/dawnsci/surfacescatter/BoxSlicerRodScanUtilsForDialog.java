@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.january.dataset.Dataset;
@@ -206,6 +205,62 @@ public class BoxSlicerRodScanUtilsForDialog {
 
 	return output;
 	}	
+	
+	public static Dataset[] LeftRightTopBottomBoxesForGaussian (IDataset input , 
+			int[] len, int[] pt, int boundaryBox) throws OperationException{
+		
+		
+		Dataset regionOfRegard = regionOfRegard(input, len, pt, boundaryBox);
+		
+		int noOfPoints = (len[1] + 2*boundaryBox)*(len[0] +2*boundaryBox) - len[1]*len[0];
+		
+		DoubleDataset xset = DatasetFactory.createRange(len[0]+2*boundaryBox);
+		DoubleDataset yset = DatasetFactory.createRange(len[1]+2*boundaryBox);
+		DoubleDataset zset = DatasetFactory.zeros(DoubleDataset.class,
+												  new int[] {(len[1] +2*boundaryBox),(len[0] + 2*boundaryBox)});
+		
+				
+		for (int i =0; i<(len[1]+2*boundaryBox); i++){
+			for (int j = 0; j<(len[0] + 2*boundaryBox);j++){
+
+				if ((j<boundaryBox || j>=(boundaryBox+len[0]))||(i<boundaryBox || i>=(boundaryBox+len[1]))){
+
+					try{
+						zset.set(regionOfRegard.getDouble(i, j), i, j);
+						
+					}
+					catch(ArrayIndexOutOfBoundsException e){
+						System.out.println("i:  " + i + "      j: " + j);;
+						Dataset[] errorDatArray = new Dataset[1];
+						Dataset errorDat = DatasetFactory.zeros(new int [] {2,2});
+						IndexIterator it1 = ((Dataset) errorDat).getIterator();
+						
+						while (it1.hasNext()) {
+							double q = ((Dataset) errorDat).getElementDoubleAbs(it1.index);
+							if (q <= 0)
+								((Dataset) errorDat).setObjectAbs(it1.index, 0.1);
+						}
+						
+						errorDatArray[0] = errorDat;
+						return errorDatArray;
+					}	
+				}
+				else{
+					zset.set(Double.NaN, i, j);
+					}		
+				}
+		}	
+		
+		Dataset[] output = new Dataset[3];
+		
+		output[0] = xset;
+		output[1] = yset;
+		output[2] = zset;
+		
+
+	return output;
+	}	
+	
 	
 	
 	public static Dataset[] LeftRightTopBottomHalfBoxes (IDataset input , 
@@ -420,17 +475,17 @@ public class BoxSlicerRodScanUtilsForDialog {
 		
 		switch(am){
 			case  TWOD_TRACKING:
-				bgLen[0] = bgLen[0] + 2*bgBox;
-				bgLen[1] = bgLen[1] + 2*bgBox;
+				bgLen[0] = bgLen[0] + 2*bgBox+1;
+				bgLen[1] = bgLen[1] + 2*bgBox+1;
 				
-				bgPt[0] = bgPt[0] - bgBox;
-				bgPt[1] = bgPt[1] - bgBox;
+				bgPt[0] = bgPt[0] - bgBox+1;
+				bgPt[1] = bgPt[1] - bgBox+1;
 				
 				return new double[] {bgPt[0], bgPt[1], bgLen[0], bgLen[1], 0};
 			
 			case  TWOD:
-				bgLen[0] = bgLen[0] + 2*bgBox;
-				bgLen[1] = bgLen[1] + 2*bgBox;
+				bgLen[0] = bgLen[0] + 2*bgBox+1;
+				bgLen[1] = bgLen[1] + 2*bgBox+1;
 				
 				bgPt[0] = bgPt[0] - bgBox;
 				bgPt[1] = bgPt[1] - bgBox;
@@ -438,7 +493,7 @@ public class BoxSlicerRodScanUtilsForDialog {
 				return new double[] {bgPt[0], bgPt[1], bgLen[0], bgLen[1], 0};
 				
 			case  X:
-				bgLen[0] = bgLen[0] + 2*bgBox;
+				bgLen[0] = bgLen[0] + 2*bgBox+1;
 				bgLen[1] = bgLen[1];
 				
 				bgPt[0] = bgPt[0] - bgBox;
@@ -448,7 +503,7 @@ public class BoxSlicerRodScanUtilsForDialog {
 				
 			case  Y:
 				bgLen[0] = bgLen[0];
-				bgLen[1] = bgLen[1] + 2*bgBox;
+				bgLen[1] = bgLen[1] + 2*bgBox+1;
 				
 				bgPt[0] = bgPt[0];
 				bgPt[1] = bgPt[1] - bgBox;

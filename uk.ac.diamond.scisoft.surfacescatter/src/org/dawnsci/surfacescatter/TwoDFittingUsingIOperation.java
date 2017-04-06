@@ -10,8 +10,6 @@
 package org.dawnsci.surfacescatter;
 
 import java.util.Arrays;
-
-import org.dawnsci.surfacescatter.AnalaysisMethodologies.FitPower;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
@@ -24,7 +22,6 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.LinearAlgebra;
 import org.eclipse.january.dataset.Maths;
-import org.eclipse.swt.widgets.Display;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial2D;
 
 /**
@@ -68,7 +65,7 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 		if (Arrays.equals(in1.getShape(), new int[] { len[1], len[0] }) == false) {
 			IDataset location = DatasetFactory.ones(new int[] {2,2});
 			Dataset errorDat = DatasetFactory.zeros(new int[] { 2, 2 });
-			IndexIterator it2 = errorDat.getIterator();
+//			IndexIterator it2 = errorDat.getIterator();
 
 			return new OperationData(errorDat, location);
 		}

@@ -10,7 +10,6 @@
 package org.dawnsci.surfacescatter;
 
 import java.util.Arrays;
-
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;

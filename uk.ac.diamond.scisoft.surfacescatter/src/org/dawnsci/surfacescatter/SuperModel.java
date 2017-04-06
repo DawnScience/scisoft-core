@@ -22,6 +22,7 @@ public class SuperModel {
 	private int selection = 0;
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private IDataset splicedCurveX;
+	private IDataset splicedCurveQ;
 	private IDataset splicedCurveY;
 	private IDataset splicedCurveYFhkl;
 	private MethodSetting correctionSelection = MethodSetting.SXRD;
@@ -40,6 +41,7 @@ public class SuperModel {
 	private int[] filepathsSortedArray;
 	private int sliderPos;
 	private ArrayList<Double> xList;
+	private ArrayList<Double> qList;
 	private ArrayList<Double> yList;
 	private ArrayList<Double> yListError;
 	private ArrayList<Double> yListFhkl;
@@ -86,7 +88,16 @@ public class SuperModel {
 	private ArrayList<double[][]> interpolatorBoxes;
 	private ArrayList<IRegion> interpolatorRegions;
 	private ArrayList<double[][]> interpolatedLenPts;
+	private double energy;
 	
+	public double getEnergy() {
+		return energy;
+	}
+
+	public void setEnergy(double energy) {
+		this.energy = energy;
+	}
+
 	public ArrayList<double[][]> getInterpolatedLenPts() {
 		return interpolatedLenPts;
 	}
@@ -308,8 +319,97 @@ public class SuperModel {
 	public ArrayList<IDataset> getBackgroundDatArray() {
 		return backgroundDatArray;
 	}
+	
 	public void setBackgroundDatArray(ArrayList<IDataset> backgroundDatArray) {
 		this.backgroundDatArray = backgroundDatArray;
+	}
+	
+	
+	public void qConversion(){
+		
+		if(xList !=null){
+			
+			try{
+				if (qList==null){
+					qList = new ArrayList<Double>();
+					for (int i = 0; i < xList.size(); i++) {
+						  qList.add(0.0);
+						}
+				}
+				
+				if (qList.size() == 0){
+					qList = new ArrayList<Double>();
+					for (int i = 0; i < xList.size(); i++) {
+						  qList.add(0.0);
+						}
+				}
+			}
+			catch(Exception o){
+				
+			}
+			
+			try{
+				
+			
+				for(int i = 0 ; i < xList.size(); i++){
+					
+					double energyJ  = energy*1000*1.602177*Math.pow(10, -19);
+					double hc = 1.98644568*Math.pow(10, -25);
+					double q = 4*Math.PI* Math.sin(xList.get(i))*energyJ/ hc;
+					
+					double qA = q/(Math.pow(10, -10));
+					try{
+						qList.set(i, qA);
+					}
+					catch(NullPointerException d){
+						qList.add(qA);
+					}
+				}
+			}
+			catch(Exception p){
+				
+			}
+		}
+		
+		if(splicedCurveX !=null){
+			
+			try{
+				if (splicedCurveQ==null){
+					
+					splicedCurveQ = DatasetFactory.createFromObject(splicedCurveX);
+					
+				}
+				
+				if (splicedCurveQ.getSize() == 0){
+					splicedCurveQ = DatasetFactory.createFromObject(splicedCurveX);
+					
+				}
+			}
+			catch(Exception o){
+				
+			}
+			
+			try{
+			
+				for(int i = 0 ; i < splicedCurveX.getSize(); i++){
+					
+					double energyJ  = energy*1000*1.602177*Math.pow(10, -19);
+					double hc = 1.98644568*Math.pow(10, -25);
+					double q = 4*Math.PI* Math.sin(splicedCurveX.getDouble(i))*energyJ/ hc;
+					
+					double qA = q/(Math.pow(10, -10));
+					try{
+						splicedCurveQ.set(qA, i);
+					}
+					catch(NullPointerException d){
+					
+					}
+				}
+			}
+			catch(Exception p){
+				
+			}
+		}
 	}
 	
 	public void addOutputDatArray(IDataset in){
@@ -1469,6 +1569,22 @@ public class SuperModel {
 
 	public void setInterpolatorRegions(ArrayList<IRegion> interpolatorRegions) {
 		this.interpolatorRegions = interpolatorRegions;
+	}
+
+	public ArrayList<Double> getqList() {
+		return qList;
+	}
+
+	public void setqList(ArrayList<Double> qList) {
+		this.qList = qList;
+	}
+
+	public IDataset getSplicedCurveQ() {
+		return splicedCurveQ;
+	}
+
+	public void setSplicedCurveQ(IDataset splicedCurveQ) {
+		this.splicedCurveQ = splicedCurveQ;
 	}
 	
 	

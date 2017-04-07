@@ -34,6 +34,7 @@ public class SuperModel {
 	private IDataset splicedCurveYFhklErrorMin;
 	private ILazyDataset imageStack;
 	private Dataset sortedX; // this the scanned variable, e.g. l or qdcd
+	private Dataset sortedQ; 
 	private Dataset nullImage;
 	@SuppressWarnings("rawtypes")
 	private TreeMap sortedImages;
@@ -52,7 +53,7 @@ public class SuperModel {
 	private ArrayList<IDataset> backgroundDatArray;
 	private ArrayList<double[]> locationList; 
 	private int[][] initialLenPt = new int[][] {{50, 50}, {10, 10}};
-	private boolean errorDisplayFlag = true;
+	private boolean errorDisplayFlag = false;
 	private IRectangularROI backgroundROI = new RectangularROI(10,10,50,50,0);
 	private int[][] backgroundLenPt;
 	private RectangularROI backgroundBox;
@@ -89,6 +90,7 @@ public class SuperModel {
 	private ArrayList<IRegion> interpolatorRegions;
 	private ArrayList<double[][]> interpolatedLenPts;
 	private double energy;
+	private int theta = 0;
 	
 	public double getEnergy() {
 		return energy;
@@ -327,6 +329,10 @@ public class SuperModel {
 	
 	public void qConversion(){
 		
+		qList =null;
+		splicedCurveQ =null;
+		sortedQ = null;
+		
 		if(xList !=null){
 			
 			try{
@@ -357,7 +363,7 @@ public class SuperModel {
 					double hc = 1.98644568*Math.pow(10, -25);
 					double q = 4*Math.PI* Math.sin(xList.get(i))*energyJ/ hc;
 					
-					double qA = q/(Math.pow(10, -10));
+					double qA = q/(Math.pow(10, 10));
 					try{
 						qList.set(i, qA);
 					}
@@ -375,14 +381,16 @@ public class SuperModel {
 			
 			try{
 				if (splicedCurveQ==null){
-					
-					splicedCurveQ = DatasetFactory.createFromObject(splicedCurveX);
-					
+					splicedCurveQ = DatasetFactory.zeros(splicedCurveX.getShape());
 				}
 				
 				if (splicedCurveQ.getSize() == 0){
-					splicedCurveQ = DatasetFactory.createFromObject(splicedCurveX);
+					splicedCurveQ = DatasetFactory.zeros(splicedCurveX.getShape());
 					
+				}
+				
+				if (splicedCurveQ.getSize()!=splicedCurveX.getSize()){
+					splicedCurveQ = DatasetFactory.zeros(splicedCurveX.getShape());
 				}
 			}
 			catch(Exception o){
@@ -395,9 +403,11 @@ public class SuperModel {
 					
 					double energyJ  = energy*1000*1.602177*Math.pow(10, -19);
 					double hc = 1.98644568*Math.pow(10, -25);
-					double q = 4*Math.PI* Math.sin(splicedCurveX.getDouble(i))*energyJ/ hc;
+					double q = 4*Math.PI* (Math.sin((theta +1 )*splicedCurveX.getDouble(i)))*energyJ/ hc;
 					
-					double qA = q/(Math.pow(10, -10));
+//					IDataset x= splicedCurveX;
+					
+					double qA = q/(Math.pow(10, 10));
 					try{
 						splicedCurveQ.set(qA, i);
 					}
@@ -410,8 +420,54 @@ public class SuperModel {
 				
 			}
 		}
+		
+		if(sortedX !=null){
+			
+			try{
+				if (sortedQ==null){
+					sortedQ = DatasetFactory.zeros(sortedX.getShape());
+				}
+				
+				if (sortedQ.getSize() == 0){
+					sortedQ = DatasetFactory.zeros(sortedX.getShape());
+					
+				}
+				
+				if (sortedQ.getSize()!=sortedX.getSize()){
+					sortedQ = DatasetFactory.zeros(sortedX.getShape());
+				}
+			}
+			catch(Exception o){
+				
+			}
+			
+			try{
+			
+				for(int i = 0 ; i < sortedX.getSize(); i++){
+					
+					double energyJ  = energy*1000*1.602177*Math.pow(10, -19);
+					double hc = 1.98644568*Math.pow(10, -25);
+					double q = 4*Math.PI* (Math.sin((theta +1 )*sortedX.getDouble(i)))*energyJ/ hc;
+					
+//					IDataset x= sortedX;
+					
+					double qA = q/(Math.pow(10, 10));
+					try{
+						sortedQ.set(qA, i);
+					}
+					catch(NullPointerException d){
+					
+					}
+				}
+			}
+			catch(Exception p){
+				
+			}
+		}
+		
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void addOutputDatArray(IDataset in){
 		if (outputDatArray==null){
 			outputDatArray = new ArrayList<IDataset>();
@@ -1585,6 +1641,22 @@ public class SuperModel {
 
 	public void setSplicedCurveQ(IDataset splicedCurveQ) {
 		this.splicedCurveQ = splicedCurveQ;
+	}
+
+	public int getTheta() {
+		return theta;
+	}
+
+	public void setTheta(int theta) {
+		this.theta = theta;
+	}
+
+	public Dataset getSortedQ() {
+		return sortedQ;
+	}
+
+	public void setSortedQ(Dataset sortedQ) {
+		this.sortedQ = sortedQ;
 	}
 	
 	

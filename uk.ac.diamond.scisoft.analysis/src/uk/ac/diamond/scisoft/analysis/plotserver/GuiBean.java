@@ -13,6 +13,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.dawnsci.analysis.api.roi.IROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.ROIList;
+import org.eclipse.dawnsci.analysis.dataset.roi.ROIUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,10 +66,44 @@ public class GuiBean extends HashMap<GuiParameters, Serializable> implements Ser
 		return returnValue;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Serializable put(GuiParameters key, Serializable value) {
 		if (key == null) {
 			throw new NullPointerException("key must not be null");
+		}
+		if (key.equals(GuiParameters.ROIDATA)) { // special case to handle old users of ROIDATA
+			if (!key.getStorageClass().isInstance(value)) {
+				if (value instanceof IROI) {
+					IROI roi = (IROI) value;
+					String name = roi.getName();
+					ROIList<IROI> list = (ROIList<IROI>) get(GuiParameters.ROIDATALIST);
+					if (list == null || list.size() == 0) {
+						list = (ROIList<IROI>) ROIUtils.createNewROIList(roi);
+					} else {
+						IROI oroi = list.get(0);
+						if (!oroi.getClass().isAssignableFrom(roi.getClass())) {
+							list = (ROIList<IROI>) ROIUtils.createNewROIList(roi); // overwrite list
+						}
+					}
+					boolean found = false;
+					for (int i = 0, imax = list.size(); i < imax; i++) {
+						IROI r = list.get(i);
+						if (r.getName().equals(name)) {
+							found = true;
+							if (r != roi) {
+								list.set(i, roi);
+							}
+							break;
+						}
+					}
+					if (!found) {
+						list.add(roi);
+					}
+					super.put(GuiParameters.ROIDATALIST, list);
+					value = roi.getName();
+				}
+			}
 		}
 		if (warn && value != null && !key.getStorageClass().isInstance(value)) {
 			logger.error("Value in GuiBean for key " + key.toString() + " is not of expected type. A ClassCastException is likely");
@@ -87,5 +124,21 @@ public class GuiBean extends HashMap<GuiParameters, Serializable> implements Ser
 
 	public void setWarn(boolean warn) {
 		this.warn = warn;
+	}
+
+	/**
+	 * @return roi if it can be found otherwise null
+	 */
+	public IROI getROI() {
+		String name = (String) get(GuiParameters.ROIDATA);
+		if (name != null) {
+			ROIList<?> list = (ROIList<?>) get(GuiParameters.ROIDATALIST);
+			for (IROI r : list) {
+				if (r.getName().equals(name)) {
+					return r;
+				}
+			}
+		}
+		return null;
 	}
 }

@@ -410,6 +410,7 @@ public class SuperModel {
 					double qA = q/(Math.pow(10, 10));
 					try{
 						splicedCurveQ.set(qA, i);
+//						System.out.println("i: " + i + "  qA: "+ qA);
 					}
 					catch(NullPointerException d){
 					

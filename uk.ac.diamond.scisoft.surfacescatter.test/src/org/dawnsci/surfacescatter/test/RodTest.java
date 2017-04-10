@@ -31,14 +31,14 @@ public class RodTest {
 
 		ssp.setImageFolderPath(null);
 
-		ssvs = new SurfaceScatterViewStart(s, 
-				null, 
-				ssp.getNumberOfImages(), 
-				ssp.getImage(0),
-				ssp,
-				null);
-
-		ssp.setSsvs(ssvs);
+//		ssvs = new SurfaceScatterViewStart(s, 
+//				null, 
+//				ssp.getNumberOfImages(), 
+//				ssp.getImage(0),
+//				ssp,
+//				null);
+//
+//		ssp.setSsvs(ssvs);
 		
 	}
 	

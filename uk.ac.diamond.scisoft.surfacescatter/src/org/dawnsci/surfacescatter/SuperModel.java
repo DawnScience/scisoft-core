@@ -37,10 +37,11 @@ public class SuperModel {
 	private Dataset sortedQ; 
 	private Dataset nullImage;
 	@SuppressWarnings("rawtypes")
-	private TreeMap sortedImages;
+//	private TreeMap sortedImages;
 	private ILazyDataset[] images;
 	private int[] filepathsSortedArray;
 	private int sliderPos;
+	private IImageTracker initialTracker;
 	private ArrayList<Double> xList;
 	private ArrayList<Double> qList;
 	private ArrayList<Double> yList;
@@ -58,7 +59,6 @@ public class SuperModel {
 	private int[][] backgroundLenPt;
 	private RectangularROI backgroundBox;
 	private IImageTracker tracker;
-	private IImageTracker initialTracker;
 	private ArrayList<double[]> trackerLocationList;
 	private ArrayList<Double> trackerKList;
 	private IDataset temporaryBackgroundHolder; // in1Background
@@ -257,7 +257,6 @@ public class SuperModel {
 
 	public void resetTrackers(){
 		tracker = null;
-		initialTracker = null;
 	}
 	
 	public int[][] getBackgroundLenPt() {
@@ -1137,13 +1136,13 @@ public class SuperModel {
 		this.nullImage = nullImage;
 	}
 
-	public TreeMap getSortedImages() {
-		return sortedImages;
-	}
+//	public TreeMap getSortedImages() {
+//		return sortedImages;
+//	}
 
-	public void setSortedImages(TreeMap sortedImages) {
-		this.sortedImages = sortedImages;
-	}
+//	public void setSortedImages(TreeMap sortedImages) {
+//		this.sortedImages = sortedImages;
+//	}
 
 	public ILazyDataset[] getImages() {
 		return images;
@@ -1335,13 +1334,13 @@ public class SuperModel {
 		this.trackerLocationList = trackerLocationList;
 	}
 
-	public ArrayList<Double> getTrackerKList() {
-		return trackerKList;
-	}
+//	public ArrayList<Double> getTrackerKList() {
+//		return trackerKList;
+//	}
 
-	public void setTrackerKList(ArrayList<Double> trackerKList) {
-		this.trackerKList = trackerKList;
-	}
+//	public void setTrackerKList(ArrayList<Double> trackerKList) {
+//		this.trackerKList = trackerKList;
+//	}
 
 	public int[][] getBoxOffsetLenPt() {
 		return boxOffsetLenPt;
@@ -1654,12 +1653,5 @@ public class SuperModel {
 
 	public Dataset getSortedQ() {
 		return sortedQ;
-	}
-
-	public void setSortedQ(Dataset sortedQ) {
-		this.sortedQ = sortedQ;
-	}
-	
-	
-	
+	}	
 }

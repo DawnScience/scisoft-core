@@ -129,7 +129,8 @@ public class RegisterImage2 implements DatasetToDatasetFunction {
 	 */
 	public Dataset pTF(IDataset image) {
 		// TODO use gradient images (dx, dy) as complex pair
-		DoubleDataset preprocessed = DatasetUtils.cast(DoubleDataset.class, image.getSlice(slice)).isubtract(image.mean()).imultiply(window);
+		DoubleDataset preprocessed = DatasetUtils.cast(DoubleDataset.class, image.getSlice(slice));
+		preprocessed.isubtract(preprocessed.mean()).imultiply(window);
 		Dataset transform = FFT.fftn(preprocessed, pShape, null);
 		if (tFilter  != null) {
 			transform.imultiply(tFilter);
@@ -299,7 +300,7 @@ public class RegisterImage2 implements DatasetToDatasetFunction {
 		DoubleDataset vecr = fit[0];
 		shift = new double[2];
 		result.add(DatasetFactory.createFromObject(shift.clone()));
-		Dataset shiftedImage = shiftImage ? shiftImage(DatasetUtils.convertToDataset(datasets[0]) , shift) : null;
+		Dataset shiftedImage = shiftImage ? DatasetUtils.convertToDataset(datasets[0]).clone() : null;
 		result.add(shiftedImage);
 		for (int i = 1; i < n; i++) {
 			int x = 2*i - 2;
@@ -307,7 +308,7 @@ public class RegisterImage2 implements DatasetToDatasetFunction {
 			shift[1] += vecr.get(x+1);
 //			System.err.println("Cumulative shifts for " + i + ": " + Arrays.toString(shift));
 			result.add(DatasetFactory.createFromObject(shift.clone()));
-			shiftedImage = shiftImage ? shiftImage(DatasetUtils.convertToDataset(datasets[i]) , shift) : null;
+			shiftedImage = shiftImage ? shiftImage(DatasetUtils.convertToDataset(datasets[i]), shift) : null;
 			result.add(shiftedImage);
 			if (shiftImage && monitor != null) {
 				if(monitor.isCancelled()) {
@@ -321,24 +322,24 @@ public class RegisterImage2 implements DatasetToDatasetFunction {
 
 	private DoubleDataset[] fitLeastSquares(List<double[]> rows, boolean[] use) {
 		int used = 0;
-		for (int i = 0; i < use.length; i++) {
-			if (use[i]) {
+		for (boolean u : use) {
+			if (u) {
 				used++;
 			}
 		}
 
-		int len = rows.get(0).length;
+		int end = rows.get(0).length - 1;
 
 		DoubleDataset vecb = DatasetFactory.zeros(DoubleDataset.class, used);
-		DoubleDataset matA = DatasetFactory.zeros(DoubleDataset.class, used, len - 1);
+		DoubleDataset matA = DatasetFactory.zeros(DoubleDataset.class, used, end);
 		int k = 0;
 		for (int i = 0; i < use.length; i++) {
 			if (use[i]) {
 				double[] row = rows.get(i);
-				for (int j = 0; j < len - 1; j++) {
+				for (int j = 0; j < end; j++) {
 					matA.set(row[j], k, j);
 				}
-				vecb.set(row[len - 1], k);
+				vecb.set(row[end], k);
 				k++;
 			}
 		}

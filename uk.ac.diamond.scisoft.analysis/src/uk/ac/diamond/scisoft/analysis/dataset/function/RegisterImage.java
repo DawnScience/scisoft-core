@@ -121,7 +121,8 @@ public class RegisterImage implements DatasetToDatasetFunction {
 	 */
 	public Dataset pTF(IDataset image) {
 		// TODO use gradient images (dx, dy) as complex pair
-		DoubleDataset preprocessed = DatasetUtils.cast(DoubleDataset.class, image.getSlice(slice)).isubtract(image.mean()).imultiply(window);
+		DoubleDataset preprocessed = DatasetUtils.cast(DoubleDataset.class, image.getSlice(slice));
+		preprocessed.isubtract(preprocessed.mean()).imultiply(window);
 		Dataset transform = FFT.fftn(preprocessed, pShape, null);
 		if (tFilter  != null) {
 			transform.imultiply(tFilter);

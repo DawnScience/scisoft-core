@@ -28,7 +28,7 @@ public class RegisterImageTest {
 	private static final int X_SIZE = 366;
 	private static final int Y_SIZE = 256;
 	
-	private static final int START = 3; // start divder
+	private static final int START = 3; // start divider
 	private static final int MARGIN = 5; // margin for ROI
 	private static final double OBJECT_X = 42.3;
 	private static final double OBJECT_Y = 27.5;
@@ -46,7 +46,7 @@ public class RegisterImageTest {
 		end[1] += 2*OBJECT_Y + MAX*Y_DELTA + MARGIN;
 		RectangularROI roi = new RectangularROI(start, end);
 		System.err.println(roi);
-		testRegisterSynthetic(roi, 0.176);
+		testRegisterSynthetic(roi, 0.177);
 	}
 
 	private void testRegisterSynthetic(IRectangularROI roi, double delta) {
@@ -115,16 +115,16 @@ public class RegisterImageTest {
 	private double getZ(double x, double y) {
 		final double m = OBJECT_Y/OBJECT_X;
 		final double zmax = 0.5;
-		if (Math.abs(x) > OBJECT_X || Math.abs(y) > OBJECT_Y) {
+		double ax = Math.abs(x);
+		double ay = Math.abs(y);
+		if (ax > OBJECT_X || ay > OBJECT_Y) {
 			return 0;
 		}
-		double ax = Math.abs(x);
 		double yl = m*ax;
 		double z;
 		if (y < yl && y > -yl) { // within E-W sides
 			z = 1 - ax/OBJECT_X;
-		} else {
-		double ay = Math.abs(y); // within N-S sides
+		} else { // within N-S sides
 			z = 1 - ay/OBJECT_Y;
 		}
 		if (z > zmax) {

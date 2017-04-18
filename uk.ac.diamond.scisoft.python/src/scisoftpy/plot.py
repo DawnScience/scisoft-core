@@ -722,7 +722,7 @@ def setbean(bean, name=None, warn=True):
             _set_roi(nbean[parameters.roilist], cr, warn)
             bean = nbean
 
-        _plot_setbean(name, nbean)
+        _plot_setbean(name, bean)
 
 def getdatabean(name=None):
     '''Get data bean (contains data from named view)

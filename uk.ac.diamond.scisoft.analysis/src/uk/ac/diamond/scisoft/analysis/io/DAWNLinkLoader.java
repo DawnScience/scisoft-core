@@ -28,14 +28,16 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.LazyDataset;
 import org.eclipse.january.dataset.StringDataset;
+import org.eclipse.january.metadata.Metadata;
 
 public class DAWNLinkLoader extends AbstractFileLoader {
 
 	private Map<String,String> metadataMap;
 	private Set<String> datasetSet;
+	private Set<String> datasetSetSingle;
 	private static String DIRECTORY = "DIR_NAME";
 	private static String DATA_KEY = "DATASET_NAME";
-	private static String FILE_NAME = "FILE_NAME";
+	private static String SINGLE_DATA_KEY = "SINGLE_DATASET_NAME";
 	private static String SHAPE_KEY = "SHAPE";
 	private int[] shape;
 	
@@ -61,6 +63,7 @@ public class DAWNLinkLoader extends AbstractFileLoader {
 					
 					metadataMap = new HashMap<>();
 					datasetSet = new HashSet<>();
+					datasetSetSingle = new HashSet<>(); 
 					
 					
 					String nextLine = in.readLine();
@@ -73,7 +76,9 @@ public class DAWNLinkLoader extends AbstractFileLoader {
 								datasetSet.add(split[1].trim());
 							} else if (SHAPE_KEY.equals(key)) {
 								setShape(split);
-							}else {
+							} else if (SINGLE_DATA_KEY.equals(key)) {
+								datasetSetSingle.add(split[1].trim());
+							} else {
 							
 								metadataMap.put(split[0].trim(),split[1].trim());
 							}
@@ -145,10 +150,13 @@ public class DAWNLinkLoader extends AbstractFileLoader {
 						line = in.readLine();
 					}
 					
+					Metadata m = new Metadata();
+					result.setMetadata(m);
 					for (String key : mapDouble.keySet()){
 						Dataset d = DatasetFactory.createFromList(mapDouble.get(key));
 						d.setName(key);
 						result.addDataset(key, d);
+						m.addDataInfo(key, d.getShape());
 					}
 					
 					if (shape != null) {
@@ -164,7 +172,23 @@ public class DAWNLinkLoader extends AbstractFileLoader {
 							ImageStackLoader l = new ImageStackLoader(ds, null,null,key);
 							ILazyDataset lz = new LazyDataset(key, l.getDType(), l.getShape(), l);
 							result.addDataset(key, lz);
+							m.addDataInfo(key, lz.getShape());
 					}
+					for (String key : datasetSetSingle){
+						try{
+							IDataHolder dh = LoaderFactory.getData(filename.get(0));
+							if (dh != null && dh.contains(key)) {
+								ILazyDataset lazyDataset = dh.getLazyDataset(key);
+								result.addDataset(key, lazyDataset);
+								m.addDataInfo(key, lazyDataset.getShape());
+							}
+							
+						} catch (Exception e) {
+							// TODO: handle exception
+						}
+					}
+					
+					
 					
 				} catch (Exception e) {
 					throw new ScanFileHolderException("DatLoader.loadFile exception loading  " + fileName, e);

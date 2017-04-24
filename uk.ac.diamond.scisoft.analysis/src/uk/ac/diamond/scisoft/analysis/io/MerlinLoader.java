@@ -21,11 +21,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.AggregateDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.LazyDataset;
 import org.eclipse.january.dataset.ShortDataset;
+import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.metadata.Metadata;
 
 public class MerlinLoader extends AbstractFileLoader {
@@ -67,7 +72,7 @@ public class MerlinLoader extends AbstractFileLoader {
 		File f = null;
 		FileInputStream fi = null;
 		BufferedReader br = null;
-		List<Dataset> dataList = new ArrayList<Dataset>();
+		List<ILazyDataset> dataList = new ArrayList<ILazyDataset>();
 		
 		List<MetaListHolder> metaHolder = new ArrayList<MetaListHolder>();
 		int x;
@@ -176,6 +181,7 @@ public class MerlinLoader extends AbstractFileLoader {
 					throw new ScanFileHolderException("Binary number format not supported");
 				}
 				long imageLength = x * y * itemSize;
+				int[] shape = new int[] {y, x};
 
 				cbufRemainder = new char[headerLength - INITIAL_LENGTH];
 				br.read(cbufRemainder);
@@ -185,31 +191,12 @@ public class MerlinLoader extends AbstractFileLoader {
 				br.skip(imageLength);
 
 				imageReadStart += headerLength;
+				
+				LazyDataset lazy = createLazyDataset("Internal", dtype, shape,
+						new MerlinFrameLazyDataset(f, imageReadStart, dtype, shape));
+				imageReadStart += imageLength;
+				dataList.add(lazy);
 
-				if (loadLazily) {
-					dataList.add(null);
-				} else {
-					fi = new FileInputStream(f);
-					try {
-						data = DatasetFactory.zeros(new int[] {y, x}, dtype);
-						switch (itemSize) {
-						case 1:
-							Utils.readByte(fi, (ShortDataset) data, imageReadStart);
-							break;
-						case 2:
-							Utils.readBeShort(fi, (IntegerDataset) data, imageReadStart, false);
-							break;
-						case 4:
-							Utils.readBeInt(fi, (IntegerDataset) data, imageReadStart);
-							break;
-						}
-					} finally {
-						fi.close();
-						fi = null;
-					}
-					imageReadStart += imageLength;
-					dataList.add(data);
-				}
 			} while (br.read(cbuf) > 0);
 		} catch (Exception e) {
 			throw new ScanFileHolderException("File failed to load " + fileName, e);
@@ -221,35 +208,12 @@ public class MerlinLoader extends AbstractFileLoader {
 					// do nothing
 				}
 			}
-			if (fi != null) {
-				try {
-					fi.close();
-				} catch (IOException ex) {
-					// do nothing
-				}
-				fi = null;
-			}
 		}
 
-		ILazyDataset ds;
-		int[] shape = dataList.size() > 1 ? new int[] {dataList.size(), y, x} : new int[] {y, x};
-		if (loadLazily) {
-			ds = createLazyDataset(DATA_NAME, dtype, shape, new MerlinLoader(fileName));
-		} else if (shape.length == 3) {
-			final Dataset tds = DatasetFactory.zeros(shape, dtype);
-			int[] start = new int[3];
-			int[] stop  = shape.clone();
-			int[] step  = new int[] {1,1,1};
-			for(int i = 0; i < shape[0]; i++) {
-				start[0] = i;
-				stop[0] = i + 1;
-				tds.setSlice(dataList.get(i), start, stop, step);
-			}
-			ds = tds;
-		} else {
-			ds = dataList.get(0);
-		}
-		output.addDataset(DATA_NAME, ds.squeezeEnds());
+		ILazyDataset[] dataArray = dataList.toArray(new ILazyDataset[0]);		
+		AggregateDataset agg = new AggregateDataset(true, dataArray);
+		output.addDataset(DATA_NAME, agg);
+		
 		if (loadMetadata) {
 			createMetadata(metaHolder);
 			output.setMetadata(metadata);
@@ -273,5 +237,46 @@ public class MerlinLoader extends AbstractFileLoader {
 			map.put(h.name, (Serializable) h.getValue());
 		}
 		metadata.setMetadata(map);
+	}
+
+	class MerlinFrameLazyDataset extends LazyLoaderStub {
+		
+		private File file;
+		private long frameOffset;
+		private int dtype;
+		private int[] frameshape;
+		
+		public MerlinFrameLazyDataset(File file, long frameOffset, int dtype, int[] frameshape) {
+			this.file = file;
+			this.frameOffset = frameOffset;
+			this.dtype = dtype;
+			this.frameshape = frameshape;
+		}
+		
+		@Override
+		public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
+			FileInputStream fis = new FileInputStream(file);
+			IDataset loaded = null;
+			try {
+				switch (dtype) {
+				case Dataset.INT16:
+					loaded = DatasetFactory.zeros(ShortDataset.class, frameshape);
+					Utils.readByte(fis, (ShortDataset) loaded, frameOffset);
+					break;
+				case Dataset.INT32:
+					loaded = DatasetFactory.zeros(IntegerDataset.class, frameshape);
+					Utils.readBeShort(fis, (IntegerDataset) loaded, frameOffset, false);
+					break;
+				case Dataset.INT64:
+					loaded = DatasetFactory.zeros(IntegerDataset.class, frameshape);
+					Utils.readBeInt(fis, (IntegerDataset) loaded, frameOffset);
+					break;
+				}
+			} finally {
+				fis.close();
+				fis = null;
+			}
+			return loaded == null ? null : loaded.getSliceView(slice);
+		}
 	}
 }

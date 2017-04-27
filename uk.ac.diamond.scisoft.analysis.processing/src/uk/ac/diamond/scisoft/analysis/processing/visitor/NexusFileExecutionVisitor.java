@@ -60,6 +60,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
+import uk.ac.diamond.scisoft.analysis.processing.IFlushMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 
 public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFile {
@@ -240,7 +241,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		}
 		
 		if (nullReturnSWMRMode.get()) {
-			flushDatasets();
+			flushDatasets(monitor);
 			return;
 		}
 		
@@ -265,16 +266,19 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 					logger.debug("SWMR-ING");
 				}
 			}
-			flushDatasets();
+			flushDatasets(monitor);
 		}
 	}
 	
-	private void flushDatasets() {
+	private void flushDatasets(IMonitor monitor) {
 		long time = System.currentTimeMillis();
 		if (time - lastFlush > 2000) {
 			lastFlush = time;
 			((NexusFileHDF5)nexusFile).flushAllCachedDatasets();
 			logger.debug("Flushing");
+			if (monitor instanceof IFlushMonitor) {
+				((IFlushMonitor)monitor).fileFlushed();
+			}
 		}
 	}
 

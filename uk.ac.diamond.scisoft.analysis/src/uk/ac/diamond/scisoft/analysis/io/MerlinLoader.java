@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.AggregateDataset;
 import org.eclipse.january.dataset.Dataset;
@@ -31,6 +32,7 @@ import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.LazyDataset;
 import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.metadata.IMetadata;
 import org.eclipse.january.metadata.Metadata;
 
 public class MerlinLoader extends AbstractFileLoader {
@@ -210,13 +212,35 @@ public class MerlinLoader extends AbstractFileLoader {
 			}
 		}
 
-		ILazyDataset[] dataArray = dataList.toArray(new ILazyDataset[0]);		
-		AggregateDataset agg = new AggregateDataset(true, dataArray);
-		output.addDataset(DATA_NAME, agg);
 		
 		if (loadMetadata) {
 			createMetadata(metaHolder);
 			output.setMetadata(metadata);
+		}
+
+		
+		
+		ILazyDataset[] dataArray = dataList.toArray(new ILazyDataset[0]);
+		if (dataArray.length > 1) {
+			// Build a lazy dataset out of the stack of lazy datasets
+			AggregateDataset agg = new AggregateDataset(true, dataArray);
+			agg.setName(DATA_NAME);
+			output.addDataset(DATA_NAME, agg);
+			IMetadata meta = new Metadata();
+			meta.addDataInfo(DATA_NAME, agg.getShape());
+			output.setMetadata(meta);
+		} else {
+			// Actually load the first dataset into memory.
+			try {
+				IDataset dataset = dataArray[0].getSlice(null, null, null);
+				dataset.setName(DATA_NAME);
+				output.addDataset(DATA_NAME, dataset);
+				IMetadata meta = new Metadata();
+				meta.addDataInfo(DATA_NAME, dataset.getShape());
+				output.setMetadata(meta);
+			} catch (DatasetException e) {
+				throw new ScanFileHolderException("Unable to load frame of data from file", e);
+			}
 		}
 
 		return output;

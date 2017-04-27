@@ -13,6 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.junit.Test;
 
 public class MerlinLoaderTest {
@@ -36,12 +37,12 @@ public class MerlinLoaderTest {
 		final String path = testFileFolder + "multi.mib";
 		IDataHolder dataHolder = LoaderFactory.getData(path, null);
  		
-		IDataset data = dataHolder.getDataset(0);
+		ILazyDataset data = dataHolder.getLazyDataset(0);
 		int[] shape = data.getShape();
 		assertEquals(10,shape[0], 0.0);
 		assertEquals(515,shape[1], 0.0);
 		assertEquals(515,shape[2], 0.0);
-		assertEquals(2862,data.max().intValue(), 0.0);
+		assertEquals(2862,data.getSlice(null, null, null).max().intValue(), 0.0);
 	}
 
 	@Test
@@ -53,5 +54,6 @@ public class MerlinLoaderTest {
 		int[] shape = data.getShape();
 		assertEquals(515,shape[0], 0.0);
 		assertEquals(515,shape[1], 0.0);
+		assertEquals(0, data.max().intValue(), 0.001);
 	}
 }

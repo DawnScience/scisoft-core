@@ -136,7 +136,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 		}
 //		for (int i = 0; i < nIterations; i++) 
 //			absCor = theCalibration.iterate(true);
-		absCor = theCalibration.calibrate(nIterations, model.getNThreads());
+		absCor = theCalibration.calibrate(nIterations, model.getNThreads(),this);
 		
 		
 		// Copy metadata, but preserve the errors, if they exist.

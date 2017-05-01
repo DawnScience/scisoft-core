@@ -19,13 +19,14 @@ import org.junit.Test;
 public class MerlinLoaderTest {
 	
 	final static String testFileFolder = "testfiles/gda/analysis/io/merlin/";
+	final static String DATA_NAME = "MerlinData";
 	
 	@Test
 	public void testMerlinDataLoader()  throws Exception {
 		final String path = testFileFolder + "default1.mib";
 		IDataHolder dataHolder = LoaderFactory.getData(path, null);
  		
-		IDataset data = dataHolder.getDataset(0);
+		IDataset data = dataHolder.getDataset(DATA_NAME);
 		int[] shape = data.getShape();
 		assertEquals(512,shape[0], 0.0);
 		assertEquals(512,shape[1], 0.0);
@@ -37,7 +38,7 @@ public class MerlinLoaderTest {
 		final String path = testFileFolder + "multi.mib";
 		IDataHolder dataHolder = LoaderFactory.getData(path, null);
  		
-		ILazyDataset data = dataHolder.getLazyDataset(0);
+		ILazyDataset data = dataHolder.getLazyDataset(DATA_NAME);
 		int[] shape = data.getShape();
 		assertEquals(10,shape[0], 0.0);
 		assertEquals(515,shape[1], 0.0);
@@ -50,7 +51,7 @@ public class MerlinLoaderTest {
 		final String path = testFileFolder + "I13-20150210-101459-1.mib";
 		IDataHolder dataHolder = LoaderFactory.getData(path, null);
  		
-		IDataset data = dataHolder.getDataset(0);
+		IDataset data = dataHolder.getDataset(DATA_NAME);
 		int[] shape = data.getShape();
 		assertEquals(515,shape[0], 0.0);
 		assertEquals(515,shape[1], 0.0);

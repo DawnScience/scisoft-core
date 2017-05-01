@@ -26,6 +26,8 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
+import org.eclipse.dawnsci.analysis.api.processing.IOperation;
+import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperationBase;
 import org.eclipse.january.DatasetException;
@@ -35,6 +37,8 @@ import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.IPixelIntegrationCache;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegration;
@@ -66,11 +70,15 @@ public class XPDFCalibration {
 
 	private int dataDimensions;
 	
+	private static final int MAX_ITERATIONS = 20;
+	
 	// Perform any kind of fluorescence correction
 	private boolean doFluorescence;
 	// Perform the full fluorescence calibration, calculating the optimum fluorescence scale
 	private boolean doFluorescenceCalibration;
 
+	private final static Logger logger = LoggerFactory.getLogger(XPDFCalibration.class);
+	
 	// caching angular factors
 	Map<XPDFCoordinates, Dataset> cachedDeTran, cachedPolar;
 	
@@ -524,12 +532,12 @@ public class XPDFCalibration {
 	 * 					multiplicative calibration constant.
 	 * @return the calibrated XPDF data
 	 */
-	public Dataset calibrate(int nIterations, int nThreads) {
+	public Dataset calibrate(int nIterations, int nThreads, IOperation<?, ?> op) {
 		if (doFluorescence && doFluorescenceCalibration)
-			calibrateFluorescence(nIterations, nThreads);
-		Dataset absCor = iterateCalibrate(nIterations, true);
-		System.err.println("Fluorescence scale = " + fluorescenceScale);
-		System.err.println("Calibration constant = " + calibrationConstants.getLast());
+			calibrateFluorescence(nIterations, nThreads, op);
+		Dataset absCor = iterateCalibrate(nIterations, true, op);
+		logger.debug("Fluorescence scale = " + fluorescenceScale);
+		logger.debug("Calibration constant = " + calibrationConstants.getLast());
 		return absCor;
 	}
 	
@@ -544,7 +552,7 @@ public class XPDFCalibration {
 	 * 						propagate errors, if they are found
 	 * @return the calibrated XPDF data
 	 */
-	private Dataset iterateCalibrate(int nIterations, boolean propagateErrors) {
+	private Dataset iterateCalibrate(int nIterations, boolean propagateErrors, IOperation<?, ?> op) {
 		List<Dataset> solAng = new ArrayList<Dataset>();
 		for (Dataset targetComponent : backgroundSubtracted) {
 			Dataset cosTwoTheta = coords.getCosTwoTheta();
@@ -589,9 +597,14 @@ public class XPDFCalibration {
 		calibrationConstants = new LinkedList<Double>(Arrays.asList(new Double[] {calibrationConstant0}));
 		// Iterate until a hardcoded precision is achieved
 		final double calibrationPrecision = 1e-6;
-		do
+		int count = 0;
+		do{
+			if (count == MAX_ITERATIONS) {
+				throw new OperationException(op);
+			}
 			absCor = this.iterate(fluorescenceCorrected, propagateErrors);
-		while (Math.abs(calibrationConstants.getLast()/calibrationConstants.get(calibrationConstants.size()-2) - 1) > calibrationPrecision);
+			count++;
+		} while (Math.abs(calibrationConstants.getLast()/calibrationConstants.get(calibrationConstants.size()-2) - 1) > calibrationPrecision);
 //		for (int i = 0; i < nIterations; i++)
 //			absCor = this.iterate(fluorescenceCorrected, propagateErrors);
 		return absCor;
@@ -608,7 +621,7 @@ public class XPDFCalibration {
 	 * @param nIterations
 	 * 					the number of iterations to use in the calibration.
 	 */
-	private void calibrateFluorescence(int nIterations, int nThreads) {
+	private void calibrateFluorescence(int nIterations, int nThreads, IOperation<?,?> op) {
 		
 		if (this.sampleFluorescence == null) return;
 		
@@ -632,10 +645,11 @@ public class XPDFCalibration {
 			ExecutorService annihilator = Executors.newSingleThreadExecutor();
 			double granularity = (maxScale - minScale) / nSteps / 2;
 			double xLow = minScale, xHigh = maxScale;
-			double fLow = evaluateSingleFluorescence(annihilator, xLow, nIterations),
-					fHigh = evaluateSingleFluorescence(annihilator, xHigh, nIterations);
+			double fLow = evaluateSingleFluorescence(annihilator, xLow, nIterations, op),
+					fHigh = evaluateSingleFluorescence(annihilator, xHigh, nIterations, op);
 			// If the selected range should not change sign, expand it until it does
-			while (Math.signum(fHigh) == Math.signum(fLow)) {
+			int count = 0;
+			while (Math.signum(fHigh) == Math.signum(fLow) && count < MAX_ITERATIONS) {
 				// Double the range, centred on the same point
 				double xDifference = xHigh - xLow;
 				xLow = xLow - xDifference / 2;
@@ -655,18 +669,24 @@ public class XPDFCalibration {
 				// Calculate the differences at the end points of the expanded range
 				Map<Double, Double> differences = evaluateSeveralFluoroScales(
 						Arrays.asList(ArrayUtils.toObject(new double[] { xLow, xHigh })), nIterations,
-						Math.min(nThreads, 2));
+						Math.min(nThreads, 2),op);
 				fLow = differences.get(xLow);
 				fHigh = differences.get(xHigh);
-				System.err
-						.println("Bisection fluoro scales " + Double.toString(xLow) + " to " + Double.toString(xHigh));
+				logger.debug("Bisection fluoro scales " + Double.toString(xLow) + " to " + Double.toString(xHigh));
+				
+				count++;
+			}
+			
+			if (count == MAX_ITERATIONS) {
+				throw new OperationException(op);
 			}
 
 			if (!doGridded) {
 				boolean doQuadrisection = false;
 				double xLinear = xHigh, xLinearLast = xLow;
 				// Reduce the range, while maintaining the condition that fHigh and fLow have opposite signs
-				while (Math.abs(xLinear - xLinearLast) > granularity) {
+				int counter = 0;
+				while (Math.abs(xLinear - xLinearLast) > granularity && counter < MAX_ITERATIONS) {
 
 					xLinearLast = xLinear;
 
@@ -681,7 +701,7 @@ public class XPDFCalibration {
 						// Calculate the difference values at the three quarter points
 						double[] xes = new double[] { xQuarter, xMid, x3Quarters };
 						Map<Double, Double> midScales = evaluateSeveralFluoroScales(
-								Arrays.asList(ArrayUtils.toObject(xes)), nIterations, Math.min(nThreads, 3));
+								Arrays.asList(ArrayUtils.toObject(xes)), nIterations, Math.min(nThreads, 3),op);
 						fMid = midScales.get(xMid);
 
 						// Do the first bisection
@@ -698,7 +718,7 @@ public class XPDFCalibration {
 					} else {
 						// Serial bisection
 						xMid = (xHigh + xLow) / 2;
-						fMid = evaluateSingleFluorescence(annihilator, xMid, nIterations);
+						fMid = evaluateSingleFluorescence(annihilator, xMid, nIterations,op);
 					}
 
 					// Do the bisection
@@ -712,10 +732,15 @@ public class XPDFCalibration {
 
 					// Calculate the linear interpolation of zero difference
 					xLinear = xLow - (xHigh - xLow) / (fHigh - fLow) * fLow;
-
-					System.err.println("Bisection fluoro scales " + Double.toString(xLow) + " to "
+					counter++;
+					logger.debug("Bisection fluoro scales " + Double.toString(xLow) + " to "
 							+ Double.toString(xHigh) + ". Linear solution: " + Double.toString(xLinear));
 				}
+				
+				if (counter == MAX_ITERATIONS) {
+					throw new OperationException(op);
+				}
+				
 				// Linear interpolation of x over this range
 				//		double xZero = xLow - (xHigh - xLow)/(fHigh - fLow) * fLow;
 				this.fluorescenceScale = xLinear;
@@ -724,30 +749,32 @@ public class XPDFCalibration {
 		// Old gridded code
 		if (doGridded) {
 
-			Map<Double, Double> scaleToDifference = evaluateSeveralFluoroScales(Arrays.asList(ArrayUtils.toObject(DatasetFactory.createRange(DoubleDataset.class, minScale, maxScale, stepScale).getData())), nIterations, nThreads);
+			Map<Double, Double> scaleToDifference = evaluateSeveralFluoroScales(Arrays.asList(ArrayUtils.toObject(DatasetFactory.createRange(DoubleDataset.class, minScale, maxScale, stepScale).getData())), nIterations, nThreads,op);
 			
 			double minimalScale = 0;
 			double minimalDifference = Double.POSITIVE_INFINITY; 
 			// Get the scale with the minimum difference
 			for(Map.Entry<Double, Double> entry : scaleToDifference.entrySet()) {
-				System.err.println("F = " + Double.toString(entry.getKey()) + ", C = " + Double.toString(entry.getValue()));
+				logger.debug("F = " + Double.toString(entry.getKey()) + ", C = " + Double.toString(entry.getValue()));;
 				if (Math.abs(entry.getValue()) < minimalDifference) {
 					minimalDifference = Math.abs(entry.getValue());
 					minimalScale = entry.getKey();
 				}
 			}
 			this.fluorescenceScale = minimalScale;
-			System.err.println("Gridded fluoro scale = " + this.fluorescenceScale);
+			logger.debug("Gridded fluoro scale = " + this.fluorescenceScale);
 		}
 	}
 
 	// Bundle all the execution and waiting code and especially their try/catches into a function
-	private double evaluateSingleFluorescence(ExecutorService executor, double x, int nIterations) {
-		return evaluateSeveralFluoroScales(Arrays.asList(new Double[] {x}), nIterations, 1).values().toArray(new Double[1])[0];
+	private double evaluateSingleFluorescence(ExecutorService executor, double x, int nIterations, IOperation<?,?> op) {
+		Map<Double, Double> map = evaluateSeveralFluoroScales(Arrays.asList(new Double[] {x}), nIterations, 1, op);
+		if (map.isEmpty()) throw new OperationException(op, "Fluoroscent scale calulation failed!");
+		return map.values().toArray(new Double[1])[0];
 	}
 	
 	// Common code to evaluate several fluorescence scales at the same time
-	private Map<Double, Double> evaluateSeveralFluoroScales(Collection<Double> scales, int nIterations, int nThreads) {
+	private Map<Double, Double> evaluateSeveralFluoroScales(Collection<Double> scales, int nIterations, int nThreads, IOperation<?,?> op) {
 		ExecutorService ravager = (scales.size() == 1) ? Executors.newSingleThreadExecutor() : Executors.newFixedThreadPool(nThreads);
 
 		AtomicInteger completionCounter = new AtomicInteger(0);
@@ -756,7 +783,7 @@ public class XPDFCalibration {
 		Map<Double, Future<Double>> futureMap = new HashMap<Double, Future<Double>>();
 		// Submit to the executor	
 		for (double scale : scales)
-			futureMap.put(scale, ravager.submit(new FluorescenceEvaluator(this, absorptionMaps, scale, calibrationConstant0, nIterations, completionCounter)));
+			futureMap.put(scale, ravager.submit(new FluorescenceEvaluator(this, absorptionMaps, scale, calibrationConstant0, nIterations, completionCounter, op)));
 
 		Map<Double, Double> scaleToDifference = new HashMap<Double, Double>();
 
@@ -770,16 +797,20 @@ public class XPDFCalibration {
 
 		// Get all the results
 		
-		for (Map.Entry<Double, Future<Double>> scaleNFuture : futureMap.entrySet())
+		for (Map.Entry<Double, Future<Double>> scaleNFuture : futureMap.entrySet()) {
+		
 			try {
 				scaleToDifference.put(scaleNFuture.getKey(), scaleNFuture.getValue().get());
 			} catch (ExecutionException eE) {
-				// Do nothing!
-				// FIXME Do something!
+				logger.error("Fluoro scale error", eE);
+				scaleToDifference.clear();
+				break;
 			} catch (InterruptedException iE) {
-				// Do nothing!
-				// FIXME Do something!
+				logger.error("Fluoro scale error", iE);
+				scaleToDifference.clear();
+				break;
 			}
+		}
 		
 		ravager.shutdown();
 
@@ -838,20 +869,25 @@ public class XPDFCalibration {
 		int nIterations;
 		double scale;
 		AtomicInteger counter;
+		IOperation<?, ?> op;
 		
-		public FluorescenceEvaluator(XPDFCalibration source, XPDFAbsorptionMaps absorptionMaps, double scale, double calCon0, int nIterations, AtomicInteger counter) {
+		public FluorescenceEvaluator(XPDFCalibration source, XPDFAbsorptionMaps absorptionMaps, double scale, double calCon0, int nIterations, AtomicInteger counter, IOperation<?, ?> op) {
 			fluorCalibration = source.getShallowCopy();
 			fluorCalibration.setFixedFluorescence(scale);
 			this.scale = scale;
 			this.nIterations = nIterations;
 			this.counter = counter;
+			this.op = op;
 		}
 		
 		public Double call() {
-			Dataset absCor = fluorCalibration.iterateCalibrate(nIterations, false);
-			double difference = fluorCalibration.integrateFluorescence(absCor);
-			counter.incrementAndGet();
-			return difference;
+			try {
+				Dataset absCor = fluorCalibration.iterateCalibrate(nIterations, false, op);
+				double difference = fluorCalibration.integrateFluorescence(absCor);
+				return difference;
+			} finally {
+				counter.incrementAndGet();
+			}
 		}
 	}
 	

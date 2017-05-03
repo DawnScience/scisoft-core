@@ -61,6 +61,7 @@ public class OperationContextImpl implements IOperationContext {
 	 * Defaults to ExecutionType.SERIES
 	 */
 	private ExecutionType executionType = ExecutionType.SERIES;
+	private int numberOfCores = 1;
 	
 	/* (non-Javadoc)
 	 * @see uk.ac.diamond.scisoft.analysis.processing.IOperationContext#getSeries()
@@ -153,6 +154,8 @@ public class OperationContextImpl implements IOperationContext {
 		result = prime * result
 				+ ((executionType == null) ? 0 : executionType.hashCode());
 		result = prime * result
+				+ (int) (numberOfCores ^ (numberOfCores >>> 32));
+		result = prime * result
 				+ ((filePath == null) ? 0 : filePath.hashCode());
 		result = prime * result + ((monitor == null) ? 0 : monitor.hashCode());
 		result = prime * result
@@ -182,6 +185,8 @@ public class OperationContextImpl implements IOperationContext {
 		} else if (!datasetPath.equals(other.datasetPath))
 			return false;
 		if (executionType != other.executionType)
+			return false;
+		if (numberOfCores != other.numberOfCores)
 			return false;
 		if (filePath == null) {
 			if (other.filePath != null)
@@ -215,13 +220,25 @@ public class OperationContextImpl implements IOperationContext {
 	public void setExecutionType(ExecutionType executionType) {
 		this.executionType = executionType;
 		if (parallelTimeout<0) parallelTimeout = executionType.getTimeout();
+		// To ensure that we enable the same behaviour as before, unless overwritten later
+		if (this.executionType == ExecutionType.PARALLEL) {
+			this.setNumberOfCores(Runtime.getRuntime().availableProcessors());
+		}
 	}
-	
-
+	public int getNumberOfCores() {
+		return numberOfCores;
+	}
+	public void setNumberOfCores(int numberOfCores) {
+		if (numberOfCores == -1){
+			this.setNumberOfCores(Runtime.getRuntime().availableProcessors());
+		}
+		else {
+			this.numberOfCores = numberOfCores;
+		}
+	}
 	public long getParallelTimeout() {
 		return parallelTimeout;
 	}
-
 	public void setParallelTimeout(long parallelTimeout) {
 		this.parallelTimeout = parallelTimeout;
 	}

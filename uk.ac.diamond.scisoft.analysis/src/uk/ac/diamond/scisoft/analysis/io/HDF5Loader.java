@@ -810,6 +810,9 @@ public class HDF5Loader extends AbstractFileLoader {
 
 			ntid = H5.H5Tget_native_type(tid);
 			type = HDF5Utils.getDatasetType(tid, ntid);
+			if (type == null) { // inhomogeneous datatype
+				return false;
+			}
 			if (type.name != null) {
 				node.setTypeName(type.name);
 			}

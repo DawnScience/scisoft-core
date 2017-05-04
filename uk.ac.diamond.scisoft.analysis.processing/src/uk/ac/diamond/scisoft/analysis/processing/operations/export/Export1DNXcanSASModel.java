@@ -39,7 +39,6 @@ public class Export1DNXcanSASModel extends AbstractOperationModel{
 		firePropertyChange("outputDirectoryPath", this.outputDirectoryPath, this.outputDirectoryPath = outputDirectoryPath);
 	}
 
-
 	// Should the files have a numerical prefix? Useful for multiframe files...
 	@OperationModelField(label = "Pad with zeros", hint = "Should you want to have a fixed length for the appended frame number, useful for ordering in lists.", min = 1)
 	private Integer paddingZeros = 5;

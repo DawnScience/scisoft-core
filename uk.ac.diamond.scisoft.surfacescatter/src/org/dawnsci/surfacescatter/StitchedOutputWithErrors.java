@@ -486,6 +486,9 @@ public class StitchedOutputWithErrors {
 	public static IDataset[] curveStitch4 (ArrayList<DataModel> dms, 
 										   SuperModel sm){
 		
+
+		ArrayList<OverlapDataModel> overlapDataModels = new ArrayList<>();
+		
 		ArrayList<IDataset> xArrayList = new ArrayList<>();
 		ArrayList<IDataset> yArrayList = new ArrayList<>();
 		ArrayList<IDataset> yArrayListRaw = new ArrayList<>();
@@ -495,7 +498,6 @@ public class StitchedOutputWithErrors {
 		ArrayList<IDataset> yArrayListFhklError = new ArrayList<>();
 
 		sm.resetSplicedCurves();
-
 
 		for(int p = 0;p<dms.size();p++){
 			
@@ -508,7 +510,6 @@ public class StitchedOutputWithErrors {
 			yArrayListRawError.add(dms.get(p).yRawIDatasetError());
 		}
 
-
 		IDataset[] xArray= new IDataset[xArrayList.size()];
 		IDataset[] yArray= new IDataset[yArrayList.size()];
 		IDataset[] yArrayError= new IDataset[yArrayListError.size()];
@@ -516,7 +517,6 @@ public class StitchedOutputWithErrors {
 		IDataset[] yArrayFhklError= new IDataset[yArrayListFhklError.size()];
 		IDataset[] yArrayRaw = new IDataset[yArrayListRaw.size()];
 		IDataset[] yArrayRawError = new IDataset[yArrayListRawError.size()];
-		
 
 		for (int b = 0; b< xArrayList.size(); b++){
 			xArray[b] = xArrayList.get(b);
@@ -558,11 +558,14 @@ public class StitchedOutputWithErrors {
 		attenuationFactorRaw =1;
 
 		for (int k=0; k<xArray.length-1;k++){
+			
+			OverlapDataModel odm = new OverlapDataModel();
 
-
+			odm.setLowerDatName(sm.getFilepaths()[k]);
+			odm.setUpperDatName(sm.getFilepaths()[k+1]);
+			
 			ArrayList<Integer> overlapLower = new ArrayList<Integer>();
 			ArrayList<Integer> overlapHigher = new ArrayList<Integer>();
-
 
 			for(int l=0; l<xArrayCorrected[k].getSize();l++){
 				if (xArrayCorrected[k].getDouble(l)>=(maxMinArray[k+1][1] - 0.001*maxMinArray[k+1][1])){
@@ -574,6 +577,21 @@ public class StitchedOutputWithErrors {
 					overlapHigher.add(m);
 				}
 			}
+			
+			int[] lowerOverlapPositions = new int[overlapLower.size()];
+			
+			for(int o = 0;o< overlapLower.size();o++){
+				lowerOverlapPositions[o] = overlapLower.get(o); 
+			}
+			
+			int[] higherOverlapPositions = new int[overlapHigher.size()];
+			
+			for(int o = 0;o< overlapHigher.size();o++){
+				higherOverlapPositions[o] = overlapHigher.get(o); 
+			}
+			
+			odm.setLowerOverlapPositions(lowerOverlapPositions);
+			odm.setUpperOverlapPositions(higherOverlapPositions);
 
 			Dataset[] xLowerDataset =new Dataset[1];
 			Dataset yLowerDataset =null;
@@ -607,6 +625,25 @@ public class StitchedOutputWithErrors {
 					yLowerDatasetRaw = DatasetFactory.createFromObject(yLowerListRaw);
 				}
 
+				double[] lowerOverlapCorrectedValues = new double[overlapLower.size()];
+				double[] lowerOverlapRawValues = new double[overlapLower.size()];
+				double[] lowerOverlapFhklValues = new double[overlapLower.size()];
+				double[] lowerOverlapScannedValues = new double[overlapLower.size()];
+				
+				
+				for(int o = 0;o< overlapLower.size();o++){
+					lowerOverlapScannedValues[o] = xLowerList.get(o);
+					lowerOverlapCorrectedValues[o] = yLowerList.get(o);
+					lowerOverlapRawValues[o] = yLowerListRaw.get(o);;
+					lowerOverlapFhklValues[o] = yLowerListFhkl.get(o);
+					 
+				}
+				
+				odm.setLowerOverlapCorrectedValues(lowerOverlapCorrectedValues);
+				odm.setLowerOverlapRawValues(lowerOverlapRawValues);
+				odm.setLowerOverlapFhklValues(lowerOverlapFhklValues);
+				odm.setLowerOverlapScannedValues(lowerOverlapScannedValues);
+				
 				for (int l=0; l<overlapHigher.size(); l++){
 					xHigherList.add(xArray[k+1].getDouble(overlapHigher.get(l)));
 					yHigherList.add(yArray[k+1].getDouble(overlapHigher.get(l)));
@@ -619,22 +656,57 @@ public class StitchedOutputWithErrors {
 					yHigherDatasetRaw = DatasetFactory.createFromObject(yHigherListRaw);	
 				}
 
-				double correctionRatio = PolynomialOverlapSXRD.correctionRatio1(xLowerDataset, yLowerDataset, 
+				double[] upperOverlapCorrectedValues = new double[overlapHigher.size()];
+				double[] upperOverlapRawValues = new double[overlapHigher.size()];
+				double[] upperOverlapFhklValues = new double[overlapHigher.size()];
+				double[] upperOverlapScannedValues = new double[overlapHigher.size()];
+				
+				
+				for(int o = 0;o< overlapHigher.size();o++){
+					upperOverlapScannedValues[o] = xHigherList.get(o);
+					upperOverlapCorrectedValues[o] = yHigherList.get(o);
+					upperOverlapRawValues[o] = yHigherListRaw.get(o);;
+					upperOverlapFhklValues[o] = yHigherListFhkl.get(o);
+					 
+				}
+				
+				odm.setUpperOverlapCorrectedValues(upperOverlapCorrectedValues);
+				odm.setUpperOverlapRawValues(upperOverlapRawValues);
+				odm.setUpperOverlapFhklValues(upperOverlapFhklValues);
+				odm.setUpperOverlapScannedValues(upperOverlapScannedValues);
+				
+				double[][] correctionRatio = PolynomialOverlapSXRD.correctionRatio2(xLowerDataset, yLowerDataset, 
 						xHigherDataset, yHigherDataset, attenuationFactor,4);
 
-				double  correctionRatioFhkl = PolynomialOverlapSXRD.correctionRatio1(xLowerDataset, yLowerDatasetFhkl, 
+				double[][]  correctionRatioFhkl = PolynomialOverlapSXRD.correctionRatio2(xLowerDataset, yLowerDatasetFhkl, 
 						xHigherDataset, yHigherDatasetFhkl, attenuationFactorFhkl,4);
 				
-				double  correctionRatioRaw = PolynomialOverlapSXRD.correctionRatio1(xLowerDataset, yLowerDatasetRaw, 
+				double[][]  correctionRatioRaw = PolynomialOverlapSXRD.correctionRatio2(xLowerDataset, yLowerDatasetRaw, 
 						xHigherDataset, yHigherDatasetRaw, attenuationFactorRaw,4);
 
-				attenuationFactor = correctionRatio;
-				attenuationFactorFhkl = correctionRatioFhkl;
-				attenuationFactorRaw = correctionRatioRaw;
+				attenuationFactor = correctionRatio[2][0];
+				attenuationFactorFhkl = correctionRatioFhkl[2][0];
+				attenuationFactorRaw = correctionRatioRaw[2][0];
+				
+				odm.setAttenuationFactor(attenuationFactor);
+				odm.setAttenuationFactorFhkl(attenuationFactorFhkl);
+				odm.setAttenuationFactorRaw(attenuationFactorRaw);
+				
+				
+				odm.setLowerOverlapFitParametersCorrected(correctionRatio[0]);
+				odm.setUpperOverlapFitParametersCorrected(correctionRatio[1]);
+				
+				odm.setLowerOverlapFitParametersFhkl(correctionRatioFhkl[0]);
+				odm.setUpperOverlapFitParametersFhkl(correctionRatioFhkl[1]);
+				
+				odm.setLowerOverlapFitParametersRaw(correctionRatioRaw[0]);
+				odm.setUpperOverlapFitParametersRaw(correctionRatioRaw[1]);
+				
+				
+				overlapDataModels.add(odm);
 
 			}
-			//////////////////need to deal with the lack of overlap here
-
+			
 			yArrayCorrected[k+1] = Maths.multiply(yArray[k+1],attenuationFactor);
 			yArrayCorrectedFhkl[k+1] = Maths.multiply(yArrayFhkl[k+1],attenuationFactorFhkl);
 			yArrayCorrectedRaw[k+1] = Maths.multiply(yArrayRaw[k+1],attenuationFactorRaw);
@@ -756,6 +828,8 @@ public class StitchedOutputWithErrors {
 		sm.setSplicedCurveYFhklErrorMin(sortedYArrayCorrectedFhklErrorMin);
 		sm.setSplicedCurveYRaw(sortedAttenuatedDatasets[7]);
 		sm.setSplicedCurveYRawError(sortedYArrayCorrectedRawError);
+		sm.setOverlapDataModels(overlapDataModels);
+		
 		
 		return sortedAttenuatedDatasets;
 	}	

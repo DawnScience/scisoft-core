@@ -15,11 +15,9 @@ public class OverlapUIModel {
 	private int[][] lenpt;
 	private IDataset currentImage;
 	private ArrayList<IRectangularROI> ROIList = new ArrayList<IRectangularROI>();
-	private IROI ROIListElement;
 	private int ROIevent=0;
 	private Dataset[] output;
 	private String[] filepaths1;
-	
 	
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
@@ -48,20 +46,10 @@ public class OverlapUIModel {
 	public void setROIListElement(IRectangularROI ROI, int k) {
 		
 		
-//		if (ROIList.size() == 0){
-//			ROIList.add(ROI);
-//			firePropertyChange("ROIList", this.ROIList, this.ROIList= ROIList);
-//			firePropertyChange("ROIevent", this.ROIevent, this.ROIevent= (ROIevent+1));
-//			
-//			ROIList.set(k, ROI);
-//		}
-		
-		
 		if (ROIList.size() <= k | ROIList.size() !=0){
 			ROIList.add(ROI);
 			firePropertyChange("ROIevent", this.ROIevent, this.ROIevent= (ROIevent+1));
 			firePropertyChange("ROIList", this.ROIList, this.ROIList= ROIList);
-		//	ROIList.set(k, ROI);
 		}
 
 		else {
@@ -92,18 +80,13 @@ public class OverlapUIModel {
 		return output;
 	}
 	
-	
 	public void setFilepaths(String[] filepaths){
 		filepaths1 =filepaths;
 	}
 	
-
 	public String[] getFilepaths(){
 		return filepaths1;
 	}
-	
-	
-	
 	
 	public IROI getROIListElement(int k){
 		return ROIList.get(k);
@@ -112,9 +95,6 @@ public class OverlapUIModel {
 	public ArrayList<IRectangularROI> getROIList(){
 		return ROIList;
 	}
-	
-	
-	
 	
 	public int[][] getLenPt(){
 		return lenpt;
@@ -126,9 +106,8 @@ public class OverlapUIModel {
 	
 	public void setCurrentImage(IDataset currentImage){
 		firePropertyChange("currentImage", this.currentImage, this.currentImage= currentImage);
-		}
+	}
 	
-
 	public int getImageNumber() {
 		return imageNumber;
 	}

@@ -43,7 +43,16 @@ public class ExampleModel {
 	private ILazyDataset theta;
 	private TrackerType1 trackerType = TrackerType1.TLD;
 	private FitPower fitPower = FitPower.ONE;
+	private Dataset tifNames;
 	
+	public Dataset getTifNames() {
+		return tifNames;
+	}
+
+	public void setTifNames(Dataset tifNames) {
+		this.tifNames = tifNames;
+	}
+
 	public IDataset getInput() {
 		return input;
 	}

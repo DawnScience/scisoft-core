@@ -45,7 +45,7 @@ public class FluxDatasetGetter {
 				
 			}
 			catch (Exception e){
-				System.out.println("No normalisation data availbale externally");
+				System.out.println("No normalisation data available externally");
 				}
 		}
 		

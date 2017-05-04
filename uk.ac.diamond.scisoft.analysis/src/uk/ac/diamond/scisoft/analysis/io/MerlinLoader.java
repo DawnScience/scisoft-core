@@ -15,22 +15,32 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.LazyDataset;
+import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.metadata.IMetadata;
 import org.eclipse.january.metadata.Metadata;
+
+import uk.ac.diamond.scisoft.analysis.fitting.functions.DatasetsIterator;
 
 public class MerlinLoader extends AbstractFileLoader {
 
@@ -69,10 +79,36 @@ public class MerlinLoader extends AbstractFileLoader {
 	}
 	
 	private static int INITIAL_LENGTH = 40;
-
+	private int droppedFrames = 0;
+	private int[] mapShape = null;
+	
 	@Override
 	public DataHolder loadFile() throws ScanFileHolderException {
 		final DataHolder output = new DataHolder();
+		// if a metadata file exisits, load it
+		String metaFilename = fileName+"meta";
+		try {
+			if (new File(metaFilename).exists()){
+				byte[] encoded = Files.readAllBytes(Paths.get(metaFilename));
+				String metadata = new String(encoded, StandardCharsets.UTF_8);
+				
+				for (String part : metadata.split("\n")) {
+					if(part.split(":")[0].equals("DroppedFrames")){
+						this.droppedFrames = Integer.parseInt(part.split(":")[1].trim());
+					} 
+					if(part.split(":")[0].equals("Shape")){
+						ArrayList<Integer> values = new ArrayList<Integer>();
+						for (String part2 : part.split(":")[1].split(",")) {
+							values.add(Integer.parseInt(part2.trim()));
+						}
+						this.mapShape = ArrayUtils.toPrimitive(values.toArray(new Integer[0]), 0);
+					} 
+				} 
+			}
+		} catch (IOException e) {
+			// TODO Should post an error here.
+		}
+		
 		File f = null;
 		BufferedReader br = null;
 		List<Long> offsetList = new ArrayList<Long>();
@@ -202,10 +238,15 @@ public class MerlinLoader extends AbstractFileLoader {
 
 			} while (br.read(cbuf) > 0);
 
-			int[] shape = new int[] {offsetList.size(), y, x};
+			
+			if (this.mapShape == null) {
+				this.mapShape = new int[] {offsetList.size()};
+			}
+			
 			int[] frameShape = new int[] {y, x};
+			int[] shape = ArrayUtils.addAll(this.mapShape, frameShape);
 			lazy = createLazyDataset(DATA_NAME, dtype, shape,
-					new MerlinFrameLazyDataset(f, offsetList.toArray(new Long[0]), dtype, frameShape));
+					new MerlinFrameLazyDataset(f, offsetList.toArray(new Long[0]), dtype, frameShape, this.droppedFrames, this.mapShape));
 
 		} catch (Exception e) {
 			throw new ScanFileHolderException("File failed to load " + fileName, e);
@@ -224,9 +265,8 @@ public class MerlinLoader extends AbstractFileLoader {
 		if (loadMetadata) {
 			processMetadata(metaHolder, output, meta);
 		}
-
-		if (lazy.getShape()[0] > 1) {
-			// add the lazy dataset
+		if (offsetList.size() > 1) {
+			// add the lazy dataset			
 			lazy.setName(DATA_NAME);
 			output.addDataset(DATA_NAME, lazy);
 			meta.addDataInfo(DATA_NAME, lazy.getShape());
@@ -270,12 +310,16 @@ public class MerlinLoader extends AbstractFileLoader {
 		private Long[] frameOffsets;
 		private int dtype;
 		private int[] frameShape;
+		private int droppedFrames;
+		private int[] mapShape;
 		
-		public MerlinFrameLazyDataset(File file, Long[] frameOffsets, int dtype, int[] frameShape) {
+		public MerlinFrameLazyDataset(File file, Long[] frameOffsets, int dtype, int[] frameShape, int droppedFrames, int[] mapShape) {
 			this.file = file;
 			this.frameOffsets = frameOffsets;
 			this.dtype = dtype;
 			this.frameShape = frameShape;
+			this.droppedFrames = droppedFrames;
+			this.mapShape = mapShape;
 		}
 		
 		@Override
@@ -283,44 +327,56 @@ public class MerlinLoader extends AbstractFileLoader {
 			FileInputStream fis = new FileInputStream(file);
 			Dataset loaded = null;
 			Dataset temp = null;
+			Class<? extends Dataset> clazz = null;
 			switch (dtype) {
 			case Dataset.INT16:
-				loaded = DatasetFactory.zeros(ShortDataset.class, slice.getShape());
-				temp = DatasetFactory.zeros(ShortDataset.class, frameShape);
+				clazz = ShortDataset.class;
 				break;
 			case Dataset.INT32:
-				loaded = DatasetFactory.zeros(IntegerDataset.class, slice.getShape());
-				temp = DatasetFactory.zeros(IntegerDataset.class, frameShape);
-				break;
 			case Dataset.INT64:
-				loaded = DatasetFactory.zeros(IntegerDataset.class, slice.getShape());
-				temp = DatasetFactory.zeros(IntegerDataset.class, frameShape);
+				clazz = IntegerDataset.class;
 				break;
 			}
+			
+			loaded = DatasetFactory.zeros(clazz, slice.getShape());
+			temp = DatasetFactory.zeros(clazz, frameShape);
 			
 			try {
 				int framepos = 0;
 				IDataset sliced = null;
-				for(int i = slice.getStart()[0]; i < slice.getStop()[0]; i+=slice.getStep()[0]) {
+				
+				LongDataset lookup = DatasetFactory.createRange(LongDataset.class, (long) DatasetFactory.createFromObject(mapShape).product(true));
+				lookup.iadd(droppedFrames);
+				lookup.setShape(mapShape);
+				
+				Slice[] mapSlice = Arrays.copyOf(slice.convertToSlice(), slice.convertToSlice().length-2);
+				lookup = (LongDataset) lookup.getSliceView(mapSlice);				
+				
+				IndexIterator iter = lookup.getPositionIterator(null);
+				
+				int[] pos = iter.getPos();
+				while(iter.hasNext()){
+					long position = frameOffsets[(int) lookup.get(pos)];
 					switch (dtype) {
 					case Dataset.INT16:
-						Utils.readByte(fis, (ShortDataset) temp, frameOffsets[i]);
-						sliced = temp.getSlice(slice.convertToSlice()[1], slice.convertToSlice()[2]);
-						loaded.setSlice(sliced, new Slice(framepos, framepos+1), slice.convertToSlice()[1], slice.convertToSlice()[2]);
+						Utils.readByte(fis, (ShortDataset) temp, position);
 						break;
 					case Dataset.INT32:
-						Utils.readBeShort(fis, (IntegerDataset) temp, frameOffsets[i], false);			
-						sliced = temp.getSlice(slice.convertToSlice()[1], slice.convertToSlice()[2]);
-						loaded.setSlice(sliced, new Slice(framepos, framepos+1), slice.convertToSlice()[1], slice.convertToSlice()[2]);
+						Utils.readBeShort(fis, (IntegerDataset) temp, position, false);			
 						break;
 					case Dataset.INT64:
-						Utils.readBeInt(fis, (IntegerDataset) temp, frameOffsets[i]);
-						sliced = temp.getSlice(slice.convertToSlice()[1], slice.convertToSlice()[2]);
-						loaded.setSlice(sliced, new Slice(framepos, framepos+1), slice.convertToSlice()[1], slice.convertToSlice()[2]);
+						Utils.readBeInt(fis, (IntegerDataset) temp, position);
 						break;
 					}
-					framepos++;
+					Slice[] readSlice = Arrays.copyOfRange(slice.convertToSlice(), frameShape.length, frameShape.length+2);
+					sliced = temp.getSlice(readSlice);
+					SliceND setSlice = slice.clone();
+					for (int i = 0; i < iter.getPos().length; i ++) {
+						setSlice.setSlice(i, pos[i],  pos[i]+1 , 1);
+					}
+					loaded.setSlice(sliced, setSlice);
 				}
+				
 			} catch (Exception e) {
 				throw new IOException(e);				
 			} finally {

@@ -9,8 +9,6 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.export;
 
-import java.io.File;
-
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.IExportOperation;
@@ -32,9 +30,6 @@ import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 
 @Atomic
 public class ExportAsText2DOperation extends AbstractOperation<ExportAsText2DModel, OperationData> implements IExportOperation {
-
-	private static final String EXPORT = "export";
-	private static final String DEFAULT_EXT = "dat";
 	
 	@Override
 	public String getId() {
@@ -85,7 +80,9 @@ public class ExportAsText2DOperation extends AbstractOperation<ExportAsText2DMod
 				ASCIIDataWithHeadingSaver saver = new ASCIIDataWithHeadingSaver(fileName);
 				try {
 					outds = DatasetUtils.convertToDataset(it.next().getSlice()).transpose();
-					outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
+					if (x != null) {
+						outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
+					}
 					DataHolder dh = new DataHolder();
 					dh.addDataset("Export", outds);
 					saver.saveFile(dh);
@@ -96,7 +93,9 @@ public class ExportAsText2DOperation extends AbstractOperation<ExportAsText2DMod
 			
 		} else {
 			String fileName = ExportAsText1DOperation.getFilePath( model, input, this, -1);
-			outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
+			if (x != null) {
+				outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
+			}
 			ASCIIDataWithHeadingSaver saver = new ASCIIDataWithHeadingSaver(fileName);
 			
 			DataHolder dh = new DataHolder();

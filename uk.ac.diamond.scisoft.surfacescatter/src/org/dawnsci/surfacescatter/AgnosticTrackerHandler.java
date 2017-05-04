@@ -778,8 +778,9 @@ public class AgnosticTrackerHandler {
 							      DataModel dm, 
 							      int trackingMarker, 
 							      int k,
-							      int selection,
-							      IPlottingSystem<Composite> pS) {
+							      int selection
+//							      IPlottingSystem<Composite> pS
+							      ) {
 
 		len = sm.getInitialLenPt()[0];
 		pt = sm.getInitialLenPt()[1];

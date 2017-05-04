@@ -36,8 +36,6 @@ public class SuperModel {
 	private Dataset sortedX; // this the scanned variable, e.g. l or qdcd
 	private Dataset sortedQ; 
 	private Dataset nullImage;
-	@SuppressWarnings("rawtypes")
-//	private TreeMap sortedImages;
 	private ILazyDataset[] images;
 	private int[] filepathsSortedArray;
 	private int sliderPos;
@@ -91,7 +89,28 @@ public class SuperModel {
 	private ArrayList<double[][]> interpolatedLenPts;
 	private double energy;
 	private int theta = 0;
+	private Dataset sortedTifFiles;
+	private Dataset sortedDatNamesInOrderDataset;
+	private String nexusPath;
+	private Dataset sortedDatIntsInOrderDataset;
+	private ArrayList<OverlapDataModel> overlapDataModels;
 	
+	public String getNexusPath() {
+		return nexusPath;
+	}
+
+	public void setNexusPath(String nexusPath) {
+		this.nexusPath = nexusPath;
+	}
+
+	public Dataset getSortedTifFiles() {
+		return sortedTifFiles;
+	}
+
+	public void setSortedTifFiles(Dataset tifFiles) {
+		this.sortedTifFiles = tifFiles;
+	}
+
 	public double getEnergy() {
 		return energy;
 	}
@@ -125,6 +144,23 @@ public class SuperModel {
 		
 		interpolatorRegions.add(box);
 	}
+	
+	public ArrayList<Double> getyListRawIntensity() {
+		return yListRawIntensity;
+	}
+
+	public void setyListRawIntensity(ArrayList<Double> yListRawIntensity) {
+		this.yListRawIntensity = yListRawIntensity;
+	}
+
+	public ArrayList<Double> getyListRawIntensityError() {
+		return yListRawIntensityError;
+	}
+
+	public void setyListRawIntensityError(ArrayList<Double> yListRawIntensityError) {
+		this.yListRawIntensityError = yListRawIntensityError;
+	}
+
 	
 	public ProccessingMethod getProcessingMethodSelection() {
 		return processingMethodSelection;
@@ -403,13 +439,10 @@ public class SuperModel {
 					double energyJ  = energy*1000*1.602177*Math.pow(10, -19);
 					double hc = 1.98644568*Math.pow(10, -25);
 					double q = 4*Math.PI* (Math.sin((theta +1 )*splicedCurveX.getDouble(i)))*energyJ/ hc;
-					
-//					IDataset x= splicedCurveX;
-					
 					double qA = q/(Math.pow(10, 10));
+					
 					try{
 						splicedCurveQ.set(qA, i);
-//						System.out.println("i: " + i + "  qA: "+ qA);
 					}
 					catch(NullPointerException d){
 					
@@ -1136,14 +1169,6 @@ public class SuperModel {
 		this.nullImage = nullImage;
 	}
 
-//	public TreeMap getSortedImages() {
-//		return sortedImages;
-//	}
-
-//	public void setSortedImages(TreeMap sortedImages) {
-//		this.sortedImages = sortedImages;
-//	}
-
 	public ILazyDataset[] getImages() {
 		return images;
 	}
@@ -1243,9 +1268,7 @@ public class SuperModel {
 				trackerLocationList.add(new double[] {0,0,0,0,0,0,0,0});
 				}
 		}
-		
-//		System.out.println("Added tracker location at k = " + k);
-		
+
 		ArrayList<double[]> trackerLocationList1 = new ArrayList<double[]>();
 		trackerLocationList1 = (ArrayList<double[]>) trackerLocationList.clone();
 		trackerLocationList1.set(k,in);
@@ -1283,8 +1306,6 @@ public class SuperModel {
 				trackerKList.add((double) 2000000);
 				}
 		}
-		
-//		System.out.println("Added tracker location at k = " + k);
 		
 		ArrayList<Double> trackerKList1 = new ArrayList<Double>();
 		trackerKList1 = (ArrayList<Double>) trackerKList.clone();
@@ -1333,14 +1354,6 @@ public class SuperModel {
 	public void setTrackerLocationList(ArrayList<double[]> trackerLocationList) {
 		this.trackerLocationList = trackerLocationList;
 	}
-
-//	public ArrayList<Double> getTrackerKList() {
-//		return trackerKList;
-//	}
-
-//	public void setTrackerKList(ArrayList<Double> trackerKList) {
-//		this.trackerKList = trackerKList;
-//	}
 
 	public int[][] getBoxOffsetLenPt() {
 		return boxOffsetLenPt;
@@ -1653,5 +1666,29 @@ public class SuperModel {
 
 	public Dataset getSortedQ() {
 		return sortedQ;
+	}
+
+	public Dataset getSortedDatNamesInOrderDataset() {
+		return sortedDatNamesInOrderDataset;
+	}
+
+	public void setSortedDatNamesInOrderDataset(Dataset sortedDatNamesInOrderDataset) {
+		this.sortedDatNamesInOrderDataset = sortedDatNamesInOrderDataset;
+	}
+
+	public Dataset getSortedDatIntsInOrderDataset() {
+		return sortedDatIntsInOrderDataset;
+	}
+
+	public void setSortedDatIntsInOrderDataset(Dataset sortedDatIntsInOrderDataset) {
+		this.sortedDatIntsInOrderDataset = sortedDatIntsInOrderDataset;
+	}
+	
+	public ArrayList<OverlapDataModel> getOverlapDataModels() {
+		return overlapDataModels;
+	}
+
+	public void setOverlapDataModels(ArrayList<OverlapDataModel> overlapDataModels) {
+		this.overlapDataModels = overlapDataModels;
 	}	
 }

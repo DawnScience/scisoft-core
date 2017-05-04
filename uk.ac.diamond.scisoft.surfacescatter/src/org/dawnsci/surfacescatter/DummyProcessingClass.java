@@ -35,8 +35,6 @@ public class DummyProcessingClass {
 										ExampleModel model, 
 										DataModel dm, 
 										GeometricParametersModel gm, 
-										IPlottingSystem<Composite> pS,
-//										IPlottingSystem<Composite> ssvsPS,
 										int correctionSelector, 
 										int k, 
 										int trackingMarker,
@@ -56,8 +54,9 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection,
-									  pS);
+									  selection
+//									  pS
+									  );
 				}
 				
 				if(AnalaysisMethodologies.toInt(model.getFitPower())<5){
@@ -114,8 +113,9 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection,
-									  pS);
+									  selection
+//									  pS
+									  );
 				}
 				
 				else{	
@@ -171,8 +171,9 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection,
-									  pS);
+									  selection
+//									  pS
+									  );
 				}
 				
 				else{
@@ -188,7 +189,7 @@ public class DummyProcessingClass {
 												 model,
 										 		 input,  
 										 		 dm, 
-										 		 pS,
+//										 		 pS,
 										 		 selection,
 										 		 trackingMarker,
 										 		 k);	
@@ -209,8 +210,9 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection,
-									  pS);
+									  selection
+//									  pS
+									  );
 				}
 
 				else{
@@ -228,7 +230,7 @@ public class DummyProcessingClass {
 						 model,
 				 		 input,  
 				 		 dm, 
-				 		 pS,
+//				 		 pS,
 				 		 selection,
 				 		 trackingMarker,
 				 		 k);	
@@ -247,8 +249,9 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection,
-									  pS);
+									  selection
+//									  pS
+									  );
 				}
 
 				else{
@@ -286,8 +289,9 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection,
-									  pS);
+									  selection
+//									  pS
+									  );
 				}
 
 				else{
@@ -388,8 +392,9 @@ public class DummyProcessingClass {
 								  dm, 
 								  trackingMarker, 
 								  k, 
-									  selection,
-									  pS);
+								  selection
+//								  pS
+								  );
 				
 				if(AnalaysisMethodologies.toInt(model.getFitPower())<5){
 					  outputOD= TwoDFittingIOp(model,
@@ -441,9 +446,10 @@ public class DummyProcessingClass {
 									  model, 
 									  dm, 
 									  trackingMarker, 
-									   k, 
-									  selection,
-									  pS);
+									  k, 
+									  selection
+//									  pS
+									  );
 				}
 				
 				else{	
@@ -496,8 +502,9 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k,
-									  selection,
-									  pS);
+									  selection
+//									  pS
+									  );
 			
 				}
 
@@ -514,7 +521,7 @@ public class DummyProcessingClass {
 						 model,
 				 		 input,  
 				 		 dm, 
-				 		 pS,
+//				 		 pS,
 //				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
@@ -535,8 +542,7 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k,
-									  selection,
-									  pS);
+									  selection);
 			
 				}
 
@@ -553,7 +559,7 @@ public class DummyProcessingClass {
 						 model,
 				 		 input,  
 				 		 dm, 
-				 		 pS,
+//				 		 pS,
 //				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
@@ -574,8 +580,7 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k,
-									  selection,
-									  pS);
+									  selection);
 			
 				}
 				
@@ -613,8 +618,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k,
-									  selection,
-									  pS);
+									  selection
+									  );
 			
 					
 				}
@@ -655,7 +660,6 @@ public class DummyProcessingClass {
 		try {
 			Thread.sleep(0);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -709,8 +713,7 @@ public class DummyProcessingClass {
 								  dm, 
 								  trackingMarker, 
 								  k, 
-								  selection,
-								  pS);
+								  selection);
 				
 				
 				if(AnalaysisMethodologies.toInt(model.getFitPower())<5){
@@ -758,9 +761,10 @@ public class DummyProcessingClass {
 									  model, 
 									  dm, 
 									  trackingMarker, 
-									   k, 
-									  selection,
-									  pS);
+									  k, 
+									  selection
+//									  pS
+									  );
 					
 				}
 
@@ -820,9 +824,9 @@ public class DummyProcessingClass {
 									  model, 
 									  dm, 
 									  trackingMarker, 
-									   k, 
-									  selection,
-									  pS);
+									  k, 
+									  selection
+									  );
 					
 				}
 
@@ -838,7 +842,7 @@ public class DummyProcessingClass {
 						 model,
 				 		 input,  
 				 		 dm, 
-				 		 pS,
+//				 		 pS,
 //				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
@@ -860,8 +864,9 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  selection, 
-									  selection,
-									  pS);
+									  selection
+//									  pS
+									  );
 					
 				}
 
@@ -877,7 +882,7 @@ public class DummyProcessingClass {
 						 model,
 				 		 input,  
 				 		 dm, 
-				 		 pS,
+//				 		 pS,
 //				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
@@ -897,8 +902,8 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection,
-									  pS
+									  selection
+//									  pS
 									  );
 					
 				}
@@ -937,9 +942,10 @@ public class DummyProcessingClass {
 									  model, 
 									  dm, 
 									  trackingMarker, 
-									   k, 
-									  selection,
-									  pS);	
+									  k, 
+									  selection
+//									  pS
+									  );	
 				}
 
 				else{
@@ -977,7 +983,6 @@ public class DummyProcessingClass {
 		try {
 			Thread.sleep(0);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 				
@@ -1168,7 +1173,7 @@ public class DummyProcessingClass {
 						 model,
 				 		 input,  
 				 		 dm, 
-				 		 pS,
+//				 		 pS,
 //				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
@@ -1206,11 +1211,11 @@ public class DummyProcessingClass {
 						 model,
 				 		 input,  
 				 		 dm, 
-				 		 pS,
+//				 		 pS,
 //				 		 ssvsPS,
 				 		 selection,
-				 		trackingMarker,
-				 		k);	
+				 		 trackingMarker,
+				 		 k);	
 				
 				
 				break;
@@ -1312,7 +1317,6 @@ public class DummyProcessingClass {
 		try {
 			Thread.sleep(0);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -1622,7 +1626,6 @@ public class DummyProcessingClass {
 		
 		
 		Metadata md = new Metadata();
-		IDataset dummyMD = DatasetFactory.zeros(new int [] {2,2});
 		Map<String, Integer> dumMap = new HashMap<String, Integer>();
 		dumMap.put("one", 1);
 		md.initialize(dumMap);
@@ -1650,8 +1653,6 @@ public class DummyProcessingClass {
 											ExampleModel model,
 											IDataset input,  
 											DataModel dm, 
-											IPlottingSystem<Composite> pS,
-//											IPlottingSystem<Composite> ssvsPS,
 											int selection,
 											int trackingMarker,
 											int k){		
@@ -1679,8 +1680,6 @@ public class DummyProcessingClass {
 			outputOD4 = OverlappingBackgroundROIFittingIOp(model, 
 														   input, 
 														   sm,
-														   pS,
-//														   ssvsPS,
 														   trackingMarker,
 														   k);
 			if(outputOD4.getAuxData()[3] != null){
@@ -1714,17 +1713,15 @@ public class DummyProcessingClass {
 	public static OperationData OverlappingBackgroundROIFittingIOp(ExampleModel model,
 				  												   IDataset input,
 				  												   SuperModel sm,
-				  												   IPlottingSystem<Composite> pS,
-//				  												   IPlottingSystem<Composite> ssvsPS,
 				  												   int trackingMarker,
 				  												   int k){
 
 		SecondConstantROIBackgroundSubtractionModel scrbm 
 			= new SecondConstantROIBackgroundSubtractionModel();
 		int[][] a= sm.getInitialLenPt();
-		scrbm.setInitialLenPt(sm.getInitialLenPt());
+		scrbm.setInitialLenPt(a);
 		int[][] b= model.getLenPt();
-		scrbm.setLenPt(model.getLenPt());
+		scrbm.setLenPt(b);
 		scrbm.setFitPower(model.getFitPower());
 		scrbm.setBoundaryBox(model.getBoundaryBox());
 		scrbm.setTrackerOn(sm.getTrackerOn());
@@ -1732,7 +1729,7 @@ public class DummyProcessingClass {
 		
 		if(sm.getBoxOffsetLenPt() != null){
 			int[][] e = sm.getBoxOffsetLenPt();
-			scrbm.setBoxOffsetLenPt(sm.getBoxOffsetLenPt());
+			scrbm.setBoxOffsetLenPt(e);
 		}
 		
 		
@@ -1754,7 +1751,7 @@ public class DummyProcessingClass {
 			
 			if(sm.getPermanentBoxOffsetLenPt()!= null){
 				int[][] c = sm.getPermanentBoxOffsetLenPt();
-				scrbm.setBoxOffsetLenPt(sm.getPermanentBoxOffsetLenPt());
+				scrbm.setBoxOffsetLenPt(c);
 			}
 			
 		}
@@ -1763,10 +1760,9 @@ public class DummyProcessingClass {
 		}
 		
 		int[][]  d= sm.getBackgroundLenPt();
-		scrbm.setBackgroundLenPt(sm.getBackgroundLenPt());
+		scrbm.setBackgroundLenPt(d);
 		
 		Metadata md = new Metadata();
-		IDataset dummyMD = DatasetFactory.zeros(new int [] {2,2});
 		Map<String, Integer> dumMap = new HashMap<String, Integer>();
 		dumMap.put("one", 1);
 		md.initialize(dumMap);

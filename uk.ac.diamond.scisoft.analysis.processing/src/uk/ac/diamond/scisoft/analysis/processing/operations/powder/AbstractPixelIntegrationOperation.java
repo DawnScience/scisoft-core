@@ -47,9 +47,17 @@ public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrati
 
 		if (md == null) throw new OperationException(this, "No detector geometry information!");
 		
-		if (metadata == null || (!metadata.getDiffractionCrystalEnvironment().equals(md.getDiffractionCrystalEnvironment())&& !metadata.getDetector2DProperties().equals(md.getDetector2DProperties()))) {
+		if (metadata == null) {
 			metadata = md;
 			cache = null;
+		} else {
+			boolean dee = metadata.getDiffractionCrystalEnvironment().equals(md.getDiffractionCrystalEnvironment());
+			boolean dpe = metadata.getDetector2DProperties().equals(md.getDetector2DProperties());
+			
+			if (!dpe || !dee) {
+				metadata = md;
+				cache = null;
+			}
 		}
 
 		IPixelIntegrationCache lcache = getCache((PixelIntegrationModel)model, metadata, input.getShape());

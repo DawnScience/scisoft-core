@@ -112,7 +112,7 @@ public class RodObjectNexusUtils{
 			nxData.addAttribute(TreeFactory.createAttribute("l", lArrayCon.getObject(imageFilepathNo)));
 			
 			nxData.addAttribute(TreeFactory.createAttribute("Lorentzian_Correction", sm.getLorentzCorrection().get(imageFilepathNo)));
-			nxData.addAttribute(TreeFactory.createAttribute("PolarisaStion_Correction", sm.getPolarisation().get(imageFilepathNo)));
+			nxData.addAttribute(TreeFactory.createAttribute("Polarisation_Correction", sm.getPolarisation().get(imageFilepathNo)));
 			nxData.addAttribute(TreeFactory.createAttribute("Area_Correction", sm.getAreaCorrection().get(imageFilepathNo)));
 			
 			nxData.addAttribute(TreeFactory.createAttribute("Fhkl", sm.getSplicedCurveYFhkl().getDouble(imageFilepathNo)));
@@ -128,7 +128,7 @@ public class RodObjectNexusUtils{
 			nxData.addAttribute(TreeFactory.createAttribute("Fit_Power", AnalaysisMethodologies.toString(em.getFitPower())));
 			nxData.addAttribute(TreeFactory.createAttribute("Boundary_Box", em.getBoundaryBox()));
 			nxData.addAttribute(TreeFactory.createAttribute("Tracker_Type", TrackingMethodology.toString(em.getTrackerType())));
-			nxData.addAttribute(TreeFactory.createAttribute("Background_Methdology", AnalaysisMethodologies.toString(em.getMethodology())));
+			nxData.addAttribute(TreeFactory.createAttribute("Background_Methodology", AnalaysisMethodologies.toString(em.getMethodology())));
 	
 			nxData.addAttribute(TreeFactory.createAttribute("Unspliced_Corrected_Intensity", sm.getyList().get(imageFilepathNo)));
 			nxData.addAttribute(TreeFactory.createAttribute("Unspliced_Corrected_Intensity_Error", Maths.power(sm.getyList().get(imageFilepathNo), 0.5)));
@@ -263,7 +263,7 @@ public class RodObjectNexusUtils{
 					GroupNode overlapData = TreeFactory.createGroupNode(p);
 					p++;
 					
-					overlapRegions.addGroupNode("Overlap_Region" + overlapNumber, overlapData);
+					overlapRegions.addGroupNode("Overlap_Region_" + overlapNumber, overlapData);
 					
 					//lower overlap data
 					

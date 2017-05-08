@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.mask;
 
+import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -27,8 +29,12 @@ import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationCache;
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
+@Atomic
 public class MaskOutliersInQOperation extends AbstractOperation<MaskOutliersInQModel, OperationData> {
 
+	private volatile PixelIntegrationCache cache;
+	private IDiffractionMetadata metadata;
+	
 	@Override
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutliersInQOperation";
@@ -51,13 +57,20 @@ public class MaskOutliersInQOperation extends AbstractOperation<MaskOutliersInQM
 		
 		if (meta == null) throw new OperationException(this, "Does not contain calibration information!");
 		
-		PixelIntegrationBean bean = new PixelIntegrationBean();
-		bean.setUsePixelSplitting(false);
-		bean.setxAxis(XAxis.Q);
-		bean.setAzimuthalIntegration(true);
-		bean.setTo1D(true);
-		bean.setShape(input.getShape());
-		PixelIntegrationCache lcache = new PixelIntegrationCache(meta, bean);
+		if (metadata == null) {
+			metadata = meta;
+			cache = null;
+		} else {
+			boolean dee = metadata.getDiffractionCrystalEnvironment().equals(meta.getDiffractionCrystalEnvironment());
+			boolean dpe = metadata.getDetector2DProperties().equals(meta.getDetector2DProperties());
+			
+			if (!dpe || !dee) {
+				metadata = meta;
+				cache = null;
+			}
+		}
+		
+		PixelIntegrationCache lcache = getCache(input, meta);
 		
 		IDataset mask = null;
 		
@@ -79,6 +92,27 @@ public class MaskOutliersInQOperation extends AbstractOperation<MaskOutliersInQM
 		input.setMetadata(mm);
 
 		return new OperationData(input);
+	}
+	
+	
+	private PixelIntegrationCache getCache(IDataset input, IDiffractionMetadata meta) {
+
+		PixelIntegrationCache lcache = cache;
+		if (lcache == null) {
+			synchronized(this) {
+				lcache = cache;
+				if (lcache == null) {
+					PixelIntegrationBean bean = new PixelIntegrationBean();
+					bean.setUsePixelSplitting(false);
+					bean.setxAxis(XAxis.Q);
+					bean.setAzimuthalIntegration(true);
+					bean.setTo1D(true);
+					bean.setShape(input.getShape());
+					cache = lcache = new PixelIntegrationCache(meta, bean);
+				}
+			}
+		}
+		return lcache;
 	}
 
 }

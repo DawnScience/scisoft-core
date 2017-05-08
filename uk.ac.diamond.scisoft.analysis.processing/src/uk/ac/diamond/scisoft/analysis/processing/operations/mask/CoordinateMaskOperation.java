@@ -11,19 +11,14 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.mask;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Arrays;
 
-import org.dawb.common.services.ServiceManager;
-import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
-import org.eclipse.dawnsci.analysis.api.persistence.IPersistentFile;
+import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
-import org.eclipse.dawnsci.hdf.object.HierarchicalDataFactory;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.BooleanDataset;
@@ -33,15 +28,12 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.MaskMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.MakeMask;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
-import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
-import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 /**
  * Mask a 2 dimensional Dataset based on the coordinates of the points 
@@ -52,6 +44,7 @@ public class CoordinateMaskOperation extends
 	
 	private volatile Dataset mask = null;
 	private PropertyChangeListener listener;
+	private IDiffractionMetadata metadata;
 	
 	@Override
 	public String getId() {
@@ -73,6 +66,23 @@ public class CoordinateMaskOperation extends
 			throws OperationException {
 		
 		if (model.getCoordinateRange() == null) return new OperationData(input);
+		
+		DiffractionMetadata meta = input.getFirstMetadata(DiffractionMetadata.class);
+		
+		if (meta == null && !model.getCoordinateType().equals(MaskAxis.PIXEL)) throw new OperationException(this, "Does not contain calibration information!");
+		
+		if (metadata == null) {
+			metadata = meta;
+			mask = null;
+		} else {
+			boolean dee = metadata.getDiffractionCrystalEnvironment().equals(meta.getDiffractionCrystalEnvironment());
+			boolean dpe = metadata.getDetector2DProperties().equals(meta.getDetector2DProperties());
+			
+			if (!dpe || !dee) {
+				metadata = meta;
+				mask = null;
+			}
+		}
 		
 		
 		Dataset coordinateMask = getMask(input);

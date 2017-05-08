@@ -10,6 +10,9 @@ public class DirectoryModel {
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	
 
+	
+	
+	
 	public ArrayList<ArrayList<Integer>> getFramesCorespondingToDats() {
 		return framesCorespondingToDats;
 	}

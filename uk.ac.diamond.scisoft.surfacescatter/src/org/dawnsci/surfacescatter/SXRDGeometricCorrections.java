@@ -72,6 +72,55 @@ public class SXRDGeometricCorrections {
 		return arb;
 	}
 	
+	public static ILazyDataset getArb(String filepath, String choice) {
+		ILazyDataset arb = null;
+		arb =  DiffData(filepath, choice);
+
+		return arb;
+	}
+	
+	
+	public static ILazyDataset geth(String model) {
+		return getArb(model, "h");
+	}
+	
+	public static ILazyDataset getk(String model) {
+		return getArb(model, "k");
+		}
+	
+	public static ILazyDataset  getl(String model) {
+		return getArb(model, "l");
+		}
+	
+	public  static ILazyDataset  getAlpha(String model) {
+		return getArb(model, ALPHA);
+		}
+	
+	public static ILazyDataset  getDelta(String model) {
+		return getArb(model, DELTA);
+		}
+	
+	public static ILazyDataset  getGamma(String model) {
+		return getArb(model, GAMMA);
+		}
+	
+	public static ILazyDataset  getOmega(String model) {
+		return getArb(model, OMEGA);
+		}
+	
+	public static ILazyDataset  getChi(String model) {
+		return getArb(model, CHI);
+		}
+	
+	public static ILazyDataset  getPhi(String model) {
+		return getArb(model, PHI);
+		}
+	
+	
+	public static ILazyDataset  getExposureTime(String model) {
+		return getArb(model, "ExposureTime");
+		}
+	
 	
 	public static ILazyDataset geth(ExampleModel model) {
 		return getArb(model, "h");
@@ -135,13 +184,23 @@ public class SXRDGeometricCorrections {
 
 	}
 	
-	public static Dataset lorentz (String filepath) throws DatasetException{	
+	public static Dataset lorentz (String model) throws DatasetException{	
 		
-		ExampleModel model = new ExampleModel();
+		double pc = Math.PI/180;
 		
-		model.setFilepath(filepath);
+		ILazyDataset alpha3 = getAlpha(model);
 		
-		return lorentz(model);
+		ILazyDataset delta3 = getDelta(model);
+		
+		ILazyDataset gamma3 = getGamma(model);
+
+		Dataset a = Maths.multiply(alpha3,pc);
+		Dataset d = Maths.multiply(delta3,pc);
+		Dataset g = Maths.multiply(gamma3,pc);
+		
+		Dataset lorentzcor = Maths.multiply(Maths.cos(d),(Maths.sin(Maths.subtract(g, a)))); 
+		
+		return lorentzcor;
 
 	}
 	
@@ -172,12 +231,29 @@ public class SXRDGeometricCorrections {
 	}
 	
 	public static Dataset polarisation (String filepath, double IP, double OP) throws DatasetException{	
+	
 		
-		ExampleModel model = new ExampleModel();
+		double pc = Math.PI/180;
 		
-		model.setFilepath(filepath);
+		ILazyDataset delta3 = getDelta(filepath);
+
+		ILazyDataset gamma3 = getGamma(filepath);
+
+		Dataset d = Maths.multiply(delta3,pc);
+		Dataset g = Maths.multiply(gamma3,pc);
 		
-		return polarisation(model, IP, OP);
+		Dataset inplane = Maths.subtract(1,Maths.power(Maths.sin(d), 2));
+		Dataset outplane = Maths.subtract(1,(Maths.power((Maths.multiply(Maths.cos(d),Maths.sin(g))),2)));
+		
+		
+		Dataset IPdat = DatasetFactory.zeros(delta3.getShape(),Dataset.FLOAT64);
+		IPdat = Maths.add(IPdat, IP);
+		
+		Dataset OPdat = DatasetFactory.zeros(delta3.getShape(),Dataset.FLOAT64);
+		OPdat = Maths.add(OPdat, OP);
+	
+		Dataset polar = Maths.divide(1,(Maths.add((Maths.multiply(OPdat,outplane)),(Maths.multiply(IPdat,inplane)))));
+		return polar;
 	}
 	
 
@@ -395,26 +471,181 @@ public class SXRDGeometricCorrections {
 		//
 	}	
 	
-
-	public static Dataset areacor (String filepath, boolean BeamCor, boolean Specular, 
+	public static Dataset areacor (String model, boolean BeamCor, boolean Specular, 
 			double SampleSize, double OutPlaneSlits, double InPlaneSlits, double BeamInPlane, double BeamOutPlane, 
 			double DetectorSlits) throws DatasetException {	
+				
+			double pc = Math.PI/180;
+			
+			ILazyDataset alpha3 = getAlpha(model);
+			
+			ILazyDataset delta3 = getDelta(model);
 		
-		ExampleModel model = new ExampleModel();
+			ILazyDataset gamma3 = getGamma(model);
 		
-		model.setFilepath(filepath);
-		
-		return areacor (model, 
-				        BeamCor, 
-				        Specular, 
-				        SampleSize,  
-				        OutPlaneSlits, 
-				        InPlaneSlits, 
-				        BeamInPlane, 
-				        BeamOutPlane, 
-				        DetectorSlits);
-	}
+			Dataset a = Maths.multiply(alpha3,pc);
+			Dataset d = Maths.multiply(delta3,pc);
+			Dataset g = Maths.multiply(gamma3,pc);
+			
+			
+			Dataset area_cor = DatasetFactory.zeros(delta3.getShape(),Dataset.FLOAT64);
+			Dataset ylimitdat = DatasetFactory.zeros(delta3.getShape(),Dataset.FLOAT64);
+			
+			
+			if (BeamCor == true) {
+				if (Specular == true) {
+					Dataset y_sum = DatasetFactory.createFromObject(0);
+					Dataset betain = a;
+					double ylimit = 10;
+									
+					
+					ylimitdat = Maths.add(ylimitdat, ylimit);
+							
+					for (int i=0; i<=delta3.getShape()[0]; i++){
+					
+						if (SampleSize > 0.01) {
+							ylimitdat = Maths.subtract(ylimitdat, ylimit);
+							ylimitdat = Maths.add(ylimitdat, SampleSize * 0.6);
+						}
+				
+						else if (Math.abs((2 * (OutPlaneSlits))/Math.sin(0.001 + betain.getDouble(i))) < ylimit) { 
+							ylimitdat.set(Math.abs(2 * OutPlaneSlits / Math.sin(betain.getDouble(i) + 0.001)),i);
+						}
+						if (1.1*OutPlaneSlits / (2*Math.sin(betain.getDouble(i) + 0.001)) < ylimit) {
+							ylimitdat.set(1.1 *OutPlaneSlits / (2* Math.sin(betain.getDouble(i))),i);
+						}
+								
+						double ystep = (ylimit / 50);
+						Dataset ystep1 = DatasetFactory.createFromObject(ystep);
+							
+						for (double y = (-1* ylimitdat.getDouble(i)); y <= (ylimitdat.getDouble(i) + ystep); y+=ystep) {
+							Dataset c = 	Maths.multiply(f_onsample(0, y, SampleSize) , f_beam(0,y*Math.sin(betain.getDouble(i)), 
+									 InPlaneSlits, OutPlaneSlits, BeamInPlane, BeamOutPlane));						
+							y_sum = Maths.add(y_sum , c);
+						}
+						
+						area_cor.set( (Maths.divide(1, Maths.multiply(y_sum , ystep)).getObject(0)) , i);
+					}
+				}
+					
+					else { 
+						Dataset betain = a;
+						Dataset c1 = Maths.sin(betain);
+						Dataset c2 = Maths.cos(d);
+						Dataset c3 = Maths.sin(d);
+						double  xlimit = 0.1;
+						double ylimit = 10;
+					
+						ylimitdat = Maths.add(ylimitdat, ylimit);
+						
+						if (InPlaneSlits> 0.01){
+		                    xlimit =InPlaneSlits / 2 + 0.01;
+						}
+		                else{
+		                    xlimit = 0.1;
+		                }
+						
+						
+						for (int i=0; i<delta3.getShape()[0]; i++){
+							
+						
+							if (InPlaneSlits > 0.01) {
+								xlimit  = 0.01 + InPlaneSlits / 2;	
+							}
+							
+							double xstep = xlimit / 50;
+					
+							if (SampleSize > 0.01){
+								ylimitdat = Maths.subtract(ylimitdat, ylimit);
+								ylimitdat = Maths.add(ylimitdat, SampleSize * 0.6);
+							}
+					
+							if (Math.abs(2* OutPlaneSlits / Math.sin(0.001 + betain.getDouble(i))) < ylimit){
+								ylimitdat.set(Math.abs(2 * OutPlaneSlits / Math.sin(betain.getDouble(i) + 0.001)),i);
+							}
+					
+							if (1.1 * OutPlaneSlits /(2* Math.sin(0.001 + betain.getDouble(i))) < ylimit) {
+								ylimitdat.set(1.1 *OutPlaneSlits / (2* Math.sin(betain.getDouble(i))),i);
+							}
+					
+							double ystep = ylimit / 50;
+					
+							double com = 0;
+							double x = (-1 *xlimit);
+							double y = (-1 *ylimit);
+							double area_sum = 0;
+					
+							for ( x = (-1* xlimit); x <= (xlimit + 0.01 + xstep) ; x += xstep){
+								for ( y = -1 * ylimit ;  y <= ylimit + 0.01 + ystep; y += ystep){
+									double fb = f_beam(x, y*c1.getDouble(i), 
+											 InPlaneSlits, OutPlaneSlits, BeamInPlane, BeamOutPlane);
+									double fd = f_detector(x*c2.getDouble(i) - y*c3.getDouble(i), DetectorSlits);
+									
+									double fo = f_onsample(x, y, SampleSize);
+									
+									if (fb!=0 && fo!=0 && fd !=0){
+										
+										
+										if(fb != 0){
+											System.out.println("fb :  " + fb + "  x = " +x + "  y = " +y);
+										}
+										else if(fo != 0){
+											System.out.println("fo :  " + fo +"  x = " +x + "  y = " +y);
+										}
+										else if(fd != 0){
+											System.out.println("fd :  " + fd +"  x = " +x + "  y = " +y);
+										}
 
-	
-	
+									}
+									
+									if(fd != 0){
+										System.out.println("fd :  " + fd +"  x = " +x + "  y = " +y);
+									}
+									area_sum = f_beam(x, y*c1.getDouble(i), 
+											 InPlaneSlits, OutPlaneSlits, BeamInPlane, BeamOutPlane) 
+											* f_detector(x*c2.getDouble(i) - y*c3.getDouble(i), DetectorSlits) * f_onsample(x, y, SampleSize);
+									com = com +area_sum;
+								}
+							}
+							
+							area_sum = com;
+							double bs_eff = 0;
+							com = 0;
+					
+					
+							for (x = -1*xlimit; x<=xlimit+xstep/10; x +=xstep/10){
+								bs_eff = f_beam(x, 0, InPlaneSlits, OutPlaneSlits, BeamInPlane, BeamOutPlane);
+								com = com + bs_eff;
+							}
+							bs_eff =com;
+							bs_eff = bs_eff * (xstep/10);
+							area_cor.set((bs_eff)/(area_sum * xstep * ystep),i);
+					
+						}
+					}
+			}
+				
+				else {
+					
+					//boolean flag = false;
+					//if (Specular == true) flag = true;
+			
+					if (Specular = false){
+						Dataset sinbetaout =  Maths.multiply(Maths.cos(d),Maths.sin(Maths.subtract(g,a)));
+						Dataset betaout = Maths.multiply(pc, Maths.arcsin(sinbetaout)) ;
+						Dataset cosbetaout = Maths.cos(betaout);
+						area_cor = Maths.divide(Maths.sin(d),cosbetaout);		
+					}
+				
+				else{
+					area_cor = Maths.sin(a);
+					
+				}
+			}
+			
+			
+			return area_cor;
+			
+			//
+		}	
 }

@@ -2,7 +2,8 @@ package org.dawnsci.surfacescatter;
 
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.FitPower;
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
-import org.eclipse.january.dataset.Dataset;
+import org.dawnsci.surfacescatter.TrackingMethodology.TrackerType1;
+import org.eclipse.january.dataset.ILazyDataset;
 
 public class FrameModel {
 
@@ -12,6 +13,8 @@ public class FrameModel {
 	private double k;
 	private double l;
 	
+	private double scannedVariable;
+	
 	//number as read in
 	
 	private int imageNumber;
@@ -20,8 +23,10 @@ public class FrameModel {
 
 	private String tifFilePath;
 	private String datFilePath;
+	private int datNo;
 			
 	///physical corrections
+	
 	
 	private double lorentzianCorrection;
 	private double polarisationCorrection;
@@ -32,13 +37,13 @@ public class FrameModel {
 	private double[] roiLocation;
 	private FitPower fitPower;
 	private int boundaryBox;
-	private TrackingMethodology trackingMethodolgy;
+	private TrackerType1 trackingMethodolgy;
 	private Methodology backgroundMethdology;
 	private double[] overlapping_Background_ROI;
 	private double[] static_Background_ROI;
 				
 	//raw image
-	private Dataset rawImageData;
+	private ILazyDataset rawImageData;
 	
 	
 	//results
@@ -125,11 +130,11 @@ public class FrameModel {
 	public void setBoundaryBox(int boundaryBox) {
 		this.boundaryBox = boundaryBox;
 	}
-	public TrackingMethodology getTrackingMethodolgy() {
+	public TrackerType1 getTrackingMethodolgy() {
 		return trackingMethodolgy;
 	}
-	public void setTrackingMethodolgy(TrackingMethodology trackingMethodolgy) {
-		this.trackingMethodolgy = trackingMethodolgy;
+	public void setTrackingMethodolgy(TrackerType1 trackerType1) {
+		this.trackingMethodolgy = trackerType1;
 	}
 	public Methodology getBackgroundMethdology() {
 		return backgroundMethdology;
@@ -149,10 +154,10 @@ public class FrameModel {
 	public void setStatic_Background_ROI(double[] static_Background_ROI) {
 		this.static_Background_ROI = static_Background_ROI;
 	}
-	public Dataset getRawImageData() {
+	public ILazyDataset getRawImageData() {
 		return rawImageData;
 	}
-	public void setRawImageData(Dataset rawImageData) {
+	public void setRawImageData(ILazyDataset rawImageData) {
 		this.rawImageData = rawImageData;
 	}
 	public double getUnspliced_Corrected_Intensity() {
@@ -191,6 +196,16 @@ public class FrameModel {
 	public void setUnspliced_Fhkl_Intensity_Error(double unspliced_Fhkl_Intensity_Error) {
 		this.unspliced_Fhkl_Intensity_Error = unspliced_Fhkl_Intensity_Error;
 	}
-	
-	
+	public int getDatNo() {
+		return datNo;
+	}
+	public void setDatNo(int datNo) {
+		this.datNo = datNo;
+	}
+	public double getScannedVariable() {
+		return scannedVariable;
+	}
+	public void setScannedVariable(double scannedVariable) {
+		this.scannedVariable = scannedVariable;
+	}
 }

@@ -1420,11 +1420,14 @@ public class SuperModel {
 									  int k,
 									  double y){
 		
-		dataArrayListManager(yListRawIntensity,
-					         yListRawIntensityError,
-					         l,
-					         k,
-					         y);
+		ArrayList<ArrayList<Double>> output = dataArrayListManager(yListRawIntensity,
+															         yListRawIntensityError,
+															         l,
+															         k,
+															         y);
+		
+		yListRawIntensity = output.get(0);
+		yListRawIntensityError = output.get(1);
 		
 		firePropertyChange("yListRawIntensity", this.yListRawIntensity,
 				this.yListRawIntensity= yListRawIntensity);
@@ -1473,7 +1476,7 @@ public class SuperModel {
 		
 	}
 	
-	public static void dataArrayListManager(ArrayList<Double> dataArray,
+	public static ArrayList<ArrayList<Double>> dataArrayListManager(ArrayList<Double> dataArray,
 											ArrayList<Double> dataArrayError,
 											int l, 
 											int k, 
@@ -1521,6 +1524,13 @@ public class SuperModel {
 		
 		dataArrayError = yList2;
 
+		ArrayList<ArrayList<Double>> output = new ArrayList<>();
+		
+		output.add(yList1);
+		output.add(yList2);
+		
+		return output;
+		
 	}
 	
 	public static void dataArrayListManager(ArrayList<Double> dataArray,

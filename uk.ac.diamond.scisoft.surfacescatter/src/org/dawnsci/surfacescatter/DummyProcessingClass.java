@@ -54,9 +54,7 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection
-//									  pS
-									  );
+									  selection);
 				}
 				
 				if(AnalaysisMethodologies.toInt(model.getFitPower())<5){
@@ -113,9 +111,7 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection
-//									  pS
-									  );
+									  selection);
 				}
 				
 				else{	
@@ -147,10 +143,7 @@ public class DummyProcessingClass {
 							   trackingMarker);
 				}
 				
-				
-				
-				
-				
+			
 				output = outputOD.getData();
 				
 
@@ -171,9 +164,7 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection
-//									  pS
-									  );
+									  selection);
 				}
 				
 				else{
@@ -189,7 +180,6 @@ public class DummyProcessingClass {
 												 model,
 										 		 input,  
 										 		 dm, 
-//										 		 pS,
 										 		 selection,
 										 		 trackingMarker,
 										 		 k);	
@@ -210,9 +200,7 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection
-//									  pS
-									  );
+									  selection);
 				}
 
 				else{
@@ -230,7 +218,6 @@ public class DummyProcessingClass {
 						 model,
 				 		 input,  
 				 		 dm, 
-//				 		 pS,
 				 		 selection,
 				 		 trackingMarker,
 				 		 k);	
@@ -249,9 +236,7 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection
-//									  pS
-									  );
+									  selection);
 				}
 
 				else{
@@ -289,9 +274,7 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection
-//									  pS
-									  );
+									  selection);
 				}
 
 				else{
@@ -342,6 +325,8 @@ public class DummyProcessingClass {
 		
 		
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
+		Double rawIntensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
+		
 		Double fhkl = (double) 0.001;
 			if (intensity >=0){
 				fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
@@ -358,6 +343,7 @@ public class DummyProcessingClass {
 			
 			sm.addyList(sm.getImages().length, selection ,intensity);
 			sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
+			sm.addYListRawIntensity(sm.getImages().length, selection ,rawIntensity);
 			sm.addOutputDatArray(sm.getImages().length, selection ,output);
 			
 			
@@ -447,9 +433,7 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k, 
-									  selection
-//									  pS
-									  );
+									  selection);
 				}
 				
 				else{	
@@ -502,9 +486,7 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  k,
-									  selection
-//									  pS
-									  );
+									  selection);
 			
 				}
 
@@ -520,9 +502,7 @@ public class DummyProcessingClass {
 				output = secondConstantROIMethod(sm,
 						 model,
 				 		 input,  
-				 		 dm, 
-//				 		 pS,
-//				 		 ssvsPS,
+				 		 dm,
 				 		 selection,
 				 		 trackingMarker,
 				 		 k);	
@@ -559,8 +539,6 @@ public class DummyProcessingClass {
 						 model,
 				 		 input,  
 				 		 dm, 
-//				 		 pS,
-//				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
 				 		 k);	
@@ -665,6 +643,8 @@ public class DummyProcessingClass {
 		
 	
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
+		Double rawIntensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
+		
 		Double fhkl = (double) 0.001;
 		if (intensity >=0){
 			fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
@@ -679,6 +659,7 @@ public class DummyProcessingClass {
 			
 			sm.addyList(sm.getImages().length, selection ,intensity);
 			sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
+			sm.addYListRawIntensity(sm.getImages().length, selection ,rawIntensity);
 			sm.addOutputDatArray(sm.getImages().length, selection ,output);
 			
 		}
@@ -763,7 +744,6 @@ public class DummyProcessingClass {
 									  trackingMarker, 
 									  k, 
 									  selection
-//									  pS
 									  );
 					
 				}
@@ -842,8 +822,6 @@ public class DummyProcessingClass {
 						 model,
 				 		 input,  
 				 		 dm, 
-//				 		 pS,
-//				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
 				 		 k);	
@@ -864,9 +842,7 @@ public class DummyProcessingClass {
 									  dm, 
 									  trackingMarker, 
 									  selection, 
-									  selection
-//									  pS
-									  );
+									  selection);
 					
 				}
 
@@ -882,8 +858,6 @@ public class DummyProcessingClass {
 						 model,
 				 		 input,  
 				 		 dm, 
-//				 		 pS,
-//				 		 ssvsPS,
 				 		 selection,
 				 		 trackingMarker,
 				 		 k);	
@@ -987,6 +961,8 @@ public class DummyProcessingClass {
 		}
 				
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
+		Double rawIntensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
+		
 		Double fhkl = (double) 0.001;
 		if (intensity >=0){
 			fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
@@ -1001,6 +977,7 @@ public class DummyProcessingClass {
 			
 			sm.addyList(sm.getImages().length, selection ,intensity);
 			sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
+			sm.addYListRawIntensity(sm.getImages().length, selection ,rawIntensity);
 			sm.addOutputDatArray(sm.getImages().length, selection ,output);
 			
 			debug("  intensity:  " + intensity + "   k: " + k);
@@ -1323,6 +1300,8 @@ public class DummyProcessingClass {
 		
 				
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
+		Double rawIntensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
+		
 		Double fhkl = (double) 0.001;
 		if (intensity >=0){
 			fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
@@ -1336,6 +1315,7 @@ public class DummyProcessingClass {
 		
 			sm.addyList(sm.getImages().length, selection ,intensity);
 			sm.addyListFhkl(sm.getImages().length, selection ,fhkl);
+			sm.addYListRawIntensity(sm.getImages().length, selection ,rawIntensity);
 			sm.addOutputDatArray(sm.getImages().length, selection ,output);
 			
 			debug("  intensity:  " + intensity + "   k: " + k);

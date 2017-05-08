@@ -71,9 +71,17 @@ public class SurfaceScatteringRemappingOperation extends AbstractOperation<Surfa
 		if (model.getParRange() != null && model.getParRange().length != 2) throw new OperationException(this, "Ranges must have 2 values!");
 		if (model.getPerpRange() != null && model.getPerpRange().length != 2) throw new OperationException(this, "Ranges must have 2 values!");
 		
-		if (metadata == null || (!metadata.getDiffractionCrystalEnvironment().equals(md.getDiffractionCrystalEnvironment())&& !metadata.getDetector2DProperties().equals(md.getDetector2DProperties()))) {
+		if (metadata == null) {
 			metadata = md;
 			cache = null;
+		} else {
+			boolean dee = metadata.getDiffractionCrystalEnvironment().equals(md.getDiffractionCrystalEnvironment());
+			boolean dpe = metadata.getDetector2DProperties().equals(md.getDetector2DProperties());
+			
+			if (!dpe || !dee) {
+				metadata = md;
+				cache = null;
+			}
 		}
 
 		IPixelIntegrationCache lcache = getCache(model, metadata, input.getShape());

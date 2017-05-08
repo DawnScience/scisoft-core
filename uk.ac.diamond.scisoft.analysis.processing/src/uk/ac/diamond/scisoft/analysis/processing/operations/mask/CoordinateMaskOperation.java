@@ -9,11 +9,21 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.mask;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Arrays;
+
+import org.dawb.common.services.ServiceManager;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
+import org.eclipse.dawnsci.analysis.api.persistence.IPersistentFile;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.dawnsci.hdf.object.HierarchicalDataFactory;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.BooleanDataset;
@@ -30,6 +40,7 @@ import org.eclipse.january.metadata.MetadataFactory;
 import uk.ac.diamond.scisoft.analysis.dataset.function.MakeMask;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
+import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 /**
@@ -38,7 +49,10 @@ import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 @Atomic
 public class CoordinateMaskOperation extends
 		AbstractOperation<CoordinateMaskModel, OperationData> {
-
+	
+	private volatile Dataset mask = null;
+	private PropertyChangeListener listener;
+	
 	@Override
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.CoordinateMaskOperation";
@@ -58,87 +72,122 @@ public class CoordinateMaskOperation extends
 	protected OperationData process(IDataset input, IMonitor monitor)
 			throws OperationException {
 		
-		// Assume q
-		MaskAxis theAxis = model.getCoordinateType();
-		double coordinateRange[] = model.getCoordinateRange();
-		//TODO: get data from an external data source, rather than the
-		// diffraction calibration, if not present
-		DiffractionMetadata diffractionMD = input.getFirstMetadata(DiffractionMetadata.class);
+		if (model.getCoordinateRange() == null) return new OperationData(input);
+		
+		
+		Dataset coordinateMask = getMask(input);
 
-		// Generate the Dataset of the chosen coordinate
-		Dataset coordinateArray;
-		if (diffractionMD != null) {
-			switch (theAxis) {
-			case Q:
-				coordinateArray = PixelIntegrationUtils.generateQArray(input.getShape(),diffractionMD);
-				break;
-			case ANGLE:
-				// In degrees
-				coordinateArray = PixelIntegrationUtils.generate2ThetaArrayRadians(input.getShape(),diffractionMD);
-				coordinateArray.imultiply(180/Math.PI);
-				break;
-			case AZIMUTHAL_ANGLE:
-				coordinateArray = PixelIntegrationUtils.generateAzimuthalArray(input.getShape(), diffractionMD, false);
-				break;
-			case PIXEL:
-				double[] beamCentre = diffractionMD.getOriginalDetector2DProperties().getBeamCentreCoords();
-				coordinateArray = DatasetFactory.zeros(DoubleDataset.class, input.getShape());
-				for (int i = 0; i < input.getShape()[0]; i++)
-					for (int j = 0; j < input.getShape()[1]; j++)
-						// The elements of getBeamCentreCoords are transposed from those of getShape
-						coordinateArray.set(Math.sqrt(square(i-beamCentre[1]) + square(j-beamCentre[0])), i, j);
-				break;
-			default:
-				throw new OperationException(this, "This coordinate is not yet supported");
-			}
+		// Get the input mask, and combine the two masks
+		IDataset inputMask = DatasetUtils.convertToDataset(getFirstMask(input));
+
+		if (inputMask == null) {
+			inputMask = coordinateMask;
 		} else {
-			switch (theAxis) {
-			case PIXEL:
-				double[] beamCentre = new double[]{input.getShape()[0]*0.5, input.getShape()[1]*0.5};
-				coordinateArray = DatasetFactory.zeros(DoubleDataset.class, input.getShape());
-				for (int i = 0; i < input.getShape()[0]; i++)
-					for (int j = 0; j < input.getShape()[1]; j++)
-						coordinateArray.set(Math.sqrt(square(i-beamCentre[0]) + square(j-beamCentre[1])), i, j);
-			break;
-			case ANGLE:
-			case AZIMUTHAL_ANGLE:
-			case Q:
-			default:
-				throw new OperationException(this, "Dataset-based masking not yet supported");
-			}
-
+			inputMask = Comparisons.logicalAnd(inputMask, coordinateMask);
 		}
-		
-		if (coordinateRange != null) {
-		
-			MakeMask maskMaker = new MakeMask(coordinateRange[0], coordinateRange[1]);
-			// MakeMask makes BooleanDatasets
-			BooleanDataset coordinateMask = (BooleanDataset) maskMaker.value(coordinateArray).get(0); 
-			// Invert if required
-			if (model.isMaskedInside())
-				coordinateMask.isubtract(true);
 
+		MaskMetadata maskMetadata;
+		try {
+			maskMetadata = MetadataFactory.createMetadata(MaskMetadata.class, inputMask);
+		} catch (MetadataException e) {
+			throw new OperationException(this, e);
+		}
+		input.setMetadata(maskMetadata);
 
-			// Get the input mask, and combine the two masks
-			IDataset inputMask = DatasetUtils.convertToDataset(getFirstMask(input));
-
-			if (inputMask == null) {
-				inputMask = coordinateMask;
-			} else {
-				inputMask = Comparisons.logicalAnd(inputMask, coordinateMask);
-			}
-
-			MaskMetadata maskMetadata;
-			try {
-				maskMetadata = MetadataFactory.createMetadata(MaskMetadata.class, inputMask);
-			} catch (MetadataException e) {
-				throw new OperationException(this, e);
-			}
-			input.setMetadata(maskMetadata);
-		}		
 		return new OperationData(input);
 	}
 
+	
+	private Dataset getMask(IDataset input) {
+
+		Dataset lmask = mask;
+		if (lmask == null) {
+			synchronized(this) {
+				lmask = mask;
+				if (lmask == null) {
+					// Assume q
+					MaskAxis theAxis = model.getCoordinateType();
+					double coordinateRange[] = model.getCoordinateRange();
+					//TODO: get data from an external data source, rather than the
+					// diffraction calibration, if not present
+					DiffractionMetadata diffractionMD = input.getFirstMetadata(DiffractionMetadata.class);
+
+					// Generate the Dataset of the chosen coordinate
+					Dataset coordinateArray;
+					if (diffractionMD != null) {
+						switch (theAxis) {
+						case Q:
+							coordinateArray = PixelIntegrationUtils.generateQArray(input.getShape(),diffractionMD);
+							break;
+						case ANGLE:
+							// In degrees
+							coordinateArray = PixelIntegrationUtils.generate2ThetaArrayRadians(input.getShape(),diffractionMD);
+							coordinateArray.imultiply(180/Math.PI);
+							break;
+						case AZIMUTHAL_ANGLE:
+							coordinateArray = PixelIntegrationUtils.generateAzimuthalArray(input.getShape(), diffractionMD, false);
+							break;
+						case PIXEL:
+							double[] beamCentre = diffractionMD.getOriginalDetector2DProperties().getBeamCentreCoords();
+							coordinateArray = DatasetFactory.zeros(DoubleDataset.class, input.getShape());
+							for (int i = 0; i < input.getShape()[0]; i++)
+								for (int j = 0; j < input.getShape()[1]; j++)
+									// The elements of getBeamCentreCoords are transposed from those of getShape
+									coordinateArray.set(Math.sqrt(square(i-beamCentre[1]) + square(j-beamCentre[0])), i, j);
+							break;
+						default:
+							throw new OperationException(this, "This coordinate is not yet supported");
+						}
+					} else {
+						switch (theAxis) {
+						case PIXEL:
+							double[] beamCentre = new double[]{input.getShape()[0]*0.5, input.getShape()[1]*0.5};
+							coordinateArray = DatasetFactory.zeros(DoubleDataset.class, input.getShape());
+							for (int i = 0; i < input.getShape()[0]; i++)
+								for (int j = 0; j < input.getShape()[1]; j++)
+									coordinateArray.set(Math.sqrt(square(i-beamCentre[0]) + square(j-beamCentre[1])), i, j);
+						break;
+						case ANGLE:
+						case AZIMUTHAL_ANGLE:
+						case Q:
+						default:
+							throw new OperationException(this, "Dataset-based masking not yet supported");
+						}
+
+					}
+					
+					MakeMask maskMaker = new MakeMask(coordinateRange[0], coordinateRange[1]);
+					// MakeMask makes BooleanDatasets
+					BooleanDataset coordinateMask = (BooleanDataset) maskMaker.value(coordinateArray).get(0); 
+					// Invert if required
+					if (model.isMaskedInside())
+						coordinateMask.isubtract(true);
+					
+					mask = lmask = coordinateMask;
+				}
+			}
+		}
+		return lmask;
+	}
+	
+	@Override
+	public void setModel(CoordinateMaskModel model) {
+		
+		super.setModel(model);
+		if (listener == null) {
+			listener = new PropertyChangeListener() {
+				
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					mask = null;
+				}
+			};
+		} else {
+			((AbstractOperationModel)this.model).removePropertyChangeListener(listener);
+		}
+		
+		((AbstractOperationModel)this.model).addPropertyChangeListener(listener);
+	}
 	
 	public enum MaskAxis {
 		ANGLE,

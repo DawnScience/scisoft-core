@@ -545,7 +545,7 @@ public class XPDFCalibration {
 	 * Performs the calibration iterations.
 	 * <p>
 	 * Perfoms the part of the calibration following the fluorescence scale determination. 
-	 * @param nIterations
+//	 * @param nIterations
 	 * 					the number of iterations to make to calculate the
 	 * 					multiplicative calibration constant.
 	 * @param propagateErrors
@@ -595,16 +595,15 @@ public class XPDFCalibration {
 		Dataset absCor = null;
 		// Initialize the list of calibration constants with the predefined initial value.
 		calibrationConstants = new LinkedList<Double>(Arrays.asList(new Double[] {calibrationConstant0}));
-		// Iterate until a hardcoded precision is achieved
+		// Iterate until a hardcoded precision is achieved or the maximum number of iterations is reached
 		final double calibrationPrecision = 1e-6;
 		int count = 0;
+		double calConRatio;
 		do{
-			if (count == MAX_ITERATIONS) {
-				throw new OperationException(op);
-			}
 			absCor = this.iterate(fluorescenceCorrected, propagateErrors);
 			count++;
-		} while (Math.abs(calibrationConstants.getLast()/calibrationConstants.get(calibrationConstants.size()-2) - 1) > calibrationPrecision);
+			calConRatio = calibrationConstants.getLast()/calibrationConstants.get(calibrationConstants.size()-2); 
+		} while (Math.abs(calConRatio - 1) > calibrationPrecision && count < nIterations);
 //		for (int i = 0; i < nIterations; i++)
 //			absCor = this.iterate(fluorescenceCorrected, propagateErrors);
 		return absCor;

@@ -310,26 +310,26 @@ public class XPDFCalibration {
 	 * </ul>
 	 * @return the absorption corrected data
 	 */
-	private Dataset iterate(List<Dataset> fluorescenceCorrected, boolean propagateErrors) {
-		// Detector transmission correction
-		Dataset transmissionCorrection;
-		if (!cachedDeTran.containsKey(coords)) {
-			transmissionCorrection = tect.getTransmissionCorrection(coords.getTwoTheta(), beamData.getBeamEnergy());
-			cachedDeTran.put(coords, transmissionCorrection);
-		} else {
-			transmissionCorrection = cachedDeTran.get(coords);
-		}
-		
-		List<Dataset> deTran = new ArrayList<Dataset>();
-		for (Dataset componentTrace : fluorescenceCorrected) {
-//			Dataset deTranData = Maths.multiply(componentTrace, transmissionCorrection);
-			Dataset deTranData = DatasetFactory.createFromObject(IntStream.range(0, componentTrace.getSize()).parallel().mapToDouble(i-> componentTrace.getElementDoubleAbs(i) * transmissionCorrection.getElementDoubleAbs(i)).toArray(), componentTrace.getShape()); 
-			
-			// Error propagation
-			if (propagateErrors && componentTrace.getErrors() != null)
-				deTranData.setErrors(Maths.multiply(componentTrace.getErrors(), transmissionCorrection));
-			deTran.add(deTranData);
-		}
+	private Dataset iterate(List<Dataset> deTran, boolean propagateErrors) {
+//		// Detector transmission correction
+//		Dataset transmissionCorrection;
+//		if (!cachedDeTran.containsKey(coords)) {
+//			transmissionCorrection = tect.getTransmissionCorrection(coords.getTwoTheta(), beamData.getBeamEnergy());
+//			cachedDeTran.put(coords, transmissionCorrection);
+//		} else {
+//			transmissionCorrection = cachedDeTran.get(coords);
+//		}
+//		
+//		List<Dataset> deTran = new ArrayList<Dataset>();
+//		for (Dataset componentTrace : fluorescenceCorrected) {
+////			Dataset deTranData = Maths.multiply(componentTrace, transmissionCorrection);
+//			Dataset deTranData = DatasetFactory.createFromObject(IntStream.range(0, componentTrace.getSize()).parallel().mapToDouble(i-> componentTrace.getElementDoubleAbs(i) * transmissionCorrection.getElementDoubleAbs(i)).toArray(), componentTrace.getShape()); 
+//			
+//			// Error propagation
+//			if (propagateErrors && componentTrace.getErrors() != null)
+//				deTranData.setErrors(Maths.multiply(componentTrace.getErrors(), transmissionCorrection));
+//			deTran.add(deTranData);
+//		}
 		
 		// Divide by the calibration constant and subtract the multiple scattering correction
 		List<Dataset> calCon = new ArrayList<Dataset>();
@@ -591,7 +591,27 @@ public class XPDFCalibration {
 		}
 		for (int iContainer = 1; iContainer < solAng.size(); iContainer++)
 			fluorescenceCorrected.add(solAng.get(iContainer));
+
+		// Detector transmission correction
+		Dataset transmissionCorrection;
+		if (!cachedDeTran.containsKey(coords)) {
+			transmissionCorrection = tect.getTransmissionCorrection(coords.getTwoTheta(), beamData.getBeamEnergy());
+			cachedDeTran.put(coords, transmissionCorrection);
+		} else {
+			transmissionCorrection = cachedDeTran.get(coords);
+		}
 		
+		List<Dataset> deTran = new ArrayList<Dataset>();
+		for (Dataset componentTrace : fluorescenceCorrected) {
+//			Dataset deTranData = Maths.multiply(componentTrace, transmissionCorrection);
+			Dataset deTranData = DatasetFactory.createFromObject(IntStream.range(0, componentTrace.getSize()).parallel().mapToDouble(i-> componentTrace.getElementDoubleAbs(i) * transmissionCorrection.getElementDoubleAbs(i)).toArray(), componentTrace.getShape()); 
+			
+			// Error propagation
+			if (propagateErrors && componentTrace.getErrors() != null)
+				deTranData.setErrors(Maths.multiply(componentTrace.getErrors(), transmissionCorrection));
+			deTran.add(deTranData);
+		}
+
 		Dataset absCor = null;
 		// Initialize the list of calibration constants with the predefined initial value.
 		calibrationConstants = new LinkedList<Double>(Arrays.asList(new Double[] {calibrationConstant0}));
@@ -600,7 +620,7 @@ public class XPDFCalibration {
 		int count = 0;
 		double calConRatio;
 		do{
-			absCor = this.iterate(fluorescenceCorrected, propagateErrors);
+			absCor = this.iterate(deTran, propagateErrors);
 			count++;
 			calConRatio = calibrationConstants.getLast()/calibrationConstants.get(calibrationConstants.size()-2); 
 		} while (Math.abs(calConRatio - 1) > calibrationPrecision && count < nIterations);

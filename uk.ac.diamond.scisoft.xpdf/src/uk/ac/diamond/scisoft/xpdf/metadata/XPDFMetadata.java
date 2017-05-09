@@ -19,6 +19,7 @@ import uk.ac.diamond.scisoft.xpdf.XPDFAbsorptionMaps;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamTrace;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentForm;
+import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFDetector;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 
@@ -119,6 +120,20 @@ public interface XPDFMetadata extends MetadataType {
 	 */
 	Dataset getSampleFluorescence(Dataset gamma, Dataset delta);
 
+	/**
+	 * Returns the corrected sample fluorescence.
+	 * <p>
+	 * Given the XPDF coordinate object, this
+	 * function returns the fluorescence flux of the sample, corrected for
+	 * absorption by the surrounding containers and for the relative
+	 * transmission of the various energies of photon by the detector.
+	 * @param coords
+	 * 			XPDF coordinates object
+	 * @return the dataset containing the total sample fluorescence.
+	 */
+	Dataset getSampleFluorescence(XPDFCoordinates coords);
+
+	
 	/**
 	 * Defines the geometry of undefined samples and containers.
 	 * <p>

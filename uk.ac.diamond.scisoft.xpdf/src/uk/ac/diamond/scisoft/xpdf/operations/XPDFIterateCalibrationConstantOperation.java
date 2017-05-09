@@ -125,7 +125,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 		// Set the fluorescence parameters for the calibration. 
 		if (model.isDoingFluorescence()) {
 			theCalibration.setDoFluorescence(true);
-			theCalibration.setSampleFluorescence(theXPDFMetadata.getSampleFluorescence(coordinates.getGamma(), coordinates.getDelta()));
+			theCalibration.setSampleFluorescence(theXPDFMetadata.getSampleFluorescence(coordinates));
 			// Check for fixed scale fluorescence in the model, and set the fixed scale if necessary
 			if (model.isCalculatingFluorescence())
 				theCalibration.performFullFluorescence();

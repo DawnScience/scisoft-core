@@ -300,10 +300,16 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 	 */
 	@Override
 	public Dataset getSampleFluorescence(Dataset gamma, Dataset delta) {
-		Dataset totalSampleFluorescence = DatasetFactory.zeros(gamma, DoubleDataset.class);
 		
 		XPDFCoordinates coords = new XPDFCoordinates();
 		coords.setGammaDelta(gamma, delta);
+		
+		return getSampleFluorescence(coords);
+	}
+	
+	@Override
+	public Dataset getSampleFluorescence(XPDFCoordinates coords) {
+		Dataset totalSampleFluorescence = DatasetFactory.zeros(coords.getGamma());
 
 		ExecutorService ravager = Executors.newFixedThreadPool(4); // Why not 4?
 		AtomicInteger counter = new AtomicInteger(0);

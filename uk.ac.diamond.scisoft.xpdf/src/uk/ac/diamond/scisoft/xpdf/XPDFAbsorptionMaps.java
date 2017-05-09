@@ -21,22 +21,22 @@ import org.eclipse.january.dataset.Dataset;
  * @since 2015-09-11
  */
 public class XPDFAbsorptionMaps {
-	private Map<String, Dataset> theMaps;
+	private Map<Long, Dataset> theMaps;
 	private Dataset delta;
 	private Dataset gamma;
 	private List<XPDFComponentForm> formList;
 	private XPDFBeamData beamData;
-	private Map<String, Boolean> isUpstreamMap;
-	private Map<String, Boolean> isDownstreamMap;
+	private Map<Long, Boolean> isUpstreamMap;
+	private Map<Long, Boolean> isDownstreamMap;
 	
 	/**
 	 * Creates an empty Map.
 	 */
 	public XPDFAbsorptionMaps() {
-		theMaps = new HashMap<String, Dataset>();
+		theMaps = new HashMap<Long, Dataset>();
 		formList = new ArrayList<XPDFComponentForm>();
-		isUpstreamMap = new HashMap<String, Boolean>();
-		isDownstreamMap = new HashMap<String, Boolean>();
+		isUpstreamMap = new HashMap<Long, Boolean>();
+		isDownstreamMap = new HashMap<Long, Boolean>();
 	}
 	
 	/**
@@ -49,8 +49,8 @@ public class XPDFAbsorptionMaps {
 		if (inMaps.theMaps == null) {
 			this.theMaps = null;
 		} else {
-			this.theMaps = new HashMap<String, Dataset>(inMaps.theMaps.size());
-			for (Map.Entry<String, Dataset> entry : inMaps.theMaps.entrySet() )
+			this.theMaps = new HashMap<Long, Dataset>(inMaps.theMaps.size());
+			for (Map.Entry<Long, Dataset> entry : inMaps.theMaps.entrySet() )
 				this.theMaps.put(entry.getKey(), entry.getValue().clone());
 		}
 		this.delta = (inMaps.delta != null) ? inMaps.delta : null;
@@ -226,8 +226,8 @@ public class XPDFAbsorptionMaps {
 	 * @param iAttenuator index of the attenuating object in the list of XPDFTargetComponents.
 	 * @return The encoded string.
 	 */
-	private static String stringifier(int iScatterer, int iAttenuator) {
-		return Integer.toString(iScatterer, Character.MAX_RADIX)+" "+Integer.toString(iAttenuator, Character.MAX_RADIX);
+	private static long stringifier(int iScatterer, int iAttenuator) {
+		return (((long) iScatterer) << (Long.SIZE - Integer.SIZE)) + iAttenuator;//Integer.toString(iScatterer, Character.MAX_RADIX)+" "+Integer.toString(iAttenuator, Character.MAX_RADIX);
 	}
 
 	public boolean checkFormList(List<XPDFComponentForm> inFormList) {

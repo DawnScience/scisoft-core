@@ -589,8 +589,8 @@ public class XPDFCalibration {
 		} else {
 			fluorescenceCorrected.add(targetComponent);
 		}
-		for (int iContainer = 1; iContainer < backgroundSubtracted.size(); iContainer++)
-			fluorescenceCorrected.add(backgroundSubtracted.get(iContainer));
+		for (int iContainer = 1; iContainer < solAng.size(); iContainer++)
+			fluorescenceCorrected.add(solAng.get(iContainer));
 		
 		Dataset absCor = null;
 		// Initialize the list of calibration constants with the predefined initial value.

@@ -24,12 +24,18 @@ import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.LinearAlgebra;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.PositionIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
+import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 public class PixelIntegrationUtils {
+	
+	private final static Logger logger = LoggerFactory.getLogger(PixelIntegrationUtils.class);
 	
 	public enum IntegrationMode{NONSPLITTING,SPLITTING,SPLITTING2D,NONSPLITTING2D}
 	
@@ -201,6 +207,13 @@ public class PixelIntegrationUtils {
 		
 		if (qSpace == null) return null;
 		
+		Dataset[] cached = getFromCache(qSpace, xAxis, false);
+		
+		if (cached != null) {
+			logger.info("Coords from cache");
+			return cached;
+		}
+		
 		double[] beamCentre = qSpace.getDetectorProperties().getBeamCentreCoords();
 
 		Dataset radialArrayMax = DatasetFactory.zeros(shape, Dataset.FLOAT64);
@@ -246,7 +259,12 @@ public class PixelIntegrationUtils {
 				break;
 			}
 		}
-		return new Dataset[]{radialArrayMin,radialArrayMax};
+		
+		Dataset[] output = new Dataset[]{radialArrayMin,radialArrayMax};
+		
+		putInCache(qSpace, xAxis, false, output);
+		
+		return output;
 	}
 	
 	public static Dataset generateRadialArray(int[] shape, QSpace qSpace, XAxis xAxis) {
@@ -255,15 +273,25 @@ public class PixelIntegrationUtils {
 	
 	private static Dataset generateRadialArray(int[] shape, QSpace qSpace, XAxis xAxis, boolean radians) {
 		
+		
+		
 		if (qSpace == null) return null;
+	
+		Dataset[] cached = getFromCache(qSpace, xAxis, true);
+		
+		if (cached != null) {
+			logger.info("Coords from cache");
+			return cached[0];
+		}
+		
 		
 		double[] beamCentre = qSpace.getDetectorProperties().getBeamCentreCoords();
 
-		Dataset ra = DatasetFactory.zeros(shape, Dataset.FLOAT64);
+		DoubleDataset ra = DatasetFactory.zeros(DoubleDataset.class, shape);
 
 		PositionIterator iter = ra.getPositionIterator();
 		int[] pos = iter.getPos();
-
+		long t = System.currentTimeMillis();
 		while (iter.hasNext()) {
 			
 			Vector3d q;
@@ -287,10 +315,41 @@ public class PixelIntegrationUtils {
 				value = Math.hypot(pos[1]-beamCentre[0]+0.5,pos[0]-beamCentre[1]+0.5);
 				break; 
 			}
-			ra.set(value, pos);
+			ra.setItem(value, pos);
 		}
 		
+		putInCache(qSpace, xAxis, true, new Dataset[]{ra});
+		
+		System.out.println(System.currentTimeMillis()-t);
+		
 		return ra;
+	}
+	
+	private static Dataset[] getFromCache(QSpace q, XAxis axis, boolean centre) {
+		DiffractionCoordinateCache cacheInstance = DiffractionCoordinateCache.getInstance();
+		DiffractionMetadata md = new DiffractionMetadata("", q.getDetectorProperties(), new DiffractionCrystalEnvironment(q.getWavelength()));
+		Object object = cacheInstance.get(md, axis, centre);
+		
+		if (object == null) return null;
+		
+		try {
+			if (centre) {
+				return new Dataset[]{(Dataset)object};
+			}
+				
+			return (Dataset[])object;
+			
+		} catch (Exception e) {
+			logger.error("Bad object in the cache");
+		}
+		
+		return null;
+	}
+	
+	private static void putInCache(QSpace q, XAxis axis, boolean centre, Dataset[] object) {
+		DiffractionCoordinateCache cacheInstance = DiffractionCoordinateCache.getInstance();
+		DiffractionMetadata md = new DiffractionMetadata("", q.getDetectorProperties(), new DiffractionCrystalEnvironment(q.getWavelength()));
+		cacheInstance.put(md, axis, centre,centre ? object[0] : object);
 	}
 	
 	public static int[] getShape(IDiffractionMetadata metadata) {

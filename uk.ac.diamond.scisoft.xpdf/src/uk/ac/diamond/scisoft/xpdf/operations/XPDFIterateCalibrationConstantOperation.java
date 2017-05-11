@@ -16,8 +16,10 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 
+import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 import uk.ac.diamond.scisoft.xpdf.XPDFAbsorptionMaps;
 import uk.ac.diamond.scisoft.xpdf.XPDFCalibration;
+import uk.ac.diamond.scisoft.xpdf.XPDFCalibrationBase;
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFQSquaredIntegrator;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
@@ -39,47 +41,29 @@ public class XPDFIterateCalibrationConstantOperation extends
 	@SuppressWarnings("unused")
 	private Dataset cachedSampleFluorescence;
 	
+	private XPDFCalibrationBase cachedCalibration;
+	private DiffractionMetadata cacheKeyMetadata;
+	
 	protected OperationData process(IDataset input, IMonitor monitor)
 			throws OperationException {
 
 		XPDFOperationChecker.checkXPDFMetadata(this, input, true, true, true);
-		
-		// The real XPDFIterateCalibrationConstantOperation starts here
-		
-		XPDFCalibration theCalibration = new XPDFCalibration();
-		
-		int nIterations = model.getnIterations();
-		// The initial value of the calibration constant is 1e-16
-		theCalibration.initializeCalibrationConstant(1e-16);
-		
+
 		Dataset absCor = null;
 		
 		XPDFMetadata theXPDFMetadata = null;
 		// Get the metadata
 		theXPDFMetadata = input.getFirstMetadata(XPDFMetadata.class);
 		if (theXPDFMetadata == null) throw new OperationException(this, "XPDFMetadata not found.");
+
+		XPDFCalibrationBase theBase = getCachedCalibration(input);
 		
-		// Sort the containers if requested
-		if (model.isSortContainers()) {
-			theXPDFMetadata.reorderContainers(orderContainers(theXPDFMetadata.getContainers()));
-		}
-		// Nullify the absorption map cache if the container sorting setting
-		// has been changed.
-		if (model.isSortContainers() != isCachedMapsSorted) {
-			synchronized (this) {
-				if (model.isSortContainers() != isCachedMapsSorted) {
-					cachedAbsorptionMaps = null;
-					isCachedMapsSorted = model.isSortContainers();
-				}
-			}
-		}
+
+		// The per-data calibration derived from the cached base
+		XPDFCalibration theCalibration = new XPDFCalibration(theBase);
 		
-		// Define the geometry of any components defined by their container(s).
-		try {
-			theXPDFMetadata.defineUndefinedSamplesContainers();
-		} catch (Exception e) {
-			throw new OperationException(this, "Could not define sample geometry: " + e.toString());
-		}
+		int nIterations = model.getnIterations();
+		
 		
 		List<Dataset> backgroundSubtracted = new ArrayList<Dataset>();
 		// The 0th element is the sample
@@ -90,50 +74,6 @@ public class XPDFIterateCalibrationConstantOperation extends
 		}
 		theCalibration.setBackgroundSubtracted(backgroundSubtracted);
 	
-		theCalibration.setSampleIlluminatedAtoms(theXPDFMetadata.getSampleIlluminatedAtoms());
-		
-		// Get 2θ, the axis variable
-		if (XPDFCoordinates.coordinateMetadataProblems(DatasetUtils.convertToDataset(input)) != null)
-			throw new OperationException(this, XPDFCoordinates.coordinateMetadataProblems(DatasetUtils.convertToDataset(input)));
-		XPDFCoordinates coordinates = new XPDFCoordinates(DatasetUtils.convertToDataset(input));
-//		Dataset twoTheta = coordinates.getTwoTheta();
-		
-		// Set up the q² integrator class
-		theCalibration.setqSquaredIntegrator(new XPDFQSquaredIntegrator(coordinates));//twoTheta, theXPDFMetadata.getBeam()));
-		theCalibration.setCoordinates(coordinates);
-		
-		theCalibration.setSelfScattering(theXPDFMetadata.getSample());
-		theCalibration.setSelfScatteringDenominatorFromSample(theXPDFMetadata.getSample(), coordinates);
-		
-		
-		// localized cache with a double null check with sprinkles on top
-		XPDFAbsorptionMaps localAbsMaps = cachedAbsorptionMaps;
-		if (localAbsMaps == null || !(localAbsMaps.checkFormList(theXPDFMetadata.getFormList())) || model.getRegenerateAbsorptionMaps() == true) {
-			synchronized (this) {
-				localAbsMaps = cachedAbsorptionMaps;
-				if (localAbsMaps == null || !(localAbsMaps.checkFormList(theXPDFMetadata.getFormList())) || model.getRegenerateAbsorptionMaps() == true) {
-//					cachedAbsorptionMaps = localAbsMaps = theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DatasetFactory.zeros(DoubleDataset.class, twoTheta.reshape(twoTheta.getSize(), 1)));
-					cachedAbsorptionMaps = localAbsMaps = theXPDFMetadata.getAbsorptionMaps(coordinates.getDelta(), coordinates.getGamma());
-				}
-			}
-		}
-		
-		theCalibration.setBeamData(theXPDFMetadata.getBeam());
-		theCalibration.setDetector(theXPDFMetadata.getDetector());
-//		theCalibration.setAbsorptionMaps(theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DatasetFactory.zeros(DoubleDataset.class, twoTheta.reshape(twoTheta.getSize(), 1))));
-		theCalibration.setAbsorptionMaps(localAbsMaps);
-		// Set the fluorescence parameters for the calibration. 
-		if (model.isDoingFluorescence()) {
-			theCalibration.setDoFluorescence(true);
-			theCalibration.setSampleFluorescence(theXPDFMetadata.getSampleFluorescence(coordinates));
-			// Check for fixed scale fluorescence in the model, and set the fixed scale if necessary
-			if (model.isCalculatingFluorescence())
-				theCalibration.performFullFluorescence();
-			else
-				theCalibration.setFixedFluorescence(model.getFluorescenceScale());
-		} else {
-			theCalibration.setDoFluorescence(false);
-		}
 //		for (int i = 0; i < nIterations; i++) 
 //			absCor = theCalibration.iterate(true);
 		absCor = theCalibration.calibrate(nIterations, model.getNThreads(),this);
@@ -193,6 +133,120 @@ public class XPDFIterateCalibrationConstantOperation extends
 		return newOrder;
 	}
 
+	
+	private XPDFCalibrationBase getCachedCalibration(IDataset input) {
+
+		DiffractionMetadata currentKeyMetadata = input.getFirstMetadata(DiffractionMetadata.class);
+		// Invalidate the cache, if the diffraction metadata on the input has changed
+		if (cacheKeyMetadata != null && (
+				!cacheKeyMetadata.getDetector2DProperties().equals(currentKeyMetadata.getDetector2DProperties()) ||
+				!cacheKeyMetadata.getDiffractionCrystalEnvironment().equals(currentKeyMetadata.getDiffractionCrystalEnvironment())
+				)) {
+			synchronized (this) {
+				if (cacheKeyMetadata != null && (
+						!cacheKeyMetadata.getDetector2DProperties().equals(currentKeyMetadata.getDetector2DProperties()) ||
+						!cacheKeyMetadata.getDiffractionCrystalEnvironment().equals(currentKeyMetadata.getDiffractionCrystalEnvironment())
+						)) {
+					cachedCalibration = null;
+					cacheKeyMetadata = null;
+				}
+			}
+		}
+		
+		XPDFCalibrationBase theBase;
+		if (cachedCalibration == null) {
+		
+			theBase = new XPDFCalibrationBase();
+
+			// The initial value of the calibration constant is 1e-16
+			theBase.initializeCalibrationConstant(1e-16);
+
+
+			XPDFMetadata theXPDFMetadata = null;
+			// Get the metadata
+			theXPDFMetadata = input.getFirstMetadata(XPDFMetadata.class);
+			if (theXPDFMetadata == null) throw new OperationException(this, "XPDFMetadata not found.");
+
+			// Sort the containers if requested
+			if (model.isSortContainers()) {
+				theXPDFMetadata.reorderContainers(orderContainers(theXPDFMetadata.getContainers()));
+			}
+			// Nullify the absorption map cache if the container sorting setting
+			// has been changed.
+			if (model.isSortContainers() != isCachedMapsSorted) {
+				synchronized (this) {
+					if (model.isSortContainers() != isCachedMapsSorted) {
+						cachedAbsorptionMaps = null;
+						isCachedMapsSorted = model.isSortContainers();
+					}
+				}
+			}
+
+			// Define the geometry of any components defined by their container(s).
+			try {
+				theXPDFMetadata.defineUndefinedSamplesContainers();
+			} catch (Exception e) {
+				throw new OperationException(this, "Could not define sample geometry: " + e.toString());
+			}
+
+			theBase.setSampleIlluminatedAtoms(theXPDFMetadata.getSampleIlluminatedAtoms());
+
+			// Get 2θ, the axis variable
+			if (XPDFCoordinates.coordinateMetadataProblems(DatasetUtils.convertToDataset(input)) != null)
+				throw new OperationException(this, XPDFCoordinates.coordinateMetadataProblems(DatasetUtils.convertToDataset(input)));
+			XPDFCoordinates coordinates = new XPDFCoordinates(DatasetUtils.convertToDataset(input));
+			//		Dataset twoTheta = coordinates.getTwoTheta();
+
+			// Set up the q² integrator class
+			theBase.setqSquaredIntegrator(new XPDFQSquaredIntegrator(coordinates));//twoTheta, theXPDFMetadata.getBeam()));
+			theBase.setCoordinates(coordinates);
+
+			theBase.setSelfScattering(theXPDFMetadata.getSample());
+			theBase.setSelfScatteringDenominatorFromSample(theXPDFMetadata.getSample(), coordinates);
+
+
+			// localized cache with a double null check with sprinkles on top
+			XPDFAbsorptionMaps localAbsMaps = cachedAbsorptionMaps;
+			if (localAbsMaps == null || !(localAbsMaps.checkFormList(theXPDFMetadata.getFormList())) || model.getRegenerateAbsorptionMaps() == true) {
+				synchronized (this) {
+					localAbsMaps = cachedAbsorptionMaps;
+					if (localAbsMaps == null || !(localAbsMaps.checkFormList(theXPDFMetadata.getFormList())) || model.getRegenerateAbsorptionMaps() == true) {
+						//					cachedAbsorptionMaps = localAbsMaps = theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DatasetFactory.zeros(DoubleDataset.class, twoTheta.reshape(twoTheta.getSize(), 1)));
+						cachedAbsorptionMaps = localAbsMaps = theXPDFMetadata.getAbsorptionMaps(coordinates.getDelta(), coordinates.getGamma());
+					}
+				}
+			}
+
+			theBase.setBeamData(theXPDFMetadata.getBeam());
+			theBase.setDetector(theXPDFMetadata.getDetector());
+			//		theCalibration.setAbsorptionMaps(theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DatasetFactory.zeros(DoubleDataset.class, twoTheta.reshape(twoTheta.getSize(), 1))));
+			theBase.setAbsorptionMaps(localAbsMaps);
+			// Set the fluorescence parameters for the calibration. 
+			if (model.isDoingFluorescence()) {
+				theBase.setDoFluorescence(true);
+				theBase.setSampleFluorescence(theXPDFMetadata.getSampleFluorescence(coordinates));
+				// Check for fixed scale fluorescence in the model, and set the fixed scale if necessary
+				if (model.isCalculatingFluorescence())
+					theBase.performFullFluorescence();
+				else
+					theBase.setFixedFluorescence(model.getFluorescenceScale());
+			} else {
+				theBase.setDoFluorescence(false);
+			}
+
+			synchronized (this) {
+				if (cachedCalibration == null) {
+					cachedCalibration = theBase;
+					cacheKeyMetadata = currentKeyMetadata;
+				}
+			}
+		} else {
+			theBase = cachedCalibration;
+		}
+		
+		return theBase;
+		
+	}
 
 	@Override
 	public String getId() {

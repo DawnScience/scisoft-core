@@ -61,6 +61,20 @@ public class XPDFIterateCalibrationConstantOperation extends
 
 		// The per-data calibration derived from the cached base
 		XPDFCalibration theCalibration = new XPDFCalibration(theBase);
+
+		
+		// Set the fluorescence parameters for the calibration. 
+		if (model.isDoingFluorescence()) {
+			theCalibration.setDoFluorescence(true);
+			// Check for fixed scale fluorescence in the model, and set the fixed scale if necessary
+			if (model.isCalculatingFluorescence())
+				theCalibration.performFullFluorescence();
+			else
+				theCalibration.setFixedFluorescence(model.getFluorescenceScale());
+		} else {
+			theCalibration.setDoFluorescence(false);
+		}
+
 		
 		int nIterations = model.getnIterations();
 		
@@ -221,19 +235,11 @@ public class XPDFIterateCalibrationConstantOperation extends
 			theBase.setDetector(theXPDFMetadata.getDetector());
 			//		theCalibration.setAbsorptionMaps(theXPDFMetadata.getAbsorptionMaps(twoTheta.reshape(twoTheta.getSize(), 1), DatasetFactory.zeros(DoubleDataset.class, twoTheta.reshape(twoTheta.getSize(), 1))));
 			theBase.setAbsorptionMaps(localAbsMaps);
-			// Set the fluorescence parameters for the calibration. 
-			if (model.isDoingFluorescence()) {
-				theBase.setDoFluorescence(true);
-				theBase.setSampleFluorescence(theXPDFMetadata.getSampleFluorescence(coordinates));
-				// Check for fixed scale fluorescence in the model, and set the fixed scale if necessary
-				if (model.isCalculatingFluorescence())
-					theBase.performFullFluorescence();
-				else
-					theBase.setFixedFluorescence(model.getFluorescenceScale());
-			} else {
-				theBase.setDoFluorescence(false);
-			}
 
+			// Calculate the sample fluorescence, regardless of whether it is needed.
+			theBase.setSampleFluorescence(theXPDFMetadata.getSampleFluorescence(coordinates));
+
+			
 			synchronized (this) {
 				if (cachedCalibration == null) {
 					cachedCalibration = theBase;

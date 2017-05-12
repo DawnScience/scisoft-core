@@ -42,11 +42,6 @@ public class XPDFCalibrationBase {
 
 	protected int dataDimensions;
 	
-	// Perform any kind of fluorescence correction
-	protected boolean doFluorescence;
-	// Perform the full fluorescence calibration, calculating the optimum fluorescence scale
-	protected boolean doFluorescenceCalibration;
-	
 	private IPixelIntegrationCache cachePI;
 
 	/**
@@ -57,7 +52,6 @@ public class XPDFCalibrationBase {
 		selfScatteringDenominator = 1.0;
 		multipleScatteringCorrection = null;
 		nSampleIlluminatedAtoms = 1.0; // there must be at least one
-		doFluorescence = true;
 		cachePI = null;
 	}
 
@@ -67,32 +61,16 @@ public class XPDFCalibrationBase {
 	 * 				calibration object to be copied.
 	 */
 	public XPDFCalibrationBase(XPDFCalibrationBase inCal) {
-//		if (inCal.calibrationConstants != null) {
-//			this.calibrationConstants = new LinkedList<Double>();
-//			for (double c3 : inCal.calibrationConstants)
-//				this.calibrationConstants.add(c3);
-//		}
 		this.calibrationConstant0 = (inCal.calibrationConstant0 != null) ? inCal.calibrationConstant0 : null;
 		this.qSquaredIntegrator = (inCal.qSquaredIntegrator != null) ? inCal.qSquaredIntegrator : null;
 		this.selfScatteringDenominator = inCal.selfScatteringDenominator;
 		this.multipleScatteringCorrection = (inCal.multipleScatteringCorrection != null) ? inCal.multipleScatteringCorrection.copy(DoubleDataset.class) : null;
 		this.nSampleIlluminatedAtoms = inCal.nSampleIlluminatedAtoms;
-//		if (inCal.backgroundSubtracted != null) {
-//			this.backgroundSubtracted = new ArrayList<Dataset>();
-//			for (Dataset data : inCal.backgroundSubtracted) {
-//				this.backgroundSubtracted.add(data);
-//			}
-//		}
 		this.tect = (inCal.tect != null) ? new XPDFDetector(inCal.tect): null;
 		this.beamData = (inCal.beamData != null) ? new XPDFBeamData(inCal.beamData) : null;
 		this.sampleFluorescence = (inCal.sampleFluorescence != null) ? inCal.sampleFluorescence.clone() : null;
-//		this.fluorescenceScale = inCal.fluorescenceScale;
-		this.doFluorescence = inCal.doFluorescence;
-		this.doFluorescenceCalibration = inCal.doFluorescenceCalibration;
 		this.dataDimensions = inCal.dataDimensions;
 		this.coords = (inCal.coords != null) ? new XPDFCoordinates(inCal.coords) : null;
-//		this.cachedDeTran = new HashMap<XPDFCoordinates, Dataset>();
-//		this.cachedPolar = new HashMap<XPDFCoordinates, Dataset>();
 		this.sampleSelfScattering = (inCal.sampleSelfScattering != null) ? inCal.sampleSelfScattering : null;
 		this.absorptionMaps = (inCal.absorptionMaps != null) ? inCal.absorptionMaps : null;
 	}
@@ -106,9 +84,6 @@ public class XPDFCalibrationBase {
 	 * 							the initial value of the calibration constant.
 	 */
 	public void initializeCalibrationConstant(double calibrationConstant) {
-//		if (this.calibrationConstants == null || !this.calibrationConstants.isEmpty())
-//			this.calibrationConstants = new LinkedList<Double>();
-//		this.calibrationConstants.add(calibrationConstant);
 		calibrationConstant0 = calibrationConstant;
 	}
 
@@ -219,35 +194,6 @@ public class XPDFCalibrationBase {
 	}
 
 	/**
-	 * Sets whether the calibration should estimate and subtract the fluorescence from the data. 
-	 * @param doIt
-	 * 			true indicates that the fluorescence subtraction should be performed.
-	 */
-	public void setDoFluorescence(boolean doIt) {
-		doFluorescence = doIt;
-	}
-	
-	/**
-	 * Sets the calibration to perform the full fluorescence calibration.
-	 * <p>
-	 * Tells the calibration to do the full fluorescence calibration, including
-	 * calculating the optimum fluorescence scale. 
-	 */
-	public void performFullFluorescence() {
-		doFluorescenceCalibration = true;
-	}
-	
-	/**
-	 * Sets the calibration to use the fixed scale fluorescence calibration.
-	 * @param fixedFluorescenceScale
-	 * 								value to fix the fluorescence scale to
-	 */
-	public void setFixedFluorescence(double fixedFluorescenceScale) {
-		doFluorescenceCalibration = false;
-		fixedFluorescence = fixedFluorescenceScale;
-	}
-	
-	/**
 	 * Generates a {@link IPixelIntegrationCache} to be used by the azimuthal integration.
 	 * @param q
 	 * 			the q axis to integrate on to.
@@ -275,6 +221,5 @@ public class XPDFCalibrationBase {
 		
 		return cachePI;
 	}
-	
 
 }

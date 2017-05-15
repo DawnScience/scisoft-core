@@ -15,12 +15,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.january.dataset.DatasetFactory;
 
 public class JCPDSLoader extends AbstractFileLoader {
 
@@ -58,6 +60,7 @@ public class JCPDSLoader extends AbstractFileLoader {
 	List<Double> d, i, h, k, l;
 	
 	public JCPDSLoader() {
+		metadataMap = new HashMap<String, String>();
 		d = new ArrayList<Double>();
 		i = new ArrayList<Double>();
 		h = new ArrayList<Double>();
@@ -87,7 +90,10 @@ public class JCPDSLoader extends AbstractFileLoader {
 		BufferedReader in = null;
 		
 		try {
-			in = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8"));
+			FileInputStream fIS = new FileInputStream(fileName);
+			InputStreamReader iSR = new InputStreamReader(fIS, "UTF-8");
+			in = new BufferedReader(iSR);
+//			in = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8"));
 			
 			// Read the VERSION: 4 line
 			String versionLine = in.readLine();
@@ -129,7 +135,11 @@ public class JCPDSLoader extends AbstractFileLoader {
 				}
 			}
 			
-			
+			result.setDataset("d", DatasetFactory.createFromList(d));
+			result.setDataset("i", DatasetFactory.createFromList(i));
+			result.setDataset("h", DatasetFactory.createFromList(h));
+			result.setDataset("k", DatasetFactory.createFromList(k));
+			result.setDataset("l", DatasetFactory.createFromList(l));
 		} catch (Exception e) {
 			throw new ScanFileHolderException("JCPDS cannot load from file " + fileName, e);
 		} finally {

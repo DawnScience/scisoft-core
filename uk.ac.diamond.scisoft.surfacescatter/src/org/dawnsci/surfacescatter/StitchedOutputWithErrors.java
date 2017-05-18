@@ -21,7 +21,7 @@ public class StitchedOutputWithErrors {
 
 
 	
-	public  static IDataset[] curveStitch (IPlottingSystem<Composite> plotSystem, 
+	public  static IDataset[] curveStitch (//IPlottingSystem<Composite> plotSystem, 
 										   ArrayList<IDataset> xArrayList,
 										   ArrayList<IDataset> yArrayList,
 										   ArrayList<IDataset> yArrayListError,

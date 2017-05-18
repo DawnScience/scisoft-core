@@ -61,91 +61,97 @@ public class RodObjectNexusUtils{
 
 	public RodObjectNexusUtils(RodObjectNexusBuilderModel model){
 
-
-		
-		SuperModel sm = model.getSm();
-		ArrayList<ExampleModel> models = model.getModels();
-		ArrayList<DataModel> dms = model.getDms();
+		ArrayList<FrameModel> fms = model.getFms();
 		GeometricParametersModel gm = model.getGm();
+		DirectoryModel drm = model.getDrm();
 		
+		OutputCurvesDataPackage ocdp = drm.getOcdp();
+		CurveStitchDataPackage csdp = drm.getCsdp();
+		
+		int noImages = fms.size();
 		int p= 0;
 		
-		IDataset[] hArray = new IDataset[sm.getFilepaths().length];
-	    IDataset[] kArray = new IDataset[sm.getFilepaths().length];
-	    IDataset[] lArray = new IDataset[sm.getFilepaths().length];
-	    
-	    for (int id = 0; id < sm.getFilepaths().length; id++) {
-	    
-	    	ILazyDataset h = SXRDGeometricCorrections.geth(models.get(id));
-			ILazyDataset k = SXRDGeometricCorrections.getk(models.get(id));
-			ILazyDataset l = SXRDGeometricCorrections.getl(models.get(id));
-			
-			hArray[id] = (IDataset) h;
-			kArray[id] = (IDataset) k;
-			lArray[id] = (IDataset) l;
-			
-	    }
-	    
-	    Dataset hArrayCon = DatasetUtils.concatenate(hArray, 0);
-	    Dataset kArrayCon = DatasetUtils.concatenate(kArray, 0);
-	    Dataset lArrayCon = DatasetUtils.concatenate(lArray, 0);	
-			
-	    hArrayCon.sort(0);
-	    kArrayCon.sort(0);
-	    lArrayCon.sort(0);
+//		IDataset[] hArray = new IDataset[noImages];
+//	    IDataset[] kArray = new IDataset[noImages];
+//	    IDataset[] lArray = new IDataset[noImages];
+//	    
+//	    for (int id = 0; id < noImages; id++) {
+//	    
+//	    	FrameModel f = fms.get(id);
+//	    	
+//	    	ILazyDataset h = SXRDGeometricCorrections.geth(models.get(id));
+//			ILazyDataset k = SXRDGeometricCorrections.getk(models.get(id));
+//			ILazyDataset l = SXRDGeometricCorrections.getl(models.get(id));
+//			
+//			hArray[id] = (IDataset) h;
+//			kArray[id] = (IDataset) k;
+//			lArray[id] = (IDataset) l;
+//			
+//	    }
+//	    
+//	    Dataset hArrayCon = DatasetUtils.concatenate(hArray, 0);
+//	    Dataset kArrayCon = DatasetUtils.concatenate(kArray, 0);
+//	    Dataset lArrayCon = DatasetUtils.concatenate(lArray, 0);	
+//			
+//	    hArrayCon.sort(0);
+//	    kArrayCon.sort(0);
+//	    lArrayCon.sort(0);
 		
 		ArrayList<GroupNode> nodes = new ArrayList<>();
 		
-		int noImages = model.getSm().getFilepathsSortedArray().length;
+//		int noIma
 		
 		GroupNode entry = TreeFactory.createGroupNode(p);
 		p++;
 		
 		for(int imageFilepathNo =0 ; imageFilepathNo < noImages ; imageFilepathNo++){
 			
+			FrameModel f = fms.get(imageFilepathNo);
+	    	
+			
 			GroupNode nxData = TreeFactory.createGroupNode(p);
 
-			nxData.addAttribute(TreeFactory.createAttribute("Image_Tif_File_Path", sm.getSortedTifFiles().getObject(imageFilepathNo)));
-			nxData.addAttribute(TreeFactory.createAttribute("Source_Dat_File", sm.getSortedDatNamesInOrderDataset().getObject(imageFilepathNo)));
-			nxData.addAttribute(TreeFactory.createAttribute("h", hArrayCon.getObject(imageFilepathNo)));
-			nxData.addAttribute(TreeFactory.createAttribute("k", kArrayCon.getObject(imageFilepathNo)));
-			nxData.addAttribute(TreeFactory.createAttribute("l", lArrayCon.getObject(imageFilepathNo)));
+			nxData.addAttribute(TreeFactory.createAttribute("Image_Tif_File_Path", f.getTifFilePath()));
+			nxData.addAttribute(TreeFactory.createAttribute("Source_Dat_File", f.getDatFilePath()));
+			nxData.addAttribute(TreeFactory.createAttribute("h", f.getH()));
+			nxData.addAttribute(TreeFactory.createAttribute("k", f.getK()));
+			nxData.addAttribute(TreeFactory.createAttribute("l", f.getL()));
 			
-			nxData.addAttribute(TreeFactory.createAttribute("Lorentzian_Correction", sm.getLorentzCorrection().get(imageFilepathNo)));
-			nxData.addAttribute(TreeFactory.createAttribute("Polarisation_Correction", sm.getPolarisation().get(imageFilepathNo)));
-			nxData.addAttribute(TreeFactory.createAttribute("Area_Correction", sm.getAreaCorrection().get(imageFilepathNo)));
+			nxData.addAttribute(TreeFactory.createAttribute("Lorentzian_Correction", f.getLorentzianCorrection()));
+			nxData.addAttribute(TreeFactory.createAttribute("Polarisation_Correction", f.getPolarisationCorrection()));
+			nxData.addAttribute(TreeFactory.createAttribute("Area_Correction", f.getAreaCorrection()));
 			
-			nxData.addAttribute(TreeFactory.createAttribute("Fhkl", sm.getSplicedCurveYFhkl().getDouble(imageFilepathNo)));
-			nxData.addAttribute(TreeFactory.createAttribute("Corrected_Intensity", sm.getSplicedCurveY().getDouble(imageFilepathNo)));
+			nxData.addAttribute(TreeFactory.createAttribute("Fhkl", csdp.getSplicedCurveYFhkl().getDouble(imageFilepathNo)));
+			nxData.addAttribute(TreeFactory.createAttribute("Corrected_Intensity", csdp.getSplicedCurveY().getDouble(imageFilepathNo)));
 			
-			nxData.addAttribute(TreeFactory.createAttribute("ROI_Location", sm.getLocationList().get(imageFilepathNo)));
+			nxData.addAttribute(TreeFactory.createAttribute("ROI_Location", f.getRoiLocation()));
 			
 			//getting the background subtraction setup
-			int datNo = sm.getSortedDatIntsInOrderDataset().getInt(imageFilepathNo);
+//			int datNo = sm.getSortedDatIntsInOrderDataset().getInt(imageFilepathNo);
 			
-			ExampleModel em = model.getModels().get(datNo);
+//			ExampleModel em = model.getModels().get(datNo);
 			
-			nxData.addAttribute(TreeFactory.createAttribute("Fit_Power", AnalaysisMethodologies.toString(em.getFitPower())));
-			nxData.addAttribute(TreeFactory.createAttribute("Boundary_Box", em.getBoundaryBox()));
-			nxData.addAttribute(TreeFactory.createAttribute("Tracker_Type", TrackingMethodology.toString(em.getTrackerType())));
-			nxData.addAttribute(TreeFactory.createAttribute("Background_Methodology", AnalaysisMethodologies.toString(em.getMethodology())));
+			nxData.addAttribute(TreeFactory.createAttribute("Fit_Power", AnalaysisMethodologies.toString(f.getFitPower())));
+			nxData.addAttribute(TreeFactory.createAttribute("Boundary_Box", f.getBoundaryBox()));
+			nxData.addAttribute(TreeFactory.createAttribute("Tracker_Type", TrackingMethodology.toString(f.getTrackingMethodology())));
+			nxData.addAttribute(TreeFactory.createAttribute("Background_Methodology", AnalaysisMethodologies.toString(f.getBackgroundMethdology())));
 	
-			nxData.addAttribute(TreeFactory.createAttribute("Unspliced_Corrected_Intensity", sm.getyList().get(imageFilepathNo)));
-			nxData.addAttribute(TreeFactory.createAttribute("Unspliced_Corrected_Intensity_Error", Maths.power(sm.getyList().get(imageFilepathNo), 0.5)));
+			nxData.addAttribute(TreeFactory.createAttribute("Unspliced_Corrected_Intensity", ocdp.getyList().get(imageFilepathNo)));
+			nxData.addAttribute(TreeFactory.createAttribute("Unspliced_Corrected_Intensity_Error", Maths.power(ocdp.getyList().get(imageFilepathNo), 0.5)));
 			
-			nxData.addAttribute(TreeFactory.createAttribute("Unspliced_Raw_Intensity", sm.getyListRawIntensity().get(imageFilepathNo)));
-			nxData.addAttribute(TreeFactory.createAttribute("Unspliced_Raw_Intensity_Error", Maths.power(sm.getyListRawIntensity().get(imageFilepathNo), 0.5)));
+			nxData.addAttribute(TreeFactory.createAttribute("Unspliced_Raw_Intensity", ocdp.getyListRawIntensity().get(imageFilepathNo)));
+			nxData.addAttribute(TreeFactory.createAttribute("Unspliced_Raw_Intensity_Error", Maths.power(ocdp.getyListRawIntensity().get(imageFilepathNo), 0.5)));
 			
-			nxData.addAttribute(TreeFactory.createAttribute("Unspliced_Fhkl_Intensity", sm.getyListFhkl().get(imageFilepathNo)));
-			nxData.addAttribute(TreeFactory.createAttribute("Unspliced_Fhkl_Intensity_Error", Maths.power(sm.getyListFhkl().get(imageFilepathNo),0.5)));
+			nxData.addAttribute(TreeFactory.createAttribute("Unspliced_Fhkl_Intensity", ocdp.getyListFhkl().get(imageFilepathNo)));
+			nxData.addAttribute(TreeFactory.createAttribute("Unspliced_Fhkl_Intensity_Error", Maths.power(ocdp.getyListFhkl().get(imageFilepathNo),0.5)));
 			
 
-			if(em.getMethodology() == Methodology.OVERLAPPING_BACKGROUND_BOX){
+			if(f.getBackgroundMethdology() == Methodology.OVERLAPPING_BACKGROUND_BOX){
 			
-				int[] offsetLen = sm.getBoxOffsetLenPt()[0];
-				int[] offsetPt = sm.getBoxOffsetLenPt()[1];
+				int[] offsetLen = drm.getBoxOffsetLenPt()[0];
+				int[] offsetPt = drm.getBoxOffsetLenPt()[1];
 				
-				double[] location = sm.getLocationList().get(imageFilepathNo);
+				double[] location = drm.getLocationList().get(f.getDatNo()).get(f.getNoInOriginalDat());
 				
 				int[][] lenPt = LocationLenPtConverterUtils.locationToLenPtConverter(location);
 				int[] len = lenPt[0];
@@ -169,9 +175,9 @@ public class RodObjectNexusUtils{
 				
 			}
 
-			else if(em.getMethodology() == Methodology.SECOND_BACKGROUND_BOX){
+			else if(f.getBackgroundMethdology() == Methodology.SECOND_BACKGROUND_BOX){
 		
-				double[] staticBackground = LocationLenPtConverterUtils.lenPtToLocationConverter(sm.getBackgroundLenPt());
+				double[] staticBackground = LocationLenPtConverterUtils.lenPtToLocationConverter(drm.getBackgroundLenPt());
 				
 				nxData.addAttribute(TreeFactory.createAttribute("Static_Background_ROI", staticBackground));
 				
@@ -182,13 +188,18 @@ public class RodObjectNexusUtils{
 			// Then we add the raw image
 			DataNode rawImageDataNode = new DataNodeImpl(p);
 			
-			SliceND snd = new SliceND(sm.getImages()[imageFilepathNo].getShape());
+			SliceND slice = new SliceND(f.getRawImageData().getShape());
+			IDataset j = DatasetFactory.createFromObject(0);
 			try {
-				rawImageDataNode.setDataset(sm.getImages()[imageFilepathNo].getSlice(snd).squeeze());
+				j = f.getRawImageData().getSlice(slice);
+				rawImageDataNode.setDataset(j.squeeze());
+				
 			} catch (DatasetException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				System.out.println(e.getMessage());
 			}
+			
 			nxData.addDataNode("Raw_Image", rawImageDataNode);
 			
 			p++;
@@ -200,10 +211,10 @@ public class RodObjectNexusUtils{
 		// Then we add the overall stitched rod intensities 
 		DataNode fhklNode = new DataNodeImpl(p);
 		
-		SliceND slice00= new SliceND(sm.getSplicedCurveYFhkl().getShape());
+		SliceND slice00= new SliceND(csdp.getSplicedCurveYFhkl().getShape());
 		
-		IDataset splicedfhkl = sm.getSplicedCurveYFhkl().getSlice(slice00);
-		splicedfhkl.setErrors(sm.getSplicedCurveYFhklError());
+		IDataset splicedfhkl = csdp.getSplicedCurveYFhkl().getSlice(slice00);
+		splicedfhkl.setErrors(csdp.getSplicedCurveYFhklError());
 		
 		fhklNode.setDataset(splicedfhkl);
 		entry.addDataNode("Fhkl_Dataset", fhklNode);
@@ -212,10 +223,10 @@ public class RodObjectNexusUtils{
 		// Then we add the overall corrected rod intensities 
 		DataNode correctedIntensityNode = new DataNodeImpl(p);
 		
-		SliceND slice01= new SliceND(sm.getSplicedCurveY().getShape());
+		SliceND slice01= new SliceND(csdp.getSplicedCurveY().getShape());
 		
-		IDataset splicedCorrected = sm.getSplicedCurveY().getSlice(slice01);
-		splicedCorrected.setErrors(sm.getSplicedCurveYError());
+		IDataset splicedCorrected = csdp.getSplicedCurveY().getSlice(slice01);
+		splicedCorrected.setErrors(csdp.getSplicedCurveYError());
 		
 		correctedIntensityNode.setDataset(splicedCorrected);
 		entry.addDataNode("Corrected_Intensity_Dataset", correctedIntensityNode);
@@ -224,10 +235,10 @@ public class RodObjectNexusUtils{
 		// Then we add the overall raw rod intensities 
 		DataNode rawIntensityNode = new DataNodeImpl(p);
 		
-		SliceND slice02= new SliceND(sm.getSplicedCurveYRaw().getShape());
+		SliceND slice02= new SliceND(csdp.getSplicedCurveYRaw().getShape());
 		
-		IDataset splicedRaw = sm.getSplicedCurveYRaw().getSlice(slice02);
-		splicedRaw.setErrors(sm.getSplicedCurveYRawError());
+		IDataset splicedRaw = csdp.getSplicedCurveYRaw().getSlice(slice02);
+		splicedRaw.setErrors(csdp.getSplicedCurveYRawError());
 		
 		rawIntensityNode.setDataset(splicedRaw);
 		entry.addDataNode("Raw_Intensity_Dataset", rawIntensityNode);
@@ -237,9 +248,9 @@ public class RodObjectNexusUtils{
 		// Then we add the overall stitched rod scanned variables 
 		DataNode scannedVariableNode = new DataNodeImpl(p);
 		
-		SliceND slice0= new SliceND(sm.getSplicedCurveX().getShape());
+		SliceND slice0= new SliceND(csdp.getSplicedCurveX().getShape());
 		
-		scannedVariableNode.setDataset(sm.getSplicedCurveX().getSlice(slice0));
+		scannedVariableNode.setDataset(csdp.getSplicedCurveX().getSlice(slice0));
 		entry.addDataNode("Scanned_Variable_Dataset", scannedVariableNode);
 		
 		scannedVariableNode.addAttribute(TreeFactory.createAttribute("Scanned_Variable_Name", gm.getxName()));
@@ -255,7 +266,7 @@ public class RodObjectNexusUtils{
 		
 		int overlapNumber =0;
 		
-		for(OverlapDataModel ovm :sm.getOverlapDataModels()){
+		for(OverlapDataModel ovm :drm.getOverlapDataModels()){
 		
 			if(!ovm.getLowerOverlapScannedValues().equals(null)){
 				if(ovm.getLowerOverlapScannedValues().length > 0){

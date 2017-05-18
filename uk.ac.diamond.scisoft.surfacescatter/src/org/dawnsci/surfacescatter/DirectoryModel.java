@@ -24,7 +24,7 @@ public class DirectoryModel {
 	private ArrayList<FrameModel> fms;
 	private TrackerType1 trackingMethodolgy;
 	private boolean trackerOn;
-	private int[][] initialLenPt;
+	private int[][] initialLenPt =  new int[][] {{50,50},{10,10}};;
 	private IImageTracker initialTracker;
 	private double[] trackerCoordinates = {100,100,110,100,110,100,110,110};
 	private double[] initialTrackerCoordinates = {100,100,110,100,110,100,110,110};
@@ -55,6 +55,7 @@ public class DirectoryModel {
 	private ArrayList<double[][]> interpolatorBoxes;
 	private ArrayList<IRegion> interpolatorRegions;
 	private ArrayList<OverlapDataModel> overlapDataModels;
+	private double currentRawIntensity;
 
 	
 	public void addToInterpolatorRegions(IRegion box){
@@ -730,6 +731,16 @@ public class DirectoryModel {
 
 	public void setOverlapDataModels(ArrayList<OverlapDataModel> overlapDataModels) {
 		this.overlapDataModels = overlapDataModels;
+	}
+
+
+	public double getCurrentRawIntensity() {
+		return currentRawIntensity;
+	}
+
+
+	public void setCurrentRawIntensity(double currentRawIntensity) {
+		this.currentRawIntensity = currentRawIntensity;
 	}
 	
 //	

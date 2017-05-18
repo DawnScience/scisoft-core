@@ -42,7 +42,7 @@ public class FrameModel {
 	private double[] roiLocation;
 	private FitPower fitPower;
 	private int boundaryBox;
-	private TrackerType1 trackingMethodology;
+	private TrackerType1 trackingMethodology  = TrackerType1.TLD;
 	private Methodology backgroundMethodology;
 	private double[] overlapping_Background_ROI;
 	private double[] static_Background_ROI;

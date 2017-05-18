@@ -2,6 +2,7 @@ package org.dawnsci.surfacescatter;
 
 import java.util.ArrayList;
 
+import org.eclipse.january.dataset.Dataset;
 //import org.dawnsci.surfacescatter.MethodSettingEnum.MethodSetting;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
@@ -128,4 +129,15 @@ public class CsdpGeneratorFromDrm {
 		return output;
 	}
 	
+	
+	public ArrayList<IDataset> convert(IDataset[] al){
+		
+		ArrayList<IDataset> output = new ArrayList<>(); 
+		
+		for(int i =0 ; i< al.length; i++){
+			output.add(al[i]);
+		}
+		
+		return output;
+	}
 }

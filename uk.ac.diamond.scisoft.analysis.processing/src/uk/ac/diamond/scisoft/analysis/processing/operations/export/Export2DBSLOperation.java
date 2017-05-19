@@ -265,6 +265,12 @@ public class Export2DBSLOperation extends AbstractOperation<Export2DBSLModel, Op
 		String filePath = folderPath + File.separator + fileNames[2];
 
 		// Find out how many scalers there are
+		int rank = scalerValues.getRank();
+		
+		while (rank > 1) {
+			scalerValues.squeeze();
+			rank = scalerValues.getRank();
+		}
 		int scalerLength = scalerValues.getSize();
 
 		// Calculate how many bytes of data that is and create a byte array, for output

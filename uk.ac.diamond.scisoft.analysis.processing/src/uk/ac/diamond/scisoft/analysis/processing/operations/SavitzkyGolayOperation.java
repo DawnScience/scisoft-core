@@ -15,7 +15,6 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.SavitzkyGolay;

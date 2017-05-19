@@ -8,12 +8,8 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import org.eclipse.dawnsci.analysis.api.fitting.functions.IPeak;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
-import org.eclipse.january.dataset.IDataset;
-
-import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 
 /**
  * Savitzky-Golay filtering operation

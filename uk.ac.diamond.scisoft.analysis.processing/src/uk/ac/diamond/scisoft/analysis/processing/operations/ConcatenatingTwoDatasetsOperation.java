@@ -22,6 +22,7 @@ import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
@@ -112,12 +113,12 @@ public class ConcatenatingTwoDatasetsOperation extends AbstractOperation<Concate
 					axes_concat_mean_old1 = axes_concat1.mean(0);
 		
 					axes_concat_mean_new0 = axes_concat_mean_old0;
-					axes_concat_mean_new1 = DatasetFactory.createLinearSpace(axes_concat_mean_old1.getDouble(0), axes_concat_mean_old1.getDouble(axes_concat_mean_old1.getSize()-1), axes_concat_mean_old1.getSize(), Dataset.FLOAT64);
+					axes_concat_mean_new1 = DatasetFactory.createLinearSpace(DoubleDataset.class, axes_concat_mean_old1.getDouble(0), axes_concat_mean_old1.getDouble(axes_concat_mean_old1.getSize()-1), axes_concat_mean_old1.getSize());
 				} else {
 					axes_concat_mean_old0 = axes_concat0.mean(0);
 					axes_concat_mean_old1 = axes_concat1.mean(1);
 		
-					axes_concat_mean_new0 = DatasetFactory.createLinearSpace(axes_concat_mean_old0.getDouble(0), axes_concat_mean_old0.getDouble(axes_concat_mean_old0.getSize()-1), axes_concat_mean_old0.getSize(), Dataset.FLOAT64);
+					axes_concat_mean_new0 = DatasetFactory.createLinearSpace(DoubleDataset.class, axes_concat_mean_old0.getDouble(0), axes_concat_mean_old0.getDouble(axes_concat_mean_old0.getSize()-1), axes_concat_mean_old0.getSize());
 					axes_concat_mean_new1 = axes_concat_mean_old1;
 				}
 			} catch (IllegalArgumentException e) {

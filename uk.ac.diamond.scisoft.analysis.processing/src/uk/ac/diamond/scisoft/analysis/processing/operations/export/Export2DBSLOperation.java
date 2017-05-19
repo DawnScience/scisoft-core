@@ -98,16 +98,32 @@ public class Export2DBSLOperation extends AbstractOperation<Export2DBSLModel, Op
 		// Then generate the different file names that will be generated for the BSL directory
 		String[] bslFileNames = BSLFileNames(fileName);
 		
-		// Make the BSL header file
-		BSLHeaderWriter(bslFolderPath, bslFileNames, sampleName, input.getShape(), sliceSeriesMetadata.getTotalSlices(), scalersData.getShape()[1]);
-		// Output the detector images
-		BSLDetectorImageWriter(bslFolderPath, bslFileNames, input, input.getShape());
-		// Output the scalers, focussing on the scaler values for this frame
-		BSLScalersWriter(bslFolderPath, bslFileNames, scalersData.getSlice(new Slice(frameNumber, frameNumber + 1)).squeeze());
-		// Output the secondary detector information (blank for now)
-		BSLNullWriter(bslFolderPath, bslFileNames);
-		// Output the scan times, focussing on the time values for this frame
-		BSLTimesWriter(bslFolderPath, bslFileNames, countTimes.getFloat(frameNumber), waitTimes.getFloat(frameNumber));
+		boolean multiFrame = (1 >= 0) && (1 < scalersData.getShape().length);
+		
+		if (multiFrame == true) {
+			// Output the BSL header file
+			BSLHeaderWriter(bslFolderPath, bslFileNames, sampleName, input.getShape(), sliceSeriesMetadata.getTotalSlices(), scalersData.getShape()[1]);
+			// Output the detector images
+			BSLDetectorImageWriter(bslFolderPath, bslFileNames, input, input.getShape());
+			// Output the scalers, focusing on the scaler values for this frame
+			BSLScalersWriter(bslFolderPath, bslFileNames, scalersData.getSlice(new Slice(frameNumber, frameNumber + 1)));
+			// Output the secondary detector information (blank for now)
+			BSLNullWriter(bslFolderPath, bslFileNames);
+			// Output the scan times, focusing on the time values for this frame
+			BSLTimesWriter(bslFolderPath, bslFileNames, countTimes.getFloat(frameNumber), waitTimes.getFloat(frameNumber));
+		}
+		else {
+			// Output the BSL header file
+			BSLHeaderWriter(bslFolderPath, bslFileNames, sampleName, input.getShape(), sliceSeriesMetadata.getTotalSlices(), scalersData.getShape()[0]);
+			// Output the detector images
+			BSLDetectorImageWriter(bslFolderPath, bslFileNames, input, input.getShape());
+			// Output the scalers, focusing on the scaler values for this frame
+			BSLScalersWriter(bslFolderPath, bslFileNames, scalersData);
+			// Output the secondary detector information (blank for now)
+			BSLNullWriter(bslFolderPath, bslFileNames);
+			// Output the scan times, focusing on the time values for this frame
+			BSLTimesWriter(bslFolderPath, bslFileNames, countTimes.getFloat(), waitTimes.getFloat());
+		}
 		
 		// Return the data as it arrived
 		OperationData output = new OperationData();

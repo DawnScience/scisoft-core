@@ -43,7 +43,7 @@ public class Export2DBSLModel extends AbstractOperationModel{
 	// @OperationModelField annotations for the UI element creation
 	// Get the internal filepath of the Scalers data
 	@OperationModelField(dataset = "filePath", label = "Path to Scalers data", fieldPosition = 2)
-	private String scalersFilePath = "/entry1/Scalers/data";
+	private String scalersFilePath = "/entry1/instrument/Scalers/data";
 	
 	// Set up the getter...
 	public String getScalersFilePath() {
@@ -59,7 +59,7 @@ public class Export2DBSLModel extends AbstractOperationModel{
 	// @OperationModelField annotations for the UI element creation
 	// Get the internal filepath of the sample thickness
 	@OperationModelField(dataset = "filePath", label = "Path to count time", fieldPosition = 3)
-	private String countTimeFilePath = "/entry1/Scalers/count_time";
+	private String countTimeFilePath = "/entry1/instrument/Scalers/count_time";
 	
 	// Set up the getter...
 	public String getCountTimeFilePath() {
@@ -75,7 +75,7 @@ public class Export2DBSLModel extends AbstractOperationModel{
 	// @OperationModelField annotations for the UI element creation
 	// Get the internal filepath of the sample thickness
 	@OperationModelField(dataset = "filePath", label = "Path to wait time", fieldPosition = 4)
-	private String waitTimeFilePath = "/entry1/Scalers/wait_time";
+	private String waitTimeFilePath = "/entry1/instrument/Scalers/wait_time";
 	
 	// Set up the getter...
 	public String getWaitTimeFilePath() {

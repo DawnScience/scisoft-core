@@ -59,7 +59,6 @@ public class DiffractionCoordinateCache {
 			result = prime * result + ((dce == null) ? 0 : dce.hashCode());
 			result = prime * result + ((dp == null) ? 0 : dp.hashCode());
 			result = prime * result + (radians ? 1231 : 1237);
-			System.out.println(result);
 			return result;
 		}
 

@@ -140,6 +140,7 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 		// in this shallow copy, the caches can even be shared
 		theCopy.cachedDeTran = this.cachedDeTran;
 		theCopy.cachedPolar = this.cachedPolar;
+		theCopy.cachePI = (this.cachePI != null) ? this.cachePI : null;
 		
 		return theCopy;
 	}

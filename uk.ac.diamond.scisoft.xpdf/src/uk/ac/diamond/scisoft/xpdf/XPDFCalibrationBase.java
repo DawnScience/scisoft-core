@@ -42,7 +42,7 @@ public class XPDFCalibrationBase {
 
 	protected int dataDimensions;
 	
-	private IPixelIntegrationCache cachePI;
+	protected IPixelIntegrationCache cachePI;
 
 	/**
 	 * Empty constructor.
@@ -73,6 +73,7 @@ public class XPDFCalibrationBase {
 		this.coords = (inCal.coords != null) ? new XPDFCoordinates(inCal.coords) : null;
 		this.sampleSelfScattering = (inCal.sampleSelfScattering != null) ? inCal.sampleSelfScattering : null;
 		this.absorptionMaps = (inCal.absorptionMaps != null) ? inCal.absorptionMaps : null;
+		this.cachePI = (inCal.cachePI != null) ? inCal.cachePI : null;
 	}
 
 	/**
@@ -155,6 +156,7 @@ public class XPDFCalibrationBase {
 	public void setCoordinates(XPDFCoordinates inCoords) {
 		this.coords = inCoords;
 		this.dataDimensions = inCoords.getTwoTheta().getShape().length;
+		cachePI = null;
 	}
 	
 	/**

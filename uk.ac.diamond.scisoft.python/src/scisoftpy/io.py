@@ -222,7 +222,7 @@ def save(name, data, format=None, range=(), autoscale=False, signed=True, bits=N
 
 from os.path import join as _join
 
-def find_scan_files(scan, data_dir, visit=None, year=None, ending=".dat"):
+def find_scan_files(scan, data_dir, visit=None, year=None, prefix=None, ending=".dat"):
     '''Find scan files in given data directory
 
     Looks for file in data_dir/year/visit/
@@ -231,6 +231,7 @@ def find_scan_files(scan, data_dir, visit=None, year=None, ending=".dat"):
     data_dir - beamline data directory, such as '/dls/i01/data'
     visit    - visit-ID, such as cm1234-1 (defaults to data_dir and its sub-directories)
     year     - calendar year (defaults to visit directory and any year in range 2000-99)
+    prefix   - prefix to file name of scan file, such as 'i06-' (defaults to nothing)
     ending   - suffix or list of suffices (defaults to '.dat')
 
     Returns list of files
@@ -262,7 +263,8 @@ def find_scan_files(scan, data_dir, visit=None, year=None, ending=".dat"):
         if y is None:
             ds = (data_dir,)
         else:
-            ds = glob(_join(data_dir, y)).sort(reverse=True)
+            ds = glob(_join(data_dir, y))
+            ds.sort(reverse=True)
         for d in ds:
             for v in visits:
                 if v is None:
@@ -271,7 +273,10 @@ def find_scan_files(scan, data_dir, visit=None, year=None, ending=".dat"):
                     vs = glob(_join(d, v))
                 for lv in vs:
                     for e in es:
-                        files.extend(iglob(_join(lv, scan + e)))
+                        fn = scan + e
+                        if prefix:
+                            fn = prefix + fn
+                        files.extend(iglob(_join(lv, fn)))
                     if len(files) > 0:
                         break
                 if len(files) > 0:

@@ -164,7 +164,7 @@ public class SeriesRunner implements IOperationRunner {
 		if (context.getExecutionType()==ExecutionType.SERIES) {
 			Slicer.visit(iterator,sv);
 		} else if (context.getExecutionType()==ExecutionType.PARALLEL) {
-			Slicer.visitParallel(iterator,sv);
+			Slicer.visitParallel(iterator,sv,context.getNumberOfCores());
 		} else {
 			throw new OperationException(context.getSeries()[0], "The edges are needed to execute a graph using ptolemy!");
 		}

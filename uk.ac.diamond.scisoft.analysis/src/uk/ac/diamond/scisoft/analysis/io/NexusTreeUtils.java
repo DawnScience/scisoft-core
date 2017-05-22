@@ -2105,6 +2105,15 @@ public class NexusTreeUtils {
 	public static GroupNode createNXDetector(DetectorProperties dp) {
 		GroupNode g = createNXGroup(NX_DETECTOR);
 
+		return addDetectorProperties(dp, g);
+	}
+	
+	/**
+	 * @param dp
+	 * @return group containing fields and classes for a detector
+	 */
+	public static GroupNode addDetectorProperties(DetectorProperties dp, GroupNode g) {
+
 		addDataNode(g, "distance", dp.getBeamCentreDistance(), "mm");
 
 		double[] bc = dp.getBeamCentreCoords();
@@ -2138,7 +2147,8 @@ public class NexusTreeUtils {
 
 		return g;
 	}
-
+	
+	
 	private static boolean addRelative(String dependsOn) {
 		if (dependsOn.equals(NX_TRANSFORMATIONS_ROOT) || dependsOn.startsWith(Tree.ROOT)) {
 			return false;

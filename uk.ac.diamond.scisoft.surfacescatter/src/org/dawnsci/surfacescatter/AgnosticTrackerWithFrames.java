@@ -11,14 +11,10 @@ package org.dawnsci.surfacescatter;
 
 import org.dawnsci.boofcv.BoofCVImageTrackerServiceCreator;
 import org.eclipse.dawnsci.analysis.api.image.IImageTracker;
-import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.SliceND;
-import org.eclipse.swt.widgets.Composite;
-
-
 
 public class AgnosticTrackerWithFrames {
 
@@ -28,31 +24,37 @@ public class AgnosticTrackerWithFrames {
 	private double[] initialLocation;
 	private int[] len;
 	private int[] pt;
-	private SuperModel sm;
+	private DirectoryModel drm;
 	private int DEBUG = 0;
 	private boolean isTheTrackingMarkerNot3 = true;
 	
-	public void TwoDTracking0(IDataset input, 
-								  ExampleModel model,
-								  SuperModel sm, 
-								  DataModel dm, 
-								  int trackingMarker, 
-								  int k,
-								  int selection,
-								  IPlottingSystem<Composite> pS) {
+	public void TwoDTracking0(DirectoryModel drm,
+							  int trackingMarker, 
+							  int k,
+							  int selection) {
 	
-		this.sm = sm;
-		len = model.getLenPt()[0];
-		pt = model.getLenPt()[1];
-		 
 		
-		if(model.getTrackerType() != TrackingMethodology.TrackerType1.INTERPOLATION 
-				&& model.getTrackerType() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
+		len = drm.getInitialLenPt()[0];
+		pt = drm.getInitialLenPt()[1];
+		
+		FrameModel frame = drm.getFms().get(selection);
+		IDataset input = DatasetFactory.createFromObject(0);
+		try {
+			input = frame.getRawImageData().getSlice(new SliceND (frame.getRawImageData().getShape())).squeeze();
+		} catch (DatasetException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+//		FrameModel fm = 
+		
+		if(frame.getTrackingMethodology() != TrackingMethodology.TrackerType1.INTERPOLATION 
+				&& frame.getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
 			
 			if (trackingMarker == 0) {
-				if (model.getInput() == null) {
-					len = model.getLenPt()[0];
-					pt = model.getLenPt()[1];
+				if (drm.getInputForEachDat()[frame.getDatNo()] == null) {
+					len = drm.getLenPtForEachDat()[frame.getDatNo()][0];
+					pt = drm.getLenPtForEachDat()[frame.getDatNo()][1];
 	
 	//				in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input, len, pt);
 					
@@ -70,18 +72,21 @@ public class AgnosticTrackerWithFrames {
 					
 					
 					try {
-						tracker.initialize(input, initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
-						tracker1.initialize(input, initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
+						tracker.initialize(input, initialLocation, TrackingMethodology.toTT(frame.getTrackingMethodology()));
+						tracker1.initialize(input, initialLocation, TrackingMethodology.toTT(frame.getTrackingMethodology()));
 					} catch (Exception e) {
 	
 					}
 	
-					model.setInput(input);
+					drm.getInputForEachDat()[frame.getDatNo()] =input;
+				
+					
 					location = initialLocation;
 					
-					sm.setTracker(tracker);
-					sm.setInitialTracker(tracker1);
-					sm.addTrackerLocationList(selection, location);
+					drm.setTracker(tracker);
+					drm.setInitialTracker(tracker1);
+					drm.addTrackerLocationList(frame.getImageNumber(),
+									   location);
 
 				}
 	
@@ -90,34 +95,36 @@ public class AgnosticTrackerWithFrames {
 					try {
 	
 	//					tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
-	//					tracker.initialize(model.getInput(), model.getTrackerCoordinates(), TrackingMethodology.toTT(model.getTrackerType()));
-						if(sm.getTracker() != null){
-							tracker = sm.getTracker();
+	//					tracker.initialize(drm.getInputForEachDat()[frame.getDatNo()], model.getTrackerCoordinates(), TrackingMethodology.toTT(frame.getTrackingMethodology()));
+						if(drm.getTracker() != null){
+							tracker = drm.getTracker();
 							location = tracker.track(input);
 						}					
 						if (location != null) {
-							model.setTrackerCoordinates(location);
-							sm.addTrackerLocationList(selection, location);
-							sm.setTracker(tracker);
+							drm.setTrackerCoordinates(location);
+							drm.addTrackerLocationList(frame.getImageNumber(),
+									   location);
+							drm.setTracker(tracker);
 						
 						}
 	
 						else{
 							tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
-							tracker.initialize(model.getInput(), model.getTrackerCoordinates(), TrackingMethodology.toTT(model.getTrackerType()));
+							tracker.initialize(drm.getInputForEachDat()[frame.getDatNo()], drm.getTrackerCoordinates(), TrackingMethodology.toTT(frame.getTrackingMethodology()));
 							location = tracker.track(input);
 							if (location != null) {
-								model.setTrackerCoordinates(location);
-								sm.addTrackerLocationList(selection, location);
-								sm.setTracker(tracker);
+								drm.setTrackerCoordinates(location);
+								drm.addTrackerLocationList(frame.getImageNumber(),
+									   location);
+								drm.setTracker(tracker);
 							}
 						}
 						
 						if (location == null){
-							location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(sm.getTrackerLocationList(), 
-																						  sm.getSortedX(), 
-																						  sm.getInitialLenPt()[0],
-																						  selection);
+							location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(drm.getTrackerLocationList(), 
+									  drm.getSortedX(), 
+									  drm.getInitialLenPt()[0],
+									  selection);
 						}
 						
 						
@@ -126,14 +133,14 @@ public class AgnosticTrackerWithFrames {
 						
 	//					sm.addLocationList(k, location);
 						
-						int[] len1 = model.getLenPt()[0];
+						int[] len1 =drm.getLenPtForEachDat()[frame.getDatNo()][0];
 	
 						int[] newPt = new int[] { (int) location[0], (int) location[1] };
 						int[][] newLenPt = new int[2][];
 						newLenPt[0] = len1;
 						newLenPt[1] = newPt;
-						model.setLenPt(newLenPt);
-						model.setInput(input);
+						drm.getLenPtForEachDat()[frame.getDatNo()]=(newLenPt);
+						drm.getInputForEachDat()[frame.getDatNo()] =input;
 	//					sm.addLocationList(k, location);
 	//					System.out.println("~~~~~~~~~~~~~~~~~~~success!~~~~~~~~~~~~~~~~~");
 					} catch (Exception e) {
@@ -145,12 +152,12 @@ public class AgnosticTrackerWithFrames {
 			}
 	
 			else if (trackingMarker == 1) {
-				if (model.getInput() == null) {
-					len = model.getLenPt()[0];
-					pt = model.getLenPt()[1];
+				if (drm.getInputForEachDat()[frame.getDatNo()] == null) {
+					len = drm.getLenPtForEachDat()[frame.getDatNo()][0];
+					pt = drm.getLenPtForEachDat()[frame.getDatNo()][1];
 	
-					dm.setInitialDataset(input);
-					dm.setInitialLenPt(new int[][] {len, pt });
+					drm.getInputForEachDat()[frame.getDatNo()]= (input);
+					drm.setInitialLenPt(new int[][] {len, pt });
 					
 				
 	//				in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input, len, pt);
@@ -161,20 +168,23 @@ public class AgnosticTrackerWithFrames {
 							(double) (pt[1]), (double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]),
 							(double) (pt[1] + len[1]) };
 					try {
-						tracker.initialize(input, initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
-						tracker1.initialize(input, initialLocation, TrackingMethodology.toTT(model.getTrackerType()));
+						tracker.initialize(input, initialLocation, TrackingMethodology.toTT(frame.getTrackingMethodology()));
+						tracker1.initialize(input, initialLocation, TrackingMethodology.toTT(frame.getTrackingMethodology()));
 					} catch (Exception e) {
 	
 					}
-					model.setTrackerCoordinates(
-							new double[] { initialLocation[0], initialLocation[1], initialLocation[2], initialLocation[3],
-									initialLocation[4], initialLocation[5], initialLocation[6], initialLocation[7] });
-					model.setInput(input);
-					location = initialLocation;
 					
-					sm.addTrackerLocationList(selection, location);
-					sm.setTracker(tracker);
-					sm.setInitialTracker(tracker1);
+//					drm.setTrackerCoordinates(location);
+//					model.setTrackerCoordinates(
+//							new double[] { initialLocation[0], initialLocation[1], initialLocation[2], initialLocation[3],
+//									initialLocation[4], initialLocation[5], initialLocation[6], initialLocation[7] });
+					drm.getInputForEachDat()[frame.getDatNo()] =input;
+					location = initialLocation;
+					drm.setTrackerCoordinates(location);
+					drm.addTrackerLocationList(frame.getImageNumber(),
+									   location);
+					drm.setTracker(tracker);
+					drm.setInitialTracker(tracker1);
 	
 	//				sm.addLocationList(k, location);
 				}
@@ -184,48 +194,50 @@ public class AgnosticTrackerWithFrames {
 					try {
 	
 	//					tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
-	//					tracker.initialize(model.getInput(), model.getTrackerCoordinates(), TrackingMethodology.toTT(model.getTrackerType()));
+	//					tracker.initialize(drm.getInputForEachDat()[frame.getDatNo()], model.getTrackerCoordinates(), TrackingMethodology.toTT(frame.getTrackingMethodology()));
 						
-						if(sm.getTracker() != null){
-							tracker = sm.getTracker();
+						if(drm.getTracker() != null){
+							tracker = drm.getTracker();
 							location = tracker.track(input);
 						}
 						if (location != null) {
-							model.setTrackerCoordinates(location);
-							sm.addTrackerLocationList(selection, location);
-							sm.setTracker(tracker);
+							drm.setTrackerCoordinates(location);
+							drm.addTrackerLocationList(frame.getImageNumber(),
+									   location);
+							drm.setTracker(tracker);
 						
 						}
 	
 						else{
 							tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
-							tracker.initialize(model.getInput(), model.getTrackerCoordinates(), TrackingMethodology.toTT(model.getTrackerType()));
+							tracker.initialize(drm.getInputForEachDat()[frame.getDatNo()],drm.getTrackerCoordinates(), TrackingMethodology.toTT(frame.getTrackingMethodology()));
 							location = tracker.track(input);
 							if (location != null) {
-								model.setTrackerCoordinates(location);
-								sm.addTrackerLocationList(selection, location);
-								sm.setTracker(tracker);
+								drm.setTrackerCoordinates(location);
+								drm.addTrackerLocationList(frame.getImageNumber(),
+									   location);
+								drm.setTracker(tracker);
 							}
 						}
 						
 						if (location == null){
-							location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(sm.getTrackerLocationList(), 
-																						  sm.getSortedX(), 
-																						  sm.getInitialLenPt()[0],
+							location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(drm.getTrackerLocationList(), 
+																						  drm.getSortedX(), 
+																						  drm.getInitialLenPt()[0],
 																						  selection);
 						}
 						
 						
-	//					sm.setTracker(tracker);
+	//					drm.setTracker(tracker);
 						
-						int[] len1 = model.getLenPt()[0];
+						int[] len1 = drm.getLenPtForEachDat()[frame.getDatNo()][0];
 	
 						int[] newPt = new int[] { (int) location[0], (int) location[1] };
 						int[][] newLenPt = new int[2][];
 						newLenPt[0] = len1;
 						newLenPt[1] = newPt;
-						model.setLenPt(newLenPt);
-						model.setInput(input);
+						drm.getLenPtForEachDat()[frame.getDatNo()]=(newLenPt);
+						drm.getInputForEachDat()[frame.getDatNo()] =input;
 	//					sm.addLocationList(k, location);
 	//					System.out.println("~~~~~~~~~~~~~~~~~~~success!~~~~~~~~~~~~~~~~~");
 					} catch (Exception e) {
@@ -237,40 +249,40 @@ public class AgnosticTrackerWithFrames {
 			}
 	
 			else if (trackingMarker == 2) {
-				if (model.getInput() == null) {
-					len = dm.getInitialLenPt()[0];
-					pt = dm.getInitialLenPt()[1];
+				if (drm.getInputForEachDat()[frame.getDatNo()] == null) {
+					len = drm.getInitialLenPt()[0];
+					pt = drm.getInitialLenPt()[1];
 					
 					initialLocation = new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]),
 							(double) (pt[1]), (double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]),
 							(double) (pt[1] + len[1]) };
 					
-					if (sm.getInitialTracker() == null){	
+					if (drm.getInitialTracker() == null){	
 						tracker =null;
 						tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 						
 						try {
 							
-							location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(sm.getTrackerLocationList(), 
-									  sm.getSortedX(), 
-									  sm.getInitialLenPt()[0],
+							location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(drm.getTrackerLocationList(), 
+									  drm.getSortedX(), 
+									  drm.getInitialLenPt()[0],
 									  selection);
 							
 							debug("TwoDTrackign3 interpolated location for trackingMarker = 2 ; location[0]:  " +  location[0] + "    TwoDTrackign3 location[1]:  " +  location[1] );
 							
 							
-							tracker.initialize(dm.getInitialDataset(), location, TrackingMethodology.toTT(model.getTrackerType()));
+							tracker.initialize(drm.getInputForEachDat()[frame.getDatNo()], location, TrackingMethodology.toTT(frame.getTrackingMethodology()));
 			
 							
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-						sm.addTrackerLocationList(k, initialLocation);
+						drm.addTrackerLocationList(k, initialLocation);
 					}
 					
 					else{
-						tracker = sm.getInitialTracker();
+						tracker = drm.getInitialTracker();
 						
 					}
 					
@@ -285,40 +297,42 @@ public class AgnosticTrackerWithFrames {
 				
 					
 					if (location != null) {
-						model.setTrackerCoordinates(location);
-						sm.addTrackerLocationList(selection, location);
-						sm.setTracker(tracker);
+						drm.setTrackerCoordinates(location);
+						drm.addTrackerLocationList(frame.getImageNumber(),
+									   location);
+						drm.setTracker(tracker);
 					
 					}
 	
 					else{
 						try{
 							tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
-							tracker.initialize(model.getInput(), model.getTrackerCoordinates(), TrackingMethodology.toTT(model.getTrackerType()));
+							tracker.initialize(drm.getInputForEachDat()[frame.getDatNo()], drm.getTrackerCoordinates(), TrackingMethodology.toTT(frame.getTrackingMethodology()));
 							location = tracker.track(input);
 						}
 						catch(Exception e){
 							debug("Error in tracker initialisation; line ~278");
 						}
 						if (location != null) {
-							model.setTrackerCoordinates(location);
-							sm.addTrackerLocationList(selection, location);
-							sm.setTracker(tracker);
+							drm.setTrackerCoordinates(location);
+							drm.addTrackerLocationList(frame.getImageNumber(),
+									   location);
+							drm.setTracker(tracker);
 							}
 							
 					}
 					
 					if (location == null){
-						location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(sm.getTrackerLocationList(), 
-																					  sm.getSortedX(), 
-																					  sm.getInitialLenPt()[0],
-																					  selection);
+						location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(drm.getTrackerLocationList(), 
+								  drm.getSortedX(), 
+								  drm.getInitialLenPt()[0],
+								  selection);
 					}
 					
 	
-					model.setInput(input);
-	
-					sm.setTracker(tracker);
+					drm.getInputForEachDat()[frame.getDatNo()] =input;
+					drm.getInputForEachDat()[frame.getDatNo()] =input;
+					drm.setTracker(tracker);
 	
 					
 				}
@@ -328,45 +342,47 @@ public class AgnosticTrackerWithFrames {
 					try {
 	
 	//					tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
-	//					tracker.initialize(model.getInput(), model.getTrackerCoordinates(), TrackingMethodology.toTT(model.getTrackerType()));
+	//					tracker.initialize(drm.getInputForEachDat()[frame.getDatNo()], model.getTrackerCoordinates(), TrackingMethodology.toTT(frame.getTrackingMethodology()));
 						
-						if(sm.getTracker() != null){
-							tracker = sm.getTracker();
+						if(drm.getTracker() != null){
+							tracker = drm.getTracker();
 							location = tracker.track(input);
 						}
 						if (location != null) {
-							model.setTrackerCoordinates(location);
-							sm.addTrackerLocationList(selection, location);
-							sm.setTracker(tracker);
+							drm.setTrackerCoordinates(location);
+							drm.addTrackerLocationList(frame.getImageNumber(),
+									   location);
+							drm.setTracker(tracker);
 						
 						}
 	
 						else{
 							tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
-							tracker.initialize(model.getInput(), model.getTrackerCoordinates(), TrackingMethodology.toTT(model.getTrackerType()));
+							tracker.initialize(drm.getInputForEachDat()[frame.getDatNo()], drm.getTrackerCoordinates(), TrackingMethodology.toTT(frame.getTrackingMethodology()));
 							location = tracker.track(input);
 							if (location != null) {
-								model.setTrackerCoordinates(location);
-								sm.addTrackerLocationList(selection, location);
-								sm.setTracker(tracker);
+								drm.setTrackerCoordinates(location);
+								drm.addTrackerLocationList(frame.getImageNumber(),
+									   location);
+								drm.setTracker(tracker);
 							}
 						}
 						
 						if (location == null){
-							location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(sm.getTrackerLocationList(), 
-																						  sm.getSortedX(), 
-																						  sm.getInitialLenPt()[0],
-																						  selection);
+							location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(drm.getTrackerLocationList(), 
+									  drm.getSortedX(), 
+									  drm.getInitialLenPt()[0],
+									  selection);
 						}
 						
-						int[] len1 = model.getLenPt()[0];
+						int[] len1 = drm.getLenPtForEachDat()[frame.getDatNo()][0];
 	
 						int[] newPt = new int[] { (int) location[0], (int) location[1] };
 						int[][] newLenPt = new int[2][];
 						newLenPt[0] = len1;
 						newLenPt[1] = newPt;
-						model.setLenPt(newLenPt);
-						model.setInput(input);
+						drm.getLenPtForEachDat()[frame.getDatNo()]=(newLenPt);
+						drm.getInputForEachDat()[frame.getDatNo()] =input;
 	//					sm.addLocationList(k, location);
 	//					System.out.println("~~~~~~~~~~~~~~~~~~~success!~~~~~~~~~~~~~~~~~");
 					} catch (Exception e) {
@@ -378,21 +394,25 @@ public class AgnosticTrackerWithFrames {
 			}
 	
 			if (location == null) {
-				location = model.getTrackerCoordinates();
+				location = drm.getTrackerCoordinates();
 			}
 			
 			if (isTheTrackingMarkerNot3){
 				
 				int[] localPt = new int[] {(int) (location[0]), (int) (location[1])};
 				int[] localLen = new int[] {(int) ((int)location[2] - (int)location[0]), (int) ((int)location[5] -(int)location[1])};
-				localLen = sm.getInitialLenPt()[0];
+				localLen = drm.getInitialLenPt()[0];
 				int[] localLocation = new int[] { localPt[0], localPt[1], (localPt[0] + localLen[0]),
 						(localPt[1]), localPt[0], localPt[1] + localLen[1], (localPt[0] + localLen[0]),
 						(localPt[1] + localLen[1]) };
 				
 				 
-				sm.addLocationList(selection, localLocation);
-				dm.addLocationList(model.getDatImages().getShape()[0], k, localLocation);
+				drm.addLocationList(frame.getDatNo(),
+						drm.getNoOfImagesInDatFile(frame.getDatNo()), 
+						k, 
+						localLocation);
+//				dm.addLocationList(model.getDatImages().getShape()[0], k, localLocation);
+//				frame.setRoiLocation(location);
 				debug("location[0]:  " + location[0] + "  location[1]:  " + location[1] + "  selection" + selection);
 			}
 		}
@@ -403,15 +423,21 @@ public class AgnosticTrackerWithFrames {
 			
 			try{
 				
-				len = new int[] {(int) Math.round(sm.getInterpolatedLenPts().get(selection)[0][0]),(int) Math.round(sm.getInterpolatedLenPts().get(selection)[0][1])};
-				pt = new int[] {(int) Math.round(sm.getInterpolatedLenPts().get(selection)[1][0]),(int) Math.round(sm.getInterpolatedLenPts().get(selection)[1][1])};
+				len = new int[] {(int) Math.round(drm.getInterpolatedLenPts().get(selection)[0][0]),(int) Math.round(drm.getInterpolatedLenPts().get(selection)[0][1])};
+				pt = new int[] {(int) Math.round(drm.getInterpolatedLenPts().get(selection)[1][0]),(int) Math.round(drm.getInterpolatedLenPts().get(selection)[1][1])};
 				
 				double[] localLocation = new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]),
 						(double) (pt[1]), (double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]),
 						(double) (pt[1] + len[1]) };
 				
-				sm.addLocationList(selection, localLocation);
-				dm.addLocationList(model.getDatImages().getShape()[0], k, localLocation);
+				drm.addLocationList(frame.getDatNo(),
+						drm.getNoOfImagesInDatFile(frame.getDatNo()), 
+						k, 
+						localLocation);
+				drm.addLocationList(frame.getDatNo(),
+									drm.getNoOfImagesInDatFile(frame.getDatNo()), 
+									k, 
+									localLocation);
 			}
 			catch(Exception r){
 				
@@ -423,8 +449,8 @@ public class AgnosticTrackerWithFrames {
 
 	public void resetTracker() {
 		tracker = null;
-		sm.setTracker(null);
-		sm.setInitialTracker(null);
+		drm.setTracker(null);
+		drm.setInitialTracker(null);
 	}
 	
 	//////////////////////////////The following is only for use with seed locations//////////
@@ -443,7 +469,7 @@ public class AgnosticTrackerWithFrames {
 		FrameModel fm = drm.getFms().get(selection);
 		IDataset input = DatasetFactory.createFromObject(0);
 		try {
-			input = fm.getRawImageData().getSlice(new SliceND (fm.getRawImageData().getShape()));
+			input = fm.getRawImageData().getSlice(new SliceND (fm.getRawImageData().getShape())).squeeze();
 		} catch (DatasetException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -495,8 +521,9 @@ public class AgnosticTrackerWithFrames {
 						
 						if (location != null) {
 							drm.setTrackerCoordinates(location);
-							sm.addTrackerLocationList(selection, location);
-							sm.setTracker(tracker);
+							drm.addTrackerLocationList(fm.getImageNumber(),
+									   location);
+							drm.setTracker(tracker);
 						
 						}
 	
@@ -516,7 +543,7 @@ public class AgnosticTrackerWithFrames {
 						if (location == null){
 							location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(drm.getTrackerLocationList(), 
 																						  drm.getSortedX(), 
-																						  sm.getInitialLenPt()[0],
+																						  drm.getInitialLenPt()[0],
 																						  selection);
 						}
 						
@@ -540,8 +567,8 @@ public class AgnosticTrackerWithFrames {
 	
 			else if (trackingMarker == 1) {
 				if (drm.getInputForEachDat()[fm.getDatNo()] == null) {
-//					len = model.getLenPt()[0];
-//					pt = model.getLenPt()[1];
+//					len = drm.getLenPtForEachDat()[frame.getDatNo()][0];
+//					pt = drm.getLenPtForEachDat()[frame.getDatNo()][1];
 //	
 //					dm.setInitialDataset(input);
 					
@@ -564,7 +591,7 @@ public class AgnosticTrackerWithFrames {
 						debug("Failed to initialise tracker in TwoDTracking1");
 					}
 					
-//					model.setInput(input);
+//					drm.getInputForEachDat()[frame.getDatNo()] =input;
 					location = initialLocation;
 					drm.addTrackerLocationList(selection, location);
 					drm.setTracker(tracker);
@@ -602,9 +629,9 @@ public class AgnosticTrackerWithFrames {
 						}
 						
 						if (location == null){
-							location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(sm.getTrackerLocationList(), 
-																						  sm.getSortedX(), 
-																						  sm.getInitialLenPt()[0],
+							location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(drm.getTrackerLocationList(), 
+																						  drm.getSortedX(), 
+																						  drm.getInitialLenPt()[0],
 																						  selection);
 						}
 						
@@ -619,7 +646,7 @@ public class AgnosticTrackerWithFrames {
 							drm.addTrackerLocationList(selection, location);
 						}
 	
-						sm.setTracker(tracker);
+						drm.setTracker(tracker);
 						
 					} catch (Exception e) {
 						debug(
@@ -637,7 +664,7 @@ public class AgnosticTrackerWithFrames {
 					
 					initialLocation = seedLocation;
 					
-					if (sm.getInitialTracker() == null){	
+					if (drm.getInitialTracker() == null){	
 						tracker =null;
 						tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 						
@@ -663,7 +690,7 @@ public class AgnosticTrackerWithFrames {
 					}
 					
 					else{
-						tracker = sm.getInitialTracker();
+						tracker = drm.getInitialTracker();
 						
 					}
 					
@@ -676,11 +703,12 @@ public class AgnosticTrackerWithFrames {
 					
 					if (location != null) {
 						drm.setTrackerCoordinates(location);
-						sm.addTrackerLocationList(selection, location);
+						drm.addTrackerLocationList(fm.getImageNumber(),
+									   location);
 					}
 					
 					
-					sm.setTracker(tracker);
+					drm.setTracker(tracker);
 					drm.getInputForEachDat()[fm.getDatNo()] = input;
 	//				sm.addLocationList(k, location);
 				}
@@ -688,8 +716,8 @@ public class AgnosticTrackerWithFrames {
 				else {
 					try {
 						
-						if(sm.getTracker() != null){
-							tracker = sm.getTracker();
+						if(drm.getTracker() != null){
+							tracker = drm.getTracker();
 							location = tracker.track(input);
 						}
 						if (location != null) {
@@ -713,10 +741,10 @@ public class AgnosticTrackerWithFrames {
 						}
 						
 						if (location == null){
-							location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(sm.getTrackerLocationList(), 
-																						  sm.getSortedX(), 
-																						  sm.getInitialLenPt()[0],
-																						  selection);
+							location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(drm.getTrackerLocationList(), 
+									  drm.getSortedX(), 
+									  drm.getInitialLenPt()[0],
+									  selection);
 						}
 						if (location != null) {
 							
@@ -740,7 +768,7 @@ public class AgnosticTrackerWithFrames {
 								"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Failed to track");
 					}
 	
-					sm.setTracker(tracker);
+					drm.setTracker(tracker);
 					
 				}
 			}
@@ -753,18 +781,23 @@ public class AgnosticTrackerWithFrames {
 				
 				int[] localPt = new int[] {(int) (location[0]), (int) (location[1])};
 				int[] localLen = new int[] {(int) ((int)location[2] - (int)location[0]), (int) ((int)location[5] -(int)location[1])};
-				localLen = sm.getInitialLenPt()[0];
+				localLen = drm.getInitialLenPt()[0];
 				int[] localLocation = new int[] { localPt[0], localPt[1], (localPt[0] + localLen[0]),
 						(localPt[1]), localPt[0], localPt[1] + localLen[1], (localPt[0] + localLen[0]),
 						(localPt[1] + localLen[1]) };
 				
 				 
-				sm.addLocationList(selection, localLocation);
+			drm.addLocationList(fm.getDatNo(),
+						drm.getNoOfImagesInDatFile(fm.getDatNo()), 
+						k, 
+						localLocation);
 				drm.addLocationList(fm.getDatNo(), 
 									drm.getNoOfImagesInDatFile(fm.getDatNo()), 
 									k, 
 									localLocation);
 			
+				fm.setRoiLocation(location);
+				
 				debug("location[0]:  " + location[0] + "  location[1]:  " + location[1] + "  selection" + selection);
 			}
 		}
@@ -813,7 +846,7 @@ public class AgnosticTrackerWithFrames {
 		FrameModel fm = drm.getFms().get(selection);
 		IDataset input = DatasetFactory.createFromObject(0);
 		try {
-			input = fm.getRawImageData().getSlice(new SliceND (fm.getRawImageData().getShape()));
+			input = fm.getRawImageData().getSlice(new SliceND (fm.getRawImageData().getShape())).squeeze();
 		} catch (DatasetException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -967,7 +1000,7 @@ public class AgnosticTrackerWithFrames {
 			else {
 			
 				try {
-					if(sm.getTracker() != null){
+					if(drm.getTracker() != null){
 						tracker = drm.getTracker();
 						location = tracker.track(input);
 						
@@ -1070,13 +1103,13 @@ public class AgnosticTrackerWithFrames {
 					
 					try {
 						
-						//tracker.initialize(dm.getInitialDataset(), initialLocation, TrackerType.TLD);
+						//tracker.initialize(drm.getInputForEachDat()[frame.getDatNo()], initialLocation, TrackerType.TLD);
 						location = tracker.track(input);
 						
 						
 					
 					} catch (Exception e) {
-					e.printStackTrace();
+						e.printStackTrace();
 					}
 					
 					if (location != null) {
@@ -1167,13 +1200,21 @@ public class AgnosticTrackerWithFrames {
 						(localPt[1] + localLen[1]) };
 				
 				 
-//				sm.addLocationList(selection, localLocation);
-//				dm.addLocationList(model.getDatImages().getShape()[0], k, localLocation);
-				
-				drm.addLocationList(fm.getDatNo(),
+			drm.addLocationList(fm.getDatNo(),
 						drm.getNoOfImagesInDatFile(fm.getDatNo()), 
 						k, 
 						localLocation);
+//				dm.addLocationList(model.getDatImages().getShape()[0], k, localLocation);
+				
+				int a = fm.getDatNo();
+				int b = drm.getNoOfImagesInDatFile(a);
+				
+				drm.addLocationList(a,
+									b, 
+									k, 
+									localLocation);
+				
+				fm.setRoiLocation(location);
 				
 				
 				debug("location[0]:  " + location[0] + "  location[1]:  " + location[1] + "  selection" + selection);

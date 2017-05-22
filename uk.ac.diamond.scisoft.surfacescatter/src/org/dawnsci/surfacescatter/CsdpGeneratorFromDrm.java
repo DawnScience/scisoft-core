@@ -1,9 +1,6 @@
 package org.dawnsci.surfacescatter;
 
 import java.util.ArrayList;
-
-import org.eclipse.january.dataset.Dataset;
-//import org.dawnsci.surfacescatter.MethodSettingEnum.MethodSetting;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 
@@ -84,7 +81,7 @@ public class CsdpGeneratorFromDrm {
 		
 		ArrayList<Double> zero = new ArrayList<Double>();
 		
-		zero.add(0.0);
+		zero.add(-10000000000.0);
 		
 		outputC.removeAll(zero);
 		
@@ -94,8 +91,7 @@ public class CsdpGeneratorFromDrm {
 	}
 	
 	public  IDataset[] iDatasetArrayGenerator(int n, // number of Dats
-			
-			  							   			ArrayList<ArrayList<Double>> input){
+											   ArrayList<ArrayList<Double>> input){
 		
 		
 		if (input==null){
@@ -104,26 +100,49 @@ public class CsdpGeneratorFromDrm {
 			for(int r=0; r<n;r++){
 				input.add(new ArrayList<Double>());
 				
-				for(int u =0; u<drm.getNoOfImagesInDatFile(r);u++ ){
-					input.get(r).add(0.0);
+				for(int u =0; u<=drm.getNoOfImagesInDatFile(r);u++ ){
+					input.get(r).add(-10000000000.0);
 				}
 			}
 		}
+		ArrayList<ArrayList<Double>> outputC = new ArrayList<>();
 		
-		IDataset[] output = new IDataset[input.size()];
-		
-		ArrayList<ArrayList<Double>> outputC =  (ArrayList<ArrayList<Double>>) input.clone();
+		for (ArrayList<Double> w : input){
+			
+			ArrayList<Double> q =new ArrayList<>();
+			
+			for(Double c : w){
+				q.add(c);
+			}
+			outputC.add(q);
+		}
 		
 		ArrayList<Double> zero = new ArrayList<Double>();
 		
-		zero.add(0.0);
+		zero.add(-10000000000.0);
 		
-		outputC.removeAll(zero);
+		for(ArrayList<Double> t : outputC){
+			t.removeAll(zero);
+		}
 		
 		
+		int r =0;
+		
+		for(int s = 0; s<outputC.size(); s++){
+			if(outputC.get(s)!=null && outputC.get(s).size()>0){
+				r++;
+			}
+		}
+		
+		IDataset[] output = new IDataset[r];
+		
+		r=0;
 		for(int u = 0; u<input.size(); u++){
-			IDataset yOut = DatasetFactory.createFromList(outputC.get(u));
-			output[u] = yOut;
+			if(outputC.get(u)!=null && outputC.get(u).size()>0){
+				IDataset yOut = DatasetFactory.createFromList(outputC.get(u));
+				output[r] = yOut;
+				r++;
+			}
 		}
 		
 		return output;

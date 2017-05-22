@@ -21,10 +21,7 @@ public class CurveStitchWithErrorsAndFrames {
 	public static IDataset[] curveStitch4 (CurveStitchDataPackage csdp){
 
 
-		ArrayList<OverlapDataModel> overlapDataModels = new ArrayList<>();
-		
-//		sm.resetSplicedCurves();
-		
+		ArrayList<OverlapDataModel> overlapDataModels = new ArrayList<>();	
 		
 		IDataset[] xArray= csdp.getxIDataset();
 		IDataset[] yArray= csdp.getyIDataset();
@@ -249,7 +246,9 @@ public class CurveStitchWithErrorsAndFrames {
 		sortedAttenuatedDatasets[0].getSize()){
 		} 
 		
-		
+		if(sortedAttenuatedDatasets[1].getShape()[0] != sortedAttenuatedDatasets[0].getShape()[0]){
+			System.out.println("error");
+		}
 		
 		DatasetUtils.sort(sortedAttenuatedDatasets[1],///xArray
 		sortedAttenuatedDatasets[0]);///yArray Intensity

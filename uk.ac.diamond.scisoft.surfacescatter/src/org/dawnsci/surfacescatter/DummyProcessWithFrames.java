@@ -44,7 +44,7 @@ public class DummyProcessWithFrames {
 		FrameModel fm = drm.getFms().get(selection);
 		IDataset input = DatasetFactory.createFromObject(0);
 		try {
-			input = fm.getRawImageData().getSlice(new SliceND(fm.getRawImageData().getShape()));
+			input = fm.getRawImageData().getSlice(new SliceND(fm.getRawImageData().getShape())).squeeze();
 		} catch (DatasetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -52,7 +52,6 @@ public class DummyProcessWithFrames {
 		
 		switch(fm.getBackgroundMethdology()){
 			case TWOD_TRACKING:
-								
 				
 				AgnosticTrackerWithFrames ath = new AgnosticTrackerWithFrames();
 				if(trackingMarker != 3 && trackingMarker != 4 && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
@@ -336,11 +335,11 @@ public class DummyProcessWithFrames {
 		
 		
 		yValue = correctionMethod(fm, 
-								  input);
+								  output);
 		
 		
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
-		Double rawIntensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
+		Double rawIntensity = (Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum();
 		
 		Double fhkl = (double) 0.001;
 			if (intensity >=0){
@@ -354,7 +353,12 @@ public class DummyProcessWithFrames {
 			OutputCurvesDataPackage ocdp =  drm.getOcdp();
 			int noOfFrames = drm.getFms().size();
 			
-			ocdp.addToYListForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k ,intensity);
+			
+			int a = fm.getDatNo();
+			int b = drm.getDatFilepaths().length;
+			int c = drm.getNoOfImagesInDatFile(fm.getDatNo());
+					
+			ocdp.addToYListForEachDat(a,b, c, k ,intensity);
 			ocdp.addToYListFhklForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k ,fhkl);
 			ocdp.addToYListRawForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k ,rawIntensity);
 			
@@ -660,7 +664,7 @@ public class DummyProcessWithFrames {
 	
 		
 		yValue = correctionMethod(fm, 
-				  input);
+				  output);
 
 		try {
 			Thread.sleep(0);
@@ -670,7 +674,7 @@ public class DummyProcessWithFrames {
 		
 	
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
-		Double rawIntensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
+		Double rawIntensity = (Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum();
 		
 		Double fhkl = (double) 0.001;
 		if (intensity >=0){
@@ -1013,7 +1017,7 @@ public class DummyProcessWithFrames {
 		}
 				
 		yValue = correctionMethod(fm, 
-				  input);
+				  output);
 
 		try {
 			Thread.sleep(0);
@@ -1022,7 +1026,7 @@ public class DummyProcessWithFrames {
 		}
 				
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
-		Double rawIntensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
+		Double rawIntensity = (Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum();
 		
 		Double fhkl = (double) 0.001;
 		if (intensity >=0){
@@ -1170,7 +1174,7 @@ public class DummyProcessWithFrames {
 				}
 				
 				if(AnalaysisMethodologies.toInt(fm.getFitPower())<5){
-					  outputOD= TwoDFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
+					  outputOD= TwoDFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(fm.getNoInOriginalDat()),
 							   fm.getFitPower(),
 							   fm.getBoundaryBox(),
 							   drm.getInitialLenPt(),
@@ -1179,7 +1183,7 @@ public class DummyProcessWithFrames {
 							   trackingMarker);
 				}
 				else if (fm.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_GAUSSIAN){
-					outputOD= TwoDGaussianFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
+					outputOD= TwoDGaussianFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(fm.getNoInOriginalDat()),
 	   						 drm.getInitialLenPt(),
 	   						 fm.getFitPower(),
 	   						 fm.getBoundaryBox(),
@@ -1188,7 +1192,7 @@ public class DummyProcessWithFrames {
 	   						 trackingMarker);
 				}
 				else if (fm.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_EXPONENTIAL){
-					outputOD= TwoDExponentialFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
+					outputOD= TwoDExponentialFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(fm.getNoInOriginalDat()),
    							input,
    							drm.getInitialLenPt(),
    							fm.getFitPower(),
@@ -1359,7 +1363,7 @@ public class DummyProcessWithFrames {
 		}
 		
 		yValue = correctionMethod(fm, 
-				  input);
+				  output);
 
 		try {
 			Thread.sleep(0);
@@ -1370,7 +1374,7 @@ public class DummyProcessWithFrames {
 		
 				
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
-		Double rawIntensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
+		Double rawIntensity = (Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum();
 		
 		Double fhkl = (double) 0.001;
 		if (intensity >=0){

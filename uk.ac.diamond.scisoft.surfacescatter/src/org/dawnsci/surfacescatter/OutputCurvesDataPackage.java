@@ -219,12 +219,12 @@ public class OutputCurvesDataPackage {
 										int k, 
 										double result){
 
-		yListFhklForEachDat = addDoubleToResultsList(n,
+		yListRawIntensityForEachDat = addDoubleToResultsList(n,
 													 m,
 													 l, 
 													 k, 
 													 result,
-													 yListFhklForEachDat);
+													 yListRawIntensityForEachDat);
 		
 		
 		addToYListRawErrorForEachDat(n,
@@ -241,12 +241,12 @@ public class OutputCurvesDataPackage {
 											 int k, 
 											 double result){
 
-		yListFhklErrorForEachDat = addDoubleToResultsList(n,
+		yListRawIntensityErrorForEachDat = addDoubleToResultsList(n,
 														  m,
 														  l, 
 														  k, 
 														  result,
-														  yListFhklErrorForEachDat);
+														  yListRawIntensityErrorForEachDat);
 
 	}
 
@@ -274,10 +274,16 @@ public class OutputCurvesDataPackage {
 			}
 			
 			for (int i = 0; i < l; i++) {		
-				resultList0.get(n).add(0.0);
+				resultList0.get(n).add(-10000000000.0);
 			}
 		}
 		
+		
+		if(resultList0.get(n).size()<l){
+			for (int i = 0; i < l; i++) {		
+				resultList0.get(n).add(-10000000000.0);
+			}
+		}
 		ArrayList<ArrayList<Double>> resultList = (ArrayList<ArrayList<Double>>) resultList0.clone();
 		
 		resultList.get(n).set(k, result);
@@ -418,14 +424,14 @@ public class OutputCurvesDataPackage {
 		if (yListFhkl==null){
 			yListFhkl = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  yListFhkl.add(0.0);
+				  yListFhkl.add(-10000000000.0);
 				}
 		}
 		
 		if (yListFhkl.size() == 0){
 			yListFhkl = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  yListFhkl.add(0.0);
+				  yListFhkl.add(-10000000000.0);
 				}
 		}
 		
@@ -433,14 +439,14 @@ public class OutputCurvesDataPackage {
 		if (yListFhklError==null){
 			yListFhklError = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  yListFhklError.add(0.0);
+				  yListFhklError.add(-10000000000.0);
 				}
 		}
 		
 		if (yListFhklError.size() == 0){
 			yListFhklError = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  yListFhklError.add(0.0);
+				  yListFhklError.add(-10000000000.0);
 				}
 		}
 		
@@ -487,21 +493,21 @@ public class OutputCurvesDataPackage {
 		if (yList==null){
 			yList = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  yList.add(0.0);
+				  yList.add(-10000000000.0);
 				}
 		}
 		
 		if (yList.size() == 0){
 			yList = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  yList.add(0.0);
+				  yList.add(-10000000000.0);
 				}
 		}
 		
 		if (yListError==null){
 			yListError = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  yListError.add(0.0);
+				  yListError.add(-10000000000.0);
 				}
 		}
 		
@@ -509,7 +515,7 @@ public class OutputCurvesDataPackage {
 		if (yListError.size() == 0){
 			yListError = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  yListError.add(0.0);
+				  yListError.add(-10000000000.0);
 				}
 		}
 		
@@ -605,7 +611,6 @@ public class OutputCurvesDataPackage {
 			dataArray = new ArrayList<Double>();
 			
 			for (int i = 0; i < l; i++) {
-				dataArray.add(0.0);
 			}
 		}
 		
@@ -613,7 +618,7 @@ public class OutputCurvesDataPackage {
 			dataArray = new ArrayList<Double>();
 			
 			for (int i = 0; i < l; i++) {
-				dataArray.add(0.0);
+				dataArray.add(-10000000000.0);
 			}
 		}
 		
@@ -621,7 +626,7 @@ public class OutputCurvesDataPackage {
 			dataArrayError = new ArrayList<Double>();
 			
 			for (int i = 0; i < l; i++) {
-				dataArrayError.add(0.0);
+				dataArrayError.add(-10000000000.0);
 			}
 		}
 		
@@ -629,7 +634,7 @@ public class OutputCurvesDataPackage {
 			dataArrayError = new ArrayList<Double>();
 		
 			for (int i = 0; i < l; i++) {
-				dataArrayError.add(0.0);
+				dataArrayError.add(-10000000000.0);
 			}
 		}
 		

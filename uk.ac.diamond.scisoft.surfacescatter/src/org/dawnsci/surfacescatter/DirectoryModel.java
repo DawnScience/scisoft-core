@@ -199,13 +199,9 @@ public class DirectoryModel {
 		
 		xList =null;
 		dmxList = null;
+		ocdp = null;
+		csdp = null;
 		
-		try{
-			ocdp.resetAll();
-		}
-		catch(Exception r){
-			System.out.println(r.getMessage());
-		}
 		setOutputDatArray(null);
 	
 		trackerLocationList = null;
@@ -255,13 +251,26 @@ public class DirectoryModel {
 			
 			locationList = new ArrayList<>();
 			
-			if(locationList.get(n) == null){ 
-				locationList.set(n, new ArrayList<>());
+			for(int m = 0; m<datFilepaths.length ; m++){
+				
+				ArrayList<double[]> q = new ArrayList<>();
+				locationList.add(q);
+				
+				for (int i = 0; i < this.getNoOfImagesInDatFile(m); i++) {		
+					locationList.get(m).add(new double[]{0,0,0,0,0,0,0,0});
+				}
+				
 			}
 			
 			for (int i = 0; i < l; i++) {		
-					locationList.get(n).add(new double[]{0,0,0,0,0,0,0,0});
-				}
+				locationList.get(n).add(new double[]{0,0,0,0,0,0,0,0});
+			}
+		}
+		
+		if(locationList.get(n).size()<l){
+			for (int i = 0; i < l; i++) {		
+				locationList.get(n).add(new double[]{0,0,0,0,0,0,0,0});
+			}
 		}
 		
 		ArrayList<double[]> locationList1 = new ArrayList<double[]>();
@@ -322,14 +331,14 @@ public class DirectoryModel {
 		if (xList==null){
 			xList = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  xList.add(0.0);
+				  xList.add(-10000000000.0);
 				}
 		}
 		
 		if (xList.size() == 0){
 			xList = new ArrayList<Double>();
 			for (int i = 0; i < l; i++) {
-				  xList.add(0.0);
+				  xList.add(-10000000000.0);
 				}
 		}
 		
@@ -675,7 +684,7 @@ public class DirectoryModel {
 			for(int y=0; y <datFilepaths.length; y++){
 				dmxList.add(new ArrayList<Double>());
 				for(int u =0; u<this.getNoOfImagesInDatFile(y);u++ ){
-					dmxList.get(y).add(0.0);
+					dmxList.get(y).add(-10000000000.0);
 				}
 			}
 		}

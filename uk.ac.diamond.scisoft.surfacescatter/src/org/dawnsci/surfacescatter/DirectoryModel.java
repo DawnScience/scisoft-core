@@ -256,14 +256,18 @@ public class DirectoryModel {
 				ArrayList<double[]> q = new ArrayList<>();
 				locationList.add(q);
 				
-				for (int i = 0; i < this.getNoOfImagesInDatFile(m); i++) {		
+				int y = this.getNoOfImagesInDatFile(m);
+				
+				for (int i = 0; i < y; i++) {		
 					locationList.get(m).add(new double[]{0,0,0,0,0,0,0,0});
 				}
 				
 			}
 			
-			for (int i = 0; i < l; i++) {		
-				locationList.get(n).add(new double[]{0,0,0,0,0,0,0,0});
+			if(locationList.get(n).size()<l){
+				for (int i = 0; i < l; i++) {		
+					locationList.get(n).set(i, new double[]{0,0,0,0,0,0,0,0});
+				}
 			}
 		}
 		
@@ -752,6 +756,5 @@ public class DirectoryModel {
 		this.currentRawIntensity = currentRawIntensity;
 	}
 	
-//	
 	
 }

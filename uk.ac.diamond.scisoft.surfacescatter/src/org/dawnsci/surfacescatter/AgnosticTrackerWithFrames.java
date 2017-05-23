@@ -659,8 +659,6 @@ public class AgnosticTrackerWithFrames {
 			else if (trackingMarker == 2) {
 				if (drm.getInputForEachDat()[fm.getDatNo()]==null) {
 					
-					len =drm.getLenPtForEachDat()[fm.getDatNo()][0];
-					pt =drm.getLenPtForEachDat()[fm.getDatNo()][1];
 					
 					initialLocation = seedLocation;
 					

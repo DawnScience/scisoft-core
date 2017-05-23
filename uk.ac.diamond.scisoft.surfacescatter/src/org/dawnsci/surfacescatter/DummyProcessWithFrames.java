@@ -133,7 +133,7 @@ public class DummyProcessWithFrames {
 					double[] p = new double[6];
 						
 					try{
-						p =drm.getLocationList().get(fm.getDatNo()).get(selection);
+						p =drm.getLocationList().get(fm.getDatNo()).get(fm.getNoInOriginalDat());
 					}
 					catch(Exception n){
 						System.out.println(n.getMessage());
@@ -480,7 +480,7 @@ public class DummyProcessWithFrames {
 				}
 				
 				if(AnalaysisMethodologies.toInt(fm.getFitPower())<5){
-					outputOD= TwoDFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
+					outputOD= TwoDFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(fm.getNoInOriginalDat()),
 							   fm.getFitPower(),
 							   fm.getBoundaryBox(),
 							   drm.getInitialLenPt(),

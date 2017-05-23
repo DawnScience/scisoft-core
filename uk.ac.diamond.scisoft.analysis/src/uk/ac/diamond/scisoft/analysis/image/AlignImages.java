@@ -22,6 +22,7 @@ import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -266,7 +267,7 @@ public class AlignImages {
 	 * @return aligned list of dataset
 	 */
 	public static ILazyDataset alignLazyWithROI(ILazyDataset data, List<List<double[]>> shifts, RectangularROI roi,
-			int mode, IMonitor monitor) {
+			IDataset darkImageData, IDataset brightImageData, int mode, IMonitor monitor) {
 
 		if (mode == 0) {
 			return alignLazyWithROI(data, shifts, roi, monitor);
@@ -336,7 +337,20 @@ public class AlignImages {
 				}
 				for (int i = 0; i < nsets; i++) {
 					try {
-						tImages[i] = data.getSlice(monitor, new Slice(index++, index)).squeeze();
+						Dataset temp = DatasetUtils.convertToDataset(data.getSlice(monitor, new Slice(index++, index)).squeeze()).cast(DoubleDataset.class);
+						
+						// Dark field correction image processing
+						if(darkImageData != null)
+							temp.isubtract(darkImageData);
+						
+						temp.setByBoolean(0, Comparisons.lessThan(temp, 0));
+						
+						// Bright field correction image processing
+						if(brightImageData != null)
+							temp.idivide(brightImageData);
+						
+						tImages[i] = temp;
+						
 					} catch (DatasetException e) {
 						logger.error("Could not get slice of image", e);
 					}

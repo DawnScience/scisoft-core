@@ -871,7 +871,7 @@ public class HDF5Loader extends AbstractFileLoader {
 				}
 
 				if (type.unsigned) {
-					d = DatasetUtils.makeUnsigned(d);
+					d = DatasetUtils.makeUnsigned(d, true);
 				}
 				d.setName(name);
 				node.setDataset(d);

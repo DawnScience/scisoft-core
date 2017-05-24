@@ -3,21 +3,12 @@
 	<name>uk.ac.diamond.scisoft.python</name>
 	<comment></comment>
 	<projects>
-		<project>hdf.hdf5lib</project>
 		<project>org.dawnsci.boofcv</project>
-		<project>org.eclipse.dawnsci.analysis.api</project>
-		<project>org.eclipse.dawnsci.analysis.dataset</project>
-		<project>org.eclipse.dawnsci.analysis.tree</project>
-		<project>org.eclipse.dawnsci.hdf5</project>
-		<project>org.eclipse.dawnsci.nexus</project>
-		<project>org.eclipse.january</project>
+		<project>org.eclipse.dawnsci.plotting.api</project>
 		<project>tp</project>
-		<project>uk.ac.diamond.CBFlib</project>
 		<project>uk.ac.diamond.scisoft.analysis</project>
-		<project>uk.ac.diamond.scisoft.analysis.osgi</project>
 		<project>uk.ac.diamond.scisoft.analysis.plotclient</project>
 		<project>uk.ac.diamond.scisoft.analysis.plotserver</project>
-		<project>uk.ac.diamond.scisoft.analysis.rcp</project>
 		<project>uk.ac.diamond.scisoft.analysis.xmlrpc</project>
 	</projects>
 	<buildSpec>

@@ -29,6 +29,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.RGBDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +102,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 						max = s;
 				}
 			}
-			return new IDataset[] { DatasetFactory.createRange(max, Dataset.INT32) };
+			return new IDataset[] { DatasetFactory.createRange(IntegerDataset.class, max) };
 		}
 
 		return new IDataset[] { xValues };
@@ -959,7 +960,7 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		List<DatasetWithAxisInformation> data = new ArrayList<DatasetWithAxisInformation>();
 		DatasetWithAxisInformation d = new DatasetWithAxisInformation();
 		if (dataset != null) {
-			d.setData((IDataset) dataset);
+			d.setData(dataset);
 			data.add(d);
 			databean.setData(data);
 			databean.putGuiParameter(GuiParameters.FILENAME, dataset.getName());

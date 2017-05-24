@@ -158,8 +158,9 @@ public abstract class APeak extends AFunction implements IPeak {
 
 	@Override
 	public double getHeight() {
-		if (isDirty())
+		if (isDirty()) {
 			calcCachedParameters();
+		}
 
 		return height;
 	}

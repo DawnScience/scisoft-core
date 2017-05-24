@@ -19,6 +19,7 @@ import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.metadata.IExtendedMetadata;
+import org.eclipse.january.metadata.IMetadata;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -68,7 +69,7 @@ public class ADSCImageTest {
 	public void testMetaDataDate() throws Exception{
 		DataHolder loader = new ADSCImageLoader(TestFileFolder + testfile1).loadFile();
 		Dataset data = loader.getDataset(0);
-		IExtendedMetadata metadata = (IExtendedMetadata) data.getMetadata();
+		IExtendedMetadata metadata = (IExtendedMetadata) data.getFirstMetadata(IMetadata.class);
 		Date date = metadata.getCreation();
 		SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
 		try {
@@ -91,7 +92,7 @@ public class ADSCImageTest {
 	public void testFileParsedMetaData() throws Exception{
 		DataHolder loader = new ADSCImageLoader(TestFileFolder + testfile1).loadFile();
 		Dataset data = loader.getDataset(0);
-		IExtendedMetadata metadata = (IExtendedMetadata) data.getMetadata();
+		IExtendedMetadata metadata = (IExtendedMetadata) data.getFirstMetadata(IMetadata.class);
 		System.out.println("File path is "+metadata.getFullPath());
 		System.out.println("File size is "+metadata.getFileSize()+ " in bytes");
 		System.out.println("File last modified "+metadata.getLastModified().toString());
@@ -104,7 +105,7 @@ public class ADSCImageTest {
 		Dataset data;
 		IDiffractionMetadata md, cmd;
 		data = loader.getDataset(0);
-		md = (IDiffractionMetadata) data.getMetadata();
+		md = data.getFirstMetadata(IDiffractionMetadata.class);
 		
 		// test cloning
 		cmd = md.clone();

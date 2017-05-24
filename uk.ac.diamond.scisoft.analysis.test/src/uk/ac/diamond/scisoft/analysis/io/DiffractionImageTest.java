@@ -61,7 +61,7 @@ public class DiffractionImageTest {
 	@Test
 	public void testMetadata() throws Exception {
 		DataHolder dh = new ADSCImageLoader(testfile1).loadFile();
-		IMetadata metadata = dh.getDataset(0).getMetadata();
+		IMetadata metadata = dh.getDataset(0).getFirstMetadata(IMetadata.class);
 		if(metadata instanceof IDiffractionMetadata){
 			detprops = ((IDiffractionMetadata)metadata).getDetector2DProperties();
 			dce = ((IDiffractionMetadata)metadata).getDiffractionCrystalEnvironment();
@@ -81,7 +81,7 @@ public class DiffractionImageTest {
 	@Test
 	public void testMAR() throws Exception {
 		DataHolder dh = new MARLoader(testfile2).loadFile();
-		IMetadata metadata = dh.getDataset(0).getMetadata();
+		IMetadata metadata = dh.getDataset(0).getFirstMetadata(IMetadata.class);
 		if(metadata instanceof IDiffractionMetadata){
 			detprops = ((IDiffractionMetadata)metadata).getDetector2DProperties();
 			dce = ((IDiffractionMetadata)metadata).getDiffractionCrystalEnvironment();
@@ -100,7 +100,7 @@ public class DiffractionImageTest {
 	@Test
 	public void testminiCBF() throws Exception {
 		DataHolder dh = new CBFLoader(testfile3).loadFile();
-		IMetadata metadata = dh.getDataset(0).getMetadata();
+		IMetadata metadata = dh.getDataset(0).getFirstMetadata(IMetadata.class);
 		if(metadata instanceof IDiffractionMetadata){
 			detprops = ((IDiffractionMetadata)metadata).getDetector2DProperties();
 			dce = ((IDiffractionMetadata)metadata).getDiffractionCrystalEnvironment();
@@ -120,13 +120,13 @@ public class DiffractionImageTest {
 	public void testSerializability() throws Exception {
 		Dataset data;
 		data = new ADSCImageLoader(testfile1).loadFile().getDataset(0);
-		SerializationUtils.serialize(data.getMetadata());
+		SerializationUtils.serialize(data.getFirstMetadata(IMetadata.class));
 
 		data = new MARLoader(testfile2).loadFile().getDataset(0);
-		SerializationUtils.serialize(data.getMetadata());
+		SerializationUtils.serialize(data.getFirstMetadata(IMetadata.class));
 
 		data = new CBFLoader(testfile3).loadFile().getDataset(0);
-		SerializationUtils.serialize(data.getMetadata());
+		SerializationUtils.serialize(data.getFirstMetadata(IMetadata.class));
 }
 
 }

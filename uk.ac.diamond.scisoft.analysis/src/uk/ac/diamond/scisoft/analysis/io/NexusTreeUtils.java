@@ -806,7 +806,7 @@ public class NexusTreeUtils {
 				int[] indices = parseIntArray(gn.getAttribute(name + NX_INDICES_SUFFIX));
 				ILazyDataset view = gn.getDataNode(name).getDataset().getSliceView();
 				view.setName(name);
-				metadata.addAxis(primaryDimension, view,indices);
+				metadata.addAxis(primaryDimension, view, indices);
 				allAnnotations.remove(name + NX_INDICES_SUFFIX);
 			}
 			

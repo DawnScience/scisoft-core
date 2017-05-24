@@ -132,6 +132,6 @@ public class DatLoaderTest {
 	public void testSerializability() throws Exception {
 		DataHolder loader = new DatLoader("testfiles/gda/analysis/io/DatLoaderTest/MoFoil.dat").loadFile();
 		Dataset data = loader.getDataset(0);
-		SerializationUtils.serialize(data.getMetadata());
+		SerializationUtils.serialize(data.getFirstMetadata(IMetadata.class));
 	}
 }

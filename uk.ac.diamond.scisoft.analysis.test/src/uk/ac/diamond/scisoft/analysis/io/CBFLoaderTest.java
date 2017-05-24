@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.metadata.IMetadata;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -165,7 +166,7 @@ public class CBFLoaderTest {
 	public void testSerializability() throws Exception {
 		DataHolder loader = new CBFLoader(testpath + "xtal5e_1_0010.cbf").loadFile();
 		Dataset data = loader.getDataset(0);
-		SerializationUtils.serialize(data.getMetadata());
+		SerializationUtils.serialize(data.getFirstMetadata(IMetadata.class));
 	}
 
 	private int[] iterateAllOld(int xLength, int yLength, boolean isRowsX, boolean xIncreasing, boolean yIncreasing) {

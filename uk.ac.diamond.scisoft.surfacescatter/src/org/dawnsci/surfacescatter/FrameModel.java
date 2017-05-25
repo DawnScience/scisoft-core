@@ -35,13 +35,19 @@ public class FrameModel {
 	private double lorentzianCorrection;
 	private double polarisationCorrection;
 	private double areaCorrection;
+	private double reflectivityAreaCorrection;
+	private double reflectivityFluxCorrection;
+	
+	
 	private MethodSetting correctionSelection = MethodSetting.SXRD;
+	
+	
 	
 	///background subtraction parameters
 	
 	private double[] roiLocation;
 	private FitPower fitPower;
-	private int boundaryBox;
+	private int boundaryBox = 10;
 	private TrackerType1 trackingMethodology  = TrackerType1.TLD;
 	private Methodology backgroundMethodology;
 	private double[] overlapping_Background_ROI;
@@ -247,5 +253,17 @@ public class FrameModel {
 	}
 	public void setBackgroundSubtractedImage(IDataset backgroundSubtractedImage) {
 		this.backgroundSubtractedImage = backgroundSubtractedImage;
+	}
+	public double getReflectivityAreaCorrection() {
+		return reflectivityAreaCorrection;
+	}
+	public void setReflectivityAreaCorrection(double reflectivityAreaCorrection) {
+		this.reflectivityAreaCorrection = reflectivityAreaCorrection;
+	}
+	public double getReflectivityFluxCorrection() {
+		return reflectivityFluxCorrection;
+	}
+	public void setReflectivityFluxCorrection(double reflectivityFluxCorrection) {
+		this.reflectivityFluxCorrection = reflectivityFluxCorrection;
 	}
 }

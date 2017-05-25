@@ -14,12 +14,16 @@ public class CurveStitchWithErrorsAndFrames {
 	private static double attenuationFactor;
 	private static double attenuationFactorFhkl;
 	private static double attenuationFactorRaw;
+	private static double[][] maxMinArray;
 	private static int DEBUG =0;
 
 	
 	
-	public static IDataset[] curveStitch4 (CurveStitchDataPackage csdp){
+	public static IDataset[] curveStitch4 (CurveStitchDataPackage csdp, 
+										   double[][] maxMinArrayIn){
 
+		
+		maxMinArray = maxMinArrayIn;
 
 		ArrayList<OverlapDataModel> overlapDataModels = new ArrayList<>();	
 		
@@ -49,11 +53,13 @@ public class CurveStitchWithErrorsAndFrames {
 		
 		int d = xArray.length;
 		
-		double[][] maxMinArray = new double[d][2];
-		
-		for(int k =0;k<d;k++){
-			maxMinArray[k][0] = (double) xArray[k].max(null);
-			maxMinArray[k][1] = (double) xArray[k].min(null);
+		if(maxMinArray ==null){
+			maxMinArray = new double[d][2];
+			
+			for(int k =0;k<d;k++){
+				maxMinArray[k][0] = (double) xArray[k].max(null);
+				maxMinArray[k][1] = (double) xArray[k].min(null);
+			}
 		}
 		
 		attenuationFactor =1;

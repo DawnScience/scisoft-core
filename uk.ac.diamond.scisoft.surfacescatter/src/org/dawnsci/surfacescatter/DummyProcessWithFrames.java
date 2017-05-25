@@ -137,7 +137,7 @@ public class DummyProcessWithFrames {
 					}
 					catch(Exception n){
 						System.out.println(n.getMessage());
-						p= null;
+						p= fm.getRoiLocation();
 					}
 					
 					outputOD= TwoDFittingIOp(p,

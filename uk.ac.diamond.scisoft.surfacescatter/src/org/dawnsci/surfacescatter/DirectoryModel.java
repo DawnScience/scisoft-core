@@ -207,7 +207,18 @@ public class DirectoryModel {
 		trackerLocationList = null;
 //		trackerKList = null;
 		locationList = null;
-//		reflectivityAreaCorrection = null;
+		try{
+			for(FrameModel fm : fms){
+			
+				fm.setRoiLocation(null);
+			
+			}
+		}
+		catch(Exception h){
+			
+		}
+			
+			//		reflectivityAreaCorrection = null;
 //		reflectivityFluxCorrection = null;
 		
 	}
@@ -739,6 +750,11 @@ public class DirectoryModel {
 	}
 	
 	public ArrayList<OverlapDataModel> getOverlapDataModels() {
+		
+		if(overlapDataModels == null){
+			overlapDataModels = csdp.getOverlapDataModels();
+		}
+		
 		return overlapDataModels;
 	}
 

@@ -151,7 +151,9 @@ public class RodObjectNexusUtils{
 				int[] offsetLen = drm.getBoxOffsetLenPt()[0];
 				int[] offsetPt = drm.getBoxOffsetLenPt()[1];
 				
-				double[] location = drm.getLocationList().get(f.getDatNo()).get(f.getNoInOriginalDat());
+//				double[] location = drm.getLocationList().get(f.getDatNo()).get(f.getNoInOriginalDat());
+				
+				double[] location = f.getRoiLocation();
 				
 				int[][] lenPt = LocationLenPtConverterUtils.locationToLenPtConverter(location);
 				int[] len = lenPt[0];

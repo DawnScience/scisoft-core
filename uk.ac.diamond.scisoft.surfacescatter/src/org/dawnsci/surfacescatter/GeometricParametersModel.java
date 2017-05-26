@@ -30,6 +30,8 @@ public class GeometricParametersModel {
 	private String savePath  = "/scratch/runtime-uk.ac.diamond.dawn.product/data/examples";
 	private String fluxPath = "NO"; //"/scratch/233990.dat";
 	private String xNameRef ="qsdcd";
+	private double energy = 3000;
+	private int theta = 0;
 	
 	
 	public Double getNormalisationFactor() {
@@ -181,6 +183,17 @@ public class GeometricParametersModel {
 	public void setxNameRef(String xNameRef) {
 		this.xNameRef = xNameRef;
 	}
-	
+	public double getEnergy() {
+		return energy;
+	}
+	public void setEnergy(double energy) {
+		this.energy = energy;
+	}
+	public int getTheta() {
+		return theta;
+	}
+	public void setTheta(int theta) {
+		this.theta = theta;
+	}
 	
 }

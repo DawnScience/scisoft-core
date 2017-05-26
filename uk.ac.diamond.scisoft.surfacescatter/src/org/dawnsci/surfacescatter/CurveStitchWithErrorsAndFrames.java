@@ -77,7 +77,7 @@ public class CurveStitchWithErrorsAndFrames {
 		ArrayList<Integer> overlapHigher = new ArrayList<Integer>();
 		
 		for(int l=0; l<xArrayCorrected[k].getSize();l++){
-			if (xArrayCorrected[k].getDouble(l)>=(maxMinArray[k+1][1] - 0.001*maxMinArray[k+1][1])){
+			if (xArrayCorrected[k].getDouble(l)>=(maxMinArray[k][1] - 0.001*maxMinArray[k][1])){
 				overlapLower.add(l);
 			}
 		}

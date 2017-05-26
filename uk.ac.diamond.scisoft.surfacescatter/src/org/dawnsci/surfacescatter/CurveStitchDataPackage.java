@@ -25,6 +25,7 @@ public class CurveStitchDataPackage {
 	
 	private IDataset splicedCurveY;
 	private IDataset splicedCurveX;
+	private IDataset splicedCurveQ;
 	private IDataset splicedCurveYFhkl;
 	private IDataset splicedCurveYError;
 	private IDataset splicedCurveYFhklError;
@@ -161,6 +162,12 @@ public class CurveStitchDataPackage {
 	}
 	public void setCorrectionSelection(MethodSetting correctionSelection) {
 		this.correctionSelection = correctionSelection;
+	}
+	public IDataset getSplicedCurveQ() {
+		return splicedCurveQ;
+	}
+	public void setSplicedCurveQ(IDataset splicedCurveQ) {
+		this.splicedCurveQ = splicedCurveQ;
 	}
 	
 }

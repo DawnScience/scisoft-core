@@ -19,11 +19,11 @@ import org.eclipse.january.dataset.ILazyDataset;
 
 public class GeometricCorrectionsReflectivityMethod {
 
-	public static double reflectivityCorrectionsBatch(ILazyDataset dcdtheta, int k, double  angularfudgefactor, double BeamHeight, double footprint) throws Exception {
+	public static double reflectivityCorrectionsBatch(ILazyDataset dcdtheta, int k, double  angularfudgefactor, double beamHeight, double footprint) throws Exception {
 			
 		double theta = ScanMetadataForDialog.getTheta(dcdtheta, k);
 		
-		NormalDistribution beamfootprint  = new NormalDistribution(0, (1e-3*BeamHeight/2*Math.sqrt(2*Math.log(2) - 0.5)));
+		NormalDistribution beamfootprint  = new NormalDistribution(0, (1e-3*beamHeight/2*Math.sqrt(2*Math.log(2) - 0.5)));
 		double areaCorrection = 2*(beamfootprint.cumulativeProbability((footprint*Math.sin((theta + angularfudgefactor)*Math.PI/180))/2));
 		
 		return areaCorrection;

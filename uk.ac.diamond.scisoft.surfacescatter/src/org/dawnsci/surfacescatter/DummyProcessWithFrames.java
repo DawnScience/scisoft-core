@@ -12,7 +12,6 @@ import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
-import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -23,7 +22,6 @@ import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.metadata.Metadata;
-import org.eclipse.swt.widgets.Composite;
 
 public class DummyProcessWithFrames {
 	
@@ -62,7 +60,7 @@ public class DummyProcessWithFrames {
 				}
 				
 				if(AnalaysisMethodologies.toInt(fm.getFitPower())<5){
-								  outputOD= TwoDFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
+								  outputOD= TwoDFittingIOp(fm.getRoiLocation(),
 														   fm.getFitPower(),
 														   fm.getBoundaryBox(),
 														   drm.getInitialLenPt(),
@@ -71,7 +69,7 @@ public class DummyProcessWithFrames {
 														   trackingMarker);
 				}
 				else if (fm.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_GAUSSIAN){
-					outputOD= TwoDGaussianFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
+					outputOD= TwoDGaussianFittingIOp(fm.getRoiLocation(),
 							   						 drm.getInitialLenPt(),
 							   						 fm.getFitPower(),
 							   						 fm.getBoundaryBox(),
@@ -265,10 +263,10 @@ public class DummyProcessWithFrames {
 				}
 				
 				
-				OperationData outputOD2= OneDFittingIOp(drm.getLenPtForEachDat()[k],
+				OperationData outputOD2= OneDFittingIOp(//drm.getLenPtForEachDat()[k],
 						   								drm.getInitialLenPt(),
 						   								fm.getFitPower(),
-						   								drm.getLocationList().get(fm.getDatNo()).get(selection),
+						   								fm.getRoiLocation(),
 						   								input,
 						   								fm.getBoundaryBox(),
 						   								Methodology.X,
@@ -302,10 +300,10 @@ public class DummyProcessWithFrames {
 							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
-				OperationData outputOD3= OneDFittingIOp(drm.getLenPtForEachDat()[k],
+				OperationData outputOD3= OneDFittingIOp(//drm.getLenPtForEachDat()[k],
 														drm.getInitialLenPt(),
 														fm.getFitPower(),
-														drm.getLocationList().get(fm.getDatNo()).get(selection),
+														fm.getRoiLocation(),
 														input,
 														fm.getBoundaryBox(),
 														Methodology.Y,
@@ -605,7 +603,7 @@ public class DummyProcessWithFrames {
 							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
-				OperationData outputOD2= OneDFittingIOp(drm.getLenPtForEachDat()[k],
+				OperationData outputOD2= OneDFittingIOp(//drm.getLenPtForEachDat()[k],
 							drm.getInitialLenPt(),
 							fm.getFitPower(),
 							drm.getLocationList().get(fm.getDatNo()).get(selection),
@@ -644,7 +642,7 @@ public class DummyProcessWithFrames {
 							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
-				OperationData outputOD3= OneDFittingIOp(drm.getLenPtForEachDat()[k],
+				OperationData outputOD3= OneDFittingIOp(//drm.getLenPtForEachDat()[k],
 							drm.getInitialLenPt(),
 							fm.getFitPower(),
 							drm.getLocationList().get(fm.getDatNo()).get(selection),
@@ -956,7 +954,7 @@ public class DummyProcessWithFrames {
 							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
-				OperationData outputOD2= OneDFittingIOp(drm.getLenPtForEachDat()[k],
+				OperationData outputOD2= OneDFittingIOp(//drm.getLenPtForEachDat()[k],
 							drm.getInitialLenPt(),
 							fm.getFitPower(),
 							drm.getLocationList().get(fm.getDatNo()).get(selection),
@@ -997,7 +995,7 @@ public class DummyProcessWithFrames {
 							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
-				OperationData outputOD3= OneDFittingIOp(drm.getLenPtForEachDat()[k],
+				OperationData outputOD3= OneDFittingIOp(//drm.getLenPtForEachDat()[k],
 							drm.getInitialLenPt(),
 							fm.getFitPower(),
 							drm.getLocationList().get(fm.getDatNo()).get(selection),
@@ -1301,7 +1299,7 @@ public class DummyProcessWithFrames {
 				}
 				
 				
-				OperationData outputOD2= OneDFittingIOp(drm.getLenPtForEachDat()[k],
+				OperationData outputOD2= OneDFittingIOp(//drm.getLenPtForEachDat()[k],
 						drm.getInitialLenPt(),
 						fm.getFitPower(),
 						drm.getLocationList().get(fm.getDatNo()).get(selection),
@@ -1344,7 +1342,7 @@ public class DummyProcessWithFrames {
 							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
-				OperationData outputOD3= OneDFittingIOp(drm.getLenPtForEachDat()[k],
+				OperationData outputOD3= OneDFittingIOp(//drm.getLenPtForEachDat()[k],
 						drm.getInitialLenPt(),
 						fm.getFitPower(),
 						drm.getLocationList().get(fm.getDatNo()).get(selection),
@@ -1403,56 +1401,56 @@ public class DummyProcessWithFrames {
 	}
 	
 	
-	public static OperationData TwoDFittingIOp(ExampleModel model,
-										IDataset input,
-										SuperModel sm,
-										int k,
-										int trackingMarker){
-		
-		TwoDFittingModel tdfm = new TwoDFittingModel();
-		tdfm.setInitialLenPt(sm.getInitialLenPt());
-		
-		if (trackingMarker != 3){
-			double[] p = sm.getLocationList().get(k);
-			int[] pt = new int[]{(int) p[0], (int) p[1]}; 
-			int[] len = sm.getInitialLenPt()[0]; 
-			int[][] lenPt = new int[][] {len,pt};
-			if(p[0] != 0 && p[1] != 0){
-				tdfm.setLenPt(lenPt);
-			}
-			else{
-				tdfm.setLenPt(sm.getInitialLenPt());
-			}
-			
-		}
-		else{
-			tdfm.setLenPt(sm.getInitialLenPt());
-		}
-		
-		tdfm.setFitPower(model.getFitPower());
-		tdfm.setBoundaryBox(model.getBoundaryBox());
-		
-		Metadata md = new Metadata();
-		Map<String, Integer> dumMap = new HashMap<String, Integer>();
-		dumMap.put("one", 1);
-		md.initialize(dumMap);
-		
-		ILazyDataset  ild = null;
-		
-		SourceInformation  si =new SourceInformation("dummy", "dummy2", ild);
-		
-		SliceFromSeriesMetadata sfsm = new SliceFromSeriesMetadata(si);
-		
-		input.setMetadata(sfsm);
-		
-		input.setMetadata(md);
-		
-		TwoDFittingUsingIOperation tdfuio = new TwoDFittingUsingIOperation();
-		tdfuio.setModel(tdfm);
-		
-		return tdfuio.execute(input, null);
-		
-	}
+//	public static OperationData TwoDFittingIOp(ExampleModel model,
+//										IDataset input,
+//										SuperModel sm,
+//										int k,
+//										int trackingMarker){
+//		
+//		TwoDFittingModel tdfm = new TwoDFittingModel();
+//		tdfm.setInitialLenPt(sm.getInitialLenPt());
+//		
+//		if (trackingMarker != 3){
+//			double[] p = sm.getLocationList().get(k);
+//			int[] pt = new int[]{(int) p[0], (int) p[1]}; 
+//			int[] len = sm.getInitialLenPt()[0]; 
+//			int[][] lenPt = new int[][] {len,pt};
+//			if(p[0] != 0 && p[1] != 0){
+//				tdfm.setLenPt(lenPt);
+//			}
+//			else{
+//				tdfm.setLenPt(sm.getInitialLenPt());
+//			}
+//			
+//		}
+//		else{
+//			tdfm.setLenPt(sm.getInitialLenPt());
+//		}
+//		
+//		tdfm.setFitPower(model.getFitPower());
+//		tdfm.setBoundaryBox(model.getBoundaryBox());
+//		
+//		Metadata md = new Metadata();
+//		Map<String, Integer> dumMap = new HashMap<String, Integer>();
+//		dumMap.put("one", 1);
+//		md.initialize(dumMap);
+//		
+//		ILazyDataset  ild = null;
+//		
+//		SourceInformation  si =new SourceInformation("dummy", "dummy2", ild);
+//		
+//		SliceFromSeriesMetadata sfsm = new SliceFromSeriesMetadata(si);
+//		
+//		input.setMetadata(sfsm);
+//		
+//		input.setMetadata(md);
+//		
+//		TwoDFittingUsingIOperation tdfuio = new TwoDFittingUsingIOperation();
+//		tdfuio.setModel(tdfm);
+//		
+//		return tdfuio.execute(input, null);
+//		
+//	}
 	
 	public static OperationData TwoDFittingIOp(double[] p,   // = sm.getLocationList().get(k)
 											   FitPower fp,  //model.getFitPower()
@@ -1522,56 +1520,56 @@ public class DummyProcessWithFrames {
 	
 	
 	
-	public static OperationData TwoDGaussianFittingIOp(ExampleModel model,
-														IDataset input,
-														SuperModel sm,
-														int k,
-														int trackingMarker){
-
-		TwoDFittingModel tdfm = new TwoDFittingModel();
-		tdfm.setInitialLenPt(sm.getInitialLenPt());
-		
-		if (trackingMarker != 3){
-			double[] p = sm.getLocationList().get(k);
-			int[] pt = new int[]{(int) p[0], (int) p[1]}; 
-			int[] len = sm.getInitialLenPt()[0]; 
-			int[][] lenPt = new int[][] {len,pt};
-			if(p[0] != 0 && p[1] != 0){
-				tdfm.setLenPt(lenPt);
-			}
-			else{
-				tdfm.setLenPt(sm.getInitialLenPt());
-			}
-		}
-		
-		else{
-			tdfm.setLenPt(sm.getInitialLenPt());
-		}
-		
-		tdfm.setFitPower(model.getFitPower());
-		tdfm.setBoundaryBox(model.getBoundaryBox());
-		
-		Metadata md = new Metadata();
-		Map<String, Integer> dumMap = new HashMap<String, Integer>();
-		dumMap.put("one", 1);
-		md.initialize(dumMap);
-		
-		ILazyDataset  ild = null;
-		
-		SourceInformation  si =new SourceInformation("dummy", "dummy2", ild);
-		
-		SliceFromSeriesMetadata sfsm = new SliceFromSeriesMetadata(si);
-		
-		input.setMetadata(sfsm);
-		
-		input.setMetadata(md);
-		
-		TwoDGaussianFittingUsingIOperation tdgfuio = new TwoDGaussianFittingUsingIOperation();
-		tdgfuio.setModel(tdfm);
-		
-		return tdgfuio.execute(input, null);
-		
-	}
+//	public static OperationData TwoDGaussianFittingIOp(ExampleModel model,
+//														IDataset input,
+//														SuperModel sm,
+//														int k,
+//														int trackingMarker){
+//
+//		TwoDFittingModel tdfm = new TwoDFittingModel();
+//		tdfm.setInitialLenPt(sm.getInitialLenPt());
+//		
+//		if (trackingMarker != 3){
+//			double[] p = sm.getLocationList().get(k);
+//			int[] pt = new int[]{(int) p[0], (int) p[1]}; 
+//			int[] len = sm.getInitialLenPt()[0]; 
+//			int[][] lenPt = new int[][] {len,pt};
+//			if(p[0] != 0 && p[1] != 0){
+//				tdfm.setLenPt(lenPt);
+//			}
+//			else{
+//				tdfm.setLenPt(sm.getInitialLenPt());
+//			}
+//		}
+//		
+//		else{
+//			tdfm.setLenPt(sm.getInitialLenPt());
+//		}
+//		
+//		tdfm.setFitPower(model.getFitPower());
+//		tdfm.setBoundaryBox(model.getBoundaryBox());
+//		
+//		Metadata md = new Metadata();
+//		Map<String, Integer> dumMap = new HashMap<String, Integer>();
+//		dumMap.put("one", 1);
+//		md.initialize(dumMap);
+//		
+//		ILazyDataset  ild = null;
+//		
+//		SourceInformation  si =new SourceInformation("dummy", "dummy2", ild);
+//		
+//		SliceFromSeriesMetadata sfsm = new SliceFromSeriesMetadata(si);
+//		
+//		input.setMetadata(sfsm);
+//		
+//		input.setMetadata(md);
+//		
+//		TwoDGaussianFittingUsingIOperation tdgfuio = new TwoDGaussianFittingUsingIOperation();
+//		tdgfuio.setModel(tdfm);
+//		
+//		return tdgfuio.execute(input, null);
+//		
+//	}
 	
 	public static OperationData TwoDGaussianFittingIOp(double[] p, // = sm.getLocationList().get(k);,
 													   int[][] initialLenPt, //sm.getInitialLenPt() 
@@ -1743,93 +1741,93 @@ public class DummyProcessWithFrames {
 	
 	
 	
-	public static IDataset caseXY(SuperModel sm,
-								  ExampleModel model,
-								  DataModel dm,
-								  int k,
-								  int trackingMarker,
-								  int selection,
-								  double[] locationList,
-								  IDataset input,
-								  IPlottingSystem<Composite> pS,
-								  AnalaysisMethodologies.Methodology am){
-		
-		
-		
-		
-		OperationData outputOD2= OneDFittingIOp(model,
-				   								input,
-				   								sm,
-				   								am,
-				   								trackingMarker,
-				   								k);
-		IDataset output = outputOD2.getData();
-
-									
-		IDataset temporaryBackground2 = (IDataset) outputOD2.getAuxData()[1];
-		sm.setTemporaryBackgroundHolder(temporaryBackground2);
-		
-		return output;
-	}
+//	public static IDataset caseXY(SuperModel sm,
+//								  ExampleModel model,
+//								  DataModel dm,
+//								  int k,
+//								  int trackingMarker,
+//								  int selection,
+//								  double[] locationList,
+//								  IDataset input,
+//								  IPlottingSystem<Composite> pS,
+//								  AnalaysisMethodologies.Methodology am){
+//		
+//		
+//		
+//		
+//		OperationData outputOD2= OneDFittingIOp(model,
+//				   								input,
+//				   								sm,
+//				   								am,
+//				   								trackingMarker,
+//				   								k);
+//		IDataset output = outputOD2.getData();
+//
+//									
+//		IDataset temporaryBackground2 = (IDataset) outputOD2.getAuxData()[1];
+//		sm.setTemporaryBackgroundHolder(temporaryBackground2);
+//		
+//		return output;
+//	}
 	
 	
-	public static OperationData OneDFittingIOp(ExampleModel model,
-											   IDataset input,
-					                           SuperModel sm,
-					                           AnalaysisMethodologies.Methodology am,
-					                           int trackingMarker,
-					                           int k){
-		
-		OneDFittingModel odfm = new OneDFittingModel();
-		odfm.setInitialLenPt(sm.getInitialLenPt());
-		odfm.setLenPt(model.getLenPt());
-		odfm.setFitPower(model.getFitPower());
-		odfm.setBoundaryBox(model.getBoundaryBox());
-		odfm.setDirection(am);
-		
-		if (trackingMarker != 3){
-			
-			double[] p = sm.getLocationList().get(k);
-			int[] pt = new int[]{(int) p[0], (int) p[1]}; 
-			int[] len = sm.getInitialLenPt()[0]; 
-			int[][] lenPt = new int[][] {len,pt};
-			if(p[0] != 0 && p[1] != 0){
-				odfm.setLenPt(lenPt);
-			}
-			else{
-				odfm.setLenPt(sm.getInitialLenPt());
-			}
-			
-		}
-		else{
-			odfm.setLenPt(sm.getInitialLenPt());
-		}
-		
-				
-		Metadata md = new Metadata();
-		Map<String, Integer> dumMap = new HashMap<String, Integer>();
-		dumMap.put("one", 1);
-		md.initialize(dumMap);
-		
-		ILazyDataset  ild = null;
-		
-		SourceInformation  si =new SourceInformation("dummy", "dummy2", ild);
-		
-		SliceFromSeriesMetadata sfsm = new SliceFromSeriesMetadata(si);
-		
-		input.setMetadata(sfsm);
-		
-		input.setMetadata(md);
-		
-		OneDFittingUsingIOperation odfuio = new OneDFittingUsingIOperation();
-		odfuio.setModel(odfm);
-		
-		return odfuio.execute(input, null);
-
-	}
+//	public static OperationData OneDFittingIOp(ExampleModel model,
+//											   IDataset input,
+//					                           SuperModel sm,
+//					                           AnalaysisMethodologies.Methodology am,
+//					                           int trackingMarker,
+//					                           int k){
+//		
+//		OneDFittingModel odfm = new OneDFittingModel();
+//		odfm.setInitialLenPt(sm.getInitialLenPt());
+//		odfm.setLenPt(model.getLenPt());
+//		odfm.setFitPower(model.getFitPower());
+//		odfm.setBoundaryBox(model.getBoundaryBox());
+//		odfm.setDirection(am);
+//		
+//		if (trackingMarker != 3){
+//			
+//			double[] p = sm.getLocationList().get(k);
+//			int[] pt = new int[]{(int) p[0], (int) p[1]}; 
+//			int[] len = sm.getInitialLenPt()[0]; 
+//			int[][] lenPt = new int[][] {len,pt};
+//			if(p[0] != 0 && p[1] != 0){
+//				odfm.setLenPt(lenPt);
+//			}
+//			else{
+//				odfm.setLenPt(sm.getInitialLenPt());
+//			}
+//			
+//		}
+//		else{
+//			odfm.setLenPt(sm.getInitialLenPt());
+//		}
+//		
+//				
+//		Metadata md = new Metadata();
+//		Map<String, Integer> dumMap = new HashMap<String, Integer>();
+//		dumMap.put("one", 1);
+//		md.initialize(dumMap);
+//		
+//		ILazyDataset  ild = null;
+//		
+//		SourceInformation  si =new SourceInformation("dummy", "dummy2", ild);
+//		
+//		SliceFromSeriesMetadata sfsm = new SliceFromSeriesMetadata(si);
+//		
+//		input.setMetadata(sfsm);
+//		
+//		input.setMetadata(md);
+//		
+//		OneDFittingUsingIOperation odfuio = new OneDFittingUsingIOperation();
+//		odfuio.setModel(odfm);
+//		
+//		return odfuio.execute(input, null);
+//
+//	}
 	
 	
-	public static OperationData OneDFittingIOp(int[][] mLenPt, //model.getLenPt()
+	public static OperationData OneDFittingIOp(//int[][] mLenPt, //model.getLenPt()
 											   int[][] initialLenPt, // sm.getInitialLenPt()
 											   FitPower fp, // model.getFitPower()
 											   double[]location, // 
@@ -1840,7 +1838,11 @@ public class DummyProcessWithFrames {
 									           int k){
 
 		OneDFittingModel odfm = new OneDFittingModel();
+		
+		
 		odfm.setInitialLenPt(initialLenPt);
+		
+		int[][] mLenPt = LocationLenPtConverterUtils.locationToLenPtConverter(location);
 		odfm.setLenPt(mLenPt);
 		odfm.setFitPower(fp);
 		odfm.setBoundaryBox(boundaryBox);
@@ -1892,64 +1894,64 @@ public class DummyProcessWithFrames {
 		
 	
 
-	public static OperationData SecondConstantBackgroundROIFittingIOp(ExampleModel model,
-			   														  IDataset input,
-			   														  SuperModel sm,
-			   														  int trackingMarker,
-			   														  int k
-			   														  ){
-
-		SecondConstantROIBackgroundSubtractionModel scrbm 
-					= new SecondConstantROIBackgroundSubtractionModel();
-		scrbm.setInitialLenPt(sm.getInitialLenPt());
-		scrbm.setLenPt(model.getLenPt());
-		scrbm.setFitPower(model.getFitPower());
-		scrbm.setBoundaryBox(model.getBoundaryBox());
-		
-		if (sm.getBackgroundLenPt() != null){
-				scrbm.setBackgroundLenPt(sm.getBackgroundLenPt());
-		}
-		
-		if (trackingMarker != 3){
-			double[] p = sm.getLocationList().get(k);
-			int[] pt = new int[]{(int) p[0], (int) p[1]}; 
-			int[] len = sm.getInitialLenPt()[0]; 
-			int[][] lenPt = new int[][] {len,pt};
-			if(p[0] != 0 && p[1] != 0){
-				scrbm.setLenPt(lenPt);
-			}
-			else{
-				scrbm.setLenPt(sm.getInitialLenPt());
-			}
-			
-		}
-		else{
-			scrbm.setLenPt(sm.getInitialLenPt());
-		}
-		
-		
-		Metadata md = new Metadata();
-		Map<String, Integer> dumMap = new HashMap<String, Integer>();
-		dumMap.put("one", 1);
-		md.initialize(dumMap);
-		
-		ILazyDataset  ild = null;
-		
-		SourceInformation  si =new SourceInformation("dummy", "dummy2", ild);
-		
-		SliceFromSeriesMetadata sfsm = new SliceFromSeriesMetadata(si);
-		
-		input.setMetadata(sfsm);
-		
-		input.setMetadata(md);
-		
-		SecondConstantROIUsingIOperation scrbio 
-				= new SecondConstantROIUsingIOperation();
-		scrbio.setModel(scrbm);
-		
-		return scrbio.execute(input, null);
-
-	}
+//	public static OperationData SecondConstantBackgroundROIFittingIOp(ExampleModel model,
+//			   														  IDataset input,
+//			   														  SuperModel sm,
+//			   														  int trackingMarker,
+//			   														  int k
+//			   														  ){
+//
+//		SecondConstantROIBackgroundSubtractionModel scrbm 
+//					= new SecondConstantROIBackgroundSubtractionModel();
+//		scrbm.setInitialLenPt(sm.getInitialLenPt());
+//		scrbm.setLenPt(model.getLenPt());
+//		scrbm.setFitPower(model.getFitPower());
+//		scrbm.setBoundaryBox(model.getBoundaryBox());
+//		
+//		if (sm.getBackgroundLenPt() != null){
+//				scrbm.setBackgroundLenPt(sm.getBackgroundLenPt());
+//		}
+//		
+//		if (trackingMarker != 3){
+//			double[] p = sm.getLocationList().get(k);
+//			int[] pt = new int[]{(int) p[0], (int) p[1]}; 
+//			int[] len = sm.getInitialLenPt()[0]; 
+//			int[][] lenPt = new int[][] {len,pt};
+//			if(p[0] != 0 && p[1] != 0){
+//				scrbm.setLenPt(lenPt);
+//			}
+//			else{
+//				scrbm.setLenPt(sm.getInitialLenPt());
+//			}
+//			
+//		}
+//		else{
+//			scrbm.setLenPt(sm.getInitialLenPt());
+//		}
+//		
+//		
+//		Metadata md = new Metadata();
+//		Map<String, Integer> dumMap = new HashMap<String, Integer>();
+//		dumMap.put("one", 1);
+//		md.initialize(dumMap);
+//		
+//		ILazyDataset  ild = null;
+//		
+//		SourceInformation  si =new SourceInformation("dummy", "dummy2", ild);
+//		
+//		SliceFromSeriesMetadata sfsm = new SliceFromSeriesMetadata(si);
+//		
+//		input.setMetadata(sfsm);
+//		
+//		input.setMetadata(md);
+//		
+//		SecondConstantROIUsingIOperation scrbio 
+//				= new SecondConstantROIUsingIOperation();
+//		scrbio.setModel(scrbm);
+//		
+//		return scrbio.execute(input, null);
+//
+//	}
 	
 	
 		
@@ -2019,66 +2021,66 @@ public class DummyProcessWithFrames {
 	
 
 	
-	public static IDataset secondConstantROIMethod(SuperModel sm, 
-												   ExampleModel model,
-												   IDataset input,  
-												   DataModel dm, 
-												   int selection,
-												   int trackingMarker,
-												   int k){		
-		
-
-		
-		OperationData outputOD4 = null;
-		
-		if(model.getMethodology() == Methodology.SECOND_BACKGROUND_BOX){
-		
-			
-			
-			outputOD4 = SecondConstantBackgroundROIFittingIOp(model, 
-															  input, 
-															  sm,
-															  trackingMarker,
-															  k
-															  );
-		}
-		
-		else if(model.getMethodology() == Methodology.OVERLAPPING_BACKGROUND_BOX){
-			
-
-			
-			outputOD4 = OverlappingBackgroundROIFittingIOp(model, 
-														   input, 
-														   sm,
-														   trackingMarker,
-														   k);
-			if(outputOD4.getAuxData()[3] != null){
-				sm.setBoxOffsetLenPt((int[][]) outputOD4.getAuxData()[3]);
-			}
-			
-		}
-		
-		IDataset output = outputOD4.getData();
-
-		if ((IROI) outputOD4.getAuxData()[1] != null){
-			IRectangularROI bounds = ((IROI) outputOD4.getAuxData()[1]).getBounds();
-			int[] len = bounds.getIntLengths();
-			int[] pt = bounds.getIntPoint();
-		
-			if (Arrays.equals(len,new int[] {50, 50}) == false || 
-					Arrays.equals(pt,new int[] {10, 10}) == false){
-			
-				sm.setBackgroundROI((IROI) outputOD4.getAuxData()[1]);
-				dm.setBackgroundROI((IROI) outputOD4.getAuxData()[1]);;
-			}
-		}
-		
-		
-		sm.setTemporaryBackgroundHolder((IDataset) outputOD4.getAuxData()[2]);
-		
-		
-		return output;
-	}
+//	public static IDataset secondConstantROIMethod(SuperModel sm, 
+//												   ExampleModel model,
+//												   IDataset input,  
+//												   DataModel dm, 
+//												   int selection,
+//												   int trackingMarker,
+//												   int k){		
+//		
+//
+//		
+//		OperationData outputOD4 = null;
+//		
+//		if(model.getMethodology() == Methodology.SECOND_BACKGROUND_BOX){
+//		
+//			
+//			
+//			outputOD4 = SecondConstantBackgroundROIFittingIOp(model, 
+//															  input, 
+//															  sm,
+//															  trackingMarker,
+//															  k
+//															  );
+//		}
+//		
+//		else if(model.getMethodology() == Methodology.OVERLAPPING_BACKGROUND_BOX){
+//			
+//
+//			
+//			outputOD4 = OverlappingBackgroundROIFittingIOp(model, 
+//														   input, 
+//														   sm,
+//														   trackingMarker,
+//														   k);
+//			if(outputOD4.getAuxData()[3] != null){
+//				sm.setBoxOffsetLenPt((int[][]) outputOD4.getAuxData()[3]);
+//			}
+//			
+//		}
+//		
+//		IDataset output = outputOD4.getData();
+//
+//		if ((IROI) outputOD4.getAuxData()[1] != null){
+//			IRectangularROI bounds = ((IROI) outputOD4.getAuxData()[1]).getBounds();
+//			int[] len = bounds.getIntLengths();
+//			int[] pt = bounds.getIntPoint();
+//		
+//			if (Arrays.equals(len,new int[] {50, 50}) == false || 
+//					Arrays.equals(pt,new int[] {10, 10}) == false){
+//			
+//				sm.setBackgroundROI((IROI) outputOD4.getAuxData()[1]);
+//				dm.setBackgroundROI((IROI) outputOD4.getAuxData()[1]);;
+//			}
+//		}
+//		
+//		
+//		sm.setTemporaryBackgroundHolder((IDataset) outputOD4.getAuxData()[2]);
+//		
+//		
+//		return output;
+//	}
 	
 	public static IDataset secondConstantROIMethod(IDataset input,
 												   DirectoryModel drm,
@@ -2098,7 +2100,7 @@ public class DummyProcessWithFrames {
 		
 		
 			outputOD4 = SecondConstantBackgroundROIFittingIOp(input,
-															  drm.getLocationList().get(datNo).get(selection),
+										                      drm.getFms().get(k).getRoiLocation(),
 															  drm.getInitialLenPt(),
 															  drm.getLenPtForEachDat()[datNo],
 															  drm.getBackgroundLenPt(),
@@ -2113,7 +2115,7 @@ public class DummyProcessWithFrames {
 		
 		
 			outputOD4 = OverlappingBackgroundROIFittingIOp(input,
-					  									   drm.getLocationList().get(datNo).get(selection),
+														   drm.getFms().get(k).getRoiLocation(),
 					  									   drm.getInitialLenPt(),
 					  									   drm.getLenPtForEachDat()[datNo],
 					  									   drm.getBackgroundLenPt(),
@@ -2154,81 +2156,81 @@ public class DummyProcessWithFrames {
 	}
 	
 	
-	public static OperationData OverlappingBackgroundROIFittingIOp(ExampleModel model,
-				  												   IDataset input,
-				  												   SuperModel sm,
-				  												   int trackingMarker,
-				  												   int k){
-
-		SecondConstantROIBackgroundSubtractionModel scrbm 
-			= new SecondConstantROIBackgroundSubtractionModel();
-		int[][] a= sm.getInitialLenPt();
-		scrbm.setInitialLenPt(a);
-		int[][] b= model.getLenPt();
-		scrbm.setLenPt(b);
-		scrbm.setFitPower(model.getFitPower());
-		scrbm.setBoundaryBox(model.getBoundaryBox());
-		scrbm.setTrackerOn(sm.getTrackerOn());
-		scrbm.setTrackingMarker(trackingMarker);
-		
-		if(sm.getBoxOffsetLenPt() != null){
-			int[][] e = sm.getBoxOffsetLenPt();
-			scrbm.setBoxOffsetLenPt(e);
-		}
-		
-		
-		
-		if (trackingMarker != 3){
-			
-			double[] p = sm.getLocationList().get(k);
-			int[] pt = new int[]{(int) p[0], (int) p[1]}; 
-			int[] len = sm.getInitialLenPt()[0]; 
-			int[][] lenPt = new int[][] {len,pt};
-			
-			if(p[0] != 0 && p[1] != 0){
-				scrbm.setLenPt(lenPt);
-			}
-			
-			else{
-				scrbm.setLenPt(sm.getInitialLenPt());
-			}
-			
-			if(sm.getPermanentBoxOffsetLenPt()!= null){
-				int[][] c = sm.getPermanentBoxOffsetLenPt();
-				scrbm.setBoxOffsetLenPt(c);
-			}
-			
-		}
-		else{
-			scrbm.setLenPt(sm.getInitialLenPt());
-		}
-		
-		int[][]  d= sm.getBackgroundLenPt();
-		scrbm.setBackgroundLenPt(d);
-		
-		Metadata md = new Metadata();
-		Map<String, Integer> dumMap = new HashMap<String, Integer>();
-		dumMap.put("one", 1);
-		md.initialize(dumMap);
-		
-		ILazyDataset  ild = null;
-		
-		SourceInformation  si =new SourceInformation("dummy", "dummy2", ild);
-		
-		SliceFromSeriesMetadata sfsm = new SliceFromSeriesMetadata(si);
-		
-		input.setMetadata(sfsm);
-		
-		input.setMetadata(md);
-		
-		OverlappingBgBoxUsingIOperation obbio 
-			= new OverlappingBgBoxUsingIOperation();
-		
-		obbio.setModel(scrbm);
-		
-		return obbio.execute(input, null);
-	
-	}
+//	public static OperationData OverlappingBackgroundROIFittingIOp(ExampleModel model,
+//				  												   IDataset input,
+//				  												   SuperModel sm,
+//				  												   int trackingMarker,
+//				  												   int k){
+//
+//		SecondConstantROIBackgroundSubtractionModel scrbm 
+//			= new SecondConstantROIBackgroundSubtractionModel();
+//		int[][] a= sm.getInitialLenPt();
+//		scrbm.setInitialLenPt(a);
+//		int[][] b= model.getLenPt();
+//		scrbm.setLenPt(b);
+//		scrbm.setFitPower(model.getFitPower());
+//		scrbm.setBoundaryBox(model.getBoundaryBox());
+//		scrbm.setTrackerOn(sm.getTrackerOn());
+//		scrbm.setTrackingMarker(trackingMarker);
+//		
+//		if(sm.getBoxOffsetLenPt() != null){
+//			int[][] e = sm.getBoxOffsetLenPt();
+//			scrbm.setBoxOffsetLenPt(e);
+//		}
+//		
+//		
+//		
+//		if (trackingMarker != 3){
+//			
+//			double[] p = sm.getLocationList().get(k);
+//			int[] pt = new int[]{(int) p[0], (int) p[1]}; 
+//			int[] len = sm.getInitialLenPt()[0]; 
+//			int[][] lenPt = new int[][] {len,pt};
+//			
+//			if(p[0] != 0 && p[1] != 0){
+//				scrbm.setLenPt(lenPt);
+//			}
+//			
+//			else{
+//				scrbm.setLenPt(sm.getInitialLenPt());
+//			}
+//			
+//			if(sm.getPermanentBoxOffsetLenPt()!= null){
+//				int[][] c = sm.getPermanentBoxOffsetLenPt();
+//				scrbm.setBoxOffsetLenPt(c);
+//			}
+//			
+//		}
+//		else{
+//			scrbm.setLenPt(sm.getInitialLenPt());
+//		}
+//		
+//		int[][]  d= sm.getBackgroundLenPt();
+//		scrbm.setBackgroundLenPt(d);
+//		
+//		Metadata md = new Metadata();
+//		Map<String, Integer> dumMap = new HashMap<String, Integer>();
+//		dumMap.put("one", 1);
+//		md.initialize(dumMap);
+//		
+//		ILazyDataset  ild = null;
+//		
+//		SourceInformation  si =new SourceInformation("dummy", "dummy2", ild);
+//		
+//		SliceFromSeriesMetadata sfsm = new SliceFromSeriesMetadata(si);
+//		
+//		input.setMetadata(sfsm);
+//		
+//		input.setMetadata(md);
+//		
+//		OverlappingBgBoxUsingIOperation obbio 
+//			= new OverlappingBgBoxUsingIOperation();
+//		
+//		obbio.setModel(scrbm);
+//		
+//		return obbio.execute(input, null);
+//	
+//	}
 	
 	public static OperationData OverlappingBackgroundROIFittingIOp(IDataset input,
 																   double[] p, //  = sm.getLocationList().get(k);
@@ -2481,9 +2483,9 @@ public class DummyProcessWithFrames {
 		
 		}
 		
-//		else if (correctionSelector ==1){
+		else if (correctionSelector ==1){
 		
-//		try {
+		try {
 //			correction = GeometricCorrectionsReflectivityMethod.reflectivityCorrectionsBatch(model.getDcdtheta(), k, gm.getAngularFudgeFactor(), 
 //			gm.getBeamHeight(), gm.getFootprint());
 //			
@@ -2499,52 +2501,65 @@ public class DummyProcessWithFrames {
 //			
 //			sm.setCurrentReflectivityAreaCorrection(correction);
 //			sm.setCurrentReflectivityFluxCorrection(ref);
-//			
-//			if (correction ==0){
-//				correction = 0.001;
-//			}
-//		} 
-//		catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		
-//		yValue = Maths.multiply(output, correction);
-//		}
-//		
-//		
-//		else if (correctionSelector ==2){
-//		
-//		try {
-//		
+			
+			double refAreaCorrection = fm.getReflectivityAreaCorrection(); 
+			
+			double refFluxCorrection = fm.getReflectivityFluxCorrection(); 
+			
+			correction = refAreaCorrection* refFluxCorrection; 
+			
+			
+			if (correction ==0){
+				correction = 0.001;
+			}
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		yValue = Maths.multiply(output, correction);
+		}
+		
+		
+		else if (correctionSelector ==2){
+		
+		try {
+		
 //			correction = (GeometricCorrectionsReflectivityMethod.reflectivityCorrectionsBatch(model.getDcdtheta(), k, gm.getAngularFudgeFactor(), 
 //			gm.getBeamHeight(), gm.getFootprint()));
 //			
 //			sm.addReflectivityAreaCorrection(sm.getImages().length, k, correction);
 //			sm.setCurrentReflectivityAreaCorrection(correction);
-//			
-//		
-//			if (correction ==0){
-//				correction = 0.001;
-//			}
-//		} 
-//		
-//		catch (Exception e) {
-//		// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//		yValue = Maths.multiply(output, correction);
-//		
-//		}
-//		
-//		else if (correctionSelector ==3){
-//		
-//		yValue = Maths.multiply(output, 1);
-//		
-//		}
-//		
-//		else{	
-//		}
+			
+			
+			double refAreaCorrection = fm.getReflectivityAreaCorrection(); 
+			
+			
+			correction = refAreaCorrection;
+			
+		
+			if (correction ==0){
+				correction = 0.001;
+			}
+		} 
+		
+		catch (Exception e) {
+		// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		yValue = Maths.multiply(output, correction);
+		
+		}
+		
+		else if (correctionSelector ==3){
+		
+		yValue = Maths.multiply(output, 1);
+		
+		}
+		
+		else{	
+		}
 //		
 //		Double intensity = (Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum();
 //		

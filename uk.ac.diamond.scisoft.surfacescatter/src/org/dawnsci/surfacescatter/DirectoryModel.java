@@ -20,6 +20,7 @@ public class DirectoryModel {
 	private ArrayList<ArrayList<Integer>> framesCorespondingToDats;
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private ArrayList<Double> xList;
+	private ArrayList<Double> qList;
 	private ArrayList<ArrayList<Double>> dmxList;
 	private ArrayList<FrameModel> fms;
 	private TrackerType1 trackingMethodolgy;
@@ -35,11 +36,12 @@ public class DirectoryModel {
 	private ArrayList<ArrayList<double[]>> locationList; 
 	private IImageTracker tracker;
 	private Dataset sortedX; 
+	private Dataset sortedQ;
 	private ArrayList<double[][]> interpolatedLenPts;
 	private IDataset temporaryBackgroundHolder;
 	private int[][] permanentBoxOffsetLenPt;
 	private int[][] permanentBackgroundLenPt;
-	private int[][] boxOffsetLenPt;
+	private int[][] boxOffsetLenPt = new int[][] {{0, 0 },{-25, -25}};
 	private IRectangularROI backgroundROI = new RectangularROI(10,10,50,50,0);
 	private IROI[] backgroundROIForEachDat;
 	private int[][] backgroundLenPt;
@@ -772,5 +774,156 @@ public class DirectoryModel {
 		this.currentRawIntensity = currentRawIntensity;
 	}
 	
+	public Dataset getSortedQ() {
+		return sortedQ;
+	}
+
+
+	public void setSortedQ(Dataset sortedQ) {
+		this.sortedQ = sortedQ;
+	}
+
+
+	
+	
+	public void qConversion(double energy, int theta){
+		
+		qList =null;
+		
+		IDataset splicedCurveQ  =csdp.getSplicedCurveQ();
+		splicedCurveQ =null;
+		sortedQ = null;
+		
+		if(xList !=null){
+			
+			try{
+				if (qList==null){
+					qList = new ArrayList<Double>();
+					for (int i = 0; i < xList.size(); i++) {
+						  qList.add(0.0);
+						}
+				}
+				
+				if (qList.size() == 0){
+					qList = new ArrayList<Double>();
+					for (int i = 0; i < xList.size(); i++) {
+						  qList.add(0.0);
+						}
+				}
+			}
+			catch(Exception o){
+				
+			}
+			
+			try{
+				
+			
+				for(int i = 0 ; i < xList.size(); i++){
+					
+					double energyJ  = energy*1000*1.602177*Math.pow(10, -19);
+					double hc = 1.98644568*Math.pow(10, -25);
+					double q = 4*Math.PI* Math.sin(xList.get(i))*energyJ/ hc;
+					
+					double qA = q/(Math.pow(10, 10));
+					try{
+						qList.set(i, qA);
+					}
+					catch(NullPointerException d){
+						qList.add(qA);
+					}
+				}
+			}
+			catch(Exception p){
+				
+			}
+		}
+		
+		if(csdp.getSplicedCurveX() !=null){
+			
+			try{
+				if (splicedCurveQ==null){
+					splicedCurveQ = DatasetFactory.zeros(csdp.getSplicedCurveX().getShape());
+				}
+				
+				if (splicedCurveQ.getSize() == 0){
+					splicedCurveQ = DatasetFactory.zeros(csdp.getSplicedCurveX().getShape());
+					
+				}
+				
+				if (splicedCurveQ.getSize()!=csdp.getSplicedCurveX().getSize()){
+					splicedCurveQ = DatasetFactory.zeros(csdp.getSplicedCurveX().getShape());
+				}
+			}
+			catch(Exception o){
+				
+			}
+			
+			try{
+			
+				for(int i = 0 ; i < csdp.getSplicedCurveX().getSize(); i++){
+					
+					double energyJ  = energy*1000*1.602177*Math.pow(10, -19);
+					double hc = 1.98644568*Math.pow(10, -25);
+					double q = 4*Math.PI* (Math.sin((theta +1 )*csdp.getSplicedCurveX().getDouble(i)))*energyJ/ hc;
+					double qA = q/(Math.pow(10, 10));
+					
+					try{
+						splicedCurveQ.set(qA, i);
+					}
+					catch(NullPointerException d){
+					
+					}
+				}
+			}
+			catch(Exception p){
+				
+			}
+		}
+		
+		if(sortedX !=null){
+			
+			try{
+				if (sortedQ==null){
+					sortedQ = DatasetFactory.zeros(sortedX.getShape());
+				}
+				
+				if (sortedQ.getSize() == 0){
+					sortedQ = DatasetFactory.zeros(sortedX.getShape());
+					
+				}
+				
+				if (sortedQ.getSize()!=sortedX.getSize()){
+					sortedQ = DatasetFactory.zeros(sortedX.getShape());
+				}
+			}
+			catch(Exception o){
+				
+			}
+			
+			try{
+			
+				for(int i = 0 ; i < sortedX.getSize(); i++){
+					
+					double energyJ  = energy*1000*1.602177*Math.pow(10, -19);
+					double hc = 1.98644568*Math.pow(10, -25);
+					double q = 4*Math.PI* (Math.sin((theta +1 )*sortedX.getDouble(i)))*energyJ/ hc;
+					
+//					IDataset x= sortedX;
+					
+					double qA = q/(Math.pow(10, 10));
+					try{
+						sortedQ.set(qA, i);
+					}
+					catch(NullPointerException d){
+					
+					}
+				}
+			}
+			catch(Exception p){
+				
+			}
+		}
+		
+	}
 	
 }

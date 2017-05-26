@@ -51,7 +51,7 @@ public class CurveStitchWithErrorsAndFrames {
 		
 		IDataset[][] attenuatedDatasetsRaw = new IDataset[2][];
 		
-		int d = xArray.length;
+		int d = (xArray.length);
 		
 		if(maxMinArray ==null){
 			maxMinArray = new double[d][2];
@@ -67,163 +67,163 @@ public class CurveStitchWithErrorsAndFrames {
 		attenuationFactorRaw =1;
 		
 		for (int k=0; k<xArray.length-1;k++){
-		
-		OverlapDataModel odm = new OverlapDataModel();
-		
-		odm.setLowerDatName(csdp.getFilepaths()[k]);
-		odm.setUpperDatName(csdp.getFilepaths()[k+1]);
-		
-		ArrayList<Integer> overlapLower = new ArrayList<Integer>();
-		ArrayList<Integer> overlapHigher = new ArrayList<Integer>();
-		
-		for(int l=0; l<xArrayCorrected[k].getSize();l++){
-			if (xArrayCorrected[k].getDouble(l)>=(maxMinArray[k][1] - 0.001*maxMinArray[k][1])){
-				overlapLower.add(l);
-			}
-		}
-		
-		for(int m=0; m<xArrayCorrected[k+1].getSize();m++){
-			if (xArrayCorrected[k+1].getDouble(m)<=(maxMinArray[k][0] + 0.001 * maxMinArray[k][0])){
-				overlapHigher.add(m);
-			}
-		}
-		
-		int[] lowerOverlapPositions = new int[overlapLower.size()];
-		
-		for(int o = 0;o< overlapLower.size();o++){
-		lowerOverlapPositions[o] = overlapLower.get(o); 
-		}
-		
-		int[] higherOverlapPositions = new int[overlapHigher.size()];
-		
-		for(int o = 0;o< overlapHigher.size();o++){
-		higherOverlapPositions[o] = overlapHigher.get(o); 
-		}
-		
-		odm.setLowerOverlapPositions(lowerOverlapPositions);
-		odm.setUpperOverlapPositions(higherOverlapPositions);
-		
-		Dataset[] xLowerDataset =new Dataset[1];
-		Dataset yLowerDataset =null;
-		Dataset yLowerDatasetFhkl =null;
-		Dataset yLowerDatasetRaw =null;
-		Dataset[] xHigherDataset =new Dataset[1];
-		Dataset yHigherDataset =null;
-		Dataset yHigherDatasetFhkl =null;
-		Dataset yHigherDatasetRaw =null;
-		
-		ArrayList<Double> xLowerList =new ArrayList<>();
-		ArrayList<Double> yLowerList =new ArrayList<>();
-		ArrayList<Double> yLowerListFhkl =new ArrayList<>();
-		ArrayList<Double> yLowerListRaw =new ArrayList<>();
-		ArrayList<Double> xHigherList =new ArrayList<>();
-		ArrayList<Double> yHigherList =new ArrayList<>();
-		ArrayList<Double> yHigherListFhkl =new ArrayList<>();
-		ArrayList<Double> yHigherListRaw =new ArrayList<>();
-		
-		if (overlapLower.size() > 0 && overlapHigher.size() > 0){
-		
-			for (int l=0; l<overlapLower.size(); l++){
-				xLowerList.add(xArray[k].getDouble(overlapLower.get(l)));
-				yLowerList.add(yArray[k].getDouble(overlapLower.get(l)));
-				yLowerListFhkl.add(yArrayFhkl[k].getDouble(overlapLower.get(l)));
-				yLowerListRaw.add(yArrayRaw[k].getDouble(overlapLower.get(l)));
-				
-				xLowerDataset[0] = DatasetFactory.createFromObject(xLowerList);
-				yLowerDataset = DatasetFactory.createFromObject(yLowerList);
-				yLowerDatasetFhkl = DatasetFactory.createFromObject(yLowerListFhkl);
-				yLowerDatasetRaw = DatasetFactory.createFromObject(yLowerListRaw);
+			
+			OverlapDataModel odm = new OverlapDataModel();
+			
+			odm.setLowerDatName(csdp.getFilepaths()[k]);
+			odm.setUpperDatName(csdp.getFilepaths()[k+1]);
+			
+			ArrayList<Integer> overlapLower = new ArrayList<Integer>();
+			ArrayList<Integer> overlapHigher = new ArrayList<Integer>();
+			
+			for(int l=0; l<xArrayCorrected[k].getSize() ;l++){
+				if (xArrayCorrected[k].getDouble(l)>=(maxMinArray[k+1][1] - 0.001*maxMinArray[k+1][1])){
+					overlapLower.add(l);
+				}
 			}
 			
-			double[] lowerOverlapCorrectedValues = new double[overlapLower.size()];
-			double[] lowerOverlapRawValues = new double[overlapLower.size()];
-			double[] lowerOverlapFhklValues = new double[overlapLower.size()];
-			double[] lowerOverlapScannedValues = new double[overlapLower.size()];
+			for(int m=0; m<xArrayCorrected[k+1].getSize();m++){
+				if (xArrayCorrected[k+1].getDouble(m)<=(maxMinArray[k][0] + 0.001 * maxMinArray[k][0])){
+					overlapHigher.add(m);
+				}
+			}
 			
+			int[] lowerOverlapPositions = new int[overlapLower.size()];
 			
 			for(int o = 0;o< overlapLower.size();o++){
-				lowerOverlapScannedValues[o] = xLowerList.get(o);
-				lowerOverlapCorrectedValues[o] = yLowerList.get(o);
-				lowerOverlapRawValues[o] = yLowerListRaw.get(o);;
-				lowerOverlapFhklValues[o] = yLowerListFhkl.get(o);	
+				lowerOverlapPositions[o] = overlapLower.get(o); 
 			}
 			
-			odm.setLowerOverlapCorrectedValues(lowerOverlapCorrectedValues);
-			odm.setLowerOverlapRawValues(lowerOverlapRawValues);
-			odm.setLowerOverlapFhklValues(lowerOverlapFhklValues);
-			odm.setLowerOverlapScannedValues(lowerOverlapScannedValues);
-			
-			for (int l=0; l<overlapHigher.size(); l++){
-				xHigherList.add(xArray[k+1].getDouble(overlapHigher.get(l)));
-				yHigherList.add(yArray[k+1].getDouble(overlapHigher.get(l)));
-				yHigherListFhkl.add(yArrayFhkl[k+1].getDouble(overlapHigher.get(l)));
-				yHigherListRaw.add(yArrayRaw[k+1].getDouble(overlapHigher.get(l)));
-				
-				xHigherDataset[0] = DatasetFactory.createFromObject(xHigherList);
-				yHigherDataset = DatasetFactory.createFromObject(yHigherList);
-				yHigherDatasetFhkl = DatasetFactory.createFromObject(yHigherListFhkl);
-				yHigherDatasetRaw = DatasetFactory.createFromObject(yHigherListRaw);	
-			}
-			
-			double[] upperOverlapCorrectedValues = new double[overlapHigher.size()];
-			double[] upperOverlapRawValues = new double[overlapHigher.size()];
-			double[] upperOverlapFhklValues = new double[overlapHigher.size()];
-			double[] upperOverlapScannedValues = new double[overlapHigher.size()];
-			
+			int[] higherOverlapPositions = new int[overlapHigher.size()];
 			
 			for(int o = 0;o< overlapHigher.size();o++){
-				upperOverlapScannedValues[o] = xHigherList.get(o);
-				upperOverlapCorrectedValues[o] = yHigherList.get(o);
-				upperOverlapRawValues[o] = yHigherListRaw.get(o);;
-				upperOverlapFhklValues[o] = yHigherListFhkl.get(o);				
+				higherOverlapPositions[o] = overlapHigher.get(o); 
 			}
 			
-			odm.setUpperOverlapCorrectedValues(upperOverlapCorrectedValues);
-			odm.setUpperOverlapRawValues(upperOverlapRawValues);
-			odm.setUpperOverlapFhklValues(upperOverlapFhklValues);
-			odm.setUpperOverlapScannedValues(upperOverlapScannedValues);
+			odm.setLowerOverlapPositions(lowerOverlapPositions);
+			odm.setUpperOverlapPositions(higherOverlapPositions);
 			
-			double[][] correctionRatio = PolynomialOverlapSXRD.correctionRatio2(xLowerDataset, yLowerDataset, 
-			xHigherDataset, yHigherDataset, attenuationFactor,4);
+			Dataset[] xLowerDataset =new Dataset[1];
+			Dataset yLowerDataset =null;
+			Dataset yLowerDatasetFhkl =null;
+			Dataset yLowerDatasetRaw =null;
+			Dataset[] xHigherDataset =new Dataset[1];
+			Dataset yHigherDataset =null;
+			Dataset yHigherDatasetFhkl =null;
+			Dataset yHigherDatasetRaw =null;
 			
-			double[][]  correctionRatioFhkl = PolynomialOverlapSXRD.correctionRatio2(xLowerDataset, yLowerDatasetFhkl, 
-			xHigherDataset, yHigherDatasetFhkl, attenuationFactorFhkl,4);
+			ArrayList<Double> xLowerList =new ArrayList<>();
+			ArrayList<Double> yLowerList =new ArrayList<>();
+			ArrayList<Double> yLowerListFhkl =new ArrayList<>();
+			ArrayList<Double> yLowerListRaw =new ArrayList<>();
+			ArrayList<Double> xHigherList =new ArrayList<>();
+			ArrayList<Double> yHigherList =new ArrayList<>();
+			ArrayList<Double> yHigherListFhkl =new ArrayList<>();
+			ArrayList<Double> yHigherListRaw =new ArrayList<>();
 			
-			double[][]  correctionRatioRaw = PolynomialOverlapSXRD.correctionRatio2(xLowerDataset, yLowerDatasetRaw, 
-			xHigherDataset, yHigherDatasetRaw, attenuationFactorRaw,4);
+			if (overlapLower.size() > 0 && overlapHigher.size() > 0){
 			
-			attenuationFactor = correctionRatio[2][0];
-			attenuationFactorFhkl = correctionRatioFhkl[2][0];
-			attenuationFactorRaw = correctionRatioRaw[2][0];
+				for (int l=0; l<overlapLower.size(); l++){
+					xLowerList.add(xArray[k].getDouble(overlapLower.get(l)));
+					yLowerList.add(yArray[k].getDouble(overlapLower.get(l)));
+					yLowerListFhkl.add(yArrayFhkl[k].getDouble(overlapLower.get(l)));
+					yLowerListRaw.add(yArrayRaw[k].getDouble(overlapLower.get(l)));
+					
+					xLowerDataset[0] = DatasetFactory.createFromObject(xLowerList);
+					yLowerDataset = DatasetFactory.createFromObject(yLowerList);
+					yLowerDatasetFhkl = DatasetFactory.createFromObject(yLowerListFhkl);
+					yLowerDatasetRaw = DatasetFactory.createFromObject(yLowerListRaw);
+				}
+				
+				double[] lowerOverlapCorrectedValues = new double[overlapLower.size()];
+				double[] lowerOverlapRawValues = new double[overlapLower.size()];
+				double[] lowerOverlapFhklValues = new double[overlapLower.size()];
+				double[] lowerOverlapScannedValues = new double[overlapLower.size()];
+				
+				
+				for(int o = 0;o< overlapLower.size();o++){
+					lowerOverlapScannedValues[o] = xLowerList.get(o);
+					lowerOverlapCorrectedValues[o] = yLowerList.get(o);
+					lowerOverlapRawValues[o] = yLowerListRaw.get(o);;
+					lowerOverlapFhklValues[o] = yLowerListFhkl.get(o);	
+				}
+				
+				odm.setLowerOverlapCorrectedValues(lowerOverlapCorrectedValues);
+				odm.setLowerOverlapRawValues(lowerOverlapRawValues);
+				odm.setLowerOverlapFhklValues(lowerOverlapFhklValues);
+				odm.setLowerOverlapScannedValues(lowerOverlapScannedValues);
+				
+				for (int l=0; l<overlapHigher.size(); l++){
+					xHigherList.add(xArray[k+1].getDouble(overlapHigher.get(l)));
+					yHigherList.add(yArray[k+1].getDouble(overlapHigher.get(l)));
+					yHigherListFhkl.add(yArrayFhkl[k+1].getDouble(overlapHigher.get(l)));
+					yHigherListRaw.add(yArrayRaw[k+1].getDouble(overlapHigher.get(l)));
+					
+					xHigherDataset[0] = DatasetFactory.createFromObject(xHigherList);
+					yHigherDataset = DatasetFactory.createFromObject(yHigherList);
+					yHigherDatasetFhkl = DatasetFactory.createFromObject(yHigherListFhkl);
+					yHigherDatasetRaw = DatasetFactory.createFromObject(yHigherListRaw);	
+				}
+				
+				double[] upperOverlapCorrectedValues = new double[overlapHigher.size()];
+				double[] upperOverlapRawValues = new double[overlapHigher.size()];
+				double[] upperOverlapFhklValues = new double[overlapHigher.size()];
+				double[] upperOverlapScannedValues = new double[overlapHigher.size()];
+				
+				
+				for(int o = 0;o< overlapHigher.size();o++){
+					upperOverlapScannedValues[o] = xHigherList.get(o);
+					upperOverlapCorrectedValues[o] = yHigherList.get(o);
+					upperOverlapRawValues[o] = yHigherListRaw.get(o);;
+					upperOverlapFhklValues[o] = yHigherListFhkl.get(o);				
+				}
+				
+				odm.setUpperOverlapCorrectedValues(upperOverlapCorrectedValues);
+				odm.setUpperOverlapRawValues(upperOverlapRawValues);
+				odm.setUpperOverlapFhklValues(upperOverlapFhklValues);
+				odm.setUpperOverlapScannedValues(upperOverlapScannedValues);
+				
+				double[][] correctionRatio = PolynomialOverlapSXRD.correctionRatio2(xLowerDataset, yLowerDataset, 
+				xHigherDataset, yHigherDataset, attenuationFactor,4);
+				
+				double[][]  correctionRatioFhkl = PolynomialOverlapSXRD.correctionRatio2(xLowerDataset, yLowerDatasetFhkl, 
+				xHigherDataset, yHigherDatasetFhkl, attenuationFactorFhkl,4);
+				
+				double[][]  correctionRatioRaw = PolynomialOverlapSXRD.correctionRatio2(xLowerDataset, yLowerDatasetRaw, 
+				xHigherDataset, yHigherDatasetRaw, attenuationFactorRaw,4);
+				
+				attenuationFactor = correctionRatio[2][0];
+				attenuationFactorFhkl = correctionRatioFhkl[2][0];
+				attenuationFactorRaw = correctionRatioRaw[2][0];
+				
+				odm.setAttenuationFactor(attenuationFactor);
+				odm.setAttenuationFactorFhkl(attenuationFactorFhkl);
+				odm.setAttenuationFactorRaw(attenuationFactorRaw);
+				
+				
+				odm.setLowerOverlapFitParametersCorrected(correctionRatio[0]);
+				odm.setUpperOverlapFitParametersCorrected(correctionRatio[1]);
+				
+				odm.setLowerOverlapFitParametersFhkl(correctionRatioFhkl[0]);
+				odm.setUpperOverlapFitParametersFhkl(correctionRatioFhkl[1]);
+				
+				odm.setLowerOverlapFitParametersRaw(correctionRatioRaw[0]);
+				odm.setUpperOverlapFitParametersRaw(correctionRatioRaw[1]);
+				
+				
+				overlapDataModels.add(odm);
 			
-			odm.setAttenuationFactor(attenuationFactor);
-			odm.setAttenuationFactorFhkl(attenuationFactorFhkl);
-			odm.setAttenuationFactorRaw(attenuationFactorRaw);
+			}
+			
+			yArrayCorrected[k+1] = Maths.multiply(yArray[k+1],attenuationFactor);
+			yArrayCorrectedFhkl[k+1] = Maths.multiply(yArrayFhkl[k+1],attenuationFactorFhkl);
+			yArrayCorrectedRaw[k+1] = Maths.multiply(yArrayRaw[k+1],attenuationFactorRaw);
+			
+			yArrayCorrectedError[k+1] = Maths.multiply(yArrayError[k+1],attenuationFactor);
+			yArrayCorrectedFhklError[k+1] = Maths.multiply(yArrayFhklError[k+1],attenuationFactorFhkl);
+			yRawErrorArrayCorrected[k+1] = Maths.multiply(yArrayRawError[k+1],attenuationFactorRaw);
 			
 			
-			odm.setLowerOverlapFitParametersCorrected(correctionRatio[0]);
-			odm.setUpperOverlapFitParametersCorrected(correctionRatio[1]);
-			
-			odm.setLowerOverlapFitParametersFhkl(correctionRatioFhkl[0]);
-			odm.setUpperOverlapFitParametersFhkl(correctionRatioFhkl[1]);
-			
-			odm.setLowerOverlapFitParametersRaw(correctionRatioRaw[0]);
-			odm.setUpperOverlapFitParametersRaw(correctionRatioRaw[1]);
-			
-			
-			overlapDataModels.add(odm);
-		
-		}
-		
-		yArrayCorrected[k+1] = Maths.multiply(yArray[k+1],attenuationFactor);
-		yArrayCorrectedFhkl[k+1] = Maths.multiply(yArrayFhkl[k+1],attenuationFactorFhkl);
-		yArrayCorrectedRaw[k+1] = Maths.multiply(yArrayRaw[k+1],attenuationFactorRaw);
-		
-		yArrayCorrectedError[k+1] = Maths.multiply(yArrayError[k+1],attenuationFactor);
-		yArrayCorrectedFhklError[k+1] = Maths.multiply(yArrayFhklError[k+1],attenuationFactorFhkl);
-		yRawErrorArrayCorrected[k+1] = Maths.multiply(yArrayRawError[k+1],attenuationFactorRaw);
-		
-		
 		}
 		
 		attenuatedDatasets[0] = yArrayCorrected;

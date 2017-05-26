@@ -788,8 +788,8 @@ public class AgnosticTrackerWithFrames {
 			if (isTheTrackingMarkerNot3){
 				
 				int[] localPt = new int[] {(int) (location[0]), (int) (location[1])};
-				int[] localLen = new int[] {(int) ((int)location[2] - (int)location[0]), (int) ((int)location[5] -(int)location[1])};
-				localLen = drm.getInitialLenPt()[0];
+//				int[] localLen = new int[] {(int) ((int)location[2] - (int)location[0]), (int) ((int)location[5] -(int)location[1])};
+				int[] localLen = drm.getInitialLenPt()[0];
 				int[] localLocation = new int[] { localPt[0], localPt[1], (localPt[0] + localLen[0]),
 						(localPt[1]), localPt[0], localPt[1] + localLen[1], (localPt[0] + localLen[0]),
 						(localPt[1] + localLen[1]) };
@@ -804,7 +804,7 @@ public class AgnosticTrackerWithFrames {
 									k, 
 									localLocation);
 			
-				fm.setRoiLocation(location);
+				fm.setRoiLocation(localLocation);
 				
 				int[][] localLenPt = LocationLenPtConverterUtils.locationToLenPtConverter(location);
 				
@@ -981,7 +981,7 @@ public class AgnosticTrackerWithFrames {
 					pt = drm.getInitialLenPt()[1];
 			
 					drm.getInitialDatasetForEachDat()[fm.getDatNo()] = (input);
-					drm.setInitialLenPt(new int[][] {len, pt });
+//					drm.setInitialLenPt(new int[][] {len, pt });
 			
 					tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 					tracker1 = BoofCVImageTrackerServiceCreator.createImageTrackerService();
@@ -1208,14 +1208,14 @@ public class AgnosticTrackerWithFrames {
 			if (isTheTrackingMarkerNot3){
 			
 				int[] localPt = new int[] {(int) (location[0]), (int) (location[1])};
-				int[] localLen = new int[] {(int) ((int)location[2] - (int)location[0]), (int) ((int)location[5] -(int)location[1])};
-				localLen = drm.getInitialLenPt()[0];
+//				int[] localLen = new int[] {(int) ((int)location[2] - (int)location[0]), (int) ((int)location[5] -(int)location[1])};
+				int[] localLen = drm.getInitialLenPt()[0];
 				int[] localLocation = new int[] { localPt[0], localPt[1], (localPt[0] + localLen[0]),
 						(localPt[1]), localPt[0], localPt[1] + localLen[1], (localPt[0] + localLen[0]),
 						(localPt[1] + localLen[1]) };
 				
 				 
-			drm.addLocationList(fm.getDatNo(),
+				drm.addLocationList(fm.getDatNo(),
 						drm.getNoOfImagesInDatFile(fm.getDatNo()), 
 						k, 
 						localLocation);
@@ -1229,9 +1229,10 @@ public class AgnosticTrackerWithFrames {
 									k, 
 									localLocation);
 				
-				fm.setRoiLocation(location);
+				fm.setRoiLocation(localLocation);
 				
-				int[][] localLenPt = LocationLenPtConverterUtils.locationToLenPtConverter(location);
+			
+				int[][] localLenPt = LocationLenPtConverterUtils.locationToLenPtConverter(localLocation);
 				
 				drm.getLenPtForEachDat()[fm.getDatNo()] = localLenPt;
 				
@@ -1256,7 +1257,7 @@ public class AgnosticTrackerWithFrames {
 						k, 
 						localLocation);
 				
-				fm.setRoiLocation(location);
+				fm.setRoiLocation(localLocation);
 				
 				drm.getLenPtForEachDat()[fm.getDatNo()] = new int[][] {len, pt};
 			}

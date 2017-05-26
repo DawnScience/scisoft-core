@@ -212,7 +212,7 @@ public class DirectoryModel {
 		try{
 			for(FrameModel fm : fms){
 			
-				fm.setRoiLocation(null);
+				fm.resetRoiLocation();
 			
 			}
 		}
@@ -913,6 +913,7 @@ public class DirectoryModel {
 					double qA = q/(Math.pow(10, 10));
 					try{
 						sortedQ.set(qA, i);
+						fms.get(i).setQ(qA);
 					}
 					catch(NullPointerException d){
 					
@@ -924,6 +925,10 @@ public class DirectoryModel {
 			}
 		}
 		
+	}
+	
+	public IDataset getSplicedCurveQ(){
+		return csdp.getSplicedCurveQ();
 	}
 	
 }

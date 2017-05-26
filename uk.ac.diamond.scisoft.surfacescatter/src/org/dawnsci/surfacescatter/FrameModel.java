@@ -17,6 +17,11 @@ public class FrameModel {
 	private double k;
 	private double l;
 	
+	private double q;
+	
+	private double qdcd;
+	
+	
 	private double scannedVariable;
 	
 	//number as read in
@@ -139,8 +144,24 @@ public class FrameModel {
 	public double[] getRoiLocation() {
 		return roiLocation;
 	}
+	public void resetRoiLocation() {
+		roiLocation = null;
+	}
+	
 	public void setRoiLocation(double[] roiLocation) {
 		this.roiLocation = roiLocation;
+	}
+	
+	public void setRoiLocation(int[] roiLocation1) {
+		
+		double[] rl = new double[roiLocation1.length];
+		
+		for(int u =0; u<roiLocation1.length; u++){
+			
+			rl[u] = (double) roiLocation1[u];
+		}
+		
+		this.roiLocation = rl;
 	}
 	public FitPower getFitPower() {
 		return fitPower;
@@ -265,5 +286,17 @@ public class FrameModel {
 	}
 	public void setReflectivityFluxCorrection(double reflectivityFluxCorrection) {
 		this.reflectivityFluxCorrection = reflectivityFluxCorrection;
+	}
+	public double getQ() {
+		return q;
+	}
+	public void setQ(double q) {
+		this.q = q;
+	}
+	public double getQdcd() {
+		return qdcd;
+	}
+	public void setQdcd(double qdcd) {
+		this.qdcd = qdcd;
 	}
 }

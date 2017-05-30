@@ -12,7 +12,9 @@ package org.dawnsci.surfacescatter;
 import java.util.Arrays;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -60,13 +62,18 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 //		debug("pt[0]:  " + pt[0] + "  pt[1]:  " + pt[1] + "  in the 2D bg subtraction operation");
 		
 		
-		Dataset in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input, len, pt);
+//		Dataset in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input, len, pt);
+
+		IRectangularROI greenRectangle = new RectangularROI(pt[0], pt[1],
+				 len[0], len[1], 0);
+
+		
+		Dataset in1 = (Dataset) PlotSystem2DataSetter.PlotSystem2DataSetter1(greenRectangle, input);
+		
 
 		if (Arrays.equals(in1.getShape(), new int[] { len[1], len[0] }) == false) {
 			IDataset location = DatasetFactory.ones(new int[] {2,2});
 			Dataset errorDat = DatasetFactory.zeros(new int[] { 2, 2 });
-//			IndexIterator it2 = errorDat.getIterator();
-
 			return new OperationData(errorDat, location);
 		}
 

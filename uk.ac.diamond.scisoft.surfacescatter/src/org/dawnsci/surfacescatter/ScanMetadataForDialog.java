@@ -63,23 +63,23 @@ public class ScanMetadataForDialog {
 		
 	}
 	
-	public IDataset  getqdcd(IDataset input, SuperModel sm) {
-		IDataset qdcdDataset=null;
-		try {
-			qdcdDataset = ProcessingUtils.getLazyDataset(null, sm.getFilepaths()[sm.getSelection()], ReflectivityMetadataTitlesForDialog.getqdcd()).getSlice();
-		} catch (OperationException | DatasetException e) {
-			// TODO Auto-generated catch block
-		}
-		return qdcdDataset;
-		
-	}
-	
-	
-	public ILazyDataset getqdcdLazy (IDataset input, SuperModel sm){ 
-		ILazyDataset getqdcdLazy  = ProcessingUtils.getLazyDataset(null, sm.getFilepaths()[sm.getSelection()], ReflectivityMetadataTitlesForDialog.getqdcd());
-		return getqdcdLazy;
-	}
-	
+//	public IDataset  getqdcd(IDataset input, SuperModel sm) {
+//		IDataset qdcdDataset=null;
+//		try {
+//			qdcdDataset = ProcessingUtils.getLazyDataset(null, sm.getFilepaths()[sm.getSelection()], ReflectivityMetadataTitlesForDialog.getqdcd()).getSlice();
+//		} catch (OperationException | DatasetException e) {
+//			// TODO Auto-generated catch block
+//		}
+//		return qdcdDataset;
+//		
+//	}
+//	
+//	
+//	public ILazyDataset getqdcdLazy (IDataset input, SuperModel sm){ 
+//		ILazyDataset getqdcdLazy  = ProcessingUtils.getLazyDataset(null, sm.getFilepaths()[sm.getSelection()], ReflectivityMetadataTitlesForDialog.getqdcd());
+//		return getqdcdLazy;
+//	}
+//	
 
 	public ILazyDataset adc2DataLazy (String path) {
 		ILazyDataset adc2data= null;

@@ -44,9 +44,7 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 		//second pass
 		double secondTime = testWholeImageAzimuthal(data,npsi);
 		
-		if (firstTime < secondTime) {
-			Assert.fail("Whole image: second run should be faster due to caching, something odd is afoot");
-		}
+		
 		
 		npsi.setAzimuthalRange(new double[]{-180,-170});
 		//first pass
@@ -93,9 +91,7 @@ public class PixelSplittingIntegrationTest extends AbstractPixelIntegrationTestB
 		//second pass
 		double secondTime = testWholeImageRadial(data,npsi);
 		
-		if (firstTime < secondTime) {
-			Assert.fail("Whole image: second run should be faster due to caching, something odd is afoot");
-		}
+		
 		
 		npsi.setRadialRange(new double[]{1,5});
 		//first pass

@@ -15,6 +15,7 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.metadata.MaskMetadata;
 
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 import uk.ac.diamond.scisoft.xpdf.XPDFAbsorptionMaps;
@@ -212,7 +213,10 @@ public class XPDFIterateCalibrationConstantOperation extends
 			//		Dataset twoTheta = coordinates.getTwoTheta();
 
 			// Set up the q² integrator class
-			theBase.setqSquaredIntegrator(new XPDFQSquaredIntegrator(coordinates));//twoTheta, theXPDFMetadata.getBeam()));
+			XPDFQSquaredIntegrator qSquInt = (input.getFirstMetadata(MaskMetadata.class) != null) ?
+					new XPDFQSquaredIntegrator(coordinates, DatasetUtils.convertToDataset(input.getFirstMetadata(MaskMetadata.class).getMask())):
+						new XPDFQSquaredIntegrator(coordinates);
+			theBase.setqSquaredIntegrator(qSquInt);//twoTheta, theXPDFMetadata.getBeam()));
 			theBase.setCoordinates(coordinates);
 
 			theBase.setSelfScattering(theXPDFMetadata.getSample());

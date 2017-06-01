@@ -36,6 +36,8 @@ import org.eclipse.january.MetadataException;
 // Imports from uk.ac.diamond
 import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
+import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
+import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.GuinierFittingModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.expressions.ExpressionServiceHolder;
 
@@ -150,7 +152,9 @@ public class GuinierFittingOperation extends AbstractOperation<GuinierFittingMod
 		
 		// Try to do the fitting on the new processed slices
 		try {
-			Fitter.llsqFit(new Dataset[] {processedXSlice}, processedYSlice, guinierFit);
+			ApacheOptimizer opt = new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT);
+			opt.optimize(new Dataset[] {processedXSlice}, processedYSlice, guinierFit);
+//			Fitter.llsqFit(new Dataset[] {processedXSlice}, processedYSlice, guinierFit);
 		} catch (Exception fittingError) {
 			System.err.println("Exception performing linear fit in GuinierFittingOperation(): " + fittingError.toString());
 		}

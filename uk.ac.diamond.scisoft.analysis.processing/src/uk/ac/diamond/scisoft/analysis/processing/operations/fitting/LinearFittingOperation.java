@@ -33,6 +33,8 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 // Imports from uk.ac.diamond
 import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
+import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
+import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 
 
 // @author Tim Snow
@@ -170,7 +172,9 @@ public class LinearFittingOperation extends AbstractOperation<LinearFittingModel
 		
 		// Try to do the fitting on the new processed slices
 		try {
-			Fitter.llsqFit(new Dataset[] {xSlice}, ySlice, linearFit);
+			ApacheOptimizer opt = new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT);
+			opt.optimize(new Dataset[] {xSlice}, ySlice, linearFit);
+//			Fitter.llsqFit(new Dataset[] {xSlice}, ySlice, linearFit);
 		} catch (Exception fittingError) {
 			System.err.println("Exception performing linear fit in LinearFittingOperation(): " + fittingError.toString());
 		}

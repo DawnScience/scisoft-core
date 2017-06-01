@@ -149,6 +149,12 @@ public class FrameModel {
 	}
 	
 	public void setRoiLocation(double[] roiLocation) {
+		
+		if(roiLocation == null){
+			System.out.println("roi set to null");
+		}
+		
+		
 		this.roiLocation = roiLocation;
 	}
 	
@@ -160,6 +166,11 @@ public class FrameModel {
 			
 			rl[u] = (double) roiLocation1[u];
 		}
+		
+		if(roiLocation1 == null){
+			System.out.println("roi set to null");
+		}
+		
 		
 		this.roiLocation = rl;
 	}

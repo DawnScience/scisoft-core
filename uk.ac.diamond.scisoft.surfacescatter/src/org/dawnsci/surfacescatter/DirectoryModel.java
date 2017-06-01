@@ -436,10 +436,20 @@ public class DirectoryModel {
 	}
 
 
-	public void setInitialLenPt(int[][] initialLenPt) {
+	public void setInitialLenPt(int[][] initialLenPt) {		
 		this.initialLenPt = initialLenPt;
 	}
 
+	
+	public void setInitialLenPt(int sliderPos,
+								int[][] initialLenPt) {		
+		
+		double[] roiLocation = LocationLenPtConverterUtils.lenPtToLocationConverter(initialLenPt);
+		
+		fms.get(sliderPos).setRoiLocation(roiLocation);
+		
+		this.initialLenPt = initialLenPt;
+	}
 
 	public IImageTracker getInitialTracker() {
 		return initialTracker;

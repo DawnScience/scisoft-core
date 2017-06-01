@@ -37,6 +37,12 @@ public class AgnosticTrackerWithFrames {
 		len = drm.getInitialLenPt()[0];
 		pt = drm.getInitialLenPt()[1];
 		
+		isTheTrackingMarkerNot3 = true;
+		
+		if (trackingMarker == 3){
+			isTheTrackingMarkerNot3 = false;
+		}
+		
 		FrameModel frame = drm.getFms().get(selection);
 		IDataset input = DatasetFactory.createFromObject(0);
 		
@@ -401,8 +407,8 @@ public class AgnosticTrackerWithFrames {
 			if (isTheTrackingMarkerNot3){
 				
 				int[] localPt = new int[] {(int) (location[0]), (int) (location[1])};
-				int[] localLen = new int[] {(int) ((int)location[2] - (int)location[0]), (int) ((int)location[5] -(int)location[1])};
-				localLen = drm.getInitialLenPt()[0];
+//				int[] localLen = new int[] {(int) ((int)location[2] - (int)location[0]), (int) ((int)location[5] -(int)location[1])};
+				int[] localLen = drm.getInitialLenPt()[0];
 				int[] localLocation = new int[] { localPt[0], localPt[1], (localPt[0] + localLen[0]),
 						(localPt[1]), localPt[0], localPt[1] + localLen[1], (localPt[0] + localLen[0]),
 						(localPt[1] + localLen[1]) };
@@ -428,28 +434,53 @@ public class AgnosticTrackerWithFrames {
 			///////start the interpolation tracker
 			
 			try{
-				
-				len = new int[] {(int) Math.round(drm.getInterpolatedLenPts().get(selection)[0][0]),(int) Math.round(drm.getInterpolatedLenPts().get(selection)[0][1])};
-				pt = new int[] {(int) Math.round(drm.getInterpolatedLenPts().get(selection)[1][0]),(int) Math.round(drm.getInterpolatedLenPts().get(selection)[1][1])};
-				
-				double[] localLocation = new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]),
-						(double) (pt[1]), (double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]),
-						(double) (pt[1] + len[1]) };
-				
-				drm.addLocationList(frame.getDatNo(),
-						drm.getNoOfImagesInDatFile(frame.getDatNo()), 
-						k, 
-						localLocation);
-				drm.addLocationList(frame.getDatNo(),
-									drm.getNoOfImagesInDatFile(frame.getDatNo()), 
-									k, 
-									localLocation);
-				
-				
-				
-				drm.getLenPtForEachDat()[frame.getDatNo()] = new int[][]{len, pt};
-				
-				frame.setRoiLocation(localLocation);
+				if (isTheTrackingMarkerNot3){
+					len = new int[] {(int) Math.round(drm.getInterpolatedLenPts().get(selection)[0][0]),(int) Math.round(drm.getInterpolatedLenPts().get(selection)[0][1])};
+					pt = new int[] {(int) Math.round(drm.getInterpolatedLenPts().get(selection)[1][0]),(int) Math.round(drm.getInterpolatedLenPts().get(selection)[1][1])};
+					
+					double[] localLocation = new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]),
+							(double) (pt[1]), (double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]),
+							(double) (pt[1] + len[1]) };
+					
+					drm.addLocationList(frame.getDatNo(),
+							drm.getNoOfImagesInDatFile(frame.getDatNo()), 
+							k, 
+							localLocation);
+					drm.addLocationList(frame.getDatNo(),
+										drm.getNoOfImagesInDatFile(frame.getDatNo()), 
+										k, 
+										localLocation);
+					
+					
+					
+					drm.getLenPtForEachDat()[frame.getDatNo()] = new int[][]{len, pt};
+					
+					frame.setRoiLocation(localLocation);
+				}
+				else{
+					int[] localPt = drm.getInitialLenPt()[1];
+//					int[] localLen = new int[] {(int) ((int)location[2] - (int)location[0]), (int) ((int)location[5] -(int)location[1])};
+					int[] localLen = drm.getInitialLenPt()[0];
+					
+					
+					double[] localLocation = LocationLenPtConverterUtils.lenPtToLocationConverter(new int[][] {localLen, localPt});
+					
+					drm.addLocationList(frame.getDatNo(),
+							drm.getNoOfImagesInDatFile(frame.getDatNo()), 
+							k, 
+							localLocation);
+					drm.addLocationList(frame.getDatNo(),
+										drm.getNoOfImagesInDatFile(frame.getDatNo()), 
+										k, 
+										localLocation);
+					
+					
+					
+					drm.getLenPtForEachDat()[frame.getDatNo()] = new int[][]{len, pt};
+					
+					frame.setRoiLocation(localLocation);
+					
+				}
 			}
 			catch(Exception r){
 				
@@ -477,6 +508,10 @@ public class AgnosticTrackerWithFrames {
 
 		len = drm.getInitialLenPt()[0];
 		pt = drm.getInitialLenPt()[1];
+		
+		if (trackingMarker == 3){
+			isTheTrackingMarkerNot3 = false;
+		}
 		
 		FrameModel fm = drm.getFms().get(selection);
 		IDataset input = DatasetFactory.createFromObject(0);
@@ -821,24 +856,56 @@ public class AgnosticTrackerWithFrames {
 				///////start the interpolation tracker
 				
 			try{
+				if(isTheTrackingMarkerNot3){	
 					
-				len = new int[] {(int) Math.round(drm.getInterpolatedLenPts().get(selection)[0][0]),(int) Math.round(drm.getInterpolatedLenPts().get(selection)[0][1])};
-				pt = new int[] {(int) Math.round(drm.getInterpolatedLenPts().get(selection)[1][0]),(int) Math.round(drm.getInterpolatedLenPts().get(selection)[1][1])};
+					len = new int[] {(int) Math.round(drm.getInterpolatedLenPts().get(selection)[0][0]),(int) Math.round(drm.getInterpolatedLenPts().get(selection)[0][1])};
+					pt = new int[] {(int) Math.round(drm.getInterpolatedLenPts().get(selection)[1][0]),(int) Math.round(drm.getInterpolatedLenPts().get(selection)[1][1])};
 					
-				double[] localLocation = new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]),
-							(double) (pt[1]), (double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]),
-							(double) (pt[1] + len[1]) };
+					
+					
+					double[] localLocation = LocationLenPtConverterUtils.lenPtToLocationConverter(new int[][] {len, pt});
+					
+					int a = drm.getNoOfImagesInDatFile(fm.getDatNo());
+					
+					
+					drm.addLocationList(fm.getDatNo(), 
+							drm.getNoOfImagesInDatFile(fm.getDatNo()), 
+							fm.getNoInOriginalDat(), 
+							localLocation);
+					
+					
+					drm.getLenPtForEachDat()[fm.getDatNo()] = new int[][] {len,pt};
+					
+					
+					fm.setRoiLocation(localLocation);
 				
-				drm.addLocationList(fm.getDatNo(), 
-						drm.getNoOfImagesInDatFile(fm.getDatNo()), 
-						selection, 
-						localLocation);
+				}
+			
+				else{
+					int[] localPt = drm.getInitialLenPt()[1];
+	//				int[] localLen = new int[] {(int) ((int)location[2] - (int)location[0]), (int) ((int)location[5] -(int)location[1])};
+					int[] localLen = drm.getInitialLenPt()[0];
+					
+					
+					double[] localLocation = LocationLenPtConverterUtils.lenPtToLocationConverter(new int[][] {localLen, localPt});
+					
+					drm.addLocationList(fm.getDatNo(),
+							drm.getNoOfImagesInDatFile(fm.getDatNo()), 
+							k, 
+							localLocation);
+					drm.addLocationList(fm.getDatNo(),
+										drm.getNoOfImagesInDatFile(fm.getDatNo()), 
+										k, 
+										localLocation);
+					
+					
+					
+					drm.getLenPtForEachDat()[fm.getDatNo()] = new int[][]{len, pt};
+					
+					fm.setRoiLocation(localLocation);
+					
+				}
 				
-				
-				drm.getLenPtForEachDat()[fm.getDatNo()] = new int[][] {len,pt};
-				
-				
-				fm.setRoiLocation(localLocation);
 			}
 			catch(Exception r){
 					
@@ -860,6 +927,10 @@ public class AgnosticTrackerWithFrames {
 		len = drm.getInitialLenPt()[0];
 		pt = drm.getInitialLenPt()[1];
 		
+		if (trackingMarker == 3){
+			isTheTrackingMarkerNot3 = false;
+		}
+		
 		FrameModel fm = drm.getFms().get(selection);
 		IDataset input = DatasetFactory.createFromObject(0);
 		try {
@@ -869,8 +940,6 @@ public class AgnosticTrackerWithFrames {
 			e1.printStackTrace();
 		}
 		
-//		initialLocation = new double[] { (double) pt[1], (double) pt[0], (double) (pt[1] + len[1]), (double) (pt[0]),
-//		(double) pt[1], (double) pt[0] + len[0], (double) (pt[1] + len[1]), (double) (pt[0] + len[0]) };
 		
 		if(fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.INTERPOLATION && fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
 			
@@ -1246,22 +1315,47 @@ public class AgnosticTrackerWithFrames {
 			///////start the interpolation tracker
 			
 			try{
-				
-				len = new int[] {(int) Math.round(drm.getInterpolatedLenPts().get(selection)[0][0]),(int) Math.round(drm.getInterpolatedLenPts().get(selection)[0][1])};
-				pt = new int[] {(int) Math.round(drm.getInterpolatedLenPts().get(selection)[1][0]),(int) Math.round(drm.getInterpolatedLenPts().get(selection)[1][1])};
-				
-				double[] localLocation = new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]),
-						(double) (pt[1]), (double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]),
-						(double) (pt[1] + len[1]) };
-				
-				drm.addLocationList(fm.getDatNo(),
-						drm.getNoOfImagesInDatFile(fm.getDatNo()), 
-						k, 
-						localLocation);
-				
-				fm.setRoiLocation(localLocation);
-				
-				drm.getLenPtForEachDat()[fm.getDatNo()] = new int[][] {len, pt};
+				if(isTheTrackingMarkerNot3){
+					len = new int[] {(int) Math.round(drm.getInterpolatedLenPts().get(selection)[0][0]),(int) Math.round(drm.getInterpolatedLenPts().get(selection)[0][1])};
+					pt = new int[] {(int) Math.round(drm.getInterpolatedLenPts().get(selection)[1][0]),(int) Math.round(drm.getInterpolatedLenPts().get(selection)[1][1])};
+					
+					double[] localLocation = new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]),
+							(double) (pt[1]), (double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]),
+							(double) (pt[1] + len[1]) };
+					
+					drm.addLocationList(fm.getDatNo(),
+							drm.getNoOfImagesInDatFile(fm.getDatNo()), 
+							k, 
+							localLocation);
+					
+					fm.setRoiLocation(localLocation);
+					
+					drm.getLenPtForEachDat()[fm.getDatNo()] = new int[][] {len, pt};
+				}
+				else{
+					int[] localPt = drm.getInitialLenPt()[1];
+	//				int[] localLen = new int[] {(int) ((int)location[2] - (int)location[0]), (int) ((int)location[5] -(int)location[1])};
+					int[] localLen = drm.getInitialLenPt()[0];
+					
+					
+					double[] localLocation = LocationLenPtConverterUtils.lenPtToLocationConverter(new int[][] {localLen, localPt});
+					
+					drm.addLocationList(fm.getDatNo(),
+							drm.getNoOfImagesInDatFile(fm.getDatNo()), 
+							k, 
+							localLocation);
+					drm.addLocationList(fm.getDatNo(),
+										drm.getNoOfImagesInDatFile(fm.getDatNo()), 
+										k, 
+										localLocation);
+					
+					
+					
+					drm.getLenPtForEachDat()[fm.getDatNo()] = new int[][]{len, pt};
+					
+					fm.setRoiLocation(localLocation);
+					
+				}
 			}
 			catch(Exception r){
 				

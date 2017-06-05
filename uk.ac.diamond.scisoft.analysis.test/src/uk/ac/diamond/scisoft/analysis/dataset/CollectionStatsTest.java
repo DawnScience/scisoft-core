@@ -16,7 +16,6 @@ import java.util.List;
 import org.eclipse.january.dataset.CollectionStats;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.junit.Test;
 

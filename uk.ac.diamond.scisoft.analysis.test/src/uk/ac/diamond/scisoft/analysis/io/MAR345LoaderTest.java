@@ -84,7 +84,7 @@ public class MAR345LoaderTest {
 		Assert.assertEquals(146, image.getInt(854, 2890));
 		Assert.assertEquals(250, image.getInt(961, 1741));
 
-		IMetadata md = image.getMetadata();
+		IMetadata md = image.getFirstMetadata(IMetadata.class);
 		Assert.assertTrue(md instanceof IDiffractionMetadata);
 		DiffractionCrystalEnvironment env = ((IDiffractionMetadata) md).getDiffractionCrystalEnvironment();
 		Assert.assertEquals(1.54179, env.getWavelength(), 1e-5);

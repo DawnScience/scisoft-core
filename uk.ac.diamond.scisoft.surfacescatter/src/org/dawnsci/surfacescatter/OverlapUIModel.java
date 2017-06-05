@@ -18,6 +18,7 @@ public class OverlapUIModel {
 	private int ROIevent=0;
 	private Dataset[] output;
 	private String[] filepaths1;
+	private double[] attenuationFactors;
 	
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
@@ -131,5 +132,26 @@ public class OverlapUIModel {
 		propertyChangeSupport.firePropertyChange(propertyName, oldValue,
 				newValue);
 	}
+
+	public double[] getAttenuationFactors() {
+		
+		if(attenuationFactors == null){
+			attenuationFactors = new double[ROIList.size()];
+		}
+		
+		return attenuationFactors;
+	}
+
+	public void setAttenuationFactors(double[] attenuationFactors) {
+		this.attenuationFactors = attenuationFactors;
+	}
 	
+	
+	public void setAttenuationFactors(int pos, double val ) {
+		if(attenuationFactors == null){
+			attenuationFactors = new double[ROIList.size()];
+		}
+		attenuationFactors[pos] = val; 
+
+	}
 }

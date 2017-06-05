@@ -14,6 +14,7 @@ import java.util.stream.IntStream;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.metadata.MaskMetadata;
 
 /**
  * Performs the q² integrals.
@@ -27,6 +28,7 @@ import org.eclipse.january.dataset.Maths;
 public class XPDFQSquaredIntegrator {
 
 	private Dataset q, dq;
+	private Dataset mask;
 	private XPDFElectronCrossSections eXSections;
 	
 	/**
@@ -52,6 +54,11 @@ public class XPDFQSquaredIntegrator {
 //		eXSections.setBeamEnergy(beamData.getBeamEnergy());
 	}
 	
+	public XPDFQSquaredIntegrator(XPDFCoordinates coordinates, Dataset mask) {
+		this(coordinates);
+		this.mask = mask;
+	}
+	
 	/**
 	 * Copy constructor.
 	 * @param qq
@@ -61,6 +68,7 @@ public class XPDFQSquaredIntegrator {
 		this.q = qq.q;
 		this.dq = qq.dq;
 		this.eXSections = (qq.eXSections != null) ? qq.eXSections : null;
+		this.mask = (qq.mask != null) ? qq.mask : null;
 	}
 
 	// 
@@ -85,7 +93,11 @@ public class XPDFQSquaredIntegrator {
 
 			// Integrate by the 2D rectangle rule, summing values as they are calculated
 			// using Java 8 streams, in parallel, (for now)
-			integral = IntStream.range(0, fn.getSize()).parallel().mapToDouble(i -> fn.getElementDoubleAbs(i) * q.getElementDoubleAbs(i) * q.getElementDoubleAbs(i) * dq.getElementDoubleAbs(i)).sum();
+			integral = IntStream.range(0, fn.getSize()).parallel().filter(i -> mask.getElementBooleanAbs(i)).mapToDouble(i ->
+			fn.getElementDoubleAbs(i) * // value
+			q.getElementDoubleAbs(i) * q.getElementDoubleAbs(i) * // Q²
+			dq.getElementDoubleAbs(i) // dQ
+			).sum();
 		}
 		return integral;
 		
@@ -127,8 +139,10 @@ public class XPDFQSquaredIntegrator {
 		return (double) integrand.sum();
 	}
 
-	
-	
+	public void setMask(Dataset mask) {
+		this.mask = mask;
+	}
+
 //	/**
 //	 * Finite difference approximation to a 1d Dataset.
 //	 * <p>

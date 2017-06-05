@@ -120,22 +120,30 @@ public class PythonUtils {
 		int na = 0; // count new axes
 		int nc = 0; // count collapsed dimensions
 		int ns = 0; // count slices or ellipses
+		boolean hasEllipsis = false;
 		for (int j = 0; j < indices.length; j++) {
 			PyObject index = indices[j];
-			if (index instanceof PyNone)
+			if (index instanceof PyNone) {
 				na++;
-			else if (index instanceof PyInteger)
+			} else if (index instanceof PyInteger) {
 				nc++;
-			else if (index instanceof PySlice)
+			} else if (index instanceof PySlice) {
 				ns++;
-			else if (index instanceof PyEllipsis)
+			} else if (index instanceof PyEllipsis) {
+				if (hasEllipsis) {
+					throw new IllegalArgumentException("Only one ellipsis is allowed");
+				}
+				hasEllipsis = true;
 				ns++;
+			} else {
+				throw new IllegalArgumentException("Unsupported object in index: " + index);
+			}
 		}
 
 		int spare = orank - nc - ns; // number of spare dimensions
 		SliceND slice = new SliceND(shape);
 
-		boolean hasEllipse = false;
+		hasEllipsis = false;
 		boolean[] sdim = new boolean[orank]; // flag which dimensions are sliced
 		int[] axes = new int[na]; // new axes
 		int i = 0;
@@ -145,8 +153,8 @@ public class PythonUtils {
 			PyObject index = indices[j];
 			if (index instanceof PyEllipsis) {
 				sdim[i++] = true;
-				if (!hasEllipse) { // pad out with full slices on first ellipse
-					hasEllipse = true;
+				if (!hasEllipsis) { // pad out with full slices on first ellipsis
+					hasEllipsis = true;
 					for (int k = 0; k < spare; k++) {
 						sdim[i++] = true;
 					}
@@ -168,7 +176,7 @@ public class PythonUtils {
 				Slice nslice = convertToSlice(pyslice);
 				slice.setSlice(i++, nslice.getStart(), nslice.getStop(), nslice.getStep());
 			} else if (index instanceof PyNone) { // newaxis
-				axes[a++] = (hasEllipse ? j + spare : j) - c;
+				axes[a++] = (hasEllipsis ? j + spare : j) - c;
 			} else {
 				throw new IllegalArgumentException("Unexpected item in indexing");
 			}
@@ -269,7 +277,7 @@ public class PythonUtils {
 	public static void setSlice(Dataset a, Object object, final PyObject indexes) {
 		if (a.isComplex() || a.getElementsPerItem() == 1) {
 			if (object instanceof PySequence) {
-				object = DatasetFactory.createFromObject(a.getDType(), object);
+				object = DatasetFactory.createFromObject(a.getClass(), object);
 			}
 		}
 
@@ -316,6 +324,7 @@ public class PythonUtils {
 	 * @return dataset
 	 * @throws IllegalArgumentException if dataset type is not known
 	 */
+	@SuppressWarnings("deprecation")
 	public static Dataset createFromObject(final Integer dtype, final Object obj) {
 		return DatasetFactory.createFromObject(dtype, obj, null);
 	}
@@ -330,6 +339,7 @@ public class PythonUtils {
 	 * @param dtype
 	 * @return a new 1D dataset of given type, filled with values determined by parameters
 	 */
+	@SuppressWarnings("deprecation")
 	public static Dataset createRange(final double start, final double stop, final double step, final int dtype) {
 		return DatasetFactory.createRange(start, stop, step, dtype);
 	}

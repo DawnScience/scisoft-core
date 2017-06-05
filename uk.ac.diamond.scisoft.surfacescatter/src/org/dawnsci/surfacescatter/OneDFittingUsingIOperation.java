@@ -26,8 +26,6 @@ import org.eclipse.january.dataset.Maths;
 public class OneDFittingUsingIOperation extends AbstractOperation<OneDFittingModel, OperationData> {
 	
 	private static Dataset output;
-//	private int[] len;
-//	private int[] pt;
 	private Dataset in1Background;
 
 
@@ -48,14 +46,6 @@ public class OneDFittingUsingIOperation extends AbstractOperation<OneDFittingMod
 	
 	public OperationData process (IDataset input,
 								  IMonitor monitor){
-			
-//												 SuperModel sm, 
-//												 IDataset input, 
-//												 ExampleModel model, 
-//												 DataModel dm, 
-//												 int k,
-//												 int selection,
-//												 AnalaysisMethodologies.Methodology am) {
 
 		int[] len = model.getLenPt()[0];
 		int[] pt = model.getLenPt()[1];
@@ -90,32 +80,12 @@ public class OneDFittingUsingIOperation extends AbstractOperation<OneDFittingMod
 		
 		
 		if(Arrays.equals(in1Background.getShape(),(new int[] {2,2}))){
-//			return (IDataset) in1Background;
+
 			return null;
 		}
-//		
-//		IndexIterator it = in1Background.getIterator();
-//		
-//		while (it.hasNext()) {
-//			double v = in1Background.getElementDoubleAbs(it.index);
-//			if (v < 0) {
-//				in1Background.setObjectAbs(it.index, 0);
-//			}
-//		}
 
 		Dataset pBackgroundSubtracted = Maths.subtract(in1, in1Background, null);
-
-
 		
-//		IndexIterator it1 = pBackgroundSubtracted.getIterator();
-//		
-//		while (it1.hasNext()) {
-//			double q = pBackgroundSubtracted.getElementDoubleAbs(it1.index);
-//			if (q < 0){
-//			           pBackgroundSubtracted.setObjectAbs(it1.index, 0);
-//			}
-//		}
-//		
 		output = DatasetUtils.cast(pBackgroundSubtracted, Dataset.FLOAT64);
 		
 		output.setName("Region of Interest, polynomial background removed");
@@ -130,13 +100,7 @@ public class OneDFittingUsingIOperation extends AbstractOperation<OneDFittingMod
 				   							(double) (model.getInitialLenPt()[1][1] + model.getInitialLenPt()[0][1]), 
 				   							(double) (model.getInitialLenPt()[1][0] + model.getInitialLenPt()[0][0]) };
 
-//		sm.addLocationList(selection, location);
-//	
-//		dm.addBackgroundDatArray(in1Background);
-//		dm.addLocationList(model.getDatImages().getShape()[0], k, location);
-		
-//		return pBackgroundSubtracted;
-//		return null;
+
 		
 		return new OperationData(output, location, in1Background);
 

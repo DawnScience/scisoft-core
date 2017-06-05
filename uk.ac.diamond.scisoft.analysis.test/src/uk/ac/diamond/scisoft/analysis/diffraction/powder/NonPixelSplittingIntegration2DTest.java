@@ -38,9 +38,7 @@ public class NonPixelSplittingIntegration2DTest extends AbstractPixelIntegration
 		//second pass
 		double secondTime = testWholeImage(data,npsi);
 		
-		if (firstTime < secondTime) {
-			Assert.fail("Whole image: second run should be faster due to caching, something odd is afoot");
-		}
+		
 		
 		npsi.setAzimuthalRange(new double[]{-180,-170});
 		//first pass
@@ -64,9 +62,7 @@ public class NonPixelSplittingIntegration2DTest extends AbstractPixelIntegration
 		//first pass
 		secondTime =testDifferentSizeAxis(data,npsi);
 
-		if (firstTime < secondTime) {
-			Assert.fail("Whole image: second run should be faster due to caching, something odd is afoot");
-		}
+		
 
 	}
 	

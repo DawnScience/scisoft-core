@@ -19,6 +19,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.python.core.CompileMode;
@@ -43,7 +44,7 @@ public class PythonUtilsTest {
 		IDataset b;
 		int[] shape;
 
-		a = DatasetFactory.createRange(12, Dataset.FLOAT64).reshape(2, 6);
+		a = DatasetFactory.createRange(12).reshape(2, 6);
 		b = PythonUtils.getSlice(a, new PyInteger(-1));
 		shape = b.getShape();
 		assertEquals(1, shape.length);
@@ -54,7 +55,7 @@ public class PythonUtilsTest {
 		assertEquals(1, shape.length);
 		assertEquals(6, shape[0]);
 
-		a = DatasetFactory.createRange(60, Dataset.FLOAT64).reshape(2, 5, 3, 2);
+		a = DatasetFactory.createRange(60).reshape(2, 5, 3, 2);
 		b = PythonUtils.getSlice(a, new PyTuple(new PyInteger(-1)));
 		assertArrayEquals(new int[] {5, 3, 2}, b.getShape());
 
@@ -88,6 +89,12 @@ public class PythonUtilsTest {
 		b = PythonUtils.getSlice(a, new PyTuple(Py.Ellipsis, new PyInteger(-1), Py.None));
 		assertArrayEquals(new int[] {2, 5, 3, 1}, b.getShape());
 
+		b = PythonUtils.getSlice(a, new PyTuple(new PySlice(), Py.Ellipsis, Py.None, new PyInteger(-1)));
+		assertArrayEquals(new int[] {2, 5, 3, 1}, b.getShape());
+
+		b = PythonUtils.getSlice(a, new PyTuple(Py.Ellipsis, Py.None, new PySlice(), new PyInteger(-1)));
+		assertArrayEquals(new int[] {2, 5, 1, 3}, b.getShape());
+
 		b = PythonUtils.getSlice(a, new PyTuple(new PySlice(), Py.None, Py.Ellipsis, new PyInteger(-1)));
 		assertArrayEquals(new int[] {2, 1, 5, 3}, b.getShape());
 
@@ -96,6 +103,32 @@ public class PythonUtilsTest {
 
 		b = PythonUtils.getSlice(a, new PyTuple(new PySlice(), Py.None, Py.Ellipsis, new PyInteger(-1), Py.None));
 		assertArrayEquals(new int[] {2, 1, 5, 3, 1}, b.getShape());
+
+		b = PythonUtils.getSlice(a, new PyTuple(Py.None, Py.Ellipsis, new PyInteger(-1)));
+		assertArrayEquals(new int[] {1, 2, 5, 3}, b.getShape());
+
+		b = PythonUtils.getSlice(a, new PyTuple(Py.None, Py.None, Py.Ellipsis, new PyInteger(-1)));
+		assertArrayEquals(new int[] {1, 1, 2, 5, 3}, b.getShape());
+
+		b = PythonUtils.getSlice(a, new PyTuple(Py.None, Py.None, Py.None, Py.Ellipsis, new PyInteger(-1)));
+		assertArrayEquals(new int[] {1, 1, 1, 2, 5, 3}, b.getShape());
+
+		b = PythonUtils.getSlice(a, new PyTuple(Py.None, Py.Ellipsis, Py.None, new PyInteger(-1)));
+		assertArrayEquals(new int[] {1, 2, 5, 3, 1}, b.getShape());
+
+		try {
+			b = PythonUtils.getSlice(a, new PyTuple(Py.None, Py.Ellipsis, Py.Ellipsis));
+			fail("Should have thrown an IAE");
+		} catch (IllegalArgumentException e) {
+			// do nothing
+		}
+
+		try {
+			b = PythonUtils.getSlice(a, new PyTuple(Py.None, Py.Ellipsis, Py.Space));
+			fail("Should have thrown an IAE");
+		} catch (IllegalArgumentException e) {
+			// do nothing
+		}
 
 		b = PythonUtils.getSlice(a, new PyList(new PyObject[] {new PySlice(), Py.None, Py.Ellipsis, new PyInteger(-1), Py.None}));
 		assertArrayEquals(new int[] {2, 1, 5, 3, 1}, b.getShape());
@@ -110,57 +143,57 @@ public class PythonUtilsTest {
 	public void testSetSlice() throws DatasetException {
 		Dataset a;
 
-		a = DatasetFactory.createRange(12, Dataset.INT32).reshape(2, 6);
+		a = DatasetFactory.createRange(IntegerDataset.class, 12).reshape(2, 6);
 		PythonUtils.setSlice(a, 1, new PyInteger(-1));
 		assertEquals(0, a.getInt(0, 0));
 		assertEquals(5, a.getInt(0, 5));
 		assertEquals(1, a.getInt(1, 0));
 		assertEquals(1, a.getInt(1, 5));
-		PythonUtils.setSlice(a, DatasetFactory.createRange(6, Dataset.INT32), new PyInteger(-1));
+		PythonUtils.setSlice(a, DatasetFactory.createRange(IntegerDataset.class, 6), new PyInteger(-1));
 		assertEquals(0, a.getInt(0, 0));
 		assertEquals(5, a.getInt(0, 5));
 		assertEquals(0, a.getInt(1, 0));
 		assertEquals(5, a.getInt(1, 5));
 
-		a = DatasetFactory.createRange(12, Dataset.INT32).reshape(2, 6);
+		a = DatasetFactory.createRange(IntegerDataset.class, 12).reshape(2, 6);
 		PythonUtils.setSlice(a, 1, new PyTuple(new PySlice(), new PyInteger(-1)));
 		assertEquals(0, a.getInt(0, 0));
 		assertEquals(1, a.getInt(0, 5));
 		assertEquals(6, a.getInt(1, 0));
 		assertEquals(1, a.getInt(1, 5));
 
-		a = DatasetFactory.createRange(12, Dataset.INT32).reshape(2, 6);
-		PythonUtils.setSlice(a, DatasetFactory.createRange(2, Dataset.INT32), new PyTuple(new PySlice(), new PyInteger(-1)));
+		a = DatasetFactory.createRange(IntegerDataset.class, 12).reshape(2, 6);
+		PythonUtils.setSlice(a, DatasetFactory.createRange(IntegerDataset.class, 2), new PyTuple(new PySlice(), new PyInteger(-1)));
 		assertEquals(0, a.getInt(0, 0));
 		assertEquals(0, a.getInt(0, 5));
 		assertEquals(6, a.getInt(1, 0));
 		assertEquals(1, a.getInt(1, 5));
 
 		try {
-			PythonUtils.setSlice(a, DatasetFactory.createRange(5, Dataset.INT32), new PyInteger(-1));
+			PythonUtils.setSlice(a, DatasetFactory.createRange(IntegerDataset.class, 5), new PyInteger(-1));
 			fail("Should have thrown an IAE");
 		} catch (IllegalArgumentException e) {
 		}
 
-		a = DatasetFactory.createRange(12, Dataset.INT32).reshape(2, 6);
+		a = DatasetFactory.createRange(IntegerDataset.class, 12).reshape(2, 6);
 		PythonUtils.setSlice(a, 1, new PyInteger(-1));
-		PythonUtils.setSlice(a, DatasetFactory.createRange(6, Dataset.INT32).reshape(1, 6), new PyInteger(-1));
+		PythonUtils.setSlice(a, DatasetFactory.createRange(IntegerDataset.class, 6).reshape(1, 6), new PyInteger(-1));
 		assertEquals(0, a.getInt(1, 0));
 		assertEquals(5, a.getInt(1, 5));
 
 		PythonUtils.setSlice(a, 1, new PyInteger(-1));
-		PythonUtils.setSlice(a, DatasetFactory.createRange(6, Dataset.INT32).reshape(1, 1, 6), new PyInteger(-1));
+		PythonUtils.setSlice(a, DatasetFactory.createRange(IntegerDataset.class, 6).reshape(1, 1, 6), new PyInteger(-1));
 		assertEquals(0, a.getInt(1, 0));
 		assertEquals(5, a.getInt(1, 5));
 
 		try {
-			PythonUtils.setSlice(a, DatasetFactory.createRange(6, Dataset.INT32).reshape(6, 1), new PyInteger(-1));
+			PythonUtils.setSlice(a, DatasetFactory.createRange(IntegerDataset.class, 6).reshape(6, 1), new PyInteger(-1));
 			fail("Should have thrown an IAE");
 		} catch (IllegalArgumentException e) {
 		}
 
 		PythonUtils.setSlice(a, 1, new PyInteger(-1));
-		PythonUtils.setSlice(a, DatasetFactory.createRange(6, Dataset.INT32), new PyTuple(new PySlice(), new PySlice()));
+		PythonUtils.setSlice(a, DatasetFactory.createRange(IntegerDataset.class, 6), new PyTuple(new PySlice(), new PySlice()));
 		assertEquals(0, a.getInt(1, 0));
 		assertEquals(5, a.getInt(1, 5));
 

@@ -19,43 +19,30 @@ import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 // Let's find somewhere to save this file!
 public class RodObjectNexusBuilderModel extends AbstractOperationModel{
 
-	private ArrayList<ExampleModel> models;
-	private ArrayList<DataModel> dms;
-	private SuperModel sm;
+	private ArrayList<FrameModel> fms;
 	private String filepath;
 	private GeometricParametersModel gm;
+	private DirectoryModel drm;
 
+	
+	public RodObjectNexusBuilderModel(ArrayList<FrameModel> fms,
+								      String filepath,
+								      GeometricParametersModel gm,
+								      DirectoryModel drm){
+
+		this.fms =fms;
+		this.drm =drm;
+		this.gm =gm;
+		this.filepath =filepath;
+	
+	}
+	
 	public String getFilepath() {
 		return filepath;
 	}
 
 	public void setFilepath(String filepath) {
 		this.filepath = filepath;
-	}
-
-	// Now the getters and setters
-	public ArrayList<ExampleModel> getModels() {
-		return models;
-	}
-	
-	public void setModels(ArrayList<ExampleModel> m) {
-		models = m;
-	}
-	
-	public ArrayList<DataModel> getDms() {
-		return dms;
-	}
-
-	public void setDms(ArrayList<DataModel> dms) {
-		this.dms = dms;
-	}
-
-	public SuperModel getSm() {
-		return sm;
-	}
-
-	public void setSm(SuperModel sm) {
-		this.sm = sm;
 	}
 
 	public GeometricParametersModel getGm() {
@@ -66,5 +53,20 @@ public class RodObjectNexusBuilderModel extends AbstractOperationModel{
 		this.gm = gm;
 	}
 
+	public ArrayList<FrameModel> getFms() {
+		return fms;
+	}
+
+	public void setFms(ArrayList<FrameModel> fms) {
+		this.fms = fms;
+	}
+
+	public DirectoryModel getDrm() {
+		return drm;
+	}
+
+	public void setDrm(DirectoryModel drm) {
+		this.drm = drm;
+	}
 	
 }

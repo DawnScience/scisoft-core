@@ -148,7 +148,7 @@ public class XICCO2DTest {
 		Dataset ratio = Maths.divide(abscor, referenceData);
 		double meanRatio = (double) Maths.abs(ratio).mean();
 		double meanRationalDifference = meanRatio - 1;
-		double rationalDifferenceLimit = 11e-2;
+		double rationalDifferenceLimit = 13e-2;
 		
 		assertTrue("ABSCOR rational difference too large.", meanRationalDifference < rationalDifferenceLimit);
 

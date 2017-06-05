@@ -31,6 +31,7 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.metadata.IMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,7 +148,7 @@ public class ADSCImageLoader extends AbstractFileLoader {
 			output.addDataset(ADSC_IMAGE_NAME, data);
 			if (loadMetadata) {
 				data.setMetadata(getMetadata());
-				output.setMetadata(data.getMetadata());
+				output.setMetadata(data.getFirstMetadata(IMetadata.class));
 			}
 		} catch (Exception e) {
 			throw new ScanFileHolderException("There was a problem reading the ADSC image", e);

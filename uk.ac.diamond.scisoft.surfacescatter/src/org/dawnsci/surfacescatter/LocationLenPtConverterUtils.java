@@ -38,4 +38,16 @@ public class LocationLenPtConverterUtils {
 		
 	}
 	
+	public static int[][] locationToLenPtConverter(int[] location){
+		
+		double[] doubleLocation = new double[location.length]; 
+		
+		for(int i=0; i<location.length; i++){
+			doubleLocation[i] = (double) location[i];
+		}
+		
+		return locationToLenPtConverter(doubleLocation);
+		
+	}
+	
 }

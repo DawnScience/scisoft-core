@@ -16,7 +16,7 @@ import org.apache.commons.lang.SerializationUtils;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
-import org.junit.Assert;
+import org.eclipse.january.metadata.IMetadata;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -108,6 +108,6 @@ public class MARImageTest {
 	public void testSerializability() throws Exception {
 		DataHolder loader = new MARLoader(testfile2).loadFile();
 		Dataset data = loader.getDataset(0);
-		SerializationUtils.serialize(data.getMetadata());
+		SerializationUtils.serialize(data.getFirstMetadata(IMetadata.class));
 	}
 }

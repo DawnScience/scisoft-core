@@ -1,11 +1,8 @@
 package org.dawnsci.surfacescatter;
 
-import java.util.ArrayList;
-
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.Maths;
-
 import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 
@@ -65,14 +62,18 @@ public class PolynomialOverlap {
 		Dataset xValueDat = polyFitXValues.calculateValues(desiredlDat);
 		
 		
-		double yValue = yValueDat.getDouble(0);
-		double xValue = xValueDat.getDouble(0);
+		int yValue = (int) yValueDat.getDouble(0);
+		int xValue = (int) xValueDat.getDouble(0);
 		
-		double[] output = new double[] {yValue, xValue, 
-									    yValue, (xValue + len[1]), 
-										(yValue +len[0]), xValue, 
-										(yValue +len[0]), (xValue + len[1])}; 
+		int[] pt = new int[] {xValue, yValue};
 		
+		double[] output = LocationLenPtConverterUtils.lenPtToLocationConverter(new int[][] {len, pt});
+		
+//		double[] output = new double[] {yValue, xValue, 
+//									    yValue, (xValue + len[1]), 
+//										(yValue +len[0]), xValue, 
+//										(yValue +len[0]), (xValue + len[1])}; 
+//		
 		
 
 		

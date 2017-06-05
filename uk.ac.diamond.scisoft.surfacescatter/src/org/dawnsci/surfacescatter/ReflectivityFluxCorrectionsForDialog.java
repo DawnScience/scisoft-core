@@ -94,14 +94,22 @@ public class ReflectivityFluxCorrectionsForDialog{
 		
 		Dataset[] fluxData = RecoverNormalisationFluxBatchForDialog.normalisationFlux(path, filepath);
 
-		System.out.println("m shape:  " + m.getShape()[0]);
+//		System.out.println("m shape:  " + m.getShape()[0]);
 		
 		Dataset flux =  (Dataset) Interpolation1D.splineInterpolation(fluxData[0], fluxData[1], m);;
 
+		float fluxLong = (float)flux.getDouble(0);
 		
-		double output = Math.floorDiv((long)1,(long)flux.getDouble(0));
 		
-		return output;
+		if(fluxLong == 0){
+			System.out.println("££££££££££  fluxLong is zero  £$£$£$£");
+		}
+		
+		float  output = 1/fluxLong;
+		
+		
+		
+		return (double) output;
 		}
 	
 }

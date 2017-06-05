@@ -32,7 +32,10 @@ import org.eclipse.january.dataset.SliceND;
 /**
  * Register images using a cross correlation method that has sub-pixel accuracy
  * <p>
- * This is suitable for noisy images
+ * This is suitable for noisy images and based on MotionCorr's whole frame registration algorithm
+ * as detailed in XM Li, P Mooney, S Zheng, C Booth, MB Braunfeld, S Gubbens, DA Agard and YF Cheng,
+ * "Electron counting and beam-induced motion correction enable near atomic resolution single particle
+ * cryoEM", Nature Methods 10(6), 584-90 (2013); doi:10.1038/nmeth.2472
  */
 public class RegisterImage2 implements DatasetToDatasetFunction {
 
@@ -222,8 +225,8 @@ public class RegisterImage2 implements DatasetToDatasetFunction {
 			Dataset cf = Maths.conjugate(filtered.get(datasets[i]));
 			shift = ccFindShift(cf, datasets[i+1]);
 			if (monitor != null) {
-				if(monitor.isCancelled()) {
-					return result;
+				if (monitor.isCancelled()) {
+					return null;
 				}
 				monitor.worked(1);
 			}
@@ -242,8 +245,8 @@ public class RegisterImage2 implements DatasetToDatasetFunction {
 
 				shift = ccFindShift(cf, datasets[j]);
 				if (monitor != null) {
-					if(monitor.isCancelled()) {
-						return result;
+					if (monitor.isCancelled()) {
+						return null;
 					}
 					monitor.worked(1);
 				}
@@ -284,8 +287,8 @@ public class RegisterImage2 implements DatasetToDatasetFunction {
 				break;
 			}
 			if (monitor != null) {
-				if(monitor.isCancelled()) {
-					return result;
+				if (monitor.isCancelled()) {
+					return null;
 				}
 				monitor.worked(1);
 			}
@@ -311,8 +314,8 @@ public class RegisterImage2 implements DatasetToDatasetFunction {
 			shiftedImage = shiftImage ? shiftImage(DatasetUtils.convertToDataset(datasets[i]), shift) : null;
 			result.add(shiftedImage);
 			if (shiftImage && monitor != null) {
-				if(monitor.isCancelled()) {
-					return result;
+				if (monitor.isCancelled()) {
+					return null;
 				}
 				monitor.worked(1);
 			}

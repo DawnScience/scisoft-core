@@ -82,12 +82,94 @@ public class RecoverNormalisationFluxBatchForDialog {
 
 	}
 	
+//	public static Dataset[] normalisationFlux(String path, String filepath){
+//	
+//		ExampleModel model = new ExampleModel();
+//		model.setFilepath(filepath);
+//		
+//		return normalisationFlux(path, model);
+//
+//	}
+	
+	
 	public static Dataset[] normalisationFlux(String path, String filepath){
 	
-		ExampleModel model = new ExampleModel();
-		model.setFilepath(filepath);
 		
-		return normalisationFlux(path, model);
+		ILazyDataset flux = null;
+		ILazyDataset theta = null;
+		Dataset[] fluxData = new Dataset[2];
+		
+	
+		try{ 
+			IDataHolder dh1 =LoaderFactory.getData(path);
+			
+			flux =dh1.getLazyDataset(ReflectivityMetadataTitlesForDialog.getadc2()); 
+//				model.setFlux(flux);
+				
+			if(flux ==null) {
+				
+				try {
+					flux =dh1.getLazyDataset("ionc1"); 
+				}
+				catch(Exception o){
+				}
+					
+			}
+			
+			if(flux == null){
+				IDataHolder dh2 =LoaderFactory.getData(filepath);
+				
+				flux =dh2.getLazyDataset(ReflectivityMetadataTitlesForDialog.getadc2()); 
+//					model.setFlux(flux);
+					
+				if(flux ==null) {
+					
+					try {
+						flux =dh2.getLazyDataset("ionc1"); 
+					}
+					catch(Exception o){
+					}
+						
+				}
+				
+			}
+			
+			
+			theta =dh1.getLazyDataset(ReflectivityMetadataTitlesForDialog.getqdcd_()); 
+//				model.setTheta(theta);
+				
+				
+			if(theta == null){
+				try { 
+					theta =dh1.getLazyDataset("qsdcd"); 
+				}
+				catch(Exception g){
+						
+				}
+			
+			}
+		}
+				
+		catch (Exception f){
+				System.out.println("No normalisation data available internally");
+					
+		}
+		
+		
+
+		SliceND sliceF = new SliceND(flux.getShape());
+		SliceND sliceT = new SliceND(theta.getShape());
+
+		
+		try {
+			fluxData[0] = (Dataset) theta.getSlice(sliceT);
+			fluxData[1]= (Dataset) flux.getSlice(sliceF);;
+		} catch (DatasetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return fluxData;
 
 	}
 	

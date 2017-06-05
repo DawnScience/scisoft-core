@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.metadata.IMetadata;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -51,6 +52,6 @@ public class CrysalisLoaderTest {
 	public void testSerializability() throws Exception {
 		DataHolder loader = new CrysalisLoader(TestFileFolder + "ccd_direct_0deg_1000ms_1.img_1_uncomp.img").loadFile();
 		Dataset data = loader.getDataset(0);
-		SerializationUtils.serialize(data.getMetadata());
+		SerializationUtils.serialize(data.getFirstMetadata(IMetadata.class));
 	}
 }

@@ -119,6 +119,8 @@ public class ClosestNoFinder {
 	}
 	
 	
+	
+	
 	public static int closestNoWithoutDone (double myNum, 
 												Dataset numbers,
 												String[] doneArray,

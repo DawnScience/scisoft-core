@@ -65,6 +65,12 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 	// caching angular factors
 	Map<XPDFCoordinates, Dataset> cachedDeTran, cachedPolar;
 	
+	// caching (per run) unchanging corrections.
+	// For sample data: solid angle correction
+	// For container data: solid angle & transmission
+	Dataset solAngSample;
+	List<Dataset> transCorContainers;
+	
 	/**
 	 * Empty constructor.
 	 */

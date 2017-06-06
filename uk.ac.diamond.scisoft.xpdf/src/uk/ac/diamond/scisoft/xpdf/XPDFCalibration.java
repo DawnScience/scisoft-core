@@ -80,6 +80,8 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 		doFluorescence = true;
 		cachedDeTran = new HashMap<XPDFCoordinates, Dataset>();
 		cachedPolar = new HashMap<XPDFCoordinates, Dataset>();
+		solAngSample = null;
+		transCorContainers = new ArrayList<Dataset>();
 	}
 	
 	/**
@@ -388,6 +390,7 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 	 * @return the calibrated XPDF data
 	 */
 	public Dataset calibrate(int nIterations, int nThreads, IOperation<?, ?> op) {
+//		calculateInitialCorrections();
 		if (doFluorescence && doFluorescenceCalibration)
 			calibrateFluorescence(nIterations, nThreads, op);
 		Dataset absCor = iterateCalibrate(nIterations, true, op);
@@ -399,7 +402,7 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 	/**
 	 * Performs the calibration iterations.
 	 * <p>
-	 * Perfoms the part of the calibration following the fluorescence scale determination. 
+	 * Performs the part of the calibration following the fluorescence scale determination. 
 //	 * @param nIterations
 	 * 					the number of iterations to make to calculate the
 	 * 					multiplicative calibration constant.
@@ -408,12 +411,91 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 	 * @return the calibrated XPDF data
 	 */
 	private Dataset iterateCalibrate(int nIterations, boolean propagateErrors, IOperation<?, ?> op) {
+
+		List<Dataset> deTran;
+//		if (solAngSample == null || transCorContainers == null || !transCorContainers.isEmpty())
+			deTran = doInitialCorrections(propagateErrors);
+
+		Dataset absCor = null;
+		// Initialize the list of calibration constants with the predefined initial value.
+		calibrationConstants = new LinkedList<Double>(Arrays.asList(new Double[] {calibrationConstant0}));
+		// Iterate until a hardcoded precision is achieved or the maximum number of iterations is reached
+		final double calibrationPrecision = 1e-6;
+		int count = 0;
+		double calConRatio;
+		do{
+			absCor = this.iterate(deTran, propagateErrors);
+			count++;
+			calConRatio = calibrationConstants.getLast()/calibrationConstants.get(calibrationConstants.size()-2); 
+		} while (Math.abs(calConRatio - 1) > calibrationPrecision && count < nIterations);
+//		for (int i = 0; i < nIterations; i++)
+//			absCor = this.iterate(fluorescenceCorrected, propagateErrors);
+		return absCor;
+	}
+	
+	/**
+	 * Calculates the corrections that do not change through the iterations of this calibration
+	 */
+	private void calculateInitialCorrections() {
+		// Precalculate the transmission correction
+		Dataset transmissionCorrection;
+		if (!cachedDeTran.containsKey(coords)) {
+			transmissionCorrection = tect.getTransmissionCorrection(coords.getTwoTheta(), beamData.getBeamEnergy());
+			cachedDeTran.put(coords, transmissionCorrection);
+		} else {
+			transmissionCorrection = cachedDeTran.get(coords);
+		}
+		
+		Dataset oneOverCosTwoThetaCubed = DatasetFactory.createFromObject(IntStream.range(0, coords.getCosTwoTheta().getSize()).parallel().mapToDouble(
+						i -> 1/(coords.getCosTwoTheta().getElementDoubleAbs(i)*
+						coords.getCosTwoTheta().getElementDoubleAbs(i)*
+						coords.getCosTwoTheta().getElementDoubleAbs(i))
+						).toArray(), coords.getCosTwoTheta().getShape());
+		
+		
+		// Solid Angle Correction
+		// sample, index = 0
+		solAngSample = copyingSolidAngle(backgroundSubtracted.get(0), oneOverCosTwoThetaCubed);
+		// containers, index > 0
+		for (int iCont = 1; iCont < backgroundSubtracted.size(); iCont++) {
+			transCorContainers.add(copyingTransmissionCorrection(copyingSolidAngle(backgroundSubtracted.get(iCont), oneOverCosTwoThetaCubed), transmissionCorrection));
+		}
+	}
+	
+	private Dataset copyingSolidAngle(Dataset targetComponent, Dataset oneOverCosTwoThetaCubed) {
+		// result = data /(cos 2θ)^3
+		return Maths.multiply(targetComponent, oneOverCosTwoThetaCubed);
+	}
+	
+	private Dataset copyingTransmissionCorrection(Dataset solAng, Dataset transmissionCorrection) {
+
+		return DatasetFactory.createFromObject(IntStream.range(0, solAng.getSize()).parallel().mapToDouble(i-> solAng.getElementDoubleAbs(i) * transmissionCorrection.getElementDoubleAbs(i)).toArray(), solAng.getShape()); 
+
+	}
+	
+	private void invalidateInitialCorrections() {
+		solAngSample = null;
+		transCorContainers.clear();
+	}
+	
+	/**
+	 * If the initial corrections have not been performed, then do them.
+	 * @return list of transmission corrected Datasets
+	 */
+	private List<Dataset> doInitialCorrections(boolean propagateErrors) {
 		List<Dataset> solAng = new ArrayList<Dataset>();
 		for (Dataset targetComponent : backgroundSubtracted) {
 			Dataset cosTwoTheta = coords.getCosTwoTheta();
 			// result = data /(cos 2θ)^3
-			Dataset solAngData = Maths.divide(Maths.divide(targetComponent, cosTwoTheta), Maths.square(cosTwoTheta));
+			Dataset oneOverCosTwoThetaCubed = DatasetFactory.createFromObject(IntStream.range(0, cosTwoTheta.getSize()).parallel().mapToDouble(
+							i -> 1/(cosTwoTheta.getElementDoubleAbs(i)*
+							cosTwoTheta.getElementDoubleAbs(i)*
+							cosTwoTheta.getElementDoubleAbs(i))
+							).toArray(), cosTwoTheta.getShape());
+
+			//			Dataset solAngData = Maths.divide(Maths.divide(targetComponent, cosTwoTheta), Maths.square(cosTwoTheta));
 //			Dataset solAngData = Maths.multiply(1.0, targetComponent);
+			Dataset solAngData = copyingSolidAngle(targetComponent, oneOverCosTwoThetaCubed);
 			if (propagateErrors && targetComponent.getErrors() != null)
 				solAngData.setErrors(targetComponent.getErrors());
 			solAng.add(solAngData);
@@ -463,30 +545,17 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 		List<Dataset> deTran = new ArrayList<Dataset>();
 		for (Dataset componentTrace : fluorescenceCorrected) {
 //			Dataset deTranData = Maths.multiply(componentTrace, transmissionCorrection);
-			Dataset deTranData = DatasetFactory.createFromObject(IntStream.range(0, componentTrace.getSize()).parallel().mapToDouble(i-> componentTrace.getElementDoubleAbs(i) * transmissionCorrection.getElementDoubleAbs(i)).toArray(), componentTrace.getShape()); 
+//			Dataset deTranData = DatasetFactory.createFromObject(IntStream.range(0, componentTrace.getSize()).parallel().mapToDouble(i-> componentTrace.getElementDoubleAbs(i) * transmissionCorrection.getElementDoubleAbs(i)).toArray(), componentTrace.getShape()); 
+			Dataset deTranData = copyingTransmissionCorrection(componentTrace, transmissionCorrection);
 			
 			// Error propagation
 			if (propagateErrors && componentTrace.getErrors() != null)
 				deTranData.setErrors(Maths.multiply(componentTrace.getErrors(), transmissionCorrection));
 			deTran.add(deTranData);
 		}
-
-		Dataset absCor = null;
-		// Initialize the list of calibration constants with the predefined initial value.
-		calibrationConstants = new LinkedList<Double>(Arrays.asList(new Double[] {calibrationConstant0}));
-		// Iterate until a hardcoded precision is achieved or the maximum number of iterations is reached
-		final double calibrationPrecision = 1e-6;
-		int count = 0;
-		double calConRatio;
-		do{
-			absCor = this.iterate(deTran, propagateErrors);
-			count++;
-			calConRatio = calibrationConstants.getLast()/calibrationConstants.get(calibrationConstants.size()-2); 
-		} while (Math.abs(calConRatio - 1) > calibrationPrecision && count < nIterations);
-//		for (int i = 0; i < nIterations; i++)
-//			absCor = this.iterate(fluorescenceCorrected, propagateErrors);
-		return absCor;
+		return deTran;
 	}
+	
 	
 	/**
 	 * Calibrates the fluorescence.

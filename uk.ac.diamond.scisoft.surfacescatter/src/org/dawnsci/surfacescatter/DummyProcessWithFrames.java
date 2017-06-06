@@ -44,9 +44,7 @@ public class DummyProcessWithFrames {
 			locationOverride = fm.getRoiLocation();
 		}
 		
-		
 		IDataset output =null;	
-		
 		
 		IDataset input = DatasetFactory.createFromObject(0);
 		try {
@@ -112,8 +110,6 @@ public class DummyProcessWithFrames {
 				
 			case TWOD:
 				
-				
-				
 				int[] len = drm.getInitialLenPt()[0];
 				int[] pt = drm.getInitialLenPt()[1];
 				
@@ -131,8 +127,6 @@ public class DummyProcessWithFrames {
 					(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
-				
-
 				if(AnalaysisMethodologies.toInt(fm.getFitPower())<5){
 					
 					double[] p = new double[6];
@@ -229,10 +223,6 @@ public class DummyProcessWithFrames {
   						 						 trackingMarker,
   						 						 k);
 	
-				
-				
-				
-				
 				break;
 				
 			case OVERLAPPING_BACKGROUND_BOX:
@@ -289,7 +279,6 @@ public class DummyProcessWithFrames {
 				
 				
 				OperationData outputOD2= OneDFittingIOp(LocationLenPtConverterUtils.locationToLenPtConverter(locationOverride),
-//						   								drm.getInitialLenPt(),
 						   								fm.getFitPower(),
 						   								fm.getRoiLocation(),
 						   								input,
@@ -326,7 +315,6 @@ public class DummyProcessWithFrames {
 				}
 				
 				OperationData outputOD3= OneDFittingIOp(LocationLenPtConverterUtils.locationToLenPtConverter(locationOverride),							
-//														drm.getInitialLenPt(),
 														fm.getFitPower(),
 														fm.getRoiLocation(),
 														input,
@@ -413,8 +401,6 @@ public class DummyProcessWithFrames {
 			e.printStackTrace();
 		}
 		
-		
-		
 		switch(fm.getBackgroundMethdology()){
 			case TWOD_TRACKING:
 								
@@ -464,11 +450,6 @@ public class DummyProcessWithFrames {
    							k,
    							trackingMarker);
 				}
-				
-			
-				
-				
-				
 				
 				output = outputOD.getData();
 				
@@ -565,8 +546,6 @@ public class DummyProcessWithFrames {
 						   						 trackingMarker,
 						   						 k);
 
-
-				
 				break;
 				
 			case OVERLAPPING_BACKGROUND_BOX:
@@ -596,7 +575,6 @@ public class DummyProcessWithFrames {
 						   						 selection,
 						   						 trackingMarker,
 						   						 k);
-				
 				
 				break;
 		
@@ -649,7 +627,6 @@ public class DummyProcessWithFrames {
 									  k, 
 									  selection);
 			
-					
 				}
 
 				else{
@@ -679,7 +656,6 @@ public class DummyProcessWithFrames {
 				break;
 		}
 	
-		
 		yValue = correctionMethod(fm, 
 				  output);
 
@@ -721,8 +697,6 @@ public class DummyProcessWithFrames {
 		return output;
 	}
 	
-	
-	
 	public static IDataset DummyProcess1(DirectoryModel drm, 
 										GeometricParametersModel gm, 
 										int correctionSelector, 
@@ -740,7 +714,6 @@ public class DummyProcessWithFrames {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		
 		switch(fm.getBackgroundMethdology()){
 			case TWOD_TRACKING:
@@ -792,10 +765,6 @@ public class DummyProcessWithFrames {
    							trackingMarker);
 				}
 				
-				
-				
-				
-				
 				output = outputOD.getData();
 				
 				IDataset temporaryBackground = (IDataset) outputOD.getAuxData()[0];
@@ -828,9 +797,6 @@ public class DummyProcessWithFrames {
 							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
-				
-				
-				
 				if(AnalaysisMethodologies.toInt(fm.getFitPower())<5){
 					  outputOD= TwoDFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
 							   fm.getFitPower(),
@@ -858,10 +824,6 @@ public class DummyProcessWithFrames {
    							k,
    							trackingMarker);
 				}
-				
-				
-				
-				
 				
 				output = outputOD.getData();
 				
@@ -948,8 +910,6 @@ public class DummyProcessWithFrames {
 										  trackingMarker, 
 										  k, 
 										  selection);
-					
-					
 				}
 
 				else{
@@ -980,8 +940,6 @@ public class DummyProcessWithFrames {
 											
 			case Y:
 				
-				
-
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					
 					AgnosticTrackerWithFrames ath1 = new AgnosticTrackerWithFrames();
@@ -1089,8 +1047,6 @@ public class DummyProcessWithFrames {
 			e.printStackTrace();
 		}
 		
-		
-		
 		switch(fm.getBackgroundMethdology()){
 			case TWOD_TRACKING:
 								
@@ -1153,9 +1109,6 @@ public class DummyProcessWithFrames {
 							k,
 							locationList,
 							selection);
-					
-
-
 				}
 
 				else{
@@ -1267,8 +1220,6 @@ public class DummyProcessWithFrames {
 				break;
 				
 			case X:
-				
-				
 				
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerWithFrames ath1 = new AgnosticTrackerWithFrames();
@@ -1399,14 +1350,9 @@ public class DummyProcessWithFrames {
 											   int trackingMarker){
 
 		TwoDFittingModel tdfm = new TwoDFittingModel();
-//		tdfm.setInitialLenPt(initialLenPt);
-//		
+	
 		input.squeeze();
-//		
-//		try{
-//			
-//			if (trackingMarker != 3){
-//	
+
 				int[] pt = new int[]{(int) p[0], (int) p[1]}; 
 				int[] len = initialLenPt[0]; 
 				int[][] lenPt = new int[][] {len,pt};
@@ -1418,17 +1364,6 @@ public class DummyProcessWithFrames {
 				else{
 					tdfm.setLenPt(initialLenPt);
 				}	
-//			}
-//			else{
-//				tdfm.setLenPt(initialLenPt);
-//			}
-//		}
-		
-		
-//		catch(Exception o){
-//			System.out.println(o.getMessage());
-//			tdfm.setLenPt(initialLenPt);
-//		}
 		
 		tdfm.setFitPower(fp);
 		tdfm.setBoundaryBox(boundaryBox);
@@ -1633,10 +1568,7 @@ public class DummyProcessWithFrames {
 	
 	}
 		
-
 	
-	
-		
 	public static OperationData SecondConstantBackgroundROIFittingIOp(IDataset input,
 																	  double[] p, //  = sm.getLocationList().get(k);
 																	  int[][] initialLenPt, // sm.getInitialLenPt()
@@ -1700,8 +1632,6 @@ public class DummyProcessWithFrames {
 		return scrbio.execute(input, null);
 		
 	}
-	
-
 	
 	public static IDataset secondConstantROIMethod(IDataset input,
 												   DirectoryModel drm,
@@ -1775,8 +1705,6 @@ public class DummyProcessWithFrames {
 		
 		return output;
 	}
-	
-
 	
 	public static OperationData OverlappingBackgroundROIFittingIOp(IDataset input,
 																   double[] p, //  = sm.getLocationList().get(k);
@@ -1894,13 +1822,11 @@ public class DummyProcessWithFrames {
 		
 		try {
 
-			
 			double refAreaCorrection = fm.getReflectivityAreaCorrection(); 
 			
 			double refFluxCorrection = fm.getReflectivityFluxCorrection(); 
 			
 			correction = refAreaCorrection* refFluxCorrection; 
-			
 			
 			if (correction ==0){
 				correction = 0.001;
@@ -1918,7 +1844,6 @@ public class DummyProcessWithFrames {
 		
 		try {
 		
-
 			double refAreaCorrection = fm.getReflectivityAreaCorrection(); 
 			
 			
@@ -1953,7 +1878,6 @@ public class DummyProcessWithFrames {
 		
 	}
 
-	
 	private static void debug(String output) {
 		if (DEBUG == 1) {
 			System.out.println(output);

@@ -396,12 +396,23 @@ public class DirectoryModel {
 
 
 	public void setInitialLenPt(int[][] initialLenPt) {		
+		
+//		if(this.initialLenPt != initialLenPt){
+//			firePropertyChange("initialLenPt", this.initialLenPt,
+//					this.initialLenPt= initialLenPt);
+//		}
+			
 		this.initialLenPt = initialLenPt;
 	}
 
 	
 	public void setInitialLenPt(int sliderPos,
 								int[][] initialLenPt) {		
+		
+//		if(this.initialLenPt != initialLenPt){
+//			firePropertyChange("initialLenPt", this.initialLenPt,
+//					this.initialLenPt= initialLenPt);
+//		}
 		
 		double[] roiLocation = LocationLenPtConverterUtils.lenPtToLocationConverter(initialLenPt);
 		

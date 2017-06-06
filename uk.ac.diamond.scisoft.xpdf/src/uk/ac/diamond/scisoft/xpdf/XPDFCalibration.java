@@ -109,6 +109,8 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 		this.doFluorescence = inCal.doFluorescence;
 		this.cachedDeTran = new HashMap<XPDFCoordinates, Dataset>();
 		this.cachedPolar = new HashMap<XPDFCoordinates, Dataset>();
+		solAngSample = null;
+		transCorContainers = new ArrayList<Dataset>();
 
 	}
 
@@ -124,6 +126,8 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 		backgroundSubtracted = new ArrayList<Dataset>();
 		cachedDeTran = new HashMap<XPDFCoordinates, Dataset>();
 		cachedPolar = new HashMap<XPDFCoordinates, Dataset>();
+		solAngSample = null;
+		transCorContainers = new ArrayList<Dataset>();
 	}
 	
 	public XPDFCalibration getShallowCopy() {
@@ -148,6 +152,8 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 		// in this shallow copy, the caches can even be shared
 		theCopy.cachedDeTran = this.cachedDeTran;
 		theCopy.cachedPolar = this.cachedPolar;
+		theCopy.solAngSample = this.solAngSample;
+		theCopy.transCorContainers = this.transCorContainers;
 		theCopy.cachePI = (this.cachePI != null) ? this.cachePI : null;
 		
 		return theCopy;
@@ -390,12 +396,13 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 	 * @return the calibrated XPDF data
 	 */
 	public Dataset calibrate(int nIterations, int nThreads, IOperation<?, ?> op) {
-//		calculateInitialCorrections();
+		calculateInitialCorrections();
 		if (doFluorescence && doFluorescenceCalibration)
 			calibrateFluorescence(nIterations, nThreads, op);
 		Dataset absCor = iterateCalibrate(nIterations, true, op);
 		logger.debug("Fluorescence scale = " + fluorescenceScale);
 		logger.debug("Calibration constant = " + calibrationConstants.getLast());
+		invalidateInitialCorrections();
 		return absCor;
 	}
 	
@@ -413,9 +420,15 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 	private Dataset iterateCalibrate(int nIterations, boolean propagateErrors, IOperation<?, ?> op) {
 
 		List<Dataset> deTran;
-//		if (solAngSample == null || transCorContainers == null || !transCorContainers.isEmpty())
+		if (solAngSample == null || transCorContainers == null || transCorContainers.isEmpty()) {
+			logger.debug("Calculating initial corrections");
 			deTran = doInitialCorrections(propagateErrors);
+		} else {
+			logger.debug("Utilising pre-calculated initial corrections");
+			deTran = utilizePrecalculatedCorrections(propagateErrors);
+		}
 
+		
 		Dataset absCor = null;
 		// Initialize the list of calibration constants with the predefined initial value.
 		calibrationConstants = new LinkedList<Double>(Arrays.asList(new Double[] {calibrationConstant0}));
@@ -437,7 +450,8 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 	 * Calculates the corrections that do not change through the iterations of this calibration
 	 */
 	private void calculateInitialCorrections() {
-		// Precalculate the transmission correction
+		logger.debug("Pre-calculating initial corrections");
+		// Pre-calculate the transmission correction
 		Dataset transmissionCorrection;
 		if (!cachedDeTran.containsKey(coords)) {
 			transmissionCorrection = tect.getTransmissionCorrection(coords.getTwoTheta(), beamData.getBeamEnergy());
@@ -472,6 +486,42 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 		return DatasetFactory.createFromObject(IntStream.range(0, solAng.getSize()).parallel().mapToDouble(i-> solAng.getElementDoubleAbs(i) * transmissionCorrection.getElementDoubleAbs(i)).toArray(), solAng.getShape()); 
 
 	}
+
+	private void inPlaceTransmissionCorrection(Dataset targetComponent, Dataset transmissionCorrection) {
+		targetComponent.imultiply(transmissionCorrection);
+	}
+	
+	private List<Dataset> utilizePrecalculatedCorrections(boolean propagateErrors) {
+		// Sample data: apply the fluorescence scaling (if required), and then the transmission correction
+		Dataset transCorSample;
+		if (doFluorescence) {
+			transCorSample= Maths.multiply(-fluorescenceScale, sampleFluorescence.squeeze());
+			transCorSample.iadd(solAngSample);
+		} else {
+			transCorSample = solAngSample;
+		}
+		// sample transmission correction
+		// Detector transmission correction
+		Dataset transmissionCorrection;
+		if (!cachedDeTran.containsKey(coords)) {
+			transmissionCorrection = tect.getTransmissionCorrection(coords.getTwoTheta(), beamData.getBeamEnergy());
+			cachedDeTran.put(coords, transmissionCorrection);
+		} else {
+			transmissionCorrection = cachedDeTran.get(coords);
+		}
+		
+		inPlaceTransmissionCorrection(transCorSample, transmissionCorrection);
+		
+		List<Dataset> deTran = new ArrayList<Dataset>();
+		deTran.add(transCorSample);
+		
+		// Container transmission correction
+		for (Dataset deTranSample: transCorContainers)
+			deTran.add(deTranSample);
+		
+		return deTran;
+		
+	}
 	
 	private void invalidateInitialCorrections() {
 		solAngSample = null;
@@ -493,8 +543,6 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 							cosTwoTheta.getElementDoubleAbs(i))
 							).toArray(), cosTwoTheta.getShape());
 
-			//			Dataset solAngData = Maths.divide(Maths.divide(targetComponent, cosTwoTheta), Maths.square(cosTwoTheta));
-//			Dataset solAngData = Maths.multiply(1.0, targetComponent);
 			Dataset solAngData = copyingSolidAngle(targetComponent, oneOverCosTwoThetaCubed);
 			if (propagateErrors && targetComponent.getErrors() != null)
 				solAngData.setErrors(targetComponent.getErrors());
@@ -508,8 +556,7 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 		Dataset targetComponent = solAng.get(0);
 
 		if (doFluorescence) {
-//			Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.reshape(targetComponent.getSize())));
-//			Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.squeeze()));
+			// corrected = data - scale*fluorescence
 			// Try to save a Dataset by first calculating the fluorescence subtrahend
 			Dataset fluorescenceCorrectedData = Maths.multiply(-fluorescenceScale, sampleFluorescence.squeeze());
 			fluorescenceCorrectedData.iadd(targetComponent);
@@ -544,8 +591,6 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 		
 		List<Dataset> deTran = new ArrayList<Dataset>();
 		for (Dataset componentTrace : fluorescenceCorrected) {
-//			Dataset deTranData = Maths.multiply(componentTrace, transmissionCorrection);
-//			Dataset deTranData = DatasetFactory.createFromObject(IntStream.range(0, componentTrace.getSize()).parallel().mapToDouble(i-> componentTrace.getElementDoubleAbs(i) * transmissionCorrection.getElementDoubleAbs(i)).toArray(), componentTrace.getShape()); 
 			Dataset deTranData = copyingTransmissionCorrection(componentTrace, transmissionCorrection);
 			
 			// Error propagation

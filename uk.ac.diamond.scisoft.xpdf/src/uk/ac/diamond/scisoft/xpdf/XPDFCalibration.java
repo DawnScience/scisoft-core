@@ -421,7 +421,11 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 
 		if (doFluorescence) {
 //			Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.reshape(targetComponent.getSize())));
-					Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.squeeze()));
+//			Dataset fluorescenceCorrectedData = Maths.subtract(targetComponent, Maths.multiply(fluorescenceScale, sampleFluorescence.squeeze()));
+			// Try to save a Dataset by first calculating the fluorescence subtrahend
+			Dataset fluorescenceCorrectedData = Maths.multiply(-fluorescenceScale, sampleFluorescence.squeeze());
+			fluorescenceCorrectedData.iadd(targetComponent);
+			
 			if (propagateErrors && targetComponent.getErrors() != null)
 				if (sampleFluorescence.getErrors() != null)
 					fluorescenceCorrectedData.setErrors(
@@ -713,8 +717,9 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 		// self-scattering of the sample at the same abscissa values 
 		if (absCor.getShape().length == 1) {
 			// One dimensional version
-			Dataset covolver = Maths.divide(DatasetFactory.ones(DoubleDataset.class, smoothLength), smoothLength);
-			smoothed = Signal.convolveForOverlap(absCor, covolver, new int[] {0});
+//			Dataset covolver = Maths.divide(DatasetFactory.ones(DoubleDataset.class, smoothLength), smoothLength);
+			Dataset convolver = DatasetFactory.ones(DoubleDataset.class, smoothLength).idivide(smoothLength);
+			smoothed = Signal.convolveForOverlap(absCor, convolver, new int[] {0});
 			truncatedSelfScattering = sampleSelfScattering.getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
 			truncatedQ = coords.getQ().getSlice(new int[] {smoothLength/2}, new int[] {smoothed.getSize()+smoothLength/2}, new int[] {1});
 		} else {
@@ -726,8 +731,12 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 			
 			//truncatedSelfScattering = InterpolatorUtils.remap1D(sampleSelfScattering, coords.getQ(), truncatedQ);
 		}
-		Dataset difference = Maths.subtract(smoothed, truncatedSelfScattering);
-		return (double) Maths.multiply(difference, truncatedQ).sum();
+//		Dataset difference = Maths.subtract(smoothed, truncatedSelfScattering);
+//		return (double) Maths.multiply(difference, truncatedQ).sum();
+
+		smoothed.isubtract(truncatedSelfScattering);
+		smoothed.imultiply(truncatedQ);
+		return (double) smoothed.sum();
 		
 	}
 	

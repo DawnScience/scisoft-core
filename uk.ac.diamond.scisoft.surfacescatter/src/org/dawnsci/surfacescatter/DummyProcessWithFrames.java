@@ -151,13 +151,25 @@ public class DummyProcessWithFrames {
 						p = LocationLenPtConverterUtils.lenPtToLocationConverter(lenPt);
 					}
 					
+					int[][] hi   = new int[2][];
+					
+					if(fm.getRoiLocation() != null){
+						hi = LocationLenPtConverterUtils.locationToLenPtConverter(fm.getRoiLocation());
+						
+					}
+					
+					else{
+						hi = drm.getInitialLenPt();
+					}
+					
 					outputOD= TwoDFittingIOp(p,
 										     fm.getFitPower(),
 										     fm.getBoundaryBox(),
-										     LocationLenPtConverterUtils.locationToLenPtConverter(fm.getRoiLocation()),
+										     hi,
 										     input,
 										     k,
 										     trackingMarker);
+					
 				}
 				
 				else if (fm.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_GAUSSIAN){
@@ -1061,6 +1073,10 @@ public class DummyProcessWithFrames {
 										int selection,
 										double[]locationList){		
 		
+		if(locationList == null){
+			System.out.println("Warning!!!!!!");
+		}
+		
 		////////////////////////////////NB selection is position in the sorted list of the whole rod k is position in the .dat file
 		IDataset output =null;	
 		
@@ -1115,10 +1131,6 @@ public class DummyProcessWithFrames {
    							k,
    							trackingMarker);
 				}
-				
-				
-				
-				
 				
 				output = outputOD.getData();
 				
@@ -1183,10 +1195,6 @@ public class DummyProcessWithFrames {
    							k,
    							trackingMarker);
 				}
-				
-				
-				
-				
 				
 				output = outputOD.getData();
 				
@@ -1305,7 +1313,6 @@ public class DummyProcessWithFrames {
 											
 			case Y:
 				
-			
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					AgnosticTrackerWithFrames ath2 = new AgnosticTrackerWithFrames();
 					
@@ -1353,9 +1360,7 @@ public class DummyProcessWithFrames {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
 		
-				
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double rawIntensity = (Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum();
 		

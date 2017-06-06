@@ -65,7 +65,7 @@ public class PolynomialOverlap {
 		int yValue = (int) yValueDat.getDouble(0);
 		int xValue = (int) xValueDat.getDouble(0);
 		
-		int[] pt = new int[] {xValue, yValue};
+		int[] pt = new int[] {yValue, xValue};
 		
 		double[] output = LocationLenPtConverterUtils.lenPtToLocationConverter(new int[][] {len, pt});
 		

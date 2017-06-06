@@ -68,7 +68,6 @@ public class DirectoryModel {
 		
 		interpolatorRegions.add(box);
 	}
-	
 
 	public ArrayList<IRegion> getInterpolatorRegions() {
 		return interpolatorRegions;
@@ -187,8 +186,6 @@ public class DirectoryModel {
 				this.trackerLocationList= trackerLocationList1);
 	}
 	
-	
-	
 	public ArrayList<Integer> getImageNoInDatList() {
 		return imageNoInDatList;
 	}
@@ -203,7 +200,7 @@ public class DirectoryModel {
 		dmxList = null;
 		ocdp = null;
 		csdp = null;
-		
+		inputForEachDat = null;
 		setOutputDatArray(null);
 	
 		trackerLocationList = null;
@@ -219,10 +216,7 @@ public class DirectoryModel {
 		catch(Exception h){
 			
 		}
-			
-			//		reflectivityAreaCorrection = null;
-//		reflectivityFluxCorrection = null;
-		
+	
 	}
 	
 	public PropertyChangeSupport getPropertyChangeSupport() {
@@ -296,41 +290,6 @@ public class DirectoryModel {
 		firePropertyChange("locationList", this.locationList,
 				this.locationList.set(n, locationList1));
 	}
-	
-
-//	public void addTrackerLocationList(int n, int l , int k, int[] in){
-//		double[] inDouble = new double[in.length]; 
-//		for (int i = 0; i<in.length; i++){
-//			inDouble[i] = (double)in[i];
-//		}
-//		addTrackerLocationList(n, l, k, inDouble);
-//		
-//	}
-//
-//	public void addTrackerLocationList(int n, int l, int k, double[] location){
-//		
-//		if (trackerLocationList==null || trackerLocationList.isEmpty()){
-//			
-//			trackerLocationList = new ArrayList<>();
-//			
-//			if(trackerLocationList.get(n) == null){ 
-//				trackerLocationList.set(n, new ArrayList<>());
-//			}
-//			
-//			for (int i = 0; i < l; i++) {		
-//				trackerLocationList.get(n).add(new double[]{0,0,0,0,0,0,0,0});
-//			}
-//		}
-//		
-//		ArrayList<double[]> locationList1 = new ArrayList<double[]>();
-//		locationList1 = (ArrayList<double[]>) trackerLocationList.get(n).clone();
-//		locationList1.set(k, location);
-////		locationList.set(n, locationList1);
-//		firePropertyChange("trackerLocationList", this.trackerLocationList,
-//				this.trackerLocationList.set(n, locationList1));
-//	}
-	
-	
 
 	public void addxList(double x){
 		if (xList==null){

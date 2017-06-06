@@ -509,6 +509,10 @@ public class AgnosticTrackerWithFrames {
 		len = drm.getInitialLenPt()[0];
 		pt = drm.getInitialLenPt()[1];
 		
+		if (seedLocation == null){
+			System.out.println("Warning!!!!");
+		}
+		
 		if (trackingMarker == 3){
 			isTheTrackingMarkerNot3 = false;
 		}
@@ -941,9 +945,8 @@ public class AgnosticTrackerWithFrames {
 		}
 		
 		
-		if(fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.INTERPOLATION && fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
-			
-			
+		if(fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.INTERPOLATION && 
+		   fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
 			
 			isTheTrackingMarkerNot3 = true;
 			
@@ -952,7 +955,6 @@ public class AgnosticTrackerWithFrames {
 				trackingMarker = 0;
 				isTheTrackingMarkerNot3 = false;
 			}
-			
 			
 			if (trackingMarker == 0) {
 				if (drm.getInputForEachDat()[fm.getDatNo()] == null) {
@@ -1146,7 +1148,6 @@ public class AgnosticTrackerWithFrames {
 					
 					len = drm.getInitialLenPt()[0];
 					pt = drm.getInitialLenPt()[1];
-								
 					
 					initialLocation = new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]),
 							(double) (pt[1]), (double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]),
@@ -1181,19 +1182,13 @@ public class AgnosticTrackerWithFrames {
 							tracker.initialize(drm.getInitialDatasetForEachDat()[fm.getDatNo()], location, TrackingMethodology.toTT(fm.getTrackingMethodology()));
 						} catch (Exception e) {
 							debug("Failed to initialise tracker in TwoDTracking3 ");
-						}
-						
+						}	
 					}
 					
-					
-					
-					try {
-						
+					try {	
 						//tracker.initialize(drm.getInputForEachDat()[frame.getDatNo()], initialLocation, TrackerType.TLD);
 						location = tracker.track(input);
 						
-						
-					
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -1203,7 +1198,6 @@ public class AgnosticTrackerWithFrames {
 						drm.addTrackerLocationList(fm.getImageNumber(),
 								   location);
 					}
-					
 		
 					drm.getInputForEachDat()[fm.getDatNo()] = (input);
 					if (isTheTrackingMarkerNot3){
@@ -1268,7 +1262,6 @@ public class AgnosticTrackerWithFrames {
 					debug(
 							"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@Failed to track");
 					}
-					
 				}
 			}
 			
@@ -1290,7 +1283,6 @@ public class AgnosticTrackerWithFrames {
 						drm.getNoOfImagesInDatFile(fm.getDatNo()), 
 						k, 
 						localLocation);
-//				dm.addLocationList(model.getDatImages().getShape()[0], k, localLocation);
 				
 				int a = fm.getDatNo();
 				int b = drm.getNoOfImagesInDatFile(a);
@@ -1302,7 +1294,6 @@ public class AgnosticTrackerWithFrames {
 				
 				fm.setRoiLocation(localLocation);
 				
-			
 				int[][] localLenPt = LocationLenPtConverterUtils.locationToLenPtConverter(localLocation);
 				
 				drm.getLenPtForEachDat()[fm.getDatNo()] = localLenPt;
@@ -1348,8 +1339,6 @@ public class AgnosticTrackerWithFrames {
 										drm.getNoOfImagesInDatFile(fm.getDatNo()), 
 										k, 
 										localLocation);
-					
-					
 					
 					drm.getLenPtForEachDat()[fm.getDatNo()] = new int[][]{len, pt};
 					

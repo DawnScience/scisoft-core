@@ -54,15 +54,12 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) {
 
-		g2 = null;
-
+		g2 = new Polynomial2D(AnalaysisMethodologies.toInt(model.getFitPower()));
+		
 		int[] len = model.getLenPt()[0];
 		int[] pt = model.getLenPt()[1];
 
-//		debug("pt[0]:  " + pt[0] + "  pt[1]:  " + pt[1] + "  in the 2D bg subtraction operation");
-		
-		
-//		Dataset in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input, len, pt);
+
 
 		IRectangularROI greenRectangle = new RectangularROI(pt[0], pt[1],
 				 len[0], len[1], 0);
@@ -77,9 +74,7 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 			return new OperationData(errorDat, location);
 		}
 
-		if (g2 == null) {
-			g2 = new Polynomial2D(AnalaysisMethodologies.toInt(model.getFitPower()));
-		}
+		
 		if ((int) Math.pow(AnalaysisMethodologies.toInt(model.getFitPower()) + 1, 2) != g2.getNoOfParameters()) {
 			g2 = new Polynomial2D(AnalaysisMethodologies.toInt(model.getFitPower()));
 		}

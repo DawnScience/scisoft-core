@@ -256,6 +256,11 @@ public class CurveStitchWithErrorsAndFrames {
 			System.out.println("error");
 		}
 		
+		if(sortedAttenuatedDatasets[1].getSize() !=
+				sortedAttenuatedDatasets[0].getSize()){
+			System.out.println("error in lengths, in stitcher");
+		}
+		
 		DatasetUtils.sort(sortedAttenuatedDatasets[1],///xArray
 		sortedAttenuatedDatasets[0]);///yArray Intensity
 		

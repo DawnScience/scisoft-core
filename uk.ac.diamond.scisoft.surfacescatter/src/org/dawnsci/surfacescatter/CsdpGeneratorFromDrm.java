@@ -59,6 +59,12 @@ public class CsdpGeneratorFromDrm {
 		
 		csdp.setCorrectionSelection(drm.getFms().get(0).getCorrectionSelection());
 		
+		if(xIDataset.length !=
+				yIDataset.length){
+			System.out.println("error in lengths, in csdp generator");
+		}
+		
+		
 		return csdp;
 	}
 		
@@ -91,7 +97,7 @@ public class CsdpGeneratorFromDrm {
 	}
 	
 	public  IDataset[] iDatasetArrayGenerator(int n, // number of Dats
-											   ArrayList<ArrayList<Double>> input){
+											  ArrayList<ArrayList<Double>> input){
 		
 		
 		if (input==null){

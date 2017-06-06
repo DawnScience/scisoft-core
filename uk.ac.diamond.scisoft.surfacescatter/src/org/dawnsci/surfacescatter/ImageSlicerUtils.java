@@ -1,5 +1,7 @@
 package org.dawnsci.surfacescatter;
 
+import java.util.Arrays;
+
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.plotting.api.region.IRegion;
@@ -74,23 +76,12 @@ public class ImageSlicerUtils {
 		public static IDataset ImageSliceUpdate(IDataset input, int[][] LenPt){
 			
 			SliceND slice1 = new SliceND(input.getShape());
-//			slice1.setSlice(0, selection, selection+1, 1);
-//			
-			
-			//int[] len 
+
 			int[] len = LenPt[0];
 			int[] pt = LenPt[1];
 			
-
-			//slice1.setSlice(2, (int) Math.round(pt[0]-(0.5*len[0])), (int) Math.round(pt[0] + (0.5*len[0])), 1);
-			//slice1.setSlice(1, (int) Math.round(pt[1]-(0.5*len[1])), (int) Math.round(pt[1] + (0.5*len[1])), 1);
-			
 			slice1.setSlice(1, (int) Math.round(pt[0]), (int) Math.round(pt[0] + (len[0])), 1);
 			slice1.setSlice(0, (int) Math.round(pt[1]), (int) Math.round(pt[1] + (len[1])), 1);
-
-
-			
-			//IDataset image2 = image.getSlice(slice1);
 			
 			IDataset j = null;
 			try {
@@ -99,6 +90,20 @@ public class ImageSlicerUtils {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+//			if(Arrays.equals(j.getShape(), len) != true){
+//				slice1.setSlice(0, (int) Math.round(pt[0]), (int) Math.round(pt[0] + (len[0])), 1);
+//				slice1.setSlice(1, (int) Math.round(pt[1]), (int) Math.round(pt[1] + (len[1])), 1);
+//				
+//				try {
+//					j = input.getSlice(slice1);
+//				} catch (Exception e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				
+//			}
+			
 			j.squeeze();
 			return j;
 			

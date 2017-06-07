@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.powder.indexer.indexers.CellParameter;
 import uk.ac.diamond.scisoft.analysis.powder.indexer.indexers.GsasIIWrapper;
-import uk.ac.diamond.scisoft.xpdf.views.CrystalSystem;
 
 public class GSASIITest {
 

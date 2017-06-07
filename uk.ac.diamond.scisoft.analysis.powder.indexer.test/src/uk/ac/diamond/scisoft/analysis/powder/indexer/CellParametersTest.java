@@ -10,9 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.powder.indexer.indexers.CellParameter;
-import uk.ac.diamond.scisoft.xpdf.views.XPDFPhase;
-import uk.ac.diamond.scisoft.xpdf.views.XPDFPhaseForm;
-import uk.ac.diamond.scisoft.xpdf.views.XPDFPhaseForm.Forms;
 
 public class CellParametersTest {
 	
@@ -36,8 +33,12 @@ public class CellParametersTest {
 		
 		CellParameter cell = new CellParameter();
 		
-		cell.setUnitCellLengths(1, 1, 1);
-		cell.setUnitCellAngles(1, 1, 1);
+		cell.setA(1);
+		cell.setB(1);
+		cell.setC(1);
+		cell.setAl(1);
+		cell.setBe(1);
+		cell.setGa(1);
 		
 		assertTrue(cell.equals(cell));
 	}
@@ -47,13 +48,21 @@ public class CellParametersTest {
 		
 		CellParameter cell = new CellParameter();
 		
-		cell.setUnitCellLengths(1, 1, 1);
-		cell.setUnitCellAngles(1, 1, 1);
+		cell.setA(1);
+		cell.setB(1);
+		cell.setC(1);
+		cell.setAl(1);
+		cell.setBe(1);
+		cell.setGa(1);
 		
 		CellParameter cellNot = new CellParameter();
 		
-		cellNot.setUnitCellLengths(0, 0, 0);
-		cellNot.setUnitCellAngles(0, 0, 0);
+		cellNot.setA(0);
+		cellNot.setB(0);
+		cellNot.setC(0);
+		cellNot.setAl(0);
+		cellNot.setBe(0);
+		cellNot.setGa(0);
 		
 		assertFalse(cell.equals(cellNot));
 

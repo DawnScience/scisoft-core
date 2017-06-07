@@ -36,7 +36,7 @@ public class AutoIndexerProcessTest {
 			String absPath = f.getAbsolutePath().toString();
 			String dirPath = absPath.substring(0, absPath.length() - binName.length());
 
-			indexerStore = dirPath;
+			fileOutPath = dirPath;
 			outFileTitle = "tmpDummyIndexer";
 		}
 

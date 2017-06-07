@@ -24,12 +24,11 @@ import org.eclipse.january.dataset.LinearAlgebra;
 import org.eclipse.january.dataset.Maths;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial2D;
-import uk.ac.diamond.scisoft.analysis.optimize.LinearLeastSquares;
 
 /**
  * Cuts out the region of interest and fits it with a 2D polynomial background.
  */
-public class TwoDPolynomialBackgroundFitAndSubtract extends AbstractOperation<BoxSlicerModel, OperationData> {
+public class TwoDPolynomialBackgroundFitAndSubtract extends AbstractOperation<TwoDPolynomialBackgroundFitAndSubtractModel, OperationData> {
 	
 	private Polynomial2D g2;
 	
@@ -63,7 +62,7 @@ public class TwoDPolynomialBackgroundFitAndSubtract extends AbstractOperation<Bo
 		Dataset[] fittingBackground = BoxSlicerRodScanUtils.LeftRightTopBottomBoxes(input, monitor, box.getIntLengths(),
 				box.getIntPoint(), model.getBoundaryBox());
 			
-		Dataset offset = DatasetFactory.ones(fittingBackground[2].getShape(), Dataset.FLOAT64);
+		Dataset offset = DatasetFactory.ones(DoubleDataset.class, fittingBackground[2].getShape());
 		
 		Dataset intermediateFitTest = Maths.add(offset, fittingBackground[2]);
 		Dataset matrix = LinearLeastSquaresServicesForSXRD.polynomial2DLinearLeastSquaresMatrixGenerator(
@@ -79,7 +78,7 @@ public class TwoDPolynomialBackgroundFitAndSubtract extends AbstractOperation<Bo
 	
 		while (it.hasNext()) {
 			double v = in1Background.getElementDoubleAbs(it.index);
-			if (v < 0)
+			if (model.isAllowNegativeValues() == false && v < 0)
 				in1Background.setObjectAbs(it.index, 0);
 		}
 	
@@ -91,7 +90,7 @@ public class TwoDPolynomialBackgroundFitAndSubtract extends AbstractOperation<Bo
 	
 		while (it1.hasNext()) {
 			double q = pBackgroundSubtracted.getElementDoubleAbs(it1.index);
-			if (q < 0)
+			if (model.isAllowNegativeValues() == false && q < 0)
 				pBackgroundSubtracted.setObjectAbs(it1.index, 0);
 		}
 		

@@ -20,5 +20,6 @@ Require-Bundle: org.eclipse.january;bundle-version="1.0.0",
  uk.ac.diamond.org.apache.ws.commons.util;bundle-version="1.0.2"
 Service-Component: OSGI-INF/IndexerService.xml
 Export-Package: uk.ac.diamond.scisoft.analysis.powder.indexer,
+ uk.ac.diamond.scisoft.analysis.powder.indexer.crystal,
  uk.ac.diamond.scisoft.analysis.powder.indexer.indexers
 Bundle-ActivationPolicy: lazy

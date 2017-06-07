@@ -26,7 +26,6 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.powder.indexer.indexers.CellParameter;
 import uk.ac.diamond.scisoft.analysis.powder.indexer.indexers.Dicvol;
-import uk.ac.diamond.scisoft.xpdf.views.CrystalSystem;
 
 public class DicvolTest {
 		
@@ -53,7 +52,7 @@ public class DicvolTest {
 		CellParameter cell = new CellParameter();
 		
 		CrystalSystem system = new CrystalSystem();	//TODO: need to set as Triclinic		
-		
+		 	
 		//Extract crystal system indexing found
 		cell.setCrystalSystem(system); //Shouldnt really be having to set this
 		

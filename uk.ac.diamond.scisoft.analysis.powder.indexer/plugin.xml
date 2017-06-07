@@ -16,7 +16,7 @@
             indexer="uk.ac.diamond.scisoft.analysis.powder.indexer.indexers.Dicvol">
       </indexer>
       <indexer
-            id="GSASII"
+            id="GsasII"
             indexer="uk.ac.diamond.scisoft.analysis.powder.indexer.indexers.GsasIIWrapper">
       </indexer>
    </extension>

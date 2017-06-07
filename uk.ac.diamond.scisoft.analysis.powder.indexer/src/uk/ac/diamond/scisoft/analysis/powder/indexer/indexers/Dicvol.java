@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.powder.indexer.IPowderIndexerParam;
 import uk.ac.diamond.scisoft.analysis.powder.indexer.PowderIndexerParam;
+import uk.ac.diamond.scisoft.analysis.powder.indexer.crystal.Lattice;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -192,9 +193,14 @@ public class Dicvol extends AbstractPowderIndexerProcess implements IPowderProce
 
 			// Key sets for dicvol extraction A, B, C, ALP, BET, GAM, VOL, these
 			// are constant but only used once during extraction
-			cell.setUnitCellLengths(rawCell.get("A"), rawCell.get("B"), rawCell.get("C"));
-			cell.setUnitCellAngles(rawCell.get("ALP"), rawCell.get("BET"), rawCell.get("GAM"));
-
+			//Lattice latt = new Lattice(rawCell.get("A"), rawCell.get("B"), rawCell.get("C"), rawCell.get("ALP"), rawCell.get("BET"), rawCell.get("GAM"))
+			
+			cell.setA(rawCell.get("A"));
+			cell.setB(rawCell.get("B"));
+			cell.setC(rawCell.get("C"));
+			cell.setAl(rawCell.get("ALP"));
+			cell.setBe(rawCell.get("BET"));
+			cell.setGa(rawCell.get("GAM"));
 			// Extract figure of merit
 			// set figue of merit
 			// Map<String, Double> rawFigures =

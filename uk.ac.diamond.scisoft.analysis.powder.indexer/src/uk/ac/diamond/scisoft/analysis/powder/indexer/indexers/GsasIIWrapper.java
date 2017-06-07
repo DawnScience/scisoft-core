@@ -5,7 +5,6 @@ import uk.ac.diamond.scisoft.analysis.PythonHelper.PythonRunInfo;
 import uk.ac.diamond.scisoft.analysis.powder.indexer.IPowderIndexerParam;
 import uk.ac.diamond.scisoft.analysis.powder.indexer.PowderIndexerParam;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcClient;
-import uk.ac.diamond.scisoft.xpdf.views.CrystalSystem;
 
 import java.io.File;
 import java.net.URL;
@@ -125,7 +124,7 @@ public class GsasIIWrapper extends AbstractPowderIndexer {
 		for (int val = 0; val < cells.length; ++val) {
 			// Create plausible cells
 			CellParameter cell = new CellParameter();
-			cell.setCrystalSystem(new CrystalSystem());
+			//cell.setCrystalSystem(new CrystalSystem());
 
 			Double merit = Double.valueOf(cells[val++]);
 			Double a = Double.valueOf(cells[val++]);
@@ -137,8 +136,14 @@ public class GsasIIWrapper extends AbstractPowderIndexer {
 			Double gam = Double.valueOf(cells[val]);
 
 			cell.setFigureMerit(merit);
-			cell.setUnitCellLengths(a, b, c);
-			cell.setUnitCellAngles(alp, bet, gam);
+			
+			cell.setA(a);
+			cell.setB(b);
+			cell.setC(c);
+			cell.setAl(alp);
+			cell.setBe(bet);
+			cell.setGa(gam);
+			
 
 			pC.add(cell);
 		}

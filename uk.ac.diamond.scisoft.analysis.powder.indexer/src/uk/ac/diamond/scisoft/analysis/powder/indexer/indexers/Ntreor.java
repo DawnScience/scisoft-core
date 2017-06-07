@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.powder.indexer.IPowderIndexerParam;
 import uk.ac.diamond.scisoft.analysis.powder.indexer.PowderIndexerParam;
-import uk.ac.diamond.scisoft.xpdf.views.CrystalSystem;
 
 /**
  * Utilises Ntreor indexer
@@ -224,22 +223,23 @@ public class Ntreor extends AbstractPowderIndexerProcess {
 
 			Map<String, Double> raw = extractDataKeyVal(i);
 
-			CrystalSystem system = new CrystalSystem();
-
-			// Extract crystal system indexing found
-			cell.setCrystalSystem(system); // TODO: Shouldn't really be having
-											// to set this
+//			CrystalSystem system = new CrystalSystem();
+//
+//			// Extract crystal system indexing found
+//			cell.setCrystalSystem(system); // TODO: Shouldn't really be having
+//											// to set this
 
 			//// the cell A, B, C, Alpha, Beta, Gamma
-			cell.setUnitCellLengths(raw.get("A"), raw.get("B"), raw.get("C"));
-			cell.setUnitCellAngles(raw.get("Alpha"), raw.get("Beta"), raw.get("Gamma"));
-
-			cell.setUnitA(raw.get("A"));
-			cell.setUnitB(raw.get("B"));
-			cell.setUnitC(raw.get("C"));
-			cell.setAngleAlpha(raw.get("Alpha"));
-			cell.setAngleBeta(raw.get("Beta"));
-			cell.setAngleGamma(raw.get("Gamma"));
+//			cell.setUnitCellLengths(raw.get("A"), raw.get("B"), raw.get("C"));
+//			cell.setUnitCellAngles(raw.get("Alpha"), raw.get("Beta"), raw.get("Gamma"));
+//
+//			
+			cell.setA(raw.get("A"));
+			cell.setB(raw.get("B"));
+			cell.setC(raw.get("C"));
+			cell.setAl(raw.get("Alpha"));
+			cell.setBe(raw.get("Beta"));
+			cell.setGa(raw.get("Gamma"));
 
 			// Extract & set figure of merit
 			double merit = (Double) raw.get("M(20)");

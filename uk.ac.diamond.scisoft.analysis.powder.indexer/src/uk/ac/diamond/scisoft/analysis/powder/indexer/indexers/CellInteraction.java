@@ -11,14 +11,7 @@ public class CellInteraction implements ICellInteraction {
 	private double a, b, c, al, be, ga;
 	
 	public CellInteraction(){
-		//Initialise unitcell
-		//this.unitcell = new CellParameter();
-		
-		//this.crytalSys = new Crystal();
-		//Generic crystall initialisation
-		//Lattice latt = new Lattice(angleTol, angleTol, angleTol, angleTol, angleTol, angleTol, null);
-		//Lattice latt = new 
-		//crystalSys = new Crystal(new Lattice.LatticeBuilder(1).build(), CrystalSystem.CUBIC);
+		this.a = 0;
 	}
 	
 	public double getA() {
@@ -71,7 +64,7 @@ public class CellInteraction implements ICellInteraction {
 	
 	@Override
 	public Crystal getSearchCrystal() {
-		return new Crystal(getLattice()); //TODO: way to set crystal sysstems
+		return new Crystal(getLattice()); //TODO: way to set 
 	}
 	@Override
 	public Lattice getLattice() {

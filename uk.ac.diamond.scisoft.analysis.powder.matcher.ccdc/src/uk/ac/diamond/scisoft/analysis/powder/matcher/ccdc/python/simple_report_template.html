@@ -1,0 +1,85 @@
+<html>
+    <head>
+        <title>Simple report on {entry.identifier}</title>
+        <style type="text/css">
+        table {{
+            border-collapse: collapse;
+        }};
+        table, th, td {{
+            border: 1px solid black;
+        }}
+        .table-header {{
+            text-align: center;
+            padding: 15px;
+        }}
+        </style>
+    </head>
+    <body>
+        <h1>Simple report on {entry.identifier}</h1>
+        <table border=1>
+            <tbody>
+                <tr>
+                    <th>Refcode</th>
+                    <td>{entry.identifier}</td>
+                </tr>
+                <tr>
+                    <td colspan=2>{image}</td>
+                </tr>
+                <tr>
+                    <th colspan=2 class="table-header">Entry Details</th>
+                </tr>
+                <tr> <th>Chemical name</th> <td>{entry.chemical_name}</td> </tr>
+                <tr> <th>Synonyms</th> <td>{synonyms}</td> </tr>
+                <tr> <th>Formula</th> <td>{entry.formula}</td> </tr>
+                <tr> <th>R-factor</th><td>{entry.r_factor}</td> </tr>
+                <tr> <th>Disorder</th><td>{entry.disorder_details}</td> </tr>
+                <tr> <th>Polymorphism?</th><td>{entry.polymorph}</td> </tr>
+                <tr> <th>Has 3d structure?</th><td>{entry.has_3d_structure}</td> </tr>
+                <tr> <th>Is organic?</th><td>{entry.is_organic}</td> </tr>
+                <tr> <th>Is polymeric?</th><td>{entry.is_polymeric}</td> </tr>
+                <tr> <th>Bioactivity?</th><td>{entry.bioactivity}</td> </tr>
+                <tr> <th>Source</th><td>{entry.source}</td> </tr>
+                <tr> <th>Habit</th><td>{entry.habit}</td> </tr>
+                <tr>
+                    <th colspan=2 class="table-header">Publication Details</th>
+                </tr>
+                <tr>
+                    <th>Reference</th>
+                    <td>{entry.publication.journal.name} Volume {entry.publication.volume} {entry.publication.year}</td>
+                </tr>
+                <tr>
+                    <th>Authors</th>
+                    <td>{entry.publication.authors}</td>
+                </tr>
+                <tr>
+                    <th>DOI</th>
+                    <td>{doi}</td>
+                </tr>
+                <tr>
+                    <th colspan=2 class="table-header">Basic Crystallographic Information</th>
+                </tr>
+                <tr>
+                    <th>Crystal System</th>
+                    <td>{entry.crystal.crystal_system}</td>
+                </tr>
+                <tr>
+                    <th>Space Group</th>
+                    <td>{entry.crystal.spacegroup_symbol}</td>
+                </tr>
+                <tr>
+                    <th>Cell Volume</th>
+                    <td>{entry.crystal.cell_volume}&#197&#179</td>
+                </tr>
+                <tr>
+                    <th>Z, Z'</th>
+                    <td>{entry.crystal.z_value}, {entry.crystal.z_prime}</td>
+                </tr>
+                <tr> <th colspan=2 class="table-header">Molecular Details</th> </tr>
+                <tr> <th>Number of atoms</th><td>{counts[natoms]}</td> </tr>
+                <tr> <th>Number of donors</th><td>{counts[ndonors]}</td> </tr>
+                <tr> <th>Number of acceptors</th><td>{counts[nacceptors]}</td> </tr>
+                <tr> <th>Number of rotatable bonds</th><td>{counts[nrot_bonds]}</td> </tr>
+            </tbody>
+        </table>
+    </body>
+</html>

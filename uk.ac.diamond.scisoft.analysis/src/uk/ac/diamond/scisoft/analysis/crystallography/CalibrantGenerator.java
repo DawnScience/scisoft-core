@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Diamond Light Source Ltd.
+ * Copyright (c) 2012, 2017 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -15,14 +15,13 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.measure.quantity.Length;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
-import org.jscience.physics.amount.Amount;
+import si.uom.SI;
 
 public class CalibrantGenerator {
 	
-	public final static Unit<Length> NANO = SI.NANO(SI.METER);
+	public final static Unit<Length> NANO = SI.NANO(SI.METRE);
 	
 	public static enum Cubic {
 		SIMPLE,BCC,FCC,DIAMOND;

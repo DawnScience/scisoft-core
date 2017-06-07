@@ -17,14 +17,15 @@ Require-Bundle: javax.vecmath;bundle-version="1.5.2",
  org.eclipse.dawnsci.analysis.dataset;bundle-version="1.0.0";visibility:=reexport,
  org.eclipse.dawnsci.analysis.tree;bundle-version="1.0.0";visibility:=reexport,
  uk.ac.diamond.CBFlib;bundle-version="1.0.0",
- uk.ac.diamond.org.jscience4;bundle-version="[4.3.1,5.0.0)",
  hdf.hdf5lib;bundle-version="[1.10.0,1.12.0)",
  org.eclipse.dawnsci.nexus;bundle-version="1.0.0",
  org.eclipse.dawnsci.hdf5;bundle-version="1.2.0",
  org.apache.commons.lang;bundle-version="2.6.0",
  com.googlecode.efficient-java-matrix-library.core;bundle-version="[0.26.0,0.27.0)",
  org.ddogleg;bundle-version="[0.6.0,0.7.0)",
- com.thoughtworks.xstream
+ com.thoughtworks.xstream,
+ si.uom.si-units;bundle-version="0.6.6",
+ javax.measure.unit-api;bundle-version="1.0.0"
 Export-Package: uk.ac.diamond.scisoft.analysis,
  uk.ac.diamond.scisoft.analysis.axis,
  uk.ac.diamond.scisoft.analysis.crystallography,
@@ -45,7 +46,8 @@ Bundle-ClassPath: .,
  jars/jai_imageio.jar
 Import-Package: Jama,
  org.eclipse.january.dataset,
- org.slf4j;version="[1.7.2,2.0.0)"
+ org.slf4j;version="[1.7.2,2.0.0)",
+ tec.units.ri.unit;version="1.0.2"
 Eclipse-BuddyPolicy: global
 Important-Note: This plugin SHOULD NOT be lazy activated because we always want this 
  plugin to be loaded to contribute the service.

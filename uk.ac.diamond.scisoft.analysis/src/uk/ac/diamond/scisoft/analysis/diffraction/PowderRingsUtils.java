@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.TreeSet;
 
-import javax.measure.unit.NonSI;
 import javax.vecmath.Vector3d;
 
 import org.apache.commons.math3.optim.SimpleBounds;
@@ -50,6 +49,8 @@ import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IdentifiedPeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
+
+import si.uom.NonSI;
 
 /**
  * Utilities to fit powder rings

@@ -1,5 +1,5 @@
 /*-
- * Copyright 2015 Diamond Light Source Ltd.
+ * Copyright 2015, 2017 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,10 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 
-import javax.measure.unit.NonSI;
-import javax.measure.unit.ProductUnit;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.ProductUnit;
+import javax.measure.Unit;
 
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.UnitMetadata;
@@ -26,6 +24,9 @@ import uk.ac.diamond.scisoft.analysis.crystallography.ScatteringVector;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.metadata.UnitMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.roi.XAxis;
+
+import si.uom.SI;
+import si.uom.NonSI;
 
 public class PixelIntegrationCache implements IPixelIntegrationCache {
 	

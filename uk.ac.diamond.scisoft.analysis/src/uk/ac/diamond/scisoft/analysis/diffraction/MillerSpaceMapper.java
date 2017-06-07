@@ -1,5 +1,5 @@
 /*-
- * Copyright 2015 Diamond Light Source Ltd.
+ * Copyright 2015, 2017 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.measure.unit.SI;
 import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
@@ -40,6 +39,8 @@ import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
 import uk.ac.diamond.scisoft.analysis.dataset.function.BicubicInterpolator;
 import uk.ac.diamond.scisoft.analysis.io.NexusHDF5Loader;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
+
+import si.uom.SI;
 
 /**
  * Intensity value splitter that splits an image pixel value and adds the pieces to close-by voxels

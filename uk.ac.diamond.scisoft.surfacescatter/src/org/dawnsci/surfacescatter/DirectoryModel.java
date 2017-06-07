@@ -697,11 +697,23 @@ public class DirectoryModel {
 	}
 
 	public double[][] getSeedLocation() {
+		
+		if(seedLocation == null){
+			seedLocation = new double[datFilepaths.length][];
+		}
+		
 		return seedLocation;
 	}
 
 	public void setSeedLocation(double[][] seedLocation) {
 		this.seedLocation = seedLocation;
+	}
+	
+	public void setSeedLocation(int datNo, double[] seedLocation) {
+		getSeedLocation();
+		this.seedLocation[datNo] = seedLocation;
+		
+		
 	}
 
 	public void addSeedLocation(int n,  //Dat number
@@ -763,15 +775,16 @@ public class DirectoryModel {
 		this.sortedQ = sortedQ;
 	}
 
-
-	
-	
 	public void qConversion(double energy, int theta){
 		
 		qList =null;
 		
-		IDataset splicedCurveQ  =csdp.getSplicedCurveQ();
-		splicedCurveQ =null;
+		IDataset splicedCurveQ = (IDataset) DatasetFactory.createFromObject(2);
+		if(csdp == null){
+			csdp = new CurveStitchDataPackage();
+		}
+		csdp.setSplicedCurveQ(splicedCurveQ);
+		
 		sortedQ = null;
 		
 		if(xList !=null){
@@ -823,11 +836,6 @@ public class DirectoryModel {
 			try{
 				if (splicedCurveQ==null){
 					splicedCurveQ = DatasetFactory.zeros(csdp.getSplicedCurveX().getShape());
-				}
-				
-				if (splicedCurveQ.getSize() == 0){
-					splicedCurveQ = DatasetFactory.zeros(csdp.getSplicedCurveX().getShape());
-					
 				}
 				
 				if (splicedCurveQ.getSize()!=csdp.getSplicedCurveX().getSize()){
@@ -887,8 +895,6 @@ public class DirectoryModel {
 					double energyJ  = energy*1000*1.602177*Math.pow(10, -19);
 					double hc = 1.98644568*Math.pow(10, -25);
 					double q = 4*Math.PI* (Math.sin((theta +1 )*sortedX.getDouble(i)))*energyJ/ hc;
-					
-//					IDataset x= sortedX;
 					
 					double qA = q/(Math.pow(10, 10));
 					try{

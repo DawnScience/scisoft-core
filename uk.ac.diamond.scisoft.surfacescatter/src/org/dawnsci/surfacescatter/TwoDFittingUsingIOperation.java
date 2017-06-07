@@ -90,21 +90,18 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 		Dataset matrix = LinearLeastSquaresServicesForDialog.polynomial2DLinearLeastSquaresMatrixGenerator(
 				AnalaysisMethodologies.toInt(model.getFitPower()), fittingBackground[0], fittingBackground[1]);
 
-				DoubleDataset test = (DoubleDataset) LinearAlgebra.solveSVD(matrix, fittingBackground[2]);
-				double[] params = test.getData();
+		DoubleDataset test = (DoubleDataset) LinearAlgebra.solveSVD(matrix, fittingBackground[2]);
+		double[] params = test.getData();
 
-				in1Background = g2.getOutputValues2(params, len, model.getBoundaryBox(),
+		in1Background = g2.getOutputValues2(params, len, model.getBoundaryBox(),
 						AnalaysisMethodologies.toInt(model.getFitPower()));
 
 
-				Dataset pBackgroundSubtracted = Maths.subtract(in1, in1Background, null);
+		Dataset pBackgroundSubtracted = Maths.subtract(in1, in1Background, null);
 
-				output = DatasetUtils.cast(pBackgroundSubtracted, Dataset.FLOAT64);
+		output = DatasetUtils.cast(pBackgroundSubtracted, Dataset.FLOAT64);
 
-				output.setName("Region of Interest, polynomial background removed");
-				
-	
-		
+		output.setName("Region of Interest, polynomial background removed");
 				
 		return new OperationData(output, (IDataset) in1Background);
 	}
@@ -114,5 +111,4 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 			System.out.println(output);
 		}
 	}
-
 }

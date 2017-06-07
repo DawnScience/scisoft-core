@@ -19,11 +19,12 @@ import java.security.PrivilegedAction;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.jscience.physics.amount.Amount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.thoughtworks.xstream.core.util.CompositeClassLoader;
+
+import tec.units.ri.quantity.Quantities;
 
 /**
  * CalibrationFactory when we go to e4 like all xxxFactory classes this will become
@@ -112,7 +113,7 @@ public class CalibrationFactory {
 
 		final CompositeClassLoader customLoader = new CompositeClassLoader();
 		customLoader.add(CalibrationStandards.class.getClassLoader());
-		customLoader.add(Amount.class.getClassLoader());
+		customLoader.add(Quantities.class.getClassLoader());
 
 		AccessController.doPrivileged(new PrivilegedAction<Object>() {
 			@Override

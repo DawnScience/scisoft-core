@@ -25,7 +25,9 @@ Require-Bundle: javax.vecmath;bundle-version="1.5.2",
  org.ddogleg;bundle-version="[0.6.0,0.7.0)",
  com.thoughtworks.xstream,
  si.uom.si-units;bundle-version="0.6.6",
- javax.measure.unit-api;bundle-version="1.0.0"
+ javax.measure.unit-api;bundle-version="1.0.0",
+ tec.units.unit-ri,
+ tec.uom.lib.uom-lib-common;bundle-version="1.0.2"
 Export-Package: uk.ac.diamond.scisoft.analysis,
  uk.ac.diamond.scisoft.analysis.axis,
  uk.ac.diamond.scisoft.analysis.crystallography,
@@ -46,8 +48,7 @@ Bundle-ClassPath: .,
  jars/jai_imageio.jar
 Import-Package: Jama,
  org.eclipse.january.dataset,
- org.slf4j;version="[1.7.2,2.0.0)",
- tec.units.ri.unit;version="1.0.2"
+ org.slf4j;version="[1.7.2,2.0.0)"
 Eclipse-BuddyPolicy: global
 Important-Note: This plugin SHOULD NOT be lazy activated because we always want this 
  plugin to be loaded to contribute the service.

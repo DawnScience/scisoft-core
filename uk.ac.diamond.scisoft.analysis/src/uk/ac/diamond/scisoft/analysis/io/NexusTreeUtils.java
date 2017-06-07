@@ -20,18 +20,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.measure.UnitConverter;
-import javax.measure.Quantity;
+import javax.measure.IncommensurableException;
+import javax.measure.UnconvertibleException;
 import javax.measure.Unit;
-import javax.measure.format.UnitFormat;
+import javax.measure.UnitConverter;
+import javax.measure.quantity.Energy;
+import javax.measure.quantity.Length;
 import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Matrix4d;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector4d;
-
-import si.uom.SI;
-import si.uom.NonSI;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
@@ -65,6 +64,11 @@ import org.eclipse.january.metadata.MetadataFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import si.uom.NonSI;
+import si.uom.SI;
+import tec.units.ri.format.SimpleUnitFormat;
+import tec.units.ri.unit.MetricPrefix;
+import tec.units.ri.unit.Units;
 import uk.ac.diamond.scisoft.analysis.axis.AxisChoice;
 import uk.ac.diamond.scisoft.analysis.crystallography.ReciprocalCell;
 import uk.ac.diamond.scisoft.analysis.crystallography.UnitCell;
@@ -117,10 +121,13 @@ public class NexusTreeUtils {
 	public static final String DEPENDS_ON = "depends_on";
 	
 	static {
-		UnitFormat.getInstance().alias(NonSI.ANGSTROM, "Angstrom");
-		UnitFormat.getInstance().alias(NonSI.ANGSTROM, "angstrom");
-		UnitFormat.getInstance().alias(NonSI.DEGREE_ANGLE, "deg");
+		SimpleUnitFormat.getInstance().alias(NonSI.ANGSTROM, "Angstrom");
+		SimpleUnitFormat.getInstance().alias(NonSI.ANGSTROM, "angstrom");
+		SimpleUnitFormat.getInstance().alias(NonSI.DEGREE_ANGLE, "deg");
 	}
+
+	private static final Unit<Length> MILLIMETRE = MetricPrefix.MILLI(Units.METRE);
+	private static final Unit<Energy> KILO_ELECTRON_VOLT = MetricPrefix.KILO(NonSI.ELECTRON_VOLT);
 
 	public static void augmentTree(Tree tree) {
 		augmentNodeLink(tree instanceof TreeFile ? ((TreeFile) tree).getFilename() : null, tree.getNodeLink(), true);
@@ -1014,14 +1021,16 @@ public class NexusTreeUtils {
 		if (nl != null) {
 			Node n = nl.getDestination();
 			double[] c = parseDoubleArray(n, 1);
-			beamCentre[0] = convertIfNecessary(SI.MILLIMETRE, getFirstString(n.getAttribute(NX_UNITS)), c[0]);
+			beamCentre[0] = convertIfNecessary(MILLIMETRE, getFirstString(n.getAttribute(NX_UNITS)), c[0]);
+
 		}
 		
 		nl = gNode.getNodeLink("beam_centre_y");
 		if (nl != null) {
 			Node n = nl.getDestination();
 			double[] c = parseDoubleArray(n, 1);
-			beamCentre[1] = convertIfNecessary(SI.MILLIMETRE, getFirstString(n.getAttribute(NX_UNITS)), c[1]);
+			beamCentre[1] = convertIfNecessary(MILLIMETRE, getFirstString(n.getAttribute(NX_UNITS)), c[1]);
+
 		}
 
 		// determine beam direction from centre position
@@ -1088,7 +1097,7 @@ public class NexusTreeUtils {
 	 * @param unit
 	 * @return dataset
 	 */
-	public static Dataset getDataset(String path, Tree tree, Unit<? extends Quantity> unit) {
+	public static Dataset getDataset(String path, Tree tree, Unit<?> unit) {
 		NodeLink link = tree.findNodeLink(path);
 
 		if (link == null) {
@@ -1294,7 +1303,7 @@ public class NexusTreeUtils {
 		Matrix4d m2 = new Matrix4d();
 		if (translate) {
 			da = da.clone(); // necessary to stop clobbering cached values
-			convertIfNecessary(SI.MILLIMETRE, getFirstString(dNode.getAttribute(NX_UNITS)), da);
+			convertIfNecessary(MILLIMETRE, getFirstString(dNode.getAttribute(NX_UNITS)), da);
 			m2.setIdentity();
 			m2.setColumn(3, da[0], da[1], da[2], 1);
 		} else {
@@ -1352,7 +1361,7 @@ public class NexusTreeUtils {
 		if (energy == null) {
 			logger.warn("Energy was missing in {}", link.getName());
 		} else {
-			Dataset e = getConvertedData(energy, SI.KILO(NonSI.ELECTRON_VOLT));
+			Dataset e = getConvertedData(energy, KILO_ELECTRON_VOLT);
 			sample.setWavelengthFromEnergykeV(e.getElementDoubleAbs(0));
 		}
 	}
@@ -1378,7 +1387,8 @@ public class NexusTreeUtils {
 		if (energy == null) {
 			logger.warn("Energy was missing in {}", link.getName());
 		} else {
-			Dataset e = getConvertedData(energy, SI.KILO(NonSI.ELECTRON_VOLT));
+//			Dataset e = ?getConvertedData(energy, SI.KILO(NonSI.ELECTRON_VOLT));
+			Dataset e = getConvertedData(energy, KILO_ELECTRON_VOLT);
 			sample.setWavelengthFromEnergykeV((e.getElementDoubleAbs(0)));
 			return;
 		}
@@ -1388,15 +1398,15 @@ public class NexusTreeUtils {
 		try {
 			GroupNode node = (GroupNode)link.getDestination();
 			DataNode distanceNode = node.getDataNode(NX_DETECTOR_DISTANCE);
-			double distanceMm = getConvertedData(distanceNode, SI.MILLIMETRE).get(0);
+			double distanceMm = getConvertedData(distanceNode, MILLIMETRE).get(0);
 			DataNode bxNode = node.getDataNode(NX_DETECTOR_XBEAMCENTRE);
 			double bx = bxNode.getDataset().getSlice().getDouble(0);
 			DataNode byNode = node.getDataNode(NX_DETECTOR_YBEAMCENTRE);
 			double by = byNode.getDataset().getSlice().getDouble(0);
 			DataNode pxNode = node.getDataNode(NX_DETECTOR_XPIXELSIZE);
-			double px = getConvertedData(pxNode, SI.MILLIMETRE).get(0);
+			double px = getConvertedData(pxNode, MILLIMETRE).get(0);
 			DataNode pyNode = node.getDataNode(NX_DETECTOR_YPIXELSIZE);
-			double py = getConvertedData(pyNode, SI.MILLIMETRE).get(0);
+			double py = getConvertedData(pyNode, MILLIMETRE).get(0);
 			DataNode nxNode = node.getDataNode(NX_DETECTOR_XPIXELNUMBER);
 			
 			if (nxNode == null) {
@@ -1649,7 +1659,7 @@ public class NexusTreeUtils {
 			Matrix3d m3 = new Matrix3d();
 			m3.setIdentity();
 //			v3.normalize(); // XXX I16 written with magnitude too
-			v3.scale(convertIfNecessary(SI.MILLIMETRE, units, value));
+			v3.scale(convertIfNecessary(MILLIMETRE, units, value));
 			m4 = new Matrix4d(m3, v3, 1);
 			break;
 		case "rotation":
@@ -1668,7 +1678,7 @@ public class NexusTreeUtils {
 			logger.error("Offset has wrong length");
 		}
 		if (offset != null) {
-			convertIfNecessary(SI.MILLIMETRE, getFirstString(dNode.getAttribute("offset_units")), offset);
+			convertIfNecessary(MILLIMETRE, getFirstString(dNode.getAttribute("offset_units")), offset);
 			for (int i = 0; i < 3; i++) {
 				m4.setElement(i, 3, offset[i] + m4.getElement(i, 3));
 			}
@@ -1712,7 +1722,7 @@ public class NexusTreeUtils {
 		DataNode dNode = (DataNode) link.getDestination();
 		double[] vector = parseDoubleArray(dNode.getAttribute("vector"), 3);
 		Vector3d v3 = new Vector3d(vector);
-		DoubleDataset dataset = getConvertedData(dNode, SI.MILLIMETRE);
+		DoubleDataset dataset = getConvertedData(dNode, MILLIMETRE);
 		if (dataset == null) {
 			logger.warn("Transform {} has an empty dataset", link.getName());
 			return null;
@@ -1727,7 +1737,7 @@ public class NexusTreeUtils {
 		Vector3d o3 = new Vector3d();
 		double[] offset = parseDoubleArray(dNode.getAttribute("offset"), 3);
 		if (offset != null) {
-			convertIfNecessary(SI.MILLIMETRE, getFirstString(dNode.getAttribute("offset_units")), offset);
+			convertIfNecessary(MILLIMETRE, getFirstString(dNode.getAttribute("offset_units")), offset);
 			o3.set(offset);
 		}
 
@@ -2037,10 +2047,16 @@ public class NexusTreeUtils {
 		return s.split("[:,]");
 	}
 
-	private static double convertIfNecessary(Unit<? extends Quantity> unit, String attr, double value) {
-		Unit<? extends Quantity> u = parseUnit(attr);
+	private static double convertIfNecessary(Unit<?> unit, String attr, double value) {
+		Unit<?> u = parseUnit(attr);
 		if (u != null && !u.equals(unit)) {
-			return u.getConverterTo(unit).convert(value);
+			try {
+				return u.getConverterToAny(unit).convert(value);
+			} catch (UnconvertibleException e) {
+				logger.error("Could not convert {} to {}", u, unit, e);
+			} catch (IncommensurableException e) {
+				logger.error("Could not convert {} to {}", u, unit, e);
+			}
 		}
 		return value;
 	}
@@ -2073,7 +2089,7 @@ public class NexusTreeUtils {
 		return dataset;
 	}
 
-	private static DoubleDataset getConvertedData(DataNode data, Unit<? extends Quantity> unit) {
+	private static DoubleDataset getConvertedData(DataNode data, Unit<?> unit) {
 		DoubleDataset values = (DoubleDataset) getCastAndCacheData(data, Dataset.FLOAT64);
 		if (values != null) {
 			values = values.clone(); // necessary to stop clobbering cached values
@@ -2082,18 +2098,24 @@ public class NexusTreeUtils {
 		return values;
 	}
 
-	private static void convertIfNecessary(Unit<? extends Quantity> unit, String attr, double[] values) {
-		Unit<? extends Quantity> u = parseUnit(attr);
+	private static void convertIfNecessary(Unit<?> unit, String attr, double[] values) {
+		Unit<?> u = parseUnit(attr);
 		if (u != null && !u.equals(unit)) {
-			UnitConverter c = u.getConverterTo(unit);
-			for (int i = 0, imax = values.length; i < imax; i++) {
-				values[i] = c.convert(values[i]);
+			try {
+				UnitConverter c = u.getConverterToAny(unit);
+				for (int i = 0, imax = values.length; i < imax; i++) {
+					values[i] = c.convert(values[i]);
+				}
+			} catch (UnconvertibleException e) {
+				logger.error("Could not convert {} to {}", u, unit, e);
+			} catch (IncommensurableException e) {
+				logger.error("Could not convert {} to {}", u, unit, e);
 			}
 		}
 	}
 
-	private static Unit<? extends Quantity> parseUnit(String attr) {
-		return attr != null ? Unit.valueOf(attr) : null;
+	private static Unit<?> parseUnit(String attr) {
+		return attr != null ? SimpleUnitFormat.getInstance().parse(attr) : null;
 	}
 
 	private static final String RELATIVE_PREFIX = ".";

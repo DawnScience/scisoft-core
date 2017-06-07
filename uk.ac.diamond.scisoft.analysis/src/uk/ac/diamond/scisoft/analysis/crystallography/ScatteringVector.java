@@ -10,13 +10,15 @@
 package uk.ac.diamond.scisoft.analysis.crystallography;
 
 import javax.measure.Quantity;
-import javax.measure.ProductUnit;
 import javax.measure.Unit;
+import javax.measure.quantity.Length;
+import javax.measure.spi.ServiceProvider;
 
-import si.uom.SI;
+import tec.units.ri.unit.Units;
 
-public interface ScatteringVector extends Quantity {
-	
-    public final static Unit<ScatteringVector> UNIT 
-         = new ProductUnit<ScatteringVector>(Units.ONE.divide(SI.METRE));
+public interface ScatteringVector {
+
+	final static Quantity<Length> length = ServiceProvider.current().getQuantityFactory(Length.class).create(1, Units.METRE);
+	public final static Quantity<?> QUANTITY = length.inverse();
+	public final static Unit<?> UNIT = length.inverse().getUnit();
 }

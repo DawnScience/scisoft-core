@@ -6,27 +6,21 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-
 package uk.ac.diamond.scisoft.analysis.diffraction.powder;
-
-import javax.measure.ProductUnit;
-import javax.measure.Unit;
 
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.UnitMetadata;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.metadata.MetadataFactory;
 
-import uk.ac.diamond.scisoft.analysis.crystallography.ScatteringVector;
-import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
-import uk.ac.diamond.scisoft.analysis.metadata.UnitMetadataImpl;
-import uk.ac.diamond.scisoft.analysis.roi.XAxis;
-
-import si.uom.SI;
 import si.uom.NonSI;
+import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
+import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 public class PixelIntegrationCache implements IPixelIntegrationCache {
 	
@@ -289,24 +283,28 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 		String name = null;
 		UnitMetadata unit = null;
 		
-		switch (xAxis) {
-		case Q:
-			name = "q";
-			unit = new UnitMetadataImpl(new ProductUnit<>(Unit.ONE.divide(NonSI.ANGSTROM)));
-			break;
-		case ANGLE:
-			name = "2-theta";
-			unit = new UnitMetadataImpl(NonSI.DEGREE_ANGLE);
-			break;
-		case RESOLUTION:
-			axis = Maths.divide((2*Math.PI), axis);
-			name = "d-spacing";
-			unit = new UnitMetadataImpl(NonSI.ANGSTROM);
-			break;
-		case PIXEL:
-			name = "pixel";
-			unit = new UnitMetadataImpl(NonSI.PIXEL);
-			break;
+		try {
+			switch (xAxis) {
+			case Q:
+				name = "q";
+				unit = MetadataFactory.createMetadata(UnitMetadata.class, NonSI.ANGSTROM.inverse());
+				break;
+			case ANGLE:
+				name = "2-theta";
+				unit = MetadataFactory.createMetadata(UnitMetadata.class, NonSI.DEGREE_ANGLE);
+				break;
+			case RESOLUTION:
+				axis = Maths.divide((2 * Math.PI), axis);
+				name = "d-spacing";
+				unit = MetadataFactory.createMetadata(UnitMetadata.class, NonSI.ANGSTROM);
+				break;
+			case PIXEL:
+				name = "pixel"; // TODO fix pixel case
+				// unit = MetadataFactory.createMetadata(UnitMetadata.class,
+				// NonSI.getInstance().getUnit(QuantityDimension.LENGTH));
+				break;
+			}
+		} catch (MetadataException e) {
 		}
 		axis.setMetadata(unit);
 		axis.setName(name);

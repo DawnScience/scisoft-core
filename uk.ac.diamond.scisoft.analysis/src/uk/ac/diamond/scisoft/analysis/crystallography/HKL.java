@@ -12,9 +12,10 @@ package uk.ac.diamond.scisoft.analysis.crystallography;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 
-import org.jscience.physics.amount.Amount;
+import tec.units.ri.quantity.Quantities;
 
 /**
  * This class is a bean to hold d-spacing and, optionally, integer Miller indices (h,k,l).
@@ -34,14 +35,14 @@ public class HKL implements Serializable, Cloneable {
 	private int[] hkl;
 	private String ringName;
 	
-	private Amount<Length> d;
+	private Quantity<Length> d;
 
 	public HKL() {
 		hkl = new int[3];
 		setDNano(0);
 	}
 
-	public HKL(Amount<Length> d) {
+	public HKL(Quantity<Length> d) {
 		this(-1,-1,-1,d);
 	}
 	
@@ -58,9 +59,9 @@ public class HKL implements Serializable, Cloneable {
 	 * @param l
 	 * @param d
 	 */
-	public HKL(int h, int k, int l, Amount<Length> d) {
+	public HKL(int h, int k, int l, Quantity<Length> d) {
 		this.hkl = new int[]{h,k,l};
-		this.d   = d!=null ? d.copy() : null;
+		this.d = d != null ? Quantities.getQuantity(d.getValue(), d.getUnit()) : null;
 	}
 
 	public int getH() {
@@ -76,15 +77,15 @@ public class HKL implements Serializable, Cloneable {
 	}
 	
 	public void setH(int h) {
-		hkl[0]=h;
+		hkl[0] = h;
 	}
 	
 	public void setK(int k) {
-		hkl[1]=k;
+		hkl[1] = k;
 	}
 	
 	public void setL(int l) {
-		hkl[2]=l;
+		hkl[2] = l;
 	}
 	
 	public int[] getIndices() {
@@ -147,12 +148,12 @@ public class HKL implements Serializable, Cloneable {
 		this.ringName = name;
 	}
 
-	public Amount<Length> getD() {
-		return d!=null ? d.copy() : null;
+	public Quantity<Length> getD() {
+		return d != null ? Quantities.getQuantity(d.getValue(), d.getUnit()) : null;
 	}
 
-	public void setD(Amount<Length> d) {
-		this.d = d!=null ? d.copy() : null;
+	public void setD(Quantity<Length> d) {
+		this.d = d != null ? Quantities.getQuantity(d.getValue(), d.getUnit()) : null;
 	}
 	
 	/**
@@ -161,14 +162,14 @@ public class HKL implements Serializable, Cloneable {
 	 */
 	public double getDNano() {
 		if (d==null) return Double.NaN;
-		return d.doubleValue(CalibrationStandards.NANOMETRE);
+		return d.to(CalibrationStandards.NANOMETRE).getValue().doubleValue();
 	}
 
 	/**
 	 * @param d in nanometres
 	 */
 	public void setDNano(double d) {
-		this.d = Amount.valueOf(d, CalibrationStandards.NANOMETRE);
+		this.d = Quantities.getQuantity(d, CalibrationStandards.NANOMETRE);
 	}
 
 }

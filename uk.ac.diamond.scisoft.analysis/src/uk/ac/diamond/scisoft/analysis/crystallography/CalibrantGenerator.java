@@ -16,12 +16,14 @@ import java.util.List;
 
 import javax.measure.quantity.Length;
 import javax.measure.Unit;
+import javax.measure.spi.ServiceProvider;
 
-import si.uom.SI;
+import tec.units.ri.unit.MetricPrefix;
+import tec.units.ri.unit.Units;
 
 public class CalibrantGenerator {
 	
-	public final static Unit<Length> NANO = SI.NANO(SI.METRE);
+	public final static Unit<Length> NANO = MetricPrefix.NANO(Units.METRE);
 	
 	public static enum Cubic {
 		SIMPLE,BCC,FCC,DIAMOND;
@@ -179,13 +181,13 @@ public class CalibrantGenerator {
 
 		double d = a/(Math.sqrt((Math.pow(h, 2)+Math.pow(k, 2)+Math.pow(l, 2))));
 
-		return new HKL(h, k, l, Amount.valueOf(d,  NANO));
+		return new HKL(h, k, l, ServiceProvider.current().getQuantityFactory(Length.class).create(d, NANO));
 	}
 
 	private static HKL calculateHexagonalLatticeSpacing(double a, double c, int h, int k, int l) {
 
 		double d = Math.sqrt(1/((4./3.)*(Math.pow(h, 2)+(h*k)+Math.pow(k, 2))/Math.pow(a, 2)+(Math.pow(l, 2)/Math.pow(c, 2))));
-		return new HKL(h, k, l, Amount.valueOf(d,  NANO));
+		return new HKL(h, k, l, ServiceProvider.current().getQuantityFactory(Length.class).create(d, NANO));
 
 	}
 

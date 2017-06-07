@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="uk.ac.diamond.scisoft.analysis.powder.indexer.feature"
-      label="Feature"
-      version="1.0.0.qualifier">
+      label="Powder Analysis Feature"
+      version="1.0.0.qualifier"
+      provider-name="Diamond Light Source">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -17,18 +18,17 @@
    </license>
 
    <plugin
-         id="uk.ac.diamond.scisoft.analysis.powder.indexer"
+         id="uk.ac.diamond.scisoft.analysis.powder.indexer.rcp"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="uk.ac.diamond.scisoft.analysis.powder.indexer.test"
+         id="uk.ac.diamond.scisoft.analysis.powder.indexer"
          download-size="0"
          install-size="0"
          version="0.0.0"
-         fragment="true"
          unpack="false"/>
 
 </feature>

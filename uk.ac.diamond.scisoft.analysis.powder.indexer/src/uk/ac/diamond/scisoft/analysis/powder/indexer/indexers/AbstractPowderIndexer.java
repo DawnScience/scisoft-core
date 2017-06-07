@@ -41,7 +41,11 @@ public abstract class AbstractPowderIndexer implements IPowderIndexer {
 		this.parameters = this.getInitialParamaters();
 	}
 
+	public String  getPowderRoutineID() {
+		return ID;
+	}
 
+	
 	//TODO: place active bravais searching in parameter set
 	
 	public IDataset getPeakData() {

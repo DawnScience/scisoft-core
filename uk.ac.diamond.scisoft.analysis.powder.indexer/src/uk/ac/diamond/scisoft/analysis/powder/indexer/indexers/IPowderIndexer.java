@@ -87,4 +87,6 @@ public interface IPowderIndexer extends IPowderIndexerPowderParams {
 	public boolean isPeakDataValid(IDataset peakData);
 
 	
+	public String getPowderRoutineID();
+	
 }

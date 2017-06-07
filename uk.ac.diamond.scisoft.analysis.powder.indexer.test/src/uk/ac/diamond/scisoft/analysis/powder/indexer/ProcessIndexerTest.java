@@ -52,49 +52,49 @@ public class ProcessIndexerTest {
 	
 	private ProcessingIndexerImpl processIndexer;
 	
-	@Before
-	public void setUp() {
-		processIndexer = new ProcessingIndexerImpl();
-	}
-		
-	@Test
-	public void extractIndexingTest() {
-
-		//Generating Test File
-		String filepath =  System.getProperty("java.io.tmpdir") + "/testExtractionIndexerProcess.dat";
-		String identifer = "IMPORTANCE BELOW";
-		
-		int repeats = 3;
-		int numInterestedLines = 2;
-		
-		try {
-			PrintWriter writer = new PrintWriter(filepath, "UTF-8");
-
-			for (int i = 0; i < repeats; ++i){
-				writer.println(identifer);
-				for (int j = 0; j < numInterestedLines; ++j){
-					writer.println(Integer.toString(i) + Integer.toString(j)); 
-				}
-			}
-			writer.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-        
-        //Now check extract indexing gathers this information
-		Ntreor test = new Ntreor();
-		List<String> extractedInfo = test.extractRawCellInfo(filepath, identifer, numInterestedLines);
-		
-		for (int i = 0; i < repeats; ++i){
-			String interestContent = "";
-			for (int j = 0; j < numInterestedLines; ++j){
-				interestContent += Integer.toString(i)+Integer.toString(j);
-			}
-			assertEquals(interestContent, extractedInfo.get(i));
-		}
-	}
-	
+//	@Before
+//	public void setUp() {
+//		processIndexer = new ProcessingIndexerImpl();
+//	}
+//		
+//	@Test
+//	public void extractIndexingTest() {
+//
+//		//Generating Test File
+//		String filepath =  System.getProperty("java.io.tmpdir") + "/testExtractionIndexerProcess.dat";
+//		String identifer = "IMPORTANCE BELOW";
+//		
+//		int repeats = 3;
+//		int numInterestedLines = 2;
+//		
+//		try {
+//			PrintWriter writer = new PrintWriter(filepath, "UTF-8");
+//
+//			for (int i = 0; i < repeats; ++i){
+//				writer.println(identifer);
+//				for (int j = 0; j < numInterestedLines; ++j){
+//					writer.println(Integer.toString(i) + Integer.toString(j)); 
+//				}
+//			}
+//			writer.close();
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		} catch (UnsupportedEncodingException e) {
+//			e.printStackTrace();
+//		}
+//        
+//        //Now check extract indexing gathers this information
+//		Ntreor test = new Ntreor();
+//		List<String> extractedInfo = test.extractRawCellInfo(filepath, identifer, numInterestedLines);
+//		
+//		for (int i = 0; i < repeats; ++i){
+//			String interestContent = "";
+//			for (int j = 0; j < numInterestedLines; ++j){
+//				interestContent += Integer.toString(i)+Integer.toString(j);
+//			}
+//			assertEquals(interestContent, extractedInfo.get(i));
+//		}
+//	}
+//	
 	
 }

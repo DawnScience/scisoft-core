@@ -16,10 +16,15 @@ Require-Bundle: org.eclipse.january;bundle-version="1.0.0",
  uk.ac.diamond.org.apache.xmlrpc.client;bundle-version="3.1.3",
  uk.ac.diamond.org.apache.xmlrpc.common;bundle-version="3.1.3",
  uk.ac.diamond.org.apache.xmlrpc.server;bundle-version="3.1.3",
- org.apache.commons.lang;bundle-version="2.6.0",
- uk.ac.diamond.org.apache.ws.commons.util;bundle-version="1.0.2"
+ org.apache.commons.lang;bundle-version="2.6.0"
 Service-Component: OSGI-INF/IndexerService.xml
-Export-Package: uk.ac.diamond.scisoft.analysis.powder.indexer,
- uk.ac.diamond.scisoft.analysis.powder.indexer.crystal,
- uk.ac.diamond.scisoft.analysis.powder.indexer.indexers
+Export-Package: uk.ac.diamond.scisoft.analysis.powder.indexer;uses:="org.osgi.framework,org.eclipse.ui.plugin",
+ uk.ac.diamond.scisoft.analysis.powder.indexer.crystal;uses:="org.apache.commons.math3.geometry.euclidean.threed,org.apache.commons.math3.linear",
+ uk.ac.diamond.scisoft.analysis.powder.indexer.indexers;
+  uses:="uk.ac.diamond.scisoft.analysis.powder.indexer.crystal,
+   org.eclipse.january.dataset,
+   org.slf4j,
+   uk.ac.diamond.scisoft.analysis,
+   uk.ac.diamond.scisoft.analysis.powder.indexer,
+   uk.ac.diamond.scisoft.analysis.rpc"
 Bundle-ActivationPolicy: lazy

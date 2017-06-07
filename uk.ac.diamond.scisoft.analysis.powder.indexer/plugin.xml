@@ -3,9 +3,6 @@
 <plugin>
    <extension-point id="PowderIndexer" name="PowderIndexer" schema="schema/PowderIndexer.exsd"/>
    <extension
-         point="org.eclipse.equinox.preferences.preferences">
-   </extension>
-   <extension
          point="uk.ac.diamond.scisoft.analysis.powder.indexer.PowderIndexer">
       <indexer
             id="Ntreor"

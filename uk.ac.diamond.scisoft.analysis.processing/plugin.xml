@@ -1095,7 +1095,7 @@
             class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.TwoDPolynomialBackgroundFitAndSubtract"
             icon="icons/template.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.TwoDPolynomialBackgroundFitAndSubtract"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.BoxSlicerModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.TwoDPolynomialBackgroundFitAndSubtractModel"
             name="Polynomial Background Subtraction 2D">
       </operation>
       <operation

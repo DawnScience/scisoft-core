@@ -1,90 +1,83 @@
 package uk.ac.diamond.scisoft.analysis.powder.indexer.indexers;
 
-import uk.co.norphos.crystallography.toolkit.Crystal;
-import uk.co.norphos.crystallography.toolkit.CrystalSystem;
-import uk.co.norphos.crystallography.toolkit.Lattice;
+import uk.ac.diamond.scisoft.analysis.powder.indexer.crystal.Crystal;
+import uk.ac.diamond.scisoft.analysis.powder.indexer.crystal.CrystalSystem;
+import uk.ac.diamond.scisoft.analysis.powder.indexer.crystal.Lattice;
 
 public class CellInteraction implements ICellInteraction {
 	
 	private Crystal crystalSys;
 	
-	private Lattice latt;
+	private double a, b, c, al, be, ga;
 	
 	public CellInteraction(){
 		//Initialise unitcell
 		//this.unitcell = new CellParameter();
 		
-		//Cant initialise
-		//Lattice latt = new Lattice(angleTol, angleTol, angleTol, angleTol, angleTol, angleTol, null);
 		//this.crytalSys = new Crystal();
 		//Generic crystall initialisation
-		crystalSys = new Crystal(new Lattice.LatticeBuilder(1).build(), CrystalSystem.CUBIC);
+		//Lattice latt = new Lattice(angleTol, angleTol, angleTol, angleTol, angleTol, angleTol, null);
+		//Lattice latt = new 
+		//crystalSys = new Crystal(new Lattice.LatticeBuilder(1).build(), CrystalSystem.CUBIC);
 	}
 	
-	public void setAVal(double a){
-		Lattice preLatt =this.crystalSys.getUnitCell().getLattice();
-		Lattice nLatt = new Lattice.LatticeBuilder(preLatt).setA(a).build();
-		this.crystalSys = new Crystal(nLatt, this.crystalSys.getCrystalsystem());
+	public double getA() {
+		return a;
 	}
 
-	public double getAVal(){
-		return crystalSys.getUnitCell().getLattice().a();
+	public void setA(double a) {
+		this.a = a;
 	}
 	
-	public void setBVal(double b){
-		Lattice preLatt =this.crystalSys.getUnitCell().getLattice();
-		Lattice nLatt = new Lattice.LatticeBuilder(preLatt).setB(b).build();
-		this.crystalSys = new Crystal(nLatt, this.crystalSys.getCrystalsystem());
-	}	
-	public double getBVal(){
-		return crystalSys.getUnitCell().getLattice().b();
+	public double getB() {
+		return b;
 	}
-	
-	public void setCVal(double c){
-		Lattice preLatt =this.crystalSys.getUnitCell().getLattice();
-		Lattice nLatt = new Lattice.LatticeBuilder(preLatt).setC(c).build();
-		this.crystalSys = new Crystal(nLatt, this.crystalSys.getCrystalsystem());
+
+	public void setB(double b) {
+		this.b = b;
 	}
-	public double getCVal(){
-		return crystalSys.getUnitCell().getLattice().c();
+
+	public double getC() {
+		return c;
 	}
-	
-	
-	public double getAlphaVal() {
-		return crystalSys.getUnitCell().getLattice().al();
+
+	public void setC(double c) {
+		this.c = c;
 	}
-	public void setAlphaVal(double alpha) {
-		Lattice preLatt =this.crystalSys.getUnitCell().getLattice();
-		Lattice nLatt = new Lattice.LatticeBuilder(preLatt).setAl(alpha).build();
-		this.crystalSys = new Crystal(nLatt, this.crystalSys.getCrystalsystem());
+
+	public double getAl() {
+		return al;
 	}
-	
-	public double getBetaVal() {
-		return crystalSys.getUnitCell().getLattice().be();
+
+	public void setAl(double al) {
+		this.al = al;
 	}
-	public void setBetaVal(double beta) {
-		Lattice preLatt =this.crystalSys.getUnitCell().getLattice();
-		Lattice nLatt = new Lattice.LatticeBuilder(preLatt).setBe(beta).build();
-		this.crystalSys = new Crystal(nLatt, this.crystalSys.getCrystalsystem());
+
+	public double getBe() {
+		return be;
 	}
-	
-	public double getGammaVal() {
-		return crystalSys.getUnitCell().getLattice().ga();
+
+	public void setBe(double be) {
+		this.be = be;
 	}
-	public void setGammaVal(double gamma) {
-		Lattice preLatt =this.crystalSys.getUnitCell().getLattice();
-		Lattice nLatt = new Lattice.LatticeBuilder(preLatt).setGa(gamma).build();
-		this.crystalSys = new Crystal(nLatt, this.crystalSys.getCrystalsystem());
+
+	public double getGa() {
+		return ga;
 	}
-	
+
+	public void setGa(double ga) {
+		this.ga = ga;
+	}
 	
 	@Override
 	public Crystal getSearchCrystal() {
-		return crystalSys;
+		return new Crystal(getLattice()); //TODO: way to set crystal sysstems
 	}
 	@Override
 	public Lattice getLattice() {
-		return crystalSys.getUnitCell().getLattice();
+		return new Lattice(getA(), getB(), getC(), getAl(), getBe(), getGa());
 	}
+
+
 	
 }

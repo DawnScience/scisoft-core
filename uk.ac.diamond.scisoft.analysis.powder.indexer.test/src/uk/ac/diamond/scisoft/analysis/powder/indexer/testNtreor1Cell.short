@@ -1,0 +1,63 @@
+
+------------------------------------------------------------
+   N-TREOR trial #    1  -  Applied 2-Theta shift = 0.0000
+------------------------------------------------------------
+
+
+ The first (up to 25) d-values will  be  used by  N-TREOR  in order  to
+ find  a possible cell.
+
+test1                                                                           
+       10.756900
+        9.726810
+        7.226810
+        7.202560
+        6.629820
+        6.628920
+        6.480720
+        6.472790
+        5.378450
+        4.998180
+        4.997030
+        4.936500
+        4.925990
+        4.863410
+        4.835220
+        4.831230
+        4.713550
+        4.700080
+        4.662440
+        4.656220
+
+ Number of plausible solutions (with M(20) > 10) =      4
+
+ --------------------
+      Cell #  1 :
+ --------------------
+
+ WARNING: the cell
+
+     A  =   7.35266       B  =  10.27759       C  =  11.35499
+  Alpha =  83.88913    Beta  =  71.32196    Gamma =  71.15863
+
+  Unit cell volume =  769.316 A**3
+
+  M(20) =     28      M'(20) =     28
+
+  Number of observed   lines =     20
+
+  Number of calculated lines =     20
+
+  Number of unindexed  lines =      0
+
+
+         has been reduced into the following one
+
+  Crystal system: Triclinic                                                      
+
+     A  =  10.27759       B  =  11.35499       C  =   7.35266
+  Alpha = 108.67804    Beta  = 108.84137    Gamma =  83.88913
+
+  Unit cell volume =  769.316 A**3
+
+  M(20) =     28      M'(20) =     28

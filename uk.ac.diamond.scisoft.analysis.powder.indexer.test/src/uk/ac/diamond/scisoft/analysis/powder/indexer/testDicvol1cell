@@ -1,0 +1,312 @@
+1
+       --------------------------------------------------------------------
+       | tmpD                                                             |
+       --------------------------------------------------------------------
+                                    INPUT DATA
+                                    **********
+            EXPERIMENTAL                                   EXPERIMENTAL
+              2-THETA                                          ERROR
+
+                5.696                                         0.030
+                8.059                                         0.030
+                9.875                                         0.030
+               10.757                                         0.030
+               11.408                                         0.030
+               12.759                                         0.030
+               13.983                                         0.030
+               16.160                                         0.030
+               17.146                                         0.030
+               18.082                                         0.030
+               18.972                                         0.030
+               19.816                                         0.030
+               20.642                                         0.030
+               21.431                                         0.030
+               22.930                                         0.030
+               23.646                                         0.030
+               24.341                                         0.030
+               25.019                                         0.030
+               25.681                                         0.030
+               26.326                                         0.030
+                     ******************************************
+    -------  PARAMETER LIMITS  --------     --------  VOLUME LIMITS  ---------
+    |                                 |     |                                |
+    |    A MAXIMUM    =   25.00 A     |     |                                |
+    |    B MAXIMUM    =   25.00 A     |     |  VOLUME MINIMUM =    0.00 A**3 |
+    |    C MAXIMUM    =   25.00 A     |     |                                |
+    |    BETA MINIMUM =   90.00 Deg.  |     |  VOLUME MAXIMUM = 2500.00 A**3 |
+    |    BETA MAXIMUM =  125.00 Deg.  |     |                                |
+    |                                 |     |                                |
+    -----------------------------------     ----------------------------------
+                              WAVELENGTH = 1.540598 A
+  LOWER FIGURE OF MERIT REQUIRED FOR PRINTED SOLUTION(S)  :  M( 20) =  10.0
+ MAXIMUM NUMBER OF ACCEPTED UNINDEXED LINES AMONG THE FIRST 20 INPUT LINES: 0
+            ************************************************************
+            **                                                        **
+            **  ATTENTION  : VOS DONNEES SONT-ELLES IRREPROCHABLES ?  **
+            **  WARNING    : ARE YOUR DATA IRREPROACHABLE ?           **
+            **                                                        **
+            ************************************************************
+
+
+
+  SELECTED OPTION  =====>  DICVOL04
+
+
+
+                  SEARCH OF CUBIC SOLUTION(S)
+                  ***************************
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =       0.00 A**3     HIGHER BOUND =    2500.00 A**3
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+
+  END OF SEARCH FOR CUBIC SOLUTION(S)
+  -----------------------------------
+
+                  SEARCH OF TETRAGONAL AND/OR HEXAGONAL SOLUTION(S)    
+                  *************************************************
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =       0.00 A**3     HIGHER BOUND =     400.00 A**3
+        TETRAGONAL SYSTEM
+        -----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+        HEXAGONAL SYSTEM
+        ----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =     400.00 A**3     HIGHER BOUND =     800.00 A**3
+        TETRAGONAL SYSTEM
+        -----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+        HEXAGONAL SYSTEM
+        ----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =     800.00 A**3     HIGHER BOUND =    1200.00 A**3
+        TETRAGONAL SYSTEM
+        -----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+        HEXAGONAL SYSTEM
+        ----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =    1200.00 A**3     HIGHER BOUND =    1600.00 A**3
+        TETRAGONAL SYSTEM
+        -----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+        HEXAGONAL SYSTEM
+        ----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =    1600.00 A**3     HIGHER BOUND =    2000.00 A**3
+        TETRAGONAL SYSTEM
+        -----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+        HEXAGONAL SYSTEM
+        ----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =    2000.00 A**3     HIGHER BOUND =    2400.00 A**3
+        TETRAGONAL SYSTEM
+        -----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+        HEXAGONAL SYSTEM
+        ----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =    2400.00 A**3     HIGHER BOUND =    2500.00 A**3
+        TETRAGONAL SYSTEM
+        -----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+        HEXAGONAL SYSTEM
+        ----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+
+  END OF SEARCH FOR TETRAGONAL AND/OR HEXAGONAL SOLUTION(S)
+  ---------------------------------------------------------
+
+                  SEARCH OF MONOCLINIC SOLUTION(S)
+                  ********************************
+
+   SEARCH OF MONOCLINIC SOLUTION(S) WITHIN THE LIMITS ON LINEAR PARAMETERS
+   ***********************************************************************
+   (SLIGHT TOLERANCE ACCEPTED):  AMAX= 25.000   BMAX= 25.000   CMAX= 25.000
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =       0.00 A**3     HIGHER BOUND =     400.00 A**3
+   ANGLE RANGE SCANNED :  BETA MIN= 90.000 Deg.  BETA MAX= 95.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN= 95.000 Deg.  BETA MAX=100.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=100.000 Deg.  BETA MAX=105.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=105.000 Deg.  BETA MAX=110.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=110.000 Deg.  BETA MAX=115.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=115.000 Deg.  BETA MAX=120.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=120.000 Deg.  BETA MAX=125.000 Deg.
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =     400.00 A**3     HIGHER BOUND =     800.00 A**3
+   ANGLE RANGE SCANNED :  BETA MIN= 90.000 Deg.  BETA MAX= 95.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN= 95.000 Deg.  BETA MAX=100.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=100.000 Deg.  BETA MAX=105.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=105.000 Deg.  BETA MAX=110.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=110.000 Deg.  BETA MAX=115.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=115.000 Deg.  BETA MAX=120.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=120.000 Deg.  BETA MAX=125.000 Deg.
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                  13       0       0       0       0       0       0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =     800.00 A**3     HIGHER BOUND =    1200.00 A**3
+   ANGLE RANGE SCANNED :  BETA MIN= 90.000 Deg.  BETA MAX= 95.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN= 95.000 Deg.  BETA MAX=100.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=100.000 Deg.  BETA MAX=105.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=105.000 Deg.  BETA MAX=110.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=110.000 Deg.  BETA MAX=115.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=115.000 Deg.  BETA MAX=120.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=120.000 Deg.  BETA MAX=125.000 Deg.
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                 112       6       0       0       0       0       0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =    1200.00 A**3     HIGHER BOUND =    1600.00 A**3
+   ANGLE RANGE SCANNED :  BETA MIN= 90.000 Deg.  BETA MAX= 95.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN= 95.000 Deg.  BETA MAX=100.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=100.000 Deg.  BETA MAX=105.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=105.000 Deg.  BETA MAX=110.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=110.000 Deg.  BETA MAX=115.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=115.000 Deg.  BETA MAX=120.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=120.000 Deg.  BETA MAX=125.000 Deg.
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                 253      79      17      14       5       0       0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =    1600.00 A**3     HIGHER BOUND =    2000.00 A**3
+   ANGLE RANGE SCANNED :  BETA MIN= 90.000 Deg.  BETA MAX= 95.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN= 95.000 Deg.  BETA MAX=100.000 Deg.
+   ANGLE RANGE SCANNED :  BETA MIN=100.000 Deg.  BETA MAX=105.000 Deg.
+
+ DIRECT PARAMETERS AND THEIR STANDARD DEVIATIONS :
+ A= 21.4130 B= 19.1401 C=  8.3039  ALP= 34.937 BET=133.620 GAM=124.439 VOL= 1410.94
+     0.0003     0.0003     0.0003        0.001       0.001       0.001
+
+ REDUCED CELL :
+ A=  8.3039 B= 10.9994 C= 15.6097  ALP= 89.441 BET= 83.247 GAM= 85.218 VOL= 1410.94
+
+    H   K   L    DOBS     DCAL    DOBS-DCAL 2TH.OBS  2TH.CAL  DIF.2TH.
+
+    1   0   0  15.50318 15.50144   0.00174    5.696    5.697  -0.001
+    0   1   0  10.96130 10.96115   0.00015    8.059    8.060  -0.000
+    1  -1   0   8.94978  8.94954   0.00025    9.875    9.875  -0.000
+    1   1   0            8.94996  -0.00017             9.875   0.000
+    2  -2  -1   8.21794  8.21794  -0.00000   10.757   10.757   0.000
+    2   0   0   7.75067  7.75072  -0.00006   11.408   11.407   0.000
+    3  -2  -1   6.93228  6.93233  -0.00005   12.759   12.759   0.000
+    2  -3  -1   6.32834  6.32850  -0.00015   13.983   13.983   0.000
+    2  -1   0            6.32828   0.00006            13.983  -0.000
+    2   1   0            6.32858  -0.00024            13.982   0.001
+    0   2   0   5.48055  5.48057  -0.00002   16.160   16.159   0.000
+    1  -2   0   5.16724  5.16705   0.00018   17.146   17.147  -0.001
+    1   2   0            5.16722   0.00002            17.147  -0.000
+    3   0   0            5.16715   0.00009            17.147  -0.000
+    4  -1  -1   4.90195  4.90194   0.00002   18.082   18.082  -0.000
+    3  -1   0   4.67384  4.67377   0.00007   18.972   18.973  -0.000
+    3   1   0            4.67395  -0.00011            18.972   0.000
+    2  -2   0   4.47667  4.47477   0.00190   19.816   19.825  -0.009
+    2   2   0            4.47498   0.00169            19.824  -0.008
+    1  -4  -1   4.29944  4.29944   0.00000   20.642   20.642  -0.000
+ (  5  -2  -1)  4.14290  ****************    21.431           -0.090
+    4   0   0   3.87534  3.87536  -0.00002   22.930   22.930   0.000
+    3  -2   0   3.75967  3.75955   0.00012   23.646   23.646  -0.001
+    3   2   0            3.75974  -0.00007            23.645   0.000
+    0   3   0   3.65372  3.65372   0.00001   24.341   24.342  -0.000
+    4  -1   0            3.65367   0.00006            24.342  -0.000
+    4   1   0            3.65378  -0.00006            24.341   0.000
+    1  -3   0   3.55630  3.55623   0.00007   25.019   25.019  -0.000
+    1   3   0            3.55631  -0.00001            25.019   0.000
+    5  -5  -2            3.55625   0.00005            25.019  -0.000
+    6  -4  -2   3.46617  3.46617   0.00000   25.681   25.681  -0.000
+    5   0  -1   3.38269  3.38269  -0.00000   26.326   26.325   0.000
+    2  -3   0   3.30486  3.30485   0.00001   26.957   26.957  -0.000
+    2   3   0            3.30497  -0.00011            26.956   0.001
+
+          * NUMBER OF LINES
+               .- LINES INPUT      =   21
+               .- LINES INDEXED    =   20
+               .- LINES CALCULATED =   84
+          * AVERAGE 2-Theta DIFFERENCE FOR INDEXED LINES =-0.0004
+          * MEAN ABSOLUTE DISCREPANCIES
+                                              <Q> =0.2387E-05
+                                 <DELTA(2-THETA)> =0.5071E-03
+               MAX. ERROR ACCEPTED (DEG. 2-THETA) =0.4500E-01
+          * FIGURES OF MERIT
+                 1.- M( 20) =  228.3
+                 2.- F( 20) =  469.5(0.0005,   84)
+
+                    ITERATION NUMBER AT EACH DICHOTOMY : 
+       5086     23073     45960     90847    169490    583061   3472085   2283366
+
+
+  END OF SEARCH FOR TRICLINIC SOLUTIONS
+  -------------------------------------
+  --- T O T A L   CALCULATION TIME :    208.690 SEC
+
+        DICVOL04 : USEFUL REFERENCES
+        --------
+          * BOULTIF, A. & LOUER, D. (2004). J. APPL. CRYST. 37, 724-731.
+          * LOUER, D. & LOUER, M. (1972). J. APPL. CRYST. 5, 271-275.
+          * BOULTIF, A. & LOUER, D. (1991). J. APPL. CRYST. 24, 987-993.

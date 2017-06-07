@@ -1,0 +1,196 @@
+1
+       --------------------------------------------------------------------
+       | tp                                                               |
+       --------------------------------------------------------------------
+                                    INPUT DATA
+                                    **********
+            EXPERIMENTAL                                   EXPERIMENTAL
+              2-THETA                                          ERROR
+
+                4.656                                         0.030
+                4.662                                         0.030
+                4.700                                         0.030
+                4.714                                         0.030
+                4.831                                         0.030
+                4.835                                         0.030
+                4.863                                         0.030
+                4.926                                         0.030
+                4.937                                         0.030
+                4.997                                         0.030
+                4.998                                         0.030
+                5.378                                         0.030
+                6.473                                         0.030
+                6.481                                         0.030
+                6.629                                         0.030
+                6.630                                         0.030
+                7.203                                         0.030
+                7.227                                         0.030
+                9.727                                         0.030
+               10.757                                         0.030
+                     ******************************************
+    -------  PARAMETER LIMITS  --------     --------  VOLUME LIMITS  ---------
+    |        A MAXIMUM = 25.00 A      |     |                                |
+    |                                 |     |  VOLUME MINIMUM =    0.00 A**3 |
+    |        B MAXIMUM = 25.00 A      |     |                                |
+    |                                 |     |  VOLUME MAXIMUM = 2500.00 A**3 |
+    |        C MAXIMUM = 25.00 A      |     |                                |
+    -----------------------------------     ----------------------------------
+
+                              WAVELENGTH = 1.540598 A
+  LOWER FIGURE OF MERIT REQUIRED FOR PRINTED SOLUTION(S)  :  M( 20) =  10.0
+ MAXIMUM NUMBER OF ACCEPTED UNINDEXED LINES AMONG THE FIRST 20 INPUT LINES: 0
+            ************************************************************
+            **                                                        **
+            **  ATTENTION  : VOS DONNEES SONT-ELLES IRREPROCHABLES ?  **
+            **  WARNING    : ARE YOUR DATA IRREPROACHABLE ?           **
+            **                                                        **
+            ************************************************************
+
+
+
+  SELECTED OPTION  =====>  DICVOL04
+
+
+
+                  SEARCH OF CUBIC SOLUTION(S)
+                  ***************************
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =       0.00 A**3     HIGHER BOUND =    2500.00 A**3
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+
+  END OF SEARCH FOR CUBIC SOLUTION(S)
+  -----------------------------------
+
+                  SEARCH OF TETRAGONAL AND/OR HEXAGONAL SOLUTION(S)    
+                  *************************************************
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =       0.00 A**3     HIGHER BOUND =     400.00 A**3
+        TETRAGONAL SYSTEM
+        -----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =     400.00 A**3     HIGHER BOUND =     800.00 A**3
+        TETRAGONAL SYSTEM
+        -----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =     800.00 A**3     HIGHER BOUND =    1200.00 A**3
+        TETRAGONAL SYSTEM
+        -----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =    1200.00 A**3     HIGHER BOUND =    1600.00 A**3
+        TETRAGONAL SYSTEM
+        -----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =    1600.00 A**3     HIGHER BOUND =    2000.00 A**3
+        TETRAGONAL SYSTEM
+        -----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =    2000.00 A**3     HIGHER BOUND =    2400.00 A**3
+        TETRAGONAL SYSTEM
+        -----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =    2400.00 A**3     HIGHER BOUND =    2500.00 A**3
+        TETRAGONAL SYSTEM
+        -----------------
+                ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                   0       0       0       0       0       0       0
+                                    NO SOLUTION
+
+  END OF SEARCH FOR TETRAGONAL AND/OR HEXAGONAL SOLUTION(S)
+  ---------------------------------------------------------
+
+                  SEARCH OF TRICLINIC SOLUTION(S)
+                  *******************************
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =       0.00 A**3     HIGHER BOUND =     400.00 A**3
+                    ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                    0         0         0         0         0         0         0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =     400.00 A**3     HIGHER BOUND =     800.00 A**3
+                    ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                    0         0         0         0         0         0         0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =     800.00 A**3     HIGHER BOUND =    1200.00 A**3
+                    ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                    0         0         0         0         0         0         0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =    1200.00 A**3     HIGHER BOUND =    1600.00 A**3
+                    ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                    0         0         0         0         0         0         0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =    1600.00 A**3     HIGHER BOUND =    2000.00 A**3
+                    ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                    0         0         0         0         0         0         0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =    2000.00 A**3     HIGHER BOUND =    2400.00 A**3
+                    ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                    0         0         0         0         0         0         0
+                                    NO SOLUTION
+
+  VOLUME DOMAIN BEING SCANNED :
+  ===========================
+             LOWER BOUND =    2400.00 A**3     HIGHER BOUND =    2500.00 A**3
+                    ITERATION NUMBER AT EACH DICHOTOMY LEVEL :
+                    0         0         0         0         0         0         0
+                                    NO SOLUTION
+
+  END OF SEARCH FOR TRICLINIC SOLUTIONS
+  -------------------------------------
+
+        DICVOL04 : USEFUL REFERENCES
+        --------
+          * BOULTIF, A. & LOUER, D. (2004). J. APPL. CRYST. 37, 724-731.
+          * LOUER, D. & LOUER, M. (1972). J. APPL. CRYST. 5, 271-275.
+          * BOULTIF, A. & LOUER, D. (1991). J. APPL. CRYST. 24, 987-993.

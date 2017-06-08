@@ -1024,7 +1024,20 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		}
 
 		if (dataBean != null) {
-			plotServer.setData(plotName, dataBean);
+			try {
+				plotServer.setData(plotName, dataBean);
+			} catch (Exception e) {
+				try {
+					logger.trace("Could not send data bean. Trying again without metadata", e);
+					dataBean.removeMetadata();
+					plotServer.setData(plotName, dataBean);
+					logger.trace("Succeeded sending data bean without metadata.");
+				} catch (Exception e1) {
+					e1.printStackTrace();
+					logger.error("Could not send data bean", e1);
+					throw e1;
+				}
+			}
 		}
 	}
 
@@ -1105,4 +1118,13 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 		setGuiBean(plotName, guiBean);
 	}
+
+	@Override
+	public void setActiveAxisRange(String plotName, String axis, double lower, double upper) throws Exception {
+		GuiBean guiBean = new GuiBean();
+		guiBean.put(GuiParameters.AXIS_OPERATION, new AxisOperation(axis, lower, upper));
+
+		setGuiBean(plotName, guiBean);
+	}
 }
+

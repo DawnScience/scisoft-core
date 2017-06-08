@@ -108,7 +108,7 @@ public class CCDCService implements ICCDCService {
 			
 			
 			//TODO: pass a debug mode level for the logger. If in debug also dd not fail the getStdout the same
-			PythonRunInfo server = PythonHelper.runPythonFileBackground(absPath);
+			//PythonRunInfo server = PythonHelper.runPythonFileBackground(absPath);
 			
 			AnalysisRpcPythonPyDevService s = null;
 			PythonRunScriptService pythonRunScriptService = null;

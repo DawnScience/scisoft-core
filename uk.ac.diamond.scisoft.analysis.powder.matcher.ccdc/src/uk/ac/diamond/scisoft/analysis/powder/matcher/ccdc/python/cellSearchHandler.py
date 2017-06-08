@@ -52,8 +52,8 @@ logger.addHandler(ch)
 
 
 #TODO: is essential to have scisoftpy? probably not create own python class for handling xmlrpc components
-scisoftpath = '/scratch/DAWN_git/scisoft-core.git/uk.ac.diamond.scisoft.python/src' #TODO: no absolute path
-sys.path.append(scisoftpath)
+# scisoftpath = '/scratch/DAWN_git/scisoft-core.git/uk.ac.diamond.scisoft.python/src' #TODO: no absolute path
+# sys.path.append(scisoftpath)
 #TODO: there are lots of configuration within the pyrpc. can not really remove such a nice configuration for running the server.
 #The better plan is to make sure the scisoft dnp is ready to go
 
@@ -113,6 +113,7 @@ try:
     from ccdc.search import SimilaritySearch
     from ccdc.search import TextNumericSearch
     from ccdc.diagram import DiagramGenerator
+    from ccdc.io import EntryReader
 except ImportError: 
     raise ImportError('Part of the CCDC is not avaliable')
 
@@ -250,16 +251,20 @@ class CellSearcher:
             #logger.info("Casting one hit " + hit.crystal.to_string(format='sdf'))
             detailsImp = []
             logger.info(hit.molecule.identifier)
-            logger.info("CCDC number: ")
-            logger.info(hit.entry.ccdc_number)
+            logger.info("CCDC number: " + str(hit.entry.ccdc_number))
+            
+            details = EntryReader('CSD').entry(hit.identifier)
             detailsImp.append(hit.identifier) # refcode
-            detailsImp.append(str(hit.crystal.cell_lengths[0]))
-            detailsImp.append(str(hit.crystal.cell_lengths[1]))
-            detailsImp.append(str(hit.crystal.cell_lengths[2]))
+            logger.info(str(details.crystal.cell_lengths[0]))
+            
+            detailsImp.append(str(details.crystal.cell_lengths[0]))
+            
+            detailsImp.append(str(details.crystal.cell_lengths[1]))
+            detailsImp.append(str(details.crystal.cell_lengths[2]))
 
-            detailsImp.append(str(hit.crystal.cell_angles[0]))
-            detailsImp.append(str(hit.crystal.cell_angles[1]))
-            detailsImp.append(str(hit.crystal.cell_angles[2]))
+            detailsImp.append(str(details.crystal.cell_angles[0]))
+            detailsImp.append(str(details.crystal.cell_angles[1]))
+            detailsImp.append(str(details.crystal.cell_angles[2]))
 
             detailsImp.append(hit.crystal.formula)
 
@@ -410,6 +415,7 @@ class CellSearcher:
         :return:
         """
         cellSearcher.reportGenerator(filepath,refcode)
+        logger.info("Generated report at " + filepath + " with refcode " + refcode )
         return True
 
     #TODO: Weight up flatterners

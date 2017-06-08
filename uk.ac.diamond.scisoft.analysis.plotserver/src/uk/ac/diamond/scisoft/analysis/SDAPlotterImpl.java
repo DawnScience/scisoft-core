@@ -1118,13 +1118,4 @@ public class SDAPlotterImpl implements ISDAPlotter {
 
 		setGuiBean(plotName, guiBean);
 	}
-
-	@Override
-	public void setActiveAxisRange(String plotName, String axis, double lower, double upper) throws Exception {
-		GuiBean guiBean = new GuiBean();
-		guiBean.put(GuiParameters.AXIS_OPERATION, new AxisOperation(axis, lower, upper));
-
-		setGuiBean(plotName, guiBean);
-	}
 }
-

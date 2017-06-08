@@ -1,12 +1,24 @@
 import os, sys, logging
-scisoftpath = '/scratch/DAWN_git/scisoft-core.git/uk.ac.diamond.scisoft.python/src' #TODO: no absolute path
-sys.path.append(scisoftpath)
-import scisoftpy as dnp #@UnresolvedImport
+
+# scisoftpath = '/scratch/DAWN_git/scisoft-core.git/uk.ac.diamond.scisoft.python/src' #TODO: no absolute path
+# sys.path.append(scisoftpath)
+try:
+    import scisoftpy as dnp #@UnresolvedImport
+except ImportError:
+    raise ImportError('Scisoftpy is not avaliable')
+
+
 
 #GSASII dependencies
-gsasIIPath = '/scratch/software/Indexers/GSASII_Indexing/gsas2' #TODO: link to environment varaible of gsasII instead
-sys.path.append(gsasIIPath)
-import GSASIIindex 
+# gsasIIPath = '/scratch/software/Indexers/GSASII_Indexing/gsas2' #TODO: link to environment varaible of gsasII instead
+# sys.path.append(gsasIIPath)
+sys.path.append(os.environ.get('Gsas2'))
+
+try:
+    import GSASIIindex 
+except ImportError:
+    raise ImportError('GSAS2 is not avaliable')
+
 
 #Configure logger
 logger = logging.getLogger('runGSASII')
@@ -60,7 +72,7 @@ def isCallAvaliable():
 #side note in the GSASII implementation there might be no difference between a peak and peaks ...
 def getIndexing(peakData, controls, bravais):
     '''
-    Peform indexing call to gsasII and return a list of plasible cells.
+    Peform indexing call to gsasII and return a list of plausible cells.
     
     :param peakData -> list[peak[x,y],...,*]
     :param controls -> [UNKNOWN_UNUSED,zero=0,ncno = 4 ,volume=25,]

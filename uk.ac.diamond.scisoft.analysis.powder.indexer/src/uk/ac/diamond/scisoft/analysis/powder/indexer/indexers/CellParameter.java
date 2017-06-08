@@ -15,18 +15,12 @@ public class CellParameter extends CellInteraction {
 	
 	private String indexerIdentifer;
 
-	private CellInteraction cell;
 	
 	public CellParameter() {
 		
-		cell = new CellInteraction();
 		//TODO: intialise to zero?
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		return cell.equals(obj);
-	}
 	
 	public boolean isGreaterMerit(Object obj){
 		
@@ -53,10 +47,6 @@ public class CellParameter extends CellInteraction {
 		return merit;
 	}
 
-	public CellInteraction getCell(){
-		return this.cell;
-	}
-	
 	public String getIndexerIdentifer() {
 		return indexerIdentifer;
 	}

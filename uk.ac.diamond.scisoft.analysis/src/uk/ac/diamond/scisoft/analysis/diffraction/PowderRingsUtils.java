@@ -532,7 +532,7 @@ public class PowderRingsUtils {
 
 		int n = ellipses.size();
 
-		double dmax = spacings.get(0).getD().doubleValue(NonSI.ANGSTROM);
+		double dmax = spacings.get(0).getD().to(NonSI.ANGSTROM).getValue().doubleValue();
 		{
 			double rmin = detector.getDetectorDistance() * Math.tan(2.0 * Math.asin(0.5 * env.getWavelength() / dmax)) / detector.getVPxSize();
 			int l = 0;
@@ -583,7 +583,7 @@ public class PowderRingsUtils {
 		List<Double> s = new ArrayList<Double>();
 		for (int i = 0, imax = spacings.size(); i < imax; i++) {
 			HKL d = spacings.get(i);
-			s.add(d.getD().doubleValue(NonSI.ANGSTROM));
+			s.add(d.getD().to(NonSI.ANGSTROM).getValue().doubleValue());
 		}
 		CombinationGenerator<Double> gen = new CombinationGenerator<Double>(s, n);
 		if (mon != null) {
@@ -667,7 +667,7 @@ public class PowderRingsUtils {
 			EllipticalROI e = (EllipticalROI) r;
 			ellipses.add(e);
 			HKL d = spacings.get(i);
-			s.add(d.getD().doubleValue(NonSI.ANGSTROM));
+			s.add(d.getD().to(NonSI.ANGSTROM).getValue().doubleValue());
 			logger.debug("    {}", e);
 			if (allCircles && !e.isCircular()) {
 				allCircles = false;
@@ -832,7 +832,7 @@ public class PowderRingsUtils {
 				EllipticalROI e = (EllipticalROI) r;
 				ellipses.add(e);
 				HKL d = spacings.get(i);
-				s.add(d.getD().doubleValue(NonSI.ANGSTROM));
+				s.add(d.getD().to(NonSI.ANGSTROM).getValue().doubleValue());
 				logger.debug("    {}", e);
 			}
 			lEllipses.add(ellipses);

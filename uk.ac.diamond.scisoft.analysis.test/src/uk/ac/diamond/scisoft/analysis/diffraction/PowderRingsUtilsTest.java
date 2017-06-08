@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.measure.quantity.Length;
+import javax.measure.spi.ServiceProvider;
 import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
@@ -27,7 +29,7 @@ import org.eclipse.dawnsci.analysis.dataset.roi.PolylineROI;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
-import org.jscience.physics.amount.Amount;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -73,7 +75,7 @@ public class PowderRingsUtilsTest {
 		siliconCell = new UnitCell(LATTICE_PARAMETER);
 		spacings = new ArrayList<HKL>();
 		for (double d : SPACINGS) {
-			spacings.add(new HKL(Amount.valueOf(d, NonSI.ANGSTROM)));
+			spacings.add(new HKL(ServiceProvider.current().getQuantityFactory(Length.class).create(d, NonSI.ANGSTROM)));
 		}
 		FittingUtils.seed = 1237L; // set seed for evolution strategy fitting
 //		mSpace = new MillerSpace(siliconCell, null);
@@ -115,7 +117,7 @@ public class PowderRingsUtilsTest {
 		List<EllipticalROI> ells = new ArrayList<EllipticalROI>();
 		List<Double> list = new ArrayList<Double>();
 		for (HKL d : spacings) {
-			double s = d.getD().doubleValue(NonSI.ANGSTROM);
+			double s = d.getD().to(NonSI.ANGSTROM).getValue().doubleValue();
 			IROI r = DSpacing.conicFromDSpacing(det, wavelength, s);
 			if (r instanceof EllipticalROI) {
 				ells.add((EllipticalROI) r);
@@ -229,7 +231,7 @@ public class PowderRingsUtilsTest {
 					EllipticalROI e;
 					try {
 						e = (EllipticalROI) DSpacing.conicFromDSpacing(det, env.getWavelength(),
-								d.getD().doubleValue(NonSI.ANGSTROM));
+								d.getD().to(NonSI.ANGSTROM).getValue().doubleValue());
 						ds.add(d);
 						ells.add(e);
 					} catch (Exception ex) {
@@ -341,7 +343,7 @@ public class PowderRingsUtilsTest {
 						EllipticalROI e = null;
 						try {
 							e = (EllipticalROI) DSpacing.conicFromDSpacing(det, env.getWavelength(), d.getD()
-									.doubleValue(NonSI.ANGSTROM));
+									.to(NonSI.ANGSTROM).getValue().doubleValue());
 						} catch (Exception ex) {
 							continue;
 						} finally {
@@ -456,7 +458,7 @@ public class PowderRingsUtilsTest {
 		DetectorProperties[] dets = new DetectorProperties[] {det, det2};
 
 		for (HKL d : spacings) {
-			double dspacing = d.getD().doubleValue(NonSI.ANGSTROM); 
+			double dspacing = d.getD().to(NonSI.ANGSTROM).getValue().doubleValue(); 
 			list.add(dspacing);
 			try {
 				ells.add((EllipticalROI) DSpacing.conicFromDSpacing(det, wavelength, dspacing));
@@ -476,7 +478,7 @@ public class PowderRingsUtilsTest {
 				ells.clear();
 				list.clear();
 				for (HKL d : spacings) {
-					double dspacing = d.getD().doubleValue(NonSI.ANGSTROM);
+					double dspacing = d.getD().to(NonSI.ANGSTROM).getValue().doubleValue();
 					try {
 						EllipticalROI e = (EllipticalROI) DSpacing.conicFromDSpacing(dt, wavelength, dspacing);
 						list.add(dspacing);
@@ -514,7 +516,7 @@ public class PowderRingsUtilsTest {
 						ells.clear();
 						list.clear();
 						for (HKL d : spacings) {
-							double dspacing = d.getD().doubleValue(NonSI.ANGSTROM);
+							double dspacing = d.getD().to(NonSI.ANGSTROM).getValue().doubleValue();
 							try {
 								EllipticalROI e = (EllipticalROI) DSpacing.conicFromDSpacing(dt, wavelength, dspacing);
 								list.add(dspacing);

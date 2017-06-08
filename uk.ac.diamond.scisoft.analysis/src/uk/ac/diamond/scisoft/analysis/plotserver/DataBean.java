@@ -19,7 +19,6 @@ import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.metadata.StatisticsMetadata;
 
 /**
  * This bean contains all the information required by a GUI to perform a plot,
@@ -103,9 +102,27 @@ public class DataBean implements Serializable {
 			tmp = tmp.getSlice();
 			tmp.setName(data.getName());
 		}
-		tmp = tmp.getView(false);
-		tmp.clearMetadata(StatisticsMetadata.class);
 		return tmp;
+	}
+
+	static Dataset removeMetadata(IDataset data) {
+		Dataset tmp;
+		if (data instanceof Dataset) {
+			tmp = ((Dataset) data).getView(false);
+			tmp.clearMetadata(null);
+		} else {
+			 tmp = DatasetUtils.convertToDataset(data);
+		}
+		return tmp;
+	}
+
+	public void removeMetadata() {
+		for (DatasetWithAxisInformation a: data) {
+			a.removeMetadata();
+		}
+		for (String s : axisData.keySet()) {
+			axisData.put(s, removeMetadata(axisData.get(s)));
+		}
 	}
 
 	/**

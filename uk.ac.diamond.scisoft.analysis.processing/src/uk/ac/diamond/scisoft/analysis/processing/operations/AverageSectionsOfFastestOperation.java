@@ -23,11 +23,9 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.RunningAverage;
 import org.eclipse.january.dataset.Slice;
 
-import uk.ac.diamond.scisoft.analysis.processing.RunningAverageFix;
-
 public class AverageSectionsOfFastestOperation extends AbstractOperation<AverageSectionsOfFastestModel, OperationData> implements IExportOperation{
 
-	private RunningAverageFix average;
+	private RunningAverage average;
 	private int fastestDimension = -1;
 	int currentInAverage = 0;
 	int currentStart = 0;
@@ -93,7 +91,7 @@ public class AverageSectionsOfFastestOperation extends AbstractOperation<Average
 
 			}
 			
-			average = new RunningAverageFix(input);
+			average = new RunningAverage(input);
 			currentInAverage++;
 
 		} else {

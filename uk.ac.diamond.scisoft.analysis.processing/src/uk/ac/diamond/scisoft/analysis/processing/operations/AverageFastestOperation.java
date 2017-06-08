@@ -23,12 +23,11 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.RunningAverage;
 import org.eclipse.january.dataset.Slice;
 
-import uk.ac.diamond.scisoft.analysis.processing.RunningAverageFix;
 import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DataUtils;
 
 public class AverageFastestOperation extends AbstractOperation<EmptyModel, OperationData> implements IExportOperation {
 
-	private RunningAverageFix average;
+	private RunningAverage average;
 	private int fastestDimension = -1;;
 	
 	@Override
@@ -57,13 +56,11 @@ public class AverageFastestOperation extends AbstractOperation<EmptyModel, Opera
 		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(input);
 		
 		if (average == null) {
-			average = new RunningAverageFix(input);
+			average = new RunningAverage(input);
 			if (fastestDimension < 0) fastestDimension = DataUtils.calculateFastestDimension(ssm.getDataDimensions(),ssm.getSubSampledShape());
 			if (fastestDimension < 0) throw new OperationException(this, "Cannot average this data, it has no, non-data dimensions!");
 		} else {
-			long t = System.currentTimeMillis();
 			average.update(input);
-			System.out.println(System.currentTimeMillis()-t);
 		}
 		
 		if (isLastSlice(ssm.getSliceInOutput(), ssm.getSubSampledShape(), fastestDimension)) {

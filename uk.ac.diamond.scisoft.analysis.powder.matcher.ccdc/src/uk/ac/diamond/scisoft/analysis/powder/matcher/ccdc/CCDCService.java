@@ -9,6 +9,8 @@ import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcClient;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.dawnsci.python.rpc.AnalysisRpcPythonPyDevService;
@@ -101,11 +103,12 @@ public class CCDCService implements ICCDCService {
 	 */
 	public void setUpServer() {
 		try {
-			File f = new File(urlCellSearchHandler.getPath());
-			String absPath = f.getAbsolutePath().toString();
-			
+//			File f = new Path(urlCellSearchHandler.getPath());
+//			
+//			String absPath = f.getAbsoluteFile().getAbsolutePath().toString();
+			//String absPath = Paths.get(urlCellSearchHandler.toURI()).toAbsolutePath().toString();
+			String absPath = "/dls/tmp/PowderAnalysisConfig/cellSearchHandler.py";
 			//TODO: check the python setup before even beginnign the interaction?
-			
 			
 			//TODO: pass a debug mode level for the logger. If in debug also dd not fail the getStdout the same
 			//PythonRunInfo server = PythonHelper.runPythonFileBackground(absPath);
@@ -123,10 +126,13 @@ public class CCDCService implements ICCDCService {
 			}		
 			
 			if (s == null || pythonRunScriptService == null) throw new Exception("Could not create python interpreter");
-
+			
 			if (absPath == null || absPath.isEmpty()) throw new Exception("Path to script not set");
 			
 			
+			Map<String,Object> inputs = new HashMap<>();
+			//Map<String, String> in = new Map<String, String>();
+			pythonRunScriptService.runScript(absPath, inputs);
 			
 			/*
 			 * BELOW ARE OLD METHODS PLAYING WITh

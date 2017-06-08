@@ -57,6 +57,11 @@ public class GsasIIWrapper extends AbstractPowderIndexer {
 	public List<CellParameter> getResultCells() {
 		return plausibleCells;
 	}
+	
+	@Override
+	public String getPowderRoutineID() {
+		return ID;
+	}
 
 	/**
 	 * Destroys the server background python file listening for input.

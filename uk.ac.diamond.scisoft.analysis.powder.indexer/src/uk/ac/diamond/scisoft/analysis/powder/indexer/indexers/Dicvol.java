@@ -52,6 +52,11 @@ public class Dicvol extends AbstractPowderIndexerProcess implements IPowderProce
 		//Set params
 	}
 	
+	@Override
+	public String getPowderRoutineID() {
+		return ID;
+	}
+	
 	// Intial keys and values. Insertion order is important to file created.
 	// Also included defaults
 	// See dicvol.html for details

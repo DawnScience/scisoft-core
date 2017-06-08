@@ -70,7 +70,12 @@ public class Ntreor extends AbstractPowderIndexerProcess {
 		binName = BINNAME;
 		resultsExtension = ".short";
 	}
-
+	
+	@Override
+	public String getPowderRoutineID() {
+		return ID;
+	}
+	
 	public boolean isPeakDataValid(IDataset peakData) {
 		boolean isValid = true;
 

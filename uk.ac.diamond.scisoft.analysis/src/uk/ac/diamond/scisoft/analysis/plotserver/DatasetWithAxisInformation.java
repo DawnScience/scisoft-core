@@ -103,7 +103,14 @@ public class DatasetWithAxisInformation implements Serializable {
 		axisData.setAxisMap(axisMapBean);
 		axisData.setData(data);
 		return axisData;
-	}	
+	}
+
+	/**
+	 * Remove metadata from dataset
+	 */
+	public void removeMetadata() {
+		data = DataBean.removeMetadata(data);
+	}
 
 	@Override
 	public String toString() {

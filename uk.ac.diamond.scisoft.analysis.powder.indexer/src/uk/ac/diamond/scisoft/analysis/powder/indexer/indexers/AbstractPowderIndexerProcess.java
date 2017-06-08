@@ -156,7 +156,7 @@ public abstract class AbstractPowderIndexerProcess extends AbstractPowderIndexer
 			e.printStackTrace();
 		}
 		indexerProcess.destroy();
-		// indexerProcess.destroyForcibly();
+		indexerProcess.destroyForcibly();
 	}
 
 	@Override

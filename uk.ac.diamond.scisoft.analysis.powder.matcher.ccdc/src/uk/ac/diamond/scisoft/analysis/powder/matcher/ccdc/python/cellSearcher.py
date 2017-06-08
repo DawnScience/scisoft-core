@@ -587,7 +587,7 @@ def playgroundQuery():
     logger.info("Seraching Unit Cell")
     logger.info("Lenths: " + str(a) + "," + str(b) + ","  + str(c))
     logger.info("Angles: " + str(alp) + ","  +str(beta) + ","  + str(gamma))
-    logger.info("Lattice Centering: " + ChemistryLib.Spacegroup_centring_text().text(1))
+    #logger.info("Lattice Centering: " + ChemistryLib.Spacegroup_centring_text().text(1))
 
     #Example search
     centring = ChemistryLib.Spacegroup_centring_text().text(1) #Primitive

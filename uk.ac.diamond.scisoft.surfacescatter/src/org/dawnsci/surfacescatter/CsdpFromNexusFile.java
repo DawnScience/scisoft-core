@@ -14,7 +14,7 @@ import org.eclipse.january.dataset.SliceND;
 
 public class CsdpFromNexusFile {
 
-		private static INexusFileFactory nexusFileFactory = new NexusFileFactoryHDF5();
+	private static INexusFileFactory nexusFileFactory = new NexusFileFactoryHDF5();
 	
 	public CurveStitchDataPackage CsdpFromNexusFileGenerator(String filename){
 		

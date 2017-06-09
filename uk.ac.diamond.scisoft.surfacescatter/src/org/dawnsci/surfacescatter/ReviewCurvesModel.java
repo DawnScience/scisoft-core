@@ -7,7 +7,6 @@ import java.util.ArrayList;
 public class ReviewCurvesModel {
 	
 	private ArrayList<CurveStitchDataPackage> csdpList;
-//	private Set<IPresenterStateChangeEventListener> listeners = new HashSet<>();
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private CurveStitchDataPackage csdpLatest;
 	
@@ -33,16 +32,7 @@ public class ReviewCurvesModel {
 		firePropertyChange("csdpList", this.csdpList,
 				this.csdpList= this.csdpList);
 	}
-	
-	
-//	public void addStateListener(IPresenterStateChangeEventListener listener){
-//		listeners.add(listener);
-//	}
-//	
-//	private void fireStateListeners(){
-//		for (IPresenterStateChangeEventListener l : listeners) l.update();
-//	}
-//	
+
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		propertyChangeSupport.addPropertyChangeListener(listener);
 	}

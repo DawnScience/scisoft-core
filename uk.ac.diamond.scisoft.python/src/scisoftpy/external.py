@@ -224,7 +224,7 @@ def pyenv(exe=None, path=None, ldpath=None):
 
 _dls_modules = dict() # cache for modules
 
-def get_dls_module(module='numpy', module_init='/etc/profile.d/modules.sh'):
+def get_dls_module(module='python/anaconda', module_init='/etc/profile.d/modules.sh'):
     if module in _dls_modules:
         return _dls_modules[module]
 

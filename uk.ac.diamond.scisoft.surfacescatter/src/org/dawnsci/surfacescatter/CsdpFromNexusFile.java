@@ -16,15 +16,15 @@ public class CsdpFromNexusFile {
 
 	private static INexusFileFactory nexusFileFactory = new NexusFileFactoryHDF5();
 	
-	public CurveStitchDataPackage CsdpFromNexusFileGenerator(String filename){
+	public static CurveStitchDataPackage CsdpFromNexusFileGenerator(String filename){
 		
 		final CurveStitchDataPackage csdp = new CurveStitchDataPackage();
 		
 		
-		String[] nodeNames = new String[]{"Corrected_Intensity_Dataset",
-										  "Fhkl_Dataset",
-										  "Raw_Intensity_Dataset",
-										  "Scanned_Variable_Dataset"};
+		String[] nodeNames = new String[]{"/Corrected_Intensity_Dataset",
+										  "/Fhkl_Dataset",
+										  "/Raw_Intensity_Dataset",
+										  "/Scanned_Variable_Dataset"};
 		
 		
 	
@@ -62,7 +62,7 @@ public class CsdpFromNexusFile {
 		return csdp;
 	}
 	
-	private IDataset nodeToDataset(DataNode inputNode,
+	private static IDataset nodeToDataset(DataNode inputNode,
 								   String dataName,
 								   NexusFile file){
 		

@@ -12,11 +12,9 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.RunningAverage;
 
-import uk.ac.diamond.scisoft.analysis.processing.RunningAverageFix;
-
 public class AveragingOperation<T extends EmptyModel> extends AbstractOperation<EmptyModel, OperationData> implements IExportOperation{
 
-	private RunningAverageFix average;
+	private RunningAverage average;
 	
 	@Override
 	public String getId() {
@@ -33,7 +31,7 @@ public class AveragingOperation<T extends EmptyModel> extends AbstractOperation<
 		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(input);
 		
 		if (average == null) {
-			average = new RunningAverageFix(input);
+			average = new RunningAverage(input);
 		} else {
 			average.update(input);
 		}

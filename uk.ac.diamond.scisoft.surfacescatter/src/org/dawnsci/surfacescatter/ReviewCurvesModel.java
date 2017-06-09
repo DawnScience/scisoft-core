@@ -17,7 +17,7 @@ public class ReviewCurvesModel {
 	public void setCsdpList(ArrayList<CurveStitchDataPackage> csdpList) {
 		this.csdpList = csdpList;
 		firePropertyChange("csdpList", this.csdpList,
-				this.csdpList= this.csdpList);
+				this.csdpList= csdpList);
 	}
 	
 	public void addToCsdpList(CurveStitchDataPackage csdp) {
@@ -26,11 +26,19 @@ public class ReviewCurvesModel {
 			csdpList = new ArrayList<CurveStitchDataPackage>();
 		}
 		
-		csdpList.add(csdp);
+		ArrayList<CurveStitchDataPackage> csdpListCopy = new ArrayList<CurveStitchDataPackage>();
+		
+		for(int h = 0; h<csdpList.size(); h++){
+			csdpListCopy.add(csdpList.get(h));
+		}
+		
+		csdpListCopy.add(csdp);
+		
 		setCsdpLatest(csdp);
+//		setCsdpList(csdpListCopy);
 		
 		firePropertyChange("csdpList", this.csdpList,
-				this.csdpList= this.csdpList);
+				this.csdpList= csdpListCopy);
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener) {

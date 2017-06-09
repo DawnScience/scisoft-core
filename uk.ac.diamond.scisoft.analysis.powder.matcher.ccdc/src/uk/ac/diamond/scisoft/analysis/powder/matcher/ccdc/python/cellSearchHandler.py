@@ -444,8 +444,8 @@ class CellSearcher:
 #CELL SEARCHER INSTANCE CONFIGURATION
 searcher = CellSearcher()
 
-searcher.findCellMatches(5.4767,5.4767,5.4767,90,90,90)
-searcher.gatherMatches()
+# searcher.findCellMatches(5.4767,5.4767,5.4767,90,90,90)
+# searcher.gatherMatches()
 
 # Make the fancy functions available
 logger.info("Rpc server call setup")

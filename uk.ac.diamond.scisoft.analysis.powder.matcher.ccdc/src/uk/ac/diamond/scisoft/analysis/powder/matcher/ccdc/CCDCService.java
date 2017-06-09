@@ -16,6 +16,9 @@ import java.util.Map;
 import org.dawnsci.python.rpc.AnalysisRpcPythonPyDevService;
 import org.dawnsci.python.rpc.AnalysisRpcPythonService;
 import org.dawnsci.python.rpc.PythonRunScriptService;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -103,15 +106,17 @@ public class CCDCService implements ICCDCService {
 	 */
 	public void setUpServer() {
 		try {
-//			File f = new Path(urlCellSearchHandler.getPath());
+//			URL resource = getClass().getResource("python/cellSearchHandler.py");
+//			String resultPath = Paths.get(resource.toURI()).toFile().toString();
 //			
 //			String absPath = f.getAbsoluteFile().getAbsolutePath().toString();
 			//String absPath = Paths.get(urlCellSearchHandler.toURI()).toAbsolutePath().toString();
+			System.out.println(new File("src/python/cellSearchHandler.py").getAbsolutePath());
 			String absPath = "/dls/tmp/PowderAnalysisConfig/cellSearchHandler.py";
 			//TODO: check the python setup before even beginnign the interaction?
 			
 			//TODO: pass a debug mode level for the logger. If in debug also dd not fail the getStdout the same
-			//PythonRunInfo server = PythonHelper.runPythonFileBackground(absPath);
+			
 			
 			AnalysisRpcPythonPyDevService s = null;
 			PythonRunScriptService pythonRunScriptService = null;
@@ -121,7 +126,8 @@ public class CCDCService implements ICCDCService {
 				s = AnalysisRpcPythonPyDevService.create();
 				pythonRunScriptService = new PythonRunScriptService(s);
 			} catch (Exception e) {
-				System.out.println(e);
+				//System.out.println(e);
+				logger.debug("Server already started" +e);
 				//this, "Could not create script service!");
 			}		
 			
@@ -183,23 +189,22 @@ public class CCDCService implements ICCDCService {
 			//NOTE: fails on any output... not neccasirly a error...
 //			String outting = server.getStdout(true);
 			//TODO: how to determine which import caused this? we would know about he assert but how to delegate and say get your path sorted?
-			
+			PythonRunInfo server = PythonHelper.runPythonFileBackground(absPath);
 			setServer(server);
-
-			
-			analysisRpcClient = new AnalysisRpcClient(PORT);
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+	
 
 		} catch (Exception e) {
 			
 			logger.debug("Was not able to start" + urlCellSearchHandler.getFile() + e);
 			
-			
-			terminateServer();
+			//terminateServer();
+			e.printStackTrace();
+		}
+		
+		analysisRpcClient = new AnalysisRpcClient(PORT);
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}

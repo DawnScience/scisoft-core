@@ -105,7 +105,7 @@ public class OverlappingBgBoxUsingIOperation
 			
 			Dataset matrix = LinearLeastSquaresServicesForDialog.polynomial2DLinearLeastSquaresMatrixGenerator(
 					AnalaysisMethodologies.toInt(model.getFitPower()), xBackgroundDat, yBackgroundDat);
-			double[] location = null;
+//			double[] location = null;
 	              	   
 	        DoubleDataset test = (DoubleDataset)LinearAlgebra.solveSVD(matrix, zBackgroundDat);
 			double[] params = test.getData();
@@ -131,10 +131,10 @@ public class OverlappingBgBoxUsingIOperation
 			output.setName("Region of Interest, constant background removed");
 
 			return new OperationData(output, 
-									 location, 
+									 null, 
 									 null,
 									 in1Background,
-									 newOffsetLenPt);
+									 null);
 			
 		}
 	

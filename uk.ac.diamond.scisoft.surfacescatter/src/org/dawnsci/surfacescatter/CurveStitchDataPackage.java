@@ -10,7 +10,8 @@ public class CurveStitchDataPackage {
 	
 	////Inputs:
 	
-	private String[] filepaths; // Dat filepaths
+	private String[] filepaths;// Dat filepaths
+	private String name;
 	
 	private IDataset[] xIDataset;
 	private IDataset[] yIDataset;
@@ -29,10 +30,6 @@ public class CurveStitchDataPackage {
 	private IDataset splicedCurveYFhkl;
 	private IDataset splicedCurveYError;
 	private IDataset splicedCurveYFhklError;
-	private IDataset splicedCurveYErrorMax;
-	private IDataset splicedCurveYErrorMin;
-	private IDataset splicedCurveYFhklErrorMax;
-	private IDataset splicedCurveYFhklErrorMin;
 	private IDataset splicedCurveYRaw;
 	private IDataset splicedCurveYRawError;
 	private ArrayList<OverlapDataModel> overlapDataModels;
@@ -109,30 +106,7 @@ public class CurveStitchDataPackage {
 	public void setSplicedCurveYFhklError(IDataset splicedCurveYFhklError) {
 		this.splicedCurveYFhklError = splicedCurveYFhklError;
 	}
-	public IDataset getSplicedCurveYErrorMax() {
-		return splicedCurveYErrorMax;
-	}
-	public void setSplicedCurveYErrorMax(IDataset splicedCurveYErrorMax) {
-		this.splicedCurveYErrorMax = splicedCurveYErrorMax;
-	}
-	public IDataset getSplicedCurveYErrorMin() {
-		return splicedCurveYErrorMin;
-	}
-	public void setSplicedCurveYErrorMin(IDataset splicedCurveYErrorMin) {
-		this.splicedCurveYErrorMin = splicedCurveYErrorMin;
-	}
-	public IDataset getSplicedCurveYFhklErrorMax() {
-		return splicedCurveYFhklErrorMax;
-	}
-	public void setSplicedCurveYFhklErrorMax(IDataset splicedCurveYFhklErrorMax) {
-		this.splicedCurveYFhklErrorMax = splicedCurveYFhklErrorMax;
-	}
-	public IDataset getSplicedCurveYFhklErrorMin() {
-		return splicedCurveYFhklErrorMin;
-	}
-	public void setSplicedCurveYFhklErrorMin(IDataset splicedCurveYFhklErrorMin) {
-		this.splicedCurveYFhklErrorMin = splicedCurveYFhklErrorMin;
-	}
+
 	public IDataset getSplicedCurveYRaw() {
 		return splicedCurveYRaw;
 	}
@@ -168,6 +142,12 @@ public class CurveStitchDataPackage {
 	}
 	public void setSplicedCurveQ(IDataset splicedCurveQ) {
 		this.splicedCurveQ = splicedCurveQ;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 }

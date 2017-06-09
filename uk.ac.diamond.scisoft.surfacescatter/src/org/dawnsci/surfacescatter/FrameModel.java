@@ -218,6 +218,9 @@ public class FrameModel {
 		return rawImageData;
 	}
 	public void setRawImageData(ILazyDataset rawImageData) {
+		
+//		rawImageData.squeezeEnds();
+		
 		this.rawImageData = rawImageData;
 	}
 	public double getUnspliced_Corrected_Intensity() {

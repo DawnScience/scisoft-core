@@ -42,6 +42,8 @@ public class SecondConstantROIUsingIOperation
 		public OperationData process (IDataset input, IMonitor monitor) 
 				throws OperationException {
 			
+			input.squeeze();
+			
 			int[] len = model.getLenPt()[0];
 			int[] pt = model.getLenPt()[1];
 					

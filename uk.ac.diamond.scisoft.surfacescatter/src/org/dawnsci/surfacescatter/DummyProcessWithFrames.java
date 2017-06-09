@@ -65,6 +65,10 @@ public class DummyProcessWithFrames {
 									  selection);
 				}
 				
+				locationOverride = pfixer(fm,
+										  drm,
+										  locationOverride);
+				
 				if(AnalaysisMethodologies.toInt(fm.getFitPower())<5){
 								  outputOD= TwoDFittingIOp(locationOverride,
 														   fm.getFitPower(),
@@ -120,6 +124,10 @@ public class DummyProcessWithFrames {
 									  trackingMarker, 
 									  k, 
 									  selection);
+					
+					locationOverride = pfixer(fm,
+							  drm,
+							  locationOverride);
 				}
 				
 				else{	
@@ -129,21 +137,9 @@ public class DummyProcessWithFrames {
 				
 				if(AnalaysisMethodologies.toInt(fm.getFitPower())<5){
 					
-					double[] p = new double[6];
-						
-					try{
-						if(locationOverride != null){
-							p =locationOverride;
-						}
-						else{
-							p= fm.getRoiLocation();
-						}
-					}
-					catch(Exception n){
-						System.out.println(n.getMessage());
-						int[][] lenPt = drm.getInitialLenPt();
-						p = LocationLenPtConverterUtils.lenPtToLocationConverter(lenPt);
-					}
+					locationOverride = pfixer(fm,
+							  drm,
+							  locationOverride);
 					
 					int[][] hi   = new int[2][];
 					
@@ -156,7 +152,7 @@ public class DummyProcessWithFrames {
 						hi = drm.getInitialLenPt();
 					}
 					
-					outputOD= TwoDFittingIOp(p,
+					outputOD= TwoDFittingIOp(locationOverride,
 										     fm.getFitPower(),
 										     fm.getBoundaryBox(),
 										     hi,
@@ -205,6 +201,10 @@ public class DummyProcessWithFrames {
 									  trackingMarker, 
 									  k, 
 									  selection);
+					
+					locationOverride = pfixer(fm,
+							  drm,
+							  locationOverride);
 				}
 				
 				else{
@@ -234,6 +234,10 @@ public class DummyProcessWithFrames {
 									  trackingMarker, 
 									  k, 
 									  selection);
+					
+					locationOverride = pfixer(fm,
+							  drm,
+							  locationOverride);
 				}
 
 				else{
@@ -266,6 +270,10 @@ public class DummyProcessWithFrames {
 							  trackingMarker, 
 							  k, 
 							  selection);
+					
+					locationOverride = pfixer(fm,
+							  drm,
+							  locationOverride);
 				}
 
 				else{
@@ -303,6 +311,10 @@ public class DummyProcessWithFrames {
 							  trackingMarker, 
 							  k, 
 							  selection);
+					
+					locationOverride = pfixer(fm,
+							  drm,
+							  locationOverride);
 				}
 
 				else{
@@ -417,7 +429,7 @@ public class DummyProcessWithFrames {
 					double[] p = new double[6];
 					
 					try{
-						p =drm.getLocationList().get(fm.getDatNo()).get(selection);
+						p =fm.getRoiLocation();
 					}
 					catch(Exception n){
 						System.out.println(n.getMessage());
@@ -433,7 +445,7 @@ public class DummyProcessWithFrames {
 						     trackingMarker);
 				}
 				else if (fm.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_GAUSSIAN){
-					outputOD= TwoDGaussianFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
+					outputOD= TwoDGaussianFittingIOp(fm.getRoiLocation(),
 	   						 drm.getInitialLenPt(),
 	   						 fm.getFitPower(),
 	   						 fm.getBoundaryBox(),
@@ -442,7 +454,7 @@ public class DummyProcessWithFrames {
 	   						 trackingMarker);
 				}
 				else if (fm.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_EXPONENTIAL){
-					outputOD= TwoDExponentialFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
+					outputOD= TwoDExponentialFittingIOp(fm.getRoiLocation(),
    							input,
    							drm.getInitialLenPt(),
    							fm.getFitPower(),
@@ -490,7 +502,7 @@ public class DummyProcessWithFrames {
 							   trackingMarker);
 				}
 				else if (fm.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_GAUSSIAN){
-					outputOD= TwoDGaussianFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
+					outputOD= TwoDGaussianFittingIOp(fm.getRoiLocation(),
 	   						 drm.getInitialLenPt(),
 	   						 fm.getFitPower(),
 	   						 fm.getBoundaryBox(),
@@ -499,7 +511,7 @@ public class DummyProcessWithFrames {
 	   						 trackingMarker);
 				}
 				else if (fm.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_EXPONENTIAL){
-					outputOD= TwoDExponentialFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
+					outputOD= TwoDExponentialFittingIOp(fm.getRoiLocation(),
    							input,
    							drm.getInitialLenPt(),
    							fm.getFitPower(),
@@ -538,8 +550,9 @@ public class DummyProcessWithFrames {
 							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
 				}
 				
+				input = input.squeeze();
 
-				output = secondConstantROIMethod(input,
+				output = secondConstantROIMethod(input.squeeze(),
 						   						 drm,
 						   						 fm.getBackgroundMethdology(), 
 						   						 selection,
@@ -603,7 +616,7 @@ public class DummyProcessWithFrames {
 				OperationData outputOD2= OneDFittingIOp(//drm.getLenPtForEachDat()[k],
 							drm.getInitialLenPt(),
 							fm.getFitPower(),
-							drm.getLocationList().get(fm.getDatNo()).get(selection),
+							fm.getRoiLocation(),
 							input,
 							fm.getBoundaryBox(),
 							Methodology.X,
@@ -641,7 +654,7 @@ public class DummyProcessWithFrames {
 				OperationData outputOD3= OneDFittingIOp(//drm.getLenPtForEachDat()[k],
 							drm.getInitialLenPt(),
 							fm.getFitPower(),
-							drm.getLocationList().get(fm.getDatNo()).get(selection),
+							fm.getRoiLocation(),
 							input,
 							fm.getBoundaryBox(),
 							Methodology.Y,
@@ -730,14 +743,14 @@ public class DummyProcessWithFrames {
 					double[] p = new double[6];
 					
 					try{
-						p =drm.getLocationList().get(fm.getDatNo()).get(selection);
+						p =fm.getRoiLocation();
 					}
 					catch(Exception n){
 						System.out.println(n.getMessage());
 						p= null;
 					}
 					
-					  outputOD= TwoDFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
+					  outputOD= TwoDFittingIOp(fm.getRoiLocation(),
 							   fm.getFitPower(),
 							   fm.getBoundaryBox(),
 							   drm.getInitialLenPt(),
@@ -747,7 +760,7 @@ public class DummyProcessWithFrames {
 					  
 				}
 				else if (fm.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_GAUSSIAN){
-					outputOD= TwoDGaussianFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
+					outputOD= TwoDGaussianFittingIOp(fm.getRoiLocation(),
 	   						 drm.getInitialLenPt(),
 	   						 fm.getFitPower(),
 	   						 fm.getBoundaryBox(),
@@ -756,7 +769,7 @@ public class DummyProcessWithFrames {
 	   						 trackingMarker);
 				}
 				else if (fm.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_EXPONENTIAL){
-					outputOD= TwoDExponentialFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
+					outputOD= TwoDExponentialFittingIOp(fm.getRoiLocation(),
    							input,
    							drm.getInitialLenPt(),
    							fm.getFitPower(),
@@ -798,7 +811,7 @@ public class DummyProcessWithFrames {
 				}
 				
 				if(AnalaysisMethodologies.toInt(fm.getFitPower())<5){
-					  outputOD= TwoDFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
+					  outputOD= TwoDFittingIOp(fm.getRoiLocation(),
 							   fm.getFitPower(),
 							   fm.getBoundaryBox(),
 							   drm.getInitialLenPt(),
@@ -807,7 +820,7 @@ public class DummyProcessWithFrames {
 							   trackingMarker);
 				}
 				else if (fm.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_GAUSSIAN){
-					outputOD= TwoDGaussianFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
+					outputOD= TwoDGaussianFittingIOp(fm.getRoiLocation(),
 	   						 drm.getInitialLenPt(),
 	   						 fm.getFitPower(),
 	   						 fm.getBoundaryBox(),
@@ -816,7 +829,7 @@ public class DummyProcessWithFrames {
 	   						 trackingMarker);
 				}
 				else if (fm.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_EXPONENTIAL){
-					outputOD= TwoDExponentialFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
+					outputOD= TwoDExponentialFittingIOp(fm.getRoiLocation(),
    							input,
    							drm.getInitialLenPt(),
    							fm.getFitPower(),
@@ -924,7 +937,7 @@ public class DummyProcessWithFrames {
 				OperationData outputOD2= OneDFittingIOp(//drm.getLenPtForEachDat()[k],
 							drm.getInitialLenPt(),
 							fm.getFitPower(),
-							drm.getLocationList().get(fm.getDatNo()).get(selection),
+							fm.getRoiLocation(),
 							input,
 							fm.getBoundaryBox(),
 							Methodology.X,
@@ -963,7 +976,7 @@ public class DummyProcessWithFrames {
 				OperationData outputOD3= OneDFittingIOp(//drm.getLenPtForEachDat()[k],
 							drm.getInitialLenPt(),
 							fm.getFitPower(),
-							drm.getLocationList().get(fm.getDatNo()).get(selection),
+							fm.getRoiLocation(),
 							input,
 							fm.getBoundaryBox(),
 							Methodology.Y,
@@ -1061,7 +1074,7 @@ public class DummyProcessWithFrames {
 
 				
 				if(AnalaysisMethodologies.toInt(fm.getFitPower())<5){
-					  outputOD= TwoDFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
+					  outputOD= TwoDFittingIOp(fm.getRoiLocation(),
 							   fm.getFitPower(),
 							   fm.getBoundaryBox(),
 							   drm.getInitialLenPt(),
@@ -1070,7 +1083,7 @@ public class DummyProcessWithFrames {
 							   trackingMarker);
 				}
 				else if (fm.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_GAUSSIAN){
-					outputOD= TwoDGaussianFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
+					outputOD= TwoDGaussianFittingIOp(fm.getRoiLocation(),
 	   						 drm.getInitialLenPt(),
 	   						 fm.getFitPower(),
 	   						 fm.getBoundaryBox(),
@@ -1079,7 +1092,7 @@ public class DummyProcessWithFrames {
 	   						 trackingMarker);
 				}
 				else if (fm.getFitPower() == AnalaysisMethodologies.FitPower.TWOD_EXPONENTIAL){
-					outputOD= TwoDExponentialFittingIOp(drm.getLocationList().get(fm.getDatNo()).get(selection),
+					outputOD= TwoDExponentialFittingIOp(fm.getRoiLocation(),
    							input,
    							drm.getInitialLenPt(),
    							fm.getFitPower(),
@@ -1515,7 +1528,7 @@ public class DummyProcessWithFrames {
 
 		OneDFittingModel odfm = new OneDFittingModel();
 		
-		
+		input.squeeze();
 		odfm.setInitialLenPt(initialLenPt);
 		
 		int[][] mLenPt = LocationLenPtConverterUtils.locationToLenPtConverter(location);
@@ -1569,7 +1582,7 @@ public class DummyProcessWithFrames {
 	}
 		
 	
-	public static OperationData SecondConstantBackgroundROIFittingIOp(IDataset input,
+	public static OperationData SecondConstantBackgroundROIFittingIOp(IDataset input1,
 																	  double[] p, //  = sm.getLocationList().get(k);
 																	  int[][] initialLenPt, // sm.getInitialLenPt()
 																	  int[][] mLenPt, //model.getLenPt()
@@ -1578,6 +1591,7 @@ public class DummyProcessWithFrames {
 																	  int boundaryBox,
 																	  int trackingMarker,
 																	  int k){
+		IDataset input = input1.squeeze();
 		
 		SecondConstantROIBackgroundSubtractionModel scrbm 
 		= new SecondConstantROIBackgroundSubtractionModel();
@@ -1596,18 +1610,17 @@ public class DummyProcessWithFrames {
 			int[] len = initialLenPt[0]; 
 			int[][] lenPt = new int[][] {len,pt};
 			if(p[0] != 0 && p[1] != 0){
-			scrbm.setLenPt(lenPt);
-		}
+				scrbm.setLenPt(lenPt);
+			}
 			
-		else{
-			scrbm.setLenPt(initialLenPt);
-		}
+			else{
+				scrbm.setLenPt(initialLenPt);
+			}
 		
 		}
 		else{
 			scrbm.setLenPt(initialLenPt);
 		}
-		
 		
 		Metadata md = new Metadata();
 		Map<String, Integer> dumMap = new HashMap<String, Integer>();
@@ -1623,35 +1636,31 @@ public class DummyProcessWithFrames {
 		input.setMetadata(sfsm);
 		
 		input.setMetadata(md);
-		
-		SecondConstantROIUsingIOperation scrbio 
-				= new SecondConstantROIUsingIOperation();
-		
+		SecondConstantROIUsingIOperation scrbio = new SecondConstantROIUsingIOperation();
 		scrbio.setModel(scrbm);
 		
 		return scrbio.execute(input, null);
-		
 	}
 	
-	public static IDataset secondConstantROIMethod(IDataset input,
+	public static IDataset secondConstantROIMethod(IDataset input1,
 												   DirectoryModel drm,
 												   AnalaysisMethodologies.Methodology am, 
 												   int selection,
 												   int trackingMarker,
 												   int k){		
 		
-		
+		IDataset input = input1.squeeze();
 		
 		OperationData outputOD4 = null;
 		
-		int datNo = drm.getFms().get(k).getDatNo();
+		int datNo = drm.getFms().get(selection).getDatNo();
 		
 		if(am == Methodology.SECOND_BACKGROUND_BOX){
 		
 		
 		
 			outputOD4 = SecondConstantBackgroundROIFittingIOp(input,
-										                      drm.getFms().get(k).getRoiLocation(),
+										                      drm.getFms().get(selection).getRoiLocation(),
 															  drm.getInitialLenPt(),
 															  drm.getLenPtForEachDat()[datNo],
 															  drm.getBackgroundLenPt(),
@@ -1663,10 +1672,25 @@ public class DummyProcessWithFrames {
 		
 		else if(am == Methodology.OVERLAPPING_BACKGROUND_BOX){
 		
-		
+			 double[] a = drm.getFms().get(selection).getRoiLocation();
+			 int[][] b = drm.getInitialLenPt();
+			 
+			 if(a == null){
+				 a = LocationLenPtConverterUtils.lenPtToLocationConverter(b);
+				 drm.getFms().get(k).setRoiLocation(a);
+			 }
+			 
+			 int[][] c = drm.getLenPtForEachDat()[datNo];
+			 int[][] d = drm.getBackgroundLenPt();
+			 int[][] e = drm.getBoxOffsetLenPt();
+			 int[][] f = drm.getPermanentBoxOffsetLenPt();
+			 boolean g = drm.isTrackerOn();
+			 FitPower h = drm.getFms().get(k).getFitPower();
+			 int i = drm.getFms().get(k).getBoundaryBox();
+			 int j = trackingMarker;			
 		
 			outputOD4 = OverlappingBackgroundROIFittingIOp(input,
-														   drm.getFms().get(k).getRoiLocation(),
+														   drm.getFms().get(selection).getRoiLocation(),
 					  									   drm.getInitialLenPt(),
 					  									   drm.getLenPtForEachDat()[datNo],
 					  									   drm.getBackgroundLenPt(),
@@ -1735,8 +1759,6 @@ public class DummyProcessWithFrames {
 			scrbm.setBoxOffsetLenPt(e);
 		}
 		
-		
-		
 		if (trackingMarker != 3){
 		
 			int[] pt = new int[]{(int) p[0], (int) p[1]}; 
@@ -1771,6 +1793,8 @@ public class DummyProcessWithFrames {
 		
 		ILazyDataset  ild = null;
 		
+		input.squeeze();
+		
 		SourceInformation  si =new SourceInformation("dummy", "dummy2", ild);
 		
 		SliceFromSeriesMetadata sfsm = new SliceFromSeriesMetadata(si);
@@ -1784,7 +1808,18 @@ public class DummyProcessWithFrames {
 		
 		obbio.setModel(scrbm);
 		
-		return obbio.execute(input, null);
+		if(input == null || obbio == null){
+			System.out.println("obbio or input is null");
+		}
+		
+		
+		OperationData out = obbio.execute(input, null);
+		
+		if(out == null){
+			System.out.println("prob in out");
+		}
+		
+		return out;
 		
 	}
 	
@@ -1882,6 +1917,32 @@ public class DummyProcessWithFrames {
 		if (DEBUG == 1) {
 			System.out.println(output);
 		}
+	}
+	
+	
+	private static double[] pfixer(FrameModel fm,
+							DirectoryModel drm,
+							double[] locationOverride){
+		
+		double[] p = new double[6];
+		
+		if(AnalaysisMethodologies.toInt(fm.getFitPower())<5){
+			
+			try{
+				if(locationOverride != null){
+					p =locationOverride;
+				}
+				else{
+					p= fm.getRoiLocation();
+				}
+			}
+			catch(Exception n){
+				System.out.println(n.getMessage());
+				int[][] lenPt = drm.getInitialLenPt();
+				p = LocationLenPtConverterUtils.lenPtToLocationConverter(lenPt);
+			}
+		}
+		return p;
 	}
 	
 }

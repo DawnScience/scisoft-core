@@ -10,7 +10,7 @@ public class CsdpGeneratorFromDrm {
 	
 	private DirectoryModel drm;
 	
-	public  CurveStitchDataPackage generateCsdpFromDrm (DirectoryModel drm){
+	public CurveStitchDataPackage generateCsdpFromDrm (DirectoryModel drm){
 		
 		this.drm= drm;
 		
@@ -63,7 +63,6 @@ public class CsdpGeneratorFromDrm {
 				yIDataset.length){
 			System.out.println("error in lengths, in csdp generator");
 		}
-		
 		
 		return csdp;
 	}

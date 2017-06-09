@@ -71,35 +71,7 @@ public class RodObjectNexusUtils{
 		int noImages = fms.size();
 		int p= 0;
 		
-//		IDataset[] hArray = new IDataset[noImages];
-//	    IDataset[] kArray = new IDataset[noImages];
-//	    IDataset[] lArray = new IDataset[noImages];
-//	    
-//	    for (int id = 0; id < noImages; id++) {
-//	    
-//	    	FrameModel f = fms.get(id);
-//	    	
-//	    	ILazyDataset h = SXRDGeometricCorrections.geth(models.get(id));
-//			ILazyDataset k = SXRDGeometricCorrections.getk(models.get(id));
-//			ILazyDataset l = SXRDGeometricCorrections.getl(models.get(id));
-//			
-//			hArray[id] = (IDataset) h;
-//			kArray[id] = (IDataset) k;
-//			lArray[id] = (IDataset) l;
-//			
-//	    }
-//	    
-//	    Dataset hArrayCon = DatasetUtils.concatenate(hArray, 0);
-//	    Dataset kArrayCon = DatasetUtils.concatenate(kArray, 0);
-//	    Dataset lArrayCon = DatasetUtils.concatenate(lArray, 0);	
-//			
-//	    hArrayCon.sort(0);
-//	    kArrayCon.sort(0);
-//	    lArrayCon.sort(0);
-		
 		ArrayList<GroupNode> nodes = new ArrayList<>();
-		
-//		int noIma
 		
 		GroupNode entry = TreeFactory.createGroupNode(p);
 		p++;

@@ -15,9 +15,7 @@ public class CurveStitchWithErrorsAndFrames {
 	private static double attenuationFactorFhkl;
 	private static double attenuationFactorRaw;
 	private static double[][] maxMinArray;
-	private static int DEBUG =0;
-
-	
+//	private static int DEBUG =0;
 	
 	public static IDataset[] curveStitch4 (CurveStitchDataPackage csdp, 
 										   double[][] maxMinArrayIn){
@@ -278,29 +276,10 @@ public class CurveStitchWithErrorsAndFrames {
 		
 		DatasetUtils.sort(sortedAttenuatedDatasets[1],
 		sortedYArrayCorrectedRawError);
-		
-		
-		Dataset sortedYArrayCorrectedErrorMax = Maths.add(sortedYArrayCorrectedError, sortedAttenuatedDatasets[0]);
-		Dataset sortedYArrayCorrectedFhklErrorMax = Maths.add(sortedYArrayCorrectedFhklError, sortedAttenuatedDatasets[2]);
-		Dataset sortedYArrayCorrectedRawErrorMax = Maths.add(sortedYArrayCorrectedRawError, sortedAttenuatedDatasets[7]);
-		
+			
 		sortedAttenuatedDatasets[0].setErrors(sortedYArrayCorrectedError);
 		sortedAttenuatedDatasets[2].setErrors(sortedYArrayCorrectedFhklError);
 		sortedAttenuatedDatasets[7].setErrors(sortedYArrayCorrectedRawError);
-		
-		sortedAttenuatedDatasets[3] = sortedYArrayCorrectedErrorMax;
-		sortedAttenuatedDatasets[4] = sortedYArrayCorrectedFhklErrorMax;
-		sortedAttenuatedDatasets[8] =  sortedYArrayCorrectedRawErrorMax;
-		
-		
-		Dataset sortedYArrayCorrectedErrorMin = Maths.subtract(sortedAttenuatedDatasets[0], sortedYArrayCorrectedError);
-		Dataset sortedYArrayCorrectedFhklErrorMin = Maths.subtract(sortedAttenuatedDatasets[2], sortedYArrayCorrectedFhklError);
-		Dataset sortedYArrayCorrectedRawErrorMin = Maths.subtract(sortedAttenuatedDatasets[7], sortedYArrayCorrectedRawError);
-		
-		
-		sortedAttenuatedDatasets[5] = sortedYArrayCorrectedErrorMin;
-		sortedAttenuatedDatasets[6] = sortedYArrayCorrectedFhklErrorMin;
-		sortedAttenuatedDatasets[9] = sortedYArrayCorrectedRawErrorMin;
 		
 		if(MethodSetting.toInt(csdp.getCorrectionSelection()) == 1||
 			MethodSetting.toInt(csdp.getCorrectionSelection()) == 2||	
@@ -337,10 +316,6 @@ public class CurveStitchWithErrorsAndFrames {
 		csdp.setSplicedCurveYFhkl(sortedAttenuatedDatasets[2]);
 		csdp.setSplicedCurveYError(sortedYArrayCorrectedError);
 		csdp.setSplicedCurveYFhklError(sortedYArrayCorrectedFhklError);
-		csdp.setSplicedCurveYErrorMax(sortedYArrayCorrectedErrorMax);
-		csdp.setSplicedCurveYErrorMin(sortedYArrayCorrectedErrorMin);
-		csdp.setSplicedCurveYFhklErrorMax(sortedYArrayCorrectedFhklErrorMax);
-		csdp.setSplicedCurveYFhklErrorMin(sortedYArrayCorrectedFhklErrorMin);
 		csdp.setSplicedCurveYRaw(sortedAttenuatedDatasets[7]);
 		csdp.setSplicedCurveYRawError(sortedYArrayCorrectedRawError);
 		csdp.setOverlapDataModels(overlapDataModels);

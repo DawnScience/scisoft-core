@@ -142,7 +142,7 @@ public class FunctionsTest {
 		
 		// We do 10 Peak fits
 		final Dataset     pseudo = generatePseudoVoigt(defaultPeakPos.length);
-		final AggregateDataset    aggy   = new AggregateDataset(true, pseudo, pseudo, pseudo, pseudo, pseudo);
+		final Dataset    aggy   = new AggregateDataset(true, pseudo, pseudo, pseudo, pseudo, pseudo).getSlice();
 		final IOperationContext context  = service.createContext();
 		context.setData(aggy);
 		context.setDataDimensions(new int[]{1});
@@ -195,7 +195,7 @@ public class FunctionsTest {
 		
 		// We do 10 Peak fits
 		final Dataset     pseudo = generatePseudoVoigt(defaultPeakPos.length);
-		final AggregateDataset    aggy   = new AggregateDataset(true, pseudo, pseudo, pseudo, pseudo, pseudo);
+		final Dataset    aggy   = new AggregateDataset(true, pseudo, pseudo, pseudo, pseudo, pseudo).getSlice();
 		final IOperationContext context  = service.createContext();
 		context.setData(aggy);
 		context.setDataDimensions(new int[]{1});

@@ -46,6 +46,11 @@ public class ImageIntegration extends AbstractOperation<ImageIntegrationModel, O
 
 	protected OperationData process(IDataset input, IMonitor imon) throws OperationException {
 		
+		if (input.getRank() == 1) {
+			//in case someone has squeezed a [1,X] image
+			return new OperationData(input);
+		}
+		
 		Dataset nannyInput = DatasetUtils.convertToDataset(input);
 		
 		// Replace masked values by NaN, based on the Dataset type

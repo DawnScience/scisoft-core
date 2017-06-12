@@ -10,6 +10,7 @@ package uk.ac.diamond.scisoft.analysis.processing;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -200,6 +201,27 @@ public class OperationServiceImpl implements IOperationService {
         int[] squeezedShape = null;
         
         if (firstSlice != null) squeezedShape = ShapeUtils.squeezeShape(firstSlice.getShape(), false);
+        
+        SliceFromSeriesMetadata md = firstSlice.getFirstMetadata(SliceFromSeriesMetadata.class);
+        
+        if (md == null || md.getDataDimensions() == null) {
+        	throw new RuntimeException("data must contain metadata, with dimensions!");
+        }
+        
+        if (md.getDataDimensions().length != squeezedShape.length) {
+        	
+        	int[] shape = firstSlice.getShape();
+        	
+        	squeezedShape = new int[md.getDataDimensions().length];
+        	
+        	int[] dd = md.getDataDimensions().clone();
+        	Arrays.sort(dd);
+        	
+        	for (int i = 0; i < dd.length; i++) {
+        		squeezedShape[i] = shape[dd[i]];
+        	}
+        	
+        }
         
         if (series[0].getInputRank().isDiscrete() && firstSlice != null) {
         	

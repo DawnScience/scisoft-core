@@ -257,7 +257,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		updateAxes(integrated, slices, shape, dataDims, results,fNNE);
 		integrated.setName("data");
 		synchronized (nexusFile) {
-			appendData(integrated,nexusFile.getGroup(results,false), slices,shape, nexusFile);
+			appendData(integrated,nexusFile.getGroup(results,false), slices,shape, nexusFile,dataDims);
 			if (fNNE){
 				GroupNode group = nexusFile.getGroup(results,false);
 				nexusFile.addAttribute(group,new AttributeImpl(NexusTreeUtils.NX_SIGNAL,integrated.getName()));
@@ -315,7 +315,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 				Dataset d = DatasetUtils.convertToDataset(data.getData());
 				
 				synchronized (nexusFile) {d.setName("data");
-					appendData(d,group, slices,shape, nexusFile);
+					appendData(d,group, slices,shape, nexusFile, dataDims);
 				}
 				if (first){
 					synchronized (nexusFile) {
@@ -351,7 +351,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 						
 						ds.setName("data");
 						synchronized (nexusFile) {
-							appendData(ds,group, slices,shape, nexusFile);
+							appendData(ds,group, slices,shape, nexusFile,dataDims);
 							if (first){
 								nexusFile.addAttribute(group,new AttributeImpl("signal",ds.getName()));
 							}
@@ -555,7 +555,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	 * @param file
 	 * @throws Exception
 	 */
-	private void appendData(Dataset dataset, GroupNode group, Slice[] oSlice, int[] oShape, NexusFile file) throws Exception {
+	private void appendData(Dataset dataset, GroupNode group, Slice[] oSlice, int[] oShape, NexusFile file, int[] dataDims) throws Exception {
 		
 		if (ShapeUtils.squeezeShape(dataset.getShape(), false).length == 0) {
 			//padding slice and shape does not play nice with single values of rank != 0
@@ -564,7 +564,8 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		}
 		
 		//determine the dimensions of the original data
-		int[] dd = getNonSingularDimensions(oSlice, oShape);
+		int[] dd = dataDims.clone();
+		Arrays.sort(dd);
 		//update the slice to reflect the new data shape/rank
 		Slice[] sliceOut = getUpdatedSliceArray( oShape, dataset.getShape(), oSlice, dd);
 		//determine shape of full output dataset

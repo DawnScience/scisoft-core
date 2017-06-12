@@ -1,26 +1,28 @@
 package uk.ac.diamond.scisoft.analysis.powder.indexer.indexers;
 
+import uk.ac.diamond.scisoft.analysis.powder.indexer.crystal.Lattice;
+
 /**
  *         Structure of cell parameters receive after indexing.
  *			
  *			TODO: zero point + vol + more scraped besides merit			
- *
- *
- *	
  * @author Dean P. Ottewell
  */
-public class CellParameter extends CellInteraction {
+public class CellParameter extends Lattice implements ICellParameter {
 
 	private Double merit;
 	
 	private String indexerIdentifer;
-
 	
 	public CellParameter() {
-		
-		//TODO: intialise to zero?
+		//Default lattice TODO: should be intialising to zero?
+		super(0.0, 0.0, 0.0, 90.0, 90.0, 90.0);
 	}
 
+	public CellParameter(double a, double b, double c, double al, double be, double ga, double merit, String indexeId){
+		super(a, b, c, al, be, ga);
+		this.merit = merit;
+	}
 	
 	public boolean isGreaterMerit(Object obj){
 		
@@ -43,7 +45,7 @@ public class CellParameter extends CellInteraction {
 		merit = m;
 	}
 
-	public Double getFigureMerit() {
+	public double getFigureMerit() {
 		return merit;
 	}
 

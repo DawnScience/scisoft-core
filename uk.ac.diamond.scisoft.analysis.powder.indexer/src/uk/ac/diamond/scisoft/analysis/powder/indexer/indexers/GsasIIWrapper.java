@@ -85,7 +85,7 @@ public class GsasIIWrapper extends AbstractPowderIndexer {
 	/**
 	 * Initialise python server to run in background and listen for requests
 	 */
-	private void setUpServer() {
+	private void startPythonServer() {
 		try {
 			File f = new File(urlGsasIIPyServer.getPath());
 			String absPath = f.getAbsolutePath().toString();
@@ -128,27 +128,16 @@ public class GsasIIWrapper extends AbstractPowderIndexer {
 
 		for (int val = 0; val < cells.length; ++val) {
 			// Create plausible cells
-			CellParameter cell = new CellParameter();
-			//cell.setCrystalSystem(new CrystalSystem());
-
 			Double merit = Double.valueOf(cells[val++]);
 			Double a = Double.valueOf(cells[val++]);
 			Double b = Double.valueOf(cells[val++]);
 			Double c = Double.valueOf(cells[val++]);
 
-			Double alp = Double.valueOf(cells[val++]);
-			Double bet = Double.valueOf(cells[val++]);
-			Double gam = Double.valueOf(cells[val]);
+			Double al = Double.valueOf(cells[val++]);
+			Double be = Double.valueOf(cells[val++]);
+			Double ga = Double.valueOf(cells[val]);
 
-			cell.setFigureMerit(merit);
-			
-			cell.setA(a);
-			cell.setB(b);
-			cell.setC(c);
-			cell.setAl(alp);
-			cell.setBe(bet);
-			cell.setGa(gam);
-			
+			CellParameter cell = new CellParameter(a, b, c, al, be, ga, merit, this.ID);
 
 			pC.add(cell);
 		}
@@ -158,8 +147,8 @@ public class GsasIIWrapper extends AbstractPowderIndexer {
 
 	@Override
 	public void configureIndexer() {
-		// Call setup and start running the python file in the bg
-		setUpServer();
+		// Call setup and start running the Python service
+		startPythonServer();
 		// Check success of server
 		connectServerSuccesfully();
 	}
@@ -267,7 +256,6 @@ public class GsasIIWrapper extends AbstractPowderIndexer {
 		//TODO: what is ncno then?
 		//intialParams.put("ncno",new PowderIndexerParam("ncno", 4));
 		intialParams.put("Volume Limit", new PowderIndexerParam("volume", 25));
-		
 	
 		intialParams.put(StandardConstantParameters.cubicSearch, new PowderIndexerParam(StandardConstantParameters.cubicSearch, 1));
 		intialParams.put(StandardConstantParameters.monoclinicSearch, new PowderIndexerParam(StandardConstantParameters.monoclinicSearch, 1));

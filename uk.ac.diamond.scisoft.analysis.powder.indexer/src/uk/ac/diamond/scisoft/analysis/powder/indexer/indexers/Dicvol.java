@@ -190,31 +190,20 @@ public class Dicvol extends AbstractPowderIndexerProcess implements IPowderProce
 		for (int i = 0; i < rawUnitCell.size(); ++i)// (String rawCell :
 													// rawUnitCell)
 		{
-			CellParameter cell = new CellParameter();
-
-			// cell.setCrystalSystem()); //Need to extract crystal system first
-
 			Map<String, Double> rawCell = extractKeyVal(rawUnitCell.get(i));
 
-			// Key sets for dicvol extraction A, B, C, ALP, BET, GAM, VOL, these
-			// are constant but only used once during extraction
-			//Lattice latt = new Lattice(rawCell.get("A"), rawCell.get("B"), rawCell.get("C"), rawCell.get("ALP"), rawCell.get("BET"), rawCell.get("GAM"))
-			
-			cell.setA(rawCell.get("A"));
-			cell.setB(rawCell.get("B"));
-			cell.setC(rawCell.get("C"));
-			cell.setAl(rawCell.get("ALP"));
-			cell.setBe(rawCell.get("BET"));
-			cell.setGa(rawCell.get("GAM"));
-			// Extract figure of merit
-			// set figue of merit
-			// Map<String, Double> rawFigures =
-			// extractKeyVal(rawFigureMerit.get(i));
+			// Key sets for dicvol extraction A, B, C, ALP, BET, GAM, VOL, these are constant but only used once during extraction
+			double a = rawCell.get("A");
+			double b = rawCell.get("B");
+			double c = rawCell.get("C");
+			double al = rawCell.get("ALP");
+			double be = rawCell.get("BET");
+			double ga = rawCell.get("GAM");
 
 			String[] out = rawFigureMerit.get(i).split("=");
-			Double merit = Double.parseDouble(out[1]);
-
-			cell.setFigureMerit(merit);
+			double merit = Double.parseDouble(out[1]);
+			
+			CellParameter cell = new CellParameter(a, b, c, al, be, ga, merit, this.ID);
 
 			this.plausibleCells.add(cell);
 		}

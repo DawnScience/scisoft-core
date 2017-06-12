@@ -219,38 +219,24 @@ public class Ntreor extends AbstractPowderIndexerProcess {
 		}
 
 		for (String i : rawIndexes) {
-			CellParameter cell = new CellParameter();
 
 			String id = "Crystal system: ";
 			String crystalSys = i.substring(id.length() + 1, i.length()); // Until
 																			// reach
 																			// space
-
 			Map<String, Double> raw = extractDataKeyVal(i);
 
-//			CrystalSystem system = new CrystalSystem();
-//
-//			// Extract crystal system indexing found
-//			cell.setCrystalSystem(system); // TODO: Shouldn't really be having
-//											// to set this
-
-			//// the cell A, B, C, Alpha, Beta, Gamma
-//			cell.setUnitCellLengths(raw.get("A"), raw.get("B"), raw.get("C"));
-//			cell.setUnitCellAngles(raw.get("Alpha"), raw.get("Beta"), raw.get("Gamma"));
-//
-//			
-			cell.setA(raw.get("A"));
-			cell.setB(raw.get("B"));
-			cell.setC(raw.get("C"));
-			cell.setAl(raw.get("Alpha"));
-			cell.setBe(raw.get("Beta"));
-			cell.setGa(raw.get("Gamma"));
+			double a = raw.get("A");
+			double b = raw.get("B");
+			double c = raw.get("C");
+			double al = raw.get("Alpha");
+			double be = raw.get("Beta");
+			double ga = raw.get("Gamma");
 
 			// Extract & set figure of merit
 			double merit = (Double) raw.get("M(20)");
-			cell.setFigureMerit(merit);
 
-			cell.setIndexerIdentifer(this.ID);
+			CellParameter cell = new CellParameter(a, b, c, al, be, ga, merit,this.ID);
 
 			plausibleCells.add(cell);
 		}

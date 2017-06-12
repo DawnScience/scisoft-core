@@ -16,7 +16,7 @@ import javax.measure.spi.ServiceProvider;
 
 import tec.units.ri.unit.Units;
 
-public interface ScatteringVector {
+public interface ScatteringVector<Q extends Quantity<Q>> extends Quantity<Q> {
 
 	final static Quantity<Length> length = ServiceProvider.current().getQuantityFactory(Length.class).create(1, Units.METRE);
 	public final static Quantity<?> QUANTITY = length.inverse();

@@ -15,8 +15,7 @@ import javax.measure.Unit;
 import tec.units.ri.unit.ProductUnit;
 import tec.units.ri.unit.Units;
 
-public interface ScatteringVectorOverDistance {
-
-	public final static Unit<ScatteringVectorOverDistance> UNIT = new ProductUnit<ScatteringVectorOverDistance>(
+public interface ScatteringVectorOverDistance<Q extends Quantity<Q>> extends Quantity<Q> {
+	public final Unit<? extends ScatteringVector> UNIT = new ProductUnit(
 			Units.METRE.pow(2).inverse());
 }

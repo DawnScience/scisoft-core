@@ -204,11 +204,8 @@ public class OperationServiceImpl implements IOperationService {
         
         SliceFromSeriesMetadata md = firstSlice.getFirstMetadata(SliceFromSeriesMetadata.class);
         
-        if (md == null || md.getDataDimensions() == null) {
-        	throw new RuntimeException("data must contain metadata, with dimensions!");
-        }
         
-        if (md.getDataDimensions().length != squeezedShape.length) {
+        if (!(md == null || md.getDataDimensions() == null) && md.getDataDimensions().length != squeezedShape.length) {
         	
         	int[] shape = firstSlice.getShape();
         	

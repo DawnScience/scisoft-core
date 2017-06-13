@@ -15,5 +15,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.january;bundle-version="2.0.0"
 Export-Package: uk.ac.diamond.scisoft.python
 Import-Package: Jama,
- org.dawb.common.util.eclipse,
  org.slf4j;version="[1.7.2,2.0.0)"

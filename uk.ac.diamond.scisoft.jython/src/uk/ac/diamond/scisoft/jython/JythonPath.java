@@ -20,20 +20,23 @@ import org.dawb.common.util.eclipse.BundleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+/**
+ * Class to hold methods to find files and directories to put on the PYTHONPATH for Jython
+ */
 public class JythonPath {
-	
 	private static Logger logger = LoggerFactory.getLogger(JythonPath.class);
-	
+
 	private static final String GIT_REPO_ENDING = ".git";
 	private static final String GIT_SUFFIX = "_git";
 	private static final String JYTHON_BUNDLE = "uk.ac.diamond.jython";
 	private static final String JYTHON_BUNDLE_LOC = JYTHON_BUNDLE + ".location";
 	private static final String JYTHON_EXEC= "jython.jar";
-	private static final String JYTHON_VERSION = "2.7";
+	private static final String JYTHON_MAJOR_VERSION = "2";
+	private static final String JYTHON_MINOR_VERSION = "7";
+	private static final String JYTHON_VERSION = JYTHON_MAJOR_VERSION + "." + JYTHON_MINOR_VERSION;
 	private static final String JYTHON_DIR = "jython" + JYTHON_VERSION;
 	private static final String SCISOFTPY = "uk.ac.diamond.scisoft.python";
-	
+
 	/*
 	 * Lists of Jars we want to/don't want to include
 	 */
@@ -251,8 +254,8 @@ public class JythonPath {
 			}
 		}
 		return jyPaths;
-		
 	}
+
 	/**
 	 * Recursively search through a given directory to locate all jar files provided 
 	 * they are in the requiredJars/extraPlugins lists
@@ -278,7 +281,6 @@ public class JythonPath {
 		return jarFiles;
 	}
 	
-	
 	/**
 	 * Method returns path to plugin directories (behaviour depends on whether in eclipse
 	 * @param directory Search location
@@ -288,7 +290,6 @@ public class JythonPath {
 	public static List<File> findDirs(File directory, Collection<String> extras, boolean isRunningInEclipse) {
 		final List<File> plugins = new ArrayList<File>();
 		
-		// TODO This could be shortened code-wise (move for loop outside if), but that might be slower in execution
 		if (isRunningInEclipse) {
 			//Look in git repos for plugin parents in given lists
 			for (File file : directory.listFiles()) {
@@ -333,7 +334,6 @@ public class JythonPath {
 	 */
 	private static boolean isRequired(File file, String[] keys, Collection<String> extraKeys) {
 		String filename = file.getName();
-//		logger.debug("Jar/dir found: {}", filename);
 		for (String key : keys) {
 			if (filename.startsWith(key)) return true;
 		}
@@ -346,15 +346,16 @@ public class JythonPath {
 	}
 		
 	/**
-	 * Returns name of Jython executable.
-	 * @return JYTHON_EXEC
+	 * @return name of Jython executable
 	 */
 	public static String getJythonExecutableName() {
 		return JYTHON_EXEC;
 	}
-	
-	public static String getJythonVersion() {
-		return JYTHON_VERSION;
-	}
 
+	/**
+	 * @return major version number of Jython interpreter
+	 */
+	public static String getJythonMajorVersion() {
+		return JYTHON_MAJOR_VERSION;
+	}
 }

@@ -18,7 +18,9 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import org.dawb.common.util.eclipse.BundleUtils;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
 import org.python.core.PyList;
 import org.python.core.PyString;
 import org.python.core.PyStringMap;
@@ -147,13 +149,14 @@ public class JythonInterpreterUtils {
 	 * @return a new Jython Interpreter, with only scisoftpy in sys.path
 	 * @throws Exception from getJythonInterpreterDirectory in case of missing JYTHON_BUNDLE_LOC when no Jython bundle found
 	 */
-	public static PythonInterpreter getScisoftpyInterpreter() throws Exception{
+	public static PythonInterpreter getScisoftpyInterpreter() throws Exception {
 		final Set<String> extraPaths = new HashSet<String>();
 		
 		try {
 			//This seems to work in git repo case (and presumably in binary)
 			//Old code in 0f667dd and before (now deleted) was more verbose
-			File pythonPlugin = BundleUtils.getBundleLocation(SCISOFTPY);
+			Bundle bundle = Platform.getBundle(SCISOFTPY);
+			File pythonPlugin = FileLocator.getBundleFile(bundle);
 			logger.debug("Found Scisoft Python (Jython) plugin: {}", pythonPlugin);
 			File binDir = new File(pythonPlugin, "bin");
 			if (binDir.exists()) {

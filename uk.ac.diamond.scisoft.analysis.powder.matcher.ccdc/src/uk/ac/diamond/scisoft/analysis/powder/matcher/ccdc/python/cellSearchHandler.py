@@ -21,16 +21,12 @@ TODO: have the identifying keys for handlers in specific file
 TODO: a query system to expose the handler functions and feed them back. Rather than just hoping the java keys are correct.
 """
 
-
 #TODO: check dependencies seperate
 
 import sys
 import os
 import logging
 import types
-
-print(sys.version)
-
 
 #LOGGER CONFIGURATION
 fileName = os.path.basename(sys.argv[0])
@@ -50,6 +46,17 @@ ch.setFormatter(formatter)
 logger.addHandler(fh)
 logger.addHandler(ch)
 
+import os 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+print(dir_path)
+
+import os
+cwd = os.getcwd()
+print(cwd)
+
+
+#Adding additional module directoyr 
+sys.path.insert(0,'/some/directory') 
 
 #TODO: is essential to have scisoftpy? probably not create own python class for handling xmlrpc components
 # scisoftpath = '/scratch/DAWN_git/scisoft-core.git/uk.ac.diamond.scisoft.python/src' #TODO: no absolute path
@@ -77,13 +84,7 @@ except KeyError:
     user_paths = []
 
 
-print(os.environ['LD_LIBRARY_PATH'])
-#TMP SETTING
-#CCDC_CSD_LICENCE_FILE = CCDC_CSD_LICENCE_FILE=/scratch/.ccdc/csd_licence.dat'
-#LD_LIBRARY_PATH']'/scratch/CCDC_playground/TestCCDC/lib/python2.7/site-packages/ccdc/_lib/'
-#CSDHOME = /dls_sw/apps/ccdc/CSD_2017
-
-
+#print(os.environ['LD_LIBRARY_PATH'])
 
 #Check licensing 
 #CCDC_CSD_LICENCE_FILE=
@@ -94,13 +95,10 @@ except TypeError:
 
 
 #CSDHOME - might not matter if on PYTHON PATH
-# try:
-#     os.environ['CSDHOME']
-# except TypeError:
-#     raise "CSDHOME path is not configured. Attempt installing CCDC or setting environment towards CSD installation"
-
-
-
+try:
+    os.environ['CSDHOME']
+except TypeError:
+    raise "CSDHOME path is not configured. Attempt installing CCDC or setting environment towards CSD installation"
 
 
 try:
@@ -122,13 +120,10 @@ except ImportError:
 
 
 try: 
-    import cellSearcher
+    import cellSearcher.py
 except ImportError:
     #This has some import problems...
-    logger.error("Could not generic cellSearcher setup...")
-
-    
-
+    logger.error("Could not create generic cellSearcher setup...")
 
 
 

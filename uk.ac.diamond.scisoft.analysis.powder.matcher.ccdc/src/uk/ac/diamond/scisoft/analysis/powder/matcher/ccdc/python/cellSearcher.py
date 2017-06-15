@@ -33,7 +33,6 @@ from ccdc.search import SimilaritySearch
 from ccdc.search import TextNumericSearch
 from ccdc.diagram import DiagramGenerator
 
-
 fileName = os.path.basename(sys.argv[0])
 fileName = fileName[:-3]
 
@@ -83,7 +82,6 @@ def generateDiagram(refcode, filepath):
     logger.info("Generated mole diagram")
     img.save(filepath + refcode, "PNG")
     return filepath + refcode + ".png"
-
 
 def retrieveHits(searcher):
     """

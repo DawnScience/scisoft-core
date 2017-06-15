@@ -19,9 +19,10 @@ public class CellParameter extends Lattice implements ICellParameter {
 		super(0.0, 0.0, 0.0, 90.0, 90.0, 90.0);
 	}
 
-	public CellParameter(double a, double b, double c, double al, double be, double ga, double merit, String indexeId){
+	public CellParameter(double a, double b, double c, double al, double be, double ga, double merit, String indexerId){
 		super(a, b, c, al, be, ga);
 		this.merit = merit;
+		this.indexerIdentifer = indexerId;
 	}
 	
 	public boolean isGreaterMerit(Object obj){

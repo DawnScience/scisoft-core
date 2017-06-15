@@ -31,7 +31,7 @@ public abstract class AbstractPowderIndexerProcess extends AbstractPowderIndexer
 
 	protected final Logger logger = LoggerFactory.getLogger(AbstractPowderIndexerProcess.class);
 	
-	protected String fileOutPath = "/scratch/Data/";//System.getProperty("java.io.tmpdir") + "/"; - TODO: until can properly kill process if i cancel during dev shouldn't place here
+	protected String fileOutPath = System.getProperty("java.io.tmpdir") + "/"; //- TODO: until can properly kill process if i cancel during dev shouldn't place here
 
 	protected static String binName = null;
 

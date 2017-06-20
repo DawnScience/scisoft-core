@@ -10,6 +10,7 @@ import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcClient;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +33,9 @@ import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcException;
 import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcRemoteException;
 import org.eclipse.dawnsci.analysis.api.rpc.IAnalysisRpcPythonService;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.internal.theme.Theme;
+import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +87,8 @@ public class CCDCService implements ICCDCService {
 	private Crystal crystalSys;
 
 	private PythonRunSearcherService serviceSearcher;
+
+	private String scriptAbsPath;
 	
 	public CCDCService() {
 		//setUpServer();
@@ -125,76 +130,97 @@ public class CCDCService implements ICCDCService {
 	 * 
 	 * TODO: need to gather feedback on why the server did not run. This can then be fed up the ui.... does service need a status
 	 */
-	public void setUpServer() {
+	public void setUpServer() throws Exception {
+			
 		try {
-			
-			try {
-				rpcservice = AnalysisRpcPythonPyDevService.create();
-				serviceSearcher = new PythonRunSearcherService(rpcservice);
-				
-			} catch (Exception e) {
-				logger.debug("Could not create script service: " +e);
-			}		
-			
-			if (rpcservice == null || pythonRunScriptService == null) throw new Exception("Could not create python interpreter");
-			
+//			try {
+//				rpcservice = AnalysisRpcPythonPyDevService.create();
+//			
+//
+//				
+//				Map<String,Object> inputs = new HashMap<>();
+//				//Map<String, String> in = new Map<String, String>();
+//
+//				//Cast below into runner - need a way to destroy...
+//				 Runnable r = new Runnable() {
+//			         public void run() {
+//						try {
+//							serviceSearcher = new PythonRunSearcherService(rpcservice);
+//						} catch (AnalysisRpcException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						} catch (IOException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//				     }
+//			         };
+//
+//			     Thread pythonServer = new Thread(r);
+//			     pythonServer.start();
+//			     pythonServer.setName("Core CCDC service server");
+//			     pythonServer.interrupt();
+//				
+//			} catch (Exception e) {
+//				logger.debug("Could not create script service: " +e);
+//			}		
+//			
+//			/if (rpcservice == null || pythonRunScriptService == null) throw new Exception("Could not create python interpreter");
+
 //			if (script == null || script.isEmpty()) throw new Exception("Path to script not set");
 //			
 //					
 					
-//					
-//			File bundlePath = BundleUtils.getBundleLocation(Activator.PLUGIN_ID);
-//			
-//			String scriptPath = bundlePath.getAbsolutePath() + SCRIPTPATH
-//					+ PYTHONSCRIPTHANDLER;
-//			
-//			if (!new File(scriptPath).exists()) {
-//				scriptPath = bundlePath.getAbsolutePath() + "/src" + SCRIPTPATH
-//						+ PYTHONSCRIPTHANDLER;
-//				if (!new File(scriptPath).exists()) {
-//					throw new RuntimeException("Couldn't find path to "
-//							+ PYTHONSCRIPTHANDLER + "!");
-//				}
-//			}
-//
-//			try {
-//				service = AnalysisRpcPythonPyDevService.create();
-//				
-//				pythonRunScriptService = new PythonRunScriptService(service);
-//			} catch (Exception e) {
-//				//System.out.println(e);
-//				logger.debug("Server already started" +e);
-//				//this, "Could not create script service!");
-//			}		
-//			
-//			if (service == null || pythonRunScriptService == null) throw new Exception("Could not create python interpreter");
-//			
-//			if (scriptPath == null || scriptPath.isEmpty()) throw new Exception("Path to script not set");
-//			
-//			
+			File bundlePath = BundleUtils.getBundleLocation(Activator.PLUGIN_ID);
+			
+			scriptAbsPath = bundlePath.getAbsolutePath() + SCRIPTPATH
+					+ PYTHONSCRIPTHANDLER;
+			
+			if (!new File(scriptAbsPath).exists()) {
+				scriptAbsPath = bundlePath.getAbsolutePath() + "/src" + SCRIPTPATH
+						+ PYTHONSCRIPTHANDLER;
+				if (!new File(scriptAbsPath).exists()) {
+					throw new RuntimeException("Couldn't find path to "
+							+ PYTHONSCRIPTHANDLER + "!");
+				}
+			}
+		//	if (scriptAbsPath == null || scriptAbsPath.isEmpty()) throw new Exception("Path to script not set");
+			
+			try {
+				rpcservice = AnalysisRpcPythonPyDevService.create();
+				
+				pythonRunScriptService = new PythonRunScriptService(rpcservice);
+			} catch (Exception e) {
+				//System.out.println(e);
+				logger.debug("Server already started" +e);
+				//this, "Could not create script service!");
+			}		
+			
+			//if (rpcservice == null || pythonRunScriptService == null) throw new Exception("Could not create python interpreter");
+			
+			
+			
 
-//			
-//			Map<String,Object> inputs = new HashMap<>();
-//			//Map<String, String> in = new Map<String, String>();
-//			
-//			pythonRunScriptService.runScript(scriptPath, inputs);
-//
-//			//Cast below into runner - need a way to destroy...
-//			 Runnable r = new Runnable() {
-//		         public void run() {
-//					try {
-//						pythonRunScriptService.runScript(scriptPath, inputs);
-//					} catch (AnalysisRpcException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//			     }
-//		         };
-//
-//		     Thread pythonServer = new Thread(r);
-//		     pythonServer.start();
-//		     pythonServer.setName("Core CCDC service server");
-//		     pythonServer.interrupt();
+			
+			Map<String,Object> inputs = new HashMap<>();
+			//Cast below into runner - need a way to destroy...
+			 Runnable r = new Runnable() {
+		         public void run() {
+			
+						try {
+							Map<String, Object> runScript = pythonRunScriptService.runScript(scriptAbsPath, inputs);
+						} catch (AnalysisRpcException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+			
+			     }
+		     };
+
+		     Thread pythonServer = new Thread(r);
+		     pythonServer.start();
+		     pythonServer.setName("Core CCDC service server");
+		     pythonServer.interrupt();
 //		     
 
 		     
@@ -249,11 +275,14 @@ public class CCDCService implements ICCDCService {
 			//TODO: how to determine which import caused this? we would know about he assert but how to delegate and say get your path sorted?
 
 		} catch (Exception e) {
-			
 			logger.debug("Was not able to start" + urlCellSearchHandler.getFile() + e);
 			terminateServer();
-			e.printStackTrace();
+			throw new Exception(e);
+//			e.printStackTrace();
 		}
+		
+		
+		//Connect analysis seperatte
 		
 		analysisRpcClient = new AnalysisRpcClient(PORT);
 		try {
@@ -262,7 +291,7 @@ public class CCDCService implements ICCDCService {
 			e.printStackTrace();
 		}
 	}
-	
+
 	
 	public Boolean serverAvaliable() {
 		Boolean avaliblePyfile = false;
@@ -375,10 +404,6 @@ public class CCDCService implements ICCDCService {
 	 */
 	public Boolean runIndependentCellSearch(double a, double b, double c, double alp, double bet, double gam) {
 		boolean success = false;
-		
-		if(crystalSys == null){
-			return false;
-		}
 		
 		// Run cell search
 		try {
@@ -538,13 +563,16 @@ class PythonRunSearcherService implements IPythonRunScript {
 			
 			//rpcservice.addHandlers( bundlePath.getAbsolutePath(), new String[]{});
 			
+//			rpcservice.addHandlers("execfile(r'" + getSearcherPath() + "')",
+//					new String[] {  }); //TODO: extra handler?
+			
 			// script has a function definition called "runScript", add a
 			// handler for it, then create a proxy to run the function
 			rpcservice.addHandlers("execfile(r'" + script + "')",
 					new String[] {  }); //TODO: extra handler?
 		}
-//		proxy = rpcservice.getClient().newProxyInstance(IPythonRunScript.class,
-//				debug);
+		proxy = rpcservice.getClient().newProxyInstance(IPythonRunScript.class,
+				debug);
 	}
 	
 	@Override
@@ -583,35 +611,45 @@ class PythonRunSearcherService implements IPythonRunScript {
 		if (path == null) {
 			path = "";
 		}
-		StringBuilder pythonpath = new StringBuilder(path);
-		if (pythonpath.length() > 0) {
-			pythonpath.append(File.pathSeparator);
+		StringBuilder orignalsearcherPath = new StringBuilder(path);
+		if (orignalsearcherPath.length() > 0) {
+			orignalsearcherPath.append(File.pathSeparator);
 		}
 
 		String searcherPath = getSearcherPath();
 		if (searcherPath != null) {
-			pythonpath.append(searcherPath).append(File.pathSeparator);
-			pythonpath.append(searcherPath + "/src").append(File.pathSeparator);
+			orignalsearcherPath.append(searcherPath).append(File.pathSeparator);
+			orignalsearcherPath.append(searcherPath + "/src").append(File.pathSeparator);
 		}
 
-		env.put("PYTHONPATH", pythonpath.toString());
+		env.put("SEARCHERS", orignalsearcherPath.toString());
 
 		return env;
 	} 
 	
 	private static String getSearcherPath() {
-		String searcherPath = null;
+		
+		File bundlePath = null;
 		try {
-			searcherPath = BundleUtils.getBundleLocation(
-					SCRIPTPATH).getAbsolutePath();
-		} catch (IOException e) {
-			logger.error(SCRIPTPATH
-					+ " not available, import of scisoftpy.rpc may fail", e);
-		} catch (NullPointerException e) {
-			logger.error(SCRIPTPATH
-					+ " not available, import of scisoftpy.rpc may fail", e);
+			bundlePath = BundleUtils.getBundleLocation(Activator.PLUGIN_ID);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
-		return searcherPath;
+
+		String path = bundlePath.getAbsolutePath() + SCRIPTPATH
+				+ "cellSearcher.py";
+		
+		if (!new File(path).exists()) {
+			path = bundlePath.getAbsolutePath() + "/src" + SCRIPTPATH
+					+ "cellSearcher.py";
+			if (!new File(path).exists()) {
+				throw new RuntimeException("Couldn't find path to "
+						+ "cellSearcher.py" + "!");
+			}
+		}
+		
+		return path;
 	}
 
 }

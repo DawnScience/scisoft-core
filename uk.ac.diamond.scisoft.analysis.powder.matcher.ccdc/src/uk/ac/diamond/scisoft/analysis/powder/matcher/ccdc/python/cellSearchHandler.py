@@ -55,8 +55,6 @@ cwd = os.getcwd()
 print(cwd)
 
 
-#Adding additional module directoyr 
-sys.path.insert(0,'/some/directory') 
 
 #TODO: is essential to have scisoftpy? probably not create own python class for handling xmlrpc components
 # scisoftpath = '/scratch/DAWN_git/scisoft-core.git/uk.ac.diamond.scisoft.python/src' #TODO: no absolute path
@@ -120,10 +118,566 @@ except ImportError:
 
 
 try: 
-    import cellSearcher.py
+    import cellSearcher as cellLib
 except ImportError:
     #This has some import problems...
     logger.error("Could not create generic cellSearcher setup...")
+
+
+"""
+TMP CURRENT CELL SEAARCHER STATE
+
+Once module configured with handler correctly
+
+"""
+import sys
+import os
+import logging
+
+
+import pprint as pp #Optional too?
+
+
+from PIL import Image #Optional library for saving out images
+
+#CCDC imports
+from ccdc import io, search, molecule
+from ccdc import crystal
+from ccdc.io import MoleculeReader
+from ccdc.io import EntryReader
+from ccdc._lib import ChemistryLib
+from ccdc.search import ReducedCellSearch
+from ccdc.search import SimilaritySearch
+from ccdc.search import TextNumericSearch
+from ccdc.diagram import DiagramGenerator
+
+fileName = os.path.basename(sys.argv[0])
+fileName = fileName[:-3]
+
+#Configuration CSD
+entryReader = io.EntryReader('CSD')
+
+#--    LOGGER CONFIGURATION     --#
+logger = logging.getLogger(fileName)
+logger.setLevel(logging.DEBUG)
+# create console handler with a higher log level
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+# create file handler which logs even debug messages
+fh = logging.FileHandler('/tmp/spamcellsearcher.log')
+fh.setLevel(logging.DEBUG)
+# create formatter and add it to the handlers
+formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+# add the handlers to the logger
+logger.addHandler(fh)
+logger.addHandler(ch)
+
+
+
+#--    HELPER FUNCTIONS    --#
+
+def generateDiagram(refcode, filepath):
+    """
+    Generates a diagram on refcode.
+    Creates img for crystal, molecule + entry
+
+    :param refcode: refcode a unique identifier for //TODO: name of that please?
+    :param filepath:
+    :return: fulpath namee of generated *.png diagram
+    """
+    mol = entryReader.molecule(refcode)
+    crystal = entryReader.crystal(refcode)
+
+    generator = DiagramGenerator()
+    # img = generator.image(crystal)
+    # logStatus("Generated crystal diagram. ")
+    # img.save(filepath + refcode + "crystal", "PNG")
+
+    #BUG: seg fault if try and do both of these at once
+    img = generator.image(mol)
+    logger.info("Generated mole diagram")
+    img.save(filepath + refcode, "PNG")
+    return filepath + refcode + ".png"
+
+def retrieveHits(searcher):
+    """
+
+    :param searcher: expects searcher Search type
+    :return: ccdc.search.SearchHit
+    """
+    hits =  searcher.search()
+    logger.info("Retrieve hits: " + str(len(hits)))
+    return hits
+
+def displayHits(hits):
+    """
+    Configure format to display all the information inside a relating to the crystal components.
+
+    :param hits: ccdc.search.SearchHit
+    """
+    logger.info("Cell Matches: ")
+    for i in hits:
+        logger.info("Hit Entry Identifier: " + str(i.identifier))
+        logger.info("CCDC Number : " + str(i.entry.ccdc_number))
+        logger.info("Similarity Values")
+        displayCrystal(i.crystal)
+
+def displayCrystal(crystal):
+    """
+    Formats pretty particular values from a CCDC.crystal
+
+    :param crystal: ccdc.crystal.Crystal
+    """
+    logger.info("Crystal Lengths:" + str(crystal.reduced_cell.cell_lengths))
+    logger.info("Crystal Angles: " + str(crystal.reduced_cell.cell_angles))
+    logger.info("Lattice Centering: " + str(crystal.lattice_centring))
+    logger.info("Molecule Formula " + str(crystal.molecule.formula))
+    logger.info("Spacegroup " + str(crystal.crystal_system))
+
+
+def query(refcode):
+    """
+    Performs crystal search query on refcode
+    :param refcode: refcode format of  six letters + digits  ... n
+    :return: ccdc.entry.Entry
+    """
+    logger.info("Reading in refcode entry: "+ str(refcode))
+    return entryReader.crystal(refcode)
+
+
+
+
+#--    SEARCH CONFIGURATION    --#
+
+# TODO: assumes a value is left there...
+
+def setCrystalLength(inCrystal, nA=None, nB=None, nC=None):
+    """
+    @deprecated: 
+    :param inCrystal: ccdc.crystal.Crystal
+    :param nA: float
+    :param nB: float
+    :param nC: float
+    :return: ccdc.crystal.Crystal
+    """
+    if (nA == None):
+        cellLens = inCrystal.reduced_cell.cell_lengths
+        nA = cellLens.a
+    if (nB == None):
+        cellLens = inCrystal.reduced_cell.cell_lengths
+        nB = cellLens.b
+    if (nC == None):
+        cellLens = inCrystal.reduced_cell.cell_lengths
+        nC = cellLens.c
+    inCrystal = inCrystal.reduced_cell.cell_lengths._replace(a=nA, b=nB, c=nC)
+    return inCrystal
+
+
+
+def setCrystalAngles(inCrystal, alp, bet, gam):
+    """
+    @deprecated: 
+    :param inCrystal: ccdc.crystal.Crystal
+    :param alp: float
+    :param bet: float
+    :param gam: float
+    :return: ccdc.crystal.Crystal
+    """
+    if (alp == None):
+        cellAngs = inCrystal.reduced_cell.cell_angles
+        alp = cellAngs.alpha
+    if (bet == None):
+        cellAngs = inCrystal.reduced_cell.cell_angles
+        bet = cellAngs.beta
+    if (gam == None):
+        cellAngs = inCrystal.reduced_cell.cell_angles
+        gam = cellAngs.gamma
+    inCrystal = inCrystal.reduced_cell.cell_angles._replace(alpha=alp, beta=bet, gamma=gam)
+    return inCrystal
+
+
+def setSpacegroup(inCyrstal, spaceGroup):
+    """
+    @deprecated: 
+    TODO: validation
+    :param inCyrstal: ccdc.crystal.Crystal
+    :param spaceGroup:  
+    :return: ccdc.crystal.Crystal
+    """
+    outCrystal = inCyrstal.spacegroup_symbol._replace(spaceGroup)
+    return outCrystal
+
+
+def setFormula(inCrystal, formula):
+    """
+    @deprecated: 
+    TODO: validation
+    :param inCrystal: ccdc.crystal.Crystal
+    :param formula: string
+    :return: ccdc.crystal.Crystal
+    """
+    return inCrystal
+
+
+#--    SEARCHING QUERYS  --#
+
+def searchRefcode(refCode):
+    """
+    TODO: validation refcode
+    :param refCode: refcode format of  six letters + digits  ... n
+    :return: ccdc.search.SearchHit
+    """
+    query = TextNumericSearch()
+    query.add_all_identifiers(refCode)
+
+    hits = query.search()
+    return hits
+
+def searchCrystal(inCrystal):
+    """
+    Search on a configured crystal. Potentially configured by crystal configuration
+    functions or a based on a entry of CCDC,
+
+    :param inCrystal: ccdc.crystal.Crystal
+    :return: ccdc.search.SearchHit
+    """
+    query = search.ReducedCellSearch.CrystalQuery(inCrystal)
+    searcher = search.ReducedCellSearch(query)
+    return retrieveHits(searcher)
+
+def searchCrystalTols(inCrystal, absAngTol,percentLenTol):
+    """
+
+    :param inCrystal: ccdc.crystal.Crystal
+    :param absAngTol: float 
+    :param percentLenTol: float 
+    :return: ccdc.search.SearchHit
+    """
+    query = search.ReducedCellSearch.CrystalQuery(inCrystal)
+    searcher = search.ReducedCellSearch(query)
+
+    if(percentLenTol != None):
+        searcher.settings.percent_length_tolerance = percentLenTol
+        logger.info(searcher.settings.percent_length_tolerance)
+    if (absAngTol != None):
+        searcher.settings.absolute_angle_tolerance = absAngTol
+        logger.info(searcher.settings.absolute_angle_tolerance)
+    return retrieveHits(searcher)
+
+
+def searchCellVals(a,b,c):
+    """
+    The generic lattice centering does not work...
+    @deprecated: need to set crystal system
+    :param a: float
+    :param b: float
+    :param c: float 
+    :return: ccdc.search.SearchHit
+    """
+    cellLen = crystal.CellLengths(a,b,c)
+    query = ReducedCellSearch.Query(lengths=cellLen)
+    specifics = query._get_query()
+    searcher= ReducedCellSearch(query)
+    return retrieveHits(searcher)
+
+def searchCellAngles(alpha,beta,gamma):
+    """
+    @deprecated:
+    :param alpha: float
+    :param beta: float
+    :param gamma: float
+    :return: ccdc.search.SearchHit
+    """
+    cellAngles = crystal.CellAngles(alpha,beta,gamma)
+    query = ReducedCellSearch.Query(angles=cellAngles)
+    searcher = ReducedCellSearch(query)
+    return retrieveHits(searcher)
+
+
+def unitCellQuery(cellLengths, cellAngles, centring):
+    """
+    :param cellLengths: float
+    :param cellAngles: float
+    :param centring: ChemLin.Spacegroupcentering TODO: validation?
+    :return: ccdc.search.SearchHit
+    """
+    logger.info("Created cell angles"+ str(cellAngles))
+    logger.info("Created cell lengths" + str(cellLengths))
+    logger.info("Set to centering" + str(centring))
+
+    query = ReducedCellSearch.Query(angles=cellAngles, lengths=cellLengths, lattice_centring=centring)
+    searcher = ReducedCellSearch(query)
+
+    return retrieveHits(searcher)
+
+
+def unitCellQuerySettings(cellLengths, cellAngles, centring, absAngTol,percentLenTol):
+    """
+
+    :param cellLengths: float
+    :param cellAngles: float
+    :param centring: float
+    :param absAngTol: float
+    :param percentLenTol: float
+    :return: ccdc.search.SearchHit
+    """
+    logger.info("Created cell angles"+ str(cellAngles))
+    logger.info("Created cell lengths" + str(cellLengths))
+    logger.info("Set to centering" + str(centring))
+
+    query = ReducedCellSearch.Query(angles=cellAngles, lengths=cellLengths, lattice_centring=centring)
+    searcher = ReducedCellSearch(query)
+
+    if(percentLenTol != None):
+        searcher.settings.percent_length_tolerance = percentLenTol
+    if (absAngTol != None):
+        searcher.settings.absolute_angle_tolerance = absAngTol
+
+    return retrieveHits(searcher)
+
+def searchCentering(center):
+    """
+    TODO: how generate safely
+    :param center:
+    """
+    pass
+
+def searchSpaceGroup(spacegroup):
+    """
+    TODO: validate spacegroup... isValid believe does not work how would like
+    :param spacegroup:s
+    """
+    pass
+
+def searchCCDCNumber(num):
+    """
+    TODO: look at email reply got
+    :param num:
+    :return: ccdc.search.SearchHit
+    """
+    searcher = TextNumericSearch()
+    searcher.add_ccdc_number(num)
+    return retrieveHits(searcher)
+
+def searchChemicalFormula(formula):
+    """
+    :param formula:
+    """
+    pass
+
+def searchName(name):
+    """
+    :param name:
+    :return: ccdc.search.SearchHit
+    """
+    searcher = TextNumericSearch()
+    searcher.add_synonym(name)
+    return retrieveHits(searcher)
+
+def filterHitsHasAtleastElements(hits, elements):
+    """
+
+    :param hits: ccdc.search.SearchHit
+    :param elements: list of elements to filter on capitalised
+    :return: ccdc.search.SearchHit
+    """
+    filterHits = []
+    for hit in hits:
+        #TODO: might not have a molecule. or hit.molecule
+        atoms = hit.molecule.atoms
+
+        for atom in atoms:
+            if (atom.atomic_symbol in elements):
+                filterHits.append(hit)
+                break
+
+    return filterHits
+
+def filterHitsMustHaveElements(hits, elements):
+    """
+    :param hits: ccdc.search.SearchHit
+    :param elements: list of elements to filter on capitalised
+    :return: ccdc.search.SearchHit
+    """
+    filterHits = []
+    for hit in hits:
+        #TODO: might not have a molecule.
+        atoms = hit.molecule.atoms
+        atomSymbols = []
+        for atom in atoms:
+            atomSymbols.append(atom.atomic_symbol)
+        if(set(elements) < set(atomSymbols)):
+            filterHits.append(hit)
+
+    return filterHits
+
+
+def filterHitsFormula(hits, formula):
+    """
+
+    :param hits:
+    :param formula:
+    :return: ccdc.search.SearchHit
+    """
+    filterHits = []
+    for hit in hits:
+        #TODO: might not have a molecule.
+        if(hit.molecule.formula == formula):
+            filterHits.append(hit)
+    return filterHits
+
+
+
+
+
+#--     INPUT AND OUTPUT CRYSTALS       --//
+
+
+
+def extractCrystalCif(filepath):
+    """
+    TODO: Can i store molecule information inside and that'll be in crystal?
+    :param filepath:
+    :return:
+    """
+    reader = io.EntryReader(filepath + ".cif")
+    entry_from_cif = reader[0]
+    logger.info(entry_from_cif.crystal)
+    displayCrystal(entry_from_cif.crystal)
+    return entry_from_cif.crystal;
+
+
+def saveCrystalCif(filepath, filename, crystal):
+    """
+
+    :param filepath:
+    :param filename:
+    :param crystal:
+    """
+    logger.info("Saving: " + filepath + filename)
+    with io.CrystalWriter(os.path.join(filepath, filename + '.cif')) as crystal_writer:
+        crystal_writer.write(crystal)
+
+def saveRefcodeCif(filepath, refcode):
+    """
+
+    :param filepath:
+    :param refcode:
+    """
+    saveCrystalCif(filepath, refcode, query(refcode))
+    logger.info("Generated cif for " + refcode)
+
+
+
+
+
+
+
+"""
+EXPERMINENTAL METHODs.
+
+Potential dynamic load of setting.
+
+To just query the Python for a structure and then load that subsequent structure on the java side.
+Why fill out all the specific settings when they need to eventually be passed.
+Can flag up the type on a return
+
+TODO: how load the setup on the java sides..
+
+"""
+# def gatherSettings():
+#     pass
+#     #Can dnp.flatten the settings
+#  
+#  
+# """
+# Gath
+# """   
+# def gatherCrystalSettings(crystal):
+#     crystal
+#     pass
+#     #Can dnp.flatten the settings
+#     
+     
+
+def gatherSpaceGroups():
+    """
+    The order of these responds to the order desired.
+    Someone like a enum when pass in the optitions.
+
+    This could for example be dynamically loaded into a combo box and selected from that.
+
+    :return: ordered enum of spaceGroups with corresponding text
+    """
+    spaceGroupsOps = ChemistryLib.Spacegroup_centring_text()
+    #Split of text
+    return spaceGroupsOps
+
+
+def reportGenerator(filepath,refcode):
+    """
+    :param filepath:
+    :param refcode:
+    :return:path to where generated html report can be found
+    """
+    entry = EntryReader('csd').entry(refcode)
+    mol = entry.molecule
+    atoms = mol.atoms
+    bonds = mol.bonds
+    img = DiagramGenerator().image(mol)
+    doi = entry.publication.doi
+    if doi is None:
+        doi = '&nbsp;'
+    else:
+        doi = '<a href="http://dx.doi.org/%s">%s</a>' % (doi, doi)
+
+    template_file_name = os.path.join(
+        os.path.dirname(__file__), 'simple_report_template.html'
+    )
+
+    template = unicode(open(template_file_name).read())
+
+    fileGenPath = os.path.join(filepath + refcode+ '.html')
+    with open(fileGenPath, 'w') as html:
+        s = template.format(
+            entry=entry,
+            molecule=mol,
+            image=img,
+            doi=doi,
+            synonyms='; '.join(s for s in entry.synonyms),
+            counts=dict(
+                natoms=len(atoms),
+                ndonors=len([a for a in atoms if a.is_donor]),
+                nacceptors=len([a for a in atoms if a.is_acceptor]),
+                nrot_bonds=len([b for b in bonds if b.is_rotatable]),
+            ),
+        )
+        html.write(s.encode('utf8'))
+
+    return fileGenPath
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -176,13 +730,13 @@ class CellSearcher:
         """
         Functional Assignment
         """
-        self.unitCellQuery = cellSearcher.unitCellQuery
+        self._unitCellQuery = unitCellQuery
 
-        self._searchCellVals = cellSearcher.searchCellVals
+        self._searchCellVals = searchCellVals
 
-        #self.cifQueryPath = cellSearcher.extractCrystalCif
+        #self.cifQueryPath = cellLib.extractCrystalCif
 
-        self.strDetails = cellSearcher.query
+        self._strDetails = query
 
         """
         Filtering that can be performed on the hits
@@ -216,9 +770,9 @@ class CellSearcher:
         centring = ChemistryLib.Spacegroup_centring_text().text(1)
         logger.info("Set to centering" + str(centring))
 
-        self.searchHits = self.unitCellQuery(cellAngles=cellAngles, cellLengths=cellLengths, centring=centring)
+        self.searchHits = self._unitCellQuery(cellAngles=cellAngles, cellLengths=cellLengths, centring=centring)
         logger.info("Success in running request for find cell matches")
-        cellSearcher.displayHits(self.searchHits)
+        displayHits(self.searchHits)
 
         return True
 
@@ -232,7 +786,7 @@ class CellSearcher:
         #Refine the hit list here to match group.
         #TMP: right now im just going to return a list of identifiers
         logger.info("Sending request for hits results\n\n")
-        #cellSearcher.displayHits(self.searchHits)
+        #cellLib.displayHits(self.searchHits)
 
         allHits = []
         #TODO: cast to typem
@@ -292,11 +846,11 @@ class CellSearcher:
 
 
         if(self.angTol == None and self.lengthTol == None):
-            self.searchHits = cellSearcher.searchCrystal(self.searchCrystal)
+            self.searchHits = searchCrystal(self.searchCrystal)
             logger.info("Success in running cell matches with crystal")
         else:
             logger.info("Running tolerance search")
-            self.searchHits = cellSearcher.searchCrystalTols(self.searchCrystal,self.angTol,self.lengthTol)
+            self.searchHits = searchCrystalTols(self.searchCrystal,self.angTol,self.lengthTol)
             logger.info("Success in running cell matches  with crystal under configured tolerance")
 
         return True
@@ -377,7 +931,7 @@ class CellSearcher:
         :return:
         """
         elements = [element.capitalize() for element in elements]
-        self.searchHits = cellSearcher.filterHitsHasAtleastElements(self.searchHits,elements)
+        self.searchHits = filterHitsHasAtleastElements(self.searchHits,elements)
         return True
 
     def saveCifAllHits(self, filepath):
@@ -386,7 +940,7 @@ class CellSearcher:
         :param filepath:
         """
         for hit in self.searchHits:
-            cellSearcher.saveCrystalCif(filepath, hit.identifier,hit)
+            saveCrystalCif(filepath, hit.identifier,hit)
 
 
     def saveRefcodeCif(self,filepath, refcode):
@@ -396,7 +950,7 @@ class CellSearcher:
         :param refcode:
         :return:
         """
-        cellSearcher.saveCrystalCif(filepath, refcode, self.entryReader.crystal(refcode))
+        saveCrystalCif(filepath, refcode, self.entryReader.crystal(refcode))
         logger.info("Generated cif for " + refcode)
         return True
 
@@ -409,7 +963,7 @@ class CellSearcher:
         :param refcode:
         :return:
         """
-        cellSearcher.reportGenerator(filepath,refcode)
+        reportGenerator(filepath,refcode)
         logger.info("Generated report at " + filepath + " with refcode " + refcode )
         return True
 
@@ -469,6 +1023,7 @@ logger.info("Waiting call indefinitely...")
 serverAvaliable = True
 rpcserver.serve_forever()
 logger.debug("Server Closed")
+
 rpcserver.close()
 rpcserver.shutdown()
 

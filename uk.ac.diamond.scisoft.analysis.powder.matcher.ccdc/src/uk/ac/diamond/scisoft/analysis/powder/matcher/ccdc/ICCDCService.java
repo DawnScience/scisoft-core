@@ -9,8 +9,11 @@ public interface ICCDCService {
 	
 	/**
 	 * 
+	 * TODO: poor mans exception to get some feedback to progress than run this ervice
+	 * @throws Exception 
+	 * 
 	 */
-	public void setUpServer();
+	public void setUpServer() throws Exception;
 	
 	/**
 	 * 

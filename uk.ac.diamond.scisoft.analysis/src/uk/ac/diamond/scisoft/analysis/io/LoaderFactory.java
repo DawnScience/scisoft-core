@@ -345,6 +345,9 @@ public class LoaderFactory {
 		}
 		
 		final File file = new File(path);
+		//MXGDA-3013 & 278 : call list on parent directory to refresh dir, so the client cache can see any new
+		//files, before checking file.exists()
+		new File(file.getParent()).list();
 		if (!file.exists()) throw new FileNotFoundException(path);
 		
 		if (file.isFile()) {

@@ -7,6 +7,8 @@ import org.eclipse.january.dataset.IDataset;
 
 public class CurveStitchDataPackage {
 
+	private String rodName;
+	
 	
 	////Inputs:
 	
@@ -148,6 +150,12 @@ public class CurveStitchDataPackage {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getRodName() {
+		return rodName;
+	}
+	public void setRodName(String rodName) {
+		this.rodName = rodName;
 	}
 	
 }

@@ -119,7 +119,7 @@ public class PolynomialOverlapSXRD {
 			runningSum += r;
 		}
 		
-		double[] correction  = new double[] {(runningSum/numberOfTestPoints)};
+		double[] correction  = new double[] {(runningSum/numberOfTestPoints)*attenuationFactor};
 		
 		
 		return new double[][] {lowerParams, higherParams, correction};

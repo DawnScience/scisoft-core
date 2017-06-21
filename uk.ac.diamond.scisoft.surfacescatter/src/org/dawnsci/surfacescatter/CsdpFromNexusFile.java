@@ -20,14 +20,11 @@ public class CsdpFromNexusFile {
 		
 		final CurveStitchDataPackage csdp = new CurveStitchDataPackage();
 		
-		
 		String[] nodeNames = new String[]{"/Corrected_Intensity_Dataset",
 										  "/Fhkl_Dataset",
 										  "/Raw_Intensity_Dataset",
 										  "/Scanned_Variable_Dataset"};
 		
-		
-	
 		NexusFile file = nexusFileFactory.newNexusFile(filename);
 		
 		try {

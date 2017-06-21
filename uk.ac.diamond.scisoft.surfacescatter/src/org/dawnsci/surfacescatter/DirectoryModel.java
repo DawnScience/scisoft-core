@@ -58,8 +58,19 @@ public class DirectoryModel {
 	private ArrayList<IRegion> interpolatorRegions;
 	private ArrayList<OverlapDataModel> overlapDataModels;
 	private double currentRawIntensity;
+	private String rodName;
 
 	
+	public String getRodName() {
+		return rodName;
+	}
+
+	public void setRodName(String rodName) {
+		this.rodName = rodName;
+		csdp.setRodName(rodName);
+		
+	}
+
 	public void addToInterpolatorRegions(IRegion box){
 		
 		if(interpolatorRegions ==null){

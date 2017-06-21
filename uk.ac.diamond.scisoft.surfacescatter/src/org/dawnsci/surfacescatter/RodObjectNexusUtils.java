@@ -16,41 +16,20 @@ package org.dawnsci.surfacescatter;
 
 // Imports from Java
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-
-import org.apache.commons.math3.linear.Array2DRowFieldMatrix;
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
-import org.eclipse.dawnsci.analysis.api.processing.IExportOperation;
-import org.eclipse.dawnsci.analysis.api.processing.OperationData;
-import org.eclipse.dawnsci.analysis.api.processing.OperationException;
-import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
-import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
-import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.analysis.tree.impl.DataNodeImpl;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.january.DatasetException;
-// Imports from org.eclipse.january
-import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.SliceND;
-import org.eclipse.january.metadata.AxesMetadata;
-
-// Imports from uk.ac.diamond.scisoft
-import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
-import uk.ac.diamond.scisoft.analysis.processing.operations.export.Export1DNXcanSASModel;
 
 
 //Let's save this file.
@@ -230,6 +209,7 @@ public class RodObjectNexusUtils{
 		scannedVariableNode.addAttribute(TreeFactory.createAttribute("Scanned_Variable_Name", gm.getxName()));
 		p++;
 		
+		entry.addAttribute(TreeFactory.createAttribute("Rod Name", drm.getRodName()));
 		
 		GroupNode overlapRegions = TreeFactory.createGroupNode(p);
 		p++;

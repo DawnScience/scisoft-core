@@ -1,17 +1,13 @@
 package uk.ac.diamond.scisoft.analysis.powder.matcher.ccdc;
 
-import uk.ac.diamond.scisoft.analysis.PythonHelper;
 import uk.ac.diamond.scisoft.analysis.PythonHelper.PythonRunInfo;
 import uk.ac.diamond.scisoft.analysis.powder.indexer.crystal.Crystal;
 import uk.ac.diamond.scisoft.analysis.powder.indexer.indexers.CellParameter;
-import uk.ac.diamond.scisoft.analysis.processing.python.AbstractPythonScriptOperation;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcClient;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,22 +16,11 @@ import org.dawb.common.util.eclipse.BundleUtils;
 import uk.ac.diamond.scisoft.analysis.powder.matcher.ccdc.Activator;
 
 import org.dawnsci.python.rpc.AnalysisRpcPythonPyDevService;
-import org.dawnsci.python.rpc.AnalysisRpcPythonService;
 import org.dawnsci.python.rpc.IPythonRunScript;
 import org.dawnsci.python.rpc.PythonRunScriptService;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.dawnsci.analysis.api.processing.OperationData;
-import org.eclipse.dawnsci.analysis.api.processing.OperationException;
-import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcException;
 import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcRemoteException;
 import org.eclipse.dawnsci.analysis.api.rpc.IAnalysisRpcPythonService;
-import org.eclipse.january.dataset.IDataset;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.internal.theme.Theme;
-import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,10 +38,10 @@ public class CCDCService implements ICCDCService {
 
 	public static final String ID = "CCDC";
 
-	protected URL urlCellSearchHandler = getClass().getResource("python/cellSearchHandler.py");
+	protected URL urlCellSearchHandler = getClass().getResource("cellSearchHandler.py");
 
 	
-	private static final String SCRIPTPATH = "/uk/ac/diamond/scisoft/analysis/powder/matcher/ccdc/python/";
+	private static final String SCRIPTPATH = "/uk/ac/diamond/scisoft/analysis/powder/matcher/ccdc/";
 	private static final String PYTHONSCRIPTHANDLER = "cellSearchHandler.py";
 	
 	

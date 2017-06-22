@@ -13,7 +13,17 @@ public class Lattice implements Serializable {
 
 	private static final long serialVersionUID = 5083826131364460534L;
 	
-	protected final double a, b, c, al, be, ga;
+	protected double a;
+
+	protected double b;
+
+	protected double c;
+
+	protected double al;
+
+	protected double be;
+
+	protected double ga;
 	private final double alR, beR, gaR; //Angles in radians for convenience
 	private final Double volume;
 	private final PrincipleAxis principleAxis;

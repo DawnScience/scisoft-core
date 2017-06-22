@@ -49,7 +49,6 @@ public class Dicvol extends AbstractPowderIndexerProcess implements IPowderProce
 	public Dicvol() {
 		this.binName = BINNAME;
 		this.resultsExtension = ".ord";
-		//Set params
 	}
 	
 	@Override
@@ -183,16 +182,11 @@ public class Dicvol extends AbstractPowderIndexerProcess implements IPowderProce
 
 		List<String> rawFigureMerit = extractRawCellInfo(resultFilePath, "FIGURES OF MERIT", 1);
 
-		if (rawUnitCell.size() != rawFigureMerit.size()) {
-			logger.debug("Found more unit cells than there were figure of merits...");
-		}
-
-		for (int i = 0; i < rawUnitCell.size(); ++i)// (String rawCell :
-													// rawUnitCell)
+		for (int i = 0; i < rawUnitCell.size(); ++i)
 		{
 			Map<String, Double> rawCell = extractKeyVal(rawUnitCell.get(i));
 
-			// Key sets for dicvol extraction A, B, C, ALP, BET, GAM, VOL, these are constant but only used once during extraction
+			// Key sets for Dicvol extraction A, B, C, ALP, BET, GAM, VOL TODO: these constant values put aside somewhere else
 			double a = rawCell.get("A");
 			double b = rawCell.get("B");
 			double c = rawCell.get("C");
@@ -238,7 +232,7 @@ public class Dicvol extends AbstractPowderIndexerProcess implements IPowderProce
 			// PLEASE ENTER THE NAME OF INPUT FILE
 			bw.write(path + "/" + outFileTitle + "\n");
 			// PLEASE ENTER THE NAME OF OUTPUT FILE
-			bw.write(path + "/" + outFileTitle + resultsExtension  +"\n");
+			bw.write(path + "/" + outFileTitle + "out" +"\n");
 			bw.flush();
 		} catch (IOException e) {
 			logger.debug("Unable to communicate with Dicvol executable" + e);
@@ -391,7 +385,7 @@ public class Dicvol extends AbstractPowderIndexerProcess implements IPowderProce
 		}
 
 		
-		//TODO: complete the rest of the standardparameters
+		//TODO: complete the rest of the standardparameters in the fllowing method rather than cheat and iterate over array
 		intialParams.put(StandardConstantParameters.wavelength, new PowderIndexerParam(StandardConstantParameters.wavelength, 0.));
 		intialParams.put(StandardConstantParameters.maxVolume, new PowderIndexerParam(StandardConstantParameters.maxVolume, 2000.));
 		
@@ -416,8 +410,11 @@ public class Dicvol extends AbstractPowderIndexerProcess implements IPowderProce
 		// =1 TRICLINIC SYSTEM IS TESTED.
 		intialParams.put(StandardConstantParameters.triclinicSearch, new PowderIndexerParam("JTR", 0));
 
+		
+		//No search selection for following 2
 		intialParams.put(StandardConstantParameters.trigonalSearch, new PowderIndexerParam(StandardConstantParameters.trigonalSearch, 0));
 		intialParams.put(StandardConstantParameters.hexagonalSearch, new PowderIndexerParam(StandardConstantParameters.hexagonalSearch	, 0));
+
 		
 		return intialParams;
 	}

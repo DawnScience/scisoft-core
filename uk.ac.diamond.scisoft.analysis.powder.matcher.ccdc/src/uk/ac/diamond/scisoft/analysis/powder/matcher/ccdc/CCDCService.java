@@ -169,7 +169,8 @@ public class CCDCService implements ICCDCService {
 							+ PYTHONSCRIPTHANDLER + "!");
 				}
 			}
-		//	if (scriptAbsPath == null || scriptAbsPath.isEmpty()) throw new Exception("Path to script not set");
+			
+			if (scriptAbsPath == null || scriptAbsPath.isEmpty()) throw new Exception("Path to script not set");
 			
 			try {
 				rpcservice = AnalysisRpcPythonPyDevService.create();

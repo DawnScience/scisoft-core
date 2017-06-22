@@ -42,6 +42,7 @@ public class AveragingOutputExecutionVisitor implements IExecutionVisitor {
 
 	@Override
 	public void executed(OperationData result, IMonitor monitor) throws Exception {
+		if (result == null) return;
 		if (average == null) average = new RunningAverage(result.getData());
 	}
 	

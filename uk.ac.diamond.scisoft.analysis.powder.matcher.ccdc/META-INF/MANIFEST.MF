@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Eclipse-BundleShape: dir
 Bundle-ManifestVersion: 2
 Bundle-Name: CCDC
 Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis.powder.matcher.ccdc

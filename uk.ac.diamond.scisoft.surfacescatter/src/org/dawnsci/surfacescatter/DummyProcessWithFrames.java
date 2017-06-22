@@ -40,8 +40,13 @@ public class DummyProcessWithFrames {
 		
 		FrameModel fm = drm.getFms().get(selection);
 		
+		
 		if(locationOverride == null){
 			locationOverride = fm.getRoiLocation();
+			if(locationOverride == null){
+				int[][] lenPt = drm.getInitialLenPt();
+				locationOverride = LocationLenPtConverterUtils.lenPtToLocationConverter(lenPt);
+			}
 		}
 		
 		IDataset output =null;	

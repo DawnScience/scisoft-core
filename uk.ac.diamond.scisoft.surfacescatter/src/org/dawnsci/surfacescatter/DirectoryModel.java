@@ -791,10 +791,12 @@ public class DirectoryModel {
 		qList =null;
 		
 		IDataset splicedCurveQ = (IDataset) DatasetFactory.createFromObject(2);
+		
+		
 		if(csdp == null){
 			csdp = new CurveStitchDataPackage();
 		}
-		csdp.setSplicedCurveQ(splicedCurveQ);
+		
 		
 		sortedQ = null;
 		
@@ -832,7 +834,7 @@ public class DirectoryModel {
 					try{
 						qList.set(i, qA);
 					}
-					catch(NullPointerException d){
+					catch(Exception d){
 						qList.add(qA);
 					}
 				}
@@ -877,6 +879,8 @@ public class DirectoryModel {
 			catch(Exception p){
 				
 			}
+			
+			csdp.setSplicedCurveQ(splicedCurveQ);
 		}
 		
 		if(sortedX !=null){

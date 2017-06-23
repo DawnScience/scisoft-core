@@ -10,7 +10,8 @@ public class TrackingMethodology {
 		SPARSEFLOW,
 		MEANSHIFTCOMANICIU2003,
 		INTERPOLATION,
-		SPLINE_INTERPOLATION;
+		SPLINE_INTERPOLATION,
+		USE_SET_POSITIONS;
 	}
 
 	public static String toString(TrackerType1 tt){
@@ -28,6 +29,8 @@ public class TrackingMethodology {
 				return "Interpolation";
 			case SPLINE_INTERPOLATION:
 				return "Spline Interpolation";
+			case USE_SET_POSITIONS:
+				return "Use Set Positions";
 		}
 		return null;
 	}
@@ -52,6 +55,10 @@ public class TrackingMethodology {
 		else if (in.equals("Spline Interpolation")){
 			return TrackerType1.SPLINE_INTERPOLATION;
 		}
+		else if (in.equals("Use Set Positions")){
+			return  TrackerType1.USE_SET_POSITIONS;
+		}
+		
 		return null;
 	}
 
@@ -76,6 +83,9 @@ public class TrackingMethodology {
 		else if (in == 5){
 			return TrackerType1.SPLINE_INTERPOLATION;
 		}
+		else if (in == 6){
+			return TrackerType1.USE_SET_POSITIONS;
+		}
 		return null;
 	}
 
@@ -93,6 +103,8 @@ public class TrackingMethodology {
 			case INTERPOLATION:
 				return null;
 			case SPLINE_INTERPOLATION:
+				return null;
+			case USE_SET_POSITIONS:
 				return null;
 			}
 		

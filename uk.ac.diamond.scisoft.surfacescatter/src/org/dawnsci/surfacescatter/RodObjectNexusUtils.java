@@ -101,9 +101,7 @@ public class RodObjectNexusUtils{
 			
 				int[] offsetLen = drm.getBoxOffsetLenPt()[0];
 				int[] offsetPt = drm.getBoxOffsetLenPt()[1];
-				
-//				double[] location = drm.getLocationList().get(f.getDatNo()).get(f.getNoInOriginalDat());
-				
+								
 				double[] location = f.getRoiLocation();
 				
 				int[][] lenPt = LocationLenPtConverterUtils.locationToLenPtConverter(location);
@@ -163,7 +161,6 @@ public class RodObjectNexusUtils{
 		
 		// Then we add the overall stitched rod intensities 
 		DataNode fhklNode = new DataNodeImpl(p);
-		
 		SliceND slice00= new SliceND(csdp.getSplicedCurveYFhkl().getShape());
 		
 		IDataset splicedfhkl = csdp.getSplicedCurveYFhkl().getSlice(slice00);
@@ -171,6 +168,15 @@ public class RodObjectNexusUtils{
 		
 		fhklNode.setDataset(splicedfhkl);
 		entry.addDataNode("Fhkl_Dataset", fhklNode);
+		p++;
+		
+		DataNode fhklErrorNode = new DataNodeImpl(p);
+		SliceND slice03= new SliceND(csdp.getSplicedCurveYFhklError().getShape());
+		
+		IDataset splicedFhklError = csdp.getSplicedCurveYFhklError().getSlice(slice03);
+		
+		fhklErrorNode.setDataset(splicedFhklError);
+		entry.addDataNode("Fhkl_Error_Dataset", fhklErrorNode);
 		p++;
 		
 		// Then we add the overall corrected rod intensities 
@@ -185,6 +191,16 @@ public class RodObjectNexusUtils{
 		entry.addDataNode("Corrected_Intensity_Dataset", correctedIntensityNode);
 		p++;
 		
+		DataNode correctedIntensityErrorNode = new DataNodeImpl(p);
+		SliceND slice04= new SliceND(csdp.getSplicedCurveYError().getShape());
+		
+		IDataset splicedCorrectedError = csdp.getSplicedCurveYError().getSlice(slice04);
+		
+		correctedIntensityErrorNode.setDataset(splicedCorrectedError);
+		entry.addDataNode("Corrected_Intensity_Error_Dataset", correctedIntensityErrorNode);
+		p++;
+		
+		
 		// Then we add the overall raw rod intensities 
 		DataNode rawIntensityNode = new DataNodeImpl(p);
 		
@@ -195,6 +211,16 @@ public class RodObjectNexusUtils{
 		
 		rawIntensityNode.setDataset(splicedRaw);
 		entry.addDataNode("Raw_Intensity_Dataset", rawIntensityNode);
+		p++;
+		
+		
+		DataNode rawIntensityErrorNode = new DataNodeImpl(p);
+		SliceND slice05= new SliceND(csdp.getSplicedCurveYRawError().getShape());
+		
+		IDataset splicedCorrectedRawError = csdp.getSplicedCurveYRawError().getSlice(slice05);
+		
+		rawIntensityErrorNode.setDataset(splicedCorrectedRawError);
+		entry.addDataNode("Raw_Intensity_Error_Dataset", rawIntensityErrorNode);
 		p++;
 		
 		

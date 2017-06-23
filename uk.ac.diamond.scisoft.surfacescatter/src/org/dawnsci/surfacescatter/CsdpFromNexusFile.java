@@ -23,7 +23,10 @@ public class CsdpFromNexusFile {
 		String[] nodeNames = new String[]{"/Corrected_Intensity_Dataset",
 										  "/Fhkl_Dataset",
 										  "/Raw_Intensity_Dataset",
-										  "/Scanned_Variable_Dataset"};
+										  "/Scanned_Variable_Dataset",
+										  "/Corrected_Intensity_Error_Dataset",
+										  "/Fhkl_Dataset",
+										  "/Raw_Intensity_Error_Dataset"};
 		
 		NexusFile file = nexusFileFactory.newNexusFile(filename);
 		
@@ -44,17 +47,32 @@ public class CsdpFromNexusFile {
 			
 			case 0:
 				csdp.setSplicedCurveY(data);
+				break;
 			case 1:
 				csdp.setSplicedCurveYFhkl(data);
+				break;
 			case 2:
 				csdp.setSplicedCurveYRaw(data);
+				break;
 			case 3:
 				csdp.setSplicedCurveX(data);
+				break;
+			case 4:
+				csdp.setSplicedCurveYError(data);
+				break;
+			case 5:
+				csdp.setSplicedCurveYFhklError(data);
+				break;
+			case 6:
+				csdp.setSplicedCurveYRawError(data);
+				break;
 		
 			}
+			
+			
 		}
 		
-		csdp.setName(filename);
+		csdp.setRodName(filename);
 		
 		return csdp;
 	}

@@ -180,6 +180,9 @@ public class FrameModel {
 	public void setFitPower(FitPower fitPower) {
 		this.fitPower = fitPower;
 	}
+	public void setFitPower(int in) {
+		this.fitPower = AnalaysisMethodologies.toFitPower(in);
+	}
 	public int getBoundaryBox() {
 		return boundaryBox;
 	}
@@ -192,11 +195,17 @@ public class FrameModel {
 	public void setTrackingMethodology(TrackerType1 trackerType1) {
 		this.trackingMethodology = trackerType1;
 	}
+	public void setTrackingMethodology(String str) {
+		this.trackingMethodology = TrackingMethodology.toTracker1(str);
+	}
 	public Methodology getBackgroundMethdology() {
 		return backgroundMethodology;
 	}
 	public void setBackgroundMethodology(Methodology backgroundMethdology) {
 		this.backgroundMethodology = backgroundMethdology;
+	}
+	public void setBackgroundMethodology(String str) {
+		this.backgroundMethodology = AnalaysisMethodologies.toMethodology(str);
 	}
 	public double[] getOverlapping_Background_ROI() {
 		return overlapping_Background_ROI;
@@ -218,9 +227,7 @@ public class FrameModel {
 		return rawImageData;
 	}
 	public void setRawImageData(ILazyDataset rawImageData) {
-		
-//		rawImageData.squeezeEnds();
-		
+	
 		this.rawImageData = rawImageData;
 	}
 	public double getUnspliced_Corrected_Intensity() {

@@ -56,7 +56,10 @@ public class AgnosticTrackerWithFrames {
 //		FrameModel fm = 
 		
 		if(frame.getTrackingMethodology() != TrackingMethodology.TrackerType1.INTERPOLATION 
-				&& frame.getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
+				&& frame.getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION
+				&& frame.getTrackingMethodology() != TrackingMethodology.TrackerType1.USE_SET_POSITIONS){
+	
+//			
 			
 			if (trackingMarker == 0) {
 				if (drm.getInputForEachDat()[frame.getDatNo()] == null) {
@@ -430,7 +433,8 @@ public class AgnosticTrackerWithFrames {
 		}
 		
 		
-		else{
+		else if (frame.getTrackingMethodology() == TrackingMethodology.TrackerType1.INTERPOLATION 
+				&& frame.getTrackingMethodology() == TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
 			///////start the interpolation tracker
 			
 			try{
@@ -527,8 +531,9 @@ public class AgnosticTrackerWithFrames {
 		}
 		
 		
-		if(fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.INTERPOLATION && 
-				fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
+		if(fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.INTERPOLATION 
+				&& fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION
+				&& fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.USE_SET_POSITIONS){
 			
 			
 			if (trackingMarker == 0) {
@@ -618,13 +623,8 @@ public class AgnosticTrackerWithFrames {
 	
 			else if (trackingMarker == 1) {
 				if (drm.getInputForEachDat()[fm.getDatNo()] == null) {
-//					len = drm.getLenPtForEachDat()[frame.getDatNo()][0];
-//					pt = drm.getLenPtForEachDat()[frame.getDatNo()][1];
-//	
-//					dm.setInitialDataset(input);
-					
+
 					drm.getInputForEachDat()[fm.getDatNo()] = input;
-//					dm.setInitialLenPt(new int[][] {len, pt });
 	
 					tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 					tracker1 = BoofCVImageTrackerServiceCreator.createImageTrackerService();
@@ -642,7 +642,6 @@ public class AgnosticTrackerWithFrames {
 						debug("Failed to initialise tracker in TwoDTracking1");
 					}
 					
-//					drm.getInputForEachDat()[frame.getDatNo()] =input;
 					location = initialLocation;
 					drm.addTrackerLocationList(selection, location);
 					drm.setTracker(tracker);
@@ -856,7 +855,8 @@ public class AgnosticTrackerWithFrames {
 			}
 		}
 			
-		else{
+		else if (fm.getTrackingMethodology() == TrackingMethodology.TrackerType1.INTERPOLATION 
+				&& fm.getTrackingMethodology() == TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
 				///////start the interpolation tracker
 				
 			try{
@@ -945,9 +945,9 @@ public class AgnosticTrackerWithFrames {
 		}
 		
 		
-		if(fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.INTERPOLATION && 
-		   fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
-			
+		if(fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.INTERPOLATION 
+				&& fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION
+				&& fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.USE_SET_POSITIONS){
 			isTheTrackingMarkerNot3 = true;
 			
 			if (trackingMarker == 3){
@@ -1302,7 +1302,8 @@ public class AgnosticTrackerWithFrames {
 			}
 		}
 		
-		else{
+		else if (fm.getTrackingMethodology() == TrackingMethodology.TrackerType1.INTERPOLATION 
+				&& fm.getTrackingMethodology() == TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
 			///////start the interpolation tracker
 			
 			try{

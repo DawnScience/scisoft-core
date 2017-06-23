@@ -35,7 +35,6 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationCategory;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperationBase;
 import org.eclipse.dawnsci.analysis.dataset.slicer.DynamicSliceViewIterator;
@@ -43,13 +42,8 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.ISliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
-import org.eclipse.dawnsci.hdf.object.operation.HierarchicalFileExecutionVisitor;
-import org.eclipse.dawnsci.macro.api.IMacroService;
-import org.eclipse.dawnsci.macro.api.MacroEventObject;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IDynamicDataset;
-import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.dataset.LazyDynamicDataset;
 import org.eclipse.january.dataset.ShapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,11 +65,6 @@ public class OperationServiceImpl implements IOperationService {
 		rservice = s;
 	}
 	
-	static {
-		System.out.println("Starting operation service");
-	}
-	
-	// Generic gone mad ; ah - hahaha...
 	private Map<String, IOperation<? extends IOperationModel, ? extends OperationData>>              operations;
 	private Map<String, Class<? extends IOperationModel>>                                            models;
 	private Map<String, OperationCategory>                                                           categoryId;
@@ -103,8 +92,12 @@ public class OperationServiceImpl implements IOperationService {
 			throw new OperationException(null, "No operation list defined, call setSeries(...) with something meaningful please!");
 		}
 		
+		
+		
 		// We check the pipeline ranks are ok
 		try {
+			
+//			modify1DImageContext(context);
 	        
 	        ISliceViewIterator it = null;
 	        
@@ -183,6 +176,45 @@ public class OperationServiceImpl implements IOperationService {
 		}
 
 	}
+	
+//	private void modify1DImageContext(IOperationContext context) throws Exception{
+//		
+//		ILazyDataset data = context.getData();
+//		int[] maxShape = data.getShape();
+//		
+//		if (data instanceof IDynamicDataset) {
+//			maxShape = ((IDynamicDataset)data).getMaxShape();
+//		}
+//		
+//		int[] dd = context.getDataDimensions();
+//		SliceND s = context.getSlicing();
+//		if (s == null) {
+//			s = new SliceND(data.getShape(),maxShape);
+//		}
+//		
+//		List<Integer> dim = new ArrayList<>();
+//		
+//		for (int i : dd) {
+//			if (i < 0) i = maxShape.length + i;
+//			if (maxShape[i] == 1)  {
+//				s.setSlice(i, new Slice(0,1,1));
+//			} else {
+//				dim.add(i);
+//			}
+//		}
+//		
+//		if (dd.length == dim.size()) return;
+//		
+//		
+//		context.setSlicing(s);
+//		int[] d = new int[dim.size()];
+//		
+//		for (int i = 0; i < d.length; i++) {
+//			d[i] = dim.get(i);
+//		}
+//		
+//		context.setDataDimensions(d);
+//	}
 
 	/**
 	 * Checks that the pipeline passed in has a reasonable rank (for instance)

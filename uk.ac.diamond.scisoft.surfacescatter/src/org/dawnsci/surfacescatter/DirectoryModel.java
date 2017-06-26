@@ -218,16 +218,22 @@ public class DirectoryModel {
 //		trackerKList = null;
 		locationList = null;
 		try{
-			for(FrameModel fm : fms){
-			
-				fm.resetRoiLocation();
-			
+			if(fms.get(0).getTrackingMethodology() != TrackerType1.USE_SET_POSITIONS){
+				try{
+					for(FrameModel fm : fms){
+					
+						fm.resetRoiLocation();
+					
+					}
+				}
+				catch(Exception h){
+					
+				}
 			}
 		}
-		catch(Exception h){
-			
+		catch(Exception uy){
+				
 		}
-	
 	}
 	
 	public PropertyChangeSupport getPropertyChangeSupport() {
@@ -247,6 +253,25 @@ public class DirectoryModel {
 	}
 	
 	public ArrayList<ArrayList<double[]>> getLocationList() {
+		
+		if (locationList==null || locationList.isEmpty()){
+			
+			locationList = new ArrayList<>();
+			
+			for(int m = 0; m<datFilepaths.length ; m++){
+				
+				ArrayList<double[]> q = new ArrayList<>();
+				locationList.add(q);
+				
+				int y = this.getNoOfImagesInDatFile(m);
+				
+				for (int i = 0; i < y; i++) {		
+					locationList.get(m).add(new double[]{0,0,0,0,0,0,0,0});
+				}
+				
+			}
+		}
+		
 		return locationList;
 	}
 

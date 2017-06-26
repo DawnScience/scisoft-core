@@ -434,7 +434,7 @@ public class AgnosticTrackerWithFrames {
 		
 		
 		else if (frame.getTrackingMethodology() == TrackingMethodology.TrackerType1.INTERPOLATION 
-				&& frame.getTrackingMethodology() == TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
+				|| frame.getTrackingMethodology() == TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
 			///////start the interpolation tracker
 			
 			try{
@@ -856,7 +856,7 @@ public class AgnosticTrackerWithFrames {
 		}
 			
 		else if (fm.getTrackingMethodology() == TrackingMethodology.TrackerType1.INTERPOLATION 
-				&& fm.getTrackingMethodology() == TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
+				|| fm.getTrackingMethodology() == TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
 				///////start the interpolation tracker
 				
 			try{
@@ -906,7 +906,7 @@ public class AgnosticTrackerWithFrames {
 					
 					drm.getLenPtForEachDat()[fm.getDatNo()] = new int[][]{len, pt};
 					
-					fm.setRoiLocation(localLocation);
+//					fm.setRoiLocation(localLocation);
 					
 				}
 				
@@ -1303,7 +1303,8 @@ public class AgnosticTrackerWithFrames {
 		}
 		
 		else if (fm.getTrackingMethodology() == TrackingMethodology.TrackerType1.INTERPOLATION 
-				&& fm.getTrackingMethodology() == TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
+				|| fm.getTrackingMethodology() == TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
+			
 			///////start the interpolation tracker
 			
 			try{
@@ -1343,7 +1344,7 @@ public class AgnosticTrackerWithFrames {
 					
 					drm.getLenPtForEachDat()[fm.getDatNo()] = new int[][]{len, pt};
 					
-					fm.setRoiLocation(localLocation);
+//					fm.setRoiLocation(localLocation);
 					
 				}
 			}

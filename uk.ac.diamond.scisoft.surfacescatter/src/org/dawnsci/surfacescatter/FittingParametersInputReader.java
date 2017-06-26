@@ -19,9 +19,13 @@ import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.dataset.StringDataset;
 import org.eclipse.january.metadata.IMetadata;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
@@ -75,42 +79,58 @@ public class FittingParametersInputReader {
 		
 		FittingParameters fp = new FittingParameters();
 
-		String pointNode = "/point_" + frameNumber;
+		String pointNode = "point_" + frameNumber;
 		
-		String[] attributeNames = new String[]{"/Boundary_Box",
-											   "/Fit_Power",
-											   "/Tracker_Type",
-											   "/Background_Methodology",
-											   "/ROI_Location"};
+		String[] attributeNames0 = new String[]{"Boundary_Box",
+											   "Fit_Power",
+											   "Tracker_Type",
+											   "Background_Methodology",
+											   "ROI_Location"};
+		
+		String[] attributeNames = new String[attributeNames0.length];
+		
+		for(int g =0; g<attributeNames0.length; g++){
+			attributeNames[g] = pointNode + attributeNames0[g];
+		}
 		
 		GroupNode gn = tree.getGroupNode();
 		GroupNode point = gn.getGroupNode(pointNode);
 			
-		Attribute boundaryBoxAttribute = point.getAttribute(attributeNames[0]);
-		int boundaryBox = boundaryBoxAttribute.getValue().getInt(0);
+		Attribute boundaryBoxAttribute = point.getAttribute(attributeNames0[0]);
+		IntegerDataset boundaryBox0 = DatasetUtils.cast(IntegerDataset.class, boundaryBoxAttribute.getValue());		
+		
+		
+		int boundaryBox =boundaryBox0.getInt();
+				
 		
 		m.setBoundaryBox(boundaryBox);
 		
-		Attribute fitPowerAttribute = point.getAttribute(attributeNames[1]);
-		int fitPower = fitPowerAttribute.getValue().getInt(0);
+		Attribute fitPowerAttribute = point.getAttribute(attributeNames0[1]);
+		StringDataset fitPower0 = DatasetUtils.cast(StringDataset.class, fitPowerAttribute.getValue());
+		
+		int fitPower = Integer.valueOf(fitPower0.get());
 		
 		m.setFitPower(fitPower);
 		
-		Attribute trackerTypeAttribute = point.getAttribute(attributeNames[2]);
-		String trackerType = trackerTypeAttribute.getValue().getString(0);
+		Attribute trackerTypeAttribute = point.getAttribute(attributeNames0[2]);
 		
-		m.setTrackingMethodology(trackerType);
+		StringDataset trackerType = DatasetUtils.cast(StringDataset.class, trackerTypeAttribute.getValue());
 		
-		Attribute backgroundMethodologyAttribute = point.getAttribute(attributeNames[3]);
-		String backgroundMethodology = backgroundMethodologyAttribute.getValue().getString(0);
+		m.setTrackingMethodology(trackerType.get());
 		
-		m.setBackgroundMethodology(backgroundMethodology);
+		Attribute backgroundMethodologyAttribute = point.getAttribute(attributeNames0[3]);
+		StringDataset backgroundMethodology = DatasetUtils.cast(StringDataset.class, backgroundMethodologyAttribute.getValue());
 		
-		Attribute roiAttribute = point.getAttribute(attributeNames[4]);
+		m.setBackgroundMethodology(backgroundMethodology.get());
+		
+		Attribute roiAttribute = point.getAttribute(attributeNames0[4]);
+		DoubleDataset roiAttributeDat =  DatasetUtils.cast(DoubleDataset.class, roiAttribute.getValue());
+				
+				
 		double[] roi = new double[8];
 		
 		for(int h =0; h<8 ; h++){
-			roi[h] = roiAttribute.getValue().getDouble(h); 
+			roi[h] = roiAttributeDat.getDouble(h); 
 		}
 		
 		m.setRoiLocation(roi);

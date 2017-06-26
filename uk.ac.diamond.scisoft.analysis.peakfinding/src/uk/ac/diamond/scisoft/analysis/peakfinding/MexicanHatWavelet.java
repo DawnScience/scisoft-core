@@ -18,10 +18,10 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.CoordinatesIterator;
  * @author Dean P. Ottewell
  *
  *
- *TODO: Almost certain should extend APeak... then hav ethe top peak be the amplitude calucalted.
+ *TODO: Almost certain should extend APeak... then hav ethe top peak be the amplitude calculated.
  *However, should the humps be classed as peaks too?
  *
- *TODO: Then after that should have a IWavelet - containg point num 
+ *TODO: Then after that should have a IWavelet - contains point num 
  *
  */
 public class MexicanHatWavelet extends AFunction {
@@ -73,7 +73,7 @@ public class MexicanHatWavelet extends AFunction {
 
 	@Override
 	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
-		//Fills with coords based on data. Centered around a 0 point based on numPoints
+		//Fills with coords based on data. Centred around a 0 point based on numPoints
 		double[] coords = it.getCoordinates();
 		int i = 0;
 		double[] buffer = data.getData();

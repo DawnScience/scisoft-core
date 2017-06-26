@@ -55,7 +55,7 @@ import uk.ac.diamond.scisoft.analysis.peakfinding.MexicanHatWavelet;
  * 
  * TODO'S
  * TODO: this might be due to a ignore of the first unit... there is a initial added 0,0 that is passed that should not be analysed
- * TODO: fixed the algorithm is probably horribly ineffienct. Move to lazy dataset and point at problem areas. Perhaps functionalize to free up whats loaded.
+ * TODO: fixed the algorithm is probably horribly ineffienct. Move to lazy dataset and point at problem areas. Perhaps functionals to free up whats loaded.
  * TODO: FUNCTIONALISE REFACTOR - I say that lots, but what I mean is those functions for filtering and generating a matrix got out of hand. 
  * 
  */
@@ -65,7 +65,7 @@ public class WaveletTransformPeakFinds extends AbstractPeakFinder {
 
 	
 	/*PARAMETER NAMES*/
-	//TODO: because of the way the dynamcially loaded configurables exist a neater name should be set here
+	//TODO: because of the way the dynamically loaded configurable exist a neater name should be set here
 	private String WIDTHSIZENAME = "Conolve Width Size";
 	private String MINSNRATIO = "Minimum signal to noise ratio";// ;
 	private String NOISEPERCNAME = "Noise percentile";//=10;
@@ -80,8 +80,8 @@ public class WaveletTransformPeakFinds extends AbstractPeakFinder {
 	 */
 	private double widthSzParam;
 	
-	private double minSNR;// =1.0;
-	private double noisePerc;//=10;
+	private double minSNR;
+	private double noisePerc;
 	private double minLength;
 	private double gapThresh; 
 	
@@ -494,7 +494,7 @@ public class WaveletTransformPeakFinds extends AbstractPeakFinder {
 	
 	@Override
 	public Map<Integer, Double> findPeaks(IDataset xData, IDataset yData, Integer maxPeaks) {
-		//TODO: shouldnt be reloading params inside find peaks...
+		//TODO: shouldn't be reloading params inside find peaks...
 		loadParam();
 		
 		//Generate width set to step through for convoluation 

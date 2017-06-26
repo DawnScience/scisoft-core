@@ -201,7 +201,7 @@ public class AutoPeakFinderTest {
 		TreeMap<Integer, Double> expectedPeaks = (TreeMap<Integer, Double>) ampd.findPeaks(xData, yData, 10);
 
 		assertTrue(expectedPeaks.size() > 1); // Check has found values,
-												// therefore doesnt crash with
+												// therefore doesn't crash with
 												// large sizes
 	}
 

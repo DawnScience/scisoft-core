@@ -1,23 +1,15 @@
 """
 The wrapper interface that runs as a server for xmlrpc java calls.
-
-
 Uses XMLRPC framework to package the calls from remote. For example java.
-
 All activity is then log and current state is found in logStatus() 
-
 Every function handler returns either a success or object.
-
 TODO: maybe can gather the results elsewhere and just have the calls passable. Well can store the hits inside the searcher...
 TODO: restraint addition on searcher    searcher.add_distance_constraint('HA', 0, 1, 1, 0, (0, 4.0), 'Inter')
-
 #TODO: which
 is lock safe and can be queried whilst function is handled. The
 length of function run is unfortunately indeterminate. Depends on the search
 procedure.
-
 TODO: have the identifying keys for handlers in specific file
-
 TODO: a query system to expose the handler functions and feed them back. Rather than just hoping the java keys are correct.
 """
 
@@ -126,9 +118,7 @@ except ImportError:
 
 """
 TMP CURRENT CELL SEAARCHER STATE
-
 Once module configured with handler correctly
-
 """
 import sys
 import os
@@ -182,7 +172,6 @@ def generateDiagram(refcode, filepath):
     """
     Generates a diagram on refcode.
     Creates img for crystal, molecule + entry
-
     :param refcode: refcode a unique identifier for //TODO: name of that please?
     :param filepath:
     :return: fulpath namee of generated *.png diagram
@@ -203,7 +192,6 @@ def generateDiagram(refcode, filepath):
 
 def retrieveHits(searcher):
     """
-
     :param searcher: expects searcher Search type
     :return: ccdc.search.SearchHit
     """
@@ -214,7 +202,6 @@ def retrieveHits(searcher):
 def displayHits(hits):
     """
     Configure format to display all the information inside a relating to the crystal components.
-
     :param hits: ccdc.search.SearchHit
     """
     logger.info("Cell Matches: ")
@@ -227,7 +214,6 @@ def displayHits(hits):
 def displayCrystal(crystal):
     """
     Formats pretty particular values from a CCDC.crystal
-
     :param crystal: ccdc.crystal.Crystal
     """
     logger.info("Crystal Lengths:" + str(crystal.reduced_cell.cell_lengths))
@@ -339,7 +325,6 @@ def searchCrystal(inCrystal):
     """
     Search on a configured crystal. Potentially configured by crystal configuration
     functions or a based on a entry of CCDC,
-
     :param inCrystal: ccdc.crystal.Crystal
     :return: ccdc.search.SearchHit
     """
@@ -349,7 +334,6 @@ def searchCrystal(inCrystal):
 
 def searchCrystalTols(inCrystal, absAngTol,percentLenTol):
     """
-
     :param inCrystal: ccdc.crystal.Crystal
     :param absAngTol: float 
     :param percentLenTol: float 
@@ -415,7 +399,6 @@ def unitCellQuery(cellLengths, cellAngles, centring):
 
 def unitCellQuerySettings(cellLengths, cellAngles, centring, absAngTol,percentLenTol):
     """
-
     :param cellLengths: float
     :param cellAngles: float
     :param centring: float
@@ -478,7 +461,6 @@ def searchName(name):
 
 def filterHitsHasAtleastElements(hits, elements):
     """
-
     :param hits: ccdc.search.SearchHit
     :param elements: list of elements to filter on capitalised
     :return: ccdc.search.SearchHit
@@ -516,7 +498,6 @@ def filterHitsMustHaveElements(hits, elements):
 
 def filterHitsFormula(hits, formula):
     """
-
     :param hits:
     :param formula:
     :return: ccdc.search.SearchHit
@@ -551,7 +532,6 @@ def extractCrystalCif(filepath):
 
 def saveCrystalCif(filepath, filename, crystal):
     """
-
     :param filepath:
     :param filename:
     :param crystal:
@@ -562,7 +542,6 @@ def saveCrystalCif(filepath, filename, crystal):
 
 def saveRefcodeCif(filepath, refcode):
     """
-
     :param filepath:
     :param refcode:
     """
@@ -577,15 +556,11 @@ def saveRefcodeCif(filepath, refcode):
 
 """
 EXPERMINENTAL METHODs.
-
 Potential dynamic load of setting.
-
 To just query the Python for a structure and then load that subsequent structure on the java side.
 Why fill out all the specific settings when they need to eventually be passed.
 Can flag up the type on a return
-
 TODO: how load the setup on the java sides..
-
 """
 # def gatherSettings():
 #     pass
@@ -606,9 +581,7 @@ def gatherSpaceGroups():
     """
     The order of these responds to the order desired.
     Someone like a enum when pass in the optitions.
-
     This could for example be dynamically loaded into a combo box and selected from that.
-
     :return: ordered enum of spaceGroups with corresponding text
     """
     spaceGroupsOps = ChemistryLib.Spacegroup_centring_text()
@@ -746,8 +719,6 @@ class CellSearcher:
     def findCellMatches(self,a,b,c,alpha,beta,gamma):
         """
         TODO: docs
-
-
         :param a:
         :param b:
         :param c:
@@ -780,7 +751,6 @@ class CellSearcher:
         """
         Set up as a raw string gather matches for now
         TODO: create crystal flattener
-
         :return:
         """
         #Refine the hit list here to match group.
@@ -826,7 +796,6 @@ class CellSearcher:
     def searchConfiguredCrystal(self):
         """
         Search on preonfigured self.searchCrystal
-
         :return:
         """
         if(self.searchCrystal.cell_angles == None):
@@ -859,7 +828,6 @@ class CellSearcher:
 
     def setLatticeParameters(self,a,b,c,alpha,beta,gamma):
         """
-
         :param a:
         :param b:
         :param c:
@@ -883,7 +851,6 @@ class CellSearcher:
 
     def setLatticeTolerance(self, absoluteAngleTol,percentLengthTol):
         """
-
         :param absoluteAngleTol:
         :param percentLengthTol:
         :return:
@@ -896,7 +863,6 @@ class CellSearcher:
 
     def setRefCode(self, refcode):
         """
-
         :param refcode:
         :return:
         """
@@ -905,7 +871,6 @@ class CellSearcher:
 
     def setCCDCNum(self, ccdcNum):
         """
-
         :param ccdcNum:
         :return:
         """
@@ -917,7 +882,6 @@ class CellSearcher:
     def filterOnFormula(self, formula):
         """
         TODO: check if correct format
-
         :param formula: string of formula in standard -> "C1 H6 Cl1 N3 O4"
         :return:
         """
@@ -926,7 +890,6 @@ class CellSearcher:
 
     def filterHitsOnElements(self, elements):
         """
-
         :param elements: strings of every atomic symbols to filter on
         :return:
         """
@@ -945,7 +908,6 @@ class CellSearcher:
 
     def saveRefcodeCif(self,filepath, refcode):
         """
-
         :param filepath:
         :param refcode:
         :return:
@@ -957,7 +919,6 @@ class CellSearcher:
 
     def generateReportRefcode(self,filepath,refcode):
         """
-
         :param self:
         :param filepath:
         :param refcode:
@@ -1026,5 +987,3 @@ logger.debug("Server Closed")
 
 rpcserver.close()
 rpcserver.shutdown()
-
-

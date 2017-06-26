@@ -6,12 +6,8 @@ import uk.ac.diamond.scisoft.analysis.powder.indexer.indexers.CellParameter;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcClient;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.dawb.common.util.eclipse.BundleUtils;
@@ -29,7 +25,6 @@ import org.slf4j.LoggerFactory;
  * Cambridge Crystallographic Data Centre wrapper to communicate with xmlrpc
  * Python interface.
  *
- * TODO: send crystal system TODO: set port java scide and take as argument
  * 
  * @author Dean P. Ottewell
  */
@@ -168,7 +163,7 @@ public class CCDCService implements ICCDCService {
 		}
 		
 		
-		//Connect analysis handler seperately
+		//Connect analysis handler separately
 		
 		analysisRpcClient = new AnalysisRpcClient(PORT);
 		try {

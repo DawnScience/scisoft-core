@@ -23,7 +23,7 @@ public interface ICCDCService {
 	/**
 	 * @return
 	 */
-	public Boolean serverAvaliable();
+	public Boolean serverAvailable();
 
 	/*Searching Components*/
 	

@@ -19,12 +19,9 @@ import org.dawb.common.util.eclipse.BundleUtils;
 import uk.ac.diamond.scisoft.analysis.powder.matcher.ccdc.Activator;
 
 import org.dawnsci.python.rpc.AnalysisRpcPythonPyDevService;
-import org.dawnsci.python.rpc.IPythonRunScript;
 import org.dawnsci.python.rpc.PythonRunScriptService;
 import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcException;
-import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcRemoteException;
 import org.eclipse.dawnsci.analysis.api.rpc.IAnalysisRpcClient;
-import org.eclipse.dawnsci.analysis.api.rpc.IAnalysisRpcPythonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,139 +111,141 @@ public class CCDCService implements ICCDCService {
 	/**
 	 * Initialise Python server to run in background and listen for requests
 	 * 
-	 * Throws exceptions? * Env license not avaliable * CCDC path wrong -> that
-	 * is multiple trie. Then can resutl in CSD_HOME or CCDC_ERR
-	 * 
-	 * 
-	 * TODO: need to gather feedback on why the server did not run. This can
-	 * then be fed up the ui.... does service need a status
 	 */
 	public void setUpServer() throws Exception {
-
-		try {
-
-			// TODO: testing service hanlders
-			//
-			// rpcservice = AnalysisRpcPythonPyDevService.create();
-			// rpcSearcherService = new PythonRunSearcherService(rpcservice);
-			// Boolean callAvailable = rpcSearcherService.isCallAvailable();
-			//
-			// Map<String,Object> matches =
-			// rpcSearcherService.findCellMatches(5.6, 5.6, 5.6, 90, 90, 90);
-			//
-
+		try {					
 			File bundlePath = BundleUtils.getBundleLocation(Activator.PLUGIN_ID);
-
-			scriptAbsPath = bundlePath.getAbsolutePath() + SCRIPTPATH + PYTHONSCRIPTHANDLER;
-
+			
+			scriptAbsPath = bundlePath.getAbsolutePath() + SCRIPTPATH
+					+ PYTHONSCRIPTHANDLER;
+			
 			if (!new File(scriptAbsPath).exists()) {
-				scriptAbsPath = bundlePath.getAbsolutePath() + "/src" + SCRIPTPATH + PYTHONSCRIPTHANDLER;
+				scriptAbsPath = bundlePath.getAbsolutePath() + "/src" + SCRIPTPATH
+						+ PYTHONSCRIPTHANDLER;
 				if (!new File(scriptAbsPath).exists()) {
-					throw new RuntimeException("Couldn't find path to " + PYTHONSCRIPTHANDLER + "!");
+					throw new RuntimeException("Couldn't find path to "
+							+ PYTHONSCRIPTHANDLER + "!");
 				}
 			}
 
-			if (scriptAbsPath == null || scriptAbsPath.isEmpty())
-				throw new Exception("Python handler file is not available. Check project structures"); // TODO:
-																										// does
-																										// user
-																										// need
-																										// to
-																										// know
-																										// this?
-
-			// TODO:^is top check needed as should be able to get error from the
-			// pytho nservice crate...
-
-			// TODO: check service rpc is avlaiable before create one.
-			// TODO: delete on the tool close
-
 			try {
 				rpcservice = AnalysisRpcPythonPyDevService.create();
-				// pythonRunScriptService = new
-				// PythonRunScriptService(rpcservice);
-				rpcSearcherService = new PythonRunSearcherService(rpcservice,false);
-			} catch (AnalysisRpcException e) {
+				
+				pythonRunScriptService = new PythonRunScriptService(rpcservice);
+			} catch (Exception e) {
+				//System.out.println(e);
+				logger.debug("Server already started" +e);
+				//this, "Could not create script service!");
+			}		
+			
+			Map<String,Object> inputs = new HashMap<>();
+			//Cast below into runner - need a way to destroy...
+			//XXX: this method does not proeprly destroy! MUST encapulate into alternative method of service holder. 
+			//currently issues with returning results from that method.
+			 Runnable r = new Runnable() {
+		         public void run() {
+			
+						try {
+							Map<String, Object> runScript = pythonRunScriptService.runScript(scriptAbsPath, inputs);
+						} catch (AnalysisRpcException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+			
+			     }
+		     };
 
-				// TODO: place in better exception catch clause
-				throw new Exception(e.getMessage());
-				// System.out.println(e);
-				// logger.debug("Server already started" +e);
-				// this, "Could not create script service!");
-			}
+		     Thread pythonServer = new Thread(r);
+		     pythonServer.start();
+		     pythonServer.setName("Core CCDC service server");
+		     pythonServer.interrupt();
 
-			if (rpcservice == null || rpcSearcherService == null)
-				throw new Exception("Could not create Python interpreter");
-
-			// TODO: cuts off but works whilst chanign methods to
-			// rpcSearcherService reuqest
-			analysisRpcClient =  rpcservice.getClient();
-
-			// Map<String,Object> inputs = new HashMap<>();
-			// inputs.put("A", 5);
-			try {
-				matches = rpcSearcherService.findCellMatches(5.2, 5.2, 5.2, 90, 90, 90);
-				//analysisRpcClient.request("cellSearchMatches", new Object[] {5.2, 5.2, 5.2, 90, 90, 90});
-			} catch (AnalysisRpcException e) {
-				// TODO: handle exception
-				e.printStackTrace();
-
-			}
-			// TODO: method below rundundent is just callign the service
-			// handlers
-			// Map<String,Object> inputs = new HashMap<>();
-			// //Cast below into runner - need a way to destroy...
-			// Runnable r = new Runnable() {
-			// public void run() {
-			//
-			// try {
-			// //TODO: break up handlers to prevent this type of background
-			// handler setyup
-			// //TODO: then can call the handlers through ->
-			// rpcservice.getClient().request(destination, args);
-			//
-			// pythonRunScriptService.runScript(scriptAbsPath, inputs);
-			// } catch (AnalysisRpcException e) {
-			// //TODO: cant really cathc and except this runnable. That is why
-			// breaking into handler would be better.
-			// e.printStackTrace();
-			// }
-			//
-			// }
-			// };
-			//
-			// Thread pythonServer = new Thread(r);
-			// pythonServer.start();
-			// pythonServer.setName("Core CCDC service server");
-			// pythonServer.interrupt();
-			//
-			//
-			//
-			//
-
+		     
 		} catch (Exception e) {
-			logger.debug("Was not able to start" + urlCellSearchHandler.getFile() + e.getMessage());
-
-			// TODO: the termination of said server creates a error! can assume
-			// not really need to terminate...
-			// terminateServer();
-
-			throw new Exception(e.getMessage());
+			logger.debug("Was not able to start" + urlCellSearchHandler.getFile() + e);
+			terminateServer();
+			throw new Exception(e);
 		}
+		
+		
+		//Connect analysis handler seperately
+		
+		analysisRpcClient = new AnalysisRpcClient(PORT);
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+//XXX: below is how the service should work once the return from the service handlers stop not casting back. They do run and the execution of the python is visable. The return does not however fuinctions
+//		try {
 
-		// Connect analysis seperatte
+//			File bundlePath = BundleUtils.getBundleLocation(Activator.PLUGIN_ID);
+//
+//			scriptAbsPath = bundlePath.getAbsolutePath() + SCRIPTPATH + PYTHONSCRIPTHANDLER;
+//
+//			if (!new File(scriptAbsPath).exists()) {
+//				scriptAbsPath = bundlePath.getAbsolutePath() + "/src" + SCRIPTPATH + PYTHONSCRIPTHANDLER;
+//				if (!new File(scriptAbsPath).exists()) {
+//					throw new RuntimeException("Couldn't find path to " + PYTHONSCRIPTHANDLER + "!");
+//				}
+//			}
+//
+//			if (scriptAbsPath == null || scriptAbsPath.isEmpty())
+//				throw new Exception("Python handler file is not available. Check project structures"); // TODO:
+//																										// does
+//																										// user
+//																										// need
+//																										// to
+//																										// know
+//																										// this?
+//			// TODO:^is top check needed as should be able to get error from the
+//			// pytho nservice crate...
+//
+//			// TODO: check service rpc is avlaiable before create one.
+//			// TODO: delete on the tool close
+//
+//			try {
+//				rpcservice = AnalysisRpcPythonPyDevService.create();
+//				// pythonRunScriptService = new
+//				// PythonRunScriptService(rpcservice);
+//				rpcSearcherService = new PythonRunSearcherService(rpcservice,false);
+//			} catch (AnalysisRpcException e) {
+//
+//				// TODO: place in better exception catch clause
+//				throw new Exception(e.getMessage());
+//				// System.out.println(e);
+//				// logger.debug("Server already started" +e);
+//				// this, "Could not create script service!");
+//			}
+//
+//			if (rpcservice == null || rpcSearcherService == null)
+//				throw new Exception("Could not create Python interpreter");
+//
+//			// TODO: cuts off but works whilst chanign methods to
+//			// rpcSearcherService reuqest
+//			analysisRpcClient =  rpcservice.getClient();
+//
+//			// Map<String,Object> inputs = new HashMap<>();
+//			// inputs.put("A", 5);
+//			try {
+//				matches = rpcSearcherService.findCellMatches(5.2, 5.2, 5.2, 90, 90, 90);
+//				//analysisRpcClient.request("cellSearchMatches", new Object[] {5.2, 5.2, 5.2, 90, 90, 90});
+//			} catch (AnalysisRpcException e) {
+//				// TODO: handle exception
+//				e.printStackTrace();
+//
+//
+//		} catch (Exception e) {
+//			logger.debug("Was not able to start" + urlCellSearchHandler.getFile() + e.getMessage());
+//
+//			// TODO: the termination of said server creates a error! can assume
+//			// not really need to terminate...
+//			// terminateServer();
+//
+//			throw new Exception(e.getMessage());
+//		}
 
-		// TODO: should check instance is accessible to talk to first, might be
-		// causing the double spawn error
-		//
-		// analysisRpcClient = new AnalysisRpcClient(PORT);
-		// try {
-		// Thread.sleep(5000);
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// }
-		//
-		//
 	}
 
 	// See results paths
@@ -428,173 +427,8 @@ public class CCDCService implements ICCDCService {
 
 }
 
-/*
- * Extend to interface for the python run script with handler names and that
- * should include the
- */
 
-interface IPythonSearcherHandlers {
-	// expects def isAvailiable
-	// rpcserver.add_handler("AVALIABLE", isCallAvaliable)
-	// TODO: redundent with the wrapper now?
-	public Boolean isCallAvailable() throws AnalysisRpcException;
 
-	// expects def findCellmatches
-	// rpcserver.add_handler("FINDCELLMATCHES", searcher.findCellMatches)
-	/// findCellMatches(a, b, c, alpha, beta, gamma)
-	public int findCellMatches(double a, double b, double c, double alp, double bet, double gam)
-			throws AnalysisRpcException;
 
-}
 
-// TODO: wanted to extend this
-class PythonRunSearcherService implements IPythonSearcherHandlers {
 
-	private static final String SCRIPTPATH = "/uk/ac/diamond/scisoft/analysis/powder/matcher/ccdc/";
-
-	private static final String PYTHONSERVICESCRIPTHANDLER = "cellSearcherService.py";
-
-	private static final Logger logger = LoggerFactory.getLogger(PythonRunSearcherService.class);
-
-	private IPythonSearcherHandlers proxy;
-	
-	IAnalysisRpcPythonService rpcservice; //TODO: shoukd not store her
-
-	/**
-	 * Create a new proxy and register the runScript code. Calls to runScript
-	 * are run the client's {@link AnalysisRpcClient#request(String, Object[])}
-	 * (as opposed to
-	 * {@link AnalysisRpcClient#request_debug(String, Object[], boolean)}.
-	 * 
-	 * @param rpcservice
-	 *            the running service to register with
-	 * @throws IOException
-	 *             if there is a problem resolving the location of
-	 *             {@value #PYTHON_SERVICE_RUNSCRIPT_PY}
-	 * @throws AnalysisRpcException
-	 *             if there is a problem registering the handler
-	 */
-	public PythonRunSearcherService(IAnalysisRpcPythonService rpcservice) throws IOException, AnalysisRpcException {
-		this(rpcservice, false);
-	}
-
-	/**
-	 * Create a new proxy and register the runScript code.
-	 * 
-	 * @param rpcservice
-	 *            the running service to register with
-	 * @param debug
-	 *            if true uses's the client's
-	 *            {@link AnalysisRpcClient#request_debug(String, Object[], boolean)}
-	 *            , if false uses
-	 *            {@link AnalysisRpcClient#request(String, Object[])}
-	 * @throws IOException
-	 *             if there is a problem resolving the location of
-	 *             {@value #PYTHON_SERVICE_RUNSCRIPT_PY}
-	 * @throws AnalysisRpcException
-	 *             if there is a problem registering the handler
-	 */
-	public PythonRunSearcherService(IAnalysisRpcPythonService rpcservice, boolean debug)
-			throws IOException, AnalysisRpcException {
-		this(rpcservice, debug, false);
-	}
-
-	/**
-	 * Create a new proxy and register the runScript code.
-	 * 
-	 * @param rpcservice
-	 *            the running service to register with
-	 * @param debug
-	 *            if true uses's the client's
-	 *            {@link AnalysisRpcClient#request_debug(String, Object[], boolean)}
-	 *            , if false uses
-	 *            {@link AnalysisRpcClient#request(String, Object[])}
-	 * @param skipAddHandler
-	 *            if true, does not add the handler to the server. This should
-	 *            only be true in cases where the handler has already been added
-	 * @throws IOException
-	 *             if there is a problem resolving the location of
-	 *             {@value #PYTHON_SERVICE_RUNSCRIPT_PY}
-	 * @throws AnalysisRpcException
-	 *             if there is a problem registering the handler
-	 */
-	public PythonRunSearcherService(IAnalysisRpcPythonService rpcservice, boolean debug, boolean skipAddHandler)
-			throws IOException, AnalysisRpcException {
-		
-		this.rpcservice = rpcservice;
-		if (!skipAddHandler) {
-			File bundlePath = BundleUtils.getBundleLocation(Activator.PLUGIN_ID);
-
-			String script = bundlePath.getAbsolutePath() + SCRIPTPATH + PYTHONSERVICESCRIPTHANDLER;
-
-			if (!new File(script).exists()) {
-				script = bundlePath.getAbsolutePath() + "/src" + SCRIPTPATH + PYTHONSERVICESCRIPTHANDLER;
-				if (!new File(script).exists()) {
-					throw new RuntimeException("Couldn't find path to " + PYTHONSERVICESCRIPTHANDLER + "!");
-				}
-			}
-
-			// rpcservice.addHandlers( bundlePath.getAbsolutePath(), new
-			// String[]{});
-
-			// rpcservice.addHandlers("execfile(r'" + getSearcherPath() + "')",
-			// new String[] { }); //TODO: extra handler?
-
-			// script has a function definition called "runScript", add a
-			// // handler for it, then create a proxy to run the function
-			// rpcservice.addHandlers("execfile(r'" + script + "')",
-			// new String[] { }); //TODO: extra handler?
-
-			// TODO: Handlers added for addition of own interface
-			rpcservice.addHandlers("execfile(r'" + script + "')",
-					new String[] { "isCallAvailable", "findCellMatches" }); // TODO:
-																			// extra
-																			// handler?
-
-		}
-
-		// As long as proxy is made for the implemented interface all the
-		// functions should be avalaible.
-		// That if the functions are matching
-		proxy = rpcservice.getClient().newProxyInstance(IPythonSearcherHandlers.class, debug);
-	}
-
-	/**
-	 * Formats a remote exception to limit the Python code that was not "users"
-	 * code.
-	 * 
-	 * @param e
-	 *            Remote Exception to format
-	 * @return a Python style exception format
-	 */
-	public String formatException(AnalysisRpcRemoteException e) {
-		return e.getPythonFormattedStackTrace(PYTHONSERVICESCRIPTHANDLER);
-	}
-
-	@Override
-	public Boolean isCallAvailable() throws AnalysisRpcException {
-		return proxy.isCallAvailable();
-	}
-
-	@Override
-	public int findCellMatches(double a, double b, double c, double alp, double bet, double gam)
-			throws AnalysisRpcException {
-		
-        rpcservice.getClient().getPort();
-        
-		
-		
-		IPythonSearcherHandlers newProxyInstance = rpcservice.getClient().newProxyInstance(IPythonSearcherHandlers.class,false);
-		rpcservice.getClient().newProxyInstance(IPythonSearcherHandlers.class);
-		final Object newOut = newProxyInstance.findCellMatches(a, b, c, alp, bet, gam);
-		
-		final Object out =  proxy.findCellMatches(a, b, c, alp, bet, gam);//this.rpcservice.getClient().request("findCellMatches", new Object[]{a, b, c, alp,bet,gam}); 
-		
-		//rpcservice.addHandler("findCellMatches", "noParm");
-		
-		// Calls the method 'runScript' in the script with the arguments
-	    return (int) out;
-		//return proxy.findCellMatches(a, b, c, alp, bet, gam);
-	}
-
-}

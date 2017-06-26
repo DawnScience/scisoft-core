@@ -21,7 +21,7 @@ import uk.ac.diamond.scisoft.analysis.powder.indexer.IPowderIndexerParam;
  *         Results can be acquired in {@link CellParameter} format.
  *         
  *         TODO: would like a way to force a extension of abstract powder indexer
-
+ *         TODO: place active bravais searching in parameter set
  * @author Dean P. Ottewell
  */
 public abstract class AbstractPowderIndexer implements IPowderIndexer {
@@ -44,9 +44,6 @@ public abstract class AbstractPowderIndexer implements IPowderIndexer {
 	public String  getPowderRoutineID() {
 		return ID;
 	}
-
-	
-	//TODO: place active bravais searching in parameter set
 	
 	public IDataset getPeakData() {
 		return peakData;

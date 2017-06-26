@@ -250,40 +250,7 @@ public class Dicvol extends AbstractPowderIndexerProcess implements IPowderProce
 	public void generateIndexFile(String fullPathFile) {
 		try {
 			PrintWriter writer = new PrintWriter(fullPathFile, "UTF-8");
-
-//			// CARD 1 TITLE FREE FORMAT
-//			writer.println(outFileTitle);
-//
-//			String delim = " ";
-//
-//			Iterator<Entry<String, String>> itr = stdKeyval.entrySet().iterator();
-//
-//			int card2Sz = 8;
-//			int card3Sz = 7;
-//			int card4Sz = 4;
-//			int card5Sz = 6;
-//
-//			// CARD 2 N,ITYPE,JC,JT,JH,JO,JM,JTR -8 FREE FORMAT
-//			// CARD 3 AMAX,BMAX,CMAX,VOLMIN,VOLMAX,BEMIN,BEMAX-7 FREE FORMAT
-//			// CARD 4 WAVE,POIMOL,DENS,DELDEN-4 FREE FORMAT
-//			// CARD 5 EPS,FOM,N_IMP,ZERO_S,ZERO_REF,OPTION-6 FREE FORMAT
-//			repeat.accept(card2Sz, () -> writer.print(itr.next().getValue() + delim));
-//			writer.println();
-//			repeat.accept(card3Sz, () -> writer.print(itr.next().getValue() + delim));
-//			writer.println();
-//			repeat.accept(card4Sz, () -> writer.print(itr.next().getValue() + delim));
-//			writer.println();
-//			repeat.accept(card5Sz, () -> writer.print(itr.next().getValue() + delim));
-//			writer.println();
-//			for (int i = 0; i < peakData.getSize(); ++i) {
-//				double d = peakData.getDouble(i);
-//				writer.println(String.valueOf(d));
-//			}
-//
-//			writer.close();
-
-			//TODO: what to do when the value is not there 
-			
+	
 			// CARD 1 TITLE FREE FORMAT
 			writer.println(fullPathFile);
 
@@ -301,7 +268,6 @@ public class Dicvol extends AbstractPowderIndexerProcess implements IPowderProce
 			writer.println();
 
 			
-			//TODO: repeat for rest?
 			String[] CARD3KEYS = {"AMAX","BMAX","CMAX","VOLMIN",StandardConstantParameters.maxVolume,"BEMIN","BEMAX"};
 			for (String cardKey : CARD3KEYS){
 				writer.print(parameters.get(cardKey).getValue().toString() + " ");
@@ -342,7 +308,7 @@ public class Dicvol extends AbstractPowderIndexerProcess implements IPowderProce
 	@Override
 	public boolean isPeakDataValid(IDataset peakData) {
 		boolean valid = true;
-		// title + path can only be max 18 characters long or dicvol executable concatenates
+		//XXX: title + path can only be max 18 characters long or dicvol executable concatenates
 		String relativePath = Paths.get(System.getProperty("user.dir") + "/").relativize(Paths.get(fileOutPath))
 				.toString();
 
@@ -366,7 +332,6 @@ public class Dicvol extends AbstractPowderIndexerProcess implements IPowderProce
 		
 		Iterator<Entry<String, String>> itr = stdKeyval.entrySet().iterator();
 		
-		
 		//TODO: tmp lazy method as all these values are needed to run Dicvol
 		while(itr.hasNext()){
 			Entry<String, String> kv = itr.next();
@@ -385,7 +350,7 @@ public class Dicvol extends AbstractPowderIndexerProcess implements IPowderProce
 		}
 
 		
-		//TODO: complete the rest of the standardparameters in the fllowing method rather than cheat and iterate over array
+		//TODO: complete the rest of the standard parameters in the following method rather than cheat and iterate over array
 		intialParams.put(StandardConstantParameters.wavelength, new PowderIndexerParam(StandardConstantParameters.wavelength, 0.));
 		intialParams.put(StandardConstantParameters.maxVolume, new PowderIndexerParam(StandardConstantParameters.maxVolume, 2000.));
 		

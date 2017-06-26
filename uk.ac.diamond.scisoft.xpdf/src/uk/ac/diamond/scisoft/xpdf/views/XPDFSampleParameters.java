@@ -420,7 +420,7 @@ class XPDFSampleParameters {
 			sample.setUnit_cell_volume(DatasetFactory.createFromList(phases.stream().map(a -> a.getUnitCellVolume()).collect(Collectors.toList())));
 			sample.setAttribute("unit_cell_volume", "units", aa+"³");
 			sample.setUnit_cell_class(DatasetFactory.createFromList(phases.stream().map(a -> a.getCrystalSystem().getName()).collect(Collectors.toList())));
-			sample.setUnit_cell_group(DatasetFactory.createFromList(phases.stream().map(a -> a.getSpaceGroup().getNumber() + ": " + a.getSpaceGroup().getName()).collect(Collectors.toList())));
+			sample.setSpace_group(DatasetFactory.createFromList(phases.stream().map(a -> a.getSpaceGroup().getNumber() + ": " + a.getSpaceGroup().getName()).collect(Collectors.toList())));
 
 			// TODO: Crystal structure
 		}

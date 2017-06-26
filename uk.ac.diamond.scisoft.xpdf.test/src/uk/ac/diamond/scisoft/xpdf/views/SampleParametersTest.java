@@ -269,7 +269,7 @@ public class SampleParametersTest {
 		// unit cell parameters...
 		assertEquals("NX unit cell volume incorrect", DatasetFactory.createFromList(sample.getPhases().stream().map(a -> a.getUnitCellVolume()).collect(Collectors.toList())), nxample.getUnit_cell_volume());
 		assertEquals("NX unit cell class incorrect", DatasetFactory.createFromList(sample.getPhases().stream().map(a -> a.getCrystalSystem().getName()).collect(Collectors.toList())), nxample.getUnit_cell_class());
-		assertEquals("NX unit cell space group incorrect", DatasetFactory.createFromList(sample.getPhases().stream().map(a -> a.getSpaceGroup().getNumber() + ": " + a.getSpaceGroup().getName()).collect(Collectors.toList())), nxample.getUnit_cell_group());
+		assertEquals("NX unit cell space group incorrect", DatasetFactory.createFromList(sample.getPhases().stream().map(a -> a.getSpaceGroup().getNumber() + ": " + a.getSpaceGroup().getName()).collect(Collectors.toList())), nxample.getSpace_group());
 		assertEquals("NX theoretical densities incorrect", DatasetFactory.createFromList(sample.getPhases().stream().map(a -> a.getDensity()).collect(Collectors.toList())), nxample.getDataset("theoretical_density"));
 		
 	}

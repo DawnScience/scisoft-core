@@ -35,7 +35,7 @@ public class ReviewCurvesModel {
 		csdpListCopy.add(csdp);
 		
 		setCsdpLatest(csdp);
-//		setCsdpList(csdpListCopy);
+
 		
 		firePropertyChange("csdpList", this.csdpList,
 				this.csdpList= csdpListCopy);

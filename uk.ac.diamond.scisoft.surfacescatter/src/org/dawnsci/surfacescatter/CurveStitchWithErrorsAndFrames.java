@@ -181,13 +181,13 @@ public class CurveStitchWithErrorsAndFrames {
 				odm.setUpperOverlapFhklValues(upperOverlapFhklValues);
 				odm.setUpperOverlapScannedValues(upperOverlapScannedValues);
 				
-				double[][] correctionRatio = PolynomialOverlapSXRD.correctionRatio2(xLowerDataset, yLowerDataset, 
+				double[][] correctionRatio = PolynomialOverlapSXRD.correctionRatio3(xLowerDataset, yLowerDataset, 
 				xHigherDataset, yHigherDataset, attenuationFactor,4);
 				
-				double[][]  correctionRatioFhkl = PolynomialOverlapSXRD.correctionRatio2(xLowerDataset, yLowerDatasetFhkl, 
+				double[][]  correctionRatioFhkl = PolynomialOverlapSXRD.correctionRatio3(xLowerDataset, yLowerDatasetFhkl, 
 				xHigherDataset, yHigherDatasetFhkl, attenuationFactorFhkl,4);
 				
-				double[][]  correctionRatioRaw = PolynomialOverlapSXRD.correctionRatio2(xLowerDataset, yLowerDatasetRaw, 
+				double[][]  correctionRatioRaw = PolynomialOverlapSXRD.correctionRatio3(xLowerDataset, yLowerDatasetRaw, 
 				xHigherDataset, yHigherDatasetRaw, attenuationFactorRaw,4);
 				
 				attenuationFactor = correctionRatio[2][0];

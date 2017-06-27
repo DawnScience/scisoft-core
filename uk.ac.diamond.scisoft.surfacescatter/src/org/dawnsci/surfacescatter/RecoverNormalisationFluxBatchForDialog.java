@@ -131,22 +131,38 @@ public class RecoverNormalisationFluxBatchForDialog {
 					}
 						
 				}
-				
 			}
-			
 			
 			theta =dh1.getLazyDataset(ReflectivityMetadataTitlesForDialog.getqdcd_()); 
 //				model.setTheta(theta);
 				
 				
 			if(theta == null){
+				
+				
 				try { 
 					theta =dh1.getLazyDataset("qsdcd"); 
 				}
 				catch(Exception g){
-						
+					theta =dh1.getLazyDataset("qdcd");
 				}
 			
+			}
+			
+			if(theta == null){
+				
+				IDataHolder dh2 =LoaderFactory.getData(filepath);				
+				theta =dh2.getLazyDataset(ReflectivityMetadataTitlesForDialog.getqdcd_()); 
+
+				if(theta == null){
+					try { 
+						theta =dh2.getLazyDataset("qsdcd"); 
+					}
+					catch(Exception g){
+						theta =dh2.getLazyDataset("qdcd");
+					}
+				
+				}
 			}
 		}
 				

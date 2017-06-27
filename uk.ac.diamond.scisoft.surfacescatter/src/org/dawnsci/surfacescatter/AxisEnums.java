@@ -47,6 +47,19 @@ public class AxisEnums {
 		return null;
 	}
 	
+	public static int toInt(yAxes input){
+		
+		switch(input){
+			case SPLICEDY:
+				return 0;
+			case SPLICEDYFHKL:
+				return 1;
+			case SPLICEDYRAW:
+				return 2;
+		}
+		return 0;
+	}
+	
 	public static yAxes toYAxis(String in){
 		
 		if (in.equals("Intensity")){
@@ -61,5 +74,19 @@ public class AxisEnums {
 		return null;
 	}
 
+	
+	public static yAxes toYAxis(int in){
+		
+		if (in == 0){
+			return yAxes.SPLICEDY;
+		}
+		else if (in  == 2){
+			return yAxes.SPLICEDYRAW;
+		}
+		else if (in == 1){
+			return yAxes.SPLICEDYFHKL;
+		}
+		return null;
+	}
 	
 }

@@ -1234,6 +1234,12 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.EnterDiffractionCalibrationModel"
             name="Enter Diffraction Calibration">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.RegionSumOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.RegionSumOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.RegionSumModel"
+            name="Region Sum">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

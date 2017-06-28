@@ -266,6 +266,22 @@ public class MerlinLoader extends AbstractFileLoader {
 		if (loadMetadata) {
 			processMetadata(metaHolder, output, meta, this.droppedFrames, this.mapShape);
 		}
+		
+		// Adds some simple Axis to get the mapping functionality working
+		if ((this.mapShape != null) && (this.mapShape.length < 0)) { 
+			Dataset xdataset = DatasetFactory.createRange(IntegerDataset.class, this.mapShape[0]);
+			xdataset.setName("xAxis");
+			output.addDataset(xdataset.getName(), xdataset);
+			meta.addDataInfo(xdataset.getName(), xdataset.getShape());
+		}
+		
+		if ((this.mapShape != null) && (this.mapShape.length < 1)) { 
+			Dataset ydataset = DatasetFactory.createRange(IntegerDataset.class, this.mapShape[1]);
+			ydataset.setName("yAxis");
+			output.addDataset(ydataset.getName(), ydataset);
+			meta.addDataInfo(ydataset.getName(), ydataset.getShape());
+		}
+		
 		if (offsetList.size() > 1) {
 			// add the lazy dataset			
 			lazy.setName(DATA_NAME);

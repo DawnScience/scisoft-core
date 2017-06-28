@@ -360,7 +360,6 @@ public class MerlinLoader extends AbstractFileLoader {
 				break;
 			}
 			
-			loaded = DatasetFactory.zeros(clazz, slice.getShape());
 			temp = DatasetFactory.zeros(clazz, frameShape);
 			
 			LongDataset lookup = DatasetFactory.createRange(LongDataset.class, (long) DatasetFactory.createFromObject(mapShapeInt).product(true));
@@ -399,12 +398,9 @@ public class MerlinLoader extends AbstractFileLoader {
 				}
 
 				Slice[] readSlice = Arrays.copyOfRange(slice.convertToSlice(), frameShape.length, frameShape.length+2);
-				IDataset sliced = temp.getSlice(readSlice);
-				SliceND setSlice = slice.clone();
-				for (int i = 0; i < iter.getPos().length; i ++) {
-					setSlice.setSlice(i, pos[i],  pos[i]+1 , 1);
-				}
-				loaded.setSlice(sliced, setSlice);
+				Dataset sliced = temp.getSlice(readSlice);
+				sliced.setShape(1, 1, sliced.getShape()[0], sliced.getShape()[1]);
+				loaded = sliced;
 			}
 			return loaded == null ? null : loaded;
 		}

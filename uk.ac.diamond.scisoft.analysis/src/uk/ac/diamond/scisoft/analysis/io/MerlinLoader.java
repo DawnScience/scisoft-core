@@ -28,6 +28,7 @@ import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegerDataset;
@@ -82,6 +83,11 @@ public class MerlinLoader extends AbstractFileLoader {
 	private static int INITIAL_LENGTH = 40;
 	private int droppedFrames = 0;
 	private int[] mapShape = null;
+
+	private double xStart = 0.0;
+	private double xStep = 1.0;
+	private double yStart = 0.0;
+	private double yStep = 1.0;
 	
 	@Override
 	public DataHolder loadFile() throws ScanFileHolderException {
@@ -103,6 +109,18 @@ public class MerlinLoader extends AbstractFileLoader {
 							values.add(Integer.parseInt(part2.trim()));
 						}
 						this.mapShape = ArrayUtils.toPrimitive(values.toArray(new Integer[0]), 0);
+					}
+					if(part.split(":")[0].equals("XStart")){
+						this.xStart = Double.parseDouble(part.split(":")[1].trim());
+					} 
+					if(part.split(":")[0].equals("XStep")){
+						this.xStep = Double.parseDouble(part.split(":")[1].trim());
+					} 
+					if(part.split(":")[0].equals("YStart")){
+						this.yStart = Double.parseDouble(part.split(":")[1].trim());
+					} 
+					if(part.split(":")[0].equals("YStep")){
+						this.yStep = Double.parseDouble(part.split(":")[1].trim());
 					} 
 				} 
 			}
@@ -268,15 +286,15 @@ public class MerlinLoader extends AbstractFileLoader {
 		}
 		
 		// Adds some simple Axis to get the mapping functionality working
-		if ((this.mapShape != null) && (this.mapShape.length < 0)) { 
-			Dataset xdataset = DatasetFactory.createRange(IntegerDataset.class, this.mapShape[0]);
+		if ((this.mapShape != null) && (this.mapShape.length > 0)) { 
+			Dataset xdataset = DatasetFactory.createRange(DoubleDataset.class, this.xStart, this.xStart + (this.xStep * (this.mapShape[0]-0.5)), this.xStep);
 			xdataset.setName("xAxis");
 			output.addDataset(xdataset.getName(), xdataset);
 			meta.addDataInfo(xdataset.getName(), xdataset.getShape());
 		}
 		
-		if ((this.mapShape != null) && (this.mapShape.length < 1)) { 
-			Dataset ydataset = DatasetFactory.createRange(IntegerDataset.class, this.mapShape[1]);
+		if ((this.mapShape != null) && (this.mapShape.length > 1)) { 
+			Dataset ydataset = DatasetFactory.createRange(DoubleDataset.class, this.yStart, this.yStart + (this.yStep * (this.mapShape[1]-0.5)), this.yStep);
 			ydataset.setName("yAxis");
 			output.addDataset(ydataset.getName(), ydataset);
 			meta.addDataInfo(ydataset.getName(), ydataset.getShape());

@@ -264,7 +264,7 @@ public class MerlinLoader extends AbstractFileLoader {
 		IMetadata meta = new Metadata();
 		
 		if (loadMetadata) {
-			processMetadata(metaHolder, output, meta);
+			processMetadata(metaHolder, output, meta, this.droppedFrames, this.mapShape);
 		}
 		if (offsetList.size() > 1) {
 			// add the lazy dataset			
@@ -297,9 +297,15 @@ public class MerlinLoader extends AbstractFileLoader {
 		}
 	}
 
-	private void processMetadata(List<MetaListHolder> metaHolder, DataHolder output, IMetadata meta) {
+	private void processMetadata(List<MetaListHolder> metaHolder, DataHolder output, IMetadata meta, int droppedFrames, int[] mapShape) {
 		for (MetaListHolder h : metaHolder) {
 			IDataset dataset = h.getDataset();
+			int length = 1;
+			for (int i = 0; i < mapShape.length; i++) {
+				length *= mapShape[i];
+			}
+			dataset = dataset.getSlice(new Slice(droppedFrames, droppedFrames+length));
+			dataset.setShape(mapShape);
 			output.addDataset(h.name, dataset);
 			meta.addDataInfo(h.name, dataset.getShape());
 		}

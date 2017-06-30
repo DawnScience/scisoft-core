@@ -169,6 +169,9 @@ public class XPDFIterateCalibrationConstantOperation extends
 		}
 		
 		XPDFCalibrationBase theBase;
+		// nullify the calibration if something should change
+		if (model.getRegenerateAbsorptionMaps() || model.isSortContainers())
+			cachedCalibration = null;
 		if (cachedCalibration == null) {
 		
 			theBase = new XPDFCalibrationBase();

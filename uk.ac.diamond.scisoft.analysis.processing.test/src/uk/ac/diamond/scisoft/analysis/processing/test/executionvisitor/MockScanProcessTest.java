@@ -198,6 +198,11 @@ public class MockScanProcessTest {
 			public IDynamicDataset getComplete() {
 				return (IDynamicDataset)fdh.getLazyDataset("/entry/live/finished");
 			}
+
+			@Override
+			public boolean isMonitorForOverwrite() {
+				return false;
+			}
 		});
 		
 		IOperation[] ops = new IOperation[noData ? 3 : 2];
@@ -224,9 +229,6 @@ public class MockScanProcessTest {
 			ops[2] = ndo;
 		}
 		
-
-		//FIXME or rather fix swmr. Not currently testing swmr since wont read from a 
-		//different thread to writing thread
 		context.setVisitor(new NexusFileExecutionVisitor(tmpProc.getAbsolutePath(),true));
 		context.setSeries(ops);
 		context.setExecutionType(ExecutionType.SERIES);

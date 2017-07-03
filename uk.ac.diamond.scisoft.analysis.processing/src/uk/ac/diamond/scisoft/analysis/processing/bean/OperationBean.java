@@ -49,6 +49,8 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	private String				 dataKey;
 	//clear processing file at finish
 	private boolean   			 deleteProcessingFile = true;
+	//detector is overwriting data
+	private boolean 			 monitorForOverwrite = false;
 	
 	//time out for live processing
 	private int timeOut = 60000;
@@ -240,7 +242,21 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	public boolean getLinkParentEntry() {
 		return linkEntry;
 	}
-
+	
+	/**
+	 * Set whether the raw data is going to be overwritten
+	 * 
+	 * @param overwrite
+	 */
+	@Override
+	public void setMonitorForOverwrite(boolean overwrite) {
+		monitorForOverwrite = overwrite;
+	}
+	
+	public boolean isMonitorForOverwrite(){
+		return monitorForOverwrite;
+	}
+ 
 	@Override
 	public int hashCode() {
 		final int prime = 31;

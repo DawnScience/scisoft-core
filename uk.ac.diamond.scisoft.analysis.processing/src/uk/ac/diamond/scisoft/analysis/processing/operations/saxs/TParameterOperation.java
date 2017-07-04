@@ -240,7 +240,7 @@ public class TParameterOperation extends AbstractOperation<TParameterModel, Oper
 		//OperationData toReturn = new OperationData(inputDataset);
 		OperationData toReturn = new OperationData(inputDataset);
 		
-		toReturn.setAuxData(yDataPorod, yFitPorod, yDataKratky, yFitKratky, xAxis, tParameterDataset);
+		toReturn.setAuxData(yDataPorod, yFitPorod, yDataKratky, yFitKratky, xAxis, tParameterDataset, porodGradient);
 		// And then returning it
 		return toReturn;
 	}

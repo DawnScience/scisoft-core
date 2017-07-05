@@ -296,7 +296,8 @@ public class RegisterImage2 implements DatasetToDatasetFunction {
 		} while (used >= rlen - 1);
 
 		if (used < rlen - 1) { // dropped too many rows
-			return null;
+			//return null;	Gives no user feedback (other than NPE) to what went wrong - replaced with below for now
+			throw new NullPointerException("Images are too far out of sync to be aligned!"); // AlignProgressJob should be refactored to make use of Status
 		}
 
 		@SuppressWarnings("null")

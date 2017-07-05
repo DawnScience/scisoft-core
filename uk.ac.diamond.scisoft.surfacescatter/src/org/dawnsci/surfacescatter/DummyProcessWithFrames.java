@@ -414,7 +414,6 @@ public class DummyProcessWithFrames {
 		try {
 			input = fm.getRawImageData().getSlice(new SliceND(fm.getRawImageData().getShape()));
 		} catch (DatasetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

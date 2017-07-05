@@ -906,7 +906,7 @@ public class AgnosticTrackerWithFrames {
 					
 					drm.getLenPtForEachDat()[fm.getDatNo()] = new int[][]{len, pt};
 					
-//					fm.setRoiLocation(localLocation);
+
 					
 				}
 				

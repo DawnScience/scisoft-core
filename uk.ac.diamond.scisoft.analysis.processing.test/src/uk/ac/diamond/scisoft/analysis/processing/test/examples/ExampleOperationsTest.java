@@ -20,9 +20,9 @@ import java.util.Map;
 import org.dawb.common.services.ServiceManager;
 import org.dawnsci.conversion.ConversionServiceImpl;
 import org.dawnsci.conversion.converters.util.LocalServiceManager;
+import org.dawnsci.conversion.schemes.ProcessConversionScheme;
 import org.dawnsci.persistence.PersistenceServiceCreator;
 import org.eclipse.dawnsci.analysis.api.conversion.IConversionContext;
-import org.eclipse.dawnsci.analysis.api.conversion.IConversionContext.ConversionScheme;
 import org.eclipse.dawnsci.analysis.api.conversion.IConversionService;
 import org.eclipse.dawnsci.analysis.api.conversion.IProcessingConversionInfo;
 import org.eclipse.dawnsci.analysis.api.conversion.ProcessingOutputType;
@@ -33,7 +33,6 @@ import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
-import org.eclipse.dawnsci.hdf.object.operation.HierarchicalFileExecutionVisitor;
 import org.eclipse.january.dataset.IDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -76,7 +75,7 @@ public class ExampleOperationsTest {
 		IConversionService service = (IConversionService)ServiceManager.getService(IConversionService.class);
 		IConversionContext context = service.open(path);
 
-		context.setConversionScheme(ConversionScheme.PROCESS);
+		context.setConversionScheme(new ProcessConversionScheme());
 		context.setDatasetName("/entry1/data/data");
 		context.addSliceDimension(0, "all");
 		Map<Integer, String> axesNames = new HashMap<Integer,String>();
@@ -168,7 +167,7 @@ public class ExampleOperationsTest {
 		IConversionService service = (IConversionService)ServiceManager.getService(IConversionService.class);
 		IConversionContext context = service.open(path);
 
-		context.setConversionScheme(ConversionScheme.PROCESS);
+		context.setConversionScheme(new ProcessConversionScheme());
 		context.setDatasetName("/entry1/data/data");
 		context.addSliceDimension(0, "all");
 		context.addSliceDimension(1, "all");
@@ -255,7 +254,7 @@ public class ExampleOperationsTest {
 		IConversionService service = (IConversionService)ServiceManager.getService(IConversionService.class);
 		IConversionContext context = service.open(path);
 
-		context.setConversionScheme(ConversionScheme.PROCESS);
+		context.setConversionScheme(new ProcessConversionScheme());
 		context.setDatasetName("/entry1/data/data");
 		context.addSliceDimension(0, "all");
 		Map<Integer, String> axesNames = new HashMap<Integer,String>();

@@ -10,8 +10,9 @@ Bundle-ActivationPolicy: lazy
 Import-Package: org.dawnsci.conversion,
  org.dawnsci.conversion.converters.util,
  org.dawnsci.persistence,
- org.eclipse.dawnsci.analysis.api.conversion,
  org.eclipse.ui.services,
  org.slf4j;version="1.7.6",
  uk.ac.diamond.scisoft.analysis.osgi
-Require-Bundle: org.junit;bundle-version="[4.10.0,5.0.0)"
+Require-Bundle: org.junit;bundle-version="[4.10.0,5.0.0)",
+ org.eclipse.dawnsci.analysis.api,
+ org.dawnsci.conversion

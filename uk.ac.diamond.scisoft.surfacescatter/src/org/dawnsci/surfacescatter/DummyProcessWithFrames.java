@@ -62,9 +62,9 @@ public class DummyProcessWithFrames {
 		switch(fm.getBackgroundMethdology()){
 			case TWOD_TRACKING:
 				
-				AgnosticTrackerWithFrames ath = new AgnosticTrackerWithFrames();
+				
 				if(trackingMarker != 3 && trackingMarker != 4 && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
-					ath.TwoDTracking3(drm, 
+					ModifiedAgnosticTrackerWithFrames1 ath = new ModifiedAgnosticTrackerWithFrames1(drm, 
 									  trackingMarker, 
 									  k, 
 									  selection);
@@ -123,9 +123,9 @@ public class DummyProcessWithFrames {
 				int[] pt = drm.getInitialLenPt()[1];
 				
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
-					AgnosticTrackerWithFrames ath1 = new AgnosticTrackerWithFrames();
 					
-					ath1.TwoDTracking3(drm,
+					
+					ModifiedAgnosticTrackerWithFrames1 ath = new ModifiedAgnosticTrackerWithFrames1(drm,
 									  trackingMarker, 
 									  k, 
 									  selection);
@@ -200,9 +200,9 @@ public class DummyProcessWithFrames {
 			case SECOND_BACKGROUND_BOX:
 				
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
-					AgnosticTrackerWithFrames ath1 = new AgnosticTrackerWithFrames();
+				
 					
-					ath1.TwoDTracking3(drm, 
+					ModifiedAgnosticTrackerWithFrames1 ath = new ModifiedAgnosticTrackerWithFrames1(drm, 
 									  trackingMarker, 
 									  k, 
 									  selection);
@@ -233,9 +233,9 @@ public class DummyProcessWithFrames {
 			case OVERLAPPING_BACKGROUND_BOX:
 				
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
-					AgnosticTrackerWithFrames ath1 = new AgnosticTrackerWithFrames();
 					
-					ath1.TwoDTracking3(drm, 
+					
+					ModifiedAgnosticTrackerWithFrames1 ath = new ModifiedAgnosticTrackerWithFrames1(drm, 
 									  trackingMarker, 
 									  k, 
 									  selection);
@@ -269,9 +269,8 @@ public class DummyProcessWithFrames {
 				
 				
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
-					AgnosticTrackerWithFrames ath1 = new AgnosticTrackerWithFrames();
 					
-					ath1.TwoDTracking3(drm,
+					ModifiedAgnosticTrackerWithFrames1 ath = new ModifiedAgnosticTrackerWithFrames1(drm,
 							  trackingMarker, 
 							  k, 
 							  selection);
@@ -310,9 +309,8 @@ public class DummyProcessWithFrames {
 				
 				
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
-					AgnosticTrackerWithFrames ath1 = new AgnosticTrackerWithFrames();
-					
-					ath1.TwoDTracking3(drm,
+				
+					ModifiedAgnosticTrackerWithFrames1 ath = new ModifiedAgnosticTrackerWithFrames1(drm,
 							  trackingMarker, 
 							  k, 
 							  selection);
@@ -419,11 +417,8 @@ public class DummyProcessWithFrames {
 		
 		switch(fm.getBackgroundMethdology()){
 			case TWOD_TRACKING:
-								
 				
-				AgnosticTrackerWithFrames ath1 = new AgnosticTrackerWithFrames();
-				
-				ath1.TwoDTracking3(drm,
+				ModifiedAgnosticTrackerWithFrames1 ath = new ModifiedAgnosticTrackerWithFrames1(drm,
 								  trackingMarker, 
 								  k, 
 								  selection);
@@ -483,9 +478,9 @@ public class DummyProcessWithFrames {
 				int[] pt = drm.getInitialLenPt()[1];
 				
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
-					AgnosticTrackerWithFrames ath = new AgnosticTrackerWithFrames();
 					
-					ath.TwoDTracking3(drm,
+					
+					ModifiedAgnosticTrackerWithFrames1 ath1 = new ModifiedAgnosticTrackerWithFrames1(drm,
 									  trackingMarker, 
 									  k, 
 									  selection);
@@ -536,9 +531,7 @@ public class DummyProcessWithFrames {
 			case SECOND_BACKGROUND_BOX:
 
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
-					AgnosticTrackerWithFrames ath = new AgnosticTrackerWithFrames();
-					
-					ath.TwoDTracking3(drm,
+					ModifiedAgnosticTrackerWithFrames1 ath1 = new ModifiedAgnosticTrackerWithFrames1(drm,
 									  trackingMarker, 
 									  k, 
 									  selection);
@@ -568,9 +561,8 @@ public class DummyProcessWithFrames {
 			case OVERLAPPING_BACKGROUND_BOX:
 		
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
-					AgnosticTrackerWithFrames ath = new AgnosticTrackerWithFrames();
-					
-					ath.TwoDTracking3(drm,
+
+					ModifiedAgnosticTrackerWithFrames1 ath1 = new ModifiedAgnosticTrackerWithFrames1(drm,
 									  trackingMarker, 
 									  k, 
 									  selection);
@@ -599,9 +591,7 @@ public class DummyProcessWithFrames {
 				
 				
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
-					AgnosticTrackerWithFrames ath = new AgnosticTrackerWithFrames();
-					
-					ath.TwoDTracking3(drm,
+					ModifiedAgnosticTrackerWithFrames1 ath1 = new ModifiedAgnosticTrackerWithFrames1(drm,
 									  trackingMarker, 
 									  k, 
 									  selection);
@@ -637,9 +627,7 @@ public class DummyProcessWithFrames {
 				
 				
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
-					AgnosticTrackerWithFrames ath2 = new AgnosticTrackerWithFrames();
-					
-					ath2.TwoDTracking3(drm,
+					ModifiedAgnosticTrackerWithFrames1 ath1 = new ModifiedAgnosticTrackerWithFrames1(drm,
 									  trackingMarker, 
 									  k, 
 									  selection);
@@ -735,9 +723,7 @@ public class DummyProcessWithFrames {
 		switch(fm.getBackgroundMethdology()){
 			case TWOD_TRACKING:
 												
-				AgnosticTrackerWithFrames ath = new AgnosticTrackerWithFrames();
-				
-				ath.TwoDTracking3(drm, 
+				ModifiedAgnosticTrackerWithFrames1 ath = new ModifiedAgnosticTrackerWithFrames1(drm, 
 									  trackingMarker, 
 									  k, 
 									  selection);
@@ -796,9 +782,7 @@ public class DummyProcessWithFrames {
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 					
 					
-					AgnosticTrackerWithFrames ath1 = new AgnosticTrackerWithFrames();
-					
-					ath1.TwoDTracking3(drm, 
+					ModifiedAgnosticTrackerWithFrames1 ath1 = new ModifiedAgnosticTrackerWithFrames1(drm, 
 										  trackingMarker, 
 										  k, 
 										  selection);
@@ -856,9 +840,7 @@ public class DummyProcessWithFrames {
 					
 					
 
-					AgnosticTrackerWithFrames ath1 = new AgnosticTrackerWithFrames();
-					
-					ath1.TwoDTracking3(drm, 
+					ModifiedAgnosticTrackerWithFrames1 ath1 = new ModifiedAgnosticTrackerWithFrames1(drm, 
 										  trackingMarker, 
 										  k, 
 										  selection);
@@ -889,9 +871,7 @@ public class DummyProcessWithFrames {
 				
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 
-					AgnosticTrackerWithFrames ath1 = new AgnosticTrackerWithFrames();
-					
-					ath1.TwoDTracking3(drm, 
+					ModifiedAgnosticTrackerWithFrames1 ath1 = new ModifiedAgnosticTrackerWithFrames1(drm, 
 										  trackingMarker, 
 										  k, 
 										  selection);
@@ -921,9 +901,7 @@ public class DummyProcessWithFrames {
 				
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
 
-					AgnosticTrackerWithFrames ath1 = new AgnosticTrackerWithFrames();
-					
-					ath1.TwoDTracking3(drm, 
+					ModifiedAgnosticTrackerWithFrames1 ath1 = new ModifiedAgnosticTrackerWithFrames1(drm, 
 										  trackingMarker, 
 										  k, 
 										  selection);
@@ -1066,10 +1044,7 @@ public class DummyProcessWithFrames {
 		
 		switch(fm.getBackgroundMethdology()){
 			case TWOD_TRACKING:
-								
-				AgnosticTrackerWithFrames ath = new AgnosticTrackerWithFrames();
-				
-				ath.TwoDTracking1(drm, 
+				ModifiedAgnosticTrackerWithFrames1 ath = new ModifiedAgnosticTrackerWithFrames1(drm, 
 						trackingMarker, 
 						k,
 						locationList,
@@ -1119,9 +1094,7 @@ public class DummyProcessWithFrames {
 			
 				if(drm.isTrackerOn() && 
 				   fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
-					AgnosticTrackerWithFrames ath2 = new AgnosticTrackerWithFrames();
-					
-					ath2.TwoDTracking1(drm, 
+					ModifiedAgnosticTrackerWithFrames1 ath1 = new ModifiedAgnosticTrackerWithFrames1(drm, 
 							trackingMarker, 
 							k,
 							locationList,
@@ -1177,9 +1150,7 @@ public class DummyProcessWithFrames {
 			case SECOND_BACKGROUND_BOX:
 
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
-					AgnosticTrackerWithFrames ath2 = new AgnosticTrackerWithFrames();
-					
-					ath2.TwoDTracking1(drm, 
+					ModifiedAgnosticTrackerWithFrames1 ath1 = new ModifiedAgnosticTrackerWithFrames1(drm, 
 							trackingMarker, 
 							k,
 							locationList,
@@ -1208,9 +1179,7 @@ public class DummyProcessWithFrames {
 			case OVERLAPPING_BACKGROUND_BOX:
 
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
-					AgnosticTrackerWithFrames ath1 = new AgnosticTrackerWithFrames();
-					
-					ath1.TwoDTracking1(drm, 
+					ModifiedAgnosticTrackerWithFrames1 ath1 = new ModifiedAgnosticTrackerWithFrames1(drm, 
 							trackingMarker, 
 							k,
 							locationList,
@@ -1239,9 +1208,7 @@ public class DummyProcessWithFrames {
 			case X:
 				
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
-					AgnosticTrackerWithFrames ath1 = new AgnosticTrackerWithFrames();
-					
-					ath1.TwoDTracking1(drm, 
+					ModifiedAgnosticTrackerWithFrames1 ath1 = new ModifiedAgnosticTrackerWithFrames1(drm, 
 							trackingMarker, 
 							k,
 							locationList,
@@ -1282,9 +1249,7 @@ public class DummyProcessWithFrames {
 			case Y:
 				
 				if(drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL){
-					AgnosticTrackerWithFrames ath2 = new AgnosticTrackerWithFrames();
-					
-					ath2.TwoDTracking1(drm, 
+					ModifiedAgnosticTrackerWithFrames1 ath1 = new ModifiedAgnosticTrackerWithFrames1(drm, 
 							trackingMarker, 
 							k,
 							locationList,

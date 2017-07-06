@@ -120,15 +120,17 @@ public abstract class AbstractTracker {
 	}
 	
 	public void initialiseTracker(){
-		int[] len = drm.getLenPtForEachDat()[frame.getDatNo()][0];
-		int[] pt = drm.getLenPtForEachDat()[frame.getDatNo()][1];
+		
+		
+		int[] len = drm.getInitialLenPt()[0];
+		int[] pt = drm.getInitialLenPt()[1];
 		
 		tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 		trackerInitialCopy = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 
 		initialLocation = LocationLenPtConverterUtils.lenPtToLocationConverter(new int[][] {len, pt});
 		
-		if(seedLocation == null){
+		if(seedLocation != null){
 			initialLocation = seedLocation;
 		}
 		
@@ -149,7 +151,9 @@ public abstract class AbstractTracker {
 								initialLocation);
 		drm.setTrackerCoordinates(location);
 
-		
+		if(location == null){
+			System.out.println("error in initialiseTracker()");
+		}
 		
 	}
 	
@@ -207,6 +211,10 @@ public abstract class AbstractTracker {
 		catch(Exception h){
 			System.out.println(h.getMessage());
 		}
+		
+		if(location == null){
+			System.out.println("error in followUp()");
+		}
 	
 	}
 	
@@ -228,19 +236,25 @@ public abstract class AbstractTracker {
 			if (drm.getInitialTracker() == null){	
 				tracker =null;
 				tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
+				trackerInitialCopy = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 				
+				if(seedLocation ==null){
+					location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(drm.getTrackerLocationList(), 
+																				  drm.getSortedX(), 
+																				  drm.getInitialLenPt()[0],
+																				  selection);
+				}
+				else{
+					location= seedLocation;
+				}
+			
 				try {
-					
-					double[] l = TrackerLocationInterpolation.trackerInterpolationInterpolator0(drm.getTrackerLocationList(), 
-							  drm.getSortedX(), 
-							  drm.getInitialLenPt()[0],
-							  selection);
-					
-					location = l; 
-					
+						
 					tracker.initialize(drm.getInputForEachDat()[frame.getDatNo()], 
 							 		   location, 
 							 		   TrackingMethodology.toTT(frame.getTrackingMethodology()));
+					
+					trackerInitialCopy.initialize(input, location, TrackingMethodology.toTT(frame.getTrackingMethodology()));
 					
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -263,9 +277,33 @@ public abstract class AbstractTracker {
 				drm.setTrackerCoordinates(location);
 				drm.addTrackerLocationList(frame.getImageNumber(),
 							   location);
+				drm.setTracker(tracker);
 			}
 			
-			drm.setTracker(tracker);
+			if (location == null){
+				if(seedLocation ==null){
+					location = TrackerLocationInterpolation.trackerInterpolationInterpolator0(drm.getTrackerLocationList(), 
+																				  drm.getSortedX(), 
+																				  drm.getInitialLenPt()[0],
+																				  selection);
+				}
+				else{
+					location= seedLocation;
+				}																  
+					
+				tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
+				trackerInitialCopy = BoofCVImageTrackerServiceCreator.createImageTrackerService();
+					
+				try{
+					tracker.initialize(input, location, TrackingMethodology.toTT(frame.getTrackingMethodology()));
+					trackerInitialCopy.initialize(input, location, TrackingMethodology.toTT(frame.getTrackingMethodology()));
+				}	
+				catch(Exception d){
+						
+				}
+			}
+			
+			
 			drm.getInputForEachDat()[frame.getDatNo()] = input;
 
 		}
@@ -331,6 +369,10 @@ public abstract class AbstractTracker {
 			drm.setTracker(tracker);
 			
 		}	
+		
+		if(location == null){
+			System.out.println("error in restartInOppositeDirection()");
+		}
 	}
 	
 	public void setPostTrackParameters(){

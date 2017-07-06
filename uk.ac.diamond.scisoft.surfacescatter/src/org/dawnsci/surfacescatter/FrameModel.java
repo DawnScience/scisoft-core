@@ -167,11 +167,6 @@ public class FrameModel {
 			rl[u] = (double) roiLocation1[u];
 		}
 		
-		if(roiLocation1 == null){
-			System.out.println("roi set to null");
-		}
-		
-		
 		this.roiLocation = rl;
 	}
 	public FitPower getFitPower() {

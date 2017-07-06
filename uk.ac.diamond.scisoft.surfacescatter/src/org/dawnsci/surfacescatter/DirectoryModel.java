@@ -59,6 +59,7 @@ public class DirectoryModel {
 	private ArrayList<OverlapDataModel> overlapDataModels;
 	private double currentRawIntensity;
 	private String rodName;
+	private String[] doneArray;
 
 	
 	public String getRodName() {
@@ -955,6 +956,14 @@ public class DirectoryModel {
 	
 	public IDataset getSplicedCurveQ(){
 		return csdp.getSplicedCurveQ();
+	}
+
+	public String[] getDoneArray() {
+		return doneArray;
+	}
+
+	public void setDoneArray(String[] doneArray) {
+		this.doneArray = doneArray;
 	}
 	
 }

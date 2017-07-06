@@ -16,7 +16,10 @@ public class ModifiedAgnosticTrackerWithFrames1 extends AbstractTracker{
 			  seedLocation,
 			  selection);
 		
-		runTrack(trackingMarker);
+		if(super.getFrame().getRoiLocation() == null){
+			runTrack(trackingMarker);
+		}
+		
 	}
 	
 	public ModifiedAgnosticTrackerWithFrames1(DirectoryModel drm,								
@@ -29,6 +32,10 @@ public class ModifiedAgnosticTrackerWithFrames1 extends AbstractTracker{
 				   trackingMarker, 
 				   k,
 			 	   selection);
+		
+		if(super.getFrame().getRoiLocation() == null){
+			runTrack(trackingMarker);
+		}
 		
 		runTrack(trackingMarker);
 	}

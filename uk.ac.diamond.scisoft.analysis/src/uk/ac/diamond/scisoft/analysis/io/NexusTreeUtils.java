@@ -65,7 +65,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import si.uom.NonSI;
-import si.uom.SI;
 import tec.units.ri.format.SimpleUnitFormat;
 import tec.units.ri.unit.MetricPrefix;
 import tec.units.ri.unit.Units;
@@ -1663,7 +1662,7 @@ public class NexusTreeUtils {
 			m4 = new Matrix4d(m3, v3, 1);
 			break;
 		case "rotation":
-			AxisAngle4d aa = new AxisAngle4d(v3, convertIfNecessary(SI.RADIAN, units, value));
+			AxisAngle4d aa = new AxisAngle4d(v3, convertIfNecessary(Units.RADIAN, units, value));
 			m4 = new Matrix4d();
 			m4.set(aa);
 			break;

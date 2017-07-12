@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-public class OverlapDisplayObject {
+public class OverlapDisplayObjects {
 
 
 	private TableItem tb;
@@ -37,14 +37,14 @@ public class OverlapDisplayObject {
 	private OverlapDataModel odm;
 	
 	
-	public OverlapDisplayObject generateFromOdmAndTable(OverlapDataModel odm,
+	public OverlapDisplayObjects generateFromOdmAndTable(OverlapDataModel odm,
 														int i,
 														Table table){
 		
 		 this.odoNumber = i;
 		 this.odm = odm;
 		 
-		 OverlapDisplayObject odo = new OverlapDisplayObject();
+		 OverlapDisplayObjects odo = new OverlapDisplayObjects();
 		
 //		 tb = new TableItem(table, SWT.NONE);
 		 
@@ -156,8 +156,8 @@ public class OverlapDisplayObject {
 				modified = false;
 				buttonPushed =true;
 				firePropertyChange("modified", 
-						OverlapDisplayObject.this.modified, 
-						OverlapDisplayObject.this.modified = true);
+						OverlapDisplayObjects.this.modified, 
+						OverlapDisplayObjects.this.modified = true);
 			}
 			
 			@Override

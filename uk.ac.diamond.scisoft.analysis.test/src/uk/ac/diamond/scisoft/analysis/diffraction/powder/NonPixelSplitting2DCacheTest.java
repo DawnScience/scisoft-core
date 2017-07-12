@@ -98,7 +98,7 @@ public class NonPixelSplitting2DCacheTest extends AbstractPixelIntegrationTestBa
 	
 	@Test
 	public void testNonPixelSplittingAxis() {
-		
+		DiffractionCoordinateCache.getInstance().setDisabled(true);
 		IDataset data = getData();
 		if (data == null) {
 			Assert.fail("Could not load test data");
@@ -156,7 +156,7 @@ public class NonPixelSplitting2DCacheTest extends AbstractPixelIntegrationTestBa
 		info = new PixelIntegrationCache(meta, bean);
 		out = PixelIntegration.integrate(data,null,info);
 		Assert.assertEquals(300, out.get(0).getDouble(1591),0.00001);
-		
+		DiffractionCoordinateCache.getInstance().setDisabled(false);
 	}
 	
 	private double testWholeImage(IDataset data, IDataset mask, IPixelIntegrationCache info) {

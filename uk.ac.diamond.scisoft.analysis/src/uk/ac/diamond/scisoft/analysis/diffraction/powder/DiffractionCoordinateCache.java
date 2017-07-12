@@ -26,6 +26,7 @@ public class DiffractionCoordinateCache {
 	private static final Map<DiffractionCoordiateCacheKey, WeakReference<Object>> CACHE = Collections.synchronizedMap(new LinkedHashMap<>(6));
 	
 	private static final DiffractionCoordinateCache instance = new DiffractionCoordinateCache();
+	private boolean disabled = false;
 	
 	private DiffractionCoordinateCache() {
 		
@@ -36,11 +37,13 @@ public class DiffractionCoordinateCache {
 	}
 	
 	public void put(IDiffractionMetadata md, XAxis axis, boolean centre, Object value) {
+		if (disabled) return;
 		DiffractionCoordiateCacheKey key = new DiffractionCoordiateCacheKey(md, axis, centre);
 		CACHE.put(key, new WeakReference<Object>(value));
 	}
 
 	public Object get(IDiffractionMetadata md, XAxis axis, boolean centre) {
+		if (disabled) return null;
 		DiffractionCoordiateCacheKey key = new DiffractionCoordiateCacheKey(md, axis, centre);
 		WeakReference<Object> wr = CACHE.get(key);
 		return wr != null ? wr.get() : null;
@@ -123,6 +126,14 @@ public class DiffractionCoordinateCache {
 		
 		
 		
+	}
+
+	public boolean isDisabled() {
+		return disabled;
+	}
+
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
 	}
 
 }

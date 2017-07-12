@@ -85,7 +85,7 @@ public class NonPixelSplittingIntegration2DTest extends AbstractPixelIntegration
 	
 	@Test
 	public void testNonPixelSplittingAxis() {
-		
+		DiffractionCoordinateCache.getInstance().setDisabled(true);
 		IDataset data = getData();
 		if (data == null) {
 			Assert.fail("Could not load test data");
@@ -127,7 +127,7 @@ public class NonPixelSplittingIntegration2DTest extends AbstractPixelIntegration
 		npsi.setRadialRange(new double[]{100,300});
 		out = npsi.integrate(data);
 		Assert.assertEquals(300, out.get(0).getDouble(1591),0.00001);
-		
+		DiffractionCoordinateCache.getInstance().setDisabled(false);
 	}
 	
 	private double testWholeImage(IDataset data, AbstractPixelIntegration integrator) {

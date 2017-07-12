@@ -428,17 +428,18 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 				
 		// Create a mask of the illuminated atoms in the cylinder.
 		// TODO: There has to be a better way to make a mask Dataset
-		Dataset illuminationPlate = DatasetFactory.ones(xPlate);
+//		Dataset illuminationPlateOld = DatasetFactory.ones(xPlate);
 //		for (int i=0; i<xPlate.getShape()[0]; i++){
 //			for (int k=0; k<xPlate.getShape()[1]; k++) {
 ////				if (Math.abs(xPlate.getDouble(i, k)) > beamData.getBeamHeight()/2)
 //				// Elliptical beam shape 
 //				if (square(xPlate.getDouble(i, k)/(beamData.getBeamHeight()/2)) + 
 //						square(yPlate.getDouble(i, k)/(beamData.getBeamWidth()/2)) > 1)
-//				illuminationPlate.set(0.0, i, k);
+//				illuminationPlateOld.set(0.0, i, k);
 //			}
 //		}
 
+		Dataset illuminationPlate= DatasetFactory.ones(xPlate);
 		// Illuminate the volume if the beam passes through the element (will overestimate the illuminated volume)
 		IndexIterator iter = xPlate.getIterator();
 		double dR_2 = dR/2, h_2 = beamData.getBeamHeight()/2;
@@ -447,14 +448,14 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 					cosXi = Math.cos(xiCylinder.getElementDoubleAbs(iter.index));
 			double rInner = rCylinder.getElementDoubleAbs(iter.index) - dR_2,
 					rOuter = rCylinder.getElementDoubleAbs(iter.index) + dR_2;
-			double y0 = yPlate.getElementDoubleAbs(iter.index);
-			double y1 = y0 + dR_2*sinXi + dXi/2*rOuter*cosXi,
-					y2 = y0 - dR_2*sinXi + dXi/2*rInner*cosXi,
-					y3 = y0 - dR_2*sinXi - dXi/2*rInner*cosXi,
-					y4 = y0 + dR_2*sinXi - dXi/2*rOuter*cosXi;
+			double x0 = xPlate.getElementDoubleAbs(iter.index);
+			double x1 = x0 + dR_2*sinXi + dXi/2*rOuter*cosXi,
+					x2 = x0 - dR_2*sinXi + dXi/2*rInner*cosXi,
+					x3 = x0 - dR_2*sinXi - dXi/2*rInner*cosXi,
+					x4 = x0 + dR_2*sinXi - dXi/2*rOuter*cosXi;
 			
-			if ( ( (y1 > h_2) && (y2 > h_2) && (y3 > h_2) && (y4 > h_2) ) ||
-					( (y1 < -h_2) && (y2 < -h_2) && (y3 < -h_2) && (y4 < -h_2) ) )
+			if ( ( (x1 > h_2) && (x2 > h_2) && (x3 > h_2) && (x4 > h_2) ) ||
+					( (x1 < -h_2) && (x2 < -h_2) && (x3 < -h_2) && (x4 < -h_2) ) )
 				illuminationPlate.setObjectAbs(iter.index, 0.0);
 		}
 		
@@ -468,6 +469,8 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 		while(iterGrid.hasNext())
 			totalIlluminatedVolume += illuminatedVolume.getElementDoubleAbs(iterGrid.index);
 
+//		System.err.println("New: "+ illuminatedVolume.sum() + ", old: "  + illuminatedVolumeOld.sum() );
+		
 		Dataset volumeElement = Maths.multiply(dR*dXi, rCylinder);
 		double totalVolume = (double) volumeElement.sum();
 

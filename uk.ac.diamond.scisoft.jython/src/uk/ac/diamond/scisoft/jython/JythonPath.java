@@ -59,7 +59,6 @@ public class JythonPath {
 		"com.googlecode.efficient-java-matrix-library.core",
 		"org.ddogleg",
 		"org.apache.commons.lang",
-		"org.eclipse.january",
 		"org.eclipse.dawnsci.analysis", // Includes api, dataset, tree, etc
 		"org.eclipse.dawnsci.nexus", // required for loading to work in client started from IDE
 		"org.eclipse.dawnsci.plotting.api",
@@ -101,7 +100,6 @@ public class JythonPath {
 	 * Plugins we want
 	 */
 	private final static String[] pluginKeys = {
-		"org.eclipse.january",
 		"org.eclipse.dawnsci.hdf5", // required for loading to work in client started from IDE
 		"org.eclipse.dawnsci.analysis", // includes api, dataset, tree, etc
 		"org.eclipse.dawnsci.nexus", // required for loading to work in client started from IDE
@@ -111,12 +109,14 @@ public class JythonPath {
 		"uk.ac.diamond.scisoft.python",
 		"uk.ac.diamond.CBFlib",
 		"uk.ac.gda.common",
-		"org.dawnsci.boofcv", //required for boofcv services
+		"org.dawnsci.boofcv", // required for boofcv services
 		"org.ddogleg",
 		"hdf.hdf5lib",
 		"hdf.object", // used in dawnsci.hdf.HDF5Utils as well as older Hierarchical stuff
 		"org.dawnsci.persistence" // Required for I11 LDE script
 	};
+
+	private final static String JANUARY_PREFIX = "org.eclipse.january";
 
 	/**
 	 * Provides location of plugin files; behaviour depends whether we're running in eclipse
@@ -129,14 +129,14 @@ public class JythonPath {
 			if (isRunningInEclipse) {
 				scisoftParent = scisoftParent.getParentFile();
 			}
-			//Need to include a logging statement
+			// Need to include a logging statement
 			return scisoftParent;
 		} catch (Exception e) {
 			logger.error("Could not find Scisoft Python plugin", e);
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Gets the interpreter directory using the bundle location
 	 * @return directory path 
@@ -163,7 +163,7 @@ public class JythonPath {
 		logger.info("Jython bundle found at: {}", jyBundleLoc);
 		return jyBundleLoc;
 	}
-	
+
 	/**
 	 * Returns a set containing all of the plugins/jars found in the given 
 	 * directories which are in the requiredJars, pluginKeys, extraPlugins and not
@@ -175,7 +175,7 @@ public class JythonPath {
 	public static final Set<String> assembleJyPaths(File pluginsDir, boolean isRunningInEclipse) {
 		return assembleJyPaths(pluginsDir, null, isRunningInEclipse);
 	}
-	
+
 	/**
 	 * Returns a set containing all of the plugins/jars found in the given 
 	 * directories which are in the requiredJars, pluginKeys, extraPlugins and not
@@ -189,7 +189,7 @@ public class JythonPath {
 		
 		final Set<String> jyPaths = new HashSet<String>();
 		
-		//Find third party jar files & add them all
+		// Find third party jar files & add them all
 		final List<File> thirdPartyJars = findJars(pluginsDir, extras);
 		for (File jar : thirdPartyJars) {
 			if (jyPaths.add(jar.getAbsolutePath())) {
@@ -197,12 +197,12 @@ public class JythonPath {
 			}
 		}
 		
-		//Find all the plugin directories
+		// Find all the plugin directories
 		List<File> allPluginDirs = findDirs(pluginsDir, extras, isRunningInEclipse);
 		
-		//Find other plugin directories. Where searched depends on if running in eclipse
+		// Find other plugin directories. Where searched depends on if running in eclipse
 		if (isRunningInEclipse) {
-			//Locate wsdir (w/o GIT_SUFFIX)
+			// Locate wsdir (w/o GIT_SUFFIX)
 			File wsDir = pluginsDir;
 			if (!new File(wsDir, "tp").isDirectory()) {
 				String ws = wsDir.getName();
@@ -211,12 +211,13 @@ public class JythonPath {
 					wsDir = new File(wsDir.getParentFile(), ws.substring(0, i));
 				}
 			}
-			//Add dirs inside the wsDir/plugins directory
+			// Add dirs inside the wsDir/plugins directory
+			// TODO remove now all projects in git?
 			final File wsPluginsDir = new File(wsDir, "plugins");
 			if (wsPluginsDir.isDirectory()) {
 				allPluginDirs.addAll(findDirs(wsPluginsDir, extras, isRunningInEclipse));
 			}
-			//Add jars inside the wsdir/plugins directory
+			// Add jars inside the wsDir/tp/plugins directory
 			wsDir = new File(wsDir, "tp");
 			if (wsDir.isDirectory()) {
 				wsDir = new File(wsDir, "plugins");
@@ -227,8 +228,8 @@ public class JythonPath {
 					}
 				}
 			}
-			//Add all plugin directories & jars contained therein
-			for (File dir: allPluginDirs){
+			// Add all plugin directories & jars contained therein
+			for (File dir: allPluginDirs) {
 				File binDir = new File(dir,"bin");
 				if (binDir.isDirectory()) {
 					String binDirPath = binDir.getAbsolutePath();
@@ -243,9 +244,30 @@ public class JythonPath {
 					}
 				}
 			}
+
+			// add January
+			File janDir = findJanuaryDir(pluginsDir);
+			if (janDir != null) {
+				File binDir = new File(janDir, "bin");
+				if (binDir.isDirectory()) {
+					String binDirPath = binDir.getAbsolutePath();
+					if (jyPaths.add(binDirPath)) {
+						logger.debug("Adding January directory to jython path: {}", binDirPath);
+					}
+				}
+			} else { // find jar in tp
+				if (wsDir.getName().equals("plugins")) {
+					List<File> jJars = findJanuaryJars(wsDir);
+					for (File jar : jJars) {
+						if (jyPaths.add(jar.getAbsolutePath())) {
+							logger.debug("Adding January jar file to jython path: {} ", jar.getAbsolutePath());
+						}
+					}
+				}
+			}
 		}
 		else {
-			//Only add directories to pyPaths
+			// Only add directories to pyPaths
 			for (File dir: allPluginDirs) {
 				String dirPath = dir.getAbsolutePath();
 				if (jyPaths.add(dirPath)) {
@@ -280,9 +302,33 @@ public class JythonPath {
 		}
 		return jarFiles;
 	}
-	
+
 	/**
-	 * Method returns path to plugin directories (behaviour depends on whether in eclipse
+	 * Search through a given directory to locate all jar files provided 
+	 * they begin with {@link JythonPath#JANUARY_PREFIX}
+	 * @param directory location searched for jar files 
+	 * @return List of jar files which will be added to the path or null
+	 */
+	private static final List<File> findJanuaryJars(File directory) {
+		List<File> jarFiles = null;
+
+		if (directory.isDirectory()) {
+			for (File file : directory.listFiles()) {
+				final String name = file.getName();
+				//If the file is a jar, then add it
+				if (name.startsWith(JANUARY_PREFIX) && name.endsWith(".jar")) {
+					if (jarFiles == null) {
+						jarFiles = new ArrayList<File>();
+					}
+					jarFiles.add(file);
+				}
+			}
+		}
+		return jarFiles;
+	}
+
+	/**
+	 * Method returns path to plugin directories (behaviour depends on whether in eclipse)
 	 * @param directory Search location
 	 * @param isRunningInEclipse Boolean, true if running in eclipse
 	 * @return list of directories
@@ -291,7 +337,7 @@ public class JythonPath {
 		final List<File> plugins = new ArrayList<File>();
 		
 		if (isRunningInEclipse) {
-			//Look in git repos for plugin parents in given lists
+			// Look in git repos for plugin parents in given lists
 			for (File file : directory.listFiles()) {
 				if (file.isDirectory()) {
 					String fileName = file.getName();
@@ -302,7 +348,7 @@ public class JythonPath {
 				}
 			}
 		} else {
-			//Look in directory for plugin names in given lists
+			// Look in directory for plugin names in given lists
 			for (File file : directory.listFiles()) {
 				if (file.isDirectory()) {
 					if (isRequired(file, pluginKeys, extras)) {
@@ -312,10 +358,34 @@ public class JythonPath {
 				}
 			}
 		}
-		//Return all the directories we found
+		// Return all the directories we found
 		return plugins;
 	}
-	
+
+	/**
+	 * Method returns path to the January plugin directory
+	 * @return directory or null
+	 */
+	private static File findJanuaryDir(File directory) {
+		// Look in git repos for plugin parents in given lists
+		for (File file : directory.listFiles()) {
+			if (file.isDirectory()) {
+				String fileName = file.getName();
+				if (fileName.endsWith(GIT_REPO_ENDING)) {
+					File d = findJanuaryDir(file);
+					if (d != null) {
+						return d;
+					}
+				}
+				if (fileName.equals(JANUARY_PREFIX)) {
+					return file;
+				}
+			}
+		}
+
+		return null;
+	}
+
 	/**
 	 * Check whether a file is in a given list
 	 * @param file Filename to search for
@@ -344,7 +414,7 @@ public class JythonPath {
 		}
 		return false;
 	}
-		
+
 	/**
 	 * @return name of Jython executable
 	 */

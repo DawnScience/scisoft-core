@@ -261,14 +261,14 @@ public class DirectoryModel {
 			
 			for(int m = 0; m<datFilepaths.length ; m++){
 				
-				ArrayList<double[]> q = null;
+				ArrayList<double[]> q = new ArrayList<double[]>();
 				locationList.add(q);
-//				
-//				int y = this.getNoOfImagesInDatFile(m);
-//				
-//				for (int i = 0; i < y; i++) {		
-//					locationList.get(m).add(new double[]{0,0,0,0,0,0,0,0});
-//				}
+				
+				int y = this.getNoOfImagesInDatFile(m);
+				
+				for (int i = 0; i < y; i++) {		
+					locationList.get(m).add(new double[]{0,0,0,0,0,0,0,0});
+				}
 //				
 			}
 		}

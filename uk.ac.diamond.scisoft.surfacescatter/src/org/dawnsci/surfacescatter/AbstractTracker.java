@@ -377,21 +377,23 @@ public abstract class AbstractTracker {
 	
 	public void setPostTrackParameters(){
 		
-		int[] localPt = new int[] {(int) (location[0]), (int) (location[1])};
-		int[] localLen = drm.getInitialLenPt()[0];
-		int[][] localLenPt = new int[][]{localLen,localPt};
-		
-		double[] localLocation = LocationLenPtConverterUtils.lenPtToLocationConverter(localLenPt);
-		 
-		drm.addLocationList(frame.getDatNo(),
-							drm.getNoOfImagesInDatFile(frame.getDatNo()), 
-							k, 
-							localLocation);
-				
-		drm.getLenPtForEachDat()[frame.getDatNo()] = localLenPt;
-		drm.getInputForEachDat()[frame.getDatNo()] =input;
-		
-		frame.setRoiLocation(localLocation);
+		if(frame.getRoiLocation() == null){
+			int[] localPt = new int[] {(int) (location[0]), (int) (location[1])};
+			int[] localLen = drm.getInitialLenPt()[0];
+			int[][] localLenPt = new int[][]{localLen,localPt};
+			
+			double[] localLocation = LocationLenPtConverterUtils.lenPtToLocationConverter(localLenPt);
+			 
+			drm.addLocationList(frame.getDatNo(),
+								drm.getNoOfImagesInDatFile(frame.getDatNo()), 
+								k, 
+								localLocation);
+					
+			drm.getLenPtForEachDat()[frame.getDatNo()] = localLenPt;
+			drm.getInputForEachDat()[frame.getDatNo()] =input;
+			
+			frame.setRoiLocation(localLocation);
+		}
 	}
 	
 	public void initialiseRestart(){

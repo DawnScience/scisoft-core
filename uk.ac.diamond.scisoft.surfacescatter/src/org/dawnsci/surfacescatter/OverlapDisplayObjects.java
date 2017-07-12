@@ -3,21 +3,16 @@ package org.dawnsci.surfacescatter;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 public class OverlapDisplayObjects {
-
 
 	private TableItem tb;
 	private String label;
@@ -33,8 +28,6 @@ public class OverlapDisplayObjects {
 	private boolean modified = false;
 	private boolean buttonPushed = false;
 	private Button resetOverlap;
-	private Button go;
-	private OverlapDataModel odm;
 	
 	
 	public OverlapDisplayObjects generateFromOdmAndTable(OverlapDataModel odm,
@@ -42,103 +35,16 @@ public class OverlapDisplayObjects {
 														Table table){
 		
 		 this.odoNumber = i;
-		 this.odm = odm;
 		 
 		 OverlapDisplayObjects odo = new OverlapDisplayObjects();
-		
-//		 tb = new TableItem(table, SWT.NONE);
-		 
-//		 TableEditor editorLabel = new TableEditor(table);
-		 
-//		 label = new Label(table, SWT.BORDER);
 		 
 		 label = "Overlap: " + i;
-//		 
-//		 editorLabel.grabHorizontal = true;
-//	     editorLabel.setEditor(label, tb, 0);
-//		 
-//		 TableEditor editorTextCorrected = new TableEditor(table);
-//		 textCorrected = new Text(table, SWT.NONE);
-//		 
+	 
 		 textCorrectedContent = (odm.getAttenuationFactor());
-//		 
-//	     textCorrected.setText(textCorrectedContent);
-//	     editorTextCorrected.grabHorizontal = true;
-//	     editorTextCorrected.setEditor(textCorrected, tb, 1);
-//		
-//	     TableEditor editorTextRaw = new TableEditor(table);
-//		 textRaw = new Text(table, SWT.NONE);
-//		 
+	 
 		 textRawContent = (odm.getAttenuationFactorRaw());
-//		 
-//	     textRaw.setText(textRawContent);
-//	     editorTextRaw.grabHorizontal = true;
-//	     editorTextRaw.setEditor(textRaw, tb, 2);
-//		
-//	     TableEditor editorTextFhkl = new TableEditor(table);
-//		 textFhkl = new Text(table, SWT.NONE);
-//		 
+		 
 		 textFhklContent = (odm.getAttenuationFactorFhkl());
-//		 
-//	     textFhkl.setText(textFhklContent);
-//	     editorTextFhkl.grabHorizontal = true;
-//	     editorTextFhkl.setEditor(textFhkl, tb, 3);
-		
-	     
-//	     textCorrected.addModifyListener(new ModifyListener() {
-//			
-//			@Override
-//			public void modifyText(ModifyEvent e) {
-//				modified = true;
-//					
-//			}
-//		});
-//	     
-//	     
-//	    textRaw.addModifyListener(new ModifyListener() {
-//				
-//				@Override
-//				public void modifyText(ModifyEvent e) {
-//					modified = true;
-//	
-//				}
-//		});
-//	    
-//	    textFhkl.addModifyListener(new ModifyListener() {
-//			
-//			@Override
-//			public void modifyText(ModifyEvent e) {
-//				modified = true;
-//							
-//			}
-//		});
-//	    
-//	    TableEditor editorResetButton = new TableEditor(table);
-//	    resetOverlap = new Button(table, SWT.PUSH);
-//		 
-//	    resetOverlap.setText("Reset Overlap");
-//		
-//	    editorResetButton.grabHorizontal = true;
-//	    editorResetButton.setEditor(resetOverlap, tb, 4);
-//		  
-//	    resetOverlap.addSelectionListener(new SelectionListener() {
-//			
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				
-//				modified = false;
-//				buttonPushed =true;
-//				firePropertyChange("modified", 
-//						OverlapDisplayObject.this.modified, 
-//						OverlapDisplayObject.this.modified = true);
-//			}
-//			
-//			@Override
-//			public void widgetDefaultSelected(SelectionEvent e) {
-//				
-//			}
-//		});
-//	    
 
 	    
 		return odo;
@@ -180,8 +86,6 @@ public class OverlapDisplayObjects {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				modified = true;
-				
-				String test = textCorrected.getText();
 				textCorrectedContent = Double.valueOf(textCorrected.getText());
 				
 			}
@@ -340,23 +244,6 @@ public class OverlapDisplayObjects {
 
 	public void setModified(boolean modified) {
 		this.modified = modified;
-	}
-	
-	private void modifiedText(){
-		
-		oAo = new OverlapAttenuationObject();
-		oAo.setOdoNumber(odoNumber);
-		
-		double r =  getTextCorrectedContentAsDoubleForUpdating();
-		double s =  getTextRawContentAsDoubleForUpdating();
-		double t =  getTextFhklContentAsDoubleForUpdating();
-		
-		oAo.setAttenuationFactorCorrected(r);
-		oAo.setAttenuationFactorRaw(s);
-		oAo.setAttenuationFactorFhkl(t);
-		
-		oAo.setModified(true);
-		
 	}
 
 	public Button getResetOverlap() {

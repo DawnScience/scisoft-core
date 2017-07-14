@@ -74,6 +74,7 @@ public class XPDFCoordinates {
 		this.gamma = (inCoords.gamma != null) ? inCoords.gamma.copy(DoubleDataset.class) : null;
 		this.delta = (inCoords.delta != null) ? inCoords.delta.copy(DoubleDataset.class) : null;
 		this.q = (inCoords.q != null) ? inCoords.q.copy(DoubleDataset.class) : null;
+		this.dAngle = (inCoords.dAngle != null) ? inCoords.dAngle.clone() : null;
 		this.x = (inCoords.x != null) ? inCoords.x.copy(DoubleDataset.class) : null;
 		this.isAngleAuthorative = inCoords.isAngleAuthorative;
 		this.sinTwoTheta = null;

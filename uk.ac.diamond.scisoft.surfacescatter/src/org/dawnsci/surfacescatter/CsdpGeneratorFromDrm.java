@@ -22,6 +22,36 @@ public class CsdpGeneratorFromDrm {
 		
 		csdp.setFilepaths(drm.getDatFilepaths());
 		
+		ArrayList<ArrayList<Boolean>> goodPointLists = new ArrayList<>();
+		
+		for(int i=0; i< drm.getDatFilepaths().length; i++){
+			goodPointLists.add(new ArrayList<>());
+			
+			int g = drm.getDmxList().get(i).size();
+			
+			for(int j =0; j<g ;j++){
+				goodPointLists.get(i).add(true);
+			}
+		}
+		
+		for(FrameModel fm : drm.getFms()){
+			
+			int datNo = fm.getDatNo();
+			int noInDatFile = fm.getNoInOriginalDat();
+			boolean goodPoint = fm.isGoodPoint();
+			
+			goodPointLists.get(datNo).set(noInDatFile, goodPoint);
+			
+		}
+		
+		IDataset[] goodPointDatArray = new IDataset[drm.getFilepathsSortedArray().length];
+		
+		for(int i=0; i< drm.getDatFilepaths().length; i++){
+			goodPointDatArray[i] =  DatasetFactory.createFromList(goodPointLists.get(i)); 
+		}
+		
+		csdp.setGoodPointIDataset(goodPointDatArray);
+		
 		IDataset[] xIDataset = iDatasetArrayGenerator(noOfDats,
 													  drm.getDmxList());
 		
@@ -29,6 +59,8 @@ public class CsdpGeneratorFromDrm {
 		
 		IDataset[] yIDataset = iDatasetArrayGenerator(noOfDats,
 				  									  ocdp.getyListForEachDat());
+		
+
 
 		csdp.setyIDataset(yIDataset);
 

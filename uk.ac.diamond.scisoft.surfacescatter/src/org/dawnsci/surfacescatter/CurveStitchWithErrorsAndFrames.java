@@ -104,13 +104,18 @@ public class CurveStitchWithErrorsAndFrames {
 			ArrayList<Integer> overlapHigher = new ArrayList<Integer>();
 				
 			for(int l=0; l<xArrayCorrected[k].getSize() ;l++){
-				if (xArrayCorrected[k].getDouble(l)>=(maxMinArray[k+1][1] - 0.001*maxMinArray[k+1][1])){
+				if ((xArrayCorrected[k].getDouble(l)>=(maxMinArray[k+1][1] - 0.001*maxMinArray[k+1][1]))
+						&& csdp.getGoodPointIDataset()[k].getBoolean(l)){
 					overlapLower.add(l);
+				}
+				else if(!csdp.getGoodPointIDataset()[k].getBoolean(l)) {
+					System.out.println("false point: "+ "Dat: " + k +"  local frame no:  " + l);
 				}
 			}
 				
 			for(int m=0; m<xArrayCorrected[k+1].getSize();m++){
-				if (xArrayCorrected[k+1].getDouble(m)<=(maxMinArray[k][0] + 0.001 * maxMinArray[k][0])){
+				if (xArrayCorrected[k+1].getDouble(m)<=(maxMinArray[k][0] + 0.001 * maxMinArray[k][0])
+						&& csdp.getGoodPointIDataset()[k+1].getBoolean(m)){
 					overlapHigher.add(m);
 				}
 			}

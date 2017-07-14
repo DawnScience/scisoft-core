@@ -11,6 +11,11 @@ import org.eclipse.january.dataset.ILazyDataset;
 
 public class FrameModel {
 
+	//is this considered a "good"frame
+	
+	
+	private boolean goodPoint =true;
+	
 	//reciprocal space location
 	
 	private double h;
@@ -314,5 +319,11 @@ public class FrameModel {
 	}
 	public void setQdcd(double qdcd) {
 		this.qdcd = qdcd;
+	}
+	public boolean isGoodPoint() {
+		return goodPoint;
+	}
+	public void setGoodPoint(boolean goodPoint) {
+		this.goodPoint = goodPoint;
 	}
 }

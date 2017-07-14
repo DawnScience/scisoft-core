@@ -16,6 +16,7 @@ public class CurveStitchDataPackage {
 	private String name;
 	
 	private IDataset[] xIDataset;
+	private IDataset[] goodPointIDataset;
 	private IDataset[] yIDataset;
 	private IDataset[] yIDatasetError;
 	private IDataset[] yIDatasetFhkl;
@@ -156,6 +157,12 @@ public class CurveStitchDataPackage {
 	}
 	public void setRodName(String rodName) {
 		this.rodName = rodName;
+	}
+	public IDataset[] getGoodPointIDataset() {
+		return goodPointIDataset;
+	}
+	public void setGoodPointIDataset(IDataset[] goodPointIDataset) {
+		this.goodPointIDataset = goodPointIDataset;
 	}
 	
 }

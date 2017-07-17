@@ -152,8 +152,36 @@ public class CinaderOrientationOperation extends AbstractOperation<CinaderOrient
 							angle -= (1.5 * Math.PI);
 						} else if (angle >= Math.PI) {
 							angle -= Math.PI;
-						} else if (angle >= (Math.PI / 2)) {
-							angle -= (Math.PI / 2);
+						} else if (angle >= (0.5 * Math.PI)) {
+							angle -= (0.5 * Math.PI);
+						}
+						break;
+				case 3:	if (angle >= ((5 / 3) * Math.PI)) {
+							angle -= ((5 / 3) * Math.PI);
+						} else if (angle >= ((4 / 3) * Math.PI)) {
+							angle -= ((4 / 3) * Math.PI);
+						} else if (angle >= Math.PI) {
+							angle -= Math.PI;
+						} else if (angle >= ((2 / 3) * Math.PI)) {
+							angle -= ((2 / 3) * Math.PI);
+						} else if (angle >= ((1 / 3) * Math.PI)) {
+							angle -= ((1 / 3) * Math.PI);
+						}
+						break;
+				case 4:	if (angle >= (1.75 * Math.PI)) {
+							angle -= (1.75 * Math.PI);
+						} else if (angle >= (1.5 * Math.PI)) {
+							angle -= (1.5 * Math.PI);
+						} else if (angle >= (1.25 * Math.PI)) {
+							angle -= (1.25 * Math.PI);
+						} else if (angle >= Math.PI) {
+							angle -= Math.PI;
+						} else if (angle >= (0.75 * Math.PI)) {
+							angle -= (0.75 * Math.PI);
+						} else if (angle >= (0.5 * Math.PI)) {
+							angle -= (0.5 * Math.PI);
+						} else if (angle >= (0.25 * Math.PI)) {
+							angle -= (0.25 * Math.PI);
 						}
 						break;
 			}

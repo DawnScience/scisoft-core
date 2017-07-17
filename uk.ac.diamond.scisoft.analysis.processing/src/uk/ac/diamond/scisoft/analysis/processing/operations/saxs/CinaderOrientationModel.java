@@ -39,6 +39,8 @@ public class CinaderOrientationModel extends AbstractOperationModel {
 			switch (this.foldsOfSymmetry) {
 				case 1:		return String.format("Two fold");
 				case 2:		return String.format("Four fold");
+				case 3:		return String.format("Six fold");
+				case 4:		return String.format("Eight fold");
 				default:	return String.format("Error!");
 			}
 		}

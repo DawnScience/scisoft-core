@@ -143,7 +143,7 @@ public class AnalysisRpcClient implements IAnalysisRpcClient {
 	@Override
 	public void waitUntilAlive() throws AnalysisRpcException {
 		String timeoutSystemProp = System.getProperty(
-				"uk.ac.diamond.scisoft.analysis.xmlrpc.client.timeout", "10000");
+				"uk.ac.diamond.scisoft.analysis.xmlrpc.client.timeout", "15000");
 		final long ms = Integer.parseInt(timeoutSystemProp);
 		waitUntilAlive(ms);
 	}

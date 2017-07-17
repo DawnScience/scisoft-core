@@ -862,6 +862,15 @@
             name="SAXS">
       </category>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.MultipleDetectorScalerOperation"
+            description="Use the inverse-power law to scale the intensity recorded from an uncalibrated detector against a calibrated detector where sample-to-detector distance is the only variable"
+            icon="icons/unchanged.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.MultipleDetectorScalerOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.MultipleDetectorScalerModel"
+            name="Multiple Detector Intensity Scaling"
+            visible="true">
+      </operation> 
+      <operation
             category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.AbsoluteIntensityCalibrationOperation"
             description="Calculate a scaling factor between a standard and a scanned calibrant"

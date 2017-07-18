@@ -79,8 +79,31 @@ public class DiffractionEllipseFitOperation extends AbstractOperation<Diffractio
 		
 		Dataset a = DatasetFactory.createFromObject(new double[]{ang});
 		a.setName("angle");
+		
+		double semimaj = semi[0];
+		double semimin = semi[1];
+		
+		if (semimaj < semimin) {
+			double tmp = semimaj;
+			semimaj = semimin;
+			semimin = tmp;
+		}
 
-		return new OperationData(input, new Serializable[]{r,ax,po,a});
+		Dataset sma = DatasetFactory.createFromObject(new double[]{semimaj});
+		sma.setName("semi-major");
+		
+		Dataset smi = DatasetFactory.createFromObject(new double[]{semimin});
+		smi.setName("semi-minor");
+		
+		Dataset ec = DatasetFactory.createFromObject(new double[]{Math.sqrt(1-(Math.pow(semimin, 2)/Math.pow(semimaj, 2)))});
+		ec.setName("eccentricity");
+		
+		Dataset x = DatasetFactory.createFromObject(new double[]{point[0]});
+		x.setName("centre-x");
+		Dataset y = DatasetFactory.createFromObject(new double[]{point[1]});
+		y.setName("centre-y");
+		
+		return new OperationData(input, new Serializable[]{r,ax,po,a,sma,smi,ec,x,y});
 	}
 	
 	@Override

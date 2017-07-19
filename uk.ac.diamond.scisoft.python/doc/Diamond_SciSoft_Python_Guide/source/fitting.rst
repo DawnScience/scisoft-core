@@ -34,6 +34,15 @@ fitting functions defined in ``fit.function`` listed in the table below:
 | pvoigt     | pseudo-Voigt profile                | position, Lorentzian FWHM,        |
 |            |                                     | area, Gaussian FWHM, mixing       |
 +------------+-------------------------------------+-----------------------------------+
+| voigt      | Voigt profile                       | position, Lorentzian FWHM,        |
+|            |                                     | area, Gaussian FWHM               |
++------------+-------------------------------------+-----------------------------------+
+| fano       | Fano resonance profile              | resonance position, width,        |
+|            |                                     | cross-section, Fano parameter     |
++------------+-------------------------------------+-----------------------------------+
+| fano_gaussian | modified Fano-Gaussian resonance profile | position, Lorentzian FWHM, |
+|            |                                     | area, Gaussian FWHM, Fano parameter |
++------------+-------------------------------------+-----------------------------------+
 | pearson7   | Pearson VII profile                 | position, FWHM, area, power       |
 +------------+-------------------------------------+-----------------------------------+
 

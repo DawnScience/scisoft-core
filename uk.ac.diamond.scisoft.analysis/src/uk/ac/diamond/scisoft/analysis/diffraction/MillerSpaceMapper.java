@@ -34,6 +34,7 @@ import org.eclipse.january.dataset.ILazyWriteableDataset;
 import org.eclipse.january.dataset.LazyWriteableDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.PositionIterator;
+import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.SliceND;
 
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
@@ -404,8 +405,8 @@ public class MillerSpaceMapper {
 			Arrays.fill(sMax, -1);
 		}
 
-		DoubleDataset map = (DoubleDataset) DatasetFactory.zeros(vShape, Dataset.FLOAT64);
-		DoubleDataset weight = (DoubleDataset) DatasetFactory.zeros(vShape, Dataset.FLOAT64);
+		DoubleDataset map = DatasetFactory.zeros(vShape);
+		DoubleDataset weight = DatasetFactory.zeros(vShape);
 
 		try {
 			mapToASpace(mapQ, tree, iters, map, weight);
@@ -563,7 +564,7 @@ public class MillerSpaceMapper {
 		}
 	}
 
-	private void calcVolume(double[] vBeg, double[] vEnd, QSpace qspace, MillerSpace mspace) {
+	private static void calcVolume(double[] vBeg, double[] vEnd, QSpace qspace, MillerSpace mspace) {
 		Vector3d q = new Vector3d();
 		Vector3d m = new Vector3d();
 		DetectorProperties dp = qspace.getDetectorProperties();
@@ -634,6 +635,63 @@ public class MillerSpaceMapper {
 			mspace.h(q, null, m);
 			minMax(vBeg, vEnd, m);
 		}
+	}
+
+	/**
+	 * Print where corners of all images are in Miller (aka HKL) space
+	 * @param endsOnly if true, only print from first and last images 
+	 * @throws ScanFileHolderException
+	 */
+	public void printMillerSpaceCorners(final boolean endsOnly) throws ScanFileHolderException {
+		processBean();
+		NexusHDF5Loader l = new NexusHDF5Loader();
+		
+		l.setFile(bean.getInputs()[0]);
+		Tree tree = l.loadFile().getTree();
+		PositionIterator[] iters = getPositionIterators(tree);
+	
+		PositionIterator diter = iters[0];
+		PositionIterator iter = iters[1];
+		int[] dpos = diter.getPos();
+
+		int end = ShapeUtils.calcSize(diter.getShape()) - 1;
+		int n = 0;
+		while (iter.hasNext() && diter.hasNext()) {
+			if (!endsOnly || n == 0 || n == end) {
+				System.out.println("Image " + n);
+				DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
+				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, dpos);
+				DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
+				QSpace qspace = new QSpace(dp, env);
+				MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
+				printCorners(qspace, mspace);
+			}
+			n++;
+		}
+	}
+
+	private static void printCorners(QSpace qspace, MillerSpace mspace) {
+		Vector3d q = new Vector3d();
+		Vector3d m = new Vector3d();
+		DetectorProperties dp = qspace.getDetectorProperties();
+		int x = dp.getPx();
+		int y = dp.getPy();
+
+		qspace.qFromPixelPosition(0, 0, q);
+		mspace.h(q, null, m);
+		System.out.println("0,0: " + m.toString());
+
+		qspace.qFromPixelPosition(x, 0, q);
+		mspace.h(q, null, m);
+		System.out.println("x,0: " + m.toString());
+
+		qspace.qFromPixelPosition(0, y, q);
+		mspace.h(q, null, m);
+		System.out.println("0,y: " + m.toString());
+
+		qspace.qFromPixelPosition(x, y, q);
+		mspace.h(q, null, m);
+		System.out.println("x,y: " + m.toString());
 	}
 
 	private void mapImages(boolean mapQ, Tree tree, Dataset trans, ILazyDataset images, PositionIterator[] iters,
@@ -848,7 +906,7 @@ public class MillerSpaceMapper {
 
 			// estimate size of flattened list from 
 			if (list == null || list.getSize() != 4*image.getSize()) {
-				list = (DoubleDataset) DatasetFactory.zeros(new int[] {image.getSize(), 4}, Dataset.FLOAT64);
+				list = DatasetFactory.zeros(image.getSize(), 4);
 			}
 			int length = doImage(s, qspace, mspace, image, list);
 			appendDataset(lazy, list, length);
@@ -1035,8 +1093,8 @@ public class MillerSpaceMapper {
 		String volPath = mapQ ? Q_VOLUME_DATA_PATH : MILLER_VOLUME_DATA_PATH;
 
 		try {
-			DoubleDataset map = (DoubleDataset) DatasetFactory.zeros(vShape, Dataset.FLOAT64);
-			DoubleDataset weight = (DoubleDataset) DatasetFactory.zeros(vShape, Dataset.FLOAT64);
+			DoubleDataset map = DatasetFactory.zeros(vShape);
+			DoubleDataset weight = DatasetFactory.zeros(vShape);
 
 			for (int i = 0; i < trees.length; i++) {
 				Tree tree = trees[i];
@@ -1090,8 +1148,8 @@ public class MillerSpaceMapper {
 					break;
 				}
 				try {
-					map = (DoubleDataset) DatasetFactory.zeros(tShape, Dataset.FLOAT64);
-					weight = (DoubleDataset) DatasetFactory.zeros(tShape, Dataset.FLOAT64);
+					map = DatasetFactory.zeros(tShape);
+					weight = DatasetFactory.zeros(tShape);
 					break;
 				} catch (IllegalArgumentException | OutOfMemoryError ex) {
 					map = null;
@@ -1132,7 +1190,7 @@ public class MillerSpaceMapper {
 			if (mStop != null) {
 				mStop[i] = mend;
 			}
-			a[i] = DatasetFactory.createLinearSpace(mbeg, mend - mDelta[i], mShape[i], Dataset.FLOAT64);
+			a[i] = DatasetFactory.createLinearSpace(DoubleDataset.class, mbeg, mend - mDelta[i], mShape[i]);
 			a[i].setName(names[i]);
 			System.out.print("Axis " + i + ": " + mbeg);
 			if (mShape[i] > 1) {
@@ -1472,7 +1530,7 @@ public class MillerSpaceMapper {
 	 * @param qDelta sides of voxels in q space
 	 * @throws ScanFileHolderException
 	 */
-	public static void processBothVolumesWithAutoBox(String[] inputs, String output, String splitter, double p, double scale, boolean reduceToNonZero, double[] mDelta, double[] qDelta) throws ScanFileHolderException {
+	public static void processBothVolumesWithAutoBox(String[] inputs, String output, String splitter, double p, double scale, boolean reduceToNonZero, double[] mDelta, double... qDelta) throws ScanFileHolderException {
 		setBeanWithAutoBox(I16MapperBean, inputs, output, splitter, p, scale, reduceToNonZero, mDelta, qDelta);
 		MillerSpaceMapper mapper = new MillerSpaceMapper(I16MapperBean);
 		mapper.mapToVolumeFile();
@@ -1489,6 +1547,18 @@ public class MillerSpaceMapper {
 		setBeanWithList(I16MapperBean, inputs, output, scale);
 		MillerSpaceMapper mapper = new MillerSpaceMapper(I16MapperBean);
 		mapper.mapToVolumeFile();
+	}
+
+	/**
+	 * Print where corners of all images are in Miller (aka HKL) space
+	 * @param input Nexus file
+	 * @param endsOnly if true, only print from first and last images 
+	 * @throws ScanFileHolderException
+	 */
+	public static void printCorners(String input, boolean endsOnly) throws ScanFileHolderException {
+		I16MapperBean.setInputs(input);
+		MillerSpaceMapper mapper = new MillerSpaceMapper(I16MapperBean);
+		mapper.printMillerSpaceCorners(endsOnly);
 	}
 
 	static PixelSplitter createSplitter(String splitter, double p) {
@@ -1526,7 +1596,7 @@ public class MillerSpaceMapper {
 	}
 
 	/**
-	 * Process Nexus files for I16 with automatic bounding box setting
+	 * Set up bean to process Nexus file with automatic bounding box setting
 	 * @param inputs Nexus files
 	 * @param output name of HDF5 file to be created
 	 * @param scale upsampling factor
@@ -1548,7 +1618,7 @@ public class MillerSpaceMapper {
 	}
 
 	/**
-	 * Process Nexus files for I16 with automatic bounding box setting
+	 * Set up bean to process Nexus file with automatic bounding box setting
 	 * @param inputs Nexus files
 	 * @param output name of HDF5 file to be created
 	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
@@ -1575,7 +1645,7 @@ public class MillerSpaceMapper {
 	}
 
 	/**
-	 * Process Nexus file for I16
+	 * Set up bean to process Nexus file
 	 * @param input Nexus file
 	 * @param output name of HDF5 file to be created
 	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.

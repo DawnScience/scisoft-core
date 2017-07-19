@@ -392,4 +392,10 @@ public class I16NexusTest {
 		String n = testFileFolder + "588193.nxs";
 		MillerSpaceMapper.processList(new String[] {n}, "test-scratch/588193-list.h5", 2.);
 	}
+
+	@Test
+	public void testI16NexusCorners() throws ScanFileHolderException {
+		String n = testFileFolder + "588193.nxs";
+		MillerSpaceMapper.printCorners(n, true);
+	}
 }

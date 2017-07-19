@@ -108,7 +108,6 @@ public class GoodPointStripper {
 				break;
 				
 			default:
-				
 		}
 		
 		ArrayList<Double> yHolder =new ArrayList<>();

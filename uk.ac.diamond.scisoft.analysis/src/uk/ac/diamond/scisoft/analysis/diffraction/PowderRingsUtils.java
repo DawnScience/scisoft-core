@@ -45,6 +45,7 @@ import org.uncommons.maths.combinatorics.CombinationGenerator;
 
 import si.uom.NonSI;
 import uk.ac.diamond.scisoft.analysis.crystallography.HKL;
+import uk.ac.diamond.scisoft.analysis.crystallography.IHKL;
 import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
 import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IdentifiedPeak;
@@ -528,11 +529,11 @@ public class PowderRingsUtils {
 	 * @param fixedWavelength 
 	 * @return q-space
 	 */
-	public static QSpace fitEllipsesToQSpace(IMonitor mon, DetectorProperties detector, DiffractionCrystalEnvironment env, List<EllipticalROI> ellipses, List<HKL> spacings, boolean fixedWavelength) {
+	public static QSpace fitEllipsesToQSpace(IMonitor mon, DetectorProperties detector, DiffractionCrystalEnvironment env, List<EllipticalROI> ellipses, List<IHKL> spacings, boolean fixedWavelength) {
 
 		int n = ellipses.size();
 
-		double dmax = spacings.get(0).getD().to(NonSI.ANGSTROM).getValue().doubleValue();
+		double dmax = ((HKL)spacings.get(0)).getD().to(NonSI.ANGSTROM).getValue().doubleValue();
 		{
 			double rmin = detector.getDetectorDistance() * Math.tan(2.0 * Math.asin(0.5 * env.getWavelength() / dmax)) / detector.getVPxSize();
 			int l = 0;
@@ -582,7 +583,7 @@ public class PowderRingsUtils {
 		// set up a combination generator for all
 		List<Double> s = new ArrayList<Double>();
 		for (int i = 0, imax = spacings.size(); i < imax; i++) {
-			HKL d = spacings.get(i);
+			HKL d = (HKL) spacings.get(i);
 			s.add(d.getD().to(NonSI.ANGSTROM).getValue().doubleValue());
 		}
 		CombinationGenerator<Double> gen = new CombinationGenerator<Double>(s, n);

@@ -19,4 +19,6 @@ public interface IHKL extends Serializable, Cloneable{
 
 	public IHKL clone();
 
+	public double getDNano();
+
 }

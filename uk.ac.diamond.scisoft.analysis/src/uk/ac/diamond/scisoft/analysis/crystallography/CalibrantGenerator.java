@@ -32,7 +32,7 @@ public class CalibrantGenerator {
 	public static CalibrantSpacing createCubicStandard(String name, double a, int nReflections, Cubic type) {
 		
 		CalibrantSpacing calibrant = new CalibrantSpacing(name);
-		List<HKL> listHKL =  new ArrayList<HKL>();
+		List<IHKL> listHKL =  new ArrayList<IHKL>();
 		int h = 0;
 		int k = 0;
 		int l = 1;
@@ -43,7 +43,7 @@ public class CalibrantGenerator {
 				HKL hkl = calculateCubicLatticeSpacing(a, h, k, l);
 				
 				boolean duplicate = false;
-				for (HKL i: listHKL) {
+				for (IHKL i: listHKL) {
 					if (i.getDNano() == hkl.getDNano()) {
 						duplicate = true;
 						break;
@@ -65,10 +65,10 @@ public class CalibrantGenerator {
 			else h++;
 		}
 		
-		Collections.sort(listHKL, new Comparator<HKL>() {
+		Collections.sort(listHKL, new Comparator<IHKL>() {
 			
 			@Override
-			public int compare(HKL h1, HKL h2) {
+			public int compare(IHKL h1, IHKL h2) {
 				
 				return (int)Math.signum((h2.getDNano() - h1.getDNano()));
 			}
@@ -111,7 +111,7 @@ public class CalibrantGenerator {
 	public static CalibrantSpacing createRhombohedralStandard(String name, double a, double c, int maxhkl) {
 
 		CalibrantSpacing calibrant = new CalibrantSpacing(name);
-		List<HKL> listHKL =  new ArrayList<HKL>();
+		List<IHKL> listHKL =  new ArrayList<IHKL>();
 
 		for (int l = -maxhkl; l < maxhkl; l++) {
 			for (int k = -maxhkl; k < maxhkl; k++) {
@@ -123,7 +123,7 @@ public class CalibrantGenerator {
 
 					HKL hkl = calculateHexagonalLatticeSpacing(a, c, h, k, l);
 					boolean duplicate = false;
-					for (HKL i: listHKL) {
+					for (IHKL i: listHKL) {
 						if (i.getDNano() == hkl.getDNano()) {
 							duplicate = true;
 							break;
@@ -136,10 +136,10 @@ public class CalibrantGenerator {
 			}
 		}
 
-		Collections.sort(listHKL, new Comparator<HKL>() {
+		Collections.sort(listHKL, new Comparator<IHKL>() {
 
 			@Override
-			public int compare(HKL h1, HKL h2) {
+			public int compare(IHKL h1, IHKL h2) {
 
 				return (int)Math.signum((h2.getDNano() - h1.getDNano()));
 			}

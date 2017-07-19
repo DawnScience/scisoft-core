@@ -18,7 +18,7 @@ import java.util.List;
 public class CalibrantSpacing implements Serializable, Cloneable {
 
 	private String    name;
-	private List<HKL> hkls;
+	private List<IHKL> hkls;
 	
 	public CalibrantSpacing() {
 		this(null);
@@ -26,18 +26,18 @@ public class CalibrantSpacing implements Serializable, Cloneable {
 	
 	public CalibrantSpacing(String name) {
 		this.name = name;
-		hkls = new ArrayList<HKL>();
+		hkls = new ArrayList<IHKL>();
 	}
 
 	public void clear() {
 		if (hkls!=null) hkls.clear();
 	}
 
-	public void setHKLs(List<HKL> calibrationData) {
+	public void setHKLs(List<IHKL> calibrationData) {
 		this.hkls = calibrationData;
 	}
 	
-	public List<HKL> getHKLs() {
+	public List<IHKL> getHKLs() {
 		return hkls;
 	}
 	
@@ -47,15 +47,15 @@ public class CalibrantSpacing implements Serializable, Cloneable {
 	@Override
 	public CalibrantSpacing clone() {
 		final CalibrantSpacing ret = new CalibrantSpacing();
-		for (HKL hkl : hkls) {
+		for (IHKL hkl : hkls) {
 			ret.addHKL(hkl.clone());
 		}
 		return ret;
 	}
 
 	
-	public void addHKL(HKL ring) {
-		if (hkls==null) hkls =  new ArrayList<HKL>(7);
+	public void addHKL(IHKL ring) {
+		if (hkls==null) hkls =  new ArrayList<IHKL>(7);
 		hkls.add(ring);
 		if (ring.getRingName()==null) ring.setRingName("Position "+hkls.size());
 	}

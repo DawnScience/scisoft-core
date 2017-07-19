@@ -9,7 +9,6 @@
 
 package uk.ac.diamond.scisoft.analysis.crystallography;
 
-import java.io.Serializable;
 import java.util.Arrays;
 
 import javax.measure.Quantity;
@@ -30,7 +29,7 @@ import tec.units.ri.quantity.Quantities;
  * Often if d is set, h,k and l are not needed but it is up to the 
  * user of the data to decide what happens with it.
  */
-public class HKL implements Serializable, Cloneable {
+public class HKL implements IHKL {
 	
 	private int[] hkl;
 	private String ringName;
@@ -140,10 +139,12 @@ public class HKL implements Serializable, Cloneable {
 		return true;
 	}
 
+	@Override
 	public String getRingName() {
 		return ringName;
 	}
 
+	@Override
 	public void setRingName(String name) {
 		this.ringName = name;
 	}

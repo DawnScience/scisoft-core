@@ -11,6 +11,9 @@ public class ReviewCurvesModel {
 	private CurveStitchDataPackage csdpLatest;
 	
 	public ArrayList<CurveStitchDataPackage> getCsdpList() {
+		if(csdpList ==null){
+			csdpList = new ArrayList<CurveStitchDataPackage>();
+		}
 		return csdpList;
 	}
 
@@ -36,11 +39,35 @@ public class ReviewCurvesModel {
 		
 		setCsdpLatest(csdp);
 
-		
 		firePropertyChange("csdpList", this.csdpList,
 				this.csdpList= csdpListCopy);
 	}
+	
+	public void removeFromCsdpList(CurveStitchDataPackage csdp) {
+		
+		boolean changed = false;
+		
+		if(csdpList != null){ 
+			ArrayList<CurveStitchDataPackage> csdpListCopy = new ArrayList<CurveStitchDataPackage>();
+			
+			for(int h = 0; h<csdpList.size(); h++){
+				if(csdpList.size()>0){
+					if(!csdp.getRodName().equals(csdpList.get(h).getRodName())){
+						csdpListCopy.add(csdpList.get(h));
+					}
+					else{
+						changed = true;
+					}
+				}
+			}
 
+			if(changed){
+				firePropertyChange("csdpList", this.csdpList,
+						this.csdpList = csdpListCopy);
+			}
+		}
+	}
+	
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		propertyChangeSupport.addPropertyChangeListener(listener);
 	}

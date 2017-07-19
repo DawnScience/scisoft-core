@@ -29,6 +29,7 @@ public class CurveStitchDataPackage {
 	
 	private IDataset splicedCurveY;
 	private IDataset splicedCurveX;
+	private IDataset splicedGoodPointIDataset;
 	private IDataset splicedCurveQ;
 	private IDataset splicedCurveYFhkl;
 	private IDataset splicedCurveYError;
@@ -163,6 +164,12 @@ public class CurveStitchDataPackage {
 	}
 	public void setGoodPointIDataset(IDataset[] goodPointIDataset) {
 		this.goodPointIDataset = goodPointIDataset;
+	}
+	public IDataset getSplicedGoodPointIDataset() {
+		return splicedGoodPointIDataset;
+	}
+	public void setSplicedGoodPointIDataset(IDataset splicedGoodPointIDataset) {
+		this.splicedGoodPointIDataset = splicedGoodPointIDataset;
 	}
 	
 }

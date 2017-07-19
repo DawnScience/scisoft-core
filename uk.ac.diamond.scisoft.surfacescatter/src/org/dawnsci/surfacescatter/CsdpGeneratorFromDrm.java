@@ -34,6 +34,8 @@ public class CsdpGeneratorFromDrm {
 			}
 		}
 		
+		ArrayList<Boolean> splicedGoodPointArray = new ArrayList<>();
+ 		
 		for(FrameModel fm : drm.getFms()){
 			
 			int datNo = fm.getDatNo();
@@ -42,7 +44,12 @@ public class CsdpGeneratorFromDrm {
 			
 			goodPointLists.get(datNo).set(noInDatFile, goodPoint);
 			
+			splicedGoodPointArray.add(fm.isGoodPoint());
+			
 		}
+		
+		IDataset splicedGoodPointIDataset = DatasetFactory.createFromList(splicedGoodPointArray);
+		csdp.setSplicedGoodPointIDataset(splicedGoodPointIDataset);
 		
 		IDataset[] goodPointDatArray = new IDataset[drm.getFilepathsSortedArray().length];
 		

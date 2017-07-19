@@ -15,7 +15,8 @@ public class SavingUtils {
 	
 	private PrintWriter writer;
 
-	public void genXSave(String title,
+	public void genXSave(boolean writeOnlyGood,
+						String title,
 						CurveStitchDataPackage csdp,
 						DirectoryModel drm,
 						ArrayList<FrameModel> fms,
@@ -40,9 +41,12 @@ public class SavingUtils {
 			
 			for(int gh = 0 ; gh<fms.size(); gh++){
 				FrameModel f = fms.get(gh);
-				
+				if((writeOnlyGood == true && f.isGoodPoint()) ||
+							!writeOnlyGood){
 					writer.println(f.getH() +"	"+ f.getK() +"	"+f.getL() + 
 							"	"+ csdp.getSplicedCurveYFhkl().getDouble(gh)+ "	"+ csdp.getSplicedCurveY().getError(gh));
+			
+				}
 			}
 	    }
 		
@@ -50,9 +54,15 @@ public class SavingUtils {
 		    	writer.println("#"+gm.getxName()+"	I	Ie");
 				
 				 for(int gh = 0 ; gh<fms.size(); gh++){
+					 FrameModel f = fms.get(gh);
+						if((writeOnlyGood == true && f.isGoodPoint()) ||
+						   !writeOnlyGood){
+							
 							writer.println(drm.getxList().get(gh) +"	"+ 
 						    csdp.getSplicedCurveY().getDouble(gh)+ "	"+ 
 							csdp.getSplicedCurveY().getError(gh));
+				 
+						}
 				 }
 	    }	
 		writer.close();
@@ -60,7 +70,8 @@ public class SavingUtils {
 	
 	
 	
-	public void anarodSave(String title,
+	public void anarodSave(boolean writeOnlyGood,
+							String title,
 							CurveStitchDataPackage csdp,
 							DirectoryModel drm,
 							ArrayList<FrameModel> fms,
@@ -87,10 +98,16 @@ public class SavingUtils {
 			writer.println("#h	k	l	F	Fe");
 	
 			for(int gh = 0 ; gh<fms.size(); gh++){
+				
 				FrameModel f = fms.get(gh);
+				
+				if((writeOnlyGood == true && f.isGoodPoint()) ||
+						!writeOnlyGood){
 				
 					writer.println(f.getH() +"	"+ f.getK() +"	"+f.getL() + 
 							"	"+ csdp.getSplicedCurveYFhkl().getDouble(gh)+ "	"+ csdp.getSplicedCurveYFhkl().getError(gh));
+			
+				}
 			}
 	    }
 	    
@@ -104,26 +121,31 @@ public class SavingUtils {
 				 writer.println("#qdcd	I	Ie");
 			
 				 for(int gh = 0 ; gh<fms.size(); gh++){
-					 
-					 writer.println(fms.get(gh).getQ() + "	"+ 
+					FrameModel f = fms.get(gh);
+					if((writeOnlyGood == true && f.isGoodPoint()) ||
+									!writeOnlyGood){
+						
+					
+						writer.println(fms.get(gh).getQ() + "	"+ 
 					    csdp.getSplicedCurveY().getDouble(gh)+ "	"+ 
 					    csdp.getSplicedCurveY().getError(gh));
-				}
-			
-			
+					}
+				 }
 		    }
 //		    
 		    else{
 		    	writer.println("#"+gm.getxName()+"	I	Ie");
 				
 				 for(int gh = 0 ; gh<fms.size(); gh++){
-
+					 FrameModel f = fms.get(gh);
+					 if((writeOnlyGood == true && f.isGoodPoint()) ||
+									!writeOnlyGood){
 					 
 							writer.println(drm.getxList().get(gh) +"	"+ 
 						    csdp.getSplicedCurveY().getDouble(gh)+ "	"+ 
 							csdp.getSplicedCurveY().getError(gh));
+					}
 				 }
-			
 		    }
 //	    	
 	    }
@@ -131,7 +153,8 @@ public class SavingUtils {
 		writer.close();
 	}	
 	
-	public void intSave(String title,
+	public void intSave(boolean writeOnlyGood,
+						String title,
 					    CurveStitchDataPackage csdp,
 					    DirectoryModel drm,
 						ArrayList<FrameModel> fms,
@@ -171,10 +194,13 @@ public class SavingUtils {
 	
 			for(int gh = 0 ; gh<fms.size(); gh++){
 				FrameModel f = fms.get(gh);
+				if((writeOnlyGood == true && f.isGoodPoint()) ||
+							!writeOnlyGood){
 				
 					writer.println(f.getH() +"	"+ f.getK() +"	"+f.getL() + 
 							"	"+ csdp.getSplicedCurveYFhkl().getDouble(gh)+ "	"+ csdp.getSplicedCurveYFhkl().getError(gh) +"	"
 							+ f.getLorentzianCorrection()+"	" + f.getPolarisationCorrection() +"	" + f.getAreaCorrection());
+				}
 			}
 	    }
 	    else{
@@ -190,13 +216,16 @@ public class SavingUtils {
 //
 					 for(int gh = 0 ; gh<fms.size(); gh++){
 						 
-						 	FrameModel fm = fms.get(gh);
+						 FrameModel fm = fms.get(gh);
+						 if((writeOnlyGood == true && fm.isGoodPoint()) ||
+										!writeOnlyGood){
 					 
 							writer.println(fm.getQdcd() +"	"+ 
 						    csdp.getSplicedCurveY().getDouble(gh)+ "	"+ 
 						    csdp.getSplicedCurveY().getError(gh)+ "	"+ 
 						    fm.getReflectivityAreaCorrection()+ "	"+
 						    fm.getReflectivityFluxCorrection());
+						 }
 					}
 				 }
 				 
@@ -205,11 +234,14 @@ public class SavingUtils {
 					 for(int gh = 0 ; gh<fms.size(); gh++){
 						 
 						 	FrameModel fm = fms.get(gh);
+						 	if((writeOnlyGood == true && fm.isGoodPoint()) ||
+										!writeOnlyGood){
 					 
 					 		writer.println(fm.getQdcd() +"	"+ 
 						    csdp.getSplicedCurveY().getDouble(gh)+ "	"+ 
 						    csdp.getSplicedCurveY().getError(gh)+ "	"+ 
 						    fm.getReflectivityAreaCorrection());
+						 	}
 					}
 				 }
 				 
@@ -218,10 +250,13 @@ public class SavingUtils {
 					 for(int gh = 0 ; gh<fms.size(); gh++){
 						 
 						 	FrameModel fm = fms.get(gh);
+							if((writeOnlyGood == true && fm.isGoodPoint()) ||
+										!writeOnlyGood){
 						 
 							writer.println(fm.getQdcd() +"	"+ 
 						    csdp.getSplicedCurveY().getDouble(gh)+ "	"+ 
 						    csdp.getSplicedCurveY().getError(gh));
+							}
 					 }
 				 }
 		       }
@@ -231,7 +266,8 @@ public class SavingUtils {
 	    }
 	
 
-		public void simpleXYYeSave(String title, 
+		public void simpleXYYeSave(boolean writeOnlyGood, 
+									String title, 
 									int state,
 									CurveStitchDataPackage csdp,
 									DirectoryModel drm,
@@ -269,25 +305,37 @@ public class SavingUtils {
 			
 			if(state == 1){
 				for(int gh = 0 ; gh<fms.size(); gh++){
+					FrameModel fm = fms.get(gh);
+					if((writeOnlyGood == true && fm.isGoodPoint()) ||
+								!writeOnlyGood){
 						writer.println(csdp.getSplicedCurveX().getDouble(gh) + 
 								"	"+ csdp.getSplicedCurveYFhkl().getDouble(gh)+ 
 								"	"+ csdp.getSplicedCurveYFhkl().getError(gh));
+					}
 				}
 			}
 			
 			if(state == 0){
 				for(int gh = 0 ; gh<fms.size(); gh++){
+					FrameModel fm = fms.get(gh);
+					if((writeOnlyGood == true && fm.isGoodPoint()) ||
+								!writeOnlyGood){
 						writer.println(csdp.getSplicedCurveX().getDouble(gh) + 
 								"	"+ csdp.getSplicedCurveY().getDouble(gh)+ 
 								"	"+ csdp.getSplicedCurveY().getError(gh));
+					}
 				}
 			}
 
 			if(state == 2){
 				for(int gh = 0 ; gh<fms.size(); gh++){
+					FrameModel fm = fms.get(gh);
+					if((writeOnlyGood == true && fm.isGoodPoint()) ||
+								!writeOnlyGood){
 						writer.println(csdp.getSplicedCurveX().getDouble(gh) + 
 								"	"+ csdp.getSplicedCurveYRaw().getDouble(gh)+ 
 								"	"+ csdp.getSplicedCurveYRaw().getError(gh));
+					}
 				}
 			}
 			

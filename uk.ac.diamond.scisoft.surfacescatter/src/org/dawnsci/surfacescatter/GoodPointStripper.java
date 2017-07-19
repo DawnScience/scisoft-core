@@ -39,7 +39,7 @@ public class GoodPointStripper {
 				break;
 				
 			default:
-				//defensive;
+				
 		}
 		
 		IDataset[][] output = new IDataset[noOfDats][];
@@ -72,4 +72,105 @@ public class GoodPointStripper {
 	}
 	
 	
+	public IDataset[] splicedYGoodPointStripper(CurveStitchDataPackage csdp, 
+			 									 AxisEnums.yAxes ids,
+			 									 boolean includeAll){
+
+		IDataset goodPointIDatasets = DatasetFactory.createFromObject(true);
+		
+		IDataset yIDatasets = csdp.getSplicedCurveY();
+		IDataset yIDatasetsErrors = csdp.getSplicedCurveYError();
+		
+		if(csdp.getSplicedGoodPointIDataset() != null){
+			goodPointIDatasets = csdp.getSplicedGoodPointIDataset();
+		}
+		
+		else{
+			ArrayList<Boolean> bh = new ArrayList<>();
+			
+			for(int u =0 ; u<yIDatasets.getSize(); u++){
+				bh.add(true);
+			}
+		}
+		
+		switch (ids){
+			case SPLICEDY:
+				break;
+			
+			case SPLICEDYRAW:
+				yIDatasets = csdp.getSplicedCurveYRaw();
+				yIDatasetsErrors = csdp.getSplicedCurveYRawError();
+				break;
+				
+			case SPLICEDYFHKL:
+				yIDatasets = csdp.getSplicedCurveYFhkl();
+				yIDatasetsErrors = csdp.getSplicedCurveYFhklError();
+				break;
+				
+			default:
+				
+		}
+		
+		ArrayList<Double> yHolder =new ArrayList<>();
+		ArrayList<Double> yErrorHolder =new ArrayList<>();
+			
+		for(int j =0; j<goodPointIDatasets.getSize(); j++){
+			if(goodPointIDatasets.getBoolean(j) ||
+					includeAll){
+				
+				yHolder.add(yIDatasets.getDouble(j));
+				yErrorHolder.add(yIDatasetsErrors.getDouble(j));
+			}
+		}
+			 
+		IDataset yH = DatasetFactory.createFromList(yHolder);
+		IDataset yEH = DatasetFactory.createFromList(yErrorHolder);
+			
+		return new IDataset[] {yH, yEH};
+	}
+	
+	public IDataset splicedXGoodPointStripper(CurveStitchDataPackage csdp, 
+			 									AxisEnums.xAxes ids,
+			 									boolean includeAll){
+		
+		IDataset goodPointIDatasets = DatasetFactory.createFromObject(true);
+		
+		IDataset xIDataset = csdp.getSplicedCurveX();
+		
+		if(csdp.getSplicedGoodPointIDataset() != null){
+			goodPointIDatasets = csdp.getSplicedGoodPointIDataset();
+		}
+		
+		else{
+			ArrayList<Boolean> bh = new ArrayList<>();
+			
+			for(int u =0 ; u<xIDataset.getSize(); u++){
+				bh.add(true);
+			}
+		}
+		
+		switch (ids){
+			case SCANNED_VARIABLE:
+				break;
+			
+			case Q:
+				xIDataset = csdp.getSplicedCurveQ();
+				break;
+				
+			default:
+			
+		}
+		
+		ArrayList<Double> xHolder =new ArrayList<>();
+			
+		for(int j =0; j<goodPointIDatasets.getSize(); j++){
+			if(goodPointIDatasets.getBoolean(j) ||
+					includeAll){
+				xHolder.add(xIDataset.getDouble(j));
+			}
+		}
+		
+		return DatasetFactory.createFromList(xHolder);
+	}
+			
 }

@@ -9,11 +9,13 @@
 
 package uk.ac.diamond.scisoft.analysis.optimize;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
-import org.apache.commons.math3.fitting.PolynomialFitter;
-import org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquardtOptimizer;
+import org.apache.commons.math3.fitting.PolynomialCurveFitter;
+import org.apache.commons.math3.fitting.WeightedObservedPoint;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 
@@ -43,13 +45,22 @@ public class ApachePolynomial {
 	 * @return coefficients of fitted polynomial
 	 */
 	public static double[] polynomialFit(Dataset x, Dataset y, double... guess) {
-		PolynomialFitter fitter = new PolynomialFitter(new LevenbergMarquardtOptimizer());
-
-		for (int i = 0; i < y.getSize(); i++) {
-			fitter.addObservedPoint(1,x.getDouble(i),y.getDouble(i));
+		final int size = x.getSize();
+		if (x.getRank() != 1 && y.getRank() != 1) {
+			throw new IllegalArgumentException("Input datasets must have rank of 1");
+		}
+		if (y.getSize() != size) {
+			throw new IllegalArgumentException("Input dataset sizes must match");
 		}
 
-		return fitter.fit(guess);
+		Collection<WeightedObservedPoint> points = new ArrayList<>(size);
+		for (int i = 0; i < size; i++) {
+			points.add(new WeightedObservedPoint(1, x.getDouble(i), y.getDouble(i)));
+		}
+
+		PolynomialCurveFitter fitter = PolynomialCurveFitter.create(guess.length - 1);
+		fitter.withStartPoint(guess);
+		return fitter.fit(points);
 	}
 
 	/**
@@ -64,37 +75,51 @@ public class ApachePolynomial {
 	 */
 	public static Dataset getPolynomialSmoothed(final Dataset x, final Dataset y,
 			int windowSize, int polyOrder) throws Exception {
-		// Could probably do with more sanity check on relative size of
-		// window vs polynomial but doesn't seem to trip up
-		// So we'll see how it goes...
+		final int size = x.getSize();
+		if (x.getRank() != 1 && y.getRank() != 1) {
+			throw new IllegalArgumentException("Input datasets must have rank of 1");
+		}
+		if (y.getSize() != size) {
+			throw new IllegalArgumentException("Input dataset sizes must match");
+		}
+		if (size <= windowSize) {
+			throw new IllegalArgumentException("Input dataset size must be greater than window size");
+		}
+		if (size < 2) {
+			throw new IllegalArgumentException("Input dataset size must be greater than 2");
+		}
 
+		Collection<WeightedObservedPoint> points = new ArrayList<>(size);
 		// integer divide window size so window is symmetric around point
-		int window = windowSize/2;
-
-		PolynomialFitter fitter = new PolynomialFitter(new LevenbergMarquardtOptimizer());
-		double dx = x.getDouble(1) - x.getDouble(0); // change in x for edge extrapolation
-		int xs =  x.getSize();
-		Dataset result = DatasetFactory.zeros(y);
+		final int window = windowSize/2;
+		final double dx = x.getDouble(1) - x.getDouble(0); // change in x for edge extrapolation
+		final int end = size - 1;
+		Dataset result = DatasetFactory.zeros(size);
+		PolynomialCurveFitter fitter = PolynomialCurveFitter.create(polyOrder);
 		double[] guess = new double[polyOrder+1];
+		Arrays.fill(guess, 1);
 
-		for (int idx = 0; idx < xs; idx++) {
-			fitter.clearObservations();
-			
-			// Deal with edge cases:
-			// In both cases extend x edge by dx required for window size
-			// Pad y with first or last value
-			for (int idw = -window; idw < window+1; idw++) {
-				if (idx+idw < 0) {
-					fitter.addObservedPoint(1,x.getDouble(0)+(dx*(idx+idw)), y.getDouble(0));
-				} else if ((idx + idw) > (xs-1)) {
-					fitter.addObservedPoint(1,x.getDouble(xs-1) + dx*(idx + idw -(xs-1)), y.getDouble(xs-1));
+		for (int i = 0; i < size; i++) {
+			points.clear();
+			for (int j = -window + i; j < window+i; j++) {
+				WeightedObservedPoint pt;
+
+				// Deal with edge cases:
+				// In both cases extend x edge by dx required for window size
+				// Pad y with first or last value
+				if (j < 0) {
+					pt = new WeightedObservedPoint(1, x.getDouble(0) + dx*j, y.getDouble(0));
+				} else if (j > end) {
+					pt = new WeightedObservedPoint(1, x.getDouble(end) + dx*(j - end), y.getDouble(end));
 				} else {
-					fitter.addObservedPoint(1,x.getDouble(idx+idw), y.getDouble(idx+idw));
+					pt = new WeightedObservedPoint(1, x.getDouble(j), y.getDouble(j));
 				}
+				points.add(pt);
 			}
 
-			PolynomialFunction fitted = new PolynomialFunction(fitter.fit(guess));
-			result.set(fitted.value(x.getDouble(idx)), idx);
+			fitter.withStartPoint(guess);
+			PolynomialFunction fitted = new PolynomialFunction(fitter.fit(points));
+			result.set(fitted.value(x.getDouble(i)), i);
 		}
 
 		return result;

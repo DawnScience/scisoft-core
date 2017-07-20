@@ -61,8 +61,8 @@ public class FitterTest {
 		Add add = new Add();
 		add.addFunction(gauss);
 		add.addFunction(off);
-		DoubleDataset xAxis = (DoubleDataset) DatasetFactory.createRange(10, 20, 1, Dataset.FLOAT64);
-		DoubleDataset data = (DoubleDataset) DatasetFactory.createFromObject(Dataset.FLOAT64, new double[] {0, 1, 2, 3, 4, 5, 4, 3, 2, 1});
+		DoubleDataset xAxis = DatasetFactory.createRange(DoubleDataset.class, 10., 20., 1.);
+		DoubleDataset data = DatasetFactory.createFromObject(DoubleDataset.class, new double[] {0, 1, 2, 3, 4, 5, 4, 3, 2, 1});
 //		DoubleDataset ds = gauss.calculateValues(xAxis);
 
 		try {
@@ -111,7 +111,7 @@ public class FitterTest {
 		DoubleDataset yAxis = DatasetFactory.createRange(DoubleDataset.class, -20.0,20.0,yAxisStep);
 		DoubleDataset ds2 = gauss2.calculateValues(yAxis);
 		
-		DoubleDataset ds = (DoubleDataset) DatasetFactory.zeros(new int[] {xAxis.getShape()[0],xAxis.getShape()[0]} , Dataset.FLOAT64);
+		DoubleDataset ds = DatasetFactory.zeros(xAxis.getShape()[0], xAxis.getShape()[0]);
 		
 		IndexIterator iter = ds.getIterator(true);
 		int[] pos;

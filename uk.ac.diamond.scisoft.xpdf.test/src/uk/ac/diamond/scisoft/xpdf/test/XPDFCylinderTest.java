@@ -20,6 +20,7 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.Maths;
 import org.junit.Ignore;
+import org.junit.Test;
 
 import junit.framework.TestCase;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
@@ -227,7 +228,8 @@ public class XPDFCylinderTest extends TestCase {
 	// Tests using data from the autumn 2015 standards experiments
 	//
 	///////////////////////////////////////////////////////////////////////////
-	@Ignore
+	@Test
+	@Ignore("The reason for the fluorescence test being so far from correct needs more analysis")
 	public void testFluorescence() throws DatasetException {
 		
 		XPDFSubstance ceria = new XPDFSubstance("ceria", "CeO2", 7.65, 0.6);

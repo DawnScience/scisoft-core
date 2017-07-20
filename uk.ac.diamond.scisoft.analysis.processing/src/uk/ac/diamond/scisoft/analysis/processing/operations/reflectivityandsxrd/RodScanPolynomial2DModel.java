@@ -13,8 +13,6 @@ import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxIntegration.Direction;
-
 public class RodScanPolynomial2DModel extends AbstractOperationModel {
 	//@OperationModelField(label="Direction of Integration", hint="The direction to integrate in.")
 		//private Direction direction = Direction.X;

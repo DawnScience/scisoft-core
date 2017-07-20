@@ -12,6 +12,7 @@ import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -64,7 +65,7 @@ public class MaskOutsideRegionOperation extends AbstractOperation<MaskOutsideReg
 	}
 	
 	private IDataset generateMaskFromROI(IROI roi, int[] shape) {
-		Dataset mask = DatasetFactory.zeros(shape, Dataset.BOOL);
+		Dataset mask = DatasetFactory.zeros(BooleanDataset.class, shape);
 		for (int i = 0; i < shape[0]; i++) {
 			double[] hi = roi.findHorizontalIntersections(i);
 			if (hi != null) {

@@ -25,6 +25,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 
 // A method to calculate the absolute scatter
 // From: Small-angle scattering of x-rays, A. Guinier & G. Fournet, Wiley & Sons, London, 1955 pp 75-81.
@@ -60,7 +61,7 @@ public class InvariantOperation extends AbstractOperation<EmptyModel, OperationD
 		
 		// We're going to need an axis, so if one doesn't already exist, let's create one
 		if (axesDataset == null) {
-			axesDataset = DatasetFactory.createLinearSpace(0, dataLength, dataLength, Dataset.FLOAT);
+			axesDataset = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, dataLength, dataLength);
 		}
 		
 		for (int loopIter = 0; loopIter < dataLength; loopIter ++) {

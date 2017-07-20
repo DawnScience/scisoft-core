@@ -18,6 +18,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 
@@ -75,16 +76,16 @@ public class BoxIntegration extends AbstractIntegrationOperation<BoxIntegrationM
 				} catch (MetadataException e) {
 					throw new OperationException(this, e);
 				}
-				metadata.setAxis(0, DatasetFactory.createRange(input.getShape()[0],Dataset.INT32));
-				metadata.setAxis(1, DatasetFactory.createRange(input.getShape()[1],Dataset.INT32));
+				metadata.setAxis(0, DatasetFactory.createRange(IntegerDataset.class, input.getShape()[0]));
+				metadata.setAxis(1, DatasetFactory.createRange(IntegerDataset.class, input.getShape()[1]));
 			}
 
 			if (metadata.getAxis(0) == null || metadata.getAxis(0).length == 0) {
-				metadata.setAxis(0, DatasetFactory.createRange(input.getShape()[0],Dataset.INT32));
+				metadata.setAxis(0, DatasetFactory.createRange(IntegerDataset.class, input.getShape()[0]));
 			}
 
 			if (metadata.getAxis(1) == null || metadata.getAxis(1).length == 0) {
-				metadata.setAxis(1, DatasetFactory.createRange(input.getShape()[1],Dataset.INT32));
+				metadata.setAxis(1, DatasetFactory.createRange(IntegerDataset.class, input.getShape()[1]));
 			}
 
 			local.setMetadata(metadata);

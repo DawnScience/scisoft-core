@@ -10,7 +10,6 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.MetadataException;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
@@ -96,8 +95,8 @@ public class Expression2DOperation<T extends Expression2DModel> extends Expressi
 			}
 		}
 		
-		if (axisx == null) axisx = DatasetFactory.createRange(input.getShape()[0], Dataset.FLOAT64);
-		if (axisy == null) axisy = DatasetFactory.createRange(input.getShape()[1], Dataset.FLOAT64);
+		if (axisx == null) axisx = DatasetFactory.createRange(input.getShape()[0]);
+		if (axisy == null) axisy = DatasetFactory.createRange(input.getShape()[1]);
 		
 		engine.addLoadedVariable("xaxis", axisx);
 		engine.addLoadedVariable("yaxis", axisy);

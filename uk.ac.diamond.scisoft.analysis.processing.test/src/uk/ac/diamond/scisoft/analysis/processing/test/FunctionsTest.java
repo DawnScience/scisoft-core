@@ -27,6 +27,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Maths;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -73,7 +74,7 @@ public class FunctionsTest {
 	@Test
 	public void testPolynomial() throws Exception {
 		
-		final IDataset       indices = DatasetFactory.createRange(1000, Dataset.INT);
+		final IDataset       indices = DatasetFactory.createRange(IntegerDataset.class, 1000);
 		final IOperationContext context = service.createContext();
 		context.setData(indices);
 		context.setDataDimensions(new int[]{0});
@@ -125,7 +126,7 @@ public class FunctionsTest {
 	static final int defaultFWHM = 20;
 	static final int defaultArea = 50;
 	static final int dataRange = 550;
-	static final DoubleDataset xAxis = (DoubleDataset) DatasetFactory.createRange(0, dataRange, 1, Dataset.FLOAT64);
+	static final DoubleDataset xAxis = (DoubleDataset) DatasetFactory.createRange(DoubleDataset.class, 0, dataRange, 1);
 	static final boolean backgroundDominated = true;
 	static final boolean autoStopping = true;
 	static final double threshold = 0.10;

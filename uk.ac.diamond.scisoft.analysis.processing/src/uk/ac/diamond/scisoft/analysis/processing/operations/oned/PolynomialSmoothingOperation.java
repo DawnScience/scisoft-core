@@ -21,6 +21,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 
 import uk.ac.diamond.scisoft.analysis.optimize.ApachePolynomial;
 
@@ -40,7 +41,7 @@ public class PolynomialSmoothingOperation extends AbstractOperation<PolynomialSm
 		ILazyDataset[] firstAxes = getFirstAxes(input);
 		IDataset ax;
 		if (firstAxes == null || firstAxes[0] == null) {
-			ax = DatasetFactory.createRange(input.getShape()[0], Dataset.INT64);
+			ax = DatasetFactory.createRange(IntegerDataset.class, input.getShape()[0]);
 		} else {
 			try {
 				ax = firstAxes[0].getSlice();

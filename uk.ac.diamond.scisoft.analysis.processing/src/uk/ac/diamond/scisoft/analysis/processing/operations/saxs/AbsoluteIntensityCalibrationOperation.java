@@ -10,54 +10,40 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 
-import org.eclipse.january.DatasetException;
-
-
+import java.io.IOException;
 // Imports from java
 import java.net.URL;
-import java.io.IOException;
-
 
 // Imports from org.apache
 import org.apache.commons.math3.analysis.UnivariateFunction;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
-
-
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.eclipse.core.runtime.FileLocator;
 // Imports from org.eclipse.core
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.FileLocator;
-
-
-// Imports from org.eclipse.january
-import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.Slice;
-import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.MetadataException;
-import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.metadata.MetadataFactory;
-
-
+import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 // Imports from org.eclipse.dawnsci
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
-import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.processing.PlotAdditionalData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.processing.PlotAdditionalData;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
-
-
+import org.eclipse.january.DatasetException;
+// Imports from org.eclipse.january
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 // Imports from org.osgi
 import org.osgi.framework.Bundle;
 
-
-// Imports from uk.ac.diamond
-import uk.ac.diamond.scisoft.analysis.io.DatLoader;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 

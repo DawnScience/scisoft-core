@@ -9,7 +9,6 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.MetadataException;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
@@ -80,7 +79,7 @@ public class Expression1DOperation<T extends Expression1DModel> extends Abstract
 			}
 			engine.addLoadedVariable("xaxis", axis);
 		} else {
-			axis = DatasetFactory.createRange(input.getSize(), Dataset.FLOAT64);
+			axis = DatasetFactory.createRange(input.getSize());
 			engine.addLoadedVariable("xaxis", axis);
 		}
 		

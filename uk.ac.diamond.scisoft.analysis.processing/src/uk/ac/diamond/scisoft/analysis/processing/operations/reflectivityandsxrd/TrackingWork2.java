@@ -19,21 +19,17 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
-import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
-import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.LinearAlgebra;
 import org.eclipse.january.dataset.Maths;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial2D;
-import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 /**
  * Cuts out the region of interest and fits it with a 2D polynomial background.
@@ -65,7 +61,6 @@ public class TrackingWork2 extends AbstractOperation<BoxSlicerModel, OperationDa
 		return OperationRank.TWO ;
 	}
 	
-	@SuppressWarnings("null")
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) {
 		
@@ -183,7 +178,7 @@ public class TrackingWork2 extends AbstractOperation<BoxSlicerModel, OperationDa
 		Dataset[] fittingBackground = BoxSlicerRodScanUtils.LeftRightTopBottomBoxes(input, monitor, box.getIntLengths(),
 				new int[]{(int) location[0], (int) location[1]},model.getBoundaryBox());
 		
-		Dataset offset = DatasetFactory.ones(fittingBackground[2].getShape(), Dataset.FLOAT64);
+		Dataset offset = DatasetFactory.ones(fittingBackground[2].getShape());
 		
 		Dataset intermediateFitTest = Maths.add(offset, fittingBackground[2]);
 		Dataset matrix = LinearLeastSquaresServicesForSXRD.polynomial2DLinearLeastSquaresMatrixGenerator(

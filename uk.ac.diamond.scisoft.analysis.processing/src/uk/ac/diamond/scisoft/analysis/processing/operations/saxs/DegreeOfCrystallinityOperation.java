@@ -111,8 +111,7 @@ public class DegreeOfCrystallinityOperation extends AbstractOperation<DegreeOfCr
 
 		// Must move the DoC into a dataset for DAWN
 		// First up, let's create a one element dataset of a zero
-		int[] datasetSize = {1};
-		Dataset degreeOfCrystallinityDataset = DatasetFactory.zeros(1, datasetSize, Dataset.FLOAT64);
+		Dataset degreeOfCrystallinityDataset = DatasetFactory.zeros(1);
 		
 		degreeOfCrystallinityDataset.setName("Degree of Crystallinity");
 		// Now we can stick in the calculated factor

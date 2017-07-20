@@ -254,7 +254,7 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		double shift = (sp- st)/(2*nBins);
 		start = st - shift;
 		stop = sp + shift;
-		binEdges = DatasetFactory.createLinearSpace(start,stop,nBins+1, Dataset.FLOAT64);
+		binEdges = DatasetFactory.createLinearSpace(DoubleDataset.class, start,stop,nBins+1);
 	}
 
 	@Override

@@ -10,7 +10,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.fitting;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -21,12 +20,12 @@ import org.eclipse.dawnsci.analysis.dataset.roi.ROISliceUtils;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceViewIterator;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
@@ -70,7 +69,7 @@ public class FitPeakToRowsOperation extends AbstractOperation<FitPeakToRowsModel
 		IDataset axis = null;
 		
 		if (firstAxes == null || firstAxes[1] == null) {
-			axis = DatasetFactory.createRange(input.getShape()[1], Dataset.INT32);
+			axis = DatasetFactory.createRange(IntegerDataset.class, input.getShape()[1]);
 			//Add back in as metadata
 		} else {
 			try {
@@ -98,7 +97,7 @@ public class FitPeakToRowsOperation extends AbstractOperation<FitPeakToRowsModel
 		s.setSlice(1, indexes[0], indexes[1], 1);
 		
 		SliceViewIterator it = new SliceViewIterator(input, s, new int[]{1});
-		Dataset position = DatasetFactory.zeros(new int[]{input.getShape()[0]},Dataset.FLOAT64);
+		Dataset position = DatasetFactory.zeros(input.getShape()[0]);
 		position.fill(Double.NaN);
 		position.setName("Position");
 		int count = 0;

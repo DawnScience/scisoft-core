@@ -10,6 +10,7 @@ import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 
@@ -56,7 +57,7 @@ public class Junk2Dto2DOperation extends AbstractOperation<Junk2Dto2Dmodel, Oper
 		int x = model.getxDim();
 		int y = model.getyDim();
 		
-		IDataset out = DatasetFactory.createRange(x*y,Dataset.INT16);
+		IDataset out = DatasetFactory.createRange(ShortDataset.class, x*y);
 		out.setShape(new int[]{x,y});;
 		out.setName("Junk2Dto2Dout");
 		
@@ -68,12 +69,12 @@ public class Junk2Dto2DOperation extends AbstractOperation<Junk2Dto2Dmodel, Oper
 				throw new OperationException(this, e);
 			}
 			for (int i = 0; i < nAxes; i++) {
-				Dataset ax1 = DatasetFactory.createRange(0, x,1, Dataset.INT16);
+				Dataset ax1 = DatasetFactory.createRange(ShortDataset.class, 0, x, 1);
 				ax1.iadd(i);
 				ax1.setShape(new int[]{x,1});
 				if (i == 0) ax1.setName("Junk2Dto2DAx1");
 				else ax1.setName("Junk2Dto2DAx1"+"_"+Integer.toString(i));
-				Dataset ax2 = DatasetFactory.createRange(0, y,1, Dataset.INT16);
+				Dataset ax2 = DatasetFactory.createRange(ShortDataset.class, 0, y, 1);
 				ax2.setShape(new int[]{1,y});
 				ax2.setName("Junk2Dto2DAx2");
 				if (i == 0) ax2.setName("Junk2Dto2DAx2");

@@ -1,9 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.processing;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;

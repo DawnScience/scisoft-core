@@ -34,7 +34,7 @@ public class ExampleDataUtils {
 			String nxdata = file.group("data", entry1);
 			file.setNexusAttribute(nxdata, "NXdata");
 			
-			Dataset data = DatasetFactory.ones(shape, Dataset.FLOAT64);
+			Dataset data = DatasetFactory.ones(shape);
 			data.imultiply(10);
 			
 			String ds = file.createDataset("data", data, nxdata, true);
@@ -42,7 +42,7 @@ public class ExampleDataUtils {
 			
 			for (int i = 0; i < shape.length; i++) {
 				
-				Dataset ax = DatasetFactory.createRange(shape[i], Dataset.FLOAT64);
+				Dataset ax = DatasetFactory.createRange(shape[i]);
 				ax.imultiply(i);
 				
 				String da = file.createDataset("axis" + i, ax, nxdata, true);

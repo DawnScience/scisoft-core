@@ -84,7 +84,7 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 					throw new OperationException(this, e);
 				}
 			} else {
-				x = DatasetFactory.createRange(input.getSize(), Dataset.FLOAT64);
+				x = DatasetFactory.createRange(input.getSize());
 			}
 			
 			Dataset[] traceROI;

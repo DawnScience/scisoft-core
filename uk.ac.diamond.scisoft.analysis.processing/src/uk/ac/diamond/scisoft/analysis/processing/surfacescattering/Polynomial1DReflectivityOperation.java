@@ -81,7 +81,7 @@ public class Polynomial1DReflectivityOperation extends AbstractOperation<Polynom
 				, model.getBoundaryBox(), model.getDirection());
 		
 		
-		Dataset in1Background = DatasetFactory.zeros(in1.getShape(), Dataset.FLOAT64);
+		Dataset in1Background = DatasetFactory.zeros(in1.getShape());
 		
 		in1Background = BackgroundSetting.rOIBackground1(background, in1Background
 				, box.getIntLengths(), box.getIntPoint()

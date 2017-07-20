@@ -23,6 +23,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.MetadataException;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.metadata.MetadataFactory;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.HermanOrientation1DModel.NumberOfPis;
@@ -137,8 +138,7 @@ public class HermanOrientation1DOperation extends AbstractOperation<HermanOrient
 		
 		// Must move the HoF into a dataset for DAWN
 		// First up, let's create a one element dataset of a zero
-		int[] datasetSize = {1};
-		Dataset hermanOrientationDataset = DatasetFactory.zeros(1, datasetSize, Dataset.FLOAT64);
+		Dataset hermanOrientationDataset = DatasetFactory.zeros(1);
 		
 		hermanOrientationDataset.setName("Herman Orientation Factor");
 		// Now we can stick in the calculated factor
@@ -155,10 +155,10 @@ public class HermanOrientation1DOperation extends AbstractOperation<HermanOrient
 		}
 		
 		// Create the axis as a fixed length tied to the data array
-		metadata.setAxis(0, DatasetFactory.createRange(0.00, ((180 / Math.PI) * hermanPiRange), ((180 / Math.PI) * integrationRadianStep), Dataset.FLOAT64));
+		metadata.setAxis(0, DatasetFactory.createRange(DoubleDataset.class, 0.00, ((180 / Math.PI) * hermanPiRange), ((180 / Math.PI) * integrationRadianStep)));
 		
 		// Create the data dataset...
-		Dataset hermanRadialData = DatasetFactory.createFromObject(Dataset.FLOAT64, data);
+		Dataset hermanRadialData = DatasetFactory.createFromObject(DoubleDataset.class, data);
 		// and stick in the axis metadata
 		hermanRadialData.setMetadata(metadata);
 		

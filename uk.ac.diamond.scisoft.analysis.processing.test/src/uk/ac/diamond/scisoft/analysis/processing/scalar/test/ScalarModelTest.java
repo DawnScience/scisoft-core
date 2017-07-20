@@ -25,7 +25,6 @@ public class ScalarModelTest {
 	private final double defaultModelValue = 1;
 	
 	// Then test the getValue method of the ScalarModel, usually this wouldn't be tested but we're being exhaustive here
-	@SuppressWarnings("deprecation")
 	@Test
 	public void testGetValue() {
 		// Create a new ScalarModel object

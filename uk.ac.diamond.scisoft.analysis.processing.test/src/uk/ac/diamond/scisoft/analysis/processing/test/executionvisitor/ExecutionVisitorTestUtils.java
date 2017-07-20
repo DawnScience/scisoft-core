@@ -15,7 +15,9 @@ import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.LazyDataset;
+import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 
@@ -29,7 +31,7 @@ public static ILazyDataset getLazyDataset(int[] dsShape, int withAxes) {
 		
 		for (int i : dsShape) size *= i;
 		
-		Dataset d = DatasetFactory.createRange(size, Dataset.INT32);
+		Dataset d = DatasetFactory.createRange(IntegerDataset.class, size);
 		d.setShape(dsShape);
 	
 		ILazyDataset lz = LazyDataset.createLazyDataset(d);
@@ -40,7 +42,7 @@ public static ILazyDataset getLazyDataset(int[] dsShape, int withAxes) {
 				am = MetadataFactory.createMetadata(AxesMetadata.class, dsShape.length);
 				for (int j = 0; j < withAxes; j++) {
 					for (int i = 0; i < dsShape.length; i++) {
-						Dataset ax = DatasetFactory.createRange(0, dsShape[i], 1, Dataset.INT16);
+						Dataset ax = DatasetFactory.createRange(ShortDataset.class, 0, dsShape[i], 1);
 						ax.iadd(j);
 						int[] shape = new int[dsShape.length];
 						Arrays.fill(shape, 1);

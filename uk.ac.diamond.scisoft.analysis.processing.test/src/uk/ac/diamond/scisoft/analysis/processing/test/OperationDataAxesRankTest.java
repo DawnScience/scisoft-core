@@ -23,7 +23,9 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Random;
+import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 import org.junit.BeforeClass;
@@ -455,13 +457,13 @@ public class OperationDataAxesRankTest {
 		
 		ILazyDataset lz = Random.lazyRand("test", dsShape);
 
-		final IDataset axDataset1 = DatasetFactory.createRange(24,Dataset.INT16);
+		final IDataset axDataset1 = DatasetFactory.createRange(ShortDataset.class, 24);
 		axDataset1.setShape(new int[] {24,1,1});
 
-		final IDataset axDataset2 = DatasetFactory.createRange(1000,Dataset.INT32);
+		final IDataset axDataset2 = DatasetFactory.createRange(IntegerDataset.class, 1000);
 		axDataset2.setShape(new int[] {1,1000,1});
 
-		final IDataset axDataset3 = DatasetFactory.createRange(1000,Dataset.INT32);
+		final IDataset axDataset3 = DatasetFactory.createRange(IntegerDataset.class, 1000);
 		axDataset3.setShape(new int[] {1,1,1000});
 
 		AxesMetadata am = MetadataFactory.createMetadata(AxesMetadata.class, 3);
@@ -479,10 +481,10 @@ public class OperationDataAxesRankTest {
 		
 		protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 			
-			Dataset ones = DatasetFactory.ones(new int[] {5, 10}, Dataset.INT16);
-			Dataset ax1 = DatasetFactory.createRange(5, Dataset.INT16);
+			Dataset ones = DatasetFactory.ones(ShortDataset.class, 5, 10);
+			Dataset ax1 = DatasetFactory.createRange(ShortDataset.class, 5);
 			ax1.setShape(new int[]{5,1});
-			Dataset ax2 = DatasetFactory.createRange(10, Dataset.INT16);
+			Dataset ax2 = DatasetFactory.createRange(ShortDataset.class, 10);
 			ax2.setShape(new int[]{1,10});
 			AxesMetadata md;
 			try {
@@ -585,8 +587,8 @@ public class OperationDataAxesRankTest {
 		
 		protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 			
-			Dataset ones = DatasetFactory.ones(new int[] {10}, Dataset.INT16);
-			Dataset ax1 = DatasetFactory.createRange(10, Dataset.INT16);
+			Dataset ones = DatasetFactory.ones(ShortDataset.class, 10);
+			Dataset ax1 = DatasetFactory.createRange(ShortDataset.class, 10);
 			ax1.setShape(new int[]{10});
 			AxesMetadata md;
 			try {
@@ -653,10 +655,10 @@ public class OperationDataAxesRankTest {
 	}
 	
 	public static Dataset getNew2dDataset() throws MetadataException {
-		Dataset ones = DatasetFactory.ones(new int[] {5, 10}, Dataset.INT16);
-		Dataset ax1 = DatasetFactory.createRange(5, Dataset.INT16);
+		Dataset ones = DatasetFactory.ones(ShortDataset.class, 5, 10);
+		Dataset ax1 = DatasetFactory.createRange(ShortDataset.class, 5);
 		ax1.setShape(new int[]{5,1});
-		Dataset ax2 = DatasetFactory.createRange(10, Dataset.INT16);
+		Dataset ax2 = DatasetFactory.createRange(ShortDataset.class, 10);
 		ax2.setShape(new int[]{1,10});
 		AxesMetadata md = MetadataFactory.createMetadata(AxesMetadata.class, 2);
 		md.addAxis(0, ax1);
@@ -667,8 +669,8 @@ public class OperationDataAxesRankTest {
 	
 
 	public static Dataset getNew1dDataset() throws MetadataException {
-		Dataset ones = DatasetFactory.ones(new int[] {10}, Dataset.INT16);
-		Dataset ax1 = DatasetFactory.createRange(10, Dataset.INT16);
+		Dataset ones = DatasetFactory.ones(ShortDataset.class, 10);
+		Dataset ax1 = DatasetFactory.createRange(ShortDataset.class, 10);
 		ax1.setShape(new int[]{10});
 		AxesMetadata md = MetadataFactory.createMetadata(AxesMetadata.class, 1);
 		md.addAxis(0, ax1);

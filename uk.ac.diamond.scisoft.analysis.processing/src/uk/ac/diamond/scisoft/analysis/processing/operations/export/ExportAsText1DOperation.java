@@ -22,7 +22,6 @@ import org.eclipse.january.dataset.Slice;
 import uk.ac.diamond.scisoft.analysis.io.ASCIIDataWithHeadingSaver;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadata;
-import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadataImpl;
 
 @Atomic
 public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DModel, OperationData> implements IExportOperation {

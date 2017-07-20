@@ -55,6 +55,7 @@ public class OperationMetadataImpl implements OperationMetadata {
 		return process(filename, datasetName, metadata, null, null);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Dataset process(String filename, String datasetName, SliceFromSeriesMetadata metadata, Integer start, Integer stop) {
 		
 		SliceND sampling = null;

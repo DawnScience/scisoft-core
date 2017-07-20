@@ -15,11 +15,12 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.hdf.object.operation.HierarchicalFileExecutionVisitor;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Random;
+import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 import org.junit.BeforeClass;
@@ -57,15 +58,15 @@ private static IOperationService service;
 //		context.setSlicing(sliceMap); //
 		context.setDataDimensions(new int[]{1,2});
 		
-		final IDataset axDataset1 = DatasetFactory.createRange(100,Dataset.INT16);
+		final IDataset axDataset1 = DatasetFactory.createRange(ShortDataset.class, 100);
 		axDataset1.setShape(new int[] {100,1,1});
 		axDataset1.setName("z");
 		
-		final IDataset axDataset2 = DatasetFactory.createRange(100,Dataset.INT32);
+		final IDataset axDataset2 = DatasetFactory.createRange(IntegerDataset.class, 100);
 		axDataset2.setShape(new int[] {1,100,1});
 		axDataset2.setName("y");
 		
-		final IDataset axDataset3 = DatasetFactory.createRange(100,Dataset.INT32);
+		final IDataset axDataset3 = DatasetFactory.createRange(IntegerDataset.class, 100);
 		axDataset3.setShape(new int[] {1,1,100});
 		axDataset3.setName("x");
 		

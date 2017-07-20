@@ -12,23 +12,21 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 
 // Imports from org.eclipse.dawnsci
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
-import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
-
-
+import org.eclipse.january.DatasetException;
 // imports from org.eclipse.january
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Slice;
-import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.DatasetException;
-import org.eclipse.january.MetadataException;
-import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.metadata.MetadataFactory;
 
 
@@ -80,7 +78,7 @@ public class Trim1DOperation extends AbstractOperation<Trim1DModel, OperationDat
 		try {
 			inputAxis = axes[0].getSlice((Slice) null);
 		} catch (DatasetException noAxes) {
-			inputAxis = DatasetFactory.createLinearSpace(0, dataLength, dataLength, Dataset.INT);
+			inputAxis = DatasetFactory.createLinearSpace(IntegerDataset.class, 0, dataLength, dataLength);
 		}
 		
 		// Find the start and end array indices

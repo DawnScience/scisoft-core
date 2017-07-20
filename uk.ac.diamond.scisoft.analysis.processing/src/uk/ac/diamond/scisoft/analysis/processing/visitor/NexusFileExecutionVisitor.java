@@ -22,7 +22,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
@@ -50,6 +49,7 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.LazyWriteableDataset;
 import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.Slice;
@@ -181,7 +181,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		if (swmring) {
 			group = nexusFile.getGroup("/" + ENTRY + "/" + LIVE, true);
 			nexusFile.addAttribute(group, new AttributeImpl("NX_class","NXcollection"));
-			IDataset dataset = DatasetFactory.zeros(new int[]{1}, Dataset.INT32);
+			IDataset dataset = DatasetFactory.zeros(IntegerDataset.class, 1);
 			dataset.setName(FINISHED);
 			createWriteableLazy(dataset, group);
 		}
@@ -621,7 +621,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			
 			if (swmring) {
 				DataNode dn = nexusFile.getData(Node.SEPARATOR + ENTRY + Node.SEPARATOR + LIVE + Node.SEPARATOR + FINISHED);
-				dn.getWriteableDataset().setSlice(null, DatasetFactory.ones(new int[]{1}, Dataset.INT32), new SliceND(dn.getWriteableDataset().getShape()));
+				dn.getWriteableDataset().setSlice(null, DatasetFactory.ones(IntegerDataset.class, 1), new SliceND(dn.getWriteableDataset().getShape()));
 			}
 			
 			nexusFile.flush();

@@ -36,8 +36,9 @@ public class AffineTransformImageOperation extends AbstractSimpleImageOperation<
 			imageTransformService = OperationServiceLoader.getImageTransformService();
 
 		IDataset out = processImage(input, monitor);
+		int[] outShape = out.getShape();
 		//check if dimensions of the data changed after processing
-		if (input.getShape()[0] == out.getShape()[0] && input.getShape()[1] == out.getShape()[1]) {
+		if (input.getShape()[0] == outShape[0] && input.getShape()[1] == outShape[1]) {
 			copyMetadata(input, out);
 		} else {
 			copyMetadata(input, out, false);
@@ -56,17 +57,17 @@ public class AffineTransformImageOperation extends AbstractSimpleImageOperation<
 					//check if axes is 1 or 2 dimensional
 					if (axis_old_x.getRank() == 1) {
 						//1D
-						axis_new_x = DatasetFactory.zeros(new int[]{out.getShape()[0]}, axis_old_x.getDType());
-						for (int i = 0 ; i < out.getShape()[0] ; i++) {
-							double new_value = axis_old_x.getDouble(0) + (axis_old_x.getDouble(axis_old_x.getShape()[0]-1) - axis_old_x.getDouble(0)) * i / (out.getShape()[0]-1);
+						axis_new_x = DatasetFactory.zeros(axis_old_x.getClass(), outShape[0]);
+						for (int i = 0 ; i < outShape[0] ; i++) {
+							double new_value = axis_old_x.getDouble(0) + (axis_old_x.getDouble(-1) - axis_old_x.getDouble(0)) * i / (outShape[0]-1);
 							axis_new_x.set(new_value, i);
 						}
 					} else {
 						//2D
-						axis_new_x = DatasetFactory.zeros(out.getShape(), axis_old_x.getDType());
-						for (int i = 0 ; i < out.getShape()[0] ; i++) {
-							double new_value = axis_old_x.getDouble(0, 0) + (axis_old_x.getDouble(axis_old_x.getShape()[0]-1, 0) - axis_old_x.getDouble(0, 0)) * i / (out.getShape()[0]-1);
-							for (int j = 0 ; j < out.getShape()[1] ; j++) {
+						axis_new_x = DatasetFactory.zeros(axis_old_x.getClass(), outShape);
+						for (int i = 0 ; i < outShape[0] ; i++) {
+							double new_value = axis_old_x.getDouble(0, 0) + (axis_old_x.getDouble(-1, 0) - axis_old_x.getDouble(0, 0)) * i / (outShape[0]-1);
+							for (int j = 0 ; j < outShape[1] ; j++) {
 								//System.out.println("i: " + i + " j: " + j);
 								axis_new_x.set(new_value, i, j);
 							}
@@ -84,17 +85,17 @@ public class AffineTransformImageOperation extends AbstractSimpleImageOperation<
 					//check if axes is 1 or 2 dimensional
 					if (axis_old_y.getRank() == 1) {
 						//1D
-						axis_new_y = DatasetFactory.zeros(new int[]{out.getShape()[1]}, axis_old_y.getDType());
-						for (int j = 0 ; j < out.getShape()[1] ; j++) {
-							double new_value = axis_old_y.getDouble(0) + (axis_old_y.getDouble(axis_old_y.getShape()[0]-1) - axis_old_y.getDouble(0)) * j / (out.getShape()[1]-1);
+						axis_new_y = DatasetFactory.zeros(axis_old_y.getClass(), outShape[1]);
+						for (int j = 0 ; j < outShape[1] ; j++) {
+							double new_value = axis_old_y.getDouble(0) + (axis_old_y.getDouble(-1) - axis_old_y.getDouble(0)) * j / (outShape[1]-1);
 							axis_new_y.set(new_value, j);
 						}
 					} else {
 						//2D
-						axis_new_y = DatasetFactory.zeros(out.getShape(), axis_old_y.getDType());
-						for (int j = 0 ; j < out.getShape()[1] ; j++) {
-							double new_value = axis_old_y.getDouble(0, 0) + (axis_old_y.getDouble(0, axis_old_y.getShape()[1]-1) - axis_old_y.getDouble(0, 0)) * j / (out.getShape()[1]-1);
-							for (int i = 0 ; i < out.getShape()[0] ; i++) {
+						axis_new_y = DatasetFactory.zeros(axis_old_y.getClass(), outShape);
+						for (int j = 0 ; j < outShape[1] ; j++) {
+							double new_value = axis_old_y.getDouble(0, 0) + (axis_old_y.getDouble(0, -1) - axis_old_y.getDouble(0, 0)) * j / (outShape[1]-1);
+							for (int i = 0 ; i < outShape[0] ; i++) {
 								axis_new_y.set(new_value, i, j);
 							}
 						}

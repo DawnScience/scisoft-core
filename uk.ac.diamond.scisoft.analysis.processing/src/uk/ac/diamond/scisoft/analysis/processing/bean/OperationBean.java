@@ -24,6 +24,8 @@ import org.eclipse.scanning.api.event.status.StatusBean;
  */
 public class OperationBean extends StatusBean implements IOperationBean {
 
+	private static final long serialVersionUID = -7528050805167164964L;
+
 	private String               filePath;              
 	private String               datasetPath; // can be to NXdata node
 	private String				 slicing; //can be null

@@ -103,8 +103,8 @@ public class BoxSlicerRodScanUtils {
 		
 		Dataset regionOfRegard = regionOfRegard(input, monitor, len, pt, boundaryBox);
 		
-		Dataset x = DatasetFactory.createRange(regionOfRegard.getShape()[0], Dataset.FLOAT64);
-		Dataset y = DatasetFactory.createRange(regionOfRegard.getShape()[1], Dataset.FLOAT64);;
+		Dataset x = DatasetFactory.createRange(regionOfRegard.getShapeRef()[0]);
+		Dataset y = DatasetFactory.createRange(regionOfRegard.getShapeRef()[1]);
 		
 		List<Dataset> meshGrid = DatasetUtils.meshGrid(x,y);
 		

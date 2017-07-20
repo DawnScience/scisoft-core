@@ -9,22 +9,22 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.scalar.test;
 
+//Import from org.junit
+import static org.junit.Assert.assertEquals;
+
 // Imports from org.eclipse
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
-import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.IMonitor;
-
-//Import from org.junit
-import static org.junit.Assert.*;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.processing.scalar.ScalarModel;
 //Imports from uk.ac.diamond
 import uk.ac.diamond.scisoft.analysis.processing.scalar.SubtractScalarOperation;
-import uk.ac.diamond.scisoft.analysis.processing.scalar.ScalarModel;
 
 
 // Now the testing class
@@ -49,7 +49,7 @@ public class SubtractScalarOperationTest {
 		SubtractScalarOperation scalarOperation = new SubtractScalarOperation();
 		
 		// We shall set up a dataset with ten values, between 10 and 19
-		IDataset testData = DatasetFactory.createLinearSpace(start, stop, length, Dataset.FLOAT64);
+		IDataset testData = DatasetFactory.createLinearSpace(DoubleDataset.class, start, stop, length);
 
 		// We shall then tell the ScalarModel that we want to subtract ten from the testData and pass this to the operation
 		ScalarModel scalarModel = new ScalarModel();
@@ -57,7 +57,7 @@ public class SubtractScalarOperationTest {
 		scalarOperation.setModel(scalarModel);
 
 		// Then we shall create the dataset, as it should be
-		IDataset testResult = DatasetFactory.createLinearSpace((start - scalarOperator), (stop - scalarOperator), length, Dataset.FLOAT64);
+		IDataset testResult = DatasetFactory.createLinearSpace(DoubleDataset.class, (start - scalarOperator), (stop - scalarOperator), length);
 		
 		// We shall then create a monitor to satisfy the operation arguments
 		IMonitor monitor = new IMonitor.Stub();

@@ -10,9 +10,11 @@
 package uk.ac.diamond.scisoft.analysis.processing.sxrdrods;
 
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -20,8 +22,8 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
 
+import uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.RodScanCorrections;
 import uk.ac.diamond.scisoft.analysis.processing.surfacescattering.BackgroundSetting;
-import uk.ac.diamond.scisoft.analysis.processing.surfacescattering.BoxSlicer;
 
 public class RodScanPolynomial1DOperation extends AbstractOperation<RodScanPolynomial1DModel, OperationData> {
 
@@ -62,7 +64,7 @@ public class RodScanPolynomial1DOperation extends AbstractOperation<RodScanPolyn
 				, model.getBoundaryBox(), model.getDirection());
 		
 		
-		Dataset in1Background = DatasetFactory.zeros(in1.getShape(), Dataset.FLOAT64);
+		Dataset in1Background = DatasetFactory.zeros(in1.getShape());
 		
 		in1Background = BackgroundSetting.rOIBackground1(background, in1Background
 				, box.getIntLengths(), box.getIntPoint()
@@ -80,13 +82,17 @@ public class RodScanPolynomial1DOperation extends AbstractOperation<RodScanPolyn
 
 		pBackgroundSubtracted.setName("pBackgroundSubtracted");
 
-		Dataset correction = Maths.multiply(RodScanCorrections.lorentz(input), RodScanCorrections.areacor(input
-				, model.getBeamCor(), model.getSpecular(),  model.getSampleSize()
-				, model.getOutPlaneSlits(), model.getInPlaneSlits(), model.getBeamInPlane()
-				, model.getBeamOutPlane(), model.getScalingFactor()));
-
-		correction = Maths.multiply(RodScanCorrections.polarisation(input, model.getInPlanePolarisation()
-				, model.getOutPlanePolarisation()), correction);
+		Dataset correction;
+		try {
+			correction = Maths.multiply(RodScanCorrections.lorentz(input), RodScanCorrections.areacor(input
+					, model.getBeamCor(), model.getSpecular(),  model.getSampleSize()
+					, model.getOutPlaneSlits(), model.getInPlaneSlits(), model.getBeamInPlane()
+					, model.getBeamOutPlane(), model.getScalingFactor()));
+			correction = Maths.multiply(RodScanCorrections.polarisation(input, model.getInPlanePolarisation()
+					, model.getOutPlanePolarisation()), correction);
+		} catch (DatasetException e) {
+			throw new OperationException(this, e);
+		}
 		
 		correction = Maths.multiply(model.getScalingFactor(), correction);
 			

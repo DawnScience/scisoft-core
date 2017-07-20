@@ -17,6 +17,7 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -108,9 +109,9 @@ public class Pauw1DBackgroundSubtractionOperation extends AbstractOperation<Pauw
 		double equationPrefactor = 1 / sampleThickness;
 		
 		// Now cast into float datasets  so we can go through using the error propogation utilities
-		Dataset sampleFractionFactorData = DatasetFactory.createFromObject(Dataset.FLOAT64, sampleFractionFactor);
-		Dataset backgroundFractionFactorData = DatasetFactory.createFromObject(Dataset.FLOAT64, backgroundFractionFactor);
-		Dataset equationPrefactorData = DatasetFactory.createFromObject(Dataset.FLOAT64, equationPrefactor);
+		Dataset sampleFractionFactorData = DatasetFactory.createFromObject(DoubleDataset.class, sampleFractionFactor);
+		Dataset backgroundFractionFactorData = DatasetFactory.createFromObject(DoubleDataset.class, backgroundFractionFactor);
+		Dataset equationPrefactorData = DatasetFactory.createFromObject(DoubleDataset.class, equationPrefactor);
 
 //		Dataset hermanOrientationDataset = DatasetFactory.zeros(1, datasetSize, Dataset.FLOAT64);
 //		hermanOrientationDataset.set(hermanOrientationFactor, 0);

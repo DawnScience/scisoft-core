@@ -10,7 +10,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd;
 
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
-import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
@@ -57,7 +56,7 @@ public class OneDPolynomialBackgroundFitAndSubtract extends AbstractOperation<Bo
 				, model.getBoundaryBox(), model.getDirection());
 		
 		
-		Dataset in1Background = DatasetFactory.zeros(in1.getShape(), Dataset.FLOAT64);
+		Dataset in1Background = DatasetFactory.zeros(in1.getShapeRef());
 		
 		in1Background = BackgroundSetting.rOIBackground1(background, in1Background
 				, box.getIntLengths(), box.getIntPoint()

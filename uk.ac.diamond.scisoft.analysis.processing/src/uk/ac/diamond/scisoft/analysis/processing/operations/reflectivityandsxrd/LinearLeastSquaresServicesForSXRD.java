@@ -11,7 +11,6 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd
 
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.SliceND;
 
 public class LinearLeastSquaresServicesForSXRD {
 
@@ -22,7 +21,7 @@ public class LinearLeastSquaresServicesForSXRD {
 		int datasize = xValues.getShape()[0];
 		
 		
-		Dataset testMatrix = DatasetFactory.ones(new int[] {datasize, noParams}, Dataset.FLOAT64);
+		Dataset testMatrix = DatasetFactory.ones(datasize, noParams);
 		
 		int[] pos = new int[]{0,0};
 		for (int i = 0; i < datasize; i++) {
@@ -65,7 +64,7 @@ public class LinearLeastSquaresServicesForSXRD {
 		
 		int datasize = Z.getShape()[0];
 		
-		Dataset sigmaMatrix = DatasetFactory.ones(new int[] {datasize}, Dataset.FLOAT64);
+		Dataset sigmaMatrix = DatasetFactory.ones(datasize);
 		
 		
 		for (int k =0; k<datasize; k++){

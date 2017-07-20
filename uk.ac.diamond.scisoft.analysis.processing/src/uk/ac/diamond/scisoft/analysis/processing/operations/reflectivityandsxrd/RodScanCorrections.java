@@ -145,11 +145,11 @@ public class RodScanCorrections {
 		Dataset inplane = Maths.subtract(1,Maths.power(Maths.sin(d), 2));
 		Dataset outplane = Maths.subtract(1,(Maths.power((Maths.multiply(Maths.cos(d),Maths.sin(g))),2)));
 		
-		
-		Dataset IPdat = DatasetFactory.zeros(delta4.getShape(),Dataset.FLOAT64);
+		int[] d4Shape = delta4.getShape();
+		Dataset IPdat = DatasetFactory.zeros(d4Shape);
 		IPdat = Maths.add(IPdat, IP);
 		
-		Dataset OPdat = DatasetFactory.zeros(delta4.getShape(),Dataset.FLOAT64);
+		Dataset OPdat = DatasetFactory.zeros(d4Shape);
 		OPdat = Maths.add(OPdat, OP);
 	
 		Dataset polar = Maths.divide(1,(Maths.add((Maths.multiply(OPdat,outplane)),(Maths.multiply(IPdat,inplane)))));
@@ -198,9 +198,9 @@ public class RodScanCorrections {
 		Dataset d = Maths.multiply(delta4,pc);
 		Dataset g = Maths.multiply(gamma4,pc);
 		
-		
-		Dataset area_cor = DatasetFactory.zeros(delta4.getShape(),Dataset.FLOAT64);
-		Dataset ylimitdat = DatasetFactory.zeros(delta4.getShape(),Dataset.FLOAT64);
+		int[] d4Shape = delta4.getShape();
+		Dataset area_cor = DatasetFactory.zeros(d4Shape);
+		Dataset ylimitdat = DatasetFactory.zeros(d4Shape);
 		
 		
 		if (BeamCor == true) {
@@ -212,7 +212,7 @@ public class RodScanCorrections {
 				
 				ylimitdat = Maths.add(ylimitdat, ylimit);
 						
-				for (int i=0; i<=delta4.getShape()[0]; i++){
+				for (int i=0; i<d4Shape[0]; i++){
 				
 					if (SampleSize > 0.01) {
 						ylimitdat = Maths.subtract(ylimitdat, ylimit);
@@ -248,7 +248,7 @@ public class RodScanCorrections {
 				
 					ylimitdat = Maths.add(ylimitdat, ylimit);
 					
-					for (int i=0; i<=delta4.getShape()[0]; i++){
+					for (int i=0; i<d4Shape[0]; i++){
 						
 					
 						if (InPlaneSlits > 0.01) {

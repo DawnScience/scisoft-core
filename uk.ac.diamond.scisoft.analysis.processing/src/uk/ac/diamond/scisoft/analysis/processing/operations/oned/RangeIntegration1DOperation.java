@@ -15,6 +15,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 
 @Atomic
 public class RangeIntegration1DOperation extends AbstractOperation<RangeIntegration1DModel, OperationData> {
@@ -40,7 +41,7 @@ public class RangeIntegration1DOperation extends AbstractOperation<RangeIntegrat
 		IDataset axis = null;
 		
 		if (firstAxes == null || firstAxes[0] == null) {
-			axis = DatasetFactory.createRange(input.getSize(), Dataset.INT32);
+			axis = DatasetFactory.createRange(IntegerDataset.class, input.getSize());
 		} else {
 			try {
 				axis = firstAxes[0].getSlice();

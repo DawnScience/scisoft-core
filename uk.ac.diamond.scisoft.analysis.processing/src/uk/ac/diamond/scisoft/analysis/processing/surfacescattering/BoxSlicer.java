@@ -9,10 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.surfacescattering;
 
-import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
-import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;

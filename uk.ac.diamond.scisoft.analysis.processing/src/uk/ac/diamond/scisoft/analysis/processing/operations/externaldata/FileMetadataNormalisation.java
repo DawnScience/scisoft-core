@@ -10,7 +10,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;

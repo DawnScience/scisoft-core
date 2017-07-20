@@ -12,7 +12,6 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.IntegrationModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxIntegration.Direction;
 
 public class ImageIntegrationModel extends AbstractOperationModel {

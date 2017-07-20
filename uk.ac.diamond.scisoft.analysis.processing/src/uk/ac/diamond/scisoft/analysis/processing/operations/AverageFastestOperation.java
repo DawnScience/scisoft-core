@@ -9,8 +9,6 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import java.util.Arrays;
-
 import org.eclipse.dawnsci.analysis.api.processing.IExportOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;

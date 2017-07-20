@@ -10,7 +10,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -21,6 +20,7 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.Slice;
 
@@ -46,7 +46,7 @@ public class DataWrittenOperation extends AbstractOperation<DataWrittenModel, Op
 
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		if (model.getnFramesOverwrite() < 0) {
-			Dataset ones = DatasetFactory.ones(new int[]{1}, Dataset.INT64);
+			Dataset ones = DatasetFactory.ones(IntegerDataset.class, 1);
 			ones.setName("key");
 			return new OperationData(input, new Serializable[]{ones});
 		} else {

@@ -7,15 +7,11 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
-import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
-import org.eclipse.january.metadata.OriginMetadata;
-
-import uk.ac.diamond.scisoft.analysis.processing.operations.powder.AbstractPixelIntegrationOperation;
 
 public abstract class AbstractImageSubtrationOperation<T extends AbstractOperationModel> extends AbstractOperation<T, OperationData> {
 

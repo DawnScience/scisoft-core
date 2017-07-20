@@ -17,11 +17,7 @@ import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.metadata.MaskMetadata;
-
-import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
 
 public class BoxMeanOperation extends AbstractOperation<BoxModel, OperationData> {
 

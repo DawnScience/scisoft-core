@@ -21,7 +21,6 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.RunningAverage;
-import org.eclipse.january.dataset.Slice;
 
 public class AverageSectionsOfFastestOperation extends AbstractOperation<AverageSectionsOfFastestModel, OperationData> implements IExportOperation{
 

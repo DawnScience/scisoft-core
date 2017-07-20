@@ -7,10 +7,10 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.MetadataException;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Random;
+import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.ErrorMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
@@ -76,16 +76,16 @@ public class Junk1Dto1DOperation extends AbstractOperation<Junk1DModel, Operatio
 		
 		int x = model.getxDim();
 
-		IDataset out = DatasetFactory.createRange(x,Dataset.INT16);
+		IDataset out = DatasetFactory.createRange(ShortDataset.class, x);
 		out.setName("Junk1Dout");
 		
 		if (withAxes) {
-			IDataset ax1 = DatasetFactory.createRange(0, x,1, Dataset.INT16);
+			IDataset ax1 = DatasetFactory.createRange(ShortDataset.class, 0, x,1);
 			ax1.setShape(new int[]{x});
 			ax1.setName("Junk1Dax");
 			
 			if (withErrors) {
-				ax1.setErrors(DatasetFactory.createRange(1, x+1,1, Dataset.INT16));
+				ax1.setErrors(DatasetFactory.createRange(ShortDataset.class, 1, x+1,1));
 			}
 			
 			AxesMetadata am;

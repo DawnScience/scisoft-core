@@ -21,9 +21,9 @@ import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 
 public class FilterXYbyRatioOperation extends AbstractOperation<FilterXYbyRatioModel, OperationData> {
 
@@ -57,7 +57,7 @@ public class FilterXYbyRatioOperation extends AbstractOperation<FilterXYbyRatioM
 		IDataset axis = null;
 		
 		if (firstAxes == null || firstAxes[0] == null) {
-			axis = DatasetFactory.createRange(input.getSize(), Dataset.INT32);
+			axis = DatasetFactory.createRange(IntegerDataset.class, input.getSize());
 		} else {
 			try {
 				axis = firstAxes[0].getSlice();

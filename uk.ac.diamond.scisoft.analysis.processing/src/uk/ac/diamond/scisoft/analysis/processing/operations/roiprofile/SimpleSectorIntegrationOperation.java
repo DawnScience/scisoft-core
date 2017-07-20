@@ -18,6 +18,7 @@ import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MaskMetadata;
@@ -55,7 +56,7 @@ public class SimpleSectorIntegrationOperation extends AbstractOperation<SimpleSe
 		Dataset[] sector = ROIProfile.sector(DatasetUtils.convertToDataset(input), mask, model.getSector(),
 				true, false, false, null, null, false);
 		
-		final Dataset xi = DatasetFactory.createLinearSpace(model.getSector().getRadius(0), model.getSector().getRadius(1), sector[0].getSize(), Dataset.FLOAT64);
+		final Dataset xi = DatasetFactory.createLinearSpace(DoubleDataset.class, model.getSector().getRadius(0), model.getSector().getRadius(1), sector[0].getSize());
 		xi.setName("radius");
 		
 		Dataset s = sector[0];

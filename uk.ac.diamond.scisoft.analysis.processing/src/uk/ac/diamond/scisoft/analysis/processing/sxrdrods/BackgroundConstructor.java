@@ -14,6 +14,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.IntegerDataset;
 
 import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
@@ -60,10 +61,10 @@ public class BackgroundConstructor {
 
 
 			Dataset[] strip = new Dataset[length];
-			Dataset c = DatasetFactory.zeros(new int[] { 2 * boundaryBox}, Dataset.FLOAT64);
+			Dataset c = DatasetFactory.zeros(2 * boundaryBox);
 			//Make axis for fit
-			IDataset begin = DatasetFactory.createRange(boundaryBox, Dataset.INT32);
-			IDataset end = DatasetFactory.createRange((double) (boundaryBox + length),(double) (2*boundaryBox + length), 1, Dataset.INT32);
+			IDataset begin = DatasetFactory.createRange(IntegerDataset.class, boundaryBox);
+			IDataset end = DatasetFactory.createRange(IntegerDataset.class, (double) (boundaryBox + length), (double) (2*boundaryBox + length), 1);
 			Dataset fullBack = DatasetUtils.concatenate(new IDataset[]{begin,end}, 0);
 			
 			
@@ -89,11 +90,11 @@ public class BackgroundConstructor {
 				Polynomial polyFit = Fitter.polyFit(temp, c, 1e-5,fitpower);
 				//Dataset[] e = new Dataset[1];
 				
-				int[] tempshape = {length1 , 0};
-				
-				Dataset e = DatasetFactory.zeros(tempshape, Dataset.INT64);
+//				int[] tempshape = {length1 , 0};
+//				
+//				Dataset e = DatasetFactory.zeros(IntegerDataset.class, tempshape);
 					
-				e = DatasetFactory.createLinearSpace(boundaryBox, length1 + boundaryBox, length1, Dataset.INT);
+				IntegerDataset e = DatasetFactory.createLinearSpace(IntegerDataset.class, boundaryBox, length1 + boundaryBox, length1);
 
 				strip[i] = (Dataset) polyFit.calculateValues(e);
 					

@@ -11,10 +11,8 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 
-//Imports from org.eclipse.dawnsci
-import org.eclipse.dawnsci.analysis.api.processing.model.FileType;
-import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
+import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 // This processing plugin scales the intensity recorded on an uncalibrated detector when another, calibrated, detector 
 // at a different sample-to-detector distance can be used as a reference point. This is achieved via the inverse square law 

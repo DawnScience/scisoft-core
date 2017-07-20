@@ -9,11 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import java.util.Arrays;
-
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IndexIterator;
 
@@ -102,8 +99,8 @@ public class ErrorPropagationUtils {
 		
 		Dataset inputUncert = input.getErrors();
 		Dataset oprahendUncert = oprahend.getErrors();
-		DoubleDataset output = (DoubleDataset) DatasetFactory.zeros(input, Dataset.FLOAT64);
-		DoubleDataset outputUncert = (inputUncert == null) ? null : (DoubleDataset) DatasetFactory.zeros(inputUncert, Dataset.FLOAT64);
+		DoubleDataset output = (DoubleDataset) DatasetFactory.zeros(input.getShapeRef());
+		DoubleDataset outputUncert = (inputUncert == null) ? null : DatasetFactory.zeros(inputUncert.getShapeRef());
 		//assume data and errors are either not views or common views
 		IndexIterator iter = input.getIterator();
 		

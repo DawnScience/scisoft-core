@@ -16,11 +16,9 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperationBase;
-
 // Import org.eclipse.january
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.metadata.AxesMetadata;
 
 //Import uk.ac.diamond.scisoft
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;

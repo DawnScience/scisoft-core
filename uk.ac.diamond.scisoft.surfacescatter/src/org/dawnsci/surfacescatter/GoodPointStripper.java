@@ -113,7 +113,7 @@ public class GoodPointStripper {
 		ArrayList<Double> yHolder =new ArrayList<>();
 		ArrayList<Double> yErrorHolder =new ArrayList<>();
 			
-		for(int j =0; j<goodPointIDatasets.getSize(); j++){
+		for(int j =0; j<yIDatasets.getSize(); j++){
 			if(goodPointIDatasets.getBoolean(j) ||
 					includeAll){
 				
@@ -162,7 +162,7 @@ public class GoodPointStripper {
 		
 		ArrayList<Double> xHolder =new ArrayList<>();
 			
-		for(int j =0; j<goodPointIDatasets.getSize(); j++){
+		for(int j =0; j<xIDataset.getSize(); j++){
 			if(goodPointIDatasets.getBoolean(j) ||
 					includeAll){
 				xHolder.add(xIDataset.getDouble(j));

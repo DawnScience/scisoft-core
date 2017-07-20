@@ -51,11 +51,8 @@ public class CsdpGeneratorFromDrm {
 		IDataset splicedGoodPointIDataset = DatasetFactory.createFromList(splicedGoodPointArray);
 		csdp.setSplicedGoodPointIDataset(splicedGoodPointIDataset);
 		
-		IDataset[] goodPointDatArray = new IDataset[drm.getFilepathsSortedArray().length];
-		
-		for(int i=0; i< drm.getDatFilepaths().length; i++){
-			goodPointDatArray[i] =  DatasetFactory.createFromList(goodPointLists.get(i)); 
-		}
+		IDataset[] goodPointDatArray =goodPointIDatasetArrayGenerator(noOfDats, 
+																	  ocdp.getyListForEachDat());
 		
 		csdp.setGoodPointIDataset(goodPointDatArray);
 		
@@ -191,6 +188,78 @@ public class CsdpGeneratorFromDrm {
 		
 		return output;
 	}
+	
+	
+	
+	public  IDataset[] goodPointIDatasetArrayGenerator(int n, // number of Dats
+			  											ArrayList<ArrayList<Double>> input){
+
+
+		
+		
+		if (input==null){
+			input = new ArrayList<ArrayList<Double>>();
+		
+			for(int r=0; r<n;r++){
+				input.add(new ArrayList<Double>());
+			
+				for(int u =0; u<=drm.getNoOfImagesInDatFile(r);u++ ){
+					input.get(r).add(-10000000000.0);
+					
+				}
+			}
+		}
+		ArrayList<ArrayList<Double>> outputC = new ArrayList<>();
+		
+		for (ArrayList<Double> w : input){
+			
+			ArrayList<Double> q =new ArrayList<>();
+			
+			for(Double c : w){
+				q.add(c);
+			}
+				outputC.add(q);
+		}
+		
+		ArrayList<ArrayList<Boolean>> goodPointArrays = new ArrayList<>();
+		
+		for(int i = 0; i<n; i++){
+			
+			boolean containsGoodPoint  = false;
+			
+			for(double l: outputC.get(i)){
+				if(l != -10000000000.0){
+					containsGoodPoint = true;
+				}
+			}
+			
+			if(containsGoodPoint){
+				ArrayList<Boolean> aq = new ArrayList<>();
+							
+				for(int j= 0; j< outputC.get(i).size(); j++){
+					if(outputC.get(i).get(j) != -10000000000.0){
+						for(FrameModel fm: drm.getFms()){
+							if(fm.getDatNo() == i &&  fm.getNoInOriginalDat() == j){
+								aq.add(fm.isGoodPoint());
+							}
+						}
+					}
+				}
+					
+				goodPointArrays.add(aq);
+			}
+		}
+				
+		IDataset[] output = new IDataset[goodPointArrays.size()];
+		
+		for(int y = 0; y<output.length; y++){
+			
+			output[y]=DatasetFactory.createFromList(goodPointArrays.get(y));
+		}
+		
+		return output;
+	}
+
 	
 	
 	public ArrayList<IDataset> convert(IDataset[] al){

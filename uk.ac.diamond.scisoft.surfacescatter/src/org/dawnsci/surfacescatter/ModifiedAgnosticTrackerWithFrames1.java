@@ -37,7 +37,7 @@ public class ModifiedAgnosticTrackerWithFrames1 extends AbstractTracker{
 			runTrack(trackingMarker);
 		}
 		
-		runTrack(trackingMarker);
+		
 	}
 	
 	private void runTrack(int trackingMarker){

@@ -173,7 +173,7 @@ public class JythonPath {
 	 * @return jyPaths Set containing all of the required plugins
 	 */
 	public static final Set<String> assembleJyPaths(File pluginsDir, boolean isRunningInEclipse) {
-		return assembleJyPaths(pluginsDir, null, isRunningInEclipse);
+		return assembleJyPaths(pluginsDir, null, null, isRunningInEclipse);
 	}
 
 	/**
@@ -186,6 +186,20 @@ public class JythonPath {
 	 * @return jyPaths Set containing all of the required plugins
 	 */
 	public static final Set<String> assembleJyPaths(File pluginsDir, Collection<String> extras, boolean isRunningInEclipse) {
+		return assembleJyPaths(pluginsDir, null, extras, isRunningInEclipse);
+	}
+
+	/**
+	 * Returns a set containing all of the plugins/jars found in the given 
+	 * directories which are in the requiredJars, pluginKeys, extraPlugins and not
+	 * in the blackListedJarDirs arrays.
+	 * @param pluginsDir
+	 * @param allPluginDirs can be null, in which case, they will be found from pluginsDir
+	 * @param extras
+	 * @param isRunningInEclipse
+	 * @return jyPaths Set containing all of the required plugins
+	 */
+	public static final Set<String> assembleJyPaths(File pluginsDir, List<File> allPluginDirs, Collection<String> extras, boolean isRunningInEclipse) {
 		
 		final Set<String> jyPaths = new HashSet<String>();
 		
@@ -198,8 +212,10 @@ public class JythonPath {
 		}
 		
 		// Find all the plugin directories
-		List<File> allPluginDirs = findDirs(pluginsDir, extras, isRunningInEclipse);
-		
+		if (allPluginDirs == null) {
+			allPluginDirs = findDirs(pluginsDir, extras, isRunningInEclipse);
+		}
+
 		// Find other plugin directories. Where searched depends on if running in eclipse
 		if (isRunningInEclipse) {
 			// Locate wsdir (w/o GIT_SUFFIX)

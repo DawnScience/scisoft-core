@@ -25,7 +25,7 @@ public class JCPDSLoaderTest {
 	@Test
 	public void testLoadFile() {
 		// TODO: Move the test file out of my home directory
-		JCPDSLoader loadOTron = new JCPDSLoader("/home/rkl37156/jcpds/diamond.jcpds");
+		JCPDSLoader loadOTron = new JCPDSLoader("/dls/science/groups/das/ExampleData/i15/jcpds/diamond.jcpds");
 		
 		DataHolder dh = null;
 		try {

@@ -257,6 +257,9 @@ public abstract class AbstractTracker {
 					
 					trackerInitialCopy.initialize(input, location, TrackingMethodology.toTT(frame.getTrackingMethodology()));
 					
+					
+					drm.setTracker(tracker);
+					drm.setInitialTracker(trackerInitialCopy);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -298,6 +301,9 @@ public abstract class AbstractTracker {
 				try{
 					tracker.initialize(input, location, TrackingMethodology.toTT(frame.getTrackingMethodology()));
 					trackerInitialCopy.initialize(input, location, TrackingMethodology.toTT(frame.getTrackingMethodology()));
+
+					drm.setTracker(tracker);
+					drm.setInitialTracker(trackerInitialCopy);
 				}	
 				catch(Exception d){
 						
@@ -352,6 +358,12 @@ public abstract class AbstractTracker {
 					///what's wrong here?
 					System.out.println("something wrong");
 					location = l; 
+					
+					tracker.initialize(input, location, TrackingMethodology.toTT(frame.getTrackingMethodology()));
+					trackerInitialCopy.initialize(input, location, TrackingMethodology.toTT(frame.getTrackingMethodology()));
+					
+					drm.setTracker(tracker);
+					drm.setInitialTracker(trackerInitialCopy);
 					
 				}
 				if (location != null) {

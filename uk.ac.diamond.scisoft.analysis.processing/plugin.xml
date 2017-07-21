@@ -1249,6 +1249,14 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.RegionSumModel"
             name="Region Sum">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.TextureFromCakeOperation"
+            description="Texture plot from Cake plot"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.TextureFromCakeOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="Texture from Cake"
+            visible="false">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

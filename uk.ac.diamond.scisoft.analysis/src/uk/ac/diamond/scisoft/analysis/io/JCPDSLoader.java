@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -140,6 +141,16 @@ public class JCPDSLoader extends AbstractFileLoader {
 			result.setDataset("h", DatasetFactory.createFromList(h));
 			result.setDataset("k", DatasetFactory.createFromList(k));
 			result.setDataset("l", DatasetFactory.createFromList(l));
+			
+			// metadata
+			metadata = new ExtendedMetadata(new File(fileName));
+			metadata.setMetadata(metadataMap);
+			
+			for (String name : new String[] {"d", "i", "j", "k", "l"})
+				metadata.addDataInfo(name, d.size());
+			
+			result.setMetadata(metadata);
+			
 		} catch (Exception e) {
 			throw new ScanFileHolderException("JCPDS cannot load from file " + fileName, e);
 		} finally {

@@ -1443,7 +1443,23 @@ public class MillerSpaceMapper {
 	 * @throws ScanFileHolderException
 	 */
 	public static void processVolume(String input, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double... mDelta) throws ScanFileHolderException {
-		setBean(I16MapperBean, input, output, splitter, p, scale, mShape, mStart, mDelta, null, null, null);
+		processVolume(new String[] {input}, output, splitter, p, scale, mShape, mStart, mDelta);
+	}
+
+	/**
+	 * Process Nexus files for I16
+	 * @param inputs Nexus files
+	 * @param output name of HDF5 file to be created
+	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
+	 * @param p splitter parameter
+	 * @param scale upsampling factor
+	 * @param mShape shape of Miller space volume
+	 * @param mStart start coordinates in Miller space
+	 * @param mDelta sides of voxels in Miller space
+	 * @throws ScanFileHolderException
+	 */
+	public static void processVolume(String[] inputs, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double... mDelta) throws ScanFileHolderException {
+		setBean(I16MapperBean, inputs, output, splitter, p, scale, mShape, mStart, mDelta, null, null, null);
 		MillerSpaceMapper mapper = new MillerSpaceMapper(I16MapperBean);
 		mapper.mapToVolumeFile();
 	}
@@ -1464,7 +1480,26 @@ public class MillerSpaceMapper {
 	 * @throws ScanFileHolderException
 	 */
 	public static void processBothVolumes(String input, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double[] mDelta, int[] qShape, double[] qStart, double[] qDelta) throws ScanFileHolderException {
-		setBean(I16MapperBean, input, output, splitter, p, scale, mShape, mStart, mDelta, qShape, qStart, qDelta);
+		processBothVolumes(new String[] {input}, output, splitter, p, scale, mShape, mStart, mDelta, qShape, qStart, qDelta);
+	}
+
+	/**
+	 * Process Nexus file for I16
+	 * @param inputs Nexus file
+	 * @param output name of HDF5 file to be created
+	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
+	 * @param p splitter parameter
+	 * @param scale upsampling factor
+	 * @param mShape shape of Miller space volume
+	 * @param mStart start coordinates in Miller space
+	 * @param mDelta sides of voxels in Miller space
+	 * @param qShape shape of q space volume
+	 * @param qStart start coordinates in q space
+	 * @param qDelta sides of voxels in q space
+	 * @throws ScanFileHolderException
+	 */
+	public static void processBothVolumes(String[] inputs, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double[] mDelta, int[] qShape, double[] qStart, double[] qDelta) throws ScanFileHolderException {
+		setBean(I16MapperBean, inputs, output, splitter, p, scale, mShape, mStart, mDelta, qShape, qStart, qDelta);
 		MillerSpaceMapper mapper = new MillerSpaceMapper(I16MapperBean);
 		mapper.mapToVolumeFile();
 	}
@@ -1645,8 +1680,8 @@ public class MillerSpaceMapper {
 	}
 
 	/**
-	 * Set up bean to process Nexus file
-	 * @param input Nexus file
+	 * Set up bean to process Nexus files
+	 * @param inputs Nexus files
 	 * @param output name of HDF5 file to be created
 	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
 	 * @param p splitter parameter
@@ -1658,8 +1693,8 @@ public class MillerSpaceMapper {
 	 * @param qStart start coordinates in q space
 	 * @param qDelta sides of voxels in q space
 	 */
-	public static void setBean(MillerSpaceMapperBean bean, String input, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double[] mDelta, int[] qShape, double[] qStart, double[] qDelta) {
-		bean.setInputs(input);
+	public static void setBean(MillerSpaceMapperBean bean, String[] inputs, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double[] mDelta, int[] qShape, double[] qStart, double[] qDelta) {
+		bean.setInputs(inputs);
 		bean.setOutput(output);
 		bean.setSplitterName(splitter);
 		bean.setSplitterParameter(p);

@@ -20,7 +20,7 @@ public class DirectoryModel {
 	private ArrayList<ArrayList<Integer>> framesCorespondingToDats;
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private ArrayList<Double> xList;
-	private ArrayList<Double> qList;
+//	private ArrayList<Double> qList;
 	private ArrayList<ArrayList<Double>> dmxList;
 	private ArrayList<FrameModel> fms;
 	private TrackerType1 trackingMethodolgy;
@@ -35,7 +35,8 @@ public class DirectoryModel {
 	private int[][][] lenPtForEachDat;
 	private ArrayList<ArrayList<double[]>> locationList; 
 	private IImageTracker tracker;
-	private Dataset sortedX; 
+	private Dataset sortedX;
+	private Dataset sortedTheta;
 	private Dataset sortedQ;
 	private ArrayList<double[][]> interpolatedLenPts;
 	private IDataset temporaryBackgroundHolder;
@@ -814,102 +815,102 @@ public class DirectoryModel {
 
 	public void qConversion(double energy, int theta){
 		
-		qList =null;
-		
-		IDataset splicedCurveQ = (IDataset) DatasetFactory.createFromObject(2);
-		
+//		qList =null;
+//		
+//		IDataset splicedCurveQ = (IDataset) DatasetFactory.createFromObject(2);
+//		
 		
 		if(csdp == null){
 			csdp = new CurveStitchDataPackage();
 		}
 		
 		
-		sortedQ = null;
-		
-		if(xList !=null){
-			
-			try{
-				if (qList==null){
-					qList = new ArrayList<Double>();
-					for (int i = 0; i < xList.size(); i++) {
-						  qList.add(0.0);
-						}
-				}
-				
-				if (qList.size() == 0){
-					qList = new ArrayList<Double>();
-					for (int i = 0; i < xList.size(); i++) {
-						  qList.add(0.0);
-						}
-				}
-			}
-			catch(Exception o){
-				
-			}
-			
-			try{
-				
-			
-				for(int i = 0 ; i < xList.size(); i++){
-					
-					double energyJ  = energy*1000*1.602177*Math.pow(10, -19);
-					double hc = 1.98644568*Math.pow(10, -25);
-					double q = 4*Math.PI* Math.sin(xList.get(i))*energyJ/ hc;
-					
-					double qA = q/(Math.pow(10, 10));
-					try{
-						qList.set(i, qA);
-					}
-					catch(Exception d){
-						qList.add(qA);
-					}
-				}
-			}
-			catch(Exception p){
-				
-			}
-		}
-		
-		if(csdp.getSplicedCurveX() !=null){
-			
-			try{
-				if (splicedCurveQ==null){
-					splicedCurveQ = DatasetFactory.zeros(csdp.getSplicedCurveX().getShape());
-				}
-				
-				if (splicedCurveQ.getSize()!=csdp.getSplicedCurveX().getSize()){
-					splicedCurveQ = DatasetFactory.zeros(csdp.getSplicedCurveX().getShape());
-				}
-			}
-			catch(Exception o){
-				
-			}
-			
-			try{
-			
-				for(int i = 0 ; i < csdp.getSplicedCurveX().getSize(); i++){
-					
-					double energyJ  = energy*1000*1.602177*Math.pow(10, -19);
-					double hc = 1.98644568*Math.pow(10, -25);
-					double q = 4*Math.PI* (Math.sin((theta +1 )*csdp.getSplicedCurveX().getDouble(i)))*energyJ/ hc;
-					double qA = q/(Math.pow(10, 10));
-					
-					try{
-						splicedCurveQ.set(qA, i);
-					}
-					catch(NullPointerException d){
-					
-					}
-				}
-			}
-			catch(Exception p){
-				
-			}
-			
-			csdp.setSplicedCurveQ(splicedCurveQ);
-		}
-		
-		if(sortedX !=null){
+//		sortedQ = null;
+//		
+//		if(xList !=null){
+//			
+//			try{
+//				if (qList==null){
+//					qList = new ArrayList<Double>();
+//					for (int i = 0; i < xList.size(); i++) {
+//						  qList.add(0.0);
+//						}
+//				}
+//				
+//				if (qList.size() == 0){
+//					qList = new ArrayList<Double>();
+//					for (int i = 0; i < xList.size(); i++) {
+//						  qList.add(0.0);
+//						}
+//				}
+//			}
+//			catch(Exception o){
+//				
+//			}
+//			
+//			try{
+//				
+//			
+//				for(int i = 0 ; i < xList.size(); i++){
+//					
+//					double energyJ  = energy*1000*1.602177*Math.pow(10, -19);
+//					double hc = 1.98644568*Math.pow(10, -25);
+//					double q = 4*Math.PI* Math.cos((xList.get(i)))*energyJ/ hc;
+//					
+//					double qA = q/(Math.pow(10, 10));
+//					try{
+//						qList.set(i, qA);
+//					}
+//					catch(Exception d){
+//						qList.add(qA);
+//					}
+//				}
+//			}
+//			catch(Exception p){
+//				
+//			}
+//		}
+//		
+//		if(csdp.getSplicedCurveX() !=null){
+//			
+//			try{
+//				if (splicedCurveQ==null){
+//					splicedCurveQ = DatasetFactory.zeros(csdp.getSplicedCurveX().getShape());
+//				}
+//				
+//				if (splicedCurveQ.getSize()!=csdp.getSplicedCurveX().getSize()){
+//					splicedCurveQ = DatasetFactory.zeros(csdp.getSplicedCurveX().getShape());
+//				}
+//			}
+//			catch(Exception o){
+//				
+//			}
+//			
+//			try{
+//			
+//				for(int i = 0 ; i < csdp.getSplicedCurveX().getSize(); i++){
+//					
+//					double energyJ  = energy*1000*1.602177*Math.pow(10, -19);
+//					double hc = 1.98644568*Math.pow(10, -25);
+//					double q = 4*Math.PI* (Math.sin((theta +1 )*csdp.getSplicedCurveX().getDouble(i)))*energyJ/ hc;
+//					double qA = q/(Math.pow(10, 10));
+//					
+//					try{
+//						splicedCurveQ.set(qA, i);
+//					}
+//					catch(NullPointerException d){
+//					
+//					}
+//				}
+//			}
+//			catch(Exception p){
+//				
+//			}
+//			
+//			csdp.setSplicedCurveQ(splicedCurveQ);
+//		}
+//		
+		if(sortedTheta !=null){
 			
 			try{
 				if (sortedQ==null){
@@ -935,7 +936,7 @@ public class DirectoryModel {
 					
 					double energyJ  = energy*1000*1.602177*Math.pow(10, -19);
 					double hc = 1.98644568*Math.pow(10, -25);
-					double q = 4*Math.PI* (Math.sin((theta +1 )*sortedX.getDouble(i)))*energyJ/ hc;
+					double q = 4*Math.PI* (Math.sin(((theta +1 )*sortedTheta.getDouble(i))*Math.PI/180))*energyJ/ hc;
 					
 					double qA = q/(Math.pow(10, 10));
 					try{
@@ -951,7 +952,7 @@ public class DirectoryModel {
 				
 			}
 		}
-		
+		csdp.setSplicedCurveQ(sortedQ);
 	}
 	
 	public IDataset getSplicedCurveQ(){
@@ -964,6 +965,14 @@ public class DirectoryModel {
 
 	public void setDoneArray(String[] doneArray) {
 		this.doneArray = doneArray;
+	}
+
+	public Dataset getSortedTheta() {
+		return sortedTheta;
+	}
+
+	public void setSortedTheta(Dataset sortedTheta) {
+		this.sortedTheta = sortedTheta;
 	}
 	
 }

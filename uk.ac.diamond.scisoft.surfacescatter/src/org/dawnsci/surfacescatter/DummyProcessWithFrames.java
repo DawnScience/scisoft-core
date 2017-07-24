@@ -36,7 +36,8 @@ public class DummyProcessWithFrames {
 										int k, 
 										int trackingMarker,
 										int selection,
-										double[] locationOverride){		
+										double[] locationOverride,
+										int[][] sspLenPt){		
 		
 		FrameModel fm = drm.getFms().get(selection);
 		
@@ -393,6 +394,11 @@ public class DummyProcessWithFrames {
 			
 			fm.setBackgroundSubtractedImage(output);
 			
+			if(!drm.isTrackerOn()){
+				double[] d = LocationLenPtConverterUtils.lenPtToLocationConverter(sspLenPt);
+				fm.setRoiLocation(d);
+			}
+			
 		}
 		
 		return output;
@@ -403,7 +409,8 @@ public class DummyProcessWithFrames {
 										int correctionSelector, 
 										int k, 
 										int trackingMarker,
-										int selection){		
+										int selection,
+										int[][] sspLenPt){		
 		
 		IDataset output =null;	
 		
@@ -697,6 +704,10 @@ public class DummyProcessWithFrames {
 			
 			fm.setBackgroundSubtractedImage(output);
 			
+			if(!drm.isTrackerOn()){
+				double[] d = LocationLenPtConverterUtils.lenPtToLocationConverter(sspLenPt);
+				fm.setRoiLocation(d);
+			}
 		}
 
 		return output;
@@ -707,7 +718,8 @@ public class DummyProcessWithFrames {
 										int correctionSelector, 
 										int k, 
 										int trackingMarker,
-										int selection){		
+										int selection,
+										int[][] sspLenPt){		
 		
 		IDataset output =null;	
 		
@@ -1007,6 +1019,11 @@ public class DummyProcessWithFrames {
 			ocdp.addOutputDatArray(noOfFrames, selection ,output);
 			
 			fm.setBackgroundSubtractedImage(output);
+			
+			if(!drm.isTrackerOn()){
+				double[] d = LocationLenPtConverterUtils.lenPtToLocationConverter(sspLenPt);
+				fm.setRoiLocation(d);
+			}
 
 			debug("  intensity:  " + intensity + "   k: " + k);
 		}
@@ -1024,7 +1041,8 @@ public class DummyProcessWithFrames {
 										int k, 
 										int trackingMarker,
 										int selection,
-										double[]locationList){		
+										double[]locationList,
+										int[][] sspLenPt){		
 		
 		if(locationList == null){
 			System.out.println("Warning!!!!!!");
@@ -1316,6 +1334,14 @@ public class DummyProcessWithFrames {
 			ocdp.addOutputDatArray(noOfFrames, selection ,output);
 			
 			fm.setBackgroundSubtractedImage(output);
+			
+			if(!drm.isTrackerOn()){
+				double[] d = LocationLenPtConverterUtils.lenPtToLocationConverter(sspLenPt);
+				fm.setRoiLocation(d);
+			}
+			
+			
+			
 			debug("  intensity:  " + intensity + "   k: " + k);
 		}
 		debug("intensity added to dm: " + intensity + "   local k: " + k + "   selection: " + selection);

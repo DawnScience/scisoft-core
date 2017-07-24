@@ -290,7 +290,13 @@ public class JythonPath {
 					logger.debug("Adding directory to jython path: {}", dirPath);
 				}
 			}
+
+			// add January
+			for (File jar: findJanuaryJars(pluginsDir)) {
+				jyPaths.add(jar.getAbsolutePath());
+			}
 		}
+
 		return jyPaths;
 	}
 

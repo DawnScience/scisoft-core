@@ -1263,6 +1263,12 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.IntegrateImageMatchedAxesModel"
             name="Image Integration Against Axes">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ClearMaskOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ClearMaskOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="Clear Mask">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

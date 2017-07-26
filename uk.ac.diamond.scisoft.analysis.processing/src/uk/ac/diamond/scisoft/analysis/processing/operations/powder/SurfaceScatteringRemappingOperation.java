@@ -42,7 +42,7 @@ import uk.ac.diamond.scisoft.analysis.diffraction.powder.SurfacePixelIntegration
 @Atomic
 public class SurfaceScatteringRemappingOperation extends AbstractOperation<SurfaceScatteringRemappingModel, OperationData> {
 
-	private IPixelIntegrationCache cache;
+	private volatile IPixelIntegrationCache cache;
 	private IDiffractionMetadata metadata;
 	private PropertyChangeListener listener;
 	

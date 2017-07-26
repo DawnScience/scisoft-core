@@ -1257,6 +1257,12 @@
             name="Texture from Cake"
             visible="false">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.IntegrateImageMatchedAxesOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.twod.IntegrateImageMatchedAxesOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.IntegrateImageMatchedAxesModel"
+            name="Image Integration Against Axes">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

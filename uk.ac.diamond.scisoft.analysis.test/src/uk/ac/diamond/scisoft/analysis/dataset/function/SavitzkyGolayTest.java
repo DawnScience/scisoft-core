@@ -9,12 +9,11 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset.function;
 
-import static org.junit.Assert.*;
-
 import java.util.Arrays;
 
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.Maths;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,16 +37,16 @@ public class SavitzkyGolayTest {
 	
 	@Before
 	public void init() {
-		input = Maths.sin(DatasetFactory.createRange(-2.0, 2.0, 0.005, Dataset.FLOAT64).reshape(40, 20));
+		input = Maths.sin(DatasetFactory.createRange(DoubleDataset.class, -2.0, 2.0, 0.005).reshape(40, 20));
 		
 		//printInfo(input);
 		
 	}
 	
 	@Test
-	public void testFilterIDatasetIntIntInt() throws Exception {
+	public void testFilterIDatasetIntIntInt() {
 		Dataset rv = SavitzkyGolay.filter(input, 5, 3, 1);
-		//printInfo(rv);
+		printInfo(rv);
 	}
 
 }

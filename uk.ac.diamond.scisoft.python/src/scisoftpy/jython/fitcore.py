@@ -225,42 +225,48 @@ class fitresult(object):
         '''
         return self.func.getNoOfParameters()
 
-    def makeplotdata(self):
+    def makeplotdata(self, all=True):
         '''Make a list of datasets to plot
+        all   -- if True, then make datasets for all functions
         '''
-        pdata = self.makefuncdata()
+        pdata = self.makefuncdata(all=all)
         pdata.insert(0, self.data)
-        offset = self.data.min() - ((self.data.max() - self.data.min()) / 5.0)
-        edata = self.data - pdata[1] + offset
-        edata.name = "Error value"
-        odata = _dnp.zeros_like(edata)
-        odata.fill(offset)
-        odata.name = "Error offset"
-        pdata.insert(2, odata)
-        pdata.insert(2, edata)
+        if all:
+            offset = self.data.min() - ((self.data.max() - self.data.min()) / 5.0)
+            edata = self.data - pdata[1] + offset
+            edata.name = "Error value"
+            odata = _dnp.zeros_like(edata)
+            odata.fill(offset)
+            odata.name = "Error offset"
+            pdata.insert(2, odata)
+            pdata.insert(2, edata)
         return pdata
 
-    def makefuncdata(self):
+    def makefuncdata(self, all=True):
         '''Make a list of datasets for composite fitting function and its components
+        all   -- if True, then make datasets for all contributing functions
         '''
         nf = self.func.noOfFunctions
         coords = _jinput(self.coords)
-        if nf > 1:
+        if nf >= 1:
             fdata = [_sciwrap(self.func.calculateValues(coords))]
-            fdata[0].name = "Composite function"
-            for n in range(nf):
-                fdata.append(_sciwrap(self.func.getFunction(n).calculateValues(*coords)))
-        elif nf == 1:
-            fdata = [_sciwrap(self.func.getFunction(0).calculateValues(coords))]
+            if all:
+                if nf > 1:
+                    fdata[0].name = "Composite function"
+                for n in range(nf):
+                    fdata.append(_sciwrap(self.func.getFunction(n).calculateValues(*coords)))
         else:
             fdata = []
 
         return fdata
 
-    def plot(self, title=None, name=None):
+    def plot(self, title=None, name=None, all=True):
         '''Plot fit as 1D
+        title -- title of plot
+        name  -- name of plot view to use (if None, use default name)
+        all   -- if True, then plot all
         '''
-        _dnp.plot.line(self.coords[0], self.makeplotdata(), title, name)
+        _dnp.plot.line(self.coords[0], self.makeplotdata(all=all), title, name)
 
     def _parameters(self):
         '''Array of all parameter values

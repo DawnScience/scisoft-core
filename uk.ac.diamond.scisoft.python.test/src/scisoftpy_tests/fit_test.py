@@ -86,6 +86,7 @@ class Test(unittest.TestCase):
         print fr, fr.area, fr.residual
         fd = fr.makefuncdata()
         fp = fr.makeplotdata()
+        return fr
 
     def testPoly(self):
         fr = fit.polyfit(self.x, self.y, 1)

@@ -645,7 +645,7 @@ def points(x, y=None, z=None, size=0, name=None):
     size = _core.asarray(size)
     if z is None:
         if y is None:
-            _plot_points2d(name, _toList(x), size)
+            _plot_points2d(name, _toList(x), _toList(size))
         else:
             _plot_points2d(name, x, y, size)
     else:

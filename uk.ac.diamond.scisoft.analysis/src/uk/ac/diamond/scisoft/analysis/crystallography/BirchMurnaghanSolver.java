@@ -23,7 +23,7 @@ public class BirchMurnaghanSolver {
 		return 3./2 * bulkModulus * (Math.pow(x, -7.) - Math.pow(x, -5.));
 	}
 	private static double dTerm1_dx(double x, double bulkModulus) {
-		return 3./2. * bulkModulus * (-7. * Math.pow(x, 8.) + 5. * Math.pow(x,  6.));
+		return 3./2. * bulkModulus * (-7. * Math.pow(x, -8.) + 5. * Math.pow(x,  -6.));
 	}
 	
 	private static double term2(double x, double bulkModulus_p) {
@@ -93,7 +93,8 @@ public class BirchMurnaghanSolver {
 	 * @return pressure required to achieve the requested volume (same units as the bulk modulus parameter).
 	 */
 	public static double birchMurnaghanPressure(double v_v0, double bulkModulus, double bulkModulusDerivative) {
-		double x = Math.pow(v_v0, -1./3.);
+		// x is l/l0 = (v/v0)^1/3
+		double x = Math.pow(v_v0, 1./3.);
 		return fBirchMurnaghan(x, bulkModulus, bulkModulusDerivative);
 	}
 

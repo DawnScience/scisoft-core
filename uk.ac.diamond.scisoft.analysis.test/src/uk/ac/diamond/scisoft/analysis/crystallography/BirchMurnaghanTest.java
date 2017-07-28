@@ -9,42 +9,51 @@
 
 package uk.ac.diamond.scisoft.analysis.crystallography;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
+@RunWith(Parameterized.class)
 public class BirchMurnaghanTest {
-	
-	class Moduluses {
-		public double k0, k0p;
+	@Parameters
+	public static Collection<Object[]> data() {
+		return Arrays.asList(new Object[][] {
+				// Nickel
+				{ 181.0, 5.2, 1.000, 1e-3, 0.0, 1e-12 }, { 181.0, 5.2, 1.010, 1e-3, 1.848, 1e-3 },
+				{ 181.0, 5.2, 1.100, 1e-3, 22.1, 1e-1 }, { 181.0, 5.2, 2.000, 1e-3, 774., 1 },
+				// ceria
+				{ 3.8, 5.4, 1.000, 1e-3, 0.0, 1e-12 }, { 3.8, 5.4, 1.010, 1e-3, 0.0388, 1e-4 },
+				{ 3.8, 5.4, 1.100, 1e-3, 0.469, 1e-3 }, { 3.8, 5.4, 2.000, 1e-3, 17.19, 1e-2 }
+
+		});
 	}
-	
-	Moduluses ceria, nickel;
-	
-	@Before
-	public void setUp() throws Exception {
-		nickel = new Moduluses();
-		nickel.k0 = 181.0;
-		nickel.k0p = 5.2;
-		ceria = new Moduluses();
-		ceria.k0 = 3.8;
-		ceria.k0p = 5.4;
+
+	private double k0, k0p, pressure, pError, volume, vError;
+
+	public BirchMurnaghanTest(double k0, double k0p, double v0v, double vError, double pressure, double pError) {
+		this.k0 = k0;
+		this.k0p = k0p;
+		this.volume = 1./v0v;
+		this.vError = vError/v0v/v0v;
+		this.pressure = pressure;
+		this.pError = pError;
 	}
 
 	@Test
-	public void testBirchMurnaghanLinear() {
-		fail("Not yet implemented");
+	public void pressureTest() {
+		assertEquals(pressure, BirchMurnaghanSolver.birchMurnaghanPressure(volume, k0, k0p), pError);
 	}
 
 	@Test
-	public void testBirchMurnaghanVolume() {
-		fail("Not yet implemented");
+	public void volumeTest() {
+		assertEquals(volume, BirchMurnaghanSolver.birchMurnaghanVolume(pressure, k0, k0p), vError);
 	}
-
-	@Test
-	public void testBirchMurnaghanPressure() {
-		fail("Not yet implemented");
-	}
-
+	
+	
 }

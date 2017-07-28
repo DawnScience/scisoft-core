@@ -371,7 +371,10 @@ def _toslice(rank, key):
                 nkeys.append(k)
         key = nkeys
     elif isinstance(key, ndarray):
-        return False, (key._jdataset(),)
+        ds = key._jdataset()
+        if ds.getRank() == rank and isinstance(ds, _booleands):
+            return False, ds
+        return False, (ds,)
 
     if adv:
         return False, [k if not isinstance(k, slice) else _cvt2js(k) for k in key]

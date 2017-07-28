@@ -191,7 +191,7 @@ public class TIFFImageLoader extends JavaImageLoader {
 	private void mergeMetadata(ILazyDataset image) {
 		IMetadata imd;
 		try {
-			imd = image.getMetadata();
+			imd = image.getFirstMetadata(IMetadata.class);
 			if (imd == null)
 				return;
 

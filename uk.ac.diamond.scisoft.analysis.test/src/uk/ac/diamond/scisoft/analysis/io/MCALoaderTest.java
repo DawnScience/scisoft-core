@@ -1,15 +1,13 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.metadata.IMetadata;
 import org.junit.Test;
-
-import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 
 public class MCALoaderTest {
 
@@ -27,7 +25,7 @@ public class MCALoaderTest {
 		DoubleDataset Counts_1 = (DoubleDataset) dh.getDataset("Counts_1");
 		assertEquals(2048, Energy_1.getSize());
 		assertEquals(2048, Counts_1.getSize());
-		DoubleDataset Energy_1_constructed = (DoubleDataset) DatasetFactory.createRange(Energy_1.getSize(), Dataset.FLOAT64);
+		DoubleDataset Energy_1_constructed = DatasetFactory.createRange(Energy_1.getSize());
 		Energy_1_constructed.imultiply(gain_1).iadd(zero_1);
 		assertArrayEquals(Energy_1.getData(), Energy_1_constructed.getData(), 1E-5);
 		assertEquals(2.00, Counts_1.get(DatasetUtils.findIndexGreaterThanOrEqualTo(Energy_1, 1.03)), 1E-5);

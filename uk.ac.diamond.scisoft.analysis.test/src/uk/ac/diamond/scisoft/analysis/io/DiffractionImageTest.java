@@ -62,9 +62,9 @@ public class DiffractionImageTest {
 	public void testMetadata() throws Exception {
 		DataHolder dh = new ADSCImageLoader(testfile1).loadFile();
 		IMetadata metadata = dh.getDataset(0).getFirstMetadata(IMetadata.class);
-		if(metadata instanceof IDiffractionMetadata){
-			detprops = ((IDiffractionMetadata)metadata).getDetector2DProperties();
-			dce = ((IDiffractionMetadata)metadata).getDiffractionCrystalEnvironment();
+		if (metadata instanceof IDiffractionMetadata) {
+			detprops = ((IDiffractionMetadata) metadata).getDetector2DProperties();
+			dce = ((IDiffractionMetadata) metadata).getDiffractionCrystalEnvironment();
 		}
 		double detSizeX = detprops.getDetectorSizeH();
 		double detSizeY = detprops.getDetectorSizeV();
@@ -76,15 +76,18 @@ public class DiffractionImageTest {
 		Vector3d px1topx4 = new Vector3d();
 		px1topx4.sub(detprops.pixelPosition(detectorCorners[0], detectorCorners[1]),detprops.pixelPosition(detprops.getPx(), detprops.getPy()));
 		Assert.assertEquals(diagDetSize, px1topx4.length(), 0.00001);
+
+		IDiffractionMetadata dmd = dh.getDataset(0).getFirstMetadata(IDiffractionMetadata.class);
+		Assert.assertEquals(metadata, dmd);
 	}
 
 	@Test
 	public void testMAR() throws Exception {
 		DataHolder dh = new MARLoader(testfile2).loadFile();
 		IMetadata metadata = dh.getDataset(0).getFirstMetadata(IMetadata.class);
-		if(metadata instanceof IDiffractionMetadata){
-			detprops = ((IDiffractionMetadata)metadata).getDetector2DProperties();
-			dce = ((IDiffractionMetadata)metadata).getDiffractionCrystalEnvironment();
+		if (metadata instanceof IDiffractionMetadata) {
+			detprops = ((IDiffractionMetadata) metadata).getDetector2DProperties();
+			dce = ((IDiffractionMetadata) metadata).getDiffractionCrystalEnvironment();
 		}
 		double detSizeX = detprops.getDetectorSizeH();
 		double detSizeY = detprops.getDetectorSizeV();
@@ -101,10 +104,10 @@ public class DiffractionImageTest {
 	public void testminiCBF() throws Exception {
 		DataHolder dh = new CBFLoader(testfile3).loadFile();
 		IMetadata metadata = dh.getDataset(0).getFirstMetadata(IMetadata.class);
-		if(metadata instanceof IDiffractionMetadata){
-			detprops = ((IDiffractionMetadata)metadata).getDetector2DProperties();
-			dce = ((IDiffractionMetadata)metadata).getDiffractionCrystalEnvironment();
-		}		
+		if (metadata instanceof IDiffractionMetadata) {
+			detprops = ((IDiffractionMetadata) metadata).getDetector2DProperties();
+			dce = ((IDiffractionMetadata) metadata).getDiffractionCrystalEnvironment();
+		}
 		double detSizeX = detprops.getDetectorSizeH();
 		double detSizeY = detprops.getDetectorSizeV();
 		System.out.println("mini cbf "+detSizeX +" pix size "+detprops.getHPxSize() +" num pix "+ detprops.getPx());
@@ -127,6 +130,5 @@ public class DiffractionImageTest {
 
 		data = new CBFLoader(testfile3).loadFile().getDataset(0);
 		SerializationUtils.serialize(data.getFirstMetadata(IMetadata.class));
-}
-
+	}
 }

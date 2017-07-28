@@ -45,7 +45,7 @@ public class UViewDatLoaderTest {
 		final String testfile = "testfiles/gda/analysis/io/UViewDatLoaderTest/movie_22_000001.dat";
 		DataHolder loader = (DataHolder) new UViewDatLoader(testfile).loadFile();
 		Dataset data = loader.getDataset(0);
-		IMetadata metadata = data.getMetadata();
+		IMetadata metadata = data.getFirstMetadata(IMetadata.class);
 		assertEquals(8, metadata.getMetaValue(UViewDatLoader.BinaryKey.VERSION.toString()));
 		assertEquals(1657, metadata.getMetaValue(UViewDatLoader.BinaryKey.TOTALHEADERSIZE.toString()));
 		assertEquals(true, metadata.getMetaValue(UViewDatLoader.BinaryKey.HASMARKUP.toString()));
@@ -56,7 +56,7 @@ public class UViewDatLoaderTest {
 		final String testfile = "testfiles/gda/analysis/io/UViewDatLoaderTest/movie_22_000001.dat";
 		DataHolder loader = (DataHolder) new UViewDatLoader(testfile).loadFile();
 		Dataset data = loader.getDataset(0);
-		SerializationUtils.serialize(data.getMetadata());
+		SerializationUtils.serialize(data.getFirstMetadata(IMetadata.class));
 	}
 
 	@Test

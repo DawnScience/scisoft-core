@@ -21,6 +21,7 @@ import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.metadata.IMetadata;
 
 /**
  * Class to load Rigaku images. Class returns a DataHolder that is called from the ScanFileHolder class.
@@ -115,7 +116,7 @@ public class RAxisImageLoader extends AbstractFileLoader implements Serializable
 			output.addDataset(DATA_NAME, data);
 			if (loadMetadata) {
 				data.setMetadata(getMetadata());
-				output.setMetadata(data.getMetadata());
+				output.setMetadata(data.getFirstMetadata(IMetadata.class));
 			}
 		} catch (Exception e) {
 			throw new ScanFileHolderException("There was a problem reading the RAxis image", e);

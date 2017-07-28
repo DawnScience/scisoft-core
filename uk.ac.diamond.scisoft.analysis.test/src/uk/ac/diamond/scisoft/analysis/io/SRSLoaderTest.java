@@ -24,8 +24,10 @@ import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.metadata.IMetadata;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -249,15 +251,15 @@ public class SRSLoaderTest {
 	public void testSerializability() throws Exception {
 		DataHolder dh = new SRSLoader("testfiles/gda/analysis/io/SRSLoaderTest/96356.dat").loadFile();
 		Dataset data = dh.getDataset(0);
-		SerializationUtils.serialize(data.getMetadata());
+		SerializationUtils.serialize(data.getFirstMetadata(IMetadata.class));
 	}
 
 	@Test
 	public void testSpacesInNames() throws Exception {
 		DataHolder dh = new DataHolder();
 		String fileName = "quoted.dat";
-		Dataset data1 = DatasetFactory.createRange(20, Dataset.INT32);
-		Dataset data2 = DatasetFactory.createLinearSpace(0, 576000, 20, Dataset.FLOAT64);
+		Dataset data1 = DatasetFactory.createRange(IntegerDataset.class, 20);
+		Dataset data2 = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 576000, 20);
 		try {
 			dh.addDataset("col1", data1);
 			dh.addDataset("testing data", data2);

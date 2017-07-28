@@ -147,8 +147,11 @@ histogram = _np.histogram
 dot = _np.dot
 vdot = _np.vdot
 inner = _np.inner
-#outer = _np.outer
+outer = _np.outer
+matmul = _np.matmul
 tensordot = _np.tensordot
+kron = _np.kron
+trace = _np.trace
 cross = _np.cross
 
 def gradient(f, *arg):

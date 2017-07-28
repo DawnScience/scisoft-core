@@ -36,7 +36,8 @@ Implemented NumPy methods (1.10)
    floor_divide, remainder, phase, signum, diff, gradient, roots, modf, fmod, interp
  * Trig: sin, cos, tan, arcsin, arccos, arctan, arctan2, hypot, sinh, cosh,
    tanh, arcsinh, arccosh, arctanh, deg2rad, rad2deg
- * Linear algebra: trace, tensordot, eig, eigvals, cholesky, qr, svd, norm, cond, det, solve, inv, pinv, matrix_power
+ * Matrix: dot, vdot, inner, outer, matmul, tensordot, kron, trace
+ * Linear algebra: eig, eigvals, cholesky, qr, svd, norm, cond, det, solve, inv, pinv, matrix_power
  * Rounding: rint, ceil, floor, trunc, fix
  * Bitwise: bitwise_and, bitwise_or, bitwise_xor, invert, left_shift, right_shift
  * Stats: amax, amin, ptp, mean, std, var, cumprod, cumsum, histogram

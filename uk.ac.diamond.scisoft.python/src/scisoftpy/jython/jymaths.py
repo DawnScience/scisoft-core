@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###
+from scisoftpy.jython.jycore import _wrapout, asarray
 
 '''
 Maths package
@@ -457,6 +458,29 @@ def inner(a, b):
     return _linalg.tensorDotProduct(a, b, -1, -1)
 
 @_wrap
+def outer(a, b):
+    '''Outer product of two arrays'''
+    return _linalg.outerProduct(a, b)
+
+def matmul(a, b):
+    '''Matrix product of two datasets
+    '''
+    a = _asarray(a)
+    b = _asarray(b)
+    prepend = a.rank == 1
+    if prepend:
+        a.shape = 1,a.shape[0] 
+    append = b.rank == 1
+    if append:
+        b.shape = b.shape[0],1 
+    m = _asarray(_linalg.matrixProduct(a._jdataset(), b._jdataset()))
+    if prepend:
+        m.shape = m.shape[1:]
+    if append:
+        m.shape = m.shape[:-1]
+    return m
+
+@_wrap
 def tensordot(a, b, axes=2):
     '''Tensor dot product of two arrays
     '''
@@ -490,6 +514,11 @@ def tensordot(a, b, axes=2):
             raise ValueError, "Given axes has wrong type"
 
     return _linalg.tensorDotProduct(a, b, ax, bx)
+
+@_wrap
+def kron(a, b):
+    '''Kronecker product of two arrays'''
+    return _linalg.kroneckerProduct(a, b)
 
 @_wrap
 def trace(a, offset=0, axis1=0, axis2=1, dtype=None):

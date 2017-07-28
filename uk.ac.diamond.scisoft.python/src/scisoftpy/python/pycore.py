@@ -218,6 +218,10 @@ meshgrid = _np.meshgrid
 
 indices = _np.indices
 
+ix_ = _np.ix_
+
+# need to define r_, c_, s_, index_exp objects
+
 fliplr = _np.fliplr
 
 flipud = _np.flipud

@@ -332,7 +332,7 @@ def _toslice(rank, key):
     if rank == 1:
         if isinstance(key, int):
             return False, key
-        if isinstance(key, (tuple, list)):
+        if isinstance(key, tuple):
             nk = len(key)
             if nk == 1:
                 key = key[0]
@@ -1610,6 +1610,21 @@ def indices(dimensions, dtype=int32):
     if dtype != int32:
         ind = _dsutils.cast(ind, dtype.value)
     return ind
+
+def ix_(*args):
+    '''Create an open mesh from 1D sequences
+    '''
+    n = len(args)
+    index = []
+    for i,a in enumerate(args):
+        d = asarray(a)
+        if d.ndim > 1:
+            raise ValueError, 'sequences must be 1D'
+        shape = [1]*n
+        shape[i] = d.size
+        d.shape = shape
+        index.append(d)
+    return tuple(index)
 
 @_wrap
 def fliplr(a):

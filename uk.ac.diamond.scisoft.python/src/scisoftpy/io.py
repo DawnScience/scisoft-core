@@ -41,7 +41,7 @@ _fallback_loader = _io.fallback_loader
 
 from dictutils import DataHolder as _DataHolder, ListDict as _ListDict
 
-_extra_suffices = { 'jpg' : ['jpeg'], 'tif' : ['tiff'], 'dat' : ['srs', 'dls'], 'h5' : ['hdf5'], 'nxs' : ['nx'] }
+_extra_suffices = { 'jpg' : ['jpeg'], 'tif' : ['tiff'], 'dat' : ['srs', 'dls'], 'h5' : ['hdf5'], 'nxs' : ['nx'], 'txt' : ['text'] }
 
 
 def _findsuffix(name, formats):
@@ -227,7 +227,7 @@ def find_scan_files(scan, data_dir, visit=None, year=None, prefix=None, ending="
 
     Looks for file in data_dir/year/visit/
     Arguments:
-    scan      - scan number
+    scan     - scan number
     data_dir - beamline data directory, such as '/dls/i01/data'
     visit    - visit-ID, such as cm1234-1 (defaults to data_dir and its sub-directories)
     year     - calendar year (defaults to visit directory and any year in range 2000-99)

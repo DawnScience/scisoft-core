@@ -87,7 +87,9 @@ Functions available:
 '''
 import sys
 if sys.hexversion < 0x02070000:
-    raise 'Must use python of at least version 2.7'
+    raise ImportError('Must use python of at least version 2.7')
+elif sys.hexversion >= 0x03000000:
+    raise ImportError('Python 3 not supported')
 
 import os
 if os.name == 'java':
@@ -107,77 +109,80 @@ Imports should work with python+numpy only agreed with MB 11 Nov 2011
 '''
 try:
     import nexus
-except Exception, e:
+except Exception as e:
     print >> sys.stderr, "Could not import nexus"
+    print >> sys.stderr, e
 
 try:
     import io
-except Exception, e:
+except Exception as e:
     print >> sys.stderr, "Could not import input/output routines"
     print >> sys.stderr, e
 
 try:
     import plot
-except Exception, e:
+except Exception as e:
     print >> sys.stderr, "Could not import plotting routines"
     print >> sys.stderr, e
 
 try:
     import data
-except Exception, e:
+except Exception as e:
     print >> sys.stderr, "Could not import data routines"
     print >> sys.stderr, e
 
 try:
     import random
-except Exception, e:
+except Exception as e:
     print >> sys.stderr, "Could not import random routines"
     print >> sys.stderr, e
 
 try:
     import linalg
-except Exception, e:
+except Exception as e:
     print >> sys.stderr, "Could not import linear algebra routines"
     print >> sys.stderr, e
 
 try:
     import flatten
-except Exception, e:
+except Exception as e:
     print >> sys.stderr, "Could not import flatten API"
     print >> sys.stderr, e
 
 try:
     import rpc
-except Exception, e:
+except Exception as e:
     print >> sys.stderr, "Could not import rpc API"
     print >> sys.stderr, e
 
 try:
     import fft
-except Exception, e:
+except Exception as e:
     print >> sys.stderr, "Could not import fft routines"
     print >> sys.stderr, e
 
 try:
     from signal import convolve, correlate
-except Exception, e:
+except Exception as e:
     print >> sys.stderr, "Could not import some signal routines"
     print >> sys.stderr, e
 
 try:
     import image
-except Exception, e:
+except Exception as e:
     print >> sys.stderr, "Could not import image routines"
     print >> sys.stderr, e
 
 try:
     import fit
     from fit import roots, poly1d
-except Exception, e:
+except Exception as e:
     print >> sys.stderr, "Could not import fit"
+    print >> sys.stderr, e
 
 try:
     import external
-except Exception, e:
+except Exception as e:
     print >> sys.stderr, "Could not import external functions"
+    print >> sys.stderr, e
 

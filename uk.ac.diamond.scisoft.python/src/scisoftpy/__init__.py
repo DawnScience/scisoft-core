@@ -43,45 +43,73 @@ dtypes available:
     complex128 = complex
 
 Functions available:
-    arange(start, stop=None, step=1, dtype=None):
-    array(object, dtype=None):
     asarray(data, dtype=None)
     asanyarray(data, dtype=None)
-    ones(shape, dtype=float64):
-    zeros(shape, dtype=float64):
+    asfarray(data, dtype=None)
+    arange(start, stop=None, step=1, dtype=None)
+    array(object, dtype=None)
+    ones(shape, dtype=float64)
+    ones_like(shape, dtype=None)
+    zeros(shape, dtype=float64, elements=None)
+    zeros_like(shape, dtype=None)
     empty = zeros
-    eye(N, M=None, k=0, dtype=float64):
-    identity(n, dtype=float64):
-    diag(v, k=0):
-    diagflat(v, k=0):
-    take(a, indices, axis=None):
-    put(a, indices, values):
-    concatenate(a, axis=0):
-    vstack(tup):
-    hstack(tup):
-    dstack(tup):
-    split(ary, indices_or_sections, axis=0):
-    array_split(ary, indices_or_sections, axis=0):
-    vsplit(ary, indices_or_sections):
-    hsplit(ary, indices_or_sections):
-    dsplit(ary, indices_or_sections):
-    sort(a, axis=-1):
-    tile(a, reps):
-    repeat(a, repeats, axis=-1):
-    cast(a, dtype):
-    any(a, axis=None):
-    all(a, axis=None):
-    squeeze(a):
-    transpose(a, axes=None):
-    swapaxes(a, axis1, axis2):
-    argmax(a, axis=None):
-    argmin(a, axis=None):
-    maximum(a, b):
-    minimum(a, b):
-    meshgrid(*a):
-    indices(dimensions, dtype=int32):
-    norm(a, allelements=True):
-    compoundarray(a, view=True):
+    empty_like = zeros_like
+    full(shape, fill_value, dtype=None, elements=None)
+    full_like(a, fill_value, dtype=None, elements=None)
+    linspace(start, stop, num=50, endpoint=True, retstep=False, dtype=None)
+    logspace(start, stop, num=50, endpoint=True, base=10.0, dtype=None)
+    eye(N, M=None, k=0, dtype=float64)
+    identity(n, dtype=float64)
+    diag(v, k=0)
+    diagflat(v, k=0)
+    take(a, indices, axis=None)
+    put(a, indices, values)
+    select(condlist, choicelist, default=0)
+    choose(a, choices, mode='raise')
+    atleast_1d(*arrays)
+    atleast_2d(*arrays)
+    atleast_3d(*arrays)
+    concatenate(a, axis=0)
+    vstack(tup)
+    hstack(tup)
+    dstack(tup)
+    split(ary, indices_or_sections, axis=0)
+    array_split(ary, indices_or_sections, axis=0)
+    vsplit(ary, indices_or_sections)
+    hsplit(ary, indices_or_sections)
+    dsplit(ary, indices_or_sections)
+    sort(a, axis=-1)
+    tile(a, reps)
+    repeat(a, repeats, axis=-1)
+    append(arr, values, axis=None)
+    cast(a, dtype)
+    copy(a)
+    reshape(a, newshape)
+    resize(a, new_shape)
+    ravel(a)
+    squeeze(a)
+    transpose(a, axes=None)
+    swapaxes(a, axis1, axis2)
+    amax(a, axis=None)
+    amin(a, axis=None)
+    nanmax(a, axis=None)
+    nanmin(a, axis=None)
+    argmax(a, axis=None)
+    argmin(a, axis=None)
+    nanargmax(a, axis=None)
+    nanargmin(a, axis=None)
+    meshgrid(*a)
+    indices(dimensions, dtype=int32)
+    ix_(*args)
+    fliplr(a)
+    flipud(a)
+    roll(a, shift, axis=None))
+    rot90(a, k=1)
+    rollaxis(a, axis, start=0)
+    compoundarray(a, view=True)
+    nan_to_num(a)
+    unravel_index(indices, dims)
+    ravel_multi_index(multi_index, dims, mode='raise')
 
     Check also in maths, comparisons, fft, random, io, plot and signal sub-modules
 '''

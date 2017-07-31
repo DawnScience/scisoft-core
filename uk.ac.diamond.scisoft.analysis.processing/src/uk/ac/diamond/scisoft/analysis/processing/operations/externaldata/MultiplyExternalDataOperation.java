@@ -14,6 +14,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
+import uk.ac.diamond.scisoft.analysis.processing.operations.OperateOnDataAbstractOperation;
 
 @Atomic
 public class MultiplyExternalDataOperation extends OperateOnDataAbstractOperation<ExternalDataModel> {

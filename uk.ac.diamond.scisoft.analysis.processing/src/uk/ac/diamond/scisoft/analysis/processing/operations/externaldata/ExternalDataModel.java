@@ -12,7 +12,9 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 import org.eclipse.dawnsci.analysis.api.processing.model.FileType;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
-public class ExternalDataModel extends InternalDatasetNameModel {
+import uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDatasetModel;
+
+public class ExternalDataModel extends InternalDatasetModel {
 
 	@OperationModelField(hint="Enter the path to the data file, leave blank to use the file being processed", file = FileType.EXISTING_FILE, label = "File", fieldPosition = 0)
 	private String filePath = "";

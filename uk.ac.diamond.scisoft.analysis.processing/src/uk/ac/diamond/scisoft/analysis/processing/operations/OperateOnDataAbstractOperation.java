@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
+package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import java.util.Arrays;
 
@@ -26,9 +26,10 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ShapeUtils;
 
+import uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDatasetModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
-public abstract class OperateOnDataAbstractOperation<T extends InternalDatasetNameModel> extends AbstractOperation<InternalDatasetNameModel, OperationData> {
+public abstract class OperateOnDataAbstractOperation<T extends InternalDatasetModel> extends AbstractOperation<InternalDatasetModel, OperationData> {
 	
 	@Override
 	final public OperationRank getInputRank() {

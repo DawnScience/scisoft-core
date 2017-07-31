@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
+package uk.ac.diamond.scisoft.analysis.processing.operations.internaldata;
 
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
@@ -15,13 +15,14 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
+import uk.ac.diamond.scisoft.analysis.processing.operations.OperateOnDataAbstractOperation;
 
 @Atomic
-public class PlusInternalDataOperation extends OperateOnDataAbstractOperation<InternalDatasetNameModel> {
+public class AddInternalDataOperation extends OperateOnDataAbstractOperation<InternalDatasetModel> {
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusInternalDataOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.AddInternalDataOperation";
 	}
 
 	@Override

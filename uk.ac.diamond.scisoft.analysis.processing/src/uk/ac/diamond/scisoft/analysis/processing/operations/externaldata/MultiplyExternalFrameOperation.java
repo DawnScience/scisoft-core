@@ -9,28 +9,21 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
-import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.DatasetUtils;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
-@Atomic
-public class PlusExternalDataOperation extends OperateOnDataAbstractOperation<ExternalDataModel> {
+public class MultiplyExternalFrameOperation extends SubtractExternalFrameOperation<ExternalDataSelectedFramesModel> {
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusExternalDataOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyExternalFrameOperation";
 	}
 
 	@Override
-	protected Dataset doMathematics(Dataset a, Dataset b) {
-		return ErrorPropagationUtils.addWithUncertainty(a, b);
-	}
-
-	@Override
-	protected String getFilePath(IDataset input) {
-		return ((ExternalDataModel)model).getFilePath();
+	protected Dataset performOperation(Dataset input, Dataset other) {
+		return ErrorPropagationUtils.multiplyWithUncertainty(DatasetUtils.convertToDataset(input), other);
 	}
 
 }

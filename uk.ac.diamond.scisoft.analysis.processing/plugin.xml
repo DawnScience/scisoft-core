@@ -760,10 +760,10 @@
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.externaldata"
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusExternalDataOperation"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.AddExternalDataOperation"
             description="Add external data to a Dataset"
             icon="icons/plus.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusExternalDataOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.AddExternalDataOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataModel"
             name="Add"
             visible="true">
@@ -994,50 +994,50 @@
       </category>
       <operation
             category="uuk.ac.diamond.scisoft.analysis.processing.internaldata"
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyInternalDataOperation"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.MultiplyInternalDataOperation"
             description="Multiply dataset by internal value"
             icon="icons/blue-cross.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyInternalDataOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.InternalDatasetNameModel"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.MultiplyInternalDataOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDatasetModel"
             name="Multiply"
             visible="true">
       </operation>
       <operation
             category="uuk.ac.diamond.scisoft.analysis.processing.internaldata"
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractInternalDataOperation"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.SubtractInternalDataOperation"
             description="Subtract internal data from a dataset"
             icon="icons/minus.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractInternalDataOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.InternalDatasetNameModel"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.SubtractInternalDataOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDatasetModel"
             name="Subtract"
             visible="true">
       </operation>
       <operation
             category="uuk.ac.diamond.scisoft.analysis.processing.internaldata"
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DivideInternalDataOperation"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.DivideInternalDataOperation"
             description="Divide dataset by internal value"
             icon="icons/yellow-divide.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DivideInternalDataOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.InternalDatasetNameModel"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.DivideInternalDataOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDatasetModel"
             name="Divide"
             visible="true">
       </operation>
       <operation
             category="uuk.ac.diamond.scisoft.analysis.processing.internaldata"
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusInternalDataOperation"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.AddInternalDataOperation"
             description="Add internal data to a Dataset"
             icon="icons/plus.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusInternalDataOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.InternalDatasetNameModel"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.AddInternalDataOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDatasetModel"
             name="Add"
             visible="true">
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.externaldata"
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MutliplyExternalFrameOperation"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyExternalFrameOperation"
             description="Multiply dataset by frame (or average of stack) from external file"
             icon="icons/blue-cross.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MutliplyExternalFrameOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyExternalFrameOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataSelectedFramesModel"
             name="Multiply Frame">
       </operation>

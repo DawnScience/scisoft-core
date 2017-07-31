@@ -1,5 +1,5 @@
 /*-
- * Copyright 2015 Diamond Light Source Ltd.
+ * Copyright 2016 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
+package uk.ac.diamond.scisoft.analysis.processing.operations.internaldata;
 
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
@@ -15,24 +15,24 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
+import uk.ac.diamond.scisoft.analysis.processing.operations.OperateOnDataAbstractOperation;
 
 @Atomic
-public class MultiplyInternalDataOperation extends OperateOnDataAbstractOperation<InternalDatasetNameModel> {
-	
+public class SubtractInternalDataOperation extends OperateOnDataAbstractOperation<InternalDatasetModel> {
+
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyInternalDataOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.SubtractInternalDataOperation";
 	}
 
 	@Override
 	protected Dataset doMathematics(Dataset a, Dataset b) {
-		return ErrorPropagationUtils.multiplyWithUncertainty(a, b);
+		return ErrorPropagationUtils.subtractWithUncertainty(a, b);
 	}
 	
 	@Override
 	protected String getFilePath(IDataset input) {
 		return input.getFirstMetadata(SliceFromSeriesMetadata.class).getFilePath();
 	}
-	
 
 }

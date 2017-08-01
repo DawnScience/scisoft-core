@@ -16,6 +16,8 @@ import java.io.File;
 
 // Imports from org.eclipse
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.io.IFileSaver;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -97,7 +99,14 @@ public class ExportImageOperation extends AbstractOperation<ExportImageModel, Op
 		// With this in hand we can construct the full output path for the file and pass this, along with the filetype to the saving method
 		if (model.getFileFormatEnum() == FileFormatEnum.TIFF) {
 			outputPath = outputDirectory + File.separator + fileName + "_" + paddedFrameString + ".tiff";
-			fileSaver = new TIFFImageSaver(outputPath, 32, false);
+			
+			int nBits = 32;
+			Dataset d = DatasetUtils.convertToDataset(input);
+			if (d.getDType() == Dataset.FLOAT32 || d.getDType() == Dataset.FLOAT64) {
+				nBits =33;
+			}
+			
+			fileSaver = new TIFFImageSaver(outputPath, nBits, false);
 
 		}
 		else if (model.getFileFormatEnum() == FileFormatEnum.PNG) {

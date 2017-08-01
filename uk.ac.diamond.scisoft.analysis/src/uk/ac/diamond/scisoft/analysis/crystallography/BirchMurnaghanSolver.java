@@ -58,6 +58,9 @@ public class BirchMurnaghanSolver {
 		final double error = 1e-6;
 		double x1, x2 = 1;
 		
+		// A better initial guess? Murnaghan equation of state
+		x1 = x2 = Math.pow(bulkModulusDerivative/bulkModulus*pressure + 1, -1/bulkModulusDerivative);
+		
 		do {
 			x1 = x2;
 			x2 = x1 - (fBirchMurnaghan(x1, bulkModulus, bulkModulusDerivative) - pressure) / dBirchMurnaghan(x1, bulkModulus, bulkModulusDerivative);

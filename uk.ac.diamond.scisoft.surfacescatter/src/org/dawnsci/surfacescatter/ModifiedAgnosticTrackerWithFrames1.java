@@ -42,8 +42,9 @@ public class ModifiedAgnosticTrackerWithFrames1 extends AbstractTracker{
 	
 	private void runTrack(int trackingMarker){
 		
-		if(super.getFrame().getTrackingMethodology() != TrackingMethodology.TrackerType1.INTERPOLATION 
-				&& super.getFrame().getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION
+		if(//super.getFrame().getTrackingMethodology() != TrackingMethodology.TrackerType1.INTERPOLATION 
+				//&& 
+				super.getFrame().getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION
 				&& super.getFrame().getTrackingMethodology() != TrackingMethodology.TrackerType1.USE_SET_POSITIONS){
 			
 			
@@ -66,8 +67,9 @@ public class ModifiedAgnosticTrackerWithFrames1 extends AbstractTracker{
 		
 		}
 			
-		else if(super.getFrame().getTrackingMethodology() == TrackingMethodology.TrackerType1.INTERPOLATION 
-					|| super.getFrame().getTrackingMethodology() == TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
+		else if(//super.getFrame().getTrackingMethodology() == TrackingMethodology.TrackerType1.INTERPOLATION 
+					//|| 
+					super.getFrame().getTrackingMethodology() == TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
 			///////start the interpolation tracker
 			
 					interpolationRoutine();

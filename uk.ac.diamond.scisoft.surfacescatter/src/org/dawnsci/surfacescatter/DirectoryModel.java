@@ -24,7 +24,7 @@ public class DirectoryModel {
 	private ArrayList<ArrayList<Double>> dmxList;
 	private ArrayList<FrameModel> fms;
 	private TrackerType1 trackingMethodolgy;
-	private boolean trackerOn;
+	private boolean trackerOn = false;
 	private int[][] initialLenPt =  new int[][] {{50,50},{10,10}};;
 	private IImageTracker initialTracker;
 	private double[] trackerCoordinates = {100,100,110,100,110,100,110,110};

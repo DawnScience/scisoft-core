@@ -6,7 +6,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.SliceND;
 
-public abstract class AbstractTracker {
+public abstract class AbstractTrackerWithInterfaces {
 	
 	private DirectoryModel drm;
 	private int selection;
@@ -140,19 +140,8 @@ public abstract class AbstractTracker {
 		}
 		
 		try {
-			
-			ITrackerFactoryObject itfo = new ITrackerFactoryObject(input, initialLocation, TrackingMethodology.toTT(frame.getTrackingMethodology()));
-			TrackerHolder tH = frame.getTrackingMethodology().apply(itfo);
-			TrackerHolder tH2 = frame.getTrackingMethodology().apply(itfo);
-		
-			tracker = tH.getTracker();
-			trackerInitialCopy = tH2.getTracker();
-			
-			
-			
-			
-//			tracker.initialize(input, initialLocation, TrackingMethodology.toTT(frame.getTrackingMethodology()));
-//			trackerInitialCopy.initialize(input, initialLocation, TrackingMethodology.toTT(frame.getTrackingMethodology()));
+			tracker.initialize(input, initialLocation, TrackingMethodology.toTT(frame.getTrackingMethodology()));
+			trackerInitialCopy.initialize(input, initialLocation, TrackingMethodology.toTT(frame.getTrackingMethodology()));
 		} catch (Exception e) {
 
 		}
@@ -330,15 +319,8 @@ public abstract class AbstractTracker {
 				trackerInitialCopy = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 					
 				try{
-//					tracker.initialize(input, location, TrackingMethodology.toTT(frame.getTrackingMethodology()));
-					ITrackerFactoryObject itfo = new ITrackerFactoryObject(input, location, TrackingMethodology.toTT(frame.getTrackingMethodology()));
-					TrackerHolder tH = ITrackerFactory.TLD.apply(itfo);
-					TrackerHolder tH2 = ITrackerFactory.TLD.apply(itfo);
-				
-					tracker = tH.getTracker();
-					trackerInitialCopy = tH2.getTracker();
-					
-//					trackerInitialCopy.initialize(input, location, TrackingMethodology.toTT(frame.getTrackingMethodology()));
+					tracker.initialize(input, location, TrackingMethodology.toTT(frame.getTrackingMethodology()));
+					trackerInitialCopy.initialize(input, location, TrackingMethodology.toTT(frame.getTrackingMethodology()));
 
 					drm.setTracker(tracker);
 					drm.setInitialTracker(trackerInitialCopy);

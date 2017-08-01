@@ -55,8 +55,9 @@ public class AgnosticTrackerWithFrames {
 		
 //		FrameModel fm = 
 		
-		if(frame.getTrackingMethodology() != TrackingMethodology.TrackerType1.INTERPOLATION 
-				&& frame.getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION
+		if(//frame.getTrackingMethodology() != TrackingMethodology.TrackerType1.INTERPOLATION 
+				//&& 
+				frame.getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION
 				&& frame.getTrackingMethodology() != TrackingMethodology.TrackerType1.USE_SET_POSITIONS){
 	
 //			
@@ -433,8 +434,9 @@ public class AgnosticTrackerWithFrames {
 		}
 		
 		
-		else if (frame.getTrackingMethodology() == TrackingMethodology.TrackerType1.INTERPOLATION 
-				|| frame.getTrackingMethodology() == TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
+		else if (//frame.getTrackingMethodology() == TrackingMethodology.TrackerType1.INTERPOLATION 
+				//|| 
+				frame.getTrackingMethodology() == TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
 			///////start the interpolation tracker
 			
 			try{
@@ -531,8 +533,9 @@ public class AgnosticTrackerWithFrames {
 		}
 		
 		
-		if(fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.INTERPOLATION 
-				&& fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION
+		if(//fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.INTERPOLATION 
+				//&& 
+				fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION
 				&& fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.USE_SET_POSITIONS){
 			
 			
@@ -855,8 +858,9 @@ public class AgnosticTrackerWithFrames {
 			}
 		}
 			
-		else if (fm.getTrackingMethodology() == TrackingMethodology.TrackerType1.INTERPOLATION 
-				|| fm.getTrackingMethodology() == TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
+		else if (//fm.getTrackingMethodology() == TrackingMethodology.TrackerType1.INTERPOLATION 
+//				|| 
+				fm.getTrackingMethodology() == TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
 				///////start the interpolation tracker
 				
 			try{
@@ -945,8 +949,9 @@ public class AgnosticTrackerWithFrames {
 		}
 		
 		
-		if(fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.INTERPOLATION 
-				&& fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION
+		if(//fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.INTERPOLATION 
+//				&& 
+				fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION
 				&& fm.getTrackingMethodology() != TrackingMethodology.TrackerType1.USE_SET_POSITIONS){
 			isTheTrackingMarkerNot3 = true;
 			
@@ -1302,8 +1307,9 @@ public class AgnosticTrackerWithFrames {
 			}
 		}
 		
-		else if (fm.getTrackingMethodology() == TrackingMethodology.TrackerType1.INTERPOLATION 
-				|| fm.getTrackingMethodology() == TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
+		else if (//fm.getTrackingMethodology() == TrackingMethodology.TrackerType1.INTERPOLATION 
+//				s|| 
+				fm.getTrackingMethodology() == TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION){
 			
 			///////start the interpolation tracker
 			

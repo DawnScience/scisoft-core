@@ -30,6 +30,7 @@ public class PolynomialOverlap {
 	}
 	
 	
+	@SuppressWarnings("deprecation")
 	public static double[] extrapolatedLocation(double desiredl, 
 												Dataset lValues, 
 												Dataset xValues,
@@ -40,9 +41,7 @@ public class PolynomialOverlap {
 		
 		Dataset[] lValuesHolder = new Dataset[1];
 		Dataset lValuesNullHolder = DatasetFactory.zeros(lValues, Dataset.ARRAYFLOAT64);
-		Dataset[] lValuesHolder2 = new Dataset[1];
-		Dataset lValuesNullHolder2 = DatasetFactory.zeros(lValues, Dataset.ARRAYFLOAT64);
-		
+		Dataset[] lValuesHolder2 = new Dataset[1];		
 		
 		for(int t = 0; t<lValues.getSize(); t++){
 			lValuesNullHolder.set(lValues.getDouble(t), lValues.getSize()-1-t);

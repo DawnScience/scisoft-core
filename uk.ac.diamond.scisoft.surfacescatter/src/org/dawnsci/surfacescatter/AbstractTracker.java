@@ -117,6 +117,10 @@ public abstract class AbstractTracker {
 			
 			location =localLocation;
 		}
+		
+		if(location != null){
+			sanityCheck(location);
+		}
 	}
 	
 	public void initialiseTracker(){
@@ -153,6 +157,10 @@ public abstract class AbstractTracker {
 
 		if(location == null){
 			System.out.println("error in initialiseTracker()");
+		}
+		
+		if(location != null){
+			sanityCheck(location);
 		}
 		
 	}
@@ -207,7 +215,7 @@ public abstract class AbstractTracker {
 				drm.addTrackerLocationList(selection, location);
 			}
 			
-//			drm.setTracker(tracker);
+
 		}
 		catch(Exception h){
 			System.out.println(h.getMessage());
@@ -216,7 +224,10 @@ public abstract class AbstractTracker {
 		if(location == null){
 			System.out.println("error in followUp()");
 		}
-	
+		
+		if(location != null){
+			sanityCheck(location);
+		}
 	}
 	
 	public void restartInOppositeDirection(){
@@ -244,6 +255,9 @@ public abstract class AbstractTracker {
 																				  drm.getSortedX(), 
 																				  drm.getInitialLenPt()[0],
 																				  selection);
+					
+					System.out.println("extrapolation inside restart method, selection:        " + k + "      seedlocation [0]:   " + seedLocation[0] +"    seedlocation [1]:   " + seedLocation[1] );
+					
 				}
 				else{
 					location= seedLocation;
@@ -355,6 +369,10 @@ public abstract class AbstractTracker {
 							  drm.getInitialLenPt()[0],
 							  selection);
 					
+					
+					System.out.println("extrapolation inside restart method, selection:        " + selection + "      seedlocation [0]:   " + seedLocation[0] +"    seedlocation [1]:   " + seedLocation[1] );
+					
+					
 					///what's wrong here?
 					System.out.println("something wrong");
 					location = l; 
@@ -388,7 +406,12 @@ public abstract class AbstractTracker {
 		
 			
 			if(location == null){
+				System.out.println("something very wrong");
 				location = seedLocation;
+			}
+			
+			if(location != null){
+				sanityCheck(location);
 			}
 			
 			drm.setTracker(tracker);
@@ -481,4 +504,66 @@ public abstract class AbstractTracker {
 	}
 
 
+	private double[] sanityCheck(double[] kROI){
+		
+		try{
+			double[] kMinusOneROI = drm.getFms().get(selection-1).getRoiLocation();
+			double[] kMinusTwoROI = drm.getFms().get(selection-2).getRoiLocation();
+			
+			if(kMinusOneROI ==null || kMinusTwoROI ==null){
+				kMinusOneROI = drm.getFms().get(selection+1).getRoiLocation();
+				kMinusTwoROI = drm.getFms().get(selection+2).getRoiLocation();
+			}
+			
+			
+			if(kMinusOneROI !=null & kMinusTwoROI !=null){
+				
+				double xPreviousStep = kMinusOneROI[0] - kMinusTwoROI[0];
+				double yPreviousStep = kMinusOneROI[1] - kMinusTwoROI[1];
+				
+				double xStep = kROI[0] - kMinusOneROI[0];
+				double yStep = kROI[1] - kMinusOneROI[1];
+				
+				double xyStepLength = Math.pow((Math.pow(xStep,2)+ Math.pow(yStep,2)),0.5);
+				
+				double[] calculatedPosition = TrackerLocationInterpolation.trackerInterpolationInterpolator0(drm.getTrackerLocationList(), 
+						  drm.getSortedX(), 
+						  drm.getInitialLenPt()[0],
+						  selection);
+				
+				double xCalculatedStep = calculatedPosition[0] - kMinusOneROI[0];
+				double yCalculatedStep = calculatedPosition[1] - kMinusOneROI[1];
+				
+				double xyCalculatedStepLength = Math.pow((Math.pow(xCalculatedStep,2)+ Math.pow(yCalculatedStep,2)),0.5);
+				
+				
+				double angleOfDivertionFromPreviousTrack = Math.abs((Math.PI/2) - Math.atan(xPreviousStep/yPreviousStep)-Math.atan(yStep/xStep));
+				
+				if(angleOfDivertionFromPreviousTrack >(Math.PI/9) || xyStepLength > 1.2* xyCalculatedStepLength){
+					kROI = calculatedPosition;
+					
+					try {
+						tracker.initialize(input, kROI, TrackingMethodology.toTT(frame.getTrackingMethodology()));
+						trackerInitialCopy.initialize(input, kROI, TrackingMethodology.toTT(frame.getTrackingMethodology()));
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					drm.setTracker(tracker);
+					drm.setInitialTracker(trackerInitialCopy);
+				}
+				
+				return kROI;
+			}	
+			
+			return kROI;
+		}
+		catch(Exception g){
+			return kROI;
+		}
+		
+	}
+	
+	
 }

@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,7 +29,7 @@ public class HistogramTest {
 	 */
 	@Before
 	public void setUp() {
-		d = (DoubleDataset) DatasetFactory.createRange(1.0, 2048.0, 1.0, Dataset.FLOAT64);
+		d = DatasetFactory.createRange(DoubleDataset.class, 1.0, 2048.0, 1.0);
 	}
 
 	/**
@@ -133,7 +134,7 @@ public class HistogramTest {
 	@Test
 	public void testHistogram8() {
 		Histogram histo = new Histogram(50);
-		Dataset pd = histo.value(DatasetFactory.createLinearSpace(0, 100, 101, Dataset.INT32)).get(0);
+		Dataset pd = histo.value(DatasetFactory.createLinearSpace(IntegerDataset.class, 0, 100, 101)).get(0);
 
 		assertEquals(50, pd.getSize());
 		assertEquals(2, pd.getInt(0));
@@ -145,11 +146,22 @@ public class HistogramTest {
 	 * 
 	 */
 	@Test
+	public void testHistogram9() {
+		Histogram histo = new Histogram(DatasetFactory.createFromObject(new int[] {0, 1}));
+		Dataset pd = histo.value(DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 2, 201)).get(0);
+		assertEquals(1, pd.getSize());
+		assertEquals(101, pd.getInt(0));
+	}
+
+	/**
+	 * 
+	 */
+	@Test
 	public void testHistogramSpeed() {
 		long start = 0;
 
 		Histogram h = new Histogram(50);
-		Dataset d = DatasetFactory.createLinearSpace(0, 100, 500000, Dataset.FLOAT64);
+		Dataset d = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 100, 500000);
 		
 		Dataset a  = null;
 

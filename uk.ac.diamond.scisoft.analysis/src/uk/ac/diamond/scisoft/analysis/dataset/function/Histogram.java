@@ -63,7 +63,7 @@ public class Histogram implements DatasetToDatasetFunction {
 			throw new IllegalArgumentException("Given lower bound was higher than upper bound");
 		}
 
-		bins = (DoubleDataset) DatasetFactory.createLinearSpace(min, max, nbins + 1, Dataset.FLOAT64);
+		bins = DatasetFactory.createLinearSpace(DoubleDataset.class, min, max, nbins + 1);
 	}
 
 	/**
@@ -95,7 +95,9 @@ public class Histogram implements DatasetToDatasetFunction {
 	public Histogram(IDataset edges, boolean ignore)
 	{
 		if (edges.getRank() != 1) {
-			throw new IllegalArgumentException("Bin edges should be given as 1D dataset");
+			throw new IllegalArgumentException("Bin edges must be given as 1D dataset");
+		} else if (edges.getSize() < 2) {
+			throw new IllegalArgumentException("There must be more than one bin edge");
 		}
 
 		bins = (DoubleDataset) DatasetUtils.cast(DatasetUtils.convertToDataset(edges), Dataset.FLOAT64);
@@ -107,8 +109,12 @@ public class Histogram implements DatasetToDatasetFunction {
 		}
 
 		// check for equal spans
-		Dataset diff = Maths.difference(bins, 2, 0);
-		useEqualSpanBins = Comparisons.allTrue(Comparisons.almostEqualTo(diff, 0, 1e-8, 1e-8));
+		if (bins.getSize() == 2) {
+			useEqualSpanBins = true;
+		} else {
+			Dataset diff = Maths.difference(bins, 2, 0);
+			useEqualSpanBins = Comparisons.allTrue(Comparisons.almostEqualTo(diff, 0, 1e-8, 1e-8));
+		}
 
 		nbins = edges.getSize() - 1;
 		ignoreOutliers = ignore;
@@ -128,7 +134,7 @@ public class Histogram implements DatasetToDatasetFunction {
 		if (useEqualSpanBins) {
 			for (IDataset ds : datasets) {
 				if (bins == null) {
-					bins = (DoubleDataset) DatasetFactory.createLinearSpace(ds.min().doubleValue(), ds.max().doubleValue(), nbins + 1, Dataset.FLOAT64);
+					bins = DatasetFactory.createLinearSpace(DoubleDataset.class, ds.min().doubleValue(), ds.max().doubleValue(), nbins + 1);
 				}
 				final double[] edges = bins.getData();
 				final double lo = edges[0];
@@ -150,16 +156,17 @@ public class Histogram implements DatasetToDatasetFunction {
 				while (iter.hasNext()) {
 					final double val = a.getElementDoubleAbs(iter.index);
 					if (val < lo) {
-						if (ignoreOutliers)
+						if (ignoreOutliers) {
 							continue;
+						}
 						h[0]++;
 					} else if (val >= hi) {
-						if (val > hi && ignoreOutliers)
+						if (val > hi && ignoreOutliers) {
 							continue;
+						}
 						h[nbins-1]++;
 					} else {
-						if(((int) ((val-lo)/span))<h.length)
-							h[(int) ((val-lo)/span)]++;
+						h[(int) ((val - lo) / span)]++;
 					}
 				}
 				result.add(histo);
@@ -168,7 +175,7 @@ public class Histogram implements DatasetToDatasetFunction {
 		} else {
 			for (IDataset ds : datasets) {
 				if (bins == null) {
-					bins = (DoubleDataset) DatasetFactory.createLinearSpace(ds.min().doubleValue(), ds.max().doubleValue(), nbins + 1, Dataset.FLOAT64);
+					bins = DatasetFactory.createLinearSpace(DoubleDataset.class, ds.min().doubleValue(), ds.max().doubleValue(), nbins + 1);
 				}
 				final double[] edges = bins.getData();
 				final double lo = edges[0];
@@ -221,7 +228,7 @@ public class Histogram implements DatasetToDatasetFunction {
 	public void setMinMax(double min, double max) {
 		this.min = min;
 		this.max = max;
-		bins = (DoubleDataset) DatasetFactory.createLinearSpace(min, max, nbins + 1, Dataset.FLOAT64);		
+		bins = DatasetFactory.createLinearSpace(DoubleDataset.class, min, max, nbins + 1);		
 	}
 
 	/**

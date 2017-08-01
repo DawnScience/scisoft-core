@@ -27,7 +27,6 @@ public class ModifiedAgnosticTrackerWithFrames1 extends AbstractTracker{
 											  int k,
 											  int selection) {
 
-
 		super.init(drm,								
 				   trackingMarker, 
 				   k,
@@ -36,7 +35,6 @@ public class ModifiedAgnosticTrackerWithFrames1 extends AbstractTracker{
 		if(super.getFrame().getRoiLocation() == null){
 			runTrack(trackingMarker);
 		}
-		
 		
 	}
 	

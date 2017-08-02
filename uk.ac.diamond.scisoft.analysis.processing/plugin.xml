@@ -528,7 +528,7 @@
             description="Subtract a selected dataset of the input data (or average) from all datasets"
             icon="icons/subblank.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractCurrentDataOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SelectedFramesModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.SelectedFramesModel"
             name="Subtract Input Data">
       </operation>
       <operation
@@ -989,46 +989,46 @@
             visible="true">
       </operation>
       <category
-            id="uuk.ac.diamond.scisoft.analysis.processing.internaldata"
+            id="uk.ac.diamond.scisoft.analysis.processing.internaldata"
             name="Internal Data">
       </category>
       <operation
-            category="uuk.ac.diamond.scisoft.analysis.processing.internaldata"
+            category="uk.ac.diamond.scisoft.analysis.processing.internaldata"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.MultiplyInternalDataOperation"
             description="Multiply dataset by internal value"
             icon="icons/blue-cross.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.MultiplyInternalDataOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDatasetModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDataModel"
             name="Multiply"
             visible="true">
       </operation>
       <operation
-            category="uuk.ac.diamond.scisoft.analysis.processing.internaldata"
+            category="uk.ac.diamond.scisoft.analysis.processing.internaldata"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.SubtractInternalDataOperation"
             description="Subtract internal data from a dataset"
             icon="icons/minus.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.SubtractInternalDataOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDatasetModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDataModel"
             name="Subtract"
             visible="true">
       </operation>
       <operation
-            category="uuk.ac.diamond.scisoft.analysis.processing.internaldata"
+            category="uk.ac.diamond.scisoft.analysis.processing.internaldata"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.DivideInternalDataOperation"
             description="Divide dataset by internal value"
             icon="icons/yellow-divide.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.DivideInternalDataOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDatasetModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDataModel"
             name="Divide"
             visible="true">
       </operation>
       <operation
-            category="uuk.ac.diamond.scisoft.analysis.processing.internaldata"
+            category="uk.ac.diamond.scisoft.analysis.processing.internaldata"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.AddInternalDataOperation"
             description="Add internal data to a Dataset"
             icon="icons/plus.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.AddInternalDataOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDatasetModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDataModel"
             name="Add"
             visible="true">
       </operation>
@@ -1060,11 +1060,48 @@
             name="Divide Frame">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.externaldata"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.AddExternalFrameOperation"
             description="Add frame (or average of stack) from external file"
             icon="icons/plus.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.AddExternalFrameOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataSelectedFramesModel"
+            name="Add Frame">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.internaldata"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.MultiplyInternalFrameOperation"
+            description="Multiply with internal dataset frame"
+            icon="icons/blue-cross.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.MultiplyInternalFrameOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDataSelectedFramesModel"
+            name="Multiply Frame">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.internaldata"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.DivideInternalFrameOperation"
+            description="Divide by internal dataset frame"
+            icon="icons/yellow-divide.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.DivideInternalFrameOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDataSelectedFramesModel"
+            name="Divide Frame">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.internaldata"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.SubtractInternalFrameOperation"
+            description="Subtract internal frame"
+            icon="icons/minus.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.SubtractInternalFrameOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDataSelectedFramesModel"
+            name="Subtract Frame">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.internaldata"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.AddInternalFrameOperation"
+            description="Add internal frame"
+            icon="icons/plus.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.AddInternalFrameOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDataSelectedFramesModel"
             name="Add Frame">
       </operation>
       <operation

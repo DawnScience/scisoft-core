@@ -1,5 +1,5 @@
 /*-
- * Copyright 2016 Diamond Light Source Ltd.
+ * Copyright 2017 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,21 +9,20 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.internaldata;
 
-import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
-@Atomic
-public class SubtractInternalDataOperation extends AbstractInternalDataOperation {
+public class MultiplyInternalFrameOperation extends AbstractInternalFrameOperation {
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.SubtractInternalDataOperation";
+        return "uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.MultiplyInternalFrameOperation";
 	}
 
 	@Override
-	protected Dataset doMathematics(Dataset a, Dataset b) {
-		return ErrorPropagationUtils.subtractWithUncertainty(a, b);
+	protected Dataset performOperation(Dataset input, Dataset other) {
+		return ErrorPropagationUtils.multiplyWithUncertainty(DatasetUtils.convertToDataset(input), other);
 	}
 }

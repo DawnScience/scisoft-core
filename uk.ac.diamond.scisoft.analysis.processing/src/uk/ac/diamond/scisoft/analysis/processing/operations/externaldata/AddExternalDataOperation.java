@@ -11,13 +11,11 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
-import uk.ac.diamond.scisoft.analysis.processing.operations.OperateOnDataAbstractOperation;
 
 @Atomic
-public class AddExternalDataOperation extends OperateOnDataAbstractOperation<ExternalDataModel> {
+public class AddExternalDataOperation extends AbstractExternalDataOperation {
 
 	@Override
 	public String getId() {
@@ -28,10 +26,4 @@ public class AddExternalDataOperation extends OperateOnDataAbstractOperation<Ext
 	protected Dataset doMathematics(Dataset a, Dataset b) {
 		return ErrorPropagationUtils.addWithUncertainty(a, b);
 	}
-
-	@Override
-	protected String getFilePath(IDataset input) {
-		return ((ExternalDataModel)model).getFilePath();
-	}
-
 }

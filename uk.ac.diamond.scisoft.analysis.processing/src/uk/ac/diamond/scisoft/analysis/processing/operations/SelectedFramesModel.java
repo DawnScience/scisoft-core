@@ -7,16 +7,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
+package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class SelectedFramesModel extends AbstractOperationModel {
 	
-	@OperationModelField(hint="Position of first (or only) dataset, leave blank to average all data",label = "First:" )
+	@OperationModelField(hint="Position of first (or only) dataset, leave blank to average all data",label = "First" )
 	private Integer startFrame = 0;
-	@OperationModelField(hint="Position of end dataset, leave empty to use a single dataset",label = "Last:" )
+	@OperationModelField(hint="Position of end dataset, leave empty to use a single dataset",label = "Last" )
 	private Integer endFrame = 1;
 	@OperationModelField(hint="Scaling of the multiplying data", label="Scaling")
 	private double scaling = 1.0;

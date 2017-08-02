@@ -10,15 +10,12 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.internaldata;
 
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
-import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
-import uk.ac.diamond.scisoft.analysis.processing.operations.OperateOnDataAbstractOperation;
 
 @Atomic
-public class DivideInternalDataOperation extends OperateOnDataAbstractOperation<InternalDatasetModel> {
+public class DivideInternalDataOperation extends AbstractInternalDataOperation {
 
 	@Override
 	public String getId() {
@@ -29,10 +26,4 @@ public class DivideInternalDataOperation extends OperateOnDataAbstractOperation<
 	protected Dataset doMathematics(Dataset a, Dataset b) {
 		return ErrorPropagationUtils.divideWithUncertainty(a, b);
 	}
-	
-	@Override
-	protected String getFilePath(IDataset input) {
-		return input.getFirstMetadata(SliceFromSeriesMetadata.class).getFilePath();
-	}
-
 }

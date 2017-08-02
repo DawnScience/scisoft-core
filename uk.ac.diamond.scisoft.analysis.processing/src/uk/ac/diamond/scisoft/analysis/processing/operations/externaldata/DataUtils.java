@@ -26,6 +26,10 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtil
 
 public class DataUtils {
 
+	private DataUtils() {
+		
+	}
+	
 	public static Dataset getInternalFrameAverage(IDataset input, Integer start, Integer end) throws OperationException {
 		SliceFromSeriesMetadata ssm = input.getFirstMetadata(SliceFromSeriesMetadata.class);
 		
@@ -103,6 +107,11 @@ public class DataUtils {
 		return null;
 	}
 	
+	public static Dataset getInternalFrameMatching(IDataset input, Integer start, Integer end, String name, IOperation op) throws OperationException {
+		SliceFromSeriesMetadata ssm = input.getFirstMetadata(SliceFromSeriesMetadata.class);
+		return getExternalFrameMatching(input, start, end, ssm.getFilePath(), name, op);
+	}
+	
 	public static int calculateFastestDimension(int[] dataDims, int[] shape) {
 		int[] dd = dataDims.clone();
 		Arrays.sort(dd);
@@ -113,5 +122,10 @@ public class DataUtils {
 		}
 		
 		return -1;	
+	}
+
+	public static Dataset getInternalFrameAverage(IDataset input, Integer start, Integer end, String name, IOperation op) {
+		SliceFromSeriesMetadata ssm = input.getFirstMetadata(SliceFromSeriesMetadata.class);
+		return getExternalFrameAverage(input, start, end, ssm.getFilePath(), name, op);
 	}
 }

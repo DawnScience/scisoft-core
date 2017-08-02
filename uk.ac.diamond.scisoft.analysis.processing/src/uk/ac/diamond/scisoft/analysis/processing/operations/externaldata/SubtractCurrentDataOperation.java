@@ -17,6 +17,7 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
+import uk.ac.diamond.scisoft.analysis.processing.operations.SelectedFramesModel;
 
 @Atomic
 public class SubtractCurrentDataOperation extends FrameMathsOperation<SelectedFramesModel> {

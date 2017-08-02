@@ -7,7 +7,7 @@ import org.eclipse.january.dataset.IDataset;
 
 public class CurveStitchDataPackage {
 
-	private String rodName;
+	private String rodName = "Current Curve";
 	
 	
 	////Inputs:

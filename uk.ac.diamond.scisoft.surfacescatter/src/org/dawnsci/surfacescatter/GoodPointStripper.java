@@ -91,6 +91,8 @@ public class GoodPointStripper {
 			for(int u =0 ; u<yIDatasets.getSize(); u++){
 				bh.add(true);
 			}
+			
+			goodPointIDatasets = DatasetFactory.createFromList(bh);
 		}
 		
 		switch (ids){
@@ -114,14 +116,28 @@ public class GoodPointStripper {
 		ArrayList<Double> yErrorHolder =new ArrayList<>();
 			
 		for(int j =0; j<yIDatasets.getSize(); j++){
-			if(goodPointIDatasets.getBoolean(j) ||
-					includeAll){
+			
+			if(includeAll){
 				
 				yHolder.add(yIDatasets.getDouble(j));
 				yErrorHolder.add(yIDatasetsErrors.getDouble(j));
+					
+			}
+			
+			else{
+				try{
+					if(goodPointIDatasets.getBoolean(j)){
+					
+						yHolder.add(yIDatasets.getDouble(j));
+						yErrorHolder.add(yIDatasetsErrors.getDouble(j));
+					}
+				}
+				catch(IndexOutOfBoundsException d){
+					
+				}	
 			}
 		}
-			 
+		
 		IDataset yH = DatasetFactory.createFromList(yHolder);
 		IDataset yEH = DatasetFactory.createFromList(yErrorHolder);
 			
@@ -146,6 +162,8 @@ public class GoodPointStripper {
 			for(int u =0 ; u<xIDataset.getSize(); u++){
 				bh.add(true);
 			}
+			
+			goodPointIDatasets = DatasetFactory.createFromList(bh);
 		}
 		
 		switch (ids){
@@ -163,9 +181,19 @@ public class GoodPointStripper {
 		ArrayList<Double> xHolder =new ArrayList<>();
 			
 		for(int j =0; j<xIDataset.getSize(); j++){
-			if(goodPointIDatasets.getBoolean(j) ||
-					includeAll){
+			if(includeAll){	
 				xHolder.add(xIDataset.getDouble(j));
+			}
+			else{
+				try{
+					if(goodPointIDatasets.getBoolean(j)){
+						
+						xHolder.add(xIDataset.getDouble(j));
+					}
+				}
+				catch(IndexOutOfBoundsException d){
+					
+				}
 			}
 		}
 		

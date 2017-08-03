@@ -19,7 +19,7 @@ public class MultiplyInternalDataOperation extends AbstractInternalDataOperation
 	
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.MultiplyInternalDataOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyInternalDataOperation";
 	}
 
 	@Override

@@ -18,7 +18,7 @@ public class MultiplyExternalFrameOperation extends AbstractExternalFrameOperati
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyExternalFrameOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MutliplyExternalFrameOperation";
 	}
 
 	@Override

@@ -19,7 +19,7 @@ public class DivideInternalDataOperation extends AbstractInternalDataOperation {
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.DivideInternalDataOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DivideInternalDataOperation";
 	}
 
 	@Override

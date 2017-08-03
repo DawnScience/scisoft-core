@@ -19,7 +19,7 @@ public class AddExternalDataOperation extends AbstractExternalDataOperation {
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.AddExternalDataOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusExternalDataOperation";
 	}
 
 	@Override

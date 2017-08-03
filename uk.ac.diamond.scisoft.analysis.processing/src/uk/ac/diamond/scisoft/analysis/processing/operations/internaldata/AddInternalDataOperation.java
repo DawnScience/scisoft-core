@@ -19,7 +19,7 @@ public class AddInternalDataOperation extends AbstractInternalDataOperation {
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.AddInternalDataOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusInternalDataOperation";
 	}
 
 	@Override

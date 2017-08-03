@@ -763,7 +763,7 @@
             class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.AddExternalDataOperation"
             description="Add external data to a Dataset"
             icon="icons/plus.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.AddExternalDataOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusExternalDataOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataModel"
             name="Add"
             visible="true">
@@ -997,7 +997,7 @@
             class="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.MultiplyInternalDataOperation"
             description="Multiply dataset by internal value"
             icon="icons/blue-cross.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.MultiplyInternalDataOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyInternalDataOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDataModel"
             name="Multiply"
             visible="true">
@@ -1007,7 +1007,7 @@
             class="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.SubtractInternalDataOperation"
             description="Subtract internal data from a dataset"
             icon="icons/minus.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.SubtractInternalDataOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractInternalDataOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDataModel"
             name="Subtract"
             visible="true">
@@ -1017,7 +1017,7 @@
             class="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.DivideInternalDataOperation"
             description="Divide dataset by internal value"
             icon="icons/yellow-divide.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.DivideInternalDataOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DivideInternalDataOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDataModel"
             name="Divide"
             visible="true">
@@ -1027,7 +1027,7 @@
             class="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.AddInternalDataOperation"
             description="Add internal data to a Dataset"
             icon="icons/plus.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.AddInternalDataOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusInternalDataOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDataModel"
             name="Add"
             visible="true">
@@ -1037,7 +1037,7 @@
             class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyExternalFrameOperation"
             description="Multiply dataset by frame (or average of stack) from external file"
             icon="icons/blue-cross.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyExternalFrameOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MutliplyExternalFrameOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataSelectedFramesModel"
             name="Multiply Frame">
       </operation>

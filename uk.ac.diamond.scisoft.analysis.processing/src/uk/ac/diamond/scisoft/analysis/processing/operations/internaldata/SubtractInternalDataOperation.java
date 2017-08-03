@@ -19,7 +19,7 @@ public class SubtractInternalDataOperation extends AbstractInternalDataOperation
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.SubtractInternalDataOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractInternalDataOperation";
 	}
 
 	@Override

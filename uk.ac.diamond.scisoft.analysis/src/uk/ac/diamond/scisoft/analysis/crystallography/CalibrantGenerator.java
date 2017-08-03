@@ -18,8 +18,8 @@ import javax.measure.quantity.Length;
 import javax.measure.Unit;
 import javax.measure.spi.ServiceProvider;
 
-import tec.units.ri.unit.MetricPrefix;
-import tec.units.ri.unit.Units;
+import tec.uom.se.unit.MetricPrefix;
+import tec.uom.se.unit.Units;
 
 public class CalibrantGenerator {
 	

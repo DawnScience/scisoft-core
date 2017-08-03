@@ -14,7 +14,7 @@ import java.util.Arrays;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 
-import tec.units.ri.quantity.Quantities;
+import tec.uom.se.quantity.Quantities;
 
 /**
  * This class is a bean to hold d-spacing and, optionally, integer Miller indices (h,k,l).

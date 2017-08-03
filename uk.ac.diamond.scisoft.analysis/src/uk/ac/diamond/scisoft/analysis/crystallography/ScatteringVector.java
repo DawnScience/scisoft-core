@@ -14,7 +14,7 @@ import javax.measure.Unit;
 import javax.measure.quantity.Length;
 import javax.measure.spi.ServiceProvider;
 
-import tec.units.ri.unit.Units;
+import tec.uom.se.unit.Units;
 
 public interface ScatteringVector<Q extends Quantity<Q>> extends Quantity<Q> {
 

@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.thoughtworks.xstream.core.util.CompositeClassLoader;
 
-import tec.units.ri.quantity.Quantities;
+import tec.uom.se.quantity.Quantities;
 
 /**
  * CalibrationFactory when we go to e4 like all xxxFactory classes this will become

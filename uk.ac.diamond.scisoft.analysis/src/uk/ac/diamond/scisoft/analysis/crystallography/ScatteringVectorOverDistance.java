@@ -12,8 +12,8 @@ package uk.ac.diamond.scisoft.analysis.crystallography;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 
-import tec.units.ri.unit.ProductUnit;
-import tec.units.ri.unit.Units;
+import tec.uom.se.unit.ProductUnit;
+import tec.uom.se.unit.Units;
 
 public interface ScatteringVectorOverDistance<Q extends Quantity<Q>> extends Quantity<Q> {
 	public final Unit<? extends ScatteringVector> UNIT = new ProductUnit(

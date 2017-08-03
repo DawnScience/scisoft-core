@@ -24,10 +24,10 @@ Require-Bundle: javax.vecmath;bundle-version="1.5.2",
  com.googlecode.efficient-java-matrix-library.core;bundle-version="[0.26.0,0.27.0)",
  org.ddogleg;bundle-version="[0.6.0,0.7.0)",
  com.thoughtworks.xstream,
- si.uom.si-units;bundle-version="0.6.6",
  javax.measure.unit-api;bundle-version="1.0.0",
- tec.units.unit-ri,
- tec.uom.lib.uom-lib-common;bundle-version="1.0.2"
+ tec.uom.lib.uom-lib-common;bundle-version="1.0.2",
+ tec.uom.se,
+ si.uom.si-units-java8;bundle-version="0.6.6"
 Export-Package: uk.ac.diamond.scisoft.analysis,
  uk.ac.diamond.scisoft.analysis.axis,
  uk.ac.diamond.scisoft.analysis.crystallography,

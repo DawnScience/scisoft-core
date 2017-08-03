@@ -21,9 +21,9 @@ import javax.measure.Unit;
 import javax.measure.quantity.Length;
 
 import si.uom.NonSI;
-import tec.units.ri.quantity.Quantities;
-import tec.units.ri.unit.MetricPrefix;
-import tec.units.ri.unit.Units;
+import tec.uom.se.quantity.Quantities;
+import tec.uom.se.unit.MetricPrefix;
+import tec.uom.se.unit.Units;
 
 /**
  * Since we cannot have eclipse preferences in this plugin, but

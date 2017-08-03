@@ -65,9 +65,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import si.uom.NonSI;
-import tec.units.ri.format.SimpleUnitFormat;
-import tec.units.ri.unit.MetricPrefix;
-import tec.units.ri.unit.Units;
+import tec.uom.se.format.SimpleUnitFormat;
+import tec.uom.se.unit.MetricPrefix;
+import tec.uom.se.unit.Units;
 import uk.ac.diamond.scisoft.analysis.axis.AxisChoice;
 import uk.ac.diamond.scisoft.analysis.crystallography.ReciprocalCell;
 import uk.ac.diamond.scisoft.analysis.crystallography.UnitCell;

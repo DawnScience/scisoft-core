@@ -3,8 +3,6 @@ package org.dawnsci.surfacescatter;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-import org.eclipse.swt.widgets.Text;
-
 public class GeometricParametersModel {
 	
 	private Boolean beamCorrection = false;

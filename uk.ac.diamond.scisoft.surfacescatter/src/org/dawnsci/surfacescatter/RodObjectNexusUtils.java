@@ -16,7 +16,11 @@ package org.dawnsci.surfacescatter;
 
 // Imports from Java
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+
+import org.apache.commons.lang.StringUtils;
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
@@ -50,7 +54,7 @@ public class RodObjectNexusUtils{
 		int noImages = fms.size();
 		int p= 0;
 		
-		ArrayList<GroupNode> nodes = new ArrayList<>();
+//		ArrayList<GroupNode> nodes = new ArrayList<>();
 		
 		GroupNode entry = TreeFactory.createGroupNode(p);
 		p++;
@@ -155,7 +159,7 @@ public class RodObjectNexusUtils{
 			
 			p++;
 
-	 		nodes.add(nxData);
+//	 		nodes.add(nxData);
 			entry.addGroupNode("point_"+imageFilepathNo, nxData);
 		}
 		
@@ -240,13 +244,20 @@ public class RodObjectNexusUtils{
 		GroupNode overlapRegions = TreeFactory.createGroupNode(p);
 		p++;
 		
+		
+		
+		///// entering the geometrical model
+		
+		geometricalParameterReader(gm, entry);
+		
+		
 		entry.addGroupNode("Overlap_Regions", overlapRegions);
 		
 		///Start creating the overlap region coding
 		
 		int overlapNumber =0;
 		
-		for(OverlapDataModel ovm :drm.getOverlapDataModels()){
+		for(OverlapDataModel ovm :csdp.getOverlapDataModels()){
 		
 			if(!ovm.getLowerOverlapScannedValues().equals(null)){
 				if(ovm.getLowerOverlapScannedValues().length > 0){
@@ -254,7 +265,7 @@ public class RodObjectNexusUtils{
 					GroupNode overlapData = TreeFactory.createGroupNode(p);
 					p++;
 					
-					overlapRegions.addGroupNode("Overlap_Region_" + overlapNumber, overlapData);
+					
 					
 					//lower overlap data
 					
@@ -290,7 +301,11 @@ public class RodObjectNexusUtils{
 
 					overlapData.addAttribute(TreeFactory.createAttribute("Attenuation_Factor_For_Corrected_Intensities", ovm.getAttenuationFactor()));
 					overlapData.addAttribute(TreeFactory.createAttribute("Attenuation_Factor_For_Fhkl_Intensities", ovm.getAttenuationFactorFhkl()));
-					overlapData.addAttribute(TreeFactory.createAttribute("Attenuation_Factor_For_Raw_Intensities", ovm.getAttenuationFactorRaw()));								
+					overlapData.addAttribute(TreeFactory.createAttribute("Attenuation_Factor_For_Raw_Intensities", ovm.getAttenuationFactorRaw()));			
+					
+					overlapRegions.addGroupNode("Overlap_Region_" + overlapNumber, overlapData);
+					
+					overlapNumber++;
 				}
 			}
 		}
@@ -321,6 +336,41 @@ public class RodObjectNexusUtils{
 				
 			}
 			System.out.println("This error occured when attempting to open the NeXus file: " + nexusFileError.getMessage());
+		}
+	}
+	
+	
+	private void geometricalParameterReader(GeometricParametersModel gm, 
+											GroupNode entry){
+		
+		Method[] methods = gm.getClass().getMethods();
+		
+		for(Method m : methods){
+			
+			String mName = m.getName();
+			CharSequence s = "get";
+			
+			
+			if(mName.contains(s) && !mName.equals("getClass")){
+				
+				String name = StringUtils.substringAfter(mName, "get");
+//				Class c = m.getReturnType();
+				
+				
+				try {
+					entry.addAttribute(TreeFactory.createAttribute(name,String.valueOf(m.invoke(gm, (Object[]) null))));
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					System.out.println("error for:   " + name);
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		
 		}
 	}
 }

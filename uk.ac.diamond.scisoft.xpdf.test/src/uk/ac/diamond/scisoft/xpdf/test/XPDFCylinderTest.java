@@ -1,5 +1,8 @@
 package uk.ac.diamond.scisoft.xpdf.test;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,7 +25,6 @@ import org.eclipse.january.dataset.Maths;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import junit.framework.TestCase;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.xpdf.XPDFBeamData;
 import uk.ac.diamond.scisoft.xpdf.XPDFComponentCylinder;
@@ -31,10 +33,11 @@ import uk.ac.diamond.scisoft.xpdf.XPDFComponentGeometry;
 import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 
-public class XPDFCylinderTest extends TestCase {
+public class XPDFCylinderTest {
 
 	final static private String testDataDir = "/home/rkl37156/ceria_dean_data/testData/";
 	
+	@Test
 	public void testGetUpstreamPathLength() {
 //		fail("Temporary fail"); //TODO: remove
 		XPDFComponentCylinder cap = new XPDFComponentCylinder();
@@ -79,6 +82,7 @@ public class XPDFCylinderTest extends TestCase {
 		//fail("Not yet implemented");
 	}
 
+	@Test
 	public void testGetDownstreamPathLength() {
 //		fail("Temporary fail"); //TODO: remove
 		XPDFComponentCylinder cap = new XPDFComponentCylinder();
@@ -141,6 +145,7 @@ public class XPDFCylinderTest extends TestCase {
 		}		
 	}
 	
+	@Test
 	public void testAbsorptionCorrections() throws DatasetException {
 
 		double rmsError = absorptionCorrectionCommon(true, true);
@@ -148,6 +153,7 @@ public class XPDFCylinderTest extends TestCase {
 		assertTrue("Error in sample-sample absorption correction too large: " + rmsError, rmsError < rmsErrorTarget);
 	}
 
+	@Test
 	public void testAbsorptionCorrectionsSC() throws DatasetException {
 
 		double rmsError = absorptionCorrectionCommon(true, false);
@@ -155,6 +161,7 @@ public class XPDFCylinderTest extends TestCase {
 		assertTrue("Error in sample-capillary absorption correction too large: " + rmsError, rmsError < rmsErrorTarget);		
 	}
 
+	@Test
 	public void testAbsorptionCorrectionsCS() throws DatasetException {
 
 		double rmsError = absorptionCorrectionCommon(false, true);
@@ -162,6 +169,7 @@ public class XPDFCylinderTest extends TestCase {
 		assertTrue("Error in capillary-sample absorption correction too large: " + rmsError, rmsError < rmsErrorTarget);
 	}
 	
+	@Test
 	public void testAbsorptionCorrectionsCC() throws DatasetException {
 
 		double rmsError = absorptionCorrectionCommon(false, false);
@@ -331,6 +339,7 @@ public class XPDFCylinderTest extends TestCase {
 		
 	}
 	
+	@Test
 	public void testCeriaAbsorption() throws DatasetException {
 
 		XPDFSubstance ceria = new XPDFSubstance("ceria", "CeO2", 7.65, 0.6);

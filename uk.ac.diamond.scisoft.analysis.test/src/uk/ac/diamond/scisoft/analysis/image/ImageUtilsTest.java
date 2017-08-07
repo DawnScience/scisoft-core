@@ -64,30 +64,36 @@ public class ImageUtilsTest {
 
 		// 1D
 		double[] centre = new double[] {32.3};
-		Dataset data = DatasetFactory.zeros(new int[] {size}, Dataset.FLOAT64);
+		int[] pos = new int[] {(int) centre[0]};
+		Dataset data = DatasetFactory.zeros(size);
 
 		distributePeak(data, centre, 5, amp);
 		double sum = ((Number) data.sum()).doubleValue();
 		Assert.assertEquals(amp, sum, REL_TOL*amp);
+		Assert.assertEquals(0.398, data.getDouble(pos), 0.001);
 
 		data.fill(0);
 		distributePeak(data, centre, 0.5, amp);
 		sum = ((Number) data.sum()).doubleValue();
 		Assert.assertEquals(amp, sum, REL_TOL*amp);
+		Assert.assertEquals(3.225, data.getDouble(pos), 0.001);
 
 		// 2D
 		centre = new double[] {32.3, 72.7};
+		pos = new int[] {(int) centre[0], (int) centre[1]};
 
-		data = DatasetFactory.zeros(new int[] {size, size}, Dataset.FLOAT64);
+		data = DatasetFactory.zeros(size, size);
 
 		distributePeak(data, centre, 5, amp);
 		sum = ((Number) data.sum()).doubleValue();
 		Assert.assertEquals(amp, sum, REL_TOL*amp);
+		Assert.assertEquals(0.032, data.getDouble(pos), 0.001);
 
 		data.fill(0);
 		distributePeak(data, centre, 0.5, amp);
 		sum = ((Number) data.sum()).doubleValue();
 		Assert.assertEquals(amp, sum, REL_TOL*amp);
+		Assert.assertEquals(2.080, data.getDouble(pos), 0.001);
 	}
 
 	@Test
@@ -97,11 +103,11 @@ public class ImageUtilsTest {
 		final double amp = 5;
 		double[] centre = new double[] {12.3};
 
-		Dataset data = DatasetFactory.zeros(new int[] {size}, Dataset.FLOAT64);
+		Dataset data = DatasetFactory.zeros(size);
 
 		distributePeak(data, centre, 0.5, amp);
 		List<Dataset> result = ImageUtils.findWindowedPeaks(data, window, 0.1*amp, 1.1*amp);
-		Assert.assertEquals(2, result.size());
+		Assert.assertEquals(3, result.size());
 
 		Dataset sum = result.get(0);
 		Assert.assertEquals(1, sum.getSize());
@@ -110,6 +116,8 @@ public class ImageUtilsTest {
 		Dataset coords = result.get(1);
 		Assert.assertArrayEquals(new int[] {1, 1}, coords.getShapeRef());
 		Assert.assertEquals(centre[0], coords.getDouble(0, 0), REL_TOL*centre[0]);
+		Dataset fraction = result.get(2);
+		Assert.assertEquals(3.225/amp, fraction.getDouble(0), 0.01);
 	}
 
 	@Test
@@ -119,11 +127,11 @@ public class ImageUtilsTest {
 		final double amp = 5;
 		double[] centre = new double[] {32.3, 72.7};
 
-		Dataset data = DatasetFactory.zeros(new int[] {size, size}, Dataset.FLOAT64);
+		Dataset data = DatasetFactory.zeros(size, size);
 
 		distributePeak(data, centre, 0.5, amp);
 		List<Dataset> result = ImageUtils.findWindowedPeaks(data, window, 0.1*amp, 1.1*amp);
-		Assert.assertEquals(2, result.size());
+		Assert.assertEquals(3, result.size());
 
 		Dataset sum = result.get(0);
 		Assert.assertEquals(1, sum.getSize());
@@ -133,5 +141,7 @@ public class ImageUtilsTest {
 		Assert.assertArrayEquals(new int[] {1, 2}, coords.getShapeRef());
 		Assert.assertEquals(centre[0], coords.getDouble(0, 0), REL_TOL*centre[0]);
 		Assert.assertEquals(centre[1], coords.getDouble(0, 1), REL_TOL*centre[1]);
+		Dataset fraction = result.get(2);
+		Assert.assertEquals(2.080/amp, fraction.getDouble(0), 0.01);
 	}
 }

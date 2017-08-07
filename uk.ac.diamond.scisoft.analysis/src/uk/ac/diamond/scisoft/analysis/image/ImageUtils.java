@@ -28,13 +28,14 @@ public class ImageUtils {
 	 * @param window size of window
 	 * @param low lower threshold value for centre of peak
 	 * @param high upper threshold value for centre of peak
-	 * @return list of their sum and centroids (as coordinates in N x rank dataset)
+	 * @return list of their sum, centroids (as coordinates in N x rank dataset) and centre fraction
 	 */
 	public static List<Dataset> findWindowedPeaks(Dataset data, int window, double low, double high) {
 		int[] shape = data.getShapeRef();
 		int rank = shape.length;
 		List<Double> sum = new ArrayList<Double>();
 		List<Double> centroid = new ArrayList<Double>();
+		List<Double> fraction = new ArrayList<Double>();
 
 		IndexIterator it = data.getIterator(true);
 		int half = window/2;
@@ -67,11 +68,13 @@ public class ImageUtils {
 					}
 					Dataset sliced = data.getSliceView(slice);
 					if (sliced.max().doubleValue() <= v) { // this does not check if other non-central pixels are equal to v
-						sum.add(((Number) sliced.sum()).doubleValue());
+						double total = ((Number) sliced.sum()).doubleValue();
+						sum.add(total);
 						List<Double> c = centroidFn.value(sliced);
 						for (int i = 0; i < rank; i++) {
 							centroid.add(pos[i] + c.get(i));
 						}
+						fraction.add(v/total);
 					}
 				}
 			}
@@ -81,9 +84,11 @@ public class ImageUtils {
 		if (sum.size() == 0) {
 			list.add(DatasetFactory.zeros(0));
 			list.add(DatasetFactory.zeros(0, rank));
+			list.add(DatasetFactory.zeros(0));
 		} else {
 			list.add(DatasetFactory.createFromList(sum));
 			list.add(DatasetFactory.createFromList(centroid).reshape(sum.size(), rank));
+			list.add(DatasetFactory.createFromList(fraction));
 		}
 		return list;
 	}

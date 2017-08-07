@@ -2,10 +2,13 @@ package org.dawnsci.surfacescatter;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
@@ -137,6 +140,77 @@ public class FittingParametersInputReader {
 		
 	}
 	
+	public static void geometricalParametersReaderFromNexus (Tree tree,
+															 GeometricParametersModel gm){
+
+
+		GroupNode gn = tree.getGroupNode();
+		
+		Method[] methods = gm.getClass().getMethods();
+		
+		for(Method m : methods){
+			
+			String mName = m.getName();
+			CharSequence s = "get";
+			
+			
+			if(mName.contains(s) && !mName.equals("getClass")){
+				
+				String name = StringUtils.substringAfter(mName, "get");
+				
+				Attribute att = gn.getAttribute(name);
+				
+				String writeName = "set" + name;
+				
+				StringDataset sd = DatasetUtils.cast(StringDataset.class, att.getValue());
+				
+				m.getReturnType();
+				
+				
+				for(Method m1 : methods){
+					if(m1.getName().equals(writeName)){
+						String tn = m1.getParameterTypes()[0].getName();
+						try {
+							switch(tn){
+								case "java.lang.Boolean":
+									m1.invoke(gm, Boolean.valueOf(sd.get()));
+									break;
+								case "java.lang.Double":
+									m1.invoke(gm, Double.valueOf(sd.get()));
+									break;
+								case "java.lang.String":
+									m1.invoke(gm, (sd.get()));
+									break;
+								case "int":
+									m1.invoke(gm, Integer.valueOf(sd.get()));
+									break;
+								case "double":
+									m1.invoke(gm, Double.valueOf(sd.get()));
+									break;
+								default:
+									break;
+							}
+						
+						} catch (NumberFormatException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IllegalArgumentException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (InvocationTargetException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						break;
+					}
+				}
+			}
+		}	
+	}
+	
 
 	public static FittingParameters fittingParametersFromFrameModel(FrameModel fm){
 		
@@ -156,8 +230,6 @@ public class FittingParametersInputReader {
 	    fp.setFitPower(fm.getFitPower());
 		fp.setBoundaryBox(fm.getBoundaryBox());
 		fp.setSliderPos(0);
-//		fp.setXValue(null);
-//		fp.setFile(columns[10]);
 		
 	    return fp;
 		

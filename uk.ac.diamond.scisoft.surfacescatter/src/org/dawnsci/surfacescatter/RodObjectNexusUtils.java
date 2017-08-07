@@ -248,7 +248,7 @@ public class RodObjectNexusUtils{
 		
 		///// entering the geometrical model
 		
-		geometricalParameterReader(gm, entry);
+		geometricalParameterWriter(gm, entry);
 		
 		
 		entry.addGroupNode("Overlap_Regions", overlapRegions);
@@ -340,7 +340,7 @@ public class RodObjectNexusUtils{
 	}
 	
 	
-	private void geometricalParameterReader(GeometricParametersModel gm, 
+	private void geometricalParameterWriter(GeometricParametersModel gm, 
 											GroupNode entry){
 		
 		Method[] methods = gm.getClass().getMethods();

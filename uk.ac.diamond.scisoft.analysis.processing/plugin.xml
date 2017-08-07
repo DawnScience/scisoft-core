@@ -1269,6 +1269,19 @@
             model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="Clear Mask">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.image.CollectFastestDimensionOperation"
+            description="Collect 1D dataset into a 2D image along fastestDimension"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.image.CollectFastestDimensionOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="Collect along fastest dimension">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.MaxAverageRegionRatioOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.MaxAverageRegionRatioOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.XRangeModel"
+            name="Max/Mean ratio">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

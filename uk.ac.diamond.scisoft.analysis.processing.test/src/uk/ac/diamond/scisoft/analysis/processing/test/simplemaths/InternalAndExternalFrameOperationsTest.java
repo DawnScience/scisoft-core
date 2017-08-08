@@ -134,62 +134,61 @@ public class InternalAndExternalFrameOperationsTest {
 	private void testSubtract(SliceViewIterator it, IOperation<?, ?> op) throws Exception{
 		IDataset[] d = getData(it,op);
 		
-		assertEquals(0,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(0,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(11,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(11-11,d[1].getDouble(0,1,1),0.00000001);
 		
 		d = getData(it,op);
-		assertEquals(100,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(100,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(111,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(111-11,d[1].getDouble(0,1,1),0.00000001);
 		
 		d = getData(it,op);
-		assertEquals(200,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(200,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(211,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(211-11,d[1].getDouble(0,1,1),0.00000001);
 	}
 	
 	private void testAdd(SliceViewIterator it, IOperation<?, ?> op) throws Exception{
 		IDataset[] d = getData(it,op);
 		
-		assertEquals(0,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(0,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(11,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(11+11,d[1].getDouble(0,1,1),0.00000001);
 		
 		d = getData(it,op);
-		assertEquals(100,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(100,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(111,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(111+11,d[1].getDouble(0,1,1),0.00000001);
 		
 		d = getData(it,op);
-		assertEquals(200,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(200,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(211,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(211+11,d[1].getDouble(0,1,1),0.00000001);
 	}
 	
 	private void testMultiply(SliceViewIterator it, IOperation<?, ?> op) throws Exception{
 		IDataset[] d = getData(it,op);
 		
-		assertEquals(0,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(0,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(11,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(11*11,d[1].getDouble(0,1,1),0.00000001);
 		
 		d = getData(it,op);
-		assertEquals(100,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(0,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(111,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(111*11,d[1].getDouble(0,1,1),0.00000001);
 		
 		d = getData(it,op);
-		assertEquals(200,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(0,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(211,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(211*11,d[1].getDouble(0,1,1),0.00000001);
 	}
 	
 	private void testDivide(SliceViewIterator it, IOperation<?, ?> op) throws Exception{
 		IDataset[] d = getData(it,op);
 		
-		assertEquals(0,d[0].getDouble(0,0,0),0.00000001);
-		double val = d[1].getDouble(0,0,0);
-		assertTrue(Double.isNaN(val));
+		assertEquals(11.0,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(11.0/11.0, d[1].getDouble(0,1,1),0.00000001);
 		
 		d = getData(it,op);
-		assertEquals(100,d[0].getDouble(0,0,0),0.00000001);
-		assertTrue(Double.isInfinite(d[1].getDouble(0,0,0)));
+		assertEquals(111,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(111.0/11.0, d[1].getDouble(0,1,1),0.00000001);
 		
 		d = getData(it,op);
-		assertEquals(200,d[0].getDouble(0,0,0),0.00000001);
-		assertTrue(Double.isInfinite(d[1].getDouble(0,0,0)));
+		assertEquals(211,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(211.0/11.0, d[1].getDouble(0,1,1),0.00000001);
 	}
 	
 	private IDataset[] getData(SliceViewIterator it, IOperation<?, ?> op) throws Exception{

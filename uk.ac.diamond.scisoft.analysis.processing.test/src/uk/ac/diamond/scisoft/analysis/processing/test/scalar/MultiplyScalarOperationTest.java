@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.processing.scalar.test;
+package uk.ac.diamond.scisoft.analysis.processing.test.scalar;
 
 //Import from org.junit
 import static org.junit.Assert.assertEquals;

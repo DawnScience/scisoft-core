@@ -10,16 +10,11 @@
 package org.dawnsci.surfacescatter;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.SliceND;
-
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
-import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 /**This class is generate an array ([2]) datasets of the X-ray flux at given theta values. These are used to correct X-ray reflectivity
  * measurements 
  * 
@@ -28,59 +23,59 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtil
 public class RecoverNormalisationFluxBatchForDialog {
 	
 	
-	public static Dataset[] normalisationFlux(String path, ExampleModel model){
-	
-		
-		ILazyDataset flux = null;
-		ILazyDataset theta = null;
-		Dataset[] fluxData = new Dataset[2];
-		
-		
-		if (model.getFlux() == null) {
-			
-			try{ 
-				IDataHolder dh1 =LoaderFactory.getData(path);
-				flux =dh1.getLazyDataset(ReflectivityMetadataTitlesForDialog.getadc2()); 
-				model.setFlux(flux);
-				
-				theta =dh1.getLazyDataset(ReflectivityMetadataTitlesForDialog.getqdcd_()); 
-				model.setTheta(theta);
-			}
-			catch (Exception e){
-				System.out.println("No normalisation data availbale externally");
-			}
-		
-			try { 
-				flux = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(null, model.getFilepath(), "ionc1")); 
-				theta = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(null, model.getFilepath(), "qsdcd"));
-			
-			}
-			catch (Exception e){
-				System.out.println("No normalisation data available internally");
-				
-			}
-		}
-		
-		else{
-			flux = model.getFlux();
-			theta = model.getTheta();
-		}
-		
-		SliceND sliceF = new SliceND(flux.getShape());
-		SliceND sliceT = new SliceND(theta.getShape());
-
-		
-		try {
-			fluxData[0] = (Dataset) theta.getSlice(sliceT);
-			fluxData[1]= (Dataset) flux.getSlice(sliceF);;
-		} catch (DatasetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return fluxData;
-
-	}
+//	public static Dataset[] normalisationFlux(String path, ExampleModel model){
+//	
+//		
+//		ILazyDataset flux = null;
+//		ILazyDataset theta = null;
+//		Dataset[] fluxData = new Dataset[2];
+//		
+//		
+//		if (model.getFlux() == null) {
+//			
+//			try{ 
+//				IDataHolder dh1 =LoaderFactory.getData(path);
+//				flux =dh1.getLazyDataset(ReflectivityMetadataTitlesForDialog.getadc2()); 
+//				model.setFlux(flux);
+//				
+//				theta =dh1.getLazyDataset(ReflectivityMetadataTitlesForDialog.getqdcd_()); 
+//				model.setTheta(theta);
+//			}
+//			catch (Exception e){
+//				System.out.println("No normalisation data availbale externally");
+//			}
+//		
+//			try { 
+//				flux = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(null, model.getFilepath(), "ionc1")); 
+//				theta = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(null, model.getFilepath(), "qsdcd"));
+//			
+//			}
+//			catch (Exception e){
+//				System.out.println("No normalisation data available internally");
+//				
+//			}
+//		}
+//		
+//		else{
+//			flux = model.getFlux();
+//			theta = model.getTheta();
+//		}
+//		
+//		SliceND sliceF = new SliceND(flux.getShape());
+//		SliceND sliceT = new SliceND(theta.getShape());
+//
+//		
+//		try {
+//			fluxData[0] = (Dataset) theta.getSlice(sliceT);
+//			fluxData[1]= (Dataset) flux.getSlice(sliceF);;
+//		} catch (DatasetException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		return fluxData;
+//
+//	}
 	
 //	public static Dataset[] normalisationFlux(String path, String filepath){
 //	
@@ -92,7 +87,7 @@ public class RecoverNormalisationFluxBatchForDialog {
 //	}
 	
 	
-	public static Dataset[] normalisationFlux(String path, String filepath){
+	public static Dataset[] normalisationFlux(String filepath){
 	
 		
 		ILazyDataset flux = null;
@@ -101,9 +96,9 @@ public class RecoverNormalisationFluxBatchForDialog {
 		
 	
 		try{ 
-			IDataHolder dh1 =LoaderFactory.getData(path);
+			IDataHolder dh1 =LoaderFactory.getData(filepath);
 			
-			flux =dh1.getLazyDataset(ReflectivityMetadataTitlesForDialog.getadc2()); 
+			flux =dh1.getLazyDataset(ReflectivityFluxParametersAliasEnum.FLUX.getFluxAlias()); 
 //				model.setFlux(flux);
 				
 			if(flux ==null) {
@@ -133,7 +128,7 @@ public class RecoverNormalisationFluxBatchForDialog {
 				}
 			}
 			
-			theta =dh1.getLazyDataset(ReflectivityMetadataTitlesForDialog.getqdcd_()); 
+			theta =dh1.getLazyDataset(ReflectivityFluxParametersAliasEnum.FLUX_SCANNED_VARIABLE.getFluxAlias()); 
 //				model.setTheta(theta);
 				
 				

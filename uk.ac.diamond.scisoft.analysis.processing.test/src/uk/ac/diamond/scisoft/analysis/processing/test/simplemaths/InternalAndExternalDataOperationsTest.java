@@ -42,7 +42,7 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.Multipl
 import uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.SubtractInternalDataOperation;
 import uk.ac.diamond.scisoft.analysis.processing.test.TestHDF5DataUtils;
 
-public class InternalAndExternalOperationsTest {
+public class InternalAndExternalDataOperationsTest {
 
 	@Test
 	public void test() throws Exception {

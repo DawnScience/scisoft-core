@@ -12,9 +12,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.AbstractInternalFrameOperation;
-
-public abstract class AbstractExternalFrameOperation extends AbstractInternalFrameOperation {
+public abstract class AbstractExternalFrameOperation extends FrameMathsOperation<ExternalDataSelectedFramesModel> {
 
 	@Override
 	protected Dataset getData(IDataset ds) {

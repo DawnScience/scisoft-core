@@ -30,16 +30,16 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.LoaderServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
+import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.AddExternalDataOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DivideExternalDataOperation;
-import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DivideInternalDataOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataModel;
-import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.InternalDatasetNameModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyExternalDataOperation;
-import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyInternalDataOperation;
-import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusExternalDataOperation;
-import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusInternalDataOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractExternalDataOperation;
-import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractInternalDataOperation;
+import uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.AddInternalDataOperation;
+import uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.DivideInternalDataOperation;
+import uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDataModel;
+import uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.MultiplyInternalDataOperation;
+import uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.SubtractInternalDataOperation;
 import uk.ac.diamond.scisoft.analysis.processing.test.TestHDF5DataUtils;
 
 public class InternalAndExternalOperationsTest {
@@ -61,7 +61,7 @@ public class InternalAndExternalOperationsTest {
 		
 		TestHDF5DataUtils.makeHDF5File(file.getAbsolutePath(), nameShapeMap);
 		
-		DivideExternalDataOperation<ExternalDataModel> op = new DivideExternalDataOperation<>();
+		DivideExternalDataOperation op = new DivideExternalDataOperation();
 		ExternalDataModel mod = new ExternalDataModel();
 		
 		mod.setFilePath(file.getAbsolutePath());
@@ -81,7 +81,7 @@ public class InternalAndExternalOperationsTest {
 		it.reset();
 		
 		DivideInternalDataOperation op2 = new DivideInternalDataOperation();
-		InternalDatasetNameModel inMod = new InternalDatasetNameModel();
+		InternalDataModel inMod = new InternalDataModel();
 		inMod.setDatasetName(FULL_OTHER);
 		op2.setModel(inMod);
 		
@@ -103,14 +103,14 @@ public class InternalAndExternalOperationsTest {
 		
 		it.reset();
 		
-		PlusExternalDataOperation aop = new PlusExternalDataOperation();
+		AddExternalDataOperation aop = new AddExternalDataOperation();
 		aop.setModel(mod);
 		
 		testAdd(it,aop);
 		
 		it.reset();
 		
-		PlusInternalDataOperation aop2 = new PlusInternalDataOperation();
+		AddInternalDataOperation aop2 = new AddInternalDataOperation();
 		aop2.setModel(inMod);
 		
 		testAdd(it, aop2);

@@ -23,6 +23,6 @@ public class AddInternalFrameOperation extends AbstractInternalFrameOperation {
 
 	@Override
 	protected Dataset performOperation(Dataset input, Dataset other) {
-		return ErrorPropagationUtils.subtractWithUncertainty(DatasetUtils.convertToDataset(input), other);
+		return ErrorPropagationUtils.addWithUncertainty(DatasetUtils.convertToDataset(input), other);
 	}
 }

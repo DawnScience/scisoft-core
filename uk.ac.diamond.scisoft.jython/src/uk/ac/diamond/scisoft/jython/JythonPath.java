@@ -52,7 +52,6 @@ public class JythonPath {
 	private static final String[] requiredJars = {
 		"org.python.pydev",
 		"cbflib-0.9",
-		"org.apache.commons.codec",
 		"org.apache.commons.math3", // math3 only now
 		"uk.ac.diamond.CBFlib",
 		"uk.ac.diamond.jama",

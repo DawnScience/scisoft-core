@@ -45,6 +45,27 @@ import types as _types
 import java.lang.ArrayIndexOutOfBoundsException as _jarrayindex_exception #@UnresolvedImport
 import java.lang.IllegalArgumentException as _jillegalargument_exception #@UnresolvedImport
 
+def quieten_logging(netty_only=True):
+    '''
+    Quieten logging to warnings and above
+    
+    :param netty_only: True then only quieten messages from Netty's DefaultChannelPipeline
+    '''
+    try:
+        if netty_only:
+            logger_name = 'org.python.netty.channel.DefaultChannelPipeline'
+        else:
+            from org.slf4j import Logger as LGR
+            logger_name = LGR.ROOT_LOGGER_NAME
+        from org.slf4j import LoggerFactory as LGF
+        # assumes we are using logback
+        from ch.qos.logback.classic import Level as LBL
+        LGF.getLogger(logger_name).setLevel(LBL.WARN)
+    except:
+        pass
+
+quieten_logging()
+
 class ndgeneric(object):
     pass # there is no array scalars at the moment
 
@@ -1628,6 +1649,20 @@ def ix_(*args):
         d.shape = shape
         index.append(d)
     return tuple(index)
+
+# need to define r_, c_, s_, index_exp objects
+class _slice_translate(object):
+    def __init__(self, axis):
+        self.axis = axis
+        pass
+    def __getitem__(self, key):
+        pass
+
+r_ = _slice_translate(0)
+c_ = _slice_translate(-1)
+s_ = _slice_translate(2)
+
+# also mgrid, ogrid
 
 @_wrap
 def fliplr(a):

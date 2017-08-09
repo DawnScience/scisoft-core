@@ -220,14 +220,20 @@ def _parselinearg(x, y, title, name):
             elif len(xl) != len(yl):
                 raise ValueError("number of x datasets should be equal to number of y datasets")
             else:
-                for i,j in zip(xl,yl):
+                for n in range(len(xl)):
+                    i = xl[n]
+                    j = yl[n]
                     if type(i) is _types.DictType: # has axis name
                         i = i.values()[0]
                     if type(j) is _types.DictType: # has axis name
                         j = j.values()[0]
                     if type(j) is _types.ListType or type(j) is _types.TupleType: # has y dataset labelling
                         j = j[0]
-                    if i.shape[0] != j.shape[0]:
+                    if i is None:
+                        i = _core.arange(j.size, dtype=_core.int)
+                        i.shape = i.shape
+                        xl[n] = i
+                    elif i.shape[0] != j.shape[0]:
                         raise AttributeError("length of y does not match the length of x")
 
     return name, title, xl, yl
@@ -345,14 +351,15 @@ def _process_line(x, y, title, name, mode):
         _plot_addline(name, t, xs, ys, yn, ax, ay)
 
 def line(x, y=None, title=None, name=None):
-    '''Plot y dataset (or list of datasets), optionally against any
+    '''
+    Plot y dataset (or list of datasets), optionally against any
     given x dataset in the named view
 
     Arguments:
-    x -- optional dataset or list of datasets for x values
-    y -- dataset or list of datasets
-    title -- title of plot
-    name -- name of plot view to use (if None, use default name)
+    :param x: optional dataset or list of datasets for x values; can have None as placeholders for index values
+    :param y: dataset or list of datasets
+    :param title: title of plot
+    :param name: name of plot view to use (if None, use default name)
 
     For example,
     >>> import scisoftpy as dnp
@@ -361,6 +368,7 @@ def line(x, y=None, title=None, name=None):
     >>> dnp.plot.line([a,a+12.3]) # plots two lines against array index
     >>> dnp.plot.line(2*a, [a,a+12.3]) # plots two lines against 2*a
     >>> dnp.plot.line([2*a, 3.5*b], [a,b]) # plots two lines against defined x values
+    >>> dnp.plot.line([2*a, None], [a,b]) # plots two lines against defined x values and index values
 
     To plot with alternative axes, x and y can be single-item dictionaries or lists of
     dictionaries. Each dictionary pairs an axis as a key with the value being a dataset.
@@ -418,7 +426,7 @@ def updateline(x, y=None, title=None, name=None):
 plot = line
 updateplot = updateline
 
-def _checkimagearg(x, y, im, name):
+def _checkimagearg(x, y, im):
     '''x and y can be arrays or single-item dicts
     (each dict comprises an axis name (or tuple of axis name/position) and array (can be None))
     '''
@@ -436,7 +444,7 @@ def _checkimagearg(x, y, im, name):
             raise AttributeError("Height of image does not match the length of y" )
 
 def _process_image(x, y, im, name, resetaxes):
-    _checkimagearg(x, y, im, name)
+    _checkimagearg(x, y, im)
 
     if resetaxes is True:
         _plot_clear(name)
@@ -560,6 +568,7 @@ def surface(s, x=None, y=None, name=None):
         y = None
     if y is None:
         x = None
+    _checkimagearg(x, y, s)
 
     _plot_surface(name, x, y, s)
 

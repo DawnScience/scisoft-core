@@ -37,7 +37,12 @@ public class ScanMetadata {
 		
 		try{
 
-			ILazyDataset dcdthetaL = ProcessingUtils.getLazyDataset(null, getSliceMetadata(input).getFilePath(), "dcdtheta");
+			ILazyDataset dcdthetaL = ProcessingUtils.getLazyDataset(null, 
+																	getSliceMetadata(input).getFilePath(), 
+																	ReflectivityAngleAliasEnum.THETA.getAngleAlias());
+			
+//			"dcdtheta"
+			
 			dcdtheta = getSliceMetadata(input).getMatchingSlice(dcdthetaL);
 			
 		} catch (DatasetException e){
@@ -57,7 +62,9 @@ public class ScanMetadata {
 	}
 	
 	public IDataset  getqdcd(IDataset input) {
-		IDataset qdcdDataset = ProcessingUtils.getDataset(null, getSliceMetadata(input).getFilePath(), "qdcd");
+		IDataset qdcdDataset = ProcessingUtils.getDataset(null, 
+														  getSliceMetadata(input).getFilePath(), 
+														  ReflectivityAngleAliasEnum.Q.getAngleAlias());
 		return qdcdDataset;
 		
 	}
@@ -69,10 +76,10 @@ public class ScanMetadata {
 	}
 	
 
-	public IDataset adc2DataLazy (Polynomial1DReflectivityModel model) {
-		IDataset adc2data = ProcessingUtils.getDataset(null, model.getPath(), adc2);
-		 return adc2data;
-	}
+//	public IDataset adc2DataLazy (Polynomial1DReflectivityModel model) {
+//		IDataset adc2data = ProcessingUtils.getDataset(null, model.getPath(), adc2);
+//		 return adc2data;
+//	}
 		 
 	public IDataset qdcd_dataDataLazy (Polynomial1DReflectivityModel model) {	 
 		IDataset qdcd_data = ProcessingUtils.getDataset(null, model.getPath(), qdcd_);

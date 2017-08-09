@@ -154,7 +154,11 @@ public class FittingParametersInputReader {
 			CharSequence s = "get";
 			
 			
-			if(mName.contains(s) && !mName.equals("getClass")){
+			if(mName.contains(s) && 
+			   !mName.equals("getClass") && 
+			   !mName.equals("getReflectivityFluxMap") &&
+			   !mName.equals("getReflectivityAnglesMap") &&
+			   !mName.equals("getsXRDMap")){
 				
 				String name = StringUtils.substringAfter(mName, "get");
 				
@@ -162,8 +166,13 @@ public class FittingParametersInputReader {
 				
 				String writeName = "set" + name;
 				
-				StringDataset sd = DatasetUtils.cast(StringDataset.class, att.getValue());
-				
+				StringDataset sd = null;
+				try{
+					sd = DatasetUtils.cast(StringDataset.class, att.getValue());
+				}
+				catch(Exception f){
+					System.out.println(f.getMessage());
+				}
 				m.getReturnType();
 				
 				

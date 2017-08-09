@@ -2,6 +2,7 @@ package org.dawnsci.surfacescatter;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.EnumMap;
 
 public class GeometricParametersModel {
 	
@@ -28,9 +29,11 @@ public class GeometricParametersModel {
 	private String savePath  = "/scratch/runtime-uk.ac.diamond.dawn.product/data/examples";
 	private String fluxPath = "NO"; //"/scratch/233990.dat";
 	private String xNameRef ="qsdcd";
-	private double energy = 3000;
+	private double energy = 12000;
 	private int theta = 0;
-	
+	private EnumMap<SXRDAngleAliasEnum,String> sXRDMap;
+	private EnumMap<ReflectivityAngleAliasEnum,String> reflectivityAnglesMap;
+	private EnumMap<ReflectivityFluxParametersAliasEnum,String> reflectivityFluxMap;
 	
 	public Double getNormalisationFactor() {
 		return normalisationFactor;
@@ -193,6 +196,23 @@ public class GeometricParametersModel {
 	public void setTheta(int theta) {
 		this.theta = theta;
 	}
-	
+	public EnumMap<SXRDAngleAliasEnum, String> getsXRDMap() {
+		return sXRDMap;
+	}
+	public void setsXRDMap(EnumMap<SXRDAngleAliasEnum, String> sXRDMap) {
+		this.sXRDMap = sXRDMap;
+	}
+	public EnumMap<ReflectivityAngleAliasEnum, String> getReflectivityAnglesMap() {
+		return reflectivityAnglesMap;
+	}
+	public void setReflectivityAnglesMap(EnumMap<ReflectivityAngleAliasEnum, String> reflectivityAnglesMap) {
+		this.reflectivityAnglesMap = reflectivityAnglesMap;
+	}
+	public EnumMap<ReflectivityFluxParametersAliasEnum, String> getReflectivityFluxMap() {
+		return reflectivityFluxMap;
+	}
+	public void setReflectivityFluxMap(EnumMap<ReflectivityFluxParametersAliasEnum, String> reflectivityFluxMap) {
+		this.reflectivityFluxMap = reflectivityFluxMap;
+	}
 	
 }

@@ -45,7 +45,9 @@ plotting package:
    plots the given ``y`` value dataset or list of datasets against a ``x`` dataset or list of
    datasets (if given). If a single ``x`` dataset is given, then it used for all ``y`` datasets
    and if a list of ``x`` datasets is given then it used in a pairwise fashion with the
-   corresponding ``y`` datasets.
+   corresponding ``y`` datasets. Also ``None``s can be used for ``x`` datasets as placeholders
+   for plotting against index values of the corresponding ``y`` datasets.
+   
 
    As well as passing datasets, a plot title can be set using the title keyword. Furthermore,
    alternative axes can be specified per dataset using a single-item dictionary where the key is

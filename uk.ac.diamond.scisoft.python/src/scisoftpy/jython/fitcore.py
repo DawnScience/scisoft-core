@@ -260,7 +260,7 @@ class fitresult(object):
 
         return fdata
 
-    def plot(self, title=None, name=None, all=True):
+    def plot(self, title=None, name=None, all=False):
         '''Plot fit as 1D
         title -- title of plot
         name  -- name of plot view to use (if None, use default name)

@@ -188,53 +188,53 @@ def _parselinearg(x, y, title, name):
     (each dict comprises an axis name (or tuple of axis name/position) and array (or array/label tuple))
     '''
     if y is None:
-        if isinstance(x, dict):
+        if isinstance(x, (dict, tuple)):
             yl = [x]
         else:
             yl = _toList(x)
+        x = None
+    elif isinstance(y, (dict, tuple)):
+        yl = [y]
+    else:
+        yl = _toList(y)
+
+    if x is None:
         xl = None
     else:
-        if isinstance(y, dict):
-            yl = [y]
+        if isinstance(x, dict):
+            xl = [x]
         else:
-            yl = _toList(y)
-        if x is None:
-            xl = None
+            xl = _toList(x)
+        if len(xl) == 1:
+            x = xl[0]
+            if type(x) is _types.DictType: # has axis name
+                x = x.values()[0]
+            xLength = x.shape[0]
+            for i in yl:
+                if type(i) is _types.DictType: # has axis name
+                    i = i.values()[0]
+                if type(i) is _types.ListType or type(i) is _types.TupleType: # has y dataset labelling
+                    i = i[0]
+                if xLength != i.shape[0]:
+                    raise AttributeError("length of y does not match the length of x" )
+        elif len(xl) != len(yl):
+            raise ValueError("number of x datasets should be equal to number of y datasets")
         else:
-            if isinstance(x, dict):
-                xl = [x]
-            else:
-                xl = _toList(x)
-            if len(xl) == 1:
-                x = xl[0]
-                if type(x) is _types.DictType: # has axis name
-                    x = x.values()[0]
-                xLength = x.shape[0]
-                for i in yl:
-                    if type(i) is _types.DictType: # has axis name
-                        i = i.values()[0]
-                    if type(i) is _types.ListType or type(i) is _types.TupleType: # has y dataset labelling
-                        i = i[0]
-                    if xLength != i.shape[0]:
-                        raise AttributeError("length of y does not match the length of x" )
-            elif len(xl) != len(yl):
-                raise ValueError("number of x datasets should be equal to number of y datasets")
-            else:
-                for n in range(len(xl)):
-                    i = xl[n]
-                    j = yl[n]
-                    if type(i) is _types.DictType: # has axis name
-                        i = i.values()[0]
-                    if type(j) is _types.DictType: # has axis name
-                        j = j.values()[0]
-                    if type(j) is _types.ListType or type(j) is _types.TupleType: # has y dataset labelling
-                        j = j[0]
-                    if i is None:
-                        i = _core.arange(j.size, dtype=_core.int)
-                        i.shape = i.shape
-                        xl[n] = i
-                    elif i.shape[0] != j.shape[0]:
-                        raise AttributeError("length of y does not match the length of x")
+            for n in range(len(xl)):
+                i = xl[n]
+                j = yl[n]
+                if type(i) is _types.DictType: # has axis name
+                    i = i.values()[0]
+                if type(j) is _types.DictType: # has axis name
+                    j = j.values()[0]
+                if type(j) is _types.ListType or type(j) is _types.TupleType: # has y dataset labelling
+                    j = j[0]
+                if i is None:
+                    i = _core.arange(j.size, dtype=_core.int)
+                    i.shape = i.shape
+                    xl[n] = i
+                elif i.shape[0] != j.shape[0]:
+                    raise AttributeError("length of y does not match the length of x")
 
     return name, title, xl, yl
 

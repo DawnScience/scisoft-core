@@ -59,7 +59,7 @@ public class GuiBean extends HashMap<GuiParameters, Serializable> implements Ser
 		if (warn && key instanceof GuiParameters) {
 			GuiParameters guiParam = (GuiParameters) key;
 			if (returnValue != null && !guiParam.getStorageClass().isInstance(returnValue)) {
-				logger.error("Value in GuiBean for key " + guiParam.toString() + " is not of expected type. A ClassCastException is likely");
+				logger.error("Value in GuiBean for key {} is not of expected type. A ClassCastException is likely", guiParam);
 			}
 		}
 		
@@ -106,7 +106,7 @@ public class GuiBean extends HashMap<GuiParameters, Serializable> implements Ser
 			}
 		}
 		if (warn && value != null && !key.getStorageClass().isInstance(value)) {
-			logger.error("Value in GuiBean for key " + key.toString() + " is not of expected type. A ClassCastException is likely");
+			logger.error("Value in GuiBean for key {} is not of expected type. A ClassCastException is likely", key);
 		}
 		return super.put(key, value);
 	}

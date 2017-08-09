@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.dawnsci.surfacescatter.MethodSettingEnum.MethodSetting;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IDataset;
 
 public class SavingUtils {
 
@@ -266,11 +268,11 @@ public class SavingUtils {
 	    }
 	
 
-		public void simpleXYYeSave(boolean writeOnlyGood, 
+		public void simpleXYYeSave(boolean useQ,
+									boolean writeOnlyGood, 
 									String title, 
 									int state,
 									CurveStitchDataPackage csdp,
-									DirectoryModel drm,
 									ArrayList<FrameModel> fms,
 									GeometricParametersModel gm){
 			
@@ -301,43 +303,50 @@ public class SavingUtils {
 		    
 			writer.println("# Test file created: " + strDate);
 			writer.println("# Headers: ");
-			writer.println("#X	Y	Ye");
 			
-			if(state == 1){
-				for(int gh = 0 ; gh<fms.size(); gh++){
-					FrameModel fm = fms.get(gh);
-					if((writeOnlyGood == true && fm.isGoodPoint()) ||
-								!writeOnlyGood){
-						writer.println(csdp.getSplicedCurveX().getDouble(gh) + 
-								"	"+ csdp.getSplicedCurveYFhkl().getDouble(gh)+ 
-								"	"+ csdp.getSplicedCurveYFhkl().getError(gh));
-					}
+			
+			IDataset y = DatasetFactory.createFromObject(0);
+			IDataset ye = DatasetFactory.createFromObject(0);
+			IDataset x = csdp.getSplicedCurveX();
+			
+			switch(state){
+				case 0:
+					y = csdp.getSplicedCurveY();
+					ye = y = csdp.getSplicedCurveY().getErrors();
+					break;
+				case 1:
+					y = csdp.getSplicedCurveYFhkl();
+					ye = y = csdp.getSplicedCurveYFhkl().getErrors();
+					break;
+				case 2:
+					y = csdp.getSplicedCurveYRaw();
+					ye = y = csdp.getSplicedCurveYRaw().getErrors();
+					break;
+				default:
+					//
+					break;
+			}
+			
+			if(useQ){
+				x = csdp.getSplicedCurveQ();
+				writer.println("#q	Y	Ye");
+			}
+			else{
+				writer.println("#X	Y	Ye");
+			}
+			
+			for(int gh = 0 ; gh<fms.size(); gh++){
+				FrameModel fm = fms.get(gh);
+				
+				if((writeOnlyGood == true && fm.isGoodPoint()) ||
+							!writeOnlyGood){
+					
+					writer.println(x.getDouble(gh) + 
+								"	"+ y.getDouble(gh)+ 
+								"	"+ ye.getError(gh));
 				}
 			}
 			
-			if(state == 0){
-				for(int gh = 0 ; gh<fms.size(); gh++){
-					FrameModel fm = fms.get(gh);
-					if((writeOnlyGood == true && fm.isGoodPoint()) ||
-								!writeOnlyGood){
-						writer.println(csdp.getSplicedCurveX().getDouble(gh) + 
-								"	"+ csdp.getSplicedCurveY().getDouble(gh)+ 
-								"	"+ csdp.getSplicedCurveY().getError(gh));
-					}
-				}
-			}
-
-			if(state == 2){
-				for(int gh = 0 ; gh<fms.size(); gh++){
-					FrameModel fm = fms.get(gh);
-					if((writeOnlyGood == true && fm.isGoodPoint()) ||
-								!writeOnlyGood){
-						writer.println(csdp.getSplicedCurveX().getDouble(gh) + 
-								"	"+ csdp.getSplicedCurveYRaw().getDouble(gh)+ 
-								"	"+ csdp.getSplicedCurveYRaw().getError(gh));
-					}
-				}
-			}
 			
 			writer.close();
 		}	

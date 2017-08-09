@@ -4,7 +4,28 @@ package org.dawnsci.surfacescatter;
 public class AxisEnums {
 
 	public enum xAxes {
-		SCANNED_VARIABLE, Q
+		SCANNED_VARIABLE(0, "Scanned Variable"), 
+		Q(1, "q");
+		
+		private int xAxisNumber;
+		private String xAxisName;
+		
+		xAxes(int a, String b){
+			
+			this.xAxisNumber =a;
+			this.xAxisName = b;
+			
+		}
+		
+		public String getXAxisName(){
+			return xAxisName;
+		}
+		
+		public int getXAxisNumber(){
+			return xAxisNumber;
+		}
+		
+		
 	}
 
 	public static String toString(xAxes input){
@@ -31,16 +52,37 @@ public class AxisEnums {
 	}
 	
 	public enum yAxes {
-		SPLICEDY, SPLICEDYRAW, SPLICEDYFHKL
+		SPLICEDY(0, "Corrected Intensity"), 
+		SPLICEDYRAW(1, "Raw Intensity"), 
+		SPLICEDYFHKL(2, "Fhkl");
+		
+		private int yAxisNumber;
+		private String yAxisName;
+		
+		yAxes(int a, String b){
+			
+			this.yAxisNumber =a;
+			this.yAxisName = b;
+			
+		}
+		
+		public String getYAxisName(){
+			return yAxisName;
+		}
+		
+		public int getYAxisNumber(){
+			return yAxisNumber;
+		}
+		
 	}
 
 	public static String toString(yAxes input){
 		
 		switch(input){
 			case SPLICEDY:
-				return "Intensity";
+				return "Corrected Intensity";
 			case SPLICEDYRAW:
-				return "Uncorrected Intensity";
+				return "Raw Intensity";
 			case SPLICEDYFHKL:
 				return "Fhkl";
 		}

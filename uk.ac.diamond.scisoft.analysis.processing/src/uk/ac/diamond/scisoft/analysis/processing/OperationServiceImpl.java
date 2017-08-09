@@ -92,7 +92,29 @@ public class OperationServiceImpl implements IOperationService {
 			throw new OperationException(null, "No operation list defined, call setSeries(...) with something meaningful please!");
 		}
 		
-		
+		try {
+			
+			SourceInformation ssource = context.getData().getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo();
+			
+			StringBuilder builder = new StringBuilder("Processing ");
+			builder.append(ssource.getDatasetName());
+			builder.append(" from ");
+			builder.append(ssource.getFilePath());
+			if (ssource.isLive()) {
+				builder.append(", live,");
+			}
+			builder.append(" using the following sequence: ");
+			IOperation<? extends IOperationModel, ? extends OperationData>[] series = context.getSeries();
+			for (IOperation<?, ?> s : series) {
+				builder.append(s.getName());
+				builder.append(", ");
+			}
+			
+			logger.info(builder.toString());
+			
+		} catch (Exception e) {
+			logger.error("Could not log processing run",e);
+		}
 		
 		// We check the pipeline ranks are ok
 		try {

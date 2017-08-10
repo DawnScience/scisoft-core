@@ -3,6 +3,7 @@ package org.dawnsci.surfacescatter;
 import java.util.ArrayList;
 
 import org.dawnsci.surfacescatter.MethodSettingEnum.MethodSetting;
+import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 
 public class CurveStitchDataPackage {
@@ -170,6 +171,10 @@ public class CurveStitchDataPackage {
 	}
 	public void setSplicedGoodPointIDataset(IDataset splicedGoodPointIDataset) {
 		this.splicedGoodPointIDataset = splicedGoodPointIDataset;
+	}
+	public Dataset getSplicedCurveFhkl() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

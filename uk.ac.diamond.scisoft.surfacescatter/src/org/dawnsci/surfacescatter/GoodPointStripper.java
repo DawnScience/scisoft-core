@@ -2,7 +2,6 @@ package org.dawnsci.surfacescatter;
 
 import java.util.ArrayList;
 
-import org.dawnsci.surfacescatter.IntensityDisplayEnum.IntensityDisplaySetting;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 
@@ -10,7 +9,7 @@ public class GoodPointStripper {
 
 	
 	public IDataset[][] goodPointStripper(CurveStitchDataPackage csdp, 
-							 IntensityDisplaySetting ids){
+							 AxisEnums.yAxes ids){
 		
 		
 		IDataset[] goodPointIDatasets = csdp.getGoodPointIDataset();
@@ -23,17 +22,17 @@ public class GoodPointStripper {
 		IDataset[] yIDatasetsErrors = csdp.getyIDatasetError();
 		
 		switch (ids){
-			case Corrected_Intensity:
+			case SPLICEDY:
 				yIDatasets = csdp.getyIDataset();
 				yIDatasetsErrors = csdp.getyIDatasetError();
 				break;
 				
-			case Raw_Intensity:
+			case SPLICEDYRAW:
 				yIDatasets = csdp.getyRawIDataset();
 				yIDatasetsErrors = csdp.getyRawIDatasetError();
 				break;
 				
-			case Fhkl:
+			case SPLICEDYFHKL:
 				yIDatasets = csdp.getyIDatasetFhkl();
 				yIDatasetsErrors = csdp.getyIDatasetFhklError();
 				break;

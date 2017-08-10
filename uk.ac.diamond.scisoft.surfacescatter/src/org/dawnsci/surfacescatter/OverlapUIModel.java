@@ -4,6 +4,8 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
+import org.dawnsci.surfacescatter.AxisEnums.xAxes;
+import org.dawnsci.surfacescatter.AxisEnums.yAxes;
 import org.dawnsci.surfacescatter.MethodSettingEnum.MethodSetting;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
@@ -22,6 +24,28 @@ public class OverlapUIModel {
 	private String[] filepaths1;
 	private double[] attenuationFactors;
 	private MethodSetting correctionSelection = MethodSetting.SXRD;
+	private AxisEnums.yAxes yAxis = yAxes.SPLICEDY;
+	
+	public AxisEnums.yAxes getyAxis() {
+		return yAxis;
+	}
+
+	public void setyAxis(AxisEnums.yAxes yAxis) {
+		firePropertyChange("yAxis", this.yAxis, this.yAxis= yAxis);
+		
+		this.yAxis = yAxis;
+	}
+
+	public AxisEnums.xAxes getxAxis() {
+		return xAxis;
+	}
+
+	public void setxAxis(AxisEnums.xAxes xAxis) {
+		firePropertyChange("xAxis", this.xAxis, this.xAxis= xAxis);
+		this.xAxis = xAxis;
+	}
+
+	private AxisEnums.xAxes xAxis = xAxes.SCANNED_VARIABLE;
 	
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 

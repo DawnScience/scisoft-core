@@ -1,11 +1,12 @@
 package org.dawnsci.surfacescatter;
 
+import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
 
 public class ReflectivityNormalisation {
 
-	public static void ReflectivityNormalisation1 (CurveStitchDataPackage csdp){
+	public static void reflectivityNormalisation1 (CurveStitchDataPackage csdp){
 		////////////////////////////////////////
 		IDataset a1 =csdp.getSplicedCurveY();
 		IDataset a2 =csdp.getSplicedCurveYError();
@@ -66,5 +67,62 @@ public class ReflectivityNormalisation {
 		
 		return output;
 	}
+	
+	public static void reflectivityNormalisationToAPoint (CurveStitchDataPackage csdp,
+															AxisEnums.yAxes y,
+															double normalisationPoint){
+		////////////////////////////////////////
+		IDataset a1 =DatasetFactory.createFromObject(0);
+		IDataset a2 =DatasetFactory.createFromObject(0);
+		
+		double a3 = 1/normalisationPoint;
+		
+		IDataset[] output = new IDataset[2];
+		
+		switch(y){
+			case SPLICEDY:
+				a1 =csdp.getSplicedCurveY();
+				a2 =csdp.getSplicedCurveYError();
+				output = multiplyYYe(a1, a2, a3);
+				csdp.setSplicedCurveY(output[0]);
+				csdp.setSplicedCurveYError(output[1]);
+				break;
+			case SPLICEDYFHKL:
+				a1 =csdp.getSplicedCurveYFhkl();
+				a2 =csdp.getSplicedCurveYFhklError();
+				output = multiplyYYe(a1, a2, a3);
+				csdp.setSplicedCurveYFhkl(output[0]);
+				csdp.setSplicedCurveYFhklError(output[1]);
+				break;
+			case SPLICEDYRAW:
+				a1 =csdp.getSplicedCurveYRaw();
+				a2 =csdp.getSplicedCurveYRawError();
+				output = multiplyYYe(a1, a2, a3);
+				csdp.setSplicedCurveYRaw(output[0]);
+				csdp.setSplicedCurveYRawError(output[1]);
+				break;
+			default:
+				break;
+		}
+		
+	}
+	
+	private static IDataset[] multiplyYYe(IDataset a1,
+									   	  IDataset a2,
+									   	  double a3){
+		
+		IDataset splicedCurveY = Maths.multiply(a1, a3);
+		IDataset splicedCurveYError = Maths.multiply(a2, a3);
+		
+		splicedCurveY.setErrors(splicedCurveYError);
+		
+		
+		return new IDataset[] {splicedCurveY, splicedCurveYError};
+		
+	}
+									   			  
+									   			  
+									   			  
+	
 	
 }

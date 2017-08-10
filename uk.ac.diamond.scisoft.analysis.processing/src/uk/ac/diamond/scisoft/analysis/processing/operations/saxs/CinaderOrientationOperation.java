@@ -108,15 +108,22 @@ public class CinaderOrientationOperation extends AbstractOperation<CinaderOrient
 		double[] cos2data = new double[size];
 		double[] sin2data = new double[size];
 		double[] sincosdata = new double[size];
+		double correctionValue = 0.00;
+		
+		// Inspect first element and prepare a correction value if it's not zero
+		if (parentaxis[0] < 0.00) {
+			correctionValue = Math.abs(parentaxis[0]);
+		} else if (parentaxis[0] > 0.00) {
+			correctionValue = parentaxis[0];
+		}
 		
 		for (int i = 0; i < parentaxis.length; i++) {
-			myaxis[i] = Math.toRadians(parentaxis[i]) * symmetryFolds;
+			myaxis[i] = Math.toRadians(parentaxis[i] + correctionValue) * symmetryFolds;
 			mydata[i] = parentdata[i];
-			float cos2alpha = (float) Math.cos(2.0*myaxis[i]);
-			float sin2alpha = (float) Math.sin(2.0*myaxis[i]);
-			cos2data[i] = (1.0f + cos2alpha) * parentdata[i] / 2.0;
-			sin2data[i] = (1.0f - cos2alpha) * parentdata[i] / 2.0;
-			sincosdata[i] = sin2alpha * parentdata[i] / 2.0;
+			
+			cos2data[i] = (Math.pow(Math.cos(myaxis[i]), 2) * parentdata[i]) / parentdata[i];
+			sin2data[i] = (Math.pow(Math.sin(myaxis[i]), 2) * parentdata[i]) / parentdata[i];
+			sincosdata[i] = (Math.sin(myaxis[i]) * Math.cos(myaxis[i]) * parentdata[i]) / parentdata[i];
 		}
 		
 		UnivariateInterpolator interpolator = new SplineInterpolator();
@@ -139,52 +146,8 @@ public class CinaderOrientationOperation extends AbstractOperation<CinaderOrient
 			sin2mean /= norm;
 			sincosmean /= norm;
 			
-			float result =  (float) Math.sqrt(Math.pow(cos2mean-sin2mean, 2) - 4.0*sincosmean*sincosmean);
-			double angle = MathUtils.normalizeAngle(Math.atan2(2.0*sincosmean, cos2mean-sin2mean) / 2.0, Math.PI);
-			
-			// Make sure that the angle makes sense according to the number of folds of symmetry
-			switch (symmetryFolds) {
-				case 1:	if (angle >= Math.PI) {
-							angle -= Math.PI;
-						}
-						break;
-				case 2:	if (angle >= (1.5 * Math.PI)) {
-							angle -= (1.5 * Math.PI);
-						} else if (angle >= Math.PI) {
-							angle -= Math.PI;
-						} else if (angle >= (0.5 * Math.PI)) {
-							angle -= (0.5 * Math.PI);
-						}
-						break;
-				case 3:	if (angle >= ((5 / 3) * Math.PI)) {
-							angle -= ((5 / 3) * Math.PI);
-						} else if (angle >= ((4 / 3) * Math.PI)) {
-							angle -= ((4 / 3) * Math.PI);
-						} else if (angle >= Math.PI) {
-							angle -= Math.PI;
-						} else if (angle >= ((2 / 3) * Math.PI)) {
-							angle -= ((2 / 3) * Math.PI);
-						} else if (angle >= ((1 / 3) * Math.PI)) {
-							angle -= ((1 / 3) * Math.PI);
-						}
-						break;
-				case 4:	if (angle >= (1.75 * Math.PI)) {
-							angle -= (1.75 * Math.PI);
-						} else if (angle >= (1.5 * Math.PI)) {
-							angle -= (1.5 * Math.PI);
-						} else if (angle >= (1.25 * Math.PI)) {
-							angle -= (1.25 * Math.PI);
-						} else if (angle >= Math.PI) {
-							angle -= Math.PI;
-						} else if (angle >= (0.75 * Math.PI)) {
-							angle -= (0.75 * Math.PI);
-						} else if (angle >= (0.5 * Math.PI)) {
-							angle -= (0.5 * Math.PI);
-						} else if (angle >= (0.25 * Math.PI)) {
-							angle -= (0.25 * Math.PI);
-						}
-						break;
-			}
+			float result =  (float) Math.sqrt(Math.pow(cos2mean - sin2mean, 2) + Math.pow(2d * sincosmean, 2));
+			double angle = Math.toDegrees(Math.atan2(2d * sincosmean, cos2mean - sin2mean) / symmetryFolds);
 			
 			Object[] output = new Object[] {
 					new float[] { result },

@@ -20,8 +20,9 @@ public class DirectoryModel {
 	private ArrayList<ArrayList<Integer>> framesCorespondingToDats;
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private ArrayList<Double> xList;
-//	private ArrayList<Double> qList;
+	private ArrayList<Double> qList;
 	private ArrayList<ArrayList<Double>> dmxList;
+	private ArrayList<ArrayList<Double>> dmqList;
 	private ArrayList<FrameModel> fms;
 	private TrackerType1 trackingMethodolgy;
 	private boolean trackerOn = false;
@@ -824,6 +825,10 @@ public class DirectoryModel {
 			csdp = new CurveStitchDataPackage();
 		}
 		
+		qList =null;
+//		
+//		IDataset splicedCurveQ = (IDataset) DatasetFactory.createFromObject(2);
+//		
 		
 //		sortedQ = null;
 //		
@@ -952,6 +957,23 @@ public class DirectoryModel {
 				
 			}
 		}
+		
+		dmqList = new ArrayList<ArrayList <Double>>();
+		
+		for(int r =0; r<dmxList.size(); r++){
+			dmqList.add(new ArrayList<Double>());
+			for(int  s =0; s<dmxList.get(r).size(); s++){
+				dmqList.get(r).add(0.0);
+			}
+		}
+		
+		for(int u = 0; u<fms.size(); u++){
+			FrameModel fm = fms.get(u);
+			int datNo = fm.getDatNo();
+			int noInDat = fm.getNoInOriginalDat();
+			dmqList.get(datNo).set(noInDat, sortedQ.getDouble(u));
+		}
+		
 		csdp.setSplicedCurveQ(sortedQ);
 	}
 	
@@ -973,6 +995,22 @@ public class DirectoryModel {
 
 	public void setSortedTheta(Dataset sortedTheta) {
 		this.sortedTheta = sortedTheta;
+	}
+
+	public ArrayList<Double> getqList() {
+		return qList;
+	}
+
+	public void setqList(ArrayList<Double> qList) {
+		this.qList = qList;
+	}
+
+	public ArrayList<ArrayList<Double>> getDmqList() {
+		return dmqList;
+	}
+
+	public void setDmqList(ArrayList<ArrayList<Double>> dmqList) {
+		this.dmqList = dmqList;
 	}
 	
 }

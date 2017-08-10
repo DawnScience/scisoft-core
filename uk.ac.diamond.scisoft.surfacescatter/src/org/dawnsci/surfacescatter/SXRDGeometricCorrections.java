@@ -97,7 +97,9 @@ public class SXRDGeometricCorrections {
 		}
 	
 	public static ILazyDataset  getDelta(String model) {
-		return getArb(model, SXRDAngleAliasEnum.DELTA.getAngleAlias());
+		String s = SXRDAngleAliasEnum.DELTA.getAngleAlias();
+		
+		return getArb(model, s);
 		}
 	
 	public static ILazyDataset  getGamma(String model) {

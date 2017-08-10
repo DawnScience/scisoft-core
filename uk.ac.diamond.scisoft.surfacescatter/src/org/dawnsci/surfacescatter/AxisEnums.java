@@ -50,27 +50,27 @@ public class AxisEnums {
 		
 	}
 
-	public static String toString(xAxes input){
-		
-		switch(input){
-			case SCANNED_VARIABLE:
-				return "Scanned Variable";
-			case Q:
-				return "Q";
-		}
-		return null;
-	}
-	
 	public static xAxes toXAxis(String in){
 		
-		if (in.equals("Scanned Variable")){
-			return xAxes.SCANNED_VARIABLE;
-		}
-		else if (in.equals("Q")){
-			return xAxes.Q;
+		for(AxisEnums.xAxes xA : AxisEnums.xAxes.values()){
+			if (in.equals(xA.xAxisName)){
+				return xA;
+			}
 		}
 		
-		return null;
+		return xAxes.SCANNED_VARIABLE;
+	}
+
+	
+	public static xAxes toXAxis(int in){
+		
+		for(AxisEnums.xAxes xA : AxisEnums.xAxes.values()){
+			if (in == xA.xAxisNumber){
+				return xA;
+			}
+		}
+		
+		return xAxes.SCANNED_VARIABLE;
 	}
 	
 	public enum yAxes {
@@ -138,9 +138,9 @@ public class AxisEnums {
 		switch(input){
 			case SPLICEDY:
 				return 0;
-			case SPLICEDYFHKL:
-				return 1;
 			case SPLICEDYRAW:
+				return 1;
+			case SPLICEDYFHKL:
 				return 2;
 		}
 		return 0;
@@ -148,31 +148,24 @@ public class AxisEnums {
 	
 	public static yAxes toYAxis(String in){
 		
-		if (in.equals("Intensity")){
-			return yAxes.SPLICEDY;
+		for(AxisEnums.yAxes yA : AxisEnums.yAxes.values()){
+			if (in.equals(yA.yAxisName)){
+				return yA;
+			}
 		}
-		else if (in.equals("Uncorrected Intensity")){
-			return yAxes.SPLICEDYRAW;
-		}
-		else if (in.equals("Fhkl")){
-			return yAxes.SPLICEDYFHKL;
-		}
-		return null;
+		
+		return yAxes.SPLICEDY;
 	}
 
 	
 	public static yAxes toYAxis(int in){
 		
-		if (in == 0){
-			return yAxes.SPLICEDY;
+		for(AxisEnums.yAxes yA : AxisEnums.yAxes.values()){
+			if (in == yA.yAxisNumber){
+				return yA;
+			}
 		}
-		else if (in  == 2){
-			return yAxes.SPLICEDYRAW;
-		}
-		else if (in == 1){
-			return yAxes.SPLICEDYFHKL;
-		}
-		return null;
+		
+		return yAxes.SPLICEDY;
 	}
-	
 }

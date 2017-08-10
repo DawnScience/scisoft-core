@@ -54,6 +54,7 @@ public class CurveStitchWithErrorsAndFrames {
 		ArrayList<OverlapDataModel> overlapDataModels = new ArrayList<>();	
 		
 		IDataset[] xArray= csdp.getxIDataset();
+		IDataset[] qArray= csdp.getqIDataset();
 		IDataset[] yArray= csdp.getyIDataset();
 		IDataset[] yArrayError= csdp.getyIDatasetError();
 		IDataset[] yArrayFhkl= csdp.getyIDatasetFhkl();
@@ -375,6 +376,17 @@ public class CurveStitchWithErrorsAndFrames {
 		csdp.setSplicedCurveYRawError(sortedYArrayCorrectedRawError);
 		csdp.setOverlapDataModels(overlapDataModels);
 		
+		try{
+			if(qArray != null){
+				
+				Dataset splicedQ = DatasetUtils.convertToDataset(DatasetUtils.concatenate(qArray, 0)); ///qArray
+				DatasetUtils.sort(sortedAttenuatedDatasets[1],splicedQ);
+				csdp.setSplicedCurveQ(splicedQ);
+			}
+		}
+		catch(Exception f){
+				
+		}
 		
 		return sortedAttenuatedDatasets;
 	}	

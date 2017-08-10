@@ -25,6 +25,28 @@ public class AxisEnums {
 			return xAxisNumber;
 		}
 		
+		public xAxes getXAxesFromString(String k){
+			
+			for(AxisEnums.xAxes xA : AxisEnums.xAxes.values()){
+				if(xA.getXAxisName().equals(k)){
+					return xA;
+				}
+			}
+			
+			return SCANNED_VARIABLE;
+		}
+		
+		public xAxes getXAxesFromInt(int k){
+			
+			for(AxisEnums.xAxes xA : AxisEnums.xAxes.values()){
+				if(xA.getXAxisNumber() == k){
+					return xA;
+				}
+			}
+			
+			return SCANNED_VARIABLE;
+		}
+		
 		
 	}
 
@@ -72,6 +94,28 @@ public class AxisEnums {
 		
 		public int getYAxisNumber(){
 			return yAxisNumber;
+		}
+		
+		public yAxes getYAxesFromString(String k){
+			
+			for(AxisEnums.yAxes yA : AxisEnums.yAxes.values()){
+				if(yA.getYAxisName().equals(k)){
+					return yA;
+				}
+			}
+			
+			return SPLICEDY;
+		}
+		
+		public yAxes getYAxesFromInt(int k){
+			
+			for(AxisEnums.yAxes yA : AxisEnums.yAxes.values()){
+				if(yA.getYAxisNumber() == k){
+					return yA;
+				}
+			}
+			
+			return SPLICEDY;
 		}
 		
 	}

@@ -25,6 +25,7 @@ public class OverlapUIModel {
 	private double[] attenuationFactors;
 	private MethodSetting correctionSelection = MethodSetting.SXRD;
 	private AxisEnums.yAxes yAxis = yAxes.SPLICEDY;
+	private boolean pokeTheModel = true;
 	
 	public AxisEnums.yAxes getyAxis() {
 		return yAxis;
@@ -49,7 +50,12 @@ public class OverlapUIModel {
 	
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
-
+	public void poke(){
+		firePropertyChange("pokeTheModel", this.pokeTheModel, this.pokeTheModel= !pokeTheModel);
+		this.pokeTheModel = !pokeTheModel;
+		
+	}
+	
 	public IROI getROI(){
 		return ROI;
 	}

@@ -2,6 +2,7 @@ package org.dawnsci.surfacescatter;
 
 import java.util.ArrayList;
 
+import org.dawnsci.surfacescatter.AxisEnums.yAxes;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 
@@ -9,17 +10,33 @@ public class GoodPointStripper {
 
 	
 	public IDataset[][] goodPointStripper(CurveStitchDataPackage csdp, 
-							 AxisEnums.yAxes ids){
-		
+							 			  AxisEnums.yAxes ids,
+							 			  AxisEnums.xAxes xds){
 		
 		IDataset[] goodPointIDatasets = csdp.getGoodPointIDataset();
 		
 		IDataset[] xIDatasets = csdp.getxIDataset();
 		
+		switch (xds){
+			case SCANNED_VARIABLE:
+				xIDatasets = csdp.getxIDataset();
+				break;
+			case Q:
+				xIDatasets = csdp.getqIDataset();
+				break;
+			default:
+//					
+		}
+		
+		
 		int noOfDats =xIDatasets.length; 
 		
 		IDataset[] yIDatasets = csdp.getyIDataset();
 		IDataset[] yIDatasetsErrors = csdp.getyIDatasetError();
+		
+		if(ids == null){
+			ids = yAxes.SPLICEDY;
+		}
 		
 		switch (ids){
 			case SPLICEDY:
@@ -198,5 +215,56 @@ public class GoodPointStripper {
 		
 		return DatasetFactory.createFromList(xHolder);
 	}
+	
+	
+	private IDataset getYIDataset(CurveStitchDataPackage csdp,
+								  AxisEnums.yAxes y){
+		   
+		   switch(y){
+		   		case SPLICEDY:
+		   			return csdp.getSplicedCurveY();
+		   		case SPLICEDYRAW:
+		   			return csdp.getSplicedCurveYRaw();
+		   		case SPLICEDYFHKL:
+		   			return csdp.getSplicedCurveYFhkl();
+		   		default:
+//		   			
+		   }
+		   
+		   return csdp.getSplicedCurveY();
+	   }
+	   
+	   private IDataset getYeIDataset(CurveStitchDataPackage csdp,
+			   						   AxisEnums.yAxes y){
+	
+			switch(y){
+				case SPLICEDY:
+					return csdp.getSplicedCurveYError();
+				case SPLICEDYRAW:
+					return csdp.getSplicedCurveYRawError();
+				case SPLICEDYFHKL:
+					return csdp.getSplicedCurveYFhklError();
+				default:
+				//	
+			}
+			
+			return csdp.getSplicedCurveYError();
+		}
+
+	
+	   private IDataset getXIDataset(CurveStitchDataPackage csdp,
+			   						 AxisEnums.xAxes x){
+		   
+		   switch(x){
+		   		case SCANNED_VARIABLE:
+		   			return csdp.getSplicedCurveX();
+		   		case Q:
+		   			return csdp.getSplicedCurveQ();
+		   		default:
+//		   			
+		   }
+		   
+		   return csdp.getSplicedCurveX();
+	   }
 			
 }

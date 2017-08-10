@@ -61,6 +61,11 @@ public class CsdpGeneratorFromDrm {
 		
 		csdp.setxIDataset(xIDataset);
 		
+		IDataset[] qIDataset = iDatasetArrayGenerator(noOfDats,
+				  drm.getDmqList());
+
+		csdp.setqIDataset(qIDataset);
+		
 		IDataset[] yIDataset = iDatasetArrayGenerator(noOfDats,
 				  									  ocdp.getyListForEachDat());
 		

@@ -17,6 +17,7 @@ public class CurveStitchDataPackage {
 	private String name;
 	
 	private IDataset[] xIDataset;
+	private IDataset[] qIDataset;
 	private IDataset[] goodPointIDataset;
 	private IDataset[] yIDataset;
 	private IDataset[] yIDatasetError;
@@ -45,6 +46,13 @@ public class CurveStitchDataPackage {
 	public void setxIDataset(IDataset[] xIDataset) {
 		this.xIDataset = xIDataset;
 	}
+	public IDataset[] getqIDataset() {
+		return qIDataset;
+	}
+	public void setqIDataset(IDataset[] xIDataset) {
+		this.qIDataset = xIDataset;
+	}
+	
 	public IDataset[] getyIDataset() {
 		return yIDataset;
 	}

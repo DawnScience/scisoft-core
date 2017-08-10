@@ -147,7 +147,7 @@ public class CinaderOrientationOperation extends AbstractOperation<CinaderOrient
 			sincosmean /= norm;
 			
 			float result =  (float) Math.sqrt(Math.pow(cos2mean - sin2mean, 2) + Math.pow(2d * sincosmean, 2));
-			double angle = Math.toDegrees(Math.atan2(2d * sincosmean, cos2mean - sin2mean) / symmetryFolds);
+			double angle = Math.atan2(2d * sincosmean, cos2mean - sin2mean) / symmetryFolds;
 			
 			Object[] output = new Object[] {
 					new float[] { result },

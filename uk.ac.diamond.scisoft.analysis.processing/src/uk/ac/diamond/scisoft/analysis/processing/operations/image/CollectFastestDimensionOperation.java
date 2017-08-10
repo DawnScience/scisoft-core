@@ -10,7 +10,10 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.image;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import javax.print.DocFlavor.INPUT_STREAM;
 
 import org.eclipse.dawnsci.analysis.api.processing.IExportOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -23,8 +26,11 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.RunningAverage;
 import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataType;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DataUtils;
 
@@ -67,6 +73,40 @@ public class CollectFastestDimensionOperation extends AbstractOperationBase<Empt
 			SliceInformation sliceInfo = outsmm.getSliceInfo();
 			sliceInfo.convertSliceDimensionToFull(fastestDimension);
 			out.setMetadata(outsmm);
+			
+			AxesMetadata ax = slice.getFirstMetadata(AxesMetadata.class);
+			
+			try {
+			
+			if (ax != null) {
+				AxesMetadata output = (AxesMetadata)ax.clone();
+				
+				int[] dd = ssm.getDataDimensions().clone();
+				Arrays.sort(dd);
+				
+				for (int i = 0; i < slice.getRank(); i++) {
+					if (Arrays.binarySearch(dd, i) < 0) {
+						List<IDataset> axl = new ArrayList<>();
+						for (IDataset l : list) {
+							AxesMetadata m = l.getFirstMetadata(AxesMetadata.class);
+							ILazyDataset[] axes = m.getAxes();
+							if (axes[i] != null) axl.add(axes[i].getSlice());
+						}
+						
+						if (axl.size() == list.size()) {
+							IDataset axout = DatasetUtils.concatenate(axl.toArray(new IDataset[axl.size()]), fastestDimension);
+							axout.setName(axl.get(0).getName());
+							output.setAxis(i, axout);
+						}
+					}
+				}
+				
+				out.setMetadata(output);
+			}
+			} catch (Exception e) {
+//				logger
+			}
+			
 			list = null;
 			return new OperationData(out);
 		}

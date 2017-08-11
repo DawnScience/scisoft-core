@@ -15,7 +15,6 @@ import static org.junit.Assert.fail;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.Maths;
 import org.junit.Before;
 import org.junit.Test;
 

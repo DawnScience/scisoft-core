@@ -118,7 +118,7 @@ public class XRMCLoader extends AbstractFileLoader {
 	}
 
 	/**
-	 * A wrapping of DatInputStream that performs byte swapping, and allows reading of arrays of doubles
+	 * A wrapping of DataInputStream that performs byte swapping, and allows reading of arrays of doubles
 	 */
 	public static class XRMCInputStream implements DataInput {
 		

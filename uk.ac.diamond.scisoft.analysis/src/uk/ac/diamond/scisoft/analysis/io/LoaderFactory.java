@@ -173,6 +173,7 @@ public class LoaderFactory {
 		    registerLoader("alba", AlbaLinkFileLoader.class);
 		    registerLoader("dawn", DAWNLinkLoader.class);
 		    registerLoader("jcpds", JCPDSLoader.class);
+		    registerLoader("xrmc", XRMCLoader.class);
 
 		    registerUnzip("gz",  GZIPInputStream.class);
 		    registerUnzip("zip", ZipInputStream.class);

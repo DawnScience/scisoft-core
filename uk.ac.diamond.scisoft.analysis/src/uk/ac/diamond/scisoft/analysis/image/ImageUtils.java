@@ -28,7 +28,7 @@ public class ImageUtils {
 	 * @param window size of window
 	 * @param low lower threshold value for centre of peak
 	 * @param high upper threshold value for centre of peak
-	 * @return list of their sum, centroids (as coordinates in N x rank dataset) and centre fraction
+	 * @return list of their sum, centroids (as coordinates in N x rank dataset), centre fraction and all values
 	 */
 	public static List<Dataset> findWindowedPeaks(Dataset data, int window, double low, double high) {
 		int[] shape = data.getShapeRef();
@@ -36,14 +36,21 @@ public class ImageUtils {
 		List<Double> sum = new ArrayList<Double>();
 		List<Double> centroid = new ArrayList<Double>();
 		List<Double> fraction = new ArrayList<Double>();
+		List<Double> values = new ArrayList<Double>();
 
 		IndexIterator it = data.getIterator(true);
 		int half = window/2;
+		int[] wShape = new int[rank];
 		int[] ub = new int[rank];
 		for (int i = 0; i < rank; i++) {
 			ub[i] = shape[i] - window;
+			wShape[i] = window;
 		}
 		Dataset base = DatasetFactory.createRange(DoubleDataset.class, window);
+		DoubleDataset sliced = DatasetFactory.zeros(wShape);
+		int ssize = sliced.getSize();
+		double[] sdata = sliced.getData();
+
 		base.iadd(0.5); // shift to centre of pixel
 		Dataset[] bases = new Dataset[rank];
 		for (int i = 0; i < rank; i++) {
@@ -66,7 +73,9 @@ public class ImageUtils {
 						int p = pos[i];
 						slice.setSlice(i, p, p + window, 1);
 					}
-					Dataset sliced = data.getSliceView(slice);
+					// TODO update to 2.1
+					data.fillDataset(sliced, data.getSliceIterator(slice.getStart(), slice.getStop(), slice.getStep()));
+					sliced.setDirty(); // remove for 2.1
 					if (sliced.max().doubleValue() <= v) { // this does not check if other non-central pixels are equal to v
 						double total = ((Number) sliced.sum()).doubleValue();
 						sum.add(total);
@@ -75,6 +84,9 @@ public class ImageUtils {
 							centroid.add(pos[i] + c.get(i));
 						}
 						fraction.add(v/total);
+						for (int i = 0; i < ssize; i++) {
+							values.add(sdata[i]);
+						}
 					}
 				}
 			}
@@ -85,10 +97,12 @@ public class ImageUtils {
 			list.add(DatasetFactory.zeros(0));
 			list.add(DatasetFactory.zeros(0, rank));
 			list.add(DatasetFactory.zeros(0));
+			list.add(DatasetFactory.zeros(0));
 		} else {
 			list.add(DatasetFactory.createFromList(sum));
 			list.add(DatasetFactory.createFromList(centroid).reshape(sum.size(), rank));
 			list.add(DatasetFactory.createFromList(fraction));
+			list.add(DatasetFactory.createFromList(values));
 		}
 		return list;
 	}

@@ -107,7 +107,7 @@ public class ImageUtilsTest {
 
 		distributePeak(data, centre, 0.5, amp);
 		List<Dataset> result = ImageUtils.findWindowedPeaks(data, window, 0.1*amp, 1.1*amp);
-		Assert.assertEquals(3, result.size());
+		Assert.assertEquals(4, result.size());
 
 		Dataset sum = result.get(0);
 		Assert.assertEquals(1, sum.getSize());
@@ -131,7 +131,7 @@ public class ImageUtilsTest {
 
 		distributePeak(data, centre, 0.5, amp);
 		List<Dataset> result = ImageUtils.findWindowedPeaks(data, window, 0.1*amp, 1.1*amp);
-		Assert.assertEquals(3, result.size());
+		Assert.assertEquals(4, result.size());
 
 		Dataset sum = result.get(0);
 		Assert.assertEquals(1, sum.getSize());

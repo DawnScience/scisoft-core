@@ -121,9 +121,9 @@ public class CinaderOrientationOperation extends AbstractOperation<CinaderOrient
 			myaxis[i] = Math.toRadians(parentaxis[i] + correctionValue) * symmetryFolds;
 			mydata[i] = parentdata[i];
 			
-			cos2data[i] = (Math.pow(Math.cos(myaxis[i]), 2) * parentdata[i]) / parentdata[i];
-			sin2data[i] = (Math.pow(Math.sin(myaxis[i]), 2) * parentdata[i]) / parentdata[i];
-			sincosdata[i] = (Math.sin(myaxis[i]) * Math.cos(myaxis[i]) * parentdata[i]) / parentdata[i];
+			cos2data[i] = (Math.pow(Math.cos(myaxis[i]), 2) * parentdata[i]);
+			sin2data[i] = (Math.pow(Math.sin(myaxis[i]), 2) * parentdata[i]);
+			sincosdata[i] = (Math.sin(myaxis[i]) * Math.cos(myaxis[i]) * parentdata[i]);
 		}
 		
 		UnivariateInterpolator interpolator = new SplineInterpolator();
@@ -151,8 +151,8 @@ public class CinaderOrientationOperation extends AbstractOperation<CinaderOrient
 			
 			Object[] output = new Object[] {
 					new float[] { result },
-					new float[] { (float) Math.toDegrees(angle) },
-					new float[] { (float) (result * Math.cos(angle)),  (float) (result * Math.sin(angle))},
+					new float[] { (float) Math.abs(Math.toDegrees(angle)) },
+					new float[] { (float) (result * Math.cos(angle)),  (float) (result * Math.sin(angle)) },
 					}; 
 			
 			return output;

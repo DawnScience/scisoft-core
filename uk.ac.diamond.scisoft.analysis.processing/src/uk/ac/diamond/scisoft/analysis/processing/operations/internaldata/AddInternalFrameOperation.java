@@ -18,7 +18,7 @@ public class AddInternalFrameOperation extends AbstractInternalFrameOperation {
 
 	@Override
 	public String getId() {
-        return "uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.SubtractInternalFrameOperation";
+        return "uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.AddInternalFrameOperation";
 	}
 
 	@Override

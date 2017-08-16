@@ -10,7 +10,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.test.simplemaths;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.HashMap;

@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
+package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import java.util.Arrays;
 
@@ -19,24 +19,23 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ShapeUtils;
 
+import uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDataModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
-public abstract class OperateOnDataAbstractOperation<T extends InternalDatasetNameModel> extends AbstractOperation<InternalDatasetNameModel, OperationData> {
+public abstract class OperateOnDataAbstractOperation<T extends InternalDataModel> extends AbstractOperation<InternalDataModel, OperationData> {
 	
 	@Override
-	final public OperationRank getInputRank() {
+	public final OperationRank getInputRank() {
 		return OperationRank.ANY;
 	}
 
 	@Override
-	final public OperationRank getOutputRank() {
+	public final OperationRank getOutputRank() {
 		return OperationRank.SAME;
 	}
 	
@@ -73,8 +72,7 @@ public abstract class OperateOnDataAbstractOperation<T extends InternalDatasetNa
 		// A non-scalar val is an error at this point
 		if (val.getRank() != 0) throw new OperationException(this, "External data shape invalid");
 
-		Dataset output = DatasetFactory.zeros(DoubleDataset.class, null);
-		output = doMathematics(inputData, DatasetUtils.convertToDataset(val));
+		Dataset output = doMathematics(inputData, DatasetUtils.convertToDataset(val));
 		// copy metadata, except for the error metadata
 		copyMetadata(input, output);
 		

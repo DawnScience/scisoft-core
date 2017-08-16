@@ -7,12 +7,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
+package uk.ac.diamond.scisoft.analysis.processing.operations.internaldata;
 
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
-public class InternalDatasetNameModel extends AbstractOperationModel {
+public class InternalDataModel extends AbstractOperationModel {
 
 	//filePath is important for classes that extend this model
 	@OperationModelField(dataset = "filePath", label = "Dataset", hint = "Enter the name of the dataset to be used")

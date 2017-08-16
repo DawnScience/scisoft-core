@@ -14,7 +14,7 @@ import org.eclipse.january.dataset.DatasetUtils;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
-public class DivideExternalFrameOperation extends SubtractExternalFrameOperation<ExternalDataSelectedFramesModel> {
+public class DivideExternalFrameOperation extends AbstractExternalFrameOperation {
 
 	@Override
 	public String getId() {

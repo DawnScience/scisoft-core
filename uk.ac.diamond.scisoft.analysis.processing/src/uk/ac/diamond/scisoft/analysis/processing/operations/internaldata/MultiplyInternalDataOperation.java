@@ -7,17 +7,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
+package uk.ac.diamond.scisoft.analysis.processing.operations.internaldata;
 
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
-import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
 @Atomic
-public class MultiplyInternalDataOperation extends OperateOnDataAbstractOperation<InternalDatasetNameModel> {
+public class MultiplyInternalDataOperation extends AbstractInternalDataOperation {
 	
 	@Override
 	public String getId() {
@@ -28,11 +26,4 @@ public class MultiplyInternalDataOperation extends OperateOnDataAbstractOperatio
 	protected Dataset doMathematics(Dataset a, Dataset b) {
 		return ErrorPropagationUtils.multiplyWithUncertainty(a, b);
 	}
-	
-	@Override
-	protected String getFilePath(IDataset input) {
-		return input.getFirstMetadata(SliceFromSeriesMetadata.class).getFilePath();
-	}
-	
-
 }

@@ -9,22 +9,21 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
-import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
-@Atomic
-public class SubtractExternalDataOperation extends AbstractExternalDataOperation {
+public class MultiplyExternalFrameOperation extends AbstractExternalFrameOperation {
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractExternalDataOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MutliplyExternalFrameOperation";
 	}
 
 	@Override
-	protected Dataset doMathematics(Dataset a, Dataset b) {
-		return ErrorPropagationUtils.subtractWithUncertainty(a, b);
+	protected Dataset performOperation(Dataset input, Dataset other) {
+		return ErrorPropagationUtils.multiplyWithUncertainty(DatasetUtils.convertToDataset(input), other);
 	}
 
 }

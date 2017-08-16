@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.processing.scalar.test;
+package uk.ac.diamond.scisoft.analysis.processing.test.scalar;
 
 //Import from org.junit
 import static org.junit.Assert.assertEquals;
@@ -22,42 +22,42 @@ import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.processing.scalar.ScalarModel;
 //Imports from uk.ac.diamond
-import uk.ac.diamond.scisoft.analysis.processing.scalar.SubtractScalarOperation;
+import uk.ac.diamond.scisoft.analysis.processing.scalar.AddScalarOperation;
+import uk.ac.diamond.scisoft.analysis.processing.scalar.ScalarModel;
 
 
 // Now the testing class
-public class SubtractScalarOperationTest {
+public class AddScalarOperationTest {
 
 	// Let's create some static numbers that we will use for the doMaths() test
-	private final int start = 10;
-	private final int stop = 19;
+	private final int start = 0;
+	private final int stop = 9;
 	private final int length = 10;
 	private final int scalarOperator = 10;
 	
 	// First test, let's make sure that the operation ID is as expected
 	@Test
 	public void testGetId() {
-		assertEquals("Subtract Scalar Operation ID String not as expected", "uk.ac.diamond.scisoft.analysis.processing.scalar.SubtractScalarOperation", new SubtractScalarOperation().getId());
+		assertEquals("Add Scalar Operation ID String not as expected", "uk.ac.diamond.scisoft.analysis.processing.scalar.AddScalarOperation", new AddScalarOperation().getId());
 	}
 	
-	// Then test the doMaths method of the SubtractScalarOperation
+	// Then test the doMaths method of the AddScalarOperation
 	@Test
 	public void testDoMaths() {
 		// First we shall create an object of the operation
-		SubtractScalarOperation scalarOperation = new SubtractScalarOperation();
+		AddScalarOperation scalarOperation = new AddScalarOperation();
 		
-		// We shall set up a dataset with ten values, between 10 and 19
+		// We shall set up a dataset with ten values, between 0 and 9
 		IDataset testData = DatasetFactory.createLinearSpace(DoubleDataset.class, start, stop, length);
 
-		// We shall then tell the ScalarModel that we want to subtract ten from the testData and pass this to the operation
+		// We shall then tell the ScalarModel that we want to add ten to the testData and pass this to the operation
 		ScalarModel scalarModel = new ScalarModel();
 		scalarModel.setValue(scalarOperator);
 		scalarOperation.setModel(scalarModel);
 
 		// Then we shall create the dataset, as it should be
-		IDataset testResult = DatasetFactory.createLinearSpace(DoubleDataset.class, (start - scalarOperator), (stop - scalarOperator), length);
+		IDataset testResult = DatasetFactory.createLinearSpace(DoubleDataset.class, (start + scalarOperator), (stop + scalarOperator), length);
 		
 		// We shall then create a monitor to satisfy the operation arguments
 		IMonitor monitor = new IMonitor.Stub();
@@ -70,6 +70,6 @@ public class SubtractScalarOperationTest {
 		OperationData returnedResult = scalarOperation.execute(testData, monitor);
 
 		// Before checking the result
-		assertEquals("Subtract Scalar Operation did not exectue doMaths as expected", testResult, returnedResult.getData());
+		assertEquals("Add Scalar Operation did not exectue doMaths as expected", testResult, returnedResult.getData());
 	}
 }

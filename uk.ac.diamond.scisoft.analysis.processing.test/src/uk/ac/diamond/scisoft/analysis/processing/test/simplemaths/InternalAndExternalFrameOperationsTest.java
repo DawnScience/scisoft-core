@@ -10,7 +10,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.test.simplemaths;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.HashMap;
@@ -30,39 +29,39 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.LoaderServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
-import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DivideExternalDataOperation;
-import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DivideInternalDataOperation;
-import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataModel;
-import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.InternalDatasetNameModel;
-import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyExternalDataOperation;
-import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyInternalDataOperation;
-import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusExternalDataOperation;
-import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusInternalDataOperation;
-import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractExternalDataOperation;
-import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractInternalDataOperation;
+import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.AddExternalFrameOperation;
+import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DivideExternalFrameOperation;
+import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataSelectedFramesModel;
+import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyExternalFrameOperation;
+import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractExternalFrameOperation;
+import uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.AddInternalFrameOperation;
+import uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.DivideInternalFrameOperation;
+import uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDataSelectedFramesModel;
+import uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.MultiplyInternalFrameOperation;
+import uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.SubtractInternalFrameOperation;
 import uk.ac.diamond.scisoft.analysis.processing.test.TestHDF5DataUtils;
 
-public class InternalAndExternalOperationsTest {
+public class InternalAndExternalFrameOperationsTest {
 
 	@Test
 	public void test() throws Exception {
 		LocalServiceManager.setLoaderService(new LoaderServiceImpl());
 		final String DATA = "data";
 		final String OTHER = "other_data";
-		final String FULL_DATA = TestHDF5DataUtils.ROOT + Node.SEPARATOR+ DATA;
-		final String FULL_OTHER = TestHDF5DataUtils.ROOT + Node.SEPARATOR+ OTHER;
+		final String FULL_DATA = TestHDF5DataUtils.ROOT + Node.SEPARATOR + DATA;
+		final String FULL_OTHER = TestHDF5DataUtils.ROOT + Node.SEPARATOR + OTHER;
 		
-		File file = File.createTempFile("dividemathstest", ".h5");
+		File file = File.createTempFile("framemathstest", ".h5");
 		file.deleteOnExit();
 		
 		Map<String,int[]> nameShapeMap = new HashMap<>();
 		nameShapeMap.put(DATA, new int[]{10,10,10});
-		nameShapeMap.put(OTHER, new int[]{10});
+		nameShapeMap.put(OTHER, new int[]{10, 10});
 		
 		TestHDF5DataUtils.makeHDF5File(file.getAbsolutePath(), nameShapeMap);
 		
-		DivideExternalDataOperation<ExternalDataModel> op = new DivideExternalDataOperation<>();
-		ExternalDataModel mod = new ExternalDataModel();
+		DivideExternalFrameOperation op = new DivideExternalFrameOperation();
+		ExternalDataSelectedFramesModel mod = new ExternalDataSelectedFramesModel();
 		
 		mod.setFilePath(file.getAbsolutePath());
 		mod.setDatasetName(FULL_OTHER);
@@ -80,8 +79,8 @@ public class InternalAndExternalOperationsTest {
 		
 		it.reset();
 		
-		DivideInternalDataOperation op2 = new DivideInternalDataOperation();
-		InternalDatasetNameModel inMod = new InternalDatasetNameModel();
+		DivideInternalFrameOperation op2 = new DivideInternalFrameOperation();
+		InternalDataSelectedFramesModel inMod = new InternalDataSelectedFramesModel();
 		inMod.setDatasetName(FULL_OTHER);
 		op2.setModel(inMod);
 		
@@ -89,42 +88,42 @@ public class InternalAndExternalOperationsTest {
 		
 		it.reset();
 		
-		MultiplyExternalDataOperation mop = new MultiplyExternalDataOperation();
+		MultiplyExternalFrameOperation mop = new MultiplyExternalFrameOperation();
 		mop.setModel(mod);
 		
 		testMultiply(it,mop);
 		
 		it.reset();
 		
-		MultiplyInternalDataOperation mop2 = new MultiplyInternalDataOperation();
+		MultiplyInternalFrameOperation mop2 = new MultiplyInternalFrameOperation();
 		mop2.setModel(inMod);
 		
 		testMultiply(it, mop2);
 		
 		it.reset();
 		
-		PlusExternalDataOperation aop = new PlusExternalDataOperation();
+		AddExternalFrameOperation aop = new AddExternalFrameOperation();
 		aop.setModel(mod);
 		
 		testAdd(it,aop);
 		
 		it.reset();
 		
-		PlusInternalDataOperation aop2 = new PlusInternalDataOperation();
+		AddInternalFrameOperation aop2 = new AddInternalFrameOperation();
 		aop2.setModel(inMod);
 		
 		testAdd(it, aop2);
 		
 		it.reset();
 		
-		SubtractExternalDataOperation sop = new SubtractExternalDataOperation();
+		SubtractExternalFrameOperation sop = new SubtractExternalFrameOperation();
 		sop.setModel(mod);
 		
 		testSubtract(it, sop);
 		
 		it.reset();
 		
-		SubtractInternalDataOperation sop2 = new SubtractInternalDataOperation();
+		SubtractInternalFrameOperation sop2 = new SubtractInternalFrameOperation();
 		sop2.setModel(inMod);
 		
 		testSubtract(it, sop2);
@@ -134,62 +133,61 @@ public class InternalAndExternalOperationsTest {
 	private void testSubtract(SliceViewIterator it, IOperation<?, ?> op) throws Exception{
 		IDataset[] d = getData(it,op);
 		
-		assertEquals(0,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(0,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(11,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(11-11,d[1].getDouble(0,1,1),0.00000001);
 		
 		d = getData(it,op);
-		assertEquals(100,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(99,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(111,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(111-11,d[1].getDouble(0,1,1),0.00000001);
 		
 		d = getData(it,op);
-		assertEquals(200,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(198,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(211,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(211-11,d[1].getDouble(0,1,1),0.00000001);
 	}
 	
 	private void testAdd(SliceViewIterator it, IOperation<?, ?> op) throws Exception{
 		IDataset[] d = getData(it,op);
 		
-		assertEquals(0,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(0,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(11,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(11+11,d[1].getDouble(0,1,1),0.00000001);
 		
 		d = getData(it,op);
-		assertEquals(100,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(101,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(111,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(111+11,d[1].getDouble(0,1,1),0.00000001);
 		
 		d = getData(it,op);
-		assertEquals(200,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(202,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(211,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(211+11,d[1].getDouble(0,1,1),0.00000001);
 	}
 	
 	private void testMultiply(SliceViewIterator it, IOperation<?, ?> op) throws Exception{
 		IDataset[] d = getData(it,op);
 		
-		assertEquals(0,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(0,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(11,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(11*11,d[1].getDouble(0,1,1),0.00000001);
 		
 		d = getData(it,op);
-		assertEquals(100,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(100,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(111,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(111*11,d[1].getDouble(0,1,1),0.00000001);
 		
 		d = getData(it,op);
-		assertEquals(200,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(400,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(211,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(211*11,d[1].getDouble(0,1,1),0.00000001);
 	}
 	
 	private void testDivide(SliceViewIterator it, IOperation<?, ?> op) throws Exception{
 		IDataset[] d = getData(it,op);
 		
-		assertEquals(0,d[0].getDouble(0,0,0),0.00000001);
-		double val = d[1].getDouble(0,0,0);
-		assertTrue(Double.isNaN(val));
+		assertEquals(11.0,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(11.0/11.0, d[1].getDouble(0,1,1),0.00000001);
 		
 		d = getData(it,op);
-		assertEquals(100,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(100,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(111,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(111.0/11.0, d[1].getDouble(0,1,1),0.00000001);
 		
 		d = getData(it,op);
-		assertEquals(200,d[0].getDouble(0,0,0),0.00000001);
-		assertEquals(100,d[1].getDouble(0,0,0),0.00000001);
+		assertEquals(211,d[0].getDouble(0,1,1),0.00000001);
+		assertEquals(211.0/11.0, d[1].getDouble(0,1,1),0.00000001);
 	}
 	
 	private IDataset[] getData(SliceViewIterator it, IOperation<?, ?> op) throws Exception{

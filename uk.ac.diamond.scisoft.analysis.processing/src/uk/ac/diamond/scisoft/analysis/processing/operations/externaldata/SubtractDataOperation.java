@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 
 @Atomic
-public class SubtractDataOperation extends SubtractExternalFrameOperation<ExternalDataSelectedFramesModel> {
+public class SubtractDataOperation extends SubtractExternalFrameOperation {
 	
 	@Override
 	public String getId() {

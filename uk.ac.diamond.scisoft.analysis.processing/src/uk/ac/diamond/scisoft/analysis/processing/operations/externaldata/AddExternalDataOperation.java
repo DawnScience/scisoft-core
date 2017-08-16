@@ -10,28 +10,20 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
-import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
 @Atomic
-public class PlusInternalDataOperation extends OperateOnDataAbstractOperation<InternalDatasetNameModel> {
+public class AddExternalDataOperation extends AbstractExternalDataOperation {
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusInternalDataOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusExternalDataOperation";
 	}
 
 	@Override
 	protected Dataset doMathematics(Dataset a, Dataset b) {
 		return ErrorPropagationUtils.addWithUncertainty(a, b);
 	}
-
-	@Override
-	protected String getFilePath(IDataset input) {
-		return input.getFirstMetadata(SliceFromSeriesMetadata.class).getFilePath();
-	}
-
 }

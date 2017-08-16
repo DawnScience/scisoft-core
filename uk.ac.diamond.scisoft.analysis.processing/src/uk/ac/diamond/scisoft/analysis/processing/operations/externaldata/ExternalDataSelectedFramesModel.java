@@ -12,13 +12,12 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 import org.eclipse.dawnsci.analysis.api.processing.model.FileType;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
-public class ExternalDataSelectedFramesModel extends SelectedFramesModel {
+import uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDataSelectedFramesModel;
+
+public class ExternalDataSelectedFramesModel extends InternalDataSelectedFramesModel {
 	
 	@OperationModelField(hint="Enter the path to the data file", file = FileType.EXISTING_FILE, label = "File", fieldPosition = 0)
 	private String filePath = "";
-	@OperationModelField(dataset = "filePath", label = "Dataset",fieldPosition = 1)
-	private String datasetName = "";
-	
 
 	public String getFilePath() {
 		return filePath;
@@ -27,13 +26,4 @@ public class ExternalDataSelectedFramesModel extends SelectedFramesModel {
 	public void setFilePath(String filePath) {
 		firePropertyChange("filePath", this.filePath, this.filePath = filePath);
 	}
-	
-	public String getDatasetName() {
-		return datasetName;
-	}
-
-	public void setDatasetName(String datasetName) {
-		firePropertyChange("datasetName", this.datasetName, this.datasetName = datasetName);
-	}
-
 }

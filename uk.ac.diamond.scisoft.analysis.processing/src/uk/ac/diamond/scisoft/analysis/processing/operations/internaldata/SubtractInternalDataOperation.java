@@ -7,30 +7,23 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
+package uk.ac.diamond.scisoft.analysis.processing.operations.internaldata;
 
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
 @Atomic
-public class PlusExternalDataOperation extends OperateOnDataAbstractOperation<ExternalDataModel> {
+public class SubtractInternalDataOperation extends AbstractInternalDataOperation {
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.PlusExternalDataOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractInternalDataOperation";
 	}
 
 	@Override
 	protected Dataset doMathematics(Dataset a, Dataset b) {
-		return ErrorPropagationUtils.addWithUncertainty(a, b);
+		return ErrorPropagationUtils.subtractWithUncertainty(a, b);
 	}
-
-	@Override
-	protected String getFilePath(IDataset input) {
-		return ((ExternalDataModel)model).getFilePath();
-	}
-
 }

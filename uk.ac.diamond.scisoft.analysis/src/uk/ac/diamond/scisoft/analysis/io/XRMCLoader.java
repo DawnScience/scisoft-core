@@ -32,6 +32,36 @@ import org.eclipse.january.dataset.DatasetFactory;
  */
 public class XRMCLoader extends AbstractFileLoader {
 	
+	public enum XRMCMetadata{
+		NORDER("nOrder", Integer.class), NCOLUMNS("nColumns", Integer.class),
+		NROWS("nRows", Integer.class), PIXELSIZEX("pixelSizeX", Double.class),
+		PIXELSIZEY("pixelSizeY", Double.class), EXPOSURETIME("exposureTime", Double.class),
+		PIXELCONTENTTYPE("pixelContentType", Integer.class),
+		NENERGY("nEnergy", Integer.class), MINENERGY("minEnergy", Double.class),
+		MAXENERGY("maxEnergy", Double.class);
+		
+		private final String name;
+		private Class datatype;
+		
+		XRMCMetadata(String name, Class datatype) {
+			this.name = name;
+			this.datatype = datatype;
+		}
+		
+		public String getName() {
+			return name;
+		}
+		
+		public double readDoubleData(XRMCInputStream in) throws IOException {
+			if (this.datatype == Double.class)
+				return in.readDouble();
+			else if (this.datatype == Integer.class)
+				return in.readInt();
+			else
+				return Double.NaN;
+		}
+	}
+	
 	// metadata as a String double map. All 32 bit values are exactly storeable
 	// as doubles
 	protected Map<String, Double> metadataMap;
@@ -56,16 +86,9 @@ public class XRMCLoader extends AbstractFileLoader {
 			FileInputStream fIS = new FileInputStream(fileName);
 			in = new XRMCInputStream(fIS);
 			
-			metadataMap.put("nOrder", (double) in.readInt());
-			metadataMap.put("nColumns", (double) in.readInt());
-			metadataMap.put("nRows", (double) in.readInt());
-			metadataMap.put("pixelSizeX", in.readDouble());
-			metadataMap.put("pixelSizeY", in.readDouble());
-			metadataMap.put("exposureTime", in.readDouble());
-			metadataMap.put("pixelContentType", (double) in.readInt());
-			metadataMap.put("nEnergy", (double) in.readInt());
-			metadataMap.put("minEnergy", in.readDouble());
-			metadataMap.put("maxEnergy", in.readDouble());
+			for (XRMCMetadata aMeta : XRMCMetadata.values()) {
+				metadataMap.put(aMeta.getName(), aMeta.readDoubleData(in));
+			}
 			
 			// Header read in. Now check for consistency.
 			if (metadataMap.get("nOrder") <= 0 ||

@@ -19,6 +19,8 @@ import org.eclipse.january.metadata.IMetadata;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.ac.diamond.scisoft.analysis.io.XRMCLoader.XRMCMetadata;
+
 public class XRMCLoaderTest {
 
 	static final String testFileName = "testfiles/images/image.xrmc";
@@ -59,15 +61,15 @@ public class XRMCLoaderTest {
 		}
 		IMetadata meta = dh.getMetadata();
 		try {
-			assertEquals("Error in metadata", (int) (double) meta.getMetaValue("nOrder"), nOrder);
-			assertEquals("Error in metadata", (int) (double) meta.getMetaValue("nColumns"), nX);
-			assertEquals("Error in metadata", (int) (double) meta.getMetaValue("nRows"), nY);
-			assertEquals("Error in metadata", (double) meta.getMetaValue("pixelSizeX"), 1, 1e-12); // pixels are 1 cm × 1 cm
-			assertEquals("Error in metadata", (double) meta.getMetaValue("pixelSizeY"), 1, 1e-12);
-			assertEquals("Error in metadata", (double) meta.getMetaValue("exposureTime"), 1.0, 1e-12);
-			assertEquals("Error in metadata", (int) (double) meta.getMetaValue("nEnergy"), 1);
-			assertEquals("Error in metadata", (double) meta.getMetaValue("minEnergy"), 0., 1e-12);
-			assertEquals("Error in metadata", (double) meta.getMetaValue("maxEnergy"), 80., 1e-12);
+			assertEquals("Error in number of orders metadata", (int) (double) meta.getMetaValue(XRMCMetadata.NORDER.getName()), nOrder);
+			assertEquals("Error in number of columns metadata", (int) (double) meta.getMetaValue(XRMCMetadata.NCOLUMNS.getName()), nX);
+			assertEquals("Error in number of rows metadata", (int) (double) meta.getMetaValue(XRMCMetadata.NROWS.getName()), nY);
+			assertEquals("Error in pixel x size metadata", (double) meta.getMetaValue(XRMCMetadata.PIXELSIZEX.getName()), 1, 1e-12); // pixels are 1 cm × 1 cm
+			assertEquals("Error in pixel y size metadata", (double) meta.getMetaValue(XRMCMetadata.PIXELSIZEY.getName()), 1, 1e-12);
+			assertEquals("Error in exposure time metadata", (double) meta.getMetaValue(XRMCMetadata.EXPOSURETIME.getName()), 1.0, 1e-12);
+			assertEquals("Error in number of energy bins metadata", (int) (double) meta.getMetaValue(XRMCMetadata.NENERGY.getName()), 1);
+			assertEquals("Error in minimum energy metadata", (double) meta.getMetaValue(XRMCMetadata.MINENERGY.getName()), 0., 1e-12);
+			assertEquals("Error in maximum energy metadata", (double) meta.getMetaValue(XRMCMetadata.MAXENERGY.getName()), 80., 1e-12);
 
 
 		} catch(Exception e) {

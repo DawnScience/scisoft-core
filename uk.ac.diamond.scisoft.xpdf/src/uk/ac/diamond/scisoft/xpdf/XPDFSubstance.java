@@ -219,7 +219,7 @@ public class XPDFSubstance {
 	 * Calculates the photoionization attenuation coefficient of the substance.
 	 * @param beamEnergy
 	 * 					the energy of the photons being attenuated.
-	 * @return the photoionization attenuation coefficient of the substance in 1/cm.
+	 * @return the photoionization attenuation coefficient of the substance in 1/mm.
 	 */
 	public double getPhotoionizationCoefficient(double beamEnergy) {
 		return 0.1 * getMassDensity()*getPackingFraction() * materialComposition.getPhotoionizationAttenuation(beamEnergy);

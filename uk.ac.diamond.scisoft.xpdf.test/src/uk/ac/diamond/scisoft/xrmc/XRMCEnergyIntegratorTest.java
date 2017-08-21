@@ -77,7 +77,7 @@ public class XRMCEnergyIntegratorTest {
 		integrator.setEnergies(energies);
 		
 		// geometry of the detector
-		integrator.setGeometry(new Vector3d(20.,  20.,  20.), DatasetFactory.createFromList(Arrays.asList(new Double[]{0., 0., 0.})), DatasetFactory.createFromList(Arrays.asList(new Double[]{10., 10.})));
+		integrator.setGeometry(new Vector3d(200.,  200.,  200.), DatasetFactory.createFromList(Arrays.asList(new Double[]{0., 0., 0.})), DatasetFactory.createFromList(Arrays.asList(new Double[]{10., 10.})));
 		
 		
 		Dataset xrmcIntegrated = integrator.getDetectorCounts();
@@ -86,6 +86,21 @@ public class XRMCEnergyIntegratorTest {
 		assertFalse(xrmcIntegrated.containsNans());
 		// Check that the integration is not just a direct sum
 		assertNotEquals(625349., xrmcIntegrated.getElementDoubleAbs(expX/2 + expX*expY/2), 1.);
+		
+		// Calculate the correct at i=19, j = 19 'by hand'. Data taken from the original test data file.
+		Dataset significantEnergies = DatasetFactory.createFromList(Arrays.asList(new Double[] {34.28, 34.68, 39.08, 39.16, 40.20, 76.04, 76.12, 76.20, 76.28, 76.36, 76.44, 76.52, 76.60}));
+		Dataset countsAt = DatasetFactory.createFromList(Arrays.asList(new Double[] {25623., 49067., 7180., 13817., 4910., 11., 18., 29., 37., 60., 175., 615., 537571.}));
+		
+		Dataset centralTwoTheta = DatasetFactory.createFromList(Arrays.asList(new Double[]{0.0353}));
+		
+		double totalCounts = 0.0;
+		
+		for (int iEnergy = 0; iEnergy < significantEnergies.getSize(); iEnergy++) {
+			Dataset tCorr = det.getTransmissionCorrection(centralTwoTheta, significantEnergies.getDouble(iEnergy));
+			totalCounts += countsAt.getDouble(iEnergy)/tCorr.getDouble();
+		}
+		
+		assertEquals(totalCounts, xrmcIntegrated.getDouble(19, 19), 100.0);
 		
 	}
 

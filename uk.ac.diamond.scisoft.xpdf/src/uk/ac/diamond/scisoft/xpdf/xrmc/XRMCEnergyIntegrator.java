@@ -88,13 +88,14 @@ public class XRMCEnergyIntegrator {
 		// generate the arrays of the scattering angles. Angles taken to the pixel centre.
 		for (int i = 0; i < nx; i++) {
 			for (int j = 0; j < ny; j++) {
-				Vector3d r = detProp.pixelPosition(nx+0.5, ny+0.5);
+				Vector3d r = detProp.pixelPosition(i+0.5, j+0.5);
 				double dp = beamVector.dot(r);
 				double lenR = r.length();
-				twoTheta.set(Math.acos(dp/lenR), i, j);
+				double twoth = Math.acos(dp/lenR);
+				twoTheta.set(twoth, i, j);
 				
-				phi.set(Math.atan2(normalVector.dot(r), polarizationVector.dot(r)), i, j);
-				
+				double fie = Math.atan2(normalVector.dot(r), polarizationVector.dot(r)); 
+				phi.set(fie, i, j);
 			}
 		}
 	}

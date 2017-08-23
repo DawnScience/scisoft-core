@@ -19,6 +19,8 @@ package uk.ac.diamond.scisoft.analysis.io;
 import gda.data.nexus.extractor.NexusExtractor;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
@@ -38,6 +40,8 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 import uk.ac.gda.util.OSUtils;
+
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assume.assumeTrue;
 
 /**
@@ -143,9 +147,11 @@ public class NexusLoaderTest {
 		String outputFile = testScratchDirectoryName+"/NexusLoaderTest_convertToAscii1_Actual.txt";
 		NexusLoader.convertToAscii(TestFileFolder + "NexusLoaderTest.nxs", TestFileFolder + "NexusLoaderTestSelection1.xml",
 				 null, outputFile, null);
-		junitx.framework.FileAssert.assertEquals( 
-				new File(TestFileFolder+"NexusLoaderTest_convertToAscii1_Expected.txt"), 
-				new File(outputFile));
+
+		// Check binary files are the same
+		assertArrayEquals(
+				Files.readAllBytes(Paths.get(TestFileFolder + "NexusLoaderTest_convertToAscii1_Expected.txt")),
+				Files.readAllBytes(Paths.get(outputFile)));
 	}
 	/**
 	 *  test of using null for selection tree - should get everything under NXentry
@@ -163,9 +169,11 @@ public class NexusLoaderTest {
 		String outputFile = testScratchDirectoryName+"/NexusLoaderTest_convertToAscii2_Actual.txt";
 		NexusLoader.convertToAscii(testScratchDirectoryName + "/testconvertToAscii2.nxs", null, null,
 				outputFile, dataSetNames);
-		junitx.framework.FileAssert.assertEquals( 
-				new File(TestFileFolder+"NexusLoaderTest_convertToAscii2_Expected.txt"), 
-				new File(outputFile));
+		
+		// Check binary files are the same
+		assertArrayEquals(
+				Files.readAllBytes(Paths.get(TestFileFolder + "NexusLoaderTest_convertToAscii2_Expected.txt")),
+				Files.readAllBytes(Paths.get(outputFile)));
 		(new File(TestFileFolder + "testconvertToAscii2.nxs")).delete();
 	}
 	/**
@@ -184,9 +192,10 @@ public class NexusLoaderTest {
 		String outputFile = testScratchDirectoryName+"/NexusLoaderTest_convertToAscii3_Actual.txt";
 		NexusLoader.convertToAscii(testScratchDirectoryName + "/testconvertToAscii3.nxs", "","",
 				outputFile, null);
-		junitx.framework.FileAssert.assertEquals( 
-				new File(TestFileFolder+"NexusLoaderTest_convertToAscii3_Expected.txt"), 
-				new File(outputFile));
+		// Check binary files are the same
+		assertArrayEquals(
+				Files.readAllBytes(Paths.get(TestFileFolder + "NexusLoaderTest_convertToAscii3_Expected.txt")),
+				Files.readAllBytes(Paths.get(outputFile)));
 		(new File(TestFileFolder + "testconvertToAscii3.nxs")).delete();
 	}
 	/**
@@ -201,9 +210,10 @@ public class NexusLoaderTest {
 		String outputFile = testScratchDirectoryName+"/NexusLoaderTest_convertToAscii4_Actual.txt";
 		NexusLoader.convertToAscii(TestFileFolder + "NexusLoaderTest.nxs", TestFileFolder + "NexusLoaderTestSelection2.xml",
 				TestFileFolder + "NexusLoaderTestSelection2.xml", outputFile, null);
-		junitx.framework.FileAssert.assertEquals( 
-				new File(TestFileFolder+"NexusLoaderTest_convertToAscii4_Expected.txt"), 
-				new File(outputFile));
+		// Check binary files are the same
+		assertArrayEquals(
+				Files.readAllBytes(Paths.get(TestFileFolder + "NexusLoaderTest_convertToAscii4_Expected.txt")),
+				Files.readAllBytes(Paths.get(outputFile)));
 	}
 	/**
 	 *  test of regular expressions in the selection tree - saving to SRS
@@ -217,9 +227,10 @@ public class NexusLoaderTest {
 		String outputFile = testScratchDirectoryName+"/NexusLoaderTest_convertToSRS1_Actual.txt";
 		NexusLoader.convertToSRS(TestFileFolder + "NexusLoaderTest.nxs", TestFileFolder + "NexusLoaderTestSelection2.xml",
 				TestFileFolder + "NexusLoaderTestSelection2.xml", outputFile, null);
-		junitx.framework.FileAssert.assertEquals( 
-				new File(TestFileFolder+"NexusLoaderTest_convertToSRS1_Expected.txt"), 
-				new File(outputFile));
+		// Check binary files are the same
+		assertArrayEquals(
+				Files.readAllBytes(Paths.get(TestFileFolder + "NexusLoaderTest_convertToSRS1_Expected.txt")),
+				Files.readAllBytes(Paths.get(outputFile)));
 	}
 	
 	/*

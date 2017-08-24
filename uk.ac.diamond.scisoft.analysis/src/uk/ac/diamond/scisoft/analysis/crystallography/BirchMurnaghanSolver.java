@@ -18,6 +18,8 @@ package uk.ac.diamond.scisoft.analysis.crystallography;
 
 public class BirchMurnaghanSolver {
 
+	private BirchMurnaghanSolver() {}
+	
 	// In the below, x is the linear unit cell size as a function of pressure x = (V/V0)^(1/3)
 	private static double term1(double x, double bulkModulus) {
 		return 3./2 * bulkModulus * (Math.pow(x, -7.) - Math.pow(x, -5.));
@@ -56,10 +58,11 @@ public class BirchMurnaghanSolver {
 	public static double birchMurnaghanLinear(double pressure, double bulkModulus, double bulkModulusDerivative) {
 		// Solve the Birch-Murnaghan equation of state to get the linear ratio at the current pressure
 		final double error = 1e-6;
-		double x1, x2 = 1;
+		double x1; 
+		double x2;
 		
 		// A better initial guess? Murnaghan equation of state
-		x1 = x2 = Math.pow(bulkModulusDerivative/bulkModulus*pressure + 1, -1/bulkModulusDerivative);
+		x2 = Math.pow(bulkModulusDerivative/bulkModulus*pressure + 1, -1/bulkModulusDerivative);
 		
 		do {
 			x1 = x2;

@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Random;
 
 import javax.measure.quantity.Length;
-import javax.measure.spi.ServiceProvider;
 import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
@@ -40,6 +39,7 @@ import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 import uk.ac.diamond.scisoft.analysis.crystallography.HKL;
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
 import uk.ac.diamond.scisoft.analysis.crystallography.UnitCell;
+import uk.ac.diamond.scisoft.analysis.crystallography.UnitUtils;
 import uk.ac.diamond.scisoft.analysis.diffraction.PowderRingsUtils.DetectorFitFunction;
 import uk.ac.diamond.scisoft.analysis.io.ADSCImageLoader;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
@@ -75,7 +75,7 @@ public class PowderRingsUtilsTest {
 		siliconCell = new UnitCell(LATTICE_PARAMETER);
 		spacings = new ArrayList<HKL>();
 		for (double d : SPACINGS) {
-			spacings.add(new HKL(ServiceProvider.current().getQuantityFactory(Length.class).create(d, NonSI.ANGSTROM)));
+			spacings.add(new HKL(UnitUtils.getUOMServiceProvider().getQuantityFactory(Length.class).create(d, NonSI.ANGSTROM)));
 		}
 		FittingUtils.seed = 1237L; // set seed for evolution strategy fitting
 //		mSpace = new MillerSpace(siliconCell, null);

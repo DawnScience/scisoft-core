@@ -12,13 +12,12 @@ package uk.ac.diamond.scisoft.analysis.crystallography;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
-import javax.measure.spi.ServiceProvider;
 
 import tec.uom.se.unit.Units;
 
 public interface ScatteringVector<Q extends Quantity<Q>> extends Quantity<Q> {
 
-	final static Quantity<Length> length = ServiceProvider.current().getQuantityFactory(Length.class).create(1, Units.METRE);
+	final static Quantity<Length> length = UnitUtils.getUOMServiceProvider().getQuantityFactory(Length.class).create(1, Units.METRE);
 	public final static Quantity<?> QUANTITY = length.inverse();
 	public final static Unit<?> UNIT = length.inverse().getUnit();
 }

@@ -13,11 +13,12 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
 
+import tec.uom.se.quantity.Quantities;
 import tec.uom.se.unit.Units;
 
 public interface ScatteringVector<Q extends Quantity<Q>> extends Quantity<Q> {
 
-	final static Quantity<Length> length = UnitUtils.getUOMServiceProvider().getQuantityFactory(Length.class).create(1, Units.METRE);
+	final static Quantity<Length> length = Quantities.getQuantity(1, Units.METRE);
 	public final static Quantity<?> QUANTITY = length.inverse();
 	public final static Unit<?> UNIT = length.inverse().getUnit();
 }

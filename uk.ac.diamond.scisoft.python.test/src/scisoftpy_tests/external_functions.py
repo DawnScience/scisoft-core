@@ -14,9 +14,9 @@ def fundec(a, b=1.5):
 def funexception():
     raise ValueError, 'Help!!'
 
-def funscipy():
-    import scipy
-    return scipy.version.version
+def funpyana():
+    import sys
+    return sys.version_info.major, sys.version_info.minor
 
 def funarrayscalar():
     import numpy

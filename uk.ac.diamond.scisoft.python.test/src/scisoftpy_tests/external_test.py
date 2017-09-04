@@ -123,10 +123,10 @@ class Test(unittest.TestCase):
         self.assertRaises(ValueError, efunexception)
 #        efunexception()
 
-    def testSciPy(self):
-        efun = dnp.external.create_function("funscipy", "external_functions", extra_path=Test.epath_list, dls_module="scipy/0.10.0")
-        print '0.10.0',
-        self.assertEquals(efun(), '0.10.0')
+    def testPyAna(self):
+        efun = dnp.external.create_function("funpyana", "external_functions", extra_path=Test.epath_list, dls_module="python/anaconda")
+        print '2,7',
+        self.assertEquals(efun(), (2,7))
         print 'passed'
 
     def testArrayScalar(self):

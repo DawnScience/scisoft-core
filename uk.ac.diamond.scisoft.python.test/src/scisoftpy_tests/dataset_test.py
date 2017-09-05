@@ -776,9 +776,11 @@ class Test(unittest.TestCase):
         s = dr[:2,...,1].shape
         print s
         self.assertEquals(s, (2,3,5))
-        s = dr[:2,...,...,1].shape
-        print s
-        self.assertEquals(s, (2,3,5))
+        try:
+            s = dr[:2,...,...,1].shape
+            raise AssertionError, 'Should have raised an error'
+        except:
+            pass
 
         print 'test newaxis'
         dr = np.arange(15).reshape(3,5)
@@ -1011,6 +1013,11 @@ class Test(unittest.TestCase):
         d = tm[np.logical_not(c)]
         self.checkitems([ 0, 2., 6 ], d)
 
+        # all false (should be zero shape)
+        d = tm[tm > tm.max()]
+        print 'all false', d
+        self.checkitems([], d)
+
         ta = tm.copy()
         ta[c] = -2.3
         self.checkitems([ [[0., 2.], [6., -2.3]], [[-2.3, -2.3], [-2.3, -2.3]] ], ta)
@@ -1075,6 +1082,17 @@ class Test(unittest.TestCase):
         d = tm[np.array([0, 1]), np.array([False, True]), :1]
         self.checkitems([[6.], [42.]], d)
 
+        # TODO broadcasting with lower ranked booleam
+        d = np.arange(8).reshape(4,2)
+        m = np.array([False, True, True, False])
+        print 'broadcast', d[m]
+        self.checkitems([[2, 3], [4, 5]], d[m])
+
+#         m = np.array([False, False, False, False])
+#         f = d[m]
+        # should be (0,2)
+#         print 'broadcast', f, f.shape
+        
     def testSelect(self):
         print 'test select'
         tm = np.select([np.array([[[False, True], [True, False]], [[True, True], [False, False]]])], [np.array(self.mm)], -2.3)

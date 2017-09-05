@@ -35,7 +35,7 @@ import org.eclipse.january.dataset.SliceND;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.dataset.function.RegisterImage2;
+import uk.ac.diamond.scisoft.analysis.dataset.function.RegisterNoisyImage;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.utils.FileUtils;
 
@@ -49,14 +49,14 @@ public class AlignImages {
 	 * @param roi
 	 * @param preShift
 	 * @param monitor
-	 * @return shifts
+	 * @return shifts can be null, if cancelled
 	 */
 	public static List<double[]> align(final IDataset[] images, final List<Dataset> shifted, 
 			final RectangularROI roi, double[] preShift, IMonitor monitor) {
 		List<IDataset> list = new ArrayList<>();
 		Collections.addAll(list, images);
 
-		RegisterImage2 registerImage = new RegisterImage2();
+		RegisterNoisyImage registerImage = new RegisterNoisyImage();
 		registerImage.setRectangle(roi);
 		registerImage.setMonitor(monitor);
 
@@ -67,6 +67,10 @@ public class AlignImages {
 		registerImage.setShiftImage(shifted != null);
 
 		List<Dataset> output = registerImage.value(images);
+		if (output == null) {
+			return null;
+		}
+
 		final int length = output.size();
 		
 		final List<double[]> shift = new ArrayList<>();
@@ -177,6 +181,9 @@ public class AlignImages {
 				shifted.clear();
 				// align a column
 				List<double[]> nshifts = align(tImages, shifted, croi, null, monitor);
+				if (nshifts == null) {
+					return null;
+				}
 
 				// create anchor by summing
 				Dataset canchor = DatasetFactory.zeros(DoubleDataset.class, tImages[0].getShape());
@@ -188,6 +195,10 @@ public class AlignImages {
 				} else {
 					// align with first column's anchor
 					double[] topShift = align(new IDataset[] {anchor, canchor}, null, croi, null, monitor).get(1);
+					if (topShift == null) {
+						return null;
+					}
+
 					logger.info("Top shift: {}", Arrays.toString(topShift));
 					// align with new pre-shift
 					if (monitor != null) {
@@ -198,12 +209,12 @@ public class AlignImages {
 						cshift[0] += topShift[0];
 						cshift[1] += topShift[1];
 						logger.info("New shifts for {}: {}", i, Arrays.toString(cshift));
-						Dataset cimage = RegisterImage2.shiftImage(DatasetUtils.convertToDataset(tImages[i]), cshift);
+						Dataset cimage = ImageUtils.shiftImage(DatasetUtils.convertToDataset(tImages[i]), cshift);
 						cimage.setName(shifted.get(i).getName());
 						shifted.set(i, cimage);
 						if (monitor != null) {
 							if (monitor.isCancelled()) {
-								return shiftedImages;
+								return null;
 							}
 							monitor.worked(1);
 						}
@@ -214,7 +225,7 @@ public class AlignImages {
 
 				if (monitor != null) {
 					if (monitor.isCancelled())
-						return shiftedImages;
+						return null;
 					monitor.worked(1);
 				}
 			}
@@ -381,7 +392,7 @@ public class AlignImages {
 							cshift[0] += topShift[0];
 							cshift[1] += topShift[1];
 							logger.info("New shifts for {}: {}", i, Arrays.toString(cshift));
-							Dataset cimage = RegisterImage2.shiftImage(DatasetUtils.convertToDataset(tImages[i]), cshift);
+							Dataset cimage = ImageUtils.shiftImage(DatasetUtils.convertToDataset(tImages[i]), cshift);
 							cimage.setName(shifted.get(i).getName());
 							shifted.set(i, cimage);
 							if (monitor != null) {

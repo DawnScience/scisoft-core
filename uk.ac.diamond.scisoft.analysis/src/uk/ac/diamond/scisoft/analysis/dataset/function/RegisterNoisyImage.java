@@ -29,6 +29,8 @@ import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 
+import uk.ac.diamond.scisoft.analysis.image.ImageUtils;
+
 /**
  * Register images using a cross correlation method that has sub-pixel accuracy
  * <p>
@@ -37,7 +39,7 @@ import org.eclipse.january.dataset.SliceND;
  * "Electron counting and beam-induced motion correction enable near atomic resolution single particle
  * cryoEM", Nature Methods 10(6), 584-90 (2013); doi:10.1038/nmeth.2472
  */
-public class RegisterImage2 implements DatasetToDatasetFunction {
+public class RegisterNoisyImage implements DatasetToDatasetFunction {
 
 	private IRectangularROI roi = null;
 	private double tukeyWidth = 0.25;
@@ -52,7 +54,7 @@ public class RegisterImage2 implements DatasetToDatasetFunction {
 	private IMonitor monitor = null;
 	private boolean shiftImage = true;
 
-	public RegisterImage2() {
+	public RegisterNoisyImage() {
 		filtered = new DatasetCache(new DatasetToDatasetFunction() {
 			@Override
 			public List<? extends IDataset> value(IDataset... datasets) {
@@ -312,7 +314,7 @@ public class RegisterImage2 implements DatasetToDatasetFunction {
 			shift[1] += vecr.get(x+1);
 //			System.err.println("Cumulative shifts for " + i + ": " + Arrays.toString(shift));
 			result.add(DatasetFactory.createFromObject(shift.clone()));
-			shiftedImage = shiftImage ? shiftImage(DatasetUtils.convertToDataset(datasets[i]), shift) : null;
+			shiftedImage = shiftImage ? ImageUtils.shiftImage(DatasetUtils.convertToDataset(datasets[i]), shift) : null;
 			result.add(shiftedImage);
 			if (shiftImage && monitor != null) {
 				if (monitor.isCancelled()) {
@@ -399,26 +401,5 @@ public class RegisterImage2 implements DatasetToDatasetFunction {
 		Dataset cc = FFT.ifftn(spectrum, pShape, null).getRealView();
 
 		return FFT.shift(cc, true);
-	}
-
-	/**
-	 * @param im
-	 * @param shifts
-	 * @return shifted image
-	 */
-	public static Dataset shiftImage(Dataset im, double[] shifts) {
-		Dataset newImage = DatasetFactory.zeros(im);
-		int[] shape = im.getShapeRef();
-
-		double cx0, cx1;
-		for (int x0 = 0; x0 < shape[0]; x0++) {
-			cx0 = x0 + shifts[0];
-			for (int x1 = 0; x1 < shape[1]; x1++) {
-				cx1 = x1 + shifts[1];
-				newImage.set(Maths.interpolate(im, cx0, cx1), x0, x1);
-			}
-		}
-
-		return newImage;
 	}
 }

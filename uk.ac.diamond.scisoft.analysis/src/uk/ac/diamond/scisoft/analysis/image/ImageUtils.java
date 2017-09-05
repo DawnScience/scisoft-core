@@ -17,6 +17,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.SliceND;
 
 public class ImageUtils {
@@ -120,5 +121,33 @@ public class ImageUtils {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Shift image using linear interpolation
+	 * @param im
+	 * @param shifts
+	 * @return shifted image
+	 */
+	public static Dataset shiftImage(Dataset im, double[] shifts) {
+		if (im.getRank() != 2) {
+			throw new IllegalArgumentException("Dataset must be 2d");
+		}
+		if (shifts.length >= 2) {
+			throw new IllegalArgumentException("Shift array must have at least two entries");
+		}
+		Dataset newImage = DatasetFactory.zeros(im);
+		int[] shape = im.getShapeRef();
+	
+		double cx0, cx1;
+		for (int x0 = 0; x0 < shape[0]; x0++) {
+			cx0 = x0 + shifts[0];
+			for (int x1 = 0; x1 < shape[1]; x1++) {
+				cx1 = x1 + shifts[1];
+				newImage.set(Maths.interpolate(im, cx0, cx1), x0, x1);
+			}
+		}
+	
+		return newImage;
 	}
 }

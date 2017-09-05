@@ -192,7 +192,6 @@ public class RegisterImage implements DatasetToDatasetFunction {
 		Dataset fImage = pTF(im);
 
 		// phase correlate
-//		Dataset spectrum = Maths.phaseAsComplexNumber(fImage.imultiply(cfAnchor), true);
 		Dataset spectrum = Maths.phaseAsComplexNumber(Maths.dividez(fImage, fAnchor), true); // more stable???
 
 		Dataset pc = FFT.ifftn(spectrum, pShape, null).getRealView();
@@ -213,7 +212,6 @@ public class RegisterImage implements DatasetToDatasetFunction {
 
 		// phase correlate
 		Dataset spectrum = Maths.phaseAsComplexNumber(fImage.imultiply(cfAnchor), true);
-//		Dataset spectrum = Maths.phaseAsComplexNumber(Maths.dividez(fImage, fAnchor), true); // more stable???
 
 		Dataset pc = FFT.ifftn(spectrum, pShape, null).getRealView();
 

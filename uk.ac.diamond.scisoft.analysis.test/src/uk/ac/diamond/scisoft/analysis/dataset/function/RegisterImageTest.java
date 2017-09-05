@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
+import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -22,16 +23,16 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class RegisterImageTest {
-	private static final int MAX = 6;
-	private static final double X_DELTA = 2.4;
-	private static final double Y_DELTA = 0.4;
-	private static final int X_SIZE = 366;
-	private static final int Y_SIZE = 256;
+	protected static final int MAX = 6;
+	protected static final double X_DELTA = 2.4;
+	protected static final double Y_DELTA = 0.4;
+	protected static final int X_SIZE = 366;
+	protected static final int Y_SIZE = 256;
 	
-	private static final int START = 3; // start divider
-	private static final int MARGIN = 5; // margin for ROI
-	private static final double OBJECT_X = 42.3;
-	private static final double OBJECT_Y = 27.5;
+	protected static final int START = 3; // start divider
+	protected static int MARGIN = 5; // margin for ROI
+	protected static final double OBJECT_X = 42.3;
+	protected static final double OBJECT_Y = 27.5;
 
 	@Test
 	public void testRegisterSynthetic() {
@@ -49,19 +50,23 @@ public class RegisterImageTest {
 		testRegisterSynthetic(roi, 0.177);
 	}
 
-	private void testRegisterSynthetic(IRectangularROI roi, double delta) {
+	void testRegisterSynthetic(IRectangularROI roi, double delta) {
 		double[][] shifts = generateShifts(MAX);
 		System.err.println(Arrays.deepToString(shifts));
 		IDataset[] images = createTestImages(shifts, Y_SIZE, X_SIZE);
-		IDataset anchor = images[0];
 
-		RegisterImage reg = new RegisterImage();
-		reg.setReference(anchor);
-		reg.setRectangle(roi);
-		List<? extends IDataset> coords = reg.value(images);
+		DatasetToDatasetFunction function = createFunction(images, roi);
+		List<? extends IDataset> coords = function.value(images);
 		for (int i = 0; i < MAX; i++) {
 			Assert.assertArrayEquals(shifts[i], (double[]) DatasetUtils.convertToDataset(coords.get(2*i)).getBuffer(), delta);
 		}
+	}
+
+	DatasetToDatasetFunction createFunction(IDataset[] data, IRectangularROI roi) {
+		RegisterImage reg = new RegisterImage();
+		reg.setReference(data[0]);
+		reg.setRectangle(roi);
+		return reg;
 	}
 
 	public double[][] generateShifts(int number) {

@@ -1055,6 +1055,7 @@ public class DummyProcessWithFrames {
 		IDataset input = DatasetFactory.createFromObject(0);
 		try {
 			input = fm.getRawImageData().getSlice(new SliceND(fm.getRawImageData().getShape()));
+			input.squeeze();
 		} catch (DatasetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1435,6 +1436,8 @@ public class DummyProcessWithFrames {
 		Map<String, Integer> dumMap = new HashMap<String, Integer>();
 		dumMap.put("one", 1);
 		md.initialize(dumMap);
+		
+		input.squeeze();
 		
 		ILazyDataset  ild = null;
 		

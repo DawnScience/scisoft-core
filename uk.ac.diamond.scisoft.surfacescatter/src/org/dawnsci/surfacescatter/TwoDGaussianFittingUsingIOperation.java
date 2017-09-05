@@ -1,6 +1,8 @@
 package org.dawnsci.surfacescatter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
@@ -21,7 +23,7 @@ public class TwoDGaussianFittingUsingIOperation extends AbstractOperation<TwoDFi
 	private static Dataset output;
 	private static int DEBUG = 0;
 	private IDataset in1Background;
-	private NDGaussianFitResult result;
+	private NDGaussianFitResult[] result;
 	private static Dataset Av;
 	
 	@Override
@@ -45,6 +47,9 @@ public class TwoDGaussianFittingUsingIOperation extends AbstractOperation<TwoDFi
 		int[] len = model.getLenPt()[0];
 		int[] pt = model.getLenPt()[1];
 		
+		
+		result = new NDGaussianFitResult[2];
+		
 		Dataset in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input, len, pt);
 
 		if (Arrays.equals(in1.getShape(), new int[] { len[1], len[0] }) == false) {
@@ -62,31 +67,48 @@ public class TwoDGaussianFittingUsingIOperation extends AbstractOperation<TwoDFi
 			return new OperationData(fittingBackground[0], location);
 		}
 		
-		try{
-		
-							result = NDGaussianSimpleFit2D(fittingBackground[2],
-																fittingBackground[0],
-																fittingBackground[1]);
 
-		}
-		catch(Exception y){
-			System.out.println(y.getMessage());
-		}
 		
-		
-		Gaussian backgroundX = new Gaussian(result.getPos()[0],
-											result.getFwhm()[0],
-											result.getArea()[0]);
-		
-		Gaussian backgroundY = new Gaussian(result.getPos()[1],
-											result.getFwhm()[1],
-											result.getArea()[1]);
-		
-		in1Background = getGaussianOutputValues(model.getLenPt()[0],
-												model.getBoundaryBox(),
-												backgroundX,
-												backgroundY);
+		long startTime = System.currentTimeMillis();
 
+
+		for(int i = 0; i<2; i++){
+			try{
+				result[i] = NDGaussianSimpleFit2DArbSlices(fittingBackground[2], i);
+			}
+			catch(Exception y){
+				System.out.println(y.getMessage());
+			}
+		}
+		
+		
+
+	
+
+		long endTime = System.currentTimeMillis();
+		
+
+		System.out.println("get arb slices result took:  " + (endTime - startTime) + " milliseconds");
+		
+		
+		
+		startTime = System.currentTimeMillis();
+
+		in1Background = getGaussianOutputValuesArbSlices(model.getLenPt()[0],
+												model.getBoundaryBox());
+
+
+		endTime = System.currentTimeMillis();
+		
+
+		System.out.println("get arb background took:  " + (endTime - startTime) + " milliseconds");
+		
+//		in1Background = getGaussianOutputValues(model.getLenPt()[0],
+//												model.getBoundaryBox(),
+//												backgroundX,		 
+//												backgroundY);
+
+		
 		Dataset pBackgroundSubtracted = Maths.subtract(in1, in1Background, null);
 
 		output = DatasetUtils.cast(pBackgroundSubtracted, Dataset.FLOAT64);
@@ -113,7 +135,7 @@ public class TwoDGaussianFittingUsingIOperation extends AbstractOperation<TwoDFi
 				DoubleDataset tempXCalc = gY.calculateValues(DatasetFactory.createFromObject(x));
 				DoubleDataset tempYCalc = gX.calculateValues(DatasetFactory.createFromObject(y));
 				
-				double temp = tempXCalc.get() * tempYCalc.get();
+				double temp = (tempXCalc.get() + tempYCalc.get())/2;
 				
 				output1.set(temp, k-boundaryBox, l-boundaryBox);
 			}
@@ -122,12 +144,41 @@ public class TwoDGaussianFittingUsingIOperation extends AbstractOperation<TwoDFi
 		return output1;
 	}
 	
+	public IDataset getGaussianOutputValuesArbSlices (int[] len, 
+													  int boundaryBox) {
+
+		IDataset output1 = DatasetFactory.zeros(new int[] {len[1], len[0]});//new DoubleDataset(len[1], len[0]);
+
+		for (int k=boundaryBox; k<boundaryBox+len[1]; k++){
+			for (int l=boundaryBox; l<boundaryBox+len[0]; l++){
+				
+				double x = k;
+				double y = l;
+
+				Gaussian backgroundX = new Gaussian(result[0].getPos()[k],
+						result[0].getFwhm()[k],
+						result[0].getArea()[k]);
+
+				Gaussian backgroundY = new Gaussian(result[1].getPos()[l],
+						result[1].getFwhm()[l],
+						result[1].getArea()[l]);
+				
+				DoubleDataset tempXCalc = backgroundY.calculateValues(DatasetFactory.createFromObject(x));
+				DoubleDataset tempYCalc = backgroundX.calculateValues(DatasetFactory.createFromObject(y));
+
+				double temp = (tempXCalc.get() + tempYCalc.get())/2;
+
+				output1.set(temp, k-boundaryBox, l-boundaryBox);
+			}
+		}
+
+		return output1;
+	}
 	
 	public static NDGaussianFitResult NDGaussianSimpleFit2D(Dataset twoDData, 
 															Dataset xAxis,
 															Dataset yAxis) {
-		
-
+	
 		Dataset[] axis = new Dataset[] {xAxis, yAxis};
 		
 		// first resolve the problem into n 1D problems
@@ -137,13 +188,13 @@ public class TwoDGaussianFittingUsingIOperation extends AbstractOperation<TwoDFi
 			
 			for (int j = 0; j < 1; j++) {
 				if (j < i) {
-					Av = DatasetFactory.zeros(yAxis);
+					Av = DatasetFactory.zeros(xAxis);
 					for (int a =0; a<xAxis.getSize(); a++){
 						double temp=0;
 						double l=0;
-						for (int b =0; b<xAxis.getSize(); b++){
-							if(Double.isNaN(twoDData.getDouble(a, b)) == false){
-								temp += twoDData.getDouble(a, b);
+						for (int b =0; b<yAxis.getSize(); b++){
+							if(Double.isNaN(twoDData.getDouble(b, a)) == false){
+								temp += twoDData.getDouble(b, a);
 								l+=1;
 							}
 							
@@ -170,7 +221,7 @@ public class TwoDGaussianFittingUsingIOperation extends AbstractOperation<TwoDFi
 			}
 			try{
 				results[i] = Fitter.GaussianFit(Av, axis[i]);
-				
+//				Fitter.NDGaussianSimpleFit(data, axis)
 				
 			}
 			catch(Exception o ){
@@ -181,6 +232,59 @@ public class TwoDGaussianFittingUsingIOperation extends AbstractOperation<TwoDFi
 		return new NDGaussianFitResult(results);
 	}
 
+	
+	
+	
+	public static NDGaussianFitResult NDGaussianSimpleFit2DArbSlices(Dataset twoDData, 
+																	 int axisNo) {
+		
+		int otherAxis = 1- axisNo;
+
+		// first resolve the problem into n 1D problems
+		AFunction[] results = new AFunction[twoDData.getShape()[axisNo]];
+		int [] coords = new int[2];
+		
+		for (int a =0; a< twoDData.getShape()[axisNo]; a++){
+
+			List<Double> zs = new ArrayList<Double>();
+			List<Integer> zAxis = new ArrayList<Integer>();
+
+
+			for (int b =0; b<twoDData.getShape()[otherAxis]; b++){
+
+				///get the correct position
+				
+				coords[otherAxis] = b;
+				coords[axisNo] = a;
+
+				if(Double.isNaN(twoDData.getDouble(coords[0], coords[1])) == false){
+
+					zs.add(twoDData.getDouble(coords[0], coords[1]));
+					zAxis.add(b);
+				}
+
+			}
+
+			Dataset zsDataset = DatasetFactory.createFromObject(zs);
+			Dataset zAxisDataset = DatasetFactory.createFromObject(zAxis);
+
+			try{
+				results[a] = Fitter.GaussianFit(zsDataset, zAxisDataset);
+			}
+			catch(Exception e){
+				System.out.println(e.getMessage());
+			}
+		}
+
+
+		NDGaussianFitResult result = new NDGaussianFitResult(results);
+
+
+		return result;
+	}
+
+	
+	
 	
 	private void debug(String output) {
 		if (DEBUG == 1) {

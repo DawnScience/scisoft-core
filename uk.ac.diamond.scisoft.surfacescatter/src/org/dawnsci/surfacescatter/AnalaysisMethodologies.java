@@ -101,7 +101,7 @@ public class AnalaysisMethodologies {
 			case FOUR:
 				return "4";
 			case TWOD_GAUSSIAN:
-				return "2D Gaussian";
+				return "2D Gaussian (Slow)";
 			case TWOD_EXPONENTIAL:
 				return "2D Exponential";
 		}
@@ -168,7 +168,7 @@ public class AnalaysisMethodologies {
 		else if (in.equals("FOUR")){
 			return FitPower.FOUR;
 		}
-		else if (in.equals("2D Gaussian")){
+		else if (in.equals("2D Gaussian (Slow)")){
 			return FitPower.TWOD_GAUSSIAN;
 		}
 		else if (in.equals("2D Exponential")){

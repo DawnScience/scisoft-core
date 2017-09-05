@@ -72,6 +72,7 @@ public class RegisterData1DTest {
 		DoubleDataset filter = DatasetFactory.ones(DoubleDataset.class, 5);
 		IDataset anchor = data[0];
 		filter.imultiply(1./ ((Number) filter.sum()).doubleValue());
+		reg.setWindowFunction(0.25);
 		reg.setFilter(filter);
 		reg.setReference(anchor);
 		reg.setRectangle(roi);

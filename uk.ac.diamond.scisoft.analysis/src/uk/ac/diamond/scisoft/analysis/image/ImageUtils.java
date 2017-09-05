@@ -133,7 +133,7 @@ public class ImageUtils {
 		if (im.getRank() != 2) {
 			throw new IllegalArgumentException("Dataset must be 2d");
 		}
-		if (shifts.length >= 2) {
+		if (shifts.length < 2) {
 			throw new IllegalArgumentException("Shift array must have at least two entries");
 		}
 		Dataset newImage = DatasetFactory.zeros(im);

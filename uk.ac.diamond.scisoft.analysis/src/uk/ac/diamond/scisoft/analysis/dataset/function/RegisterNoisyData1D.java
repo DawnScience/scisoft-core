@@ -442,7 +442,7 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 	 * @return shifted data
 	 */
 	public static Dataset shiftData(Dataset im, double shift) {
-		Dataset newImage = DatasetFactory.zeros(im);
+		Dataset newImage = DatasetFactory.zeros(im, DoubleDataset.class);
 		int[] shape = im.getShapeRef();
 
 		double cx0;

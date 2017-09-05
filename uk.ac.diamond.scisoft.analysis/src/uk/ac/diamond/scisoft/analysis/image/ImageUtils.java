@@ -136,7 +136,7 @@ public class ImageUtils {
 		if (shifts.length < 2) {
 			throw new IllegalArgumentException("Shift array must have at least two entries");
 		}
-		Dataset newImage = DatasetFactory.zeros(im);
+		Dataset newImage = DatasetFactory.zeros(im, DoubleDataset.class);
 		int[] shape = im.getShapeRef();
 	
 		double cx0, cx1;

@@ -814,6 +814,8 @@ class ndarray(object):
                 return self.__dataset.max(_jtrue)
             return self.__dataset.max(_empty_boolean_array)
         else:
+            if axis < 0:
+                axis = self.__dataset.getRank() + axis
             if ignore_nans:
                 return self.__dataset.max(_jint(axis), _jtrue)
             return self.__dataset.max(_jint(axis))
@@ -825,6 +827,8 @@ class ndarray(object):
                 return self.__dataset.min(_jtrue)
             return self.__dataset.min(_empty_boolean_array)
         else:
+            if axis < 0:
+                axis = self.__dataset.getRank() + axis
             if ignore_nans:
                 return self.__dataset.min(_jint(axis), _jtrue)
             return self.__dataset.min(_jint(axis))
@@ -836,6 +840,8 @@ class ndarray(object):
                 return self.__dataset.argMax(_jtrue)
             return self.__dataset.argMax(_empty_boolean_array)
         else:
+            if axis < 0:
+                axis = self.__dataset.getRank() + axis
             if ignore_nans:
                 return self.__dataset.argMax(_jint(axis), _jtrue)
             return self.__dataset.argMax(_jint(axis))
@@ -847,6 +853,8 @@ class ndarray(object):
                 return self.__dataset.argMin(_jtrue)
             return self.__dataset.argMin(_empty_boolean_array)
         else:
+            if axis < 0:
+                axis = self.__dataset.getRank() + axis
             if ignore_nans:
                 return self.__dataset.argMin(_jint(axis), _jtrue)
             return self.__dataset.argMin(_jint(axis))
@@ -856,6 +864,8 @@ class ndarray(object):
         if axis is None:
             return self.__dataset.peakToPeak(_empty_boolean_array)
         else:
+            if axis < 0:
+                axis = self.__dataset.getRank() + axis
             return self.__dataset.peakToPeak(_jint(axis))
 
     def clip(self, a_min, a_max):
@@ -877,6 +887,8 @@ class ndarray(object):
         if axis is None:
             return self.__dataset.mean(_empty_boolean_array)
         else:
+            if axis < 0:
+                axis = self.__dataset.getRank() + axis
             return self.__dataset.mean(_jint(axis))
 
     @_wrapout
@@ -884,6 +896,8 @@ class ndarray(object):
         is_pop = _jbool(ddof == 0)
         if axis is None:
             return self.__dataset.variance(is_pop)
+        if axis < 0:
+            axis = self.__dataset.getRank() + axis
         return self.__dataset.variance(_jint(axis), is_pop)
 
     @_wrapout
@@ -891,14 +905,17 @@ class ndarray(object):
         is_pop = _jbool(ddof == 0)
         if axis is None:
             return self.__dataset.stdDeviation(is_pop)
+        if axis < 0:
+            axis = self.__dataset.getRank() + axis
         return self.__dataset.stdDeviation(_jint(axis), is_pop)
 
     @_wrapout
     def rms(self, axis=None):
         if axis is None:
             return self.__dataset.rootMeanSquare()
-        else:
-            return self.__dataset.rootMeanSquare(_jint(axis))
+        if axis < 0:
+            axis = self.__dataset.getRank() + axis
+        return self.__dataset.rootMeanSquare(_jint(axis))
 
     def prod(self, axis=None, dtype=None):
         return _maths.prod(self, axis, dtype)
@@ -910,15 +927,17 @@ class ndarray(object):
     def all(self, axis=None): #@ReservedAssignment
         if axis is None:
             return self.__dataset.all()
-        else:
-            return self.__dataset.all(axis)
+        if axis < 0:
+            axis = self.__dataset.getRank() + axis
+        return self.__dataset.all(axis)
 
     @_wrapout
     def any(self, axis=None): #@ReservedAssignment
         if axis is None:
             return self.__dataset.any()
-        else:
-            return self.__dataset.any(axis)
+        if axis < 0:
+            axis = self.__dataset.getRank() + axis
+        return self.__dataset.any(axis)
 
     #  comparison operators
     def __lt__(self, o):

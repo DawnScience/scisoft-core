@@ -844,12 +844,14 @@ class Test(unittest.TestCase):
         self.assertEquals(ds.argmax(), 2)
         self.checkitems([[0, 1, 0], [1, 0, 0]], ds.argmax(0))
         self.checkitems([[0, 1, 0], [1, 0, 1]], ds.argmax(1))
+        self.checkitems([[0, 1, 0], [1, 0, 1]], ds.argmax(-2))
         self.checkitems([[2, 1], [1, 1]], ds.argmax(2))
 
         print 'test arg mins'
         self.assertEquals(ds.argmin(), 1)
         self.checkitems([[1, 0, 1], [0, 0, 0]], ds.argmin(0))
         self.checkitems([[1, 0, 1], [0, 1, 0]], ds.argmin(1))
+        self.checkitems([[1, 0, 1], [0, 1, 0]], ds.argmin(-2))
         self.checkitems([[1, 0], [0, 0]], ds.argmin(2))
 
     def testProds(self):
@@ -857,12 +859,16 @@ class Test(unittest.TestCase):
         ds = np.arange(12).reshape(3,4)
         self.assertEquals(np.prod(ds), 0)
         self.checkitems([ 0, 45, 120, 231], np.prod(ds, 0))
+        self.checkitems([ 0, 45, 120, 231], np.prod(ds, -2))
         self.checkitems([ 0, 840, 7920], np.prod(ds, 1))
+        self.checkitems([ 0, 840, 7920], np.prod(ds, -1))
         
         print 'test cumprod'
         self.checkitems([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], np.cumprod(ds))
         self.checkitems([[0, 1, 2, 3], [0, 5, 12, 21], [0, 45, 120, 231]], np.cumprod(ds, 0))
+        self.checkitems([[0, 1, 2, 3], [0, 5, 12, 21], [0, 45, 120, 231]], np.cumprod(ds, -2))
         self.checkitems([[0, 0, 0, 0], [4, 20, 120, 840], [8, 72, 720, 7920]], np.cumprod(ds, 1))
+        self.checkitems([[0, 0, 0, 0], [4, 20, 120, 840], [8, 72, 720, 7920]], np.cumprod(ds, -1))
 
     def testSums(self):
         print 'test sum'
@@ -870,9 +876,13 @@ class Test(unittest.TestCase):
         self.assertEquals(ds.sum(), 66)
         self.assertEquals(np.sum(ds), 66)
         self.checkitems([12, 15, 18, 21], ds.sum(0))
+        self.checkitems([12, 15, 18, 21], ds.sum(-2))
         self.checkitems([12, 15, 18, 21], np.sum(ds, 0))
+        self.checkitems([12, 15, 18, 21], np.sum(ds, -2))
         self.checkitems([ 6, 22, 38], ds.sum(1))
+        self.checkitems([ 6, 22, 38], ds.sum(-1))
         self.checkitems([ 6, 22, 38], np.sum(ds, 1))
+        self.checkitems([ 6, 22, 38], np.sum(ds, -1))
         lds = np.arange(1024*1024, dtype=np.int32)
         self.assertEquals(np.sum(lds, dtype=np.int32), -524288)
         self.assertEquals(np.sum(lds, dtype=np.int64), 549755289600)
@@ -881,6 +891,7 @@ class Test(unittest.TestCase):
         self.checkitems([0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66], np.cumsum(ds))
         self.checkitems([[0, 1, 2, 3], [4, 6, 8, 10], [12, 15, 18, 21]], np.cumsum(ds, 0))
         self.checkitems([[0, 1, 3, 6], [4, 9, 15, 22], [8, 17, 27, 38]], np.cumsum(ds, 1))
+        self.checkitems([[0, 1, 3, 6], [4, 9, 15, 22], [8, 17, 27, 38]], np.cumsum(ds, -1))
 
     def testStats(self):
         print 'test stats'
@@ -898,16 +909,25 @@ class Test(unittest.TestCase):
         self.checkitems([2, 2, 2, 2], a.argmax(1))
         self.checkitems([0, 0, 0, 0], a.argmin(1))
         self.checkitems([2.,5.,8.,11.], a.max(1))
+        self.checkitems([2.,5.,8.,11.], a.max(-1))
         self.checkitems([0., 3., 6., 9.], a.min(1))
+        self.checkitems([0., 3., 6., 9.], a.min(-1))
         self.checkitems([1., 4., 7., 10.], a.mean(1))
+        self.checkitems([1., 4., 7., 10.], a.mean(-1))
         b = 2./3
         self.checkitems([b, b, b, b], a.var(1))
+        self.checkitems([b, b, b, b], a.var(-1))
         self.checkitems([1., 1., 1., 1.], a.var(1, ddof=1))
+        self.checkitems([1., 1., 1., 1.], a.var(-1, ddof=1))
         b = np.sqrt(b)
         self.checkitems([b, b, b, b], a.std(1))
+        self.checkitems([b, b, b, b], a.std(-1))
         self.checkitems([1., 1., 1., 1.], a.std(1, ddof=1))
+        self.checkitems([1., 1., 1., 1.], a.std(-1, ddof=1))
         self.checkitems([3., 12., 21., 30.], a.sum(1))
+        self.checkitems([3., 12., 21., 30.], a.sum(-1))
         self.checkitems([0., 60., 336., 990.], a.prod(1))
+        self.checkitems([0., 60., 336., 990.], a.prod(-1))
         # a.rms()  
         # a.rms(1) 
 
@@ -1078,6 +1098,7 @@ class Test(unittest.TestCase):
         self.assertEqual(4.5, a.mean())
         self.checkitems([2.5, 3.5, 4.5, 5.5, 6.5], a.mean(0))
         self.checkitems([2., 7.], a.mean(1))
+        self.checkitems([2., 7.], a.mean(-1))
 
     def testMaxMin(self):
         print 'test max/min'
@@ -1085,26 +1106,34 @@ class Test(unittest.TestCase):
         self.assertEqual(0., a.min())
         self.checkitems([0., 1., 2., 3., 4.], a.min(0))
         self.checkitems([0., 5.], a.min(1))
+        self.checkitems([0., 5.], a.min(-1))
         self.assertEqual(0, a.argmin())
         self.checkitems([0, 0, 0, 0, 0], a.argmin(0))
         self.checkitems([0, 0], a.argmin(1))
+        self.checkitems([0, 0], a.argmin(-1))
         if isjava:
             self.checkitems([0., 1., 2., 3., 4.], a.min(0, True))
             self.checkitems([0., 5.], a.min(1, True))
+            self.checkitems([0., 5.], a.min(-1, True))
             self.checkitems([0, 0, 0, 0, 0], a.argmin(0, True))
             self.checkitems([0, 0], a.argmin(1, True))
+            self.checkitems([0, 0], a.argmin(-1, True))
 
         self.assertEqual(9., a.max())
         self.checkitems([5., 6., 7., 8., 9.], a.max(0))
         self.checkitems([4., 9.], a.max(1))
+        self.checkitems([4., 9.], a.max(-1))
         self.assertEqual(9, a.argmax())
         self.checkitems([1, 1, 1, 1, 1], a.argmax(0))
         self.checkitems([4, 4], a.argmax(1))
+        self.checkitems([4, 4], a.argmax(-1))
         if isjava:
             self.checkitems([5., 6., 7., 8., 9.], a.max(0, True))
             self.checkitems([4., 9.], a.max(1, True))
+            self.checkitems([4., 9.], a.max(-1, True))
             self.checkitems([1, 1, 1, 1, 1], a.argmax(0, True))
             self.checkitems([4, 4], a.argmax(1, True))
+            self.checkitems([4, 4], a.argmax(-1, True))
 
     def testIterate(self):
         print 'test iterate'

@@ -333,15 +333,25 @@ public class RegisterData1D implements DatasetToDatasetFunction {
 		return sum0/sum - (pc.getShapeRef()[0])/2;
 	}
 
-	private Dataset shiftData(Dataset im, double shift) {
-		Dataset newData = DatasetFactory.zeros(im);
+	/**
+	 * Shift 1D using linear interpolation
+	 * @param im
+	 * @param shift
+	 * @return shifted data
+	 */
+	public static Dataset shiftData(Dataset im, double shift) {
+		if (im.getRank() != 1) {
+			throw new IllegalArgumentException("Dataset must be 1d");
+		}
+		Dataset newImage = DatasetFactory.zeros(im, DoubleDataset.class);
+		int[] shape = im.getShapeRef();
 
 		double cx0;
 		for (int x0 = 0; x0 < shape[0]; x0++) {
-			cx0 = x0 - shift;
-			newData.set(Maths.interpolate(im, cx0), x0);
+			cx0 = x0 + shift;
+			newImage.set(Maths.interpolate(im, cx0), x0);
 		}
 
-		return newData;
+		return newImage;
 	}
 }

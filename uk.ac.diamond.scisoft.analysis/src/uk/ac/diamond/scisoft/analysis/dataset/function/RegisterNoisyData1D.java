@@ -308,7 +308,7 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 				shift += vecr.get(x);
 	//			System.err.println("Cumulative shifts for " + i + ": " + Arrays.toString(shift));
 				result.add(DatasetFactory.createFromObject(shift));
-				shiftedImage = shiftData ? shiftData(DatasetUtils.convertToDataset(datasets[i]), shift) : null;
+				shiftedImage = shiftData ? RegisterData1D.shiftData(DatasetUtils.convertToDataset(datasets[i]), shift) : null;
 				result.add(shiftedImage);
 				if (shiftData && monitor != null) {
 					if(monitor.isCancelled()) {
@@ -326,7 +326,7 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 			for (int i = 1; i < n; i++) {
 				shift = ccFindShift(cf, datasets[i]);
 				result.add(DatasetFactory.createFromObject(shift));
-				shiftedImage = shiftData ? shiftData(DatasetUtils.convertToDataset(datasets[i]), shift) : null;
+				shiftedImage = shiftData ? RegisterData1D.shiftData(DatasetUtils.convertToDataset(datasets[i]), shift) : null;
 				result.add(shiftedImage);
 				if (monitor != null) {
 					if(monitor.isCancelled()) {
@@ -436,21 +436,4 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 		return FFT.shift(cc, true);
 	}
 
-	/**
-	 * @param im
-	 * @param shift
-	 * @return shifted data
-	 */
-	public static Dataset shiftData(Dataset im, double shift) {
-		Dataset newImage = DatasetFactory.zeros(im, DoubleDataset.class);
-		int[] shape = im.getShapeRef();
-
-		double cx0;
-		for (int x0 = 0; x0 < shape[0]; x0++) {
-			cx0 = x0 + shift;
-			newImage.set(Maths.interpolate(im, cx0), x0);
-		}
-
-		return newImage;
-	}
 }

@@ -30,6 +30,7 @@ import org.eclipse.january.dataset.SliceND;
 
 import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
+import uk.ac.diamond.scisoft.analysis.image.ImageUtils;
 
 /**
  * Register images using a phase correlation method that has sub-pixel accuracy
@@ -173,7 +174,7 @@ public class RegisterImage implements DatasetToDatasetFunction {
 			shifts = fitGaussians(pCorrelation, Math.min(pCorrelation.getShapeRef()[0], 11));
 			System.err.println("Fit     : " + Arrays.toString(shifts));
 			result.add(DatasetFactory.createFromObject(shifts));
-			Dataset shiftedImage = shiftImage(DatasetUtils.convertToDataset(d) , shifts);
+			Dataset shiftedImage = ImageUtils.shiftImage(DatasetUtils.convertToDataset(d) , shifts);
 			result.add(shiftedImage);
 		}
 
@@ -333,20 +334,5 @@ public class RegisterImage implements DatasetToDatasetFunction {
 		}
 
 		return new double[] {sum0/sum - (pc.getShapeRef()[0])/2, sum1/sum - (pc.getShapeRef()[1])/2};
-	}
-
-	private Dataset shiftImage(Dataset im, double[] shifts) {
-		Dataset newImage = DatasetFactory.zeros(im);
-
-		double cx0, cx1;
-		for (int x0 = 0; x0 < shape[0]; x0++) {
-			cx0 = x0 - shifts[0];
-			for (int x1 = 0; x1 < shape[1]; x1++) {
-				cx1 = x1 - shifts[1];
-				newImage.set(Maths.interpolate(im, cx0, cx1), x0, x1);
-			}
-		}
-
-		return newImage;
 	}
 }

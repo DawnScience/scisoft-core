@@ -231,7 +231,7 @@ def _parselinearg(x, y, title, name):
                     j = j[0]
                 if i is None:
                     i = _core.arange(j.size, dtype=_core.int)
-                    i.shape = i.shape
+                    i.shape = j.shape
                     xl[n] = i
                 elif i.shape[0] != j.shape[0]:
                     raise AttributeError("length of y does not match the length of x")

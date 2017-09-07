@@ -2066,11 +2066,10 @@ public class NexusTreeUtils {
 	}
 
 	private static Dataset getCastAndCacheData(DataNode dNode, int dtype) {
-		ILazyDataset ld = dNode.getDataset();
-		Dataset dataset;
-		if (ld == null) {
+		ILazyDataset ld = dNode != null ? dNode.getDataset() : null;
+		if (dNode == null || ld == null)
 			return null;
-		}
+		Dataset dataset;
 		if (ld instanceof Dataset) {
 			dataset = (Dataset) ld;
 		} else {

@@ -8,6 +8,7 @@
  */
 package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 
+import org.eclipse.dawnsci.analysis.api.Constants;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.metadata.UnitMetadata;
 import org.eclipse.january.MetadataException;
@@ -287,7 +288,7 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 			switch (xAxis) {
 			case Q:
 				name = "q";
-				unit = MetadataFactory.createMetadata(UnitMetadata.class, NonSI.ANGSTROM.inverse());
+				unit = MetadataFactory.createMetadata(UnitMetadata.class, Constants.ANGSTROM.inverse());
 				break;
 			case ANGLE:
 				name = "2-theta";
@@ -296,7 +297,7 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 			case RESOLUTION:
 				axis = Maths.divide((2 * Math.PI), axis);
 				name = "d-spacing";
-				unit = MetadataFactory.createMetadata(UnitMetadata.class, NonSI.ANGSTROM);
+				unit = MetadataFactory.createMetadata(UnitMetadata.class, Constants.ANGSTROM);
 				break;
 			case PIXEL:
 				name = "pixel"; // TODO fix pixel case

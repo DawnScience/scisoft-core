@@ -20,7 +20,8 @@ import java.util.Map;
 import javax.measure.Unit;
 import javax.measure.quantity.Length;
 
-import si.uom.NonSI;
+import org.eclipse.dawnsci.analysis.api.Constants;
+
 import tec.uom.se.quantity.Quantities;
 import tec.uom.se.unit.MetricPrefix;
 import tec.uom.se.unit.Units;
@@ -73,7 +74,7 @@ public class CalibrationStandards implements Serializable, Cloneable {
 	}
 
 	public final static Unit<Length> NANOMETRE = MetricPrefix.NANO(Units.METRE);
-	public final static Unit<Length> ANGSTROM = NonSI.ANGSTROM;
+	private final static Unit<Length> ANGSTROM = Constants.ANGSTROM;
 
 	private Map<String, CalibrantSpacing> cal2peaks;	
 	private String version;

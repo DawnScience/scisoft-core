@@ -33,6 +33,7 @@ import javax.vecmath.Vector3d;
 import javax.vecmath.Vector4d;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.eclipse.dawnsci.analysis.api.Constants;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
@@ -120,8 +121,8 @@ public class NexusTreeUtils {
 	public static final String DEPENDS_ON = "depends_on";
 	
 	static {
-		SimpleUnitFormat.getInstance().alias(NonSI.ANGSTROM, "Angstrom");
-		SimpleUnitFormat.getInstance().alias(NonSI.ANGSTROM, "angstrom");
+		SimpleUnitFormat.getInstance().alias(Constants.ANGSTROM, "Angstrom");
+		SimpleUnitFormat.getInstance().alias(Constants.ANGSTROM, "angstrom");
 		SimpleUnitFormat.getInstance().alias(NonSI.DEGREE_ANGLE, "deg");
 	}
 
@@ -1352,7 +1353,7 @@ public class NexusTreeUtils {
 		if (wavelength == null) {
 			logger.warn("Wavelength was missing in {}", link.getName());
 		} else {
-			Dataset w = getConvertedData(wavelength, NonSI.ANGSTROM);
+			Dataset w = getConvertedData(wavelength, Constants.ANGSTROM);
 			sample.setWavelength(w.getElementDoubleAbs(0));
 		}
 
@@ -1377,7 +1378,7 @@ public class NexusTreeUtils {
 		if (wavelength == null) {
 			logger.warn("Wavelength was missing in {}", link.getName());
 		} else {
-			Dataset w = getConvertedData(wavelength, NonSI.ANGSTROM);
+			Dataset w = getConvertedData(wavelength, Constants.ANGSTROM);
 			sample.setWavelength(w.getElementDoubleAbs(0));
 			return;
 		}

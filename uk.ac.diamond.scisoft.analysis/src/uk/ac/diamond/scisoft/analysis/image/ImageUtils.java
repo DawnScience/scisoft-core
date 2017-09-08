@@ -48,6 +48,7 @@ public class ImageUtils {
 			wShape[i] = window;
 		}
 		Dataset base = DatasetFactory.createRange(DoubleDataset.class, window);
+		data = data.cast(DoubleDataset.class);
 		DoubleDataset sliced = DatasetFactory.zeros(wShape);
 		int ssize = sliced.getSize();
 		double[] sdata = sliced.getData();
@@ -88,6 +89,12 @@ public class ImageUtils {
 						for (int i = 0; i < ssize; i++) {
 							values.add(sdata[i]);
 						}
+						// bump along to next window
+						for (int i = 0; i < window; i++) {
+							if (!it.hasNext() || !windowIsInsideVolume(ub, pos)) {
+								break;
+							}
+						}
 					}
 				}
 			}
@@ -115,7 +122,7 @@ public class ImageUtils {
 	 * @return true if window does not overlap boundary of volume
 	 */
 	private static boolean windowIsInsideVolume(int[] ub, int[] pos) {
-		for (int i = 0; i < ub.length; i++) {
+		for (int i = ub.length - 1; i >= 0; i--) {
 			if (pos[i] > ub[i]) {
 				return false;
 			}

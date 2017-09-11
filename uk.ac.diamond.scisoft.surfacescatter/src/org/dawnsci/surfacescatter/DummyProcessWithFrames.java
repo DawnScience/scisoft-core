@@ -1826,89 +1826,84 @@ public class DummyProcessWithFrames {
 
 		double correction = 0.001;
 		int correctionSelector = MethodSetting.toInt(fm.getCorrectionSelection());
-		
+
 		yValue = DatasetFactory.zeros(new int[] {1}, Dataset.ARRAYFLOAT64);
-		
+
 		if (correctionSelector == 0){
-		
-		
+
 			double lorentz = fm.getLorentzianCorrection();
 
 			double areaCorrection = fm.getAreaCorrection(); 
-			
+
 			double polarisation = fm.getPolarisationCorrection();
-			
 
-			
 			correction = lorentz* polarisation * areaCorrection;
-			
+
 			if (correction ==0){
 				correction = 0.001;
 			}
 
-		
-		yValue = Maths.multiply(output, correction);
-		
+
+			yValue = Maths.multiply(output, correction);
+
 		}
-		
+
 		else if (correctionSelector ==1){
-		
-		try {
 
-			double refAreaCorrection = fm.getReflectivityAreaCorrection(); 
-			
-			double refFluxCorrection = fm.getReflectivityFluxCorrection(); 
-			
-			correction = refAreaCorrection* refFluxCorrection; 
-			
-			if (correction ==0){
-				correction = 0.001;
+			try {
+
+				double refAreaCorrection = fm.getReflectivityAreaCorrection(); 
+
+				double refFluxCorrection = fm.getReflectivityFluxCorrection(); 
+
+				correction = refAreaCorrection* refFluxCorrection; 
+
+				if (correction ==0){
+					correction = 0.001;
+				}
+			} 
+			catch (Exception e) {
+				e.printStackTrace();
 			}
-		} 
-		catch (Exception e) {
-			e.printStackTrace();
+
+			yValue = Maths.multiply(output, correction);
 		}
-		
-		yValue = Maths.multiply(output, correction);
-		}
-		
-		
+
+
 		else if (correctionSelector ==2){
-		
-		try {
-		
-			double refAreaCorrection = fm.getReflectivityAreaCorrection(); 
-			
-			
-			correction = refAreaCorrection;
-			
-		
-			if (correction ==0){
-				correction = 0.001;
+
+			try {
+
+				double refAreaCorrection = fm.getReflectivityAreaCorrection(); 
+
+				correction = refAreaCorrection;
+
+				if (correction ==0){
+					correction = 0.001;
+				}
+			} 
+
+			catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} 
-		
-		catch (Exception e) {
-		// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			yValue = Maths.multiply(output, correction);
+
 		}
-		
-		yValue = Maths.multiply(output, correction);
-		
-		}
-		
+
 		else if (correctionSelector ==3){
-		
-		yValue = Maths.multiply(output, 1);
-		
+
+			yValue = Maths.multiply(output, 1);
+
 		}
-		
+
 		else{	
 		}
-		
-		
+
+
 		return yValue;
-		
+
 	}
 
 	private static void debug(String output) {
@@ -1916,7 +1911,7 @@ public class DummyProcessWithFrames {
 			System.out.println(output);
 		}
 	}
-	
+
 	
 	private static double[] pfixer(FrameModel fm,
 							DirectoryModel drm,

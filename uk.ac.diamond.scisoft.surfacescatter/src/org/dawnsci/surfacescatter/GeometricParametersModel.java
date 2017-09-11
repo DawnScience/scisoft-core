@@ -34,7 +34,14 @@ public class GeometricParametersModel {
 	private EnumMap<SXRDAngleAliasEnum,String> sXRDMap;
 	private EnumMap<ReflectivityAngleAliasEnum,String> reflectivityAnglesMap;
 	private EnumMap<ReflectivityFluxParametersAliasEnum,String> reflectivityFluxMap;
+	private boolean useNegativeQ = false;
 	
+	public boolean isUseNegativeQ() {
+		return useNegativeQ;
+	}
+	public void setUseNegativeQ(boolean useNegativeQ) {
+		this.useNegativeQ = useNegativeQ;
+	}
 	public Double getNormalisationFactor() {
 		return normalisationFactor;
 	}

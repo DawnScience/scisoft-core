@@ -21,7 +21,6 @@ public class OverlappingBgBoxUsingIOperation
 	private static Polynomial2D g2;
 		private static Dataset output;
 		private DoubleDataset in1Background;
-		private int[][] newOffsetLenPt;
 		private static int DEBUG =1;
 		
 		@Override
@@ -105,7 +104,6 @@ public class OverlappingBgBoxUsingIOperation
 			
 			Dataset matrix = LinearLeastSquaresServicesForDialog.polynomial2DLinearLeastSquaresMatrixGenerator(
 					AnalaysisMethodologies.toInt(model.getFitPower()), xBackgroundDat, yBackgroundDat);
-//			double[] location = null;
 	              	   
 	        DoubleDataset test = (DoubleDataset)LinearAlgebra.solveSVD(matrix, zBackgroundDat);
 			double[] params = test.getData();

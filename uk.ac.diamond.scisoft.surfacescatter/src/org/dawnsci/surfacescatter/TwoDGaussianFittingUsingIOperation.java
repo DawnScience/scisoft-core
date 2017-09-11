@@ -219,6 +219,7 @@ public class TwoDGaussianFittingUsingIOperation extends AbstractOperation<TwoDFi
 					}
 				}
 			}
+			
 			try{
 				results[i] = Fitter.GaussianFit(Av, axis[i]);
 //				Fitter.NDGaussianSimpleFit(data, axis)

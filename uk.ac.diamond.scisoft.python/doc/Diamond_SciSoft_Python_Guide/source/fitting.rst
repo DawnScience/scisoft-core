@@ -9,42 +9,42 @@ Fitting functions
 The fit function requires fitting functions to be specified. There are a number of built-in
 fitting functions defined in ``fit.function`` listed in the table below:
 
-+------------+-------------------------------------+-----------------------------------+
-| Name       | Description                         | Parameters                        |
-+============+=====================================+===================================+
-| offset     | constant offset, :math:`a`          | :math:`a`                         |
-+------------+-------------------------------------+-----------------------------------+
-| linear     | linear function, :math:`a x + b`    | :math:`a, b`                      |
-+------------+-------------------------------------+-----------------------------------+
-| quadratic  | quadratic function,                 | :math:`a, b, c`                   |
-|            | :math:`a x^2 + b x + c`             |                                   |
-+------------+-------------------------------------+-----------------------------------+
-| cubic      | cubic function,                     | :math:`a, b, c, d`                |
-|            | :math:`a x^3 + b x^2 + c x + d`     |                                   |
-+------------+-------------------------------------+-----------------------------------+
-| step       | double step profile                 | base, start, end, outer step,     |
-|            |                                     | inner step, inner width fraction, | 
-|            |                                     | inner offset fraction             |  
-+------------+-------------------------------------+-----------------------------------+
-| gaussian   | Gaussian profile (normal profile)   | position, FWHM, area              |
-+------------+-------------------------------------+-----------------------------------+
-| lorentzian | Lorentzian profile (Cauchy or       | position, FWHM, area              |
-|            | Breit-Wigner profile)               |                                   |
-+------------+-------------------------------------+-----------------------------------+
-| pvoigt     | pseudo-Voigt profile                | position, Lorentzian FWHM,        |
-|            |                                     | area, Gaussian FWHM, mixing       |
-+------------+-------------------------------------+-----------------------------------+
-| voigt      | Voigt profile                       | position, Lorentzian FWHM,        |
-|            |                                     | area, Gaussian FWHM               |
-+------------+-------------------------------------+-----------------------------------+
-| fano       | Fano resonance profile              | resonance position, width,        |
-|            |                                     | cross-section, Fano parameter     |
-+------------+-------------------------------------+-----------------------------------+
-| fano_gaussian | modified Fano-Gaussian resonance profile | position, Lorentzian FWHM, |
++------------+-------------------------------------+-------------------------------------+
+| Name       | Description                         | Parameters                          |
++============+=====================================+=====================================+
+| offset     | constant offset, :math:`a`          | :math:`a`                           |
++------------+-------------------------------------+-------------------------------------+
+| linear     | linear function, :math:`a x + b`    | :math:`a, b`                        |
++------------+-------------------------------------+-------------------------------------+
+| quadratic  | quadratic function,                 | :math:`a, b, c`                     |
+|            | :math:`a x^2 + b x + c`             |                                     |
++------------+-------------------------------------+-------------------------------------+
+| cubic      | cubic function,                     | :math:`a, b, c, d`                  |
+|            | :math:`a x^3 + b x^2 + c x + d`     |                                  -- |
++------------+-------------------------------------+-------------------------------------+
+| step       | double step profile                 | base, start, end, outer step,       |
+|            |                                     | inner step, inner width fraction,   | 
+|            |                                     | inner offset fraction               |
++------------+-------------------------------------+-------------------------------------+
+| gaussian   | Gaussian profile (normal profile)   | position, FWHM, area                |
++------------+-------------------------------------+-------------------------------------+
+| lorentzian | Lorentzian profile (Cauchy or       | position, FWHM, area                |
+|            | Breit-Wigner profile)               |                                     |
++------------+-------------------------------------+-------------------------------------+
+| pvoigt     | pseudo-Voigt profile                | position, Lorentzian FWHM,          |
+|            |                                     | area, Gaussian FWHM, mixing         |
++------------+-------------------------------------+-------------------------------------+
+| voigt      | Voigt profile                       | position, Lorentzian FWHM,          |
+|            |                                     | area, Gaussian FWHM                 |
++------------+-------------------------------------+-------------------------------------+
+| fano       | Fano resonance profile              | resonance position, width,          |
+|            |                                     | cross-section, Fano parameter       |
++------------+-------------------------------------+-------------------------------------+
+| fano_gaussian | modified Fano-Gaussian resonance profile | position, Lorentzian FWHM,  |
 |            |                                     | area, Gaussian FWHM, Fano parameter |
-+------------+-------------------------------------+-----------------------------------+
-| pearson7   | Pearson VII profile                 | position, FWHM, area, power       |
-+------------+-------------------------------------+-----------------------------------+
++------------+-------------------------------------+-------------------------------------+
+| pearson7   | Pearson VII profile                 | position, FWHM, area, power         |
++------------+-------------------------------------+-------------------------------------+
 
 Functions defined in Jython can also be used as long as they conform to a
 standard argument signature::

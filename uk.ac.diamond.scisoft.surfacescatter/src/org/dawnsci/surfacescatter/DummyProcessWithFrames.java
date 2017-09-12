@@ -1125,9 +1125,8 @@ public class DummyProcessWithFrames {
 					int[] len = drm.getInitialLenPt()[0];
 					int[] pt = drm.getInitialLenPt()[1];
 					
-
-					fm.setRoiLocation(new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
-							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
+					fm.setRoiLocation(LocationLenPtConverterUtils.lenPtToLocationConverter(new int[][]{len, pt}));
+					
 				}
 				
 				if(AnalaysisMethodologies.toInt(fm.getFitPower())<5){
@@ -1181,9 +1180,8 @@ public class DummyProcessWithFrames {
 					int[] len = drm.getInitialLenPt()[0];
 					int[] pt = drm.getInitialLenPt()[1];
 					
-
-					fm.setRoiLocation(new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
-							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
+					fm.setRoiLocation(LocationLenPtConverterUtils.lenPtToLocationConverter(new int[][]{len, pt}));
+					
 				}
 	
 				output = secondConstantROIMethod(input,
@@ -1206,15 +1204,13 @@ public class DummyProcessWithFrames {
 				}
 
 				else{
-					
+
 					int[] len = drm.getInitialLenPt()[0];
 					int[] pt = drm.getInitialLenPt()[1];
-					
 
-					fm.setRoiLocation(new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
-							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
+					fm.setRoiLocation(LocationLenPtConverterUtils.lenPtToLocationConverter(new int[][]{len, pt}));
 				}
-				
+
 				output = secondConstantROIMethod(input,
   						 drm,
   						 fm.getBackgroundMethdology(), 
@@ -1240,9 +1236,8 @@ public class DummyProcessWithFrames {
 					int[] len = drm.getInitialLenPt()[0];
 					int[] pt = drm.getInitialLenPt()[1];
 					
-
-					fm.setRoiLocation(new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
-							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
+					fm.setRoiLocation(LocationLenPtConverterUtils.lenPtToLocationConverter(new int[][]{len, pt}));
+					
 				}
 				
 				
@@ -1280,10 +1275,9 @@ public class DummyProcessWithFrames {
 					
 					int[] len = drm.getInitialLenPt()[0];
 					int[] pt = drm.getInitialLenPt()[1];
-					
 
-					fm.setRoiLocation(new double[] { (double) pt[0], (double) pt[1], (double) (pt[0] + len[0]), (double) (pt[1]),
-							(double) pt[0], (double) pt[1] + len[1], (double) (pt[0] + len[0]), (double) (pt[1] + len[1])});
+					fm.setRoiLocation(LocationLenPtConverterUtils.lenPtToLocationConverter(new int[][]{len, pt}));
+
 				}
 				
 				OperationData outputOD3= OneDFittingIOp(//drm.getLenPtForEachDat()[k],
@@ -1340,8 +1334,6 @@ public class DummyProcessWithFrames {
 				double[] d = LocationLenPtConverterUtils.lenPtToLocationConverter(sspLenPt);
 				fm.setRoiLocation(d);
 			}
-			
-			
 			
 			debug("  intensity:  " + intensity + "   k: " + k);
 		}

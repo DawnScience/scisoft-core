@@ -337,36 +337,36 @@ public class CurveStitchWithErrorsAndFrames {
 		sortedAttenuatedDatasets[2].setErrors(sortedYArrayCorrectedFhklError);
 		sortedAttenuatedDatasets[7].setErrors(sortedYArrayCorrectedRawError);
 		
-		if(MethodSetting.toInt(csdp.getCorrectionSelection()) == 1||
-			MethodSetting.toInt(csdp.getCorrectionSelection()) == 2||	
-			MethodSetting.toInt(csdp.getCorrectionSelection()) == 3){
-		
-			double normalisation = 1/sortedAttenuatedDatasets[0].getDouble(0);
-			sortedAttenuatedDatasets[0] = 
-			Maths.multiply(sortedAttenuatedDatasets[0], normalisation);
-			
-			sortedYArrayCorrectedError = Maths.multiply(sortedYArrayCorrectedError, normalisation);
-			
-			
-			double normalisationFhkl = 1/sortedAttenuatedDatasets[2].getDouble(0);
-			sortedAttenuatedDatasets[2] = 
-			Maths.multiply(sortedAttenuatedDatasets[2], normalisation);
-			
-			sortedYArrayCorrectedFhklError = Maths.multiply(sortedYArrayCorrectedFhklError, normalisationFhkl);
-			
-			double normalisationRaw = 1/sortedAttenuatedDatasets[7].getDouble(0);
-			sortedAttenuatedDatasets[7] = 
-			Maths.multiply(sortedAttenuatedDatasets[7], normalisation);
-			
-			sortedYArrayCorrectedRawError = Maths.multiply(sortedYArrayCorrectedRawError, normalisationRaw);
-			
-			
-			
-			sortedAttenuatedDatasets[0].setErrors(sortedYArrayCorrectedError);
-			sortedAttenuatedDatasets[2].setErrors(sortedYArrayCorrectedFhklError);
-			sortedAttenuatedDatasets[7].setErrors(sortedYArrayCorrectedRawError);
-		}
-		
+//		if(MethodSetting.toInt(csdp.getCorrectionSelection()) == 1||
+//			MethodSetting.toInt(csdp.getCorrectionSelection()) == 2||	
+//			MethodSetting.toInt(csdp.getCorrectionSelection()) == 3){
+//		
+//			double normalisation = 1/sortedAttenuatedDatasets[0].getDouble(0);
+//			sortedAttenuatedDatasets[0] = 
+//			Maths.multiply(sortedAttenuatedDatasets[0], normalisation);
+//			
+//			sortedYArrayCorrectedError = Maths.multiply(sortedYArrayCorrectedError, normalisation);
+//			
+//			
+//			double normalisationFhkl = 1/sortedAttenuatedDatasets[2].getDouble(0);
+//			sortedAttenuatedDatasets[2] = 
+//			Maths.multiply(sortedAttenuatedDatasets[2], normalisation);
+//			
+//			sortedYArrayCorrectedFhklError = Maths.multiply(sortedYArrayCorrectedFhklError, normalisationFhkl);
+//			
+//			double normalisationRaw = 1/sortedAttenuatedDatasets[7].getDouble(0);
+//			sortedAttenuatedDatasets[7] = 
+//			Maths.multiply(sortedAttenuatedDatasets[7], normalisation);
+//			
+//			sortedYArrayCorrectedRawError = Maths.multiply(sortedYArrayCorrectedRawError, normalisationRaw);
+//			
+//			
+//			
+//			sortedAttenuatedDatasets[0].setErrors(sortedYArrayCorrectedError);
+//			sortedAttenuatedDatasets[2].setErrors(sortedYArrayCorrectedFhklError);
+//			sortedAttenuatedDatasets[7].setErrors(sortedYArrayCorrectedRawError);
+//		}
+//		
 		csdp.setSplicedCurveY(sortedAttenuatedDatasets[0]);
 		csdp.setSplicedCurveX(sortedAttenuatedDatasets[1]);
 		csdp.setSplicedCurveYFhkl(sortedAttenuatedDatasets[2]);

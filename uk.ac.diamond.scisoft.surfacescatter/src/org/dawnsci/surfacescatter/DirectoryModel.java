@@ -713,7 +713,7 @@ public class DirectoryModel {
 												   int k, // posiiton in the dat
 												   double result) {
 		
-		if(this.dmxList== null){
+		if(this.dmxList== null || dmxList.get(0).size() <= 0){
 			
 			this.dmxList= new ArrayList<ArrayList<Double>>();
 			
@@ -724,7 +724,7 @@ public class DirectoryModel {
 				}
 			}
 		}
-		
+
 		dmxList.get(n).set(k, result);
 		
 		return dmxList;

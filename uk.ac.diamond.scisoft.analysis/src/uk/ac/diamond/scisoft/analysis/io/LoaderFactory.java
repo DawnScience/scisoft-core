@@ -346,8 +346,10 @@ public class LoaderFactory {
 		}
 		
 		final File file = new File(path);
-		if (!file.exists()) throw new FileNotFoundException(path);
-		
+		if (!file.exists()) {
+			new File(file.getParent()).list();
+			if (!file.exists()) throw new FileNotFoundException(path);	
+		}
 		if (file.isFile()) {
 		    return getFileData(path, willLoadMetadata, loadImageStacks, lazily, mon);
 		    

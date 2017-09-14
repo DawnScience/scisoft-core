@@ -41,9 +41,12 @@ public class CsdpGeneratorFromDrm {
 			int datNo = fm.getDatNo();
 			int noInDatFile = fm.getNoInOriginalDat();
 			boolean goodPoint = fm.isGoodPoint();
-			
-			goodPointLists.get(datNo).set(noInDatFile, goodPoint);
-			
+			try{
+				goodPointLists.get(datNo).set(noInDatFile, goodPoint);
+			}
+			catch(Exception r){
+				System.out.println("error at datNo:  " + datNo + "   noInDatFile : "  + noInDatFile);
+			}
 			splicedGoodPointArray.add(fm.isGoodPoint());
 			
 		}
@@ -199,9 +202,6 @@ public class CsdpGeneratorFromDrm {
 	public  IDataset[] goodPointIDatasetArrayGenerator(int n, // number of Dats
 			  											ArrayList<ArrayList<Double>> input){
 
-
-		
-		
 		if (input==null){
 			input = new ArrayList<ArrayList<Double>>();
 		

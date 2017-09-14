@@ -15,16 +15,15 @@ public class CurveStitchWithErrorsAndFrames {
 	private static double attenuationFactorFhkl;
 	private static double attenuationFactorRaw;
 	private static double[][] maxMinArray;
-//	private static int DEBUG =0;
 	
 	public static IDataset[] curveStitch4 (CurveStitchDataPackage csdp, 
 										   double[][] maxMinArrayIn){
+
+
+		return curveStitch4 (csdp, 
+				maxMinArrayIn,
+				null);
 		
-		
-		IDataset[] output = curveStitch4 (csdp, 
-				   						  maxMinArrayIn,
-				   						  null);
-		return output;
 		
 	}
 	

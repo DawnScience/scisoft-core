@@ -146,22 +146,22 @@ public class Export2DBSLOperation extends AbstractOperation<Export2DBSLModel, Op
 		// then get the day
 		String day = String.format("%02d", cal.get(Calendar.DAY_OF_MONTH));
 		// and the last 3 digits of the run number
-		String runNumber = fileName.substring(fileName.length() - 3);
+		String runNumber = fileName.substring(fileName.length() - 2);
 
 		// Now we can crete a placeholder for the file titles
 		String[] bslFileNames = new String[5];
 		
 		// And 'string' them all together
 		// 000 is the header
-		bslFileNames[0] = runNumber + "000." + month + day;
+		bslFileNames[0] = "A" + runNumber + "000." + month + day;
 		// 001 is the primary scattering data
-		bslFileNames[1] = runNumber + "001." + month + day;
+		bslFileNames[1] = "A" + runNumber + "001." + month + day;
 		// 002 is the scalers data
-		bslFileNames[2] = runNumber + "002." + month + day;
+		bslFileNames[2] = "A" + runNumber + "002." + month + day;
 		// 003 is the secondary scattering data
-		bslFileNames[3] = runNumber + "003." + month + day;
+		bslFileNames[3] = "A" + runNumber + "003." + month + day;
 		// 004 is the scan times
-		bslFileNames[4] = runNumber + "004." + month + day;
+		bslFileNames[4] = "A" + runNumber + "004." + month + day;
 
 		// Return the file names
 		return bslFileNames;

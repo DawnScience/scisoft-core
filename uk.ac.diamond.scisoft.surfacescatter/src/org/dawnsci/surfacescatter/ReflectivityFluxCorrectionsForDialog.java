@@ -11,8 +11,6 @@ package org.dawnsci.surfacescatter;
 
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.Maths;
-
 import uk.ac.diamond.scisoft.analysis.dataset.function.Interpolation1D;
 
 public class ReflectivityFluxCorrectionsForDialog{

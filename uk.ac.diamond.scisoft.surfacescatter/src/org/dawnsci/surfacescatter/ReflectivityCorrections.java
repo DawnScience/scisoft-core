@@ -25,6 +25,9 @@ public class ReflectivityCorrections {
 		NormalDistribution beamfootprint  = new NormalDistribution(0, (1e-3*BeamHeight/2*Math.sqrt(2*Math.log(2) - 0.5)));
 		double areaCorrection = 2*(beamfootprint.cumulativeProbability((footprint*Math.sin((theta + angularfudgefactor)*Math.PI/180))));
 			
+		
+		System.out.println("theta  : " + theta + "   areaCorrection :  "+ areaCorrection +"   this note is in ReflectivityCorrections");
+		
 		return areaCorrection;
 	}
 }

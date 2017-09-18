@@ -1840,7 +1840,7 @@ public class DummyProcessWithFrames {
 		
 		MethodSetting method =fm.getCorrectionSelection(); 
 
-		yValue = DatasetFactory.zeros(new int[] {1}, Dataset.ARRAYFLOAT64);
+		yValue = DatasetFactory.createFromObject(0);
 
 		switch(method){
 

@@ -54,7 +54,7 @@ public class PCA {
 		
 		Dataset comps = out.getSlice(s);
 		
-		Dataset scores = LinearAlgebra.dotProduct(data, comps.transpose());
+		Dataset scores = LinearAlgebra.dotProduct(centered, comps.transpose());
 		
 //		 Get variance explained by singular values
 		SimpleMatrix simple = SimpleMatrix.wrap(S).extractDiag();

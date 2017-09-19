@@ -102,13 +102,7 @@ public class Polynomial1DReflectivityOperation extends AbstractOperation<Polynom
 
 		double areaCorrection = 0;
 		
-		try {
-			areaCorrection = ReflectivityCorrections.reflectivityCorrectionsBatch(input
-					, model.getAngularFudgeFactor() 
-					, model.getBeamHeight(), model.getFootprint());
-		} catch (Exception e1) {
-			System.out.println("failed to get areaCorrection");
-		}
+	
 		
 		pBackgroundSubtracted = Maths.divide(pBackgroundSubtracted,areaCorrection);
 		

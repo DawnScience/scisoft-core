@@ -244,7 +244,7 @@ public class Polynomial2D extends AFunction {
 							temp += v;
 						}
 						catch (ArrayIndexOutOfBoundsException exc){
-							
+							System.out.println(exc.getMessage());
 						}
 					}
 				}

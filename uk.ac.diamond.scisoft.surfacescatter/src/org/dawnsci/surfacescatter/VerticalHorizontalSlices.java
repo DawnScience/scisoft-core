@@ -152,9 +152,6 @@ public class VerticalHorizontalSlices {
 		ILineTrace lt1 = pS.createLineTrace("background sub slice");
 		lt1.setData(xhrange, iihdata);
 		
-	 
-		
-		
 		return lt1;
 	}
 	

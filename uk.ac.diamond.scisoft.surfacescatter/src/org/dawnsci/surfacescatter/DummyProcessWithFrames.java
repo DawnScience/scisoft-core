@@ -1733,8 +1733,10 @@ public class DummyProcessWithFrames {
 			}
 		}
 
-
-		drm.setTemporaryBackgroundHolder((IDataset) outputOD4.getAuxData()[2]);
+		
+		IDataset check = (IDataset) outputOD4.getAuxData()[2];
+		
+		drm.setTemporaryBackgroundHolder(check);
 
 
 		return output;
@@ -1901,8 +1903,7 @@ public class DummyProcessWithFrames {
 				e.printStackTrace();
 			}
 
-			yValue = Maths.multiply(output, correction);
-
+			
 			break;
 
 		case Reflectivity_NO_Correction:

@@ -106,9 +106,9 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 		return new OperationData(output, (IDataset) in1Background);
 	}
 
-	private void debug(String output) {
-		if (DEBUG == 1) {
-			System.out.println(output);
-		}
-	}
+//	private void debug(String output) {
+//		if (DEBUG == 1) {
+//			System.out.println(output);
+//		}
+//	}
 }

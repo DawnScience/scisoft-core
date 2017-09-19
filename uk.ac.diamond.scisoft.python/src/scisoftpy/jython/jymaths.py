@@ -51,8 +51,6 @@ from jycore import _translatenativetype, _empty_boolean_array
 @_wrap
 def prod(a, axis=None, dtype=None):
     '''Product of input'''
-    if axis is not None and axis < 0:
-        axis = a.getRank() + axis
     if dtype is None:
         if axis is None:
             return a.product(_empty_boolean_array)
@@ -65,8 +63,6 @@ def prod(a, axis=None, dtype=None):
 @_wrap
 def sum(a, axis=None, dtype=None): #@ReservedAssignment
     '''Sum of input'''
-    if axis is not None and axis < 0:
-        axis = a.getRank() + axis
     if dtype is None:
         if axis is None:
             return a.sum(_empty_boolean_array)
@@ -389,8 +385,6 @@ def median(a, axis=None):
     if axis is None:
         return _stats.median(a)
     else:
-        if axis < 0:
-            axis = a.getRank() + axis
         return _stats.median(a, axis)
 
 @_wrap
@@ -402,8 +396,6 @@ def cumprod(a, axis=None, dtype=None):
     if axis is None:
         return _stats.cumulativeProduct(a)
     else:
-        if axis < 0:
-            axis = a.getRank() + axis
         return _stats.cumulativeProduct(a, _jint(axis))
 
 @_wrap
@@ -415,8 +407,6 @@ def cumsum(a, axis=None, dtype=None):
     if axis is None:
         return _stats.cumulativeSum(a)
     else:
-        if axis < 0:
-            axis = a.getRank() + axis
         return _stats.cumulativeSum(a, _jint(axis))
 
 @_wrap

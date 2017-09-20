@@ -234,8 +234,8 @@ public class Polynomial2D extends AFunction {
 			for (int l=-1*(boundaryBox[0]); l<(-1*(boundaryBox[0]))+len[0]; l++){
 				
 				double temp = 0;
-				double x = k;
-				double y = l;
+				double x = l;
+				double y = k;
 			
 				for (int j = 0; j < (fitPower+1); j++) {
 					for (int i = 0; i < (fitPower+1); i++) {
@@ -258,44 +258,44 @@ public class Polynomial2D extends AFunction {
 	
 
 
-	public DoubleDataset getOutputValues0 (double[] d,int[] len, int boundaryBox, int fitPower ) {
-				
-			DoubleDataset output1 = DatasetFactory.zeros(new int[] {len[1], len[0]});//new DoubleDataset(len[1], len[0]);
-			
-			for (int k=boundaryBox; k<boundaryBox+len[1]; k++){
-				for (int l=boundaryBox; l<boundaryBox+len[0]; l++){
-					
-					double temp = 0;
-					double x = k;
-					double y = l;
-				
-					for (int j = 0; j < (fitPower+1); j++) {
-						for (int i = 0; i < (fitPower+1); i++) {
-							try{
-								double v = d[(j*(fitPower+1)+i)]*Math.pow(x, j)*Math.pow(y, i);
-								temp += v;
-							}
-							catch (ArrayIndexOutOfBoundsException exc){
-								
-							}
-						}
-					}
-					
-					output1.set(temp, k-boundaryBox, l-boundaryBox);
-				}
-			}
-		
-			return output1;
-	}
+//	public DoubleDataset getOutputValues0 (double[] d,int[] len, int boundaryBox, int fitPower ) {
+//				
+//			DoubleDataset output1 = DatasetFactory.zeros(new int[] {len[1], len[0]});//new DoubleDataset(len[1], len[0]);
+//			
+//			for (int k=boundaryBox; k<boundaryBox+len[1]; k++){
+//				for (int l=boundaryBox; l<boundaryBox+len[0]; l++){
+//					
+//					double temp = 0;
+//					double x = k;
+//					double y = l;
+//				
+//					for (int j = 0; j < (fitPower+1); j++) {
+//						for (int i = 0; i < (fitPower+1); i++) {
+//							try{
+//								double v = d[(j*(fitPower+1)+i)]*Math.pow(x, j)*Math.pow(y, i);
+//								temp += v;
+//							}
+//							catch (ArrayIndexOutOfBoundsException exc){
+//								
+//							}
+//						}
+//					}
+//					
+//					output1.set(temp, k-boundaryBox, l-boundaryBox);
+//				}
+//			}
+//		
+//			return output1;
+//	}
 
-	public DoubleDataset getOutputValues1 (int[] len, int boundaryBox, int fitPower ) {
-		
-		double[] d = getParameterValues();
-		
-		DoubleDataset output1 = this.getOutputValues0(d,len, boundaryBox, fitPower);
-	
-		return output1;
-	}
+//	public DoubleDataset getOutputValues1 (int[] len, int boundaryBox, int fitPower ) {
+//		
+//		double[] d = getParameterValues();
+//		
+//		DoubleDataset output1 = this.getOutputValues0(d,len, boundaryBox, fitPower);
+//	
+//		return output1;
+//	}
 	
 	
 	public IDataset getOutputValues2 (double[] d,int[] len, int boundaryBox, int fitPower ) {
@@ -316,7 +316,7 @@ public class Polynomial2D extends AFunction {
 							temp += v;
 						}
 						catch (ArrayIndexOutOfBoundsException exc){
-							
+							System.out.println(exc.getMessage());
 						}
 					}
 				}

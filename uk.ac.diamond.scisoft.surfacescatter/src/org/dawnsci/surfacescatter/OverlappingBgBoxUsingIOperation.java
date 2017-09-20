@@ -82,8 +82,8 @@ extends AbstractOperation<SecondConstantROIBackgroundSubtractionModel, Operation
 			for(int j = backPt[1]; j<backPt[1]+backLen[1]; j++){
 				try{
 					if((i<pt[0]||i>=(pt[0]+len[0]))||(j<pt[1]||j>=(pt[1]+len[1]))){
-						br.xArrayAdd(i);
-						br.yArrayAdd(j);
+						br.xArrayAdd(i-backPt[0]);
+						br.yArrayAdd(j-backPt[1]);
 						br.zArrayAdd(input.getDouble(j,i));
 					}
 				}
@@ -97,10 +97,29 @@ extends AbstractOperation<SecondConstantROIBackgroundSubtractionModel, Operation
 		Dataset yBackgroundDat = DatasetFactory.createFromObject(br.getYArray());
 		Dataset zBackgroundDat = DatasetFactory.createFromObject(br.getZArray());
 
+		Dataset xBackgroundDatEx = xBackgroundDat.clone();
+		Dataset yBackgroundDatEx = yBackgroundDat.clone();
+		Dataset zBackgroundDatEx = zBackgroundDat.clone();
+		
+		
+		for(int i = 0; i<br.getXArray().size(); i++){
+			
+			double xi = br.getXArray().get(i);
+			xBackgroundDatEx.set(xi, i);
+			
+			double yi = br.getYArray().get(i);
+			yBackgroundDatEx.set(yi, i);
+			
+			double zi = br.getZArray().get(i);
+			zBackgroundDatEx.set(zi, i);
+			
+		}
+		
+		
 		Dataset matrix = LinearLeastSquaresServicesForDialog.polynomial2DLinearLeastSquaresMatrixGenerator(
-				AnalaysisMethodologies.toInt(model.getFitPower()), xBackgroundDat, yBackgroundDat);
+				AnalaysisMethodologies.toInt(model.getFitPower()), xBackgroundDatEx, yBackgroundDatEx);
 
-		DoubleDataset test = (DoubleDataset)LinearAlgebra.solveSVD(matrix, zBackgroundDat);
+		DoubleDataset test = (DoubleDataset)LinearAlgebra.solveSVD(matrix, zBackgroundDatEx);
 		double[] params = test.getData();
 
 		in1Background = g2.getOutputValuesOverlapping(params, len, new int[] {(int) (model.getBoxOffsetLenPt()[1][0]),(int) (model.getBoxOffsetLenPt()[1][1])},

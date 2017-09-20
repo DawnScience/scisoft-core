@@ -214,7 +214,8 @@ public class SavingUtils {
 
 				writer.println("#qdcd	I	Ie	Area Correction	Flux Correction");
 
-				if(drm.getCorrectionSelection() == MethodSetting.Reflectivity_with_Flux_Correction){
+				if(drm.getCorrectionSelection() == MethodSetting.Reflectivity_with_Flux_Correction_Gaussian_Profile ||
+						drm.getCorrectionSelection() == MethodSetting.Reflectivity_with_Flux_Correction_Simple_Scaling){
 					//
 					for(int gh = 0 ; gh<fms.size(); gh++){
 
@@ -231,7 +232,8 @@ public class SavingUtils {
 					}
 				}
 
-				if(drm.getCorrectionSelection() == MethodSetting.Reflectivity_without_Flux_Correction){
+				if(drm.getCorrectionSelection() == MethodSetting.Reflectivity_without_Flux_Correction_Gaussian_Profile ||
+						drm.getCorrectionSelection() == MethodSetting.Reflectivity_without_Flux_Correction_Simple_Scaling){
 
 					for(int gh = 0 ; gh<fms.size(); gh++){
 

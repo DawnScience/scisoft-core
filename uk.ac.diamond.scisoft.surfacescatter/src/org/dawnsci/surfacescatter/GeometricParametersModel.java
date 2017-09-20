@@ -29,7 +29,7 @@ public class GeometricParametersModel {
 	private String savePath  = "/scratch/runtime-uk.ac.diamond.dawn.product/data/examples";
 	private String fluxPath = "NO"; //"/scratch/233990.dat";
 	private String xNameRef ="qsdcd";
-	private double energy = 12000;
+	private double energy = 12500;
 	private int theta = 0;
 	private EnumMap<SXRDAngleAliasEnum,String> sXRDMap;
 	private EnumMap<ReflectivityAngleAliasEnum,String> reflectivityAnglesMap;

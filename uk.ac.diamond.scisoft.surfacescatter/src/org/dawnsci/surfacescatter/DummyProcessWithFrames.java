@@ -1864,7 +1864,28 @@ public class DummyProcessWithFrames {
 			break;
 
 
-		case Reflectivity_with_Flux_Correction:
+		case Reflectivity_with_Flux_Correction_Gaussian_Profile:
+
+			try {
+
+				double refAreaCorrection = fm.getReflectivityAreaCorrection(); 
+
+				double refFluxCorrection = fm.getReflectivityFluxCorrection(); 
+
+				correction = refAreaCorrection* refFluxCorrection; 
+
+				if (correction ==0){
+					correction = 0.001;
+				}
+			} 
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+
+
+			break;
+			
+		case Reflectivity_with_Flux_Correction_Simple_Scaling:
 
 			try {
 
@@ -1885,7 +1906,28 @@ public class DummyProcessWithFrames {
 
 			break;
 
-		case Reflectivity_without_Flux_Correction:
+		case Reflectivity_without_Flux_Correction_Gaussian_Profile:
+
+			try {
+
+				double refAreaCorrection = fm.getReflectivityAreaCorrection(); 
+
+				correction = refAreaCorrection;
+
+				if (correction ==0){
+					correction = 0.001;
+				}
+			} 
+
+			catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			
+			break;
+			
+		case Reflectivity_without_Flux_Correction_Simple_Scaling:
 
 			try {
 

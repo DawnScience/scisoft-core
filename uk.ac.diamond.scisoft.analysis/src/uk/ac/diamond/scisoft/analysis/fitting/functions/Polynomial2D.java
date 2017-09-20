@@ -48,19 +48,21 @@ public class Polynomial2D extends AFunction {
 
 	/**
 	 * Make a polynomial of given degree (0 - constant, 1 - linear, 2 - quadratic, etc)
+	 * 
 	 * @param degree
 	 */
 	public Polynomial2D(int degree) {
-		super((int) (Math.pow((degree+1),2)));
+		super((int) (Math.pow((degree + 1), 2)));
 		this.degree = degree;
-		nparams = (int) Math.pow((degree+1),2);
-		noFunctions = (int) Math.pow((degree+1),2);
+		nparams = (int) Math.pow((degree + 1), 2);
+		noFunctions = (int) Math.pow((degree + 1), 2);
 		parameters = createParameters(noFunctions);
-		
+
 	}
 
 	/**
 	 * Make a polynomial with given parameters
+	 * 
 	 * @param params
 	 */
 	public Polynomial2D(double[] params) {
@@ -69,6 +71,7 @@ public class Polynomial2D extends AFunction {
 
 	/**
 	 * Make a polynomial with given parameters
+	 * 
 	 * @param params
 	 */
 	public Polynomial2D(IParameter... params) {
@@ -93,7 +96,7 @@ public class Polynomial2D extends AFunction {
 		a = new double[nparams];
 
 		for (int i = 0; i < nparams; i++) {
-			a[i] = 0.5*(min[i] + max[i]);
+			a[i] = 0.5 * (min[i] + max[i]);
 			parameters[i] = new Parameter(a[i], min[i], max[i]);
 		}
 
@@ -101,12 +104,10 @@ public class Polynomial2D extends AFunction {
 	}
 
 	@Override
-	public int getNoOfParameters(){
+	public int getNoOfParameters() {
 		return nparams;
 	}
-	
-	
-	
+
 	@Override
 	protected void setNames() {
 		if (isDirty() && noFunctions < getNoOfParameters()) {
@@ -130,8 +131,6 @@ public class Polynomial2D extends AFunction {
 
 		setDirty(false);
 	}
-	
-	
 
 	@Override
 	public double val(double... values) {
@@ -149,7 +148,7 @@ public class Polynomial2D extends AFunction {
 
 	@Override
 	public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
-		
+
 		double[] d = getParameterValues();
 		it.reset();
 		double[] coords = it.getCoordinates();
@@ -160,397 +159,385 @@ public class Polynomial2D extends AFunction {
 			double x = coords[0];
 			double y = coords[1];
 			double temp = 0;
-			for (int j = 0; j < (degree+1); j++) {
-				for (int k = 0; k < (degree+1); k++) {
-					double v = d[(j*(degree+1)+k)]*Math.pow(x, j)*Math.pow(y, k);
+			for (int j = 0; j < (degree + 1); j++) {
+				for (int k = 0; k < (degree + 1); k++) {
+					double v = d[(j * (degree + 1) + k)] * Math.pow(x, j) * Math.pow(y, k);
 					temp += v;
 				}
 			}
-//			if (temp<0){
-//				temp=0;
-//			}
-			buffer[i++] = temp;	
+			// if (temp<0){
+			// temp=0;
+			// }
+			buffer[i++] = temp;
 		}
-		
+
 		buffer.toString();
 	}
-	
+
 	public double[] outputParameters() {
-		
+
 		double[] d = getParameterValues();
-		
+
 		return d;
 	}
-	
-	
-	
-	public double[][] jacobian (CoordinatesIterator it){
-		
+
+	public double[][] jacobian(CoordinatesIterator it) {
+
 		it.reset();
 		double[] coords = it.getCoordinates();
-		
-		double[][] jacobian = new double[2][(int)(Math.pow((degree+1), 2))];
-		
+
+		double[][] jacobian = new double[2][(int) (Math.pow((degree + 1), 2))];
+
 		while (it.hasNext()) {
 			double x = coords[0];
 			double y = coords[1];
-		
-			for (int j = 0; j < (degree+1); j++) {
-				for (int k = 0; k < (degree+1); k++) {
-					
-					double v =0;
-					double u =0;
-					
-					v = Math.pow(x, j)*Math.pow(y, k);
-					u = Math.pow(x, j)*Math.pow(y, k);
-					
-					jacobian[0][(j*(degree+1)+k)] = v;
-					jacobian[1][(j*(degree+1)+k)] = u;
+
+			for (int j = 0; j < (degree + 1); j++) {
+				for (int k = 0; k < (degree + 1); k++) {
+
+					double v = 0;
+					double u = 0;
+
+					v = Math.pow(x, j) * Math.pow(y, k);
+					u = Math.pow(x, j) * Math.pow(y, k);
+
+					jacobian[0][(j * (degree + 1) + k)] = v;
+					jacobian[1][(j * (degree + 1) + k)] = u;
 				}
 			}
 		}
-		
+
 		return jacobian;
 	}
-	
+
 	public void checkFittingParameters() {
-		
+
 		double[] d = getParameterValues();
-		
+
 		System.out.println(">>>>>>>>>>>Fitted parameters: <<<<<<<<<");
-		
-		for (int e=0; e<d.length; e++){
-				System.out.println("Parameter d[" +e+"]: "+d[e]+"  ########");
+
+		for (int e = 0; e < d.length; e++) {
+			System.out.println("Parameter d[" + e + "]: " + d[e] + "  ########");
 		}
-		
-		
+
 	}
-	
-	public DoubleDataset getOutputValuesOverlapping (double[] d,int[] len, int[] boundaryBox, int fitPower ) {
-		
-		DoubleDataset output1 = DatasetFactory.zeros(new int[] {len[1], len[0]});//new DoubleDataset(len[1], len[0]);
-		
-		for (int k=-1*(boundaryBox[1]); k<(-1*(boundaryBox[1]))+len[1]; k++){
-			for (int l=-1*(boundaryBox[0]); l<(-1*(boundaryBox[0]))+len[0]; l++){
-				
+
+	public DoubleDataset getOutputValuesOverlapping(double[] d, int[] len, int[] boundaryBox, int fitPower) {
+
+		DoubleDataset output1 = DatasetFactory.zeros(new int[] { len[1], len[0] });// new DoubleDataset(len[1], len[0]);
+
+		for (int k = -1 * (boundaryBox[1]); k < (-1 * (boundaryBox[1])) + len[1]; k++) {
+			for (int l = -1 * (boundaryBox[0]); l < (-1 * (boundaryBox[0])) + len[0]; l++) {
+
 				double temp = 0;
 				double x = l;
 				double y = k;
-			
-				for (int j = 0; j < (fitPower+1); j++) {
-					for (int i = 0; i < (fitPower+1); i++) {
-						try{
-							double v = d[(j*(fitPower+1)+i)]*Math.pow(x, j)*Math.pow(y, i);
+
+				for (int j = 0; j < (fitPower + 1); j++) {
+					for (int i = 0; i < (fitPower + 1); i++) {
+						try {
+							double v = d[(j * (fitPower + 1) + i)] * Math.pow(x, j) * Math.pow(y, i);
 							temp += v;
-						}
-						catch (ArrayIndexOutOfBoundsException exc){
+						} catch (ArrayIndexOutOfBoundsException exc) {
 							System.out.println(exc.getMessage());
 						}
 					}
 				}
-				
-				output1.set(temp, k-(-1*boundaryBox[1]), l-(-1*boundaryBox[0]));
+
+				output1.set(temp, k - (-1 * boundaryBox[1]), l - (-1 * boundaryBox[0]));
 			}
 		}
-	
+
 		return output1;
-}
-	
+	}
 
+	public DoubleDataset getOutputValues0(double[] d, int[] len, int boundaryBox, int fitPower) {
 
-//	public DoubleDataset getOutputValues0 (double[] d,int[] len, int boundaryBox, int fitPower ) {
-//				
-//			DoubleDataset output1 = DatasetFactory.zeros(new int[] {len[1], len[0]});//new DoubleDataset(len[1], len[0]);
-//			
-//			for (int k=boundaryBox; k<boundaryBox+len[1]; k++){
-//				for (int l=boundaryBox; l<boundaryBox+len[0]; l++){
-//					
-//					double temp = 0;
-//					double x = k;
-//					double y = l;
-//				
-//					for (int j = 0; j < (fitPower+1); j++) {
-//						for (int i = 0; i < (fitPower+1); i++) {
-//							try{
-//								double v = d[(j*(fitPower+1)+i)]*Math.pow(x, j)*Math.pow(y, i);
-//								temp += v;
-//							}
-//							catch (ArrayIndexOutOfBoundsException exc){
-//								
-//							}
-//						}
-//					}
-//					
-//					output1.set(temp, k-boundaryBox, l-boundaryBox);
-//				}
-//			}
-//		
-//			return output1;
-//	}
+		DoubleDataset output1 = DatasetFactory.zeros(new int[] { len[1], len[0] });// new DoubleDataset(len[1], len[0]);
 
-//	public DoubleDataset getOutputValues1 (int[] len, int boundaryBox, int fitPower ) {
-//		
-//		double[] d = getParameterValues();
-//		
-//		DoubleDataset output1 = this.getOutputValues0(d,len, boundaryBox, fitPower);
-//	
-//		return output1;
-//	}
-	
-	
-	public IDataset getOutputValues2 (double[] d,int[] len, int boundaryBox, int fitPower ) {
-		
-		IDataset output1 = DatasetFactory.zeros(new int[] {len[1], len[0]});//new DoubleDataset(len[1], len[0]);
-		
-		for (int k=boundaryBox; k<boundaryBox+len[1]; k++){
-			for (int l=boundaryBox; l<boundaryBox+len[0]; l++){
-				
+		for (int k = boundaryBox; k < boundaryBox + len[1]; k++) {
+			for (int l = boundaryBox; l < boundaryBox + len[0]; l++) {
+
 				double temp = 0;
 				double x = k;
 				double y = l;
-			
-				for (int j = 0; j < (fitPower+1); j++) {
-					for (int i = 0; i < (fitPower+1); i++) {
-						try{
-							double v = d[(j*(fitPower+1)+i)]*Math.pow(x, j)*Math.pow(y, i);
+
+				for (int j = 0; j < (fitPower + 1); j++) {
+					for (int i = 0; i < (fitPower + 1); i++) {
+						try {
+							double v = d[(j * (fitPower + 1) + i)] * Math.pow(x, j) * Math.pow(y, i);
 							temp += v;
+						} catch (ArrayIndexOutOfBoundsException exc) {
+
 						}
-						catch (ArrayIndexOutOfBoundsException exc){
+					}
+				}
+
+				output1.set(temp, k - boundaryBox, l - boundaryBox);
+			}
+		}
+
+		return output1;
+	}
+
+	public DoubleDataset getOutputValues1(int[] len, int boundaryBox, int fitPower) {
+
+		double[] d = getParameterValues();
+
+		DoubleDataset output1 = this.getOutputValues0(d, len, boundaryBox, fitPower);
+
+		return output1;
+	}
+
+	public IDataset getOutputValues2(double[] d, int[] len, int boundaryBox, int fitPower) {
+
+		IDataset output1 = DatasetFactory.zeros(new int[] { len[1], len[0] });// new DoubleDataset(len[1], len[0]);
+
+		for (int k = boundaryBox; k < boundaryBox + len[1]; k++) {
+			for (int l = boundaryBox; l < boundaryBox + len[0]; l++) {
+
+				double temp = 0;
+				double x = k;
+				double y = l;
+
+				for (int j = 0; j < (fitPower + 1); j++) {
+					for (int i = 0; i < (fitPower + 1); i++) {
+						try {
+							double v = d[(j * (fitPower + 1) + i)] * Math.pow(x, j) * Math.pow(y, i);
+							temp += v;
+						} catch (ArrayIndexOutOfBoundsException exc) {
 							System.out.println(exc.getMessage());
 						}
 					}
 				}
-				
-				output1.set(temp, k-boundaryBox, l-boundaryBox);
+
+				output1.set(temp, k - boundaryBox, l - boundaryBox);
 			}
 		}
-	
+
 		return output1;
 	}
-	
-	
-//	@Override
-//	public double partialDeriv(IParameter parameter, double... position) {
-//		if (isDuplicated(parameter))
-//			return super.partialDeriv(parameter, position);
-//
-//		int i = indexOfParameter(parameter);
-//		if (i < 0)
-//			return 0;
-//
-//		final double pos = position[0];
-//		final int n = nparams - 1 - i;
-//		switch (n) {
-//		case 0:
-//			return 1.0;
-//		case 1:
-//			return pos;
-//		case 2:
-//			return pos * pos;
-//		default:
-//			return Math.pow(pos, n);
-//		}
-//	}
 
-//	@Override
-//	public void fillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it) {
-//		Dataset pos = DatasetUtils.convertToDataset(it.getValues()[0]);
-//
-//		final int n = nparams - 1 - indexOfParameter(parameter);
-//		switch (n) {
-//		case 0:
-//			data.fill(1);
-//			break;
-//		case 1:
-//			data.setSlice(pos);
-//			break;
-//		case 2:
-//			Maths.square(pos, data);
-//			break;
-//		default:
-//			Maths.power(pos, n, data);
-//			break;
-//		}
-//	}
+	// @Override
+	// public double partialDeriv(IParameter parameter, double... position) {
+	// if (isDuplicated(parameter))
+	// return super.partialDeriv(parameter, position);
+	//
+	// int i = indexOfParameter(parameter);
+	// if (i < 0)
+	// return 0;
+	//
+	// final double pos = position[0];
+	// final int n = nparams - 1 - i;
+	// switch (n) {
+	// case 0:
+	// return 1.0;
+	// case 1:
+	// return pos;
+	// case 2:
+	// return pos * pos;
+	// default:
+	// return Math.pow(pos, n);
+	// }
+	// }
+
+	// @Override
+	// public void fillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it) {
+	// Dataset pos = DatasetUtils.convertToDataset(it.getValues()[0]);
+	//
+	// final int n = nparams - 1 - indexOfParameter(parameter);
+	// switch (n) {
+	// case 0:
+	// data.fill(1);
+	// break;
+	// case 1:
+	// data.setSlice(pos);
+	// break;
+	// case 2:
+	// Maths.square(pos, data);
+	// break;
+	// default:
+	// Maths.power(pos, n, data);
+	// break;
+	// }
+	// }
 
 	public DoubleDataset makeMatrix(List<Dataset> coords, int degree) {
-		
-		int noFunctions = (int) Math.pow((degree+1),2);
+
+		int noFunctions = (int) Math.pow((degree + 1), 2);
 		final int rows = (coords.get(0)).getShape()[0];
-		DoubleDataset designMatrix = DatasetFactory.zeros(new int[] {rows, noFunctions}); 
-		
-		
+		DoubleDataset designMatrix = DatasetFactory.zeros(new int[] { rows, noFunctions });
+
 		for (int l = 0; l < rows; l++) {
 			final double x = (coords.get(0)).getDouble(l);
 			final double y = (coords.get(1)).getDouble(l);
 			double v = 1.0;
-			
-			for (int i=0; i<= (degree+1); i++){
-				for (int j=0; j<= (degree+1); j++){
-					double element = v*Math.pow(x,i)*Math.pow(y,j);
-					designMatrix.set(element, l, i*j+j);					
-					}
+
+			for (int i = 0; i <= (degree + 1); i++) {
+				for (int j = 0; j <= (degree + 1); j++) {
+					double element = v * Math.pow(x, i) * Math.pow(y, j);
+					designMatrix.set(element, l, i * j + j);
+				}
 			}
-			
+
 		}
 
-			return designMatrix;
+		return designMatrix;
 	}
-	
-	
-	
-	public static double[] makeAArray (int degree){
-		
-		double[] a = new double[(int) Math.pow((degree+1),2)];
-		for (int i=0; i<a.length; i++){
-			a[i] =1;
+
+	public static double[] makeAArray(int degree) {
+
+		double[] a = new double[(int) Math.pow((degree + 1), 2)];
+		for (int i = 0; i < a.length; i++) {
+			a[i] = 1;
 		}
-		
+
 		return a;
 	}
-	
+
 	/**
 	 * Create a 2D dataset which contains in each row a coordinate raised to n-th powers.
 	 * <p>
-	 * This is for solving the linear least squares problem 
+	 * This is for solving the linear least squares problem
+	 * 
 	 * @param coords
 	 * @return matrix
 	 */
-	public static DoubleDataset makeDesignMatrix(int[][]coords, int degree, double[] a) {
+	public static DoubleDataset makeDesignMatrix(int[][] coords, int degree, double[] a) {
 		final int rows = coords.length;
-		int noFunctions = (int) Math.pow((degree+1),2);
-		DoubleDataset designMatrix = DatasetFactory.zeros(new int[] {rows, noFunctions});
-		
-		for (int l =0; l<rows; l++){
-			for (int i=0; i<= (degree+1); i++){
-				for (int j=0; j<= (degree+1); j++){
-					double element = a[l]*Math.pow(coords[l][0],i)*Math.pow(coords[l][1],j);
-					designMatrix.set(element, l, i+j);
+		int noFunctions = (int) Math.pow((degree + 1), 2);
+		DoubleDataset designMatrix = DatasetFactory.zeros(new int[] { rows, noFunctions });
+
+		for (int l = 0; l < rows; l++) {
+			for (int i = 0; i <= (degree + 1); i++) {
+				for (int j = 0; j <= (degree + 1); j++) {
+					double element = a[l] * Math.pow(coords[l][0], i) * Math.pow(coords[l][1], j);
+					designMatrix.set(element, l, i + j);
 				}
 			}
 		}
-		
+
 		return designMatrix;
-		
+
 	}
-	
-	public static Dataset evaluateDesignMatrix (DoubleDataset designMatrix){
-		
+
+	public static Dataset evaluateDesignMatrix(DoubleDataset designMatrix) {
+
 		Dataset z = designMatrix.sum(1);
-		
+
 		return z;
 	}
-	
-	public static double calculateChiSquared (Dataset z, double[] values){
-		
+
+	public static double calculateChiSquared(Dataset z, double[] values) {
+
 		double chiSquared = 0;
-		for (int i = 0; i<values.length; i++){
-			chiSquared = chiSquared + Math.pow((values[i] - z.getDouble(i))/(Math.pow(values[i],0.5)),2);
+		for (int i = 0; i < values.length; i++) {
+			chiSquared = chiSquared + Math.pow((values[i] - z.getDouble(i)) / (Math.pow(values[i], 0.5)), 2);
 		}
 		return chiSquared;
 	}
-	
-	public static int findIndexOfMinimum (double[] array){
-		
-		double minimum= array[0];
+
+	public static int findIndexOfMinimum(double[] array) {
+
+		double minimum = array[0];
 		int index = 0;
 		for (int i = 1; i < array.length; i++) {
-		  if ( array[i] < minimum) {
-		      minimum = array[i];
-		      index = i;
-		   }
+			if (array[i] < minimum) {
+				minimum = array[i];
+				index = i;
+			}
 		}
 		return index;
 	}
-	
-	public static double[] outputAArray (int[][]coords, double[] values, int degree, int noLoops, double delta){
-		
+
+	public static double[] outputAArray(int[][] coords, double[] values, int degree, int noLoops, double delta) {
+
 		double a[] = makeAArray(degree);
-		int noFunctions = (int) Math.pow((degree+1),2);
-		double[][] parameterSpace = new double[2*noFunctions][];
-		double[] chiSquaredArray = new double[2*noFunctions];
-		
-		for (int loopCounter = 0; loopCounter<noLoops;loopCounter++){
-			for (int l =0; l<=noFunctions; l++){
-				double[] b =a;
-				b[l] = a[l]+delta*a[l];
+		int noFunctions = (int) Math.pow((degree + 1), 2);
+		double[][] parameterSpace = new double[2 * noFunctions][];
+		double[] chiSquaredArray = new double[2 * noFunctions];
+
+		for (int loopCounter = 0; loopCounter < noLoops; loopCounter++) {
+			for (int l = 0; l <= noFunctions; l++) {
+				double[] b = a;
+				b[l] = a[l] + delta * a[l];
 				DoubleDataset designMatrix = makeDesignMatrix(coords, degree, b);
 				chiSquaredArray[l] = calculateChiSquared(designMatrix, values);
-				parameterSpace[l]=b;
-				
-				b[l] = a[l]-delta*a[l];
+				parameterSpace[l] = b;
+
+				b[l] = a[l] - delta * a[l];
 				designMatrix = makeDesignMatrix(coords, degree, b);
-				parameterSpace[l + noFunctions]=b;
+				parameterSpace[l + noFunctions] = b;
 				designMatrix = makeDesignMatrix(coords, degree, b);
 				chiSquaredArray[l + noFunctions] = calculateChiSquared(designMatrix, values);
-				parameterSpace[l + noFunctions]=b;
+				parameterSpace[l + noFunctions] = b;
 			}
-			
+
 			int minimumChiSquaredIndex = findIndexOfMinimum(chiSquaredArray);
 			a = parameterSpace[minimumChiSquaredIndex];
 		}
-		
+
 		return a;
-		
+
 	}
-	
-	public static DoubleDataset outputMatrix (int[][]coords, double[] values, int degree, int noLoops, double delta){
-		
+
+	public static DoubleDataset outputMatrix(int[][] coords, double[] values, int degree, int noLoops, double delta) {
+
 		double[] a = outputAArray(coords, values, degree, noLoops, delta);
-		
+
 		Dataset outputDesignMatrix = evaluateDesignMatrix(makeDesignMatrix(coords, degree, a));
-		
-		DoubleDataset output = DatasetFactory.zeros(new int[] {values.length,3});
-		
-		for (int k = 0; k<values.length;k++){
+
+		DoubleDataset output = DatasetFactory.zeros(new int[] { values.length, 3 });
+
+		for (int k = 0; k < values.length; k++) {
 			output.set(coords[k][0], k, 0);
 			output.set(coords[k][1], k, 1);
 			output.set(outputDesignMatrix.getDouble(k), k, 2);
 		}
-		
+
 		return output;
 	}
-	
-	
 
 	/**
 	 * Set the degree after a class instantiation
+	 * 
 	 * @param degree
 	 */
 	public void setDegree(int degree) {
-		nparams = (int) Math.pow((degree+1),2);
-		noFunctions = (int) Math.pow((degree+1),2);
+		nparams = (int) Math.pow((degree + 1), 2);
+		noFunctions = (int) Math.pow((degree + 1), 2);
 		parameters = createParameters(noFunctions);
 		dirty = true;
-		
+
 		setNames();
 
 		if (parent != null) {
 			parent.updateParameters();
 		}
 	}
-	
+
 	public String getStringEquation() {
-		
+
 		StringBuilder out = new StringBuilder();
-		
+
 		DecimalFormat df = new DecimalFormat("0.#####E0");
-		
-		for (int i = nparams-1; i >= 2; i--) {
-			out.append(df.format(parameters[nparams - 1 -i].getValue()));
+
+		for (int i = nparams - 1; i >= 2; i--) {
+			out.append(df.format(parameters[nparams - 1 - i].getValue()));
 			out.append(String.format("x^%d + ", i));
 		}
-		
+
 		if (nparams >= 2)
-			out.append(df.format(parameters[nparams-2].getValue()) + "x + ");
+			out.append(df.format(parameters[nparams - 2].getValue()) + "x + ");
 		if (nparams >= 1)
-			out.append(df.format(parameters[nparams-1].getValue()));
-		
+			out.append(df.format(parameters[nparams - 1].getValue()));
+
 		return out.toString();
 	}
 
 	/**
 	 * Find all roots
+	 * 
 	 * @return all roots or null if there is any problem finding the roots
 	 */
 	public Complex[] findRoots() {
@@ -562,6 +549,7 @@ public class Polynomial2D extends AFunction {
 
 	/**
 	 * Find all roots
+	 * 
 	 * @param coeffs
 	 * @return all roots or null if there is any problem finding the roots
 	 */
@@ -600,8 +588,8 @@ public class Polynomial2D extends AFunction {
 			public int compare(Complex o1, Complex o2) {
 				double a = o1.getReal();
 				double b = o2.getReal();
-				
-				double u = 10*Math.ulp(Math.max(Math.abs(a), Math.abs(b)));
+
+				double u = 10 * Math.ulp(Math.max(Math.abs(a), Math.abs(b)));
 				if (Math.abs(a - b) > u)
 					return a < b ? -1 : 1;
 
@@ -617,4 +605,4 @@ public class Polynomial2D extends AFunction {
 	}
 }
 
-//TEST
+// TEST

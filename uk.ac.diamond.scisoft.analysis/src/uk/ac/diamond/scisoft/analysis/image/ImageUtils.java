@@ -12,7 +12,6 @@ package uk.ac.diamond.scisoft.analysis.image;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.function.Centroid;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
@@ -47,23 +46,19 @@ public class ImageUtils {
 			ub[i] = shape[i] - window;
 			wShape[i] = window;
 		}
-		Dataset base = DatasetFactory.createRange(DoubleDataset.class, window);
+		DoubleDataset base = DatasetFactory.createRange(DoubleDataset.class, window);
 		data = data.cast(DoubleDataset.class);
 		DoubleDataset sliced = DatasetFactory.zeros(wShape);
+		IndexIterator sIt = sliced.getIterator(true);
 		int ssize = sliced.getSize();
 		double[] sdata = sliced.getData();
 
 		base.iadd(0.5); // shift to centre of pixel
-		Dataset[] bases = new Dataset[rank];
-		for (int i = 0; i < rank; i++) {
-			bases[i] = base;
-		}
-		Centroid centroidFn = new Centroid(bases);
 
 		int[] centre = new int[rank];
 		int[] pos = it.getPos();
 		SliceND slice = new SliceND(shape);
-		
+
 		while (it.hasNext()) {
 			if (windowIsInsideVolume(ub, pos)) {
 				for (int i = 0; i < rank; i++) {
@@ -75,15 +70,16 @@ public class ImageUtils {
 						int p = pos[i];
 						slice.setSlice(i, p, p + window, 1);
 					}
+
 					// TODO update to 2.1
 					data.fillDataset(sliced, data.getSliceIterator(slice.getStart(), slice.getStop(), slice.getStep()));
 					sliced.setDirty(); // remove for 2.1
-					if (sliced.max().doubleValue() <= v) { // this does not check if other non-central pixels are equal to v
-						double total = ((Number) sliced.sum()).doubleValue();
+					final double[] results = processWindow(sliced, sIt, base, v);
+					if (results != null) {
+						final double total = results[rank];
 						sum.add(total);
-						List<Double> c = centroidFn.value(sliced);
 						for (int i = 0; i < rank; i++) {
-							centroid.add(pos[i] + c.get(i));
+							centroid.add(pos[i] + results[i]);
 						}
 						fraction.add(v/total);
 						for (int i = 0; i < ssize; i++) {
@@ -113,6 +109,42 @@ public class ImageUtils {
 			list.add(DatasetFactory.createFromList(values));
 		}
 		return list;
+	}
+
+	/**
+	 * Find sum and centroid in window
+	 * @param box
+	 * @param it iterator
+	 * @param base values of base
+	 * @param c central value
+	 * @return return centroid values and total or null if central value not maximum
+	 */
+	private static double[] processWindow(final DoubleDataset box, final IndexIterator it, final DoubleDataset base, final double c) {
+		final int[] pos = it.getPos();
+		final int rank = pos.length;
+		final double[] xsum = new double[rank + 1]; // room to store total at end
+		int count = 0; // number of pixels with given central value
+		double total = 0;
+		it.reset();
+		while (it.hasNext()) {
+			final double value = box.getElementDoubleAbs(it.index);
+			
+			if (value > c) {
+				return null; // centre not maximum
+			} else if (value == c) {
+				count++;
+			}
+			total += value;
+			for (int i = 0; i < rank; i++) {
+				xsum[i] += base.getElementDoubleAbs(pos[i])*value;
+			}
+		}
+
+		for (int i = 0; i < rank; i++) {
+			xsum[i] /= total;
+		}
+		xsum[rank] = total;
+		return count > 1 ? null: xsum;
 	}
 
 	/**

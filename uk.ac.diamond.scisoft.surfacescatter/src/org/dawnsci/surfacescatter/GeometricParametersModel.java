@@ -34,6 +34,8 @@ public class GeometricParametersModel {
 	private EnumMap<SXRDAngleAliasEnum,String> sXRDMap;
 	private EnumMap<ReflectivityAngleAliasEnum,String> reflectivityAnglesMap;
 	private EnumMap<ReflectivityFluxParametersAliasEnum,String> reflectivityFluxMap;
+	private boolean useInternalFlux;
+	
 	private boolean useNegativeQ = false;
 	
 	public boolean isUseNegativeQ() {
@@ -220,6 +222,12 @@ public class GeometricParametersModel {
 	}
 	public void setReflectivityFluxMap(EnumMap<ReflectivityFluxParametersAliasEnum, String> reflectivityFluxMap) {
 		this.reflectivityFluxMap = reflectivityFluxMap;
+	}
+	public boolean isUseInternalFlux() {
+		return useInternalFlux;
+	}
+	public void setUseInternalFlux(boolean useInternalFlux) {
+		this.useInternalFlux = useInternalFlux;
 	}
 	
 }

@@ -318,50 +318,6 @@ public class Polynomial2D extends AFunction {
 		return output1;
 	}
 
-	// @Override
-	// public double partialDeriv(IParameter parameter, double... position) {
-	// if (isDuplicated(parameter))
-	// return super.partialDeriv(parameter, position);
-	//
-	// int i = indexOfParameter(parameter);
-	// if (i < 0)
-	// return 0;
-	//
-	// final double pos = position[0];
-	// final int n = nparams - 1 - i;
-	// switch (n) {
-	// case 0:
-	// return 1.0;
-	// case 1:
-	// return pos;
-	// case 2:
-	// return pos * pos;
-	// default:
-	// return Math.pow(pos, n);
-	// }
-	// }
-
-	// @Override
-	// public void fillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it) {
-	// Dataset pos = DatasetUtils.convertToDataset(it.getValues()[0]);
-	//
-	// final int n = nparams - 1 - indexOfParameter(parameter);
-	// switch (n) {
-	// case 0:
-	// data.fill(1);
-	// break;
-	// case 1:
-	// data.setSlice(pos);
-	// break;
-	// case 2:
-	// Maths.square(pos, data);
-	// break;
-	// default:
-	// Maths.power(pos, n, data);
-	// break;
-	// }
-	// }
-
 	public DoubleDataset makeMatrix(List<Dataset> coords, int degree) {
 
 		int noFunctions = (int) Math.pow((degree + 1), 2);

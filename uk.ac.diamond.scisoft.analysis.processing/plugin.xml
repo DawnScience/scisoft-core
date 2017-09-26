@@ -166,6 +166,16 @@
             name="Rolling Ball Baseline Correction"
             visible="true">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.DigitalFilterOperation"
+            description="A background subtraction routine supplied via a digital filter"
+            icon="icons/function.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.DigitalFilterOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.DigitalFilterModel"
+            name="Background Filter"
+            visible="true">
+      </operation>
       <category
             id="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"
             name="Image Filter">

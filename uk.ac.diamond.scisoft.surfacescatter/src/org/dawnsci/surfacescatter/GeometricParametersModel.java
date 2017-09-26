@@ -223,7 +223,7 @@ public class GeometricParametersModel {
 	public void setReflectivityFluxMap(EnumMap<ReflectivityFluxParametersAliasEnum, String> reflectivityFluxMap) {
 		this.reflectivityFluxMap = reflectivityFluxMap;
 	}
-	public boolean isUseInternalFlux() {
+	public boolean getUseInternalFlux() {
 		return useInternalFlux;
 	}
 	public void setUseInternalFlux(boolean useInternalFlux) {

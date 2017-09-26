@@ -17,7 +17,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import org.apache.commons.lang.StringUtils;
-//import org.dawnsci.ede.EdeDataConstants;
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
@@ -35,23 +34,19 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.SliceND;
-
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 
 //Let's save this file.
 public class RodObjectNexusUtils_Development {
 
-//	private static NexusFile nexusFileReference;
-
 	public static void RodObjectNexusUtils(RodObjectNexusBuilderModel model) {
 
-		
 		ArrayList<FrameModel> fms = model.getFms();
 		GeometricParametersModel gm = model.getGm();
 		DirectoryModel drm = model.getDrm();
 
 		IDataset[] rawImageArray = new IDataset[fms.size()];
-		
+
 		OutputCurvesDataPackage ocdp = drm.getOcdp();
 		CurveStitchDataPackage csdp = drm.getCsdp();
 
@@ -60,8 +55,9 @@ public class RodObjectNexusUtils_Development {
 
 		GroupNode entry = TreeFactory.createGroupNode(p);
 		p++;
-		
-		entry.addAttribute(new AttributeImpl("NX_class","NXentry"));
+
+		entry.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXentry"));
+		//
 
 		for (int imageFilepathNo = 0; imageFilepathNo < noImages; imageFilepathNo++) {
 
@@ -69,9 +65,11 @@ public class RodObjectNexusUtils_Development {
 
 			GroupNode nxData = TreeFactory.createGroupNode(p);
 
+			nxData.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXsubentry"));
+
 			nxData.addAttribute(TreeFactory.createAttribute("Image_Tif_File_Path", fm.getTifFilePath()));
 			nxData.addAttribute(TreeFactory.createAttribute("Source_Dat_File", fm.getDatFilePath()));
-			
+
 			nxData.addAttribute(TreeFactory.createAttribute("h", fm.getH()));
 			nxData.addAttribute(TreeFactory.createAttribute("k", fm.getK()));
 			nxData.addAttribute(TreeFactory.createAttribute("l", fm.getL()));
@@ -84,10 +82,10 @@ public class RodObjectNexusUtils_Development {
 			nxData.addAttribute(TreeFactory.createAttribute("Polarisation_Correction", fm.getPolarisationCorrection()));
 			nxData.addAttribute(TreeFactory.createAttribute("Area_Correction", fm.getAreaCorrection()));
 
-			nxData.addAttribute(TreeFactory.createAttribute("Reflectivity_Area_Correction", fm.getReflectivityAreaCorrection()));
+			nxData.addAttribute(
+					TreeFactory.createAttribute("Reflectivity_Area_Correction", fm.getReflectivityAreaCorrection()));
 			nxData.addAttribute(TreeFactory.createAttribute("Area_Correction", fm.getAreaCorrection()));
 
-			
 			nxData.addAttribute(
 					TreeFactory.createAttribute("Fhkl", csdp.getSplicedCurveYFhkl().getDouble(imageFilepathNo)));
 			nxData.addAttribute(TreeFactory.createAttribute("Corrected_Intensity",
@@ -173,136 +171,36 @@ public class RodObjectNexusUtils_Development {
 
 			nxData.addDataNode("Raw_Image", rawImageDataNode);
 
-			p++;	
+			p++;
 
 			try {
-				
+
 				nxData.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, NexusTreeUtils.NX_SAMPLE));
-				
+
 				entry.addGroupNode("point_" + imageFilepathNo, nxData);
 			} catch (Exception e) {
-		
+
 				System.out.println(e.getMessage());
 			}
 		}
-		
-		SliceND slice0 = new SliceND(csdp.getSplicedCurveX().getShape());
-		
-		GroupNode rawImageGroupNode = TreeFactory.createGroupNode(p);
-		p++;
-		
-		Dataset rawImageConcat= DatasetUtils.concatenate(rawImageArray, 0);
-			
-		rawImageGroupNode.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, NexusTreeUtils.NX_DATA));
-		rawImageGroupNode.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_SIGNAL, "rawImagesDataset"));
-		
-		rawImageGroupNode.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_AXES, gm.getxName()));
-		rawImageGroupNode.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_AXES, "integers"));
-		rawImageGroupNode.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_AXES, "q"));
-		
-		
-		rawImageGroupNode.addAttribute(TreeFactory.createAttribute(gm.getxName() + NexusTreeUtils.NX_INDICES_SUFFIX, Long.valueOf(0)));
-	
-		entry.addGroupNode("Raw_Images_Dataset", rawImageGroupNode);
-		
-		GroupNode reducedDataGroupNode = TreeFactory.createGroupNode(p);
-		p++;
-		
-		
-		reducedDataGroupNode.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, NexusTreeUtils.NX_DATA));
-		reducedDataGroupNode.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_SIGNAL, "Fhkl_Dataset"));
-		reducedDataGroupNode.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_SIGNAL, "Corrected_Intensity_Dataset"));
-		reducedDataGroupNode.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_SIGNAL, "Raw_Intensity_Dataset"));
-		
-		reducedDataGroupNode.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_AXES, gm.getxName()));
-		reducedDataGroupNode.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_AXES, "integers"));
-		reducedDataGroupNode.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_AXES, "q"));
-		
-		reducedDataGroupNode.addAttribute(TreeFactory.createAttribute(gm.getxName() + NexusTreeUtils.NX_INDICES_SUFFIX, Long.valueOf(0)));
-		entry.addGroupNode("Reduced_Data_Dataset", rawImageGroupNode);
-		
-		
-		// Then we add the overall stitched rod intensities
-//		DataNode fhklNode = new DataNodeImpl(p);
-//		SliceND slice00 = new SliceND(csdp.getSplicedCurveYFhkl().getShape());
-//
-//		IDataset splicedfhkl = csdp.getSplicedCurveYFhkl().getSlice(slice00);
-//		splicedfhkl.setErrors(csdp.getSplicedCurveYFhklError());
-//
-//		fhklNode.setDataset(splicedfhkl);
-//		entry.addDataNode("Fhkl_Dataset", fhklNode);
-//		p++;
-//
-//		DataNode fhklErrorNode = new DataNodeImpl(p);
-//		SliceND slice03 = new SliceND(csdp.getSplicedCurveYFhklError().getShape());
-//
-//		IDataset splicedFhklError = csdp.getSplicedCurveYFhklError().getSlice(slice03);
-//
-//		fhklErrorNode.setDataset(splicedFhklError);
-//		entry.addDataNode("Fhkl_Error_Dataset", fhklErrorNode);
-//		p++;
-//		
-//		// Then we add the overall corrected rod intensities
-//		DataNode correctedIntensityNode = new DataNodeImpl(p);
-//
-//		SliceND slice01 = new SliceND(csdp.getSplicedCurveY().getShape());
-//
-//		IDataset splicedCorrected = csdp.getSplicedCurveY().getSlice(slice01);
-//		splicedCorrected.setErrors(csdp.getSplicedCurveYError());
-//
-//		correctedIntensityNode.setDataset(splicedCorrected);
-//		entry.addDataNode("Corrected_Intensity_Dataset", correctedIntensityNode);
-//		p++;
-//
-//		DataNode correctedIntensityErrorNode = new DataNodeImpl(p);
-//		SliceND slice04 = new SliceND(csdp.getSplicedCurveYError().getShape());
-//
-//		IDataset splicedCorrectedError = csdp.getSplicedCurveYError().getSlice(slice04);
-//
-//		correctedIntensityErrorNode.setDataset(splicedCorrectedError);
-//		entry.addDataNode("Corrected_Intensity_Error_Dataset", correctedIntensityErrorNode);
-//		p++;
-//
-//		// Then we add the overall raw rod intensities
-//		DataNode rawIntensityNode = new DataNodeImpl(p);
-//
-//		SliceND slice02 = new SliceND(csdp.getSplicedCurveYRaw().getShape());
-//
-//		IDataset splicedRaw = csdp.getSplicedCurveYRaw().getSlice(slice02);
-//		splicedRaw.setErrors(csdp.getSplicedCurveYRawError());
-//
-//		rawIntensityNode.setDataset(splicedRaw);
-//		entry.addDataNode("Raw_Intensity_Dataset", rawIntensityNode);
-//		p++;
-//
-//		DataNode rawIntensityErrorNode = new DataNodeImpl(p);
-//		SliceND slice05 = new SliceND(csdp.getSplicedCurveYRawError().getShape());
-//
-//		IDataset splicedCorrectedRawError = csdp.getSplicedCurveYRawError().getSlice(slice05);
-//
-//		rawIntensityErrorNode.setDataset(splicedCorrectedRawError);
-//		entry.addDataNode("Raw_Intensity_Error_Dataset", rawIntensityErrorNode);
-//		p++;
-//
-//		// Then we add the overall stitched rod scanned variables
-		
-		
-//		p++;
 
-		entry.addAttribute(TreeFactory.createAttribute("Rod Name", drm.getRodName()));
+		SliceND slice0 = new SliceND(csdp.getSplicedCurveX().getShape());
+
+		Dataset rawImageConcat = DatasetUtils.concatenate(rawImageArray, 0);
 
 		GroupNode overlapRegions = TreeFactory.createGroupNode(p);
 		p++;
 
 		///// entering the geometrical model
 
-		geometricalParameterWriter(gm, 
-									(long)p, 
-//									nexusFileReference
-									entry);
+		geometricalParameterWriter(gm, (long) p, drm, entry);
 
 		p++;
-		
+
+		angleAliasWriter((long) p, drm, entry);
+
+		p++;
+
 		entry.addGroupNode("Overlap_Regions", overlapRegions);
 
 		/// Start creating the overlap region coding
@@ -387,169 +285,99 @@ public class RodObjectNexusUtils_Development {
 			f.delete();
 			f = new File(model.getFilepath());
 		}
+
 		try {
-			NexusFile nexusFileReference = NexusFileHDF5.openNexusFile(model.getFilepath());
-			
-			nexusFileReference.addNode("/", entry);
-			
+			NexusFile nexusFileReference = NexusFileHDF5.createNexusFile(model.getFilepath());
+
+			nexusFileReference.addNode("/entry", entry);
+
 			nexusFileReference.createData("/entry/Raw_Images_Dataset/", "rawImagesDataset", rawImageConcat, true);
-			nexusFileReference.createData("/entry/Raw_Images_Dataset/", gm.getxName(), csdp.getSplicedCurveX().getSlice(slice0), true);
-			
+			nexusFileReference.createData("/entry/Raw_Images_Dataset/", gm.getxName(),
+					csdp.getSplicedCurveX().getSlice(slice0), true);
+
+			String[] axesArray = new String[2];
+
+			ArrayList<String> axes = new ArrayList<>();
+			axes.add(gm.getxName());
+
+			GroupNode group2 = nexusFileReference.getGroup("/entry/Raw_Images_Dataset", true);
+
+			nexusFileReference.addAttribute(group2, new AttributeImpl("signal", "rawImagesDataset"));
+
+			Dataset integers = DatasetFactory.createLinearSpace(IntegerDataset.class, (double) 0, (double) fms.size(),
+					fms.size());
+			axes.add("integers");
+
+			nexusFileReference.createData("/entry/Raw_Images_Dataset/", "integers", integers, true);
+			try {
+				nexusFileReference.createData("/entry/Raw_Images_Dataset/", "q",
+						csdp.getSplicedCurveQ().getSlice(slice0), true);
+				axes.add("q");
+
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+
+			axes.toArray(axesArray);
+
+			nexusFileReference.addAttribute(group2, new AttributeImpl("axes", axesArray));
+
+			SliceND slice00 = new SliceND(csdp.getSplicedCurveYFhkl().getShape());
+			IDataset splicedfhkl = csdp.getSplicedCurveYFhkl().getSlice(slice00);
+			splicedfhkl.setErrors(csdp.getSplicedCurveYFhklError());
+
+			nexusFileReference.createData("/entry/Reduced_Data_Dataset/", "Fhkl_Dataset", splicedfhkl, true);
+
+			SliceND slice01 = new SliceND(csdp.getSplicedCurveY().getShape());
+			IDataset splicedCorrected = csdp.getSplicedCurveY().getSlice(slice01);
+			splicedCorrected.setErrors(csdp.getSplicedCurveYError());
+
+			nexusFileReference.createData("/entry/Reduced_Data_Dataset/", "Corrected_Intensity_Dataset",
+					splicedCorrected, true);
+
+			SliceND slice02 = new SliceND(csdp.getSplicedCurveYRaw().getShape());
+			IDataset splicedRaw = csdp.getSplicedCurveYRaw().getSlice(slice02);
+			splicedRaw.setErrors(csdp.getSplicedCurveYRawError());
+
+			nexusFileReference.createData("/entry/Reduced_Data_Dataset/", "Raw_Intensity_Dataset", splicedCorrected,
+					true);
+
+			nexusFileReference.createData("/entry/Reduced_Data_Dataset/", gm.getxName(),
+					csdp.getSplicedCurveX().getSlice(slice0), true);
+			nexusFileReference.createData("/entry/Reduced_Data_Dataset/", "integers", integers, true);
+			try {
+				nexusFileReference.createData("/entry/Reduced_Data_Dataset/", "q",
+						csdp.getSplicedCurveQ().getSlice(slice0), true);
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+
+			GroupNode group = nexusFileReference.getGroup("/entry/Reduced_Data_Dataset", true);
+
+			nexusFileReference.addAttribute(group, new AttributeImpl("axes", axesArray));
+			nexusFileReference.addAttribute(group, new AttributeImpl("signal", "Corrected_Intensity_Dataset"));
+
+			GroupNode group1 = nexusFileReference.getGroup("/entry/Raw_Images_Dataset", true);
+
+			nexusFileReference.addAttribute(group, new AttributeImpl("NX_class", "NXdata"));
+			nexusFileReference.addAttribute(group1, new AttributeImpl("NX_class", "NXdata"));
 
 			nexusFileReference.close();
-		} catch (Exception u) {
-			try {
-				NexusFile nexusFileReference = NexusFileHDF5.createNexusFile(model.getFilepath());
-				nexusFileReference.addNode("/", entry);
+		} catch (NexusException e) {
 
-				nexusFileReference.createData("/entry/Raw_Images_Dataset/", "rawImagesDataset", rawImageConcat, true);
-				nexusFileReference.createData("/entry/Raw_Images_Dataset/", gm.getxName(), csdp.getSplicedCurveX().getSlice(slice0), true);
-				
-
-				Dataset integers = DatasetFactory.createLinearSpace(IntegerDataset.class,(double) 0, (double) fms.size(), fms.size());
-			
-				
-//				nexusFileReference.createData("/entry/Raw_Images_Dataset/", gm.getxName(), csdp.getSplicedCurveX().getSlice(slice0), true);
-				nexusFileReference.createData("/entry/Raw_Images_Dataset/", "integers", integers, true);
-				try{
-					nexusFileReference.createData("/entry/Raw_Images_Dataset/", "q", csdp.getSplicedCurveQ().getSlice(slice0), true);
-				}
-				catch(Exception e){
-					System.out.println(e.getMessage());
-				}
-				
-				
-				DataNode fhklNode = new DataNodeImpl(p);
-				SliceND slice00 = new SliceND(csdp.getSplicedCurveYFhkl().getShape());
-				IDataset splicedfhkl = csdp.getSplicedCurveYFhkl().getSlice(slice00);
-				splicedfhkl.setErrors(csdp.getSplicedCurveYFhklError());
-				
-				nexusFileReference.createData("/entry/Reduced_Data_Dataset/", "Fhkl_Dataset", splicedfhkl, true);
-				
-				DataNode correctedIntensityNode = new DataNodeImpl(p);
-				SliceND slice01 = new SliceND(csdp.getSplicedCurveY().getShape());
-				IDataset splicedCorrected = csdp.getSplicedCurveY().getSlice(slice01);
-				splicedCorrected.setErrors(csdp.getSplicedCurveYError());
-
-				nexusFileReference.createData("/entry/Reduced_Data_Dataset/", "Corrected_Intensity_Dataset", splicedCorrected, true);
-				
-				SliceND slice02 = new SliceND(csdp.getSplicedCurveYRaw().getShape());
-				IDataset splicedRaw = csdp.getSplicedCurveYRaw().getSlice(slice02);
-				splicedRaw.setErrors(csdp.getSplicedCurveYRawError());
-
-				nexusFileReference.createData("/entry/Reduced_Data_Dataset/", "Raw_Intensity_Dataset", splicedCorrected, true);
-			
-				nexusFileReference.createData("/entry/Reduced_Data_Dataset/", gm.getxName(), csdp.getSplicedCurveX().getSlice(slice0), true);
-				nexusFileReference.createData("/entry/Reduced_Data_Dataset/", "integers", integers, true);	
-				try{
-					nexusFileReference.createData("/entry/Reduced_Data_Dataset/", "q", csdp.getSplicedCurveQ().getSlice(slice0), true);
-				}
-				catch(Exception e){
-					System.out.println(e.getMessage());
-				}
-//				nexusFileReference.createData("/entry/Reduced_Data_Dataset/", "q", csdp.getSplicedCurveQ().getSlice(slice0), true);
-				
-				
-				// Then we add the overall stitched rod intensities
-//				DataNode fhklNode = new DataNodeImpl(p);
-//				SliceND slice00 = new SliceND(csdp.getSplicedCurveYFhkl().getShape());
-//				IDataset splicedfhkl = csdp.getSplicedCurveYFhkl().getSlice(slice00);
-//				splicedfhkl.setErrors(csdp.getSplicedCurveYFhklError());
-//
-//				fhklNode.setDataset(splicedfhkl);
-//				entry.addDataNode("Fhkl_Dataset", fhklNode);
-//				p++;
-
-//				DataNode fhklErrorNode = new DataNodeImpl(p);
-//				SliceND slice03 = new SliceND(csdp.getSplicedCurveYFhklError().getShape());
-//
-//				IDataset splicedFhklError = csdp.getSplicedCurveYFhklError().getSlice(slice03);
-//
-//				fhklErrorNode.setDataset(splicedFhklError);
-//				entry.addDataNode("Fhkl_Error_Dataset", fhklErrorNode);
-//				p++;
-				
-				// Then we add the overall corrected rod intensities
-//				DataNode correctedIntensityNode = new DataNodeImpl(p);
-//
-//				SliceND slice01 = new SliceND(csdp.getSplicedCurveY().getShape());
-//
-//				IDataset splicedCorrected = csdp.getSplicedCurveY().getSlice(slice01);
-//				splicedCorrected.setErrors(csdp.getSplicedCurveYError());
-//
-//				correctedIntensityNode.setDataset(splicedCorrected);
-//				entry.addDataNode("Corrected_Intensity_Dataset", correctedIntensityNode);
-//				p++;
-
-//				DataNode correctedIntensityErrorNode = new DataNodeImpl(p);
-//				SliceND slice04 = new SliceND(csdp.getSplicedCurveYError().getShape());
-//
-//				IDataset splicedCorrectedError = csdp.getSplicedCurveYError().getSlice(slice04);
-//
-//				correctedIntensityErrorNode.setDataset(splicedCorrectedError);
-//				entry.addDataNode("Corrected_Intensity_Error_Dataset", correctedIntensityErrorNode);
-//				p++;
-
-				// Then we add the overall raw rod intensities
-//				DataNode rawIntensityNode = new DataNodeImpl(p);
-//
-//				SliceND slice02 = new SliceND(csdp.getSplicedCurveYRaw().getShape());
-//
-//				IDataset splicedRaw = csdp.getSplicedCurveYRaw().getSlice(slice02);
-//				splicedRaw.setErrors(csdp.getSplicedCurveYRawError());
-//
-//				rawIntensityNode.setDataset(splicedRaw);
-//				entry.addDataNode("Raw_Intensity_Dataset", rawIntensityNode);
-//				p++;
-//
-//				DataNode rawIntensityErrorNode = new DataNodeImpl(p);
-//				SliceND slice05 = new SliceND(csdp.getSplicedCurveYRawError().getShape());
-//
-//				IDataset splicedCorrectedRawError = csdp.getSplicedCurveYRawError().getSlice(slice05);
-//
-//				rawIntensityErrorNode.setDataset(splicedCorrectedRawError);
-//				entry.addDataNode("Raw_Intensity_Error_Dataset", rawIntensityErrorNode);
-//				p++;
-
-				// Then we add the overall stitched rod scanned variables
-				
-				
-				
-				nexusFileReference.close();
-			} catch (NexusException e) {
-//				try {
-//					nexusFileReference.close();
-//				} catch (NexusException closingerror) {
-					System.out.println(
-							"This error occured when attempting to close the NeXus file: " + e.getMessage());
-
-//				}
-				
-			}
+			System.out.println("This error occured when attempting to close the NeXus file: " + e.getMessage());
 		}
-		
-		
-	
+
 	}
 
-	private static void geometricalParameterWriter(GeometricParametersModel gm, 
-//												   GroupNode entry, 
-												   long oid, 
-//												   NexusFile nexusFile
-												   GroupNode entry) {
+	private static void geometricalParameterWriter(GeometricParametersModel gm,
+			// GroupNode entry,
+			long oid, DirectoryModel drm,
+			// NexusFile nexusFile
+			GroupNode entry) {
 
 		GroupNode parameters = TreeFactory.createGroupNode(oid);
-		
-		
-		
-//		try {
-//			parameters = nexusFile.getGroup("/entry/Parameters/", true);
-//		} catch (NexusException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//			System.out.println(e1.getMessage());
-//		}
-//		
+
 		Method[] methods = gm.getClass().getMethods();
 
 		for (Method m : methods) {
@@ -562,13 +390,9 @@ public class RodObjectNexusUtils_Development {
 				String name = StringUtils.substringAfter(mName, "get");
 
 				try {
-//					parameters.addAttribute(
-//							TreeFactory.createAttribute(name, String.valueOf(m.invoke(gm, (Object[]) null))));
-					
-					
 					parameters.addAttribute(
 							TreeFactory.createAttribute(name, String.valueOf(m.invoke(gm, (Object[]) null))));
-					
+
 				} catch (IllegalAccessException e) {
 					System.out.println(e.getMessage());
 				} catch (IllegalArgumentException e) {
@@ -576,26 +400,47 @@ public class RodObjectNexusUtils_Development {
 				} catch (InvocationTargetException e) {
 					System.out.println(e.getMessage());
 				}
+				
 			}
 		}
 
-		parameters.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, NexusTreeUtils.NX_ORIENTATION));
-		
-		entry.addGroupNode("Parameters", parameters);
-		//		
-//		try {
-////			nexusFile.addAttribute(parameters, new AttributeImpl("NX_class","NXparameters"));
-//			nexusFile.getGroup("/entry/Parameters", true);
-////			parameters.addAttribute(new AttributeImpl(NexusTreeUtils.NX_CLASS, "NXparameters"));
-//			nexusFile.addNode("/entry/Parameters", parameters);
-//			
-//		} catch (NexusException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		catch(Exception d){
-//			System.out.println(d.getMessage());
-//		}
+		parameters.addAttribute(TreeFactory.createAttribute("Rod Name", drm.getRodName()));
 
+//		parameters.addAttribute(TreeFactory.createAttribute("Rod Name", drm.getRodName()));
+		
+		parameters.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXparameters"));
+
+		entry.addGroupNode("Parameters", parameters);
 	}
+
+	private static void angleAliasWriter(long oid, DirectoryModel drm, GroupNode entry) {
+
+		GroupNode alias = TreeFactory.createGroupNode(oid);
+
+		for (SXRDAngleAliasEnum m : SXRDAngleAliasEnum.values()) {
+
+			if(m != SXRDAngleAliasEnum.NULL){
+				alias.addAttribute(TreeFactory.createAttribute(m.getAngleVariable(), m.getAngleAlias()));
+			}
+		}
+
+		for (ReflectivityAngleAliasEnum r : ReflectivityAngleAliasEnum.values()) {
+			
+			if(r != ReflectivityAngleAliasEnum.NULL){
+				alias.addAttribute(TreeFactory.createAttribute(r.getAngleVariable(), r.getAngleAlias()));
+			}
+		}
+
+		for (ReflectivityFluxParametersAliasEnum f : ReflectivityFluxParametersAliasEnum.values()) {
+
+			if(f != ReflectivityFluxParametersAliasEnum.NULL){
+				alias.addAttribute(TreeFactory.createAttribute(f.getFluxVariable(), f.getFluxAlias()));
+			}
+		}
+
+		alias.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXparameters"));
+
+		entry.addGroupNode("Aliases", alias);
+	}
+
 }

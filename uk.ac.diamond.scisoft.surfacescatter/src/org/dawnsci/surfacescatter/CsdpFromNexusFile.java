@@ -3,7 +3,6 @@ package org.dawnsci.surfacescatter;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.tree.impl.DataNodeImpl;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileFactoryHDF5;
-import org.eclipse.dawnsci.nexus.INexusFileFactory;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.january.DatasetException;
@@ -14,94 +13,121 @@ import org.eclipse.january.dataset.SliceND;
 
 public class CsdpFromNexusFile {
 
-	private static INexusFileFactory nexusFileFactory = new NexusFileFactoryHDF5();
-	
 	public static CurveStitchDataPackage CsdpFromNexusFileGenerator(String filename){
-		
+
 		final CurveStitchDataPackage csdp = new CurveStitchDataPackage();
-		
-		String[] nodeNames = new String[]{"/Corrected_Intensity_Dataset",
-										  "/Fhkl_Dataset",
-										  "/Raw_Intensity_Dataset",
-										  "/Scanned_Variable_Dataset",
-										  "/Corrected_Intensity_Error_Dataset",
-										  "/Fhkl_Dataset",
-										  "/Raw_Intensity_Error_Dataset"};
-		
-		NexusFile file = nexusFileFactory.newNexusFile(filename);
-		
+
+		final String entryString = "/" + NeXusStructureStrings.getEntry() + "/" ;
+		final String reducedDataString = entryString + NeXusStructureStrings.getReducedDataDataset() + "/";
+
+//		String xSpliced = "placeholder";
+
+		String scannedVariable = reducedDataString + NeXusStructureStrings.getScannedVariableDataset();
+
+		String[] nodeNames = new String[]{scannedVariable,
+				reducedDataString + NeXusStructureStrings.getCorrectedIntensityDataset(),
+				reducedDataString + NeXusStructureStrings.getCorrectedIntensityDatasetErrors(),
+				reducedDataString + NeXusStructureStrings.getFhklDataset(),
+				reducedDataString + NeXusStructureStrings.getFhklDatasetErrors(),
+				reducedDataString + NeXusStructureStrings.getRawIntensityDataset(),
+				reducedDataString + NeXusStructureStrings.getRawIntensityDatasetErrors()};
+
+		NexusFile file = new NexusFileFactoryHDF5().newNexusFile(filename);
+
 		try {
 			file.openToRead();
 		} catch (NexusException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		boolean done = false;
 		
 		for(int i =0; i<nodeNames.length;i++){
-			
+
 			DataNode inputNode = new DataNodeImpl(i);
+
+			IDataset data = DatasetFactory.createFromObject(0);
+
 			
-			IDataset data = nodeToDataset(inputNode, nodeNames[i], file);
-			
+			try{
+				data = nodeToDataset(inputNode, nodeNames[i], file);
+			}
+			catch(Exception e){
+				System.out.println(e.getMessage());
+			}
+
+			if(nodeNames[i].equals(scannedVariable) && !done){
+				try{
+					data = nodeToDataset(inputNode, reducedDataString + data.getString(), file);
+				}
+				catch(Exception f){
+					System.out.println(f.getMessage());
+				}
+				
+				done = true;
+			}
+
 			switch(i){
-			
+
 			case 0:
-				csdp.setSplicedCurveY(data);
-				break;
-			case 1:
-				csdp.setSplicedCurveYFhkl(data);
-				break;
-			case 2:
-				csdp.setSplicedCurveYRaw(data);
-				break;
-			case 3:
 				csdp.setSplicedCurveX(data);
 				break;
-			case 4:
+			case 1:
+				csdp.setSplicedCurveY(data);
+				break;
+			case 2:
 				csdp.setSplicedCurveYError(data);
 				break;
-			case 5:
+			case 3:
+				csdp.setSplicedCurveYFhkl(data);
+				break;
+			case 4:
 				csdp.setSplicedCurveYFhklError(data);
+				break;
+			case 5:
+				csdp.setSplicedCurveYRaw(data);
 				break;
 			case 6:
 				csdp.setSplicedCurveYRawError(data);
 				break;
-		
+			default:
+				//defensive
+				break;
+
 			}
-			
-			
 		}
-		
+
 		csdp.setRodName(filename);
-		
+
 		return csdp;
 	}
-	
+
 	private static IDataset nodeToDataset(DataNode inputNode,
-								   String dataName,
-								   NexusFile file){
-		
+			String dataName,
+			NexusFile file){
+
 		try {
 			inputNode = file.getData(dataName);
 		} catch (NexusException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		int[] inputDatasetShape =  inputNode.getDataset().getShape();
 		SliceND inputDatasetSlice = new SliceND(inputDatasetShape);
-		
+
 		ILazyDataset inputLazyDataset = inputNode.getDataset();
-		
+
 		IDataset outputIDataset = DatasetFactory.createFromObject(0);
-		
+
 		try {
 			outputIDataset = (IDataset) inputLazyDataset.getSlice(inputDatasetSlice);
 		} catch (DatasetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return outputIDataset;
 	}
+
+
+
 }

@@ -289,28 +289,38 @@ public class RodObjectNexusUtils_Development {
 		try {
 			NexusFile nexusFileReference = NexusFileHDF5.createNexusFile(model.getFilepath());
 
-			nexusFileReference.addNode("/entry", entry);
+			final String entryString = "/" + NeXusStructureStrings.getEntry();
+			final String rawImagesString = entryString + "/" + NeXusStructureStrings.getRawImagesDataset() + "/";
+			final String reducedDataString = entryString + "/" + NeXusStructureStrings.getReducedDataDataset() + "/";
+			
+			nexusFileReference.addNode(entryString, entry);
 
-			nexusFileReference.createData("/entry/Raw_Images_Dataset/", "rawImagesDataset", rawImageConcat, true);
-			nexusFileReference.createData("/entry/Raw_Images_Dataset/", gm.getxName(),
+			nexusFileReference.createData(rawImagesString, "rawImagesDataset", rawImageConcat, true);
+			nexusFileReference.createData(rawImagesString, gm.getxName(),
 					csdp.getSplicedCurveX().getSlice(slice0), true);
 
 			String[] axesArray = new String[2];
 
 			ArrayList<String> axes = new ArrayList<>();
+			
 			axes.add(gm.getxName());
-
-			GroupNode group2 = nexusFileReference.getGroup("/entry/Raw_Images_Dataset", true);
+			
+//			nexusFileReference.createData(rawImagesString, gm.getxName(),
+//					csdp.getSplicedCurveX().getSlice(slice0), true);
+			
+			GroupNode group2 = nexusFileReference.getGroup(rawImagesString, true);
 
 			nexusFileReference.addAttribute(group2, new AttributeImpl("signal", "rawImagesDataset"));
-
+			
 			Dataset integers = DatasetFactory.createLinearSpace(IntegerDataset.class, (double) 0, (double) fms.size(),
 					fms.size());
+			
 			axes.add("integers");
 
-			nexusFileReference.createData("/entry/Raw_Images_Dataset/", "integers", integers, true);
+			nexusFileReference.createData(rawImagesString, "integers", integers, true);
+			
 			try {
-				nexusFileReference.createData("/entry/Raw_Images_Dataset/", "q",
+				nexusFileReference.createData(rawImagesString, "q",
 						csdp.getSplicedCurveQ().getSlice(slice0), true);
 				axes.add("q");
 
@@ -323,44 +333,76 @@ public class RodObjectNexusUtils_Development {
 			nexusFileReference.addAttribute(group2, new AttributeImpl("axes", axesArray));
 
 			SliceND slice00 = new SliceND(csdp.getSplicedCurveYFhkl().getShape());
-			IDataset splicedfhkl = csdp.getSplicedCurveYFhkl().getSlice(slice00);
-			splicedfhkl.setErrors(csdp.getSplicedCurveYFhklError());
+			
+			IDataset splicedFhkl = csdp.getSplicedCurveYFhkl().getSlice(slice00);
+			splicedFhkl.setErrors(csdp.getSplicedCurveYFhklError());
+			
+			IDataset splicedFhklErrors = csdp.getSplicedCurveYFhklError().getSlice(slice00);
 
-			nexusFileReference.createData("/entry/Reduced_Data_Dataset/", "Fhkl_Dataset", splicedfhkl, true);
+			String fhkl_Dataset = NeXusStructureStrings.getFhklDataset();
+			
+			nexusFileReference.createData(reducedDataString, fhkl_Dataset, splicedFhkl, true);
+			
+			String fhkl_Dataset_Errors = NeXusStructureStrings.getFhklDatasetErrors();
+			
+			nexusFileReference.createData(reducedDataString, fhkl_Dataset_Errors, splicedFhklErrors, true);
 
 			SliceND slice01 = new SliceND(csdp.getSplicedCurveY().getShape());
 			IDataset splicedCorrected = csdp.getSplicedCurveY().getSlice(slice01);
 			splicedCorrected.setErrors(csdp.getSplicedCurveYError());
 
-			nexusFileReference.createData("/entry/Reduced_Data_Dataset/", "Corrected_Intensity_Dataset",
+			IDataset splicedCorrectedErrors = csdp.getSplicedCurveYError().getSlice(slice00);
+			
+			String corrected_Intensity_Dataset = NeXusStructureStrings.getCorrectedIntensityDataset();
+			
+			nexusFileReference.createData(reducedDataString, corrected_Intensity_Dataset,
 					splicedCorrected, true);
 
+			String corrected_Dataset_Errors = NeXusStructureStrings.getCorrectedIntensityDatasetErrors();
+			
+			nexusFileReference.createData(reducedDataString, corrected_Dataset_Errors, splicedCorrectedErrors, true);
+			
 			SliceND slice02 = new SliceND(csdp.getSplicedCurveYRaw().getShape());
 			IDataset splicedRaw = csdp.getSplicedCurveYRaw().getSlice(slice02);
 			splicedRaw.setErrors(csdp.getSplicedCurveYRawError());
+			
+			IDataset splicedRawErrors = csdp.getSplicedCurveYRawError().getSlice(slice00);
+			
+			String raw_Intensity_Dataset = NeXusStructureStrings.getRawIntensityDataset();
 
-			nexusFileReference.createData("/entry/Reduced_Data_Dataset/", "Raw_Intensity_Dataset", splicedCorrected,
+			nexusFileReference.createData(reducedDataString, raw_Intensity_Dataset, splicedCorrected,
 					true);
 
-			nexusFileReference.createData("/entry/Reduced_Data_Dataset/", gm.getxName(),
+			String raw_Dataset_Errors = NeXusStructureStrings.getRawIntensityDatasetErrors();
+			
+			nexusFileReference.createData(reducedDataString, raw_Dataset_Errors, splicedRawErrors, true);
+			
+			nexusFileReference.createData(reducedDataString, gm.getxName(),
 					csdp.getSplicedCurveX().getSlice(slice0), true);
-			nexusFileReference.createData("/entry/Reduced_Data_Dataset/", "integers", integers, true);
+			
+			
+			nexusFileReference.createData(reducedDataString, "integers", integers, true);
 			try {
-				nexusFileReference.createData("/entry/Reduced_Data_Dataset/", "q",
+				nexusFileReference.createData(reducedDataString, "q",
 						csdp.getSplicedCurveQ().getSlice(slice0), true);
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
 
-			GroupNode group = nexusFileReference.getGroup("/entry/Reduced_Data_Dataset", true);
-
+			Dataset scannedVarStr = DatasetFactory.createFromObject(gm.getxName());
+			
+			nexusFileReference.createData(reducedDataString, NeXusStructureStrings.getScannedVariableDataset(), scannedVarStr,true);
+			
+			GroupNode group = nexusFileReference.getGroup(rawImagesString, true);
+			
 			nexusFileReference.addAttribute(group, new AttributeImpl("axes", axesArray));
-			nexusFileReference.addAttribute(group, new AttributeImpl("signal", "Corrected_Intensity_Dataset"));
-
-			GroupNode group1 = nexusFileReference.getGroup("/entry/Raw_Images_Dataset", true);
+				
+			GroupNode group1 = nexusFileReference.getGroup(reducedDataString, true);
 
 			nexusFileReference.addAttribute(group, new AttributeImpl("NX_class", "NXdata"));
 			nexusFileReference.addAttribute(group1, new AttributeImpl("NX_class", "NXdata"));
+			nexusFileReference.addAttribute(group1, new AttributeImpl("signal", "Corrected_Intensity_Dataset"));
+			nexusFileReference.addAttribute(group1, new AttributeImpl("axes", axesArray));
 
 			nexusFileReference.close();
 		} catch (NexusException e) {
@@ -410,7 +452,7 @@ public class RodObjectNexusUtils_Development {
 		
 		parameters.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXparameters"));
 
-		entry.addGroupNode("Parameters", parameters);
+		entry.addGroupNode(NeXusStructureStrings.getParameters(), parameters);
 	}
 
 	private static void angleAliasWriter(long oid, DirectoryModel drm, GroupNode entry) {
@@ -440,7 +482,7 @@ public class RodObjectNexusUtils_Development {
 
 		alias.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXparameters"));
 
-		entry.addGroupNode("Aliases", alias);
+		entry.addGroupNode(NeXusStructureStrings.getAliases(), alias);
 	}
 
 }

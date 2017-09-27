@@ -62,14 +62,6 @@ public class ReflectivityFluxCorrectionsForDialog{
 			System.out.println(f.getMessage());
 		}
 		
-//		if(k == (double)fluxData[1].getObject(0)){
-//			fluxLong =(float) fluxData[0].getDouble(0);
-//		}
-//		
-//		if(k == (double)fluxData[1].getObject(fluxData[1].getSize()-1)){
-//			fluxLong =(float) fluxData[0].getDouble(fluxData[1].getSize()-1);
-//		}
-		
 		if(fluxLong == 0){
 			System.out.println("££££££££££  fluxLong is zero  £$£$£$£");
 		}

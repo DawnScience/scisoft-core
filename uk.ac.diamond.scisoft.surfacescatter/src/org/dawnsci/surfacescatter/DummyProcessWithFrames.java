@@ -1059,9 +1059,9 @@ public class DummyProcessWithFrames {
 			double[]locationList,
 			int[][] sspLenPt){		
 
-		if(locationList == null){
-			System.out.println("Warning!!!!!!");
-		}
+//		if(locationList == null){
+//			System.out.println("Warning!!!!!!");
+//		}
 
 		////////////////////////////////NB selection is position in the sorted list of the whole rod k is position in the .dat file
 		IDataset output =null;	

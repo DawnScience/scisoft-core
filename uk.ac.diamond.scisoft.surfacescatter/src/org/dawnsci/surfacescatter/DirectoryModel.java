@@ -60,7 +60,7 @@ public class DirectoryModel {
 	private ArrayList<IRegion> interpolatorRegions;
 	private ArrayList<OverlapDataModel> overlapDataModels;
 	private double currentRawIntensity;
-	private String rodName;
+	private String rodName = "placeHolder";
 	private String[] doneArray;
 
 	

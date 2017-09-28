@@ -255,7 +255,7 @@ public class FittingParametersInputReader {
 
 				if (m != SXRDAngleAliasEnum.NULL) {
 
-					alias = aliasNode.getAttribute(m.getAngleVariable()).getValue().getString(0);
+					alias = aliasNode.getAttribute(m.getAngleVariable()).getValue().getString();
 
 					m.setAngleAlias(alias);
 				}
@@ -264,7 +264,7 @@ public class FittingParametersInputReader {
 			for (ReflectivityAngleAliasEnum r : ReflectivityAngleAliasEnum.values()) {
 
 				if (r != ReflectivityAngleAliasEnum.NULL) {
-					alias = aliasNode.getAttribute(r.getAngleVariable()).getValue().getString(0);
+					alias = aliasNode.getAttribute(r.getAngleVariable()).getValue().getString();
 
 					r.setAngleAlias(alias);
 				}
@@ -273,7 +273,7 @@ public class FittingParametersInputReader {
 			for (ReflectivityFluxParametersAliasEnum f : ReflectivityFluxParametersAliasEnum.values()) {
 
 				if (f != ReflectivityFluxParametersAliasEnum.NULL) {
-					alias = aliasNode.getAttribute(f.getFluxVariable()).getValue().getString(0);
+					alias = aliasNode.getAttribute(f.getFluxVariable()).getValue().getString();
 
 					f.setFluxAlias(alias);
 				}

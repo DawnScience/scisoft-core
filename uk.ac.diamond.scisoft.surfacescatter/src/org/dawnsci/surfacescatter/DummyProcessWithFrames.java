@@ -32,7 +32,7 @@ public class DummyProcessWithFrames {
 
 	public static IDataset DummyProcess(DirectoryModel drm,  
 			GeometricParametersModel gm, 
-			int correctionSelector, 
+//			int correctionSelector, 
 			int k, 
 			int trackingMarker,
 			int selection,
@@ -411,7 +411,7 @@ public class DummyProcessWithFrames {
 
 	public static IDataset DummyProcess0(DirectoryModel drm,
 			GeometricParametersModel gm, 
-			int correctionSelector, 
+//			int correctionSelector, 
 			int k, 
 			int trackingMarker,
 			int selection,
@@ -725,7 +725,7 @@ public class DummyProcessWithFrames {
 
 	public static IDataset DummyProcess1(DirectoryModel drm, 
 			GeometricParametersModel gm, 
-			int correctionSelector, 
+//			int correctionSelector, 
 			int k, 
 			int trackingMarker,
 			int selection,
@@ -1052,7 +1052,7 @@ public class DummyProcessWithFrames {
 
 	public static IDataset DummyProcess1(DirectoryModel drm,  
 			GeometricParametersModel gm, 
-			int correctionSelector, 
+//			int correctionSelector, 
 			int k, 
 			int trackingMarker,
 			int selection,

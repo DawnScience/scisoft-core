@@ -286,19 +286,25 @@ public class CurveStitchWithErrorsAndFrames {
 		
 		
 		Dataset[] sortedAttenuatedDatasets = new Dataset[10];
+
+		sortedAttenuatedDatasets[0]= localConcatenate(attenuatedDatasets[0], 0);
+		sortedAttenuatedDatasets[1]= localConcatenate(attenuatedDatasets[1], 0);
 		
-		sortedAttenuatedDatasets[0]=DatasetUtils.convertToDataset(DatasetUtils.concatenate(attenuatedDatasets[0], 0)); ///yArray Intensity
-		sortedAttenuatedDatasets[1]=DatasetUtils.convertToDataset(DatasetUtils.concatenate(attenuatedDatasets[1], 0)); ///xArray
+//		sortedAttenuatedDatasets[0]=DatasetUtils.convertToDataset(DatasetUtils.concatenate(attenuatedDatasets[0], 0)); ///yArray Intensity
+//		sortedAttenuatedDatasets[1]=DatasetUtils.convertToDataset(DatasetUtils.concatenate(attenuatedDatasets[1], 0)); ///xArray
 		
 		Dataset xArrayCloned =  sortedAttenuatedDatasets[1].clone();
 		Dataset xArrayCloned2 =  sortedAttenuatedDatasets[1].clone();
 		
-		sortedAttenuatedDatasets[2]=DatasetUtils.convertToDataset(DatasetUtils.concatenate(attenuatedDatasetsFhkl[0], 0)); //////yArray Fhkl
-		sortedAttenuatedDatasets[7]=DatasetUtils.convertToDataset(DatasetUtils.concatenate(attenuatedDatasetsRaw[0], 0)); //////yArray Raw
+		sortedAttenuatedDatasets[2]= localConcatenate(attenuatedDatasetsFhkl[0], 0);
+		sortedAttenuatedDatasets[7]= localConcatenate(attenuatedDatasetsRaw[1], 0);
+//		
+//		sortedAttenuatedDatasets[2]=DatasetUtils.convertToDataset(DatasetUtils.concatenate(attenuatedDatasetsFhkl[0], 0)); //////yArray Fhkl
+//		sortedAttenuatedDatasets[7]=DatasetUtils.convertToDataset(DatasetUtils.concatenate(attenuatedDatasetsRaw[0], 0)); //////yArray Raw
 		
-		Dataset sortedYArrayCorrectedError= (DatasetUtils.convertToDataset(DatasetUtils.concatenate(yArrayCorrectedError, 0)));
-		Dataset sortedYArrayCorrectedFhklError= (DatasetUtils.convertToDataset(DatasetUtils.concatenate(yArrayCorrectedFhklError, 0)));
-		Dataset sortedYArrayCorrectedRawError= (DatasetUtils.convertToDataset(DatasetUtils.concatenate(yRawErrorArrayCorrected, 0)));
+		Dataset sortedYArrayCorrectedError= localConcatenate(yArrayCorrectedError, 0);
+		Dataset sortedYArrayCorrectedFhklError= localConcatenate(yArrayCorrectedFhklError, 0);
+		Dataset sortedYArrayCorrectedRawError= localConcatenate(yRawErrorArrayCorrected, 0);
 		
 		
 		if (sortedAttenuatedDatasets[1].getSize() != 
@@ -336,36 +342,6 @@ public class CurveStitchWithErrorsAndFrames {
 		sortedAttenuatedDatasets[2].setErrors(sortedYArrayCorrectedFhklError);
 		sortedAttenuatedDatasets[7].setErrors(sortedYArrayCorrectedRawError);
 		
-//		if(MethodSetting.toInt(csdp.getCorrectionSelection()) == 1||
-//			MethodSetting.toInt(csdp.getCorrectionSelection()) == 2||	
-//			MethodSetting.toInt(csdp.getCorrectionSelection()) == 3){
-//		
-//			double normalisation = 1/sortedAttenuatedDatasets[0].getDouble(0);
-//			sortedAttenuatedDatasets[0] = 
-//			Maths.multiply(sortedAttenuatedDatasets[0], normalisation);
-//			
-//			sortedYArrayCorrectedError = Maths.multiply(sortedYArrayCorrectedError, normalisation);
-//			
-//			
-//			double normalisationFhkl = 1/sortedAttenuatedDatasets[2].getDouble(0);
-//			sortedAttenuatedDatasets[2] = 
-//			Maths.multiply(sortedAttenuatedDatasets[2], normalisation);
-//			
-//			sortedYArrayCorrectedFhklError = Maths.multiply(sortedYArrayCorrectedFhklError, normalisationFhkl);
-//			
-//			double normalisationRaw = 1/sortedAttenuatedDatasets[7].getDouble(0);
-//			sortedAttenuatedDatasets[7] = 
-//			Maths.multiply(sortedAttenuatedDatasets[7], normalisation);
-//			
-//			sortedYArrayCorrectedRawError = Maths.multiply(sortedYArrayCorrectedRawError, normalisationRaw);
-//			
-//			
-//			
-//			sortedAttenuatedDatasets[0].setErrors(sortedYArrayCorrectedError);
-//			sortedAttenuatedDatasets[2].setErrors(sortedYArrayCorrectedFhklError);
-//			sortedAttenuatedDatasets[7].setErrors(sortedYArrayCorrectedRawError);
-//		}
-//		
 		csdp.setSplicedCurveY(sortedAttenuatedDatasets[0]);
 		csdp.setSplicedCurveX(sortedAttenuatedDatasets[1]);
 		csdp.setSplicedCurveYFhkl(sortedAttenuatedDatasets[2]);
@@ -378,7 +354,7 @@ public class CurveStitchWithErrorsAndFrames {
 		try{
 			if(qArray != null){
 				
-				Dataset splicedQ = DatasetUtils.convertToDataset(DatasetUtils.concatenate(qArray, 0)); ///qArray
+				Dataset splicedQ = localConcatenate(qArray, 0); ///qArray
 				DatasetUtils.sort(sortedAttenuatedDatasets[1],splicedQ);
 				csdp.setSplicedCurveQ(splicedQ);
 			}
@@ -389,5 +365,34 @@ public class CurveStitchWithErrorsAndFrames {
 		
 		return sortedAttenuatedDatasets;
 	}	
+	
+	
+	private static Dataset localConcatenate(IDataset[] in, int dim){
+		
+		boolean good = true;
+		
+		if(in.length == 0){
+			good = false;
+			return null;
+		}
+		
+		for(IDataset i : in){
+			
+			if(i == null){
+				good = false;
+				return null;
+			}
+			
+			if(i.getSize() == 0){
+				good = false;
+				return null;
+			}
+		}
+		
+		if(good){
+			return DatasetUtils.convertToDataset(DatasetUtils.concatenate(in, dim));
+		}
+		return null;
+	}
 	
 }

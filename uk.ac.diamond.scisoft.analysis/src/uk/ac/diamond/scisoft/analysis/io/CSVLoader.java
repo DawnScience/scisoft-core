@@ -72,11 +72,16 @@ public class CSVLoader extends DatLoader {
 
 		boolean foundHeaderLine = false;
 		boolean wasScanLine     = false;
+		boolean foundData       = false;
 		// TODO clean up as this should not be a while loop
 		while (true) {
 
 			try {
 				if ("".equals(line.trim())) continue;
+				if (DATA.matcher(line).matches()) {
+					foundData = true;
+					break; 
+				}
 				foundHeaderLine = true;
 
 				if (!monitorIncrement(mon)) {
@@ -98,24 +103,31 @@ public class CSVLoader extends DatLoader {
 
 
 			} finally {
-				line = in.readLine();
+				//no head, just starts with data
 
-				// Ignore empty lines.
-				while (line != null && "".equals(line.trim())) {
+				if (!foundData) {
+
 					line = in.readLine();
-				}
 
-				if (!line.startsWith("#")) { // We found the header line
-					
-					if (DATA.matcher(line).matches()) break; // Data is not columns!
-					
-					// We bodge the last non-empty line with non-numerical data
-					// to be a header line.
-					header.add("# "+line);
-					line = in.readLine(); // We must leave the last line read as a number, not header line.
-					break;
+					// Ignore empty lines.
+					while (line != null && "".equals(line.trim())) {
+						line = in.readLine();
+					}
+
+					if (!line.startsWith("#")) { // We found the header line
+
+						if (DATA.matcher(line).matches()) break; // Data is not columns!
+
+						// We bodge the last non-empty line with non-numerical data
+						// to be a header line.
+						header.add("# "+line);
+						line = in.readLine(); // We must leave the last line read as a number, not header line.
+						break;
+					}
 				}
 			}
+
+
 		}
 
 		if (header.size() < 1) {

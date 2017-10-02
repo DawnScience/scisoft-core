@@ -80,18 +80,25 @@ public class HDF5Loader extends AbstractFileLoader {
 	private int syncNodes;
 	private ScanFileHolderException syncException = null;
 
-	private String host = null;
+	private static String host;
 
 	private static final long DEFAULT_OBJECT_ID = -1;
 
 	public static final String DATA_FILENAME_ATTR_NAME = "data_filename";
 
+	static {
+		try {
+			host = InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException e) {
+			host = "localhost";
+			logger.error("Could not get local hostname:", e);
+		}
+	}
+	
 	public HDF5Loader() {
-		setHost();
 	}
 
 	public HDF5Loader(final String name) {
-		setHost();
 		setFile(name);
 	}
 
@@ -126,14 +133,6 @@ public class HDF5Loader extends AbstractFileLoader {
 	 */
 	public synchronized void stopAsyncLoading() {
 		syncNodes = syncLimit;
-	}
-
-	private void setHost() {
-		try {
-			host = InetAddress.getLocalHost().getHostName();
-		} catch (UnknownHostException e) {
-			logger.error("Could not find host name", e);
-		}
 	}
 
 	@Override

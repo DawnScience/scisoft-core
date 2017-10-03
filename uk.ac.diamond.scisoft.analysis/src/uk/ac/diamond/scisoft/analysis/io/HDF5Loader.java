@@ -80,21 +80,12 @@ public class HDF5Loader extends AbstractFileLoader {
 	private int syncNodes;
 	private ScanFileHolderException syncException = null;
 
-	private static String host;
+	private static String host = HDF5Utils.getLocalHostName();
 
 	private static final long DEFAULT_OBJECT_ID = -1;
 
 	public static final String DATA_FILENAME_ATTR_NAME = "data_filename";
 
-	static {
-		try {
-			host = InetAddress.getLocalHost().getHostName();
-		} catch (UnknownHostException e) {
-			host = "localhost";
-			logger.error("Could not get local hostname:", e);
-		}
-	}
-	
 	public HDF5Loader() {
 	}
 

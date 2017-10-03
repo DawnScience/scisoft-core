@@ -78,7 +78,7 @@ public class FittingParametersInputReader {
 		final String pointNode = path + "point_" + frameNumber;
 
 		String[] attributeNames0 = new String[] { "Boundary_Box", "Fit_Power", "Tracker_Type", "Background_Methodology",
-		"ROI_Location" };
+				"ROI_Location" };
 
 		String[] attributeNames = new String[attributeNames0.length];
 
@@ -177,6 +177,11 @@ public class FittingParametersInputReader {
 					} catch (Exception f) {
 						System.out.println(f.getMessage());
 					}
+
+					if (sd == null) {
+						continue;
+					}
+
 					m.getReturnType();
 
 					for (Method m1 : methods) {

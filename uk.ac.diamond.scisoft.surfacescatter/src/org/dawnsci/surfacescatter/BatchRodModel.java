@@ -9,6 +9,8 @@ public class BatchRodModel {
 	
 	private ArrayList<BatchRodDataTransferObject> brdtoList;
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+	private boolean poke = true;
+	
 	
 	public ArrayList<BatchRodDataTransferObject> getBrdtoList() {
 		
@@ -31,6 +33,8 @@ public class BatchRodModel {
 		}
 		
 		brdtoList.add(brdto);
+		
+		setPoke(!poke);
 	}
 	
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -47,6 +51,14 @@ public class BatchRodModel {
 			Object newValue) {
 		propertyChangeSupport.firePropertyChange(propertyName, oldValue,
 				newValue);
+	}
+
+
+
+	public void setPoke(boolean poke) {
+		firePropertyChange("poke", this.poke,
+				this.poke= poke);
+
 	}
 	
 }

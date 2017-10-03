@@ -4,6 +4,8 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.EnumMap;
 
+import org.dawnsci.surfacescatter.MethodSettingEnum.MethodSetting;
+
 public class GeometricParametersModel {
 	
 	private Boolean beamCorrection = false;
@@ -35,6 +37,7 @@ public class GeometricParametersModel {
 	private EnumMap<ReflectivityAngleAliasEnum,String> reflectivityAnglesMap;
 	private EnumMap<ReflectivityFluxParametersAliasEnum,String> reflectivityFluxMap;
 	private boolean useInternalFlux;
+	private String experimentMethod;
 	
 	private boolean useNegativeQ = false;
 	
@@ -228,6 +231,12 @@ public class GeometricParametersModel {
 	}
 	public void setUseInternalFlux(boolean useInternalFlux) {
 		this.useInternalFlux = useInternalFlux;
+	}
+	public String getExperimentMethod() {
+		return experimentMethod;
+	}
+	public void setExperimentMethod(String experimentMethod) {
+		this.experimentMethod = experimentMethod;
 	}
 	
 }

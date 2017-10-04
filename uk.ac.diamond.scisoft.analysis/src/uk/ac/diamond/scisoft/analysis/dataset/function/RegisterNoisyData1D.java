@@ -413,7 +413,7 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 				sum0 += vr*right;
 			}
 		} while (bl || br);
-		System.out.println("Width used to find centroid = " + (right - left));
+//		System.out.println("Width used to find centroid = " + (right - left));
 
 		int hs = (cc.getShapeRef()[0] + 1)/2;
 		return sum0/sum - hs;

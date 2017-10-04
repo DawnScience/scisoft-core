@@ -10,12 +10,14 @@
 package uk.ac.diamond.scisoft.analysis.image;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.SliceND;
 
@@ -28,15 +30,17 @@ public class ImageUtils {
 	 * @param window size of window
 	 * @param low lower threshold value for centre of peak
 	 * @param high upper threshold value for centre of peak
-	 * @return list of their sum, centroids (as coordinates in N x rank dataset), centre fraction and all values
+	 * @return list of their sum, centroids (as coordinates in N x rank dataset), centre fraction, all pixel values,
+	 * and position of clashes (where other pixels in the window are equal to the maximum)
 	 */
 	public static List<Dataset> findWindowedPeaks(Dataset data, int window, double low, double high) {
 		int[] shape = data.getShapeRef();
 		int rank = shape.length;
-		List<Double> sum = new ArrayList<Double>();
-		List<Double> centroid = new ArrayList<Double>();
-		List<Double> fraction = new ArrayList<Double>();
-		List<Double> values = new ArrayList<Double>();
+		List<Double> sum = new ArrayList<>();
+		List<Double> centroid = new ArrayList<>();
+		List<Double> fraction = new ArrayList<>();
+		List<Double> values = new ArrayList<>();
+		List<Integer> clashes = new ArrayList<>();
 
 		IndexIterator it = data.getIterator(true);
 		int half = window/2;
@@ -58,6 +62,7 @@ public class ImageUtils {
 		int[] centre = new int[rank];
 		int[] pos = it.getPos();
 		SliceND slice = new SliceND(shape);
+		final double[] results = new double[rank + 1]; // room to store total at end
 
 		while (it.hasNext()) {
 			if (windowIsInsideVolume(ub, pos)) {
@@ -74,8 +79,8 @@ public class ImageUtils {
 					// TODO update to 2.1
 					data.fillDataset(sliced, data.getSliceIterator(slice.getStart(), slice.getStop(), slice.getStep()));
 					sliced.setDirty(); // remove for 2.1
-					final double[] results = processWindow(sliced, sIt, base, v);
-					if (results != null) {
+					PEAK_TYPE type = processWindow(sliced, sIt, base, v, results);
+					if (type == PEAK_TYPE.CENTRAL) {
 						final double total = results[rank];
 						sum.add(total);
 						for (int i = 0; i < rank; i++) {
@@ -85,11 +90,15 @@ public class ImageUtils {
 						for (int i = 0; i < ssize; i++) {
 							values.add(sdata[i]);
 						}
-						// bump along to next window
-						for (int i = 0; i < window; i++) {
-							if (!it.hasNext() || !windowIsInsideVolume(ub, pos)) {
-								break;
-							}
+//						// bump along to next window
+//						for (int i = 0; i < window; i++) {
+//							if (!it.hasNext() || !windowIsInsideVolume(ub, pos)) {
+//								break;
+//							}
+//						}
+					} else if (type == PEAK_TYPE.SHARED) {
+						for (int i = 0; i < rank; i++) {
+							clashes.add(pos[i]);
 						}
 					}
 				}
@@ -102,13 +111,23 @@ public class ImageUtils {
 			list.add(DatasetFactory.zeros(0, rank));
 			list.add(DatasetFactory.zeros(0));
 			list.add(DatasetFactory.zeros(0));
+			list.add(DatasetFactory.zeros(IntegerDataset.class, 0, rank));
 		} else {
 			list.add(DatasetFactory.createFromList(sum));
 			list.add(DatasetFactory.createFromList(centroid).reshape(sum.size(), rank));
 			list.add(DatasetFactory.createFromList(fraction));
 			list.add(DatasetFactory.createFromList(values));
+			if (clashes.size() > 0) {
+				list.add(DatasetFactory.createFromList(clashes).reshape(clashes.size()/rank, rank));
+			} else {
+				list.add(DatasetFactory.zeros(IntegerDataset.class, 0, rank));
+			}
 		}
 		return list;
+	}
+
+	enum PEAK_TYPE {
+		NONE, CENTRAL, SHARED;
 	}
 
 	/**
@@ -117,26 +136,31 @@ public class ImageUtils {
 	 * @param it iterator
 	 * @param base values of base
 	 * @param c central value
+	 * @param xsum
 	 * @return return centroid values and total or null if central value not maximum
 	 */
-	private static double[] processWindow(final DoubleDataset box, final IndexIterator it, final DoubleDataset base, final double c) {
+	private static PEAK_TYPE processWindow(final DoubleDataset box, final IndexIterator it, final DoubleDataset base, final double c, final double[] xsum) {
 		final int[] pos = it.getPos();
 		final int rank = pos.length;
-		final double[] xsum = new double[rank + 1]; // room to store total at end
 		int count = 0; // number of pixels with given central value
 		double total = 0;
+
+		Arrays.fill(xsum, 0);
 		it.reset();
 		while (it.hasNext()) {
 			final double value = box.getElementDoubleAbs(it.index);
 			
 			if (value > c) {
-				return null; // centre not maximum
+				return PEAK_TYPE.NONE; // centre not maximum
 			} else if (value == c) {
 				count++;
+				if (count > 1) {
+					return PEAK_TYPE.SHARED; // centre jointly maximum
+				}
 			}
 			total += value;
 			for (int i = 0; i < rank; i++) {
-				xsum[i] += base.getElementDoubleAbs(pos[i])*value;
+				xsum[i] += base.getElementDoubleAbs(pos[i]) * value;
 			}
 		}
 
@@ -144,7 +168,7 @@ public class ImageUtils {
 			xsum[i] /= total;
 		}
 		xsum[rank] = total;
-		return count > 1 ? null: xsum;
+		return PEAK_TYPE.CENTRAL;
 	}
 
 	/**

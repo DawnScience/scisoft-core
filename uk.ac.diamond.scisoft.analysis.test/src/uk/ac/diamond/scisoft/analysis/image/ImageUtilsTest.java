@@ -27,29 +27,38 @@ public class ImageUtilsTest {
 	 * @param x
 	 * @return CDF
 	 */
-	private static double cdfGaussian(double x) {
+	public static double cdfGaussian(double x) {
 		return 0.5*Erf.erfc(mobrt*x);
 	}
 
-	private void distributePeak(Dataset data, double[] centre, double width, double amplitude) {
+	/**
+	 * Add gaussian peak to dataset
+	 * @param data
+	 * @param centre
+	 * @param width
+	 * @param amplitude
+	 */
+	public static void addGaussianPeak(Dataset data, double[] centre, double width, double amplitude) {
 		int rank = data.getRank();
 		int[] start = new int[rank];
 		int[] stop = new int[rank];
+		int[] shape = data.getShapeRef();
 		int window = (int) Math.ceil(6*width); // 3 sigma 
 		for (int i = 0; i < rank; i++) {
-			start[i] = (int) (Math.floor(centre[i]) - window/2);
-			stop[i] = start[i] + window;
+			start[i] = Math.max((int) (Math.floor(centre[i]) - window/2), 0);
+			stop[i] = Math.min(start[i] + window, shape[i] - 1);
 		}
 
 		double f = 1./width;
 		IndexIterator it = data.getSliceIterator(start, stop, null);
-		int[] pos = it.getPos();
+		final int[] pos = it.getPos();
 		while (it.hasNext()) {
 			
 			double v = 1;
 			for (int j = 0; j < rank; j++) {
 				double x = f * (pos[j] - centre[j]);
-				v *= cdfGaussian(x + f) - cdfGaussian(x);
+				double t = cdfGaussian(x + f) - cdfGaussian(x); 
+				v *= t;
 			}
 			data.setObjectAbs(it.index, v*amplitude + data.getElementDoubleAbs(it.index));
 		}
@@ -58,7 +67,7 @@ public class ImageUtilsTest {
 	private static final double REL_TOL = 1e-2;
 
 	@Test
-	public void testDistributePeak() {
+	public void testAddPeak() {
 		final int size = 128;
 		final double amp = 5;
 
@@ -67,13 +76,13 @@ public class ImageUtilsTest {
 		int[] pos = new int[] {(int) centre[0]};
 		Dataset data = DatasetFactory.zeros(size);
 
-		distributePeak(data, centre, 5, amp);
+		addGaussianPeak(data, centre, 5, amp);
 		double sum = ((Number) data.sum()).doubleValue();
 		Assert.assertEquals(amp, sum, REL_TOL*amp);
 		Assert.assertEquals(0.398, data.getDouble(pos), 0.001);
 
 		data.fill(0);
-		distributePeak(data, centre, 0.5, amp);
+		addGaussianPeak(data, centre, 0.5, amp);
 		sum = ((Number) data.sum()).doubleValue();
 		Assert.assertEquals(amp, sum, REL_TOL*amp);
 		Assert.assertEquals(3.225, data.getDouble(pos), 0.001);
@@ -84,13 +93,13 @@ public class ImageUtilsTest {
 
 		data = DatasetFactory.zeros(size, size);
 
-		distributePeak(data, centre, 5, amp);
+		addGaussianPeak(data, centre, 5, amp);
 		sum = ((Number) data.sum()).doubleValue();
 		Assert.assertEquals(amp, sum, REL_TOL*amp);
 		Assert.assertEquals(0.032, data.getDouble(pos), 0.001);
 
 		data.fill(0);
-		distributePeak(data, centre, 0.5, amp);
+		addGaussianPeak(data, centre, 0.5, amp);
 		sum = ((Number) data.sum()).doubleValue();
 		Assert.assertEquals(amp, sum, REL_TOL*amp);
 		Assert.assertEquals(2.080, data.getDouble(pos), 0.001);
@@ -105,9 +114,9 @@ public class ImageUtilsTest {
 
 		Dataset data = DatasetFactory.zeros(size);
 
-		distributePeak(data, centre, 0.5, amp);
+		addGaussianPeak(data, centre, 0.5, amp);
 		List<Dataset> result = ImageUtils.findWindowedPeaks(data, window, 0.1*amp, 1.1*amp);
-		Assert.assertEquals(4, result.size());
+		Assert.assertEquals(5, result.size());
 
 		Dataset sum = result.get(0);
 		Assert.assertEquals(1, sum.getSize());
@@ -129,9 +138,9 @@ public class ImageUtilsTest {
 
 		Dataset data = DatasetFactory.zeros(size, size);
 
-		distributePeak(data, centre, 0.5, amp);
+		addGaussianPeak(data, centre, 0.5, amp);
 		List<Dataset> result = ImageUtils.findWindowedPeaks(data, window, 0.1*amp, 1.1*amp);
-		Assert.assertEquals(4, result.size());
+		Assert.assertEquals(5, result.size());
 
 		Dataset sum = result.get(0);
 		Assert.assertEquals(1, sum.getSize());

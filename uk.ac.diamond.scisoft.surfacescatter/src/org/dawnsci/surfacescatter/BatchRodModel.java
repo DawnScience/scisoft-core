@@ -70,6 +70,15 @@ public class BatchRodModel {
 		setPoke(!poke);
 
 	}
+	
+	public BatchRodDataTransferObject getDTO (String d){
+		for(BatchRodDataTransferObject b : brdtoList){
+			if(b.getRodName().equals(d)){
+				return b;
+			}
+		}
+		return null;
+	}
 
 	public void setPoke(boolean poke) {
 		firePropertyChange("poke", this.poke, this.poke = poke);

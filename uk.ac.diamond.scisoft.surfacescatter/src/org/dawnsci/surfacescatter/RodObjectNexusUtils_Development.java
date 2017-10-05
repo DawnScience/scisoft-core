@@ -38,8 +38,10 @@ import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 
 //Let's save this file.
 public class RodObjectNexusUtils_Development {
+	
+	private static NexusFile nexusFileReference;
 
-	public static void RodObjectNexusUtils(RodObjectNexusBuilderModel model) {
+	public static void RodObjectNexusUtils(RodObjectNexusBuilderModel model) throws NexusException {
 
 		ArrayList<FrameModel> fms = model.getFms();
 		GeometricParametersModel gm = model.getGm();
@@ -287,7 +289,7 @@ public class RodObjectNexusUtils_Development {
 		}
 
 		try {
-			NexusFile nexusFileReference = NexusFileHDF5.createNexusFile(model.getFilepath());
+			nexusFileReference = NexusFileHDF5.createNexusFile(model.getFilepath());
 
 			final String entryString = "/" + NeXusStructureStrings.getEntry();
 			final String rawImagesString = entryString + "/" + NeXusStructureStrings.getRawImagesDataset() + "/";
@@ -404,10 +406,18 @@ public class RodObjectNexusUtils_Development {
 			nexusFileReference.addAttribute(group1, new AttributeImpl("signal", "Corrected_Intensity_Dataset"));
 			nexusFileReference.addAttribute(group1, new AttributeImpl("axes", axesArray));
 
-			nexusFileReference.close();
+			
 		} catch (NexusException e) {
 
 			System.out.println("This error occured when attempting to close the NeXus file: " + e.getMessage());
+		}
+		finally{
+			if(nexusFileReference != null){
+				nexusFileReference.close();
+			}
+			else{
+				
+			}
 		}
 
 	}
@@ -447,11 +457,11 @@ public class RodObjectNexusUtils_Development {
 		}
 
 		parameters.addAttribute(TreeFactory.createAttribute("Rod Name", drm.getRodName()));
-
-//		parameters.addAttribute(TreeFactory.createAttribute("Rod Name", drm.getRodName()));
 		
 		parameters.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXparameters"));
 
+		parameters.addAttribute(TreeFactory.createAttribute("Tracker On", String.valueOf(drm.isTrackerOn())));
+		
 		entry.addGroupNode(NeXusStructureStrings.getParameters(), parameters);
 	}
 

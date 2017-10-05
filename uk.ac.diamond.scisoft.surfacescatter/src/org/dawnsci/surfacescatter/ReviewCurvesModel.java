@@ -30,6 +30,11 @@ public class ReviewCurvesModel {
 			csdpList.add(csdp);
 			setCsdpLatest(csdp);
 		}
+		
+		else if(csdpList.size() ==0){
+			csdpList.add(csdp);
+			setCsdpLatest(csdp);
+		}
 
 		else{
 			ArrayList<CurveStitchDataPackage> csdpListCopy = new ArrayList<CurveStitchDataPackage>();

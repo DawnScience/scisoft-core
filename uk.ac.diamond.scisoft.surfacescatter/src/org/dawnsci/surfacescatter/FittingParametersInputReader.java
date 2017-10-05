@@ -61,7 +61,7 @@ public class FittingParametersInputReader {
 		return fp;
 	}
 
-	public static void readerFromNexus(String filename, int frameNumber, FrameModel m) {
+	public static void readerFromNexus(String filename, int frameNumber, FrameModel m, boolean useTrajectory) {
 
 		// FittingParameters fp = new FittingParameters();
 
@@ -74,9 +74,16 @@ public class FittingParametersInputReader {
 		}
 
 		final String path = "/" + NeXusStructureStrings.getEntry() + "/";
+		
+		String pointNode = path + "point_";
+		
+		if(useTrajectory){
+			pointNode = pointNode+	frameNumber;
 
-		final String pointNode = path + "point_" + frameNumber;
-
+		}
+		else{
+			pointNode = pointNode+0;
+		}
 		String[] attributeNames0 = new String[] { "Boundary_Box", "Fit_Power", "Tracker_Type", "Background_Methodology",
 				"ROI_Location" };
 
@@ -111,6 +118,10 @@ public class FittingParametersInputReader {
 			StringDataset trackerType = DatasetUtils.cast(StringDataset.class, trackerTypeAttribute.getValue());
 
 			m.setTrackingMethodology(trackerType.get());
+			
+			if(useTrajectory){
+				m.setTrackingMethodology(TrackingMethodology.TrackerType1.USE_SET_POSITIONS);
+			}
 
 			Attribute backgroundMethodologyAttribute = point.getAttribute(attributeNames0[3]);
 			StringDataset backgroundMethodology = DatasetUtils.cast(StringDataset.class,
@@ -135,7 +146,7 @@ public class FittingParametersInputReader {
 		}
 	}
 
-	public static void geometricalParametersReaderFromNexus(String filename, GeometricParametersModel gm) {
+	public static void geometricalParametersReaderFromNexus(String filename, GeometricParametersModel gm, DirectoryModel drm) {
 
 		final String path = "/" + NeXusStructureStrings.getEntry() + "/";
 
@@ -226,6 +237,12 @@ public class FittingParametersInputReader {
 					}
 				}
 			}
+			
+			Attribute att = parametersNode.getAttribute(NeXusStructureStrings.getTrackerOn());
+			StringDataset sd = DatasetUtils.cast(StringDataset.class, att.getValue());
+			
+			drm.setTrackerOn(Boolean.valueOf(sd.get()));
+			
 		} catch (NexusException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

@@ -76,7 +76,7 @@ public class MultipleDetectorScalerOperation extends AbstractOperation<MultipleD
 		inputData = ErrorPropagationUtils.multiplyWithUncertainty(inputData, correctionFactorDataset);
 		
 		// and export the result
-		inputData.setMetadata(metadata);
+		copyMetadata(input, inputData);
 		OperationData toReturn = new OperationData(inputData);
 
 		return toReturn;

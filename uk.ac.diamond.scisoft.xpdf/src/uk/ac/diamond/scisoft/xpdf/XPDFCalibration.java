@@ -199,6 +199,13 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 	}
 	
 	/**
+	 * Return form factors for comparison with the calibrated data
+	 */
+	public IDataset getSampleSelfScattering() {
+		return this.sampleSelfScattering;
+	}
+	
+	/**
 	 * Iterates the calibration constant for five iterations.
 	 * <p>
 	 * Perform the iterations to converge the calibration constant of the data.

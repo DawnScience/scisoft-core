@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 
 
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 // Imports from org.eclipse.dawnsci
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -33,6 +34,8 @@ import org.eclipse.january.metadata.MetadataFactory;
 // This plugin is designed to trim out sections of data from within the dataset
 // @ author: Tim Snow
 //
+
+@Atomic
 public class Trim1DOperation extends AbstractOperation<Trim1DModel, OperationData> {
 
 	@Override

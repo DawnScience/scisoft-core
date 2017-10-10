@@ -1,5 +1,6 @@
 package org.dawnsci.surfacescatter;
 
+import java.io.ObjectInputStream.GetField;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -368,6 +369,11 @@ public class DummyProcessWithFrames {
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double rawIntensity = (Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum();
 
+		Double intensityError = getCorrectionValue(fm)*((Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum());
+		Double rawIntensityError = Math.sqrt((Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum());
+
+		
+		
 		Double fhkl = (double) 0.001;
 		if (intensity >=0){
 			fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
@@ -387,6 +393,12 @@ public class DummyProcessWithFrames {
 			ocdp.addToYListFhklForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k ,fhkl);
 			ocdp.addToYListRawForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k ,rawIntensity);
 
+
+			ocdp.addToYListErrorForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k ,intensityError);
+			ocdp.addToYListFhklErrorForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k , fhklerror(fhkl, rawIntensity));
+			ocdp.addToYListRawErrorForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k ,rawIntensityError);
+	
+			
 			ocdp.addyList(noOfFrames, selection ,intensity);
 			ocdp.addyListFhkl(noOfFrames, selection ,fhkl);
 			ocdp.addYListRawIntensity(noOfFrames, selection ,rawIntensity);
@@ -686,6 +698,12 @@ public class DummyProcessWithFrames {
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double rawIntensity = (Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum();
 
+		Double intensityError = getCorrectionValue(fm)*((Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum());
+		Double rawIntensityError = Math.sqrt((Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum());
+
+		
+		
+		
 		Double fhkl = (double) 0.001;
 		if (intensity >=0){
 			fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
@@ -702,6 +720,10 @@ public class DummyProcessWithFrames {
 			ocdp.addToYListFhklForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k ,fhkl);
 			ocdp.addToYListRawForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k ,rawIntensity);
 
+			ocdp.addToYListErrorForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k ,intensityError);
+			ocdp.addToYListFhklErrorForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k , fhklerror(fhkl, rawIntensity));
+			ocdp.addToYListRawErrorForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k ,rawIntensityError);
+			
 			ocdp.addyList(noOfFrames, selection ,intensity);
 			ocdp.addyListFhkl(noOfFrames, selection ,fhkl);
 			ocdp.addYListRawIntensity(noOfFrames, selection ,rawIntensity);
@@ -1007,6 +1029,10 @@ public class DummyProcessWithFrames {
 
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double rawIntensity = (Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum();
+		
+		Double intensityError = getCorrectionValue(fm)*((Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum());
+		Double rawIntensityError = Math.sqrt((Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum());
+
 
 		Double fhkl = (double) 0.001;
 		if (intensity >=0){
@@ -1023,6 +1049,12 @@ public class DummyProcessWithFrames {
 			ocdp.addToYListFhklForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k ,fhkl);
 			ocdp.addToYListRawForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k ,rawIntensity);
 
+			ocdp.addToYListErrorForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k ,intensityError);	
+			ocdp.addToYListFhklErrorForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k , fhklerror(fhkl, rawIntensity));
+			ocdp.addToYListRawErrorForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k ,rawIntensityError);
+			
+			
+			
 			ocdp.addyList(noOfFrames, selection ,intensity);
 			ocdp.addyListFhkl(noOfFrames, selection ,fhkl);
 			ocdp.addYListRawIntensity(noOfFrames, selection ,rawIntensity);
@@ -1324,10 +1356,15 @@ public class DummyProcessWithFrames {
 
 		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
 		Double rawIntensity = (Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum();
+		
+		
+		Double intensityError = getCorrectionValue(fm)*Math.sqrt((Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum());
+		Double rawIntensityError = Math.sqrt((Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum());
+
 
 		Double fhkl = (double) 0.001;
 		if (intensity >=0){
-			fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
+			fhkl =Math.pow(intensity, 0.5);
 		}	
 
 		if (trackingMarker !=3 ){
@@ -1338,6 +1375,11 @@ public class DummyProcessWithFrames {
 			ocdp.addToYListFhklForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k, fhkl);
 			ocdp.addToYListRawForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k ,rawIntensity);
 
+			ocdp.addToYListErrorForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k ,intensityError);
+			ocdp.addToYListFhklErrorForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k , fhklerror(fhkl, rawIntensity));
+			ocdp.addToYListRawErrorForEachDat(fm.getDatNo(),drm.getDatFilepaths().length, drm.getNoOfImagesInDatFile(fm.getDatNo()), k ,rawIntensityError);
+			
+			
 			ocdp.addyList(noOfFrames, selection ,intensity);
 			ocdp.addyListFhkl(noOfFrames, selection ,fhkl);
 			ocdp.addYListRawIntensity(noOfFrames, selection ,rawIntensity);
@@ -1837,6 +1879,14 @@ public class DummyProcessWithFrames {
 
 	public static Dataset correctionMethod(FrameModel fm,
 			IDataset output){
+		
+		yValue = Maths.multiply(output,  getCorrectionValue(fm));
+
+		return yValue;
+	}
+		
+		
+	public static double getCorrectionValue(FrameModel fm){
 
 		double correction = 0.001;
 		
@@ -1962,9 +2012,7 @@ public class DummyProcessWithFrames {
 
 		}
 
-		yValue = Maths.multiply(output, correction);
-
-		return yValue;
+		return correction;
 
 	}
 
@@ -1974,6 +2022,14 @@ public class DummyProcessWithFrames {
 		}
 	}
 
+	private static double fhklerror(double fhkl, double rawIntensity){
+		
+		double error = fhkl*0.5/Math.sqrt(rawIntensity);
+		
+		return error;
+		
+	}
+	
 
 	private static double[] pfixer(FrameModel fm,
 			DirectoryModel drm,

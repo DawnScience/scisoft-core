@@ -504,28 +504,28 @@ public class OutputCurvesDataPackage {
 				}
 		}
 		
-		if (yListError==null){
-			yListError = new ArrayList<Double>();
-			for (int i = 0; i < l; i++) {
-				  yListError.add(-10000000000.0);
-				}
-		}
-		
-
-		if (yListError.size() == 0){
-			yListError = new ArrayList<Double>();
-			for (int i = 0; i < l; i++) {
-				  yListError.add(-10000000000.0);
-				}
-		}
-		
-		
-		ArrayList<Double> yList2 = new ArrayList<Double>();
-		
-		yList2 = (ArrayList<Double>) yListError.clone();
-		yList2.set(k,Math.sqrt(y));
-		
-		yListError = yList2;
+//		if (yListError==null){
+//			yListError = new ArrayList<Double>();
+//			for (int i = 0; i < l; i++) {
+//				  yListError.add(-10000000000.0);
+//				}
+//		}
+//		
+//
+//		if (yListError.size() == 0){
+//			yListError = new ArrayList<Double>();
+//			for (int i = 0; i < l; i++) {
+//				  yListError.add(-10000000000.0);
+//				}
+//		}
+//		
+//		
+//		ArrayList<Double> yList2 = new ArrayList<Double>();
+//		
+//		yList2 = (ArrayList<Double>) yListError.clone();
+//		yList2.set(k,Math.sqrt(y));
+//		
+//		yListError = yList2;
 		
 		ArrayList<Double> yList1 = new ArrayList<Double>();
 		yList1 = (ArrayList<Double>) yList.clone();

@@ -53,11 +53,8 @@ public class AgnosticTrackerWithFrames {
 			e1.printStackTrace();
 		}
 		
-//		FrameModel fm = 
 		
-		if(//frame.getTrackingMethodology() != TrackingMethodology.TrackerType1.INTERPOLATION 
-				//&& 
-				frame.getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION
+		if(frame.getTrackingMethodology() != TrackingMethodology.TrackerType1.SPLINE_INTERPOLATION
 				&& frame.getTrackingMethodology() != TrackingMethodology.TrackerType1.USE_SET_POSITIONS){
 	
 //			
@@ -66,8 +63,6 @@ public class AgnosticTrackerWithFrames {
 				if (drm.getInputForEachDat()[frame.getDatNo()] == null) {
 					len = drm.getLenPtForEachDat()[frame.getDatNo()][0];
 					pt = drm.getLenPtForEachDat()[frame.getDatNo()][1];
-	
-	//				in1 = BoxSlicerRodScanUtilsForDialog.rOIBox(input, len, pt);
 					
 					tracker = BoofCVImageTrackerServiceCreator.createImageTrackerService();
 					tracker1 = BoofCVImageTrackerServiceCreator.createImageTrackerService();

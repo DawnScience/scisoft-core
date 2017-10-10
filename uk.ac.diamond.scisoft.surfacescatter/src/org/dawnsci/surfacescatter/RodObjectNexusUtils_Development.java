@@ -177,7 +177,7 @@ public class RodObjectNexusUtils_Development {
 
 			try {
 
-				nxData.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, NexusTreeUtils.NX_SAMPLE));
+				nxData.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXcollection"));
 
 				entry.addGroupNode("point_" + imageFilepathNo, nxData);
 			} catch (Exception e) {

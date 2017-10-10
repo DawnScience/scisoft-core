@@ -11,11 +11,13 @@ package org.dawnsci.surfacescatter;
 
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.Maths;
+
 import uk.ac.diamond.scisoft.analysis.dataset.function.Interpolation1D;
 
 public class ReflectivityFluxCorrectionsForDialog{
 	
-	public static double reflectivityFluxCorrectionsDouble (Double k, String...filepath){
+	public static double reflectivityFluxCorrectionsDouble (Double k, boolean useNegativeQ, String...filepath){
 
 		Dataset m = DatasetFactory.zeros(new int[] {1});
 		
@@ -39,6 +41,9 @@ public class ReflectivityFluxCorrectionsForDialog{
 			}
 		}
 		
+		if(useNegativeQ){
+			fluxData[1] = Maths.multiply(-1, fluxData[1]);
+		}
 		
 		Dataset flux =  DatasetFactory.createFromObject(0);
 		float fluxLong = 0;

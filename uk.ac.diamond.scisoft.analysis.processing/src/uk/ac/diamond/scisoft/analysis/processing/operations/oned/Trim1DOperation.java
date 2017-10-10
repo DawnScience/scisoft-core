@@ -105,13 +105,17 @@ public class Trim1DOperation extends AbstractOperation<Trim1DModel, OperationDat
 			int newDataLength = dataLength - (endIndex - startIndex);
 			outputDataset = DatasetFactory.zeros(newDataLength);
 			outputAxis = DatasetFactory.zeros(newDataLength);
-			outputError = DatasetFactory.zeros(newDataLength);
+			if (inputError != null) {
+				outputError = DatasetFactory.zeros(newDataLength);
+			}
 			
 			// Then First part of the data and axis values
 			for (int loopIter = 0; loopIter < startIndex; loopIter ++) {
 				outputDataset.set(inputDataset.getDouble(loopIter), loopIter);
 				outputAxis.set(inputAxis.getDouble(loopIter), loopIter);
-				outputError.set(inputError.getDouble(loopIter), loopIter);
+				if (inputError != null) {
+					outputError.set(inputError.getDouble(loopIter), loopIter);
+				}
 			}
 			
 			// followed by the section after the trim
@@ -119,7 +123,9 @@ public class Trim1DOperation extends AbstractOperation<Trim1DModel, OperationDat
 				int newIndex = (loopIter - endIndex) + startIndex;
 				outputDataset.set(inputDataset.getDouble(loopIter), newIndex);
 				outputAxis.set(inputAxis.getDouble(loopIter), newIndex);
-				outputError.set(inputError.getDouble(loopIter), newIndex);
+				if (inputError != null) {
+					outputError.set(inputError.getDouble(loopIter), newIndex);
+				}
 			}		
 		}
 
@@ -137,9 +143,11 @@ public class Trim1DOperation extends AbstractOperation<Trim1DModel, OperationDat
 		}
 		
 		// Then sticking back in all the previous data
-		outputDataset.setMetadata(inputMetadata);
+		copyMetadata(inputDataset, outputDataset);
 		outputDataset.setMetadata(axisValues);
-		outputDataset.setErrors(outputError);
+		if (inputError != null) {
+			outputDataset.setErrors(outputError);
+		}
 		
 		// Create the return variable
 		OperationData toReturn = new OperationData();

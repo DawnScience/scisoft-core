@@ -206,4 +206,14 @@ public interface XPDFMetadata extends MetadataType {
 	 */
 	void setLorchCutOff(double cutOff);
 
+	/**
+	 * Sets the Compton scattering scaling parameter
+	 */
+	void setComptonScaling(double comptonScaling);
+	
+	/**
+	 * Gets the stored value of the Compton scaling
+	 */
+	double getComptonScaling();
+	
 }

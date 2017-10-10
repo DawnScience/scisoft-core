@@ -48,6 +48,7 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 	private double calCon;
 	private double fluoro;
 	private double lorchCutOff;
+	private double comptonScaling = 1.0;
 	
 	/**
 	 * Empty constructor.
@@ -504,6 +505,16 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 
 		}
 	
+	}
+
+	@Override
+	public void setComptonScaling(double comptonScaling) {
+		this.comptonScaling = comptonScaling;
+	}
+
+	@Override
+	public double getComptonScaling() {
+		return this.comptonScaling;
 	}
 	
 }

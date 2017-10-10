@@ -79,6 +79,10 @@ public class XPDFIterateCalibrationConstantOperation extends
 		
 		int nIterations = model.getnIterations();
 		
+		// Set the adjustable parameters for the calibration
+		theCalibration.setPolarizationFactor(model.getPolarizationFactor());
+		theCalibration.setComptonScaling(model.getComptonScaling());
+		theXPDFMetadata.setComptonScaling(model.getComptonScaling());
 		
 		List<Dataset> backgroundSubtracted = new ArrayList<Dataset>();
 		// The 0th element is the sample

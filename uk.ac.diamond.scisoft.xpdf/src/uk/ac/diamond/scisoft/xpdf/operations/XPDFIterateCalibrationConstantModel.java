@@ -29,7 +29,27 @@ public class XPDFIterateCalibrationConstantModel extends AbstractOperationModel 
 	private boolean regenerateAbsorptionMaps = false;
 	@OperationModelField(hint="Number of parallel threads to use for the fluorescence calibration", label = "Parallel threads")
 	private int nThreads = 1;
+	@OperationModelField(hint="Polarization factor of the incident beam", label = "Polarization factor")
+	private double polarizationFactor = 1.0;
+	@OperationModelField(hint = "Compton Scattering scaling factor (non-physical)", label = "Compton Scaling")
+	private double comptonScaling = 1.0; 
 	
+	public double getPolarizationFactor() {
+		return polarizationFactor;
+	}
+
+	public void setPolarizationFactor(double polarizationFactor) {
+		firePropertyChange("polarizationFactor", this.polarizationFactor, this.polarizationFactor = polarizationFactor);
+	}
+
+	public double getComptonScaling() {
+		return comptonScaling;
+	}
+
+	public void setComptonScaling(double comptonScaling) {
+		firePropertyChange("comptonScaling", this.comptonScaling, this.comptonScaling = comptonScaling);
+	}
+
 	public int getnIterations() {
 		return nIterations;
 	}

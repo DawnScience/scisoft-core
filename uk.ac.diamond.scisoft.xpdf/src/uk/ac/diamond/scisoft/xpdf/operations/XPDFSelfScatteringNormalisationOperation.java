@@ -20,7 +20,7 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 /**
  * Apply self-scattering corrections to the data.
- * @author Timothy Spain thimothy.spain@diamond.ac.uk
+ * @author Timothy Spain timothy.spain@diamond.ac.uk
  * @since 2015-09-14
  *
  */
@@ -44,8 +44,12 @@ public class XPDFSelfScatteringNormalisationOperation extends
 		} else if (absCor.getShape().length == 2) {
 			if (absCor.getFirstMetadata(DiffractionMetadata.class) == null) throw new OperationException(this, "Diffraction metadata not found.");
 		}
+		
+		double comptonScaling = theXPDFMetadata.getComptonScaling();
+		if (comptonScaling != 1.0) System.out.println("XPDFSelfScatteringNormalisationOperation: Compton scattering scaled by" + comptonScaling);
+		
 		XPDFCoordinates coords = new XPDFCoordinates(DatasetUtils.convertToDataset(absCor));
-		soq = Maths.divide(Maths.subtract(absCor, sample.getSelfScattering(coords)), sample.getFSquared(coords));
+		soq = Maths.divide(Maths.subtract(absCor, Maths.multiply(comptonScaling, sample.getSelfScattering(coords))), sample.getFSquared(coords));
 		Dataset soqError = null;
 		if (absCor.getErrors() != null)
 			soqError = Maths.divide(absCor.getErrors(), sample.getFSquared(coords));

@@ -71,6 +71,10 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 	Dataset solAngSample;
 	List<Dataset> transCorContainers;
 	
+	// Adjustable parameters for beam polarization and to scale the Compton Scattering
+	private double polarizationFraction = 1.0;
+	private double comptonScaling = 1.0;
+	
 	/**
 	 * Empty constructor.
 	 */
@@ -179,6 +183,22 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 	}
 
 	/**
+	 * Sets the polarization factor of the incident beam. Should usually be set to 1.0.
+	 */
+	public void setPolarizationFactor(double polarizationFactor) {
+		this.polarizationFraction = polarizationFactor;
+		// Changing the polarization factor implies re-calculating the polarization correction.
+		cachedPolar.clear();
+	}
+	
+	/**
+	 * Sets the non-physical applied to the Compton scattering. Should really be set to 1.0. 
+	 */
+	public void setComptonScaling(double comptonScaling) {
+		this.comptonScaling = comptonScaling;
+	}
+	
+	/**
 	 * Iterates the calibration constant for five iterations.
 	 * <p>
 	 * Perform the iterations to converge the calibration constant of the data.
@@ -240,7 +260,7 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 		if (propagateErrors && absCor.getErrors() != null)
 			absCor.getErrors().idivide(nSampleIlluminatedAtoms);
 
-		Dataset absCorP = applyPolarizationConstant(absCor);
+		Dataset absCorP = applyPolarizationCorrection(absCor);
 		
 		// Integrate
 		double numerator = qSquaredIntegrator.ThomsonIntegral(absCorP);
@@ -350,9 +370,9 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 	 * 				The data uncorrected for the effects of polarization
 	 * @return the data corrected for the effects of polarization.
 	 */
-	private Dataset applyPolarizationConstant(Dataset absCor) {
+	private Dataset applyPolarizationCorrection(Dataset absCor) {
 		final double sineFudge = 0.99;		
-		final double polarizationFraction = 1.0;
+//		final double polarizationFraction = 1.0;
 		Dataset polCor;
 
 		if (!cachedPolar.containsKey(coords)) {		
@@ -854,7 +874,7 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 //		Dataset difference = Maths.subtract(smoothed, truncatedSelfScattering);
 //		return (double) Maths.multiply(difference, truncatedQ).sum();
 
-		smoothed.isubtract(truncatedSelfScattering);
+		smoothed.isubtract(truncatedSelfScattering.imultiply(this.comptonScaling));
 		smoothed.imultiply(truncatedQ);
 		return (double) smoothed.sum();
 		

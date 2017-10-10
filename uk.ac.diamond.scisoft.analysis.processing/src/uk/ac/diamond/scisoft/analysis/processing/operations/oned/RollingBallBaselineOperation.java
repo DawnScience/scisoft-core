@@ -13,9 +13,9 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import uk.ac.diamond.scisoft.analysis.baseline.BaselineGeneration;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
@@ -50,30 +50,7 @@ public class RollingBallBaselineOperation extends AbstractOperation<RollingBallB
 	
 	private  Dataset rollingBallBaselineCorrection(Dataset y, int width) {
 
-		Dataset t1 = DatasetFactory.zeros(y);
-		Dataset t2 = DatasetFactory.zeros(y);
-
-		for (int i = 0 ; i < y.getSize()-1; i++) {
-			int start = (i-width) < 0 ? 0 : (i - width);
-			int end = (i+width) > (y.getSize()-1) ? (y.getSize()-1) : (i+width);
-			double val = y.getSlice(new int[]{start}, new int[]{end}, null).min().doubleValue();
-			t1.set(val, i);
-		}
-
-		for (int i = 0 ; i < y.getSize()-1; i++) {
-			int start = (i-width) < 0 ? 0 : (i - width);
-			int end = (i+width) > (y.getSize()-1) ? (y.getSize()-1) : (i+width);
-			double val = t1.getSlice(new int[]{start}, new int[]{end}, null).max().doubleValue();
-			t2.set(val, i);
-		}
-
-		for (int i = 0 ; i < y.getSize()-1; i++) {
-			int start = (i-width) < 0 ? 0 : (i - width);
-			int end = (i+width) > (y.getSize()-1) ? (y.getSize()-1) : (i+width);
-			double val = (Double)t2.getSlice(new int[]{start}, new int[]{end}, null).mean();
-			t1.set(val, i);
-		}
-
+		Dataset t1 = BaselineGeneration.rollingBallBaseline(y, width);
 		return Maths.subtract(y, t1);
 	}
 

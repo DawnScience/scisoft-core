@@ -54,6 +54,10 @@ public class Expression1DOperation<T extends Expression1DModel> extends Abstract
 		am.setAxis(0, outaxis);
 		outdata.setMetadata(am);
 		
+		if (input.getSize() == outdata.getSize()) {
+			copyMetadata(input, outdata, false);
+		}
+		
 		return new OperationData(outdata);
 	}
 

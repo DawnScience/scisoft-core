@@ -27,6 +27,7 @@ import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 
+import uk.ac.diamond.scisoft.analysis.baseline.BaselineGeneration;
 import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 
@@ -63,29 +64,11 @@ public class IterativePolynomialBaselineSubtractionOperation extends
 			throw new OperationException(this, e);
 		}
 		
-		Dataset[] aa = new Dataset[]{axis};
 		DoubleDataset data = (DoubleDataset)DatasetUtils.cast(input, Dataset.FLOAT64).clone();
 		
-		Polynomial polyFit = null;
-		for (int i = 0; i < model.getnIterations(); i++) {
-			try {
-				polyFit = Fitter.polyFit(aa, data, 1e-15, model.getPolynomialOrder());
-				DoubleDataset v = polyFit.calculateValues(aa);
-				
-				IndexIterator it = v.getIterator();
-				while (it.hasNext()) {
-					double val = data.getAbs(it.index);
-					double base = v.getAbs(it.index);
-					if (val > base) data.setAbs(it.index, base);
-				}
-				
-			} catch (Exception e) {
-				throw new OperationException(this, "Error in polynomial fit!");
-			}
-			
-		}
-		DoubleDataset v = polyFit.calculateValues(aa);
-		IDataset output = Maths.subtract(input, v);
+		Dataset baseline = BaselineGeneration.iterativePolynomialBaseline(data, axis, model.getPolynomialOrder(), model.getnIterations());
+		
+		IDataset output = Maths.subtract(input, baseline);
 		
 		AxesMetadata ax;
 		try {

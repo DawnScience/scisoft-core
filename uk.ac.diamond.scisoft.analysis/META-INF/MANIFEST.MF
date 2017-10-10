@@ -28,6 +28,7 @@ Require-Bundle: javax.vecmath;bundle-version="1.5.2",
  org.eclipse.dawnsci.hdf.object;bundle-version="1.3.0"
 Export-Package: uk.ac.diamond.scisoft.analysis,
  uk.ac.diamond.scisoft.analysis.axis,
+ uk.ac.diamond.scisoft.analysis.baseline,
  uk.ac.diamond.scisoft.analysis.crystallography,
  uk.ac.diamond.scisoft.analysis.dataset.function,
  uk.ac.diamond.scisoft.analysis.decomposition,

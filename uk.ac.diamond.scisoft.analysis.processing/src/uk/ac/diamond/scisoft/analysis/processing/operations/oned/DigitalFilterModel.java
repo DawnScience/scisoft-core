@@ -60,26 +60,26 @@ public class DigitalFilterModel extends AbstractOperationModel {
 	
 	// The second entry in the model for this plug-in, the initial filter width
 	@OperationModelField(min=1, hint="This number should be equal to the number of points of the average feature", label = "First filter width", fieldPosition = 2)
-	private int firstFilterWidth = 5;
+	private double firstFilterWidth = 0.00;
 
-	public int getFirstFilterWidth() {
+	public double getFirstFilterWidth() {
 		return firstFilterWidth;
 	}
 
-	public void setFirstFilterWidth(int firstFilterWidth) {
+	public void setFirstFilterWidth(double firstFilterWidth) {
 		firePropertyChange("firstFilterWidth", this.firstFilterWidth, this.firstFilterWidth = firstFilterWidth);
 	}
 	
 	
 	// The third entry in the model for this plug-in, the secondary, narrower, filter width
 	@OperationModelField(min=1, hint="This number should be equal to half the number of points of the average feature, or less", label = "Second filter width", fieldPosition = 3)
-	private int secondFilterWidth = 2;
+	private double secondFilterWidth = 0.00;
 
-	public int getSecondFilterWidth() {
+	public double getSecondFilterWidth() {
 		return secondFilterWidth;
 	}
 
-	public void setSecondFilterWidth(int secondFilterWidth) {
+	public void setSecondFilterWidth(double secondFilterWidth) {
 		firePropertyChange("secondFilterWidth", this.secondFilterWidth, this.secondFilterWidth = secondFilterWidth);
 	}
 }

@@ -26,7 +26,6 @@ import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.api.processing.PlotAdditionalData;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 import org.slf4j.Logger;
@@ -35,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import uk.ac.diamond.scisoft.analysis.processing.operations.oned.DigitalFilterModel.FeatureFilter;
 
 
-@PlotAdditionalData(onInput = false, dataName = "Live Setup Plot Data")
 public class DigitalFilterOperation extends AbstractOperation<DigitalFilterModel, OperationData> {
 
 	// First we set the ID of the plug-in
@@ -66,9 +64,13 @@ public class DigitalFilterOperation extends AbstractOperation<DigitalFilterModel
 	
 	// Then we declare the process itself
 	protected OperationData process(IDataset input, IMonitor monitor) {
-		// Do the filtering
-		Dataset output = digitalFilterBackground(DatasetUtils.convertToDataset(input), xAxisExtractor(input), model.getFirstFilterWidth(), model.getSecondFilterWidth());
-
+		Dataset output = (Dataset) input;
+		
+		// If widths have been given, do the filtering
+		if (model.getFirstFilterWidth() != 0.00 && model.getSecondFilterWidth() != 0.00) {
+			output = digitalFilterBackground(DatasetUtils.convertToDataset(input), xAxisExtractor(input), model.getFirstFilterWidth(), model.getSecondFilterWidth());
+		}
+		
 		// Put the metadata back!
 		copyMetadata(input, output);
 		
@@ -78,14 +80,20 @@ public class DigitalFilterOperation extends AbstractOperation<DigitalFilterModel
 	
 	
 	// Where all the work happens, made public out to make this available to other classes
-	public Dataset digitalFilterBackground(Dataset yDataset, Dataset xDataset, int firstWidth, int secondWidth) {
+	public Dataset digitalFilterBackground(Dataset yDataset, Dataset xDataset, double firstWidth, double secondWidth) {
 		// Set up some bits for the method
 		LinearInterpolator interpolator = new LinearInterpolator();
 		double[] yData = (double[]) DatasetUtils.createJavaArray(yDataset);
 		double[] xData = (double[]) DatasetUtils.createJavaArray(xDataset);
 		
+		double startValue = xDataset.min(true).doubleValue();
+		double endValue = startValue + firstWidth;
+		int firstWidthInt = DatasetUtils.findIndexGreaterThanOrEqualTo(xDataset, endValue);
+		endValue = startValue + secondWidth;
+		int secondWidthInt = DatasetUtils.findIndexGreaterThanOrEqualTo(xDataset, endValue);
+		
 		// Run the first round of filtering
-		double[] firstFilterData = forwardDigitalFilter(firstWidth, firstWidth, yData);
+		double[] firstFilterData = forwardDigitalFilter(firstWidthInt, firstWidthInt, yData);
 		double[][] firstFilter = arrayChecker(yData, firstFilterData, xData);
 		
 		// Interpolate to re-create the original array dimensions
@@ -93,15 +101,12 @@ public class DigitalFilterOperation extends AbstractOperation<DigitalFilterModel
 		double[] interpolatedFirstFilterY = dataRecreator(firstInterpolationResult, xData);
 		
 		// Run the second round of filtering
-		double[] secondFilterData = backwardDigitalFilter(secondWidth, secondWidth, yData);
+		double[] secondFilterData = backwardDigitalFilter(secondWidthInt, secondWidthInt, yData);
 		double[][] secondFilter = arrayChecker(yData, secondFilterData, xData);
 
 		// Interpolate to re-create the original array dimensions
 		PolynomialSplineFunction secondInterpolationResult = interpolator.interpolate(secondFilter[1], secondFilter[0]);
 		double[] interpolatedSecondFilterY = dataRecreator(secondInterpolationResult, xData);
-
-		// Creare our return array
-		boolean narrowFeatures = true;
 
 		// Depending on whether we're interested in the narrow or broad features...
 		if (model.getFilterType() == FeatureFilter.NARROW) {
@@ -133,7 +138,7 @@ public class DigitalFilterOperation extends AbstractOperation<DigitalFilterModel
 	}
 	
 	
-	private Dataset xAxisExtractor(IDataset inputDataset) {
+	public static Dataset xAxisExtractor(IDataset inputDataset) {
 		// Next, we'll extract out the x axis (q) dataset from the input
 		Dataset xAxis;
 		
@@ -350,7 +355,7 @@ public class DigitalFilterOperation extends AbstractOperation<DigitalFilterModel
 	private double[] addMinimumValue(double[] dataset) {
 		// Get the datalength and setup the return array
 		int dataSize = dataset.length;
-		double minimumValue = Double.MAX_VALUE;
+		double minimumValue = 0.00;
 		
 		// Looping over the dataset
 		for (int loopIter = 0; loopIter < dataSize; loopIter ++) {

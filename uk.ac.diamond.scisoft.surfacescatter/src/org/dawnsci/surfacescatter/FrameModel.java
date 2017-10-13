@@ -38,6 +38,7 @@ public class FrameModel {
 	private String tifFilePath;
 	private String datFilePath;
 	private int datNo;
+	private int fmNo;
 			
 	///physical corrections
 	
@@ -81,6 +82,8 @@ public class FrameModel {
 	private IDataset backgroundSubtractedImage; 
 	
 	private int noInOriginalDat;
+	
+	private boolean scanned = false;
 	
 	
 	public int getNoInOriginalDat() {
@@ -325,5 +328,17 @@ public class FrameModel {
 	}
 	public void setGoodPoint(boolean goodPoint) {
 		this.goodPoint = goodPoint;
+	}
+	public boolean isScanned() {
+		return scanned;
+	}
+	public void setScanned(boolean scanned) {
+		this.scanned = scanned;
+	}
+	public int getFmNo() {
+		return fmNo;
+	}
+	public void setFmNo(int fmNo) {
+		this.fmNo = fmNo;
 	}
 }

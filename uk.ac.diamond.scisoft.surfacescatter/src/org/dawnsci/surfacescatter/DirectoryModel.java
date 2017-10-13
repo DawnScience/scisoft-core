@@ -24,6 +24,7 @@ public class DirectoryModel {
 	private ArrayList<ArrayList<Double>> dmxList;
 	private ArrayList<ArrayList<Double>> dmqList;
 	private ArrayList<FrameModel> fms;
+	private ArrayList<ArrayList<FrameModel>> fmsSorted;
 	private TrackerType1 trackingMethodolgy;
 	private boolean trackerOn = false;
 	private int[][] initialLenPt =  new int[][] {{50,50},{10,10}};;
@@ -61,7 +62,7 @@ public class DirectoryModel {
 	private ArrayList<OverlapDataModel> overlapDataModels;
 	private double currentRawIntensity;
 	private String rodName = "placeHolder";
-	private String[] doneArray;
+	private boolean[] doneArray;
 
 	
 	public String getRodName() {
@@ -226,7 +227,7 @@ public class DirectoryModel {
 					for(FrameModel fm : fms){
 					
 						fm.resetRoiLocation();
-					
+						fm.setScanned(false);
 					}
 				}
 				catch(Exception h){
@@ -247,9 +248,9 @@ public class DirectoryModel {
 		return trackerLocationList;
 	}
 
-	public void setTrackerLocationList(ArrayList<double[]> trackerLocationList) {
-		this.trackerLocationList = trackerLocationList;
-	}
+//	public void setTrackerLocationList(ArrayList<double[]> trackerLocationList) {
+//		this.trackerLocationList = trackerLocationList;
+//	}
 	
 	public void resetTrackers(){
 		tracker = null;
@@ -816,105 +817,13 @@ public class DirectoryModel {
 
 	public void qConversion(double energy, int theta){
 		
-//		qList =null;
-//		
-//		IDataset splicedCurveQ = (IDataset) DatasetFactory.createFromObject(2);
-//		
-		
+	
 		if(csdp == null){
 			csdp = new CurveStitchDataPackage();
 		}
 		
 		qList =null;
-//		
-//		IDataset splicedCurveQ = (IDataset) DatasetFactory.createFromObject(2);
-//		
-		
-//		sortedQ = null;
-//		
-//		if(xList !=null){
-//			
-//			try{
-//				if (qList==null){
-//					qList = new ArrayList<Double>();
-//					for (int i = 0; i < xList.size(); i++) {
-//						  qList.add(0.0);
-//						}
-//				}
-//				
-//				if (qList.size() == 0){
-//					qList = new ArrayList<Double>();
-//					for (int i = 0; i < xList.size(); i++) {
-//						  qList.add(0.0);
-//						}
-//				}
-//			}
-//			catch(Exception o){
-//				
-//			}
-//			
-//			try{
-//				
-//			
-//				for(int i = 0 ; i < xList.size(); i++){
-//					
-//					double energyJ  = energy*1000*1.602177*Math.pow(10, -19);
-//					double hc = 1.98644568*Math.pow(10, -25);
-//					double q = 4*Math.PI* Math.cos((xList.get(i)))*energyJ/ hc;
-//					
-//					double qA = q/(Math.pow(10, 10));
-//					try{
-//						qList.set(i, qA);
-//					}
-//					catch(Exception d){
-//						qList.add(qA);
-//					}
-//				}
-//			}
-//			catch(Exception p){
-//				
-//			}
-//		}
-//		
-//		if(csdp.getSplicedCurveX() !=null){
-//			
-//			try{
-//				if (splicedCurveQ==null){
-//					splicedCurveQ = DatasetFactory.zeros(csdp.getSplicedCurveX().getShape());
-//				}
-//				
-//				if (splicedCurveQ.getSize()!=csdp.getSplicedCurveX().getSize()){
-//					splicedCurveQ = DatasetFactory.zeros(csdp.getSplicedCurveX().getShape());
-//				}
-//			}
-//			catch(Exception o){
-//				
-//			}
-//			
-//			try{
-//			
-//				for(int i = 0 ; i < csdp.getSplicedCurveX().getSize(); i++){
-//					
-//					double energyJ  = energy*1000*1.602177*Math.pow(10, -19);
-//					double hc = 1.98644568*Math.pow(10, -25);
-//					double q = 4*Math.PI* (Math.sin((theta +1 )*csdp.getSplicedCurveX().getDouble(i)))*energyJ/ hc;
-//					double qA = q/(Math.pow(10, 10));
-//					
-//					try{
-//						splicedCurveQ.set(qA, i);
-//					}
-//					catch(NullPointerException d){
-//					
-//					}
-//				}
-//			}
-//			catch(Exception p){
-//				
-//			}
-//			
-//			csdp.setSplicedCurveQ(splicedCurveQ);
-//		}
-//		
+
 		if(sortedTheta !=null){
 			
 			try{
@@ -981,11 +890,11 @@ public class DirectoryModel {
 		return csdp.getSplicedCurveQ();
 	}
 
-	public String[] getDoneArray() {
+	public boolean[] getDoneArray() {
 		return doneArray;
 	}
 
-	public void setDoneArray(String[] doneArray) {
+	public void setDoneArray(boolean[] doneArray) {
 		this.doneArray = doneArray;
 	}
 
@@ -1011,6 +920,14 @@ public class DirectoryModel {
 
 	public void setDmqList(ArrayList<ArrayList<Double>> dmqList) {
 		this.dmqList = dmqList;
+	}
+
+	public ArrayList<ArrayList<FrameModel>> getFmsSorted() {
+		return fmsSorted;
+	}
+
+	public void setFmsSorted(ArrayList<ArrayList<FrameModel>> fmsSorted) {
+		this.fmsSorted = fmsSorted;
 	}
 	
 }

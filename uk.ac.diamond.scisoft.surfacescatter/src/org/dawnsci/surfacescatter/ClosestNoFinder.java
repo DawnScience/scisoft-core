@@ -119,14 +119,6 @@ public class ClosestNoFinder {
 		double distance = Math.abs(numbers.getDouble(0) - myNum);
 		int idx = 0;
 
-//		for (int d = 0; d < numbers.getSize(); d++) {
-//			if (test.equals(doneArray[filepathSortedArray[d]]) == false) {
-//				idx = d;
-//				distance = Math.abs(numbers.getDouble(0) - myNum);
-//				break;
-//			}
-//		}
-
 		for (int c = 0; c < numbers.getSize(); c++) {
 			double cdistance = Math.abs(numbers.getDouble(c) - myNum);
 			if ((cdistance < distance) & (test.equals(doneArray[filepathSortedArray[c]]) == false)) {

@@ -1329,6 +1329,12 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.XRangeModel"
             name="Max/Mean ratio">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalIntegrationDifferenceOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalIntegrationDifferenceOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="Azimuthal Integration Difference Image">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

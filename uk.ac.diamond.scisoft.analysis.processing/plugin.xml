@@ -425,6 +425,13 @@
             name="Average All Data">
       </operation>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.PropagateAllAxesOperation"
+            description="An operation to propagate all axes associated with the dataset through the pipelin"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.PropagateAllAxesOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="Propagate all axes">
+      </operation>
+      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.AxisPullthroughOperation"
             description="An operation to pull multiple axes through processing"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.AxisPullthroughOperation"

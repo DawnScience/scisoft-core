@@ -439,7 +439,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 								synchronized (nexusFile) {
 									DataNode dn = nexusFile.createData(nexusFile.getGroup(groupName, true), axDataset.squeeze());
 									dn.addAttribute(new AttributeImpl("axis", String.valueOf(i+1)));
-									nexusFile.addAttribute(nexusFile.getGroup(groupName, true), new AttributeImpl(axNames[i]+NexusTreeUtils.NX_INDICES_SUFFIX, DatasetFactory.createFromObject(i)));
+									nexusFile.addAttribute(nexusFile.getGroup(groupName, true), new AttributeImpl(names[j]+NexusTreeUtils.NX_INDICES_SUFFIX, DatasetFactory.createFromObject(i)));
 									UnitMetadata unit = axDataset.getFirstMetadata(UnitMetadata.class);
 									if (unit != null) {
 										nexusFile.addAttribute(dn,new AttributeImpl(NexusTreeUtils.NX_UNITS,unit.toString()));

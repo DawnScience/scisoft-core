@@ -11,6 +11,8 @@ public class BatchRodModel {
 	private boolean poke = true;
 	private boolean updateControl =true;
 	private String nxsFolderPath;
+	private BatchSavingAdvancedSettings[] bsas;
+	private BatchSetupMiscellaneousProperties bsmps;
 
 	public ArrayList<BatchRodDataTransferObject> getBrdtoList() {
 
@@ -99,6 +101,22 @@ public class BatchRodModel {
 
 	public void setNxsFolderPath(String nxsFolderPath) {
 		this.nxsFolderPath = nxsFolderPath;
+	}
+
+	public BatchSavingAdvancedSettings[] getBsas() {
+		return bsas;
+	}
+
+	public void setBsas(BatchSavingAdvancedSettings[] bsas) {
+		this.bsas = bsas;
+	}
+
+	public BatchSetupMiscellaneousProperties getBsmps() {
+		return bsmps;
+	}
+
+	public void setBsmps(BatchSetupMiscellaneousProperties bsmps) {
+		this.bsmps = bsmps;
 	}
 
 }

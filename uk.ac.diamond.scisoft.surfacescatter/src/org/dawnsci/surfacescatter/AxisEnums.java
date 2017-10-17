@@ -70,7 +70,9 @@ public class AxisEnums {
 	}
 
 	public enum yAxes {
-		SPLICEDY(0, "Corrected Intensity"), SPLICEDYRAW(1, "Raw Intensity"), SPLICEDYFHKL(2, "Fhkl");
+		SPLICEDY(0, "Corrected Intensity"), 
+		SPLICEDYRAW(1, "Raw Intensity"), 
+		SPLICEDYFHKL(2, "Fhkl");
 
 		private int yAxisNumber;
 		private String yAxisName;
@@ -115,29 +117,13 @@ public class AxisEnums {
 	}
 
 	public static String toString(yAxes input) {
-
-		switch (input) {
-		case SPLICEDY:
-			return "Corrected Intensity";
-		case SPLICEDYRAW:
-			return "Raw Intensity";
-		case SPLICEDYFHKL:
-			return "Fhkl";
-		}
-		return null;
+		
+		return input.getYAxisName();
 	}
 
 	public static int toInt(yAxes input) {
-
-		switch (input) {
-		case SPLICEDY:
-			return 0;
-		case SPLICEDYRAW:
-			return 1;
-		case SPLICEDYFHKL:
-			return 2;
-		}
-		return 0;
+		
+		return input.getYAxisNumber();
 	}
 
 	public static yAxes toYAxis(String in) {

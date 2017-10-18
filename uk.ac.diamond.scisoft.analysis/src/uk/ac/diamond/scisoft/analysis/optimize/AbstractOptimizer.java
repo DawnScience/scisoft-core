@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
@@ -23,6 +22,9 @@ import org.eclipse.january.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CoordinatesIterator;
 
+/**
+ * Abstract base class for optimizer implementations
+ */
 public abstract class AbstractOptimizer implements IOptimizer {
 
 	protected IFunction function;
@@ -61,6 +63,10 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		n = params.size();
 	}
 
+	/**
+	 * Set the weights
+	 * @param weight (can be null)
+	 */
 	public void setWeight(DoubleDataset weight) {
 		this.weight = weight;
 	}
@@ -74,22 +80,31 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		int nc = coordinates.length;
 		this.coords = new DoubleDataset[nc];
 		for (int i = 0; i < nc; i++) {
-			coords[i] = (DoubleDataset) DatasetUtils.cast(coordinates[i], Dataset.FLOAT64);
+			coords[i] = DatasetUtils.cast(DoubleDataset.class, coordinates[i]);
 		}
 
-		this.data = (DoubleDataset) DatasetUtils.cast(data, Dataset.FLOAT64);
+		this.data = DatasetUtils.cast(DoubleDataset.class, data);
 		initializeParameters();
 		internalOptimize();
 	}
 
+	/**
+	 * @return coordinates
+	 */
 	public DoubleDataset[] getCoords() {
 		return coords;
 	}
 
+	/**
+	 * @return data
+	 */
 	public DoubleDataset getData() {
 		return data;
 	}
 
+	/**
+	 * @return function
+	 */
 	public IFunction getFunction() {
 		return function;
 	}
@@ -126,15 +141,28 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		function.setDirty(true);
 	}
 
+	/**
+	 * Calculate function values for current coordinates
+	 * @return values
+	 */
 	public DoubleDataset calculateValues() {
-		return (DoubleDataset) DatasetUtils.cast(function.calculateValues(coords), Dataset.FLOAT64);
+		return DatasetUtils.cast(DoubleDataset.class, function.calculateValues(coords));
 	}
 
+	/**
+	 * Calculate residual for given parameters
+	 * @param parameters
+	 * @return residual
+	 */
 	public double calculateResidual(double[] parameters) {
 		setParameterValues(parameters);
 		return function.residual(true, data, weight, coords);
 	}
 
+	/**
+	 * Calculate residual for current parameters
+	 * @return residual
+	 */
 	public double calculateResidual() {
 		return function.residual(true, data, weight, coords);
 	}
@@ -150,6 +178,12 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		return -1;
 	}
 
+	/**
+	 * Calculate partial derivative of residual with respect to the given parameter at the given parameter values
+	 * @param parameter
+	 * @param parameters parameter values
+	 * @return residual derivative
+	 */
 	public double calculateResidualDerivative(IParameter parameter, double[] parameters) {
 		if (indexOfParameter(parameter) < 0)
 			return 0;

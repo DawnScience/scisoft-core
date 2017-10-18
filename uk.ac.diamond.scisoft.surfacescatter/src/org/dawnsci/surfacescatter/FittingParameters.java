@@ -18,6 +18,7 @@ public class FittingParameters {
 	private int sliderPos;
 	private String file;
 	private double xValue;
+	private boolean useNegativeQ;
 	
 	public int getPt0() {
 		return pt0;
@@ -97,6 +98,12 @@ public class FittingParameters {
 	}
 	public double getXValue(){
 		return xValue;
+	}
+	public boolean getUseNegativeQ() {
+		return useNegativeQ;
+	}
+	public void setUseNegativeQ(boolean useNegativeQ) {
+		this.useNegativeQ = useNegativeQ;
 	}
 	
 }

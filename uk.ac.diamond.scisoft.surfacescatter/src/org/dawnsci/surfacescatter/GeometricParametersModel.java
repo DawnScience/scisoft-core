@@ -4,8 +4,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.EnumMap;
 
-import org.dawnsci.surfacescatter.MethodSettingEnum.MethodSetting;
-
 public class GeometricParametersModel {
 	
 	private Boolean beamCorrection = false;
@@ -38,10 +36,9 @@ public class GeometricParametersModel {
 	private EnumMap<ReflectivityFluxParametersAliasEnum,String> reflectivityFluxMap;
 	private boolean useInternalFlux;
 	private String experimentMethod;
+	private Boolean useNegativeQ = false;
 	
-	private boolean useNegativeQ = false;
-	
-	public boolean isUseNegativeQ() {
+	public boolean getUseNegativeQ() {
 		return useNegativeQ;
 	}
 	public void setUseNegativeQ(boolean useNegativeQ) {

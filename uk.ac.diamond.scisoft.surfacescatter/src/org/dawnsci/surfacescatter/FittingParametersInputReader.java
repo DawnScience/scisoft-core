@@ -177,6 +177,10 @@ public class FittingParametersInputReader {
 						&& !mName.equals("getReflectivityAnglesMap") && !mName.equals("getsXRDMap")) {
 
 					String name = StringUtils.substringAfter(mName, "get");
+					
+					if(name.equals("UseNegativeQ")) {
+						System.out.println("catch hahah!");
+					}
 
 					Attribute att = parametersNode.getAttribute(name);
 
@@ -214,6 +218,9 @@ public class FittingParametersInputReader {
 									break;
 								case "double":
 									m1.invoke(gm, Double.valueOf(sd.get()));
+									break;
+								case "boolean":
+									m1.invoke(gm, Boolean.valueOf(sd.get()));
 									break;
 								default:
 									break;

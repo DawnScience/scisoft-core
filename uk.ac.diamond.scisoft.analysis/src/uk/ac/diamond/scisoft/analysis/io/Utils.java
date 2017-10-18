@@ -487,6 +487,21 @@ public class Utils {
 		storeStats(data, fmax, fmin, (int) hash);
 	}
 
+	/**
+	 * Regular expression for any floating point number
+	 */
+	public static final String FLOATING_POINT_NUMBER = "[-+]?(?:(?:[0-9]+\\.?[0-9]*)|(?:\\.[0-9]+))(?:[eE][-+]?[0-9]+)?";
+
+	private static final Pattern FLOAT_POINT_REGEX = Pattern.compile(FLOATING_POINT_NUMBER);
+
+	/**
+	 * @param text
+	 * @return true if it can be a number
+	 */
+	public static final boolean isNumber(String text) {
+		return FLOAT_POINT_REGEX.matcher(text).matches();
+	}
+
 	private static final Pattern EXP_REGEX = Pattern.compile("[eE]");
 
 	/**

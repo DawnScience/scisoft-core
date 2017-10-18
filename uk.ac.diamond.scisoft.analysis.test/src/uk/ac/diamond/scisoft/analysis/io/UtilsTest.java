@@ -25,6 +25,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.Random;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -390,6 +391,16 @@ public class UtilsTest {
 				}
 			}
 		}
- 		return null;
- 	}
+		return null;
+	}
+
+	@Test
+	public void testIsNumber() {
+		Assert.assertTrue(Utils.isNumber(".1"));
+		Assert.assertTrue(Utils.isNumber("0."));
+		Assert.assertTrue(Utils.isNumber("0.e0"));
+		Assert.assertTrue(Utils.isNumber("0.e+0"));
+		Assert.assertTrue(Utils.isNumber("0.e-0"));
+		Assert.assertFalse(Utils.isNumber("."));
+	}
 }

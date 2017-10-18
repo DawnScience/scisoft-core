@@ -91,7 +91,6 @@ public class DatLoader extends AbstractFileLoader {
 	
 	protected static final Logger logger = LoggerFactory.getLogger(DatLoader.class);
 	
-	private static final String  FLOAT = "([-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)|(0\\.)";
 	transient protected final Pattern DATA;
 
 	protected Map<String,String>        metadataMap;
@@ -100,7 +99,7 @@ public class DatLoader extends AbstractFileLoader {
 	protected int                       columnIndex;
 
 	public DatLoader() {
-		DATA  = Pattern.compile("^(("+FLOAT+")"+getDelimiter()+")+("+FLOAT+")$");
+		DATA  = Pattern.compile("^(("+Utils.FLOATING_POINT_NUMBER+")"+getDelimiter()+")+("+Utils.FLOATING_POINT_NUMBER+")$");
 	}
 	
 	/**

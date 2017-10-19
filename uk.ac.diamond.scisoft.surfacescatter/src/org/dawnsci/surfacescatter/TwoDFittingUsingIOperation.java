@@ -10,6 +10,7 @@
 package org.dawnsci.surfacescatter;
 
 import java.util.Arrays;
+
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
@@ -21,9 +22,9 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.LinearAlgebra;
 import org.eclipse.january.dataset.Maths;
+
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial2D;
 
 /**

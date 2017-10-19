@@ -12,7 +12,7 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.RunningAverage;
 
-public class AveragingOperation<T extends EmptyModel> extends AbstractOperation<EmptyModel, OperationData> implements IExportOperation{
+public class AveragingOperation extends AbstractOperation<EmptyModel, OperationData> implements IExportOperation{
 
 	private RunningAverage average;
 	

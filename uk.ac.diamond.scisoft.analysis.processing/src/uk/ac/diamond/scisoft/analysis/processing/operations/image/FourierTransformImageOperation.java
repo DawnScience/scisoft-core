@@ -18,12 +18,13 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.FFT;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 
 // @author Tim Snow
 
 //The operation for a DAWN process to perform a 2D FFT on images
-public class FourierTransformImageOperation extends AbstractSimpleImageOperation<FourierTransformImageModel> {
+public class FourierTransformImageOperation extends AbstractSimpleImageOperation<EmptyModel> {
 
 	
 	// Let's give this process an ID tag

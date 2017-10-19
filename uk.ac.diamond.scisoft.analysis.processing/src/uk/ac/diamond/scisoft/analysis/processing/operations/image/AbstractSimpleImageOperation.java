@@ -20,7 +20,7 @@ import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.OperationServiceLoader;
 
-public abstract class AbstractSimpleImageOperation <T extends IOperationModel> extends AbstractOperation<IOperationModel, OperationData> {
+public abstract class AbstractSimpleImageOperation <T extends IOperationModel> extends AbstractOperation<T, OperationData> {
 
 	protected IImageFilterService imageFilterService;
 	protected IImageTransform imageTransformService;

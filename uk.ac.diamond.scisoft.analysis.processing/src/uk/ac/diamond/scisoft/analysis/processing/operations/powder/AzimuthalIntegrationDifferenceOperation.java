@@ -9,7 +9,6 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 
-import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;

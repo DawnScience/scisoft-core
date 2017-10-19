@@ -34,7 +34,7 @@ import org.eclipse.january.metadata.MetadataFactory;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 
 @Atomic
-public class ImportMaskOperation<T extends ImportMaskModel> extends AbstractOperation<ImportMaskModel,OperationData>{
+public class ImportMaskOperation<T extends ImportMaskModel> extends AbstractOperation<T, OperationData>{
 
 	
 	private volatile IDataset mask;
@@ -113,7 +113,7 @@ public class ImportMaskOperation<T extends ImportMaskModel> extends AbstractOper
 	
 
 	@Override
-	public void setModel(ImportMaskModel model) {
+	public void setModel(T model) {
 		
 		super.setModel(model);
 		if (listener == null) {

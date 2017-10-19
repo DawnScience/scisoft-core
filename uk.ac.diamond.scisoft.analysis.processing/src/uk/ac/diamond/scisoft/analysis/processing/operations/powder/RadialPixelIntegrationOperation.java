@@ -17,7 +17,7 @@ import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationBean;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationCache;
 
 @Atomic
-public class RadialPixelIntegrationOperation extends AzimuthalPixelIntegrationOperation<AzimuthalPixelIntegrationModel> {
+public class RadialPixelIntegrationOperation extends AzimuthalPixelIntegrationOperation {
 
 	@Override
 	public OperationRank getInputRank() {
@@ -31,7 +31,7 @@ public class RadialPixelIntegrationOperation extends AzimuthalPixelIntegrationOp
 	
 	@Override
 	protected IPixelIntegrationCache getCache(
-			PixelIntegrationModel model, IDiffractionMetadata md, int[] shape) {
+			AzimuthalPixelIntegrationModel model, IDiffractionMetadata md, int[] shape) {
 
 		IPixelIntegrationCache lcache = cache;
 		if (lcache == null) {
@@ -41,7 +41,7 @@ public class RadialPixelIntegrationOperation extends AzimuthalPixelIntegrationOp
 					PixelIntegrationBean bean = new PixelIntegrationBean();
 					bean.setUsePixelSplitting(model.isPixelSplitting());
 					if (model.getNumberOfBins() != null) bean.setNumberOfBinsAzimuthal(model.getNumberOfBins());
-					bean.setxAxis(((AzimuthalPixelIntegrationModel)model).getAxisType());
+					bean.setxAxis(model.getAxisType());
 					bean.setRadialRange(model.getRadialRange());
 					bean.setAzimuthalRange(model.getAzimuthalRange());
 					bean.setAzimuthalIntegration(false);

@@ -59,7 +59,7 @@ public class CakePixelIntegrationOperation extends AbstractPixelIntegrationOpera
 	
 	@Override
 	protected IPixelIntegrationCache getCache(
-			PixelIntegrationModel model, IDiffractionMetadata md, int[] shape) {
+			CakePixelIntegrationModel model, IDiffractionMetadata md, int[] shape) {
 
 		IPixelIntegrationCache lcache = cache;
 		if (lcache == null) {
@@ -69,8 +69,8 @@ public class CakePixelIntegrationOperation extends AbstractPixelIntegrationOpera
 					PixelIntegrationBean bean = new PixelIntegrationBean();
 					bean.setUsePixelSplitting(model.isPixelSplitting());
 					if (model.getNumberOfBins()!=null)bean.setNumberOfBinsRadial(model.getNumberOfBins());
-					if (((CakePixelIntegrationModel)model).getNumberOfBins2ndAxis() != null) bean.setNumberOfBinsAzimuthal(((CakePixelIntegrationModel)model).getNumberOfBins2ndAxis());
-					bean.setxAxis(((CakePixelIntegrationModel)model).getAxisType());
+					if (model.getNumberOfBins2ndAxis() != null) bean.setNumberOfBinsAzimuthal(model.getNumberOfBins2ndAxis());
+					bean.setxAxis(model.getAxisType());
 					bean.setRadialRange(model.getRadialRange());
 					bean.setAzimuthalRange(model.getAzimuthalRange());
 					bean.setAzimuthalIntegration(true);

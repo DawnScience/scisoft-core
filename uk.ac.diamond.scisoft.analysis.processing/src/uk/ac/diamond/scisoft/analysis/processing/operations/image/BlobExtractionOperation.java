@@ -35,7 +35,7 @@ public class BlobExtractionOperation extends AbstractSimpleImageOperation<BlobEx
 	@Override
 	public IDataset processImage(IDataset dataset, IMonitor monitor) {
 		IImageFilterService service = getImageFilterService();
-		ConnectRule rule = ((BlobExtractionModel)model).getRule();
+		ConnectRule rule = model.getRule();
 
 		IDataset extracted = null;
 		try {

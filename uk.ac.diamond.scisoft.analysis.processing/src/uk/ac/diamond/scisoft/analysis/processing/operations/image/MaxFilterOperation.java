@@ -22,6 +22,6 @@ public class MaxFilterOperation extends AbstractSimpleImageOperation<KernelWidth
 	@Override
 	public IDataset processImage(IDataset dataset, IMonitor monitor) {
 		IImageFilterService service = getImageFilterService();
-		return service.filterMax(dataset,((KernelWidthModel)model).getWidth());
+		return service.filterMax(dataset, model.getWidth());
 	}
 }

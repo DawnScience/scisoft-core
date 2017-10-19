@@ -19,7 +19,7 @@ public abstract class AbstractInternalFrameOperation extends FrameMathsOperation
 
 	@Override
 	protected Dataset getData(IDataset ds) {
-		String dsName = ((InternalDataSelectedFramesModel)model).getDatasetName();
+		String dsName = model.getDatasetName();
 		
 		Dataset d = null;
 		

@@ -1,6 +1,7 @@
 package org.dawnsci.surfacescatter;
 
 import java.util.Arrays;
+
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;

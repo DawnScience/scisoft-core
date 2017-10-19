@@ -23,7 +23,7 @@ import org.eclipse.january.metadata.MaskMetadata;
 
 import uk.ac.diamond.scisoft.analysis.roi.ROIProfile;
 
-public abstract class AbstractTwoBoxMeanOperation<T extends TwoBoxModel> extends AbstractOperation<TwoBoxModel, OperationData> {
+public abstract class AbstractTwoBoxMeanOperation<T extends TwoBoxModel> extends AbstractOperation<T, OperationData> {
 
 	@Override
 	public OperationRank getInputRank() {

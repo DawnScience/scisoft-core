@@ -16,7 +16,7 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 
-public class Expression2DOperation<T extends Expression2DModel> extends Expression1DOperation<Expression2DModel> {
+public class Expression2DOperation<T extends Expression2DModel> extends Expression1DOperation<T> {
 
 	@Override
 	public String getId() {
@@ -40,10 +40,10 @@ public class Expression2DOperation<T extends Expression2DModel> extends Expressi
 		
 		IDataset outdata = evaluateData(input, model.getDataExpression(),2);
 		IDataset outaxisx = evaluateData(axes[0], model.getAxisExpressionX(), axes[0].getRank());
-		IDataset outaxisy = evaluateData(axes[1], ((Expression2DModel)model).getAxisExpressionY(), axes[1].getRank());
+		IDataset outaxisy = evaluateData(axes[1], model.getAxisExpressionY(), axes[1].getRank());
 		
 		outdata.setName("custom_expression");
-		if (((Expression2DModel)model).getAxisExpressionY() != null && !((Expression2DModel)model).getAxisExpressionY().isEmpty()) outaxisy.setName("custom_y_axis");
+		if (model.getAxisExpressionY() != null && !model.getAxisExpressionY().isEmpty()) outaxisy.setName("custom_y_axis");
 		//outaxisy.setShape(new int[]{outaxisy.getShape()[0],1});
 		if (model.getAxisExpressionX() != null && !model.getAxisExpressionX().isEmpty()) outaxisx.setName("custom_x_axis");
 		//outaxisx.setShape(new int[]{1,outaxisx.getShape()[0]});

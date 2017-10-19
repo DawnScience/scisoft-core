@@ -22,6 +22,6 @@ public class MedianFilterOperation extends AbstractSimpleImageOperation<KernelWi
 	@Override
 	public IDataset processImage(IDataset dataset, IMonitor monitor) {
 		IImageFilterService service = getImageFilterService();
-		return service.filterMedian(dataset,((KernelWidthModel)model).getWidth());
+		return service.filterMedian(dataset, model.getWidth());
 	}
 }

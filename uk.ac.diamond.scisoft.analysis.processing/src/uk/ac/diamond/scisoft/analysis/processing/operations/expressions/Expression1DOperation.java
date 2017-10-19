@@ -15,7 +15,7 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 
-public class Expression1DOperation<T extends Expression1DModel> extends AbstractOperation<Expression1DModel ,OperationData> {
+public class Expression1DOperation<T extends Expression1DModel> extends AbstractOperation<T ,OperationData> {
 
 	IExpressionEngine engine;
 	

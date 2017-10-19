@@ -34,10 +34,10 @@ public class ThresholdImageOperation extends AbstractSimpleImageOperation<Thresh
 	@Override
 	public IDataset processImage(IDataset dataset, IMonitor monitor) {
 		IImageFilterService service = getImageFilterService();
-		float threshold = ((ThresholdImageModel)model).getThreshold();
-		ImageThresholdType type = ((ThresholdImageModel)model).getType();
-		int radius = ((ThresholdImageModel)model).getRadius();
-		boolean down = ((ThresholdImageModel)model).isDown();
+		float threshold = model.getThreshold();
+		ImageThresholdType type = model.getType();
+		int radius = model.getRadius();
+		boolean down = model.isDown();
 		IDataset thresholded = null;
 		try {
 			switch (type) {

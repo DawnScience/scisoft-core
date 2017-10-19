@@ -9,7 +9,6 @@
 
 package uk.ac.diamond.scisoft.xpdf.operations;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 

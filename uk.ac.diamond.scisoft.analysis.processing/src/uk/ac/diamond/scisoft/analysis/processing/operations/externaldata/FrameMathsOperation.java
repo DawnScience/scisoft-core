@@ -26,7 +26,7 @@ import org.eclipse.january.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.SelectedFramesModel;
 
-public abstract class FrameMathsOperation<T extends SelectedFramesModel> extends AbstractOperation<SelectedFramesModel, OperationData> {
+public abstract class FrameMathsOperation<T extends SelectedFramesModel> extends AbstractOperation<T, OperationData> {
 
 	protected Dataset data;
 	protected PropertyChangeListener listener;
@@ -56,7 +56,7 @@ public abstract class FrameMathsOperation<T extends SelectedFramesModel> extends
 
 
 	@Override
-	public void setModel(SelectedFramesModel model) {
+	public void setModel(T model) {
 
 		super.setModel(model);
 		if (listener == null) {

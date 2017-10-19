@@ -22,6 +22,6 @@ public class MeanFilterOperation extends AbstractSimpleImageOperation<KernelWidt
 	@Override
 	public IDataset processImage(IDataset dataset, IMonitor monitor) {
 		IImageFilterService service = getImageFilterService();
-		return service.filterMean(dataset,((KernelWidthModel)model).getWidth());
+		return service.filterMean(dataset, model.getWidth());
 	}
 }

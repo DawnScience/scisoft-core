@@ -22,6 +22,6 @@ public class MinFilterOperation extends AbstractSimpleImageOperation<KernelWidth
 	@Override
 	public IDataset processImage(IDataset dataset, IMonitor monitor) {
 		IImageFilterService service = getImageFilterService();
-		return service.filterMin(dataset,((KernelWidthModel)model).getWidth());
+		return service.filterMin(dataset, model.getWidth());
 	}
 }

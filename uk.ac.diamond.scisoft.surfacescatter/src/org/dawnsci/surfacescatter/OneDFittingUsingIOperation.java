@@ -18,9 +18,7 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
 
 public class OneDFittingUsingIOperation extends AbstractOperation<OneDFittingModel, OperationData> {
@@ -68,7 +66,7 @@ public class OneDFittingUsingIOperation extends AbstractOperation<OneDFittingMod
 																	   model.getDirection());
 		
 		
-		in1Background = DatasetFactory.zeros(in1.getShape(), Dataset.FLOAT64);
+		in1Background = DatasetFactory.zeros(in1.getShape());
 		
 		in1Background = BackgroundSetting.rOIBackground1(background, 
 														 in1Background,

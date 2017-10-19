@@ -22,6 +22,6 @@ public class GaussianBlurOperation extends AbstractSimpleImageOperation<KernelWi
 	@Override
 	public IDataset processImage(IDataset dataset, IMonitor monitor) {
 		IImageFilterService service = getImageFilterService();
-		return service.filterGaussianBlur(dataset, -1, ((KernelWidthModel)model).getWidth());
+		return service.filterGaussianBlur(dataset, -1, model.getWidth());
 	}
 }

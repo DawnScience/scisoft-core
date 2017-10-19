@@ -120,13 +120,13 @@ public class AffineTransformImageOperation extends AbstractSimpleImageOperation<
 	@Override
 	public IDataset processImage(IDataset dataset, IMonitor monitor) {
 		IImageTransform service = getImageTransformService();
-		double a11 = ((AffineTransformImageModel)model).getA11();
-		double a12 = ((AffineTransformImageModel)model).getA12();
-		double a21 = ((AffineTransformImageModel)model).getA21();
-		double a22 = ((AffineTransformImageModel)model).getA22();
-		double dx = ((AffineTransformImageModel)model).getDx();
-		double dy = ((AffineTransformImageModel)model).getDy();
-		boolean resize = ((AffineTransformImageModel)model).isResize();
+		double a11 = model.getA11();
+		double a12 = model.getA12();
+		double a21 = model.getA21();
+		double a22 = model.getA22();
+		double dx = model.getDx();
+		double dy = model.getDy();
+		boolean resize = model.isResize();
 		IDataset transformed = null;
 		try {
 			transformed = service.affineTransform(dataset, a11, a12, a21, a22, dx, dy, !resize);

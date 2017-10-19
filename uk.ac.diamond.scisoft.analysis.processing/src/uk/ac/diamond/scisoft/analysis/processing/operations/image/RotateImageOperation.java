@@ -21,9 +21,9 @@ public class RotateImageOperation extends AbstractSimpleImageOperation<RotateIma
 	@Override
 	public IDataset processImage(IDataset dataset, IMonitor monitor) {
 		IImageTransform service = getImageTransformService();
-		double angle = ((RotateImageModel)model).getAngle();
-		AngleUnit unit = ((RotateImageModel)model).getUnit();
-		boolean resize = ((RotateImageModel)model).isResize();
+		double angle = model.getAngle();
+		AngleUnit unit = model.getUnit();
+		boolean resize = model.isResize();
 		IDataset rotated = null;
 		if (unit == AngleUnit.RADIAN)
 			angle = Math.toDegrees(angle);

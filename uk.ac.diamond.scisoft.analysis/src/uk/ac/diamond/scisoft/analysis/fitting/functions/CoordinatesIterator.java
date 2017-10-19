@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
 
@@ -91,7 +92,7 @@ public abstract class CoordinatesIterator implements Iterator<double[]> {
 		CoordinatesIterator it;
 		int[] shape = coords[0].getShape();
 		if (coords.length == 1) {
-			it = coords[0].getElementsPerItem() == 1 ? new DatasetsIterator(coords) : new CoordinateDatasetIterator(coords[0]);
+			it = coords[0].getElementsPerItem() == 1 ? (coords[0] instanceof Dataset ? new DatasetIterator((Dataset) coords[0]) : new DatasetsIterator(coords)) : new CoordinateDatasetIterator(coords[0]);
 		} else {
 			boolean same = true;
 			for (int i = 1; i < coords.length; i++) {

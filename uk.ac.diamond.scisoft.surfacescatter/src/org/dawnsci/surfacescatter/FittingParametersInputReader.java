@@ -177,10 +177,7 @@ public class FittingParametersInputReader {
 						&& !mName.equals("getReflectivityAnglesMap") && !mName.equals("getsXRDMap")) {
 
 					String name = StringUtils.substringAfter(mName, "get");
-					
-					if(name.equals("UseNegativeQ")) {
-						System.out.println("catch hahah!");
-					}
+				
 
 					Attribute att = parametersNode.getAttribute(name);
 

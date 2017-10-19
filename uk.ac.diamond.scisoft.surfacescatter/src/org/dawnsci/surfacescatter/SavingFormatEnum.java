@@ -3,7 +3,7 @@ package org.dawnsci.surfacescatter;
 public class SavingFormatEnum {
 
 	public enum SaveFormatSetting {
-		GenX("GenX", 0), Anarod("Anarod", 1), int_format(".int", 2), ASCII("X/Y/Ye", 3);
+		GenX("GenX", 0), Anarod("Anarod", 1), int_format(".int", 2), ASCII("X_Y_Ye", 3);
 
 		private String displayName;
 		private int position;

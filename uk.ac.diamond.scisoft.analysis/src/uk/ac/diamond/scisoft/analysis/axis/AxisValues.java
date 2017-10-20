@@ -341,8 +341,8 @@ public class AxisValues implements Iterable<Double>, Serializable, Cloneable {
 
 	private void sanityCheckMinMax() {
 		if (isDirty) {
-			minValue = values.min().doubleValue();
-			maxValue = values.max().doubleValue();
+			minValue = values.min(true).doubleValue();
+			maxValue = values.max(true).doubleValue();
 			isDirty = false;
 		}
 		if (minValue > maxValue) {

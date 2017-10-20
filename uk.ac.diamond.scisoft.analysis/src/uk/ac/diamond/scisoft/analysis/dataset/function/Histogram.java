@@ -134,7 +134,7 @@ public class Histogram implements DatasetToDatasetFunction {
 		if (useEqualSpanBins) {
 			for (IDataset ds : datasets) {
 				if (bins == null) {
-					bins = DatasetFactory.createLinearSpace(DoubleDataset.class, ds.min().doubleValue(), ds.max().doubleValue(), nbins + 1);
+					bins = DatasetFactory.createLinearSpace(DoubleDataset.class, ds.min(true).doubleValue(), ds.max(true).doubleValue(), nbins + 1);
 				}
 				final double[] edges = bins.getData();
 				final double lo = edges[0];
@@ -175,7 +175,7 @@ public class Histogram implements DatasetToDatasetFunction {
 		} else {
 			for (IDataset ds : datasets) {
 				if (bins == null) {
-					bins = DatasetFactory.createLinearSpace(DoubleDataset.class, ds.min().doubleValue(), ds.max().doubleValue(), nbins + 1);
+					bins = DatasetFactory.createLinearSpace(DoubleDataset.class, ds.min(true).doubleValue(), ds.max(true).doubleValue(), nbins + 1);
 				}
 				final double[] edges = bins.getData();
 				final double lo = edges[0];

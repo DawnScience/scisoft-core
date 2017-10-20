@@ -381,7 +381,7 @@ public class Generic1DFitter implements Serializable {
 		}
 
 		// slightly less arbitrary scale for minimum height of peaks
-		final double scale = Math.max(Math.abs(ydata.min().doubleValue()), Math.abs(ydata.max().doubleValue())) * EPSILON;
+		final double scale = Math.max(Math.abs(ydata.min(true).doubleValue()), Math.abs(ydata.max(true).doubleValue())) * EPSILON;
 
 		Dataset data = Maths.derivative(xdata, ydata, smooth+1);
 		int backPos, forwardPos;

@@ -61,11 +61,11 @@ public class FittingParametersInputReader {
 		return fp;
 	}
 
-	public static void readerFromNexus(String filename, int frameNumber, FrameModel m, boolean useTrajectory) {
+	public static void readerFromNexus(NexusFile file, int frameNumber, FrameModel m, boolean useTrajectory) {
 
 		// FittingParameters fp = new FittingParameters();
 
-		NexusFile file = new NexusFileFactoryHDF5().newNexusFile(filename);
+		
 
 		try {
 			file.openToRead();
@@ -97,7 +97,7 @@ public class FittingParametersInputReader {
 
 		GroupNode point;
 		try {
-			point = file.getGroup(pointNode, true);
+			point = file.getGroup(pointNode, false);
 
 			Attribute boundaryBoxAttribute = point.getAttribute(attributeNames0[0]);
 			IntegerDataset boundaryBox0 = DatasetUtils.cast(IntegerDataset.class, boundaryBoxAttribute.getValue());
@@ -144,15 +144,21 @@ public class FittingParametersInputReader {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		try {
+			file.close();;
+		} catch (NexusException e) {
+			e.printStackTrace();
+		}
 	}
 
-	public static void geometricalParametersReaderFromNexus(String filename, GeometricParametersModel gm, DirectoryModel drm) {
+	public static void geometricalParametersReaderFromNexus(NexusFile file, GeometricParametersModel gm, DirectoryModel drm) {
 
 		final String path = "/" + NeXusStructureStrings.getEntry() + "/";
 
 		final String parametersPath = path + NeXusStructureStrings.getParameters();
 
-		NexusFile file = new NexusFileFactoryHDF5().newNexusFile(filename);
+//		NexusFile file = new NexusFileFactoryHDF5().newNexusFile(filename);
 
 		try {
 			file.openToRead();
@@ -160,7 +166,6 @@ public class FittingParametersInputReader {
 			e.printStackTrace();
 		}
 
-		// List<GroupNode> parametersDNode = gn.getGroupNodes();
 		GroupNode parametersNode;
 
 		try {
@@ -251,17 +256,24 @@ public class FittingParametersInputReader {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		
+		try {
+			file.close();;
+		} catch (NexusException e) {
+			e.printStackTrace();
+		}
 
 	}
 
-	public static void anglesAliasReaderFromNexus(String filename) {
+	public static void anglesAliasReaderFromNexus(NexusFile file) {
 
 		final String path = "/" + NeXusStructureStrings.getEntry() + "/";
 
 		final String aliasPath = path + NeXusStructureStrings.getAliases() + "/";
 
-		NexusFile file = new NexusFileFactoryHDF5().newNexusFile(filename);
+//		NexusFile file = new NexusFileFactoryHDF5().newNexusFile(filename);
 
+		
 		try {
 			file.openToRead();
 		} catch (NexusException e) {
@@ -306,8 +318,21 @@ public class FittingParametersInputReader {
 			}
 		} catch (Exception g) {
 			System.out.println(g.getMessage());
+			
+		}
+		
+		try {
+			file.close();;
+		} catch (NexusException e) {
+			e.printStackTrace();
 		}
 
+		
+		try {
+			file.close();;
+		} catch (NexusException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static FittingParameters fittingParametersFromFrameModel(FrameModel fm) {

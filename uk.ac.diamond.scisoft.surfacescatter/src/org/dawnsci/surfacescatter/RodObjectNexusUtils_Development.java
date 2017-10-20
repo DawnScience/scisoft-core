@@ -553,5 +553,47 @@ public class RodObjectNexusUtils_Development {
 	}
 	
 	
+	private void addToOverViewArrays(int  noImages) {
+		
+		String[] image_Tif_File_Path_Array = new String[noImages];
+		String[] source_dat_File_Array = new String[noImages];
+		
+		double[] hArray = new double[noImages];
+		double[] kArray = new double[noImages];
+		double[] lArray = new double[noImages];
+				
+		double[] qArray = new double[noImages];
+		
+		boolean[] is_Good_Point_Array = new boolean[noImages];
+		
+		double[] lorentzian_Correction_Array = new double[noImages];
+		double[] polarisation_Correction_Array = new double[noImages];
+		double[] area_Correction_Array = new double[noImages];
+		double[] reflectivity_Area_Correction_Array = new double[noImages];
+		
+		double[][] roi_Location_Array = new double[noImages][];
+		String[] fitPowers_array = new String[noImages];
+		
+		int[] boundaryBox_array = new int[noImages];
+		String[] tracking_Method_array = new String[noImages];
+		String[] background_Method_array = new String[noImages];
+		
+		
+		double[] unspliced_Corrected_Intensity_Array = new double[noImages];
+		double[] unspliced_Corrected_Intensity_Error_Array = new double[noImages];
+		
+		double[] unspliced_Raw_Intensity_Array = new double[noImages];
+		double[] unspliced_Raw_Intensity_Error_Array = new double[noImages];
+		
+		double[] unspliced_Fhkl_Intensity_Array = new double[noImages];
+		double[] unspliced_Fhkl_Intensity_Error_Array = new double[noImages];
+		
+		double[][] overlapping_Background_ROI_array = new double[noImages][];
+		double[][] static_Background_ROI_Array = new double[noImages][];
+		
+		
+	}
+	
+	
 	
 }

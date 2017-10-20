@@ -25,28 +25,7 @@ public class SXRDGeometricCorrections {
 	 * 
 	 */
 	
-//	private static final String ALPHA = "alpha";
-//	private static final String DELTA = "delta";
-//	private static final String GAMMA = "gamma";
-//	private static final String OMEGA = "omega";
-//	private static final String CHI = "chi";
-//	private static final String PHI = "phi";
-//		
-//	public static ILazyDataset DiffData (ExampleModel model, String choice) {
-//		
-//		IDataHolder dh1 = null;
-//			
-//		try {
-//			dh1 = LoaderFactory.getData(model.getFilepath());			
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//
-//		ILazyDataset ild =dh1.getLazyDataset(choice); 
-//
-//		return ild;
-//	}
+
 	
 	public static ILazyDataset DiffData (String filepath, String choice) {
 		
@@ -64,13 +43,6 @@ public class SXRDGeometricCorrections {
 		return ild;
 	}
 
-	
-//	public static ILazyDataset getArb(ExampleModel model, String choice) {
-//		ILazyDataset arb = null;
-//		arb =  DiffData(model, choice);
-//
-//		return arb;
-//	}
 	
 	public static ILazyDataset getArb(String filepath, String choice) {
 		ILazyDataset arb = null;

@@ -7,7 +7,7 @@ import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
 
-public class Expression2DDiffractionOperation extends AbstractExpression2DOperation<Expression2DModel> {
+public class Expression2DDiffractionOperation extends Expression2DOperation<Expression2DModel> {
 	
 	@Override
 	public String getId() {

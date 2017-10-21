@@ -25,7 +25,7 @@ import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationBean;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationCache;
 
 @Atomic
-public class AzimuthalPixelIntegrationOperation<T extends AzimuthalPixelIntegrationModel> extends AbstractPixelIntegrationOperation<AzimuthalPixelIntegrationModel> {
+public class AzimuthalPixelIntegrationOperation<T extends AzimuthalPixelIntegrationModel> extends AbstractPixelIntegrationOperation<T> {
 
 
 	@Override

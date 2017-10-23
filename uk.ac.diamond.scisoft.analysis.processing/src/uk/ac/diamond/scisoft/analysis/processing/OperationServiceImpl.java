@@ -340,39 +340,39 @@ public class OperationServiceImpl implements IOperationService {
 		
 		IConfigurationElement[] eles = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.operation");
 		for (IConfigurationElement e : eles) {
-	    	if (!e.getName().equals("category")) continue;
+			if (!e.getName().equals("category")) continue;
 			final String     id   = e.getAttribute("id");
 			final String     name = e.getAttribute("name");
 			final String     icon = e.getAttribute("icon");
 			categoryId.put(id, new OperationCategory(name, icon, id));		
 		}
-		
-		eles = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.operation");
+	
 		for (IConfigurationElement e : eles) {
-	    	if (!e.getName().equals("operation")) continue;
-			final String     id = e.getAttribute("id");
+			if (!e.getName().equals("operation")) continue;
+			final String id = e.getAttribute("id");
 			IOperation<? extends IOperationModel, ? extends OperationData> op = null;
 			try {
-				op = (IOperation<? extends IOperationModel, ? extends OperationData>)e.createExecutableExtension("class");
+				op = (IOperation<? extends IOperationModel, ? extends OperationData>) e.createExecutableExtension("class");
 			} catch (Exception e1) {
 				e1.printStackTrace();
 				continue;
 			}
-			
+
 			operations.put(id, op);
-			
-			final String     catId= e.getAttribute("category");
+
+			final String catId = e.getAttribute("category");
 			opIdCategory.put(id, catId);
-			
-			if (catId!=null) {
+
+			if (catId != null) {
 				Collection<IOperation<? extends IOperationModel, ? extends OperationData>> ops = categoryOp.get(catId);
-				if (ops==null) {
-					ops = new TreeSet<IOperation<? extends IOperationModel,? extends OperationData>>(new AbstractOperationBase.OperationComparitor());
+				if (ops == null) {
+					ops = new TreeSet<IOperation<? extends IOperationModel,? extends OperationData>>(new AbstractOperationBase.OperationComparator());
 					categoryOp.put(catId, ops);
 				}
 				ops.add(op);
 			}
 
+			final String model;
 			if (op instanceof AbstractOperationBase) {
 				final String name = e.getAttribute("name");
 				AbstractOperationBase<? extends IOperationModel, ? extends OperationData> aop = (AbstractOperationBase<? extends IOperationModel, ? extends OperationData>)op;
@@ -380,14 +380,14 @@ public class OperationServiceImpl implements IOperationService {
 				
 				final String desc = e.getAttribute("description");
 				if (desc!=null) aop.setDescription(desc);
-
+				model = aop.getModelClass().getName();
+			} else {
+				model = e.getAttribute("model");
 			}
-			
-			final String     model = e.getAttribute("model");
+
 			if (model!=null && !"".equals(model)) {
 				models.put(id, ((IOperationModel)e.createExecutableExtension("model")).getClass());
 			}
-			
 		}
 	}
 	
@@ -500,7 +500,7 @@ public class OperationServiceImpl implements IOperationService {
 		ret.putAll(cats);
 		
 		// Now add all those with no category
-		final TreeSet<IOperation<? extends IOperationModel,? extends OperationData>> uncategorized = new TreeSet<IOperation<? extends IOperationModel,? extends OperationData>>(new AbstractOperationBase.OperationComparitor());
+		final TreeSet<IOperation<? extends IOperationModel,? extends OperationData>> uncategorized = new TreeSet<IOperation<? extends IOperationModel,? extends OperationData>>(new AbstractOperationBase.OperationComparator());
 		for (String id : operations.keySet()) {
 			final IOperation op = operations.get(id);
 			if (op instanceof AbstractOperationBase) {

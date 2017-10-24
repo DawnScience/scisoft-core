@@ -49,6 +49,7 @@
 				<path refid="tp.slf4j.path" />  <!-- ensure that required org.slf4j.LoggerFactory appears first in classpath -->
 				<path refid="tp.jcl-over-slf4j.path" />  <!-- ensure that matching imp appears first in classpath -->
 				<path refid="tp.hamcrest.path" />  <!-- ensure that latest version appears first in classpath -->
+				<path refid="tp.jscience4.path" />
 				<path refid="tp.path" />  <!-- target platform -->
 			</classpath>
 			<!-- define several batches (default forkmode=perBatch), since at some point in the past some tests triggered a JVM out-of-memory crash, whence following tests erroneously reported failure unless in a new JVM -->

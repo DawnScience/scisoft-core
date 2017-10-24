@@ -17,7 +17,7 @@
 '''
 AnalysisRpc implementation in Python
 '''
-from SocketServer import ThreadingMixIn
+from SocketServer import TCPServer, ThreadingMixIn
 from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler, SimpleXMLRPCServer
 from xmlrpclib import ServerProxy
 import scisoftpy.python.pyflatten as _flatten
@@ -43,6 +43,7 @@ class rpcserver(object):
         '''
         Create a new AnalysisRpc Server listening on the specified port
         '''
+        TCPServer.allow_reuse_address = True
         self._server = ThreadedSimpleXMLRPCServer(("127.0.0.1", port), requestHandler=RequestHandler, logRequests=False)
         self._server.register_introspection_functions()
         

@@ -15,7 +15,7 @@
 ###
 
 import os, sys
-scisoftpath = os.getcwd() + '/../uk.ac.diamond.scisoft.python/src'
+scisoftpath = os.path.abspath(os.path.join('..', 'uk.ac.diamond.scisoft.python', 'src'))
 sys.path.append(scisoftpath)
 
 import scisoftpy as dnp #@UnresolvedImport

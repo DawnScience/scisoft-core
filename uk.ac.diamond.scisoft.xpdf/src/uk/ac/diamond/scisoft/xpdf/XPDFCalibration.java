@@ -883,7 +883,7 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 
 		smoothed.isubtract(truncatedSelfScattering.imultiply(this.comptonScaling));
 		smoothed.imultiply(truncatedQ);
-		return (double) smoothed.sum();
+		return ((Number) smoothed.sum()).doubleValue();
 		
 	}
 	

@@ -93,11 +93,11 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 		
 		Dataset ds = DatasetUtils.convertToDataset(input);
 		
-		double m = model.isUseFullFrameForRatio() ? (double)ds.sum(true) : (double)signal.sum(true);
+		double m = ((Number) (model.isUseFullFrameForRatio() ? ds.sum(true) : signal.sum(true))).doubleValue();
 		
 		signal.isubtract((b0.iadd(b1).idivide(2)));
 		
-		double m2 = (double)signal.sum(true);
+		double m2 = ((Number) signal.sum(true)).doubleValue();
 		if (model.isUseFullFrameForRatio()) m2 = m2*nSignal[0];
 		
 		if (axis1 != null) {

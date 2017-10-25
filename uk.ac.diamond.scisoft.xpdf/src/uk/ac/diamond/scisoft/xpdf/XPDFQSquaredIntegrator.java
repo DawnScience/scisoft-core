@@ -124,7 +124,7 @@ public class XPDFQSquaredIntegrator {
 	 * @return quadrature of the integrand over the stored angles.
 	 */
 	private static double quadrate1DDataset(Dataset integrand) {
-		return (double) integrand.sum();
+		return ((Number) integrand.sum()).doubleValue();
 	}
 
 	// TODO:  a more sophisticated quadrature formula than the rectangle rule
@@ -136,7 +136,7 @@ public class XPDFQSquaredIntegrator {
 	 */
 	@SuppressWarnings("unused")
 	private static double quadrate2DDataset(Dataset integrand) {
-		return (double) integrand.sum();
+		return ((Number) integrand.sum()).doubleValue();
 	}
 
 	public void setMask(Dataset mask) {

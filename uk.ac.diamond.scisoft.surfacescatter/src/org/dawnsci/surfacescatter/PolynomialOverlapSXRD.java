@@ -24,7 +24,7 @@ public class PolynomialOverlapSXRD {
 		Dataset correctionsRatioDataset = Maths.divide(calculatedValuesLowerAv, 
 				calculatedValuesHigherAv);
 		
-		double correction = ((double) correctionsRatioDataset.sum())*attenuationFactor;
+		double correction = ((Number) correctionsRatioDataset.sum()).doubleValue()*attenuationFactor;
 		
 		return correction;
 	}

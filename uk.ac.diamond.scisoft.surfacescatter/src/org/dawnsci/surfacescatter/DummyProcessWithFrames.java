@@ -366,17 +366,17 @@ public class DummyProcessWithFrames {
 				output);
 
 
-		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
-		Double rawIntensity = (Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum();
+		double intensity = ((Number) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum()).doubleValue();
+		double rawIntensity = ((Number) DatasetUtils.cast(output,Dataset.FLOAT64).sum()).doubleValue();
 
-		Double intensityError = getCorrectionValue(fm)*((Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum());
-		Double rawIntensityError = Math.sqrt((Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum());
+		double intensityError = getCorrectionValue(fm)*((Number) DatasetUtils.cast(output,Dataset.FLOAT64).sum()).doubleValue();
+		double rawIntensityError = Math.sqrt(((Number) DatasetUtils.cast(output,Dataset.FLOAT64).sum()).doubleValue());
 
 		
 		
-		Double fhkl = (double) 0.001;
+		double fhkl = 0.001;
 		if (intensity >=0){
-			fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
+			fhkl =Math.pow(((Number) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum()).doubleValue(), 0.5);
 		}		
 
 
@@ -695,18 +695,18 @@ public class DummyProcessWithFrames {
 		}
 
 
-		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
-		Double rawIntensity = (Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum();
+		double intensity = ((Number) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum()).doubleValue();
+		double rawIntensity = ((Number) DatasetUtils.cast(output,Dataset.FLOAT64).sum()).doubleValue();
 
-		Double intensityError = getCorrectionValue(fm)*((Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum());
-		Double rawIntensityError = Math.sqrt((Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum());
+		double intensityError = getCorrectionValue(fm)*((Number) DatasetUtils.cast(output,Dataset.FLOAT64).sum()).doubleValue();
+		double rawIntensityError = Math.sqrt(((Number) DatasetUtils.cast(output,Dataset.FLOAT64).sum()).doubleValue());
 
 		
 		
 		
-		Double fhkl = (double) 0.001;
+		double fhkl = 0.001;
 		if (intensity >=0){
-			fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
+			fhkl =Math.pow(((Number) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum()).doubleValue(), 0.5);
 		}	
 
 
@@ -1027,16 +1027,16 @@ public class DummyProcessWithFrames {
 			e.printStackTrace();
 		}
 
-		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
-		Double rawIntensity = (Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum();
+		double intensity = ((Number) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum()).doubleValue();
+		double rawIntensity = ((Number) DatasetUtils.cast(output,Dataset.FLOAT64).sum()).doubleValue();
 		
-		Double intensityError = getCorrectionValue(fm)*((Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum());
-		Double rawIntensityError = Math.sqrt((Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum());
+		double intensityError = getCorrectionValue(fm)*((Number) DatasetUtils.cast(output,Dataset.FLOAT64).sum()).doubleValue();
+		double rawIntensityError = Math.sqrt(((Number) DatasetUtils.cast(output,Dataset.FLOAT64).sum()).doubleValue());
 
 
-		Double fhkl = (double) 0.001;
+		double fhkl = 0.001;
 		if (intensity >=0){
-			fhkl =Math.pow((Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum(), 0.5);
+			fhkl =Math.pow(((Number) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum()).doubleValue(), 0.5);
 		}	
 
 
@@ -1354,15 +1354,15 @@ public class DummyProcessWithFrames {
 			e.printStackTrace();
 		}
 
-		Double intensity = (Double) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum();
-		Double rawIntensity = (Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum();
+		double intensity = ((Number) DatasetUtils.cast(yValue,Dataset.FLOAT64).sum()).doubleValue();
+		double rawIntensity = ((Number) DatasetUtils.cast(output,Dataset.FLOAT64).sum()).doubleValue();
 		
 		
-		Double intensityError = getCorrectionValue(fm)*Math.sqrt((Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum());
-		Double rawIntensityError = Math.sqrt((Double) DatasetUtils.cast(output,Dataset.FLOAT64).sum());
+		double intensityError = getCorrectionValue(fm)*Math.sqrt(((Number) DatasetUtils.cast(output,Dataset.FLOAT64).sum()).doubleValue());
+		double rawIntensityError = Math.sqrt(((Number) DatasetUtils.cast(output,Dataset.FLOAT64).sum()).doubleValue());
 
 
-		Double fhkl = (double) 0.001;
+		double fhkl = 0.001;
 		if (intensity >=0){
 			fhkl =Math.pow(intensity, 0.5);
 		}	

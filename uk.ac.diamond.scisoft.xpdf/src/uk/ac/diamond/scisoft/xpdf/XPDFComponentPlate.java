@@ -185,7 +185,7 @@ public class XPDFComponentPlate extends XPDFComponentGeometry {
 				else
 					downstreamPathLength = DatasetFactory.zeros(xPlate);
 				
-				absorptionCorrection.set( (double)
+				absorptionCorrection.set( ((Number)
 						Maths.multiply(
 								Maths.exp(
 										Maths.multiply(
@@ -197,7 +197,7 @@ public class XPDFComponentPlate extends XPDFComponentGeometry {
 												)
 										),
 										illuminatedVolume
-								).sum() / (double) illuminatedVolume.sum(), i, k);
+								).sum()).doubleValue() / ((Number) illuminatedVolume.sum()).doubleValue(), i, k);
 			}
 		}		
 		

@@ -483,7 +483,7 @@ public class PowderRingsUtils {
 			}
 			pb[0] = (int) p.getMinXVal();
 			pe[0] = (int) p.getMaxXVal();
-			p.setArea((Double) profile.getSlice(pb, pe, null).sum());
+			p.setArea(((Number) profile.getSlice(pb, pe, null).sum()).doubleValue());
 			stats.addValue(p.getArea());
 			System.err.printf("P %f A %f W %f H %f\n", p.getPos(), p.getArea(), p.getFWHM(), p.getHeight());
 		}

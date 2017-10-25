@@ -225,7 +225,7 @@ public class TParameterOperation extends AbstractOperation<TParameterModel, Oper
 		Dataset integrand = Maths.multiply(Maths.square(qSlice), dataSlice);
 		Dataset indices = DatasetFactory.createRange(DoubleDataset.class, (double) lowerPorodIndex - lowerKratkyIndex);
 		Dataset dq = Maths.derivative(indices, qSlice, 1);
-		jExp = (double) Maths.multiply(integrand, dq).sum();
+		jExp = ((Number) Maths.multiply(integrand, dq).sum()).doubleValue();
 		// Add any bits between the pieces of the integral
 		jExp = (xAxis.getDouble(lowerKratkyIndex) - kratkyROI[0]) * inputDataset.getDouble(lowerKratkyIndex) + jExp + (xAxis.getDouble(lowerPorodIndex) - kratkyROI[0]) * ((lowerKratkyIndex != inputDataset.getSize() - 1) ? inputDataset.getDouble(lowerKratkyIndex+1) : inputDataset.getDouble(lowerKratkyIndex));
 		double jTerm = jKratky + jExp + jPorod;

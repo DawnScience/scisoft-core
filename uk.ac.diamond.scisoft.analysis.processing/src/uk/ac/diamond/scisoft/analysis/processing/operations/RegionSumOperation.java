@@ -89,7 +89,7 @@ public class RegionSumOperation extends AbstractOperation<RegionSumModel, Operat
 				slice.imultiply(s);
 			}
 			
-			return (double)slice.sum(true);
+			return ((Number) slice.sum(true)).doubleValue();
 		}
 
 		public double getSum() {

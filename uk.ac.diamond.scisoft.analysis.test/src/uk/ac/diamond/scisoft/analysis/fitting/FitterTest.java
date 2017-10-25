@@ -122,7 +122,7 @@ public class FitterTest {
 		
 		NDGaussianFitResult result = Fitter.NDGaussianSimpleFit(ds, xAxis,yAxis);
 		
-		double area = (Double) ds.sum();
+		double area = ((Number) ds.sum()).doubleValue();
 		
 		Assert.assertEquals(pos1, result.getPos()[0], 0.1);
 		Assert.assertEquals(pos2, result.getPos()[1], 0.1);

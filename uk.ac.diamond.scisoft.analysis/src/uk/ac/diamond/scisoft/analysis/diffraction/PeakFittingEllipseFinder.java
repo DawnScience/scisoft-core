@@ -133,7 +133,7 @@ public class PeakFittingEllipseFinder {
 			
 			if (Comparisons.allTrue(badVals)) continue;
 			
-			double count = (Double)badVals.sum();
+			double count = ((Number) badVals.sum()).doubleValue();
 			
 			if (count > sub.getSize()*0.1) continue;
 			

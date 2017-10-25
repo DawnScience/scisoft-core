@@ -75,9 +75,9 @@ public class XPDFSubstance {
 		this.materialName = nxample.getChemical_formulaScalar();
 		this.materialComposition = new XPDFComposition(nxample.getChemical_formulaScalar());
 		// Sum of component packing fractions
-		this.packingFraction = (double) DatasetUtils.convertToDataset(nxample.getVolume_fraction()).sum();
+		this.packingFraction = ((Number) DatasetUtils.convertToDataset(nxample.getVolume_fraction()).sum()).doubleValue();
 		// Sum of component concentrations
-		this.microMassDensity = (double) DatasetUtils.convertToDataset(nxample.getConcentration()).sum();
+		this.microMassDensity = ((Number) DatasetUtils.convertToDataset(nxample.getConcentration()).sum()).doubleValue();
 		// Divide by total volume fraction to get the solid density. 
 		this.microMassDensity /= this.packingFraction;
 	}

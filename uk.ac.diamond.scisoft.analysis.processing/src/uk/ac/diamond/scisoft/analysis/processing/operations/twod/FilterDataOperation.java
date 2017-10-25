@@ -125,7 +125,7 @@ public class FilterDataOperation extends AbstractOperation<FilterDataModel, Oper
 		
 			
 		// let the processing begin...
-		int count = (int) Math.floor((double) goodPositions.sum());
+		int count = ((Number) goodPositions.sum()).intValue();
 		
 		if (count == 0) {
 			throw new Exception("No data was found that satisfies the matches the provided data filter parameters");

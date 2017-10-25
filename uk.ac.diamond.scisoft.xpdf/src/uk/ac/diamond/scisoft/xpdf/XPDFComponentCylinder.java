@@ -472,7 +472,7 @@ public class XPDFComponentCylinder extends XPDFComponentGeometry {
 //		System.err.println("New: "+ illuminatedVolume.sum() + ", old: "  + illuminatedVolumeOld.sum() );
 		
 		Dataset volumeElement = Maths.multiply(dR*dXi, rCylinder);
-		double totalVolume = (double) volumeElement.sum();
+		double totalVolume = ((Number) volumeElement.sum()).doubleValue();
 
 		double normalizationVolume = (illuminationNormalize) ? totalIlluminatedVolume : totalVolume;
 		

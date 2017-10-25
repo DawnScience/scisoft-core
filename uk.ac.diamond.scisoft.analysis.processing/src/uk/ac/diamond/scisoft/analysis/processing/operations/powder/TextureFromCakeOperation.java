@@ -77,7 +77,7 @@ public class TextureFromCakeOperation extends AbstractOperation<EmptyModel, Oper
 		
 		Dataset weighted_intensity_sum = cosIn.sum(0, true);
 		
-		double sumAngle = (double)cosAngle.sum();
+		double sumAngle = ((Number) cosAngle.sum()).doubleValue();
 		
 		weighted_intensity_sum.idivide(sumAngle);
 		intensity_sum.idivide(in.getShape()[0]);

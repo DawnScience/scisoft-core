@@ -98,7 +98,7 @@ public class VerticalHorizontalSlices {
 		IDataset xvrange = null;
 		
 		try{
-			xvrange = DatasetFactory.createRange(ptv[1]+lenv[1], ptv[1], -1, Dataset.FLOAT64);
+			xvrange = DatasetFactory.createRange(ptv[1], ptv[1]+lenv[1],  1, Dataset.FLOAT64);
 		}
 		catch(Exception n){
 			xvrange = DatasetFactory.createRange(ptv[1]+lenv[1], ptv[1], 1, Dataset.FLOAT64);
@@ -194,7 +194,7 @@ public class VerticalHorizontalSlices {
 		IDataset xvrange = null;
 		
 		try{
-			xvrange = DatasetFactory.createRange(ptv[1]+lenv[1], ptv[1], -1, Dataset.FLOAT64);
+			xvrange = DatasetFactory.createRange(ptv[1], ptv[1]+lenv[1], 1, Dataset.FLOAT64);
 		}
 		catch(IllegalArgumentException r){
 			r.printStackTrace();

@@ -1,6 +1,6 @@
 package org.dawnsci.surfacescatter;
 
-public class overviewNexusObjectBuilder {
+public class OverviewNexusObjectBuilder {
 
 	private String[] image_Tif_File_Path_Array;
 	private String[] source_dat_File_Array;
@@ -37,7 +37,7 @@ public class overviewNexusObjectBuilder {
 	private double[][] overlapping_Background_ROI_array;
 	private double[][] static_Background_ROI_Array;
 
-	public overviewNexusObjectBuilder(int noImages) {
+	public OverviewNexusObjectBuilder(int noImages) {
 
 		image_Tif_File_Path_Array = new String[noImages];
 		source_dat_File_Array = new String[noImages];

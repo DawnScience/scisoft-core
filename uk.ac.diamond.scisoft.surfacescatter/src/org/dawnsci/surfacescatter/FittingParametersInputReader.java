@@ -13,12 +13,14 @@ import org.eclipse.dawnsci.hdf5.nexus.NexusFileFactoryHDF5;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.StringDataset;
 
@@ -63,10 +65,6 @@ public class FittingParametersInputReader {
 
 	public static void readerFromNexus(NexusFile file, int frameNumber, FrameModel m, boolean useTrajectory) {
 
-		// FittingParameters fp = new FittingParameters();
-
-		
-
 		try {
 			file.openToRead();
 		} catch (NexusException e) {
@@ -74,15 +72,14 @@ public class FittingParametersInputReader {
 		}
 
 		final String path = "/" + NeXusStructureStrings.getEntry() + "/";
-		
-		String pointNode = path + "point_";
-		
-		if(useTrajectory){
-			pointNode = pointNode+	frameNumber;
 
-		}
-		else{
-			pointNode = pointNode+0;
+		String pointNode = path + "point_";
+
+		if (useTrajectory) {
+			pointNode = pointNode + frameNumber;
+
+		} else {
+			pointNode = pointNode + 0;
 		}
 		String[] attributeNames0 = new String[] { "Boundary_Box", "Fit_Power", "Tracker_Type", "Background_Methodology",
 				"ROI_Location" };
@@ -118,8 +115,8 @@ public class FittingParametersInputReader {
 			StringDataset trackerType = DatasetUtils.cast(StringDataset.class, trackerTypeAttribute.getValue());
 
 			m.setTrackingMethodology(trackerType.get());
-			
-			if(useTrajectory){
+
+			if (useTrajectory) {
 				m.setTrackingMethodology(TrackingMethodology.TrackerType1.USE_SET_POSITIONS);
 			}
 
@@ -144,21 +141,134 @@ public class FittingParametersInputReader {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		try {
-			file.close();;
+			file.close();
+			
 		} catch (NexusException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static void geometricalParametersReaderFromNexus(NexusFile file, GeometricParametersModel gm, DirectoryModel drm) {
+	public static FrameSetupFromNexusTransferObject readerFromNexusOverView(NexusFile file, boolean useTrajectory) {
+
+
+		try {
+			file.openToRead();
+		} catch (NexusException e) {
+			e.printStackTrace();
+		}
+
+		final String path = "/" + NeXusStructureStrings.getEntry() + "/" + NeXusStructureStrings.getOverviewOfFrames();
+
+		String[] attributeNames1 = new String[] { NeXusStructureStrings.getBoundaryboxArray()[1],
+				NeXusStructureStrings.getFitpowersArray()[1], NeXusStructureStrings.getTrackingMethodArray()[1],
+				NeXusStructureStrings.getBackgroundMethodArray()[1], NeXusStructureStrings.getRoiLocationArray()[1] };
+
+		String[] attributeNames = new String[attributeNames1.length];
+
+		for (int g = 0; g < attributeNames1.length; g++) {
+			attributeNames[g] = path + attributeNames1[g];
+		}
+
+		GroupNode point;
+
+		try {
+			point = file.getGroup(path, false);
+
+			///////// boundary box
+
+			Attribute boundaryBoxAttribute = point.getAttribute(attributeNames1[0]);
+			IntegerDataset boundaryBox0 = DatasetUtils.cast(IntegerDataset.class, boundaryBoxAttribute.getValue());
+
+			int[] boundaryBoxOut = new int[boundaryBox0.getSize()];
+
+			///////// fit power
+
+			Attribute fitPowerAttribute = point.getAttribute(attributeNames1[1]);
+			StringDataset fitPower0 = DatasetUtils.cast(StringDataset.class, fitPowerAttribute.getValue());
+
+			String[] fitPowerOut = new String[boundaryBox0.getSize()];
+
+			///////// tracker type
+
+			Attribute trackerTypeAttribute = point.getAttribute(attributeNames1[2]);
+			StringDataset trackerType = DatasetUtils.cast(StringDataset.class, trackerTypeAttribute.getValue());
+
+			String[] trackerTypeOut = new String[boundaryBox0.getSize()];
+
+			//// background method
+
+			Attribute backgroundMethodologyAttribute = point.getAttribute(attributeNames1[3]);
+			StringDataset backgroundMethodology = DatasetUtils.cast(StringDataset.class,
+					backgroundMethodologyAttribute.getValue());
+
+			String[] backgroundMethodologyOut = new String[boundaryBox0.getSize()];
+
+			/// roi
+
+			Attribute roiAttribute = point.getAttribute(attributeNames1[4]);
+			Dataset roiAttributeDat = (Dataset) roiAttribute.getValue();
+
+			double[][] roiOut = new double[boundaryBox0.getSize()][];
+
+			for (int i = 0; i < boundaryBox0.getSize(); i++) {
+
+				boundaryBoxOut[i] = boundaryBox0.get(i);
+				fitPowerOut[i] = fitPower0.get(i);
+
+				if (!useTrajectory) {
+					trackerTypeOut[i] = trackerType.get(i);
+				} else {
+					trackerTypeOut[i] = TrackingMethodology
+							.toString(TrackingMethodology.TrackerType1.USE_SET_POSITIONS);
+
+				}
+
+				backgroundMethodologyOut[i] = backgroundMethodology.get(i);
+				Dataset f  = roiAttributeDat.getSlice(new Slice(i, i+1));
+				f.squeeze();
+				roiOut[i] = new double[f.getSize()];
+				
+				for(int d = 0 ; d<f.getSize(); d++) {
+					roiOut[i][d] = f.getDouble(d);	
+				}
+				
+			}
+
+			 
+			try {
+				file.close();
+				
+			} catch (NexusException e) {
+				e.printStackTrace();
+			}
+			
+			return new FrameSetupFromNexusTransferObject(boundaryBoxOut, 
+					fitPowerOut, trackerTypeOut, backgroundMethodologyOut, 
+					roiOut);
+			
+			
+		} catch (NexusException e) {
+
+			e.printStackTrace();
+		}
+
+	
+		
+		return null;
+	
+		
+	}
+
+	public static void geometricalParametersReaderFromNexus(NexusFile file, GeometricParametersModel gm,
+			DirectoryModel drm) {
 
 		final String path = "/" + NeXusStructureStrings.getEntry() + "/";
 
 		final String parametersPath = path + NeXusStructureStrings.getParameters();
 
-//		NexusFile file = new NexusFileFactoryHDF5().newNexusFile(filename);
+		// NexusFile file = new NexusFileFactoryHDF5().newNexusFile(filename);
 
 		try {
 			file.openToRead();
@@ -182,7 +292,6 @@ public class FittingParametersInputReader {
 						&& !mName.equals("getReflectivityAnglesMap") && !mName.equals("getsXRDMap")) {
 
 					String name = StringUtils.substringAfter(mName, "get");
-				
 
 					Attribute att = parametersNode.getAttribute(name);
 
@@ -246,19 +355,20 @@ public class FittingParametersInputReader {
 					}
 				}
 			}
-			
+
 			Attribute att = parametersNode.getAttribute(NeXusStructureStrings.getTrackerOn());
 			StringDataset sd = DatasetUtils.cast(StringDataset.class, att.getValue());
-			
+
 			drm.setTrackerOn(Boolean.valueOf(sd.get()));
-			
+
 		} catch (NexusException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		try {
-			file.close();;
+			file.close();
+			;
 		} catch (NexusException e) {
 			e.printStackTrace();
 		}
@@ -271,9 +381,8 @@ public class FittingParametersInputReader {
 
 		final String aliasPath = path + NeXusStructureStrings.getAliases() + "/";
 
-//		NexusFile file = new NexusFileFactoryHDF5().newNexusFile(filename);
+		// NexusFile file = new NexusFileFactoryHDF5().newNexusFile(filename);
 
-		
 		try {
 			file.openToRead();
 		} catch (NexusException e) {
@@ -318,18 +427,19 @@ public class FittingParametersInputReader {
 			}
 		} catch (Exception g) {
 			System.out.println(g.getMessage());
-			
+
 		}
-		
+
 		try {
-			file.close();;
+			file.close();
+			;
 		} catch (NexusException e) {
 			e.printStackTrace();
 		}
 
-		
 		try {
-			file.close();;
+			file.close();
+			;
 		} catch (NexusException e) {
 			e.printStackTrace();
 		}

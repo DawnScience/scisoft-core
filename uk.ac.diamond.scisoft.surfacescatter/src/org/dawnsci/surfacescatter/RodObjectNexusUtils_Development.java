@@ -16,6 +16,9 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
@@ -32,7 +35,6 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IntegerDataset;
-import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.SliceND;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 
@@ -49,7 +51,7 @@ public class RodObjectNexusUtils_Development {
 
 		IDataset[] rawImageArray = new IDataset[fms.size()];
 
-		OutputCurvesDataPackage ocdp = drm.getOcdp();
+		// OutputCurvesDataPackage ocdp = drm.getOcdp();
 		CurveStitchDataPackage csdp = drm.getCsdp();
 
 		int noImages = fms.size();
@@ -59,7 +61,14 @@ public class RodObjectNexusUtils_Development {
 		p++;
 
 		entry.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXentry"));
+
 		//
+
+		Map<String, Object[]> m = new HashMap<String, Object[]>();
+
+		for (OverviewNexusObjectBuilderEnum oe : OverviewNexusObjectBuilderEnum.values()) {
+			m.put(oe.getFirstName(), new Object[noImages]);
+		}
 
 		for (int imageFilepathNo = 0; imageFilepathNo < noImages; imageFilepathNo++) {
 
@@ -79,7 +88,7 @@ public class RodObjectNexusUtils_Development {
 
 			}
 
-			GroupNode nxData = framePointWriter(fm, p, imageFilepathNo, ocdp, csdp, submitLenPt, rawImageArray );
+			GroupNode nxData = framePointWriter(fm, p, submitLenPt, rawImageArray, m);
 
 			try {
 				nxData.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXcollection"));
@@ -93,19 +102,24 @@ public class RodObjectNexusUtils_Development {
 
 		SliceND slice0 = new SliceND(csdp.getSplicedCurveX().getShape());
 
-		Dataset rawImageConcat = DatasetUtils.concatenate(rawImageArray, 0);
-
-		GroupNode overlapRegions = TreeFactory.createGroupNode(p);
-		p++;
-
 		///// entering the geometrical model
 
 		geometricalParameterWriter(gm, (long) p, drm, entry);
 
 		p++;
 
-		angleAliasWriter((long) p, drm, entry);
+		angleAliasWriter((long) p, entry);
 
+		p++;
+		//////// overview writer
+
+		overviewGroupWriter((long) p, m, entry);
+		p++;
+		////////////
+
+		Dataset rawImageConcat = DatasetUtils.concatenate(rawImageArray, 0);
+
+		GroupNode overlapRegions = TreeFactory.createGroupNode(p);
 		p++;
 
 		entry.addGroupNode("Overlap_Regions", overlapRegions);
@@ -200,7 +214,11 @@ public class RodObjectNexusUtils_Development {
 			final String rawImagesString = entryString + "/" + NeXusStructureStrings.getRawImagesDataset() + "/";
 			final String reducedDataString = entryString + "/" + NeXusStructureStrings.getReducedDataDataset() + "/";
 
-			nexusFileReference.addNode(entryString, entry);
+			try {
+				nexusFileReference.addNode(entryString, entry);
+			} catch (Exception ui) {
+				System.out.println(ui.getMessage());
+			}
 
 			nexusFileReference.createData(rawImagesString, "rawImagesDataset", rawImageConcat, true);
 			nexusFileReference.createData(rawImagesString, gm.getxName(), csdp.getSplicedCurveX().getSlice(slice0),
@@ -211,9 +229,6 @@ public class RodObjectNexusUtils_Development {
 			ArrayList<String> axes = new ArrayList<>();
 
 			axes.add(gm.getxName());
-
-			// nexusFileReference.createData(rawImagesString, gm.getxName(),
-			// csdp.getSplicedCurveX().getSlice(slice0), true);
 
 			GroupNode group2 = nexusFileReference.getGroup(rawImagesString, true);
 
@@ -363,7 +378,87 @@ public class RodObjectNexusUtils_Development {
 		entry.addGroupNode(NeXusStructureStrings.getParameters(), parameters);
 	}
 
-	private static void angleAliasWriter(long oid, DirectoryModel drm, GroupNode entry) {
+	private static GroupNode framePointWriter(FrameModel fm, int p, int[][] backgroundLenPt, IDataset[] rawImageArray,
+			Map<String, Object[]> m) {
+
+		GroupNode nxData = TreeFactory.createGroupNode(p);
+
+		nxData.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXsubentry"));
+
+		if (fm.getBackgroundMethdology() == Methodology.OVERLAPPING_BACKGROUND_BOX) {
+
+			int[] offsetLen = backgroundLenPt[0];
+			int[] offsetPt = backgroundLenPt[1];
+
+			double[] location = fm.getRoiLocation();
+
+			int[][] lenPt = LocationLenPtConverterUtils.locationToLenPtConverter(location);
+			int[] len = lenPt[0];
+			int[] pt = lenPt[1];
+
+			int pt0 = pt[0] + offsetPt[0];
+			int pt1 = pt[1] + offsetPt[1];
+			int[] backPt = new int[] { pt0, pt1 };
+
+			int len0 = len[0] + offsetLen[0];
+			int len1 = len[1] + offsetLen[1];
+			int[] backLen = new int[] { len0, len1 };
+
+			int[][] backLenPt = new int[][] { backLen, backPt };
+
+			double[] backLocation = LocationLenPtConverterUtils.lenPtToLocationConverter(backLenPt);
+
+			fm.setOverlapping_Background_ROI(backLocation);
+
+		}
+
+		else if (fm.getBackgroundMethdology() == Methodology.SECOND_BACKGROUND_BOX) {
+
+			double[] staticBackground = LocationLenPtConverterUtils.lenPtToLocationConverter(backgroundLenPt);
+
+			fm.setStatic_Background_ROI(staticBackground);
+
+		}
+
+		for (OverviewNexusObjectBuilderEnum oe : OverviewNexusObjectBuilderEnum.values()) {
+			try {
+				oe.frameGroupNodePopulateFromFrameModelMethod(oe, nxData, fm);
+			} catch (Exception j) {
+				System.out.println(j.getMessage());
+			}
+			try {
+				oe.frameExtractionMethod(oe, m, fm);
+			} catch (Exception ji) {
+				System.out.println(ji.getMessage());
+			}
+		}
+
+		p++;
+
+		// Then we add the raw image
+		DataNode rawImageDataNode = new DataNodeImpl(p);
+
+		SliceND slice = new SliceND(fm.getRawImageData().getShape());
+		IDataset j = DatasetFactory.createFromObject(0);
+		try {
+			j = fm.getRawImageData().getSlice(slice);
+			rawImageArray[fm.getFmNo()] = j;
+			rawImageDataNode.setDataset(j.clone().squeeze());
+		} catch (DatasetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+
+		nxData.addDataNode("Raw_Image", rawImageDataNode);
+
+		p++;
+
+		return nxData;
+
+	}
+
+	private static void angleAliasWriter(long oid, GroupNode entry) {
 
 		GroupNode alias = TreeFactory.createGroupNode(oid);
 
@@ -393,207 +488,109 @@ public class RodObjectNexusUtils_Development {
 		entry.addGroupNode(NeXusStructureStrings.getAliases(), alias);
 	}
 
-	private static GroupNode framePointWriter(FrameModel fm, int p, int imageFilepathNo, OutputCurvesDataPackage ocdp,
-			CurveStitchDataPackage csdp, int[][] backgroundLenPt, IDataset[] rawImageArray) {
+	private static void overviewGroupWriter(long oid, Map<String, Object[]> m, GroupNode entry) {
 
-		GroupNode nxData = TreeFactory.createGroupNode(p);
+		GroupNode overview = TreeFactory.createGroupNode(oid);
 
-		nxData.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXsubentry"));
+		for (OverviewNexusObjectBuilderEnum oe : OverviewNexusObjectBuilderEnum.values()) {
 
-		nxData.addAttribute(TreeFactory.createAttribute("Image_Tif_File_Path", fm.getTifFilePath()));
-		nxData.addAttribute(TreeFactory.createAttribute("Source_Dat_File", fm.getDatFilePath()));
+			String name = oe.getSecondName();
 
-		nxData.addAttribute(TreeFactory.createAttribute("h", fm.getH()));
-		nxData.addAttribute(TreeFactory.createAttribute("k", fm.getK()));
-		nxData.addAttribute(TreeFactory.createAttribute("l", fm.getL()));
+			try {
+				Object[] s = m.get(oe.getFirstName());
 
-		nxData.addAttribute(TreeFactory.createAttribute("q", fm.getQ()));
+				String x = s[0].getClass().getName();
 
-		nxData.addAttribute(TreeFactory.createAttribute("Is Good Point", String.valueOf(fm.isGoodPoint())));
+				System.out.println(x);
 
-		nxData.addAttribute(TreeFactory.createAttribute("Lorentzian_Correction", fm.getLorentzianCorrection()));
-		nxData.addAttribute(TreeFactory.createAttribute("Polarisation_Correction", fm.getPolarisationCorrection()));
-		nxData.addAttribute(TreeFactory.createAttribute("Area_Correction", fm.getAreaCorrection()));
+				switch (s[0].getClass().getName()) {
 
-		nxData.addAttribute(
-				TreeFactory.createAttribute("Reflectivity_Area_Correction", fm.getReflectivityAreaCorrection()));
-		nxData.addAttribute(TreeFactory.createAttribute("Area_Correction", fm.getAreaCorrection()));
+				case "java.lang.String":
+//					if(oe !=OverviewNexusObjectBuilderEnum.image_Tif_File_Path_Array) {
+						String[] out0 = new String[s.length];
+						shortArrayBuilder(out0, s, name, overview);
+//					}
+					break;
+				case "java.lang.Integer":
+					Integer[] out1 = new Integer[s.length];
+					shortArrayBuilder(out1, s, name, overview);
+					break;
+				case "java.lang.Double":
+					Double[] out2 = new Double[s.length];
+					shortArrayBuilder(out2, s, name, overview);
+					break;
+				case "[D":
+					shortArrayBuilder(s, name, overview);
+					break;
+				case "java.lang.Boolean":
+					Boolean[] out4 = new Boolean[s.length];
+					shortArrayBuilder(out4, s, name, overview);
+					break;
+				default:
+					// defensive
+					break;
+				}
 
-		nxData.addAttribute(
-				TreeFactory.createAttribute("Fhkl", csdp.getSplicedCurveYFhkl().getDouble(imageFilepathNo)));
-		nxData.addAttribute(
-				TreeFactory.createAttribute("Corrected_Intensity", csdp.getSplicedCurveY().getDouble(imageFilepathNo)));
-
-		nxData.addAttribute(TreeFactory.createAttribute("ROI_Location", fm.getRoiLocation()));
-
-		nxData.addAttribute(
-				TreeFactory.createAttribute("Fit_Power", AnalaysisMethodologies.toString(fm.getFitPower())));
-		nxData.addAttribute(TreeFactory.createAttribute("Boundary_Box", fm.getBoundaryBox()));
-		nxData.addAttribute(
-				TreeFactory.createAttribute("Tracker_Type", TrackingMethodology.toString(fm.getTrackingMethodology())));
-		nxData.addAttribute(TreeFactory.createAttribute("Background_Methodology",
-				AnalaysisMethodologies.toString(fm.getBackgroundMethdology())));
-
-		nxData.addAttribute(
-				TreeFactory.createAttribute("Unspliced_Corrected_Intensity", ocdp.getyList().get(imageFilepathNo)));
-		nxData.addAttribute(TreeFactory.createAttribute("Unspliced_Corrected_Intensity_Error",
-				Maths.power(ocdp.getyList().get(imageFilepathNo), 0.5)));
-
-		nxData.addAttribute(TreeFactory.createAttribute("Unspliced_Raw_Intensity",
-				ocdp.getyListRawIntensity().get(imageFilepathNo)));
-		nxData.addAttribute(TreeFactory.createAttribute("Unspliced_Raw_Intensity_Error",
-				Maths.power(ocdp.getyListRawIntensity().get(imageFilepathNo), 0.5)));
-
-		nxData.addAttribute(
-				TreeFactory.createAttribute("Unspliced_Fhkl_Intensity", ocdp.getyListFhkl().get(imageFilepathNo)));
-		nxData.addAttribute(TreeFactory.createAttribute("Unspliced_Fhkl_Intensity_Error",
-				Maths.power(ocdp.getyListFhkl().get(imageFilepathNo), 0.5)));
-
-		if (fm.getBackgroundMethdology() == Methodology.OVERLAPPING_BACKGROUND_BOX) {
-
-			int[] offsetLen = backgroundLenPt[0];
-			int[] offsetPt = backgroundLenPt[1];
-
-			double[] location = fm.getRoiLocation();
-
-			int[][] lenPt = LocationLenPtConverterUtils.locationToLenPtConverter(location);
-			int[] len = lenPt[0];
-			int[] pt = lenPt[1];
-
-			int pt0 = pt[0] + offsetPt[0];
-			int pt1 = pt[1] + offsetPt[1];
-			int[] backPt = new int[] { pt0, pt1 };
-
-			int len0 = len[0] + offsetLen[0];
-			int len1 = len[1] + offsetLen[1];
-			int[] backLen = new int[] { len0, len1 };
-
-			int[][] backLenPt = new int[][] { backLen, backPt };
-
-			double[] backLocation = LocationLenPtConverterUtils.lenPtToLocationConverter(backLenPt);
-
-			nxData.addAttribute(TreeFactory.createAttribute("Overlapping_Background_ROI", backLocation));
-
+			} catch (Exception hj) {
+				System.out.println(hj.getMessage() + oe.getFirstName());
+			}
 		}
 
-		else if (fm.getBackgroundMethdology() == Methodology.SECOND_BACKGROUND_BOX) {
+		overview.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXparameters"));
 
-			double[] staticBackground = LocationLenPtConverterUtils.lenPtToLocationConverter(backgroundLenPt);
-
-			nxData.addAttribute(TreeFactory.createAttribute("Static_Background_ROI", staticBackground));
-
-		}
-
-		p++;
-
-		// Then we add the raw image
-		DataNode rawImageDataNode = new DataNodeImpl(p);
-
-		SliceND slice = new SliceND(fm.getRawImageData().getShape());
-		IDataset j = DatasetFactory.createFromObject(0);
 		try {
-			j = fm.getRawImageData().getSlice(slice);
-			rawImageArray[imageFilepathNo] = j;
-			rawImageDataNode.setDataset(j.clone().squeeze());
-		} catch (DatasetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.println(e.getMessage());
+			entry.addGroupNode(NeXusStructureStrings.getOverviewOfFrames(), overview);
+		} catch (Exception vb) {
+			System.out.println(vb.getMessage());
 		}
 
-		nxData.addDataNode("Raw_Image", rawImageDataNode);
+	}
 
-		p++;
+	private static void shortArrayBuilder(Object[] out, Object[] in, String name, GroupNode overview) {
 
-		
-		return nxData;
-	
+		for (int w = 0; w < in.length; w++) {
+			out[w] = in[w];
+		}
 
+		overview.addAttribute(TreeFactory.createAttribute(name, out));
 	}
 	
-	private void buildOverViewArrays(int  noImages) {
+	private static void shortArrayBuilder(String[] out, Object[] in, String name, GroupNode overview) {
+
+		for (int w = 0; w < in.length; w++) {
+			out[w] = (String)in[w];
+		}
 		
-		String[] image_Tif_File_Path_Array = new String[noImages];
-		String[] source_dat_File_Array = new String[noImages];
+		Dataset r = DatasetFactory.createFromObject(0);
 		
-		double[] hArray = new double[noImages];
-		double[] kArray = new double[noImages];
-		double[] lArray = new double[noImages];
-				
-		double[] qArray = new double[noImages];
-		
-		boolean[] is_Good_Point_Array = new boolean[noImages];
-		
-		double[] lorentzian_Correction_Array = new double[noImages];
-		double[] polarisation_Correction_Array = new double[noImages];
-		double[] area_Correction_Array = new double[noImages];
-		double[] reflectivity_Area_Correction_Array = new double[noImages];
-		
-		double[][] roi_Location_Array = new double[noImages][];
-		String[] fitPowers_array = new String[noImages];
-		
-		int[] boundaryBox_array = new int[noImages];
-		String[] tracking_Method_array = new String[noImages];
-		String[] background_Method_array = new String[noImages];
+		try {
+			r = DatasetFactory.createFromObject(out);
+		}
+		catch(Exception y) {
+			System.err.println(y.getMessage());
+		}
 		
 		
-		double[] unspliced_Corrected_Intensity_Array = new double[noImages];
-		double[] unspliced_Corrected_Intensity_Error_Array = new double[noImages];
-		
-		double[] unspliced_Raw_Intensity_Array = new double[noImages];
-		double[] unspliced_Raw_Intensity_Error_Array = new double[noImages];
-		
-		double[] unspliced_Fhkl_Intensity_Array = new double[noImages];
-		double[] unspliced_Fhkl_Intensity_Error_Array = new double[noImages];
-		
-		double[][] overlapping_Background_ROI_array = new double[noImages][];
-		double[][] static_Background_ROI_Array = new double[noImages][];
-		
-		
+		overview.addAttribute(TreeFactory.createAttribute(name, r));
 	}
-	
-	
-	private void addToOverViewArrays(int  noImages) {
-		
-		String[] image_Tif_File_Path_Array = new String[noImages];
-		String[] source_dat_File_Array = new String[noImages];
-		
-		double[] hArray = new double[noImages];
-		double[] kArray = new double[noImages];
-		double[] lArray = new double[noImages];
-				
-		double[] qArray = new double[noImages];
-		
-		boolean[] is_Good_Point_Array = new boolean[noImages];
-		
-		double[] lorentzian_Correction_Array = new double[noImages];
-		double[] polarisation_Correction_Array = new double[noImages];
-		double[] area_Correction_Array = new double[noImages];
-		double[] reflectivity_Area_Correction_Array = new double[noImages];
-		
-		double[][] roi_Location_Array = new double[noImages][];
-		String[] fitPowers_array = new String[noImages];
-		
-		int[] boundaryBox_array = new int[noImages];
-		String[] tracking_Method_array = new String[noImages];
-		String[] background_Method_array = new String[noImages];
-		
-		
-		double[] unspliced_Corrected_Intensity_Array = new double[noImages];
-		double[] unspliced_Corrected_Intensity_Error_Array = new double[noImages];
-		
-		double[] unspliced_Raw_Intensity_Array = new double[noImages];
-		double[] unspliced_Raw_Intensity_Error_Array = new double[noImages];
-		
-		double[] unspliced_Fhkl_Intensity_Array = new double[noImages];
-		double[] unspliced_Fhkl_Intensity_Error_Array = new double[noImages];
-		
-		double[][] overlapping_Background_ROI_array = new double[noImages][];
-		double[][] static_Background_ROI_Array = new double[noImages][];
-		
-		
+
+	private static void shortArrayBuilder(Object[] in, String name, GroupNode overview) {
+
+		double[][] o1 = new double[in.length][];
+
+		for (int w = 0; w < in.length; w++) {
+
+			try {
+				Object h = in[w];
+				double[] d = (double[]) h;
+				o1[w] = d;
+
+			} catch (Exception u) {
+				System.out.println(u.getMessage());
+			}
+
+		}
+
+		overview.addAttribute(TreeFactory.createAttribute(name, o1));
 	}
-	
-	
-	
 }

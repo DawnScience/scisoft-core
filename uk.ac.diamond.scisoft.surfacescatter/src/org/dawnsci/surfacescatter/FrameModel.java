@@ -61,8 +61,8 @@ public class FrameModel {
 	private int boundaryBox = 10;
 	private TrackerType1 trackingMethodology  = TrackerType1.TLD;
 	private Methodology backgroundMethodology;
-	private double[] overlapping_Background_ROI;
-	private double[] static_Background_ROI;
+	private double[] overlapping_Background_ROI = new double[] {0};
+	private double[] static_Background_ROI= new double[] {0};
 	private ProccessingMethod processingMethodSelection;
 	
 	//raw image

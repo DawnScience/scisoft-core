@@ -4,6 +4,7 @@ public class BatchSetupMiscellaneousProperties {
 
 	private BatchSetupYAxes[] bsya;
 	private boolean useQ;
+	private boolean outputNexusFiles = true; 
 
 	public BatchSetupMiscellaneousProperties() {
 		bsya = new BatchSetupYAxes[AxisEnums.yAxes.values().length];
@@ -29,6 +30,14 @@ public class BatchSetupMiscellaneousProperties {
 
 	public void setUseQ(boolean useQ) {
 		this.useQ = useQ;
+	}
+
+	public boolean isOutputNexusFiles() {
+		return outputNexusFiles;
+	}
+
+	public void setOutputNexusFiles(boolean outputNexusFiles) {
+		this.outputNexusFiles = outputNexusFiles;
 	}
 
 }

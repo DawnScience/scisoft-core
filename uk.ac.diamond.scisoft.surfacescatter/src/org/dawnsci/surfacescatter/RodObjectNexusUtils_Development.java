@@ -499,9 +499,6 @@ public class RodObjectNexusUtils_Development {
 			try {
 				Object[] s = m.get(oe.getFirstName());
 
-				String x = s[0].getClass().getName();
-
-				System.out.println(x);
 
 				switch (s[0].getClass().getName()) {
 

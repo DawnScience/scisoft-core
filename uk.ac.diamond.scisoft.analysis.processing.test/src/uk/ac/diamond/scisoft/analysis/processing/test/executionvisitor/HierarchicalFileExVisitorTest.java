@@ -829,9 +829,9 @@ public class HierarchicalFileExVisitorTest {
 	}
 	
 	private void compareDatasets(IDataset a, IDataset b) {
-		double sum = (Double) DatasetUtils.convertToDataset(a).sum();
+		double sum = ((Number) DatasetUtils.convertToDataset(a).sum()).doubleValue();
 		assertFalse(sum == 0);
-		double sum1 = (Double) DatasetUtils.convertToDataset(b).sum();
+		double sum1 = ((Number) DatasetUtils.convertToDataset(b).sum()).doubleValue();
 		assertTrue(sum1 == sum);
 	}
 	

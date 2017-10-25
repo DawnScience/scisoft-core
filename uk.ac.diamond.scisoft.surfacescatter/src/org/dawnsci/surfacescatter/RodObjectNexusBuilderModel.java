@@ -23,17 +23,20 @@ public class RodObjectNexusBuilderModel extends AbstractOperationModel{
 	private String filepath;
 	private GeometricParametersModel gm;
 	private DirectoryModel drm;
+	private int noRods;
 
 	
 	public RodObjectNexusBuilderModel(ArrayList<FrameModel> fms,
 								      String filepath,
 								      GeometricParametersModel gm,
-								      DirectoryModel drm){
+								      DirectoryModel drm,
+								      int noRods){
 
 		this.fms =fms;
 		this.drm =drm;
 		this.gm =gm;
 		this.filepath =filepath;
+		this.noRods = noRods;
 	
 	}
 	
@@ -68,5 +71,10 @@ public class RodObjectNexusBuilderModel extends AbstractOperationModel{
 	public void setDrm(DirectoryModel drm) {
 		this.drm = drm;
 	}
+
+	public int getNoRods() {
+		return noRods;
+	}
+
 	
 }

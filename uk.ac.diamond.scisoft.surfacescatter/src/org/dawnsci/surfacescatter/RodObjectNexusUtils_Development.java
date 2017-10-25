@@ -18,6 +18,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.locks.ReadWriteLock;
 
 import org.apache.commons.lang.StringUtils;
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
@@ -117,13 +119,13 @@ public class RodObjectNexusUtils_Development {
 		p++;
 		////////////
 
-		Dataset rawImageConcat = DatasetUtils.concatenate(rawImageArray, 0);
-
 		GroupNode overlapRegions = TreeFactory.createGroupNode(p);
 		p++;
 
 		entry.addGroupNode("Overlap_Regions", overlapRegions);
 
+		entry.getGroupNode("Overlap_Regions")
+				.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXcollection"));
 		/// Start creating the overlap region coding
 
 		int overlapNumber = 0;
@@ -134,8 +136,10 @@ public class RodObjectNexusUtils_Development {
 				if (ovm.getLowerOverlapScannedValues().length > 0) {
 
 					GroupNode overlapData = TreeFactory.createGroupNode(p);
+
 					p++;
 
+					overlapData.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXsubentry"));
 					// lower overlap data
 
 					overlapData.addAttribute(TreeFactory.createAttribute("Lower_.Dat_Name", ovm.getLowerDatName()));
@@ -219,6 +223,8 @@ public class RodObjectNexusUtils_Development {
 			} catch (Exception ui) {
 				System.out.println(ui.getMessage());
 			}
+
+			Dataset rawImageConcat = retryConcat(rawImageArray, model.getNoRods(), 0);
 
 			nexusFileReference.createData(rawImagesString, "rawImagesDataset", rawImageConcat, true);
 			nexusFileReference.createData(rawImagesString, gm.getxName(), csdp.getSplicedCurveX().getSlice(slice0),
@@ -499,14 +505,13 @@ public class RodObjectNexusUtils_Development {
 			try {
 				Object[] s = m.get(oe.getFirstName());
 
-
 				switch (s[0].getClass().getName()) {
 
 				case "java.lang.String":
-//					if(oe !=OverviewNexusObjectBuilderEnum.image_Tif_File_Path_Array) {
-						String[] out0 = new String[s.length];
-						shortArrayBuilder(out0, s, name, overview);
-//					}
+					// if(oe !=OverviewNexusObjectBuilderEnum.image_Tif_File_Path_Array) {
+					String[] out0 = new String[s.length];
+					shortArrayBuilder(out0, s, name, overview);
+					// }
 					break;
 				case "java.lang.Integer":
 					Integer[] out1 = new Integer[s.length];
@@ -551,23 +556,21 @@ public class RodObjectNexusUtils_Development {
 
 		overview.addAttribute(TreeFactory.createAttribute(name, out));
 	}
-	
+
 	private static void shortArrayBuilder(String[] out, Object[] in, String name, GroupNode overview) {
 
 		for (int w = 0; w < in.length; w++) {
-			out[w] = (String)in[w];
+			out[w] = (String) in[w];
 		}
-		
+
 		Dataset r = DatasetFactory.createFromObject(0);
-		
+
 		try {
 			r = DatasetFactory.createFromObject(out);
-		}
-		catch(Exception y) {
+		} catch (Exception y) {
 			System.err.println(y.getMessage());
 		}
-		
-		
+
 		overview.addAttribute(TreeFactory.createAttribute(name, r));
 	}
 
@@ -589,5 +592,37 @@ public class RodObjectNexusUtils_Development {
 		}
 
 		overview.addAttribute(TreeFactory.createAttribute(name, o1));
+	}
+
+	private static Dataset retryConcat(IDataset[] rawImageArray, int cutOff, int flag) {
+
+		IDataset[] rawImageArray1 = rawImageArray.clone();
+
+		Dataset rawImageConcat = DatasetFactory.createFromObject(0);
+
+		try {
+			return DatasetUtils.concatenate(rawImageArray1, 0);
+		} catch (Exception e) {
+			// connection failed, try again.
+			try {
+				if ((new Random()).nextInt(10) >= 5 && flag < cutOff + 1) {
+					Thread.sleep((new Random()).nextInt(10000) + 1000);
+					flag++;
+					System.out.println("flag:  " + flag);
+
+					return DatasetUtils.concatenate(rawImageArray1, 0);
+
+				}
+				if (flag >= cutOff + 1) {
+					return DatasetUtils.concatenate(rawImageArray1, 0);
+
+				}
+			} catch (InterruptedException f) {
+			}
+
+			retryConcat(rawImageArray1, cutOff, flag);
+		}
+
+		return rawImageConcat;
 	}
 }

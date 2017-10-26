@@ -152,7 +152,6 @@ public class FittingParametersInputReader {
 
 	public static FrameSetupFromNexusTransferObject readerFromNexusOverView(NexusFile file, boolean useTrajectory) {
 
-
 		try {
 			file.openToRead();
 		} catch (NexusException e) {
@@ -261,6 +260,7 @@ public class FittingParametersInputReader {
 		
 	}
 
+
 	public static void geometricalParametersReaderFromNexus(NexusFile file, GeometricParametersModel gm,
 			DirectoryModel drm) {
 
@@ -368,7 +368,7 @@ public class FittingParametersInputReader {
 
 		try {
 			file.close();
-			;
+			
 		} catch (NexusException e) {
 			e.printStackTrace();
 		}
@@ -381,15 +381,12 @@ public class FittingParametersInputReader {
 
 		final String aliasPath = path + NeXusStructureStrings.getAliases() + "/";
 
-		// NexusFile file = new NexusFileFactoryHDF5().newNexusFile(filename);
-
 		try {
 			file.openToRead();
 		} catch (NexusException e) {
 			e.printStackTrace();
 		}
 
-		// List<GroupNode> parametersDNode = gn.getGroupNodes();
 		GroupNode aliasNode;
 
 		try {

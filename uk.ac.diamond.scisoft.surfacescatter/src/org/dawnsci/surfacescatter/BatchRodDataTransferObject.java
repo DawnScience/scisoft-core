@@ -8,6 +8,15 @@ public class BatchRodDataTransferObject {
 	private String nexusSaveFilePaths;
 	private String rodName;
 	private boolean useTrajectory;
+	private boolean useStareMode;
+
+	public boolean isUseStareMode() {
+		return useStareMode;
+	}
+
+	public void setUseStareMode(boolean useStareMode) {
+		this.useStareMode = useStareMode;
+	}
 
 	public String[] getDatFiles() {
 		return datFiles;

@@ -803,7 +803,11 @@ class ndarray(object):
     def nonzero(self):
         return _cmps.nonzero(self)
 
-    # MISSING: argsort, searchsorted
+    @_wrapout
+    def argsort(self, axis=-1):
+        return _dsutils.indexSort(self.__dataset, axis)
+
+    # MISSING: searchsorted
     # MISSING: compress, diagonal
 
     #  calculation
@@ -1556,6 +1560,10 @@ def sort(a, axis=-1):
     if axis is None:
         return _dsutils.sort(a)
     return _dsutils.sort(a, axis)
+
+@_wrap
+def argsort(a, axis=-1):
+    return _dsutils.indexSort(a, axis)
 
 @_wrap
 def tile(a, reps):

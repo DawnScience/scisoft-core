@@ -22,12 +22,12 @@ Key differences
 Implemented NumPy methods (1.10)
  * Array attributes: shape, ndim, data, size, itemsize, nbytes, T, view, indices
  * Array methods: copy, fill, reshape, resize, transpose, flatten, squeeze,
-   take, put, max, min, sum, prod, all, any, argmax, argmin, cumsum, cumprod
+   take, put, max, min, sum, prod, all, any, argmax, argmin, cumsum, cumprod, argsort
  * Array creation: array, zeros, zeros_like, ones, ones_like, empty, full, full_like, eye, identity, linspace, logspace, arange, diag, diagflat, meshgrid, indices
  * Array manipulation: append, tile, repeat, concatenate, vstack,
    hstack, dstack, array_split, split, vsplit, hsplit, dsplit, fliplr, flipud, roll, rot90,
    reshape, resize, ravel, rollaxis, atleast_1d, atleast_2d, atleast_3d
- * Array modification: fill, append
+ * Array modification: fill, append, sort
  * Array comparisons and logic operations: all, any, greater, greater_equal, less, less_equal, equal,
    not_equal, logical_not, logical_and, logical_or, logical_xor, allclose, nonzero, select, where, choose
  * Indexing operations: unravel_index, ravel_multi_index

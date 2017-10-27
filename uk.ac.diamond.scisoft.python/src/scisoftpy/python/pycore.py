@@ -184,6 +184,8 @@ dsplit = _np.dsplit
 
 sort = _np.sort
 
+argsort = _np.argsort
+
 tile = _np.tile
 
 repeat = _np.repeat

@@ -13,6 +13,7 @@ public class BatchRodModel {
 	private String nxsFolderPath;
 	private BatchSavingAdvancedSettings[] bsas;
 	private BatchSetupMiscellaneousProperties bsmps;
+	private boolean batchDisplayOn = false;
 
 	public ArrayList<BatchRodDataTransferObject> getBrdtoList() {
 
@@ -118,6 +119,17 @@ public class BatchRodModel {
 	public void setBsmps(BatchSetupMiscellaneousProperties bsmps) {
 		this.bsmps = bsmps;
 	}
+	
+	public boolean isBatchDisplayOn() {
+		return batchDisplayOn;
+	}
+
+	public void setBatchDisplayOn(boolean batchDisplayOn) {
+		this.batchDisplayOn = batchDisplayOn;
+		setPoke(!poke);
+	}
+	
+	
 
 
 }

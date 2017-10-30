@@ -306,21 +306,21 @@ public class DirectoryModel {
 				int y = this.getNoOfImagesInDatFile(m);
 				
 				for (int i = 0; i < y; i++) {		
-					locationList.get(m).add(new double[]{0,0,0,0,0,0,0,0});
+					locationList.get(m).add(new double[]{0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0});
 				}
 				
 			}
 			
 			if(locationList.get(n).size()<l){
 				for (int i = 0; i < l; i++) {		
-					locationList.get(n).set(i, new double[]{0,0,0,0,0,0,0,0});
+					locationList.get(n).set(i, new double[]{0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0});
 				}
 			}
 		}
 		
 		if(locationList.get(n).size()<l){
 			for (int i = 0; i < l; i++) {		
-				locationList.get(n).add(new double[]{0,0,0,0,0,0,0,0});
+				locationList.get(n).add(new double[]{0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0});
 			}
 		}
 		

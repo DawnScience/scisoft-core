@@ -26,7 +26,7 @@ public class TrackerLocationInterpolation {
 				
 				double[] tL = trackerLocations.get(h);
 				
-				if (Arrays.equals(tL, new double[] {0,0,0,0,0,0,0,0}) != true){
+				if (Arrays.equals(tL, new double[] {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}) != true){
 					lList.add(sortedX.getDouble(h));
 					yList.add(tL[0]);
 					xList.add(tL[1]);
@@ -35,21 +35,21 @@ public class TrackerLocationInterpolation {
 			}
 		
 			
-			Dataset yValues = DatasetFactory.zeros(lList.size());
-			Dataset xValues = DatasetFactory.zeros(lList.size());
-			Dataset lValues = DatasetFactory.zeros(lList.size());
+			Dataset yValues = DatasetFactory.createFromObject(yList);
+			Dataset xValues = DatasetFactory.createFromObject(xList);
+			Dataset lValues = DatasetFactory.createFromObject(lList);
 			
-			for(int op = 0; op<xList.size(); op++){
-				
-				double x = xList.get(op);
-				double y = yList.get(op);
-				double l = lList.get(op);
-				
-				xValues.set(x, op);
-				yValues.set(y, op);
-				lValues.set(l, op);
-
-			}
+//			for(int op = 0; op<xList.size(); op++){
+//				
+//				double x = xList.get(op);
+//				double y = yList.get(op);
+//				double l = lList.get(op);
+//				
+//				xValues.set(x, op);
+//				yValues.set(y, op);
+//				lValues.set(l, op);
+//
+//			}
 			
 			
 			double[] seedLocation = PolynomialOverlap.extrapolatedLocation(sortedX.getDouble(k),

@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
 import org.dawnsci.surfacescatter.MethodSettingEnum.MethodSetting;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
@@ -16,10 +15,20 @@ public class SavingUtils {
 
 
 	private PrintWriter writer;
+	private CurveStitchDataPackage csdp;
+	private boolean writeOnlyGood;
+	
 
-	public void genXSave(boolean writeOnlyGood,
+	public SavingUtils(boolean writeOnlyGood, CurveStitchDataPackage csdp){
+		
+		this.writeOnlyGood = writeOnlyGood;
+		this.csdp = csdp;
+		
+		
+	}
+	
+	public void genXSave(
 			String title,
-			CurveStitchDataPackage csdp,
 			DirectoryModel drm,
 			ArrayList<FrameModel> fms,
 			GeometricParametersModel gm){
@@ -43,7 +52,7 @@ public class SavingUtils {
 
 			for(int gh = 0 ; gh<fms.size(); gh++){
 				FrameModel f = fms.get(gh);
-				if((writeOnlyGood == true && f.isGoodPoint()) ||
+				if((writeOnlyGood && f.isGoodPoint()) ||
 						!writeOnlyGood){
 					writer.println(f.getH() +"	"+ f.getK() +"	"+f.getL() + 
 							"	"+ csdp.getSplicedCurveYFhkl().getDouble(gh)+ "	"+ csdp.getSplicedCurveY().getError(gh));
@@ -57,7 +66,7 @@ public class SavingUtils {
 
 			for(int gh = 0 ; gh<fms.size(); gh++){
 				FrameModel f = fms.get(gh);
-				if((writeOnlyGood == true && f.isGoodPoint()) ||
+				if((writeOnlyGood && f.isGoodPoint()) ||
 						!writeOnlyGood){
 
 					writer.println(drm.getxList().get(gh) +"	"+ 
@@ -72,9 +81,7 @@ public class SavingUtils {
 
 
 
-	public void anarodSave(boolean writeOnlyGood,
-			String title,
-			CurveStitchDataPackage csdp,
+	public void anarodSave(String title,
 			DirectoryModel drm,
 			ArrayList<FrameModel> fms,
 			GeometricParametersModel gm){
@@ -103,7 +110,7 @@ public class SavingUtils {
 
 				FrameModel f = fms.get(gh);
 
-				if((writeOnlyGood == true && f.isGoodPoint()) ||
+				if((writeOnlyGood  && f.isGoodPoint()) ||
 						!writeOnlyGood){
 
 					writer.println(f.getH() +"	"+ f.getK() +"	"+f.getL() + 
@@ -124,7 +131,7 @@ public class SavingUtils {
 
 				for(int gh = 0 ; gh<fms.size(); gh++){
 					FrameModel f = fms.get(gh);
-					if((writeOnlyGood == true && f.isGoodPoint()) ||
+					if((writeOnlyGood && f.isGoodPoint()) ||
 							!writeOnlyGood){
 
 
@@ -140,7 +147,7 @@ public class SavingUtils {
 
 				for(int gh = 0 ; gh<fms.size(); gh++){
 					FrameModel f = fms.get(gh);
-					if((writeOnlyGood == true && f.isGoodPoint()) ||
+					if((writeOnlyGood && f.isGoodPoint()) ||
 							!writeOnlyGood){
 
 						writer.println(drm.getxList().get(gh) +"	"+ 
@@ -155,9 +162,7 @@ public class SavingUtils {
 		writer.close();
 	}	
 
-	public void intSave(boolean writeOnlyGood,
-			String title,
-			CurveStitchDataPackage csdp,
+	public void intSave(String title,
 			DirectoryModel drm,
 			ArrayList<FrameModel> fms,
 			GeometricParametersModel gm){
@@ -196,7 +201,7 @@ public class SavingUtils {
 
 			for(int gh = 0 ; gh<fms.size(); gh++){
 				FrameModel f = fms.get(gh);
-				if((writeOnlyGood == true && f.isGoodPoint()) ||
+				if((writeOnlyGood && f.isGoodPoint()) ||
 						!writeOnlyGood){
 
 					writer.println(f.getH() +"	"+ f.getK() +"	"+f.getL() + 
@@ -220,7 +225,7 @@ public class SavingUtils {
 					for(int gh = 0 ; gh<fms.size(); gh++){
 
 						FrameModel fm = fms.get(gh);
-						if((writeOnlyGood == true && fm.isGoodPoint()) ||
+						if((writeOnlyGood && fm.isGoodPoint()) ||
 								!writeOnlyGood){
 
 							writer.println(fm.getQdcd() +"	"+ 
@@ -238,7 +243,7 @@ public class SavingUtils {
 					for(int gh = 0 ; gh<fms.size(); gh++){
 
 						FrameModel fm = fms.get(gh);
-						if((writeOnlyGood == true && fm.isGoodPoint()) ||
+						if((writeOnlyGood && fm.isGoodPoint()) ||
 								!writeOnlyGood){
 
 							writer.println(fm.getQdcd() +"	"+ 
@@ -254,7 +259,7 @@ public class SavingUtils {
 					for(int gh = 0 ; gh<fms.size(); gh++){
 
 						FrameModel fm = fms.get(gh);
-						if((writeOnlyGood == true && fm.isGoodPoint()) ||
+						if((writeOnlyGood && fm.isGoodPoint()) ||
 								!writeOnlyGood){
 
 							writer.println(fm.getQdcd() +"	"+ 
@@ -271,10 +276,8 @@ public class SavingUtils {
 
 
 	public void simpleXYYeSave(boolean useQ,
-			boolean writeOnlyGood, 
 			String title, 
 			int state,
-			CurveStitchDataPackage csdp,
 			ArrayList<FrameModel> fms){
 
 		File file =null;
@@ -317,7 +320,7 @@ public class SavingUtils {
 			break;
 		case 1:
 			y = csdp.getSplicedCurveYFhkl();
-			ye = y = csdp.getSplicedCurveYFhkl().getErrors();
+			ye = y.getErrors();
 			break;
 		case 2:
 			y = csdp.getSplicedCurveYRaw();
@@ -339,7 +342,7 @@ public class SavingUtils {
 		for(int gh = 0 ; gh<fms.size(); gh++){
 			FrameModel fm = fms.get(gh);
 
-			if((writeOnlyGood == true && fm.isGoodPoint()) ||
+			if((writeOnlyGood && fm.isGoodPoint()) ||
 					!writeOnlyGood){
 
 				writer.println(x.getDouble(gh) + 

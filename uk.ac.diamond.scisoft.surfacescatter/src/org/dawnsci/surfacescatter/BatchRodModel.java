@@ -14,6 +14,7 @@ public class BatchRodModel {
 	private BatchSavingAdvancedSettings[] bsas;
 	private BatchSetupMiscellaneousProperties bsmps;
 	private boolean batchDisplayOn = false;
+	private String batchTitle;
 
 	public ArrayList<BatchRodDataTransferObject> getBrdtoList() {
 
@@ -127,6 +128,14 @@ public class BatchRodModel {
 	public void setBatchDisplayOn(boolean batchDisplayOn) {
 		this.batchDisplayOn = batchDisplayOn;
 		setPoke(!poke);
+	}
+
+	public String getBatchTitle() {
+		return batchTitle;
+	}
+
+	public void setBatchTitle(String rodTitle) {
+		this.batchTitle = rodTitle;
 	}
 	
 	

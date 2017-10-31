@@ -1,5 +1,6 @@
 package org.dawnsci.surfacescatter;
 
+import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 
 public class FastFourierTransform {
@@ -23,10 +24,33 @@ public class FastFourierTransform {
 	
 	
 	
-	public static IDataset fftModeledYvalues(IDataset inputReal) {
-				
+	public static IDataset fftModeledYValuesDataset(IDataset inputReal) {
+
+		return computedYOutputDataset(inputReal, fft(inputReal));
 		
-		return computedYOutput(inputReal, fft(inputReal));
+	}
+	
+	public static double[] fftModeledYValuesArray (IDataset inputReal) {
+
+		return computedYOutputArray(inputReal, fft(inputReal));
+		
+	}
+	
+	public static double[] fftModeledYValuesArray (double[] probeArray,IDataset inputReal) {
+
+		return computedYOutputArray(probeArray, fft(inputReal));
+		
+	}
+	
+	public static double[] fftModeledYValuesArray (IDataset probeArray,IDataset inputReal) {
+
+		return computedYOutputArray(probeArray, fft(inputReal));
+		
+	}
+	
+	public static IDataset fftModeledYValuesDataset (IDataset probeArray,IDataset inputReal) {
+
+		return computedYOutputDataset(probeArray, fft(inputReal));
 		
 	}
 	
@@ -162,7 +186,7 @@ public class FastFourierTransform {
 		return k;
 	}
 
-	private static  IDataset computedYOutput(IDataset xRange, double[][] coefficients) {
+	private static  IDataset computedYOutputDataset(IDataset xRange, double[][] coefficients) {
 		
 		IDataset yOutput = xRange.clone();
 		
@@ -193,6 +217,80 @@ public class FastFourierTransform {
 			}
 			
 			yOutput.set(yVal, j);
+		}
+		
+		
+		return yOutput;
+	}
+	
+	private static double[] computedYOutputArray(IDataset xRange, double[][] coefficients) {
+		
+		double[] yOutput = new double[xRange.getSize()];
+		
+		//xRange is just a series of integers 0-N where N is the end
+		
+		
+		///base frequency for each FFT bin. Remember coeffiecients[n] is the real and coeffiecients[n+1] the imaginary
+		// components for 1 bin so frequency = (bin_id * freq/2) / (N/2). freq is sample frequency, N the size of the FFT (which is coefficients.length).
+		
+		for(int j =0; j<xRange.getSize(); j++) {
+			
+			double xVal = xRange.getDouble(j); 
+			
+			double yVal = 0;
+			
+			double baseFrequency = (1/(2*xRange.getSize())) * coefficients.length/2;
+			
+			double[] realArray = new double[coefficients.length/2];
+			double[] imArray = new double[coefficients.length/2];
+			
+			for(int n = 0; n<coefficients.length; n++) {
+				
+				realArray[n] = coefficients[0][n]*Math.cos(baseFrequency*xVal);
+				imArray[n] = -1*coefficients[1][n]*Math.sin(baseFrequency*xVal);
+				
+				yVal+= realArray[n];
+				yVal+= imArray[n];
+			}
+			
+			yOutput[j]=yVal;
+		}
+		
+		
+		return yOutput;
+	}
+	
+	private static double[] computedYOutputArray(double[] probePoints, double[][] coefficients) {
+		
+		double[] yOutput = new double[probePoints.length];
+		
+		//xRange is just a series of integers 0-N where N is the end
+		
+		
+		///base frequency for each FFT bin. Remember coeffiecients[n] is the real and coeffiecients[n+1] the imaginary
+		// components for 1 bin so frequency = (bin_id * freq/2) / (N/2). freq is sample frequency, N the size of the FFT (which is coefficients.length).
+		
+		for(int j =0; j<probePoints.length; j++) {
+			
+			double xVal = probePoints[j]; 
+			
+			double yVal = 0;
+			
+			double baseFrequency = (1/(2*probePoints.length)) * coefficients.length/2;
+			
+			double[] realArray = new double[coefficients.length/2];
+			double[] imArray = new double[coefficients.length/2];
+			
+			for(int n = 0; n<coefficients.length; n++) {
+				
+				realArray[n] = coefficients[0][n]*Math.cos(baseFrequency*xVal);
+				imArray[n] = -1*coefficients[1][n]*Math.sin(baseFrequency*xVal);
+				
+				yVal+= realArray[n];
+				yVal+= imArray[n];
+			}
+			
+			yOutput[j]=yVal;
 		}
 		
 		

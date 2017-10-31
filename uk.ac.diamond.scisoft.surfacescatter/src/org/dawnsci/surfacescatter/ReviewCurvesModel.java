@@ -9,9 +9,10 @@ public class ReviewCurvesModel {
 	private ArrayList<CurveStitchDataPackage> csdpList;
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 	private CurveStitchDataPackage csdpLatest;
+	private boolean poke;
 
 	public ArrayList<CurveStitchDataPackage> getCsdpList() {
-		if(csdpList ==null){
+		if (csdpList == null) {
 			csdpList = new ArrayList<CurveStitchDataPackage>();
 		}
 		return csdpList;
@@ -19,60 +20,49 @@ public class ReviewCurvesModel {
 
 	public void setCsdpList(ArrayList<CurveStitchDataPackage> csdpList) {
 		this.csdpList = csdpList;
-		firePropertyChange("csdpList", this.csdpList,
-				this.csdpList= csdpList);
+		firePropertyChange("csdpList", this.csdpList, this.csdpList = csdpList);
 	}
 
 	public void addToCsdpList(CurveStitchDataPackage csdp) {
 
-		if(csdpList ==null){
+		if (csdpList == null) {
 			csdpList = new ArrayList<CurveStitchDataPackage>();
 			csdpList.add(csdp);
-			setCsdpLatest(csdp);
 		}
-		
-		else if(csdpList.size() ==0){
+
+		else if (csdpList.size() == 0) {
 			csdpList.add(csdp);
-			setCsdpLatest(csdp);
 		}
 
-		else{
-			ArrayList<CurveStitchDataPackage> csdpListCopy = new ArrayList<CurveStitchDataPackage>();
+		else {
+			
+			csdpList.add(csdp);
 
-			for(int h = 0; h<csdpList.size(); h++){
-				csdpListCopy.add(csdpList.get(h));
-			}
-
-			csdpListCopy.add(csdp);
-
-			setCsdpLatest(csdp);
-
-			firePropertyChange("csdpList", this.csdpList,
-					this.csdpList= csdpListCopy);
 		}
+
+		setCsdpLatest(csdp);
+		setPoke(!poke);
 	}
 
 	public void removeFromCsdpList(CurveStitchDataPackage csdp) {
 
 		boolean changed = false;
 
-		if(csdpList != null){ 
+		if (csdpList != null) {
 			ArrayList<CurveStitchDataPackage> csdpListCopy = new ArrayList<CurveStitchDataPackage>();
 
-			for(int h = 0; h<csdpList.size(); h++){
-				if(csdpList.size()>0){
-					if(!csdp.getRodName().equals(csdpList.get(h).getRodName())){
+			for (int h = 0; h < csdpList.size(); h++) {
+				if (csdpList.size() > 0) {
+					if (!csdp.getRodName().equals(csdpList.get(h).getRodName())) {
 						csdpListCopy.add(csdpList.get(h));
-					}
-					else{
+					} else {
 						changed = true;
 					}
 				}
 			}
 
-			if(changed){
-				firePropertyChange("csdpList", this.csdpList,
-						this.csdpList = csdpListCopy);
+			if (changed) {
+				firePropertyChange("csdpList", this.csdpList, this.csdpList = csdpListCopy);
 			}
 		}
 	}
@@ -81,16 +71,12 @@ public class ReviewCurvesModel {
 		propertyChangeSupport.addPropertyChangeListener(listener);
 	}
 
-	public void removePropertyChangeListener(String propertyName,
-			PropertyChangeListener listener) {
-		propertyChangeSupport.removePropertyChangeListener(propertyName,
-				listener);
+	public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+		propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
 	}
 
-	protected void firePropertyChange(String propertyName, Object oldValue,
-			Object newValue) {
-		propertyChangeSupport.firePropertyChange(propertyName, oldValue,
-				newValue);
+	protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+		propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
 	}
 
 	public CurveStitchDataPackage getCsdpLatest() {
@@ -98,10 +84,18 @@ public class ReviewCurvesModel {
 	}
 
 	public void setCsdpLatest(CurveStitchDataPackage csdpLatest) {
-		this.csdpLatest = csdpLatest;
 
-		firePropertyChange("csdpLatest", this.csdpLatest,
-				this.csdpLatest = csdpLatest);
+		firePropertyChange("csdpLatest", this.csdpLatest, this.csdpLatest = csdpLatest);
+		setPoke(!poke);
+	}
+
+	public boolean isPoke() {
+		return poke;
+	}
+
+	public void setPoke(boolean poke) {
+
+		firePropertyChange("poke", this.poke, this.poke = poke);
 	}
 
 }

@@ -256,7 +256,7 @@ public class OperationServiceImpl implements IOperationService {
         
         if (firstSlice != null) squeezedShape = ShapeUtils.squeezeShape(firstSlice.getShape(), false);
         
-        SliceFromSeriesMetadata md = firstSlice.getFirstMetadata(SliceFromSeriesMetadata.class);
+        SliceFromSeriesMetadata md = firstSlice == null ? null : firstSlice.getFirstMetadata(SliceFromSeriesMetadata.class);
         
         
         if (!(md == null || md.getDataDimensions() == null) && md.getDataDimensions().length != squeezedShape.length) {
@@ -334,7 +334,7 @@ public class OperationServiceImpl implements IOperationService {
 		
 		operations = new HashMap<String, IOperation<? extends IOperationModel, ? extends OperationData>>(31);
 		models     = new HashMap<String, Class<? extends IOperationModel>>(31);
-		categoryOp = new HashMap<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>>(7);		
+		categoryOp = new HashMap<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>>(7);
 		categoryId = new HashMap<String, OperationCategory>(7);
 		opIdCategory = new HashMap<String, String>();
 		
@@ -344,7 +344,7 @@ public class OperationServiceImpl implements IOperationService {
 			final String     id   = e.getAttribute("id");
 			final String     name = e.getAttribute("name");
 			final String     icon = e.getAttribute("icon");
-			categoryId.put(id, new OperationCategory(name, icon, id));		
+			categoryId.put(id, new OperationCategory(name, icon, id));
 		}
 	
 		for (IConfigurationElement e : eles) {
@@ -375,18 +375,17 @@ public class OperationServiceImpl implements IOperationService {
 			final String model;
 			if (op instanceof AbstractOperationBase) {
 				final String name = e.getAttribute("name");
-				AbstractOperationBase<? extends IOperationModel, ? extends OperationData> aop = (AbstractOperationBase<? extends IOperationModel, ? extends OperationData>)op;
+				AbstractOperationBase<? extends IOperationModel, ? extends OperationData> aop = (AbstractOperationBase<? extends IOperationModel, ? extends OperationData>) op;
 				aop.setName(name);
-				
+
 				final String desc = e.getAttribute("description");
 				if (desc!=null) aop.setDescription(desc);
-				model = aop.getModelClass().getName();
+				models.put(id, aop.getModelClass());
 			} else {
 				model = e.getAttribute("model");
-			}
-
-			if (model!=null && !"".equals(model)) {
-				models.put(id, ((IOperationModel)e.createExecutableExtension("model")).getClass());
+				if (model != null && !model.isEmpty()) {
+					models.put(id, ((IOperationModel) e.createExecutableExtension("model")).getClass());
+				}
 			}
 		}
 	}
@@ -394,17 +393,7 @@ public class OperationServiceImpl implements IOperationService {
 
 	@Override
 	public Class<? extends IOperationModel> getModelClass(String operationId) throws Exception {
-		if (models.containsKey(operationId)) {
-			return models.get(operationId);
-		}
-		
-		throw new RuntimeException("Extension point must specify model class!");
-		
-//		IOperation<? extends IOperationModel, ? extends OperationData> op = create(operationId);
-//		if (op instanceof AbstractOperationBase) {
-//			return ((AbstractOperationBase)op).getModelClass();
-//		}
-//		return null; // Normally one of the above lines would throw an exception before this.
+		return models.get(operationId); // allow null to return
 	}
 
 	@Override
@@ -514,11 +503,16 @@ public class OperationServiceImpl implements IOperationService {
 		return ret;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public IOperation<? extends IOperationModel, ? extends OperationData> create(String operationId) throws Exception {
 		checkOperations();
 		IOperation op = operations.get(operationId).getClass().newInstance();
 		Class<? extends IOperationModel> modelClass = getModelClass(operationId);
+		if (modelClass == null && op instanceof AbstractOperationBase) {
+			modelClass =  ((AbstractOperationBase) op).getModelClass();
+		}
+
 		if (modelClass == null) throw new RuntimeException("Model class not found! All operations require a model");
 			
 		op.setModel(modelClass.newInstance());
@@ -544,7 +538,9 @@ public class OperationServiceImpl implements IOperationService {
 				if (models == null) models = new HashMap<>();
 				
 				operations.put(op.getId(), op);
-				models.put(op.getId(), ((AbstractOperationBase)op).getModelClass());
+				if (op instanceof AbstractOperationBase) {
+					models.put(op.getId(), ((AbstractOperationBase) op).getModelClass());
+				}
 			}
 		}
 	}

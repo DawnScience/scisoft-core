@@ -76,9 +76,7 @@ public class ImageUtils {
 						slice.setSlice(i, p, p + window, 1);
 					}
 
-					// TODO update to 2.1
 					data.fillDataset(sliced, data.getSliceIterator(slice.getStart(), slice.getStop(), slice.getStep()));
-					sliced.setDirty(); // remove for 2.1
 					PEAK_TYPE type = processWindow(sliced, sIt, base, v, results);
 					if (type == PEAK_TYPE.CENTRAL) {
 						final double total = results[rank];

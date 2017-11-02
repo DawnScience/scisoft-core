@@ -72,11 +72,11 @@ public class OverlapFinder {
 
 			try {
 			
-				maxMinArray[k][0] = (double) xArray[k].max(null);
-				maxMinArray[k][1] = (double) xArray[k].min(null);
+				maxMinArray[k][0] = (double) xArray[k].max();
+				maxMinArray[k][1] = (double) xArray[k].min();
 
-				maxMinArrayClone[k][0] = (double) xArray[k].max(null);
-				maxMinArrayClone[k][1] = (double) xArray[k].min(null);
+				maxMinArrayClone[k][0] = (double) xArray[k].max();
+				maxMinArrayClone[k][1] = (double) xArray[k].min();
 
 				maxArray[k] = (double) xArray[k].max(null);
 			} catch (Exception e) {

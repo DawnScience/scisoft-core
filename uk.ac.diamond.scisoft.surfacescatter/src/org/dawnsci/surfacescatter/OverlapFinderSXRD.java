@@ -3,10 +3,7 @@ package org.dawnsci.surfacescatter;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.dataset.SliceND;
 
 public class OverlapFinderSXRD{
 
@@ -19,8 +16,8 @@ public class OverlapFinderSXRD{
 		double[][] overlap = new double[d][2];
 		
 		for(int k =0;k<d;k++){
-				maxMinArray[k][0] = (double) xArray[k].max(null);
-				maxMinArray[k][1] = (double) xArray[k].min(null);
+				maxMinArray[k][0] = (double) xArray[k].max();
+				maxMinArray[k][1] = (double) xArray[k].min();
 		}
 		
 		for (int k=0; k<d-1;k++){

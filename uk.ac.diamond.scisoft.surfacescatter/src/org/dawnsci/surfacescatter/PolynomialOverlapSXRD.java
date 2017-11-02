@@ -2,15 +2,14 @@ package org.dawnsci.surfacescatter;
 
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 
 public class PolynomialOverlapSXRD {
 
-
-	
-	public static double[][] correctionRatio3(Dataset[] xLowerDataset, 
+	public static double[][] correctionRatio(Dataset[] xLowerDataset, 
 											  Dataset yLowerDataset,
 											  Dataset[] xHigherDataset, 
 											  Dataset yHigherDataset, 
@@ -31,8 +30,8 @@ public class PolynomialOverlapSXRD {
 		
 		int numberOfTestPoints = 100;
 		
-		Dataset xLowerTestArray= DatasetFactory.zeros(new int[] {numberOfTestPoints}, Dataset.ARRAYFLOAT64);
-		Dataset xHigherTestArray = DatasetFactory.zeros(new int[] {numberOfTestPoints}, Dataset.ARRAYFLOAT64);
+		Dataset xLowerTestArray= DatasetFactory.createRange(numberOfTestPoints);
+		Dataset xHigherTestArray = DatasetFactory.createRange(numberOfTestPoints);
 		
 		for(int i =0 ; i <numberOfTestPoints ; i++){
 						
@@ -45,6 +44,11 @@ public class PolynomialOverlapSXRD {
 		
 		Dataset calculatedValuesHigher = polyFitHigher.calculateValues(xHigherTestArray);
 		Dataset calculatedValuesLower = polyFitLower.calculateValues(xLowerTestArray);
+		
+		double calculatedValuesHigherRMS = computeRMS(yHigherDataset,xHigherDataset, polyFitLower);
+		double calculatedValuesLowerRMS = computeRMS(yHigherDataset,xHigherDataset, polyFitLower);
+		double[] RMSLowerHigher = new double[] {calculatedValuesLowerRMS, calculatedValuesHigherRMS};
+		
 		
 		double runningSum = 0;
 		double runningSumDelta = 0;
@@ -67,14 +71,16 @@ public class PolynomialOverlapSXRD {
 		
 		double temp = runningSumDelta/runningSumNorm;
 		
+		double[] runningSumNormArray = new double[] {runningSumNorm};
+		
 		double[] correction  = new double[] {(temp)*attenuationFactor};
 		
-		double[] correctionDelta  = new double[] {(runningSum/numberOfTestPoints)*attenuationFactor};
+//		double[] correctionDelta  = new double[] {(runningSum/numberOfTestPoints)*attenuationFactor};
 		
-		return new double[][] {lowerParams, higherParams, correction};
+		return new double[][] {lowerParams, higherParams, correction, runningSumNormArray, RMSLowerHigher};
 	}
 	
-	public static double maxValue(Dataset[] input){
+	private static double maxValue(Dataset[] input){
 		
 		 double maxValue = input[0].getDouble(0);
 		 
@@ -87,7 +93,7 @@ public class PolynomialOverlapSXRD {
 		return maxValue;
 	}
 	
-	public static double minValue(Dataset[] input){
+	private static double minValue(Dataset[] input){
 		
 		 double minValue = input[0].getDouble(0);
 		 
@@ -98,5 +104,22 @@ public class PolynomialOverlapSXRD {
 		  }
 		
 		return minValue;
+	}
+	
+	private static double computeRMS(IDataset yInput,IDataset[] xInput, Polynomial polyFit) {
+		
+		double meanOfDifferenceSquared = 0;
+		
+		Dataset yComputed = polyFit.calculateValues(xInput);
+		
+		
+		for(int j =0; j<yInput.getSize(); j++) {
+			
+			meanOfDifferenceSquared+=Math.pow((yInput.getDouble(j) - yComputed.getDouble(j)),2);
+			
+		}
+		
+		return  Math.pow(meanOfDifferenceSquared/(yInput.getSize()), 0.5);
+		
 	}
 }

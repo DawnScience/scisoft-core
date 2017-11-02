@@ -6,8 +6,11 @@ import org.eclipse.january.dataset.IDataset;
 
 public class FourierTransformOverlap {
 
-	public static double correctionRatio(Dataset[] xLowerDataset, Dataset yLowerDataset, Dataset[] xHigherDataset,
-			Dataset yHigherDataset, double attenuationFactor) {
+	public static double[][] correctionRatio(Dataset[] xLowerDataset, 
+										 Dataset yLowerDataset, 
+										 Dataset[] xHigherDataset,
+										 Dataset yHigherDataset, 
+										 double attenuationFactor) {
 
 		double minXLower = minValue(xLowerDataset);
 		double maxXLower = maxValue(xLowerDataset);
@@ -34,6 +37,9 @@ public class FourierTransformOverlap {
 		Dataset calculatedValuesLower = (Dataset) FastFourierTransform.fftModeledYValuesDataset(xHigherTestArray,
 				(IDataset) yLowerDataset);
 
+		double  calculatedValuesHigherRMS = FastFourierTransform.fftModeledYValuesDatasetRMS(yHigherDataset);
+		double  calculatedValuesLowerRMS = FastFourierTransform.fftModeledYValuesDatasetRMS(yLowerDataset);
+
 		double runningSum = 0;
 		double runningSumDelta = 0;
 		double runningSumNorm = 0;
@@ -53,11 +59,21 @@ public class FourierTransformOverlap {
 
 		}
 
-		double temp = runningSumDelta / runningSumNorm;
-
-		double correction = (temp) * attenuationFactor;
-
-		return correction ;
+	
+		double[] RMSLowerHigher = new double[] {calculatedValuesLowerRMS, calculatedValuesHigherRMS};
+		
+		
+		double temp = runningSumDelta/runningSumNorm;
+		
+		double[] runningSumNormArray = new double[] {runningSumNorm};
+		
+		double[] correction  = new double[] {(temp)*attenuationFactor};
+		
+//		double[] correctionDelta  = new double[] {(runningSum/numberOfTestPoints)*attenuationFactor};
+		
+		return new double[][] {null, null, correction, runningSumNormArray, RMSLowerHigher};
+		
+		
 	}
 
 	public static double maxValue(Dataset[] input) {

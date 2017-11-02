@@ -255,13 +255,13 @@ public class CurveStitchWithErrorsAndFrames {
 
 				if (!modifiedOverlaps.get(k)) {
 
-					double[][] correctionRatio = PolynomialOverlapSXRD.correctionRatio3(xLowerDataset, yLowerDataset,
+					double[][] correctionRatio = PolynomialOverlapSXRD.correctionRatio(xLowerDataset, yLowerDataset,
 							xHigherDataset, yHigherDataset, attenuationFactor, 4);
 
-					double[][] correctionRatioFhkl = PolynomialOverlapSXRD.correctionRatio3(xLowerDataset,
+					double[][] correctionRatioFhkl = PolynomialOverlapSXRD.correctionRatio(xLowerDataset,
 							yLowerDatasetFhkl, xHigherDataset, yHigherDatasetFhkl, attenuationFactorFhkl, 4);
 
-					double[][] correctionRatioRaw = PolynomialOverlapSXRD.correctionRatio3(xLowerDataset,
+					double[][] correctionRatioRaw = PolynomialOverlapSXRD.correctionRatio(xLowerDataset,
 							yLowerDatasetRaw, xHigherDataset, yHigherDatasetRaw, attenuationFactorRaw, 4);
 
 					attenuationFactor = correctionRatio[2][0];
@@ -302,6 +302,22 @@ public class CurveStitchWithErrorsAndFrames {
 
 				overlapDataModels.add(odm);
 
+			}
+			else {
+				yArrayCorrected[k + 1] = Maths.multiply(yArray[k + 1], attenuationFactor);
+				yArrayCorrectedFhkl[k + 1] = Maths.multiply(yArrayFhkl[k + 1], attenuationFactorFhkl);
+				yArrayCorrectedRaw[k + 1] = Maths.multiply(yArrayRaw[k + 1], attenuationFactorRaw);
+
+				yArrayCorrectedError[k + 1] = Maths.multiply(yArrayError[k + 1], attenuationFactor);
+				yArrayCorrectedFhklError[k + 1] = Maths.multiply(yArrayFhklError[k + 1], attenuationFactorFhkl);
+				yRawErrorArrayCorrected[k + 1] = Maths.multiply(yArrayRawError[k + 1], attenuationFactorRaw);
+
+				odm.setAttenuationFactor(attenuationFactor);
+				odm.setAttenuationFactorFhkl(attenuationFactorFhkl);
+				odm.setAttenuationFactorRaw(attenuationFactorRaw);
+
+				overlapDataModels.add(odm);
+				
 			}
 		}
 

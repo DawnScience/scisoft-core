@@ -32,6 +32,7 @@ voigt         -- Voigt profile: [position, Lorentzian FWHM, area, Gaussian FWHM]
 fano          -- Fano resonance profile: [resonance position, width, cross-section, Fano parameter]
 fano_gaussian -- modified Fano-Gaussian profile: [position, Lorentzian FWHM, area, Gaussian FWHM, Fano parameter]
 pearson7      -- Pearson VII profile: [position, FWHM, area, power]
+poisson       -- Poisson profile: [position, area]
 
 '''
 
@@ -40,6 +41,7 @@ from uk.ac.diamond.scisoft.analysis.fitting.functions import Gaussian as _gaussi
 from uk.ac.diamond.scisoft.analysis.fitting.functions import Lorentzian as _lorentzian
 from uk.ac.diamond.scisoft.analysis.fitting.functions import Offset as _offset
 from uk.ac.diamond.scisoft.analysis.fitting.functions import PearsonVII as _pearsonvii
+from uk.ac.diamond.scisoft.analysis.fitting.functions import Poisson as _poisson
 from uk.ac.diamond.scisoft.analysis.fitting.functions import PseudoVoigt as _pseudovoigt
 from uk.ac.diamond.scisoft.analysis.fitting.functions import Voigt as _voigt
 from uk.ac.diamond.scisoft.analysis.fitting.functions import Fano as _fano
@@ -89,6 +91,7 @@ lorentzian = _jfnclass(_lorentzian)
 offset = _jfnclass(_offset)
 constant = _jfnclass(_offset)
 pearson7 = _jfnclass(_pearsonvii)
+poisson = _jfnclass(_poisson)
 pvoigt = _jfnclass(_pseudovoigt)
 voigt = _jfnclass(_voigt)
 fano = _jfnclass(_fano)
@@ -104,7 +107,7 @@ def isjclass(cls):
 def isjmethod(fn):
     return hasattr(fn, '_jfn')
 
-_nparamsdict = { cubic:4, gaussian:3, lorentzian:3, offset:1, constant:1, pearson7:4, pvoigt:5, voigt:4, fano:4, fano_gaussian:5, quadratic:3, step:7, linear:2}
+_nparamsdict = { cubic:4, gaussian:3, lorentzian:3, offset:1, constant:1, pearson7:4, poisson:2, pvoigt:5, voigt:4, fano:4, fano_gaussian:5, quadratic:3, step:7, linear:2}
 
 def nparams(afunction):
     '''Get number of required parameters'''

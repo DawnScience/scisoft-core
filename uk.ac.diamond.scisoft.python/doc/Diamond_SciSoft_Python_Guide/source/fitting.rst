@@ -45,6 +45,8 @@ fitting functions defined in ``fit.function`` listed in the table below:
 +---------------+------------------------------------------+-------------------------------------+
 | pearson7      | Pearson VII profile                      | position, FWHM, area, power         |
 +---------------+------------------------------------------+-------------------------------------+
+| poisson       | Poisson profile                          | position, area                      |
++---------------+------------------------------------------+-------------------------------------+
 
 Functions defined in Jython can also be used as long as they conform to a
 standard argument signature::

@@ -24,8 +24,7 @@ Require-Bundle: javax.vecmath;bundle-version="1.5.2",
  org.apache.commons.lang;bundle-version="2.6.0",
  com.googlecode.efficient-java-matrix-library.core;bundle-version="[0.26.0,0.27.0)",
  org.ddogleg;bundle-version="0.6.0",
- com.thoughtworks.xstream,
- org.eclipse.dawnsci.hdf.object;bundle-version="1.3.0"
+ com.thoughtworks.xstream
 Export-Package: uk.ac.diamond.scisoft.analysis,
  uk.ac.diamond.scisoft.analysis.axis,
  uk.ac.diamond.scisoft.analysis.baseline,

@@ -15,4 +15,5 @@ Import-Package: org.dawnsci.conversion,
  uk.ac.diamond.scisoft.analysis.osgi
 Require-Bundle: org.junit;bundle-version="[4.10.0,5.0.0)",
  org.eclipse.dawnsci.analysis.api,
- org.dawnsci.conversion
+ org.dawnsci.conversion,
+ org.eclipse.dawnsci.hdf.object

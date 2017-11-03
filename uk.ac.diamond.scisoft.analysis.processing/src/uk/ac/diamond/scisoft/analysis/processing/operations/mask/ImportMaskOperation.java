@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Diamond Light Source Ltd.
+ * Copyright (c) 2012, 2017 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -22,7 +22,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
-import org.eclipse.dawnsci.hdf.object.HierarchicalDataFactory;
+import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Comparisons;
@@ -79,7 +79,7 @@ public class ImportMaskOperation<T extends ImportMaskModel> extends AbstractOper
 				lmask = mask;
 				if (lmask == null) {
 					try {
-						if (HierarchicalDataFactory.isHDF5(path)) {
+						if (HDF5Utils.isHDF5(path)) {
 							IPersistenceService service = (IPersistenceService)ServiceManager.getService(IPersistenceService.class);
 							IPersistentFile pf = service.getPersistentFile(path);
 							IDataset m = pf.getMask(pf.getMaskNames(null).get(0),null);

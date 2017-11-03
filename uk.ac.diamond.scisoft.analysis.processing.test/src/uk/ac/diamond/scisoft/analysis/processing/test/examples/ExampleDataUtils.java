@@ -1,5 +1,5 @@
 /*-
- * Copyright 2015 Diamond Light Source Ltd.
+ * Copyright 2015, 2017 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,8 +11,11 @@ package uk.ac.diamond.scisoft.analysis.processing.test.examples;
 
 import java.io.File;
 
-import org.eclipse.dawnsci.hdf.object.HierarchicalDataFactory;
-import org.eclipse.dawnsci.hdf.object.IHierarchicalDataFile;
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
+import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
+import org.eclipse.dawnsci.analysis.tree.impl.AttributeImpl;
+import org.eclipse.dawnsci.hdf5.nexus.NexusFileFactoryHDF5;
+import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 
@@ -27,27 +30,23 @@ public class ExampleDataUtils {
 			tmp.deleteOnExit();
 			tmp.createNewFile();
 			
-			IHierarchicalDataFile file = HierarchicalDataFactory.getWriter(tmp.getAbsolutePath());
-			
-			String entry1 = file.group("entry1");
-			file.setNexusAttribute(entry1, "NXentry");
-			String nxdata = file.group("data", entry1);
-			file.setNexusAttribute(nxdata, "NXdata");
+			NexusFile file = new NexusFileFactoryHDF5().newNexusFile(tmp.getAbsolutePath());
+			file.createAndOpenToWrite();
+			GroupNode entryGroup = file.getGroup("/entry1", true);
 			
 			Dataset data = DatasetFactory.ones(shape);
 			data.imultiply(10);
-			
-			String ds = file.createDataset("data", data, nxdata, true);
-			file.setIntAttribute(ds, "signal", 1);
+			data.setName("data");
+			DataNode dataNode = file.createData(entryGroup, data);
+			file.addAttribute(dataNode, new AttributeImpl("signal", 1));
 			
 			for (int i = 0; i < shape.length; i++) {
 				
 				Dataset ax = DatasetFactory.createRange(shape[i]);
 				ax.imultiply(i);
-				
-				String da = file.createDataset("axis" + i, ax, nxdata, true);
-				file.setIntAttribute(da, "axis", i+1);
-				
+				ax.setName("axis" + i);
+				dataNode = file.createData(entryGroup, ax);
+				file.addAttribute(dataNode, new AttributeImpl("axis", i+1));
 			}
 			
 			file.close();

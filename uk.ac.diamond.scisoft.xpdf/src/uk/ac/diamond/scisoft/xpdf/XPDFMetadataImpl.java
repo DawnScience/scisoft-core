@@ -333,7 +333,9 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 		// Gather the parallel results
 		for (Future<Dataset> lineFuture: futureSet)
 			try {
-				totalSampleFluorescence.iadd(lineFuture.get());
+				Dataset future = lineFuture.get();
+				totalSampleFluorescence.squeeze();
+				totalSampleFluorescence.iadd(future);
 			} catch (ExecutionException eE) {
 				// Do nothing!
 				// FIXME Do something!
@@ -499,7 +501,7 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 			double lineXSection = line.getCrossSection();
 			double lineNumberDensity = sampleData.getNumberDensity(line.getFluorescentZ());
 			oneLineFluorescence.imultiply(lineXSection*lineNumberDensity);
-			Dataset detectorCorrectedOLF = tect.applyTransmissionCorrection(oneLineFluorescence, coords.getTwoTheta(), line.getEnergy());
+			Dataset detectorCorrectedOLF = tect.applyTransmissionCorrection(oneLineFluorescence.squeeze(), coords.getTwoTheta(), line.getEnergy());
 			counter.incrementAndGet();
 			return detectorCorrectedOLF;	
 

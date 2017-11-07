@@ -25,6 +25,7 @@ import javax.measure.quantity.Quantity;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import javax.measure.unit.UnitFormat;
 import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Matrix4d;
@@ -114,9 +115,9 @@ public class NexusTreeUtils {
 	public static final String DEPENDS_ON = "depends_on";
 	
 	static {
-//		UnitFormat.getInstance().alias(NonSI.ANGSTROM, "Angstrom");
-//		UnitFormat.getInstance().alias(NonSI.ANGSTROM, "angstrom");
-//		UnitFormat.getInstance().alias(NonSI.DEGREE_ANGLE, "deg");
+		UnitFormat.getInstance().alias(NonSI.ANGSTROM, "Angstrom");
+		UnitFormat.getInstance().alias(NonSI.ANGSTROM, "angstrom");
+		UnitFormat.getInstance().alias(NonSI.DEGREE_ANGLE, "deg");
 	}
 
 	public static void augmentTree(Tree tree) {

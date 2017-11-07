@@ -25,7 +25,6 @@ import javax.measure.quantity.Quantity;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import javax.measure.unit.UnitFormat;
 import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Matrix4d;
@@ -51,7 +50,6 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.ShapeUtils;
@@ -116,9 +114,9 @@ public class NexusTreeUtils {
 	public static final String DEPENDS_ON = "depends_on";
 	
 	static {
-		UnitFormat.getInstance().alias(NonSI.ANGSTROM, "Angstrom");
-		UnitFormat.getInstance().alias(NonSI.ANGSTROM, "angstrom");
-		UnitFormat.getInstance().alias(NonSI.DEGREE_ANGLE, "deg");
+//		UnitFormat.getInstance().alias(NonSI.ANGSTROM, "Angstrom");
+//		UnitFormat.getInstance().alias(NonSI.ANGSTROM, "angstrom");
+//		UnitFormat.getInstance().alias(NonSI.DEGREE_ANGLE, "deg");
 	}
 
 	public static void augmentTree(Tree tree) {
@@ -1859,7 +1857,7 @@ public class NexusTreeUtils {
 			int value = Integer.parseInt(attr.getFirstElement());
 			return value;
 		}
-		IDataset attrd = attr.getValue();
+		Dataset attrd = DatasetUtils.convertToDataset(attr.getValue());
 		return attrd.getInt();
 	}
 
@@ -1943,7 +1941,7 @@ public class NexusTreeUtils {
 			double value = Double.parseDouble(attr.getFirstElement());
 			return value;
 		}
-		IDataset attrd = attr.getValue();
+		Dataset attrd = DatasetUtils.convertToDataset(attr.getValue());
 		return attrd.getDouble();
 	}
 

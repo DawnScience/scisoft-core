@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.locks.ReadWriteLock;
-
 import org.apache.commons.lang.StringUtils;
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
@@ -38,6 +36,7 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.SliceND;
+
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 
 //Let's save this file.
@@ -129,81 +128,84 @@ public class RodObjectNexusUtils_Development {
 		/// Start creating the overlap region coding
 
 		int overlapNumber = 0;
+		try {
+			for (OverlapDataModel ovm : csdp.getOverlapDataModels()) {
 
-		for (OverlapDataModel ovm : csdp.getOverlapDataModels()) {
+				if (!ovm.getLowerOverlapScannedValues().equals(null)) {
+					if (ovm.getLowerOverlapScannedValues().length > 0) {
 
-			if (!ovm.getLowerOverlapScannedValues().equals(null)) {
-				if (ovm.getLowerOverlapScannedValues().length > 0) {
+						GroupNode overlapData = TreeFactory.createGroupNode(p);
 
-					GroupNode overlapData = TreeFactory.createGroupNode(p);
+						p++;
 
-					p++;
+						overlapData.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXsubentry"));
+						// lower overlap data
 
-					overlapData.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXsubentry"));
-					// lower overlap data
+						overlapData.addAttribute(TreeFactory.createAttribute("Lower_.Dat_Name", ovm.getLowerDatName()));
+						overlapData.addAttribute(
+								TreeFactory.createAttribute("Lower_Overlap_Positions", ovm.getLowerOverlapPositions()));
+						overlapData.addAttribute(TreeFactory.createAttribute("Lower_Overlap_Scanned_Values",
+								ovm.getLowerOverlapScannedValues()));
+						overlapData.addAttribute(TreeFactory.createAttribute("Lower_Overlap_Corrected_Intensities",
+								ovm.getLowerOverlapCorrectedValues()));
+						overlapData.addAttribute(TreeFactory.createAttribute("Lower_Overlap_Raw_Intensities",
+								ovm.getLowerOverlapRawValues()));
+						overlapData.addAttribute(TreeFactory.createAttribute("Lower_Overlap_Fhkl_Values",
+								ovm.getLowerOverlapFhklValues()));
 
-					overlapData.addAttribute(TreeFactory.createAttribute("Lower_.Dat_Name", ovm.getLowerDatName()));
-					overlapData.addAttribute(
-							TreeFactory.createAttribute("Lower_Overlap_Positions", ovm.getLowerOverlapPositions()));
-					overlapData.addAttribute(TreeFactory.createAttribute("Lower_Overlap_Scanned_Values",
-							ovm.getLowerOverlapScannedValues()));
-					overlapData.addAttribute(TreeFactory.createAttribute("Lower_Overlap_Corrected_Intensities",
-							ovm.getLowerOverlapCorrectedValues()));
-					overlapData.addAttribute(TreeFactory.createAttribute("Lower_Overlap_Raw_Intensities",
-							ovm.getLowerOverlapRawValues()));
-					overlapData.addAttribute(
-							TreeFactory.createAttribute("Lower_Overlap_Fhkl_Values", ovm.getLowerOverlapFhklValues()));
+						// parameters for the quartic used to fit the lower overlap
+						// region
 
-					// parameters for the quartic used to fit the lower overlap
-					// region
+						overlapData.addAttribute(TreeFactory.createAttribute("Lower_Overlap_Fit_Parameters_Corrected",
+								ovm.getLowerOverlapFitParametersCorrected()));
+						overlapData.addAttribute(TreeFactory.createAttribute("Lower_Overlap_Fit_Parameters_Raw",
+								ovm.getLowerOverlapFitParametersRaw()));
+						overlapData.addAttribute(TreeFactory.createAttribute("Lower_Overlap_Fit_Parameters_Fhkl",
+								ovm.getLowerOverlapFitParametersFhkl()));
 
-					overlapData.addAttribute(TreeFactory.createAttribute("Lower_Overlap_Fit_Parameters_Corrected",
-							ovm.getLowerOverlapFitParametersCorrected()));
-					overlapData.addAttribute(TreeFactory.createAttribute("Lower_Overlap_Fit_Parameters_Raw",
-							ovm.getLowerOverlapFitParametersRaw()));
-					overlapData.addAttribute(TreeFactory.createAttribute("Lower_Overlap_Fit_Parameters_Fhkl",
-							ovm.getLowerOverlapFitParametersFhkl()));
+						// upper overlap data
 
-					// upper overlap data
+						overlapData.addAttribute(TreeFactory.createAttribute("Upper_.Dat_Name", ovm.getUpperDatName()));
+						overlapData.addAttribute(
+								TreeFactory.createAttribute("Upper_Overlap_Positions", ovm.getUpperOverlapPositions()));
+						overlapData.addAttribute(TreeFactory.createAttribute("Upper_Overlap_Scanned_Values",
+								ovm.getUpperOverlapScannedValues()));
+						overlapData.addAttribute(TreeFactory.createAttribute("Upper_Overlap_Corrected_Intensities",
+								ovm.getUpperOverlapCorrectedValues()));
+						overlapData.addAttribute(TreeFactory.createAttribute("Upper_Overlap_Raw_Intensities",
+								ovm.getUpperOverlapRawValues()));
+						overlapData.addAttribute(TreeFactory.createAttribute("Upper_Overlap_Fhkl_Values",
+								ovm.getUpperOverlapFhklValues()));
 
-					overlapData.addAttribute(TreeFactory.createAttribute("Upper_.Dat_Name", ovm.getUpperDatName()));
-					overlapData.addAttribute(
-							TreeFactory.createAttribute("Upper_Overlap_Positions", ovm.getUpperOverlapPositions()));
-					overlapData.addAttribute(TreeFactory.createAttribute("Upper_Overlap_Scanned_Values",
-							ovm.getUpperOverlapScannedValues()));
-					overlapData.addAttribute(TreeFactory.createAttribute("Upper_Overlap_Corrected_Intensities",
-							ovm.getUpperOverlapCorrectedValues()));
-					overlapData.addAttribute(TreeFactory.createAttribute("Upper_Overlap_Raw_Intensities",
-							ovm.getUpperOverlapRawValues()));
-					overlapData.addAttribute(
-							TreeFactory.createAttribute("Upper_Overlap_Fhkl_Values", ovm.getUpperOverlapFhklValues()));
+						// parameters for the quartic used to fit the upper overlap
+						// region
 
-					// parameters for the quartic used to fit the upper overlap
-					// region
+						overlapData.addAttribute(TreeFactory.createAttribute("Upper_Overlap_Fit_Parameters_Corrected",
+								ovm.getUpperOverlapFitParametersCorrected()));
+						overlapData.addAttribute(TreeFactory.createAttribute("Upper_Overlap_Fit_Parameters_Raw",
+								ovm.getUpperOverlapFitParametersRaw()));
+						overlapData.addAttribute(TreeFactory.createAttribute("Upper_Overlap_Fit_Parameters_Fhkl",
+								ovm.getUpperOverlapFitParametersFhkl()));
 
-					overlapData.addAttribute(TreeFactory.createAttribute("Upper_Overlap_Fit_Parameters_Corrected",
-							ovm.getUpperOverlapFitParametersCorrected()));
-					overlapData.addAttribute(TreeFactory.createAttribute("Upper_Overlap_Fit_Parameters_Raw",
-							ovm.getUpperOverlapFitParametersRaw()));
-					overlapData.addAttribute(TreeFactory.createAttribute("Upper_Overlap_Fit_Parameters_Fhkl",
-							ovm.getUpperOverlapFitParametersFhkl()));
+						// attentuation factors
 
-					// attentuation factors
+						overlapData.addAttribute(TreeFactory.createAttribute(
+								"Attenuation_Factor_For_Corrected_Intensities", ovm.getAttenuationFactor()));
+						overlapData.addAttribute(TreeFactory.createAttribute("Attenuation_Factor_For_Fhkl_Intensities",
+								ovm.getAttenuationFactorFhkl()));
+						overlapData.addAttribute(TreeFactory.createAttribute("Attenuation_Factor_For_Raw_Intensities",
+								ovm.getAttenuationFactorRaw()));
 
-					overlapData.addAttribute(TreeFactory.createAttribute("Attenuation_Factor_For_Corrected_Intensities",
-							ovm.getAttenuationFactor()));
-					overlapData.addAttribute(TreeFactory.createAttribute("Attenuation_Factor_For_Fhkl_Intensities",
-							ovm.getAttenuationFactorFhkl()));
-					overlapData.addAttribute(TreeFactory.createAttribute("Attenuation_Factor_For_Raw_Intensities",
-							ovm.getAttenuationFactorRaw()));
+						overlapRegions.addGroupNode("Overlap_Region_" + overlapNumber, overlapData);
 
-					overlapRegions.addGroupNode("Overlap_Region_" + overlapNumber, overlapData);
+						overlapNumber++;
 
-					overlapNumber++;
+					}
 				}
 			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
-
 		File f = new File(model.getFilepath());
 
 		if (f.exists()) {

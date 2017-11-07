@@ -435,6 +435,7 @@ public class DirectoryModel {
 
 	public void setTrackerOn(boolean trackerOn) {
 		this.trackerOn = trackerOn;
+		poke();
 	}
 
 	public int[][] getInitialLenPt() {

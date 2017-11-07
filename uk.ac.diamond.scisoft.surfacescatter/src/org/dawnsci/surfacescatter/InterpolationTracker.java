@@ -57,7 +57,18 @@ public class InterpolationTracker {
 			localOutput[1] = new double[2];
 			
 			localOutput[0][0] = calculatedXlenDat.getDouble(lj);
+			
+			if(localOutput[0][0]<5) {
+				localOutput[0][0]=5;
+			}
+			
+			
 			localOutput[0][1] = calculatedYlenDat.getDouble(lj);
+			
+			if(localOutput[0][1]<5) {
+				localOutput[0][1]=5;
+			}
+			
 			
 			localOutput[1][0] = calculatedXptsDat.getDouble(lj);
 			localOutput[1][1] = calculatedYptsDat.getDouble(lj);

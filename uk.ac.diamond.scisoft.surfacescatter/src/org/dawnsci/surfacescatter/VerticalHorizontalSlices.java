@@ -62,51 +62,55 @@ public class VerticalHorizontalSlices {
 	public static ILineTrace verticalslice(IRectangularROI verticalSliceBounds,
 			IDataset ii, IPlottingSystem<Composite> pS, IROI green){
 
-		
-		int[] lenv =verticalSliceBounds.getIntLengths();
-		lenv[1]= green.getBounds().getIntLengths()[1];
-		if (green.getBounds().getIntLengths()[0] < lenv[0]){
-			lenv[0] = green.getBounds().getIntLengths()[0];
-		}
-
-		int[] ptv = verticalSliceBounds.getIntPoint();
-		int[][] lenptv = new int[][] {lenv,ptv};
-		
-		IDataset iiv= ImageSlicerUtils.ImageSliceUpdate(ii, lenptv);
-		
-		IDataset iivdata  = DatasetFactory.zeros(lenv[1]);
-		
-		int a =lenv[0];
-		
-		if(lenv[0]>iiv.getShape()[1]){
-			a = iiv.getShape()[1];
-		}
-
-		
-		
-		for(int iy = 0;iy<lenv[1];iy++){
+	
+			int[] lenv =verticalSliceBounds.getIntLengths();
+			lenv[1]= green.getBounds().getIntLengths()[1];
+			if (green.getBounds().getIntLengths()[0] < lenv[0]){
+				lenv[0] = green.getBounds().getIntLengths()[0];
+			}
+	
+			int[] ptv = verticalSliceBounds.getIntPoint();
+			int[][] lenptv = new int[][] {lenv,ptv};
 			
-			double ixsum = 0;
+			IDataset iiv= ImageSlicerUtils.ImageSliceUpdate(ii, lenptv);
 			
-			for(int ix = 0; ix<a;ix++){
-				ixsum += iiv.getDouble(iy, ix);
+			IDataset iivdata  = DatasetFactory.zeros(lenv[1]);
+			
+			int a =lenv[0];
+			
+			if(lenv[0]>iiv.getShape()[1]){
+				a = iiv.getShape()[1];
+			}
+	
+			
+			
+			for(int iy = 0;iy<lenv[1];iy++){
+				
+				double ixsum = 0;
+				
+				for(int ix = 0; ix<a;ix++){
+					ixsum += iiv.getDouble(iy, ix);
+				}
+				
+				iivdata.set(ixsum, iy);
 			}
 			
-			iivdata.set(ixsum, iy);
-		}
+			IDataset xvrange = null;
+			
+			try{
+				xvrange = DatasetFactory.createRange(ptv[1], ptv[1]+lenv[1],  1, Dataset.FLOAT64);
+			}
+			catch(Exception n){
+				xvrange = DatasetFactory.createRange(ptv[1]+lenv[1], ptv[1], 1, Dataset.FLOAT64);
+			}
+			ILineTrace lt3 = pS.createLineTrace("vertical slice");
+			lt3.setData(iivdata, xvrange);
+			
+			return lt3;
+			
 		
-		IDataset xvrange = null;
 		
-		try{
-			xvrange = DatasetFactory.createRange(ptv[1], ptv[1]+lenv[1],  1, Dataset.FLOAT64);
-		}
-		catch(Exception n){
-			xvrange = DatasetFactory.createRange(ptv[1]+lenv[1], ptv[1], 1, Dataset.FLOAT64);
-		}
-		ILineTrace lt3 = pS.createLineTrace("vertical slice");
-		lt3.setData(iivdata, xvrange);
 		
-		return lt3;
 	}
 	
 	public static ILineTrace horizontalsliceBackgroundSubtracted(IRectangularROI horizontalSliceBounds,

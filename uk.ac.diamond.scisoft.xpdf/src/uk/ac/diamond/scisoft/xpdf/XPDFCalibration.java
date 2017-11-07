@@ -116,6 +116,10 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 		solAngSample = null;
 		transCorContainers = new ArrayList<Dataset>();
 
+		// scaling factors
+		this.comptonScaling = inCal.comptonScaling;
+		this.polarizationFraction = inCal.polarizationFraction;
+
 	}
 
 	/**
@@ -159,6 +163,10 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 		theCopy.solAngSample = this.solAngSample;
 		theCopy.transCorContainers = this.transCorContainers;
 		theCopy.cachePI = (this.cachePI != null) ? this.cachePI : null;
+		
+		// scaling factors
+		theCopy.comptonScaling = this.comptonScaling;
+		theCopy.polarizationFraction = this.polarizationFraction;
 		
 		return theCopy;
 	}
@@ -881,7 +889,9 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 //		Dataset difference = Maths.subtract(smoothed, truncatedSelfScattering);
 //		return (double) Maths.multiply(difference, truncatedQ).sum();
 
-		smoothed.isubtract(truncatedSelfScattering.imultiply(this.comptonScaling));
+		
+		truncatedSelfScattering.imultiply(this.comptonScaling);
+		smoothed.isubtract(truncatedSelfScattering);
 		smoothed.imultiply(truncatedQ);
 		return ((Number) smoothed.sum()).doubleValue();
 		

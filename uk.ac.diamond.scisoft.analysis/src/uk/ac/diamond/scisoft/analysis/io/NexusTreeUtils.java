@@ -1860,9 +1860,7 @@ public class NexusTreeUtils {
 			return value;
 		}
 		IDataset attrd = attr.getValue();
-		// FIXME remove when getXXX() returns first value
-		int r = attrd.getRank();
-		return r == 0 ? attrd.getInt() : attrd.getInt(new int[r]);
+		return attrd.getInt();
 	}
 
 	/**
@@ -1946,9 +1944,7 @@ public class NexusTreeUtils {
 			return value;
 		}
 		IDataset attrd = attr.getValue();
-		// FIXME remove when getXXX() returns first value
-		int r = attrd.getRank();
-		return r == 0 ? attrd.getDouble() : attrd.getDouble(new int[r]);
+		return attrd.getDouble();
 	}
 
 	/**

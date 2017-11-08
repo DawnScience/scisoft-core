@@ -277,7 +277,7 @@ public class SavingUtils {
 
 	public void simpleXYYeSave(boolean useQ,
 			String title, 
-			int state,
+			AxisEnums.yAxes state,
 			ArrayList<FrameModel> fms){
 
 		File file =null;
@@ -314,15 +314,15 @@ public class SavingUtils {
 		IDataset x = csdp.getSplicedCurveX();
 
 		switch(state){
-		case 0:
+		case SPLICEDY:
 			y = csdp.getSplicedCurveY();
 			ye = csdp.getSplicedCurveY().getErrors();
 			break;
-		case 1:
+		case SPLICEDYFHKL:
 			y = csdp.getSplicedCurveYFhkl();
 			ye = y.getErrors();
 			break;
-		case 2:
+		case SPLICEDYRAW:
 			y = csdp.getSplicedCurveYRaw();
 			ye = csdp.getSplicedCurveYRaw().getErrors();
 			break;

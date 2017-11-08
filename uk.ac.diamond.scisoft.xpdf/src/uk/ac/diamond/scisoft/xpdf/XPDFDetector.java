@@ -70,7 +70,7 @@ public class XPDFDetector {
 	
 		final double mu = substance.getPhotoionizationCoefficient(beamEnergy);
 		Dataset transmission = null;
-		if (twoTheta.squeeze().getShape().length == 1) {
+		if (twoTheta.squeeze().getShape().length <= 1) {
 			transmission = calculateTransmission(mu, twoTheta);
 		} else {
 			transmission = (new XPDFScaled2DCalculation(4096) {

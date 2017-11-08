@@ -26,6 +26,7 @@ public class OverlapUIModel {
 	private MethodSetting correctionSelection = MethodSetting.SXRD;
 	private AxisEnums.yAxes yAxis = yAxes.SPLICEDY;
 	private boolean pokeTheModel = true;
+	private boolean poke = true;
 	
 	public AxisEnums.yAxes getyAxis() {
 		return yAxis;
@@ -195,4 +196,6 @@ public class OverlapUIModel {
 	public void setCorrectionSelection(MethodSetting correctionSelection) {
 		this.correctionSelection = correctionSelection;
 	}
+
+
 }

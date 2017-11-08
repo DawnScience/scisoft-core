@@ -259,14 +259,14 @@ public class FourierTransformCurveStitch {
 
 					boolean useFourierTransform = true;
 
-					Dataset yLowerDatasetUse = DatasetFactory.createFromObject(0);
-					Dataset yHigherDatasetUse = DatasetFactory.createFromObject(0);
+					Dataset yLowerDatasetUse = yLowerDataset;
+					Dataset yHigherDatasetUse = yHigherDataset;
 
-					Dataset yLowerDatasetFhklUse = DatasetFactory.createFromObject(0);
-					Dataset yHigherDatasetFhklUse = DatasetFactory.createFromObject(0);
+					Dataset yLowerDatasetFhklUse = yLowerDatasetFhkl;
+					Dataset yHigherDatasetFhklUse = yHigherDatasetFhkl;
 
-					Dataset yLowerDatasetRawUse = DatasetFactory.createFromObject(0);
-					Dataset yHigherDatasetRawUse = DatasetFactory.createFromObject(0);
+					Dataset yLowerDatasetRawUse = yLowerDatasetRaw;
+					Dataset yHigherDatasetRawUse = yHigherDatasetRaw;
 
 					// - nu is its logarithm in base e
 					int n = yLowerDataset.getSize();
@@ -275,7 +275,6 @@ public class FourierTransformCurveStitch {
 					// If n is a power of 2, then ld is an integer (_without_ decimals)
 					double ldL = Math.log(n) / Math.log(2.0);
 					double ldH = Math.log(m) / Math.log(2.0);
-
 					// Here I check if n is a power of 2. If exist decimals in ld, I quit
 					// from the function returning null.
 					if (((int) ldL) - ldL != 0 || ((int) ldH) - ldH != 0) {
@@ -302,23 +301,27 @@ public class FourierTransformCurveStitch {
 					}
 
 					if (useFourierTransform) {
-
-						double[][] correctionRatiosFourier = FourierTransformOverlap.correctionRatio(xLowerDataset,
-								yLowerDatasetUse, xHigherDataset, yHigherDatasetUse, attenuationFactor);
-
-						correctionRatioFourier = correctionRatiosFourier[2][0];
-
-						fourierRMSMean = (correctionRatiosFourier[4][0] + correctionRatiosFourier[4][1]) / 2;
-
-						double[][] correctionRatiosFhklFourier = FourierTransformOverlap.correctionRatio(xLowerDataset,
-								yLowerDatasetFhklUse, xHigherDataset, yHigherDatasetFhklUse, attenuationFactor);
-
-						correctionRatioFhklFourier = correctionRatiosFhklFourier[2][0];
-
-						double[][] correctionRatiosRawFourier = FourierTransformOverlap.correctionRatio(xLowerDataset,
-								yLowerDatasetRawUse, xHigherDataset, yHigherDatasetRawUse, attenuationFactor);
-
-						correctionRatioRawFourier = correctionRatiosRawFourier[2][0];
+						try {
+							double[][] correctionRatiosFourier = FourierTransformOverlap.correctionRatio(xLowerDataset,
+									yLowerDatasetUse, xHigherDataset, yHigherDatasetUse, attenuationFactor);
+	
+							correctionRatioFourier = correctionRatiosFourier[2][0];
+	
+							fourierRMSMean = (correctionRatiosFourier[4][0] + correctionRatiosFourier[4][1]) / 2;
+	
+							double[][] correctionRatiosFhklFourier = FourierTransformOverlap.correctionRatio(xLowerDataset,
+									yLowerDatasetFhklUse, xHigherDataset, yHigherDatasetFhklUse, attenuationFactor);
+	
+							correctionRatioFhklFourier = correctionRatiosFhklFourier[2][0];
+	
+							double[][] correctionRatiosRawFourier = FourierTransformOverlap.correctionRatio(xLowerDataset,
+									yLowerDatasetRawUse, xHigherDataset, yHigherDatasetRawUse, attenuationFactorRaw);
+	
+							correctionRatioRawFourier = correctionRatiosRawFourier[2][0];
+						}
+						catch(NullPointerException pe) {
+							useFourierTransform = false;
+						}
 
 					}
 

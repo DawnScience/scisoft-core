@@ -210,7 +210,6 @@ public class DummyProcessWithFrames {
 					p = fm.getRoiLocation();
 				}
 			} catch (Exception n) {
-				System.out.println(n.getMessage());
 				int[][] lenPt = drm.getInitialLenPt();
 				p = LocationLenPtConverterUtils.lenPtToLocationConverter(lenPt);
 			}

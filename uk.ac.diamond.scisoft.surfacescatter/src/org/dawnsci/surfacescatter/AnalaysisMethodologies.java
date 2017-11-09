@@ -3,7 +3,8 @@ package org.dawnsci.surfacescatter;
 public class AnalaysisMethodologies {
 
 	public enum Methodology {
-		TWOD, TWOD_TRACKING, X ,Y, SECOND_BACKGROUND_BOX, OVERLAPPING_BACKGROUND_BOX
+		TWOD, //TWOD_TRACKING, 
+		X ,Y, SECOND_BACKGROUND_BOX, OVERLAPPING_BACKGROUND_BOX
 	}
 
 	public static String toString(Methodology methodology){
@@ -15,8 +16,8 @@ public class AnalaysisMethodologies {
 				return "Y";
 			case TWOD:
 				return "2D";
-			case TWOD_TRACKING:
-				return "2D Tracking";
+//			case TWOD_TRACKING:
+//				return "2D Tracking";
 			case SECOND_BACKGROUND_BOX:
 				return "Second Background Box";
 			case OVERLAPPING_BACKGROUND_BOX:
@@ -41,13 +42,13 @@ public class AnalaysisMethodologies {
 			return Methodology.TWOD;
 		}
 		
-		else if (in.equals("2D Tracking")){
-			return Methodology.TWOD_TRACKING;
-		}
+//		else if (in.equals("2D Tracking")){
+//			return Methodology.TWOD_TRACKING;
+//		}
 		
-		else if (in.equals("TWOD_TRACKING")){
-			return Methodology.TWOD_TRACKING;
-		}
+//		else if (in.equals("TWOD_TRACKING")){
+//			return Methodology.TWOD_TRACKING;
+//		}
 		
 		else if (in.equals("Second Background Box")){
 			return Methodology.SECOND_BACKGROUND_BOX;

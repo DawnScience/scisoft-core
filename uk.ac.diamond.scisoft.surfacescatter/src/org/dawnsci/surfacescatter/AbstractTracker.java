@@ -164,8 +164,8 @@ public abstract class AbstractTracker {
 
 		try {
 			if (drm.getTracker() != null) {
-				location = drm.getTracker().track(input);
 				tracker = drm.getTracker();
+				location = tracker.track(input);
 			}
 
 			if (location != null) {

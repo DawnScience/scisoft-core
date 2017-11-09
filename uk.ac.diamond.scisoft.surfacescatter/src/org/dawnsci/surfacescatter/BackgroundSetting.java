@@ -24,7 +24,7 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxIntegr
 
 public class BackgroundSetting{
 	
-	public static Dataset rOIBackground1(IDataset[] Background, Dataset in1Background, 
+	public static Dataset rOIBackground1(IDataset[] background, Dataset in1Background, 
 			int[] len, int[] pt,  int boundaryBox, int fitpower, Direction direction1){
 		
 		Integer direction = 1;
@@ -45,7 +45,7 @@ public class BackgroundSetting{
 				break;
 		}
 		
-		Dataset backGroundData = DatasetUtils.concatenate(Background, direction);
+		Dataset backGroundData = DatasetUtils.concatenate(background, direction);
 		
 		int[] i1 = new int[2 * boundaryBox];
 		int[] i2 = new int[length1];

@@ -13,6 +13,8 @@ public class ProcessingMethodsEnum {
 					return "AUTOMATIC";
 				case MANUAL:
 					return "MANUAL";
+				default:
+						//defensive
 			}
 			return null;
 		}

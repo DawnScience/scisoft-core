@@ -474,14 +474,14 @@ public class BoxSlicerRodScanUtilsForDialog {
 		double[] bgPt = new double[] {(double) lenpt[1][0] , (double) lenpt[1][1]};
 		
 		switch(am){
-			case  TWOD_TRACKING:
-				bgLen[0] = bgLen[0] + 2*bgBox+1;
-				bgLen[1] = bgLen[1] + 2*bgBox+1;
-				
-				bgPt[0] = bgPt[0] - bgBox+1;
-				bgPt[1] = bgPt[1] - bgBox+1;
-				
-				return new double[] {bgPt[0], bgPt[1], bgLen[0], bgLen[1], 0};
+//			case  TWOD_TRACKING:
+//				bgLen[0] = bgLen[0] + 2*bgBox+1;
+//				bgLen[1] = bgLen[1] + 2*bgBox+1;
+//				
+//				bgPt[0] = bgPt[0] - bgBox+1;
+//				bgPt[1] = bgPt[1] - bgBox+1;
+//				
+//				return new double[] {bgPt[0], bgPt[1], bgLen[0], bgLen[1], 0};
 			
 			case  TWOD:
 				bgLen[0] = bgLen[0] + 2*bgBox+1;

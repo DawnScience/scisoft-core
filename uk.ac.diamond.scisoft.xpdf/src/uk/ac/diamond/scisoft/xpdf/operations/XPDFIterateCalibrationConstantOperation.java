@@ -114,6 +114,12 @@ public class XPDFIterateCalibrationConstantOperation extends
 		
 		absCor.setName("Absorption Corrected");
 		
+		AxesMetadata m = input.getFirstMetadata(AxesMetadata.class);
+		
+		if (m != null) {
+			absCor.setMetadata(m.clone());
+		}
+		
 		OperationDataForDisplay opData = new OperationDataForDisplay(absCor);
 		IDataset sampleSelfScattering = theCalibration.getSampleSelfScattering().getSliceView();
 		sampleSelfScattering.setMetadata(input.getFirstMetadata(AxesMetadata.class));

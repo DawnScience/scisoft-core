@@ -93,7 +93,9 @@ public class Trim1DOperation extends AbstractOperation<Trim1DModel, OperationDat
 			// We clone the dataset and axis values
 			outputDataset = inputDataset.clone();
 			outputAxis = inputAxis.clone();
-			outputError = inputError.clone();
+			if (inputError != null) {
+				outputError = inputError.clone();
+			}
 			for (int loopIter = startIndex; loopIter < endIndex; loopIter ++) {
 				// And fill the relevant elements with zero
 				outputDataset.set(Double.NaN, loopIter);

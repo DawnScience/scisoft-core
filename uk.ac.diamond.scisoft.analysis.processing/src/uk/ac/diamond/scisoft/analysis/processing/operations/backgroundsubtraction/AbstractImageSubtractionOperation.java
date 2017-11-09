@@ -13,7 +13,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
 
-public abstract class AbstractImageSubtrationOperation<T extends AbstractOperationModel> extends AbstractOperation<T, OperationData> {
+public abstract class AbstractImageSubtractionOperation<T extends AbstractOperationModel> extends AbstractOperation<T, OperationData> {
 
 	protected Dataset image;
 	private PropertyChangeListener listener;

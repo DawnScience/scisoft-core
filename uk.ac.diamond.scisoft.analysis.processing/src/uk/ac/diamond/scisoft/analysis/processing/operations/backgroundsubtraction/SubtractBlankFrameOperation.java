@@ -14,7 +14,7 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.PositionIterator;
 import org.eclipse.january.dataset.ShapeUtils;
 
-public class SubtractBlankFrameOperation extends AbstractImageSubtrationOperation<SubtractBlankFrameModel> {
+public class SubtractBlankFrameOperation extends AbstractImageSubtractionOperation<SubtractBlankFrameModel> {
 	
 	private ILazyDataset parent = null;
 	

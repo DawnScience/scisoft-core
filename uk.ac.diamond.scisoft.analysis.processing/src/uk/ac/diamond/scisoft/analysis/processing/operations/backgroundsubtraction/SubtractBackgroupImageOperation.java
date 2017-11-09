@@ -14,7 +14,7 @@ import org.eclipse.january.dataset.LazyMaths;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 
-public class SubtractBackgroupImageOperation extends AbstractImageSubtrationOperation<SubtractBackgroundImageModel> {
+public class SubtractBackgroupImageOperation extends AbstractImageSubtractionOperation<SubtractBackgroundImageModel> {
 
 	
 	@Override

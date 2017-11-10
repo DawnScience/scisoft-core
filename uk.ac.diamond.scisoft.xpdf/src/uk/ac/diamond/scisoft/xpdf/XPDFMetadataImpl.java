@@ -95,6 +95,7 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 		this.calCon = inMeta.calCon;
 		this.fluoro = inMeta.fluoro;
 		this.lorchCutOff = inMeta.lorchCutOff;
+		this.comptonScaling = inMeta.comptonScaling;
 	}
 	
 	/**

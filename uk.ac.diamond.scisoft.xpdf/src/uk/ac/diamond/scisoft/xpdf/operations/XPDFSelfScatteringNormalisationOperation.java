@@ -46,7 +46,7 @@ public class XPDFSelfScatteringNormalisationOperation extends
 		}
 		
 		double comptonScaling = theXPDFMetadata.getComptonScaling();
-		if (comptonScaling != 1.0) System.out.println("XPDFSelfScatteringNormalisationOperation: Compton scattering scaled by" + comptonScaling);
+		if (comptonScaling != 1.0) System.out.println("XPDFSelfScatteringNormalisationOperation: Compton scattering scaled by " + comptonScaling);
 		
 		XPDFCoordinates coords = new XPDFCoordinates(DatasetUtils.convertToDataset(absCor));
 		soq = Maths.divide(Maths.subtract(absCor, Maths.multiply(comptonScaling, sample.getSelfScattering(coords))), sample.getFSquared(coords));

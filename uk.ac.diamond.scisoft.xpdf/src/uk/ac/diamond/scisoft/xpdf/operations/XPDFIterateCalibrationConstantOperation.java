@@ -110,7 +110,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 		// assign the calibration values to the XPDF metadata object
 		theXPDFMetadata.setCalibrationConstant(theCalibration.getCalibrationConstant());
 		theXPDFMetadata.setFluorescenceScale(theCalibration.getFluorescenceScale());
-
+		theXPDFMetadata.setComptonScaling(model.getComptonScaling());
 		
 		absCor.setName("Absorption Corrected");
 		

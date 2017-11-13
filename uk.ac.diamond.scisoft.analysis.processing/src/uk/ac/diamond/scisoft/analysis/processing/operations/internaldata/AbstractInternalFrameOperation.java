@@ -18,6 +18,11 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.FrameMa
 public abstract class AbstractInternalFrameOperation extends FrameMathsOperation<InternalDataSelectedFramesModel> {
 
 	@Override
+	public void init() {
+		data = null;
+	}
+	
+	@Override
 	protected Dataset getData(IDataset ds) {
 		String dsName = model.getDatasetName();
 		

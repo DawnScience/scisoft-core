@@ -210,7 +210,7 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 	 * Return form factors for comparison with the calibrated data
 	 */
 	public IDataset getSampleSelfScattering() {
-		return this.sampleSelfScattering;
+		return Maths.multiply(this.sampleSelfScattering, this.comptonScaling);
 	}
 	
 	/**

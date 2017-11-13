@@ -164,8 +164,8 @@ public abstract class AbstractTracker {
 
 		try {
 			if (drm.getTracker() != null) {
+				location = drm.getTracker().track(input);
 				tracker = drm.getTracker();
-				location = tracker.track(input);
 			}
 
 			if (location != null) {
@@ -209,11 +209,12 @@ public abstract class AbstractTracker {
 			}
 
 		} catch (Exception h) {
-			System.out.println(h.getMessage());
+			throw new java.lang.IndexOutOfBoundsException();
+			
 		}
 
 		if (location == null) {
-			System.out.println("error in followUp()");
+			throw new java.lang.IndexOutOfBoundsException();
 		}
 
 		if (location != null) {
@@ -487,7 +488,21 @@ public abstract class AbstractTracker {
 	}
 
 	private double[] sanityCheck(double[] kROI) {
+		
+		if (kROI[0] > input.getShape()[1] || kROI[2] > input.getShape()[1]) {
+			throw new java.lang.IndexOutOfBoundsException();
+		}
 
+		if (kROI[1] > input.getShape()[0] || kROI[7] > input.getShape()[0]) {
+			throw new java.lang.IndexOutOfBoundsException();
+		}
+
+		for (double i : kROI) {
+			if (i < 0) {
+				throw new java.lang.IndexOutOfBoundsException();
+			}
+		}
+		
 		try {
 			double[] kMinusOneROI = drm.getFms().get(selection - 1).getRoiLocation();
 			double[] kMinusTwoROI = drm.getFms().get(selection - 2).getRoiLocation();

@@ -5,6 +5,15 @@ public class BatchSetupMiscellaneousProperties {
 	private BatchSetupYAxes[] bsya;
 	private boolean useQ;
 	private boolean outputNexusFiles = true; 
+	private boolean ditchNegativeValues = false;
+
+	public boolean isDitchNegativeValues() {
+		return ditchNegativeValues;
+	}
+
+	public void setDitchNegativeValues(boolean ditchNegativeValues) {
+		this.ditchNegativeValues = ditchNegativeValues;
+	}
 
 	public BatchSetupMiscellaneousProperties() {
 		bsya = new BatchSetupYAxes[AxisEnums.yAxes.values().length];

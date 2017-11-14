@@ -67,6 +67,17 @@ public class CsdpFromNexusFile {
 				done = true;
 			}
 
+			if(data.getSize() ==0) {
+				throw new NullPointerException();
+			}
+			try {
+				data.getSize(); 
+				data.getDouble(0);
+			}
+			catch(Exception o ) {
+				throw new NullPointerException();
+			}
+			
 			switch(i){
 
 			case 0:

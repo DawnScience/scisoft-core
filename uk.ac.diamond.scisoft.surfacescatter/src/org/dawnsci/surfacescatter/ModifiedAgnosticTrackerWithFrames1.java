@@ -61,8 +61,7 @@ public class ModifiedAgnosticTrackerWithFrames1 extends AbstractTracker {
 		
 		else if (super.getFrame().getTrackingMethodology() == TrackerType1.USE_SET_POSITIONS) {
 			
-			int[][] lenpt = LocationLenPtConverterUtils.locationToLenPtConverter(super.getFrame().getRoiLocation());
-			
+			int[][] lenpt = LocationLenPtConverterUtils.locationToLenPtConverter(super.getDrm().getSetPositions()[selection]);
 			super.getDrm().setInitialLenPt(lenpt);
 			
 		}

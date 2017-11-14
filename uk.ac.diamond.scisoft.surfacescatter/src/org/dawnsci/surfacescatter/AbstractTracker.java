@@ -9,7 +9,7 @@ import org.eclipse.january.dataset.SliceND;
 public abstract class AbstractTracker {
 
 	private DirectoryModel drm;
-	private int selection;
+	protected int selection;
 	private int k;
 	private int trackingMarker;
 	private IImageTracker tracker = null;

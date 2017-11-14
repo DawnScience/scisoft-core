@@ -58,6 +58,11 @@ public abstract class AbstractTracker {
 	public void setTrackerInitialCopy(IImageTracker trackerInitialCopy) {
 		this.trackerInitialCopy = trackerInitialCopy;
 	}
+	
+	protected DirectoryModel getDrm() {
+		return drm;
+		
+	}
 
 	public void init(DirectoryModel drm, int trackingMarker, int k, // dat number
 			double[] seedLocation, int selection) { // selection is the frame number

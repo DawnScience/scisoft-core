@@ -1,5 +1,10 @@
 package org.dawnsci.surfacescatter;
 
+import org.dawnsci.surfacescatter.TrackingMethodology.TrackerType1;
+import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
+import org.eclipse.january.dataset.Dataset;
+
 public class ModifiedAgnosticTrackerWithFrames1 extends AbstractTracker {
 
 	public ModifiedAgnosticTrackerWithFrames1(DirectoryModel drm, int trackingMarker, int k, double[] seedLocation,
@@ -52,6 +57,14 @@ public class ModifiedAgnosticTrackerWithFrames1 extends AbstractTracker {
 
 			interpolationRoutine();
 
+		}
+		
+		else if (super.getFrame().getTrackingMethodology() == TrackerType1.USE_SET_POSITIONS) {
+			
+			int[][] lenpt = LocationLenPtConverterUtils.locationToLenPtConverter(super.getFrame().getRoiLocation());
+			
+			super.getDrm().setInitialLenPt(lenpt);
+			
 		}
 
 		if (super.isTheTrackingMarkerNot3()) {

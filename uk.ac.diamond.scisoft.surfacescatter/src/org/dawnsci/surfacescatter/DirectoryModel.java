@@ -59,11 +59,13 @@ public class DirectoryModel {
 	private CurveStitchDataPackage csdp;
 	private ArrayList<double[][]> interpolatorBoxes;
 	private ArrayList<IRegion> interpolatorRegions;
+	private ArrayList<IRectangularROI> setRegions;
 	private ArrayList<OverlapDataModel> overlapDataModels;
 	private double currentRawIntensity;
 	private String rodName = "placeHolder";
 	private boolean[] doneArray;
 	private boolean poke = true;
+	private double[][] setPositions;
 
 	public String getRodName() {
 		return rodName;
@@ -894,6 +896,22 @@ public class DirectoryModel {
 
 	public void setFmsSorted(ArrayList<ArrayList<FrameModel>> fmsSorted) {
 		this.fmsSorted = fmsSorted;
+	}
+
+	public double[][] getSetPositions() {
+		return setPositions;
+	}
+
+	public void setSetPositions(double[][] setPositions) {
+		this.setPositions = setPositions;
+	}
+
+	public ArrayList<IRectangularROI> getSetRegions() {
+		return setRegions;
+	}
+
+	public void setSetRegions(ArrayList<IRectangularROI> setRegions) {
+		this.setRegions = setRegions;
 	}
 
 }

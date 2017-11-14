@@ -20,8 +20,6 @@ public class CsdpFromNexusFile {
 		final String entryString = "/" + NeXusStructureStrings.getEntry() + "/" ;
 		final String reducedDataString = entryString + NeXusStructureStrings.getReducedDataDataset() + "/";
 
-//		String xSpliced = "placeholder";
-
 		String scannedVariable = reducedDataString + NeXusStructureStrings.getScannedVariableDataset();
 
 		String[] nodeNames = new String[]{scannedVariable,

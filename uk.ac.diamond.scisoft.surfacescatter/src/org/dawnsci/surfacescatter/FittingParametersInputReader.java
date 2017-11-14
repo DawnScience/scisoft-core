@@ -259,6 +259,59 @@ public class FittingParametersInputReader {
 	
 		
 	}
+	
+	public static double[][] readROIsFromNexus(NexusFile file) {
+
+		try {
+			file.openToRead();
+		} catch (NexusException e) {
+			e.printStackTrace();
+		}
+
+		final String path = "/" + NeXusStructureStrings.getEntry() + "/" + NeXusStructureStrings.getOverviewOfFrames();
+
+		GroupNode point;
+
+		try {
+			point = file.getGroup(path, false);
+
+			/// roi
+
+			Attribute roiAttribute = point.getAttribute(NeXusStructureStrings.getRoiLocationArray()[1]);
+			Dataset roiAttributeDat = (Dataset) roiAttribute.getValue();
+
+			double[][] roiOut = new double[roiAttributeDat.getShape()[0]][];
+
+			for (int i = 0; i < roiAttributeDat.getShape()[0]; i++) {
+					
+				Dataset f  = roiAttributeDat.getSlice(new Slice(i, i+1));
+				f.squeeze();
+				roiOut[i] = new double[f.getSize()];
+				
+				for(int d = 0 ; d<f.getSize(); d++) {
+					roiOut[i][d] = f.getDouble(d);	
+				}
+				
+			}
+			 
+			try {
+				file.close();
+				
+			} catch (NexusException e) {
+				e.printStackTrace();
+			}
+			
+			return roiOut;
+			
+		} catch (NexusException e) {
+
+			e.printStackTrace();
+		}
+		
+		return null;
+	
+		
+	}
 
 
 	public static void geometricalParametersReaderFromNexus(NexusFile file, GeometricParametersModel gm,

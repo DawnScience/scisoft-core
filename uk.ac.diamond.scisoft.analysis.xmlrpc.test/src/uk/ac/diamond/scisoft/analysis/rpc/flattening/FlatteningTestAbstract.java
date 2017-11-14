@@ -81,8 +81,8 @@ abstract public class FlatteningTestAbstract {
 	protected static boolean handleDoubleSpecials = true;
 
 	protected RectangularROI createRectangularROI() {
-		// now the rectangular ROI null constructor will have NaNs in some fields
-		return handleDoubleSpecials ? new RectangularROI() : new RectangularROI(10, 0);
+		// now the rectangular ROI null constructor will have NaNs and infinities in some fields
+		return handleDoubleSpecials ? new RectangularROI(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NaN, 0) : new RectangularROI(10, 0);
 	}
 
 	@BeforeClass

@@ -22,6 +22,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -83,8 +84,8 @@ public class DigitalFilterOperation extends AbstractOperation<DigitalFilterModel
 	public Dataset digitalFilterBackground(Dataset yDataset, Dataset xDataset, double firstWidth, double secondWidth) {
 		// Set up some bits for the method
 		LinearInterpolator interpolator = new LinearInterpolator();
-		double[] yData = (double[]) DatasetUtils.createJavaArray(yDataset);
-		double[] xData = (double[]) DatasetUtils.createJavaArray(xDataset);
+		double[] yData = DatasetUtils.cast(DoubleDataset.class, yDataset).getData();
+		double[] xData = DatasetUtils.cast(DoubleDataset.class, xDataset).getData();
 		
 		double startValue = xDataset.min(true).doubleValue();
 		double endValue = startValue + firstWidth;

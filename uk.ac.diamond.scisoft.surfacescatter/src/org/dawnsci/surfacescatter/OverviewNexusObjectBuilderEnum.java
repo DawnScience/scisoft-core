@@ -102,13 +102,15 @@ public enum OverviewNexusObjectBuilderEnum {
 	private String secondName;
 	private fmExtract fe;
 	private frameGroupNodePopulateFromFrameModel fg;
+	private frameModelPopulateFromGroupNode fp;
 
-	OverviewNexusObjectBuilderEnum(String a, String a2, fmExtract fe, frameGroupNodePopulateFromFrameModel fg) {
+	OverviewNexusObjectBuilderEnum(String a, String a2, fmExtract fe, frameGroupNodePopulateFromFrameModel fg, frameModelPopulateFromGroupNode fp ) {
 
 		this.firstName = a;
 		this.secondName = a2;
 		this.fe = fe;
 		this.fg = fg;
+		this.fp = fp;
 
 	}
 
@@ -192,15 +194,11 @@ public enum OverviewNexusObjectBuilderEnum {
 	public interface frameGroupNodePopulateFromFrameModel {
 		void frameGroupNodePopulateFromFrameModel1(GroupNode nxData, FrameModel fm);
 	}
+	
+	@FunctionalInterface
+	public interface frameModelPopulateFromGroupNode {
+		void frameModelPopulateFromGroupNode(GroupNode nxData, FrameModel fm);
+	}
 
-//	@FunctionalInterface
-//	public interface csdpExtract {
-//		double csdpExtract(Map<String, Object[]> m, CurveStitchDataPackage csdp, int n);
-//	}
-//
-//	@FunctionalInterface
-//	public interface ocdpExtract {
-//		double csdpExtract(Map<String, Object[]> m, OutputCurvesDataPackage ocdp, int n);
-//	}
 
 }

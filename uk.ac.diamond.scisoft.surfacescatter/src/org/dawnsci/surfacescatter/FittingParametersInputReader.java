@@ -7,21 +7,14 @@ import java.lang.reflect.Method;
 import java.util.Scanner;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
-import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
-import org.eclipse.dawnsci.hdf5.nexus.NexusFileFactoryHDF5;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
-import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Slice;
-import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.StringDataset;
 
 public class FittingParametersInputReader {
@@ -482,14 +475,6 @@ public class FittingParametersInputReader {
 
 		try {
 			file.close();
-			;
-		} catch (NexusException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			file.close();
-			;
 		} catch (NexusException e) {
 			e.printStackTrace();
 		}

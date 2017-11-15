@@ -42,13 +42,11 @@ public class CsdpFromNexusFile {
 		
 		for(int i =0; i<nodeNames.length;i++){
 
-			DataNode inputNode = new DataNodeImpl(i);
-
 			IDataset data = DatasetFactory.createFromObject(0);
 
 			
 			try{
-				data = nodeToDataset(inputNode, nodeNames[i], file);
+				data = nodeToDataset(nodeNames[i], file);
 			}
 			catch(Exception e){
 				System.out.println(e.getMessage());
@@ -56,7 +54,7 @@ public class CsdpFromNexusFile {
 
 			if(nodeNames[i].equals(scannedVariable) && !done){
 				try{
-					data = nodeToDataset(inputNode, reducedDataString + data.getString(), file);
+					data = nodeToDataset(reducedDataString + data.getString(), file);
 				}
 				catch(Exception f){
 					System.out.println(f.getMessage());
@@ -111,10 +109,11 @@ public class CsdpFromNexusFile {
 		return csdp;
 	}
 
-	private static IDataset nodeToDataset(DataNode inputNode,
-			String dataName,
+	private static IDataset nodeToDataset(String dataName,
 			NexusFile file){
 
+		DataNode inputNode = null;
+		
 		try {
 			inputNode = file.getData(dataName);
 		} catch (NexusException e) {

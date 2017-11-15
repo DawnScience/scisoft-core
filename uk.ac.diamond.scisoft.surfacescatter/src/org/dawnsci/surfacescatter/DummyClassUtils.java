@@ -74,16 +74,6 @@ public class DummyClassUtils {
 	public static OperationData twoDMethod(DirectoryModel drm, double[] locationList, FrameModel fm, int k,
 			int selection, IDataset input, int trackingMarker) {
 
-		if (drm.isTrackerOn() && fm.getProcessingMethodSelection() != ProccessingMethod.MANUAL) {
-
-			new ModifiedAgnosticTrackerWithFrames1(drm, trackingMarker, k, locationList, selection);
-		}
-
-		else {
-
-			fm.setRoiLocation(LocationLenPtConverterUtils.lenPtToLocationConverter(drm.getInitialLenPt()));
-
-		}
 
 		if (AnalaysisMethodologies.toInt(fm.getFitPower()) < 5) {
 			OperationData outputOD = DummyProcessBackGrounds.twoDFittingIOp(fm.getRoiLocation(), fm.getFitPower(),
@@ -116,13 +106,7 @@ public class DummyClassUtils {
 			return outputOD;
 		}
 
-		// output = outputOD.getData();
-
-		// IDataset temporaryBackground1 = (IDataset) outputOD.getAuxData()[0];
-
-		// drm.setTemporaryBackgroundHolder(temporaryBackground1);
-
-		// return outputOD;
+		
 		return null;
 
 	}

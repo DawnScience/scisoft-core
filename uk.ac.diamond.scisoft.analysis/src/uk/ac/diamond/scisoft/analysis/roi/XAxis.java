@@ -10,20 +10,36 @@
 package uk.ac.diamond.scisoft.analysis.roi;
 
 public enum XAxis {
-	ANGLE ("2theta / deg", new FromANGLEConversionStrategy()) ,
-	PIXEL ("Pixel Number", new FromPIXELConversionStrategy()) ,
-	Q("Q-space", new FromQConversionStrategy()) ,
-	RESOLUTION ("d-space", new FromRESOLUTIONConversionStrategy()) ,;
+	ANGLE (0, "2theta / deg", new FromANGLEConversionStrategy()) ,
+	PIXEL (1, "Pixel Number", new FromPIXELConversionStrategy()) ,
+	Q(2, "Q-space (inverse Angstrom)", new FromQConversionStrategy()) ,
+	Qnm(3, "Q-space (inverse nanometre)", new FromQnmConversionStrategy()) ,
+	RESOLUTION (4, "d-space", new FromRESOLUTIONConversionStrategy()) ,;
 	
 	
 	private final String axisLabel;
+	private final int axisStrategyInteger;
+	
 	private AbstractXAxisConversionStrategy conversionStrategy;
-	XAxis(String axisLabel, AbstractXAxisConversionStrategy strategy) {
+	XAxis(int axisStrategyInteger, String axisLabel, AbstractXAxisConversionStrategy strategy) {
 		this.axisLabel = axisLabel;
+		this.axisStrategyInteger = axisStrategyInteger;
 		setXAxisConversionStrategy(strategy);
 	}
 	public String getXAxisLabel() {
 		return axisLabel;
+	}
+	
+	@Override
+	public String toString() {
+		switch (this.axisStrategyInteger) {
+			case 0 :	return String.format("Angle (degrees)");
+			case 1 :	return String.format("Pixel number (pixels)");
+			case 2 :	return String.format("Q (inverse Angstroms)");
+			case 3 :	return String.format("Q (inverse nanometers)");
+			case 4 :	return String.format("d-spacing (Angstrom)");
+			default:	return String.format("Error!");
+		}
 	}
 	
 	private void setXAxisConversionStrategy(AbstractXAxisConversionStrategy strategy) {
@@ -40,6 +56,10 @@ public enum XAxis {
 	
 	public double convertToQ(double initVal, Double lambda) throws Exception{
 		return conversionStrategy.toQ(initVal, lambda);
+	}
+	
+	public double convertToQnm(double initVal, Double lambda) throws Exception{
+		return conversionStrategy.toQnm(initVal, lambda);
 	}
 	
 	public double convertToRESOLUTION(double initVal, Double lambda) throws Exception{

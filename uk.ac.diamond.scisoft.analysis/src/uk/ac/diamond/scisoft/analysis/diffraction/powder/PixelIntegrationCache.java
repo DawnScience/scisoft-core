@@ -293,6 +293,10 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 			name = "q";
 			unit = new UnitMetadataImpl(new ProductUnit<>(Unit.ONE.divide(NonSI.ANGSTROM)));
 			break;
+		case Qnm:
+			name = "q";
+			unit = new UnitMetadataImpl(new ProductUnit<>(Unit.ONE.divide(SI.NANO(SI.METER))));
+			break;
 		case ANGLE:
 			name = "2-theta";
 			unit = new UnitMetadataImpl(NonSI.DEGREE_ANGLE);

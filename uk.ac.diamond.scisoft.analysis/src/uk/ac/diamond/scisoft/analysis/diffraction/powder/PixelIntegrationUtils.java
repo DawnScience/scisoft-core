@@ -308,6 +308,9 @@ public class PixelIntegrationUtils {
 			case Q:
 				value = q.length();
 				break;
+			case Qnm:
+				value = q.length()*10;
+				break;
 			case RESOLUTION:
 				value = (2*Math.PI)/q.length();
 				break;

@@ -28,6 +28,11 @@ public class FromRESOLUTIONConversionStrategy extends AbstractXAxisConversionStr
 	}
 
 	@Override
+	public double toQnm(double initVal, Double lambda) throws Exception {
+		return ((2*Math.PI)/initVal)*10;
+	}
+
+	@Override
 	public double toRESOLUTION(double initVal, Double lambda) throws Exception {
 		return initVal; //Do nothing
 	}

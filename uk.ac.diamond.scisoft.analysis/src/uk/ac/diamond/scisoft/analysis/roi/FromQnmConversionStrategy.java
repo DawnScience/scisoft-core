@@ -9,11 +9,13 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
-public class FromPIXELConversionStrategy extends AbstractXAxisConversionStrategy {
+public class FromQnmConversionStrategy extends AbstractXAxisConversionStrategy {
 
 	@Override
 	public double toANGLE(double initVal, Double lambda) throws Exception {
-		throw new Exception("Unimplemented method.");
+//		initVal = initVal / 10.0;
+		double thRadians = Math.asin((initVal*lambda)/(4*Math.PI));
+		return calcTwoThetaInDegrees(thRadians);
 	}
 
 	@Override
@@ -23,16 +25,17 @@ public class FromPIXELConversionStrategy extends AbstractXAxisConversionStrategy
 
 	@Override
 	public double toQ(double initVal, Double lambda) throws Exception {
-		throw new Exception("Unimplemented method.");
+		return initVal/10;
 	}
 
 	@Override
 	public double toQnm(double initVal, Double lambda) throws Exception {
-		throw new Exception("Unimplemented method.");
+		return initVal; //Do nothing
 	}
 
 	@Override
 	public double toRESOLUTION(double initVal, Double lambda) throws Exception {
-		throw new Exception("Unimplemented method.");
+//		initVal = initVal / 10.0;
+		return (2*Math.PI)/initVal;
 	}
 }

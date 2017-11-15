@@ -20,10 +20,15 @@ public class FromANGLEConversionStrategy extends AbstractXAxisConversionStrategy
 	public double toPIXEL(double initVal) throws Exception {
 		throw new Exception("Unimplemented method.");
 	}
-	
+
 	@Override
 	public double toQ(double initVal, Double lambda) throws Exception {
 		return (4*Math.PI/lambda)*Math.sin(calcThetaInRadians(initVal));
+	}
+
+	@Override
+	public double toQnm(double initVal, Double lambda) throws Exception {
+		return (4*Math.PI/lambda)*Math.sin(calcThetaInRadians(initVal))*10;
 	}
 
 	@Override

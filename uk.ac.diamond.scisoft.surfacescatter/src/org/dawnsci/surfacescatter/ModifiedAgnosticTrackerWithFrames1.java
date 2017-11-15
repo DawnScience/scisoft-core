@@ -1,9 +1,6 @@
 package org.dawnsci.surfacescatter;
 
 import org.dawnsci.surfacescatter.TrackingMethodology.TrackerType1;
-import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
-import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
-import org.eclipse.january.dataset.Dataset;
 
 public class ModifiedAgnosticTrackerWithFrames1 extends AbstractTracker {
 

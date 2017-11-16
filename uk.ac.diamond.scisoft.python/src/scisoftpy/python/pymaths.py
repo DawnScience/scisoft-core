@@ -22,6 +22,7 @@ import numpy as _np #@UnresolvedImport
 
 from math import pi as _ppi
 from math import e as _e
+import sys
 
 pi = _ppi
 e = _e
@@ -148,7 +149,11 @@ dot = _np.dot
 vdot = _np.vdot
 inner = _np.inner
 outer = _np.outer
-matmul = _np.matmul
+try:
+    # added in numpy 1.10
+    matmul = _np.matmul
+except:
+    print >> sys.stderr, 'Warning: matmul is not yet available in numpy ' + _np.__version__
 tensordot = _np.tensordot
 kron = _np.kron
 trace = _np.trace

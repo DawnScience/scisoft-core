@@ -1,14 +1,12 @@
 package org.dawnsci.surfacescatter;
 
 import java.util.Map;
-
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.StringDataset;
 import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.Dataset;
 
@@ -191,7 +189,162 @@ public enum OverviewNexusObjectBuilderEnum {
 			(GroupNode nxData, FrameModel fm) -> nxData.addAttribute(TreeFactory.createAttribute(
 					NeXusStructureStrings.getStaticBackgroundRoiArray()[1], (double[]) fm.getStatic_Background_ROI())),
 			(GroupNode nxData, FrameModel fm) -> fm
-			.setStatic_Background_ROI(getDoubleArrayAttribute(NeXusStructureStrings.getStaticBackgroundRoiArray()[1], nxData)));
+			.setStatic_Background_ROI(getDoubleArrayAttribute(NeXusStructureStrings.getStaticBackgroundRoiArray()[1], nxData))),
+	
+	unspliced_Corrected_Intensity(NeXusStructureStrings.getUnsplicedCorrectedIntensityArray()[0],
+			NeXusStructureStrings.getUnsplicedCorrectedIntensityArray()[1],
+			(Map<String, Object[]> m,
+					FrameModel fm) -> m.get(NeXusStructureStrings.getUnsplicedCorrectedIntensityArray()[0])[fm
+							.getFmNo()] = fm.getUnspliced_Corrected_Intensity(),
+			(GroupNode nxData,
+					FrameModel fm) -> nxData.addAttribute(TreeFactory.createAttribute(
+							NeXusStructureStrings.getUnsplicedCorrectedIntensityArray()[1], fm.getUnspliced_Corrected_Intensity())),
+			(GroupNode nxData, FrameModel fm) -> fm.setUnspliced_Corrected_Intensity(
+					getDoubleAttribute(NeXusStructureStrings.getUnsplicedCorrectedIntensityArray()[1], nxData))),
+
+	unspliced_Corrected_Intensity_Error(NeXusStructureStrings.getUnsplicedCorrectedIntensityErrorArray()[0],
+			NeXusStructureStrings.getUnsplicedCorrectedIntensityErrorArray()[1],
+			(Map<String, Object[]> m,
+					FrameModel fm) -> m.get(NeXusStructureStrings.getUnsplicedCorrectedIntensityErrorArray()[0])[fm
+							.getFmNo()] = fm.getUnspliced_Corrected_Intensity_Error(),
+			(GroupNode nxData,
+					FrameModel fm) -> nxData.addAttribute(TreeFactory.createAttribute(
+							NeXusStructureStrings.getUnsplicedCorrectedIntensityErrorArray()[1], fm.getUnspliced_Corrected_Intensity_Error())),
+			(GroupNode nxData, FrameModel fm) -> fm.setUnspliced_Corrected_Intensity_Error(
+					getDoubleAttribute(NeXusStructureStrings.getUnsplicedCorrectedIntensityErrorArray()[1], nxData))),
+	
+	unspliced_Raw_Intensity(NeXusStructureStrings.getUnsplicedRawIntensityArray()[0],
+			NeXusStructureStrings.getUnsplicedRawIntensityArray()[1],
+			(Map<String, Object[]> m,
+					FrameModel fm) -> m.get(NeXusStructureStrings.getUnsplicedRawIntensityArray()[0])[fm
+							.getFmNo()] = fm.getUnspliced_Raw_Intensity(),
+			(GroupNode nxData,
+					FrameModel fm) -> nxData.addAttribute(TreeFactory.createAttribute(
+							NeXusStructureStrings.getUnsplicedRawIntensityArray()[1], fm.getUnspliced_Raw_Intensity())),
+			(GroupNode nxData, FrameModel fm) -> fm.setUnspliced_Raw_Intensity(
+					getDoubleAttribute(NeXusStructureStrings.getUnsplicedRawIntensityArray()[1], nxData))),
+
+	unspliced_Raw_Intensity_Error(NeXusStructureStrings.getUnsplicedRawIntensityErrorArray()[0],
+			NeXusStructureStrings.getUnsplicedRawIntensityErrorArray()[1],
+			(Map<String, Object[]> m,
+					FrameModel fm) -> m.get(NeXusStructureStrings.getUnsplicedRawIntensityErrorArray()[0])[fm
+							.getFmNo()] = fm.getUnspliced_Raw_Intensity_Error(),
+			(GroupNode nxData,
+					FrameModel fm) -> nxData.addAttribute(TreeFactory.createAttribute(
+							NeXusStructureStrings.getUnsplicedRawIntensityErrorArray()[1], fm.getUnspliced_Raw_Intensity_Error())),
+			(GroupNode nxData, FrameModel fm) -> fm.setUnspliced_Raw_Intensity_Error(
+					getDoubleAttribute(NeXusStructureStrings.getUnsplicedRawIntensityErrorArray()[1], nxData))),
+	
+	unspliced_Fhkl_Intensity(NeXusStructureStrings.getUnsplicedFhklIntensityArray()[0],
+			NeXusStructureStrings.getUnsplicedFhklIntensityArray()[1],
+			(Map<String, Object[]> m,
+					FrameModel fm) -> m.get(NeXusStructureStrings.getUnsplicedFhklIntensityArray()[0])[fm
+							.getFmNo()] = fm.getUnspliced_Fhkl_Intensity(),
+			(GroupNode nxData,
+					FrameModel fm) -> nxData.addAttribute(TreeFactory.createAttribute(
+							NeXusStructureStrings.getUnsplicedFhklIntensityArray()[1], fm.getUnspliced_Fhkl_Intensity())),
+			(GroupNode nxData, FrameModel fm) -> fm.setUnspliced_Fhkl_Intensity(
+					getDoubleAttribute(NeXusStructureStrings.getUnsplicedFhklIntensityArray()[1], nxData))),
+
+	unspliced_Fhkl_Intensity_Error(NeXusStructureStrings.getUnsplicedFhklIntensityErrorArray()[0],
+			NeXusStructureStrings.getUnsplicedFhklIntensityErrorArray()[1],
+			(Map<String, Object[]> m,
+					FrameModel fm) -> m.get(NeXusStructureStrings.getUnsplicedFhklIntensityErrorArray()[0])[fm
+							.getFmNo()] = fm.getUnspliced_Raw_Intensity_Error(),
+			(GroupNode nxData,
+					FrameModel fm) -> nxData.addAttribute(TreeFactory.createAttribute(
+							NeXusStructureStrings.getUnsplicedFhklIntensityErrorArray()[1], fm.getUnspliced_Fhkl_Intensity_Error())),
+			(GroupNode nxData, FrameModel fm) -> fm.setUnspliced_Fhkl_Intensity_Error(
+					getDoubleAttribute(NeXusStructureStrings.getUnsplicedFhklIntensityErrorArray()[1], nxData))),
+
+	scanned_Variable(NeXusStructureStrings.getScannedVariable(),
+			NeXusStructureStrings.getScannedVariable(),
+			(Map<String, Object[]> m,
+					FrameModel fm) -> m.get(NeXusStructureStrings.getScannedVariable())[fm
+							.getFmNo()] = fm.getScannedVariable(),
+			(GroupNode nxData,
+					FrameModel fm) -> nxData.addAttribute(TreeFactory.createAttribute(
+							NeXusStructureStrings.getScannedVariable(), fm.getScannedVariable())),
+			(GroupNode nxData, FrameModel fm) -> fm.setScannedVariable(
+					getDoubleAttribute(NeXusStructureStrings.getScannedVariable(), nxData))),
+	
+	number_In_Original_Dat(NeXusStructureStrings.getNumberInOriginalDat(),
+			NeXusStructureStrings.getNumberInOriginalDat(),
+			(Map<String, Object[]> m,
+					FrameModel fm) -> m.get(NeXusStructureStrings.getNumberInOriginalDat())[fm
+							.getFmNo()] = fm.getNoInOriginalDat(),
+			(GroupNode nxData,
+					FrameModel fm) -> nxData.addAttribute(TreeFactory.createAttribute(
+							NeXusStructureStrings.getNumberInOriginalDat(), fm.getNoInOriginalDat())),
+			(GroupNode nxData, FrameModel fm) -> fm.setNoInOriginalDat(
+					getDoubleAttribute(NeXusStructureStrings.getNumberInOriginalDat(), nxData))),
+
+	frame_number(NeXusStructureStrings.getFrameNumber(),
+			NeXusStructureStrings.getFrameNumber(),
+			(Map<String, Object[]> m,
+					FrameModel fm) -> m.get(NeXusStructureStrings.getFrameNumber())[fm
+							.getFmNo()] = fm.getFmNo(),
+			(GroupNode nxData,
+					FrameModel fm) -> nxData.addAttribute(TreeFactory.createAttribute(
+							NeXusStructureStrings.getFrameNumber(), fm.getFmNo())),
+			(GroupNode nxData, FrameModel fm) -> fm.setFmNo(
+					getDoubleAttribute(NeXusStructureStrings.getFrameNumber(), nxData))),
+
+
+	image_number(NeXusStructureStrings.getImageNumber(),
+			NeXusStructureStrings.getImageNumber(),
+			(Map<String, Object[]> m,
+					FrameModel fm) -> m.get(NeXusStructureStrings.getImageNumber())[fm
+							.getFmNo()] = fm.getImageNumber(),
+			(GroupNode nxData,
+					FrameModel fm) -> nxData.addAttribute(TreeFactory.createAttribute(
+							NeXusStructureStrings.getImageNumber(), fm.getImageNumber())),
+			(GroupNode nxData, FrameModel fm) -> fm.setImageNumber(
+					getDoubleAttribute(NeXusStructureStrings.getImageNumber(), nxData))),
+
+	reflectivity_flux_correction(NeXusStructureStrings.getReflectivityFluxCorrection(),
+			NeXusStructureStrings.getReflectivityFluxCorrection(),
+			(Map<String, Object[]> m,
+					FrameModel fm) -> m.get(NeXusStructureStrings.getReflectivityFluxCorrection())[fm.getFmNo()] = fm.getReflectivityFluxCorrection(),
+			(GroupNode nxData,
+					FrameModel fm) -> nxData.addAttribute(TreeFactory.createAttribute(
+							NeXusStructureStrings.getReflectivityFluxCorrection(), fm.getReflectivityFluxCorrection())),
+			(GroupNode nxData, FrameModel fm) -> fm.setReflectivityFluxCorrection(
+					getDoubleAttribute(NeXusStructureStrings.getReflectivityFluxCorrection(), nxData))),
+
+	correction_selection(NeXusStructureStrings.getCorrectionSelection(),
+			NeXusStructureStrings.getCorrectionSelection(),
+			(Map<String, Object[]> m,
+					FrameModel fm) -> m.get(NeXusStructureStrings.getCorrectionSelection())[fm.getFmNo()] = fm
+							.getCorrectionSelection(),
+			(GroupNode nxData, FrameModel fm) -> nxData.addAttribute(
+					TreeFactory.createAttribute(NeXusStructureStrings.getCorrectionSelection(), fm.getCorrectionSelection())),
+			(GroupNode nxData, FrameModel fm) -> fm
+					.setCorrectionSelection(getStringAttribute(NeXusStructureStrings.getCorrectionSelection(), nxData))),
+	
+	qdcd(NeXusStructureStrings.getQdcd(),
+			NeXusStructureStrings.getQdcd(),
+			(Map<String, Object[]> m,
+					FrameModel fm) -> m.get(NeXusStructureStrings.getQdcd())[fm
+							.getFmNo()] = fm.getQdcd(),
+			(GroupNode nxData,
+					FrameModel fm) -> nxData.addAttribute(TreeFactory.createAttribute(
+							NeXusStructureStrings.getQdcd(), fm.getQdcd())),
+			(GroupNode nxData, FrameModel fm) -> fm.setQdcd(
+					getDoubleAttribute(NeXusStructureStrings.getQdcd(), nxData))),
+
+	processing_method(NeXusStructureStrings.getProcessingMethod(),
+			NeXusStructureStrings.getProcessingMethod(),
+			(Map<String, Object[]> m,
+					FrameModel fm) -> m.get(NeXusStructureStrings.getProcessingMethod())[fm.getFmNo()] = fm
+							.getProcessingMethodSelection(),
+			(GroupNode nxData, FrameModel fm) -> nxData.addAttribute(
+					TreeFactory.createAttribute(NeXusStructureStrings.getProcessingMethod(), fm.getProcessingMethodSelection())),
+			(GroupNode nxData, FrameModel fm) -> fm
+					.setProcessingMethodSelection(getStringAttribute(NeXusStructureStrings.getProcessingMethod(), nxData))),
+	
+	
+	;
 
 	private String firstName;
 	private String secondName;
@@ -235,7 +388,7 @@ public enum OverviewNexusObjectBuilderEnum {
 	
 	public void frameModelPopulateFromGroupNodeMethod(GroupNode n, FrameModel fm) {
 		
-		fp.frameModelPopulateFromGroupNode(n,fm); 
+		fp.frameModelPopulateFromGroupNode1(n,fm); 
 	}
 
 	public void frameExtractionMethod(OverviewNexusObjectBuilderEnum o, Map<String, Object[]> m, FrameModel fm) {
@@ -327,7 +480,7 @@ public enum OverviewNexusObjectBuilderEnum {
 
 	@FunctionalInterface
 	public interface frameModelPopulateFromGroupNode {
-		void frameModelPopulateFromGroupNode(GroupNode nxData, FrameModel fm);
+		void frameModelPopulateFromGroupNode1(GroupNode nxData, FrameModel fm);
 	}
 
 }

@@ -314,8 +314,6 @@ public class FittingParametersInputReader {
 
 		final String parametersPath = path + NeXusStructureStrings.getParameters();
 
-		// NexusFile file = new NexusFileFactoryHDF5().newNexusFile(filename);
-
 		try {
 			file.openToRead();
 		} catch (NexusException e) {

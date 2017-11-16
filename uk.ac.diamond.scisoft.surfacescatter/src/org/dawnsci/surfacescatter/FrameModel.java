@@ -85,6 +85,10 @@ public class FrameModel {
 	public void setNoInOriginalDat(int noInOriginalDat) {
 		this.noInOriginalDat = noInOriginalDat;
 	}
+	
+	public void setNoInOriginalDat(double noInOriginalDat) {
+		this.noInOriginalDat = (int) noInOriginalDat;
+	}
 
 	public Methodology getBackgroundMethodology() {
 		return backgroundMethodology;
@@ -122,6 +126,10 @@ public class FrameModel {
 		this.imageNumber = imageNumber;
 	}
 
+	public void setImageNumber(double imageNumber) {
+		this.imageNumber = (int) imageNumber;
+	}
+	
 	public String getTifFilePath() {
 		return tifFilePath;
 	}
@@ -346,6 +354,10 @@ public class FrameModel {
 		this.processingMethodSelection = processingMethodSelection;
 	}
 
+	public void setProcessingMethodSelection(String in) {
+		this.processingMethodSelection = ProcessingMethodsEnum.ProccessingMethod.toMethodology(in);
+	}
+	
 	public MethodSetting getCorrectionSelection() {
 		return correctionSelection;
 	}
@@ -354,6 +366,11 @@ public class FrameModel {
 		this.correctionSelection = correctionSelection;
 	}
 
+	
+	public void setCorrectionSelection(String in) {
+		this.correctionSelection = MethodSetting.toMethod(in);
+	}
+	
 	public IDataset getBackgroundSubtractedImage() {
 		return backgroundSubtractedImage;
 	}
@@ -416,5 +433,9 @@ public class FrameModel {
 
 	public void setFmNo(int fmNo) {
 		this.fmNo = fmNo;
+	}
+	
+	public void setFmNo(double fmNo) {
+		this.fmNo = (int) fmNo;
 	}
 }

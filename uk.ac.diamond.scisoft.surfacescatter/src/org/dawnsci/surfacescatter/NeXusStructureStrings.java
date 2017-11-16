@@ -73,6 +73,47 @@ public class NeXusStructureStrings {
 	private static final String[] static_Background_ROI_Array = new String[] { "static_Background_ROI_Array",
 			"Static_Background_ROI" };
 
+	private static final String SCANNED_VARIABLE = "Scanned_Variable";
+
+	private static final String NUMBER_IN_ORIGINAL_DAT = "Number_In_Original_Dat_File";
+	
+	private static final String FRAME_NUMBER = "Frame_Number";
+	
+	private static final String DAT_NUMBER = "Dat_File_Number";
+	
+	private static final String IMAGE_NUMBER = "Image_Number";
+
+	private static final String CORRECTION_SELECTION = "Correction_Selection";
+	
+	private static final String reflectivity_Flux_Correction= "Reflectivity_Flux_Correction";
+
+	private static final String qdcd= "qdcd";
+	
+	private static final String RAW_IMAGE= "Raw_Image";
+	
+	private static final String BACKGROUND_SUBTRACTED_IMAGE = "Background_Subtracted_Image";
+
+	private static final String PROCESSING_METHOD = "Processing_Method";
+
+	private static final String POINT  = "point_";
+	
+	public static String getImageNumber() {
+		return IMAGE_NUMBER;
+	}
+
+	public static String getNumberInOriginalDat() {
+		return NUMBER_IN_ORIGINAL_DAT;
+	}
+
+	public static String getFrameNumber() {
+		return FRAME_NUMBER;
+	}
+
+	public static String getDatNumber() {
+		return DAT_NUMBER;
+	}
+
+	
 	public static String getTrackerOn() {
 		return TRACKER_ON;
 	}
@@ -223,6 +264,38 @@ public class NeXusStructureStrings {
 
 	public static String getOverviewOfFrames() {
 		return OVERVIEW_OF_FRAMES;
+	}
+
+	public static String getScannedVariable() {
+		return SCANNED_VARIABLE;
+	}
+
+	public static String getReflectivityFluxCorrection() {
+		return reflectivity_Flux_Correction;
+	}
+
+	public static String getCorrectionSelection() {
+		return CORRECTION_SELECTION;
+	}
+
+	public static String getQdcd() {
+		return qdcd;
+	}
+
+	public static String getRawImage() {
+		return RAW_IMAGE;
+	}
+
+	public static String getBackgroundSubtractedImage() {
+		return BACKGROUND_SUBTRACTED_IMAGE;
+	}
+
+	public static String getProcessingMethod() {
+		return PROCESSING_METHOD;
+	}
+
+	public static String getPoint() {
+		return POINT;
 	}
 
 }

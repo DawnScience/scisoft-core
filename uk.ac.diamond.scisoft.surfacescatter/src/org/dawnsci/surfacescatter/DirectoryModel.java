@@ -49,7 +49,6 @@ public class DirectoryModel {
 	private IROI[] backgroundROIForEachDat;
 	private int[][] backgroundLenPt;
 	private OutputCurvesDataPackage ocdp;
-	private ArrayList<IDataset> outputDatArray;
 	private int[] filepathsSortedArray;
 	private ArrayList<Integer> imageNoInDatList;
 	private double[][] seedLocation;
@@ -93,12 +92,7 @@ public class DirectoryModel {
 		if (interpolatorRegions == null) {
 			interpolatorRegions = new ArrayList<>();
 		}
-//		else {
-//			for(IRegion b : interpolatorRegions) {
-//				if(b.get)
-//			}
-//			
-//		}
+
 		interpolatorRegions.add(box);
 	}
 
@@ -247,7 +241,7 @@ public class DirectoryModel {
 		ocdp = null;
 		csdp = null;
 		inputForEachDat = null;
-		setOutputDatArray(null);
+
 
 		trackerLocationList = null;
 		// trackerKList = null;
@@ -658,13 +652,7 @@ public class DirectoryModel {
 		this.ocdp = ocdp;
 	}
 
-	public ArrayList<IDataset> getOutputDatArray() {
-		return outputDatArray;
-	}
 
-	public void setOutputDatArray(ArrayList<IDataset> outputDatArray) {
-		this.outputDatArray = outputDatArray;
-	}
 
 	public int[] getFilepathsSortedArray() {
 		return filepathsSortedArray;

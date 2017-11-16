@@ -51,6 +51,7 @@ public class RodObjectNexusUtils_Development {
 		DirectoryModel drm = model.getDrm();
 
 		IDataset[] rawImageArray = new IDataset[fms.size()];
+		IDataset[] backgroundSubtractedImageArray = new IDataset[fms.size()];
 
 		// OutputCurvesDataPackage ocdp = drm.getOcdp();
 		CurveStitchDataPackage csdp = drm.getCsdp();
@@ -89,7 +90,7 @@ public class RodObjectNexusUtils_Development {
 
 			}
 
-			GroupNode nxData = framePointWriter(fm, p, submitLenPt, rawImageArray, m);
+			GroupNode nxData = framePointWriter(fm, p, submitLenPt, rawImageArray, backgroundSubtractedImageArray, m);
 
 			try {
 				nxData.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXcollection"));
@@ -387,7 +388,7 @@ public class RodObjectNexusUtils_Development {
 	}
 
 	private static GroupNode framePointWriter(FrameModel fm, int p, int[][] backgroundLenPt, IDataset[] rawImageArray,
-			Map<String, Object[]> m) {
+			IDataset[] backgroundSubtractedImageArray, Map<String, Object[]> m) {
 
 		GroupNode nxData = TreeFactory.createGroupNode(p);
 
@@ -441,10 +442,8 @@ public class RodObjectNexusUtils_Development {
 			}
 		}
 
-		p++;
-
 		// Then we add the raw image
-		DataNode rawImageDataNode = new DataNodeImpl(p);
+		DataNode rawImageDataNode = new DataNodeImpl(0);
 
 		SliceND slice = new SliceND(fm.getRawImageData().getShape());
 		IDataset j = DatasetFactory.createFromObject(0);
@@ -458,10 +457,26 @@ public class RodObjectNexusUtils_Development {
 			System.out.println(e.getMessage());
 		}
 
-		nxData.addDataNode("Raw_Image", rawImageDataNode);
+		nxData.addDataNode(NeXusStructureStrings.getRawImage(), rawImageDataNode);
 
-		p++;
+	
+		DataNode backgroundSubtractedImageDataNode = new DataNodeImpl(1);
 
+		SliceND slice1 = new SliceND(fm.getBackgroundSubtractedImage().getShape());
+		IDataset jb = DatasetFactory.createFromObject(0);
+		try {
+			jb = fm.getBackgroundSubtractedImage().getSlice(slice1);
+			backgroundSubtractedImageArray[fm.getFmNo()] = jb;
+			backgroundSubtractedImageDataNode.setDataset(jb.clone().squeeze());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+
+		nxData.addDataNode(NeXusStructureStrings.getBackgroundSubtractedImage(), backgroundSubtractedImageDataNode);
+
+	
 		return nxData;
 
 	}

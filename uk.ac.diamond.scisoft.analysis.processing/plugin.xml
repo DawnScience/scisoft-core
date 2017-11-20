@@ -1201,6 +1201,14 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataSelectedFramesModel"
             name="Subtract Frame">
        </operation>
+             <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.processing_operations"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractInternalStringExternalData"
+            icon="icons/minus.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractInternalStringExternalData"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.InternalStringExternalDataModel"
+            name="Subtract Frame From Internal Filepath">
+       </operation>
        <category
             id="uk.ac.diamond.scisoft.analysis.processing.processing_operations"
             name="Match Processed BETA">

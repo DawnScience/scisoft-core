@@ -424,7 +424,34 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 						names[j] = santiziseName(name, axesNames);
 						axesNames.putIfAbsent(i, names);
 						name = axesNames.get(i)[j];
-						Dataset axDataset = DatasetUtils.sliceAndConvertLazyDataset(ax);
+						
+						Dataset axDataset = null;
+						
+						//FOR TESTING ON I18
+						try {
+							axDataset = DatasetUtils.sliceAndConvertLazyDataset(ax);
+						} catch (IllegalArgumentException ex) {
+							if (name == null) {
+								name = "unknown";
+							}
+							logger.error("Cannot slice dataset " + name + " try again",ex);
+						}
+						
+						if (axDataset == null) {
+							try {
+
+								axDataset = DatasetUtils.sliceAndConvertLazyDataset(ax);
+							} catch (IllegalArgumentException ex) {
+								if (name == null) {
+									name = "unknown";
+								}
+								logger.error("Cannot slice dataset " + name + " on second try",ex);
+							}
+						}
+						
+						
+						if (axDataset == null) continue;
+						 
 						axDataset.setName(name);
 						if (axNames != null && j == 0) axNames[count++] = name;
 						if (setDims.contains(i)) {

@@ -180,11 +180,11 @@ def pyenv(exe=None, path=None, ldpath=None):
         if exe:
             pyexe = exe
     
-        if path:
+        if path is not None:
 #            pypath = [ p for p in sys.path if not p.endswith('jar') ]
             pypath = list(path)
     
-        if ldpath:
+        if ldpath is not None:
             pyldpath = list(ldpath)
 
     else:
@@ -198,7 +198,7 @@ def pyenv(exe=None, path=None, ldpath=None):
         else:
             pypath = list(path)
     
-        if ldpath:
+        if ldpath is not None:
             pyldpath = ldpath
         else:
             pyldpath = None

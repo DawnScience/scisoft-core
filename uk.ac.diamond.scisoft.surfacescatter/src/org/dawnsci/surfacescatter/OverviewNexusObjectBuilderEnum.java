@@ -316,11 +316,11 @@ public enum OverviewNexusObjectBuilderEnum {
 			NeXusStructureStrings.getCorrectionSelection(),
 			(Map<String, Object[]> m,
 					FrameModel fm) -> m.get(NeXusStructureStrings.getCorrectionSelection())[fm.getFmNo()] = fm
-							.getCorrectionSelection(),
+							.getCorrectionSelectionAsString(),
 			(GroupNode nxData, FrameModel fm) -> nxData.addAttribute(
 					TreeFactory.createAttribute(NeXusStructureStrings.getCorrectionSelection(), fm.getCorrectionSelection())),
 			(GroupNode nxData, FrameModel fm) -> fm
-					.setCorrectionSelection(getStringAttribute(NeXusStructureStrings.getCorrectionSelection(), nxData))),
+					.setCorrectionSelectionFromString(getStringAttribute(NeXusStructureStrings.getCorrectionSelection(), nxData))),
 	
 	qdcd(NeXusStructureStrings.getQdcd(),
 			NeXusStructureStrings.getQdcd(),
@@ -339,9 +339,9 @@ public enum OverviewNexusObjectBuilderEnum {
 					FrameModel fm) -> m.get(NeXusStructureStrings.getProcessingMethod())[fm.getFmNo()] = fm
 							.getProcessingMethodSelection(),
 			(GroupNode nxData, FrameModel fm) -> nxData.addAttribute(
-					TreeFactory.createAttribute(NeXusStructureStrings.getProcessingMethod(), fm.getProcessingMethodSelection())),
+					TreeFactory.createAttribute(NeXusStructureStrings.getProcessingMethod(), fm.getProcessingMethodSelectionAsString())),
 			(GroupNode nxData, FrameModel fm) -> fm
-					.setProcessingMethodSelection(getStringAttribute(NeXusStructureStrings.getProcessingMethod(), nxData))),
+					.setProcessingMethodSelectionFromString(getStringAttribute(NeXusStructureStrings.getProcessingMethod(), nxData))),
 	
 	datNumber(NeXusStructureStrings.getDatNumber(), NeXusStructureStrings.getDatNumber(),
 			(Map<String, Object[]> m,
@@ -420,12 +420,17 @@ public enum OverviewNexusObjectBuilderEnum {
 	}
 
 	private static double[] getDoubleArrayAttribute(String desired, GroupNode g) {
-		DoubleDataset sd = DatasetUtils.cast(DoubleDataset.class, g.getAttribute(desired).getValue());
-
+		
 		Attribute roiAttribute = g.getAttribute(desired);
 		Dataset roiAttributeDat = (Dataset) roiAttribute.getValue();
 		
-		return (double[])roiAttributeDat.getObject();
+		double[] out= new double[roiAttributeDat.getSize()];
+		
+		for(int i= 0; i<roiAttributeDat.getSize();i++) {
+			out[i] = roiAttributeDat.getDouble(i);
+		}
+		
+		return out;
 	}
 
 	private static boolean getBooleanFromStringAttribute(String desired, GroupNode g) {

@@ -359,20 +359,32 @@ public class FrameModel {
 		return processingMethodSelection;
 	}
 
+	public String getProcessingMethodSelectionAsString() {
+		return ProccessingMethod.toString(processingMethodSelection);
+	}
+	
 	public void setProcessingMethodSelection(ProccessingMethod processingMethodSelection) {
 		this.processingMethodSelection = processingMethodSelection;
 	}
 
-	public void setProcessingMethodSelection(String in) {
+	public void setProcessingMethodSelectionFromString(String in) {
 		this.processingMethodSelection = ProcessingMethodsEnum.ProccessingMethod.toMethodology(in);
 	}
 	
 	public MethodSetting getCorrectionSelection() {
 		return correctionSelection;
 	}
+	
+	public String getCorrectionSelectionAsString() {
+		return correctionSelection.getCorrectionsName();
+	}
 
 	public void setCorrectionSelection(MethodSetting correctionSelection) {
 		this.correctionSelection = correctionSelection;
+	}
+	
+	public void setCorrectionSelectionFromString(String in) {
+		this.correctionSelection = MethodSetting.toMethod(in);
 	}
 
 	

@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.StringDataset;
 
@@ -32,15 +34,16 @@ public enum DirectoryModelNodeEnum {
 					getDoubleArrayAttribute(NeXusStructureStrings.getInitialtrackercoordinates(), nxData))),
 
 	initialDatasetForEachDat(NeXusStructureStrings.getInitialdatasetforeachdat(),
-			(GroupNode nxData,
-					DirectoryModel drm) -> nxData.addAttribute(TreeFactory.createAttribute(
-							NeXusStructureStrings.getInitialdatasetforeachdat(), drm.getInitialDatasetForEachDatSingleDataset())),
+			(GroupNode nxData, DirectoryModel drm) -> nxData
+					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getInitialdatasetforeachdat(),
+							drm.getInitialDatasetForEachDatSingleDataset())),
 			(GroupNode nxData, DirectoryModel drm) -> drm.setInitialDatasetForEachDatFromSingleDataset(
 					getDatasetAttribute(NeXusStructureStrings.getInitialdatasetforeachdat(), nxData))),
 
 	lenPtForEachDat(NeXusStructureStrings.getLenptforeachdat(),
-			(GroupNode nxData, DirectoryModel drm) -> nxData.addAttribute(
-					TreeFactory.createAttribute(NeXusStructureStrings.getLenptforeachdat(), drm.getLenPtForEachDatAsDataset())),
+			(GroupNode nxData,
+					DirectoryModel drm) -> nxData.addAttribute(TreeFactory.createAttribute(
+							NeXusStructureStrings.getLenptforeachdat(), drm.getLenPtForEachDatAsDataset())),
 			(GroupNode nxData, DirectoryModel drm) -> drm.setLenPtForEachDatFromDataset(
 					getDatasetAttribute(NeXusStructureStrings.getLenptforeachdat(), nxData))),
 
@@ -57,16 +60,14 @@ public enum DirectoryModelNodeEnum {
 					getListofDoubleArrayofArrays(NeXusStructureStrings.getInterpolatedlenpts(), nxData))),
 
 	permanentBoxOffsetLenPt(NeXusStructureStrings.getPermanentboxoffsetlenpt(),
-			(GroupNode nxData,
-					DirectoryModel drm) -> nxData.addAttribute(TreeFactory.createAttribute(
-							NeXusStructureStrings.getPermanentboxoffsetlenpt(), drm.getPermanentBoxOffsetLenPtAsDataset())),
+			(GroupNode nxData, DirectoryModel drm) -> nxData.addAttribute(TreeFactory.createAttribute(
+					NeXusStructureStrings.getPermanentboxoffsetlenpt(), drm.getPermanentBoxOffsetLenPtAsDataset())),
 			(GroupNode nxData, DirectoryModel drm) -> drm.setPermanentBoxOffsetLenPtFromDataset(
 					getDatasetAttribute(NeXusStructureStrings.getPermanentboxoffsetlenpt(), nxData))),
 
 	permanentBackgroundLenPt(NeXusStructureStrings.getPermanentbackgroundlenpt(),
-			(GroupNode nxData,
-					DirectoryModel drm) -> nxData.addAttribute(TreeFactory.createAttribute(
-							NeXusStructureStrings.getPermanentbackgroundlenpt(), drm.getPermanentBackgroundLenPtAsDataset())),
+			(GroupNode nxData, DirectoryModel drm) -> nxData.addAttribute(TreeFactory.createAttribute(
+					NeXusStructureStrings.getPermanentbackgroundlenpt(), drm.getPermanentBackgroundLenPtAsDataset())),
 			(GroupNode nxData, DirectoryModel drm) -> drm.setPermanentBackgroundLenPtFromDataset(
 					getDatasetAttribute(NeXusStructureStrings.getPermanentbackgroundlenpt(), nxData))),
 
@@ -111,8 +112,8 @@ public enum DirectoryModelNodeEnum {
 
 	interpolatorBoxes(NeXusStructureStrings.getInterpolatorboxes(),
 			(GroupNode nxData,
-					DirectoryModel drm) -> nxData.addAttribute(TreeFactory
-							.createAttribute(NeXusStructureStrings.getInterpolatorboxes(), drm.getInterpolatorBoxesAsDataset())),
+					DirectoryModel drm) -> nxData.addAttribute(TreeFactory.createAttribute(
+							NeXusStructureStrings.getInterpolatorboxes(), drm.getInterpolatorBoxesAsDataset())),
 			(GroupNode nxData, DirectoryModel drm) -> drm.setInterpolatorBoxesFromDataset(
 					getDatasetAttribute(NeXusStructureStrings.getInterpolatorboxes(), nxData))),
 
@@ -123,23 +124,24 @@ public enum DirectoryModelNodeEnum {
 					.setRodName(getStringAttribute(NeXusStructureStrings.getRodname(), nxData))),
 
 	setPositions(NeXusStructureStrings.getSetpositions(),
-			(GroupNode nxData, DirectoryModel drm) -> nxData.addAttribute(
-					TreeFactory.createAttribute(NeXusStructureStrings.getSetpositions(), drm.getSetPositionsAsDataset())),
+			(GroupNode nxData,
+					DirectoryModel drm) -> nxData.addAttribute(TreeFactory
+							.createAttribute(NeXusStructureStrings.getSetpositions(), drm.getSetPositionsAsDataset())),
 			(GroupNode nxData, DirectoryModel drm) -> drm
 					.setSetPositionsFromDataset(getDatasetAttribute(NeXusStructureStrings.getSetpositions(), nxData))),
-	
+
 	interpolatorRegions(NeXusStructureStrings.getInterpolatorregions(),
-			(GroupNode nxData, DirectoryModel drm) -> nxData.addAttribute(
-					TreeFactory.createAttribute(NeXusStructureStrings.getInterpolatorregions(), drm.getInterpolatorRegionsAsDataset())),
-			(GroupNode nxData, DirectoryModel drm) -> drm
-					.setInterpolatorRegionsFromDataset(getDatasetAttribute(NeXusStructureStrings.getInterpolatorregions(), nxData))),
+			(GroupNode nxData,
+					DirectoryModel drm) -> nxData.addAttribute(TreeFactory.createAttribute(
+							NeXusStructureStrings.getInterpolatorregions(), drm.getInterpolatorRegionsAsDataset())),
+			(GroupNode nxData, DirectoryModel drm) -> drm.setInterpolatorRegionsFromDataset(
+					getDatasetAttribute(NeXusStructureStrings.getInterpolatorregions(), nxData))),
 
 	setRegions(NeXusStructureStrings.getSetregions(),
 			(GroupNode nxData, DirectoryModel drm) -> nxData.addAttribute(
 					TreeFactory.createAttribute(NeXusStructureStrings.getSetregions(), drm.getSetRegionsAsDataset())),
 			(GroupNode nxData, DirectoryModel drm) -> drm
 					.setSetRegionsFromDataset(getDatasetAttribute(NeXusStructureStrings.getSetregions(), nxData)))
-
 
 	;
 
@@ -175,8 +177,7 @@ public enum DirectoryModelNodeEnum {
 		fp.DirectoryModelPopulateFromGroupNode1(n, drm);
 	}
 
-	public void directoryGroupNodePopulateFromDirectoryModelMethod(GroupNode nxData,
-			DirectoryModel drm) {
+	public void directoryGroupNodePopulateFromDirectoryModelMethod(GroupNode nxData, DirectoryModel drm) {
 		fg.directoryGroupNodePopulateFromDirectoryModel1(nxData, drm);
 	}
 
@@ -186,7 +187,7 @@ public enum DirectoryModelNodeEnum {
 	}
 
 	private static Dataset getDatasetAttribute(String desired, GroupNode g) {
-		Dataset sd = DatasetUtils.cast(Dataset.class, g.getAttribute(desired).getValue());
+		Dataset sd = (Dataset) g.getAttribute(desired).getValue();
 		return sd;
 	}
 
@@ -207,13 +208,19 @@ public enum DirectoryModelNodeEnum {
 	}
 
 	private static double[] getDoubleArrayAttribute(String desired, GroupNode g) {
-
+		
 		Attribute roiAttribute = g.getAttribute(desired);
 		Dataset roiAttributeDat = (Dataset) roiAttribute.getValue();
-
-		return (double[]) roiAttributeDat.getObject(0);
+		
+		double[] out= new double[roiAttributeDat.getSize()];
+		
+		for(int i= 0; i<roiAttributeDat.getSize();i++) {
+			out[i] = roiAttributeDat.getDouble(i);
+		}
+		
+		return out;
 	}
-
+	
 	private static ArrayList<double[]> getListofDoubleArrays(String desired, GroupNode g) {
 
 		Attribute roiAttribute = g.getAttribute(desired);
@@ -246,13 +253,38 @@ public enum DirectoryModelNodeEnum {
 
 		return out;
 	}
-
+	
 	private static double[][] getDoubleArrayofArraysAttribute(String desired, GroupNode g) {
 
 		Attribute roiAttribute = g.getAttribute(desired);
 		Dataset roiAttributeDat = (Dataset) roiAttribute.getValue();
 
-		return (double[][]) roiAttributeDat.getObject(0);
+		double[][] out = new double[roiAttributeDat.getShape()[0]][];
+
+		SliceND slice = new SliceND(roiAttributeDat.getShape());
+
+		for (int i = 0; i < roiAttributeDat.getShape()[0]; i++) {
+
+			slice.setSlice(0, i, i + 1, 1);
+
+			ILazyDataset ld = roiAttributeDat.getSlice(slice).squeeze();
+			
+			double[] a = new double[ld.getShape()[0]];
+
+			for (int j = 0; j < ld.getShape()[0]; j++) {
+
+				try {
+					a[j] = ld.getSlice(new SliceND(ld.getShape())).getInt(j);
+				} catch (DatasetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			out[i] = a;
+
+		}
+
+		return out;
 	}
 
 	private static int[][] getIntegerArrayofArraysAttribute(String desired, GroupNode g) {
@@ -260,7 +292,32 @@ public enum DirectoryModelNodeEnum {
 		Attribute roiAttribute = g.getAttribute(desired);
 		Dataset roiAttributeDat = (Dataset) roiAttribute.getValue();
 
-		return (int[][]) roiAttributeDat.getObject(0);
+		int[][] out = new int[roiAttributeDat.getShape()[0]][];
+
+		SliceND slice = new SliceND(roiAttributeDat.getShape());
+
+		for (int i = 0; i < roiAttributeDat.getShape()[0]; i++) {
+
+			slice.setSlice(0, i, i + 1, 1);
+
+			ILazyDataset ld = roiAttributeDat.getSlice(slice).squeeze();
+			
+			int[] a = new int[ld.getShape()[0]];
+
+			for (int j = 0; j < ld.getShape()[0]; j++) {
+
+				try {
+					a[j] = ld.getSlice(new SliceND(ld.getShape())).getInt(j);
+				} catch (DatasetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			out[i] = a;
+
+		}
+
+		return out;
 	}
 
 	private static int[][][] getIntegerArrayofArrayofArraysAttribute(String desired, GroupNode g) {

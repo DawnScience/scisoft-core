@@ -439,9 +439,11 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 						
 						if (axDataset == null) {
 							try {
-
-								axDataset = DatasetUtils.sliceAndConvertLazyDataset(ax);
-							} catch (IllegalArgumentException ex) {
+								int[] shape = ax.getShape();
+								logger.debug("Second slice attempt, for shape " + Arrays.toString(shape));
+								axDataset = (Dataset)ax.getSlice(new SliceND(shape));
+//								axDataset = DatasetUtils.sliceAndConvertLazyDataset(ax);
+							} catch (Exception ex) {
 								if (name == null) {
 									name = "unknown";
 								}

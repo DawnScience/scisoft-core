@@ -216,6 +216,11 @@ public class FrameModel {
 		this.fitPower = AnalaysisMethodologies.toFitPower(in);
 	}
 
+	public void setFitPower(String ind) {
+		int in = Integer.valueOf(ind);
+		this.fitPower = AnalaysisMethodologies.toFitPower(in);
+	}
+	
 	public int getBoundaryBox() {
 		return boundaryBox;
 	}
@@ -336,6 +341,10 @@ public class FrameModel {
 
 	public void setDatNo(int datNo) {
 		this.datNo = datNo;
+	}
+	
+	public void setDatNo(double in) {
+		this.datNo = (int) in;
 	}
 
 	public double getScannedVariable() {

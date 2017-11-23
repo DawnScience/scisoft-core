@@ -426,11 +426,17 @@ public class FittingParametersInputReader {
 		final String aliasPath = path + NeXusStructureStrings.getAliases() + "/";
 
 		try {
+			file.close();
 			file.openToRead();
-		} catch (NexusException e) {
-			e.printStackTrace();
+		}catch (NexusException e) {
+			try{
+				file.openToRead();
+			}catch (NexusException f) {
+				System.out.println(f.getMessage());
+			}
+			
 		}
-
+		
 		GroupNode aliasNode;
 
 		try {

@@ -35,7 +35,7 @@ public class ReviewCurvesModel {
 		}
 
 		else {
-			
+
 			csdpList.add(csdp);
 
 		}
@@ -96,6 +96,16 @@ public class ReviewCurvesModel {
 	public void setPoke(boolean poke) {
 
 		firePropertyChange("poke", this.poke, this.poke = poke);
+	}
+
+	public CurveStitchDataPackage getCurveStitchDataPackage(String in) {
+
+		for (CurveStitchDataPackage c : csdpList) {
+			if (c.getRodName().equals(in))
+				return c;
+		}
+
+		return null;
 	}
 
 }

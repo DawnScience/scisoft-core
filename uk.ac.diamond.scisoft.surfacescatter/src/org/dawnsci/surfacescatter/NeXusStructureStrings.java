@@ -8,6 +8,7 @@ public class NeXusStructureStrings {
 	private static final String OVERVIEW_OF_FRAMES = "Overview_Of_Frames";
 	private static final String ALIASES = "Aliases";
 	private static final String PARAMETERS = "Parameters";
+	private static final String DIRECTORY_MODEL_PARAMETERS = "Directory Model Parameters";
 
 	private static final String CORRECTED_INTENSITY_DATASET = "Corrected_Intensity_Dataset";
 	private static final String RAW_INTENSITY_DATASET = "Raw_Intensity_Dataset";
@@ -76,26 +77,146 @@ public class NeXusStructureStrings {
 	private static final String SCANNED_VARIABLE = "Scanned_Variable";
 
 	private static final String NUMBER_IN_ORIGINAL_DAT = "Number_In_Original_Dat_File";
-	
+
 	private static final String FRAME_NUMBER = "Frame_Number";
-	
+
 	private static final String DAT_NUMBER = "Dat_File_Number";
-	
+
 	private static final String IMAGE_NUMBER = "Image_Number";
 
 	private static final String CORRECTION_SELECTION = "Correction_Selection";
-	
-	private static final String reflectivity_Flux_Correction= "Reflectivity_Flux_Correction";
 
-	private static final String qdcd= "qdcd";
-	
-	private static final String RAW_IMAGE= "Raw_Image";
-	
+	private static final String reflectivity_Flux_Correction = "Reflectivity_Flux_Correction";
+
+	private static final String qdcd = "qdcd";
+
+	private static final String RAW_IMAGE = "Raw_Image";
+
 	private static final String BACKGROUND_SUBTRACTED_IMAGE = "Background_Subtracted_Image";
 
 	private static final String PROCESSING_METHOD = "Processing_Method";
 
-	private static final String POINT  = "point_";
+	private static final String POINT = "point_";
+
+	private static final String initialLenPt = "Initial Length/Position";
+
+	private static final String trackerCoordinates = "Tracking Coordinates";
+
+	private static final String initialTrackerCoordinates = "Coordinates for Tracker Initialisation";
+
+	private static final String initialDatasetForEachDat = "Datasets For Tracker Training in Each Dat";
+
+	private static final String lenPtForEachDat = "Length/Position Data For Tracker Training In Each Dat";
+
+	private static final String sortedTheta = "Sorted Theta Values";
+
+	private static final String interpolatedLenPts = "Interpolated Length/Position";
+	
+	private static final String temporaryBackgroundHolder = "Temporary Background For Background Subtraction";
+	
+	private static final String permanentBoxOffsetLenPt = "Box Offset For Tracker";
+	
+	private static final String permanentBackgroundLenPt = "Fixed Position Background Length/Position For Tracker";
+	
+	private static final String boxOffsetLenPt = "Offset for Overlap";
+	
+	private static final String backgroundROI = "Background Region Of Interest";
+	
+	private static final String backgroundROIArray = "Array of Background Regions Of Interest";
+	
+	private static final String backgroundLenPt = "Length/Position Data for background";
+	
+	private static final String seedLocation = "Tracker Seed Location";
+	
+	private static final String trackerLocationList = "List of Tracker Locations";
+	
+	private static final String interpolatorBoxes = "Interpolator Set Positions";
+	
+	private static final String rodName = "Rod Name";
+	
+	private static final String setPositions = "Set Positions";
+	
+	private static final String interpolatorRegions = "Regions of Interest Computed By Interpolation";
+	
+	private static final String setRegions = "Manually Set Regions of Interest For Interpolation";
+	
+	private static final String INTEGERS = "Integers";
+
+	public static String getInitiallenpt() {
+		return initialLenPt;
+	}
+
+	public static String getTrackercoordinates() {
+		return trackerCoordinates;
+	}
+
+	public static String getInitialtrackercoordinates() {
+		return initialTrackerCoordinates;
+	}
+
+	public static String getInitialdatasetforeachdat() {
+		return initialDatasetForEachDat;
+	}
+
+	public static String getLenptforeachdat() {
+		return lenPtForEachDat;
+	}
+
+	public static String getSortedtheta() {
+		return sortedTheta;
+	}
+
+	public static String getInterpolatedlenpts() {
+		return interpolatedLenPts;
+	}
+
+	public static String getTemporarybackgroundholder() {
+		return temporaryBackgroundHolder;
+	}
+
+	public static String getPermanentboxoffsetlenpt() {
+		return permanentBoxOffsetLenPt;
+	}
+
+	public static String getPermanentbackgroundlenpt() {
+		return permanentBackgroundLenPt;
+	}
+
+	public static String getBoxoffsetlenpt() {
+		return boxOffsetLenPt;
+	}
+
+	public static String getBackgroundroi() {
+		return backgroundROI;
+	}
+
+	public static String getBackgroundroiarray() {
+		return backgroundROIArray;
+	}
+
+	public static String getBackgroundlenpt() {
+		return backgroundLenPt;
+	}
+
+	public static String getSeedlocation() {
+		return seedLocation;
+	}
+
+	public static String getTrackerlocationlist() {
+		return trackerLocationList;
+	}
+
+	public static String getInterpolatorboxes() {
+		return interpolatorBoxes;
+	}
+
+	public static String getRodname() {
+		return rodName;
+	}
+
+	public static String getSetpositions() {
+		return setPositions;
+	}
 	
 	public static String getImageNumber() {
 		return IMAGE_NUMBER;
@@ -113,7 +234,6 @@ public class NeXusStructureStrings {
 		return DAT_NUMBER;
 	}
 
-	
 	public static String getTrackerOn() {
 		return TRACKER_ON;
 	}
@@ -296,6 +416,22 @@ public class NeXusStructureStrings {
 
 	public static String getPoint() {
 		return POINT;
+	}
+
+	public static String getInterpolatorregions() {
+		return interpolatorRegions;
+	}
+
+	public static String getSetregions() {
+		return setRegions;
+	}
+
+	public static String getDirectoryModelParameters() {
+		return DIRECTORY_MODEL_PARAMETERS;
+	}
+
+	public static String getIntegers() {
+		return INTEGERS;
 	}
 
 }

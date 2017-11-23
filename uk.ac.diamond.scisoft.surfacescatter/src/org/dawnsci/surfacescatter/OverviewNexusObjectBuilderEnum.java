@@ -67,13 +67,13 @@ public enum OverviewNexusObjectBuilderEnum {
 
 	is_Good_Point_Array(NeXusStructureStrings.getIsGoodPointArray()[0], NeXusStructureStrings.getIsGoodPointArray()[1],
 			(Map<String, Object[]> m,
-					FrameModel fm) -> m.get(NeXusStructureStrings.getIsGoodPointArray()[0])[fm.getFmNo()] = String
+					FrameModel fm) -> m.get(NeXusStructureStrings.getIsGoodPointArray()[1])[fm.getFmNo()] = String
 							.valueOf(fm.isGoodPoint()),
 			(GroupNode nxData,
 					FrameModel fm) -> nxData.addAttribute(TreeFactory.createAttribute(
 							NeXusStructureStrings.getIsGoodPointArray()[1], String.valueOf(fm.isGoodPoint()))),
 			(GroupNode nxData, FrameModel fm) -> fm
-					.setGoodPoint(getBooleanAttribute(NeXusStructureStrings.getIsGoodPointArray()[1], nxData))),
+					.setGoodPoint(getBooleanFromStringAttribute(NeXusStructureStrings.getIsGoodPointArray()[1], nxData))),
 
 	lorentzian_Correction_Array(NeXusStructureStrings.getLorentzianCorrectionArray()[0],
 			NeXusStructureStrings.getLorentzianCorrectionArray()[1],
@@ -125,7 +125,7 @@ public enum OverviewNexusObjectBuilderEnum {
 			(GroupNode nxData, FrameModel fm) -> nxData.addAttribute(TreeFactory.createAttribute(
 					NeXusStructureStrings.getFitpowersArray()[1], AnalaysisMethodologies.toString(fm.getFitPower()))),
 			(GroupNode nxData, FrameModel fm) -> fm
-					.setFitPower(getDoubleAttribute(NeXusStructureStrings.getFitpowersArray()[1], nxData))),
+					.setFitPower(getStringAttribute(NeXusStructureStrings.getFitpowersArray()[1], nxData))),
 
 	roi_Location_Array(NeXusStructureStrings.getRoiLocationArray()[0], NeXusStructureStrings.getRoiLocationArray()[1],
 			(Map<String, Object[]> m,
@@ -343,6 +343,15 @@ public enum OverviewNexusObjectBuilderEnum {
 			(GroupNode nxData, FrameModel fm) -> fm
 					.setProcessingMethodSelection(getStringAttribute(NeXusStructureStrings.getProcessingMethod(), nxData))),
 	
+	datNumber(NeXusStructureStrings.getDatNumber(), NeXusStructureStrings.getDatNumber(),
+			(Map<String, Object[]> m,
+					FrameModel fm) -> m.get(NeXusStructureStrings.getDatNumber())[fm.getFmNo()] = fm
+							.getDatNo(),
+			(GroupNode nxData, FrameModel fm) -> nxData.addAttribute(
+					TreeFactory.createAttribute(NeXusStructureStrings.getDatNumber(), fm.getDatNo())),
+			(GroupNode nxData, FrameModel fm) -> fm.setDatNo(
+					getDoubleAttribute(NeXusStructureStrings.getDatNumber(), nxData))),
+
 	
 	;
 
@@ -402,12 +411,12 @@ public enum OverviewNexusObjectBuilderEnum {
 
 	private static String getStringAttribute(String desired, GroupNode g) {
 		StringDataset sd = DatasetUtils.cast(StringDataset.class, g.getAttribute(desired).getValue());
-		return sd.get(0);
+		return sd.get();
 	}
 
 	private static double getDoubleAttribute(String desired, GroupNode g) {
 		DoubleDataset sd = DatasetUtils.cast(DoubleDataset.class, g.getAttribute(desired).getValue());
-		return sd.get(0);
+		return sd.get();
 	}
 
 	private static double[] getDoubleArrayAttribute(String desired, GroupNode g) {
@@ -416,12 +425,18 @@ public enum OverviewNexusObjectBuilderEnum {
 		Attribute roiAttribute = g.getAttribute(desired);
 		Dataset roiAttributeDat = (Dataset) roiAttribute.getValue();
 		
-		return (double[])roiAttributeDat.getObject(0);
+		return (double[])roiAttributeDat.getObject();
 	}
 
+	private static boolean getBooleanFromStringAttribute(String desired, GroupNode g) {
+		StringDataset sd = DatasetUtils.cast(StringDataset.class, g.getAttribute(desired).getValue());
+		String b =  sd.get();
+		return Boolean.valueOf(b);
+	}
+	
 	private static boolean getBooleanAttribute(String desired, GroupNode g) {
 		BooleanDataset sd = DatasetUtils.cast(BooleanDataset.class, g.getAttribute(desired).getValue());
-		return sd.get(0);
+		return sd.get();
 	}
 
 	public String getFirstNameFromSecond(String in) {

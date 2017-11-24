@@ -1350,6 +1350,12 @@
             model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="Azimuthal Integration Difference Image">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractRemappedExternalDataOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractRemappedExternalDataOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractRemappedExternalDataModel"
+            name="Subtract remapped 1D data from image">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

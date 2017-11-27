@@ -39,16 +39,17 @@ public class RegisterData1D implements DatasetToDatasetFunction {
 
 	private IRectangularROI roi = null;
 	private double tukeyWidth = 0.0;
-	private IDataset anchor;
 	private int[] shape;
 	private int[] pShape; // padded shape
 	private Dataset window; // window function
-	private Dataset cfAnchor; // conjugate transform of windowed anchor
-	private Dataset fAnchor; // transform of windowed anchor
-	private SliceND slice = null;
 	private boolean dirty = true;
+	private SliceND slice = null;
 	private Dataset tFilter = null;
 	private Dataset filter;
+
+	private IDataset anchor;
+	private Dataset cfAnchor; // conjugate transform of windowed anchor
+	private Dataset fAnchor; // transform of windowed anchor
 
 	public RegisterData1D() {
 	}
@@ -171,10 +172,10 @@ public class RegisterData1D implements DatasetToDatasetFunction {
 			}
 
 			Dataset pCorrelation = phaseCorrelate(d);
-			shift = calcForooshShift(pCorrelation);
-			System.err.println("Foroosh : " + shift);
-			shift = findCentroid(pCorrelation, Math.min(pCorrelation.getShapeRef()[0], 7));
-			System.err.println("Centroid: " + shift);
+//			shift = calcForooshShift(pCorrelation);
+//			System.err.println("Foroosh : " + shift);
+//			shift = findCentroid(pCorrelation, Math.min(pCorrelation.getShapeRef()[0], 7));
+//			System.err.println("Centroid: " + shift);
 			shift = fitGaussians(pCorrelation, Math.min(pCorrelation.getShapeRef()[0], 11));
 			System.err.println("Fit     : " + shift);
 			result.add(DatasetFactory.createFromObject(shift));

@@ -41,6 +41,7 @@ import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.tree.impl.AttributeImpl;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
+import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
@@ -76,6 +77,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	private final String RESULTS_GROUP = "result";
 	private final String INTER_GROUP = "intermediate";
 	private final String AUX_GROUP = "auxiliary";
+	private final String SUM_GROUP = "summary";
 	private final String ENTRY = "entry";
 	private final String LIVE = "live";
 	private final String FINISHED = "finished";
@@ -87,7 +89,6 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 
 	private String results;
 	private String intermediate;
-	private String auxiliary;
 
 	private ConcurrentHashMap<String,ConcurrentHashMap<Integer, String[]>> groupAxesNames = new ConcurrentHashMap<String,ConcurrentHashMap<Integer,String[]>>();
 	private String filePath;
@@ -142,9 +143,10 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			// don't fail process because of error persisting models
 			IPersistentNodeFactory pf = service.getPersistentNodeFactory();
 			GroupNode gn = pf.writeOperationsToGroup(series);
-			nexusFile.addNode("/" + ENTRY+"/process", gn);
+			String process = Tree.ROOT + ENTRY + Node.SEPARATOR + "process";
+			nexusFile.addNode(process, gn);
 			GroupNode or = pf.writeOriginalDataInformation(origin);
-			nexusFile.addNode("/" + ENTRY+"/process/origin", or);
+			nexusFile.addNode(process + Node.SEPARATOR + "origin", or);
 		} catch (Exception e){
 			logger.error("Cant persist operations!", e);
 		}
@@ -158,13 +160,27 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 					groupCreated = true;
 				}
 
-				GroupNode group2 = nexusFile.getGroup(intermediate+ "/"+i + "-" + series[i].getName(), true);
-				nexusFile.addAttribute(group2, new AttributeImpl("NX_class","NXdata"));
-
+				requireNXclass(intermediate+ Node.SEPARATOR + i + "-" + series[i].getName(), NX_DATA);
 			}
 		}
 		
 		lastFlush = System.currentTimeMillis();
+	}
+
+	private static final String NX_ENTRY = "NXentry";
+	private static final String NX_SUBENTRY = "NXsubentry";
+	private static final String NX_DATA = NexusTreeUtils.NX_DATA;
+	private static final String NX_COLLECTION = "NXcollection";
+
+	private GroupNode requireNXclass(String name, String NXclass) throws NexusException {
+		GroupNode g = nexusFile.getGroup(name, true);
+		nexusFile.addAttribute(g, new AttributeImpl(NexusTreeUtils.NX_CLASS, NXclass));
+		return g;
+	}
+
+	private GroupNode requireNXclass(GroupNode p, String name, String NXclass) throws NexusException {
+		GroupNode g = nexusFile.getGroup(p, name, NXclass, true);
+		return g;
 	}
 
 	/**
@@ -172,15 +188,13 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	 * @throws Exception
 	 */
 	private void initGroups() throws Exception {
-
-		GroupNode group = nexusFile.getGroup("/" + ENTRY, true);
-		nexusFile.addAttribute(group, new AttributeImpl("NX_class","NXentry"));
-		group = nexusFile.getGroup("/" + ENTRY + "/" + RESULTS_GROUP, true);
-		nexusFile.addAttribute(group, new AttributeImpl("NX_class","NXdata"));
-		results = "/" + ENTRY + "/" + RESULTS_GROUP;
+		String entry = Tree.ROOT + ENTRY;
+		GroupNode group = requireNXclass(entry, NX_ENTRY);
+		results = entry + Node.SEPARATOR + RESULTS_GROUP;
+		group = requireNXclass(results, NX_DATA);
 		if (swmring) {
-			group = nexusFile.getGroup("/" + ENTRY + "/" + LIVE, true);
-			nexusFile.addAttribute(group, new AttributeImpl("NX_class","NXcollection"));
+			
+			group = requireNXclass(entry + Node.SEPARATOR + LIVE, NX_COLLECTION);
 			IDataset dataset = DatasetFactory.zeros(IntegerDataset.class, 1);
 			dataset.setName(FINISHED);
 			createWriteableLazy(dataset, group);
@@ -202,7 +216,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 						String updatedName = "raw_" + key;
 						int count = 0;
 						while(keys.contains(updatedName)) updatedName = "raw_" + key + count++;
-						nexusFile.linkExternal(new URI("nxfile://"+originalFilePath+"#"+key),"/"+updatedName , true);
+						nexusFile.linkExternal(new URI("nxfile://"+originalFilePath+"#"+key),Tree.ROOT + updatedName, true);
 					}
 				}
 			} catch (Exception e) {
@@ -217,9 +231,8 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	 */
 	private void createInterGroup() {
 		try {
-			GroupNode group = nexusFile.getGroup("/" +ENTRY + "/" + INTER_GROUP, true);
-			intermediate = "/" +ENTRY + "/" + INTER_GROUP;
-			nexusFile.addAttribute(group,new AttributeImpl("NX_class","NXsubentry"));
+			intermediate = Tree.ROOT +ENTRY + Node.SEPARATOR + INTER_GROUP;
+			requireNXclass(intermediate, NX_SUBENTRY);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -282,15 +295,21 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		}
 	}
 
+	private static boolean isEmpty(Serializable... blah) {
+		return blah == null || blah.length == 0 || blah[0] == null;
+	}
+
 	@Override
-	public void notify(IOperation<? extends IOperationModel, ? extends OperationData> intermeadiateData, OperationData data) {
+	public void notify(IOperation<? extends IOperationModel, ? extends OperationData> intermediateData, OperationData data) {
 		//make groups on first pass
 
-		if (!intermeadiateData.isStoreOutput() && (data.getAuxData() == null || data.getAuxData()[0] == null)) return;
+		Serializable[] auxData = data.getAuxData();
+		Serializable[] summaryData = data.getSummaryData();
+		if (!intermediateData.isStoreOutput() && isEmpty(auxData) && isEmpty(summaryData)) return;
 
-		boolean first = firstNotifyMap.get(intermeadiateData).getAndSet(false);
+		boolean first = firstNotifyMap.get(intermediateData).getAndSet(false);
 
-		String position = String.valueOf(positionMap.get(intermeadiateData));
+		String position = String.valueOf(positionMap.get(intermediateData));
 
 		SliceFromSeriesMetadata metadata;
 		try {
@@ -306,23 +325,25 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		Slice[] slices = metadata.getSliceInOutput();
 
 		//if specified to save data, do it
-		if (intermeadiateData.isStoreOutput()) {
+		if (intermediateData.isStoreOutput()) {
 			try {
+				String intermediatePosData = intermediate + Node.SEPARATOR + position + "-" + intermediateData.getName();
 				GroupNode group;
 				synchronized (nexusFile) {
-					group = nexusFile.getGroup(intermediate + "/" + position + "-" + intermeadiateData.getName(), true);	
+					group = nexusFile.getGroup(intermediatePosData, true);	
 				}
 				Dataset d = DatasetUtils.convertToDataset(data.getData());
 				
-				synchronized (nexusFile) {d.setName("data");
+				synchronized (nexusFile) {
+					d.setName("data");
 					appendData(d,group, slices,shape, nexusFile, dataDims);
 				}
 				if (first){
 					synchronized (nexusFile) {
-						nexusFile.addAttribute(group,new AttributeImpl("signal",d.getName()));
+						nexusFile.addAttribute(group,new AttributeImpl("signal", d.getName()));
 					}
 				}
-				updateAxes(d, slices, shape, dataDims, intermediate + "/" + position + "-" + intermeadiateData.getName(),first);
+				updateAxes(d, slices, shape, dataDims, intermediatePosData,first);
 
 			} catch (Exception e) {
 				logger.error(e.getMessage());
@@ -330,10 +351,8 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 
 		}
 
-		Serializable[] auxData = data.getAuxData();
-
 		//save aux data (should be IDataset, with unit dimensions)
-		if (auxData != null && auxData[0] != null) {
+		if (!isEmpty(auxData)) {
 			for (int i = 0; i < auxData.length; i++) {
 				if (auxData[i] instanceof IDataset) {
 					
@@ -341,23 +360,49 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 						Dataset ds = DatasetUtils.convertToDataset((IDataset) auxData[i]);
 						String dsName = ds.getName();
 						GroupNode group;
+						String currentGroup = Tree.ROOT + ENTRY + Node.SEPARATOR + AUX_GROUP;
 						synchronized (nexusFile) {
-							GroupNode auxG = nexusFile.getGroup("/"+ENTRY + "/" + AUX_GROUP, true);
-							nexusFile.addAttribute(auxG,new AttributeImpl("NX_class","NXsubentry"));
-							group = nexusFile.getGroup(auxG,position + "-" + intermeadiateData.getName() + "/" +dsName ,"NXdata",true);
-							GroupNode rg = nexusFile.getGroup("/"+ENTRY + "/" + AUX_GROUP + "/" +position + "-" + intermeadiateData.getName(), false);
-							if (first) nexusFile.addAttribute(rg,new AttributeImpl("NX_class","NXsubentry"));
-						}
-						
-						ds.setName("data");
-						synchronized (nexusFile) {
-							appendData(ds,group, slices,shape, nexusFile,dataDims);
+							GroupNode auxG = requireNXclass(currentGroup, NX_SUBENTRY);
+							group = requireNXclass(auxG, position + "-" + intermediateData.getName() + Node.SEPARATOR + dsName, NX_DATA);
+							currentGroup += Node.SEPARATOR + position + "-" + intermediateData.getName();
+							ds.setName("data");
+							appendData(ds, group, slices, shape, nexusFile, dataDims);
 							if (first){
-								nexusFile.addAttribute(group,new AttributeImpl("signal",ds.getName()));
+								nexusFile.addAttribute(group,new AttributeImpl("signal", ds.getName()));
 							}
 						}
 						
-						updateAxes(ds, slices, shape, dataDims, "/"+ENTRY + "/" + AUX_GROUP +  "/" + position + "-" + intermeadiateData.getName() +"/"+  dsName, first);
+						updateAxes(ds, slices, shape, dataDims, currentGroup + Node.SEPARATOR + dsName, first);
+					} catch (Exception e) {
+						logger.error(e.getMessage(), e);
+					}
+				}
+			}
+		}
+
+		//save summary data (should be IDataset, with unit dimensions)
+		if (!isEmpty(summaryData)) {
+			for (int i = 0; i < summaryData.length; i++) {
+				if (summaryData[i] instanceof IDataset) {
+					
+					try {
+						Dataset ds = DatasetUtils.convertToDataset((IDataset) summaryData[i]);
+						String dsName = ds.getName();
+						GroupNode group;
+						String currentPath = Tree.ROOT + ENTRY + Node.SEPARATOR + SUM_GROUP;
+						synchronized (nexusFile) {
+							group = requireNXclass(currentPath, NX_SUBENTRY);
+							String gName = position + "-" + intermediateData.getName();
+							currentPath += Node.SEPARATOR + gName + Node.SEPARATOR + dsName;
+							group = requireNXclass(currentPath, NX_DATA);
+							ds.setName("data");
+							writeData(ds, group, nexusFile);
+							if (i == 0) {
+								nexusFile.addAttribute(group, new AttributeImpl("signal", ds.getName()));
+							}
+						}
+						
+						writeAxes(ds, currentPath, true);
 					} catch (Exception e) {
 						logger.error(e.getMessage(), e);
 					}
@@ -365,7 +410,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			}
 		}
 	}
-	
+
 	@Override
 	public String getFileName() {
 		return filePath;
@@ -421,7 +466,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 						ILazyDataset ax = axis[j];
 						if (ax == null) continue;
 						String name = ax.getName();
-						names[j] = santiziseName(name, axesNames);
+						names[j] = sanitizeName(name, axesNames);
 						axesNames.putIfAbsent(i, names);
 						name = axesNames.get(i)[j];
 						
@@ -442,7 +487,6 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 								int[] shape = ax.getShape();
 								logger.debug("Second slice attempt, for shape " + Arrays.toString(shape));
 								axDataset = (Dataset)ax.getSlice(new SliceND(shape));
-//								axDataset = DatasetUtils.sliceAndConvertLazyDataset(ax);
 							} catch (Exception ex) {
 								if (name == null) {
 									name = "unknown";
@@ -485,7 +529,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 
 								if (first) {
 
-									nexusFile.getData(groupName +"/" +axDataset.getName()).addAttribute(new AttributeImpl("axis", String.valueOf(i+1)));
+									nexusFile.getData(groupName + Node.SEPARATOR +axDataset.getName()).addAttribute(new AttributeImpl("axis", String.valueOf(i+1)));
 
 								}
 
@@ -519,14 +563,104 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		}
 	}
 	
-	private String santiziseName(String name, ConcurrentHashMap<Integer, String[]> names) {
+	private void writeAxes(IDataset data, String groupName, boolean first) throws Exception {
+		
+		ConcurrentHashMap<Integer, String[]> axesNames = new ConcurrentHashMap<Integer,String[]>();
+
+		groupAxesNames.putIfAbsent(groupName, axesNames);
+		
+		axesNames = groupAxesNames.get(groupName);
+
+		String[] axNames = null;
+		if (first) axNames = new String[data.getRank()];
+		
+		List<AxesMetadata> mList = data.getMetadata(AxesMetadata.class);
+		if (mList!= null && !mList.isEmpty()) {
+			int count = 0;
+			for (AxesMetadata am : mList) {
+				ILazyDataset[] axes = am.getAxes();
+				if (axes == null && axesNames != null)  {
+					Arrays.fill(axNames,NexusTreeUtils.NX_AXES_EMPTY);
+					return;
+				}
+
+				int rank = axes.length;
+
+				for (int i = 0; i< rank; i++) {
+					ILazyDataset[] axis = am.getAxis(i);
+					if (axis == null) {
+						if (axNames != null)  {
+							axNames[count++] = ".";
+						}
+
+						continue;
+					}
+					String[] names = new String[axis.length];
+					for (int j = 0; j < axis.length; j++) {
+						ILazyDataset ax = axis[j];
+						if (ax == null) continue;
+						String name = ax.getName();
+						names[j] = sanitizeName(name, axesNames);
+						axesNames.putIfAbsent(i, names);
+						name = axesNames.get(i)[j];
+						Dataset axDataset = DatasetUtils.sliceAndConvertLazyDataset(ax);
+						axDataset.setName(name);
+						if (axNames != null && j == 0)
+							axNames[count++] = name;
+						if (first) {
+							ILazyDataset error = axDataset.getErrors();
+							IDataset e = null;
+							if (error != null) {
+								e = error.getSlice().squeeze();
+								e.setName(axDataset.getName() + "_errors");
+							}
+
+							synchronized (nexusFile) {
+								DataNode dn = nexusFile.createData(nexusFile.getGroup(groupName, true),
+										axDataset.squeeze());
+								dn.addAttribute(new AttributeImpl("axis", String.valueOf(i + 1))); // FIXME needed???
+								nexusFile.addAttribute(nexusFile.getGroup(groupName, true),
+										new AttributeImpl(names[j] + NexusTreeUtils.NX_INDICES_SUFFIX,
+												DatasetFactory.createFromObject(i)));
+								UnitMetadata unit = axDataset.getFirstMetadata(UnitMetadata.class);
+								if (unit != null) {
+									nexusFile.addAttribute(dn,
+											new AttributeImpl(NexusTreeUtils.NX_UNITS, unit.toString()));
+								}
+								if (e != null) {
+									nexusFile.createData(nexusFile.getGroup(groupName, true), e);
+									nexusFile.addAttribute(groupName, new AttributeImpl(
+											axDataset.getName() + NexusTreeUtils.NX_UNCERTAINTY_SUFFIX, e.getName()));
+								}
+							}
+						}
+
+					}
+				}
+				
+				if (first && axNames != null) {
+					synchronized (nexusFile) {
+						GroupNode group = nexusFile.getGroup(groupName, false);
+						nexusFile.addAttribute(group, new AttributeImpl("axes", DatasetFactory.createFromObject(axNames)));
+//						for (int i = 0; i < axNames.length; i++) {
+//							if (axNames[i] != null && !axNames[i].equals(NexusTreeUtils.NX_AXES_EMPTY)) nexusFile.addAttribute(group, new AttributeImpl(axNames[i]+NexusTreeUtils.NX_INDICES_SUFFIX, DatasetFactory.createFromObject(i)));
+//						}
+						axNames = null;
+					}
+				}
+
+			}
+		}
+	}
+
+	private String sanitizeName(String name, ConcurrentHashMap<Integer, String[]> names) {
 		//assume only our slicing puts [ in a axis name!
 		if (name.contains("[")) {
 			name = name.split("\\[")[0];
 		}
 
-		if (name.contains("/")) {
-			String[] split = name.split("/");
+		if (name.contains(Node.SEPARATOR)) {
+			String[] split = name.split(Node.SEPARATOR);
 			name = split[split.length-1];
 		}
 		
@@ -563,10 +697,10 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		dataset.setShape(1);
 		DataNode dn = null;
 		try {
-			dn = file.getData(group+"/"+dataset.getName());
+			dn = file.getData(group+Node.SEPARATOR+dataset.getName());
 		} catch (Exception e) {
 			createWriteableLazy(dataset, file.getGroup(group, true));
-			dn = file.getData(group+"/"+dataset.getName());
+			dn = file.getData(group+Node.SEPARATOR+dataset.getName());
 			nexusFile.addAttribute(group, new AttributeImpl(dataset.getName()+NexusTreeUtils.NX_INDICES_SUFFIX, DatasetFactory.createFromObject(axisDim)));
 		}
 
@@ -638,6 +772,64 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			ILazyWriteableDataset wdse = dn.getWriteableDataset();
 			s = new SliceND(e.getShape(),determineMaxShape(e),sliceOut);
 			wdse.setSlice(null, e, s);
+		}
+
+		return;
+	}
+
+
+	/**
+	 * Write or overwrite the data into the correct position
+	 * @param dataset
+	 * @param group
+	 * @param file
+	 * @throws Exception
+	 */
+	private void writeData(Dataset dataset, GroupNode group, NexusFile file) throws Exception {
+		
+		//determine shape of full output dataset
+		int rank = dataset.getRank();
+		if (rank == 0) {
+			rank = 1;
+			int[] shape = new int[rank];
+			Arrays.fill(shape, 1);
+			dataset.setShape(shape);
+		}
+
+		long[] newShape = new long[rank];
+		for (int i = 0; i < rank; i++) {
+			newShape[i] = dataset.getShapeRef()[i];
+		}
+
+		//write
+		DataNode dn = null;
+		if (group.containsDataNode(dataset.getName())){
+			dn = file.getData(group,dataset.getName());
+		} else {
+			createWriteableLazy(dataset, group);
+			dn = file.getData(group,dataset.getName());
+		}
+
+		ILazyWriteableDataset wds = dn.getWriteableDataset();
+		SliceND nslice = new SliceND(dataset.getShapeRef());
+		wds.setSlice(null, dataset, nslice);
+
+		ILazyDataset error = dataset.getErrors();
+
+		if (error != null) {
+			Dataset e = DatasetUtils.sliceAndConvertLazyDataset(error);
+			e.setName("errors");
+			dn = null;
+			if (group.containsDataNode(e.getName())){
+				dn = file.getData(group,e.getName());
+			} else {
+				createWriteableLazy(e, group);
+				nexusFile.addAttribute(group, new AttributeImpl(dataset.getName() + NexusTreeUtils.NX_UNCERTAINTY_SUFFIX, e.getName()));
+				dn = file.getData(group,e.getName());
+			}
+
+			ILazyWriteableDataset wdse = dn.getWriteableDataset();
+			wdse.setSlice(null, e, new SliceND(e.getShapeRef()));
 		}
 
 		return;

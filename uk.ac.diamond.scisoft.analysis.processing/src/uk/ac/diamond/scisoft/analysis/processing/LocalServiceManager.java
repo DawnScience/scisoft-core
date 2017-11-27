@@ -10,12 +10,14 @@
 package uk.ac.diamond.scisoft.analysis.processing;
 
 import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
+import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 
 public class LocalServiceManager {
 	
 	private static ILoaderService lservice;
 	private static IOperationService oservice;
+	private static IPersistenceService pservice;
 
 	public static void setLoaderService(ILoaderService s) {
 		lservice = s;
@@ -31,5 +33,13 @@ public class LocalServiceManager {
 
 	public static void setOperationService(IOperationService s) {
 		oservice = s;
+	}
+
+	public static IPersistenceService getPersistenceService() {
+		return pservice;
+	}
+
+	public static void setPersistenceService(IPersistenceService p) {
+		pservice = p;
 	}
 }

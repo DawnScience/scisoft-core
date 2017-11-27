@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.dawb.common.services.ServiceManager;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IDataBasedFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
@@ -52,6 +51,7 @@ import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
+import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 
 @Atomic
 public class FunctionFittingOperation extends AbstractOperation<FunctionFittingModel, OperationData> {
@@ -183,7 +183,7 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 
 					try {
 
-						IPersistenceService service = (IPersistenceService)ServiceManager.getService(IPersistenceService.class);
+						IPersistenceService service = LocalServiceManager.getPersistenceService();
 						IPersistentFile pf = service.getPersistentFile(model.getFilePath());
 						Map<String, IFunction> functions = pf.getFunctions(null);
 						Map<String, IROI> rois = pf.getROIs(null);

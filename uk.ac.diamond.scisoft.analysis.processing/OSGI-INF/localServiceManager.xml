@@ -3,4 +3,5 @@
    <implementation class="uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager"/>
    <reference bind="setLoaderService" cardinality="1..1" interface="org.eclipse.dawnsci.analysis.api.io.ILoaderService" name="ILoaderService" policy="static"/>
    <reference bind="setOperationService" cardinality="1..1" interface="org.eclipse.dawnsci.analysis.api.processing.IOperationService" name="IOperationService" policy="static"/>
+   <reference bind="setPersistenceService" cardinality="1..1" interface="org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService" name="IPersistenceService" policy="static"/>
 </scr:component>

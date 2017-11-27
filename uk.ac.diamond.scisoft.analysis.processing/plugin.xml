@@ -356,6 +356,15 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractFittedBackgroundOperation"
+            description="Perform background subtraction by fitting a PDF to the population of pixel values. The count at which the given signal to background ratio occurs is subtracted"
+            icon="icons/image--minus.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractFittedBackgroundOperation"
+            name="Image background subtraction - Fitted to a PDF"
+            visible="true">
+      </operation>
+      <operation
             category="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.XRegionProfileNormalize"
             description="A filter which normalises the data frame by the profile of the selected region of the X axis."

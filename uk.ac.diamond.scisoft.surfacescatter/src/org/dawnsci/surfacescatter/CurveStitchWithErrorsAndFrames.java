@@ -214,7 +214,6 @@ public class CurveStitchWithErrorsAndFrames {
 					lowerOverlapScannedValues[o] = xLowerList.get(o);
 					lowerOverlapCorrectedValues[o] = yLowerList.get(o);
 					lowerOverlapRawValues[o] = yLowerListRaw.get(o);
-					;
 					lowerOverlapFhklValues[o] = yLowerListFhkl.get(o);
 				}
 

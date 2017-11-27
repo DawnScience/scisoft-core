@@ -1,7 +1,6 @@
 package org.dawnsci.surfacescatter;
 
 import org.dawnsci.surfacescatter.MethodSettingEnum.MethodSetting;
-import org.dawnsci.surfacescatter.ProcessingMethodsEnum.ProccessingMethod;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -15,14 +14,15 @@ public class DummyClassUtils {
 
 		Dataset yValue = correctionMethod(fm, output);
 
+	
 		double intensity = ((Number) DatasetUtils.cast(yValue, Dataset.FLOAT64).sum()).doubleValue();
 		double rawIntensity = ((Number) DatasetUtils.cast(output, Dataset.FLOAT64).sum()).doubleValue();
 
 		double intensityError = getCorrectionValue(fm)
-				* ((Number) DatasetUtils.cast(output, Dataset.FLOAT64).sum()).doubleValue();
+				* Math.sqrt(((Number) DatasetUtils.cast(output, Dataset.FLOAT64).sum()).doubleValue());
 		double rawIntensityError = Math.sqrt(((Number) DatasetUtils.cast(output, Dataset.FLOAT64).sum()).doubleValue());
 
-		double fhkl = 0.001;
+		double fhkl =Double.MIN_VALUE;
 		if (intensity >= 0) {
 			fhkl = Math.pow(((Number) DatasetUtils.cast(yValue, Dataset.FLOAT64).sum()).doubleValue(), 0.5);
 		}

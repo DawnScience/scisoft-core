@@ -1306,6 +1306,13 @@
             name="Maximum Frames">
       </operation>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.MinimumFramesOperation"
+            description="Collect all frames and return the minimum"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.MinimumFramesOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="Minimum Frames">
+      </operation>
+      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.EnterDiffractionCalibrationOperation"
             description="Manually enter the calibration values for a 2D diffraction detector"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.twod.EnterDiffractionCalibrationOperation"

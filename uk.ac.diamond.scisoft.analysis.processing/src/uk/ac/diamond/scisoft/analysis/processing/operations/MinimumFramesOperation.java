@@ -11,15 +11,15 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import org.eclipse.january.dataset.Maths;
 
-public class SumFramesOperation extends AbstractFramesOperation {
+public class MinimumFramesOperation extends AbstractFramesOperation {
 
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.SumFramesOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.MinimumFramesOperation";
 	}
 
 	// do not use the method reference -> see https://jira.diamond.ac.uk/browse/SCI-6339
-	public SumFramesOperation() {
-		super((oldDataset, newDataset) -> Maths.add(oldDataset, newDataset));
+	public MinimumFramesOperation() {
+		super((oldDataset, newDataset) -> Maths.minimum(oldDataset, newDataset));
 	}
 }

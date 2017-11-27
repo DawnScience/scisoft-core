@@ -141,7 +141,105 @@ public class NeXusStructureStrings {
 	private static final String setRegions = "Manually Set Regions of Interest For Interpolation";
 	
 	private static final String INTEGERS = "Integers";
+	
+	private static final String DATA_PACKAGE_FOR_OVERLAP_CALCULATION = "Data Package For Overlap Calculation";
 
+	private static final String YLIST = "yList";
+	
+	private static final String YLIST_ERROR = "yList_Error";
+	
+	private static final String YLIST_FHKL = "yList_Fhkl";
+	
+	private static final String YLIST_FHKL_ERROR = "yList_Fhkl_Error";
+	
+	private static final String YLIST_RAW = "yList_Raw";
+	
+	private static final String YLIST_RAW_ERROR = "yList_Raw_Error";
+	
+	private static final String YLIST_FOR_EACH_DAT = "yList_For_Each_Dat";
+	
+	private static final String YLIST_ERROR_FOR_EACH_DAT = "yList_Error_Each_Dat";
+	
+	private static final String YLIST_FHKL_FOR_EACH_DAT = "yList_Fhkl_Each_Dat";
+	
+	private static final String YLIST_FHKL_ERROR_FOR_EACH_DAT = "yList_Fhkl_Error_Each_Dat";
+	
+	private static final String YLIST_RAW_FOR_EACH_DAT = "yList_Raw_Each_Dat";
+	
+	private static final String YLIST_RAW_ERROR_FOR_EACH_DAT = "yList_Raw_Error_Each_Dat";
+	
+	private static final String OUTPUT_DATA_ARRAY = "Output_Data_Array";
+	
+	private static final String BACKGROUND_DATA_ARRAY = "Background_Data_Array";
+	
+	private static final String NO_DATS = "Number_of_Dat_Files";
+	
+	public static String getNoDats() {
+		return NO_DATS;
+	}
+
+	public static String getOutputDataArray() {
+		return OUTPUT_DATA_ARRAY;
+	}
+
+	public static String getBackgroundDataArray() {
+		return BACKGROUND_DATA_ARRAY;
+	}
+
+	
+	public static String getDataPackageForOverlapCalculation() {
+		return DATA_PACKAGE_FOR_OVERLAP_CALCULATION;
+	}
+
+	public static String getYlist() {
+		return YLIST;
+	}
+
+	public static String getYlistError() {
+		return YLIST_ERROR;
+	}
+
+	public static String getYlistFhkl() {
+		return YLIST_FHKL;
+	}
+
+	public static String getYlistFhklError() {
+		return YLIST_FHKL_ERROR;
+	}
+
+	public static String getYlistRaw() {
+		return YLIST_RAW;
+	}
+
+	public static String getYlistRawError() {
+		return YLIST_RAW_ERROR;
+	}
+
+	public static String getYlistForEachDat() {
+		return YLIST_FOR_EACH_DAT;
+	}
+
+	public static String getYlistErrorForEachDat() {
+		return YLIST_ERROR_FOR_EACH_DAT;
+	}
+
+	public static String getYlistFhklForEachDat() {
+		return YLIST_FHKL_FOR_EACH_DAT;
+	}
+
+	public static String getYlistFhklErrorForEachDat() {
+		return YLIST_FHKL_ERROR_FOR_EACH_DAT;
+	}
+
+	public static String getYlistRawForEachDat() {
+		return YLIST_RAW_FOR_EACH_DAT;
+	}
+
+	public static String getYlistRawErrorForEachDat() {
+		return YLIST_RAW_ERROR_FOR_EACH_DAT;
+	}
+
+	
 	public static String getInitiallenpt() {
 		return initialLenPt;
 	}

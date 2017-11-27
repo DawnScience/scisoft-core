@@ -11,7 +11,7 @@ public class ReflectivityNormalisation {
 		IDataset a1 =csdp.getSplicedCurveY();
 		IDataset a2 =csdp.getSplicedCurveYError();
 		
-		double a3 = normalisationFactor(csdp.getSplicedCurveY());
+		double a3 = normalisationFactor(csdp.getSplicedCurveY(), csdp.getSplicedGoodPointIDataset());
 		
 		IDataset splicedCurveY = Maths.multiply(a1, a3);
 		IDataset splicedCurveYError = Maths.multiply(a2, a3);
@@ -24,7 +24,7 @@ public class ReflectivityNormalisation {
 		IDataset a4 =csdp.getSplicedCurveYRaw();
 		IDataset a5 =csdp.getSplicedCurveYRawError();
 		
-		double a6 = normalisationFactor(csdp.getSplicedCurveYRaw());
+		double a6 = normalisationFactor(csdp.getSplicedCurveYRaw(), csdp.getSplicedGoodPointIDataset());
 		
 		IDataset splicedCurveYRaw = Maths.multiply(a4, a6);
 		IDataset splicedCurveYRawError = Maths.multiply(a5, a6);
@@ -37,7 +37,7 @@ public class ReflectivityNormalisation {
 		IDataset a7 =csdp.getSplicedCurveYFhkl();
 		IDataset a8 =csdp.getSplicedCurveYFhklError();
 		
-		double a9 = normalisationFactor(csdp.getSplicedCurveYFhkl());
+		double a9 = normalisationFactor(csdp.getSplicedCurveYFhkl(), csdp.getSplicedGoodPointIDataset());
 		
 		IDataset splicedCurveYFhkl = Maths.multiply(a7, a9);
 		IDataset splicedCurveYFhklError = Maths.multiply(a8, a9);
@@ -50,7 +50,7 @@ public class ReflectivityNormalisation {
 	}
 	
 	
-	private static double normalisationFactor(IDataset in){
+	private static double normalisationFactor(IDataset in, IDataset goodPoints){
 		
 		double output =1;
 		
@@ -58,9 +58,18 @@ public class ReflectivityNormalisation {
 		
 		int noToAverage = 3;
 		
-		for(int i = 0; i<noToAverage; i++){
-			double j = in.getDouble(i);
-			temp += 1/j;
+		int counter =0;
+
+		for(int i = 0; i<in.getSize(); i++){
+			if(goodPoints.getBoolean(i)) {
+				double j = in.getDouble(i);
+				temp += 1/j;
+				counter++;	
+			}
+			if(counter >= noToAverage) {
+				break;
+			}
+			
 		}
 		
 		output = temp/noToAverage;

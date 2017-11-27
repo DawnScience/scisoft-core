@@ -22,6 +22,8 @@ public class CsdpGeneratorFromDrm {
 
 		int noOfDats = drm.getDatFilepaths().length;
 
+		ocdp.setNoOfDats(noOfDats);
+		
 		csdp.setFilepaths(drm.getDatFilepaths());
 
 		ArrayList<ArrayList<Boolean>> goodPointLists = new ArrayList<>();

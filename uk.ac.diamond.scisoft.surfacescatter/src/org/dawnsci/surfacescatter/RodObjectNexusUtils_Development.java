@@ -11,7 +11,6 @@
 
 package org.dawnsci.surfacescatter;
 
-// Imports from Java
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -36,10 +35,8 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.SliceND;
-
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 
-//Let's save this file.
 public class RodObjectNexusUtils_Development {
 
 	private static NexusFile nexusFileReference;
@@ -114,6 +111,10 @@ public class RodObjectNexusUtils_Development {
 
 		p++;
 
+		overlapCurvesDataPackageGroupWriter((long) p, drm.getOcdp(), entry);
+		
+		p++;
+		
 		angleAliasWriter((long) p, entry);
 
 		p++;
@@ -611,6 +612,32 @@ public class RodObjectNexusUtils_Development {
 		}
 		
 	}
+	
+	
+
+	private static void overlapCurvesDataPackageGroupWriter(long oid, OutputCurvesDataPackage ocdp, GroupNode entry) {
+
+		GroupNode ocdpGroup = TreeFactory.createGroupNode(oid);
+
+		for (OutputCurvesDataPackageEnum dmne : OutputCurvesDataPackageEnum.values()) {
+
+			try {
+				dmne.ocdpGroupNodePopulateFromOutputCurvesDataPackageMethod(ocdpGroup, ocdp);			
+			} catch (Exception j) {
+				System.out.println(j.getMessage() + "  OutputCurvesDataPackageEnum name:  " + dmne.getFirstName());
+			}
+		}
+
+	
+		ocdpGroup.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXparameters"));		
+		
+		try {
+			entry.addGroupNode(NeXusStructureStrings.getDataPackageForOverlapCalculation(), ocdpGroup);
+		} catch (Exception vb) {
+			System.out.println(vb.getMessage());
+		}
+		
+	}
 
 	private static void shortArrayBuilder(Object[] out, Object[] in, String name, GroupNode overview) {
 
@@ -691,5 +718,44 @@ public class RodObjectNexusUtils_Development {
 		}
 
 		return rawImageConcat;
+	}
+	
+	private static IDataset convertListofListsOfDoublesToDataset(ArrayList<ArrayList<Double>> in) {
+
+		ArrayList<IDataset> im = new ArrayList<>();
+
+		for (ArrayList<Double> a : in) {
+			im.add(DatasetFactory.createFromList(a));
+		}
+
+		return concatenateIDatasetArrayList(im);
+	}
+
+	private static IDataset concatenateIDatasetArrayList(ArrayList<IDataset> in) {
+
+		IDataset[] im = new IDataset[in.size()];
+
+		for (int i = 0; i < in.size(); i++) {
+
+			im[i] = in.get(i);
+		}
+
+		return localConcatenate(im, 0);
+	}
+	
+	private static Dataset localConcatenate(IDataset[] in, int dim) {
+
+		for (IDataset i : in) {
+
+			if (i == null) {
+				return null;
+			}
+
+			if (i.getSize() == 0) {
+				return null;
+			}
+		}
+
+		return DatasetUtils.convertToDataset(DatasetUtils.concatenate(in, dim));
 	}
 }

@@ -191,22 +191,6 @@ public enum DirectoryModelNodeEnum {
 		return sd;
 	}
 
-	private static Dataset[] getDatasetArrayAttribute(String desired, GroupNode g) {
-		Dataset sd = DatasetUtils.cast(Dataset.class, g.getAttribute(desired).getValue());
-
-		int[] sdShape = sd.getShape();
-
-		Dataset[] slices = new Dataset[sdShape[0]];
-		SliceND slice = new SliceND(sdShape);
-
-		for (int i = 0; i < sdShape[0]; i++) {
-			slice.setSlice(0, i, i + 1, 1);
-			slices[i] = sd.getSlice(slice);
-		}
-
-		return slices;
-	}
-
 	private static double[] getDoubleArrayAttribute(String desired, GroupNode g) {
 		
 		Attribute roiAttribute = g.getAttribute(desired);
@@ -221,19 +205,6 @@ public enum DirectoryModelNodeEnum {
 		return out;
 	}
 	
-	private static ArrayList<double[]> getListofDoubleArrays(String desired, GroupNode g) {
-
-		Attribute roiAttribute = g.getAttribute(desired);
-		Dataset roiAttributeDat = (Dataset) roiAttribute.getValue();
-		ArrayList<double[]> out = new ArrayList<>();
-
-		for (int i = 0; i < roiAttributeDat.getShape()[0]; i++) {
-			out.add((double[]) roiAttributeDat.getObject(i));
-		}
-
-		return out;
-	}
-
 	private static double[] createDoubleArrayAttributeFromROI(int[][] lenPt) {
 
 		double[] roi = LocationLenPtConverterUtils.lenPtToLocationConverter(lenPt);
@@ -320,13 +291,6 @@ public enum DirectoryModelNodeEnum {
 		return out;
 	}
 
-	private static int[][][] getIntegerArrayofArrayofArraysAttribute(String desired, GroupNode g) {
-
-		Attribute roiAttribute = g.getAttribute(desired);
-		Dataset roiAttributeDat = (Dataset) roiAttribute.getValue();
-
-		return (int[][][]) roiAttributeDat.getObject(0);
-	}
 
 	public DirectoryModelNodeEnum getFromFirstName(String in) {
 

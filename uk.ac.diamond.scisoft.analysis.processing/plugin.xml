@@ -1299,6 +1299,13 @@
             name="Sum Frames">
       </operation>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.MaximumFramesOperation"
+            description="Collect all frames and return the maximum"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.MaximumFramesOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="Maximum Frames">
+      </operation>
+      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.EnterDiffractionCalibrationOperation"
             description="Manually enter the calibration values for a 2D diffraction detector"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.twod.EnterDiffractionCalibrationOperation"

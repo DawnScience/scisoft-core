@@ -472,7 +472,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 						
 						Dataset axDataset = null;
 						
-						//FOR TESTING ON I18
+						//Can fail, due to upstream bugs
 						try {
 							axDataset = DatasetUtils.sliceAndConvertLazyDataset(ax);
 						} catch (IllegalArgumentException ex) {
@@ -481,20 +481,6 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 							}
 							logger.error("Cannot slice dataset " + name + " try again",ex);
 						}
-						
-						if (axDataset == null) {
-							try {
-								int[] shape = ax.getShape();
-								logger.debug("Second slice attempt, for shape " + Arrays.toString(shape));
-								axDataset = (Dataset)ax.getSlice(new SliceND(shape));
-							} catch (Exception ex) {
-								if (name == null) {
-									name = "unknown";
-								}
-								logger.error("Cannot slice dataset " + name + " on second try",ex);
-							}
-						}
-						
 						
 						if (axDataset == null) continue;
 						 

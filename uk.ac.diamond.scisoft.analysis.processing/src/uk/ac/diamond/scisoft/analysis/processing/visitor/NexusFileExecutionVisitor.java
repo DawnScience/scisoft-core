@@ -438,7 +438,10 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		if (data.getSize() == 1) setDims.clear();
 
 		String[] axNames = null;
-		if (first) axNames = new String[data.getRank()];
+		if (first) {
+			axNames = new String[data.getRank()];
+			Arrays.fill(axNames,NexusTreeUtils.NX_AXES_EMPTY);
+		}
 		
 		List<AxesMetadata> mList = data.getMetadata(AxesMetadata.class);
 		if (mList!= null && !mList.isEmpty()) {
@@ -446,7 +449,6 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			for (AxesMetadata am : mList) {
 				ILazyDataset[] axes = am.getAxes();
 				if (axes == null && axesNames != null)  {
-					Arrays.fill(axNames,NexusTreeUtils.NX_AXES_EMPTY);
 					return;
 				}
 
@@ -558,7 +560,10 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		axesNames = groupAxesNames.get(groupName);
 
 		String[] axNames = null;
-		if (first) axNames = new String[data.getRank()];
+		if (first) {
+			axNames = new String[data.getRank()];
+			Arrays.fill(axNames,NexusTreeUtils.NX_AXES_EMPTY);
+		}
 		
 		List<AxesMetadata> mList = data.getMetadata(AxesMetadata.class);
 		if (mList!= null && !mList.isEmpty()) {
@@ -566,7 +571,6 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			for (AxesMetadata am : mList) {
 				ILazyDataset[] axes = am.getAxes();
 				if (axes == null && axesNames != null)  {
-					Arrays.fill(axNames,NexusTreeUtils.NX_AXES_EMPTY);
 					return;
 				}
 

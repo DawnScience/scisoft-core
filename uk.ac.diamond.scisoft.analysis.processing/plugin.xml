@@ -1379,6 +1379,37 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractRemappedExternalDataModel"
             name="Subtract remapped 1D data from image">
       </operation>
+       <category
+            id="uk.ac.diamond.scisoft.analysis.processing.rixs"
+            name="RIXS spectrum processing">
+       </category>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.rixs"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.rixs.ElasticLineFit"
+            description="Find and fit elastic lines in RIXS image"
+            icon="icons/stairs.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.rixs.ElasticLineFit"
+            name="RIXS elastic line fit"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.rixs"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.rixs.ElasticLineEnergyCalibration"
+            description="Calibrate energy dispersion using elastic lines in RIXS image"
+            icon="icons/stairs.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.rixs.ElasticLineEnergyCalibration"
+            name="RIXS energy dispersion calibration"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.rixs"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReduction"
+            description="Reduce RIXS images to spectra"
+            icon="icons/stairs.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReduction"
+            name="RIXS image reduction"
+            visible="true">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

@@ -165,8 +165,8 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		b.setName("Log10 of " + fit.getName());
 		// clamp values to above zero for nicer display 
 		b.setByBoolean(0, Comparisons.lessThan(b, 0));
-		ProcessingUtils.addAxes(a, x);
-		ProcessingUtils.addAxes(b, x);
+		ProcessingUtils.setAxes(a, x);
+		ProcessingUtils.setAxes(b, x);
 		od.setDisplayData(a, b);
 	}
 

@@ -119,7 +119,7 @@ public class ProcessingUtils {
 		throw new OperationException(operation, "NXprocess node not found: " + processName);
 	}
 
-	public static void addAxes(IDataset d, Dataset... axes) {
+	public static void setAxes(IDataset d, Dataset... axes) {
 		if (d.getRank() == 0) {
 			return;
 		}
@@ -130,7 +130,7 @@ public class ProcessingUtils {
 				Dataset a = axes[i];
 				if (a != null) {
 					try {
-						am.addAxis(i, a);
+						am.setAxis(i, a);
 					} catch (Exception e) {
 						System.err.println(Arrays.toString(a.getShapeRef()) + " cf " + Arrays.toString(d.getShape()));
 					}

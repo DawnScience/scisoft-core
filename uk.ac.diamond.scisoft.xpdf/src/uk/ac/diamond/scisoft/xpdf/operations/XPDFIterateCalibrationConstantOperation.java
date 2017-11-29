@@ -87,6 +87,8 @@ public class XPDFIterateCalibrationConstantOperation extends
 		XPDFComposition.setComptonScaling(model.getComptonScaling());
 		theXPDFMetadata.setComptonScaling(model.getComptonScaling());
 		
+		theCalibration.setSelfScattering(theXPDFMetadata.getSample());
+		
 		List<Dataset> backgroundSubtracted = new ArrayList<Dataset>();
 		// The 0th element is the sample
 		backgroundSubtracted.add(DatasetUtils.convertToDataset(input));

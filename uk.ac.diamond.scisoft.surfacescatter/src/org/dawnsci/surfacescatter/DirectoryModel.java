@@ -3,7 +3,7 @@ package org.dawnsci.surfacescatter;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
-
+import java.util.List;
 import org.dawnsci.surfacescatter.MethodSettingEnum.MethodSetting;
 import org.dawnsci.surfacescatter.TrackingMethodology.TrackerType1;
 import org.eclipse.dawnsci.analysis.api.image.IImageTracker;
@@ -13,7 +13,9 @@ import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.plotting.api.region.IRegion;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.SliceND;
 
 public class DirectoryModel {
 
@@ -49,7 +51,6 @@ public class DirectoryModel {
 	private IROI[] backgroundROIForEachDat;
 	private int[][] backgroundLenPt;
 	private OutputCurvesDataPackage ocdp;
-	private ArrayList<IDataset> outputDatArray;
 	private int[] filepathsSortedArray;
 	private ArrayList<Integer> imageNoInDatList;
 	private double[][] seedLocation;
@@ -70,18 +71,16 @@ public class DirectoryModel {
 	public String getRodName() {
 		return rodName;
 	}
-	
+
 	private void setPoke(boolean poke1) {
-		firePropertyChange("poke", this.poke,
-				this.poke = poke1);
+		firePropertyChange("poke", this.poke, this.poke = poke1);
 	}
 
 	private void poke() {
-		
+
 		setPoke(!poke);
 	}
-	
-	
+
 	public void setRodName(String rodName) {
 		this.rodName = rodName;
 		csdp.setRodName(rodName);
@@ -93,17 +92,103 @@ public class DirectoryModel {
 		if (interpolatorRegions == null) {
 			interpolatorRegions = new ArrayList<>();
 		}
-//		else {
-//			for(IRegion b : interpolatorRegions) {
-//				if(b.get)
-//			}
-//			
-//		}
+
 		interpolatorRegions.add(box);
 	}
 
 	public ArrayList<IRegion> getInterpolatorRegions() {
 		return interpolatorRegions;
+	}
+
+	public Dataset getInterpolatorRegionsAsDataset() {
+
+		ArrayList<int[][]> out = new ArrayList<>();
+
+		for (int i = 0; i < interpolatorRegions.size(); i++) {
+
+			IRegion ir = interpolatorRegions.get(i);
+
+			int[] pt = ir.getROI().getBounds().getIntPoint();
+			int[] len = ir.getROI().getBounds().getIntLengths();
+
+			out.add(new int[][] { len, pt });
+
+		}
+
+		return DatasetFactory.createFromList(out);
+
+	}
+
+	public void setInterpolatorRegionsFromDataset(Dataset in) {
+
+		ArrayList<IRegion> iroi = new ArrayList<>();
+
+		SliceND nd = new SliceND(in.getShape());
+
+		for (int i = 0; i < in.getShape()[0]; i++) {
+			nd.setSlice(0, i, i + 1, 1);
+			int[][] lenpt = (int[][]) in.getSlice(nd).getObject(0);
+			IRectangularROI rn = new RectangularROI(lenpt[1][0], lenpt[1][1], lenpt[0][0], lenpt[0][1], 0);
+			iroi.add((IRegion) rn.getBounds());
+		}
+
+		interpolatorRegions = iroi;
+
+	}
+
+	public Dataset getSetRegionsAsDataset() {
+
+		ArrayList<int[][]> out = new ArrayList<>();
+
+		for (int i = 0; i < setRegions.size(); i++) {
+
+			IRectangularROI rir = setRegions.get(i);
+
+			int[] pt = rir.getBounds().getIntPoint();
+			int[] len = rir.getBounds().getIntLengths();
+
+			out.add(new int[][] { len, pt });
+
+		}
+
+		return DatasetFactory.createFromList(out);
+
+	}
+
+	public void setSetRegionsFromDataset(Dataset in) {
+
+		ArrayList<IRectangularROI> iroi = new ArrayList<>();
+
+		SliceND nd = new SliceND(in.getShape());
+
+		for (int i = 0; i < in.getShape()[0]; i++) {
+			nd.setSlice(0, i, i + 1, 1);
+			int[][] lenpt = (int[][]) in.getSlice(nd).getObject(0);
+			IRectangularROI rn = new RectangularROI(lenpt[1][0], lenpt[1][1], lenpt[0][0], lenpt[0][1], 0);
+			iroi.add(rn);
+		}
+
+		setRegions = iroi;
+
+	}
+
+	public Dataset getSetRegionsAsDatast() {
+
+		ArrayList<int[][]> out = new ArrayList<>();
+
+		for (int i = 0; i < setRegions.size(); i++) {
+
+			IRectangularROI ir = setRegions.get(i);
+
+			int[] pt = ir.getBounds().getIntPoint();
+			int[] len = ir.getBounds().getIntLengths();
+
+			out.add(new int[][] { len, pt });
+
+		}
+
+		return DatasetFactory.createFromList(out);
+
 	}
 
 	public void setInterpolatorRegions(ArrayList<IRegion> interpolatorRegions) {
@@ -128,13 +213,54 @@ public class DirectoryModel {
 			}
 		}
 		interpolatorBoxes.add(box);
-		
+
 		setPoke(!poke);
-		
+
 	}
 
 	public ArrayList<double[][]> getInterpolatorBoxes() {
 		return interpolatorBoxes;
+	}
+
+	public Dataset getInterpolatorBoxesAsDataset() {
+
+		ArrayList<double[]> out = new ArrayList<>();
+
+		for (double[][] b : interpolatorBoxes) {
+			double[] bn = new double[6];
+			bn[0] = b[0][0];
+			bn[1] = b[0][1];
+			bn[2] = b[1][0];
+			bn[3] = b[1][1];
+			bn[4] = b[2][0];
+			bn[5] = b[2][1];
+		}
+
+		return DatasetFactory.createFromList(out);
+	}
+
+	public void setInterpolatorBoxesFromDataset(Dataset in) {
+
+		interpolatorBoxes = new ArrayList<>();
+
+		SliceND nd = new SliceND(in.getShape());
+
+		for (int i = 0; i < in.getShape()[0]; i++) {
+			double[][] b = new double[3][];
+			nd.setSlice(0, i, i + 1, 1);
+
+			double[] bn = (double[]) in.getSlice(nd).getObject(0);
+
+			b[0][0] = bn[0];
+			b[0][1] = bn[1];
+			b[1][0] = bn[2];
+			b[1][1] = bn[3];
+			b[2][0] = bn[4];
+			b[2][1] = bn[5];
+
+			interpolatorBoxes.add(b);
+
+		}
 	}
 
 	public void setInterpolatorBoxes(ArrayList<double[][]> interpolatorBoxes) {
@@ -247,7 +373,6 @@ public class DirectoryModel {
 		ocdp = null;
 		csdp = null;
 		inputForEachDat = null;
-		setOutputDatArray(null);
 
 		trackerLocationList = null;
 		// trackerKList = null;
@@ -275,6 +400,27 @@ public class DirectoryModel {
 
 	public ArrayList<double[]> getTrackerLocationList() {
 		return trackerLocationList;
+	}
+
+	public Dataset getTrackerLocationListAsDataset() {
+		return DatasetFactory.createFromList(trackerLocationList);
+	}
+
+	public void setTrackerLocationListFromDataset(Dataset in) {
+
+		trackerLocationList = new ArrayList<>();
+
+		SliceND nd = new SliceND(in.getShape());
+
+		for (int i = 0; i < in.getShape()[0]; i++) {
+			nd.setSlice(0, i, i + 1, 1);
+			trackerLocationList.add((double[]) in.getSlice(nd).getObject(0));
+		}
+
+	}
+
+	public void setTrackerLocationList(ArrayList<double[]> in) {
+		trackerLocationList = in;
 	}
 
 	public void resetTrackers() {
@@ -451,7 +597,6 @@ public class DirectoryModel {
 
 	public void setInitialLenPt(int sliderPos, int[][] initialLenPt) {
 
-
 		double[] roiLocation = LocationLenPtConverterUtils.lenPtToLocationConverter(initialLenPt);
 
 		fms.get(sliderPos).setRoiLocation(roiLocation);
@@ -518,6 +663,34 @@ public class DirectoryModel {
 		return initialDatasetForEachDat;
 	}
 
+	public IDataset getInitialDatasetForEachDatSingleDataset() {
+
+		for (IDataset i : initialDatasetForEachDat) {
+
+			if (i == null) {
+				return null;
+			}
+
+			if (i.getSize() == 0) {
+				return null;
+			}
+		}
+
+		return DatasetUtils.convertToDataset(DatasetUtils.concatenate(initialDatasetForEachDat, 0));
+	}
+
+	public void setInitialDatasetForEachDatFromSingleDataset(Dataset in) {
+
+		initialDatasetForEachDat = new Dataset[in.getShape()[0]];
+
+		SliceND nd = new SliceND(in.getShape());
+
+		for (int i = 0; i < in.getShape()[0]; i++) {
+			nd.setSlice(0, i, i + 1, 1);
+			initialDatasetForEachDat[i] = in.getSlice(nd);
+		}
+	}
+
 	public void setInitialDatasetForEachDat(IDataset[] initialDatasetForEachDat) {
 
 		if (this.initialDatasetForEachDat == null) {
@@ -534,6 +707,34 @@ public class DirectoryModel {
 		}
 
 		return lenPtForEachDat;
+	}
+
+	public Dataset getLenPtForEachDatAsDataset() {
+
+		ArrayList<int[]> outList = new ArrayList<>();
+
+		for (int i = 0; i < lenPtForEachDat.length; i++) {
+			int[] lenpt = new int[] { lenPtForEachDat[i][0][0], lenPtForEachDat[i][0][1], lenPtForEachDat[i][1][0],
+					lenPtForEachDat[i][1][1] };
+
+			outList.add(lenpt);
+
+		}
+
+		return DatasetFactory.createFromList(outList);
+	}
+
+	public void setLenPtForEachDatFromDataset(Dataset in) {
+
+		int[] shape = in.getShape();
+		lenPtForEachDat = new int[shape[0]][][];
+		SliceND nd = new SliceND(shape);
+
+		for (int i = 0; i < shape[0]; i++) {
+			nd.setSlice(0, i, i + 1, 1);
+			int[] lenpt = (int[]) in.getSlice(nd).getObject(0);
+			lenPtForEachDat[i] = new int[][] { { lenpt[0], lenpt[1] }, { lenpt[2], lenpt[3] } };
+		}
 	}
 
 	public void setLenPtForEachDat(int[][][] lenPtForEachDat) {
@@ -602,6 +803,24 @@ public class DirectoryModel {
 		return permanentBoxOffsetLenPt;
 	}
 
+	public Dataset getPermanentBoxOffsetLenPtAsDataset() {
+		List<Integer> out = new ArrayList<>();
+
+		out.add(permanentBoxOffsetLenPt[0][0]);
+		out.add(permanentBoxOffsetLenPt[0][1]);
+		out.add(permanentBoxOffsetLenPt[1][0]);
+		out.add(permanentBoxOffsetLenPt[1][1]);
+
+		return DatasetFactory.createFromList(out);
+	}
+
+	public void setPermanentBoxOffsetLenPtFromDataset(Dataset in) {
+		permanentBoxOffsetLenPt[0][0] = in.getInt(0);
+		permanentBoxOffsetLenPt[0][1] = in.getInt(1);
+		permanentBoxOffsetLenPt[1][0] = in.getInt(2);
+		permanentBoxOffsetLenPt[1][1] = in.getInt(3);
+	}
+
 	public void setPermanentBoxOffsetLenPt(int[][] permanentBoxOffsetLenPt) {
 		this.permanentBoxOffsetLenPt = permanentBoxOffsetLenPt;
 	}
@@ -611,6 +830,13 @@ public class DirectoryModel {
 	}
 
 	public void setBackgroundROI(IROI iroi) {
+		this.backgroundROI = iroi.getBounds();
+	}
+
+	public void setBackgroundROI(double[] in) {
+		int[][] lenpt = LocationLenPtConverterUtils.locationToLenPtConverter(in);
+		IROI iroi = new RectangularROI(lenpt[1][0], lenpt[1][1], lenpt[0][0], lenpt[0][1], 0);
+
 		this.backgroundROI = iroi.getBounds();
 	}
 
@@ -627,6 +853,25 @@ public class DirectoryModel {
 		return backgroundROIForEachDat;
 	}
 
+	public Dataset getBackgroundROIForEachDatAsIntegerArrays() {
+
+		ArrayList<int[][]> outArray = new ArrayList<>();
+
+		for (int i = 0; i < backgroundROIForEachDat.length; i++) {
+
+			IROI iroi = backgroundROIForEachDat[i].getBounds();
+			int[] len = iroi.getBounds().getIntLengths();
+			int[] pt = iroi.getBounds().getIntPoint();
+			int[][] lenpt = new int[][] { len, pt };
+
+			outArray.add(lenpt);
+		}
+
+		Dataset out = DatasetFactory.createFromObject(outArray);
+
+		return out;
+	}
+
 	public void setBackgroundROIForEachDat(IROI[] backgroundROIForEachDat) {
 
 		if (this.backgroundROIForEachDat == null) {
@@ -634,6 +879,23 @@ public class DirectoryModel {
 		}
 
 		this.backgroundROIForEachDat = backgroundROIForEachDat;
+	}
+
+	public void setBackgroundROIForEachDat(Dataset in) {
+
+		IROI[] iroi = new IROI[in.getShape()[0]];
+
+		SliceND nd = new SliceND(in.getShape());
+
+		for (int i = 0; i < in.getShape()[0]; i++) {
+			nd.setSlice(0, i, i + 1, 1);
+			int[][] lenpt = (int[][]) in.getSlice(nd).getObject(0);
+
+			iroi[i] = new RectangularROI(lenpt[1][0], lenpt[1][1], lenpt[0][0], lenpt[0][1], 0);
+
+		}
+
+		this.backgroundROIForEachDat = iroi;
 	}
 
 	public int[][] getBackgroundLenPt() {
@@ -656,14 +918,6 @@ public class DirectoryModel {
 
 	public void setOcdp(OutputCurvesDataPackage ocdp) {
 		this.ocdp = ocdp;
-	}
-
-	public ArrayList<IDataset> getOutputDatArray() {
-		return outputDatArray;
-	}
-
-	public void setOutputDatArray(ArrayList<IDataset> outputDatArray) {
-		this.outputDatArray = outputDatArray;
 	}
 
 	public int[] getFilepathsSortedArray() {
@@ -755,6 +1009,24 @@ public class DirectoryModel {
 
 	public void setPermanentBackgroundLenPt(int[][] permanentBackgroundLenPt) {
 		this.permanentBackgroundLenPt = permanentBackgroundLenPt;
+	}
+
+	public Dataset getPermanentBackgroundLenPtAsDataset() {
+		List<Integer> out = new ArrayList<>();
+
+		out.add(permanentBackgroundLenPt[0][0]);
+		out.add(permanentBackgroundLenPt[0][1]);
+		out.add(permanentBackgroundLenPt[1][0]);
+		out.add(permanentBackgroundLenPt[1][1]);
+
+		return DatasetFactory.createFromList(out);
+	}
+
+	public void setPermanentBackgroundLenPtFromDataset(Dataset in) {
+		permanentBackgroundLenPt[0][0] = in.getInt(0);
+		permanentBackgroundLenPt[0][1] = in.getInt(1);
+		permanentBackgroundLenPt[1][0] = in.getInt(2);
+		permanentBackgroundLenPt[1][1] = in.getInt(3);
 	}
 
 	public ArrayList<OverlapDataModel> getOverlapDataModels() {
@@ -902,8 +1174,31 @@ public class DirectoryModel {
 		return setPositions;
 	}
 
+	public Dataset getSetPositionsAsDataset() {
+
+		ArrayList<double[]> out = new ArrayList<>();
+
+		for (int i = 0; i < setPositions.length; i++) {
+			out.add(setPositions[i]);
+		}
+
+		return DatasetFactory.createFromList(out);
+	}
+
 	public void setSetPositions(double[][] setPositions) {
 		this.setPositions = setPositions;
+	}
+
+	public void setSetPositionsFromDataset(Dataset in) {
+
+		SliceND nd = new SliceND(in.getShape());
+		setPositions = new double[in.getShape()[0]][];
+
+		for (int i = 0; i < in.getShape()[0]; i++) {
+			nd.setSlice(0, i, i + 1, 1);
+			setPositions[i] = (double[]) in.getSlice(nd).getObject(0);
+		}
+
 	}
 
 	public ArrayList<IRectangularROI> getSetRegions() {

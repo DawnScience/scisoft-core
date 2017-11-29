@@ -114,9 +114,9 @@ public class OverlapFinder {
 
 			ArrayList<Integer> overlapLower = new ArrayList<>();
 
-			if (maxMinArray[k][0] > maxMinArray[k + 1][1]) {
+			if (1.02*maxMinArray[k][0] > maxMinArray[k + 1][1]) {
 				for (int l = 0; l < xArray[k].getSize(); l++) {
-					if (xArray[k].getDouble(l) > 0.99 * maxMinArray[k + 1][1]) {
+					if (xArray[k].getDouble(l) > 0.98 * maxMinArray[k + 1][1]) {
 						overlapLower.add(l);
 					}
 				}

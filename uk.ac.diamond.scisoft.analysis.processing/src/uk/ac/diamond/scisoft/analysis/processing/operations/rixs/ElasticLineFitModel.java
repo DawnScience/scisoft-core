@@ -29,7 +29,7 @@ public class ElasticLineFitModel extends RixsBaseModel {
 	private int minPoints = 5;
 
 	@OperationModelField(label = "Minimum number of photons required before attempting to find elastic line", min = 20)
-	private int minPhotons = 100;
+	private int minPhotons = 150;
 
 	/**
 	 * @return width of strip to use to find elastic line

@@ -116,6 +116,7 @@ public class RefinedTwoDExponentialFittingUsingIOperation extends AbstractOperat
 
 		Dataset pBackgroundSubtracted = DatasetFactory.createFromObject(in1);
 		
+		
 		try{
 			pBackgroundSubtracted = Maths.subtract(in1, in1Background, null);
 		}

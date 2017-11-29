@@ -55,7 +55,7 @@ public class SavingUtils {
 				if((writeOnlyGood && f.isGoodPoint()) ||
 						!writeOnlyGood){
 					writer.println(f.getH() +"	"+ f.getK() +"	"+f.getL() + 
-							"	"+ csdp.getSplicedCurveYFhkl().getDouble(gh)+ "	"+ csdp.getSplicedCurveY().getError(gh));
+							"	"+ csdp.getSplicedCurveYFhkl().getDouble(gh)+ "	"+ csdp.getSplicedCurveYFhkl().getDouble(gh));
 
 				}
 			}
@@ -71,7 +71,7 @@ public class SavingUtils {
 
 					writer.println(drm.getxList().get(gh) +"	"+ 
 							csdp.getSplicedCurveY().getDouble(gh)+ "	"+ 
-							csdp.getSplicedCurveY().getError(gh));
+							csdp.getSplicedCurveYError().getDouble(gh));
 
 				}
 			}
@@ -114,7 +114,7 @@ public class SavingUtils {
 						!writeOnlyGood){
 
 					writer.println(f.getH() +"	"+ f.getK() +"	"+f.getL() + 
-							"	"+ csdp.getSplicedCurveYFhkl().getDouble(gh)+ "	"+ csdp.getSplicedCurveYFhkl().getError(gh));
+							"	"+ csdp.getSplicedCurveYFhkl().getDouble(gh)+ "	"+ csdp.getSplicedCurveYFhklError().getDouble(gh));
 
 				}
 			}
@@ -137,7 +137,7 @@ public class SavingUtils {
 
 						writer.println(fms.get(gh).getQ() + "	"+ 
 								csdp.getSplicedCurveY().getDouble(gh)+ "	"+ 
-								csdp.getSplicedCurveY().getError(gh));
+								csdp.getSplicedCurveYError().getDouble(gh));
 					}
 				}
 			}
@@ -152,7 +152,7 @@ public class SavingUtils {
 
 						writer.println(drm.getxList().get(gh) +"	"+ 
 								csdp.getSplicedCurveY().getDouble(gh)+ "	"+ 
-								csdp.getSplicedCurveY().getError(gh));
+								csdp.getSplicedCurveYError().getDouble(gh));
 					}
 				}
 			}
@@ -205,7 +205,7 @@ public class SavingUtils {
 						!writeOnlyGood){
 
 					writer.println(f.getH() +"	"+ f.getK() +"	"+f.getL() + 
-							"	"+ csdp.getSplicedCurveYFhkl().getDouble(gh)+ "	"+ csdp.getSplicedCurveYFhkl().getError(gh) +"	"
+							"	"+ csdp.getSplicedCurveYFhkl().getDouble(gh)+ "	"+ csdp.getSplicedCurveYFhklError().getDouble(gh) +"	"
 							+ f.getLorentzianCorrection()+"	" + f.getPolarisationCorrection() +"	" + f.getAreaCorrection());
 				}
 			}
@@ -230,7 +230,7 @@ public class SavingUtils {
 
 							writer.println(fm.getQdcd() +"	"+ 
 									csdp.getSplicedCurveY().getDouble(gh)+ "	"+ 
-									csdp.getSplicedCurveY().getError(gh)+ "	"+ 
+									csdp.getSplicedCurveYError().getDouble(gh)+ "	"+ 
 									fm.getReflectivityAreaCorrection()+ "	"+
 									fm.getReflectivityFluxCorrection());
 						}
@@ -248,7 +248,7 @@ public class SavingUtils {
 
 							writer.println(fm.getQdcd() +"	"+ 
 									csdp.getSplicedCurveY().getDouble(gh)+ "	"+ 
-									csdp.getSplicedCurveY().getError(gh)+ "	"+ 
+									csdp.getSplicedCurveYError().getDouble(gh)+ "	"+ 
 									fm.getReflectivityAreaCorrection());
 						}
 					}
@@ -264,7 +264,7 @@ public class SavingUtils {
 
 							writer.println(fm.getQdcd() +"	"+ 
 									csdp.getSplicedCurveY().getDouble(gh)+ "	"+ 
-									csdp.getSplicedCurveY().getError(gh));
+									csdp.getSplicedCurveYError().getDouble(gh));
 						}
 					}
 				}
@@ -316,15 +316,15 @@ public class SavingUtils {
 		switch(state){
 		case SPLICEDY:
 			y = csdp.getSplicedCurveY();
-			ye = csdp.getSplicedCurveY().getErrors();
+			ye = csdp.getSplicedCurveYError();
 			break;
 		case SPLICEDYFHKL:
-			y = csdp.getSplicedCurveYFhkl();
+			y = csdp.getSplicedCurveYFhklError();
 			ye = y.getErrors();
 			break;
 		case SPLICEDYRAW:
 			y = csdp.getSplicedCurveYRaw();
-			ye = csdp.getSplicedCurveYRaw().getErrors();
+			ye = csdp.getSplicedCurveYRawError();
 			break;
 		default:
 			//

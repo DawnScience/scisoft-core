@@ -38,6 +38,9 @@ public class ElasticLineEnergyCalibration extends ElasticLineFit {
 	private boolean isImageGood = false;
 	private List<Dataset>[] goodSpectra = new List[] {new ArrayList<>(), new ArrayList<>()};
 
+	/**
+	 * Auxiliary subentry. This must match the name field defined in the plugin extension
+	 */
 	public static final String PROCESS_NAME = "RIXS energy dispersion calibration";
 
 	@Override
@@ -92,6 +95,7 @@ public class ElasticLineEnergyCalibration extends ElasticLineFit {
 				double[] dispersion = new double[rmax];
 				for (int r = 0; r < rmax; r++) {
 					if (goodPosition[r].size() <= 2) {
+						log.append("Not enough good lines (%d) found for ROI %d", goodPosition[r].size(), r);
 						continue;
 					}
 

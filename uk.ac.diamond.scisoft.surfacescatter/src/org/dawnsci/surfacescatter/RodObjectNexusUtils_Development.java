@@ -11,7 +11,6 @@
 
 package org.dawnsci.surfacescatter;
 
-// Imports from Java
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -36,10 +35,8 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.SliceND;
-
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 
-//Let's save this file.
 public class RodObjectNexusUtils_Development {
 
 	private static NexusFile nexusFileReference;
@@ -51,6 +48,7 @@ public class RodObjectNexusUtils_Development {
 		DirectoryModel drm = model.getDrm();
 
 		IDataset[] rawImageArray = new IDataset[fms.size()];
+		IDataset[] backgroundSubtractedImageArray = new IDataset[fms.size()];
 
 		// OutputCurvesDataPackage ocdp = drm.getOcdp();
 		CurveStitchDataPackage csdp = drm.getCsdp();
@@ -89,7 +87,7 @@ public class RodObjectNexusUtils_Development {
 
 			}
 
-			GroupNode nxData = framePointWriter(fm, p, submitLenPt, rawImageArray, m);
+			GroupNode nxData = framePointWriter(fm, p, submitLenPt, rawImageArray, backgroundSubtractedImageArray, m);
 
 			try {
 				nxData.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXcollection"));
@@ -108,7 +106,15 @@ public class RodObjectNexusUtils_Development {
 		geometricalParameterWriter(gm, (long) p, drm, entry);
 
 		p++;
+		
+		directoryModelGroupWriter((long) p, drm, entry);
 
+		p++;
+
+		overlapCurvesDataPackageGroupWriter((long) p, drm.getOcdp(), entry);
+		
+		p++;
+		
 		angleAliasWriter((long) p, entry);
 
 		p++;
@@ -232,7 +238,7 @@ public class RodObjectNexusUtils_Development {
 			nexusFileReference.createData(rawImagesString, gm.getxName(), csdp.getSplicedCurveX().getSlice(slice0),
 					true);
 
-			String[] axesArray = new String[2];
+			String[] axesArray = new String[3];
 
 			ArrayList<String> axes = new ArrayList<>();
 
@@ -245,9 +251,9 @@ public class RodObjectNexusUtils_Development {
 			Dataset integers = DatasetFactory.createLinearSpace(IntegerDataset.class, (double) 0, (double) fms.size(),
 					fms.size());
 
-			axes.add("integers");
+			axes.add(NeXusStructureStrings.getIntegers());
 
-			nexusFileReference.createData(rawImagesString, "integers", integers, true);
+			nexusFileReference.createData(rawImagesString, NeXusStructureStrings.getIntegers(), integers, true);
 
 			try {
 				nexusFileReference.createData(rawImagesString, "q", csdp.getSplicedCurveQ().getSlice(slice0), true);
@@ -307,7 +313,7 @@ public class RodObjectNexusUtils_Development {
 			nexusFileReference.createData(reducedDataString, gm.getxName(), csdp.getSplicedCurveX().getSlice(slice0),
 					true);
 
-			nexusFileReference.createData(reducedDataString, "integers", integers, true);
+			nexusFileReference.createData(reducedDataString, NeXusStructureStrings.getIntegers(), integers, true);
 			try {
 				nexusFileReference.createData(reducedDataString, "q", csdp.getSplicedCurveQ().getSlice(slice0), true);
 			} catch (Exception e) {
@@ -344,9 +350,7 @@ public class RodObjectNexusUtils_Development {
 	}
 
 	private static void geometricalParameterWriter(GeometricParametersModel gm,
-			// GroupNode entry,
 			long oid, DirectoryModel drm,
-			// NexusFile nexusFile
 			GroupNode entry) {
 
 		GroupNode parameters = TreeFactory.createGroupNode(oid);
@@ -387,7 +391,7 @@ public class RodObjectNexusUtils_Development {
 	}
 
 	private static GroupNode framePointWriter(FrameModel fm, int p, int[][] backgroundLenPt, IDataset[] rawImageArray,
-			Map<String, Object[]> m) {
+			IDataset[] backgroundSubtractedImageArray, Map<String, Object[]> m) {
 
 		GroupNode nxData = TreeFactory.createGroupNode(p);
 
@@ -441,15 +445,13 @@ public class RodObjectNexusUtils_Development {
 			}
 		}
 
-		p++;
-
 		// Then we add the raw image
-		DataNode rawImageDataNode = new DataNodeImpl(p);
+		DataNode rawImageDataNode = new DataNodeImpl(0);
 
 		SliceND slice = new SliceND(fm.getRawImageData().getShape());
-		IDataset j = DatasetFactory.createFromObject(0);
+
 		try {
-			j = fm.getRawImageData().getSlice(slice);
+			IDataset j = fm.getRawImageData().getSlice(slice);
 			rawImageArray[fm.getFmNo()] = j;
 			rawImageDataNode.setDataset(j.clone().squeeze());
 		} catch (DatasetException e) {
@@ -458,9 +460,23 @@ public class RodObjectNexusUtils_Development {
 			System.out.println(e.getMessage());
 		}
 
-		nxData.addDataNode("Raw_Image", rawImageDataNode);
+		nxData.addDataNode(NeXusStructureStrings.getRawImage(), rawImageDataNode);
 
-		p++;
+		DataNode backgroundSubtractedImageDataNode = new DataNodeImpl(1);
+
+		SliceND slice1 = new SliceND(fm.getBackgroundSubtractedImage().getShape());
+		IDataset jb = DatasetFactory.createFromObject(0);
+		try {
+			jb = fm.getBackgroundSubtractedImage().getSlice(slice1);
+			backgroundSubtractedImageArray[fm.getFmNo()] = jb;
+			backgroundSubtractedImageDataNode.setDataset(jb.clone().squeeze());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+
+		nxData.addDataNode(NeXusStructureStrings.getBackgroundSubtractedImage(), backgroundSubtractedImageDataNode);
 
 		return nxData;
 
@@ -550,6 +566,73 @@ public class RodObjectNexusUtils_Development {
 
 	}
 
+	private static void directoryModelGroupWriter(long oid, DirectoryModel drm, GroupNode entry) {
+
+		GroupNode drmGroup = TreeFactory.createGroupNode(oid);
+
+		for (DirectoryModelNodeEnum dmne : DirectoryModelNodeEnum.values()) {
+
+			try {
+				dmne.directoryGroupNodePopulateFromDirectoryModelMethod(drmGroup, drm);			
+			} catch (Exception j) {
+				System.out.println(j.getMessage() + "  DirectoryModelNodeEnum name:  " + dmne.getFirstName());
+			}
+		}
+
+		DataNode backgroundSubtractedImageDataNode = new DataNodeImpl(1);
+
+		SliceND slice1 = new SliceND(drm.getTemporaryBackgroundHolder().getShape());
+		IDataset jb = DatasetFactory.createFromObject(0);
+		try {
+			jb = drm.getTemporaryBackgroundHolder().getSlice(slice1);
+			backgroundSubtractedImageDataNode.setDataset(jb.clone().squeeze());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+
+		drmGroup.addDataNode(NeXusStructureStrings.getTemporarybackgroundholder(), backgroundSubtractedImageDataNode);
+
+		
+		
+		
+		drmGroup.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXparameters"));
+
+		try {
+			entry.addGroupNode(NeXusStructureStrings.getDirectoryModelParameters(), drmGroup);
+		} catch (Exception vb) {
+			System.out.println(vb.getMessage());
+		}
+		
+	}
+	
+	
+
+	private static void overlapCurvesDataPackageGroupWriter(long oid, OutputCurvesDataPackage ocdp, GroupNode entry) {
+
+		GroupNode ocdpGroup = TreeFactory.createGroupNode(oid);
+
+		for (OutputCurvesDataPackageEnum dmne : OutputCurvesDataPackageEnum.values()) {
+
+			try {
+				dmne.ocdpGroupNodePopulateFromOutputCurvesDataPackageMethod(ocdpGroup, ocdp);			
+			} catch (Exception j) {
+				System.out.println(j.getMessage() + "  OutputCurvesDataPackageEnum name:  " + dmne.getFirstName());
+			}
+		}
+
+	
+		ocdpGroup.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXparameters"));		
+		
+		try {
+			entry.addGroupNode(NeXusStructureStrings.getDataPackageForOverlapCalculation(), ocdpGroup);
+		} catch (Exception vb) {
+			System.out.println(vb.getMessage());
+		}
+		
+	}
+
 	private static void shortArrayBuilder(Object[] out, Object[] in, String name, GroupNode overview) {
 
 		for (int w = 0; w < in.length; w++) {
@@ -603,9 +686,12 @@ public class RodObjectNexusUtils_Development {
 		Dataset rawImageConcat = DatasetFactory.createFromObject(0);
 
 		try {
-			return DatasetUtils.concatenate(rawImageArray1, 0);
+			
+				return DatasetUtils.concatenate(rawImageArray1, 0);
+
+			
 		} catch (Exception e) {
-			// connection failed, try again.
+
 			try {
 				if ((new Random()).nextInt(10) >= 5 && flag < cutOff + 1) {
 					Thread.sleep((new Random()).nextInt(10000) + 1000);
@@ -626,5 +712,21 @@ public class RodObjectNexusUtils_Development {
 		}
 
 		return rawImageConcat;
+	}
+	
+	private static Dataset localConcatenate(IDataset[] in, int dim) {
+
+		for (IDataset i : in) {
+
+			if (i == null) {
+				return null;
+			}
+
+			if (i.getSize() == 0) {
+				return null;
+			}
+		}
+
+		return DatasetUtils.convertToDataset(DatasetUtils.concatenate(in, dim));
 	}
 }

@@ -12,9 +12,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.net.URI;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -141,6 +139,18 @@ public class HDF5Loader extends AbstractFileLoader {
 		if (loadMetadata) {
 			metadata = dh.getMetadata();
 		}
+		return dh;
+	}
+
+	/**
+	 * @param tree
+	 * @return data holder for tree
+	 */
+	public DataHolder createDataHolder(Tree tree) {
+		DataHolder dh = new DataHolder();
+		dh.setFilePath(fileName);
+		dh.setTree(tree);
+		updateDataHolder(dh, loadMetadata);
 		return dh;
 	}
 

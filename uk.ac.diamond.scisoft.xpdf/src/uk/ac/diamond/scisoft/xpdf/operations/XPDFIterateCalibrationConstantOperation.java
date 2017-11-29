@@ -23,6 +23,7 @@ import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 import uk.ac.diamond.scisoft.xpdf.XPDFAbsorptionMaps;
 import uk.ac.diamond.scisoft.xpdf.XPDFCalibration;
 import uk.ac.diamond.scisoft.xpdf.XPDFCalibrationBase;
+import uk.ac.diamond.scisoft.xpdf.XPDFComposition;
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFQSquaredIntegrator;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
@@ -83,7 +84,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 		
 		// Set the adjustable parameters for the calibration
 		theCalibration.setPolarizationFactor(model.getPolarizationFactor());
-		theCalibration.setComptonScaling(model.getComptonScaling());
+		XPDFComposition.setComptonScaling(model.getComptonScaling());
 		theXPDFMetadata.setComptonScaling(model.getComptonScaling());
 		
 		List<Dataset> backgroundSubtracted = new ArrayList<Dataset>();

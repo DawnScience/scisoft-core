@@ -71,9 +71,8 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 	Dataset solAngSample;
 	List<Dataset> transCorContainers;
 	
-	// Adjustable parameters for beam polarization and to scale the Compton Scattering
+	// Adjustable parameter for beam polarization
 	private double polarizationFraction = 1.0;
-	private double comptonScaling = 1.0;
 	
 	/**
 	 * Empty constructor.
@@ -117,7 +116,6 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 		transCorContainers = new ArrayList<Dataset>();
 
 		// scaling factors
-		this.comptonScaling = inCal.comptonScaling;
 		this.polarizationFraction = inCal.polarizationFraction;
 
 	}
@@ -165,7 +163,6 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 		theCopy.cachePI = (this.cachePI != null) ? this.cachePI : null;
 		
 		// scaling factors
-		theCopy.comptonScaling = this.comptonScaling;
 		theCopy.polarizationFraction = this.polarizationFraction;
 		
 		return theCopy;
@@ -200,17 +197,10 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 	}
 	
 	/**
-	 * Sets the non-physical applied to the Compton scattering. Should really be set to 1.0. 
-	 */
-	public void setComptonScaling(double comptonScaling) {
-		this.comptonScaling = comptonScaling;
-	}
-	
-	/**
 	 * Return form factors for comparison with the calibrated data
 	 */
 	public IDataset getSampleSelfScattering() {
-		return Maths.multiply(this.sampleSelfScattering, this.comptonScaling);
+		return this.sampleSelfScattering;
 	}
 	
 	/**
@@ -890,7 +880,6 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 //		return (double) Maths.multiply(difference, truncatedQ).sum();
 
 		
-		truncatedSelfScattering.imultiply(this.comptonScaling);
 		smoothed.isubtract(truncatedSelfScattering);
 		smoothed.imultiply(truncatedQ);
 		return ((Number) smoothed.sum()).doubleValue();

@@ -35,7 +35,7 @@ public class GeometricParametersModel {
 	private EnumMap<ReflectivityAngleAliasEnum,String> reflectivityAnglesMap;
 	private EnumMap<ReflectivityFluxParametersAliasEnum,String> reflectivityFluxMap;
 	private boolean useInternalFlux;
-	private String experimentMethod;
+	private String experimentMethod = "SXRD";
 	private Boolean useNegativeQ = false;
 	
 	public boolean getUseNegativeQ() {

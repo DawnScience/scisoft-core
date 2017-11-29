@@ -270,19 +270,23 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 			log.append("Summing %s", s);
 			peak.setParameterValues(ip); // reset initial parameter values
 			Dataset t = image.getSliceView(s, interval).sum(0);
-			fitFunction(peak, xSlice, t);
-
 			if (allStrips == null) {
 				allStrips = t.reshape(1, t.getSize());
 			} else {
 				allStrips = DatasetUtils.concatenate(new IDataset[] {allStrips, t.reshape(1, t.getSize())}, 0);
 			}
 
+			try {
+				fitFunction(peak, xSlice, t);
+				col.setAbs(i, peak.getParameterValue(0));
+			} catch (Exception e) {
+				col.setAbs(i, Double.NaN);
+			}
+
 //			if (i == 0) { // TODO add ROI number
 //				t.setName("peak_" + i);
 //				generateFitForDisplay(peak, xSlice, t, "peak_fit_" + i);
 //			}
-			col.setAbs(i, peak.getParameterValue(0));
 		}
 
 		allStrips.setName("strip_" + r);
@@ -357,6 +361,10 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 
 	protected void initializeFunctionParameters(IFunction pdf, Dataset v) {
 		IParameter p = pdf.getParameter(0);
+		if (v.max(true).doubleValue() == 0) {
+			throw new OperationException(this, "Cannot fit to data with maximum value of zero");
+		}
+
 		int pmax = v.argMax(true); // position of maximum
 		double std = v.stdDeviation();
 		p.setLimits(Math.max(pmax - 10 * std, 0), Math.min(pmax + 10 * std, v.getSize()));

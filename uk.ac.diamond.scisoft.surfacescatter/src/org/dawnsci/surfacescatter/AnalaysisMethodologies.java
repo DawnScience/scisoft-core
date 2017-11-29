@@ -3,62 +3,58 @@ package org.dawnsci.surfacescatter;
 public class AnalaysisMethodologies {
 
 	public enum Methodology {
-		TWOD, //TWOD_TRACKING, 
-		X ,Y, SECOND_BACKGROUND_BOX, OVERLAPPING_BACKGROUND_BOX
+		TWOD(0, "2D"),
+		X(1, "X") ,
+		Y(2, "Y"), 
+		SECOND_BACKGROUND_BOX(3, "Second Background Box"), 
+		OVERLAPPING_BACKGROUND_BOX(4, "O'l'ing Bg Box");
+		
+		private int methodNumber;
+		private String methodName;
+
+		Methodology(int a, String b) {
+
+			this.methodNumber = a;
+			this.methodName = b;
+
+		}
+
+		
 	}
 
 	public static String toString(Methodology methodology){
 		
-		switch(methodology){
-			case X:
-				return "X";
-			case Y:
-				return "Y";
-			case TWOD:
-				return "2D";
-//			case TWOD_TRACKING:
-//				return "2D Tracking";
-			case SECOND_BACKGROUND_BOX:
-				return "Second Background Box";
-			case OVERLAPPING_BACKGROUND_BOX:
-				return "O'l'ing Bg Box";
-		}
-		return null;
+		return methodology.methodName;
 	}
 	
 	public static Methodology toMethodology(String in){
 		
-		if (in.equals("X")){
-			return Methodology.X;
-		}
-		else if (in.equals("Y")){
-			return Methodology.Y;
-		}
-		else if (in.equals("2D")){
-			return Methodology.TWOD;
+		for(Methodology m :Methodology.values()) {
+			if(in.equals(m.methodName)) {
+				return m;
+			}
+			
 		}
 		
-		else if (in.equals("TWOD")){
-			return Methodology.TWOD;
-		}
-		
-//		else if (in.equals("2D Tracking")){
-//			return Methodology.TWOD_TRACKING;
-//		}
-		
-//		else if (in.equals("TWOD_TRACKING")){
-//			return Methodology.TWOD_TRACKING;
-//		}
-		
-		else if (in.equals("Second Background Box")){
-			return Methodology.SECOND_BACKGROUND_BOX;
-		}
-		else if (in.equals("O'l'ing Bg Box")){
-			return Methodology.OVERLAPPING_BACKGROUND_BOX;
-		}
 		return null;
 	}
 	
+	
+	public static Methodology toMethodology(int in){
+		
+		if(in == -1) {
+			return Methodology.TWOD;
+		}
+		
+		for(Methodology m :Methodology.values()) {
+			if(in == m.methodNumber) {
+				return m;
+			}
+			
+		}
+		
+		return null;
+	}
 	
 	
 	public enum FitPower {

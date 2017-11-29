@@ -231,10 +231,6 @@ public class RodObjectNexusUtils_Development {
 			} catch (Exception ui) {
 				System.out.println(ui.getMessage());
 			}
-			
-//			for(IDataset d:rawImageArray) {
-//				d.squeeze();
-//			}
 
 			Dataset rawImageConcat = retryConcat(rawImageArray, model.getNoRods(), 0);
 
@@ -354,9 +350,7 @@ public class RodObjectNexusUtils_Development {
 	}
 
 	private static void geometricalParameterWriter(GeometricParametersModel gm,
-			// GroupNode entry,
 			long oid, DirectoryModel drm,
-			// NexusFile nexusFile
 			GroupNode entry) {
 
 		GroupNode parameters = TreeFactory.createGroupNode(oid);
@@ -718,29 +712,6 @@ public class RodObjectNexusUtils_Development {
 		}
 
 		return rawImageConcat;
-	}
-	
-	private static IDataset convertListofListsOfDoublesToDataset(ArrayList<ArrayList<Double>> in) {
-
-		ArrayList<IDataset> im = new ArrayList<>();
-
-		for (ArrayList<Double> a : in) {
-			im.add(DatasetFactory.createFromList(a));
-		}
-
-		return concatenateIDatasetArrayList(im);
-	}
-
-	private static IDataset concatenateIDatasetArrayList(ArrayList<IDataset> in) {
-
-		IDataset[] im = new IDataset[in.size()];
-
-		for (int i = 0; i < in.size(); i++) {
-
-			im[i] = in.get(i);
-		}
-
-		return localConcatenate(im, 0);
 	}
 	
 	private static Dataset localConcatenate(IDataset[] in, int dim) {

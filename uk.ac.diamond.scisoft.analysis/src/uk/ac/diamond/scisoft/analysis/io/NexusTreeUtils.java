@@ -740,9 +740,11 @@ public class NexusTreeUtils {
 
 		String signal = getFirstString(gn.getAttribute(NX_SIGNAL));
 		if (signal == null) {
+			logger.warn("Signal is null, defaulting to {}", DATA);
 			signal = DATA;
 		}
 		if (!gn.containsDataNode(signal)) {
+			logger.warn("Group node does not contain {}", signal);
 			return null;
 		}
 
@@ -761,6 +763,7 @@ public class NexusTreeUtils {
 
 		String[] tmp = getStringArray(gn.getAttribute(NX_AXES));
 		if (tmp == null) {
+			logger.warn("Could not read axes attribute");
 			return null;
 		}
 		

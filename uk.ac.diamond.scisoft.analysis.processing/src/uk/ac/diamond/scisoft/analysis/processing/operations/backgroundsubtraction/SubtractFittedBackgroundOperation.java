@@ -141,6 +141,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 		// add fit parameters metadata to dataset to pass down chain
 		OperationDataForDisplay od = new OperationDataForDisplay(op.getData());
+		od.setShowSeparately(true);
 		od.setLog(log);
 
 		setDisplayData(od, x, h, fit);

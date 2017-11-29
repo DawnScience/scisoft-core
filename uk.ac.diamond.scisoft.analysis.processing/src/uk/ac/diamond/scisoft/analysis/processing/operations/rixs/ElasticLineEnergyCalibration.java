@@ -80,6 +80,7 @@ public class ElasticLineEnergyCalibration extends ElasticLineFit {
 				odd = (OperationDataForDisplay) od;
 			} else {
 				odd = new OperationDataForDisplay();
+				odd.setShowSeparately(true);
 			}
 			int smax = si.getTotalSlices();
 			log.append("At frame %d/%d", si.getSliceNumber(), smax);

@@ -108,6 +108,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		}
 
 		OperationDataForDisplay od = new OperationDataForDisplay();
+		od.setShowSeparately(true);
 		od.setLog(log);
 		od.setData(result);
 		if (displayData.size() > 0) {

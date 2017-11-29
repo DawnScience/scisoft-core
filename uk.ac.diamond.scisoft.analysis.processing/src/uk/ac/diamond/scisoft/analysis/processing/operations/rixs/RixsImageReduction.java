@@ -414,6 +414,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			odd = (OperationDataForDisplay) od;
 		} else {
 			odd = new OperationDataForDisplay(od.getData());
+			odd.setShowSeparately(true);
 		}
 
 		odd.setDisplayData(displayData.toArray(new IDataset[displayData.size()]));

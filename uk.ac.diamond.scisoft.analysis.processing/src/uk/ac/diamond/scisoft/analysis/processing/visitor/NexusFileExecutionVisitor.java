@@ -606,8 +606,11 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 							}
 
 							synchronized (nexusFile) {
-								DataNode dn = nexusFile.createData(nexusFile.getGroup(groupName, true),
-										axDataset.squeeze());
+								GroupNode gn = nexusFile.getGroup(groupName, true);
+								if (gn.containsDataNode(name)) { // final check as there is a race condition
+									continue;
+								}
+								DataNode dn = nexusFile.createData(gn, axDataset.squeeze());
 								dn.addAttribute(new AttributeImpl("axis", String.valueOf(i + 1))); // FIXME needed???
 								nexusFile.addAttribute(nexusFile.getGroup(groupName, true),
 										new AttributeImpl(names[j] + NexusTreeUtils.NX_INDICES_SUFFIX,
@@ -672,7 +675,10 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			duplicateName = false;
 			for (Entry<Integer, String[]> e : names.entrySet()) {
 				for (String s : e.getValue()) {
-					if (name.equals(s)) duplicateName = true;
+					if (name.equals(s)) {
+						duplicateName = true;
+						break;
+					}
 				}
 			}
 			

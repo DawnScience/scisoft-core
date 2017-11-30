@@ -140,7 +140,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	/**
 	 * @param r
 	 * @param in
-	 * @return shift and spectrum datasets
+	 * @return elastic line position and spectrum datasets
 	 */
 	public Dataset[] makeSpectrum(int r, Dataset in, double maxSlope) {
 		// shift and accumulate spectra
@@ -156,18 +156,17 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			lines[r] = line;
 		}
 
-		DoubleDataset shift = line.calculateValues(y);
-		double shift0 = shift.getDouble();
-		shift.isubtract(shift0); // relative to edge of region
+		DoubleDataset elastic = line.calculateValues(y); // absolute position of elastic line to use a zero point
+		double elastic0 = elastic.getDouble();
 
 		DoubleDataset spectrum = DatasetFactory.zeros(cols);
 		SliceND slice = new SliceND(shape); 
 		for (int i = 0; i < rows; i++) {
 			slice.setSlice(0, i, i+1, 1);
-			spectrum.iadd(Maths.interpolate(Maths.add(c, shift.getDouble(i)), in.getSliceView(slice).squeeze(), c, 0, 0));
+			spectrum.iadd(Maths.interpolate(Maths.add(c, elastic.getDouble(i) - elastic0), in.getSliceView(slice).squeeze(), c, 0, 0));
 		}
 
-		return new Dataset[] {shift, spectrum};
+		return new Dataset[] {elastic, spectrum};
 	}
 
 	/**

@@ -277,10 +277,10 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 						int[] hMultiple = new int[bmax];
 						allSingle[r][i] = hSingle;
 						allMultiple[r][i] = hMultiple;
-						double py0 = line.val(0);
+						double el0 = line.val(0); // elastic line intercept
 						for (int j = 0, jmax = sums.getSize(); j < jmax; j++) {
-							double px = posn.getDouble(j, 1); // + offset[0];
-							double py = posn.getDouble(j, 0); // + offset[1];
+							double px = posn.getDouble(j, 1);
+							double py = posn.getDouble(j, 0);
 
 							if (roi != null && !roi.containsPoint(px, py)) {
 								continue; // separate by regions
@@ -289,7 +289,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 							cX.add(px);
 							cY.add(py);
 							// correct for tilt
-							py += line.val(px) - py0;
+							py += line.val(px) - el0;
 
 							double ps = sums.getDouble(j);
 							if (ps >= single) {
@@ -326,11 +326,10 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				Dataset[] sSpectra = new Dataset[2];
 				Dataset[] mSpectra = new Dataset[2];
 				for (int r = 0; r < rmax; r++) {
-					StraightLine line = getStraightLine(r);
-					double py0 = line.val(0);
+					double el0 = getStraightLine(r).val(0); // elastic line intercept
 					Dataset er = DatasetFactory.createRange(bmax);
-					er.iadd(-py0); // adjust zero TODO sign wrong??
-					er.imultiply(energyDispersion[r]/bin);
+					er.iadd(-bin*el0); // adjust zero TODO sign wrong??
+					er.imultiply(-energyDispersion[r]/bin);
 					er.setName("Energy loss");
 					energies[r] = er;
 					Dataset t = DatasetFactory.createFromObject(allSingle[r]);

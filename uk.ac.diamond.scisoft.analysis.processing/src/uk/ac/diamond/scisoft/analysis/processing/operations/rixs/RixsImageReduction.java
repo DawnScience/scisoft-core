@@ -36,6 +36,7 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Maths;
@@ -286,8 +287,12 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 								continue; // separate by regions
 							}
 
-							cX.add(px);
-							cY.add(py);
+							// add coords
+							if (i == 0) {
+								cX.add(px);
+								cY.add(py);
+							}
+
 							// correct for tilt
 							py += line.val(px) - el0;
 
@@ -325,6 +330,9 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				Dataset[] energies = new Dataset[2];
 				Dataset[] sSpectra = new Dataset[2];
 				Dataset[] mSpectra = new Dataset[2];
+				Dataset[] sEvents = new Dataset[2];
+				Dataset[] mEvents = new Dataset[2];
+
 				for (int r = 0; r < rmax; r++) {
 					double el0 = getStraightLine(r).val(0); // elastic line intercept
 					Dataset er = DatasetFactory.createRange(bmax);
@@ -337,11 +345,26 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					ProcessingUtils.setAxes(t, null, er);
 					sSpectra[r] = t;
 					summaryData.add(t);
+
+					Dataset nf = t.sum(1); // to work out per-image as single fraction of total events
+					nf.setName("single_photon_count_" + r);
+					sEvents[r] = nf;
+					summaryData.add(nf);
+
 					t = DatasetFactory.createFromObject(allMultiple[r]);
 					t.setName("multiple_photon_spectrum_" + r);
 					ProcessingUtils.setAxes(t, null, er);
 					mSpectra[r] = t;
 					summaryData.add(t);
+
+					t = t.sum(1);
+					t.setName("multiple_photon_count_" + r);
+					mEvents[r] = t;
+					summaryData.add(t);
+
+					nf = Maths.divide(nf.cast(DoubleDataset.class), t);
+					nf.setName("single_events_fraction_" + r);
+					summaryData.add(nf);
 				}
 
 				// total and correlated spectra
@@ -351,6 +374,12 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					sp = accumulate(sArray);
 					sp.setName("total_spectrum_" + r);
 					summaryData.add(sp);
+
+					double ts = (Double) ((Number) sEvents[r].sum()).doubleValue();
+					double tm = (Double) ((Number) mEvents[r].sum()).doubleValue();
+					log.append("Events: single/total = %g/%g = %g ", ts, tm, ts/tm);
+					summaryData.add(ProcessingUtils.createNamedDataset(ts/tm, "total_single_events_fraction_" + r));
+
 					Dataset ax = null;
 					try {
 						ax = DatasetUtils.sliceAndConvertLazyDataset(sp.getFirstMetadata(AxesMetadata.class).getAxis(0)[0]);

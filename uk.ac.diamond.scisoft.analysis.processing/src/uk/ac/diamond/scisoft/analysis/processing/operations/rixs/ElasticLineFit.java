@@ -312,8 +312,11 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 		log.append("\nFitting straight line");
 		StraightLine line = getStraightLine(r);
 		if (line == null) {
-			line = new StraightLine(-model.getMaxSlope(), model.getMaxSlope(), 0, ymax);
-			lines[r] = line;
+			line = lines[r] = new StraightLine(-model.getMaxSlope(), model.getMaxSlope(), 0, ymax);
+		}
+		IParameter intercept = line.getParameter(1);
+		if (ymax > intercept.getUpperLimit()) { // correct upper bound (TODO find out why it's wrong)
+			intercept.setUpperLimit(ymax);
 		}
 		residual = Double.POSITIVE_INFINITY;
 		Dataset diff;
@@ -323,7 +326,7 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 		do {
 			line.setParameterValues(0, ymax/2);
 			double cr = fitFunction(line, x, y, mask);
-			if (cr > residual) {
+			if (cr > 1.5*residual) { // allow for variation in residual trends
 				throw new OperationException(this, "Discarding outliers made straight line fit worse");
 			}
 			residual = cr;
@@ -340,7 +343,7 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 			int i = ((Number) omask.sum()).intValue();
 			log.append("Outliers found: %d/%d", x.getSize() - i, x.getSize());
 			if (i < model.getMinPoints()) {
-				throw new OperationException(this, "Too few points left to fit straight line: " + (x.getSize() - i));
+				throw new OperationException(this, "Too few points left to fit straight line: " + i + " from " + x.getSize());
 			}
 			mask = omask;
 		} while (dev > model.getMaxDev());

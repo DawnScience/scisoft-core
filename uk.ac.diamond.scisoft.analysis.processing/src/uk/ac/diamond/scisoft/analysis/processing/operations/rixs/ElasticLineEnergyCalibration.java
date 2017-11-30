@@ -211,6 +211,7 @@ public class ElasticLineEnergyCalibration extends ElasticLineFit {
 
 		List<Double> gEnergy = new ArrayList<>();
 		List<Double> gPosn = new ArrayList<>();
+		List<Double> gFWHM = new ArrayList<>();
 		List<Double> energy = goodPosition[r];
 
 		int ns = goodSpectra[r].size();
@@ -221,8 +222,8 @@ public class ElasticLineEnergyCalibration extends ElasticLineFit {
 			spectrum = goodSpectra[r].get(i);
 			log.append("Fitting elastic peak: %d/%d", i, ns);
 			if (ip != null) {
-				ip[0] = spectrum.argMax(true); // shift fit
-				peak.setParameterValues(ip);
+				ip[0] = spectrum.argMax(true);
+				peak.setParameterValues(ip); // shift peak initial position for fit
 			}
 			double res = Double.POSITIVE_INFINITY;
 			try {
@@ -230,6 +231,7 @@ public class ElasticLineEnergyCalibration extends ElasticLineFit {
 				if (Double.isFinite(res)) {
 					gEnergy.add(energy.get(i));
 					gPosn.add(peak.getParameterValue(0));
+					gFWHM.add(peak.getParameterValue(1));
 					if (ip == null) {
 						ip = peak.getParameterValues();
 					}
@@ -257,6 +259,11 @@ public class ElasticLineEnergyCalibration extends ElasticLineFit {
 		gSpectrumFit.setName("elastic_spectrum_fit_" + r);
 		ProcessingUtils.setAxes(gSpectrumFit, ge);
 		summaryData.add(gSpectrumFit);
+		Dataset gf = DatasetFactory.createFromList(gFWHM);
+		gf.setName("elastic_spectrum_fwhm_" + r);
+		ProcessingUtils.setAxes(gf, ge);
+		summaryData.add(gf);
+
 		return new List<?>[] {gEnergy, gPosn};
 	}
 }

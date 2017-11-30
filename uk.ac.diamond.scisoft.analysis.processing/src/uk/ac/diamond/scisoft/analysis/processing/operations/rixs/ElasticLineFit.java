@@ -224,6 +224,8 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 		return y;
 	}
 
+	private int[] stripSizes = new int[] {-1, -1};
+
 	/**
 	 * Sum rows to form approximate form of elastic spectrum then fit to find maxima
 	 * and use them as coords
@@ -255,6 +257,11 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 		int mean = (int) Math.floor(ip[0]);
 		int width = Math.max(3, (int) (3 * Math.ceil(ip[1])));
 		Slice interval = new Slice(Math.max(0, mean - width), Math.min(xmax, mean + width + 1));
+		int stripSize = stripSizes[r];
+		if (stripSize < 0) { // save first strip size
+			stripSize = stripSizes[r] = interval.getNumSteps();
+		}
+
 		log.append("Using line slice %s for finding peak", interval);
 		int delta = model.getDelta();
 		int rows = shape[0];
@@ -289,6 +296,11 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 //			}
 		}
 
+		int diff = interval.getNumSteps() - stripSize;
+		if (diff > 0) {
+			// need to crop strips when saved as they can have different sizes
+			allStrips = allStrips.getSliceView(null, new Slice(diff, null));
+		}
 		allStrips.setName("strip_" + r);
 		ProcessingUtils.setAxes(allStrips, null, xSlice);
 		auxData.add(allStrips);

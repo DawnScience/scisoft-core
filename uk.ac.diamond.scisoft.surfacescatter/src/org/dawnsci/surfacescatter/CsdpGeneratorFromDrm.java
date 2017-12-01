@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 
-import javolution.io.Struct.Bool;
-
 public class CsdpGeneratorFromDrm {
 
 	private CurveStitchDataPackage csdp;

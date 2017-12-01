@@ -27,7 +27,16 @@ public class OverlapUIModel {
 	private AxisEnums.yAxes yAxis = yAxes.SPLICEDY;
 	private boolean pokeTheModel = true;
 	private boolean poke = true;
+	private boolean useNegativevalues = false;
 	
+	public boolean isUseNegativevalues() {
+		return useNegativevalues;
+	}
+
+	public void setUseNegativevalues(boolean useNegativevalues) {
+		this.useNegativevalues = useNegativevalues;
+	}
+
 	public AxisEnums.yAxes getyAxis() {
 		return yAxis;
 	}

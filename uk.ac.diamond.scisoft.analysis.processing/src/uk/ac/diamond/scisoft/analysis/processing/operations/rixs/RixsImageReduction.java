@@ -60,7 +60,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 	private Dataset totalSum = null; // dataset of all event sums (so far)
 	private List<Dataset> allSums = new ArrayList<>(); // list of dataset of event sums in each image
 	private List<Dataset> allPositions = new ArrayList<>(); // list of dataset of event coords in each image
-	private List<Dataset>[] spectra = new List[] {new ArrayList<>(), new ArrayList<>()};
+	private List<Dataset>[] allSpectra = new List[] {new ArrayList<>(), new ArrayList<>()};
 
 	@Override
 	public String getId() {
@@ -97,13 +97,16 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 
 	@Override
 	protected void resetProcess(IDataset original) {
-		spectra[0].clear();
-		spectra[1].clear();
+		totalSum = null;
+		allSums.clear();
+		allPositions.clear();
+		allSpectra[0].clear();
+		allSpectra[1].clear();
 	}
 
 	@Override
 	void initializeProcess(IDataset original) {
-		log.append("RIXS Image Operation");
+		log.append("RIXS Image Reduction");
 		log.append("====================");
 	}
 
@@ -212,7 +215,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 
 		auxData.add(spectrum);
 
-		spectra[r].add(spectrum);
+		allSpectra[r].add(spectrum);
 		return spectrum;
 	}
 
@@ -382,7 +385,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				// total and correlated spectra
 				for (int r = 0; r < roiMax; r++) {
 					Dataset sp = null;
-					IDataset[] sArray = toArray(spectra[r]);
+					IDataset[] sArray = toArray(allSpectra[r]);
 					sp = accumulate(sArray);
 					sp.setName("total_spectrum_" + r);
 					summaryData.add(sp);
@@ -408,6 +411,12 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					ProcessingUtils.setAxes(sp, ax);
 					summaryData.add(sp);
 
+					List<Double> shift = new ArrayList<>();
+					for (int i = 0; i < sArray.length; i++) {
+						shift.add(DatasetUtils.convertToDataset(results.get(2*i)).getDouble());
+					}
+					summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, "correlated_spectrum_shift_" + r));
+
 					Dataset e = energies[r];
 					sp = sSpectra[r].sum(0);
 					sp.setName("total_single_photon_spectrum_" + r);
@@ -432,6 +441,11 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					sp.setName("correlated_single_photon_spectrum_" + r);
 					ProcessingUtils.setAxes(sp, e);
 					summaryData.add(sp);
+					shift.clear();
+					for (int i = 0; i < sArray.length; i++) {
+						shift.add(DatasetUtils.convertToDataset(results.get(2*i)).getDouble());
+					}
+					summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, "correlated_single_photon_spectrum_shift_" + r));
 
 					sArray = new IDataset[mSpectra[r].getShapeRef()[0]];
 					for (int i = 0; i < sArray.length; i++) {
@@ -445,6 +459,11 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					sp.setName("correlated_multiple_photon_spectrum_" + r);
 					ProcessingUtils.setAxes(sp, e);
 					summaryData.add(sp);
+					shift.clear();
+					for (int i = 0; i < sArray.length; i++) {
+						shift.add(DatasetUtils.convertToDataset(results.get(2*i)).getDouble());
+					}
+					summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, "correlated_multiple_photon_spectrum_shift_" + r));
 				}
 			}
 		}

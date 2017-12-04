@@ -377,6 +377,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					mEvents[r] = t;
 					summaryData.add(t);
 
+					t = Maths.add(t, nf);
 					nf = Maths.divide(nf.cast(DoubleDataset.class), t);
 					nf.setName("single_events_fraction_" + r);
 					summaryData.add(nf);
@@ -392,8 +393,8 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 
 					double ts = (Double) ((Number) sEvents[r].sum()).doubleValue();
 					double tm = (Double) ((Number) mEvents[r].sum()).doubleValue();
-					log.append("Events: single/total = %g/%g = %g ", ts, tm, ts/tm);
-					summaryData.add(ProcessingUtils.createNamedDataset(ts/tm, "total_single_events_fraction_" + r));
+					log.append("Events: single/total = %g/%g = %g ", ts, tm, ts/(ts + tm));
+					summaryData.add(ProcessingUtils.createNamedDataset(ts/(ts + tm), "total_single_events_fraction_" + r));
 
 					Dataset ax = null;
 					try {

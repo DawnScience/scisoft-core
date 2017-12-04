@@ -19,7 +19,6 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
-import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.BooleanIterator;
@@ -33,6 +32,7 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.Stats;
 import org.eclipse.january.metadata.AxesMetadata;
 
@@ -115,7 +115,8 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 			log.append("Current position: %s", position.toString(true));
 		} catch (Exception e) {
 			log.append("Could not get position: %s", e);
-			position = DatasetFactory.ones(1); // dummy scan is incorrectly written
+			SliceND is = smd.getSliceInfo().getInputSliceWithoutDataDimensions();
+			position = DatasetFactory.ones(is.getSourceShape()); // dummy scan is incorrectly written
 		}
 	}
 

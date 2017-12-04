@@ -31,8 +31,8 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.Slice;
-import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.Stats;
 import org.eclipse.january.metadata.AxesMetadata;
 
@@ -113,10 +113,10 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 		try {
 			position = DatasetUtils.convertToDataset(smd.getMatchingSlice(amd.getAxis(0)[0])).squeeze(true);
 			log.append("Current position: %s", position.toString(true));
-		} catch (Exception e) {
+		} catch (Exception e) { // dummy scans are incorrectly written
 			log.append("Could not get position: %s", e);
-			SliceND is = smd.getSliceInfo().getInputSliceWithoutDataDimensions();
-			position = DatasetFactory.ones(is.getSourceShape()); // dummy scan is incorrectly written
+			int[] shape = smd.getSliceInfo().getInputSliceWithoutDataDimensions().getSourceShape();
+			position = DatasetFactory.createRange(ShapeUtils.calcSize(shape)).reshape(shape);
 		}
 	}
 

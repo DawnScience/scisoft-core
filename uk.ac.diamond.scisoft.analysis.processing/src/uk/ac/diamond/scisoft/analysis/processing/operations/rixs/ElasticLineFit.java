@@ -113,7 +113,9 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 		try {
 			position = DatasetUtils.convertToDataset(smd.getMatchingSlice(amd.getAxis(0)[0])).squeeze(true);
 			log.append("Current position: %s", position.toString(true));
-		} catch (DatasetException e1) {
+		} catch (Exception e) {
+			log.append("Could not get position: %s", e);
+			position = DatasetFactory.ones(1); // dummy scan is incorrectly written
 		}
 	}
 
@@ -388,7 +390,24 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 
 		log.append("Fitted function: residual = %g\n%s", residual, f);
 		log.append("Peak is %g cf %g", f.val(f.getParameter(0).getValue()), v.max().doubleValue());
+
+//		checkResidual(v, residual);
 		return residual;
+	}
+
+	private static final double RESIDUAL_FACTOR = 0.03; //
+	private void checkResidual(Dataset y, double residual) {
+		double t;
+		if (y.min(true).doubleValue() >= 0) {
+			t = ((Number) y.sum(true)).doubleValue();
+			t *= t * RESIDUAL_FACTOR;
+		} else {
+			t = ((Number) y.mean(true)).doubleValue();
+			t = (y.variance(true, true) + t*t) * RESIDUAL_FACTOR;
+		}
+		if (residual > t) {
+			throw new OperationException(this, "Bad fit: residual exceeds threshold " + residual + " cf " + t);
+		}
 	}
 
 	protected void initializeFunctionParameters(IFunction pdf, Dataset v) {

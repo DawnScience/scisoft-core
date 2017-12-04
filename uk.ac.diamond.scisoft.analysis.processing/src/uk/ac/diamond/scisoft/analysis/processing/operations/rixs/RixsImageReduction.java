@@ -78,10 +78,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 	}
 
 	@Override
-	void initializeProcess(IDataset original) {
-		log.append("RIXS Image Operation");
-		log.append("====================");
-
+	void updateFromModel() {
 		Arrays.fill(energyDispersion, Double.NaN);
 		energyDispersion[0] = model.getEnergyDispersion();
 		if (Double.isNaN(energyDispersion[0])) {
@@ -94,6 +91,20 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		}
 
 		initializeFitLine(model.getFitFile());
+
+		super.updateFromModel();
+	}
+
+	@Override
+	protected void resetProcess(IDataset original) {
+		spectra[0].clear();
+		spectra[1].clear();
+	}
+
+	@Override
+	void initializeProcess(IDataset original) {
+		log.append("RIXS Image Operation");
+		log.append("====================");
 	}
 
 	private void initializeFitLine(String fitFile) {
@@ -125,15 +136,18 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				if (n.getName().endsWith(ElasticLineFit.PROC_NAME) && n.isDestinationGroup()) {
 					GroupNode fg = (GroupNode) n.getDestination();
 					int r = fg.getNumberOfGroupNodes() / 3; // three datasets per line
-					double[] p = new double[MAX_ROIS]; 
+					double[] p = new double[2];
 					for (int i = 0; i < r; i++) {
 						String l = "line_" + i;
 						p[0] = NexusTreeUtils.parseDoubleArray(fg.getGroupNode(l + "_m").getDataNode("data"))[0];
 						p[1] = NexusTreeUtils.parseDoubleArray(fg.getGroupNode(l + "_c").getDataNode("data"))[0];
-						lines[i] = new StraightLine(p);
+						StraightLine line = lines[i] = new StraightLine(p);
 					}
 				}
 			}
+
+			// TODO may be set slope limits from process in pg
+
 		} catch (Exception e) {
 			throw new OperationException(this, "Cannot load file with elastic line fit", e);
 		}
@@ -257,20 +271,18 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				int bin = model.getBins();
 				int bmax = bin * original.getShapeRef()[model.getEnergyIndex()];
 
-				boolean useBothROIs = model.getRoiA() != null && model.getRoiB() != null;
 				// per image, separate by sum
-				int rmax = useBothROIs ? 2 : 1;
-				int[][][] allSingle = new int[rmax][smax][];
-				int[][][] allMultiple = new int[rmax][smax][];
+				int[][][] allSingle = new int[roiMax][smax][];
+				int[][][] allMultiple = new int[roiMax][smax][];
 				List<Double> cX = new ArrayList<>();
 				List<Double> cY = new ArrayList<>();
 				for (int i = 0; i < smax; i++) {
-					for (int r = 0; r < rmax; r++) {
+					for (int r = 0; r < roiMax; r++) {
 						cX.clear();
 						cY.clear();
 
 						StraightLine line = getStraightLine(r);
-						IRectangularROI roi = getROI(useBothROIs, r);
+						IRectangularROI roi = getROI(r);
 
 						Dataset sums = allSums.get(i);
 						Dataset posn = allPositions.get(i);
@@ -333,7 +345,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				Dataset[] sEvents = new Dataset[2];
 				Dataset[] mEvents = new Dataset[2];
 
-				for (int r = 0; r < rmax; r++) {
+				for (int r = 0; r < roiMax; r++) {
 					double el0 = getStraightLine(r).val(0); // elastic line intercept
 					Dataset er = DatasetFactory.createRange(bmax);
 					er.iadd(-bin*el0); // adjust zero TODO sign wrong??
@@ -368,7 +380,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				}
 
 				// total and correlated spectra
-				for (int r = 0; r < rmax; r++) {
+				for (int r = 0; r < roiMax; r++) {
 					Dataset sp = null;
 					IDataset[] sArray = toArray(spectra[r]);
 					sp = accumulate(sArray);
@@ -459,7 +471,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		}
 		return a;
 	}
-	
+
 	private Dataset accumulate(IDataset... d) {
 		Dataset sp = null;
 		for (IDataset s : d) {
@@ -469,24 +481,10 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			if (sp == null) {
 				sp = DatasetUtils.convertToDataset(s).clone();
 			} else {
-//				System.err.printf("%s cf %s\n", Arrays.toString(s.getShapeRef()), Arrays.toString(sp.getShapeRef()));
 				sp.iadd(s);
 			}
 		}
 		return sp;
-	}
-
-	private IRectangularROI getROI(boolean useBothROIs, int r) {
-		IRectangularROI roi;
-		if (useBothROIs) {
-			roi = r == 0 ? model.getRoiA() : model.getRoiB();
-		} else {
-			roi = model.getRoiA();
-			if (roi == null) {
-				roi = model.getRoiB();
-			}
-		}
-		return roi;
 	}
 
 	private DatasetToDatasetFunction getCorrelateShifter(boolean noisy) {

@@ -74,18 +74,39 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 	}
 
 	@Override
+	void updateFromModel() {
+		super.updateFromModel();
+		for (int r = 0; r < roiMax; r++) {
+			if (lines[r] == null) {
+				StraightLine l = lines[r] = new StraightLine();
+				l.getParameter(0).setLimits(-model.getMaxSlope(), model.getMaxSlope());
+			}
+		}
+	}
+
+	@Override
+	protected void resetProcess(IDataset original) {
+		goodPosition[0].clear();
+		goodPosition[1].clear();
+		goodIntercept[0].clear();
+		goodIntercept[1].clear();
+
+		// update lines parameters
+		int[] shape = original.getShape();
+		for (int r = 0; r < roiMax; r++) {
+			IParameter intercept = lines[r].getParameter(1);
+			intercept.setLimits(0, shape[model.getEnergyIndex()]); // FIXME decide which to set
+			intercept.setUpperLimit(shape[0]);
+		}
+	}
+
+	@Override
 	void initializeProcess(IDataset original) {
 		log.append("Elastic Line Fit");
 		log.append("================");
 
 		// get position
 		SliceFromSeriesMetadata smd = original.getFirstMetadata(SliceFromSeriesMetadata.class);
-		if (smd.getSliceInfo().getSliceNumber() == 1) {
-			goodPosition[0].clear();
-			goodPosition[1].clear();
-			goodIntercept[0].clear();
-			goodIntercept[1].clear();
-		}
 
 		ILazyDataset ld = smd.getParent();
 		AxesMetadata amd = ld.getFirstMetadata(AxesMetadata.class);
@@ -101,7 +122,10 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 		double requiredPhotons = countsPerPhoton * model.getMinPhotons(); // count per photon
 
 		// check if image has sufficient signal: anything less than 100 photons is insufficient
-		if (((Number) in.sum()).doubleValue() < requiredPhotons) {
+		double sum = ((Number) in.sum()).doubleValue();
+		System.err.println(sum / countsPerPhoton);
+		log.append("Number of photons, estimated: %g", sum / countsPerPhoton);
+		if (sum < requiredPhotons) {
 			createInvalidOperationData(r, new OperationException(this, "Not enough signal for elastic line"));
 			return original;
 		}
@@ -311,13 +335,6 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 	private BooleanDataset fitStraightLine(int r, boolean useMaxFactor, int ymax, Dataset x, Dataset y) {
 		log.append("\nFitting straight line");
 		StraightLine line = getStraightLine(r);
-		if (line == null) {
-			line = lines[r] = new StraightLine(-model.getMaxSlope(), model.getMaxSlope(), 0, ymax);
-		}
-		IParameter intercept = line.getParameter(1);
-		if (ymax > intercept.getUpperLimit()) { // correct upper bound (TODO find out why it's wrong)
-			intercept.setUpperLimit(ymax);
-		}
 		residual = Double.POSITIVE_INFINITY;
 		Dataset diff;
 		double dev = Double.POSITIVE_INFINITY;

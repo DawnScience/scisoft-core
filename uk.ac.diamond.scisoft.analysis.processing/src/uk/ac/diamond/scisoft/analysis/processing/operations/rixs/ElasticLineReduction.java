@@ -157,7 +157,6 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			}
 			od.setData(data); // save storage space
 		}
-		od.setLog(log);
 
 		// hold state in this object's super class then
 		// then process when a running count matches 
@@ -166,14 +165,9 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 		// aggregate aux data???
 
+		Dataset out = null;
+
 		if (si != null) {
-			OperationDataForDisplay odd;
-			if (od instanceof OperationDataForDisplay) {
-				odd = (OperationDataForDisplay) od;
-			} else {
-				odd = new OperationDataForDisplay();
-				odd.setShowSeparately(true);
-			}
 			int smax = si.getTotalSlices();
 			log.append("At frame %d/%d", si.getSliceNumber(), smax);
 
@@ -206,20 +200,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 					log.append("Dispersion is %g for residual %g", dispersion[r], res[0]);
 				}
 
-				Dataset out = ProcessingUtils.createNamedDataset(dispersion, "energy_dispersion").reshape(1, roiMax);
-				if (displayData.size() > 0) {
-					IDataset[] fit = displayData.toArray(new IDataset[displayData.size()]);
-					odd.setDisplayData(fit);
-					
-					for (int i = 0; i < fit.length; i++) {
-						summaryData.add(fit[i]);
-					}
-				}
-				odd.setData(out);
-				odd.setLog(log);
-				odd.setAuxData(auxData.toArray(new Serializable[auxData.size()]));
-				odd.setSummaryData(summaryData.toArray(new Serializable[summaryData.size()]));
-
+				out = ProcessingUtils.createNamedDataset(dispersion, "energy_dispersion").reshape(1, roiMax);
 				copyMetadata(input, out);
 				out.clearMetadata(AxesMetadata.class);
 				out.clearMetadata(SliceFromSeriesMetadata.class);
@@ -229,17 +210,29 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 						outssm.reducedDimensionToSingular(i);
 					}
 				}
-
 				out.setMetadata(outssm);
-				return odd;
+
+				if (displayData.size() > 0) {
+					for (IDataset d : displayData) {
+						summaryData.add(d);
+					}
+				}
 			}
 		}
 
-//		od.setDisplayData(displayData.toArray(new IDataset[displayData.size()]));
-		od.setData(null);
-		od.setLog(log);
-		od.setAuxData(auxData.toArray(new Serializable[auxData.size()]));
-		od.setSummaryData(summaryData.toArray(new Serializable[summaryData.size()]));
+		OperationDataForDisplay odd;
+		if (od instanceof OperationDataForDisplay) {
+			odd = (OperationDataForDisplay) od;
+		} else {
+			odd = new OperationDataForDisplay(od.getData());
+		}
+		odd.setShowSeparately(true);
+		odd.setLog(log);
+		odd.setData(out);
+		odd.setDisplayData(displayData.toArray(new IDataset[displayData.size()]));
+		odd.setAuxData(auxData.toArray(new Serializable[auxData.size()]));
+		odd.setSummaryData(summaryData.toArray(new Serializable[summaryData.size()]));
+
 		return od;
 	}
 

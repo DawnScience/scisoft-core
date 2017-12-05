@@ -9,9 +9,11 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.scalar;
 
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 
+@Atomic
 public class AddScalarOperation extends AbstractScalarMathsOperation<ScalarModel> {
 
 	@Override

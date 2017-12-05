@@ -11,6 +11,8 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -22,14 +24,14 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
-import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
 
+@Atomic
 public class MultiplicativeIntensityCorrectionOperation extends
 		AbstractOperation<MultiplicativeIntensityCorrectionModel, OperationData> {
 
-	private Dataset correction;
+	private volatile Dataset correction;
 	private IDiffractionMetadata metadata;
 	private PropertyChangeListener listener;
 	
@@ -53,9 +55,9 @@ public class MultiplicativeIntensityCorrectionOperation extends
 			correction = null;
 		}
 		
-		if (correction == null) correction = calculateCorrectionArray(input, metadata);
-		
 		Dataset in = DatasetUtils.convertToDataset(input);
+		Dataset lCorrection = getCorrectionArray(in, metadata);
+		
 		DoubleDataset out = DatasetFactory.zeros(DoubleDataset.class, in.getShape());
 		Dataset error = in.getErrors();
 		if (error != null) error = error.getSlice();
@@ -65,7 +67,7 @@ public class MultiplicativeIntensityCorrectionOperation extends
 		double cor = 0;
 		while (i.hasNext()) {
 			val = in.getElementDoubleAbs(i.index);
-			cor = correction.getElementDoubleAbs(i.index);
+			cor = lCorrection.getElementDoubleAbs(i.index);
 			out.setAbs(i.index, val*cor);
 			if (error != null) error.setObjectAbs(i.index, error.getElementDoubleAbs(i.index)*cor);
 		}
@@ -104,6 +106,22 @@ public class MultiplicativeIntensityCorrectionOperation extends
 		
 		model.addPropertyChangeListener(listener);
 	}
+	
+	
+	private Dataset getCorrectionArray(IDataset input,IDiffractionMetadata metadata) {
+
+		Dataset lcorrection = correction;
+		if (lcorrection == null) {
+			synchronized(this) {
+				lcorrection = correction;
+				if (lcorrection == null) {
+					correction = lcorrection = calculateCorrectionArray(input,metadata);
+				}
+			}
+		}
+		return lcorrection;
+	}
+	
 	
 	private Dataset calculateCorrectionArray(IDataset data, IDiffractionMetadata md) {
 		

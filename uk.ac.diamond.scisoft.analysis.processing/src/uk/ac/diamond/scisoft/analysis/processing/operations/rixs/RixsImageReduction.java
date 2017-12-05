@@ -81,16 +81,27 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 	void updateFromModel() {
 		Arrays.fill(energyDispersion, Double.NaN);
 		energyDispersion[0] = model.getEnergyDispersion();
+		String file = model.getCalibrationFile();
 		if (Double.isNaN(energyDispersion[0])) {
-			if (model.getCalibrationFile() == null) {
-				throw new OperationException(this, "Either energy dispersion or calibration file must be defined");
+			if (file == null) {
+				file = model.getFitFile();
+				if (file == null) {
+					throw new OperationException(this, "Either energy dispersion calibration or elastic fit file must be defined");
+				}
 			}
 			// energy dispersion in terms of eV/pixel
-			double[] tmp = parseCalibrationFile(model.getCalibrationFile());
+			double[] tmp = parseForCalibration(file);
 			System.arraycopy(tmp, 0, energyDispersion, 0, Math.min(2, tmp.length));
 		}
 
-		initializeFitLine(model.getFitFile());
+		file = model.getFitFile();
+		if (file == null) {
+			file = model.getCalibrationFile();
+			if (file == null) {
+				throw new OperationException(this, "Either elastic fit or energy calibration file must be defined");
+			}
+		}
+		initializeFitLine(file);
 
 		super.updateFromModel();
 	}
@@ -110,13 +121,13 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		log.append("====================");
 	}
 
-	private void initializeFitLine(String fitFile) {
+	private void initializeFitLine(String elasticLineFile) {
 		try {
-			Tree tree = LoaderFactory.getData(fitFile).getTree();
+			Tree tree = LoaderFactory.getData(elasticLineFile).getTree();
 			GroupNode root = tree.getGroupNode();
 			GroupNode entry = (GroupNode) NexusTreeUtils.findFirstNode(root, "NXentry").getDestination();
 
-			GroupNode pg = ProcessingUtils.checkForProcess(this, entry, ElasticLineFit.PROC_NAME);
+			GroupNode pg = ProcessingUtils.checkForProcess(this, entry, ElasticLineReduction.PROCESS_NAME);
 
 			if (model.isRegionsFromFitFile()) {
 				IPersistenceService service = LocalServiceManager.getPersistenceService();
@@ -136,7 +147,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			// find /entry/auxiliary/*-RIXS elastic line fit/line?_[cm]
 			GroupNode g = (GroupNode) entry.getGroupNode("auxiliary");
 			for (NodeLink n : g) {
-				if (n.getName().endsWith(ElasticLineFit.PROC_NAME) && n.isDestinationGroup()) {
+				if (n.getName().endsWith(ElasticLineReduction.PROCESS_NAME) && n.isDestinationGroup()) {
 					GroupNode fg = (GroupNode) n.getDestination();
 					int r = fg.getNumberOfGroupNodes() / 3; // three datasets per line
 					double[] p = new double[2];
@@ -167,9 +178,9 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 //	}
 //
 
-	private double[] parseCalibrationFile(String calibrationFile) {
+	private double[] parseForCalibration(String elasticLineFile) {
 		try {
-			Tree t = LoaderFactory.getData(calibrationFile).getTree();
+			Tree t = LoaderFactory.getData(elasticLineFile).getTree();
 
 			GroupNode root = t.getGroupNode();
 			// entry1:NXentry
@@ -179,7 +190,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 
 			GroupNode entry = (GroupNode) NexusTreeUtils.findFirstNode(root, "NXentry").getDestination();
 
-			ProcessingUtils.checkForProcess(this, entry, ElasticLineEnergyCalibration.PROCESS_NAME);
+			ProcessingUtils.checkForProcess(this, entry, ElasticLineReduction.PROCESS_NAME);
 
 			GroupNode rg = entry.getGroupNode("result");
 			if (rg == null) {
@@ -193,7 +204,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 
 			return NexusTreeUtils.parseDoubleArray(d);
 		} catch (Exception e) {
-			log.append("Could not parse Nexus file %s:%s", calibrationFile, e);
+			log.append("Could not parse Nexus file %s:%s", elasticLineFile, e);
 		}
 
 		return new double[] {-1, -1};

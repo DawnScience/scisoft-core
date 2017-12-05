@@ -17,7 +17,7 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
  */
 public class RixsImageReductionModel extends RixsBaseModel {
 
-	@OperationModelField(label = "Elastic line fit file", file = FileType.EXISTING_FILE)
+	@OperationModelField(label = "Elastic line fit file", file = FileType.EXISTING_FILE, hint = "Can be empty then calibration file is used")
 	private String fitFile;
 
 	@OperationModelField(label = "Energy calibration file", file = FileType.EXISTING_FILE, hint = "Energy dispersion value has precedence")

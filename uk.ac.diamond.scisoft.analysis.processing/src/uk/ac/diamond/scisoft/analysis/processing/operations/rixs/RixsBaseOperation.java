@@ -46,8 +46,6 @@ import org.eclipse.january.dataset.SliceND;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
-import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
-import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 /**
@@ -362,7 +360,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		return new Slice[] {s0, s1};
 	}
 
-	protected void generateFitForDisplay(IFunction f, Dataset x, Dataset d, String name) {
+	protected void generateFitForDisplay(IFunction f, Dataset x, Dataset d, String name, boolean transpose) {
 		IDataset fit = f.calculateValues(x);
 		fit.setName(name);
 		ProcessingUtils.setAxes(fit, x);
@@ -387,28 +385,5 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 //		return y;
 //	}
 //
-
-	protected double fitFunction(IFunction f, Dataset x, Dataset v) {
-		return fitFunction(f, x, v, null);
-	}
-
-	private double fitFunction(IFunction f, Dataset x, Dataset v, Dataset m) {
-		if (m != null) {
-			x = x.getByBoolean(m);
-			v = v.getByBoolean(m);
-		}
-		double residual = Double.POSITIVE_INFINITY;
-		try {
-			ApacheOptimizer opt = new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT);
-			opt.optimize(new Dataset[] {x}, v, f);
-			residual = opt.calculateResidual();
-		} catch (Exception fittingError) {
-			throw new OperationException(this, "Exception performing fit in SubtractFittedBackgroundOperation()", fittingError);
-		}
-
-		log.append("Fitted function: residual = %g\n%s", residual, f);
-		log.append("Peak is %g cf %g", f.val(f.getParameter(0).getValue()), v.max().doubleValue());
-		return residual;
-	}
 
 }

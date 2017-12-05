@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.rixs;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,9 +17,11 @@ import java.util.List;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.api.processing.OperationDataForDisplay;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.BooleanIterator;
@@ -43,25 +46,31 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Offset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
+import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsBaseModel.ENERGY_DIRECTION;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 /**
- * Find and fit the RIXS elastic line image to a straight line so other image
+ * Find and fit the RIXS elastic line image to a straight line and if scan then
+ * calibrate energy dispersion
  * <p>
- * Returns line fit parameters and also peak FWHM as auxiliary data
+ * Records line fit parameters, peak FWHM as auxiliary data and also, energy dispersion if
+ * can calibrate scan
  */
-public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
+public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReductionModel> {
 
 	/**
 	 * Auxiliary subentry. This must match the name field defined in the plugin extension
 	 */
-	public static final String PROC_NAME = "RIXS elastic line fit";
+	public static final String PROCESS_NAME = "RIXS elastic line reduction";
 
 	private double residual;
 	private Dataset position;
+	private boolean useSpectrum = true;
+	private boolean isImageGood = false;
 
 	protected List<Double>[] goodPosition = new List[] {new ArrayList<>(), new ArrayList<>()}; 
 	protected List<Double>[] goodIntercept = new List[] {new ArrayList<>(), new ArrayList<>()};
+	private List<Dataset>[] goodSpectra = new List[] {new ArrayList<>(), new ArrayList<>()};
 
 	@Override
 	public OperationRank getOutputRank() {
@@ -70,7 +79,7 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 
 	@Override
 	public String getFilenameSuffix() {
-		return "elastic_line_fit";
+		return "elastic_line";
 	}
 
 	@Override
@@ -84,12 +93,26 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 		}
 	}
 
+	private void createInvalidOperationData(int r, Exception e) {
+		log.append("Operation halted!");
+		log.append("%s", e);
+		addAuxData(r, Double.NaN, Double.NaN, Double.NaN);
+	}
+
+	private void addDisplayData(int i, Dataset[] coords) {
+		coords[0].setName(String.format("row%d", i));
+		coords[1].setName(String.format("col%d", i));
+		generateFitForDisplay(getStraightLine(i), coords[0], coords[1], String.format("line_%d_fit", i), false);
+	}
+
 	@Override
 	protected void resetProcess(IDataset original) {
 		goodPosition[0].clear();
 		goodPosition[1].clear();
 		goodIntercept[0].clear();
 		goodIntercept[1].clear();
+		goodSpectra[0].clear();
+		goodSpectra[1].clear();
 
 		// update lines parameters
 		int[] shape = original.getShape();
@@ -98,12 +121,13 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 			intercept.setLimits(0, shape[model.getEnergyIndex()]); // FIXME decide which to set
 			intercept.setUpperLimit(shape[0]);
 		}
+
 	}
 
 	@Override
 	void initializeProcess(IDataset original) {
-		log.append("Elastic Line Fit");
-		log.append("================");
+		log.append("Elastic Line Reduction");
+		log.append("======================");
 
 		// get position
 		SliceFromSeriesMetadata smd = original.getFirstMetadata(SliceFromSeriesMetadata.class);
@@ -113,11 +137,110 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 		try {
 			position = DatasetUtils.convertToDataset(smd.getMatchingSlice(amd.getAxis(0)[0])).squeeze(true);
 			log.append("Current position: %s", position.toString(true));
-		} catch (Exception e) { // dummy scans are incorrectly written
+		} catch (Exception e) { // TODO remove as fix is in SliceInformation
+			// single point scans are incorrectly dealt with
 			log.append("Could not get position: %s", e);
 			int[] shape = smd.getSliceInfo().getInputSliceWithoutDataDimensions().getSourceShape();
 			position = DatasetFactory.createRange(ShapeUtils.calcSize(shape)).reshape(shape);
 		}
+	}
+
+	@Override
+	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
+		OperationData od = super.process(input, monitor);
+		IDataset data = od.getData();
+		if (data != null) {
+			SliceFromSeriesMetadata ssm = data.getFirstMetadata(SliceFromSeriesMetadata.class);
+			data = DatasetFactory.zeros(1, 1);
+			if (ssm != null) {
+				data.setMetadata(ssm);
+			}
+			od.setData(data); // save storage space
+		}
+		od.setLog(log);
+
+		// hold state in this object's super class then
+		// then process when a running count matches 
+		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(input);
+		SliceInformation si = ssm.getSliceInfo();
+
+		// aggregate aux data???
+
+		if (si != null) {
+			OperationDataForDisplay odd;
+			if (od instanceof OperationDataForDisplay) {
+				odd = (OperationDataForDisplay) od;
+			} else {
+				odd = new OperationDataForDisplay();
+				odd.setShowSeparately(true);
+			}
+			int smax = si.getTotalSlices();
+			log.append("At frame %d/%d", si.getSliceNumber(), smax);
+
+			// TODO make this live-friendly by show result per frame
+			// needs to give fake results for first slice
+			if (si.getSliceNumber() == smax) {
+				summaryData.clear();
+				displayData.clear();
+//				odd.setAuxData();
+				double[] dispersion = new double[roiMax];
+				for (int r = 0; r < roiMax; r++) {
+//					if (goodPosition[r].size() <= 2) {
+//						log.append("Not enough good lines (%d) found for ROI %d", goodPosition[r].size(), r);
+//						continue;
+//					}
+
+					if (goodPosition[r].size() == 0) {
+						log.append("No lines found for ROI %d", r);
+						continue;
+					}
+					List<?>[] coords;
+					if (useSpectrum) {
+						coords = fitSpectraPeakPositions(r);
+					} else {
+						coords = new List<?>[] {goodPosition[r], goodIntercept[r]};
+					}
+
+					double[] res = fitIntercepts(r, coords);
+					dispersion[r] = 1./res[1];
+					log.append("Dispersion is %g for residual %g", dispersion[r], res[0]);
+				}
+
+				Dataset out = ProcessingUtils.createNamedDataset(dispersion, "energy_dispersion").reshape(1, roiMax);
+				if (displayData.size() > 0) {
+					IDataset[] fit = displayData.toArray(new IDataset[displayData.size()]);
+					odd.setDisplayData(fit);
+					
+					for (int i = 0; i < fit.length; i++) {
+						summaryData.add(fit[i]);
+					}
+				}
+				odd.setData(out);
+				odd.setLog(log);
+				odd.setAuxData(auxData.toArray(new Serializable[auxData.size()]));
+				odd.setSummaryData(summaryData.toArray(new Serializable[summaryData.size()]));
+
+				copyMetadata(input, out);
+				out.clearMetadata(AxesMetadata.class);
+				out.clearMetadata(SliceFromSeriesMetadata.class);
+				SliceFromSeriesMetadata outssm = ssm.clone();
+				for (int i = 0, imax = ssm.getParent().getRank(); i < imax; i++) {
+					if (!outssm.isDataDimension(i)) {
+						outssm.reducedDimensionToSingular(i);
+					}
+				}
+
+				out.setMetadata(outssm);
+				return odd;
+			}
+		}
+
+//		od.setDisplayData(displayData.toArray(new IDataset[displayData.size()]));
+		od.setData(null);
+		od.setLog(log);
+		od.setAuxData(auxData.toArray(new Serializable[auxData.size()]));
+		od.setSummaryData(summaryData.toArray(new Serializable[summaryData.size()]));
+		return od;
 	}
 
 	@Override
@@ -163,45 +286,155 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 		StraightLine line = getStraightLine(r);
 		addAuxData(r, line.getParameterValue(0), line.getParameterValue(1), residual);
 
+		if (useSpectrum) { // use spectrum fitted with Gaussian for calibration fit
+			Dataset[] result = makeSpectrum(r, in, model.getMaxSlope());
+			Dataset spectrum = result[1];
+			spectrum.setName("elastic_spectrum_" + r);
+//			auxData.add(spectrum); // put in summary data instead
+
+			if (isImageGood) {
+				goodSpectra[r].add(spectrum);
+			}
+		}
+
 		return original;
 	}
 
-	@Override
-	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
-		OperationData od = super.process(input, monitor);
-		IDataset data = od.getData();
-		if (data != null) {
-			SliceFromSeriesMetadata ssm = data.getFirstMetadata(SliceFromSeriesMetadata.class);
-			data = DatasetFactory.zeros(1, 1);
-			if (ssm != null) {
-				data.setMetadata(ssm);
-			}
-			od.setData(data); // save storage space
-		}
-		return od;
-	}
-
-	private void createInvalidOperationData(int r, Exception e) {
-		log.append("Operation halted!");
-		log.append("%s", e);
-		addAuxData(r, Double.NaN, Double.NaN, Double.NaN);
-	}
-
-	protected void addAuxData(int i, double m, double c, double r) {
+	private void addAuxData(int i, double m, double c, double r) {
 		if (Double.isFinite(c)) {
 			goodPosition[i].add(position.getDouble());
 			goodIntercept[i].add(c);
 		}
-
+	
 		auxData.add(addPositionAxis(ProcessingUtils.createNamedDataset(m, "line_%d_m", i)));
 		auxData.add(addPositionAxis(ProcessingUtils.createNamedDataset(c, "line_%d_c", i)));
 		auxData.add(addPositionAxis(ProcessingUtils.createNamedDataset(r, "residual_%d", i)));
+
+		if (useSpectrum) {
+			isImageGood = Double.isFinite(c);
+		}
 	}
 
-	private void addDisplayData(int i, Dataset[] coords) {
-		coords[0].setName(String.format("row%d", i));
-		coords[1].setName(String.format("col%d", i));
-		generateFitForDisplay(getStraightLine(i), coords[0], coords[1], String.format("line_%d_fit", i));
+	/**
+	 * Fit to intercepts of 
+	 * @param r
+	 * @param coords
+	 * @return residual and gradient
+	 */
+	private double[] fitIntercepts(int r, List<?>[] coords) {
+		if (coords[0].size() <= 2) {
+			return new double[] {Double.NaN, Double.NaN};
+		}
+
+		Dataset energy = DatasetFactory.createFromList(coords[0]);
+		Dataset intercept = DatasetFactory.createFromList(coords[1]);
+		energy.setName("Energy");
+		intercept.setName("intercept_" + r);
+		double smax = 2*Math.abs(intercept.peakToPeak().doubleValue()) / Math.abs(energy.peakToPeak().doubleValue());
+		StraightLine iLine = new StraightLine(-smax, smax, -Double.MAX_VALUE, Double.MAX_VALUE);
+
+		double res = fitFunction(iLine, energy, intercept, null);
+		generateFitForDisplay(iLine, energy, intercept, "intercept_fit_" + r, model.getEnergyDirection() == ENERGY_DIRECTION.SLOW);
+		return new double[] {res, iLine.getParameterValue(0)};
+	}
+
+	private List<?>[] fitSpectraPeakPositions(int r) {
+//		Gaussian peak = new Gaussian();
+		Add peak = new Add();
+		peak.addFunction(new Gaussian());
+		peak.addFunction(new Offset());
+
+//		log.append("Sum %s/%s", v.sum(), v.toString(true));
+//		log.append("Initial peak:\n%s", peak);
+
+		Dataset spectrum = goodSpectra[r].get(0);
+		initializeFunctionParameters(peak, spectrum);
+		int size = spectrum.getSize();
+		DoubleDataset x = DatasetFactory.createRange(size);
+		x.setName("Energy Index");
+
+		List<Double> gEnergy = new ArrayList<>();
+		List<Double> gPosn = new ArrayList<>();
+		List<Double> gFWHM = new ArrayList<>();
+		List<Double> energy = goodPosition[r];
+
+		int ns = goodSpectra[r].size();
+		Dataset gSpectrum = null;
+		Dataset gSpectrumFit = null;
+		double[] ip = null;
+		for (int i = 0; i < ns; i++) {
+			spectrum = goodSpectra[r].get(i);
+			log.append("Fitting elastic peak: %d/%d", i, ns);
+			if (ip != null) {
+				ip[0] = spectrum.argMax(true);
+				peak.setParameterValues(ip); // shift peak initial position for fit
+			}
+			double res = Double.POSITIVE_INFINITY;
+			try {
+				res = fitFunction(peak, x, spectrum, null);
+				if (Double.isFinite(res)) {
+					gEnergy.add(energy.get(i));
+					gPosn.add(peak.getParameterValue(0));
+					gFWHM.add(peak.getParameterValue(1));
+					if (ip == null) {
+						ip = peak.getParameterValues();
+					}
+					DoubleDataset fit = peak.calculateValues(x);
+					if (gSpectrum == null) {
+						gSpectrum = spectrum.clone().reshape(1, size);
+						gSpectrumFit = fit.reshape(1, size);
+					} else {
+						gSpectrum = DatasetUtils.concatenate(new IDataset[] {gSpectrum, spectrum.reshape(1, size)}, 0);
+						gSpectrumFit = DatasetUtils.concatenate(new IDataset[] {gSpectrumFit, fit.reshape(1, size)}, 0);
+					}
+				}
+			} catch (Exception e) {
+			}
+			if (!Double.isFinite(res)) {
+				log.append("Fitting elastic peak: FAILED");
+			}
+		}
+
+		Dataset ge = DatasetFactory.createFromList(gEnergy);
+		ge.setName("Scan energy");
+		gSpectrum.setName("elastic_spectrum_" + r);
+		ProcessingUtils.setAxes(gSpectrum, ge);
+		summaryData.add(gSpectrum);
+		gSpectrumFit.setName("elastic_spectrum_fit_" + r);
+		ProcessingUtils.setAxes(gSpectrumFit, ge);
+		summaryData.add(gSpectrumFit);
+		Dataset gf = DatasetFactory.createFromList(gFWHM);
+		gf.setName("elastic_spectrum_fwhm_" + r);
+		ProcessingUtils.setAxes(gf, ge);
+		summaryData.add(gf);
+
+		return new List<?>[] {gEnergy, gPosn};
+	}
+
+	protected void generateFitForDisplay(IFunction f, Dataset x, Dataset d, String name, boolean transpose) {
+		Dataset fit = DatasetUtils.convertToDataset(f.calculateValues(x));
+		fit.setName(name);
+		if (transpose) {
+			Dataset xf = x.clone();
+			ProcessingUtils.setAxes(xf, fit);
+			ProcessingUtils.setAxes(x, d);
+			displayData.add(x);
+			displayData.add(xf);
+		} else {
+			ProcessingUtils.setAxes(fit, x);
+			ProcessingUtils.setAxes(d, x);
+			displayData.add(d);
+			displayData.add(fit);
+		}
+	}
+
+	// FIXME this is wasteful as these axis datasets are replicated for each
+	// aux data
+	// TODO fix NexusFileExecutionVisitor to automatically link any axis datasets
+	// from the SSFMD#getParent()'s axes metadata
+	private Dataset addPositionAxis(Dataset y) {
+		ProcessingUtils.setAxes(y, position);
+		return y;
 	}
 
 	/**
@@ -233,24 +466,6 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 		return new Dataset[] {r, c};
 	}
 
-	protected void generateFitForDisplay(IFunction f, Dataset x, Dataset d, String name) {
-		IDataset fit = f.calculateValues(x);
-		fit.setName(name);
-		ProcessingUtils.setAxes(fit, x);
-		ProcessingUtils.setAxes(d, x);
-		displayData.add(d);
-		displayData.add(fit);
-	}
-
-	// FIXME this is wasteful as these axis datasets are replicated for each
-	// aux data
-	// TODO fix NexusFileExecutionVisitor to automatically link any axis datasets
-	// from the SSFMD#getParent()'s axes metadata
-	private Dataset addPositionAxis(Dataset y) {
-		ProcessingUtils.setAxes(y, position);
-		return y;
-	}
-
 	private int[] stripSizes = new int[] {-1, -1};
 
 	/**
@@ -277,7 +492,7 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 		log.append("Initial peak:\n%s", peak);
 
 		// fit entire image so as to initialise per summed row fits
-		fitFunction(peak, x, v);
+		fitFunction(peak, x, v, null);
 
 //		generateFitForDisplay(peak, x, v);
 		double[] ip = peak.getParameterValues();
@@ -311,7 +526,7 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 			}
 
 			try {
-				fitFunction(peak, xSlice, t);
+				fitFunction(peak, xSlice, t, null);
 				col.setAbs(i, peak.getParameterValue(0));
 			} catch (Exception e) {
 				col.setAbs(i, Double.NaN);
@@ -371,11 +586,7 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 		return mask;
 	}
 
-	protected double fitFunction(IFunction f, Dataset x, Dataset v) {
-		return fitFunction(f, x, v, null);
-	}
-
-	private double fitFunction(IFunction f, Dataset x, Dataset v, Dataset m) {
+	protected double fitFunction(IFunction f, Dataset x, Dataset v, Dataset m) {
 		if (m != null) {
 			x = x.getByBoolean(m);
 			v = v.getByBoolean(m);
@@ -386,29 +597,12 @@ public class ElasticLineFit extends RixsBaseOperation<ElasticLineFitModel> {
 			opt.optimize(new Dataset[] {x}, v, f);
 			residual = opt.calculateResidual();
 		} catch (Exception fittingError) {
-			throw new OperationException(this, "Exception performing fit in ElasticLineFit()", fittingError);
+			throw new OperationException(this, "Exception performing fit in ElasticLineReduction()", fittingError);
 		}
 
 		log.append("Fitted function: residual = %g\n%s", residual, f);
 		log.append("Peak is %g cf %g", f.val(f.getParameter(0).getValue()), v.max().doubleValue());
-
-//		checkResidual(v, residual);
 		return residual;
-	}
-
-	private static final double RESIDUAL_FACTOR = 0.03; //
-	private void checkResidual(Dataset y, double residual) {
-		double t;
-		if (y.min(true).doubleValue() >= 0) {
-			t = ((Number) y.sum(true)).doubleValue();
-			t *= t * RESIDUAL_FACTOR;
-		} else {
-			t = ((Number) y.mean(true)).doubleValue();
-			t = (y.variance(true, true) + t*t) * RESIDUAL_FACTOR;
-		}
-		if (residual > t) {
-			throw new OperationException(this, "Bad fit: residual exceeds threshold " + residual + " cf " + t);
-		}
 	}
 
 	protected void initializeFunctionParameters(IFunction pdf, Dataset v) {

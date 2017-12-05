@@ -116,7 +116,7 @@ public class DummyClassUtils {
 		return Maths.multiply(output, getCorrectionValue(fm));
 	}
 
-	private static double getCorrectionValue(FrameModel fm) {
+	public static double getCorrectionValue(FrameModel fm) {
 
 		double correction = 0.001;
 

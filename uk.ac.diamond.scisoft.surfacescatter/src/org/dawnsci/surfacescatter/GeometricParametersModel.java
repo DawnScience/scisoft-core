@@ -22,7 +22,7 @@ public class GeometricParametersModel {
 	private String imageName = "file_image";
 	private String xName = "l";
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
-	private Double ScalingFactor = 10.0;
+	private Double scalingFactor = 10.0;
 	private double beamHeight = 0.06;
 	private double footprint = 190;
 	private double angularFudgeFactor = 0;
@@ -44,8 +44,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setUseNegativeQ(boolean useNegativeQ) {
-		this.useNegativeQ = useNegativeQ;
-		poke();
+		firePropertyChange("useNegativeQ", this.useNegativeQ, this.useNegativeQ = useNegativeQ);
 	}
 
 	public Double getNormalisationFactor() {
@@ -53,8 +52,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setNormalisationFactor(Double normalisationfactor) {
-		this.normalisationFactor = normalisationfactor;
-		poke();
+		firePropertyChange("normalisationfactor", this.normalisationFactor, this.normalisationFactor = normalisationfactor);
 	}
 
 	public Boolean getBeamCorrection() {
@@ -62,8 +60,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setBeamCorrection(Boolean beamCorrection) {
-		this.beamCorrection = beamCorrection;
-		poke();
+		firePropertyChange("beamCorrection", this.beamCorrection, this.beamCorrection = beamCorrection);
 	}
 
 	public Double getBeamInPlane() {
@@ -71,8 +68,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setBeamInPlane(Double beamInPlane) {
-		this.beamInPlane = beamInPlane;
-		poke();
+		firePropertyChange("beamInPlane", this.beamInPlane, this.beamInPlane= beamInPlane);
 	}
 
 	public Double getBeamOutPlane() {
@@ -80,8 +76,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setBeamOutPlane(Double beamOutPlane) {
-		this.beamOutPlane = beamOutPlane;
-		poke();
+		firePropertyChange("beamOutPlane", this.beamOutPlane, this.beamOutPlane= beamOutPlane);
 	}
 
 	public Double getCovar() {
@@ -89,8 +84,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setCovar(Double covar) {
-		this.covar = covar;
-		poke();
+		firePropertyChange("covar", this.covar, this.covar= covar);
 	}
 
 	public Double getDetectorSlits() {
@@ -98,8 +92,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setDetectorSlits(Double detectorSlits) {
-		this.detectorSlits = detectorSlits;
-		poke();
+		firePropertyChange("detectorSlits", this.detectorSlits, this.detectorSlits= detectorSlits);
 	}
 
 	public Double getInPlaneSlits() {
@@ -107,8 +100,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setInPlaneSlits(Double inPlaneSlits) {
-		this.inPlaneSlits = inPlaneSlits;
-		poke();
+		firePropertyChange("inPlaneSlits", this.inPlaneSlits, this.inPlaneSlits= inPlaneSlits);
 	}
 
 	public Double getOutPlaneSlits() {
@@ -116,8 +108,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setOutPlaneSlits(Double outPlaneSlits) {
-		this.outPlaneSlits = outPlaneSlits;
-		poke();
+		firePropertyChange("outPlaneSlits", this.outPlaneSlits, this.outPlaneSlits= outPlaneSlits);
 	}
 
 	public Double getReflectivityA() {
@@ -125,8 +116,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setReflectivityA(Double reflectivityA) {
-		this.reflectivityA = reflectivityA;
-		poke();
+		firePropertyChange("reflectivityA", this.reflectivityA, this.reflectivityA= reflectivityA);
 	}
 
 	public Double getSampleSize() {
@@ -134,8 +124,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setSampleSize(Double sampleSize) {
-		this.sampleSize = sampleSize;
-		poke();
+		firePropertyChange("sampleSize", this.sampleSize, this.sampleSize= sampleSize);
 	}
 
 	public Boolean getSpecular() {
@@ -143,8 +132,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setSpecular(Boolean specular) {
-		this.specular = specular;
-		poke();
+		firePropertyChange("specular", this.specular, this.specular= specular);
 	}
 
 	public Double getInplanePolarisation() {
@@ -152,17 +140,15 @@ public class GeometricParametersModel {
 	}
 
 	public void setInplanePolarisation(Double inplanePolarisation) {
-		this.inplanePolarisation = inplanePolarisation;
-		poke();
+		firePropertyChange("inplanePolarisation", this.inplanePolarisation, this.inplanePolarisation= inplanePolarisation);
 	}
 
 	public Double getOutplanePolarisation() {
 		return outplanePolarisation;
 	}
 
-	public void setOutplanePolarisation(Double outplanePolaristaion) {
-		this.outplanePolarisation = outplanePolaristaion;
-		poke();
+	public void setOutplanePolarisation(Double outplanePolarisation) {
+		firePropertyChange("outplanePolarisation", this.outplanePolarisation, this.outplanePolarisation= outplanePolarisation);
 	}
 
 	public String getImageName() {
@@ -170,8 +156,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setImageName(String imageName) {
-		this.imageName = imageName;
-		poke();
+		firePropertyChange("imageName", this.imageName, this.imageName= imageName);
 	}
 
 	public String getxName() {
@@ -179,8 +164,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setxName(String xName) {
-		this.xName = xName;
-		poke();
+		firePropertyChange("xName", this.xName, this.xName= xName);
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -196,12 +180,11 @@ public class GeometricParametersModel {
 	}
 
 	public Double getScalingFactor() {
-		return ScalingFactor;
+		return scalingFactor;
 	}
 
 	public void setScalingFactor(Double scalingFactor) {
-		ScalingFactor = scalingFactor;
-		poke();
+		firePropertyChange("scalingFactor", this.scalingFactor, this.scalingFactor= scalingFactor);
 	}
 
 	public double getBeamHeight() {
@@ -209,8 +192,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setBeamHeight(double beamHeight) {
-		this.beamHeight = beamHeight;
-		poke();
+		firePropertyChange("beamHeight", this.beamHeight, this.beamHeight= beamHeight);
 	}
 
 	public double getFootprint() {
@@ -218,8 +200,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setFootprint(double footprint) {
-		this.footprint = footprint;
-		poke();
+		firePropertyChange("footprint", this.footprint, this.footprint= footprint);
 	}
 
 	public double getAngularFudgeFactor() {
@@ -227,8 +208,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setAngularFudgeFactor(double angularFudgeFactor) {
-		this.angularFudgeFactor = angularFudgeFactor;
-		poke();
+		firePropertyChange("angularFudgeFactor", this.angularFudgeFactor, this.angularFudgeFactor= angularFudgeFactor);
 	}
 
 	public String getSavePath() {
@@ -236,8 +216,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setSavePath(String savePath) {
-		this.savePath = savePath;
-		poke();
+		firePropertyChange("savePath", this.savePath, this.savePath= savePath);
 	}
 
 	public String getFluxPath() {
@@ -245,8 +224,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setFluxPath(String fluxPath) {
-		this.fluxPath = fluxPath;
-		poke();
+		firePropertyChange("fluxPath", this.fluxPath, this.fluxPath= fluxPath);
 	}
 
 	public String getxNameRef() {
@@ -254,8 +232,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setxNameRef(String xNameRef) {
-		this.xNameRef = xNameRef;
-		poke();
+		firePropertyChange("xNameRef", this.xNameRef, this.xNameRef= xNameRef);
 	}
 
 	public double getEnergy() {
@@ -263,8 +240,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setEnergy(double energy) {
-		this.energy = energy;
-		poke();
+		firePropertyChange("energy", this.energy, this.energy= energy);
 	}
 
 	public int getTheta() {
@@ -272,8 +248,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setTheta(int theta) {
-		this.theta = theta;
-		poke();
+		firePropertyChange("theta", this.theta, this.theta= theta);
 	}
 
 	public EnumMap<SXRDAngleAliasEnum, String> getsXRDMap() {
@@ -281,8 +256,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setsXRDMap(EnumMap<SXRDAngleAliasEnum, String> sXRDMap) {
-		this.sXRDMap = sXRDMap;
-		poke();
+		firePropertyChange("sXRDMap", this.sXRDMap, this.sXRDMap= sXRDMap);
 	}
 	
 
@@ -291,8 +265,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setReflectivityAnglesMap(EnumMap<ReflectivityAngleAliasEnum, String> reflectivityAnglesMap) {
-		this.reflectivityAnglesMap = reflectivityAnglesMap;
-		poke();
+		firePropertyChange("reflectivityAnglesMap", this.reflectivityAnglesMap, this.reflectivityAnglesMap= reflectivityAnglesMap);
 	}
 
 	public EnumMap<ReflectivityFluxParametersAliasEnum, String> getReflectivityFluxMap() {
@@ -300,8 +273,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setReflectivityFluxMap(EnumMap<ReflectivityFluxParametersAliasEnum, String> reflectivityFluxMap) {
-		this.reflectivityFluxMap = reflectivityFluxMap;
-		poke();
+		firePropertyChange("reflectivityFluxMap", this.reflectivityFluxMap, this.reflectivityFluxMap= reflectivityFluxMap);
 	}
 
 	public boolean getUseInternalFlux() {
@@ -309,8 +281,7 @@ public class GeometricParametersModel {
 	}
 
 	public void setUseInternalFlux(boolean useInternalFlux) {
-		this.useInternalFlux = useInternalFlux;
-		poke();
+		firePropertyChange("useInternalFlux", this.useInternalFlux, this.useInternalFlux= useInternalFlux);
 	}
 
 	public String getExperimentMethod() {
@@ -318,8 +289,8 @@ public class GeometricParametersModel {
 	}
 
 	public void setExperimentMethod(String experimentMethod) {
-		this.experimentMethod = experimentMethod;
-		poke();
+		
+		firePropertyChange("experimentMethod", this.experimentMethod, this.experimentMethod= experimentMethod);
 	}
 
 	private void setPoke(boolean poke) {

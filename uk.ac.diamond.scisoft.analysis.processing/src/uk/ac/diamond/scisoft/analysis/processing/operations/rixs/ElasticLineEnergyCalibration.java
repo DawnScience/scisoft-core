@@ -49,14 +49,20 @@ public class ElasticLineEnergyCalibration extends ElasticLineFit {
 	}
 
 	@Override
+	protected void resetProcess(IDataset original) {
+		super.resetProcess(original);
+
+		goodSpectra[0].clear();
+		goodSpectra[1].clear();
+	}
+
+	@Override
 	void initializeProcess(IDataset original) {
 		super.initializeProcess(original);
-		// get position
-		SliceFromSeriesMetadata smd = original.getFirstMetadata(SliceFromSeriesMetadata.class);
-		if (smd.getSliceInfo().getSliceNumber() == 1) {
-			goodSpectra[0].clear();
-			goodSpectra[1].clear();
-		}
+
+		log.clear();
+		log.append("Elastic Line Energy Calibration");
+		log.append("===============================");
 	}
 
 	@Override
@@ -91,10 +97,8 @@ public class ElasticLineEnergyCalibration extends ElasticLineFit {
 				summaryData.clear();
 				displayData.clear();
 //				odd.setAuxData();
-				boolean useBothROIs = model.getRoiA() != null && model.getRoiB() != null;
-				int rmax = useBothROIs ? 2 : 1;
-				double[] dispersion = new double[rmax];
-				for (int r = 0; r < rmax; r++) {
+				double[] dispersion = new double[roiMax];
+				for (int r = 0; r < roiMax; r++) {
 					if (goodPosition[r].size() <= 2) {
 						log.append("Not enough good lines (%d) found for ROI %d", goodPosition[r].size(), r);
 						continue;
@@ -112,7 +116,7 @@ public class ElasticLineEnergyCalibration extends ElasticLineFit {
 					log.append("Dispersion is %g for residual %g", dispersion[r], res[0]);
 				}
 
-				Dataset out = ProcessingUtils.createNamedDataset(dispersion, "energy_dispersion").reshape(1, rmax);
+				Dataset out = ProcessingUtils.createNamedDataset(dispersion, "energy_dispersion").reshape(1, roiMax);
 				if (displayData.size() > 0) {
 					IDataset[] fit = displayData.toArray(new IDataset[displayData.size()]);
 					odd.setDisplayData(fit);

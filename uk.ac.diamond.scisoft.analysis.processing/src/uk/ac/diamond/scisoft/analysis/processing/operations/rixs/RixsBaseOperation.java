@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.rixs;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,7 +55,7 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtil
  * <p>
  * Returns line fit parameters and also peak FWHM as auxiliary data
  */
-public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends AbstractOperation<T, OperationData> {
+public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends AbstractOperation<T, OperationData> implements PropertyChangeListener {
 
 	protected int[] offset = new int[2];
 	protected List<IDataset> displayData = new ArrayList<>();
@@ -63,6 +65,27 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	protected int countsPerPhoton;
 	public static final int MAX_ROIS = 2;
 	protected StraightLine[] lines = new StraightLine[MAX_ROIS];
+	protected boolean useBothROIs;
+	protected int roiMax;
+
+	@Override
+	public void setModel(T model) {
+		super.setModel(model);
+		model.addPropertyChangeListener(this);
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		updateFromModel();
+	}
+
+	/**
+	 * Updates useBothROIs and roiMax so override for more
+	 */
+	void updateFromModel() {
+		useBothROIs = model.getRoiA() != null && model.getRoiB() != null;
+		roiMax = useBothROIs ? 2 : 1;
+	};
 
 	@Override
 	public String getId() {
@@ -80,22 +103,18 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		auxData.clear();
 		log.clear();
 
+		SliceFromSeriesMetadata smd = input.getFirstMetadata(SliceFromSeriesMetadata.class);
+		if (smd.getSliceInfo().getSliceNumber() == 1) {
+			resetProcess(input);
+			updateFromModel();
+			parseNexusFile(smd.getFilePath());
+		}
 		initializeProcess(input);
 
-		parseNexusFile(input.getFirstMetadata(SliceFromSeriesMetadata.class).getFilePath());
-
-		boolean useBothROIs = model.getRoiA() != null && model.getRoiB() != null;
 		IRectangularROI roi;
 		IDataset result = input;
-		for (int r = 0, rmax = useBothROIs ? 2 : 1; r < rmax; r++) {
-			if (useBothROIs) {
-				roi = r == 0 ? model.getRoiA() : model.getRoiB();
-			} else {
-				roi = model.getRoiA();
-				if (roi == null) {
-					roi = model.getRoiB();
-				}
-			}
+		for (int r = 0; r < roiMax; r++) {
+			roi = getROI(r);
 			Dataset in = preprocessImage(input, roi);
 			int cutoff = (int) Math.floor(countsPerPhoton * model.getCutoff());
 			if (cutoff > 0) {
@@ -117,6 +136,26 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		od.setAuxData(auxData.toArray(new Serializable[auxData.size()]));
 		return od;
 	}
+
+	protected IRectangularROI getROI(int r) {
+		IRectangularROI roi;
+		if (useBothROIs) {
+			roi = r == 0 ? model.getRoiA() : model.getRoiB();
+		} else {
+			roi = model.getRoiA();
+			if (roi == null) {
+				roi = model.getRoiB();
+			}
+		}
+		return roi;
+	}
+
+
+	/**
+	 * Override to reset state of processing object. This is called for the first slice of data only.
+	 * @param original
+	 */
+	abstract void resetProcess(IDataset original);
 
 	/**
 	 * Initialize log and fields as necessary
@@ -151,10 +190,6 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		Dataset c = DatasetFactory.createRange(cols);
 		y.iadd(offset[0]);
 		StraightLine line = getStraightLine(r);
-		if (line == null) {
-			line = new StraightLine(-maxSlope, maxSlope, 0, rows);
-			lines[r] = line;
-		}
 
 		DoubleDataset elastic = line.calculateValues(y); // absolute position of elastic line to use a zero point
 		double elastic0 = elastic.getDouble();

@@ -60,7 +60,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 	private Dataset totalSum = null; // dataset of all event sums (so far)
 	private List<Dataset> allSums = new ArrayList<>(); // list of dataset of event sums in each image
 	private List<Dataset> allPositions = new ArrayList<>(); // list of dataset of event coords in each image
-	private List<Dataset>[] spectra = new List[] {new ArrayList<>(), new ArrayList<>()};
+	private List<Dataset>[] allSpectra = new List[] {new ArrayList<>(), new ArrayList<>()};
 
 	@Override
 	public String getId() {
@@ -78,10 +78,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 	}
 
 	@Override
-	void initializeProcess(IDataset original) {
-		log.append("RIXS Image Operation");
-		log.append("====================");
-
+	void updateFromModel() {
 		Arrays.fill(energyDispersion, Double.NaN);
 		energyDispersion[0] = model.getEnergyDispersion();
 		if (Double.isNaN(energyDispersion[0])) {
@@ -94,6 +91,23 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		}
 
 		initializeFitLine(model.getFitFile());
+
+		super.updateFromModel();
+	}
+
+	@Override
+	protected void resetProcess(IDataset original) {
+		totalSum = null;
+		allSums.clear();
+		allPositions.clear();
+		allSpectra[0].clear();
+		allSpectra[1].clear();
+	}
+
+	@Override
+	void initializeProcess(IDataset original) {
+		log.append("RIXS Image Reduction");
+		log.append("====================");
 	}
 
 	private void initializeFitLine(String fitFile) {
@@ -125,15 +139,18 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				if (n.getName().endsWith(ElasticLineFit.PROC_NAME) && n.isDestinationGroup()) {
 					GroupNode fg = (GroupNode) n.getDestination();
 					int r = fg.getNumberOfGroupNodes() / 3; // three datasets per line
-					double[] p = new double[MAX_ROIS]; 
+					double[] p = new double[2];
 					for (int i = 0; i < r; i++) {
 						String l = "line_" + i;
 						p[0] = NexusTreeUtils.parseDoubleArray(fg.getGroupNode(l + "_m").getDataNode("data"))[0];
 						p[1] = NexusTreeUtils.parseDoubleArray(fg.getGroupNode(l + "_c").getDataNode("data"))[0];
-						lines[i] = new StraightLine(p);
+						StraightLine line = lines[i] = new StraightLine(p);
 					}
 				}
 			}
+
+			// TODO may be set slope limits from process in pg
+
 		} catch (Exception e) {
 			throw new OperationException(this, "Cannot load file with elastic line fit", e);
 		}
@@ -198,7 +215,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 
 		auxData.add(spectrum);
 
-		spectra[r].add(spectrum);
+		allSpectra[r].add(spectrum);
 		return spectrum;
 	}
 
@@ -257,20 +274,18 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				int bin = model.getBins();
 				int bmax = bin * original.getShapeRef()[model.getEnergyIndex()];
 
-				boolean useBothROIs = model.getRoiA() != null && model.getRoiB() != null;
 				// per image, separate by sum
-				int rmax = useBothROIs ? 2 : 1;
-				int[][][] allSingle = new int[rmax][smax][];
-				int[][][] allMultiple = new int[rmax][smax][];
+				int[][][] allSingle = new int[roiMax][smax][];
+				int[][][] allMultiple = new int[roiMax][smax][];
 				List<Double> cX = new ArrayList<>();
 				List<Double> cY = new ArrayList<>();
 				for (int i = 0; i < smax; i++) {
-					for (int r = 0; r < rmax; r++) {
+					for (int r = 0; r < roiMax; r++) {
 						cX.clear();
 						cY.clear();
 
 						StraightLine line = getStraightLine(r);
-						IRectangularROI roi = getROI(useBothROIs, r);
+						IRectangularROI roi = getROI(r);
 
 						Dataset sums = allSums.get(i);
 						Dataset posn = allPositions.get(i);
@@ -333,7 +348,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				Dataset[] sEvents = new Dataset[2];
 				Dataset[] mEvents = new Dataset[2];
 
-				for (int r = 0; r < rmax; r++) {
+				for (int r = 0; r < roiMax; r++) {
 					double el0 = getStraightLine(r).val(0); // elastic line intercept
 					Dataset er = DatasetFactory.createRange(bmax);
 					er.iadd(-bin*el0); // adjust zero TODO sign wrong??
@@ -362,23 +377,24 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					mEvents[r] = t;
 					summaryData.add(t);
 
+					t = Maths.add(t, nf);
 					nf = Maths.divide(nf.cast(DoubleDataset.class), t);
 					nf.setName("single_events_fraction_" + r);
 					summaryData.add(nf);
 				}
 
 				// total and correlated spectra
-				for (int r = 0; r < rmax; r++) {
+				for (int r = 0; r < roiMax; r++) {
 					Dataset sp = null;
-					IDataset[] sArray = toArray(spectra[r]);
+					IDataset[] sArray = toArray(allSpectra[r]);
 					sp = accumulate(sArray);
 					sp.setName("total_spectrum_" + r);
 					summaryData.add(sp);
 
 					double ts = (Double) ((Number) sEvents[r].sum()).doubleValue();
 					double tm = (Double) ((Number) mEvents[r].sum()).doubleValue();
-					log.append("Events: single/total = %g/%g = %g ", ts, tm, ts/tm);
-					summaryData.add(ProcessingUtils.createNamedDataset(ts/tm, "total_single_events_fraction_" + r));
+					log.append("Events: single/total = %g/%g = %g ", ts, tm, ts/(ts + tm));
+					summaryData.add(ProcessingUtils.createNamedDataset(ts/(ts + tm), "total_single_events_fraction_" + r));
 
 					Dataset ax = null;
 					try {
@@ -395,6 +411,12 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					sp.setName("correlated_spectrum_" + r);
 					ProcessingUtils.setAxes(sp, ax);
 					summaryData.add(sp);
+
+					List<Double> shift = new ArrayList<>();
+					for (int i = 0; i < sArray.length; i++) {
+						shift.add(DatasetUtils.convertToDataset(results.get(2*i)).getDouble());
+					}
+					summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, "correlated_spectrum_shift_" + r));
 
 					Dataset e = energies[r];
 					sp = sSpectra[r].sum(0);
@@ -420,6 +442,11 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					sp.setName("correlated_single_photon_spectrum_" + r);
 					ProcessingUtils.setAxes(sp, e);
 					summaryData.add(sp);
+					shift.clear();
+					for (int i = 0; i < sArray.length; i++) {
+						shift.add(DatasetUtils.convertToDataset(results.get(2*i)).getDouble());
+					}
+					summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, "correlated_single_photon_spectrum_shift_" + r));
 
 					sArray = new IDataset[mSpectra[r].getShapeRef()[0]];
 					for (int i = 0; i < sArray.length; i++) {
@@ -433,6 +460,11 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					sp.setName("correlated_multiple_photon_spectrum_" + r);
 					ProcessingUtils.setAxes(sp, e);
 					summaryData.add(sp);
+					shift.clear();
+					for (int i = 0; i < sArray.length; i++) {
+						shift.add(DatasetUtils.convertToDataset(results.get(2*i)).getDouble());
+					}
+					summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, "correlated_multiple_photon_spectrum_shift_" + r));
 				}
 			}
 		}
@@ -459,7 +491,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		}
 		return a;
 	}
-	
+
 	private Dataset accumulate(IDataset... d) {
 		Dataset sp = null;
 		for (IDataset s : d) {
@@ -469,24 +501,10 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			if (sp == null) {
 				sp = DatasetUtils.convertToDataset(s).clone();
 			} else {
-//				System.err.printf("%s cf %s\n", Arrays.toString(s.getShapeRef()), Arrays.toString(sp.getShapeRef()));
 				sp.iadd(s);
 			}
 		}
 		return sp;
-	}
-
-	private IRectangularROI getROI(boolean useBothROIs, int r) {
-		IRectangularROI roi;
-		if (useBothROIs) {
-			roi = r == 0 ? model.getRoiA() : model.getRoiB();
-		} else {
-			roi = model.getRoiA();
-			if (roi == null) {
-				roi = model.getRoiB();
-			}
-		}
-		return roi;
 	}
 
 	private DatasetToDatasetFunction getCorrelateShifter(boolean noisy) {

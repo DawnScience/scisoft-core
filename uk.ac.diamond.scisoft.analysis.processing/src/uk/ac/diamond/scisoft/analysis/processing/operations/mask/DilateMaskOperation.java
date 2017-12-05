@@ -10,6 +10,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.mask;
 
 import org.dawb.common.services.ServiceManager;
 import org.eclipse.dawnsci.analysis.api.image.IImageFilterService;
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -22,6 +23,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.metadata.MaskMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 
+@Atomic
 public class DilateMaskOperation extends AbstractOperation<DilateMaskModel, OperationData> {
 
 	@Override

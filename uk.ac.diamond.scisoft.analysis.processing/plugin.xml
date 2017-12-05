@@ -1385,20 +1385,11 @@
        </category>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.rixs"
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.rixs.ElasticLineFit"
-            description="Find and fit elastic lines in RIXS image"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.rixs.ElasticLineReduction"
+            description="Fit elastic lines in RIXS image and calibrate energy dispersion if energy scan"
             icon="icons/stairs.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.rixs.ElasticLineFit"
-            name="RIXS elastic line fit"
-            visible="true">
-      </operation>
-      <operation
-            category="uk.ac.diamond.scisoft.analysis.processing.rixs"
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.rixs.ElasticLineEnergyCalibration"
-            description="Calibrate energy dispersion using elastic lines in RIXS image"
-            icon="icons/stairs.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.rixs.ElasticLineEnergyCalibration"
-            name="RIXS energy dispersion calibration"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.rixs.ElasticLineReduction"
+            name="RIXS elastic line reduction"
             visible="true">
       </operation>
       <operation

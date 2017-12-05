@@ -14,7 +14,7 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 /**
  * Model for fitting elastic line in RIXS images
  */
-public class ElasticLineFitModel extends RixsBaseModel {
+public class ElasticLineReductionModel extends RixsBaseModel {
 
 	@OperationModelField(label = "Width of strip to use to find elastic line", hint = "1 for using column maxima, 2+ for summing and fitting line", min = 1)
 	private int delta = 25;

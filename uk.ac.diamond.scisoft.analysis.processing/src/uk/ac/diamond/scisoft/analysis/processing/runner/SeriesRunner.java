@@ -121,7 +121,7 @@ public class SeriesRunner implements IOperationRunner {
 					//TODO only set metadata if doesnt already contain it!
 					//TODO continue if null;
 					
-					if (tmp == null) {
+					if (tmp == null || tmp.getData() == null) {
 						data = null;
 						break;
 					}

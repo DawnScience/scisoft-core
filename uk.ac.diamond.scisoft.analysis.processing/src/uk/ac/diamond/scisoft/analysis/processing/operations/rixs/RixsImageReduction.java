@@ -103,6 +103,10 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		}
 		initializeFitLine(file);
 
+		if (model.isRegionsFromFile()) {
+			initializeROIsFromFile(file);
+		}
+
 		super.updateFromModel();
 	}
 
@@ -129,22 +133,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 
 			GroupNode pg = ProcessingUtils.checkForProcess(this, entry, ElasticLineReduction.PROCESS_NAME);
 
-			if (model.isRegionsFromFitFile()) {
-				IPersistenceService service = LocalServiceManager.getPersistenceService();
-				IPersistentNodeFactory pf = service.getPersistentNodeFactory();
-				IOperation[] ops = pf.readOperationsFromTree(tree);
-				for (IOperation o : ops) {
-					IOperationModel m = o.getModel();
-					if (m instanceof RixsBaseModel) {
-						RixsBaseModel rbm = (RixsBaseModel) m;
-						model.setRoiA(rbm.getRoiA());
-						model.setRoiB(rbm.getRoiB());
-						break;
-					}
-				}
-			}
-
-			// find /entry/auxiliary/*-RIXS elastic line fit/line?_[cm]
+			// find /entry/auxiliary/*-RIXS elastic line reduction/line?_[cm]
 			GroupNode g = (GroupNode) entry.getGroupNode("auxiliary");
 			for (NodeLink n : g) {
 				if (n.getName().endsWith(ElasticLineReduction.PROCESS_NAME) && n.isDestinationGroup()) {
@@ -155,15 +144,33 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 						String l = "line_" + i;
 						p[0] = NexusTreeUtils.parseDoubleArray(fg.getGroupNode(l + "_m").getDataNode("data"))[0];
 						p[1] = NexusTreeUtils.parseDoubleArray(fg.getGroupNode(l + "_c").getDataNode("data"))[0];
-						StraightLine line = lines[i] = new StraightLine(p);
+						lines[i] = new StraightLine(p);
 					}
 				}
 			}
 
-			// TODO may be set slope limits from process in pg
-
+			// TODO may be set slope limits from process in process group by reading model
 		} catch (Exception e) {
 			throw new OperationException(this, "Cannot load file with elastic line fit", e);
+		}
+	}
+
+	private void initializeROIsFromFile(String file) {
+		try {
+			Tree tree = LoaderFactory.getData(file).getTree();
+			IPersistenceService service = LocalServiceManager.getPersistenceService();
+			IPersistentNodeFactory pf = service.getPersistentNodeFactory();
+			for (IOperation<?,?> o : pf.readOperationsFromTree(tree)) {
+				IOperationModel m = o.getModel();
+				if (m instanceof RixsBaseModel) {
+					RixsBaseModel rbm = (RixsBaseModel) m;
+					model.setRoiA(rbm.getRoiA());
+					model.setRoiB(rbm.getRoiB());
+					break;
+				}
+			}
+		} catch (Exception e) {
+			throw new OperationException(this, "Cannot load file with ROIs", e);
 		}
 	}
 
@@ -213,7 +220,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 
 	@Override
 	IDataset processImageRegion(int r, IDataset original, Dataset in) {
-		Dataset[] result = makeSpectrum(r, in, 0.25);
+		Dataset[] result = makeSpectrum(r, in);
 		Dataset spectrum = result[1];
 		spectrum.setName("spectrum_" + r);
 
@@ -238,6 +245,11 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		// find photon events in entire image
 		List<Dataset> events = ImageUtils.findWindowedPeaks(original, model.getWindow(), countsPerPhoton * model.getLowThreshold(), countsPerPhoton * model.getHighThreshold());
 		Dataset eSum = events.get(0);
+		if (eSum.getSize() == 0) {
+			log.append("No events found");
+			return od;
+		}
+
 		// accumulate event sums and photons
 		if (totalSum == null) {
 			totalSum = eSum;
@@ -485,9 +497,9 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			odd = (OperationDataForDisplay) od;
 		} else {
 			odd = new OperationDataForDisplay(od.getData());
-			odd.setShowSeparately(true);
 		}
-
+		odd.setShowSeparately(true);
+		odd.setLog(log);
 		odd.setDisplayData(displayData.toArray(new IDataset[displayData.size()]));
 		odd.setAuxData(auxData.toArray(new Serializable[auxData.size()]));
 		odd.setSummaryData(summaryData.toArray(new Serializable[summaryData.size()]));

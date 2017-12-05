@@ -179,27 +179,38 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	 * @param in
 	 * @return elastic line position and spectrum datasets
 	 */
-	public Dataset[] makeSpectrum(int r, Dataset in, double maxSlope) {
+	public Dataset[] makeSpectrum(int r, Dataset in) {
 		// shift and accumulate spectra
-		int[] shape = in.getShapeRef();
-		int rows = shape[0];
-		int cols = shape[1]; // energy
+		int rows = in.getShapeRef()[0];
 		Dataset y = DatasetFactory.createRange(rows);
-		Dataset c = DatasetFactory.createRange(cols);
 		y.iadd(offset[0]);
 		StraightLine line = getStraightLine(r);
-
 		DoubleDataset elastic = line.calculateValues(y); // absolute position of elastic line to use a zero point
-		double elastic0 = elastic.getDouble();
 
-		DoubleDataset spectrum = DatasetFactory.zeros(cols);
-		SliceND slice = new SliceND(shape); 
-		for (int i = 0; i < rows; i++) {
-			slice.setSlice(0, i, i+1, 1);
-			spectrum.iadd(Maths.interpolate(Maths.add(c, elastic.getDouble(i) - elastic0), in.getSliceView(slice).squeeze(), c, 0, 0));
-		}
+		Dataset spectrum = sumImageAlongSlope(in, line.getParameterValue(1));
 
 		return new Dataset[] {elastic, spectrum};
+	}
+
+	/**
+	 * Sum image row-by-row offset by slope
+	 * @param image
+	 * @param slope
+	 * @return summed image
+	 */
+	protected Dataset sumImageAlongSlope(Dataset image, double slope) {
+		int[] shape = image.getShapeRef();
+		int rows = shape[0];
+		int cols = shape[1];
+		DoubleDataset result = DatasetFactory.zeros(cols);
+		SliceND slice = new SliceND(shape); 
+		Dataset c = DatasetFactory.createRange(cols);
+		for (int i = 0; i < rows; i++) {
+			slice.setSlice(0, i, i+1, 1);
+			result.iadd(Maths.interpolate(c, image.getSliceView(slice).squeeze(), c, 0, 0));
+			c.iadd(slope);
+		}
+		return result;
 	}
 
 	/**

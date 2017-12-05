@@ -38,8 +38,8 @@ public class RixsImageReductionModel extends RixsBaseModel {
 	@OperationModelField(label = "Supersampling for event centroids", min = 2)
 	private int bins = 2;
 
-	@OperationModelField(label = "Read regions from fit file")
-	private boolean regionsFromFitFile = true;
+	@OperationModelField(label = "Read regions from file")
+	private boolean regionsFromFile = true;
 
 	public enum CORRELATE_OPTION {
 		ALL_PAIRS, // every pairs of spectra
@@ -129,14 +129,14 @@ public class RixsImageReductionModel extends RixsBaseModel {
 	}
 
 	/**
-	 * @return if true, read regions of interest from fit file
+	 * @return if true, read regions of interest from file
 	 */
-	public boolean isRegionsFromFitFile() {
-		return regionsFromFitFile;
+	public boolean isRegionsFromFile() {
+		return regionsFromFile;
 	}
 
-	public void setRegionsFromFitFile(boolean regionsFromFitFile) {
-		firePropertyChange("setRegionsFromFitFile", this.regionsFromFitFile, this.regionsFromFitFile = regionsFromFitFile);
+	public void setRegionsFromFile(boolean regionsFromFile) {
+		firePropertyChange("setRegionsFromFile", this.regionsFromFile, this.regionsFromFile = regionsFromFile);
 	}
 
 	/**

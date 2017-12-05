@@ -287,7 +287,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		addAuxData(r, line.getParameterValue(0), line.getParameterValue(1), residual);
 
 		if (useSpectrum) { // use spectrum fitted with Gaussian for calibration fit
-			Dataset[] result = makeSpectrum(r, in, model.getMaxSlope());
+			Dataset[] result = makeSpectrum(r, in);
 			Dataset spectrum = result[1];
 			spectrum.setName("elastic_spectrum_" + r);
 //			auxData.add(spectrum); // put in summary data instead

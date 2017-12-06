@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
-import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationDataForDisplay;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -46,7 +45,6 @@ import org.eclipse.january.dataset.SliceND;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
-import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 /**
  * Find and fit the RIXS elastic line image to a straight line so other image
@@ -369,15 +367,6 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		offset[0] = s0 == null ? 0 : s0.getStart();
 		offset[1] = s1 == null ? 0 : s1.getStart();
 		return new Slice[] {s0, s1};
-	}
-
-	protected void generateFitForDisplay(IFunction f, Dataset x, Dataset d, String name, boolean transpose) {
-		IDataset fit = f.calculateValues(x);
-		fit.setName(name);
-		ProcessingUtils.setAxes(fit, x);
-		ProcessingUtils.setAxes(d, x);
-		displayData.add(d);
-		displayData.add(fit);
 	}
 
 //	// FIXME this is wasteful as these axis datasets are replicated for each

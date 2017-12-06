@@ -321,13 +321,21 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 		Dataset energy = DatasetFactory.createFromList(coords[0]);
 		Dataset intercept = DatasetFactory.createFromList(coords[1]);
-		energy.setName("Energy");
-		intercept.setName("intercept_" + r);
+		String name;
+		if (model.getEnergyDirection() == ENERGY_DIRECTION.SLOW) {
+			energy.setName("energy_" + r);
+			intercept.setName("Intercept");
+			name = "energy_fit_" + r;
+		} else {
+			energy.setName("Energy");
+			intercept.setName("intercept_" + r);
+			name = "intercept_fit_" + r;
+		}
 		double smax = 2*Math.abs(intercept.peakToPeak().doubleValue()) / Math.abs(energy.peakToPeak().doubleValue());
 		StraightLine iLine = new StraightLine(-smax, smax, -Double.MAX_VALUE, Double.MAX_VALUE);
 
 		double res = fitFunction(iLine, energy, intercept, null);
-		generateFitForDisplay(iLine, energy, intercept, "intercept_fit_" + r, model.getEnergyDirection() == ENERGY_DIRECTION.SLOW);
+		generateFitForDisplay(iLine, energy, intercept, name, model.getEnergyDirection() == ENERGY_DIRECTION.SLOW);
 		return new double[] {res, iLine.getParameterValue(0)};
 	}
 
@@ -406,14 +414,16 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 	protected void generateFitForDisplay(IFunction f, Dataset x, Dataset d, String name, boolean transpose) {
 		Dataset fit = DatasetUtils.convertToDataset(f.calculateValues(x));
-		fit.setName(name);
 		if (transpose) {
 			Dataset xf = x.clone();
+			xf.setName(name);
+			fit.setName(d.getName());
 			ProcessingUtils.setAxes(xf, fit);
 			ProcessingUtils.setAxes(x, d);
 			displayData.add(x);
 			displayData.add(xf);
 		} else {
+			fit.setName(name);
 			ProcessingUtils.setAxes(fit, x);
 			ProcessingUtils.setAxes(d, x);
 			displayData.add(d);

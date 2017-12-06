@@ -1,7 +1,6 @@
 package org.dawnsci.surfacescatter;
 
 import java.util.ArrayList;
-
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
@@ -11,7 +10,6 @@ import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.SliceND;
@@ -27,241 +25,234 @@ public enum OverlapDataModelEnum {
 
 	lowerOverlapPositions(NeXusStructureStrings.getLoweroverlappositions(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData.addAttribute(TreeFactory.createAttribute(
-					NeXusStructureStrings.getLoweroverlappositions(), convertListofDoublesToDataset(ovdm.getyList()))),
+					NeXusStructureStrings.getLoweroverlappositions(), getIntegerArrayAsDataset(ovdm.getLowerOverlapPositions()))),
 			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm
-					.setyList(getListofDoublesAttribute(NeXusStructureStrings.getLoweroverlappositions(), nxData))),
+					.setLowerOverlapPositions(getIntegerArrayAttribute(NeXusStructureStrings.getLoweroverlappositions(), nxData))),
 
 	lowerOverlapScannedValues(NeXusStructureStrings.getLoweroverlapscannedvalues(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
 					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getLoweroverlapscannedvalues(),
-							convertListofDoublesToDataset(ovdm.getyListError()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListError(
-					getListofDoublesAttribute(NeXusStructureStrings.getLoweroverlapscannedvalues(), nxData))),
+							getDoubleArrayAsDataset(ovdm.getLowerOverlapScannedValues()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setLowerOverlapScannedValues(
+					getDoubleArrayAttribute(NeXusStructureStrings.getLoweroverlapscannedvalues(), nxData))),
 
 	lowerOverlapCorrectedValues(NeXusStructureStrings.getLoweroverlapcorrectedvalues(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
 					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getLoweroverlapcorrectedvalues(),
-							convertListofDoublesToDataset(ovdm.getyListFhkl()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListFhkl(
-					getListofDoublesAttribute(NeXusStructureStrings.getLoweroverlapcorrectedvalues(), nxData))),
+							getDoubleArrayAsDataset(ovdm.getLowerOverlapCorrectedValues()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setLowerOverlapCorrectedValues(
+					getDoubleArrayAttribute(NeXusStructureStrings.getLoweroverlapcorrectedvalues(), nxData))),
 
 	lowerOverlapRawValues(NeXusStructureStrings.getLoweroverlaprawvalues(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
 					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getLoweroverlaprawvalues(),
-							convertListofDoublesToDataset(ovdm.getyListFhklError()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListFhklError(
-					getListofDoublesAttribute(NeXusStructureStrings.getLoweroverlaprawvalues(), nxData))),
+							getDoubleArrayAsDataset(ovdm.getLowerOverlapRawValues()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setLowerOverlapRawValues(
+					getDoubleArrayAttribute(NeXusStructureStrings.getLoweroverlaprawvalues(), nxData))),
 
 	lowerOverlapFhklValues(NeXusStructureStrings.getLoweroverlapfhklvalues(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
 					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getLoweroverlapfhklvalues(),
-							convertListofDoublesToDataset(ovdm.getyListRawIntensity()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListRawIntensity(
-					getListofDoublesAttribute(NeXusStructureStrings.getLoweroverlapfhklvalues(), nxData))),
+							getDoubleArrayAsDataset(ovdm.getLowerOverlapFhklValues()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setLowerOverlapFhklValues(
+					getDoubleArrayAttribute(NeXusStructureStrings.getLoweroverlapfhklvalues(), nxData))),
 
 	lowerOverlapFitParametersCorrected(NeXusStructureStrings.getLoweroverlapfitparameterscorrected(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData.addAttribute(
 					TreeFactory.createAttribute(NeXusStructureStrings.getLoweroverlapfitparameterscorrected(),
-							convertListofDoublesToDataset(ovdm.getyListRawIntensityError()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListRawIntensityError(
-					getListofDoublesAttribute(NeXusStructureStrings.getLoweroverlapfitparameterscorrected(), nxData))),
+							getDoubleArrayAsDataset(ovdm.getLowerOverlapFitParametersCorrected()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setLowerOverlapFitParametersCorrected(
+					getDoubleArrayAttribute(NeXusStructureStrings.getLoweroverlapfitparameterscorrected(), nxData))),
 
 	lowerOverlapFitParametersRaw(NeXusStructureStrings.getLoweroverlapfitparametersraw(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
 					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getLoweroverlapfitparametersraw(),
-							convertListofListsOfDoublesToDataset(ovdm.getyListForEachDat()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListForEachDat(
-					getListofListsOfDoublesAttribute(NeXusStructureStrings.getLoweroverlapfitparametersraw(), nxData))),
+							getDoubleArrayAsDataset(ovdm.getLowerOverlapFitParametersRaw()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setLowerOverlapFitParametersRaw(
+					getDoubleArrayAttribute(NeXusStructureStrings.getLoweroverlapfitparametersraw(), nxData))),
 
 	lowerOverlapFitParametersFhkl(NeXusStructureStrings.getLoweroverlapfitparametersfhkl(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
 					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getLoweroverlapfitparametersfhkl(),
-							convertListofListsOfDoublesToDataset(ovdm.getyListErrorForEachDat()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListErrorForEachDat(
-					getListofListsOfDoublesAttribute(NeXusStructureStrings.getLoweroverlapfitparametersfhkl(),
+							getDoubleArrayAsDataset(ovdm.getLowerOverlapFitParametersFhkl()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setLowerOverlapFitParametersFhkl(
+					getDoubleArrayAttribute(NeXusStructureStrings.getLoweroverlapfitparametersfhkl(),
 							nxData))),
 
 	upperDatName(NeXusStructureStrings.getUpperdatname(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
-					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getUpperdatname(),
-							convertListofListsOfDoublesToDataset(ovdm.getyListFhklForEachDat()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListFhklForEachDat(
-					getListofListsOfDoublesAttribute(NeXusStructureStrings.getUpperdatname(), nxData))),
+					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getUpperdatname(), ovdm.getUpperDatName())),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setUpperDatName(
+					getStringAttribute(NeXusStructureStrings.getUpperdatname(), nxData))),
 
 	upperOverlapPositions(NeXusStructureStrings.getUpperoverlappositions(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
 					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getUpperoverlappositions(),
-							convertListofListsOfDoublesToDataset(ovdm.getyListFhklErrorForEachDat()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListFhklErrorForEachDat(
-					getListofListsOfDoublesAttribute(NeXusStructureStrings.getUpperoverlappositions(), nxData))),
+							getIntegerArrayAsDataset(ovdm.getUpperOverlapPositions()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setUpperOverlapPositions(
+					getIntegerArrayAttribute(NeXusStructureStrings.getUpperoverlappositions(), nxData))),
 
 	upperOverlapScannedValues(NeXusStructureStrings.getUpperoverlapscannedvalues(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
 					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getUpperoverlapscannedvalues(),
-							convertListofListsOfDoublesToDataset(ovdm.getyListRawIntensityErrorForEachDat()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListRawIntensityForEachDat(
-					getListofListsOfDoublesAttribute(NeXusStructureStrings.getUpperoverlapscannedvalues(), nxData))),
+							getDoubleArrayAsDataset(ovdm.getUpperOverlapScannedValues()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setUpperOverlapScannedValues(
+					getDoubleArrayAttribute(NeXusStructureStrings.getUpperoverlapscannedvalues(), nxData))),
 
 	upperOverlapCorrectedValues(NeXusStructureStrings.getUpperoverlapcorrectedvalues(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
 					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getUpperoverlapcorrectedvalues(),
-							convertListofListsOfDoublesToDataset(ovdm.getyListRawIntensityErrorForEachDat()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListRawIntensityErrorForEachDat(
-					getListofListsOfDoublesAttribute(NeXusStructureStrings.getUpperoverlapcorrectedvalues(), nxData))),
+							getDoubleArrayAsDataset(ovdm.getUpperOverlapCorrectedValues()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setUpperOverlapCorrectedValues(
+					getDoubleArrayAttribute(NeXusStructureStrings.getUpperoverlapcorrectedvalues(), nxData))),
 
 	upperOverlapRawValues(NeXusStructureStrings.getUpperoverlaprawvalues(),
-			(GroupNode nxData, OverlapDataModel ovdm) -> addDataNodeFromDataset(
-					NeXusStructureStrings.getUpperoverlaprawvalues(), nxData,
-					concatenateIDatasetArrayList(ovdm.getOutputDatArray()), 0),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setOutputDatArray(
-					getListOfDatasetsAttribute(NeXusStructureStrings.getUpperoverlaprawvalues(), nxData))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
+				.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getUpperoverlaprawvalues(),
+					getDoubleArrayAsDataset(ovdm.getUpperOverlapRawValues()))),
+	(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setUpperOverlapRawValues(
+			getDoubleArrayAttribute(NeXusStructureStrings.getUpperoverlaprawvalues(), nxData))),
+
 
 	upperOverlapFhklValues(NeXusStructureStrings.getUpperoverlapfhklvalues(),
-			(GroupNode nxData, OverlapDataModel ovdm) -> addDataNodeFromDataset(
-					NeXusStructureStrings.getUpperoverlapfhklvalues(), nxData,
-					concatenateIDatasetArrayList(ovdm.getBackgroundDatArray()), 1),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setBackgroundDatArray(
-					getListOfDatasetsAttribute(NeXusStructureStrings.getUpperoverlapfhklvalues(), nxData))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
+			.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getUpperoverlapfhklvalues(),
+					getDoubleArrayAsDataset(ovdm.getUpperOverlapFhklValues()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setUpperOverlapFhklValues(
+					getDoubleArrayAttribute(NeXusStructureStrings.getUpperoverlapfhklvalues(), nxData))),
 
 	upperOverlapFitParametersRaw(NeXusStructureStrings.getUpperoverlapfitparametersraw(),
 			(GroupNode nxData,
 					OverlapDataModel ovdm) -> nxData.addAttribute(TreeFactory.createAttribute(
-							NeXusStructureStrings.getUpperoverlapfitparametersraw(), ovdm.getNoOfDats())),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm
-					.setNoOfDats(getIntegerAttribute(NeXusStructureStrings.getUpperoverlapfitparametersraw(), nxData))),
+							NeXusStructureStrings.getUpperoverlapfitparametersraw(), ovdm.getUpperOverlapFitParametersRaw())),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setUpperOverlapFitParametersRaw(
+					getDoubleArrayAttribute(NeXusStructureStrings.getUpperoverlapfitparametersraw(), nxData))),
 
 	upperOverlapFitParametersFhkl(NeXusStructureStrings.getUpperoverlapfitparametersfhkl(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
 					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getUpperoverlapfitparametersfhkl(),
-							convertListofDoublesToDataset(ovdm.getyList()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyList(
-					getListofDoublesAttribute(NeXusStructureStrings.getUpperoverlapfitparametersfhkl(), nxData))),
+							getDoubleArrayAsDataset(ovdm.getUpperOverlapFitParametersFhkl()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setUpperOverlapFitParametersFhkl(
+					getDoubleArrayAttribute(NeXusStructureStrings.getUpperoverlapfitparametersfhkl(), nxData))),
 
 	attenuationFactor(NeXusStructureStrings.getAttenuationfactor(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData.addAttribute(TreeFactory.createAttribute(
-					NeXusStructureStrings.getAttenuationfactor(), convertListofDoublesToDataset(ovdm.getyListError()))),
+					NeXusStructureStrings.getAttenuationfactor(), (ovdm.getAttenuationFactor()))),
 			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm
-					.setyListError(getListofDoublesAttribute(NeXusStructureStrings.getAttenuationfactor(), nxData))),
+					.setAttenuationFactor(getDoubleAttribute(NeXusStructureStrings.getAttenuationfactor(), nxData))),
 
 	attenuationFactorFhkl(NeXusStructureStrings.getAttenuationfactorfhkl(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
-					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getAttenuationfactorfhkl(),
-							convertListofDoublesToDataset(ovdm.getyListFhkl()))),
+					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getAttenuationfactorfhkl(), (ovdm.getAttenuationFactorFhkl()))),
 			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm
-					.setyListFhkl(getListofDoublesAttribute(NeXusStructureStrings.getAttenuationfactorfhkl(), nxData))),
+					.setAttenuationFactorFhkl(getDoubleAttribute(NeXusStructureStrings.getAttenuationfactorfhkl(), nxData))),
 
 	attenuationFactorRaw(NeXusStructureStrings.getAttenuationfactorraw(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
-					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getAttenuationfactorraw(),
-							convertListofDoublesToDataset(ovdm.getyListFhklError()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListFhklError(
-					getListofDoublesAttribute(NeXusStructureStrings.getAttenuationfactorraw(), nxData))),
+					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getAttenuationfactorraw(), (ovdm.getAttenuationFactorRaw()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setAttenuationFactorRaw(
+					getDoubleAttribute(NeXusStructureStrings.getAttenuationfactorraw(), nxData))),
 
 	upperFFTFitCoefficientsCorrected(NeXusStructureStrings.getUpperfftfitcoefficientscorrected(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData.addAttribute(
 					TreeFactory.createAttribute(NeXusStructureStrings.getUpperfftfitcoefficientscorrected(),
-							convertListofDoublesToDataset(ovdm.getyListRawIntensity()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListRawIntensity(
-					getListofDoublesAttribute(NeXusStructureStrings.getUpperfftfitcoefficientscorrected(), nxData))),
+							 getDoubleArrayOfArraysAsDataset(ovdm.getUpperFFTFitCoefficientsCorrected()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setUpperFFTFitCoefficientsCorrected(
+					getDoubleArrayofArraysAttribute(NeXusStructureStrings.getUpperfftfitcoefficientscorrected(), nxData))),
 
 	upperFFTFitCoefficientsRaw(NeXusStructureStrings.getUpperfftfitcoefficientsraw(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
 					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getUpperfftfitcoefficientsraw(),
-							convertListofDoublesToDataset(ovdm.getyListRawIntensityError()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListRawIntensityError(
-					getListofDoublesAttribute(NeXusStructureStrings.getUpperfftfitcoefficientsraw(), nxData))),
+							getDoubleArrayOfArraysAsDataset(ovdm.getUpperFFTFitCoefficientsRaw()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setUpperFFTFitCoefficientsRaw(
+					getDoubleArrayofArraysAttribute(NeXusStructureStrings.getUpperfftfitcoefficientsraw(), nxData))),
 
 	upperFFTFitCoefficientsFhkl(NeXusStructureStrings.getUpperfftfitcoefficientsfhkl(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
 					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getUpperfftfitcoefficientsfhkl(),
-							convertListofListsOfDoublesToDataset(ovdm.getyListForEachDat()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListForEachDat(
-					getListofListsOfDoublesAttribute(NeXusStructureStrings.getUpperfftfitcoefficientsfhkl(), nxData))),
+							getDoubleArrayOfArraysAsDataset(ovdm.getUpperFFTFitCoefficientsFhkl()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setUpperFFTFitCoefficientsFhkl(
+					getDoubleArrayofArraysAttribute(NeXusStructureStrings.getUpperfftfitcoefficientsfhkl(), nxData))),
 
 	upperBaseFrequencyCorrected(NeXusStructureStrings.getUpperbasefrequencycorrected(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
 					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getUpperbasefrequencycorrected(),
-							convertListofListsOfDoublesToDataset(ovdm.getyListErrorForEachDat()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListErrorForEachDat(
-					getListofListsOfDoublesAttribute(NeXusStructureStrings.getUpperbasefrequencycorrected(), nxData))),
+							(ovdm.getUpperBaseFrequencyCorrected()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setUpperBaseFrequencyCorrected(
+					getDoubleAttribute(NeXusStructureStrings.getUpperbasefrequencycorrected(), nxData))),
 
 	upperBaseFrequencyRaw(NeXusStructureStrings.getUpperbasefrequencyraw(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
 					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getUpperbasefrequencyraw(),
-							convertListofListsOfDoublesToDataset(ovdm.getyListFhklForEachDat()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListFhklForEachDat(
-					getListofListsOfDoublesAttribute(NeXusStructureStrings.getUpperbasefrequencyraw(), nxData))),
+							(ovdm.getUpperBaseFrequencyRaw()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setUpperBaseFrequencyRaw(
+					getDoubleAttribute(NeXusStructureStrings.getUpperbasefrequencyraw(), nxData))),
 
 	upperBaseFrequencyFhkl(NeXusStructureStrings.getUpperbasefrequencyfhkl(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
 					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getUpperbasefrequencyfhkl(),
-							convertListofListsOfDoublesToDataset(ovdm.getyListFhklErrorForEachDat()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListFhklErrorForEachDat(
-					getListofListsOfDoublesAttribute(NeXusStructureStrings.getUpperbasefrequencyfhkl(), nxData))),
+							(ovdm.getUpperBaseFrequencyFhkl()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setUpperBaseFrequencyFhkl(
+					getDoubleAttribute(NeXusStructureStrings.getUpperbasefrequencyfhkl(), nxData))),
 
 	lowerFFTFitCoefficientsCorrected(NeXusStructureStrings.getLowerfftfitcoefficientscorrected(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData.addAttribute(
 					TreeFactory.createAttribute(NeXusStructureStrings.getLowerfftfitcoefficientscorrected(),
-							convertListofListsOfDoublesToDataset(ovdm.getyListRawIntensityErrorForEachDat()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListRawIntensityForEachDat(
-					getListofListsOfDoublesAttribute(NeXusStructureStrings.getLowerfftfitcoefficientscorrected(),
+							getDoubleArrayOfArraysAsDataset(ovdm.getLowerFFTFitCoefficientsCorrected()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setLowerFFTFitCoefficientsCorrected(
+					getDoubleArrayofArraysAttribute(NeXusStructureStrings.getLowerfftfitcoefficientscorrected(),
 							nxData))),
 
 	lowerFFTFitCoefficientsRaw(NeXusStructureStrings.getLowerfftfitcoefficientsraw(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> nxData
 					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getLowerfftfitcoefficientsraw(),
-							convertListofListsOfDoublesToDataset(ovdm.getyListRawIntensityErrorForEachDat()))),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setyListRawIntensityErrorForEachDat(
-					getListofListsOfDoublesAttribute(NeXusStructureStrings.getLowerfftfitcoefficientsraw(), nxData))),
+							getDoubleArrayOfArraysAsDataset(ovdm.getLowerFFTFitCoefficientsRaw()))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setLowerFFTFitCoefficientsRaw(
+					getDoubleArrayofArraysAttribute(NeXusStructureStrings.getLowerfftfitcoefficientsraw(), nxData))),
 
 	lowerFFTFitCoefficientsFhkl(NeXusStructureStrings.getLowerfftfitcoefficientsfhkl(),
 			(GroupNode nxData, OverlapDataModel ovdm) -> addDataNodeFromDataset(
 					NeXusStructureStrings.getLowerfftfitcoefficientsfhkl(), nxData,
-					concatenateIDatasetArrayList(ovdm.getOutputDatArray()), 0),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setOutputDatArray(
-					getListOfDatasetsAttribute(NeXusStructureStrings.getLowerfftfitcoefficientsfhkl(), nxData))),
+					getDoubleArrayOfArraysAsDataset(ovdm.getLowerFFTFitCoefficientsFhkl()), 0),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setLowerFFTFitCoefficientsFhkl(
+					getDoubleArrayofArraysAttribute(NeXusStructureStrings.getLowerfftfitcoefficientsfhkl(), nxData))),
 
 	lowerBaseFrequencyCorrected(NeXusStructureStrings.getLowerbasefrequencycorrected(),
-			(GroupNode nxData, OverlapDataModel ovdm) -> addDataNodeFromDataset(
-					NeXusStructureStrings.getLowerbasefrequencycorrected(), nxData,
-					concatenateIDatasetArrayList(ovdm.getBackgroundDatArray()), 1),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setBackgroundDatArray(
-					getListOfDatasetsAttribute(NeXusStructureStrings.getLowerbasefrequencycorrected(), nxData))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> nxData.addAttribute(TreeFactory.createAttribute(
+					NeXusStructureStrings.getLowerbasefrequencycorrected(), ovdm.getLowerBaseFrequencyCorrected())),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setLowerBaseFrequencyCorrected(
+					getDoubleAttribute(NeXusStructureStrings.getLowerbasefrequencycorrected(), nxData))),
 
 	lowerBaseFrequencyRaw(NeXusStructureStrings.getLowerbasefrequencyraw(),
-			(GroupNode nxData, OverlapDataModel ovdm) -> addDataNodeFromDataset(
-					NeXusStructureStrings.getLowerbasefrequencyraw(), nxData,
-					concatenateIDatasetArrayList(ovdm.getBackgroundDatArray()), 1),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setBackgroundDatArray(
-					getListOfDatasetsAttribute(NeXusStructureStrings.getLowerbasefrequencyraw(), nxData))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> nxData.addAttribute(TreeFactory.createAttribute(
+					NeXusStructureStrings.getLowerbasefrequencyraw(), ovdm.getLowerBaseFrequencyRaw())),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setLowerBaseFrequencyRaw(
+					getDoubleAttribute(NeXusStructureStrings.getLowerbasefrequencyraw(), nxData))),
 
 	lowerBaseFrequencyFhkl(NeXusStructureStrings.getLowerbasefrequencyfhkl(),
-			(GroupNode nxData, OverlapDataModel ovdm) -> addDataNodeFromDataset(
-					NeXusStructureStrings.getLowerbasefrequencyfhkl(), nxData,
-					concatenateIDatasetArrayList(ovdm.getBackgroundDatArray()), 1),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setBackgroundDatArray(
-					getListOfDatasetsAttribute(NeXusStructureStrings.getLowerbasefrequencyfhkl(), nxData))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> nxData.addAttribute(TreeFactory.createAttribute(
+					NeXusStructureStrings.getLowerbasefrequencyfhkl(), ovdm.getLowerBaseFrequencyFhkl())),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setLowerBaseFrequencyFhkl(
+					getDoubleAttribute(NeXusStructureStrings.getLowerbasefrequencyfhkl(), nxData))),
 
 	attenuationFactorFFT(NeXusStructureStrings.getAttenuationfactorfft(),
-			(GroupNode nxData, OverlapDataModel ovdm) -> addDataNodeFromDataset(
-					NeXusStructureStrings.getAttenuationfactorfft(), nxData,
-					concatenateIDatasetArrayList(ovdm.getBackgroundDatArray()), 1),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setBackgroundDatArray(
-					getListOfDatasetsAttribute(NeXusStructureStrings.getAttenuationfactorfft(), nxData))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> nxData.addAttribute(TreeFactory.createAttribute(
+					NeXusStructureStrings.getAttenuationfactorfft(), ovdm.getAttenuationFactorFFT())),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setAttenuationFactorFFT(
+					getDoubleAttribute(NeXusStructureStrings.getAttenuationfactorfft(), nxData))),
 
 	attenuationFactorFhklFFT(NeXusStructureStrings.getAttenuationfactorfhklfft(),
-			(GroupNode nxData, OverlapDataModel ovdm) -> addDataNodeFromDataset(
-					NeXusStructureStrings.getAttenuationfactorfhklfft(), nxData,
-					concatenateIDatasetArrayList(ovdm.getBackgroundDatArray()), 1),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setBackgroundDatArray(
-					getListOfDatasetsAttribute(NeXusStructureStrings.getAttenuationfactorfhklfft(), nxData))),
+			(GroupNode nxData, OverlapDataModel ovdm) -> nxData.addAttribute(TreeFactory.createAttribute(
+					NeXusStructureStrings.getAttenuationfactorfhklfft(), ovdm.getAttenuationFactorFhklFFT())),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setAttenuationFactorFhklFFT(
+					getDoubleAttribute(NeXusStructureStrings.getAttenuationfactorfhklfft(), nxData))),
 
 	attenuationFactorRawFFT(NeXusStructureStrings.getAttenuationfactorrawfft(),
-			(GroupNode nxData, OverlapDataModel ovdm) -> addDataNodeFromDataset(
-					NeXusStructureStrings.getAttenuationfactorrawfft(), nxData,
-					concatenateIDatasetArrayList(ovdm.getBackgroundDatArray()), 1),
-			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setBackgroundDatArray(
-					getListOfDatasetsAttribute(NeXusStructureStrings.getAttenuationfactorrawfft(), nxData))),;
+			(GroupNode nxData, OverlapDataModel ovdm) -> nxData.addAttribute(TreeFactory.createAttribute(
+					NeXusStructureStrings.getAttenuationfactorrawfft(),
+					ovdm.getAttenuationFactorRawFFT())),
+			(GroupNode nxData, OverlapDataModel ovdm) -> ovdm.setAttenuationFactorRawFFT(
+					getDoubleAttribute(NeXusStructureStrings.getAttenuationfactorrawfft(), nxData)));
 
 	private String firstName;
 	private ovdmGroupNodePopulateFromOverlapDataModel fg;
@@ -299,23 +290,6 @@ public enum OverlapDataModelEnum {
 		fg.ovdmGroupNodePopulateFromOverlapDataModel1(nxData, ovdm);
 	}
 
-	private static ArrayList<IDataset> getListOfDatasetsAttribute(String desired, GroupNode g) {
-		Dataset sd = DatasetUtils.cast(Dataset.class, g.getAttribute(desired).getValue());
-
-		int[] sdShape = sd.getShape();
-
-		ArrayList<IDataset> slices = new ArrayList<>();
-
-		SliceND slice = new SliceND(sdShape);
-
-		for (int i = 0; i < sdShape[0]; i++) {
-			slice.setSlice(0, i, i + 1, 1);
-			slices.add(sd.getSlice(slice));
-		}
-
-		return slices;
-	}
-
 	private static void addDataNodeFromDataset(String name, GroupNode g, IDataset in, int l) {
 
 		DataNode newDN = new DataNodeImpl(l);
@@ -332,96 +306,12 @@ public enum OverlapDataModelEnum {
 
 	}
 
-	private static Dataset convertListofDoublesToDataset(ArrayList<Double> in) {
-
-		return DatasetFactory.createFromList(in);
-
-	}
-
-	private static IDataset convertListofListsOfDoublesToDataset(ArrayList<ArrayList<Double>> in) {
-
-		ArrayList<ArrayList<Double>> in1 = padListsToUniformLength(in);
-
-		ArrayList<IDataset> im = new ArrayList<>();
-
-		for (ArrayList<Double> a : in1) {
-			im.add(DatasetFactory.createFromList(a));
-
-		}
-
-		return concatenateIDatasetArrayList(im);
-	}
-
-	private static IDataset concatenateIDatasetArrayList(ArrayList<IDataset> in) {
-
-		Dataset h = DatasetFactory.ones(new int[] { in.size(), in.get(0).getSize() });
-
-		int maxj = in.get(0).getShape()[0];
-
-		for (int i = 0; i < in.size(); i++) {
-			for (int j = 0; j < maxj; j++) {
-
-				h.set(in.get(i).getDouble(j), i, j);
-			}
-
-		}
-
-		return h;
-	}
-
-	private static ArrayList<ArrayList<Double>> padListsToUniformLength(ArrayList<ArrayList<Double>> in) {
-
-		ArrayList<ArrayList<Double>> out = (ArrayList<ArrayList<Double>>) in.clone();
-
-		int longestListLength = 0;
-
-		for (ArrayList<Double> r : out) {
-			if (r.size() > longestListLength) {
-				longestListLength = r.size();
-			}
-		}
-
-		for (ArrayList<Double> r : out) {
-			if (r.size() < longestListLength) {
-				int padding = longestListLength - r.size();
-
-				for (int j = 0; j < padding; j++) {
-					r.add(Double.MAX_VALUE);
-				}
-			}
-		}
-
-		return out;
-	}
-
-	private static ArrayList<ArrayList<Double>> getListofListsOfDoublesAttribute(String desired, GroupNode g) {
-
+	private static double getDoubleAttribute(String desired, GroupNode g) {
 		IDataset sd = g.getAttribute(desired).getValue();
-
-		ArrayList<ArrayList<Double>> out = new ArrayList<>();
-
-		SliceND slice = new SliceND(sd.getShape());
-
-		for (int i = 0; i < sd.getShape()[0]; i++) {
-			slice.setSlice(0, i, i + 1, 1);
-			IDataset a = sd.getSlice(slice).squeeze();
-
-			ArrayList<Double> b = new ArrayList<>();
-
-			for (int j = 0; j < a.getSize(); j++) {
-				if (a.getDouble(j) != Double.MAX_VALUE) {
-					b.add(a.getDouble(j));
-				}
-			}
-
-			out.add(b);
-		}
-
-		return out;
-
+		return (double) sd.getInt(0);
 	}
 
-	private Dataset getDoubleArrayOfArraysAsDataset(double[][] in) {
+	private static Dataset getDoubleArrayOfArraysAsDataset(double[][] in) {
 
 		ArrayList<double[]> out = new ArrayList<>();
 
@@ -432,40 +322,45 @@ public enum OverlapDataModelEnum {
 		return DatasetFactory.createFromList(out);
 	}
 
-	private static ArrayList<Double> getListofDoublesAttribute(String desired, GroupNode g) {
-
-		IDataset sd = g.getAttribute(desired).getValue();
-
-		ArrayList<Double> out = new ArrayList<>();
-
-		for (int j = 0; j < sd.getSize(); j++) {
-			out.add(sd.getDouble(j));
+	private static int[] getIntegerArrayAttribute(String desired, GroupNode g) {
+		
+		Attribute roiAttribute = g.getAttribute(desired);
+		Dataset roiAttributeDat = (Dataset) roiAttribute.getValue();
+		
+		int[] out= new int[roiAttributeDat.getSize()];
+		
+		for(int i= 0; i<roiAttributeDat.getSize();i++) {
+			out[i] = (int) roiAttributeDat.getDouble(i);
 		}
-
+		
 		return out;
-
+	}
+	
+	private static Dataset getIntegerArrayAsDataset(int[] in) {
+		
+		ArrayList<Integer> out1 = new ArrayList<>();
+		
+		for(int i= 0; i<in.length;i++) {
+			out1.add(in[i]);
+		}
+		
+		return DatasetFactory.createFromList(out1);
+	}
+	
+	private static Dataset getDoubleArrayAsDataset(double[] in) {
+		
+		ArrayList<Double> out1 = new ArrayList<>();
+		
+		for(int i= 0; i<in.length;i++) {
+			out1.add(in[i]);
+		}
+		
+		return DatasetFactory.createFromList(out1);
 	}
 	
 	private static String getStringAttribute(String desired, GroupNode g) {
 		StringDataset sd = DatasetUtils.cast(StringDataset.class, g.getAttribute(desired).getValue());
 		return sd.get();
-	}
-
-
-	private static Dataset localConcatenate(IDataset[] in, int dim) {
-
-		for (IDataset i : in) {
-
-			if (i == null) {
-				return null;
-			}
-
-			if (i.getSize() == 0) {
-				return null;
-			}
-		}
-
-		return DatasetUtils.convertToDataset(DatasetUtils.concatenate(in, dim));
 	}
 
 	public OverlapDataModelEnum getFromFirstName(String in) {
@@ -512,9 +407,18 @@ public enum OverlapDataModelEnum {
 		return out;
 	}
 
-	private static int getIntegerAttribute(String desired, GroupNode g) {
-		IDataset sd = g.getAttribute(desired).getValue();
-		return (int) sd.getInt(0);
+	private static double[] getDoubleArrayAttribute(String desired, GroupNode g) {
+		
+		Attribute roiAttribute = g.getAttribute(desired);
+		Dataset roiAttributeDat = (Dataset) roiAttribute.getValue();
+		
+		double[] out= new double[roiAttributeDat.getSize()];
+		
+		for(int i= 0; i<roiAttributeDat.getSize();i++) {
+			out[i] = roiAttributeDat.getDouble(i);
+		}
+		
+		return out;
 	}
 
 	@FunctionalInterface

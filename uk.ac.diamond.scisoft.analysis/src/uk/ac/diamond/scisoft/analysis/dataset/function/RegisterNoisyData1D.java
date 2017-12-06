@@ -51,6 +51,7 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 	private boolean fitAll = true;
 
 	private double peakThresholdFraction = 0.90; // fraction of peak height to use as threshold
+	private boolean useFirst = true;
 
 	/**
 	 * Set function to fit all data at once
@@ -58,6 +59,15 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 	 */
 	public void setFitAll(boolean fitAll) {
 		this.fitAll = fitAll;
+	}
+
+	/**
+	 * Set which given dataset to use as anchor
+	 * @param useFirst if true, use the first dataset otherwise use the last dataset
+	 */
+	public void setUseFirstAsAnchor(boolean useFirst) {
+		this.useFirst = useFirst;
+		dirty = true;
 	}
 
 	public RegisterNoisyData1D() {
@@ -180,10 +190,21 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 			monitor.subTask("Registering images");
 		}
 
-		if (dirty) {
-			if (datasets == null || datasets.length == 0) {
-				throw new IllegalArgumentException("Need at least one image");
+		if (datasets == null || datasets.length == 0) {
+			throw new IllegalArgumentException("Need at least one image");
+		}
+
+		int n = datasets.length;
+		if (!useFirst) { // reverse array
+			datasets = datasets.clone();
+			for (int i = 0, j = n - 1; i < j; i++, j--) {
+				IDataset t = datasets[j];
+				datasets[j] = datasets[i];
+				datasets[i] = t;
 			}
+		}
+
+		if (dirty) {
 			IDataset image = datasets[0];
 			if (image.getRank() != 1) {
 				throw new IllegalArgumentException("Dataset must be 1D");
@@ -194,7 +215,6 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 		}
 
 		List<Dataset> result = new ArrayList<Dataset>();
-		int n = datasets.length;
 
 		if (fitAll) {
 			/*
@@ -337,6 +357,15 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 			}
 		}
 
+		if (!useFirst) { // block reverse order of list
+			List<Dataset> reversed = new ArrayList<>();
+			for (int i = 2*(n - 1); i >= 0; i -= 2) {
+				reversed.add(result.get(i));
+				reversed.add(result.get(i+1));
+			}
+
+			return reversed;
+		}
 		return result;
 	}
 

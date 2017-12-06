@@ -50,6 +50,7 @@ public class RegisterData1D implements DatasetToDatasetFunction {
 	private IDataset anchor;
 	private Dataset cfAnchor; // conjugate transform of windowed anchor
 	private Dataset fAnchor; // transform of windowed anchor
+	private boolean useFirst = false;
 
 	public RegisterData1D() {
 	}
@@ -68,6 +69,16 @@ public class RegisterData1D implements DatasetToDatasetFunction {
 		dirty = true;
 	}
 
+	/**
+	 * Set which given dataset to use as anchor. Overrides any reference already set
+	 * @param useFirst if true, use the first dataset otherwise use the last dataset
+	 */
+	public void setUseFirstAsAnchor(boolean useFirst) {
+		this.useFirst = useFirst;
+		anchor = null;
+		dirty = true;
+	}
+
 	private int[] padShape(int[] shape) {
 		int[] s = shape.clone();
 //		for (int i = 0; i < s.length; i++) {
@@ -82,7 +93,7 @@ public class RegisterData1D implements DatasetToDatasetFunction {
 			if (datasets == null || datasets.length == 0) {
 				throw new IllegalArgumentException("No reference defined and no data given");
 			}
-			setReference(datasets[0]);
+			setReference(useFirst ? datasets[0] : datasets[datasets.length - 1]);
 		}
 		int[] wShape;
 		if (roi == null) {

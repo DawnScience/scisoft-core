@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
+import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
@@ -67,13 +68,14 @@ public class RegisterData1DTest {
 		testRegisterSynthetic(roi, delta, noise);
 	}
 
-	DatasetToDatasetFunction createFunction(IDataset[] data, IRectangularROI roi) {
+	DatasetToDatasetFunction createFunction(IDataset[] data, IRectangularROI roi, boolean useFirst) {
 		RegisterData1D reg = new RegisterData1D();
 		DoubleDataset filter = DatasetFactory.ones(DoubleDataset.class, 5);
-		IDataset anchor = data[0];
+		IDataset anchor = useFirst ? data[0] : data[data.length - 1];
 		filter.imultiply(1./ ((Number) filter.sum()).doubleValue());
 		reg.setWindowFunction(0.25);
 		reg.setFilter(filter);
+		reg.setUseFirstAsAnchor(useFirst);
 		reg.setReference(anchor);
 		reg.setRectangle(roi);
 		return reg;
@@ -84,7 +86,7 @@ public class RegisterData1DTest {
 		System.err.println(Arrays.toString(shifts));
 		IDataset[] data = createTestData(shifts, X_SIZE, noise);
 
-		DatasetToDatasetFunction function = createFunction(data, roi);
+		DatasetToDatasetFunction function = createFunction(data, roi, true);
 		List<? extends IDataset> coords = function.value(data);
 		assertNotNull(coords);
 		for (int i = 0; i < MAX; i++) {
@@ -94,6 +96,19 @@ public class RegisterData1DTest {
 		for (int i = 0; i < MAX; i++) {
 			double v = coords.get(2*i).getDouble();
 			Assert.assertEquals(shifts[i], v, delta);
+		}
+
+		for (int i = 0, j = data.length - 1; i < j; i++, j--) {
+			IDataset t = data[j];
+			data[j] = data[i];
+			data[i] = t;
+		}
+		DatasetToDatasetFunction rfunction = createFunction(data, roi, false);
+		List<? extends IDataset> rcoords = rfunction.value(data);
+
+		for (int i = 0, imax = rcoords.size(); i < imax; i += 2) {
+			Assert.assertEquals(((Dataset) coords.get(i)).getDouble(), ((Dataset) rcoords.get(imax - i - 2)).getDouble(), delta);
+			Assert.assertEquals(((Dataset) coords.get(i + 1)).getDouble(), ((Dataset) rcoords.get(imax - i - 1)).getDouble(), delta);
 		}
 	}
 

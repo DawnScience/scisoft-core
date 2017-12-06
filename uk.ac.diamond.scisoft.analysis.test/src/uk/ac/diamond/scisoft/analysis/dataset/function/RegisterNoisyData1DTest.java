@@ -41,11 +41,12 @@ public class RegisterNoisyData1DTest extends RegisterData1DTest {
 	}
 
 	@Override
-	DatasetToDatasetFunction createFunction(IDataset[] data, IRectangularROI roi) {
+	DatasetToDatasetFunction createFunction(IDataset[] data, IRectangularROI roi, boolean useFirst) {
 		RegisterNoisyData1D reg = new RegisterNoisyData1D();
 		DoubleDataset filter = DatasetFactory.ones(DoubleDataset.class, 5);
 		filter.imultiply(1./ ((Number) filter.sum()).doubleValue());
 		reg.setFilter(filter);
+		reg.setUseFirstAsAnchor(useFirst);
 		reg.setRectangle(roi);
 		return reg;
 	}

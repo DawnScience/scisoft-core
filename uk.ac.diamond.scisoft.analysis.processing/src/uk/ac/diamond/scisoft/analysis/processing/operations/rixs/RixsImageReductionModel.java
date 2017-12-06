@@ -41,13 +41,21 @@ public class RixsImageReductionModel extends RixsBaseModel {
 	@OperationModelField(label = "Read regions from file")
 	private boolean regionsFromFile = true;
 
-	public enum CORRELATE_OPTION {
+	public enum CORRELATE_ORDER {
+		FIRST, // use first spectrum and work forwards
+		LAST,  // use last spectrum and work backwards
+	}
+
+	@OperationModelField(label = "Spectrum correlation order", hint = "Which spectrum to start correlating from")
+	private CORRELATE_ORDER correlateOrder= CORRELATE_ORDER.LAST;
+
+	public enum CORRELATE_PAIR {
 		ALL_PAIRS, // every pairs of spectra
 		CONSECUTIVE_PAIR, // consecutive pairs only
 	}
 
-	@OperationModelField(label = "Image correlation option", hint = "All pairs of images; consecutive pairs only")
-	private CORRELATE_OPTION correlateOption = CORRELATE_OPTION.CONSECUTIVE_PAIR; // in 2D image
+	@OperationModelField(label = "Spectrum correlation option", hint = "All pairs of spectra; consecutive pairs only")
+	private CORRELATE_PAIR correlateOption = CORRELATE_PAIR.CONSECUTIVE_PAIR; // in 2D image
 
 	// TODO conditional override to fit parameters??
 
@@ -140,15 +148,25 @@ public class RixsImageReductionModel extends RixsBaseModel {
 	}
 
 	/**
-	 * @return option for image correlator
+	 * @return order for spectrum correlator
 	 */
-	public CORRELATE_OPTION getCorrelateOption() {
+	public CORRELATE_ORDER getCorrelateOrder() {
+		return correlateOrder;
+	}
+
+	public void setCorrelateOrder(CORRELATE_ORDER correlateOrder) {
+		firePropertyChange("setCorrelateOrder", this.correlateOrder, this.correlateOrder = correlateOrder);
+	}
+
+	/**
+	 * @return option for spectrum correlator
+	 */
+	public CORRELATE_PAIR getCorrelateOption() {
 		return correlateOption;
 	}
 
-	public void setCorrelateOption(CORRELATE_OPTION correlateOption) {
-		firePropertyChange("setRegionsFromFitFile", this.correlateOption, this.correlateOption = correlateOption);
+	public void setCorrelateOption(CORRELATE_PAIR correlateOption) {
+		firePropertyChange("setCorrelateOption", this.correlateOption, this.correlateOption = correlateOption);
 	}
-
 
 }

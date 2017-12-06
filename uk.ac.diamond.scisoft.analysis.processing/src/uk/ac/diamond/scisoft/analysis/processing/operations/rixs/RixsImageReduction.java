@@ -51,7 +51,8 @@ import uk.ac.diamond.scisoft.analysis.image.ImageUtils;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
-import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionModel.CORRELATE_OPTION;
+import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionModel.CORRELATE_ORDER;
+import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionModel.CORRELATE_PAIR;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionModel> {
@@ -531,18 +532,21 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 	}
 
 	private DatasetToDatasetFunction getCorrelateShifter(boolean noisy) {
-		boolean all = model.getCorrelateOption() == CORRELATE_OPTION.ALL_PAIRS;
+		boolean all = model.getCorrelateOption() == CORRELATE_PAIR.ALL_PAIRS;
+		boolean first = model.getCorrelateOrder() == CORRELATE_ORDER.FIRST;
 		if (noisy) {
 			RegisterNoisyData1D reg = new RegisterNoisyData1D();
 			reg.setFilter(DatasetFactory.ones(5).imultiply(1./5));
 			reg.setPeakCentroidThresholdFraction(0.85);
 			reg.setFitAll(all);
+			reg.setUseFirstAsAnchor(first);
 			return reg;
 		}
 
 		RegisterData1D reg = new RegisterData1D();
 		reg.setFilter(DatasetFactory.ones(5).imultiply(1./5));
 		reg.setWindowFunction(0.25);
+		reg.setUseFirstAsAnchor(first);
 		return reg;
 	}
 }

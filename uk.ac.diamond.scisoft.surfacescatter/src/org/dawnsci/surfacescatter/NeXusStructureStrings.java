@@ -170,9 +170,219 @@ public class NeXusStructureStrings {
 	
 	private static final String OUTPUT_DATA_ARRAY = "Output_Data_Array";
 	
+	private static final String NO_DATS = "Number_of_Dat_Files";
+	
 	private static final String BACKGROUND_DATA_ARRAY = "Background_Data_Array";
 	
-	private static final String NO_DATS = "Number_of_Dat_Files";
+	private static final String lowerDatName = "Lower_.Dat_Name";
+	
+	private static final String lowerOverlapPositions = "Lower_Overlap_Positions";
+	
+	private static final String lowerOverlapScannedValues = "Lower_Overlap_Scanned_Values";
+	
+	private static final String lowerOverlapCorrectedValues = "Lower_Overlap_Corrected_Intensities";
+	
+	private static final String lowerOverlapRawValues ="Lower_Overlap_Raw_Intensities";
+	
+	private static final String lowerOverlapFhklValues = "Lower_Overlap_Fhkl_Values";
+	
+	private static final String lowerOverlapFitParametersCorrected = "Lower_Overlap_Fit_Parameters_Corrected";
+	
+	private static final String lowerOverlapFitParametersRaw = "Lower_Overlap_Fit_Parameters_Raw";
+
+	private static final String lowerOverlapFitParametersFhkl = "Lower_Overlap_Fit_Parameters_Fhkl";
+	
+	private static final String upperDatName = "Upper_.Dat_Name";
+
+	private static final String upperOverlapPositions = "Upper_Overlap_Positions";
+	
+	private static final String upperOverlapScannedValues = "Upper_Overlap_Scanned_Values";
+
+	private static final String upperOverlapCorrectedValues = "Upper_Overlap_Corrected_Intensities";
+	
+	private static final String upperOverlapRawValues = "Upper_Overlap_Raw_Intensities";
+
+	private static final String upperOverlapFhklValues = "Upper_Overlap_Fhkl_Values";
+	
+	private static final String upperOverlapFitParametersRaw = "Upper_Overlap_Fit_Parameters_Corrected";
+
+	private static final String upperOverlapFitParametersFhkl = "Upper_Overlap_Fit_Parameters_Raw";
+	
+	private static final String attenuationFactor = "Attenuation_Factor_For_Corrected_Intensities";
+
+	private static final String attenuationFactorFhkl = "Attenuation_Factor_For_Fhkl_Intensities";
+	
+	private static final String attenuationFactorRaw = "Attenuation_Factor_For_Raw_Intensities";
+
+	private static final String upperFFTFitCoefficientsCorrected = "Upper_FFT_Fit_Coefficients_Corrected";
+	
+	private static final String upperFFTFitCoefficientsRaw = "Upper_FFT_Fit_Coefficients_Raw";
+
+	private static final String upperFFTFitCoefficientsFhkl = "Upper_FFT_Fit_Coefficients_Fhkl";
+	
+	private static final String upperBaseFrequencyCorrected = "Upper_Base_Frequency_Corrected";
+
+	private static final String upperBaseFrequencyRaw = "Upper_Base_Frequency_Raw";
+	
+	private static final String upperBaseFrequencyFhkl = "Upper_Base_Frequency_Fhkl";
+
+	private static final String lowerFFTFitCoefficientsCorrected = "Lower_FFT_Fit_Coefficients_Corrected";
+	
+	private static final String lowerFFTFitCoefficientsRaw = "Lower_FFT_Fit_Coefficients_Raw";
+	
+	private static final String lowerFFTFitCoefficientsFhkl = "Lower_FFT_Fit_Coefficients_Fhkl";
+
+	private static final String lowerBaseFrequencyCorrected = "Lower_Base_Frequency_Corrected";
+	
+	private static final String lowerBaseFrequencyRaw = "Lower_Base_Frequency_Raw";
+	
+	private static final String lowerBaseFrequencyFhkl = "Lower_Base_Frequency_Fhkl";
+
+	private static final String attenuationFactorFFT = "Attenuation_Factor_FFT";
+	
+	private static final String attenuationFactorFhklFFT = "Attenuation_Factor_Fhkl_FFT";
+
+	private static final String attenuationFactorRawFFT = "Attenuation_Factor_Raw_FFT";
+
+	public static String getLowerdatname() {
+		return lowerDatName;
+	}
+
+	public static String getLoweroverlappositions() {
+		return lowerOverlapPositions;
+	}
+
+	public static String getLoweroverlapscannedvalues() {
+		return lowerOverlapScannedValues;
+	}
+
+	public static String getLoweroverlapcorrectedvalues() {
+		return lowerOverlapCorrectedValues;
+	}
+
+	public static String getLoweroverlaprawvalues() {
+		return lowerOverlapRawValues;
+	}
+
+	public static String getLoweroverlapfhklvalues() {
+		return lowerOverlapFhklValues;
+	}
+
+	public static String getLoweroverlapfitparameterscorrected() {
+		return lowerOverlapFitParametersCorrected;
+	}
+
+	public static String getLoweroverlapfitparametersraw() {
+		return lowerOverlapFitParametersRaw;
+	}
+
+	public static String getLoweroverlapfitparametersfhkl() {
+		return lowerOverlapFitParametersFhkl;
+	}
+
+	public static String getUpperdatname() {
+		return upperDatName;
+	}
+
+	public static String getUpperoverlappositions() {
+		return upperOverlapPositions;
+	}
+
+	public static String getUpperoverlapscannedvalues() {
+		return upperOverlapScannedValues;
+	}
+
+	public static String getUpperoverlapcorrectedvalues() {
+		return upperOverlapCorrectedValues;
+	}
+
+	public static String getUpperoverlaprawvalues() {
+		return upperOverlapRawValues;
+	}
+
+	public static String getUpperoverlapfhklvalues() {
+		return upperOverlapFhklValues;
+	}
+
+	public static String getUpperoverlapfitparametersraw() {
+		return upperOverlapFitParametersRaw;
+	}
+
+	public static String getUpperoverlapfitparametersfhkl() {
+		return upperOverlapFitParametersFhkl;
+	}
+
+	public static String getAttenuationfactor() {
+		return attenuationFactor;
+	}
+
+	public static String getAttenuationfactorfhkl() {
+		return attenuationFactorFhkl;
+	}
+
+	public static String getAttenuationfactorraw() {
+		return attenuationFactorRaw;
+	}
+
+	public static String getUpperfftfitcoefficientscorrected() {
+		return upperFFTFitCoefficientsCorrected;
+	}
+
+	public static String getUpperfftfitcoefficientsraw() {
+		return upperFFTFitCoefficientsRaw;
+	}
+
+	public static String getUpperfftfitcoefficientsfhkl() {
+		return upperFFTFitCoefficientsFhkl;
+	}
+
+	public static String getUpperbasefrequencycorrected() {
+		return upperBaseFrequencyCorrected;
+	}
+
+	public static String getUpperbasefrequencyraw() {
+		return upperBaseFrequencyRaw;
+	}
+
+	public static String getUpperbasefrequencyfhkl() {
+		return upperBaseFrequencyFhkl;
+	}
+
+	public static String getLowerfftfitcoefficientscorrected() {
+		return lowerFFTFitCoefficientsCorrected;
+	}
+
+	public static String getLowerfftfitcoefficientsraw() {
+		return lowerFFTFitCoefficientsRaw;
+	}
+
+	public static String getLowerfftfitcoefficientsfhkl() {
+		return lowerFFTFitCoefficientsFhkl;
+	}
+
+	public static String getLowerbasefrequencycorrected() {
+		return lowerBaseFrequencyCorrected;
+	}
+
+	public static String getLowerbasefrequencyraw() {
+		return lowerBaseFrequencyRaw;
+	}
+
+	public static String getLowerbasefrequencyfhkl() {
+		return lowerBaseFrequencyFhkl;
+	}
+
+	public static String getAttenuationfactorfft() {
+		return attenuationFactorFFT;
+	}
+
+	public static String getAttenuationfactorfhklfft() {
+		return attenuationFactorFhklFFT;
+	}
+
+	public static String getAttenuationfactorrawfft() {
+		return attenuationFactorRawFFT;
+	}
 	
 	public static String getNoDats() {
 		return NO_DATS;

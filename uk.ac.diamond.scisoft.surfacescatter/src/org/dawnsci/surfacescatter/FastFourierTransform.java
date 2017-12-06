@@ -50,6 +50,14 @@ public class FastFourierTransform {
 		return computedYOutputDataset(probeArray, fft(inputReal));
 
 	}
+	
+	
+	public static FourierScalingOutputPackage fftModeledYValuesDatasetFullPackage(IDataset probeArray, IDataset inputReal) {
+
+		return computedYOutputDatasetFullPackage(probeArray, fft(inputReal));
+
+	}
+
 
 	public static double fftModeledYValuesDatasetRMS(IDataset inputReal) {
 
@@ -262,6 +270,49 @@ public class FastFourierTransform {
 		}
 
 		return yOutput;
+		
+	}
+	
+	private static FourierScalingOutputPackage computedYOutputDatasetFullPackage(IDataset xRange, double[][] coefficients) {
+
+		IDataset yOutput = xRange.clone();
+
+		// xRange is just a series of integers 0-N where N is the end
+
+		/// base frequency for each FFT bin. Remember coeffiecients[n] is the real and
+		/// coeffiecients[n+1] the imaginary
+		// components for 1 bin so frequency = (bin_id * freq/2) / (N/2). freq is sample
+		/// frequency, N the size of the FFT (which is coefficients.length).
+		double baseFrequency = 1;
+		
+		try {
+			baseFrequency = ((1 / (2 * ((double) xRange.getSize()))) * ((double) coefficients[0].length)
+					/ 2);
+		} catch (NullPointerException n) {
+			System.out.println(n.getMessage());
+		}
+		for (int j = 0; j < xRange.getSize(); j++) {
+
+			double xVal = (double) j;
+
+			double yVal = 0;
+
+			double[] realArray = new double[coefficients.length / 2];
+			double[] imArray = new double[coefficients.length / 2];
+
+			for (int n = 0; n < coefficients.length / 2; n++) {
+
+				realArray[n] = coefficients[0][n] * Math.cos(baseFrequency * xVal);
+				imArray[n] = -1 * coefficients[1][n] * Math.sin(baseFrequency * xVal);
+
+				yVal += realArray[n];
+				yVal += imArray[n];
+			}
+
+			yOutput.set(yVal, j);
+		}
+
+		return new FourierScalingOutputPackage(baseFrequency, coefficients,new double[] {0.0}, new double[] {0.0}, new double[] {0.0}, yOutput) ;
 	}
 
 	private static double[] computedYOutputArray(IDataset xRange, double[][] coefficients) {

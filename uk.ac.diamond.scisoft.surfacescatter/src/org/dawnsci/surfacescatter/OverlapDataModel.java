@@ -32,7 +32,123 @@ public class OverlapDataModel {
 	private double attenuationFactorFhkl;
 	private double attenuationFactorRaw;
 	
+//	parameters for the FFT used to fit the upper overlap region
 	
+	private double[][] upperFFTFitCoefficientsCorrected;
+	private double[][] upperFFTFitCoefficientsRaw;
+	private double[][] upperFFTFitCoefficientsFhkl;
+
+	private double upperBaseFrequencyCorrected;
+	private double upperBaseFrequencyRaw;
+	private double upperBaseFrequencyFhkl;
+	
+//	parameters for the FFT used to fit the lower overlap region
+	
+	private double[][] lowerFFTFitCoefficientsCorrected;
+	private double[][] lowerFFTFitCoefficientsRaw;
+	private double[][] lowerFFTFitCoefficientsFhkl;
+	
+	private double lowerBaseFrequencyCorrected;
+	private double lowerBaseFrequencyRaw;
+	private double lowerBaseFrequencyFhkl;
+	
+	private double attenuationFactorFFT;
+	private double attenuationFactorFhklFFT;
+	private double attenuationFactorRawFFT;
+	
+	
+	public double getUpperBaseFrequencyCorrected() {
+		return upperBaseFrequencyCorrected;
+	}
+	public void setUpperBaseFrequencyCorrected(double upperBaseFrequencyCorrected) {
+		this.upperBaseFrequencyCorrected = upperBaseFrequencyCorrected;
+	}
+	public double getUpperBaseFrequencyRaw() {
+		return upperBaseFrequencyRaw;
+	}
+	public void setUpperBaseFrequencyRaw(double upperBaseFrequencyRaw) {
+		this.upperBaseFrequencyRaw = upperBaseFrequencyRaw;
+	}
+	public double getUpperBaseFrequencyFhkl() {
+		return upperBaseFrequencyFhkl;
+	}
+	public void setUpperBaseFrequencyFhkl(double upperBaseFrequencyFhkl) {
+		this.upperBaseFrequencyFhkl = upperBaseFrequencyFhkl;
+	}
+	public double getLowerBaseFrequencyRaw() {
+		return lowerBaseFrequencyRaw;
+	}
+	public void setLowerBaseFrequencyRaw(double lowerBaseFrequencyRaw) {
+		this.lowerBaseFrequencyRaw = lowerBaseFrequencyRaw;
+	}
+	public double getLowerBaseFrequencyFhkl() {
+		return lowerBaseFrequencyFhkl;
+	}
+	public void setLowerBaseFrequencyFhkl(double lowerBaseFrequencyFhkl) {
+		this.lowerBaseFrequencyFhkl = lowerBaseFrequencyFhkl;
+	}
+	
+	public double[][] getUpperFFTFitCoefficientsCorrected() {
+		return upperFFTFitCoefficientsCorrected;
+	}
+	public void setUpperFFTFitCoefficientsCorrected(double[][] upperFFTFitCoefficientsCorrected) {
+		this.upperFFTFitCoefficientsCorrected = upperFFTFitCoefficientsCorrected;
+	}
+	public double[][] getUpperFFTFitCoefficientsRaw() {
+		return upperFFTFitCoefficientsRaw;
+	}
+	public void setUpperFFTFitCoefficientsRaw(double[][] upperFFTFitCoefficientsRaw) {
+		this.upperFFTFitCoefficientsRaw = upperFFTFitCoefficientsRaw;
+	}
+	public double[][] getUpperFFTFitCoefficientsFhkl() {
+		return upperFFTFitCoefficientsFhkl;
+	}
+	public void setUpperFFTFitCoefficientsFhkl(double[][] upperFFTFitCoefficientsFhkl) {
+		this.upperFFTFitCoefficientsFhkl = upperFFTFitCoefficientsFhkl;
+	}
+
+	public double[][] getLowerFFTFitCoefficientsCorrected() {
+		return lowerFFTFitCoefficientsCorrected;
+	}
+	public void setLowerFFTFitCoefficientsCorrected(double[][] lowerFFTFitCoefficientsCorrected) {
+		this.lowerFFTFitCoefficientsCorrected = lowerFFTFitCoefficientsCorrected;
+	}
+	public double[][] getLowerFFTFitCoefficientsRaw() {
+		return lowerFFTFitCoefficientsRaw;
+	}
+	public void setLowerFFTFitCoefficientsRaw(double[][] lowerFFTFitCoefficientsRaw) {
+		this.lowerFFTFitCoefficientsRaw = lowerFFTFitCoefficientsRaw;
+	}
+	public double[][] getLowerFFTFitCoefficientsFhkl() {
+		return lowerFFTFitCoefficientsFhkl;
+	}
+	public void setLowerFFTFitCoefficientsFhkl(double[][] lowerFFTFitCoefficientsFhkl) {
+		this.lowerFFTFitCoefficientsFhkl = lowerFFTFitCoefficientsFhkl;
+	}
+	public double getLowerBaseFrequencyCorrected() {
+		return lowerBaseFrequencyCorrected;
+	}
+	public void setLowerBaseFrequencyCorrected(double lowerBaseFrequency) {
+		this.lowerBaseFrequencyCorrected = lowerBaseFrequency;
+	}
+	public double getAttenuationFactorFFT() {
+		return attenuationFactorFFT;
+	}
+	public void setAttenuationFactorFFT(double attenuationFactorFFT) {
+		this.attenuationFactorFFT = attenuationFactorFFT;
+	}
+	public double getAttenuationFactorFhklFFT() {
+		return attenuationFactorFhklFFT;
+	}
+	public void setAttenuationFactorFhklFFT(double attenuationFactorFhklFFT) {
+		this.attenuationFactorFhklFFT = attenuationFactorFhklFFT;
+	}
+	public double getAttenuationFactorRawFFT() {
+		return attenuationFactorRawFFT;
+	}
+	public void setAttenuationFactorRawFFT(double attenuationFactorRawFFT) {
+		this.attenuationFactorRawFFT = attenuationFactorRawFFT;
+	}
 	public double[] getLowerOverlapScannedValues() {
 		return lowerOverlapScannedValues;
 	}

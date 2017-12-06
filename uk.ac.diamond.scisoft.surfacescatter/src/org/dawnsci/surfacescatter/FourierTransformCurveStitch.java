@@ -84,8 +84,8 @@ public class FourierTransformCurveStitch {
 			odm.setLowerDatName(csdp.getFilepaths()[k]);
 			odm.setUpperDatName(csdp.getFilepaths()[k + 1]);
 
-			ArrayList<Integer> overlapLower = new ArrayList<Integer>();
-			ArrayList<Integer> overlapHigher = new ArrayList<Integer>();
+			ArrayList<Integer> overlapLower = new ArrayList<>();
+			ArrayList<Integer> overlapHigher = new ArrayList<>();
 
 			double[] maxMinArrayhere = new double[2];
 
@@ -137,7 +137,6 @@ public class FourierTransformCurveStitch {
 			}
 
 			for (int m = 0; m < yArray[k + 1].getSize(); m++) {
-				// try{
 				try {
 					if ((xArray[k + 1].getDouble(m) <= (maxMinArrayhere[0] + 0.001 * maxMinArrayhere[0]))
 							&& (xArray[k + 1].getDouble(m) >= (maxMinArrayhere[1] - 0.001 * maxMinArrayhere[1]))
@@ -300,24 +299,29 @@ public class FourierTransformCurveStitch {
 
 					}
 
+					
+					FourierScalingOutputPackage correctionRatiosFourier = null;
+					FourierScalingOutputPackage correctionRatiosFhklFourier= null;
+					FourierScalingOutputPackage correctionRatiosRawFourier= null;
+					
 					if (useFourierTransform) {
 						try {
-							double[][] correctionRatiosFourier = FourierTransformOverlap.correctionRatio(xLowerDataset,
+							correctionRatiosFourier = FourierTransformOverlap.correctionRatioFullPackage(xLowerDataset,
 									yLowerDatasetUse, xHigherDataset, yHigherDatasetUse, attenuationFactor);
 	
-							correctionRatioFourier = correctionRatiosFourier[2][0];
+							correctionRatioFourier = correctionRatiosFourier.getCorrection()[0];
 	
-							fourierRMSMean = (correctionRatiosFourier[4][0] + correctionRatiosFourier[4][1]) / 2;
+							fourierRMSMean = (correctionRatiosFourier.getrMSLowerHigher()[0] + correctionRatiosFourier.getrMSLowerHigher()[1]) / 2;
 	
-							double[][] correctionRatiosFhklFourier = FourierTransformOverlap.correctionRatio(xLowerDataset,
+							correctionRatiosFhklFourier = FourierTransformOverlap.correctionRatioFullPackage(xLowerDataset,
 									yLowerDatasetFhklUse, xHigherDataset, yHigherDatasetFhklUse, attenuationFactor);
 	
-							correctionRatioFhklFourier = correctionRatiosFhklFourier[2][0];
+							correctionRatioFhklFourier = correctionRatiosFhklFourier.getCorrection()[0];
 	
-							double[][] correctionRatiosRawFourier = FourierTransformOverlap.correctionRatio(xLowerDataset,
+							correctionRatiosRawFourier = FourierTransformOverlap.correctionRatioFullPackage(xLowerDataset,
 									yLowerDatasetRawUse, xHigherDataset, yHigherDatasetRawUse, attenuationFactorRaw);
 	
-							correctionRatioRawFourier = correctionRatiosRawFourier[2][0];
+							correctionRatioRawFourier = correctionRatiosRawFourier.getCorrection()[0];
 						}
 						catch(NullPointerException pe) {
 							useFourierTransform = false;
@@ -340,25 +344,47 @@ public class FourierTransformCurveStitch {
 						attenuationFactor = correctionRatioFourier;
 						attenuationFactorFhkl = correctionRatioFhklFourier;
 						attenuationFactorRaw = correctionRatioRawFourier;
+						
+						odm.setLowerFFTFitCoefficientsCorrected(correctionRatiosFourier.getLowerCoefficients());
+						odm.setUpperFFTFitCoefficientsCorrected(correctionRatiosFourier.getUpperCoefficients());
+						
+						odm.setUpperBaseFrequencyCorrected(correctionRatiosFourier.getUpperBaseFrequency());
+						odm.setLowerBaseFrequencyCorrected(correctionRatiosFourier.getLowerBaseFrequency());
+						
+						odm.setLowerFFTFitCoefficientsFhkl(correctionRatiosFhklFourier.getLowerCoefficients());
+						odm.setUpperFFTFitCoefficientsFhkl(correctionRatiosFhklFourier.getUpperCoefficients());
+						
+						odm.setUpperBaseFrequencyFhkl(correctionRatiosFhklFourier.getUpperBaseFrequency());
+						odm.setLowerBaseFrequencyFhkl(correctionRatiosFhklFourier.getLowerBaseFrequency());
+						
+						odm.setLowerFFTFitCoefficientsRaw(correctionRatiosRawFourier.getLowerCoefficients());
+						odm.setUpperFFTFitCoefficientsRaw(correctionRatiosRawFourier.getUpperCoefficients());
+						
+						odm.setUpperBaseFrequencyRaw(correctionRatiosRawFourier.getUpperBaseFrequency());
+						odm.setLowerBaseFrequencyRaw(correctionRatiosRawFourier.getLowerBaseFrequency());
+						
 					}
 					else {
 						attenuationFactor = correctionRatiosPoly[2][0];
 						attenuationFactorFhkl = correctionRatioFhklPoly[2][0];
 						attenuationFactorRaw = correctionRatioRawPoly[2][0];
+						
+						odm.setLowerOverlapFitParametersCorrected(correctionRatiosPoly[0]);
+						odm.setUpperOverlapFitParametersCorrected(correctionRatiosPoly[1]);
+						
+						odm.setLowerOverlapFitParametersFhkl(correctionRatioFhklPoly[0]);
+						odm.setUpperOverlapFitParametersFhkl(correctionRatioFhklPoly[1]);
+						
+						odm.setLowerOverlapFitParametersRaw(correctionRatioRawPoly[0]);
+						odm.setUpperOverlapFitParametersRaw(correctionRatioRawPoly[1]);
+						
 					}
 
 					odm.setAttenuationFactor(attenuationFactor);
 					odm.setAttenuationFactorFhkl(attenuationFactorFhkl);
 					odm.setAttenuationFactorRaw(attenuationFactorRaw);
 
-					// odm.setLowerOverlapFitParametersCorrected(correctionRatio[0]);
-					// odm.setUpperOverlapFitParametersCorrected(correctionRatio[1]);
-					//
-					// odm.setLowerOverlapFitParametersFhkl(correctionRatioFhkl[0]);
-					// odm.setUpperOverlapFitParametersFhkl(correctionRatioFhkl[1]);
-					//
-					// odm.setLowerOverlapFitParametersRaw(correctionRatioRaw[0]);
-					// odm.setUpperOverlapFitParametersRaw(correctionRatioRaw[1]);
+					
 
 				} else {
 					attenuationFactor = oAos.get(k).getAttenuationFactorCorrected();

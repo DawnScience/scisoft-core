@@ -2,15 +2,17 @@ package org.dawnsci.surfacescatter;
 
 import java.util.ArrayList;
 
+import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.analysis.tree.impl.DataNodeImpl;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.SliceND;
 
 public enum OutputCurvesDataPackageEnum {
@@ -278,6 +280,19 @@ public enum OutputCurvesDataPackageEnum {
 		return out;
 
 	}
+	
+	private Dataset getDoubleArrayOfArraysAsDataset(double[][] in) {
+
+		ArrayList<double[]> out = new ArrayList<>();
+
+		for (int i = 0; i < in.length; i++) {
+			out.add(in[i]);
+		}
+
+		return DatasetFactory.createFromList(out);
+	}
+		
+		
 
 	private static ArrayList<Double> getListofDoublesAttribute(String desired, GroupNode g) {
 
@@ -319,6 +334,41 @@ public enum OutputCurvesDataPackageEnum {
 
 		return null;
 	}
+	
+
+	private static double[][] getDoubleArrayofArraysAttribute(String desired, GroupNode g) {
+
+		Attribute roiAttribute = g.getAttribute(desired);
+		Dataset roiAttributeDat = (Dataset) roiAttribute.getValue();
+
+		double[][] out = new double[roiAttributeDat.getShape()[0]][];
+
+		SliceND slice = new SliceND(roiAttributeDat.getShape());
+
+		for (int i = 0; i < roiAttributeDat.getShape()[0]; i++) {
+
+			slice.setSlice(0, i, i + 1, 1);
+
+			ILazyDataset ld = roiAttributeDat.getSlice(slice).squeeze();
+			
+			double[] a = new double[ld.getShape()[0]];
+
+			for (int j = 0; j < ld.getShape()[0]; j++) {
+
+				try {
+					a[j] = ld.getSlice(new SliceND(ld.getShape())).getInt(j);
+				} catch (DatasetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			out[i] = a;
+
+		}
+
+		return out;
+	}
+
 	
 	private static int getIntegerAttribute(String desired, GroupNode g) {
 		IDataset sd = g.getAttribute(desired).getValue();

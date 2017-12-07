@@ -47,15 +47,17 @@ public class RixsImageReductionModel extends RixsBaseModel {
 	}
 
 	@OperationModelField(label = "Spectrum correlation order", hint = "Which spectrum to start correlating from")
-	private CORRELATE_ORDER correlateOrder= CORRELATE_ORDER.LAST;
+	private CORRELATE_ORDER correlateOrder = CORRELATE_ORDER.LAST;
 
-	public enum CORRELATE_PAIR {
+	public enum CORRELATE_PHOTON {
 		ALL_PAIRS, // every pairs of spectra
 		CONSECUTIVE_PAIR, // consecutive pairs only
+		USE_INTENSITY_SHIFTS, // use shifts from intensity correlations
 	}
 
-	@OperationModelField(label = "Spectrum correlation option", hint = "All pairs of spectra; consecutive pairs only")
-	private CORRELATE_PAIR correlateOption = CORRELATE_PAIR.CONSECUTIVE_PAIR; // in 2D image
+	@OperationModelField(label = "Spectrum correlation option (for photon events only)", hint = "All pairs of spectra; consecutive pairs only; use intensity shifts")
+	private CORRELATE_PHOTON correlateOption = CORRELATE_PHOTON.CONSECUTIVE_PAIR; // in 2D image
+
 
 	// TODO conditional override to fit parameters??
 
@@ -159,13 +161,13 @@ public class RixsImageReductionModel extends RixsBaseModel {
 	}
 
 	/**
-	 * @return option for spectrum correlator
+	 * @return option for photon event spectrum correlation
 	 */
-	public CORRELATE_PAIR getCorrelateOption() {
+	public CORRELATE_PHOTON getCorrelateOption() {
 		return correlateOption;
 	}
 
-	public void setCorrelateOption(CORRELATE_PAIR correlateOption) {
+	public void setCorrelateOption(CORRELATE_PHOTON correlateOption) {
 		firePropertyChange("setCorrelateOption", this.correlateOption, this.correlateOption = correlateOption);
 	}
 

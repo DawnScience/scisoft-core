@@ -52,7 +52,7 @@ import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionModel.CORRELATE_ORDER;
-import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionModel.CORRELATE_PAIR;
+import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionModel.CORRELATE_PHOTON;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionModel> {
@@ -310,43 +310,14 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 
 						StraightLine line = getStraightLine(r);
 						IRectangularROI roi = getROI(r);
-
 						Dataset sums = allSums.get(i);
 						Dataset posn = allPositions.get(i);
 						int[] hSingle = new int[bmax];
 						int[] hMultiple = new int[bmax];
 						allSingle[r][i] = hSingle;
 						allMultiple[r][i] = hMultiple;
-						double el0 = line.val(0); // elastic line intercept
-						for (int j = 0, jmax = sums.getSize(); j < jmax; j++) {
-							double px = posn.getDouble(j, 1);
-							double py = posn.getDouble(j, 0);
-
-							if (roi != null && !roi.containsPoint(px, py)) {
-								continue; // separate by regions
-							}
-
-							// add coords
-							if (i == 0) {
-								cX.add(px);
-								cY.add(py);
-							}
-
-							// correct for tilt
-							py += line.val(px) - el0;
-
-							double ps = sums.getDouble(j);
-							if (ps >= single) {
-								int ip = (int) Math.floor(bin * py); // discretize position
-								if (ip >= 0 && ip < bmax) {
-									if (ps < multiple) {
-										hSingle[ip]++;
-									} else {
-										hMultiple[ip]++;
-									}
-								}
-							}
-						}
+						shiftAndBinPhotonEvents(0, single, multiple, bin, bmax, cX, cY, i, line, roi, sums, posn,
+								hSingle, hMultiple);
 
 						// add coords
 						if (i == 0) {
@@ -453,42 +424,71 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					ProcessingUtils.setAxes(sp, e);
 					summaryData.add(sp);
 
-					reg = getCorrelateShifter(true);
-					sArray = new IDataset[sSpectra[r].getShapeRef()[0]];
-					for (int i = 0; i < sArray.length; i++) {
-						sArray[i] = sSpectra[r].getSliceView(new Slice(i, i+1)).squeeze();
-					}
-					results = reg.value(sArray);
-					for (int i = 0; i < sArray.length; i++) {
-						sArray[i] = results.get(2*i + 1);
-					}
-					sp = accumulate(sArray);
-					sp.setName("correlated_single_photon_spectrum_" + r);
-					ProcessingUtils.setAxes(sp, e);
-					summaryData.add(sp);
-					shift.clear();
-					for (int i = 0; i < sArray.length; i++) {
-						shift.add(DatasetUtils.convertToDataset(results.get(2*i)).getDouble());
-					}
-					summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, "correlated_single_photon_spectrum_shift_" + r));
+					if (model.getCorrelateOption() == CORRELATE_PHOTON.USE_INTENSITY_SHIFTS) {
+						for (int i = 0; i < sArray.length; i++) { // image to image shifts
+							double offset = DatasetUtils.convertToDataset(results.get(2*i)).getDouble();
+							int[] hSingle = new int[bmax];
+							int[] hMultiple = new int[bmax];
+							allSingle[r][i] = hSingle; // need to repopulate as previous arrays are referenced in datasets
+							allMultiple[r][i] = hMultiple;
+							StraightLine line = getStraightLine(r);
+							IRectangularROI roi = getROI(r);
+							Dataset sums = allSums.get(i);
+							Dataset posn = allPositions.get(i);
 
-					sArray = new IDataset[mSpectra[r].getShapeRef()[0]];
-					for (int i = 0; i < sArray.length; i++) {
-						sArray[i] = mSpectra[r].getSliceView(new Slice(i, i+1)).squeeze();
+							Arrays.fill(hSingle, 0);
+							Arrays.fill(hMultiple, 0);
+							shiftAndBinPhotonEvents(offset, single, multiple, bin, bmax, null, null, i, line, roi, sums, posn,
+									hSingle, hMultiple);
+						}
+
+						Dataset t = DatasetFactory.createFromObject(allSingle[r]).sum(0);
+						t.setName("correlated_single_photon_spectrum_" + r);
+						ProcessingUtils.setAxes(t, e);
+						summaryData.add(t);
+
+						t = DatasetFactory.createFromObject(allMultiple[r]).sum(0);
+						t.setName("correlated_multiple_photon_spectrum_" + r);
+						ProcessingUtils.setAxes(t, e);
+						summaryData.add(t);
+					} else {
+						reg = getCorrelateShifter(true);
+						sArray = new IDataset[sSpectra[r].getShapeRef()[0]];
+						for (int i = 0; i < sArray.length; i++) {
+							sArray[i] = sSpectra[r].getSliceView(new Slice(i, i+1)).squeeze();
+						}
+						results = reg.value(sArray);
+						for (int i = 0; i < sArray.length; i++) {
+							sArray[i] = results.get(2*i + 1);
+						}
+						sp = accumulate(sArray);
+						sp.setName("correlated_single_photon_spectrum_" + r);
+						ProcessingUtils.setAxes(sp, e);
+						summaryData.add(sp);
+						shift.clear();
+						for (int i = 0; i < sArray.length; i++) {
+							shift.add(DatasetUtils.convertToDataset(results.get(2*i)).getDouble());
+						}
+						summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, "correlated_single_photon_spectrum_shift_" + r));
+	
+						sArray = new IDataset[mSpectra[r].getShapeRef()[0]];
+						for (int i = 0; i < sArray.length; i++) {
+							sArray[i] = mSpectra[r].getSliceView(new Slice(i, i+1)).squeeze();
+						}
+						results = reg.value(sArray);
+						for (int i = 0; i < sArray.length; i++) {
+							sArray[i] = results.get(2*i + 1);
+						}
+						sp = accumulate(sArray);
+						sp.setName("correlated_multiple_photon_spectrum_" + r);
+						ProcessingUtils.setAxes(sp, e);
+						summaryData.add(sp);
+						shift.clear();
+						for (int i = 0; i < sArray.length; i++) {
+							shift.add(DatasetUtils.convertToDataset(results.get(2*i)).getDouble());
+						}
+						summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, "correlated_multiple_photon_spectrum_shift_" + r));
 					}
-					results = reg.value(sArray);
-					for (int i = 0; i < sArray.length; i++) {
-						sArray[i] = results.get(2*i + 1);
-					}
-					sp = accumulate(sArray);
-					sp.setName("correlated_multiple_photon_spectrum_" + r);
-					ProcessingUtils.setAxes(sp, e);
-					summaryData.add(sp);
-					shift.clear();
-					for (int i = 0; i < sArray.length; i++) {
-						shift.add(DatasetUtils.convertToDataset(results.get(2*i)).getDouble());
-					}
-					summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, "correlated_multiple_photon_spectrum_shift_" + r));
 				}
 			}
 		}
@@ -505,6 +505,41 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		odd.setAuxData(auxData.toArray(new Serializable[auxData.size()]));
 		odd.setSummaryData(summaryData.toArray(new Serializable[summaryData.size()]));
 		return odd;
+	}
+
+	// bins photons according to their locations
+	private void shiftAndBinPhotonEvents(double offset, int single, int multiple, int bin, int bmax, List<Double> cX,
+			List<Double> cY, int i, StraightLine line, IRectangularROI roi, Dataset sums, Dataset posn, int[] hSingle, int[] hMultiple) {
+		double el0 = line.val(0); // elastic line intercept
+		for (int j = 0, jmax = sums.getSize(); j < jmax; j++) {
+			double px = posn.getDouble(j, 1);
+			double py = posn.getDouble(j, 0) + offset;
+
+			if (roi != null && !roi.containsPoint(px, py)) {
+				continue; // separate by regions
+			}
+
+			// add coords
+			if (i == 0 && cX != null && cY != null) {
+				cX.add(px);
+				cY.add(py);
+			}
+
+			// correct for tilt
+			py += line.val(px) - el0;
+
+			double ps = sums.getDouble(j);
+			if (ps >= single) {
+				int ip = (int) Math.floor(bin * py); // discretize position
+				if (ip >= 0 && ip < bmax) {
+					if (ps < multiple) {
+						hSingle[ip]++;
+					} else {
+						hMultiple[ip]++;
+					}
+				}
+			}
+		}
 	}
 
 	private IDataset[] toArray(List<Dataset> d) {
@@ -532,7 +567,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 	}
 
 	private DatasetToDatasetFunction getCorrelateShifter(boolean noisy) {
-		boolean all = model.getCorrelateOption() == CORRELATE_PAIR.ALL_PAIRS;
+		boolean all = model.getCorrelateOption() == CORRELATE_PHOTON.ALL_PAIRS;
 		boolean first = model.getCorrelateOrder() == CORRELATE_ORDER.FIRST;
 		if (noisy) {
 			RegisterNoisyData1D reg = new RegisterNoisyData1D();

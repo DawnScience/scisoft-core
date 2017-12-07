@@ -184,8 +184,13 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		y.iadd(offset[0]);
 		StraightLine line = getStraightLine(r);
 		DoubleDataset elastic = line.calculateValues(y); // absolute position of elastic line to use a zero point
-
-		Dataset spectrum = sumImageAlongSlope(in, line.getParameterValue(1));
+		double slope = line.getParameterValue(0);
+		Dataset spectrum;
+		if (Double.isFinite(slope)) {
+			spectrum = sumImageAlongSlope(in, -slope);
+		} else {
+			spectrum = DatasetFactory.zeros(rows).fill(Double.NaN);
+		}
 
 		return new Dataset[] {elastic, spectrum};
 	}

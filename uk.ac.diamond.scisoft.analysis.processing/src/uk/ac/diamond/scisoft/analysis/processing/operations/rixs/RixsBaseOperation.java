@@ -196,17 +196,18 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	 * @param slope
 	 * @return summed image
 	 */
-	protected Dataset sumImageAlongSlope(Dataset image, double slope) {
+	public static Dataset sumImageAlongSlope(Dataset image, double slope) {
 		int[] shape = image.getShapeRef();
 		int rows = shape[0];
 		int cols = shape[1];
 		DoubleDataset result = DatasetFactory.zeros(cols);
-		SliceND slice = new SliceND(shape); 
+		SliceND slice = new SliceND(shape);
 		Dataset c = DatasetFactory.createRange(cols);
+		Dataset nc = c.clone();
 		for (int i = 0; i < rows; i++) {
 			slice.setSlice(0, i, i+1, 1);
-			result.iadd(Maths.interpolate(c, image.getSliceView(slice).squeeze(), c, 0, 0));
-			c.iadd(slope);
+			result.iadd(Maths.interpolate(nc, image.getSliceView(slice).squeeze(), c, 0, 0));
+			nc.iadd(slope);
 		}
 		return result;
 	}

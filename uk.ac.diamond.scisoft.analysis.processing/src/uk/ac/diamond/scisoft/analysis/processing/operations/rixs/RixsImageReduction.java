@@ -397,7 +397,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					} catch (DatasetException e) {
 					}
 
-					DatasetToDatasetFunction reg = getCorrelateShifter(false);
+					DatasetToDatasetFunction reg = getCorrelateShifter(true);
 					List<? extends IDataset> results = reg.value(sArray);
 					for (int i = 0; i < sArray.length; i++) {
 						sArray[i] = results.get(2*i + 1);

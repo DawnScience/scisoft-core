@@ -510,7 +510,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 	// bins photons according to their locations
 	private void shiftAndBinPhotonEvents(double offset, int single, int multiple, int bin, int bmax, List<Double> cX,
 			List<Double> cY, int i, StraightLine line, IRectangularROI roi, Dataset sums, Dataset posn, int[] hSingle, int[] hMultiple) {
-		double el0 = line.val(0); // elastic line intercept
+		double slope = -line.getParameterValue(0);
 		for (int j = 0, jmax = sums.getSize(); j < jmax; j++) {
 			double px = posn.getDouble(j, 1);
 			double py = posn.getDouble(j, 0) + offset;
@@ -526,7 +526,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			}
 
 			// correct for tilt
-			py += line.val(px) - el0;
+			py += slope*px;
 
 			double ps = sums.getDouble(j);
 			if (ps >= single) {

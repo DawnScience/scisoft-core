@@ -36,6 +36,21 @@ public class RixsBaseModel extends AbstractOperationModel {
 	@OperationModelField(label = "Cutoff for pixels as multiple of single photon", hint = "Use a negative value to not apply")
 	private double cutoff = 5;
 
+	public enum ENERGY_OFFSET {
+		FROM_ELASTIC_LINE_FIT, // use value of intercept in fit
+		MANUAL_OVERRIDE, // override if values are available
+		// TURNING_POINT,
+	}
+
+	@OperationModelField(label = "Zero energy offset option", hint = "From elastic line fit; manual override by given values")
+	private ENERGY_OFFSET energyOffsetOption = ENERGY_OFFSET.FROM_ELASTIC_LINE_FIT;
+
+	@OperationModelField(label = "Zero energy offset value for rectangle A", hint = "Position on energy axis in pixels")
+	private double energyOffsetA = Double.NaN;
+
+	@OperationModelField(label = "Zero energy offset value for rectangle B", hint = "Position on energy axis in pixels")
+	private double energyOffsetB = Double.NaN;
+
 	/**
 	 * @return get first region of interest (can be null to signify the entire image)
 	 */
@@ -87,5 +102,38 @@ public class RixsBaseModel extends AbstractOperationModel {
 
 	public void setCutoff(int cutoff) {
 		firePropertyChange("setCutoff", this.cutoff, this.cutoff = cutoff);
+	}
+
+	/**
+	 * @return option for zero energy offset
+	 */
+	public ENERGY_OFFSET getEnergyOffsetOption() {
+		return energyOffsetOption;
+	}
+
+	public void setEnergyOffsetOption(ENERGY_OFFSET energyOffsetOption) {
+		firePropertyChange("setEnergyOffsetOption", this.energyOffsetOption, this.energyOffsetOption = energyOffsetOption);
+	}
+
+	/**
+	 * @return pixel position on energy axis of zero energy loss for rectangle A
+	 */
+	public double getEnergyOffsetA() {
+		return energyOffsetA;
+	}
+
+	public void setEnergyOffsetA(double energyOffsetA) {
+		firePropertyChange("setEnergyOffsetA", this.energyOffsetA, this.energyOffsetA = energyOffsetA);
+	}
+
+	/**
+	 * @return pixel position on energy axis of zero energy loss for rectangle B
+	 */
+	public double getEnergyOffsetB() {
+		return energyOffsetB;
+	}
+
+	public void setEnergyOffsetB(double energyOffsetB) {
+		firePropertyChange("setEnergyOffsetA", this.energyOffsetB, this.energyOffsetB = energyOffsetB);
 	}
 }

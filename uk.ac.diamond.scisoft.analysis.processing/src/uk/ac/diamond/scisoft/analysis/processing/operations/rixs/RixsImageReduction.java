@@ -354,7 +354,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				Dataset[] mEvents = new Dataset[2];
 
 				for (int r = 0; r < roiMax; r++) {
-					double el0 = getStraightLine(r).val(0); // elastic line intercept
+					double el0 = getZeroEnergyOffset(r); // elastic line intercept
 					Dataset er = DatasetFactory.createRange(bmax);
 					er.iadd(-bin*el0); // adjust zero TODO sign wrong??
 					er.imultiply(-energyDispersion[r]/bin);

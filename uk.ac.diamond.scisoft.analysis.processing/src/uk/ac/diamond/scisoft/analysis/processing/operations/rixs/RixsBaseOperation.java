@@ -45,6 +45,7 @@ import org.eclipse.january.dataset.SliceND;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
+import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsBaseModel.ENERGY_OFFSET;
 
 /**
  * Find and fit the RIXS elastic line image to a straight line so other image
@@ -174,6 +175,21 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 	/**
 	 * @param r
+	 * @return offset for zero energy loss along energy axis
+	 */
+	protected double getZeroEnergyOffset(int r) {
+		double offset = Double.NaN;
+		if (model.getEnergyOffsetOption() == ENERGY_OFFSET.MANUAL_OVERRIDE) {
+			offset = r == 0 ? model.getEnergyOffsetA() : model.getEnergyOffsetB();
+		}
+		if (!Double.isFinite(offset)) {
+			offset = getStraightLine(r).val(0); // elastic line intercept
+		}
+		return offset;
+	}
+
+	/**
+	 * @param r
 	 * @param in
 	 * @return elastic line position and spectrum datasets
 	 */
@@ -184,6 +200,13 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		y.iadd(offset[0]);
 		StraightLine line = getStraightLine(r);
 		DoubleDataset elastic = line.calculateValues(y); // absolute position of elastic line to use a zero point
+		if (model.getEnergyOffsetOption() == ENERGY_OFFSET.MANUAL_OVERRIDE) {
+			double offset = r == 0 ? model.getEnergyOffsetA() : model.getEnergyOffsetB();
+			if (Double.isFinite(offset)) {
+				elastic.iadd(offset - line.getParameterValue(1));
+			}
+		}
+
 		double slope = line.getParameterValue(0);
 		Dataset spectrum;
 		if (Double.isFinite(slope)) {

@@ -58,7 +58,6 @@ public class RixsImageReductionModel extends RixsBaseModel {
 	@OperationModelField(label = "Spectrum correlation option (for photon events only)", hint = "All pairs of spectra; consecutive pairs only; use intensity shifts")
 	private CORRELATE_PHOTON correlateOption = CORRELATE_PHOTON.USE_INTENSITY_SHIFTS; // in 2D image
 
-
 	// TODO conditional override to fit parameters??
 
 	/**
@@ -170,5 +169,4 @@ public class RixsImageReductionModel extends RixsBaseModel {
 	public void setCorrelateOption(CORRELATE_PHOTON correlateOption) {
 		firePropertyChange("setCorrelateOption", this.correlateOption, this.correlateOption = correlateOption);
 	}
-
 }

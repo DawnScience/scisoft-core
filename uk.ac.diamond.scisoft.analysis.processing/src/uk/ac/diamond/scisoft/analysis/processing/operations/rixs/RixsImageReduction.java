@@ -94,6 +94,9 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			double[] tmp = parseForCalibration(file);
 			System.arraycopy(tmp, 0, energyDispersion, 0, Math.min(2, tmp.length));
 		}
+		if (energyDispersion[1] == 0 || Double.isNaN(energyDispersion[1])) { // assume first entry is fine
+			energyDispersion[1] = energyDispersion[0];
+		}
 
 		file = model.getFitFile();
 		if (file == null) {
@@ -139,7 +142,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			for (NodeLink n : g) {
 				if (n.getName().endsWith(ElasticLineReduction.PROCESS_NAME) && n.isDestinationGroup()) {
 					GroupNode fg = (GroupNode) n.getDestination();
-					int r = fg.getNumberOfGroupNodes() / 3; // three datasets per line
+					int r = Math.min(MAX_ROIS, fg.getNumberOfGroupNodes() / 3); // three datasets per line
 					double[] p = new double[2];
 					for (int i = 0; i < r; i++) {
 						String l = "line_" + i;
@@ -147,6 +150,13 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 						p[1] = NexusTreeUtils.parseDoubleArray(fg.getGroupNode(l + "_c").getDataNode("data"))[0];
 						lines[i] = new StraightLine(p);
 					}
+					if (r == 1 && Double.isNaN(lines[0].getParameterValue(0))) {
+						throw new OperationException(this, "Loaded elastic line fit is invalid");
+					}
+					if (Double.isNaN(lines[1].getParameterValue(0))) {
+						lines[1].setParameterValues(lines[0].getParameterValues());
+					}
+					break;
 				}
 			}
 

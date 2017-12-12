@@ -15,7 +15,7 @@ public class DummyProcessWithFrames {
 	private static OperationData outputOD;
 
 	public static IDataset dummyProcess(DirectoryModel drm, int k, int trackingMarker, int selection,
-			double[] locationOverride, int[][] sspLenPt) {
+			double[] locationOverride, int[][] sspLenPt) throws IndexOutOfBoundsException{
 
 		FrameModel fm = drm.getFms().get(selection);
 
@@ -113,14 +113,7 @@ public class DummyProcessWithFrames {
 		}
 
 		if (Arrays.equals(output.getShape(), (new int[] { 2, 2 }))) {
-			IndexIterator it11 = ((Dataset) output).getIterator();
-
-			while (it11.hasNext()) {
-				double q = ((Dataset) output).getElementDoubleAbs(it11.index);
-				if (q <= 0)
-					((Dataset) output).setObjectAbs(it11.index, 0.1);
-			}
-			return output;
+			throw new IndexOutOfBoundsException();
 		}
 
 		DummyClassUtils.save(drm, fm, k, selection, output, sspLenPt, trackingMarker);
@@ -129,7 +122,7 @@ public class DummyProcessWithFrames {
 	}
 
 	public static IDataset dummyProcess1(DirectoryModel drm, int k, int trackingMarker, int selection,
-			double[] locationList, int[][] sspLenPt) {
+			double[] locationList, int[][] sspLenPt) throws IndexOutOfBoundsException {
 
 		//////////////////////////////// NB selection is position in the sorted list of
 		//////////////////////////////// the whole rod k is position in the .dat file
@@ -158,7 +151,7 @@ public class DummyProcessWithFrames {
 
 		case TWOD:
 
-			outputOD = DummyClassUtils.twoDMethod(drm, locationList, fm, k, selection, input, trackingMarker);
+			outputOD = DummyClassUtils.twoDMethod(drm, fm, k, selection, input, trackingMarker);
 
 			output = outputOD.getData();
 
@@ -190,6 +183,9 @@ public class DummyProcessWithFrames {
 
 			break;
 
+		}
+		if (Arrays.equals(output.getShape(), (new int[] { 2, 2 }))) {
+			throw new IndexOutOfBoundsException();
 		}
 
 		DummyClassUtils.save(drm, fm, k, selection, output, sspLenPt, trackingMarker);

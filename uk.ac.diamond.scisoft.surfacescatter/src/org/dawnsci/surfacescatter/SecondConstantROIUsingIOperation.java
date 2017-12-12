@@ -67,7 +67,6 @@ public class SecondConstantROIUsingIOperation
 			IndexIterator it1 = pBackgroundSubtracted.getIterator();
 			
 			while (it1.hasNext()) {
-				double q = pBackgroundSubtracted.getElementDoubleAbs(it1.index);
 				in1Background.setObjectAbs(it1.index, bgAv);
 
 			}

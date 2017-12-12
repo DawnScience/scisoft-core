@@ -34,7 +34,6 @@ public class TwoDFittingUsingIOperation extends AbstractOperation<TwoDFittingMod
 
 	private static Dataset output;
 	private static Polynomial2D g2;
-	private static int DEBUG = 0;
 	private IDataset in1Background;
 	
 	@Override

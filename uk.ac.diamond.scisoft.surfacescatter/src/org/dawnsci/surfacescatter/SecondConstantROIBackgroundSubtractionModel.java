@@ -25,7 +25,6 @@ public class SecondConstantROIBackgroundSubtractionModel extends AbstractOperati
 	private int loopNo = 0;
 	private IDataset input;
 	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
-//	private IRectangularROI initialBackgroundROI = new RectangularROI(10,10,50,50,0);
 	private int[][] backgroundLenPt;
 	private int[][] boxOffsetLenPt =null;
 	
@@ -37,14 +36,6 @@ public class SecondConstantROIBackgroundSubtractionModel extends AbstractOperati
 		this.backgroundLenPt = backgroundLenPt;
 	}
 	
-//	public IRectangularROI getInitialBackgroundROI() {
-//		return initialBackgroundROI;
-//	}
-//
-//	public void setInitialBackgroundROI(IRectangularROI initialBackgroundROI) {
-//		this.initialBackgroundROI = initialBackgroundROI;
-//	}
-
 	@OperationModelField(label="trackerOn", hint = "Are you tracking?" )
 	private Boolean trackerOn = false;
 	
@@ -69,25 +60,6 @@ public class SecondConstantROIBackgroundSubtractionModel extends AbstractOperati
 		firePropertyChange("trackingMarker", this.trackingMarker, this.trackingMarker = trackingMarker);
 	}
 
-//	@OperationModelField(label="backgroundROI", hint = "backgroundROI?" )
-//	private IRectangularROI backgroundROI = new RectangularROI(10,10,50,50,0);;
-//	
-//	public IRectangularROI getBackgroundROI() {
-//		return backgroundROI;
-//	}
-//
-//	public void setBackgroundROI(IRectangularROI backgroundROI) {
-//		IRectangularROI bounds = backgroundROI.getBounds();
-//		int[] len = bounds.getIntLengths();
-//		int[] pt = bounds.getIntPoint();
-//		int[][] lenpt = new int[2][];
-//		lenpt[0]=len;
-//		lenpt[1]=pt;
-//		this.setBackgroundLenPt(lenpt);
-//		firePropertyChange("backgroundROI", this.backgroundROI, this.backgroundROI = backgroundROI);
-//	}
-	
-	
 	@OperationModelField(label="Tracker Reset", hint = "Reset Tracker?" )
 	private int trackerReset = 0;
 	
@@ -136,8 +108,6 @@ public class SecondConstantROIBackgroundSubtractionModel extends AbstractOperati
 
 	@OperationModelField(label="Boundary Box size (pixels)", hint = "Size of the boundary box used for background calculation" )
 	private int boundaryBox = 20;
-
-//	private RectangularROI box = new RectangularROI(100d, 100d, 10d, 10d, 0d);
 	
 	public int getBoundaryBox() {
 		return boundaryBox;
@@ -146,15 +116,7 @@ public class SecondConstantROIBackgroundSubtractionModel extends AbstractOperati
 	public void setBoundaryBox(int boundaryBox) {
 		firePropertyChange("boundaryBox", this.boundaryBox, this.boundaryBox = boundaryBox);
 	}
-
-//	public RectangularROI getBox() {
-//		return box;
-//	}
-//	
-//	public void setBox(RectangularROI box) {
-//		firePropertyChange("box", this.box, this.box = box);
-//	}
-//	
+	
 	@OperationModelField(label="Fit power", hint = "Fit power" )
 	private FitPower fitPower = FitPower.THREE;
 	

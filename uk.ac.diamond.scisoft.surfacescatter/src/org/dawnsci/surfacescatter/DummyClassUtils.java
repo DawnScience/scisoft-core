@@ -71,7 +71,7 @@ public class DummyClassUtils {
 
 	}
 
-	public static OperationData twoDMethod(DirectoryModel drm, double[] locationList, FrameModel fm, int k,
+	public static OperationData twoDMethod(DirectoryModel drm, FrameModel fm, int k,
 			int selection, IDataset input, int trackingMarker) {
 
 

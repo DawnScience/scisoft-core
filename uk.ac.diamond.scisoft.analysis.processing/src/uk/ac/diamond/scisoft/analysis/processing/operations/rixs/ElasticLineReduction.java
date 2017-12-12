@@ -168,7 +168,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		Dataset out = null;
 
 		if (si != null) {
-			int smax = si.getTotalSlices();
+			int smax = si.getTotalSlices() - 1;
 			log.append("At frame %d/%d", si.getSliceNumber(), smax);
 
 			// TODO make this live-friendly by show result per frame

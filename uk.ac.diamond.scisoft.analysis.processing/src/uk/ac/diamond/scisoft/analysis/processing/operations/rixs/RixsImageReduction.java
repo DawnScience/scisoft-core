@@ -291,7 +291,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			System.err.printf("At frame %d/%d\n", si.getSliceNumber(), smax);
 			summaryData.clear(); // do not save anything yet
 
-			if (si.getSliceNumber() == smax) {
+			if (si.getSliceNumber() == smax - 1) {
 				summaryData.add(a);
 
 				// After last image, calculate splitting levels

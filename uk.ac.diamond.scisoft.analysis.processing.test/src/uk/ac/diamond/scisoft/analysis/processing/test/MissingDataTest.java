@@ -45,13 +45,13 @@ public class MissingDataTest {
 		// positive infinity
 		Dataset infSine = fullSine.clone();
 		infSine.setSlice(Double.POSITIVE_INFINITY, missingSlice);
-		infSine.addMetadata(new SliceFromSeriesMetadata(new SliceInformation(new SliceND(infSine.getShape()), new SliceND(infSine.getShape()), new SliceND(infSine.getShape()), infSine.getShape(), 1, 1)));
+		infSine.addMetadata(new SliceFromSeriesMetadata(new SliceInformation(new SliceND(infSine.getShape()), new SliceND(infSine.getShape()), new SliceND(infSine.getShape()), infSine.getShape(), 1, 0)));
 		// Missing data indicator
 		double mdi = 2e30;
 		Dataset mdiSine = fullSine.clone();
 		mdiSine.setSlice(mdi, missingSlice);
 		mdiSine = InterpolateMissingDataOperation.interpolateMissingData(mdiSine, mdi);
-		mdiSine.addMetadata(new SliceFromSeriesMetadata(new SliceInformation(new SliceND(infSine.getShape()), new SliceND(infSine.getShape()), new SliceND(infSine.getShape()), infSine.getShape(), 1, 1)));
+		mdiSine.addMetadata(new SliceFromSeriesMetadata(new SliceInformation(new SliceND(infSine.getShape()), new SliceND(infSine.getShape()), new SliceND(infSine.getShape()), infSine.getShape(), 1, 0)));
 		// What the answer should be
 		Dataset interpolSine = fullSine.clone();
 		for (int i = start; i < stop; i+=step) {

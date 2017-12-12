@@ -101,7 +101,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		log.clear();
 
 		SliceFromSeriesMetadata smd = input.getFirstMetadata(SliceFromSeriesMetadata.class);
-		if (smd.getSliceInfo().getSliceNumber() == 1) {
+		if (smd.getSliceInfo().getSliceNumber() == 0) {
 			resetProcess(input);
 			updateFromModel();
 			parseNexusFile(smd.getFilePath());

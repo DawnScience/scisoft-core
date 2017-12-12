@@ -572,18 +572,18 @@ public class HDF5Loader extends AbstractFileLoader {
 					if (eName != null) {
 						String parent = f.getParentDirectory();
 						File ef = new File(eName);
-						logger.debug("Looking for external file {}", eName);
+						logger.trace("Looking for external file {}", eName);
 						if (!ef.isAbsolute()) {
 							exists = ef.exists();
 							if (!exists) { // use directory of linking file
-								logger.debug("Could not find external relative file, now trying in {}", parent);
+								logger.trace("Could not find external relative file, now trying in {}", parent);
 								File ref = new File(parent, ef.getName());
 								exists = ref.exists();
 								if (!exists) {
 									// append to directory of linking file
 									File ref2 = new File(parent, eName);
 									if (!ref2.equals(ref)) {
-										logger.debug("Could not find external relative file, finally trying {}", ref2);
+										logger.trace("Could not find external relative file, finally trying {}", ref2);
 										ref = ref2;
 									}
 								}
@@ -597,7 +597,7 @@ public class HDF5Loader extends AbstractFileLoader {
 							if (exists) {
 								eName = ref.getAbsolutePath();
 								ef = ref;
-								logger.debug("Found external file {} in {}", ef.getName(), parent);
+								logger.trace("Found external file {} in {}", ef.getName(), parent);
 							}
 						}
 
@@ -605,7 +605,7 @@ public class HDF5Loader extends AbstractFileLoader {
 							exists = ef.exists();
 							eName = ef.getAbsolutePath();
 							if (exists) {
-								logger.debug("Finally found external file {}", eName);
+								logger.trace("Finally found external file {}", eName);
 							}
 						}
 					}

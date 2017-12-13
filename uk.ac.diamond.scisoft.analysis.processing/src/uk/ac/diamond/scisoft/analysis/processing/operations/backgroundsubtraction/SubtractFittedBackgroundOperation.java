@@ -63,10 +63,19 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	@Override
 	protected Dataset getImage(IDataset input) throws OperationException {
 		Dataset in = DatasetUtils.convertToDataset(input);
-		double min = model.isPositiveOnly() ? 0 : in.min(true).doubleValue();
+		double min = in.min(true).doubleValue();
 		double max = in.max(true).doubleValue();
 		int nbin = (int) Math.ceil(max - min);
-		
+		if (nbin == 0) {
+			log.append("No range in data. All finite values are %g", min);
+			return DatasetFactory.createFromObject(min);
+		}
+
+		if (model.isPositiveOnly()) {
+			min = 0;
+			nbin = (int) Math.ceil(max - min);
+		}
+
 		Dataset bins; 
 		if (in.hasFloatingPointElements() || nbin > SubtractFittedBackgroundModel.HISTOGRAM_MAX_BINS) {
 			bins = DatasetFactory.createLinearSpace(DoubleDataset.class, min, max, nbin);
@@ -144,17 +153,20 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		od.setShowSeparately(true);
 		od.setLog(log);
 
-		setDisplayData(od, x, h, fit);
+		if (h != null) {
+			setDisplayData(od, x, h, fit);
+	
+			// switch to use display data and record fit parameters as [1]-shape datasets
+			// need two plots...
+			od.setAuxData(ProcessingUtils.createNamedDataset(threshold, "threshold"),
+					ProcessingUtils.createNamedDataset(pdf.getParameterValue(0), "pdf_posn"),
+					ProcessingUtils.createNamedDataset(pdf.getParameterValue(1), "pdf_fwhm"),
+					ProcessingUtils.createNamedDataset(pdf.getParameterValue(2), "pdf_area"),
+					ProcessingUtils.createNamedDataset(residual, "residual"));
+	
+			od.getData().addMetadata(new FitMetadataImpl().setFitFunction(pdf));
+		}
 
-		// switch to use display data and record fit parameters as [1]-shape datasets
-		// need two plots...
-		od.setAuxData(ProcessingUtils.createNamedDataset(threshold, "threshold"),
-				ProcessingUtils.createNamedDataset(pdf.getParameterValue(0), "pdf_posn"),
-				ProcessingUtils.createNamedDataset(pdf.getParameterValue(1), "pdf_fwhm"),
-				ProcessingUtils.createNamedDataset(pdf.getParameterValue(2), "pdf_area"),
-				ProcessingUtils.createNamedDataset(residual, "residual"));
-
-		od.getData().addMetadata(new FitMetadataImpl().setFitFunction(pdf));
 		return od;
 	}
 

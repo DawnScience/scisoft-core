@@ -113,6 +113,9 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		for (int r = 0; r < roiMax; r++) {
 			roi = getROI(r);
 			Dataset in = preprocessImage(input, roi);
+			if (in.getSize() == 0) {
+				continue;
+			}
 			int cutoff = (int) Math.floor(countsPerPhoton * model.getCutoff());
 			if (cutoff > 0) {
 				BooleanDataset hots = Comparisons.greaterThan(in, cutoff);

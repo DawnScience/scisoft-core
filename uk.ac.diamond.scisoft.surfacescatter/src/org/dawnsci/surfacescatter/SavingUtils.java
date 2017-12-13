@@ -319,8 +319,8 @@ public class SavingUtils {
 			ye = csdp.getSplicedCurveYError();
 			break;
 		case SPLICEDYFHKL:
-			y = csdp.getSplicedCurveYFhklError();
-			ye = y.getErrors();
+			y = csdp.getSplicedCurveYFhkl();
+			ye = csdp.getSplicedCurveYFhklError();
 			break;
 		case SPLICEDYRAW:
 			y = csdp.getSplicedCurveYRaw();

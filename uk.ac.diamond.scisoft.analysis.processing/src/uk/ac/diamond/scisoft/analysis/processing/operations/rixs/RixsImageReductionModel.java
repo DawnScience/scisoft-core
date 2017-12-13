@@ -17,6 +17,16 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
  */
 public class RixsImageReductionModel extends RixsBaseModel {
 
+	public enum FIT_FILE_OPTION {
+		NEXT_SCAN,
+		SAME_SCAN,
+		PREVIOUS_SCAN,
+		MANUAL_OVERRIDE,
+	}
+
+	@OperationModelField(label = "Elastic line fit file option", hint = "Use next (or same or previous) scan's processed fit file; manual override by given file")
+	private FIT_FILE_OPTION fitFileOption = FIT_FILE_OPTION.NEXT_SCAN;
+
 	@OperationModelField(label = "Elastic line fit file", file = FileType.EXISTING_FILE, hint = "Can be empty then calibration file is used")
 	private String fitFile;
 
@@ -58,7 +68,21 @@ public class RixsImageReductionModel extends RixsBaseModel {
 	@OperationModelField(label = "Spectrum correlation option (for photon events only)", hint = "All pairs of spectra; consecutive pairs only; use intensity shifts")
 	private CORRELATE_PHOTON correlateOption = CORRELATE_PHOTON.USE_INTENSITY_SHIFTS; // in 2D image
 
+	@OperationModelField(label = "Normalize spectra by region size")
+	private boolean normalizeByRegionSize= true;
+
 	// TODO conditional override to fit parameters??
+
+	/**
+	 * @return option to work out which fit file to use
+	 */
+	public FIT_FILE_OPTION getFitFileOption() {
+		return fitFileOption;
+	}
+
+	public void setFitFileOption(FIT_FILE_OPTION fitFileOption) {
+		firePropertyChange("setFitFileOption", this.fitFileOption, this.fitFileOption = fitFileOption);
+	}
 
 	/**
 	 * @return path to file that contains processed fit file
@@ -168,5 +192,16 @@ public class RixsImageReductionModel extends RixsBaseModel {
 
 	public void setCorrelateOption(CORRELATE_PHOTON correlateOption) {
 		firePropertyChange("setCorrelateOption", this.correlateOption, this.correlateOption = correlateOption);
+	}
+
+	/**
+	 * @return true if spectra should be normalized by region size
+	 */
+	public boolean isNormalizeByRegionSize() {
+		return normalizeByRegionSize;
+	}
+
+	public void setNormalizeByRegionSize(boolean normalizeByRegionSize) {
+		firePropertyChange("setNnormalizeByRegionSize", this.normalizeByRegionSize, this.normalizeByRegionSize = normalizeByRegionSize);
 	}
 }

@@ -62,6 +62,10 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	 * Auxiliary subentry. This must match the name field defined in the plugin extension
 	 */
 	public static final String PROCESS_NAME = "RIXS elastic line reduction";
+	/**
+	 * Suffix for processed file
+	 */
+	public static final String SUFFIX = "elastic_line";
 
 	private double residual;
 	private Dataset position;
@@ -79,7 +83,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 	@Override
 	public String getFilenameSuffix() {
-		return "elastic_line";
+		return SUFFIX;
 	}
 
 	@Override

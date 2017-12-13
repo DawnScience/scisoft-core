@@ -9,10 +9,14 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.rixs;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistentNodeFactory;
@@ -53,6 +57,7 @@ import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionModel.CORRELATE_ORDER;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionModel.CORRELATE_PHOTON;
+import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionModel.FIT_FILE_OPTION;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionModel> {
@@ -62,6 +67,8 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 	private List<Dataset> allSums = new ArrayList<>(); // list of dataset of event sums in each image
 	private List<Dataset> allPositions = new ArrayList<>(); // list of dataset of event coords in each image
 	private List<Dataset>[] allSpectra = new List[] {new ArrayList<>(), new ArrayList<>()};
+
+	private String currentDataFile = null;
 
 	@Override
 	public String getId() {
@@ -98,14 +105,16 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			energyDispersion[1] = energyDispersion[0];
 		}
 
-		file = model.getFitFile();
-		if (file == null) {
-			file = model.getCalibrationFile();
+		if (model.getFitFileOption() == FIT_FILE_OPTION.MANUAL_OVERRIDE) {
+			file = model.getFitFile();
 			if (file == null) {
-				throw new OperationException(this, "Either elastic fit or energy calibration file must be defined");
+				file = model.getCalibrationFile();
+				if (file == null) {
+					throw new OperationException(this, "Either elastic fit or energy calibration file must be defined");
+				}
 			}
+			initializeFitLine(file);
 		}
-		initializeFitLine(file);
 
 		if (model.isRegionsFromFile()) {
 			initializeROIsFromFile(file);
@@ -121,12 +130,73 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		allPositions.clear();
 		allSpectra[0].clear();
 		allSpectra[1].clear();
+		currentDataFile = null;
 	}
 
 	@Override
 	void initializeProcess(IDataset original) {
 		log.append("RIXS Image Reduction");
 		log.append("====================");
+
+		SliceFromSeriesMetadata smd = original.getFirstMetadata(SliceFromSeriesMetadata.class);
+		if (smd.getSliceInfo().getSliceNumber() == 0) {
+			String filePath = smd.getSourceInfo().getFilePath();
+			if (model.getFitFileOption() != FIT_FILE_OPTION.MANUAL_OVERRIDE  && !filePath.equals(currentDataFile)) {
+				currentDataFile = filePath;
+
+				File file = new File(filePath);
+				File currentDir = file.getParentFile();
+				String currentName = file.getName();
+				Pattern REGEX = Pattern.compile(".*?([0-9]+)\\.nxs");
+
+				Matcher m = REGEX.matcher(currentName);
+				if (!m.matches()) {
+					throw new OperationException(this, "Current file path does not end with scan number");
+				}
+				int scan = Integer.parseInt(m.group(1));
+				if (model.getFitFileOption() == FIT_FILE_OPTION.NEXT_SCAN) {
+					scan++;
+				} else if (model.getFitFileOption() == FIT_FILE_OPTION.PREVIOUS_SCAN) {
+					scan--;
+				}
+				log.append("Looking for processed elastic line fit of scan %d", scan);
+
+				String prefix = currentName.substring(0, m.start(1)) + scan + "_processed_" + ElasticLineReduction.SUFFIX;
+				FilenameFilter filter = new FilenameFilter() {
+					
+					@Override
+					public boolean accept(File dir, String name) {
+						return name.startsWith(prefix);
+					}
+				};
+				String fitFile = findLatestFitFile(filter, currentDir, prefix);
+				if (fitFile == null) {
+					fitFile = findLatestFitFile(filter, new File(currentDir, "processing"), prefix);
+				}
+				
+				if (fitFile == null) {
+					throw new OperationException(this, "Could not find processed scan file that starts with " + prefix);
+				}
+				initializeFitLine(fitFile);
+			}
+		}
+	}
+
+	// find any processed fit file with scan number
+	private String findLatestFitFile(FilenameFilter filter, File cwd, final String prefix) {
+		File[] files = cwd.listFiles(filter);
+		long latest = 0;
+		File last = null;
+		for (File f : files) {
+			if (last == null) {
+				last = f;
+				latest = f.lastModified();
+			} else if (latest < f.lastModified()) {
+				last = f;
+				latest = f.lastModified();
+			}
+		}
+		return last == null ? null : last.toString();
 	}
 
 	private void initializeFitLine(String elasticLineFile) {

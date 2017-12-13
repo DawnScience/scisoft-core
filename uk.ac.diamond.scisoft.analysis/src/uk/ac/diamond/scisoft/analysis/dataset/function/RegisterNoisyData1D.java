@@ -425,19 +425,20 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 		double threshold = cc.max().doubleValue() * peakThresholdFraction;
 		int left = maxpos[0];
 		int right = left;
+		int rMax = cc.getSize() - 1;
 		double sum = cc.max().doubleValue(), sum0 = sum*left;
 		double vl, vr;
 		boolean bl = true, br = true;
 		do {
 			if (bl) {
 				vl = cc.getDouble(--left);
-				bl = vl > threshold;
+				bl = vl > threshold && left > 0;
 				sum += vl;
 				sum0 += vl*left;
 			}
 			if (br) {
 				vr = cc.getDouble(++right);
-				br = vr > threshold;
+				br = vr > threshold && right < rMax;
 				sum += vr;
 				sum0 += vr*right;
 			}

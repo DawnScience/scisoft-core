@@ -141,11 +141,14 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		try {
 			position = DatasetUtils.convertToDataset(smd.getMatchingSlice(amd.getAxis(0)[0])).squeeze(true);
 			log.append("Current position: %s", position.toString(true));
-		} catch (Exception e) { // TODO remove as fix is in SliceInformation
+		} catch (Exception e) { // TODO remove NexusUtils
 			// single point scans are incorrectly dealt with
 			log.append("Could not get position: %s", e);
 			int[] shape = smd.getSliceInfo().getInputSliceWithoutDataDimensions().getSourceShape();
 			position = DatasetFactory.createRange(ShapeUtils.calcSize(shape)).reshape(shape);
+		}
+		if (position.getRank() == 0) {
+			position.setShape(1);
 		}
 	}
 
@@ -172,12 +175,12 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		Dataset out = null;
 
 		if (si != null) {
-			int smax = si.getTotalSlices() - 1;
+			int smax = si.getTotalSlices();
 			log.append("At frame %d/%d", si.getSliceNumber(), smax);
 
 			// TODO make this live-friendly by show result per frame
 			// needs to give fake results for first slice
-			if (si.getSliceNumber() == smax) {
+			if (si.getSliceNumber() == smax - 1) {
 				summaryData.clear();
 				displayData.clear();
 //				odd.setAuxData();
@@ -313,7 +316,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	}
 
 	/**
-	 * Fit to intercepts of 
+	 * Fit to intercepts of elastic lines
 	 * @param r
 	 * @param coords
 	 * @return residual and gradient

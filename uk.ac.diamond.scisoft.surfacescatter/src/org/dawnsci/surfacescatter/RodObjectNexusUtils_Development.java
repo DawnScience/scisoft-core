@@ -180,16 +180,17 @@ public class RodObjectNexusUtils_Development {
 			nexusFileReference.createData(rawImagesString, gm.getxName(), csdp.getSplicedCurveX().getSlice(slice0),
 					true);
 
-			String[] axesArray = new String[3];
-
+			
 			ArrayList<String> axes = new ArrayList<>();
 
 			axes.add(gm.getxName());
 
 			GroupNode group2 = nexusFileReference.getGroup(rawImagesString, true);
-
-			nexusFileReference.addAttribute(group2, new AttributeImpl("signal", "rawImagesDataset"));
-
+			try {
+				nexusFileReference.addAttribute(group2, new AttributeImpl("signal", "rawImagesDataset"));
+			} catch (Exception ef) {
+				System.out.println("what broke   :   " + ef.getMessage());
+			}
 			Dataset integers = DatasetFactory.createLinearSpace(IntegerDataset.class, (double) 0, (double) fms.size(),
 					fms.size());
 
@@ -205,9 +206,10 @@ public class RodObjectNexusUtils_Development {
 				System.out.println(e.getMessage());
 			}
 
-			axes.toArray(axesArray);
+			String[] b = new String[axes.size()];
+			axes.toArray(b);
 
-			nexusFileReference.addAttribute(group2, new AttributeImpl("axes", axesArray));
+			nexusFileReference.addAttribute(group2, new AttributeImpl("axes", b));
 
 			SliceND slice00 = new SliceND(csdp.getSplicedCurveYFhkl().getShape());
 
@@ -269,16 +271,16 @@ public class RodObjectNexusUtils_Development {
 
 			GroupNode group = nexusFileReference.getGroup(rawImagesString, true);
 
-			nexusFileReference.addAttribute(group, new AttributeImpl("axes", axesArray));
+			nexusFileReference.addAttribute(group, new AttributeImpl("axes", b));
 
 			GroupNode group1 = nexusFileReference.getGroup(reducedDataString, true);
 
 			nexusFileReference.addAttribute(group, new AttributeImpl("NX_class", "NXdata"));
 			nexusFileReference.addAttribute(group1, new AttributeImpl("NX_class", "NXdata"));
 			nexusFileReference.addAttribute(group1, new AttributeImpl("signal", "Corrected_Intensity_Dataset"));
-			nexusFileReference.addAttribute(group1, new AttributeImpl("axes", axesArray));
+			nexusFileReference.addAttribute(group1, new AttributeImpl("axes", b));
 
-		} catch (NexusException e) {
+		} catch (Exception e) {
 
 			System.out.println("This error occured when attempting to close the NeXus file: " + e.getMessage());
 		} finally {

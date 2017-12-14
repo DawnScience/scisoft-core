@@ -13,347 +13,312 @@ import org.eclipse.january.dataset.IDataset;
 
 public class SavingUtils {
 
-
 	private PrintWriter writer;
 	private CurveStitchDataPackage csdp;
 	private boolean writeOnlyGood;
-	
 
-	public SavingUtils(boolean writeOnlyGood, CurveStitchDataPackage csdp){
-		
+	public SavingUtils(boolean writeOnlyGood, CurveStitchDataPackage csdp) {
+
 		this.writeOnlyGood = writeOnlyGood;
 		this.csdp = csdp;
-		
-		
+
 	}
-	
-	public void genXSave(
-			String title,
-			DirectoryModel drm,
-			ArrayList<FrameModel> fms,
-			GeometricParametersModel gm){
+
+	public void genXSave(String title, DirectoryModel drm, ArrayList<FrameModel> fms, GeometricParametersModel gm)
+			throws OutputException {
 
 		try {
 			File file = new File(title);
 			file.createNewFile();
 			writer = new PrintWriter(file);
-		} catch (FileNotFoundException e2) {
-			e2.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
 
-		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
-		Date now = new Date();
-		String strDate = sdfDate.format(now);
-		writer.println("#Output file created: " + strDate);
+			SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// dd/MM/yyyy
+			Date now = new Date();
+			String strDate = sdfDate.format(now);
+			writer.println("#Output file created: " + strDate);
 
-		if (drm.getCorrectionSelection() == MethodSetting.SXRD){		    
+			if (drm.getCorrectionSelection() == MethodSetting.SXRD) {
 
-			for(int gh = 0 ; gh<fms.size(); gh++){
-				FrameModel f = fms.get(gh);
-				if((writeOnlyGood && f.isGoodPoint()) ||
-						!writeOnlyGood){
-					writer.println(f.getH() +"	"+ f.getK() +"	"+f.getL() + 
-							"	"+ csdp.getSplicedCurveYFhkl().getDouble(gh)+ "	"+ csdp.getSplicedCurveYFhkl().getDouble(gh));
+				for (int gh = 0; gh < fms.size(); gh++) {
+					FrameModel f = fms.get(gh);
+					if ((writeOnlyGood && f.isGoodPoint()) || !writeOnlyGood) {
+						writer.println(f.getH() + "	" + f.getK() + "	" + f.getL() + "	"
+								+ csdp.getSplicedCurveYFhkl().getDouble(gh) + "	"
+								+ csdp.getSplicedCurveYFhkl().getDouble(gh));
 
+					}
 				}
 			}
-		}
 
-		else{
-			writer.println("#"+gm.getxName()+"	I	Ie");
+			else {
+				writer.println("#" + gm.getxName() + "	I	Ie");
 
-			for(int gh = 0 ; gh<fms.size(); gh++){
-				FrameModel f = fms.get(gh);
-				if((writeOnlyGood && f.isGoodPoint()) ||
-						!writeOnlyGood){
+				for (int gh = 0; gh < fms.size(); gh++) {
+					FrameModel f = fms.get(gh);
+					if ((writeOnlyGood && f.isGoodPoint()) || !writeOnlyGood) {
 
-					writer.println(drm.getxList().get(gh) +"	"+ 
-							csdp.getSplicedCurveY().getDouble(gh)+ "	"+ 
-							csdp.getSplicedCurveYError().getDouble(gh));
+						writer.println(drm.getxList().get(gh) + "	" + csdp.getSplicedCurveY().getDouble(gh) + "	"
+								+ csdp.getSplicedCurveYError().getDouble(gh));
 
+					}
 				}
 			}
-		}	
-		writer.close();
-	}	
+			writer.close();
+		}
 
+		catch (Exception d) {
 
+			throw new OutputException("genXSave " + d.getMessage());
+		}
+	}
 
-	public void anarodSave(String title,
-			DirectoryModel drm,
-			ArrayList<FrameModel> fms,
-			GeometricParametersModel gm){
+	public void anarodSave(String title, DirectoryModel drm, ArrayList<FrameModel> fms, GeometricParametersModel gm)
+			throws OutputException {
 
 		try {
 			File file = new File(title);
 			file.createNewFile();
 			writer = new PrintWriter(file);
-		} catch (FileNotFoundException e2) {
-			e2.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
 
-		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
-		Date now = new Date();
-		String strDate = sdfDate.format(now);
+			SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// dd/MM/yyyy
+			Date now = new Date();
+			String strDate = sdfDate.format(now);
 
-		if (drm.getCorrectionSelection() == MethodSetting.SXRD){
-
-			writer.println("# Test file created: " + strDate);
-			writer.println("# Headers: ");
-			writer.println("#h	k	l	F	Fe");
-
-			for(int gh = 0 ; gh<fms.size(); gh++){
-
-				FrameModel f = fms.get(gh);
-
-				if((writeOnlyGood  && f.isGoodPoint()) ||
-						!writeOnlyGood){
-
-					writer.println(f.getH() +"	"+ f.getK() +"	"+f.getL() + 
-							"	"+ csdp.getSplicedCurveYFhkl().getDouble(gh)+ "	"+ csdp.getSplicedCurveYFhklError().getDouble(gh));
-
-				}
-			}
-		}
-
-		else{
-
-
-			if (Double.isFinite(fms.get(0).getQ())){
+			if (drm.getCorrectionSelection() == MethodSetting.SXRD) {
 
 				writer.println("# Test file created: " + strDate);
 				writer.println("# Headers: ");
-				writer.println("#qdcd	I	Ie");
+				writer.println("#h	k	l	F	Fe");
 
-				for(int gh = 0 ; gh<fms.size(); gh++){
+				for (int gh = 0; gh < fms.size(); gh++) {
+
 					FrameModel f = fms.get(gh);
-					if((writeOnlyGood && f.isGoodPoint()) ||
-							!writeOnlyGood){
 
+					if ((writeOnlyGood && f.isGoodPoint()) || !writeOnlyGood) {
 
-						writer.println(fms.get(gh).getQ() + "	"+ 
-								csdp.getSplicedCurveY().getDouble(gh)+ "	"+ 
-								csdp.getSplicedCurveYError().getDouble(gh));
+						writer.println(f.getH() + "	" + f.getK() + "	" + f.getL() + "	"
+								+ csdp.getSplicedCurveYFhkl().getDouble(gh) + "	"
+								+ csdp.getSplicedCurveYFhklError().getDouble(gh));
+
 					}
 				}
 			}
-			//		    
-			else{
-				writer.println("#"+gm.getxName()+"	I	Ie");
 
-				for(int gh = 0 ; gh<fms.size(); gh++){
-					FrameModel f = fms.get(gh);
-					if((writeOnlyGood && f.isGoodPoint()) ||
-							!writeOnlyGood){
+			else {
 
-						writer.println(drm.getxList().get(gh) +"	"+ 
-								csdp.getSplicedCurveY().getDouble(gh)+ "	"+ 
-								csdp.getSplicedCurveYError().getDouble(gh));
-					}
-				}
-			}
-			//	    	
-		}
+				if (Double.isFinite(fms.get(0).getQ())) {
 
-		writer.close();
-	}	
+					writer.println("# Test file created: " + strDate);
+					writer.println("# Headers: ");
+					writer.println("#qdcd	I	Ie");
 
-	public void intSave(String title,
-			DirectoryModel drm,
-			ArrayList<FrameModel> fms,
-			GeometricParametersModel gm){
+					for (int gh = 0; gh < fms.size(); gh++) {
+						FrameModel f = fms.get(gh);
+						if ((writeOnlyGood && f.isGoodPoint()) || !writeOnlyGood) {
 
-		File file =null;
-
-		try {
-			file = new File(title);
-			file.createNewFile();
-			writer = new PrintWriter(file);
-		} catch (FileNotFoundException e2) {
-			e2.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-
-		int index  = title.lastIndexOf(".");
-
-		if(index != -1){
-			String ext = title.substring(0,index);
-			file.renameTo(new File(ext + ".int"));
-		}
-		else{
-			file.renameTo(new File(title + ".int"));
-		}
-
-		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
-		Date now = new Date();
-		String strDate = sdfDate.format(now);
-
-		if(drm.getCorrectionSelection() == MethodSetting.SXRD){
-
-			writer.println("# Test file created: " + strDate);
-			writer.println("# Headers: ");
-			writer.println("#h	k	l	F	Fe	lorentz	correction 	polarisation correction		area correction");
-
-			for(int gh = 0 ; gh<fms.size(); gh++){
-				FrameModel f = fms.get(gh);
-				if((writeOnlyGood && f.isGoodPoint()) ||
-						!writeOnlyGood){
-
-					writer.println(f.getH() +"	"+ f.getK() +"	"+f.getL() + 
-							"	"+ csdp.getSplicedCurveYFhkl().getDouble(gh)+ "	"+ csdp.getSplicedCurveYFhklError().getDouble(gh) +"	"
-							+ f.getLorentzianCorrection()+"	" + f.getPolarisationCorrection() +"	" + f.getAreaCorrection());
-				}
-			}
-		}
-		else{
-
-			writer.println("# Test file created: " + strDate);
-			writer.println("# Headers: ");
-
-			if (Double.isFinite(fms.get(0).getQdcd())){			
-
-				writer.println("#qdcd	I	Ie	Area Correction	Flux Correction");
-
-				if(drm.getCorrectionSelection() == MethodSetting.Reflectivity_with_Flux_Correction_Gaussian_Profile ||
-						drm.getCorrectionSelection() == MethodSetting.Reflectivity_with_Flux_Correction_Simple_Scaling){
-					//
-					for(int gh = 0 ; gh<fms.size(); gh++){
-
-						FrameModel fm = fms.get(gh);
-						if((writeOnlyGood && fm.isGoodPoint()) ||
-								!writeOnlyGood){
-
-							writer.println(fm.getQdcd() +"	"+ 
-									csdp.getSplicedCurveY().getDouble(gh)+ "	"+ 
-									csdp.getSplicedCurveYError().getDouble(gh)+ "	"+ 
-									fm.getReflectivityAreaCorrection()+ "	"+
-									fm.getReflectivityFluxCorrection());
+							writer.println(fms.get(gh).getQ() + "	" + csdp.getSplicedCurveY().getDouble(gh) + "	"
+									+ csdp.getSplicedCurveYError().getDouble(gh));
 						}
 					}
 				}
+				//
+				else {
+					writer.println("#" + gm.getxName() + "	I	Ie");
 
-				if(drm.getCorrectionSelection() == MethodSetting.Reflectivity_without_Flux_Correction_Gaussian_Profile ||
-						drm.getCorrectionSelection() == MethodSetting.Reflectivity_without_Flux_Correction_Simple_Scaling){
+					for (int gh = 0; gh < fms.size(); gh++) {
+						FrameModel f = fms.get(gh);
+						if ((writeOnlyGood && f.isGoodPoint()) || !writeOnlyGood) {
 
-					for(int gh = 0 ; gh<fms.size(); gh++){
-
-						FrameModel fm = fms.get(gh);
-						if((writeOnlyGood && fm.isGoodPoint()) ||
-								!writeOnlyGood){
-
-							writer.println(fm.getQdcd() +"	"+ 
-									csdp.getSplicedCurveY().getDouble(gh)+ "	"+ 
-									csdp.getSplicedCurveYError().getDouble(gh)+ "	"+ 
-									fm.getReflectivityAreaCorrection());
-						}
-					}
-				}
-
-				if(drm.getCorrectionSelection() == MethodSetting.Reflectivity_NO_Correction){
-
-					for(int gh = 0 ; gh<fms.size(); gh++){
-
-						FrameModel fm = fms.get(gh);
-						if((writeOnlyGood && fm.isGoodPoint()) ||
-								!writeOnlyGood){
-
-							writer.println(fm.getQdcd() +"	"+ 
-									csdp.getSplicedCurveY().getDouble(gh)+ "	"+ 
-									csdp.getSplicedCurveYError().getDouble(gh));
+							writer.println(drm.getxList().get(gh) + "	" + csdp.getSplicedCurveY().getDouble(gh)
+									+ "	" + csdp.getSplicedCurveYError().getDouble(gh));
 						}
 					}
 				}
 			}
+
+			writer.close();
 		}
 
-		writer.close();
+		catch (Exception d) {
+
+			throw new OutputException("anaRodSave " + d.getMessage());
+		}
 	}
 
+	public void intSave(String title, DirectoryModel drm, ArrayList<FrameModel> fms, GeometricParametersModel gm)
+			throws OutputException {
 
-	public void simpleXYYeSave(boolean useQ,
-			String title, 
-			AxisEnums.yAxes state,
-			ArrayList<FrameModel> fms){
-
-		File file =null;
+		File file = null;
 
 		try {
 			file = new File(title);
 			file.createNewFile();
 			writer = new PrintWriter(file);
-		} catch (FileNotFoundException e2) {
-			e2.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
 
-		int index  = title.lastIndexOf(".");
-		if(index != -1){
-			String ext = title.substring(0,index);
-			file.renameTo(new File(ext + ".int"));
-		}
-		else{
-			file.renameTo(new File(title + ".int"));
-		}
+			int index = title.lastIndexOf(".");
 
-		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
-		Date now = new Date();
-		String strDate = sdfDate.format(now);
-
-		writer.println("# Test file created: " + strDate);
-		writer.println("# Headers: ");
-
-
-		IDataset y = DatasetFactory.createFromObject(0);
-		IDataset ye = DatasetFactory.createFromObject(0);
-		IDataset x = csdp.getSplicedCurveX();
-
-		switch(state){
-		case SPLICEDY:
-			y = csdp.getSplicedCurveY();
-			ye = csdp.getSplicedCurveYError();
-			break;
-		case SPLICEDYFHKL:
-			y = csdp.getSplicedCurveYFhkl();
-			ye = csdp.getSplicedCurveYFhklError();
-			break;
-		case SPLICEDYRAW:
-			y = csdp.getSplicedCurveYRaw();
-			ye = csdp.getSplicedCurveYRawError();
-			break;
-		default:
-			//
-			break;
-		}
-
-		if(useQ){
-			x = csdp.getSplicedCurveQ();
-			writer.println("#q	Y	Ye");
-		}
-		else{
-			writer.println("#X	Y	Ye");
-		}
-
-		for(int gh = 0 ; gh<fms.size(); gh++){
-			FrameModel fm = fms.get(gh);
-
-			if((writeOnlyGood && fm.isGoodPoint()) ||
-					!writeOnlyGood){
-
-				writer.println(x.getDouble(gh) + 
-						"	"+ y.getDouble(gh)+ 
-						"	"+ ye.getDouble(gh));
+			if (index != -1) {
+				String ext = title.substring(0, index);
+				file.renameTo(new File(ext + ".int"));
+			} else {
+				file.renameTo(new File(title + ".int"));
 			}
+
+			SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// dd/MM/yyyy
+			Date now = new Date();
+			String strDate = sdfDate.format(now);
+
+			if (drm.getCorrectionSelection() == MethodSetting.SXRD) {
+
+				writer.println("# Test file created: " + strDate);
+				writer.println("# Headers: ");
+				writer.println("#h	k	l	F	Fe	lorentz	correction 	polarisation correction		area correction");
+
+				for (int gh = 0; gh < fms.size(); gh++) {
+					FrameModel f = fms.get(gh);
+					if ((writeOnlyGood && f.isGoodPoint()) || !writeOnlyGood) {
+
+						writer.println(f.getH() + "	" + f.getK() + "	" + f.getL() + "	"
+								+ csdp.getSplicedCurveYFhkl().getDouble(gh) + "	"
+								+ csdp.getSplicedCurveYFhklError().getDouble(gh) + "	" + f.getLorentzianCorrection()
+								+ "	" + f.getPolarisationCorrection() + "	" + f.getAreaCorrection());
+					}
+				}
+			} else {
+
+				writer.println("# Test file created: " + strDate);
+				writer.println("# Headers: ");
+
+				if (Double.isFinite(fms.get(0).getQdcd())) {
+
+					writer.println("#qdcd	I	Ie	Area Correction	Flux Correction");
+
+					if (drm.getCorrectionSelection() == MethodSetting.Reflectivity_with_Flux_Correction_Gaussian_Profile
+							|| drm.getCorrectionSelection() == MethodSetting.Reflectivity_with_Flux_Correction_Simple_Scaling) {
+						//
+						for (int gh = 0; gh < fms.size(); gh++) {
+
+							FrameModel fm = fms.get(gh);
+							if ((writeOnlyGood && fm.isGoodPoint()) || !writeOnlyGood) {
+
+								writer.println(fm.getQdcd() + "	" + csdp.getSplicedCurveY().getDouble(gh) + "	"
+										+ csdp.getSplicedCurveYError().getDouble(gh) + "	"
+										+ fm.getReflectivityAreaCorrection() + "	"
+										+ fm.getReflectivityFluxCorrection());
+							}
+						}
+					}
+
+					if (drm.getCorrectionSelection() == MethodSetting.Reflectivity_without_Flux_Correction_Gaussian_Profile
+							|| drm.getCorrectionSelection() == MethodSetting.Reflectivity_without_Flux_Correction_Simple_Scaling) {
+
+						for (int gh = 0; gh < fms.size(); gh++) {
+
+							FrameModel fm = fms.get(gh);
+							if ((writeOnlyGood && fm.isGoodPoint()) || !writeOnlyGood) {
+
+								writer.println(fm.getQdcd() + "	" + csdp.getSplicedCurveY().getDouble(gh) + "	"
+										+ csdp.getSplicedCurveYError().getDouble(gh) + "	"
+										+ fm.getReflectivityAreaCorrection());
+							}
+						}
+					}
+
+					if (drm.getCorrectionSelection() == MethodSetting.Reflectivity_NO_Correction) {
+
+						for (int gh = 0; gh < fms.size(); gh++) {
+
+							FrameModel fm = fms.get(gh);
+							if ((writeOnlyGood && fm.isGoodPoint()) || !writeOnlyGood) {
+
+								writer.println(fm.getQdcd() + "	" + csdp.getSplicedCurveY().getDouble(gh) + "	"
+										+ csdp.getSplicedCurveYError().getDouble(gh));
+							}
+						}
+					}
+				}
+			}
+
+			writer.close();
 		}
 
+		catch (Exception d) {
 
-		writer.close();
-	}	
+			throw new OutputException("intSave " + d.getMessage());
+		}
+	}
 
+	public void simpleXYYeSave(boolean useQ, String title, AxisEnums.yAxes state, ArrayList<FrameModel> fms)
+			throws OutputException {
 
+		File file = null;
+
+		try {
+			file = new File(title);
+			file.createNewFile();
+			writer = new PrintWriter(file);
+
+			int index = title.lastIndexOf(".");
+			if (index != -1) {
+				String ext = title.substring(0, index);
+				file.renameTo(new File(ext + ".int"));
+			} else {
+				file.renameTo(new File(title + ".int"));
+			}
+
+			SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// dd/MM/yyyy
+			Date now = new Date();
+			String strDate = sdfDate.format(now);
+
+			writer.println("# Test file created: " + strDate);
+			writer.println("# Headers: ");
+
+			IDataset y = DatasetFactory.createFromObject(0);
+			IDataset ye = DatasetFactory.createFromObject(0);
+			IDataset x = csdp.getSplicedCurveX();
+
+			switch (state) {
+			case SPLICEDY:
+				y = csdp.getSplicedCurveY();
+				ye = csdp.getSplicedCurveYError();
+				break;
+			case SPLICEDYFHKL:
+				y = csdp.getSplicedCurveYFhkl();
+				ye = csdp.getSplicedCurveYFhklError();
+				break;
+			case SPLICEDYRAW:
+				y = csdp.getSplicedCurveYRaw();
+				ye = csdp.getSplicedCurveYRawError();
+				break;
+			default:
+				//
+				break;
+			}
+
+			if (useQ) {
+				x = csdp.getSplicedCurveQ();
+				writer.println("#q	Y	Ye");
+			} else {
+				writer.println("#X	Y	Ye");
+			}
+
+			for (int gh = 0; gh < fms.size(); gh++) {
+				FrameModel fm = fms.get(gh);
+
+				if ((writeOnlyGood && fm.isGoodPoint()) || !writeOnlyGood) {
+
+					writer.println(x.getDouble(gh) + "	" + y.getDouble(gh) + "	" + ye.getDouble(gh));
+				}
+			}
+
+			writer.close();
+
+		}
+
+		catch (Exception d) {
+
+			throw new OutputException("simpleXYYeSave " + d.getMessage());
+		}
+
+	}
 }

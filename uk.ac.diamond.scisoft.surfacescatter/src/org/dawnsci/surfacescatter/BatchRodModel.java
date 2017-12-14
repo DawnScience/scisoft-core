@@ -15,6 +15,7 @@ public class BatchRodModel {
 	private BatchSetupMiscellaneousProperties bsmps;
 	private boolean batchDisplayOn = false;
 	private String batchTitle;
+	private String saveFolder;
 
 	public ArrayList<BatchRodDataTransferObject> getBrdtoList() {
 
@@ -136,6 +137,14 @@ public class BatchRodModel {
 
 	public void setBatchTitle(String rodTitle) {
 		this.batchTitle = rodTitle;
+	}
+
+	public String getSaveFolder() {
+		return saveFolder;
+	}
+
+	public void setSaveFolder(String saveFolder) {
+		this.saveFolder = saveFolder;
 	}
 	
 	

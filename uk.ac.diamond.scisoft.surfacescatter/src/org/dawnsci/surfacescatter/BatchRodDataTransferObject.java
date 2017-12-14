@@ -6,6 +6,7 @@ public class BatchRodDataTransferObject {
 	private String imageFolderPath;
 	private String paramFiles;
 	private String nexusSaveFilePaths;
+	private String saveFolder;
 	private String rodName;
 	private boolean useTrajectory;
 	private boolean useStareMode;
@@ -64,6 +65,14 @@ public class BatchRodDataTransferObject {
 
 	public void setUseTrajectory(boolean useTrajectory) {
 		this.useTrajectory = useTrajectory;
+	}
+
+	public String getSaveFolder() {
+		return saveFolder;
+	}
+
+	public void setSaveFolder(String saveFolder) {
+		this.saveFolder = saveFolder;
 	}
 
 }

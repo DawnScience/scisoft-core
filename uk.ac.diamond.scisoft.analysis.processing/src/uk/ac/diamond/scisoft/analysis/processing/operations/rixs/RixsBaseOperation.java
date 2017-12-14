@@ -29,6 +29,7 @@ import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.BooleanDataset;
@@ -46,6 +47,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsBaseModel.ENERGY_OFFSET;
+import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 /**
  * Find and fit the RIXS elastic line image to a straight line so other image
@@ -64,6 +66,8 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	protected StraightLine[] lines = new StraightLine[MAX_ROIS];
 	protected boolean useBothROIs;
 	protected int roiMax;
+	private Dataset currentCountTime;
+	private double countTime = 0;
 
 	@Override
 	public void setModel(T model) {
@@ -101,11 +105,18 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		log.clear();
 
 		SliceFromSeriesMetadata smd = input.getFirstMetadata(SliceFromSeriesMetadata.class);
-		if (smd.getSliceInfo().getSliceNumber() == 0) {
+		SliceInformation si = smd.getSliceInfo();
+		if (si.getSliceNumber() == 0) {
+			countTime = 0;
+			currentCountTime = null;
 			resetProcess(input);
 			updateFromModel();
 			parseNexusFile(smd.getFilePath());
 		}
+		if (currentCountTime != null) {
+			countTime += ((Number) currentCountTime.getSlice(si.getInputSliceWithoutDataDimensions()).sum(true)).doubleValue();
+		}
+
 		initializeProcess(input);
 
 		IRectangularROI roi;
@@ -258,6 +269,9 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			//         pgmEnergy:NXcollection/ [energy in eV, always single value, even for an energy scan]
 
 			GroupNode entry = (GroupNode) NexusTreeUtils.findFirstNode(root, "NXentry").getDestination();
+			GroupNode instrument = (GroupNode) NexusTreeUtils.findFirstNode(entry, "NXinstrument").getDestination();
+			GroupNode detector = (GroupNode) NexusTreeUtils.findFirstNode(instrument, "NXdetector").getDestination();
+			currentCountTime = DatasetUtils.sliceAndConvertLazyDataset(detector.getDataNode("count_time").getDataset());
 
 			GroupNode mdg = entry.getGroupNode("before_scan");
 			if (mdg == null) {
@@ -276,6 +290,13 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		}
 
 		log.append("Counts per single photon event = %d", countsPerPhoton);
+	}
+
+	/**
+	 * Add standard items to summary data for monitor and normalization
+	 */
+	protected void addSummaryData() {
+		summaryData.add(ProcessingUtils.createNamedDataset(countTime, "total_count_time"));
 	}
 
 	private static final double PAIR_PRODUCTION_ENERGY = 3.67; // energy required to generate an electron-hole pair

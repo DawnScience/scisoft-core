@@ -376,6 +376,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				log.append("Using only first %d frames", fmax);
 			}
 			if (si.getSliceNumber() == smax - 1) {
+				addSummaryData();
 				summaryData.add(a);
 
 				// After last image, calculate splitting levels

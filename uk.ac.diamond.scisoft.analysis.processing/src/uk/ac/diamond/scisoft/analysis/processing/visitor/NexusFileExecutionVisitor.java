@@ -601,7 +601,11 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 							ILazyDataset error = axDataset.getErrors();
 							IDataset e = null;
 							if (error != null) {
-								e = error.getSlice().squeeze();
+								e = error.getSlice();
+								e.squeeze();
+								if (e.getRank() == 0) {
+									e.setShape(1);
+								}
 								e.setName(axDataset.getName() + "_errors");
 							}
 
@@ -610,7 +614,11 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 								if (gn.containsDataNode(name)) { // final check as there is a race condition
 									continue;
 								}
-								DataNode dn = nexusFile.createData(gn, axDataset.squeeze());
+								axDataset.squeeze();
+								if (axDataset.getRank() == 0) {
+									axDataset.setShape(1);
+								}
+								DataNode dn = nexusFile.createData(gn, axDataset);
 								dn.addAttribute(new AttributeImpl("axis", String.valueOf(i + 1))); // FIXME needed???
 								nexusFile.addAttribute(nexusFile.getGroup(groupName, true),
 										new AttributeImpl(names[j] + NexusTreeUtils.NX_INDICES_SUFFIX,

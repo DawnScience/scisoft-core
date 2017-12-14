@@ -30,9 +30,7 @@ public class ReviewCurvesModel {
 			csdpList.add(csdp);
 		}
 
-		else if (csdpList.size() == 0) {
-			csdpList.add(csdp);
-		}
+	
 
 		else {
 

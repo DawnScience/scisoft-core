@@ -133,6 +133,8 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		currentDataFile = null;
 	}
 
+	private static final String PROCESSING = "processing";
+
 	@Override
 	void initializeProcess(IDataset original) {
 		log.append("RIXS Image Reduction");
@@ -171,9 +173,16 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				};
 				String fitFile = findLatestFitFile(filter, currentDir, prefix);
 				if (fitFile == null) {
-					fitFile = findLatestFitFile(filter, new File(currentDir, "processing"), prefix);
+					fitFile = findLatestFitFile(filter, new File(currentDir, PROCESSING), prefix);
 				}
-				
+				if (fitFile == null) { // try in calibration file's directory
+					currentDir = new File(model.getCalibrationFile()).getParentFile();
+					fitFile = findLatestFitFile(filter, currentDir, prefix);
+					if (fitFile == null) {
+						fitFile = findLatestFitFile(filter, new File(currentDir, PROCESSING), prefix);
+					}
+				}
+
 				if (fitFile == null) {
 					throw new OperationException(this, "Could not find processed scan file that starts with " + prefix);
 				}

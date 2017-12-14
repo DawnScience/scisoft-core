@@ -71,6 +71,9 @@ public class RixsImageReductionModel extends RixsBaseModel {
 	@OperationModelField(label = "Normalize spectra by region size")
 	private boolean normalizeByRegionSize= true;
 
+	@OperationModelField(label = "Maximum number of frames to use", min = 0, hint = "Any value < 1 means all frames are used")
+	private int maxFrames = 0;
+
 	// TODO conditional override to fit parameters??
 
 	/**
@@ -203,5 +206,16 @@ public class RixsImageReductionModel extends RixsBaseModel {
 
 	public void setNormalizeByRegionSize(boolean normalizeByRegionSize) {
 		firePropertyChange("setNnormalizeByRegionSize", this.normalizeByRegionSize, this.normalizeByRegionSize = normalizeByRegionSize);
+	}
+
+	/**
+	 * @return maximum number of frames to use (<1 means use all frames)
+	 */
+	public int getMaxFrames() {
+		return maxFrames;
+	}
+
+	public void setMaxFrames(int maxFrames) {
+		firePropertyChange("setMaxFrames", this.maxFrames, this.maxFrames = maxFrames);
 	}
 }

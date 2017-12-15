@@ -68,6 +68,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	protected int roiMax;
 	private Dataset currentCountTime;
 	private double countTime = 0;
+	private double drainCurrent;
 
 	@Override
 	public void setModel(T model) {
@@ -281,9 +282,12 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			int gain = (int) parseBeforeScanItem(mdg, "andorPreampGain");
 			double speed = parseBeforeScanItem(mdg, "andorADCSpeed");
 
-			
 			double energy = parseBeforeScanItem(mdg, "pgmEnergy");
 			countsPerPhoton = calculateCountsPerPhoton(gain, speed, energy);
+
+			drainCurrent = parseBeforeScanItem(mdg, "draincurrent");
+
+			// TODO ring current, other things
 		} catch (Exception e) {
 			log.append("Could not parse Nexus file %s:%s", filePath, e);
 			countsPerPhoton = 74;
@@ -293,9 +297,11 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	}
 
 	/**
-	 * Add standard items to summary data for monitor and normalization
+	 * Add standard items to summary data for monitoring and normalizing
 	 */
 	protected void addSummaryData() {
+		summaryData.add(ProcessingUtils.createNamedDataset(drainCurrent, "drain_current"));
+		summaryData.add(ProcessingUtils.createNamedDataset(countsPerPhoton, "counts_per_photon"));
 		summaryData.add(ProcessingUtils.createNamedDataset(countTime, "total_count_time"));
 	}
 

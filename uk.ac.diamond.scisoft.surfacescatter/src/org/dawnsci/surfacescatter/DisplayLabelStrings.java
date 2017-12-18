@@ -10,6 +10,7 @@ public class DisplayLabelStrings {
 	private static final String INTERPOLATED_TRAJECTORY= "Interpolated trajectory";
 	private static final String SET_TRAJECTORY= "Set Trajectory";
 	private static final String GRAY_REGION= "Gray Region";
+	private static final String DESELECT_ALL= "Deselect All";
 	
 	
 	public static String getInterpolatedTrajectory() {
@@ -37,6 +38,9 @@ public class DisplayLabelStrings {
 	}
 	public static String getGrayRegion() {
 		return GRAY_REGION;
+	}
+	public static String getDeselectAll() {
+		return DESELECT_ALL;
 	}
 	
 	

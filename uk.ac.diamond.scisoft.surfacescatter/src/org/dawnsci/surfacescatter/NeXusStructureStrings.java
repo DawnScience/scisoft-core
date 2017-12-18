@@ -244,6 +244,11 @@ public class NeXusStructureStrings {
 
 	private static final String attenuationFactorRawFFT = "Attenuation_Factor_Raw_FFT";
 
+	private static final String overlapRegions = "Overlap_Regions";
+
+	private static final String overlapRegionPrefix = "Overlap_Region_";
+
+	
 	public static String getLowerdatname() {
 		return lowerDatName;
 	}
@@ -740,6 +745,14 @@ public class NeXusStructureStrings {
 
 	public static String getIntegers() {
 		return INTEGERS;
+	}
+
+	public static String getOverlapregions() {
+		return overlapRegions;
+	}
+
+	public static String getOverlapregionprefix() {
+		return overlapRegionPrefix;
 	}
 
 }

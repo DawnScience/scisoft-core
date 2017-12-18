@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Scanner;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
@@ -13,6 +14,7 @@ import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.StringDataset;
@@ -137,7 +139,7 @@ public class FittingParametersInputReader {
 
 		try {
 			file.close();
-			
+
 		} catch (NexusException e) {
 			e.printStackTrace();
 		}
@@ -218,41 +220,35 @@ public class FittingParametersInputReader {
 				}
 
 				backgroundMethodologyOut[i] = backgroundMethodology.get(i);
-				Dataset f  = roiAttributeDat.getSlice(new Slice(i, i+1));
+				Dataset f = roiAttributeDat.getSlice(new Slice(i, i + 1));
 				f.squeeze();
 				roiOut[i] = new double[f.getSize()];
-				
-				for(int d = 0 ; d<f.getSize(); d++) {
-					roiOut[i][d] = f.getDouble(d);	
+
+				for (int d = 0; d < f.getSize(); d++) {
+					roiOut[i][d] = f.getDouble(d);
 				}
-				
+
 			}
 
-			 
 			try {
 				file.close();
-				
+
 			} catch (NexusException e) {
 				e.printStackTrace();
 			}
-			
-			return new FrameSetupFromNexusTransferObject(boundaryBoxOut, 
-					fitPowerOut, trackerTypeOut, backgroundMethodologyOut, 
-					roiOut);
-			
-			
+
+			return new FrameSetupFromNexusTransferObject(boundaryBoxOut, fitPowerOut, trackerTypeOut,
+					backgroundMethodologyOut, roiOut);
+
 		} catch (NexusException e) {
 
 			e.printStackTrace();
 		}
 
-	
-		
 		return null;
-	
-		
+
 	}
-	
+
 	public static double[][] readROIsFromNexus(NexusFile file) {
 
 		try {
@@ -276,36 +272,34 @@ public class FittingParametersInputReader {
 			double[][] roiOut = new double[roiAttributeDat.getShape()[0]][];
 
 			for (int i = 0; i < roiAttributeDat.getShape()[0]; i++) {
-					
-				Dataset f  = roiAttributeDat.getSlice(new Slice(i, i+1));
+
+				Dataset f = roiAttributeDat.getSlice(new Slice(i, i + 1));
 				f.squeeze();
 				roiOut[i] = new double[f.getSize()];
-				
-				for(int d = 0 ; d<f.getSize(); d++) {
-					roiOut[i][d] = f.getDouble(d);	
+
+				for (int d = 0; d < f.getSize(); d++) {
+					roiOut[i][d] = f.getDouble(d);
 				}
-				
+
 			}
-			 
+
 			try {
 				file.close();
-				
+
 			} catch (NexusException e) {
 				e.printStackTrace();
 			}
-			
+
 			return roiOut;
-			
+
 		} catch (NexusException e) {
 
 			e.printStackTrace();
 		}
-		
-		return null;
-	
-		
-	}
 
+		return null;
+
+	}
 
 	public static void geometricalParametersReaderFromNexus(NexusFile file, GeometricParametersModel gm,
 			DirectoryModel drm) {
@@ -412,7 +406,7 @@ public class FittingParametersInputReader {
 
 		try {
 			file.close();
-			
+
 		} catch (NexusException e) {
 			e.printStackTrace();
 		}
@@ -428,15 +422,15 @@ public class FittingParametersInputReader {
 		try {
 			file.close();
 			file.openToRead();
-		}catch (NexusException e) {
-			try{
+		} catch (NexusException e) {
+			try {
 				file.openToRead();
-			}catch (NexusException f) {
+			} catch (NexusException f) {
 				System.out.println(f.getMessage());
 			}
-			
+
 		}
-		
+
 		GroupNode aliasNode;
 
 		try {
@@ -484,6 +478,84 @@ public class FittingParametersInputReader {
 		}
 	}
 
+	public static ArrayList<AttenuationFactors> attenuationFactorsFromNexus(NexusFile file) {
+
+		final String path = "/" + NeXusStructureStrings.getEntry() + "/";
+
+		final String overlapPath = path + NeXusStructureStrings.getOverlapregions() + "/";
+
+		try {
+			file.close();
+			file.openToRead();
+		} catch (NexusException e) {
+			try {
+				file.openToRead();
+			} catch (NexusException f) {
+				System.out.println(f.getMessage());
+			}
+
+		}
+
+		ArrayList<AttenuationFactors> out = new ArrayList<>();
+
+		GroupNode overlapNode;
+
+		try {
+
+			int number = 0;
+
+			overlapNode = file.getGroup(overlapPath, true);
+
+			while (overlapNode.containsGroupNode(NeXusStructureStrings.getOverlapregionprefix() + number)) {
+
+				GroupNode gn = overlapNode.getGroupNode(NeXusStructureStrings.getOverlapregionprefix() + number);
+
+				double attenuationFactorCorrected = getDoubleAttribute(NeXusStructureStrings.getAttenuationfactor(),
+						gn);
+
+				if (attenuationFactorCorrected == 0) {
+					attenuationFactorCorrected = getDoubleAttribute(NeXusStructureStrings.getAttenuationfactorfft(),
+							gn);
+				}
+
+				double attenuationFactorRaw = getDoubleAttribute(NeXusStructureStrings.getAttenuationfactorraw(), gn);
+
+				if (attenuationFactorCorrected == 0) {
+					attenuationFactorCorrected = getDoubleAttribute(NeXusStructureStrings.getAttenuationfactorrawfft(),
+							gn);
+				}
+
+				double attenuationFactorFhkl = getDoubleAttribute(NeXusStructureStrings.getAttenuationfactorfhkl(), gn);
+
+				if (attenuationFactorCorrected == 0) {
+					attenuationFactorCorrected = getDoubleAttribute(NeXusStructureStrings.getAttenuationfactorfhklfft(),
+							gn);
+				}
+
+				AttenuationFactors af = new AttenuationFactors(attenuationFactorCorrected, attenuationFactorRaw,
+						attenuationFactorFhkl);
+
+				out.add(af);
+
+				number++;
+			}
+
+		} catch (
+
+		Exception g) {
+			System.out.println(g.getMessage());
+
+		}
+
+		try {
+			file.close();
+		} catch (NexusException e) {
+			e.printStackTrace();
+		}
+
+		return out;
+	}
+
 	public static FittingParameters fittingParametersFromFrameModel(FrameModel fm) {
 
 		FittingParameters fp = new FittingParameters();
@@ -505,6 +577,11 @@ public class FittingParametersInputReader {
 
 		return fp;
 
+	}
+
+	private static double getDoubleAttribute(String desired, GroupNode g) {
+		IDataset sd = g.getAttribute(desired).getValue();
+		return (double) sd.getDouble();
 	}
 
 }

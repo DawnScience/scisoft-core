@@ -1,14 +1,20 @@
 package org.dawnsci.surfacescatter;
 
+import java.util.ArrayList;
+
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
+import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileFactoryHDF5;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.dataset.StringDataset;
 
 public class CsdpFromNexusFile {
 
@@ -18,7 +24,9 @@ public class CsdpFromNexusFile {
 
 		final String entryString = "/" + NeXusStructureStrings.getEntry() + "/" ;
 		final String reducedDataString = entryString + NeXusStructureStrings.getReducedDataDataset() + "/";
-
+		final String goodPointsArrayRoot = entryString + NeXusStructureStrings.getOverviewOfFrames() + "/";
+		final String goodPointsArrayString =  NeXusStructureStrings.getIsGoodPointArray()[1];
+		
 		String scannedVariable = reducedDataString + NeXusStructureStrings.getScannedVariableDataset();
 
 		String[] nodeNames = new String[]{scannedVariable,
@@ -103,6 +111,10 @@ public class CsdpFromNexusFile {
 			}
 		}
 
+		IDataset bd = getStringAttribute(goodPointsArrayString, file, goodPointsArrayRoot);
+		
+		csdp.setSplicedGoodPointIDataset(bd);
+		
 		csdp.setRodName(filename);
 
 		return csdp;
@@ -135,6 +147,32 @@ public class CsdpFromNexusFile {
 		return outputIDataset;
 	}
 
+	private static IDataset getStringAttribute(String desired, NexusFile file, String gN) {
+		
+		GroupNode g = null;
+		
+		try {
+			g = file.getGroup(gN, false);
+		} catch (NexusException e) {
+			e.printStackTrace();
+		}
+		
+		StringDataset sd = DatasetUtils.cast(StringDataset.class, g.getAttribute(desired).getValue());
+		
+		ArrayList<Boolean> ob = new ArrayList<>();
+		
+	
+				
+		for(int i =0; i< sd.getSize(); i++) {
+			
+			Boolean f = Boolean.valueOf(sd.get(i));
+			ob.add(f);
+		}
+		
+		
+		return DatasetFactory.createFromList(ob);
+		
+	}
 
 
 }

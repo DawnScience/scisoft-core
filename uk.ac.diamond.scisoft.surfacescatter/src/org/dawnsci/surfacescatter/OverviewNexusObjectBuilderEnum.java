@@ -67,11 +67,11 @@ public enum OverviewNexusObjectBuilderEnum {
 
 	is_Good_Point_Array(NeXusStructureStrings.getIsGoodPointArray()[0], NeXusStructureStrings.getIsGoodPointArray()[1],
 			(Map<String, Object[]> m,
-					FrameModel fm) -> m.get(NeXusStructureStrings.getIsGoodPointArray()[1])[fm.getFmNo()] = String
+					FrameModel fm) -> m.get(NeXusStructureStrings.getIsGoodPointArray()[0])[fm.getFmNo()] = String
 							.valueOf(fm.isGoodPoint()),
 			(GroupNode nxData,
 					FrameModel fm) -> nxData.addAttribute(TreeFactory.createAttribute(
-							NeXusStructureStrings.getIsGoodPointArray()[1], String.valueOf(fm.isGoodPoint()))),
+							NeXusStructureStrings.getIsGoodPointArray()[0], String.valueOf(fm.isGoodPoint()))),
 			(GroupNode nxData, FrameModel fm) -> fm
 					.setGoodPoint(getBooleanFromStringAttribute(NeXusStructureStrings.getIsGoodPointArray()[1], nxData))),
 

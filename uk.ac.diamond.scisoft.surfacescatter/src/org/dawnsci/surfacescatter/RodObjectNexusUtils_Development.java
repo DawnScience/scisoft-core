@@ -127,9 +127,9 @@ public class RodObjectNexusUtils_Development {
 		GroupNode overlapRegions = TreeFactory.createGroupNode(p);
 		p++;
 
-		entry.addGroupNode("Overlap_Regions", overlapRegions);
+		entry.addGroupNode(NeXusStructureStrings.getOverlapregions(), overlapRegions);
 
-		entry.getGroupNode("Overlap_Regions")
+		entry.getGroupNode(NeXusStructureStrings.getOverlapregions())
 				.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXcollection"));
 		/// Start creating the overlap region coding
 
@@ -144,7 +144,8 @@ public class RodObjectNexusUtils_Development {
 
 						p++;
 
-						overlapRegions.addGroupNode("Overlap_Region_" + overlapNumber, overlapData);
+						overlapRegions.addGroupNode(NeXusStructureStrings.getOverlapregionprefix() + overlapNumber,
+								overlapData);
 
 						overlapNumber++;
 
@@ -174,13 +175,21 @@ public class RodObjectNexusUtils_Development {
 				System.out.println(ui.getMessage());
 			}
 
+			if (rawImageArray[0].getShape().length < 3) {
+				for (int i = 0; i < rawImageArray.length; i++) {
+
+					rawImageArray[i]
+							.resize(new int[] { 1, rawImageArray[i].getShape()[0], rawImageArray[i].getShape()[1] });
+				}
+
+			}
+
 			Dataset rawImageConcat = retryConcat(rawImageArray, model.getNoRods(), 0);
 
 			nexusFileReference.createData(rawImagesString, "rawImagesDataset", rawImageConcat, true);
 			nexusFileReference.createData(rawImagesString, gm.getxName(), csdp.getSplicedCurveX().getSlice(slice0),
 					true);
 
-			
 			ArrayList<String> axes = new ArrayList<>();
 
 			axes.add(gm.getxName());
@@ -559,12 +568,6 @@ public class RodObjectNexusUtils_Development {
 				System.out.println(j.getMessage() + "  DirectoryModelNodeEnum name:  " + dmne.getFirstName());
 			}
 		}
-
-		// try {
-		// entry.addGroupNode(nodeName, ovmGroup);
-		// } catch (Exception vb) {
-		// System.out.println(vb.getMessage());
-		// }
 
 		return ovmGroup;
 	}

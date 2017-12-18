@@ -8,37 +8,15 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
 
-public class FourierTransformCurveStitch {
+public class CurveStitchWithSetAttenuationFactors {
 
 	private static double attenuationFactor;
 	private static double attenuationFactorFhkl;
 	private static double attenuationFactorRaw;
 	private static double[][] maxMinArray;
 
-	public static IDataset[] curveStitch4(CurveStitchDataPackage csdp, double[][] maxMinArrayIn) {
-
-		return curveStitch4(csdp, maxMinArrayIn, null);
-
-	}
-
-	public static IDataset[] curveStitch4(CurveStitchDataPackage csdp, double[][] maxMinArrayIn,
-			ArrayList<OverlapAttenuationObject> oAos) {
-
-		ArrayList<Boolean> modifiedOverlaps = new ArrayList<Boolean>();
-
-		if (oAos != null) {
-			for (int g = 0; g < oAos.size(); g++) {
-				modifiedOverlaps.add(oAos.get(g).isModified());
-			}
-		}
-
-		else {
-			for (int i = 0; i < csdp.getFilepaths().length; i++) {
-				modifiedOverlaps.add(false);
-			}
-		}
-
-		maxMinArray = maxMinArrayIn;
+	public static IDataset[] curveStitch(CurveStitchDataPackage csdp,
+			ArrayList<AttenuationFactors> attenuationFactors) {
 
 		ArrayList<OverlapDataModel> overlapDataModels = new ArrayList<>();
 
@@ -246,152 +224,9 @@ public class FourierTransformCurveStitch {
 				odm.setUpperOverlapFhklValues(upperOverlapFhklValues);
 				odm.setUpperOverlapScannedValues(upperOverlapScannedValues);
 
-				if (!modifiedOverlaps.get(k)) {
-
-					double correctionRatioFourier = 0;
-					double correctionRatioFhklFourier = 0;
-					double correctionRatioRawFourier = 0;
-
-					double fourierRMSMean = 0;
-					double polyRMSMean = 0;
-
-
-					boolean useFourierTransform = true;
-
-					Dataset yLowerDatasetUse = yLowerDataset;
-					Dataset yHigherDatasetUse = yHigherDataset;
-
-					Dataset yLowerDatasetFhklUse = yLowerDatasetFhkl;
-					Dataset yHigherDatasetFhklUse = yHigherDatasetFhkl;
-
-					Dataset yLowerDatasetRawUse = yLowerDatasetRaw;
-					Dataset yHigherDatasetRawUse = yHigherDatasetRaw;
-
-					// - nu is its logarithm in base e
-					int n = yLowerDataset.getSize();
-					int m = yHigherDataset.getSize();
-
-					// If n is a power of 2, then ld is an integer (_without_ decimals)
-					double ldL = Math.log(n) / Math.log(2.0);
-					double ldH = Math.log(m) / Math.log(2.0);
-					// Here I check if n is a power of 2. If exist decimals in ld, I quit
-					// from the function returning null.
-					if (((int) ldL) - ldL != 0 || ((int) ldH) - ldH != 0) {
-
-						int twoPowL = (int) Math.floor(ldL);
-						int twoPowH = (int) Math.floor(ldH);
-
-						if (twoPowL == 0 || twoPowH == 0) {
-							useFourierTransform = false;
-						}
-
-						int noPointsReqL = (int) Math.pow(2, twoPowL);
-						int noPointsReqH = (int) Math.pow(2, twoPowH);
-
-						yLowerDatasetUse = usedatasetStochastic(yLowerDataset, noPointsReqL);
-						yHigherDatasetUse = usedatasetStochastic(yHigherDataset, noPointsReqH);
-
-						yLowerDatasetFhklUse = usedatasetStochastic(yLowerDatasetFhkl, noPointsReqL);
-						yHigherDatasetFhklUse = usedatasetStochastic(yHigherDatasetFhkl, noPointsReqH);
-
-						yLowerDatasetRawUse = usedatasetStochastic(yLowerDatasetRaw, noPointsReqL);
-						yHigherDatasetRawUse = usedatasetStochastic(yHigherDatasetRaw, noPointsReqH);
-
-					}
-
-					
-					FourierScalingOutputPackage correctionRatiosFourier = null;
-					FourierScalingOutputPackage correctionRatiosFhklFourier= null;
-					FourierScalingOutputPackage correctionRatiosRawFourier= null;
-					
-					if (useFourierTransform) {
-						try {
-							correctionRatiosFourier = FourierTransformOverlap.correctionRatioFullPackage(xLowerDataset,
-									yLowerDatasetUse, xHigherDataset, yHigherDatasetUse, attenuationFactor);
-	
-							correctionRatioFourier = correctionRatiosFourier.getCorrection()[0];
-	
-							fourierRMSMean = (correctionRatiosFourier.getrMSLowerHigher()[0] + correctionRatiosFourier.getrMSLowerHigher()[1]) / 2;
-	
-							correctionRatiosFhklFourier = FourierTransformOverlap.correctionRatioFullPackage(xLowerDataset,
-									yLowerDatasetFhklUse, xHigherDataset, yHigherDatasetFhklUse, attenuationFactor);
-	
-							correctionRatioFhklFourier = correctionRatiosFhklFourier.getCorrection()[0];
-	
-							correctionRatiosRawFourier = FourierTransformOverlap.correctionRatioFullPackage(xLowerDataset,
-									yLowerDatasetRawUse, xHigherDataset, yHigherDatasetRawUse, attenuationFactorRaw);
-	
-							correctionRatioRawFourier = correctionRatiosRawFourier.getCorrection()[0];
-						}
-						catch(NullPointerException pe) {
-							useFourierTransform = false;
-						}
-
-					}
-
-					double[][] correctionRatiosPoly = PolynomialOverlapSXRD.correctionRatio(xLowerDataset,
-							yLowerDataset, xHigherDataset, yHigherDataset, attenuationFactor, 4);
-
-					polyRMSMean = (correctionRatiosPoly[4][0] + correctionRatiosPoly[4][1]) / 2;
-
-					double[][] correctionRatioFhklPoly = PolynomialOverlapSXRD.correctionRatio(xLowerDataset,
-							yLowerDatasetFhkl, xHigherDataset, yHigherDatasetFhkl, attenuationFactorFhkl, 4);
-
-					double[][] correctionRatioRawPoly = PolynomialOverlapSXRD.correctionRatio(xLowerDataset,
-							yLowerDatasetRaw, xHigherDataset, yHigherDatasetRaw, attenuationFactorRaw, 4);
-
-					if (useFourierTransform && fourierRMSMean < polyRMSMean && !Double.isNaN(correctionRatioFourier)) {
-						attenuationFactor = correctionRatioFourier;
-						attenuationFactorFhkl = correctionRatioFhklFourier;
-						attenuationFactorRaw = correctionRatioRawFourier;
-						
-						odm.setLowerFFTFitCoefficientsCorrected(correctionRatiosFourier.getLowerCoefficients());
-						odm.setUpperFFTFitCoefficientsCorrected(correctionRatiosFourier.getUpperCoefficients());
-						
-						odm.setUpperBaseFrequencyCorrected(correctionRatiosFourier.getUpperBaseFrequency());
-						odm.setLowerBaseFrequencyCorrected(correctionRatiosFourier.getLowerBaseFrequency());
-						
-						odm.setLowerFFTFitCoefficientsFhkl(correctionRatiosFhklFourier.getLowerCoefficients());
-						odm.setUpperFFTFitCoefficientsFhkl(correctionRatiosFhklFourier.getUpperCoefficients());
-						
-						odm.setUpperBaseFrequencyFhkl(correctionRatiosFhklFourier.getUpperBaseFrequency());
-						odm.setLowerBaseFrequencyFhkl(correctionRatiosFhklFourier.getLowerBaseFrequency());
-						
-						odm.setLowerFFTFitCoefficientsRaw(correctionRatiosRawFourier.getLowerCoefficients());
-						odm.setUpperFFTFitCoefficientsRaw(correctionRatiosRawFourier.getUpperCoefficients());
-						
-						odm.setUpperBaseFrequencyRaw(correctionRatiosRawFourier.getUpperBaseFrequency());
-						odm.setLowerBaseFrequencyRaw(correctionRatiosRawFourier.getLowerBaseFrequency());
-						
-					}
-					else {
-						attenuationFactor = correctionRatiosPoly[2][0];
-						attenuationFactorFhkl = correctionRatioFhklPoly[2][0];
-						attenuationFactorRaw = correctionRatioRawPoly[2][0];
-						
-						odm.setLowerOverlapFitParametersCorrected(correctionRatiosPoly[0]);
-						odm.setUpperOverlapFitParametersCorrected(correctionRatiosPoly[1]);
-						
-						odm.setLowerOverlapFitParametersFhkl(correctionRatioFhklPoly[0]);
-						odm.setUpperOverlapFitParametersFhkl(correctionRatioFhklPoly[1]);
-						
-						odm.setLowerOverlapFitParametersRaw(correctionRatioRawPoly[0]);
-						odm.setUpperOverlapFitParametersRaw(correctionRatioRawPoly[1]);
-						
-					}
-
-					odm.setAttenuationFactor(attenuationFactor);
-					odm.setAttenuationFactorFhkl(attenuationFactorFhkl);
-					odm.setAttenuationFactorRaw(attenuationFactorRaw);
-
-					
-
-				} else {
-					attenuationFactor = oAos.get(k).getAttenuationFactorCorrected();
-					attenuationFactorFhkl = oAos.get(k).getAttenuationFactorFhkl();
-					attenuationFactorRaw = oAos.get(k).getAttenuationFactorRaw();
-
-				}
+				attenuationFactor = attenuationFactors.get(k).getAttenuationFactorCorrected();
+				attenuationFactorFhkl = attenuationFactors.get(k).getAttenuationFactorFhkl();
+				attenuationFactorRaw = attenuationFactors.get(k).getAttenuationFactorRaw();
 
 				yArrayCorrected[k + 1] = Maths.multiply(yArray[k + 1], attenuationFactor);
 				yArrayCorrectedFhkl[k + 1] = Maths.multiply(yArrayFhkl[k + 1], attenuationFactorFhkl);
@@ -408,7 +243,7 @@ public class FourierTransformCurveStitch {
 				overlapDataModels.add(odm);
 
 			}
-			
+
 			else {
 
 				yArrayCorrected[k + 1] = Maths.multiply(yArray[k + 1], attenuationFactor);
@@ -424,7 +259,7 @@ public class FourierTransformCurveStitch {
 				odm.setAttenuationFactorRaw(attenuationFactorRaw);
 
 				overlapDataModels.add(odm);
-				
+
 			}
 		}
 
@@ -533,72 +368,6 @@ public class FourierTransformCurveStitch {
 			return DatasetUtils.convertToDataset(DatasetUtils.concatenate(in, dim));
 		}
 		return null;
-	}
-
-	private static Dataset usedataset(Dataset candidate, int noPointsReq) {
-
-		Dataset output = DatasetFactory.createRange(noPointsReq);
-
-		boolean[] mask = new boolean[candidate.getSize()];
-
-		for (int u = 0; u < mask.length; u++) {
-			mask[u] = false;
-		}
-
-		Dataset yLowerDatasetUseMask = DatasetFactory.createFromObject(mask);
-
-		for (int o = 0; o < noPointsReq; o++) {
-			yLowerDatasetUseMask.set(true, o);
-
-		}
-
-	
-		int y = 0;
-		for (int p = 0; p < yLowerDatasetUseMask.getSize(); p++) {
-			if (yLowerDatasetUseMask.getBoolean(p)) {
-				output.set(candidate.getDouble(p), y);
-				y++;
-			}
-		}
-
-		return output;
-
-	}
-
-	private static Dataset usedatasetStochastic(Dataset candidate, int noPointsReq) {
-
-		boolean[] mask = new boolean[candidate.getSize()];
-
-		for (int u = 0; u < mask.length; u++) {
-			mask[u] = false;
-		}
-
-		Dataset yLowerDatasetUseMask = DatasetFactory.createFromObject(mask);
-
-		ArrayList<Double> usedPoints = new ArrayList<>();
-
-		for (int o = 0; o < noPointsReq; o++) {
-			yLowerDatasetUseMask.set(true, o);
-		}
-
-		int numberOfPointsUnused = candidate.getSize() - noPointsReq;
-
-		int skippedPoints = 0;
-
-		while (usedPoints.size() < noPointsReq) {
-			for (int i = 0; i < candidate.getSize(); i++) {
-				if (Math.random() < 0.5 && skippedPoints < numberOfPointsUnused) {
-					skippedPoints++;
-				} else {
-					usedPoints.add(candidate.getDouble(i));
-				}
-			}
-		}
-
-		Dataset output = DatasetFactory.createFromObject(usedPoints);
-
-		return output;
-
 	}
 
 }

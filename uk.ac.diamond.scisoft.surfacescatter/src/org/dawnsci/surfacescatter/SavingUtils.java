@@ -80,14 +80,14 @@ public class SavingUtils {
 			file.createNewFile();
 			writer = new PrintWriter(file);
 
-			SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// dd/MM/yyyy
-			Date now = new Date();
-			String strDate = sdfDate.format(now);
+//			SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// dd/MM/yyyy
+//			Date now = new Date();
+//			String strDate = sdfDate.format(now);
 
 			if (drm.getCorrectionSelection() == MethodSetting.SXRD) {
 
-				writer.println("# Test file created: " + strDate);
-				writer.println("# Headers: ");
+//				writer.println("# Test file created: " + strDate);
+//				writer.println("# Headers: ");
 				writer.println("#h	k	l	F	Fe");
 
 				for (int gh = 0; gh < fms.size(); gh++) {
@@ -108,8 +108,8 @@ public class SavingUtils {
 
 				if (Double.isFinite(fms.get(0).getQ())) {
 
-					writer.println("# Test file created: " + strDate);
-					writer.println("# Headers: ");
+//					writer.println("# Test file created: " + strDate);
+//					writer.println("# Headers: ");
 					writer.println("#qdcd	I	Ie");
 
 					for (int gh = 0; gh < fms.size(); gh++) {

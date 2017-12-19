@@ -44,7 +44,7 @@ public class SavingUtils {
 					if ((writeOnlyGood && f.isGoodPoint()) || !writeOnlyGood) {
 						writer.println(f.getH() + "	" + f.getK() + "	" + f.getL() + "	"
 								+ csdp.getSplicedCurveYFhkl().getDouble(gh) + "	"
-								+ csdp.getSplicedCurveYFhkl().getDouble(gh));
+								+ csdp.getSplicedCurveYFhklError().getDouble(gh));
 
 					}
 				}

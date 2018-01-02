@@ -145,7 +145,6 @@ public class VerticalHorizontalSlices {
 			
 			for(int ix = 0; ix<a;ix++){
 				ixsum += iih.getDouble(ix, iy);
-//				System.out.println("ix : " +ix);
 			}
 			
 			iihdata.set(ixsum, iy);

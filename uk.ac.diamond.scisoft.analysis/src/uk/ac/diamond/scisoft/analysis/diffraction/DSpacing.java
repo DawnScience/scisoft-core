@@ -9,21 +9,35 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
+import javax.measure.unit.NonSI;
 import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
+import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.roi.IOrientableROI;
+import org.eclipse.dawnsci.analysis.api.roi.IParametricROI;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.EllipticalFitROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.EllipticalROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.HyperbolicROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.ParabolicROI;
+import org.eclipse.dawnsci.analysis.dataset.roi.PolylineROI;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import uk.ac.diamond.scisoft.analysis.crystallography.CalibrantSpacing;
+import uk.ac.diamond.scisoft.analysis.crystallography.HKL;
 
 /**
  * Utility class to hold methods that calculate or use d-spacings
@@ -362,5 +376,159 @@ public class DSpacing {
 		}
 
 		return rois;
+	}
+	
+	
+	public static List<IROI> getResolutionRings(IDiffractionMetadata metadata, CalibrantSpacing cs) {
+		
+		List<IROI> rois = new ArrayList<IROI>(cs.getHKLs().size());
+		
+		for (HKL hkl : cs.getHKLs()) {
+			DetectorProperties detprop = metadata.getDetector2DProperties();
+			DiffractionCrystalEnvironment diffenv = metadata.getDiffractionCrystalEnvironment();
+			try {
+				IROI roi = DSpacing.conicFromDSpacing(detprop, diffenv, Double.valueOf(hkl.getD().doubleValue(NonSI.ANGSTROM)));
+				rois.add(roi);
+			} catch ( Exception e) {
+				rois.add(null);
+			}
+		}
+		
+		return rois;
+	}
+	
+	public static IROI runConicPeakFit(final IMonitor monitor, Dataset image, IParametricROI roi, IParametricROI[] innerOuter, int nPoints) {
+		
+		if (roi == null)
+			return null;
+
+		monitor.subTask("Find POIs near initial ellipse");
+		PolylineROI points;
+		monitor.subTask("Fit POIs");
+		
+		points = PeakFittingEllipseFinder.findPointsOnConic(image, null,roi, innerOuter,nPoints, monitor);
+		
+		if (monitor.isCancelled())
+			return null;
+		
+		if (points == null) return null;
+		
+		if (roi instanceof EllipticalROI) {
+			if (points.getNumberOfPoints() < 3) {
+				throw new IllegalArgumentException("Could not find enough points to trim");
+			}
+
+			monitor.subTask("Trim POIs");
+			EllipticalFitROI efroi = PowderRingsUtils.fitAndTrimOutliers(monitor, points, 5, false);
+			logger.debug("Found {}...", efroi);
+			monitor.subTask("");
+			
+			EllipticalFitROI cfroi = PowderRingsUtils.fitAndTrimOutliers(null, points, 2, true);
+			
+			
+			double dma = efroi.getSemiAxis(0)-cfroi.getSemiAxis(0);
+			double dmi = efroi.getSemiAxis(1)-cfroi.getSemiAxis(0);
+			
+			double crms = Math.sqrt((dma*dma + dmi*dmi)/2);
+			double rms = efroi.getRMS();
+			
+			if (crms < rms) {
+				efroi = cfroi;
+				logger.warn("SWITCHING TO CIRCLE - RMS SEMIAX-RADIUS {} < FIT RMS {}",crms,rms);
+			}
+			
+			return efroi;
+		}
+		
+		return points;
+	}
+	
+	public static IROI fitParametricROI(List<IROI> resROIs, IParametricROI r, IDataset image, int i, int minSpacing, int nPoints, int maxSize, IMonitor monitor) {
+		
+		IParametricROI[] inOut = getInnerAndOuterRangeROIs(resROIs, r,i,minSpacing, maxSize);
+		
+		if (inOut == null) return null;
+		
+		return DSpacing.runConicPeakFit(monitor,DatasetUtils.convertToDataset(image), r,inOut,nPoints);
+	}
+	
+	private static IParametricROI[] getInnerAndOuterRangeROIs(List<IROI> resROIs, IParametricROI r, int i, int minSpacing, int maxSize) {
+		IParametricROI[] inOut = new IParametricROI[2];
+		//TODO min spacing for non-elliptical
+		//TODO include parabolic case
+		if (r instanceof HyperbolicROI) {
+			HyperbolicROI h = (HyperbolicROI)r;
+			double slr = h.getSemilatusRectum();
+			
+			if (i != 0) {
+				
+				if (resROIs.get(i-1) instanceof HyperbolicROI) {
+					HyperbolicROI inner =  (HyperbolicROI)resROIs.get(i-1);
+					double sd = (slr-inner.getSemilatusRectum())/4;
+					sd = sd > maxSize ? maxSize : sd;
+					double semi = slr - sd;
+					double px = h.getPointX() - (h.getPointX() - inner.getPointX())/4;
+					double py = h.getPointY() - (h.getPointY() - inner.getPointY())/4;
+					inOut[0] = new HyperbolicROI(semi, h.getEccentricity(), h.getAngle(), px, py);
+				}
+			}
+			
+			if (i < resROIs.size()-1) {
+				if (resROIs.get(i+1) instanceof HyperbolicROI) {
+					HyperbolicROI outer =  (HyperbolicROI)resROIs.get(i+1);
+					double sd = (outer.getSemilatusRectum()-slr)/4;
+					sd = sd > maxSize ? maxSize : sd;
+					double pxd = (outer.getPointX() - h.getPointX())/4;
+					double pyd = (outer.getPointY() - h.getPointY())/4;
+					inOut[1] = new HyperbolicROI(h.getSemilatusRectum()+sd,
+							h.getEccentricity(), h.getAngle(), h.getPointX()+pxd, h.getPointY()+pyd);
+					
+					
+					if (inOut[0] == null) {
+						inOut[0] = new HyperbolicROI(h.getSemilatusRectum()-sd,
+								outer.getEccentricity(), outer.getAngle(), h.getPointX()-pxd, h.getPointY()-pyd);
+					}
+				}
+			}
+			
+			
+		} else if (r instanceof EllipticalROI) {
+			EllipticalROI e = (EllipticalROI) r;
+			double major = e.getSemiAxis(0);
+			
+			double deltalow = major > maxSize ? maxSize : major;
+			double deltahigh = maxSize;
+			
+			if (i != 0) {
+				
+				if (resROIs.get(i-1) instanceof EllipticalROI) {
+					deltalow = 0.5*(major - ((EllipticalROI)resROIs.get(i-1)).getSemiAxis(0));
+					deltalow = deltalow > maxSize ? maxSize : deltalow;
+				}
+			}
+			
+			if (i < resROIs.size()-1) {
+				if (resROIs.get(i+1) instanceof EllipticalROI) {
+				deltahigh = 0.5*(((EllipticalROI)resROIs.get(i+1)).getSemiAxis(0) - major);
+				deltahigh = deltahigh > maxSize ? maxSize : deltahigh;
+				}
+			}
+			
+			if (deltalow < minSpacing || deltahigh < minSpacing) return null;
+			
+			EllipticalROI in = e.copy();
+			in.setSemiAxis(0, e.getSemiAxis(0)-deltalow);
+			in.setSemiAxis(1, e.getSemiAxis(1)-deltalow);
+			inOut[0] = in;
+			
+			EllipticalROI out = e.copy();
+			out.setSemiAxis(0, e.getSemiAxis(0)+deltahigh);
+			out.setSemiAxis(1, e.getSemiAxis(1)+deltahigh);
+			inOut[1] = out;
+		}
+		
+		if (inOut[0] == null || inOut[1] == null) return null;
+		
+		return inOut;
 	}
 }

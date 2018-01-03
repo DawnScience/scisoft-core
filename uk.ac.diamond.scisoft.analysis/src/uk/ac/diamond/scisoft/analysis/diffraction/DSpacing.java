@@ -378,12 +378,16 @@ public class DSpacing {
 		return rois;
 	}
 	
-	
 	public static List<IROI> getResolutionRings(IDiffractionMetadata metadata, CalibrantSpacing cs) {
+		return getResolutionRings(metadata, cs.getHKLs());
+	}
+	
+	
+	public static List<IROI> getResolutionRings(IDiffractionMetadata metadata, List<HKL> hkls) {
 		
-		List<IROI> rois = new ArrayList<IROI>(cs.getHKLs().size());
+		List<IROI> rois = new ArrayList<IROI>(hkls.size());
 		
-		for (HKL hkl : cs.getHKLs()) {
+		for (HKL hkl : hkls) {
 			DetectorProperties detprop = metadata.getDetector2DProperties();
 			DiffractionCrystalEnvironment diffenv = metadata.getDiffractionCrystalEnvironment();
 			try {
@@ -402,13 +406,13 @@ public class DSpacing {
 		if (roi == null)
 			return null;
 
-		monitor.subTask("Find POIs near initial ellipse");
+		if (monitor != null) monitor.subTask("Find POIs near initial ellipse");
 		PolylineROI points;
-		monitor.subTask("Fit POIs");
+		if (monitor != null) monitor.subTask("Fit POIs");
 		
 		points = PeakFittingEllipseFinder.findPointsOnConic(image, null,roi, innerOuter,nPoints, monitor);
 		
-		if (monitor.isCancelled())
+		if (monitor != null && monitor.isCancelled())
 			return null;
 		
 		if (points == null) return null;
@@ -418,10 +422,10 @@ public class DSpacing {
 				throw new IllegalArgumentException("Could not find enough points to trim");
 			}
 
-			monitor.subTask("Trim POIs");
+			if (monitor != null) monitor.subTask("Trim POIs");
 			EllipticalFitROI efroi = PowderRingsUtils.fitAndTrimOutliers(monitor, points, 5, false);
 			logger.debug("Found {}...", efroi);
-			monitor.subTask("");
+			if (monitor != null) monitor.subTask("");
 			
 			EllipticalFitROI cfroi = PowderRingsUtils.fitAndTrimOutliers(null, points, 2, true);
 			

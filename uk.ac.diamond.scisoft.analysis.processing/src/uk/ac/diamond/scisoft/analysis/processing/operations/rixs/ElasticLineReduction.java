@@ -240,7 +240,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		odd.setAuxData(auxData.toArray(new Serializable[auxData.size()]));
 		odd.setSummaryData(summaryData.toArray(new Serializable[summaryData.size()]));
 
-		return od;
+		return odd;
 	}
 
 	@Override

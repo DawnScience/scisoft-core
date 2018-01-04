@@ -389,7 +389,8 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				int single = (int) Math.floor(z.get(0));
 				int multiple = single + countsPerPhoton; // (int) Math.floor(z.get(1)); // TODO
 				log.append("Setting limits for single photon as [%d, %d)", single, multiple);
-				
+				summaryData.add(ProcessingUtils.createNamedDataset(single, "single_photon_minimum"));
+				summaryData.add(ProcessingUtils.createNamedDataset(multiple, "multiple_photon_minimum"));
 				int bin = model.getBins();
 				int bmax = bin * original.getShapeRef()[model.getEnergyIndex()];
 

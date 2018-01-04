@@ -88,7 +88,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 	@Override
 	void updateFromModel() {
-		super.updateFromModel();
+		updateROICount();
 		for (int r = 0; r < roiMax; r++) {
 			if (lines[r] == null) {
 				StraightLine l = lines[r] = new StraightLine();

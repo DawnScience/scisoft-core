@@ -81,13 +81,15 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		updateFromModel();
 	}
 
+	abstract void updateFromModel();
+
 	/**
 	 * Updates useBothROIs and roiMax so override for more
 	 */
-	void updateFromModel() {
+	protected void updateROICount() {
 		useBothROIs = model.getRoiA() != null && model.getRoiB() != null;
 		roiMax = useBothROIs ? 2 : 1;
-	};
+	}
 
 	@Override
 	public String getId() {

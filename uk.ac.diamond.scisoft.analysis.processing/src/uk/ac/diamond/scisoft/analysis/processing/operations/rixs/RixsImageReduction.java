@@ -117,10 +117,16 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		}
 
 		if (model.isRegionsFromFile()) {
-			initializeROIsFromFile(file);
+			file = model.getFitFile();
+			if (file == null) {
+				file = model.getCalibrationFile();
+				if (file != null) { // only in case of calibration only
+					initializeROIsFromFile(file);
+				}
+			}
 		}
 
-		super.updateFromModel();
+		updateROICount();
 	}
 
 	@Override
@@ -187,6 +193,10 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					throw new OperationException(this, "Could not find processed scan file that starts with " + prefix);
 				}
 				initializeFitLine(fitFile);
+				if (model.isRegionsFromFile()) {
+					initializeROIsFromFile(fitFile);
+					updateROICount();
+				}
 			}
 		}
 	}

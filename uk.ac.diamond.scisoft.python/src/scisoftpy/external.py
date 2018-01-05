@@ -534,9 +534,13 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
                     p = p_parts[0]
                     p_parts = _path.split(p)
     else: # use caller's directory
+        p = None
         import inspect
-        fr = inspect.stack()[1]
-        p = _path.dirname(fr[1])
+        stack = inspect.stack()
+        if len(stack) > 1:
+            f = stack[1][1] # see if module is in directory of previous frame's file
+            if _path.exists(f):
+                p = find_module_path([_path.dirname(f)], module)
 
     ldpath = None
     if dls_module:

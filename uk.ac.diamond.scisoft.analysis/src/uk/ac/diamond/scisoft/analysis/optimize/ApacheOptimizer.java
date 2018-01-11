@@ -305,15 +305,16 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 		LeastSquaresOptimizer opt = createLeastSquaresOptimizer();
 
 		try {
-			
+			double[] tdata = data.getStrides() == null ? data.getData() : ((DoubleDataset) data.getSlice()).getData();
 			LeastSquaresBuilder builder = new LeastSquaresBuilder().model(createJacobianFunction())
-					.target(data.getData()).start(getParameterValues()).lazyEvaluation(false)
+					.target(tdata).start(getParameterValues()).lazyEvaluation(false)
 					.maxEvaluations(MAX_EVAL).maxIterations(MAX_ITER);
 
 			builder.checker(new EvaluationRmsChecker(REL_TOL, ABS_TOL));
 
 			if (weight != null) {
-				builder.weight(MatrixUtils.createRealDiagonalMatrix(weight.getData()));
+				double[] wdata = weight.getStrides() == null ? weight.getData() : ((DoubleDataset) weight.getSlice()).getData();
+				builder.weight(MatrixUtils.createRealDiagonalMatrix(wdata));
 			}
 
 			// TODO add checker, validator

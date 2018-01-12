@@ -103,7 +103,9 @@ public class JexlExpressionFunction extends AFunction {
 	private transient Map<String, IParameter> beforeParametersMap;
 	private transient IExpressionService service;
 
-
+	public JexlExpressionFunction() {
+		super(0);
+	}
 
 	public JexlExpressionFunction(IExpressionService service) {
 		super(0);
@@ -120,6 +122,10 @@ public class JexlExpressionFunction extends AFunction {
 		} catch (JexlExpressionFunctionException e) {
 			// The error state is saved in expressionError
 		}
+	}
+	
+	public void setService(IExpressionService service) {
+		init(service);
 	}
 
 	private void init(IExpressionService service) {

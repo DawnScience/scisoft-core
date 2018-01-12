@@ -31,9 +31,8 @@ public class OptimizerTest  {
 
 	static final long SEED = 12357L;
 
-	public AbstractOptimizer createOptimizer(Optimizer o) {
-		ApacheOptimizer opt = new ApacheOptimizer(o);
-		opt.seed = SEED;
+	public static AbstractOptimizer createOptimizer(Optimizer o) {
+		ApacheOptimizer opt = new ApacheOptimizer(o, SEED);
 		return opt;
 	}
 

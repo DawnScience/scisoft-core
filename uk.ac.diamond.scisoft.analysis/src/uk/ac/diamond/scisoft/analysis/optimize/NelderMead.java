@@ -128,7 +128,17 @@ public class NelderMead extends AbstractOptimizer {
 
 	@Override
 	void internalOptimize() {
-		double[] best = optimise(getParameterValues(), accuracy);
+		double[] best = optimise(getParameterValues(), accuracy, true);
+		setParameterValues(best);
+	}
+
+	@Override
+	void internalMinimax(boolean minimize) throws Exception {
+		if (!minimize) {
+			throw new IllegalArgumentException("Maximize not supported");
+		}
+
+		double[] best = optimise(getParameterValues(), accuracy, false);
 		setParameterValues(best);
 	}
 
@@ -137,9 +147,10 @@ public class NelderMead extends AbstractOptimizer {
 	 * 
 	 * @param parameters
 	 * @param finishCriteria
+	 * @param useResiduals
 	 * @return a double array of the parameters for the optimisation
 	 */
-	private double[] optimise(double[] parameters, double finishCriteria) {
+	private double[] optimise(double[] parameters, double finishCriteria, final boolean useResiduals) {
 
 		double[] solution = parameters;
 		
@@ -153,7 +164,7 @@ public class NelderMead extends AbstractOptimizer {
 			
 			while (ok && collapseCount < 5) {
 				// this outer loop handles collapsing simplexes
-				Simplex simplex = new Simplex(solution, startingSpread);
+				Simplex simplex = new Simplex(solution, startingSpread, useResiduals);
 	
 				simplex.generateStartingFitnesses();
 	
@@ -192,6 +203,7 @@ public class NelderMead extends AbstractOptimizer {
 		int contractCount = 0;
 		int extendedCount = 0;
 		int reflectedCount = 0;
+		private final boolean useResiduals;
 
 		@SuppressWarnings("unused")
 		public int getReduceCount() {
@@ -213,8 +225,8 @@ public class NelderMead extends AbstractOptimizer {
 			return reflectedCount;
 		}
 
-		public Simplex(double[] parameters, double startingSpread) {
-
+		public Simplex(double[] parameters, double startingSpread, final boolean useResiduals) {
+			this.useResiduals = useResiduals;
 			points = new double[parameters.length + 1][parameters.length];
 
 			initialise(parameters, startingSpread);
@@ -263,7 +275,7 @@ public class NelderMead extends AbstractOptimizer {
 			double[] reflectedPoint = calculateReflectedPoint(cog,
 					orderedValues);
 
-			double reflectedPointFitness = calculateResidual(reflectedPoint);
+			double reflectedPointFitness = useResiduals ? calculateResidual(reflectedPoint) : calculateFunction(reflectedPoint);
 
 			// if the reflected point is better than the best point
 
@@ -272,7 +284,7 @@ public class NelderMead extends AbstractOptimizer {
 				double[] extendedPoint = calculateExtendedPoint(cog,
 						orderedValues);
 
-				double extendedPointFitness = calculateResidual(extendedPoint);
+				double extendedPointFitness = useResiduals ? calculateResidual(extendedPoint) : calculateFunction(extendedPoint);
 
 				// if the extended point is better than the reflected point
 
@@ -292,10 +304,9 @@ public class NelderMead extends AbstractOptimizer {
 			double nextWorstFitness = fitnesses[orderedValues[orderedValues.length - 2]];
 			if (reflectedPointFitness > nextWorstFitness) {
 
-				double[] contractedPoint = calculateContractedPoint(cog,
-						orderedValues);
+				double[] contractedPoint = calculateContractedPoint(cog, orderedValues);
 
-				double contractedPointFitness = calculateResidual(contractedPoint);
+				double contractedPointFitness = useResiduals ? calculateResidual(contractedPoint) : calculateFunction(contractedPoint);
 
 				// if this is better than the worst point
 				if (contractedPointFitness < fitnesses[orderedValues[orderedValues.length - 1]]) {
@@ -330,7 +341,7 @@ public class NelderMead extends AbstractOptimizer {
 					        + sigma * (points[orderedValues[i]][j] - points[orderedValues[0]][j]);
 				}
 
-				fitnesses[orderedValues[i]] = calculateResidual(points[orderedValues[i]]);
+				fitnesses[orderedValues[i]] = useResiduals ? calculateResidual(points[orderedValues[i]]) : calculateFunction(points[orderedValues[i]]);
 			}
 
 		}
@@ -445,7 +456,7 @@ public class NelderMead extends AbstractOptimizer {
 			fitnesses = new double[points.length];
 
 			for (int i = 0; i < fitnesses.length; i++) {
-				fitnesses[i] = calculateResidual(points[i]);
+				fitnesses[i] = useResiduals ? calculateResidual(points[i]) : calculateFunction(points[i]);
 			}
 
 			// initialise stored best values

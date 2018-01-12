@@ -61,28 +61,41 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.CoordinatesIterator;
 public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresOptimizer {
 	private static Logger logger = LoggerFactory.getLogger(ApacheOptimizer.class);
 
-	public MultivariateFunction createFunction() {
+	public MultivariateFunction createFunction(final boolean useResiduals) {
 		// provide the fitting function which wrappers all the normal fitting functionality
-		MultivariateFunction f = new MultivariateFunction() {
-
+		MultivariateFunction f = useResiduals ? new MultivariateFunction() {
 			@Override
 			public double value(double[] parameters) {
 				return calculateResidual(parameters);
+			}
+		} : new MultivariateFunction() {
+			@Override
+			public double value(double[] parameters) {
+				return calculateFunction(parameters);
 			}
 		};
 
 		return f;
 	}
 
-	public MultivariateVectorFunction createGradientFunction() {
-		MultivariateVectorFunction f = new MultivariateVectorFunction() {
-			
+	public MultivariateVectorFunction createGradientFunction(final boolean useResiduals) {
+		MultivariateVectorFunction f = useResiduals ? new MultivariateVectorFunction() {
 			@Override
 			public double[] value(double[] parameters) throws IllegalArgumentException {
 				double[] result = new double[n];
 				
 				for (int i = 0; i < n; i++) {
 					result[i] = calculateResidualDerivative(params.get(i), parameters);
+				}
+				return result;
+			}
+		} : new MultivariateVectorFunction() {
+			@Override
+			public double[] value(double[] parameters) throws IllegalArgumentException {
+				double[] result = new double[n];
+				
+				for (int i = 0; i < n; i++) {
+					result[i] = calculateFunctionDerivative(params.get(i), parameters);
 				}
 				return result;
 			}
@@ -154,20 +167,58 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 		return f;
 	}
 
-	public Long seed = null;
+	private Long seed = null;
 
 	private static final int MAX_ITER = 10000;
 	private static final int MAX_EVAL = 1000000;
 	private static final double REL_TOL = 1e-7;
 	private static final double ABS_TOL = 1e-15;
 
-	public enum Optimizer { SIMPLEX_MD, SIMPLEX_NM, POWELL, CMAES, BOBYQA, CONJUGATE_GRADIENT, GAUSS_NEWTON, LEVENBERG_MARQUARDT }
+	public enum Optimizer {
+		/**
+		 * Simplex method with with multi-directional direct search
+		 */
+		SIMPLEX_MD,
+		/**
+		 * Nelder-Mead simplex algorithm
+		 */
+		SIMPLEX_NM,
+		/**
+		 * Powell's algorithm
+		 */
+		POWELL,
+		/**
+		 * Covariance matrix adaption evolution strategy (CMA-ES)
+		 */
+		CMAES,
+		/**
+		 * Powell's BOBYQA algorithm
+		 */
+		BOBYQA,
+		/**
+		 * Conjugate gradient with Polak-Ribiere update formula
+		 */
+		CONJUGATE_GRADIENT,
+		/**
+		 * Gauss-Newton (least-squares only) with QR decomposition of normal equations
+		 */
+		GAUSS_NEWTON,
+		/**
+		 * Levenberg-Marquardt (least-squares only)
+		 */
+		LEVENBERG_MARQUARDT
+	}
 
 	private Optimizer optimizer;
 	private double[] errors = null;
 
 	public ApacheOptimizer(Optimizer opt) {
 		optimizer = opt;
+	}
+
+	public ApacheOptimizer(Optimizer opt, Long seed) {
+		optimizer = opt;
+		this.seed = seed;
 	}
 
 	private MultivariateOptimizer createOptimizer() {
@@ -221,12 +272,12 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 			internalLeastSquaresOptimize();
 			break;
 		default:
-			internalScalarOptimize();
+			internalScalarOptimize(true, true);
 			break;
 		}
 	}
 
-	private void internalScalarOptimize() {
+	private void internalScalarOptimize(final boolean useResiduals, boolean minimize) {
 		MultivariateOptimizer opt = createOptimizer();
 		SimpleBounds bd = createBounds();
 		double offset = 1e12;
@@ -234,15 +285,16 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 		for (int i = 0; i < n; i++) {
 			scale[i] = offset*0.25;
 		}
-		MultivariateFunction fn = createFunction();
-		if (optimizer == Optimizer.SIMPLEX_MD || optimizer == Optimizer.SIMPLEX_NM) {
+		MultivariateFunction fn = createFunction(useResiduals);
+		if (optimizer == Optimizer.POWELL || optimizer == Optimizer.SIMPLEX_MD || optimizer == Optimizer.SIMPLEX_NM) {
 			fn = new MultivariateFunctionPenaltyAdapter(fn, bd.getLower(), bd.getUpper(), offset, scale);
 		}
 		ObjectiveFunction of = new ObjectiveFunction(fn);
 		InitialGuess ig = new InitialGuess(getParameterValues());
 		MaxEval me = new MaxEval(MAX_EVAL);
-		double min = Double.POSITIVE_INFINITY;
+		double min = minimize ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
 		double res = Double.NaN;
+		GoalType goal = minimize ? GoalType.MINIMIZE : GoalType.MAXIMIZE;
 
 		try {
 			PointValuePair result;
@@ -250,11 +302,11 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 			switch (optimizer) {
 			case CONJUGATE_GRADIENT:
 //				af = new MultivariateFunctionPenaltyAdapter(fn, bd.getLower(), bd.getUpper(), offset, scale);
-				result = opt.optimize(ig, GoalType.MINIMIZE, of, me,
-						new ObjectiveFunctionGradient(createGradientFunction()));
+				result = opt.optimize(ig, goal, of, me,
+						new ObjectiveFunctionGradient(createGradientFunction(useResiduals)));
 				break;
 			case BOBYQA:
-				result = opt.optimize(ig, GoalType.MINIMIZE, of, me, bd);
+				result = opt.optimize(ig, goal, of, me, bd);
 				break;
 			case CMAES:
 				double[] sigma = new double[n];
@@ -266,25 +318,29 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 				}
 				int p = (int) Math.ceil(4 + Math.log(n)) + 1;
 				logger.trace("Population size: {}", p);
-				result = opt.optimize(ig, GoalType.MINIMIZE, of, me, bd,
+				result = opt.optimize(ig, goal, of, me, bd,
 						new CMAESOptimizer.Sigma(sigma), new CMAESOptimizer.PopulationSize(p));
 				break;
 			case SIMPLEX_MD:
-				result = opt.optimize(ig, GoalType.MINIMIZE, of, me, new MultiDirectionalSimplex(n));
+				result = opt.optimize(ig, goal, of, me, new MultiDirectionalSimplex(n));
 				break;
 			case SIMPLEX_NM:
-				result = opt.optimize(ig, GoalType.MINIMIZE, of, me, new NelderMeadSimplex(n));
+				result = opt.optimize(ig, goal, of, me, new NelderMeadSimplex(n));
+				break;
+			case POWELL:
+				result = opt.optimize(ig, goal, of, me);
 				break;
 			default:
 				throw new IllegalStateException("Should not be called");
 			}
 
 			// logger.info("Q-space fit: rms = {}, x^2 = {}", opt.getRMS(), opt.getChiSquare());
-			double ires = calculateResidual(opt.getStartPoint());
+			double ires = useResiduals ? calculateResidual(opt.getStartPoint()) : calculateFunction(opt.getStartPoint());
 			logger.trace("Residual: {} from {}", result.getValue(), ires);
 			res = result.getValue();
-			if (res < min)
+			if ((minimize && res < min) || (!minimize && res > min)) {
 				setParameterValues(result.getPoint());
+			}
 			logger.trace("Used {} evals and {} iters", opt.getEvaluations(), opt.getIterations());
 //			System.err.printf("Used %d evals and %d iters\n", opt.getEvaluations(), opt.getIterations());
 			// logger.info("Q-space fit: rms = {}, x^2 = {}", opt.getRMS(), opt.getChiSquare());
@@ -353,5 +409,18 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 	@Override
 	public double[] guessParametersErrors() {
 		return errors;
+	}
+
+	@Override
+	void internalMinimax(boolean minimize) throws Exception {
+		switch (optimizer) {
+		case LEVENBERG_MARQUARDT:
+		case GAUSS_NEWTON:
+			throw new UnsupportedOperationException("Cannot minimize or maximize with this optimizer");
+		default:
+			internalScalarOptimize(false, minimize);
+			break;
+		}
+
 	}
 }

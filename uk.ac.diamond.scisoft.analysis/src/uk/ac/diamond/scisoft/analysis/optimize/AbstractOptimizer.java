@@ -33,6 +33,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	protected DoubleDataset[] coords;
 	protected DoubleDataset data;
 	protected DoubleDataset weight;
+	protected double[] point;
 
 	public AbstractOptimizer() {
 		params = new ArrayList<IParameter>();
@@ -86,6 +87,14 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		this.data = DatasetUtils.cast(DoubleDataset.class, data);
 		initializeParameters();
 		internalOptimize();
+	}
+
+	@Override
+	public void optimize(boolean minimize, IFunction function, double... point) throws Exception {
+		this.function = function;
+		this.point = point;
+		initializeParameters();
+		internalMinimax(minimize);
 	}
 
 	/**
@@ -150,6 +159,16 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	}
 
 	/**
+	 * Calculate function at set point for given parameters
+	 * @param parameters
+	 * @return residual
+	 */
+	public double calculateFunction(double[] parameters) {
+		setParameterValues(parameters);
+		return function.val(point);
+	}
+
+	/**
 	 * Calculate residual for given parameters
 	 * @param parameters
 	 * @return residual
@@ -179,14 +198,30 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	}
 
 	/**
+	 * Calculate partial derivative of function at set point with respect to the given parameter at the given parameter values
+	 * @param parameter
+	 * @param parameters parameter values
+	 * @return functionderivative
+	 */
+	public double calculateFunctionDerivative(IParameter parameter, double[] parameters) {
+		if (indexOfParameter(parameter) < 0) {
+			return 0;
+		}
+
+		setParameterValues(parameters);
+		return function.partialDeriv(parameter, point);
+	}
+
+	/**
 	 * Calculate partial derivative of residual with respect to the given parameter at the given parameter values
 	 * @param parameter
 	 * @param parameters parameter values
 	 * @return residual derivative
 	 */
 	public double calculateResidualDerivative(IParameter parameter, double[] parameters) {
-		if (indexOfParameter(parameter) < 0)
+		if (indexOfParameter(parameter) < 0) {
 			return 0;
+		}
 
 		setParameterValues(parameters);
 		CoordinatesIterator it = CoordinatesIterator.createIterator(data == null ? null : data.getShapeRef(), coords);
@@ -246,7 +281,12 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	}
 
 	/**
-	 * This should use do the work and set the parameters
+	 * This should do the work and set the parameters
 	 */
 	abstract void internalOptimize() throws Exception;
+
+	/**
+	 * This should do the work and set the parameters
+	 */
+	abstract void internalMinimax(boolean minimize) throws Exception;
 }

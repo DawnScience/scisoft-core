@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.optimize;
 
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 
 import Jama.Matrix;
@@ -28,23 +29,31 @@ public class LeastSquares extends AbstractOptimizer {
 	/**
 	 * Base constructor
 	 * 
-	 * @param tolerence
+	 * @param tolerance
 	 *            Not currently used.
 	 */
 	// TODO Add in the ability to use the tolerance parameter
-	public LeastSquares(@SuppressWarnings("unused") double tolerence) {
+	public LeastSquares(@SuppressWarnings("unused") double tolerance) {
 
 	}
 
 	private double alpha(int k, int l) {
-		Dataset value = DatasetUtils.convertToDataset(function.calculatePartialDerivativeValues(params.get(k), coords[0]));
+		Dataset value;
+		if (coords == null) {
+			value = DatasetFactory.createFromObject(function.partialDeriv(params.get(k)));
+		} else {
+			value = DatasetUtils.convertToDataset(function.calculatePartialDerivativeValues(params.get(k), coords));
+		}
 		if (k == l) {
 			value.imultiply(value);
+		} else if (coords == null) {
+			value.imultiply(function.partialDeriv(params.get(l)));
 		} else {
-			value.imultiply(function.calculatePartialDerivativeValues(params.get(l), coords[0]));
+			value.imultiply(function.calculatePartialDerivativeValues(params.get(l), coords));
 		}
-		if (weight != null)
+		if (weight != null) {
 			value.imultiply(weight);
+		}
 
 		return ((Number) value.sum()).doubleValue();
 	}
@@ -71,33 +80,33 @@ public class LeastSquares extends AbstractOptimizer {
 
 	private final static double PERT = 1e-4;
 
-	private double beta(int k) {
+	private double beta(int k, final boolean useResiduals) {
 		// do a numerical differential for the time being.
 		final double[] params = getParameterValues();
 		final double v = params[k];
 
 		double dv = (v == 0 ? 1 : v) * PERT;
 		params[k] = v - dv;
-		double chimin = calculateResidual(params);
+		double chimin = useResiduals ? calculateResidual(params) : calculateFunction(params);
 		params[k] = v + dv;
-		double chimax = calculateResidual(params);
+		double chimax = useResiduals ? calculateResidual(params) : calculateFunction(params);
 		params[k] = v;
 		setParameterValues(params);
 
 		return -0.5 * (chimax - chimin) / (2 * PERT);
 	}
 
-	private Matrix evaluateChiSquared() {
+	private Matrix evaluateChiSquared(final boolean useResiduals) {
 		Matrix mat = new Matrix(n, 1);
 		for (int i = 0; i < n; i++) {
-			mat.set(i, 0, beta(i));
+			mat.set(i, 0, beta(i, useResiduals));
 		}
 		return mat;
 	}
 
-	private double[] solveDa(double lambda) {
+	private double[] solveDa(double lambda, final boolean useResiduals) {
 		Matrix A = evaluateMatrix(lambda);
-		Matrix B = evaluateChiSquared();
+		Matrix B = evaluateChiSquared(useResiduals);
 
 		Matrix mat = A.inverse();
 		mat = mat.times(B);
@@ -112,27 +121,37 @@ public class LeastSquares extends AbstractOptimizer {
 	@Override
 	void internalOptimize() {
 		// choose a value for lambda
-		optimize(0.001);
+		optimize(0.001, true);
 	}
 
-	public void optimize(double lambda) {
+	@Override
+	void internalMinimax(boolean minimize) throws Exception {
+		if (!minimize) {
+			throw new IllegalArgumentException("Maximize not supported");
+		}
+
+		// choose a value for lambda
+		optimize(0.001, false);
+	}
+
+	public void optimize(double lambda, final boolean useResiduals) {
 		double[] pvalues = getParameterValues();
 		// first calculate the quality of the fit.
-		double eval = calculateResidual(pvalues);
+		double eval = useResiduals ? calculateResidual(pvalues) : calculateFunction(pvalues);
 
 		double[] testParams = new double[n];
 
 		for (int j = 0; j < 1; j++) {
 
 			// solve the least squares calculation
-			double[] dParams = solveDa(lambda);
+			double[] dParams = solveDa(lambda, useResiduals);
 
 			// evaluate the new position
 			for (int i = 0; i < n; i++) {
 				testParams[i] = pvalues[i] + dParams[i];
 			}
 
-			double testEval = calculateResidual(testParams);
+			double testEval = useResiduals ? calculateResidual(testParams) : calculateFunction(testParams);
 
 			//logger.debug(testEval + "," + eval + "," + lambda + "["
 			//		+ dParams[0] + "," + dParams[1] + "," + dParams[2] + "]");

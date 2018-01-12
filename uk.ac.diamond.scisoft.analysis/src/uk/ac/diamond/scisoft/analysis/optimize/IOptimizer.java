@@ -20,7 +20,7 @@ import org.eclipse.january.dataset.IDataset;
 public interface IOptimizer extends Serializable {
 
 	/**
-	 * The standard optimize function
+	 * Perform least squares optimization
 	 * 
 	 * @param coords
 	 *            An array of datasets containing the coordinate positions
@@ -31,4 +31,15 @@ public interface IOptimizer extends Serializable {
 	 * @throws Exception 
 	 */
 	public void optimize(IDataset[] coords, IDataset data, IFunction function) throws Exception;
+
+	/**
+	 * Perform optimization of parameters at given coordinates in function
+	 * @param minimize if true then minimize function, else maximize it
+	 * @param function
+	 *            A (possibly composite) function to fit
+	 * @param coords
+	 * 
+	 * @throws Exception 
+	 */
+	public void optimize(boolean minimize, IFunction function, double... coords) throws Exception;
 }

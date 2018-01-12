@@ -66,13 +66,25 @@ public class GeneticAlg extends AbstractOptimizer {
 	@Override
 	void internalOptimize() {
 		try {
-			optimize(10000);
+			optimize(10000, true);
 		} catch (IterationLimitException e) {	
 			GAlogger.warn("Maximum number of itterations has been exceeded.  This solution may be suboptimal");
 		}
 	}
 
-	public void optimize(int maxItterations) throws IterationLimitException {
+	@Override
+	void internalMinimax(boolean minimize) throws Exception {
+		if (!minimize) {
+			throw new IllegalArgumentException("Maximize not supported");
+		}
+		try {
+			optimize(10000, false);
+		} catch (IterationLimitException e) {	
+			GAlogger.warn("Maximum number of itterations has been exceeded.  This solution may be suboptimal");
+		}
+	}
+
+	public void optimize(int maxItterations, final boolean useResiduals) throws IterationLimitException {
 		IOperator operator = (function instanceof IOperator) ? (IOperator) function : null;
 		// set some factors
 		final double mutantProportion = 0.5;
@@ -109,7 +121,7 @@ public class GeneticAlg extends AbstractOptimizer {
 
 		// now the first epoch has been created and calculate the fitness
 		for (int i = 0; i <= topEpoch; i++) {
-			double r = calculateResidual(epoch[i]);
+			double r = useResiduals ? calculateResidual(epoch[i]) : calculateFunction(epoch[i]);
 			results[i] = Double.isNaN(r) ? Double.MAX_VALUE : r;
 		}
 
@@ -225,7 +237,7 @@ public class GeneticAlg extends AbstractOptimizer {
 				}
 
 				// finally calculate the fitness and put it in the last digit
-				results[i] = calculateResidual(e);
+				results[i] = useResiduals ? calculateResidual(e) : calculateFunction(e);
 
 			    double delta = results[i] - mean;
 			    mean = mean + delta/(i+1);

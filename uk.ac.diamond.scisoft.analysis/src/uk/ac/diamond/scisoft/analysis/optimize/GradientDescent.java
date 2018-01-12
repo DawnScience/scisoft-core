@@ -43,7 +43,17 @@ public class GradientDescent extends AbstractOptimizer {
 
 	@Override
 	void internalOptimize() {
-		double[] bestParams = optimise(getParameterValues(), qualityFactor);
+		double[] bestParams = optimise(getParameterValues(), qualityFactor, true);
+		function.setParameterValues(bestParams);
+	}
+
+	@Override
+	void internalMinimax(boolean minimize) throws Exception {
+		if (!minimize) {
+			throw new IllegalArgumentException("Maximize not supported");
+		}
+
+		double[] bestParams = optimise(getParameterValues(), qualityFactor, false);
 		function.setParameterValues(bestParams);
 	}
 
@@ -55,10 +65,11 @@ public class GradientDescent extends AbstractOptimizer {
 	 * 
 	 * @param parameters
 	 * @param finishCriteria
+	 * @param useResiduals
 	 * @return a double array of the parameters for the optimisation
 	 */
 	public double[] optimise(double[] parameters,
-			double finishCriteria) {
+			double finishCriteria, final boolean useResiduals) {
 
 		double[] solution = parameters;
 		double[] stepweight = solution.clone();
@@ -66,11 +77,11 @@ public class GradientDescent extends AbstractOptimizer {
 			stepweight[i] = 1.0;
 		}
 		
-		double[] oldd = deriv(solution);
+		double[] oldd = deriv(solution, useResiduals);
 		
 		while (stepsize > finishCriteria*0.1) {
 
-			double[] d = deriv(solution);
+			double[] d = deriv(solution, useResiduals);
 			// now adjust the stepweights
 			for(int i = 0; i < stepweight.length; i++) {
 				if(d[i]*oldd[i] < 0) {
@@ -84,14 +95,14 @@ public class GradientDescent extends AbstractOptimizer {
 			}
 			
 			oldd = d;
-			double value = calculateResidual(solution);
+			double value = useResiduals ? calculateResidual(solution) : calculateFunction(solution);
 
 			double[] test = solution.clone();
 			
 			for(int i = 0; i < d.length; i++) {
 				test[i] -= d[i]*stepsize*stepweight[i];
 			}
-			double testValue = calculateResidual(test);
+			double testValue = useResiduals ? calculateResidual(test) : calculateFunction(test);
 			if(testValue < value) {
 				solution = test;
 				stepsize *= 1.1;
@@ -107,7 +118,7 @@ public class GradientDescent extends AbstractOptimizer {
 	 * @param position
 	 * @return the normalised derivative
 	 */
-	private double[] deriv(double[] position) {
+	private double[] deriv(double[] position, final boolean useResiduals) {
 		double[] deriv = position.clone();
 		double length = 0.0;
 		boolean stepSizeOk = false;
@@ -118,8 +129,8 @@ public class GradientDescent extends AbstractOptimizer {
 				double[] neg = position.clone();
 				pos[i] += diffsize;
 				neg[i] -= diffsize;
-				double posvalue = calculateResidual(pos);
-				double negvalue = calculateResidual(neg);
+				double posvalue = useResiduals ? calculateResidual(pos) : calculateFunction(pos);
+				double negvalue = useResiduals ? calculateResidual(neg) : calculateFunction(neg);
 				deriv[i] = (posvalue - negvalue)*(2.0*diffsize);
 				if (deriv[i] == 0) {
 					stepSizeOk=false;

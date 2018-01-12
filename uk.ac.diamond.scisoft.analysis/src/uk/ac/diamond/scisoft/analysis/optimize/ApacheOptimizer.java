@@ -154,7 +154,7 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 		return f;
 	}
 
-	public Long seed = null;
+	private Long seed = null;
 
 	private static final int MAX_ITER = 10000;
 	private static final int MAX_EVAL = 1000000;
@@ -168,6 +168,11 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 
 	public ApacheOptimizer(Optimizer opt) {
 		optimizer = opt;
+	}
+
+	public ApacheOptimizer(Optimizer opt, Long seed) {
+		optimizer = opt;
+		this.seed = seed;
 	}
 
 	private MultivariateOptimizer createOptimizer() {

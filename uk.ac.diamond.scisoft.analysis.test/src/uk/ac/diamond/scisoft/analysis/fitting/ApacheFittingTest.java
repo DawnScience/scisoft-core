@@ -58,8 +58,7 @@ public class ApacheFittingTest extends AbstractFittingTestBase {
 
 	@Override
 	public IOptimizer createOptimizer() {
-		ApacheOptimizer opt = new ApacheOptimizer(o);
-		opt.seed = SEED;
+		ApacheOptimizer opt = new ApacheOptimizer(o, SEED);
 		return opt;
 	}
 

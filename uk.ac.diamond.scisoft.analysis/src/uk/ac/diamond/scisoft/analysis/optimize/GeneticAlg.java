@@ -59,6 +59,10 @@ public class GeneticAlg extends AbstractOptimizer {
 			generator.setSeed(seed);
 	}
 
+	public void setSeed(long seed) {
+		generator.setSeed(seed);
+	}
+
 	@Override
 	void internalOptimize() {
 		try {

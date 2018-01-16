@@ -301,8 +301,7 @@ public class CurveStitchWithErrorsAndFrames {
 
 				overlapDataModels.add(odm);
 
-			}
-			else {
+			} else {
 				yArrayCorrected[k + 1] = Maths.multiply(yArray[k + 1], attenuationFactor);
 				yArrayCorrectedFhkl[k + 1] = Maths.multiply(yArrayFhkl[k + 1], attenuationFactorFhkl);
 				yArrayCorrectedRaw[k + 1] = Maths.multiply(yArrayRaw[k + 1], attenuationFactorRaw);
@@ -316,7 +315,7 @@ public class CurveStitchWithErrorsAndFrames {
 				odm.setAttenuationFactorRaw(attenuationFactorRaw);
 
 				overlapDataModels.add(odm);
-				
+
 			}
 		}
 
@@ -366,6 +365,28 @@ public class CurveStitchWithErrorsAndFrames {
 		if (sortedAttenuatedDatasets[1].getSize() != sortedAttenuatedDatasets[0].getSize()) {
 			System.out.println("error in lengths, in stitcher");
 		}
+
+//		for (int i = 0; i < sortedAttenuatedDatasets.length; i++) {
+//			
+//			if (sortedAttenuatedDatasets[i] != null) {
+//				ArrayList<Double> g = new ArrayList<>();
+//
+//				for (int j = 0; j < sortedAttenuatedDatasets[i].getSize(); j++) {
+//
+//					if (sortedAttenuatedDatasets[i].getDouble(j) != Double.MAX_VALUE
+//							&& sortedAttenuatedDatasets[i].getDouble(j) != Double.MIN_VALUE
+//							&& Double.isFinite(sortedAttenuatedDatasets[i].getDouble(j))) {
+//
+//						g.add(sortedAttenuatedDatasets[i].getDouble(j));
+//					}
+//				}
+//				
+//				sortedAttenuatedDatasets[i] = DatasetFactory.createFromList(g);
+//			}
+
+			
+//
+//		}
 
 		DatasetUtils.sort(sortedAttenuatedDatasets[1], /// xArray
 				sortedAttenuatedDatasets[0]);/// yArray Intensity

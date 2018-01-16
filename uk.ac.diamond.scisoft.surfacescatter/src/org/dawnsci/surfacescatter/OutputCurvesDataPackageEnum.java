@@ -11,19 +11,20 @@ import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.SliceND;
 
 public enum OutputCurvesDataPackageEnum {
-	
+
 	NO_DATS(NeXusStructureStrings.getNoDats(),
-			(GroupNode nxData,
-					OutputCurvesDataPackage ocdp) -> nxData.addAttribute(TreeFactory.createAttribute(
-							NeXusStructureStrings.getNoDats(), ocdp.getNoOfDats())),
+			(GroupNode nxData, OutputCurvesDataPackage ocdp) -> nxData
+					.addAttribute(TreeFactory.createAttribute(NeXusStructureStrings.getNoDats(), ocdp.getNoOfDats())),
 			(GroupNode nxData, OutputCurvesDataPackage ocdp) -> ocdp
 					.setNoOfDats(getIntegerAttribute(NeXusStructureStrings.getNoDats(), nxData))),
-	
+
 	YLIST(NeXusStructureStrings.getYlist(),
 			(GroupNode nxData,
 					OutputCurvesDataPackage ocdp) -> nxData.addAttribute(TreeFactory.createAttribute(
@@ -197,14 +198,13 @@ public enum OutputCurvesDataPackageEnum {
 
 	private static IDataset convertListofListsOfDoublesToDataset(ArrayList<ArrayList<Double>> in) {
 
-		
 		ArrayList<ArrayList<Double>> in1 = padListsToUniformLength(in);
-		
+
 		ArrayList<IDataset> im = new ArrayList<>();
 
 		for (ArrayList<Double> a : in1) {
 			im.add(DatasetFactory.createFromList(a));
-			
+
 		}
 
 		return concatenateIDatasetArrayList(im);
@@ -212,43 +212,43 @@ public enum OutputCurvesDataPackageEnum {
 
 	private static IDataset concatenateIDatasetArrayList(ArrayList<IDataset> in) {
 
-		Dataset h = DatasetFactory.ones(new int[] {in.size(), in.get(0).getSize()});
-		
+		Dataset h = DatasetFactory.ones(new int[] { in.size(), in.get(0).getSize() });
+
 		int maxj = in.get(0).getShape()[0];
-		
+
 		for (int i = 0; i < in.size(); i++) {
 			for (int j = 0; j < maxj; j++) {
-			
+
 				h.set(in.get(i).getDouble(j), i, j);
 			}
-			
+
 		}
 
 		return h;
 	}
-	
-	private static ArrayList<ArrayList<Double>> padListsToUniformLength (ArrayList<ArrayList<Double>> in){
-		
-		ArrayList<ArrayList<Double>> out= (ArrayList<ArrayList<Double>>) in.clone();
-		
+
+	private static ArrayList<ArrayList<Double>> padListsToUniformLength(ArrayList<ArrayList<Double>> in) {
+
+		ArrayList<ArrayList<Double>> out = (ArrayList<ArrayList<Double>>) in.clone();
+
 		int longestListLength = 0;
-		
-		for(ArrayList<Double> r : out) {
-			if(r.size()>longestListLength) {
+
+		for (ArrayList<Double> r : out) {
+			if (r.size() > longestListLength) {
 				longestListLength = r.size();
 			}
 		}
-		
-		for(ArrayList<Double> r : out) {
-			if(r.size()<longestListLength) {
-				int padding = longestListLength -r.size();
-				
-				for(int j =0; j<padding; j++) {
+
+		for (ArrayList<Double> r : out) {
+			if (r.size() < longestListLength) {
+				int padding = longestListLength - r.size();
+
+				for (int j = 0; j < padding; j++) {
 					r.add(Double.MAX_VALUE);
 				}
 			}
 		}
-		
+
 		return out;
 	}
 
@@ -267,20 +267,18 @@ public enum OutputCurvesDataPackageEnum {
 			ArrayList<Double> b = new ArrayList<>();
 
 			for (int j = 0; j < a.getSize(); j++) {
-				if(a.getDouble(j) != Double.MAX_VALUE) {
+				if (a.getDouble(j) != Double.MAX_VALUE) {
 					b.add(a.getDouble(j));
 				}
 			}
 
 			out.add(b);
 		}
-		
-		
 
 		return out;
 
 	}
-	
+
 	private Dataset getDoubleArrayOfArraysAsDataset(double[][] in) {
 
 		ArrayList<double[]> out = new ArrayList<>();
@@ -291,8 +289,6 @@ public enum OutputCurvesDataPackageEnum {
 
 		return DatasetFactory.createFromList(out);
 	}
-		
-		
 
 	private static ArrayList<Double> getListofDoublesAttribute(String desired, GroupNode g) {
 
@@ -334,7 +330,6 @@ public enum OutputCurvesDataPackageEnum {
 
 		return null;
 	}
-	
 
 	private static double[][] getDoubleArrayofArraysAttribute(String desired, GroupNode g) {
 
@@ -350,7 +345,7 @@ public enum OutputCurvesDataPackageEnum {
 			slice.setSlice(0, i, i + 1, 1);
 
 			ILazyDataset ld = roiAttributeDat.getSlice(slice).squeeze();
-			
+
 			double[] a = new double[ld.getShape()[0]];
 
 			for (int j = 0; j < ld.getShape()[0]; j++) {
@@ -369,10 +364,9 @@ public enum OutputCurvesDataPackageEnum {
 		return out;
 	}
 
-	
 	private static int getIntegerAttribute(String desired, GroupNode g) {
-		IDataset sd = g.getAttribute(desired).getValue();
-		return (int) sd.getInt(0);
+		IntegerDataset sd1 = DatasetUtils.cast(IntegerDataset.class, g.getAttribute(desired).getValue());
+		return (int) sd1.get();
 	}
 
 	@FunctionalInterface

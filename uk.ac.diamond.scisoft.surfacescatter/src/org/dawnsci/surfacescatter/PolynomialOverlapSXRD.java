@@ -16,6 +16,18 @@ public class PolynomialOverlapSXRD {
 											  double attenuationFactor, 
 											  int power) {
 
+		for(int l = 0; l <yLowerDataset.getSize(); l++) {
+			if(!Double.isFinite(yLowerDataset.getDouble(l)) ) {
+				yLowerDataset.set(0.0, l);
+			}
+		}
+		
+		for(int l = 0; l <yHigherDataset.getSize(); l++) {
+			if(!Double.isFinite(yHigherDataset.getDouble(l)) ) {
+				yHigherDataset.set(0.0, l);
+			}
+		}
+		
 		Polynomial polyFitLower = Fitter.polyFit(xLowerDataset, yLowerDataset, 1e-5,power);
 		Polynomial polyFitHigher = Fitter.polyFit(xHigherDataset, yHigherDataset, 1e-5,power);
 		

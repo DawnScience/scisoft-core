@@ -22,7 +22,7 @@ public class DummyClassUtils {
 				* Math.sqrt(((Number) DatasetUtils.cast(output, Dataset.FLOAT64).sum()).doubleValue());
 		double rawIntensityError = Math.sqrt(((Number) DatasetUtils.cast(output, Dataset.FLOAT64).sum()).doubleValue());
 
-		double fhkl =Double.MIN_VALUE;
+		double fhkl =0;
 		if (intensity >= 0) {
 			fhkl = Math.pow(((Number) DatasetUtils.cast(yValue, Dataset.FLOAT64).sum()).doubleValue(), 0.5);
 		}

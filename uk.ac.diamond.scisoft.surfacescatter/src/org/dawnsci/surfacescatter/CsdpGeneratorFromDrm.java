@@ -21,7 +21,7 @@ public class CsdpGeneratorFromDrm {
 		int noOfDats = drm.getDatFilepaths().length;
 
 		ocdp.setNoOfDats(noOfDats);
-		
+
 		csdp.setFilepaths(drm.getDatFilepaths());
 
 		ArrayList<ArrayList<Boolean>> goodPointLists = new ArrayList<>();
@@ -35,12 +35,17 @@ public class CsdpGeneratorFromDrm {
 
 			for (int j = 0; j < g; j++) {
 
-				if (drm.getDmxList().get(i).get(j) != -10000000000.0) {
+				if (drm.getDmxList().get(i).get(j) != -10000000000.0 && Double.isFinite(drm.getDmxList().get(i).get(j))
+						&& drm.getDmxList().get(i).get(j) != Double.MAX_EXPONENT
+						&& drm.getDmxList().get(i).get(j) != Double.MIN_EXPONENT) {
+
 					for (FrameModel fm : drm.getFms()) {
-						if (fm.getDatNo() == i && fm.getNoInOriginalDat() == j)
+						if (fm.getDatNo() == i && fm.getNoInOriginalDat() == j) {
 							goodPointLists.get(i).add(fm.isGoodPoint());
-						goodPointListsForSplice.get(i).add(fm.isGoodPoint());
+							goodPointListsForSplice.get(i).add(fm.isGoodPoint());
+						}
 					}
+
 				} else {
 					goodPointListsForSplice.get(i).add(j, null);
 				}
@@ -198,13 +203,12 @@ public class CsdpGeneratorFromDrm {
 	public IDataset[] goodPointIDatasetArrayGenerator(int n, // number of Dats
 			ArrayList<ArrayList<Boolean>> input) {
 
-
 		ArrayList<ArrayList<Boolean>> goodArrays = new ArrayList<>();
-		
-		for (int d= 0; d< input.size();d++) {
+
+		for (int d = 0; d < input.size(); d++) {
 
 			ArrayList<Boolean> s = input.get(d);
-			
+
 			if (s.size() > 0) {
 				goodArrays.add(s);
 			}
@@ -212,7 +216,6 @@ public class CsdpGeneratorFromDrm {
 
 		IDataset[] output = new IDataset[goodArrays.size()];
 
-		
 		for (int r = 0; r < goodArrays.size(); r++) {
 
 			IDataset i = DatasetFactory.createFromObject(goodArrays.get(r));

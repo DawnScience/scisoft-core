@@ -602,14 +602,19 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			v = v.getByBoolean(m);
 		}
 		double residual = Double.POSITIVE_INFINITY;
+		double[] errors = null;
 		try {
 			ApacheOptimizer opt = new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT);
 			opt.optimize(new Dataset[] {x}, v, f);
 			residual = opt.calculateResidual();
+			errors = opt.guessParametersErrors();
 		} catch (Exception fittingError) {
 			throw new OperationException(this, "Exception performing fit in ElasticLineReduction()", fittingError);
 		}
 
+		if (errors == null) {
+			throw new OperationException(this, "Exception performing fit in ElasticLineReduction()");
+		}
 		log.append("Fitted function: residual = %g\n%s", residual, f);
 		log.append("Peak is %g cf %g", f.val(f.getParameter(0).getValue()), v.max().doubleValue());
 		return residual;

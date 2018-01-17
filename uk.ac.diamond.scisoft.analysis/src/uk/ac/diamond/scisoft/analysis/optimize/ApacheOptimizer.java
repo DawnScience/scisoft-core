@@ -381,6 +381,7 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 			RealVector res = result.getPoint();
 			setParameterValues(res instanceof ArrayRealVector ? ((ArrayRealVector) res).getDataRef() : res.toArray());
 			try {
+				errors = null;
 				RealVector err = result.getSigma(1e-14);
 				
 //				sqrt(S / (n - m) * C[i][i]);

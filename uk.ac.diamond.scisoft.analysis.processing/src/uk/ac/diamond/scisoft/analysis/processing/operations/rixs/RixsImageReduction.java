@@ -109,9 +109,6 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			file = model.getFitFile();
 			if (file == null) {
 				file = model.getCalibrationFile();
-				if (file == null) {
-					throw new OperationException(this, "Either elastic fit or energy calibration file must be defined");
-				}
 			}
 			initializeFitLine(file);
 		}
@@ -181,7 +178,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				if (fitFile == null) {
 					fitFile = findLatestFitFile(filter, new File(currentDir, PROCESSING), prefix);
 				}
-				if (fitFile == null) { // try in calibration file's directory
+				if (fitFile == null && model.getCalibrationFile() != null) { // try in calibration file's directory
 					currentDir = new File(model.getCalibrationFile()).getParentFile();
 					fitFile = findLatestFitFile(filter, currentDir, prefix);
 					if (fitFile == null) {
@@ -189,11 +186,8 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					}
 				}
 
-				if (fitFile == null) {
-					throw new OperationException(this, "Could not find processed scan file that starts with " + prefix);
-				}
 				initializeFitLine(fitFile);
-				if (model.isRegionsFromFile()) {
+				if (fitFile != null && model.isRegionsFromFile()) {
 					initializeROIsFromFile(fitFile);
 					updateROICount();
 				}
@@ -219,6 +213,12 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 	}
 
 	private void initializeFitLine(String elasticLineFile) {
+		if (elasticLineFile == null) {
+			lines[0] = new StraightLine();
+			lines[1] = new StraightLine();
+			return;
+		}
+
 		try {
 			Tree tree = LoaderFactory.getData(elasticLineFile).getTree();
 			GroupNode root = tree.getGroupNode();

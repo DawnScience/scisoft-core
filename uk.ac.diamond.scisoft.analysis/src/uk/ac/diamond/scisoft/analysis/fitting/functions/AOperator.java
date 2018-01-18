@@ -140,7 +140,6 @@ abstract public class AOperator extends AFunction implements IOperator {
 				if (nf > 1)
 					out.append(String.format("Function %d - \n", i));
 				out.append(f.toString());
-				out.append('\n');
 			}
 		}
 

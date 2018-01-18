@@ -352,41 +352,34 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		peak.addFunction(new Gaussian());
 		peak.addFunction(new Offset());
 
-//		log.append("Sum %s/%s", v.sum(), v.toString(true));
-//		log.append("Initial peak:\n%s", peak);
-
-		Dataset spectrum = goodSpectra[r].get(0);
-		initializeFunctionParameters(peak, spectrum);
-		int size = spectrum.getSize();
-		DoubleDataset x = DatasetFactory.createRange(size);
-		x.setName("Energy Index");
-
 		List<Double> gEnergy = new ArrayList<>();
 		List<Double> gPosn = new ArrayList<>();
 		List<Double> gFWHM = new ArrayList<>();
 		List<Double> energy = goodPosition[r];
 
 		int ns = goodSpectra[r].size();
+		Dataset spectrum = null;
 		Dataset gSpectrum = null;
 		Dataset gSpectrumFit = null;
-		double[] ip = null;
+		int size = 0;
+		DoubleDataset x = null;
+		if (ns > 0) {
+			size = goodSpectra[r].get(0).getSize();
+			x = DatasetFactory.createRange(size);
+			x.setName("Energy Index");
+		}
 		for (int i = 0; i < ns; i++) {
 			spectrum = goodSpectra[r].get(i);
 			log.append("Fitting elastic peak: %d/%d", i, ns);
-			if (ip != null) {
-				ip[0] = spectrum.argMax(true);
-				peak.setParameterValues(ip); // shift peak initial position for fit
-			}
+			initializeFunctionParameters(peak, spectrum);
 			double res = Double.POSITIVE_INFINITY;
 			try {
 				res = fitFunction(peak, x, spectrum, null);
+				System.err.println("Peak " + i + " fit is " + peak + " with residual " + res);
 				if (Double.isFinite(res)) {
 					gEnergy.add(energy.get(i));
 					gPosn.add(peak.getParameterValue(0));
 					gFWHM.add(peak.getParameterValue(1));
-					if (ip == null) {
-						ip = peak.getParameterValues();
-					}
 					DoubleDataset fit = peak.calculateValues(x);
 					if (gSpectrum == null) {
 						gSpectrum = spectrum.clone().reshape(1, size);

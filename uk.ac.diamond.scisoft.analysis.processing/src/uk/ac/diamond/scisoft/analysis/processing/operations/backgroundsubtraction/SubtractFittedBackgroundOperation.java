@@ -72,7 +72,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		}
 
 		if (model.isPositiveOnly()) {
-			min = 0;
+			min = 1; // ignore zero readings too
 			nbin = (int) Math.ceil(max - min);
 		}
 
@@ -200,27 +200,33 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		IParameter p = pdf.getParameter(0);
 		double xb = x.getDouble(0);
 		double dx = x.getDouble(1) - xb;
-		int pmax = h.argMax(true); // position of maximum
+		int pMax = h.argMax(true); // position of maximum
 
 		// determine if there are lower background peaks by checking zeros of derivative
 		// this implies there are troughs between the peaks
 		Dataset diff = Maths.derivative(x, h, 3);
 		// find index crossing less than max position
-		List<Double> cs = DatasetUtils.crossings(diff, 0);
+		List<Double> cs = DatasetUtils.crossings(x, diff, 0);
 		int i = 0;
-		for (int imax = cs.size() - 1; i < imax && Math.round(cs.get(i)) < pmax; i++);
-		if (i > 0) { // this is where a trough lies between background peaks
-			i--;
-			i = (int) Math.floor(cs.get(i));
+		for (int imax = cs.size() - 1; i < imax && Math.round(cs.get(i)) < pMax; i++);
+		int pBeg;
+		int pEnd;
+		if (i > 1) { // this is where a trough lies between background peaks
+			pBeg = pMax - 3; // only fit from just before peak
+			pEnd = 2*pMax - (int) Math.floor(cs.get(i-1));
+		} else {
+			int pDel = (int) (0.66*(pMax - Math.floor(cs.get(0)))); // part way to begin first peak
+			pBeg = pMax - pDel; 
+			pEnd = pMax + pDel;
 		}
-		p.setValue(pmax); // set these to indexes to allow slicing
-		p.setLimits(i == 0 ? 0 : pmax - 3, 2*pmax - i); // if there is a trough then only fit from just before peak 
+		p.setValue(pMax); // set these to indexes to allow slicing
+		p.setLimits(pBeg, pEnd);
 
 		p = pdf.getParameter(1);
 		// estimate FWHM from crossings at HM and finding the crossing that is less than max x
 		cs = DatasetUtils.crossings(x, h, h.max(true).doubleValue() * 0.5);
 		i = 1;
-		double xmax = x.getDouble(pmax);
+		double xmax = x.getDouble(pMax);
 		for (int imax = cs.size() - 2; i < imax && cs.get(i) < xmax; i++);
 		double xr = cs.get(i) - cs.get(i-1);
 		p.setLimits(dx, 2*xr);

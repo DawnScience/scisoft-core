@@ -100,7 +100,7 @@ public class RixsBaseModel extends AbstractOperationModel {
 		return cutoff;
 	}
 
-	public void setCutoff(int cutoff) {
+	public void setCutoff(double cutoff) {
 		firePropertyChange("setCutoff", this.cutoff, this.cutoff = cutoff);
 	}
 

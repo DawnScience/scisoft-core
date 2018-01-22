@@ -126,6 +126,12 @@ public class HistogramTest {
 		assertEquals(1, pd.getInt(0));
 		assertEquals(1, pd.getInt(512));
 		assertEquals(1, pd.getInt(1023));
+
+		histo = new Histogram(1024, 0, 0, true);
+		pd = histo.value(d).get(0);
+
+		assertEquals(1024, pd.getSize());
+		assertEquals(d.getSize(), pd.getInt(0));
 	}
 
 	/**
@@ -151,6 +157,94 @@ public class HistogramTest {
 		Dataset pd = histo.value(DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 2, 201)).get(0);
 		assertEquals(1, pd.getSize());
 		assertEquals(101, pd.getInt(0));
+	}
+
+	/**
+	 * 
+	 */
+	@Test
+	public void testHistogram10() {
+		int bins = 1023;
+		Histogram histo = new Histogram(bins, 0, 100.0, true);
+
+		double[] edgeValues = new double [] {0, Double.MIN_VALUE, Double.MIN_NORMAL, Math.nextDown(100.0), 100, Math.nextUp(100.0)};
+
+		Dataset pd = histo.value(DatasetFactory.createFromObject(edgeValues)).get(0);
+
+		assertEquals(bins, pd.getSize());
+		assertEquals(3, pd.getInt(0));
+		assertEquals(2, pd.getInt(bins - 1)); // == are counted at top
+	}
+
+	/**
+	 * 
+	 */
+	@Test
+	public void testHistogram11() {
+		int bins = 2048;
+		double min = -0.9647109185159629;
+		double max = 0.9989960485318626;
+		Histogram histo = new Histogram(bins, min, max, true);
+
+		double[] edgeValues = new double [] {Math.nextDown(min), min, Math.nextUp(min),
+				Math.nextDown(max), max, Math.nextUp(max), 0.9989960485318625};
+
+		Dataset pd = histo.value(DatasetFactory.createFromObject(edgeValues)).get(0);
+
+		assertEquals(bins, pd.getSize());
+		assertEquals(2, pd.getInt(0));
+		assertEquals(3, pd.getInt(bins - 1));
+	}
+
+	/**
+	 * 
+	 */
+	@Test
+	public void testHistogram12() {
+		int bins = 2048;
+		double max = 0.9647109185159629;
+		double min = -0.9989960485318626;
+		Histogram histo = new Histogram(bins, min, max, true);
+
+		double[] edgeValues = new double [] {-0.9989960485318625, Math.nextDown(min), min, Math.nextUp(min),
+				Math.nextDown(max), max, Math.nextUp(max)};
+
+		Dataset pd = histo.value(DatasetFactory.createFromObject(edgeValues)).get(0);
+
+		assertEquals(bins, pd.getSize());
+		assertEquals(3, pd.getInt(0));
+		assertEquals(2, pd.getInt(bins - 1));
+	}
+
+	/**
+	 * 
+	 */
+	@Test
+	public void testHistogramNoException() {
+		int bins = 2048;
+		double max = 0.9989960485318626;
+		Histogram h = new Histogram(bins, max, max, true);
+		Dataset pd = h.value(d).get(0);
+		assertEquals(bins, pd.getSize());
+		assertEquals(d.getSize(), pd.getInt(0));
+
+		h = new Histogram(bins, Math.nextDown(max), max, true);
+		pd = h.value(d).get(0);
+		assertEquals(bins, pd.getSize());
+		assertEquals(d.getSize(), pd.getInt(0));
+}
+
+	/**
+	 * 
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testHistogramException() {
+		int bins = 2048;
+		double max = 0.9989960485318626;
+		Histogram h = new Histogram(bins, Math.nextUp(max), max, true);
+		Dataset pd = h.value(d).get(0);
+		assertEquals(bins, pd.getSize());
+		assertEquals(d.getSize(), pd.getInt(0));
 	}
 
 	/**

@@ -138,17 +138,17 @@ public class Histogram implements DatasetToDatasetFunction {
 				}
 				final double[] edges = bins.getData();
 				final double lo = edges[0];
-				final double hi = edges[nbins];
-				final double span = (hi - lo)/nbins;
+				final double hi = Math.nextDown(edges[nbins]);
 
 				IntegerDataset histo = DatasetFactory.zeros(IntegerDataset.class, nbins);
 				final int[] h = histo.getData();
-				if (span <= 0) {
+				if (lo >= hi) {
 					h[0] = ds.getSize();
 					result.add(histo);
 					result.add(bins);
 					continue;
 				}
+				final double f = nbins/(hi - lo);
 
 				Dataset a = DatasetUtils.convertToDataset(ds);
 				IndexIterator iter = a.getIterator();
@@ -161,12 +161,12 @@ public class Histogram implements DatasetToDatasetFunction {
 						}
 						h[0]++;
 					} else if (val >= hi) {
-						if (val > hi && ignoreOutliers) {
+						if (val > edges[nbins] && ignoreOutliers) {
 							continue;
 						}
-						h[nbins-1]++;
+						h[nbins - 1]++;
 					} else {
-						h[(int) ((val - lo) / span)]++;
+						h[(int) ((val - lo) * f)]++;
 					}
 				}
 				result.add(histo);
@@ -228,7 +228,7 @@ public class Histogram implements DatasetToDatasetFunction {
 	public void setMinMax(double min, double max) {
 		this.min = min;
 		this.max = max;
-		bins = DatasetFactory.createLinearSpace(DoubleDataset.class, min, max, nbins + 1);		
+		bins = DatasetFactory.createLinearSpace(DoubleDataset.class, min, max, nbins + 1);
 	}
 
 	/**

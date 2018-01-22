@@ -27,7 +27,7 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 	@OperationModelField(label = "Background PDF")
 	private BackgroundPixelPDF backgroundPDF = BackgroundPixelPDF.Gaussian;
 
-	@OperationModelField(label = "Signal to background ratio", min=1, max=50)
+	@OperationModelField(label = "Signal to background ratio", min=1)
 	private double ratio = 3.0;
 
 	public static final int HISTOGRAM_MAX_BINS = 1024*1024;

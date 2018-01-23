@@ -137,6 +137,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 				in.setByBoolean(0, hots);
 			}
 
+			log.append("Processing region %d", r);
 			result = processImageRegion(r, input, in);
 		}
 

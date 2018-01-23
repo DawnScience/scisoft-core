@@ -19,6 +19,8 @@ import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 
+import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
+
 public class ExampleDataUtils {
 
 	
@@ -33,11 +35,15 @@ public class ExampleDataUtils {
 			NexusFile file = new NexusFileFactoryHDF5().newNexusFile(tmp.getAbsolutePath());
 			file.createAndOpenToWrite();
 			GroupNode entryGroup = file.getGroup("/entry1", true);
-			
+			file.addAttribute(entryGroup, new AttributeImpl(NexusFile.NXCLASS, "NXentry"));
+
+			GroupNode dataGroup = file.getGroup(entryGroup, "data", NexusTreeUtils.NX_DATA, true);
+
 			Dataset data = DatasetFactory.ones(shape);
 			data.imultiply(10);
 			data.setName("data");
-			DataNode dataNode = file.createData(entryGroup, data);
+			DataNode dataNode = file.createData(dataGroup, data);
+
 			file.addAttribute(dataNode, new AttributeImpl("signal", 1));
 			
 			for (int i = 0; i < shape.length; i++) {
@@ -45,7 +51,7 @@ public class ExampleDataUtils {
 				Dataset ax = DatasetFactory.createRange(shape[i]);
 				ax.imultiply(i);
 				ax.setName("axis" + i);
-				dataNode = file.createData(entryGroup, ax);
+				dataNode = file.createData(dataGroup, ax);
 				file.addAttribute(dataNode, new AttributeImpl("axis", i+1));
 			}
 			

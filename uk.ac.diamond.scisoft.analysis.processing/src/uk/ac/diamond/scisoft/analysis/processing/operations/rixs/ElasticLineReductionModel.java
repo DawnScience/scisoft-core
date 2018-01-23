@@ -16,8 +16,8 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
  */
 public class ElasticLineReductionModel extends RixsBaseModel {
 
-	@OperationModelField(label = "Width of strip to use to find elastic line", hint = "1 for using column maxima, 2+ for summing and fitting line", min = 1)
-	private int delta = 25;
+	@OperationModelField(label = "Width of strip to use to find elastic line", hint = "0 for minimizing FWHM of summed spectra, 1 for using column maxima, 2+ for summing and fitting line", min = 0)
+	private int delta = 0;
 
 	@OperationModelField(label = "Maximum magnitude of straight line slope", min = 1e-6, max = 1)
 	private double maxSlope = 0.2;

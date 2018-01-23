@@ -16,9 +16,11 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
+import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationDataForDisplay;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.processing.OperationLog;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
@@ -40,12 +42,15 @@ import org.eclipse.january.dataset.Stats;
 import org.eclipse.january.metadata.AxesMetadata;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Add;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.CoordinatesIterator;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Offset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
+import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsBaseModel.ENERGY_DIRECTION;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
@@ -182,7 +187,9 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			// needs to give fake results for first slice
 			if (si.getSliceNumber() == smax - 1) {
 				summaryData.clear();
-				displayData.clear();
+				if (smax != 1) { // display when there is only one image
+					displayData.clear();
+				}
 //				odd.setAuxData();
 				double[] dispersion = new double[roiMax];
 				for (int r = 0; r < roiMax; r++) {
@@ -218,12 +225,6 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 					}
 				}
 				out.setMetadata(outssm);
-
-				if (displayData.size() > 0) {
-					for (IDataset d : displayData) {
-						summaryData.add(d);
-					}
-				}
 			}
 		}
 
@@ -257,32 +258,37 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		}
 
 		Dataset[] coords;
-		if (model.getDelta() == 1) {
-			coords = processPerRowMax(in);
+		if (model.getDelta() != 0) {
+			if (model.getDelta() == 1) {
+				coords = processPerRowMax(in);
+			} else {
+				coords = processBySummedRows(r, in);
+			}
+
+			// shift coords
+			coords[0].iadd(offset[0]);
+			coords[1].iadd(offset[1]);
+	
+			// fit, prune and refit
+			int ymax = original.getShape()[model.getEnergyIndex()];
+			
+			BooleanDataset mask;
+			try {
+				mask = fitStraightLine(r, model.getDelta() == 1, ymax, coords[0], coords[1]);
+			} catch (OperationException e) {
+				createInvalidOperationData(r, e);
+				return original;
+			}
+	
+			coords[0] = coords[0].getByBoolean(mask);
+			coords[1] = coords[1].getByBoolean(mask);
+
+			if (r == 0) {
+				addDisplayData(r, coords);
+			}
 		} else {
-			coords = processBySummedRows(r, in);
+			minimizeFWHMForSpectrum(r, in);
 		}
-
-		// shift coords
-		coords[0].iadd(offset[0]);
-		coords[1].iadd(offset[1]);
-
-		// fit, prune and refit
-		int ymax = original.getShape()[model.getEnergyIndex()];
-		
-		BooleanDataset mask;
-		try {
-			mask = fitStraightLine(r, model.getDelta() == 1, ymax, coords[0], coords[1]);
-		} catch (OperationException e) {
-			createInvalidOperationData(r, e);
-			return original;
-		}
-
-		coords[0] = coords[0].getByBoolean(mask);
-		coords[1] = coords[1].getByBoolean(mask);
-		
-		addDisplayData(r, coords);
-
 		StraightLine line = getStraightLine(r);
 		addAuxData(r, line.getParameterValue(0), line.getParameterValue(1), residual);
 
@@ -298,6 +304,159 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		}
 
 		return original;
+	}
+
+	private void minimizeFWHMForSpectrum(int r, Dataset in) {
+		Dataset s = sumImageAlongSlope(in, 0);
+		s.setName("raw spectrum");
+		auxData.add(s);
+
+		Add peak = new Add();
+		peak.addFunction(new Gaussian());
+		peak.addFunction(new Offset());
+
+		// assume max is where the peak to be sharpened is located
+		double w = findFWHM2(peak, DatasetFactory.createRange(s.getSize()), s);
+		int pos = (int) Math.round(peak.getParameterValue(0));
+		int del = Math.max(s.getSize()/8, (int) Math.ceil(30 * w));
+		// work out interval and make some aux data of FWHMs
+		Slice slice = new Slice(Math.max(0, pos - del), Math.min(s.getSize(), pos + del));
+		log.append("Raw spectrum has max at %d with FWHM of %g", pos, w);
+		log.append("Slice interval for peak is %s", slice);
+		System.err.printf("Raw spectrum has max at %d with FWHM of %g\n", pos, w);
+		System.err.printf("Slice interval for peak is %s\n", slice);
+
+		Dataset sin = in.getSliceView((Slice) null, slice);
+		Dataset sx = DatasetFactory.createRange(DoubleDataset.class, slice.getStart(), slice.getStop(), 1);
+//		sin.setName("subimage");
+//		auxData.add(sin);
+
+		FWHMForSpectrum fn = new FWHMForSpectrum(sx, sin, peak);
+		IParameter param = fn.getParameter(0);
+		int n = 33;
+		Dataset slopes = DatasetFactory.createLinearSpace(DoubleDataset.class, -16, 16, n).idivide(16*16);
+		slopes.setName("slope");
+		Dataset summed = DatasetFactory.zeros(n, sin.getShapeRef()[1]);
+		DoubleDataset fwhm = DatasetFactory.zeros(n);
+		for (int i = 0; i < n; i++) {
+			double x = slopes.getDouble(i);
+			Dataset ns = sumImageAlongSlope(sin, x);
+			fwhm.setItem(findFWHM2(peak, sx, ns), i);
+			summed.setSlice(ns, new Slice(i, i+1));
+//			param.setValue(slopes.getDouble(i));
+//			fwhm.setItem(fn.val(), i);
+		}
+
+		int pmin = fwhm.argMin(true);
+		log.append("Minimal FWHM at slope of %g ", slopes.getDouble(pmin));
+		fwhm.setName("FWHM");
+		ProcessingUtils.setAxes(fwhm, slopes);
+		auxData.add(fwhm);
+		if (r == 0) {
+			displayData.add(fwhm);
+		}
+		summed.setName("summed");
+		ProcessingUtils.setAxes(summed, slopes);
+		auxData.add(summed);
+
+		// crop limits to turning point of minimum
+		Dataset diff = Maths.derivative(DatasetFactory.createRange(n), fwhm, 3);
+		List<Double> cs = DatasetUtils.crossings(diff, 0);
+		int i = 0;
+		int imax = cs.size() - 1;
+		log.append("Zero crossings of FWHM derivative: %s", cs);
+		for (; i <= imax && Math.round(cs.get(i)) < pmin; i++);
+//		if (i > 0) { // this is where a trough lies between background peaks
+//			i--;
+//			i = (int) Math.floor(cs.get(i));
+//		}
+		int imin = 0;
+		if (i > 0) {
+			imin = (int) Math.ceil(cs.get(i - 1));
+//			imax = (int) Math.floor(cs.get(Math.min(imax, i + 2)));
+		} else {
+			imin = 0;
+		}
+		for (; i <= imax && Math.round(cs.get(i)) < pmin; i++);
+//		int imin = i > 0 ? (int) Math.floor(cs.get(--i)) : 0;
+		imax = (int) Math.floor(cs.get(Math.min(imax, i)));
+		if (imax < pmin) {
+			imax = n - 1;
+		}
+
+		// minimize FWHM
+		param.setLimits(slopes.getDouble(imin), slopes.getDouble(imax));
+		param.setValue(slopes.getDouble(pmin));
+		log.append("Initial parameter settings: %g [%g, %g]", param.getValue(), param.getLowerLimit(), param.getUpperLimit());
+		IOptimizer optimizer = new ApacheOptimizer(Optimizer.SIMPLEX_NM);
+		try {
+			optimizer.optimize(true, fn);
+			StraightLine line = getStraightLine(r);
+			line.getParameter(0).setValue(-param.getValue());
+//			Dataset ns = sumImageAlongSlope(sin, param.getValue());
+			line.getParameter(1).setValue(peak.getParameterValue(0));
+			log.append("Optimized minimal FWHM at slope of %g", param.getValue());
+			System.err.printf("Optimized minimal FWHM at slope of %g\n", param.getValue());
+		} catch (Exception e) {
+			log.append("Error minimizing FWHM for peak in spectrum: %s", e.getMessage());
+			throw new OperationException(this, "Error minimizing FWHM for peak in spectrum", e);
+		}
+	}
+
+	private class FWHMForSpectrum extends AFunction {
+		private static final long serialVersionUID = 5751477494591603033L;
+		final Dataset image;
+		private IFunction peak;
+		private Dataset rx;
+
+		public FWHMForSpectrum(Dataset rx, Dataset image, IFunction peak) {
+			super(1);
+			this.image = image;
+			this.peak = peak;
+			this.rx = rx;
+		}
+
+		@Override
+		public double val(double... values) {
+			double x = getParameterValue(0);
+			Dataset ns = sumImageAlongSlope(image, x);
+			return findFWHM2(peak, rx, ns);
+		}
+
+		@Override
+		protected void setNames() {
+			setNames("FWHM", "Full-width half maximum when summing along given slope", "slope");
+		}
+
+		@Override
+		public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
+			double f = val();
+			it.reset();
+			int i = 0;
+			double[] buffer = data.getData();
+			while (it.hasNext()) {
+				buffer[i++] = f;
+			}
+		}
+	}
+
+	/**
+	 * Find full-width at half-maximum from fitting a peak
+	 * @param peak
+	 * @param x dataset
+	 * @param y dataset
+	 * @return FWHM
+	 */
+	public static double findFWHM2(IFunction peak, Dataset x, Dataset y) {
+		initializeFunctionParameters(null, peak, y);
+		double res = Double.POSITIVE_INFINITY;
+		try {
+			res = fitFunction(null, null, peak, x, y, null);
+			System.err.println("Peak fit is " + peak + " with residual " + res);
+		} catch (Exception e) {
+			
+		}
+		return peak.getParameterValue(1);
 	}
 
 	private void addAuxData(int i, double m, double c, double r) {
@@ -371,7 +530,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		for (int i = 0; i < ns; i++) {
 			spectrum = goodSpectra[r].get(i);
 			log.append("Fitting elastic peak: %d/%d", i, ns);
-			initializeFunctionParameters(peak, spectrum);
+			initializeFunctionParameters(this, peak, spectrum);
 			double res = Double.POSITIVE_INFINITY;
 			try {
 				res = fitFunction(peak, x, spectrum, null);
@@ -491,7 +650,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 		Dataset v = image.sum(0);
 		log.append("Sum %s/%s", v.sum(), v.toString(true));
-		initializeFunctionParameters(peak, v);
+		initializeFunctionParameters(this, peak, v);
 		log.append("Initial peak:\n%s", peak);
 
 		// fit entire image so as to initialise per summed row fits
@@ -590,6 +749,10 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	}
 
 	protected double fitFunction(IFunction f, Dataset x, Dataset v, Dataset m) {
+		return fitFunction(this, log, f, x, v, m);
+	}
+
+	protected static double fitFunction(IOperation<?, ?> op, OperationLog llog, IFunction f, Dataset x, Dataset v, Dataset m) {
 		if (m != null) {
 			x = x.getByBoolean(m);
 			v = v.getByBoolean(m);
@@ -602,21 +765,23 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			residual = opt.calculateResidual();
 			errors = opt.guessParametersErrors();
 		} catch (Exception fittingError) {
-			throw new OperationException(this, "Exception performing fit in ElasticLineReduction()", fittingError);
+			throw new OperationException(op, "Exception performing fit in ElasticLineReduction()", fittingError);
 		}
 
 		if (errors == null) {
-			throw new OperationException(this, "Exception performing fit in ElasticLineReduction()");
+			throw new OperationException(op, "Exception performing fit in ElasticLineReduction()");
 		}
-		log.append("Fitted function: residual = %g\n%s", residual, f);
-		log.append("Peak is %g cf %g", f.val(f.getParameter(0).getValue()), v.max().doubleValue());
+		if (llog != null) {
+			llog.append("Fitted function: residual = %g\n%s", residual, f);
+			llog.append("Peak is %g cf %g", f.val(f.getParameter(0).getValue()), v.max().doubleValue());
+		}
 		return residual;
 	}
 
-	protected void initializeFunctionParameters(IFunction pdf, Dataset v) {
+	protected static void initializeFunctionParameters(IOperation<?,?> op, IFunction pdf, Dataset v) {
 		IParameter p = pdf.getParameter(0);
 		if (v.max(true).doubleValue() == 0) {
-			throw new OperationException(this, "Cannot fit to data with maximum value of zero");
+			throw new OperationException(op, "Cannot fit to data with maximum value of zero");
 		}
 
 		int pmax = v.argMax(true); // position of maximum

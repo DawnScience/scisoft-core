@@ -250,7 +250,6 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 		// check if image has sufficient signal: anything less than 100 photons is insufficient
 		double sum = ((Number) in.sum()).doubleValue();
-		System.err.println(sum / countsPerPhoton);
 		log.append("Number of photons, estimated: %g", sum / countsPerPhoton);
 		if (sum < requiredPhotons) {
 			createInvalidOperationData(r, new OperationException(this, "Not enough signal for elastic line"));
@@ -316,15 +315,13 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		peak.addFunction(new Offset());
 
 		// assume max is where the peak to be sharpened is located
-		double w = findFWHM2(peak, DatasetFactory.createRange(s.getSize()), s);
+		double w = findFWHM(peak, DatasetFactory.createRange(s.getSize()), s);
 		int pos = (int) Math.round(peak.getParameterValue(0));
 		int del = Math.max(s.getSize()/8, (int) Math.ceil(30 * w));
 		// work out interval and make some aux data of FWHMs
 		Slice slice = new Slice(Math.max(0, pos - del), Math.min(s.getSize(), pos + del));
 		log.append("Raw spectrum has max at %d with FWHM of %g", pos, w);
 		log.append("Slice interval for peak is %s", slice);
-		System.err.printf("Raw spectrum has max at %d with FWHM of %g\n", pos, w);
-		System.err.printf("Slice interval for peak is %s\n", slice);
 
 		Dataset sin = in.getSliceView((Slice) null, slice);
 		Dataset sx = DatasetFactory.createRange(DoubleDataset.class, slice.getStart(), slice.getStop(), 1);
@@ -341,10 +338,8 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		for (int i = 0; i < n; i++) {
 			double x = slopes.getDouble(i);
 			Dataset ns = sumImageAlongSlope(sin, x);
-			fwhm.setItem(findFWHM2(peak, sx, ns), i);
+			fwhm.setItem(findFWHM(peak, sx, ns), i);
 			summed.setSlice(ns, new Slice(i, i+1));
-//			param.setValue(slopes.getDouble(i));
-//			fwhm.setItem(fn.val(), i);
 		}
 
 		int pmin = fwhm.argMin(true);
@@ -366,19 +361,13 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		int imax = cs.size() - 1;
 		log.append("Zero crossings of FWHM derivative: %s", cs);
 		for (; i <= imax && Math.round(cs.get(i)) < pmin; i++);
-//		if (i > 0) { // this is where a trough lies between background peaks
-//			i--;
-//			i = (int) Math.floor(cs.get(i));
-//		}
 		int imin = 0;
 		if (i > 0) {
 			imin = (int) Math.ceil(cs.get(i - 1));
-//			imax = (int) Math.floor(cs.get(Math.min(imax, i + 2)));
 		} else {
 			imin = 0;
 		}
 		for (; i <= imax && Math.round(cs.get(i)) < pmin; i++);
-//		int imin = i > 0 ? (int) Math.floor(cs.get(--i)) : 0;
 		imax = (int) Math.floor(cs.get(Math.min(imax, i)));
 		if (imax < pmin) {
 			imax = n - 1;
@@ -393,10 +382,9 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			optimizer.optimize(true, fn);
 			StraightLine line = getStraightLine(r);
 			line.getParameter(0).setValue(-param.getValue());
-//			Dataset ns = sumImageAlongSlope(sin, param.getValue());
 			line.getParameter(1).setValue(peak.getParameterValue(0));
 			log.append("Optimized minimal FWHM at slope of %g", param.getValue());
-			System.err.printf("Optimized minimal FWHM at slope of %g\n", param.getValue());
+//			System.err.printf("Optimized minimal FWHM at slope of %g\n", param.getValue());
 		} catch (Exception e) {
 			log.append("Error minimizing FWHM for peak in spectrum: %s", e.getMessage());
 			throw new OperationException(this, "Error minimizing FWHM for peak in spectrum", e);
@@ -420,7 +408,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		public double val(double... values) {
 			double x = getParameterValue(0);
 			Dataset ns = sumImageAlongSlope(image, x);
-			return findFWHM2(peak, rx, ns);
+			return findFWHM(peak, rx, ns);
 		}
 
 		@Override
@@ -447,12 +435,12 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	 * @param y dataset
 	 * @return FWHM
 	 */
-	public static double findFWHM2(IFunction peak, Dataset x, Dataset y) {
+	public static double findFWHM(IFunction peak, Dataset x, Dataset y) {
 		initializeFunctionParameters(null, peak, y);
-		double res = Double.POSITIVE_INFINITY;
+//		double res = Double.POSITIVE_INFINITY;
 		try {
-			res = fitFunction(null, null, peak, x, y, null);
-			System.err.println("Peak fit is " + peak + " with residual " + res);
+			fitFunction(null, null, peak, x, y, null);
+//			System.err.println("Peak fit is " + peak + " with residual " + res);
 		} catch (Exception e) {
 			
 		}

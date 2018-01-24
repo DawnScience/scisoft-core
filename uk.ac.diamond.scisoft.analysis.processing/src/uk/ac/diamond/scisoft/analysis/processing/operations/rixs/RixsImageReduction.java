@@ -105,13 +105,12 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			energyDispersion[1] = energyDispersion[0];
 		}
 
-		if (model.getFitFileOption() == FIT_FILE_OPTION.MANUAL_OVERRIDE) {
-			file = model.getFitFile();
-			if (file == null) {
-				file = model.getCalibrationFile();
-			}
-			initializeFitLine(file);
+		// done regardless of fit file option but gets overwrite when not manual override
+		file = model.getFitFile();
+		if (file == null) {
+			file = model.getCalibrationFile();
 		}
+		initializeFitLine(file);
 
 		if (model.isRegionsFromFile()) {
 			file = model.getFitFile();

@@ -185,10 +185,12 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					}
 				}
 
-				initializeFitLine(fitFile);
-				if (fitFile != null && model.isRegionsFromFile()) {
-					initializeROIsFromFile(fitFile);
-					updateROICount();
+				if (fitFile != null) {
+					initializeFitLine(fitFile);
+					if (model.isRegionsFromFile()) {
+						initializeROIsFromFile(fitFile);
+						updateROICount();
+					}
 				}
 			}
 		}

@@ -14,7 +14,6 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
-import org.eclipse.dawnsci.hdf.object.operation.HierarchicalFileExecutionVisitor;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
@@ -29,6 +28,7 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.operations.RotatedCartesianBox;
 import uk.ac.diamond.scisoft.analysis.processing.operations.RotatedCartesianBoxModel;
+import uk.ac.diamond.scisoft.analysis.processing.visitor.NexusFileExecutionVisitor;
 
 public class RotatedCartesianBoxToFileTest {
 	
@@ -92,7 +92,7 @@ private static IOperationService service;
 			long time =  System.currentTimeMillis();
 			
 			context.setSeries(rotatedCartesianBox);
-			context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+			context.setVisitor(new NexusFileExecutionVisitor(tmp.getAbsolutePath()));
 			
 			service.execute(context);
 			

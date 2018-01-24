@@ -51,7 +51,7 @@ public class NexusFileMultiThreadedRunnerTest {
 		
 		int[] inputShape = new int[] {30,1000};
 		
-		ILazyDataset lazy = HierarchicalFileExVisitorTest.getLazyDataset(inputShape,1);
+		ILazyDataset lazy = NexusFileExecutionVisitorTest.getLazyDataset(inputShape,1);
 		
 		
 		final IOperationContext context = service.createContext();

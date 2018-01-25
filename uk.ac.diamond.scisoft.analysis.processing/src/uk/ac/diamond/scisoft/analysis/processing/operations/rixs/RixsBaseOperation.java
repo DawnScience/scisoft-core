@@ -233,7 +233,21 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			spectrum = DatasetFactory.zeros(rows).fill(Double.NaN);
 		}
 
+		if (model.getEnergyOffsetOption() == ENERGY_OFFSET.TURNING_POINT) {
+			int offset = findTurningPoint(false, spectrum);
+			elastic.isubtract(offset);
+		}
 		return new Dataset[] {elastic, spectrum};
+	}
+
+	private int findTurningPoint(boolean fromFirst, Dataset y) {
+		int n = y.getSize();
+		Dataset diff = Maths.derivative(DatasetFactory.createRange(n), y, 3);
+		List<Double> cs = DatasetUtils.crossings(diff, 0);
+		if (cs.size() == 0) {
+			return 0;
+		}
+		return (int) (fromFirst ? Math.floor(cs.get(0)) : Math.ceil(cs.get(cs.size() - 1)));
 	}
 
 	/**

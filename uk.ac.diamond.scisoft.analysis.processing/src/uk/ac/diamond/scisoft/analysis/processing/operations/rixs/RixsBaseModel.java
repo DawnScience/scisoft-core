@@ -39,10 +39,10 @@ public class RixsBaseModel extends AbstractOperationModel {
 	public enum ENERGY_OFFSET {
 		FROM_ELASTIC_LINE_FIT, // use value of intercept in fit
 		MANUAL_OVERRIDE, // override if values are available
-		// TURNING_POINT,
+		TURNING_POINT,
 	}
 
-	@OperationModelField(label = "Zero energy offset option", hint = "From elastic line fit; manual override by given values")
+	@OperationModelField(label = "Zero energy offset option", hint = "From elastic line fit; manual override by given values; or from first turning point")
 	private ENERGY_OFFSET energyOffsetOption = ENERGY_OFFSET.FROM_ELASTIC_LINE_FIT;
 
 	@OperationModelField(label = "Zero energy offset value for rectangle A", hint = "Position on energy axis in pixels")
@@ -134,6 +134,6 @@ public class RixsBaseModel extends AbstractOperationModel {
 	}
 
 	public void setEnergyOffsetB(double energyOffsetB) {
-		firePropertyChange("setEnergyOffsetA", this.energyOffsetB, this.energyOffsetB = energyOffsetB);
+		firePropertyChange("setEnergyOffsetB", this.energyOffsetB, this.energyOffsetB = energyOffsetB);
 	}
 }

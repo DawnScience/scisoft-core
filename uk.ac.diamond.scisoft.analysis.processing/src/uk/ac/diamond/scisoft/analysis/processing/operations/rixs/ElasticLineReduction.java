@@ -357,9 +357,12 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		// crop limits to turning point of minimum
 		Dataset diff = Maths.derivative(DatasetFactory.createRange(n), fwhm, 3);
 		List<Double> cs = DatasetUtils.crossings(diff, 0);
-		int i = 0;
-		int imax = cs.size() - 1;
 		log.append("Zero crossings of FWHM derivative: %s", cs);
+		int imax = cs.size() - 1;
+		if (imax < 0) {
+			throw new OperationException(this, "No turning points found in FWHM");
+		}
+		int i = 0;
 		for (; i <= imax && Math.round(cs.get(i)) < pmin; i++);
 		int imin = 0;
 		if (i > 0) {
@@ -442,7 +445,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			fitFunction(null, null, peak, x, y, null);
 //			System.err.println("Peak fit is " + peak + " with residual " + res);
 		} catch (Exception e) {
-			
+			return Double.POSITIVE_INFINITY;
 		}
 		return peak.getParameterValue(1);
 	}

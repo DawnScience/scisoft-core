@@ -111,7 +111,6 @@ public class JythonPath {
 		"org.dawnsci.boofcv", // required for boofcv services
 		"org.ddogleg",
 		"hdf.hdf5lib",
-		"hdf.object", // used in dawnsci.hdf.HDF5Utils as well as older Hierarchical stuff
 		"org.dawnsci.persistence" // Required for I11 LDE script
 	};
 

@@ -21,7 +21,6 @@ import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
-import org.eclipse.dawnsci.hdf.object.operation.HierarchicalFileExecutionVisitor;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -30,8 +29,9 @@ import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
+import uk.ac.diamond.scisoft.analysis.processing.visitor.NexusFileExecutionVisitor;
 
-public class HierarchicalFileExVistWorkflowRunnerTest {
+public class NexusFileExVistWorkflowRunnerTest {
 	
 	private static IOperationService service;
 	
@@ -51,7 +51,7 @@ public class HierarchicalFileExVistWorkflowRunnerTest {
 		
 		int[] inputShape = new int[] {30,1000};
 		
-		ILazyDataset lazy = HierarchicalFileExVisitorTest.getLazyDataset(inputShape,1);
+		ILazyDataset lazy = NexusFileExecutionVisitorTest.getLazyDataset(inputShape,1);
 		
 		
 		final IOperationContext context = service.createContext();
@@ -73,7 +73,7 @@ public class HierarchicalFileExVistWorkflowRunnerTest {
 		tmp.deleteOnExit();
 		tmp.createNewFile();
 		
-		context.setVisitor(new HierarchicalFileExecutionVisitor(tmp.getAbsolutePath()));
+		context.setVisitor(new NexusFileExecutionVisitor(tmp.getAbsolutePath()));
 		context.setSeries(op1, op2, op3);
 		context.setExecutionType(ExecutionType.PARALLEL);
 		service.execute(context);

@@ -75,7 +75,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	private double residual;
 	private Dataset position;
 	private boolean useSpectrum = true;
-	private boolean isImageGood = false;
+	private Dataset output;
 
 	protected List<Double>[] goodPosition = new List[] {new ArrayList<>(), new ArrayList<>()}; 
 	protected List<Double>[] goodIntercept = new List[] {new ArrayList<>(), new ArrayList<>()};
@@ -105,7 +105,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	private void createInvalidOperationData(int r, Exception e) {
 		log.append("Operation halted!");
 		log.append("%s", e);
-		addAuxData(r, Double.NaN, Double.NaN, Double.NaN);
+		processFit(r, null, Double.NaN, Double.NaN, Double.NaN);
 	}
 
 	private void addDisplayData(int i, Dataset[] coords) {
@@ -159,6 +159,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
+		output = null;
 		OperationData od = super.process(input, monitor);
 		IDataset data = od.getData();
 		if (data != null) {
@@ -176,8 +177,6 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		SliceInformation si = ssm.getSliceInfo();
 
 		// aggregate aux data???
-
-		Dataset out = null;
 
 		if (si != null) {
 			int smax = si.getTotalSlices();
@@ -214,17 +213,17 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 					log.append("Dispersion is %g for residual %g", dispersion[r], res[0]);
 				}
 
-				out = ProcessingUtils.createNamedDataset(dispersion, "energy_dispersion").reshape(1, roiMax);
-				copyMetadata(input, out);
-				out.clearMetadata(AxesMetadata.class);
-				out.clearMetadata(SliceFromSeriesMetadata.class);
+				output = ProcessingUtils.createNamedDataset(dispersion, "energy_dispersion").reshape(1, roiMax);
+				copyMetadata(input, output);
+				output.clearMetadata(AxesMetadata.class);
+				output.clearMetadata(SliceFromSeriesMetadata.class);
 				SliceFromSeriesMetadata outssm = ssm.clone();
 				for (int i = 0, imax = ssm.getParent().getRank(); i < imax; i++) {
 					if (!outssm.isDataDimension(i)) {
 						outssm.reducedDimensionToSingular(i);
 					}
 				}
-				out.setMetadata(outssm);
+				output.setMetadata(outssm);
 			}
 		}
 
@@ -236,7 +235,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		}
 		odd.setShowSeparately(true);
 		odd.setLog(log);
-		odd.setData(out);
+		odd.setData(output);
 		odd.setDisplayData(displayData.toArray(new IDataset[displayData.size()]));
 		odd.setAuxData(auxData.toArray(new Serializable[auxData.size()]));
 		odd.setSummaryData(summaryData.toArray(new Serializable[summaryData.size()]));
@@ -289,18 +288,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			minimizeFWHMForSpectrum(r, in);
 		}
 		StraightLine line = getStraightLine(r);
-		addAuxData(r, line.getParameterValue(0), line.getParameterValue(1), residual);
-
-		if (useSpectrum) { // use spectrum fitted with Gaussian for calibration fit
-			Dataset[] result = makeSpectrum(r, in);
-			Dataset spectrum = result[1];
-			spectrum.setName("elastic_spectrum_" + r);
-//			auxData.add(spectrum); // put in summary data instead
-
-			if (isImageGood) {
-				goodSpectra[r].add(spectrum);
-			}
-		}
+		processFit(r, in, line.getParameterValue(0), line.getParameterValue(1), residual);
 
 		return original;
 	}
@@ -450,19 +438,26 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		return peak.getParameterValue(1);
 	}
 
-	private void addAuxData(int i, double m, double c, double r) {
+	private void processFit(int i, Dataset in, double m, double c, double r) {
 		if (Double.isFinite(c)) {
 			goodPosition[i].add(position.getDouble());
 			goodIntercept[i].add(c);
+
+			if (useSpectrum && in != null) {
+				Dataset[] result = makeSpectrum(i, in);
+				Dataset spectrum = result[1];
+				spectrum.setName("elastic_spectrum_" + i);
+//				auxData.add(spectrum); // put in summary data instead
+				goodSpectra[i].add(spectrum);
+				if (i == 0) {
+					output = spectrum;
+				}
+			}
 		}
 	
 		auxData.add(addPositionAxis(ProcessingUtils.createNamedDataset(m, "line_%d_m", i)));
 		auxData.add(addPositionAxis(ProcessingUtils.createNamedDataset(c, "line_%d_c", i)));
 		auxData.add(addPositionAxis(ProcessingUtils.createNamedDataset(r, "residual_%d", i)));
-
-		if (useSpectrum) {
-			isImageGood = Double.isFinite(c);
-		}
 	}
 
 	/**

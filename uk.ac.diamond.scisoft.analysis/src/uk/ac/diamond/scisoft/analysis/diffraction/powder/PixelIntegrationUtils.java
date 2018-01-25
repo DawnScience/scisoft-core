@@ -248,6 +248,10 @@ public class PixelIntegrationUtils {
 				radialArrayMax.set(Math.toDegrees(Math.asin(vals[3] * w/(4*Math.PI))*2),pos);
 				radialArrayMin.set(Math.toDegrees(Math.asin(vals[0] * w/(4*Math.PI))*2),pos);
 				break;
+			case Qnm:
+				radialArrayMax.set(vals[3]*10,pos);
+				radialArrayMin.set(vals[0]*10,pos);
+				break;
 			case Q:
 			case PIXEL:
 				radialArrayMax.set(vals[3],pos);

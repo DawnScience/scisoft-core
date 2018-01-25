@@ -9,28 +9,22 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
-import java.util.List;
-
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IndexIterator;
-import org.eclipse.january.dataset.Maths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.IPixelIntegrationCache;
-import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegration;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationBean;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationCache;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
@@ -38,7 +32,6 @@ import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractRemappedExternalDataModel.DataType;
-import uk.ac.diamond.scisoft.analysis.processing.operations.oned.DigitalFilterOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 

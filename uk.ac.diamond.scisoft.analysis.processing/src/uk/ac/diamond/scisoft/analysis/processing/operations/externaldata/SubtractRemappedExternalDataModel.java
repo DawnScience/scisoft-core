@@ -45,9 +45,8 @@ public class SubtractRemappedExternalDataModel extends AbstractOperationModel {
 		}
 	}
 	
-	private boolean loadingNeXusFile = true;
-	
-	// Should we be integrating over a half or one Pi radians?
+
+	// What's the input file format?
 	@OperationModelField(label = "I vs q data format", hint = "NeXus or DAT (Tab-delimited text) format", fieldPosition = 1)
 	private DataType dataType = DataType.NeXus;
 
@@ -57,12 +56,6 @@ public class SubtractRemappedExternalDataModel extends AbstractOperationModel {
 	}
 
 	public void setDataType(DataType dataType) {
-		if (dataType == DataType.NeXus) {
-			this.loadingNeXusFile = true;
-		} else {
-			this.loadingNeXusFile = false;
-		}
-		
 		firePropertyChange("dataType", this.dataType, this.dataType = dataType);
 	}
 	

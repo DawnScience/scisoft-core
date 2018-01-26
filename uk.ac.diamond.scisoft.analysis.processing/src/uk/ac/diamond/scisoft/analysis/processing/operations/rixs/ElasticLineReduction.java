@@ -449,9 +449,9 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 				spectrum.setName("elastic_spectrum_" + i);
 //				auxData.add(spectrum); // put in summary data instead
 				goodSpectra[i].add(spectrum);
-				if (i == 0) {
-					output = spectrum;
-				}
+//				if (i == 0) { // cannot do this as it interferes with writing output
+//					output = spectrum;
+//				}
 			}
 		}
 	

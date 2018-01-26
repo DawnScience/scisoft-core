@@ -146,6 +146,8 @@ class ListDict(object):
             key = self.__odict__.keys()[key]
 
         if type(key) is StringType or type(key) is UnicodeType:
+            if self.__inter__:
+                key = sanitise_name(key, False)
             return self.__odict__.__getitem__(key)
         else:
             raise KeyError, "Key was not a string or integer"
@@ -184,6 +186,8 @@ class ListDict(object):
             key = self.__odict__.keys()[key]
 
         if type(key) is StringType:
+            if self.__inter__:
+                key = sanitise_name(key, False)
             self.__odict__.__delitem__(key)
             if self.__inter__:
                 self.__dict__.__delitem__(key)

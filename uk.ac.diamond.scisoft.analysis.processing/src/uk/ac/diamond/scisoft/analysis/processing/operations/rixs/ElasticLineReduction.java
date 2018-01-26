@@ -444,7 +444,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			goodIntercept[i].add(c);
 
 			if (useSpectrum && in != null) {
-				Dataset[] result = makeSpectrum(i, in);
+				Dataset[] result = makeSpectrum(i, in, 0);
 				Dataset spectrum = result[1];
 				spectrum.setName("elastic_spectrum_" + i);
 //				auxData.add(spectrum); // put in summary data instead

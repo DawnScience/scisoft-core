@@ -74,6 +74,9 @@ public class RixsImageReductionModel extends RixsBaseModel {
 	@OperationModelField(label = "Maximum number of frames to use", min = 0, hint = "Any value < 1 means all frames are used")
 	private int maxFrames = 0;
 
+	@OperationModelField(label = "Slope override", hint = "Any non-zero value is used to override the slopes from fit files")
+	private double slopeOverride = 0;
+
 	// TODO conditional override to fit parameters??
 
 	/**
@@ -218,4 +221,17 @@ public class RixsImageReductionModel extends RixsBaseModel {
 	public void setMaxFrames(int maxFrames) {
 		firePropertyChange("setMaxFrames", this.maxFrames, this.maxFrames = maxFrames);
 	}
+
+	/**
+	 * @return slope of elastic line. Non-zero values are used to override values from elastic fit files
+	 */
+	public double getSlopeOverride() {
+		return slopeOverride;
+	}
+
+	public void setSlopeOverride(double slopeOverride) {
+		firePropertyChange("setSlopeOverride", this.slopeOverride, this.slopeOverride = slopeOverride);
+	}
+
+
 }

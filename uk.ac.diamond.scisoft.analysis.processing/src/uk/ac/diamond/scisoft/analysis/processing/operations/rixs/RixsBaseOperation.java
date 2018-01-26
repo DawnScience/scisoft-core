@@ -201,7 +201,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			offset = r == 0 ? model.getEnergyOffsetA() : model.getEnergyOffsetB();
 		}
 		if (!Double.isFinite(offset)) {
-			offset = getStraightLine(r).val(0); // elastic line intercept
+			offset = getStraightLine(r).getParameterValue(1); // elastic line intercept
 		}
 		return offset;
 	}
@@ -209,15 +209,23 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	/**
 	 * @param r
 	 * @param in
+	 * @param slope override value
 	 * @return elastic line position and spectrum datasets
 	 */
-	public Dataset[] makeSpectrum(int r, Dataset in) {
+	public Dataset[] makeSpectrum(int r, Dataset in, double slope) {
 		// shift and accumulate spectra
 		int rows = in.getShapeRef()[0];
 		Dataset y = DatasetFactory.createRange(rows);
 		y.iadd(offset[0]);
 		StraightLine line = getStraightLine(r);
-		DoubleDataset elastic = line.calculateValues(y); // absolute position of elastic line to use a zero point
+		DoubleDataset elastic;
+		if (slope == 0) {
+			elastic = line.calculateValues(y); // absolute position of elastic line to use a zero point
+		} else {
+			elastic = DatasetFactory.createRange(rows);
+			elastic.imultiply(slope);
+			elastic.iadd(line.getParameterValue(1));
+		}
 		if (model.getEnergyOffsetOption() == ENERGY_OFFSET.MANUAL_OVERRIDE) {
 			double offset = r == 0 ? model.getEnergyOffsetA() : model.getEnergyOffsetB();
 			if (Double.isFinite(offset)) {
@@ -225,7 +233,6 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			}
 		}
 
-		double slope = line.getParameterValue(0);
 		Dataset spectrum;
 		if (Double.isFinite(slope)) {
 			spectrum = sumImageAlongSlope(in, -slope);

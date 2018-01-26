@@ -321,7 +321,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 
 	@Override
 	IDataset processImageRegion(int r, IDataset original, Dataset in) {
-		Dataset[] result = makeSpectrum(r, in);
+		Dataset[] result = makeSpectrum(r, in, model.getSlopeOverride());
 		Dataset spectrum = result[1];
 		spectrum.setName("spectrum_" + r);
 
@@ -331,9 +331,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		e.imultiply(-energyDispersion[r]);
 		e.setName("Energy loss");
 		ProcessingUtils.setAxes(spectrum, e);
-
 		auxData.add(spectrum);
-
 		allSpectra[r].add(spectrum);
 		return spectrum;
 	}

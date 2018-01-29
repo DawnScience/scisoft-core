@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
+import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationDataForDisplay;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -94,31 +95,20 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		IParameter p = pdf.getParameter(0);
 		int b = (int) p.getLowerLimit();
 		int e = (int) p.getUpperLimit();
-		int c = (int) p.getValue();
+		double cx = p.getValue();
+		int c = (int) cx - 1;
 		p.setLimits(bins.getDouble(c - 2), bins.getDouble(c + 2)); // set narrow range for fitting pdf position
-		double cx = bins.getDouble(c);
 		p.setValue(cx);
 		Slice slice = new Slice(b, e + 1, 1);
 
-		Dataset hf = h.getSliceView(slice);
-		Dataset xf = bins.getSliceView(slice);
-
-		residual = Double.POSITIVE_INFINITY;
-		try {
-			ApacheOptimizer opt = new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT);
-			opt.optimize(new Dataset[] {xf}, hf, pdf);
-			residual = opt.calculateResidual();
-		} catch (Exception fittingError) {
-			throw new OperationException(this, "Exception performing fit in SubtractFittedBackgroundOperation()", fittingError);
-		}
-
-		log.append("\nFitted PDF: residual = %g\n%s", residual, pdf);
+		residual = fitFunction(this, pdf, bins.getSliceView(slice), h.getSliceView(slice));
+		log.append("\nFitted PDF in %s: residual = %g\n%s", slice, residual, pdf);
 
 		fit = DatasetUtils.convertToDataset(pdf.calculateValues(x));
 		fit.setName("Background fit");
 
 		// find where given ratio occurs and is past peak position
-		List<Double> cs = DatasetUtils.crossings(bins.getSliceView(new Slice(-1)), Maths.dividez(h, fit), model.getRatio());
+		List<Double> cs = DatasetUtils.crossings(x, Maths.dividez(h, fit), model.getRatio());
 		threshold = -1;
 		for (Double d : cs) {
 			if (d > cx) {
@@ -138,6 +128,18 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 		log.append("Threshold = %d", threshold);
 		return DatasetUtils.select(Comparisons.lessThan(in, threshold), in, threshold);
+	}
+
+	static double fitFunction(IOperation<?, ?> op, IFunction fun, Dataset xf, IDataset hf) {
+		double residual = Double.POSITIVE_INFINITY;
+		try {
+			ApacheOptimizer opt = new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT);
+			opt.optimize(new Dataset[] {xf}, hf, fun);
+			residual = opt.calculateResidual();
+		} catch (Exception fittingError) {
+			throw new OperationException(op, "Exception performing fit", fittingError);
+		}
+		return residual;
 	}
 
 	@Override
@@ -193,14 +195,15 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		}
 
 		initializeFunctionParameters(x, h, pdf);
+		log.append("Initial PDF:\n%s", pdf);
 		return pdf;
 	}
 
-	private void initializeFunctionParameters(Dataset x, Dataset h, IFunction pdf) {
+	private static void initializeFunctionParameters(Dataset x, Dataset h, IFunction pdf) {
 		IParameter p = pdf.getParameter(0);
 		double xb = x.getDouble(0);
 		double dx = x.getDouble(1) - xb;
-		int pMax = h.argMax(true); // position of maximum
+		int pMax = x.getInt(h.maxPos(true)); // position of maximum
 
 		// determine if there are lower background peaks by checking zeros of derivative
 		// this implies there are troughs between the peaks
@@ -208,15 +211,13 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		// find index crossing less than max position
 		List<Double> cs = DatasetUtils.crossings(x, diff, 0);
 		int i = 0;
-		for (int imax = cs.size() - 1; i < imax && Math.round(cs.get(i)) < pMax; i++);
-		int pBeg;
+		for (int imax = cs.size() - 1; i < imax && (cs.get(i) - pMax < -1); i++);
+		int pBeg = pMax - 3; // only fit from just before peak as background peak can be unresolved
 		int pEnd;
 		if (i > 1) { // this is where a trough lies between background peaks
-			pBeg = pMax - 3; // only fit from just before peak
-			pEnd = 2*pMax - (int) Math.floor(cs.get(i-1));
+			pEnd = 2*pMax - (int) Math.floor(cs.get(i - 1));
 		} else {
-			int pDel = (int) (0.66*(pMax - Math.floor(cs.get(0)))); // part way to begin first peak
-			pBeg = pMax - pDel; 
+			int pDel = (int) (0.5*(pMax - Math.floor(cs.get(0)))); // part way to begin first peak
 			pEnd = pMax + pDel;
 		}
 		p.setValue(pMax); // set these to indexes to allow slicing
@@ -226,8 +227,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		// estimate FWHM from crossings at HM and finding the crossing that is less than max x
 		cs = DatasetUtils.crossings(x, h, h.max(true).doubleValue() * 0.5);
 		i = 1;
-		double xmax = x.getDouble(pMax);
-		for (int imax = cs.size() - 2; i < imax && cs.get(i) < xmax; i++);
+		for (int imax = cs.size() - 2; i < imax && cs.get(i) < pMax; i++);
 		double xr = cs.get(i) - cs.get(i-1);
 		p.setLimits(dx, 2*xr);
 		p.setValue(xr);
@@ -238,7 +238,5 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		p.setValue(t);
 		double hm = h.max(true).doubleValue();
 		p.setLimits(dx * hm, 2*xr * hm);
-
-		log.append("Initial PDF:\n%s", pdf);
 	}
 }

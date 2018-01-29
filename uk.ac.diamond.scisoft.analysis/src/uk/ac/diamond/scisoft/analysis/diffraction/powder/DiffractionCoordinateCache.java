@@ -10,7 +10,6 @@
 package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 
 import java.lang.ref.WeakReference;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -36,15 +35,15 @@ public class DiffractionCoordinateCache {
 		return instance;
 	}
 	
-	public void put(IDiffractionMetadata md, XAxis axis, boolean centre, Object value) {
+	public void put(IDiffractionMetadata md, XAxis axis, boolean centre, boolean radians, Object value) {
 		if (disabled) return;
-		DiffractionCoordiateCacheKey key = new DiffractionCoordiateCacheKey(md, axis, centre);
+		DiffractionCoordiateCacheKey key = new DiffractionCoordiateCacheKey(md, axis, centre, radians);
 		CACHE.put(key, new WeakReference<Object>(value));
 	}
 
-	public Object get(IDiffractionMetadata md, XAxis axis, boolean centre) {
+	public Object get(IDiffractionMetadata md, XAxis axis, boolean centre, boolean radians) {
 		if (disabled) return null;
-		DiffractionCoordiateCacheKey key = new DiffractionCoordiateCacheKey(md, axis, centre);
+		DiffractionCoordiateCacheKey key = new DiffractionCoordiateCacheKey(md, axis, centre, radians);
 		WeakReference<Object> wr = CACHE.get(key);
 		return wr != null ? wr.get() : null;
 	}
@@ -57,7 +56,6 @@ public class DiffractionCoordinateCache {
 			int result = 1;
 			result = prime * result + getOuterType().hashCode();
 			result = prime * result + ((axis == null) ? 0 : axis.hashCode());
-			result = prime * result + Arrays.hashCode(beamCentre);
 			result = prime * result + (centre ? 1231 : 1237);
 			result = prime * result + ((dce == null) ? 0 : dce.hashCode());
 			result = prime * result + ((dp == null) ? 0 : dp.hashCode());
@@ -77,8 +75,6 @@ public class DiffractionCoordinateCache {
 			if (!getOuterType().equals(other.getOuterType()))
 				return false;
 			if (axis != other.axis)
-				return false;
-			if (!Arrays.equals(beamCentre, other.beamCentre))
 				return false;
 			if (centre != other.centre)
 				return false;
@@ -101,19 +97,12 @@ public class DiffractionCoordinateCache {
 		private DiffractionCrystalEnvironment dce;
 		private XAxis axis;
 		private boolean centre;
-		
-		private double[] beamCentre;
 		private boolean radians;
 		
-		public DiffractionCoordiateCacheKey(IDiffractionMetadata md, XAxis axis, boolean centre) {
+		public DiffractionCoordiateCacheKey(IDiffractionMetadata md, XAxis axis, boolean centre, boolean radians) {
 			dp = md.getDetector2DProperties().clone();
 			dce = md.getDiffractionCrystalEnvironment().clone();
 			this.axis = axis;
-			this.centre = centre;
-		}
-		
-		public DiffractionCoordiateCacheKey(double[] beamCentre, boolean centre, boolean radians) {
-			this.beamCentre = beamCentre.clone();
 			this.centre = centre;
 			this.radians = radians;
 		}
@@ -121,10 +110,6 @@ public class DiffractionCoordinateCache {
 		private DiffractionCoordinateCache getOuterType() {
 			return DiffractionCoordinateCache.this;
 		}
-
-
-		
-		
 		
 	}
 

@@ -15,6 +15,8 @@ import javax.vecmath.Vector3d;
 
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
+import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
+import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -26,8 +28,6 @@ import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.PositionIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
-import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
@@ -207,7 +207,7 @@ public class PixelIntegrationUtils {
 		
 		if (qSpace == null) return null;
 		
-		Dataset[] cached = getFromCache(qSpace, xAxis, false);
+		Dataset[] cached = getFromCache(qSpace, xAxis, false, false);
 		
 		if (cached != null) {
 			logger.info("Coords from cache");
@@ -266,7 +266,7 @@ public class PixelIntegrationUtils {
 		
 		Dataset[] output = new Dataset[]{radialArrayMin,radialArrayMax};
 		
-		putInCache(qSpace, xAxis, false, output);
+		putInCache(qSpace, xAxis, false, false, output);
 		
 		return output;
 	}
@@ -281,7 +281,7 @@ public class PixelIntegrationUtils {
 		
 		if (qSpace == null) return null;
 	
-		Dataset[] cached = getFromCache(qSpace, xAxis, true);
+		Dataset[] cached = getFromCache(qSpace, xAxis, true, radians);
 		
 		if (cached != null) {
 			logger.info("Coords from cache");
@@ -325,17 +325,17 @@ public class PixelIntegrationUtils {
 			ra.setItem(value, pos);
 		}
 		
-		putInCache(qSpace, xAxis, true, new Dataset[]{ra});
+		putInCache(qSpace, xAxis, true, radians, new Dataset[]{ra});
 		
 		System.out.println(System.currentTimeMillis()-t);
 		
 		return ra;
 	}
 	
-	private static Dataset[] getFromCache(QSpace q, XAxis axis, boolean centre) {
+	private static Dataset[] getFromCache(QSpace q, XAxis axis, boolean centre, boolean radians) {
 		DiffractionCoordinateCache cacheInstance = DiffractionCoordinateCache.getInstance();
 		DiffractionMetadata md = new DiffractionMetadata("", q.getDetectorProperties(), new DiffractionCrystalEnvironment(q.getWavelength()));
-		Object object = cacheInstance.get(md, axis, centre);
+		Object object = cacheInstance.get(md, axis, centre, radians);
 		
 		if (object == null) return null;
 		
@@ -353,10 +353,10 @@ public class PixelIntegrationUtils {
 		return null;
 	}
 	
-	private static void putInCache(QSpace q, XAxis axis, boolean centre, Dataset[] object) {
+	private static void putInCache(QSpace q, XAxis axis, boolean centre, boolean radians, Dataset[] object) {
 		DiffractionCoordinateCache cacheInstance = DiffractionCoordinateCache.getInstance();
 		DiffractionMetadata md = new DiffractionMetadata("", q.getDetectorProperties(), new DiffractionCrystalEnvironment(q.getWavelength()));
-		cacheInstance.put(md, axis, centre,centre ? object[0] : object);
+		cacheInstance.put(md, axis, centre, radians, centre ? object[0] : object);
 	}
 	
 	public static int[] getShape(IDiffractionMetadata metadata) {

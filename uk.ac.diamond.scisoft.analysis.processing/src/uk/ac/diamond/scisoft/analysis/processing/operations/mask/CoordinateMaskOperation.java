@@ -32,8 +32,10 @@ import org.eclipse.january.metadata.MaskMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.MakeMask;
+import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
+import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 /**
  * Mask a 2 dimensional Dataset based on the coordinates of the points 
@@ -131,8 +133,7 @@ public class CoordinateMaskOperation extends
 							break;
 						case ANGLE:
 							// In degrees
-							coordinateArray = PixelIntegrationUtils.generate2ThetaArrayRadians(input.getShape(),diffractionMD);
-							coordinateArray.imultiply(180/Math.PI);
+							coordinateArray = PixelIntegrationUtils.generateRadialArray(input.getShape(), new QSpace(diffractionMD.getDetector2DProperties(), diffractionMD.getDiffractionCrystalEnvironment()), XAxis.ANGLE);
 							break;
 						case AZIMUTHAL_ANGLE:
 							coordinateArray = PixelIntegrationUtils.generateAzimuthalArray(input.getShape(), diffractionMD, false);

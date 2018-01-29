@@ -302,8 +302,10 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		peak.addFunction(new Gaussian());
 		peak.addFunction(new Offset());
 
+		ApacheOptimizer opt = new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT);
+
 		// assume max is where the peak to be sharpened is located
-		double w = findFWHM(peak, DatasetFactory.createRange(s.getSize()), s);
+		double w = findFWHM(opt, peak, DatasetFactory.createRange(s.getSize()), s);
 		int pos = (int) Math.round(peak.getParameterValue(0));
 		int del = Math.max(s.getSize()/8, (int) Math.ceil(30 * w));
 		// work out interval and make some aux data of FWHMs
@@ -316,7 +318,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 //		sin.setName("subimage");
 //		auxData.add(sin);
 
-		FWHMForSpectrum fn = new FWHMForSpectrum(sx, sin, peak);
+		FWHMForSpectrum fn = new FWHMForSpectrum(opt, sx, sin, peak);
 		IParameter param = fn.getParameter(0);
 		int n = 33;
 		Dataset slopes = DatasetFactory.createLinearSpace(DoubleDataset.class, -16, 16, n).idivide(16*16);
@@ -326,7 +328,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		for (int i = 0; i < n; i++) {
 			double x = slopes.getDouble(i);
 			Dataset ns = sumImageAlongSlope(sin, x);
-			fwhm.setItem(findFWHM(peak, sx, ns), i);
+			fwhm.setItem(findFWHM(opt, peak, sx, ns), i);
 			summed.setSlice(ns, new Slice(i, i+1));
 		}
 
@@ -387,9 +389,11 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		final Dataset image;
 		private IFunction peak;
 		private Dataset rx;
+		private ApacheOptimizer opt;
 
-		public FWHMForSpectrum(Dataset rx, Dataset image, IFunction peak) {
+		public FWHMForSpectrum(ApacheOptimizer opt, Dataset rx, Dataset image, IFunction peak) {
 			super(1);
+			this.opt = opt;
 			this.image = image;
 			this.peak = peak;
 			this.rx = rx;
@@ -399,7 +403,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		public double val(double... values) {
 			double x = getParameterValue(0);
 			Dataset ns = sumImageAlongSlope(image, x);
-			return findFWHM(peak, rx, ns);
+			return findFWHM(opt, peak, rx, ns);
 		}
 
 		@Override
@@ -426,11 +430,11 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	 * @param y dataset
 	 * @return FWHM
 	 */
-	public static double findFWHM(IFunction peak, Dataset x, Dataset y) {
+	public static double findFWHM(ApacheOptimizer opt, IFunction peak, Dataset x, Dataset y) {
 		initializeFunctionParameters(null, peak, y);
 //		double res = Double.POSITIVE_INFINITY;
 		try {
-			fitFunction(null, null, peak, x, y, null);
+			fitFunction(null, opt, null, peak, x, y, null);
 //			System.err.println("Peak fit is " + peak + " with residual " + res);
 		} catch (Exception e) {
 			return Double.POSITIVE_INFINITY;
@@ -706,9 +710,10 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		double dev = Double.POSITIVE_INFINITY;
 		BooleanDataset mask = null;
 
+		ApacheOptimizer opt = new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT);
 		do {
 			line.setParameterValues(0, ymax/2);
-			double cr = fitFunction(line, x, y, mask);
+			double cr = fitFunction(this, opt, log, line, x, y, mask);
 			if (cr > 1.5*residual) { // allow for variation in residual trends
 				throw new OperationException(this, "Discarding outliers made straight line fit worse");
 			}
@@ -735,18 +740,18 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	}
 
 	protected double fitFunction(IFunction f, Dataset x, Dataset v, Dataset m) {
-		return fitFunction(this, log, f, x, v, m);
+		return fitFunction(this, new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT), log, f, x, v, m);
 	}
 
-	protected static double fitFunction(IOperation<?, ?> op, OperationLog llog, IFunction f, Dataset x, Dataset v, Dataset m) {
+	protected static double fitFunction(IOperation<?, ?> op, ApacheOptimizer opt, OperationLog llog, IFunction f, Dataset x, Dataset v, Dataset m) {
 		if (m != null) {
 			x = x.getByBoolean(m);
 			v = v.getByBoolean(m);
 		}
 		double residual = Double.POSITIVE_INFINITY;
 		double[] errors = null;
+
 		try {
-			ApacheOptimizer opt = new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT);
 			opt.optimize(new Dataset[] {x}, v, f);
 			residual = opt.calculateResidual();
 			errors = opt.guessParametersErrors();

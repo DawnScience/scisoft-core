@@ -220,6 +220,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		StraightLine line = getStraightLine(r);
 		DoubleDataset elastic;
 		if (slope == 0) {
+			slope = line.getParameterValue(0);
 			elastic = line.calculateValues(y); // absolute position of elastic line to use a zero point
 		} else {
 			elastic = DatasetFactory.createRange(rows);

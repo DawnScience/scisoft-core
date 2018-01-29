@@ -34,7 +34,7 @@ public class RixsBaseModel extends AbstractOperationModel {
 	private ENERGY_DIRECTION energyDirection = ENERGY_DIRECTION.SLOW; // in 2D image
 
 	@OperationModelField(label = "Cutoff for pixels as multiple of single photon", hint = "Use a negative value to not apply")
-	private double cutoff = 3.5;
+	private double cutoff = 5.0;
 
 	public enum ENERGY_OFFSET {
 		FROM_ELASTIC_LINE_FIT, // use value of intercept in fit

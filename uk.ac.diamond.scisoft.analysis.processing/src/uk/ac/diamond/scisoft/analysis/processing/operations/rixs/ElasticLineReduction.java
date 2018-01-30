@@ -526,12 +526,14 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 				res = fitFunction(peak, x, spectrum, null);
 				System.err.println("Peak " + i + " fit is " + peak + " with residual " + res);
 				if (Double.isFinite(res)) {
-					// isolate peak and fit again (to reduce influence of other spikes
+					// isolate peak and fit again (to reduce influence of other spikes)
 					double posn = peak.getParameterValue(0);
 					double width = peak.getParameterValue(1);
 					Slice slice = new Slice(Math.max(0, (int) Math.floor(posn-width)), Math.min(size, (int) Math.floor(posn+width)));
+					IParameter p = peak.getParameter(3); // reset offset
+					p.setValue(-0.5*peak.val(posn));
 					res = fitFunction(peak, x.getSliceView(slice), spectrum.getSliceView(slice), null);
-					System.err.println("Refit is " + peak + " with residual " + res);
+					System.err.println("Refit is " + peak + " with residual " + res + " in " + slice);
 					if (!Double.isFinite(res)) {
 						log.append("Fitting elastic peak: refit FAILED");
 					}
@@ -803,7 +805,8 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		if (pdf.getNoOfParameters() > 3) {
 			p = pdf.getParameter(3);
 			p.setValue(0);
-//			p.setLimits(0, Double.MAX_VALUE);
+//			p.setLimits(-Double.MAX_VALUE, Double.MAX_VALUE);
+			p.setLimits(-Double.MAX_VALUE, 0);
 		}
 	}
 }

@@ -212,14 +212,15 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		List<Double> cs = DatasetUtils.crossings(x, diff, 0);
 		int i = 0;
 		for (int imax = cs.size() - 1; i < imax && (cs.get(i) - pMax < -1); i++);
-		int pBeg = pMax - 3; // only fit from just before peak as background peak can be unresolved
+		int pBeg = pMax - 1; // only fit from just before peak as background peak can be unresolved
 		int pEnd;
+		int pDel;
 		if (i > 1) { // this is where a trough lies between background peaks
-			pEnd = 2*pMax - (int) Math.floor(cs.get(i - 1));
+			pDel = pMax - (int) Math.floor(cs.get(i - 1));
 		} else {
-			int pDel = (int) (0.5*(pMax - Math.floor(cs.get(0)))); // part way to begin first peak
-			pEnd = pMax + pDel;
+			pDel = (int) (0.4*(pMax - Math.floor(cs.get(0)))); // part way to begin first peak
 		}
+		pEnd = pMax + Math.min(3, pDel); // ensure at least five points are used
 		p.setValue(pMax); // set these to indexes to allow slicing
 		p.setLimits(pBeg, pEnd);
 

@@ -21,3 +21,5 @@ else:
     from ..python.pynxio import SDS #@Reimport
 
 from nxclasses import *
+
+from utils import *

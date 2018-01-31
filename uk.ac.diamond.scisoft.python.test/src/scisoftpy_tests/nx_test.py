@@ -47,6 +47,12 @@ class Test(unittest.TestCase):
         self.assertEquals(d[479], 7944.5, "value does not match")
         print d.dtype, d[3:6:2]
 
+    def testLoadingNXutils(self):
+        t = dnp.io.load(IOTestFolder + "FeKedge_1_15.nxs")
+        e1 = dnp.nexus.find_class(t, "NXentry")
+        e2 = dnp.nexus.find_class(t, dnp.nexus.NXentry)
+        self.assertEquals(e1, e2, "entries do not match")
+
     def testLoadingHDF(self):
         t = dnp.io.load(IOTestFolder + "testlinks.h5")
         print t

@@ -11,11 +11,16 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionEngine;
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionService;
 // Imports from org.eclipse.dawnsci
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.api.processing.OperationDataForDisplay;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.processing.OperationLog;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.PlotAdditionalData;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
@@ -224,14 +229,35 @@ public class GuinierFittingOperation extends AbstractOperation<GuinierFittingMod
 		fitDataset.setName("Fitted line from ln(I) vs q^2 plot");
 		fitDataset.setMetadata(fitAxisMetadata);
 		// Before creating the OperationData object to save everything in
-		OperationData toReturn = new OperationData();
-		// Filling it with data
-		toReturn.setData(processedYSlice);
-		// And all the other variables
-		toReturn.setAuxData(gradientDataset, constantDataset, fitDataset, iZeroDataset, rgDataset);
 		
-		// And then returning it		
-		return toReturn;
+		// Now create an operation data object but also displaying the values of interest
+		OperationDataForDisplay returnDataWithDisplay = new OperationDataForDisplay();
+		// And a log for the user
+		OperationLog log = new OperationLog();
+		
+		// Then some content for the log window
+		log.append("Guinier fit, the linear fit of log(I) against q^2");
+		log.append("where a linear fit is a y = mx + c fit\n");
+		log.append("Fitting parameters are as follows:\n");
+		log.append("Gradient (m) = %E", gradientDataset.getDouble());
+		log.append("Constant (c) = %E\n", constantDataset.getDouble());
+		log.append("From these parameters the following are deduced:\n");
+		log.append("The forward scatter (I0) is %E", iZeroDataset.getDouble());
+		log.append("The Rg value is %E", rgDataset.getDouble());		
+		// The output data to display
+		List<IDataset> displayData = new ArrayList<>();
+		displayData.add(fittedYSlice);
+		displayData.add(processedYSlice);
+		
+		// Then set up the operation data object, getting it ready to return everything
+		returnDataWithDisplay.setShowSeparately(true);
+		returnDataWithDisplay.setLog(log);
+		returnDataWithDisplay.setData(inputDataset);
+		returnDataWithDisplay.setDisplayData(displayData.toArray(new IDataset[displayData.size()]));
+		returnDataWithDisplay.setAuxData(gradientDataset, constantDataset, fitDataset, iZeroDataset, rgDataset, processedYSlice);
+
+		// Then return it
+		return returnDataWithDisplay;
 	}
 	
 	

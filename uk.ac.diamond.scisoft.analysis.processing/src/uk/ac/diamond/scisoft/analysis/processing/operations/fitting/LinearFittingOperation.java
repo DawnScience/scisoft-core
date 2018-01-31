@@ -56,7 +56,8 @@ public class LinearFittingOperation extends AbstractOperation<LinearFittingModel
 
 	// Then we'll create some placeholders for data to be stored in
 	private Dataset fittedYaxis;
-
+	private Dataset xSlice;
+	private Dataset ySlice;
 
 	// Now, how many dimensions of data are going in...
 	@Override
@@ -77,6 +78,7 @@ public class LinearFittingOperation extends AbstractOperation<LinearFittingModel
 	public OperationData process(IDataset inputDataset, IMonitor monitor) throws OperationException {
 		// Next, we'll extract out the x axis (q) dataset from the input
 		Dataset xAxis;
+
 		// Just in case we don't have an x-axis (as we could do with an x axis)
 		try {
 			xAxis = DatasetUtils.convertToDataset(inputDataset.getFirstMetadata(AxesMetadata.class).getAxis(0)[0].getSlice());
@@ -97,13 +99,13 @@ public class LinearFittingOperation extends AbstractOperation<LinearFittingModel
 		double xGradient = linearFit.getParameterValue(0);
 		double constant = linearFit.getParameterValue(1);
 		
-		this.fittedYaxis = DatasetFactory.zeros(yAxis.getSize());
+		this.fittedYaxis = DatasetFactory.zeros(this.ySlice.getSize());
 		
 		// Assuming there were nice numbers, regenerate from the x-axis
 		if (Double.isFinite(xGradient) && Double.isFinite(constant)) {
-			for (int loopIter = 0; loopIter < yAxis.getSize(); loopIter ++) {
+			for (int loopIter = 0; loopIter < this.ySlice.getSize(); loopIter ++) {
 				// y = (m * x) + c
-				double fitVariable = (xGradient * xAxis.getDouble(loopIter)) + constant;
+				double fitVariable = (xGradient * this.xSlice.getDouble(loopIter)) + constant;
 				this.fittedYaxis.set(fitVariable, loopIter);
 			}	
 		}
@@ -114,7 +116,7 @@ public class LinearFittingOperation extends AbstractOperation<LinearFittingModel
 		// We'll create the xAxis used in the regression for plotting
 		try {
 			xAxisMetadata = MetadataFactory.createMetadata(AxesMetadata.class, 1);
-			xAxisMetadata.setAxis(0, xAxis);
+			xAxisMetadata.setAxis(0, this.xSlice);
 		} catch (MetadataException xAxisError) {
 			throw new OperationException(this, xAxisError.getMessage());
 		}
@@ -144,7 +146,7 @@ public class LinearFittingOperation extends AbstractOperation<LinearFittingModel
 		
 		// The output data to display
 		List<IDataset> displayData = new ArrayList<>();
-		displayData.add(inputDataset);
+		displayData.add(this.ySlice);
 		displayData.add(fittedYaxis);
 		
 		// Then set up the operation data object, getting it ready to return everything
@@ -184,8 +186,8 @@ public class LinearFittingOperation extends AbstractOperation<LinearFittingModel
 		
 		// Next up, we'll slice the datasets down to the size of interest
 		Slice regionOfInterest = new Slice(startIndex, endIndex, 1);
-		Dataset xSlice = xAxis.getSlice(regionOfInterest);
-		Dataset ySlice = yAxis.getSlice(regionOfInterest);
+		this.xSlice = xAxis.getSlice(regionOfInterest);
+		this.ySlice = yAxis.getSlice(regionOfInterest);
 		
 		// Set up a place to place the fitting parameters
 		StraightLine linearFit = new StraightLine();

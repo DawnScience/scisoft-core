@@ -11,11 +11,16 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionEngine;
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionService;
 // Imports from org.eclipse.dawnsci
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.api.processing.OperationDataForDisplay;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.processing.OperationLog;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.PlotAdditionalData;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
@@ -47,28 +52,30 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.expressions.Expressi
 @PlotAdditionalData(onInput = false, dataName = "Live Setup Plot Data")
 public class PorodFittingOperation extends AbstractOperation<PorodFittingModel, OperationData>{
 
+
 	// First let's declare our process ID tag
 	@Override
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.saxs.PorodFittingOperation";
 	}
 
-	
+
 	// Then we'll create some placeholders for data to be stored in
 	private Dataset processedXSlice;
 	private Dataset processedYSlice;
 	private Dataset processedLogXSlice;
 	private Dataset processedLogYSlice;
-	
-	
+
+
 	// Expression strings for Porod plotting
 	final public String xExpressionStringPorod = "xaxis";  // In essence, nothing but included just in case.
 	final public String yExpressionStringPorod = "dnp:power(xaxis, 4) * data";
-	
+
+
 	// In order to do our mathematics, we shall instantiate an expression and regression engine
 	private IExpressionEngine expressionEngine;
 
-	
+
 	// Now, how many dimensions of data are going in...
 	@Override
 	public OperationRank getInputRank() {
@@ -100,14 +107,14 @@ public class PorodFittingOperation extends AbstractOperation<PorodFittingModel, 
 		
 		// Extract out the y axis (intensity) from the input
 		Dataset yAxis = DatasetUtils.convertToDataset(inputDataset);
-
+		
 		// Do the Porod fitting and get the fitting variables
 		StraightLine porodFit = this.fitPorodData(xAxis, yAxis, porodROI, inputDataset.getSize());
 		
 		// Extract out the fitting parameters
 		double gradient = porodFit.getParameterValue(0);
 		double constant = porodFit.getParameterValue(1);
-
+		
 		// Just for the user's sanity, create the line of best fit as well
 		String yExpressionString;
 		Dataset fittedYLogSlice = null;
@@ -115,7 +122,7 @@ public class PorodFittingOperation extends AbstractOperation<PorodFittingModel, 
 		
 		// Load in the processed x axis to recreate the fitted line
 		expressionEngine.addLoadedVariable("xaxis", this.processedLogXSlice);
-
+		
 		// Assuming there were nice numbers, regenerate from the x-axis
 		if (Double.isFinite(gradient) && Double.isFinite(constant)) {
 			yExpressionString = "xaxis * " + gradient + " + " + constant;
@@ -138,15 +145,15 @@ public class PorodFittingOperation extends AbstractOperation<PorodFittingModel, 
 		// Now let's prepare to return these values, first by creating a home for the gradient data
 		Dataset gradientDataset = DatasetFactory.createFromObject(gradient, 1);
 		gradientDataset.setName("Gradient of log(I) vs log(q) fit");
-
+		
 		// Then creating a home for the constant variable
 		Dataset constantDataset = DatasetFactory.createFromObject(constant, 1);
 		constantDataset.setName("Intercept of log(I) vs log(q) fit");
-
+		
 		// Creating a home for the q axis
 		Dataset xDataset = DatasetFactory.createFromObject(this.processedXSlice, this.processedXSlice.getShape());
 		xDataset.setName("q axis");
-
+		
 		// Creating a home for the I*q^4 data
 		Dataset yDataset = DatasetFactory.createFromObject(this.processedYSlice, this.processedYSlice.getShape());
 		yDataset.setName("I * q^4 axis");
@@ -154,7 +161,7 @@ public class PorodFittingOperation extends AbstractOperation<PorodFittingModel, 
 		// Creating a home for the log q axis
 		Dataset logXDataset = DatasetFactory.createFromObject(this.processedLogXSlice, this.processedLogXSlice.getShape());
 		logXDataset.setName("log(q) axis");
-
+		
 		// Creating a home for the log I data
 		Dataset logYDataset = DatasetFactory.createFromObject(this.processedLogYSlice, this.processedLogYSlice.getShape());
 		logYDataset.setName("log(I) axis");
@@ -162,16 +169,13 @@ public class PorodFittingOperation extends AbstractOperation<PorodFittingModel, 
 		// Creating a home for the fit data
 		Dataset fitDataset = DatasetFactory.createFromObject(fittedYLogSlice, fittedYLogSlice.getShape());
 		fitDataset.setName("Fitted line from log(I) vs log(q) data");
-
+		
 		// Creating a home for the fit data
 		Dataset fitPlotDataset = null;
 		
-		// Before creating the OperationData object to save everything in
-		OperationData toReturn = new OperationData();
-
 		// Now we'll make up the xAxis to return
 		AxesMetadata xAxisMetadata;
-
+		
 		// Prepare it for receiving the necessary
 		try {
 			xAxisMetadata = MetadataFactory.createMetadata(AxesMetadata.class, 1);
@@ -181,7 +185,22 @@ public class PorodFittingOperation extends AbstractOperation<PorodFittingModel, 
 		
 		// Before the case/switch let's create everything
 		MetadataType fitAxisMetadata = null;
-
+		
+		// Now create an operation data object but also displaying the values of interest
+		OperationDataForDisplay returnDataWithDisplay = new OperationDataForDisplay();
+		// And a log for the user
+		OperationLog log = new OperationLog();
+		
+		// Then some content for the log window
+		log.append("Porod fit, the linear fit of log(I) against log(q)");
+		log.append("where a linear fit is a y = mx + c fit\n");
+		log.append("Fitting parameters are as follows:\n");
+		log.append("Gradient (m) = %E", gradientDataset.getDouble());
+		log.append("Constant (c) = %E", constantDataset.getDouble());
+		
+		// The output data to display
+		List<IDataset> displayData = new ArrayList<>();
+		
 		// Now, based on the user input, get ready to display the plot
 		// In the future, if more than two cases are required, the filling could be outsourced as a method
 		switch (model.getPlotView()) {
@@ -194,9 +213,10 @@ public class PorodFittingOperation extends AbstractOperation<PorodFittingModel, 
 							fitPlotDataset.setMetadata(fitAxisMetadata);
 							fitPlotDataset.setName("Live Setup Plot Data");
 							// Filling it with data
-							toReturn.setData(this.processedYSlice);
+							displayData.add(fittedYIQSlice);
+							displayData.add(this.processedYSlice);
 							// And all the other variables
-							toReturn.setAuxData(gradientDataset, constantDataset, fitDataset, logXDataset, logYDataset, fitPlotDataset);
+							returnDataWithDisplay.setAuxData(gradientDataset, constantDataset, fitDataset, logXDataset, logYDataset, fitPlotDataset, this.processedLogYSlice);
 							break;
 						
 			case LOG_LOG:	// Filling the object with the processed x axis slice
@@ -208,16 +228,23 @@ public class PorodFittingOperation extends AbstractOperation<PorodFittingModel, 
 							fitPlotDataset.setMetadata(fitAxisMetadata);
 							fitPlotDataset.setName("Live Setup Plot Data");
 							// Filling it with data
-							toReturn.setData(this.processedLogYSlice);
+							displayData.add(fitPlotDataset);
+							displayData.add(this.processedLogYSlice);
 							// And all the other variables
-							toReturn.setAuxData(gradientDataset, constantDataset, fitDataset, xDataset, yDataset, fitPlotDataset);
+							returnDataWithDisplay.setAuxData(gradientDataset, constantDataset, fitDataset, xDataset, yDataset, fitPlotDataset, this.processedLogYSlice);
 							break;
 						
 			default:		System.err.println("This shouldn't have occured, the enum switch in PorodFittingOperation is broken!");
 		} 
 		
+		// Then set up the operation data object, getting it ready to return everything
+		returnDataWithDisplay.setShowSeparately(true);
+		returnDataWithDisplay.setLog(log);
+		returnDataWithDisplay.setDisplayData(displayData.toArray(new IDataset[displayData.size()]));
+		returnDataWithDisplay.setData(inputDataset);
+		
 		// And then returning it		
-		return toReturn;
+		return returnDataWithDisplay;
 	}
 	
 	

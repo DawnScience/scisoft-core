@@ -42,34 +42,9 @@ public class RecoverNormalisationFluxBatchForDialog {
 
 				flux = dh1.getLazyDataset(ReflectivityFluxParametersAliasEnum.FLUX.getFluxAlias());
 
-//				if (flux == null) {
-//
-//					try {
-//						flux = dh1.getLazyDataset("ionc1");
-//					} catch (Exception o) {
-//						System.out.println(o.getMessage());
-//					}
-//
-//				}
-
 				String whatsWrong = ReflectivityFluxParametersAliasEnum.FLUX_SCANNED_VARIABLE.getFluxAlias();
 				
 				theta = dh1.getLazyDataset(ReflectivityFluxParametersAliasEnum.FLUX_SCANNED_VARIABLE.getFluxAlias());
-
-//				if (theta == null) {
-//
-//					try {
-//						theta = dh1.getLazyDataset("qsdcd");
-//					} catch (Exception g) {
-//						theta = dh1.getLazyDataset("qdcd");
-//					}
-//
-//				}
-//
-//				if (theta == null) {
-//
-//					theta = dh1.getLazyDataset(ReflectivityMetadataTitlesForDialog.getqdcd_());
-//				}
 
 			}
 

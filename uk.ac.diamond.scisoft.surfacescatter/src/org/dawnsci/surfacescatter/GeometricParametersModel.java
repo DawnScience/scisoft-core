@@ -35,7 +35,7 @@ public class GeometricParametersModel {
 	private EnumMap<ReflectivityAngleAliasEnum, String> reflectivityAnglesMap;
 	private EnumMap<ReflectivityFluxParametersAliasEnum, String> reflectivityFluxMap;
 	private boolean useInternalFlux;
-	private String experimentMethod = "SXRD";
+	private MethodSettingEnum.MethodSetting experimentMethod = MethodSettingEnum.MethodSetting.SXRD;
 	private Boolean useNegativeQ = false;
 	private boolean poke = true;
 
@@ -285,14 +285,23 @@ public class GeometricParametersModel {
 	}
 
 	public String getExperimentMethod() {
+		return experimentMethod.getCorrectionsName();
+	}
+	
+	public MethodSettingEnum.MethodSetting getExperimentMethodEnum() {
 		return experimentMethod;
 	}
 
 	public void setExperimentMethod(String experimentMethod) {
 		
-		firePropertyChange("experimentMethod", this.experimentMethod, this.experimentMethod= experimentMethod);
+		firePropertyChange("experimentMethod", this.experimentMethod, this.experimentMethod= MethodSettingEnum.MethodSetting.toMethod(experimentMethod));
 	}
 
+	public void setExperimentMethod(MethodSettingEnum.MethodSetting experimentMethod) {
+		
+		firePropertyChange("experimentMethod", this.experimentMethod, this.experimentMethod= experimentMethod);
+	}
+	
 	private void setPoke(boolean poke) {
 		firePropertyChange("poke", this.poke, this.poke = poke);
 	}

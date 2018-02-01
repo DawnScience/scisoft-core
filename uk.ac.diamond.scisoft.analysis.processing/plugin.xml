@@ -895,7 +895,17 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.MultipleDetectorScalerModel"
             name="Multiple Detector Intensity Scaling"
             visible="true">
-      </operation> 
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.SelfAbsorptionCorrectionOperation"
+            description="Correct for sample self-absorption"
+            icon="icons/unchanged.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.SelfAbsorptionCorrectionOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.SelfAbsorptionCorrectionModel"
+            name="Self-absorption correction"
+            visible="true">
+      </operation>  
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.AbsoluteIntensityCalibrationOperation"

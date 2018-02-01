@@ -337,26 +337,6 @@
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw1DBackgroundSubtractionOperation"
-            description="Perform a background subtraction on a reduced dataset"
-            icon="icons/subblank.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw1DBackgroundSubtractionOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw1DBackgroundSubtractionModel"
-            name="Background subtraction for diffracting but not absorbing samples in 1D"
-            visible="false">
-      </operation>
-      <operation
-            category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw2DBackgroundSubtractionOperation"
-            description="Perform background subtraction for diffracting but not absorbing samples in 2D using a blank beamline and a empty cell combined with I0 and It values"
-            icon="icons/subblank.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw2DBackgroundSubtractionOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw2DBackgroundSubtractionModel"
-            name="Image background subtraction - Automatic"
-            visible="true">
-      </operation>
-      <operation
-            category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractFittedBackgroundOperation"
             description="Perform background subtraction by fitting a PDF to the population of pixel values. The count at which the given signal to background ratio occurs is subtracted"
             icon="icons/image--minus.png"

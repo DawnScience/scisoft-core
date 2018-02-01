@@ -199,6 +199,9 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 	// find any processed fit file with scan number
 	private String findLatestFitFile(FilenameFilter filter, File cwd, final String prefix) {
 		File[] files = cwd.listFiles(filter);
+		if (files == null) {
+			return null;
+		}
 		long latest = 0;
 		File last = null;
 		for (File f : files) {

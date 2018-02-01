@@ -148,11 +148,18 @@ public class SelfAbsorptionCorrectionOperation extends AbstractOperation<SelfAbs
 
 
 	private Dataset plateCorrection(Dataset inputData, Dataset absorptionFactor) {
-		Dataset fractionTop = Maths.add(Maths.multiply(Maths.exp(Maths.multiply(absorptionFactor, -1.0)), -1.0), Maths.exp(Maths.divide(Maths.multiply(absorptionFactor, -1.0), Maths.cos(this.twoThetaArray))));
-		Dataset fractionBottom = Maths.subtract(absorptionFactor, Maths.divide(absorptionFactor, Maths.cos(this.twoThetaArray)));
-		Dataset correctedValues = Maths.multiply(inputData, Maths.multiply(Maths.exp(absorptionFactor), Maths.divide(fractionTop, fractionBottom)));
+		IndexIterator loopIterator = inputData.getIterator();
+		double absFac = absorptionFactor.getDouble();
 		
-		return correctedValues;
+		while (loopIterator.hasNext()) {
+			int index = loopIterator.index;
+			Double topFraction = -Math.exp(-absFac) + Math.exp(-absFac / Math.cos(this.twoThetaArray.getElementDoubleAbs(index)));
+			Double bottomFraction = absFac - (absFac / Math.cos(this.twoThetaArray.getElementDoubleAbs(index)));
+			Double correctedValue = inputData.getElementDoubleAbs(index) * Math.exp(absFac) * (topFraction / bottomFraction);
+			inputData.setObjectAbs(index, correctedValue);
+		}
+		
+		return inputData;
 	}
 
 

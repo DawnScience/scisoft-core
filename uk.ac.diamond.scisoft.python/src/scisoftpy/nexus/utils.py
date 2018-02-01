@@ -28,9 +28,11 @@ def _visitall(tree, visitor):
 
 def find_class(nx_tree, nx_class):
     '''
-    Find a given NXclass
+    Find all nodes of a given NXclass
     :param nx_tree: tree
     :param nx_class: NeXus class or list of classes
+
+    :return: list of name-group pairs
     '''
     tt = type(nx_tree)
     if not issubclass(tt, _nxobject) and not issubclass(tt, _nxroot):

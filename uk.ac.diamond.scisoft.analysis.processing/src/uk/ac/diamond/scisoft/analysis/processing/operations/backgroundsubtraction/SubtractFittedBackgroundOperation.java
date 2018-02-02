@@ -97,7 +97,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		int e = (int) p.getUpperLimit();
 		double cx = p.getValue();
 		int c = (int) cx - 1;
-		p.setLimits(bins.getDouble(c - 2), bins.getDouble(c + 2)); // set narrow range for fitting pdf position
+		p.setLimits(bins.getDouble(c) - 0.5, bins.getDouble(c + 2)); // set narrow range for fitting pdf position
 		p.setValue(cx);
 		Slice slice = new Slice(b, e + 1, 1);
 
@@ -205,29 +205,18 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		double dx = x.getDouble(1) - xb;
 		int pMax = x.getInt(h.maxPos(true)); // position of maximum
 
-		// determine if there are lower background peaks by checking zeros of derivative
-		// this implies there are troughs between the peaks
-		Dataset diff = Maths.derivative(x, h, 3);
-		// find index crossing less than max position
-		List<Double> cs = DatasetUtils.crossings(x, diff, 0);
-		int i = 0;
-		for (int imax = cs.size() - 1; i < imax && (cs.get(i) - pMax < -1); i++);
 		int pBeg = pMax - 1; // only fit from just before peak as background peak can be unresolved
-		int pEnd;
-		int pDel;
-		if (i > 1) { // this is where a trough lies between background peaks
-			pDel = pMax - (int) Math.floor(cs.get(i - 1));
-		} else {
-			pDel = (int) (0.4*(pMax - Math.floor(cs.get(0)))); // part way to begin first peak
-		}
-		pEnd = pMax + Math.min(3, pDel); // ensure at least five points are used
+		int pEnd = pMax;
+		double hm = h.max(true).doubleValue();
+		double hr = 1e-3 * hm; // set right threshold to determine fit interval
+		for (int max = h.getSize() - 1; pEnd < max && h.getDouble(++pEnd) > hr;);
 		p.setValue(pMax); // set these to indexes to allow slicing
 		p.setLimits(pBeg, pEnd);
 
 		p = pdf.getParameter(1);
 		// estimate FWHM from crossings at HM and finding the crossing that is less than max x
-		cs = DatasetUtils.crossings(x, h, h.max(true).doubleValue() * 0.5);
-		i = 1;
+		List<Double> cs = DatasetUtils.crossings(x, h, h.max(true).doubleValue() * 0.5);
+		int i = 1;
 		for (int imax = cs.size() - 2; i < imax && cs.get(i) < pMax; i++);
 		double xr = cs.get(i) - cs.get(i-1);
 		p.setLimits(dx, 2*xr);
@@ -237,7 +226,6 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		// estimate area
 		double t = dx * ((Number) h.sum(true)).doubleValue();
 		p.setValue(t);
-		double hm = h.max(true).doubleValue();
 		p.setLimits(dx * hm, 2*xr * hm);
 	}
 }

@@ -624,6 +624,16 @@
             name="No Data">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.SolidAngleCorrectionOperation"
+            description="Solid angle correction, taking into account sample to detector distance (use Import Detector Calibration)."
+            icon="icons/PowderCorrection"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.SolidAngleCorrectionOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="Solid Angle Correction"
+            visible="true">
+      </operation>
+      <operation
             category="uk.ac.diamond.scisoft.analysis.processing.utilities"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.OriginalDataOperation"
             description="Propagates the input data without modifying it, used to convert other data formats to nexus"

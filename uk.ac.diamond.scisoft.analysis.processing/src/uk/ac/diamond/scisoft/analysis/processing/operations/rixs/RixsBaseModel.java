@@ -62,6 +62,10 @@ public class RixsBaseModel extends AbstractOperationModel {
 		firePropertyChange("setRoiA", this.roiA, this.roiA = roi);
 	}
 
+	void internalSetRoiA(IRectangularROI roi) {
+		this.roiA = roi;
+	}
+
 	/**
 	 * @return get second region of interest (can be null to signify only use first ROI)
 	 */
@@ -71,6 +75,10 @@ public class RixsBaseModel extends AbstractOperationModel {
 
 	public void setRoiB(IRectangularROI roi) {
 		firePropertyChange("setRoiB", this.roiB, this.roiB = roi);
+	}
+
+	void internalSetRoiB(IRectangularROI roi) {
+		this.roiB = roi;
 	}
 
 	/**

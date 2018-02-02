@@ -268,8 +268,8 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				IOperationModel m = o.getModel();
 				if (m instanceof RixsBaseModel) {
 					RixsBaseModel rbm = (RixsBaseModel) m;
-					model.setRoiA(rbm.getRoiA());
-					model.setRoiB(rbm.getRoiB());
+					model.internalSetRoiA(rbm.getRoiA());
+					model.internalSetRoiB(rbm.getRoiB());
 					break;
 				}
 			}

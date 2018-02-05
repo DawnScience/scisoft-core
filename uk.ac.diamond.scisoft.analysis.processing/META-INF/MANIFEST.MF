@@ -17,8 +17,13 @@ Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.lang;version="2.6.0",
  org.dawb.common.services,
  org.dawnsci.boofcv,
+ org.dawnsci.plotting.histogram.service,
  org.eclipse.january.dataset,
  org.eclipse.scanning.api.event.status,
+ org.eclipse.swt.graphics,
+ org.monte.media,
+ org.monte.media.avi,
+ org.monte.media.math,
  org.osgi.framework;version="1.7.0",
  org.slf4j;version="1.7.6"
 Service-Component: OSGI-INF/*.xml

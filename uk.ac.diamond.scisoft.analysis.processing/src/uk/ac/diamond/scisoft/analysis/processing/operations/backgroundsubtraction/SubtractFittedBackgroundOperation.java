@@ -215,9 +215,9 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 		p = pdf.getParameter(1);
 		// estimate FWHM from crossings at HM and finding the crossing that is less than max x
-		List<Double> cs = DatasetUtils.crossings(x, h, h.max(true).doubleValue() * 0.5);
+		List<Double> cs = DatasetUtils.crossings(x, h, hm * 0.5);
 		int i = 1;
-		for (int imax = cs.size() - 2; i < imax && cs.get(i) < pMax; i++);
+		for (int imax = cs.size() - 1; i < imax && cs.get(i) < pMax; i++);
 		double xr = cs.get(i) - cs.get(i-1);
 		p.setLimits(dx, 2*xr);
 		p.setValue(xr);

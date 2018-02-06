@@ -58,8 +58,8 @@ public class ExampleOperationsTest {
 		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.test.examples");
 		ServiceManager.setService(IOperationService.class, service);
 		
-		LocalServiceManager.setLoaderService(new LoaderServiceImpl());
-		LocalServiceManager.setOperationService(service);
+		new LocalServiceManager().setLoaderService(new LoaderServiceImpl());
+		new LocalServiceManager().setOperationService(service);
 		
 		new uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager().setLoaderService(new LoaderServiceImpl());
 	}

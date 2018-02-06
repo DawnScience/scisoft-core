@@ -53,7 +53,7 @@ public class XICCO2DTest {
 	@Before
 	public void setUp() throws Exception {
 		// Set factory for test
-		ServiceLoader.setNexusFactory(new NexusFileFactoryHDF5());
+		new ServiceLoader().setNexusFactory(new NexusFileFactoryHDF5());
 		// Set up a File Service for ImportMaskMetadata
 		ServiceManager.setService(IPersistenceService.class, PersistenceServiceCreator.createPersistenceService());
 		new LocalServiceManager().setLoaderService(new LoaderServiceImpl());

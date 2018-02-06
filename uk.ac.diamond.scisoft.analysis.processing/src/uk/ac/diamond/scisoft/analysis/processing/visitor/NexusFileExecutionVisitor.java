@@ -367,7 +367,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 							currentGroup += Node.SEPARATOR + position + "-" + intermediateData.getName();
 							ds.setName("data");
 							appendData(ds, group, slices, shape, nexusFile, dataDims);
-							if (first){
+							if (first) {
 								nexusFile.addAttribute(group,new AttributeImpl("signal", ds.getName()));
 							}
 						}
@@ -397,9 +397,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 							group = requireNXclass(currentPath, NX_DATA);
 							ds.setName("data");
 							writeData(ds, group, nexusFile);
-							if (i == 0) {
-								nexusFile.addAttribute(group, new AttributeImpl("signal", ds.getName()));
-							}
+							nexusFile.addAttribute(group, new AttributeImpl("signal", ds.getName()));
 						}
 						
 						writeAxes(ds, currentPath, true);

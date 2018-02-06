@@ -61,7 +61,7 @@ import uk.ac.diamond.scisoft.analysis.utils.ClassUtils;
 public class OperationServiceImpl implements IOperationService {
 	
 	private static IOperationRunnerService rservice;
-	public static void setOperationRunner(IOperationRunnerService s) {
+	public void setOperationRunner(IOperationRunnerService s) {
 		rservice = s;
 	}
 	

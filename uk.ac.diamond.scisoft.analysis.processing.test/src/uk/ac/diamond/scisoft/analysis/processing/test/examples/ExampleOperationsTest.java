@@ -61,7 +61,7 @@ public class ExampleOperationsTest {
 		LocalServiceManager.setLoaderService(new LoaderServiceImpl());
 		LocalServiceManager.setOperationService(service);
 		
-		uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager.setLoaderService(new LoaderServiceImpl());
+		new uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager().setLoaderService(new LoaderServiceImpl());
 	}
 	
 	

@@ -56,7 +56,7 @@ public class XICCO2DTest {
 		ServiceLoader.setNexusFactory(new NexusFileFactoryHDF5());
 		// Set up a File Service for ImportMaskMetadata
 		ServiceManager.setService(IPersistenceService.class, PersistenceServiceCreator.createPersistenceService());
-		LocalServiceManager.setLoaderService(new LoaderServiceImpl());
+		new LocalServiceManager().setLoaderService(new LoaderServiceImpl());
 	}
 
 	@After

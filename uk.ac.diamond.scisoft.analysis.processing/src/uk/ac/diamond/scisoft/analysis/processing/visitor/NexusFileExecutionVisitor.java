@@ -67,7 +67,7 @@ import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFile {
 	
 	private static IPersistenceService service;
-	public static void setPersistenceService(IPersistenceService s) { // Injected
+	public void setPersistenceService(IPersistenceService s) { // Injected
 		service = s;
 	}
 	public NexusFileExecutionVisitor() {

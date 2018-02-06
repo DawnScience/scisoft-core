@@ -59,7 +59,7 @@ public class MockScanProcessTest {
 		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
 		
 		ServiceManager.setService(IPersistenceService.class, PersistenceServiceCreator.createPersistenceService());
-		NexusFileExecutionVisitor.setPersistenceService(PersistenceServiceCreator.createPersistenceService());
+		new NexusFileExecutionVisitor().setPersistenceService(PersistenceServiceCreator.createPersistenceService());
 		service = (IOperationService)Activator.getService(IOperationService.class);
 		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.test.executionvisitor");
 	}

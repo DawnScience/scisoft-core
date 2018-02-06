@@ -41,7 +41,7 @@ public class XPDFChainTest {
 		operationService.createOperations(operationService.getClass().getClassLoader(), "uk.ac.diamond.scisoft.xpdf.operations");
 		operationService.createOperations(operationService.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.operations");
 		PersistJsonOperationsNode.setOperationService(operationService);
-		LocalServiceManager.setLoaderService(new LoaderServiceImpl());
+		new LocalServiceManager().setLoaderService(new LoaderServiceImpl());
 		ServiceManager.setService(IPersistenceService.class, PersistenceServiceCreator.createPersistenceService());
 		org.dawnsci.persistence.ServiceLoader.setNexusFactory(new NexusFileFactoryHDF5());
 	}

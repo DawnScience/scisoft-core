@@ -19,7 +19,7 @@ public class LocalServiceManager {
 	private static IOperationService oservice;
 	private static IPersistenceService pservice;
 
-	public static void setLoaderService(ILoaderService s) {
+	public void setLoaderService(ILoaderService s) {
 		lservice = s;
 	}
 
@@ -31,7 +31,7 @@ public class LocalServiceManager {
 		return oservice;
 	}
 
-	public static void setOperationService(IOperationService s) {
+	public void setOperationService(IOperationService s) {
 		oservice = s;
 	}
 
@@ -39,7 +39,7 @@ public class LocalServiceManager {
 		return pservice;
 	}
 
-	public static void setPersistenceService(IPersistenceService p) {
+	public void setPersistenceService(IPersistenceService p) {
 		pservice = p;
 	}
 }

@@ -23,7 +23,7 @@ public class OperationServiceLoader {
 	 * Injected by OSGI
 	 * @param it
 	 */
-	public static void setImageFilterService(IImageFilterService ifs) {
+	public void setImageFilterService(IImageFilterService ifs) {
 		imageFilterService = ifs;
 	}
 
@@ -31,7 +31,7 @@ public class OperationServiceLoader {
 	 * Injected by OSGI
 	 * @param it
 	 */
-	public static void setImageTransformService(IImageTransform it) {
+	public void setImageTransformService(IImageTransform it) {
 		imageTransformService = it;
 	}
 
@@ -39,7 +39,7 @@ public class OperationServiceLoader {
 	 * Injected by OSGI
 	 * @param isp
 	 */
-	public static void setImageStitchingService(IImageStitchingProcess isp) {
+	public void setImageStitchingService(IImageStitchingProcess isp) {
 		imageStitchingService = isp;
 	}
 

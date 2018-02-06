@@ -10,7 +10,7 @@ public class ExpressionServiceHolder {
 		return expressionService;
 	}
 
-	public static void setExpressionService(IExpressionService expressionService) {
+	public void setExpressionService(IExpressionService expressionService) {
 		ExpressionServiceHolder.expressionService = expressionService;
 	}
 }

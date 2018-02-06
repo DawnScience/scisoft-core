@@ -45,7 +45,7 @@ public class InternalAndExternalFrameOperationsTest {
 
 	@Test
 	public void test() throws Exception {
-		LocalServiceManager.setLoaderService(new LoaderServiceImpl());
+		new LocalServiceManager().setLoaderService(new LoaderServiceImpl());
 		final String DATA = "data";
 		final String OTHER = "other_data";
 		final String FULL_DATA = TestHDF5DataUtils.ROOT + Node.SEPARATOR + DATA;

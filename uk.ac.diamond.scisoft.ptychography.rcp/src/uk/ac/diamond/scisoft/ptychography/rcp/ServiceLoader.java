@@ -13,7 +13,7 @@ public class ServiceLoader {
 		
 	}
 
-	public static void setEventTracker(EventTracker et) {
+	public void setEventTracker(EventTracker et) {
 		serviceTracker = et;
 	}
 

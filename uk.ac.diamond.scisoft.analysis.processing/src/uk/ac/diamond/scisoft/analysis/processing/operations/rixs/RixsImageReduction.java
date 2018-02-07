@@ -185,12 +185,13 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					}
 				}
 
-				if (fitFile != null) {
-					initializeFitLine(fitFile);
-					if (model.isRegionsFromFile()) {
-						initializeROIsFromFile(fitFile);
-						updateROICount();
-					}
+				if (fitFile == null) {
+					throw new OperationException(this, "Could not find fit file in data, calibration or processing directories");
+				}
+				initializeFitLine(fitFile);
+				if (model.isRegionsFromFile()) {
+					initializeROIsFromFile(fitFile);
+					updateROICount();
 				}
 			}
 		}
@@ -653,7 +654,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		}
 	}
 
-	private IDataset[] toArray(List<Dataset> d) {
+	private static IDataset[] toArray(List<Dataset> d) {
 		int imax = d.size();
 		IDataset[] a = new IDataset[imax];
 		for (int i = 0; i < imax; i++) {

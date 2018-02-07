@@ -400,7 +400,7 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 			
 			if (absCor.getShape().length == 1) {
 				// One dimensional: f(φ) = c/2 sin² 2θ
-				azimuthalFactor = Maths.multiply(0.5*sineFudge, Maths.square(coords.getSinTwoTheta()));
+				azimuthalFactor = Maths.multiply(polarizationFraction, Maths.square(coords.getSinTwoTheta()));
 			} else {
 				// Two dimensional: f(φ) = f_pol cos 2φ sin² 2θ
 				azimuthalFactor =

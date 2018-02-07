@@ -51,6 +51,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
+import uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractFittedBackgroundOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsBaseModel.ENERGY_DIRECTION;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
@@ -431,7 +432,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	 * @return FWHM
 	 */
 	public static double findFWHM(ApacheOptimizer opt, IFunction peak, Dataset x, Dataset y) {
-		initializeFunctionParameters(null, peak, y);
+		initializeFunctionParameters(null, peak, x, y);
 //		double res = Double.POSITIVE_INFINITY;
 		try {
 			fitFunction(null, opt, null, peak, x, y, null);
@@ -522,7 +523,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		for (int i = 0; i < ns; i++) {
 			spectrum = goodSpectra[r].get(i);
 			log.append("Fitting elastic peak: %d/%d", i, ns);
-			initializeFunctionParameters(this, peak, spectrum);
+			initializeFunctionParameters(this, peak, x, spectrum);
 			double res = Double.POSITIVE_INFINITY;
 			try {
 				res = fitFunction(peak, x, spectrum, null);
@@ -669,7 +670,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 		Dataset v = image.sum(0);
 		log.append("Sum %s/%s", v.sum(), v.toString(true));
-		initializeFunctionParameters(this, peak, v);
+		initializeFunctionParameters(this, peak, x, v);
 		log.append("Initial peak:\n%s", peak);
 
 		// fit entire image so as to initialise per summed row fits
@@ -798,27 +799,30 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		return residual;
 	}
 
-	protected static void initializeFunctionParameters(IOperation<?,?> op, IFunction pdf, Dataset v) {
+	protected static void initializeFunctionParameters(IOperation<?,?> op, IFunction pdf, Dataset x, Dataset v) {
 		IParameter p = pdf.getParameter(0);
-		if (v.max(true).doubleValue() == 0) {
+		double max = v.max(true).doubleValue();
+		if (max == 0) {
 			throw new OperationException(op, "Cannot fit to data with maximum value of zero");
 		}
 
 		int pmax = v.argMax(true); // position of maximum
-		double std = v.stdDeviation();
-		p.setLimits(Math.max(pmax - 10 * std, 0), Math.min(pmax + 10 * std, v.getSize()));
+		double fw = SubtractFittedBackgroundOperation.findFWHMPostMax(x, v);
+		if (Double.isNaN(fw)) {
+			fw = v.stdDeviation();
+		}
+		p.setLimits(Math.max(pmax - 5 * fw, 0), Math.min(pmax + 5 * fw, v.getSize()));
 		p.setValue(pmax);
 
 		p = pdf.getParameter(1);
-		p.setLimits(1, 2*std);
-		p.setValue(std);
+		p.setLimits(1, 2*fw);
+		p.setValue(fw);
 
 		p = pdf.getParameter(2);
 		// estimate area
 		double t = ((Number) v.sum(true)).doubleValue();
 		p.setValue(t);
-		double hm = v.max(true).doubleValue();
-		p.setLimits(0, 2*std * hm);
+		p.setLimits(0, Math.max(2* t, fw * max));
 
 		if (pdf.getNoOfParameters() > 3) {
 			p = pdf.getParameter(3);

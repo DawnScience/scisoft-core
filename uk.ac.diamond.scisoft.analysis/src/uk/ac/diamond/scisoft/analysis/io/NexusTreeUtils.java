@@ -1749,7 +1749,21 @@ public class NexusTreeUtils {
 	 * @return node link to first 
 	 */
 	public static NodeLink findFirstNode(GroupNode group, String clazz) {
+		return findFirstNode(group, null, clazz);
+	}
+
+	/**
+	 * Find node link to first item in group with prefix as name to be of given Nexus class
+	 * @param group
+	 * @param prefix (can be null)
+	 * @param clazz
+	 * @return node link to first 
+	 */
+	public static NodeLink findFirstNode(GroupNode group, String prefix, String clazz) {
 		for (NodeLink l : group) {
+			if (prefix != null && l.getName().startsWith(prefix)) {
+				continue;
+			}
 			if (isNXClass(l.getDestination(), clazz)) {
 				return l;
 			}

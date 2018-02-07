@@ -1761,7 +1761,7 @@ public class NexusTreeUtils {
 	 */
 	public static NodeLink findFirstNode(GroupNode group, String prefix, String clazz) {
 		for (NodeLink l : group) {
-			if (prefix != null && l.getName().startsWith(prefix)) {
+			if (prefix != null && !l.getName().startsWith(prefix)) {
 				continue;
 			}
 			if (isNXClass(l.getDestination(), clazz)) {

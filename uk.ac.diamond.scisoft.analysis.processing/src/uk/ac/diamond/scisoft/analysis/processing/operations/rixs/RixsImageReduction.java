@@ -491,6 +491,9 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					Dataset sp = null;
 					IDataset[] sArray = toArray(allSpectra[r]);
 					sp = accumulate(sArray);
+					if (sp == null) {
+						continue;
+					}
 					sp.setName("total_spectrum_" + r);
 					summaryData.add(sp);
 

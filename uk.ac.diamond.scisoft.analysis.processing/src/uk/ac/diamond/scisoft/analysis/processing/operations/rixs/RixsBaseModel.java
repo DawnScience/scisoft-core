@@ -19,10 +19,10 @@ import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
  */
 public class RixsBaseModel extends AbstractOperationModel {
 	@OperationModelField(label = "Rectangle A to search for elastic peak")
-	private IRectangularROI roiA = new RectangularROI(49.68, 0, 872.83, 1623.58, 0);
+	private IRectangularROI roiA = new RectangularROI(0, 0, 2048, 1600, 0);
 
 	@OperationModelField(label = "Rectangle B to search for elastic peak")
-	private IRectangularROI roiB = new RectangularROI(1200, 600, 700, 400, 0);
+	private IRectangularROI roiB = new RectangularROI(1348, 1648, 700, 400, 0);
 
 	public enum ENERGY_DIRECTION {
 		SLOW, // slowest pixel direction

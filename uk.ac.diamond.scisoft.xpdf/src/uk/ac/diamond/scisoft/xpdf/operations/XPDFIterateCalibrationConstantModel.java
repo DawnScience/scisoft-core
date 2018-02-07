@@ -33,11 +33,12 @@ public class XPDFIterateCalibrationConstantModel extends AbstractOperationModel 
 	private double polarizationFactor = 1.0;
 	@OperationModelField(hint = "Compton Scattering scaling factor (non-physical)", label = "Compton Scaling")
 	private double comptonScaling = 1.0; 
+	@OperationModelField(hint = "Initial calibration constant", label = "Initial calibration const.")
+	private double initialCalibrationConstant = 1.0e-16; 
 	
 	public double getPolarizationFactor() {
 		return polarizationFactor;
 	}
-
 	public void setPolarizationFactor(double polarizationFactor) {
 		firePropertyChange("polarizationFactor", this.polarizationFactor, this.polarizationFactor = polarizationFactor);
 	}
@@ -45,7 +46,6 @@ public class XPDFIterateCalibrationConstantModel extends AbstractOperationModel 
 	public double getComptonScaling() {
 		return comptonScaling;
 	}
-
 	public void setComptonScaling(double comptonScaling) {
 		firePropertyChange("comptonScaling", this.comptonScaling, this.comptonScaling = comptonScaling);
 	}
@@ -53,7 +53,6 @@ public class XPDFIterateCalibrationConstantModel extends AbstractOperationModel 
 	public int getnIterations() {
 		return nIterations;
 	}
-
 	public void setnIterations(int nIterations) {
 		firePropertyChange("nIterations", this.nIterations, this.nIterations = nIterations);
 	}
@@ -61,7 +60,6 @@ public class XPDFIterateCalibrationConstantModel extends AbstractOperationModel 
 	public boolean isSortContainers() {
 		return sortContainers;
 	}
-
 	public void setSortContainers(boolean sortContainers) {
 		firePropertyChange("sortContainers", this.sortContainers, this.sortContainers = sortContainers);
 	}
@@ -69,7 +67,6 @@ public class XPDFIterateCalibrationConstantModel extends AbstractOperationModel 
 	public boolean isDoingFluorescence() {
 		return doingFluorescence;
 	}
-	
 	public void setDoingFluorescence(boolean doFluorescence) {
 		firePropertyChange("doingFluorescence", this.doingFluorescence, this.doingFluorescence = doFluorescence);
 	}
@@ -77,7 +74,6 @@ public class XPDFIterateCalibrationConstantModel extends AbstractOperationModel 
 	public boolean isCalculatingFluorescence() {
 		return calculatingFluorescence;
 	}
-	
 	public void setCalculatingFluorescence(boolean calcFluorescence) {
 		firePropertyChange("calculatingFluorescence", this.calculatingFluorescence, this.calculatingFluorescence = calcFluorescence);
 	}
@@ -85,7 +81,6 @@ public class XPDFIterateCalibrationConstantModel extends AbstractOperationModel 
 	public double getFluorescenceScale() {
 		return fluorescenceScale;
 	}
-	
 	public void setFluorescenceScale(double fluorescenceScale) {
 		firePropertyChange("fluorescenceScale", this.fluorescenceScale, this.fluorescenceScale = fluorescenceScale);
 	}
@@ -93,7 +88,6 @@ public class XPDFIterateCalibrationConstantModel extends AbstractOperationModel 
 	public boolean getRegenerateAbsorptionMaps() {
 		return regenerateAbsorptionMaps;
 	}
-
 	public void setRegenerateAbsorptionMaps(boolean regenerateAbsorptionMaps) {
 		firePropertyChange("regenerateAbsorptionMaps", this.regenerateAbsorptionMaps, this.regenerateAbsorptionMaps = regenerateAbsorptionMaps);
 	}
@@ -101,9 +95,15 @@ public class XPDFIterateCalibrationConstantModel extends AbstractOperationModel 
 	public int getNThreads() {
 		return nThreads;
 	}
-	
 	public void setNThreads(int nThreads) {
 		firePropertyChange("nThreads", this.nThreads, this.nThreads = nThreads);
 	}
 
+	public double getInitialCalibrationConstant() {
+		return initialCalibrationConstant;
+	}
+	public void setInitialCalibrationConstant(double icc) {
+		this.initialCalibrationConstant = icc;
+	}
+	
 }

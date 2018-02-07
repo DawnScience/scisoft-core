@@ -27,7 +27,7 @@ import uk.ac.diamond.scisoft.analysis.roi.XAxis;
  */
 public class XPDFCalibrationBase {
 
-	protected Double calibrationConstant0;
+//	protected Double calibrationConstant0;
 	protected XPDFQSquaredIntegrator qSquaredIntegrator;
 	protected double selfScatteringDenominator;
 	protected Dataset multipleScatteringCorrection;
@@ -61,7 +61,7 @@ public class XPDFCalibrationBase {
 	 * 				calibration object to be copied.
 	 */
 	public XPDFCalibrationBase(XPDFCalibrationBase inCal) {
-		this.calibrationConstant0 = (inCal.calibrationConstant0 != null) ? inCal.calibrationConstant0 : null;
+//		this.calibrationConstant0 = (inCal.calibrationConstant0 != null) ? inCal.calibrationConstant0 : null;
 		this.qSquaredIntegrator = (inCal.qSquaredIntegrator != null) ? inCal.qSquaredIntegrator : null;
 		this.selfScatteringDenominator = inCal.selfScatteringDenominator;
 		this.multipleScatteringCorrection = (inCal.multipleScatteringCorrection != null) ? inCal.multipleScatteringCorrection.copy(DoubleDataset.class) : null;
@@ -84,9 +84,9 @@ public class XPDFCalibrationBase {
 	 * @param calibrationConstant
 	 * 							the initial value of the calibration constant.
 	 */
-	public void initializeCalibrationConstant(double calibrationConstant) {
-		calibrationConstant0 = calibrationConstant;
-	}
+//	public void initializeCalibrationConstant(double calibrationConstant) {
+//		calibrationConstant0 = calibrationConstant;
+//	}
 
 	/**
 	 * Sets up the q² integrator class to use in the calculation of the constants

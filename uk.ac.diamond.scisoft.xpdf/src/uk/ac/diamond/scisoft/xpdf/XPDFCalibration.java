@@ -49,6 +49,7 @@ import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegration;
  */
 public class XPDFCalibration extends XPDFCalibrationBase {
 
+	private Double calibrationConstant0;
 	private LinkedList<Double> calibrationConstants;
 	private ArrayList<Dataset> backgroundSubtracted;
 	private double fluorescenceScale;
@@ -97,6 +98,7 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 		super((XPDFCalibrationBase) inCal);
 
 		// copy the extended data
+		this.calibrationConstant0 = (inCal.calibrationConstant0 != null) ? inCal.calibrationConstant0 : null;
 		if (inCal.calibrationConstants != null) {
 			this.calibrationConstants = new LinkedList<Double>();
 			for (double c3 : inCal.calibrationConstants)
@@ -168,6 +170,18 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 		return theCopy;
 	}
 	
+	/**
+	 * Sets the initial calibration constant to be iterated.
+	 * <p>
+	 * Sets the initial calibration constant. If there is already an array,
+	 * then a new Array is created.
+	 * @param calibrationConstant
+	 * 							the initial value of the calibration constant.
+	 */
+	public void initializeCalibrationConstant(double calibrationConstant) {
+		calibrationConstant0 = calibrationConstant;
+	}
+
 	/**
 	 * Gets the most recent calibration constant from the list.
 	 * @return the most recent calibration constant.
@@ -426,6 +440,8 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 			calibrateFluorescence(nIterations, nThreads, op);
 		Dataset absCor = iterateCalibrate(nIterations, true, op);
 		logger.debug("Fluorescence scale = " + fluorescenceScale);
+		// The last value on the list was the corrected value, not used for the calculation of absCor
+		calibrationConstants.pop();
 		logger.debug("Calibration constant = " + calibrationConstants.getLast());
 		invalidateInitialCorrections();
 		return absCor;

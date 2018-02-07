@@ -97,6 +97,8 @@ public class XPDFIterateCalibrationConstantOperation extends
 			backgroundSubtracted.add(theXPDFMetadata.getContainerTrace(container).getTrace());
 		}
 		theCalibration.setBackgroundSubtracted(backgroundSubtracted);
+		
+		theCalibration.initializeCalibrationConstant(model.getInitialCalibrationConstant());
 	
 //		for (int i = 0; i < nIterations; i++) 
 //			absCor = theCalibration.iterate(true);
@@ -197,7 +199,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 			theBase = new XPDFCalibrationBase();
 
 			// The initial value of the calibration constant is 1e-16
-			theBase.initializeCalibrationConstant(1e-16);
+//			theBase.initializeCalibrationConstant(1e-16);
 
 
 			XPDFMetadata theXPDFMetadata = null;

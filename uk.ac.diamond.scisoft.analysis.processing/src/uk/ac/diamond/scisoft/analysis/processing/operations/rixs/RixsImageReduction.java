@@ -185,12 +185,13 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					}
 				}
 
-				if (fitFile != null) {
-					initializeFitLine(fitFile);
-					if (model.isRegionsFromFile()) {
-						initializeROIsFromFile(fitFile);
-						updateROICount();
-					}
+				if (fitFile == null) {
+					throw new OperationException(this, "Could not find fit file in data, calibration or processing directories");
+				}
+				initializeFitLine(fitFile);
+				if (model.isRegionsFromFile()) {
+					initializeROIsFromFile(fitFile);
+					updateROICount();
 				}
 			}
 		}
@@ -491,6 +492,9 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					Dataset sp = null;
 					IDataset[] sArray = toArray(allSpectra[r]);
 					sp = accumulate(sArray);
+					if (sp == null) {
+						continue;
+					}
 					sp.setName("total_spectrum_" + r);
 					summaryData.add(sp);
 
@@ -650,7 +654,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		}
 	}
 
-	private IDataset[] toArray(List<Dataset> d) {
+	private static IDataset[] toArray(List<Dataset> d) {
 		int imax = d.size();
 		IDataset[] a = new IDataset[imax];
 		for (int i = 0; i < imax; i++) {

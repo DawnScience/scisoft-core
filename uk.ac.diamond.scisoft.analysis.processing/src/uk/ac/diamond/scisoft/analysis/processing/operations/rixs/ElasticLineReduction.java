@@ -501,6 +501,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		peak.addFunction(new Gaussian());
 		peak.addFunction(new Offset());
 
+		List<Double> bEnergy = new ArrayList<>();
 		List<Double> gEnergy = new ArrayList<>();
 		List<Double> gPosn = new ArrayList<>();
 		List<Double> gFWHM = new ArrayList<>();
@@ -508,6 +509,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 		int ns = goodSpectra[r].size();
 		Dataset spectrum = null;
+		Dataset bSpectrum = null;
 		Dataset gSpectrum = null;
 		Dataset gSpectrumFit = null;
 		int size = 0;
@@ -526,6 +528,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 				res = fitFunction(peak, x, spectrum, null);
 				System.err.println("Peak " + i + " fit is " + peak + " with residual " + res);
 				if (Double.isFinite(res)) {
+					res = Double.POSITIVE_INFINITY;
 					// isolate peak and fit again (to reduce influence of other spikes)
 					double posn = peak.getParameterValue(0);
 					double width = peak.getParameterValue(1);
@@ -553,21 +556,36 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			}
 			if (!Double.isFinite(res)) {
 				log.append("Fitting elastic peak: FAILED");
+				bEnergy.add(energy.get(i));
+				if (bSpectrum == null) {
+					bSpectrum = spectrum.clone().reshape(1, size);
+				} else {
+					bSpectrum = DatasetUtils.concatenate(new IDataset[] {bSpectrum, spectrum.reshape(1, size)}, 0);
+				}
 			}
 		}
 
-		Dataset ge = DatasetFactory.createFromList(gEnergy);
-		ge.setName("Scan energy");
-		gSpectrum.setName("elastic_spectrum_" + r);
-		ProcessingUtils.setAxes(gSpectrum, ge);
-		summaryData.add(gSpectrum);
-		gSpectrumFit.setName("elastic_spectrum_fit_" + r);
-		ProcessingUtils.setAxes(gSpectrumFit, ge);
-		summaryData.add(gSpectrumFit);
-		Dataset gf = DatasetFactory.createFromList(gFWHM);
-		gf.setName("elastic_spectrum_fwhm_" + r);
-		ProcessingUtils.setAxes(gf, ge);
-		summaryData.add(gf);
+		if (gEnergy.size() > 0) {
+			Dataset ge = DatasetFactory.createFromList(gEnergy);
+			ge.setName("Scan energy");
+			gSpectrum.setName("elastic_spectrum_" + r);
+			ProcessingUtils.setAxes(gSpectrum, ge);
+			summaryData.add(gSpectrum);
+			gSpectrumFit.setName("elastic_spectrum_fit_" + r);
+			ProcessingUtils.setAxes(gSpectrumFit, ge);
+			summaryData.add(gSpectrumFit);
+			Dataset gf = DatasetFactory.createFromList(gFWHM);
+			gf.setName("elastic_spectrum_fwhm_" + r);
+			ProcessingUtils.setAxes(gf, ge);
+			summaryData.add(gf);
+		}
+		if (bEnergy.size() > 0) {
+			Dataset be = DatasetFactory.createFromList(bEnergy);
+			be.setName("Scan energy");
+			bSpectrum.setName("bad_elastic_spectrum_" + r);
+			ProcessingUtils.setAxes(bSpectrum, be);
+			summaryData.add(bSpectrum);
+		}
 
 		return new List<?>[] {gEnergy, gPosn};
 	}

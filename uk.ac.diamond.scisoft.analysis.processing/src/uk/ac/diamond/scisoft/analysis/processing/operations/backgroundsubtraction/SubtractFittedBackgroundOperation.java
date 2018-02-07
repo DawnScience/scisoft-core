@@ -28,6 +28,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.dataset.SliceND;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
@@ -99,9 +100,9 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		int c = (int) cx - 1;
 		p.setLimits(bins.getDouble(c) - 0.5, bins.getDouble(c + 2)); // set narrow range for fitting pdf position
 		p.setValue(cx);
-		Slice slice = new Slice(b, e + 1, 1);
+		SliceND slice = new SliceND(h.getShapeRef(), new Slice(b, e + 1, 1));
 
-		residual = fitFunction(this, pdf, bins.getSliceView(slice), h.getSliceView(slice));
+		residual = fitFunction(this, pdf, x.getSliceView(slice), h.getSliceView(slice));
 		log.append("\nFitted PDF in %s: residual = %g\n%s", slice, residual, pdf);
 
 		fit = DatasetUtils.convertToDataset(pdf.calculateValues(x));
@@ -215,10 +216,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 		p = pdf.getParameter(1);
 		// estimate FWHM from crossings at HM and finding the crossing that is less than max x
-		List<Double> cs = DatasetUtils.crossings(x, h, hm * 0.5);
-		int i = 1;
-		for (int imax = cs.size() - 1; i < imax && cs.get(i) < pMax; i++);
-		double xr = cs.get(i) - cs.get(i-1);
+		double xr = findFWHMPostMax(x, h);
 		p.setLimits(dx, 2*xr);
 		p.setValue(xr);
 
@@ -227,5 +225,19 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		double t = dx * ((Number) h.sum(true)).doubleValue();
 		p.setValue(t);
 		p.setLimits(dx * hm, 2*xr * hm);
+	}
+
+	/**
+	 * Find FWHM from values of y after maximum
+	 * @param x
+	 * @param y
+	 * @return FWHM or NaN if not found
+	 */
+	public static double findFWHMPostMax(Dataset x, Dataset y) {
+		double ym = y.max(true).doubleValue();
+		int pos = y.maxPos(true)[0];
+		SliceND slice = new SliceND(x.getShapeRef(), new Slice(pos, null));
+		List<Double> cs = DatasetUtils.crossings(x.getSliceView(slice), y.getSliceView(slice), ym * 0.5);
+		return cs.size() > 0 ? (cs.get(0) - x.getDouble(pos)) * 2 : Double.NaN;
 	}
 }

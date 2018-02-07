@@ -1256,6 +1256,14 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.SurfaceScatteringRemappingModel"
             name="Grazing Incidence Scattering Remapping">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.RemapToQOperation"
+            description="Re-map pixel values to q values"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.RemapToQOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationModel"
+            name="Remap into Q">
+      </operation>
        <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.TrackingWork2"
             icon="icons/template.png"

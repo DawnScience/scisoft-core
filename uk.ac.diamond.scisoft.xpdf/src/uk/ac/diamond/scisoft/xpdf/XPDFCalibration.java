@@ -436,6 +436,12 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 	 */
 	public Dataset calibrate(int nIterations, int nThreads, IOperation<?, ?> op) {
 		calculateInitialCorrections();
+//		if (doFluorescence) {
+//			double originalScale = this.fluorescenceScale;
+//			calibrateFluorescence(nIterations, nThreads, op);
+//			if (!doFluorescenceCalibration)
+//				this.fluorescenceScale = originalScale;
+//		}
 		if (doFluorescence && doFluorescenceCalibration)
 			calibrateFluorescence(nIterations, nThreads, op);
 		Dataset absCor = iterateCalibrate(nIterations, true, op);
@@ -961,5 +967,9 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 
 	public double getFluorescenceScale() {
 		return fluorescenceScale;
+	}
+	
+	public void setSelfScatteringDenominatorFromSample(XPDFTargetComponent sample) {
+		super.setSelfScatteringDenominatorFromSample(sample, this.coords);
 	}
 }

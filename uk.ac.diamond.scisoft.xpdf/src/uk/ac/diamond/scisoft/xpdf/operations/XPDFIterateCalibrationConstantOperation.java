@@ -87,7 +87,9 @@ public class XPDFIterateCalibrationConstantOperation extends
 		XPDFComposition.setComptonScaling(model.getComptonScaling());
 		theXPDFMetadata.setComptonScaling(model.getComptonScaling());
 		
+		// Update the values that depend on the self-scattering
 		theCalibration.setSelfScattering(theXPDFMetadata.getSample());
+		theCalibration.setSelfScatteringDenominatorFromSample(theXPDFMetadata.getSample());
 		
 		List<Dataset> backgroundSubtracted = new ArrayList<Dataset>();
 		// The 0th element is the sample
@@ -115,7 +117,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 		// assign the calibration values to the XPDF metadata object
 		theXPDFMetadata.setCalibrationConstant(theCalibration.getCalibrationConstant());
 		theXPDFMetadata.setFluorescenceScale(theCalibration.getFluorescenceScale());
-		theXPDFMetadata.setComptonScaling(model.getComptonScaling());
+//		theXPDFMetadata.setComptonScaling(model.getComptonScaling());
 		
 		absCor.setName("Absorption Corrected");
 		

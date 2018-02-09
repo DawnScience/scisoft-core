@@ -31,10 +31,11 @@ public class AlbaLinkFileLoader extends AbstractFileLoader {
 	
 	private Map<String,String> metadataMap;
 	private static String BASE_DIR = "BaseDir";
+	private static String BASE_DIR2 = "base_dir";
+	private static String PYTHON_NAN = "nan";
 	
 	@Override
 	public IDataHolder loadFile() throws ScanFileHolderException {
-		fileName.toString();
 		
 		// first instantiate the return object.
 				final DataHolder result = new DataHolder();
@@ -74,9 +75,9 @@ public class AlbaLinkFileLoader extends AbstractFileLoader {
 						
 					}
 					
-					if (!metadataMap.containsKey(BASE_DIR)) throw new ScanFileHolderException("No " + BASE_DIR +" in header");
+					if (!metadataMap.containsKey(BASE_DIR) && !metadataMap.containsKey(BASE_DIR2)) throw new ScanFileHolderException("No " + BASE_DIR +" in header");
 					
-					String base = metadataMap.get(BASE_DIR);
+					String base = metadataMap.containsKey(BASE_DIR) ? metadataMap.get(BASE_DIR) : metadataMap.get(BASE_DIR2);
 					
 					String[] split = line.split("\t");
 					
@@ -88,7 +89,10 @@ public class AlbaLinkFileLoader extends AbstractFileLoader {
 					for (int i = 0; i < split.length; i++) {
 						double d = 0;
 						try {
-							d = Double.parseDouble(split[i]);
+							if (PYTHON_NAN.equals(split[i])) {
+								split[i] = "NaN";
+							}
+							d = Utils.parseDouble(split[i]);
 							doubleKey[i] = true;
 						} catch (Exception e) {
 							doubleKey[i] = false;
@@ -122,6 +126,11 @@ public class AlbaLinkFileLoader extends AbstractFileLoader {
 						}
 						
 						for (int i = 0; i < split.length; i++) {
+							
+							if (PYTHON_NAN.equals(split[i])) {
+								split[i] = "NaN";
+							}
+							
 							if (doubleKey[i]) {
 								mapDouble.get(cols[i]).add(Utils.parseDouble(split[i]));
 							} else {

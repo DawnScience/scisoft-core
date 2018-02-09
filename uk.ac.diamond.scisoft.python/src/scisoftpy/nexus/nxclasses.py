@@ -483,6 +483,14 @@ class NXprocess(NXobject):
     '''
     pass
 
+class NXreflections(NXobject):
+    '''
+    NXreflections node. This is a subclass of the NXobject class.
+    
+    See the NXobject documentation for more details.
+    '''
+    pass
+
 class NXsample(NXobject):
     '''
     NXsample node. This is a subclass of the NXobject class.

@@ -13,7 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###
-
+'''
+For Jython only
+'''
 import os
 if os.name == 'java':
     from scisoftpy.jython.fitcore import *

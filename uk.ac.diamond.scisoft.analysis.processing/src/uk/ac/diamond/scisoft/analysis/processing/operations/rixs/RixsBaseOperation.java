@@ -30,6 +30,7 @@ import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
+import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.BooleanDataset;
@@ -388,11 +389,11 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 			GroupNode root = t.getGroupNode();
 			// TODO find photon energy, (decide where it should be recorded)
-			NodeLink beam = NexusTreeUtils.findFirstNode(root, NexusTreeUtils.NX_BEAM);
+			NodeLink beam = NexusTreeUtils.findFirstNode(root, NexusConstants.BEAM);
 			DiffractionCrystalEnvironment dce = new DiffractionCrystalEnvironment();
 			NexusTreeUtils.parseBeam(beam, dce);
 
-			NodeLink detector = NexusTreeUtils.findFirstNode(root, NexusTreeUtils.NX_DETECTOR);
+			NodeLink detector = NexusTreeUtils.findFirstNode(root, NexusConstants.DETECTOR);
 			parseNXrixs((GroupNode) detector.getDestination(), 1e3 * dce.getEnergy());
 		} catch (Exception e) {
 			log.append("Could not parse Nexus file %s:%s", filePath, e);

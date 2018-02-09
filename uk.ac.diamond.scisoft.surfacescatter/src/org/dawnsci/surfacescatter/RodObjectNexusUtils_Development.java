@@ -18,14 +18,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+
 import org.apache.commons.lang.StringUtils;
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
-import org.eclipse.dawnsci.analysis.tree.impl.AttributeImpl;
-import org.eclipse.dawnsci.analysis.tree.impl.DataNodeImpl;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
+import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.january.DatasetException;
@@ -35,7 +35,6 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.SliceND;
-import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 
 public class RodObjectNexusUtils_Development {
 
@@ -59,7 +58,7 @@ public class RodObjectNexusUtils_Development {
 		GroupNode entry = TreeFactory.createGroupNode(p);
 		p++;
 
-		entry.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXentry"));
+		entry.addAttribute(TreeFactory.createAttribute(NexusConstants.NXCLASS, NexusConstants.ENTRY));
 
 		//
 
@@ -90,7 +89,7 @@ public class RodObjectNexusUtils_Development {
 			GroupNode nxData = framePointWriter(fm, p, submitLenPt, rawImageArray, backgroundSubtractedImageArray, m);
 
 			try {
-				nxData.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXcollection"));
+				nxData.addAttribute(TreeFactory.createAttribute(NexusConstants.NXCLASS, NexusConstants.COLLECTION));
 
 				entry.addGroupNode("point_" + imageFilepathNo, nxData);
 			} catch (Exception e) {
@@ -130,7 +129,7 @@ public class RodObjectNexusUtils_Development {
 		entry.addGroupNode(NeXusStructureStrings.getOverlapregions(), overlapRegions);
 
 		entry.getGroupNode(NeXusStructureStrings.getOverlapregions())
-				.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXcollection"));
+				.addAttribute(TreeFactory.createAttribute(NexusConstants.NXCLASS, NexusConstants.COLLECTION));
 		/// Start creating the overlap region coding
 
 		int overlapNumber = 0;
@@ -196,7 +195,7 @@ public class RodObjectNexusUtils_Development {
 
 			GroupNode group2 = nexusFileReference.getGroup(rawImagesString, true);
 			try {
-				nexusFileReference.addAttribute(group2, new AttributeImpl("signal", "rawImagesDataset"));
+				nexusFileReference.addAttribute(group2, TreeFactory.createAttribute(NexusConstants.DATA_SIGNAL, "rawImagesDataset"));
 			} catch (Exception ef) {
 				System.out.println("what broke   :   " + ef.getMessage());
 			}
@@ -218,7 +217,7 @@ public class RodObjectNexusUtils_Development {
 			String[] b = new String[axes.size()];
 			axes.toArray(b);
 
-			nexusFileReference.addAttribute(group2, new AttributeImpl("axes", b));
+			nexusFileReference.addAttribute(group2, TreeFactory.createAttribute(NexusConstants.DATA_AXES, b));
 
 			SliceND slice00 = new SliceND(csdp.getSplicedCurveYFhkl().getShape());
 
@@ -280,14 +279,14 @@ public class RodObjectNexusUtils_Development {
 
 			GroupNode group = nexusFileReference.getGroup(rawImagesString, true);
 
-			nexusFileReference.addAttribute(group, new AttributeImpl("axes", b));
+			nexusFileReference.addAttribute(group, TreeFactory.createAttribute(NexusConstants.DATA_AXES, b));
 
 			GroupNode group1 = nexusFileReference.getGroup(reducedDataString, true);
 
-			nexusFileReference.addAttribute(group, new AttributeImpl("NX_class", "NXdata"));
-			nexusFileReference.addAttribute(group1, new AttributeImpl("NX_class", "NXdata"));
-			nexusFileReference.addAttribute(group1, new AttributeImpl("signal", "Corrected_Intensity_Dataset"));
-			nexusFileReference.addAttribute(group1, new AttributeImpl("axes", b));
+			nexusFileReference.addAttribute(group, TreeFactory.createAttribute(NexusConstants.NXCLASS, NexusConstants.DATA));
+			nexusFileReference.addAttribute(group1, TreeFactory.createAttribute(NexusConstants.NXCLASS, NexusConstants.DATA));
+			nexusFileReference.addAttribute(group1, TreeFactory.createAttribute(NexusConstants.DATA_SIGNAL, "Corrected_Intensity_Dataset"));
+			nexusFileReference.addAttribute(group1, TreeFactory.createAttribute(NexusConstants.DATA_AXES, b));
 
 		} catch (Exception e) {
 
@@ -335,7 +334,7 @@ public class RodObjectNexusUtils_Development {
 
 		parameters.addAttribute(TreeFactory.createAttribute("Rod Name", drm.getRodName()));
 
-		parameters.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXparameters"));
+		parameters.addAttribute(TreeFactory.createAttribute(NexusConstants.NXCLASS, NexusConstants.PARAMETERS));
 
 		parameters.addAttribute(TreeFactory.createAttribute("Tracker On", String.valueOf(drm.isTrackerOn())));
 
@@ -347,7 +346,7 @@ public class RodObjectNexusUtils_Development {
 
 		GroupNode nxData = TreeFactory.createGroupNode(p);
 
-		nxData.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXsubentry"));
+		nxData.addAttribute(TreeFactory.createAttribute(NexusConstants.NXCLASS, NexusConstants.SUBENTRY));
 
 		if (fm.getBackgroundMethdology() == Methodology.OVERLAPPING_BACKGROUND_BOX) {
 
@@ -398,7 +397,7 @@ public class RodObjectNexusUtils_Development {
 		}
 
 		// Then we add the raw image
-		DataNode rawImageDataNode = new DataNodeImpl(0);
+		DataNode rawImageDataNode = TreeFactory.createDataNode(0);
 
 		SliceND slice = new SliceND(fm.getRawImageData().getShape());
 
@@ -414,7 +413,7 @@ public class RodObjectNexusUtils_Development {
 
 		nxData.addDataNode(NeXusStructureStrings.getRawImage(), rawImageDataNode);
 
-		DataNode backgroundSubtractedImageDataNode = new DataNodeImpl(1);
+		DataNode backgroundSubtractedImageDataNode = TreeFactory.createDataNode(1);
 
 		SliceND slice1 = new SliceND(fm.getBackgroundSubtractedImage().getShape());
 		IDataset jb = DatasetFactory.createFromObject(0);
@@ -459,7 +458,7 @@ public class RodObjectNexusUtils_Development {
 			}
 		}
 
-		alias.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXparameters"));
+		alias.addAttribute(TreeFactory.createAttribute(NexusConstants.NXCLASS, NexusConstants.PARAMETERS));
 
 		entry.addGroupNode(NeXusStructureStrings.getAliases(), alias);
 	}
@@ -508,7 +507,7 @@ public class RodObjectNexusUtils_Development {
 			}
 		}
 
-		overview.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXparameters"));
+		overview.addAttribute(TreeFactory.createAttribute(NexusConstants.NXCLASS, NexusConstants.PARAMETERS));
 
 		try {
 			entry.addGroupNode(NeXusStructureStrings.getOverviewOfFrames(), overview);
@@ -531,7 +530,7 @@ public class RodObjectNexusUtils_Development {
 			}
 		}
 
-		DataNode backgroundSubtractedImageDataNode = new DataNodeImpl(1);
+		DataNode backgroundSubtractedImageDataNode = TreeFactory.createDataNode(1);
 
 		SliceND slice1 = new SliceND(drm.getTemporaryBackgroundHolder().getShape());
 		IDataset jb = DatasetFactory.createFromObject(0);
@@ -546,7 +545,7 @@ public class RodObjectNexusUtils_Development {
 
 		drmGroup.addDataNode(NeXusStructureStrings.getTemporarybackgroundholder(), backgroundSubtractedImageDataNode);
 
-		drmGroup.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXparameters"));
+		drmGroup.addAttribute(TreeFactory.createAttribute(NexusConstants.NXCLASS, NexusConstants.PARAMETERS));
 
 		try {
 			entry.addGroupNode(NeXusStructureStrings.getDirectoryModelParameters(), drmGroup);
@@ -585,7 +584,7 @@ public class RodObjectNexusUtils_Development {
 			}
 		}
 
-		ocdpGroup.addAttribute(TreeFactory.createAttribute(NexusTreeUtils.NX_CLASS, "NXparameters"));
+		ocdpGroup.addAttribute(TreeFactory.createAttribute(NexusConstants.NXCLASS, NexusConstants.PARAMETERS));
 
 		try {
 			entry.addGroupNode(NeXusStructureStrings.getDataPackageForOverlapCalculation(), ocdpGroup);

@@ -41,6 +41,7 @@ import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5LazyLoader;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.eclipse.dawnsci.hdf5.HDF5Utils.DatasetType;
+import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.DTypeUtils;
@@ -520,7 +521,7 @@ public class HDF5Loader extends AbstractFileLoader {
 							} else {
 								group.addNode(oname, g);
 
-								if (NexusTreeUtils.isNXClass(g, NexusTreeUtils.NX_DATA)) {
+								if (NexusTreeUtils.isNXClass(g, NexusConstants.DATA)) {
 									augmentLink(group.getNodeLink(oname));
 								}
 							}

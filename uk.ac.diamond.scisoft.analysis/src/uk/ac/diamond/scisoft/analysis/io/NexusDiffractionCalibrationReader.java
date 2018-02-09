@@ -25,6 +25,7 @@ import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
+import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -107,7 +108,7 @@ public class NexusDiffractionCalibrationReader {
 	}
 	
 	private static DiffractionCrystalEnvironment tryBeam(Tree tree) {
-		NodeLink nl = findWavelengthNode(tree, NexusTreeUtils.NX_BEAM);
+		NodeLink nl = findWavelengthNode(tree, NexusConstants.BEAM);
 		if (nl == null) return null;
 		DiffractionCrystalEnvironment dce = new DiffractionCrystalEnvironment();
 		NexusTreeUtils.parseBeam(nl, dce);
@@ -116,7 +117,7 @@ public class NexusDiffractionCalibrationReader {
 	}
 	
 	private static DiffractionCrystalEnvironment tryMonochromator(Tree tree) {
-		NodeLink nl = findWavelengthNode(tree, NexusTreeUtils.NX_MONOCHROMATOR);
+		NodeLink nl = findWavelengthNode(tree, NexusConstants.MONOCHROMATOR);
 		if (nl == null) return null;
 		DiffractionCrystalEnvironment dce = new DiffractionCrystalEnvironment();
 		NexusTreeUtils.parseMonochromator(nl, dce);
@@ -131,7 +132,7 @@ public class NexusDiffractionCalibrationReader {
 			public boolean found(NodeLink node) {
 				Node source = node.getDestination();
 
-				Attribute attribute = source.getAttribute("NX_class");
+				Attribute attribute = source.getAttribute(NexusConstants.NXCLASS);
 				if (attribute == null) return false;
 				String el = attribute.getFirstElement();
 				if (el == null) return false;

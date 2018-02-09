@@ -45,6 +45,7 @@ import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.analysis.tree.impl.TreeImpl;
+import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
@@ -74,46 +75,71 @@ public class NexusTreeUtils {
 	protected static final Logger logger = LoggerFactory.getLogger(NexusTreeUtils.class);
 
 	/**
-	 * Attribute name for a NeXus class
+	 * @deprecated Non-standard attribute
 	 */
-	public static final String NX_CLASS = "NX_class";
-	public static final String NX_AXES = "axes";
-	public static final String NX_AXIS = "axis";
+	@Deprecated
 	public static final String NX_LABEL = "label";
-	public static final String NX_PRIMARY = "primary";
-	public static final String NX_SIGNAL = "signal";
-	public static final String NX_DATA = "NXdata";
-	public static final String NX_ERRORS = "errors";
-	public static final String NX_ERRORS_SUFFIX = "_" + NX_ERRORS;
-	public static final String NX_UNITS = "units";
-	public static final String NX_NAME = "long_name";
-	public static final String NX_INDICES_SUFFIX = "_indices";
-	public static final String NX_UNCERTAINTY_SUFFIX ="_uncertainty";
-	public static final String NX_AXES_EMPTY = ".";
-	public static final String SDS = "SDS";
-	public static final String DATA = "data";
-	public static final String NX_DETECTOR = "NXdetector";
-	public static final String NX_DETECTOR_MODULE = "NXdetector_module";
-	public static final String NX_GEOMETRY = "NXgeometry";
-	public static final String NX_TRANSLATION = "NXtranslation";
-	public static final String NX_ORIENTATION = "NXorientation";
-	public static final String NX_TRANSFORMATIONS = "NXtransformations";
-	public static final String NX_TRANSFORMATIONS_ROOT = ".";
-	public static final String NX_SAMPLE = "NXsample";
-	public static final String NX_BEAM = "NXbeam";
-	public static final String NX_MONOCHROMATOR = "NXmonochromator";
-	public static final String NX_ATTENUATOR = "NXattenuator";
-	public static final String NX_DETECTOR_DISTANCE = "distance";
-	public static final String NX_DETECTOR_XPIXELSIZE = "x_pixel_size";
-	public static final String NX_DETECTOR_YPIXELSIZE = "y_pixel_size";
-	public static final String NX_DETECTOR_XBEAMCENTRE = "beam_center_y";
-	public static final String NX_DETECTOR_YBEAMCENTRE = "beam_center_x";
-	public static final String NX_DETECTOR_XPIXELNUMBER = "x_pixel_number";
-	public static final String NX_DETECTOR_YPIXELNUMER = "y_pixel_number";
-	public static final String NX_AXES_SET = "_set";
 
-	public static final String DEPENDS_ON = "depends_on";
-	
+	/**
+	 * deprecated Use {@link NexusConstants#NXCLASS}
+	 */
+	@Deprecated
+	public static final String NX_CLASS = NexusConstants.NXCLASS;
+
+	/**
+	 * @deprecated Use {@link NexusConstants#DATA_AXES}
+	 */
+	@Deprecated
+	public static final String NX_AXES = NexusConstants.DATA_AXES;
+
+	/**
+	 * @deprecated Use {@link NexusConstants#DATA_AXIS}
+	 */
+	@Deprecated
+	public static final String NX_AXIS = NexusConstants.DATA_AXIS;
+
+	/**
+	 * @deprecated Use {@link NexusConstants#DATA_PRIMARY}
+	 */
+	@Deprecated
+	public static final String NX_PRIMARY = NexusConstants.DATA_PRIMARY;
+
+	/**
+	 * @deprecated Use {@link NexusConstants#DATA_SIGNAL}
+	 */
+	@Deprecated
+	public static final String NX_SIGNAL = NexusConstants.DATA_SIGNAL;
+
+	/**
+	 * @deprecated Use {@link NexusConstants#DATA}
+	 */
+	@Deprecated
+	public static final String NX_DATA = NexusConstants.DATA;
+
+	/**
+	 * @deprecated Use {@link NexusConstants#UNITS}
+	 */
+	@Deprecated
+	public static final String NX_UNITS = NexusConstants.UNITS;
+
+	/**
+	 * @deprecated Use {@link NexusConstants#DATA_INDICES_SUFFIX}
+	 */
+	@Deprecated
+	public static final String NX_INDICES_SUFFIX = NexusConstants.DATA_INDICES_SUFFIX;
+
+	private static final String TRANSFORMATIONS_ROOT = ".";
+	private static final String TRANSFORMATIONS_DEPENDSON = "depends_on";
+
+	private static final String DETECTOR_DISTANCE = "distance";
+	private static final String DETECTOR_XPIXELSIZE = "x_pixel_size";
+	private static final String DETECTOR_YPIXELSIZE = "y_pixel_size";
+	private static final String DETECTOR_XBEAMCENTRE = "beam_center_y";
+	private static final String DETECTOR_YBEAMCENTRE = "beam_center_x";
+	private static final String DETECTOR_XPIXELNUMBER = "x_pixel_number";
+	private static final String DETECTOR_YPIXELNUMBER = "y_pixel_number";
+
+
 	static {
 		UnitFormat.getInstance().alias(NonSI.ANGSTROM, "Angstrom");
 		UnitFormat.getInstance().alias(NonSI.ANGSTROM, "angstrom");
@@ -166,7 +192,7 @@ public class NexusTreeUtils {
 		}
 
 //		if (!isNXClass(dNode, SDS)) {
-//			logger.trace("Data node does not have {} attribute: {}", NX_CLASS, link);
+//			logger.trace("Data node does not have {} attribute: {}", NexusConstants.DATA_CLASS, link);
 //		}
 
 		ILazyDataset cData = dNode.getDataset();
@@ -176,7 +202,7 @@ public class NexusTreeUtils {
 		}
 
 		// find possible long name
-		String string = getFirstString(dNode.getAttribute(NX_NAME));
+		String string = getFirstString(dNode.getAttribute(NexusConstants.DATA_NAME));
 		if (string != null && string.length() > 0) {
 			cData.setName(string);
 		}
@@ -191,16 +217,16 @@ public class NexusTreeUtils {
 		}
 
 		GroupNode gNode = (GroupNode) link.getSource(); // before hunting for axes
-		Attribute stringAttr = dNode.getAttribute(NX_SIGNAL);
+		Attribute stringAttr = dNode.getAttribute(NexusConstants.DATA_SIGNAL);
 		boolean isSignal = false;
 		if (stringAttr != null) {
 			isSignal = true;
 			if (parseFirstInt(stringAttr) != 1) {
-				logger.warn("Node has {} attribute but is not 1: {}", NX_SIGNAL, link);
+				logger.warn("Node has {} attribute but is not 1: {}", NexusConstants.DATA_SIGNAL, link);
 				isSignal = false;
 			}
 		} else {
-			String sName = getFirstString(dNode.getAttribute(NX_SIGNAL));
+			String sName = getFirstString(dNode.getAttribute(NexusConstants.DATA_SIGNAL));
 			if (sName != null) {
 				if (gNode.containsDataNode(sName)) {
 					isSignal = dNode == gNode.getDataNode(sName);
@@ -209,7 +235,7 @@ public class NexusTreeUtils {
 				}
 			}
 			if (!isSignal) {
-				isSignal = gNode.containsDataNode(DATA) && dNode == gNode.getDataNode(DATA);
+				isSignal = gNode.containsDataNode(NexusConstants.DATA_DATA) && dNode == gNode.getDataNode(NexusConstants.DATA_DATA);
 			}
 		}
 
@@ -220,10 +246,10 @@ public class NexusTreeUtils {
 
 		if (eData == null) {
 			cName = cData.getName();
-			if (!NX_ERRORS.equals(cName)) { 
-				eName = cName + NX_ERRORS_SUFFIX;
+			if (!NexusConstants.DATA_ERRORS.equals(cName)) { 
+				eName = cName + NexusConstants.DATA_ERRORS_SUFFIX;
 				if (!gNode.containsDataNode(eName) && !cName.equals(link.getName())) {
-					eName = link.getName() + NX_ERRORS_SUFFIX;
+					eName = link.getName() + NexusConstants.DATA_ERRORS_SUFFIX;
 				}
 				if (gNode.containsDataNode(eName)) {
 					eData = gNode.getDataNode(eName).getDataset();
@@ -232,12 +258,12 @@ public class NexusTreeUtils {
 					} else {
 						eData.setName(eName);
 					}
-				} else if (isSignal && gNode.containsDataNode(NX_ERRORS)) { // fall back for signal dataset
-					eData = gNode.getDataNode(NX_ERRORS).getDataset();
+				} else if (isSignal && gNode.containsDataNode(NexusConstants.DATA_ERRORS)) { // fall back for signal dataset
+					eData = gNode.getDataNode(NexusConstants.DATA_ERRORS).getDataset();
 					if (eData == null) {
 						logger.warn("Error dataset {} is empty", eName);
 					} else {
-						eData.setName(NX_ERRORS);
+						eData.setName(NexusConstants.DATA_ERRORS);
 					}
 				}
 			}
@@ -261,7 +287,7 @@ public class NexusTreeUtils {
 			DataNode d = (DataNode) l.getDestination();
 			if (!d.isSupported() || d.isString() || dNode == d)
 				continue;
-			stringAttr = d.getAttribute(NX_SIGNAL);
+			stringAttr = d.getAttribute(NexusConstants.DATA_SIGNAL);
 			if (stringAttr != null && parseFirstInt(stringAttr) == 1)
 				continue;
 
@@ -275,7 +301,7 @@ public class NexusTreeUtils {
 				int[] ashape = a.getShape();
 
 				AxisChoice choice = new AxisChoice(a);
-				String n = getFirstString(dNode.getAttribute(NX_NAME));
+				String n = getFirstString(dNode.getAttribute(NexusConstants.DATA_NAME));
 				if (n != null)
 					choice.setLongName(n);
 
@@ -283,15 +309,15 @@ public class NexusTreeUtils {
 				if (cName == null)
 					cName = l.getName();
 				// avoid using errors for axes
-				if (cName.contains(NX_ERRORS)) {
+				if (cName.contains(NexusConstants.DATA_ERRORS)) {
 					continue;
 				}
 				
 				// add errors
 				if (a.getErrors() == null) {
-					eName = cName + NX_ERRORS_SUFFIX;
+					eName = cName + NexusConstants.DATA_ERRORS_SUFFIX;
 					if (!gNode.containsDataNode(eName) && !cName.equals(l.getName())) {
-						eName = l.getName() + NX_ERRORS_SUFFIX;
+						eName = l.getName() + NexusConstants.DATA_ERRORS_SUFFIX;
 					}
 					if (gNode.containsDataNode(eName)) {
 						eData = gNode.getDataNode(eName).getDataset();
@@ -308,14 +334,14 @@ public class NexusTreeUtils {
 					}
 				}
 				Attribute attr;
-				attr = d.getAttribute(NX_PRIMARY);
+				attr = d.getAttribute(NexusConstants.DATA_PRIMARY);
 				if (attr != null) {
 					choice.setPrimary(parseFirstInt(attr));
 				}
 
 				int[] intAxis = null;
 				if (isSignal) {
-					String indAttr = l.getName() + NX_INDICES_SUFFIX;
+					String indAttr = l.getName() + NexusConstants.DATA_INDICES_SUFFIX;
 					if (gNode.containsAttribute(indAttr)) {
 						// deal with index mapping from @*_indices
 						attr = gNode.getAttribute(indAttr);
@@ -327,7 +353,7 @@ public class NexusTreeUtils {
 				}
 
 				if (intAxis == null) {
-					attr = d.getAttribute(NX_AXIS);
+					attr = d.getAttribute(NexusConstants.DATA_AXIS);
 					if (attr != null) {
 						intAxis = parseIntArray(attr);
 						if (intAxis.length == ashape.length) {
@@ -385,11 +411,11 @@ public class NexusTreeUtils {
 		}
 
 		List<String> aNames = new ArrayList<String>();
-		Attribute axesAttr = dNode.getAttribute(NX_AXES);
+		Attribute axesAttr = dNode.getAttribute(NexusConstants.DATA_AXES);
 		if (axesAttr == null && isSignal) { // cope with @axes being in group
-			axesAttr = gNode.getAttribute(NX_AXES);
+			axesAttr = gNode.getAttribute(NexusConstants.DATA_AXES);
 			if (axesAttr != null)
-				logger.warn("Found @{} tag in group (not in '{}' dataset)", NX_AXES, gNode.findLinkedNodeName(dNode));
+				logger.warn("Found @{} tag in group (not in '{}' dataset)", NexusConstants.DATA_AXES, gNode.findLinkedNodeName(dNode));
 		}
 
 		if (axesAttr != null) { // check axes attribute for list axes
@@ -472,8 +498,8 @@ public class NexusTreeUtils {
 	 */
 	public static ILazyDataset parseLegacyNXdataAndAugment(GroupNode gn) {
 		
-		if (!isNXClass(gn, NX_DATA)) {
-			logger.warn("'{}' was not an {} class", gn, NX_DATA);
+		if (!isNXClass(gn, NexusConstants.DATA_DATA)) {
+			logger.warn("'{}' was not an {} class", gn, NexusConstants.DATA_DATA);
 			return null;
 		}
 		
@@ -486,7 +512,7 @@ public class NexusTreeUtils {
 			String name = it.next();
 			if (gn.containsDataNode(name)) {
 				DataNode dataNode = gn.getDataNode(name);
-				Attribute attribute = dataNode.getAttribute(NX_SIGNAL);
+				Attribute attribute = dataNode.getAttribute(NexusConstants.DATA_SIGNAL);
 				if (attribute != null) {
 					if (parseFirstInt(attribute) == 1 && signal == null) {
 						signal = name;
@@ -495,13 +521,13 @@ public class NexusTreeUtils {
 						return null;
 					}
 				} else {
-					attribute = dataNode.getAttribute(NX_AXIS);
+					attribute = dataNode.getAttribute(NexusConstants.DATA_AXIS);
 					if (attribute != null) {
 						int[] intArray = parseIntArray(attribute);
 						if (intArray != null) {
 							AxisChoice choice = new AxisChoice(dataNode.getDataset());
 							choice.setIndexMapping(intArray);
-							if (gn.getAttribute(NX_PRIMARY) != null) {
+							if (gn.getAttribute(NexusConstants.DATA_PRIMARY) != null) {
 								choice.setPrimary(1);
 							}
 							choices.add(choice);
@@ -557,8 +583,8 @@ public class NexusTreeUtils {
 			}
 		}
 		
-		if (gn.containsDataNode(NX_ERRORS)) {
-			ILazyDataset lze = gn.getDataNode(NX_ERRORS).getDataset();
+		if (gn.containsDataNode(NexusConstants.DATA_ERRORS)) {
+			ILazyDataset lze = gn.getDataNode(NexusConstants.DATA_ERRORS).getDataset();
 			if (Arrays.equals(lz.getShape(), lze.getShape())) {
 				lz.setErrors(lze);
 			}
@@ -573,14 +599,14 @@ public class NexusTreeUtils {
 	 * @return true if it conforms to standard
 	 */
 	public static boolean parseNXdataAndAugment(GroupNode gn) {
-		if (!isNXClass(gn, NX_DATA)) {
-			logger.warn("'{}' was not an {} class", gn, NX_DATA);
+		if (!isNXClass(gn, NexusConstants.DATA_DATA)) {
+			logger.warn("'{}' was not an {} class", gn, NexusConstants.DATA_DATA);
 			return false;
 		}
 
-		String signal = getFirstString(gn.getAttribute(NX_SIGNAL));
+		String signal = getFirstString(gn.getAttribute(NexusConstants.DATA_SIGNAL));
 		if (signal == null) {
-			signal = DATA;
+			signal = NexusConstants.DATA_DATA;
 		}
 		if (!gn.containsDataNode(signal)) {
 			return false;
@@ -594,7 +620,7 @@ public class NexusTreeUtils {
 		}
 
 		// find possible @long_name
-		String string = getFirstString(dNode.getAttribute(NX_NAME));
+		String string = getFirstString(dNode.getAttribute(NexusConstants.DATA_NAME));
 		if (string != null && string.length() > 0) {
 			cData.setName(string);
 		}
@@ -609,7 +635,7 @@ public class NexusTreeUtils {
 		int rank = shape.length;
 
 		List<String> namedAxes = new ArrayList<>();
-		String[] tmp = getStringArray(gn.getAttribute(NX_AXES));
+		String[] tmp = getStringArray(gn.getAttribute(NexusConstants.DATA_AXES));
 		if (tmp == null) {
 			return false;
 		}
@@ -620,7 +646,7 @@ public class NexusTreeUtils {
 
 		List<ILazyDataset> axes = new ArrayList<ILazyDataset>();
 		for (String a : namedAxes) {
-			if (NX_AXES_EMPTY.equals(a)) {
+			if (NexusConstants.DATA_AXESEMPTY.equals(a)) {
 				continue;
 			}
 
@@ -641,7 +667,7 @@ public class NexusTreeUtils {
 		Iterator<String> it = gn.getAttributeNameIterator();
 		while (it.hasNext()) {
 			String aName = it.next();
-			int i = aName.lastIndexOf(NX_INDICES_SUFFIX);
+			int i = aName.lastIndexOf(NexusConstants.DATA_INDICES_SUFFIX);
 			if (i > 0) {
 				String a = aName.substring(0, i);
 				if (!namedAxes.contains(a)) {
@@ -657,7 +683,7 @@ public class NexusTreeUtils {
 				}
 			}
 			
-			i = aName.lastIndexOf(NX_UNCERTAINTY_SUFFIX);
+			i = aName.lastIndexOf(NexusConstants.DATA_UNCERTAINTY_SUFFIX);
 			if (i > 0) {
 				String a = aName.substring(0, i);
 				Attribute uncertAttr = gn.getAttribute(aName);
@@ -685,13 +711,13 @@ public class NexusTreeUtils {
 			String signalName = "";
 			while (it.hasNext()) {
 				String aName = it.next();
-				if (NX_SIGNAL.equalsIgnoreCase(aName)) 
+				if (NexusConstants.DATA_SIGNAL.equalsIgnoreCase(aName)) 
 					signalName = gn.getAttribute(aName).getFirstElement();
 			}
 			DataNode signalNode = gn.getDataNode(signalName);
 			
-			// Check for a Dataset named as NX_ERRORS
-			String[] uncertaintyNames = new String[] {NX_ERRORS};
+			// Check for a Dataset named as NexusConstants.DATA_ERRORS
+			String[] uncertaintyNames = new String[] {NexusConstants.DATA_ERRORS};
 			DataNode uncertaintyNode = null;
 			for (String uncertainName : uncertaintyNames) {
 				uncertaintyNode = gn.getDataNode(uncertainName);
@@ -733,15 +759,15 @@ public class NexusTreeUtils {
 	 * @return ILazyDataset with meatadata
 	 */
 	public static ILazyDataset parseNXdataAndAugmentStrict(GroupNode gn) {
-		if (!isNXClass(gn, NX_DATA)) {
-			logger.warn("'{}' was not an {} class", gn, NX_DATA);
+		if (!isNXClass(gn, NexusConstants.DATA_DATA)) {
+			logger.warn("'{}' was not an {} class", gn, NexusConstants.DATA_DATA);
 			return null;
 		}
 
-		String signal = getFirstString(gn.getAttribute(NX_SIGNAL));
+		String signal = getFirstString(gn.getAttribute(NexusConstants.DATA_SIGNAL));
 		if (signal == null) {
-			logger.warn("Signal is null, defaulting to {}", DATA);
-			signal = DATA;
+			logger.warn("Signal is null, defaulting to {}", NexusConstants.DATA_DATA);
+			signal = NexusConstants.DATA_DATA;
 		}
 		if (!gn.containsDataNode(signal)) {
 			logger.warn("Group node does not contain {}", signal);
@@ -756,12 +782,12 @@ public class NexusTreeUtils {
 		}
 
 		// find possible @long_name
-		String string = getFirstString(dNode.getAttribute(NX_NAME));
+		String string = getFirstString(dNode.getAttribute(NexusConstants.DATA_NAME));
 		if (string != null && string.length() > 0) {
 			cData.setName(string);
 		}
 
-		String[] tmp = getStringArray(gn.getAttribute(NX_AXES));
+		String[] tmp = getStringArray(gn.getAttribute(NexusConstants.DATA_AXES));
 		if (tmp == null) {
 			logger.warn("Could not read axes attribute");
 			return null;
@@ -785,14 +811,14 @@ public class NexusTreeUtils {
 			return;
 		}
 		
-		if (annotations.contains(signalName+NX_UNCERTAINTY_SUFFIX)) {
-			DataNode dn = gn.getDataNode(signalName+NX_UNCERTAINTY_SUFFIX);
+		if (annotations.contains(signalName+NexusConstants.DATA_UNCERTAINTY_SUFFIX)) {
+			DataNode dn = gn.getDataNode(signalName+NexusConstants.DATA_UNCERTAINTY_SUFFIX);
 			ILazyDataset sv = dn.getDataset().getSliceView();
 			lz.setErrors(sv);
 		}
 		
 		for (int i = 0; i < primaryAxes.length; i++) {
-			if (NX_AXES_EMPTY.equals(primaryAxes[i])) continue;
+			if (NexusConstants.DATA_AXESEMPTY.equals(primaryAxes[i])) continue;
 			updateMetadata(primaryAxes[i], gn, annotations, ax, i);
 		}
 		
@@ -803,28 +829,28 @@ public class NexusTreeUtils {
 	}
 	
 	private static void updateMetadata(String name, GroupNode gn, Set<String> allAnnotations, AxesMetadata metadata, int primaryDimension) {
-		if (name.endsWith(NX_AXES_SET)) {
-			if (allAnnotations.contains(name + NX_INDICES_SUFFIX)) {
-				int[] indices = parseIntArray(gn.getAttribute(name + NX_INDICES_SUFFIX));
+		if (name.endsWith(NexusConstants.DATA_AXESSET_SUFFIX)) {
+			if (allAnnotations.contains(name + NexusConstants.DATA_INDICES_SUFFIX)) {
+				int[] indices = parseIntArray(gn.getAttribute(name + NexusConstants.DATA_INDICES_SUFFIX));
 				ILazyDataset view = gn.getDataNode(name).getDataset().getSliceView();
 				view.setName(name);
 				metadata.addAxis(primaryDimension, view, indices);
-				allAnnotations.remove(name + NX_INDICES_SUFFIX);
+				allAnnotations.remove(name + NexusConstants.DATA_INDICES_SUFFIX);
 			}
 			
-			String rb = name.substring(0, name.length() - NX_AXES_SET.length());
+			String rb = name.substring(0, name.length() - NexusConstants.DATA_AXESSET_SUFFIX.length());
 			
-			if (gn.containsDataNode(rb) && allAnnotations.contains(rb + NX_INDICES_SUFFIX)) {
-				int[] indices = parseIntArray(gn.getAttribute(rb + NX_INDICES_SUFFIX));
+			if (gn.containsDataNode(rb) && allAnnotations.contains(rb + NexusConstants.DATA_INDICES_SUFFIX)) {
+				int[] indices = parseIntArray(gn.getAttribute(rb + NexusConstants.DATA_INDICES_SUFFIX));
 				ILazyDataset view = gn.getDataNode(rb).getDataset().getSliceView();
 				view.setName(rb);
 				metadata.addAxis(primaryDimension, view,indices);
-				allAnnotations.remove(rb + NX_INDICES_SUFFIX);
+				allAnnotations.remove(rb + NexusConstants.DATA_INDICES_SUFFIX);
 				allAnnotations.remove(rb);
 			}
 		} else {
-			if (name.endsWith(NX_INDICES_SUFFIX)) {
-				String not_indices = name.substring(0, name.length() - NX_INDICES_SUFFIX.length());
+			if (name.endsWith(NexusConstants.DATA_INDICES_SUFFIX)) {
+				String not_indices = name.substring(0, name.length() - NexusConstants.DATA_INDICES_SUFFIX.length());
 				if (gn.containsDataNode(not_indices)) {
 					int[] indices = parseIntArray(gn.getAttribute(name));
 					ILazyDataset view = gn.getDataNode(not_indices).getDataset().getSliceView();
@@ -833,12 +859,12 @@ public class NexusTreeUtils {
 					allAnnotations.remove(not_indices);
 				}
 			} else {
-				if (allAnnotations.contains(name + NX_INDICES_SUFFIX)) {
-					int[] indices = parseIntArray(gn.getAttribute(name + NX_INDICES_SUFFIX));
+				if (allAnnotations.contains(name + NexusConstants.DATA_INDICES_SUFFIX)) {
+					int[] indices = parseIntArray(gn.getAttribute(name + NexusConstants.DATA_INDICES_SUFFIX));
 					ILazyDataset view = gn.getDataNode(name).getDataset().getSliceView();
 					view.setName(name);
 					metadata.addAxis(primaryDimension == -1 ? indices[0] : primaryDimension, view,indices);
-					allAnnotations.remove(name + NX_INDICES_SUFFIX);
+					allAnnotations.remove(name + NexusConstants.DATA_INDICES_SUFFIX);
 				}
 			}
 		}
@@ -858,7 +884,7 @@ public class NexusTreeUtils {
 		}
 
 		int[] ashape = aData.getShape();
-		int[] indices = parseIntArray(gn.getAttribute(a + NX_INDICES_SUFFIX));
+		int[] indices = parseIntArray(gn.getAttribute(a + NexusConstants.DATA_INDICES_SUFFIX));
 		if (indices == null) {
 			throw new IllegalArgumentException("No indices attribute for axis '" + a + "' in " + gn);
 		} else if (indices.length != ashape.length) {
@@ -915,14 +941,14 @@ public class NexusTreeUtils {
 		}
 
 		GroupNode gNode = (GroupNode) link.getDestination();
-		if (!isNXClass(gNode, NX_DETECTOR)) {
-			logger.warn("'{}' was not an {} class", gNode, NX_DETECTOR);
+		if (!isNXClass(gNode, NexusConstants.DETECTOR)) {
+			logger.warn("'{}' was not an {} class", gNode, NexusConstants.DETECTOR);
 			return null;
 		}
 
 		int[] shape = null;
 		for (NodeLink l : gNode) {
-			if (isNXClass(l.getDestination(), NX_DETECTOR_MODULE)) {
+			if (isNXClass(l.getDestination(), NexusConstants.DETECTORMODULE)) {
 				shape = parseSubDetectorShape(path + Node.SEPARATOR + l.getName(), tree, l);
 				break; // TODO multiple modules
 			}
@@ -952,19 +978,19 @@ public class NexusTreeUtils {
 		}
 
 		GroupNode gNode = (GroupNode) link.getDestination();
-		if (!isNXClass(gNode, NX_DETECTOR)) {
-			logger.warn("'{}' was not an {} class", gNode, NX_DETECTOR);
+		if (!isNXClass(gNode, NexusConstants.DETECTOR)) {
+			logger.warn("'{}' was not an {} class", gNode, NexusConstants.DETECTOR);
 			return null;
 		}
 
 		Map<String, Transform> ftrans = new HashMap<String, Transform>();
-		NodeLink tl = findFirstNode(gNode, NX_TRANSFORMATIONS);
+		NodeLink tl = findFirstNode(gNode, NexusConstants.TRANSFORMATIONS);
 		if (tl != null) {
 			parseTransformations(path, tree, tl, ftrans, pos);
 		}
 
 		// initial dependency chain
-		NodeLink nl = gNode.getNodeLink(DEPENDS_ON);
+		NodeLink nl = gNode.getNodeLink(TRANSFORMATIONS_DEPENDSON);
 		String first = nl == null ? null : parseStringArray(nl.getDestination(), 1)[0];
 		if (first != null) {
 			first = canonicalizeDependsOn(path, tree, first);
@@ -978,7 +1004,7 @@ public class NexusTreeUtils {
 		Map<String, Transform> mtrans = new HashMap<String, Transform>();
 		for (Transform t: ftrans.values()) {
 			String dpath = t.depend;
-			while (!dpath.equals(NX_TRANSFORMATIONS_ROOT) && !ftrans.containsKey(dpath) && !mtrans.containsKey(dpath)) {
+			while (!dpath.equals(TRANSFORMATIONS_ROOT) && !ftrans.containsKey(dpath) && !mtrans.containsKey(dpath)) {
 				NodeLink l = tree.findNodeLink(dpath);
 				try {
 					Transform nt = parseTransformation(dpath.substring(0, dpath.lastIndexOf(Node.SEPARATOR)), tree, l, pos);
@@ -1002,12 +1028,12 @@ public class NexusTreeUtils {
 
 		List<DetectorProperties> detectors = new ArrayList<>();
 		for (NodeLink l : gNode) {
-			if (isNXClass(l.getDestination(), NX_DETECTOR_MODULE)) {
+			if (isNXClass(l.getDestination(), NexusConstants.DETECTORMODULE)) {
 				detectors.add(parseSubDetector(path + Node.SEPARATOR + l.getName(), tree, ftrans, m, l, pos));
 			}
 		}
 
-		// XXX NX_GEOMETRY support or not?
+		// XXX NexusConstants.GEOMETRY support or not?
 		// with parseGeometry(m, l);
 
 		double[] beamCentre = new double[2];
@@ -1015,14 +1041,14 @@ public class NexusTreeUtils {
 		if (nl != null) {
 			Node n = nl.getDestination();
 			double[] c = parseDoubleArray(n, 1);
-			beamCentre[0] = convertIfNecessary(SI.MILLIMETRE, getFirstString(n.getAttribute(NX_UNITS)), c[0]);
+			beamCentre[0] = convertIfNecessary(SI.MILLIMETRE, getFirstString(n.getAttribute(NexusConstants.UNITS)), c[0]);
 		}
 		
 		nl = gNode.getNodeLink("beam_centre_y");
 		if (nl != null) {
 			Node n = nl.getDestination();
 			double[] c = parseDoubleArray(n, 1);
-			beamCentre[1] = convertIfNecessary(SI.MILLIMETRE, getFirstString(n.getAttribute(NX_UNITS)), c[1]);
+			beamCentre[1] = convertIfNecessary(SI.MILLIMETRE, getFirstString(n.getAttribute(NexusConstants.UNITS)), c[1]);
 		}
 
 		// determine beam direction from centre position
@@ -1058,8 +1084,8 @@ public class NexusTreeUtils {
 		}
 
 		GroupNode gNode = (GroupNode) link.getDestination();
-		if (!isNXClass(gNode, NX_ATTENUATOR)) {
-			logger.warn("'{}' was not an {} class", path, NX_ATTENUATOR);
+		if (!isNXClass(gNode, NexusConstants.ATTENUATOR)) {
+			logger.warn("'{}' was not an {} class", path, NexusConstants.ATTENUATOR);
 			return null;
 		}
 
@@ -1234,7 +1260,7 @@ public class NexusTreeUtils {
 
 			m.mul(t.matrix, m);
 			dep = t.depend;
-		} while (!NX_TRANSFORMATIONS_ROOT.equals(dep));
+		} while (!TRANSFORMATIONS_ROOT.equals(dep));
 
 		return m;
 	}
@@ -1258,12 +1284,12 @@ public class NexusTreeUtils {
 		// find orientation first as parseSubGeometry multiplies from the right
 		NodeLink l = gNode.getNodeLink("orientation");
 		if (l != null) {
-			if (isNXClass(l.getDestination(), NX_ORIENTATION))
+			if (isNXClass(l.getDestination(), NexusConstants.ORIENTATION))
 				parseSubGeometry(m, l, false);
 		}
 		l = gNode.getNodeLink("translation");
 		if (l != null) {
-			if (isNXClass(l.getDestination(), NX_TRANSLATION))
+			if (isNXClass(l.getDestination(), NexusConstants.TRANSLATION))
 				parseSubGeometry(m, l, true);
 		}
 	}
@@ -1295,7 +1321,7 @@ public class NexusTreeUtils {
 		Matrix4d m2 = new Matrix4d();
 		if (translate) {
 			da = da.clone(); // necessary to stop clobbering cached values
-			convertIfNecessary(SI.MILLIMETRE, getFirstString(dNode.getAttribute(NX_UNITS)), da);
+			convertIfNecessary(SI.MILLIMETRE, getFirstString(dNode.getAttribute(NexusConstants.UNITS)), da);
 			m2.setIdentity();
 			m2.setColumn(3, da[0], da[1], da[2], 1);
 		} else {
@@ -1307,7 +1333,7 @@ public class NexusTreeUtils {
 		m.mul(m2); // right multiply
 	
 		l = gNode.getNodeLink("geometry");
-		if (l != null && isNXClass(l.getDestination(), NX_GEOMETRY)) {
+		if (l != null && isNXClass(l.getDestination(), NexusConstants.GEOMETRY)) {
 			parseGeometry(m, l);
 		}
 	}
@@ -1388,20 +1414,20 @@ public class NexusTreeUtils {
 	public static DetectorProperties parseSaxsDetector(NodeLink link) {
 		try {
 			GroupNode node = (GroupNode)link.getDestination();
-			DataNode distanceNode = node.getDataNode(NX_DETECTOR_DISTANCE);
+			DataNode distanceNode = node.getDataNode(DETECTOR_DISTANCE);
 			double distanceMm = getConvertedData(distanceNode, SI.MILLIMETRE).get(0);
-			DataNode bxNode = node.getDataNode(NX_DETECTOR_XBEAMCENTRE);
+			DataNode bxNode = node.getDataNode(DETECTOR_XBEAMCENTRE);
 			double bx = bxNode.getDataset().getSlice().getDouble(0);
-			DataNode byNode = node.getDataNode(NX_DETECTOR_YBEAMCENTRE);
+			DataNode byNode = node.getDataNode(DETECTOR_YBEAMCENTRE);
 			double by = byNode.getDataset().getSlice().getDouble(0);
-			DataNode pxNode = node.getDataNode(NX_DETECTOR_XPIXELSIZE);
+			DataNode pxNode = node.getDataNode(DETECTOR_XPIXELSIZE);
 			double px = getConvertedData(pxNode, SI.MILLIMETRE).get(0);
-			DataNode pyNode = node.getDataNode(NX_DETECTOR_YPIXELSIZE);
+			DataNode pyNode = node.getDataNode(DETECTOR_YPIXELSIZE);
 			double py = getConvertedData(pyNode, SI.MILLIMETRE).get(0);
-			DataNode nxNode = node.getDataNode(NX_DETECTOR_XPIXELNUMBER);
+			DataNode nxNode = node.getDataNode(DETECTOR_XPIXELNUMBER);
 			
 			if (nxNode == null) {
-				DataNode dataNode = node.getDataNode(DATA);
+				DataNode dataNode = node.getDataNode(NexusConstants.DATA_DATA);
 				if (dataNode == null) return null;
 				long[] shape = dataNode.getMaxShape();
 				DetectorProperties dp = new DetectorProperties(distanceMm, by*py, bx*px, (int)shape[shape.length-2], (int)shape[shape.length-1], py, px);
@@ -1410,7 +1436,7 @@ public class NexusTreeUtils {
 			}
 			
 			int nx = nxNode.getDataset().getSlice().getInt(0);
-			DataNode nyNode = node.getDataNode(NX_DETECTOR_XPIXELNUMBER);
+			DataNode nyNode = node.getDataNode(DETECTOR_XPIXELNUMBER);
 			int ny = nyNode.getDataset().getSlice().getInt(0);
 			
 			DetectorProperties dp = new DetectorProperties(distanceMm, by*py, bx*px, nx, ny, py, px);
@@ -1438,9 +1464,9 @@ public class NexusTreeUtils {
 
 		int[] nshape = dataset.getShape();
 
-		String dep = canonicalizeDependsOn(path, tree, getFirstString(dNode.getAttribute(DEPENDS_ON)));
+		String dep = canonicalizeDependsOn(path, tree, getFirstString(dNode.getAttribute(TRANSFORMATIONS_DEPENDSON)));
 
-		if (dep.equals(NX_TRANSFORMATIONS_ROOT)) {
+		if (dep.equals(TRANSFORMATIONS_ROOT)) {
 			return nshape;
 		}
 
@@ -1497,16 +1523,16 @@ public class NexusTreeUtils {
 		}
 
 		GroupNode gNode = (GroupNode) link.getDestination();
-		if (!isNXClass(gNode, NX_SAMPLE)) {
-			logger.warn("'{}' was not an {} class", gNode, NX_SAMPLE);
+		if (!isNXClass(gNode, NexusConstants.SAMPLE)) {
+			logger.warn("'{}' was not an {} class", gNode, NexusConstants.SAMPLE);
 			return null;
 		}
 
 		// when depends_on does not exist!?!
-		NodeLink nl = gNode.getNodeLink(DEPENDS_ON);
+		NodeLink nl = gNode.getNodeLink(TRANSFORMATIONS_DEPENDSON);
 		if (nl == null) {
-			logger.error("Sample {} must have a {} field", link.getName(), DEPENDS_ON);
-			throw new IllegalArgumentException("Sample " + link.getName() + " must have a " + DEPENDS_ON + " field");
+			logger.error("Sample {} must have a {} field", link.getName(), TRANSFORMATIONS_DEPENDSON);
+			throw new IllegalArgumentException("Sample " + link.getName() + " must have a " + TRANSFORMATIONS_DEPENDSON + " field");
 		}
 		String dep = canonicalizeDependsOn(path, tree, parseStringArray(nl.getDestination(), 1)[0]);
 		return parseNodeShape(path, tree, tree.findNodeLink(dep), shape);
@@ -1525,8 +1551,8 @@ public class NexusTreeUtils {
 		}
 
 		GroupNode gNode = (GroupNode) link.getDestination();
-		if (!isNXClass(gNode, NX_SAMPLE)) {
-			logger.warn("'{}' was not an {} class", gNode, NX_SAMPLE);
+		if (!isNXClass(gNode, NexusConstants.SAMPLE)) {
+			logger.warn("'{}' was not an {} class", gNode, NexusConstants.SAMPLE);
 			return null;
 		}
 
@@ -1537,11 +1563,11 @@ public class NexusTreeUtils {
 		boolean getBeam = true;
 		Map<String, Transform> ftrans = new HashMap<String, Transform>();
 		for (NodeLink l : gNode) {
-			if (isNXClass(l.getDestination(), NX_TRANSFORMATIONS) && getTransformations) {
+			if (isNXClass(l.getDestination(), NexusConstants.TRANSFORMATIONS) && getTransformations) {
 				parseTransformations(path, tree, l, ftrans, pos);
 				getTransformations = false;
 			}
-			if (isNXClass(l.getDestination(), NX_BEAM) && getBeam) {
+			if (isNXClass(l.getDestination(), NexusConstants.BEAM) && getBeam) {
 				parseBeam(l, env);
 				getBeam = false;
 			}
@@ -1556,7 +1582,7 @@ public class NexusTreeUtils {
 		Map<String, Transform> mtrans = new HashMap<String, Transform>();
 		for (Transform t: ftrans.values()) {
 			String dpath = t.depend;
-			while (!dpath.equals(NX_TRANSFORMATIONS_ROOT) && !ftrans.containsKey(dpath) && !mtrans.containsKey(dpath)) {
+			while (!dpath.equals(TRANSFORMATIONS_ROOT) && !ftrans.containsKey(dpath) && !mtrans.containsKey(dpath)) {
 				NodeLink l = tree.findNodeLink(dpath);
 				if (l == null) {
 					logger.error("Could not find dependency: {}", dpath);
@@ -1586,7 +1612,7 @@ public class NexusTreeUtils {
 		u.mul(ub, u);
 
 		Matrix3d m3 = new Matrix3d();
-		NodeLink nl = gNode.getNodeLink(DEPENDS_ON);
+		NodeLink nl = gNode.getNodeLink(TRANSFORMATIONS_DEPENDSON);
 		if (nl != null && nl.isDestinationData()) {
 			String dep = canonicalizeDependsOn(path, tree, parseStringArray(nl.getDestination(), 1)[0]);
 			Matrix4d m = calcForwardTransform(ftrans, dep);
@@ -1644,7 +1670,7 @@ public class NexusTreeUtils {
 		Vector3d v3 = new Vector3d(vector);
 		Matrix4d m4 = null;
 		String type = getFirstString(dNode.getAttribute("transformation_type"));
-		String units = getFirstString(dNode.getAttribute(NX_UNITS));
+		String units = getFirstString(dNode.getAttribute(NexusConstants.UNITS));
 		switch(type) {
 		case "translation":
 			Matrix3d m3 = new Matrix3d();
@@ -1677,7 +1703,7 @@ public class NexusTreeUtils {
 
 		Transform t = new Transform();
 		t.name = ppath.concat(Node.SEPARATOR).concat(link.getName());
-		String dep = canonicalizeDependsOn(ppath, tree, getFirstString(dNode.getAttribute(DEPENDS_ON)));
+		String dep = canonicalizeDependsOn(ppath, tree, getFirstString(dNode.getAttribute(TRANSFORMATIONS_DEPENDSON)));
 		t.depend = dep;
 		t.matrix = m4;
 		return t;
@@ -1685,8 +1711,8 @@ public class NexusTreeUtils {
 
 	private static String canonicalizeDependsOn(String ppath, Tree tree, String dep) {
 		if (dep == null) {
-			dep = NX_TRANSFORMATIONS_ROOT;
-		} else if (dep.equals(NX_TRANSFORMATIONS_ROOT)) {
+			dep = TRANSFORMATIONS_ROOT;
+		} else if (dep.equals(TRANSFORMATIONS_ROOT)) {
 			// do nothing
 		} else if (dep.startsWith(RELATIVE_PREFIX)) {
 			dep = ppath.concat(Node.SEPARATOR).concat(dep);
@@ -1733,7 +1759,7 @@ public class NexusTreeUtils {
 		}
 
 		TransformedVectors tv = new TransformedVectors();
-		String dep = canonicalizeDependsOn(path, tree, getFirstString(dNode.getAttribute(DEPENDS_ON)));
+		String dep = canonicalizeDependsOn(path, tree, getFirstString(dNode.getAttribute(TRANSFORMATIONS_DEPENDSON)));
 		tv.depend = dep;
 		tv.magnitudes = values;
 		tv.vector = new Vector4d(v3);
@@ -1820,7 +1846,7 @@ public class NexusTreeUtils {
 	 * @return true if it does
 	 */
 	public static boolean isNXClass(Node node, String clazz) {
-		String nxClass = getFirstString(node.getAttribute(NX_CLASS));
+		String nxClass = getFirstString(node.getAttribute(NexusConstants.NXCLASS));
 		return clazz.equals(nxClass);
 	}
 
@@ -2088,7 +2114,7 @@ public class NexusTreeUtils {
 		DoubleDataset values = (DoubleDataset) getCastAndCacheData(data, Dataset.FLOAT64);
 		if (values != null) {
 			values = values.clone(); // necessary to stop clobbering cached values
-			convertIfNecessary(unit, getFirstString(data.getAttribute(NX_UNITS)), values.getData());
+			convertIfNecessary(unit, getFirstString(data.getAttribute(NexusConstants.UNITS)), values.getData());
 		}
 		return values;
 	}
@@ -2115,7 +2141,7 @@ public class NexusTreeUtils {
 	 * @return group containing fields and classes for a detector
 	 */
 	public static GroupNode createNXDetector(DetectorProperties dp) {
-		GroupNode g = createNXGroup(NX_DETECTOR);
+		GroupNode g = createNXGroup(NexusConstants.DETECTOR);
 
 		return addDetectorProperties(dp, g);
 	}
@@ -2132,9 +2158,9 @@ public class NexusTreeUtils {
 		addDataNode(g, "beam_center_x", dp.getHPxSize()*bc[0], "mm");
 		addDataNode(g, "beam_center_y", dp.getVPxSize()*bc[1], "mm");
 
-		addDataNode(g, DEPENDS_ON, CURRENT_DIR_PREFIX + "transformations/euler_c", null);
+		addDataNode(g, TRANSFORMATIONS_DEPENDSON, CURRENT_DIR_PREFIX + "transformations/euler_c", null);
 
-		GroupNode sg = createNXGroup(NX_DETECTOR_MODULE);
+		GroupNode sg = createNXGroup(NexusConstants.DETECTORMODULE);
 		g.addGroupNode("detector_module", sg);
 
 		addDataNode(sg, "data_origin", new int[] {0, 0}, null);
@@ -2145,7 +2171,7 @@ public class NexusTreeUtils {
 		addNXTransform(sg, "fast_pixel_direction", "mm", true, new double[] {-1,0,0}, zeros, "mm", "module_offset", dp.getHPxSize());
 		addNXTransform(sg, "slow_pixel_direction", "mm", true, new double[] {0,-1,0}, zeros, "mm", "module_offset", dp.getVPxSize());
 
-		sg = createNXGroup(NX_TRANSFORMATIONS);
+		sg = createNXGroup(NexusConstants.TRANSFORMATIONS);
 		g.addGroupNode("transformations", sg);
 		double[] angles = MatrixUtils.calculateFromOrientationEulerZYZ(dp.getOrientation());
 		// Euler ZYZ angles
@@ -2155,14 +2181,14 @@ public class NexusTreeUtils {
 		Vector3d v = dp.getOrigin();
 		double[] dv = new double[3];
 		v.get(dv);
-		addNXTransform(sg, "origin_offset", "mm", true, dv, zeros, "mm", NX_TRANSFORMATIONS_ROOT, 1);
+		addNXTransform(sg, "origin_offset", "mm", true, dv, zeros, "mm", TRANSFORMATIONS_ROOT, 1);
 
 		return g;
 	}
 	
 	
 	private static boolean addRelative(String dependsOn) {
-		if (dependsOn.equals(NX_TRANSFORMATIONS_ROOT) || dependsOn.startsWith(Tree.ROOT)) {
+		if (dependsOn.equals(TRANSFORMATIONS_ROOT) || dependsOn.startsWith(Tree.ROOT)) {
 			return false;
 		}
 		return !dependsOn.startsWith(RELATIVE_PREFIX);
@@ -2177,7 +2203,7 @@ public class NexusTreeUtils {
 		if (addRelative(dependsOn)) {
 			dependsOn = CURRENT_DIR_PREFIX.concat(dependsOn);
 		}
-		d.addAttribute(TreeFactory.createAttribute(DEPENDS_ON, dependsOn));
+		d.addAttribute(TreeFactory.createAttribute(TRANSFORMATIONS_DEPENDSON, dependsOn));
 		return d;
 	}
 
@@ -2191,7 +2217,7 @@ public class NexusTreeUtils {
 	 */
 	public static GroupNode createNXGroup(String nxClass) {
 		GroupNode g = TreeFactory.createGroupNode(0);
-		g.addAttribute(TreeFactory.createAttribute(NX_CLASS, nxClass));
+		g.addAttribute(TreeFactory.createAttribute(NexusConstants.NXCLASS, nxClass));
 
 		return g;
 	}
@@ -2217,7 +2243,7 @@ public class NexusTreeUtils {
 	public static DataNode createDataNode(String name, Object value, String units) {
 		DataNode d = TreeFactory.createDataNode(0);
 		if (units != null && !units.isEmpty()) {
-			d.addAttribute(TreeFactory.createAttribute(NX_UNITS, units));
+			d.addAttribute(TreeFactory.createAttribute(NexusConstants.UNITS, units));
 		}
 		Dataset vd = DatasetFactory.createFromObject(value);
 		vd.setName(name);

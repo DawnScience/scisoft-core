@@ -997,6 +997,42 @@
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsZeroThetaOperation"
+            description="Recalculate the zero angle position"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsZeroThetaOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="USAXS Zero Theta Correction">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsDarkcurrentOperation"
+            description="Calculate a darkcurrent from a given file and dataset"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsDarkcurrentOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.UsaxsDarkcurrentModel"
+            name="USAXS Darkcurrent Correction">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsTransmissionCorrectionOperation"
+            description="Perform one of several transmission corrections from a list of possibilities..."
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsTransmissionCorrectionOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.UsaxsTransmissionCorrectionModel"
+            name="USAXS Transmission Correction">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsYawToQOperation"
+            description="Coverting a yaw scale, in radians, to the scattering wavevector q"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsYawToQOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.UsaxsYawToQModel"
+            name="USAXS Conversion of Yaw to Q">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.SaxsPlotOperation"
             description="Modify the representation of small angle data for many common techniques/analyses"
             icon="icons/mask.png"

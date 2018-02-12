@@ -166,7 +166,7 @@ public class NexusTreeUtilsTest {
 	private static GroupNode createNXdata(Dataset signal, List<AxisDataset> axes) {
 		long count = 0;
 		GroupNode group = TreeFactory.createGroupNode(count++);
-		addNXclass(group, NexusConstants.DATA_DATA);
+		addNXclass(group, NexusConstants.DATA);
 
 		DataNode dNode;
 		dNode = TreeFactory.createDataNode(count++);

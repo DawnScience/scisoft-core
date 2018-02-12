@@ -498,8 +498,8 @@ public class NexusTreeUtils {
 	 */
 	public static ILazyDataset parseLegacyNXdataAndAugment(GroupNode gn) {
 		
-		if (!isNXClass(gn, NexusConstants.DATA_DATA)) {
-			logger.warn("'{}' was not an {} class", gn, NexusConstants.DATA_DATA);
+		if (!isNXClass(gn, NexusConstants.DATA)) {
+			logger.warn("'{}' was not an {} class", gn, NexusConstants.DATA);
 			return null;
 		}
 		
@@ -599,8 +599,8 @@ public class NexusTreeUtils {
 	 * @return true if it conforms to standard
 	 */
 	public static boolean parseNXdataAndAugment(GroupNode gn) {
-		if (!isNXClass(gn, NexusConstants.DATA_DATA)) {
-			logger.warn("'{}' was not an {} class", gn, NexusConstants.DATA_DATA);
+		if (!isNXClass(gn, NexusConstants.DATA)) {
+			logger.warn("'{}' was not an {} class", gn, NexusConstants.DATA);
 			return false;
 		}
 
@@ -759,8 +759,8 @@ public class NexusTreeUtils {
 	 * @return ILazyDataset with meatadata
 	 */
 	public static ILazyDataset parseNXdataAndAugmentStrict(GroupNode gn) {
-		if (!isNXClass(gn, NexusConstants.DATA_DATA)) {
-			logger.warn("'{}' was not an {} class", gn, NexusConstants.DATA_DATA);
+		if (!isNXClass(gn, NexusConstants.DATA)) {
+			logger.warn("'{}' was not an {} class", gn, NexusConstants.DATA);
 			return null;
 		}
 

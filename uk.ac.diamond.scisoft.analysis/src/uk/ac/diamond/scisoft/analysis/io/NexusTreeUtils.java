@@ -72,6 +72,7 @@ import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 
 public class NexusTreeUtils {
 
+
 	protected static final Logger logger = LoggerFactory.getLogger(NexusTreeUtils.class);
 
 	/**
@@ -86,10 +87,16 @@ public class NexusTreeUtils {
 	private static final String DETECTOR_DISTANCE = "distance";
 	private static final String DETECTOR_XPIXELSIZE = "x_pixel_size";
 	private static final String DETECTOR_YPIXELSIZE = "y_pixel_size";
-	private static final String DETECTOR_XBEAMCENTRE = "beam_center_y";
-	private static final String DETECTOR_YBEAMCENTRE = "beam_center_x";
+	private static final String DETECTOR_BEAMCENTERX = "beam_center_y";
+	private static final String DETECTOR_BEAMCENTERY = "beam_center_x";
 	private static final String DETECTOR_XPIXELNUMBER = "x_pixel_number";
 //	private static final String DETECTOR_YPIXELNUMBER = "y_pixel_number";
+
+	private static final String DMOD_DATASIZE = "data_size";
+	private static final String DMOD_DATAORIGIN = "data_origin";
+	private static final String DMOD_MODULEOFFSET = "module_offset";
+	private static final String DMOD_FASTPIXELDIRECTION = "fast_pixel_direction";
+	private static final String DMOD_SLOWPIXELDIRECTION = "slow_pixel_direction";
 
 	static {
 		UnitFormat.getInstance().alias(NonSI.ANGSTROM, "Angstrom");
@@ -988,14 +995,14 @@ public class NexusTreeUtils {
 		// with parseGeometry(m, l);
 
 		double[] beamCentre = new double[2];
-		nl = gNode.getNodeLink("beam_centre_x");
+		nl = gNode.getNodeLink(DETECTOR_BEAMCENTERX);
 		if (nl != null) {
 			Node n = nl.getDestination();
 			double[] c = parseDoubleArray(n, 1);
 			beamCentre[0] = convertIfNecessary(SI.MILLIMETRE, getFirstString(n.getAttribute(NexusConstants.UNITS)), c[0]);
 		}
 		
-		nl = gNode.getNodeLink("beam_centre_y");
+		nl = gNode.getNodeLink(DETECTOR_BEAMCENTERY);
 		if (nl != null) {
 			Node n = nl.getDestination();
 			double[] c = parseDoubleArray(n, 1);
@@ -1096,8 +1103,8 @@ public class NexusTreeUtils {
 		for (NodeLink l : gNode) {
 			String name = l.getName();
 			switch(name) {
-			case "fast_pixel_direction":
-			case "slow_pixel_direction":
+			case DMOD_FASTPIXELDIRECTION:
+			case DMOD_SLOWPIXELDIRECTION:
 				shape = parseNodeShape(path + Node.SEPARATOR + l.getName(), tree, l, shape);
 				break;
 			default:
@@ -1121,22 +1128,22 @@ public class NexusTreeUtils {
 		for (NodeLink l : gNode) {
 			String name = l.getName();
 			switch(name) {
-			case "data_origin":
+			case DMOD_DATAORIGIN:
 				origin = parseIntArray(l.getDestination(), 2);
 				break;
-			case "data_size": // number of pixels in fast then slow; i.e. #cols, #rows
+			case DMOD_DATASIZE: // number of pixels in fast then slow; i.e. #cols, #rows
 				size = parseIntArray(l.getDestination(), 2);
 				break;
-			case "module_offset":
+			case DMOD_MODULEOFFSET:
 				mo  = parseTransformation(path, tree, l, pos);
 				if (mo != null) {
 					ftrans.put(mo.name, mo);
 				}
 				break;
-			case "fast_pixel_direction":
+			case DMOD_FASTPIXELDIRECTION:
 				fpd = parseTransformedVectors(path, tree, l);
  				break;
-			case "slow_pixel_direction":
+			case DMOD_SLOWPIXELDIRECTION:
 				spd = parseTransformedVectors(path, tree, l);
 				break;
 			default:
@@ -1367,9 +1374,9 @@ public class NexusTreeUtils {
 			GroupNode node = (GroupNode)link.getDestination();
 			DataNode distanceNode = node.getDataNode(DETECTOR_DISTANCE);
 			double distanceMm = getConvertedData(distanceNode, SI.MILLIMETRE).get(0);
-			DataNode bxNode = node.getDataNode(DETECTOR_XBEAMCENTRE);
+			DataNode bxNode = node.getDataNode(DETECTOR_BEAMCENTERX);
 			double bx = bxNode.getDataset().getSlice().getDouble(0);
-			DataNode byNode = node.getDataNode(DETECTOR_YBEAMCENTRE);
+			DataNode byNode = node.getDataNode(DETECTOR_BEAMCENTERY);
 			double by = byNode.getDataset().getSlice().getDouble(0);
 			DataNode pxNode = node.getDataNode(DETECTOR_XPIXELSIZE);
 			double px = getConvertedData(pxNode, SI.MILLIMETRE).get(0);
@@ -2103,24 +2110,24 @@ public class NexusTreeUtils {
 	 */
 	public static GroupNode addDetectorProperties(DetectorProperties dp, GroupNode g) {
 
-		addDataNode(g, "distance", dp.getBeamCentreDistance(), "mm");
+		addDataNode(g, DETECTOR_DISTANCE, dp.getBeamCentreDistance(), "mm");
 
 		double[] bc = dp.getBeamCentreCoords();
-		addDataNode(g, "beam_center_x", dp.getHPxSize()*bc[0], "mm");
-		addDataNode(g, "beam_center_y", dp.getVPxSize()*bc[1], "mm");
+		addDataNode(g, DETECTOR_BEAMCENTERX, dp.getHPxSize()*bc[0], "mm");
+		addDataNode(g, DETECTOR_BEAMCENTERY, dp.getVPxSize()*bc[1], "mm");
 
 		addDataNode(g, TRANSFORMATIONS_DEPENDSON, CURRENT_DIR_PREFIX + "transformations/euler_c", null);
 
 		GroupNode sg = createNXGroup(NexusConstants.DETECTORMODULE);
 		g.addGroupNode("detector_module", sg);
 
-		addDataNode(sg, "data_origin", new int[] {0, 0}, null);
-		addDataNode(sg, "data_size", new int[] {dp.getPx(), dp.getPy()}, null);
+		addDataNode(sg, DMOD_DATAORIGIN, new int[] {0, 0}, null);
+		addDataNode(sg, DMOD_DATASIZE, new int[] {dp.getPx(), dp.getPy()}, null);
 
 		double[] zeros = new double[3]; 
-		addNXTransform(sg, "module_offset", "mm", true, zeros, zeros, "mm", "../transformations/euler_c", 0);
-		addNXTransform(sg, "fast_pixel_direction", "mm", true, new double[] {-1,0,0}, zeros, "mm", "module_offset", dp.getHPxSize());
-		addNXTransform(sg, "slow_pixel_direction", "mm", true, new double[] {0,-1,0}, zeros, "mm", "module_offset", dp.getVPxSize());
+		addNXTransform(sg, DMOD_MODULEOFFSET, "mm", true, zeros, zeros, "mm", "../transformations/euler_c", 0);
+		addNXTransform(sg, DMOD_FASTPIXELDIRECTION, "mm", true, new double[] {-1,0,0}, zeros, "mm", DMOD_MODULEOFFSET, dp.getHPxSize());
+		addNXTransform(sg, DMOD_SLOWPIXELDIRECTION, "mm", true, new double[] {0,-1,0}, zeros, "mm", DMOD_MODULEOFFSET, dp.getVPxSize());
 
 		sg = createNXGroup(NexusConstants.TRANSFORMATIONS);
 		g.addGroupNode("transformations", sg);

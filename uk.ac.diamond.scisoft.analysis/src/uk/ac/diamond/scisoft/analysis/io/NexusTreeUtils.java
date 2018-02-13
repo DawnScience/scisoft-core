@@ -80,54 +80,6 @@ public class NexusTreeUtils {
 	@Deprecated
 	public static final String NX_LABEL = "label";
 
-	/**
-	 * deprecated Use {@link NexusConstants#NXCLASS}
-	 */
-	@Deprecated
-	public static final String NX_CLASS = NexusConstants.NXCLASS;
-
-	/**
-	 * @deprecated Use {@link NexusConstants#DATA_AXES}
-	 */
-	@Deprecated
-	public static final String NX_AXES = NexusConstants.DATA_AXES;
-
-	/**
-	 * @deprecated Use {@link NexusConstants#DATA_AXIS}
-	 */
-	@Deprecated
-	public static final String NX_AXIS = NexusConstants.DATA_AXIS;
-
-	/**
-	 * @deprecated Use {@link NexusConstants#DATA_PRIMARY}
-	 */
-	@Deprecated
-	public static final String NX_PRIMARY = NexusConstants.DATA_PRIMARY;
-
-	/**
-	 * @deprecated Use {@link NexusConstants#DATA_SIGNAL}
-	 */
-	@Deprecated
-	public static final String NX_SIGNAL = NexusConstants.DATA_SIGNAL;
-
-	/**
-	 * @deprecated Use {@link NexusConstants#DATA}
-	 */
-	@Deprecated
-	public static final String NX_DATA = NexusConstants.DATA;
-
-	/**
-	 * @deprecated Use {@link NexusConstants#UNITS}
-	 */
-	@Deprecated
-	public static final String NX_UNITS = NexusConstants.UNITS;
-
-	/**
-	 * @deprecated Use {@link NexusConstants#DATA_INDICES_SUFFIX}
-	 */
-	@Deprecated
-	public static final String NX_INDICES_SUFFIX = NexusConstants.DATA_INDICES_SUFFIX;
-
 	private static final String TRANSFORMATIONS_ROOT = ".";
 	private static final String TRANSFORMATIONS_DEPENDSON = "depends_on";
 
@@ -137,8 +89,7 @@ public class NexusTreeUtils {
 	private static final String DETECTOR_XBEAMCENTRE = "beam_center_y";
 	private static final String DETECTOR_YBEAMCENTRE = "beam_center_x";
 	private static final String DETECTOR_XPIXELNUMBER = "x_pixel_number";
-	private static final String DETECTOR_YPIXELNUMBER = "y_pixel_number";
-
+//	private static final String DETECTOR_YPIXELNUMBER = "y_pixel_number";
 
 	static {
 		UnitFormat.getInstance().alias(NonSI.ANGSTROM, "Angstrom");
@@ -197,7 +148,7 @@ public class NexusTreeUtils {
 
 		ILazyDataset cData = dNode.getDataset();
 		if (cData == null || cData.getSize() == 0) {
-			logger.warn("Chosen data {}, has zero size", dNode);
+			logger.info("Chosen data {}, has zero size", dNode);
 			return;
 		}
 
@@ -222,7 +173,7 @@ public class NexusTreeUtils {
 		if (stringAttr != null) {
 			isSignal = true;
 			if (parseFirstInt(stringAttr) != 1) {
-				logger.warn("Node has {} attribute but is not 1: {}", NexusConstants.DATA_SIGNAL, link);
+				logger.debug("Node has {} attribute but is not 1: {}", NexusConstants.DATA_SIGNAL, link);
 				isSignal = false;
 			}
 		} else {
@@ -231,7 +182,7 @@ public class NexusTreeUtils {
 				if (gNode.containsDataNode(sName)) {
 					isSignal = dNode == gNode.getDataNode(sName);
 				} else {
-					logger.warn("Given signal {} does not exist in group {}", sName, gNode);
+					logger.debug("Given signal {} does not exist in group {}", sName, gNode);
 				}
 			}
 			if (!isSignal) {
@@ -415,7 +366,7 @@ public class NexusTreeUtils {
 		if (axesAttr == null && isSignal) { // cope with @axes being in group
 			axesAttr = gNode.getAttribute(NexusConstants.DATA_AXES);
 			if (axesAttr != null)
-				logger.warn("Found @{} tag in group (not in '{}' dataset)", NexusConstants.DATA_AXES, gNode.findLinkedNodeName(dNode));
+				logger.trace("Found @{} tag in group (not in '{}' dataset)", NexusConstants.DATA_AXES, gNode.findLinkedNodeName(dNode));
 		}
 
 		if (axesAttr != null) { // check axes attribute for list axes
@@ -766,7 +717,7 @@ public class NexusTreeUtils {
 
 		String signal = getFirstString(gn.getAttribute(NexusConstants.DATA_SIGNAL));
 		if (signal == null) {
-			logger.warn("Signal is null, defaulting to {}", NexusConstants.DATA_DATA);
+			logger.info("Signal is null, defaulting to {}", NexusConstants.DATA_DATA);
 			signal = NexusConstants.DATA_DATA;
 		}
 		if (!gn.containsDataNode(signal)) {
@@ -789,7 +740,7 @@ public class NexusTreeUtils {
 
 		String[] tmp = getStringArray(gn.getAttribute(NexusConstants.DATA_AXES));
 		if (tmp == null) {
-			logger.warn("Could not read axes attribute");
+			logger.debug("Could not read axes attribute");
 			return null;
 		}
 		

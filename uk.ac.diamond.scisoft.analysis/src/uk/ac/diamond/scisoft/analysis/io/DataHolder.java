@@ -101,6 +101,7 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 		ret.metadata    = metadata;
 		ret.filePath    = filePath;
 		ret.loaderClass = loaderClass;
+		ret.tree = tree;
 		return ret;
 	}
 

@@ -23,7 +23,7 @@ import uk.ac.diamond.scisoft.analysis.dataset.function.MapToShiftedCartesian as 
 from jycore import _wrap
 #import ImageFilterServiceCreator and instantiate it
 import org.dawnsci.boofcv.BoofCVImageFilterServiceCreator as _creator
-_image.setImageFilterService(_creator.createFilterService())
+_image().setImageFilterService(_creator.createFilterService())
 
 @_wrap
 def findshift(a, b, rect=None):

@@ -110,7 +110,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 		SliceFromSeriesMetadata smd = input.getFirstMetadata(SliceFromSeriesMetadata.class);
 		SliceInformation si = smd.getSliceInfo();
-		if (si.getSliceNumber() == 0) {
+		if (si.isFirstSlice()) {
 			countTime = 0;
 			currentCountTime = null;
 			resetProcess(input);

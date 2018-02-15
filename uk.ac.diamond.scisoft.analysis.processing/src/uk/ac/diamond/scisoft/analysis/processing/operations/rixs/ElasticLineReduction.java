@@ -190,7 +190,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 			// TODO make this live-friendly by show result per frame
 			// needs to give fake results for first slice
-			if (si.getSliceNumber() == smax - 1) {
+			if (si.isLastSlice()) {
 				summaryData.clear();
 				if (smax != 1) { // display when there is only one image
 					displayData.clear();

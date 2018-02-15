@@ -144,7 +144,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		log.append("====================");
 
 		SliceFromSeriesMetadata smd = original.getFirstMetadata(SliceFromSeriesMetadata.class);
-		if (smd.getSliceInfo().getSliceNumber() == 0) {
+		if (smd.getSliceInfo().isFirstSlice()) {
 			String filePath = smd.getSourceInfo().getFilePath();
 			if (model.getFitFileOption() != FIT_FILE_OPTION.MANUAL_OVERRIDE  && !filePath.equals(currentDataFile)) {
 				currentDataFile = filePath;
@@ -389,7 +389,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				smax = fmax;
 				log.append("Using only first %d frames", fmax);
 			}
-			if (si.getSliceNumber() == smax - 1) {
+			if (si.isLastSlice()) {
 				addSummaryData();
 				summaryData.add(a);
 

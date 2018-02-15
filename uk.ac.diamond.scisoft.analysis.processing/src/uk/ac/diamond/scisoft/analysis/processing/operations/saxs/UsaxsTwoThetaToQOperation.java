@@ -13,7 +13,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 // Imports from uk.ac.diamond.scisoft
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
-import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsYawToQModel.YawUnits;
+import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsTwoThetaToQModel.YawUnits;
 
 // Imports from org.eclipse.dawnsci
 import org.eclipse.january.DatasetException;
@@ -39,11 +39,11 @@ import org.slf4j.LoggerFactory;
 //@author Tim Snow
 
 
-public class UsaxsYawToQOperation extends AbstractOperation<UsaxsYawToQModel, OperationData> {
+public class UsaxsTwoThetaToQOperation extends AbstractOperation<UsaxsTwoThetaToQModel, OperationData> {
 	
 	
 	// First, set up a logger
-	private static final Logger logger = LoggerFactory.getLogger(UsaxsYawToQOperation.class);
+	private static final Logger logger = LoggerFactory.getLogger(UsaxsTwoThetaToQOperation.class);
 	
 	
 	// Then the private variables for this class
@@ -52,7 +52,7 @@ public class UsaxsYawToQOperation extends AbstractOperation<UsaxsYawToQModel, Op
 	
 	@Override
 	public String getId() {
-		return "uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsYawToQOperation";
+		return "uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsTwoThetaToQOperation";
 	}
 	
 	

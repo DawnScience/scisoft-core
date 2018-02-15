@@ -19,7 +19,7 @@ import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 //@author Tim Snow
 
 
-public class UsaxsYawToQModel extends AbstractOperationModel {
+public class UsaxsTwoThetaToQModel extends AbstractOperationModel {
 	
 	
 	// Let's present to the user the choices on the kinds of transmission corrections they can do with this plugin
@@ -29,23 +29,27 @@ public class UsaxsYawToQModel extends AbstractOperationModel {
 		MICRORADIANS(3),
 		NANORADIANS(4);
 		
+		
 		private final int yawUnits;
+		
 		
 		YawUnits(int yawUnits) {
 			this.yawUnits = yawUnits;
 		}
 		
+		
 		public int getYawUnits() {
 			return this.yawUnits;
 		}
+		
 		
 		@Override
 		public String toString() {
 			switch (this.yawUnits) {
 				case 1:		return String.format("Radians");
-				case 2:		return String.format("Milli-radians");
-				case 3:		return String.format("Micro-radians");
-				case 4:		return String.format("Nano-radians");
+				case 2:		return String.format("Milliradians");
+				case 3:		return String.format("Microradians");
+				case 4:		return String.format("Nanoradians");
 				default:	return String.format("Error!");
 			}
 		}

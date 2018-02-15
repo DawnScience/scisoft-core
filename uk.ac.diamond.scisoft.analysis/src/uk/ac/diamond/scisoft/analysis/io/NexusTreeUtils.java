@@ -75,12 +75,6 @@ public class NexusTreeUtils {
 
 	protected static final Logger logger = LoggerFactory.getLogger(NexusTreeUtils.class);
 
-	/**
-	 * @deprecated Non-standard attribute
-	 */
-	@Deprecated
-	public static final String NX_LABEL = "label";
-
 	private static final String TRANSFORMATIONS_ROOT = ".";
 	private static final String TRANSFORMATIONS_DEPENDSON = "depends_on";
 
@@ -102,6 +96,19 @@ public class NexusTreeUtils {
 		UnitFormat.getInstance().alias(NonSI.ANGSTROM, "Angstrom");
 		UnitFormat.getInstance().alias(NonSI.ANGSTROM, "angstrom");
 		UnitFormat.getInstance().alias(NonSI.DEGREE_ANGLE, "deg");
+	}
+
+	/**
+	 * Get lazy dataset (augmented with metadata) from first NXdata group
+	 * @param tree
+	 * @return lazy dataset or null 
+	 */
+	public static ILazyDataset getFirstNXdata(Tree tree) {
+		NodeLink le = findFirstNode(tree.getGroupNode(), "entry", NexusConstants.ENTRY);
+		NodeLink ld = findFirstNode((GroupNode) le.getDestination(), NexusConstants.DATA);
+		GroupNode g = (GroupNode) ld.getDestination();
+
+		return getAugmentedSignalDataset(g);
 	}
 
 	public static void augmentTree(Tree tree) {
@@ -435,8 +442,7 @@ public class NexusTreeUtils {
 		}
 		cData.addMetadata(amd);
 	}
-	
-	
+
 	public static ILazyDataset getAugmentedSignalDataset(GroupNode gn) {
 		
 		ILazyDataset is2014 = parseNXdataAndAugmentStrict(gn);
@@ -446,7 +452,7 @@ public class NexusTreeUtils {
 		return parseLegacyNXdataAndAugment(gn); 
 
 	}
-	
+
 	/**
 	 * Parse strict old NXdata class and augment with metadata
 	 * Group must have 1 signal tagged dataset, axes datasets must be tagged, labelled
@@ -714,7 +720,7 @@ public class NexusTreeUtils {
 	/**
 	 * Strict parse new style (2014) NXdata class and augment with metadata
 	 * @param gn
-	 * @return ILazyDataset with meatadata
+	 * @return ILazyDataset with metadata or null
 	 */
 	public static ILazyDataset parseNXdataAndAugmentStrict(GroupNode gn) {
 		if (!isNXClass(gn, NexusConstants.DATA)) {
@@ -1804,6 +1810,9 @@ public class NexusTreeUtils {
 	 * @return true if it does
 	 */
 	public static boolean isNXClass(Node node, String clazz) {
+		if (node == null) {
+			return false;
+		}
 		String nxClass = getFirstString(node.getAttribute(NexusConstants.NXCLASS));
 		return clazz.equals(nxClass);
 	}

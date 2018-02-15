@@ -62,16 +62,12 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		return getClass().getName();
 	}
 
-	// this calculates a background to subtract from input
-	@Override
-	protected Dataset getImage(IDataset input) throws OperationException {
-		Dataset in = DatasetUtils.convertToDataset(input);
+	protected double calculateThreshold(Dataset in) throws OperationException {
 		double min = in.min(true).doubleValue();
 		double max = in.max(true).doubleValue();
 		int nbin = (int) Math.ceil(max - min);
 		if (nbin == 0) {
-			log.append("No range in data. All finite values are %g", min);
-			return DatasetFactory.createFromObject(min);
+			return Double.NaN;
 		}
 
 		if (model.isPositiveOnly()) {
@@ -111,25 +107,40 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 		// find where given ratio occurs and is past peak position
 		List<Double> cs = DatasetUtils.crossings(x, Maths.dividez(h, fit), model.getRatio());
-		threshold = -1;
+		double thr = -1;
 		for (Double d : cs) {
 			if (d > cx) {
-				threshold = d;
+				thr = d;
 				break;
 			}
 		}
 
-		if (threshold < 0) {
+		if (thr < 0) {
 			throw new OperationException(this, "Failed to find a threshold");
 		}
+		return thr;
+	}
+
+	// this calculates a background to subtract from input
+	@Override
+	protected Dataset getImage(IDataset input) throws OperationException {
+		Dataset in = DatasetUtils.convertToDataset(input);
+		double thr = calculateThreshold(in);
+		threshold = thr;
+		if (Double.isNaN(thr)) {
+			double min = in.min(true).doubleValue();
+			log.append("No range in data. All finite values are %g", min);
+			return DatasetFactory.createFromObject(min);
+		}
+
 		if (!in.hasFloatingPointElements()) {
-			int thr = (int) Math.floor(threshold);
-			log.append("Threshold = %d", thr);
-			return DatasetUtils.select(Comparisons.lessThan(in, thr), in, thr);
+			int ithr = (int) Math.floor(thr);
+			log.append("Threshold = %d", ithr);
+			return DatasetUtils.select(Comparisons.lessThan(in, ithr), in, ithr);
 		}
 
 		log.append("Threshold = %d", threshold);
-		return DatasetUtils.select(Comparisons.lessThan(in, threshold), in, threshold);
+		return DatasetUtils.select(Comparisons.lessThan(in, thr), in, thr);
 	}
 
 	static double fitFunction(IOperation<?, ?> op, IFunction fun, Dataset xf, IDataset hf) {
@@ -145,7 +156,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	}
 
 	@Override
-	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
+	public OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		log.clear();
 		log.append("Subtract Fitted Background");
 		log.append("==========================");

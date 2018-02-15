@@ -164,7 +164,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	}
 
 	@Override
-	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
+	public OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		output = null;
 		OperationData od = super.process(input, monitor);
 		IDataset data = od.getData();

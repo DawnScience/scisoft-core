@@ -127,19 +127,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		IDataset result = input;
 		for (int r = 0; r < roiMax; r++) {
 			roi = getROI(r);
-			Dataset in = preprocessImage(input, roi);
-			if (in.getSize() == 0) {
-				continue;
-			}
-			int cutoff = (int) Math.floor(countsPerPhoton * model.getCutoff());
-			if (cutoff > 0) {
-				BooleanDataset hots = Comparisons.greaterThan(in, cutoff);
-				log.append("Number of cut-off pixels = %d", hots.sum());
-				in.setByBoolean(0, hots);
-			}
-
-			log.append("Processing region %d", r);
-			result = processImageRegion(r, input, in);
+			result = processRegion(input, roi, r);
 		}
 
 		OperationDataForDisplay od = new OperationDataForDisplay();
@@ -151,6 +139,22 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		}
 		od.setAuxData(auxData.toArray(new Serializable[auxData.size()]));
 		return od;
+	}
+
+	private IDataset processRegion(IDataset input, IRectangularROI roi, int r) {
+		Dataset in = preprocessImage(input, roi);
+		if (in.getSize() == 0) {
+			return null;
+		}
+		int cutoff = (int) Math.floor(countsPerPhoton * model.getCutoff());
+		if (cutoff > 0) {
+			BooleanDataset hots = Comparisons.greaterThan(in, cutoff);
+			log.append("Number of cut-off pixels = %d", hots.sum());
+			in.setByBoolean(0, hots);
+		}
+
+		log.append("Processing region %d", r);
+		return processImageRegion(r, input, in);
 	}
 
 	protected IRectangularROI getROI(int r) {

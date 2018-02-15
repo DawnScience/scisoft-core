@@ -996,14 +996,38 @@
             visible="true">
       </operation>
       <operation
-            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsZeroThetaOperation"
-            description="Recalculate the zero angle position"
-            icon="icons/mask.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsZeroThetaOperation"
-            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
-            name="USAXS Zero Theta Correction">
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.SetAxisOperation"
+            description="Set a specific, or different axis during a processing pipeline"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.SetAxisOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.oned.SetAxisModel"
+            name="Set Axis">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsTwoThetaToQOperation"
+            description="Coverting a yaw scale, in radians, to the scattering wavevector q"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsTwoThetaToQOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.UsaxsTwoThetaToQModel"
+            name="USAXS Conversion of Two Theta to Q">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsDataTransposerOperation"
+            description="Fold over a Bonse-Hart USAXS dataset around zero q and average the resulting datapoints"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsDataTransposerOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="USAXS Data Transposer">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.processing_operations"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractCalibratedWithProcessing"
+            icon="icons/minus.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractCalibratedWithProcessing"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataSelectedFramesModel"
+            name="Subtract Calibrated Frame">
+       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsDarkcurrentOperation"

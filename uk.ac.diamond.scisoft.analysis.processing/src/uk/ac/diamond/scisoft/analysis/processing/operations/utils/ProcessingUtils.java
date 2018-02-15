@@ -10,7 +10,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.utils;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
@@ -23,8 +22,6 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.metadata.MetadataFactory;
 
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
@@ -117,28 +114,5 @@ public class ProcessingUtils {
 		}
 	
 		throw new OperationException(operation, "NXprocess node not found: " + processName);
-	}
-
-	public static void setAxes(IDataset d, Dataset... axes) {
-		if (d.getRank() == 0) {
-			return;
-		}
-		AxesMetadata am;
-		try {
-			am = MetadataFactory.createMetadata(AxesMetadata.class, d.getRank());
-			for (int i = 0; i < axes.length; i++) {
-				Dataset a = axes[i];
-				if (a != null) {
-					try {
-						am.setAxis(i, a);
-					} catch (Exception e) {
-						System.err.println(Arrays.toString(a.getShapeRef()) + " cf " + Arrays.toString(d.getShape()));
-					}
-				}
-				
-			}
-			d.addMetadata(am);
-		} catch (Exception e) {
-		}
 	}
 }

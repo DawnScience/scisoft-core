@@ -9,12 +9,16 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
-import org.eclipse.dawnsci.analysis.api.processing.IOperation;
+import java.util.Arrays;
+
 import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +26,7 @@ public class MetadataUtils {
 
 	private final static Logger logger = LoggerFactory.getLogger(MetadataUtils.class);
 	
-	public static IDataset[] getAxes(IDataset input) {
+	public static Dataset[] getAxes(IDataset input) {
 		AxesMetadata md = input.getFirstMetadata(AxesMetadata.class);
 		
 		if (md == null) return null;
@@ -31,12 +35,12 @@ public class MetadataUtils {
 		
 		if (axes.length != input.getRank()) return null;
 		
-		IDataset[] datasetAxes = new IDataset[axes.length];
+		Dataset[] datasetAxes = new Dataset[axes.length];
 		
 		for (int i = 0; i < axes.length; i++) {
 			if (axes[i] != null)
 				try {
-					datasetAxes[i] = axes[i].getSlice();
+					datasetAxes[i] = DatasetUtils.sliceAndConvertLazyDataset(axes[i]);
 				} catch (DatasetException e) {
 					logger.error("Could not slice axes datasets",e);
 				}
@@ -57,10 +61,10 @@ public class MetadataUtils {
 		
 	}
 	
-	public static IDataset[] getAxesAndMakeMissing(IDataset input) {
-		IDataset[] axes = getAxes(input);
+	public static Dataset[] getAxesAndMakeMissing(IDataset input) {
+		Dataset[] axes = getAxes(input);
 		
-		if (axes == null) axes = new IDataset[input.getRank()];
+		if (axes == null) axes = new Dataset[input.getRank()];
 		
 		int[] shape = input.getShape();
 		
@@ -71,7 +75,29 @@ public class MetadataUtils {
 		}
 		
 		return axes;
-		
 	}
-	
+
+	public static void setAxes(IDataset d, Dataset... axes) {
+		if (d.getRank() == 0) {
+			return;
+		}
+		AxesMetadata am;
+		try {
+			am = MetadataFactory.createMetadata(AxesMetadata.class, d.getRank());
+			for (int i = 0; i < axes.length; i++) {
+				Dataset a = axes[i];
+				if (a != null) {
+					try {
+						am.setAxis(i, a);
+					} catch (Exception e) {
+						System.err.println(Arrays.toString(a.getShapeRef()) + " cf " + Arrays.toString(d.getShape()));
+					}
+				}
+				
+			}
+			d.addMetadata(am);
+		} catch (Exception e) {
+		}
+	}
+
 }

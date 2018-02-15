@@ -51,6 +51,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
+import uk.ac.diamond.scisoft.analysis.processing.operations.MetadataUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractFittedBackgroundOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsBaseModel.ENERGY_DIRECTION;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
@@ -63,6 +64,10 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtil
  * can calibrate scan
  */
 public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReductionModel> {
+
+	public static final String ES_PREFIX = "elastic_spectrum_";
+	public static final String ESF_PREFIX = ES_PREFIX + "fit_";
+	public static final String ESFWHM_PREFIX = ES_PREFIX + "fwhm_";
 
 	/**
 	 * Auxiliary subentry. This must match the name field defined in the plugin extension
@@ -336,13 +341,13 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		int pmin = fwhm.argMin(true);
 		log.append("Minimal FWHM at slope of %g ", slopes.getDouble(pmin));
 		fwhm.setName("FWHM");
-		ProcessingUtils.setAxes(fwhm, slopes);
+		MetadataUtils.setAxes(fwhm, slopes);
 		auxData.add(fwhm);
 		if (r == 0) {
 			displayData.add(fwhm);
 		}
 		summed.setName("summed");
-		ProcessingUtils.setAxes(summed, slopes);
+		MetadataUtils.setAxes(summed, slopes);
 		auxData.add(summed);
 
 		// crop limits to turning point of minimum
@@ -451,7 +456,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			if (useSpectrum && in != null) {
 				Dataset[] result = makeSpectrum(i, in, 0);
 				Dataset spectrum = result[1];
-				spectrum.setName("elastic_spectrum_" + i);
+				spectrum.setName(ES_PREFIX + i);
 //				auxData.add(spectrum); // put in summary data instead
 				goodSpectra[i].add(spectrum);
 //				if (i == 0) { // cannot do this as it interferes with writing output
@@ -569,22 +574,22 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		if (gEnergy.size() > 0) {
 			Dataset ge = DatasetFactory.createFromList(gEnergy);
 			ge.setName("Scan energy");
-			gSpectrum.setName("elastic_spectrum_" + r);
-			ProcessingUtils.setAxes(gSpectrum, ge);
+			gSpectrum.setName(ES_PREFIX + r);
+			MetadataUtils.setAxes(gSpectrum, ge);
 			summaryData.add(gSpectrum);
-			gSpectrumFit.setName("elastic_spectrum_fit_" + r);
-			ProcessingUtils.setAxes(gSpectrumFit, ge);
+			gSpectrumFit.setName(ESF_PREFIX + r);
+			MetadataUtils.setAxes(gSpectrumFit, ge);
 			summaryData.add(gSpectrumFit);
 			Dataset gf = DatasetFactory.createFromList(gFWHM);
-			gf.setName("elastic_spectrum_fwhm_" + r);
-			ProcessingUtils.setAxes(gf, ge);
+			gf.setName(ESFWHM_PREFIX + r);
+			MetadataUtils.setAxes(gf, ge);
 			summaryData.add(gf);
 		}
 		if (bEnergy.size() > 0) {
 			Dataset be = DatasetFactory.createFromList(bEnergy);
 			be.setName("Scan energy");
 			bSpectrum.setName("bad_elastic_spectrum_" + r);
-			ProcessingUtils.setAxes(bSpectrum, be);
+			MetadataUtils.setAxes(bSpectrum, be);
 			summaryData.add(bSpectrum);
 		}
 
@@ -597,14 +602,14 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			Dataset xf = x.clone();
 			xf.setName(name);
 			fit.setName(d.getName());
-			ProcessingUtils.setAxes(xf, fit);
-			ProcessingUtils.setAxes(x, d);
+			MetadataUtils.setAxes(xf, fit);
+			MetadataUtils.setAxes(x, d);
 			displayData.add(x);
 			displayData.add(xf);
 		} else {
 			fit.setName(name);
-			ProcessingUtils.setAxes(fit, x);
-			ProcessingUtils.setAxes(d, x);
+			MetadataUtils.setAxes(fit, x);
+			MetadataUtils.setAxes(d, x);
 			displayData.add(d);
 			displayData.add(fit);
 		}
@@ -615,7 +620,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	// TODO fix NexusFileExecutionVisitor to automatically link any axis datasets
 	// from the SSFMD#getParent()'s axes metadata
 	private Dataset addPositionAxis(Dataset y) {
-		ProcessingUtils.setAxes(y, position);
+		MetadataUtils.setAxes(y, position);
 		return y;
 	}
 
@@ -726,7 +731,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			allStrips = allStrips.getSliceView(null, new Slice(diff, null));
 		}
 		allStrips.setName("strip_" + r);
-		ProcessingUtils.setAxes(allStrips, null, xSlice);
+		MetadataUtils.setAxes(allStrips, null, xSlice);
 		auxData.add(allStrips);
 
 		return new Dataset[] {row, col};

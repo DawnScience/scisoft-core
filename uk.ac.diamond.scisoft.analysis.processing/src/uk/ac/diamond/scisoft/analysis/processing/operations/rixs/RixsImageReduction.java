@@ -55,6 +55,7 @@ import uk.ac.diamond.scisoft.analysis.image.ImageUtils;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
+import uk.ac.diamond.scisoft.analysis.processing.operations.MetadataUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionModel.CORRELATE_ORDER;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionModel.CORRELATE_PHOTON;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionModel.FIT_FILE_OPTION;
@@ -334,7 +335,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		e.iadd(offset[1]-result[0].getDouble()); // TODO discretize???
 		e.imultiply(-energyDispersion[r]);
 		e.setName("Energy loss");
-		ProcessingUtils.setAxes(spectrum, e);
+		MetadataUtils.setAxes(spectrum, e);
 		auxData.add(spectrum);
 		allSpectra[r].add(spectrum);
 		return spectrum;
@@ -372,7 +373,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 
 		Dataset a = Maths.log10(h);
 		a.setName("Log10 of " + h.getName());
-		ProcessingUtils.setAxes(a, bins);
+		MetadataUtils.setAxes(a, bins);
 		displayData.add(a);
 
 		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(input);
@@ -395,7 +396,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				// After last image, calculate splitting levels
 				Dataset x = bins.getSlice(new Slice(-1));
 				Dataset dh = Maths.derivative(x, h, 3);
-				ProcessingUtils.setAxes(dh, bins);
+				MetadataUtils.setAxes(dh, bins);
 				displayData.set(0, dh);
 				List<Double> z = DatasetUtils.crossings(x, dh, 0);
 				log.append("Histogram derivative zero-crossings = %s", z);
@@ -434,7 +435,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 							if (side > 0) {
 								Dataset t;
 								t = DatasetFactory.createFromList(cY);
-								ProcessingUtils.setAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"));
+								MetadataUtils.setAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"));
 								// for DExplore's 2d scatter point
 //								t = DatasetFactory.zeros(side, side);
 //								ProcessingUtils.addAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"),
@@ -461,7 +462,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					energies[r] = er;
 					Dataset t = DatasetFactory.createFromObject(allSingle[r]);
 					t.setName("single_photon_spectrum_" + r);
-					ProcessingUtils.setAxes(t, null, er);
+					MetadataUtils.setAxes(t, null, er);
 					sSpectra[r] = t;
 					summaryData.add(t);
 
@@ -472,7 +473,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 
 					t = DatasetFactory.createFromObject(allMultiple[r]);
 					t.setName("multiple_photon_spectrum_" + r);
-					ProcessingUtils.setAxes(t, null, er);
+					MetadataUtils.setAxes(t, null, er);
 					mSpectra[r] = t;
 					summaryData.add(t);
 
@@ -516,7 +517,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					}
 					sp = accumulate(sArray);
 					sp.setName("correlated_spectrum_" + r);
-					ProcessingUtils.setAxes(sp, ax);
+					MetadataUtils.setAxes(sp, ax);
 					summaryData.add(sp);
 
 					List<Double> shift = new ArrayList<>();
@@ -528,12 +529,12 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					Dataset e = energies[r];
 					sp = sSpectra[r].sum(0);
 					sp.setName("total_single_photon_spectrum_" + r);
-					ProcessingUtils.setAxes(sp, e);
+					MetadataUtils.setAxes(sp, e);
 					summaryData.add(sp);
 
 					sp = mSpectra[r].sum(0);
 					sp.setName("total_multiple_photon_spectrum_" + r);
-					ProcessingUtils.setAxes(sp, e);
+					MetadataUtils.setAxes(sp, e);
 					summaryData.add(sp);
 
 					if (model.getCorrelateOption() == CORRELATE_PHOTON.USE_INTENSITY_SHIFTS) {
@@ -556,12 +557,12 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 
 						Dataset t = DatasetFactory.createFromObject(allSingle[r]).sum(0);
 						t.setName("correlated_single_photon_spectrum_" + r);
-						ProcessingUtils.setAxes(t, e);
+						MetadataUtils.setAxes(t, e);
 						summaryData.add(t);
 
 						t = DatasetFactory.createFromObject(allMultiple[r]).sum(0);
 						t.setName("correlated_multiple_photon_spectrum_" + r);
-						ProcessingUtils.setAxes(t, e);
+						MetadataUtils.setAxes(t, e);
 						summaryData.add(t);
 					} else {
 						reg = getCorrelateShifter(true);
@@ -575,7 +576,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 						}
 						sp = accumulate(sArray);
 						sp.setName("correlated_single_photon_spectrum_" + r);
-						ProcessingUtils.setAxes(sp, e);
+						MetadataUtils.setAxes(sp, e);
 						summaryData.add(sp);
 						shift.clear();
 						for (int i = 0; i < sArray.length; i++) {
@@ -593,7 +594,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 						}
 						sp = accumulate(sArray);
 						sp.setName("correlated_multiple_photon_spectrum_" + r);
-						ProcessingUtils.setAxes(sp, e);
+						MetadataUtils.setAxes(sp, e);
 						summaryData.add(sp);
 						shift.clear();
 						for (int i = 0; i < sArray.length; i++) {

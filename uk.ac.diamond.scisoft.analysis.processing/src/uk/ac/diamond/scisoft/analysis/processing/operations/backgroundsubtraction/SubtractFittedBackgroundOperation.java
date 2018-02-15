@@ -35,6 +35,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.FitMetadataImpl;
+import uk.ac.diamond.scisoft.analysis.processing.operations.MetadataUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractFittedBackgroundModel.BackgroundPixelPDF;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
@@ -181,8 +182,8 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		b.setName("Log10 of " + fit.getName());
 		// clamp values to above zero for nicer display 
 		b.setByBoolean(0, Comparisons.lessThan(b, 0));
-		ProcessingUtils.setAxes(a, x);
-		ProcessingUtils.setAxes(b, x);
+		MetadataUtils.setAxes(a, x);
+		MetadataUtils.setAxes(b, x);
 		od.setDisplayData(a, b);
 	}
 

@@ -642,7 +642,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		int i = 0;
 		while (it.hasNext()) {
 			r.setItem(it.index, i);
-			c.setItem(max.getInt(it.index), i++);
+			c.setItem((int) max.getElementLongAbs(it.index), i++);
 		}
 
 		log.append("Cols stats: mean = %g; outliers at %s", ((Number) c.mean()).doubleValue(), Arrays.toString(Stats.outlierValues(c, 5, 95, peaks/10)));

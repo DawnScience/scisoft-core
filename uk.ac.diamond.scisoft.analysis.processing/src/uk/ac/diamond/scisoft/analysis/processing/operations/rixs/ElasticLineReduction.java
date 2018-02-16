@@ -86,6 +86,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	protected List<Double>[] goodPosition = new List[] {new ArrayList<>(), new ArrayList<>()}; 
 	protected List<Double>[] goodIntercept = new List[] {new ArrayList<>(), new ArrayList<>()};
 	private List<Dataset>[] goodSpectra = new List[] {new ArrayList<>(), new ArrayList<>()};
+	private String positionName;
 
 	@Override
 	public OperationRank getOutputRank() {
@@ -149,6 +150,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 		ILazyDataset ld = smd.getParent();
 		AxesMetadata amd = ld.getFirstMetadata(AxesMetadata.class);
+		positionName = amd.getAxis(0)[0].getName();
 		try {
 			position = DatasetUtils.convertToDataset(smd.getMatchingSlice(amd.getAxis(0)[0])).squeeze(true);
 			log.append("Current position: %s", position.toString(true));
@@ -507,11 +509,11 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		peak.addFunction(new Gaussian());
 		peak.addFunction(new Offset());
 
-		List<Double> bEnergy = new ArrayList<>();
-		List<Double> gEnergy = new ArrayList<>();
+		List<Double> bPosition = new ArrayList<>();
+		List<Double> gPosition = new ArrayList<>();
 		List<Double> gPosn = new ArrayList<>();
 		List<Double> gFWHM = new ArrayList<>();
-		List<Double> energy = goodPosition[r];
+		List<Double> positions = goodPosition[r];
 
 		int ns = goodSpectra[r].size();
 		Dataset spectrum = null;
@@ -546,7 +548,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 					if (!Double.isFinite(res)) {
 						log.append("Fitting elastic peak: refit FAILED");
 					}
-					gEnergy.add(energy.get(i));
+					gPosition.add(positions.get(i));
 					gPosn.add(peak.getParameterValue(0));
 					gFWHM.add(peak.getParameterValue(1));
 					DoubleDataset fit = peak.calculateValues(x);
@@ -562,7 +564,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			}
 			if (!Double.isFinite(res)) {
 				log.append("Fitting elastic peak: FAILED");
-				bEnergy.add(energy.get(i));
+				bPosition.add(positions.get(i));
 				if (bSpectrum == null) {
 					bSpectrum = spectrum.clone().reshape(1, size);
 				} else {
@@ -571,9 +573,9 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			}
 		}
 
-		if (gEnergy.size() > 0) {
-			Dataset ge = DatasetFactory.createFromList(gEnergy);
-			ge.setName("Scan energy");
+		if (gPosition.size() > 0) {
+			Dataset ge = DatasetFactory.createFromList(gPosition);
+			ge.setName(positionName);
 			gSpectrum.setName(ES_PREFIX + r);
 			MetadataUtils.setAxes(gSpectrum, ge);
 			summaryData.add(gSpectrum);
@@ -585,15 +587,15 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			MetadataUtils.setAxes(gf, ge);
 			summaryData.add(gf);
 		}
-		if (bEnergy.size() > 0) {
-			Dataset be = DatasetFactory.createFromList(bEnergy);
-			be.setName("Scan energy");
+		if (bPosition.size() > 0) {
+			Dataset be = DatasetFactory.createFromList(bPosition);
+			be.setName(positionName);
 			bSpectrum.setName("bad_elastic_spectrum_" + r);
 			MetadataUtils.setAxes(bSpectrum, be);
 			summaryData.add(bSpectrum);
 		}
 
-		return new List<?>[] {gEnergy, gPosn};
+		return new List<?>[] {gPosition, gPosn};
 	}
 
 	protected void generateFitForDisplay(IFunction f, Dataset x, Dataset d, String name, boolean transpose) {

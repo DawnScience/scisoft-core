@@ -83,9 +83,10 @@ public class MetadataUtils {
 		}
 		AxesMetadata am;
 		try {
-			am = MetadataFactory.createMetadata(AxesMetadata.class, d.getRank());
-			for (int i = 0; i < axes.length; i++) {
-				Dataset a = axes[i];
+			int r = d.getRank();
+			am = MetadataFactory.createMetadata(AxesMetadata.class, r);
+			for (int i = 0; i < r; i++) {
+				Dataset a = i < axes.length ? axes[i] : null;
 				if (a != null) {
 					try {
 						am.setAxis(i, a);

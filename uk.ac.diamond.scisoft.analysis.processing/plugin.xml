@@ -1021,6 +1021,15 @@
             name="USAXS Data Transposer">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsZeroThetaOperation"
+            description="Finds the zero-q value for a Bonse-Harte USAXS curve by fitting the primary Bragg reflection to an oversampled gaussian model"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsZeroThetaOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="USAXS Zero Theta">
+      </operation>
+      <operation
             category="uk.ac.diamond.scisoft.analysis.processing.processing_operations"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractCalibratedWithProcessing"
             icon="icons/minus.png"

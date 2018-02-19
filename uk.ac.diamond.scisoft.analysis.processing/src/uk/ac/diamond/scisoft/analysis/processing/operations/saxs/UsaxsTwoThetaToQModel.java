@@ -55,8 +55,36 @@ public class UsaxsTwoThetaToQModel extends AbstractOperationModel {
 		}
 	}
 	
+	enum qUnits {
+		ANGSTROMS(1),
+		NANOMETERS(2);
+		
+		
+		private final int qUnits;
+		
+		
+		qUnits(int qUnits) {
+			this.qUnits = qUnits;
+		}
+		
+		
+		public int getQUnits() {
+			return this.qUnits;
+		}
+		
+		
+		@Override
+		public String toString() {
+			switch (this.qUnits) {
+				case 1:		return String.format("Angstroms");
+				case 2:		return String.format("Nanometers");
+				default:	return String.format("Error!");
+			}
+		}
+	}
 	
-	// Which transmission correction does the user want to perform?
+	
+	// Which units is yaw in?
 	@OperationModelField(label = "What units is yaw in?", hint = "Pick the order of magnitude that the yaw motor was calibrated in", fieldPosition = 1)
 	private YawUnits yawAccuracy = YawUnits.MILLIRADIANS;
 	
@@ -69,5 +97,21 @@ public class UsaxsTwoThetaToQModel extends AbstractOperationModel {
 	
 	public void setYawAccuracy(YawUnits yawAccuracy) {
 		firePropertyChange("IntegrationRange", this.yawAccuracy, this.yawAccuracy = yawAccuracy);
+	}
+	
+	
+	// Which units does the user want q in?
+	@OperationModelField(label = "What units should q be in?", hint = "Pick the units for q", fieldPosition = 2)
+	private qUnits qScale = qUnits.ANGSTROMS;
+	
+	
+	// Now the getters and setters
+	public qUnits getQScale() {
+		return qScale;
+	}
+	
+	
+	public void setQScale(qUnits qScale) {
+		firePropertyChange("qScale", this.qScale, this.qScale = qScale);
 	}
 }

@@ -14,6 +14,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 // Imports from uk.ac.diamond.scisoft
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsTwoThetaToQModel.YawUnits;
+import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsTwoThetaToQModel.qUnits;
 
 // Imports from org.eclipse.dawnsci
 import org.eclipse.january.DatasetException;
@@ -29,6 +30,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 
 // Importing the logger!
@@ -116,6 +118,13 @@ public class UsaxsTwoThetaToQOperation extends AbstractOperation<UsaxsTwoThetaTo
 			double sinValue = (yawValue / 2) / powerAdjustor; 
 			double qValue = (4.0 * Math.PI * Math.sin(sinValue)) / wavelength;
 			xAxis.set(qValue, index);
+		}
+		
+		if (model.getQScale() == qUnits.NANOMETERS) {
+			xAxis = Maths.multiply(xAxis, 10.0);
+			xAxis.setName("q (1/nm)");
+		} else {
+			xAxis.setName("q (1/Å)");
 		}
 		
 		// Configure the output dataset...

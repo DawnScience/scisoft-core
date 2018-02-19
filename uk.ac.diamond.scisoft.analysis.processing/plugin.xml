@@ -317,10 +317,10 @@
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
-            class="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBackgroupImageOperation"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBackgroundImageOperation"
             description="Subtract a background image from a different file"
             icon="icons/subblank.png"
-            id="uk.ac.diamond.scisoft.analysis.processing.operations.SubtractBackgroupImageOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.SubtractBackgroundImageOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractBackgroundImageModel"
             name="Subtract Background Image"
             visible="false">

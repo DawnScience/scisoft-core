@@ -24,7 +24,7 @@ import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadata;
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
-public class SubtractCalibratedWithProcessing extends FrameMathsOperation<ExternalDataSelectedFramesModel> {
+public class SubtractCalibratedWithProcessing extends FrameMathsOperation<SubtractWithProcessingModel> {
 
 	@Override
 	public String getId() {
@@ -34,7 +34,15 @@ public class SubtractCalibratedWithProcessing extends FrameMathsOperation<Extern
 	@Override
 	protected Dataset getData(IDataset ds) {
 		OperationMetadata om = ds.getFirstMetadata(OperationMetadata.class);
-		String filePath = ((ExternalDataSelectedFramesModel)model).getFilePath();
+		String filePath = ((SubtractWithProcessingModel)model).getFilePath();
+		String datasetName = null;
+		
+		if (model.getUseSameDataset() == true) {
+			datasetName = getSliceSeriesMetadata(ds).getSourceInfo().getDatasetName();
+		} else {
+			datasetName = model.getDatasetName();
+		}
+		
 		if (filePath == null) {
 			SliceFromSeriesMetadata ssm = ds.getFirstMetadata(SliceFromSeriesMetadata.class);
 			filePath = ssm.getFilePath();
@@ -42,7 +50,7 @@ public class SubtractCalibratedWithProcessing extends FrameMathsOperation<Extern
 		
 		try {
 			IDataHolder dh = LocalServiceManager.getLoaderService().getData(filePath, null);
-			if (!dh.contains(((ExternalDataSelectedFramesModel)model).getDatasetName())){
+			if (!dh.contains(datasetName)){
 				return null;
 			}
 		} catch (Exception e) {
@@ -50,7 +58,7 @@ public class SubtractCalibratedWithProcessing extends FrameMathsOperation<Extern
 		}
 		
 		Dataset processed = om.process(filePath,
-									 ((ExternalDataSelectedFramesModel)model).getDatasetName(),
+									 datasetName,
 									 ds.getFirstMetadata(SliceFromSeriesMetadata.class),model.getStartFrame(),
 									 model.getEndFrame());
 		return processed.imultiply(model.getScaling());

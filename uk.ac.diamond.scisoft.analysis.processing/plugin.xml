@@ -1034,7 +1034,7 @@
             class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractCalibratedWithProcessing"
             icon="icons/minus.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractCalibratedWithProcessing"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataSelectedFramesModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractWithProcessingModel"
             name="Subtract Calibrated Frame">
        </operation>
       <operation
@@ -1277,7 +1277,7 @@
             class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractWithProcessing"
             icon="icons/minus.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractWithProcessing"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataSelectedFramesModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractWithProcessingModel"
             name="Subtract Frame">
        </operation>
              <operation

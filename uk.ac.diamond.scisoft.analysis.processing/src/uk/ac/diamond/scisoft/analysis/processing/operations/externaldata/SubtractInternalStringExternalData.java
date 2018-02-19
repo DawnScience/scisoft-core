@@ -43,7 +43,7 @@ public class SubtractInternalStringExternalData extends FrameMathsOperation<Inte
 		}
 				
 		if (filePath == null) {
-			filePath = ssm.getFilePath();
+			throw new OperationException(this, "Can't load data!");
 		}
 		
 		try {

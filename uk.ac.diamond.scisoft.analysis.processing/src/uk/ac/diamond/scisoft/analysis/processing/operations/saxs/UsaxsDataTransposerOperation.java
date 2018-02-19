@@ -10,55 +10,60 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 
-import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
+// Imports from org.eclipse.dawnsci
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
-import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
+import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
-import org.eclipse.january.DatasetException;
+
+// Imports from org.eclipse.january
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.IndexIterator;
-import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.metadata.AxesMetadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.InterpolatorUtils;
 
-
-import uk.ac.diamond.scisoft.analysis.diffraction.powder.IPixelIntegrationCache;
+// Imports from uk.ac.diamond.scisoft.analysis
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
+
+// Imports from org.slf4j
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class UsaxsDataTransposerOperation extends AbstractOperation<EmptyModel, OperationData> {
-
-	protected volatile IPixelIntegrationCache cache;
-	protected IDiffractionMetadata metadata;
+	
 	
 	// Then set up a logger
 	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(UsaxsDataTransposerOperation.class);
 	
+	
 	@Override
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsDataTransposerOperation";
 	}
-
+	
+	
 	@Override
 	public OperationRank getInputRank() {
 		return OperationRank.ONE;
 	}
-
+	
+	
 	@Override
 	public OperationRank getOutputRank() {
 		return OperationRank.ONE;
 	}
-
+	
+	
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		// Get our x-axis for conversion and our y-axis for later...
@@ -108,16 +113,16 @@ public class UsaxsDataTransposerOperation extends AbstractOperation<EmptyModel, 
 			xAxisMetadata = shorterDataset.getFirstMetadata(AxesMetadata.class);
 			shorterX = DatasetUtils.convertToDataset(xAxisMetadata.getAxis(0)[0].getSlice());
 			shorterX = Maths.abs(shorterX);
+			DatasetUtils.sort(shorterX, shorterDataset);
 			xAxisMetadata.setAxis(0, shorterX);
 			shorterDataset.setMetadata(xAxisMetadata);
-			DatasetUtils.indexSort(shorterDataset, 0);
 			
 			xAxisMetadata = longerDataset.getFirstMetadata(AxesMetadata.class);
 			longerX = DatasetUtils.convertToDataset(xAxisMetadata.getAxis(0)[0].getSlice());
 			longerX = Maths.abs(longerX);
+			DatasetUtils.sort(longerX, longerDataset);
 			xAxisMetadata.setAxis(0, longerX);
 			longerDataset.setMetadata(xAxisMetadata);
-			DatasetUtils.indexSort(longerDataset, 0);
 			
 		} catch (DatasetException xAxisError) {
 			throw new OperationException(this, xAxisError);

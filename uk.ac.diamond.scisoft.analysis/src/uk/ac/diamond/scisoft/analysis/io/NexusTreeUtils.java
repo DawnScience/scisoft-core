@@ -81,8 +81,8 @@ public class NexusTreeUtils {
 	private static final String DETECTOR_DISTANCE = "distance";
 	private static final String DETECTOR_XPIXELSIZE = "x_pixel_size";
 	private static final String DETECTOR_YPIXELSIZE = "y_pixel_size";
-	private static final String DETECTOR_BEAMCENTERX = "beam_center_y";
-	private static final String DETECTOR_BEAMCENTERY = "beam_center_x";
+	private static final String DETECTOR_BEAMCENTERX = "beam_center_x";
+	private static final String DETECTOR_BEAMCENTERY = "beam_center_y";
 	private static final String DETECTOR_XPIXELNUMBER = "x_pixel_number";
 //	private static final String DETECTOR_YPIXELNUMBER = "y_pixel_number";
 

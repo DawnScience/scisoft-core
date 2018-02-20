@@ -1012,7 +1012,7 @@ public class NexusTreeUtils {
 		if (nl != null) {
 			Node n = nl.getDestination();
 			double[] c = parseDoubleArray(n, 1);
-			beamCentre[1] = convertIfNecessary(SI.MILLIMETRE, getFirstString(n.getAttribute(NexusConstants.UNITS)), c[1]);
+			beamCentre[1] = convertIfNecessary(SI.MILLIMETRE, getFirstString(n.getAttribute(NexusConstants.UNITS)), c[0]);
 		}
 
 		// determine beam direction from centre position

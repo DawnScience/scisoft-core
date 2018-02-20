@@ -466,10 +466,10 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 //				}
 			}
 		}
-	
-		auxData.add(addPositionAxis(ProcessingUtils.createNamedDataset(m, "line_%d_m", i)));
-		auxData.add(addPositionAxis(ProcessingUtils.createNamedDataset(c, "line_%d_c", i)));
-		auxData.add(addPositionAxis(ProcessingUtils.createNamedDataset(r, "residual_%d", i)));
+
+		auxData.add(ProcessingUtils.createNamedDataset(m, "line_%d_m", i).reshape(1));
+		auxData.add(ProcessingUtils.createNamedDataset(c, "line_%d_c", i));
+		auxData.add(ProcessingUtils.createNamedDataset(r, "residual_%d", i));
 	}
 
 	/**
@@ -615,15 +615,6 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			displayData.add(d);
 			displayData.add(fit);
 		}
-	}
-
-	// FIXME this is wasteful as these axis datasets are replicated for each
-	// aux data
-	// TODO fix NexusFileExecutionVisitor to automatically link any axis datasets
-	// from the SSFMD#getParent()'s axes metadata
-	private Dataset addPositionAxis(Dataset y) {
-		MetadataUtils.setAxes(y, position);
-		return y;
 	}
 
 	/**

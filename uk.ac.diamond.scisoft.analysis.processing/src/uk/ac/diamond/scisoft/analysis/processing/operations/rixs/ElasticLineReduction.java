@@ -539,7 +539,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 					res = Double.POSITIVE_INFINITY;
 					// isolate peak and fit again (to reduce influence of other spikes)
 					double posn = peak.getParameterValue(0);
-					double width = peak.getParameterValue(1);
+					double width = model.getPeakFittingFactor() * peak.getParameterValue(1);
 					Slice slice = new Slice(Math.max(0, (int) Math.floor(posn-width)), Math.min(size, (int) Math.floor(posn+width)));
 					IParameter p = peak.getParameter(3); // reset offset
 					p.setValue(-0.5*peak.val(posn));

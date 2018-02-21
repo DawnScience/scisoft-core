@@ -31,6 +31,9 @@ public class ElasticLineReductionModel extends RixsBaseModel {
 	@OperationModelField(label = "Minimum number of photons required before attempting to find elastic line", min = 20)
 	private int minPhotons = 100;
 
+	@OperationModelField(label = "Elastic peak width fitting factor", hint = "Multiplier for FWHM", min = 1)
+	private double peakFittingFactor = 1.5;
+
 	/**
 	 * @return width of strip to use to find elastic line
 	 */
@@ -84,5 +87,17 @@ public class ElasticLineReductionModel extends RixsBaseModel {
 	 */
 	public void setMinPhotons(int minPhotons) {
 		firePropertyChange("setMinPhotons", this.minPhotons, this.minPhotons = minPhotons);
+	}
+
+	/**
+	 * @return factor used to select range of points to fit elastic peak. The range is initial peak position +/- factor * initial FHWM
+	 * 
+	 */
+	public double getPeakFittingFactor() {
+		return peakFittingFactor;
+	}
+
+	public void setPeakFittingFactor(double peakFittingFactor) {
+		firePropertyChange("setPeakFittingFactor", this.peakFittingFactor, this.peakFittingFactor = peakFittingFactor);
 	}
 }

@@ -31,7 +31,7 @@ public class ElasticLineReductionModel extends RixsBaseModel {
 	@OperationModelField(label = "Minimum number of photons required before attempting to find elastic line", min = 20)
 	private int minPhotons = 100;
 
-	@OperationModelField(label = "Elastic peak width fitting factor", hint = "Multiplier for FWHM", min = 1)
+	@OperationModelField(label = "Elastic peak fitting width factor", hint = "Multiplier for FWHM", min = 0.5)
 	private double peakFittingFactor = 1.5;
 
 	/**

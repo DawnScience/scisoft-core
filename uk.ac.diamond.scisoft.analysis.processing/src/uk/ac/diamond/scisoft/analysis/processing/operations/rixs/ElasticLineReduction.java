@@ -805,7 +805,11 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		}
 
 		int pmax = v.argMax(true); // position of maximum
-		double fw = SubtractFittedBackgroundOperation.findFWHMPostMax(x, v);
+		// find base line
+		List<Dataset> hs = createHistogram(v);
+		int pos = hs.get(0).maxPos(true)[0];
+		double base = hs.get(1).getDouble(pos);
+		double fw = SubtractFittedBackgroundOperation.findFWHMPostMax(x, v, base);
 		if (Double.isNaN(fw)) {
 			fw = v.stdDeviation();
 		}
@@ -824,9 +828,21 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 		if (pdf.getNoOfParameters() > 3) {
 			p = pdf.getParameter(3);
-			p.setValue(0);
+			// width of base line noise PDF
+			double bd = SubtractFittedBackgroundOperation.findFWHMPostMax(hs.get(1).getSliceView(new Slice(-1)), hs.get(0), 0);
+			p.setValue(base);
 //			p.setLimits(-Double.MAX_VALUE, Double.MAX_VALUE);
-			p.setLimits(-Double.MAX_VALUE, 0);
+			p.setLimits(-Double.MAX_VALUE, base + bd);
 		}
 	}
+
+	static List<Dataset> createHistogram(Dataset in) {
+		double min = Math.floor(SubtractFittedBackgroundOperation.findPositiveMin(in));
+		double max = Math.ceil(in.max(true).doubleValue());
+		IntegerDataset bins = DatasetFactory.createRange(IntegerDataset.class, min, max+1, 100);
+
+		Histogram histo = new Histogram(bins);
+		return histo.value(in);
+	}
+
 }

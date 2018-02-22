@@ -25,6 +25,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Slice;
@@ -62,20 +63,27 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		return getClass().getName();
 	}
 
-	protected double calculateThreshold(Dataset in) throws OperationException {
-		double min = in.min(true).doubleValue();
+	public static double findPositiveMin(Dataset d) {
+		IndexIterator it = d.getIterator();
+		double min = Double.POSITIVE_INFINITY;
+		while (it.hasNext()) {
+			double x = d.getElementDoubleAbs(it.index);
+			if (x > 0 && x < min) {
+				min = x;
+			}
+		}
+		return min;
+	}
+
+	public static List<Dataset> createHistogram(Dataset in, boolean positive) {
+		double min = positive ? findPositiveMin(in) : in.min(true).doubleValue();
 		double max = in.max(true).doubleValue();
 		int nbin = (int) Math.ceil(max - min);
 		if (nbin == 0) {
-			return Double.NaN;
+			return null;
 		}
 
-		if (model.isPositiveOnly()) {
-			min = 1; // ignore zero readings too
-			nbin = (int) Math.ceil(max - min);
-		}
-
-		Dataset bins; 
+		Dataset bins;
 		if (in.hasFloatingPointElements() || nbin > SubtractFittedBackgroundModel.HISTOGRAM_MAX_BINS) {
 			bins = DatasetFactory.createLinearSpace(DoubleDataset.class, min, max, nbin);
 		} else {
@@ -83,9 +91,17 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		}
 
 		Histogram histo = new Histogram(bins);
-		h = histo.value(in).get(0);
+		return histo.value(in);
+	}
+
+	protected double calculateThreshold(Dataset in) throws OperationException {
+		List<Dataset> hs = createHistogram(in, model.isPositiveOnly());
+		if (hs == null) {
+			return Double.NaN;
+		}
+		h = hs.get(0);
 		h.setName("Histogram counts");
-		x = bins.getSliceView(new Slice(-1));
+		x = hs.get(1).getSliceView(new Slice(-1));
 		x.setName("Intensity values");
 		pdf = prepareBackgroundPDF(x, h, model.getBackgroundPDF());
 
@@ -95,7 +111,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		int e = (int) p.getUpperLimit();
 		double cx = p.getValue();
 		int c = (int) cx - 1;
-		p.setLimits(bins.getDouble(c) - 0.5, bins.getDouble(c + 2)); // set narrow range for fitting pdf position
+		p.setLimits(x.getDouble(c) - 0.5, x.getDouble(c + 2)); // set narrow range for fitting pdf position
 		p.setValue(cx);
 		SliceND slice = new SliceND(h.getShapeRef(), new Slice(b, e + 1, 1));
 
@@ -228,7 +244,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 		p = pdf.getParameter(1);
 		// estimate FWHM from crossings at HM and finding the crossing that is less than max x
-		double xr = findFWHMPostMax(x, h);
+		double xr = findFWHMPostMax(x, h, 0);
 		p.setLimits(dx, 2*xr);
 		p.setValue(xr);
 
@@ -245,11 +261,11 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	 * @param y
 	 * @return FWHM or NaN if not found
 	 */
-	public static double findFWHMPostMax(Dataset x, Dataset y) {
+	public static double findFWHMPostMax(Dataset x, Dataset y, double base) {
 		double ym = y.max(true).doubleValue();
 		int pos = y.maxPos(true)[0];
 		SliceND slice = new SliceND(x.getShapeRef(), new Slice(pos, null));
-		List<Double> cs = DatasetUtils.crossings(x.getSliceView(slice), y.getSliceView(slice), ym * 0.5);
+		List<Double> cs = DatasetUtils.crossings(x.getSliceView(slice), y.getSliceView(slice), (ym + base)*0.5);
 		return cs.size() > 0 ? (cs.get(0) - x.getDouble(pos)) * 2 : Double.NaN;
 	}
 }

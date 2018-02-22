@@ -131,9 +131,9 @@ public class LoaderServiceImpl implements ILoaderService {
 	
 	@Override
 	public AxesMetadata getAxesMetadata(ILazyDataset parent, String path, List<String>[] axesNames, boolean lazy) throws Exception {
-		AxesMetadata axMeta = null;
 		int rank = parent.getRank();
-		axMeta = MetadataFactory.createMetadata(AxesMetadata.class, rank);
+		AxesMetadata oldAM = parent.getFirstMetadata(AxesMetadata.class);
+		AxesMetadata axMeta = MetadataFactory.createMetadata(AxesMetadata.class, rank);
 		if (axesNames == null) return axMeta;
 		if (axesNames.length != rank) throw new IllegalArgumentException("Array of name lists must be equal in length to the rank of the dataset");
 		int[] shape = parent.getShape();
@@ -187,9 +187,12 @@ public class LoaderServiceImpl implements ILoaderService {
 						
 						axMeta.addAxis(j, lazy ? lazyDataset : lazyDataset.getSlice(), idx);
 					}
-				}
-				else {
-					axMeta.setAxis(j, new ILazyDataset[1]);
+				} else {
+					if (oldAM != null && oldAM.getAxis(j) != null) {
+						axMeta.setAxis(j, oldAM.getAxis(j).clone());
+					} else {
+						axMeta.setAxis(j, new ILazyDataset[1]);
+					}
 				}
 			}
 		}

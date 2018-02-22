@@ -349,32 +349,35 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		// find photon events in entire image
 		List<Dataset> events = ImageUtils.findWindowedPeaks(original, model.getWindow(), countsPerPhoton * model.getLowThreshold(), countsPerPhoton * model.getHighThreshold());
 		Dataset eSum = events.get(0);
+
+		IntegerDataset bins = null;
+		Dataset a = null;
+		Dataset h = null;
 		if (eSum.getSize() == 0) {
 			log.append("No events found");
-			return od;
-		}
-
-		// accumulate event sums and photons
-		if (totalSum == null) {
-			totalSum = eSum;
 		} else {
-			totalSum = DatasetUtils.concatenate(new IDataset[] {totalSum, eSum}, 0);
+			// accumulate event sums and photons
+			if (totalSum == null) {
+				totalSum = eSum;
+			} else {
+				totalSum = DatasetUtils.concatenate(new IDataset[] {totalSum, eSum}, 0);
+			}
+			log.append("Found %d photon events, current total = %s", eSum.getSize(), totalSum.getSize());
+			allSums.add(eSum);
+			allPositions.add(events.get(1));
+	
+			double max = totalSum.max(true).doubleValue();
+			bins = DatasetFactory.createRange(IntegerDataset.class, totalSum.min(true).doubleValue(), max+1, 1);
+			bins.setName("Event sum");
+			Histogram histo = new Histogram(bins);
+			h = histo.value(totalSum).get(0);
+			h.setName("Number of events");
+	
+			a = Maths.log10(h);
+			a.setName("Log10 of " + h.getName());
+			MetadataUtils.setAxes(a, bins);
+			displayData.add(a);
 		}
-		log.append("Found %d photon events, current total = %s", eSum.getSize(), totalSum.getSize());
-		allSums.add(eSum);
-		allPositions.add(events.get(1));
-
-		double max = totalSum.max(true).doubleValue();
-		IntegerDataset bins = DatasetFactory.createRange(IntegerDataset.class, totalSum.min(true).doubleValue(), max+1, 1);
-		bins.setName("Event sum");
-		Histogram histo = new Histogram(bins);
-		Dataset h = histo.value(totalSum).get(0);
-		h.setName("Number of events");
-
-		Dataset a = Maths.log10(h);
-		a.setName("Log10 of " + h.getName());
-		MetadataUtils.setAxes(a, bins);
-		displayData.add(a);
 
 		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(input);
 		SliceInformation si = ssm.getSliceInfo();
@@ -391,105 +394,74 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			}
 			if (si.isLastSlice()) {
 				addSummaryData();
-				summaryData.add(a);
+				int[][][] allSingle = null;
+				int[][][] allMultiple = null;
+				int bin = 0;
+				int bmax = 0;
+				int single = 0;
+				int multiple = 0;
 
-				// After last image, calculate splitting levels
-				Dataset x = bins.getSlice(new Slice(-1));
-				Dataset dh = Maths.derivative(x, h, 3);
-				MetadataUtils.setAxes(dh, bins);
-				displayData.set(0, dh);
-				List<Double> z = DatasetUtils.crossings(x, dh, 0);
-				log.append("Histogram derivative zero-crossings = %s", z);
-				int single = (int) Math.floor(z.get(0));
-				int multiple = single + countsPerPhoton; // (int) Math.floor(z.get(1)); // TODO
-				log.append("Setting limits for single photon as [%d, %d)", single, multiple);
-				summaryData.add(ProcessingUtils.createNamedDataset(single, "single_photon_minimum"));
-				summaryData.add(ProcessingUtils.createNamedDataset(multiple, "multiple_photon_minimum"));
-				int bin = model.getBins();
-				int bmax = bin * original.getShapeRef()[model.getEnergyIndex()];
+				if (bins != null) {
+					summaryData.add(a);
+	
+					// After last image, calculate splitting levels
+					Dataset x = bins.getSlice(new Slice(-1));
+					Dataset dh = Maths.derivative(x, h, 3);
+					MetadataUtils.setAxes(dh, bins);
+					displayData.set(0, dh);
+					List<Double> z = DatasetUtils.crossings(x, dh, 0);
+					log.append("Histogram derivative zero-crossings = %s", z);
+					single = (int) Math.floor(z.get(0));
+					multiple = single + countsPerPhoton; // (int) Math.floor(z.get(1)); // TODO
+					log.append("Setting limits for single photon as [%d, %d)", single, multiple);
+					summaryData.add(ProcessingUtils.createNamedDataset(single, "single_photon_minimum"));
+					summaryData.add(ProcessingUtils.createNamedDataset(multiple, "multiple_photon_minimum"));
 
-				// per image, separate by sum
-				int[][][] allSingle = new int[roiMax][smax][];
-				int[][][] allMultiple = new int[roiMax][smax][];
-				List<Double> cX = new ArrayList<>();
-				List<Double> cY = new ArrayList<>();
-				for (int i = 0; i < smax; i++) {
-					for (int r = 0; r < roiMax; r++) {
-						cX.clear();
-						cY.clear();
+					bin = model.getBins();
+					bmax = bin * original.getShapeRef()[model.getEnergyIndex()];
 
-						StraightLine line = getStraightLine(r);
-						IRectangularROI roi = getROI(r);
-						Dataset sums = allSums.get(i);
-						Dataset posn = allPositions.get(i);
-						int[] hSingle = new int[bmax];
-						int[] hMultiple = new int[bmax];
-						allSingle[r][i] = hSingle;
-						allMultiple[r][i] = hMultiple;
-						shiftAndBinPhotonEvents(0, single, multiple, bin, bmax, cX, cY, i, line, roi, sums, posn,
-								hSingle, hMultiple);
-
-						// add coords
-						if (i == 0) {
-							int side = cX.size();
-							if (side > 0) {
-								Dataset t;
-								t = DatasetFactory.createFromList(cY);
-								MetadataUtils.setAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"));
-								// for DExplore's 2d scatter point
-//								t = DatasetFactory.zeros(side, side);
-//								ProcessingUtils.addAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"),
-//										ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cY), "y"));
-								t.setName("photon_positions_" + r);
-								summaryData.add(t);
+					// per image, separate by sum
+					allSingle = new int[roiMax][smax][];
+					allMultiple = new int[roiMax][smax][];
+					List<Double> cX = new ArrayList<>();
+					List<Double> cY = new ArrayList<>();
+					for (int i = 0; i < smax; i++) {
+						for (int r = 0; r < roiMax; r++) {
+							cX.clear();
+							cY.clear();
+	
+							StraightLine line = getStraightLine(r);
+							IRectangularROI roi = getROI(r);
+							Dataset sums = allSums.get(i);
+							Dataset posn = allPositions.get(i);
+							int[] hSingle = new int[bmax];
+							int[] hMultiple = new int[bmax];
+							allSingle[r][i] = hSingle;
+							allMultiple[r][i] = hMultiple;
+							shiftAndBinPhotonEvents(0, single, multiple, bin, bmax, cX, cY, i, line, roi, sums, posn,
+									hSingle, hMultiple);
+	
+							// add coords
+							if (i == 0) {
+								int side = cX.size();
+								if (side > 0) {
+									Dataset t;
+									t = DatasetFactory.createFromList(cY);
+									MetadataUtils.setAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"));
+									// for DExplore's 2d scatter point
+//									t = DatasetFactory.zeros(side, side);
+//									ProcessingUtils.addAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"),
+//											ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cY), "y"));
+									t.setName("photon_positions_" + r);
+									summaryData.add(t);
+								}
 							}
 						}
 					}
 				}
 
-				Dataset[] energies = new Dataset[2];
-				Dataset[] sSpectra = new Dataset[2];
-				Dataset[] mSpectra = new Dataset[2];
-				Dataset[] sEvents = new Dataset[2];
-				Dataset[] mEvents = new Dataset[2];
-
 				for (int r = 0; r < roiMax; r++) {
-					double el0 = getZeroEnergyOffset(r); // elastic line intercept
-					Dataset er = DatasetFactory.createRange(bmax);
-					er.iadd(-bin*el0); // adjust zero TODO sign wrong??
-					er.imultiply(-energyDispersion[r]/bin);
-					er.setName("Energy loss");
-					energies[r] = er;
-					Dataset t = DatasetFactory.createFromObject(allSingle[r]);
-					t.setName("single_photon_spectrum_" + r);
-					MetadataUtils.setAxes(t, null, er);
-					sSpectra[r] = t;
-					summaryData.add(t);
-
-					Dataset nf = t.sum(1); // to work out per-image as single fraction of total events
-					nf.setName("single_photon_count_" + r);
-					sEvents[r] = nf;
-					summaryData.add(nf);
-
-					t = DatasetFactory.createFromObject(allMultiple[r]);
-					t.setName("multiple_photon_spectrum_" + r);
-					MetadataUtils.setAxes(t, null, er);
-					mSpectra[r] = t;
-					summaryData.add(t);
-
-					t = t.sum(1);
-					t.setName("multiple_photon_count_" + r);
-					mEvents[r] = t;
-					summaryData.add(t);
-
-					t = Maths.add(t, nf);
-					nf = Maths.divide(nf.cast(DoubleDataset.class), t);
-					nf.setName("single_events_fraction_" + r);
-					summaryData.add(nf);
-				}
-
-				// total and correlated spectra
-				for (int r = 0; r < roiMax; r++) {
+					// total and correlated spectra
 					Dataset sp = null;
 					IDataset[] sArray = toArray(allSpectra[r]);
 					sp = accumulate(sArray);
@@ -498,11 +470,6 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					}
 					sp.setName("total_spectrum_" + r);
 					summaryData.add(sp);
-
-					double ts = (Double) ((Number) sEvents[r].sum()).doubleValue();
-					double tm = (Double) ((Number) mEvents[r].sum()).doubleValue();
-					log.append("Events: single/total = %g/%g = %g ", ts, tm, ts/(ts + tm));
-					summaryData.add(ProcessingUtils.createNamedDataset(ts/(ts + tm), "total_single_events_fraction_" + r));
 
 					Dataset ax = null;
 					try {
@@ -526,15 +493,55 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					}
 					summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, "correlated_spectrum_shift_" + r));
 
-					Dataset e = energies[r];
-					sp = sSpectra[r].sum(0);
+					if (bins == null) {
+						continue; // no photon events!!!
+					}
+
+					double el0 = getZeroEnergyOffset(r); // elastic line intercept
+					Dataset energies = DatasetFactory.createRange(bmax);
+					energies.iadd(-bin*el0); // adjust zero TODO sign wrong??
+					energies.imultiply(-energyDispersion[r]/bin);
+					energies.setName("Energy loss");
+					Dataset t = DatasetFactory.createFromObject(allSingle[r]);
+					t.setName("single_photon_spectrum_" + r);
+					MetadataUtils.setAxes(t, null, energies);
+					Dataset sSpectra = t;
+					summaryData.add(t);
+
+					Dataset nf = t.sum(1); // to work out per-image as single fraction of total events
+					nf.setName("single_photon_count_" + r);
+					Dataset sEvents = nf;
+					summaryData.add(nf);
+
+					t = DatasetFactory.createFromObject(allMultiple[r]);
+					t.setName("multiple_photon_spectrum_" + r);
+					MetadataUtils.setAxes(t, null, energies);
+					Dataset mSpectra = t;
+					summaryData.add(t);
+
+					t = t.sum(1);
+					t.setName("multiple_photon_count_" + r);
+					Dataset mEvents = t;
+					summaryData.add(t);
+
+					t = Maths.add(t, nf);
+					nf = Maths.divide(nf.cast(DoubleDataset.class), t);
+					nf.setName("single_events_fraction_" + r);
+					summaryData.add(nf);
+
+					double ts = (Double) ((Number) sEvents.sum()).doubleValue();
+					double tm = (Double) ((Number) mEvents.sum()).doubleValue();
+					log.append("Events: single/total = %g/%g = %g ", ts, tm, ts/(ts + tm));
+					summaryData.add(ProcessingUtils.createNamedDataset(ts/(ts + tm), "total_single_events_fraction_" + r));
+
+					sp = sSpectra.sum(0);
 					sp.setName("total_single_photon_spectrum_" + r);
-					MetadataUtils.setAxes(sp, e);
+					MetadataUtils.setAxes(sp, energies);
 					summaryData.add(sp);
 
-					sp = mSpectra[r].sum(0);
+					sp = mSpectra.sum(0);
 					sp.setName("total_multiple_photon_spectrum_" + r);
-					MetadataUtils.setAxes(sp, e);
+					MetadataUtils.setAxes(sp, energies);
 					summaryData.add(sp);
 
 					if (model.getCorrelateOption() == CORRELATE_PHOTON.USE_INTENSITY_SHIFTS) {
@@ -555,20 +562,20 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 									hSingle, hMultiple);
 						}
 
-						Dataset t = DatasetFactory.createFromObject(allSingle[r]).sum(0);
+						t = DatasetFactory.createFromObject(allSingle[r]).sum(0);
 						t.setName("correlated_single_photon_spectrum_" + r);
-						MetadataUtils.setAxes(t, e);
+						MetadataUtils.setAxes(t, energies);
 						summaryData.add(t);
 
 						t = DatasetFactory.createFromObject(allMultiple[r]).sum(0);
 						t.setName("correlated_multiple_photon_spectrum_" + r);
-						MetadataUtils.setAxes(t, e);
+						MetadataUtils.setAxes(t, energies);
 						summaryData.add(t);
 					} else {
 						reg = getCorrelateShifter(true);
-						sArray = new IDataset[sSpectra[r].getShapeRef()[0]];
+						sArray = new IDataset[sSpectra.getShapeRef()[0]];
 						for (int i = 0; i < sArray.length; i++) {
-							sArray[i] = sSpectra[r].getSliceView(new Slice(i, i+1)).squeeze();
+							sArray[i] = sSpectra.getSliceView(new Slice(i, i+1)).squeeze();
 						}
 						results = reg.value(sArray);
 						for (int i = 0; i < sArray.length; i++) {
@@ -576,7 +583,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 						}
 						sp = accumulate(sArray);
 						sp.setName("correlated_single_photon_spectrum_" + r);
-						MetadataUtils.setAxes(sp, e);
+						MetadataUtils.setAxes(sp, energies);
 						summaryData.add(sp);
 						shift.clear();
 						for (int i = 0; i < sArray.length; i++) {
@@ -584,9 +591,9 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 						}
 						summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, "correlated_single_photon_spectrum_shift_" + r));
 	
-						sArray = new IDataset[mSpectra[r].getShapeRef()[0]];
+						sArray = new IDataset[mSpectra.getShapeRef()[0]];
 						for (int i = 0; i < sArray.length; i++) {
-							sArray[i] = mSpectra[r].getSliceView(new Slice(i, i+1)).squeeze();
+							sArray[i] = mSpectra.getSliceView(new Slice(i, i+1)).squeeze();
 						}
 						results = reg.value(sArray);
 						for (int i = 0; i < sArray.length; i++) {
@@ -594,7 +601,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 						}
 						sp = accumulate(sArray);
 						sp.setName("correlated_multiple_photon_spectrum_" + r);
-						MetadataUtils.setAxes(sp, e);
+						MetadataUtils.setAxes(sp, energies);
 						summaryData.add(sp);
 						shift.clear();
 						for (int i = 0; i < sArray.length; i++) {

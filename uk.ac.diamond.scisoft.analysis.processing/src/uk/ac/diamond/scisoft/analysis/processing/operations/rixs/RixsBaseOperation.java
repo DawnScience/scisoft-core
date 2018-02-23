@@ -241,7 +241,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 		Dataset spectrum;
 		if (Double.isFinite(slope)) {
-			spectrum = sumImageAlongSlope(in, -slope);
+			spectrum = sumImageAlongSlope(in, slope);
 		} else {
 			spectrum = DatasetFactory.zeros(rows).fill(Double.NaN);
 		}
@@ -280,7 +280,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		for (int i = 0; i < rows; i++) {
 			slice.setSlice(0, i, i+1, 1);
 			result.iadd(Maths.interpolate(nc, image.getSliceView(slice).squeeze(), c, 0, 0));
-			nc.iadd(slope);
+			nc.isubtract(slope);
 		}
 		return result;
 	}
@@ -419,7 +419,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		countsPerPhoton = (int) Math.floor(pEnergy / (pe * ds));
 	}
 
-	private final Slice createSlice(double start, double length, int max) {
+	public static final Slice createSlice(double start, double length, int max) {
 		int lo = Math.max(0, (int) Math.floor(start));
 		int hi = Math.min(max, (int) Math.ceil(start + length));
 		return lo <= 0 && hi >= max ? null : new Slice(lo, hi);

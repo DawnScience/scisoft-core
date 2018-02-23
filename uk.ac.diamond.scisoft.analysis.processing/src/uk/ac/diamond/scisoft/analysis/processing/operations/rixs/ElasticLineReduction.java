@@ -382,7 +382,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		try {
 			optimizer.optimize(true, fn);
 			StraightLine line = getStraightLine(r);
-			line.getParameter(0).setValue(-param.getValue());
+			line.getParameter(0).setValue(param.getValue());
 			line.getParameter(1).setValue(peak.getParameterValue(0));
 			log.append("Optimized minimal FWHM at slope of %g", param.getValue());
 //			System.err.printf("Optimized minimal FWHM at slope of %g\n", param.getValue());

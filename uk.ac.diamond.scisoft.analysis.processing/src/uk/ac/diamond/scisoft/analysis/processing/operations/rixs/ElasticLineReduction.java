@@ -280,7 +280,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			
 			BooleanDataset mask;
 			try {
-				mask = fitStraightLine(r, model.getDelta() == 1, ymax, coords[0], coords[1]);
+				mask = fitStraightLine(getStraightLine(r), ymax, model.getMinPoints(), model.getMaxDev(), coords[0], coords[1]);
 			} catch (OperationException e) {
 				createInvalidOperationData(r, e);
 				return original;
@@ -730,9 +730,8 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		return new Dataset[] {row, col};
 	}
 
-	private BooleanDataset fitStraightLine(int r, boolean useMaxFactor, int ymax, Dataset x, Dataset y) {
+	private BooleanDataset fitStraightLine(StraightLine line, int ymax, int minPoints, double maxDev, Dataset x, Dataset y) {
 		log.append("\nFitting straight line");
-		StraightLine line = getStraightLine(r);
 		residual = Double.POSITIVE_INFINITY;
 		Dataset diff;
 		double dev = Double.POSITIVE_INFINITY;
@@ -750,7 +749,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			diff = Maths.subtract(line.calculateValues(x), y);
 			double cdev = diff.stdDeviation(true, true);
 			if (cdev >= dev) { // ensure more outliers are found by making limits tighter
-				dev = Math.max(model.getMaxDev(), dev/1.25);
+				dev = Math.max(maxDev, dev/1.25);
 			} else {
 				dev = cdev;
 			}
@@ -758,11 +757,11 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			BooleanDataset omask = Comparisons.withinRange(diff, -dev, dev);
 			int i = ((Number) omask.sum()).intValue();
 			log.append("Outliers found: %d/%d", x.getSize() - i, x.getSize());
-			if (i < model.getMinPoints()) {
+			if (i < minPoints) {
 				throw new OperationException(this, "Too few points left to fit straight line: " + i + " from " + x.getSize());
 			}
 			mask = omask;
-		} while (dev > model.getMaxDev());
+		} while (dev > maxDev);
 
 		return mask;
 	}
@@ -771,7 +770,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		return fitFunction(this, new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT), log, f, x, v, m);
 	}
 
-	protected static double fitFunction(IOperation<?, ?> op, ApacheOptimizer opt, OperationLog llog, IFunction f, Dataset x, Dataset v, Dataset m) {
+	public static double fitFunction(IOperation<?, ?> op, ApacheOptimizer opt, OperationLog llog, IFunction f, Dataset x, Dataset v, Dataset m) {
 		if (m != null) {
 			x = x.getByBoolean(m);
 			v = v.getByBoolean(m);

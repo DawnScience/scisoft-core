@@ -248,7 +248,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					if (r == 1 && Double.isNaN(lines[0].getParameterValue(0))) {
 						throw new OperationException(this, "Loaded elastic line fit is invalid");
 					}
-					if (Double.isNaN(lines[1].getParameterValue(0))) {
+					if (r > 1 && Double.isNaN(lines[1].getParameterValue(0))) {
 						lines[1].setParameterValues(lines[0].getParameterValues());
 					}
 					break;

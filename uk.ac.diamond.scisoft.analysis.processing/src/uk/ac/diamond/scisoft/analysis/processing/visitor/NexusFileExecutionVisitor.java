@@ -335,7 +335,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 				}
 				if (first){
 					synchronized (nexusFile) {
-						nexusFile.addAttribute(group, TreeFactory.createAttribute("signal", d.getName()));
+						nexusFile.addAttribute(group, TreeFactory.createAttribute(NexusConstants.DATA_SIGNAL, d.getName()));
 					}
 				}
 				updateAxes(d, slices, shape, dataDims, intermediatePosData,first);
@@ -363,7 +363,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 							ds.setName("data");
 							appendData(ds, group, slices, shape, nexusFile, dataDims);
 							if (first) {
-								nexusFile.addAttribute(group, TreeFactory.createAttribute("signal", ds.getName()));
+								nexusFile.addAttribute(group, TreeFactory.createAttribute(NexusConstants.DATA_SIGNAL, ds.getName()));
 							}
 						}
 						
@@ -392,7 +392,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 							group = requireNXclass(currentPath, NexusConstants.DATA);
 							ds.setName("data");
 							writeData(ds, group, nexusFile);
-							nexusFile.addAttribute(group,  TreeFactory.createAttribute("signal", ds.getName()));
+							nexusFile.addAttribute(group,  TreeFactory.createAttribute(NexusConstants.DATA_SIGNAL, ds.getName()));
 						}
 						
 						writeAxes(ds, currentPath, true);

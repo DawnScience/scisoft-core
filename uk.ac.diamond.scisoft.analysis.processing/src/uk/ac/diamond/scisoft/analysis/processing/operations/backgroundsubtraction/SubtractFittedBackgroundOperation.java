@@ -110,8 +110,8 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		int b = (int) p.getLowerLimit();
 		int e = (int) p.getUpperLimit();
 		double cx = p.getValue();
-		int c = (int) cx - 1;
-		p.setLimits(x.getDouble(c) - 0.5, x.getDouble(c + 2)); // set narrow range for fitting pdf position
+//		int c = (int) cx - 1;
+		p.setLimits(cx - 1.5, cx + 1); // set narrow range for fitting pdf position
 		p.setValue(cx);
 		SliceND slice = new SliceND(h.getShapeRef(), new Slice(b, e + 1, 1));
 

@@ -1000,20 +1000,20 @@ public class NexusTreeUtils {
 		// XXX NexusConstants.GEOMETRY support or not?
 		// with parseGeometry(m, l);
 
-		double[] beamCentre = new double[2];
-		nl = gNode.getNodeLink(DETECTOR_BEAMCENTERX);
-		if (nl != null) {
-			Node n = nl.getDestination();
-			double[] c = parseDoubleArray(n, 1);
-			beamCentre[0] = convertIfNecessary(SI.MILLIMETRE, getFirstString(n.getAttribute(NexusConstants.UNITS)), c[0]);
-		}
-		
-		nl = gNode.getNodeLink(DETECTOR_BEAMCENTERY);
-		if (nl != null) {
-			Node n = nl.getDestination();
-			double[] c = parseDoubleArray(n, 1);
-			beamCentre[1] = convertIfNecessary(SI.MILLIMETRE, getFirstString(n.getAttribute(NexusConstants.UNITS)), c[0]);
-		}
+//		double[] beamCentre = new double[2];
+//		nl = gNode.getNodeLink(DETECTOR_BEAMCENTERX);
+//		if (nl != null) {
+//			Node n = nl.getDestination();
+//			double[] c = parseDoubleArray(n, 1);
+//			beamCentre[0] = convertIfNecessary(SI.MILLIMETRE, getFirstString(n.getAttribute(NexusConstants.UNITS)), c[0]);
+//		}
+//		
+//		nl = gNode.getNodeLink(DETECTOR_BEAMCENTERY);
+//		if (nl != null) {
+//			Node n = nl.getDestination();
+//			double[] c = parseDoubleArray(n, 1);
+//			beamCentre[1] = convertIfNecessary(SI.MILLIMETRE, getFirstString(n.getAttribute(NexusConstants.UNITS)), c[0]);
+//		}
 
 		// determine beam direction from centre position
 //		Vector4d p4 = new Vector4d(beamCentre[0], beamCentre[1], 0, 1);

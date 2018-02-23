@@ -1479,6 +1479,12 @@
             name="RIXS image reduction"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.ExtractRingIntensitiesOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.ExtractRingIntensitiesOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.DiffractionEllipseFitModel"
+            name="Extract Ring Intensities">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

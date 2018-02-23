@@ -22,7 +22,7 @@ public class RixsBaseModel extends AbstractOperationModel {
 	private IRectangularROI roiA = new RectangularROI(0, 0, 2048, 1600, 0);
 
 	@OperationModelField(label = "Rectangle B to search for elastic peak")
-	private IRectangularROI roiB = new RectangularROI(1348, 1648, 700, 400, 0);
+	private IRectangularROI roiB = null;
 
 	public enum ENERGY_DIRECTION {
 		SLOW, // slowest pixel direction

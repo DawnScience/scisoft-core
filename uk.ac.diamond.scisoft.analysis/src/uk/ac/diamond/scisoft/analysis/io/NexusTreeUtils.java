@@ -529,14 +529,17 @@ public class NexusTreeUtils {
 							double p1 = max1-min1;
 							
 							int index = p0 > p1 ? 0 : 1;
-							
-							axm.addAxis(index, choice.getValues().getSliceView(), m);
+							if (lz.getShape()[index] == choice.getValues().getShape()[index] ) {
+								axm.addAxis(index, choice.getValues().getSliceView(), m);
+							}
 							
 						} catch (DatasetException e) {
 							logger.error("TODO put description of error here", e);
 						}
 					} else if (m.length == 1) {
-						axm.addAxis(m[0]-1, choice.getValues());
+						if (lz.getShape()[m[0]-1] == choice.getValues().getSize() ) {
+							axm.addAxis(m[0]-1, choice.getValues());
+						}
 					}
 				}
 				

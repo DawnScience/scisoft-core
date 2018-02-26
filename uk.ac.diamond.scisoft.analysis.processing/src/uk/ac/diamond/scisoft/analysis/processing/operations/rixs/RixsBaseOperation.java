@@ -45,8 +45,8 @@ import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
-import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
+import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsBaseModel.ENERGY_OFFSET;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
@@ -279,7 +279,8 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		Dataset nc = c.clone();
 		for (int i = 0; i < rows; i++) {
 			slice.setSlice(0, i, i+1, 1);
-			result.iadd(Maths.interpolate(nc, image.getSliceView(slice).squeeze(), c, 0, 0));
+			Dataset row = image.getSliceView(slice).squeeze();
+			result.iadd(Maths.interpolate(nc, row, c, 0, 0));
 			nc.isubtract(slope);
 		}
 		return result;
@@ -291,7 +292,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	 */
 	protected void parseNexusFile(String filePath) {
 		try {
-			Tree t = LoaderFactory.getData(filePath).getTree();
+			Tree t = LocalServiceManager.getLoaderService().getData(filePath, null).getTree();
 
 			GroupNode root = t.getGroupNode();
 			// entry1:NXentry
@@ -389,7 +390,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 	protected void parseDesiredNexusFile(String filePath) {
 		try {
-			Tree t = LoaderFactory.getData(filePath).getTree();
+			Tree t = LocalServiceManager.getLoaderService().getData(filePath, null).getTree();
 
 			GroupNode root = t.getGroupNode();
 			// TODO find photon energy, (decide where it should be recorded)

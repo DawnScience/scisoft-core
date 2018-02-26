@@ -75,9 +75,12 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		return min;
 	}
 
-	public static List<Dataset> createHistogram(Dataset in, boolean positive) {
-		double min = positive ? findPositiveMin(in) : in.min(true).doubleValue();
-		double max = in.max(true).doubleValue();
+	public static List<Dataset> createHistogram(Dataset in, boolean positive, int delta) {
+		if (delta < 1) {
+			throw new IllegalArgumentException("delta must be greater than 0");
+		}
+		double min = Math.floor(positive ? findPositiveMin(in) : in.min(true).doubleValue());
+		double max = Math.ceil(in.max(true).doubleValue());
 		int nbin = (int) Math.ceil(max - min);
 		if (nbin == 0) {
 			return null;
@@ -85,17 +88,23 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 		Dataset bins;
 		if (in.hasFloatingPointElements() || nbin > SubtractFittedBackgroundModel.HISTOGRAM_MAX_BINS) {
-			bins = DatasetFactory.createLinearSpace(DoubleDataset.class, min, max, nbin);
+			bins = DatasetFactory.createLinearSpace(DoubleDataset.class, min, max, nbin + 1);
 		} else {
-			bins = DatasetFactory.createRange(IntegerDataset.class, min, max+1, 1);
+			int imin = (int) min;
+			int imax = (int) max;
+			if (delta > 1) {
+				imin = ((imin-delta+1)/delta) * delta;
+				imax = ((imax+delta-1)/delta) * delta;
+			}
+			bins = DatasetFactory.createRange(IntegerDataset.class, imin, imax+1, delta);
 		}
 
 		Histogram histo = new Histogram(bins);
 		return histo.value(in);
 	}
 
-	protected double calculateThreshold(Dataset in) throws OperationException {
-		List<Dataset> hs = createHistogram(in, model.isPositiveOnly());
+	protected double calculateThreshold(Dataset in, boolean positive) throws OperationException {
+		List<Dataset> hs = createHistogram(in, positive, 1);
 		if (hs == null) {
 			return Double.NaN;
 		}
@@ -109,10 +118,11 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		IParameter p = pdf.getParameter(0);
 		int b = (int) p.getLowerLimit();
 		int e = (int) p.getUpperLimit();
-		double cx = p.getValue();
-		int c = (int) cx;
+		int c = (int) p.getValue();
 		p.setLimits(x.getDouble(c - 1) - 0.5, x.getDouble(c + 1)); // set narrow range for fitting pdf position
-		p.setValue(x.getDouble(c)); 
+		
+		double cx = x.getDouble(c);
+		p.setValue(cx);
 		SliceND slice = new SliceND(h.getShapeRef(), new Slice(b, e + 1, 1));
 
 		residual = fitFunction(this, pdf, x.getSliceView(slice), h.getSliceView(slice));
@@ -123,7 +133,8 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 		// find where given ratio occurs and is past peak position
 		List<Double> cs = DatasetUtils.crossings(x, Maths.dividez(h, fit), model.getRatio());
-		double thr = -1;
+		double thr = Double.NaN;
+
 		for (Double d : cs) {
 			if (d > cx) {
 				thr = d;
@@ -131,7 +142,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			}
 		}
 
-		if (thr < 0) {
+		if (Double.isNaN(thr)) {
 			throw new OperationException(this, "Failed to find a threshold");
 		}
 		return thr;
@@ -141,7 +152,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	@Override
 	protected Dataset getImage(IDataset input) throws OperationException {
 		Dataset in = DatasetUtils.convertToDataset(input);
-		double thr = calculateThreshold(in);
+		double thr = calculateThreshold(in, model.isPositiveOnly());
 		threshold = thr;
 		if (Double.isNaN(thr)) {
 			double min = in.min(true).doubleValue();
@@ -155,7 +166,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			return DatasetUtils.select(Comparisons.lessThan(in, ithr), in, ithr);
 		}
 
-		log.append("Threshold = %d", threshold);
+		log.append("Threshold = %g", threshold);
 		return DatasetUtils.select(Comparisons.lessThan(in, thr), in, thr);
 	}
 
@@ -232,7 +243,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		IParameter p = pdf.getParameter(0);
 		double xb = x.getDouble(0);
 		double dx = x.getDouble(1) - xb;
-		int pMax = x.getInt(h.maxPos(true)); // position of maximum
+		int pMax = h.maxPos(true)[0]; // position of maximum
 
 		int pBeg = pMax - 1; // only fit from just before peak as background peak can be unresolved
 		int pEnd = pMax;

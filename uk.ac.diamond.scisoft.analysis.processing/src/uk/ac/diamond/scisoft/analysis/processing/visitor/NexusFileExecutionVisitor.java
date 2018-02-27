@@ -381,7 +381,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 				if (summaryData[i] instanceof IDataset) {
 					
 					try {
-						Dataset ds = DatasetUtils.convertToDataset((IDataset) summaryData[i]);
+						Dataset ds = DatasetUtils.convertToDataset((IDataset) summaryData[i]).getView(false);
 						String dsName = ds.getName();
 						GroupNode group;
 						String currentPath = Tree.ROOT + ENTRY + Node.SEPARATOR + SUM_GROUP;

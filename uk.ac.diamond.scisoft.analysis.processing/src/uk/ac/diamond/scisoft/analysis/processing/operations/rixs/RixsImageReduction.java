@@ -175,16 +175,20 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					}
 				};
 
-				String fitFile = findLatestFitFile(filter, currentDir, prefix);
-				if (fitFile == null && model.getCalibrationFile() != null) { // try in calibration file's directory
+				String fitFile = null;
+				if (model.getCalibrationFile() != null) { // try in calibration file's directory
 					File calibDir = new File(model.getCalibrationFile()).getParentFile();
 					fitFile = findLatestFitFile(filter, calibDir, prefix);
 				}
+
 				if (fitFile == null) {
-					fitFile = findLatestFitFile(filter, new File(currentDir, PROCESSING), prefix);
-				}
-				if (fitFile == null) {
-					throw new OperationException(this, "Could not find fit file in data, calibration or processing directories");
+					fitFile = findLatestFitFile(filter, currentDir, prefix);
+					if (fitFile == null) {
+						fitFile = findLatestFitFile(filter, new File(currentDir, PROCESSING), prefix);
+					}
+					if (fitFile == null) {
+						throw new OperationException(this, "Could not find fit file in data, calibration or processing directories");
+					}
 				}
 
 				log.append("Using fit file: %s", fitFile);

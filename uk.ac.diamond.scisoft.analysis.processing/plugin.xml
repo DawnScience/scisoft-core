@@ -364,6 +364,15 @@
             visible="true">
       </operation>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.oned.RemoveNansOperation"
+            description="Remove any NaN entries from a 1D dataset"
+            icon="icons/unchanged.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.oned.RemoveNansOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="Remove NaNs"
+            visible="true">
+      </operation>
+      <operation
             category="uk.ac.diamond.scisoft.analysis.processing.error"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.PhotonCountingErrorOperation"
             description="Sets the current value of the data as the variance on the dataset"

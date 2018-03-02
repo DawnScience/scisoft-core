@@ -27,13 +27,14 @@ public class SubtractWithProcessingModel extends InternalDataSelectedFramesModel
 		firePropertyChange("filePath", this.filePath, this.filePath = filePath);
 	}
 	
+	@OperationModelField(label = "Use current datapath?", hint="When checked the same dataset path as the one loaded in the data slice view will be used for the subtraction. Overrides any entry in the dataset field.")
 	private boolean useSameDataset = false;
 	
 	public boolean getUseSameDataset() {
 		return useSameDataset;
 	}
 	
-	public void SetUseSameDataset(boolean useSameDataset) {
+	public void setUseSameDataset(boolean useSameDataset) {
 		firePropertyChange("useSameDataset", this.useSameDataset, this.useSameDataset = useSameDataset);
 	}
 }

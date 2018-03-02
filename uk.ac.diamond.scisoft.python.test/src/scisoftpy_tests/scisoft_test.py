@@ -126,6 +126,14 @@ class Test(unittest.TestCase):
         self.assertEqual((2,5), a.reshape((2,5)).shape)
         self.assertEqual((5,2), a.reshape(5,-1).shape)
 
+    def testSqueeze(self):
+        print 'Squeeze testing'
+        a = np.arange(10.).reshape(2,5)
+        self.assertTrue(a is a.squeeze())
+        a.shape = 2,1,5
+        self.assertFalse(a is a.squeeze())
+        self.assertEqual((2,5), a.squeeze().shape)
+
     def testResize(self):
         print 'Resize testing'
         a = np.arange(10.)

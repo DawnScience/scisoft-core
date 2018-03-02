@@ -479,7 +479,7 @@ def __cvt_jobj(obj, dtype=None, copy=True, force=False):
 # prevent incorrect coercion of Python booleans causing trouble with overloaded Java methods
 import java.lang.Boolean as _jbool #@UnresolvedImport
 _jtrue = _jbool(1)
-# _jfalse = _jbool(0)
+_jfalse = _jbool(0)
 import java.lang.Integer as _jint
 
 import jymaths as _maths
@@ -769,7 +769,10 @@ class ndarray(object):
         return self.__dataset.flatten()
 
     def squeeze(self, axis=None): # TODO support 1.7 axis argument
-        self.__dataset.squeeze()
+        os = self.__dataset.getShapeRef()
+        if os == _sutils.squeezeShape(os, _jfalse):
+            return self
+        return Sciwrap(self.__dataset.squeeze())
 
     #  item selection and manipulation
     @_wrapout

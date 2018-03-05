@@ -119,7 +119,8 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 		pythonCmd.append("run ");
 		IPreferenceStore store = Activator.getPtychoPreferenceStore();
 		String epiFolder = store.getString(PtychoPreferenceConstants.PIE_RESOURCE_PATH);
-		pythonCmd.append(epiFolder + File.separator + "LaunchPtycho.py ");
+		//pythonCmd.append(epiFolder + File.separator + "LaunchPtycho.py ");
+		pythonCmd.append(store.getString(PtychoPreferenceConstants.SCRIPT_TO_RUN_PATH) + " ");
 		pythonCmd.append(jsonSavedPath);
 		pythonCmd.append("\n");
 		return pythonCmd.toString();

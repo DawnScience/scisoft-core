@@ -33,6 +33,9 @@ public class PtychoPreferencePage extends FieldEditorPreferencePage implements I
 		DirectoryFieldEditor epiResourceFolder = new DirectoryFieldEditor(PtychoPreferenceConstants.PIE_RESOURCE_PATH,
 				"PIE resource directory:", getFieldEditorParent());
 		addField(epiResourceFolder);
+		FileFieldEditor scriptToRun = new FileFieldEditor(PtychoPreferenceConstants.SCRIPT_TO_RUN_PATH, "Path to script to run:",
+				getFieldEditorParent());
+		addField(scriptToRun);
 		// Add a file field
 		FileFieldEditor savedFilePath = new FileFieldEditor(PtychoPreferenceConstants.FILE_SAVE_PATH, "Parameter file saved path:",
 				getFieldEditorParent());

@@ -10,4 +10,5 @@ public class PtychoConstants {
 	public static final String[] FILE_TYPES = new String[] { "CSV File", "JSon File", "XML File" };
 	public static final String INJECT_PYTHON_CMD_ID = "uk.ac.diamond.scisoft.ptychography.rcp.injectPythonCommandID";
 	public static final String TMP_FILE = System.getProperty("java.io.tmpdir") + File.separator + "parameter.csv";
+	public static final String SCRIPT = PIE_FOLDER + File.separator + "LaunchPtycho.py";
 }

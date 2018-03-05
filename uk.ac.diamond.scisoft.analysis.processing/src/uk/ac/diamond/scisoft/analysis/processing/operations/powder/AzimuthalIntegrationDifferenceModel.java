@@ -45,7 +45,7 @@ public class AzimuthalIntegrationDifferenceModel extends AbstractOperationModel 
 	}
 	
 	
-	@OperationModelField(label = "Integration Range", hint = "Choose whether to subtract the reduced and remapped form of frame A from B or divide A from B", fieldPosition = 1)
+	@OperationModelField(label = "Mathematical operator", hint = "Choose whether to subtract the reduced and remapped form of frame A from B or divide A from B", fieldPosition = 1)
 	private OperationToPerform operationSelected = OperationToPerform.SUBTRACT;
 	
 	

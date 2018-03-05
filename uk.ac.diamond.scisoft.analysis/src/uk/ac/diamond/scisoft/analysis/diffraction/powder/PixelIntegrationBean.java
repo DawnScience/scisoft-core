@@ -25,6 +25,7 @@ public class PixelIntegrationBean {
 	private double[] radialRange = null;
 	private XAxis xAxis = XAxis.Q;
 	private int[] shape = null;
+	private boolean sanitise = true;
 	
 	public int getNumberOfBinsAzimuthal() {
 		return nBinsAzimuthal;
@@ -41,7 +42,15 @@ public class PixelIntegrationBean {
 	public void setNumberOfBinsRadial(int nBinsRadial) {
 		this.nBinsRadial = nBinsRadial;
 	}
-
+	
+	public boolean getSanitise() {
+		return sanitise;
+	}
+	
+	public void setSanitise(boolean sanitise) {
+		this.sanitise = sanitise;
+	}
+	
 	public boolean isTo1D() {
 		return to1D;
 	}
@@ -140,6 +149,7 @@ public class PixelIntegrationBean {
 		bean.azimuthalRange = azimuthalRange != null ? azimuthalRange.clone() : null;
 		bean.radialRange = radialRange != null ? radialRange.clone() : null;
 		bean.xAxis = xAxis;
+		bean.sanitise = sanitise;
 		
 		return bean;
 	}

@@ -108,6 +108,7 @@ public class AzimuthalIntegrationDifferenceOperation extends AbstractOperation<E
 					bean.setAzimuthalIntegration(true);
 					bean.setTo1D(true);
 					bean.setShape(shape);
+					bean.setSanitise(false);
 					cache = lcache = new PixelIntegrationCache(metadata, bean);
 				}
 			}

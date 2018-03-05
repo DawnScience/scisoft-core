@@ -27,7 +27,11 @@ public abstract class PixelIntegrationModel extends AbstractOperationModel {
 	
 	@OperationModelField(label = "Log Radial Axis", hint="Integrates onto a log axis, has no effect on radial integration")
 	private boolean logRadial = false;
-
+	
+	@OperationModelField(label = "Zeros Instead of NaNs", hint="Ticking this box will return zeros instead of NaNs for bins where the pixel integration routine reports NaNs")
+	private boolean sanitise = true;
+	
+	
 	public boolean isLogRadial() {
 		return logRadial;
 	}
@@ -55,7 +59,15 @@ public abstract class PixelIntegrationModel extends AbstractOperationModel {
 	public double[] getAzimuthalRange() {
 		return azimuthalRange;
 	}
-
+	
+	public boolean getSanitise() {
+		return sanitise;
+	}
+	
+	public void setSanitise(boolean sanitise) {
+		firePropertyChange("sanitise", this.sanitise, this.sanitise = sanitise);
+	}
+	
 	public void setPixelSplitting(boolean pixelSplitting) {
 		firePropertyChange("pixelSplitting", this.pixelSplitting, this.pixelSplitting = pixelSplitting);
 	}

@@ -77,6 +77,7 @@ public class CakePixelIntegrationOperation extends AbstractPixelIntegrationOpera
 					bean.setTo1D(false);
 					bean.setShape(shape);
 					bean.setLog(model.isLogRadial());
+					bean.setSanitise(model.getSanitise());
 					cache = lcache = new PixelIntegrationCache(metadata, bean);
 				}
 			}

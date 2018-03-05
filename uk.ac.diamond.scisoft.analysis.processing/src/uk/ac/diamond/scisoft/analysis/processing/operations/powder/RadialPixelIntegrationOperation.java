@@ -46,6 +46,7 @@ public class RadialPixelIntegrationOperation extends AzimuthalPixelIntegrationOp
 					bean.setAzimuthalRange(model.getAzimuthalRange());
 					bean.setAzimuthalIntegration(false);
 					bean.setTo1D(true);
+					bean.setSanitise(model.getSanitise());
 					bean.setShape(shape);
 					
 					cache = lcache = new PixelIntegrationCache(metadata, bean);

@@ -71,6 +71,7 @@ public class AzimuthalPixelIntegrationOperation<T extends AzimuthalPixelIntegrat
 					bean.setTo1D(true);
 					bean.setLog(model.isLogRadial());
 					bean.setShape(shape);
+					bean.setSanitise(model.getSanitise());
 					cache = lcache = new PixelIntegrationCache(metadata, bean);
 				}
 			}

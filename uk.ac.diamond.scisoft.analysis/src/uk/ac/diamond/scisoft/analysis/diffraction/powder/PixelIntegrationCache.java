@@ -42,13 +42,19 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 	
 	private int longestOnDetector;
 	
+	private final boolean sanitise;
+	
 	QSpace qSpace = null;
+	
 	
 	public PixelIntegrationCache(IDiffractionMetadata metadata, PixelIntegrationBean bean) {
 		this.qSpace = new QSpace(metadata.getDetector2DProperties(), 
 				 metadata.getDiffractionCrystalEnvironment());
 		this.bean = bean;
+		
+		sanitise = bean.getSanitise();
 		longestOnDetector = calculateNumberOfBins();
+		
 		initialize();
 	}
 
@@ -359,7 +365,7 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 
 	@Override
 	public boolean sanitise() {
-		return true;
+		return this.sanitise;
 	}
 
 

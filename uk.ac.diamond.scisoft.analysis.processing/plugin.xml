@@ -1457,7 +1457,7 @@
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalIntegrationDifferenceOperation"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalIntegrationDifferenceOperation"
-            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalIntegrationDifferenceModel"
             name="Azimuthal Integration Difference Image">
       </operation>
       <operation

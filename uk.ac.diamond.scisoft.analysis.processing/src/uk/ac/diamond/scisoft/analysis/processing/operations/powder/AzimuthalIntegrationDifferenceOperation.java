@@ -15,7 +15,6 @@ import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
@@ -29,10 +28,11 @@ import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegration;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationBean;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationCache;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
+import uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalIntegrationDifferenceModel.OperationToPerform;
 import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
-public class AzimuthalIntegrationDifferenceOperation extends AbstractOperation<EmptyModel, OperationData> {
-
+public class AzimuthalIntegrationDifferenceOperation extends AbstractOperation<AzimuthalIntegrationDifferenceModel, OperationData> {
+	
 	protected volatile IPixelIntegrationCache cache;
 	protected IDiffractionMetadata metadata;
 	
@@ -40,22 +40,22 @@ public class AzimuthalIntegrationDifferenceOperation extends AbstractOperation<E
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalIntegrationDifferenceOperation";
 	}
-
+	
 	@Override
 	public OperationRank getInputRank() {
 		return OperationRank.TWO;
 	}
-
+	
 	@Override
 	public OperationRank getOutputRank() {
 		return OperationRank.TWO;
 	}
-
+	
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
 		IDiffractionMetadata md = getFirstDiffractionMetadata(input);
-
+		
 		if (md == null) throw new OperationException(this, "No detector geometry information!");
 		
 		if (metadata == null) {
@@ -80,14 +80,23 @@ public class AzimuthalIntegrationDifferenceOperation extends AbstractOperation<E
 				throw new OperationException(this, e);
 			}
 		}
-
+		
 		IPixelIntegrationCache lcache = getCache(metadata, input.getShape());
 		
 		final List<Dataset> out = PixelIntegration.integrate(input,m,lcache);
 		
 		Dataset image = PixelIntegrationUtils.generate2Dfrom1D(new Dataset[] {out.get(0), out.get(1)},lcache.getXAxisArray()[0]);
 		
-		image = Maths.subtract(input, image);
+		OperationToPerform operationSelected = model.getOperationSelected();
+		
+		if (operationSelected == OperationToPerform.SUBTRACT) {
+			image = Maths.subtract(input, image);
+		} else if (operationSelected == OperationToPerform.DIVIDE) {
+			image = Maths.divide(input, image);
+		} else {
+			RuntimeException unexpectedSelectionException = new RuntimeException();
+			throw unexpectedSelectionException;
+		}
 		
 		copyMetadata(input, image);
 		
@@ -96,7 +105,7 @@ public class AzimuthalIntegrationDifferenceOperation extends AbstractOperation<E
 	
 	
 	protected IPixelIntegrationCache getCache(IDiffractionMetadata md, int[] shape) {
-
+		
 		IPixelIntegrationCache lcache = cache;
 		if (lcache == null) {
 			synchronized(this) {
@@ -108,12 +117,11 @@ public class AzimuthalIntegrationDifferenceOperation extends AbstractOperation<E
 					bean.setAzimuthalIntegration(true);
 					bean.setTo1D(true);
 					bean.setShape(shape);
-					bean.setSanitise(false);
+					bean.setSanitise(true);
 					cache = lcache = new PixelIntegrationCache(metadata, bean);
 				}
 			}
 		}
 		return lcache;
 	}
-
 }

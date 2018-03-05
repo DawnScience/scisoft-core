@@ -11,6 +11,8 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 
 
+import javax.print.attribute.standard.OutputDeviceAssigned;
+
 // Imports from org.eclipse.dawnsci
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -93,7 +95,8 @@ public class RemoveNansOperation extends AbstractOperation<EmptyModel, Operation
 		
 		// Now let's work out how long the output dataset needs to be and set up some bits
 		Dataset outputDataset = DatasetFactory.zeros(inputDataset.getClass(), inputDataset.getSize() - nanCounter);
-		Dataset outputAxis = DatasetFactory.zeros(inputDataset.getClass(), inputDataset.getSize() - nanCounter);
+		Dataset outputErrors = DatasetFactory.zeros(inputDataset.getClass(), inputDataset.getSize() - nanCounter);
+		Dataset outputAxis = DatasetFactory.zeros(inputAxis.getClass(), inputDataset.getSize() - nanCounter);
 		datasetIterator = nanBooleans.getIterator();
 		int outputIndex = 0;
 		
@@ -103,6 +106,8 @@ public class RemoveNansOperation extends AbstractOperation<EmptyModel, Operation
 			
 			if (!nanBooleans.getBoolean(index)) {
 				outputDataset.set(inputDataset.getObject(index), outputIndex);
+				outputErrors.set(outputDataset.getError(index), outputIndex);
+				
 				outputAxis.set(inputAxis.getObject(index), outputIndex);
 				outputIndex ++;
 			}
@@ -111,6 +116,8 @@ public class RemoveNansOperation extends AbstractOperation<EmptyModel, Operation
 		// Copy all the metadata back alongside our new, shorter, primary axis
 		copyMetadata(input, outputDataset);
 		xAxisMetadata.setAxis(0, outputAxis);
+		outputDataset.setMetadata(xAxisMetadata);
+		outputDataset.setErrors(outputErrors);
 		
 		// and return it!
 		return new OperationData(outputDataset);

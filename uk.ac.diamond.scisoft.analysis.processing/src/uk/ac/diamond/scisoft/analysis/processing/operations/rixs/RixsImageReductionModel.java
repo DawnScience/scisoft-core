@@ -30,25 +30,25 @@ public class RixsImageReductionModel extends RixsBaseModel {
 	@OperationModelField(label = "Elastic line fit file", file = FileType.EXISTING_FILE, hint = "Can be empty then calibration file is used")
 	private String fitFile;
 
-	@OperationModelField(label = "Energy calibration file", file = FileType.EXISTING_FILE, hint = "Energy dispersion value has precedence")
+	@OperationModelField(label = "Energy calibration file", description = "This is also used to locate the directory to find processed fit files (when not manually overriden)", file = FileType.EXISTING_FILE, hint = "Energy dispersion value has precedence")
 	private String calibrationFile;
 
-	@OperationModelField(label = "Size of window to find photon event", min = 3)
+	@OperationModelField(label = "Size of window", description = "Window used to find photon event", min = 3)
 	private int window = 3;
 
-	@OperationModelField(label = "Photon event peak: lower threshold as multiple of single photon below which to ignore event", min = 0)
+	@OperationModelField(label = "Photon event peak: lower threshold", hint = "Multiple of single photon below which to ignore event", min = 0)
 	private double lowThreshold = 0.2;
 
-	@OperationModelField(label = "Photon event peak: upper threshold as multiple of single photon above which to ignore event", min = 0)
+	@OperationModelField(label = "Photon event peak: upper threshold", hint = "Multiple of single photon above which to ignore event", min = 0)
 	private double highThreshold = 2.0;
 
-	@OperationModelField(label = "Energy dispersion at detector (in eV/pixel)", hint = "Leave blank or NaN to read from file", min = 0)
+	@OperationModelField(label = "Energy dispersion at detector (in eV/pixel)", description = "Overrides the value in calibration file",  hint = "Leave blank or NaN to read from file", min = 0)
 	private double energyDispersion = Double.NaN;
 
-	@OperationModelField(label = "Supersampling for event centroids", min = 2)
+	@OperationModelField(label = "Supersampling for event centroids", description = "Number of sub-divisions per pixel edge", min = 2)
 	private int bins = 2;
 
-	@OperationModelField(label = "Read regions from file")
+	@OperationModelField(label = "Read regions from file", description = "Use regions defined in processed fit or calibration file")
 	private boolean regionsFromFile = true;
 
 	public enum CORRELATE_ORDER {
@@ -56,7 +56,7 @@ public class RixsImageReductionModel extends RixsBaseModel {
 		LAST,  // use last spectrum and work backwards
 	}
 
-	@OperationModelField(label = "Spectrum correlation order", hint = "Which spectrum to start correlating from")
+	@OperationModelField(label = "Spectrum correlation order", description = "Which spectrum to start correlating from")
 	private CORRELATE_ORDER correlateOrder = CORRELATE_ORDER.LAST;
 
 	public enum CORRELATE_PHOTON {
@@ -65,16 +65,16 @@ public class RixsImageReductionModel extends RixsBaseModel {
 		USE_INTENSITY_SHIFTS, // use shifts from intensity correlations
 	}
 
-	@OperationModelField(label = "Spectrum correlation option (for photon events only)", hint = "All pairs of spectra; consecutive pairs only; use intensity shifts")
+	@OperationModelField(label = "Spectrum correlation option", description = "Photon correlation options", hint = "All pairs of spectra; consecutive pairs only; use intensity shifts")
 	private CORRELATE_PHOTON correlateOption = CORRELATE_PHOTON.USE_INTENSITY_SHIFTS; // in 2D image
 
-	@OperationModelField(label = "Normalize spectra by region size")
-	private boolean normalizeByRegionSize= true;
+	@OperationModelField(label = "Normalize spectra by region size", description = "If true, then divide summed spectra by number of constituent spectra")
+	private boolean normalizeByRegionSize = true;
 
-	@OperationModelField(label = "Maximum number of frames to use", min = 0, hint = "Any value < 1 means all frames are used")
+	@OperationModelField(label = "Maximum number of frames to use", hint = "Any value < 1 means all frames are used", min = 0)
 	private int maxFrames = 0;
 
-	@OperationModelField(label = "Slope override", hint = "Any non-zero value is used to override the slopes from fit files")
+	@OperationModelField(label = "Slope override", description = "Overrides slope value from any processed fit file", hint = "Any non-zero value is used to override the slopes from fit files")
 	private double slopeOverride = 0;
 
 	// TODO conditional override to fit parameters??

@@ -18,10 +18,10 @@ import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
  * Base model for processing RIXS images
  */
 public class RixsBaseModel extends AbstractOperationModel {
-	@OperationModelField(label = "Rectangle A to search for elastic peak")
+	@OperationModelField(label = "Rectangle A", description = "Region to search for elastic peak")
 	private IRectangularROI roiA = new RectangularROI(0, 0, 2048, 1600, 0);
 
-	@OperationModelField(label = "Rectangle B to search for elastic peak")
+	@OperationModelField(label = "Rectangle B", description = "Region to search for elastic peak")
 	private IRectangularROI roiB = null;
 
 	public enum ENERGY_DIRECTION {
@@ -30,10 +30,10 @@ public class RixsBaseModel extends AbstractOperationModel {
 	}
 
 	// orientation (given by energy direction)
-	@OperationModelField(label = "Energy direction", hint = "Slow is vertical; fast is horizontal")
+	@OperationModelField(label = "Energy direction", description = "Principal direction in which the energy changes", hint = "Slow is vertical; fast is horizontal")
 	private ENERGY_DIRECTION energyDirection = ENERGY_DIRECTION.SLOW; // in 2D image
 
-	@OperationModelField(label = "Cutoff for pixels as multiple of single photon", hint = "Use a negative value to not apply")
+	@OperationModelField(label = "Cutoff for pixels", description = "Cutoff as multiple of single photon", hint = "Use a negative value to not apply")
 	private double cutoff = 5.0;
 
 	public enum ENERGY_OFFSET {
@@ -42,13 +42,13 @@ public class RixsBaseModel extends AbstractOperationModel {
 		TURNING_POINT,
 	}
 
-	@OperationModelField(label = "Zero energy offset option", hint = "From elastic line fit; manual override by given values; or from first turning point")
+	@OperationModelField(label = "Zero energy offset", description = "Options for how to define the zero energy position", hint = "From elastic line fit; manual override by given values; or from first turning point")
 	private ENERGY_OFFSET energyOffsetOption = ENERGY_OFFSET.FROM_ELASTIC_LINE_FIT;
 
-	@OperationModelField(label = "Zero energy offset value for rectangle A", hint = "Position on energy axis in pixels")
+	@OperationModelField(label = "Zero energy offset A", description = "Offset value for rectangle A", hint = "Position on energy axis in pixels")
 	private double energyOffsetA = Double.NaN;
 
-	@OperationModelField(label = "Zero energy offset value for rectangle B", hint = "Position on energy axis in pixels")
+	@OperationModelField(label = "Zero energy offset B", description = "Offset value for rectangle B", hint = "Position on energy axis in pixels")
 	private double energyOffsetB = Double.NaN;
 
 	/**

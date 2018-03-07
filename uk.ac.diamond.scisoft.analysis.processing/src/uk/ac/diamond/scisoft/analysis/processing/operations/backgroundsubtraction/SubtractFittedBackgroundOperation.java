@@ -494,7 +494,11 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			auxData.add(ProcessingUtils.createNamedDataset(pdf.getParameterValue(0), "pdf_posn"));
 			auxData.add(ProcessingUtils.createNamedDataset(pdf.getParameterValue(1), "pdf_fwhm"));
 			auxData.add(ProcessingUtils.createNamedDataset(pdf.getParameterValue(2), "pdf_area"));
-			auxData.add(ProcessingUtils.createNamedDataset(residual, "residual"));
+			auxData.add(ProcessingUtils.createNamedDataset(residual, "pdf_residual"));
+			MetadataUtils.setAxes(h, x);
+			auxData.add(ProcessingUtils.createNamedDataset(h, "histogram"));
+			MetadataUtils.setAxes(fit, x);
+			auxData.add(ProcessingUtils.createNamedDataset(fit, "histogram_fit"));
 			od.setAuxData(auxData.toArray(new Serializable[auxData.size()]));
 
 			od.getData().addMetadata(new FitMetadataImpl().setFitFunction(pdf));

@@ -303,8 +303,8 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 	private void minimizeFWHMForSpectrum(int r, Dataset in) {
 		Dataset s = sumImageAlongSlope(in, 0);
-		s.setName("raw spectrum");
-		auxData.add(s);
+//		s.setName("raw_spectrum");
+//		auxData.add(s);
 
 		Add peak = new Add();
 		peak.addFunction(new Gaussian());
@@ -342,13 +342,13 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 		int pmin = fwhm.argMin(true);
 		log.append("Minimal FWHM at slope of %g ", slopes.getDouble(pmin));
-		fwhm.setName("FWHM");
+		fwhm.setName("tilted_profile_width_" + r);
 		MetadataUtils.setAxes(fwhm, slopes);
 		auxData.add(fwhm);
 		if (r == 0) {
 			displayData.add(fwhm);
 		}
-		summed.setName("summed");
+		summed.setName("tilted_profile_" + r);
 		MetadataUtils.setAxes(summed, slopes);
 		auxData.add(summed);
 
@@ -469,7 +469,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 		auxData.add(ProcessingUtils.createNamedDataset(m, "line_%d_m", i).reshape(1));
 		auxData.add(ProcessingUtils.createNamedDataset(c, "line_%d_c", i));
-		auxData.add(ProcessingUtils.createNamedDataset(r, "residual_%d", i));
+		auxData.add(ProcessingUtils.createNamedDataset(r, "line_%d_residual", i));
 	}
 
 	/**
@@ -723,7 +723,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			// need to crop strips when saved as they can have different sizes
 			allStrips = allStrips.getSliceView(null, new Slice(diff, null));
 		}
-		allStrips.setName("strip_" + r);
+		allStrips.setName("subprofile_" + r);
 		MetadataUtils.setAxes(allStrips, null, xSlice);
 		auxData.add(allStrips);
 

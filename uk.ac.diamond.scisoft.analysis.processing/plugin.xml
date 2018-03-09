@@ -643,6 +643,15 @@
             visible="true">
       </operation>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.QErrorsOperation"
+            description="Calculate q errors from a number of sources"
+            icon="icons/blank.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.QErrorsOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.QErrorsModel"
+            name="Calculate errors in q"
+            visible="true">
+      </operation>
+      <operation
             category="uk.ac.diamond.scisoft.analysis.processing.utilities"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.OriginalDataOperation"
             description="Propagates the input data without modifying it, used to convert other data formats to nexus"

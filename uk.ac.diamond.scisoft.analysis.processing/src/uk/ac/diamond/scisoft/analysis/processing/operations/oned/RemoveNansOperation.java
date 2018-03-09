@@ -115,6 +115,9 @@ public class RemoveNansOperation extends AbstractOperation<EmptyModel, Operation
 		
 		// Copy all the metadata back alongside our new, shorter, primary axis
 		copyMetadata(input, outputDataset);
+		copyMetadata(inputAxis, outputAxis);
+		outputAxis.setName(inputAxis.getName());
+		
 		xAxisMetadata.setAxis(0, outputAxis);
 		outputDataset.setMetadata(xAxisMetadata);
 		outputDataset.setErrors(outputErrors);

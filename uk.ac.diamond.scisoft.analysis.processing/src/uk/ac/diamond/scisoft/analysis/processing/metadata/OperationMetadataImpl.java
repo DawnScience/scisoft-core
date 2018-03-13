@@ -83,6 +83,10 @@ public class OperationMetadataImpl implements OperationMetadata {
 			if (fd != -1) {
 				sampling = new SliceND(lz.getShape());
 				sampling.setSlice(fd, start, stop, 1);
+				
+				for (int otherDimension = fd - 1; otherDimension >= 0; otherDimension --) {
+					sampling.setSlice(otherDimension, 0, 1, 1);
+				}
 			}
 		}
 		

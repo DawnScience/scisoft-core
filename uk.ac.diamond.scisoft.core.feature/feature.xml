@@ -294,13 +294,6 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="net.sf.py4j"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.january"
          download-size="0"
          install-size="0"
@@ -329,6 +322,13 @@ limitations under the License.
 
    <plugin
          id="javax.measure.unit-api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="py4j-java"
          download-size="0"
          install-size="0"
          version="0.0.0"

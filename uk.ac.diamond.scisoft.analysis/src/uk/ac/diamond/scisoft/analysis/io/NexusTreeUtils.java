@@ -888,6 +888,13 @@ public class NexusTreeUtils {
 		Vector4d offset;
 	}
 
+	private static String join(String p, String n) {
+		if (!p.endsWith(Node.SEPARATOR)) {
+			p = p.concat(Node.SEPARATOR);
+		}
+		return p.concat(n);
+	}
+
 	/**
 	 * Parse a group that is an NXdetector class from a tree for shape of detector scan parameters
 	 * @param path to group
@@ -916,7 +923,7 @@ public class NexusTreeUtils {
 		int[] shape = null;
 		for (NodeLink l : gNode) {
 			if (isNXClass(l.getDestination(), NexusConstants.DETECTORMODULE)) {
-				shape = parseSubDetectorShape(path + Node.SEPARATOR + l.getName(), tree, l);
+				shape = parseSubDetectorShape(join(path, l.getName()), tree, l);
 				break; // TODO multiple modules
 			}
 		}
@@ -996,7 +1003,7 @@ public class NexusTreeUtils {
 		List<DetectorProperties> detectors = new ArrayList<>();
 		for (NodeLink l : gNode) {
 			if (isNXClass(l.getDestination(), NexusConstants.DETECTORMODULE)) {
-				detectors.add(parseSubDetector(path + Node.SEPARATOR + l.getName(), tree, ftrans, m, l, pos));
+				detectors.add(parseSubDetector(join(path, l.getName()), tree, ftrans, m, l, pos));
 			}
 		}
 
@@ -1114,7 +1121,7 @@ public class NexusTreeUtils {
 			switch(name) {
 			case DMOD_FASTPIXELDIRECTION:
 			case DMOD_SLOWPIXELDIRECTION:
-				shape = parseNodeShape(path + Node.SEPARATOR + l.getName(), tree, l, shape);
+				shape = parseNodeShape(join(path, l.getName()), tree, l, shape);
 				break;
 			default:
 				break;
@@ -1312,7 +1319,7 @@ public class NexusTreeUtils {
 		}
 
 		GroupNode gNode = (GroupNode) link.getDestination();
-		String gpath = path + Node.SEPARATOR + link.getName();
+		String gpath = join(path, link.getName());
 		for (NodeLink l : gNode) {
 			Transform t = null;
 			try {
@@ -1670,7 +1677,7 @@ public class NexusTreeUtils {
 		}
 
 		Transform t = new Transform();
-		t.name = ppath.concat(Node.SEPARATOR).concat(link.getName());
+		t.name = TreeImpl.canonicalizePath(join(ppath, link.getName()));
 		String dep = canonicalizeDependsOn(ppath, tree, getFirstString(dNode.getAttribute(TRANSFORMATIONS_DEPENDSON)));
 		t.depend = dep;
 		t.matrix = m4;
@@ -1683,13 +1690,13 @@ public class NexusTreeUtils {
 		} else if (dep.equals(TRANSFORMATIONS_ROOT)) {
 			// do nothing
 		} else if (dep.startsWith(RELATIVE_PREFIX)) {
-			dep = ppath.concat(Node.SEPARATOR).concat(dep);
+			dep = join(ppath, dep);
 			dep = TreeImpl.canonicalizePath(dep);
 		} else if (!dep.startsWith(Tree.ROOT)) {
 			// check if absolute, if not assume relative 
 			String test = Tree.ROOT.concat(dep);
 			if (tree.findNodeLink(test) == null) {
-				dep =  ppath.concat(Node.SEPARATOR).concat(dep);
+				dep =  join(ppath, dep);
 				dep = TreeImpl.canonicalizePath(dep);
 			} else {
 				dep = test;

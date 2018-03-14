@@ -1572,6 +1572,7 @@ public class NexusTreeUtils {
 		ftrans.putAll(mtrans);
 
 		UnitCell unitCell = parseUnitCell(gNode.getNodeLink("unit_cell"));
+		// TODO fix historic i16 files where orientation_matrix was really ub_matrix
 		Matrix3d ub = parseOrientationMatrix(gNode.getNodeLink("orientation_matrix"));
 		// remove orthogonalization to find orientation
 		Matrix3d u = new Matrix3d();
@@ -1759,6 +1760,23 @@ public class NexusTreeUtils {
 			}
 			if (isNXClass(l.getDestination(), clazz)) {
 				return l;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Find node link to first data node in group with a signal attribute
+	 * @param group
+	 * @return node link to first or null
+	 */
+	public static NodeLink findFirstSignalDataNode(GroupNode group) {
+		for (NodeLink l : group) {
+			if (l.isDestinationData()) {
+				DataNode d = (DataNode) l.getDestination();
+				if (d.containsAttribute(NexusConstants.DATA_SIGNAL)) {
+					return l;
+				}
 			}
 		}
 		return null;

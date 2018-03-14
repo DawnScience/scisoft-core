@@ -20,10 +20,14 @@ import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
+import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
+import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
+import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
 import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
+import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -39,6 +43,7 @@ import org.eclipse.january.dataset.SliceND;
 
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
 import uk.ac.diamond.scisoft.analysis.dataset.function.BicubicInterpolator;
+import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusHDF5Loader;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 
@@ -375,6 +380,14 @@ public class MillerSpaceMapper {
 		return mapToASpace(true, filePath);
 	}
 
+	private Tree getTreeFromNexusFile(String file) {
+		try {
+			return LoaderFactory.getData(NexusHDF5Loader.class, file, true, null).getTree();
+		} catch (Exception e) {
+			throw new IllegalArgumentException("No tree loaded from file: " + file, e);
+		}
+	}
+
 	/**
 	 * Map images from given Nexus file to a volume in q space
 	 * @param mapQ
@@ -384,9 +397,7 @@ public class MillerSpaceMapper {
 	 */
 	private Dataset mapToASpace(boolean mapQ, String filePath) throws ScanFileHolderException {
 		int[] vShape = copyParameters(mapQ);
-		NexusHDF5Loader l = new NexusHDF5Loader();
-		l.setFile(filePath);
-		Tree tree = l.loadFile().getTree();
+		Tree tree = getTreeFromNexusFile(filePath);
 		PositionIterator[] iters = getPositionIterators(tree);
 	
 		if (findImageBB) {
@@ -643,11 +654,9 @@ public class MillerSpaceMapper {
 	 * @throws ScanFileHolderException
 	 */
 	public void printMillerSpaceCorners(final boolean endsOnly) throws ScanFileHolderException {
-		processBean();
-		NexusHDF5Loader l = new NexusHDF5Loader();
-		
-		l.setFile(bean.getInputs()[0]);
-		Tree tree = l.loadFile().getTree();
+		processBean(bean.getInputs()[0]);
+
+		Tree tree = getTreeFromNexusFile(bean.getInputs()[0]);
 		PositionIterator[] iters = getPositionIterators(tree);
 	
 		PositionIterator diter = iters[0];
@@ -950,13 +959,81 @@ public class MillerSpaceMapper {
 		return index / 4;
 	}
 
-	private Dataset[][] processBean() {
-		String instrumentPath = bean.getEntryPath() + Node.SEPARATOR + bean.getInstrumentName() + Node.SEPARATOR;
-		detectorPath = instrumentPath + bean.getDetectorName();
-		timePath = detectorPath + Node.SEPARATOR + "count_time";
-		attenuatorPath = instrumentPath + bean.getAttenuatorName();
-		dataPath = detectorPath + Node.SEPARATOR + bean.getDataName();
-		samplePath = bean.getEntryPath() + Node.SEPARATOR + bean.getSampleName();
+	private Dataset[][] processBean(String file) throws ScanFileHolderException {
+		Tree tree = getTreeFromNexusFile(file);
+		NodeLink link;
+
+		String entryPath = bean.getEntryPath();
+		if (entryPath == null || entryPath.isEmpty()) {
+			link = NexusTreeUtils.findFirstNode(tree.getGroupNode(), NexusConstants.ENTRY);
+			entryPath = TreeUtils.getPath(tree, link.getDestination());
+			bean.setEntryPath(entryPath);
+		} else {
+			link = tree.findNodeLink(entryPath);
+		}
+		if (link == null || !link.isDestinationGroup()) {
+			throw new ScanFileHolderException("Could not find entry");
+		}
+		GroupNode entry = (GroupNode) link.getDestination();
+
+		String instrumentName = bean.getInstrumentName();
+		if (instrumentName == null || instrumentName.isEmpty()) {
+			link = NexusTreeUtils.findFirstNode(entry, NexusConstants.INSTRUMENT);
+		} else {
+			link = entry.getNodeLink(instrumentName);
+		}
+		if (link == null || !link.isDestinationGroup()) {
+			throw new ScanFileHolderException("Could not find instrument");
+		}
+		GroupNode instrument = (GroupNode) link.getDestination();
+
+		String detectorName = bean.getDetectorName();
+		if (detectorName == null || detectorName.isEmpty()) {
+			link = NexusTreeUtils.findFirstNode(instrument, NexusConstants.DETECTOR);
+		} else {
+			link = instrument.getNodeLink(detectorName);
+		}
+		if (link == null || !link.isDestinationGroup()) {
+			throw new ScanFileHolderException("Could not find detector");
+		}
+		GroupNode detector = (GroupNode) link.getDestination();
+		detectorPath = TreeUtils.getPath(tree, detector);
+
+		timePath = detectorPath + "count_time";
+
+		String attenuatorName = bean.getAttenuatorName();
+		if (attenuatorName == null || attenuatorName.isEmpty()) {
+			link = NexusTreeUtils.findFirstNode(instrument, NexusConstants.ATTENUATOR);
+		} else {
+			link = instrument.getNodeLink(attenuatorName);
+		}
+		if (link == null || !link.isDestinationGroup()) {
+			throw new ScanFileHolderException("Could not find attenuator");
+		}
+		attenuatorPath = TreeUtils.getPath(tree, link.getDestination());
+
+		String dataName = bean.getDataName();
+		if (dataName == null || dataName.isEmpty()) {
+			link = NexusTreeUtils.findFirstSignalDataNode(detector);
+		} else {
+			link = detector.getNodeLink(dataName);
+		}
+		if (link == null || !link.isDestinationData()) {
+			throw new ScanFileHolderException("Could not find image data");
+		}
+		dataPath = TreeUtils.getPath(tree, link.getDestination());
+
+		String sampleName = bean.getSampleName();
+		if (sampleName == null || sampleName.isEmpty()) {
+			link = NexusTreeUtils.findFirstNode(entry, NexusConstants.SAMPLE);
+		} else {
+			link = entry.getNodeLink(sampleName);
+		}
+		if (link == null || !link.isDestinationGroup()) {
+			throw new ScanFileHolderException("Could not find sample");
+		}
+		samplePath = TreeUtils.getPath(tree, link.getDestination());
+
 		this.splitter = createSplitter(bean.getSplitterName(), bean.getSplitterParameter());
 		listMillerEntries = bean.isListMillerEntries();
 
@@ -1022,7 +1099,7 @@ public class MillerSpaceMapper {
 	public void mapToVolumeFile() throws ScanFileHolderException {
 		hasDeleted = false; // reset state
 
-		Dataset[][] a = processBean();
+		Dataset[][] a = processBean(bean.getInputs()[0]);
 		if (qDel == null && hDel == null && !listMillerEntries) {
 			throw new IllegalStateException("Both q space and Miller space parameters have not been defined");
 		}
@@ -1033,9 +1110,7 @@ public class MillerSpaceMapper {
 		Tree[] trees = new Tree[n];
 		PositionIterator[][] allIters = new PositionIterator[n][];
 		for (int i = 0; i < n; i++) {
-			NexusHDF5Loader l = new NexusHDF5Loader();
-			l.setFile(inputs[i]);
-			trees[i] = l.loadFile().getTree();
+			trees[i] = getTreeFromNexusFile(inputs[i]);
 			allIters[i] = getPositionIterators(trees[i]);
 		}
 
@@ -1621,12 +1696,12 @@ public class MillerSpaceMapper {
 	 */
 	public static MillerSpaceMapperBean createI16MapperBean() {
 		MillerSpaceMapperBean bean = new MillerSpaceMapperBean();
-		bean.setEntryPath("/entry1");
-		bean.setInstrumentName("instrument");
-		bean.setAttenuatorName("attenuator");
-		bean.setDetectorName("pil100k");
-		bean.setDataName("image_data");
-		bean.setSampleName("sample");
+//		bean.setEntryPath("/entry1");
+//		bean.setInstrumentName("instrument");
+//		bean.setAttenuatorName("attenuator");
+//		bean.setDetectorName("pil100k");
+//		bean.setDataName("image_data");
+//		bean.setSampleName("sample");
 		return bean;
 	}
 
@@ -1753,6 +1828,9 @@ public class MillerSpaceMapper {
 		 * @param inputs Nexus files
 		 */
 		public void setInputs(String... inputs) {
+			if (inputs == null || inputs.length == 0) {
+				throw new IllegalArgumentException("One or more file names must be supplied");
+			}
 			this.inputs = inputs;
 		}
 
@@ -1873,7 +1951,7 @@ public class MillerSpaceMapper {
 		}
 
 		/**
-		 * @param entryPath
+		 * @param entryPath (can be null to imply 1st NXentry)
 		 */
 		public void setEntryPath(String entryPath) {
 			this.entryPath = entryPath;
@@ -1884,7 +1962,7 @@ public class MillerSpaceMapper {
 		}
 
 		/**
-		 * @param instrumentName name of instrument in entry
+		 * @param instrumentName name of instrument in entry (can be null to imply 1st NXinstrument)
 		 */
 		public void setInstrumentName(String instrumentName) {
 			this.instrumentName = instrumentName;
@@ -1895,7 +1973,7 @@ public class MillerSpaceMapper {
 		}
 
 		/**
-		 * @param attenuatorName name of attenuator in instrument
+		 * @param attenuatorName name of attenuator in instrument (can be null to imply 1st NXattenuator)
 		 */
 		public void setAttenuatorName(String attenuatorName) {
 			this.attenuatorName = attenuatorName;
@@ -1906,7 +1984,7 @@ public class MillerSpaceMapper {
 		}
 
 		/**
-		 * @param detectorName name of detector in instrument 
+		 * @param detectorName name of detector in instrument (can be null to imply 1st NXdetector)
 		 */
 		public void setDetectorName(String detectorName) {
 			this.detectorName = detectorName;
@@ -1917,7 +1995,7 @@ public class MillerSpaceMapper {
 		}
 
 		/**
-		 * @param dataName name of data in detector
+		 * @param dataName name of data in detector (can be null to imply 1st dataset with signal attribute)
 		 */
 		public void setDataName(String dataName) {
 			this.dataName = dataName;
@@ -1928,7 +2006,7 @@ public class MillerSpaceMapper {
 		}
 
 		/**
-		 * @param sampleName name of sample in entry
+		 * @param sampleName name of sample in entry (can be null to imply 1st NXsample)
 		 */
 		public void setSampleName(String sampleName) {
 			this.sampleName = sampleName;

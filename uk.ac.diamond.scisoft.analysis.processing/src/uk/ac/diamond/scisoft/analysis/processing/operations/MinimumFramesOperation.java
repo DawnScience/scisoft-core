@@ -18,8 +18,8 @@ public class MinimumFramesOperation extends AbstractFramesOperation {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.MinimumFramesOperation";
 	}
 
-	// do not use the method reference -> see https://jira.diamond.ac.uk/browse/SCI-6339
+	@SuppressWarnings("restriction")
 	public MinimumFramesOperation() {
-		super((oldDataset, newDataset) -> Maths.minimum(oldDataset, newDataset));
+		super(Maths::minimum);
 	}
 }

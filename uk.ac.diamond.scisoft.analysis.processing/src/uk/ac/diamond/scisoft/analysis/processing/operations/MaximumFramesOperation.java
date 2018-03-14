@@ -18,8 +18,8 @@ public class MaximumFramesOperation extends AbstractFramesOperation {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.MaximumFramesOperation";
 	}
 
-	// do not use the method reference -> see https://jira.diamond.ac.uk/browse/SCI-6339
+	@SuppressWarnings("restriction")
 	public MaximumFramesOperation() {
-		super((oldDataset, newDataset) -> Maths.maximum(oldDataset, newDataset));
+		super(Maths::maximum);
 	}
 }

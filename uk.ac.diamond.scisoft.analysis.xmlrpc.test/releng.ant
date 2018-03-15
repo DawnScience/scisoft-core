@@ -53,6 +53,7 @@
 					<exclude name="**/*PluginTest.java" />
 					<!-- exclude tests that usually fails on Jenkins (org.apache.xmlrpc.XmlRpcException: Failed to read server's response: Connection refused (Connection refused)) -->
 					<exclude name="**/AnalysisRpcBasicRemoteTest.java" />
+					<exclude name="**/FlatteningViaAnalysisRpcToPythonAndRunLocalLoopbackTest.java" />
 				</fileset>
 			</batchtest>
 		</junit-call>

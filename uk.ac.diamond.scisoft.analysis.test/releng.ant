@@ -18,7 +18,7 @@
 		<condition property="plugin-uk.ac.diamond.scisoft.analysis.junit-tests.maxmemory" value="1280m">
 			<os family="windows" />
 		</condition>
-		<property name="plugin-uk.ac.diamond.scisoft.analysis.test.junit-tests.maxmemory" value="1536m" />
+		<property name="plugin-uk.ac.diamond.scisoft.analysis.test.junit-tests.maxmemory" value="2048m" />
 		<junit-call description="${ant.project.name} Java JUnit tests"
 			maxmemory="${plugin-uk.ac.diamond.scisoft.analysis.test.junit-tests.maxmemory}"
 			timeout="180000000">  <!-- lots if tests here, a longer timeout than the default is required when running on a slow machine -->

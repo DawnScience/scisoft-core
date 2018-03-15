@@ -21,9 +21,12 @@ import org.eclipse.january.metadata.MetadataFactory;
 
 import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
+import uk.ac.diamond.scisoft.analysis.metadata.UnitMetadataImpl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.measure.unit.NonSI;
 
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -104,6 +107,10 @@ public class RemapToQOperation extends AbstractOperation<EmptyModel, OperationDa
 		} catch (MetadataException e) {
 			throw new OperationException(this, e);
 		}
+		
+		UnitMetadataImpl xAxisUnit = new UnitMetadataImpl(NonSI.ANGSTROM.inverse());
+		qCacheX.setMetadata(xAxisUnit);
+		qCacheY.setMetadata(xAxisUnit);
 		
 		axisMetadata.setAxis(0, qCacheX);
 		axisMetadata.setAxis(1, qCacheY);

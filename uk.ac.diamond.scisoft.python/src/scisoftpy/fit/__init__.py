@@ -20,4 +20,4 @@ import os
 if os.name == 'java':
     from scisoftpy.jython.fitcore import *
 else:
-    from numpy import poly1d, roots  # @UnresolvedImport @Reimport
+    from numpy import poly1d, roots, polyfit, polyval  # @UnresolvedImport @Reimport

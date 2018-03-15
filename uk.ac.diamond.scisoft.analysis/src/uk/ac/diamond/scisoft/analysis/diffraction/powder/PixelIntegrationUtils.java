@@ -249,8 +249,12 @@ public class PixelIntegrationUtils {
 				radialArrayMin.set(Math.toDegrees(Math.asin(vals[0] * w/(4*Math.PI))*2),pos);
 				break;
 			case Qnm:
-				radialArrayMax.set(vals[3]*10,pos);
-				radialArrayMin.set(vals[0]*10,pos);
+				radialArrayMax.set(vals[3]*1e1,pos);
+				radialArrayMin.set(vals[0]*1e1,pos);
+				break;
+			case Qm:
+				radialArrayMax.set(vals[3]*1e10,pos);
+				radialArrayMin.set(vals[0]*1e10,pos);
 				break;
 			case Q:
 			case PIXEL:
@@ -313,7 +317,10 @@ public class PixelIntegrationUtils {
 				value = q.length();
 				break;
 			case Qnm:
-				value = q.length()*10;
+				value = q.length()*1e1;
+				break;
+			case Qm:
+				value = q.length()*1e10;
 				break;
 			case RESOLUTION:
 				value = (2*Math.PI)/q.length();

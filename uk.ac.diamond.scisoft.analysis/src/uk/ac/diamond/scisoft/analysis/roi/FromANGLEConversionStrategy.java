@@ -28,9 +28,15 @@ public class FromANGLEConversionStrategy extends AbstractXAxisConversionStrategy
 
 	@Override
 	public double toQnm(double initVal, Double lambda) throws Exception {
-		return (4*Math.PI/lambda)*Math.sin(calcThetaInRadians(initVal))*10;
+		return (4*Math.PI/lambda)*Math.sin(calcThetaInRadians(initVal)) * 1e1;
 	}
-
+	
+	@Override
+	public double toQm(double initVal, Double lambda) throws Exception {
+		return (4*Math.PI/lambda)*Math.sin(calcThetaInRadians(initVal)) * 1e10;
+	}
+	
+	
 	@Override
 	public double toRESOLUTION(double initVal, Double lambda) throws Exception {
 		return lambda/(2*Math.sin(calcThetaInRadians(initVal)));

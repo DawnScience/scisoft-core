@@ -187,6 +187,12 @@ public abstract class AbstractPixelIntegration {
 		case Q:
 			axis.setName("q");
 			break;
+		case Qnm:
+			axis.setName("q");
+			break;
+		case Qm:
+			axis.setName("q");
+			break;
 		case ANGLE:
 			axis.setName("2theta");
 			break;

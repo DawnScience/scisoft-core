@@ -13,8 +13,7 @@ public class FromQnmConversionStrategy extends AbstractXAxisConversionStrategy {
 
 	@Override
 	public double toANGLE(double initVal, Double lambda) throws Exception {
-//		initVal = initVal / 10.0;
-		double thRadians = Math.asin((initVal*lambda)/(4*Math.PI));
+		double thRadians = Math.asin(((initVal / 1e1) * lambda) / (4 * Math.PI));
 		return calcTwoThetaInDegrees(thRadians);
 	}
 
@@ -25,17 +24,21 @@ public class FromQnmConversionStrategy extends AbstractXAxisConversionStrategy {
 
 	@Override
 	public double toQ(double initVal, Double lambda) throws Exception {
-		return initVal/10;
+		return initVal / 1e1;
 	}
 
 	@Override
 	public double toQnm(double initVal, Double lambda) throws Exception {
 		return initVal; //Do nothing
 	}
-
+	
+	@Override
+	public double toQm(double initVal, Double lambda) throws Exception {
+		return initVal * 1e9;
+	}
+	
 	@Override
 	public double toRESOLUTION(double initVal, Double lambda) throws Exception {
-//		initVal = initVal / 10.0;
-		return (2*Math.PI)/initVal;
+		return (2 * Math.PI) / (initVal / 1e1);
 	}
 }

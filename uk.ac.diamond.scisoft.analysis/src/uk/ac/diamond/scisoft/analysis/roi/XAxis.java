@@ -14,7 +14,8 @@ public enum XAxis {
 	PIXEL (1, "Pixel Number", new FromPIXELConversionStrategy()) ,
 	Q(2, "Q-space (inverse Angstrom)", new FromQConversionStrategy()) ,
 	Qnm(3, "Q-space (inverse nanometre)", new FromQnmConversionStrategy()) ,
-	RESOLUTION (4, "d-space", new FromRESOLUTIONConversionStrategy()) ,;
+	Qm(4, "Q-space (inverse metre)", new FromQmConversionStrategy()) ,
+	RESOLUTION (5, "d-space", new FromRESOLUTIONConversionStrategy()) ,;
 	
 	
 	private final String axisLabel;
@@ -37,7 +38,8 @@ public enum XAxis {
 			case 1 :	return String.format("Pixel number (pixels)");
 			case 2 :	return String.format("Q (inverse Angstroms)");
 			case 3 :	return String.format("Q (inverse nanometers)");
-			case 4 :	return String.format("d-spacing (Angstrom)");
+			case 4 :	return String.format("Q (inverse meters)");
+			case 5 :	return String.format("d-spacing (Angstrom)");
 			default:	return String.format("Error!");
 		}
 	}

@@ -30,7 +30,12 @@ public class FromPIXELConversionStrategy extends AbstractXAxisConversionStrategy
 	public double toQnm(double initVal, Double lambda) throws Exception {
 		throw new Exception("Unimplemented method.");
 	}
-
+	
+	@Override
+	public double toQm(double initVal, Double lambda) throws Exception {
+		throw new Exception("Unimplemented method.");
+	}
+	
 	@Override
 	public double toRESOLUTION(double initVal, Double lambda) throws Exception {
 		throw new Exception("Unimplemented method.");

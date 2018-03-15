@@ -9,11 +9,11 @@
 
 package uk.ac.diamond.scisoft.analysis.roi;
 
-public class FromRESOLUTIONConversionStrategy extends AbstractXAxisConversionStrategy {
+public class FromQmConversionStrategy extends AbstractXAxisConversionStrategy {
 
 	@Override
 	public double toANGLE(double initVal, Double lambda) throws Exception {
-		Double thRadians = Math.asin(lambda/(2*initVal));
+		double thRadians = Math.asin(((initVal / 1e10) * lambda) / (4 * Math.PI));
 		return calcTwoThetaInDegrees(thRadians);
 	}
 
@@ -24,21 +24,21 @@ public class FromRESOLUTIONConversionStrategy extends AbstractXAxisConversionStr
 
 	@Override
 	public double toQ(double initVal, Double lambda) throws Exception {
-		return (2 * Math.PI) / initVal;
+		return initVal / 1e2;
 	}
 
 	@Override
 	public double toQnm(double initVal, Double lambda) throws Exception {
-		return ((2 * Math.PI) / initVal) * 1e1;
+		return initVal / 1e1;
 	}
 	
 	@Override
 	public double toQm(double initVal, Double lambda) throws Exception {
-		return ((2 * Math.PI) / initVal) * 1e10;
+		return initVal; //Do nothing
 	}
-	
+
 	@Override
 	public double toRESOLUTION(double initVal, Double lambda) throws Exception {
-		return initVal; //Do nothing
+		return (2 * Math.PI) / (initVal / 1e10);
 	}
 }

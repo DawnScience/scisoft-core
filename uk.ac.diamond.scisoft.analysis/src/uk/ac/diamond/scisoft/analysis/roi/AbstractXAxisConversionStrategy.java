@@ -16,6 +16,7 @@ public abstract class AbstractXAxisConversionStrategy {
 	public abstract double toPIXEL(double initVal) throws Exception;
 	public abstract double toQ(double initVal, Double lambda) throws Exception;
 	public abstract double toQnm(double initVal, Double lambda) throws Exception;
+	public abstract double toQm(double initVal, Double lambda) throws Exception;
 	public abstract double toRESOLUTION(double initVal, Double lambda) throws Exception;
 	
 	/**

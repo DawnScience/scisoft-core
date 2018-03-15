@@ -779,7 +779,9 @@ public class NexusTreeUtils {
 		}
 		
 		if (annotations.contains(signalName+NexusConstants.DATA_UNCERTAINTY_SUFFIX)) {
-			DataNode dn = gn.getDataNode(signalName+NexusConstants.DATA_UNCERTAINTY_SUFFIX);
+			Attribute attribute = gn.getAttribute(signalName+NexusConstants.DATA_UNCERTAINTY_SUFFIX);
+			
+			DataNode dn = gn.getDataNode(attribute.getFirstElement());
 			ILazyDataset sv = dn.getDataset().getSliceView();
 			lz.setErrors(sv);
 		}

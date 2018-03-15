@@ -57,7 +57,8 @@ public class UsaxsTwoThetaToQModel extends AbstractOperationModel {
 	
 	enum qUnits {
 		ANGSTROMS(1),
-		NANOMETERS(2);
+		NANOMETERS(2),
+		METERS(3);
 		
 		
 		private final int qUnits;
@@ -76,8 +77,9 @@ public class UsaxsTwoThetaToQModel extends AbstractOperationModel {
 		@Override
 		public String toString() {
 			switch (this.qUnits) {
-				case 1:		return String.format("Angstroms");
-				case 2:		return String.format("Nanometers");
+				case 1:		return String.format("Inverse Angstroms");
+				case 2:		return String.format("Inverse Nanometers");
+				case 3:		return String.format("Inverse Meters");
 				default:	return String.format("Error!");
 			}
 		}

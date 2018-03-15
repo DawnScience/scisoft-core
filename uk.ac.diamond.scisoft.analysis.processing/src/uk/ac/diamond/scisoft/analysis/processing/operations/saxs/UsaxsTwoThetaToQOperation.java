@@ -12,12 +12,19 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 
 // Imports from uk.ac.diamond.scisoft
+import uk.ac.diamond.scisoft.analysis.metadata.UnitMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
-import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsTwoThetaToQModel.YawUnits;
 import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsTwoThetaToQModel.qUnits;
+import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsTwoThetaToQModel.YawUnits;
 
 // Imports from org.eclipse.dawnsci
 import org.eclipse.january.DatasetException;
+
+// Imports from javax.measure
+import javax.measure.unit.SI;
+import javax.measure.unit.NonSI;
+
+//Imports from uk.ac.dawnsci.analysis
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -26,11 +33,11 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 
 // Imports from org.eclipse.january
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IndexIterator;
-import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 
 // Importing the logger!
@@ -70,6 +77,7 @@ public class UsaxsTwoThetaToQOperation extends AbstractOperation<UsaxsTwoThetaTo
 	}
 	
 	
+	@SuppressWarnings("restriction")
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) {
 		// First, find the filepath and then the units of yaw
@@ -120,14 +128,23 @@ public class UsaxsTwoThetaToQOperation extends AbstractOperation<UsaxsTwoThetaTo
 			xAxis.set(qValue, index);
 		}
 		
-		if (model.getQScale() == qUnits.NANOMETERS) {
-			xAxis = Maths.multiply(xAxis, 10.0);
-			xAxis.setName("q (1/nm)");
+		UnitMetadataImpl xAxisUnit = null;
+		
+		if (model.getQScale() == qUnits.METERS) {
+			xAxisUnit = new UnitMetadataImpl(SI.METER.inverse());
+			xAxis = Maths.multiply(xAxis, 1e10);
+			xAxis.setName("q");
+		} else if (model.getQScale() == qUnits.NANOMETERS) {
+			xAxisUnit = new UnitMetadataImpl(SI.NANO(SI.METER).inverse());
+			xAxis = Maths.multiply(xAxis, 1e1);
+			xAxis.setName("q");
 		} else {
-			xAxis.setName("q (1/Å)");
+			xAxisUnit = new UnitMetadataImpl(NonSI.ANGSTROM.inverse());
+			xAxis.setName("q");
 		}
 		
 		// Configure the output dataset...
+		xAxis.setMetadata(xAxisUnit);
 		xAxisMetadata.setAxis(0, xAxis);
 		output.setMetadata(xAxisMetadata);
 		copyMetadata(input, output);

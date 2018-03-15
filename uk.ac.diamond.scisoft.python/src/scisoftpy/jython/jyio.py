@@ -21,6 +21,7 @@ from uk.ac.diamond.scisoft.analysis.io import JPEGLoader as _jpegload
 from uk.ac.diamond.scisoft.analysis.io import JPEGSaver as _jpegsave
 from uk.ac.diamond.scisoft.analysis.io import JPEGScaledSaver as _jpegscaledsave
 
+from java.lang import Throwable as _throwable
 from java.lang import System as _system #@UnresolvedImport
 from java.io import PrintStream as _pstream #@UnresolvedImport
 from java.io import OutputStream as _ostream #@UnresolvedImport
@@ -29,9 +30,10 @@ class _NoOutputStream(_ostream):
 
 try:
     from uk.ac.diamond.scisoft.analysis.io import TIFFImageLoader as _tiffload
-except:
+except _throwable as e:
     import sys
     print >> sys.stderr, "Could not import TIFF loader"
+    print >> sys.stderr, e
     _tiffload = None
 
 from uk.ac.diamond.scisoft.analysis.io import TIFFImageSaver as _tiffsave
@@ -41,10 +43,11 @@ from uk.ac.diamond.scisoft.analysis.io import ADSCImageLoader as _adscload
 
 try:
     from uk.ac.diamond.scisoft.analysis.io import CBFLoader as _cbfload
-except:
+except _throwable as e:
     import sys #@Reimport
     print >> sys.stderr, "Could not import CBF loader"
     print >> sys.stderr, "Problem with path for dynamic/shared library or product bundling"
+    print >> sys.stderr, e
     _cbfload = None
 
 from uk.ac.diamond.scisoft.analysis.io import CrysalisLoader as _crysload
@@ -65,7 +68,14 @@ from uk.ac.diamond.scisoft.analysis.io import NumPyFileSaver as _numpysave
 from uk.ac.diamond.scisoft.analysis.io import RAxisImageLoader as _raxisload
 from uk.ac.diamond.scisoft.analysis.io import PgmLoader as _pgmload
 
-from uk.ac.diamond.scisoft.analysis.io import LoaderFactory as _loader_factory
+try:
+    from uk.ac.diamond.scisoft.analysis.io import LoaderFactory as _loader_factory
+except _throwable as e:
+    import sys #@Reimport
+    print >> sys.stderr, "Could not import LoaderFactory"
+    print >> sys.stderr, "Problem with path for dynamic/shared library or product bundling"
+    print >> sys.stderr, e
+    _loader_factory = None
 
 from org.eclipse.dawnsci.analysis.api.io import ScanFileHolderException as io_exception
 
@@ -75,47 +85,6 @@ from uk.ac.diamond.scisoft.analysis.io import MetaDataAdapter as _jmetadata
 from jycore import asDatasetList, _jinput#, asDatasetDict, toList
 
 from scisoftpy.dictutils import DataHolder
-
-from uk.ac.diamond.scisoft.analysis.io import HDF5Loader as _hdf5loader
-from org.eclipse.dawnsci.analysis.api.tree import Tree as _tree
-from org.eclipse.dawnsci.analysis.api.tree import GroupNode as _gnode
-from org.eclipse.dawnsci.analysis.tree.impl import TreeFileImpl as _treefile
-
-class h5manager(object):
-    '''This holds a HDF5 tree and manages access to it. This provides
-    dictionary-like access to lists of datasets
-    '''
-    def __init__(self, tree):
-        '''Arguments:
-        tree -- HDF tree
-        '''
-        if isinstance(tree, _tree):
-            self.file = tree
-            self.grp = self.file.getGroupNode()
-        elif isinstance(tree, _gnode):
-            self.file = None
-            self.grp = tree
-        else:
-            raise ValueError, "Tree not a hdf5 file or hdf5 group"
-
-    def gettree(self):
-        if self.file is None:
-            t = _treefile(-1, "FakePlasticTree.h5")
-            t.setGroupNode(self.grp)
-            return t
-        return self.file
-
-    def __getitem__(self, key):
-        '''Return a list of datasets in tree whose names match given key'''
-        return asDatasetList(self.grp.getDatasets(key))
-
-def loadnexus(name):
-    '''Load a HDF5 file and return a HDF5 tree manager'''
-    import warnings
-    warnings.warn("This will be deprecated in the next version", PendingDeprecationWarning)
-    h5loader = _hdf5loader(name)
-    return h5manager(h5loader.loadTree())
-
 
 from jyhdf5io import HDF5Loader
 from jynxio import NXLoader
@@ -273,16 +242,19 @@ class PGMLoader(JavaLoader, _pgmload):
         _pgmload.__init__(self, *arg) #@UndefinedVariable
         self.load_metadata = True
 
-class LoaderFactoryDelegate(BareJavaLoader):
-    def __init__(self, *arg):
-        self.name = arg[0]
-        self.load_metadata = True
-
-    def _loadFile(self):
-        return _loader_factory.getData(self.name, self.load_metadata, None)
-
-    def _setLoadMetadata(self, load_metadata):
-        pass
+if _loader_factory is None:
+    LoaderFactoryDelegate = None
+else:
+    class LoaderFactoryDelegate(BareJavaLoader):
+        def __init__(self, *arg):
+            self.name = arg[0]
+            self.load_metadata = True
+    
+        def _loadFile(self):
+            return _loader_factory.getData(self.name, self.load_metadata, None)
+    
+        def _setLoadMetadata(self, load_metadata):
+            pass
 
 # register extra loaders as workaround for Jython not being OSGI
 import os as _os

@@ -16,8 +16,16 @@
 
 '''
 '''
+from java.lang import Throwable as _throwable
+try:
+    from uk.ac.diamond.scisoft.analysis.io import HDF5Loader as _hdf5loader
+except _throwable as e:
+    import sys
+    print >> sys.stderr, "Could not import HDF5Loader"
+    print >> sys.stderr, "Problem with path for dynamic/shared library or product bundling"
+    print >> sys.stderr, e
+    _hdf5loader = None
 
-from uk.ac.diamond.scisoft.analysis.io import HDF5Loader as _hdf5loader
 from org.eclipse.dawnsci.analysis.api.tree import Tree as _jtree
 from org.eclipse.dawnsci.analysis.api.tree import TreeFile as _jtreefile
 from org.eclipse.dawnsci.analysis.api.tree import DataNode as _jdnode
@@ -102,6 +110,8 @@ class SDS(_hdataset):
 
 class HDF5Loader(object):
     def __init__(self, name):
+        if _hdf5loader is None:
+            raise io_exception, "HDf5 loader could not be imported"
         self.ldr = _hdf5loader(name)
 
     def load(self, warn=True):

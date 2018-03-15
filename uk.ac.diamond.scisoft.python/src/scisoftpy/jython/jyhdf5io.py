@@ -115,6 +115,17 @@ class HDF5Loader(object):
         self.ldr = _hdf5loader(name)
 
     def load(self, warn=True):
+        tree = self._load_tree()
+
+        if tree is None:
+            raise io_exception, "No tree found"
+
+        # convert tree to own tree
+        r = tree.getNodeLink()
+        pool = dict()
+        return self._copynode(pool, r, tree)
+
+    def _load_tree(self):
         # capture all error messages
         from java.lang import System #@UnresolvedImport
         from java.io import PrintStream #@UnresolvedImport
@@ -126,13 +137,7 @@ class HDF5Loader(object):
         finally:
             System.setErr(oldErr) #@UndefinedVariable
 
-        if tree is None:
-            raise io_exception, "No tree found"
-
-        # convert tree to own tree
-        r = tree.getNodeLink()
-        pool = dict()
-        return self._copynode(pool, r, tree)
+        return tree
 
     def _mkgroup(self, name, link, attrs, parent):
         if isinstance(parent, _jtree):

@@ -13,6 +13,7 @@ import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.Metadata;
 import org.eclipse.january.metadata.MetadataFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,18 +26,14 @@ import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 
 public class XMSOLoader extends AbstractFileLoader {
 
-	transient protected static final Logger logger = LoggerFactory.getLogger(XMSOLoader.class);
+	protected static final Logger logger = LoggerFactory.getLogger(XMSOLoader.class);
+	private static final String ENERGY = "Energy (keV)";
 	
 	public XMSOLoader() {
 	}
 	
 	public XMSOLoader(final String fileName) {
 		setFile(fileName);
-	}
-
-	@Override
-	public void setFile(String fileName) {		
-		super.setFile(fileName);
 	}
 
 	@Override
@@ -76,18 +73,18 @@ public class XMSOLoader extends AbstractFileLoader {
 			
 			//check how many interactions there were
 			XPath xpath = XPathFactory.newInstance().newXPath();
-			int n_interactions = ((Double)xpath.evaluate("/xmimsim-results/xmimsim-input/general/n_interactions_trajectory", dom, XPathConstants.NUMBER)).intValue();
+			int nInteractions = ((Double)xpath.evaluate("/xmimsim-results/xmimsim-input/general/n_interactions_trajectory", dom, XPathConstants.NUMBER)).intValue();
 			
 			//check how many children the first channel has. This will let us know if there was transmission (zero-interactions) or not...
-			int nchildren_channel0 = ((NodeList) xpath.evaluate("/xmimsim-results/spectrum_conv/channel[1]/counts", dom, XPathConstants.NODESET)).getLength();
+			int nChildrenChannel0 = ((NodeList) xpath.evaluate("/xmimsim-results/spectrum_conv/channel[1]/counts", dom, XPathConstants.NODESET)).getLength();
 
-			int first_interaction;
+			int firstInteraction;
 			
-			if (n_interactions == nchildren_channel0) {
-				first_interaction = 1;
+			if (nInteractions == nChildrenChannel0) {
+				firstInteraction = 1;
 			}
-			else if (nchildren_channel0 == n_interactions+1) {
-				first_interaction = 0;
+			else if (nChildrenChannel0 == nInteractions + 1) {
+				firstInteraction = 0;
 			}
 			else {
 				//this should never happen and indicates a corrupt XMSO file
@@ -99,22 +96,22 @@ public class XMSOLoader extends AbstractFileLoader {
 			
 			//read the energies
 			double[] energies = new double[nchannels];
-			NodeList energies_list = ((NodeList) xpath.evaluate("/xmimsim-results/spectrum_conv/channel/energy", dom, XPathConstants.NODESET));
+			NodeList energiesList = ((NodeList) xpath.evaluate("/xmimsim-results/spectrum_conv/channel/energy", dom, XPathConstants.NODESET));
 			
 			for (int i = 0 ; i < nchannels ; i++) {
-				energies[i] = Double.parseDouble(energies_list.item(i).getFirstChild().getNodeValue());
+				energies[i] = Double.parseDouble(energiesList.item(i).getFirstChild().getNodeValue());
 			}
 			
 			Dataset energiesDS =  DatasetFactory.createFromObject(energies);
-			energiesDS.setName("Energy (keV)");
-			result.addDataset("Energy (keV)", energiesDS);
+			energiesDS.setName(ENERGY);
+			result.addDataset(ENERGY, energiesDS);
 
 			//convoluted data
-			for (int interaction = first_interaction ; interaction <= n_interactions ; interaction++) {
+			for (int interaction = firstInteraction ; interaction <= nInteractions ; interaction++) {
 				double[] counts = new double[nchannels];
-				NodeList counts_list = ((NodeList) xpath.evaluate("/xmimsim-results/spectrum_conv/channel/counts[@interaction_number=\""+ interaction + "\"]", dom, XPathConstants.NODESET));
+				NodeList countsList = ((NodeList) xpath.evaluate("/xmimsim-results/spectrum_conv/channel/counts[@interaction_number=\""+ interaction + "\"]", dom, XPathConstants.NODESET));
 				for (int i = 0 ; i < nchannels ; i++) {
-					counts[i] = Double.parseDouble(counts_list.item(i).getFirstChild().getNodeValue());
+					counts[i] = Double.parseDouble(countsList.item(i).getFirstChild().getNodeValue());
 				}
 				Dataset set = DatasetFactory.createFromObject(counts);
 				
@@ -127,14 +124,19 @@ public class XMSOLoader extends AbstractFileLoader {
 					logger.error("Could not created AxesMetadata: ", e);
 				}
 				
+				Metadata md = new Metadata();
+
+				String name;
+				
 				if (interaction == 1) {
-					set.setName("Counts after 1 interaction");
-					result.addDataset("Counts after 1 interaction", set);
+					name = "Counts after 1 interaction";
 				}
 				else {
-					set.setName("Counts after " + interaction + " interactions");
-					result.addDataset("Counts after " + interaction + " interactions", set);
+					name = String.format("Counts after %d interactions", interaction);
 				}
+				set.setName(name);
+				md.addDataInfo(ENERGY, set.getShape());
+				result.addDataset(name, set, md);
 			}
 			
 			

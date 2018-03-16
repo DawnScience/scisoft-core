@@ -966,8 +966,8 @@ public class MillerSpaceMapper {
 		String entryPath = bean.getEntryPath();
 		if (entryPath == null || entryPath.isEmpty()) {
 			link = NexusTreeUtils.findFirstNode(tree.getGroupNode(), NexusConstants.ENTRY);
+			System.out.println("Found " + link);
 			entryPath = TreeUtils.getPath(tree, link.getDestination());
-			bean.setEntryPath(entryPath);
 		} else {
 			link = tree.findNodeLink(entryPath);
 		}
@@ -979,6 +979,7 @@ public class MillerSpaceMapper {
 		String instrumentName = bean.getInstrumentName();
 		if (instrumentName == null || instrumentName.isEmpty()) {
 			link = NexusTreeUtils.findFirstNode(entry, NexusConstants.INSTRUMENT);
+			System.out.println("Found " + link);
 		} else {
 			link = entry.getNodeLink(instrumentName);
 		}
@@ -990,6 +991,7 @@ public class MillerSpaceMapper {
 		String detectorName = bean.getDetectorName();
 		if (detectorName == null || detectorName.isEmpty()) {
 			link = NexusTreeUtils.findFirstNode(instrument, NexusConstants.DETECTOR);
+			System.out.println("Found " + link);
 		} else {
 			link = instrument.getNodeLink(detectorName);
 		}
@@ -1004,6 +1006,7 @@ public class MillerSpaceMapper {
 		String attenuatorName = bean.getAttenuatorName();
 		if (attenuatorName == null || attenuatorName.isEmpty()) {
 			link = NexusTreeUtils.findFirstNode(instrument, NexusConstants.ATTENUATOR);
+			System.out.println("Found " + link);
 		} else {
 			link = instrument.getNodeLink(attenuatorName);
 		}
@@ -1015,6 +1018,7 @@ public class MillerSpaceMapper {
 		String dataName = bean.getDataName();
 		if (dataName == null || dataName.isEmpty()) {
 			link = NexusTreeUtils.findFirstSignalDataNode(detector);
+			System.out.println("Found " + link);
 		} else {
 			link = detector.getNodeLink(dataName);
 		}
@@ -1026,6 +1030,7 @@ public class MillerSpaceMapper {
 		String sampleName = bean.getSampleName();
 		if (sampleName == null || sampleName.isEmpty()) {
 			link = NexusTreeUtils.findFirstNode(entry, NexusConstants.SAMPLE);
+			System.out.println("Found " + link);
 		} else {
 			link = entry.getNodeLink(sampleName);
 		}

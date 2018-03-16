@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -21,6 +22,7 @@ public class MapHelper extends MapFlatteningHelper<Map> {
 
 	public static final String KEYS = "keys";
 	public static final String VALUES = "values";
+	public static final String ORDERED = "ordered";
 
 	public MapHelper() {
 		super(Map.class);
@@ -42,6 +44,7 @@ public class MapHelper extends MapFlatteningHelper<Map> {
 		}
 
 		Map<String, Object> outMap = createMap(getTypeCanonicalName());
+		outMap.put(ORDERED, inMap instanceof LinkedHashMap);
 		outMap.put(KEYS, keys);
 		outMap.put(VALUES, values);
 		return outMap;
@@ -49,7 +52,7 @@ public class MapHelper extends MapFlatteningHelper<Map> {
 
 	@Override
 	public Map<?, ?> unflatten(Map<?, ?> inMap, IRootFlattener rootFlattener) {
-		Map<Object, Object> returnMap = new HashMap<Object, Object>();
+		Map<Object, Object> returnMap = ((Boolean) inMap.get(ORDERED)) ? new LinkedHashMap<>() : new HashMap<>();
 		Object[] keys = (Object[]) inMap.get(KEYS);
 		Object[] values = (Object[]) inMap.get(VALUES);
 		if (keys.length != values.length) {

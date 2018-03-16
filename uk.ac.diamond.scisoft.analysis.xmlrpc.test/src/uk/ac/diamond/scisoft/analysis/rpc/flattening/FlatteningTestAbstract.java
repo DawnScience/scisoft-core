@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -283,6 +284,24 @@ abstract public class FlatteningTestAbstract {
 		flattenAndUnflatten(hashMap2, hashMap2, Map.class);
 
 		HashMap<Object, Object> nonStringKeys = new HashMap<Object, Object>(hashMap2);
+		nonStringKeys.put(Integer.valueOf(0), Integer.valueOf(0));
+		nonStringKeys.put(GuiParameters.FILENAME, "Filename");
+		flattenAndUnflatten(nonStringKeys, nonStringKeys, Map.class);
+	}
+
+	@Test
+	public void testOrderedMap() {
+		Map<String, Double> hashMap = new LinkedHashMap<>();
+		hashMap.put("pi", Math.PI);
+		hashMap.put("One", new Double(1));
+		flattenAndUnflatten(hashMap, hashMap, Map.class);
+
+		Map<String, Object> hashMap2 = new LinkedHashMap<>();
+		hashMap2.put("Integer", Integer.valueOf(0));
+		hashMap2.put("Integer", Integer.valueOf(100));
+		flattenAndUnflatten(hashMap2, hashMap2, Map.class);
+
+		Map<Object, Object> nonStringKeys = new LinkedHashMap<>();
 		nonStringKeys.put(Integer.valueOf(0), Integer.valueOf(0));
 		nonStringKeys.put(GuiParameters.FILENAME, "Filename");
 		flattenAndUnflatten(nonStringKeys, nonStringKeys, Map.class);

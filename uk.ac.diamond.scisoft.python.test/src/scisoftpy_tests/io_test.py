@@ -92,10 +92,9 @@ class Test(unittest.TestCase):
         print dh.eta
 
     def testLoadingNXS(self):
-        if isjava:
-            f = IOTestFolder + "NexusLoaderTest/"
-            nm = dnp.io.loadnexus(f + "FeKedge_1_15.nxs")
-            print 'There are %d datasets called "Energy"' % len(nm['Energy'])
+        f = IOTestFolder + "NexusLoaderTest/"
+        nm = dnp.io.load(f + "FeKedge_1_15.nxs")
+        print 'There are %d datasets called "Energy"' % len(nm.getnodes('Energy'))
 
     def testLoadingHDF(self):
         f = IOTestFolder + "NexusLoaderTest/"

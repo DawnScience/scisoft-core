@@ -160,9 +160,13 @@ class HDF5group(_ldict, HDF5node):
         pass
 
 class HDF5tree(HDF5group):
-    def __init__(self, filename, attrs={}):
+    def __init__(self, filename, attrs={}, native=None):
         HDF5group.__init__(self, attrs)
         super(HDF5tree, self).__setattr__('__filename', filename)
+        self.__native = native
+
+    def _getnative(self):
+        return self.__native
 
     def getnodes(self, name, group=True, data=True):
         '''Get all nodes with given name

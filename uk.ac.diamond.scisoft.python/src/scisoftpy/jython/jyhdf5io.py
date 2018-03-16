@@ -142,7 +142,7 @@ class HDF5Loader(object):
     def _mkgroup(self, name, link, attrs, parent):
         if isinstance(parent, _jtree):
             src = parent.getFilename() if isinstance(parent, _jtreefile) else parent.getSourceURI()
-            return _tree(src, attrs)
+            return _tree(src, attrs, parent)
         return _group(attrs, parent)
 
     def _mkdataset(self, dataset, attrs, parent):

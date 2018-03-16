@@ -35,7 +35,7 @@ class NXLoader(_h5loader):
                 g = super(NXLoader, self)._mkgroup(name, link, attrs, parent)
         elif name == '/' or isinstance(parent, _jtree):
             src = parent.getFilename() if isinstance(parent, _jtreefile) else parent.getSourceURI()
-            g = _nx.NXroot(src, attrs)
+            g = _nx.NXroot(src, attrs, parent)
         else:
             g = _nx.NXobject(attrs, parent)
 

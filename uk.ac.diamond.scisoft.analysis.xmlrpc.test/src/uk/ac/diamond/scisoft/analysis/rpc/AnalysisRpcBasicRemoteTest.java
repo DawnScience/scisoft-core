@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.rpc;
 
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Maths;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class AnalysisRpcBasicRemoteTest {
 			Thread.sleep(500); // add delay to ensure client is receiving
 
 			// Set up arguments to pass
-			Dataset cosInput = DatasetFactory.createRange(100, Dataset.INT32);
+			Dataset cosInput = DatasetFactory.createRange(IntegerDataset.class, 100);
 			// make the remote call
 			Dataset cosOutput = (Dataset) analysisRpcClient.request(COS, new Object[] {cosInput});
 

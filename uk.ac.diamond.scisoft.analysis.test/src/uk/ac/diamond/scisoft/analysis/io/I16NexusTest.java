@@ -56,7 +56,7 @@ public class I16NexusTest {
 		DetectorProperties dp = NexusTreeUtils.parseDetector("/entry1/instrument/pil100k", t, 0)[0];
 		System.out.println(dp);
 	
-		DiffractionSample sample = NexusTreeUtils.parseSample("/entry1/sample", t, 0);
+		DiffractionSample sample = NexusTreeUtils.parseSample("/entry1/sample", t, true, 0);
 		System.out.println(sample);
 	}
 
@@ -178,7 +178,7 @@ public class I16NexusTest {
 			for (int i = 0; i < axes.length; i++) {
 				stop[i] = pos[i] + 1;
 			}
-			DiffractionSample sample = NexusTreeUtils.parseSample("/entry1/sample", t, dpos);
+			DiffractionSample sample = NexusTreeUtils.parseSample("/entry1/sample", t, true, dpos);
 			DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 			UnitCell ucell = sample.getUnitCell();
 			QSpace qspace = new QSpace(dp, env);
@@ -254,7 +254,7 @@ public class I16NexusTest {
 			for (int i = 0; i < axes.length; i++) {
 				stop[i] = pos[i] + 1;
 			}
-			DiffractionSample sample = NexusTreeUtils.parseSample("/entry1/sample", t, dpos);
+			DiffractionSample sample = NexusTreeUtils.parseSample("/entry1/sample", t, true, dpos);
 			DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 			UnitCell ucell = sample.getUnitCell();
 			QSpace qspace = new QSpace(dp, env);

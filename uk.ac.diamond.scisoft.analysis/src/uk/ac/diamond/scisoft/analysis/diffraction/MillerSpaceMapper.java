@@ -545,7 +545,7 @@ public class MillerSpaceMapper {
 			for (int i = 0; i < srank; i++) {
 				stop[i] = pos[i] + 1;
 			}
-			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, dpos);
+			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, true, dpos);
 			DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 			QSpace qspace = new QSpace(dp, env);
 			if (qDel != null) {
@@ -669,7 +669,7 @@ public class MillerSpaceMapper {
 			if (!endsOnly || n == 0 || n == end) {
 				System.out.println("Image " + n);
 				DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
-				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, dpos);
+				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, true, dpos);
 				DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 				QSpace qspace = new QSpace(dp, env);
 				MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
@@ -727,7 +727,7 @@ public class MillerSpaceMapper {
 			for (int i = 0; i < srank; i++) {
 				stop[i] = pos[i] + 1;
 			}
-			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, dpos);
+			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, true, dpos);
 			DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 			QSpace qspace = new QSpace(dp, env);
 			if (!mapQ) {
@@ -890,7 +890,7 @@ public class MillerSpaceMapper {
 			for (int i = 0; i < srank; i++) {
 				stop[i] = pos[i] + 1;
 			}
-			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, dpos);
+			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, true, dpos);
 			DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 			QSpace qspace = new QSpace(dp, env);
 			mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
@@ -966,7 +966,7 @@ public class MillerSpaceMapper {
 		String entryPath = bean.getEntryPath();
 		if (entryPath == null || entryPath.isEmpty()) {
 			link = NexusTreeUtils.findFirstNode(tree.getGroupNode(), NexusConstants.ENTRY);
-			System.out.println("Found " + link);
+			System.out.println(NexusConstants.ENTRY + " found: " + link);
 			entryPath = TreeUtils.getPath(tree, link.getDestination());
 		} else {
 			link = tree.findNodeLink(entryPath);
@@ -979,7 +979,7 @@ public class MillerSpaceMapper {
 		String instrumentName = bean.getInstrumentName();
 		if (instrumentName == null || instrumentName.isEmpty()) {
 			link = NexusTreeUtils.findFirstNode(entry, NexusConstants.INSTRUMENT);
-			System.out.println("Found " + link);
+			System.out.println(NexusConstants.INSTRUMENT + " found: " + link);
 		} else {
 			link = entry.getNodeLink(instrumentName);
 		}
@@ -991,7 +991,7 @@ public class MillerSpaceMapper {
 		String detectorName = bean.getDetectorName();
 		if (detectorName == null || detectorName.isEmpty()) {
 			link = NexusTreeUtils.findFirstNode(instrument, NexusConstants.DETECTOR);
-			System.out.println("Found " + link);
+			System.out.println(NexusConstants.DETECTOR + " found: " + link);
 		} else {
 			link = instrument.getNodeLink(detectorName);
 		}
@@ -1006,7 +1006,7 @@ public class MillerSpaceMapper {
 		String attenuatorName = bean.getAttenuatorName();
 		if (attenuatorName == null || attenuatorName.isEmpty()) {
 			link = NexusTreeUtils.findFirstNode(instrument, NexusConstants.ATTENUATOR);
-			System.out.println("Found " + link);
+			System.out.println(NexusConstants.ATTENUATOR + " found: " + link);
 		} else {
 			link = instrument.getNodeLink(attenuatorName);
 		}
@@ -1018,7 +1018,8 @@ public class MillerSpaceMapper {
 		String dataName = bean.getDataName();
 		if (dataName == null || dataName.isEmpty()) {
 			link = NexusTreeUtils.findFirstSignalDataNode(detector);
-			System.out.println("Found " + link);
+			// TODO check also for 1st dataset rank > 2 ??
+			System.out.println("Data found: " + link);
 		} else {
 			link = detector.getNodeLink(dataName);
 		}
@@ -1030,7 +1031,7 @@ public class MillerSpaceMapper {
 		String sampleName = bean.getSampleName();
 		if (sampleName == null || sampleName.isEmpty()) {
 			link = NexusTreeUtils.findFirstNode(entry, NexusConstants.SAMPLE);
-			System.out.println("Found " + link);
+			System.out.println(NexusConstants.SAMPLE + " found: " + link);
 		} else {
 			link = entry.getNodeLink(sampleName);
 		}

@@ -1056,6 +1056,14 @@
             name="Subtract Calibrated Frame">
        </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.processing_operations"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractMatchedIntensityOperation"
+            icon="icons/minus.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractMatchedIntensityOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractMatchedIntensityModel"
+            name="Subtract Autoscaled Frame">
+       </operation>
+      <operation
             category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsDarkcurrentOperation"
             description="Calculate a darkcurrent from a given file and dataset"

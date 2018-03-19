@@ -1406,7 +1406,7 @@ public class NexusTreeUtils {
 				DataNode dataNode = node.getDataNode(NexusConstants.DATA_DATA);
 				if (dataNode == null) return null;
 				long[] shape = dataNode.getMaxShape();
-				DetectorProperties dp = new DetectorProperties(distanceMm, by*py, bx*px, (int)shape[shape.length-2], (int)shape[shape.length-1], py, px);
+				DetectorProperties dp = new DetectorProperties(distanceMm, bx*px, by*py, (int)shape[shape.length-2], (int)shape[shape.length-1], py, px);
 				
 				return dp;
 			}
@@ -1415,7 +1415,7 @@ public class NexusTreeUtils {
 			DataNode nyNode = node.getDataNode(DETECTOR_XPIXELNUMBER);
 			int ny = nyNode.getDataset().getSlice().getInt(0);
 			
-			DetectorProperties dp = new DetectorProperties(distanceMm, by*py, bx*px, nx, ny, py, px);
+			DetectorProperties dp = new DetectorProperties(distanceMm, bx*px, by*py, nx, ny, py, px);
 			
 			return dp;
 		} catch (Exception e) {

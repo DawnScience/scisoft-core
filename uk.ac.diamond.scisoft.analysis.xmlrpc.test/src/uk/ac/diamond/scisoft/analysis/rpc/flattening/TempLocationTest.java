@@ -13,8 +13,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -55,7 +55,7 @@ public class TempLocationTest {
 	 * Flatten a dataset and return the directory it was flattened to
 	 */
 	private File flattenDataSetAndReturnContainingFolder(IRootFlattener root) throws IOException {
-		Object flatten = root.flatten(DatasetFactory.createRange(100, Dataset.INT));
+		Object flatten = root.flatten(DatasetFactory.createRange(IntegerDataset.class, 100));
 		// check the internal form of Dataset to see where the file is
 		@SuppressWarnings("unchecked")
 		Map<String, Object> flatAD = (Map<String, Object>) flatten;

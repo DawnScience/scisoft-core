@@ -22,7 +22,6 @@ import os as _os
 if _os.name == 'java':
     import jython.jycore as _core #@UnusedImport
     import jython.jyio as _io #@UnusedImport
-    loadnexus = _io.loadnexus
 else:
     import python.pycore as _core #@Reimport
     import python.pyio as _io #@Reimport

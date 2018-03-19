@@ -104,16 +104,8 @@ axis_bottom = _axisop.BOTTOM
 axis_left = _axisop.LEFT
 axis_right = _axisop.RIGHT
 
-from jyio import h5manager as _h5mgr
-
 def plot_viewtree(name, tree):
-    if not isinstance(tree, _h5mgr):
-        import sys #@Reimport
-        print >> sys.stderr, "Only tree from loadnexus works for now"
-        return
-#        import jyhdf5io._tojavatree as _tojtree
-#        tree = _tojtree(tree)
-    _plotter.viewTree(name, tree.gettree())
+    _plotter.viewTree(name, tree._getnative())
 
 plot_volume = _plotter.volumePlot
 

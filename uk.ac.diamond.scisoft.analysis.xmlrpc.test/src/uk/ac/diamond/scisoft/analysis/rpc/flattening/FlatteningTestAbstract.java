@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -289,6 +290,24 @@ abstract public class FlatteningTestAbstract {
 	}
 
 	@Test
+	public void testOrderedMap() {
+		Map<String, Double> hashMap = new LinkedHashMap<>();
+		hashMap.put("pi", Math.PI);
+		hashMap.put("One", new Double(1));
+		flattenAndUnflatten(hashMap, hashMap, Map.class);
+
+		Map<String, Object> hashMap2 = new LinkedHashMap<>();
+		hashMap2.put("Integer", Integer.valueOf(0));
+		hashMap2.put("Integer", Integer.valueOf(100));
+		flattenAndUnflatten(hashMap2, hashMap2, Map.class);
+
+		Map<Object, Object> nonStringKeys = new LinkedHashMap<>();
+		nonStringKeys.put(Integer.valueOf(0), Integer.valueOf(0));
+		nonStringKeys.put(GuiParameters.FILENAME, "Filename");
+		flattenAndUnflatten(nonStringKeys, nonStringKeys, Map.class);
+	}
+
+	@Test
 	public void testObjectArrays() {
 		flattenAndUnflatten(new Object[] { new Double(1.2), new Integer(2) });
 
@@ -331,8 +350,8 @@ abstract public class FlatteningTestAbstract {
 		// class unflatten as an array of that super type. But when each element is the same implementation
 		// still unflatten to that implementation
 		// IDataset[]
-		IntegerDataset intDataset = (IntegerDataset) DatasetFactory.createRange(10, Dataset.INT);
-		DoubleDataset fltDataset = (DoubleDataset) DatasetFactory.createRange(10, Dataset.FLOAT);
+		IntegerDataset intDataset = DatasetFactory.createRange(IntegerDataset.class, 10);
+		DoubleDataset fltDataset = DatasetFactory.createRange(10);
 		flattenAndUnflatten(new IDataset[] { intDataset, fltDataset });
 		flattenAndUnflatten(new IntegerDataset[] { intDataset, intDataset });
 		// IROI[]
@@ -420,9 +439,9 @@ abstract public class FlatteningTestAbstract {
 	@Test
 	public void testDataBean() throws DataBeanException {
 		DataBean dataBean = new DataBean();
-		dataBean.addAxis(AxisMapBean.XAXIS, DatasetFactory.createRange(100, Dataset.INT));
-		dataBean.addAxis(AxisMapBean.XAXIS2, DatasetFactory.createRange(100, Dataset.FLOAT64));
-		dataBean.addData(DatasetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100, Dataset.INT)));
+		dataBean.addAxis(AxisMapBean.XAXIS, DatasetFactory.createRange(IntegerDataset.class, 100));
+		dataBean.addAxis(AxisMapBean.XAXIS2, DatasetFactory.createRange(100));
+		dataBean.addData(DatasetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(IntegerDataset.class, 100)));
 		flattenAndUnflatten(dataBean);
 
 		// Test that nexus tree data is removed
@@ -436,10 +455,10 @@ abstract public class FlatteningTestAbstract {
 	@Test
 	public void testDataset() throws Exception {
 		// flatten to an npy file implicitly
-		flattenAndUnflatten(DatasetFactory.createRange(100, Dataset.INT));
+		flattenAndUnflatten(DatasetFactory.createRange(IntegerDataset.class, 100));
 
 		// flatten a descriptor of a Dataset that unflattens to an abstract data set
-		Dataset ds = DatasetFactory.createRange(100, Dataset.INT);
+		Dataset ds = DatasetFactory.createRange(IntegerDataset.class, 100);
 		DataHolder dh = new DataHolder();
 		dh.addDataset("", ds);
 		File tempFile = File.createTempFile("scisofttmp-", ".npy");
@@ -574,17 +593,16 @@ abstract public class FlatteningTestAbstract {
 
 	@Test
 	public void testDatasetWithAxisInformation() {
-		DatasetWithAxisInformation ds = DatasetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100,
-				Dataset.INT));
+		DatasetWithAxisInformation ds = DatasetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(IntegerDataset.class, 100));
 		flattenAndUnflatten(ds);
 
-		ds = DatasetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100, Dataset.INT), "Hello");
+		ds = DatasetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(IntegerDataset.class, 100), "Hello");
 		flattenAndUnflatten(ds);
 
-		ds = DatasetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100, Dataset.INT), "Hello", "Goodbye");
+		ds = DatasetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(IntegerDataset.class, 100), "Hello", "Goodbye");
 		flattenAndUnflatten(ds);
 
-		ds = DatasetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(100, Dataset.INT), "Hello", null);
+		ds = DatasetWithAxisInformation.createAxisDataSet(DatasetFactory.createRange(IntegerDataset.class, 100), "Hello", null);
 		flattenAndUnflatten(ds);
 	}
 

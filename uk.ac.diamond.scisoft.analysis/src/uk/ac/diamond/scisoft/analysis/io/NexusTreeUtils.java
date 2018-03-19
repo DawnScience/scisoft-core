@@ -1514,7 +1514,7 @@ public class NexusTreeUtils {
 		return parseNodeShape(path, tree, tree.findNodeLink(dep), shape);
 	}
 
-	public static DiffractionSample parseSample(String path, Tree tree, int... pos) {
+	public static DiffractionSample parseSample(String path, Tree tree, boolean old, int... pos) {
 		NodeLink link = tree.findNodeLink(path);
 		if (link == null) {
 			logger.warn("'{}' could not be found", path);
@@ -1581,12 +1581,22 @@ public class NexusTreeUtils {
 		ftrans.putAll(mtrans);
 
 		UnitCell unitCell = parseUnitCell(gNode.getNodeLink("unit_cell"));
-		// TODO fix historic i16 files where orientation_matrix was really ub_matrix
-		Matrix3d ub = parseOrientationMatrix(gNode.getNodeLink("orientation_matrix"));
-		// remove orthogonalization to find orientation
-		Matrix3d u = new Matrix3d();
-		u.invert(new ReciprocalCell(unitCell).orthogonalization());
-		u.mul(ub, u);
+		Matrix3d u;
+		NodeLink l = gNode.getNodeLink("orientation_matrix");
+		if (l == null) {
+			l = gNode.getNodeLink("ub_matrix");
+			old = true;
+		}
+		if (old) {
+			// Historic i16 files have orientation_matrix was really ub_matrix
+			Matrix3d ub = parse3DMatrix(l);
+			// remove orthogonalization to find orientation
+			u = new Matrix3d();
+			u.invert(new ReciprocalCell(unitCell).orthogonalization());
+			u.mul(ub, u);
+		} else {
+			u = parse3DMatrix(l);
+		}
 
 		Matrix3d m3 = new Matrix3d();
 		NodeLink nl = gNode.getNodeLink(TRANSFORMATIONS_DEPENDSON);
@@ -1604,7 +1614,7 @@ public class NexusTreeUtils {
 		return new DiffractionSample(env, unitCell);
 	}
 
-	private static Matrix3d parseOrientationMatrix(NodeLink link) {
+	private static Matrix3d parse3DMatrix(NodeLink link) {
 		if (!link.isDestinationData()) {
 			logger.warn("'{}' was not a dataset", link.getName());
 			return null;

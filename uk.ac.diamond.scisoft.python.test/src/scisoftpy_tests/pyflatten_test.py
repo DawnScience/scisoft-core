@@ -208,11 +208,17 @@ class Test(unittest.TestCase):
         self._flattenAndUnflatten(dnp.rpc.binarywrapper("\0\1\2\3"))
         self._flattenAndUnflatten(dnp.rpc.binarywrapper(' ' * 0))
         self._flattenAndUnflatten(dnp.rpc.binarywrapper(' ' * 1000))
-    
+
     def testDict(self):
         self._flattenAndUnflatten({'moo': 'cow', 'quack': 'duck', 'pi': math.pi, 'One': 1.0}) 
         self._flattenAndUnflatten({'r1': self._createRectangularROI(), 's1': self._createSectorROI()})
         self._flattenAndUnflatten({1: 'one', 2.0: 'two point zero'})
+
+    def testODict(self):
+        from collections import OrderedDict as odict
+        self._flattenAndUnflatten(odict([('moo', 'cow'), ('quack', 'duck'), ('pi', math.pi), ('One', 1.0)])) 
+        self._flattenAndUnflatten(odict([('r1', self._createRectangularROI()), ('s1', self._createSectorROI())]))
+        self._flattenAndUnflatten(odict([(1, 'one'), (2.0, 'two point zero')]))
 
     def testListAndTuple(self):
         '''Lists and tuples are always unflattened as lists''' 
@@ -239,7 +245,6 @@ class Test(unittest.TestCase):
         '''TODO'''
         pass
 
-    
     def testGuiBean(self):
         bean = dnp.plot.bean()
         bean[dnp.plot.parameters.title] = "My amazing plot"

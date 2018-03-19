@@ -156,6 +156,7 @@ class datasetWithAxisInformationHelper(flatteningHelper):
             
 class dictHelper(flatteningHelper):
     TYPE_NAME = "java.util.Map"
+    ORDERED = "ordered"
     KEYS = "keys"
     VALUES = "values"
     
@@ -167,13 +168,16 @@ class dictHelper(flatteningHelper):
         rval[TYPE] = self.TYPE_NAME
         rval[self.KEYS] = []
         rval[self.VALUES] = []
+        from collections import OrderedDict
+        rval[self.ORDERED] = isinstance(thisDict, OrderedDict)
         for k, v in thisDict.iteritems():
             rval[self.KEYS].append(flatten(k))
             rval[self.VALUES].append(flatten(v))
         return rval
 
     def unflatten(self, thisDict):
-        rval = dict()
+        from collections import OrderedDict
+        rval = OrderedDict() if thisDict[self.ORDERED] else dict() 
         for k, v in zip(thisDict[self.KEYS], thisDict[self.VALUES]):
             rval[unflatten(k)] = unflatten(v)
         return rval

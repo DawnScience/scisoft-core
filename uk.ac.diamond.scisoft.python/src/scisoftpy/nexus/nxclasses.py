@@ -50,8 +50,8 @@ class NXroot(_tree):
     
     See the NXobject documentation for more details.
     '''
-    def __init__(self, filename, attrs={}):
-        _tree.__init__(self, filename, attrs)
+    def __init__(self, filename, attrs={}, native=None):
+        _tree.__init__(self, filename, attrs, native)
         self.nxname = self.__class__.__name__
 
     def init_group(self, nodes):

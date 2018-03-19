@@ -89,45 +89,6 @@ from scisoftpy.dictutils import DataHolder
 from jyhdf5io import HDF5Loader
 from jynxio import NXLoader
 
-from org.eclipse.dawnsci.analysis.api.tree import Tree as _tree
-from org.eclipse.dawnsci.analysis.api.tree import GroupNode as _gnode
-from org.eclipse.dawnsci.analysis.tree.impl import TreeFileImpl as _treefile
-
-class h5manager(object):
-    '''This holds a HDF5 tree and manages access to it. This provides
-    dictionary-like access to lists of datasets
-    '''
-    def __init__(self, tree):
-        '''Arguments:
-        tree -- HDF tree
-        '''
-        if isinstance(tree, _tree):
-            self.file = tree
-            self.grp = self.file.getGroupNode()
-        elif isinstance(tree, _gnode):
-            self.file = None
-            self.grp = tree
-        else:
-            raise ValueError, "Tree not a hdf5 file or hdf5 group"
-
-    def gettree(self):
-        if self.file is None:
-            t = _treefile(-1, "FakePlasticTree.h5")
-            t.setGroupNode(self.grp)
-            return t
-        return self.file
-
-    def __getitem__(self, key):
-        '''Return a list of datasets in tree whose names match given key'''
-        return asDatasetList(self.grp.getDatasets(key))
-
-def loadnexus(name):
-    '''Load a HDF5 file and return a HDF5 tree manager'''
-    import warnings
-    warnings.warn("This is deprecated, just use load and the returned tree's getnodes method")
-    h5loader = HDF5Loader(name)
-    return h5manager(h5loader._load_tree())
-
 class BareJavaLoader(object):
     def load(self, warn=True):
         # capture all error messages

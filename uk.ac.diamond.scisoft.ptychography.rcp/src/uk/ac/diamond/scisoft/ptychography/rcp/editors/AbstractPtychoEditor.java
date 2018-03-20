@@ -12,11 +12,15 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.TypedEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
@@ -30,6 +34,7 @@ import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoData;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoNode;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoTreeUtils;
 import uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferenceConstants;
+import uk.ac.diamond.scisoft.ptychography.rcp.ui.FolderSelectionWidget;
 import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoConstants;
 import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoUtils;
 
@@ -46,6 +51,9 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 	private InjectPyDevConsoleAction runPython;
 
 	private String fileSavedPath;
+	
+	private FolderSelectionWidget processDir;
+	private Text configName, scanNumber;
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input)
@@ -99,19 +107,42 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 
 				jsonSavedPath = saveJSon(fileSavedPath);
 				// reinject command
-				this.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd(jsonSavedPath));
+				//this.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd(jsonSavedPath));
+				this.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd(processDir.getText() + " " + configName.getText() + " " + scanNumber.getText()));
 				super.run();
 			}
 		};
+		
+		final Composite scriptBuilder = new Composite(parent, SWT.NONE);
+		scriptBuilder.setLayout(new GridLayout(7, false));
+		scriptBuilder.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false));
+		
+		processDir = new FolderSelectionWidget(scriptBuilder, false){
+			@Override
+			public void pathChanged(String path, TypedEvent event) {}
+		};
+		processDir.setLabel("Process Dir: ");
+		
+		Label configNameLbl = new Label(scriptBuilder, SWT.NONE);
+		configNameLbl.setText("Config: ");
+		configName = new Text(scriptBuilder, SWT.BORDER);
+		configName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		Label scanNumberLbl = new Label(scriptBuilder, SWT.NONE);
+		scanNumberLbl.setText("Scan: ");
+		scanNumber = new Text(scriptBuilder, SWT.BORDER);
+		scanNumber.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		
+		
 		runPython.setDataInjected(false);
 		runPython.setParameter(InjectPyDevConsole.CREATE_NEW_CONSOLE_PARAM, Boolean.TRUE.toString());
-		runPython.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd(jsonSavedPath));
+		//runPython.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd(jsonSavedPath));	// DOesn't work, so not sure what the point of this is... Probably need to add it into the run() method above
+		runPython.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd(processDir.getText() + " " + configName.getText() + " " + scanNumber.getText()));
 		ActionContributionItem aci = new ActionContributionItem(runPython);
-		aci.fill(parent);
+		aci.fill(scriptBuilder);
 		Button runButton = (Button) aci.getWidget();
 		runButton.setText("RUN");
 		runButton.setToolTipText("Run Ptychographic Iterative Engine process");
-		runButton.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false));
+		runButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 	}
 
 	private String getPythonCmd(String jsonSavedPath) {
@@ -120,7 +151,7 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 		IPreferenceStore store = Activator.getPtychoPreferenceStore();
 		String epiFolder = store.getString(PtychoPreferenceConstants.PIE_RESOURCE_PATH);
 		//pythonCmd.append(epiFolder + File.separator + "LaunchPtycho.py ");
-		pythonCmd.append(store.getString(PtychoPreferenceConstants.SCRIPT_TO_RUN_PATH) + " ");
+		pythonCmd.append(store.getString(PtychoPreferenceConstants.RECON_SCRIPT_PATH) + " ");
 		pythonCmd.append(jsonSavedPath);
 		pythonCmd.append("\n");
 		return pythonCmd.toString();

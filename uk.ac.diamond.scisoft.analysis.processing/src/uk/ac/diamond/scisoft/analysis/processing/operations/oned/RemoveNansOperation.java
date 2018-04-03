@@ -106,7 +106,7 @@ public class RemoveNansOperation extends AbstractOperation<EmptyModel, Operation
 			
 			if (!nanBooleans.getBoolean(index)) {
 				outputDataset.set(inputDataset.getObject(index), outputIndex);
-				outputErrors.set(outputDataset.getError(index), outputIndex);
+				outputErrors.set(inputDataset.getError(index), outputIndex);
 				
 				outputAxis.set(inputAxis.getObject(index), outputIndex);
 				outputIndex ++;

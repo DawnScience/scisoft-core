@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
@@ -30,7 +31,19 @@ public class SubtractCalibratedWithProcessing extends FrameMathsOperation<Subtra
 	public String getId() {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractCalibratedWithProcessing";
 	}
-
+	
+	// Now, how many dimensions of data are going in...
+	@Override
+	public OperationRank getInputRank() {
+		return OperationRank.ONE;
+	}
+	
+	// ...and out
+	@Override
+	public OperationRank getOutputRank() {
+		return OperationRank.ONE;
+	}
+	
 	@Override
 	protected Dataset getData(IDataset ds) {
 		OperationMetadata om = ds.getFirstMetadata(OperationMetadata.class);

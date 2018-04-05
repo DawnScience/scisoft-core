@@ -16,6 +16,7 @@ Require-Bundle: org.eclipse.ui,
  org.dawnsci.python.rpc,
  org.eclipse.january;bundle-version="1.0.0",
  org.eclipse.dawnsci.analysis.api,
+ uk.ac.diamond.scisoft.analysis.rcp,
  org.dawb.common.ui,
  org.eclipse.dawnsci.plotting.api;bundle-version="1.2.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

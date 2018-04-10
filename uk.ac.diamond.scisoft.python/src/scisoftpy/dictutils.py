@@ -146,7 +146,7 @@ class ListDict(object):
             key = self.__odict__.keys()[key]
 
         if type(key) is StringType or type(key) is UnicodeType:
-            if self.__inter__:
+            if self.__inter__ and key != 'metadata':
                 key = sanitise_name(key, False)
             return self.__odict__.__getitem__(key)
         else:

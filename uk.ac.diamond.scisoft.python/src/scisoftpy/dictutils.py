@@ -31,13 +31,13 @@ def _maketranslator():
 
 _translator = _maketranslator()
 
-_method_names = ['metadata', 'clear', 'popitem', 'has_key', 'keys', 'fromkeys', 'get', 'copy', 'setdefault', 'update', 'pop',
+_method_names = ['clear', 'popitem', 'has_key', 'keys', 'fromkeys', 'get', 'copy', 'setdefault', 'update', 'pop',
                  'values', 'items', 'iterkeys', 'itervalues', 'iteritems', 'append', 'extend', 'index', 'remove']
 
-def sanitise_name(text, warn=True):
+def sanitise_name(text, warn=True, include_meta=False):
     '''
     Sanitise name:
-        if text is metadata then prepend with an underscore
+        if text is dictionary method name then prepend with an underscore
         translate dodgy characters to underscores
         if text starts with a digit then prepend with an underscore
         if text is a reserved method name then prepend with an underscore
@@ -64,6 +64,10 @@ def sanitise_name(text, warn=True):
         sane = '_' + sane
         if warn:
             print "Warning in sanitising dict keys: '%s' is a reserved method name so prepending an underscore" % sane
+    elif include_meta and sane == 'metadata':
+        sane = '_metadata'
+        if warn:
+            print "Warning in sanitising dict keys: replacing 'metadata' with '_metadata'"
     if sane.startswith('__'):
         raise ValueError, "Cannot use a name that starts with double underscores: %s" % sane
 
@@ -78,7 +82,7 @@ def make_safe(items, warn=True):
         return []
 
     items = zip(*items) # transform to list of two tuples
-    keys = [sanitise_name(k, warn) for k in items[0]]
+    keys = [sanitise_name(k, warn, True) for k in items[0]]
     vals = items[1]
 
     lk = len(keys)
@@ -140,13 +144,15 @@ class ListDict(object):
         Key can be a number (integer) in which case return value at index of key list
         '''
         from types import StringType, IntType, UnicodeType
-        if type(key) is IntType:
+        kt = type(key)
+        if kt is IntType:
             if key > self.__odict__.__len__():
                 raise IndexError, 'Key was too large'
             key = self.__odict__.keys()[key]
+            kt = type(key)
 
-        if type(key) is StringType or type(key) is UnicodeType:
-            if self.__inter__ and key != 'metadata':
+        if kt is StringType or kt is UnicodeType:
+            if self.__inter__:
                 key = sanitise_name(key, False)
             return self.__odict__.__getitem__(key)
         else:
@@ -180,12 +186,14 @@ class ListDict(object):
         Key can be a number (integer) in which case set value at index of key list
         '''
         from types import StringType, IntType
-        if type(key) is IntType:
+        kt = type(key)
+        if kt is IntType:
             if key > len(self):
                 raise IndexError, "Key was too large"
             key = self.__odict__.keys()[key]
+            kt = type(key)
 
-        if type(key) is StringType:
+        if kt is StringType:
             if self.__inter__:
                 key = sanitise_name(key, False)
             self.__odict__.__delitem__(key)

@@ -19,6 +19,7 @@ import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.metadata.StatisticsMetadata;
 
 /**
  * This bean contains all the information required by a GUI to perform a plot,
@@ -100,6 +101,7 @@ public class DataBean implements Serializable {
 			// workaround deserialization problem where base is not set as it is transient
 			// this can cause NPEs when base is subsequently used
 			tmp = tmp.getSlice();
+			tmp.clearMetadata(StatisticsMetadata.class); // as the metadata implementation contains the dataset
 			tmp.setName(data.getName());
 		}
 		return tmp;

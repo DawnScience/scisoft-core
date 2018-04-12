@@ -1,10 +1,11 @@
-'''
+"""
 Created on Apr 5, 2010
 
 @author: Barthelemy Dagenais
-'''
+"""
 from __future__ import unicode_literals, absolute_import
 
+from contextlib import contextmanager
 from multiprocessing import Process
 import subprocess
 from threading import Thread
@@ -13,33 +14,68 @@ import unittest
 
 from py4j.compat import range
 from py4j.java_gateway import (
-    JavaGateway, PythonProxyPool, CallbackServerParameters)
+    JavaGateway, PythonProxyPool, CallbackServerParameters,
+    set_default_callback_accept_timeout, is_instance_of)
+from py4j.protocol import Py4JJavaError
 from py4j.tests.java_gateway_test import (
-    PY4J_JAVA_PATH, safe_shutdown, sleep, test_gateway_connection)
+    PY4J_JAVA_PATH, safe_shutdown, sleep, check_connection)
+
+
+set_default_callback_accept_timeout(0.125)
 
 
 def start_example_server():
-    subprocess.call(["java", "-cp", PY4J_JAVA_PATH,
+    subprocess.call([
+        "java", "-cp", PY4J_JAVA_PATH,
         "py4j.examples.ExampleApplication"])
 
 
+def start_no_mem_example_server():
+    subprocess.call([
+        "java", "-cp", PY4J_JAVA_PATH,
+        "py4j.examples.ExampleApplication$ExampleNoMemManagementApplication"])
+
+
+def start_python_entry_point_server():
+    subprocess.call([
+        "java", "-cp", PY4J_JAVA_PATH,
+        "py4j.examples.ExampleApplication$ExamplePythonEntryPointApplication"])
+
+
 def start_example_server2():
-    subprocess.call(["java", "-cp", PY4J_JAVA_PATH,
+    subprocess.call([
+        "java", "-cp", PY4J_JAVA_PATH,
         "py4j.examples.OperatorExampleTest"])
 
 
 def start_example_server3():
-    subprocess.call(["java", "-Xmx512m", "-cp", PY4J_JAVA_PATH,
+    subprocess.call([
+        "java", "-Xmx512m", "-cp", PY4J_JAVA_PATH,
         "py4j.examples.InterfaceExample"])
 
 
-def start_example_app_process():
+def start_example_app_process(app=None):
     # XXX DO NOT FORGET TO KILL THE PROCESS IF THE TEST DOES NOT SUCCEED
-    p = Process(target=start_example_server)
+    if not app:
+        target = start_example_server
+    elif app == "nomem":
+        target = start_no_mem_example_server
+    elif app == "pythonentrypoint":
+        target = start_python_entry_point_server
+    p = Process(target=target)
     p.start()
     sleep()
-    test_gateway_connection()
+    check_connection()
     return p
+
+
+@contextmanager
+def gateway_example_app_process(app=None):
+    p = start_example_app_process(app)
+    try:
+        yield p
+    finally:
+        p.join()
 
 
 def start_example_app_process2():
@@ -47,7 +83,7 @@ def start_example_app_process2():
     p = Process(target=start_example_server2)
     p.start()
     sleep()
-    test_gateway_connection()
+    check_connection()
     return p
 
 
@@ -56,20 +92,50 @@ def start_example_app_process3():
     p = Process(target=start_example_server3)
     p.start()
     sleep()
-    test_gateway_connection()
+    check_connection()
     return p
+
+
+class Returner(object):
+
+    def __init__(self, bad_type=False):
+        self.bad_type = bad_type
+
+    def getChar(self):
+        return "a"
+
+    def getFloat(self):
+        if self.bad_type:
+            return "abc"
+        else:
+            return 1.25
+
+    def getInt(self):
+        if self.bad_type:
+            return 1111111111111111111111111111
+        else:
+            return 25
+
+    def doNothing(self):
+        print("Doing nothing")
+
+    def getNull(self):
+        return None
+
+    class Java:
+        implements = ["py4j.examples.IReturnConverter"]
 
 
 class FalseAddition(object):
     def doOperation(self, i, j, k=None):
-        if k == None:
+        if k is None:
             # Integer overflow!
             return 3722507311
         else:
             return 3722507311
 
     class Java:
-        implements = ['py4j.examples.Operator']
+        implements = ["py4j.examples.Operator"]
 
 
 class GoodAddition(object):
@@ -77,7 +143,7 @@ class GoodAddition(object):
         return i + j
 
     class Java:
-        implements = ['py4j.examples.Operator']
+        implements = ["py4j.examples.Operator"]
 
 
 class CustomBytesOperator(object):
@@ -92,7 +158,7 @@ class CustomBytesOperator(object):
             return None
 
     class Java:
-        implements = ['py4j.examples.BytesOperator']
+        implements = ["py4j.examples.BytesOperator"]
 
 
 class Runner(Thread):
@@ -132,64 +198,200 @@ class TestPool(unittest.TestCase):
 
 class SimpleProxy(object):
     def hello(self, i, j):
-        return 'Hello\nWorld' + str(i) + str(j)
+        return "Hello\nWorld" + str(i) + str(j)
 
 
 class IHelloImpl(object):
     def sayHello(self, i=None, s=None):
-        if i == None:
-            return 'This is Hello!'
+        if i is None:
+            return "This is Hello!"
         else:
-            return 'This is Hello;\n{0}{1}'.format(i, s)
+            return "This is Hello;\n{0}{1}".format(i, s)
 
     class Java:
-        implements = ['py4j.examples.IHello']
+        implements = ["py4j.examples.IHello"]
 
 
-class TestIntegration(unittest.TestCase):
+class IHelloFailingImpl(object):
+    def __init__(self, exception):
+        self.exception = exception
+
+    def sayHello(self, i=None, s=None):
+        raise self.exception
+
+    class Java:
+        implements = ["py4j.examples.IHello"]
+
+
+class PythonEntryPointTest(unittest.TestCase):
+
+    def test_python_entry_point(self):
+        from py4j.tests.py4j_callback_recursive_example import (
+            HelloState)
+        hello_state = HelloState()
+        gateway = JavaGateway(
+            callback_server_parameters=CallbackServerParameters(),
+            python_server_entry_point=hello_state)
+
+        with gateway_example_app_process("pythonentrypoint"):
+            gateway.shutdown()
+
+        # Check that Java correctly called Python
+        self.assertEqual(2, len(hello_state.calls))
+        self.assertEqual((None, None), hello_state.calls[0])
+        self.assertEqual((2, "Hello World"), hello_state.calls[1])
+
+
+class NoMemManagementTest(unittest.TestCase):
+    def testGC(self):
+        with gateway_example_app_process("nomem"):
+            # This will only work with some JVM.
+            gateway = JavaGateway(
+                callback_server_parameters=CallbackServerParameters())
+            sleep()
+            example = gateway.entry_point.getNewExample()
+            impl = IHelloImpl()
+            self.assertEqual("This is Hello!", example.callHello(impl))
+            self.assertEqual(
+                "This is Hello;\n10MyMy!\n;",
+                example.callHello2(impl))
+            self.assertEqual(2, len(gateway.gateway_property.pool))
+
+            # Make sure that finalizers do not block
+            impl2 = IHelloImpl()
+            self.assertEqual("This is Hello!", example.callHello(impl2))
+            self.assertEqual(3, len(gateway.gateway_property.pool))
+
+            gateway.jvm.java.lang.System.gc()
+
+            # Leave time for sotimeout
+            sleep(3)
+            # Make sure the three objects have not been removed from the pool
+            # because the Java side should not send gc request.
+            self.assertEqual(len(gateway.gateway_property.pool), 3)
+            gateway.shutdown()
+
+
+class IntegrationTest(unittest.TestCase):
     def setUp(self):
-#        logger = logging.getLogger("py4j")
-#        logger.setLevel(logging.DEBUG)
-#        logger.addHandler(logging.StreamHandler())
         self.p = start_example_app_process()
         self.gateway = JavaGateway(
-            callback_server_parameters=CallbackServerParameters())
+            callback_server_parameters=CallbackServerParameters(
+                propagate_java_exceptions=True))
+        sleep()
 
     def tearDown(self):
         safe_shutdown(self)
         self.p.join()
         sleep()
 
-#    Does not work when combined with other tests... because of TCP_WAIT
+    # Does not work when combined with other tests... because of TCP_WAIT
     def testShutdown(self):
         example = self.gateway.entry_point.getNewExample()
         impl = IHelloImpl()
-        self.assertEqual('This is Hello!', example.callHello(impl))
-        self.assertEqual('This is Hello;\n10MyMy!\n;',
-                example.callHello2(impl))
+        self.assertEqual("This is Hello!", example.callHello(impl))
+        self.assertEqual(
+            "This is Hello;\n10MyMy!\n;",
+            example.callHello2(impl))
         self.gateway.shutdown()
         self.assertEqual(0, len(self.gateway.gateway_property.pool))
 
+    def testProxyReturnerFloatErrorTypeConversion(self):
+        sleep()
+        example = self.gateway.jvm.py4j.examples.ReturnerExample()
+        returner = Returner(bad_type=True)
+        self.assertRaises(
+            Py4JJavaError, example.computeFloat,
+            returner)
+
+    def testProxyReturnerIntOverflow(self):
+        sleep()
+        example = self.gateway.jvm.py4j.examples.ReturnerExample()
+        returner = Returner(bad_type=True)
+        self.assertRaises(
+            Py4JJavaError, example.computeInt,
+            returner)
+
+    def testProxyReturnerFloat(self):
+        sleep()
+        example = self.gateway.jvm.py4j.examples.ReturnerExample()
+        returner = Returner()
+        output = example.computeFloat(returner)
+        self.assertAlmostEqual(output, 1.25)
+
+    def testProxyReturnerChar(self):
+        sleep()
+        example = self.gateway.jvm.py4j.examples.ReturnerExample()
+        returner = Returner()
+        output = example.computeChar(returner)
+        self.assertEqual(output, "a")
+
+    def testProxyReturnerVoid(self):
+        sleep()
+        example = self.gateway.jvm.py4j.examples.ReturnerExample()
+        returner = Returner()
+        output = example.computeNothing(returner)
+        self.assertEqual(output, 1)
+
+    def testProxyReturnerNull(self):
+        sleep()
+        example = self.gateway.jvm.py4j.examples.ReturnerExample()
+        returner = Returner()
+        output = example.computeNull(returner)
+        self.assertEqual(output, None)
+
     def testProxy(self):
-#        self.gateway.jvm.py4j.GatewayServer.turnLoggingOn()
         sleep()
         example = self.gateway.entry_point.getNewExample()
         impl = IHelloImpl()
-        self.assertEqual('This is Hello!', example.callHello(impl))
-        self.assertEqual('This is Hello;\n10MyMy!\n;',
-                example.callHello2(impl))
+        self.assertEqual("This is Hello!", example.callHello(impl))
+        self.assertEqual(
+            "This is Hello;\n10MyMy!\n;",
+            example.callHello2(impl))
+
+    def testProxyError(self):
+        sleep()
+        example = self.gateway.entry_point.getNewExample()
+
+        try:
+            example.callHello(IHelloFailingImpl(
+                ValueError('My interesting Python exception')))
+            self.fail()
+        except Py4JJavaError as e:
+            self.assertTrue('interesting Python exception' in str(e))
+
+        try:
+            example.callHello(IHelloFailingImpl(
+                Py4JJavaError(
+                    '',
+                    self.gateway.jvm.java.lang.IllegalStateException(
+                        'My IllegalStateException'))))
+            self.fail()
+        except Py4JJavaError as e:
+            self.assertTrue(is_instance_of(
+                self.gateway, e.java_exception,
+                'java.lang.IllegalStateException'))
 
     def testGC(self):
         # This will only work with some JVM.
         sleep()
         example = self.gateway.entry_point.getNewExample()
         impl = IHelloImpl()
-        self.assertEqual('This is Hello!', example.callHello(impl))
-        self.assertEqual('This is Hello;\n10MyMy!\n;',
-                example.callHello2(impl))
+        self.assertEqual("This is Hello!", example.callHello(impl))
+        self.assertEqual(
+            "This is Hello;\n10MyMy!\n;",
+            example.callHello2(impl))
         self.assertEqual(2, len(self.gateway.gateway_property.pool))
+
+        # Make sure that finalizers do not block
+        impl2 = IHelloImpl()
+        self.assertEqual("This is Hello!", example.callHello(impl2))
+        self.assertEqual(3, len(self.gateway.gateway_property.pool))
+
         self.gateway.jvm.java.lang.System.gc()
-        sleep(1)
+
+        # Leave time for sotimeout
+        sleep(3)
         self.assertTrue(len(self.gateway.gateway_property.pool) < 2)
 
     def testDoubleCallbackServer(self):
@@ -211,11 +413,70 @@ class TestIntegration(unittest.TestCase):
         self.assertTrue(oe2 is not None)
 
 
-class TestPeriodicCleanup(unittest.TestCase):
+class NoPropagateTest(unittest.TestCase):
+    def setUp(self):
+        self.p = start_example_app_process()
+        self.gateway = JavaGateway(
+            callback_server_parameters=CallbackServerParameters(
+                propagate_java_exceptions=False))
+        sleep()
+
+    def tearDown(self):
+        safe_shutdown(self)
+        self.p.join()
+        sleep()
+
+    def testProxyError(self):
+        sleep()
+        example = self.gateway.entry_point.getNewExample()
+
+        try:
+            example.callHello(IHelloFailingImpl(
+                Py4JJavaError(
+                    '',
+                    self.gateway.jvm.java.lang.IllegalStateException(
+                        'My IllegalStateException'))))
+            self.fail()
+        except Py4JJavaError as e:
+            self.assertTrue(is_instance_of(
+                self.gateway, e.java_exception,
+                'py4j.Py4JException'))
+            self.assertTrue('My IllegalStateException' in str(e))
+
+
+class ResetCallbackClientTest(unittest.TestCase):
+    def setUp(self):
+        self.p = start_example_app_process()
+        self.gateway = JavaGateway(
+            callback_server_parameters=CallbackServerParameters(port=0))
+        sleep()
+
+    def tearDown(self):
+        safe_shutdown(self)
+        self.p.join()
+        sleep()
+
+    def testProxy(self):
+        sleep()
+        pythonAddress = self.gateway.java_gateway_server.getPythonAddress()
+        port = self.gateway.get_callback_server().get_listening_port()
+        self.gateway.java_gateway_server.resetCallbackClient(
+            pythonAddress, port)
+
+        example = self.gateway.entry_point.getNewExample()
+        impl = IHelloImpl()
+        self.assertEqual("This is Hello!", example.callHello(impl))
+        self.assertEqual(
+            "This is Hello;\n10MyMy!\n;",
+            example.callHello2(impl))
+
+
+class PeriodicCleanupTest(unittest.TestCase):
     def setUp(self):
         self.p = start_example_app_process2()
         self.gateway = JavaGateway(
             callback_server_parameters=CallbackServerParameters())
+        sleep()
 
     def tearDown(self):
         safe_shutdown(self)
@@ -244,7 +505,7 @@ class TestPeriodicCleanup(unittest.TestCase):
 
 class A(object):
     class Java:
-        implements = ['py4j.examples.InterfaceA']
+        implements = ["py4j.examples.InterfaceA"]
 
 
 class B(object):
@@ -252,7 +513,7 @@ class B(object):
         return A()
 
     class Java:
-        implements = ['py4j.examples.InterfaceB']
+        implements = ["py4j.examples.InterfaceB"]
 
 
 class InterfaceTest(unittest.TestCase):
@@ -260,6 +521,7 @@ class InterfaceTest(unittest.TestCase):
         self.p = start_example_app_process3()
         self.gateway = JavaGateway(
             callback_server_parameters=CallbackServerParameters())
+        sleep()
 
     def tearDown(self):
         safe_shutdown(self)
@@ -290,7 +552,7 @@ class InterfaceDeprecatedTest(unittest.TestCase):
             self.fail()
 
 
-class LazyStart(unittest.TestCase):
+class LazyStartTest(unittest.TestCase):
     def setUp(self):
         self.p = start_example_app_process3()
         self.gateway = JavaGateway(

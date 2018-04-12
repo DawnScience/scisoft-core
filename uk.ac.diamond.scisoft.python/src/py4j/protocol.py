@@ -1,4 +1,4 @@
-'''
+"""
 The protocol module defines the primitives and the escaping used by
 Py4J protocol.
 
@@ -15,19 +15,21 @@ names, etc.).
 Created on Oct 14, 2010
 
 :author: Barthelemy Dagenais
-'''
+"""
 from __future__ import unicode_literals, absolute_import
 
 from base64 import standard_b64encode, standard_b64decode
 
 from decimal import Decimal
 
-from py4j.compat import long, basestring, unicode, bytearray2,\
-        bytestr, isbytestr, isbytearray, ispython3bytestr, \
-        bytetoint, bytetostr, strtobyte
+from py4j.compat import (
+    long, basestring, unicode, bytearray2,
+    bytestr, isbytestr, isbytearray, ispython3bytestr,
+    bytetoint, bytetostr, strtobyte)
 
 
 JAVA_MAX_INT = 2147483647
+JAVA_MIN_INT = -2147483648
 
 JAVA_INFINITY = "Infinity"
 JAVA_NEGATIVE_INFINITY = "-Infinity"
@@ -37,128 +39,137 @@ JAVA_NAN = "NaN"
 ESCAPE_CHAR = "\\"
 
 # Entry point
-ENTRY_POINT_OBJECT_ID = 't'
-CONNECTION_PROPERTY_OBJECT_ID = 'c'
-STATIC_PREFIX = 'z:'
+ENTRY_POINT_OBJECT_ID = "t"
+CONNECTION_PROPERTY_OBJECT_ID = "c"
+GATEWAY_SERVER_OBJECT_ID = "GATEWAY_SERVER"
+STATIC_PREFIX = "z:"
 
 # JVM
-DEFAULT_JVM_ID = 'rj'
-DEFAULT_JVM_NAME = 'default'
+DEFAULT_JVM_ID = "rj"
+DEFAULT_JVM_NAME = "default"
 
 # Types
-BYTES_TYPE = 'j'
-INTEGER_TYPE = 'i'
-LONG_TYPE = 'L'
-BOOLEAN_TYPE = 'b'
-DOUBLE_TYPE = 'd'
-DECIMAL_TYPE = 'D'
-STRING_TYPE = 's'
-REFERENCE_TYPE = 'r'
-ARRAY_TYPE = 't'
-SET_TYPE = 'h'
-LIST_TYPE = 'l'
-MAP_TYPE = 'a'
-NULL_TYPE = 'n'
-PACKAGE_TYPE = 'p'
-CLASS_TYPE = 'c'
-METHOD_TYPE = 'm'
-NO_MEMBER = 'o'
-VOID_TYPE = 'v'
-ITERATOR_TYPE = 'g'
-PYTHON_PROXY_TYPE = 'f'
+BYTES_TYPE = "j"
+INTEGER_TYPE = "i"
+LONG_TYPE = "L"
+BOOLEAN_TYPE = "b"
+DOUBLE_TYPE = "d"
+DECIMAL_TYPE = "D"
+STRING_TYPE = "s"
+REFERENCE_TYPE = "r"
+ARRAY_TYPE = "t"
+SET_TYPE = "h"
+LIST_TYPE = "l"
+MAP_TYPE = "a"
+NULL_TYPE = "n"
+PACKAGE_TYPE = "p"
+CLASS_TYPE = "c"
+METHOD_TYPE = "m"
+NO_MEMBER = "o"
+VOID_TYPE = "v"
+ITERATOR_TYPE = "g"
+PYTHON_PROXY_TYPE = "f"
 
 # Protocol
-END = 'e'
-ERROR = 'x'
-SUCCESS = 'y'
+END = "e"
+ERROR = "x"
+FATAL_ERROR = "z"
+SUCCESS = "y"
+RETURN_MESSAGE = "!"
 
 
 # Shortcuts
 SUCCESS_PACKAGE = SUCCESS + PACKAGE_TYPE
 SUCCESS_CLASS = SUCCESS + CLASS_TYPE
 CLASS_FQN_START = 2
-END_COMMAND_PART = END + '\n'
+END_COMMAND_PART = END + "\n"
 NO_MEMBER_COMMAND = SUCCESS + NO_MEMBER
 
 # Commands
-CALL_COMMAND_NAME = 'c\n'
-FIELD_COMMAND_NAME = 'f\n'
-CONSTRUCTOR_COMMAND_NAME = 'i\n'
-SHUTDOWN_GATEWAY_COMMAND_NAME = 's\n'
-LIST_COMMAND_NAME = 'l\n'
+CALL_COMMAND_NAME = "c\n"
+FIELD_COMMAND_NAME = "f\n"
+CONSTRUCTOR_COMMAND_NAME = "i\n"
+SHUTDOWN_GATEWAY_COMMAND_NAME = "s\n"
+LIST_COMMAND_NAME = "l\n"
 REFLECTION_COMMAND_NAME = "r\n"
 MEMORY_COMMAND_NAME = "m\n"
-HELP_COMMAND_NAME = 'h\n'
+HELP_COMMAND_NAME = "h\n"
 ARRAY_COMMAND_NAME = "a\n"
 JVMVIEW_COMMAND_NAME = "j\n"
 EXCEPTION_COMMAND_NAME = "p\n"
 DIR_COMMAND_NAME = "d\n"
+STREAM_COMMAND_NAME = "S\n"
 
 # Array subcommands
-ARRAY_GET_SUB_COMMAND_NAME = 'g\n'
-ARRAY_SET_SUB_COMMAND_NAME = 's\n'
-ARRAY_SLICE_SUB_COMMAND_NAME = 'l\n'
-ARRAY_LEN_SUB_COMMAND_NAME = 'e\n'
-ARRAY_CREATE_SUB_COMMAND_NAME = 'c\n'
+ARRAY_GET_SUB_COMMAND_NAME = "g\n"
+ARRAY_SET_SUB_COMMAND_NAME = "s\n"
+ARRAY_SLICE_SUB_COMMAND_NAME = "l\n"
+ARRAY_LEN_SUB_COMMAND_NAME = "e\n"
+ARRAY_CREATE_SUB_COMMAND_NAME = "c\n"
 
 # Reflection subcommands
-REFL_GET_UNKNOWN_SUB_COMMAND_NAME = 'u\n'
-REFL_GET_MEMBER_SUB_COMMAND_NAME = 'm\n'
+REFL_GET_UNKNOWN_SUB_COMMAND_NAME = "u\n"
+REFL_GET_MEMBER_SUB_COMMAND_NAME = "m\n"
+REFL_GET_JAVA_LANG_CLASS_SUB_COMMAND_NAME = "c\n"
 
 
 # List subcommands
-LIST_SORT_SUBCOMMAND_NAME = 's\n'
-LIST_REVERSE_SUBCOMMAND_NAME = 'r\n'
-LIST_SLICE_SUBCOMMAND_NAME = 'l\n'
-LIST_CONCAT_SUBCOMMAND_NAME = 'a\n'
-LIST_MULT_SUBCOMMAND_NAME = 'm\n'
-LIST_IMULT_SUBCOMMAND_NAME = 'i\n'
-LIST_COUNT_SUBCOMMAND_NAME = 'f\n'
+LIST_SORT_SUBCOMMAND_NAME = "s\n"
+LIST_REVERSE_SUBCOMMAND_NAME = "r\n"
+LIST_SLICE_SUBCOMMAND_NAME = "l\n"
+LIST_CONCAT_SUBCOMMAND_NAME = "a\n"
+LIST_MULT_SUBCOMMAND_NAME = "m\n"
+LIST_IMULT_SUBCOMMAND_NAME = "i\n"
+LIST_COUNT_SUBCOMMAND_NAME = "f\n"
 
 # Field subcommands
-FIELD_GET_SUBCOMMAND_NAME = 'g\n'
-FIELD_SET_SUBCOMMAND_NAME = 's\n'
+FIELD_GET_SUBCOMMAND_NAME = "g\n"
+FIELD_SET_SUBCOMMAND_NAME = "s\n"
 
 # Memory subcommands
-MEMORY_DEL_SUBCOMMAND_NAME = 'd\n'
-MEMORY_ATTACH_SUBCOMMAND_NAME = 'a\n'
+MEMORY_DEL_SUBCOMMAND_NAME = "d\n"
+MEMORY_ATTACH_SUBCOMMAND_NAME = "a\n"
 
 # Help subcommands
-HELP_OBJECT_SUBCOMMAND_NAME = 'o\n'
-HELP_CLASS_SUBCOMMAND_NAME = 'c\n'
+HELP_OBJECT_SUBCOMMAND_NAME = "o\n"
+HELP_CLASS_SUBCOMMAND_NAME = "c\n"
 
 # JVM subcommands
-JVM_CREATE_VIEW_SUB_COMMAND_NAME = 'c\n'
-JVM_IMPORT_SUB_COMMAND_NAME = 'i\n'
-JVM_SEARCH_SUB_COMMAND_NAME = 's\n'
-REMOVE_IMPORT_SUB_COMMAND_NAME = 'r\n'
+JVM_CREATE_VIEW_SUB_COMMAND_NAME = "c\n"
+JVM_IMPORT_SUB_COMMAND_NAME = "i\n"
+JVM_SEARCH_SUB_COMMAND_NAME = "s\n"
+REMOVE_IMPORT_SUB_COMMAND_NAME = "r\n"
 
 # Callback specific
-PYTHON_PROXY_PREFIX = 'p'
-ERROR_RETURN_MESSAGE = ERROR + '\n'
+PYTHON_PROXY_PREFIX = "p"
+ERROR_RETURN_MESSAGE = RETURN_MESSAGE + ERROR + NULL_TYPE + "\n"
+SUCCESS_RETURN_MESSAGE = RETURN_MESSAGE + SUCCESS + "\n"
 
-CALL_PROXY_COMMAND_NAME = 'c'
-GARBAGE_COLLECT_PROXY_COMMAND_NAME = 'g'
+CALL_PROXY_COMMAND_NAME = "c"
+GARBAGE_COLLECT_PROXY_COMMAND_NAME = "g"
 
 # Dir subcommands
-DIR_FIELDS_SUBCOMMAND_NAME = 'f\n'
-DIR_METHODS_SUBCOMMAND_NAME = 'm\n'
-DIR_STATIC_SUBCOMMAND_NAME = 's\n'
-DIR_JVMVIEW_SUBCOMMAND_NAME = 'v\n'
+DIR_FIELDS_SUBCOMMAND_NAME = "f\n"
+DIR_METHODS_SUBCOMMAND_NAME = "m\n"
+DIR_STATIC_SUBCOMMAND_NAME = "s\n"
+DIR_JVMVIEW_SUBCOMMAND_NAME = "v\n"
 
-OUTPUT_CONVERTER = {NULL_TYPE: (lambda x, y: None),
-              BOOLEAN_TYPE: (lambda value, y: value.lower() == 'true'),
-              LONG_TYPE: (lambda value, y: long(value)),
-              DECIMAL_TYPE: (lambda value, y: Decimal(value)),
-              INTEGER_TYPE: (lambda value, y: int(value)),
-              BYTES_TYPE: (lambda value, y: decode_bytearray(value)),
-              DOUBLE_TYPE: (lambda value, y: float(value)),
-              STRING_TYPE: (lambda value, y: unescape_new_line(value)),
-              LIST_TYPE: (lambda value, y: decode_list(value)),
-              MAP_TYPE: (lambda value, y: decode_map(value))
-              }
+OUTPUT_CONVERTER = {
+    NULL_TYPE: (lambda x, y: None),
+    BOOLEAN_TYPE: (lambda value, y: value.lower() == "true"),
+    LONG_TYPE: (lambda value, y: long(value)),
+    DECIMAL_TYPE: (lambda value, y: Decimal(value)),
+    INTEGER_TYPE: (lambda value, y: int(value)),
+    BYTES_TYPE: (lambda value, y: decode_bytearray(value)),
+    DOUBLE_TYPE: (lambda value, y: float(value)),
+    STRING_TYPE: (lambda value, y: unescape_new_line(value)),
+}
 
 INPUT_CONVERTER = []
+
+# ERRORS
+ERROR_ON_SEND = "on_send"
+ERROR_ON_RECEIVE = "on_receive"
 
 
 def escape_new_line(original):
@@ -170,8 +181,8 @@ def escape_new_line(original):
 
     :rtype: an escaped string
     """
-    return smart_decode(original).replace('\\', '\\\\').replace('\r', '\\r').\
-            replace('\n', '\\n')
+    return smart_decode(original).replace("\\", "\\\\").replace("\r", "\\r").\
+        replace("\n", "\\n")
 
 
 def unescape_new_line(escaped):
@@ -186,9 +197,9 @@ def unescape_new_line(escaped):
     :rtype: the original string
     """
     return ESCAPE_CHAR.join(
-        '\n'.join(
-            ('\r'.join(p.split(ESCAPE_CHAR + 'r')))
-            .split(ESCAPE_CHAR + 'n'))
+        "\n".join(
+            ("\r".join(p.split(ESCAPE_CHAR + "r")))
+            .split(ESCAPE_CHAR + "n"))
         for p in escaped.split(ESCAPE_CHAR + ESCAPE_CHAR))
 
 
@@ -197,13 +208,13 @@ def smart_decode(s):
         return s
     elif isinstance(s, bytestr):
         # Should never reach this case in Python 3
-        return unicode(s, 'utf-8')
+        return unicode(s, "utf-8")
     else:
         return unicode(s)
 
 
 def encode_float(float_value):
-    float_str = smart_decode(float_value)
+    float_str = smart_decode(repr(float_value))
     if float_str == "-inf":
         float_str = JAVA_NEGATIVE_INFINITY
     elif float_str == "inf":
@@ -225,48 +236,6 @@ def decode_bytearray(encoded):
     new_bytes = strtobyte(encoded)
     return bytearray2([bytetoint(b) for b in standard_b64decode(new_bytes)])
 
-def encode_list(llist): # TODO Use JSON?
-
-    ret = ''
-    for item in llist:
-        ret+=get_command_part(item, appendNewLine=False)
-        ret+="#$_LISTSEP_$#"  # Yuck
-
-    return ret
-
-def decode_list(encoded): # TODO Use JSON?
-
-    ret = []
-    tmp = encoded.split("#$_LISTSEP_$#") # Still Yuck
-    for answer in tmp:
-
-        ret.append(get_return_value(answer, gateway_client, None, None))
-
-    return ret
-
-def encode_map(map): # TODO Use JSON?
-
-    ret = ''
-    for key in map:
-        ret+=get_command_part(key, appendNewLine=False)
-        ret+="#$_MAPSEP_$#"  # Yuck
-        ret+=get_command_part(map[key], appendNewLine=False)
-        ret+="#$_LISTSEP_$#"  # Yuck
-
-    return ret
-
-def decode_map(encoded): # TODO Use JSON?
-
-    ret = {}
-    tmp = encoded.split("#$_LISTSEP_$#") # Still Yuck
-    for line in tmp:
-        kv = line.split("#$_MAPSEP_$#")
-        key = get_return_value(kv[0], gateway_client, None, None)
-        val = get_return_value(kv[1], gateway_client, None, None)
-        ret[key] = val
-
-    return ret
-
 
 def is_python_proxy(parameter):
     """Determines whether parameter is a Python Proxy, i.e., it has a Java
@@ -283,24 +252,25 @@ def is_python_proxy(parameter):
     return is_proxy
 
 
-def get_command_part(parameter, python_proxy_pool=None, appendNewLine=True):
+def get_command_part(parameter, python_proxy_pool=None):
     """Converts a Python object into a string representation respecting the
     Py4J protocol.
 
-    For example, the integer `1` is converted to `u'i1'`
+    For example, the integer `1` is converted to `u"i1"`
 
     :param parameter: the object to convert
     :rtype: the string representing the command part
     """
-    command_part = ''
+    command_part = ""
 
-    if parameter == None:
+    if parameter is None:
         command_part = NULL_TYPE
     elif isinstance(parameter, bool):
         command_part = BOOLEAN_TYPE + smart_decode(parameter)
     elif isinstance(parameter, Decimal):
         command_part = DECIMAL_TYPE + smart_decode(parameter)
-    elif isinstance(parameter, int) and parameter <= JAVA_MAX_INT:
+    elif isinstance(parameter, int) and parameter <= JAVA_MAX_INT\
+            and parameter >= JAVA_MIN_INT:
         command_part = INTEGER_TYPE + smart_decode(parameter)
     elif isinstance(parameter, long) or isinstance(parameter, int):
         command_part = LONG_TYPE + smart_decode(parameter)
@@ -312,24 +282,14 @@ def get_command_part(parameter, python_proxy_pool=None, appendNewLine=True):
         command_part = BYTES_TYPE + encode_bytearray(parameter)
     elif isinstance(parameter, basestring):
         command_part = STRING_TYPE + escape_new_line(parameter)
-    elif isinstance(parameter, list):
-        command_part = LIST_TYPE + encode_list(parameter)
-    elif isinstance(parameter, dict):
-        command_part = MAP_TYPE + encode_map(parameter)
     elif is_python_proxy(parameter):
         command_part = PYTHON_PROXY_TYPE + python_proxy_pool.put(parameter)
         for interface in parameter.Java.implements:
-            command_part += ';' + interface
+            command_part += ";" + interface
     else:
         command_part = REFERENCE_TYPE + parameter._get_object_id()
 
-    if appendNewLine:
-        command_part += '\n'
-
-    #print('THIS IS GOING OUT: {0}'.format(command_part))
-    #print(type(command_part))
-    #for c in command_part:
-        #print(ord(c))
+    command_part += "\n"
 
     return command_part
 
@@ -356,16 +316,16 @@ def get_return_value(answer, gateway_client, target_id=None, name=None):
             value = OUTPUT_CONVERTER[type](answer[2:], gateway_client)
             if answer[1] == REFERENCE_TYPE:
                 raise Py4JJavaError(
-                    'An error occurred while calling {0}{1}{2}.\n'.
-                    format(target_id, '.', name), value)
+                    "An error occurred while calling {0}{1}{2}.\n".
+                    format(target_id, ".", name), value)
             else:
                 raise Py4JError(
-                    'An error occurred while calling {0}{1}{2}. Trace:\n{3}\n'.
-                    format(target_id, '.', name, value))
+                    "An error occurred while calling {0}{1}{2}. Trace:\n{3}\n".
+                    format(target_id, ".", name, value))
         else:
             raise Py4JError(
-                    'An error occurred while calling {0}{1}{2}'.
-                    format(target_id, '.', name))
+                "An error occurred while calling {0}{1}{2}".
+                format(target_id, ".", name))
     else:
         type = answer[1]
         if type == VOID_TYPE:
@@ -381,8 +341,16 @@ def is_error(answer):
         return (False, None)
 
 
+def is_fatal_error(answer):
+    return answer and len(answer) > 0 and answer[0] == FATAL_ERROR
+
+
 def register_output_converter(output_type, converter):
     """Registers an output converter to the list of global output converters.
+
+    An output converter transforms the output of the Java side to an instance
+    on the Python side. For example, you could transform a java.util.ArrayList
+    to a Python list. See ``py4j.java_collections`` for examples.
 
     :param output_type: A Py4J type of a return object (e.g., MAP_TYPE,
         BOOLEAN_TYPE).
@@ -394,8 +362,13 @@ def register_output_converter(output_type, converter):
     OUTPUT_CONVERTER[output_type] = converter
 
 
-def register_input_converter(converter):
+def register_input_converter(converter, prepend=False):
     """Registers an input converter to the list of global input converters.
+
+    An input converter transforms the input of the Python side to an instance
+    on the Java side. For example, you could transform a Python list into a
+    java.util.ArrayList on the Java side. See ``py4j.java_collections`` for
+    examples.
 
     When initialized with `auto_convert=True`, a :class:`JavaGateway
     <py4j.java_gateway.JavaGateway>` will use the input converters on any
@@ -404,20 +377,30 @@ def register_input_converter(converter):
 
     :param converter: A converter that declares the methods
         `can_convert(object)` and `convert(object,gateway_client)`.
+    :param prepend: Put at the beginning of the input converters list
 
     """
     global INPUT_CONVERTER
-    INPUT_CONVERTER.append(converter)
+    if prepend:
+        INPUT_CONVERTER.insert(0, converter)
+    else:
+        INPUT_CONVERTER.append(converter)
 
 
 class Py4JError(Exception):
     """Exception raised when a problem occurs with Py4J."""
-    pass
+
+    def __init__(self, args=None, cause=None):
+        super(Py4JError, self).__init__(args)
+        self.cause = cause
 
 
 class Py4JNetworkError(Py4JError):
     """Exception raised when a network error occurs with Py4J."""
-    pass
+    def __init__(self, args=None, cause=None, when=None):
+        super(Py4JNetworkError, self).__init__(args)
+        self.cause = cause
+        self.when = when
 
 
 class Py4JJavaError(Py4JError):
@@ -435,10 +418,10 @@ class Py4JJavaError(Py4JError):
         self.errmsg = msg
         self.java_exception = java_exception
         self.exception_cmd = EXCEPTION_COMMAND_NAME + REFERENCE_TYPE + \
-                java_exception._target_id + '\n' + END_COMMAND_PART
+            java_exception._target_id + "\n" + END_COMMAND_PART
 
     def __str__(self):
         gateway_client = self.java_exception._gateway_client
         answer = gateway_client.send_command(self.exception_cmd)
         return_value = get_return_value(answer, gateway_client, None, None)
-        return '{0}: {1}'.format(self.errmsg, return_value)
+        return "{0}: {1}".format(self.errmsg, return_value)

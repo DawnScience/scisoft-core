@@ -1,2 +1,4 @@
 eclipse.preferences.version=1
+encoding//bin/py4j/backport.py=utf-8
+encoding//bin/py4j/compat.py=utf-8
 encoding/<project>=UTF-8

@@ -174,6 +174,7 @@ public class LoaderFactory {
 		    registerLoader("dawn", DAWNLinkLoader.class);
 		    registerLoader("jcpds", JCPDSLoader.class);
 		    registerLoader("xrmc", XRMCLoader.class);
+		    registerLoader("xdi", XDILoader.class);
 
 		    registerUnzip("gz",  GZIPInputStream.class);
 		    registerUnzip("zip", ZipInputStream.class);

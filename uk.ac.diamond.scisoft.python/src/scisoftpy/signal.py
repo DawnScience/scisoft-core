@@ -20,6 +20,6 @@ Signal processing package
 
 import os
 if os.name == 'java':
-    from jython.jysignal import * #@UnusedWildImport
+    from .jython.jysignal import * #@UnusedWildImport
 else:
-    from python.pysignal import * #@UnusedWildImport
+    from .python.pysignal import * #@UnusedWildImport

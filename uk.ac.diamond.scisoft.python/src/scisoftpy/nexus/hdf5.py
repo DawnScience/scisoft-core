@@ -18,6 +18,7 @@
 '''
 
 from scisoftpy.dictutils import ListDict as _ldict
+import six
 
 class HDF5node(object):
     def __init__(self, attrs={}, parent=None):
@@ -84,8 +85,7 @@ class HDF5group(_ldict, HDF5node):
         HDF5node.__init__(self, attrs, parent)
 
     def __getitem__(self, key):
-        from types import StringType
-        if type(key) is StringType:
+        if isinstance(key, six.string_types):
             return self.__findnode(key)
         return _ldict.__getitem__(self, key)
 
@@ -108,7 +108,7 @@ class HDF5group(_ldict, HDF5node):
                     if p is not None:
                         g = p
                     else:
-                        raise KeyError, "No parent exists"
+                        raise KeyError("No parent exists")
                 elif n == "" or n == ".":
                     pass
                 else:
@@ -123,7 +123,7 @@ class HDF5group(_ldict, HDF5node):
             if p is not None:
                 return p
             else:
-                raise KeyError, "No parent exists"
+                raise KeyError("No parent exists")
         elif key == '.':
             return self
 

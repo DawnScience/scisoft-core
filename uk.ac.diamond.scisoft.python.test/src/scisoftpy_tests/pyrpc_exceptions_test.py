@@ -21,7 +21,8 @@ Created on 1 May 2011
 '''
 import unittest
 import scisoftpy.python.pyrpc as rpc
-import thread
+from six.moves import _thread
+
 
 PORT = 8714
 
@@ -31,7 +32,7 @@ class Test(unittest.TestCase):
     def setUp(self):
         self.rpcserver = rpc.rpcserver(PORT)
         self.rpcserver.add_handler("cat", lambda s1, s2: s1 + s2)
-        thread.start_new_thread(self.rpcserver.serve_forever, ())
+        _thread.start_new_thread(self.rpcserver.serve_forever, ())
         
         self.rpcclient = rpc.rpcclient(PORT)
 
@@ -57,8 +58,8 @@ class Test(unittest.TestCase):
         self.assertRaises(Exception, self.rpcclient.cat_invalid, ("Hello",))
         try:
             self.rpcclient.cat_invalid("Hello")
-        except Exception, e:
-            self.assertEquals("Exception: No handler registered for cat_invalid", e.args[0])
+        except Exception as e:
+            self.assertEqual("Exception: No handler registered for cat_invalid", e.args[0])
 
 def suite():
     suite = unittest.TestSuite()

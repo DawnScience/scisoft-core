@@ -35,9 +35,9 @@ Classes available:
 
 import os
 if os.name == 'java':
-    import jython.jyroi as _roi #@UnusedImport
+    from .jython import jyroi as _roi #@UnusedImport
 else:
-    import python.pyroi as _roi #@Reimport
+    from .python import pyroi as _roi #@Reimport
 
  
 

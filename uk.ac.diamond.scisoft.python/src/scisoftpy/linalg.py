@@ -16,6 +16,6 @@
 
 import os
 if os.name == 'java':
-    from jython.jylinalg import * #@UnusedWildImport
+    from .jython.jylinalg import * #@UnusedWildImport
 else:
     from numpy.linalg import *

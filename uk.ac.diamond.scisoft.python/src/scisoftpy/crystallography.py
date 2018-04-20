@@ -20,4 +20,4 @@ Crystallography package
 
 import os
 if os.name == 'java':
-    from jython.jycrystallography import * #@UnusedWildImport
+    from .jython.jycrystallography import * #@UnusedWildImport

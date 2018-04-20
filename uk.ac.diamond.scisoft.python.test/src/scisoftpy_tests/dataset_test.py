@@ -21,11 +21,15 @@ Test dataset methods
 import unittest
 unittest.TestProgram(argv=["dataset_test"])
 '''
+
+from __future__ import print_function, division
+
 import unittest
 
 import scisoftpy as np
 
 import os
+import six
 isjava = os.name == 'java'
 
 def toInt(o):
@@ -64,139 +68,139 @@ class Test(unittest.TestCase):
     def checkitems(self, la, ds, convert=toAny):
         if ds.ndim == 1:
             for i in range(ds.shape[0]):
-                self.assertEquals(convert(la[i]), ds[i])
+                self.assertEqual(convert(la[i]), ds[i])
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
-                    self.assertEquals(convert(la[i][j]), ds[i, j])
+                    self.assertEqual(convert(la[i][j]), ds[i, j])
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
                     for k in range(ds.shape[2]):
-                        self.assertEquals(convert(la[i][j][k]), ds[i, j, k])
+                        self.assertEqual(convert(la[i][j][k]), ds[i, j, k])
 
     def testZeros(self): # make new datasets with zeros
-        print "test zeros"
+        print("test zeros")
         dds = np.zeros(3, dtype=np.float)
         if isjava:
-            self.assertEquals(1, dds.dtype.elements)
-        self.assertEquals(1, dds.ndim)
-        self.assertEquals(3, dds.shape[0])
-        self.assertEquals(0, dds[0])
+            self.assertEqual(1, dds.dtype.elements)
+        self.assertEqual(1, dds.ndim)
+        self.assertEqual(3, dds.shape[0])
+        self.assertEqual(0, dds[0])
         dds = np.zeros((2,3), dtype=np.float)
         if isjava:
-            self.assertEquals(1, dds.dtype.elements)
-        self.assertEquals(2, dds.ndim)
-        self.assertEquals(2, dds.shape[0])
-        self.assertEquals(3, dds.shape[1])
-        self.assertEquals(0, dds[0,0])
+            self.assertEqual(1, dds.dtype.elements)
+        self.assertEqual(2, dds.ndim)
+        self.assertEqual(2, dds.shape[0])
+        self.assertEqual(3, dds.shape[1])
+        self.assertEqual(0, dds[0,0])
         dds = np.zeros_like(dds)
         if isjava:
-            self.assertEquals(1, dds.dtype.elements)
-        self.assertEquals(2, dds.ndim)
-        self.assertEquals(2, dds.shape[0])
-        self.assertEquals(3, dds.shape[1])
-        self.assertEquals(0, dds[0,0])
+            self.assertEqual(1, dds.dtype.elements)
+        self.assertEqual(2, dds.ndim)
+        self.assertEqual(2, dds.shape[0])
+        self.assertEqual(3, dds.shape[1])
+        self.assertEqual(0, dds[0,0])
 
     def testOnes(self): # make new datasets with ones
-        print "test ones"
+        print("test ones")
         dds = np.ones(3, dtype=np.float)
         if isjava:
-            self.assertEquals(1, dds.dtype.elements)
-        self.assertEquals(1, dds.ndim)
-        self.assertEquals(3, dds.shape[0])
-        self.assertEquals(1, dds[0])
+            self.assertEqual(1, dds.dtype.elements)
+        self.assertEqual(1, dds.ndim)
+        self.assertEqual(3, dds.shape[0])
+        self.assertEqual(1, dds[0])
         dds = np.ones((2,3), np.float)
         if isjava:
-            self.assertEquals(1, dds.dtype.elements)
-        self.assertEquals(2, dds.ndim)
-        self.assertEquals(2, dds.shape[0])
-        self.assertEquals(3, dds.shape[1])
-        self.assertEquals(1, dds[0,0])
+            self.assertEqual(1, dds.dtype.elements)
+        self.assertEqual(2, dds.ndim)
+        self.assertEqual(2, dds.shape[0])
+        self.assertEqual(3, dds.shape[1])
+        self.assertEqual(1, dds[0,0])
         dds = np.ones_like(dds)
         if isjava:
-            self.assertEquals(1, dds.dtype.elements)
-        self.assertEquals(2, dds.ndim)
-        self.assertEquals(2, dds.shape[0])
-        self.assertEquals(3, dds.shape[1])
-        self.assertEquals(1, dds[0,0])
+            self.assertEqual(1, dds.dtype.elements)
+        self.assertEqual(2, dds.ndim)
+        self.assertEqual(2, dds.shape[0])
+        self.assertEqual(3, dds.shape[1])
+        self.assertEqual(1, dds[0,0])
 
     def testTwos(self): # make new datasets with twos
-        print "test twos"
+        print("test twos")
         dds = np.full(3, 2.)
         if isjava:
-            self.assertEquals(1, dds.dtype.elements)
-        self.assertEquals(np.float64, dds.dtype)
-        self.assertEquals(1, dds.ndim)
-        self.assertEquals(3, dds.shape[0])
-        self.assertEquals(2., dds[0])
+            self.assertEqual(1, dds.dtype.elements)
+        self.assertEqual(np.float64, dds.dtype)
+        self.assertEqual(1, dds.ndim)
+        self.assertEqual(3, dds.shape[0])
+        self.assertEqual(2., dds[0])
         dds = np.full((2,3), 2.)
         if isjava:
-            self.assertEquals(1, dds.dtype.elements)
-        self.assertEquals(np.float64, dds.dtype)
-        self.assertEquals(2, dds.ndim)
-        self.assertEquals(2, dds.shape[0])
-        self.assertEquals(3, dds.shape[1])
-        self.assertEquals(2., dds[0,0])
+            self.assertEqual(1, dds.dtype.elements)
+        self.assertEqual(np.float64, dds.dtype)
+        self.assertEqual(2, dds.ndim)
+        self.assertEqual(2, dds.shape[0])
+        self.assertEqual(3, dds.shape[1])
+        self.assertEqual(2., dds[0,0])
         dds = np.full_like(dds, 2.)
         if isjava:
-            self.assertEquals(1, dds.dtype.elements)
-        self.assertEquals(np.float64, dds.dtype)
-        self.assertEquals(2, dds.ndim)
-        self.assertEquals(2, dds.shape[0])
-        self.assertEquals(3, dds.shape[1])
-        self.assertEquals(2., dds[0,0])
+            self.assertEqual(1, dds.dtype.elements)
+        self.assertEqual(np.float64, dds.dtype)
+        self.assertEqual(2, dds.ndim)
+        self.assertEqual(2, dds.shape[0])
+        self.assertEqual(3, dds.shape[1])
+        self.assertEqual(2., dds[0,0])
 
         dds = np.full(3, 2, dtype=np.float)
         if isjava:
-            self.assertEquals(1, dds.dtype.elements)
-        self.assertEquals(np.float64, dds.dtype)
-        self.assertEquals(1, dds.ndim)
-        self.assertEquals(3, dds.shape[0])
-        self.assertEquals(2., dds[0])
+            self.assertEqual(1, dds.dtype.elements)
+        self.assertEqual(np.float64, dds.dtype)
+        self.assertEqual(1, dds.ndim)
+        self.assertEqual(3, dds.shape[0])
+        self.assertEqual(2., dds[0])
         dds = np.full((2,3), 2, dtype=np.float)
         if isjava:
-            self.assertEquals(1, dds.dtype.elements)
-        self.assertEquals(np.float64, dds.dtype)
-        self.assertEquals(2, dds.ndim)
-        self.assertEquals(2, dds.shape[0])
-        self.assertEquals(3, dds.shape[1])
-        self.assertEquals(2., dds[0,0])
+            self.assertEqual(1, dds.dtype.elements)
+        self.assertEqual(np.float64, dds.dtype)
+        self.assertEqual(2, dds.ndim)
+        self.assertEqual(2, dds.shape[0])
+        self.assertEqual(3, dds.shape[1])
+        self.assertEqual(2., dds[0,0])
         dds = np.full_like(dds, 2, dtype=np.float)
         if isjava:
-            self.assertEquals(1, dds.dtype.elements)
-        self.assertEquals(np.float64, dds.dtype)
-        self.assertEquals(2, dds.ndim)
-        self.assertEquals(2, dds.shape[0])
-        self.assertEquals(3, dds.shape[1])
-        self.assertEquals(2., dds[0,0])
+            self.assertEqual(1, dds.dtype.elements)
+        self.assertEqual(np.float64, dds.dtype)
+        self.assertEqual(2, dds.ndim)
+        self.assertEqual(2, dds.shape[0])
+        self.assertEqual(3, dds.shape[1])
+        self.assertEqual(2., dds[0,0])
 
     def testCompound(self): # make new datasets with ones
-        print "test compound"
+        print("test compound")
 #        dds = np.ndarrayCB(3, (3,4))
 #        self.assertEquals(3, dds.itemsize, msg="itemsize incorrect")
-        dds = np.zeros((3,5), np.rgb)
-        print type(dds), dds.dtype, dds.shape
-        self.assertEquals(6, dds.itemsize, msg="itemsize incorrect")
+        dds = np.zeros((3,5), dtype=np.rgb)
+        print(type(dds), dds.dtype, dds.shape)
+        self.assertEqual(6, dds.itemsize, msg="itemsize incorrect")
         dds = dds.red
-        print type(dds), dds.dtype, dds.shape
-        self.assertEquals(2, dds.itemsize, msg="itemsize incorrect")
-        dds = np.zeros((3,4), np.cint32, elements=2)
-        print type(dds), dds.dtype, dds.shape
-        self.assertEquals(8, dds.itemsize, msg="itemsize incorrect")
-        dds = np.zeros((3,4), np.cint32(2))
-        print type(dds), dds.dtype, dds.shape
-        self.assertEquals(8, dds.itemsize, msg="itemsize incorrect")
+        print(type(dds), dds.dtype, dds.shape)
+        self.assertEqual(2, dds.itemsize, msg="itemsize incorrect")
+        dds = np.zeros((3,4), dtype=np.cint32, elements=2)
+        print(type(dds), dds.dtype, dds.shape)
+        self.assertEqual(8, dds.itemsize, msg="itemsize incorrect")
+        dds = np.zeros((3,4), dtype=np.cint32(2))
+        print(type(dds), dds.dtype, dds.shape)
+        self.assertEqual(8, dds.itemsize, msg="itemsize incorrect")
 
     def testArray(self): # make new datasets
-        print "test array"
+        print("test array")
         dds = np.array(self.dz, np.float)
-        self.assertEquals(self.dz, dds)
-        self.assertEquals(dds, self.dz)
-        self.assertEquals(dds.item(), self.dz)
+        self.assertEqual(self.dz, dds)
+        self.assertEqual(dds, self.dz)
+        self.assertEqual(dds.item(), self.dz)
         if isjava:
-            self.assertEquals(1, dds.dtype.elements)
-        self.assertEquals(8, dds.itemsize)
+            self.assertEqual(1, dds.dtype.elements)
+        self.assertEqual(8, dds.itemsize)
         dds = np.array(self.da, np.float)
         self.checkitems(self.da, dds)
         dds = np.array(self.db, np.float)
@@ -206,20 +210,20 @@ class Test(unittest.TestCase):
         mds = np.array(self.m)
         self.checkitems(self.db, mds)
         zds = np.array(self.zz, np.complex)
-        self.assertEquals(self.zz, zds)
-        self.assertEquals(zds, self.zz)
-        self.assertEquals(zds.item(), self.zz)
-        self.assertEquals(zds.real.item(), 1.)
-        self.assertEquals(zds.imag.item(), .5)
-        self.assertEquals(np.real(zds), 1.)
-        self.assertEquals(np.imag(zds), .5)
+        self.assertEqual(self.zz, zds)
+        self.assertEqual(zds, self.zz)
+        self.assertEqual(zds.item(), self.zz)
+        self.assertEqual(zds.real.item(), 1.)
+        self.assertEqual(zds.imag.item(), .5)
+        self.assertEqual(np.real(zds), 1.)
+        self.assertEqual(np.imag(zds), .5)
 
         zds = np.array([self.zz, self.zz], np.complex)
-        self.assertEquals(self.zz, zds[0])
+        self.assertEqual(self.zz, zds[0])
         self.assertRaises(ValueError, zds.item)
         if isjava:
-            self.assertEquals(1, zds.dtype.elements)
-        self.assertEquals(16, zds.itemsize)
+            self.assertEqual(1, zds.dtype.elements)
+        self.assertEqual(16, zds.itemsize)
         self.checkitems([1., 1.], zds.real)
         self.checkitems([.5, .5], zds.imag)
         self.checkitems([1., 1.], np.real(zds))
@@ -253,19 +257,19 @@ class Test(unittest.TestCase):
         self.checkitems(self.a, ids)
 
         tds = np.array(self.a)
-        self.assertEquals(tds.dtype, np.int_)
+        self.assertEqual(tds.dtype, np.int_)
         tds = np.array(self.m)
-        self.assertEquals(tds.dtype, np.float64)
+        self.assertEqual(tds.dtype, np.float64)
         tds = np.array(self.q)
-        self.assertEquals(tds.dtype, np.float64)
+        self.assertEqual(tds.dtype, np.float64)
         tds = np.array(self.r)
-        self.assertEquals(tds.dtype, np.float64)
+        self.assertEqual(tds.dtype, np.float64)
         tds = np.array(self.s)
-        self.assertEquals(tds.dtype, np.int_)
+        self.assertEqual(tds.dtype, np.int_)
         tds = np.array(self.t)
-        self.assertEquals(tds.dtype, np.float64)
+        self.assertEqual(tds.dtype, np.float64)
         tds = np.array(self.u)
-        self.assertEquals(tds.dtype, np.float64)
+        self.assertEqual(tds.dtype, np.float64)
 
         tds = np.array([np.arange(5), np.arange(5)+5])
         self.checkitems(np.arange(10).reshape(2,5), tds)
@@ -273,29 +277,29 @@ class Test(unittest.TestCase):
     def testAsArray(self):
         ta = np.array([1, 2])
         ata = np.asarray(ta)
-        self.assertEquals(ata.dtype, np.int_)
+        self.assertEqual(ata.dtype, np.int_)
         self.checkitems([1, 2], ata)
         ata = np.asarray(ta, np.float)
-        self.assertEquals(ata.dtype, np.float_)
+        self.assertEqual(ata.dtype, np.float_)
         self.checkitems([1, 2], ata)
 
     def testSlicing(self):
         a = np.array([], dtype=np.float_)
-        self.assertEquals(len(a), 0)
+        self.assertEqual(len(a), 0)
         a = np.zeros((2,))
-        self.assertEquals(len(a), 2)
+        self.assertEqual(len(a), 2)
         self.checkitems([0,0], a[:])
-        self.assertEquals(a[1], 0)
+        self.assertEqual(a[1], 0)
         a[:] = 0.5
         self.checkitems([0.5,0.5], a[:])
 
         a = np.zeros((2,3))
-        self.assertEquals(len(a), 2)
+        self.assertEqual(len(a), 2)
         self.checkitems([0,0,0], a[0])
         a[1] = 0.2
         self.checkitems([0.2,0.2,0.2], a[1])
         a = np.zeros((2,3,4))
-        self.assertEquals(len(a), 2)
+        self.assertEqual(len(a), 2)
         a = np.arange(10).reshape((5,2))
         a[3,:] = np.array([0,0])
         self.checkitems([0,0], a[3])
@@ -305,7 +309,7 @@ class Test(unittest.TestCase):
         self.checkitems([2,2], a[:2,1])
 
         a = np.arange(7)
-        c = range(7)
+        c = list(range(7))
         self.checkitems(c[::2], a[::2])
         self.checkitems(c[0::2], a[0::2])
         self.checkitems(c[3::2], a[3::2])
@@ -333,22 +337,22 @@ class Test(unittest.TestCase):
         self.assertEqual((0,), a[4:2,3].shape)
 
     def testArange(self):
-        print "test arange"
+        print("test arange")
         dds = np.arange(12, dtype=np.float)
-        self.checkitems(range(12), dds)
+        self.checkitems(list(range(12)), dds)
         dds = np.arange(2,12, dtype=np.int)
-        self.checkitems(range(2,12), dds)
+        self.checkitems(list(range(2,12)), dds)
         dds = np.arange(2,12,3)
-        self.checkitems(range(2,12,3), dds)
+        self.checkitems(list(range(2,12,3)), dds)
         dds = np.arange(12,2,-3)
-        self.checkitems(range(12,2,-3), dds)
+        self.checkitems(list(range(12,2,-3)), dds)
 
     def testSpace(self):
-        print "test space"
+        print("test space")
         dds = np.linspace(0, 11, 12)
-        self.checkitems(range(12), dds)
+        self.checkitems(list(range(12)), dds)
         dds = np.linspace(0, 11, 12, dtype=np.int32)
-        self.checkitems(range(12), dds, toInt)
+        self.checkitems(list(range(12)), dds, toInt)
         dds = np.linspace(0, 5, 11)
         self.checkitems([0.5*i for i in range(11)], dds)
         dds = np.linspace(0, 5, 11, dtype=np.int32)
@@ -363,33 +367,33 @@ class Test(unittest.TestCase):
     def checkitemsadd(self, la, lb, ds, convert=toAny):
         if ds.ndim == 1:
             for i in range(ds.shape[0]):
-                self.assertEquals(convert(la[i])+convert(lb[i]), ds[i])
+                self.assertEqual(convert(la[i])+convert(lb[i]), ds[i])
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
-                    self.assertEquals(convert(la[i][j])+convert(lb[i][j]), ds[i, j])
+                    self.assertEqual(convert(la[i][j])+convert(lb[i][j]), ds[i, j])
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
                     for k in range(ds.shape[2]):
-                        self.assertEquals(convert(la[i][j][k])+convert(lb[i][j][k]), ds[i, j, k])
+                        self.assertEqual(convert(la[i][j][k])+convert(lb[i][j][k]), ds[i, j, k])
 
     def checkitemsaddconst(self, la, c, ds, convert=toAny):
         if ds.ndim == 1:
             for i in range(ds.shape[0]):
-                self.assertEquals(convert(la[i])+c, ds[i])
+                self.assertEqual(convert(la[i])+c, ds[i])
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
-                    self.assertEquals(convert(la[i][j])+c, ds[i, j])
+                    self.assertEqual(convert(la[i][j])+c, ds[i, j])
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
                     for k in range(ds.shape[2]):
-                        self.assertEquals(convert(la[i][j][k])+c, ds[i, j, k])
+                        self.assertEqual(convert(la[i][j][k])+c, ds[i, j, k])
 
     def testAdd(self):
-        print "test add"
+        print("test add")
         da = np.array(self.db, np.int)
         dr = da + da
         self.checkitemsadd(self.db, self.db, dr, convert=toInt)
@@ -431,48 +435,48 @@ class Test(unittest.TestCase):
     def checkitemssub(self, la, lb, ds, convert=toAny):
         if ds.ndim == 1:
             for i in range(ds.shape[0]):
-                self.assertEquals(convert(la[i])-convert(lb[i]), ds[i])
+                self.assertEqual(convert(la[i])-convert(lb[i]), ds[i])
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
-                    self.assertEquals(convert(la[i][j])-convert(lb[i][j]), ds[i, j])
+                    self.assertEqual(convert(la[i][j])-convert(lb[i][j]), ds[i, j])
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
                     for k in range(ds.shape[2]):
-                        self.assertEquals(convert(la[i][j][k])-convert(lb[i][j][k]), ds[i, j, k])
+                        self.assertEqual(convert(la[i][j][k])-convert(lb[i][j][k]), ds[i, j, k])
 
     def checkitemssubconst(self, la, c, ds, convert=toAny):
         if ds.ndim == 1:
             for i in range(ds.shape[0]):
-                self.assertEquals(convert(la[i])-c, ds[i])
+                self.assertEqual(convert(la[i])-c, ds[i])
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
-                    self.assertEquals(convert(la[i][j])-c, ds[i, j])
+                    self.assertEqual(convert(la[i][j])-c, ds[i, j])
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
                     for k in range(ds.shape[2]):
-                        self.assertEquals(convert(la[i][j][k])-c, ds[i, j, k])
+                        self.assertEqual(convert(la[i][j][k])-c, ds[i, j, k])
 
     def checkitemssubconst2(self, la, c, ds, convert=toAny):
         if ds.ndim == 1:
             for i in range(ds.shape[0]):
-                self.assertEquals(convert(la[i]-c), ds[i])
+                self.assertEqual(convert(la[i]-c), ds[i])
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
-                    self.assertEquals(convert(convert(la[i][j])-c), ds[i, j],
+                    self.assertEqual(convert(convert(la[i][j])-c), ds[i, j],
                                       msg="%d, %d : %r %r" % (i,j, convert(convert(la[i][j])-c), ds[i, j]))
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
                     for k in range(ds.shape[2]):
-                        self.assertEquals(convert(la[i][j][k]-c), ds[i, j, k])
+                        self.assertEqual(convert(la[i][j][k]-c), ds[i, j, k])
 
     def testSub(self):
-        print "test sub"
+        print("test sub")
         da = np.array(self.db, np.int)
         dr = da - da
         self.checkitemssub(self.db, self.db, dr, convert=toInt)
@@ -519,7 +523,7 @@ class Test(unittest.TestCase):
                 x = convert(la[i])/convert(lb[i]+1.)
                 if iscomplex:
                     x = complex(x)
-                self.assertAlmostEquals(x, ds[i])
+                self.assertAlmostEqual(x, ds[i])
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
@@ -527,16 +531,16 @@ class Test(unittest.TestCase):
                     z = ds[i, j]
                     if iscomplex:
                         x = complex(x)
-                        self.assertAlmostEquals(x.real, z.real)
-                        self.assertAlmostEquals(x.imag, z.imag)
+                        self.assertAlmostEqual(x.real, z.real)
+                        self.assertAlmostEqual(x.imag, z.imag)
                     else:
-                        self.assertAlmostEquals(x, z)
+                        self.assertAlmostEqual(x, z)
 
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
                     for k in range(ds.shape[2]):
-                        self.assertAlmostEquals(convert(la[i][j][k])/convert(lb[i][j][k]+1.), ds[i, j, k])
+                        self.assertAlmostEqual(convert(la[i][j][k])/convert(lb[i][j][k]+1.), ds[i, j, k])
 
     def checkitemsdivconst(self, la, c, ds, convert=toAny, iscomplex=False):
         if ds.ndim == 1:
@@ -551,7 +555,7 @@ class Test(unittest.TestCase):
                     n = convert(c[i]+1.)
                 except:
                     n = c
-                self.assertAlmostEquals(d/n, ds[i])
+                self.assertAlmostEqual(d/n, ds[i])
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
@@ -569,10 +573,10 @@ class Test(unittest.TestCase):
                     z = ds[i, j]
                     if iscomplex:
                         x = complex(x)
-                        self.assertAlmostEquals(x.real, z.real)
-                        self.assertAlmostEquals(x.imag, z.imag)
+                        self.assertAlmostEqual(x.real, z.real)
+                        self.assertAlmostEqual(x.imag, z.imag)
                     else:
-                        self.assertAlmostEquals(x, z,
+                        self.assertAlmostEqual(x, z,
                                       msg="%d, %d : %r %r" % (i,j, x, z))
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
@@ -588,7 +592,7 @@ class Test(unittest.TestCase):
                             n = convert(c[i][j][k]+1.)
                         except:
                             n = c
-                        self.assertAlmostEquals(d/n, ds[i, j, k])
+                        self.assertAlmostEqual(d/n, ds[i, j, k])
 
     def checkitemsdivconst2(self, la, c, ds, convert=toAny):
         if ds.ndim == 1:
@@ -603,7 +607,7 @@ class Test(unittest.TestCase):
                     n = convert(c[i]+1.)
                 except:
                     n = c
-                self.assertEquals(d/n, ds[i])
+                self.assertEqual(d/n, ds[i])
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
@@ -617,7 +621,7 @@ class Test(unittest.TestCase):
                         n = c[i][j]+1.
                     except:
                         n = c
-                    self.assertEquals(convert(d/n), ds[i, j],
+                    self.assertEqual(convert(d/n), ds[i, j],
                                       msg="%d, %d : %r %r" % (i,j, convert(d/n), ds[i, j]))
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
@@ -633,16 +637,17 @@ class Test(unittest.TestCase):
                             n = convert(c[i][j][k]+1.)
                         except:
                             n = c
-                        self.assertEquals(d/n, ds[i, j, k])
+                        self.assertEqual(d/n, ds[i, j, k])
 
     def testDiv(self):
-        print "test div"
+        print("test div")
         da = np.array(self.db, np.int)
         dr = da / (da+1)
         self.checkitemsdiv(self.db, self.db, dr, convert=toInt)
-        dr = da.copy()
-        dr /= da + 1
-        self.checkitemsdiv(self.db, self.db, dr, convert=toInt)
+        # see https://github.com/numpy/numpy/issues/10565#issuecomment-364598965
+        #dr = da.copy()
+        #dr /= da + 1
+        #self.checkitemsdiv(self.db, self.db, dr, convert=toInt)
         dr = da / 1.2
         self.checkitemsdivconst(self.db, 1.2, dr, convert=toInt)
 #         dr = da.copy()
@@ -676,10 +681,10 @@ class Test(unittest.TestCase):
         self.checkitemsdivconst(self.zb, (1.3 + 0.2j), zr, iscomplex=True)
 
         a = np.arange(-4, 4, dtype=np.int8)
-        self.checkitems([-2, -2, -1, -1,  0,  0,  1,  1], a / 2)
+        self.checkitems([-2, -1.5, -1, -0.5,  0,  0.5,  1,  1.5], a / 2)
         self.checkitems([-2, -2, -1, -1,  0,  0,  1,  1], a // 2)
         self.checkitems([0, 1, 0, 1, 0, 1, 0, 1], a % 2)
-        self.checkitems([2,  1,  1,  0,  0, -1, -1, -2], a / -2)
+        self.checkitems([2,  1.5,  1,  0.5,  0, -0.5, -1, -1.5], a / -2)
         self.checkitems([2,  1,  1,  0,  0, -1, -1, -2], a // -2)
         self.checkitems([0, -1,  0, -1,  0, -1,  0, -1], a % -2)
         self.checkitems([-1.6, -1.2, -0.8, -0.4,  0. ,  0.4,  0.8,  1.2], a / 2.5)
@@ -692,113 +697,113 @@ class Test(unittest.TestCase):
     def testCopyItems(self):
         if isjava:
             import jarray
-            print "test copy items"
+            print("test copy items")
             da = np.array(self.db, np.float)
             jda = da._jdataset()
             ta = np.zeros(da.shape)
             jda.copyItemsFromAxes(None, None, ta._jdataset())
-            print ta.data
+            print(ta.data)
             ta = np.array(self.m)
             jda.setItemsOnAxes(None, None, ta.data)
-            print da.data
+            print(da.data)
     
-            print '2'
+            print('2')
             da = np.array(self.db, np.float)
             jda = da._jdataset()
             ta = np.zeros((2,))
             axes = [ True, False ]
             jda.copyItemsFromAxes(None, axes, ta._jdataset())
-            print ta.data
+            print(ta.data)
             ta = jarray.array([ -2, -3.4 ], 'd')
             jda.setItemsOnAxes(None, axes, ta)
-            print da.data
+            print(da.data)
     
-            print '3'
+            print('3')
             da = np.array(self.db, np.float)
             jda = da._jdataset()
             ta = np.zeros((2,))
             axes = [ False, True ]
             jda.copyItemsFromAxes(None, axes, ta._jdataset())
-            print ta.data
+            print(ta.data)
             ta = jarray.array([ -2.5, -3.4 ], 'd')
             jda.setItemsOnAxes(None, axes, ta)
-            print da.data
+            print(da.data)
 
     def testDatasetSlice(self):
-        print 'test slicing with start and stop'
+        print('test slicing with start and stop')
         ds = np.arange(16)
         dr = ds[2:10]
-        self.checkitems(range(2,10), dr)
+        self.checkitems(list(range(2,10)), dr)
 
-        print 'test slicing with steps'
+        print('test slicing with steps')
         dr = ds[::2]
-        self.checkitems(range(0,16,2), dr)
+        self.checkitems(list(range(0,16,2)), dr)
 
-        print 'test slicing 3D'
+        print('test slicing 3D')
         dr = self.dda[1:,::2,1::2]
         self.checkitems(self.t, dr)
 
-        print 'test putting in a 3D slice'
+        print('test putting in a 3D slice')
         dr = self.dda.copy()
         dr[:,1::2,::2] = 7.
         self.checkitems(self.u, dr)
  
-        print 'test putting a list in a 3D slice'
+        print('test putting a list in a 3D slice')
         dr = self.dda.copy()
-        print dr[:,1::2,::2].shape
+        print(dr[:,1::2,::2].shape)
         dr[:,1::2,::2] = np.array([7., 7]).reshape(2,1,1)
         self.checkitems(self.u, dr)
 
-        print 'test slicing with ellipse'
+        print('test slicing with ellipse')
         dr = ds[...]
-        self.checkitems(range(16), dr)
+        self.checkitems(list(range(16)), dr)
 
-        print 'test slicing 3D with ellipse'
+        print('test slicing 3D with ellipse')
         dr = self.dda[...,1::2]
         self.checkitems(self.t, dr[1:, ::2])
 
-        print 'test putting in a 3D slice with ellipsis'
+        print('test putting in a 3D slice with ellipsis')
         dr = self.dda.copy()
         dr[...,1::2,::2] = 7.
         self.checkitems(self.u, dr)
  
-        print 'test putting a list in a 3D slice with ellipsis'
+        print('test putting a list in a 3D slice with ellipsis')
         dr = self.dda.copy()
-        print dr[...,1::2,::2].shape
+        print(dr[...,1::2,::2].shape)
         dr[...,1::2,::2] = np.array([7., 7]).reshape(2,1,1)
         self.checkitems(self.u, dr)
 
-        print 'test slice shape reduction'
+        print('test slice shape reduction')
         dr = np.arange(120).reshape(4,3,5,2)
         s = dr[:2,...,1:].shape
-        print s
-        self.assertEquals(s, (2,3,5,1))
+        print(s)
+        self.assertEqual(s, (2,3,5,1))
         s = dr[:2,...,1].shape
-        print s
-        self.assertEquals(s, (2,3,5))
+        print(s)
+        self.assertEqual(s, (2,3,5))
         try:
             s = dr[:2,...,...,1].shape
-            raise AssertionError, 'Should have raised an error'
+            raise AssertionError('Should have raised an error')
         except:
             pass
 
-        print 'test newaxis'
+        print('test newaxis')
         dr = np.arange(15).reshape(3,5)
         s = dr[np.newaxis,:,1:].shape
-        print s
-        self.assertEquals(s, (1,3,4))
+        print(s)
+        self.assertEqual(s, (1,3,4))
         s = dr[np.newaxis,...].shape
-        print s
-        self.assertEquals(s, (1,3,5))
+        print(s)
+        self.assertEqual(s, (1,3,5))
         s = dr[np.newaxis,...,np.newaxis].shape
-        print s
-        self.assertEquals(s, (1,3,5,1))
+        print(s)
+        self.assertEqual(s, (1,3,5,1))
         s = dr[...,np.newaxis].shape
-        print s
-        self.assertEquals(s, (3,5,1))
+        print(s)
+        self.assertEqual(s, (3,5,1))
         s = dr[:,np.newaxis,...,np.newaxis].shape
-        print s
-        self.assertEquals(s, (3,1,5,1))
+        print(s)
+        self.assertEqual(s, (3,1,5,1))
         a = np.zeros((5,4))
         b = np.arange(5.)
         a[:,2] = b
@@ -807,18 +812,18 @@ class Test(unittest.TestCase):
         try:
             b.shape = (5,1)
             a[:,2] = b
-            raise AssertionError, 'Should have raised an error'
+            raise AssertionError('Should have raised an error')
         except:
             pass
         try:
             b.shape = (1,5,1)
             a[:,2] = b
-            raise AssertionError, 'Should have raised an error'
+            raise AssertionError('Should have raised an error')
         except:
             pass
 
     def testTake(self):
-        print 'test take'
+        print('test take')
         ds = np.arange(16)
         self.checkitems([2, 5], ds.take([2, 5]))
         self.checkitems([2, 5], ds.take(np.array([2, 5])))
@@ -828,7 +833,7 @@ class Test(unittest.TestCase):
         self.checkitems([[1, 3], [5, 7], [9, 11], [13, 15]], ds.take([1, 3], 1))
 
     def testPut(self):
-        print 'test put'
+        print('test put')
         ds = np.arange(6.)
         ds.put([2, 5], [-2, -5.5])
         self.checkitems([0, 1, -2, 3, 4, -5.5], ds)
@@ -841,31 +846,31 @@ class Test(unittest.TestCase):
         self.checkitems([[-2, 1, -2], [3, -5.5, -5.5]], ds)
 
     def testArgs(self):
-        print 'test arg maxs'
+        print('test arg maxs')
         ds = np.array([[[1., 0., 3.], [.5, 2.5, 2.]], [[0., 3., 1.], [1.5, 2.5, 2.]]])
-        self.assertEquals(ds.argmax(), 2)
+        self.assertEqual(ds.argmax(), 2)
         self.checkitems([[0, 1, 0], [1, 0, 0]], ds.argmax(0))
         self.checkitems([[0, 1, 0], [1, 0, 1]], ds.argmax(1))
         self.checkitems([[0, 1, 0], [1, 0, 1]], ds.argmax(-2))
         self.checkitems([[2, 1], [1, 1]], ds.argmax(2))
 
-        print 'test arg mins'
-        self.assertEquals(ds.argmin(), 1)
+        print('test arg mins')
+        self.assertEqual(ds.argmin(), 1)
         self.checkitems([[1, 0, 1], [0, 0, 0]], ds.argmin(0))
         self.checkitems([[1, 0, 1], [0, 1, 0]], ds.argmin(1))
         self.checkitems([[1, 0, 1], [0, 1, 0]], ds.argmin(-2))
         self.checkitems([[1, 0], [0, 0]], ds.argmin(2))
 
     def testProds(self):
-        print 'test prod'
+        print('test prod')
         ds = np.arange(12).reshape(3,4)
-        self.assertEquals(np.prod(ds), 0)
+        self.assertEqual(np.prod(ds), 0)
         self.checkitems([ 0, 45, 120, 231], np.prod(ds, 0))
         self.checkitems([ 0, 45, 120, 231], np.prod(ds, -2))
         self.checkitems([ 0, 840, 7920], np.prod(ds, 1))
         self.checkitems([ 0, 840, 7920], np.prod(ds, -1))
         
-        print 'test cumprod'
+        print('test cumprod')
         self.checkitems([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], np.cumprod(ds))
         self.checkitems([[0, 1, 2, 3], [0, 5, 12, 21], [0, 45, 120, 231]], np.cumprod(ds, 0))
         self.checkitems([[0, 1, 2, 3], [0, 5, 12, 21], [0, 45, 120, 231]], np.cumprod(ds, -2))
@@ -873,10 +878,10 @@ class Test(unittest.TestCase):
         self.checkitems([[0, 0, 0, 0], [4, 20, 120, 840], [8, 72, 720, 7920]], np.cumprod(ds, -1))
 
     def testSums(self):
-        print 'test sum'
+        print('test sum')
         ds = np.arange(12).reshape((3,4))
-        self.assertEquals(ds.sum(), 66)
-        self.assertEquals(np.sum(ds), 66)
+        self.assertEqual(ds.sum(), 66)
+        self.assertEqual(np.sum(ds), 66)
         self.checkitems([12, 15, 18, 21], ds.sum(0))
         self.checkitems([12, 15, 18, 21], ds.sum(-2))
         self.checkitems([12, 15, 18, 21], np.sum(ds, 0))
@@ -886,27 +891,27 @@ class Test(unittest.TestCase):
         self.checkitems([ 6, 22, 38], np.sum(ds, 1))
         self.checkitems([ 6, 22, 38], np.sum(ds, -1))
         lds = np.arange(1024*1024, dtype=np.int32)
-        self.assertEquals(np.sum(lds, dtype=np.int32), -524288)
-        self.assertEquals(np.sum(lds, dtype=np.int64), 549755289600)
+        self.assertEqual(np.sum(lds, dtype=np.int32), -524288)
+        self.assertEqual(np.sum(lds, dtype=np.int64), 549755289600)
 
-        print 'test cumsum'
+        print('test cumsum')
         self.checkitems([0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66], np.cumsum(ds))
         self.checkitems([[0, 1, 2, 3], [4, 6, 8, 10], [12, 15, 18, 21]], np.cumsum(ds, 0))
         self.checkitems([[0, 1, 3, 6], [4, 9, 15, 22], [8, 17, 27, 38]], np.cumsum(ds, 1))
         self.checkitems([[0, 1, 3, 6], [4, 9, 15, 22], [8, 17, 27, 38]], np.cumsum(ds, -1))
 
     def testStats(self):
-        print 'test stats'
+        print('test stats')
         a = np.arange(12.).reshape(4,3)
-        self.assertEquals(11, a.argmax())
-        self.assertEquals(0, a.argmin())
-        self.assertEquals(11., a.max())
-        self.assertEquals(0., a.min())
-        self.assertEquals(5.5, a.mean())
-        self.assertAlmostEquals(11.9166666667, a.var())
-        self.assertAlmostEquals(3.45205252953, a.std())
-        self.assertAlmostEquals(66., a.sum())
-        self.assertAlmostEquals(0., a.prod())
+        self.assertEqual(11, a.argmax())
+        self.assertEqual(0, a.argmin())
+        self.assertEqual(11., a.max())
+        self.assertEqual(0., a.min())
+        self.assertEqual(5.5, a.mean())
+        self.assertAlmostEqual(11.9166666667, a.var())
+        self.assertAlmostEqual(3.45205252953, a.std())
+        self.assertAlmostEqual(66., a.sum())
+        self.assertAlmostEqual(0., a.prod())
 
         self.checkitems([2, 2, 2, 2], a.argmax(1))
         self.checkitems([0, 0, 0, 0], a.argmin(1))
@@ -934,22 +939,22 @@ class Test(unittest.TestCase):
         # a.rms(1) 
 
     def testGDA2270(self):
-        print 'test negative indices'
+        print('test negative indices')
         ds = np.arange(10.)
-        self.assertEquals(8, ds[-2])
+        self.assertEqual(8, ds[-2])
         ds[-2] = 0
-        self.assertEquals(0, ds[8])
+        self.assertEqual(0, ds[8])
         ds = np.arange(10.).reshape(2,5)
         du = np.arange(5.,10)
         dt = ds[-1]
         for i in range(du.shape[0]):
-            self.assertEquals(dt[i], du[i])
+            self.assertEqual(dt[i], du[i])
         ds[-1] = -2
         for i in range(ds.shape[1]):
-            self.assertEquals(ds[-1,i], -2)
+            self.assertEqual(ds[-1,i], -2)
 
     def testGDA2271(self):
-        print 'test out of bound indices'
+        print('test out of bound indices')
         ds = np.arange(10.)
         def getf(ind):
             return ds[ind]
@@ -967,7 +972,7 @@ class Test(unittest.TestCase):
 #            ds[10] = 0.
 
     def testBooleanMethods(self):
-        print 'test boolean methods'
+        print('test boolean methods')
         a = np.array([True, False])
 
         self.checkitems([False, False], a & False)
@@ -998,7 +1003,7 @@ class Test(unittest.TestCase):
         self.checkitems([False, True], b)
 
     def testBooleanAccessors(self):
-        print 'test boolean get and set'
+        print('test boolean get and set')
         tm = np.array(self.mm)
         c = tm > 11.6
         lc = [ [[False, False], [ False, True]], [[True, True], [True, True]]]
@@ -1015,7 +1020,7 @@ class Test(unittest.TestCase):
 
         # all false (should be zero shape)
         d = tm[tm > tm.max()]
-        print 'all false', d
+        print('all false', d)
         self.checkitems([], d)
 
         ta = tm.copy()
@@ -1029,7 +1034,7 @@ class Test(unittest.TestCase):
         self.checkitems([ [[-3.3, -3.3], [-3.3, -2.3]], [[-2.3, -2.3], [-2.3, -2.3]] ], tm)
 
     def testInteger(self):
-        print 'test integer get and set'
+        print('test integer get and set')
         tm = np.array(self.mm).flatten()
 
         d = tm[np.array([2, 4, 7])]
@@ -1039,7 +1044,7 @@ class Test(unittest.TestCase):
         self.checkitems([ 0., 2., 6., -2.3, -2.3, -2.3, -2.3, -2.3 ], tm)
 
     def testIntegers(self):
-        print 'test integers get and set'
+        print('test integers get and set')
         a = np.array([8,9,10,11,12,13])
         d = a[np.where(a > 10)]
         self.checkitems([11, 12, 13], d)
@@ -1054,7 +1059,7 @@ class Test(unittest.TestCase):
         # fancy indexing
         a = np.array([8,9,10,11,12,13])
         a.shape = 3,2
-        self.assertEquals(13, a[(2,1)])
+        self.assertEqual(13, a[(2,1)])
         d = a[(2,1),]
         self.checkitems([[12, 13], [10, 11]], d)
 
@@ -1085,7 +1090,7 @@ class Test(unittest.TestCase):
         # TODO broadcasting with lower ranked booleam
         d = np.arange(8).reshape(4,2)
         m = np.array([False, True, True, False])
-        print 'broadcast', d[m]
+        print('broadcast', d[m])
         self.checkitems([[2, 3], [4, 5]], d[m])
 
 #         m = np.array([False, False, False, False])
@@ -1094,24 +1099,24 @@ class Test(unittest.TestCase):
 #         print 'broadcast', f, f.shape
         
     def testSelect(self):
-        print 'test select'
+        print('test select')
         tm = np.select([np.array([[[False, True], [True, False]], [[True, True], [False, False]]])], [np.array(self.mm)], -2.3)
         self.checkitems([ [[-2.3, 2.], [6., -2.3]], [[20., 30.], [-2.3, -2.3]] ], tm)
 
     def testWhere(self):
-        print 'test where'
+        print('test where')
         t = np.array([[[-0.5, 0.1], [2, 0]], [[1.3, 1.4], [-10, -20]]])
         tm = np.where(t > 0, np.array(self.mm), -2.3)
         self.checkitems([ [[-2.3, 2.], [6., -2.3]], [[20., 30.], [-2.3, -2.3]] ], tm)
 
     def testPrint(self):
-        print 'test print'
+        print('test print')
         a = np.arange(10)
-        print type(a)
-        print a
+        print(type(a))
+        print(a)
 
     def testMean(self):
-        print 'test mean'
+        print('test mean')
         a = np.arange(10).reshape(2,5)
         self.assertEqual(4.5, a.mean())
         self.checkitems([2.5, 3.5, 4.5, 5.5, 6.5], a.mean(0))
@@ -1119,7 +1124,7 @@ class Test(unittest.TestCase):
         self.checkitems([2., 7.], a.mean(-1))
 
     def testMaxMin(self):
-        print 'test max/min'
+        print('test max/min')
         a = np.arange(10, dtype=np.float).reshape(2,5)
         self.assertEqual(0., a.min())
         self.checkitems([0., 1., 2., 3., 4.], a.min(0))
@@ -1154,12 +1159,12 @@ class Test(unittest.TestCase):
             self.checkitems([4, 4], a.argmax(-1, True))
 
     def testIterate(self):
-        print 'test iterate'
+        print('test iterate')
         l = [v for v in np.arange(3)]
         self.assertEqual([0, 1, 2], l)
 
     def testCopy(self):
-        print 'test copy'
+        print('test copy')
         a = np.array(self.q)
         self.checkitems(self.q, np.copy(a))
 

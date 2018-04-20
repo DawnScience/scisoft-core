@@ -19,7 +19,7 @@ Test image analysis functions
 import unittest
 unittest.TestProgram(argv=["image_test"])
 '''
-
+from __future__ import print_function
 import unittest
 import scisoftpy as np
 import scisoftpy.image as img
@@ -41,18 +41,18 @@ class Test(unittest.TestCase):
     def checkitems(self, la, ds):
         if ds.ndim == 1:
             for i in range(ds.shape[0]):
-                print i, ds[i]
+                print(i, ds[i])
 #                self.assertEquals(la[i], ds[i])
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
-                    print i,j, ds[i,j]
+                    print(i,j, ds[i,j])
 #                    self.assertEquals(la[i][j], ds[i, j])
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
                     for k in range(ds.shape[2]):
-                        print i,j,k, ds[i,j,k]
+                        print(i,j,k, ds[i,j,k])
 #                        self.assertEquals(la[i][j][k], ds[i, j, k])
 
     def tryImageShift(self, dx=2, dy=3, cx=23, cy=13):
@@ -66,9 +66,9 @@ class Test(unittest.TestCase):
         sy = max(dy,5)
         r = roi.rectangle(point=[cx-2*sx,cy-2*sy],lengths=[4*sx,4*sy],angle=0)
         shift = img.findshift(da, db, r)
-        print shift
-        self.assertAlmostEquals(-dy, shift[0], places=0)
-        self.assertAlmostEquals(-dx, shift[1], places=0)
+        print(shift)
+        self.assertAlmostEqual(-dy, shift[0], places=0)
+        self.assertAlmostEqual(-dx, shift[1], places=0)
 
     def tryImageShiftGaussian(self, dx=2, dy=3, cx=23, cy=13):
         da = np.zeros([40,40])
@@ -81,9 +81,9 @@ class Test(unittest.TestCase):
         sy = max(dy,10)
         r = roi.rectangle(point=[cx-2*sx,cy-2*sy],lengths=[4*sx,4*sy],angle=0)
         shift = img.findshift(da, db, r)
-        print shift
-        self.assertAlmostEquals(-dy, shift[0], places=0)
-        self.assertAlmostEquals(-dx, shift[1], places=0)
+        print(shift)
+        self.assertAlmostEqual(-dy, shift[0], places=0)
+        self.assertAlmostEqual(-dx, shift[1], places=0)
 
     def testShifts(self):
         for x in range(4):

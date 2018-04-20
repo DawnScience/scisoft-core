@@ -20,6 +20,6 @@ if os.name == 'java':
 else:
     from ..python.pynxio import SDS #@Reimport
 
-from nxclasses import *
+from .nxclasses import *
 
-from utils import *
+from .utils import *

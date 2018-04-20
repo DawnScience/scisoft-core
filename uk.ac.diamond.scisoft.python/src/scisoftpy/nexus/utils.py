@@ -17,11 +17,11 @@
 '''
 Collection of utility functions to work with NeXus trees
 '''
-
+import six
 from .nxclasses import NXobject as _nxobject, NXroot as _nxroot, NXentry as _nxentry, NX_CLASSES as _nxclasses
 
 def _visitall(tree, visitor):
-    for n,e in tree.items():
+    for n,e in list(tree.items()):
         if isinstance(e, _nxobject):
             _visitall(e, visitor)
         visitor(n,e)
@@ -52,9 +52,11 @@ def find_class(nx_tree, nx_class):
             hits.append((name, obj))
         elif hasattr(obj, "attrs") and "NX_class" in obj.attrs:
             nxc = obj.attrs["NX_class"]
-            if not isinstance(nxc, (str, unicode)):
+            if not isinstance(nxc, str):
                 nxc = nxc.item()
-            if nxc.decode() in nx_class:
+            if six.PY2:
+                nxc = nxc.decode()
+            if nxc in nx_class:
                 hits.append((name, obj))
 
     _visitall(nx_tree, visitor)

@@ -18,12 +18,13 @@
 '''
 
 import os
+import six
 if os.name == 'java':
     _isjava = True
-    from jython.jycore import ndarray, ndgeneric, scalarToPython #@UnusedImport
+    from .jython.jycore import ndarray, ndgeneric, scalarToPython #@UnusedImport
 else:
     _isjava = False
-    from python.pycore import ndarray, ndgeneric, scalarToPython #@Reimport
+    from .python.pycore import ndarray, ndgeneric, scalarToPython #@Reimport
 
 _env = os.environ
 
@@ -45,7 +46,7 @@ with argument passing and output return, plus exception handling
 
 from os import path as _path
 
-from cPickle import dump as _psave, load as _pload
+from pickle import dump as _psave, load as _pload
 
 def save_args(arg, dir=None): #@ReservedAssignment
     '''Save arguments as files in a temporary directory
@@ -58,7 +59,7 @@ def save_args(arg, dir=None): #@ReservedAssignment
     d = _tmp.mkdtemp(prefix='ef-args', dir=dir)
     _n, tree = _pickle(d, arg, 0) # pickle non-sequences
     try: # now do argument structure
-        f = open(_path.join(d, 'tree.pkl'), 'w')
+        f = open(_path.join(d, 'tree.pkl'), 'wb')
         _psave(tree, f)
     except:
         raise
@@ -96,8 +97,8 @@ def _pickle(p, arg, n):
         if isinstance(arg, ndgeneric):
             arg = scalarToPython(arg)
         try:
-            f = open(_path.join(p, name), 'w')
-            _psave(arg, f)
+            f = open(_path.join(p, name), 'wb') # https://stackoverflow.com/a/13906715/1253230
+            _psave(str(arg), f)
         except:
             raise
         else:
@@ -239,16 +240,16 @@ def get_dls_module(module='python/anaconda', module_init='/etc/profile.d/modules
     env.pop('PYTHONPATH', None)
     import subprocess as sub
     p = sub.Popen(['bash', '-l'], shell=False, env=env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
-    p.stdin.write('source {}\n'.format(module_init))
-    p.stdin.write('module load {}\n'.format(module))
-    p.stdin.write('pyexe=$(which python)\n')
-    p.stdin.write('echo "EXEC:$pyexe"\n')
-    p.stdin.write('echo "PATH:$PYTHONPATH"\n')
-    p.stdin.write('echo "LDPATH:$LD_LIBRARY_PATH"\n')
+    p.stdin.write('source {}\n'.format(module_init).encode())
+    p.stdin.write('module load {}\n'.format(module).encode())
+    p.stdin.write(b'pyexe=$(which python)\n')
+    p.stdin.write(b'echo "EXEC:$pyexe"\n')
+    p.stdin.write(b'echo "PATH:$PYTHONPATH"\n')
+    p.stdin.write(b'echo "LDPATH:$LD_LIBRARY_PATH"\n')
     p.stdin.close()
     exe, path, ldpath = parse_for_env(p.stdout)
     if exe is None:
-        raise RuntimeError('Problem with running external process: ' + p.stderr.read())
+        raise RuntimeError('Problem with running external process: ' + p.stderr.read().decode())
     _dls_modules[module] = exe, path, ldpath
     return exe, path, ldpath
 
@@ -257,22 +258,22 @@ def get_python():
     env.pop('PYTHONPATH', None)
     import subprocess as sub
     p = sub.Popen('python', shell=False, env=env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
-    p.stdin.write('import sys\n')
-    p.stdin.write('print("EXEC|" + sys.executable)\n')
-    p.stdin.write('print("PATH|" + "|".join(sys.path))\n')
-    p.stdin.write('import os\n')
-    p.stdin.write('if sys.platform == "win32":\n')
-    p.stdin.write('    key = "PATH"\n')
-    p.stdin.write('elif sys.platform == "darwin":\n')
-    p.stdin.write('    key = "DYLD_LIBRARY_PATH"\n')
-    p.stdin.write('else:\n')
-    p.stdin.write('    key = "LD_LIBRARY_PATH"\n')
-    p.stdin.write('lp = os.environ[key].split(os.pathsep)\n')
-    p.stdin.write('print("LDPATH|" + "|".join(lp))\n')
+    p.stdin.write(b'import sys\n')
+    p.stdin.write(b'print("EXEC|" + sys.executable)\n')
+    p.stdin.write(b'print("PATH|" + "|".join(sys.path))\n')
+    p.stdin.write(b'import os\n')
+    p.stdin.write(b'if sys.platform == "win32":\n')
+    p.stdin.write(b'    key = "PATH"\n')
+    p.stdin.write(b'elif sys.platform == "darwin":\n')
+    p.stdin.write(b'    key = "DYLD_LIBRARY_PATH"\n')
+    p.stdin.write(b'else:\n')
+    p.stdin.write(b'    key = "LD_LIBRARY_PATH"\n')
+    p.stdin.write(b'lp = os.environ[key].split(os.pathsep)\n')
+    p.stdin.write(b'print("LDPATH|" + "|".join(lp))\n')
     p.stdin.close()
     exe, path, ldpath = parse_for_env(p.stdout, sep='|')
     if exe is None:
-        raise RuntimeError('Problem with running external process: ' + p.stderr.read())
+        raise RuntimeError('Problem with running external process: ' + p.stderr.read().decode())
     return exe, path, ldpath
 
 def parse_for_env(stream, sep=':'):
@@ -285,7 +286,7 @@ def parse_for_env(stream, sep=':'):
             break
         l = l.strip()
         if l:
-            r = l.split(sep)
+            r = l.split(sep.encode())
             if r[0] == 'EXEC':
                 exe = r[1]
             elif r[0] == 'PATH':
@@ -312,7 +313,7 @@ if _isjava:
     # need Java class as the Python code below does not work in Jython!!!
     from uk.ac.diamond.scisoft.python import PythonSubProcess
 else:
-    from Queue import Queue, Empty
+    from six.moves.queue import Queue, Empty
     from threading import Thread
     from subprocess import Popen, PIPE
     cmds='''import sys
@@ -373,7 +374,7 @@ while True:
                 el = self.err.readline(self.TIMEOUT)
                 if el is None:
                     el = 'None'
-                raise OSError('Problem with python subprocess not being ready: ' + l + '; ' + el)
+                raise OSError('Problem with python subprocess not being ready: ' + str(l) + '; ' + str(el))
 
         def communicate(self, text):
             self._send(text)

@@ -17,6 +17,8 @@
 '''
 '''
 
+from __future__ import print_function
+
 import numpy as _np #@UnresolvedImport
 
 from distutils.version import LooseVersion
@@ -58,16 +60,16 @@ complex_ = complex128
 complex = complex_ #@ReservedAssignment
 
 import types as _types
+import six
 
 def asIterable(items):
     '''
     Ensure entity is an iterable by making it a tuple if not
     '''
-    t = type(items)
-    if t is _types.ListType or t is _types.TupleType:
+    if isinstance(items, list) or isinstance(items, tuple):
         pass
-    elif t is _types.DictType:
-        items = [ i for i in items.items() ]
+    elif isinstance(items, dict):
+        items = [ i for i in list(six.iteritems(items)) ]
     else:
         items = (items,)
     return items
@@ -83,7 +85,7 @@ def scalarToPython(ascalar):
     '''Convert an array scalar to a python type
     '''
     if not isinstance(ascalar, _np.generic):
-        raise ValueError, "Not an array scalar"
+        raise ValueError("Not an array scalar")
     if isinstance(ascalar, _np.bool_):
         return True if ascalar else False
     if isinstance(ascalar, _np.integer):
@@ -92,7 +94,7 @@ def scalarToPython(ascalar):
         return ascalar.__float__()
     if isinstance(ascalar, _np.complexfloating):
         return ascalar.__complex__()
-    raise ValueError, "Array scalar type not supported"
+    raise ValueError("Array scalar type not supported")
 
 iscomplexobj = _np.iscomplexobj
 
@@ -119,12 +121,12 @@ def zeros(shape, dtype=float, order='C', elements=None):
         if elements is not None:
             dtype = dtype(elements)
         else:
-            raise ValueError, "Given data-type is a function and needs elements defining"
+            raise ValueError("Given data-type is a function and needs elements defining")
     elif elements is not None:
-        raise SyntaxWarning, "Defined elements ignored as data-type is not a function"
+        raise SyntaxWarning("Defined elements ignored as data-type is not a function")
 
     if dtype is rgb:
-        return ndarrayRGB(shape, dtype=dtype, order=order)
+        return ndarrayRGB(shape, dtype=dtype, order=order) # doesn't look contents will be zeroes...
 
     return _np.zeros(shape, dtype=dtype, order=order)
 
@@ -348,20 +350,26 @@ class ndarrayRGB(ndarray):
     def get_red(self, dtype=None):
         if dtype is None:
             dtype = int16
-#        return self['r'].astype(dtype)
-        return self.view(ndarray)[..., 0].astype(dtype)
+        try :
+            return self['r'].astype(dtype)
+        except:
+            return self.view(ndarray)[..., 0]#.astype(dtype)
 
     def get_green(self, dtype=None):
         if dtype is None:
             dtype = int16
-#        return self['g'].astype(dtype)
-        return self.view(ndarray)[..., 1].astype(dtype)
+        try:
+            return self['g'].astype(dtype)
+        except:
+            return self.view(ndarray)[..., 1]#.astype(dtype)
 
     def get_blue(self, dtype=None):
         if dtype is None:
             dtype = int16
-#        return self['b'].astype(dtype)
-        return self.view(ndarray)[..., 2].astype(dtype)
+        try:
+            return self['b'].astype(dtype)
+        except:
+            return self.view(ndarray)[..., 2]#.astype(dtype)
 
     def get_grey(self, cweights=None, dtype=None):
         '''Get grey image
@@ -376,7 +384,7 @@ class ndarrayRGB(ndarray):
         else:
             cweights = asIterable(cweights)
             if len(cweights) != 3:
-                raise ValueError, "three colour channel weights needed"
+                raise ValueError("three colour channel weights needed")
 
         csum = float(sum(cweights))
         g = self.get_red(float)*(cweights[0]/csum)
@@ -406,7 +414,7 @@ def _key2slice(key, shape):
     key = asIterable(key)
     rank = len(shape)
     if rank < len(key) and key[0] is not Ellipsis:
-        raise IndexError, "too many indices"
+        raise IndexError("too many indices")
 
     hasEllipsis = False
     s = []

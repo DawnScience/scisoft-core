@@ -20,4 +20,4 @@ Diffraction package
 
 import os
 if os.name == 'java':
-    from jython.jydiffraction import * #@UnusedWildImport
+    from .jython.jydiffraction import * #@UnusedWildImport

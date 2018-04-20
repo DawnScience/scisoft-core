@@ -9,7 +9,7 @@
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${workspace_loc:uk.ac.diamond.scisoft.python.test/src/all_tests.py}"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_OTHER_WORKING_DIRECTORY" value=""/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value=""/>
-<stringAttribute key="org.python.pydev.debug.ATTR_INTERPRETER" value="__default"/>
+<stringAttribute key="org.python.pydev.debug.ATTR_INTERPRETER" value="python3"/>
 <stringAttribute key="org.python.pydev.debug.ATTR_PROJECT" value="uk.ac.diamond.scisoft.python.test"/>
 <stringAttribute key="process_factory_id" value="org.python.pydev.debug.processfactory.PyProcessFactory"/>
 </launchConfiguration>

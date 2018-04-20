@@ -21,7 +21,7 @@ Created on 1 May 2011
 '''
 import unittest
 import scisoftpy.python.pyrpc as rpc
-import thread
+from six.moves import _thread
 import threading
 
 PORT = 8715
@@ -33,7 +33,7 @@ class Test(unittest.TestCase):
         rpcserver.add_handler("cat", lambda s1, s2: s1 + s2)
         rpcserver.add_handler("len", lambda s1, s2: len(s1 + s2))
         
-        thread.start_new_thread(rpcserver.serve_forever, ())
+        _thread.start_new_thread(rpcserver.serve_forever, ())
         try:
             rpcclient = rpc.rpcclient(PORT)
             result = rpcclient.cat("Hello, ", "World!")
@@ -48,7 +48,7 @@ class Test(unittest.TestCase):
         rpcserver = rpc.rpcserver(PORT)
         rpcserver.add_handler("flaterror", lambda o: object())
         
-        thread.start_new_thread(rpcserver.serve_forever, ())
+        _thread.start_new_thread(rpcserver.serve_forever, ())
         try:
             rpcclient = rpc.rpcclient(PORT)
             self.assertRaises(Exception, rpcclient.flaterror, ("Hello",))
@@ -60,7 +60,7 @@ class Test(unittest.TestCase):
         rpcserver = rpc.rpcserver(PORT)
         rpcserver.add_handler("echo", lambda o: o)
         
-        thread.start_new_thread(rpcserver.serve_forever, ())
+        _thread.start_new_thread(rpcserver.serve_forever, ())
         try:
             rpcclient = rpc.rpcclient(PORT)
             self.assertRaises(Exception, rpcclient.flaterror, (18,))

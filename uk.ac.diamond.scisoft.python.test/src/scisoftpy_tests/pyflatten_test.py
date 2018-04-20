@@ -13,11 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###
-
+from __future__ import print_function
+import six
 import unittest
 import sys, os
 import scisoftpy as dnp
-import xmlrpclib
+from six.moves import xmlrpc_client
 import math
 import uuid
 
@@ -25,14 +26,14 @@ class Test(unittest.TestCase):
 
     def _assertFlattenedEquals(self, expected, actual):
         if expected is None:
-            self.assertEquals(None, actual)
+            self.assertEqual(None, actual)
         elif isinstance(expected, (list, tuple)):
-            self.assertEquals(len(expected), len(actual))
+            self.assertEqual(len(expected), len(actual))
             for exp, act in zip(expected, actual):
                 self._assertFlattenedEquals(exp, act)
         elif isinstance(expected, dict):
-            self.assertEquals(len(expected), len(actual))
-            for k, v in expected.iteritems():
+            self.assertEqual(len(expected), len(actual))
+            for k, v in six.iteritems(expected):
                 self.assertTrue(k in actual)
                 self._assertFlattenedEquals(v, actual[k])
         elif isinstance(expected, float) and dnp.isnan(expected):
@@ -54,21 +55,21 @@ class Test(unittest.TestCase):
                 expstr = expstr[:i]
             if expstr != actualstr and "Exception: " + expstr != actualstr:
                 # on mismatch, display error on original string
-                self.assertEquals(str(expected), str(actual))
+                self.assertEqual(str(expected), str(actual))
         elif isinstance(expected, (dnp.ndarray)):
             self.assertTrue(dnp.equaldataset(expected, actual))
         else:
-            self.assertEquals(expected, actual)
+            self.assertEqual(expected, actual)
     
     def _checkFlattenedState(self, flat):
-        if isinstance(flat, (str, unicode, int, float, bool, xmlrpclib.Binary)):
+        if isinstance(flat, (six.string_types, int, float, bool, xmlrpc_client.Binary)):
             return
         if isinstance(flat, (list, tuple)):
             for elem in flat:
                 self._checkFlattenedState(elem)
             return
         if isinstance(flat, dict):
-            for k, v in flat.iteritems():
+            for k, v in six.iteritems(flat):
                 self.assertTrue(isinstance(k, str))
                 self._checkFlattenedState(v)
             return
@@ -98,7 +99,7 @@ class Test(unittest.TestCase):
         self._assertFlattenedEquals(expectedObj, out);
         
         if expectedObj is not None and expectedType == type(expectedObj):
-            self.assertEquals(expectedType, type(out))
+            self.assertEqual(expectedType, type(out))
         elif expectedType is not None:
             self.assertTrue(isinstance(out, expectedType))
 
@@ -185,8 +186,8 @@ class Test(unittest.TestCase):
         self._flattenAndUnflatten(18)
         self._flattenAndUnflatten(-7)
         self._flattenAndUnflatten(0)
-        self._flattenAndUnflatten(sys.maxint)
-        self._flattenAndUnflatten(-sys.maxint - 1)
+        self._flattenAndUnflatten(sys.maxsize)
+        self._flattenAndUnflatten(-sys.maxsize - 1)
     
     def testBoolean(self): 
         self._flattenAndUnflatten(True)
@@ -205,9 +206,9 @@ class Test(unittest.TestCase):
         self._flattenAndUnflatten(dnp.floatmax)
         
     def testBinary(self):
-        self._flattenAndUnflatten(dnp.rpc.binarywrapper("\0\1\2\3"))
-        self._flattenAndUnflatten(dnp.rpc.binarywrapper(' ' * 0))
-        self._flattenAndUnflatten(dnp.rpc.binarywrapper(' ' * 1000))
+        self._flattenAndUnflatten(dnp.rpc.binarywrapper(b"\0\1\2\3"))
+        self._flattenAndUnflatten(dnp.rpc.binarywrapper(b' ' * 0))
+        self._flattenAndUnflatten(dnp.rpc.binarywrapper(b' ' * 1000))
 
     def testDict(self):
         self._flattenAndUnflatten({'moo': 'cow', 'quack': 'duck', 'pi': math.pi, 'One': 1.0}) 
@@ -395,7 +396,7 @@ class Test(unittest.TestCase):
             raise Exception("raised exception")
         try:
             function_for_tb()
-        except Exception, e:
+        except Exception as e:
             self._flattenAndUnflatten(e, expectedObj=Exception("Exception: raised exception"))
     def testGuiParameters(self):
         # test one explicitly
@@ -427,7 +428,7 @@ class Test(unittest.TestCase):
             self._flattenAndUnflatten(uuid.uuid4())
     
     def testUnicode(self):
-        self._flattenAndUnflatten(u"\u00b0")
+        self._flattenAndUnflatten(six.u("\u00b0"))
     
     def testTypedNone(self):
         self._flattenAndUnflatten(dnp.rpc.typednone("java.lang.Double"))

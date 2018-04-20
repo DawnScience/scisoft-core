@@ -17,9 +17,10 @@
 '''
 AnalysisRpc implementation in Python
 '''
-from SocketServer import TCPServer, ThreadingMixIn
-from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler, SimpleXMLRPCServer
-from xmlrpclib import ServerProxy
+import six
+from six.moves.socketserver import TCPServer, ThreadingMixIn
+from six.moves.xmlrpc_server import SimpleXMLRPCRequestHandler, SimpleXMLRPCServer
+from six.moves.xmlrpc_client import ServerProxy
 import scisoftpy.python.pyflatten as _flatten
 
 class _method:
@@ -61,7 +62,7 @@ class rpcserver(object):
             if handler is None:
                 ret = Exception("No handler registered for " + destination)
             else:
-                unflattened = map(_flatten.unflatten, args)
+                unflattened = list(map(_flatten.unflatten, args))
                 if debug:
                     # do the import here, pydevd must already be in the sys.
                     # it is important that the import is within the outer try/except
@@ -86,7 +87,7 @@ class rpcserver(object):
                 else:
                     ret = handler(*unflattened)
             flatret = _flatten.flatten(ret)
-        except Exception, e:
+        except Exception as e:
             flatret = _flatten.flatten(e)
         return flatret
     def _xmlrpchandler(self, destination, args):

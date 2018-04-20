@@ -113,104 +113,106 @@ Functions available:
 
     Check also in maths, comparisons, fft, random, io, plot and signal sub-modules
 '''
+from __future__ import print_function
+
 import sys
 if sys.hexversion < 0x02070000:
     raise ImportError('Must use python of at least version 2.7')
-elif sys.hexversion >= 0x03000000:
-    raise ImportError('Python 3 not supported')
+#elif sys.hexversion >= 0x03000000:
+#    raise ImportError('Python 3 not supported')
 
 import os
 if os.name == 'java':
-    from jython.jycore import *
-    from jython.jymaths import *
-    from jython.jycomparisons import *
-    from jython.jyscisoft import *
+    from .jython.jycore import *
+    from .jython.jymaths import *
+    from .jython.jycomparisons import *
+    from .jython.jyscisoft import *
 else:
-    from python.pycore import *
-    from python.pymaths import *
-    from python.pycomparisons import *
-    from python.pyscisoft import *
+    from .python.pycore import *
+    from .python.pymaths import *
+    from .python.pycomparisons import *
+    from .python.pyscisoft import *
 
 
 '''
 Imports should work with python+numpy only agreed with MB 11 Nov 2011
 '''
 try:
-    import nexus
+    from . import nexus
 except Exception as e:
-    print >> sys.stderr, "Could not import nexus"
-    print >> sys.stderr, e
+    print("Could not import nexus", file=sys.stderr)
+    print(e, file=sys.stderr)
 
 try:
-    import io
+    from . import io
 except Exception as e:
-    print >> sys.stderr, "Could not import input/output routines"
-    print >> sys.stderr, e
+    print("Could not import input/output routines", file=sys.stderr)
+    print(e, file=sys.stderr)
 
 try:
-    import plot
+    from . import plot
 except Exception as e:
-    print >> sys.stderr, "Could not import plotting routines"
-    print >> sys.stderr, e
+    print("Could not import plotting routines", file=sys.stderr)
+    print(e, file=sys.stderr)
 
 try:
-    import data
+    from . import data
 except Exception as e:
-    print >> sys.stderr, "Could not import data routines"
-    print >> sys.stderr, e
+    print("Could not import data routines", file=sys.stderr)
+    print(e, file=sys.stderr)
 
 try:
-    import random
+    from . import random
 except Exception as e:
-    print >> sys.stderr, "Could not import random routines"
-    print >> sys.stderr, e
+    print("Could not import random routines", file=sys.stderr)
+    print(e, file=sys.stderr)
 
 try:
-    import linalg
+    from . import linalg
 except Exception as e:
-    print >> sys.stderr, "Could not import linear algebra routines"
-    print >> sys.stderr, e
+    print("Could not import linear algebra routines", file=sys.stderr)
+    print(e, file=sys.stderr)
 
 try:
-    import flatten
+    from . import flatten
 except Exception as e:
-    print >> sys.stderr, "Could not import flatten API"
-    print >> sys.stderr, e
+    print("Could not import flatten API", file=sys.stderr)
+    print(e, file=sys.stderr)
 
 try:
-    import rpc
+    from . import rpc
 except Exception as e:
-    print >> sys.stderr, "Could not import rpc API"
-    print >> sys.stderr, e
+    print("Could not import rpc API", file=sys.stderr)
+    print(e, file=sys.stderr)
 
 try:
-    import fft
+    from . import fft
 except Exception as e:
-    print >> sys.stderr, "Could not import fft routines"
-    print >> sys.stderr, e
+    print("Could not import fft routines", file=sys.stderr)
+    print(e, file=sys.stderr)
 
 try:
-    from signal import convolve, correlate
+    from .signal import convolve, correlate
 except Exception as e:
-    print >> sys.stderr, "Could not import some signal routines"
-    print >> sys.stderr, e
+    print("Could not import some signal routines", file=sys.stderr)
+    print(e, file=sys.stderr)
 
 try:
-    import image
+    from . import image
 except Exception as e:
-    print >> sys.stderr, "Could not import image routines"
-    print >> sys.stderr, e
+    print("Could not import image routines", file=sys.stderr)
+    print(e, file=sys.stderr)
 
 try:
-    import fit
-    from fit import roots, poly1d
+    from . import fit
+    from .fit import roots, poly1d
 except Exception as e:
-    print >> sys.stderr, "Could not import fit"
-    print >> sys.stderr, e
+    print("Could not import fit", file=sys.stderr)
+    print(e, file=sys.stderr)
 
 try:
-    import external
+    from . import external
 except Exception as e:
-    print >> sys.stderr, "Could not import external functions"
-    print >> sys.stderr, e
+    print("Could not import external functions", file=sys.stderr)
+    print(e, file=sys.stderr)
 

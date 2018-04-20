@@ -17,7 +17,7 @@
 '''
 Maths package
 '''
-
+from __future__ import print_function
 import numpy as _np #@UnresolvedImport
 
 from math import pi as _ppi
@@ -153,7 +153,7 @@ try:
     # added in numpy 1.10
     matmul = _np.matmul
 except:
-    print >> sys.stderr, 'Warning: matmul is not yet available in numpy ' + _np.__version__
+    print('Warning: matmul is not yet available in numpy ' + _np.__version__, file=sys.stderr)
 tensordot = _np.tensordot
 kron = _np.kron
 trace = _np.trace
@@ -169,7 +169,7 @@ def gradient(f, *arg):
         if al == 1:
             narg = [narg[0]]*r
         elif al != r:
-            raise SyntaxError, "Invalid number of arguments"
+            raise SyntaxError("Invalid number of arguments")
 
         for i in range(al):
             a = narg[i]

@@ -20,13 +20,13 @@ Analysis RPC Package
 
 import os
 if os.name == 'java':
-    import jython.jyrpc as _rpc #@UnusedImport
-    import jython.jywrapper as _wrapper #@UnusedImport
-    import jython.jyflatten as _flatten #@UnusedImport
+    from .jython import jyrpc as _rpc #@UnusedImport
+    from .jython import jywrapper as _wrapper #@UnusedImport
+    from .jython import jyflatten as _flatten #@UnusedImport
 else:
-    import python.pyrpc as _rpc #@Reimport
-    import python.pywrapper as _wrapper #@Reimport
-    import python.pyflatten as _flatten #@Reimport
+    from .python import pyrpc as _rpc #@Reimport
+    from .python import pywrapper as _wrapper #@Reimport
+    from .python import pyflatten as _flatten #@Reimport
 
 rpcserver=_rpc.rpcserver
 rpcclient=_rpc.rpcclient

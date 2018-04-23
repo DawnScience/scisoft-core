@@ -96,7 +96,7 @@ public class XPDFIterateCalibrationConstantOperation extends
 		backgroundSubtracted.add(DatasetUtils.convertToDataset(input));
 		// Add the containers in order, innermost to outermost
 		for (XPDFTargetComponent container : theXPDFMetadata.getContainers()) {
-			backgroundSubtracted.add(theXPDFMetadata.getContainerTrace(container).getTrace());
+			backgroundSubtracted.add(theXPDFMetadata.getContainerTrace(container).getBackgroundSubtractedTrace(null));
 		}
 		theCalibration.setBackgroundSubtracted(backgroundSubtracted);
 		

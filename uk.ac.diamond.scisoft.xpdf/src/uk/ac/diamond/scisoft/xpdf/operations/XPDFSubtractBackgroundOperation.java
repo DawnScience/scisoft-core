@@ -58,7 +58,7 @@ public class XPDFSubtractBackgroundOperation extends
 				// sets the isBackgroundSubtracted flag, but does not subtract the background from the (null) trace
 				theXPDFMetadata.getSampleTrace().subtractBackground(theXPDFMetadata.getEmptyTrace());
 				// Subtract the background from the Dataset
-				process.isubtract(theXPDFMetadata.getEmptyTrace().getTrace().squeeze());
+				process.isubtract(theXPDFMetadata.getEmptyTrace().getNormalizedTrace().squeeze());
 				
 				// Propagate the errors
 				Dataset inputErrors;

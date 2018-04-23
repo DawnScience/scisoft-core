@@ -49,6 +49,7 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 	private double fluoro;
 	private double lorchCutOff;
 	private double comptonScaling = 1.0;
+	private List<Dataset> incoherentScatteringData;
 	
 	/**
 	 * Empty constructor.
@@ -62,6 +63,7 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 		emptyDataParameters = null;
 		absorptionCorrectionMaps = null;
 		tect = null;
+		incoherentScatteringData = new ArrayList<Dataset>();
 	}
 	
 	/**
@@ -96,6 +98,12 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 		this.fluoro = inMeta.fluoro;
 		this.lorchCutOff = inMeta.lorchCutOff;
 		this.comptonScaling = inMeta.comptonScaling;
+
+		// Deep copy of the incoherent scattering data
+		this.incoherentScatteringData = new ArrayList<Dataset>();
+		for (Dataset incohere: inMeta.incoherentScatteringData) {
+			this.pushIncoherentScattering(incohere.clone());
+		}
 	}
 	
 	/**
@@ -518,6 +526,22 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 	@Override
 	public double getComptonScaling() {
 		return this.comptonScaling;
+	}
+
+	@Override
+	public void pushIncoherentScattering(Dataset data) {
+		this.incoherentScatteringData.add(data);
+	}
+	
+	@Override
+	public Dataset getIncoherentScattering(int index) {
+		return this.incoherentScatteringData.get(index);
+	}
+
+	@Override
+	public boolean isAllIncoherentScatterPresent() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }

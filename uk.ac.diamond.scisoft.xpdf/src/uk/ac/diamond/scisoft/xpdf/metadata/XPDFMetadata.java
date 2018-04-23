@@ -216,4 +216,24 @@ public interface XPDFMetadata extends MetadataType {
 	 */
 	double getComptonScaling();
 	
+	/**
+	 * Pushes a new Dataset of incoherent scattering data on the the end of the list
+	 */
+	void pushIncoherentScattering(Dataset scattering);
+	
+	/**
+	 * Gets the incoherent scattering for a given the component
+	 * <p>
+	 * Returns the incoherent scattering data for the target component with the given index
+	 * @param index
+	 * 				index of the target component required
+	 * @return the Dataset for that component
+	 */
+	Dataset getIncoherentScattering(int index);
+	
+	/**
+	 * Reports on the presence of comprehensive incoherent scattering data.
+	 * @return true if every component has corresponding incoherent scattering data
+	 */
+	boolean isAllIncoherentScatterPresent();
 }

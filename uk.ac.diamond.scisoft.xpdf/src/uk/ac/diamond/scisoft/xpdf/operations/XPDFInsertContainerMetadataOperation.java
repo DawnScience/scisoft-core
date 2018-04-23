@@ -141,6 +141,15 @@ public class XPDFInsertContainerMetadataOperation extends
 		theXPDFMetadata.addContainer(compMeta);
 		theXPDFMetadata.setContainerTrace(compMeta, containerTraceMeta);
 		
+		if (model.getIncoherentScatteringPath() != null && model.getIncoherentScatteringPath().length() > 0) {
+			String iScatterPath = model.getIncoherentScatteringPath();
+			String dataset = "/entry1/data/data";
+			
+			Dataset iScatterData = DatasetUtils.convertToDataset(ProcessingUtils.getDataset(this, iScatterPath, dataset));
+			
+			theXPDFMetadata.pushIncoherentScattering(iScatterData);
+		}
+
 		input.setMetadata(theXPDFMetadata);
 		
 		return new OperationData(input);

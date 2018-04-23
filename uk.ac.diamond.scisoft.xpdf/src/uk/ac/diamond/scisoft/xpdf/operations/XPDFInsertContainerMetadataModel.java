@@ -50,6 +50,8 @@ public class XPDFInsertContainerMetadataModel extends AbstractOperationModel {
 	private boolean downstream = true;
 	@OperationModelField(hint="Angle of the capillary. 0°:|, 90°:—", label = "Container Angle", unit = "°")
 	private double containerAngle = 0.0;
+	@OperationModelField(hint = "File to read simulated incoherent scattering flux data from ", label = "Incoherent Scattering File", file = FileType.EXISTING_FILE)
+	private String incoherentScatteringPath = "";
 	
 	public String getFilePath() {
 		return filePath;
@@ -179,4 +181,11 @@ public class XPDFInsertContainerMetadataModel extends AbstractOperationModel {
 		firePropertyChange("containerAngle", this.containerAngle, this.containerAngle = detentContainerAngle);
 	}
 	
+	public String getIncoherentScatteringPath() {
+		return this.incoherentScatteringPath;
+	}
+	
+	public void setIncoherentScatteringPath(String incoherentScatteringPath) {
+		firePropertyChange("incoherentScatteringPath", this.incoherentScatteringPath, this.incoherentScatteringPath = incoherentScatteringPath);
+	}
 }

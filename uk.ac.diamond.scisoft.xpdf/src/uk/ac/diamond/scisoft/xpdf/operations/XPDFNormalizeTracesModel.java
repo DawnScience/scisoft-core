@@ -10,6 +10,8 @@ public class XPDFNormalizeTracesModel extends AbstractOperationModel {
 	private boolean normalizeContainers = true;
 	@OperationModelField(hint="Normalize the beam data, if unnormalized",label = "Normalise empty beam trace?" )
 	private boolean normalizeBeam = true;
+	@OperationModelField(hint="Normalize counts by pixel solid angle", label = "Normalise by solid angle?")
+	private boolean normalizeByOmega = true;
 
 	public boolean isNormalizeSample() {
 		return normalizeSample;
@@ -17,12 +19,14 @@ public class XPDFNormalizeTracesModel extends AbstractOperationModel {
 	public void setNormalizeSample(boolean normalizeSample) {
 		firePropertyChange("normalizeSample", this.normalizeSample, this.normalizeSample = normalizeSample);
 	}
+
 	public boolean isNormalizeContainers() {
 		return normalizeContainers;
 	}
 	public void setNormalizeContainers(boolean normalizeContainers) {
 		firePropertyChange("normalizeContainers", this.normalizeContainers, this.normalizeContainers = normalizeContainers);
 	}
+
 	public boolean isNormalizeBeam() {
 		return normalizeBeam;
 	}
@@ -30,4 +34,10 @@ public class XPDFNormalizeTracesModel extends AbstractOperationModel {
 		firePropertyChange("normalizeBeam", this.normalizeBeam, this.normalizeBeam = normalizeBeam);
 	}
 
+	public boolean isNormalizeByOmega() {
+		return normalizeByOmega;
+	}
+	public void setNormalizeByOmega(boolean normalize) {
+		firePropertyChange("normalizeByOmega", this.normalizeByOmega, this.normalizeByOmega = normalize);
+	}
 }

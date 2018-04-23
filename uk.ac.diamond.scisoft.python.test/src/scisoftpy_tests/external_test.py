@@ -26,7 +26,7 @@ from scisoftpy.external import save_args, load_args, pyenv
 import scisoftpy as dnp
 
 import shutil
-
+from six.moves import range
 
 class Test(unittest.TestCase):
     from os import path
@@ -42,7 +42,7 @@ class Test(unittest.TestCase):
         if type(a) != type(b):
             return False
         if isinstance(a, dict):
-            if list(a.keys()) != list(b.keys()):
+            if a.keys() != b.keys():
                 return False
             for k in a:
                 if not self.equals(a[k], b[k]):
@@ -78,10 +78,11 @@ class Test(unittest.TestCase):
 #        p = sub.Popen('echo $PYTHONPATH', shell=True, env=_env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
 #        print p.communicate()
         p = sub.Popen([pyexe,], env=env, shell=False, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
-        p.stdin.write(b'print "Hello World"\n')
-        p.stdin.write(b'print "Hello World2"\n')
+        p.stdin.write(b'from __future__ import print_function\n')
+        p.stdin.write(b'print("Hello World")\n')
+        p.stdin.write(b'print("Hello World2")\n')
         p.stdin.close()
-        l = p.stdout.read()
+        l = p.stdout.read().decode()
         print(l)
 
 
@@ -126,15 +127,15 @@ class Test(unittest.TestCase):
 
     def testPyAna(self):
         efun = dnp.external.create_function("funpyana", "external_functions", extra_path=Test.epath_list, dls_module="python/anaconda")
-        print('2,7', end=' ')
-        self.assertEqual(efun(), (2,7))
+        print('2,7')
+        self.assertEquals(efun(), (2,7))
         print('passed')
 
     def testArrayScalar(self):
         efun = dnp.external.create_function("funarrayscalar", "external_functions", extra_path=Test.epath_list, dls_module=True)
         a = 2+3j, 1., 123, True
-        print(a, end=' ')
-        self.assertEqual(efun(), a)
+        print(a)
+        self.assertEquals(efun(), a)
         print('passed')
 
     def testSpeed(self):
@@ -152,9 +153,9 @@ class Test(unittest.TestCase):
 
     def testHello(self):
         py = dnp.external.PythonSubProcess("python", None)
-        print(py.communicate("print \"Hello World!\"\n"))
-        print(py.communicate("print \"Hello World2!\"\n"))
-        print(py.communicate("for i in range(4): print i\n"))
+        print(py.communicate("print(\"Hello World!\")\n"))
+        print(py.communicate("print(\"Hello World2!\")\n"))
+        print(py.communicate("for i in range(4): print(i)\n"))
         py.stop()
 
 def suite():

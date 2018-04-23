@@ -18,10 +18,9 @@
 '''
 
 import os
-import six
 if os.name == 'java':
     _isjava = True
-    from .jython.jycore import ndarray, ndgeneric, scalarToPython #@UnusedImport
+    from jython.jycore import ndarray, ndgeneric, scalarToPython #@UnusedImport
 else:
     _isjava = False
     from .python.pycore import ndarray, ndgeneric, scalarToPython #@Reimport
@@ -45,8 +44,8 @@ with argument passing and output return, plus exception handling
 '''
 
 from os import path as _path
-
-from pickle import dump as _psave, load as _pload
+import six
+from six.moves.cPickle import dump as _psave, load as _pload
 
 def save_args(arg, dir=None): #@ReservedAssignment
     '''Save arguments as files in a temporary directory
@@ -97,8 +96,8 @@ def _pickle(p, arg, n):
         if isinstance(arg, ndgeneric):
             arg = scalarToPython(arg)
         try:
-            f = open(_path.join(p, name), 'wb') # https://stackoverflow.com/a/13906715/1253230
-            _psave(str(arg), f)
+            f = open(_path.join(p, name), 'wb')
+            _psave(arg, f)
         except:
             raise
         else:
@@ -249,7 +248,7 @@ def get_dls_module(module='python/anaconda', module_init='/etc/profile.d/modules
     p.stdin.close()
     exe, path, ldpath = parse_for_env(p.stdout)
     if exe is None:
-        raise RuntimeError('Problem with running external process: ' + p.stderr.read().decode())
+        raise RuntimeError('Problem with running external process: ' + p.stderr.read())
     _dls_modules[module] = exe, path, ldpath
     return exe, path, ldpath
 
@@ -273,7 +272,7 @@ def get_python():
     p.stdin.close()
     exe, path, ldpath = parse_for_env(p.stdout, sep='|')
     if exe is None:
-        raise RuntimeError('Problem with running external process: ' + p.stderr.read().decode())
+        raise RuntimeError('Problem with running external process: ' + p.stderr.read())
     return exe, path, ldpath
 
 def parse_for_env(stream, sep=':'):
@@ -281,12 +280,12 @@ def parse_for_env(stream, sep=':'):
     path = None
     ldpath = None
     while True:
-        l =  stream.readline()
+        l =  stream.readline().decode()
         if not l:
             break
         l = l.strip()
         if l:
-            r = l.split(sep.encode())
+            r = l.split(sep)
             if r[0] == 'EXEC':
                 exe = r[1]
             elif r[0] == 'PATH':
@@ -357,7 +356,7 @@ while True:
                 self.out.get_nowait()
 
     class PythonSubProcess(object):
-        READY = 'READY\n'
+        READY = b'READY\n'
         TIMEOUT = 0.005
         def __init__(self, exe='python', env=None):
             self.proc = Popen([exe, '-c', cmds], bufsize=1, env=env, stdin=PIPE, stdout=PIPE, stderr=PIPE)
@@ -374,24 +373,23 @@ while True:
                 el = self.err.readline(self.TIMEOUT)
                 if el is None:
                     el = 'None'
-                raise OSError('Problem with python subprocess not being ready: ' + str(l) + '; ' + str(el))
+                raise OSError('Problem with python subprocess not being ready: ' + l + '; ' + el)
 
         def communicate(self, text):
             self._send(text)
-
             results = []
             while True:
                 l = self.out.readline()
                 if l == self.READY:
                     break
-                results.append(l)
+                results.append(l.decode())
             lines = [''.join(results)]
             results = []
             while True:
                 l = self.err.readline(self.TIMEOUT)
                 if not l:
                     break
-                results.append(l)
+                results.append(l.decode())
             if len(results) > 0:
                 lines.append(''.join(results))
             else:
@@ -401,7 +399,7 @@ while True:
         def _send(self, text):
             self.out.clear()
             self.err.clear()
-            self.stdin.write(text)
+            self.stdin.write(text.encode())
             self.stdin.flush()
 
         def stop(self):
@@ -573,5 +571,4 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
         else:
             key = 'LD_LIBRARY_PATH'
         env[key] = os.pathsep.join(ldpath)
-
     return ExternalFunction(exe, env, module, function, keep)

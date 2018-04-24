@@ -124,6 +124,14 @@
             model="uk.ac.diamond.scisoft.xpdf.operations.XPDFReadMetadataModel"
             name="XPDF Read Metadata">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
+            class="uk.ac.diamond.scisoft.xpdf.operations.SubtractXRMCOperation"
+            icon="icons/xpdfxicco.png"
+            id="uk.ac.diamond.scisoft.xpdf.operations.SubtractXRMCOperation"
+            model="uk.ac.diamond.scisoft.xpdf.operations.SubtractXRMCModel"
+            name="Iterate and Subtract XRMC Operation ">
+      </operation>
    </extension>
 
 </plugin>

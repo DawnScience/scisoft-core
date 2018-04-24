@@ -71,7 +71,9 @@ public class SubtractXRMCOperation extends AbstractOperation<SubtractXRMCModel, 
 		double classicalElectronRadius = 2.8179403227e-15;
 		double electronCrossSectionUnits = classicalElectronRadius * classicalElectronRadius;
 		
-		// TODO: add empirical fitting here
+		if (true) {
+			XRMCEmpiricalFitting.calculateEmpiricalGain(DatasetUtils.convertToDataset(input), xMeta.getIncoherentScattering(0), isGainFinal);
+		}
 		
 		// Iterate the gain
 		while(true) {

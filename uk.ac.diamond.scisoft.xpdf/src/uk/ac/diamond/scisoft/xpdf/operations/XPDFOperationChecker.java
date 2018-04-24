@@ -24,20 +24,46 @@ class XPDFOperationChecker {
 
 	private XPDFOperationChecker() {}
 
+	public static boolean hasMetadata(IDataset theData) {
+		return theData.getFirstMetadata(XPDFMetadata.class) != null;
+	}
+	
+	public static boolean hasSampleMetadata(IDataset theData) {
+		return hasSampleMetadata(getMetadata(theData));
+	}
+	public static boolean hasSampleMetadata(XPDFMetadata theMetadata) {
+		return theMetadata.getSample() != null;
+	}
+
+	public static boolean hasBeamMetadata(IDataset theData) {
+		return hasBeamMetadata(getMetadata(theData));
+	}
+	public static boolean hasBeamMetadata(XPDFMetadata theMetadata) {
+		return theMetadata.getBeam() != null;
+	}
+
+	public static boolean hasDetectorMetadata(IDataset theData) {
+		return hasDetectorMetadata(getMetadata(theData));
+	}
+	public static boolean hasDetectorMetadata(XPDFMetadata theMetadata) {
+		return theMetadata.getDetector() != null;
+	}
+
+	
 	public static void checkXPDFMetadata(IOperation<?,?> parentOp, IDataset theData, boolean needsSample, boolean needsBeam, boolean needsDetector) 
 	{
-		if (theData.getFirstMetadata(XPDFMetadata.class) == null)
+		if (!hasMetadata(theData))
 			throw new OperationException(parentOp, "XPDFMetadata not found.");
 		
-		XPDFMetadata theMetadata = theData.getFirstMetadata(XPDFMetadata.class);
+		XPDFMetadata theMetadata = getMetadata(theData);
 		
-		if (needsSample && theMetadata.getSample() == null)
+		if (needsSample && !hasSampleMetadata(theMetadata))
 				throw new OperationException(parentOp, "XPDF sample metadata not found.");
 			
-		if (needsBeam && theMetadata.getBeam() == null)
+		if (needsBeam && !hasBeamMetadata(theMetadata))
 			throw new OperationException(parentOp, "XPDF beam metadata not found.");
 		
-		if (needsDetector && theMetadata.getDetector() == null)
+		if (needsDetector && !hasDetectorMetadata(theMetadata))
 			throw new OperationException(parentOp, "XPDF detector metadata not found.");
 	return;
 	}	
@@ -45,5 +71,9 @@ class XPDFOperationChecker {
 	public static boolean isAllIncoherentScatterPresent(IDataset theData) {
 		XPDFMetadata theMetadata = theData.getFirstMetadata(XPDFMetadata.class);
 		return theMetadata.isAllIncoherentScatterPresent();
+	}
+
+	private static XPDFMetadata getMetadata(IDataset theData) {
+		return theData.getFirstMetadata(XPDFMetadata.class);
 	}
 }

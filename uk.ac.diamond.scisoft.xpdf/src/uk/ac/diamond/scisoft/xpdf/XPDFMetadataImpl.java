@@ -540,8 +540,8 @@ public class XPDFMetadataImpl implements XPDFMetadata {
 
 	@Override
 	public boolean isAllIncoherentScatterPresent() {
-		// TODO Auto-generated method stub
-		return false;
+		boolean sameSize = this.incoherentScatteringData.size() == (this.containerData.size() + 1); // One for the sample 
+		return sameSize;
 	}
 	
 }

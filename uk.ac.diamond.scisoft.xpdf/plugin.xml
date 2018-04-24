@@ -132,6 +132,14 @@
             model="uk.ac.diamond.scisoft.xpdf.operations.SubtractXRMCModel"
             name="Iterate and Subtract XRMC Operation ">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
+            class="uk.ac.diamond.scisoft.xpdf.operations.XRMCNormalizationOperation"
+            icon="icons/xpdfnormal.png"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XRMCNormalizationOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="XRMC Normalisation">
+      </operation>
    </extension>
 
 </plugin>

@@ -48,7 +48,7 @@ public class SubtractXRMCOperation extends AbstractOperation<SubtractXRMCModel, 
 		
 		XPDFOperationChecker.checkXPDFMetadata(this, input, true, true, true);
 		boolean allIncoherent = XPDFOperationChecker.isAllIncoherentScatterPresent(input);
-		System.err.println("Is all incoherent scattering data present? " + allIncoherent);
+		if (!allIncoherent) throw new OperationException(this, "XRMC scattering data is not present for one or more components");
 		
 		XPDFMetadata xMeta = input.getFirstMetadata(XPDFMetadata.class);
 		XPDFCoordinates coordinates = new XPDFCoordinates(DatasetUtils.convertToDataset(input));

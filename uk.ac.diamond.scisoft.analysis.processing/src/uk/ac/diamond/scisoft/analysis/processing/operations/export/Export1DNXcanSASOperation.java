@@ -31,6 +31,7 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.analysis.tree.impl.DataNodeImpl;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
+import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 // Imports from org.eclipse.dawnsci
 import org.eclipse.dawnsci.nexus.NexusFile;
@@ -102,20 +103,20 @@ public class Export1DNXcanSASOperation extends AbstractOperation<Export1DNXcanSA
 
 		// The SASdata class SDS classes of I & Q (I_err too!) with attributes for each SDS class e.g. I_axes = Q, Q_indicies 0.
 		GroupNode nxData = TreeFactory.createGroupNode(0);
-		nxData.addAttribute(TreeFactory.createAttribute("signal", "I"));
+		nxData.addAttribute(TreeFactory.createAttribute(NexusConstants.DATA_SIGNAL, "I"));
 		nxData.addAttribute(TreeFactory.createAttribute("I_axes", "Q"));
 		nxData.addAttribute(TreeFactory.createAttribute("Q_indices", Long.valueOf(0)));
 		
 		// Then we add the data
 		DataNode sasDataNode = new DataNodeImpl(1);
 		sasDataNode.setDataset(dataForOutput);
-		sasDataNode.addAttribute(TreeFactory.createAttribute("units", "arbitrary"));
+		sasDataNode.addAttribute(TreeFactory.createAttribute(NexusConstants.UNITS, "arbitrary"));
 		//nxData.addDataNode("I", NexusTreeUtils.createDataNode("I", dataForOutput, "1/cm"));
 		nxData.addDataNode("Q", NexusTreeUtils.createDataNode("Q", axesForOutput, "1/nm"));
 		
 		// And any error values, if present
 		if (errorForOutput != null) {
-			sasDataNode.addAttribute(TreeFactory.createAttribute("uncertainties", "Idev"));
+			sasDataNode.addAttribute(TreeFactory.createAttribute(NexusConstants.DATA_UNCERTAINTIES, "Idev"));
 			//nxData.addAttribute(TreeFactory.createAttribute("I/uncertainties", "Idev"));
 			nxData.addDataNode("Idev", NexusTreeUtils.createDataNode("Idev", dataForOutput, "arbitrary"));
 		}
@@ -158,7 +159,7 @@ public class Export1DNXcanSASOperation extends AbstractOperation<Export1DNXcanSA
 
 		// As a courtesy the root level has the file_name and file_time (acquisition time) given as attributes (Time format: YYYY-MM-DDTHH:MM:SS+0000 (timezone))
 		GroupNode nxRoot = TreeFactory.createGroupNode(0);
-		nxRoot.addAttribute(TreeFactory.createAttribute("NX_class", "NXroot"));
+		nxRoot.addAttribute(TreeFactory.createAttribute(NexusConstants.NXCLASS, NexusConstants.ROOT));
 		nxRoot.addAttribute(TreeFactory.createAttribute("canSAS_class", "SASroot"));
 		nxRoot.addAttribute(TreeFactory.createAttribute("default", "sasentry"));
 		nxRoot.addAttribute(TreeFactory.createAttribute("file_name", fileName));
@@ -167,7 +168,7 @@ public class Export1DNXcanSASOperation extends AbstractOperation<Export1DNXcanSA
 
 		// The SASentry class contains a SASdata class with a version attribute (NXcanSAS version e.g. 1.0)
 		GroupNode nxEntry = TreeFactory.createGroupNode(0);
-		nxEntry.addAttribute(TreeFactory.createAttribute("NX_class", "NXentry"));
+		nxEntry.addAttribute(TreeFactory.createAttribute(NexusConstants.NXCLASS, NexusConstants.ENTRY));
 		nxEntry.addAttribute(TreeFactory.createAttribute("canSAS_class", "SASentry"));
 		nxEntry.addAttribute(TreeFactory.createAttribute("default", "sasdata"));
 		nxEntry.addAttribute(TreeFactory.createAttribute("version", "1.0"));
@@ -184,7 +185,7 @@ public class Export1DNXcanSASOperation extends AbstractOperation<Export1DNXcanSA
 		
 		// The SASdata class SDS classes of I & Q (I_err too!) with attributes for each SDS class e.g. I_axes = Q, Q_indicies 0.
 		GroupNode nxData = TreeFactory.createGroupNode(0);
-		nxData.addAttribute(TreeFactory.createAttribute("NX_class", "NXdata"));
+		nxData.addAttribute(TreeFactory.createAttribute(NexusConstants.NXCLASS, NexusConstants.DATA));
 		nxData.addAttribute(TreeFactory.createAttribute("canSAS_class", "SASdata"));
 		
 		// Then write this header

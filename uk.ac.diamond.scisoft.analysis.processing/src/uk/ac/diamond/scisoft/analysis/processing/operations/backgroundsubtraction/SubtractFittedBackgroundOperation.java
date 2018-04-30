@@ -205,7 +205,8 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		if (smoothedDarkProfile != null) {
 			// fit dark to current??? (scale and offset)
 //			displayData.add(dark);
-			Dataset profile = in.sum(1, true);
+			Dataset profile = in.hasFloatingPointElements() ? in.sum(1, true) :
+				in.cast(LongDataset.class).sum(1, true); // avoid integer overflows
 			if (profile.getDouble() == 0) {
 				profile.set(0.5*(profile.getDouble(1) + profile.getDouble(2)), 0); // ensure 1st entry is non-zero
 			}

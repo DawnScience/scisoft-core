@@ -356,7 +356,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			log.append("Using only first %d frames", fmax);
 		}
 
-		if (si.getSliceNumber() >= fmax) {
+		if (fmax > 0 && si.getSliceNumber() >= fmax) {
 			return new OperationData();
 		}
 		OperationData od = super.process(original, monitor);

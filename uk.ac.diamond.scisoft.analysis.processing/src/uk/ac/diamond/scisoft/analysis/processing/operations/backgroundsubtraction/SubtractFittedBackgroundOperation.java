@@ -82,6 +82,11 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	protected List<IDataset> auxData = new ArrayList<>();
 	private double darkImageCountTime;
 
+	/**
+	 * Auxiliary subentry. This must match the name field defined in the plugin extension
+	 */
+	public static final String PROCESS_NAME = "Image background subtraction - Fitted to a PDF";
+
 	@Override
 	public String getFilenameSuffix() {
 		return "subtract_fitted_bg";
@@ -213,8 +218,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 			profile.setName("profile");
 			auxData.add(profile);
-			IFunction so = scaleAndOffset(profile);
-			Dataset darkFit = Maths.multiply(smoothedDarkProfile, so.getParameterValue(0)).iadd(so.getParameterValue(1));
+			Dataset darkFit = fitDarkProfile(profile);
 //			displayData.add(smoothedDarkProfile);
 //			displayData.add(profile);
 //			displayData.add(darkFit);
@@ -258,12 +262,69 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		return DatasetUtils.select(Comparisons.lessThan(in, thr), in, thr);
 	}
 
-	private IFunction scaleAndOffset(Dataset in) {
-		ScaleAndOffset so = new ScaleAndOffset(smoothedDarkProfile);
-		so.setParameterValues(1, 0);
+	private Dataset fitDarkProfile(Dataset in) {
+//		ScaleAndOffset so = new ScaleAndOffset(smoothedDarkProfile);
+//		so.setParameterValues(1, 0);
+//		double res = fitFunction(so, DatasetFactory.zeros(in.getShapeRef()), in);
+//		System.err.printf("Scale and offset results: res=%g\n%s\n", res, so);
+//		return Maths.multiply(smoothedDarkProfile, so.getParameterValue(0)).iadd(so.getParameterValue(1));
+
+		// find extent of shadow region on right by looking for trough
+		Dataset smooth = smoothedDarkProfile.reshape(smoothedDarkProfile.getSize());
+		Dataset d = Maths.derivative(DatasetFactory.createRange(smooth.getSize()), smooth, 1);
+		int r = d.argMin(true);
+		double dmin = d.getDouble(r);
+		List<Double> z = DatasetUtils.crossings(d, dmin/2);
+		int b = r + 4 * (int) Math.ceil(z.get(1) - z.get(0));
+		System.err.println("Crossings: " + z + " give start of " + b);
+
+		Slice s = new Slice(b, null);
+		smooth = smooth.getSliceView(s);
+		in = in.getSliceView(s);
+
+		Offset so = new Offset(smooth);
+		so.setParameterValues(0);
 		double res = fitFunction(so, DatasetFactory.zeros(in.getShapeRef()), in);
-		System.err.printf("Scale and offset results: res=%g\n%s\n", res, so);
-		return so;
+		System.err.printf("Offset results: res=%g\n%s\n", res, so);
+		return Maths.add(smoothedDarkProfile, so.getParameterValue(0));
+	}
+
+	class Offset extends AFunction {
+		private static final long serialVersionUID = -5259488500375549641L;
+		private Dataset in;
+		private BroadcastSelfIterator bit;
+		private int[] shape;
+
+		public Offset(Dataset in) {
+			super(1);
+			this.in = in;
+		}
+
+		@Override
+		public double val(double... values) {
+			return 0;
+		}
+
+		@Override
+		protected void setNames() {
+		}
+
+		@Override
+		public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
+			double a = getParameterValue(0);
+
+			int[] dshape = data.getShapeRef();
+			if (bit == null || !Arrays.equals(shape, dshape)) {
+				shape = dshape;
+				bit = BroadcastSingleIterator.createIterator(data, in);
+			} else {
+				bit.reset();
+			}
+			bit.setOutputDouble(true);
+			while (bit.hasNext()) {
+				data.setAbs(bit.aIndex, bit.bDouble + a);
+			}
+		}
 	}
 
 	class ScaleAndOffset extends AFunction {

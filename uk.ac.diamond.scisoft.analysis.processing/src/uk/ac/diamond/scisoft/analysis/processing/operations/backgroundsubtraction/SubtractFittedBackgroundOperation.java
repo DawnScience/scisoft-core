@@ -229,18 +229,19 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 //			displayData.add(diff);
 			Dataset scaledFit = Maths.multiply(darkFit.reshape(darkFit.getSize(), 1), 1./in.getShapeRef()[1]).cast(in.getClass());
 
-			diff = Maths.subtract(in, scaledFit);
-
-			double thr = calculateThreshold(diff, smoothedDarkProfile == null ? model.isPositiveOnly() : false);
-			threshold = thr;
-			if (Double.isNaN(thr)) {
-				double min = in.min(true).doubleValue();
-				log.append("No range in data. All finite values are %g", min);
-				return DatasetFactory.createFromObject(min);
-			}
-
-			scaledFit.iadd(thr);
-			log.append("Threshold = %g", threshold);
+			h = null;
+//			diff = Maths.subtract(in, scaledFit);
+//
+//			double thr = calculateThreshold(diff, smoothedDarkProfile == null ? model.isPositiveOnly() : false);
+//			threshold = thr;
+//			if (Double.isNaN(thr)) {
+//				double min = in.min(true).doubleValue();
+//				log.append("No range in data. All finite values are %g", min);
+//				return DatasetFactory.createFromObject(min);
+//			}
+//
+//			scaledFit.iadd(thr);
+//			log.append("Threshold = %g", threshold);
 			return DatasetUtils.select(Comparisons.lessThan(in, scaledFit), in, scaledFit);
 		}
 
@@ -561,10 +562,10 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			auxData.add(ProcessingUtils.createNamedDataset(h, "histogram"));
 			MetadataUtils.setAxes(fit, x);
 			auxData.add(ProcessingUtils.createNamedDataset(fit, "histogram_fit"));
-			od.setAuxData(auxData.toArray(new Serializable[auxData.size()]));
 
 			od.getData().addMetadata(new FitMetadataImpl().setFitFunction(pdf));
 		}
+		od.setAuxData(auxData.toArray(new Serializable[auxData.size()]));
 
 		if (si.isLastSlice() && smoothedDarkProfile != null) {
 			od.setSummaryData(darkProfile, smoothedDarkProfile);

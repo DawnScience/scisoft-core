@@ -347,6 +347,18 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		Dataset original = DatasetUtils.convertToDataset(input);
+		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(input);
+		SliceInformation si = ssm.getSliceInfo();
+		int smax = si.getTotalSlices();
+		int fmax = model.getMaxFrames();
+		if (fmax > 0 && fmax < smax) {
+			smax = fmax;
+			log.append("Using only first %d frames", fmax);
+		}
+
+		if (si.getSliceNumber() >= fmax) {
+			return new OperationData();
+		}
 		OperationData od = super.process(original, monitor);
 
 		// find photon events in entire image
@@ -382,20 +394,12 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			displayData.add(a);
 		}
 
-		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(input);
-		SliceInformation si = ssm.getSliceInfo();
 		if (si != null) {
-			int smax = si.getTotalSlices();
 			log.append("At frame %d/%d", si.getSliceNumber(), smax);
 			System.err.printf("At frame %d/%d\n", si.getSliceNumber(), smax);
 			summaryData.clear(); // do not save anything yet
 
-			int fmax = model.getMaxFrames();
-			if (fmax > 0) {
-				smax = fmax;
-				log.append("Using only first %d frames", fmax);
-			}
-			if (si.isLastSlice()) {
+			if (si.getSliceNumber() == smax - 1) {
 				addSummaryData();
 				int[][][] allSingle = null;
 				int[][][] allMultiple = null;
@@ -432,7 +436,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 						for (int r = 0; r < roiMax; r++) {
 							cX.clear();
 							cY.clear();
-	
+
 							StraightLine line = getStraightLine(r);
 							IRectangularROI roi = getROI(r);
 							Dataset sums = allSums.get(i);
@@ -443,7 +447,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 							allMultiple[r][i] = hMultiple;
 							shiftAndBinPhotonEvents(0, single, multiple, bin, bmax, cX, cY, i, line, roi, sums, posn,
 									hSingle, hMultiple);
-	
+
 							// add coords
 							if (i == 0) {
 								int side = cX.size();

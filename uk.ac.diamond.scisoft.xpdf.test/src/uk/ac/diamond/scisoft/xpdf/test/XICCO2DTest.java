@@ -386,6 +386,10 @@ class YesNormalizeTracesModel extends XPDFNormalizeTracesModel {
 	public boolean isNormalizeBeam() {
 		return true;
 	}
+	@Override
+	public boolean isNormalizeByOmega() {
+		return false;
+	}
 }
 
 class YesSubtractBackgroundModel extends XPDFSubtractBackgroundModel {

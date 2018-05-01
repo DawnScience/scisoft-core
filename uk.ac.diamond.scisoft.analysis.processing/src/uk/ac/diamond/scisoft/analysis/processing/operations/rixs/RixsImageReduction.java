@@ -394,228 +394,226 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			displayData.add(a);
 		}
 
-		if (si != null) {
-			log.append("At frame %d/%d", si.getSliceNumber(), smax);
-			System.err.printf("At frame %d/%d\n", si.getSliceNumber(), smax);
-			summaryData.clear(); // do not save anything yet
+		log.append("At frame %d/%d", si.getSliceNumber(), smax);
+		System.err.printf("At frame %d/%d\n", si.getSliceNumber(), smax);
+		summaryData.clear(); // do not save anything yet
 
-			if (si.getSliceNumber() == smax - 1) {
-				addSummaryData();
-				int[][][] allSingle = null;
-				int[][][] allMultiple = null;
-				int bin = 0;
-				int bmax = 0;
-				int single = 0;
-				int multiple = 0;
+		if (si.getSliceNumber() == smax - 1) {
+			addSummaryData();
+			int[][][] allSingle = null;
+			int[][][] allMultiple = null;
+			int bin = 0;
+			int bmax = 0;
+			int single = 0;
+			int multiple = 0;
 
-				if (bins != null) {
-					summaryData.add(a);
-	
-					// After last image, calculate splitting levels
-					Dataset x = bins.getSlice(new Slice(-1));
-					Dataset dh = Maths.derivative(x, h, 3);
-					MetadataUtils.setAxes(dh, bins);
-					displayData.set(0, dh);
-					List<Double> z = DatasetUtils.crossings(x, dh, 0);
-					log.append("Histogram derivative zero-crossings = %s", z);
-					single = (int) Math.floor(z.get(0));
-					multiple = single + countsPerPhoton; // (int) Math.floor(z.get(1)); // TODO
-					log.append("Setting limits for single photon as [%d, %d)", single, multiple);
-					summaryData.add(ProcessingUtils.createNamedDataset(single, "single_photon_minimum"));
-					summaryData.add(ProcessingUtils.createNamedDataset(multiple, "multiple_photon_minimum"));
+			if (bins != null) {
+				summaryData.add(a);
 
-					bin = model.getBins();
-					bmax = bin * original.getShapeRef()[model.getEnergyIndex()];
+				// After last image, calculate splitting levels
+				Dataset x = bins.getSlice(new Slice(-1));
+				Dataset dh = Maths.derivative(x, h, 3);
+				MetadataUtils.setAxes(dh, bins);
+				displayData.set(0, dh);
+				List<Double> z = DatasetUtils.crossings(x, dh, 0);
+				log.append("Histogram derivative zero-crossings = %s", z);
+				single = (int) Math.floor(z.get(0));
+				multiple = single + countsPerPhoton; // (int) Math.floor(z.get(1)); // TODO
+				log.append("Setting limits for single photon as [%d, %d)", single, multiple);
+				summaryData.add(ProcessingUtils.createNamedDataset(single, "single_photon_minimum"));
+				summaryData.add(ProcessingUtils.createNamedDataset(multiple, "multiple_photon_minimum"));
 
-					// per image, separate by sum
-					allSingle = new int[roiMax][smax][];
-					allMultiple = new int[roiMax][smax][];
-					List<Double> cX = new ArrayList<>();
-					List<Double> cY = new ArrayList<>();
-					for (int i = 0; i < smax; i++) {
-						for (int r = 0; r < roiMax; r++) {
-							cX.clear();
-							cY.clear();
+				bin = model.getBins();
+				bmax = bin * original.getShapeRef()[model.getEnergyIndex()];
 
-							StraightLine line = getStraightLine(r);
-							IRectangularROI roi = getROI(r);
-							Dataset sums = allSums.get(i);
-							Dataset posn = allPositions.get(i);
-							int[] hSingle = new int[bmax];
-							int[] hMultiple = new int[bmax];
-							allSingle[r][i] = hSingle;
-							allMultiple[r][i] = hMultiple;
-							shiftAndBinPhotonEvents(0, single, multiple, bin, bmax, cX, cY, i, line, roi, sums, posn,
-									hSingle, hMultiple);
+				// per image, separate by sum
+				allSingle = new int[roiMax][smax][];
+				allMultiple = new int[roiMax][smax][];
+				List<Double> cX = new ArrayList<>();
+				List<Double> cY = new ArrayList<>();
+				for (int i = 0; i < smax; i++) {
+					for (int r = 0; r < roiMax; r++) {
+						cX.clear();
+						cY.clear();
 
-							// add coords
-							if (i == 0) {
-								int side = cX.size();
-								if (side > 0) {
-									Dataset t;
-									t = DatasetFactory.createFromList(cY);
-									MetadataUtils.setAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"));
-									// for DExplore's 2d scatter point
+						StraightLine line = getStraightLine(r);
+						IRectangularROI roi = getROI(r);
+						Dataset sums = allSums.get(i);
+						Dataset posn = allPositions.get(i);
+						int[] hSingle = new int[bmax];
+						int[] hMultiple = new int[bmax];
+						allSingle[r][i] = hSingle;
+						allMultiple[r][i] = hMultiple;
+						shiftAndBinPhotonEvents(0, single, multiple, bin, bmax, cX, cY, i, line, roi, sums, posn,
+								hSingle, hMultiple);
+
+						// add coords
+						if (i == 0) {
+							int side = cX.size();
+							if (side > 0) {
+								Dataset t;
+								t = DatasetFactory.createFromList(cY);
+								MetadataUtils.setAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"));
+								// for DExplore's 2d scatter point
 //									t = DatasetFactory.zeros(side, side);
 //									ProcessingUtils.addAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"),
 //											ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cY), "y"));
-									t.setName("photon_positions_" + r);
-									summaryData.add(t);
-								}
+								t.setName("photon_positions_" + r);
+								summaryData.add(t);
 							}
 						}
 					}
 				}
+			}
 
-				for (int r = 0; r < roiMax; r++) {
-					// total and correlated spectra
-					Dataset sp = null;
-					IDataset[] sArray = toArray(allSpectra[r]);
-					sp = accumulate(sArray);
-					if (sp == null) {
-						continue;
+			for (int r = 0; r < roiMax; r++) {
+				// total and correlated spectra
+				Dataset sp = null;
+				IDataset[] sArray = toArray(allSpectra[r]);
+				sp = accumulate(sArray);
+				if (sp == null) {
+					continue;
+				}
+				sp.setName("total_spectrum_" + r);
+				summaryData.add(sp);
+
+				Dataset ax = null;
+				try {
+					ax = DatasetUtils.sliceAndConvertLazyDataset(sp.getFirstMetadata(AxesMetadata.class).getAxis(0)[0]);
+				} catch (DatasetException e) {
+				}
+
+				DatasetToDatasetFunction reg = getCorrelateShifter(true);
+				List<? extends IDataset> results = reg.value(sArray);
+				for (int i = 0; i < sArray.length; i++) {
+					sArray[i] = results.get(2*i + 1);
+				}
+				sp = accumulate(sArray);
+				sp.setName("correlated_spectrum_" + r);
+				MetadataUtils.setAxes(sp, ax);
+				summaryData.add(sp);
+
+				List<Double> shift = new ArrayList<>();
+				for (int i = 0; i < sArray.length; i++) {
+					shift.add(DatasetUtils.convertToDataset(results.get(2*i)).getDouble());
+				}
+				summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, "correlated_spectrum_shift_" + r));
+
+				if (bins == null) {
+					continue; // no photon events!!!
+				}
+
+				double el0 = getZeroEnergyOffset(r); // elastic line intercept
+				Dataset energies = DatasetFactory.createRange(bmax);
+				energies.iadd(-bin*el0); // adjust zero TODO sign wrong??
+				energies.imultiply(-energyDispersion[r]/bin);
+				energies.setName("Energy loss");
+				Dataset t = DatasetFactory.createFromObject(allSingle[r]);
+				t.setName("single_photon_spectrum_" + r);
+				MetadataUtils.setAxes(t, null, energies);
+				Dataset sSpectra = t;
+				summaryData.add(t);
+
+				Dataset nf = t.sum(1); // to work out per-image as single fraction of total events
+				nf.setName("single_photon_count_" + r);
+				Dataset sEvents = nf;
+				summaryData.add(nf);
+
+				t = DatasetFactory.createFromObject(allMultiple[r]);
+				t.setName("multiple_photon_spectrum_" + r);
+				MetadataUtils.setAxes(t, null, energies);
+				Dataset mSpectra = t;
+				summaryData.add(t);
+
+				t = t.sum(1);
+				t.setName("multiple_photon_count_" + r);
+				Dataset mEvents = t;
+				summaryData.add(t);
+
+				t = Maths.add(t, nf);
+				nf = Maths.divide(nf.cast(DoubleDataset.class), t);
+				nf.setName("single_events_fraction_" + r);
+				summaryData.add(nf);
+
+				double ts = (Double) ((Number) sEvents.sum()).doubleValue();
+				double tm = (Double) ((Number) mEvents.sum()).doubleValue();
+				log.append("Events: single/total = %g/%g = %g ", ts, tm, ts/(ts + tm));
+				summaryData.add(ProcessingUtils.createNamedDataset(ts/(ts + tm), "total_single_events_fraction_" + r));
+
+				sp = sSpectra.sum(0);
+				sp.setName("total_single_photon_spectrum_" + r);
+				MetadataUtils.setAxes(sp, energies);
+				summaryData.add(sp);
+
+				sp = mSpectra.sum(0);
+				sp.setName("total_multiple_photon_spectrum_" + r);
+				MetadataUtils.setAxes(sp, energies);
+				summaryData.add(sp);
+
+				if (model.getCorrelateOption() == CORRELATE_PHOTON.USE_INTENSITY_SHIFTS) {
+					for (int i = 0; i < sArray.length; i++) { // image to image shifts
+						double offset = DatasetUtils.convertToDataset(results.get(2*i)).getDouble();
+						int[] hSingle = new int[bmax];
+						int[] hMultiple = new int[bmax];
+						allSingle[r][i] = hSingle; // need to repopulate as previous arrays are referenced in datasets
+						allMultiple[r][i] = hMultiple;
+						StraightLine line = getStraightLine(r);
+						IRectangularROI roi = getROI(r);
+						Dataset sums = allSums.get(i);
+						Dataset posn = allPositions.get(i);
+
+						Arrays.fill(hSingle, 0);
+						Arrays.fill(hMultiple, 0);
+						shiftAndBinPhotonEvents(offset, single, multiple, bin, bmax, null, null, i, line, roi, sums, posn,
+								hSingle, hMultiple);
 					}
-					sp.setName("total_spectrum_" + r);
-					summaryData.add(sp);
 
-					Dataset ax = null;
-					try {
-						ax = DatasetUtils.sliceAndConvertLazyDataset(sp.getFirstMetadata(AxesMetadata.class).getAxis(0)[0]);
-					} catch (DatasetException e) {
+					t = DatasetFactory.createFromObject(allSingle[r]).sum(0);
+					t.setName("correlated_single_photon_spectrum_" + r);
+					MetadataUtils.setAxes(t, energies);
+					summaryData.add(t);
+
+					t = DatasetFactory.createFromObject(allMultiple[r]).sum(0);
+					t.setName("correlated_multiple_photon_spectrum_" + r);
+					MetadataUtils.setAxes(t, energies);
+					summaryData.add(t);
+				} else {
+					reg = getCorrelateShifter(true);
+					sArray = new IDataset[sSpectra.getShapeRef()[0]];
+					for (int i = 0; i < sArray.length; i++) {
+						sArray[i] = sSpectra.getSliceView(new Slice(i, i+1)).squeeze();
 					}
-
-					DatasetToDatasetFunction reg = getCorrelateShifter(true);
-					List<? extends IDataset> results = reg.value(sArray);
+					results = reg.value(sArray);
 					for (int i = 0; i < sArray.length; i++) {
 						sArray[i] = results.get(2*i + 1);
 					}
 					sp = accumulate(sArray);
-					sp.setName("correlated_spectrum_" + r);
-					MetadataUtils.setAxes(sp, ax);
+					sp.setName("correlated_single_photon_spectrum_" + r);
+					MetadataUtils.setAxes(sp, energies);
 					summaryData.add(sp);
-
-					List<Double> shift = new ArrayList<>();
+					shift.clear();
 					for (int i = 0; i < sArray.length; i++) {
 						shift.add(DatasetUtils.convertToDataset(results.get(2*i)).getDouble());
 					}
-					summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, "correlated_spectrum_shift_" + r));
+					summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, "correlated_single_photon_spectrum_shift_" + r));
 
-					if (bins == null) {
-						continue; // no photon events!!!
+					sArray = new IDataset[mSpectra.getShapeRef()[0]];
+					for (int i = 0; i < sArray.length; i++) {
+						sArray[i] = mSpectra.getSliceView(new Slice(i, i+1)).squeeze();
 					}
-
-					double el0 = getZeroEnergyOffset(r); // elastic line intercept
-					Dataset energies = DatasetFactory.createRange(bmax);
-					energies.iadd(-bin*el0); // adjust zero TODO sign wrong??
-					energies.imultiply(-energyDispersion[r]/bin);
-					energies.setName("Energy loss");
-					Dataset t = DatasetFactory.createFromObject(allSingle[r]);
-					t.setName("single_photon_spectrum_" + r);
-					MetadataUtils.setAxes(t, null, energies);
-					Dataset sSpectra = t;
-					summaryData.add(t);
-
-					Dataset nf = t.sum(1); // to work out per-image as single fraction of total events
-					nf.setName("single_photon_count_" + r);
-					Dataset sEvents = nf;
-					summaryData.add(nf);
-
-					t = DatasetFactory.createFromObject(allMultiple[r]);
-					t.setName("multiple_photon_spectrum_" + r);
-					MetadataUtils.setAxes(t, null, energies);
-					Dataset mSpectra = t;
-					summaryData.add(t);
-
-					t = t.sum(1);
-					t.setName("multiple_photon_count_" + r);
-					Dataset mEvents = t;
-					summaryData.add(t);
-
-					t = Maths.add(t, nf);
-					nf = Maths.divide(nf.cast(DoubleDataset.class), t);
-					nf.setName("single_events_fraction_" + r);
-					summaryData.add(nf);
-
-					double ts = (Double) ((Number) sEvents.sum()).doubleValue();
-					double tm = (Double) ((Number) mEvents.sum()).doubleValue();
-					log.append("Events: single/total = %g/%g = %g ", ts, tm, ts/(ts + tm));
-					summaryData.add(ProcessingUtils.createNamedDataset(ts/(ts + tm), "total_single_events_fraction_" + r));
-
-					sp = sSpectra.sum(0);
-					sp.setName("total_single_photon_spectrum_" + r);
+					results = reg.value(sArray);
+					for (int i = 0; i < sArray.length; i++) {
+						sArray[i] = results.get(2*i + 1);
+					}
+					sp = accumulate(sArray);
+					sp.setName("correlated_multiple_photon_spectrum_" + r);
 					MetadataUtils.setAxes(sp, energies);
 					summaryData.add(sp);
-
-					sp = mSpectra.sum(0);
-					sp.setName("total_multiple_photon_spectrum_" + r);
-					MetadataUtils.setAxes(sp, energies);
-					summaryData.add(sp);
-
-					if (model.getCorrelateOption() == CORRELATE_PHOTON.USE_INTENSITY_SHIFTS) {
-						for (int i = 0; i < sArray.length; i++) { // image to image shifts
-							double offset = DatasetUtils.convertToDataset(results.get(2*i)).getDouble();
-							int[] hSingle = new int[bmax];
-							int[] hMultiple = new int[bmax];
-							allSingle[r][i] = hSingle; // need to repopulate as previous arrays are referenced in datasets
-							allMultiple[r][i] = hMultiple;
-							StraightLine line = getStraightLine(r);
-							IRectangularROI roi = getROI(r);
-							Dataset sums = allSums.get(i);
-							Dataset posn = allPositions.get(i);
-
-							Arrays.fill(hSingle, 0);
-							Arrays.fill(hMultiple, 0);
-							shiftAndBinPhotonEvents(offset, single, multiple, bin, bmax, null, null, i, line, roi, sums, posn,
-									hSingle, hMultiple);
-						}
-
-						t = DatasetFactory.createFromObject(allSingle[r]).sum(0);
-						t.setName("correlated_single_photon_spectrum_" + r);
-						MetadataUtils.setAxes(t, energies);
-						summaryData.add(t);
-
-						t = DatasetFactory.createFromObject(allMultiple[r]).sum(0);
-						t.setName("correlated_multiple_photon_spectrum_" + r);
-						MetadataUtils.setAxes(t, energies);
-						summaryData.add(t);
-					} else {
-						reg = getCorrelateShifter(true);
-						sArray = new IDataset[sSpectra.getShapeRef()[0]];
-						for (int i = 0; i < sArray.length; i++) {
-							sArray[i] = sSpectra.getSliceView(new Slice(i, i+1)).squeeze();
-						}
-						results = reg.value(sArray);
-						for (int i = 0; i < sArray.length; i++) {
-							sArray[i] = results.get(2*i + 1);
-						}
-						sp = accumulate(sArray);
-						sp.setName("correlated_single_photon_spectrum_" + r);
-						MetadataUtils.setAxes(sp, energies);
-						summaryData.add(sp);
-						shift.clear();
-						for (int i = 0; i < sArray.length; i++) {
-							shift.add(DatasetUtils.convertToDataset(results.get(2*i)).getDouble());
-						}
-						summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, "correlated_single_photon_spectrum_shift_" + r));
-	
-						sArray = new IDataset[mSpectra.getShapeRef()[0]];
-						for (int i = 0; i < sArray.length; i++) {
-							sArray[i] = mSpectra.getSliceView(new Slice(i, i+1)).squeeze();
-						}
-						results = reg.value(sArray);
-						for (int i = 0; i < sArray.length; i++) {
-							sArray[i] = results.get(2*i + 1);
-						}
-						sp = accumulate(sArray);
-						sp.setName("correlated_multiple_photon_spectrum_" + r);
-						MetadataUtils.setAxes(sp, energies);
-						summaryData.add(sp);
-						shift.clear();
-						for (int i = 0; i < sArray.length; i++) {
-							shift.add(DatasetUtils.convertToDataset(results.get(2*i)).getDouble());
-						}
-						summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, "correlated_multiple_photon_spectrum_shift_" + r));
+					shift.clear();
+					for (int i = 0; i < sArray.length; i++) {
+						shift.add(DatasetUtils.convertToDataset(results.get(2*i)).getDouble());
 					}
+					summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, "correlated_multiple_photon_spectrum_shift_" + r));
 				}
 			}
 		}

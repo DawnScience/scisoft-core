@@ -36,6 +36,7 @@
 				<pathelement location="${workspace.git.loc}/dawnsci.git/org.eclipse.dawnsci.nexus/bin" />
 				<pathelement location="${workspace.git.loc}/dawn-hdf.git/hdf.hdf5lib/bin" />
 				<pathelement location="${workspace.git.loc}/dawn-common.git/org.dawb.common.services/bin" />
+				<pathelement location="${workspace.git.loc}/dawn-common.git/org.dawb.common.util/bin" />
 				<pathelement location="${workspace.git.loc}/dawn-common.git/org.dawnsci.conversion/bin" />
 				<pathelement location="${workspace.git.loc}/dawn-common.git/org.dawnsci.persistence/bin" />
 				<pathelement location="${workspace.git.loc}/dawn-ui.git/org.dawnsci.common.widgets.gda/bin" />

@@ -276,12 +276,12 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		int r = d.argMin(true);
 		double dmin = d.getDouble(r);
 		List<Double> z = DatasetUtils.crossings(d, dmin/2);
-		int b = r + 4 * (int) Math.ceil(z.get(1) - z.get(0));
+		int b = r + (int) Math.ceil(2.5 * (z.get(1) - z.get(0)));
 		System.err.println("Crossings: " + z + " give start of " + b);
 
 		Slice s = new Slice(b, null);
 		smooth = smooth.getSliceView(s);
-		in = in.getSliceView(s);
+		in = in.reshape(in.getSize()).getSliceView(s);
 
 		Offset so = new Offset(smooth);
 		so.setParameterValues(0);

@@ -185,54 +185,51 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		SliceInformation si = ssm.getSliceInfo();
 
 		// aggregate aux data???
+		int smax = si.getTotalSlices();
+		log.append("At frame %d/%d", si.getSliceNumber(), smax);
 
-		if (si != null) {
-			int smax = si.getTotalSlices();
-			log.append("At frame %d/%d", si.getSliceNumber(), smax);
-
-			// TODO make this live-friendly by show result per frame
-			// needs to give fake results for first slice
-			if (si.isLastSlice()) {
-				summaryData.clear();
-				if (smax != 1) { // display when there is only one image
-					displayData.clear();
-				}
+		// TODO make this live-friendly by show result per frame
+		// needs to give fake results for first slice
+		if (si.isLastSlice()) {
+			summaryData.clear();
+			if (smax != 1) { // display when there is only one image
+				displayData.clear();
+			}
 //				odd.setAuxData();
-				double[] dispersion = new double[roiMax];
-				for (int r = 0; r < roiMax; r++) {
+			double[] dispersion = new double[roiMax];
+			for (int r = 0; r < roiMax; r++) {
 //					if (goodPosition[r].size() <= 2) {
 //						log.append("Not enough good lines (%d) found for ROI %d", goodPosition[r].size(), r);
 //						continue;
 //					}
 
-					if (goodPosition[r].size() == 0) {
-						log.append("No lines found for ROI %d", r);
-						continue;
-					}
-					List<?>[] coords;
-					if (useSpectrum) {
-						coords = fitSpectraPeakPositions(r);
-					} else {
-						coords = new List<?>[] {goodPosition[r], goodIntercept[r]};
-					}
-
-					double[] res = fitIntercepts(r, coords);
-					dispersion[r] = 1./res[1];
-					log.append("Dispersion is %g for residual %g", dispersion[r], res[0]);
+				if (goodPosition[r].size() == 0) {
+					log.append("No lines found for ROI %d", r);
+					continue;
+				}
+				List<?>[] coords;
+				if (useSpectrum) {
+					coords = fitSpectraPeakPositions(r);
+				} else {
+					coords = new List<?>[] {goodPosition[r], goodIntercept[r]};
 				}
 
-				output = ProcessingUtils.createNamedDataset(dispersion, "energy_dispersion").reshape(1, roiMax);
-				copyMetadata(input, output);
-				output.clearMetadata(AxesMetadata.class);
-				output.clearMetadata(SliceFromSeriesMetadata.class);
-				SliceFromSeriesMetadata outssm = ssm.clone();
-				for (int i = 0, imax = ssm.getParent().getRank(); i < imax; i++) {
-					if (!outssm.isDataDimension(i)) {
-						outssm.reducedDimensionToSingular(i);
-					}
-				}
-				output.setMetadata(outssm);
+				double[] res = fitIntercepts(r, coords);
+				dispersion[r] = 1./res[1];
+				log.append("Dispersion is %g for residual %g", dispersion[r], res[0]);
 			}
+
+			output = ProcessingUtils.createNamedDataset(dispersion, "energy_dispersion").reshape(1, roiMax);
+			copyMetadata(input, output);
+			output.clearMetadata(AxesMetadata.class);
+			output.clearMetadata(SliceFromSeriesMetadata.class);
+			SliceFromSeriesMetadata outssm = ssm.clone();
+			for (int i = 0, imax = ssm.getParent().getRank(); i < imax; i++) {
+				if (!outssm.isDataDimension(i)) {
+					outssm.reducedDimensionToSingular(i);
+				}
+			}
+			output.setMetadata(outssm);
 		}
 
 		OperationDataForDisplay odd;

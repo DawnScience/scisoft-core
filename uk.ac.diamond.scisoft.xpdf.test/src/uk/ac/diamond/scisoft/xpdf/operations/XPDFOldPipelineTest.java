@@ -91,6 +91,7 @@ public class XPDFOldPipelineTest {
 	
 	
 	@Test
+	@Ignore("Test development in progress")
 	public void testSampleMetadata() {
 		
 		boolean beforeInsert = true;

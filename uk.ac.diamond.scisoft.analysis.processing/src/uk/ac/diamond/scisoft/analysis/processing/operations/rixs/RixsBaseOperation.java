@@ -215,15 +215,16 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	 * @param r
 	 * @param in
 	 * @param slope override value
+	 * @param clip if true, clip columns where rows contribute from outside image 
 	 * @return elastic line position and spectrum datasets
 	 */
-	public Dataset[] makeSpectrum(int r, Dataset in, double slope) {
+	public Dataset[] makeSpectrum(int r, Dataset in, double slope, boolean clip) {
 		// shift and accumulate spectra
 		int rows = in.getShapeRef()[0];
 		Dataset y = DatasetFactory.createRange(rows);
 		y.iadd(offset[0]);
 		StraightLine line = getStraightLine(r);
-		DoubleDataset elastic;
+		Dataset elastic;
 		if (slope == 0) {
 			slope = line.getParameterValue(0);
 			elastic = line.calculateValues(y); // absolute position of elastic line to use a zero point
@@ -241,7 +242,10 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 		Dataset spectrum;
 		if (Double.isFinite(slope)) {
-			spectrum = sumImageAlongSlope(in, slope);
+			spectrum = sumImageAlongSlope(in, slope, clip);
+			if (clip && slope < 0) { // adjust for shift by clipping
+				elastic.iadd(spectrum.getSize() - in.getShapeRef()[1]);
+			}
 		} else {
 			spectrum = DatasetFactory.zeros(rows).fill(Double.NaN);
 		}
@@ -267,13 +271,14 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	 * Sum image row-by-row offset by slope
 	 * @param image
 	 * @param slope
+	 * @param clip if true, clip columns where rows contribute from outside image 
 	 * @return summed image
 	 */
-	public static Dataset sumImageAlongSlope(Dataset image, double slope) {
+	public static Dataset sumImageAlongSlope(Dataset image, double slope, boolean clip) {
 		int[] shape = image.getShapeRef();
 		int rows = shape[0];
 		int cols = shape[1];
-		DoubleDataset result = DatasetFactory.zeros(cols);
+		Dataset result = DatasetFactory.zeros(cols);
 		SliceND slice = new SliceND(shape);
 		Dataset c = DatasetFactory.createRange(cols);
 		Dataset nc = c.clone();
@@ -282,6 +287,13 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			Dataset row = image.getSliceView(slice).squeeze();
 			result.iadd(Maths.interpolate(nc, row, c, 0, 0));
 			nc.isubtract(slope);
+		}
+		if (clip) {
+			int b = slope > 0 ? 0 : (int) (Math.ceil(-slope*rows) + 1);
+			int e = cols - (slope > 0 ? (int) Math.floor(slope*rows) : 0);
+			
+			result = result.getSliceView(new Slice(b, e));
+			System.err.println("Clipping sum to " + b + ":" + e + "; size = " + result.getSize() + ", for slope = " + slope);
 		}
 		return result;
 	}

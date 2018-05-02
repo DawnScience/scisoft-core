@@ -37,7 +37,7 @@ public class SlopeSummingTest {
 		}
 
 		Dataset out;
-		out = RixsBaseOperation.sumImageAlongSlope(image, 1);
+		out = RixsBaseOperation.sumImageAlongSlope(image, 1, false);
 		assertEquals(expected, out);
 	}
 }

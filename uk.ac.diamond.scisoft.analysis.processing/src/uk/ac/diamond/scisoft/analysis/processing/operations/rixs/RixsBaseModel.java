@@ -51,6 +51,9 @@ public class RixsBaseModel extends AbstractOperationModel {
 	@OperationModelField(label = "Zero energy offset B", description = "Offset value for rectangle B", hint = "Position on energy axis in pixels")
 	private double energyOffsetB = Double.NaN;
 
+	@OperationModelField(label = "Clip spectra", description = "Clip spectra to avoid fall-off from slope correction", hint = "Set true when image background is not zero")
+	private boolean clipSpectra = true;
+
 	/**
 	 * @return get first region of interest (can be null to signify the entire image)
 	 */
@@ -143,5 +146,16 @@ public class RixsBaseModel extends AbstractOperationModel {
 
 	public void setEnergyOffsetB(double energyOffsetB) {
 		firePropertyChange("setEnergyOffsetB", this.energyOffsetB, this.energyOffsetB = energyOffsetB);
+	}
+
+	/**
+	 * @return true if spectra should be clipped to avoid fall-off from slope correction
+	 */
+	public boolean isClipSpectra() {
+		return clipSpectra;
+	}
+
+	public void setClipSpectra(boolean clipSpectra) {
+		firePropertyChange("setClipSpectra", this.clipSpectra, this.clipSpectra = clipSpectra);
 	}
 }

@@ -86,6 +86,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	protected List<Double>[] goodPosition = new List[] {new ArrayList<>(), new ArrayList<>()}; 
 	protected List<Double>[] goodIntercept = new List[] {new ArrayList<>(), new ArrayList<>()};
 	private List<Dataset>[] goodSpectra = new List[] {new ArrayList<>(), new ArrayList<>()};
+	private List<Boolean>[] posSlope = new List[] {new ArrayList<>(), new ArrayList<>()};
 	private String positionName;
 
 	@Override
@@ -129,6 +130,8 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		goodIntercept[1].clear();
 		goodSpectra[0].clear();
 		goodSpectra[1].clear();
+		posSlope[0].clear();
+		posSlope[1].clear();
 
 		// update lines parameters
 		int[] shape = original.getShape();
@@ -262,8 +265,11 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 		Dataset[] coords;
 		if (model.getDelta() != 0) {
+			int minPoints = model.getMinPoints();
 			if (model.getDelta() == 1) {
 				coords = processPerRowMax(in);
+				minPoints = Math.max(minPoints, coords[0].getSize() / 20); // override to use at least 5%
+				log.append("Using %d as minimum points", minPoints);
 			} else {
 				coords = processBySummedRows(r, in);
 			}
@@ -277,7 +283,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			
 			BooleanDataset mask;
 			try {
-				mask = fitStraightLine(getStraightLine(r), ymax, model.getMinPoints(), model.getMaxDev(), coords[0], coords[1]);
+				mask = fitStraightLine(getStraightLine(r), ymax, minPoints, model.getMaxDev(), coords[0], coords[1]);
 			} catch (OperationException e) {
 				createInvalidOperationData(r, e);
 				return original;
@@ -299,7 +305,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	}
 
 	private void minimizeFWHMForSpectrum(int r, Dataset in) {
-		Dataset s = sumImageAlongSlope(in, 0);
+		Dataset s = sumImageAlongSlope(in, 0, false);
 //		s.setName("raw_spectrum");
 //		auxData.add(s);
 
@@ -332,7 +338,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		DoubleDataset fwhm = DatasetFactory.zeros(n);
 		for (int i = 0; i < n; i++) {
 			double x = slopes.getDouble(i);
-			Dataset ns = sumImageAlongSlope(sin, x);
+			Dataset ns = sumImageAlongSlope(sin, x, false);
 			fwhm.setItem(findFWHM(opt, peak, sx, ns), i);
 			summed.setSlice(ns, new Slice(i, i+1));
 		}
@@ -407,7 +413,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		@Override
 		public double val(double... values) {
 			double x = getParameterValue(0);
-			Dataset ns = sumImageAlongSlope(image, x);
+			Dataset ns = sumImageAlongSlope(image, x, false);
 			return findFWHM(opt, peak, rx, ns);
 		}
 
@@ -453,11 +459,12 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			goodIntercept[i].add(c);
 
 			if (useSpectrum && in != null) {
-				Dataset[] result = makeSpectrum(i, in, 0);
+				Dataset[] result = makeSpectrum(i, in, 0, model.isClipSpectra()); // slope override value of 0 to trigger re-read of slope value
 				Dataset spectrum = result[1];
 				spectrum.setName(ES_PREFIX + i);
 //				auxData.add(spectrum); // put in summary data instead
 				goodSpectra[i].add(spectrum);
+				posSlope[i].add(m > 0);
 //				if (i == 0) { // cannot do this as it interferes with writing output
 //					output = spectrum;
 //				}
@@ -517,15 +524,25 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		Dataset bSpectrum = null;
 		Dataset gSpectrum = null;
 		Dataset gSpectrumFit = null;
-		int size = 0;
+
+		// as clipped spectra have differing sizes, we need to find common sections
+		int minSize = Integer.MAX_VALUE;
+		for (int i = 0; i < ns; i++) {
+			minSize = Math.min(minSize, goodSpectra[r].get(i).getSize());
+		}
 		DoubleDataset x = null;
 		if (ns > 0) {
-			size = goodSpectra[r].get(0).getSize();
-			x = DatasetFactory.createRange(size);
+			x = DatasetFactory.createRange(minSize);
 			x.setName("Energy Index");
 		}
+		int[] minShape = new int[] {1, minSize};
 		for (int i = 0; i < ns; i++) {
 			spectrum = goodSpectra[r].get(i);
+			int size = spectrum.getSize();
+			if (size > minSize) {
+				Slice cs = posSlope[r].get(i) ? new Slice(minSize) : new Slice(size - minSize, null);
+				spectrum = spectrum.getSliceView(cs);
+			}
 			log.append("Fitting elastic peak: %d/%d", i, ns);
 			initializeFunctionParameters(this, peak, x, spectrum);
 			double res = Double.POSITIVE_INFINITY;
@@ -537,7 +554,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 					// isolate peak and fit again (to reduce influence of other spikes)
 					double posn = peak.getParameterValue(0);
 					double width = model.getPeakFittingFactor() * peak.getParameterValue(1);
-					Slice slice = new Slice(Math.max(0, (int) Math.floor(posn-width)), Math.min(size, (int) Math.floor(posn+width)));
+					Slice slice = new Slice(Math.max(0, (int) Math.floor(posn-width)), Math.min(minSize, (int) Math.floor(posn+width)));
 					IParameter p = peak.getParameter(3); // reset offset
 					p.setValue(-0.5*peak.val(posn));
 					res = fitFunction(peak, x.getSliceView(slice), spectrum.getSliceView(slice), null);
@@ -550,11 +567,12 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 					gFWHM.add(peak.getParameterValue(1));
 					DoubleDataset fit = peak.calculateValues(x);
 					if (gSpectrum == null) {
-						gSpectrum = spectrum.clone().reshape(1, size);
-						gSpectrumFit = fit.reshape(1, size);
+						gSpectrum = spectrum.clone().reshape(minShape);
+						gSpectrumFit = fit.reshape(minShape);
 					} else {
-						gSpectrum = DatasetUtils.concatenate(new IDataset[] {gSpectrum, spectrum.reshape(1, size)}, 0);
-						gSpectrumFit = DatasetUtils.concatenate(new IDataset[] {gSpectrumFit, fit.reshape(1, size)}, 0);
+						
+						gSpectrum = DatasetUtils.concatenate(new IDataset[] {gSpectrum, spectrum.reshape(minShape)}, 0);
+						gSpectrumFit = DatasetUtils.concatenate(new IDataset[] {gSpectrumFit, fit.reshape(minShape)}, 0);
 					}
 				}
 			} catch (Exception e) {
@@ -563,9 +581,9 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 				log.append("Fitting elastic peak: FAILED");
 				bPosition.add(positions.get(i));
 				if (bSpectrum == null) {
-					bSpectrum = spectrum.clone().reshape(1, size);
+					bSpectrum = spectrum.clone().reshape(minShape);
 				} else {
-					bSpectrum = DatasetUtils.concatenate(new IDataset[] {bSpectrum, spectrum.reshape(1, size)}, 0);
+					bSpectrum = DatasetUtils.concatenate(new IDataset[] {bSpectrum, spectrum.reshape(minShape)}, 0);
 				}
 			}
 		}

@@ -71,6 +71,13 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 
 	private String currentDataFile = null;
 
+	/**
+	 * Auxiliary subentry. This must match the name field defined in the plugin extension
+	 */
+	public static final String PROCESS_NAME = "RIXS image reduction";
+
+	private static final String ENERGY_LOSS = "Energy loss";
+
 	@Override
 	public String getId() {
 		return getClass().getName();
@@ -329,7 +336,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 
 	@Override
 	IDataset processImageRegion(int r, IDataset original, Dataset in) {
-		Dataset[] result = makeSpectrum(r, in, model.getSlopeOverride());
+		Dataset[] result = makeSpectrum(r, in, model.getSlopeOverride(), model.isClipSpectra());
 		Dataset spectrum = result[1];
 		spectrum.setName("spectrum_" + r);
 
@@ -337,7 +344,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		Dataset e = DatasetFactory.createRange(spectrum.getSize());
 		e.iadd(offset[1]-result[0].getDouble()); // TODO discretize???
 		e.imultiply(-energyDispersion[r]);
-		e.setName("Energy loss");
+		e.setName(ENERGY_LOSS);
 		MetadataUtils.setAxes(spectrum, e);
 		auxData.add(spectrum);
 		allSpectra[r].add(spectrum);
@@ -507,7 +514,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				Dataset energies = DatasetFactory.createRange(bmax);
 				energies.iadd(-bin*el0); // adjust zero TODO sign wrong??
 				energies.imultiply(-energyDispersion[r]/bin);
-				energies.setName("Energy loss");
+				energies.setName(ENERGY_LOSS);
 				Dataset t = DatasetFactory.createFromObject(allSingle[r]);
 				t.setName("single_photon_spectrum_" + r);
 				MetadataUtils.setAxes(t, null, energies);

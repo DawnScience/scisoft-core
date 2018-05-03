@@ -17,6 +17,8 @@ import org.eclipse.january.dataset.CollectionStats;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.SliceND;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.DoubleUtils;
@@ -75,34 +77,44 @@ public class CollectionStatsTest {
 
    @Test
    public void testLarge() throws Exception {
-		final long start = System.currentTimeMillis();
 		final List<IDataset> images = new ArrayList<IDataset>(10);
 		String testLocation = IOTestUtils.getGDALargeTestFilesLocation();
 		final File dir = new File(testLocation, "EDFLoaderTest");
 		final File[] files = dir.listFiles();
+		SliceND slice = null;
+		int rows = 10;
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].getName().startsWith("billeA")) {
-				images.add(LoaderFactory.getData(files[i].getAbsolutePath(), null).getDataset(0));
+				ILazyDataset lz = LoaderFactory.getData(files[i].getAbsolutePath(), null).getLazyDataset(0);
+				if (slice == null) {
+					int[] shape = lz.getShape();
+					slice = new SliceND(shape);
+					rows = shape[0] / 8;
+					slice.setSlice(0, 0, rows, 1);
+				}
+				images.add(lz.getSlice(slice));
 			}
 		}
 
+		long start = System.currentTimeMillis();
 		final Dataset median = CollectionStats.median(images);
-		final long end = System.currentTimeMillis();
-		if (median.getShape()[0] != 2048)
+		long end = System.currentTimeMillis();
+		if (median.getShape()[0] != rows)
 			throw new Exception("Median has wrong size!");
 		if (median.getShape()[1] != 2048)
 			throw new Exception("Median has wrong size!");
 
-		System.out.println("Did median of ten images 2048x2048 in " + ((end - start) / 1000d) + "s");
+		System.out.println("Did median of ten images " + rows + "x2048 in " + ((end - start) / 1000d) + "s");
 
-		final Dataset mean = CollectionStats.median(images);
-		final long end1 = System.currentTimeMillis();
-		if (mean.getShape()[0] != 2048)
+		start = System.currentTimeMillis();
+		final Dataset mean = CollectionStats.mean(images);
+		end = System.currentTimeMillis();
+		if (mean.getShape()[0] != rows)
 			throw new Exception("Mean has wrong size!");
 		if (mean.getShape()[1] != 2048)
 			throw new Exception("Mean has wrong size!");
 
-		System.out.println("Did mean of ten images 2048x2048 in " + ((end1 - end) / 1000d) + "s");
+		System.out.println("Did mean of ten images " + rows + "x2048 in " + ((end - start) / 1000d) + "s");
 	}
 
 }

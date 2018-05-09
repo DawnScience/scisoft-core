@@ -140,6 +140,12 @@
             model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="XRMC Normalisation">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
+            class="uk.ac.diamond.scisoft.xpdf.operations.XRMCEnergyIntegration"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XRMCEnergyIntegration"
+            name="XRMC Energy Integration">
+      </operation>
    </extension>
 
 </plugin>

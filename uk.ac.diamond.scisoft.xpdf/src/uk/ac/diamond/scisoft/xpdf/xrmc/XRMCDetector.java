@@ -26,6 +26,11 @@ public class XRMCDetector extends XRMCFile {
 		transformToLab = null;
 	}
 	
+	public XRMCDetector(String[] fileText) {
+		super(fileText);
+		transformToLab = null;
+	}
+	
 	/**
 	 * Checks that what the XRMCDatReader has ingested is an XRMC detector file.
 	 * @return true if the structure in the reader matches an XRMC detector file

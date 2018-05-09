@@ -1,6 +1,7 @@
 package uk.ac.diamond.scisoft.xpdf.xrmc;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -13,9 +14,10 @@ import java.util.stream.Collectors;
  * @author Timothy Spain, timothy.spain@diamond.ac.uk
  *
  */
-public class XRMCDatReader {
+public class XRMCDatReader implements Serializable {
 
-	List<NameValue> data;
+	private static final long serialVersionUID = 1L;
+	private List<NameValue> data;
 	
 	public XRMCDatReader(String filename) {
 		try {
@@ -206,7 +208,10 @@ public class XRMCDatReader {
 	}
 	
 	
-	private static class NameValue {
+	private static class NameValue implements Serializable {
+		
+		private static final long serialVersionUID = 1L;
+
 		private String name;
 		private String value;
 		private String line;

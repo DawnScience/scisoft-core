@@ -1,15 +1,17 @@
 package uk.ac.diamond.scisoft.xpdf.xrmc;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 import org.apache.commons.lang.ArrayUtils;
 
-public class XRMCFile {
+public class XRMCFile implements Serializable {
 	
 	protected XRMCDatReader reader;
 	
 	private static final String NEWDEVICE = "Newdevice";
-	
+	private static final long serialVersionUID = 1L;
+
 	protected XRMCFile(String fileName) {
 		reader = new XRMCDatReader(fileName);
 	}

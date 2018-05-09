@@ -1,6 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +10,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -30,8 +31,8 @@ public class PeakFindingDataFactoryTest {
 	//Dummy values for creating PeakFindingData DTOs
 	private List<String> activePFs;
 	private Integer nPeaks = DummyPeakFinder.getFakePeaks().size();
-	private IDataset xData = DatasetFactory.createRange(0, 10, 1, Dataset.FLOAT32);
-	private IDataset yData = DatasetFactory.createRange(0, 10, 1, Dataset.FLOAT32);
+	private IDataset xData = DatasetFactory.createRange(FloatDataset.class, 0, 10, 1);
+	private IDataset yData = DatasetFactory.createRange(FloatDataset.class, 0, 10, 1);
 	
 
 	@BeforeClass

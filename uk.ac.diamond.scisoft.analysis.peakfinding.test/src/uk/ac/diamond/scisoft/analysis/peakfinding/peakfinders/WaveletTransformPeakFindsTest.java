@@ -12,6 +12,7 @@ import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -99,7 +100,7 @@ public class WaveletTransformPeakFindsTest {
 		//Size 1 for peaks
 		Assert.assertEquals(5, paramSet.size());
 
-		assertTrue(paramSet.containsKey("Conolve Width Size"));
+		assertTrue(paramSet.containsKey("Convolve Width Size"));
 		assertTrue(paramSet.containsKey("Minimum signal to noise ratio"));
 		assertTrue(paramSet.containsKey("Noise percentile"));
 		assertTrue(paramSet.containsKey("Minimum ridge length"));
@@ -113,12 +114,12 @@ public class WaveletTransformPeakFindsTest {
 		WaveletTransformPeakFinds wave = new WaveletTransformPeakFinds();
 
 		int dataSz = 100;
-		Dataset xData = DatasetFactory.createRange(dataSz, Dataset.INT64);
+		Dataset xData = DatasetFactory.createRange(IntegerDataset.class, dataSz);
 		Dataset yData = DatasetFactory.ones(dataSz);
 
 		TreeMap<Integer, Double> foundPeaks = (TreeMap<Integer, Double>) wave.findPeaks(xData, yData, null);
 
-		//XXX: detects in plataue situation. Would need to check before runs algorithm.
+		//XXX: detects in plateau situation. Would need to check before runs algorithm.
 		//It should find only 1 peak as a result of this algorithm
 		assertTrue(foundPeaks.size() <= 1); // Check no peaks were found
 	}

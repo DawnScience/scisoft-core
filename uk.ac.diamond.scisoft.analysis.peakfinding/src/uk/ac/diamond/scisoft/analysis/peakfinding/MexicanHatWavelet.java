@@ -1,12 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
 
-import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
-import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.IndexIterator;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CoordinatesIterator;
@@ -25,6 +20,8 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.CoordinatesIterator;
  *
  */
 public class MexicanHatWavelet extends AFunction {
+
+	private static final long serialVersionUID = 3368876751681052362L;
 
 	private static final String NAME = "Mexican Hat";
 	
@@ -86,7 +83,7 @@ public class MexicanHatWavelet extends AFunction {
 		
 		while (it.hasNext()) {
 			//TODO: this exits in a world where everything is 1D...
-			double itVal = it.getCoordinates()[0];
+			double itVal = coords[0];
 			double nVal = itVal - (numPoints-1.0) / 2;
 			
 			double xsq = nVal*nVal;

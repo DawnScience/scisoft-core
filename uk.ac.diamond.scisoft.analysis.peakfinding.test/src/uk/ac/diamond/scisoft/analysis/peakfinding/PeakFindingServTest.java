@@ -9,8 +9,8 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.FloatDataset;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -51,8 +51,8 @@ public class PeakFindingServTest {
 	 * A couple of support methods for the 
 	 */
 	private void setFakeDataOnDTO() {
-		peakFindData.setData(DatasetFactory.createRange(0, 10, 1, Dataset.FLOAT32), 
-				DatasetFactory.createRange(0, 10, 1, Dataset.FLOAT32));
+		peakFindData.setData(DatasetFactory.createRange(FloatDataset.class, 0, 10, 1), 
+				DatasetFactory.createRange(FloatDataset.class, 0, 10, 1));
 	}
 	
 	@Test

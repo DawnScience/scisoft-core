@@ -154,6 +154,30 @@
             model="uk.ac.diamond.scisoft.xpdf.operations.ImportXRMCMetadataModel"
             name="Import XRMC Metadata">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
+            class="uk.ac.diamond.scisoft.xpdf.operations.XRMCNormalization"
+            icon="icons/xpdfnormal.png"
+            id="uk.ac.diamond.scisoft.xpdf.operations.XRMCNormalization"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="XRMC scattering data normalisation">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
+            class="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCToGammaDelta"
+            icon="icons/xpdfdetector.png"
+            id="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCToGammaDelta"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="Interpolate XRMC scattering data to (γ,δ)">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
+            class="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCFromGammaDelta"
+            icon="icons/xpdfdetector.png"
+            id="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCFromGammaDelta"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="Interpolate from (γ,δ) to Detector">
+      </operation>
    </extension>
 
 </plugin>

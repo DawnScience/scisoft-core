@@ -14,6 +14,8 @@ public class XRMCMetadataImpl implements XRMCMetadata {
 	private String inputFileName;
 	private EnumMap<XRMCDevice, Boolean> readDeviceType;
 	private XRMCDetector savedDetector;
+	private List<XRMCSpectrum> spectra;
+	private List<XRMCSource> sources;
 	
 	public XRMCMetadataImpl() {
 		
@@ -51,11 +53,23 @@ public class XRMCMetadataImpl implements XRMCMetadata {
 			
 		}
 
-		// Read 
+		// Read spectrum
 		if (getDeviceRead(XRMCDevice.SPECTRUM)) {
-			
+			String[] spectrumNames = xrmcText.getDeviceNames(XRMCDevice.SPECTRUM);
+			for (String spectrumName: spectrumNames) {
+				List<String> spectralLines = xrmcText.getDeviceText(spectrumName);
+				spectra.add(new XRMCSpectrum(spectralLines.toArray(new String[spectralLines.size()])));
+			}
 		}
 		
+		// Read Source
+		if (getDeviceRead(XRMCDevice.SOURCE)) {
+			String[] sourceNames = xrmcText.getDeviceNames(XRMCDevice.SOURCE);
+			for (String sourceName: sourceNames) {
+				List<String> sourceLines = xrmcText.getDeviceText(sourceName);
+				sources.add(new XRMCSource(sourceLines.toArray(new String[sourceLines.size()])));
+			}
+		}
 	}
 	
 	public void setDeviceRead(XRMCDevice deviceType, boolean isRead) {
@@ -76,11 +90,22 @@ public class XRMCMetadataImpl implements XRMCMetadata {
 		return savedDetector;
 	}
 
+	@Override
+	// Read the first spectrum
+	public XRMCSpectrum getSpectrum() {
+		return spectra.get(0);
+	}
+	
 	private void initDeviceReadingness() {
 		readDeviceType = new EnumMap<>(XRMCDevice.class);
 		for (XRMCDevice dev : XRMCDevice.values()) {
 			readDeviceType.put(dev, false);
 		}
+	}
+	
+	@Override
+	public XRMCSource getSource() {
+		return sources.get(0);
 	}
 	
 }

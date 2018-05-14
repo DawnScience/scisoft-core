@@ -71,7 +71,34 @@ public class XRMCEnergyIntegrator {
 		if (det == null)
 			return xrmcData.sum(0);
 		else
-			return correctAndNormalize(integrateEnergy(correctTransmission(xrmcData)));
+			return integrateEnergy(correctTransmission(xrmcData));
+	}
+	
+	/**
+	 * Creates a new @link{DetectorProperties} object based on the passed properties.
+	 * <p>
+	 * A static utility method.
+	 * @param nx
+	 * 			Number of pixels in the x direction
+	 * @param ny
+	 * 			Number of pixels in the y direction
+	 * @param origin
+	 * 				Origin vector of the detector, relative to the sample
+	 * @param beamVector
+	 * 					Direction vector of the beam
+	 * @param eulerAngles
+	 * 					Euler angles of the detector, relative to the aligned detector orientation
+	 * @param pixelSpacing
+	 * 					Two element @link{Dataset} containing the pixel distances in x, y, measured in mm
+	 * @return the newly constructed @link{DetectorProperties} object
+	 */
+	public static DetectorProperties calculateDetectorProperties(int nx, int ny, Vector3d origin, Vector3d beamVector, Dataset eulerAngles, Dataset pixelSpacing) {
+		DetectorProperties detProp = new DetectorProperties(origin, nx, ny, pixelSpacing.getDouble(1), pixelSpacing.getDouble(0), new Matrix3d(1.,0.,0. ,0.,1.,0. ,0.,0.,1.));
+		detProp.setOrientationEulerXYZ(eulerAngles.getDouble(0), eulerAngles.getDouble(1), eulerAngles.getDouble(2));
+
+		detProp.setBeamVector(beamVector);
+
+		return detProp;
 	}
 	
 	/**
@@ -95,15 +122,12 @@ public class XRMCEnergyIntegrator {
 		int[] shape = xrmcData.getShape();
 		int nx = shape[1], ny = shape[2];
 
-		setDetectorProperties(new DetectorProperties(origin, nx, ny, pixelSpacing.getDouble(1), pixelSpacing.getDouble(0), new Matrix3d(1.,0.,0. ,0.,1.,0. ,0.,0.,1.)));
-		detProp.setOrientationEulerXYZ(eulerAngles.getDouble(0), eulerAngles.getDouble(1), eulerAngles.getDouble(2));
-		
 		Vector3d beamVector = new Vector3d(0., 0., 1.);
 		Vector3d polarizationVector = new Vector3d(1., 0., 0.);
 		Vector3d normalVector = new Vector3d(0., 1., 0.);
-		
-		detProp.setBeamVector(beamVector);
-		
+
+		setDetectorProperties(calculateDetectorProperties(nx, ny, origin, beamVector, eulerAngles, pixelSpacing));		
+
 		twoTheta = DatasetFactory.zeros(nx, ny);
 		phi = DatasetFactory.zeros(nx,  ny);
 		
@@ -178,23 +202,4 @@ public class XRMCEnergyIntegrator {
 		return energyResolved.sum(0); // no dE term, the values are photons per bin, with no per unit of bandwidth term.
 	}
 	
-	// Convert from counts per pixel to photons per incident photon per unit solid angle
-	private Dataset correctAndNormalize(Dataset flux) {
-		
-		Dataset omegaFlux = DatasetFactory.zeros(flux);
-		
-		if (detProp != null) {
-			int[] shape = flux.getShape();
-			for (int i = 0; i < shape[0]; i++) {
-				for (int j = 0; j < shape[1]; j++) {
-					double solidAngle = detProp.calculateSolidAngle(i, j);
-					omegaFlux.set(flux.getDouble(i, j)/solidAngle, i, j);
-				}
-			}
-			return omegaFlux;
-			
-		} else {
-			return flux;
-		}
-	}
 }

@@ -6,6 +6,10 @@ public class XRMCSource extends XRMCFile {
 		super(fileName);
 	}
 
+	public XRMCSource(String[] lines) {
+		super(lines);
+	}
+	
 	@Override
 	protected String getDeviceName() {
 		return "source";
@@ -23,7 +27,7 @@ public class XRMCSource extends XRMCFile {
 	 * Gets the source coordinates
 	 * @return source x, y, z coordinates
 	 */
-	double[] getX() {
+	public double[] getX() {
 		return getAndParseValues("X");
 	}
 	
@@ -34,7 +38,7 @@ public class XRMCSource extends XRMCFile {
 	 * main source direction)
 	 * @return k_sx, k_sy, k_sz
 	 */
-	double[] getUK() {
+	public double[] getUK() {
 		return getAndParseValues("uk");
 	}
 
@@ -44,7 +48,7 @@ public class XRMCSource extends XRMCFile {
 	 * source orientation: i_s components (local x axis direction)
 	 * @return i_sx, i_sy, i_sz
 	 */
-	double[] getUI() {
+	public double[] getUI() {
 		return getAndParseValues("ui");
 	}
 
@@ -52,7 +56,7 @@ public class XRMCSource extends XRMCFile {
 	 * Gets the beam divergence.
 	 * @return θ_x, θ_y
 	 */
-	double[] getDivergence() {
+	public double[] getDivergence() {
 		return getAndParseValues("Divergence");
 	}
 
@@ -63,7 +67,7 @@ public class XRMCSource extends XRMCFile {
 	 * @return σ_x, σ_y, σ_z
 	 * 
 	 */
-	double[] getSize() {
+	public double[] getSize() {
 		return getAndParseValues("Size");
 	}
 
@@ -72,7 +76,7 @@ public class XRMCSource extends XRMCFile {
 	 * x_0 and with direction u
 	 * @return x0, y0, z0, u0, v0, w0, rotation angle θ (degrees)
 	 */
-	double[] getRotate() {
+	public double[] getRotate() {
 		return getAndParseValues("Rotate");
 	}
 }

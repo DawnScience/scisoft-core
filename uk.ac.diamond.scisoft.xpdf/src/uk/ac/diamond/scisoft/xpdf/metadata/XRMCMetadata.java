@@ -11,10 +11,14 @@ package uk.ac.diamond.scisoft.xpdf.metadata;
 import org.eclipse.january.metadata.MetadataType;
 
 import uk.ac.diamond.scisoft.xpdf.xrmc.XRMCDetector;
+import uk.ac.diamond.scisoft.xpdf.xrmc.XRMCSpectrum;
+import uk.ac.diamond.scisoft.xpdf.xrmc.XRMCSource;
 
 public interface XRMCMetadata extends MetadataType {
 
 	public XRMCDetector getDetector();
 	
+	public XRMCSpectrum getSpectrum();
 	
+	public XRMCSource getSource();
 }

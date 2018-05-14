@@ -21,9 +21,9 @@ Wrapper of dataset sending and getting functionality in DAWN
 import os
 
 if os.name == 'java':
-    import jython.jydata as _data  # @UnusedImport
+    from .jython import jydata as _data  # @UnusedImport
 else:
-    import python.pydata as _data  # @Reimport
+    from .python import pydata as _data  # @Reimport
 
 '''
 name - the long name of the dataset

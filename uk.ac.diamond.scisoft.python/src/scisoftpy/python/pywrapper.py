@@ -64,5 +64,5 @@ class datasetdescriptor(object):
     
     
 #Use this class to wrap a Binary object, typically a str of bytes
-import xmlrpclib
-binarywrapper = xmlrpclib.Binary
+import six.moves.xmlrpc_client
+binarywrapper = six.moves.xmlrpc_client.Binary

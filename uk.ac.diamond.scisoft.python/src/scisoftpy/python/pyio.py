@@ -18,6 +18,7 @@
 '''
 '''
 
+from __future__ import print_function
 from scisoftpy.dictutils import DataHolder
 
 io_exception = IOError
@@ -50,8 +51,8 @@ class NumPyLoader(PythonLoader):
 class NumPySaver(PythonSaver):
     def save(self, data):
         import numpy as np #@UnresolvedImport
-        if len(data.items()) > 1:
-            print 'Only saving first dataset'
+        if len(list(data.items())) > 1:
+            print('Only saving first dataset')
         np.save(self.name, data[0])
 
 from re import compile as _compile
@@ -75,7 +76,7 @@ class SRSLoader(PythonLoader):
             while True:
                 l = f.readline()
                 if not l:
-                    raise io_exception, "End of file reached unexpectedly"
+                    raise io_exception("End of file reached unexpectedly")
                 ls = l.lstrip()
                 if ls.startswith("&SRS") or ls.startswith("&DLS"):
                     header = True
@@ -83,14 +84,14 @@ class SRSLoader(PythonLoader):
                 if _begin_number.match(ls):
                     break
             else:
-                raise io_exception, "Not an SRS file"
+                raise io_exception("Not an SRS file")
     
             srstext = []
             if header:
                 while True:
                     l = f.readline()
                     if not l:
-                        raise io_exception, "End of file reached unexpectedly"
+                        raise io_exception("End of file reached unexpectedly")
                     ls = l.strip()
                     if ls:
                         if ls.startswith("&END"):
@@ -98,11 +99,11 @@ class SRSLoader(PythonLoader):
                         if self.load_metadata:
                             srstext.append(ls)
                 else:
-                    raise io_exception, "No end tag found"
+                    raise io_exception("No end tag found")
     
                 l = f.readline()
                 if not l:
-                    raise io_exception, "End of file reached unexpectedly"
+                    raise io_exception("End of file reached unexpectedly")
                 colstext = l.strip()
                 datatext = []
             else:
@@ -166,7 +167,7 @@ class SRSLoader(PythonLoader):
         for m in othermeta:
             s = m.split('=',1)
             if len(s) == 1:
-                raise io_exception, "Metadata did not contain equal sign: " + m
+                raise io_exception("Metadata did not contain equal sign: " + m)
             meta.append((s[0], SRSLoader._parse_value(s[1])))
         return meta
 
@@ -186,26 +187,26 @@ class SRSLoader(PythonLoader):
                     vi = kf+1
                     nc = line.find(',', vi)
                     if nc < vi:
-                        raise io_exception, "No comma found: " + line[vi:]
+                        raise io_exception("No comma found: " + line[vi:])
                     qi = line.find('\'', vi)
                     if qi > 0 and qi < nc:
                         if qi != vi:
-                            raise io_exception, "Quoted string does not follow equal sign: " + line[qi:]
+                            raise io_exception("Quoted string does not follow equal sign: " + line[qi:])
                         # inside quoted string
                         qf = line.find('\'', qi+1)
                         if qf > 0 and qf != (nc-1):
-                            raise io_exception, "A comma does not follow a quoted string: " + line[qi:]
+                            raise io_exception("A comma does not follow a quoted string: " + line[qi:])
 
                     vf = nc
                     v = line[vi:vf]
                     meta.append((k, SRSLoader._parse_value(v)))
                     ki = nc+1
                 else:
-                    raise io_exception, "No equal sign on line: " + line[ki:]
+                    raise io_exception("No equal sign on line: " + line[ki:])
         else:
             s = line.split('=',1)
             if len(s) == 1:
-                raise io_exception, "Metadata did not contain equal sign: " + line
+                raise io_exception("Metadata did not contain equal sign: " + line)
             meta.append((s[0], SRSLoader._parse_value(s[1])))
         return meta
 
@@ -235,18 +236,18 @@ class SRSLoader(PythonLoader):
             lr = len(r)
             if lr > lc:
                 if warn:
-                    print "Long row!"
+                    print("Long row!")
                 lr = lc
             for i in range(lr):
                 data[i].append(SRSLoader._parse_value(r[i]))
 
             if lr < lc:
                 if warn:
-                    print "Short row!"
+                    print("Short row!")
                 for i in range(lr, lc):
                     data[i].append(0)
 
-        from pycore import array as parray
+        from .pycore import array as parray
         return [(c, parray(d)) for c, d in zip(cols, data)]
 
     @staticmethod
@@ -258,7 +259,7 @@ class SRSLoader(PythonLoader):
             v = int(text)
         except ValueError:
             try:
-                v = long(text)
+                v = int(text)
             except ValueError:
                 try:
                     v = float(text)
@@ -267,12 +268,12 @@ class SRSLoader(PythonLoader):
                         if text.endswith('\''):
                             v = text[1:-1]
                         else:
-                            raise io_exception, "No matching single quotes in string: " + text
+                            raise io_exception("No matching single quotes in string: " + text)
                     elif text.startswith('"'):
                         if text.endswith('"'):
                             v = text[1:-1]
                         else:
-                            raise io_exception, "No matching double quotes in string: " + text
+                            raise io_exception("No matching double quotes in string: " + text)
                     else:
                         v = text
         return v
@@ -295,7 +296,7 @@ class DLSLoader(SRSLoader):
             while True:
                 l = f.readline()
                 if not l:
-                    raise io_exception, "End of file reached unexpectedly"
+                    raise io_exception("End of file reached unexpectedly")
                 ls = l.strip()
                 if ls:
                     if _begin_number.match(ls):
@@ -306,7 +307,7 @@ class DLSLoader(SRSLoader):
                             if ls:
                                 hdrtext.append(ls)
             else:
-                raise io_exception, "No end tag found"
+                raise io_exception("No end tag found")
 
             colstext = hdrtext.pop()[1:].strip() if hdrtext else None
             datatext = [ls]
@@ -346,11 +347,11 @@ class DLSLoader(SRSLoader):
                 othermeta.append(r)
             else:
                 if len(r) > 2 and warn:
-                    print "Line has more than one colon:", l
+                    print("Line has more than one colon:", l)
                 dlsmeta.append((r[0], l[len(r[0])+1:].strip()))
         return dlsmeta
 
-import pycore as _core
+from . import pycore as _core
 
 import sys
 
@@ -360,9 +361,9 @@ except:
     try: # for the Pillow fork
         from PIL import Image as _im  # @UnresolvedImport @Reimport
     except:
-        print >> sys.stderr, "Could not import python image library"
+        print("Could not import python image library", file=sys.stderr)
 
-from pycore import ndarrayRGB as _RGB
+from .pycore import ndarrayRGB as _RGB
 
 class ImageLoader(PythonLoader):
     def load(self, warn=True):
@@ -448,7 +449,7 @@ os.dup2(fd, orig_fd) #@UndefinedVariable
 try:
     import scisoftpy._external.tifffile as _tf
 except:
-    print >> sys.stderr, "Could not import tiff file package"
+    print("Could not import tiff file package", file=sys.stderr)
 finally:
     os.dup2(saved, orig_fd)#@UndefinedVariable
     os.close(fd)
@@ -533,11 +534,11 @@ try:
 #             print "padding", _padding
             if isreal:
                 s = h.get_doublearray_as_string()
-                print type(s)
+                print(type(s))
                 d = numpy.frombuffer(s, numpy.float64)
             else:
                 s = h.get_integerarray_as_string()
-                print type(s)
+                print(type(s))
                 d = numpy.frombuffer(s, numpy.uint32)
 #             print d.shape
 #             print d[0:10], d[d.shape[0]/2], d[-1]
@@ -603,7 +604,7 @@ PGMLoader = ImageLoader
 class LoaderFactoryDelegate(PythonLoader):
     def load(self, warn=True):
         # py4j gymnastics to get access to Java LoaderFactory
-        import py4jutils as utils #@UnresolvedImport
+        from . import py4jutils as utils #@UnresolvedImport
         java = utils.get_gateway().jvm
         loader_factory = java.uk.ac.diamond.scisoft.analysis.io.LoaderFactory
         jdh = loader_factory.getData(self.name, self.load_metadata, None)
@@ -619,7 +620,7 @@ class LoaderFactoryDelegate(PythonLoader):
                 basenames.append(n)
 
         if len(data) != len(basenames):
-            raise io_exception, "Number of names does not match number of datasets"
+            raise io_exception("Number of names does not match number of datasets")
 
         metadata = None
         if self.load_metadata:
@@ -630,7 +631,7 @@ class LoaderFactoryDelegate(PythonLoader):
                     mnames = java.java.util.ArrayList(mnames) # make it iterable
                     metadata = [ (k, meta.getMetaValue(k)) for k in mnames if k is not None ]
 
-        return DataHolder(zip(basenames, data), metadata, warn)
+        return DataHolder(list(zip(basenames, data)), metadata, warn)
 
 _pngsave = ImageSaver
 _jpegsave = ImageSaver
@@ -644,8 +645,8 @@ _jpegscaledsave = None
 #from pycore import asDatasetDict, asDatasetList, toList
 
 try:
-    from pynxio import NXLoader
-    from pyhdf5io import HDF5Loader
+    from .pynxio import NXLoader
+    from .pyhdf5io import HDF5Loader
 except:
     NXLoader = None
     HDF5Loader = None

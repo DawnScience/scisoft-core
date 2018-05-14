@@ -16,14 +16,15 @@
 
 '''
 '''
+from __future__ import print_function
 from java.lang import Throwable as _throwable
 try:
     from uk.ac.diamond.scisoft.analysis.io import HDF5Loader as _hdf5loader
 except _throwable as e:
     import sys
-    print >> sys.stderr, "Could not import HDF5Loader"
-    print >> sys.stderr, "Problem with path for dynamic/shared library or product bundling"
-    print >> sys.stderr, e
+    print("Could not import HDF5Loader", file=sys.stderr)
+    print("Problem with path for dynamic/shared library or product bundling", file=sys.stderr)
+    print(e, file=sys.stderr)
     _hdf5loader = None
 
 from org.eclipse.dawnsci.analysis.api.tree import Tree as _jtree
@@ -45,7 +46,7 @@ from ..nexus.hdf5 import HDF5tree as _tree
 from ..nexus.hdf5 import HDF5group as _group
 from ..nexus.hdf5 import HDF5dataset as _hdataset
 
-from jycore import asarray, _isslice, _getdtypefromjdataset, _wrapout, Sciwrap, asIterable
+from .jycore import asarray, _isslice, _getdtypefromjdataset, _wrapout, Sciwrap, asIterable
 
 def _toslice(rank, key):
     '''Transform key to proper slice if necessary
@@ -58,7 +59,7 @@ def _toslice(rank, key):
             if nk == 1:
                 key = key[0]
             elif nk > 1:
-                raise IndexError, "too many indices"
+                raise IndexError("too many indices")
         if isinstance(key, slice) or key is Ellipsis:
             return True, key
         return False, (key,)
@@ -111,14 +112,14 @@ class SDS(_hdataset):
 class HDF5Loader(object):
     def __init__(self, name):
         if _hdf5loader is None:
-            raise io_exception, "HDf5 loader could not be imported"
+            raise io_exception("HDf5 loader could not be imported")
         self.ldr = _hdf5loader(name)
 
     def load(self, warn=True):
         tree = self._load_tree()
 
         if tree is None:
-            raise io_exception, "No tree found"
+            raise io_exception("No tree found")
 
         # convert tree to own tree
         r = tree.getNodeLink()
@@ -158,7 +159,7 @@ class HDF5Loader(object):
         it = node.getAttributeNameIterator()
         attrs = []
         while it.hasNext():
-            n = it.next()
+            n = next(it)
             v = node.getAttribute(n).getValue()
             attrs.append((n, Sciwrap(v)))
 

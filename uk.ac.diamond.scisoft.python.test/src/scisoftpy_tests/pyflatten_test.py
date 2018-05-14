@@ -14,12 +14,16 @@
 # limitations under the License.
 ###
 
+
 import unittest
 import sys, os
 import scisoftpy as dnp
-import xmlrpclib
+import six.moves.xmlrpc_client
 import math
 import uuid
+import six
+
+from six.moves import zip
 
 class Test(unittest.TestCase):
 
@@ -32,7 +36,7 @@ class Test(unittest.TestCase):
                 self._assertFlattenedEquals(exp, act)
         elif isinstance(expected, dict):
             self.assertEquals(len(expected), len(actual))
-            for k, v in expected.iteritems():
+            for k, v in six.iteritems(expected):
                 self.assertTrue(k in actual)
                 self._assertFlattenedEquals(v, actual[k])
         elif isinstance(expected, float) and dnp.isnan(expected):
@@ -61,14 +65,14 @@ class Test(unittest.TestCase):
             self.assertEquals(expected, actual)
     
     def _checkFlattenedState(self, flat):
-        if isinstance(flat, (str, unicode, int, float, bool, xmlrpclib.Binary)):
+        if isinstance(flat, (str, six.text_type, int, float, bool, six.moves.xmlrpc_client.Binary)):
             return
         if isinstance(flat, (list, tuple)):
             for elem in flat:
                 self._checkFlattenedState(elem)
             return
         if isinstance(flat, dict):
-            for k, v in flat.iteritems():
+            for k, v in six.iteritems(flat):
                 self.assertTrue(isinstance(k, str))
                 self._checkFlattenedState(v)
             return
@@ -185,8 +189,8 @@ class Test(unittest.TestCase):
         self._flattenAndUnflatten(18)
         self._flattenAndUnflatten(-7)
         self._flattenAndUnflatten(0)
-        self._flattenAndUnflatten(sys.maxint)
-        self._flattenAndUnflatten(-sys.maxint - 1)
+        self._flattenAndUnflatten(sys.maxsize)
+        self._flattenAndUnflatten(-sys.maxsize - 1)
     
     def testBoolean(self): 
         self._flattenAndUnflatten(True)
@@ -205,9 +209,9 @@ class Test(unittest.TestCase):
         self._flattenAndUnflatten(dnp.floatmax)
         
     def testBinary(self):
-        self._flattenAndUnflatten(dnp.rpc.binarywrapper("\0\1\2\3"))
-        self._flattenAndUnflatten(dnp.rpc.binarywrapper(' ' * 0))
-        self._flattenAndUnflatten(dnp.rpc.binarywrapper(' ' * 1000))
+        self._flattenAndUnflatten(dnp.rpc.binarywrapper(b"\0\1\2\3"))
+        self._flattenAndUnflatten(dnp.rpc.binarywrapper(b' ' * 0))
+        self._flattenAndUnflatten(dnp.rpc.binarywrapper(b' ' * 1000))
 
     def testDict(self):
         self._flattenAndUnflatten({'moo': 'cow', 'quack': 'duck', 'pi': math.pi, 'One': 1.0}) 
@@ -395,7 +399,7 @@ class Test(unittest.TestCase):
             raise Exception("raised exception")
         try:
             function_for_tb()
-        except Exception, e:
+        except Exception as e:
             self._flattenAndUnflatten(e, expectedObj=Exception("Exception: raised exception"))
     def testGuiParameters(self):
         # test one explicitly

@@ -32,6 +32,8 @@ should be added to uk.ac.diamond.scisoft.analysis.osgi.ClassLoaderServiceImpl.ja
 convert_arrays(arrays) and convert_datasets(datasets) provide conversion
 between (NumPy) arrays in Python and datasets in Java
 '''
+from __future__ import print_function
+
 _GATEWAY = None
 
 def get_gateway():
@@ -49,12 +51,12 @@ def get_gateway():
         from py4j.protocol import Py4JNetworkError
         _GATEWAY = JavaGateway(eager_load=True) # flag to check it's okay immediately
         return _GATEWAY
-    except ImportError, ie:
-        print >> sys.stderr, "No Py4J found - check your python installation"
-        print >> sys.stderr, ie
-    except Py4JNetworkError, ne:
-        print >> sys.stderr, "Dawn JVM not found - switch on Py4J server in Window > Preferences > Py4J Default Server"
-        print >> sys.stderr, ne
+    except ImportError as ie:
+        print("No Py4J found - check your python installation", file=sys.stderr)
+        print(ie, file=sys.stderr)
+    except Py4JNetworkError as ne:
+        print("Dawn JVM not found - switch on Py4J server in Window > Preferences > Py4J Default Server", file=sys.stderr)
+        print(ne, file=sys.stderr)
 
 def convert_line_roi(roi):
     '''
@@ -197,4 +199,4 @@ if __name__ == '__main__':
     datasets = _jload_datasets(names)
     pnames = _jsave_datasets(datasets)
     arrays = _pyload_arrays(pnames)
-    print 'end!'
+    print('end!')

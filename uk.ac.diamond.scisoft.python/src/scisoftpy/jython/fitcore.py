@@ -18,6 +18,7 @@
 
 '''
 
+from __future__ import print_function
 from uk.ac.diamond.scisoft.analysis.fitting.functions import Parameter as _param
 from uk.ac.diamond.scisoft.analysis.fitting.functions import AFunction as _absfn
 from uk.ac.diamond.scisoft.analysis.fitting.functions import CompositeFunction as _compfn
@@ -25,6 +26,7 @@ from uk.ac.diamond.scisoft.analysis.fitting import Fitter as _fitter
 from org.eclipse.dawnsci.analysis.api.fitting.functions import IOperator as _operator
 
 import scisoftpy as _dnp
+
 _asIterable = _dnp.asIterable
 _toList = _dnp.toList
 _asDS = _dnp.asDataset
@@ -32,7 +34,7 @@ _sciwrap = _dnp.Sciwrap
 
 from scisoftpy.jython.jycore import _wrap, _wrapin, _wrapout, __cvt_jobj, _jinput
 
-import function
+from . import function
 
 def _createparams(np, params, bounds):
     '''Create a Parameters list with bounds, popping off items from both input lists
@@ -42,7 +44,7 @@ def _createparams(np, params, bounds):
     '''
 
     if np > len(params):
-        raise ValueError, "Number of parameters supplied is less than that required"
+        raise ValueError("Number of parameters supplied is less than that required")
 
     pl = [ _param(params.pop(0)) for _i in range(np) ]
 
@@ -98,7 +100,7 @@ class fitfunc(_absfn):
             v = self.func(*l)
             return float(v.data[0])
         except ValueError:
-            raise ValueError, 'Problem with function \"' + self.name + '\" at coord ' + coords + ' with params  ' + self.parameterValues
+            raise ValueError('Problem with function \"' + self.name + '\" at coord ' + coords + ' with params  ' + self.parameterValues)
 
     def makeDataset(self, *coords):
         return self.calculateValues(coords)
@@ -114,7 +116,7 @@ class fitfunc(_absfn):
             d.name = self.name
             return d
         except ValueError:
-            raise ValueError, "Problem with function '" + self.name + "' with params  " + self.parameterValues
+            raise ValueError("Problem with function '" + self.name + "' with params  " + self.parameterValues)
 
     def residual(self, allvalues, data, weights, *coords):
         '''Find residual as sum of squared differences of function and data
@@ -135,7 +137,7 @@ class fitfunc(_absfn):
             d = self.func(*l)
             return _dnp.residual(d, data, weights)
         except ValueError:
-            raise ValueError, "Problem with function '" + self.name + "' with params  " + self.parameterValues
+            raise ValueError("Problem with function '" + self.name + "' with params  " + self.parameterValues)
 
 class cfitfunc(_compfn):
     '''Composite function for situation where there's a mixture of jython and Java fitting functions
@@ -202,13 +204,13 @@ class fitresult(object):
             for n in range(len(coords)):
                 x = coords[n]
                 if x.ndim != r:
-                    raise ValueError, "Given coordinates are not all of same rank"
+                    raise ValueError("Given coordinates are not all of same rank")
                 delta *= x.ptp()/x.shape[n]
                 n += 1
         else:
             for x in coords:
                 if x.ndim != 1:
-                    raise ValueError, "Given coordinates are not all 1D"
+                    raise ValueError("Given coordinates are not all 1D")
                 delta *= x.ptp()/x.size
         return delta
 
@@ -341,7 +343,7 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
     mixed = False
     for f in func:
         if isinstance(f, tuple):
-            print "parameter count is no longer required"
+            print("parameter count is no longer required")
             f = f[0]
         if function.isjclass(f):
             # create bound function object
@@ -355,7 +357,7 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
         else:
             np = len(_inspect.getargspec(f)[0]) - 1
             if np < 1:
-                raise ValueError, "Function needs more than one argument (i.e. at least one parameter)"
+                raise ValueError("Function needs more than one argument (i.e. at least one parameter)")
             pl = _createparams(np, p0, bounds)
             fnlist.append(fitfunc(f, f.__name__, pl, args))
             mixed = True
@@ -383,25 +385,25 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
     jdata = data._jdataset()
 
     # use the appropriate fitter for the task
-    if optimizer == 'local' :
+    if optimizer == 'local':
         _fitter.ApacheNelderMeadFit(jcoords, jdata, cfunc)
-    elif optimizer == 'global' :
-        if n_bounds == 0 :
-            print "Using a global optimizer with no bounds is unlikely to work, please use the bounds argument to narrow the search space" 
+    elif optimizer == 'global':
+        if n_bounds == 0:
+            print("Using a global optimizer with no bounds is unlikely to work, please use the bounds argument to narrow the search space")
         _fitter.geneticFit(ptol, jcoords, jdata, cfunc)
-    elif optimizer == 'simplex' :
+    elif optimizer == 'simplex':
         _fitter.simplexFit(ptol, jcoords, jdata, cfunc)
-    elif optimizer == 'gradient' :
+    elif optimizer == 'gradient':
         _fitter.GDFit(ptol, jcoords, jdata, cfunc)
-    elif optimizer == 'apache_nm' :
+    elif optimizer == 'apache_nm':
         _fitter.ApacheNelderMeadFit(jcoords, jdata, cfunc)
-    elif optimizer == 'apache_md' :
+    elif optimizer == 'apache_md':
         _fitter.ApacheMultiDirectionFit(jcoords, jdata, cfunc)
-    elif optimizer == 'apache_cg' :
+    elif optimizer == 'apache_cg':
         _fitter.ApacheConjugateGradientFit(jcoords, jdata, cfunc)
-    elif optimizer == 'genetic' :
-        if n_bounds == 0 :
-            print "Using a global optimizer with no bounds is unlikely to work, please use the bounds argument to narrow the search space" 
+    elif optimizer == 'genetic':
+        if n_bounds == 0:
+            print("Using a global optimizer with no bounds is unlikely to work, please use the bounds argument to narrow the search space")
         _fitter.geneticFit(ptol, jcoords, jdata, cfunc)
 
     return fitresult(cfunc, coords, data)

@@ -19,6 +19,7 @@ Test roi module
 import unittest
 unittest.TestProgram(argv=["roi_test"])
 '''
+from __future__ import print_function
 import unittest
 
 import math
@@ -29,12 +30,12 @@ class Test(unittest.TestCase):
     def testROIs(self):
         r = np.roi.point()
         r.point = 50, -50
-        print r
+        print(r)
         self.assertEqual(50, r.point[0])
         self.assertEqual(-50, r.point[1])
         
         r = np.roi.point(point=[50, -50])
-        print r
+        print(r)
         self.assertEqual(50, r.point[0])
         self.assertEqual(-50, r.point[1])
 
@@ -46,14 +47,14 @@ class Test(unittest.TestCase):
         r.point = 50, -50
         r.length = 100
         r.angledegrees = 45
-        print r
+        print(r)
         self.assertEqual(50, r.point[0])
         self.assertEqual(-50, r.point[1])
         self.assertEqual(100, r.length)
         self.assertEqual(45, r.angledegrees)
 
         r = np.roi.line(point=[50, -50], length=100, angle=math.pi*0.25)
-        print r
+        print(r)
         self.assertEqual(50, r.point[0])
         self.assertEqual(-50, r.point[1])
         self.assertEqual(100, r.length)
@@ -69,7 +70,7 @@ class Test(unittest.TestCase):
         r.point = 50, -50
         r.lengths = 100, 23
         r.angledegrees = 45
-        print r
+        print(r)
         self.assertEqual(50, r.point[0])
         self.assertEqual(-50, r.point[1])
         self.assertEqual(100, r.lengths[0])
@@ -77,7 +78,7 @@ class Test(unittest.TestCase):
         self.assertEqual(45, r.angledegrees)
         
         r = np.roi.rectangle(point=[50, -50], lengths=[100,23], angle=math.pi*0.25)
-        print r
+        print(r)
         self.assertEqual(50, r.point[0])
         self.assertEqual(-50, r.point[1])
         self.assertEqual(100, r.lengths[0])
@@ -95,7 +96,7 @@ class Test(unittest.TestCase):
         r.point = 50,-50
         r.anglesdegrees = -60, 24
         r.radii = 10, 24
-        print r
+        print(r)
         self.assertEqual(50, r.point[0])
         self.assertEqual(-50, r.point[1])
         self.assertAlmostEqual(300, r.anglesdegrees[0])
@@ -104,7 +105,7 @@ class Test(unittest.TestCase):
         self.assertEqual(24, r.radii[1])
         
         r = np.roi.sector(point=[50,-50], angles=[0,math.pi], radii=[30,50])
-        print r
+        print(r)
         self.assertEqual(50, r.point[0])
         self.assertEqual(-50, r.point[1])
         self.assertEqual(0, r.angles[0])
@@ -123,13 +124,13 @@ class Test(unittest.TestCase):
         r = np.roi.circle()
         r.point = 50, -50
         r.radius = 100
-        print r
+        print(r)
         self.assertEqual(50, r.point[0])
         self.assertEqual(-50, r.point[1])
         self.assertEqual(100, r.radius)
 
         r = np.roi.circle(point=[50, -50], radius=100)
-        print r
+        print(r)
         self.assertEqual(50, r.point[0])
         self.assertEqual(-50, r.point[1])
         self.assertEqual(100, r.radius)
@@ -143,7 +144,7 @@ class Test(unittest.TestCase):
         r.point = 50, -50
         r.semiaxes = 100, 75
         r.angledegrees = 45
-        print r
+        print(r)
         self.assertEqual(50, r.point[0])
         self.assertEqual(-50, r.point[1])
         self.assertEqual(100, r.semiaxes[0])
@@ -151,7 +152,7 @@ class Test(unittest.TestCase):
         self.assertEqual(45, r.angledegrees)
 
         r = np.roi.ellipse(point=[50, -50], semiaxes=[100,75], angle=math.pi*0.25)
-        print r
+        print(r)
         self.assertEqual(50, r.point[0])
         self.assertEqual(-50, r.point[1])
         self.assertEqual(100, r.semiaxes[0])
@@ -172,14 +173,14 @@ class Test(unittest.TestCase):
         try:
             l.append(s)
             self.fail('Should have raised exception')
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
 
         try:
             l.add(s)
             self.fail('Should have raised exception')
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
 
     def testROILists(self):
         self.checkROIList(np.roi.point_list(), np.roi.point(), np.roi.sector())
@@ -189,7 +190,7 @@ class Test(unittest.TestCase):
             from scisoftpy.jython.jyroi import _roi
             l = np.roi.point_list()
             self.checkROIList(l, _roi.PointROI(), _roi.SectorROI())
-            print l._jroilist()
+            print(l._jroilist())
 
 def suite():
     suite = unittest.TestSuite()

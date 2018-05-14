@@ -17,13 +17,14 @@
 '''External python caller
 '''
 
+from __future__ import print_function
 import os
 if os.name == 'java':
     _isjava = True
-    from jython.jycore import ndarray, ndgeneric, scalarToPython #@UnusedImport
+    from .jython.jycore import ndarray, ndgeneric, scalarToPython #@UnusedImport
 else:
     _isjava = False
-    from python.pycore import ndarray, ndgeneric, scalarToPython #@Reimport
+    from .python.pycore import ndarray, ndgeneric, scalarToPython #@Reimport
 
 _env = os.environ
 
@@ -45,7 +46,12 @@ with argument passing and output return, plus exception handling
 
 from os import path as _path
 
-from cPickle import dump as _psave, load as _pload
+import sys
+py3 = sys.hexversion >= 0x03000000
+if py3:
+    from pickle import dump as _psave, load as _pload
+else:
+    from cPickle import dump as _psave, load as _pload
 
 def save_args(arg, dir=None): #@ReservedAssignment
     '''Save arguments as files in a temporary directory
@@ -312,7 +318,10 @@ if _isjava:
     # need Java class as the Python code below does not work in Jython!!!
     from uk.ac.diamond.scisoft.python import PythonSubProcess
 else:
-    from Queue import Queue, Empty
+    if py3:
+        from queue import Queue, Empty
+    else:
+        from Queue import Queue, Empty
     from threading import Thread
     from subprocess import Popen, PIPE
     cmds='''import sys

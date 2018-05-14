@@ -19,7 +19,7 @@
 '''
 
 import org.eclipse.dawnsci.analysis.dataset.impl.FFT as _fft
-from jycore import _wrap
+from .jycore import _wrap
 
 @_wrap
 def fft(a, n=None, axis=-1):

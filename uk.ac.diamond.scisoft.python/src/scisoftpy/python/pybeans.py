@@ -15,7 +15,7 @@
 ###
 
 import numpy #@UnresolvedImport @UnusedImport
-import pyscisoft
+from . import pyscisoft
 
 exception = Exception
 
@@ -176,7 +176,8 @@ class datasetwithaxisinformation(object):
 
     def __repr__(self):
         return "datasetWithAxisInformation(%s)" % self.__dict__.__repr__()
-        
+
+import six
 class databean(object):
     _DATA = "data"
     _AXIS_DATA = "axisData"
@@ -188,7 +189,7 @@ class databean(object):
     def __eq__(self, other):
         if not isinstance(other, databean) or self.data != other.data:
             return False
-        for k, v in self.axisData.iteritems():
+        for k, v in six.iteritems(self.axisData):
             if not pyscisoft.equaldataset(v, other.axisData.get(k)):
                 return False
         return True

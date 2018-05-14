@@ -1,8 +1,9 @@
 
+from __future__ import print_function
 import scisoftpy as dnp
 
 def fun():
-    print 'called fun()'
+    print('called fun()')
     return dnp.pi
 
 def funadd(a, b):
@@ -12,7 +13,7 @@ def fundec(a, b=1.5):
     return a-b
 
 def funexception():
-    raise ValueError, 'Help!!'
+    raise ValueError('Help!!')
 
 def funpyana():
     import sys

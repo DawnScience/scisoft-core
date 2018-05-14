@@ -19,6 +19,7 @@ Test random class
 import unittest
 unittest.TestProgram(argv=["random_test"])
 '''
+from __future__ import print_function
 import unittest
 
 import scisoftpy as np
@@ -34,36 +35,36 @@ class Test(unittest.TestCase):
             ja = jarray.array([1,2], 'i')
         else:
             ja = np.array([1,2])
-        print np.asIterable(ja)
+        print(np.asIterable(ja))
 
-        print rnd.rand()
-        print rnd.rand(1)
-        print rnd.rand(2,4)
-        print rnd.randn()
-        print rnd.randn(1)
-        print rnd.randn(2,4)
+        print(rnd.rand())
+        print(rnd.rand(1))
+        print(rnd.rand(2,4))
+        print(rnd.randn())
+        print(rnd.randn(1))
+        print(rnd.randn(2,4))
         for i in range(10):
-            print i, rnd.randint(1)
-        print rnd.randint(2)
-        print rnd.randint(5, size=[2,4])
-        print rnd.random_integers(1)
-        print rnd.random_integers(5, size=[2,4])
-        print rnd.exponential(1.1)
-        print rnd.exponential(1.1, [2,4])
-        print rnd.poisson(1.1)
-        print rnd.poisson(1.1, [2,4])
+            print(i, rnd.randint(1))
+        print(rnd.randint(2))
+        print(rnd.randint(5, size=[2,4]))
+        print(rnd.random_integers(1))
+        print(rnd.random_integers(5, size=[2,4]))
+        print(rnd.exponential(1.1))
+        print(rnd.exponential(1.1, [2,4]))
+        print(rnd.poisson(1.1))
+        print(rnd.poisson(1.1, [2,4]))
         a = np.ones([2,3])
-        print rnd.poisson(1.2, a.shape)
+        print(rnd.poisson(1.2, a.shape))
         rnd.seed()
-        print rnd.rand(2,3)
+        print(rnd.rand(2,3))
         rnd.seed()
-        print rnd.rand(2,3)
+        print(rnd.rand(2,3))
         rnd.seed(12343)
-        print rnd.rand(2,3)
+        print(rnd.rand(2,3))
         rnd.seed(12343)
-        print rnd.rand(2,3)
+        print(rnd.rand(2,3))
         a = rnd.rand(200,300)
-        print a.mean(), a.std()
+        print(a.mean(), a.std())
 
 def suite():
     suite = unittest.TestSuite()

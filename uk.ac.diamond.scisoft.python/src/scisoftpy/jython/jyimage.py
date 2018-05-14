@@ -20,7 +20,7 @@ Image processing package
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Image as _image
 import uk.ac.diamond.scisoft.analysis.dataset.function.MapToShiftedCartesian as _mapshift
-from jycore import _wrap
+from .jycore import _wrap
 #import ImageFilterServiceCreator and instantiate it
 import org.dawnsci.boofcv.BoofCVImageFilterServiceCreator as _creator
 _image().setImageFilterService(_creator.createFilterService())

@@ -42,10 +42,10 @@ nan = _jnan
 
 floatmax = _jmax # maximum float value (use sys.float_info.max for 2.6+)
 
-from jycore import _wrap, _jint
-from jycore import asarray as _asarray
-from jycore import float64 as _f64
-from jycore import _translatenativetype, _empty_boolean_array
+from .jycore import _wrap, _jint
+from .jycore import asarray as _asarray
+from .jycore import float64 as _f64
+from .jycore import _translatenativetype, _empty_boolean_array
 
 # these functions can call (wrapped) instance methods
 @_wrap
@@ -419,10 +419,10 @@ import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram as _histo
 def histogram(a, bins=10, range=None, normed=False, weights=None, density=None): #@ReservedAssignment
     '''Histogram of input'''
     if normed or weights or density:
-        raise ValueError, "Option not supported yet"
+        raise ValueError("Option not supported yet")
 
     if isinstance(bins, str):
-        raise ValueError, "bin string option not supported yet"
+        raise ValueError("bin string option not supported yet")
 
     h = None
     if range is None:
@@ -430,7 +430,7 @@ def histogram(a, bins=10, range=None, normed=False, weights=None, density=None):
             bins = _asarray(bins)._jdataset()
         h = _histo(bins)
     elif len(range) != 2:
-        raise ValueError, "Need two values in range"
+        raise ValueError("Need two values in range")
     else:
         h = _histo(bins, range[0], range[1])
 
@@ -483,14 +483,14 @@ def tensordot(a, b, axes=2):
     '''Tensor dot product of two arrays
     '''
     if isinstance(axes, int):
-        bx = range(axes)
+        bx = list(range(axes))
         ao = a.getRank() - axes
         ax = [ ao + i for i in bx ]
     else:
         t = type(axes)
         if t is _types.ListType or t is _types.TupleType:
             if len(axes) == 0:
-                raise ValueError, "Given axes sequence should be non-empty"
+                raise ValueError("Given axes sequence should be non-empty")
 
             if len(axes) == 1:
                 ax = axes[0]
@@ -509,7 +509,7 @@ def tensordot(a, b, axes=2):
                 else:
                     ax = list(ax)
         else:
-            raise ValueError, "Given axes has wrong type"
+            raise ValueError("Given axes has wrong type")
 
     return _linalg.tensorDotProduct(a, b, ax, bx)
 
@@ -556,14 +556,14 @@ def gradient(f, *varargs):
         g = _maths.gradient(f)
     else:
         # check for scalars, etc
-        from jycore import arange as _ar
+        from .jycore import arange as _ar
         vl = len(varargs)
         nd = f.getRank()
         if vl == 1:
             varargs = [varargs[0]]*nd
             vl = nd
         if vl != nd:
-            raise ValueError, "Number of arguments must be 0, 1 or rank of f"
+            raise ValueError("Number of arguments must be 0, 1 or rank of f")
 
         xlist = []
         for i in range(vl):

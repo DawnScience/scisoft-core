@@ -20,8 +20,8 @@ Signal processing package
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Signal as _signal
 
-from jycore import _wrap
-from jycore import asfarray as _asf
+from .jycore import _wrap
+from .jycore import asfarray as _asf
 
 @_wrap
 def correlate(f, g=None, mode='valid', axes=None):
@@ -39,7 +39,7 @@ def correlate(f, g=None, mode='valid', axes=None):
         return _signal.correlateForOverlap(f, g, axes)
     elif mode == 'full':
         return _signal.correlate(f, g, axes)
-    raise ValueError, "mode keyword has unrecognised value"
+    raise ValueError("mode keyword has unrecognised value")
 
 @_wrap
 def phasecorrelate(f, g, axes=None, includeinv=False):
@@ -59,4 +59,4 @@ def convolve(f, g, mode='full', axes=None):
         return _signal.convolveForOverlap(_asf(f)._jdataset(), _asf(g)._jdataset(), axes)
     elif mode == 'full':
         return _signal.convolve(_asf(f)._jdataset(), _asf(g)._jdataset(), axes)
-    raise ValueError, "mode keyword has unrecognised value"
+    raise ValueError("mode keyword has unrecognised value")

@@ -18,20 +18,22 @@
 Wrapper of plotting functionality in DAWN
 '''
 
+from __future__ import print_function
 import os
 import sys
 
+
 if os.name == 'java':
-    import jython.jyplot as _plot
+    from .jython import jyplot as _plot
     _plot_set_port = _plot.setremoteport
-    import jython.jycore as _core #@Reimport @UnusedImport
-    import jython.jybeans as _beans #@Reimport @UnusedImport
+    from .jython import jycore as _core #@Reimport @UnusedImport
+    from .jython import jybeans as _beans #@Reimport @UnusedImport
 else:
-    import python.pyplot as _pyplot
+    from .python import pyplot as _pyplot
     _plot_set_port = _pyplot.setremoteport
     _plot = _pyplot.plotter()
-    import python.pycore as _core #@Reimport
-    import python.pybeans as _beans #@Reimport
+    from .python import pycore as _core #@Reimport
+    from .python import pybeans as _beans #@Reimport
 
 _plot_line = _plot.plot_line
 _plot_addline = _plot.plot_addline
@@ -78,7 +80,7 @@ getguinames = _plot.plot_getguinames
 window_manager = _plot.plot_window_manager
 
 try:
-    import io as _io
+    from . import io as _io
     
     _REMOTEVOLNAME = "Remote Volume Viewer"
 
@@ -101,11 +103,11 @@ try:
         _plot_volume(name, vdatafile)
         os.remove(vdatafile)
 
-except Exception, e:
-    print >> sys.stderr, "Could not import io for volume renderer, this part of plotting will not work"
-    print >> sys.stderr, e
+except Exception as e:
+    print("Could not import io for volume renderer, this part of plotting will not work", file=sys.stderr)
+    print(e, file=sys.stderr)
 
-import roi
+from . import roi
 
 
 _toList = _core.toList
@@ -131,7 +133,7 @@ def _order(order):
     try:
         return __orders[order]
     except KeyError:
-        raise ValueError, "Given order not one of none, alpha, chrono"    
+        raise ValueError("Given order not one of none, alpha, chrono")
 
 def clear(name=None):
     '''Clear plot
@@ -167,7 +169,7 @@ def export(path=None, format=None, name=None):  # @ReservedAssignment
             eformat = f
             break
     if not eformat:
-        raise ValueError, "format '%s' is not known" % format
+        raise ValueError("format '%s' is not known" % format)
     if path is None:
         path = "exported." + format
 
@@ -208,11 +210,11 @@ def _parselinearg(x, y, title, name):
         if len(xl) == 1:
             x = xl[0]
             if type(x) is _types.DictType: # has axis name
-                x = x.values()[0]
+                x = list(x.values())[0]
             xLength = x.shape[0]
             for i in yl:
                 if type(i) is _types.DictType: # has axis name
-                    i = i.values()[0]
+                    i = list(i.values())[0]
                 if type(i) is _types.ListType or type(i) is _types.TupleType: # has y dataset labelling
                     i = i[0]
                 if xLength != i.shape[0]:
@@ -224,9 +226,9 @@ def _parselinearg(x, y, title, name):
                 i = xl[n]
                 j = yl[n]
                 if type(i) is _types.DictType: # has axis name
-                    i = i.values()[0]
+                    i = list(i.values())[0]
                 if type(j) is _types.DictType: # has axis name
-                    j = j.values()[0]
+                    j = list(j.values())[0]
                 if type(j) is _types.ListType or type(j) is _types.TupleType: # has y dataset labelling
                     j = j[0]
                 if i is None:
@@ -245,7 +247,7 @@ def _setup_axes(al, dirn, name, allow_rename):
     c = 0 # count use of default axis
     for a in al:
         if type(a) is _types.DictType: # has axis name
-            n = a.keys()[0]
+            n = list(a.keys())[0]
             if type(n) is _types.TupleType: # has side info
                 n = n[0]
             if n == _DEF_NAMES[dirn]:
@@ -257,7 +259,7 @@ def _setup_axes(al, dirn, name, allow_rename):
     an = []
     for a in al:
         if type(a) is _types.DictType: # has axis name
-            n = a.keys()[0]
+            n = list(a.keys())[0]
             rename, n = _setup_axis(rename, n, dirn, name)
             an.append(n)
         else:
@@ -318,7 +320,7 @@ def _process_line(x, y, title, name, mode):
         if xl is not None:
             xi = xl[0] if len(xl) == 1 else xl[i]
             if type(xi) is _types.DictType: # has axis name
-                _, xi = xi.items()[0]
+                _, xi = list(xi.items())[0]
             if len(xl) == 1:
                 if i == 0:
                     xs.append(xi)
@@ -328,7 +330,7 @@ def _process_line(x, y, title, name, mode):
         yi = yl[i]
         yt = None
         if type(yi) is _types.DictType: # has axis name
-            _, yi = yi.items()[0]
+            _, yi = list(yi.items())[0]
         if type(yi) is _types.ListType or type(yi) is _types.TupleType: # has y dataset labelling
             yi, yt = yi[0], yi[1] 
         ys.append(yi)
@@ -433,13 +435,13 @@ def _checkimagearg(x, y, im):
 
     if x is not None:
         if type(x) is _types.DictType: # has axis name
-            x = x.values()[0]
+            x = list(x.values())[0]
         if x is not None and x.shape[0] != im.shape[1]:
             raise AttributeError("Width of image does not match the length of x" )
 
     if y is not None:
         if type(y) is _types.DictType: # has axis name
-            y = y.values()[0]
+            y = list(y.values())[0]
         if y is not None and y.shape[0] != im.shape[0]:
             raise AttributeError("Height of image does not match the length of y" )
 
@@ -460,10 +462,10 @@ def _process_image(x, y, im, name, resetaxes):
         ay = None
 
     if type(x) is _types.DictType: # has axis name
-        _, x = x.items()[0]
+        _, x = list(x.items())[0]
 
     if type(y) is _types.DictType: # has axis name
-        _, y = y.items()[0]
+        _, y = list(y.items())[0]
 
     _plot_image(name, x, y, im, ax, ay)
 
@@ -533,7 +535,7 @@ def imagetogrid(im, name=None, x=None, y=None, store=None):
     if store is None:
         store = False
 
-    if isinstance(im, basestring):
+    if isinstance(im, str):
         _plot_imagetogrid(name, im, x, y)
     else:
         _plot_imagetogrid(name, im, x, y, store)
@@ -707,7 +709,7 @@ def _set_roi(rl, roi, warn): # replace first ROI in list that has given name
         if r.name == name:
             rl[i] = roi
             if warn:
-                print 'Warning: replaced', name, 'in ROI list with current ROI'
+                print('Warning: replaced', name, 'in ROI list with current ROI')
             return
     rl.append(roi) # or append to list
 
@@ -908,7 +910,7 @@ def setrois(bean, roilist=None, send=False, name=None):
             rtype = roi.circle
             nlist = roi.circle_list()
         else:
-            raise TypeError, "Type of first item not supported"
+            raise TypeError("Type of first item not supported")
 
         if isinstance(roilist, roi_list):
             for k in roilist:
@@ -999,10 +1001,10 @@ def getfiles(bean):
     try:
         fn = bean[parameters.fileselect]
     except KeyError:
-        print "No selection has been made and sent to server"
+        print("No selection has been made and sent to server")
         return None
     if fn is None:
-        print "No selection has been made and sent to server"
+        print("No selection has been made and sent to server")
         return None
     fl = []
     for f in fn:
@@ -1020,9 +1022,9 @@ viewnexus = viewtree
 
 
 if os.name == 'java':
-    import jython.jyplottingsystem as _ps  # @UnusedImport
+    from .jython import jyplottingsystem as _ps  # @UnusedImport
 else:
-    import python.pyplottingsystem as _ps  # @Reimport
+    from .python import pyplottingsystem as _ps  # @Reimport
 
 
 '''

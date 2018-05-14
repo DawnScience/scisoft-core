@@ -26,6 +26,9 @@ def _visitall(tree, visitor):
             _visitall(e, visitor)
         visitor(n,e)
 
+import sys
+_text_type = str if sys.hexversion >= 0x03000000 else basestring
+
 def find_class(nx_tree, nx_class):
     '''
     Find all nodes of a given NXclass
@@ -40,7 +43,7 @@ def find_class(nx_tree, nx_class):
     if not isinstance(nx_class, list):
         nx_class = [nx_class]
     for i,n in enumerate(nx_class):
-        if isinstance(n, str) and n in _nxclasses:
+        if isinstance(n, _text_type) and n in _nxclasses:
             n = _nxclasses[n]
             nx_class[i] = n
         if not issubclass(n, _nxobject):
@@ -52,9 +55,9 @@ def find_class(nx_tree, nx_class):
             hits.append((name, obj))
         elif hasattr(obj, "attrs") and "NX_class" in obj.attrs:
             nxc = obj.attrs["NX_class"]
-            if not isinstance(nxc, (str, unicode)):
+            if not isinstance(nxc, _text_type):
                 nxc = nxc.item()
-            if nxc.decode() in nx_class:
+            if nxc in nx_class:
                 hits.append((name, obj))
 
     _visitall(nx_tree, visitor)

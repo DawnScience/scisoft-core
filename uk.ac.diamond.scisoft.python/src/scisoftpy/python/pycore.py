@@ -349,19 +349,19 @@ class ndarrayRGB(ndarray):
         if dtype is None:
             dtype = int16
 #        return self['r'].astype(dtype)
-        return self.view(ndarray)[..., 0].astype(dtype)
+        return self.view(int16)[..., 0].astype(dtype)
 
     def get_green(self, dtype=None):
         if dtype is None:
             dtype = int16
 #        return self['g'].astype(dtype)
-        return self.view(ndarray)[..., 1].astype(dtype)
+        return self.view(int16)[..., 1].astype(dtype)
 
     def get_blue(self, dtype=None):
         if dtype is None:
             dtype = int16
 #        return self['b'].astype(dtype)
-        return self.view(ndarray)[..., 2].astype(dtype)
+        return self.view(int16)[..., 2].astype(dtype)
 
     def get_grey(self, cweights=None, dtype=None):
         '''Get grey image

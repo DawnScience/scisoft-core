@@ -63,14 +63,13 @@ def prod(a, axis=None, dtype=None):
 @_wrap
 def sum(a, axis=None, dtype=None): #@ReservedAssignment
     '''Sum of input'''
-    if dtype is None:
-        if axis is None:
-            return a.sum(_empty_boolean_array)
-        return a.sum(_jint(axis))
-    dtval = _translatenativetype(dtype).value
+    if dtype is not None:
+        dtval = _translatenativetype(dtype).value
+        a = a.cast(dtval)
+
     if axis is None:
-        return _stats.typedSum(a, dtval)
-    return _stats.typedSum(a, dtval, axis)
+        return a.sum(_empty_boolean_array)
+    return a.sum(_jint(axis))
 
 def mean(a, axis=None):
     '''Arithmetic mean of input'''

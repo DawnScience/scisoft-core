@@ -430,7 +430,7 @@ class ExternalFunction(object):
 #         self.proc.stdin.write('import sys\n')
 #         self.proc.stdin.write('sys.path.append("{}")\n'.format(PYDEV_SRC))
         _out, err = self.proc.communicate('from scisoftpy import external as _fwext\n')
-        if err:
+        if err and 'FutureWarning' not in err:
             raise RuntimeError('Problem with import: ' + err)
         _out, err = self.proc.communicate('from {} import {}\n'.format(self.mod, self.func))
         if err:

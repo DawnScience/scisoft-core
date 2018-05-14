@@ -3,6 +3,7 @@ package uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders;
 import static org.junit.Assert.assertEquals;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
@@ -44,7 +45,7 @@ public class MexicanHatWaveletTest {
 	public void shapePeaksTrough(){
 		AFunction f = new MexicanHatWavelet(SIZE,WIDTH);		
 		//Test is a mexican hat at key points
-		Dataset testPoints = DatasetFactory.createLinearSpace(1, 100, 100, Dataset.FLOAT64);
+		Dataset testPoints = DatasetFactory.createLinearSpace(DoubleDataset.class, 1, 100, 100);
 		Dataset dx;
 		dx = f.calculateValues(testPoints);
 				

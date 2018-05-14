@@ -177,8 +177,8 @@ public class AutoPeakFinder extends AbstractPeakFinder {
 		Polynomial ply = new Polynomial(3);
 		try {
 			optimizer.optimize(new Dataset[] { (Dataset) xData },yData,ply);
-			optimizer.getData();
-			IDataset testResults = optimizer.calculateValues();
+//			optimizer.getData();
+//			IDataset testResults = optimizer.calculateValues();
 			
 		} catch (Exception e) {
 			logger.debug("Could not detrend signal ", e);

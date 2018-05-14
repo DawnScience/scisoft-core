@@ -9,7 +9,6 @@
 
 package uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders;
 
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.Maths;
@@ -22,7 +21,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Offset;
 public class PeakyData {
 	
 	private static Double xAxisMax = 30.; 
-	private static DoubleDataset xAxisRange = (DoubleDataset) DatasetFactory.createRange(0, xAxisMax, 0.01, Dataset.FLOAT64);
+	private static DoubleDataset xAxisRange = (DoubleDataset) DatasetFactory.createRange(0, xAxisMax, 0.01);
 	
 	public static Add makeGauPeak() {
 		Add peak = new Add();
@@ -98,7 +97,7 @@ public class PeakyData {
 
 	public static void setxAxisMax(Double xAxisMax) {
 		PeakyData.xAxisMax = xAxisMax;
-		PeakyData.xAxisRange = (DoubleDataset) DatasetFactory.createRange(0, xAxisMax, 0.01, Dataset.FLOAT64);
+		PeakyData.xAxisRange = (DoubleDataset) DatasetFactory.createRange(0, xAxisMax, 0.01);
 	}
 	
 	public static DoubleDataset getxAxisRange() {

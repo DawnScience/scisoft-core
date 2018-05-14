@@ -22,8 +22,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.eclipse.dawnsci.analysis.api.peakfinding.IPeakFinderParameter;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.FloatDataset;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -96,18 +96,18 @@ public class PeakFindingDataTest {
 		assertFalse(peakFindData.hasData());
 		
 		//Only xData set
-		peakFindData.setData(DatasetFactory.createRange(0, 10, 1, Dataset.FLOAT32),
+		peakFindData.setData(DatasetFactory.createRange(FloatDataset.class, 0, 10, 1),
 				null);
 		assertFalse(peakFindData.hasData());
 		
 		//yData initialised to 0 length dataset
-		peakFindData.setData(DatasetFactory.createRange(0, 10, 1, Dataset.FLOAT32),
-				DatasetFactory.zeros(new int[]{0}, Dataset.FLOAT32));
+		peakFindData.setData(DatasetFactory.createRange(FloatDataset.class, 0, 10, 1),
+				DatasetFactory.zeros(FloatDataset.class, 0));
 		assertFalse(peakFindData.hasData());
 		
 		//Should be correct
-		peakFindData.setData(DatasetFactory.createRange(0, 10, 1, Dataset.FLOAT32),
-				DatasetFactory.createRange(0, 10, 1, Dataset.FLOAT32));
+		peakFindData.setData(DatasetFactory.createRange(FloatDataset.class, 0, 10, 1),
+				DatasetFactory.createRange(FloatDataset.class, 0, 10, 1));
 		assertTrue(peakFindData.hasData());
 	}
 	

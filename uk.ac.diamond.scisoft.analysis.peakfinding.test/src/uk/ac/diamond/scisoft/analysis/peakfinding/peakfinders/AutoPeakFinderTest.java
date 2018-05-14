@@ -2,7 +2,6 @@ package uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -50,7 +49,7 @@ public class AutoPeakFinderTest {
 	public void noisyPeriodicDataTest() {
 		IPeakFinder ampd = new AutoPeakFinder();
 
-		DoubleDataset xAxisRange = (DoubleDataset) DatasetFactory.createRange(0, 5.0, 0.1, Dataset.FLOAT64);
+		DoubleDataset xAxisRange = (DoubleDataset) DatasetFactory.createRange(0, 5.0, 0.1);
 		DoubleDataset yData = PeakyData.intialisePeakData(xAxisRange);
 
 		// Calculate the expected x-coordinate
@@ -177,7 +176,7 @@ public class AutoPeakFinderTest {
 		// TODO: Need signal to detrend... What test could I do for this??
 		AutoPeakFinder ampd = new AutoPeakFinder();
 		
-		Dataset xData = (DoubleDataset) DatasetFactory.createRange(0, 100, 0.01, Dataset.FLOAT64);
+		Dataset xData = (DoubleDataset) DatasetFactory.createRange(0, 100, 0.01);
 		Dataset yData = PeakyData.makeGauPeak().calculateValues(xData);
 
 		IDataset results = ampd.detrendSignal(xData, yData, 3);
@@ -195,7 +194,7 @@ public class AutoPeakFinderTest {
 		// TODO: set this by changing the peakyData max size variable and seeing whats resulted
 		AutoPeakFinder ampd = new AutoPeakFinder();
 
-		Dataset xData = DatasetFactory.createRange(0, 100.0, 0.01, Dataset.FLOAT64);
+		Dataset xData = DatasetFactory.createRange(0, 100.0, 0.01);
 		Dataset yData = PeakyData.makeGauLorPeaks().calculateValues(xData);
 
 		TreeMap<Integer, Double> expectedPeaks = (TreeMap<Integer, Double>) ampd.findPeaks(xData, yData, 10);

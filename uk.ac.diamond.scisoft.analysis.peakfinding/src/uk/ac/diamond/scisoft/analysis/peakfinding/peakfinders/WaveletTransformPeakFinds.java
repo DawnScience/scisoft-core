@@ -7,17 +7,18 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
-
-
 import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
 import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Slice;
+
 import uk.ac.diamond.scisoft.analysis.peakfinding.MexicanHatWavelet;
 
 /**
@@ -66,7 +67,7 @@ public class WaveletTransformPeakFinds extends AbstractPeakFinder {
 	
 	/*PARAMETER NAMES*/
 	//TODO: because of the way the dynamically loaded configurable exist a neater name should be set here
-	private String WIDTHSIZENAME = "Conolve Width Size";
+	private String WIDTHSIZENAME = "Convolve Width Size";
 	private String MINSNRATIO = "Minimum signal to noise ratio";// ;
 	private String NOISEPERCNAME = "Noise percentile";//=10;
 	private String MINLENGTHNAME = "Minimum ridge length";
@@ -145,7 +146,7 @@ public class WaveletTransformPeakFinds extends AbstractPeakFinder {
 	public Dataset countinousWaveletTransform(IDataset yData, IDataset widths) {
 
 		int dataSz = yData.getSize();
-		Dataset output = DatasetFactory.zeros(new int[] { widths.getSize(), dataSz }, Dataset.FLOAT64);
+		Dataset output = DatasetFactory.zeros(widths.getSize(), dataSz);
 		
 		for (int width = 0; width < widths.getSize(); ++width) {
 
@@ -179,9 +180,9 @@ public class WaveletTransformPeakFinds extends AbstractPeakFinder {
 	private Dataset boolRelativeExtrema(Dataset mtx, int axis) {
 		int order = 1; //The windows size to check against 
 		int size = mtx.getShape()[axis];
-		Dataset locs = DatasetFactory.createRange(size, Dataset.INT64);
+		Dataset locs = DatasetFactory.createRange(IntegerDataset.class, size);
 
-		Dataset resultsMtx = DatasetFactory.ones(mtx, Dataset.INT64);
+		Dataset resultsMtx = DatasetFactory.ones(mtx, IntegerDataset.class);
 		Dataset main = DatasetUtils.take(mtx,locs, axis);
 
 		for (int shift = 1; shift < order + 1; ++shift) {
@@ -193,10 +194,10 @@ public class WaveletTransformPeakFinds extends AbstractPeakFinder {
 			// Compare values and set true results value true -
 			Dataset cmp = null;
 			cmp = Comparisons.greaterThan(main, above);
-			resultsMtx = Maths.bitwiseAnd(resultsMtx, cmp.cast(Dataset.INT64));
+			resultsMtx = Maths.bitwiseAnd(resultsMtx, cmp.cast(IntegerDataset.class));
 
 			cmp = Comparisons.greaterThan(main, below);
-			resultsMtx = Maths.bitwiseAnd(resultsMtx, cmp.cast(Dataset.INT64));
+			resultsMtx = Maths.bitwiseAnd(resultsMtx, cmp.cast(IntegerDataset.class));
 
 //			if (Maths.bitwiseInvert(resultsMtx).any())
 //				return resultsMtx;
@@ -249,7 +250,8 @@ public class WaveletTransformPeakFinds extends AbstractPeakFinder {
 		
 		List<RidgeLine> finalRidges = new ArrayList<RidgeLine>();
 
-		Dataset rows = (startRow > 1) ? DatasetFactory.createRange(startRow, -1, -1,Dataset.INT64) : DatasetFactory.createRange(0);
+		Dataset rows = (startRow > 1) ? DatasetFactory.createRange(IntegerDataset.class, startRow, -1, -1) :
+			DatasetFactory.createRange(0);
 		Dataset cols = convolveMtx.all(0).getIndices();
 
 		/*
@@ -342,7 +344,7 @@ public class WaveletTransformPeakFinds extends AbstractPeakFinder {
 			List<Integer> sortArgs = new ArrayList<Integer>(line.row);
 			Collections.sort(sortArgs);	
 
-			Dataset ridgeLine = DatasetFactory.zeros(new int[]{sortArgs.size(),2}, Dataset.FLOAT64);
+			Dataset ridgeLine = DatasetFactory.zeros(sortArgs.size(), 2);
 			
 			//TODO: not the most efficent, just needed them to be ordered for filtering later
 			for (int i = 0; i < sortArgs.size(); ++i){
@@ -403,7 +405,7 @@ public class WaveletTransformPeakFinds extends AbstractPeakFinder {
 		int hfWindow = windowSz / 2;
 		
 		Dataset startRow = mtx.getSlice(new Slice(0, 1)).flatten();
-		Dataset noises = DatasetFactory.zeros(startRow, Dataset.FLOAT64);
+		Dataset noises = DatasetFactory.zeros(startRow, DoubleDataset.class);
 		
 		/*
 		 * Generate noise at slices about rows and on the windowsSz given
@@ -497,8 +499,8 @@ public class WaveletTransformPeakFinds extends AbstractPeakFinder {
 		//TODO: shouldn't be reloading params inside find peaks...
 		loadParam();
 		
-		//Generate width set to step through for convoluation 
-		IDataset widths = DatasetFactory.createRange(1.0, widthSzParam+1.0, 1.0, Dataset.FLOAT64);
+		//Generate width set to step through for convolution 
+		IDataset widths = DatasetFactory.createRange(1.0, widthSzParam+1.0, 1.0);
 		IDataset maxDis = Maths.divide(widths, 4.0);
 		
 		// Pass over data given width and produce waveletConvolve

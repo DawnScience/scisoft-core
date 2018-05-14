@@ -103,11 +103,10 @@ public class XRMCTextualData {
 		for (List<String> deviceLines: allDevices) {
 			// The 'Newdevice' entry is the first line
 			String nyDeviceLine = deviceLines.get(0);
-			// remove the Newdevice word. The first word is then the name of the type of the device 
-			String deviceNameAndStuff = nyDeviceLineR.matcher(nyDeviceLine).replaceFirst("");
-			String deviceCanonicalName = blankR.split(deviceNameAndStuff)[0];
+			// The format of the Newdevice line is such that on splitting by blanks, the second element is the device name. 
+			String deviceCanonicalName = blankR.split(nyDeviceLine)[1];
 			// The next non blank, non-comment line is the device name
-			String deviceName = deviceLines.get(1).trim();
+			String deviceName = blankR.split(deviceLines.get(1))[0];
 			// Add the data to the maps
 			deviceTypeByName.put(deviceName, deviceByCanonicalName.get(deviceCanonicalName));
 			deviceTextByName.put(deviceName, deviceLines);
@@ -115,9 +114,9 @@ public class XRMCTextualData {
 	}
 	
 	// Predefined regex strings 
-	private static final String BLANKREGEX = "\\s*";
+	private static final String BLANKREGEX = "\\s+";
 	private static final String NYDEVREGEX = "\\s*Newdevice\\s+";
-	private static final String ENDREGEX = "\\s*End\\s+";
+	private static final String ENDREGEX = "(\\s*End$|\\s*End\\s.*)";
 	private static final String COMMENTREGEX = ";";
 	private static void createRegex() {
 		// Any amount of whitespace only
@@ -126,8 +125,8 @@ public class XRMCTextualData {
 		nyDeviceLineR = createNonNullRegexTraillingText(nyDeviceLineR, NYDEVREGEX);
 		// New device text: Any amount of whitespace, followed by 'Newdevice', followed by some whitespace
 		nyDeviceR = createNonNullRegexTraillingText(nyDeviceR, NYDEVREGEX);
-		// End device line: Any amount of whitespace, followed by 'End', followed by some whitespace and then any characters
-		endR = createNonNullRegexTraillingText(endR, ENDREGEX);
+		// End device line: Any amount of whitespace, followed by 'End', followed by some whitespace and then any characters. OR any whitespace, "End" and nothing more.
+		endR = createNonNullRegex(endR, ENDREGEX);
 		// Comment-only line: Any amount of whitespace, followed by a semicolon, followed by anything
 		commentOnlyR = createNonNullRegexTraillingText(commentOnlyR, "\\s*"+COMMENTREGEX);
 	}

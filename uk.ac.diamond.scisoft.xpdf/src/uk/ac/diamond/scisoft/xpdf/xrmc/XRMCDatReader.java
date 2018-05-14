@@ -32,6 +32,10 @@ public class XRMCDatReader implements Serializable {
 		data = read(lines);
 	}
 	
+	public XRMCDatReader(XRMCDatReader src) {
+		this.data = new ArrayList<NameValue>(src.data);
+	}
+	
 	/**
 	 * Returns whether a given XRMC input file contains the requested key.
 	 * @param key

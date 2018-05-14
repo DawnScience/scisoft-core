@@ -18,6 +18,7 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.xpdf.metadata.XRMCMetadata;
+import uk.ac.diamond.scisoft.xpdf.xrmc.XRMCDevice;
 import uk.ac.diamond.scisoft.xpdf.xrmc.XRMCMetadataImpl;
 
 public class ImportXRMCMetadataOperation extends AbstractOperation<ImportXRMCMetadataModel, OperationData> {
@@ -44,13 +45,17 @@ public class ImportXRMCMetadataOperation extends AbstractOperation<ImportXRMCMet
 		String inputFile = model.getXrmcInputFilePath();
 		XRMCMetadata mcMeta;
 		try {
-			mcMeta = new XRMCMetadataImpl(inputFile);
+			XRMCMetadataImpl mcImpl = new XRMCMetadataImpl(inputFile);
+			mcImpl.setDeviceRead(XRMCDevice.DETECTORARRAY, true);
+			mcImpl.readData();
+			mcMeta = mcImpl;
 		} catch (IOException ioe) {
 			throw new OperationException(this, "Could not read XRMC input file " + inputFile);
 		}
 		
 		input.setMetadata(mcMeta);
-		return new OperationData(input);
+		OperationData opData = new OperationData(input);
+		return opData;
 	}
 
 }

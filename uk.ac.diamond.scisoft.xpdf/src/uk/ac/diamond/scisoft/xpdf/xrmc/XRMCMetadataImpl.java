@@ -11,9 +11,9 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XRMCMetadata;
 
 public class XRMCMetadataImpl implements XRMCMetadata {
 
-	String inputFileName;
-	EnumMap<XRMCDevice, Boolean> readDeviceType;
-	XRMCDetector savedDetector;
+	private String inputFileName;
+	private EnumMap<XRMCDevice, Boolean> readDeviceType;
+	private XRMCDetector savedDetector;
 	
 	public XRMCMetadataImpl() {
 		
@@ -22,10 +22,18 @@ public class XRMCMetadataImpl implements XRMCMetadata {
 	public XRMCMetadataImpl(String inputFile) throws IOException {
 		inputFileName = inputFile;
 		initDeviceReadingness();
-		readData();
 	}
 
+	// Copy constructor
+	public XRMCMetadataImpl(XRMCMetadataImpl inMeta) {
+		this.inputFileName = (inMeta.inputFileName != null) ? new String(inMeta.inputFileName) : null;
+		this.readDeviceType = (inMeta.readDeviceType != null) ? inMeta.readDeviceType.clone(): null;
+		this.savedDetector = new XRMCDetector(inMeta.savedDetector);
+	}
+	
 	public void readData() throws IOException {
+		System.err.println("XRMCMetadataImpl.readData(): reading data");
+		
 		XRMCInputReader xrmcInput = new XRMCInputReader(inputFileName);
 		xrmcInput.read();
 		
@@ -37,7 +45,7 @@ public class XRMCMetadataImpl implements XRMCMetadata {
 			// Get the detector that was used to by XRMC to save the image.
 			String savedDetectorName = xrmcInput.getSaveInfo().getDevicename();
 			if (!Arrays.asList(detectorNames).contains(savedDetectorName))
-				throw new IllegalArgumentException("XRMCMetadata.readData(): Saved detector not found in the list of available detectors");
+				throw new IllegalArgumentException("XRMCMetadataImpl.readData(): Saved detector not found in the list of available detectors");
 			List<String> savedDetectorText = xrmcText.getDeviceText(savedDetectorName);
 			savedDetector = new XRMCDetector(savedDetectorText.toArray(new String[savedDetectorText.size()]));
 			
@@ -60,8 +68,7 @@ public class XRMCMetadataImpl implements XRMCMetadata {
 	
 	@Override
 	public MetadataType clone() {
-		// TODO Auto-generated method stub
-		return null;
+		return new XRMCMetadataImpl(this);
 	}
 
 	@Override

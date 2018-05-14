@@ -20,6 +20,10 @@ public class XRMCFile implements Serializable {
 		reader = new XRMCDatReader(lines);
 	}
 	
+	protected XRMCFile(XRMCFile src) {
+		this.reader = new XRMCDatReader(src.reader);
+	}
+	
 	/**
 	 * Returns whether the file is valid for its type
 	 * @return

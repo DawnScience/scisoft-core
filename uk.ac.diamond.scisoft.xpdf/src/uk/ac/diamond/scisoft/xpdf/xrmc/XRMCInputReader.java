@@ -100,7 +100,7 @@ public class XRMCInputReader {
 		// All the lines that 'Load' a file
 		List<String> loadLines = commentlessLines.stream().map(line -> loadLineR.matcher(line).matches() ? line : "").collect(Collectors.toList());
 		// Replace the first part of the line with 
-		loadFiles = loadLines.stream().map(line -> loadR.matcher(line).replaceFirst("")).collect(Collectors.toList());
+		loadFiles = loadLines.stream().map(line -> loadR.matcher(line).replaceFirst("").trim()).collect(Collectors.toList());
 		loadFiles.removeIf(s -> blankR.matcher(s).matches());
 		// Get the first lines that match run and save commands
 		runLine = commentlessLines.stream().filter(line -> runLineR.matcher(line).matches()).collect(Collectors.toList()).get(0);

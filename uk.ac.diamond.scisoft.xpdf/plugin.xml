@@ -146,6 +146,14 @@
             id="uk.ac.diamond.scisoft.xpdf.operations.XRMCEnergyIntegration"
             name="XRMC Energy Integration">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
+            class="uk.ac.diamond.scisoft.xpdf.operations.ImportXRMCMetadataOperation"
+            icon="icons/xpdfbeam.png"
+            id="uk.ac.diamond.scisoft.xpdf.operations.ImportXRMCMetadataOperation"
+            model="uk.ac.diamond.scisoft.xpdf.operations.ImportXRMCMetadataModel"
+            name="Import XRMC Metadata">
+      </operation>
    </extension>
 
 </plugin>

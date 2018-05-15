@@ -151,9 +151,10 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, war
                     errors.extend(str(e).splitlines())
             except:
                 if warn:
-                    import sys
                     errors.append("Unexpected exception raised in " + l.__name__)
-                    errors.extend(str(sys.exc_info()).splitlines())
+                    import sys
+                    import traceback
+                    errors.extend(traceback.format_exception(*sys.exc_info()))
     if lfh is None:
         if warn and errors:
             for l in errors:

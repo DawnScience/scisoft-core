@@ -33,7 +33,10 @@ public class RixsBaseModel extends AbstractOperationModel {
 	@OperationModelField(label = "Energy direction", description = "Principal direction in which the energy changes", hint = "Slow is vertical; fast is horizontal")
 	private ENERGY_DIRECTION energyDirection = ENERGY_DIRECTION.SLOW; // in 2D image
 
-	@OperationModelField(label = "Cutoff for pixels", description = "Cutoff as multiple of single photon", hint = "Use a negative value to not apply")
+	@OperationModelField(label = "Cutoff enable", description = "Use cutoff to remove pixels with high counts")
+	private boolean useCutoff = false;
+
+	@OperationModelField(label = "Cutoff for pixels", description = "Cutoff as multiple of single photon count", hint = "Check if peaks are clipped when cutoff is too low", enableif = "useCutoff == true", min = 1.0)
 	private double cutoff = 5.0;
 
 	public enum ENERGY_OFFSET {
@@ -103,6 +106,16 @@ public class RixsBaseModel extends AbstractOperationModel {
 		firePropertyChange("setEnergyIndex", this.energyDirection, this.energyDirection = energyDirection);
 	}
 
+	/**
+	 * @return true if cutoff will be used
+	 */
+	public boolean isUseCutoff() {
+		return useCutoff;
+	}
+
+	public void setUseCutoff(boolean useCutoff) {
+		firePropertyChange("setUseCutoff", this.useCutoff, this.useCutoff = useCutoff);
+	}
 
 	/**
 	 * @return upper threshold multiple of single photon (in detector count units) used to ignore pixels

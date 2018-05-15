@@ -26,7 +26,7 @@ public class MetadataUtils {
 
 	private final static Logger logger = LoggerFactory.getLogger(MetadataUtils.class);
 	
-	public static Dataset[] getAxes(IDataset input) {
+	public static Dataset[] getAxes(ILazyDataset input) {
 		AxesMetadata md = input.getFirstMetadata(AxesMetadata.class);
 		
 		if (md == null) return null;
@@ -58,10 +58,9 @@ public class MetadataUtils {
 		if (allNull) return null;
 		
 		return datasetAxes;
-		
 	}
-	
-	public static Dataset[] getAxesAndMakeMissing(IDataset input) {
+
+	public static Dataset[] getAxesAndMakeMissing(ILazyDataset input) {
 		Dataset[] axes = getAxes(input);
 		
 		if (axes == null) axes = new Dataset[input.getRank()];
@@ -77,7 +76,7 @@ public class MetadataUtils {
 		return axes;
 	}
 
-	public static void setAxes(IDataset d, Dataset... axes) {
+	public static void setAxes(ILazyDataset d, Dataset... axes) {
 		if (d.getRank() == 0) {
 			return;
 		}
@@ -100,5 +99,4 @@ public class MetadataUtils {
 		} catch (Exception e) {
 		}
 	}
-
 }

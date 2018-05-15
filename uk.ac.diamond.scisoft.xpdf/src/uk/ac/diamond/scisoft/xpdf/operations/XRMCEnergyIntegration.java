@@ -61,6 +61,10 @@ public class XRMCEnergyIntegration extends AbstractOperation<EmptyModel, Operati
 
 		Dataset counts = integrator.getDetectorCounts();
 		
+		// Copy metadata: XPDF and XRMC
+		counts.addMetadata(xpdfMetadata);
+		counts.addMetadata(xrmcMetadata);
+		
 		return new OperationData(counts);
 	}
 

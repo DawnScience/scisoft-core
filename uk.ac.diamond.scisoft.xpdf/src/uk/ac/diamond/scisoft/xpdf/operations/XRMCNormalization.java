@@ -32,8 +32,6 @@ import uk.ac.diamond.scisoft.xpdf.xrmc.XRMCSpectrum.SpectrumComponent;
 
 public class XRMCNormalization extends AbstractOperation<EmptyModel, OperationData> {
 
-//	DetectorProperties detProp;
-	
 	@Override
 	public String getId() {
 		return "uk.ac.diamond.scisoft.xpdf.operations.XRMCNormalization";

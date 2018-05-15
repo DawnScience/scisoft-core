@@ -1822,28 +1822,6 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * @param node
-	 * @param attr
-	 * @return string or null
-	 * @deprecated Use {@link #getFirstString(Attribute)}
-	 */
-	@Deprecated
-	public static String parseStringAttr(Node node, String attr) {
-		return getFirstString(node.getAttribute(attr));
-	}
-
-	/**
-	 * @param node
-	 * @param attr
-	 * @return string or null
-	 * @deprecated Use {@link #getStringArray(Attribute)}
-	 */
-	@Deprecated
-	public static String[] parseStringArrayAttr(Node node, String attr) {
-		return getStringArray(node.getAttribute(attr));
-	}
-
-	/**
 	 * Check if node has given NXclass attribute
 	 * @param node
 	 * @param clazz

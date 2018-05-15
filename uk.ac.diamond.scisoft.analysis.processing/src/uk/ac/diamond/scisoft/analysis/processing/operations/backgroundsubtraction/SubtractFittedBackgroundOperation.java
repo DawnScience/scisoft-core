@@ -223,13 +223,17 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 //			displayData.add(profile);
 //			displayData.add(darkFit);
 
-			auxData.add(ProcessingUtils.createNamedDataset(darkFit, "profile_dark"));
+			auxData.add(ProcessingUtils.createNamedDataset(darkFit, "profile_fit_dark"));
 			Dataset diff = Maths.subtract(profile, darkFit);
 			auxData.add(ProcessingUtils.createNamedDataset(diff, "profile_diff"));
 //			displayData.add(diff);
 			Dataset scaledFit = Maths.multiply(darkFit.reshape(darkFit.getSize(), 1), 1./in.getShapeRef()[1]).cast(in.getClass());
 
 			h = null;
+			displayData.add(darkProfile);
+			displayData.add(smoothedDarkProfile);
+			displayData.add(darkFit);
+			displayData.add(profile);
 //			diff = Maths.subtract(in, scaledFit);
 //
 //			double thr = calculateThreshold(diff, smoothedDarkProfile == null ? model.isPositiveOnly() : false);
@@ -447,7 +451,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 					darkProfile.set(0.5*(darkProfile.getDouble(1) + darkProfile.getDouble(2)), 0); // ensure 1st entry is non-zero
 				}
 				darkProfile.imultiply(1./dark.getShape()[0]); // assume 3D
-				darkProfile.setName("dark_image_profile");
+				darkProfile.setName("dark_profile");
 			} catch (DatasetException e) {
 				throw new OperationException(this, "Could not generate dark image profile", e);
 			}
@@ -476,7 +480,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		}
 
 		smoothedDarkProfile = smoothFilter(darkProfile);
-		smoothedDarkProfile.setName("dark_image_smoothed_profile");
+		smoothedDarkProfile.setName("dark_smoothed_profile");
 //		displayData.add(darkProfile);
 //		displayData.add(smoothedDarkProfile);
 	}
@@ -521,7 +525,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	@Override
 	public OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		auxData.clear();
-//		displayData.clear();
+		displayData.clear();
 		log.clear();
 		log.append("Subtract Fitted Background");
 		log.append("==========================");

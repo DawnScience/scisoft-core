@@ -70,7 +70,7 @@ public class DAWNLinkLoader extends AbstractFileLoader {
 					while (line.startsWith("#")) {
 						if (line.contains(":")){
 							line = line.substring(1);
-							String[] split = line.split(":");
+							String[] split = line.split(":",2);
 							String key = split[0].trim();
 							if (DATA_KEY.equals(key)) {
 								datasetSet.add(split[1].trim());

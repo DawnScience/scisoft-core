@@ -47,6 +47,8 @@ public class ImportXRMCMetadataOperation extends AbstractOperation<ImportXRMCMet
 		try {
 			XRMCMetadataImpl mcImpl = new XRMCMetadataImpl(inputFile);
 			mcImpl.setDeviceRead(XRMCDevice.DETECTORARRAY, true);
+			mcImpl.setDeviceRead(XRMCDevice.SPECTRUM, true);
+			mcImpl.setDeviceRead(XRMCDevice.SOURCE, true);
 			mcImpl.readData();
 			mcMeta = mcImpl;
 		} catch (IOException ioe) {

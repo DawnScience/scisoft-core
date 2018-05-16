@@ -19,10 +19,14 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
+import org.eclipse.january.metadata.internal.AxesMetadataImpl;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.GenericPixelIntegrationCache;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegration;
@@ -105,7 +109,22 @@ public class InterpolateXRMCToGammaDelta extends AbstractOperation<EmptyModel, O
 		GenericPixelIntegrationCache gdpic = new GenericPixelIntegrationCache(gamma, delta, gammaRange, deltaRange);
 		List<Dataset> piResults = PixelIntegration.integrate(DatasetUtils.convertToDataset(input), null, gdpic);
 		
-		return new OperationData(piResults.get(1));
+		Dataset gdData = piResults.get(1);
+		gdData.setMetadata(xrmcMetadata);
+		
+		// Construct the AxesMetadata
+		AxesMetadata axMan = null;
+		try {
+			axMan = MetadataFactory.createMetadata(AxesMetadata.class, 2);
+		} catch (MetadataException mE) {
+			throw new OperationException(this, "Could not create AxesMetadata: " + mE.toString());
+		}
+//		axMan.initialize(2);
+		axMan.addAxis(0, gammaRange);
+		axMan.addAxis(1, deltaRange);
+		gdData.setMetadata(axMan);
+		
+		return new OperationData(gdData);
 	}
 
 }

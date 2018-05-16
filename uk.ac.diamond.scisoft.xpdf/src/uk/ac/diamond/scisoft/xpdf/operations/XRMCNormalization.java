@@ -61,7 +61,7 @@ public class XRMCNormalization extends AbstractOperation<EmptyModel, OperationDa
 
 		// Get the image size of the xrmc data
 		int[] shape = input.getShape();
-		int nx = shape[1], ny = shape[2];
+		int nx = shape[0], ny = shape[1];
 		Dataset pixelSpacing = DatasetFactory.createFromList(Arrays.asList(ArrayUtils.toObject(xrmcDet.getPixelSize()))).idivide(1000);
 
 		Vector3d beamVector = new Vector3d(0., 0., 1.);
@@ -75,7 +75,8 @@ public class XRMCNormalization extends AbstractOperation<EmptyModel, OperationDa
 
 		// normalize by total photon flux.
 		Dataset normed = normalizeByFlux(saCorrected, xrmcSpec, xrmcSource);
-		
+
+		normed.setMetadata(xrmcMetadata);
 		
 		return new OperationData(normed);
 	}

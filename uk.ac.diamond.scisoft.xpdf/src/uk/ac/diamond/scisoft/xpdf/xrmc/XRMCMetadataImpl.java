@@ -1,6 +1,7 @@
 package uk.ac.diamond.scisoft.xpdf.xrmc;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
@@ -31,6 +32,8 @@ public class XRMCMetadataImpl implements XRMCMetadata {
 		this.inputFileName = (inMeta.inputFileName != null) ? new String(inMeta.inputFileName) : null;
 		this.readDeviceType = (inMeta.readDeviceType != null) ? inMeta.readDeviceType.clone(): null;
 		this.savedDetector = new XRMCDetector(inMeta.savedDetector);
+		this.spectra = (inMeta.spectra != null) ? new ArrayList<>(inMeta.spectra) : null;
+		this.sources = (inMeta.sources != null) ? new ArrayList<>(inMeta.sources) : null;
 	}
 	
 	public void readData() throws IOException {
@@ -55,6 +58,9 @@ public class XRMCMetadataImpl implements XRMCMetadata {
 
 		// Read spectrum
 		if (getDeviceRead(XRMCDevice.SPECTRUM)) {
+			if (spectra == null || !(spectra instanceof List)) {
+				spectra = new ArrayList<> ();
+			}
 			String[] spectrumNames = xrmcText.getDeviceNames(XRMCDevice.SPECTRUM);
 			for (String spectrumName: spectrumNames) {
 				List<String> spectralLines = xrmcText.getDeviceText(spectrumName);
@@ -64,6 +70,9 @@ public class XRMCMetadataImpl implements XRMCMetadata {
 		
 		// Read Source
 		if (getDeviceRead(XRMCDevice.SOURCE)) {
+			if (sources == null || !(sources instanceof List)) {
+				sources = new ArrayList<> ();
+			}
 			String[] sourceNames = xrmcText.getDeviceNames(XRMCDevice.SOURCE);
 			for (String sourceName: sourceNames) {
 				List<String> sourceLines = xrmcText.getDeviceText(sourceName);

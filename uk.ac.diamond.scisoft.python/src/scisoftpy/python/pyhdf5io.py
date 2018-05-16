@@ -14,10 +14,11 @@
 # limitations under the License.
 ###
 
+from __future__ import print_function
 try:
     from .pyh5py import HDF5Loader #@UnusedImport
-except Exception, e:
+except Exception as e:
     import sys
-    print >> sys.stderr, "h5py could not be imported", e
-    print >> sys.stderr, "NAPI not supported yet"
+    print("h5py could not be imported", e, file=sys.stderr)
+    print("NAPI not supported yet", file=sys.stderr)
 #    from .pynapi import HDF5Loader #@Reimport @UnusedImport

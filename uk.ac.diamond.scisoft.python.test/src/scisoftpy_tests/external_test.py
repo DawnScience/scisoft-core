@@ -19,13 +19,13 @@ Test random class
 import unittest
 unittest.TestProgram(argv=["external_test"])
 '''
+from __future__ import print_function
 import unittest
 
 from scisoftpy.external import save_args, load_args, pyenv
 import scisoftpy as dnp
 
 import shutil
-
 
 class Test(unittest.TestCase):
     from os import path
@@ -41,7 +41,7 @@ class Test(unittest.TestCase):
         if type(a) != type(b):
             return False
         if isinstance(a, dict):
-            if a.keys() != b.keys():
+            if list(a.keys()) != list(b.keys()):
                 return False
             for k in a:
                 if not self.equals(a[k], b[k]):
@@ -81,40 +81,40 @@ class Test(unittest.TestCase):
         p.stdin.write('print "Hello World2"\n')
         p.stdin.close()
         l = p.stdout.read()
-        print l
+        print(l)
 
 
     def testDLSmodule(self):
-        print dnp.external.get_dls_module()
+        print(dnp.external.get_dls_module())
 
     def testPythonInstallation(self):
-        print dnp.external.get_python()
+        print(dnp.external.get_python())
 
     def testExternal(self):
-        from external_functions import fun, funadd, fundec#, funexception
+        from .external_functions import fun, funadd, fundec#, funexception
         a = fun()
         efun = dnp.external.create_function(fun, dls_module=True)
-        print a, self.equals(efun(), a)
+        print(a, self.equals(efun(), a))
         efun = dnp.external.create_function("fun", "external_functions", dls_module=True)
-        print a, self.equals(efun(), a)
+        print(a, self.equals(efun(), a))
 
         a = funadd(dnp.arange(3.), 1.5)
         efun = dnp.external.create_function(funadd, dls_module=True)
-        print a, self.equals(efun(dnp.arange(3.), 1.5), a)
+        print(a, self.equals(efun(dnp.arange(3.), 1.5), a))
         efun = dnp.external.create_function("funadd", "external_functions", dls_module=True)
-        print a, self.equals(efun(dnp.arange(3.), 1.5), a)
+        print(a, self.equals(efun(dnp.arange(3.), 1.5), a))
 
         a = fundec(dnp.arange(3.))
         efun = dnp.external.create_function(fundec, dls_module=True)
-        print a, self.equals(efun(dnp.arange(3.)), a)
+        print(a, self.equals(efun(dnp.arange(3.)), a))
         efun = dnp.external.create_function("fundec", "external_functions", dls_module=True)
-        print a, self.equals(efun(dnp.arange(3.)), a)
+        print(a, self.equals(efun(dnp.arange(3.)), a))
 
         a = fundec(dnp.arange(3.), b=2.5)
         efun = dnp.external.create_function(fundec, dls_module=True)
-        print a, self.equals(efun(dnp.arange(3.), b=2.5), a)
+        print(a, self.equals(efun(dnp.arange(3.), b=2.5), a))
         efun = dnp.external.create_function("fundec", "external_functions", dls_module=True)
-        print a, self.equals(efun(dnp.arange(3.), b=2.5), a)
+        print(a, self.equals(efun(dnp.arange(3.), b=2.5), a))
 
     def testException(self):
 #        from external_functions import funexception
@@ -125,35 +125,35 @@ class Test(unittest.TestCase):
 
     def testPyAna(self):
         efun = dnp.external.create_function("funpyana", "external_functions", extra_path=Test.epath_list, dls_module="python/anaconda")
-        print '2,7',
+        print('2,7', end=' ')
         self.assertEquals(efun(), (2,7))
-        print 'passed'
+        print('passed')
 
     def testArrayScalar(self):
         efun = dnp.external.create_function("funarrayscalar", "external_functions", extra_path=Test.epath_list, dls_module=True)
         a = 2+3j, 1., 123, True
-        print a,
+        print(a, end=' ')
         self.assertEquals(efun(), a)
-        print 'passed'
+        print('passed')
 
     def testSpeed(self):
         efun = dnp.external.create_function("fun", "external_functions", extra_path=Test.epath_list, dls_module=True, keep=False)
         import time
         t = time.clock()
-        for _i in xrange(10):
+        for _i in range(10):
             efun()
-        print time.clock() - t
+        print(time.clock() - t)
         efun = dnp.external.create_function("fun", "external_functions", extra_path=Test.epath_list, dls_module=True, keep=True)
         t = time.clock()
-        for _i in xrange(10):
+        for _i in range(10):
             efun()
-        print time.clock() - t
+        print(time.clock() - t)
 
     def testHello(self):
         py = dnp.external.PythonSubProcess("python", None)
-        print py.communicate("print \"Hello World!\"\n")
-        print py.communicate("print \"Hello World2!\"\n")
-        print py.communicate("for i in range(4): print i\n")
+        print(py.communicate("print \"Hello World!\"\n"))
+        print(py.communicate("print \"Hello World2!\"\n"))
+        print(py.communicate("for i in range(4): print i\n"))
         py.stop()
 
 def suite():

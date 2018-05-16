@@ -92,7 +92,7 @@ class NXentry(NXobject):
                     raise KeyError
             return result
         except KeyError:
-            raise NeXusError, "Inconsistency between two NXentry groups"
+            raise NeXusError("Inconsistency between two NXentry groups")
 
     def __sub__(self, other):
         '''
@@ -114,7 +114,7 @@ class NXentry(NXobject):
                     raise KeyError
             return result
         except KeyError:
-            raise NeXusError, "Inconsistency between two NXentry groups"
+            raise NeXusError("Inconsistency between two NXentry groups")
 
 class NXdata(NXobject):
     '''

@@ -21,7 +21,7 @@ Created on 1 May 2011
 '''
 import unittest
 import scisoftpy.python.pyrpc as rpc
-import thread
+import six.moves._thread
 
 PORT = 8713
 
@@ -35,7 +35,7 @@ class Test(unittest.TestCase):
         rpcserver = rpc.rpcserver(PORT)
         rpcserver.add_handler("cat", catTwoStrings)
         
-        thread.start_new_thread(rpcserver.serve_forever, ())
+        six.moves._thread.start_new_thread(rpcserver.serve_forever, ())
         try:
             rpcclient = rpc.rpcclient(PORT)
             result = rpcclient.cat("Hello, ", "World!")

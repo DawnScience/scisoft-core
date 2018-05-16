@@ -22,12 +22,12 @@ Can run test in jython console (after copying jython class into user script dire
 import unittest
 unittest.TestProgram(argv=["signal_test"])
 '''
+from __future__ import print_function
 import unittest
 
 import scisoftpy as np
 import scisoftpy.random as rnd
 import scisoftpy.signal as sig
-
 
 class Test(unittest.TestCase):
 
@@ -43,7 +43,7 @@ class Test(unittest.TestCase):
         if ds.ndim == 1:
             for i in range(ds.shape[0]):
                 if la == None:
-                    print i, ds[i]
+                    print(i, ds[i])
                 else:
                     if max(la[i], ds[i]) > 1e-10:
                         self.assertAlmostEqual(la[i], ds[i], places=places)
@@ -51,7 +51,7 @@ class Test(unittest.TestCase):
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
                     if la == None:
-                        print i,j, ds[i,j]
+                        print(i,j, ds[i,j])
                     else:
                         if max(la[i][j], ds[i, j]) > 1e-10:
                             self.assertAlmostEqual(la[i][j], ds[i, j], places=places)
@@ -60,13 +60,13 @@ class Test(unittest.TestCase):
                 for j in range(ds.shape[1]):
                     for k in range(ds.shape[2]):
                         if la == None:
-                            print i,j,k, ds[i,j,k]
+                            print(i,j,k, ds[i,j,k])
                         else:
                             if max(la[i][j][k], ds[i, j, k]) > 1e-10:
                                 self.assertAlmostEqual(la[i][j][k], ds[i, j, k], places=places)
 
     def testCorrelate(self):
-        print 'test correlate'
+        print('test correlate')
         da = np.array(self.da, np.float)
         ada = np.correlate(da, axes=[0])
         self.checkitems(None, ada)
@@ -81,7 +81,7 @@ class Test(unittest.TestCase):
         self.checkitems([0.5, 2., 3.5, 3., 0.][::-1], np.correlate(b, a, "full"))
 
     def testCorrelate2(self):
-        print 'test correlate2'
+        print('test correlate2')
         da = np.zeros([10], np.float)
         da[3] = 1
         db = da.copy()
@@ -103,22 +103,22 @@ class Test(unittest.TestCase):
         import os
         if os.name != 'java':
             return
-        print 'test correlate2'
+        print('test correlate2')
         da = np.zeros([8,8], np.float)
         da[3,3] = 20
         db = da.copy()
         ada = np.correlate(da,db)
-        print ada
+        print(ada)
 
         da += rnd.poisson(2, size=da.shape)
         db = np.zeros([8,8], np.float)
         db[5,6] = 20
         db += rnd.poisson(2, size=db.shape)
         ada = np.correlate(da,db)
-        print ada
+        print(ada)
 
     def testConvolve(self):
-        print 'test convolve'
+        print('test convolve')
 #        da = np.array(self.da, np.float)
 #        ada = np.convolve(da, axes=[0])
 #        self.checkitems(None, ada)

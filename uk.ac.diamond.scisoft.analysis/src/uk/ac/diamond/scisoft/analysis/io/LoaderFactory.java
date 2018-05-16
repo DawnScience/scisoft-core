@@ -123,6 +123,7 @@ public class LoaderFactory {
 		    registerLoader("tif",  PixiumLoader.class);
 		    registerLoader("jpeg", JPEGLoader.class);
 		    registerLoader("jpg",  JPEGLoader.class);
+		    registerLoader("gif",  GIFLoader.class);
 		    registerLoader("mccd", MARLoader.class);
 		    registerLoader("mar3450", MAR345Loader.class);
 		    registerLoader("pck3450", MAR345Loader.class);

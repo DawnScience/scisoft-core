@@ -18,13 +18,14 @@
 I/O  package
 '''
 
+from __future__ import print_function
 import os as _os
 if _os.name == 'java':
-    import jython.jycore as _core #@UnusedImport
-    import jython.jyio as _io #@UnusedImport
+    from .jython import jycore as _core #@UnusedImport
+    from .jython import jyio as _io #@UnusedImport
 else:
-    import python.pycore as _core #@Reimport
-    import python.pyio as _io #@Reimport
+    from .python import pycore as _core #@Reimport
+    from .python import pyio as _io #@Reimport
 
 _asIterable = _core.asIterable
 _toList = _core.toList
@@ -38,7 +39,7 @@ _soformats = _io.scaled_output_formats
 _ioexception = _io.io_exception
 _fallback_loader = _io.fallback_loader
 
-from dictutils import DataHolder as _DataHolder, ListDict as _ListDict
+from .dictutils import DataHolder as _DataHolder, ListDict as _ListDict
 
 _extra_suffices = { 'jpg' : ['jpeg'], 'tif' : ['tiff'], 'dat' : ['srs', 'dls'], 'h5' : ['hdf5'], 'nxs' : ['nx'], 'txt' : ['text'] }
 
@@ -92,7 +93,7 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, war
         f = open(name)
         f.close()
     except:
-        raise ValueError, "File %s does not exist" % name
+        raise ValueError("File %s does not exist" % name)
 
     lformats = None
     if formats is not None:
@@ -144,20 +145,21 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, war
                 ldr.setloadmetadata(withmetadata)
                 lfh = ldr.load(warn=warn)
                 break
-            except _ioexception, e:
+            except _ioexception as e:
                 if warn:
                     errors.append("Could not load using " + l.__name__)
                     errors.extend(str(e).splitlines())
             except:
                 if warn:
-                    import sys
                     errors.append("Unexpected exception raised in " + l.__name__)
-                    errors.extend(str(sys.exc_info()).splitlines())
+                    import sys
+                    import traceback
+                    errors.extend(traceback.format_exception(*sys.exc_info()))
     if lfh is None:
         if warn and errors:
             for l in errors:
-                print "Warning: ", l
-        raise IOError, 'Cannot load file'
+                print("Warning: ", l)
+        raise IOError('Cannot load file')
 
     return lfh
 
@@ -178,9 +180,9 @@ def save(name, data, format=None, range=(), autoscale=False, signed=True, bits=N
         if len(range) > 0 or autoscale:
             if not autoscale:
                 if len(range) != 2:
-                    raise ValueError, "Range has to be a pair of limits (lower, upper)"
+                    raise ValueError("Range has to be a pair of limits (lower, upper)")
                 if range[0] >= range[1]:
-                    raise ValueError, "Given minimum must be less than maximum"
+                    raise ValueError("Given minimum must be less than maximum")
             if format is None:
                 format = _findsuffix(name, _soformats)[0]  # @ReservedAssignment
 #            print "scaled save format", format
@@ -195,10 +197,10 @@ def save(name, data, format=None, range=(), autoscale=False, signed=True, bits=N
 #            print "save format", format, "as", name
             sclass = _oformats[format]
             if sclass is None:
-                raise ValueError, "Format not supported"
+                raise ValueError("Format not supported")
             saver = sclass(name, signed, bits)
     except KeyError:
-        raise ValueError, "Format not supported"
+        raise ValueError("Format not supported")
 
 
 
@@ -239,7 +241,7 @@ def find_scan_files(scan, data_dir, visit=None, year=None, prefix=None, ending="
 
     scan = str(scan)
     if data_dir is None:
-        raise ValueError, "Beamline data directory must be defined"
+        raise ValueError("Beamline data directory must be defined")
 
     if type(ending) is str:
         ending = (ending,)
@@ -282,7 +284,7 @@ def find_scan_files(scan, data_dir, visit=None, year=None, prefix=None, ending="
                     break
 
     if len(files) == 0:
-        raise IOError, "Scan files not found"
+        raise IOError("Scan files not found")
     return files
 
 
@@ -321,7 +323,7 @@ class Scan(_DataHolder):
         mds = []
         for i in dh.items():
             if i[0] == 'metadata':
-                mds = i[1].items()
+                mds = list(i[1].items())
             else:
                 itms.append(i)
         _DataHolder.__init__(self, itms, mds)
@@ -329,15 +331,15 @@ class Scan(_DataHolder):
         self.__file = srsfile
 
     def __str__(self):
-        return "\t".join(self.keys())
+        return "\t".join(list(self.keys()))
 
 if __name__ == '__main__':
-    from dictutils import sanitise_name
+    from .dictutils import sanitise_name
     insane = ['hello', '1hello', ' hello !!$#' ]
     sane = ['hello', '_1hello', '_hello_____' ]
     for i,s in enumerate(insane):
         ss = sanitise_name(s)
-        print "|%s| => |%s| cf |%s|, (%d)" % (s, ss, sane[i], ss == sane[i])
+        print("|%s| => |%s| cf |%s|, (%d)" % (s, ss, sane[i], ss == sane[i]))
 
     import sys
     if len(sys.argv) > 1:
@@ -346,5 +348,5 @@ if __name__ == '__main__':
         name = "/scratch/workspace/images/i16pilatus.dat"
     dh = load(name, withmetadata=False)
     from pprint import pprint
-    pprint(dh.metadata); print
-    pprint(dh); print
+    pprint(dh.metadata); print()
+    pprint(dh); print()

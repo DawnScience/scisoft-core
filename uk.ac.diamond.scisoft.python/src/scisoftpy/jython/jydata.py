@@ -1,4 +1,5 @@
 
+from __future__ import print_function
 import sys
 
 try:
@@ -6,10 +7,10 @@ try:
     _manager = DatasetMailman.getRemoteManager()
 except:
     ## This code has special handling because the RCP classes may not be available 
-    print >> sys.stderr, "Could not import Dataset Manager"
+    print("Could not import Dataset Manager", file=sys.stderr)
     _manager = None
     
-from jycore import _wrapin
+from .jycore import _wrapin
 
 @_wrapin
 def send(*arg, **kwarg):

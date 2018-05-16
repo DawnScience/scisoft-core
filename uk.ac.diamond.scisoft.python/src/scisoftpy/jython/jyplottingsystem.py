@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 
 # Should be there
@@ -22,9 +23,9 @@ def createColor(r, g, b):
     
         return Color(None, r, g, b)
     
-    except Exception, e:
-        print >> sys.stderr, "Could not create swt color, maybe jython interpreter old config"
-        print >> sys.stderr, e
+    except Exception as e:
+        print("Could not create swt color, maybe jython interpreter old config", file=sys.stderr)
+        print(e, file=sys.stderr)
 
 '''
 Creates a histogram bound which is a color and a position for the bound
@@ -36,9 +37,9 @@ def createHistogramBound(position, rgb):
     
         return HistogramBound(position, rgb)
     
-    except Exception, e:
-        print >> sys.stderr, "Could not create HistogramBound, maybe jython interpreter old config"
-        print >> sys.stderr, e
+    except Exception as e:
+        print("Could not create HistogramBound, maybe jython interpreter old config", file=sys.stderr)
+        print(e, file=sys.stderr)
 
 
 '''

@@ -38,7 +38,6 @@ import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Slice;
@@ -146,8 +145,8 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		if (in.getSize() == 0) {
 			return null;
 		}
-		int cutoff = (int) Math.floor(countsPerPhoton * model.getCutoff());
-		if (cutoff > 0) {
+		if (model.isUseCutoff()) {
+			int cutoff = (int) Math.floor(countsPerPhoton * model.getCutoff());
 			BooleanDataset hots = Comparisons.greaterThan(in, cutoff);
 			log.append("Number of cut-off pixels = %d", hots.sum());
 			in.setByBoolean(0, hots);

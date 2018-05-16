@@ -14,6 +14,7 @@
 # limitations under the License.
 ###
 
+from __future__ import print_function
 from uk.ac.diamond.scisoft.analysis import SDAPlotter as _plotter,\
     PlotServiceProvider as _provider
 from org.eclipse.dawnsci.analysis.api import RMIClientProvider as _rmiprovider
@@ -23,10 +24,10 @@ try:
 except:
     ## This code has special handling because the RCP classes may not be available
     import sys
-    print >> sys.stderr, "Could not import Plot Window Manager"
+    print("Could not import Plot Window Manager", file=sys.stderr)
     _manager = None
 
-from jycore import _wrapin
+from .jycore import _wrapin
 
 plot_clear = _plotter.clearPlot
 plot_export = _plotter.exportPlot
@@ -109,11 +110,11 @@ def plot_viewtree(name, tree):
 
 plot_volume = _plotter.volumePlot
 
-from jybeans import parameters as _jyparams
-from jybeans import guibean as _guibean
+from .jybeans import parameters as _jyparams
+from .jybeans import guibean as _guibean
 from uk.ac.diamond.scisoft.analysis.plotserver import GuiBean as _jyguibean
 
-from jyroi import _roi_wrap, _create_list, _roi_list
+from .jyroi import _roi_wrap, _create_list, _roi_list
 
 def _wrap_gui_bean(ob, nb):
     for k in ob:

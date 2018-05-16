@@ -19,6 +19,7 @@ Test random class
 import unittest
 unittest.TestProgram(argv=["io_test"])
 '''
+from __future__ import print_function
 import unittest
 
 import scisoftpy as dnp
@@ -38,24 +39,24 @@ class Test(unittest.TestCase):
     def load(self, name, testfolder=TestFolder):
         path = testfolder + name
         im = dnp.io.load(path)
-        print type(im[0]), im[0].shape
+        print(type(im[0]), im[0].shape)
         return im
 
     def colourload(self, name, testfolder=TestFolder):
         path = testfolder + name
         im = dnp.io.load(path, ascolour=True)
-        print type(im[0]), im[0].shape
+        print(type(im[0]), im[0].shape)
         return im[0]
 
     def testLoading(self):
         import os
-        print os.getcwd()
+        print(os.getcwd())
         self.load("test.png")
         self.load("testrgb.png")
 
         self.colourload("test.png")
         im = self.colourload("testrgb.png")
-        print 'slicing RGB: ', type(im[:5,2])
+        print('slicing RGB: ', type(im[:5,2]))
 
         self.load("test.jpg")
         self.load("testlossy85.jpg")
@@ -75,11 +76,11 @@ class Test(unittest.TestCase):
         self.load("testrgb-pb.tiff")
         try:
             self.load("test-trunc.tiff")
-        except IOError, e:
-            print 'Expected IO error caught:', e
+        except IOError as e:
+            print('Expected IO error caught:', e)
         except:
             import sys
-            print 'Unexpected exception caught', sys.exc_info()
+            print('Unexpected exception caught', sys.exc_info())
 
         self.colourload("testrgb.tiff")
         self.colourload("testrgb-df.tiff")
@@ -89,12 +90,12 @@ class Test(unittest.TestCase):
 
     def testLoadingSRS(self):
         dh = self.load("96356.dat", IOTestFolder+"SRSLoaderTest/")
-        print dh.eta
+        print(dh.eta)
 
     def testLoadingNXS(self):
         f = IOTestFolder + "NexusLoaderTest/"
         nm = dnp.io.load(f + "FeKedge_1_15.nxs")
-        print 'There are %d datasets called "Energy"' % len(nm.getnodes('Energy'))
+        print('There are %d datasets called "Energy"' % len(nm.getnodes('Energy')))
 
     def testLoadingHDF(self):
         f = IOTestFolder + "NexusLoaderTest/"
@@ -111,24 +112,24 @@ class Test(unittest.TestCase):
         self.assertAlmostEquals(cx[4,2].imag, -1.8087566023531674, places=17)
 
     def checkTree(self, t):
-        print t
+        print(t)
         g = t['entry1/instrument/FFI0']
         h = g['/entry1/instrument/FFI0']
         self.assertEquals(g, h, "relative and absolute do not match!")
         ga = g['..']
         assert ga is t['entry1/instrument'], "parent is wrong!"
         assert g['.'] is g, "self is wrong!"
-        print t['entry1/instrument/FFI0/../../']
-        print t['entry1/counterTimer01'].keys()
+        print(t['entry1/instrument/FFI0/../../'])
+        print(list(t['entry1/counterTimer01'].keys()))
         l = t.getnodes("Energy")
-        print 'List of energy datasets is:', len(l)
+        print('List of energy datasets is:', len(l))
         assert len(l) is 1, "Number of energy datasets should be 1"
         d = l[0]
-        print type(d)
+        print(type(d))
         assert d.shape == (489,), "Wrong shape"
         dd = d[...]
         assert dd.shape == (489,), "Wrong shape"
-        print type(d), type(dd)
+        print(type(d), type(dd))
 
     def save(self, name, data, testfolder=OutTestFolder):
         path = testfolder + name
@@ -153,7 +154,7 @@ class Test(unittest.TestCase):
         d = dnp.arange(12*32).reshape((12,32))
         b = dnp.abs(dnp.array(d, dnp.int8))
         b[b < 0] = 0
-        print b.min(), b.max()
+        print(b.min(), b.max())
         dnp.io.save(OutTestFolder+'uint.tiff', d, bits=32, signed=False)
         dnp.io.save(OutTestFolder+'ushort.tiff', d, bits=16, signed=False)
         dnp.io.save(OutTestFolder+'ubyte.tiff', b, bits=8, signed=False)
@@ -167,15 +168,15 @@ class Test(unittest.TestCase):
 
     def testB16data(self):
         d = dnp.io.load(IOTestFolder + 'SRSLoaderTest/34146.dat', format=['srs'])
-        print d.keys()
-        print d.metadata.keys()
-        print d.metadata.values()
+        print(list(d.keys()))
+        print(list(d.metadata.keys()))
+        print(list(d.metadata.values()))
 
     def testNulldata(self):
         try:
             d = self.load("null.dat")
-        except Exception, e:
-            print "Expected exception caught:", e
+        except Exception as e:
+            print("Expected exception caught:", e)
 
 def suite():
     suite = unittest.TestSuite()

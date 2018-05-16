@@ -19,6 +19,7 @@ Test random class
 import unittest
 unittest.TestProgram(argv=["io_test"])
 '''
+from __future__ import print_function
 import unittest
 
 import scisoftpy as dnp
@@ -33,19 +34,19 @@ OutTestFolder = path.join(TestFolder, "../test-scratch/")
 class Test(unittest.TestCase):
     def testLoadingNX(self):
         t = dnp.io.load(IOTestFolder + "FeKedge_1_15.nxs")
-        print t
+        print(t)
         g = t['entry1/instrument/FFI0']
         h = g['/entry1/instrument/FFI0']
         self.assertEquals(g, h, "relative and absolute do not match!")
         ga = g['..']
         assert ga is t['entry1/instrument'], "parent is wrong!"
         assert g['.'] is g, "self is wrong!"
-        print t['entry1/instrument/FFI0/../../']
+        print(t['entry1/instrument/FFI0/../../'])
         d = t['/entry1/FFI0/Energy']
         self.assertEquals(d.shape, (489,), "shapes do not match")
         self.assertEquals(d[2], 6922, "value does not match")
         self.assertEquals(d[479], 7944.5, "value does not match")
-        print d.dtype, d[3:6:2]
+        print(d.dtype, d[3:6:2])
 
     def testLoadingNXutils(self):
         t = dnp.io.load(IOTestFolder + "FeKedge_1_15.nxs")
@@ -55,14 +56,14 @@ class Test(unittest.TestCase):
 
     def testLoadingHDF(self):
         t = dnp.io.load(IOTestFolder + "testlinks.h5")
-        print t
+        print(t)
         g = t['/down/to/this/level']
         h = t['/g_hl']
         self.assertEquals(g, h, "relative and absolute do not match!")
         d = g['d1']
         self.assertEquals(d.shape, (25, 3), "shapes do not match")
         self.assertEquals(d[0,1], 1, "value does not match")
-        print d.dtype, d[3:6:2]
+        print(d.dtype, d[3:6:2])
 #        ga = g['..']
 #        assert ga is t['entry1/instrument'], "parent is wrong!"
 #        assert g['.'] is g, "self is wrong!"

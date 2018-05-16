@@ -14,7 +14,8 @@
 # limitations under the License.
 ###
 
-from jyhdf5io import HDF5Loader as _h5loader
+from __future__ import print_function
+from .jyhdf5io import HDF5Loader as _h5loader
 from org.eclipse.dawnsci.analysis.api.tree import Tree as _jtree
 from org.eclipse.dawnsci.analysis.api.tree import TreeFile as _jtreefile
 
@@ -31,7 +32,7 @@ class NXLoader(_h5loader):
                 g = _nx.NX_CLASSES[cls](attrs, parent)
             else:
                 if cls:
-                    print "Unknown Nexus class: %s" % cls
+                    print("Unknown Nexus class: %s" % cls)
                 g = super(NXLoader, self)._mkgroup(name, link, attrs, parent)
         elif name == '/' or isinstance(parent, _jtree):
             src = parent.getFilename() if isinstance(parent, _jtreefile) else parent.getSourceURI()

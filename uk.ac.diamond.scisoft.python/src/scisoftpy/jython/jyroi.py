@@ -17,7 +17,7 @@
 from uk.ac.diamond.scisoft.analysis.roi import ROIProfile as _profile
 from org.eclipse.dawnsci.analysis.api.roi import IROI as _iroi
 import org.eclipse.dawnsci.analysis.dataset.roi as _roi
-from jycore import _wrap
+from .jycore import _wrap
 
 _jroi = _iroi
 
@@ -211,7 +211,7 @@ class _roi_list(list):
         if isinstance(item, self._jcls):
             item = _roi_wrap(item)
         if not isinstance(item, self._pcls):
-            raise TypeError, "Item is wrong type for list"
+            raise TypeError("Item is wrong type for list")
         super(_roi_list, self).append(item)
 
     add = append
@@ -267,7 +267,7 @@ def _create_list(arg):
         return ellipse_list()
     elif isinstance(arg, _roi.CircularROI):
         return circle_list()
-    raise ValueError, "ROI not recognised"
+    raise ValueError("ROI not recognised")
 
 # No-one should be using this
 #ROIProfile = _profile
@@ -280,7 +280,7 @@ def profile(data, roi, step=None, mask=None):
     if isinstance(roi, line):
         roi  = roi._jroi()
         if step is None:
-            raise ValueError, "step value required"
+            raise ValueError("step value required")
         return _profile.line(data, roi, step)
     if isinstance(roi, rectangle):
         roi  = roi._jroi()
@@ -294,4 +294,4 @@ def profile(data, roi, step=None, mask=None):
             return _profile.sector(data, roi)
         else:
             return _profile.sector(data, mask, roi)
-    raise TypeError, "roi is not of known type"
+    raise TypeError("roi is not of known type")

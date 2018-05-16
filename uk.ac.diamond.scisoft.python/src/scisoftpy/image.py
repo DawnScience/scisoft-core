@@ -20,4 +20,4 @@ Image processing package
 
 import os
 if os.name == 'java':
-    from jython.jyimage import * #@UnusedWildImport
+    from .jython.jyimage import * #@UnusedWildImport

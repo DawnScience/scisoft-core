@@ -36,7 +36,7 @@ def phase(a, keepzeros=False):
     keepzeros -- if True, pass zeros through, else return complex NaNs
     '''
     if not _np.iscomplexobj(a):
-        raise ValueError, "array must be complex"
+        raise ValueError("array must be complex")
     am = _np.absolute(a)
     if keepzeros:
         return _np.nan_to_number(a/am)
@@ -69,7 +69,7 @@ def quantile(a, q, axis=None):
     a -- data
     q -- probability value(s)
     axis -- can be None'''
-    from pycore import toList
+    from .pycore import toList
     from math import floor
     q = toList(q)
     sa = _np.sort(a, axis=axis)
@@ -122,12 +122,12 @@ def centroid(weights, coords=None):
     if coords is None:
         coords = [ _np.arange(d, dtype=_np.float) + 0.5 for d in weights.shape ]
     else:
-        from pycore import toList
+        from .pycore import toList
         coords = toList(coords)
 
     rank = weights.ndim
     if rank > len(coords):
-        raise ValueError, "Number of coordinate arrays must match rank"
+        raise ValueError("Number of coordinate arrays must match rank")
 
     total = weights.sum()
     cshape = [1,]*rank
@@ -135,7 +135,7 @@ def centroid(weights, coords=None):
     for i in range(rank):
         cdata = coords[i]
         if cdata.ndim != 1:
-            raise ValueError, "All coordinate arrays must be 1D"
+            raise ValueError("All coordinate arrays must be 1D")
 
         cshape[i] = cdata.shape[0]
         result.append(_np.multiply(weights, cdata.reshape(cshape)).sum()/total)

@@ -23,9 +23,9 @@ import org.eclipse.january.dataset.Maths as _maths
 import org.eclipse.january.dataset.Stats as _stats
 import org.eclipse.january.dataset.DatasetUtils as _dsutils
 
-from jycore import _wrap
-from jycore import _wrapin
-from jycore import toList as _toList
+from .jycore import _wrap
+from .jycore import _wrapin
+from .jycore import toList as _toList
 
 @_wrap
 def phase(a, keepzeros=False):
@@ -119,5 +119,5 @@ def centroid(weights, coords=None):
     '''
     if coords is None:
         return _dsutils.centroid(weights)
-    from jycore import toList
+    from .jycore import toList
     return _dsutils.centroid(weights, toList(coords))

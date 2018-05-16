@@ -130,7 +130,7 @@ def _getdtypefromobj(jobj):
     jdtype = _dtutils.getDTypeFromObject(jobj)
     if jdtype in __jdtype2jytype:
         return __jdtype2jytype[jdtype]
-    raise ValueError, "Java dataset type unknown"
+    raise ValueError("Java dataset type unknown")
 
 # get dtype from Java dataset
 def _getdtypefromjdataset(jobj):
@@ -139,13 +139,13 @@ def _getdtypefromjdataset(jobj):
         return __jdtype2jytype[d]
     if d in __jcdtype2jytype:
         return __jcdtype2jytype[d](jobj.getElementsPerItem())
-    raise ValueError, "Java dataset type unknown"
+    raise ValueError("Java dataset type unknown")
 
 # check for native python type
 def _translatenativetype(dtype):
     if dtype is None:
         return None
-    elif isinstance(dtype, _dtype) or dtype in __jcdtype2jytype.values():
+    elif isinstance(dtype, _dtype) or dtype in list(__jcdtype2jytype.values()):
         return dtype
     elif dtype is int:
         return int32
@@ -153,7 +153,7 @@ def _translatenativetype(dtype):
         return float64
     elif dtype is complex:
         return complex128
-    raise ValueError, "Dataset type is not recognised"
+    raise ValueError("Dataset type is not recognised")
 
 # default types
 int_ = int32 # TODO should be 64 for 64-bit OS
@@ -180,7 +180,7 @@ def Sciwrap(a):
     This wrapper function is required for any Java method that returns a dataset
     '''
     if a is None:
-        raise ValueError, "No value given"
+        raise ValueError("No value given")
     if isinstance(a, _jcomplex): # convert to complex
         return complex(a.getReal(), a.getImaginary())
     if isinstance(a, ndarray):
@@ -320,7 +320,7 @@ asanyarray = asarray
 def asfarray(data, dtype=None):
     jdata = __cvt_jobj(data, copy=False, force=True)
     if jdata.isComplex():
-        raise TypeError, "can't convert complex to float"
+        raise TypeError("can't convert complex to float")
     if jdata.hasFloatingPointElements():
         return jdata
 
@@ -362,7 +362,7 @@ def _toslice(rank, key):
                 for k in key:
                     if isinstance(k, slice):
                         if has_slice:
-                            raise IndexError, "too many slices"
+                            raise IndexError("too many slices")
                         has_slice = True
                     elif k is not Ellipsis and k is not newaxis:
                         return False, key
@@ -409,12 +409,12 @@ def _isslice(rank, key):
         if nk < rank:
             return True
         elif nk > rank and newaxis not in key:
-            raise IndexError, "Too many indices"
+            raise IndexError("Too many indices")
     else:
         if nk > 0:
             if key[0] is Ellipsis:
                 return True
-            raise ValueError, "Cannot slice 0-d dataset" 
+            raise ValueError("Cannot slice 0-d dataset")
 
     for k in key:
         if isinstance(k, slice) or k is Ellipsis or k is newaxis:
@@ -482,8 +482,8 @@ _jtrue = _jbool(1)
 _jfalse = _jbool(0)
 import java.lang.Integer as _jint
 
-import jymaths as _maths
-import jycomparisons as _cmps
+from . import jymaths as _maths
+from . import jycomparisons as _cmps
 
 _jempty = tuple()
 
@@ -574,7 +574,7 @@ class ndarray(object):
                 while iterator.hasNext():
                     yield d.getObjectAbs(iterator.index)
             else:
-                axes = range(1, r)
+                axes = list(range(1, r))
                 iterator = d.getPositionIterator(axes)
                 pos = iterator.getPos()
                 hit = iterator.getOmit()
@@ -675,30 +675,30 @@ class ndarray(object):
             rank = self.ndim
             if index is None:
                 if rank > 1:
-                    raise ValueError, "incorrect number of indices"
+                    raise ValueError("incorrect number of indices")
             elif index:
                 if args:
-                    raise ValueError, "incorrect number of indices"
-                raise IndexError, "index out of bounds"
+                    raise ValueError("incorrect number of indices")
+                raise IndexError("index out of bounds")
             if args:
                 if (len(args) + 1) > rank:
-                    raise ValueError, "incorrect number of indices"
+                    raise ValueError("incorrect number of indices")
                 for a in args:
                     if a:
-                        raise IndexError, "index out of bounds"
+                        raise IndexError("index out of bounds")
             r = self.__dataset.getObject()
         else:
             if index is None:
-                raise ValueError, "Need an integer or a tuple of integers"
+                raise ValueError("Need an integer or a tuple of integers")
             try:
                 if args:
                     r = self.__dataset.getObject(index, *args)
                 else:
                     r = self.__dataset.getObjectAbs(index)
             except _jarrayindex_exception:
-                raise IndexError, "index out of bounds"
+                raise IndexError("index out of bounds")
             except _jillegalargument_exception:
-                raise ValueError, "incorrect number of indices"
+                raise ValueError("incorrect number of indices")
 
         if isinstance(r, _jcomplex):
             return complex(r.getReal(), r.getImaginary())
@@ -948,7 +948,7 @@ class ndarray(object):
 
     def __nonzero__(self):
         if self.size > 1:
-            raise ValueError, "The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()"
+            raise ValueError("The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()")
         return self.item() != 0
 
 
@@ -1079,7 +1079,7 @@ class ndarray(object):
     def __len__(self):
         if len(self.shape) > 0:
             return self.shape[0]
-        raise TypeError, "len() of unsized object"
+        raise TypeError("len() of unsized object")
 
     @_wrapout
     def __getitem__(self, key):
@@ -1132,27 +1132,27 @@ class ndarray(object):
     #  conversion
     def __int__(self):
         if self.size > 1:
-            raise TypeError, "only length-1 arrays can be converted to Python scalars"
+            raise TypeError("only length-1 arrays can be converted to Python scalars")
         return int(self.__dataset.getObject([]))
 
     def __long__(self):
         if self.size > 1:
-            raise TypeError, "only length-1 arrays can be converted to Python scalars"
-        return long(self.__dataset.getObject([]))
+            raise TypeError("only length-1 arrays can be converted to Python scalars")
+        return int(self.__dataset.getObject([]))
 
     def __float__(self):
         if self.size > 1:
-            raise TypeError, "only length-1 arrays can be converted to Python scalars"
+            raise TypeError("only length-1 arrays can be converted to Python scalars")
         return float(self.__dataset.getObject([]))
 
     def __oct__(self):
         if self.size > 1:
-            raise TypeError, "only length-1 arrays can be converted to Python scalars"
+            raise TypeError("only length-1 arrays can be converted to Python scalars")
         return oct(self.__dataset.getObject([]))
 
     def __hex__(self):
         if self.size > 1:
-            raise TypeError, "only length-1 arrays can be converted to Python scalars"
+            raise TypeError("only length-1 arrays can be converted to Python scalars")
         return hex(self.__dataset.getObject([]))
 
     #  string representations
@@ -1175,7 +1175,7 @@ class ndarray(object):
         if n < 0:
             n += me
         if n >= me or n < 0:
-            raise IndexError, "Element number is out of range"
+            raise IndexError("Element number is out of range")
         if me == 1:
             return self.__dataset.getView(True)
         return self.__dataset.getElements(n)
@@ -1227,7 +1227,7 @@ class ndarrayRGB(ndarray):
         if cweights:
             cweights = asIterable(cweights)
             if len(cweights) != 3:
-                raise ValueError, "three colour channel weights needed"
+                raise ValueError("three colour channel weights needed")
             csum = float(sum(cweights))
             return self._jdataset().createGreyDataset(cweights[0]/csum, cweights[1]/csum, cweights[2]/csum, dtype.value)
         return self._jdataset().createGreyDataset(dtype.value)
@@ -1265,7 +1265,7 @@ def arange(start, stop=None, step=1, dtype=None):
         elif type(start) is _types.IntType or type(stop) is _types.IntType or type(step) is _types.IntType: 
             dtype = int32
         else:
-            raise ValueError, "Unknown or invalid type of input value"
+            raise ValueError("Unknown or invalid type of input value")
     if dtype == bool:
         return None
 
@@ -1299,7 +1299,7 @@ def zeros(shape, dtype=float64, elements=None):
         else:
             dtype.elements = elements
     elif type(dtype) is _types.FunctionType:
-        raise ValueError, "Given data-type is a function and needs elements defining"
+        raise ValueError("Given data-type is a function and needs elements defining")
 
     return _df.zeros(dtype.elements, asIterable(shape), dtype.value)
 
@@ -1327,7 +1327,7 @@ def full(shape, fill_value, dtype=None, elements=None):
         else:
             dtype.elements = elements
     elif type(dtype) is _types.FunctionType:
-        raise ValueError, "Given data-type is a function and needs elements defining"
+        raise ValueError("Given data-type is a function and needs elements defining")
 
     return _df.zeros(dtype.elements, asIterable(shape), dtype.value).fill(fill_value)
 
@@ -1442,7 +1442,7 @@ def choose(a, choices, mode='raise'):
         elif mode == 'wrap':
             cf = False
         else:
-            raise ValueError, "mode is not one of raise, clip or wrap"
+            raise ValueError("mode is not one of raise, clip or wrap")
     return _dsutils.choose(a, choices, rf, cf)
 
 @_wrapin
@@ -1627,7 +1627,7 @@ def meshgrid(*a, **kwargs):
     if indexing == 'ij':
         a = [a[1], a[0]] + (a[2:] if len(a) > 2 else [])
     elif indexing != 'xy':
-        raise ValueError, 'indexing value is not valid'
+        raise ValueError('indexing value is not valid')
     axes = [ asDataset(x)._jdataset() for x in reversed(a) ]
         
     coords = _dsutils.meshGrid(axes)
@@ -1651,7 +1651,7 @@ def ix_(*args):
     for i,a in enumerate(args):
         d = asarray(a)
         if d.ndim > 1:
-            raise ValueError, 'sequences must be 1D'
+            raise ValueError('sequences must be 1D')
         shape = [1]*n
         shape[i] = d.size
         d.shape = shape

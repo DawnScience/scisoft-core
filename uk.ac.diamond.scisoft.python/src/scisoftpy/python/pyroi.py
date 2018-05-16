@@ -177,7 +177,7 @@ class sector(roibase):
 
     def _chkAngles(self):
         if len(self.ang) != 2:
-            raise ValueError, "Need two angles" 
+            raise ValueError("Need two angles") 
         a = self.ang[0]
         tpi = 2 * _math.pi
         while a >= self.ang[1]:
@@ -275,7 +275,7 @@ class roi_list(list):
 
     def append(self, item):
         if not isinstance(item, self._pcls):
-            raise TypeError, "Item is wrong type"
+            raise TypeError("Item is wrong type")
         super(roi_list, self).append(item)
 
     add = append # cover Java list usage
@@ -311,7 +311,7 @@ def _create_list(arg):
         return ellipse_list()
     elif isinstance(arg, circle):
         return circle_list()
-    raise ValueError, "ROI not recognised"
+    raise ValueError("ROI not recognised")
 
 
-from pyprofile import profile  # @UnusedImport
+from .pyprofile import profile  # @UnusedImport

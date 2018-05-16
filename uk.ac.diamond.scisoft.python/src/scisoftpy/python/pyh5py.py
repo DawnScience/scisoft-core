@@ -14,10 +14,11 @@
 # limitations under the License.
 ###
 
+from __future__ import print_function
 import h5py #@UnresolvedImport
 
 if h5py.version.version_tuple[0] < 2:
-    raise ImportError, "Installed h5py is too old - it must be at least version 2"
+    raise ImportError("Installed h5py is too old - it must be at least version 2")
 
 from ..nexus.hdf5 import HDF5tree as _tree
 from ..nexus.hdf5 import HDF5group as _group
@@ -47,20 +48,20 @@ class _lazydataset(object):
     def __getitem__(self, key):
         try:
             fh = h5py.File(self.file, 'r')
-        except Exception, e:
+        except Exception as e:
             import sys
-            print >> sys.stderr, "Could not load |%s|\n" % self.file
-            raise io_exception, e
+            print("Could not load |%s|\n" % self.file, file=sys.stderr)
+            raise io_exception(e)
         finally:
             pass
 
         if fh is None:
-            raise io_exception, "No tree found"
+            raise io_exception("No tree found")
 
         ds = fh[self.name]
 
         slices,sliced = _key2slice(key, self.shape)
-        dshape = [ l if s is None else len(range(*s.indices(l))) for s, l in zip(slices, self.shape)] # destination shape
+        dshape = [ l if s is None else len(list(range(*s.indices(l)))) for s, l in zip(slices, self.shape)] # destination shape
         nshape = [ l for f,l in zip(sliced, dshape) if f ]
 #        print 'new shape:', nshape
 
@@ -89,7 +90,7 @@ class _lazydataset(object):
             
 
         if ssize == 1:
-            for i in reversed(range(self.rank)):
+            for i in reversed(list(range(self.rank))):
                 l = v.shape[i]
                 if l > 1:
                     dshape[i] = l
@@ -98,10 +99,10 @@ class _lazydataset(object):
                     break
 
         # iterate over split dimensions
-        dst_ranges = [ range(l) for f, l in zip(split, v.shape) if f ]
+        dst_ranges = [ list(range(l)) for f, l in zip(split, v.shape) if f ]
         dst_iter = product(*dst_ranges)
 
-        src_ranges = [ range(*s.indices(l)) if s else range(l) for f, l, s in zip(split, self.shape, slices) if f ]
+        src_ranges = [ list(range(*s.indices(l))) if s else list(range(l)) for f, l, s in zip(split, self.shape, slices) if f ]
         src_iter = product(*src_ranges)
 
         for d,s in zip(dst_iter, src_iter):
@@ -150,15 +151,15 @@ class HDF5Loader(object):
         # capture all error messages
         try:
             fh = h5py.File(self.name, 'r')
-        except Exception, e:
+        except Exception as e:
             import sys
-            print >> sys.stderr, "Could not load |%s|\n" % self.name 
-            raise io_exception, e
+            print("Could not load |%s|\n" % self.name, file=sys.stderr)
+            raise io_exception(e)
         finally:
             pass
 
         if fh is None:
-            raise io_exception, "No tree found"
+            raise io_exception("No tree found")
 
         # convert tree to own tree
         pool = dict()
@@ -204,8 +205,8 @@ class HDF5Loader(object):
                 l = node.get(k, getlink=True)
                 try:
                     nodes.append((k, self._copynode(pool, n, l, g)))
-                except Exception, e:
-                    print k, n, e
+                except Exception as e:
+                    print(k, n, e)
             g.init_group(nodes)
             return g
         elif isinstance(node, h5py.Dataset):
@@ -229,7 +230,7 @@ class NXLoader(HDF5Loader):
             if cls in _nx.NX_CLASSES:
                 g = _nx.NX_CLASSES[cls](attrs, parent)
             else:
-                print "Unknown Nexus class: %s" % cls
+                print("Unknown Nexus class: %s" % cls)
                 g = super(NXLoader, self)._mkgroup(node, attrs, parent)
         elif node.name == '/':
             g = _nx.NXroot(node.filename, attrs)

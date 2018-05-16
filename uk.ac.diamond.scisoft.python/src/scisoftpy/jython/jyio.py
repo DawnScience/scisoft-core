@@ -15,6 +15,7 @@
 ###
 
 
+from __future__ import print_function
 from uk.ac.diamond.scisoft.analysis.io import PNGLoader as _pngload
 from uk.ac.diamond.scisoft.analysis.io import PNGScaledSaver as _pngscaledsave
 from uk.ac.diamond.scisoft.analysis.io import JPEGLoader as _jpegload
@@ -32,8 +33,8 @@ try:
     from uk.ac.diamond.scisoft.analysis.io import TIFFImageLoader as _tiffload
 except _throwable as e:
     import sys
-    print >> sys.stderr, "Could not import TIFF loader"
-    print >> sys.stderr, e
+    print("Could not import TIFF loader", file=sys.stderr)
+    print(e, file=sys.stderr)
     _tiffload = None
 
 from uk.ac.diamond.scisoft.analysis.io import TIFFImageSaver as _tiffsave
@@ -45,9 +46,9 @@ try:
     from uk.ac.diamond.scisoft.analysis.io import CBFLoader as _cbfload
 except _throwable as e:
     import sys #@Reimport
-    print >> sys.stderr, "Could not import CBF loader"
-    print >> sys.stderr, "Problem with path for dynamic/shared library or product bundling"
-    print >> sys.stderr, e
+    print("Could not import CBF loader", file=sys.stderr)
+    print("Problem with path for dynamic/shared library or product bundling", file=sys.stderr)
+    print(e, file=sys.stderr)
     _cbfload = None
 
 from uk.ac.diamond.scisoft.analysis.io import CrysalisLoader as _crysload
@@ -72,9 +73,9 @@ try:
     from uk.ac.diamond.scisoft.analysis.io import LoaderFactory as _loader_factory
 except _throwable as e:
     import sys #@Reimport
-    print >> sys.stderr, "Could not import LoaderFactory"
-    print >> sys.stderr, "Problem with path for dynamic/shared library or product bundling"
-    print >> sys.stderr, e
+    print("Could not import LoaderFactory", file=sys.stderr)
+    print("Problem with path for dynamic/shared library or product bundling", file=sys.stderr)
+    print(e, file=sys.stderr)
     _loader_factory = None
 
 from org.eclipse.dawnsci.analysis.api.io import ScanFileHolderException as io_exception
@@ -82,12 +83,12 @@ from org.eclipse.dawnsci.analysis.api.io import ScanFileHolderException as io_ex
 from uk.ac.diamond.scisoft.analysis.io import DataHolder as _jdataholder
 from uk.ac.diamond.scisoft.analysis.io import MetaDataAdapter as _jmetadata
 
-from jycore import asDatasetList, _jinput#, asDatasetDict, toList
+from .jycore import asDatasetList, _jinput#, asDatasetDict, toList
 
 from scisoftpy.dictutils import DataHolder
 
-from jyhdf5io import HDF5Loader
-from jynxio import NXLoader
+from .jyhdf5io import HDF5Loader
+from .jynxio import NXLoader
 
 class BareJavaLoader(object):
     def load(self, warn=True):
@@ -110,7 +111,7 @@ class BareJavaLoader(object):
                 basenames.append(n)
 
         if len(data) != len(basenames):
-            raise io_exception, "Number of names does not match number of datasets"
+            raise io_exception("Number of names does not match number of datasets")
 
         metadata = None
         if self.load_metadata:
@@ -120,7 +121,7 @@ class BareJavaLoader(object):
                 if mnames:
                     metadata = [ (k, meta.getMetaValue(k)) for k in mnames ]
 
-        return DataHolder(zip(basenames, data), metadata, warn)
+        return DataHolder(list(zip(basenames, data)), metadata, warn)
 
     def setloadmetadata(self, load_metadata):
         self.load_metadata = load_metadata
@@ -179,7 +180,7 @@ else:
     except:
         CBFLoader = None
         import sys #@Reimport
-        print >> sys.stderr, "Problem creating CBF loader so no CBF support"
+        print("Problem creating CBF loader so no CBF support", file=sys.stderr)
     else:
         del _c
         class CBFLoader(JavaLoader, _cbfload):
@@ -298,7 +299,7 @@ class _Metadata(_jmetadata):
         self.mdata = metadata
 
     def getMetaNames(self):
-        return self.mdata.keys()
+        return list(self.mdata.keys())
 
     def getMetaValue(self, key):
         return self.mdata.get(key)

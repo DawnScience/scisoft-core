@@ -21,8 +21,8 @@ Comparisons package
 import org.eclipse.january.dataset.Comparisons as _cmps
 import org.eclipse.january.dataset.DatasetUtils as _dsutils
 
-from jycore import _wrap
-from jycore import asanyarray as _asany
+from .jycore import _wrap
+from .jycore import asanyarray as _asany
 
 @_wrap
 def all(a, axis=None): #@ReservedAssignment
@@ -119,7 +119,7 @@ def where(condition, x=None, y=None):
     elif not x and not y:
         return _cmps.nonZero(condition)
     else:
-        raise ValueError, "Both x and y must be specified"
+        raise ValueError("Both x and y must be specified")
 
 @_wrap
 def isnan(a):

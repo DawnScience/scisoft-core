@@ -22,7 +22,7 @@ import org.eclipse.january.dataset.LinearAlgebra as _linalg
 from org.eclipse.january.dataset.LinearAlgebra import NormOrder as _normorder
 
 # from jycore import asIterable as _asiter
-from jycore import _wrap, _jinput
+from .jycore import _wrap, _jinput
 
 from java.lang.Double import isInfinite as _isinf #@UnresolvedImport
 
@@ -35,7 +35,7 @@ def eig(a):
     '''
     try:
         return _linalg.calcEigenDecomposition(a)
-    except Exception, e:
+    except Exception as e:
         raise LinAlgError(e)
 
 @_wrap
@@ -44,7 +44,7 @@ def eigvals(a):
     '''
     try:
         return _linalg.calcEigenvalues(a)
-    except Exception, e:
+    except Exception as e:
         raise LinAlgError(e)
 @_wrap
 def cholesky(a):
@@ -52,7 +52,7 @@ def cholesky(a):
     '''
     try:
         return _linalg.calcCholeskyDecomposition(a)
-    except Exception, e:
+    except Exception as e:
         raise LinAlgError(e)
 
 @_wrap
@@ -61,7 +61,7 @@ def qr(a, mode='full'):
     '''
     try:
         return _linalg.calcQRDecomposition(a)
-    except Exception, e:
+    except Exception as e:
         raise LinAlgError(e)
 
 @_wrap
@@ -70,7 +70,7 @@ def svd(a, full_matrices=1, compute_uv=1):
     '''
     try:
         return _linalg.calcSingularValueDecomposition(a)
-    except Exception, e:
+    except Exception as e:
         raise LinAlgError(e)
 
 @_wrap
@@ -101,7 +101,7 @@ def norm(x, order=None):
 
     try:
         return _linalg.norm(x, order)
-    except Exception, e:
+    except Exception as e:
         raise LinAlgError(e)
 
 def cond(a, order=None):
@@ -122,7 +122,7 @@ def cond(a, order=None):
     if order is None:
         try:
             return _linalg.calcConditionNumber(_jinput(a))
-        except Exception, e:
+        except Exception as e:
             raise LinAlgError(e)
     return norm(a, order)*norm(pinv(a), order)
 
@@ -132,7 +132,7 @@ def det(a):
     '''
     try:
         return _linalg.calcDeterminant(a)
-    except Exception, e:
+    except Exception as e:
         raise LinAlgError(e)
 
 @_wrap
@@ -141,7 +141,7 @@ def solve(a, b):
     '''
     try:
         return _linalg.solve(a, b)
-    except Exception, e:
+    except Exception as e:
         raise LinAlgError(e)
 
 @_wrap
@@ -150,7 +150,7 @@ def inv(a):
     '''
     try:
         return _linalg.calcInverse(a)
-    except Exception, e:
+    except Exception as e:
         raise LinAlgError(e)
 
 @_wrap
@@ -159,7 +159,7 @@ def pinv(a, rcond=1e-15):
     '''
     try:
         return _linalg.calcPseudoInverse(a)
-    except Exception, e:
+    except Exception as e:
         raise LinAlgError(e)
 
 @_wrap
@@ -168,6 +168,6 @@ def matrix_power(a, n):
     '''
     try:
         return _linalg.power(a, n)
-    except Exception, e:
+    except Exception as e:
         raise LinAlgError(e)
 

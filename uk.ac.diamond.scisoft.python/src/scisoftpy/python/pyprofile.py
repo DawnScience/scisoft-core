@@ -19,9 +19,10 @@ Implementation of profile function using Py4J so Dawn is required with the
 Py4J default server activated (through Window > Preferences >
 Py4J Default Server) as well as a Python installation of Py4J  
 '''
-from pyroi import line, rectangle, sector
+from __future__ import print_function
+from .pyroi import line, rectangle, sector
 
-import py4jutils as _py4j
+from . import py4jutils as _py4j
 
 def profile(data, roi, step=None, mask=None):
     '''Calculate a profile with given roi (a step value is required for a linear ROI)
@@ -32,7 +33,7 @@ def profile(data, roi, step=None, mask=None):
     if isinstance(roi, line):
         roi  = _py4j.convert_line_roi(roi)
         if step is None:
-            raise ValueError, "step value required"
+            raise ValueError("step value required")
         datasets = _py4j.convert_arrays([data])
         pdatasets = profile.line(datasets[0], roi, float(step))
         return _py4j.convert_datasets(pdatasets)
@@ -52,11 +53,11 @@ def profile(data, roi, step=None, mask=None):
         else:
             pdatasets = profile.sector(datasets[0], datasets[1], roi)
         return _py4j.convert_datasets(pdatasets)
-    raise TypeError, "roi is not of known type"
+    raise TypeError("roi is not of known type")
 
 if __name__ == '__main__':
     import scisoftpy as dnp
     im = dnp.io.load('/scratch/images/test.png')[0]
     l = dnp.roi.line(point=[64, 111], length=242, angle=1.0)
     p = dnp.roi.profile(im, l, 0.5)
-    print 'end!'
+    print('end!')

@@ -20,6 +20,7 @@ This module is generally for internal use by AnalysisRPC and is only made
 public for the purpose of testing, see pyflatten_test.py
 '''
 
+
 import scisoftpy.python.pycore as _core
 import scisoftpy.python.pyroi as _roi
 import scisoftpy.python.pybeans as _beans
@@ -31,6 +32,9 @@ import sys
 import copy
 import uuid
 import traceback
+import six
+from six.moves import map
+from six.moves import zip
 
 TYPE = "__type__"
 CONTENT = "content"
@@ -71,14 +75,14 @@ class roiHelper(flatteningHelper):
     def flatten(self, thisRoiBase):
         d = copy.deepcopy(thisRoiBase.__dict__)
         rval = dict()
-        for k, v in d.iteritems():
+        for k, v in six.iteritems(d):
             rval[k] = flatten(v)
         rval[TYPE] = self.typeName
         return rval
     
     def unflatten(self, obj):
         unflattenedObj = dict()
-        for k, v in obj.iteritems():
+        for k, v in six.iteritems(obj):
             if k == TYPE:
                 continue
             v = unflatten(v)
@@ -170,7 +174,7 @@ class dictHelper(flatteningHelper):
         rval[self.VALUES] = []
         from collections import OrderedDict
         rval[self.ORDERED] = isinstance(thisDict, OrderedDict)
-        for k, v in thisDict.iteritems():
+        for k, v in six.iteritems(thisDict):
             rval[self.KEYS].append(flatten(k))
             rval[self.VALUES].append(flatten(v))
         return rval
@@ -190,7 +194,7 @@ class passThroughHelper(object):
         return obj
 
     def canflatten(self, obj):
-        return isinstance(obj, (unicode, str, int, long, float, _wrapper.binarywrapper))
+        return isinstance(obj, (six.text_type, str, int, int, float, _wrapper.binarywrapper))
 
     def canunflatten(self, obj):
         return self.canflatten(obj)
@@ -263,7 +267,7 @@ class guiBeanHelper(flatteningHelper):
     
     def flatten(self, obj):
         rval = dict()
-        for k, v in obj.iteritems():
+        for k, v in six.iteritems(obj):
             rval[str(k)] = flatten(v)
             
         rval[TYPE] = self.TYPE_NAME
@@ -271,7 +275,7 @@ class guiBeanHelper(flatteningHelper):
 
     def unflatten(self, thisDict):
         rval = _beans.guibean()
-        for k, v in thisDict.iteritems():
+        for k, v in six.iteritems(thisDict):
             if k == TYPE:
                 continue
             guiparam = _beans.parameters.get(k)
@@ -522,8 +526,8 @@ class exceptionHelper(flatteningHelper):
                 return stes, texts
             if tb is not None and id(value) == id(thisException):
                 extract_tb = traceback.extract_tb(tb)
-                extract_tb = zip(extract_tb, ("",) * len(extract_tb))
-                extract_tb = [s[0] + (s[1],) for s in extract_tb]
+                extract_tb = list(zip(extract_tb, ("",) * len(extract_tb)))
+                extract_tb = [tuple(s[0]) + (s[1],) for s in extract_tb]
                 rval[self.TRACEBACK], rval[self.PYTHONTEXTS] = flatten_tb(extract_tb)
             elif hasattr(thisException, "flatten_traceback"):
                 rval[self.TRACEBACK], rval[self.PYTHONTEXTS] = flatten_tb(thisException.flatten_traceback)
@@ -568,7 +572,7 @@ class exceptionHelper(flatteningHelper):
             if analheader not in excmsg:
                 excmsg += analheader
                 # the map removes the sometime present 5th element of "class"
-                out = traceback.format_list(map(lambda x: x[0:4], stackTrace))
+                out = traceback.format_list([x[0:4] for x in stackTrace])
                 excmsg += "".join(out)
             e = Exception(excmsg)
             e.flatten_traceback = stackTrace

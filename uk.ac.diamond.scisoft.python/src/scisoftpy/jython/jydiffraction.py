@@ -44,7 +44,7 @@ class environ(_api_dfn.DiffractionCrystalEnvironment):
         energy -- in units of keV
         '''
         if not wavelength and not energy:
-            raise ValueError, "Must specify either wavelength or energy"
+            raise ValueError("Must specify either wavelength or energy")
         if wavelength:
             super(_api_dfn.DiffractionCrystalEnvironment, self).__init__(wavelength)
         else:

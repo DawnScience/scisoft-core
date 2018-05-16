@@ -41,7 +41,7 @@ class unitcell(_xstal.UnitCell):
             if not angles or len(angles) != 3:
                 angles = [90.] * 3
         else:
-            raise ValueError, "Not enough parameters"
+            raise ValueError("Not enough parameters")
 
         super(_xstal.UnitCell, self).__init__(lengths, angles)
 

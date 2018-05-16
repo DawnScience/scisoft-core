@@ -20,8 +20,8 @@ Random number generator package
 
 import org.eclipse.january.dataset.Random as _random
 
-from jycore import asIterable as _asiter
-from jycore import _wrapout
+from .jycore import asIterable as _asiter
+from .jycore import _wrapout
 
 @_wrapout
 def rand(*shape):

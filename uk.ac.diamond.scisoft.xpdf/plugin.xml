@@ -143,13 +143,14 @@
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
             class="uk.ac.diamond.scisoft.xpdf.operations.XRMCEnergyIntegration"
+            icon="icons/energy_integration.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XRMCEnergyIntegration"
             name="XRMC Energy Integration">
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
             class="uk.ac.diamond.scisoft.xpdf.operations.ImportXRMCMetadataOperation"
-            icon="icons/xpdfbeam.png"
+            icon="icons/xrmc_metadata.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.ImportXRMCMetadataOperation"
             model="uk.ac.diamond.scisoft.xpdf.operations.ImportXRMCMetadataModel"
             name="Import XRMC Metadata">
@@ -157,7 +158,7 @@
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
             class="uk.ac.diamond.scisoft.xpdf.operations.XRMCNormalization"
-            icon="icons/xpdfnormal.png"
+            icon="icons/xrmc_normalization.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XRMCNormalization"
             model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="XRMC scattering data normalisation">
@@ -165,7 +166,7 @@
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
             class="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCToGammaDelta"
-            icon="icons/xpdfdetector.png"
+            icon="icons/detector_to_gd.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCToGammaDelta"
             model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="Interpolate XRMC scattering data to (γ,δ)">
@@ -173,7 +174,7 @@
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
             class="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCFromGammaDelta"
-            icon="icons/xpdfdetector.png"
+            icon="icons/gd_to_detector.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCFromGammaDelta"
             model="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCFromGDModel"
             name="Interpolate from (γ,δ) to Detector">

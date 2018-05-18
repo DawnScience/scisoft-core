@@ -116,12 +116,6 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		processFit(r, null, Double.NaN, Double.NaN, Double.NaN);
 	}
 
-	private void addDisplayData(int i, Dataset[] coords) {
-		coords[0].setName(String.format("row%d", i));
-		coords[1].setName(String.format("col%d", i));
-		generateFitForDisplay(getStraightLine(i), coords[0], coords[1], String.format("line_%d_fit", i), false);
-	}
-
 	@Override
 	protected void resetProcess(IDataset original) {
 		goodPosition[0].clear();
@@ -286,6 +280,11 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 				mask = fitStraightLine(getStraightLine(r), ymax, minPoints, model.getMaxDev(), coords[0], coords[1]);
 			} catch (OperationException e) {
 				createInvalidOperationData(r, e);
+				if (r == 0) {
+					coords[0].setName("row0");
+					coords[1].setName("col0");
+					generateFitForDisplay(null, coords[0], coords[1], null, false);
+				}
 				return original;
 			}
 	
@@ -293,7 +292,9 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			coords[1] = coords[1].getByBoolean(mask);
 
 			if (r == 0) {
-				addDisplayData(r, coords);
+				coords[0].setName("row0");
+				coords[1].setName("col0");
+				generateFitForDisplay(getStraightLine(0), coords[0], coords[1], "line_0_fit", false);
 			}
 		} else {
 			minimizeFWHMForSpectrum(r, in);

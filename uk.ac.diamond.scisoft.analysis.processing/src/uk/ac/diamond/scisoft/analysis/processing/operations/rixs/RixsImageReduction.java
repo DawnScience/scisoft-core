@@ -47,6 +47,7 @@ import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.metadata.AxesMetadata;
 
+import uk.ac.diamond.scisoft.analysis.MultiRange;
 import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram;
 import uk.ac.diamond.scisoft.analysis.dataset.function.RegisterData1D;
 import uk.ac.diamond.scisoft.analysis.dataset.function.RegisterNoisyData1D;
@@ -70,6 +71,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 	private List<Dataset>[] allSpectra = new List[] {new ArrayList<>(), new ArrayList<>()};
 
 	private String currentDataFile = null;
+	private MultiRange selection;
 
 	/**
 	 * Auxiliary subentry. This must match the name field defined in the plugin extension
@@ -95,6 +97,12 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 
 	@Override
 	void updateFromModel() {
+		try {
+			selection = MultiRange.createMultiRange(model.getFrameSelection());
+		} catch (IllegalArgumentException e) {
+			throw new OperationException(this, "Frame selection invalid", e);
+		}
+
 		Arrays.fill(energyDispersion, Double.NaN);
 		energyDispersion[0] = model.getEnergyDispersion();
 		String file = model.getCalibrationFile();
@@ -352,31 +360,39 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 	}
 
 	@Override
+	boolean skipFrame(int size, int frame) {
+		return !selection.contains(size, frame);
+	}
+
+	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		Dataset original = DatasetUtils.convertToDataset(input);
 		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(input);
 		SliceInformation si = ssm.getSliceInfo();
 		int smax = si.getTotalSlices();
-		int fmax = model.getMaxFrames();
-		if (fmax > 0 && fmax < smax) {
-			smax = fmax;
-			log.append("Using only first %d frames", fmax);
-		}
 
-		if (fmax > 0 && si.getSliceNumber() >= fmax) {
-			return new OperationData();
-		}
 		OperationData od = super.process(original, monitor);
-
-		// find photon events in entire image
-		List<Dataset> events = ImageUtils.findWindowedPeaks(original, model.getWindow(), countsPerPhoton * model.getLowThreshold(), countsPerPhoton * model.getHighThreshold());
-		Dataset eSum = events.get(0);
+		List<Dataset> events = null;
+		Dataset eSum = null;
+		if (od != null) {
+			// find photon events in entire image
+			events = ImageUtils.findWindowedPeaks(original, model.getWindow(), countsPerPhoton * model.getLowThreshold(), countsPerPhoton * model.getHighThreshold());
+			eSum = events.get(0);
+		} else {
+			log.append("Skipping frame %d", si.getSliceNumber());
+		}
 
 		IntegerDataset bins = null;
 		Dataset a = null;
 		Dataset h = null;
-		if (eSum.getSize() == 0) {
+		if (eSum == null || eSum.getSize() == 0) {
 			log.append("No events found");
+			// need to pad spectra
+			for (int r = 0; r < roiMax; r++) {
+				allSpectra[r].add(null);
+			}
+			allSums.add(null);
+			allPositions.add(null);
 		} else {
 			// accumulate event sums and photons
 			if (totalSum == null) {
@@ -438,26 +454,32 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 				allMultiple = new int[roiMax][smax][];
 				List<Double> cX = new ArrayList<>();
 				List<Double> cY = new ArrayList<>();
+				boolean first = true;
+				int j = 0;
 				for (int i = 0; i < smax; i++) {
 					for (int r = 0; r < roiMax; r++) {
+						Dataset sums = allSums.get(i);
+						if (sums == null) {
+							continue;
+						}
 						cX.clear();
 						cY.clear();
 
-						StraightLine line = getStraightLine(r);
-						IRectangularROI roi = getROI(r);
-						Dataset sums = allSums.get(i);
-						Dataset posn = allPositions.get(i);
 						int[] hSingle = new int[bmax];
 						int[] hMultiple = new int[bmax];
-						allSingle[r][i] = hSingle;
-						allMultiple[r][i] = hMultiple;
+						allSingle[r][j] = hSingle;
+						allMultiple[r][j++] = hMultiple;
+						Dataset posn = allPositions.get(i);
+						StraightLine line = getStraightLine(r);
+						IRectangularROI roi = getROI(r);
 						shiftAndBinPhotonEvents(0, single, multiple, bin, bmax, cX, cY, i, line, roi, sums, posn,
 								hSingle, hMultiple);
 
-						// add coords
-						if (i == 0) {
+						// add coords from first (non-omitted) frame
+						if (first) {
 							int side = cX.size();
 							if (side > 0) {
+								first = false;
 								Dataset t;
 								t = DatasetFactory.createFromList(cY);
 								MetadataUtils.setAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"));
@@ -469,6 +491,12 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 								summaryData.add(t);
 							}
 						}
+					}
+				}
+				if (j < smax) { // truncate for omitted frames
+					for (int r = 0; r < roiMax; r++) {
+						allSingle[r] = Arrays.copyOf(allSingle[r], j);
+						allMultiple[r] = Arrays.copyOf(allMultiple[r], j);
 					}
 				}
 			}
@@ -567,10 +595,10 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 						StraightLine line = getStraightLine(r);
 						IRectangularROI roi = getROI(r);
 						Dataset sums = allSums.get(i);
+						if (sums == null) {
+							continue;
+						}
 						Dataset posn = allPositions.get(i);
-
-						Arrays.fill(hSingle, 0);
-						Arrays.fill(hMultiple, 0);
 						shiftAndBinPhotonEvents(offset, single, multiple, bin, bmax, null, null, i, line, roi, sums, posn,
 								hSingle, hMultiple);
 					}
@@ -629,7 +657,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		if (od instanceof OperationDataForDisplay) {
 			odd = (OperationDataForDisplay) od;
 		} else {
-			odd = new OperationDataForDisplay(od.getData());
+			odd = new OperationDataForDisplay(od == null ? null : od.getData());
 		}
 		odd.setShowSeparately(true);
 		odd.setLog(log);
@@ -677,8 +705,15 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 	private static IDataset[] toArray(List<Dataset> d) {
 		int imax = d.size();
 		IDataset[] a = new IDataset[imax];
+		int j = 0;
 		for (int i = 0; i < imax; i++) {
-			a[i] = d.get(i).getView(true).squeeze();
+			Dataset di = d.get(i);
+			if (di != null) {
+				a[j++] = di.getView(true).squeeze();
+			}
+		}
+		if (j < imax) {
+			a = Arrays.copyOf(a, j);
 		}
 		return a;
 	}

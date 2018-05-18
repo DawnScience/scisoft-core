@@ -101,6 +101,8 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		return OperationRank.TWO;
 	}
 
+	abstract boolean skipFrame(int size, int frame);
+
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		displayData.clear();
@@ -118,6 +120,9 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		}
 		if (currentCountTime != null) {
 			countTime += ((Number) currentCountTime.getSlice(si.getInputSliceWithoutDataDimensions()).sum(true)).doubleValue();
+		}
+		if (skipFrame(si.getTotalSlices(), si.getSliceNumber())) {
+			return null;
 		}
 
 		initializeProcess(input);
@@ -458,6 +463,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		}
 
 		Slice[] s = getSlice(in.getShapeRef(), axis, r);
+		log.append("Slicing image %s from %s", Arrays.toString(s), Arrays.toString(in.getShapeRef()));
 		return s[0] == null && s[1] == null ? in : in.getSliceView(s);
 	}
 

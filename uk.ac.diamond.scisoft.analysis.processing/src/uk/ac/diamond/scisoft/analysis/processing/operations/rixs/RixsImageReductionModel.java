@@ -71,8 +71,16 @@ public class RixsImageReductionModel extends RixsBaseModel {
 	@OperationModelField(label = "Normalize spectra by region size", description = "If true, then divide summed spectra by number of constituent spectra")
 	private boolean normalizeByRegionSize = true;
 
-	@OperationModelField(label = "Maximum number of frames to use", hint = "Any value < 1 means all frames are used", min = 0)
-	private int maxFrames = 0;
+	@OperationModelField(label = "Selection of frames to use", description = "A comma-separated list of sub-ranges.\n"
+			+ "Each sub-range can be a single integer or two integers (start/end) separated by\n"
+			+ "a minus. Integers can be negative to imply a count from the end of the range.\n"
+			+ "The end integer must be greater than the start integer. The end integer of\n"
+			+ "sub-ranges is inclusive. Also the last sub-range can omit the end integer.\n"
+			+ "Finally, each sub-range can be excluded with an exclamation mark prefix; if\n"
+			+ "any exclamation mark appears in a multi-range string then the default is that\n"
+			+ "the entire range is included and specified sub-ranges with \"!\" are excluded.",
+			hint = "E.g. 1 or 2,-1 or 0,2-4 or !3 or !1--2")
+	private String frameSelection = "";
 
 	@OperationModelField(label = "Slope override", description = "Overrides slope value from any processed fit file", hint = "Any non-zero value is used to override the slopes from fit files")
 	private double slopeOverride = 0;
@@ -212,14 +220,14 @@ public class RixsImageReductionModel extends RixsBaseModel {
 	}
 
 	/**
-	 * @return maximum number of frames to use (<1 means use all frames)
+	 * @return selection of frames as a multi-range string
 	 */
-	public int getMaxFrames() {
-		return maxFrames;
+	public String getFrameSelection() {
+		return frameSelection;
 	}
 
-	public void setMaxFrames(int maxFrames) {
-		firePropertyChange("setMaxFrames", this.maxFrames, this.maxFrames = maxFrames);
+	public void setFrameSelection(String frameSelection) {
+		firePropertyChange("setFrameSelection", this.frameSelection, this.frameSelection = frameSelection);
 	}
 
 	/**
@@ -232,6 +240,4 @@ public class RixsImageReductionModel extends RixsBaseModel {
 	public void setSlopeOverride(double slopeOverride) {
 		firePropertyChange("setSlopeOverride", this.slopeOverride, this.slopeOverride = slopeOverride);
 	}
-
-
 }

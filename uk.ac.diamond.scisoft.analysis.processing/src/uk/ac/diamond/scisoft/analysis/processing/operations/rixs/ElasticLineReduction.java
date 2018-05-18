@@ -163,6 +163,11 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	}
 
 	@Override
+	boolean skipFrame(int size, int frame) {
+		return false;
+	}
+
+	@Override
 	public OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		output = null;
 		OperationData od = super.process(input, monitor);
@@ -615,20 +620,27 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	}
 
 	protected void generateFitForDisplay(IFunction f, Dataset x, Dataset d, String name, boolean transpose) {
+		if (transpose) {
+			MetadataUtils.setAxes(x, d);
+			displayData.add(x);
+		} else {
+			MetadataUtils.setAxes(d, x);
+			displayData.add(d);
+		}
+		if (f == null) {
+			return;
+		}
+
 		Dataset fit = DatasetUtils.convertToDataset(f.calculateValues(x));
 		if (transpose) {
 			Dataset xf = x.clone();
 			xf.setName(name);
 			fit.setName(d.getName());
 			MetadataUtils.setAxes(xf, fit);
-			MetadataUtils.setAxes(x, d);
-			displayData.add(x);
 			displayData.add(xf);
 		} else {
 			fit.setName(name);
 			MetadataUtils.setAxes(fit, x);
-			MetadataUtils.setAxes(d, x);
-			displayData.add(d);
 			displayData.add(fit);
 		}
 	}

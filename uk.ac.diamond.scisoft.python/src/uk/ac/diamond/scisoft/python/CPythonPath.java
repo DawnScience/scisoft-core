@@ -20,13 +20,31 @@ import org.slf4j.LoggerFactory;
  * Class to hold methods to find files and directories to put on the PYTHONPATH for CPython
  */
 public class CPythonPath {
+
 	
 	private CPythonPath() {}
 	
 	private static Logger logger = LoggerFactory.getLogger(CPythonPath.class);
 
 	private static final String GIT_REPO_ENDING = ".git";
-	private static final String CPYTHON_BUNDLE = "uk.ac.diamond.cpython"; // this may need to be changed to something platform dependent
+	private static final String CPYTHON_BUNDLE;// = "uk.ac.diamond.cpython"; // this may need to be changed to something platform dependent
+	static {
+		String arch = System.getProperty("os.arch");
+		if (!arch.endsWith("64")) {
+			CPYTHON_BUNDLE = "uk.ac.diamond.cpython.unsupported_arch";
+		} else  {
+			String osName = System.getProperty("os.name").toLowerCase();
+			if (osName.contains("windows")) {
+				CPYTHON_BUNDLE = "uk.ac.diamond.cpython.win32.x86_64";
+			} else if (osName.contains("linux")) {
+				CPYTHON_BUNDLE = "uk.ac.diamond.cpython.linux.x86_64";
+			} else if (osName.contains("mac os")) {
+				CPYTHON_BUNDLE = "uk.ac.diamond.cpython.macosx.x86_64";
+			} else {
+				CPYTHON_BUNDLE = "uk.ac.diamond.cpython.unsupported_os.x86_64";
+			}
+		}
+	}
 	private static final String CPYTHON_BUNDLE_LOC = CPYTHON_BUNDLE + ".location";
 	private static final String CPYTHON_MAJOR_VERSION = "2";
 	private static final String CPYTHON_MINOR_VERSION = "7";
@@ -35,6 +53,7 @@ public class CPythonPath {
 	private static final String CPYTHON_DIR = "cpython" + CPYTHON_VERSION;
 	private static final String SCISOFTPY = "uk.ac.diamond.scisoft.python";
 
+	
 	/**
 	 * Provides location of plugin files; behaviour depends whether we're running in eclipse
 	 * @param isRunningInEclipse Boolean, true if running in eclipse

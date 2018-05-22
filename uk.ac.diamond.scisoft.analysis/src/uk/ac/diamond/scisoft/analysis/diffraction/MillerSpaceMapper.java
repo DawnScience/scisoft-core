@@ -1283,8 +1283,15 @@ public class MillerSpaceMapper {
 
 	private PositionIterator[] getPositionIterators(Tree tree) throws ScanFileHolderException {
 		int[] dshape = NexusTreeUtils.parseDetectorScanShape(detectorPath, tree);
+		if (dshape == null) {
+			throw new IllegalArgumentException("Could not parse detector scan shape from tree");
+		}
 //		System.err.println(Arrays.toString(dshape));
+
 		dshape = NexusTreeUtils.parseSampleScanShape(samplePath, tree, dshape);
+		if (dshape == null) {
+			throw new IllegalArgumentException("Could not parse sample scan shape from tree");
+		}
 //		System.err.println(Arrays.toString(dshape));
 
 		DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();

@@ -901,7 +901,7 @@ public class NexusTreeUtils {
 	 * Parse a group that is an NXdetector class from a tree for shape of detector scan parameters
 	 * @param path to group
 	 * @param tree
-	 * @return shape
+	 * @return shape or null if detector or any of its module not found
 	 */
 	public static int[] parseDetectorScanShape(String path, Tree tree) {
 		NodeLink link = tree.findNodeLink(path);
@@ -930,6 +930,9 @@ public class NexusTreeUtils {
 			}
 		}
 
+		if (shape == null) {
+			logger.debug("No {} in detector group {}", NexusConstants.DETECTORMODULE, link.getName());
+		}
 		return shape;
 	}
 
@@ -1109,6 +1112,13 @@ public class NexusTreeUtils {
 		return unit == null ? getAndCacheData(node) : getConvertedData(node, unit);
 	}
 
+	/**
+	 * Parse detector module for scan shape
+	 * @param path
+	 * @param tree
+	 * @param link
+	 * @return scan shape or null if not found
+	 */
 	public static int[] parseSubDetectorShape(String path, Tree tree, NodeLink link) {
 		if (!link.isDestinationGroup()) {
 			logger.warn("'{}' was not a group", link.getName());
@@ -1424,7 +1434,15 @@ public class NexusTreeUtils {
 		
 		return null;
 	}
-	
+
+	/**
+	 * Parse data node's shape and its transformation ancestors
+	 * @param path
+	 * @param tree
+	 * @param link
+	 * @param shape existing shape to check against
+	 * @return shape or null if not found
+	 */
 	public static int[] parseNodeShape(String path, Tree tree, NodeLink link, int[] shape) {
 		if (!link.isDestinationData()) {
 			logger.warn("'{}' was not a dataset", link.getName());
@@ -1484,7 +1502,8 @@ public class NexusTreeUtils {
 	 * Parse a group that is NXsample class from a tree for shape of sample scan parameters
 	 * @param path to group
 	 * @param tree
-	 * @return an array of detector modules
+	 * @param shape
+	 * @return shape or null if sample or its transformation ancestors not found
 	 */
 	public static int[] parseSampleScanShape(String path, Tree tree, int[] shape) {
 		NodeLink link = tree.findNodeLink(path);

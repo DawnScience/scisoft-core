@@ -451,7 +451,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		initializeFunctionParameters(null, peak, x, y);
 //		double res = Double.POSITIVE_INFINITY;
 		try {
-			fitFunction(null, opt, null, peak, x, y, null);
+			fitFunction(null, opt, "Exception for FWHM fit in optimizer", null, peak, x, y, null);
 //			System.err.println("Peak fit is " + peak + " with residual " + res);
 		} catch (Exception e) {
 			return Double.POSITIVE_INFINITY;
@@ -508,7 +508,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		double smax = 2*Math.abs(intercept.peakToPeak().doubleValue()) / Math.abs(energy.peakToPeak().doubleValue());
 		StraightLine iLine = new StraightLine(-smax, smax, -Double.MAX_VALUE, Double.MAX_VALUE);
 
-		double res = fitFunction(iLine, energy, intercept, null);
+		double res = fitFunction("Exception for intercept fit to find dispersion", iLine, energy, intercept, null);
 		generateFitForDisplay(iLine, energy, intercept, name, model.getEnergyDirection() == ENERGY_DIRECTION.SLOW);
 		return new double[] {res, iLine.getParameterValue(0)};
 	}
@@ -553,7 +553,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			initializeFunctionParameters(this, peak, x, spectrum);
 			double res = Double.POSITIVE_INFINITY;
 			try {
-				res = fitFunction(peak, x, spectrum, null);
+				res = fitFunction("Exception for elastic peak fit", peak, x, spectrum, null);
 				System.err.println("Peak " + i + " fit is " + peak + " with residual " + res);
 				if (Double.isFinite(res)) {
 					res = Double.POSITIVE_INFINITY;
@@ -563,7 +563,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 					Slice slice = new Slice(Math.max(0, (int) Math.floor(posn-width)), Math.min(minSize, (int) Math.floor(posn+width)));
 					IParameter p = peak.getParameter(3); // reset offset
 					p.setValue(-0.5*peak.val(posn));
-					res = fitFunction(peak, x.getSliceView(slice), spectrum.getSliceView(slice), null);
+					res = fitFunction("Exception for slice of elastic peak fit", peak, x.getSliceView(slice), spectrum.getSliceView(slice), null);
 					System.err.println("Refit is " + peak + " with residual " + res + " in " + slice);
 					if (!Double.isFinite(res)) {
 						log.append("Fitting elastic peak: refit FAILED");
@@ -700,7 +700,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		log.append("Initial peak:\n%s", peak);
 
 		// fit entire image so as to initialise per summed row fits
-		fitFunction(peak, x, v, null);
+		fitFunction("Exception for image profile fit", peak, x, v, null);
 
 //		generateFitForDisplay(peak, x, v);
 		double[] ip = peak.getParameterValues();
@@ -734,7 +734,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			}
 
 			try {
-				fitFunction(peak, xSlice, t, null);
+				fitFunction("Exception for summed rows fit", peak, xSlice, t, null);
 				col.setAbs(i, peak.getParameterValue(0));
 			} catch (Exception e) {
 				col.setAbs(i, Double.NaN);
@@ -768,7 +768,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		ApacheOptimizer opt = new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT);
 		do {
 			line.setParameterValues(0, ymax/2);
-			double cr = fitFunction(this, opt, log, line, x, y, mask);
+			double cr = fitFunction(this, opt, "Exception in straight line fit", log, line, x, y, mask);
 			if (cr > 1.5*residual) { // allow for variation in residual trends
 				throw new OperationException(this, "Discarding outliers made straight line fit worse");
 			}
@@ -794,11 +794,11 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		return mask;
 	}
 
-	protected double fitFunction(IFunction f, Dataset x, Dataset v, Dataset m) {
-		return fitFunction(this, new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT), log, f, x, v, m);
+	protected double fitFunction(String excMessage, IFunction f, Dataset x, Dataset v, Dataset m) {
+		return fitFunction(this, new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT), excMessage, log, f, x, v, m);
 	}
 
-	public static double fitFunction(IOperation<?, ?> op, ApacheOptimizer opt, OperationLog llog, IFunction f, Dataset x, Dataset v, Dataset m) {
+	public static double fitFunction(IOperation<?, ?> op, ApacheOptimizer opt, String excMessage, OperationLog llog, IFunction f, Dataset x, Dataset v, Dataset m) {
 		if (m != null) {
 			x = x.getByBoolean(m);
 			v = v.getByBoolean(m);
@@ -811,11 +811,11 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			residual = opt.calculateResidual();
 			errors = opt.guessParametersErrors();
 		} catch (Exception fittingError) {
-			throw new OperationException(op, "Exception performing fit in ElasticLineReduction()", fittingError);
+			throw new OperationException(op, excMessage, fittingError);
 		}
 
 		if (errors == null) {
-			throw new OperationException(op, "Exception performing fit in ElasticLineReduction()");
+			throw new OperationException(op, excMessage);
 		}
 		if (llog != null) {
 			llog.append("Fitted function: residual = %g\n%s", residual, f);

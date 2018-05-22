@@ -171,7 +171,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		p.setValue(cx);
 		SliceND slice = new SliceND(h.getShapeRef(), new Slice(b, e + 1, 1));
 
-		residual = fitFunction(pdf, x.getSliceView(slice), h.getSliceView(slice));
+		residual = fitFunction("Exception in PDF fit", pdf, x.getSliceView(slice), h.getSliceView(slice));
 		log.append("\nFitted PDF in %s: residual = %g\n%s", slice, residual, pdf);
 
 		fit = DatasetUtils.convertToDataset(pdf.calculateValues(x));
@@ -289,7 +289,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 		Offset so = new Offset(smooth);
 		so.setParameterValues(0);
-		double res = fitFunction(so, DatasetFactory.zeros(in.getShapeRef()), in);
+		double res = fitFunction("Exception in dark profile fit", so, DatasetFactory.zeros(in.getShapeRef()), in);
 		System.err.printf("Offset results: res=%g\n%s\n", res, so);
 		return Maths.add(smoothedDarkProfile, so.getParameterValue(0));
 	}
@@ -500,7 +500,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		SliceND slice = new SliceND(hd.getShapeRef(), new Slice(b, e + 1, 1));
 		System.err.println("Initial histo peak: " + dpdf);
 
-		double res = fitFunction(dpdf, dx.getSliceView(slice), hd.getSliceView(slice));
+		double res = fitFunction("Exception in bg histogram fit", dpdf, dx.getSliceView(slice), hd.getSliceView(slice));
 		log.append("\nFitted PDF in %s: residual = %g\n%s", slice, res, dpdf);
 		System.err.println("Fitted histo peak: " + dpdf + " in " + slice);
 		if (plot) {
@@ -518,8 +518,8 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 //		return new Slice[] {s0, s1};
 //	}
 
-	protected double fitFunction(IFunction f, Dataset x, Dataset v) {
-		return ElasticLineReduction.fitFunction(this, new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT), log, f, x, v, null);
+	protected double fitFunction(String excMessage, IFunction f, Dataset x, Dataset v) {
+		return ElasticLineReduction.fitFunction(this, new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT), excMessage, log, f, x, v, null);
 	}
 
 	@Override

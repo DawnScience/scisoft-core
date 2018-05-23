@@ -96,11 +96,13 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 	}
 
 	@Override
-	void updateFromModel() {
+	void updateFromModel(boolean throwEx) {
 		try {
 			selection = MultiRange.createMultiRange(model.getFrameSelection());
 		} catch (IllegalArgumentException e) {
-			throw new OperationException(this, "Frame selection invalid", e);
+			if (throwEx) {
+				throw new OperationException(this, "Frame selection invalid", e);
+			}
 		}
 
 		Arrays.fill(energyDispersion, Double.NaN);
@@ -109,13 +111,15 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		if (Double.isNaN(energyDispersion[0])) {
 			if (file == null) {
 				file = model.getFitFile();
-				if (file == null) {
+				if (file == null && throwEx) {
 					throw new OperationException(this, "Either energy dispersion calibration or elastic fit file must be defined");
 				}
 			}
 			// energy dispersion in terms of eV/pixel
-			double[] tmp = parseForCalibration(file);
-			System.arraycopy(tmp, 0, energyDispersion, 0, Math.min(2, tmp.length));
+			if (file != null) {
+				double[] tmp = parseForCalibration(file);
+				System.arraycopy(tmp, 0, energyDispersion, 0, Math.min(2, tmp.length));
+			}
 		}
 		if (energyDispersion[1] == 0 || Double.isNaN(energyDispersion[1])) { // assume first entry is fine
 			energyDispersion[1] = energyDispersion[0];

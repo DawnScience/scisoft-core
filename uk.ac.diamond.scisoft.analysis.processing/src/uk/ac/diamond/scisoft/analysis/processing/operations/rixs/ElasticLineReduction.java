@@ -100,7 +100,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	}
 
 	@Override
-	void updateFromModel() {
+	void updateFromModel(boolean throwEx) {
 		updateROICount();
 		for (int r = 0; r < roiMax; r++) {
 			if (lines[r] == null) {

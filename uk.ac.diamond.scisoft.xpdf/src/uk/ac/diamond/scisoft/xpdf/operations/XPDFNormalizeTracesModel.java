@@ -11,7 +11,7 @@ public class XPDFNormalizeTracesModel extends AbstractOperationModel {
 	@OperationModelField(hint="Normalize the beam data, if unnormalized",label = "Normalise empty beam trace?" )
 	private boolean normalizeBeam = true;
 	@OperationModelField(hint="Normalize counts by pixel solid angle", label = "Normalise by solid angle?")
-	private boolean normalizeByOmega = true;
+	private boolean normalizeByOmega = false;
 
 	public boolean isNormalizeSample() {
 		return normalizeSample;

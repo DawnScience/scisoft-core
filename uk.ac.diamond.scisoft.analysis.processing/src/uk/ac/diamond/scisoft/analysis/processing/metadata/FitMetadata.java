@@ -10,12 +10,17 @@
 package uk.ac.diamond.scisoft.analysis.processing.metadata;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
+import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.january.metadata.MetadataType;
 
 /**
  * Used to store fit information
  */
 public interface FitMetadata extends MetadataType {
+	/**
+	 * @return operation class that performed the fit
+	 */
+	Class<? extends IOperation<?, ?>> getOperationClass();
 
 	IFunction getFitFunction();
 }

@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.metadata;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
+import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 
 public class FitMetadataImpl implements FitMetadata {
 
@@ -17,14 +18,23 @@ public class FitMetadataImpl implements FitMetadata {
 
 	private IFunction fitFunction;
 
-	public FitMetadataImpl() {
+	private Class<? extends IOperation<?, ?>> opClass;
+
+	public FitMetadataImpl(Class<? extends IOperation<?, ?>> opClass) {
+		this.opClass = opClass;
 	}
 
 	public FitMetadataImpl(FitMetadata fm) {
+		opClass = fm.getOperationClass();
 		try {
 			fitFunction = fm.getFitFunction().copy();
 		} catch (Exception e) {
 		}
+	}
+
+	@Override
+	public Class<? extends IOperation<?, ?>> getOperationClass() {
+		return opClass;
 	}
 
 	@Override
@@ -34,7 +44,6 @@ public class FitMetadataImpl implements FitMetadata {
 
 	@Override
 	public IFunction getFitFunction() {
-		// TODO Auto-generated method stub
 		return fitFunction;
 	}
 

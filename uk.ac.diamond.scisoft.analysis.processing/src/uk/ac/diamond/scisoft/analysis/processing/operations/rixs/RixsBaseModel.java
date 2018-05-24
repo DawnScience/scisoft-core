@@ -19,7 +19,7 @@ import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
  */
 public class RixsBaseModel extends AbstractOperationModel {
 	@OperationModelField(label = "Rectangle A", description = "Region to search for elastic peak")
-	private IRectangularROI roiA = new RectangularROI(0, 3, 2048, 1600, 0);
+	private IRectangularROI roiA = new RectangularROI(0, 1, 2048, 1600, 0);
 
 	@OperationModelField(label = "Rectangle B", description = "Region to search for elastic peak")
 	private IRectangularROI roiB = null;

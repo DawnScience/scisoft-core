@@ -11,7 +11,6 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.rixs;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
@@ -25,6 +24,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.BooleanIterator;
 import org.eclipse.january.dataset.Comparisons;
@@ -51,6 +51,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
+import uk.ac.diamond.scisoft.analysis.processing.metadata.FitMetadata;
 import uk.ac.diamond.scisoft.analysis.processing.operations.MetadataUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractFittedBackgroundOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsBaseModel.ENERGY_DIRECTION;
@@ -666,12 +667,42 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			c.setItem((int) max.getElementLongAbs(it.index), i++);
 		}
 
-		log.append("Cols stats: mean = %g; outliers at %s", ((Number) c.mean()).doubleValue(), Arrays.toString(Stats.outlierValues(c, 5, 95, peaks/10)));
-		Histogram histo = new Histogram(64);
-		log.append(histo.value(c).get(0).toString(true));
-		log.append(histo.value(c).get(1).toString(true));
+		if (canPruneMax(image)) {
+			Dataset v = DatasetFactory.zeros(image.getClass(), peaks);
+			for (int j = 0; j < peaks; j++) {
+				v.setObjectAbs(j, image.getObject(j, c.get(j)));
+			}
+
+			int lo = 65;
+			int hi = model.isUseCutoff() ? 100 : 98; // to eliminate cosmic ray zingers
+			double[] qs = Stats.quantile(v, lo/100., hi/100.);
+			log.append("Using value cutoffs at %d%% (%g) and at %d%% (%g)", lo, qs[0], hi, qs[1]);
+			mask = Comparisons.withinRange(v, qs[0], qs[1]);
+
+			r = (IntegerDataset) r.getByBoolean(mask);
+			c = (IntegerDataset) c.getByBoolean(mask);
+			log.append("Using %d of %d points", r.getSize(), peaks);
+		}
+
+//		log.append("Cols stats: mean = %g; outliers at %s", ((Number) c.mean()).doubleValue(), Arrays.toString(Stats.outlierValues(c, 5, 95, peaks/10)));
 
 		return new Dataset[] {r, c};
+	}
+
+	private boolean canPruneMax(Dataset image) {
+		try {
+			List<FitMetadata> fms = image.getMetadata(FitMetadata.class);
+			if (fms != null) {
+				for (FitMetadata fm : fms) {
+					if (fm.getOperationClass().equals(SubtractFittedBackgroundOperation.class)) {
+						return false;
+					}
+				}
+			}
+		} catch (MetadataException e) {
+		}
+
+		return true;
 	}
 
 	private int[] stripSizes = new int[] {-1, -1};

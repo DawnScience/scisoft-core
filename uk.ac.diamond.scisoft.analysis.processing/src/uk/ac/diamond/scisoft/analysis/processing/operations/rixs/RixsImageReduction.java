@@ -57,6 +57,7 @@ import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.operations.MetadataUtils;
+import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionModel.ENERGY_OFFSET;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionModel.CORRELATE_ORDER;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionModel.CORRELATE_PHOTON;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionModel.FIT_FILE_OPTION;
@@ -262,9 +263,11 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 					int r = Math.min(MAX_ROIS, fg.getNumberOfGroupNodes() / 3); // three datasets per line
 					double[] p = new double[2];
 					for (int i = 0; i < r; i++) {
-						String l = "line_" + i;
-						p[0] = NexusTreeUtils.parseDoubleArray(fg.getGroupNode(l + "_m").getDataNode("data"))[0];
-						p[1] = NexusTreeUtils.parseDoubleArray(fg.getGroupNode(l + "_c").getDataNode("data"))[0];
+						String l;
+						l = String.format(ElasticLineReduction.LINE_GRADIENT_FORMAT, i);
+						p[0] = NexusTreeUtils.parseDoubleArray(fg.getGroupNode(l).getDataNode("data"))[0];
+						l = String.format(ElasticLineReduction.LINE_INTERCEPT_FORMAT, i);
+						p[1] = NexusTreeUtils.parseDoubleArray(fg.getGroupNode(l).getDataNode("data"))[0];
 						lines[i] = new StraightLine(p);
 					}
 					if (r == 1 && Double.isNaN(lines[0].getParameterValue(0))) {
@@ -754,5 +757,73 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		reg.setWindowFunction(0.25);
 		reg.setUseFirstAsAnchor(first);
 		return reg;
+	}
+
+	/**
+	 * @param r
+	 * @param in
+	 * @param slope override value
+	 * @param clip if true, clip columns where rows contribute from outside image 
+	 * @return elastic line position and spectrum datasets
+	 */
+	public Dataset[] makeSpectrum(int r, Dataset in, double slope, boolean clip) {
+		// shift and accumulate spectra
+		int rows = in.getShapeRef()[0];
+		Dataset y = DatasetFactory.createRange(rows);
+		y.iadd(offset[0]);
+		StraightLine line = getStraightLine(r);
+		Dataset elastic;
+		if (slope == 0) {
+			slope = line.getParameterValue(0);
+			elastic = line.calculateValues(y); // absolute position of elastic line to use a zero point
+		} else {
+			elastic = DatasetFactory.createRange(rows);
+			elastic.imultiply(slope);
+			elastic.iadd(line.getParameterValue(1));
+		}
+		if (model.getEnergyOffsetOption() == ENERGY_OFFSET.MANUAL_OVERRIDE) {
+			double offset = r == 0 ? model.getEnergyOffsetA() : model.getEnergyOffsetB();
+			if (Double.isFinite(offset)) {
+				elastic.iadd(offset - line.getParameterValue(1));
+			}
+		}
+	
+		Dataset spectrum = makeSpectrum(in, slope, clip);
+		if (Double.isFinite(slope)) {
+			if (clip && slope < 0) { // adjust for shift by clipping
+				elastic.iadd(spectrum.getSize() - in.getShapeRef()[1]);
+			}
+		}
+	
+		if (model.getEnergyOffsetOption() == ENERGY_OFFSET.TURNING_POINT) {
+			int offset = findTurningPoint(false, spectrum);
+			elastic.isubtract(offset);
+		}
+		return new Dataset[] {elastic, spectrum};
+	}
+
+	private int findTurningPoint(boolean fromFirst, Dataset y) {
+		int n = y.getSize();
+		Dataset diff = Maths.derivative(DatasetFactory.createRange(n), y, 3);
+		List<Double> cs = DatasetUtils.crossings(diff, 0);
+		if (cs.size() == 0) {
+			return 0;
+		}
+		return (int) (fromFirst ? Math.floor(cs.get(0)) : Math.ceil(cs.get(cs.size() - 1)));
+	}
+
+	/**
+	 * @param r
+	 * @return offset for zero energy loss along energy axis
+	 */
+	private double getZeroEnergyOffset(int r) {
+		double offset = Double.NaN;
+		if (model.getEnergyOffsetOption() == ENERGY_OFFSET.MANUAL_OVERRIDE) {
+			offset = r == 0 ? model.getEnergyOffsetA() : model.getEnergyOffsetB();
+		}
+		if (!Double.isFinite(offset)) {
+			offset = getStraightLine(r).getParameterValue(1); // elastic line intercept
+		}
+		return offset;
 	}
 }

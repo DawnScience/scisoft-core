@@ -46,7 +46,6 @@ import org.eclipse.january.dataset.SliceND;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
-import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsBaseModel.ENERGY_OFFSET;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 /**
@@ -200,75 +199,15 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		return lines[r >= lines.length ? 0 : r]; // in case number of ROIs have increased
 	}
 
-	/**
-	 * @param r
-	 * @return offset for zero energy loss along energy axis
-	 */
-	protected double getZeroEnergyOffset(int r) {
-		double offset = Double.NaN;
-		if (model.getEnergyOffsetOption() == ENERGY_OFFSET.MANUAL_OVERRIDE) {
-			offset = r == 0 ? model.getEnergyOffsetA() : model.getEnergyOffsetB();
-		}
-		if (!Double.isFinite(offset)) {
-			offset = getStraightLine(r).getParameterValue(1); // elastic line intercept
-		}
-		return offset;
-	}
-
-	/**
-	 * @param r
-	 * @param in
-	 * @param slope override value
-	 * @param clip if true, clip columns where rows contribute from outside image 
-	 * @return elastic line position and spectrum datasets
-	 */
-	public Dataset[] makeSpectrum(int r, Dataset in, double slope, boolean clip) {
-		// shift and accumulate spectra
-		int rows = in.getShapeRef()[0];
-		Dataset y = DatasetFactory.createRange(rows);
-		y.iadd(offset[0]);
-		StraightLine line = getStraightLine(r);
-		Dataset elastic;
-		if (slope == 0) {
-			slope = line.getParameterValue(0);
-			elastic = line.calculateValues(y); // absolute position of elastic line to use a zero point
-		} else {
-			elastic = DatasetFactory.createRange(rows);
-			elastic.imultiply(slope);
-			elastic.iadd(line.getParameterValue(1));
-		}
-		if (model.getEnergyOffsetOption() == ENERGY_OFFSET.MANUAL_OVERRIDE) {
-			double offset = r == 0 ? model.getEnergyOffsetA() : model.getEnergyOffsetB();
-			if (Double.isFinite(offset)) {
-				elastic.iadd(offset - line.getParameterValue(1));
-			}
-		}
-
+	protected Dataset makeSpectrum(Dataset in, double slope, boolean clip) {
 		Dataset spectrum;
 		if (Double.isFinite(slope)) {
 			spectrum = sumImageAlongSlope(in, slope, clip);
-			if (clip && slope < 0) { // adjust for shift by clipping
-				elastic.iadd(spectrum.getSize() - in.getShapeRef()[1]);
-			}
 		} else {
+			int rows = in.getShapeRef()[0];
 			spectrum = DatasetFactory.zeros(rows).fill(Double.NaN);
 		}
-
-		if (model.getEnergyOffsetOption() == ENERGY_OFFSET.TURNING_POINT) {
-			int offset = findTurningPoint(false, spectrum);
-			elastic.isubtract(offset);
-		}
-		return new Dataset[] {elastic, spectrum};
-	}
-
-	private int findTurningPoint(boolean fromFirst, Dataset y) {
-		int n = y.getSize();
-		Dataset diff = Maths.derivative(DatasetFactory.createRange(n), y, 3);
-		List<Double> cs = DatasetUtils.crossings(diff, 0);
-		if (cs.size() == 0) {
-			return 0;
-		}
-		return (int) (fromFirst ? Math.floor(cs.get(0)) : Math.ceil(cs.get(cs.size() - 1)));
+		return spectrum;
 	}
 
 	/**

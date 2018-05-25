@@ -466,8 +466,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			goodIntercept[i].add(c);
 
 			if (useSpectrum && in != null) {
-				Dataset[] result = makeSpectrum(i, in, 0, model.isClipSpectra()); // slope override value of 0 to trigger re-read of slope value
-				Dataset spectrum = result[1];
+				Dataset spectrum = makeSpectrum(in, getStraightLine(i).getParameterValue(0), model.isClipSpectra());
 				spectrum.setName(ES_PREFIX + i);
 //				auxData.add(spectrum); // put in summary data instead
 				goodSpectra[i].add(spectrum);
@@ -478,10 +477,14 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			}
 		}
 
-		auxData.add(ProcessingUtils.createNamedDataset(m, "line_%d_m", i).reshape(1));
-		auxData.add(ProcessingUtils.createNamedDataset(c, "line_%d_c", i));
-		auxData.add(ProcessingUtils.createNamedDataset(r, "line_%d_residual", i));
+		auxData.add(ProcessingUtils.createNamedDataset(m, LINE_GRADIENT_FORMAT, i).reshape(1));
+		auxData.add(ProcessingUtils.createNamedDataset(c, LINE_INTERCEPT_FORMAT, i));
+		auxData.add(ProcessingUtils.createNamedDataset(r, LINE_RESIDUAL_FORMAT, i));
 	}
+
+	public final static String LINE_INTERCEPT_FORMAT = "line_%d_c";
+	public final static String LINE_GRADIENT_FORMAT = "line_%d_m";
+	public final static String LINE_RESIDUAL_FORMAT = "line_%d_residual";
 
 	/**
 	 * Fit to intercepts of elastic lines

@@ -47,6 +47,8 @@ public class OperatorTest {
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2, 4.2, -7.5}, op.getParameterValues(), ABS_TOL);
 		Assert.assertEquals(-23. - 10. - 1.2 - 5.2 - 4.2 - 7.5, op.val(-1), ABS_TOL);
 
+		FunctionTestUtils.checkValues(op);
+
 		Dataset xd = DatasetFactory.createFromObject(new double[] {-1, 0, 2});
 		DoubleDataset dx;
 
@@ -81,6 +83,8 @@ public class OperatorTest {
 		double rd = data.residual(current, weight, false);
 		double rf = op.residual(true, data, weight, coords);
 		Assert.assertEquals(rd, rf, 1e-9);
+
+		FunctionTestUtils.checkPartialDerivatives(op);
 	}
 
 	@Test
@@ -100,6 +104,8 @@ public class OperatorTest {
 
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2, 4.2, -7.5}, op.getParameterValues(), ABS_TOL);
 		Assert.assertEquals((-23. - 10. - 1.2 - 5.2) * (- 4.2 - 7.5), op.val(-1), ABS_TOL);
+
+		FunctionTestUtils.checkValues(op);
 
 		Dataset xd = DatasetFactory.createFromObject(new double[] {-1, 0, 2});
 		DoubleDataset dx;
@@ -127,6 +133,8 @@ public class OperatorTest {
 		dx = op.calculatePartialDerivativeValues(op.getParameter(5), xd);
 		Assert.assertArrayEquals(new double[] {(-23. - 10. - 1.2 - 5.2), -5.2,
 				(23.*8 - 10.*4 + 1.2*2 - 5.2)}, dx.getData(), ABS_TOL);
+
+		FunctionTestUtils.checkPartialDerivatives(op);
 	}
 
 	@Test
@@ -146,6 +154,8 @@ public class OperatorTest {
 
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2, -4.2, 7.5}, op.getParameterValues(), ABS_TOL);
 		Assert.assertEquals(-23. - 10. - 1.2 - 5.2 - 4.2 - 7.5, op.val(-1), ABS_TOL);
+
+		FunctionTestUtils.checkValues(op);
 
 		Dataset xd = DatasetFactory.createFromObject(new double[] {-1, 0, 2});
 		DoubleDataset dx;
@@ -171,6 +181,8 @@ public class OperatorTest {
 
 		dx = op.calculatePartialDerivativeValues(op.getParameter(5), xd);
 		Assert.assertArrayEquals(new double[] {-1, -1, -1}, dx.getData(), ABS_TOL);
+
+		FunctionTestUtils.checkPartialDerivatives(op);
 	}
 
 	@Test
@@ -190,6 +202,8 @@ public class OperatorTest {
 
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2, 4.2, -7.5}, op.getParameterValues(), ABS_TOL);
 		Assert.assertEquals((-23. - 10. - 1.2 - 5.2) / (- 4.2 - 7.5), op.val(-1), ABS_TOL);
+
+		FunctionTestUtils.checkValues(op);
 
 		Dataset xd = DatasetFactory.createFromObject(new double[] {-1, 0, 2});
 		DoubleDataset dx;
@@ -217,6 +231,8 @@ public class OperatorTest {
 		dx = op.calculatePartialDerivativeValues(op.getParameter(5), xd);
 		Assert.assertArrayEquals(new double[] {(-23. - 10. - 1.2 - 5.2) * -1 / ((-4.2 - 7.5)*(-4.2 - 7.5)),
 				-5.2 * -1 / (7.5 * 7.5), (23.*8 - 10.*4 + 1.2*2 - 5.2) * -1 / ((4.2*2 - 7.5)*(4.2*2 - 7.5)) }, dx.getData(), ABS_TOL);
+
+		FunctionTestUtils.checkPartialDerivatives(op);
 	}
 
 	@Test

@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import org.eclipse.january.asserts.TestUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,9 +26,11 @@ public class FanoGaussianTest {
 	@Test
 	public void testFunction() {
 		AFunction f = new FanoGaussian();
-		Assert.assertEquals(5, f.getNoOfParameters());
 		f.setParameterValues(23., 5., 4., 1.2, 6.);
+		Assert.assertEquals(5, f.getNoOfParameters());
 		Assert.assertArrayEquals(new double[] {23., 5., 4., 1.2, 6.}, f.getParameterValues(), ABS_TOL);
+
+		FunctionTestUtils.checkValues(f);
 
 		double fr = 2 * Math.sqrt(Math.log(2)) / 1.2;
 		double xi = fr*5./2.;
@@ -35,7 +38,7 @@ public class FanoGaussianTest {
 		Assert.assertEquals(hr, f.val(23.), ABS_TOL);
 
 		// check area
-		Dataset x = DatasetFactory.createLinearSpace(-60+23, 60+23, 401, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(DoubleDataset.class, -60+23, 60+23, 401);
 		Dataset v = f.calculateValues(x);
 		double s = ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1));
 		Assert.assertEquals(4, s, 1.1e-1);
@@ -43,7 +46,7 @@ public class FanoGaussianTest {
 
 	@Test
 	public void testExtremes() {
-		Dataset x = DatasetFactory.createLinearSpace(-20, 20, 401, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(DoubleDataset.class, -20, 20, 401);
 
 		FanoGaussian fg = new FanoGaussian();
 		fg.setParameterValues(0., 5., 4., 1.2, 6000);
@@ -54,5 +57,13 @@ public class FanoGaussianTest {
 		Dataset vv = v.calculateValues(x);
 
 		TestUtils.assertDatasetEquals(vv, pv, 1e-2, 1e-7);
+	}
+
+	@Test
+	public void testFunctionDerivative() {
+		AFunction f = new FanoGaussian();
+		f.setParameterValues(23., 5., 4., 1.2, 6.);
+
+		FunctionTestUtils.checkPartialDerivatives(f);
 	}
 }

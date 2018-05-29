@@ -23,10 +23,12 @@ public class PolynomialTest {
 	@Test
 	public void testFunction() {
 		AFunction f = new Polynomial(3);
-		Assert.assertEquals(4, f.getNoOfParameters());
 		f.setParameterValues(23., -10., 1.2, -5.2);
+		Assert.assertEquals(4, f.getNoOfParameters());
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2}, f.getParameterValues(), ABS_TOL);
 		Assert.assertEquals(-23. - 10. - 1.2 - 5.2, f.val(-1), ABS_TOL);
+
+		FunctionTestUtils.checkValues(f);
 
 		Dataset xd = DatasetFactory.createFromObject(new double[] {-1, 0, 2});
 		DoubleDataset dx;
@@ -146,5 +148,13 @@ public class PolynomialTest {
 			Assert.assertEquals("Real " + i, e.getReal(), a.getReal(), err);
 			Assert.assertEquals("Imag " + i, e.getImaginary(), a.getImaginary(), err);
 		}
+	}
+
+	@Test
+	public void testFunctionDerivative() {
+		AFunction f = new Polynomial(3);
+		f.setParameterValues(23., -10., 1.2, -5.2);
+
+		FunctionTestUtils.checkPartialDerivatives(f);
 	}
 }

@@ -22,9 +22,11 @@ public class PoissonTest {
 	@Test
 	public void testFunction() {
 		AFunction f = new Poisson();
-		Assert.assertEquals(2, f.getNoOfParameters());
 		f.setParameterValues(23., 1.2);
+		Assert.assertEquals(2, f.getNoOfParameters());
 		Assert.assertArrayEquals(new double[] {23., 1.2}, f.getParameterValues(), ABS_TOL);
+
+		FunctionTestUtils.checkValues(f);
 
 		double lh = Math.log(1.2)  + 23. * Math.log(23) - 23 - Gamma.logGamma(23. + 1);
 		Assert.assertEquals(lh, Math.log(f.val(23.)), ABS_TOL);
@@ -32,5 +34,13 @@ public class PoissonTest {
 		Dataset x = DatasetFactory.createRange(46);
 		Dataset v = f.calculateValues(x);
 		Assert.assertEquals(1.2, ((Number) v.sum()).doubleValue(), ABS_TOL*1e3);
+	}
+
+	@Test
+	public void testFunctionDerivative() {
+		AFunction f = new Poisson();
+		f.setParameterValues(23., 1.2);
+
+		FunctionTestUtils.checkPartialDerivatives(f);
 	}
 }

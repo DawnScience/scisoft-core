@@ -22,9 +22,11 @@ public class FanoTest {
 	@Test
 	public void testFunction() {
 		AFunction f = new Fano();
-		Assert.assertEquals(4, f.getNoOfParameters());
 		f.setParameterValues(23., 5., 1.2, 4);
+		Assert.assertEquals(4, f.getNoOfParameters());
 		Assert.assertArrayEquals(new double[] {23., 5., 1.2, 4}, f.getParameterValues(), ABS_TOL);
+
+		FunctionTestUtils.checkValues(f);
 
 		double hr = 1.2*4*4.;
 		Assert.assertEquals(hr, f.val(23.), ABS_TOL);
@@ -39,5 +41,13 @@ public class FanoTest {
 		DoubleDataset dx;
 		dx = f.calculateValues(xd);
 		Assert.assertArrayEquals(new double[] {ha, hr, hb}, dx.getData(), ABS_TOL);
+	}
+
+	@Test
+	public void testFunctionDerivative() {
+		AFunction f = new Fano();
+		f.setParameterValues(23., 5., 1.2, 4);
+
+		FunctionTestUtils.checkPartialDerivatives(f);
 	}
 }

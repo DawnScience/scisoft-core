@@ -123,8 +123,9 @@ abstract public class AOperator extends AFunction implements IOperator {
 		int nf = getNoOfFunctions();
 		for (int i = 0; i < nf; i++) {
 			IFunction f = getFunction(i);
-			if (f != null)
+			if (f != null) {
 				f.setDirty(isDirty);
+			}
 		}
 	}
 
@@ -137,8 +138,9 @@ abstract public class AOperator extends AFunction implements IOperator {
 		for (int i = 0; i < nf; i++) {
 			IFunction f = getFunction(i);
 			if (f != null) {
-				if (nf > 1)
+				if (nf > 1) {
 					out.append(String.format("Function %d - \n", i));
+				}
 				out.append(f.toString());
 			}
 		}
@@ -165,36 +167,45 @@ abstract public class AOperator extends AFunction implements IOperator {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 
 		AOperator other = (AOperator) obj;
-		if (dirty != other.dirty)
+		if (dirty != other.dirty) {
 			return false;
+		}
 
 		if (name == null) {
-			if (other.name != null)
+			if (other.name != null) {
 				return false;
-		} else if (!name.equals(other.name))
+			}
+		} else if (!name.equals(other.name)) {
 			return false;
+		}
 
-		if (!params.equals(other.params))
+		if (!params.equals(other.params)) {
 			return false;
+		}
 
 		int nf = getNoOfFunctions();
-		if (nf != other.getNoOfFunctions())
+		if (nf != other.getNoOfFunctions()) {
 			return false;
+		}
 
 		for (int i = 0; i < nf; i++) {
 			IFunction fa = getFunction(i);
 			IFunction fo = other.getFunction(i);
 			if (fa == null) {
-				if (fo != null)
+				if (fo != null) {
 					return false;
+				}
 			} else if (!fa.equals(fo)) {
 				return false;
 			}
@@ -204,13 +215,13 @@ abstract public class AOperator extends AFunction implements IOperator {
 
 	@Override
 	public boolean isValid() {
-		if (!super.isValid())
+		if (!super.isValid()) {
 			return false;
+		}
 		for (IFunction function : getFunctions()) {
-			if (function == null)
+			if (function == null || !function.isValid()) {
 				return false;
-			if (!function.isValid())
-				return false;
+			}
 		}
 		return true;
 	}

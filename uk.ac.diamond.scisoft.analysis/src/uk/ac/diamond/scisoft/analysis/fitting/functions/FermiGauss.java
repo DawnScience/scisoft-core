@@ -114,14 +114,30 @@ public class FermiGauss extends AFunction implements Serializable {
 		setDirty(false);
 	}
 
+	private final static int HALF_LENGTH = 4;
+	private final static double FACTOR = 1./4096;
+
 	@Override
 	public double val(double... values)  {
 		if (isDirty()) {
 			calcCachedParameters();
 		}
 
-		Dataset fermiDS = getFermiDS(DatasetFactory.createFromObject(values));
-		return fermiDS.getDouble(0);
+		if (values.length != 1) {
+			throw new IllegalArgumentException("A single value is expected and required");
+		}
+
+		double magnitude = Math.abs(values[0]);
+		if (magnitude == 0) {
+			magnitude = fwhm == 0 ? 1 : fwhm;
+		}
+		magnitude *= FACTOR;
+		DoubleDataset coords = DatasetFactory.createRange(DoubleDataset.class, -HALF_LENGTH, HALF_LENGTH, 1);
+		coords.imultiply(magnitude);
+		coords.iadd(values[0]);
+
+		Dataset fermiDS = calculateValues(coords);
+		return fermiDS.getDouble(HALF_LENGTH);
 	}
 
 	@Override

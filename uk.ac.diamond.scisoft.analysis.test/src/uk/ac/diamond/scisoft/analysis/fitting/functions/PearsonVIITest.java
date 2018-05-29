@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import org.eclipse.january.asserts.TestUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,9 +24,11 @@ public class PearsonVIITest {
 	@Test
 	public void testFunction() {
 		APeak f = new PearsonVII();
-		Assert.assertEquals(4, f.getNoOfParameters());
 		f.setParameterValues(23., 2., 1.2, 2);
+		Assert.assertEquals(4, f.getNoOfParameters());
 		Assert.assertArrayEquals(new double[] {23., 2., 1.2, 2}, f.getParameterValues(), ABS_TOL);
+
+		FunctionTestUtils.checkValues(f);
 
 		double h = 1.2 * Math.sqrt(Math.sqrt(2) - 1) / (Math.PI / 2);
 		Assert.assertEquals(h, f.val(23.), ABS_TOL);
@@ -34,14 +37,14 @@ public class PearsonVIITest {
 		Assert.assertEquals(0.5 * h, f.val(23. - 1), ABS_TOL);
 		Assert.assertEquals(0.5 * h, f.val(23. + 1), ABS_TOL);
 
-		Dataset x = DatasetFactory.createLinearSpace(-50+23, 50+23, 200, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(DoubleDataset.class, -50+23, 50+23, 200);
 		Dataset v = f.calculateValues(x);
 		Assert.assertEquals(1.2, ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1)), 1e-4);
 	}
 
 	@Test
 	public void testExtremes() {
-		Dataset x = DatasetFactory.createLinearSpace(-20+23, 20+23, 401, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(DoubleDataset.class, -20+23, 20+23, 401);
 
 		PearsonVII pv = new PearsonVII();
 		pv.getParameter(3).setUpperLimit(Double.MAX_VALUE);
@@ -62,5 +65,13 @@ public class PearsonVIITest {
 		gf.setParameterValues(23., width, 1.2);
 		Dataset g = gf.calculateValues(x);
 		TestUtils.assertDatasetEquals(g, pg, REL_TOL, 5*ABS_TOL);
+	}
+
+	@Test
+	public void testFunctionDerivative() {
+		APeak f = new PearsonVII();
+		f.setParameterValues(23., 2., 1.2, 2);
+
+		FunctionTestUtils.checkPartialDerivatives(f);
 	}
 }

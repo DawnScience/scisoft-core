@@ -22,10 +22,12 @@ public class CubicTest {
 	@Test
 	public void testFunction() {
 		AFunction f = new Cubic();
-		Assert.assertEquals(4, f.getNoOfParameters());
 		f.setParameterValues(23., -10., 1.2, -5.2);
+		Assert.assertEquals(4, f.getNoOfParameters());
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2}, f.getParameterValues(), ABS_TOL);
 		Assert.assertEquals(-23. - 10. - 1.2 - 5.2, f.val(-1), ABS_TOL);
+
+		FunctionTestUtils.checkValues(f);
 
 		Dataset xd = DatasetFactory.createFromObject(new double[] {-1, 0, 2});
 		DoubleDataset dx;
@@ -43,5 +45,13 @@ public class CubicTest {
 
 		dx = f.calculatePartialDerivativeValues(f.getParameter(3), xd);
 		Assert.assertArrayEquals(new double[] {1, 1, 1}, dx.getData(), ABS_TOL);
+	}
+
+	@Test
+	public void testFunctionDerivative() {
+		AFunction f = new Cubic();
+		f.setParameterValues(23., -10., 1.2, -5.2);
+
+		FunctionTestUtils.checkPartialDerivatives(f);
 	}
 }

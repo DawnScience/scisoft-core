@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IOperator;
@@ -139,11 +140,13 @@ public abstract class AFunction implements IFunction, Serializable {
 	 * @return index of parameter or -1 if parameter is not in function
 	 */
 	public static int indexOfParameter(IFunction function, IParameter parameter) {
-		if (function == null || parameter == null)
+		if (function == null || parameter == null) {
 			return -1;
+		}
 
-		if (function instanceof AFunction)
+		if (function instanceof AFunction) {
 			return ((AFunction) function).indexOfParameter(parameter);
+		}
 
 		for (int j = 0, jmax = function.getNoOfParameters(); j < jmax; j++) {
 			if (parameter == function.getParameter(j)) {
@@ -222,11 +225,12 @@ public abstract class AFunction implements IFunction, Serializable {
 
 	@Override
 	public void setParameter(int index, IParameter parameter) {
-		if (indexOfParameter(parameter) == index)
+		if (indexOfParameter(parameter) == index) {
 			return;
+		}
 
 		parameters[index] = parameter;
-		dirty = true;
+		setDirty(true);
 	}
 
 	@Override
@@ -236,7 +240,7 @@ public abstract class AFunction implements IFunction, Serializable {
 		for (int j = 0; j < nparams; j++) {
 			parameters[j].setValue(params[j]);
 		}
-		dirty = true;
+		setDirty(true);
 	}
 
 	protected void setParameters(IParameter... params) {
@@ -249,7 +253,7 @@ public abstract class AFunction implements IFunction, Serializable {
 			np.setLimits(op.getLowerLimit(), op.getUpperLimit());
 			np.setFixed(op.isFixed());
 		}
-		dirty = true;
+		setDirty(true);
 	}
 
 	@Override
@@ -272,8 +276,9 @@ public abstract class AFunction implements IFunction, Serializable {
 	 */
 	@Override
 	public double partialDeriv(IParameter parameter, double... values) {
-		if (indexOfParameter(parameter) < 0)
+		if (indexOfParameter(parameter) < 0) {
 			return 0;
+		}
 
 		return calcNumericalDerivative(A_TOLERANCE, R_TOLERANCE, parameter, values);
 	}
@@ -336,8 +341,9 @@ public abstract class AFunction implements IFunction, Serializable {
 			current = numericalDerivative(delta, param, values);
 			acurrent = Math.abs(current);
 			absDifference = Math.abs(current - previous);
-			if (absDifference <= abs + rel*Math.max(acurrent, aprevious))
+			if (absDifference <= abs + rel*Math.max(acurrent, aprevious)) {
 				break;
+			}
 			// If the difference is increasing, then we are no longer
 			// approaching the convergence criterion. Assume we have just
 			// passed the best we are going to get, and break, passing back
@@ -366,13 +372,13 @@ public abstract class AFunction implements IFunction, Serializable {
 		double dv = delta * (v != 0 ? v : 1);
 
 		param.setValue(v - dv);
-		dirty = true;
+		setDirty(true);
 		double minval = val(values);
 		param.setValue(v + dv);
-		dirty = true;
+		setDirty(true);
 		double maxval = val(values);
 		param.setValue(v);
-		dirty = true;
+		setDirty(true);
 		return (maxval - minval) / (2. * dv);
 	}
 
@@ -397,8 +403,9 @@ public abstract class AFunction implements IFunction, Serializable {
 	private DoubleDataset calculatePartialDerivativeValues(int[] outShape, IParameter parameter, IDataset... coords) {
 		CoordinatesIterator it = CoordinatesIterator.createIterator(outShape, coords);
 		DoubleDataset result = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
-		if (indexOfParameter(parameter) >= 0)
+		if (indexOfParameter(parameter) >= 0) {
 			internalFillWithPartialDerivativeValues(parameter, result, it);
+		}
 		result.setName(name);
 		return result;
 	}
@@ -444,19 +451,21 @@ public abstract class AFunction implements IFunction, Serializable {
 	 */
 	protected void calcNumericalDerivativeDataset(double abs, double rel, IParameter param, DoubleDataset data, CoordinatesIterator it) {
 		DoubleDataset previous = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
+		DoubleDataset temp = DatasetFactory.zeros(previous);
 		double delta = DELTA;
-		fillWithNumericalDerivativeDataset(delta, param, previous, it);
+		fillWithNumericalDerivativeDataset(delta, param, previous, temp, it);
 		DoubleDataset current = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 
 		delta *= DELTA_FACTOR;
 		while (isDeltaLargeEnough(param, delta)) {
-			fillWithNumericalDerivativeDataset(delta, param, current, it);
-			if (Comparisons.allCloseTo(previous, current, rel, abs))
+			fillWithNumericalDerivativeDataset(delta, param, current, temp, it);
+			if (Comparisons.allCloseTo(previous, current, rel, abs)) {
 				break;
+			}
 
-			DoubleDataset temp = previous;
+			DoubleDataset t = previous;
 			previous = current;
-			current = temp;
+			current = t;
 			delta *= DELTA_FACTOR;
 		}
 //		if (!isDeltaLargeEnough(param, delta)) {
@@ -471,24 +480,25 @@ public abstract class AFunction implements IFunction, Serializable {
 	 * @param delta
 	 * @param param
 	 * @param data
+	 * @param temp
 	 * @param it
 	 */
-	private void fillWithNumericalDerivativeDataset(double delta, IParameter param, DoubleDataset data, CoordinatesIterator it) {
+	private void fillWithNumericalDerivativeDataset(double delta, IParameter param, DoubleDataset data, DoubleDataset temp, CoordinatesIterator it) {
 		double v = param.getValue();
 		double dv = delta * (v != 0 ? v : 1);
 
 		param.setValue(v + dv);
-		dirty = true;
+		setDirty(true);
 		fillWithValues(data, it);
 		it.reset();
 		param.setValue(v - dv);
-		dirty = true;
-		DoubleDataset temp = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
+		setDirty(true);
 		fillWithValues(temp, it);
+		it.reset();
 		data.isubtract(temp);
 		data.imultiply(0.5/dv);
 		param.setValue(v);
-		dirty = true;
+		setDirty(true);
 	}
 
 	/**
@@ -538,20 +548,26 @@ public abstract class AFunction implements IFunction, Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		AFunction other = (AFunction) obj;
 		if (name == null) {
-			if (other.name != null)
+			if (other.name != null) {
 				return false;
-		} else if (!name.equals(other.name))
+			}
+		} else if (!name.equals(other.name)) {
 			return false;
-		if (!Arrays.equals(parameters, other.parameters))
+		}
+		if (!Arrays.equals(parameters, other.parameters)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -642,37 +658,33 @@ public abstract class AFunction implements IFunction, Serializable {
 		return start;
 		
 	}
-	
+
 	/**
 	 * Get the parameter lower bounds as an array, excluding parameters which are fixed
 	 * @return a double[] of non fixed parameter lower bounds
 	 */
 	public double[] getLowerBoundsNoFixed() {
-		
-		ArrayList<Double> values = new ArrayList<Double>();
-		
+		List<Double> values = new ArrayList<>();
+
 		for (int i = 0; i < getNoOfParameters(); i++) {
 			if (getParameter(i).isFixed() == false) {
 				values.add(getParameter(i).getLowerLimit());
 			}
 		}
-		
+
 		double[] start = new double[values.size()];
-		
 		for (int i= 0; i < start.length; i++) {
 			start[i] = values.get(i);
 		}
 		
 		return start;
-		
 	}
-	
+
 	/**
 	 * Set the values of all non fixed parameters
 	 * @param values
 	 */
 	public void setParameterValuesNoFixed(double[] values) {
-		
 		int argpos = 0;
 		for (int i = 0; i < getNoOfParameters(); i++) {
 			if (getParameter(i).isFixed() == false) {
@@ -680,7 +692,7 @@ public abstract class AFunction implements IFunction, Serializable {
 				argpos++;
 			}
 		}
-		
+
 		setDirty(true);
 	}
 }

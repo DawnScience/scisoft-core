@@ -23,9 +23,11 @@ public class GaussianTest {
 	@Test
 	public void testFunction() {
 		APeak f = new Gaussian();
-		Assert.assertEquals(3, f.getNoOfParameters());
 		f.setParameterValues(23., 2., 1.2);
+		Assert.assertEquals(3, f.getNoOfParameters());
 		Assert.assertArrayEquals(new double[] {23., 2., 1.2}, f.getParameterValues(), ABS_TOL);
+
+		FunctionTestUtils.checkValues(f);
 
 		double tln2 = Math.log(2.) * 2;
 		double cArea = 2 * Math.sqrt(Math.PI / (2. * tln2));
@@ -36,7 +38,7 @@ public class GaussianTest {
 		Assert.assertEquals(0.5 * h, f.val(23. - 1), ABS_TOL);
 		Assert.assertEquals(0.5 * h, f.val(23. + 1), ABS_TOL);
 
-		Dataset x = DatasetFactory.createLinearSpace(0, 46, 200, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 46, 200);
 		Dataset v = f.calculateValues(x);
 		Assert.assertEquals(1.2, ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1)), ABS_TOL);
 
@@ -77,5 +79,13 @@ public class GaussianTest {
 		double rd = data.residual(current, weight, false);
 		double rf = f.residual(true, data, weight, coords);
 		Assert.assertEquals(rd, rf, 1e-9);
+	}
+
+	@Test
+	public void testFunctionDerivative() {
+		APeak f = new Gaussian();
+		f.setParameterValues(23., 2., 1.2);
+
+		FunctionTestUtils.checkPartialDerivatives(f);
 	}
 }

@@ -65,14 +65,16 @@ public class Multiply extends ANaryOperator implements IOperator {
 			data.fill(1);
 		}
 
-		if (imax == 1)
+		if (imax == 1) {
 			return;
+		}
 
 		DoubleDataset temp = DatasetFactory.zeros(DoubleDataset.class, it.getShape());
 		for (int i = 1; i < imax; i++) {
 			f = getFunction(i);
-			if (f == null)
+			if (f == null) {
 				continue;
+			}
 
 			if (f instanceof AFunction) {
 				((AFunction) f).fillWithValues(temp, it);
@@ -90,8 +92,9 @@ public class Multiply extends ANaryOperator implements IOperator {
 
 		for (int i = 0, imax = getNoOfFunctions(); i < imax; i++) {
 			IFunction f = getFunction(i);
-			if (f == null)
+			if (f == null) {
 				continue;
+			}
 
 			double r = f.partialDeriv(param, values);
 			double t = f.val(values);
@@ -146,8 +149,9 @@ public class Multiply extends ANaryOperator implements IOperator {
 		}
 		for (int i = 1; i < imax; i++) {
 			f = getFunction(i);
-			if (f == null)
+			if (f == null) {
 				continue;
+			}
 
 			hasParam = indexOfParameter(f, param) >= 0;
 			if (f instanceof AFunction) {

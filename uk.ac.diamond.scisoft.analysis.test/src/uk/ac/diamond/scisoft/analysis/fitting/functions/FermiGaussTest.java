@@ -22,9 +22,11 @@ public class FermiGaussTest {
 	@Test
 	public void testFunction() {
 		AFunction f = new FermiGauss();
-		Assert.assertEquals(6, f.getNoOfParameters());
 		f.setParameterValues(23., 110., 2.5, -0.5, -5.2, 0);
+		Assert.assertEquals(6, f.getNoOfParameters());
 		Assert.assertArrayEquals(new double[] {23., 110., 2.5, -0.5, -5.2, 0}, f.getParameterValues(), ABS_TOL);
+
+		FunctionTestUtils.checkValues(f);
 
 		Assert.assertEquals((2.5*0 - 0.5)/2. - 5.2, f.val(23.), ABS_TOL);
 
@@ -49,5 +51,13 @@ public class FermiGaussTest {
 		Assert.assertArrayEquals(new double[] {2*((-2.5*w - 0.5)/1.5 - 5.2)*Math.exp(-5.685e-3),
 				2*((2.5*0 - 0.5)/2. - 5.2)*Math.exp(-3.816e-3),
 				2*((2.5*2*w - 0.5)/5 - 5.2)*Math.exp(9.81e-3)}, fx.getData(), 200*ABS_TOL);
+	}
+
+	@Test
+	public void testFunctionDerivative() {
+		AFunction f = new FermiGauss();
+		f.setParameterValues(23., 110., 2.5, -0.5, -5.2, 0);
+
+		FunctionTestUtils.checkPartialDerivatives(f);
 	}
 }

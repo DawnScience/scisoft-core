@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -30,10 +31,12 @@ public class LorentzianSqrTest {
 	public void testLorentzianSqr(double pos, double fwhm, double area)
 	{
 		APeak f = new LorentzianSqr();
+		f.setParameterValues(pos, fwhm, area);
 		// test number of parameters and whether parameters are correctly stored
 		Assert.assertEquals(3, f.getNoOfParameters());
-		f.setParameterValues(pos, fwhm, area);
 		Assert.assertArrayEquals(new double[] {pos, fwhm, area}, f.getParameterValues(), ABS_TOL);
+
+		FunctionTestUtils.checkValues(f);
 
 		// test function values at centre and centre +/1 0.5*fwhm
 		double widthPar = fwhm / Math.sqrt(Math.sqrt(2.) - 1.);	
@@ -53,12 +56,20 @@ public class LorentzianSqrTest {
 		if ((nBins % 2) == 0) {
 			nBins += 1; // odd number of bins to get peak
 		}
-		Dataset x = DatasetFactory.createLinearSpace(-50.*fwhm+pos, 50.*fwhm+pos, nBins, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(DoubleDataset.class, -50.*fwhm+pos, 50.*fwhm+pos, nBins);
 		Dataset v = f2.calculateValues(x);
 		double s = ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1));
 		Assert.assertEquals(area, s, 1e-2); // relaxed tolerance: poor man's integration only...
 		// test that calculateValues(dataset) gives same as f.val(double)
 		Assert.assertEquals(v.getDouble(0), f.val(x.getDouble(0)), ABS_TOL);
 		
+	}
+
+	@Test
+	public void testFunctionDerivative() {
+		APeak f = new LorentzianSqr();
+		f.setParameterValues(23., 2., 1.5);
+
+		FunctionTestUtils.checkPartialDerivatives(f);
 	}
 }

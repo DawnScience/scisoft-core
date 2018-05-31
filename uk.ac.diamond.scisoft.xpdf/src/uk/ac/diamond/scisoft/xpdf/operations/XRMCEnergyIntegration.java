@@ -46,8 +46,9 @@ public class XRMCEnergyIntegration extends AbstractOperation<EmptyModel, Operati
 			throw new OperationException(this, "Could not get underlying XRMC data.");
 		}
 		int[] xrmcShape = xrmcData.getShape();
-		Dataset lastScattering = xrmcData.getSlice(new int[] {xrmcShape[0]-1, 0, 0, 0}, xrmcShape, new int[] {1, 1, 1, 1}).squeeze();
-
+//		Dataset lastScattering = xrmcData.getSlice(new int[] {xrmcShape[0]-1, 0, 0, 0}, xrmcShape, new int[] {1, 1, 1, 1}).squeeze();
+		Dataset lastScattering = xrmcData.sum(0).squeeze();
+		
 		XPDFMetadata xpdfMetadata = input2d.getFirstMetadata(XPDFMetadata.class);
 		if (!XPDFOperationChecker.hasMetadata(input2d) || !XPDFOperationChecker.hasDetectorMetadata(xpdfMetadata))
 			throw new OperationException(this, "XPDF detector metadata not found");

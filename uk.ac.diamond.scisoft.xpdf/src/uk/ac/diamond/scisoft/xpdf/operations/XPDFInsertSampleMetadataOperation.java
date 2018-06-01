@@ -116,7 +116,7 @@ public class XPDFInsertSampleMetadataOperation extends XPDFInsertXMetadataOperat
 			String dataset = "/entry1/data/data";
 			
 			Dataset iScatterData = DatasetUtils.convertToDataset(ProcessingUtils.getDataset(this, iScatterPath, dataset));
-			
+			iScatterData.squeeze();
 			theXPDFMetadata.pushIncoherentScattering(iScatterData);
 		}
 		

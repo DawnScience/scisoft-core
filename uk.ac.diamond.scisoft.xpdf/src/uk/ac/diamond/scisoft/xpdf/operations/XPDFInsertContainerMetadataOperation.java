@@ -146,7 +146,7 @@ public class XPDFInsertContainerMetadataOperation extends
 			String dataset = "/entry1/data/data";
 			
 			Dataset iScatterData = DatasetUtils.convertToDataset(ProcessingUtils.getDataset(this, iScatterPath, dataset));
-			
+			iScatterData.squeeze();
 			theXPDFMetadata.pushIncoherentScattering(iScatterData);
 		}
 

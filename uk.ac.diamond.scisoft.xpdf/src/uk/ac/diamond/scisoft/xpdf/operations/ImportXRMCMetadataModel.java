@@ -9,11 +9,12 @@
 package uk.ac.diamond.scisoft.xpdf.operations;
 
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
+import org.eclipse.dawnsci.analysis.api.processing.model.FileType;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class ImportXRMCMetadataModel extends AbstractOperationModel {
 
-	@OperationModelField(hint="Path to XRMC input file", label = "XRMC input file path")
+	@OperationModelField(hint="Path to XRMC input file", file = FileType.EXISTING_FILE, label = "XRMC input file path")
 	private String xrmcInputFilePath = "";
 	
 	public String getXrmcInputFilePath() {

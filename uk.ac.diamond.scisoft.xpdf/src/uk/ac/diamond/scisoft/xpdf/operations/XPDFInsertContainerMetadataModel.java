@@ -52,6 +52,8 @@ public class XPDFInsertContainerMetadataModel extends AbstractOperationModel {
 	private double containerAngle = 0.0;
 	@OperationModelField(hint = "File to read simulated incoherent scattering flux data from ", label = "Incoherent Scattering File", file = FileType.EXISTING_FILE)
 	private String incoherentScatteringPath = "";
+	@OperationModelField(hint = "Dataset containing the incoherent scattering data flux", label = "Incoherent Scattering Dataset", dataset = "incoherentScatteringPath")
+	private String incoherentScatteringDataset = "/entry/result/data";
 	
 	public String getFilePath() {
 		return filePath;
@@ -187,5 +189,12 @@ public class XPDFInsertContainerMetadataModel extends AbstractOperationModel {
 	
 	public void setIncoherentScatteringPath(String incoherentScatteringPath) {
 		firePropertyChange("incoherentScatteringPath", this.incoherentScatteringPath, this.incoherentScatteringPath = incoherentScatteringPath);
+	}
+
+	public String getIncoherentScatteringDataset() {
+		return this.incoherentScatteringDataset;
+	}
+	public void setIncoherentScatteringDataset(String dataset) {
+		firePropertyChange("incoherentScatteringDataset", this.incoherentScatteringDataset, this.incoherentScatteringDataset = dataset);
 	}
 }

@@ -22,10 +22,12 @@ public class QuadraticTest {
 	@Test
 	public void testFunction() {
 		AFunction f = new Quadratic();
-		Assert.assertEquals(3, f.getNoOfParameters());
 		f.setParameterValues(23., -10., 1.2);
+		Assert.assertEquals(3, f.getNoOfParameters());
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2}, f.getParameterValues(), ABS_TOL);
 		Assert.assertEquals(23. + 10. + 1.2, f.val(-1), ABS_TOL);
+
+		FunctionTestUtils.checkValues(f);
 
 		Dataset xd = DatasetFactory.createFromObject(new double[] {-1, 0, 2});
 		DoubleDataset dx;
@@ -44,5 +46,13 @@ public class QuadraticTest {
 		Assert.assertEquals(1,  f.partialDeriv(f.getParameter(0), -1), ABS_TOL);
 		Assert.assertEquals(-1, f.partialDeriv(f.getParameter(1), -1), ABS_TOL);
 		Assert.assertEquals(1,  f.partialDeriv(f.getParameter(2), -1), ABS_TOL);
+	}
+
+	@Test
+	public void testFunctionDerivative() {
+		AFunction f = new Quadratic();
+		f.setParameterValues(23., -10., 1.2);
+
+		FunctionTestUtils.checkPartialDerivatives(f);
 	}
 }

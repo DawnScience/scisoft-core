@@ -22,10 +22,12 @@ public class StraightLineTest {
 	@Test
 	public void testFunction() {
 		AFunction f = new StraightLine();
-		Assert.assertEquals(2, f.getNoOfParameters());
 		f.setParameterValues(23., -10.);
+		Assert.assertEquals(2, f.getNoOfParameters());
 		Assert.assertArrayEquals(new double[] {23., -10.}, f.getParameterValues(), ABS_TOL);
 		Assert.assertEquals(23. - 10., f.val(1), ABS_TOL);
+
+		FunctionTestUtils.checkValues(f);
 
 		Dataset xd = DatasetFactory.createFromObject(new double[] {-1, 0, 2});
 		DoubleDataset dx;
@@ -40,5 +42,13 @@ public class StraightLineTest {
 
 		Assert.assertEquals(-1, f.partialDeriv(f.getParameter(0), -1), ABS_TOL);
 		Assert.assertEquals(1,  f.partialDeriv(f.getParameter(1), -1), ABS_TOL);
+	}
+
+	@Test
+	public void testFunctionDerivative() {
+		AFunction f = new StraightLine();
+		f.setParameterValues(23., -10.);
+
+		FunctionTestUtils.checkPartialDerivatives(f);
 	}
 }

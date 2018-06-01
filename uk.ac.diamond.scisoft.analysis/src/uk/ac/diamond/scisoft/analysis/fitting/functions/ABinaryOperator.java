@@ -57,8 +57,9 @@ abstract public class ABinaryOperator extends AOperator implements IOperator {
 		default:
 			throw new IndexOutOfBoundsException("Can not set this index as it is not 0 or 1");
 		}
-		if (function != null)
+		if (function != null) {
 			function.setParentOperator(this);
+		}
 		updateParameters();
 	}
 
@@ -67,8 +68,9 @@ abstract public class ABinaryOperator extends AOperator implements IOperator {
 		params.clear();
 		for (int i = 0; i < 2; i++) {
 			IFunction f = getFunction(i);
-			if (f == null)
+			if (f == null) {
 				continue;
+			}
 			for (int j = 0, jmax = f.getNoOfParameters(); j < jmax; j++) {
 				IParameter p = f.getParameter(j);
 				boolean add = true;

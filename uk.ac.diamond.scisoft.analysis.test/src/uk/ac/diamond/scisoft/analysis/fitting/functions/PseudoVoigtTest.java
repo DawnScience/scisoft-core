@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import org.eclipse.january.asserts.TestUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,9 +24,11 @@ public class PseudoVoigtTest {
 	@Test
 	public void testFunction() {
 		PseudoVoigt f = new PseudoVoigt();
-		Assert.assertEquals(5, f.getNoOfParameters());
 		f.setParameterValues(23., 2., 1.2, 2.3, 0.6);
+		Assert.assertEquals(5, f.getNoOfParameters());
 		Assert.assertArrayEquals(new double[] {23., 2., 1.2, 2.3, 0.6}, f.getParameterValues(), ABS_TOL);
+
+		FunctionTestUtils.checkValues(f);
 
 		double l = 2 * 0.6 * Math.PI / 2;
 		double g = 2.3 * (1 - 0.6) * Math.sqrt(Math.PI / Math.log(2.)) / 2;
@@ -38,7 +41,7 @@ public class PseudoVoigtTest {
 		Assert.assertEquals(0.5 * h, f.val(23. - dx), 1e-4);
 		Assert.assertEquals(0.5 * h, f.val(23. + dx), 1e-4);
 
-		Dataset x = DatasetFactory.createLinearSpace(-20+23, 20+23, 401, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(DoubleDataset.class, -20+23, 20+23, 401);
 		Dataset v = f.calculateValues(x);
 		double s = ((Number) v.sum()).doubleValue() * Math.abs(x.getDouble(0) - x.getDouble(1));
 		Assert.assertEquals(1.2, s, 1e-1);
@@ -46,7 +49,7 @@ public class PseudoVoigtTest {
 
 	@Test
 	public void testExtremes() {
-		Dataset x = DatasetFactory.createLinearSpace(-20+23, 20+23, 401, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(DoubleDataset.class, -20+23, 20+23, 401);
 
 		PseudoVoigt pv = new PseudoVoigt();
 		pv.setParameterValues(23., 2., 1.2, 2.3, 1);
@@ -64,5 +67,13 @@ public class PseudoVoigtTest {
 		gf.setParameterValues(23., 2.3, 1.2);
 		Dataset g = gf.calculateValues(x);
 		TestUtils.assertDatasetEquals(g, pg, REL_TOL, ABS_TOL);
+	}
+
+	@Test
+	public void testFunctionDerivative() {
+		PseudoVoigt f = new PseudoVoigt();
+		f.setParameterValues(23., 2., 1.2, 2.3, 0.6);
+
+		FunctionTestUtils.checkPartialDerivatives(f);
 	}
 }

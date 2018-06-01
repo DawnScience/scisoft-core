@@ -13,6 +13,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.Random;
+import org.eclipse.january.dataset.ShortDataset;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -35,10 +36,12 @@ public class CompositeFunctionTest {
 
 		Assert.assertEquals(6, cf.getNoOfParameters());
 
+		FunctionTestUtils.checkValues(cf);
+
 		Assert.assertArrayEquals(new double[] {23., -10., 1.2, -5.2, 4.2, -7.5}, cf.getParameterValues(), ABS_TOL);
 		double x = -23. - 10. - 1.2 - 5.2 - 4.2 - 7.5;
 		Assert.assertEquals(x, cf.val(-1), ABS_TOL);
-		Assert.assertEquals(x, cf.calculateValues(DatasetFactory.createRange(-2., 2., 1, Dataset.INT16)).getDouble(1), ABS_TOL);
+		Assert.assertEquals(x, cf.calculateValues(DatasetFactory.createRange(ShortDataset.class, -2., 2., 1)).getDouble(1), ABS_TOL);
 
 		Dataset xd = DatasetFactory.createFromObject(new double[] {-1, 0, 2});
 		DoubleDataset dx;
@@ -74,5 +77,21 @@ public class CompositeFunctionTest {
 		double rd = data.residual(current, weight, false);
 		double rf = cf.residual(true, data, weight, coords);
 		Assert.assertEquals(rd, rf, 1e-9);
+	}
+
+	@Test
+	public void testFunctionDerivative() {
+		CompositeFunction f = new CompositeFunction();
+
+		AFunction fa = new Cubic();
+		fa.setParameterValues(23., -10., 1.2, -5.2);
+
+		AFunction fb = new StraightLine();
+		fb.setParameterValues(4.2, -7.5);
+
+		f.addFunction(fa);
+		f.addFunction(fb);
+
+		FunctionTestUtils.checkPartialDerivatives(f);
 	}
 }

@@ -22,9 +22,11 @@ public class FermiTest {
 	@Test
 	public void testFunction() {
 		AFunction f = new Fermi();
-		Assert.assertEquals(4, f.getNoOfParameters());
 		f.setParameterValues(23., 110., 1.2, -5.2);
+		Assert.assertEquals(4, f.getNoOfParameters());
 		Assert.assertArrayEquals(new double[] {23., 110., 1.2, -5.2}, f.getParameterValues(), ABS_TOL);
+
+		FunctionTestUtils.checkValues(f);
 
 		Assert.assertEquals(1.2 / 2. - 5.2, f.val(23.), ABS_TOL);
 
@@ -36,5 +38,13 @@ public class FermiTest {
 		DoubleDataset dx;
 		dx = f.calculateValues(xd);
 		Assert.assertArrayEquals(new double[] {1.2/1.5 - 5.2, 1.2/2 - 5.2, 1.2/5 - 5.2}, dx.getData(), ABS_TOL);
+	}
+
+	@Test
+	public void testFunctionDerivative() {
+		AFunction f = new Cubic();
+		f.setParameterValues(23., -10., 1.2, -5.2);
+
+		FunctionTestUtils.checkPartialDerivatives(f);
 	}
 }

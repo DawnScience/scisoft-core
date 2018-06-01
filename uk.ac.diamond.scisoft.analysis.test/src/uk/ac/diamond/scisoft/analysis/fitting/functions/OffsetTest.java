@@ -22,10 +22,12 @@ public class OffsetTest {
 	@Test
 	public void testFunction() {
 		AFunction f = new Offset();
-		Assert.assertEquals(1, f.getNoOfParameters());
 		f.setParameterValues(23.);
+		Assert.assertEquals(1, f.getNoOfParameters());
 		Assert.assertArrayEquals(new double[] {23.}, f.getParameterValues(), ABS_TOL);
 		Assert.assertEquals(23., f.val(), ABS_TOL);
+
+		FunctionTestUtils.checkValues(f);
 
 		Dataset xd = DatasetFactory.createFromObject(new double[] {-1, 0, 2});
 		DoubleDataset dx;
@@ -36,5 +38,13 @@ public class OffsetTest {
 		Assert.assertArrayEquals(new double[] {1, 1, 1}, dx.getData(), ABS_TOL);
 
 		Assert.assertEquals(1, f.partialDeriv(f.getParameter(0), -1), ABS_TOL);
+	}
+
+	@Test
+	public void testFunctionDerivative() {
+		AFunction f = new Offset();
+		f.setParameterValues(23.);
+
+		FunctionTestUtils.checkPartialDerivatives(f);
 	}
 }

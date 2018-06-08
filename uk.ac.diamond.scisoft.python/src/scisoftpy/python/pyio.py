@@ -359,9 +359,10 @@ try:
     import Image as _im #@UnresolvedImport @UnusedImport
 except:
     try: # for the Pillow fork
-        from PIL import Image as _im  # @UnresolvedImport @Reimport
+        from PIL import Image as _im # @UnresolvedImport @Reimport
     except:
         print("Could not import python image library", file=sys.stderr)
+        _im = None
 
 from .pycore import ndarrayRGB as _RGB
 
@@ -450,6 +451,7 @@ try:
     import scisoftpy._external.tifffile as _tf
 except:
     print("Could not import tiff file package", file=sys.stderr)
+    _tf = None
 finally:
     os.dup2(saved, orig_fd)#@UndefinedVariable
     os.close(fd)

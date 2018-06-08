@@ -25,7 +25,7 @@ suite [#GDA]_ used throughout Diamond.
 
 ScisoftPy
 =========
-This section documents version 1.3 of the Scisoft Python package.
+This section documents version 1.4 of the Scisoft Python package.
 
 This package emulates behaviour of NumPy [#Numpy]_ together with some I/O,
 plotting and fitting routines. At its core, it contains an N-dimensional array
@@ -56,6 +56,11 @@ There is some help available on the console with the various packages::
     import scisoftpy.random as drd
     help(drd)
 
+CPython
+-------
+ScisoftPy can run on Python2 or Python3. When using Python2, it requires the
+`six` [#six] compatibility module (at least version 1.6.0); also,
+`tifffile` requires `enum34` and `futures` which are backported packages.
 
 References
 ==========
@@ -66,4 +71,5 @@ References
 .. [#Jython] Jython: http://www.jython.org
 .. [#Scipy] SciPy: http://www.scipy.org
 .. [#Numpy] NumPy: http://www.numpy.org
+.. [#six] Six: http://six.rtfd.org/
 

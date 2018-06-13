@@ -29,11 +29,8 @@ else:
     suites.append(pyrpc_exceptions_test.suite())
     suites.append(pyrpc_advanced_test.suite())
 
-import sys
-py3 = sys.hexversion >= 0x03000000
-if not py3:
-    from scisoftpy_tests import external_test
-    suites.append(external_test.suite())
+from scisoftpy_tests import external_test
+suites.append(external_test.suite())
 
 import unittest
 def suite():

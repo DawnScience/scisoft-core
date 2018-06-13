@@ -53,6 +53,7 @@ if py3:
 else:
     from cPickle import dump as _psave, load as _pload
 
+_PICKLE_PROTOCOL=2
 def save_args(arg, dir=None): #@ReservedAssignment
     '''Save arguments as files in a temporary directory
     Use pickle for most objects but use NumPy's npy format for arrays
@@ -63,13 +64,9 @@ def save_args(arg, dir=None): #@ReservedAssignment
     import tempfile as _tmp
     d = _tmp.mkdtemp(prefix='ef-args', dir=dir)
     _n, tree = _pickle(d, arg, 0) # pickle non-sequences
-    try: # now do argument structure
-        f = open(_path.join(d, 'tree.pkl'), 'w')
-        _psave(tree, f)
-    except:
-        raise
-    else:
-        f.close()
+    # now do argument structure
+    with open(_path.join(d, 'tree.pkl'), 'wb') as f:
+        _psave(tree, f, _PICKLE_PROTOCOL)
 
     return d
 
@@ -101,16 +98,9 @@ def _pickle(p, arg, n):
         name = 'p{:03d}.pkl'.format(n)
         if isinstance(arg, ndgeneric):
             arg = scalarToPython(arg)
-        try:
-            f = open(_path.join(p, name), 'w')
-            _psave(arg, f)
-        except:
-            raise
-        else:
-            f.close()
+        with open(_path.join(p, name), 'wb') as f:
+            _psave(arg, f, _PICKLE_PROTOCOL)
         return n+1, name
-
-import sys
 
 def load_args(d):
     '''Load arguments from files in a temporary directory
@@ -122,15 +112,18 @@ def load_args(d):
         fn = _path.join(d, fa)
         if fn.endswith('.pkl'):
             try:
-                f = open(fn, 'r')
+                f = open(fn, 'rb')
                 fdict[fa] = _pload(f)
-            except :
-                sys.stderr.write('Could not \n')
+            except:
+                sys.stderr.write('Could not load %s\n' % fa)
+                import traceback
+                traceback.print_exc()
             finally:
                 f.close()
         else:
             from scisoftpy.io import load as _aload
-            fdict[fa] = _aload(fn)[0]
+            nd = _aload(fn)
+            fdict[fa] = nd if isinstance(nd, ndarray) else nd[0]
             
     return _recreate_args(fdict['tree.pkl'], fdict)
 
@@ -230,6 +223,8 @@ def pyenv(exe=None, path=None, ldpath=None):
 
 _dls_modules = dict() # cache for modules
 
+_PYTHONPATH = 'PYTHONPATH'
+
 def get_dls_module(module='python/anaconda', module_init='/etc/profile.d/modules.sh'):
     if module in _dls_modules:
         return _dls_modules[module]
@@ -242,9 +237,9 @@ def get_dls_module(module='python/anaconda', module_init='/etc/profile.d/modules
         print('Warning dls_module argument may not work')
 
     env = dict(_env)
-    env.pop('PYTHONPATH', None)
+    env.pop(_PYTHONPATH, None)
     import subprocess as sub
-    p = sub.Popen(['bash', '-l'], shell=False, env=env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
+    p = sub.Popen(['bash', '-l'], env=env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE, universal_newlines=True)
     p.stdin.write('source {}\n'.format(module_init))
     p.stdin.write('module load {}\n'.format(module))
     p.stdin.write('pyexe=$(which python)\n')
@@ -258,11 +253,12 @@ def get_dls_module(module='python/anaconda', module_init='/etc/profile.d/modules
     _dls_modules[module] = exe, path, ldpath
     return exe, path, ldpath
 
-def get_python():
+def get_python(py3=False):
     env = dict(_env)
-    env.pop('PYTHONPATH', None)
+    env.pop(_PYTHONPATH, None)
     import subprocess as sub
-    p = sub.Popen('python', shell=False, env=env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
+    pyexe = 'python2' if not py3 else 'python3'
+    p = sub.Popen(pyexe, env=env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE, universal_newlines=True)
     p.stdin.write('import sys\n')
     p.stdin.write('print("EXEC|" + sys.executable)\n')
     p.stdin.write('print("PATH|" + "|".join(sys.path))\n')
@@ -304,6 +300,8 @@ def parse_for_env(stream, sep=':'):
 if _isjava:
     _cached_pyenv = get_python()
 
+#PYDEV_SRC='/scratch/eclipse441_64/plugins/org.python.pydev_3.9.2.201502050007/pysrc'
+
 def find_module_path(path, module):
     modulefile = module + '.py'
     for p in path:
@@ -324,36 +322,56 @@ else:
         from Queue import Queue, Empty
     from threading import Thread
     from subprocess import Popen, PIPE
-    cmds='''import sys
+    cmds='''from __future__ import print_function
 # Started by create_function with keep=True (default),
 # this is a kept-alive process to serve an external function
+import sys
 while True:
   print('READY')
   sys.stdout.flush()
   l = sys.stdin.readline()
   if not l:
     break
-  exec l
+  exec(l)
 '''
     class StreamHandler(object):
-        def __init__(self, stream):
+        def __init__(self, stream, name=None):
             self.stream = stream
+            self.name = name
             self.alive = True
             self.out = Queue()
-            def add():
-                while self.alive:
-                    line = self.stream.readline()
-                    if line:
-                        self.out.put(line)
-                    else:
-                        break
+            if self.name is None:
+                def add():
+                    while self.alive:
+                        line = self.stream.readline()
+                        if line:
+                            self.out.put(line)
+                        else:
+                            self.out.put('\n')
+                            self.alive = False
+                            break
+            else:
+                def add():
+                    with open('/tmp/%s.log' % self.name, 'w') as log:
+                        while self.alive:
+                            line = self.stream.readline()
+                            if line:
+                                print(line, file=log)
+                                self.out.put(line)
+                            else:
+                                self.out.put('\n')
+                                print('Finished %s' % self.name, file=log)
+                                self.alive = False
+                                break
             self.thd = Thread(target=add)
             self.thd.daemon = True
             self.thd.start()
 
         def readline(self, timeout=None):
             try:
-                return self.out.get(block=True, timeout=timeout)
+                if self.alive:
+                    return self.out.get(block=True, timeout=timeout)
+                return self.out.get_nowait()
             except Empty:
                 return None
 
@@ -368,7 +386,16 @@ while True:
         READY = 'READY\n'
         TIMEOUT = 0.005
         def __init__(self, exe='python', env=None):
-            self.proc = Popen([exe, '-c', cmds], bufsize=1, env=env, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+            if env is None:
+                import os
+                env = dict(os.environ)
+                env.pop(_PYTHONPATH, None)
+#             print('PyExe: %s' % exe, file=sys.stderr)
+#             if _PYTHONPATH in env:
+#                 print('PyEnv: %s' % env[_PYTHONPATH], file=sys.stderr)
+            self.proc = Popen([exe, '-c', cmds], bufsize=1, env=env, stdin=PIPE, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+#             self.out = StreamHandler(self.proc.stdout, 'out')
+#             self.err = StreamHandler(self.proc.stderr, 'err')
             self.out = StreamHandler(self.proc.stdout)
             self.err = StreamHandler(self.proc.stderr)
             self.stdin = self.proc.stdin
@@ -382,9 +409,10 @@ while True:
                 el = self.err.readline(self.TIMEOUT)
                 if el is None:
                     el = 'None'
-                raise OSError('Problem with python subprocess not being ready: ' + l + '; ' + el)
+                raise OSError('Problem with python subprocess not being ready: {}; {}'.format(l, el))
 
         def communicate(self, text):
+#             print(text, file=sys.stderr)
             self._send(text)
 
             results = []
@@ -414,8 +442,6 @@ while True:
 
         def stop(self):
             self.stdin.close()
-
-#PYDEV_SRC='/scratch/eclipse441_64/plugins/org.python.pydev_3.9.2.201502050007/pysrc'
 
 class ExternalFunction(object):
     '''Emulates a function object with an attached python process
@@ -460,7 +486,11 @@ class ExternalFunction(object):
 
     def __call__(self, *arg, **kwarg):
         import shutil
-        argsdir = save_args((arg, kwarg))
+        try:
+            argsdir = save_args((arg, kwarg))
+        except:
+            print("Could not save arguments", file=sys.stderr)
+            raise
         try:
             if not self.keep or not self.proc:
                 self._mk_process()
@@ -572,7 +602,7 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
     if p is None:
         raise ValueError('Cannot find module in path: try specifying it in extra_path')
     env = dict(_env)
-    env['PYTHONPATH'] = os.pathsep.join(path)
+    env[_PYTHONPATH] = os.pathsep.join(path)
     if ldpath:
         if sys.platform == 'win32':
             key = 'PATH'

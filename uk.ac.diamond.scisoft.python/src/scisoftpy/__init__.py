@@ -207,12 +207,9 @@ except Exception as e:
     print("Could not import fit", file=sys.stderr)
     print(e, file=sys.stderr)
 
-if sys.hexversion >= 0x03000000:
-    print("Warning: external module not yet supported in Python3")
-else:
-    try:
-        from . import external
-    except Exception as e:
-        print("Could not import external functions", file=sys.stderr)
-        print(e, file=sys.stderr)
+try:
+    from . import external
+except Exception as e:
+    print("Could not import external functions", file=sys.stderr)
+    print(e, file=sys.stderr)
 

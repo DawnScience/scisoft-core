@@ -22,7 +22,7 @@ unittest.TestProgram(argv=["external_test"])
 from __future__ import print_function
 import unittest
 
-from scisoftpy.external import save_args, load_args, pyenv
+from scisoftpy.external import save_args, load_args, pyenv, get_python
 import scisoftpy as dnp
 
 import shutil
@@ -76,9 +76,9 @@ class Test(unittest.TestCase):
         pprint(pypath)
 #        p = sub.Popen('echo $PYTHONPATH', shell=True, env=_env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
 #        print p.communicate()
-        p = sub.Popen([pyexe,], env=env, shell=False, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
-        p.stdin.write('print "Hello World"\n')
-        p.stdin.write('print "Hello World2"\n')
+        p = sub.Popen([pyexe,], env=env, bufsize=1, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE, universal_newlines=True)
+        p.stdin.write('print("Hello World")\n')
+        p.stdin.write('print("Hello World2")\n')
         p.stdin.close()
         l = p.stdout.read()
         print(l)
@@ -151,14 +151,43 @@ class Test(unittest.TestCase):
 
     def testHello(self):
         py = dnp.external.PythonSubProcess("python", None)
-        print(py.communicate("print \"Hello World!\"\n"))
-        print(py.communicate("print \"Hello World2!\"\n"))
-        print(py.communicate("for i in range(4): print i\n"))
+        print(py.communicate("print(\"Hello World!\")\n"))
+        print(py.communicate("print(\"Hello World2!\")\n"))
+        print(py.communicate("for i in range(4): print(i)\n"))
         py.stop()
+
+    def testSubprocessCmds(self):
+        import subprocess as sub
+        pyexe, pypath, _pyldpath = get_python()
+        import os
+        env = dict(os.environ)
+        env["PYTHONPATH"] = ":".join(pypath)
+        print(pyexe)
+        from pprint import pprint
+        pprint(pypath)
+        cmds='''from __future__ import print_function
+import sys
+from time import sleep
+with open('/tmp/e.log', 'w') as _log:
+  _i = 0
+  while _i < 5:
+    print('READY %d' % _i)
+    print('READY %d' % _i, file=_log)
+    sleep(1)
+    _i += 1
+'''
+        p = sub.Popen([pyexe, '-c', cmds], env=env, bufsize=1, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE, universal_newlines=True)
+        l = p.stdout.read()
+        print(l)
+
 
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
+#     suite.addTest(Test("testException"))
+#     suite.addTest(Test("testSubprocess"))
+#     suite.addTest(Test("testSubprocessCmds"))
+#     suite.addTest(Test("testHello"))
     return suite 
 
 if __name__ == '__main__':

@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.january.dataset.Dataset;
@@ -21,6 +22,7 @@ import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadata;
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
+@Atomic
 public class SubtractWithProcessing extends FrameMathsOperation<SubtractWithProcessingModel> {
 
 	@Override
@@ -30,35 +32,46 @@ public class SubtractWithProcessing extends FrameMathsOperation<SubtractWithProc
 
 	@Override
 	protected Dataset getData(IDataset ds) {
-		OperationMetadata om = ds.getFirstMetadata(OperationMetadata.class);
-		String filePath = ((SubtractWithProcessingModel)model).getFilePath();
-		String datasetName = null;
 		
-		if (model.getUseSameDataset() == true) {
-			datasetName = getSliceSeriesMetadata(ds).getSourceInfo().getDatasetName();
-		} else {
-			datasetName = model.getDatasetName();
-		}
-		
-		if (filePath == null) {
-			SliceFromSeriesMetadata ssm = ds.getFirstMetadata(SliceFromSeriesMetadata.class);
-			filePath = ssm.getFilePath();
-		}
-		
-		try {
-			IDataHolder dh = LocalServiceManager.getLoaderService().getData(filePath, null);
-			if (!dh.contains(datasetName)){
-				return null;
+		Dataset pFrame = data;
+		if (pFrame == null) {
+			synchronized(this) {
+				pFrame = data;
+				if (pFrame == null) {
+					OperationMetadata om = ds.getFirstMetadata(OperationMetadata.class);
+					String filePath = ((SubtractWithProcessingModel)model).getFilePath();
+					String datasetName = null;
+
+					if (model.getUseSameDataset() == true) {
+						datasetName = getSliceSeriesMetadata(ds).getSourceInfo().getDatasetName();
+					} else {
+						datasetName = model.getDatasetName();
+					}
+
+					if (filePath == null) {
+						SliceFromSeriesMetadata ssm = ds.getFirstMetadata(SliceFromSeriesMetadata.class);
+						filePath = ssm.getFilePath();
+					}
+
+					try {
+						IDataHolder dh = LocalServiceManager.getLoaderService().getData(filePath, null);
+						if (!dh.contains(datasetName)){
+							return null;
+						}
+					} catch (Exception e) {
+						throw new OperationException(this, "Can't load data!");
+					}
+
+					Dataset processed = om.process(filePath,
+							datasetName,
+							ds.getFirstMetadata(SliceFromSeriesMetadata.class),model.getStartFrame(),
+							model.getEndFrame());
+					pFrame = data =  processed.imultiply(model.getScaling());
+				}
 			}
-		} catch (Exception e) {
-			throw new OperationException(this, "Can't load data!");
 		}
 		
-		Dataset processed = om.process(filePath,
-									 datasetName,
-									 ds.getFirstMetadata(SliceFromSeriesMetadata.class),model.getStartFrame(),
-									 model.getEndFrame());
-		return processed.imultiply(model.getScaling());
+		return pFrame;
 	}
 
 	@Override

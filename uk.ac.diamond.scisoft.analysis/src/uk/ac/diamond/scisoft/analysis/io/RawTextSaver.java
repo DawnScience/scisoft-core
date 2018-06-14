@@ -105,7 +105,11 @@ public class RawTextSaver implements IFileSaver {
 						}
 						bw.write(delimiter);
 					}
-					bw.write(data.getString(rows, width - 1));
+					if (cellFormat != null) {
+						bw.write(String.format(cellFormat, data.getObject(rows, width - 1)));
+					} else {
+						bw.write(data.getString(rows, width - 1));
+					}
 					bw.newLine();
 				}
 			} catch (Exception e) {

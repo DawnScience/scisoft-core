@@ -59,8 +59,8 @@ There is some help available on the console with the various packages::
 CPython
 -------
 ScisoftPy can run on Python2 or Python3. When using Python2, it requires the
-`six` [#six] compatibility module (at least version 1.6.0); also,
-`tifffile` requires `enum34` and `futures` which are backported packages.
+``six`` [#six]_ compatibility module (at least version 1.6.0); also,
+``tifffile`` requires ``enum34`` and ``futures`` which are backported packages.
 
 References
 ==========

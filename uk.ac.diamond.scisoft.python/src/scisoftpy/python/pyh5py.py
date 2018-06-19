@@ -68,7 +68,9 @@ class _lazydataset(object):
         if self.chunking is None:
             nslices = [ s if s else slice(None) for s in slices ]
             v = ds[tuple(nslices)]
-            return v.reshape(nshape)
+            if isinstance(v, ndarray):
+                return v.reshape(nshape)
+            return v
 
         split = [ c <= 1 or l > 1 for c, l in zip(self.chunking, dshape) ]
         try:

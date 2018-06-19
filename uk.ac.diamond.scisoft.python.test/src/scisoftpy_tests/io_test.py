@@ -111,6 +111,18 @@ class Test(unittest.TestCase):
         self.assertAlmostEquals(cx[4,2].real, 0.6922704317579508, places=17)
         self.assertAlmostEquals(cx[4,2].imag, -1.8087566023531674, places=17)
 
+    def testLoadingHDF5Scalars(self):
+        f = IOTestFolder + "NexusLoaderTest/"
+        nm = dnp.io.load(f + "scalar.h5", format=['hdf5'])
+        d = nm['scalar'][...]
+        self.assertAlmostEquals(d[()], 1.0, places=17)
+        d = nm['s_f_string'][...]
+        self.assertEquals(d, b'hello!')
+        d = nm['s_a_string'][...]
+        self.assertEquals(d, b'hello!')
+        d = nm['s_u_string'][...]
+        self.assertEquals(d, u'hello!')
+
     def checkTree(self, t):
         print(t)
         g = t['entry1/instrument/FFI0']

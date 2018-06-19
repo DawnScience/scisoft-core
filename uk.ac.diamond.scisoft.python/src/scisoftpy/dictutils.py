@@ -169,6 +169,9 @@ class ListDict(object):
                 raise IndexError('Key was too large')
             key = list(self.__odict__.keys())[key]
 
+        if not isinstance(key, _text_type):
+            key = str(key)
+
         if isinstance(key, _text_type):
             if self.__inter__:
                 key = sanitise_name(key, False)
@@ -184,6 +187,9 @@ class ListDict(object):
             if key > len(self.__odict__):
                 raise IndexError("Key was too large")
             key = list(self.__odict__.keys())[key]
+
+        if not isinstance(key, _text_type):
+            key = str(key)
 
         if isinstance(key, _text_type):
             if self.__inter__:
@@ -204,6 +210,9 @@ class ListDict(object):
             if key > len(self):
                 raise IndexError("Key was too large")
             key = list(_iterkeys(self.__odict__))[key]
+
+        if not isinstance(key, _text_type):
+            key = str(key)
 
         if isinstance(key, _text_type):
             if self.__inter__:

@@ -18,7 +18,8 @@ public class AzimuthalIntegrationDifferenceModel extends AbstractOperationModel 
 	
 	enum OperationToPerform {
 		SUBTRACT(1),
-		DIVIDE(2);
+		DIVIDE(2),
+		DIFFERENCE(3);
 		
 		
 		private final int operationChoice;
@@ -37,8 +38,9 @@ public class AzimuthalIntegrationDifferenceModel extends AbstractOperationModel 
 		@Override
 		public String toString() {
 			switch (this.operationChoice) {
-				case 1:		return String.format("Subtract Frames");
-				case 2:		return String.format("Divide Frames");
+				case 1:		return String.format("Subtract Frames (a-b)");
+				case 2:		return String.format("Divide Frames (a/b)");
+				case 3:		return String.format("Relative Difference of Frames ([a-b]/a)");
 				default:	return String.format("Error!");
 			}
 		}

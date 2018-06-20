@@ -89,13 +89,15 @@ public class AzimuthalIntegrationDifferenceOperation extends AbstractOperation<A
 		
 		OperationToPerform operationSelected = model.getOperationSelected();
 		
-		if (operationSelected == OperationToPerform.SUBTRACT) {
-			image = Maths.subtract(input, image);
-		} else if (operationSelected == OperationToPerform.DIVIDE) {
-			image = Maths.divide(input, image);
-		} else {
-			RuntimeException unexpectedSelectionException = new RuntimeException();
-			throw unexpectedSelectionException;
+		switch (operationSelected) {
+			case SUBTRACT:		image = Maths.subtract(input, image);
+								break;
+			case DIVIDE:		image = Maths.divide(input, image);
+								break;
+			case DIFFERENCE:	image = Maths.divide(Maths.subtract(input, image), input);
+								break;
+			default:			RuntimeException unexpectedSelectionException = new RuntimeException();
+								throw unexpectedSelectionException;
 		}
 		
 		copyMetadata(input, image);

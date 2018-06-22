@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Diamond Light Source Ltd.
+ * Copyright (c) 2018 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -11,40 +11,40 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 
-import org.eclipse.january.IMonitor;
-import org.eclipse.january.MetadataException;
-import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.Slice;
-import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.metadata.MetadataFactory;
-
-import uk.ac.diamond.scisoft.analysis.roi.XAxis;
-import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
-import uk.ac.diamond.scisoft.analysis.metadata.UnitMetadataImpl;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.vecmath.Vector3d;
 import javax.measure.unit.NonSI;
 
-import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.metadata.MetadataFactory;
+
+import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
+import uk.ac.diamond.scisoft.analysis.metadata.UnitMetadataImpl;
+
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
+import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 
 // @author Tim Snow
 
+
 public class RemapToQOperation extends AbstractOperation<EmptyModel, OperationData> {
 
 
 	protected IDiffractionMetadata metadata;
 	private static final Logger logger = LoggerFactory.getLogger(RemapToQOperation.class);
-	private Dataset qCacheX;
-	private Dataset qCacheY;
+	AxesMetadata axisMetadata;
 	
 	
 	// Let's give this process an ID tag
@@ -86,34 +86,43 @@ public class RemapToQOperation extends AbstractOperation<EmptyModel, OperationDa
 		
 		if (!dpe || !dee) {
 			this.metadata = md;
-
-			Dataset qCache = PixelIntegrationUtils.generateQArray(this.metadata);
-			Dataset qCacheRolled = qCache.getTransposedView(1, 0);
 			
-			double[] beamPixelLocation = this.metadata.getDetector2DProperties().getBeamCentreCoords();
-			int beamX = (int) Math.round(beamPixelLocation[0]);
-			int beamY = (int) Math.round(beamPixelLocation[1]);
+			// Find out how big our dataset is and create its q-space as well as defining the units of q
+			int[] datasetShape = dataset.getShape();
+			QSpace qSpace = new QSpace(md.getDetector2DProperties(), md.getDiffractionCrystalEnvironment());
+			UnitMetadataImpl axisUnit = new UnitMetadataImpl(NonSI.ANGSTROM.inverse());
 			
-			qCacheX = qCacheRolled.getSlice(new Slice(beamX, beamX + 1)).squeeze();
-			qCacheY = qCache.getSlice(new Slice(beamY, beamY + 1)).squeeze();
-			qCacheX.setName(XAxis.Q.getXAxisLabel());
-			qCacheY.setName(XAxis.Q.getXAxisLabel());
+			// Construct the axis datasets, then find the relevant q values and subsequently set the units and titles
+			DoubleDataset xAxes = DatasetFactory.zeros(DoubleDataset.class, datasetShape[0], datasetShape[1]);
+			DoubleDataset yAxes = DatasetFactory.zeros(DoubleDataset.class, datasetShape[0], datasetShape[1]);
+			
+			for (int yAxisIter = 0; yAxisIter < datasetShape[0]; yAxisIter ++) {
+				for (int xAxisIter = 0; xAxisIter < datasetShape[1]; xAxisIter ++) {
+					Vector3d qPosition = qSpace.qFromPixelPosition(xAxisIter + 0.5, yAxisIter + 0.5);
+					xAxes.set(-qPosition.x, yAxisIter, xAxisIter); // Invert sign of values to make plot look reasonable
+					yAxes.set(qPosition.y, yAxisIter, xAxisIter);
+				}
+			}
+			
+			xAxes.setMetadata(axisUnit);
+			yAxes.setMetadata(axisUnit);
+			xAxes.setName("Q_x");
+			yAxes.setName("Q_y");
+			
+			// Now try to initialise the axis metadata object
+			try {
+				axisMetadata = MetadataFactory.createMetadata(AxesMetadata.class, 2);
+			} catch (MetadataException e) {
+				logger.error("Unable to initialise axes metadata for remap to q processing plugin");
+				throw new OperationException(this, e);
+			}
+			
+			// And populate it
+			axisMetadata.addAxis(0, yAxes);
+			axisMetadata.addAxis(1, xAxes);
 		}
 		
-		AxesMetadata axisMetadata;
-		
-		try {
-			axisMetadata = MetadataFactory.createMetadata(AxesMetadata.class, 2);
-		} catch (MetadataException e) {
-			throw new OperationException(this, e);
-		}
-		
-		UnitMetadataImpl xAxisUnit = new UnitMetadataImpl(NonSI.ANGSTROM.inverse());
-		qCacheX.setMetadata(xAxisUnit);
-		qCacheY.setMetadata(xAxisUnit);
-		
-		axisMetadata.setAxis(0, qCacheX);
-		axisMetadata.setAxis(1, qCacheY);
+		// Then set the axis metadata, overwriting anything that might be there already
 		dataset.setMetadata(axisMetadata);
 		
 		return new OperationData(dataset);	

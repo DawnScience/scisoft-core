@@ -1355,7 +1355,7 @@
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.saxsCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.RemapToQOperation"
-            description="Re-map pixel values to q values"
+            description="Re-map pixel values to q values - Please note: this will only work with raw pixel values, not data already remapped."
             id="uk.ac.diamond.scisoft.analysis.processing.operations.saxs.RemapToQOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationModel"
             name="Remap into Q">

@@ -294,7 +294,7 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="net.sf.py4j"
+         id="py4j-java"
          download-size="0"
          install-size="0"
          version="0.0.0"

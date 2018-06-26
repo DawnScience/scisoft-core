@@ -32,8 +32,14 @@ public class PhotonCountingErrorOperation extends AbstractOperation<EmptyModel, 
 		double val = 0;
 		while (i.hasNext()) {
 			val = in.getElementDoubleAbs(i.index);
-			if (val < 0) continue;
-			er.setAbs(i.index, Math.sqrt(val));
+			
+			if (val > 0) {
+				er.setAbs(i.index, Math.sqrt(val));
+			} else if (val == 0) {
+				er.setAbs(i.index, 1.0d);
+			} else {
+				continue;
+			}
 		}
 		
 		in.setErrors(er);

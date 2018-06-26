@@ -9,6 +9,7 @@
 
 package org.eclipse.dawnsci.analysis.tree;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.eclipse.january.dataset.StringDataset;
 public class TreeToMapUtils {
 	
 	private static final String DATANODEKEY = "org.eclipse.dawnsci.analysis.api.tree.DataNode";
+	private static final String SYMBOLICNODEKEY = "org.eclipse.dawnsci.analysis.api.tree.SymbolicNode";
 	private static final String MAXSHAPE = "org.eclipse.dawnsci.analysis.api.tree.DataNode.maxShape";
 
 	public static Map<String, Object> treeToMap(Tree tree) {
@@ -72,11 +74,12 @@ public class TreeToMapUtils {
 			Object shape = map.remove(MAXSHAPE);
 			if (shape instanceof long[]) ((DataNode)parent).setMaxShape((long[])shape);
 			
-		} else {
+		} else if (map.containsKey(SYMBOLICNODEKEY)) {
+			parent = TreeFactory.createSymbolicNode(0, (URI)null, null, Tree.ROOT);
+		}else {
+		
 			parent = TreeFactory.createGroupNode(0);
 		}
-		
-		
 		
 		for (String key : map.keySet()) {
 			
@@ -133,9 +136,14 @@ public class TreeToMapUtils {
 		}
 		
 		if (destination instanceof DataNode) {
-			map.put(DATANODEKEY, true);
 			DataNode dn = (DataNode)destination;
-			map.put("org.eclipse.dawnsci.analysis.api.tree.DataNode.maxShape", dn.getMaxShape());
+			if (dn.getDataset() == null) {
+				map.put(SYMBOLICNODEKEY, true);
+			} else {
+				map.put(DATANODEKEY, true);
+				map.put("org.eclipse.dawnsci.analysis.api.tree.DataNode.maxShape", dn.getMaxShape());
+			}
+				
 		}
 		
 		return map;

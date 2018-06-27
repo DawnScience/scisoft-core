@@ -1,4 +1,4 @@
-package uk.ac.diamond.scisoft.xrmc;
+package uk.ac.diamond.scisoft.xpdf.xrmc;
 
 import static org.junit.Assert.*;
 

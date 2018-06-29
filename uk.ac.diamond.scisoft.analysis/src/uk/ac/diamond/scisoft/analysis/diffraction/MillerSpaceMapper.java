@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.measure.unit.SI;
 import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
@@ -21,7 +20,6 @@ import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironmen
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
-import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
@@ -41,6 +39,7 @@ import org.eclipse.january.dataset.PositionIterator;
 import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.SliceND;
 
+import tec.units.indriya.unit.Units;
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
 import uk.ac.diamond.scisoft.analysis.dataset.function.BicubicInterpolator;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
@@ -1404,7 +1403,7 @@ public class MillerSpaceMapper {
 
 				Dataset trans = NexusTreeUtils.parseAttenuator(attenuatorPath, tree);
 				// factor in count time too
-				Dataset time = NexusTreeUtils.getDataset(timePath, tree, SI.SECOND);
+				Dataset time = NexusTreeUtils.getDataset(timePath, tree, Units.SECOND);
 				if (time != null) {
 					if (time.getSize() != 1) {
 						int[] dshape = iters[0].getShape();

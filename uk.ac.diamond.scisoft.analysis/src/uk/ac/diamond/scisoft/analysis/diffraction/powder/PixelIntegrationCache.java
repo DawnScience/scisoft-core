@@ -9,22 +9,20 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction.powder;
 
-import javax.measure.unit.NonSI;
-import javax.measure.unit.ProductUnit;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
-
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.UnitMetadata;
+import org.eclipse.dawnsci.analysis.api.unit.UnitUtils;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.metadata.MetadataFactory;
+import org.eclipse.january.metadata.UnitMetadata;
 
-import uk.ac.diamond.scisoft.analysis.crystallography.ScatteringVector;
+import si.uom.NonSI;
+import tec.units.indriya.unit.Units;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
-import uk.ac.diamond.scisoft.analysis.metadata.UnitMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 public class PixelIntegrationCache implements IPixelIntegrationCache {
@@ -133,13 +131,17 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 				binEdgesAzimuthal = calculateBins(azimuthalArray, bean.getAzimuthalRange(), nBinsAz,!isAz);
 			}
 		}
-		
+
 		if (!to1D || !isAz) azimuthalAxis = calculateAzimuthalAxis(nBinsAz, bean.getAzimuthalRange(), binEdgesAzimuthal,!isAz);
-		
-		if (!to1D || isAz) radialAxis = calculateRadialAxis(bean.getxAxis(), nBinsRad, radialRange, binEdgesRadial, bean.isLog(),isAz);
-		
+
+		if (!to1D || isAz) {
+			try {
+				radialAxis = calculateRadialAxis(bean.getxAxis(), nBinsRad, radialRange, binEdgesRadial, bean.isLog(),isAz);
+			} catch (MetadataException e) {
+			}
+		}
 	}
-	
+
 	@Override
 	public Dataset[] getXAxisArray() {
 		return bean.isAzimuthalIntegration() ? radialArray : azimuthalArray;
@@ -252,10 +254,9 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 			double shift = 0;
 //			range corresponds to bin centres
 			if (isCentre) shift = (binRange[1]- binRange[0])/(2*numBins);
-			return (DoubleDataset) DatasetFactory.createLinearSpace(binRange[0]-shift, binRange[1]+shift, numBins + 1, Dataset.FLOAT64);
+			return DatasetFactory.createLinearSpace(DoubleDataset.class, binRange[0]-shift, binRange[1]+shift, numBins + 1);
 		}
-		
-			
+
 		double min = Double.MAX_VALUE;
 		double max = -Double.MAX_VALUE;
 		
@@ -269,56 +270,54 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 			max = x > max ? x : max;
 		}
 		//default range corresponds to bin edges
-		return (DoubleDataset) DatasetFactory.createLinearSpace(min, max, numBins + 1, Dataset.FLOAT64);
+		return DatasetFactory.createLinearSpace(DoubleDataset.class, min, max, numBins + 1);
 	}
-	
-	private static Dataset calculateRadialAxis(XAxis xAxis, int nBins, double[] binRange, DoubleDataset binEdges, boolean isLog, boolean isCentre) {
+
+	private static Dataset calculateRadialAxis(XAxis xAxis, int nBins, double[] binRange, DoubleDataset binEdges, boolean isLog, boolean isCentre) throws MetadataException {
 		Dataset axis = null;
-		
+
 		if (binRange == null || !isCentre) {
 			axis = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
 			axis.idivide(2);
 		} else {
-			
-			axis = DatasetFactory.createLinearSpace(binRange[0], binRange[1], nBins, Dataset.FLOAT64);
-	
+			axis = DatasetFactory.createLinearSpace(DoubleDataset.class, binRange[0], binRange[1], nBins);
 		}
-		
+
 		if (isLog) {
 			IndexIterator it = axis.getIterator();
 			while (it.hasNext()) {
 				axis.setObjectAbs(it.index,Math.pow(10,axis.getElementDoubleAbs(it.index)));
 			}
 		}
-		
+
 		String name = null;
 		UnitMetadata unit = null;
-		
+
 		switch (xAxis) {
 		case Q:
 			name = "q";
-			unit = new UnitMetadataImpl(new ProductUnit<>(Unit.ONE.divide(NonSI.ANGSTROM)));
+			unit = MetadataFactory.createMetadata(UnitMetadata.class, NonSI.ANGSTROM.inverse());
 			break;
 		case Qnm:
 			name = "q";
-			unit = new UnitMetadataImpl(new ProductUnit<>(Unit.ONE.divide(SI.NANO(SI.METER))));
+			unit = MetadataFactory.createMetadata(UnitMetadata.class, UnitUtils.NANOMETRE.inverse());
 			break;
 		case Qm:
 			name = "q";
-			unit = new UnitMetadataImpl(new ProductUnit<>(Unit.ONE.divide(SI.METER)));
+			unit = MetadataFactory.createMetadata(UnitMetadata.class, Units.METRE.inverse());
 			break;
 		case ANGLE:
 			name = "2-theta";
-			unit = new UnitMetadataImpl(NonSI.DEGREE_ANGLE);
+			unit = MetadataFactory.createMetadata(UnitMetadata.class, NonSI.DEGREE_ANGLE);
 			break;
 		case RESOLUTION:
 			axis = Maths.divide((2*Math.PI), axis);
 			name = "d-spacing";
-			unit = new UnitMetadataImpl(NonSI.ANGSTROM);
+			unit = MetadataFactory.createMetadata(UnitMetadata.class, NonSI.ANGSTROM);
 			break;
-		case PIXEL:
+		case PIXEL: // TODO support pixel pitch with size from detector
 			name = "pixel";
-			unit = new UnitMetadataImpl(NonSI.PIXEL);
+			unit = MetadataFactory.createMetadata(UnitMetadata.class, UnitUtils.PIXEL);
 			break;
 		}
 		axis.setMetadata(unit);
@@ -335,7 +334,7 @@ public class PixelIntegrationCache implements IPixelIntegrationCache {
 			axis = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
 			axis.idivide(2);
 		} else {
-			axis = DatasetFactory.createLinearSpace(binRange[0], binRange[1], nBins, Dataset.FLOAT64);
+			axis = DatasetFactory.createLinearSpace(DoubleDataset.class, binRange[0], binRange[1], nBins);
 		}
 
 		axis.setName("azimuthal angle (degrees)");

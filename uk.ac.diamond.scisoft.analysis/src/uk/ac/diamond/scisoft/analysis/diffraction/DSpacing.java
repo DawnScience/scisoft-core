@@ -15,7 +15,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.measure.unit.NonSI;
 import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
@@ -36,6 +35,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import si.uom.NonSI;
 import uk.ac.diamond.scisoft.analysis.crystallography.CalibrantSpacing;
 import uk.ac.diamond.scisoft.analysis.crystallography.HKL;
 
@@ -391,7 +391,7 @@ public class DSpacing {
 			DetectorProperties detprop = metadata.getDetector2DProperties();
 			DiffractionCrystalEnvironment diffenv = metadata.getDiffractionCrystalEnvironment();
 			try {
-				IROI roi = DSpacing.conicFromDSpacing(detprop, diffenv, Double.valueOf(hkl.getD().doubleValue(NonSI.ANGSTROM)));
+				IROI roi = DSpacing.conicFromDSpacing(detprop, diffenv, hkl.getD().to(NonSI.ANGSTROM).getValue().doubleValue());
 				rois.add(roi);
 			} catch ( Exception e) {
 				rois.add(null);

@@ -84,7 +84,10 @@ public class JythonPath {
 		"uk.ac.diamond.org.apache.xmlrpc.common",
 		"uk.ac.diamond.org.apache.xmlrpc.server",
 		"com.thoughtworks.xstream",
-		"uk.ac.diamond.org.jscience4",
+		"javax.measure.unit-api",
+		"si.uom.si-",
+		"tec.uom.lib",
+		"tec.units.indriya",
 		"org.eclipse.equinox.common", // Required for IRemotePlottingSystem
 		"org.dawnsci.boofcv", // Required for running boofcv image processing in jython
 		"org.boofcv.feature",

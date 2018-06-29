@@ -9,13 +9,11 @@
 
 package uk.ac.diamond.scisoft.analysis.crystallography;
 
-import javax.measure.quantity.Quantity;
-import javax.measure.unit.ProductUnit;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
+import javax.measure.Quantity;
 
-public interface ScatteringVector extends Quantity {
-	
-    public final static Unit<ScatteringVector> UNIT 
-         = new ProductUnit<ScatteringVector>(Unit.ONE.divide(SI.METRE));
+import tec.units.indriya.unit.Units;
+
+public interface ScatteringVector extends Quantity<ScatteringVector> {
+	public static final Unit<?> UNIT = Units.METRE.inverse();
 }

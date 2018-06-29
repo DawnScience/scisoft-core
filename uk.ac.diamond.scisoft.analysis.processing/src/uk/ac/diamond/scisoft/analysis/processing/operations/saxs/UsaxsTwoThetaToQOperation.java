@@ -11,38 +11,38 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 
-// Imports from uk.ac.diamond.scisoft
-import uk.ac.diamond.scisoft.analysis.metadata.UnitMetadataImpl;
-import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
-import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsTwoThetaToQModel.qUnits;
-import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsTwoThetaToQModel.YawUnits;
-
-// Imports from org.eclipse.dawnsci
-import org.eclipse.january.DatasetException;
-
 // Imports from javax.measure
-import javax.measure.unit.SI;
-import javax.measure.unit.NonSI;
 
 //Imports from uk.ac.dawnsci.analysis
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
-import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.unit.UnitUtils;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
-
+// Imports from org.eclipse.dawnsci
+import org.eclipse.january.DatasetException;
 // Imports from org.eclipse.january
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
-
+import org.eclipse.january.metadata.MetadataFactory;
+import org.eclipse.january.metadata.UnitMetadata;
 // Importing the logger!
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import si.uom.NonSI;
+import si.uom.SI;
+import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsTwoThetaToQModel.YawUnits;
+import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsTwoThetaToQModel.qUnits;
+// Imports from uk.ac.diamond.scisoft
+import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 
 //@author Tim Snow
@@ -128,19 +128,24 @@ public class UsaxsTwoThetaToQOperation extends AbstractOperation<UsaxsTwoThetaTo
 			xAxis.set(qValue, index);
 		}
 		
-		UnitMetadataImpl xAxisUnit = null;
+		UnitMetadata xAxisUnit = null;
 		
-		if (model.getQScale() == qUnits.METERS) {
-			xAxisUnit = new UnitMetadataImpl(SI.METER.inverse());
-			xAxis = Maths.multiply(xAxis, 1e10);
-			xAxis.setName("q");
-		} else if (model.getQScale() == qUnits.NANOMETERS) {
-			xAxisUnit = new UnitMetadataImpl(SI.NANO(SI.METER).inverse());
-			xAxis = Maths.multiply(xAxis, 1e1);
-			xAxis.setName("q");
-		} else {
-			xAxisUnit = new UnitMetadataImpl(NonSI.ANGSTROM.inverse());
-			xAxis.setName("q");
+		try {
+			if (model.getQScale() == qUnits.METERS) {
+				xAxisUnit = MetadataFactory.createMetadata(UnitMetadata.class, SI.METRE.inverse());
+				xAxis = Maths.multiply(xAxis, 1e10);
+				xAxis.setName("q");
+			} else if (model.getQScale() == qUnits.NANOMETERS) {
+				xAxisUnit = MetadataFactory.createMetadata(UnitMetadata.class, UnitUtils.NANOMETRE.inverse());
+				xAxis = Maths.multiply(xAxis, 1e1);
+				xAxis.setName("q");
+			} else {
+				xAxisUnit = MetadataFactory.createMetadata(UnitMetadata.class, NonSI.ANGSTROM.inverse());
+				xAxis.setName("q");
+			}
+		} catch (MetadataException e) {
+			logger.error("Could not create unit metadata for axis", e);
+			throw new OperationException(this, "Could not create unit metadata for axis", e);
 		}
 		
 		// Configure the output dataset...

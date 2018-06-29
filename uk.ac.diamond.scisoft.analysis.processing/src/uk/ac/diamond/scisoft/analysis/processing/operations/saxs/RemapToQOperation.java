@@ -11,29 +11,27 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 
+import javax.vecmath.Vector3d;
+
+import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
+import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
+import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
+import org.eclipse.january.metadata.UnitMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.vecmath.Vector3d;
-import javax.measure.unit.NonSI;
-
-import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.MetadataException;
-import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.metadata.MetadataFactory;
-
+import si.uom.NonSI;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
-import uk.ac.diamond.scisoft.analysis.metadata.UnitMetadataImpl;
-
-import org.eclipse.dawnsci.analysis.api.processing.OperationData;
-import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
-import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.api.processing.OperationException;
-import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 
 
 // @author Tim Snow
@@ -90,7 +88,12 @@ public class RemapToQOperation extends AbstractOperation<EmptyModel, OperationDa
 			// Find out how big our dataset is and create its q-space as well as defining the units of q
 			int[] datasetShape = dataset.getShape();
 			QSpace qSpace = new QSpace(md.getDetector2DProperties(), md.getDiffractionCrystalEnvironment());
-			UnitMetadataImpl axisUnit = new UnitMetadataImpl(NonSI.ANGSTROM.inverse());
+			UnitMetadata axisUnit;
+			try {
+				axisUnit = MetadataFactory.createMetadata(UnitMetadata.class, NonSI.ANGSTROM.inverse());
+			} catch (MetadataException e) {
+				throw new OperationException(this, "Could not create axes' unit metadata", e);
+			}
 			
 			// Construct the axis datasets, then find the relevant q values and subsequently set the units and titles
 			DoubleDataset xAxes = DatasetFactory.zeros(DoubleDataset.class, datasetShape[0], datasetShape[1]);

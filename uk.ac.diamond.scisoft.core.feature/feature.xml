@@ -143,13 +143,6 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="uk.ac.diamond.org.jscience4"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="uk.ac.diamond.scisoft.analysis.osgi"
          download-size="0"
          install-size="0"
@@ -328,6 +321,13 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
+         id="org.eclipse.dawnsci.xdi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="javax.measure.unit-api"
          download-size="0"
          install-size="0"
@@ -335,7 +335,28 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.dawnsci.xdi"
+         id="si.uom.si-units"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="tec.uom.lib.uom-lib-common"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="tec.units.indriya"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="si.uom.si-quantity"
          download-size="0"
          install-size="0"
          version="0.0.0"

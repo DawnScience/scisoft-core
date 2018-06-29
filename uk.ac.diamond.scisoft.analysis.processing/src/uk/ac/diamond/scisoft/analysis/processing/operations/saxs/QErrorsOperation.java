@@ -11,38 +11,38 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 
-// Imports from org.eclipse.january
-import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.Maths;
-import org.eclipse.january.DatasetException;
-import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.metadata.MetadataFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-// Imports from org.eclipse.dawnsci
-import org.eclipse.dawnsci.analysis.api.processing.OperationData;
-import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.api.tree.Tree;
-import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import java.text.MessageFormat;
 
-import java.util.List;
-
-import javax.measure.converter.UnitConverter;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.IncommensurableException;
+import javax.measure.UnconvertibleException;
+import javax.measure.UnitConverter;
 
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
-import org.eclipse.dawnsci.analysis.api.metadata.UnitMetadata;
+// Imports from org.eclipse.dawnsci
+import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.tree.Tree;
+import org.eclipse.dawnsci.analysis.api.unit.UnitUtils;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.january.DatasetException;
+// Imports from org.eclipse.january
+import org.eclipse.january.IMonitor;
 import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
+import org.eclipse.january.metadata.UnitMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import si.uom.NonSI;
 // Imports from uk.ac.diamond
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
@@ -123,7 +123,13 @@ public class QErrorsOperation extends AbstractOperation<QErrorsModel, OperationD
 		}
 		
 		if (!unitMetadata.getUnit().equals(NonSI.ANGSTROM.inverse())) {
-			axisConverter = unitMetadata.getUnit().getConverterTo(NonSI.ANGSTROM.inverse());
+			try {
+				axisConverter = unitMetadata.getUnit().getConverterToAny(NonSI.ANGSTROM.inverse());
+			} catch (UnconvertibleException | IncommensurableException e) {
+				String error = MessageFormat.format("Could not convert axis's ({}) unit to Angstrom", unitMetadata.getUnit());
+				logger.error(error, e);
+				throw new OperationException(this, error);
+			}
 			
 			for (int index = 0; index < inputAxis.getSize(); index ++) {
 				double convertedAxisValue = axisConverter.convert(inputAxis.getDouble(index));
@@ -149,7 +155,7 @@ public class QErrorsOperation extends AbstractOperation<QErrorsModel, OperationD
 		
 		if (model.getCalculateSampleThicknessErrors()) {
 			String nexusSampleThicknessPath = currentNexusEntry + NEXUS_SAMPLE_THICKNESS_PATH;
-			double sampleThickness = NexusTreeUtils.getDataset(nexusSampleThicknessPath, nexusTree, SI.MILLIMETER).getDouble();
+			double sampleThickness = NexusTreeUtils.getDataset(nexusSampleThicknessPath, nexusTree, UnitUtils.MILLIMETRE).getDouble();
 			
 			if (sampleThickness == 0.00 || Double.isNaN(sampleThickness)) throw new OperationException(this, "No sample thickness provided!");
 			overallErrors = Maths.add(overallErrors, CalculateSampleThicknessErrorsSquared(workingAxis, sampleToDetectorDistance, beamWavelengthInA, sampleThickness));
@@ -159,9 +165,7 @@ public class QErrorsOperation extends AbstractOperation<QErrorsModel, OperationD
 		Dataset axisErrors = Maths.sqrt(overallErrors);
 		
 		// Cast the errors if required
-		if (!unitMetadata.getUnit().equals(NonSI.ANGSTROM.inverse())) {
-			axisConverter = NonSI.ANGSTROM.inverse().getConverterTo(unitMetadata.getUnit());
-			
+		if (axisConverter != null) {
 			for (int index = 0; index < axisErrors.getSize(); index ++) {
 				double convertedErrorValue = axisConverter.convert(axisErrors.getDouble(index));
 				axisErrors.set(convertedErrorValue, index);

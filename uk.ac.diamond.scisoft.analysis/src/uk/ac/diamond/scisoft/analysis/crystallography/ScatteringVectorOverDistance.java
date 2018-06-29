@@ -9,13 +9,12 @@
 
 package uk.ac.diamond.scisoft.analysis.crystallography;
 
-import javax.measure.quantity.Quantity;
-import javax.measure.unit.ProductUnit;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Quantity;
+import javax.measure.Unit;
 
-public interface ScatteringVectorOverDistance extends Quantity {
-	
-    public final static Unit<ScatteringVectorOverDistance> UNIT 
-         = new ProductUnit<ScatteringVectorOverDistance>(Unit.ONE.divide(SI.METRE.pow(2)));
+import tec.units.indriya.unit.Units;
+
+public interface ScatteringVectorOverDistance extends Quantity<ScatteringVectorOverDistance> {
+	@SuppressWarnings("unchecked")
+	public final static Unit<ScatteringVectorOverDistance> UNIT = (Unit<ScatteringVectorOverDistance>) Units.METRE.inverse().pow(2);
 }

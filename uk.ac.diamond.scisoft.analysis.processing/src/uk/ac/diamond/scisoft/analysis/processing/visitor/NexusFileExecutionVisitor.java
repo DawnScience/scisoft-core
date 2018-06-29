@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
-import org.eclipse.dawnsci.analysis.api.metadata.UnitMetadata;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistentNodeFactory;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
@@ -58,6 +57,7 @@ import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.OriginMetadata;
+import org.eclipse.january.metadata.UnitMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

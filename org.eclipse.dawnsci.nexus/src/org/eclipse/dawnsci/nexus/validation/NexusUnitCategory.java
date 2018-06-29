@@ -11,122 +11,105 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus.validation;
 
-import static javax.measure.unit.SI.*;
+import javax.measure.Unit;
 
-import javax.measure.quantity.AmountOfSubstance;
-import javax.measure.quantity.Angle;
-import javax.measure.quantity.Area;
-import javax.measure.quantity.Dimensionless;
-import javax.measure.quantity.Duration;
-import javax.measure.quantity.ElectricCharge;
-import javax.measure.quantity.ElectricCurrent;
-import javax.measure.quantity.ElectricPotential;
-import javax.measure.quantity.Energy;
-import javax.measure.quantity.Frequency;
-import javax.measure.quantity.Length;
-import javax.measure.quantity.Mass;
-import javax.measure.quantity.Power;
-import javax.measure.quantity.Pressure;
-import javax.measure.quantity.SolidAngle;
-import javax.measure.quantity.Temperature;
-import javax.measure.quantity.Volume;
-import javax.measure.unit.Unit;
-
+import si.uom.SI;
+import tec.units.indriya.AbstractUnit;
 
 public enum NexusUnitCategory {
 	
-	NX_ANGLE(Angle.UNIT),
+	NX_ANGLE(SI.RADIAN),
 	
 	// TODO: check standard unit for this unit category (perhaps any units are ok?)
-	NX_ANY(Dimensionless.UNIT),
+	NX_ANY(AbstractUnit.ONE),
 	
-	NX_AREA(Area.UNIT),
+	NX_AREA(SI.SQUARE_METRE),
 	
-	NX_CHARGE(ElectricCharge.UNIT),
+	NX_CHARGE(SI.COULOMB),
 	
-	NX_CROSS_SECTION(Area.UNIT),
+	NX_CROSS_SECTION(SI.SQUARE_METRE),
 	
-	NX_CURRENT(ElectricCurrent.UNIT),
+	NX_CURRENT(SI.AMPERE),
 	
-	NX_DIMENSIONLESS(Dimensionless.UNIT),
+	NX_DIMENSIONLESS(AbstractUnit.ONE),
 	
 	/**
 	 * Emmittance, a length * angle, e.g. metre-radians
 	 */
-	NX_EMITTANCE(METRE.times(RADIAN)),
+	NX_EMITTANCE(SI.METRE.multiply(SI.RADIAN)),
 	
-	NX_ENERGY(Energy.UNIT),
+	NX_ENERGY(SI.JOULE),
 	
 	/**
 	 * TODO: what unit of flux to use?
 	 * The nexus format documentation gives the example: s-1 cm-2,
 	 */
-	NX_FLUX(SECOND.inverse().divide(Area.UNIT)),
+	NX_FLUX(SI.SECOND.inverse().divide(SI.SQUARE_METRE)),
 	
-	NX_FREQUENCY(Frequency.UNIT),
+	NX_FREQUENCY(SI.HERTZ),
 	
-	NX_LENGTH(METRE),
+	NX_LENGTH(SI.METRE),
 	
-	NX_MASS(Mass.UNIT),
+	NX_MASS(SI.KILOGRAM),
 	
-	NX_MASS_DENSITY(Mass.UNIT.divide(Volume.UNIT)),
+	NX_MASS_DENSITY(SI.KILOGRAM.divide(SI.CUBIC_METRE)),
 	
-	NX_MOLECULAR_WEIGHT(Mass.UNIT.divide(AmountOfSubstance.UNIT)),
+	NX_MOLECULAR_WEIGHT(SI.KILOGRAM.divide(SI.MOLE)),
 	
 	/**
 	 * Alias to {@link #NX_TIME}
 	 */
-	NX_PERIOD(Duration.UNIT),
+	NX_PERIOD(SI.SECOND),
 	
-	NX_PER_AREA(Area.UNIT.inverse()),
+	NX_PER_AREA(SI.SQUARE_METRE.inverse()),
 	
-	NX_PER_LENGTH(Length.UNIT.inverse()),
+	NX_PER_LENGTH(SI.METRE.inverse()),
 	
-	NX_POWER(Power.UNIT),
+	NX_POWER(SI.WATT),
 	
-	NX_PRESSURE(Pressure.UNIT),
+	NX_PRESSURE(SI.PASCAL),
 	
 	/**
 	 * Alias to NX_NUMBER
 	 * TODO check unit for this category - could use sub-interface of Dimensionless
 	 */
-	NX_PULSES(Dimensionless.UNIT),
+	NX_PULSES(AbstractUnit.ONE),
 	
-	NX_SCATTERING_LENGTH_DENSITY(Area.UNIT.inverse()),
+	NX_SCATTERING_LENGTH_DENSITY(SI.SQUARE_METRE.inverse()),
 	
-	NX_SOLID_ANGLE(SolidAngle.UNIT),
+	NX_SOLID_ANGLE(SI.STERADIAN),
 	
-	NX_TEMPERATURE(Temperature.UNIT),
+	NX_TEMPERATURE(SI.KELVIN),
 	
-	NX_TIME(Duration.UNIT),
+	NX_TIME(SI.SECOND),
 	
 	/**
 	 * Alias to {@link #NX_TIME}
 	 */
-	NX_TIME_OF_FLIGHT(Duration.UNIT),
+	NX_TIME_OF_FLIGHT(SI.SECOND),
 	
 	/**
 	 * TODO, what units for unitless? could we use a subinterface of Dimensionless?
 	 */
 	NX_UNITLESS(null),
 	
-	NX_VOLTAGE(ElectricPotential.UNIT),
+	NX_VOLTAGE(SI.VOLT),
 	
-	NX_VOLUME(Volume.UNIT),
+	NX_VOLUME(SI.CUBIC_METRE),
 	
-	NX_WAVELENGTH(Length.UNIT),
+	NX_WAVELENGTH(SI.METRE),
 	
-	NX_WAVENUMBER(Length.UNIT.inverse());
+	NX_WAVENUMBER(SI.METRE.inverse());
 	
 	private Unit<?> standardUnit;
 	
 	private NexusUnitCategory(Unit<?> unit) {
 		// make sure we have the standard unit
-		standardUnit = unit.getStandardUnit();
+		standardUnit = unit.getSystemUnit();
 	}
 	
 	public boolean isCompatible(Unit<?> unit) {
-		return unit.getStandardUnit().equals(standardUnit);
+		return unit.getSystemUnit().equals(standardUnit);
 	}
 
 }

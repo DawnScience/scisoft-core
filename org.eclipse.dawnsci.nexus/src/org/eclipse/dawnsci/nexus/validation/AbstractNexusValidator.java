@@ -17,10 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.measure.unit.Unit;
-
-import org.eclipse.dawnsci.analysis.api.metadata.UnitMetadata;
+import javax.measure.Unit;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.nexus.NXobject;
@@ -28,6 +25,7 @@ import org.eclipse.dawnsci.nexus.NXtransformations;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.metadata.MetadataType;
+import org.eclipse.january.metadata.UnitMetadata;
 
 /**
  * Abstract superclass for Nexus application definition validators.

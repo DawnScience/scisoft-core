@@ -111,24 +111,25 @@ public class ImageStackLoader implements ILazyLoader {
 	}
 
 	private ILazyDataset getDatasetFromFile(int[] location, IMonitor mon) throws ScanFileHolderException {
-		File f = new File(getDLSWindowsPath(filenames.get(location)));
+		File f = new File(filenames.get(location));
+		File nf = null;
 		if (parent != null) { // try local directory first
-			File nf = null;
 			if (!f.isAbsolute()) { // try relative path first
-				nf = new File(parent, f.getPath());
+				nf = getDLSWindowsPath(new File(parent, f.getPath()));
 			}
 			if (nf == null || !nf.exists()) {
-				nf = new File(parent, f.getName());
-			}
-			if (nf.exists()) {
-				try {
-					return loadDataset(nf.getAbsolutePath(), mon);
-				} catch (Exception e) {
+				nf = getDLSWindowsPath(new File(parent, f.getName()));
+				if (!nf.exists()) {
+					nf = null;
 				}
 			}
 		}
 
-		return loadDataset(f.getAbsolutePath(), mon);
+		if (nf == null) {
+			nf = getDLSWindowsPath(f);
+		}
+
+		return loadDataset(nf.getAbsolutePath(), mon);
 	}
 
 	private ILazyDataset loadDataset(String filename, IMonitor mon) throws ScanFileHolderException {
@@ -170,19 +171,26 @@ public class ImageStackLoader implements ILazyLoader {
 		return dataset;
 	}
 
+	private static final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
+
+	private static final String DLS_PREFIX = "/dls/";
+
 	/**
 	 * 
-	 * @param dlsPath
-	 * @return String in windows format.
+	 * @param f
+	 * @return file in windows format.
 	 */
-	private static String getDLSWindowsPath(String dlsPath) {
-		if (!isWindows || dlsPath == null)
-			return dlsPath;
+	private static File getDLSWindowsPath(File f) {
+		if (!isWindows || f == null) {
+			return f;
+		}
 
-		return dlsPath.startsWith("/dls/") ? "\\\\Data.diamond.ac.uk\\" + dlsPath.substring(5) : dlsPath;
+		String dlsPath = f.getPath();
+		if (dlsPath.startsWith(DLS_PREFIX)) {
+			return new File( "\\\\Data.diamond.ac.uk", dlsPath.substring(DLS_PREFIX.length()));
+		}
+		return f;
 	}
-
-	private static final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
 
 	@Override
 	public boolean isFileReadable() {

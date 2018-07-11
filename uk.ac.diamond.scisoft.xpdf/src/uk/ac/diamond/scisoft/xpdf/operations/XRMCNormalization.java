@@ -1,13 +1,20 @@
+/*
+ * Copyright (c) 2018 Diamond Light Source Ltd.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package uk.ac.diamond.scisoft.xpdf.operations;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -55,29 +62,34 @@ public class XRMCNormalization extends AbstractOperation<EmptyModel, OperationDa
 
 		XRMCDetector xrmcDet = xrmcMetadata.getDetector();
 		Vector3d originXRMC = xrmcDet.labFromPixel(new Vector2d(0, 0)); // top left of the top left pixel: DetectorProperties origin, in XRMC lab frame
-		Vector3d originDP = new Vector3d(-originXRMC.x, originXRMC.z, originXRMC.y); // origin, Detector Properties frame
-		Dataset eulerXYZ = DatasetFactory.createFromList(Arrays.asList(ArrayUtils.toObject(xrmcDet.getEulerAngles())));
-		Dataset pixelSizeDataset = DatasetFactory.createFromList(Arrays.asList(ArrayUtils.toObject(xrmcDet.getPixelSize()))).idivide(1000);
+		originXRMC.scale(1000);
+		//		Vector3d originDP = new Vector3d(-originXRMC.x, originXRMC.z, originXRMC.y); // origin, Detector Properties frame
+		Vector3d eulerXYZ = new Vector3d(xrmcDet.getEulerAngles());
 
 		// Get the image size of the xrmc data
 		int[] shape = input.getShape();
 		int nx = shape[0], ny = shape[1];
-		Dataset pixelSpacing = DatasetFactory.createFromList(Arrays.asList(ArrayUtils.toObject(xrmcDet.getPixelSize()))).idivide(1000);
+		Vector2d pixelSpacing = new Vector2d(xrmcDet.getPixelSize());
+		pixelSpacing.scale(1e-3);
 
-		Vector3d beamVector = new Vector3d(0., 0., 1.);
-		DetectorProperties detProp = XRMCEnergyIntegrator.calculateDetectorProperties(nx, ny, originDP, beamVector, eulerXYZ, pixelSpacing);
+		XRMCSource xrmcSource = xrmcMetadata.getSource();
+		Vector3d beamVector = new Vector3d(xrmcSource.getUK());
+		Vector3d beamUi = new Vector3d(xrmcSource.getUI());
+		Vector3d detectorUi = new Vector3d(xrmcDet.getDetectorXVector());
+		Vector3d detectorUk = new Vector3d(xrmcDet.getDetectorNormal());
+		
+		DetectorProperties detProp = XRMCEnergyIntegrator.calculateDetectorProperties(nx, ny, originXRMC, beamVector, eulerXYZ, pixelSpacing, detectorUi, detectorUk, beamUi);
 
 		// convert from photons to photons per unit area
 		Dataset saCorrected = correctSolidAngle(DatasetUtils.convertToDataset(input), detProp);
-		
+
 		XRMCSpectrum xrmcSpec = xrmcMetadata.getSpectrum();
-		XRMCSource xrmcSource = xrmcMetadata.getSource();
 
 		// normalize by total photon flux.
 		Dataset normed = normalizeByFlux(saCorrected, xrmcSpec, xrmcSource);
 
 		normed.setMetadata(xrmcMetadata);
-		
+
 		return new OperationData(normed);
 	}
 

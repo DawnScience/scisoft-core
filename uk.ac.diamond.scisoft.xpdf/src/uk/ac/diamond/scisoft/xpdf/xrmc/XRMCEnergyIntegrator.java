@@ -9,13 +9,10 @@
 
 package uk.ac.diamond.scisoft.xpdf.xrmc;
 
-import java.util.Arrays;
-
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -92,13 +89,42 @@ public class XRMCEnergyIntegrator {
 	 * 					Two element @link{Dataset} containing the pixel distances in x, y, measured in mm
 	 * @return the newly constructed @link{DetectorProperties} object
 	 */
-	public static DetectorProperties calculateDetectorProperties(int nx, int ny, Vector3d origin, Vector3d beamVector, Dataset eulerAngles, Dataset pixelSpacing) {
-		DetectorProperties detProp = new DetectorProperties(origin, nx, ny, pixelSpacing.getDouble(1), pixelSpacing.getDouble(0), new Matrix3d(1.,0.,0. ,0.,1.,0. ,0.,0.,1.));
-		detProp.setOrientationEulerXYZ(eulerAngles.getDouble(0), eulerAngles.getDouble(1), eulerAngles.getDouble(2));
+	public static DetectorProperties calculateDetectorProperties(int nx, int ny, Vector3d origin, Vector3d beamVector, Vector3d eulerAngles, Vector2d pixelSpacing, Vector3d detectorUi, Vector3d detectorUk, Vector3d beamUi) {
+		// Assume orthogonal, normalized ui, uk
+		Vector3d detectorUj = new Vector3d();
+		detectorUj.cross(detectorUk, detectorUi);
+		Vector3d row0 = new Vector3d(detectorUi);
+		row0.negate();
+		Vector3d row1 = new Vector3d(detectorUj);
+		Vector3d row2 = new Vector3d(detectorUk);
+		row2.negate();
+		
+		Matrix3d alignment = new Matrix3d();
+		alignment.setRow(0, row0);
+		alignment.setRow(1, row1);
+		alignment.setRow(2, row2);
 
-		detProp.setBeamVector(beamVector);
+		// But detector properties assumes a beam along +ve z, which may not be true. Create the matrix to transform to this coordinate system
+		Vector3d beamUk = beamVector;
+		row0 = beamUi;
+		row1 = new Vector3d();
+		row1.cross(beamUk, beamUi);
+		row2 = beamUk;
+		
+		// This is the matrix to transform from detProp
+		Matrix3d toDetProp = new Matrix3d();
+		toDetProp.setRow(0, row0);
+		toDetProp.setRow(1, row1);
+		toDetProp.setRow(2, row2);
+		
+		Vector3d originDP = new Vector3d(origin);
+		originDP.scale(1000.); //convert from metres to millimetres 
+		
+		Matrix3d alignmentDP = new Matrix3d(alignment);
+		alignmentDP.mul(toDetProp);
+		
+		return new DetectorProperties(originDP, beamVector, ny, nx, pixelSpacing.y, pixelSpacing.x, alignment);
 
-		return detProp;
 	}
 	
 	/**
@@ -116,21 +142,21 @@ public class XRMCEnergyIntegrator {
 	 * @param pixelSpacing
 	 * 					size of the pixels in each direction. In millimetres, x, y
 	 */
-	public void setGeometry(Vector3d origin, Dataset eulerAngles, Dataset pixelSpacing) {
+	public void setGeometry(Vector3d origin, Vector3d eulerAngles, Vector2d pixelSpacing, Vector3d beamUi, Vector3d beamUk, Vector3d detectorUi, Vector3d detectorUk) {
 		
 		// Get the image size of the xrmc data
 		int[] shape = xrmcData.getShape();
 		int nx = shape[1], ny = shape[2];
 
-		Vector3d beamVector = new Vector3d(0., 0., 1.);
-		Vector3d polarizationVector = new Vector3d(1., 0., 0.);
-		Vector3d normalVector = new Vector3d(0., 1., 0.);
-
-		setDetectorProperties(calculateDetectorProperties(nx, ny, origin, beamVector, eulerAngles, pixelSpacing));		
+		
+		setDetectorProperties(calculateDetectorProperties(nx, ny, origin, beamUk, eulerAngles, pixelSpacing, detectorUi, detectorUk, beamUi));		
 
 		twoTheta = DatasetFactory.zeros(nx, ny);
 		phi = DatasetFactory.zeros(nx,  ny);
 		
+		Vector3d beamVector = beamUk;
+		Vector3d polarizationVector = beamUi;
+		Vector3d normalVector = detectorUk;
 		// generate the arrays of the scattering angles. Angles taken to the pixel centre.
 		for (int i = 0; i < nx; i++) {
 			for (int j = 0; j < ny; j++) {
@@ -161,7 +187,7 @@ public class XRMCEnergyIntegrator {
 	 * 			the {@link XRMCDetector} object encapsulating the
 	 * 			input file used to generate the data.  
 	 */	
-	public void setXRMCDetector(XRMCDetector xdet) {
+	public void setXRMCDetector(XRMCDetector xdet, XRMCSource xsrc) {
 		// Create the range of energies from the detector properties
 		int nEnergies = xdet.getNBins();
 		double minEnergy = xdet.getEmin();
@@ -172,11 +198,17 @@ public class XRMCEnergyIntegrator {
 		// set the geometry of the detector, scaling the pixel size from μm to mm
 		
 		Vector3d originXRMC = xdet.labFromPixel(new Vector2d(0, 0)); // top left of the top left pixel: DetectorProperties origin, in XRMC lab frame
-		Vector3d originDP = new Vector3d(-originXRMC.x, originXRMC.z, originXRMC.y); // origin, Detector Properties frame
-		Dataset eulerXYZ = DatasetFactory.createFromList(Arrays.asList(ArrayUtils.toObject(xdet.getEulerAngles())));
-		Dataset pixelSizeDataset = DatasetFactory.createFromList(Arrays.asList(ArrayUtils.toObject(xdet.getPixelSize()))).idivide(1000);
+		Vector3d eulerXYZ = new Vector3d(xdet.getEulerAngles());
+		Vector2d pixelSizeDataset = new Vector2d(xdet.getPixelSize());
+		pixelSizeDataset.scale(1e-3);
 		
-		this.setGeometry(originDP, eulerXYZ, pixelSizeDataset);
+		Vector3d beamUi = new Vector3d(xsrc.getUI());
+		Vector3d beamUk = new Vector3d(xsrc.getUK());
+		
+		Vector3d detUi = new Vector3d(xdet.getDetectorXVector());
+		Vector3d detUk = new Vector3d(xdet.getDetectorNormal());
+		
+		this.setGeometry(originXRMC, eulerXYZ, pixelSizeDataset, beamUi, beamUk, detUi, detUk);
 	}
 
 	

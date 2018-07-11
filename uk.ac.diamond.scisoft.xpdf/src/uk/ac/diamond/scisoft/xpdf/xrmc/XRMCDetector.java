@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018 Diamond Light Source Ltd.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package uk.ac.diamond.scisoft.xpdf.xrmc;
 
 import javax.vecmath.Matrix3d;
@@ -302,8 +310,6 @@ public class XRMCDetector extends XRMCFile {
 		Vector3d moveCentreToLab = new Vector3d(getDetectorPosition());
 		moveCentreToLab.scale(POSITION_SCALE/METRE_SCALE);
 		Matrix4d transformCentreToLab = new Matrix4d(rotateDetectorToAligned, moveCentreToLab, 1.0);
-		
-		System.err.println("Detector centre to Lab = " + transformCentreToLab.toString());
 		
 		// Transform a position in metres (not pixels) from the top left origin
 		// of the detector into the lab frame 

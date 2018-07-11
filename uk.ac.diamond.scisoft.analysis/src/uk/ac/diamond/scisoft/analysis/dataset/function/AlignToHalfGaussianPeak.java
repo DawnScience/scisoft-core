@@ -41,6 +41,7 @@ public class AlignToHalfGaussianPeak implements DatasetToDatasetFunction {
 	private double lx = -Double.MAX_VALUE, hx = Double.MAX_VALUE;
 
 	private DiffGaussian dg = new DiffGaussian();
+	private boolean resample;
 
 	/**
 	 * @param useRisingSide if true fit to the side that rises (as the index increases)
@@ -76,6 +77,10 @@ public class AlignToHalfGaussianPeak implements DatasetToDatasetFunction {
 		hx = hi;
 	}
 
+	public void setResample(boolean resampleX) {
+		this.resample = resampleX;
+	}
+
 	/**
 	 * @param datasets x/y pairs of datasets
 	 * @return x/y pairs of datasets where x has been shifted to align data 
@@ -83,7 +88,7 @@ public class AlignToHalfGaussianPeak implements DatasetToDatasetFunction {
 	@Override
 	public List<? extends IDataset> value(IDataset... datasets) {
 		List<Dataset> result = new ArrayList<>();
-		List<Double> shifts = new ArrayList<>();
+		List<Double> iShifts = new ArrayList<>();
 
 		int imax = datasets.length;
 		for (int i = 0; i < imax; i += 2) {
@@ -92,55 +97,83 @@ public class AlignToHalfGaussianPeak implements DatasetToDatasetFunction {
 			Dataset y = DatasetUtils.convertToDataset(datasets[i + 1]);
 			result.add(y);
 			Monotonicity m = Comparisons.findMonotonicity(x);
-			Slice cs = findCroppingSlice(m, x, y, lx, hx);
+			Slice cs = findCroppingSlice(m, x, Math.min(x.getSize(), y.getSize()), lx, hx);
 			if (cs == null) {
 				logger.warn("Trace {} ignored as it is not strictly monotonic", i / 2); //t.getName());
-				shifts.add(null);
+				iShifts.add(null);
 				continue;
 			}
 
 			logger.debug("Cropping to {}", cs);
 			Dataset cy = y.getSliceView(cs);
-	
+
 			// look for 1st peak in derivative
-			Dataset dy = Maths.difference(cy, 1, 0);
+			Dataset dy = Maths.centralDifference(cy, 0);
 			int pos = useRisingSide ? dy.argMax(true) : dy.argMin(true);
-			
+
 			// fit to derivative of Gaussian???
 			double c = fitDiffGaussian(dg, dy, cy.max(true).doubleValue()/5., pos);
-			shifts.add(cs.getStart() + c);
+			iShifts.add(cs.getStart() + c);
 		}
 
-		logger.debug("Shifts are {}", shifts);
+		logger.debug("Shifts are {}", iShifts);
 
 		int i = 0;
-
-		double firstShift = Double.NaN;
+		double firstIShift = Double.NaN;
+		double firstXShift = forceToPosition ? position : Double.NaN;
+		Dataset firstX = null;
 		if (forceToPosition) {
-			firstShift = position;
-		} else { // make relative to first plot
-			for (Double s : shifts) {
-				i += 2;
-				if (s != null && Double.isFinite(s)) {
-					firstShift = s;
-					break;
+			if (resample) {
+				for (Double s : iShifts) {
+					if (s != null && Double.isFinite(s)) {
+						firstIShift = s;
+						firstX = result.get(i);
+						double xShift = Maths.interpolate(firstX, firstIShift);
+						logger.debug("Shift x {} by {}", i, xShift);
+						firstX = Maths.subtract(firstX, xShift);
+						result.set(i, firstX);
+						break;
+					}
+					i += 2;
 				}
 			}
-			if (Double.isFinite(firstShift)) {
-				Dataset x = result.get(i);
-				firstShift = Maths.interpolate(x, firstShift);
-				logger.debug("First shift is {}", firstShift);
+		} else { // make relative to first plot
+			firstX = result.get(i);
+			for (Double s : iShifts) {
+				if (s != null && Double.isFinite(s)) {
+					firstIShift = s;
+					Dataset x = result.get(i);
+					firstXShift = Maths.interpolate(x, firstIShift);
+					i += 2;
+					break;
+				}
+				i += 2;
 			}
 		}
+		logger.debug("First shift is {} (index = {})", firstXShift, firstIShift);
 
-		if (Double.isFinite(firstShift)) {
+		if (Double.isFinite(firstXShift)) {
 			for (; i < imax; i += 2) {
-				Double s = shifts.get(i / 2);
+				Double s = iShifts.get(i / 2);
 				if (s != null && Double.isFinite(s)) {
 					Dataset x = result.get(i);
-					double delta = Maths.interpolate(x, s) - firstShift;
-					logger.debug("Shifting {} by {}", i, delta);
-					result.set(i, Maths.subtract(x, delta));
+					if (resample) {
+						double delta = s - firstIShift;
+						logger.debug("Resampling {} by {}", i + 1, delta);
+						if (delta != 0) {
+							int iDelta = (int) Math.ceil(delta);
+							Slice slice = new Slice(firstX.getSize() - iDelta);
+							logger.debug("Slicing aligned data: {}", slice);
+							result.set(i, firstX.getSliceView(slice));
+							Dataset y = result.get(i + 1);
+							// assume x is uniformly spaced (otherwise we need to interpolate by new x values)
+							result.set(i + 1, RegisterData1D.shiftData(y, delta).getSliceView(slice));
+						}
+					} else {
+						double delta = Maths.interpolate(x, s) - firstXShift;
+						logger.debug("Shifting {} by {}", i, delta);
+						result.set(i, Maths.subtract(x, delta));
+					}
 				}
 			}
 		}
@@ -148,8 +181,7 @@ public class AlignToHalfGaussianPeak implements DatasetToDatasetFunction {
 		return result;
 	}
 
-	private static Slice findCroppingSlice(Monotonicity m, Dataset x, Dataset y, double lx, double hx) {
-		int l = Math.min(x.getSize(), y.getSize());
+	private static Slice findCroppingSlice(Monotonicity m, Dataset x, int l, double lx, double hx) {
 		if (m == Monotonicity.STRICTLY_DECREASING) {
 			Slice s = new Slice(l - 1, null, -1);
 			x = x.getSliceView(s);

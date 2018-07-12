@@ -18,10 +18,10 @@ import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
  * Base model for processing RIXS images
  */
 public class RixsBaseModel extends AbstractOperationModel {
-	@OperationModelField(label = "Rectangle A", description = "Region to search for elastic peak")
+	@OperationModelField(label = "Rectangle A", description = "Region to search for elastic peak", enableif = "!(regionsFromFile ?: false)")
 	private IRectangularROI roiA = new RectangularROI(0, 1, 2048, 1600, 0);
 
-	@OperationModelField(label = "Rectangle B", description = "Region to search for elastic peak")
+	@OperationModelField(label = "Rectangle B", description = "Region to search for elastic peak", enableif = "!(regionsFromFile ?: false)")
 	private IRectangularROI roiB = null;
 
 	public enum ENERGY_DIRECTION {

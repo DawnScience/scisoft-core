@@ -23,7 +23,7 @@ import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
-public class XRMCNormalizationOperation extends AbstractOperation<EmptyModel, OperationData> {
+public class XRMCProcessingNormalizationOperation extends AbstractOperation<EmptyModel, OperationData> {
 
 	@Override
 	public String getId() {

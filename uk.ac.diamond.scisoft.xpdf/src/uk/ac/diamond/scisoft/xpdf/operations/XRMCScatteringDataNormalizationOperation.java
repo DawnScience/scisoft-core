@@ -37,7 +37,7 @@ import uk.ac.diamond.scisoft.xpdf.xrmc.XRMCSpectrum.IPolarizedComponent;
 import uk.ac.diamond.scisoft.xpdf.xrmc.XRMCSpectrum.IUnpolarizedComponent;
 import uk.ac.diamond.scisoft.xpdf.xrmc.XRMCSpectrum.SpectrumComponent;
 
-public class XRMCNormalization extends AbstractOperation<EmptyModel, OperationData> {
+public class XRMCScatteringDataNormalizationOperation extends AbstractOperation<EmptyModel, OperationData> {
 
 	@Override
 	public String getId() {

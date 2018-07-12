@@ -134,7 +134,7 @@
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
-            class="uk.ac.diamond.scisoft.xpdf.operations.XRMCNormalizationOperation"
+            class="uk.ac.diamond.scisoft.xpdf.operations.XRMCProcessingNormalizationOperation"
             icon="icons/xpdfnormal.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XRMCNormalizationOperation"
             model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
@@ -157,7 +157,7 @@
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
-            class="uk.ac.diamond.scisoft.xpdf.operations.XRMCNormalization"
+            class="uk.ac.diamond.scisoft.xpdf.operations.XRMCScatteringDataNormalizationOperation"
             icon="icons/xrmc_normalization.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XRMCNormalization"
             model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"

@@ -131,7 +131,11 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		if (file == null) {
 			file = model.getCalibrationFile();
 		}
-		initializeFitLine(file);
+		try {
+			initializeFitLine(file);
+		} catch (OperationException e) {
+			log.append("Cannot initialize fit line from '%s': %s", file, e);
+		}
 
 		if (model.isRegionsFromFile()) {
 			file = model.getFitFile();

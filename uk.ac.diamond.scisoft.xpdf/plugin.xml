@@ -168,7 +168,7 @@
             class="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCToGammaDelta"
             icon="icons/detector_to_gd.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCToGammaDelta"
-            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            model="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCToGDModel"
             name="Interpolate XRMC scattering data to (γ,δ)">
       </operation>
       <operation

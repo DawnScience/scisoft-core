@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Example code
+Bundle-SymbolicName: uk.ac.diamond.scisoft.nexus.examples
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: Diamond Light Source
+Bundle-ActivationPolicy: lazy

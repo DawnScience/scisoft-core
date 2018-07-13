@@ -4,76 +4,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PtychoTreeUtils {
-
-	/**
-	 * Populates the Ptycho tree given a list of PtychoInput read from
-	 * a CSV file
-	 * TODO put in a recursive method to support more than depth 3 tree
-	 * @param input
-	 * @return
+	
+	/*
+	 * Recursive method to populate the Ptycho Input Editor tree.
+	 * Supports 'infinite' tree depth, and will continue until all rows are added.
 	 */
-	public static List<PtychoNode> populate(List<PtychoData> input) {
+	public static List<PtychoNode> populate(int count, int level, List<PtychoData> input){
 		List<PtychoNode> nodes = new ArrayList<PtychoNode>();
-		int i = 0;
-		while (i < input.size()) {
-			if (i < input.size() - 1) {
-				PtychoNode node = new PtychoNode(input.get(i));
-				int level = input.get(i).getLevel();
-				int nextLevel = input.get(i + 1).getLevel();
-				if (level == 0 && nextLevel == 1) {
-					int j = 0;
-					while (nextLevel == 1) {
-						int max = input.size() - (j + 1);
-						if (i == max)
-							break;
-						PtychoNode child = new PtychoNode(input.get(i + 1 + j));
-						j++;
-						if ((i + 1 + j) >= input.size()) {
-							child.setParent(node);
-							node.addChild(child);
-							break;
-						}
-						nextLevel = input.get(i + 1 + j).getLevel();
-						if (nextLevel == 2) {
-							int k = 0;
-							i += j;
-							while (nextLevel == 2) {
-								int max2 = input.size() - (k + 1);
-								if (i == max2)
-									break;
-								PtychoNode subchild = new PtychoNode(input.get(i + 1 + k));
-								k++;
-								if (i < input.size() - (k+1))
-									nextLevel = input.get(i + 1 + k).getLevel();
-								//Test**
-								if (nextLevel == 3) {
-									int l = 0;
-									i += k;
-									while (nextLevel == 3) {
-										PtychoNode subSubChild = new PtychoNode(input.get(i + 1 + l));
-										l++;
-										if (i  < input.size() - l)
-											nextLevel = input.get(i + 1 + l).getLevel();
-										subSubChild.setParent(subchild);
-										subchild.addChild(subSubChild);
-									}
-									i += l;
-									k = 0;
-								}
-								subchild.setParent(child);
-								child.addChild(subchild);
-							}
-							i += k;
-							j = 0;
-						}
-						child.setParent(node);
-						node.addChild(child);
-					}
-					i += j;
+		
+		PtychoNode node = new PtychoNode(input.get(count));
+		nodes.add(node);
+		while(++count < input.size()){
+			PtychoNode nextNode = new PtychoNode(input.get(count));
+			int nextLevel = nextNode.getData().getLevel();
+			
+			if(nextLevel > level){
+				List<PtychoNode> temp = populate(count, nextLevel, input);
+				for(PtychoNode n : temp){
+					n.setParent(node);
+					node.addChild(n);
+					count++;
 				}
-				nodes.add(node);
+				count--;
+			} else if(nextLevel == level) {
+				nodes.add(nextNode);
+			} else if (nextLevel < level){
+				return nodes;
 			}
-			i++;
+			node = nextNode;
 		}
 		return nodes;
 	}

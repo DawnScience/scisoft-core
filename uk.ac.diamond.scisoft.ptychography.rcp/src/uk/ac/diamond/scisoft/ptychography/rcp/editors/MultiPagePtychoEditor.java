@@ -96,7 +96,7 @@ public class MultiPagePtychoEditor extends MultiPageEditorPart implements ITitle
 		try {
 			levels = PtychoUtils.loadSpreadSheet(path);
 			if (levels != null)
-				tree = PtychoTreeUtils.populate(levels);
+				tree = PtychoTreeUtils.populate(0, 0, levels);
 		} catch (Exception e) {
 			logger.error("Error loading spreadsheet file:" + e.getMessage());
 			e.printStackTrace();
@@ -112,7 +112,7 @@ public class MultiPagePtychoEditor extends MultiPageEditorPart implements ITitle
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		super.dispose();
 	}
-
+	
 	@Override
 	public boolean isDirty() {
 		return treeEditor.isDirtyFlag;

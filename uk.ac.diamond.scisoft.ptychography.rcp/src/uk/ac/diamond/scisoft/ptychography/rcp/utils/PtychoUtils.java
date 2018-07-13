@@ -26,10 +26,7 @@ import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoData;
 public class PtychoUtils {
 
 	private final static Logger logger = LoggerFactory.getLogger(PtychoUtils.class);
-	private final static String[] HEADERS = new String[] {"level", "name", "default", "type", "unique", "lowerlimit", "upperlimit", "shortdoc", "longdoc"};
-	private final static CSVFormat format = CSVFormat.EXCEL
-			.withHeader(HEADERS)
-			.withSkipHeaderRecord(true);
+	private static CSVFormat format;
 
 	/**
 	 * Returns a fullpath given an IEditorInput
@@ -63,17 +60,52 @@ public class PtychoUtils {
 		CSVParser parser;
 		List<PtychoData> loaded = new ArrayList<PtychoData>();
 		try {
+			parser = CSVParser.parse(new File(fullPath), StandardCharsets.UTF_8, CSVFormat.EXCEL);
+			CSVRecord headers = parser.getRecords().get(0);
+			String[] headerArray = new String[9];
+			
+			for(int i=0; i<headers.size(); i++){
+				headerArray[i] = headers.get(i); 
+			}
+			
+			format = CSVFormat.EXCEL.withHeader(headerArray).withSkipHeaderRecord(true);
 			parser = CSVParser.parse(new File(fullPath), StandardCharsets.UTF_8, format);
-			for (CSVRecord csvRecord : parser) {
-				String level = csvRecord.get("level");
-				String name = csvRecord.get("name");
-				String defaultVal = csvRecord.get("default");
-				String type = csvRecord.get("type");
-				String unique = csvRecord.get("unique");
-				String lowerlimit = csvRecord.get("lowerlimit");
-				String upperlimit = csvRecord.get("upperlimit");
-				String shortdoc = csvRecord.get("shortdoc");
-				String longdoc = csvRecord.get("longdoc");
+			
+			for(CSVRecord csvRecord : parser){
+				
+				String name = null;
+				String level = null;
+				String defaultVal = null;
+				String type = null;
+				String unique = "";
+				String lowerlimit = null;
+				String upperlimit = null;
+				String shortdoc = null;
+				String longdoc = null;
+				
+				for(int i=0; i<headerArray.length;i++){
+					if(headerArray[i].equals("name") || headerArray[i].equals("path")){
+						name = csvRecord.get(i);
+					} else if(headerArray[i].equals("level")){
+						level = csvRecord.get(i);
+					} else if(headerArray[i].equals("default")){
+						defaultVal = csvRecord.get(i);
+					} else if(headerArray[i].equals("type")){
+						type = csvRecord.get(i);
+					} else if(headerArray[i].equals("unique")){
+						unique = csvRecord.get(i);
+					} else if(headerArray[i].equals("lowerlimit") || headerArray[i].equals("lowlim")){
+						lowerlimit = csvRecord.get(i);
+					} else if(headerArray[i].equals("upperlimit") || headerArray[i].equals("uplim")){
+						upperlimit = csvRecord.get(i);
+					} else if(headerArray[i].equals("shortdoc") || headerArray[i].equals("help")){
+						shortdoc = csvRecord.get(i);
+					} else if(headerArray[i].equals("longdoc") || headerArray[i].equals("doc")){
+						longdoc = csvRecord.get(i);
+					}
+				}
+				if(level == null)
+					level = Integer.toString(name.split("\\.").length -1);
 				
 				PtychoData row = new PtychoData();
 				if (level.length() > 0 && StringUtils.isNumeric(level))
@@ -91,8 +123,9 @@ public class PtychoUtils {
 				loaded.add(row);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.error("Failed to load file: " + fullPath + " " + e.getMessage());
+			logger.error(e.getStackTrace().toString());
 		}
 		return loaded;
 	}

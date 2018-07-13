@@ -106,9 +106,13 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 				}
 
 				jsonSavedPath = saveJSon(fileSavedPath);
+				
+				boolean useFile = new MessageDialog(Display.getDefault().getActiveShell(), "Choose Parameters", null, "Use Editor or Text Box arguments?", MessageDialog.QUESTION, new String[] {"Editor", "Text Boxes"}, 0).open() == 0 ? true : false ;
 				// reinject command
-				//this.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd(jsonSavedPath));
-				this.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd(processDir.getText() + " " + configName.getText() + " " + scanNumber.getText()));
+				if(useFile)
+					this.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd(jsonSavedPath));
+				else
+					this.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd(processDir.getText() + " " + configName.getText() + " " + scanNumber.getText()));
 				super.run();
 			}
 		};

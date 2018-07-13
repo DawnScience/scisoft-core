@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
+import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
@@ -80,7 +81,7 @@ public class XRMCEnergyIntegratorTest {
 		integrator.setEnergies(energies);
 		
 		// geometry of the detector
-		integrator.setGeometry(new Vector3d(200.,  200.,  200.), DatasetFactory.createFromList(Arrays.asList(new Double[]{0., 0., 0.})), DatasetFactory.createFromList(Arrays.asList(new Double[]{10., 10.})));
+		integrator.setGeometry(new Vector3d(200.,  200.,  200.), new Vector3d(0., 0., 0.), new Vector2d(10., 10.), new Vector3d(1., 0., 0.), new Vector3d(0., 0., 1.), new Vector3d(-1., 0., 0.), new Vector3d(0., 0., -1.));
 		
 		
 		Dataset xrmcIntegrated = integrator.getDetectorCounts();

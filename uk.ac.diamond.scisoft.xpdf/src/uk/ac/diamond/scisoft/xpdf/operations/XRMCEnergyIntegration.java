@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2018 Diamond Light Source Ltd.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package uk.ac.diamond.scisoft.xpdf.operations;
 
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -45,8 +54,6 @@ public class XRMCEnergyIntegration extends AbstractOperation<EmptyModel, Operati
 		if (xrmcData == null || !(xrmcData instanceof Dataset)) {
 			throw new OperationException(this, "Could not get underlying XRMC data.");
 		}
-		int[] xrmcShape = xrmcData.getShape();
-//		Dataset lastScattering = xrmcData.getSlice(new int[] {xrmcShape[0]-1, 0, 0, 0}, xrmcShape, new int[] {1, 1, 1, 1}).squeeze();
 		Dataset lastScattering = xrmcData.sum(0).squeeze();
 		
 		XPDFMetadata xpdfMetadata = input2d.getFirstMetadata(XPDFMetadata.class);
@@ -58,7 +65,7 @@ public class XRMCEnergyIntegration extends AbstractOperation<EmptyModel, Operati
 		XRMCEnergyIntegrator integrator = new XRMCEnergyIntegrator();
 		integrator.setXRMCData(lastScattering);
 		integrator.setDetector(xpdfMetadata.getDetector());
-		integrator.setXRMCDetector(xrmcMetadata.getDetector());
+		integrator.setXRMCDetector(xrmcMetadata.getDetector(), xrmcMetadata.getSource());
 
 		Dataset counts = integrator.getDetectorCounts();
 		

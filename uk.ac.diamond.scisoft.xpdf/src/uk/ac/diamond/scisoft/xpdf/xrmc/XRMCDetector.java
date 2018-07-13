@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2018 Diamond Light Source Ltd.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package uk.ac.diamond.scisoft.xpdf.xrmc;
 
 import javax.vecmath.Matrix3d;
@@ -13,7 +21,11 @@ public class XRMCDetector extends XRMCFile {
 	Matrix4d transformToLab;
 
 	static final double POSITION_TO_PIXELSIZE = 1000.0;
-
+	static final double PIXELSIZE_SCALE = 1e-6; // Pixel size in µm
+	static final double XRMC_SCALE = 1e-2; // XRMC scales values in cm
+	static final double POSITION_SCALE = 1e-3; // Position is in mm
+	static final double METRE_SCALE = 1.0; // scale of metres
+	
 	/**
 	 * Creates a new Detector class, based on the given file
 	 * @param fileName
@@ -67,7 +79,7 @@ public class XRMCDetector extends XRMCFile {
 	 */
 	public double[] getPixelSize() {
 		// an extra multiplication by 10 000 to go from cm to μm
-		return getParseAndScaleValues("PixelSize", 10_000);
+		return getParseAndScaleValues("PixelSize", XRMC_SCALE/PIXELSIZE_SCALE);
 	}
 	
 	/**
@@ -75,15 +87,19 @@ public class XRMCDetector extends XRMCFile {
 	 * @return coordinates of the screen in mm, relative to the origin. 
 	 */
 	public double[] getDetectorPosition() {
-		return getParseAndScaleValues("X", 10);
+		return getParseAndScaleValues("X", XRMC_SCALE/POSITION_SCALE);
 	}
 
 	public double[] getDetectorNormal() {
-		return getAndParseValues("uk");
+		double[] uk = getAndParseValues("uk");
+		normalize(uk);
+		return uk;
 	}
 	
 	public double[] getDetectorXVector() {
-		return getAndParseValues("ui");
+		double[] ui = getAndParseValues("ui");
+		normalize(ui);
+		return ui;
 	}
 	
 	public int getNBins() {
@@ -113,11 +129,11 @@ public class XRMCDetector extends XRMCFile {
 		// screen centre in mm
 		Maths3d screenCentre = new Maths3d(getDetectorPosition());
 		// in metres
-		screenCentre = screenCentre.times(0.001);
+		screenCentre = screenCentre.times(METRE_SCALE/POSITION_SCALE);
 
 		// half lengths of the screen in metres
-		double xHalfLength = this.getNPixels()[0] * this.getPixelSize()[0] / 1_000_000 / 2;
-		double yHalfLength = this.getNPixels()[1] * this.getPixelSize()[1] / 1_000_000 / 2;
+		double xHalfLength = this.getNPixels()[0] * this.getPixelSize()[0] / (METRE_SCALE/PIXELSIZE_SCALE) / 2;
+		double yHalfLength = this.getNPixels()[1] * this.getPixelSize()[1] / (METRE_SCALE/PIXELSIZE_SCALE) / 2;
 		
 		Maths3d mm = screenCentre.minus(xScreen.times(xHalfLength)).minus(yScreen.times(yHalfLength));
 		Maths3d pm = screenCentre.plus(xScreen.times(xHalfLength)).minus(yScreen.times(yHalfLength));
@@ -184,8 +200,8 @@ public class XRMCDetector extends XRMCFile {
 	 */
 	public Vector3d labFromPixel(Vector2d x) {
 		Vector2d d = new Vector2d(getPixelSize());
-		d.scale(1/POSITION_TO_PIXELSIZE);
-		Vector4d h = new Vector4d(d.x*x.x, d.y*x.y, 0.0, 1.0);
+		d.scale(PIXELSIZE_SCALE/METRE_SCALE);
+		Vector4d h = new Vector4d(d.x*x.x, -d.y*x.y, 0.0, 1.0);
 		getTransform().transform(h);
 		return new Vector3d(h.x, h.y, h.z);
 	}
@@ -254,7 +270,7 @@ public class XRMCDetector extends XRMCFile {
 		inverseTransform.invert(getTransform());
 		inverseTransform.transform(h);
 		Vector2d d = new Vector2d(getPixelSize());
-		d.scale(1/POSITION_TO_PIXELSIZE);
+		d.scale(PIXELSIZE_SCALE/METRE_SCALE);
 		return new Vector2d(h.x/d.x, h.y/d.y);
 	}
 
@@ -263,69 +279,72 @@ public class XRMCDetector extends XRMCFile {
 	 */
 	private Matrix4d getTransform() {
 		if (transformToLab == null) {
-			transformToLab = new Matrix4d(
-				1., 0., 0., 0.,
-				0., 1., 0., 0.,
-				0., 0., 1., 0.,
-				0., 0., 0., 1.); // identity transform
-			// Translation from the beam interaction to the detector centre
-			Vector3d centreOffset  = new Vector3d(getDetectorPosition());
-			
-			// Transform between an aligned detector and the lab frame
-			Matrix3d labFromAligned = new Matrix3d(
-					1., 0., 0.,
-					0., 0., 1.,
-					0.,-1., 0.);
-			Matrix3d alignedFromLab = new Matrix3d();
-			alignedFromLab.invert(labFromAligned);
-			
-			// Compose the matrix to transform from centred, rotated detector 
-			// coordinates to centred, aligned detector coordinates
-			Vector3d e1 = new Vector3d(getDetectorXVector());
-			Vector3d e3 = new Vector3d(getDetectorNormal());
-			// Invert the normal: detectors have the normal going into the screen
-			e3.negate();
-			// These basis vectors are defined in the lab frame. Convert to the
-			// aligned detector frame.
-			alignedFromLab.transform(e1);
-			alignedFromLab.transform(e3);
-			// y axis is mutually perpendicular
-			Vector3d e2 = new Vector3d();
-			e2.cross(e3, e1);
-			
-			// rotated to aligned
-			Matrix3d alignedFromRotated = new Matrix3d();
-			alignedFromRotated.setColumn(0, e1);
-			alignedFromRotated.setColumn(1, e2);
-			alignedFromRotated.setColumn(2, e3);
-			// invert: now aligned to rotated
-			Matrix3d rotatedFromAligned = new Matrix3d();
-			rotatedFromAligned.invert(alignedFromRotated);
-			
-			// Composed the translation from the corner origin to the detector centre
-			int[] nPx = getNPixels();
-			double[] szPx = getPixelSize();
-			Vector3d centringTranslation = new Vector3d(nPx[0]*szPx[0]/2/POSITION_TO_PIXELSIZE, nPx[1]*szPx[1]/2/POSITION_TO_PIXELSIZE, 0.);
-			centringTranslation.negate();
-			
-			// Rotation part
-			Matrix3d overallRotation = new Matrix3d();
-			overallRotation.mul(labFromAligned, alignedFromRotated);
-			
-			// Translation part: rotate the centring translation
-			overallRotation.transform(centringTranslation);
-			
-			// Translation part: translation of the detector centre
-			centringTranslation.add(centreOffset);
-			
-			transformToLab.set(overallRotation, centringTranslation, 1.0);
-		
+			transformToLab = createTransformToLab();
 		}		
 		return transformToLab;
+	}
+	
+	private Matrix4d createTransformToLab( ) {
+
+		// Get the data to construct the transformation matrix in metres (where units are used)
+		Vector3d centreOffset  = new Vector3d(getDetectorPosition());
+		centreOffset.scale(POSITION_SCALE/METRE_SCALE);
+		// Detector x (row) direction
+		Vector3d e1 = new Vector3d(getDetectorXVector());
+		// Detector z (normal) direction
+		Vector3d e3 = new Vector3d(getDetectorNormal());
+		
+		// Rotation from detector coordinates to lab coordinates
+		e1.normalize();
+		e3.normalize();
+		Vector3d e2 = new Vector3d();
+		e2.cross(e3, e1); // This is antiparallel to the along-column vector
+
+		// ROtation only part of the transformation
+		Matrix3d rotateDetectorToAligned = new Matrix3d();
+		rotateDetectorToAligned.setColumn(0, e1);
+		rotateDetectorToAligned.setColumn(1, e2);
+		rotateDetectorToAligned.setColumn(2, e3);
+		
+		// Transformation from the centred detector coordinates to the lab coordinates
+		Vector3d moveCentreToLab = new Vector3d(getDetectorPosition());
+		moveCentreToLab.scale(POSITION_SCALE/METRE_SCALE);
+		Matrix4d transformCentreToLab = new Matrix4d(rotateDetectorToAligned, moveCentreToLab, 1.0);
+		
+		// Transform a position in metres (not pixels) from the top left origin
+		// of the detector into the lab frame 
+		int[] nPx = getNPixels();
+		double[] szPx = getPixelSize();
+		// Note that the detector right-handed coordinate system 
+		Vector3d originToCentre = new Vector3d(nPx[0]*szPx[0]/2/(METRE_SCALE/PIXELSIZE_SCALE), -nPx[1]*szPx[1]/2/(METRE_SCALE/PIXELSIZE_SCALE), 0.);
+
+		rotateDetectorToAligned.transform(originToCentre);
+
+		Matrix3d id3d = new Matrix3d();
+		id3d.setIdentity();
+		//negate originToCentre to get the correct transform direction
+		originToCentre.negate();
+		Matrix4d originToCentre4d = new Matrix4d(id3d, originToCentre, 1.0);
+		
+		Matrix4d transformToLabLocal = new Matrix4d();
+		transformToLabLocal.mul(originToCentre4d, transformCentreToLab);
+
+		return transformToLabLocal;
+
 	}
 	
 	private double square(double x) { return x*x; }
 
 	private double quadrate(double x, double y) { return Math.sqrt(square(x) + square(y)); }
-	
+
+	// Normalize a double array in-place
+	private void normalize(double[] x) {
+		double squareSum = 0.;
+		for (double xi : x)
+			squareSum += xi*xi;
+		
+		double normer = 1./Math.sqrt(squareSum);
+		for (int i = 0; i < x.length; i++)
+			x[i] *= normer;
+	}
 }

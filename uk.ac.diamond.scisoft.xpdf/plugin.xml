@@ -134,7 +134,7 @@
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
-            class="uk.ac.diamond.scisoft.xpdf.operations.XRMCNormalizationOperation"
+            class="uk.ac.diamond.scisoft.xpdf.operations.XRMCProcessingNormalizationOperation"
             icon="icons/xpdfnormal.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XRMCNormalizationOperation"
             model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
@@ -157,7 +157,7 @@
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
-            class="uk.ac.diamond.scisoft.xpdf.operations.XRMCNormalization"
+            class="uk.ac.diamond.scisoft.xpdf.operations.XRMCScatteringDataNormalizationOperation"
             icon="icons/xrmc_normalization.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.XRMCNormalization"
             model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
@@ -168,7 +168,7 @@
             class="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCToGammaDelta"
             icon="icons/detector_to_gd.png"
             id="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCToGammaDelta"
-            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            model="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCToGDModel"
             name="Interpolate XRMC scattering data to (γ,δ)">
       </operation>
       <operation

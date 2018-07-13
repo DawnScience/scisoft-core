@@ -5,6 +5,7 @@
 	xmlns="http://www.eclipse.org/buckminster/CSpec-1.0">
 	<dependencies>
 		<dependency name="org.eclipse.dawnsci.hdf5.test" componentType="osgi.bundle"/>
+		<dependency name="uk.ac.diamond.scisoft.nexus.examples" componentType="osgi.bundle"/>
 	</dependencies>
 	<generators>
 		<!-- Place your Generators here -->

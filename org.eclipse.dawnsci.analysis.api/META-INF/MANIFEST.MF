@@ -4,7 +4,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Analysis API Bundle
 Bundle-SymbolicName: org.eclipse.dawnsci.analysis.api;singleton:=true
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Vendor: Diamond Light Source
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.dawnsci.analysis.api,
@@ -30,10 +30,10 @@ Export-Package: org.eclipse.dawnsci.analysis.api,
 Import-Package: org.osgi.framework;version="1.7.0",
  org.slf4j;version="[1.7.2,2.0.0)"
 Require-Bundle: javax.vecmath;bundle-version="1.5.2",
- org.eclipse.january;bundle-version="1.0.0";visibility:=reexport,
+ org.eclipse.january;bundle-version="2.1.5";visibility:=reexport,
  si.uom.si-quantity;bundle-version="0.9.0";visibility:=reexport,
  si.uom.si-units;bundle-version="0.9.0";visibility:=reexport,
  tec.units.indriya;bundle-version="1.0.0";visibility:=reexport,
- tec.uom.lib.uom-lib-common;bundle-version="1.0.3"
+ tec.uom.lib.uom-lib-common;bundle-version="1.0.3";visibility:=reexport
 Bundle-Activator: org.eclipse.dawnsci.analysis.api.Activator
 Bundle-ActivationPolicy: lazy

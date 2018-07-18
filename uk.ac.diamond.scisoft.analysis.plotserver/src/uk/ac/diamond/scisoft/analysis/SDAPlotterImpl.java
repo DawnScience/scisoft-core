@@ -976,15 +976,9 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	}
 
 	protected String saveTempFile(DataHolder tHolder, IDataset dataset) throws ScanFileHolderException {
-
 		try {
-			java.io.File tmpFile = File.createTempFile("image-explorer-store-", ".raw");
-			String dirName = System.getProperty("java.io.tmpdir");
-			java.io.File directory = new java.io.File(dirName);
-			if (!directory.exists()) {
-				directory.mkdir();
-			}
-			String rawFilename = directory.getAbsolutePath() + System.getProperty("file.separator") + tmpFile.getName();
+			File tmpFile = File.createTempFile("image-explorer-store-", ".raw");
+			String rawFilename = tmpFile.getAbsolutePath();
 			tHolder.setDataset("Data", dataset);
 			new RawBinarySaver(rawFilename).saveFile(tHolder);
 			return rawFilename;

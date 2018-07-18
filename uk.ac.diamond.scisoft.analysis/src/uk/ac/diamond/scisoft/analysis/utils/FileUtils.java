@@ -27,6 +27,8 @@ import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -247,7 +249,7 @@ public final class FileUtils {
 			throw new java.io.IOException("recursiveCopy should only be used for folders!");
 		}
 		if (source_dir.equals(destination_dir)) {
-			throw new java.io.IOException("Cannot copy folder on to itself!");
+			throw new java.io.IOException("Cannot copy folder onto itself!");
 		}
 
 		if (destination_dir.exists()) {
@@ -475,25 +477,11 @@ public final class FileUtils {
 			destination_file.createNewFile();
 		}
 
-		FileChannel srcChannel = null, dstChannel = null;
-		try {
-			// Create channel on the source
-			srcChannel = new FileInputStream(source_file).getChannel();
-
-			// Create channel on the destination
-			dstChannel = new FileOutputStream(destination_file).getChannel();
+		try (FileInputStream fis = new FileInputStream(source_file); FileOutputStream fos = new FileOutputStream(destination_file)) {
+			FileChannel srcChannel = fis.getChannel(), dstChannel = fos.getChannel();
 
 			// Copy file contents from source to destination
 			dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
-
-			// Close the channels
-		} finally {
-			if (srcChannel != null) {
-				srcChannel.close();
-			}
-			if (dstChannel != null) {
-				dstChannel.close();
-			}
 		}
 	}
 
@@ -1193,38 +1181,36 @@ public final class FileUtils {
 		}
 	}
 
+	private static final String TEMP_DIAMOND_PATH = "/dls/tmp/";
+
 	/**
-	 * 
-	 * 
 	 * @param name prefix of the file
 	 * @return a writable temporary file path
 	 */
 	public static String getTempFilePath(String name) {
 		String file = "";
-		String tmpfilepath = System.getProperty("java.io.tmpdir") + File.separator;
-		String tmpDiamondFilePath = "/dls/tmp/";
 
 		String username = System.getProperty("user.name");
-		File tmpDir = new File(tmpfilepath);
-		// if tmp directory is writable
-		boolean canWrite =tmpDir.canWrite();
-		if (canWrite) {
-			File folderTmp = new File(tmpfilepath + username);
-			if (!folderTmp.exists())
-				folderTmp.mkdir();
-			file = tmpfilepath + username + File.separator +"tmp_" + name;
-		} else if (!canWrite) {
-			File diamondFolderTmp = new File(tmpDiamondFilePath);
-			if (diamondFolderTmp.canWrite()) {
-				File diamondTmpUserFolder = new File(tmpDiamondFilePath + username);
-				if(!diamondTmpUserFolder.exists()) {
-					diamondTmpUserFolder.mkdir();
-				}
-				file = tmpDiamondFilePath + username + File.separator +"tmp_" + name;
-			} else {
-				//TODO other case?
+		
+		File tmpDir = null;
+		try {
+			tmpDir = Files.createTempDirectory(username).toFile();
+			tmpDir.deleteOnExit();
+		} catch (Exception e) {
+		}
+		if (tmpDir == null || !tmpDir.canWrite()) {
+			try {
+				tmpDir = Files.createTempDirectory(Paths.get(TEMP_DIAMOND_PATH), username).toFile();
+				tmpDir.deleteOnExit();
+			} catch (IOException e) {
+				// do nothing
 			}
 		}
+
+		if (tmpDir != null && tmpDir.canWrite()) {
+			file = (new File(tmpDir, name)).getAbsolutePath();
+		}
+
 		return file;
 	}
 }

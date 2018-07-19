@@ -14,4 +14,6 @@ import org.eclipse.january.dataset.IDataset;
 public interface IVolumeTrace extends ITrace {
 
 	public void setData(IDataset data, IDataset[] axes, Number min, Number max);
+	
+	public void setDownsampling(int downsample);
 }

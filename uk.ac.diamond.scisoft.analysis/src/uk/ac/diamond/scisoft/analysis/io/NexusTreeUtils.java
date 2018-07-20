@@ -835,12 +835,24 @@ public class NexusTreeUtils {
 					allAnnotations.remove(not_indices);
 				}
 			} else {
-				if (allAnnotations.contains(name + NexusConstants.DATA_INDICES_SUFFIX)) {
-					int[] indices = parseIntArray(gn.getAttribute(name + NexusConstants.DATA_INDICES_SUFFIX));
-					ILazyDataset view = gn.getDataNode(name).getDataset().getSliceView();
+				final String nameWithIndices = name + NexusConstants.DATA_INDICES_SUFFIX;
+				if (allAnnotations.contains(nameWithIndices)) {
+					int[] indices = parseIntArray(gn.getAttribute(nameWithIndices));
+					DataNode dataNode = null;
+					try {
+						dataNode = gn.getDataNode(name);
+						if (dataNode == null)
+							logger.warn("'{}' refers to a non-existent data node", nameWithIndices);
+					} catch (Exception e) {
+						logger.warn(e.getMessage());
+					}
+					allAnnotations.remove(nameWithIndices);
+					if (dataNode == null) {
+						return;
+					}
+					ILazyDataset view = dataNode.getDataset().getSliceView();
 					view.setName(name);
 					metadata.addAxis(primaryDimension == -1 ? indices[0] : primaryDimension, view,indices);
-					allAnnotations.remove(name + NexusConstants.DATA_INDICES_SUFFIX);
 				}
 			}
 		}

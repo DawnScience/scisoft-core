@@ -62,7 +62,6 @@ public class XRMCScatteringDataNormalizationOperation extends AbstractOperation<
 
 		XRMCDetector xrmcDet = xrmcMetadata.getDetector();
 		Vector3d originXRMC = xrmcDet.labFromPixel(new Vector2d(0, 0)); // top left of the top left pixel: DetectorProperties origin, in XRMC lab frame
-		originXRMC.scale(1000);
 		//		Vector3d originDP = new Vector3d(-originXRMC.x, originXRMC.z, originXRMC.y); // origin, Detector Properties frame
 		Vector3d eulerXYZ = new Vector3d(xrmcDet.getEulerAngles());
 

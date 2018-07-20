@@ -83,7 +83,7 @@ class PalladateNexusWriter {
 		misterManager.setLoaderService(new LoaderServiceImpl());
 		
 		outputDir = System.getProperty("user.home") + "/nexus/";
-		inputDir = "/dls/i15-1/data/2016/cm14470-1/processing/Palladates/";
+		inputDir = "/dls/science/groups/das/ExampleData/i15-1/NeXus/files for writer";
 //		fileDir = "/dls/science/groups/das/ExampleData/i15-1/NeXus" + "/";
 		
 		makeSampleNexus();

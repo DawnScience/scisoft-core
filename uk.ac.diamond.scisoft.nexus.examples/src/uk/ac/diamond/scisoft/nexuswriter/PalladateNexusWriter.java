@@ -76,7 +76,7 @@ class PalladateNexusWriter {
 	public static void main(String[] args) {
 
 		// Set the Nexus File Factory service, since we are not inside Dawn
-		ServiceHolder.setNexusFileFactory(new NexusFileFactoryHDF5());
+		new ServiceHolder().setNexusFileFactory(new NexusFileFactoryHDF5());
 		
 		// Set the general file loader service
 		LocalServiceManager misterManager = new LocalServiceManager();

@@ -223,9 +223,9 @@ public class XRMCEnergyIntegrator {
 		
 		
 		for (int iEnergy = 0; iEnergy < this.energies.getSize(); iEnergy++) {
-			Dataset transmission = this.det.getTransmissionCorrection(twoTheta, energies.getDouble(iEnergy));
+			Dataset detectorEfficiency = this.det.getTransmissionCorrection(twoTheta, energies.getDouble(iEnergy));
 			Dataset dataAtEnergy = energyResolved.getSliceView(new int[]{iEnergy,  0,  0}, new int[] {iEnergy+1, nx, ny}, new int[]{1, 1, 1});
-			dataAtEnergy.idivide(transmission); // In-place correction
+			dataAtEnergy.imultiply(detectorEfficiency); // In-place correction
 		}
 		return energyResolved;
 	}

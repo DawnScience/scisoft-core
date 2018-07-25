@@ -171,6 +171,8 @@ hstack = _np.hstack
 
 dstack = _np.dstack
 
+column_stack = _np.column_stack
+
 split = _np.split
 
 array_split = _np.array_split

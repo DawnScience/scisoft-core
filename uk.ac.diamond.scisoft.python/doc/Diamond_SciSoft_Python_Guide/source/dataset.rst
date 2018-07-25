@@ -25,7 +25,7 @@ Implemented NumPy methods (1.10)
    take, put, max, min, sum, prod, all, any, argmax, argmin, cumsum, cumprod, argsort
  * Array creation: array, zeros, zeros_like, ones, ones_like, empty, full, full_like, eye, identity, linspace, logspace, arange, diag, diagflat, meshgrid, indices
  * Array manipulation: append, tile, repeat, concatenate, vstack,
-   hstack, dstack, array_split, split, vsplit, hsplit, dsplit, fliplr, flipud, roll, rot90,
+   hstack, dstack, column_stack, array_split, split, vsplit, hsplit, dsplit, fliplr, flipud, roll, rot90,
    reshape, resize, ravel, rollaxis, atleast_1d, atleast_2d, atleast_3d
  * Array modification: fill, append, sort
  * Array comparisons and logic operations: all, any, greater, greater_equal, less, less_equal, equal,
@@ -40,7 +40,7 @@ Implemented NumPy methods (1.10)
  * Linear algebra: eig, eigvals, cholesky, qr, svd, norm, cond, det, solve, inv, pinv, matrix_power
  * Rounding: rint, ceil, floor, trunc, fix
  * Bitwise: bitwise_and, bitwise_or, bitwise_xor, invert, left_shift, right_shift
- * Stats: amax, amin, ptp, mean, std, var, cumprod, cumsum, histogram
+ * Stats: amax, amin, ptp, mean, std, var, cumprod, cumsum, histogram, histogram2s, histogramdd, bincount
  * Random: rand, randint, random_integer, randn, exponential, poisson, seed
 
 Non-NumPy

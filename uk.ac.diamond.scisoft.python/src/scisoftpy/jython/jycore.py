@@ -1519,6 +1519,11 @@ def dstack(tup):
     arr = [atleast_3d(t)._jdataset() for t in tup ]
     return _dsutils.concatenate(arr, 2)
 
+@_wrapout
+def column_stack(tup):
+    arr = [t._jdataset() if t.ndim >= 2 else atleast_2d(t).T._jdataset() for t in tup ]
+    return _dsutils.concatenate(arr, 1)
+
 @_wrap
 def split(ary, indices_or_sections, axis=0):
     return _dsutils.split(ary, indices_or_sections, axis, True)

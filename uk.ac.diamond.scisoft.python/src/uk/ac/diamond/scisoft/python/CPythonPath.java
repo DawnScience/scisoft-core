@@ -28,28 +28,33 @@ public class CPythonPath {
 
 	private static final String GIT_REPO_ENDING = ".git";
 	private static final String CPYTHON_BUNDLE;// = "uk.ac.diamond.cpython"; // this may need to be changed to something platform dependent
+	private static final String CPYTHON_MAJOR_VERSION = "2";
+	private static final String CPYTHON_MINOR_VERSION = "7";
+	private static final String CPYTHON_VERSION = CPYTHON_MAJOR_VERSION + "." + CPYTHON_MINOR_VERSION;
+	private static final String CPYTHON_EXEC;
 	static {
 		String arch = System.getProperty("os.arch");
 		if (!arch.endsWith("64")) {
 			CPYTHON_BUNDLE = "uk.ac.diamond.cpython.unsupported_arch";
+			CPYTHON_EXEC = "non-existent-python";
 		} else  {
 			String osName = System.getProperty("os.name").toLowerCase();
 			if (osName.contains("windows")) {
 				CPYTHON_BUNDLE = "uk.ac.diamond.cpython.win32.x86_64";
+				CPYTHON_EXEC = "python.exe";
 			} else if (osName.contains("linux")) {
 				CPYTHON_BUNDLE = "uk.ac.diamond.cpython.linux.x86_64";
+				CPYTHON_EXEC = "python" + CPYTHON_VERSION;
 			} else if (osName.contains("mac os")) {
 				CPYTHON_BUNDLE = "uk.ac.diamond.cpython.macosx.x86_64";
+				CPYTHON_EXEC = "python" + CPYTHON_VERSION;
 			} else {
 				CPYTHON_BUNDLE = "uk.ac.diamond.cpython.unsupported_os.x86_64";
+				CPYTHON_EXEC = "non-existent-python";
 			}
 		}
 	}
 	private static final String CPYTHON_BUNDLE_LOC = CPYTHON_BUNDLE + ".location";
-	private static final String CPYTHON_MAJOR_VERSION = "2";
-	private static final String CPYTHON_MINOR_VERSION = "7";
-	private static final String CPYTHON_VERSION = CPYTHON_MAJOR_VERSION + "." + CPYTHON_MINOR_VERSION;
-	private static final String CPYTHON_EXEC= "python" + CPYTHON_VERSION; // needs .exe on Windows
 	private static final String CPYTHON_DIR = "cpython" + CPYTHON_VERSION;
 	private static final String SCISOFTPY = "uk.ac.diamond.scisoft.python";
 
@@ -89,8 +94,12 @@ public class CPythonPath {
 				throw new Exception("Please set the property '" + CPYTHON_BUNDLE_LOC + "' for this test to work!");
 			cpyBundleLoc = new File(System.getProperty(CPYTHON_BUNDLE_LOC));
 		}
-		cpyBundleLoc = new File(cpyBundleLoc, Paths.get(CPYTHON_DIR, "bin").toString());
-		
+		String osName = System.getProperty("os.name").toLowerCase();
+		if (osName.contains("windows")) {
+			cpyBundleLoc = new File(cpyBundleLoc, CPYTHON_DIR);
+		} else {
+			cpyBundleLoc = new File(cpyBundleLoc, Paths.get(CPYTHON_DIR, "bin").toString());
+		}
 		// Test whether we're running in 
 		if (!isRunningInEclipse && cpyBundleLoc.getAbsolutePath().contains(GIT_REPO_ENDING)) {
 			logger.error("Using cpython from git, but -Drun.in.eclipse set false. This will cause errors.");

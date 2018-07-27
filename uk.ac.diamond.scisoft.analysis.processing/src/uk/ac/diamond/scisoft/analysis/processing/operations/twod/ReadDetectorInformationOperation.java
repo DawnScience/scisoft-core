@@ -48,6 +48,12 @@ public class ReadDetectorInformationOperation extends AbstractOperation<ReadDete
 	public OperationRank getOutputRank() {
 		return OperationRank.TWO;
 	}
+	
+	@Override
+	public void init() {
+		info = null;
+	}
+	
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		SliceFromSeriesMetadata ssm = input.getFirstMetadata(SliceFromSeriesMetadata.class);

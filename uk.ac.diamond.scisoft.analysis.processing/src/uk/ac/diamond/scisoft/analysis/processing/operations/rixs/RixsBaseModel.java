@@ -39,6 +39,9 @@ public class RixsBaseModel extends AbstractOperationModel {
 	@OperationModelField(label = "Cutoff for pixels", description = "Cutoff as multiple of single photon count", hint = "Check if peaks are clipped when cutoff is too low", enableif = "useCutoff == true", min = 1.0)
 	private double cutoff = 5.0;
 
+	@OperationModelField(label = "Cutoff window size", description = "Size of window to use for cutoff", hint = "Cuts out a (size, size) window", enableif = "useCutoff == true", min = 1)
+	private int cutoffSize = 1;
+
 	@OperationModelField(label = "Clip spectra", description = "Clip spectra to avoid fall-off from slope correction", hint = "Set true when image background is not zero")
 	private boolean clipSpectra = true;
 
@@ -111,6 +114,17 @@ public class RixsBaseModel extends AbstractOperationModel {
 
 	public void setCutoff(double cutoff) {
 		firePropertyChange("setCutoff", this.cutoff, this.cutoff = cutoff);
+	}
+
+	/**
+	 * @return size of window to use for cutoff of pixels that exceed threshold
+	 */
+	public int getCutoffSize() {
+		return cutoffSize;
+	}
+
+	public void setCutoffSize(int cutoffSize) {
+		firePropertyChange("setCutoff", this.cutoffSize, this.cutoffSize = cutoffSize);
 	}
 
 	/**

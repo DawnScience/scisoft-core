@@ -33,6 +33,7 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
 import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Dataset;
@@ -42,6 +43,8 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
@@ -234,8 +237,16 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		if (clip) {
 			int b = slope > 0 ? 0 : (int) (Math.ceil(-slope*rows) + 1);
 			int e = cols - (slope > 0 ? (int) Math.floor(slope*rows) : 0);
-			
-			result = result.getSliceView(new Slice(b, e));
+			Slice s = new Slice(b, e);
+			result = result.getSliceView(s);
+			AxesMetadata am;
+			try {
+				am = MetadataFactory.createMetadata(AxesMetadata.class, 1);
+				am.addAxis(0, c.getSliceView(s));
+				result.addMetadata(am);
+			} catch (MetadataException e1) {
+				// do nothing
+			}
 			System.err.println("Clipping sum to " + b + ":" + e + "; size = " + result.getSize() + ", for slope = " + slope);
 		}
 		return result;

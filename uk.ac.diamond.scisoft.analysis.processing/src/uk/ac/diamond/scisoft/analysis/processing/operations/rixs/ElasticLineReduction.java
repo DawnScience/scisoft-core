@@ -23,6 +23,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationLog;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.BooleanDataset;
@@ -148,9 +149,13 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 		ILazyDataset ld = smd.getParent();
 		AxesMetadata amd = ld.getFirstMetadata(AxesMetadata.class);
-		positionName = amd.getAxis(0)[0].getName();
+		ILazyDataset[] firstAxes = amd == null ? null : amd.getAxis(0);
+		if (firstAxes == null) {
+			return;
+		}
+		positionName = firstAxes[0].getName();
 		try {
-			position = DatasetUtils.convertToDataset(smd.getMatchingSlice(amd.getAxis(0)[0])).squeeze(true);
+			position = DatasetUtils.convertToDataset(smd.getMatchingSlice(firstAxes[0])).squeeze(true);
 			log.append("Current position: %s", position.toString(true));
 		} catch (Exception e) { // TODO remove NexusUtils
 			// single point scans are incorrectly dealt with
@@ -462,7 +467,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 	private void processFit(int i, Dataset in, double m, double c, double r) {
 		if (Double.isFinite(c)) {
-			goodPosition[i].add(position.getDouble());
+			goodPosition[i].add(position == null ? 0 : position.getDouble());
 			goodIntercept[i].add(c);
 
 			if (useSpectrum && in != null) {
@@ -532,13 +537,18 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		int ns = goodSpectra[r].size();
 		Dataset spectrum = null;
 		Dataset bSpectrum = null;
+		Dataset gAxis = null;
 		Dataset gSpectrum = null;
 		Dataset gSpectrumFit = null;
 
 		// as clipped spectra have differing sizes, we need to find common sections
 		int minSize = Integer.MAX_VALUE;
-		for (int i = 0; i < ns; i++) {
-			minSize = Math.min(minSize, goodSpectra[r].get(i).getSize());
+		if (model.isClipSpectra()) {
+			for (int i = 0; i < ns; i++) {
+				minSize = Math.min(minSize, goodSpectra[r].get(i).getSize());
+			}
+		} else if (ns > 0) {
+			minSize = goodSpectra[r].get(0).getSize();
 		}
 		DoubleDataset x = null;
 		if (ns > 0) {
@@ -548,26 +558,39 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		int[] minShape = new int[] {1, minSize};
 		for (int i = 0; i < ns; i++) {
 			spectrum = goodSpectra[r].get(i);
+			Dataset tx = x;
+			AxesMetadata am = spectrum.getFirstMetadata(AxesMetadata.class);
+			if (am != null) {
+				try {
+					tx = DatasetUtils.sliceAndConvertLazyDataset(am.getAxes()[0]);
+				} catch (DatasetException e1) {
+					// do nothing
+				}
+			}
 			int size = spectrum.getSize();
 			if (size > minSize) {
 				Slice cs = posSlope[r].get(i) ? new Slice(minSize) : new Slice(size - minSize, null);
 				spectrum = spectrum.getSliceView(cs);
+				tx = tx.getSliceView(cs);
 			}
 			log.append("Fitting elastic peak: %d/%d", i, ns);
-			initializeFunctionParameters(this, peak, x, spectrum);
+			initializeFunctionParameters(this, peak, tx, spectrum);
 			double res = Double.POSITIVE_INFINITY;
 			try {
-				res = fitFunction("Exception for elastic peak fit", peak, x, spectrum, null);
+				res = fitFunction("Exception for elastic peak fit", peak, tx, spectrum, null);
 				System.err.println("Peak " + i + " fit is " + peak + " with residual " + res);
 				if (Double.isFinite(res)) {
 					res = Double.POSITIVE_INFINITY;
 					// isolate peak and fit again (to reduce influence of other spikes)
 					double posn = peak.getParameterValue(0);
+					if (am != null) {
+						posn -= tx.getDouble();
+					}
 					double width = model.getPeakFittingFactor() * peak.getParameterValue(1);
 					Slice slice = new Slice(Math.max(0, (int) Math.floor(posn-width)), Math.min(minSize, (int) Math.floor(posn+width)));
 					IParameter p = peak.getParameter(3); // reset offset
 					p.setValue(-0.5*peak.val(posn));
-					res = fitFunction("Exception for slice of elastic peak fit", peak, x.getSliceView(slice), spectrum.getSliceView(slice), null);
+					res = fitFunction("Exception for slice of elastic peak fit", peak, tx.getSliceView(slice), spectrum.getSliceView(slice), null);
 					System.err.println("Refit is " + peak + " with residual " + res + " in " + slice);
 					if (!Double.isFinite(res)) {
 						log.append("Fitting elastic peak: refit FAILED");
@@ -575,12 +598,18 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 					gPosition.add(positions.get(i));
 					gPosn.add(peak.getParameterValue(0));
 					gFWHM.add(peak.getParameterValue(1));
-					DoubleDataset fit = peak.calculateValues(x);
+					DoubleDataset fit = peak.calculateValues(tx);
 					if (gSpectrum == null) {
+						if (tx != x) {
+							gAxis = tx.clone().reshape(minShape);
+						}
 						gSpectrum = spectrum.clone().reshape(minShape);
+						gSpectrum.clearMetadata(AxesMetadata.class);
 						gSpectrumFit = fit.reshape(minShape);
 					} else {
-						
+						if (gAxis != null) {
+							gAxis = DatasetUtils.concatenate(new IDataset[] {gAxis, tx.reshape(minShape)}, 0);
+						}
 						gSpectrum = DatasetUtils.concatenate(new IDataset[] {gSpectrum, spectrum.reshape(minShape)}, 0);
 						gSpectrumFit = DatasetUtils.concatenate(new IDataset[] {gSpectrumFit, fit.reshape(minShape)}, 0);
 					}
@@ -602,10 +631,13 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			Dataset ge = DatasetFactory.createFromList(gPosition);
 			ge.setName(positionName);
 			gSpectrum.setName(ES_PREFIX + r);
-			MetadataUtils.setAxes(gSpectrum, ge);
+			if (gAxis != null) {
+				gAxis.setName("Pixels");
+			}
+			MetadataUtils.setAxes(gSpectrum, ge, gAxis);
 			summaryData.add(gSpectrum);
 			gSpectrumFit.setName(ESF_PREFIX + r);
-			MetadataUtils.setAxes(gSpectrumFit, ge);
+			MetadataUtils.setAxes(gSpectrumFit, ge, gAxis);
 			summaryData.add(gSpectrumFit);
 			Dataset gf = DatasetFactory.createFromList(gFWHM);
 			gf.setName(ESFWHM_PREFIX + r);
@@ -865,7 +897,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			throw new OperationException(op, "Cannot fit to data with maximum value of zero");
 		}
 
-		int pmax = v.argMax(true); // position of maximum
+		double pmax = x.getDouble(v.argMax(true)); // position of maximum
 		// find base line
 		List<Dataset> hs = createHistogram(v);
 		int pos = hs.get(0).maxPos(true)[0];

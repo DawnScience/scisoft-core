@@ -145,6 +145,9 @@ cumsum = _np.cumsum
 diff = _np.diff
 
 histogram = _np.histogram
+histogram2d = _np.histogram2d
+histogramdd = _np.histogramdd
+bincount = _np.bincount
 
 dot = _np.dot
 vdot = _np.vdot

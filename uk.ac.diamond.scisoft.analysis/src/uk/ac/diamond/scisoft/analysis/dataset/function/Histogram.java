@@ -13,16 +13,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
-import org.eclipse.january.dataset.Comparisons;
+import org.eclipse.january.dataset.BroadcastIterator;
+import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegerDataset;
-import org.eclipse.january.dataset.Maths;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Find histogram of each dataset and return pairs of 1D integer dataset of bin counts
@@ -30,40 +30,31 @@ import org.eclipse.january.dataset.Maths;
  * <p>
  * By default, outliers are ignored.
  */
-public class Histogram implements DatasetToDatasetFunction {
+public class Histogram extends HistogramBase {
+	private static final Logger logger = LoggerFactory.getLogger(Histogram.class);
+
 	private int nbins;
-	private boolean ignoreOutliers = true;
-	private Double min = null;
-	private Double max = null;
-	private DoubleDataset bins = null;
-	private boolean useEqualSpanBins = true;
+	
+	private BinEdges binEdges;
 
 	/**
 	 * Constructor of the Histogram
 	 * @param numBins number of bins
 	 */
-	public Histogram(int numBins)
-	{
+	public Histogram(int numBins) {
 		nbins = numBins;
-		ignoreOutliers = true;
 	}
-	
+
 	/**
 	 * Constructor of the Histogram
 	 * @param numBins number of bins
 	 * @param lower minimum value of histogram range
 	 * @param upper maximum value of histogram range
 	 */
-	public Histogram(int numBins, double lower, double upper)
-	{
+	public Histogram(int numBins, double lower, double upper) {
 		this(numBins);
-		min = lower;
-		max = upper;
-		if (min > max) {
-			throw new IllegalArgumentException("Given lower bound was higher than upper bound");
-		}
 
-		bins = DatasetFactory.createLinearSpace(DoubleDataset.class, min, max, nbins + 1);
+		binEdges = new BinEdges(numBins, lower, upper);
 	}
 
 	/**
@@ -73,11 +64,10 @@ public class Histogram implements DatasetToDatasetFunction {
 	 * @param upper maximum value of histogram range
 	 * @param ignore if true, outliers will be ignored
 	 */
-	public Histogram(int numBins, double lower, double upper, boolean ignore)
-	{
+	public Histogram(int numBins, double lower, double upper, boolean ignore) {
 		this(numBins, lower, upper);
 		ignoreOutliers = ignore;
-	}	
+	}
 
 	/**
 	 * Constructor of the Histogram, ignoring outliers
@@ -92,132 +82,11 @@ public class Histogram implements DatasetToDatasetFunction {
 	 * @param edges bin edges including rightmost edge
 	 * @param ignore if true, outliers will be ignored
 	 */
-	public Histogram(IDataset edges, boolean ignore)
-	{
-		if (edges.getRank() != 1) {
-			throw new IllegalArgumentException("Bin edges must be given as 1D dataset");
-		} else if (edges.getSize() < 2) {
-			throw new IllegalArgumentException("There must be more than one bin edge");
-		}
-
-		bins = (DoubleDataset) DatasetUtils.cast(DatasetUtils.convertToDataset(edges), Dataset.FLOAT64);
-
-		// check for increasing order
-		Dataset sorted = DatasetUtils.sort(bins);
-		if (!Comparisons.allTrue(Comparisons.almostEqualTo(bins, sorted, 1e-8, 1e-8))) {
-			throw new IllegalArgumentException("Bin edges should be given in increasing order");
-		}
-
-		// check for equal spans
-		if (bins.getSize() == 2) {
-			useEqualSpanBins = true;
-		} else {
-			Dataset diff = Maths.difference(bins, 2, 0);
-			useEqualSpanBins = Comparisons.allTrue(Comparisons.almostEqualTo(diff, 0, 1e-8, 1e-8));
-		}
+	public Histogram(IDataset edges, boolean ignore) {
+		binEdges = new BinEdges(edges);
 
 		nbins = edges.getSize() - 1;
 		ignoreOutliers = ignore;
-	}	
-
-	/**
-	 * @param datasets input datasets
-	 * @return a list of 1D datasets which are histograms and bins
-	 */
-	@Override
-	public List<Dataset> value(IDataset... datasets) {
-		if (datasets.length == 0)
-			return null;
-
-		List<Dataset> result = new ArrayList<Dataset>();
-
-		if (useEqualSpanBins) {
-			for (IDataset ds : datasets) {
-				if (bins == null) {
-					bins = DatasetFactory.createLinearSpace(DoubleDataset.class, ds.min(true).doubleValue(), ds.max(true).doubleValue(), nbins + 1);
-				}
-				final double[] edges = bins.getData();
-				final double lo = edges[0];
-				final double hi = Math.nextDown(edges[nbins]);
-
-				IntegerDataset histo = DatasetFactory.zeros(IntegerDataset.class, nbins);
-				final int[] h = histo.getData();
-				if (lo >= hi) {
-					h[0] = ds.getSize();
-					result.add(histo);
-					result.add(bins);
-					continue;
-				}
-				final double f = nbins/(hi - lo);
-
-				Dataset a = DatasetUtils.convertToDataset(ds);
-				IndexIterator iter = a.getIterator();
-
-				while (iter.hasNext()) {
-					final double val = a.getElementDoubleAbs(iter.index);
-					if (val < lo) {
-						if (ignoreOutliers) {
-							continue;
-						}
-						h[0]++;
-					} else if (val >= hi) {
-						if (val > edges[nbins] && ignoreOutliers) {
-							continue;
-						}
-						h[nbins - 1]++;
-					} else {
-						h[(int) ((val - lo) * f)]++;
-					}
-				}
-				result.add(histo);
-				result.add(bins);
-			}
-		} else {
-			for (IDataset ds : datasets) {
-				if (bins == null) {
-					bins = DatasetFactory.createLinearSpace(DoubleDataset.class, ds.min(true).doubleValue(), ds.max(true).doubleValue(), nbins + 1);
-				}
-				final double[] edges = bins.getData();
-				final double lo = edges[0];
-				final double hi = edges[nbins];
-
-				IntegerDataset histo = DatasetFactory.zeros(IntegerDataset.class, nbins);
-				final int[] h = histo.getData();
-				if (lo >= hi) {
-					h[0] = ds.getSize();
-					result.add(histo);
-					result.add(bins);
-					continue;
-				}
-
-				Dataset a = DatasetUtils.convertToDataset(ds);
-				IndexIterator iter = a.getIterator();
-
-				while (iter.hasNext()) {
-					final double val = a.getElementDoubleAbs(iter.index);
-					if (val < lo) {
-						if (ignoreOutliers)
-							continue;
-						h[0]++;
-					} else if (val >= hi) {
-						if (val > hi && ignoreOutliers)
-							continue;
-						h[nbins-1]++;
-					} else {
-						// search for correct bin
-						final int b = Arrays.binarySearch(edges, val);
-						if (b >= 0) {
-							h[b]++; // check for special case where rightmost edge is caught
-						} else {
-							h[-b - 2]++;
-						}
-					}
-				}
-				result.add(histo);
-				result.add(bins);
-			}
-		}
-		return result;
 	}
 
 	/**
@@ -226,17 +95,148 @@ public class Histogram implements DatasetToDatasetFunction {
 	 * @param max
 	 */
 	public void setMinMax(double min, double max) {
-		this.min = min;
-		this.max = max;
-		bins = DatasetFactory.createLinearSpace(DoubleDataset.class, min, max, nbins + 1);
+		binEdges = new BinEdges(nbins, min, max);
 	}
 
 	/**
-	 * Set histogram's outliers handling
-	 * @param b if true, then ignore values that lie outside minimum and maximum bin edges
+	 * @param datasets input datasets
+	 * @return a list of 1D datasets which are histograms and bins
 	 */
-	public void setIgnoreOutliers(boolean b) {
-		ignoreOutliers = b;
+	@Override
+	public List<Dataset> value(IDataset... datasets) {
+		List<Dataset> result = new ArrayList<Dataset>();
+		if (datasets.length == 0) {
+			return result;
+		}
+
+		if (binEdges == null || binEdges.hasEqualSpans) {
+			for (IDataset ids : datasets) {
+				Dataset ds = DatasetUtils.convertToDataset(ids);
+				BinEdges be = binEdges;
+				if (be == null) {
+					be = new BinEdges(nbins, ds.min(true).doubleValue(), ds.max(true).doubleValue());
+				}
+				final double[] edges = be.edges.getData();
+				final double lo = be.l;
+				final double hi = be.h;
+
+				final int[] cShape = new int[] { nbins };
+				final Dataset count;
+				final int[] cData;
+				final Dataset w = weights;
+				if (w == null) {
+					IntegerDataset iCount = DatasetFactory.zeros(IntegerDataset.class, cShape);
+					cData = iCount.getData();
+					count = iCount;
+				} else {
+					cData = null;
+					count = DatasetFactory.zeros(cShape, DTypeUtils.getLargestDType(w.getDType()));
+				}
+				if (lo >= hi) {
+					count.set(w == null ? ids.getSize() : w.sum(true), be.isIncreasing ? 0 : be.lastBin);
+					result.add(count);
+					result.add(be.origEdges);
+					continue;
+				}
+				final double f = be.f;
+
+				final BroadcastIterator bit = w == null ? null : BroadcastIterator.createIterator(ds, w);
+				if (bit != null) {
+					bit.setOutputDouble(true);
+				}
+				final IndexIterator it = bit == null ? ds.getIterator() : bit;
+
+				while (it.hasNext()) {
+					final double val = bit == null ? ds.getElementDoubleAbs(it.index) : bit.aDouble;
+					final int p;
+					if (val < lo) {
+						if (ignoreOutliers) {
+							continue;
+						}
+						p = 0;
+					} else if (val >= hi) {
+						if (val > edges[nbins] && ignoreOutliers) {
+							continue;
+						}
+						p = nbins - 1;
+					} else {
+						p = (int) ((val - lo) * f);
+					}
+					if (bit != null) {
+						count.setObjectAbs(p, count.getElementDoubleAbs(p) + bit.bDouble);
+					} else if (cData != null) {
+						cData[p]++;
+					}
+				}
+				result.add(count);
+				result.add(be.origEdges);
+			}
+		} else {
+			final double[] edges = binEdges.edges.getData();
+			final double lo = edges[0];
+			final double hi = edges[nbins];
+			final int[] cShape = new int[] { nbins };
+			final Dataset w = weights;
+
+			for (IDataset ids : datasets) {
+				Dataset ds = DatasetUtils.convertToDataset(ids);
+				final Dataset count;
+				final int[] cData;
+				if (w == null) {
+					IntegerDataset iCount = DatasetFactory.zeros(IntegerDataset.class, cShape);
+					cData = iCount.getData();
+					count = iCount;
+				} else {
+					int[] wShape = w.getShapeRef();
+					if (!Arrays.equals(ds.getShapeRef(), wShape)) {
+						throwIAException(logger, "Dataset '{}' shape {} must be compatible with weights' shape {}", ds.getName(), Arrays.toString(ds.getShapeRef()),
+								Arrays.toString(wShape));
+					}
+					cData = null;
+					count = DatasetFactory.zeros(cShape, DTypeUtils.getLargestDType(w.getDType()));
+				}
+				if (lo >= hi) {
+					count.set(w == null ? ids.getSize() : w.sum(true), binEdges.isIncreasing ? 0 : binEdges.lastBin);
+					result.add(count);
+					result.add(binEdges.origEdges);
+					continue;
+				}
+
+				final BroadcastIterator bit = w == null ? null : BroadcastIterator.createIterator(ds, w);
+				if (bit != null) {
+					bit.setOutputDouble(true);
+				}
+				final IndexIterator it = bit == null ? ds.getIterator() : bit;
+
+				while (it.hasNext()) {
+					final double val = bit == null ? ds.getElementDoubleAbs(it.index) : bit.aDouble;
+					final int p;
+					if (val < lo) {
+						if (ignoreOutliers)
+							continue;
+						p = 0;
+					} else if (val >= hi) {
+						if (val > hi && ignoreOutliers)
+							continue;
+						p = binEdges.lastBin;
+					} else {
+						// search for correct bin
+						int b = Arrays.binarySearch(edges, val);
+						if (b < 0) { // set to insertion point - 1
+							b = -b - 2;
+						}
+						p = binEdges.isIncreasing ? b : binEdges.lastBin - b;
+					}
+					if (bit != null) {
+						count.setObjectAbs(p, count.getElementDoubleAbs(p) + bit.bDouble);
+					} else if (cData != null) {
+						cData[p]++;
+					}
+				}
+				result.add(count);
+				result.add(binEdges.origEdges);
+			}
+		}
+		return result;
 	}
-	
 }

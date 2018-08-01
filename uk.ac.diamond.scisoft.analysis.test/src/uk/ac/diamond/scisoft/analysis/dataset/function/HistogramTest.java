@@ -41,8 +41,40 @@ public class HistogramTest {
 		Dataset pd = histo.value(d).get(0);
 
 		assertEquals(2048, pd.getSize());
+		assertEquals(d.getSize(), pd.sum());
 		assertEquals(1, pd.getInt(1));
 		assertEquals(1, pd.getInt(512));
+	}
+
+	/**
+	 * 
+	 */
+	@Test
+	public void testHistogramWeights() {
+		Histogram histo = new Histogram(2048);
+		DoubleDataset w = DatasetFactory.zeros(d);
+		w.fill(0.25);
+		histo.setWeights(w);
+		Dataset pd = histo.value(d).get(0);
+
+		assertEquals(2048, pd.getSize());
+		assertEquals(w.sum(true), pd.sum());
+		assertEquals(0.25, pd.getDouble(1), 1e-8);
+		assertEquals(0.25, pd.getDouble(512), 1e-8);
+	}
+
+	/**
+	 * 
+	 */
+	@Test
+	public void testHistogramUnequalEdgeSpans() {
+		Histogram histo = new Histogram(DatasetFactory.createFromObject(new double[] {0, 200, 2000}));
+		Dataset pd = histo.value(d).get(0);
+
+		assertEquals(2, pd.getSize());
+		assertEquals(2000, pd.sum());
+		assertEquals(199, pd.getInt(0));
+		assertEquals(1801, pd.getInt(1));
 	}
 
 	/**
@@ -157,6 +189,12 @@ public class HistogramTest {
 		Dataset pd = histo.value(DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 2, 201)).get(0);
 		assertEquals(1, pd.getSize());
 		assertEquals(101, pd.getInt(0));
+
+		histo = new Histogram(DatasetFactory.createFromObject(new int[] {0, 1, 2}));
+		pd = histo.value(DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 2, 201)).get(0);
+		assertEquals(2, pd.getSize());
+		assertEquals(100, pd.getInt(0));
+		assertEquals(101, pd.getInt(1));
 	}
 
 	/**
@@ -232,7 +270,7 @@ public class HistogramTest {
 		pd = h.value(d).get(0);
 		assertEquals(bins, pd.getSize());
 		assertEquals(d.getSize(), pd.getInt(0));
-}
+	}
 
 	/**
 	 * 
@@ -256,11 +294,9 @@ public class HistogramTest {
 
 		Histogram h = new Histogram(50);
 		Dataset d = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 100, 500000);
-		
-		Dataset a  = null;
 
-//		for (int i = 0; i < 4; i++)
-			a = h.value(d).get(0);
+		Dataset a  = null;
+		a = h.value(d).get(0);
 
 		start = -System.nanoTime();
 		for (int i = 0; i < 4; i++) {

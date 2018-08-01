@@ -418,25 +418,112 @@ import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram as _histo
 @_wrap
 def histogram(a, bins=10, range=None, normed=False, weights=None, density=None): #@ReservedAssignment
     '''Histogram of input'''
-    if normed or weights or density:
+    if normed or density:
         raise ValueError("Option not supported yet")
 
     if isinstance(bins, str):
         raise ValueError("bin string option not supported yet")
 
-    h = None
-    if range is None:
-        if not isinstance(bins, int):
-            bins = _asarray(bins)._jdataset()
-        h = _histo(bins)
-    elif len(range) != 2:
-        raise ValueError("Need two values in range")
-    else:
-        h = _histo(bins, range[0], range[1])
+    if not isinstance(bins, int):
+        bins = _asarray(bins)._jdataset()
+    h = _histo(bins)
+
+    if range is not None:
+        if len(range) != 2:
+            raise ValueError("Need two values in range")
+        h.setMinMax(range[0], range[1])
+
+    if weights is not None:
+        h.setWeights(_asarray(weights)._jdataset())
 
     if not isinstance(a, _ds):
         a = _asarray(a)._jdataset()
     return h.value(a)
+
+import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram2D as _histo2d
+
+@_wrap
+def histogram2d(x, y, bins=10, range=None, normed=False, weights=None): #@ReservedAssignment
+    '''2d histogram of input'''
+    if normed:
+        raise ValueError("Option not supported yet")
+
+    if isinstance(bins, str):
+        raise ValueError("bin string option not supported yet")
+
+    if isinstance(bins, int):
+        bins = [bins]
+    elif isinstance(bins, (tuple, list)):
+        if not isinstance(bins[0], int):
+            bins = [_asarray(b)._jdataset() for b in bins]
+    h = _histo2d(bins)
+
+    if range is not None:
+        range = _asarray(range)
+        if range.shape != (2,2):
+            raise ValueError("Need four values in range as 2,2 array")
+        range = range.ravel()
+        h.setBinMinima([i for i in range[0::2]])
+        h.setBinMaxima([i for i in range[1::2]])
+
+    if weights is not None:
+        h.setWeights(_asarray(weights)._jdataset())
+
+    if not isinstance(x, _ds):
+        x = _asarray(x)._jdataset()
+    if not isinstance(y, _ds):
+        y = _asarray(y)._jdataset()
+    return h.value(x, y)
+
+import uk.ac.diamond.scisoft.analysis.dataset.function.HistogramND as _histond
+
+@_wrap
+def histogramdd(s, bins=10, range=None, normed=False, weights=None): #@ReservedAssignment
+    '''d-d histogram of input'''
+    if normed:
+        raise ValueError("Option not supported yet")
+
+    if isinstance(bins, str):
+        raise ValueError("bin string option not supported yet")
+
+    if isinstance(bins, int):
+        bins = [bins]
+    elif isinstance(bins, (tuple, list)):
+        if not isinstance(bins[0], int):
+            bins = [_asarray(b)._jdataset() for b in bins]
+    h = _histond(bins)
+
+    if range is not None:
+        range = _asarray(range)
+        range = range.ravel()
+        h.setBinMinima([i for i in range[0::2]])
+        h.setBinMaxima([i for i in range[1::2]])
+
+    if weights is not None:
+        h.setWeights(_asarray(weights)._jdataset())
+
+    if not isinstance(s, _ds):
+        s = _asarray(s)._jdataset()
+    r = h.value(s)
+    return r[0], [_asarray(a) for a in r[1:]]
+
+import uk.ac.diamond.scisoft.analysis.dataset.function.BinCount as _bincount
+
+@_wrap
+def bincount(a, weights=None, minlength=0):
+    '''Count occurrences of values in array'''
+    if weights is not None:
+        if weights.getShapeRef() != a.getShapeRef():
+            raise ValueError("Weights must have same shape as input")
+    if a.getRank() != 1:
+        raise ValueError("Input must be 1D")
+    if a.hasFloatingPointElements():
+        raise TypeError("Input must be integers")
+    bc = _bincount()
+    bc.setMinimumLength(minlength)
+    bc.setWeights(weights)
+
+    return bc.value(a)[0]
 
 import org.eclipse.january.dataset.LinearAlgebra as _linalg
 

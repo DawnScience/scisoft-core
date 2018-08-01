@@ -255,7 +255,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			GroupNode root = tree.getGroupNode();
 			GroupNode entry = (GroupNode) NexusTreeUtils.findFirstNode(root, "entry", "NXentry").getDestination();
 
-			GroupNode pg = ProcessingUtils.checkForProcess(this, entry, ElasticLineReduction.PROCESS_NAME);
+			ProcessingUtils.checkForProcess(this, entry, ElasticLineReduction.PROCESS_NAME);
 
 			// find /entry/auxiliary/*-RIXS elastic line reduction/line?_[cm]
 			GroupNode g = (GroupNode) entry.getGroupNode("auxiliary");
@@ -359,6 +359,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 
 		// work out energy scale (needs calibration)
 		Dataset e = DatasetFactory.createRange(spectrum.getSize());
+		spectrum.clearMetadata(AxesMetadata.class);
 		e.iadd(offset[1]-result[0].getDouble()); // TODO discretize???
 		e.imultiply(-energyDispersion[r]);
 		e.setName(ENERGY_LOSS);
@@ -549,7 +550,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 
 			RegisterNoisyData1D reg = getCorrelateShifter();
 			List<Double> shift = new ArrayList<>();
-			correlateSpectra("correlated_spectrum_", r, reg, shift, ax, sArray);
+			correlateSpectra("", r, reg, shift, ax, sArray);
 
 			if (bins == null) {
 				continue; // no photon events!!!
@@ -560,6 +561,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			energies.iadd(-bin*el0); // adjust zero
 			energies.imultiply(-energyDispersion[r]/bin);
 			energies.setName(ENERGY_LOSS);
+
 			Dataset t = DatasetFactory.createFromObject(allSingle[r]);
 			t.setName("single_photon_spectrum_" + r);
 			MetadataUtils.setAxes(t, null, energies);
@@ -620,23 +622,30 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 							hSingle, hMultiple);
 				}
 
-				t = DatasetFactory.createFromObject(allSingle[r]).sum(0);
-				t.setName("correlated_single_photon_spectrum_" + r);
-				MetadataUtils.setAxes(t, energies);
-				summaryData.add(t);
-
-				t = DatasetFactory.createFromObject(allMultiple[r]).sum(0);
-				t.setName("correlated_multiple_photon_spectrum_" + r);
-				MetadataUtils.setAxes(t, energies);
-				summaryData.add(t);
+				summarizePhotonSpectra("single_photon_", allSingle, r, energies);
+				summarizePhotonSpectra("multiple_photon_", allMultiple, r, energies);
 			} else {
-				correlateSpectra("correlated_single_photon_spectrum_", r, reg, shift, energies, sSpectra);
-				correlateSpectra("correlated_multiple_photon_spectrum_", r, reg, shift, energies, mSpectra);
+				correlateSpectra("single_photon_", r, reg, shift, energies, sSpectra);
+				correlateSpectra("multiple_photon_", r, reg, shift, energies, mSpectra);
 			}
 		}
 	}
 
-	// also summarizes them
+	// make summary data for spectra and sum up for spectrum
+	private void summarizePhotonSpectra(String prefix, int[][][] allPhotonCounts, int r, Dataset energies) {
+		prefix = "correlated_" + prefix;
+		Dataset t = DatasetFactory.createFromObject(allPhotonCounts[r]);
+		t.setName(prefix + "spectra_" + r);
+		MetadataUtils.setAxes(t, null, energies);
+		summaryData.add(t);
+
+		t = t.sum(0);
+		t.setName(prefix + "spectrum_" + r);
+		MetadataUtils.setAxes(t, energies);
+		summaryData.add(t);
+	}
+
+	// correlate spectra and makes summary data for them and sum up for spectrum
 	private void correlateSpectra(String prefix, int r, RegisterNoisyData1D reg, List<Double> shift, Dataset energies, Dataset spectra) {
 		Dataset[] sArray = new Dataset[spectra.getShapeRef()[0]];
 		for (int i = 0; i < sArray.length; i++) {
@@ -651,10 +660,18 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		for (int i = 0; i < sArray.length; i++) {
 			sArray[i] = results.get(2*i + 1);
 		}
-		Dataset sp = accumulate(sArray);
-		sp.setName(prefix + r);
+
+		Dataset sp = stack(sArray);
+		prefix = "correlated_" + prefix;
+		sp.setName(prefix + "spectra_" + r);
+		MetadataUtils.setAxes(sp, null, energies);
+		summaryData.add(sp);
+
+		sp = sp.sum(0);
+		sp.setName(prefix + "spectrum_" + r);
 		MetadataUtils.setAxes(sp, energies);
 		summaryData.add(sp);
+
 		shift.clear();
 		for (int i = 0; i < sArray.length; i++) {
 			shift.add(results.get(2*i).getDouble());
@@ -728,6 +745,17 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		return sp;
 	}
 
+	private static Dataset stack(Dataset... d) {
+		List<Dataset> nd = new ArrayList<>();
+		for (Dataset s : d) {
+			if (s != null) {
+				nd.add(s.reshape(1, s.getSize()));
+			}
+		}
+
+		return DatasetUtils.concatenate(nd.toArray(new Dataset[nd.size()]), 0);
+	}
+
 	private RegisterNoisyData1D getCorrelateShifter() {
 		RegisterNoisyData1D reg = new RegisterNoisyData1D();
 		reg.setFilter(DatasetFactory.ones(5).imultiply(1./5));
@@ -767,12 +795,16 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		}
 	
 		Dataset spectrum = makeSpectrum(in, slope, clip);
-		if (Double.isFinite(slope)) {
-			if (clip && slope < 0) { // adjust for shift by clipping
-				elastic.iadd(spectrum.getSize() - in.getShapeRef()[1]);
+		AxesMetadata am = spectrum.getFirstMetadata(AxesMetadata.class);
+		if (am != null) {
+			try { // adjust for shift by clipping
+				Dataset x = DatasetUtils.sliceAndConvertLazyDataset(am.getAxes()[0]);
+				elastic.iadd(-x.getDouble());
+			} catch (DatasetException e1) {
+				// do nothing
 			}
 		}
-	
+
 		if (model.getEnergyOffsetOption() == ENERGY_OFFSET.TURNING_POINT) {
 			int offset = findTurningPoint(false, spectrum);
 			elastic.isubtract(offset);

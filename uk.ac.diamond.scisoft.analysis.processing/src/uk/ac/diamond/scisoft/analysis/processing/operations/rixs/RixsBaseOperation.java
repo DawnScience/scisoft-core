@@ -27,6 +27,7 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
+import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
@@ -39,6 +40,7 @@ import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Slice;
@@ -156,6 +158,11 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			int cutoff = (int) Math.floor(countsPerPhoton * model.getCutoff());
 			BooleanDataset hots = Comparisons.greaterThan(in, cutoff);
 			log.append("Number of cut-off pixels = %d", hots.sum());
+			int size = model.getCutoffSize();
+			if (size > 1) {
+				double aboveZero = 1./1024;
+				Comparisons.greaterThan(Signal.convolveToSameShape(hots, DatasetFactory.ones(DoubleDataset.class, size, size), null), aboveZero, hots);
+			}
 			in.setByBoolean(0, hots);
 		}
 
@@ -259,6 +266,12 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	protected void parseNexusFile(String filePath) {
 		try {
 			Tree t = LocalServiceManager.getLoaderService().getData(filePath, null).getTree();
+
+			if (t == null) {
+				log.append("Could not load tree from file %s", filePath);
+				countsPerPhoton = 74;
+				return;
+			}
 
 			GroupNode root = t.getGroupNode();
 			// entry1:NXentry

@@ -267,7 +267,11 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		return DatasetUtils.select(Comparisons.lessThan(in, thr), in, thr);
 	}
 
+	private static final int CLIP_END = -10; // clip end off
+
 	private Dataset fitDarkProfile(Dataset in) {
+		in = in.reshape(in.getSize());
+
 //		ScaleAndOffset so = new ScaleAndOffset(smoothedDarkProfile);
 //		so.setParameterValues(1, 0);
 //		double res = fitFunction(so, DatasetFactory.zeros(in.getShapeRef()), in);
@@ -283,9 +287,9 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		int b = r + (int) Math.ceil(2.5 * (z.get(1) - z.get(0)));
 		System.err.println("Crossings: " + z + " give start of " + b);
 
-		Slice s = new Slice(b, null);
+		Slice s = new Slice(b, CLIP_END);
 		smooth = smooth.getSliceView(s);
-		in = in.reshape(in.getSize()).getSliceView(s);
+		in = in.getSliceView(s);
 
 		Offset so = new Offset(smooth);
 		so.setParameterValues(0);
@@ -297,8 +301,6 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	class Offset extends AFunction {
 		private static final long serialVersionUID = -5259488500375549641L;
 		private Dataset in;
-		private BroadcastSelfIterator bit;
-		private int[] shape;
 
 		public Offset(Dataset in) {
 			super(1);
@@ -316,19 +318,12 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 		@Override
 		public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
-			double a = getParameterValue(0);
+			Maths.add(in, getParameterValue(0), data);
+		}
 
-			int[] dshape = data.getShapeRef();
-			if (bit == null || !Arrays.equals(shape, dshape)) {
-				shape = dshape;
-				bit = BroadcastSingleIterator.createIterator(data, in);
-			} else {
-				bit.reset();
-			}
-			bit.setOutputDouble(true);
-			while (bit.hasNext()) {
-				data.setAbs(bit.aIndex, bit.bDouble + a);
-			}
+		@Override
+		public void fillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it) {
+			data.fill(1);
 		}
 	}
 

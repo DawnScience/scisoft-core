@@ -9,9 +9,13 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.vecmath.Vector3d;
 
@@ -23,6 +27,7 @@ import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
+import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.eclipse.dawnsci.nexus.NexusConstants;
@@ -33,15 +38,18 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
+import org.eclipse.january.dataset.LazyDataset;
 import org.eclipse.january.dataset.LazyWriteableDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.PositionIterator;
 import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.dataset.StringDataset;
 
 import tec.units.indriya.unit.Units;
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
 import uk.ac.diamond.scisoft.analysis.dataset.function.BicubicInterpolator;
+import uk.ac.diamond.scisoft.analysis.io.ImageStackLoader;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusHDF5Loader;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
@@ -1022,6 +1030,12 @@ public class MillerSpaceMapper {
 		} else {
 			link = detector.getNodeLink(dataName);
 		}
+
+		if (link == null) {
+			System.err.println("Missing image data in " + detectorPath);
+			link = synthesizeMissingImageDataForI16(file, entry, detector);
+		}
+
 		if (link == null || !link.isDestinationData()) {
 			throw new ScanFileHolderException("Could not find image data");
 		}
@@ -1095,6 +1109,55 @@ public class MillerSpaceMapper {
 		// TODO compensate for count_time and other optional stuff (ring current in NXinstrument / NXsource)
 		// mask images
 		return a;
+	}
+
+	private static final String I16_IMAGE_DATA = "image_data";
+	private NodeLink synthesizeMissingImageDataForI16(String file, GroupNode entry, GroupNode detector) throws ScanFileHolderException {
+		DataNode dn = entry.getDataNode("scan_dimensions");
+		if (dn == null) {
+			throw new ScanFileHolderException("I16 workaround: missing scan_dimensions in NXentry group");
+		}
+
+		// find directory in parent 
+		File f = new File(file);
+		File pf = f.getParentFile();
+		String sn = f.getName().split("\\.")[0]; // expected file name to be scan_number.*
+		File[] dirs = pf.listFiles(nf -> nf.isDirectory() && nf.getName().startsWith(sn));
+		if (dirs.length == 0) {
+			throw new ScanFileHolderException(String.format("I16 workaround: expecting directory starting with %s to exist", sn));
+		}
+		if (dirs.length > 1) {
+			System.err.printf("Warning: just using first of candidate directories: %s\n", Arrays.toString(dirs));
+		}
+
+		List<String> names;
+		try {
+			names = Files.list(dirs[0].toPath())
+					.filter(p -> p.toFile().isFile())
+					.sorted()
+					.map(p -> p.toString())
+					.collect(Collectors.toList());
+		} catch (IOException e1) {
+			throw new ScanFileHolderException("I16 workaround: collating image file names", e1);
+		}
+
+		StringDataset pd = DatasetFactory.createFromObject(StringDataset.class, names, NexusTreeUtils.parseIntArray(dn));
+
+		DataNode node = TreeFactory.createDataNode(-1);
+		node.addAttribute(TreeFactory.createAttribute(NexusConstants.DATA_SIGNAL, 1));
+		ImageStackLoader loader;
+		try {
+			loader = new ImageStackLoader(pd, pf.getAbsolutePath());
+		} catch (Exception e) {
+			throw new ScanFileHolderException("I16 workaround: cannot create image stack loader", e);
+		}
+		loader.setMaxShape(dn.getMaxShape());
+		loader.squeeze();
+		node.setMaxShape(loader.getMaxShape());
+		node.setChunkShape(loader.getChunkShape());
+		node.setDataset(new LazyDataset(I16_IMAGE_DATA, loader.getDType(), loader.getShape(), loader));
+		detector.addDataNode(I16_IMAGE_DATA, node);
+		return detector.getNodeLink(I16_IMAGE_DATA);
 	}
 
 	/**

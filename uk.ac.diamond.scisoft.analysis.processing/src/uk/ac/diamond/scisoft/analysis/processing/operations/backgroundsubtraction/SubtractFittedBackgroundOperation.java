@@ -40,12 +40,12 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegerDataset;
-import org.eclipse.january.dataset.LazyMaths;
 import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Operations;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.dataset.Stats;
 import org.eclipse.january.dataset.UnaryOperation;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram;
@@ -105,8 +105,17 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (SubtractFittedBackgroundModel.GAUSSIAN_PROPERTY.equals(evt.getPropertyName())) {
+		String name = evt.getPropertyName();
+		switch (name) {
+		case SubtractFittedBackgroundModel.GAUSSIAN_PROPERTY:
 			smoothedDarkProfile = null;
+			break;
+		case SubtractFittedBackgroundModel.REMOVE_OUTLIER_PROPERTY:
+			darkProfile = null;
+			smoothedDarkProfile = null;
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -127,6 +136,9 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			throw new IllegalArgumentException("delta must be greater than 0");
 		}
 		double min = Math.floor(positive ? findPositiveMin(in) : in.min(true).doubleValue());
+		if (Double.isInfinite(min)) {
+			return null; // none are above zero
+		}
 		double max = Math.ceil(in.max(true).doubleValue());
 		int nbin = (int) Math.ceil(max - min);
 		if (nbin == 0) {
@@ -425,9 +437,9 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			return;
 		}
 
-		if (!file.equals(darkImageFile)) {
+		if (!file.equals(darkImageFile) || darkProfile == null) {
 			darkImageFile = file;
-	
+
 			String data = ssm.getDatasetName();
 	
 			ILazyDataset dark;
@@ -436,20 +448,32 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			} catch (Exception e) {
 				throw new OperationException(this, "Could not load dark image file", e);
 			}
-	
+
 			darkImageCountTime = getCountTime(file).getDouble();
-	
+
+			Dataset d;
 			try {
-				// sum all so that only profile along row is left
-				darkProfile = LazyMaths.sum(dark, true, 1).cast(LongDataset.class);
-				if (darkProfile.getDouble() == 0) {
-					darkProfile.set(0.5*(darkProfile.getDouble(1) + darkProfile.getDouble(2)), 0); // ensure 1st entry is non-zero
-				}
-				darkProfile.imultiply(1./dark.getShape()[0]); // assume 3D
-				darkProfile.setName("dark_profile");
+				d = DatasetUtils.sliceAndConvertLazyDataset(dark);
 			} catch (DatasetException e) {
-				throw new OperationException(this, "Could not generate dark image profile", e);
+				throw new OperationException(this, "Could not read in dark image", e);
 			}
+
+			d.squeezeEnds();
+			if (d.getRank() != 2) {
+				throw new OperationException(this, "Can only handle single frame in dark image");
+			}
+
+			// sum all so that only profile along row is left
+			if (model.isRemoveOutliers()) {
+				darkProfile = createProfileWithoutOutliers(d);
+			} else {
+				darkProfile = d.sum(1, true).cast(LongDataset.class);
+			}
+			if (darkProfile.getDouble() == 0) {
+				darkProfile.set(0.5*(darkProfile.getDouble(1) + darkProfile.getDouble(2)), 0); // ensure 1st entry is non-zero
+			}
+			darkProfile.imultiply(1./dark.getShape()[0]); // assume 3D
+			darkProfile.setName("dark_profile");
 	
 			// blip removal...
 			Dataset diffs = Maths.difference(darkProfile, 1, 0);
@@ -480,8 +504,53 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 //		displayData.add(smoothedDarkProfile);
 	}
 
+	private static final double Q_UPPER = 0.99;
+	private static final double Q_FACTOR = 20;
+	private Dataset createProfileWithoutOutliers(Dataset d) {
+		// row-wise reject upper outliers using threshold
+		// calculated from the 99% percentile and scaling its distance from the median 
+		// by a large factor
+		int[] shape = d.getShapeRef();
+		SliceND s = new SliceND(shape);
+		int imax = shape[0];
+		int jmax = shape[1];
+		LongDataset p = DatasetFactory.zeros(LongDataset.class, imax);
+		for (int i = 0; i < imax; i++) {
+			s.setSlice(0, i, i+1, 1);
+			Dataset r = d.getSliceView(s);
+			double q = (Double) Stats.quantile(r, Q_UPPER);
+			double c = (Double) Stats.median(r);
+			q -= c;
+			int u = (int) Math.ceil((Double) c + Q_FACTOR * q);
+			int max = r.max(true).intValue();
+			long v = 0;
+			if (u >= max) {
+				v = ((Number) r.sum(true)).longValue();
+			} else {
+//				System.err.printf("Upper threshold of row %d is %d (cf %d) [%g, %g]\n", i, u, max, c, q);
+				IndexIterator it = r.getIterator();
+				int j = 0;
+				while (it.hasNext()) {
+					long x = r.getElementLongAbs(it.index);
+					if (x < u) {
+						j++;
+						v += x;
+					}
+				}
+				if (j > 0 && j < jmax) { // scale up by omitted fraction
+					v = (long) (v * ((double) jmax / j));
+				}
+			}
+			p.setAbs(i, v);
+		}
+		return p;
+	}
+
 	private IFunction fitHistogram(Dataset d, boolean plot) {
 		List<Dataset> hs = createHistogram(d, false, 200);
+		if (hs == null) {
+			return null;
+		}
 		Dataset hd = hs.get(0);
 		hd.setName("diff histo");
 		Dataset dx = hs.get(1).getSliceView(new Slice(-1));

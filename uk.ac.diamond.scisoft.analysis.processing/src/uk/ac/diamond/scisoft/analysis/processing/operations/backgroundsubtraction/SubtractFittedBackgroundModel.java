@@ -34,8 +34,8 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 	@OperationModelField(fieldPosition = 3, label = "Dark image file", file = FileType.EXISTING_FILE, hint = "Can be empty then uniform background is assumed")
 	private String darkImageFile = null;
 
-//	@OperationModelField(fieldPosition = 4, label = "Rectangle to fit profile", enableif = "darkImageFile != null")
-//	private IRectangularROI roi = null;
+	@OperationModelField(fieldPosition = 4, label = "Remove outliers from dark image", hint = "Check to omit cosmic ray events", enableif = "darkImageFile != null")
+	private boolean removeOutliers = true;
 
 	@OperationModelField(fieldPosition = 5, label = "Gaussian smoothing length parameter", enableif = "darkImageFile != null")
 	private double gaussianSmoothingLength = 10;
@@ -51,6 +51,19 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 
 	public void setPositiveOnly(boolean positiveOnly) {
 		firePropertyChange("setPositiveOnly", this.positiveOnly, this.positiveOnly = positiveOnly);
+	}
+
+	/**
+	 * @return if true, remove outlier values from dark image to make profile
+	 */
+	public boolean isRemoveOutliers() {
+		return removeOutliers;
+	}
+
+	public static final String REMOVE_OUTLIER_PROPERTY = "setRemoveOutliers";
+
+	public void setRemoveOutliers(boolean removeOutliers) {
+		firePropertyChange(REMOVE_OUTLIER_PROPERTY, this.removeOutliers, this.removeOutliers = removeOutliers);
 	}
 
 	/**

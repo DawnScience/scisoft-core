@@ -26,6 +26,8 @@ public class XRMCDetector extends XRMCFile {
 	static final double POSITION_SCALE = 1e-3; // Position is in mm
 	static final double METRE_SCALE = 1.0; // scale of metres
 	
+	static final long serialVersionUID = 0x4880c2e482c5f8bdL;
+	
 	/**
 	 * Creates a new Detector class, based on the given file
 	 * @param fileName
@@ -211,10 +213,15 @@ public class XRMCDetector extends XRMCFile {
 	 * @param x
 	 * 			the location on the screen in units of pixels, with the origin
 	 * 			at the top left of the top left pixel.
+	 * @param beamUi
+	 * 				unit vector of the perpendicular reference direction for
+	 * 				the beam. Often the direction of strongest polarization.
+	 * @param beamUk
+	 * 				unit vector in the direction of propagation of the beam
 	 * @return (γ,δ) scattering angles in radians.
 	 */
-	public Vector2d anglesFromPixel(Vector2d x) {
-		return anglesFromPixel(x, false);
+	public Vector2d anglesFromPixel(Vector2d x, Vector3d beamUi, Vector3d beamUk) {
+		return anglesFromPixel(x, beamUi, beamUk, false);
 	}
 
 	/**
@@ -222,10 +229,15 @@ public class XRMCDetector extends XRMCFile {
 	 * @param x
 	 * 			the location on the screen in units of pixels, with the origin
 	 * 			at the top left of the top left pixel.
+	 * @param beamUi
+	 * 				unit vector of the perpendicular reference direction for
+	 * 				the beam. Often the direction of strongest polarization.
+	 * @param beamUk
+	 * 				unit vector in the direction of propagation of the beam
 	 * @return (φ,2θ) scattering angles in radians.
 	 */
-	public Vector2d polarAnglesFromPixel(Vector2d x) {
-		return anglesFromPixel(x, true);
+	public Vector2d polarAnglesFromPixel(Vector2d x, Vector3d beamUi, Vector3d beamUk) {
+		return anglesFromPixel(x, beamUi, beamUk, true);
 	}
 	
 	/**
@@ -234,21 +246,35 @@ public class XRMCDetector extends XRMCFile {
 	 * @param x
 	 * 			the location on the screen in units of pixels, with the origin
 	 * 			at the top left of the top left pixel.
+	 * @param beamUi
+	 * 				unit vector of the perpendicular reference direction for
+	 * 				the beam. Often the direction of strongest polarization.
+	 * @param beamUk
+	 * 				unit vector in the direction of propagation of the beam
 	 * @param polar
 	 * 				if true, return the polar scattering angles (φ,2θ), else 
 	 * 				return the Cartesian scattering angles (γ,δ)
 	 * @return
 	 */
-	public Vector2d anglesFromPixel(Vector2d x, boolean polar) {
-		Vector3d lab = labFromPixel(x);
+	public Vector2d anglesFromPixel(Vector2d x, Vector3d beamUi, Vector3d beamUk, boolean polar) {
+		// Vector from the origin to the pixel
+		Vector3d k = labFromPixel(x);
+		// components of k relative to the beam coordinates
+		double ki = beamUi.dot(k);
+		double kj = new Maths3d(beamUk).cross(beamUi).dot(k);
+		double kk = beamUk.dot(k);
+		
+		Vector3d kDash = new Maths3d(beamUi).times(ki).plus(new Maths3d(beamUk).times(kk)).get();
+		
+		
 		Vector2d result = null;
 		if (polar) {
-			double phi = Math.atan2(lab.z, lab.x);
-			double tth = Math.atan2(quadrate(lab.x, lab.z), lab.y);
+			double phi = Math.atan2(kj, ki);
+			double tth = Math.acos(kk/kDash.length());
 			result = new Vector2d(phi, tth);
 		} else {
-			double gamma = Math.atan2(lab.x, lab.y);
-			double delta = Math.atan2(lab.z, quadrate(lab.x, lab.y));
+			double gamma = Math.atan2(ki, kk);
+			double delta = Math.asin(kj/k.length());
 			result = new Vector2d(gamma, delta);
 		}
 		return result;
@@ -333,10 +359,6 @@ public class XRMCDetector extends XRMCFile {
 
 	}
 	
-	private double square(double x) { return x*x; }
-
-	private double quadrate(double x, double y) { return Math.sqrt(square(x) + square(y)); }
-
 	// Normalize a double array in-place
 	private void normalize(double[] x) {
 		double squareSum = 0.;

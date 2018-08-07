@@ -55,6 +55,10 @@ public class InterpolateXRMCFromGammaDelta extends AbstractOperation<Interpolate
 			throw new OperationException(this, "Could not get diffraction metadata from " + detectorFileName + ": " + dSE.toString());
 		}
 		
+		if (dmeta == null || dmeta.getDetector2DProperties() == null) {
+			throw new OperationException(this, "Could not get detector metadata from file " + detectorFileName);
+		}
+		
 		DetectorProperties detProp = dmeta.getDetector2DProperties();
 		
 		// Axes of the source data

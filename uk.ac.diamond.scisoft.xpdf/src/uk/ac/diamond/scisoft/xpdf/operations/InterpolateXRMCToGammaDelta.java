@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.xpdf.operations;
 import java.util.List;
 
 import javax.vecmath.Vector2d;
+import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -55,6 +56,9 @@ public class InterpolateXRMCToGammaDelta extends AbstractOperation<InterpolateXR
 		XRMCMetadata xrmcMetadata = input.getFirstMetadata(XRMCMetadata.class);
 		XRMCDetector xdet = xrmcMetadata.getDetector();
 		
+		Vector3d beamUi = new Vector3d(xrmcMetadata.getSource().getUI());
+		Vector3d beamUk = new Vector3d(xrmcMetadata.getSource().getUK());
+		
 		Dataset gamma = DatasetFactory.zeros(shape);
 		Dataset delta = DatasetFactory.zeros(shape);
 
@@ -62,7 +66,7 @@ public class InterpolateXRMCToGammaDelta extends AbstractOperation<InterpolateXR
 		for (int i = 0; i < shape[0]; i++) {
 			for (int j = 0; j < shape[1]; j++) {
 				Vector2d pxPos = new Vector2d(j+0.5, i+0.5);
-				Vector2d angles = xdet.anglesFromPixel(pxPos);
+				Vector2d angles = xdet.anglesFromPixel(pxPos, beamUi, beamUk);
 				gamma.set(angles.x, i, j);
 				delta.set(angles.y, i, j);
 			}
@@ -162,8 +166,8 @@ public class InterpolateXRMCToGammaDelta extends AbstractOperation<InterpolateXR
 			
 			// Make the axes isotropic at the origin
 			double isoStep = Math.min(gammaStep, deltaStep);
-			gammaStep = isoStep;
-			deltaStep = isoStep;
+			gammaStep = Math.abs(isoStep);
+			deltaStep = Math.abs(isoStep);
 			
 			// Delta is the more restrictive coordinate
 			deltaMin = delta00;

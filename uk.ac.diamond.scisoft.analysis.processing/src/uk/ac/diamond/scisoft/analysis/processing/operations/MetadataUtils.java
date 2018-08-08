@@ -41,6 +41,7 @@ public class MetadataUtils {
 			if (axes[i] != null)
 				try {
 					datasetAxes[i] = DatasetUtils.sliceAndConvertLazyDataset(axes[i]);
+					datasetAxes[i].setName(axes[i].getName());
 				} catch (DatasetException e) {
 					logger.error("Could not slice axes datasets",e);
 				}

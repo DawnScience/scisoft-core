@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.processing.IOperationBean;
+import org.eclipse.scanning.api.event.IdBean;
 import org.eclipse.scanning.api.event.status.StatusBean;
 
 /**
@@ -63,7 +64,7 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	private boolean linkEntry = true;
 
 	@Override
-	public void merge(StatusBean with) {
+	public <T extends IdBean> void merge(T with) {
         super.merge(with);
         OperationBean db = (OperationBean)with;
         this.filePath             = db.filePath;

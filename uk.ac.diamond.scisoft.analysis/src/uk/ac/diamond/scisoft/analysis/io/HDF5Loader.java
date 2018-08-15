@@ -383,7 +383,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	 */
 	private Node createNode(final long fid, final TreeFile f, final HashMap<Long, Node> pool, final Queue<String> queue, final String name, final boolean keepBitWidth) throws Exception {
 		try {
-			H5O_info_t info = H5.H5Oget_info_by_name(fid, name, HDF5Constants.H5P_DEFAULT);
+			H5O_info_t info = H5.H5Oget_info_by_name(fid, name, HDF5Constants.H5O_INFO_BASIC, HDF5Constants.H5P_DEFAULT);
 			int t = info.type;
 			if (t == HDF5Constants.H5O_TYPE_GROUP) {
 				return createGroup(fid, f, DEFAULT_OBJECT_ID, pool, queue, name, keepBitWidth);
@@ -491,7 +491,7 @@ public class HDF5Loader extends AbstractFileLoader {
 				if (ltype == HDF5Constants.H5L_TYPE_HARD) {
 					final int otype;
 					try {
-						H5O_info_t info = H5.H5Oget_info_by_name(gid, oname, HDF5Constants.H5P_DEFAULT);
+						H5O_info_t info = H5.H5Oget_info_by_name(gid, oname, HDF5Constants.H5O_INFO_BASIC, HDF5Constants.H5P_DEFAULT);
 						oid = createObjectID(f.getID(), info.addr);
 						otype = info.type;
 					} catch (HDF5Exception ex) {

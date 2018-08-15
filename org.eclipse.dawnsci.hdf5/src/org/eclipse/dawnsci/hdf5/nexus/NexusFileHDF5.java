@@ -431,7 +431,7 @@ public class NexusFileHDF5 implements NexusFile {
 
 	private void cacheAttributes(String path, Node node) throws NexusException {
 		try {
-			H5O_info_t objInfo = H5.H5Oget_info_by_name(fileId, path, HDF5Constants.H5P_DEFAULT);
+			H5O_info_t objInfo = H5.H5Oget_info_by_name(fileId, path, HDF5Constants.H5O_INFO_NUM_ATTRS, HDF5Constants.H5P_DEFAULT);
 			long numAttrs = objInfo.num_attrs;
 			for (long i = 0; i < numAttrs; i++) {
 				
@@ -488,7 +488,7 @@ public class NexusFileHDF5 implements NexusFile {
 						}
 					}
 					String childPath = path + linkName;
-					H5O_info_t objectInfo = H5.H5Oget_info_by_name(fileId, childPath, HDF5Constants.H5P_DEFAULT);
+					H5O_info_t objectInfo = H5.H5Oget_info_by_name(fileId, childPath, HDF5Constants.H5O_INFO_BASIC, HDF5Constants.H5P_DEFAULT);
 					if (objectInfo.type == HDF5Constants.H5O_TYPE_GROUP) {
 						createGroupNode(childPath.hashCode(), group, path, linkName, "");
 					} else if (objectInfo.type == HDF5Constants.H5O_TYPE_DATASET) {
@@ -670,7 +670,7 @@ public class NexusFileHDF5 implements NexusFile {
 			if (!testLinkExists(absolutePath)) {
 				return null;
 			}
-			H5O_info_t info = H5.H5Oget_info_by_name(fileId, absolutePath, HDF5Constants.H5P_DEFAULT);
+			H5O_info_t info = H5.H5Oget_info_by_name(fileId, absolutePath, HDF5Constants.H5O_INFO_BASIC, HDF5Constants.H5P_DEFAULT);
 			NodeType type = NodeType.valueOf(info.type);
 			if (type == null) {
 				throw new NexusException("Unsupported object type: " + info.type);

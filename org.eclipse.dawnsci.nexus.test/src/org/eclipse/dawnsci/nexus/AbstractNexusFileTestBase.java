@@ -52,7 +52,6 @@ public abstract class AbstractNexusFileTestBase {
 	}
 
 	protected void checkNexusFile(TreeFile createdNexusTree, TreeFile loadedNexusTree) throws Exception {
-		assertNexusTreesEqual(loadedNexusTree, createdNexusTree);
+		assertNexusTreesEqual(createdNexusTree, loadedNexusTree);
 	}
-
 }

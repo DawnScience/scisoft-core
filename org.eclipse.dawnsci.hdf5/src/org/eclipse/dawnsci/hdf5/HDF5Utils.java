@@ -453,7 +453,7 @@ public class HDF5Utils {
 		Dataset data = null;
 
 		try {
-			H5O_info_t info = H5.H5Oget_info_by_name(f.getID(), dataPath, HDF5Constants.H5P_DEFAULT);
+			H5O_info_t info = H5.H5Oget_info_by_name(f.getID(), dataPath, HDF5Constants.H5O_INFO_BASIC, HDF5Constants.H5P_DEFAULT);
 			int t = info.type;
 			if (t != HDF5Constants.H5O_TYPE_DATASET) {
 				logger.error("Path {} was not a dataset in {}", dataPath, f);
@@ -1445,24 +1445,24 @@ public class HDF5Utils {
 	private static final String HERE = ".";
 
 	public static Dataset[] readAttributes(long oid, String path) throws NexusException {
-	    H5O_info_t info = null;
-	    try {
-	        info = H5.H5Oget_info(oid);
-	    } catch (HDF5LibraryException e) {
-	    	logger.error("Could not get info from object", e);
-	    	throw new NexusException("Could not get info from object", e);
-	    }
-	
-	    int n = (int) info.num_attrs;
-	    if (n <= 0) {
-	        return new Dataset[0];
-	    }
+		H5O_info_t info = null;
+		try {
+			info = H5.H5Oget_info(oid, HDF5Constants.H5O_INFO_NUM_ATTRS);
+		} catch (HDF5LibraryException e) {
+			logger.error("Could not get info from object", e);
+			throw new NexusException("Could not get info from object", e);
+		}
 
-	    Dataset[] attrs = new Dataset[n];
-	    for (int i = 0; i < n; i++) {
-	    	attrs[i] = getAttrDataset(oid, path, i);
-	    }
-	
+		int n = (int) info.num_attrs;
+		if (n <= 0) {
+			return new Dataset[0];
+		}
+
+		Dataset[] attrs = new Dataset[n];
+		for (int i = 0; i < n; i++) {
+			attrs[i] = getAttrDataset(oid, path, i);
+		}
+
 		return attrs;
 	}
 

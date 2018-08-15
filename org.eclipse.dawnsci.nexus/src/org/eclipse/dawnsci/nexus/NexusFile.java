@@ -51,27 +51,15 @@ public interface NexusFile extends AutoCloseable {
 	 */
 	public static final String NX_URL_SCHEME = "nxfile";
 
-	/*
-	 * use augmented paths (with NX_class attribute)
-	 * use absolute and relative paths with lazy moves and create if necessary
-	 * get info on dataset
-	 * get/set data as whole or slab and compressed
-	 * get/set attributes
-	 * 
-	 * cope with arbitrary serializable data including nested arrays and boxed types
-	 * add instrumentation for debugging (instead of wrapper)
-	 * make links
-	 */
-
 	/**
-	 * Returns the file path of this {@link NexusFile}. 
+	 * Returns the file path of this {@link NexusFile}
 	 * @return file path
 	 */
 	public String getFilePath();
 	
 	/**
 	 * Open file to only read
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public void openToRead() throws NexusException;
 
@@ -115,7 +103,7 @@ public interface NexusFile extends AutoCloseable {
 	public void setDebug(boolean debug);
 
 	/**
-	 * Get the path of rood node from internal tree
+	 * Get the path of root node from internal tree
 	 * @return root node path
 	 */
 	public String getRoot();

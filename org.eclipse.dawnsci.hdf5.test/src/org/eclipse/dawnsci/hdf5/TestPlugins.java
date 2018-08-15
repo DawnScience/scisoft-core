@@ -28,7 +28,6 @@ import org.junit.Test;
 import hdf.hdf5lib.H5;
 import hdf.hdf5lib.HDF5Constants;
 import hdf.hdf5lib.exceptions.HDF5Exception;
-import hdf.hdf5lib.exceptions.HDF5LibraryException;
 
 /**
  * Test various filter plugins that are built into the hdf.hdf5lib
@@ -46,37 +45,35 @@ public class TestPlugins {
 
 	@Test
 	public void testZlibFilter() throws NullPointerException, HDF5Exception {
-		testFilter("test-scratch/testFilterZlib.h5", HDF5Constants.H5Z_FILTER_DEFLATE, 1);
+		testFilter("test-scratch/testFilterZlib.h5", true, HDF5Constants.H5Z_FILTER_DEFLATE, 1);
+		testFilter("test-scratch/testFilterZlib.h5", false, HDF5Constants.H5Z_FILTER_DEFLATE, 1);
 	}
 
 	@Test
 	public void testLZFFilter() throws NullPointerException, HDF5Exception {
-		testFilter("test-scratch/testFilterLZF.h5", 32000);
+		testFilter("test-scratch/testFilterLZF.h5", true, 32000);
+		testFilter("test-scratch/testFilterLZF.h5", false, 32000); // crashes JVM in Windows during write - bug in filter
 	}
 
 	@Test
 	public void testLZ4Filter() throws NullPointerException, HDF5Exception {
-		testFilter("test-scratch/testFilterLZ4.h5", 32004, 1);
+		testFilter("test-scratch/testFilterLZ4.h5", true, 32004, 1);
+		testFilter("test-scratch/testFilterLZ4.h5", false, 32004, 1);
 	}
 
 	@Test
 	public void testBSFilter() throws NullPointerException, HDF5Exception {
-		testFilter("test-scratch/testFilterBS.h5", 32008, 0, 2);
+		testFilter("test-scratch/testFilterBS.h5", true, 32008, 0, 2);
+		testFilter("test-scratch/testFilterBS.h5", false, 32008, 0, 2);
 	}
 
-	private static void assertFilterAvailable(int filterNumber) throws HDF5LibraryException, NullPointerException {
-		if (H5.H5Zfilter_avail(filterNumber) <= 0) {
-			Assert.fail("Filter not found");
-		}
-	}
-
-	public void testFilter(String filename, int filterNumber, int... filterParams) throws NullPointerException, HDF5Exception {
-		assertFilterAvailable(filterNumber);
-		createFilteredFile(filename, filterNumber, filterParams);
+	public void testFilter(String filename, boolean shuffle, int filterNumber, int... filterParams) throws NullPointerException, HDF5Exception {
+		Assert.assertTrue("Filter not found", H5.H5Zfilter_avail(filterNumber) > 0);
+		createFilteredFile(filename, shuffle, filterNumber, filterParams);
 		checkFilteredFile(filename);
 	}
 
-	private void createFilteredFile(String filename, int filterNumber, int... filterParams) throws NullPointerException, HDF5Exception {
+	private void createFilteredFile(String filename, boolean shuffle, int filterNumber, int... filterParams) throws NullPointerException, HDF5Exception {
 		File parent = new File(filename).getParentFile();
 		if (!parent.exists()) {
 			parent.mkdir();
@@ -86,14 +83,18 @@ public class TestPlugins {
 		long dcpl = H5.H5Pcreate(HDF5Constants.H5P_DATASET_CREATE);
 		H5.H5Pset_chunk(dcpl, DATA_CHUNK.length, DATA_CHUNK);
 
+		if (shuffle) {
+			H5.H5Pset_shuffle(dcpl);
+		}
+
 		H5.H5Pset_filter(dcpl, filterNumber, HDF5Constants.H5Z_FLAG_MANDATORY, filterParams.length, filterParams);
 
 		long dID = H5.H5Dcreate(fileID, DATA_PATH,
 								HDF5Constants.H5T_NATIVE_FLOAT, dsID,
 								HDF5Constants.H5P_DEFAULT, dcpl, HDF5Constants.H5P_DEFAULT);
 
-		Dataset data = DatasetFactory.createRange(DIM_0 * DIM_1 * DIM_2).reshape(DIM_0, DIM_1, DIM_2);
-		H5.H5Dwrite(dID, HDF5Constants.H5T_NATIVE_DOUBLE, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, DatasetUtils.serializeDataset(data));
+		Dataset data = DatasetFactory.createRange(FloatDataset.class, DIM_0 * DIM_1 * DIM_2).reshape(DIM_0, DIM_1, DIM_2);
+		H5.H5Dwrite(dID, HDF5Constants.H5T_NATIVE_FLOAT, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, DatasetUtils.serializeDataset(data));
 
 		H5.H5Dclose(dID);
 		H5.H5Pclose(dcpl);

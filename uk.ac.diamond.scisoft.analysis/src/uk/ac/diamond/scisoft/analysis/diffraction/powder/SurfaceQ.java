@@ -23,7 +23,6 @@ import org.eclipse.january.dataset.PositionIterator;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
-import uk.ac.diamond.scisoft.analysis.roi.XAxis;
 
 /**
  * Calculates the perpendicular and surface parallel momentum change for

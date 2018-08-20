@@ -9,9 +9,6 @@
 
 package uk.ac.diamond.scisoft.nexuswriter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * A class to load test data for the XPDF unit cell editor.
  * @author Timothy Spain, timothy.spain@diamond.ac.uk

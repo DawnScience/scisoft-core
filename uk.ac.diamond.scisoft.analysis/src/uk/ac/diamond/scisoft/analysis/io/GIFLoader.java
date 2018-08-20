@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.dataset.AggregateDataset;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.ILazyDataset;
 
 public class GIFLoader extends JavaImageLoader {

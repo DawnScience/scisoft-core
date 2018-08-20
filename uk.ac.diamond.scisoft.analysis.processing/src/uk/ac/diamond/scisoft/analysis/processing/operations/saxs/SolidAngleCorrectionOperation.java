@@ -11,20 +11,16 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 
 
-import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 // Imports from org.eclipse
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.IPixelIntegrationCache;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
-
-import java.beans.PropertyChangeListener;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;

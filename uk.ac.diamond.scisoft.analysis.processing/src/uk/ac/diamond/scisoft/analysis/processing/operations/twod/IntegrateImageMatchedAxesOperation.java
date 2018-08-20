@@ -13,13 +13,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
-import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.MetadataException;
@@ -35,10 +33,7 @@ import org.eclipse.january.metadata.MetadataFactory;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.IPixelIntegrationCache;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegration;
-import uk.ac.diamond.scisoft.analysis.diffraction.powder.SurfacePixelIntegrationCache;
 import uk.ac.diamond.scisoft.analysis.processing.operations.MetadataUtils;
-import uk.ac.diamond.scisoft.analysis.processing.operations.powder.SurfaceScatteringRemappingModel;
-import uk.ac.diamond.scisoft.analysis.processing.operations.powder.SurfaceScatteringRemappingOperation;
 
 @Atomic
 public class IntegrateImageMatchedAxesOperation extends AbstractOperation<IntegrateImageMatchedAxesModel, OperationData> {

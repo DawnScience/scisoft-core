@@ -10,9 +10,6 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 
-
-import javax.print.attribute.standard.OutputDeviceAssigned;
-
 // Imports from org.eclipse.dawnsci
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;

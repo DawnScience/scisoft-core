@@ -22,14 +22,11 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 
 import uk.ac.diamond.scisoft.analysis.baseline.BaselineGeneration;
-import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 
 @Atomic
 public class IterativePolynomialBaselineSubtractionOperation extends

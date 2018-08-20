@@ -12,9 +12,7 @@ package uk.ac.diamond.scisoft.xpdf;
 import java.util.stream.IntStream;
 
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
-import org.eclipse.january.metadata.MaskMetadata;
 
 /**
  * Performs the q² integrals.

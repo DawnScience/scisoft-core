@@ -29,7 +29,6 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Slice;
 

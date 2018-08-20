@@ -275,7 +275,6 @@ class PalladateNexusWriter {
 			palladateActualData.resize(new int[]{1,1,palladateActualData.getShape()[0], palladateActualData.getShape()[1]});
 			palladateData.setData(palladateActualData);
 		} catch (DatasetException dE) {
-			;
 		}
 	}
 
@@ -437,7 +436,7 @@ class PalladateNexusWriter {
 	//		d1.setFlatfield_appliedScalar(true);
 			d1.setFlatfield(DatasetFactory.ones(pxMask));
 		} catch (DatasetException dE) {
-			; // do nothing, add no mask
+			// do nothing, add no mask
 		}
 
 		// detector calibration; additional calibration not specified on Confluence
@@ -466,7 +465,6 @@ class PalladateNexusWriter {
 			Dataset calData = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(null, calPath, "/entry1/instrument/detector/data"));
 			d1.setData(calData);
 		} catch (DatasetException dE) {
-			;
 		}
 		
 		NXtransformations transformations = NexusNodeFactory.createNXtransformations();

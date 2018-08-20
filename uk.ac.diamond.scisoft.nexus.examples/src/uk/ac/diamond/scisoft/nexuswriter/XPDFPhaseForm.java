@@ -23,7 +23,7 @@ class XPDFPhaseForm {
 
 	private static EnumMap<Forms, XPDFPhaseForm> formMap;
 	private static EnumMap<Forms, String> names;
-	public enum Forms {AMORPHOUS, GLASSY, LIQUID, CRYSTALLINE};
+	public enum Forms {AMORPHOUS, GLASSY, LIQUID, CRYSTALLINE}
 	private Forms form; 
 	
 	/**

@@ -22,3 +22,4 @@ Import-Package: javax.measure;version="[1.0.0,2.0.0)",
  tec.units.indriya;version="1.0.0",
  tec.units.indriya.unit;version="1.0.0",
  tec.uom.lib.common.function;version="1.0.3"
+Automatic-Module-Name: org.eclipse.dawnsci.nexus

@@ -31,3 +31,4 @@ Bundle-ClassPath: .,
  jars/JLargeArrays-1.2.jar,
  jars/JTransforms-3.0.jar
 Service-Component: OSGI-INF/*.xml 
+Automatic-Module-Name: org.eclipse.dawnsci.analysis.dataset

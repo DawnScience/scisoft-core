@@ -18,4 +18,5 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.dawnsci.json
 Import-Package: org.osgi.framework;version="1.7.0",
  org.slf4j;version="1.7.2"
+Automatic-Module-Name: org.eclipse.dawnsci.json
 

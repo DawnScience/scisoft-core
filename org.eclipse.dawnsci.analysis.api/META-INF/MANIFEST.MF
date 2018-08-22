@@ -37,3 +37,4 @@ Require-Bundle: javax.vecmath;bundle-version="1.5.2",
  tec.uom.lib.uom-lib-common;bundle-version="1.0.3";visibility:=reexport
 Bundle-Activator: org.eclipse.dawnsci.analysis.api.Activator
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.eclipse.dawnsci.analysis.api

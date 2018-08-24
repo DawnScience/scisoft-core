@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright (c) 2018 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
@@ -36,7 +36,21 @@ public class InterpolateIntensityFromGammaDelta {
 	private Dataset realIntensity;
 	
 	private DetectorProperties dProp;
-	
+
+	/**
+	 * Performs the interpolation.
+	 * <p>
+	 * Performs the interpolation of the data defined in gamma, delta coordinates to the pixel grid of the detector with the given {@link DetectorProperties}. 
+	 * @param dPropIn
+	 * 				The {@link DetectorProperties} of the target detector.
+	 * @param intensity
+	 * 					The dataset to be interpolated.
+	 * @param gammaAxis
+	 * 					The values of gamma on the horizontal axis of the intensity grid.
+	 * @param deltaAxis
+ 	 * 					The values of delta on the horizontal axis of the intensity grid.
+	 * @return The interpolated {@link Dataset}.
+	 */
 	public static Dataset calculate(DetectorProperties dPropIn, Dataset intensity, Dataset gammaAxis, Dataset deltaAxis) {
 		InterpolateIntensityFromGammaDelta obj = new InterpolateIntensityFromGammaDelta(dPropIn, intensity, gammaAxis, deltaAxis);
 
@@ -46,6 +60,35 @@ public class InterpolateIntensityFromGammaDelta {
 		obj.interpolateIntensity();
 		
 		return obj.realIntensity;
+	}
+	
+	/**
+	 * Returns the values of the gamma coordinate on the detector.
+	 * @param dPropIn
+	 * 				The {@link DetectorProperties} of the detector.
+	 * @return The values of the gamma scattering angle at the centre of each pixel on the detector.
+	 */
+	public static Dataset getGamma(DetectorProperties dPropIn) {
+		return objectForCoordinates(dPropIn).realGamma;
+	}
+	
+	/**
+	 * Returns the values of the delta coordinate on the detector.
+	 * @param dPropIn
+	 * 				The {@link DetectorProperties} of the detector.
+	 * @return The values of the gamma scattering angle at the centre of each pixel on the detector.
+	 */
+	public static Dataset getDelta(DetectorProperties dPropIn) {
+		return objectForCoordinates(dPropIn).realDelta;
+	}
+	
+	private static InterpolateIntensityFromGammaDelta objectForCoordinates(DetectorProperties dPropIn) {
+		InterpolateIntensityFromGammaDelta obj = new InterpolateIntensityFromGammaDelta();
+		obj.setDetectorProperties(dPropIn);
+		
+		obj.generateRealGammaDelta();
+
+		return obj;
 	}
 	
 	private InterpolateIntensityFromGammaDelta() {
@@ -76,7 +119,7 @@ public class InterpolateIntensityFromGammaDelta {
 		
 		for (int i = 0; i < nX; i++) {
 			for (int j = 0; j < nY; j++) {
-				Vector3d r = dProp.pixelPosition(i+0.5, j+0.5);
+				Vector3d r = dProp.pixelPosition(j+0.5, i+0.5);
 				realGamma.set(Math.atan2(r.x, r.z), i, j);
 				realDelta.set(Math.atan2(r.y, Math.hypot(r.x, r.z)), i, j);
 			}

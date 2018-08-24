@@ -182,7 +182,7 @@ class EllipseCoordinatesFunction implements IConicSectionFitFunction, Serializab
 	}
 
 	@Override
-	public Dataset calcDistanceSquared(double[] parameters) throws IllegalArgumentException {
+	public Dataset calcDistanceSquared(double[] parameters) {
 		final double[] p = calcAllInitValues(parameters).getInitialGuess();
 
 		final DoubleDataset v = DatasetFactory.zeros(DoubleDataset.class, n);
@@ -240,7 +240,7 @@ class EllipseCoordinatesFunction implements IConicSectionFitFunction, Serializab
 	public MultivariateMatrixFunction jacobian() {
 		return new MultivariateMatrixFunction() {
 			@Override
-			public double[][] value(double[] p) throws IllegalArgumentException {
+			public double[][] value(double[] p) {
 				calculateJacobian(p);
 				return j;
 			}

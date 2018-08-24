@@ -48,7 +48,7 @@ public interface IConicSectionFitFunction extends MultivariateVectorFunction {
 	 * @return squared distances
 	 * @throws IllegalArgumentException
 	 */
-	public IDataset calcDistanceSquared(double[] parameters) throws IllegalArgumentException;
+	public IDataset calcDistanceSquared(double[] parameters);
 
 	/**
 	 * @return a matrix function that calculates the Jacobian

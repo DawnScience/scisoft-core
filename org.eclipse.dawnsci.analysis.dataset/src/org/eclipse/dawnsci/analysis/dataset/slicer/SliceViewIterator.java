@@ -85,6 +85,7 @@ public class SliceViewIterator implements ISliceViewIterator{
 	/**
 	 * Resets the iterator
 	 */
+	@Override
 	public void reset() {
 		count = 0;
 		iterator.reset();

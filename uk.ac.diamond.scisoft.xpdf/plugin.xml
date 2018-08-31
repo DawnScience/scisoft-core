@@ -188,6 +188,22 @@
             model="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCFromGDModel"
             name="Interpolate from (γ,δ) to Detector">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
+            class="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCToProjectiveOperation"
+            icon="icons/detector_to_proj.png"
+            id="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCToProjectiveOperation"
+            model="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCToProjectiveModel"
+            name="Interpolate XRMC scattering data to projective coords">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
+            class="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCFromProjectiveOperation"
+            icon="icons/proj_to_detector.png"
+            id="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCFromProjectiveOperation"
+            model="uk.ac.diamond.scisoft.xpdf.operations.InterpolateXRMCFromGDModel"
+            name="Interpolate from projective coords to Detector">
+      </operation>
    </extension>
 
 </plugin>

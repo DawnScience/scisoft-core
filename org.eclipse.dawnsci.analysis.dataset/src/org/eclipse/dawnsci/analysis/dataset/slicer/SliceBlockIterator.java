@@ -85,6 +85,7 @@ private static final Logger logger = LoggerFactory.getLogger(SliceBlockIterator.
 	/**
 	 * Resets the iterator
 	 */
+	@Override
 	public void reset() {
 		count = 0;
 		iterator.reset();

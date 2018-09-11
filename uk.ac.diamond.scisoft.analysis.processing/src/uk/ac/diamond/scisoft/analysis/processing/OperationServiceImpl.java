@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -507,7 +508,9 @@ public class OperationServiceImpl implements IOperationService {
 	@Override
 	public IOperation<? extends IOperationModel, ? extends OperationData> create(String operationId) throws Exception {
 		checkOperations();
-		IOperation op = operations.get(operationId).getClass().newInstance();
+		final IOperation opValue = operations.get(operationId);
+		Objects.requireNonNull(opValue, "No operation available for id " + operationId);
+		final IOperation op = opValue.getClass().newInstance();
 		Class<? extends IOperationModel> modelClass = getModelClass(operationId);
 		if (modelClass == null && op instanceof AbstractOperationBase) {
 			modelClass =  ((AbstractOperationBase) op).getModelClass();

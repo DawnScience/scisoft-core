@@ -19,6 +19,7 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
+import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.january.dataset.IDataset;
@@ -29,6 +30,8 @@ public class TreeToMapUtils {
 	private static final String DATANODEKEY = "org.eclipse.dawnsci.analysis.api.tree.DataNode";
 	private static final String SYMBOLICNODEKEY = "org.eclipse.dawnsci.analysis.api.tree.SymbolicNode";
 	private static final String MAXSHAPE = "org.eclipse.dawnsci.analysis.api.tree.DataNode.maxShape";
+	
+	private TreeToMapUtils() {}
 
 	public static Map<String, Object> treeToMap(Tree tree) {
 		
@@ -52,6 +55,7 @@ public class TreeToMapUtils {
 		Object o = map.get(root);
 		
 		if (o instanceof Map) {
+			@SuppressWarnings("unchecked")
 			Node n = parseMap((Map<String, Object>)o);
 			if (n instanceof GroupNode) {
 				tf.setGroupNode((GroupNode)n);
@@ -86,6 +90,7 @@ public class TreeToMapUtils {
 			Object o = map.get(key);
 			
 			if (o instanceof Map) {
+				@SuppressWarnings("unchecked")
 				Node gn = parseMap((Map<String, Object>) o);
 				if (parent instanceof GroupNode) ((GroupNode)parent).addNode(key, gn);
 			}
@@ -104,7 +109,7 @@ public class TreeToMapUtils {
 	
 
 	private static Object parseNodeLink(Node destination) {
-		Map<String,Object> map = new HashMap<String, Object>();
+		Map<String,Object> map = new HashMap<>();
 		
 		Iterator<? extends Attribute> it = destination.getAttributeIterator();
 		
@@ -141,9 +146,13 @@ public class TreeToMapUtils {
 				map.put(SYMBOLICNODEKEY, true);
 			} else {
 				map.put(DATANODEKEY, true);
-				map.put("org.eclipse.dawnsci.analysis.api.tree.DataNode.maxShape", dn.getMaxShape());
+				map.put(MAXSHAPE, dn.getMaxShape());
 			}
 				
+		}
+		
+		if (destination instanceof SymbolicNode) {
+			map.put(SYMBOLICNODEKEY, true);
 		}
 		
 		return map;

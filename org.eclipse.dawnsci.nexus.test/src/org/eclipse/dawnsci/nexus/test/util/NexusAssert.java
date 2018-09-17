@@ -48,6 +48,8 @@ import org.eclipse.january.dataset.PositionIterator;
 
 public class NexusAssert {
 
+	private static final String TARGET = "target";
+
 	public static void assertNexusTreesEqual(final TreeFile expectedTree, final TreeFile actualTree) throws Exception {
 		assertGroupNodesEqual("/", expectedTree.getGroupNode(), actualTree.getGroupNode());
 	}
@@ -86,8 +88,12 @@ public class NexusAssert {
 		// check number of attributes same (i.e. actualGroup has no additional attributes)
 		// The additional attribute "target" is allowed.
 		int expectedNumAttributes = expectedGroup.getNumberOfAttributes();
-		if (expectedGroup.containsAttribute("target") && !actualGroup.containsAttribute("target")) {
-			expectedNumAttributes--;
+		if (expectedGroup.containsAttribute(TARGET)) {
+			if (!actualGroup.containsAttribute(TARGET)) {
+				expectedNumAttributes--;
+			}
+		} else if (actualGroup.containsAttribute(TARGET)) {
+			expectedNumAttributes++;
 		}
 		assertEquals(path, expectedNumAttributes, actualGroup.getNumberOfAttributes());
 		
@@ -98,7 +104,7 @@ public class NexusAssert {
 			String attrPath = path + Node.ATTRIBUTE + attributeName;
 			Attribute expectedAttr = expectedGroup.getAttribute(attributeName);
 			Attribute actualAttr = actualGroup.getAttribute(attributeName);
-			if (!expectedAttr.getName().equals("target") && !expectedAttr.getName().equals("file_name")) {
+			if (!expectedAttr.getName().equals(TARGET) && !expectedAttr.getName().equals("file_name")) {
 				assertNotNull(attrPath, actualAttr);
 				assertAttributesEquals(attrPath, expectedAttr, actualAttr);
 			}
@@ -150,8 +156,12 @@ public class NexusAssert {
 		// check number of attributes same (i.e. actualDataNode has no additional attributes)
 		// additional attribute "target" is allowed, this is added automatically when saving the file
 		int expectedNumAttributes = expectedDataNode.getNumberOfAttributes();
-		if (expectedDataNode.containsAttribute("target") && !actualDataNode.containsAttribute("target")) {
-			expectedNumAttributes--;
+		if (expectedDataNode.containsAttribute(TARGET)) {
+			if (!actualDataNode.containsAttribute(TARGET)) {
+				expectedNumAttributes--;
+			}
+		} else if (actualDataNode.containsAttribute(TARGET)) {
+			expectedNumAttributes++;
 		}
 		assertEquals(expectedNumAttributes, actualDataNode.getNumberOfAttributes());
 		
@@ -162,7 +172,7 @@ public class NexusAssert {
 			String attrPath = path + Node.ATTRIBUTE + attributeName;
 			Attribute expectedAttr = expectedDataNode.getAttribute(attributeName);
 			Attribute actualAttr = actualDataNode.getAttribute(attributeName);
-			if (!expectedAttr.getName().equals("target")) {
+			if (!expectedAttr.getName().equals(TARGET)) {
 				assertNotNull(attrPath, expectedAttr);
 				assertAttributesEquals(attrPath, expectedAttr, actualAttr);
 			}

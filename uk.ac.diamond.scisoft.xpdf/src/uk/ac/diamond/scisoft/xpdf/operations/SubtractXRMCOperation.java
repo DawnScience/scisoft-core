@@ -100,17 +100,17 @@ public class SubtractXRMCOperation extends AbstractOperation<SubtractXRMCModel, 
 			// De-scale distinct scattering
 			
 			// absorption of sample scattering by all components
-			Dataset allComponentTransmission = Maths.subtract(1, absMaps.getAbsorptionMap(0, 0));
+			Dataset allComponentTransmission = absMaps.getAbsorptionMap(0, 0);
 			for (int iCont = 0; iCont < xMeta.getContainers().size(); iCont++) {
-				allComponentTransmission.imultiply(Maths.subtract(1, absMaps.getAbsorptionMap(0, iCont)));
+				allComponentTransmission.imultiply(absMaps.getAbsorptionMap(0, iCont));
 			}
-			sampleSubx.idivide(Maths.subtract(1, allComponentTransmission));
+			sampleSubx.idivide(allComponentTransmission);
 			// detector efficiency (detector transmission correction)
 			sampleSubx.idivide(xMeta.getDetector().getTransmissionCorrection(coordinates.getTwoTheta(), xMeta.getBeam().getBeamEnergy()));
 			// number of atoms
 			sampleSubx.idivide(xMeta.getSampleIlluminatedAtoms());
 			// Thomson cross-section
-			Dataset thomsonXSection = XPDFElectronCrossSections.getThomsonCrossSection(coordinates);//.imultiply(electronCrossSectionUnits);
+			Dataset thomsonXSection = XPDFElectronCrossSections.getThomsonCrossSection(coordinates);
 			sampleSubx.idivide(thomsonXSection);
 			
 			if (isGainFinal == false) {
@@ -148,12 +148,12 @@ public class SubtractXRMCOperation extends AbstractOperation<SubtractXRMCModel, 
 		int lastIndex = subx.size() - 1;
 		Dataset outermostNormed = Maths.divide(subx.get(lastIndex), absMaps.getAbsorptionMap(lastIndex, lastIndex));
 		// Transmission of the outermost n components. Here, just the very outermost.
-		Dataset transmissionI = Maths.subtract(1, absMaps.getAbsorptionMap(lastIndex, lastIndex));
+		Dataset transmissionI = absMaps.getAbsorptionMap(lastIndex, lastIndex);
 		for (int i = lastIndex; i >= 0; i--) {
 			// update the transmission to include this component
-			transmissionI.imultiply(Maths.subtract(1, absMaps.getAbsorptionMap(lastIndex, i)));
+			transmissionI.imultiply(absMaps.getAbsorptionMap(lastIndex, i));
 			// subtract the contribution of the outermost container, scaled by the absorption
-			Dataset absNMN = Maths.subtract(1, transmissionI);
+			Dataset absNMN = transmissionI;
 			subx.get(i).isubtract(Maths.multiply(absNMN, outermostNormed));
 		}
 		// the effect of the outermost container should now be removed

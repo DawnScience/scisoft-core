@@ -91,9 +91,9 @@ public class AlignToHalfGaussianPeakTest {
 		AlignToHalfGaussianPeak align = new AlignToHalfGaussianPeak(false);
 
 		align.setPeakZone(lo, hi);
-		align.setForceToPosition(force);
-		align.setResample(resample);
-		return align.value(in);
+		List<Double> posn = align.value(in);
+		List<Dataset> data = AlignToHalfGaussianPeak.alignToPositions(resample, force || (lo <= 0 && hi >= 0), 0, posn, in);
+		return data;
 	}
 
 	private double[] calcOffset(IDataset energy, List<? extends IDataset> result) {

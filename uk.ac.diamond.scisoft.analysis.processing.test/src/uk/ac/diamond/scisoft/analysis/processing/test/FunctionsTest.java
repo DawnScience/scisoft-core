@@ -38,7 +38,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
-import uk.ac.diamond.scisoft.analysis.processing.Activator;
+import uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.operations.FittingModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.FunctionModel;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
@@ -56,7 +56,7 @@ public class FunctionsTest {
 	 */
 	@BeforeClass
 	public static void before() throws Exception {
-		service = (IOperationService)Activator.getService(IOperationService.class);
+		service = new OperationServiceImpl();
 		
 		// Just read all these operations.
 		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.operations");

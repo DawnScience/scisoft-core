@@ -4,11 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.dawb.common.services.ServiceManager;
 import org.dawnsci.persistence.PersistenceServiceCreator;
 import org.dawnsci.persistence.ServiceLoader;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
@@ -55,8 +53,10 @@ public class XICCO2DTest {
 		// Set factory for test
 		new ServiceLoader().setNexusFactory(new NexusFileFactoryHDF5());
 		// Set up a File Service for ImportMaskMetadata
-		ServiceManager.setService(IPersistenceService.class, PersistenceServiceCreator.createPersistenceService());
-		new LocalServiceManager().setLoaderService(new LoaderServiceImpl());
+		LocalServiceManager lsm = new LocalServiceManager();
+		lsm.setLoaderService(new LoaderServiceImpl());
+		lsm.setPersistenceService(PersistenceServiceCreator.createPersistenceService());
+		
 	}
 
 	@After

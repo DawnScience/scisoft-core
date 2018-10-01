@@ -17,17 +17,14 @@ import java.io.FilenameFilter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.dawb.common.services.ServiceManager;
 import org.dawnsci.conversion.ConversionServiceImpl;
 import org.dawnsci.conversion.converters.util.LocalServiceManager;
 import org.dawnsci.conversion.schemes.ProcessConversionScheme;
-import org.dawnsci.persistence.PersistenceServiceCreator;
 import org.eclipse.dawnsci.analysis.api.conversion.IConversionContext;
 import org.eclipse.dawnsci.analysis.api.conversion.IConversionService;
 import org.eclipse.dawnsci.analysis.api.conversion.IProcessingConversionInfo;
 import org.eclipse.dawnsci.analysis.api.conversion.ProcessingOutputType;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
@@ -40,6 +37,7 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.LoaderServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
+import uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 import uk.ac.diamond.scisoft.analysis.processing.visitor.NexusFileExecutionVisitor;
@@ -52,12 +50,9 @@ public class ExampleOperationsTest {
 		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
 		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
 		
-		ServiceManager.setService(IPersistenceService.class, PersistenceServiceCreator.createPersistenceService());
-		ServiceManager.setService(IConversionService.class, new ConversionServiceImpl());
-		IOperationService service = (IOperationService)Activator.getService(IOperationService.class);
+		IOperationService service = new OperationServiceImpl();
 		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.test.examples");
-		ServiceManager.setService(IOperationService.class, service);
-		
+
 		new LocalServiceManager().setLoaderService(new LoaderServiceImpl());
 		new LocalServiceManager().setOperationService(service);
 		
@@ -72,7 +67,7 @@ public class ExampleOperationsTest {
 		
 		if (path == null) fail("Could not create data file");
 
-		IConversionService service = (IConversionService)ServiceManager.getService(IConversionService.class);
+		IConversionService service = new ConversionServiceImpl();
 		IConversionContext context = service.open(path);
 
 		context.setConversionScheme(new ProcessConversionScheme());
@@ -164,7 +159,7 @@ public class ExampleOperationsTest {
 		
 		if (path == null) fail("Could not create data file");
 		
-		IConversionService service = (IConversionService)ServiceManager.getService(IConversionService.class);
+		IConversionService service = new ConversionServiceImpl();
 		IConversionContext context = service.open(path);
 
 		context.setConversionScheme(new ProcessConversionScheme());
@@ -251,7 +246,7 @@ public class ExampleOperationsTest {
 
 		if (path == null) fail("Could not create data file");
 
-		IConversionService service = (IConversionService)ServiceManager.getService(IConversionService.class);
+		IConversionService service = new ConversionServiceImpl();
 		IConversionContext context = service.open(path);
 
 		context.setConversionScheme(new ProcessConversionScheme());

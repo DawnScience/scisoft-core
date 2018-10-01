@@ -32,6 +32,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.processing.Activator;
+import uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.operations.SectorIntegrationModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.mask.ThresholdMaskModel;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
@@ -50,7 +51,7 @@ public class IntegrationTest {
 	 */
 	@BeforeClass
 	public static void before() throws Exception {
-		service = (IOperationService)Activator.getService(IOperationService.class);
+		service = new OperationServiceImpl();
 		
 		// Just read all these operations.
 		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.operations");

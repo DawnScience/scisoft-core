@@ -4,9 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 
-import org.dawb.common.services.ServiceManager;
 import org.dawnsci.persistence.PersistenceServiceCreator;
-import org.dawnsci.persistence.ServiceLoader;
 import org.dawnsci.persistence.internal.PersistJsonOperationsNode;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistentFile;
@@ -43,7 +41,6 @@ public class XPDFChainTest {
 		operationService.createOperations(operationService.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.operations");
 		new PersistJsonOperationsNode().setOperationService(operationService);
 		new LocalServiceManager().setLoaderService(new LoaderServiceImpl());
-		ServiceManager.setService(IPersistenceService.class, PersistenceServiceCreator.createPersistenceService());
 		new org.dawnsci.persistence.ServiceLoader().setNexusFactory(new NexusFileFactoryHDF5());
 	}
 	

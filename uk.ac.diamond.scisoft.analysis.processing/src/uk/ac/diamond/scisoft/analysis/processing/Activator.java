@@ -8,7 +8,6 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing;
 
-import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -41,7 +40,6 @@ public class Activator implements BundleActivator {
 
 	public static Object getService(final Class<?> serviceClass) {
 		
-		if (context==null && serviceClass==IOperationService.class) return new OperationServiceImpl();
 		if (context == null) return null;
 		ServiceReference<?> ref = context.getServiceReference(serviceClass);
 		if (ref==null) return null;

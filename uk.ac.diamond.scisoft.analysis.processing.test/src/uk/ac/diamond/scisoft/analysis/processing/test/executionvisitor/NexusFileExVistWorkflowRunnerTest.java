@@ -76,12 +76,12 @@ public class NexusFileExVistWorkflowRunnerTest {
 		
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertTrue(dh.contains("/entry/intermediate/0-Junk1Dto1DOperation/data"));
-		assertTrue(dh.contains("/entry/intermediate/0-Junk1Dto1DOperation/Axis_0"));
-		assertTrue(dh.contains("/entry/intermediate/0-Junk1Dto1DOperation/Junk1Dax"));
-		assertFalse(dh.contains("/entry/intermediate/0-Junk1Dto1DOperation/Junk1Dax1"));
-		assertTrue(dh.contains("/entry/result/Junk1Dax"));
-		assertFalse(dh.contains("/entry/result/Junk1Dax1"));
+		assertTrue(dh.contains("/processed/intermediate/0-Junk1Dto1DOperation/data"));
+		assertTrue(dh.contains("/processed/intermediate/0-Junk1Dto1DOperation/Axis_0"));
+		assertTrue(dh.contains("/processed/intermediate/0-Junk1Dto1DOperation/Junk1Dax"));
+		assertFalse(dh.contains("/processed/intermediate/0-Junk1Dto1DOperation/Junk1Dax1"));
+		assertTrue(dh.contains("/processed/result/Junk1Dax"));
+		assertFalse(dh.contains("/processed/result/Junk1Dax1"));
 		
 		
 

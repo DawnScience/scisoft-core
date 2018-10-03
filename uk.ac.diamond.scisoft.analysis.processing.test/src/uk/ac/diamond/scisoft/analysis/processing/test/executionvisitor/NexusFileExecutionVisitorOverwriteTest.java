@@ -28,10 +28,13 @@ import org.eclipse.january.dataset.SliceND;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
+import uk.ac.diamond.scisoft.analysis.processing.test.OperationsTestConstants;
 import uk.ac.diamond.scisoft.analysis.processing.visitor.NexusFileExecutionVisitor;
 
 public class NexusFileExecutionVisitorOverwriteTest {
 
+	private static final String PROCESS_DATA_PATH = OperationsTestConstants.PROCESSED_RESULTS_DATA_PATH;
+	
 	@Test
 	public void test() throws Exception {
 		final File tmp = File.createTempFile("Test", ".h5");
@@ -65,7 +68,7 @@ public class NexusFileExecutionVisitorOverwriteTest {
 	    
 	    
 	    IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-	    ILazyDataset dd = dh.getLazyDataset("/entry/result/data");
+	    ILazyDataset dd = dh.getLazyDataset(PROCESS_DATA_PATH);
 	    IDataset slice = dd.getSlice();
 	    
 	    assertEquals(firstVal, slice.getDouble(new int[]{0,0}), 0.000001);

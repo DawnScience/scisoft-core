@@ -44,11 +44,15 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.twod.DownsampleImage
 import uk.ac.diamond.scisoft.analysis.processing.operations.twod.DownsampleImageOperation;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
+import uk.ac.diamond.scisoft.analysis.processing.test.OperationsTestConstants;
 import uk.ac.diamond.scisoft.analysis.processing.visitor.NexusFileExecutionVisitor;
 
 public class MockScanProcessTest {
 	
 	private static IOperationService service;
+	
+	private static final String PROCESS_PATH = OperationsTestConstants.PROCESSED_RESULTS_PATH;
+	private static final String DATA_NAME = OperationsTestConstants.DATA;
 	
 	@BeforeClass
 	public static void before() throws Exception {
@@ -151,25 +155,25 @@ public class MockScanProcessTest {
 	
 	private void starProcessing(ExecutorService ste, File tmpProc, File tmp, boolean noData) throws Exception{
 		
-		String data = "/entry/result/data";
-		String key = "/entry/auxiliary/1-DataWritten/key/data";
-		String ax0 = "/entry/result/Axis_0";
-		String ax1 = "/entry/result/Axis_1";
-		String ax2 = "/entry/result/Axis_2";
-		String ax3 = "/entry/result/Axis_3";
+		String data = PROCESS_PATH + DATA_NAME;
+		String key = "/processed/auxiliary/1-DataWritten/key/data";
+		String ax0 = PROCESS_PATH + "Axis_0";
+		String ax1 = PROCESS_PATH + "Axis_1";
+		String ax2 = PROCESS_PATH + "Axis_2";
+		String ax3 = PROCESS_PATH + "Axis_3";
 		
 		
 		final IOperationContext context = service.createContext();
 		
 		IDataHolder dh = null;
 		int count = 0;
-		while (count < 100 &&  (dh == null || !dh.contains("/entry/result/data"))){
+		while (count < 100 &&  (dh == null || !dh.contains(PROCESS_PATH + DATA_NAME))){
 			Thread.sleep(100);
 			count++;
 			dh = LoaderFactory.getData(tmp.getAbsolutePath());
 		}
 		
-		if (count == 100) Assert.fail("Couldnt read file!");
+		if (count == 100) Assert.fail("Couldn't read file!");
 		
 		final IDataHolder fdh = dh;
 		
@@ -188,13 +192,13 @@ public class MockScanProcessTest {
 			
 			@Override
 			public IDynamicDataset[] getKeys() {
-				ILazyDataset lazyDataset = fdh.getLazyDataset("/entry/auxiliary/1-DataWritten/key/data");
+				ILazyDataset lazyDataset = fdh.getLazyDataset("/processed/auxiliary/1-DataWritten/key/data");
 				return new IDynamicDataset[]{(IDynamicDataset)lazyDataset};
 			}
 			
 			@Override
 			public IDynamicDataset getComplete() {
-				return (IDynamicDataset)fdh.getLazyDataset("/entry/live/finished");
+				return (IDynamicDataset)fdh.getLazyDataset("/processed/live/finished");
 			}
 
 			@Override

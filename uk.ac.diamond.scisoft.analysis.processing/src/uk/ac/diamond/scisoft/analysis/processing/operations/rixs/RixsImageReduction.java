@@ -253,7 +253,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		try {
 			Tree tree = LoaderFactory.getData(elasticLineFile).getTree();
 			GroupNode root = tree.getGroupNode();
-			GroupNode entry = (GroupNode) NexusTreeUtils.findFirstNode(root, "entry", "NXentry").getDestination();
+			GroupNode entry = NexusTreeUtils.findFirstEntryWithProcess(root);
 
 			ProcessingUtils.checkForProcess(this, entry, ElasticLineReduction.PROCESS_NAME);
 
@@ -328,7 +328,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			//         andorPreampGain:NXcollection/andorPreampGain [1, 2, 4]
 			//         pgmEnergy:NXcollection/ [energy in eV, always single value, even for an energy scan]
 
-			GroupNode entry = (GroupNode) NexusTreeUtils.findFirstNode(root, "entry", "NXentry").getDestination();
+			GroupNode entry = NexusTreeUtils.findFirstEntryWithProcess(root);
 
 			ProcessingUtils.checkForProcess(this, entry, ElasticLineReduction.PROCESS_NAME);
 

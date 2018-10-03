@@ -33,6 +33,7 @@ import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
+import uk.ac.diamond.scisoft.analysis.processing.test.OperationsTestConstants;
 import uk.ac.diamond.scisoft.analysis.processing.visitor.NexusFileExecutionVisitor;
 
 
@@ -46,6 +47,11 @@ public class NexusFileExecutionVisitorTest {
 	}
 	
 	private static IOperationService service;
+	
+	private static final String PROCESS_PATH = OperationsTestConstants.PROCESSED_RESULTS_PATH;
+	private static final String PROCESS_DATA_PATH = OperationsTestConstants.PROCESSED_RESULTS_DATA_PATH;
+	private static final String AXIS0 = OperationsTestConstants.AXIS0;
+	private static final String JUNK_AXIS1D = OperationsTestConstants.JUNK_AXIS1D;
 
 	@BeforeClass
 	public static void before() throws Exception {
@@ -92,17 +98,17 @@ public class NexusFileExecutionVisitorTest {
 		service.execute(context);
 
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertTrue(dh.contains("/entry/result/data"));
-		assertTrue(dh.contains("/entry/result/Axis_0"));
-		assertTrue(dh.contains("/entry/result/Junk1Dax"));
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains(PROCESS_PATH + AXIS0));
+		assertTrue(dh.contains(PROCESS_PATH + JUNK_AXIS1D));
 
-		assertArrayEquals(new int[]{inputShape[0],op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
-		assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+		assertArrayEquals(new int[]{inputShape[0],op21.getModel().getxDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + AXIS0).getShape());
+		assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + JUNK_AXIS1D).getShape());
 
-		testDataset(op21, "9,:", dh.getLazyDataset("/entry/result/data"));
-		testDataset(op21, "5,:", dh.getLazyDataset("/entry/result/data"));
-		testDataset(op21, "0,:", dh.getLazyDataset("/entry/result/data"));
+		testDataset(op21, "9,:", dh.getLazyDataset(PROCESS_DATA_PATH));
+		testDataset(op21, "5,:", dh.getLazyDataset(PROCESS_DATA_PATH));
+		testDataset(op21, "0,:", dh.getLazyDataset(PROCESS_DATA_PATH));
 
 		
 	}
@@ -132,17 +138,17 @@ public class NexusFileExecutionVisitorTest {
 		service.execute(context);
 
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertTrue(dh.contains("/entry/result/data"));
-		assertTrue(dh.contains("/entry/result/Axis_0"));
-		assertTrue(dh.contains("/entry/result/Junk1Dax"));
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains(PROCESS_PATH + AXIS0));
+		assertTrue(dh.contains(PROCESS_PATH + JUNK_AXIS1D));
 
-		assertArrayEquals(new int[]{inputShape[0],op.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
-		assertArrayEquals(new int[]{op.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+		assertArrayEquals(new int[]{inputShape[0],op.getModel().getxDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + AXIS0).getShape());
+		assertArrayEquals(new int[]{op.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + JUNK_AXIS1D).getShape());
 
-		testDataset(op, "9,:", dh.getLazyDataset("/entry/result/data"));
-		testDataset(op, "5,:", dh.getLazyDataset("/entry/result/data"));
-		testDataset(op, "0,:", dh.getLazyDataset("/entry/result/data"));
+		testDataset(op, "9,:", dh.getLazyDataset(PROCESS_DATA_PATH));
+		testDataset(op, "5,:", dh.getLazyDataset(PROCESS_DATA_PATH));
+		testDataset(op, "0,:", dh.getLazyDataset(PROCESS_DATA_PATH));
 
 		
 	}
@@ -175,16 +181,16 @@ public class NexusFileExecutionVisitorTest {
 		service.execute(context);
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertTrue(dh.contains("/entry/result/data"));
-		assertTrue(dh.contains("/entry/result/Axis_0"));
-		assertTrue(dh.contains("/entry/result/Junk1Dax"));
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains(PROCESS_PATH + AXIS0));
+		assertTrue(dh.contains(PROCESS_PATH + JUNK_AXIS1D));
 		
-		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
-		assertArrayEquals(new int[]{inputShape[1]}, dh.getLazyDataset("/entry/result/Axis_1").getShape());
-		assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op21.getModel().getxDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + AXIS0).getShape());
+		assertArrayEquals(new int[]{inputShape[1]}, dh.getLazyDataset(PROCESS_PATH + "Axis_1").getShape());
+		assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + JUNK_AXIS1D).getShape());
 
-		testDataset( op21, "3,5,:",dh.getLazyDataset("/entry/result/data"));
+		testDataset( op21, "3,5,:",dh.getLazyDataset(PROCESS_DATA_PATH));
 			
 	}
 
@@ -214,16 +220,16 @@ public class NexusFileExecutionVisitorTest {
 		service.execute(context);
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertTrue(dh.contains("/entry/result/data"));
-		assertTrue(dh.contains("/entry/result/Axis_0"));
-		assertTrue(dh.contains("/entry/result/Junk1Dax"));
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains(PROCESS_PATH + AXIS0));
+		assertTrue(dh.contains(PROCESS_PATH + JUNK_AXIS1D));
 		
-		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
-		assertArrayEquals(new int[]{inputShape[1]}, dh.getLazyDataset("/entry/result/Axis_1").getShape());
-		assertArrayEquals(new int[]{op.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op.getModel().getxDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + AXIS0).getShape());
+		assertArrayEquals(new int[]{inputShape[1]}, dh.getLazyDataset(PROCESS_PATH + "Axis_1").getShape());
+		assertArrayEquals(new int[]{op.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + JUNK_AXIS1D).getShape());
 
-		testDataset(op, "3,5,:",dh.getLazyDataset("/entry/result/data"));
+		testDataset(op, "3,5,:",dh.getLazyDataset(PROCESS_DATA_PATH));
 			
 	}
 	
@@ -256,16 +262,16 @@ public class NexusFileExecutionVisitorTest {
 
 					
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertTrue(dh.contains("/entry/result/data"));
-		assertTrue(dh.contains("/entry/result/Axis_0"));
-		assertTrue(dh.contains("/entry/result/Junk1Dax"));
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains(PROCESS_PATH + AXIS0));
+		assertTrue(dh.contains(PROCESS_PATH + JUNK_AXIS1D));
 		
-		assertArrayEquals(new int[]{inputShape[0],inputShape[1],inputShape[2],op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
-		assertArrayEquals(new int[]{inputShape[1]}, dh.getLazyDataset("/entry/result/Axis_1").getShape());
-		assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+		assertArrayEquals(new int[]{inputShape[0],inputShape[1],inputShape[2],op21.getModel().getxDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + AXIS0).getShape());
+		assertArrayEquals(new int[]{inputShape[1]}, dh.getLazyDataset(PROCESS_PATH + "Axis_1").getShape());
+		assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + JUNK_AXIS1D).getShape());
 
-		testDataset(op21, "1,3,5,:", dh.getLazyDataset("/entry/result/data"));
+		testDataset(op21, "1,3,5,:", dh.getLazyDataset(PROCESS_DATA_PATH));
 			
 	}
 	
@@ -296,16 +302,16 @@ public class NexusFileExecutionVisitorTest {
 		
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertTrue(dh.contains("/entry/result/data"));
-		assertTrue(dh.contains("/entry/result/Axis_0"));
-		assertTrue(dh.contains("/entry/result/Axis_1"));
-		assertTrue(dh.contains("/entry/result/Junk1Dax"));
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains(PROCESS_PATH + AXIS0));
+		assertTrue(dh.contains(PROCESS_PATH + "Axis_1"));
+		assertTrue(dh.contains(PROCESS_PATH + JUNK_AXIS1D));
 		
-		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
-		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + AXIS0).getShape());
+		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + JUNK_AXIS1D).getShape());
 		
-		testDataset(op11, "5,10,:", dh.getLazyDataset("/entry/result/data"));
+		testDataset(op11, "5,10,:", dh.getLazyDataset(PROCESS_DATA_PATH));
 			
 	}
 	
@@ -337,18 +343,18 @@ public class NexusFileExecutionVisitorTest {
 		service.execute(context);
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertTrue(dh.contains("/entry/result/data"));
-		assertTrue(dh.contains("/entry/result/errors"));
-		assertTrue(dh.contains("/entry/result/Axis_0"));
-		assertTrue(dh.contains("/entry/result/Axis_1"));
-		assertTrue(dh.contains("/entry/result/Junk1Dax"));
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains(PROCESS_PATH + "errors"));
+		assertTrue(dh.contains(PROCESS_PATH + AXIS0));
+		assertTrue(dh.contains(PROCESS_PATH + "Axis_1"));
+		assertTrue(dh.contains(PROCESS_PATH + JUNK_AXIS1D));
 		
-		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/errors").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
-		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + "errors").getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + AXIS0).getShape());
+		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + JUNK_AXIS1D).getShape());
 
-		testDataset( op11, "5,10,:", dh.getLazyDataset("/entry/result/data"));
+		testDataset( op11, "5,10,:", dh.getLazyDataset(PROCESS_DATA_PATH));
 			
 	}
 	
@@ -380,24 +386,24 @@ public class NexusFileExecutionVisitorTest {
 
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertTrue(dh.contains("/entry/result/data"));
-		assertTrue(dh.contains("/entry/result/Axis_0"));
-		assertTrue(dh.contains("/entry/result/Axis_1"));
-		assertTrue(dh.contains("/entry/result/Junk1Dax"));
-		assertTrue(dh.contains("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0"));
-		assertTrue(dh.contains("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_1"));
-		assertTrue(dh.contains("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data"));
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains(PROCESS_PATH + AXIS0));
+		assertTrue(dh.contains(PROCESS_PATH + "Axis_1"));
+		assertTrue(dh.contains(PROCESS_PATH + JUNK_AXIS1D));
+		assertTrue(dh.contains("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0"));
+		assertTrue(dh.contains("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_1"));
+		assertTrue(dh.contains("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data"));
 		
-		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
-		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
-		assertArrayEquals(new int[]{inputShape[0],inputShape[1]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0").getShape());
-		assertArrayEquals(new int[]{inputShape[1]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_1").getShape());
+		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + AXIS0).getShape());
+		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + JUNK_AXIS1D).getShape());
+		assertArrayEquals(new int[]{inputShape[0],inputShape[1]}, dh.getLazyDataset("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0").getShape());
+		assertArrayEquals(new int[]{inputShape[1]}, dh.getLazyDataset("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_1").getShape());
 
-		testDataset( op11, "5,10,:", dh.getLazyDataset("/entry/result/data"));
+		testDataset( op11, "5,10,:", dh.getLazyDataset(PROCESS_DATA_PATH));
 		
-		IDataset slice = dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getSlice();
+		IDataset slice = dh.getLazyDataset("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getSlice();
 		slice.toString();
 			
 	}
@@ -430,21 +436,21 @@ public class NexusFileExecutionVisitorTest {
 		service.execute(context);			
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertTrue(dh.contains("/entry/result/data"));
-		assertTrue(dh.contains("/entry/result/Axis_0"));
-		assertTrue(dh.contains("/entry/result/Axis_1"));
-		assertTrue(dh.contains("/entry/result/Junk1Dax"));
-		assertTrue(dh.contains("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0"));
-		assertTrue(dh.contains("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_1"));
-		assertTrue(dh.contains("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data"));
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains(PROCESS_PATH + AXIS0));
+		assertTrue(dh.contains(PROCESS_PATH + "Axis_1"));
+		assertTrue(dh.contains(PROCESS_PATH + JUNK_AXIS1D));
+		assertTrue(dh.contains("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0"));
+		assertTrue(dh.contains("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_1"));
+		assertTrue(dh.contains("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data"));
 		
-		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
-		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
-		assertArrayEquals(new int[]{inputShape[0],inputShape[1],auxShape[0],auxShape[1]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0").getShape());
+		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + AXIS0).getShape());
+		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + JUNK_AXIS1D).getShape());
+		assertArrayEquals(new int[]{inputShape[0],inputShape[1],auxShape[0],auxShape[1]}, dh.getLazyDataset("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0").getShape());
 
-		testDataset( op11, "5,10,:", dh.getLazyDataset("/entry/result/data"));
+		testDataset( op11, "5,10,:", dh.getLazyDataset(PROCESS_DATA_PATH));
 			
 	}
 	
@@ -477,21 +483,21 @@ public class NexusFileExecutionVisitorTest {
 		
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertTrue(dh.contains("/entry/result/data"));
-		assertTrue(dh.contains("/entry/result/Axis_0"));
-		assertTrue(dh.contains("/entry/result/Axis_1"));
-		assertTrue(dh.contains("/entry/result/Junk1Dax"));
-		assertTrue(dh.contains("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0"));
-		assertTrue(dh.contains("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_1"));
-		assertTrue(dh.contains("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data"));
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains(PROCESS_PATH + AXIS0));
+		assertTrue(dh.contains(PROCESS_PATH + "Axis_1"));
+		assertTrue(dh.contains(PROCESS_PATH + JUNK_AXIS1D));
+		assertTrue(dh.contains("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0"));
+		assertTrue(dh.contains("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_1"));
+		assertTrue(dh.contains("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data"));
 		
-		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
-		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
-		assertArrayEquals(new int[]{inputShape[0],inputShape[1],auxShape[0]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0").getShape());
+		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + AXIS0).getShape());
+		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + JUNK_AXIS1D).getShape());
+		assertArrayEquals(new int[]{inputShape[0],inputShape[1],auxShape[0]}, dh.getLazyDataset("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0").getShape());
 
-		testDataset( op11, "5,10,:", dh.getLazyDataset("/entry/result/data"));
+		testDataset( op11, "5,10,:", dh.getLazyDataset(PROCESS_DATA_PATH));
 			
 	}
 	
@@ -523,19 +529,19 @@ public class NexusFileExecutionVisitorTest {
 		service.execute(context);
 
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertTrue(dh.contains("/entry/result/data"));
-		assertTrue(dh.contains("/entry/result/Axis_0"));
-		assertTrue(dh.contains("/entry/result/Junk1Dax"));
-		assertTrue(dh.contains("/entry/auxiliary/1-Junk1Dto1DAuxOperation/singlevalue/Axis_0"));
-		assertTrue(dh.contains("/entry/auxiliary/1-Junk1Dto1DAuxOperation/singlevalue/data"));
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains(PROCESS_PATH + AXIS0));
+		assertTrue(dh.contains(PROCESS_PATH + JUNK_AXIS1D));
+		assertTrue(dh.contains("/processed/auxiliary/1-Junk1Dto1DAuxOperation/singlevalue/Axis_0"));
+		assertTrue(dh.contains("/processed/auxiliary/1-Junk1Dto1DAuxOperation/singlevalue/data"));
 
-		assertArrayEquals(new int[]{inputShape[0],op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
-		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/auxiliary/1-Junk1Dto1DAuxOperation/singlevalue/Axis_0").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/auxiliary/1-Junk1Dto1DAuxOperation/singlevalue/data").getShape());
+		assertArrayEquals(new int[]{inputShape[0],op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + AXIS0).getShape());
+		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + JUNK_AXIS1D).getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/processed/auxiliary/1-Junk1Dto1DAuxOperation/singlevalue/Axis_0").getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/processed/auxiliary/1-Junk1Dto1DAuxOperation/singlevalue/data").getShape());
 
-		testDataset( op11, "5,:", dh.getLazyDataset("/entry/result/data"));
+		testDataset( op11, "5,:", dh.getLazyDataset(PROCESS_DATA_PATH));
 		
 	}
 	
@@ -567,15 +573,15 @@ public class NexusFileExecutionVisitorTest {
 		service.execute(context);
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertTrue(dh.contains("/entry/result/data"));
-//			assertTrue(dh.contains("/entry/result/Axis_0"));
-		assertTrue(dh.contains("/entry/result/Junk1Dax"));
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+//			assertTrue(dh.contains(PROCESS_PATH + AXIS0));
+		assertTrue(dh.contains(PROCESS_PATH + JUNK_AXIS1D));
 		
-		assertArrayEquals(new int[]{inputShape[0],op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-//			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
-		assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+		assertArrayEquals(new int[]{inputShape[0],op21.getModel().getxDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+//			assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + AXIS0).getShape());
+		assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + JUNK_AXIS1D).getShape());
 
-		testDataset( op21, "5,:", dh.getLazyDataset("/entry/result/data"));
+		testDataset( op21, "5,:", dh.getLazyDataset(PROCESS_DATA_PATH));
 			
 	}
 	
@@ -606,19 +612,19 @@ public class NexusFileExecutionVisitorTest {
 		
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertTrue(dh.contains("/entry/result/data"));
-		assertTrue(dh.contains("/entry/result/Axis_0"));
-		assertTrue(dh.contains("/entry/result/Axis_1"));
-		assertTrue(dh.contains("/entry/result/Junk2Dto2DAx1"));
-		assertTrue(dh.contains("/entry/result/Junk2Dto2DAx2"));
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains(PROCESS_PATH + AXIS0));
+		assertTrue(dh.contains(PROCESS_PATH + "Axis_1"));
+		assertTrue(dh.contains(PROCESS_PATH + "Junk2Dto2DAx1"));
+		assertTrue(dh.contains(PROCESS_PATH + "Junk2Dto2DAx2"));
 		
-		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim(),op11.getModel().getyDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
-		assertArrayEquals(new int[]{inputShape[1]}, dh.getLazyDataset("/entry/result/Axis_1").getShape());
-		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk2Dto2DAx1").getShape());
-		assertArrayEquals(new int[]{op11.getModel().getyDim()}, dh.getLazyDataset("/entry/result/Junk2Dto2DAx2").getShape());
+		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim(),op11.getModel().getyDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + AXIS0).getShape());
+		assertArrayEquals(new int[]{inputShape[1]}, dh.getLazyDataset(PROCESS_PATH + "Axis_1").getShape());
+		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + "Junk2Dto2DAx1").getShape());
+		assertArrayEquals(new int[]{op11.getModel().getyDim()}, dh.getLazyDataset(PROCESS_PATH + "Junk2Dto2DAx2").getShape());
 
-		testDataset( op11, "5,10,:,:", dh.getLazyDataset("/entry/result/data"));
+		testDataset( op11, "5,10,:,:", dh.getLazyDataset(PROCESS_DATA_PATH));
 			
 	}
 	
@@ -646,19 +652,19 @@ public class NexusFileExecutionVisitorTest {
 		service.execute(context);
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertTrue(dh.contains("/entry/result/data"));
-		assertTrue(dh.contains("/entry/result/Axis_0"));
-		assertTrue(dh.contains("/entry/result/Axis_0_1"));
-		assertTrue(dh.contains("/entry/result/Junk2Dto2DAx2"));
-		assertTrue(dh.contains("/entry/result/Junk2Dto2DAx2_1"));
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains(PROCESS_PATH + AXIS0));
+		assertTrue(dh.contains(PROCESS_PATH + "Axis_0_1"));
+		assertTrue(dh.contains(PROCESS_PATH + "Junk2Dto2DAx2"));
+		assertTrue(dh.contains(PROCESS_PATH + "Junk2Dto2DAx2_1"));
 		
-		assertArrayEquals(new int[]{inputShape[0],op22.getModel().getxDim(),op22.getModel().getyDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0_1").getShape());
-		assertArrayEquals(new int[]{op22.getModel().getyDim()}, dh.getLazyDataset("/entry/result/Junk2Dto2DAx2").getShape());
+		assertArrayEquals(new int[]{inputShape[0],op22.getModel().getxDim(),op22.getModel().getyDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + AXIS0).getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + "Axis_0_1").getShape());
+		assertArrayEquals(new int[]{op22.getModel().getyDim()}, dh.getLazyDataset(PROCESS_PATH + "Junk2Dto2DAx2").getShape());
 		
-		IDataset a1 = dh.getLazyDataset("/entry/result/Axis_0").getSlice();
-		IDataset a2 = dh.getLazyDataset("/entry/result/Axis_0_1").getSlice();
+		IDataset a1 = dh.getLazyDataset(PROCESS_PATH + AXIS0).getSlice();
+		IDataset a2 = dh.getLazyDataset(PROCESS_PATH + "Axis_0_1").getSlice();
 		
 		for (int i = 0; i < 10;i++) {
 			if (a2.getInt(i) != i+1) {
@@ -673,7 +679,7 @@ public class NexusFileExecutionVisitorTest {
 			}
 		}
 		
-		testDataset( op22, "5,:,:", dh.getLazyDataset("/entry/result/data"));
+		testDataset( op22, "5,:,:", dh.getLazyDataset(PROCESS_DATA_PATH));
 			
 	}
 	
@@ -701,17 +707,17 @@ public class NexusFileExecutionVisitorTest {
 		service.execute(context);
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertTrue(dh.contains("/entry/result/data"));
-		assertTrue(dh.contains("/entry/result/Axis_0"));
-		assertTrue(dh.contains("/entry/result/Axis_0_1"));
-		assertTrue(dh.contains("/entry/result/Junk1Dax"));
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains(PROCESS_PATH + AXIS0));
+		assertTrue(dh.contains(PROCESS_PATH + "Axis_0_1"));
+		assertTrue(dh.contains(PROCESS_PATH + JUNK_AXIS1D));
 		
-		assertArrayEquals(new int[]{inputShape[0],op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0_1").getShape());
-		assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+		assertArrayEquals(new int[]{inputShape[0],op21.getModel().getxDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + AXIS0).getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + "Axis_0_1").getShape());
+		assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + JUNK_AXIS1D).getShape());
 
-		testDataset( op21, "5,:", dh.getLazyDataset("/entry/result/data"));
+		testDataset( op21, "5,:", dh.getLazyDataset(PROCESS_DATA_PATH));
 			
 	}
 	
@@ -746,13 +752,13 @@ public class NexusFileExecutionVisitorTest {
 		
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertTrue(dh.contains("/entry/result/data"));
-		assertFalse(dh.contains("/entry/result/Axis_0"));
-		assertFalse(dh.contains("/entry/result/Junk1Dax"));
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertFalse(dh.contains(PROCESS_PATH + AXIS0));
+		assertFalse(dh.contains(PROCESS_PATH + JUNK_AXIS1D));
 		
-		assertArrayEquals(new int[]{inputShape[0],op21.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
+		assertArrayEquals(new int[]{inputShape[0],op21.getModel().getxDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
 		
-		testDataset( op21, "5,:", dh.getLazyDataset("/entry/result/data"));
+		testDataset( op21, "5,:", dh.getLazyDataset(PROCESS_DATA_PATH));
 			
 	}
 	
@@ -794,25 +800,25 @@ public class NexusFileExecutionVisitorTest {
 		service.execute(context);
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertTrue(dh.contains("/entry/result/data"));
-		assertTrue(dh.contains("/entry/result/errors"));
-		assertTrue(dh.contains("/entry/result/Axis_0"));
-		assertTrue(dh.contains("/entry/result/Axis_1"));
-		assertTrue(dh.contains("/entry/result/Junk1Dax"));
-		assertTrue(dh.contains("/entry/result/Axis_0_errors"));
-		assertTrue(dh.contains("/entry/result/Axis_1_errors"));
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains(PROCESS_PATH + "errors"));
+		assertTrue(dh.contains(PROCESS_PATH + AXIS0));
+		assertTrue(dh.contains(PROCESS_PATH + "Axis_1"));
+		assertTrue(dh.contains(PROCESS_PATH + JUNK_AXIS1D));
+		assertTrue(dh.contains(PROCESS_PATH + "Axis_0_errors"));
+		assertTrue(dh.contains(PROCESS_PATH + "Axis_1_errors"));
 		
-		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/errors").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0").getShape());
-		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/entry/result/Axis_0_errors").getShape());
-		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + "errors").getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + AXIS0).getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + "Axis_0_errors").getShape());
+		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + JUNK_AXIS1D).getShape());
 		
-		testDataset( op11, "0,1,:", dh.getLazyDataset("/entry/result/data"));
-//		testDataset( op11, "5,10,:", dh.getLazyDataset("/entry/result/data"));
-//		testAxesDataset( op11, "5,10,:", dh.getLazyDataset("/entry/result/Junk1Dax"),0);
+		testDataset( op11, "0,1,:", dh.getLazyDataset(PROCESS_DATA_PATH));
+//		testDataset( op11, "5,10,:", dh.getLazyDataset(PROCESS_DATA_PATH));
+//		testAxesDataset( op11, "5,10,:", dh.getLazyDataset(PROCESS_PATH + JUNK_AXIS1D),0);
 		
-		compareDatasets(dh.getLazyDataset("/entry/result/Axis_0_errors").getSlice(), ae1);
+		compareDatasets(dh.getLazyDataset(PROCESS_PATH + "Axis_0_errors").getSlice(), ae1);
 		
 	}
 	
@@ -848,9 +854,9 @@ public class NexusFileExecutionVisitorTest {
 		
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertFalse(dh.contains("/entry/result/data"));
-		assertTrue(dh.contains("/entry/intermediate/0-Junk2Dto2DOperation/Junk2Dto2DAx1"));
-		assertFalse(dh.contains("/entry/intermediate/0-Junk2Dto2DOperation/Junk2Dto2DAx11"));
+		assertFalse(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains("/processed/intermediate/0-Junk2Dto2DOperation/Junk2Dto2DAx1"));
+		assertFalse(dh.contains("/processed/intermediate/0-Junk2Dto2DOperation/Junk2Dto2DAx11"));
 		
 			
 	}
@@ -884,14 +890,14 @@ public class NexusFileExecutionVisitorTest {
 		
 		
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
-		assertTrue(dh.contains("/entry/result/data"));
-		assertTrue(dh.contains("/entry/result/Junk1Dax"));
-		assertTrue(dh.contains("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data"));
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains(PROCESS_PATH + JUNK_AXIS1D));
+		assertTrue(dh.contains("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data"));
 		
-		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/data").getShape());
-		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset("/entry/result/Junk1Dax").getShape());
+		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + JUNK_AXIS1D).getShape());
 
-		IDataset slice = dh.getLazyDataset("/entry/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getSlice();
+		IDataset slice = dh.getLazyDataset("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getSlice();
 		double d = slice.getDouble(0);
 		assertTrue(d != 0);
 		assertTrue(d != Double.NaN);

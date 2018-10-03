@@ -334,8 +334,8 @@ public class XPDFCoordinates {
 	}
 	
 	/**
-	 * Calculates and returns sin 2θ/λ
-	 * @return the value x = sin 2θ/λ
+	 * Calculates and returns sin θ/λ
+	 * @return the value x = sin θ/λ
 	 */
 	public Dataset getX() {
 		if (this.x == null)
@@ -345,7 +345,7 @@ public class XPDFCoordinates {
 	
 	/**
 	 * Calculates and returns the momentum transfer, q 
-	 * @return the momentum transfer of a beam photon at each detector angle. q = 4π sin 2θ/λ.
+	 * @return the momentum transfer of a beam photon at each detector angle. q = 4π sin θ/λ.
 	 */
 	public Dataset getQ() {
 		if (this.q == null) 

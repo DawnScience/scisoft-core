@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.dawb.common.services.ServiceManager;
 import org.dawnsci.persistence.PersistenceServiceCreator;
 import org.dawnsci.persistence.internal.PersistJsonOperationsNode;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
@@ -56,7 +55,6 @@ public class XPDFOldPipelineTest {
 		operationService.createOperations(operationService.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.operations");
 		new PersistJsonOperationsNode().setOperationService(operationService);
 		new LocalServiceManager().setLoaderService(new LoaderServiceImpl());
-		ServiceManager.setService(IPersistenceService.class, PersistenceServiceCreator.createPersistenceService());
 		new org.dawnsci.persistence.ServiceLoader().setNexusFactory(new NexusFileFactoryHDF5());
 	
 		// Set up the pipeline and its context

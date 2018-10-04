@@ -8,7 +8,6 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing.operations.mask;
 
-import org.dawb.common.services.ServiceManager;
 import org.eclipse.dawnsci.analysis.api.image.IImageFilterService;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -22,6 +21,8 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.metadata.MaskMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
+
+import uk.ac.diamond.scisoft.analysis.processing.operations.utils.OperationServiceLoader;
 
 @Atomic
 public class DilateMaskOperation extends AbstractOperation<DilateMaskModel, OperationData> {
@@ -38,13 +39,7 @@ public class DilateMaskOperation extends AbstractOperation<DilateMaskModel, Oper
 		
 		if (mask == null) throw new OperationException(this, "No mask to dilate!");
 		
-		IImageFilterService service = null;
-		
-		try {
-			service = (IImageFilterService)ServiceManager.getService(IImageFilterService.class);
-		} catch (Exception e) {
-			throw new OperationException(this, "Could not get image processing service");
-		}
+		IImageFilterService service = OperationServiceLoader.getImageFilterService();
 
 		if (service == null) throw new OperationException(this, "Could not get image processing service");
 		

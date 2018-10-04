@@ -8,14 +8,10 @@
  */
 package uk.ac.diamond.scisoft.analysis.processing.test;
 
-import org.dawb.common.services.ServiceManager;
 import org.dawnsci.conversion.ConversionServiceImpl;
 import org.eclipse.dawnsci.analysis.api.conversion.IConversionService;
-import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl;
 
 public class ConvertOperationsTest {
 
@@ -24,10 +20,7 @@ public class ConvertOperationsTest {
 	@BeforeClass
 	public static void before() throws Exception {
 		
-		ServiceManager.setService(IOperationService.class, new OperationServiceImpl());
-		ServiceManager.setService(IConversionService.class, new ConversionServiceImpl());
-		
-		service = (IConversionService)ServiceManager.getService(IConversionService.class);
+		service = new ConversionServiceImpl();
 		
 	}
 	

@@ -6,8 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: uk.ac.diamond.scisoft.analysis.powder.indexer.Activator
 Bundle-Vendor: Diamond Light Source
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: org.apache.commons.cli,
- org.eclipse.ui.plugin,
+Import-Package: org.eclipse.ui.plugin,
  org.slf4j;version="1.7.18"
 Require-Bundle: org.eclipse.january;bundle-version="1.0.0",
  org.eclipse.core.runtime;bundle-version="3.8.0",

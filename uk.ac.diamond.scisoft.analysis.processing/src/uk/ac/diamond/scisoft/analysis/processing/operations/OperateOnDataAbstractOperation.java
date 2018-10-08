@@ -27,7 +27,7 @@ import org.eclipse.january.dataset.ShapeUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDataModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
-public abstract class OperateOnDataAbstractOperation<T extends InternalDataModel> extends AbstractOperation<InternalDataModel, OperationData> {
+public abstract class OperateOnDataAbstractOperation<T extends InternalDataModel> extends AbstractOperation<T, OperationData> {
 	
 	@Override
 	public final OperationRank getInputRank() {

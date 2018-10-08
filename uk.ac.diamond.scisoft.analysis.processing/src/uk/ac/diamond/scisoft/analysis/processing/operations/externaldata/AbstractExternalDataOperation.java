@@ -17,6 +17,6 @@ public abstract class AbstractExternalDataOperation extends OperateOnDataAbstrac
 
 	@Override
 	protected String getFilePath(IDataset input) {
-		return ((ExternalDataModel)model).getFilePath();
+		return model.getFilePath();
 	}
 }

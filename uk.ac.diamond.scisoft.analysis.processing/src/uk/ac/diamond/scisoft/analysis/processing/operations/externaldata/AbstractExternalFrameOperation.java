@@ -16,8 +16,8 @@ public abstract class AbstractExternalFrameOperation extends FrameMathsOperation
 
 	@Override
 	protected Dataset getData(IDataset ds) {
-		String path = ((ExternalDataSelectedFramesModel)model).getFilePath();
-		String dsName = ((ExternalDataSelectedFramesModel)model).getDatasetName();
+		String path = model.getFilePath();
+		String dsName = model.getDatasetName();
 		
 		Dataset d = null;
 		

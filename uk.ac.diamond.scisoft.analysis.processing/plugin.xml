@@ -1517,6 +1517,16 @@
             id="uk.ac.diamond.scisoft.analysis.processing.operations.mask.InvalidateDataUnderMaskOperation"
             name="Invalidate Masked Data">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.internaldata"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.MultiplyInternalMatrixOperation"
+            description="Matrix multiplication"
+            icon="icons/blue-cross.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.MultiplyInternalMatrixOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalDataModel"
+            name="Matrix Multiply"
+            visible="true">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

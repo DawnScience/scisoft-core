@@ -1527,6 +1527,16 @@
             name="Matrix Multiply"
             visible="true">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.externaldata"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyExternalMatrixOperation"
+            description="Matrix multiplication"
+            icon="icons/blue-cross.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.MultiplyExternalMatrixOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataModel"
+            name="Matrix Multiply"
+            visible="true">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

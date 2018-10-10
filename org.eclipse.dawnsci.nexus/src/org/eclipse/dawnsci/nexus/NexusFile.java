@@ -129,7 +129,8 @@ public interface NexusFile extends AutoCloseable {
 	 * @param name
 	 * @param nxClass
 	 * @param createPathIfNecessary
-	 * @return node or null if group does not exist at specified path
+	 * @return node or null 
+	 * @throws NexusException if node is not a group at specified path or group does not exist and not creating path
 	 */
 	public GroupNode getGroup(GroupNode group, String name, String nxClass, boolean createPathIfNecessary) throws NexusException;
 

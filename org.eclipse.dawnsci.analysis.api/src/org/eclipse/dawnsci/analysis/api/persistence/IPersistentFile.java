@@ -443,6 +443,7 @@ public interface IPersistentFile extends AutoCloseable {
 	 * @param origin
 	 * @throws Exception
 	 */
+	@Deprecated
 	public void setOperationDataOrigin(OriginMetadata origin) throws Exception;
 	
 	/**
@@ -450,5 +451,6 @@ public interface IPersistentFile extends AutoCloseable {
 	 * @return data of data origin
 	 * @throws Exception
 	 */
+	@Deprecated
 	public OriginMetadata getOperationDataOrigin() throws Exception;
 }

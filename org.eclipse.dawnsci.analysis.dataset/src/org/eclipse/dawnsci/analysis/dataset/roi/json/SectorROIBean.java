@@ -18,7 +18,7 @@ import java.util.Arrays;
  */
 public class SectorROIBean extends RingROIBean {
 
-	public static final String TYPE = "SectorROI";
+	public static final String SECTOR_TYPE = "SectorROI";
 
 	private double[] angles;   // angles in radians
 
@@ -27,7 +27,7 @@ public class SectorROIBean extends RingROIBean {
 	private boolean combineSymmetry; // combine symmetry option for profile (where appropriate)
 
 	public SectorROIBean(){
-		type = TYPE;
+		type = SECTOR_TYPE;
 	}
 
 	/**

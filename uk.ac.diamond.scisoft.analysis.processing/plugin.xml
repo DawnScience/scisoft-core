@@ -1537,6 +1537,14 @@
             name="Matrix Multiply"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.PolygonIntegrationOperation"
+            description="Integrate polygon shaped region of interest"
+            icon="icons/polysmooth.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.PolygonIntegrationOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.PolygonIntegrationModel"
+            name="Polygon Integration">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

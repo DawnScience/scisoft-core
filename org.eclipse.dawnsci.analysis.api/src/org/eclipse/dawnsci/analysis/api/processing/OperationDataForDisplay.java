@@ -23,6 +23,8 @@ public class OperationDataForDisplay extends OperationData {
 	private IDataset[] displayData;
 
 	private boolean showSeparately = false;
+	
+	private boolean plotOnOutputWindow = true;
 
 	public OperationDataForDisplay() {
 		super();
@@ -53,6 +55,25 @@ public class OperationDataForDisplay extends OperationData {
 
 	public void setDisplayData(IDataset... displayData) {
 		this.displayData = displayData;
+	}
+
+	/** If plotOnOutputWindow is true, then the displayData will be added to the output window
+	 * in the Live Mode of the Processing perspective, and added to the input window otherwise.
+	 * 
+	 * @return whether the displayData will be added to the output or input window of the Live Mode of the
+	 * Processing perspective.
+	 */
+	public boolean isPlotOnOutputWindow() {
+		return plotOnOutputWindow;
+	}
+
+	/** If plotOnOutputWindow is true, then the displayData will be added to the output window
+	 * in the Live Mode of the Processing perspective, and added to the input window otherwise.
+	 * 
+	 * @param plotOnOutputWindow
+	 */
+	public void setPlotOnOutputWindow(boolean plotOnOutputWindow) {
+		this.plotOnOutputWindow = plotOnOutputWindow;
 	}
 
 	

@@ -1837,6 +1837,24 @@ public class NexusTreeUtils {
 	}
 
 	/**
+	 * Find first entry with a process group
+	 * @param group
+	 * @return process group or null
+	 */
+	public static GroupNode findFirstEntryWithProcess(GroupNode group) {
+		for (GroupNode g : group.getGroupNodes()) {
+			if (isNXClass(g, NexusConstants.ENTRY)) {
+				NodeLink l = findFirstNode(g, NexusConstants.PROCESS);
+				if (l != null && l.isDestinationGroup()) {
+					return g;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * @param attr
 	 * @return string or null
 	 */

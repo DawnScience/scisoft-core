@@ -40,9 +40,13 @@ import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
+import uk.ac.diamond.scisoft.analysis.processing.test.OperationsTestConstants;
 import uk.ac.diamond.scisoft.analysis.processing.visitor.NexusFileExecutionVisitor;
 
 public class ExampleOperationsTest {
+	
+	private static final String PROCESS_PATH = OperationsTestConstants.PROCESSED_RESULTS_PATH;
+	private static final String DATA_NAME = "data";
 	
 	@BeforeClass
 	public static void before() throws Exception {
@@ -136,15 +140,15 @@ public class ExampleOperationsTest {
 
 		IDataHolder dh = LoaderFactory.getData(result.getAbsolutePath());
 
-		IDataset d1 = dh.getLazyDataset("/entry/result/data").getSlice();
+		IDataset d1 = dh.getLazyDataset(PROCESS_PATH + DATA_NAME).getSlice();
 		double val = d1.getDouble(0, 0, 0);
 		assertEquals(100, val, 0);
 
-		IDataset a1 = dh.getLazyDataset("/entry/result/axis1").getSlice();
+		IDataset a1 = dh.getLazyDataset(PROCESS_PATH + "axis1").getSlice();
 		val = a1.getDouble(1);
 		assertEquals(1, val, 0);
 
-		IDataset a2 = dh.getLazyDataset("/entry/result/axis2").getSlice();
+		IDataset a2 = dh.getLazyDataset(PROCESS_PATH + "axis2").getSlice();
 		val = a2.getDouble(1);
 		assertEquals(2, val, 0);
 
@@ -232,7 +236,7 @@ public class ExampleOperationsTest {
 		result.deleteOnExit();
 		IDataHolder dh = LoaderFactory.getData(result.getAbsolutePath());
 
-		IDataset d1 = dh.getLazyDataset("/entry/result/data").getSlice();
+		IDataset d1 = dh.getLazyDataset(PROCESS_PATH + DATA_NAME).getSlice();
 		double val = d1.getDouble(0, 0, 0, 0);
 		assertEquals(0, val, 0);
 		
@@ -317,7 +321,7 @@ public class ExampleOperationsTest {
 		result.deleteOnExit();
 		IDataHolder dh = LoaderFactory.getData(result.getAbsolutePath());
 
-		IDataset d1 = dh.getLazyDataset("/entry/result/data").getSlice();
+		IDataset d1 = dh.getLazyDataset(PROCESS_PATH + DATA_NAME).getSlice();
 		double val = d1.getDouble(0, 0, 0);
 		assertEquals(1, val, 0);
 		

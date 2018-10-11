@@ -17,6 +17,8 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
+import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
+import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -28,7 +30,7 @@ import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 
 public class ProcessingUtils {
 	
-	public static ILazyDataset getLazyDataset(IOperation op, String filepath, String datasetName) throws OperationException {
+	public static ILazyDataset getLazyDataset(IOperation<?, ?> op, String filepath, String datasetName) throws OperationException {
 		
 		IDataHolder dh = null;
 		
@@ -45,10 +47,9 @@ public class ProcessingUtils {
 		if (lz == null) throw new OperationException(op,"Error reading dataset: " + datasetName);
 		
 		return lz;
-		
 	}
 
-	public static IDataset getDataset(IOperation op, String filepath, String datasetName) throws OperationException {
+	public static IDataset getDataset(IOperation<?, ?> op, String filepath, String datasetName) throws OperationException {
 		ILazyDataset lz = getLazyDataset(op, filepath, datasetName);
 		try {
 			return lz.getSlice();
@@ -87,23 +88,28 @@ public class ProcessingUtils {
 	 * @param operation
 	 * @param entry entry in tree
 	 * @param processName
-	 * @return 
+	 * @return NXnote group
 	 * @throw {@link OperationException}
 	 */
 	public static GroupNode checkForProcess(IOperation<?, ?> operation, GroupNode entry, String processName) throws OperationException {
-		Node node = NexusTreeUtils.findFirstNode(entry, "NXprocess").getDestination();
+		if (entry == null) {
+			throw new OperationException(operation, "No entry given");
+		}
+
+		NodeLink link = NexusTreeUtils.findFirstNode(entry, NexusConstants.PROCESS);
+		Node node = link == null ? null : link.getDestination();
 		if (node == null) {
-			throw new OperationException(operation, "No NXprocess node exist");
+			throw new OperationException(operation, NexusConstants.PROCESS + " node does not exist");
 		}
 	
 		if (!(node instanceof GroupNode)) {
-			throw new OperationException(operation, "NXprocess node must be a group node");
+			throw new OperationException(operation, NexusConstants.PROCESS + " node must be a group node");
 		}
 	
 		GroupNode group = (GroupNode) node;
 		
 		for (GroupNode g : group.getGroupNodes()) {
-			if (NexusTreeUtils.isNXClass(g, "NXnote")) {
+			if (NexusTreeUtils.isNXClass(g, NexusConstants.NOTE)) {
 				DataNode n = g.getDataNode("name");
 				if (n != null) {
 					if (processName.equals(NexusTreeUtils.parseStringArray(n)[0])) {
@@ -113,6 +119,6 @@ public class ProcessingUtils {
 			}
 		}
 	
-		throw new OperationException(operation, "NXprocess node not found: " + processName);
+		throw new OperationException(operation, NexusConstants.PROCESS + " node not found: " + processName);
 	}
 }

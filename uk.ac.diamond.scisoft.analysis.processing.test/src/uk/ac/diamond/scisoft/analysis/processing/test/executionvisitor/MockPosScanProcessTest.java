@@ -48,11 +48,15 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.twod.DownsampleImage
 import uk.ac.diamond.scisoft.analysis.processing.operations.twod.DownsampleImageOperation;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
+import uk.ac.diamond.scisoft.analysis.processing.test.OperationsTestConstants;
 import uk.ac.diamond.scisoft.analysis.processing.visitor.NexusFileExecutionVisitor;
 
 public class MockPosScanProcessTest {
 
 	private static IOperationService service;
+	
+	private static final String PROCESS_PATH = OperationsTestConstants.PROCESSED_RESULTS_PATH;
+	private static final String DATA_NAME = OperationsTestConstants.DATA;
 	
 	@BeforeClass
 	public static void before() throws Exception {
@@ -80,7 +84,7 @@ public class MockPosScanProcessTest {
 		tmpProc.deleteOnExit();
 		tmpProc.createNewFile();
 		
-		starProcessing(ste2, tmpProc, tmp, false);
+		startProcessing(ste2, tmpProc, tmp, false);
 		ste2.shutdown();
 		
 		while (!ste.awaitTermination(200,TimeUnit.MILLISECONDS) || !ste2.awaitTermination(200,TimeUnit.MILLISECONDS)) {
@@ -89,7 +93,7 @@ public class MockPosScanProcessTest {
 
 		IDataHolder dhOrigProc = LoaderFactory.getData(tmpProc.getAbsolutePath());
 		
-		ILazyDataset procLz = dhOrigProc.getLazyDataset("/entry/result/data");
+		ILazyDataset procLz = dhOrigProc.getLazyDataset(PROCESS_PATH + DATA_NAME);
 		assertArrayEquals(new int[]{5, 11, 11}, procLz.getShape());
 		
 		Dataset slice = DatasetUtils.convertToDataset(procLz.getSlice());
@@ -137,23 +141,24 @@ public class MockPosScanProcessTest {
 		
 	}
 	
-	private void starProcessing(ExecutorService ste, File tmpProc, File tmp, boolean noData) throws Exception{
+	private void startProcessing(ExecutorService ste, File tmpProc, File tmp, boolean noData) throws Exception{
 		
-		String data = "/entry/result/data";
-		String key = "/entry/auxiliary/1-DataWritten/key/data";
+		final String data = PROCESS_PATH + DATA_NAME;
+		final String key = "/processed/auxiliary/1-DataWritten/key/data";
+		final String finished = "/processed/live/finished";
 		
 		
 		final IOperationContext context = service.createContext();
 		
 		IDataHolder dh = null;
 		int count = 0;
-		while (count < 100 &&  (dh == null || !dh.contains("/entry/result/data"))){
+		while (count < 100 &&  (dh == null || !dh.contains(PROCESS_PATH + DATA_NAME))){
 			Thread.sleep(100);
 			count++;
 			dh = LoaderFactory.getData(tmp.getAbsolutePath());
 		}
 		
-		if (count == 100) Assert.fail("Couldnt read file!");
+		if (count == 100) Assert.fail("Couldn't read file!");
 		
 		final IDataHolder fdh = dh;
 		
@@ -165,13 +170,13 @@ public class MockPosScanProcessTest {
 			
 			@Override
 			public IDynamicDataset[] getKeys() {
-				ILazyDataset lazyDataset = fdh.getLazyDataset("/entry/auxiliary/1-DataWritten/key/data");
+				ILazyDataset lazyDataset = fdh.getLazyDataset(key);
 				return new IDynamicDataset[]{(IDynamicDataset)lazyDataset};
 			}
 			
 			@Override
 			public IDynamicDataset getComplete() {
-				return (IDynamicDataset)fdh.getLazyDataset("/entry/live/finished");
+				return (IDynamicDataset)fdh.getLazyDataset(finished);
 			}
 
 			@Override

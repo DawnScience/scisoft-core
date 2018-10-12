@@ -32,6 +32,15 @@
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
+            class="uk.ac.diamond.scisoft.xpdf.gudrun.GenerateGudrun"
+            description="Generates a new gudrun input file or appends an existing one using the file placed for processing in Data Slice View "
+            icon="icons/xrmc_metadata.png"
+            id="uk.ac.diamond.scisoft.xpdf.gudrun.GenerateGudrun"
+            model="uk.ac.diamond.scisoft.xpdf.gudrun.GenerateGudrunModel"
+            name="create gudrun input file">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.xpdf.xpdfCategory"
             class="uk.ac.diamond.scisoft.xpdf.operations.XPDFLorchFTOperation"
             description="Apply the Lorch Fourier Transform to enter r-space."
             icon="icons/xpdflorch.png"

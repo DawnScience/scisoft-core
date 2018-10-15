@@ -1025,14 +1025,13 @@ public class MillerSpaceMapper {
 		String dataName = bean.getDataName();
 		if (dataName == null || dataName.isEmpty()) {
 			link = NexusTreeUtils.findFirstSignalDataNode(detector);
-			// TODO check also for 1st dataset rank > 2 ??
 			System.out.println("Data found: " + link);
 		} else {
 			link = detector.getNodeLink(dataName);
 		}
 
 		if (link == null) {
-			System.err.println("Missing image data in " + detectorPath);
+			System.err.println("Missing image data in " + detectorPath + " - synthesizing it");
 			link = synthesizeMissingImageDataForI16(file, entry, detector);
 		}
 

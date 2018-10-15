@@ -1364,32 +1364,15 @@ public class NexusTreeUtils {
 		}
 	}
 
-	public static void parseBeam(NodeLink link, DiffractionCrystalEnvironment sample) {
-		if (!link.isDestinationGroup()) {
-			logger.warn("'{}' was not a group", link.getName());
-			return;
-		}
-
-		GroupNode gNode = (GroupNode) link.getDestination();
-
-		DataNode wavelength = gNode.getDataNode("incident_wavelength");
-		if (wavelength == null) {
-			logger.warn("Wavelength was missing in {}", link.getName());
-		} else {
-			Dataset w = getConvertedData(wavelength, NonSI.ANGSTROM);
-			sample.setWavelength(w.getElementDoubleAbs(0));
-		}
-
-		DataNode energy = gNode.getDataNode("incident_energy");
-		if (energy == null) {
-			logger.warn("Energy was missing in {}", link.getName());
-		} else {
-			Dataset e = getConvertedData(energy, MetricPrefix.KILO(NonSI.ELECTRON_VOLT));
-			sample.setWavelengthFromEnergykeV(e.getElementDoubleAbs(0));
-		}
+	public static void parseBeam(NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
+		parseForDCE("incident_wavelength", "incident_energy", link, sample, pos);
 	}
 
-	public static void parseMonochromator(NodeLink link, DiffractionCrystalEnvironment sample) {
+	public static void parseMonochromator(NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
+		parseForDCE("wavelength", "energy", link, sample, pos);
+	}
+
+	public static void parseForDCE(String wavelengthName, String energyName, NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
 		if (!link.isDestinationGroup()) {
 			logger.warn("'{}' was not a group", link.getName());
 			return;
@@ -1397,22 +1380,21 @@ public class NexusTreeUtils {
 
 		GroupNode gNode = (GroupNode) link.getDestination();
 
-		DataNode wavelength = gNode.getDataNode("wavelength");
+		DataNode wavelength = gNode.getDataNode(wavelengthName);
 		if (wavelength == null) {
 			logger.warn("Wavelength was missing in {}", link.getName());
 		} else {
 			Dataset w = getConvertedData(wavelength, NonSI.ANGSTROM);
-			sample.setWavelength(w.getElementDoubleAbs(0));
+			sample.setWavelength(w.getSize() == 1 ? w.getElementDoubleAbs(0) : w.getDouble(pos));
 			return;
 		}
 
-		DataNode energy = gNode.getDataNode("energy");
+		DataNode energy = gNode.getDataNode(energyName);
 		if (energy == null) {
 			logger.warn("Energy was missing in {}", link.getName());
 		} else {
 			Dataset e = getConvertedData(energy, MetricPrefix.KILO(NonSI.ELECTRON_VOLT));
-			sample.setWavelengthFromEnergykeV((e.getElementDoubleAbs(0)));
-			return;
+			sample.setWavelengthFromEnergykeV(e.getSize() == 1 ? e.getElementDoubleAbs(0) : e.getDouble(pos));
 		}
 	}
 
@@ -1579,7 +1561,7 @@ public class NexusTreeUtils {
 				getTransformations = false;
 			}
 			if (isNXClass(l.getDestination(), NexusConstants.BEAM) && getBeam) {
-				parseBeam(l, env);
+				parseBeam(l, env, pos);
 				getBeam = false;
 			}
 		}

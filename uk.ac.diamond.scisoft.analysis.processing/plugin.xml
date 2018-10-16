@@ -1545,6 +1545,12 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.PolygonIntegrationModel"
             name="Polygon Integration">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.AverageGridScanMaskOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.AverageGridScanMaskOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskModel"
+            name="Average Frames from Grid Scan with Mask">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

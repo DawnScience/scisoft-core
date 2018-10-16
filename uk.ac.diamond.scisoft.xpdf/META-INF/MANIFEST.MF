@@ -10,7 +10,7 @@ Require-Bundle: org.apache.commons.math3;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.dawnsci.nexus,
  uk.ac.diamond.scisoft.analysis.processing,
  org.eclipse.dawnsci.hdf5
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: com.github.tschoonj.xraylib,
  javax.vecmath,
  org.apache.commons.lang;version="2.6.0",
@@ -29,3 +29,4 @@ Export-Package: uk.ac.diamond.scisoft.xpdf;
    org.eclipse.dawnsci.analysis.api.processing,
    org.eclipse.dawnsci.analysis.api.processing.model,
    org.eclipse.dawnsci.analysis.api.monitor"
+Automatic-Module-Name: uk.ac.diamond.scisoft.xpdf

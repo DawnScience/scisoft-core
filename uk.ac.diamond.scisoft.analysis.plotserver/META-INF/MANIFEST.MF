@@ -4,7 +4,7 @@ Bundle-Name: Plotserver
 Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis.plotserver
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Diamond Light Source
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: uk.ac.diamond.scisoft.analysis,
  uk.ac.diamond.scisoft.analysis.plotserver,
  uk.ac.diamond.scisoft.analysis.plotserver.rpc.sdaplotter
@@ -17,3 +17,4 @@ Require-Bundle: org.eclipse.january;bundle-version="1.0.0",
  org.eclipse.dawnsci.hdf5;bundle-version="1.2.0"
 Import-Package: javax.vecmath,
  org.slf4j;version="[1.7.2,2.0.0)"
+Automatic-Module-Name: uk.ac.diamond.scisoft.analysis.plotserver

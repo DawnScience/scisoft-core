@@ -27,8 +27,7 @@ public class AnnotationUtils {
 	 */
 	public static String getUniqueAnnotation(final String nameStub, final IPlottingSystem<?> system, final String... usedNames) {
 		int i = 1;
-		@SuppressWarnings("unchecked")
-		final List<String> used = usedNames!=null ? (List<String>) Arrays.asList(usedNames) : (List<String>) Collections.EMPTY_LIST;
+		final List<String> used = usedNames!=null ? Arrays.asList(usedNames) : Collections.emptyList();
 		while(system.getAnnotation(nameStub+" "+i)!=null || used.contains(nameStub+" "+i)) {
 			++i;
 			if (i>10000) break; // something went wrong!

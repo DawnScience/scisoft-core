@@ -500,7 +500,8 @@ def images(im, x=None, y=None, name=None):
     if y is None:
         x = None
 
-    _plot_images(name, x, y, _toList(im))
+    raise NotImplementedError("Old implementation removed; not currently implemented")
+#     _plot_images(name, x, y, _toList(im))
 
 def setupimagegrid(row, column, name=None):
     '''Set up a new image grid for an image explorer view with the specified number of rows and columns

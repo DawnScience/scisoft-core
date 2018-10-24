@@ -111,14 +111,9 @@ public class XRMCScatteringDataNormalizationOperation extends AbstractOperation<
 
 	private static Dataset normalizeByFlux(Dataset unnormed, XRMCSpectrum spectrum, XRMCSource source) {
 
-		double[] sourceSize = source.getSize();
-		double beamArea = sourceSize[0]*sourceSize[1];
-		// convert to SI: per metre squared
-		beamArea *= 1e-2 * 1e-2;
-
 		List<XRMCSpectrum.SpectrumComponent> spectrumComponents = spectrum.getSpectrum();
 		double totalIntensity = sumIntensities(spectrumComponents);
-		double totalFlux = totalIntensity/beamArea; // photons per metre squared
+		double totalFlux = totalIntensity;// integrated flux
 
 		return Maths.divide(unnormed, totalFlux);
 

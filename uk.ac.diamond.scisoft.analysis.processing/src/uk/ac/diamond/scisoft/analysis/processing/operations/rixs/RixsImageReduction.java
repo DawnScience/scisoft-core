@@ -272,10 +272,10 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 						p[1] = NexusTreeUtils.parseDoubleArray(fg.getGroupNode(l).getDataNode("data"))[0];
 						lines[i] = new StraightLine(p);
 					}
-					if (r == 1 && Double.isNaN(lines[0].getParameterValue(0))) {
+					if (r == 1 && Double.isNaN(lines[0].getParameterValue(STRAIGHT_LINE_M))) {
 						throw new OperationException(this, "Loaded elastic line fit is invalid");
 					}
-					if (r > 1 && Double.isNaN(lines[1].getParameterValue(0))) {
+					if (r > 1 && Double.isNaN(lines[1].getParameterValue(STRAIGHT_LINE_M))) {
 						lines[1].setParameterValues(lines[0].getParameterValues());
 					}
 					break;
@@ -682,7 +682,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 	// bins photons according to their locations
 	private static void shiftAndBinPhotonEvents(double offset, int single, int multiple, int bin, int bmax, List<Double> cX,
 			List<Double> cY, int i, StraightLine line, IRectangularROI roi, Dataset sums, Dataset posn, int[] hSingle, int[] hMultiple) {
-		double slope = -line.getParameterValue(0);
+		double slope = -line.getParameterValue(STRAIGHT_LINE_M);
 		for (int j = 0, jmax = sums.getSize(); j < jmax; j++) {
 			double px = posn.getDouble(j, 1);
 			double py = posn.getDouble(j, 0) + offset;
@@ -780,17 +780,17 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 		StraightLine line = getStraightLine(r);
 		Dataset elastic;
 		if (slope == 0) {
-			slope = line.getParameterValue(0);
+			slope = line.getParameterValue(STRAIGHT_LINE_M);
 			elastic = line.calculateValues(y); // absolute position of elastic line to use a zero point
 		} else {
 			elastic = DatasetFactory.createRange(rows);
 			elastic.imultiply(slope);
-			elastic.iadd(line.getParameterValue(1));
+			elastic.iadd(line.getParameterValue(STRAIGHT_LINE_C));
 		}
 		if (model.getEnergyOffsetOption() == ENERGY_OFFSET.MANUAL_OVERRIDE) {
 			double offset = r == 0 ? model.getEnergyOffsetA() : model.getEnergyOffsetB();
 			if (Double.isFinite(offset)) {
-				elastic.iadd(offset - line.getParameterValue(1));
+				elastic.iadd(offset - line.getParameterValue(STRAIGHT_LINE_C));
 			}
 		}
 	
@@ -832,7 +832,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			offset = r == 0 ? model.getEnergyOffsetA() : model.getEnergyOffsetB();
 		}
 		if (!Double.isFinite(offset)) {
-			offset = getStraightLine(r).getParameterValue(1); // elastic line intercept
+			offset = getStraightLine(r).getParameterValue(STRAIGHT_LINE_C); // elastic line intercept
 		}
 		return offset;
 	}

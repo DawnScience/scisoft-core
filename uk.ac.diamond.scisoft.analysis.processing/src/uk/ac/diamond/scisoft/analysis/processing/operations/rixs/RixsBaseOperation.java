@@ -205,6 +205,8 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	 */
 	abstract IDataset processImageRegion(int r, IDataset original, Dataset in);
 
+	protected static final int STRAIGHT_LINE_M = 0;
+	protected static final int STRAIGHT_LINE_C = 1;
 	protected StraightLine getStraightLine(int r) {
 		return lines[r >= lines.length ? 0 : r]; // in case number of ROIs have increased
 	}

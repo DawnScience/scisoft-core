@@ -32,7 +32,7 @@ public class ElasticLineReductionModel extends RixsBaseModel {
 	private int minPhotons = 100;
 
 	@OperationModelField(label = "Elastic peak fitting width factor", description = "Factor used to select range of points to fit elastic peak. The range is initial peak position +/- factor * initial FHWM", hint = "Multiplier for FWHM", min = 0.5)
-	private double peakFittingFactor = 16;
+	private double peakFittingFactor = 8;
 
 	/**
 	 * @return width of strip to use to find elastic line

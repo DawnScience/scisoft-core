@@ -10,6 +10,8 @@
 package uk.ac.diamond.scisoft.analysis.optimize;
 
 public interface ILeastSquaresOptimizer {
-	
+	/**
+	 * @return estimates of errors on parameters
+	 */
 	double[] guessParametersErrors();
 }

@@ -913,6 +913,7 @@ public class HDF5Utils {
 	}
 
 	private static final Charset UTF8 = Charset.forName("UTF-8");
+	private static final Charset ASCII = Charset.forName("US-ASCII");
 
 	/**
 	 * Write attributes to a group or dataset in given file
@@ -995,7 +996,8 @@ public class HDF5Utils {
 						System.arraycopy(str, 0, buffer, offset, str.length);
 						offset += maxLength;
 					}
-
+					//deliberate choice, mis-labelling to work around h5py/numpy
+					//handling of non ascii strings
 					H5.H5Tset_cset(datatypeID, HDF5Constants.H5T_CSET_ASCII);
 					H5.H5Tset_size(datatypeID, maxLength);
 				}
@@ -1265,7 +1267,7 @@ public class HDF5Utils {
 						hdfDatatypeId = -1;
 					}
 					hdfDatatypeId = H5.H5Tcopy(memtype);
-					H5.H5Tset_cset(hdfDatatypeId, HDF5Constants.H5T_CSET_UTF8);
+					H5.H5Tset_cset(hdfDatatypeId, HDF5Constants.H5T_CSET_ASCII);
 					H5.H5Tset_size(hdfDatatypeId, vlenString ? HDF5Constants.H5T_VARIABLE : typeSize);
 					if (vlenString) {
 						H5.H5Dwrite_VLStrings(hdfDatasetId, hdfDatatypeId, hdfMemspaceId, hdfDataspaceId, HDF5Constants.H5P_DEFAULT, (String[]) buffer);
@@ -1278,7 +1280,7 @@ public class HDF5Utils {
 							if (str.length() > typeSize - 1) {
 								logger.warn("String does not fit into space allocated in HDF5 file in " + dataPath + " - string will be truncated");
 							}
-							byte[] src = str.getBytes(UTF8);
+							byte[] src = str.getBytes(ASCII);
 							int length = Math.min(typeSize - 1, src.length);
 							System.arraycopy(src, 0, strBuffer, idx, length);
 							idx += typeSize;

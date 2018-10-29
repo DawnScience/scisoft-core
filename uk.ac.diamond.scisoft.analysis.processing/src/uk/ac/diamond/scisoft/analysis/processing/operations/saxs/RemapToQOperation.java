@@ -126,7 +126,7 @@ public class RemapToQOperation extends AbstractOperation<EmptyModel, OperationDa
 		}
 		
 		// Then set the axis metadata, overwriting anything that might be there already
-		dataset.setMetadata(axisMetadata);
+		dataset.setMetadata(axisMetadata.clone());
 		
 		return new OperationData(dataset);	
 	}

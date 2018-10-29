@@ -277,6 +277,20 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 		}
 	}
 
+	/**
+	 * @return true if optimizer should have error estimates
+	 */
+	public boolean hasErrors() {
+		switch (optimizer) {
+		case LEVENBERG_MARQUARDT:
+		case GAUSS_NEWTON:
+			return true;
+		default:
+			break;
+		}
+		return false;
+	}
+
 	private void internalScalarOptimize(final boolean useResiduals, boolean minimize) {
 		MultivariateOptimizer opt = createOptimizer();
 		SimpleBounds bd = createBounds();
@@ -407,6 +421,9 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 		}
 	}
 
+	/**
+	 * @return errors or null if chosen optimizer does not compute them
+	 */
 	@Override
 	public double[] guessParametersErrors() {
 		return errors;

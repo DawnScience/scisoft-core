@@ -16,13 +16,13 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
  */
 public class ElasticLineReductionModel extends RixsBaseModel {
 
-	@OperationModelField(label = "Width of strip", description = "Used to find elastic line", hint = "0 for minimizing FWHM of summed spectra, 1 for using column maxima, 2+ for summing and fitting line", min = 0)
+	@OperationModelField(label = "Width of strip", description = "Used to find elastic line", hint = "0 for minimizing FWHM of summed spectra, 1 for using column maxima, 2+ for summing and fitting line", min = 0, enableif = "slopeOverride == 0")
 	private int delta = 1;
 
-	@OperationModelField(label = "Maximum slope", description = "Maximum value allowed for elastic line slope", min = 1e-6, max = 1)
+	@OperationModelField(label = "Maximum slope", description = "Maximum value allowed for elastic line slope", min = 1e-6, max = 1, enableif = "slopeOverride == 0")
 	private double maxSlope = 0.2;
 	
-	@OperationModelField(label = "Maximum deviation", description = "Maximum distance allowed for included points", min = 1e-6, enableif = "delta != 0")
+	@OperationModelField(label = "Maximum deviation", description = "Maximum distance allowed for included points", min = 1e-6, enableif = "delta != 0 && slopeOverride == 0")
 	private double maxDev = 1.5;
 
 	@OperationModelField(label = "Minimum number of fit points", description = "Minimum number required for valid elastic line fit", min = 3, enableif = "delta != 0")

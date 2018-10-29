@@ -45,6 +45,9 @@ public class RixsBaseModel extends AbstractOperationModel {
 	@OperationModelField(label = "Clip spectra", description = "Clip spectra to avoid fall-off from slope correction", hint = "Set true when image background is not zero")
 	private boolean clipSpectra = true;
 
+	@OperationModelField(label = "Slope override", description = "Overrides slope value from any processed fit file", hint = "Any non-zero value is used to override the slopes from fit files")
+	private double slopeOverride = 0;
+
 	/**
 	 * @return get first region of interest (can be null to signify the entire image)
 	 */
@@ -136,5 +139,16 @@ public class RixsBaseModel extends AbstractOperationModel {
 
 	public void setClipSpectra(boolean clipSpectra) {
 		firePropertyChange("setClipSpectra", this.clipSpectra, this.clipSpectra = clipSpectra);
+	}
+
+	/**
+	 * @return slope of elastic line. Non-zero values are used to override values from elastic fit files
+	 */
+	public double getSlopeOverride() {
+		return slopeOverride;
+	}
+
+	public void setSlopeOverride(double slopeOverride) {
+		firePropertyChange("setSlopeOverride", this.slopeOverride, this.slopeOverride = slopeOverride);
 	}
 }

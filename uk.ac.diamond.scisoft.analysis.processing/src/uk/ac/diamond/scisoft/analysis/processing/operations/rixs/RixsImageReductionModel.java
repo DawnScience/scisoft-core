@@ -82,9 +82,6 @@ public class RixsImageReductionModel extends RixsBaseModel {
 			hint = "E.g. 1 or 2,-1 or 0,2-4 or !3 or !1--2")
 	private String frameSelection = "";
 
-	@OperationModelField(label = "Slope override", description = "Overrides slope value from any processed fit file", hint = "Any non-zero value is used to override the slopes from fit files")
-	private double slopeOverride = 0;
-
 	// TODO conditional override to fit parameters??
 
 	public enum ENERGY_OFFSET {
@@ -276,16 +273,5 @@ public class RixsImageReductionModel extends RixsBaseModel {
 
 	public void setFrameSelection(String frameSelection) {
 		firePropertyChange("setFrameSelection", this.frameSelection, this.frameSelection = frameSelection);
-	}
-
-	/**
-	 * @return slope of elastic line. Non-zero values are used to override values from elastic fit files
-	 */
-	public double getSlopeOverride() {
-		return slopeOverride;
-	}
-
-	public void setSlopeOverride(double slopeOverride) {
-		firePropertyChange("setSlopeOverride", this.slopeOverride, this.slopeOverride = slopeOverride);
 	}
 }

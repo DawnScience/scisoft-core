@@ -101,6 +101,8 @@ public class NexusTreeUtils {
 		SimpleUnitFormat.getInstance().alias(NonSI.ANGSTROM, "Angstrom");
 		SimpleUnitFormat.getInstance().alias(NonSI.ANGSTROM, "angstrom");
 		SimpleUnitFormat.getInstance().alias(NonSI.DEGREE_ANGLE, "deg");
+		SimpleUnitFormat.getInstance().alias(NonSI.ELECTRON_VOLT, "eV");
+		SimpleUnitFormat.getInstance().alias(MetricPrefix.KILO(NonSI.ELECTRON_VOLT), "keV");
 	}
 
 	private static final Unit<Length> MILLIMETRE = MetricPrefix.MILLI(Units.METRE);

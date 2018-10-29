@@ -522,9 +522,11 @@ public class NexusTreeUtils {
 					if (m.length == 2) {
 						for (int i = 0 ; i < m.length;i++) m[i]--;
 						try {
+							//work out for which dimension the data varies the most
+							//and set that as the main axis
 							Dataset x = DatasetUtils.sliceAndConvertLazyDataset(choice.getValues());
-							Dataset m0 = Stats.median(x, 0);
-							Dataset m1 = Stats.median(x, 1);
+							Dataset m0 = Stats.median(x, 1);
+							Dataset m1 = Stats.median(x, 0);
 							
 							double max0 = m0.max(true).doubleValue();
 							double min0 = m0.min(true).doubleValue();

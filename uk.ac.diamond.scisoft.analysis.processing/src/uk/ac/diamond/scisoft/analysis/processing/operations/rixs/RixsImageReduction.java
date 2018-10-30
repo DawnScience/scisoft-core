@@ -262,7 +262,7 @@ public class RixsImageReduction extends RixsBaseOperation<RixsImageReductionMode
 			for (NodeLink n : g) {
 				if (n.getName().endsWith(ElasticLineReduction.PROCESS_NAME) && n.isDestinationGroup()) {
 					GroupNode fg = (GroupNode) n.getDestination();
-					int r = Math.min(MAX_ROIS, fg.getNumberOfGroupNodes() / 3); // three datasets per line
+					int r = Math.min(MAX_ROIS, fg.getNumberOfGroupNodes() / 2); // two datasets per line
 					double[] p = new double[2];
 					for (int i = 0; i < r; i++) {
 						String l;

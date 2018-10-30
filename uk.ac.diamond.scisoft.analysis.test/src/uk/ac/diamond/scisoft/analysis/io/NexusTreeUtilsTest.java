@@ -29,6 +29,8 @@ import org.eclipse.january.metadata.AxesMetadata;
 import org.junit.Assert;
 import org.junit.Test;
 
+import si.uom.NonSI;
+import tec.units.indriya.unit.MetricPrefix;
 import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 
 public class NexusTreeUtilsTest {
@@ -265,5 +267,14 @@ public class NexusTreeUtilsTest {
 		Assert.assertEquals(det.getPy(), dp.getPy());
 		Assert.assertEquals(det.getHPxSize(), dp.getHPxSize(), TOL);
 		Assert.assertEquals(det.getVPxSize(), dp.getVPxSize(), TOL);
+	}
+
+	@Test
+	public void testUnits() {
+		Assert.assertEquals(NonSI.ANGSTROM, NexusTreeUtils.parseUnit("Angstrom"));
+		Assert.assertEquals(NonSI.ANGSTROM, NexusTreeUtils.parseUnit("angstrom"));
+		Assert.assertEquals(NonSI.ELECTRON_VOLT, NexusTreeUtils.parseUnit("eV"));
+		Assert.assertEquals(MetricPrefix.KILO(NonSI.ELECTRON_VOLT), NexusTreeUtils.parseUnit("keV"));
+		Assert.assertEquals(NonSI.DEGREE_ANGLE, NexusTreeUtils.parseUnit("deg"));
 	}
 }

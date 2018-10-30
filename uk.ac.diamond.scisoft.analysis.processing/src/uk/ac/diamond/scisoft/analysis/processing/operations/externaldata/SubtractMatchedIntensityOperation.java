@@ -57,6 +57,8 @@ public class SubtractMatchedIntensityOperation extends AbstractOperation<Subtrac
 	// Some things to hold on to
 	protected volatile IPixelIntegrationCache cache;
 	protected IDiffractionMetadata metadata;
+	protected List<Dataset> reducedExternalData;
+	protected Dataset processedExternalData;
 	
 	
 	@Override
@@ -78,19 +80,24 @@ public class SubtractMatchedIntensityOperation extends AbstractOperation<Subtrac
 	
 	
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
-		// First let's set up the subtract with processing plugin to format the external data
-		SubtractWithProcessing subtractWithProcessing = new SubtractWithProcessing();
-		subtractWithProcessing.setModel(model);
-		
-		// Now let's fetch both datasets
-		Dataset processedExternalData = subtractWithProcessing.getData(input).squeeze();
-		Dataset processedInternalData = DatasetUtils.convertToDataset(input);
-		
-		// Now let's reduce these datasets
+		// Let's check that we've got the correct metadata to start with
 		IDiffractionMetadata diffractionMetadata = getFirstDiffractionMetadata(input);
-		List<Dataset> reducedExternalData = getReducedData(processedExternalData, diffractionMetadata);
+
+		// Then let's set up the external data, unless it's already been reduced!
+		if (reducedExternalData == null || processedExternalData == null) {
+			// First let's set up the subtract with processing plugin to format the external data
+			SubtractWithProcessing subtractWithProcessing = new SubtractWithProcessing();
+			subtractWithProcessing.setModel(model);
+		
+			this.processedExternalData = subtractWithProcessing.getData(input).squeeze();
+			this.reducedExternalData = getReducedData(processedExternalData, diffractionMetadata);
+		}
+		
+		// Now let's process/reduce the current frame
+		Dataset processedInternalData = DatasetUtils.convertToDataset(input);
 		List<Dataset> reducedInternalData = getReducedData(processedInternalData, diffractionMetadata);
 		
+		// Get the q-scale to match from the model
 		double[] qRange = model.getQScalingRange();
 		
 		// Then find the index values corresponding to the range we want to work on
@@ -102,7 +109,7 @@ public class SubtractMatchedIntensityOperation extends AbstractOperation<Subtrac
 		Dataset reducedInternalDataSlice = reducedInternalData.get(1).getSlice(new Slice(internalIndexValues[0], internalIndexValues[1], 1));
 		
 		// First divide a by b in order to work out the difference factor and then take the mean for good stats
-		Dataset differenceFactorDataset = Maths.divide(reducedInternalDataSlice, reducedExternalDataSlice);
+		Dataset differenceFactorDataset = Maths.divide(reducedExternalDataSlice, reducedInternalDataSlice);
 		Dataset meanDifferenceFactor = DatasetFactory.createFromObject(differenceFactorDataset.mean(null), 1);
 
 		// Then do the multiplication and subtraction

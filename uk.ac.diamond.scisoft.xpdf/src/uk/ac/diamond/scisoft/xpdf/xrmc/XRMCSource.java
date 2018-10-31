@@ -1,5 +1,7 @@
 package uk.ac.diamond.scisoft.xpdf.xrmc;
 
+import javax.vecmath.Vector2d;
+
 public class XRMCSource extends XRMCFile {
 
 	protected XRMCSource(String fileName) {
@@ -53,7 +55,7 @@ public class XRMCSource extends XRMCFile {
 	}
 
 	/**
-	 * Gets the beam divergence.
+	 * Gets the beam divergence in radians.
 	 * @return θ_x, θ_y
 	 */
 	public double[] getDivergence() {
@@ -61,7 +63,7 @@ public class XRMCSource extends XRMCFile {
 	}
 
 	/**
-	 * Gets the source size.
+	 * Gets the source size in cm.
 	 * <p>
 	 * The source is modelled as a three-dimensional Gaussian distribution.
 	 * @return σ_x, σ_y, σ_z
@@ -78,5 +80,26 @@ public class XRMCSource extends XRMCFile {
 	 */
 	public double[] getRotate() {
 		return getAndParseValues("Rotate");
+	}
+
+	/**
+	 * Calculates and returns the beam spot size in cm.
+	 * @return beam spot size at the origin
+	 */
+	public double[] getBeamSpotSize() {
+		Maths3d sourceSize = new Maths3d(getSize());
+		Maths3d sourcePosition = new Maths3d(getX());
+		Maths3d sourceDirection = new Maths3d(getUK());
+		
+		double sourceDistance = sourcePosition.dot(sourceDirection);
+		Vector2d divergence = new Vector2d(getDivergence());
+		divergence.scale(2*sourceDistance);
+		
+		double[] beamSize = new double[2];
+		// Assumes z-aligned beam.
+		beamSize[0] = sourceSize.get().x + divergence.x;
+		beamSize[1] = sourceSize.get().y + divergence.y;
+		
+		return beamSize;
 	}
 }

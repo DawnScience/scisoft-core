@@ -11,6 +11,7 @@ package org.eclipse.dawnsci.plotting.api.trace;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.january.DatasetException;
@@ -262,10 +263,17 @@ public class MetadataPlotUtils {
 		}
 		return null;
 	}
-	
+
+	private static Pattern SQUARE_BRACKET_REGEX = Pattern.compile("\\[(.+?)\\]$");
+
+	/**
+	 * Remove substring delimited by square brackets only if it is positioned at the end
+	 * @param string
+	 * @return edited string
+	 */
 	public static String removeSquareBrackets(String string) {
 		if (string == null) return null;
-		return string.replaceAll("\\[(.+?)\\]$", "");
+		return SQUARE_BRACKET_REGEX.matcher(string).replaceAll("");
 	}
 
 	public static IDataset[] getAxesAsIDatasetArray(ILazyDataset data) {

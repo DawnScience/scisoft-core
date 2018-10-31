@@ -10,23 +10,32 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.twod;
 
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
+import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class EnterDiffractionCalibrationModel extends AbstractOperationModel {
 	
+	@OperationModelField(hint = "Distance to the detector centre", label = "Detector distance", unit = "mm")
 	private double detectorDistance = 100;
 	
+	@OperationModelField(hint = "Beam centre in pixel coordinates, X direction", label = "Beam centre X", unit = "px")
 	private double beamCentreX = 0;
 	
+	@OperationModelField(hint = "Beam centre in pixel coordinates, Y direction", label = "Beam centre Y", unit = "px")
 	private double beamCentreY = 0;
 	
+	@OperationModelField(hint = "Beam energy", label = "Energy", unit = "keV")
 	private double energy = 12;
 	
+	@OperationModelField(hint = "Detector pitch", label = "Pitch", unit = "°")
 	private double pitch = 0;
 	
+	@OperationModelField(hint = "Detector roll", label = "Roll", unit = "°")
 	private double roll = 0;
 	
+	@OperationModelField(hint = "Detector yaw", label = "Yaw", unit = "°")
 	private double yaw = 0;
 	
+	@OperationModelField(hint = "Pixel size, assumed isotropic", label = "Pixel size", unit = "mm")
 	private double pixelSize = 0.172;
 
 	

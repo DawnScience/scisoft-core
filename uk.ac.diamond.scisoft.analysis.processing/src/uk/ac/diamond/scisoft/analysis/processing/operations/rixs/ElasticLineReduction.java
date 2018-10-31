@@ -445,6 +445,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		Dataset summed = DatasetFactory.zeros(n, sin.getShapeRef()[1]);
 		Dataset fitted = DatasetFactory.zeros(summed);
 		DoubleDataset fwhm = DatasetFactory.zeros(n);
+		fwhm.setName("fwhm");
 		for (int i = 0; i < n; i++) {
 			double m = slopes.getDouble(i);
 			Dataset ns = sumImageAlongSlope(sin, m, false);
@@ -456,7 +457,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 		if (countedData != null) {
 			String prefix = String.format("%04d_", ++counter);
-			DoubleDataset tf = fwhm.getView(false);
+			Dataset tf = fwhm.getView(false);
 			tf.setName(prefix + "tilted_fwhm");
 			countedData.add(tf);
 			auxData.addAll(countedData);
@@ -518,16 +519,20 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		double w = findFWHM(null, opt, peak, factor, sx, ns);
 
 		// find slope limits around fitted line
+		List<Double> slopes = new ArrayList<>();
+		List<Double> fwhm = new ArrayList<>();
 		double d = Math.min((s == 0 ? model.getMaxSlope() : Math.abs(s)), 1./64)/8;
 		double min = s;
 		double last;
 		double tw = w;
 		do {
+			slopes.add(0, min);
+			fwhm.add(0, tw);
 			last = tw;
 			min -= d;
 			ns = sumImageAlongSlope(sin, min, false);
 			tw = findFWHM(null, opt, peak, factor, sx, ns);
-		} while (tw > last);
+		} while (tw >= last);
 
 		double max = s;
 		tw = w;
@@ -536,8 +541,15 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			max += d;
 			ns = sumImageAlongSlope(sin, max, false);
 			tw = findFWHM(null, opt, peak, factor, sx, ns);
-		} while (tw > last);
+			slopes.add(max);
+			fwhm.add(tw);
+		} while (tw >= last);
 
+		fwhm.remove(fwhm.size() - 1);
+		Dataset widths = DatasetFactory.createFromList(fwhm);
+		widths.setName("fwhm");
+		MetadataUtils.setAxes(widths, DatasetFactory.createFromList(slopes));
+		displayData.add(widths);
 		slope.setLimits(min, max);
 		slope.setValue(s);
 	}
@@ -684,18 +696,19 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		energy.setName("Energy");
 		intercept.setName("intercept_" + r);
 
-
-		double ePTP = Math.abs(energy.peakToPeak().doubleValue());
+		double ePTP = energy.peakToPeak().doubleValue();
 		if (ePTP == 0) {
 			MetadataUtils.setAxes(intercept, energy);
 			summaryData.add(intercept);
 			return null;
 		}
 
-		double smax = 2*Math.abs(intercept.peakToPeak().doubleValue()) / ePTP;
-		StraightLine iLine = new StraightLine(-smax, smax, -Double.MAX_VALUE, Double.MAX_VALUE);
+		double grad = intercept.peakToPeak().doubleValue() / ePTP;
+		double gMax = 2*Math.abs(grad);
+		StraightLine iLine = new StraightLine(-gMax, gMax, -Double.MAX_VALUE, Double.MAX_VALUE);
+		iLine.setParameterValues(grad, 0);
 
-		double res = fitFunction(this, new ApacheOptimizer(Optimizer.SIMPLEX_MD), "Exception for intercept fit to find dispersion", log, iLine, energy, intercept, null);
+		double res = fitFunction(this, new ApacheOptimizer(Optimizer.SIMPLEX_NM), "Exception for intercept fit to find dispersion", log, iLine, energy, intercept, null);
 		generateFitForDisplayAndSummary(iLine, energy, intercept, name);
 		return new double[] {res, iLine.getParameterValue(STRAIGHT_LINE_M)};
 	}

@@ -100,8 +100,6 @@ public class NexusTreeUtils {
 	static {
 		SimpleUnitFormat.getInstance().alias(NonSI.ANGSTROM, "Angstrom");
 		SimpleUnitFormat.getInstance().alias(NonSI.ANGSTROM, "angstrom");
-		SimpleUnitFormat.getInstance().alias(NonSI.DEGREE_ANGLE, "deg");
-		SimpleUnitFormat.getInstance().alias(NonSI.ELECTRON_VOLT, "eV");
 		SimpleUnitFormat.getInstance().alias(MetricPrefix.KILO(NonSI.ELECTRON_VOLT), "keV");
 	}
 
@@ -2166,7 +2164,7 @@ public class NexusTreeUtils {
 		}
 	}
 
-	private static Unit<?> parseUnit(String attr) {
+	static Unit<?> parseUnit(String attr) {
 		return attr != null ? SimpleUnitFormat.getInstance().parse(attr) : null;
 	}
 

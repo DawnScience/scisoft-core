@@ -162,7 +162,7 @@ public class RegisterImage implements DatasetToDatasetFunction {
 		List<Dataset> result = new ArrayList<Dataset>();
 		double[] shifts;
 		for (IDataset d : datasets) {
-			if (!Arrays.equals(d.getShape(), shape)) {
+			if (roi == null && !Arrays.equals(d.getShape(), shape)) {
 				throw new IllegalArgumentException("Shape of dataset must match reference image");
 			}
 

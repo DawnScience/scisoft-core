@@ -79,33 +79,15 @@ _plot_setdatabean = _plot.plot_setdatabean
 getguinames = _plot.plot_getguinames
 window_manager = _plot.plot_window_manager
 
-try:
-    from . import io as _io
+def volume(v, x=None, y=None,z = None, name=None):
+    '''Plot a volume dataset in remote volume view
+    '''
     
-    _REMOTEVOLNAME = "Remote Volume Viewer"
+    if name is None:
+        name = _PVNAME
+    
+    _plot_volume(name, x, y, z, v)
 
-    def volume(v, name=_REMOTEVOLNAME):
-        '''Plot a volume dataset in remote volume view
-        '''
-        import tempfile
-        import os #@Reimport
-        tmp = tempfile.mkstemp('.dsr') # '/tmp/blah.dsr'
-        os.close(tmp[0])
-        vdatafile = tmp[1]
-        # convert to byte, int or float as volume viewer cannot cope with boolean, long or double datasets
-        if v.dtype == _core.bool:
-            v = _core.cast(v, _core.int8)
-        elif v.dtype == _core.int64:
-            v = _core.cast(v, _core.int32)
-        elif v.dtype == _core.float64 or v.dtype == _core.complex64 or v.dtype == _core.complex128:
-            v = _core.cast(v, _core.float32)
-        _io.save(vdatafile, v, format='binary')
-        _plot_volume(name, vdatafile)
-        os.remove(vdatafile)
-
-except Exception as e:
-    print("Could not import io for volume renderer, this part of plotting will not work", file=sys.stderr)
-    print(e, file=sys.stderr)
 
 from . import roi
 

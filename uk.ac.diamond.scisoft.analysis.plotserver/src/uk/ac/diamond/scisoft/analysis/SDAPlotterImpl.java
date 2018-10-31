@@ -837,66 +837,33 @@ public class SDAPlotterImpl implements ISDAPlotter {
 		imageFiles.addAll(imap.values());
 	}
 
-	@Override
-	public void volumePlot(String viewName, String rawvolume, int headerSize, int voxelType, int xdim, int ydim,
-			int zdim) throws Exception {
-		GuiBean guiBean = new GuiBean();
-		guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.VOLUME);
-		guiBean.put(GuiParameters.FILENAME, rawvolume);
-		guiBean.put(GuiParameters.VOLUMEHEADERSIZE, Integer.valueOf(headerSize));
-		guiBean.put(GuiParameters.VOLUMEVOXELTYPE, Integer.valueOf(voxelType));
-		guiBean.put(GuiParameters.VOLUMEXDIM, Integer.valueOf(xdim));
-		guiBean.put(GuiParameters.VOLUMEYDIM, Integer.valueOf(ydim));
-		guiBean.put(GuiParameters.VOLUMEZDIM, Integer.valueOf(zdim));
-		setGuiBean(viewName, guiBean);
-	}
+	public void volumePlot(String plotName, IDataset xValues, IDataset yValues, IDataset zValues, IDataset volume) throws Exception{
+		DataBean dataBean = new DataBean(GuiPlotMode.VOLUME);
 
-	@Override
-	public void volumePlot(String viewName, IDataset volume) throws Exception {
-		if (!isDataND(volume, 3)) {
-			logger.error("Input dataset has incorrect rank: it has {} dimensions when it should be 3", volume.getRank());
-			throw new Exception("Input dataset has incorrect rank: it should be 3");
-		}
-		DataHolder tHolder = new DataHolder();
+		DatasetWithAxisInformation axisData = new DatasetWithAxisInformation();
+		AxisMapBean amb = new AxisMapBean();
+		axisData.setAxisMap(amb);
+		axisData.setData(volume);
 		try {
-			Dataset v = DatasetUtils.convertToDataset(volume);
-			if (v instanceof CompoundDataset) {
-				CompoundDataset cd = (CompoundDataset) v;
-				v = cd.getElements(0);
-			}
-			switch (v.getDType()) {
-			case Dataset.BOOL:
-				v = v.cast(Dataset.FLOAT32);
-				break;
-			case Dataset.FLOAT64:
-				v = v.cast(Dataset.FLOAT32);
-				break;
-			case Dataset.INT32:
-				v = v.cast(Dataset.FLOAT32);
-				break;
-			case Dataset.INT64:
-				v = v.cast(Dataset.FLOAT32);
-				break;
-			}
-			//FIXME This is a horrible hack to get round some bugs in GigaCube.  Should be fixed in the GigaCube code as soon as possible
-			int[] shape = new int[] {v.getShape()[2], v.getShape()[1], v.getShape()[0]};
-			v.setShape(shape);
-			
-			String filename = saveTempFile(tHolder, v);
-			volumePlot(viewName, filename);
-		} catch (ScanFileHolderException e) {
-			throw new Exception("Failed to save to temporary file");
+			dataBean.addData(axisData);
+		} catch (DataBeanException e) {
+			e.printStackTrace();
 		}
-	}
 
-	@Override
-	public void volumePlot(String viewName, String dsrvolume) throws Exception {
-		GuiBean guiBean = new GuiBean();
-		guiBean.put(GuiParameters.PLOTMODE, GuiPlotMode.VOLUME);
-		guiBean.put(GuiParameters.FILENAME, dsrvolume);
-		setGuiBean(viewName, guiBean);
-	}
+		if (xValues != null) {
+			dataBean.addAxis(AxisMapBean.XAXIS, xValues);
+		}
+		if (yValues != null) {
+			dataBean.addAxis(AxisMapBean.YAXIS, yValues);
+		}
+		
+		if (zValues != null) {
+			dataBean.addAxis(AxisMapBean.ZAXIS, zValues);
+		}
 
+		setDataBean(plotName, dataBean);
+	}
+	
 	@Override
 	public void clearPlot(String viewName) throws Exception {
 		PlotService plotServer = getPlotService();

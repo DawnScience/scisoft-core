@@ -949,28 +949,6 @@ public class SDAPlotter {
 		return getPlotterImpl().scanForImages(viewName, pathname, order, nameregex, suffices, gridColumns, rowMajor, maxFiles, jumpBetween);
 	}
 
-	/**
-	 * Send volume data contained in given filename to remote renderer. Note the raw data needs
-	 * written in little endian byte order
-	 * @param viewName
-	 * @param rawvolume
-	 *            raw format filename
-	 * @param headerSize
-	 *            number of bytes to ignore in file
-	 * @param voxelType
-	 *            0,1,2,3 for byte, short, int and float (integer values are interpreted as unsigned values)
-	 * @param xdim
-	 *            number of voxels in x-dimension
-	 * @param ydim
-	 *            number of voxels in y-dimension
-	 * @param zdim
-	 *            number of voxels in z-dimension
-	 * @throws Exception
-	 */
-	public static void volumePlot(String viewName, String rawvolume, int headerSize, int voxelType, int xdim, int ydim,
-			int zdim) throws Exception {
-		getPlotterImpl().volumePlot(viewName, rawvolume, headerSize, voxelType, xdim, ydim, zdim);
-	}
 
 	/**
 	 * Send volume data to remote renderer. Only single-element datasets of byte, short, int and float are directly
@@ -980,21 +958,10 @@ public class SDAPlotter {
 	 * @param volume
 	 * @throws Exception
 	 */
-	public static void volumePlot(String viewName, IDataset volume) throws Exception {
-		getPlotterImpl().volumePlot(viewName, volume);
+	public static void volumePlot(String plotName, IDataset xValues, IDataset yValues, IDataset zValues, IDataset volume) throws Exception {
+		getPlotterImpl().volumePlot(plotName, xValues, yValues, zValues, volume);
 	}
 
-	/**
-	 * Send volume data contained in given filename to remote renderer
-	 * 
-	 * @param viewName
-	 * @param dsrvolume
-	 *            Diamond Scisoft raw format filename
-	 * @throws Exception
-	 */
-	public static void volumePlot(String viewName, String dsrvolume) throws Exception {
-		getPlotterImpl().volumePlot(viewName, dsrvolume);
-	}
 
 	/**
 	 * Clear/empty a named plot view

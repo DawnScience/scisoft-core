@@ -146,22 +146,6 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	}
 
 	@Override
-	public void volumePlot(String viewName, String rawvolume, int headerSize, int voxelType, int xdim, int ydim,
-			int zdim) throws Exception {
-		throw new UnsupportedOperationException("Method unsupported in python due to arguments other than data set and viewName");
-	}
-
-	@Override
-	public void volumePlot(String viewName, IDataset volume) throws Exception {
-		throw new UnsupportedOperationException("Method unsupported in python due to io save not implemented, see volume in plot.py");
-	}
-
-	@Override
-	public void volumePlot(String viewName, String dsrvolume) throws Exception {
-		throw new UnsupportedOperationException("Method unsupported in python due to arguments other than data set and viewName");
-	}
-
-	@Override
 	public void clearPlot(String plotName) throws Exception {
 		request("clear", plotName);
 	}
@@ -246,5 +230,12 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	@Override
 	public void renameActiveYAxis(String plotName, String yAxisTitle) throws Exception {
 		throw new UnsupportedOperationException("Method unsupported in python, please use the py4j connection to maniplulate axes from cpython!");
+	}
+
+	@Override
+	public void volumePlot(String plotName, IDataset xValues, IDataset yValues, IDataset zValues, IDataset volume)
+			throws Exception {
+		request("volume", volume, xValues, yValues, zValues, plotName);
+		
 	}
 }

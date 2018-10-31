@@ -108,7 +108,9 @@ axis_right = _axisop.RIGHT
 def plot_viewtree(name, tree):
     _plotter.viewTree(name, tree._getnative())
 
-plot_volume = _plotter.volumePlot
+@_wrapin
+def plot_volume(*arg, **kwarg):
+    _plotter.volumePlot(*arg, **kwarg)
 
 from .jybeans import parameters as _jyparams
 from .jybeans import guibean as _guibean

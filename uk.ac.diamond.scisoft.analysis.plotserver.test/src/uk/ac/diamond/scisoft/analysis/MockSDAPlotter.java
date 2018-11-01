@@ -115,22 +115,6 @@ public class MockSDAPlotter implements ISDAPlotter {
 	}
 
 	@Override
-	public void volumePlot(String viewName, String rawvolume, int headerSize, int voxelType, int xdim, int ydim,
-			int zdim) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public void volumePlot(String viewName, IDataset volume) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
-	public void volumePlot(String viewName, String dsrvolume) throws Exception {
-		throw newShouldNotBeCalled();
-	}
-
-	@Override
 	public void clearPlot(String plotName) throws Exception {
 		throw newShouldNotBeCalled();
 	}
@@ -215,6 +199,13 @@ public class MockSDAPlotter implements ISDAPlotter {
 	@Override
 	public void renameActiveYAxis(String plotName, String yAxisTitle) throws Exception {
 		throw newShouldNotBeCalled();
+	}
+
+	@Override
+	public void volumePlot(String plotName, IDataset xValues, IDataset yValues, IDataset zValues, IDataset volume)
+			throws Exception {
+		throw newShouldNotBeCalled();
+		
 	}
 
 }

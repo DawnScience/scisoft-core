@@ -271,46 +271,20 @@ public interface ISDAPlotter {
 			int gridColumns, boolean rowMajor, int maxFiles, int jumpBetween) throws Exception;
 
 	/**
-	 * Send volume data contained in given filename to remote renderer. Note the raw data needs
-	 * written in little endian byte order
-	 * @param viewName
-	 * @param rawvolume
-	 *            raw format filename
-	 * @param headerSize
-	 *            number of bytes to ignore in file
-	 * @param voxelType
-	 *            0,1,2,3 for byte, short, int and float (integer values are interpreted as unsigned values)
-	 * @param xdim
-	 *            number of voxels in x-dimension
-	 * @param ydim
-	 *            number of voxels in y-dimension
-	 * @param zdim
-	 *            number of voxels in z-dimension
-	 * @throws Exception
-	 */
-	public void volumePlot(String viewName, String rawvolume, int headerSize, int voxelType, int xdim, int ydim,
-			int zdim) throws Exception;
-
-	/**
-	 * Send volume data to remote renderer. Only single-element datasets of byte, short, int and float are directly
-	 * supported. Other types are internally converted; first elements of compound datasets are extracted.
+	 * Allows the plotting of a volume to the defined view
 	 * 
-	 * @param viewName
+	 * @param plotName
+	 * @param xValues
+	 *            can be null
+	 * @param yValues
+	 *            can be null
+	 * @param zValues
+	 *            can be null
 	 * @param volume
 	 * @throws Exception
 	 */
-	public void volumePlot(String viewName, IDataset volume) throws Exception;
-
-	/**
-	 * Send volume data contained in given filename to remote renderer
-	 * 
-	 * @param viewName
-	 * @param dsrvolume
-	 *            Diamond Scisoft raw format filename
-	 * @throws Exception
-	 */
-	public void volumePlot(String viewName, String dsrvolume) throws Exception;
-
+	public void volumePlot(String plotName, IDataset xValues, IDataset yValues, IDataset zValues, IDataset volume) throws Exception;
+	
 	/**
 	 * Clear/empty a named plot view
 	 * 

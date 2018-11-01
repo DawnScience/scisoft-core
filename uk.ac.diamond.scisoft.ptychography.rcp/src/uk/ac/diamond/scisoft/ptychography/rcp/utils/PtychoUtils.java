@@ -2,6 +2,7 @@ package uk.ac.diamond.scisoft.ptychography.rcp.utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,6 +21,11 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoData;
 
@@ -48,6 +54,14 @@ public class PtychoUtils {
 			fullPath = fileStore.getURI().getPath();
 		}
 		return fullPath;
+	}
+	
+	
+	public static List<PtychoData> loadTemplateFile(String fullPath){
+		if(fullPath.endsWith(".json"))
+			return loadJsonTemplate(fullPath);
+		else
+			return loadSpreadSheet(fullPath);
 	}
 
 	/**
@@ -123,9 +137,70 @@ public class PtychoUtils {
 				loaded.add(row);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
-			logger.error("Failed to load file: " + fullPath + " " + e.getMessage());
-			logger.error(e.getStackTrace().toString());
+			logger.error("Failed to load file: " + fullPath + " " + e.getMessage(),e);
+		}
+		return loaded;
+	}
+	
+	
+	public static List<PtychoData> loadJsonTemplate(String fullPath){
+		JsonObject jsonObject = new JsonObject();
+		JsonElement rootNode;
+		
+		try {
+			JsonParser parser = new JsonParser();
+			rootNode = parser.parse(new FileReader(fullPath));
+			jsonObject = rootNode.getAsJsonObject();
+		} catch(FileNotFoundException e) {
+			logger.error("Failed to load file " + fullPath + " " + e.getMessage(),e);
+		}
+		
+		return recursiveJsonLoad(jsonObject, 0);
+	}
+	
+	/*
+	 * Recursively load JSON files into existing editor structure
+	 * Only populates the name and value fields, due to key value pair structure of JSON
+	 */
+	private static List<PtychoData> recursiveJsonLoad(JsonObject root, int level) {
+		List<PtychoData> loaded = new ArrayList<PtychoData>();
+		
+		for(String name : root.keySet()) {
+			JsonElement element = root.get(name);
+			
+			PtychoData data = new PtychoData();
+			data.setName(name);
+			data.setDefaultValue("");
+			
+			if(element.isJsonObject()) {
+				data.setLevel(level);
+				loaded.add(data);
+				loaded.addAll(recursiveJsonLoad(element.getAsJsonObject(), ++level));
+				level--;
+			}
+			
+			if(!element.isJsonObject() && !element.isJsonArray())
+				data.setDefaultValue(element.getAsString());
+			if(element.isJsonArray()) {
+				JsonArray array = element.getAsJsonArray();
+				StringBuilder sb = new StringBuilder();
+				sb.append("[");
+				
+				int count = 1;
+				for(JsonElement arrayElement : array) {
+					sb.append(arrayElement.getAsString());
+					if(count < array.size()) {
+						sb.append(",");
+						count++;
+					}
+				}
+				sb.append("]");
+				data.setDefaultValue(sb.toString());
+			}
+			if(!element.isJsonObject()) {
+				data.setLevel(level);
+				loaded.add(data);
+			}
 		}
 		return loaded;
 	}
@@ -138,6 +213,10 @@ public class PtychoUtils {
 	 */
 	public static void saveSpreadsheet(List<PtychoData> input, String filePath) throws FileNotFoundException {
 		CSVPrinter printer;
+		
+		if(format == null)
+			format = CSVFormat.EXCEL.withHeader("level","name","value");
+		
 		try {
 			printer = new CSVPrinter(new PrintWriter(filePath), format);
 			for (PtychoData row : input) {
@@ -145,12 +224,14 @@ public class PtychoUtils {
 				rowData.add(String.valueOf(row.getLevel()));
 				rowData.add(row.getName());
 				rowData.add(row.getDefaultValue());
-				rowData.add(row.getType());
-				rowData.add(String.valueOf(row.isUnique()));
-				rowData.add(String.valueOf(row.getLowerLimit()));
-				rowData.add(String.valueOf(row.getUpperLimit()));
-				rowData.add(row.getShortDoc());
-				rowData.add(row.getLongDoc());
+				if(format.getHeader().length > 3) {
+					rowData.add(row.getType());
+					rowData.add(String.valueOf(row.isUnique()));
+					rowData.add(String.valueOf(row.getLowerLimit()));
+					rowData.add(String.valueOf(row.getUpperLimit()));
+					rowData.add(row.getShortDoc());
+					rowData.add(row.getLongDoc());
+				}
 				printer.printRecord(rowData);
 			}
 			printer.close();

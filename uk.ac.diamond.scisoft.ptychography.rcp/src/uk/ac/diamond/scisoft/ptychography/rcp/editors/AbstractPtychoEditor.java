@@ -4,27 +4,37 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 import org.dawnsci.python.rpc.action.InjectPyDevConsole;
 import org.dawnsci.python.rpc.action.InjectPyDevConsoleAction;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dawnsci.analysis.api.EventTracker;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.di.Persist;
+import org.eclipse.e4.ui.di.PersistState;
+import org.eclipse.e4.ui.internal.workbench.handlers.SaveHandler;
+import org.eclipse.e4.ui.model.application.ui.MDirtyable;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TypedEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.part.EditorPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,15 +48,21 @@ import uk.ac.diamond.scisoft.ptychography.rcp.ui.FolderSelectionWidget;
 import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoConstants;
 import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoUtils;
 
-public abstract class AbstractPtychoEditor extends EditorPart {
+public abstract class AbstractPtychoEditor {
 
 	private static final Logger logger = LoggerFactory.getLogger(AbstractPtychoEditor.class);
+	private static final String ENABLE_TEXT_BOXES = "enableTextBoxes";
 
 	protected List<PtychoData> levels;
 	protected List<PtychoNode> tree;
 	protected String jsonSavedPath;
 	protected String fullPath;
 	protected boolean isDirtyFlag = false;
+	protected boolean isTextBoxInputEnabled = false;
+	@Inject MDirtyable dirty;
+	@Inject ECommandService commandService;
+	@Inject EHandlerService handlerService;
+	
 
 	private InjectPyDevConsoleAction runPython;
 
@@ -54,45 +70,92 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 	
 	private FolderSelectionWidget processDir;
 	private Text configName, scanNumber;
-
-	@Override
-	public void init(IEditorSite site, IEditorInput input)
-			throws PartInitException {
-		setSite(site);
-		setInput(input);
-
+	
+	@PersistState
+	public void saveState(MPart part) {
+		part.getPersistedState().put(ENABLE_TEXT_BOXES, Boolean.toString(isTextBoxInputEnabled));
+	}
+	
+	@PostConstruct
+	public void loadState(MPart part) {
+		if(part.getPersistedState().get(ENABLE_TEXT_BOXES) != null)
+			isTextBoxInputEnabled = Boolean.parseBoolean(part.getPersistedState().get(ENABLE_TEXT_BOXES));
 	}
 
-	@Override
 	public boolean isDirty() {
-		return isDirtyFlag;
+		return dirty.isDirty();
 	}
 
 	protected void setDirty(boolean value) {
-		isDirtyFlag = value;
-		firePropertyChange(PROP_DIRTY);
+		handlerService.activateHandler("org.eclipse.ui.file.save", new SaveHandler());
+		dirty.setDirty(value);
+		commandService.getCommand("org.eclipse.ui.file.save").isEnabled();
 	}
 
-	@Override
+	@Persist
 	public void doSave(IProgressMonitor monitor) {
+		fileSavedPath = getFileSavePathPreference();
 		List<PtychoData> list = PtychoTreeUtils.extract(tree);
-		if (fileSavedPath == null)
+		if (fileSavedPath == null || fileSavedPath.equals(""))
 			doSaveAs();
-		PtychoUtils.saveCSVFile(fileSavedPath, list);
-		setFileSavedPath(fileSavedPath);
-		setDirty(false);
+		// if doSaveAs() dialog was cancelled we don't want to save or change state
+		if (fileSavedPath != null && !fileSavedPath.equals("")) {
+			if(fileSavedPath.endsWith(".json"))
+				saveJSon(fileSavedPath);
+			else
+				PtychoUtils.saveCSVFile(fileSavedPath, list);
+			setFileSavedPath(fileSavedPath);
+			setDirty(false);
+			commandService.getCommand("org.eclipse.ui.file.save").isEnabled();
+		}
 	}
 
-	@Override
 	public void doSaveAs() {
 		fileSavedPath = saveAs(fileSavedPath);
-		setDirty(false);
+		if(fileSavedPath != null && !fileSavedPath.equals(""))
+			setDirty(false);
 	}
 
-	@Override
-	public abstract void createPartControl(Composite parent);
+	public AbstractPtychoEditor() {
+		IPreferenceStore store = Activator.getPtychoPreferenceStore();
+		String fileSavedPath = store.getString(PtychoPreferenceConstants.TEMPLATE_FILE_PATH);
+		
+		try {
+			levels = PtychoUtils.loadTemplateFile(fileSavedPath);
+			if (levels != null)
+				tree = PtychoTreeUtils.populate(0, 0, levels);
+		} catch (Exception e) {
+			logger.error("Error loading spreadsheet file:" + e.getMessage(), e);
+		}
+	}
 
 	protected void createPythonRunCommand(Composite parent) {
+		
+		final Composite scriptBuilder = new Composite(parent, SWT.NONE);
+		scriptBuilder.setLayout(new GridLayout(8, false));
+		scriptBuilder.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false));
+		
+		final Button enableTextBoxInput = new Button(scriptBuilder, SWT.CHECK);
+		enableTextBoxInput.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		enableTextBoxInput.setToolTipText("Enable/disable text box inputs \n \nEnabling will force the RUN button to use the process dir, config and scan entries as arguments \n\n"
+				+ "Disabling will pass the editor file as an argument.");
+		enableTextBoxInput.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				if(enableTextBoxInput.getSelection()) {
+					isTextBoxInputEnabled = true;
+				} else {							
+					isTextBoxInputEnabled = false;
+				}
+				processDir.setEnabled(enableTextBoxInput.getSelection());
+				configName.setEnabled(enableTextBoxInput.getSelection());
+				scanNumber.setEnabled(enableTextBoxInput.getSelection());
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {}
+		});
+		
 		runPython = new InjectPyDevConsoleAction("Run Ptychographic Iterative Engine python script") {
 			@Override
 			public void run() {
@@ -102,24 +165,19 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 					if (tracker != null)
 						tracker.trackActionEvent("Ptycho_Iterative_Engine");
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error(e.getMessage());
 				}
 
-				jsonSavedPath = saveJSon(fileSavedPath);
-				
-				boolean useFile = new MessageDialog(Display.getDefault().getActiveShell(), "Choose Parameters", null, "Use Editor or Text Box arguments?", MessageDialog.QUESTION, new String[] {"Editor", "Text Boxes"}, 0).open() == 0 ? true : false ;
 				// reinject command
-				if(useFile)
+				if(!enableTextBoxInput.getSelection()) {
+					jsonSavedPath = saveJSon(fileSavedPath);
 					this.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd(jsonSavedPath));
+				}
 				else
 					this.setParameter(InjectPyDevConsole.INJECT_COMMANDS_PARAM, getPythonCmd(processDir.getText() + " " + configName.getText() + " " + scanNumber.getText()));
 				super.run();
 			}
 		};
-		
-		final Composite scriptBuilder = new Composite(parent, SWT.NONE);
-		scriptBuilder.setLayout(new GridLayout(7, false));
-		scriptBuilder.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false));
 		
 		processDir = new FolderSelectionWidget(scriptBuilder, false){
 			@Override
@@ -147,14 +205,15 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 		runButton.setText("RUN");
 		runButton.setToolTipText("Run Ptychographic Iterative Engine process");
 		runButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
+		
+		enableTextBoxInput.setSelection(isTextBoxInputEnabled);
+		enableTextBoxInput.notifyListeners(SWT.Selection, new Event());
 	}
 
 	private String getPythonCmd(String jsonSavedPath) {
 		StringBuilder pythonCmd = new StringBuilder();
 		pythonCmd.append("run ");
 		IPreferenceStore store = Activator.getPtychoPreferenceStore();
-		String epiFolder = store.getString(PtychoPreferenceConstants.PIE_RESOURCE_PATH);
-		//pythonCmd.append(epiFolder + File.separator + "LaunchPtycho.py ");
 		pythonCmd.append(store.getString(PtychoPreferenceConstants.RECON_SCRIPT_PATH) + " ");
 		pythonCmd.append(jsonSavedPath);
 		pythonCmd.append("\n");
@@ -162,15 +221,28 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 	}
 
 	private String saveJSon(String fileSavedPath) {
-		if (fileSavedPath == null || fileSavedPath.equals("")) {
-			//trigger the save wizard
-			saveAs(fileSavedPath);
-			if (fileSavedPath == null)
+		String fileSavePref = getFileSavePathPreference();
+		// Should only be true on first use (fileSavedPath preference not set), or if manually set to ""
+		if ((fileSavedPath == null || fileSavedPath.equals("")) && (fileSavePref == null || fileSavePref.equals(""))) {
+			fileSavedPath = saveAs(fileSavedPath);
+			if (fileSavedPath == null || fileSavedPath.equals(""))
 				return "";
 			setDirty(false);
 		}
-		String jsonSavedPath = fileSavedPath.substring(0, fileSavedPath.length() - 3);
-		jsonSavedPath += "json";
+		// saveAs() will set the fileSavedPath preference, use this if variable not set
+		if(fileSavedPath == null || fileSavedPath.equals("")) {
+			fileSavedPath = fileSavePref;
+			setFileSavedPath(fileSavedPath);
+		}
+		
+		String jsonSavedPath;
+		
+		if(!fileSavedPath.endsWith(".json")) {
+			jsonSavedPath = fileSavedPath.substring(0, fileSavedPath.length() - 3);
+			jsonSavedPath += "json";
+		} else {
+			jsonSavedPath = fileSavedPath;
+		}
 		String json = PtychoTreeUtils.jsonMarshal(tree);
 		try {
 			PtychoUtils.saveJSon(jsonSavedPath, json);
@@ -184,15 +256,9 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 		return jsonSavedPath;
 	}
 
-	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-	}
+	@Focus
+	public void setFocus() {}
 
-	@Override
-	public boolean isSaveAsAllowed() {
-		return true;
-	}
 
 	protected String saveAs(String fileSavedPath) {
 		FileDialog dialog = new FileDialog(Display.getDefault()
@@ -240,7 +306,7 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 				throw new Exception("XML serialisation is not yet implemented.");
 			}
 		} catch (Exception e) {
-			logger.error("Error saving file:"+ e.getMessage());
+			logger.error("Error saving file:"+ e.getMessage(), e);
 			return fileSavedPath;
 		}
 		return path;
@@ -252,5 +318,10 @@ public abstract class AbstractPtychoEditor extends EditorPart {
 
 	public String getFileSavedPath() {
 		return fileSavedPath;
+	}
+	
+	private String getFileSavePathPreference() {
+		IPreferenceStore store = Activator.getPtychoPreferenceStore();
+		return store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
 	}
 }

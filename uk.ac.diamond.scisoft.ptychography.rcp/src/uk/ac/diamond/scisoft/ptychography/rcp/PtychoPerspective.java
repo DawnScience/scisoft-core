@@ -1,27 +1,18 @@
 package uk.ac.diamond.scisoft.ptychography.rcp;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.NotEnabledException;
-import org.eclipse.core.commands.NotHandledException;
-import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IConsoleConstants;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.ptychography.rcp.handlers.CallPtychoEditor;
 import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoConstants;
 
 public class PtychoPerspective implements IPerspectiveFactory {
 
-	private static final Logger logger = LoggerFactory.getLogger(PtychoPerspective.class);
 	public static final String ID = "uk.ac.diamond.scisoft.ptychography.rcp.perspective";
-
+	
 	@Override
 	public void createInitialLayout(IPageLayout layout) {
 
@@ -59,18 +50,10 @@ public class PtychoPerspective implements IPerspectiveFactory {
 		// add the console and the outline to the bottom
 		IFolderLayout bottomLayout = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.6f, editorArea);
 		bottomLayout.addView(IConsoleConstants.ID_CONSOLE_VIEW);
-
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
-				try {
-					handlerService.executeCommand(CallPtychoEditor.COMMAND_ID, null);
-				} catch (ExecutionException | NotDefinedException | NotEnabledException
-						| NotHandledException e) {
-					logger.error("Error opening Ptycho editor:" + e.getMessage());
-				}
-			}
-		});
+		
+		IFolderLayout editorLayout = layout.createFolder("editor", IPageLayout.TOP, 0.6f, editorArea);
+		editorLayout.addView("uk.ac.diamond.scisoft.ptychography.rcp.basicPtychoInput");
+		editorLayout.addView("uk.ac.diamond.scisoft.ptychography.rcp.ptychoTreeEditor");
+		layout.setEditorAreaVisible(false);
 	}
 }

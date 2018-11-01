@@ -2,6 +2,11 @@ package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -11,6 +16,7 @@ import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
@@ -32,6 +38,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
@@ -40,9 +47,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
@@ -53,16 +57,17 @@ import org.slf4j.LoggerFactory;
 import uk.ac.diamond.scisoft.ptychography.rcp.Activator;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoData;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoNode;
+import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoTreeUtils;
 import uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferenceConstants;
 import uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferencePage;
+import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoUtils;
 
 public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 
-	public final static String ID = "uk.ac.diamond.scisoft.ptychography.rcp.ptychoTreeEditor";
+	public static final String ID = "uk.ac.diamond.scisoft.ptychography.rcp.ptychoTreeEditor";
 	private static final Logger logger = LoggerFactory.getLogger(PtychoTreeViewerEditor.class);
 	private TreeViewer viewer;
 	private FilteredTree filteredTree;
-	private ISelectionChangedListener selectionListener;
 	private Text nameText;
 	private Text valueText;
 	private Combo typeCombo;
@@ -75,33 +80,22 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 	private Color gray;
 	private Color darkGray;
 	private Color black;
-	private IPropertyChangeListener propertyListener;
+	
+	@Inject
+	EPartService partService;
+	
+	@Inject
+	IEventBroker broker;
 
-	public PtychoTreeViewerEditor() {
-	}
-
-	public PtychoTreeViewerEditor(List<PtychoData> levels,
-			List<PtychoNode> tree, String fullPath, boolean isDirtyFlag) {
-		this.levels = levels;
-		this.tree = tree;
-		this.fullPath = fullPath;
-		this.isDirtyFlag = isDirtyFlag;
-	}
-
-	@Override
-	public void init(IEditorSite site, IEditorInput input)
-			throws PartInitException {
-		super.init(site, input);
-
-		setPartName("Ptycho Tree Input");
-
-		Display display = Display.getDefault();
+	@PostConstruct
+	public void createPartControl(final Composite parent) {
+		final Display display = Display.getDefault();
 		white = new Color(display, 255, 255, 255);
 		gray = new Color(display, 237, 236, 235);
 		darkGray = new Color(display, 170, 166, 161);
 		black = new Color(display, 0, 0, 0);
 
-		selectionListener = new ISelectionChangedListener() {
+		ISelectionChangedListener selectionListener = new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
@@ -112,53 +106,36 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 						PtychoNode node = (PtychoNode) selected;
 						currentNode = node;
 						PtychoData data = node.getData();
-						nameText.setText(data.getName());
-						valueText.setText(data.getDefaultValue());
-						typeCombo.setText(data.getType());
-						lowerText.setText(String.valueOf(data.getLowerLimit()));
-						upperText.setText(String.valueOf(data.getUpperLimit()));
-						shortDocText.setText(data.getShortDoc());
-						longDocStyledText.setText(data.getLongDoc());
-						boolean unique = data.isUnique();
-						nameText.setEnabled(!unique);
-						valueText.setEnabled(!unique);
-						typeCombo.setEnabled(!unique);
-						lowerText.setEnabled(!unique);
-						upperText.setEnabled(!unique);
-						shortDocText.setEnabled(!unique);
-						longDocStyledText.setEnabled(!unique);
-						if (unique) {
-							longDocStyledText.setBackground(gray);
-							longDocStyledText.setForeground(darkGray);
-						} else {
-							longDocStyledText.setBackground(white);
-							longDocStyledText.setForeground(black);
-						}
+						toggleEnableUiElements(data);
 					}
 				}
 			}
 		};
-		propertyListener = new IPropertyChangeListener() {
+		IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent event) {
-				if (isInterestingProperty(event)) {
-					String propName = event.getProperty();
-					if (PtychoPreferenceConstants.FILE_SAVE_PATH.equals(propName))
-//						fileSavedPath = event.getProperty();
-						;
+				if(event.getProperty() == PtychoPreferenceConstants.TEMPLATE_FILE_PATH) {
+					try {
+						String newFilePath = (String)event.getNewValue();
+						levels = PtychoUtils.loadTemplateFile(newFilePath);
+						if (levels != null) {
+							tree = PtychoTreeUtils.populate(0, 0, levels);
+							viewer.setInput(tree);
+							viewer.refresh();
+							toggleEnableUiElements(levels.get(0));
+							viewer.getControl().setFocus();
+							broker.send("refreshSimplePtychoEditor", tree);
+						}
+					} catch (Exception e) {
+						logger.error("Error loading spreadsheet file:" + e.getMessage(), e);
+					}
+				} else if(event.getProperty() == PtychoPreferenceConstants.FILE_SAVE_PATH) {
+					setFileSavedPath((String)event.getNewValue());
 				}
-			}
-			private boolean isInterestingProperty(PropertyChangeEvent event) {
-				String propName = event.getProperty();
-				return PtychoPreferenceConstants.FILE_SAVE_PATH.equals(propName) || 
-						PtychoPreferenceConstants.PIE_RESOURCE_PATH.equals(propName);
 			}
 		};
 		Activator.getPtychoPreferenceStore().addPropertyChangeListener(propertyListener);
-	}
-
-	@Override
-	public void createPartControl(final Composite parent) {
+		
 //		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(1, false));
@@ -214,6 +191,16 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 		editorComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true)); 
 		Composite leftComp = new Composite(editorComposite, SWT.NONE);
 		leftComp.setLayout(new GridLayout(3, false));
+		
+		ModifyListener modifyListener = new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				Control control = display.getFocusControl();
+				if(control instanceof Text || control instanceof StyledText || control instanceof Combo)
+					updateAttributes(e);
+					
+			}
+		};
 
 		GridData gridData = new GridData(SWT.FILL, SWT.LEFT, true, false, 2, 1);
 		Label nameLabel = new Label(leftComp, SWT.NONE);
@@ -221,24 +208,16 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 		nameText = new Text(leftComp, SWT.BORDER);
 		nameText.setText("");
 		nameText.setLayoutData(gridData);
-		nameText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateAttributes(e);
-			}
-		});
+		nameText.addModifyListener(modifyListener);
+		
 		Label valueLabel = new Label(leftComp, SWT.NONE);
 		valueLabel.setText("Value");
 		valueText = new Text(leftComp, SWT.BORDER);
 		valueText.setText("");
 		valueText.setLayoutData(gridData);
 		valueText.setLayoutData(gridData);
-		valueText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateAttributes(e);
-			}
-		});
+		valueText.addModifyListener(modifyListener);
+		
 		Label typeLabel = new Label(leftComp, SWT.NONE);
 		typeLabel.setText("Type");
 		typeCombo = new Combo(leftComp, SWT.BORDER);
@@ -270,21 +249,12 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 		lowerText = new Text(subLeftComp, SWT.BORDER);
 		lowerText.setText("");
 		lowerText.setLayoutData(gridData);
-		lowerText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateAttributes(e);
-			}
-		});
+		lowerText.addModifyListener(modifyListener);
+		
 		upperText = new Text(subLeftComp, SWT.BORDER);
 		upperText.setText("");
 		upperText.setLayoutData(gridData);
-		upperText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateAttributes(e);
-			}
-		});
+		upperText.addModifyListener(modifyListener);
 
 		Composite rightComp = new Composite(editorComposite, SWT.NONE);
 		rightComp.setLayout(new GridLayout(2, false));
@@ -294,23 +264,15 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 		shortDocLabel.setText("Shortdoc");
 		shortDocText = new Text(rightComp, SWT.BORDER);
 		shortDocText.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, false));
-		shortDocText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateAttributes(e);
-			}
-		});
+		shortDocText.addModifyListener(modifyListener);
+		
 		Label longDocLabel = new Label(rightComp, SWT.NONE);
 		longDocLabel.setText("Longdoc");
 		longDocStyledText = new StyledText(rightComp, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 		longDocStyledText.setText("");
 		longDocStyledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 3));
-		longDocStyledText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateAttributes(e);
-			}
-		});
+		longDocStyledText.addModifyListener(modifyListener);
+		
 		scrollComposite.setContent(editorComposite);
 		scrollComposite.setExpandHorizontal(true);
 		scrollComposite.setExpandVertical(true);
@@ -321,10 +283,7 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 				scrollComposite.setMinSize(editorComposite.computeSize(r.width, SWT.DEFAULT));
 			}
 		});
-
 		createPythonRunCommand(container);
-
-		getSite().setSelectionProvider(viewer);
 	}
 
 	private void updateAttributes(ModifyEvent event) {
@@ -472,6 +431,7 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 						tree.add(currentIdx + 1, node);
 					}
 					viewer.refresh();
+					setDirty(true);
 				}
 			}
 		};
@@ -497,6 +457,7 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 							currentNode = tree.get(0);
 					}
 					viewer.refresh();
+					setDirty(true);
 				}
 			}
 		};
@@ -508,24 +469,50 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 	}
 
 	@Override
-	public void dispose() {
-		if (viewer != null)
-			viewer.removeSelectionChangedListener(selectionListener);
-		if (white != null && !white.isDisposed() && gray != null
-				&& !gray.isDisposed() && darkGray != null
-				&& !darkGray.isDisposed() && black != null
-				&& !black.isDisposed()) {
-			white.dispose();
-			gray.dispose();
-			darkGray.dispose();
-			black.dispose();
-		}
-		Activator.getPtychoPreferenceStore().removePropertyChangeListener(propertyListener);
-	}
-
-	@Override
 	public void setFocus() {
 		if (viewer != null)
 			viewer.getControl().setFocus();
+	}
+	
+	private void toggleEnableUiElements(PtychoData data) {
+		nameText.setText(data.getName());
+		valueText.setText(data.getDefaultValue());
+		
+		if(Activator.getPtychoPreferenceStore().getString(PtychoPreferenceConstants.TEMPLATE_FILE_PATH).endsWith(".json")) {
+			typeCombo.setText("");
+			lowerText.setText("");
+			upperText.setText("");
+			shortDocText.setText("");
+			longDocStyledText.setText("");
+			typeCombo.setEnabled(false);
+			lowerText.setEnabled(false);
+			upperText.setEnabled(false);
+			shortDocText.setEnabled(false);
+			longDocStyledText.setEnabled(false);
+			longDocStyledText.setBackground(gray);
+			longDocStyledText.setForeground(darkGray);
+		} else {
+			typeCombo.setText(data.getType());
+			lowerText.setText(String.valueOf(data.getLowerLimit()));
+			upperText.setText(String.valueOf(data.getUpperLimit()));
+			shortDocText.setText(data.getShortDoc());
+			longDocStyledText.setText(data.getLongDoc());
+			
+			boolean unique = data.isUnique();
+			nameText.setEnabled(!unique);
+			valueText.setEnabled(!unique);
+			typeCombo.setEnabled(!unique);
+			lowerText.setEnabled(!unique);
+			upperText.setEnabled(!unique);
+			shortDocText.setEnabled(!unique);
+			longDocStyledText.setEnabled(!unique);
+			if (unique) {
+				longDocStyledText.setBackground(gray);
+				longDocStyledText.setForeground(darkGray);
+			} else {
+				longDocStyledText.setBackground(white);
+				longDocStyledText.setForeground(black);
+			}
+		}
 	}
 }

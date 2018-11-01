@@ -46,7 +46,7 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//import uk.ac.diamond.scisoft.peema.rcp.Activator;
+import uk.ac.diamond.scisoft.ptychography.rcp.Activator;
 
 /**
  * Selector widget made of a SWT Text with drag and drop listeners and content proposal and SWT Button
@@ -137,8 +137,8 @@ public abstract class FolderSelectionWidget {
 		});
 
 		fileButton = new Button(container, SWT.PUSH);
-		fileButton.setText("Browse...");
-		//fileButton.setImage(Activator.getImageDescriptor("icons/folder.png").createImage());
+		//fileButton.setText("Browse...");
+		fileButton.setImage(Activator.getImageDescriptor("icons/folder.png").createImage());
 		fileButton.setToolTipText("Select an external folder");
 		fileButton.addSelectionListener(new SelectionAdapter() {
 			@Override

@@ -3,34 +3,7 @@
 <plugin>
 
    <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            class="uk.ac.diamond.scisoft.ptychography.rcp.editors.MultiPagePtychoEditor"
-            default="false"
-            extensions="csv"
-            id="uk.ac.diamond.scisoft.ptychography.rcp.ptychoMultiPageEditor"
-            name="Ptycho Input Editor">
-      </editor>
-      <editor
-            class="uk.ac.diamond.scisoft.ptychography.rcp.editors.PtychoTreeViewerEditor"
-            default="false"
-            id="uk.ac.diamond.scisoft.ptychography.rcp.ptychoTreeEditor"
-            name="Tree Ptycho input">
-      </editor>
-      <editor
-            class="uk.ac.diamond.scisoft.ptychography.rcp.editors.SimplePtychoEditor"
-            default="false"
-            id="uk.ac.diamond.scisoft.ptychography.rcp.basicPtychoInput"
-            name="Basic Ptycho Input">
-      </editor>
-   </extension>
-   <extension
          point="org.eclipse.ui.commands">
-      <command
-            defaultHandler="uk.ac.diamond.scisoft.ptychography.rcp.handlers.CallPtychoEditor"
-            id="uk.ac.diamond.scisoft.ptychography.rcp.openPtychoEditor"
-            name="Open PtychoEditor">
-      </command>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
@@ -42,6 +15,18 @@
    </extension>
    <extension
          point="org.eclipse.ui.views">
+      <e4view
+            class="uk.ac.diamond.scisoft.ptychography.rcp.editors.PtychoTreeViewerEditor"
+            default="false"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.ptychoTreeEditor"
+            name="Tree Ptycho input">
+      </e4view>
+      <e4view
+            class="uk.ac.diamond.scisoft.ptychography.rcp.editors.SimplePtychoEditor"
+            default="false"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.basicPtychoInput"
+            name="Basic Ptycho Input">
+      </e4view>
       <view
             allowMultiple="false"
             category="uk.ac.diamond.scisoft.ptychography.rcp.category"

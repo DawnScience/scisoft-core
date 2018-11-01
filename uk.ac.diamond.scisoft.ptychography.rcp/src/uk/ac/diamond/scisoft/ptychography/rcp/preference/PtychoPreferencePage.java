@@ -9,7 +9,6 @@
 
 package uk.ac.diamond.scisoft.ptychography.rcp.preference;
 
-import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -29,10 +28,6 @@ public class PtychoPreferencePage extends FieldEditorPreferencePage implements I
 
 	@Override
 	protected void createFieldEditors() {
-		 // Add a directory field
-		DirectoryFieldEditor epiResourceFolder = new DirectoryFieldEditor(PtychoPreferenceConstants.PIE_RESOURCE_PATH,
-				"PIE resource directory:", getFieldEditorParent());
-		addField(epiResourceFolder);
 		FileFieldEditor scriptToRun = new FileFieldEditor(PtychoPreferenceConstants.RECON_SCRIPT_PATH, "Path to recon script:",
 				getFieldEditorParent());
 		addField(scriptToRun);
@@ -40,6 +35,10 @@ public class PtychoPreferencePage extends FieldEditorPreferencePage implements I
 		FileFieldEditor savedFilePath = new FileFieldEditor(PtychoPreferenceConstants.FILE_SAVE_PATH, "Parameter file saved path:",
 				getFieldEditorParent());
 		addField(savedFilePath);
+		
+		FileFieldEditor templateFilePath = new FileFieldEditor(PtychoPreferenceConstants.TEMPLATE_FILE_PATH, "Template parameter file:",
+				getFieldEditorParent());
+		addField(templateFilePath);
 	}
 
 	@Override

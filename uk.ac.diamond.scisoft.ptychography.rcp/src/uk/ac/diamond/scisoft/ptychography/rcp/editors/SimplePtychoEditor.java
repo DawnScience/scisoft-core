@@ -3,6 +3,11 @@ package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -11,11 +16,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.PartInitException;
 
-import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoData;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoNode;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoTreeUtils;
 
@@ -24,27 +25,24 @@ public class SimplePtychoEditor extends AbstractPtychoEditor {
 	public static final String ID = "uk.ac.diamond.scisoft.ptychography.rcp.basicPtychoInput";
 
 	private List<TextNode> textNodes = new ArrayList<TextNode>();
-
-	public SimplePtychoEditor() {
-		
-	}
-
-	public SimplePtychoEditor(List<PtychoData> levels, List<PtychoNode> tree, boolean isDirtyFlag) {
-		this.levels = levels;
+	private Composite parent, container;
+	
+	@Inject
+	@Optional
+	private void refreshView(@UIEventTopic("refreshSimplePtychoEditor")List<PtychoNode> tree) {
 		this.tree = tree;
-		this.isDirtyFlag = isDirtyFlag;
+		container.dispose();
+		initialise();
 	}
-
-	@Override
-	public void init(IEditorSite site, IEditorInput input)
-			throws PartInitException {
-		super.init(site, input);
-		setPartName("Ptychography parameter simple Editor");
-	}
-
-	@Override
+	
+	@PostConstruct
 	public void createPartControl(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
+		this.parent = parent;
+		initialise();
+	}
+	
+	private void initialise() {
+		container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(1, false));
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
@@ -93,6 +91,12 @@ public class SimplePtychoEditor extends AbstractPtychoEditor {
 				textNodes.add(new TextNode(text, res));
 				i++;
 			}
+		}
+		if(result.isEmpty()) {
+			Label label = new Label(parent, SWT.NONE);
+			label.setText("The simple Ptycho Editor is currently only supported for the default template file. \n"
+					+ "This can be found at /dls_sw/apps/ePi/epi_parameters_descriptions.csv. \n"
+					+ "Please use the Ptycho Tree Editor for the currently selected file.");
 		}
 	}
 

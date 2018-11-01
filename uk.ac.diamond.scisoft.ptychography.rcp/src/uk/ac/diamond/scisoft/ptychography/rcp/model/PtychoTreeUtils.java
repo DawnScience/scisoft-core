@@ -3,6 +3,8 @@ package uk.ac.diamond.scisoft.ptychography.rcp.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.math.NumberUtils;
+
 public class PtychoTreeUtils {
 	
 	/*
@@ -167,11 +169,17 @@ public class PtychoTreeUtils {
 		json.append("}");
 		return json.toString();
 	}
-
+	
+	/*
+	 * One case with existing CSV template has the value 00 as a string
+	 * Once converted to JSON, NumberUtils.isNumber correctly identifies this as numeric
+	 * This may not be desirable, however the value can be surrounded with "" in the tree editor to force string type
+	 */
 	private static String getValue(String value, String type) {
 		if (((value.startsWith("[") && value.endsWith("]")) ||
 				(value.startsWith("\"") && value.endsWith("\"")))
-				|| (type.equals("int")||(type.equals("float")))) {
+				|| ((type != null) && (type.equals("int")||(type.equals("float"))))
+				|| (NumberUtils.isNumber(value))) {
 			if(value.equals("") || value.equals("None")) return "\"\"";
 			return value;
 		}

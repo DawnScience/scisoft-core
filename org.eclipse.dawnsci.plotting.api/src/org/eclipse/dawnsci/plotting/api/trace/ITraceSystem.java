@@ -125,9 +125,22 @@ public interface ITraceSystem {
 	 * @return
 	 */
 	public IPlane3DTrace createPlane3DTrace(String traceName);
-	
+
+	/**
+	 * Creates a trace corresponding to given class/interface
+	 * @param traceName
+	 * @param clazz
+	 * @return
+	 */
 	public <U extends ITrace> U createTrace(String traceName, Class<U> clazz);
-	
+
+	/**
+	 * Create a trace best suited to current plot type
+	 * @param traceName
+	 * @return
+	 */
+	public ITrace createTrace(String traceName);
+
 	public List<Class<? extends ITrace>> getRegisteredTraceClasses();
 
 	/**

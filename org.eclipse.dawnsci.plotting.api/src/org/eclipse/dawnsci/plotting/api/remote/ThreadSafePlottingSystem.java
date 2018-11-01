@@ -669,6 +669,11 @@ public class ThreadSafePlottingSystem<T> extends ThreadSafeObject implements IPl
 	}
 
 	@Override
+	public ITrace createTrace(String traceName) {
+		return delegate.createTrace(traceName);
+	}
+
+	@Override
 	public List<Class<? extends ITrace>> getRegisteredTraceClasses() {
 		return delegate.getRegisteredTraceClasses();
 	}

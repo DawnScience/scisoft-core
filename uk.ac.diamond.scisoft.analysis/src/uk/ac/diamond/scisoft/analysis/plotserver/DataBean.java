@@ -35,25 +35,23 @@ public class DataBean implements Serializable {
 
 	protected List<Tree> trees;
 	
-	protected GuiPlotMode guiPlotMode;
-	
 	protected GuiBean plotParameters;
 
 	/**
 	 * Constructor to initialise all the collection objects
 	 */
 	public DataBean(GuiPlotMode plotMode) {
-		guiPlotMode = plotMode;
 		data = new ArrayList<DatasetWithAxisInformation>();
 		axisData = new HashMap<String, Dataset>();
 		trees = new ArrayList<Tree>();
+		putGuiParameter(GuiParameters.PLOTMODE, plotMode);
 	}
 	
 	public DataBean() {
-		guiPlotMode = null;
 		data = new ArrayList<DatasetWithAxisInformation>();
 		axisData = new HashMap<String, Dataset>();
 		trees = new ArrayList<Tree>();
+		putGuiParameter(GuiParameters.PLOTMODE, GuiPlotMode.EMPTY);
 	}
 	
 
@@ -65,7 +63,6 @@ public class DataBean implements Serializable {
 		bean.data.addAll(data);
 		bean.axisData.putAll(axisData);
 		bean.trees.addAll(trees);
-		bean.guiPlotMode = guiPlotMode;
 		if (plotParameters != null)
 			bean.plotParameters = plotParameters.copy();
 		return bean;
@@ -252,11 +249,11 @@ public class DataBean implements Serializable {
 	}
 
 	public GuiPlotMode getGuiPlotMode() {
-		return guiPlotMode;
+		return (GuiPlotMode) plotParameters.get(GuiParameters.PLOTMODE);
 	}
 
 	public void setGuiPlotMode(GuiPlotMode guiPlotMode) {
-		this.guiPlotMode = guiPlotMode;
+		putGuiParameter(GuiParameters.PLOTMODE, guiPlotMode);
 	}
 
 	public void putGuiParameter(GuiParameters key, Serializable value) {

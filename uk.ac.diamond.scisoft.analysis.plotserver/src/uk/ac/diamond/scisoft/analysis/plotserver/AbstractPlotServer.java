@@ -56,7 +56,7 @@ abstract public class AbstractPlotServer implements PlotServer {
 		}
 
 		// update plot mode
-		GuiPlotMode mode = data.getGuiPlotMode();
+		GuiPlotMode mode = (GuiPlotMode) gb.get(GuiParameters.PLOTMODE);
 		GuiBean bean = guiStore.get(guiName);
 		if (bean == null) {
 			bean = new GuiBean();

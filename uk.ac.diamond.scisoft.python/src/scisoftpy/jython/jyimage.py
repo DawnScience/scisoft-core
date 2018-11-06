@@ -28,7 +28,9 @@ _image().setImageFilterService(_creator.createFilterService())
 @_wrap
 def findshift(a, b, rect=None):
     '''Find translation vector from b to a using rectangular ROI rect'''
-    return _image.findTranslation2D(a, b, rect._jroi())
+    if rect is not None:
+        rect = rect._jroi()
+    return _image.findTranslation2D(a, b, rect)
 
 @_wrap
 def shiftimage(image, shift):

@@ -643,7 +643,8 @@ def points(x, y=None, z=None, size=0, name=None):
         else:
             _plot_points2d(name, x, y, size)
     else:
-        _plot_points3d(name, x, y, z, size)
+        raise NotImplementedError("Old implementation removed; not currently implemented")
+        #_plot_points3d(name, x, y, z, size)
 
 def addpoints(x, y, z=None, size=0, name=None):
     '''Update existing plot by adding points of given coordinates
@@ -661,7 +662,8 @@ def addpoints(x, y, z=None, size=0, name=None):
     if z is None:
         _plot_updatepoints2d(name, x, y, size)
     else:
-        _plot_updatepoints3d(name, x, y, z, size)
+        raise NotImplementedError("Old implementation removed; not currently implemented")
+        #_plot_updatepoints3d(name, x, y, z, size)
 
 
 _IMAGEEXPNAME = "ImageExplorer View"

@@ -55,10 +55,10 @@ public class NexusDataBean extends DataBean implements Serializable {
 		bean.axisData.putAll(axisData);
 		bean.nexusTrees.addAll(nexusTrees);
 		bean.trees.addAll(trees);
-		bean.guiPlotMode = guiPlotMode;
+		bean.plotParameters.putAll(plotParameters);
 		return bean;
 	}
-	
+
 	/**
 	 * Adds the provided NeXus tree to the bean, one element at a time
 	 * 

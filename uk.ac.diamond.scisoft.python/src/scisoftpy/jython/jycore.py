@@ -204,6 +204,8 @@ def _jinput(arg): # strip for java input
     elif isinstance(arg, _jlist):
         return [ _jinput(a) for a in arg ]
     elif type(arg) is _arraytype:
+        if len(arg.typecode) == 1: # only check non-primitives
+            return arg
         return [ _jinput(a) for a in arg if a is not None]
     elif isinstance(arg, ndarray):
         return arg._jdataset()

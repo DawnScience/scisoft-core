@@ -122,7 +122,7 @@ class _lazydataset(object):
                     src_pos.append(sl if sl else slice(None))
 
 #            print dst_pos, src_pos
-            v[dst_pos] = ds[tuple(src_pos)]
+            v[tuple(dst_pos)] = ds[tuple(src_pos)]
 
         fh.close()
         return v.reshape(nshape)

@@ -328,8 +328,8 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 		// each element of the dimensionMappings array must between 0 and the rank of the default data node of the NXdata group
 		for (int dimensionMapping : dimensionMappings) {
 			if (dimensionMapping < 0 || dimensionMapping >= signalFieldRank) {
-				throw new IllegalArgumentException(MessageFormat.format("Dimension mapping must be between {0} and {1}, was {2}.",
-						0, signalFieldRank, dimensionMapping));
+				throw new IllegalArgumentException(MessageFormat.format("Invalid dimension mapping for field ''{0}'', {1}, must be between 0 and {2} exclusive, as the rank of the primary data field ''{3}'' has rank {2}. This problem can occur when the rank of the signal data field is smaller than the rank of the scan.",
+						sourceFieldName, dimensionMapping, signalFieldRank, signalFieldSourceName));
 			}
 		}
 	}

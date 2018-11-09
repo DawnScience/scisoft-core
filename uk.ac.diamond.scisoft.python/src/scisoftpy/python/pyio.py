@@ -309,7 +309,7 @@ class DLSLoader(SRSLoader):
             else:
                 raise io_exception("No end tag found")
 
-            colstext = hdrtext.pop()[1:].strip() if hdrtext else None
+            colstext = hdrtext.pop().strip() if hdrtext else None
             datatext = [ls]
             while True:
                 l = f.readline()

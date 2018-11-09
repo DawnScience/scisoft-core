@@ -41,7 +41,6 @@ public class JythonPath {
 	 * Lists of Jars we want to/don't want to include
 	 */
 	private static final String[] blackListedJarDirs = {
-		"uk.ac.gda.libs",
 		"ch.qos.logback.eclipse",
 		"ch.qos.logback.beagle",
 		"org.dawb.workbench.jmx",

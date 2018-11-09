@@ -80,10 +80,13 @@ public class PixelIntegration {
 		IndexIterator iter = a.getIterator();
 
 		while (iter.hasNext()) {
-			final double val = a.getElementDoubleAbs(iter.index);
 			final double sig = d.getElementDoubleAbs(iter.index);
 			
+			if (!Double.isFinite(sig)) continue;
+
 			if (m != null && !m.getElementBooleanAbs(iter.index)) continue;
+
+			final double val = a.getElementDoubleAbs(iter.index);
 			
 			if (integrationRange != null && r != null) {
 				final double ra = r.getElementDoubleAbs(iter.index);
@@ -160,9 +163,14 @@ public class PixelIntegration {
 		double rMax = 0;
 		
 		while (iter.hasNext()) {
+			double sig = d.getElementDoubleAbs(iter.index);
 
+			if (!Double.isFinite(sig)) continue;
+			
 			if (m != null && !m.getElementBooleanAbs(iter.index)) continue;
 
+			double qMin = a[0].getElementDoubleAbs(iter.index);
+			double qMax = a[1].getElementDoubleAbs(iter.index);
 			double rangeScale = 1;
 
 			if (integrationRange != null && r != null) {
@@ -182,10 +190,6 @@ public class PixelIntegration {
 				rangeScale = reducedRange/fullRange;
 
 			}
-
-			double sig = d.getElementDoubleAbs(iter.index);
-			double qMin = a[0].getElementDoubleAbs(iter.index);
-			double qMax = a[1].getElementDoubleAbs(iter.index);
 
 			if (qMax < lo || qMin > hi) {
 				continue;
@@ -269,13 +273,16 @@ public class PixelIntegration {
 		IndexIterator iter = x.getIterator();
 
 		while (iter.hasNext()) {
-
-			final double valq = x.getElementDoubleAbs(iter.index);
 			final double sig = b.getElementDoubleAbs(iter.index);
-			final double chi = y.getElementDoubleAbs(iter.index);
+			
+			if (!Double.isFinite(sig)) continue;
+			
 			if (m != null && !m.getElementBooleanAbs(iter.index)) {
 				continue;
 			}
+
+			final double valq = x.getElementDoubleAbs(iter.index);
+			final double chi = y.getElementDoubleAbs(iter.index);
 
 			if (valq < loQ || valq > hiQ) {
 				continue;
@@ -346,14 +353,16 @@ public class PixelIntegration {
 		int[] setPos = new int[]{0,0};
 		
 		while (iter.hasNext()) {
+			double sig = d.getElementDoubleAbs(iter.index);
+			
+			if (!Double.isFinite(sig)) continue;
 
 			if (m != null && !m.getElementBooleanAbs(iter.index)) continue;
+			
 			double xPixMax = x1.getElementDoubleAbs(iter.index);
 			double xPixMin = x0.getElementDoubleAbs(iter.index);
 			double yPixMax = y1.getElementDoubleAbs(iter.index);
 			double yPixMin = y0.getElementDoubleAbs(iter.index);
-
-			double sig = d.getElementDoubleAbs(iter.index);
 
 			if (xPixMax < minX || xPixMin > maxX) {
 				continue;

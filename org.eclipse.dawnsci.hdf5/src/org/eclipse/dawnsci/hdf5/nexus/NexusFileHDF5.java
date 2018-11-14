@@ -73,6 +73,32 @@ import hdf.hdf5lib.structs.H5O_info_t;
 
 public class NexusFileHDF5 implements NexusFile {
 
+	private static final Logger logger = LoggerFactory.getLogger(NexusFileHDF5.class);
+
+	private HDF5File file = null;
+	private long fileId = -1;
+
+	private String fileName;
+
+	private String fileDir;
+
+	private TreeFile tree;
+
+	private static final long ROOT_NODE_ADDR = -1234;
+
+	private Map<Long, Node> nodeMap; //used to remember node locations in file for detecting hard links
+
+	private boolean writeable = false;
+
+	private IdentityHashMap<Node, String> passedNodeMap; // associate given nodes with "canonical" path (used for working out hardlinks)
+
+	private boolean useSWMR = false;
+	private boolean writeAsync;
+
+	private boolean swmrOn = false;
+
+	private static final int DEF_FIXED_STRING_LENGTH = 1024;
+
 	/**
 	 * Create a new Nexus file (overwriting any existing one)
 	 * @param path
@@ -122,10 +148,7 @@ public class NexusFileHDF5 implements NexusFile {
 		return file;
 	}
 
-	private static final Logger logger = LoggerFactory.getLogger(NexusFileHDF5.class);
-
 	//TODO: Clean up and move stuff to helper classes?
-
 
 	public enum NodeType {
 		GROUP(HDF5Constants.H5O_TYPE_GROUP),
@@ -171,28 +194,6 @@ public class NexusFileHDF5 implements NexusFile {
 			this.type = type;
 		}
 	}
-
-	private HDF5File file = null;
-	private long fileId = -1;
-
-	private String fileName;
-
-	private String fileDir;
-
-	private TreeFile tree;
-
-	private static long ROOT_NODE_ADDR = -1234;
-
-	private Map<Long, Node> nodeMap; //used to remember node locations in file for detecting hard links
-
-	private boolean writeable = false;
-
-	private IdentityHashMap<Node, String> passedNodeMap; // associate given nodes with "canonical" path (used for working out hardlinks)
-
-	private boolean useSWMR = false;
-	private boolean writeAsync;
-	
-	private static int DEF_FIXED_STRING_LENGTH = 1024;
 
 	public NexusFileHDF5(String path) {
 		this(path, false);
@@ -698,6 +699,9 @@ public class NexusFileHDF5 implements NexusFile {
 
 		if (type == null) {
 			if (create && writeable) {
+				if (swmrOn) {
+					throw new NexusException("Can not create groups in SWMR mode");
+				}
 				try {
 					groupId = H5.H5Gcreate(fileId, absolutePath,
 							HDF5Constants.H5P_DEFAULT, HDF5Constants.H5P_DEFAULT, HDF5Constants.H5P_DEFAULT);
@@ -927,6 +931,9 @@ public class NexusFileHDF5 implements NexusFile {
 	public DataNode createData(String path, String name, ILazyWriteableDataset data, int compression, boolean createPathIfNecessary)
 			throws NexusException {
 		assertCanWrite();
+		if (swmrOn) {
+			throw new NexusException("Can not create datasets in SWMR mode");
+		}
 		NodeData parentNode = getGroupNode(path, createPathIfNecessary);
 		if (parentNode.name == null) {
 			return null;
@@ -1077,6 +1084,9 @@ public class NexusFileHDF5 implements NexusFile {
 	@Override
 	public DataNode createData(String path, String name, IDataset data, boolean createPathIfNecessary) throws NexusException {
 		assertCanWrite();
+		if (swmrOn) {
+			throw new NexusException("Can not create datasets in SWMR mode");
+		}
 
 		NodeData parentNode = getGroupNode(path, createPathIfNecessary);
 		if (name == null) {
@@ -1390,6 +1400,9 @@ public class NexusFileHDF5 implements NexusFile {
 	}
 
 	private void createSoftLink(String source, String destination) throws NexusException {
+		if (swmrOn) {
+			throw new NexusException("Can not create links in SWMR mode");
+		}
 		boolean useNameAtSource = destination.endsWith(Node.SEPARATOR);
 		String linkName = destination;
 		if (!useNameAtSource) {
@@ -1408,6 +1421,9 @@ public class NexusFileHDF5 implements NexusFile {
 	}
 
 	private void createHardLink(String source, String destination) throws NexusException {
+		if (swmrOn) {
+			throw new NexusException("Can not create links in SWMR mode");
+		}
 		boolean useNameAtSource = destination.endsWith(Node.SEPARATOR);
 		NodeData sourceData = getNode(source, false);
 		if (sourceData.name == null) {
@@ -1449,6 +1465,9 @@ public class NexusFileHDF5 implements NexusFile {
 	}
 
 	private void createExternalLink(String externalFileName, String destinationParent, String linkNodeName, String source) throws NexusException {
+		if (swmrOn) {
+			throw new NexusException("Can not create links in SWMR mode");
+		}
 		//create the destination node (the path on our side of the link)
 		getGroupNode(destinationParent, true);
 		String linkName = destinationParent + Node.SEPARATOR + linkNodeName;
@@ -1518,28 +1537,12 @@ public class NexusFileHDF5 implements NexusFile {
 			throw new IllegalStateException("File was not created to use SWMR");
 		}
 
-		//*
 		try {
 			H5.H5Fstart_swmr_write(fileId);
 		} catch (HDF5LibraryException e) {
 			throw new NexusException("Could not switch to SWMR mode", e);
 		}
-		/*/
-				try {
-					HDF5FileFactory.releaseFile(fileName, true);
-					fileId = -1;
-					try {
-						fileId = HDF5FileFactory.acquireForSwmrWrite(fileName);
-				} catch (Exception e) {
-						fileId = HDF5FileFactory.acquireFile(fileName, writeable);
-						throw e;
-					}
-					// int result = H5.H5Fstart_swmr_write(fileId);
-					// result++;
-				} catch (ScanFileHolderException e) {
-					throw new NexusException("Could not switch to SWMR mode", e);
-				}
-		 */
+		swmrOn = true;
 	}
 	
 	@Override
@@ -1577,6 +1580,7 @@ public class NexusFileHDF5 implements NexusFile {
 			nodeMap = null;
 			passedNodeMap = null;
 			writeable = false;
+			swmrOn = false;
 		} catch (NexusException e) {
 			throw new NexusException("Cannot close file", e);
 		} finally {
@@ -1597,8 +1601,8 @@ public class NexusFileHDF5 implements NexusFile {
 		}
 	}
 
-	private static long IS_EXTERNAL_LINK = -4370;
-	private static long NO_LINK = -3422;
+	private static final long IS_EXTERNAL_LINK = -4370;
+	private static final long NO_LINK = -3422;
 
 	private boolean testForExternalLink(String path) throws NexusException {
 		//TODO: might want to cache results
